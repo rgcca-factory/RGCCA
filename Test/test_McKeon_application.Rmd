@@ -1,0 +1,274 @@
+---
+title: "Dendogramme McKeon"
+author: "Arnaud Gloaguen, Hugo Stalla-Bourdillon, Alexandre Pernin, Arthur Tenenhaus"
+date: "3 mars 2017"
+output:
+  html_document: default
+  pdf_document: default
+---
+
+***
+##**1 - Chargement des donnees et mise en forme:**
+Chargement des donnees et des librairies
+```{r setup, warning=FALSE, message=FALSE}
+#Chargement des donnees
+setwd("~/Documents/THESE/MGCCA")
+load("~/Documents/THESE/MGCCA/SubdividedMacrophageDataset.RData")
+
+#Installation library
+library(knitr)
+library(ggplot2)
+library(gridExtra)
+library(pheatmap)
+library(Matrix)
+library(utils)
+library(cba)
+library(RGCCA)
+library(BIOSCAData)
+library(devtools)
+load_all("~/Documents/THESE/MGCCA/RGCCA/.")
+```
+
+Chargement de la fonction d'evaluation McKeon realisee avec RGCCA
+```{r}
+mckeon  = function(A)
+{
+  J   = length(A)
+  C   = matrix(1, nrow = J, ncol = J) - diag(J)
+  res = rgcca(A = A, C = C, tau = rep(1, J), scheme = "horst", scale = F, bias = T, ncomp = rep(1, J), verbose = F)
+  Y   = Reduce("cbind", res$Y)
+  rI  = 1/(J-1)*(cov2(rowSums(Y))/sum(apply(Y, 2, cov2))-1)
+  return(rI)
+}
+
+##Celle-ci pose des problème de d'inversion de matrice
+# mckeon  = function(A)
+# {
+#   J   = length(A)
+#   SD  = bdiag(lapply(A, cov2))
+#   S   = cov2(Reduce("cbind", A))
+#   rho = (1/(J-1))*(eigen(solve(SD)%*%S)$values[1]-1)
+#   return(Re(rho))
+# }
+```
+
+Chargement de la fonction pour faire du clustering hiérarchique sur des blocs en utilisant la fonction de McKeon
+```{r}
+
+source("~/Documents/THESE/MGCCA/dendo_KEON_new.R")
+
+```
+
+##**2 - Validation sur un jeu de donnee simule:**
+
+Generation des donnees
+```{r}
+set.seed(123456789)
+d1 = runif(50, 0, 10)
+d2 = runif(50, 0, 10)
+E = matrix(rnorm(800, 0, 1), 50, 16)
+
+X1 = matrix(0, 50, 4)
+X1[, 1] = d1 + E[, 1]
+X1[, 2] = d1 + E[, 2]
+X1[, 3] = d1 + E[, 3]
+X1[, 4] = d1 + E[, 4]
+colnames(X1) = paste("X1", 1:4, sep = "")
+
+X2 = matrix(0, 50, 2)
+X2[, 1] = 0.7*d1 + E[, 5]
+X2[, 2] = 0.7*d1 + E[, 6]
+colnames(X2) = paste("X1", 1:2, sep = "")
+
+X3 = matrix(0, 50, 2)
+X3[, 1] = 0.4*d1 + E[, 7]
+X3[, 2] = 0.4*d1 + E[, 8]
+colnames(X3) = paste("X3", 1:2, sep = "")
+
+X4 = matrix(0, 50, 3)
+X4[, 1] = d2 + E[, 9]
+X4[, 2] = d2 + E[, 10]
+X4[, 3] = d2 + E[, 11]
+colnames(X4) = paste("X4", 1:3, sep = "")
+
+X5 = matrix(0, 50, 3)
+X5[, 1] = 0.7*d2 + E[, 12]
+X5[, 2] = 0.7*d2 + E[, 13]
+X5[, 3] = 0.7*d2 + E[, 14]
+colnames(X5) = paste("X5", 1:3, sep = "")
+
+X6 = matrix(0, 50, 2)
+X6[, 1] = 0.4*d2 + E[, 15]
+X6[, 2] = 0.4*d2 + E[, 16]
+colnames(X6) = paste("X6", 1:2, sep = "")
+
+A = list(X1 = X1, X2 = X2, X3 = X3,
+         X4 = X4, X5 = X5, X6 = X6)
+```
+
+On a fixe la graine car on connait le resultat. On doit obtenir un arbre ou de cette forme [{(X1, X2), X3}, {(X4, X5), X6}]. Et c'est bien ce que l'on obtient.
+```{r, warning=F, message=F, results=F}
+
+res = dendo_KEON_new(A)
+
+plot(res)
+
+```
+
+
+
+##**3 - Validation sur les donnees SCA:**
+
+
+```{r, warning=F}
+load("~/Documents/THESE/MGCCA/Data/MatricesSansDuplicat1234.RData")
+
+TEMP4[[13]] = TEMP4[[13]][, -4]
+TEMP4[[16]] = TEMP4[[16]][, -2]
+
+data(Pons)
+Pons = as.data.frame(Pons[[1]]) ; rownames(Pons) = Pons[, 1]; Pons = Pons[, -1, drop = FALSE]
+Pons = Pons[intersect(rownames(Pons), rownames(TEMP4[[1]])), , drop = FALSE]
+L = lapply(TEMP4, function(x) x[intersect(rownames(Pons), rownames(x)), ])
+L[[22]] = Pons ; names(L)[22] = "Pons"
+
+names(L)[22] = "PONS"
+```
+
+
+```{r}
+res_2 = dendo_KEON_new(L)
+
+plot(res_2, hang = -1)
+```
+
+
+
+##**4 - Application aux Macrophages:**
+
+Separation des donnees initiales: obtention de trois listes de familles de genes correspondant aux etats M0, M1 et M2. Ainsi, le premier element de M0 est une liste de tous les genes de la premiere famille a l'etat M0
+```{r}
+M0 = lapply(dividedmainblocks[[1]], function(x) blockeddf[, x])
+M1 = lapply(dividedmainblocks[[2]], function(x) blockeddf[, x])
+M2 = lapply(dividedmainblocks[[3]], function(x) blockeddf[, x])
+y  = factor(rep(1:2, each  = 8), labels = c("Patient", "Control"))
+```
+
+
+Creation de la matrice donnant le nombre de genes par famille
+```{r}
+numberofgenes = matrix(0,3, 11)
+for ( j in 1:11) {
+    numberofgenes[1,j] = sum(sapply(M0[j], length))
+    numberofgenes[2,j] = sum(sapply(M1[j], length))
+    numberofgenes[3,j] = sum(sapply(M2[j], length))
+
+}
+colnames(numberofgenes) = as.matrix(as.data.frame(strsplit(names(M0), '_')))[2,]
+rownames(numberofgenes) = names(dividedmainblocks)
+remove(j)
+kable(head(numberofgenes))
+```
+
+
+Creation d'un vecteur contenant le nom de tous les genes
+```{r, message = F}
+NomsGenes = list()
+for (i in 1:11) {
+    a = colnames(M0[[i]])
+    bits <- unlist(strsplit(a, '_'))
+    bits = unique(bits)
+    bits = bits[3:length(bits)]
+    NomsGenes = c(NomsGenes, bits)
+}
+NomsGenes = unlist(NomsGenes)
+```
+
+
+Creation d'un vecteur contenant les noms des familles de genes. Chaque nom de famille est repete autant de fois que la famille compte d'elements 
+```{r}
+NomsFamille = list()
+for (i in 1:11) {
+    a = colnames(M0[[i]])
+    bits <- unlist(strsplit(a, '_'))
+    bits = unique(bits)
+    bits = rep(bits[2], numberofgenes[1,i])
+    NomsFamille = c(NomsFamille, bits)
+}
+NomsFamille = unlist(NomsFamille)
+```
+
+
+Essai pour simplifier le code de creation de M0matrix, M1matrix et M2matrix
+```{r}
+M0matrix = Reduce("cbind", M0)
+colnames(M0matrix) = NomsFamille
+M1matrix = Reduce("cbind", M1)
+colnames(M1matrix) = NomsFamille
+M2matrix = Reduce("cbind", M2)
+colnames(M2matrix) = NomsFamille
+
+M0matrix_gene = Reduce("cbind", M0)
+colnames(M0matrix_gene) = NomsGenes
+M1matrix_gene = Reduce("cbind", M1)
+colnames(M1matrix_gene) = NomsGenes
+M2matrix_gene = Reduce("cbind", M2)
+colnames(M2matrix_gene) = NomsGenes
+```
+
+
+Paramètres
+```{r}
+
+#Indice des varaibles de variance nulle
+idx_M0_novar = lapply(M0, function(x) which(apply(x, 2, var)==0))
+idx_M1_novar = lapply(M1, function(x) which(apply(x, 2, var)==0))
+idx_M2_novar = lapply(M2, function(x) which(apply(x, 2, var)==0))
+
+#Pour chacune des famille de gène, recupère les indices de variables ayant une variance nulle quelque soit leur etat (M0/M1/M2)
+idx_novar = Map(c, Map(c, idx_M0_novar, idx_M1_novar), idx_M2_novar)
+idx_novar = lapply(idx_novar, unique)
+
+#Supprime les variables dont les indices ont été identifiés
+M0_novar = lapply(1:length(M0), function(x) M0[[x]][, -c(idx_novar[[x]])])
+M1_novar = lapply(1:length(M1), function(x) M1[[x]][, -c(idx_novar[[x]])])
+M2_novar = lapply(1:length(M2), function(x) M2[[x]][, -c(idx_novar[[x]])])
+
+names(M0_novar) = names(M0)
+names(M1_novar) = names(M1)
+names(M2_novar) = names(M2)
+
+```
+
+
+```{r}
+
+M0_novar_P = lapply(M0_novar, function(x) x[1:8, ])
+M1_novar_P = lapply(M1_novar, function(x) x[1:8, ])
+M2_novar_P = lapply(M2_novar, function(x) x[1:8, ])
+
+M0_novar_C = lapply(M0_novar, function(x) x[9:16, ])
+M1_novar_C = lapply(M1_novar, function(x) x[9:16, ])
+M2_novar_C = lapply(M2_novar, function(x) x[9:16, ])
+
+
+
+
+K1 = dendo_KEON_new(M0_novar_P)
+K2 = dendo_KEON_new(M1_novar_P)
+K3 = dendo_KEON_new(M2_novar_P)
+K4 = dendo_KEON_new(M0_novar_C)
+K5 = dendo_KEON_new(M1_novar_C)
+K6 = dendo_KEON_new(M2_novar_C)
+
+par(mfrow = c(2, 3))
+plot(K1, main = "Patient", hang = -1)
+plot(K2, main = "Patient", hang = -1)
+plot(K3, main = "Patient", hang = -1)
+plot(K4, main = "Control", hang = -1)
+plot(K5, main = "Control", hang = -1)
+plot(K6, main = "Control", hang = -1)
+
+
+```
+
