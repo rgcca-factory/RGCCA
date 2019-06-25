@@ -1,4 +1,5 @@
-#' Estimation of the optimal shrinkage parameters as described in [1,2] and implemented in \code{\link[SHIP:SHIP-package]{SHIP}} [2]. 
+#' Estimation of the optimal shrinkage parameters as described in [1,2] and implemented 
+#' in a more general version within the SHIP package [2]. 
 #' @param x  Data set on which the covariance matrix is estimated.
 #' @return \item{tau}{Optimal shrinkage intensity parameter}
 #' @title Optimal shrinkage intensity parameters.

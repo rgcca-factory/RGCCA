@@ -7,6 +7,7 @@
 #' @return \item{C}{Estimation of the variance (resp. covariance) of x (resp. x and y).}
 #' @title Variance and Covariance (Matrices)
 #' @export cov2
+#' @importFrom stats cov
 
 cov2 = function (x, y = NULL, bias = TRUE) 
 {

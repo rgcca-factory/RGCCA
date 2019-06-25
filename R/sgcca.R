@@ -1,36 +1,34 @@
 #' SGCCA extends RGCCA to address the issue of variable selection. Specifically, 
 #' RGCCA is combined with an L1-penalty that gives rise to Sparse GCCA (SGCCA) which 
 #' is implemented in the function sgcca().
-#' Given \eqn{J} matrices \eqn{\mathbf{X_1}, \mathbf{X_2}, ..., \mathbf{X_J}}, that represent 
+#' Given \eqn{J} matrices \eqn{X_1, X_2, ..., X_J}, that represent 
 #' \eqn{J} sets of variables observed on the same set of \eqn{n} individuals. The matrices 
-#' \eqn{\mathbf{X_1}, \mathbf{X_2}, ..., \mathbf{X_J}} must have the same number of rows, but may 
-#' (and usually will) have different numbers of columns. Bblocks are not necessarily fully connected
+#' \eqn{X_1, X_2, ..., X_J} must have the same number of rows, but may 
+#' (and usually will) have different numbers of columns. Blocks are not necessarily fully connected
 #' within the SGCCA framework. Hence the use of SGCCA requires 
-#' the construction (user specified) of a design matrix (\eqn{\mathbf{C}}) that characterizes 
-#' the connections between blocks. Elements of the (symmetric) design matrix \eqn{\mathbf{C} = (c_{jk})} 
-#' areequal to 1 if block \eqn{j} and block \eqn{k} are connected, and 0 otherwise. 
-#' Hence, the use of SGCCA requires the construction 
-#' (user specified) of a design matrix (\eqn{\mathbf{C}}) which characterizes 
-#' the connections between blocks. The SGCCA algorithm is very similar to the RGCCA algorithm and keeps the same monotone 
+#' the construction (user specified) of a design matrix (\eqn{C}) that characterizes 
+#' the connections between blocks. Elements of the symmetric design matrix \eqn{C = (c_{jk})} 
+#' are equal to 1 if block \eqn{j} and block \eqn{k} are connected, and 0 otherwise. 
+#' The SGCCA algorithm is very similar to the RGCCA algorithm and keeps the same monotone 
 #' convergence properties (i.e. the bounded criteria to be maximized increases 
-#' at each step of the iterative procedure).
-#' Moreover, using a deflation strategy, sgcca() enables computation of several SGCCA block 
+#' at each step of the iterative procedure and hits at convergence a stationary point).
+#' Moreover, using a deflation strategy, sgcca() enables the computation of several SGCCA block 
 #' components (specified by ncomp) for each block. Block components for each block are guaranteed to be orthogonal 
 #' when using this deflation strategy. The so-called symmetric deflation is considered in this implementation,
 #' i.e. each block is deflated with respect to its own component. 
-#' Moreover, we stress that the numbers of components per block could differ 
-#' from one block to another. 
-#' @param A  A list that contains the \eqn{J} blocks of variables \eqn{\mathbf{X_1}, \mathbf{X_2}, ..., \mathbf{X_J}}.
+#' Moreover, we stress that the numbers of components per block could differ from one block to another. 
+#' @param A  A list that contains the \eqn{J} blocks of variables \eqn{X_1, X_2, ..., X_J}.
 #' @param C  A design matrix that describes the relationships between blocks (default: complete design).
-#' @param c1 Either a \eqn{1 \times J} vector or a \eqn{\max (ncomp) \times J} matrix encoding the L1 constraints applied to the outer weight vectors. Elements of c1 vary between 0 and 1 (larger values of c1 correspond to less penalization). 
+#' @param c1 Either a \eqn{1*J} vector or a \eqn{max(ncomp) * J} matrix encoding the L1 constraints applied to the outer weight vectors. 
+#' Elements of c1 vary between \eqn{1/sqrt(p_j)} and 1 (larger values of c1 correspond to less penalization). 
 #' If c1 is a vector, L1-penalties are the same for all the weights corresponding to the same block but different components: 
-#' \deqn{\forall h, \|a_{j,h}\|_{\ell_1} \leq c_1[j] \sqrt{p_j},}
-#' with \eqn{p_j} the number of variables of \eqn{\mathbf{X}_j}.
+#' \deqn{for all h, |a_{j,h}|_{L_1} \le c_1[j] \sqrt{p_j},}
+#' with \eqn{p_j} the number of variables of \eqn{X_j}.
 #' If c1 is a matrix, each row \eqn{h} defines the constraints applied to the weights corresponding to components \eqn{h}:
-#' \deqn{\forall h, \|a_{j,h}\|_{\ell_1} \leq c_1[h,j] \sqrt{p_j}.}
-#' @param ncomp  A \eqn{1 \times J} vector that contains the numbers of components for each block (default: rep(1, length(A)), which means one component per block).
+#' \deqn{for all h, |a_{j,h}|_{L_1} \le c_1[h,j] \sqrt{p_j}.}
+#' @param ncomp  A \eqn{1*J} vector that contains the numbers of components for each block (default: rep(1, length(A)), which means one component per block).
 #' @param scheme Either  "horst", "factorial" or "centroid" (Default: "centroid").
-#' @param scale	If scale = TRUE, each block is standardized to zero means and unit variances (default: TRUE).
+#' @param scale  If scale = TRUE, each block is standardized to zero means and unit variances and then divided by the square root of its number of variables (default: TRUE).
 #' @param init Mode of initialization use in the SGCCA algorithm, either by Singular Value Decompostion ("svd") or random ("random") (default : "svd").
 #' @param bias A logical value for biaised or unbiaised estimator of the var/cov.
 #' @param verbose  Will report progress while computing if verbose = TRUE (default: TRUE).
@@ -44,7 +42,7 @@
 #' @return \item{ncomp}{A \eqn{1 \times J} vector that contains the number of components for each block (user specified).}
 #' @return \item{crit}{A vector that contains the values of the objective function at each iterations.}
 #' @return \item{AVE}{Indicators of model quality based on the Average Variance Explained (AVE): AVE(for one block), AVE(outer model), AVE(inner model).}
-#' @references Tenenhaus et al. Variable Selection For Generalized Canonical Correlation Analysis. 2013. Submitted to Biostatistics.
+#' @references Tenenhaus, A., Philippe, C., Guillemot, V., Le Cao, K. A., Grill, J., and Frouin, V. , "Variable selection for generalized canonical correlation analysis.," Biostatistics, vol. 15, no. 3, pp. 569-583, 2014. 
 #' @title Variable Selection For Generalized Canonical Correlation Analysis (SGCCA)
 #' @examples
 #'
@@ -66,10 +64,10 @@
 #' # rgcca algorithm using the dual formulation for X1 and X2 
 #' # and the dual formulation for X3
 #' A[[3]] = A[[3]][, -3]
-#' result.rgcca = rgcca(A, C, tau, ncomp = c(2, 2, 1), scheme = "factorial", verbose = FALSE)
+#' result.rgcca = rgcca(A, C, tau, ncomp = c(2, 2, 1), scheme = "factorial", verbose = TRUE)
 #' # sgcca algorithm
 #' result.sgcca = sgcca(A, C, c1 = c(.071,.2, 1), ncomp = c(2, 2, 1), 
-#'                      scheme = "centroid", verbose = FALSE)
+#'                      scheme = "centroid", verbose = TRUE)
 #' 
 #' ############################
 #' # plot(y1, y2) for (RGCCA) #
@@ -99,7 +97,7 @@
 #' init = "random"
 #' result.sgcca = sgcca(A, C, c1 = matrix(c(.071,.2, 1, 0.06, 0.15, 1), nrow = 2, byrow = TRUE), 
 #'                      ncomp = c(2, 2, 1), scheme = "factorial", scale = TRUE, bias = TRUE, 
-#'                      init = init, verbose = FALSE)
+#'                      init = init, verbose = TRUE)
 #' # number of non zero elements per dimension
 #' apply(result.sgcca$a[[1]], 2, function(x) sum(x!=0)) 
 #'      #(-> 145 non zero elements for a11 and 107 non zero elements for a12)
@@ -108,24 +106,52 @@
 #' init = "svd"
 #' result.sgcca = sgcca(A, C, c1 = matrix(c(.071,.2, 1, 0.06, 0.15, 1), nrow = 2, byrow = TRUE), 
 #'                      ncomp = c(2, 2, 1), scheme = "factorial", scale = TRUE, bias = TRUE, 
-#'                      init = init, verbose = FALSE)}
+#'                      init = init, verbose = TRUE)}
 #'@export sgcca
 
 
 sgcca <- function (A, C = 1-diag(length(A)), c1 = rep(1, length(A)), ncomp = rep(1, length(A)), scheme = "centroid", scale = TRUE, init = "svd", bias = TRUE, tol = .Machine$double.eps, verbose = FALSE){
-    if ( any(ncomp < 1) ) stop("One must compute at least one component per block!")
-    if ( any((c1<0) | (c1>1)) ) stop("c1 must vary between 0 and 1!")
-    
-    #-------------------------------------------------------
+
+  ndefl <- ncomp-1
+  N <- max(ndefl)
+  J <- length(A)
+  pjs <- sapply(A,NCOL)
+  nb_ind <- NROW(A[[1]])
+  AVE_X = list()
+  AVE_outer <- rep(NA,max(ncomp))  
+  
+  if ( any(ncomp < 1) ) stop("One must compute at least one component per block!")
+  if (any(ncomp-pjs > 0)) stop("For each block, choose a number of components smaller than the number of variables!")
+  
+  if (is.vector(c1)){
+    if (any(c1 < 1/sqrt(pjs) | c1 > 1 )) 
+      stop("L1 constraints (c1) must vary between 1/sqrt(p_j) and 1.")
+  }
+  
+  if (is.matrix(c1)){
+    if (any(apply(c1, 1, function(x) any(x < 1/sqrt(pjs))))) 
+      stop("L1 constraints (c1) must vary between 1/sqrt(p_j) and 1.")
+  }
+  
+###################################################
+ 
+  if (mode(scheme) != "function") {
     if ((scheme != "horst" ) & (scheme != "factorial") & (scheme != "centroid")) {
-      stop("ERROR : choose one of the three following schemes: horst, centroid or factorial")
-    }else{
-      if (verbose) cat("Computation of the SGCCA block components based on the",scheme,"scheme \n")
+      stop("Choose one of the three following schemes: horst, centroid, factorial or design the g function")
     }
+    if (verbose) cat("Computation of the SGCCA block components based on the", scheme, "scheme \n")
+  }
+  if (mode(scheme) == "function" & verbose) {
+    cat("Computation of the SGCCA block components based on the g scheme \n")
+  }
+  
+  
     #-------------------------------------------------------
     
-    if (scale == TRUE) A = lapply(A, function(x) scale2(x, bias = bias))
-    
+    if (scale == TRUE) {
+      A = lapply(A, function(x) scale2(x, bias = bias))
+      A = lapply(A, function(x) x/sqrt(NCOL(x)))
+    }
     ####################################
     # sgcca with 1 component per block #
     ####################################
