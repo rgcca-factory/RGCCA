@@ -1,0 +1,97 @@
+---
+title: "Projection"
+author: "Arnaud Gloaguen, Arthur Tenenhaus"
+date: "3 mai 2017"
+output:
+  html_document:
+    toc: true
+    theme: united
+  pdf_document:
+    toc: true
+    theme: united
+---
+
+#1 - Chargement package/Data
+```{r setup, warning=FALSE, message=FALSE}
+#Nettoyage workspace et chargement des packages/données
+rm(list = ls())
+require(gliomaData)
+require(microbenchmark)
+require(ggplot2)
+require(devtools)
+require(reshape)
+data(ge_cgh_locIGR)
+
+#Chargement RGCCA
+load_all("../../.")
+
+#Mise en forme des données pour appliquer SGCCA
+A           = ge_cgh_locIGR$multiblocks
+A[[3]]      = A[[3]][, -3]
+Loc         = factor(ge_cgh_locIGR$y)
+levels(Loc) = colnames(ge_cgh_locIGR$multiblocks$y)
+C           = matrix(c(0, 0, 1, 0, 0, 1, 1, 1, 0), 3, 3)
+
+#Normalisation
+A = lapply(A, function(x) scale2(x, bias = TRUE))
+A = lapply(A, function(x) x/sqrt(NCOL(x)))
+
+```
+
+#2 - Non convengent exemple
+Case of an example where it seems to have a problem of convergence.
+```{r}
+
+#TEST
+pjs   = sqrt(sapply(A, NCOL))
+c1    = 1/(sqrt(sapply(A, NCOL)-1))
+res_B = sgcca(A, C, c1 = c1, ncomp = c(4, 4, 1), scheme = "factorial",
+            verbose = TRUE, scale = F, init = "svd",tol = .Machine$double.eps)
+
+#Vérification : norm2, nomr1, orthogonalité
+lapply(res_B$a, function(x) apply(x, 2, norm2))
+sapply(1:3, function(x) apply(res_B$a[[x]], 2, function(y) c1[x]*pjs[x] - sum(abs(y))))
+lapply(res_B$Y, cor)
+
+#La 4eme composante semble ne pas converger de façon croissante monotone, mais si on regarde l'écart des points du critère, ils sont proche de la précision machine.
+ diff(res_B$crit[[4]])
+
+```
+
+#2 - Comparison of the 2 function : BinarySearch (old one) and Proj_l1_l2
+The use of Proj_l1_l2 will help to get rid of this previous problem of convergence.
+```{r}
+
+#VITESSE
+x <- rnorm(100000)
+tm <- microbenchmark(BINA =  BinarySearch(x, 2.3),
+                     PROJ =  Proj_l1_l2(x, 2.3)$lambda,
+                     times          = 100)
+
+autoplot(tm)
+
+#Similarité des résultats
+df = data.frame(BINA =  soft(x, BinarySearch(x, 2.3)), 
+                PROJ =  soft(x, Proj_l1_l2(x, 2.3)$lambda))
+
+cor(df)
+
+#Précision
+DF = data.frame(BINA =  2.3 - sum(abs(soft(x, BinarySearch(x, 2.3)))),
+                PROJ =  2.3 - sum(abs(soft(x, Proj_l1_l2(x, 2.3)$lambda))))
+for (i in 1:50){
+  df = data.frame(BINA =  2.3 - sum(abs(soft(x, BinarySearch(x, 2.3)))),
+                 PROJ =  2.3 - sum(abs(soft(x, Proj_l1_l2(x, 2.3)$lambda))))
+  DF = rbind(DF, df)
+}
+
+DF_plot              = melt(DF , variable.name = 'value')
+colnames(DF_plot)[1] = "Algorithm"
+colnames(DF_plot)[2] = "Precision"
+
+ggplot(DF_plot, aes(x = Algorithm, y = Precision)) + scale_y_continuous(labels = function(x) as.character(round(x,17))) + 
+  geom_boxplot() + theme(axis.text=element_text(size=12), 
+                         axis.title.x = element_text(size = rel(1.8), angle = 00), 
+                         axis.title.y = element_text(size = rel(1.8), angle = 90))
+
+```
