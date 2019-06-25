@@ -9,4 +9,4 @@
 #' @keywords manip
 #'
 #' @export soft.threshold
-soft.threshold <- function(x,sumabs=1) return(soft(x, BinarySearch(x,sumabs)))
+soft.threshold <- function(x,sumabs=1) return(soft(x, Proj_l1_l2(x,sumabs)$lambda))
