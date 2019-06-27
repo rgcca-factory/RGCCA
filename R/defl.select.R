@@ -9,19 +9,20 @@
 #' @return \item{pdefl}{A list of \eqn{J} elements that contains \eqn{p_{1h}, \ldots, p_{Jh}}.}
 #' @title deflation function
 #' @export defl.select
-
-defl.select <- function(yy,rr,nncomp,nn,nbloc) {
+defl.select=function (yy, rr, nncomp, nn, nbloc) 
+{
   resdefl <- NULL
-  pdefl <- NULL
+  pdefl <- list()
   for (q in 1:nbloc) {
-    if ( nn <= nncomp[q] ) {
-       defltmp <- deflation(rr[[q]],yy[ , q])
-       resdefl[[q]] <- defltmp$R
-       pdefl[[q]]   <- defltmp$p
-    } else {
-        resdefl[[q]] <- rr[[q]]
-        pdefl[[q]]   <-	rep(0,NCOL(rr[[q]]))
+    if (nn <= nncomp[q]) {
+      defltmp <- RGCCA:::deflation(as.matrix(rr[[q]]), as.matrix(yy[, q]))
+      resdefl[[q]] <- defltmp$R
+      pdefl[[q]]=as.matrix(defltmp$p)
+    }
+    else {
+      resdefl[[q]] <- rr[[q]]
+      pdefl[[q]] <- rep(0, NCOL(rr[[q]]))
     }
   }
-  return(list(resdefl=resdefl,pdefl=pdefl))
+  return(list(resdefl = resdefl, pdefl = pdefl))
 }
