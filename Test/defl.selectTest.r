@@ -1,6 +1,6 @@
-'# Test defl.select
-
-'''
+# '# Test defl.select
+# 
+# '''
 set.seed(42);X1=matrix(rnorm(15),3,5);
 set.seed(22);X2=matrix(rnorm(12),3,4);
 set.seed(2);X3=matrix(rnorm(12),3,7);

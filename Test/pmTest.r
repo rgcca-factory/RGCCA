@@ -1,9 +1,7 @@
-'# Test pm 
+# '# Test pm 
+# 
+# '''
 
-'''
-wd="/home/caroline.peltier/Bureau/RGCCAtoPull"
-setwd(wd)
-source("pm.r")
 set.seed(42); A=matrix(rnorm(15),3,5)
 set.seed(34); B=matrix(rnorm(20),5,4)
 

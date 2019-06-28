@@ -1,6 +1,6 @@
-'# cov3 test
+#'# cov3 test
 
-'''
+#'''
 set.seed(42);X1=matrix(rnorm(35),7,5);
 set.seed(22);X2=matrix(rnorm(35),7,5);
 

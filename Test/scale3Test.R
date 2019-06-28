@@ -1,6 +1,6 @@
-'# scale3 test
-
-'''
+# '# scale3 test
+# 
+# '''
 set.seed(42);X1=matrix(rnorm(35),7,5);
 
 # Check old functionalities

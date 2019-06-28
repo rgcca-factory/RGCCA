@@ -1,6 +1,6 @@
-'# Test imputeNN
-
-'''
+# '# Test imputeNN
+# 
+# '''
 set.seed(42);X1=matrix(rnorm(50),10,5);
 set.seed(22);X2=matrix(rnorm(40),10,4);
 set.seed(2);X3=matrix(rnorm(70),10,7);

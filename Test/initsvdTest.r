@@ -1,10 +1,7 @@
-#' Test initsvd
-#' 
-#' 
-
-wd="/home/caroline.peltier/Bureau/RGCCAtoPush"
-setwd(wd)
-
+#' #' Test initsvd
+#' #' 
+#' #' 
+#' '''
 
 # saving the reference output
 setwd("./Test/Results")
@@ -25,9 +22,8 @@ load(file="resInitsvdRgcca")
 
 # loading the new function output
 setwd("./../..")
-source("initsvd2.r")
 T1=Sys.time()
-resInitsvdTest=initsvd2(X)
+resInitsvdTest=initsvd(X)
 T2=Sys.time()
 tInitsvdTest=T2-T1
 # testing the same results than previously
@@ -38,4 +34,4 @@ tInitsvdTest
 # testing the additional features
 X2=matrix(rnorm(15),3,5)
 X2[2,]=NA
-initsvd2(X2)
+initsvd(X2)

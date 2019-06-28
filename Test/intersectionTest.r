@@ -1,6 +1,6 @@
-'# Test intersection
-
-'''
+# '# Test intersection
+# 
+# '''
 set.seed(42);X1=matrix(rnorm(35),7,5);
 set.seed(22);X2=matrix(rnorm(28),7,4);
 set.seed(2);X3=matrix(rnorm(49),7,7);
