@@ -4,7 +4,8 @@
 #' @param X  A matrix with n lines and p columns
 #' @return A matrix with n lines and n columns
 #' @title Initialisation by SVD decomposition of X
-#' @export initsvd2
+#' @examples
+#' @export initsvd
 initsvd <- function(X) {
 # verifier le scale
   n = NROW(X)
