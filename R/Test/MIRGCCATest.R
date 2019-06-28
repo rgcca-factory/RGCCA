@@ -1,0 +1,16 @@
+setwd("/home/caroline.peltier/Bureau/RGCCAtoPush")
+set.seed(42);X1=matrix(rnorm(35),7,5);
+set.seed(22);X2=matrix(rnorm(28),7,4);
+set.seed(2);X3=matrix(rnorm(49),7,7);
+X1[1,]=NA
+X2[7,1]=NA
+X2[5,1]=NA
+X3[3,1:2]=NA
+library(RGCCA)
+library(MASS)
+source("rgcca.r")
+source("rgccak.r")
+source("defl.select.r")
+source("initsvd.r")
+source('pm.r')
+res=MIRGCCA(A,k=4,ni=5,scale=TRUE,sameBlockWeight=FALSE,tau=rep(0,3),klim=NULL,output="mean",scheme="centroid",tol=1e-16)
