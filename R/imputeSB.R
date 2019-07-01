@@ -10,18 +10,19 @@
 #' @param naxis number of component to select in the superblock for the estimation of missing data
 #' @param  scale  If scale = TRUE, each block is standardized to zero means and unit variances (default: TRUE).
 #' @param sameBlockWeight A logical value indicating if the different blocks should have the same weight in the analysis (default, sameBlockWeight=TRUE)
+#' @param bias A logical value indicating if variance should be biased or not
 #' @return \item{A} A list of blocks imputed
 #' @return \item{crit} Convergence criterion : abs(1-obj_k/obj_{k-1})
 #' @return \item{obj} Vector containing the mean square error between the predict values and the original non missing values at each iteration
 #' @title imputeSB: impute with superblock method
 #' @examples 
 #'  data();...
-imputeSB=function(A,tau,niter=50,tol=1e-16,graph=FALSE,ncomp=NULL,naxis=1,scale=TRUE,sameBlockWeight=TRUE)
+imputeSB=function(A,tau,ni=50,tol=1e-16,graph=FALSE,ncomp=NULL,naxis=1,scale=TRUE,sameBlockWeight=TRUE,bias=TRUE)
 {
     #listWithoutNA
   nvar=sapply(A,NCOL)
   indNA=which(is.na(do.call(cbind,A)),arr.ind=TRUE)
-   # to get the superblock
+   # to get the superblock X1NA, with missing values imputed by the colmeans
   Alist=lapply(A,function(X){
       if(is.list(X)){X=as.matrix(X)}
       if(is.matrix(X))
@@ -49,20 +50,20 @@ imputeSB=function(A,tau,niter=50,tol=1e-16,graph=FALSE,ncomp=NULL,naxis=1,scale=
   continue=TRUE
   
   J=length(A)
-  C2=matrix(1,J+1,J+1);C2[1:J,1:J]=C; C2[J+1,J+1]=0
+  C2=matrix(1,J+1,J+1);C2[1:J,1:J]=0; C2[J+1,J+1]=0
   tau2=c(tau,0) # mode A for the blocks and mode B for superblock (design for CPCA2 )
   if(is.null(ncomp)){ncomp2=c(rep(1, J), naxis)}else{ncomp2=c(ncomp,naxis)}
   critRGCCA=c()
+  old[[1]]=-Inf
   
   while (continue)
-  {
-    old[[1]]=-Inf
-    diff[[i]]=objective[[i]]=old[[i+1]]=criterion[[i]]=list()
+  { 
+     diff[[i]]=objective[[i]]=old[[i+1]]=criterion[[i]]=list()
     
     # building of a list with superblock
    ASB = c(Alist, list(X1NA))
    names(ASB)=c(names(Alist),"Superblock")
-   fit.rgcca = rgcca1(ASB, tau = tau2,C2,
+   fit.rgcca = rgcca(A=ASB, tau = tau2,C=C2,
                              ncomp = ncomp2,
                              scheme = "factorial",
                              scale = scale, init = "svd",
@@ -70,8 +71,9 @@ imputeSB=function(A,tau,niter=50,tol=1e-16,graph=FALSE,ncomp=NULL,naxis=1,scale=
    # si on veut le critere comme somme des deux composantes
   # critRGCCA=c(critRGCCA,fit.rgcca$crit[[1]][length(fit.rgcca$crit[[1]])]+fit.rgcca$crit[[2]][length(fit.rgcca$crit[[2]])])
   
-   # si on veut juste le critere pour une composante
-   critRGCCA=c(critRGCCA,fit.rgcca$crit[[1]][length(fit.rgcca$crit[[1]])])
+   # Criteria for one component only
+   nIterCrit=length(fit.rgcca$crit[[1]])
+   critRGCCA=c(critRGCCA,fit.rgcca$crit[[1]][nIterCrit])
    
      y = fit.rgcca$Y[[J+1]]
      # if at least 2 components are required
@@ -84,23 +86,27 @@ imputeSB=function(A,tau,niter=50,tol=1e-16,graph=FALSE,ncomp=NULL,naxis=1,scale=
       }
     } # if only 1 component is required
     else{a=apply(scale2(X1NA, bias = TRUE,scale=scale), 2, function(x) lm(x~y)$coefficients[2])}
-    X2NA = scale2(X1NA, scale=scale,bias = TRUE)
+    
+     X2NA = scale2(X1NA, scale=scale,bias = TRUE)
+    # mean and standard deviation of each variables are saved
     moy = matrix(attr(X2NA, "scaled:center"),
                  nrow = NROW(X2NA), ncol=NCOL(X2NA), byrow = TRUE)
     stdev = matrix(attr(X2NA, "scaled:scale"),
                    nrow = NROW(X2NA),ncol=NCOL(X2NA), byrow = TRUE)
+    
     D=matrix(1,dim(X1NA)[1],dim(X1NA)[2])
-    if(sameBlockWeight)
-    {
-      group=unlist(lapply(A,"NCOL"))
-     debutBlock=c(1,1+cumsum(group)[1:(length(group)-1)])
-      finBlock=cumsum(group)
-      for(u in 1:length(finBlock))
-      {
-        variances=apply(X2NA[,debutBlock[u]:finBlock[u]],2,var)
-        D[,debutBlock[u]:finBlock[u]]=1/sqrt(sum(variances))
-      }
-    } 
+    # if(sameBlockWeight)
+    # {
+    #    group=unlist(lapply(A,"NCOL"))
+    #    debutBlock=c(1,1+cumsum(group)[1:(length(group)-1)])
+    #    finBlock=cumsum(group)
+    #    for(u in 1:length(finBlock))
+    #    {
+    #       var_group=sum(apply(X2NA[,debutBlock[u]:finBlock[u]],2,"cov2"))
+    #        D[,debutBlock[u]:finBlock[u]]=1/sqrt(var_group)
+    #    }
+    # 
+    # } 
     Xhat = (y%*%t(a))*stdev*(1/D) + moy
     X1NA[indNA] = Xhat[indNA]
     Alist=list()
@@ -133,10 +139,10 @@ imputeSB=function(A,tau,niter=50,tol=1e-16,graph=FALSE,ncomp=NULL,naxis=1,scale=
         }
      }
     }
-    if (i > niter)
+    if (i > ni)
     {
       continue <- FALSE
-      warning(paste("The RGCCA imputation algorithm did not converge after ", niter, " iterations"))
+      warning(paste("The RGCCA imputation algorithm did not converge after ", ni, " iterations"))
     }
     i<- i + 1
   }	
@@ -156,5 +162,5 @@ imputeSB=function(A,tau,niter=50,tol=1e-16,graph=FALSE,ncomp=NULL,naxis=1,scale=
   
   
   
-  return(list(A=Alist,crit=unlist(criterion),obj=unlist(objective)))
+  return(list(A=Alist,crit=unlist(critRGCCA),stab=unlist(criterion)))
 }

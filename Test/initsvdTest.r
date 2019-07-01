@@ -35,3 +35,4 @@ tInitsvdTest
 X2=matrix(rnorm(15),3,5)
 X2[2,]=NA
 initsvd(X2)
+

@@ -76,4 +76,14 @@ resultRgcca_nonScale_test = rgcca(A, C,ncomp=rep(2,3), tau = c(1, 1, 1), scheme 
 resultRgcca_nonScale  = RGCCA::rgcca(A, ncomp=rep(2,3),C, tau = c(1, 1, 1), scheme = "factorial", scale = FALSE)
 all.equal(resultRgcca_nonScale ,resultRgcca_nonScale_test[1:10])
 
-
+# other test
+data(Russett)
+X_agric =as.matrix(Russett[,c("gini","farm","rent")])
+X_ind = as.matrix(Russett[,c("gnpr","labo")])
+X_polit = as.matrix(Russett[ , c("demostab", "dictator")])
+X_agric[c(2,4),]=NA
+X_ind[1,]=NA
+X_polit[5,1]=NA
+A = list(X_agric, X_ind, X_polit)
+C = matrix(c(0, 0, 1, 0, 0, 1, 1, 1, 0), 3, 3)
+rgcca(A=A,ncomp=rep(2,3),scale=scale,sameBlockWeight=sameBlockWeight,tau=tau)

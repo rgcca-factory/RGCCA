@@ -18,17 +18,18 @@
 #' @param tol The stopping value for convergence.
 #' @param ncomp vector containing the number of components per block in RGCCA
 #' @param naxis number of component to select in the superblock for the estimation of missing data
+#' @param returnA TRUE if the A list should be returned in the output, FALSE ifelse
 #' @return \item{rgcca0} RGCCA results for the reference dataset
 #' @return \item{data} list of imputed data obtained
 #' @return \item{rgccaList} list of RGCCA obtained
 #' @title MIRGCCA: Multiple imputation for RGCCA
 #' @examples 
-MIRGCCA=function(A,k=4,ni=5,scale=TRUE,sameBlockWeight=FALSE,tau,klim=NULL,output="mean",scheme="centroid",tol=1e-16)
+MIRGCCA=function(A,k=4,ni=5,scale=TRUE,sameBlockWeight=FALSE,tau,klim=NULL,output="mean",scheme="centroid",tol=1e-8,returnA=FALSE)
 {
    dataTest0=imputeNN(A=A,output=output,k=k,klim=klim)
    if(!is.null(dataTest0))
    {
-     rgcca0=rgcca(dataTest0,ncomp=rep(2,length(A)),scale=scale,sameBlockWeight=sameBlockWeight,tau=tau,verbose=FALSE,scheme=scheme,tol=tol)
+     rgcca0=rgcca(dataTest0,ncomp=rep(2,length(A)),scale=scale,sameBlockWeight=sameBlockWeight,tau=tau,verbose=FALSE,scheme=scheme,tol=tol,returnA=TRUE)
      #plotRGCCA2(rgcca0,indnames=TRUE,varnames=TRUE)
      dataTest=resRgcca2=resprocrustes=list()
      for(i in 1:ni)

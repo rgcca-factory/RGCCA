@@ -2,7 +2,7 @@
 # 
 # '''
 
-
+#setwd("/home/caroline.peltier/Bureau/RGCCA")
 
 #---------------------------------------------------------------------
 # Checking usual functionalities : Comparison of new rgcca with the packag for different tau
@@ -25,14 +25,18 @@
 
 
 # loading the reference output
+library(RGCCA)
+data(Russett)
+namesFiles=dir("./R")
+sapply(namesFiles,function(x){source(paste0("./R/",x))})
+
 setwd("./Test/Results")
 load(file="resultRgccak_Tau1");load(file="resultRgccak_Tau0");load(file="resultRgccak_TauOpt")
 setwd("./../..")
 
 # loading the new function output
 
-library(RGCCA)
- data(Russett)
+
  X_agric =as.matrix(Russett[,c("gini","farm","rent")])
  X_ind = as.matrix(Russett[,c("gnpr","labo")])
  X_polit = as.matrix(Russett[ , c("demostab", "dictator")])
@@ -52,7 +56,7 @@ all.equal(resultRgccak_TauOpt,resultRgccak_TauOpt_test)
 # Checking new functionalities : Comparison of new rgcca 
 #---------------------------------------------------------------------
 
-data(Russett)
+
 X_agric =as.matrix(Russett[,c("gini","farm","rent")])
 X_ind = as.matrix(Russett[,c("gnpr","labo")])
 X_ind[3,]=NA
