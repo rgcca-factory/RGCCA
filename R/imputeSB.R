@@ -17,7 +17,7 @@
 #' @title imputeSB: impute with superblock method
 #' @examples 
 #'  data();...
-imputeSB=function(A,tau,ni=50,tol=1e-16,graph=FALSE,ncomp=NULL,naxis=1,scale=TRUE,sameBlockWeight=TRUE,bias=TRUE)
+imputeSB=function(A,tau,ni=50,tol=1e-8,graph=FALSE,ncomp=NULL,naxis=1,scale=TRUE,sameBlockWeight=TRUE,bias=TRUE)
 {
     #listWithoutNA
   nvar=sapply(A,NCOL)
@@ -58,16 +58,21 @@ imputeSB=function(A,tau,ni=50,tol=1e-16,graph=FALSE,ncomp=NULL,naxis=1,scale=TRU
   
   while (continue)
   { 
-     diff[[i]]=objective[[i]]=old[[i+1]]=criterion[[i]]=list()
+    diff[[i]]=objective[[i]]=old[[i+1]]=criterion[[i]]=list()
     
     # building of a list with superblock
-   ASB = c(Alist, list(X1NA))
-   names(ASB)=c(names(Alist),"Superblock")
-   fit.rgcca = rgcca(A=ASB, tau = tau2,C=C2,
-                             ncomp = ncomp2,
-                             scheme = "factorial",
-                             scale = scale, init = "svd",
-                             verbose = FALSE, tol = tol,sameBlockWeight=sameBlockWeight)
+ #  ASB = c(Alist, list(X1NA))
+ #  names(ASB)=c(names(Alist),"Superblock")
+ #  fit.rgcca = rgcca(A=ASB, tau = tau2,C=C2,
+ #                            ncomp = ncomp2,
+ #                            scheme = "factorial",
+ #                            scale = scale, init = "svd",
+ #                            verbose = FALSE, tol = tol,sameBlockWeight=sameBlockWeight)
+    fit.rgcca = rgcca(A=Alist, tau = tau,C=C,
+                ncomp = ncomp,superblock=TRUE,
+                        scheme = "factorial",
+                           scale = scale, init = "svd",
+                          verbose = FALSE, tol = tol,sameBlockWeight=sameBlockWeight)
    # si on veut le critere comme somme des deux composantes
   # critRGCCA=c(critRGCCA,fit.rgcca$crit[[1]][length(fit.rgcca$crit[[1]])]+fit.rgcca$crit[[2]][length(fit.rgcca$crit[[2]])])
   
@@ -105,7 +110,6 @@ imputeSB=function(A,tau,ni=50,tol=1e-16,graph=FALSE,ncomp=NULL,naxis=1,scale=TRU
     #       var_group=sum(apply(X2NA[,debutBlock[u]:finBlock[u]],2,"cov2"))
     #        D[,debutBlock[u]:finBlock[u]]=1/sqrt(var_group)
     #    }
-    # 
     # } 
     Xhat = (y%*%t(a))*stdev*(1/D) + moy
     X1NA[indNA] = Xhat[indNA]

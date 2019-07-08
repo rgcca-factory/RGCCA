@@ -173,9 +173,18 @@ rgcca=function (A, C = 1 - diag(length(A)), tau = rep(1, length(A)), superblock=
     }
   }
 
-  # TO COMPLETE FOR SUPERBLOCK
-  # if(superblock){A=c(A,list(do.call(cbind,A)))}
-  #------------------------------------------
+  # Superblock option
+  if(superblock)
+  {
+    A=c(A,list(do.call(cbind,A)))
+    C=matrix(0,length(A),length(A))
+    C[length(A),1:(length(A)-1)]=1
+    C[1:(length(A)-1),length(A)]=1
+    pjs=c(pjs,sum(pjs))
+    ncomp=c(ncomp,1)
+    tau=c(tau,0)
+  }
+
   AVE_X = list() 
   AVE_outer <- vector()
   ndefl <- ncomp - 1
@@ -268,6 +277,7 @@ rgcca=function (A, C = 1 - diag(length(A)), tau = rep(1, length(A)), superblock=
   # ajout de na.rm et de use
   for (j in 1:J) AVE_X[[j]] = apply(cor(A[[j]], Y[[j]],use="pairwise.complete.obs")^2, 	2, mean,na.rm=TRUE)
   outer = matrix(unlist(AVE_X), nrow = max(ncomp))
+  
   for (j in 1:max(ncomp)) AVE_outer[j] <- sum(pjs * outer[j,])/sum(pjs)
   Y = shave.matlist(Y, ncomp)
   names(Y)=names(A)
