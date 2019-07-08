@@ -97,13 +97,13 @@ rgccak=function (A, C, tau = "optimal", scheme = "centroid", scale = TRUE,verbos
            
         }, 
         {
-            M[[j]] <- ginv(tau[j] * diag(pjs[j]) + ((1 - tau[j])/(N)) * (pm(t(A[[j]]) , A[[j]],na.rm=na.rm))) #calcul de la fonction à minimiser ?
+           # M[[j]] <- ginv(tau[j] * diag(pjs[j]) + ((1 - tau[j])/(N)) * (pm(t(A[[j]]) , A[[j]],na.rm=na.rm))) #calcul de la fonction à minimiser ?
          
             
             #-taking NA into account in the N
-            #nmat=ifelse(bias,t(!is.na(A[[j]]))%*%(!is.na(A[[j]])),t(!is.na(A[[j]]))%*%(!is.na(A[[j]]))-1)
-            #nmat[nmat==0]=NA
-            #M[[j]] <- ginv(tau[j] * diag(pjs[j]) + ((1 - tau[j])) *nmat^(-1)* (pm(t(A[[j]]) , A[[j]],na.rm=na.rm))) #calcul de la fonction à minimiser ?
+            nmat=ifelse(bias,t(!is.na(A[[j]]))%*%(!is.na(A[[j]])),t(!is.na(A[[j]]))%*%(!is.na(A[[j]]))-1)
+            nmat[nmat==0]=NA
+            M[[j]] <- ginv(tau[j] * diag(pjs[j]) + ((1 - tau[j])) *nmat^(-1)* (pm(t(A[[j]]) , A[[j]],na.rm=na.rm))) #calcul de la fonction à minimiser ?
             #-----------------------
            
              a[[j]] <- drop(1/sqrt(t(a[[j]])%*% M[[j]]%*%a[[j]]) )* ( M[[j]] %*% a[[j]]) # calcul premiere composante (à creuser)
@@ -118,12 +118,12 @@ rgccak=function (A, C, tau = "optimal", scheme = "centroid", scale = TRUE,verbos
             Y[, j] =pm( A[[j]], a[[j]],na.rm=na.rm)
         }, {
           
-            M[[j]] = tau[j] * diag(n) + (1 - tau[j])/(N) * K[[j]]  # contraire de la matrice de covariace
+           # M[[j]] = tau[j] * diag(n) + (1 - tau[j])/(N) * K[[j]]  # contraire de la matrice de covariace
            
            #----taking NA into account in the N
-            #nmat=ifelse(bias,t(!is.na(A[[j]]))%*%(!is.na(A[[j]])),t(!is.na(A[[j]]))%*%(!is.na(A[[j]]))-1)
-            #nmat[nmat==0]=NA
-            #M[[j]] <- tau[j] * diag(n) + ((1 - tau[j])) *nmat^(-1)* K[[j]] #calcul de la fonction à minimiser ?
+            nmat=ifelse(bias,t(!is.na(A[[j]]))%*%(!is.na(A[[j]])),t(!is.na(A[[j]]))%*%(!is.na(A[[j]]))-1)
+            nmat[nmat==0]=NA
+            M[[j]] <- tau[j] * diag(n) + ((1 - tau[j])) *nmat^(-1)* K[[j]] #calcul de la fonction à minimiser ?
             #-----------------------
             
              Minv[[j]] = ginv(M[[j]])

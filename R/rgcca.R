@@ -124,8 +124,6 @@
 #' @export rgcca
 rgcca=function (A, C = 1 - diag(length(A)), tau = rep(1, length(A)), superblock=FALSE,    ncomp = rep(1, length(A)), scheme = "centroid", scale = TRUE,   init = "svd", bias = TRUE, tol = 1e-08, verbose = TRUE,sameBlockWeight=TRUE,na.rm=TRUE,returnA=FALSE) 
 {
-  print("first A")
-  print(A[[1]][1:10,])
   shave.matlist <- function(mat_list, nb_cols) mapply(function(m,nbcomp) m[, 1:nbcomp, drop = FALSE], mat_list, nb_cols, SIMPLIFY = FALSE)
   shave.veclist <- function(vec_list, nb_elts) mapply(function(m, nbcomp) m[1:nbcomp], vec_list, nb_elts, SIMPLIFY = FALSE)
   A0=A
@@ -160,13 +158,9 @@ rgcca=function (A, C = 1 - diag(length(A)), tau = rep(1, length(A)), superblock=
   if (scale == TRUE) 
   {
     A = lapply(A, function(x) scale2(x,scale=TRUE, bias = bias)) # le biais indique si on recherche la variance biaisee ou non
-    print("scaled A")
-    print(A[[1]][1:10,])
     if(sameBlockWeight)
     {
       A = lapply(A, function(x) x/sqrt(NCOL(x)))
-      print("by block centered A")
-      print(A[[1]][1:10,])
     }
     # on divise chaque bloc par la racine du nombre de variables pour avoir chaque poids pour le même bloc
   }
