@@ -42,7 +42,19 @@ imputeSB=function(A,tau,ni=50,tol=1e-8,graph=FALSE,ncomp=NULL,naxis=1,scale=TRUE
     )
   X1NA = Reduce(cbind,Alist)
   # center and normalized ???
-  
+  D=matrix(1,dim(X1NA)[1],dim(X1NA)[2])
+  X2NA = scale2(X1NA, scale=scale,bias = TRUE)
+  if(sameBlockWeight)
+  {
+    group=unlist(lapply(A,"NCOL"))
+    debutBlock=c(1,1+cumsum(group)[1:(length(group)-1)])
+    finBlock=cumsum(group)
+    for(u in 1:length(finBlock))
+    {
+      var_group=sum(apply(X2NA[,debutBlock[u]:finBlock[u]],2,"cov2"))
+      D[,debutBlock[u]:finBlock[u]]=1/sqrt(var_group)
+    }
+  } 
   # initialization
   i=1
   diff=objective=old=criterion=list()
@@ -68,8 +80,8 @@ imputeSB=function(A,tau,ni=50,tol=1e-8,graph=FALSE,ncomp=NULL,naxis=1,scale=TRUE
  #                            scheme = "factorial",
  #                            scale = scale, init = "svd",
  #                            verbose = FALSE, tol = tol,sameBlockWeight=sameBlockWeight)
-    fit.rgcca = rgcca(A=Alist, tau = tau,C=C,
-                ncomp = ncomp,superblock=TRUE,
+    fit.rgcca = rgcca(A=Alist, tau = tau,C="superblock",
+                ncomp = ncomp,
                         scheme = "factorial",
                            scale = scale, init = "svd",
                           verbose = FALSE, tol = tol,sameBlockWeight=sameBlockWeight)
@@ -87,10 +99,10 @@ imputeSB=function(A,tau,ni=50,tol=1e-8,graph=FALSE,ncomp=NULL,naxis=1,scale=TRUE
       a=NULL
       for(k in 1:naxis)
       { # regression of the relevant block on the y
-        a=cbind(a,apply(scale2(X1NA, bias = TRUE,scale=scale), 2, function(x) lm(x~y[,k])$coefficients[2]))
+        a=cbind(a,apply(D*scale2(X1NA, bias = TRUE,scale=scale), 2, function(x) lm(x~y[,k])$coefficients[2]))
       }
     } # if only 1 component is required
-    else{a=apply(scale2(X1NA, bias = TRUE,scale=scale), 2, function(x) lm(x~y)$coefficients[2])}
+    else{a=apply(D*scale2(X1NA, bias = TRUE,scale=scale), 2, function(x) lm(x~y)$coefficients[2])}
     
      X2NA = scale2(X1NA, scale=scale,bias = TRUE)
     # mean and standard deviation of each variables are saved
@@ -99,18 +111,7 @@ imputeSB=function(A,tau,ni=50,tol=1e-8,graph=FALSE,ncomp=NULL,naxis=1,scale=TRUE
     stdev = matrix(attr(X2NA, "scaled:scale"),
                    nrow = NROW(X2NA),ncol=NCOL(X2NA), byrow = TRUE)
     
-    D=matrix(1,dim(X1NA)[1],dim(X1NA)[2])
-    # if(sameBlockWeight)
-    # {
-    #    group=unlist(lapply(A,"NCOL"))
-    #    debutBlock=c(1,1+cumsum(group)[1:(length(group)-1)])
-    #    finBlock=cumsum(group)
-    #    for(u in 1:length(finBlock))
-    #    {
-    #       var_group=sum(apply(X2NA[,debutBlock[u]:finBlock[u]],2,"cov2"))
-    #        D[,debutBlock[u]:finBlock[u]]=1/sqrt(var_group)
-    #    }
-    # } 
+  
     Xhat = (y%*%t(a))*stdev*(1/D) + moy
     X1NA[indNA] = Xhat[indNA]
     Alist=list()

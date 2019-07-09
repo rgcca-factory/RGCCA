@@ -122,7 +122,7 @@
 #' text(result.rgcca$Y[[1]], result.rgcca$Y[[2]], Russett[, 1], col = lab)
 #' text(Ytest[, 1], Ytest[, 2], substr(Russett[, 1], 1, 1), col = lab)
 #' @export rgcca
-rgcca=function (A, C = 1 - diag(length(A)), tau = rep(1, length(A)), superblock=FALSE,    ncomp = rep(1, length(A)), scheme = "centroid", scale = TRUE,   init = "svd", bias = TRUE, tol = 1e-08, verbose = TRUE,sameBlockWeight=TRUE,na.rm=TRUE,returnA=FALSE) 
+rgcca=function (A, C = 1 - diag(length(A)), tau = rep(1, length(A)),  ncomp = rep(1, length(A)), scheme = "centroid", scale = TRUE,   init = "svd", bias = TRUE, tol = 1e-08, verbose = TRUE,sameBlockWeight=TRUE,na.rm=TRUE,returnA=FALSE) 
 {
   shave.matlist <- function(mat_list, nb_cols) mapply(function(m,nbcomp) m[, 1:nbcomp, drop = FALSE], mat_list, nb_cols, SIMPLIFY = FALSE)
   shave.veclist <- function(vec_list, nb_elts) mapply(function(m, nbcomp) m[1:nbcomp], vec_list, nb_elts, SIMPLIFY = FALSE)
@@ -174,7 +174,7 @@ rgcca=function (A, C = 1 - diag(length(A)), tau = rep(1, length(A)), superblock=
   }
 
   # Superblock option
-  if(superblock)
+  if(C=="superblock")
   {
     A=c(A,list(do.call(cbind,A)))
     C=matrix(0,length(A),length(A))
