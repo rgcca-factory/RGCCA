@@ -174,7 +174,7 @@ rgcca=function (A, C = 1 - diag(length(A)), tau = rep(1, length(A)),  ncomp = re
   }
 
   # Superblock option
-  if(C=="superblock")
+  if(!is.matrix(C)&& C=="superblock")
   {
     A=c(A,list(do.call(cbind,A)))
     C=matrix(0,length(A),length(A))
