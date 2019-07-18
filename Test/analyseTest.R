@@ -4,6 +4,8 @@
 set.seed(42);X1=matrix(rnorm(35),7,5);
 set.seed(22);X2=matrix(rnorm(35),7,5);
 
+C=list(X1,X2)
+
 # Check old functionalities
 cov3(X1,bias=FALSE)==cov(X1)
 cov3(X1,X2,bias=FALSE)==cov(X1,X2)

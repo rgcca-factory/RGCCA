@@ -43,6 +43,7 @@ imputeSB=function(A,tau,ni=50,tol=1e-8,graph=FALSE,ncomp=NULL,naxis=1,scale=TRUE
   X1NA = Reduce(cbind,Alist)
   # center and normalized ???
   D=matrix(1,dim(X1NA)[1],dim(X1NA)[2])
+  X2NA = scale2(X1NA, scale=scale,bias = TRUE)
    if(sameBlockWeight)
    {
       group=unlist(lapply(A,"NCOL"))
@@ -51,7 +52,7 @@ imputeSB=function(A,tau,ni=50,tol=1e-8,graph=FALSE,ncomp=NULL,naxis=1,scale=TRUE
       for(u in 1:length(finBlock))
       {
          var_group=sum(apply(X2NA[,debutBlock[u]:finBlock[u]],2,"cov2"))
-          D[,debutBlock[u]:finBlock[u]]=1/sqrt(var_group)
+         D[,debutBlock[u]:finBlock[u]]=1/sqrt(var_group)
       }
    } 
   # initialization
