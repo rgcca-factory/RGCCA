@@ -52,8 +52,7 @@ setwd(paste0(wd,"/Reference"))
 refData=readDataset(blocknames)
 # Effectuer les analyses de RGCCA et les comparaisons
 setwd(paste0(wd,"/missingValuesSimulation"))
-analysis(refData,noIntersect=TRUE,C=NULL,tau=NULL,scale=TRUE,nAxe=2,scheme="centroid",sameBlockWeight=TRUE,wd=getwd(),blocknames=blocknames,nbTestFiles=nbTestFiles)
+an1=analysis(refData,noIntersect=TRUE,C=NULL,tau=NULL,scale=TRUE,nAxe=2,scheme="centroid",sameBlockWeight=TRUE,wd=getwd(),blocknames=blocknames,nbTestFiles=nbTestFiles)
 
-
-
-
+plotAnalysis(an1,ylim=c(0.5,1),output="rv")
+plotAnalysis(an1,ylim=c(0.5,1),output="rv")

@@ -14,5 +14,5 @@ nameTest=c("cov3Test.R","createNATest.R","defl.selectTest.r","imputeColmeansTest
 for(i in 1:length(nameTest))
 {
   print(nameTest[i])
-  source(paste0("./Test/",nameTest[[i]]),echo=TRUE)
+  source(paste0("./Test/",nameTest[[i]]),echo=FALSE);
 }

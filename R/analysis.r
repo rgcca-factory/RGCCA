@@ -47,7 +47,7 @@ analysis=function(refData,noIntersect=TRUE,C=NULL,tau=NULL,scale=TRUE,nAxe=2,sch
       return(res)
     })
   } else {
-    listFinale= mlcapply(1:nbTestFiles, mc.cores=7,
+    listFinale= mclapply(1:nbTestFiles, mc.cores=7,
                           FUN=function(j)
     {
       print("dataset")
