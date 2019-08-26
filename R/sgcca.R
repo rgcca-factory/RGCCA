@@ -149,7 +149,7 @@ sgcca <- function (A, C = 1-diag(length(A)), c1 = rep(1, length(A)), ncomp = rep
     #-------------------------------------------------------
     
     if (scale == TRUE) {
-      A = lapply(A, function(x) scale2(x, bias = bias))
+      A = lapply(A, function(x) scale3(x, bias = bias)) #TO CHECK
       A = lapply(A, function(x) x/sqrt(NCOL(x)))
     }
     ####################################
@@ -170,7 +170,7 @@ sgcca <- function (A, C = 1-diag(length(A)), c1 = rep(1, length(A)), ncomp = rep
         Y <- NULL
         for (b in 1:J) Y[[b]] <- result$Y[,b, drop = FALSE]
         #Average Variance Explained (AVE) per block
-        for (j in 1:J) AVE_X[[j]] =  mean(cor(A[[j]], Y[[j]])^2)
+        for (j in 1:J) AVE_X[[j]] =  mean(cor(A[[j]], Y[[j]])^2,na.rm=TRUE)
         
         #AVE outer 
         AVE_outer <- sum(pjs * unlist(AVE_X))/sum(pjs)
@@ -264,11 +264,11 @@ sgcca <- function (A, C = 1-diag(length(A)), c1 = rep(1, length(A)), ncomp = rep
     shave.veclist <- function(vec_list, nb_elts) mapply(function(m, nbcomp) m[1:nbcomp], vec_list, nb_elts, SIMPLIFY=FALSE)    
     
     #Average Variance Explained (AVE) per block
-    for (j in 1:J) AVE_X[[j]] =  apply(cor(A[[j]], Y[[j]])^2, 2, mean)
-    
+    for (j in 1:J) AVE_X[[j]] =  apply(cor(A[[j]], Y[[j]],use="pairwise.complete.obs")^2, 2, function(x) {return(mean(x,is.na=TRUE))})
+
     #AVE outer 
     outer = matrix(unlist(AVE_X), nrow = max(ncomp))
-    for (j in 1:max(ncomp)) AVE_outer[j] <- sum(pjs * outer[j, ])/sum(pjs)
+    for (j in 1:max(ncomp)) AVE_outer[j] <- sum(pjs * outer[j, ],na.rm=T)/sum(pjs) # TO CHECK FOR NA.RM=TRUE
     
     Y = shave.matlist(Y, ncomp)
     AVE_X = shave.veclist(AVE_X, ncomp)

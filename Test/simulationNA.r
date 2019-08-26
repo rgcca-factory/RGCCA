@@ -24,6 +24,8 @@ A=list(X1,X2)
 blocknames=c("block1","block2")
 nbTestFiles=5
 names(A)=blocknames
+
+
 # Obtenir la probabilité de données manquantes par bloc 
 pNA=0.1
 
@@ -37,6 +39,7 @@ setwd(wd)
 dir.create("Reference")
 writeList(A=A,wd=paste0(wd,"/Reference"))
 setwd(wd)
+
 # sauver les 20 jeux de données simulés
 dir.create("missingValuesSimulation")
 setwd(paste0(wd,"/missingValuesSimulation"))
@@ -47,6 +50,7 @@ for(i in 1:nbTestFiles)
   writeList(res1$dat,wd=as.character(i))
   setwd(paste0(wd,"/missingValuesSimulation"))
 }
+
 # read reference data
 setwd(paste0(wd,"/Reference"))
 refData=readDataset(blocknames)
