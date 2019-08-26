@@ -170,7 +170,7 @@ sgcca <- function (A, C = 1-diag(length(A)), c1 = rep(1, length(A)), ncomp = rep
         Y <- NULL
         for (b in 1:J) Y[[b]] <- result$Y[,b, drop = FALSE]
         #Average Variance Explained (AVE) per block
-        for (j in 1:J) AVE_X[[j]] =  mean(cor(A[[j]], Y[[j]])^2,na.rm=TRUE)
+        for (j in 1:J) AVE_X[[j]] =  mean(cor(A[[j]], Y[[j]],use="pairwise.complete.obs")^2,na.rm=TRUE)
         
         #AVE outer 
         AVE_outer <- sum(pjs * unlist(AVE_X))/sum(pjs)

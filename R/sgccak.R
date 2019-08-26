@@ -33,10 +33,11 @@ sgccak <-  function(A, C, c1 = rep(1, length(A)), scheme = "centroid", scale = F
   #  Choose J arbitrary vectors
   if (init=="svd") {
     #SVD Initialisation of a_j or \alpha_j
-    a<- lapply(A, function(x) return(initsvd(x))) 
-  } else if (init=="random") {
+    a<- lapply(A, function(x) return(initsvd(x,dual=FALSE))) 
+    a<- lapply(a,function(x) return(as.vector(x)))
+   } else if (init=="random") {
     a <- lapply(pjs,rnorm)
-  } else {
+    } else {
     stop("init should be either random or svd.")
   }
 
