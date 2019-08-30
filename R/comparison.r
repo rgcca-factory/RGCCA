@@ -11,30 +11,54 @@
 #' @title comparison of two RGCCA results
 #' @examples 
 #'  data();...
+#'  
 
-comparison=function(rgcca1,rgcca2,nAxe=1,selec=10,selectPatient=NULL)
-{
-  diffNorm2=function(vec1,vec2)
-  {
-    if(!is.null(vec1)&!is.null(vec2))
-    {
-      c1= cor(vec1,vec2)
-      c2= cor(vec1,-vec2)
-      return(max(c1,c2))	
+comparison <- function(
+    rgcca1,
+    rgcca2,
+    nAxe = 1,
+    selec = 10,
+    selectPatient = NULL) {
+
+
+    diffNorm2 <- function(vec1, vec2) {
+        if (!is.null(vec1) & !is.null(vec2)) {
+            c1 <- cor(vec1, vec2)
+            c2 <- cor(vec1, -vec2)
+            return(max(c1, c2))
+        } else {
+            return(NA)
+        }
     }
-    else{ return(NA)}
-  }
-  if(is.null(selectPatient)){selectPatient=rownames(rgcca1[["Y"]][[1]])}
-  J=length(rgcca1$A)
-  com=rv=pctBm=rep(NA,J)
-  for(i in 1:J)
-  {
-    refBm=biomarker(resRGCCA=rgcca1,block=i,axes=1,selec=selec)
-    com[i]=diffNorm2(rgcca1[["astar"]][[i]][,nAxe],rgcca2[["astar"]][[i]][,nAxe])
-    rv[i]=coeffRV(rgcca1[["Y"]][[i]][selectPatient,1:2],rgcca2[["Y"]][[i]][selectPatient,1:2])$rv
-    testBm=biomarker(resRGCCA=rgcca2,block=i,axes=1,selec=selec)
-    pctBm[i]=sum(names(testBm)%in%names(refBm))/length(refBm)	
-  }
-  
-  return(list(a=com,rv=rv,bm=pctBm))
+
+    if (is.null(selectPatient)) {
+        selectPatient <- rownames(rgcca1[["Y"]][[1]])
+    }
+
+    J <- length(rgcca1$A)
+    com <- rv <- pctBm <- rep(NA, J)
+
+    for (i in 1:J) {
+        rv[i] <- FactoMineR::coeffRV(
+                rgcca1[["Y"]][[i]][selectPatient, 1:2], 
+                rgcca2[["Y"]][[i]][selectPatient, 1:2]
+            )$rv
+        com[i] <- diffNorm2(
+                rgcca1[["astar"]][[i]][, nAxe], 
+                rgcca2[["astar"]][[i]][, nAxe]
+            )
+        bm <- lapply(list(rgcca1, rgcca2), 
+            function(x){
+                biomarker(
+                    resRGCCA = x,
+                    block = i,
+                    axes = nAxe,
+                    selec = selec
+                )
+            }
+        )
+        pctBm[i] <- sum(names(bm[[2]]) %in% names(bm[[1]])) / length(bm[[1]])
+    }
+    
+    return(list(a = com, rv = rv, bm = pctBm))
 }

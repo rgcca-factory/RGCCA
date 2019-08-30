@@ -7,87 +7,110 @@
 #' @title Create a list with missing data (for simulation)
 #' @export scale2
 
-createNA=function(A,option="block",pNA=0.1,nAllRespondants=4,output="list")
-{
-  if(length(pNA)==1){pNA=rep(pNA,length(A))}
-  if(length(pNA)!=1 & length(pNA)!=length(A)){stop("pNA should be a number between 0 and 1 or a vector of the same size as A ")}
-  if(!option%in% c("block","rand")){stop("option should be chosen as 'block' or 'rand'")}
-  if(option=="block")
-	{
-	  # For all the one but the last one, 
-	  nbloc=length(A)
-		for(i in 1:(length(A)-1))
-		{
-			n=nrow(A[[i]])
-			p=ncol(A[[i]])
-			nbNAparBloc=round(pNA[i]*n)	
-			if(nbNAparBloc!=0)
-			{
-		  	indToRemove=sample(1:n, nbNAparBloc, replace = FALSE)	
-			  A[[i]][indToRemove,]=NA
-			}
-			else
-			{
-				indToRemove=NA
-			}
-		}
-	   n=nrow(A[[nbloc]])
-	  p=ncol(A[[nbloc]])
-	  nbNAparBloc=round(pNA[length(A)]*n)	
-	  # The last block can not be a missing line if all other blocks are missing
-	  W=do.call(cbind,A[1:(nbloc-1)])
-    indToTake=which(apply(W,1,function(x){sum(!is.na(x))})==0) #index with missing data for all first blocks
-    if(length(indToTake)==0){indicesToUse=1:n}else{indicesToUse=(1:n)[!(1:n)%in%indToTake]}
-	  if(nbNAparBloc!=0)
-	  {
-	    indToRemove=sample(indicesToUse, min(length(indicesToUse),nbNAparBloc), replace = FALSE)	
-	    A[[nbloc]][indToRemove,]=NA
-	  }
-	  else
-	  {
-	    indToRemove=NA
-	  }
-	}
-	if(option=="rand")
-	{
-		
-		for(i in 1:length(A))
-		{
-			n=nrow(A[[i]])
-			p=ncol(A[[i]])
-			nbNA=round(pNA[i]*n*p)
-			if(nbNA!=0)
-			{
-				listeIndicePossible=merge(1:n,1:p)
-				indToRemove=sample(1:(n*p), nbNA, replace = FALSE)
-				listeIndicesToRemove=listeIndicePossible[indToRemove,]		
-				for(j in 1:length(indToRemove)){A[[i]][listeIndicesToRemove[j,"x"],listeIndicesToRemove[j,"y"]]=NA}
-			}
-			else{indToRemove=NA}
-		}
-	}
-	
-	if(option=="ponc") # valeurs ponctuelles en conservant un nombre d'individu complets
-	{
-		n=nrow(A[[i]])
-		allResp=sample(1:n,nAllRespondants)
-		restData=1:n[!1:n%in%allResp]
-	
-		for(i in 1:length(A))
-		{
-			p=ncol(A[[i]])
-			nbNA=round(pNA[i]*n*p)
-			if(nbNA!=0)
-			{
-				listeIndicePossible=merge(1:n,1:p)
-				indToRemove=sample(1:(n*p), nbNA, replace = FALSE)
-				listeIndicesToRemove=listeIndicePossible[indToRemove,]		
-				for(j in 1:length(indToRemove)){A[[i]][listeIndicesToRemove[j,"x"],listeIndicesToRemove[j,"y"]]=NA}
-			}
-			else{indToRemove=NA}
-		}
-	}
-		
-  if(output=="list"){res=list(dat=A,naPos=indToRemove)}else{res=do.call(cbind,A)}
-	return(res)
+createNA <- function(
+    A,
+    option = "block",
+    pNA = 0.1,
+    nAllRespondants = 4,
+    output = "list") {
+    
+    if (length(pNA) == 1)
+        pNA <- rep(pNA, length(A))
+    if (length(pNA) != 1 & length(pNA) != length(A))
+        stop("pNA should be a number between 0 and 1 or a vector of the same size as A ")
+    if (!option %in% c("block", "rand"))
+        stop("option should be chosen as 'block' or 'rand'")
+    
+    
+    if (option == "block") {
+        # For all the one but the last one,
+        nbloc <- length(A)
+        
+        for (i in 1:(length(A) - 1)) {
+            n <- nrow(A[[i]])
+            p <- ncol(A[[i]])
+            nbNAparBloc <- round(pNA[i] * n)
+            
+            if (nbNAparBloc != 0) {
+                indToRemove <- sample(1:n, nbNAparBloc, replace = FALSE)
+                A[[i]][indToRemove, ] <- NA
+            }else
+                indToRemove <- NA
+        }
+        
+        n <- nrow(A[[nbloc]])
+        p <- ncol(A[[nbloc]])
+        nbNAparBloc <- round(pNA[length(A)] * n)
+        # The last block can not be a missing line if all other blocks are missing
+        W <- do.call(cbind, A[1:(nbloc - 1)])
+        indToTake <- which(apply(W, 1, function(x) sum(!is.na(x))) == 0)
+        #index with missing data for all first blocks
+        
+        if (length(indToTake) == 0)
+            indicesToUse <- 1:n
+        else
+            indicesToUse <- (1:n)[!(1:n) %in% indToTake]
+        
+        if (nbNAparBloc != 0) {
+            indToRemove <- sample(
+                    indicesToUse, 
+                    min(length(indicesToUse), nbNAparBloc), 
+                    replace = FALSE
+                )
+            A[[nbloc]][indToRemove, ] <- NA
+        } else
+            indToRemove <- NA
+        
+    }
+    
+    
+    if (option == "rand") {
+        for (i in 1:length(A)) {
+            n <- nrow(A[[i]])
+            p <- ncol(A[[i]])
+            nbNA <- round(pNA[i] * n * p)
+            if (nbNA != 0) {
+                listeIndicePossible <- merge(1:n, 1:p)
+                indToRemove <- sample(1:(n * p), nbNA, replace = FALSE)
+                listeIndicesToRemove <- listeIndicePossible[indToRemove, ]
+                for (j in 1:length(indToRemove))
+                    A[[i]][listeIndicesToRemove[j, "x"], listeIndicesToRemove[j, "y"]] <- NA
+
+            } else
+                indToRemove <- NA
+
+        }
+    }
+    
+    # valeurs ponctuelles en conservant un nombre d'individu complets
+    if (option == "ponc") {
+        n <- nrow(A[[i]])
+        #TODO: remove these two lines
+        allResp <- sample(1:n, nAllRespondants)
+        restData <- 1:n[!1:n %in% allResp]
+        
+        for (i in 1:length(A)) {
+            p <- ncol(A[[i]])
+            nbNA <- round(pNA[i] * n * p)
+            if (nbNA != 0) {
+                listeIndicePossible <- merge(1:n, 1:p)
+                indToRemove <- sample(1:(n * p), nbNA, replace = FALSE)
+                listeIndicesToRemove <- listeIndicePossible[indToRemove, ]
+                for (j in 1:length(indToRemove))
+                    A[[i]][listeIndicesToRemove[j, "x"], listeIndicesToRemove[j, "y"]] <- NA
+
+            } else
+                indToRemove <- NA
+
+        }
+    }
+    
+    
+    if (output == "list")
+        res <- list(dat = A, naPos = indToRemove)
+    else
+        res <- do.call(cbind, A)
+    
+    
+    return(res)
 }

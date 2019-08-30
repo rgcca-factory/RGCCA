@@ -181,8 +181,8 @@ rgcca=function (A, C = 1 - diag(length(A)), tau = rep(1, length(A)),  ncomp = re
     C[length(A),1:(length(A)-1)]=1
     C[1:(length(A)-1),length(A)]=1
     pjs=c(pjs,sum(pjs))
-    ncomp=c(ncomp,1)
-    tau=c(tau,0)
+    ncomp=c(ncomp,ncomp[1])
+    #tau=c(tau,0)
   }
 
   AVE_X = list() 
