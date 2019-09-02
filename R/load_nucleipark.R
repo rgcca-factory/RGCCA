@@ -1,13 +1,13 @@
 library(RGCCA)
 library(MASS)
 
-wd1 <- "~/bin/rgccaLauncher/R/"
+wd1 <- "../rgccaLauncher/R/"
 for (f in c(list.files(wd1)[-1]))
     source(paste0(wd1, f))
 
 funcs <- c("sgcca.crit", "sgcca.permute.crit", "rgcca", "rgccak", "sgcca", "sgccak", "defl.select", "initsvd", "pm", "scale3", "cov3", "norm2")
 for (f in funcs)
-    source(paste0("~/bin/RGCCA/R/", f, ".R"))
+    source(paste0("R/", f, ".R"))
 
 #################
 # Loading
@@ -63,3 +63,6 @@ blocks.df[[1]] <- matrix(
 # Remove cofounding variables
 blocks.df[[1]] <- blocks.df[[1]][, -c(1:2, 4:6)]
 blocks <- blocks.df
+
+# Scaling
+blocks.scaled <- scaling(blocks, TRUE)

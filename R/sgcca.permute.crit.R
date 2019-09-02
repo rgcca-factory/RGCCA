@@ -56,7 +56,8 @@ sgcca.permute.crit <- function(
     scheme = "factorial",
     plot = FALSE,
     tol = .Machine$double.eps,
-    n_cores = parallel::detectCores() - 1) {
+    n_cores = parallel::detectCores() - 1,
+    scale = TRUE) {
 
     if (is.null(c1s)) {
         c1s <- matrix(NA, nrow = 10, ncol = length(A))
@@ -67,17 +68,18 @@ sgcca.permute.crit <- function(
     crit <- crits <- rep(0,NROW(c1s))
 
     for (i in 1:NROW(c1s)) {
+        write(i, file = "permut.log", append = TRUE)
         out <- sgcca(
                 A,
                 C,
                 c1 = c1s[i,],
                 ncomp = ncomp,
                 scheme = scheme,
-                tol = tol
+                tol = tol,
+                scale = scale
             )
         crits[i] <- mean(unlist(lapply(out$crit, function(x) x[length(x)])))
     }
-
 
     if (Sys.info()["sysname"] == "Windows") {
 
@@ -120,7 +122,8 @@ sgcca.permute.crit <- function(
                     ncomp = ncomp,
                     scheme = scheme,
                     tol = tol,
-                    crit = crit
+                    crit = crit,
+                    scale = scale
                 ))
         }, error = function(e) {
             warning("an error occured with sgcca.crit")
@@ -134,20 +137,23 @@ sgcca.permute.crit <- function(
 
     } else {
         permcrit <- simplify2array(parallel::mclapply(1:nperm,
-            function(x)
-                sgcca.crit(
+            function(x){
+                res <- sgcca.crit(
                     A = A,
                     C = C,
                     c1s = c1s,
                     ncomp = ncomp,
                     scheme = scheme,
                     tol = tol,
-                    crit = crit
-                ),
+                    crit = crit,
+                    scale = scale
+                )
+                write(paste0("perm ", x), file = "permut.log", append = TRUE)
+                return(res)
+                },
             mc.cores = n_cores))
-  }
-
-
+    }
+                    
     pvals <- zs <- matrix(NA, nrow = NROW(c1s), ncol = NCOL(c1s) + 1)
 
     # chaque ligne : [critère 1, critère 2, valeur pvals ou zs]
