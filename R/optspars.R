@@ -1,32 +1,38 @@
-source("load_nucleipark.R")
+load("blocks.scaled.RData")
 
-#################
-# Best sparsity
-#################
+library(RGCCA)
+library(MASS)
 
-# nperm <- 500
-nperm <- 2
-step <- .5
+for (f in c("sgcca.crit", "sgcca", "sgccak", "defl.select", "initsvd", "pm", "scale3", "cov3", "norm2"))
+    source(paste0("R/", f, ".R"))
 
-c1s <- expand.grid(lapply(2:length(blocks.scaled), function(x) seq(1/sqrt(ncol(blocks.scaled[[x]])), 1, by = step)))
+c1s <- expand.grid(
+        lapply(
+            2:length(blocks.scaled), 
+            function(x) seq(1 / sqrt(ncol(blocks.scaled[[x]])), 1, by = 0.1)
+        )
+    )
 c1s <- as.matrix(cbind(rep(1, nrow(c1s)), c1s))
 
 J <- length(blocks.scaled)
 C <- matrix(0, J, J)
 C[2:J, 1] <- C[1, 2:J] <- 1
 
-    
-sgcca.res <- sgcca.permute.crit(
+sgcca.perm <- sgcca.crit(
     A = blocks.scaled,
     C = C,
     c1s = c1s,
-    nperm = nperm,
     ncomp = rep(2, 4),
     scheme = "factorial",
+    crit = rep(NA, NROW(c1s)),
     scale = FALSE
 )
 
-# sgcca.res[["selected.variables"]] <- lapply(2:unique(names(which(sgcca.res$sgcca.best$a[[2]][, 1] != 0 | sgcca.res$sgcca.best$a[[2]][, 2] != 0)))
-# plotFingerprint(sgcca.res$sgcca.best, twoblocks, 1, F)
-
-save(sgcca.res, file = "sgcca.RData")
+write.table(
+    as.matrix(t(sgcca.perm)),
+    file = "sgcca.permut.tsv",
+    append = TRUE,
+    col.names = FALSE,
+    row.names = FALSE,
+    sep = "\t"
+)

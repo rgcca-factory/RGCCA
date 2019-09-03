@@ -148,7 +148,6 @@ sgcca.permute.crit <- function(
                     crit = crit,
                     scale = scale
                 )
-                write(paste0("perm ", x), file = "permut.log", append = TRUE)
                 return(res)
                 },
             mc.cores = n_cores))
