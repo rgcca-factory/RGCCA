@@ -1,8 +1,8 @@
 # An intern function used by sgcca.permute to perform multiple sgcca with permuted rows
 
-sgcca.crit <- function(A, C, c1s, ncomp, scheme, tol = .Machine$double.eps, crit = crit, scale = TRUE, boot = TRUE) {
+sgcca.crit <- function(A, C, c1s, ncomp, scheme, tol = .Machine$double.eps, scale = TRUE, perm = TRUE) {
 
-    if(boot){
+    if(perm){
         for (k in 1:length(A))
             A[[k]] <- A[[k]][sample(1:nrow(A[[k]])),]
     }
@@ -21,6 +21,8 @@ sgcca.crit <- function(A, C, c1s, ncomp, scheme, tol = .Machine$double.eps, crit
             return(c(mean(unlist(lapply(out$crit, function(x) x[length(x)]))), i))
         },
         mc.cores = parallel::detectCores() - 1))
+    
+    crit = rep(NA, NROW(c1s))
     
     for (i in seq(nrow(c1s)))
         crit[tasks[2, i]] <- tasks[1, i]

@@ -65,21 +65,18 @@ sgcca.permute.crit <- function(
             c1s[, k] <- pmin(1 / (seq(0.9, 0.01, len = 10) * sqrt(ncol(A[[k]]))), 1)
     }
 
-    crit <- crits <- rep(0,NROW(c1s))
-
-    for (i in 1:NROW(c1s)) {
-        write(i, file = "permut.log", append = TRUE)
-        out <- sgcca(
-                A,
-                C,
-                c1 = c1s[i,],
-                ncomp = ncomp,
-                scheme = scheme,
-                tol = tol,
-                scale = scale
-            )
-        crits[i] <- mean(unlist(lapply(out$crit, function(x) x[length(x)])))
-    }
+    crits <- sgcca.crit(
+            A,
+            C,
+            c1 = c1s,
+            ncomp = ncomp,
+            scheme = scheme,
+            tol = tol,
+            scale = scale,
+            perm = FALSE
+        )
+    
+    cat("Permutation in progress...")
 
     if (Sys.info()["sysname"] == "Windows") {
 
@@ -122,7 +119,6 @@ sgcca.permute.crit <- function(
                     ncomp = ncomp,
                     scheme = scheme,
                     tol = tol,
-                    crit = crit,
                     scale = scale
                 ))
         }, error = function(e) {
@@ -145,20 +141,20 @@ sgcca.permute.crit <- function(
                     ncomp = ncomp,
                     scheme = scheme,
                     tol = tol,
-                    crit = crit,
                     scale = scale
                 )
                 return(res)
                 },
             mc.cores = n_cores))
     }
+    
+    cat("OK", append = TRUE)
                     
     pvals <- zs <- matrix(NA, nrow = NROW(c1s), ncol = NCOL(c1s) + 1)
 
-    # chaque ligne : [critère 1, critère 2, valeur pvals ou zs]
     for (i in 1:NROW(c1s)) {
         pvals[i,] <- c(c1s[i,], mean(permcrit[i,] >= crits[i]))
-        zs[i,] <- c(c1s[i,], (crits[i] - mean(permcrit[i,])) / (sd(permcrit[i,])))  # + 0.05))
+        zs[i,] <- c(c1s[i,], (crits[i] - mean(permcrit[i,])) / (sd(permcrit[i,])))
     }
 
     bestpenalties <- c1s[which.max(zs[, length(A) + 1]), 1:length(A)]
