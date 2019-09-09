@@ -20,7 +20,7 @@ sgcca.crit <- function(A, C, c1s, ncomp, scheme, tol = .Machine$double.eps, scal
                 )
             return(c(mean(unlist(lapply(out$crit, function(x) x[length(x)]))), i))
         },
-        mc.cores = parallel::detectCores() - 1))
+        mc.cores = 4))
     
     crit = rep(NA, NROW(c1s))
     

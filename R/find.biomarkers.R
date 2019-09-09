@@ -21,5 +21,3 @@ boot <- bootstrap(
 
 biomarkers <- getBootstrap(sgcca.res$sgcca.best, boot, comp = 1, collapse = TRUE)
 plotBootstrap(biomarkers, sgcca.res$sgcca.best, TRUE, n_mark = 30)
-
-
