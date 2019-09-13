@@ -16,6 +16,7 @@ createNA=function(A,option="block",pNA=0.1,nAllRespondants=4,output="list")
 	{
 	  # For all the one but the last one, 
 	  nbloc=length(A)
+	  indToRemove=list()
 		for(i in 1:(length(A)-1))
 		{
 			n=nrow(A[[i]])
@@ -23,8 +24,10 @@ createNA=function(A,option="block",pNA=0.1,nAllRespondants=4,output="list")
 			nbNAparBloc=round(pNA[i]*n)	
 			if(nbNAparBloc!=0)
 			{
-		  	indToRemove=sample(1:n, nbNAparBloc, replace = FALSE)	
-			  A[[i]][indToRemove,]=NA
+		  	indToRemove[[i]]=sample(1:n, nbNAparBloc, replace = FALSE)	
+		  	 A[[i]][indToRemove[[i]],]=NA
+		  	 subjectRemoved=c(subjectRemoved,rownames(A[[i]])[indToRemove[[i]]])
+		  	 
 			}
 			else
 			{
@@ -35,19 +38,24 @@ createNA=function(A,option="block",pNA=0.1,nAllRespondants=4,output="list")
 	  p=ncol(A[[nbloc]])
 	  nbNAparBloc=round(pNA[length(A)]*n)	
 	  # The last block can not be a missing line if all other blocks are missing
+	  #---------------------------------------------------------------------------
 	  W=do.call(cbind,A[1:(nbloc-1)])
     indToTake=which(apply(W,1,function(x){sum(!is.na(x))})==0) #index with missing data for all first blocks
     if(length(indToTake)==0){indicesToUse=1:n}else{indicesToUse=(1:n)[!(1:n)%in%indToTake]}
 	  if(nbNAparBloc!=0)
 	  {
-	    indToRemove=sample(indicesToUse, min(length(indicesToUse),nbNAparBloc), replace = FALSE)	
-	    A[[nbloc]][indToRemove,]=NA
+	    indToRemove[[nbloc]]=sample(indicesToUse, min(length(indicesToUse),nbNAparBloc), replace = FALSE)	
+	    A[[nbloc]][indToRemove[[nbloc]],]=NA
+	    subjectRemoved=c(subjectRemoved,rownames(A[[nbloc]])[indToRemove[[nbloc]]])
 	  }
 	  else
 	  {
 	    indToRemove=NA
 	  }
-	}
+  }
+  subjectRemoved=unique(subjectRemoved)
+  subjectKept=rownames(A[[1]])[!rownames(A[[1]]) %in% subjectRemoved]
+  
 	if(option=="rand")
 	{
 		
@@ -88,6 +96,6 @@ createNA=function(A,option="block",pNA=0.1,nAllRespondants=4,output="list")
 		}
 	}
 		
-  if(output=="list"){res=list(dat=A,naPos=indToRemove)}else{res=do.call(cbind,A)}
+  if(output=="list"){res=list(dat=A,naPos=indToRemove,subjectRemoved=subjectRemoved,subjectKept=subjectKept)}else{res=do.call(cbind,A)}
 	return(res)
 }

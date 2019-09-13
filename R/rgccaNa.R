@@ -30,21 +30,34 @@
 #' @examples
 #' @export imputeRGCCA
 
-imputeRGCCA=function (A, C = 1 - diag(length(A)), tau = rep(1, length(A)), refData=NULL,    ncomp = rep(1, length(A)), scheme = "centroid", scale = TRUE,   init = "svd", bias = TRUE, tol = 1e-08, verbose = TRUE,na.impute="none",na.niter=10,na.keep=NULL,nboot=10,sameBlockWeight=TRUE,ncp=1,scaleBlock="rgcca") 
+rgccaNa=function (A,method, C = 1 - diag(length(A)), tau = rep(1, length(A)), refData=NULL,    ncomp = rep(1, length(A)), scheme = "centroid", scale = TRUE,   init = "svd", bias = TRUE, tol = 1e-08, verbose = TRUE,na.impute="none",na.niter=10,na.keep=NULL,nboot=10,sameBlockWeight=TRUE,returnA=FALSE,knn.k="all",knn.output="weightedMean",knn.klim=NULL,knn.sameBlockWeight=TRUE) 
 { 
 
   shave.matlist <- function(mat_list, nb_cols) mapply(function(m,nbcomp) m[, 1:nbcomp, drop = FALSE], mat_list, nb_cols, SIMPLIFY = FALSE)
 	shave.veclist <- function(vec_list, nb_elts) mapply(function(m, nbcomp) m[1:nbcomp], vec_list, nb_elts, SIMPLIFY = FALSE)
 	A0=A
-
- if(na.impute=="mean"){		 A2=imputeColmeans(A) }
- if(na.impute=="knn")	{ A2= imputeNN(A)	  }
-
-	if(na.impute=="pca")	{   A2= imputeSuperblock(A,ncp=ncp,method="em",opt="pca") }
-	if(na.impute=="rgccaPca"){	  A2= imputeSuperblock(A,method="em",opt="rgcca",ncp=ncp,scaleBlock=scaleBlock)}
-	if(na.impute=="mfa")	{	  A2= imputeSuperblock(A,opt="mfa",method="em",scaleBlock=scaleBlock)}
- 	if(na.impute=="iterativeSB")	{	  A2=imputeSB(A,tau,niter=niter,graph=TRUE,tol=tol,naxis=1)$A	}
-	  
-	return(A2)
+  na.rm=FALSE
+  if(method=="complete"){A2=intersection(A)}
+  if(method=="mean"){		 A2=imputeColmeans(A) }
+#	if(method=="pca")	{   A2= imputeSuperblock(A,ncp=ncp,method="em",opt="pca") }
+#	if(method=="rgccaPca"){	  A2= imputeSuperblock(A,method="em",opt="rgcca",ncp=ncp,scaleBlock=scaleBlock)}
+#	if(method=="mfa")	{	  A2= imputeSuperblock(A,opt="mfa",method="em",scaleBlock=scaleBlock)}
+ 	if(method=="iterativeSB")	{	  A2=imputeSB(A,ncomp=ncomp,scale=scale,sameBlockWeight=sameBlockWeight,tau=tau,tol=1e-8,ni=10)$A	}
+  if(method=="em")	{	  A2=imputeEM(A=A,ncomp=ncomp,scale=scale,sameBlockWeight=sameBlockWeight,tau=tau,naxis=1,ni=50,C=C,tol=1e-6)$A	}
+	if(method=="nipals"){na.rm=TRUE;A2=A}
+  
+  if(substr(method,1,3)=="knn")
+  {
+      if(substr(method,4,4)=="A")
+      {
+        A2=imputeNN(A ,output=knn.output,k="all",klim=knn.klim,sameBlockWeight=knn.sameBlockWeight);method=paste(method,":",knn.k,sep="")
+      }
+      else
+      {
+        A2=imputeNN(A ,output=knn.output,k=as.numeric(substr(method,4,4)),klim=knn.klim,sameBlockWeight=knn.sameBlockWeight);method=paste(method,":",knn.k,sep="")
+      }
+  }
+  resRgcca=rgcca(A2,C=C,ncomp=ncomp,verbose=FALSE,scale=scale,sameBlockWeight=sameBlockWeight,tau=tau,scheme=scheme,returnA=TRUE,tol=tol)
+		return(list(imputedA=A2,rgcca=resRgcca,method))
 
 }

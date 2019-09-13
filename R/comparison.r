@@ -24,17 +24,25 @@ comparison=function(rgcca1,rgcca2,nAxe=1,selec=10,selectPatient=NULL)
     }
     else{ return(NA)}
   }
-  if(is.null(selectPatient)){selectPatient=rownames(rgcca1[["Y"]][[1]])}
+ selectAllPatient=intersect(rownames(rgcca1[["Y"]][[1]]),rownames(rgcca2[["Y"]][[1]]))
   J=length(rgcca1$A)
-  com=rv=pctBm=rep(NA,J)
+  com=rv=pctBm=rvComplete=rep(NA,J)
   for(i in 1:J)
   {
     refBm=biomarker(resRGCCA=rgcca1,block=i,axes=1,selec=selec)
     com[i]=diffNorm2(rgcca1[["astar"]][[i]][,nAxe],rgcca2[["astar"]][[i]][,nAxe])
-    rv[i]=coeffRV(rgcca1[["Y"]][[i]][selectPatient,1:2],rgcca2[["Y"]][[i]][selectPatient,1:2])$rv
+    if(dim(rgcca1[["Y"]][[i]])[2]>1)
+    {
+   #   rvComplete[i]=coeffRV(rgcca1[["Y"]][[i]][selectPatient,1:2],rgcca2[["Y"]][[i]][selectPatient,1:2])$rv
+      rv[i]=coeffRV(rgcca1[["Y"]][[i]][selectAllPatient,1:2],rgcca2[["Y"]][[i]][selectAllPatient,1:2])$rv
+      
+    }
+  # if(dim(rgcca1[["Y"]][[i]])[2]==1){rvComplete[i]=cor(as.vector(rgcca1[["Y"]][[i]][selectPatient,]),as.vector(rgcca2[["Y"]][[i]][selectPatient,]))}
+    if(dim(rgcca1[["Y"]][[i]])[2]==1){rv[i]=cor(as.vector(rgcca1[["Y"]][[i]][selectAllPatient,]),as.vector(rgcca2[["Y"]][[i]][selectAllPatient,]))}
+    
     testBm=biomarker(resRGCCA=rgcca2,block=i,axes=1,selec=selec)
     pctBm[i]=sum(names(testBm)%in%names(refBm))/length(refBm)	
   }
   
-  return(list(a=com,rv=rv,bm=pctBm))
+  return(list(a=com,rv=rv,bm=pctBm,rvComplete=rvComplete))
 }

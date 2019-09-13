@@ -31,7 +31,10 @@ analysis=function(refData,noIntersect=TRUE,C=NULL,tau=NULL,scale=TRUE,nAxe=2,sch
       # listRgcca[["MI-kNN2"]]=MIRGCCA(testData,k=2,niter=5,scale=scale,sameBlockWeight=TRUE,tau,output="weightedMean",scheme=scheme)$rgcca0
       listRgcca[["MI-kNNAll"]]=MIRGCCA(testData,k= "all",ni=5,scale=scale,sameBlockWeight=sameBlockWeight,tau=tau,output="mean",scheme=scheme,returnA=TRUE,tol=1e-8)$rgcca0
       testDataSB=imputeSB(testData,ncomp=rep(nAxe,nBlock),scale=scale,sameBlockWeight=sameBlockWeight,tau=tau,tol=1e-8,ni=10)
-      listRgcca[["EM"]]=rgcca(testDataSB$A,C=C,ncomp=rep(nAxe,nBlock),verbose=FALSE,scale=scale,sameBlockWeight=sameBlockWeight,tau=tau,scheme=scheme,returnA=TRUE,tol=1e-8)
+      listRgcca[["SB"]]=rgcca(testDataSB$A,C=C,ncomp=rep(nAxe,nBlock),verbose=FALSE,scale=scale,sameBlockWeight=sameBlockWeight,tau=tau,scheme=scheme,returnA=TRUE,tol=1e-8)
+      testDataEM=imputeEM(testData,C=C,ncomp=rep(nAxe,nBlock),scale=scale,sameBlockWeight=sameBlockWeight,tau=tau,tol=1e-8,ni=10)
+       listRgcca[["EM"]]=rgcca(testDataEM$A,C=C,ncomp=rep(nAxe,nBlock),verbose=FALSE,scale=scale,sameBlockWeight=sameBlockWeight,tau=tau,scheme=scheme,returnA=TRUE,tol=1e-8)
+      
       listRgcca[["Nipals"]]=rgcca(testData,C=C,ncomp=rep(nAxe,nBlock),verbose=FALSE,na.rm=TRUE,scale=scale,sameBlockWeight=sameBlockWeight,tau=tau,scheme=scheme,returnA=TRUE,tol=1e-8)
       if(!noIntersect){
         completeData=intersection(testData)
@@ -56,13 +59,13 @@ analysis=function(refData,noIntersect=TRUE,C=NULL,tau=NULL,scale=TRUE,nAxe=2,sch
       
       testData=readDataset(blocknames)
       listRgcca=list()
-      #	lAxes=lapply(testData,function(m){resPca=PCA(m,graph=FALSE);eigenValues=resPca$eig[,1];nbAxes=critereCoude(eigenValues,graph=TRUE);return(nbAxes)})	
-      #	nbAxesRgcca=as.vector(unlist(lAxes))		
-      # listRgcca[["MI-kNN2"]]=MIRGCCA(testData,k=2,niter=5,scale=scale,sameBlockWeight=TRUE,tau,output="weightedMean",scheme=scheme)$rgcca0
       listRgcca[["MI-kNNAll"]]=MIRGCCA(testData,k= ,ni=5,scale=scale,sameBlockWeight=sameBlockWeight,tau=tau,output="weightedMean",scheme=scheme,returnA=TRUE,tol=1e-8)$rgcca0
       testDataSB=imputeSB(testData,ncomp=rep(nAxe,nBlock),scale=scale,sameBlockWeight=sameBlockWeight,tau=tau,tol=1e-8,ni=10)
-      listRgcca[["EM"]]=rgcca(testDataSB$A,C=C,ncomp=rep(nAxe,nBlock),verbose=FALSE,scale=scale,sameBlockWeight=sameBlockWeight,tau=tau,scheme=scheme,returnA=TRUE,tol=1e-8)
+      listRgcca[["SB"]]=rgcca(testDataSB$A,C=C,ncomp=rep(nAxe,nBlock),verbose=FALSE,scale=scale,sameBlockWeight=sameBlockWeight,tau=tau,scheme=scheme,returnA=TRUE,tol=1e-8)
       listRgcca[["Nipals"]]=rgcca(testData,C=C,ncomp=rep(nAxe,nBlock),verbose=FALSE,na.rm=TRUE,scale=scale,sameBlockWeight=sameBlockWeight,tau=tau,scheme=scheme,returnA=TRUE,tol=1e-8)
+      testDataEM=imputeEM(testData,C=C,ncomp=rep(nAxe,nBlock),scale=scale,sameBlockWeight=sameBlockWeight,tau=tau,tol=1e-8,ni=10)
+      listRgcca[["EM"]]=rgcca(testDataEM$A,C=C,ncomp=rep(nAxe,nBlock),verbose=FALSE,scale=scale,sameBlockWeight=sameBlockWeight,tau=tau,scheme=scheme,returnA=TRUE,tol=1e-8)
+      
       if(!noIntersect)
       {
         completeData=intersection(testData)
