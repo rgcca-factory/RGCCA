@@ -24,20 +24,38 @@
 #' @return \item{rgccaList} list of RGCCA obtained
 #' @title MIRGCCA: Multiple imputation for RGCCA
 #' @examples 
-MIRGCCA=function(A,k=5,ni=5,scale=TRUE,sameBlockWeight=TRUE,tau,klim=NULL,output="mean",scheme="centroid",tol=1e-8,returnA=FALSE)
+MIRGCCA=function(A,option="knn",superblock=TRUE,k=5,ni=5,scale=TRUE,sameBlockWeight=TRUE,tau,klim=NULL,output="mean",scheme="centroid",tol=1e-8,returnA=TRUE,C=NULL,ncomp=rep(2,length(A)))
 {
-   dataTest0=imputeNN(A=A,output=output,k=k,klim=klim)
-   if(!is.null(dataTest0))
-   {
-     rgcca0=rgcca(dataTest0,ncomp=rep(2,length(A)),scale=scale,sameBlockWeight=sameBlockWeight,tau=tau,verbose=FALSE,scheme=scheme,tol=tol,returnA=returnA)
-     #plotRGCCA2(rgcca0,indnames=TRUE,varnames=TRUE)
-     dataTest=resRgcca2=resprocrustes=list()
-     for(i in 1:ni)
-     {
-       dataTest[[i]]=imputeNN(A=A,output="random",k=k,klim=klim)
-       resRgcca2[[i]]=rgcca(dataTest[[i]],ncomp=rep(2,length(dataTest[[i]])),scale=scale,sameBlockWeight=sameBlockWeight,tau=tau,verbose=FALSE,scheme=scheme,tol=tol,returnA=returnA)
-     }
-     return(list(rgcca0=rgcca0,data=dataTest,rgccaList=resRgcca2))
-   }
- else{stop("not enough neighbors with complete data (<5)")}
+  if(option=="knn")
+  {
+    dataTest0=imputeNN(A=A,output=output,k=k,klim=klim)
+    if(!is.null(dataTest0))
+    {
+      rgcca0=rgcca(dataTest0,ncomp=rep(2,length(A)),scale=scale,sameBlockWeight=sameBlockWeight,tau=tau,verbose=FALSE,scheme=scheme,tol=tol,returnA=returnA)
+      #plotRGCCA2(rgcca0,indnames=TRUE,varnames=TRUE)
+      dataTest=resRgcca2=resprocrustes=list()
+      for(i in 1:ni)
+      {
+        dataTest[[i]]=imputeNN(A=A,output="random",k=k,klim=klim)
+        resRgcca2[[i]]=rgcca(dataTest[[i]],ncomp=rep(2,length(dataTest[[i]])),scale=scale,sameBlockWeight=sameBlockWeight,tau=tau,verbose=FALSE,scheme=scheme,tol=tol,returnA=returnA)
+      }
+      return(list(rgcca0=rgcca0,data=dataTest,rgccaList=resRgcca2))
+    }
+    else{stop("not enough neighbors with complete data (<5)")}
+  }
+  if(option=="em")
+  {
+
+      dataTest0=imputeEM(A=A,tau=tau,C=C,ncomp=ncomp,scheme=scheme,noise=FALSE,naxis = 1)$A
+      rgcca0=rgcca(dataTest0,ncomp=rep(2,length(A)),scale=scale,sameBlockWeight=sameBlockWeight,tau=tau,verbose=FALSE,scheme=scheme,tol=tol,returnA=returnA)
+      dataTest=resRgcca2=list()
+      for(i in 1:ni)
+      {
+        print(i)
+        dataTest[[i]]=imputeEM(A=A,tau=tau,C=C,scheme=scheme,noise=TRUE,ncomp=ncomp,superblock=superblock,naxis = 1)$A
+        print("ok")
+        resRgcca2[[i]]=rgcca(dataTest[[i]],ncomp=rep(2,length(dataTest[[i]])),scale=scale,sameBlockWeight=sameBlockWeight,tau=tau,verbose=FALSE,scheme=scheme,tol=tol,returnA=returnA)
+      }
+  }
+  return(list(rgcca0=rgcca0,data=dataTest,rgccaList=resRgcca2))
 }

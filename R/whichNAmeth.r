@@ -30,16 +30,17 @@ whichNAmethod=function(A,listNAdataset=NULL,listMethods,nDatasets=20,patternNA=N
 
   print("reference RGCCA")
   referenceRgcca=rgcca(referenceDataset,ncomp=rep(2,length(A)),returnA=TRUE,verbose=FALSE)
-  print("comparisons of RGCCA with the different methods...")
+  print("comparisons of RGCCA with the different methods...(this could take some time)")
   resultComparison=NULL
   resultComparison=mclapply(1:nDatasets,function(i)
   {  
+    print(i)
     selectCompletePatient=listNAdataset[[i]]$subjectKept
     indicators=NULL
     for(method in listMethods)
     {
         methodRgcca=rgccaNa(A=listNAdataset[[i]]$dat,method=method,verbose=FALSE,ncomp=rep(2,length(A)),returnA=TRUE)
-       indicators[[method]]=comparison(rgcca1=referenceRgcca,rgcca2=methodRgcca$rgcca,selectPatient=selectCompletePatient)
+       indicators[[method]]=comparison(rgcca1=referenceRgcca,rgcca2=methodRgcca$rgcca,selectPatient=selectCompletePatient,indNA=methodRgcca$indNA)
     }
     return(indicators)
   })

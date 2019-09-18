@@ -36,6 +36,7 @@ rgccaNa=function (A,method, C = 1 - diag(length(A)), tau = rep(1, length(A)), re
   shave.matlist <- function(mat_list, nb_cols) mapply(function(m,nbcomp) m[, 1:nbcomp, drop = FALSE], mat_list, nb_cols, SIMPLIFY = FALSE)
 	shave.veclist <- function(vec_list, nb_elts) mapply(function(m, nbcomp) m[1:nbcomp], vec_list, nb_elts, SIMPLIFY = FALSE)
 	A0=A
+	indNA=lapply(A,function(x){return(which(is.na(x),arr.ind=TRUE))})
   na.rm=FALSE
   if(method=="complete"){A2=intersection(A)}
   if(method=="mean"){		 A2=imputeColmeans(A) }
@@ -44,7 +45,9 @@ rgccaNa=function (A,method, C = 1 - diag(length(A)), tau = rep(1, length(A)), re
 #	if(method=="mfa")	{	  A2= imputeSuperblock(A,opt="mfa",method="em",scaleBlock=scaleBlock)}
  	if(method=="iterativeSB")	{	  A2=imputeSB(A,ncomp=ncomp,scale=scale,sameBlockWeight=sameBlockWeight,tau=tau,tol=1e-8,ni=10)$A	}
   if(method=="em")	{	  A2=imputeEM(A=A,ncomp=ncomp,scale=scale,sameBlockWeight=sameBlockWeight,tau=tau,naxis=1,ni=50,C=C,tol=1e-6)$A	}
-	if(method=="nipals"){na.rm=TRUE;A2=A}
+  if(method=="superblockEM")	{	  A2=imputeEM(A=A,superblock=TRUE,ncomp=ncomp,scale=scale,sameBlockWeight=sameBlockWeight,tau=tau,naxis=1,ni=50,C=C,tol=1e-6)$A	}
+  
+  if(method=="nipals"){na.rm=TRUE;A2=A}
   
   if(substr(method,1,3)=="knn")
   {
@@ -58,6 +61,6 @@ rgccaNa=function (A,method, C = 1 - diag(length(A)), tau = rep(1, length(A)), re
       }
   }
   resRgcca=rgcca(A2,C=C,ncomp=ncomp,verbose=FALSE,scale=scale,sameBlockWeight=sameBlockWeight,tau=tau,scheme=scheme,returnA=TRUE,tol=tol)
-		return(list(imputedA=A2,rgcca=resRgcca,method))
+	return(list(imputedA=A2,rgcca=resRgcca,method,indNA=indNA))
 
 }

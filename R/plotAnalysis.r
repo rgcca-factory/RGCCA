@@ -10,6 +10,7 @@ plotAnalysis=function(listFinale,output="rv",fileName=NULL,ylim=NULL,block="all"
   pas=1 
   par(las=1)
   J=length(listFinale[[1]][[1]][[1]]) #nblock
+  close.screen(all=TRUE)
   if(block=="all"){ split.screen(c(2,2));toPlot=1:J}else{toPlot=block:block}
   # print(toPlot)
   namesMethod=names(listFinale[[1]])
@@ -36,10 +37,8 @@ plotAnalysis=function(listFinale,output="rv",fileName=NULL,ylim=NULL,block="all"
     } 
     if(is.null(ylim))
     { 
-      print(moyenne-ecartType)
-      ylim=c(min(moyenne-ecartType),1)
+         ylim=c(min(moyenne-ecartType),1)
     }
-    print(ylim)
     plot(NULL,main=paste(namePlot,": Block",j),xlim=c(0,length(namesMethod)-1),ylim=ylim,xlab="Methods",ylab="Correlation",bty="n")
     axis(side = 1,col="grey",line=0)
     axis(side = 2,col="grey",line=0)
@@ -49,9 +48,13 @@ plotAnalysis=function(listFinale,output="rv",fileName=NULL,ylim=NULL,block="all"
 
        for(rg in namesMethod)
       {
-        points(pas*nMeth[rg],moyenne[rg],pch=16,col=colMethod[rg])
-        segments(pas*nMeth[rg],moyenne[rg]-ecartType[rg],pas*nMeth[rg],moyenne[rg]+ecartType[rg],col=colMethod[rg])
-      }
+        if(!(rg=="complete"&&output=="rv"))
+        {
+          points(pas*nMeth[rg],moyenne[rg],pch=16,col=colMethod[rg])
+          segments(pas*nMeth[rg],moyenne[rg]-ecartType[rg],pas*nMeth[rg],moyenne[rg]+ecartType[rg],col=colMethod[rg])
+          
+        }
+     }
   }
   if(block=="all")
   {

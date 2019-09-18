@@ -15,6 +15,13 @@
 imputeNN=function(A,k=1,output="mean", klim=NULL,scale=TRUE,sameBlockWeight=TRUE)
 {
    
+  if(is.null(rownames(A[[1]])))
+  {
+    stop("rownames are required for each matrix of A")
+  }
+  if(is.null(colnames(A[[1]])))
+  {
+   stop("colnames are required for each matrix of A")  }
    distance=function(vec,mat,method="euclidean")
   {
     if(method=="euclidean") 
@@ -46,7 +53,9 @@ imputeNN=function(A,k=1,output="mean", klim=NULL,scale=TRUE,sameBlockWeight=TRUE
 
  
   # dectection of subjects with missing data
+
   namesInd=rownames(A[[1]])
+
   posNA=which(is.na(superblockNAs2),arr.ind=T)
   nbNA=dim(posNA)[1]
   nbLineNA=namesInd[unique(as.vector(posNA[,"row"]))]
@@ -129,7 +138,6 @@ imputeNN=function(A,k=1,output="mean", klim=NULL,scale=TRUE,sameBlockWeight=TRUE
                 lineToImpute=mat[randomIndex,]
               }
             }
-
             A[[j]][as.character(i),naCol]=lineToImpute
           }
          
