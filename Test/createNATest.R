@@ -16,3 +16,5 @@ jdd$dat[[2]][jdd$subjectKept,]
 res=createNA(A,option="block",pNA=c(0.5,0.5))
 
 jdd=createNA(A,option="ponc",pNA=c(0.1,0.3))
+jdd$dat[[1]][jdd$subjectKept,]
+jdd$dat[[2]][jdd$subjectKept,]

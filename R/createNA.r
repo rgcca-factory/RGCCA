@@ -86,8 +86,8 @@ createNA=function(A,option="block",pNA=0.1,nAllRespondants=4,output="list")
 			nbNA=round(pNA[i]*n*p)
 			if(nbNA!=0)
 			{
-				listeIndicePossible=merge(1:n,1:p)
-				indToRemove=sample(1:(n*p), nbNA, replace = FALSE)
+				listeIndicePossible=merge(restData,1:p)
+				indToRemove=sample(1:dim(listeIndicePossible)[1], nbNA, replace = FALSE)
 				listeIndicesToRemove=listeIndicePossible[indToRemove,]		
 				for(j in 1:length(indToRemove)){A[[i]][listeIndicesToRemove[j,"x"],listeIndicesToRemove[j,"y"]]=NA}
 			}
