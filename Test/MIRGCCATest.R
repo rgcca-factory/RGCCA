@@ -15,10 +15,12 @@ X2[5,1]=NA
 X3[3,1:2]=NA
 A=list(X1,X2,X3)
 
+# test for knn
 res=MIRGCCA(A,k=4,ni=5,scale=TRUE,sameBlockWeight=FALSE,tau=rep(0,3),klim=NULL,output="weightedMean",scheme="centroid",tol=1e-16)
 res$rgccaList[[2]]$Y[[1]]
 res$rgccaList[[3]]$Y[[1]]
 
+# test for em without superblock
+res=MIRGCCA(A,option="em",C=matrix(1,3,3)-diag(3),k=4,ni=5,scale=TRUE,sameBlockWeight=FALSE,tau=rep(0,3),klim=NULL,output="weightedMean",scheme="centroid",tol=1e-16,superblock=FALSE)
 
-res=MIRGCCA(A,option="em",C=matrix(1,3,3)-diag(3),k=4,ni=5,scale=TRUE,sameBlockWeight=FALSE,tau=rep(0,3),klim=NULL,output="weightedMean",scheme="centroid",tol=1e-16)
 plotMIRGCCA(res,multiple="ell",indnames=FALSE)

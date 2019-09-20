@@ -37,7 +37,12 @@ plotAnalysis=function(listFinale,output="rv",fileName=NULL,ylim=NULL,block="all"
     } 
     if(is.null(ylim))
     { 
-         ylim=c(min(moyenne-ecartType),1)
+          minim=min(moyenne-ecartType)
+        if(!is.na(minim))
+        {
+          ylim=c(minim,1)
+        }
+        else{ylim=c(0,1)}
     }
     plot(NULL,main=paste(namePlot,": Block",j),xlim=c(0,length(namesMethod)-1),ylim=ylim,xlab="Methods",ylab="Correlation",bty="n")
     axis(side = 1,col="grey",line=0)

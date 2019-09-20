@@ -81,9 +81,9 @@ imputeEM=function(A,C,tau,ni=50,tol=1e-8,graph=FALSE,ncomp=NULL,naxis=1,scale=TR
   {
     C2=matrix(1,J+1,J+1);C2[1:J,1:J]=0; C2[J+1,J+1]=0
     tau2=c(tau,0) # mode A for the blocks and mode B for superblock (design for CPCA2 )
+       
   }
-  
-  while (continue)
+   while (continue)
   { 
     diff[[i]]=objective[[i]]=old[[i+1]]=criterion[[i]]=list()
     
@@ -109,6 +109,7 @@ imputeEM=function(A,C,tau,ni=50,tol=1e-8,graph=FALSE,ncomp=NULL,naxis=1,scale=TR
                         verbose = FALSE, tol = tol,sameBlockWeight=sameBlockWeight)      
     }
 
+ 
    # si on veut le critere comme somme des deux composantes
    
    # Criteria for one component only
@@ -136,34 +137,43 @@ imputeEM=function(A,C,tau,ni=50,tol=1e-8,graph=FALSE,ncomp=NULL,naxis=1,scale=TR
                      nrow = NROW(scaledConcatenedBlocks),ncol=sum(nvar), byrow = TRUE)
       
       # TO DO for more than two components required
-      # if(naxis>1)
-      # {
-      #   gamma=NULL
-      #   sigma=NULL
-      #   for(k in 1:naxis)
-      #   { # regression of the relevant block on the y
-      #     gamma=cbind(gamma,apply(scaledConcatenedBlocks, 1, function(x) lm(x~w[,k])$coefficients[2]))
-      #     sigma=cbind(sigma,apply(scaledConcatenedBlocks, 1, function(x){return(sd(lm(x~w)$residuals ))}   ))    
-      #     if(noise){eps=matrix(rnorm(dim(moy)[1]*dim(moy)[2],m=0,sd=sigma),nrow=dim(moy)[1],ncol=dim(moy)[2])}else{eps=0}
-      #   }
-      #   Xhat =(gamma%*%t(w))*stdev + moy
-      #   
-      # } # if only 1 component is required
+       if(naxis>1)
+       {
+         gamma=NULL
+         sigma=NULL
+         for(k in 1:naxis)
+         { # regression of the relevant block on the y
+           gamma=cbind(gamma,apply(scaledConcatenedBlocks, 1, function(x) lm(x~0+w[,k])$coefficients[1]))
+           residuals=apply(scaledConcatenedBlocks, 1, function(x) (lm(x~0+w)$residuals))     
+           sigma=cbind(sigma,sqrt(sum(residuals^2/(J*nsuj))))
+          # if(noise){eps=matrix(rnorm(dim(moy)[1]*dim(moy)[2],m=0,sd=sigma),nrow=dim(moy)[1],ncol=dim(moy)[2])}else{eps=0}
+         }
+         Xhat =(gamma%*%t(w))*stdev + moy
+         concatenedXhat= Xhat
+       }
+      # if only 1 component is required
       if(naxis==1)
       {
+           
         w1=w[,1]
-        gamma=apply(scaledConcatenedBlocks, 1, function(x) lm(x~w)$coefficients[2])
+        gamma=apply(scaledConcatenedBlocks, 1, function(x) lm(x~0+w)$coefficients[1])
+        #=t(as.matrix(w))%*%t(scaledConcatenedBlocks)/sum(w*w)
         # sigma est la somme des résidus
-        residuals=apply(scaledConcatenedBlocks, 1, function(x) (lm(x~w)$residuals))     
+        residuals=apply(scaledConcatenedBlocks, 1, function(x) (lm(x~0+w)$residuals))  
+        print(w[1:3])
         sigma=sqrt(sum(residuals^2/(J*nsuj)))
         centeredXhat=gamma%*%t(w)
         #print(dim(centeredXhat))
         #if(noise){eps=matrix(rnorm(dim(moy)[1]*dim(moy)[2],m=0,sd=sigma),nrow=dim(moy)[1],ncol=dim(moy)[2])}else{eps=0}
+     Xhat =(centeredXhat)*stdev + moy
+      print("sd")
+      print(stdev[1,1:5])
+      print("moy")
+      print(moy[1,1:5])
+      print(Xhat[1:5,1:5])
       
-      Xhat =(centeredXhat)*stdev + moy
       concatenedCenteredXhat=centeredXhat
       concatenedXhat= Xhat
-     
       }
       #Russett[1:10,]
    }
@@ -183,8 +193,8 @@ imputeEM=function(A,C,tau,ni=50,tol=1e-8,graph=FALSE,ncomp=NULL,naxis=1,scale=TR
         
         if(naxis==1)
         {
-          gamma=apply(scaledConcatenedBlocks[,debutBlock[j]:finBlock[j]], 1, function(x) lm(x~w)$coefficients[2]) 
-          residuals=apply(scaledConcatenedBlocks[,debutBlock[j]:finBlock[j]], 1, function(x) (lm(x~w)$residuals))     
+          gamma=apply(scaledConcatenedBlocks[,debutBlock[j]:finBlock[j]], 1, function(x) lm(x~0+w)$coefficients[1]) 
+          residuals=apply(scaledConcatenedBlocks[,debutBlock[j]:finBlock[j]], 1, function(x) (lm(x~0+w)$residuals))     
           sigma[[j]]=sqrt(sum(residuals^2/(J*nsuj)))
           
           # mean and standard deviation of each variables are saved

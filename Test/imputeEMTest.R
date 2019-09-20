@@ -10,7 +10,7 @@ data(Russett)
 namesFiles=dir("./R")
 sapply(namesFiles,function(x){source(paste0("./R/",x))})
 
-
+# Russetts
 
 X_agric =as.matrix(Russett[,c("gini","farm","rent")])
 X_ind = as.matrix(Russett[,c("gnpr","labo")])
@@ -20,23 +20,26 @@ X_ind[1,]=NA
 X_polit[5,1]=NA
 A = list(agri=X_agric, ind=X_ind, polit=X_polit)
 
+# pour 1 axe, non superblock
 testDataEM=imputeEM(A=A,ncomp=rep(1,3),scale=TRUE,sameBlockWeight=TRUE,tau=rep(1,3),naxis=1,ni=50,C=matrix(1,3,3)-diag(3),tol=1e-6,scheme="centroid")
 plot(testDataEM$crit,pch=16,main="RGCCA criterion")
 plot(testDataEM$stab,pch=16,main="Stability")
 plot(testDataEM$obj,pch=16,main="RMSE")
-testDataEM=imputeEM(A=A,noise=TRUE,ncomp=rep(1,3),scale=TRUE,sameBlockWeight=TRUE,tau=rep(1,3),naxis=1,ni=50,C=matrix(1,3,3)-diag(3),tol=1e-6,scheme="centroid")
+# pour 2 comp, 1 axe, pas superblock
+testDataEM=imputeEM(A=A,noise=TRUE,ncomp=rep(2,3),scale=TRUE,sameBlockWeight=TRUE,tau=rep(1,3),naxis=1,ni=50,C=matrix(1,3,3)-diag(3),tol=1e-6,scheme="centroid")
+testDataEM2=imputeEM(A=A,noise=TRUE,ncomp=rep(2,3),scale=TRUE,sameBlockWeight=TRUE,tau=rep(2,3),naxis=1,ni=50,C=matrix(1,3,3)-diag(3),tol=1e-6,scheme="centroid")
 
 
-testDataEMSB=imputeEM(A=A,superblock=TRUE,ncomp=rep(1,3),scale=TRUE,sameBlockWeight=FALSE,tau=rep(1,3),naxis=1,ni=50,C=matrix(1,3,3)-diag(3),tol=1e-6,scheme="centroid")
-testDataEMSB=imputeEM(A=A,noise=TRUE,superblock=TRUE,ncomp=rep(1,3),scale=TRUE,sameBlockWeight=FALSE,tau=rep(1,3),naxis=1,ni=50,C=matrix(1,3,3)-diag(3),tol=1e-6,scheme="centroid")
-
+# pour 1 axe, superblock
+testDataEMSB=imputeEM(A=A,superblock=TRUE,ncomp=rep(1,3),scale=TRUE,sameBlockWeight=TRUE,tau=rep(1,3),naxis=1,ni=50,C=matrix(1,3,3)-diag(3),tol=1e-6,scheme="centroid")
 plot(testDataEMSB$crit,pch=16,main="RGCCA criterion")
 plot(testDataEMSB$stab,pch=16,main="Stability",ylim=c(0,1))
 plot(testDataEMSB$obj,pch=16,main="RMSE")
+testDataEMSB=imputeEM(A=A,noise=TRUE,superblock=TRUE,ncomp=rep(2,3),scale=TRUE,sameBlockWeight=FALSE,tau=rep(1,3),naxis=1,ni=50,C=matrix(1,3,3)-diag(3),tol=1e-6,scheme="centroid")
+# pour superblock plusieurs axes
+testDataEMSB2=imputeEM(A=A,ncomp=rep(2,3),superblock=TRUE,scale=TRUE,sameBlockWeight=TRUE,tau=rep(1,3),naxis=2,ni=50,C=matrix(1,3,3)-diag(3),tol=1e-6,scheme="centroid")
+testDataEMSB3=imputeEM(A=A,ncomp=rep(1,3),superblock=TRUE,scale=TRUE,sameBlockWeight=TRUE,tau=rep(1,3),naxis=3,ni=50,C=matrix(1,3,3)-diag(3),tol=1e-6,scheme="centroid")
 
-testDataEMSB2=imputeEM(A=A,superblock=TRUE,ncomp=rep(1,3),scale=TRUE,sameBlockWeight=FALSE,tau=rep(1,3),naxis=2,ni=50,C=matrix(1,3,3)-diag(3),tol=1e-6,scheme="centroid")
-
-testDataEMSB3=imputeEM(A=A,superblock=TRUE,ncomp=rep(1,3),scale=TRUE,sameBlockWeight=FALSE,tau=rep(1,3),naxis=3,ni=50,C=matrix(1,3,3)-diag(3),tol=1e-6,scheme="centroid")
 
 
 testDataEM$A$ind[1,]
@@ -57,12 +60,31 @@ testDataEMSB2$A$agri[c(2,4),]
 testDataEMSB3$A$agri[c(2,4),]
 as.matrix(Russett[,c("gini","farm","rent")])[c(2,4),]
 
-testDataEM=imputeEM(A=A,ncomp=rep(1,3),superblock=TRUE,scale=TRUE,sameBlockWeight=TRUE,tau=rep(1,3),naxis=1,ni=50,C=matrix(1,3,3)-diag(3),tol=1e-6,scheme="centroid")
 
-plot(testDataEMSB$crit,pch=16)
-plot(testDataEMSB$stab,pch=16)
+# Etude du superbloc dans le cas Biosca
 
+setwd("/home/caroline.peltier/Bureau/EtudeNA/Datasets/Biosca/Reference")
+refData=readDataset(c("CLI","MRS","VOL"))
+A=refData
+A[[1]][1:2,]=NA
+A[[1]][3:8,]=NA
+A[[1]][9:12,]=NA
+lapply(A,dim)
+refData[[1]][1:4,]
+apply(refData[[1]],2,mean)
+A2=lapply(A,function(x){apply(x,2,scale)})
+testDataEMSB3=imputeEM(A=A2,ncomp=rep(1,3),superblock=TRUE,scale=TRUE,sameBlockWeight=TRUE,tau=rep(1,3),naxis=1,ni=50,C=matrix(1,3,3)-diag(3),tol=1e-6,scheme="centroid")
+
+listNAdataset=createNA(A=referenceDataset,option="block",pNA=patternNA,nAllRespondants=10,output="list")
 # TO DO test avec deux composantes et un axe
-testDataEM=imputeEM(A=A,ncomp=rep(2,3),scale=TRUE,sameBlockWeight=TRUE,tau=rep(1,3),naxis=1,ni=50,C=matrix(1,3,3)-diag(3),tol=1e-8)
-testDataEM=imputeEM(A=A,ncomp=rep(2,3),superblock=TRUE,scale=TRUE,sameBlockWeight=TRUE,tau=rep(1,3),naxis=1,ni=50,C=matrix(1,3,3)-diag(3),tol=1e-8)
+#testDataEM=imputeEM(A=A,ncomp=rep(2,3),scale=TRUE,sameBlockWeight=TRUE,tau=rep(1,3),naxis=1,ni=50,C=matrix(1,3,3)-diag(3),tol=1e-8)
+#testDataEM=imputeEM(A=A,ncomp=rep(2,3),superblock=TRUE,scale=TRUE,sameBlockWeight=TRUE,tau=rep(1,3),naxis=1,ni=50,C=matrix(1,3,3)-diag(3),tol=1e-8)
 
+# TO DO test avec deux composantes et deux axes
+testDataEMSB2=imputeEM(A=A,ncomp=rep(2,3),superblock=TRUE,scale=TRUE,sameBlockWeight=TRUE,tau=rep(1,3),naxis=2,ni=50,C=matrix(1,3,3)-diag(3),tol=1e-6,scheme="centroid")
+
+
+
+w=c(5,3,2,1,4,5,6,2,1)
+gamma=c(1,-1,3,2,4,5,1,5)
+(as.matrix(gamma))%*%t(as.matrix(w))+ rnorm(0,1)

@@ -11,7 +11,7 @@
 #' @title comparison of two RGCCA results
 #' @examples 
 #'  data();...
-whichNAmethod=function(A,listNAdataset=NULL,listMethods,nDatasets=20,patternNA=NULL)
+whichNAmethod=function(A,listNAdataset=NULL,listMethods,nDatasets=20,patternNA=NULL,typeNA="block")
 {
   if(is.null(patternNA)){patternNA=sapply(A,function(X){return(sum(is.na(X))/(dim(X)[1]*dim(X)[2]))})}
   if(is.vector(patternNA)){if(length(patternNA)!=length(A)){stop("patternNA should have the same size as length(A)")}}
@@ -23,7 +23,7 @@ whichNAmethod=function(A,listNAdataset=NULL,listMethods,nDatasets=20,patternNA=N
     print("creation of datasets with NA...")
     listNAdataset=lapply(1:nDatasets,function(i)
         {
-         createNA(A=referenceDataset,option="block",pNA=patternNA,nAllRespondants=10,output="list")
+         createNA(A=referenceDataset,option=typeNA,pNA=patternNA,nAllRespondants=10,output="list")
         }
     )
   }

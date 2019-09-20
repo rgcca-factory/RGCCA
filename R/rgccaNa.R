@@ -45,7 +45,18 @@ rgccaNa=function (A,method, C = 1 - diag(length(A)), tau = rep(1, length(A)), re
 #	if(method=="mfa")	{	  A2= imputeSuperblock(A,opt="mfa",method="em",scaleBlock=scaleBlock)}
  	if(method=="iterativeSB")	{	  A2=imputeSB(A,ncomp=ncomp,scale=scale,sameBlockWeight=sameBlockWeight,tau=tau,tol=1e-8,ni=10)$A	}
   if(method=="em")	{	  A2=imputeEM(A=A,ncomp=ncomp,scale=scale,sameBlockWeight=sameBlockWeight,tau=tau,naxis=1,ni=50,C=C,tol=1e-6)$A	}
-  if(method=="superblockEM")	{	  A2=imputeEM(A=A,superblock=TRUE,ncomp=ncomp,scale=scale,sameBlockWeight=sameBlockWeight,tau=tau,naxis=1,ni=50,C=C,tol=1e-6)$A	}
+  if(substr(method,1,3)=="sem")
+  {
+    if(substr(method,4,4)=="")
+    {
+      A2=imputeEM(A=A,superblock=TRUE,ncomp=ncomp,scale=scale,sameBlockWeight=sameBlockWeight,tau=tau,naxis=1,ni=50,C=C,tol=1e-6)$A
+    }
+    else
+    {
+      A2=imputeEM(A=A,superblock=TRUE,ncomp=ncomp,scale=scale,sameBlockWeight=sameBlockWeight,tau=tau,naxis=as.numeric(substr(method,4,4)),ni=50,C=C,tol=1e-6)$A
+    }
+  }
+  if(method=="ems")	{	  A2=imputeEM(A=A,superblock=TRUE,ncomp=ncomp,scale=scale,sameBlockWeight=sameBlockWeight,tau=tau,naxis=1,ni=50,C=C,tol=1e-6)$A	}
   
   if(method=="nipals"){na.rm=TRUE;A2=A}
   

@@ -46,14 +46,15 @@ MIRGCCA=function(A,option="knn",superblock=TRUE,k=5,ni=5,scale=TRUE,sameBlockWei
   if(option=="em")
   {
 
-      dataTest0=imputeEM(A=A,tau=tau,C=C,ncomp=ncomp,scheme=scheme,noise=FALSE,naxis = 1)$A
+     
       rgcca0=rgcca(dataTest0,ncomp=rep(2,length(A)),scale=scale,sameBlockWeight=sameBlockWeight,tau=tau,verbose=FALSE,scheme=scheme,tol=tol,returnA=returnA)
       dataTest=resRgcca2=list()
+      resImpute=imputeEM(A=A,tau=tau,C=C,scheme=scheme,ncomp=ncomp,superblock=superblock,naxis = 1)
+      dataTest0=resImpute$A
       for(i in 1:ni)
       {
         print(i)
-        dataTest[[i]]=imputeEM(A=A,tau=tau,C=C,scheme=scheme,noise=TRUE,ncomp=ncomp,superblock=superblock,naxis = 1)$A
-        print("ok")
+         dataTest[[i]]=addNoise(resImpute)
         resRgcca2[[i]]=rgcca(dataTest[[i]],ncomp=rep(2,length(dataTest[[i]])),scale=scale,sameBlockWeight=sameBlockWeight,tau=tau,verbose=FALSE,scheme=scheme,tol=tol,returnA=returnA)
       }
   }
