@@ -1,7 +1,8 @@
-# '# ImputeSB test
+# '# ImputeEM test
 # 
 # '''
 #setwd("/home/caroline.peltier/Bureau/RGCCA")
+# --% Henter here the name of the git RGCCA working directory 
 library(RGCCA)
 library(MASS)
 library(nipals)
@@ -19,9 +20,12 @@ X_agric[c(2,4),]=NA
 X_ind[1,]=NA
 X_polit[5,1]=NA
 A = list(agri=X_agric, ind=X_ind, polit=X_polit)
-
+A_ref=list(agri=as.matrix(Russett[,c("gini","farm","rent")]),ind=as.matrix(Russett[,c("gnpr","labo")]),polit=as.matrix(Russett[ , c("demostab", "dictator")]))
+A_ref2=lapply(A_ref,scale)
+A2=lapply(A,scale)
 # pour 1 axe, non superblock
 testDataEM=imputeEM(A=A,ncomp=rep(1,3),scale=TRUE,sameBlockWeight=TRUE,tau=rep(1,3),naxis=1,ni=50,C=matrix(1,3,3)-diag(3),tol=1e-6,scheme="centroid")
+testDataEM=imputeEM(A=A2,ncomp=rep(1,3),scale=TRUE,sameBlockWeight=TRUE,tau=rep(1,3),naxis=1,ni=50,C=matrix(1,3,3)-diag(3),tol=1e-6,scheme="centroid")
 plot(testDataEM$crit,pch=16,main="RGCCA criterion")
 plot(testDataEM$stab,pch=16,main="Stability")
 plot(testDataEM$obj,pch=16,main="RMSE")
@@ -32,6 +36,9 @@ testDataEM2=imputeEM(A=A,noise=TRUE,ncomp=rep(2,3),scale=TRUE,sameBlockWeight=TR
 
 # pour 1 axe, superblock
 testDataEMSB=imputeEM(A=A,superblock=TRUE,ncomp=rep(1,3),scale=TRUE,sameBlockWeight=TRUE,tau=rep(1,3),naxis=1,ni=50,C=matrix(1,3,3)-diag(3),tol=1e-6,scheme="centroid")
+testDataEMSB=imputeEM(A=A2,superblock=TRUE,ncomp=rep(1,3),scale=TRUE,sameBlockWeight=TRUE,tau=rep(1,3),naxis=1,ni=50,C=matrix(1,3,3)-diag(3),tol=1e-6,scheme="centroid")
+
+
 plot(testDataEMSB$crit,pch=16,main="RGCCA criterion")
 plot(testDataEMSB$stab,pch=16,main="Stability",ylim=c(0,1))
 plot(testDataEMSB$obj,pch=16,main="RMSE")
@@ -62,6 +69,7 @@ as.matrix(Russett[,c("gini","farm","rent")])[c(2,4),]
 
 
 # Etude du superbloc dans le cas Biosca
+
 
 setwd("/home/caroline.peltier/Bureau/EtudeNA/Datasets/Biosca/Reference")
 refData=readDataset(c("CLI","MRS","VOL"))
