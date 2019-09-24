@@ -20,7 +20,6 @@ addNoise=function(resImputeEM,superblock=FALSE)
       #Xhat =(gamma%*%t(w)+eps)*stdev + moy=gamma%*%t(w)*stdev+ moy+eps*stdev 
       A[[j]][indNA[[j]]]=A[[j]][indNA[[j]]]+(eps[[j]]*stdev[[j]])[indNA[[j]]]
     }
-    
   }
    return(A)
 }

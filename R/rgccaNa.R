@@ -30,9 +30,22 @@
 #' @examples
 #' @export imputeRGCCA
 
-rgccaNa=function (A,method, C = 1 - diag(length(A)), tau = rep(1, length(A)), refData=NULL,    ncomp = rep(1, length(A)), scheme = "centroid", scale = TRUE,   init = "svd", bias = TRUE, tol = 1e-08, verbose = TRUE,na.impute="none",na.niter=10,na.keep=NULL,nboot=10,sameBlockWeight=TRUE,returnA=FALSE,knn.k="all",knn.output="weightedMean",knn.klim=NULL,knn.sameBlockWeight=TRUE) 
+rgccaNa=function (A,method, C = 1 - diag(length(A)), tau = rep(1, length(A)), refData=NULL,    ncomp = rep(1, length(A)), scheme = "centroid", scale = TRUE,   init = "svd", bias = TRUE, tol = 1e-08, verbose = TRUE,na.impute="none",na.niter=10,na.keep=NULL,nboot=10,sameBlockWeight=TRUE,returnA=FALSE,knn.k="all",knn.output="weightedMean",knn.klim=NULL,knn.sameBlockWeight=TRUE,pca.ncp=1) 
 { 
-
+  nvar = sapply(A, NCOL)
+  superblockAsList=function(superblock,A)
+  {
+    Alist=list()
+    nvar = sapply(A, NCOL)
+    for(j in 1:length(nvar))
+    {
+      if(j==1){sel=1:nvar[1]}else{debut=sum(nvar[1:(j-1)])+1;fin=debut+(nvar[j]-1);sel=debut:fin}
+      Alist[[j]]=as.matrix(superblock[,sel])
+      colnames( Alist[[j]])=colnames(A[[j]])
+    }
+    names(Alist)=names(A)
+    return(Alist)
+  }
   shave.matlist <- function(mat_list, nb_cols) mapply(function(m,nbcomp) m[, 1:nbcomp, drop = FALSE], mat_list, nb_cols, SIMPLIFY = FALSE)
 	shave.veclist <- function(vec_list, nb_elts) mapply(function(m, nbcomp) m[1:nbcomp], vec_list, nb_elts, SIMPLIFY = FALSE)
 	A0=A
@@ -40,9 +53,25 @@ rgccaNa=function (A,method, C = 1 - diag(length(A)), tau = rep(1, length(A)), re
   na.rm=FALSE
   if(method=="complete"){A2=intersection(A)}
   if(method=="mean"){		 A2=imputeColmeans(A) }
-#	if(method=="pca")	{   A2= imputeSuperblock(A,ncp=ncp,method="em",opt="pca") }
+	if(method=="pca")	
+	{  
+	  imputedSuperblock= imputePCA(X=do.call(cbind,A), ncp = pca.ncp, scale = TRUE, method ="em")$completeObs 
+	  A2=superblockAsList(imputedSuperblock, A)
+	}
+  if(method=="rpca")
+  {
+    imputedSuperblock= imputePCA(do.call(cbind,A), ncp = pca.ncp, scale = TRUE, method ="regularized")$completeObs 
+     A2=superblockAsList(imputedSuperblock, A)
+  }   
+#
 #	if(method=="rgccaPca"){	  A2= imputeSuperblock(A,method="em",opt="rgcca",ncp=ncp,scaleBlock=scaleBlock)}
-#	if(method=="mfa")	{	  A2= imputeSuperblock(A,opt="mfa",method="em",scaleBlock=scaleBlock)}
+	if(method=="mfa")	
+	{	 
+	  imputedSuperblock= 	res.comp=imputeMFA(X=do.call(cbind,A), group=nvar, ncp = 1, type=rep("s",length(nvar)), method = "em")$completeObs
+	  A2=superblockAsList(imputedSuperblock, A)
+	  
+	}
+
  	if(method=="iterativeSB")	{	  A2=imputeSB(A,ncomp=ncomp,scale=scale,sameBlockWeight=sameBlockWeight,tau=tau,tol=1e-8,ni=10)$A	}
   if(method=="em")	{	  A2=imputeEM(A=A,ncomp=ncomp,scale=scale,sameBlockWeight=sameBlockWeight,tau=tau,naxis=1,ni=50,C=C,tol=1e-6)$A	}
   if(substr(method,1,3)=="sem")

@@ -85,7 +85,7 @@ imputeEM = function(A,
   
   # calculating the D matrix with the weight by number of variables in each block
   # D=matrix(1,dim(concatened
-  Blocks)[1],dim(concatenedBlocks)[2])
+ # Blocks)[1],dim(concatenedBlocks)[2])
 # if(sameBlockWeight)
 # {
 #   for(u in 1:length(finBlock))

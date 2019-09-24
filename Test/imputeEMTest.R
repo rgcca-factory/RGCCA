@@ -2,7 +2,7 @@
 # 
 # '''
 #setwd("/home/caroline.peltier/Bureau/RGCCA")
-# --% Henter here the name of the git RGCCA working directory 
+# --enter here the name of the git RGCCA working directory 
 library(RGCCA)
 library(MASS)
 library(nipals)
