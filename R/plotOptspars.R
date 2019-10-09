@@ -1,10 +1,13 @@
 library(ggplot2)
 
-for (i in 2:length(blocks)) {
-    #png(file = paste0(names(blocks)[i], "-bestc1.png"))
+omisc <- c( "metabolomic", "lipidomic", "transcriptomic")
+load(paste0(omic, ".RData"))
+load(paste0("pls.perm.", omic, ".RData"))
+
+for (i in 1:length(omics)) {
     par.sv <- par()$mar
     par(mar = c(5.1, 5.1, 5.1, 2.1))
-    zstat <- res.spls[[i]]$zstat
+    zstat <- sgcca.res$zstat
     plot(
         zstat[, 2],
         zstat[, 3],
@@ -14,7 +17,7 @@ for (i in 2:length(blocks)) {
         # xlab = "C1",
         # ylab = "Z-score",
         pch = "+",
-        main = names(blocks)[i],
+        main = names(blocks.scaled)[1],
         axes = F,
         cex.lab = 1.5, font.lab = 3, font.axis = 3, cex.axis = 0.8, cex.main = 2, cex = 1, lwd = 3
     )
@@ -36,14 +39,16 @@ for (i in 2:length(blocks)) {
     par(par.sv)
     #dev.off()
 }
+    
+    sgcca.res$bestpenalties
 
-lapply(res.spls, function(x) length(x$selected.variables))
-lapply(res.spls, function(x) x$bestpenalties)
-
-res.spls[[1]][["selected.variables"]] <- colnames(blocks[[1]])
-
-blocks.sparsed <- mapply(
-    function(x, y) x[, y$selected.variables ],
-    blocks, 
-    res.spls
-)
+# lapply(res.spls, function(x) length(x$selected.variables))
+# lapply(res.spls, function(x) x$bestpenalties)
+# 
+# res.spls[[1]][["selected.variables"]] <- colnames(blocks[[1]])
+# 
+# blocks.sparsed <- mapply(
+#     function(x, y) x[, y$selected.variables ],
+#     blocks, 
+#     res.spls
+# )
