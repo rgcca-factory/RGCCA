@@ -10,26 +10,21 @@ parser <- argparse::ArgumentParser()
 parser$add_argument("--job-id", required=T, metavar="integer")
 args <- parser$parse_args()
 
-c1s <- expand.grid(
-    lapply(
-        2:(length(blocks.scaled)-1),
-        function(x) seq(1 / sqrt(ncol(blocks.scaled[[x]])), 1, by = 0.5)
-    )
-)
+c1s <- seq(1 / sqrt(ncol(blocks.scaled[[1]])), 1, by = 0.1)
 
-c1s.1 <- rep(1, nrow(c1s))
-c1s <- as.matrix(cbind(c1s.1, c1s))
+c1s <- as.matrix(cbind(c1s, c1s))
 
 J <- length(blocks.scaled)
 C <- matrix(0, J, J)
 C[2:J, 1] <- C[1, 2:J] <- 1
     
-sgcca.perm <- sgcca.crit(
+sgcca.perm <- sgcca.permute.crit(
     A = blocks.scaled,
     C = C,
     c1s = c1s,
-    ncomp = rep(2, 4),
-    scheme = "factorial",
+    nperm = 500,
+    ncomp = rep(2, 2),
+    scheme = "horst",
     scale = FALSE
 )
 
@@ -41,4 +36,3 @@ write.table(
     row.names = FALSE,
     sep = "\t"
 )
-0.09683111

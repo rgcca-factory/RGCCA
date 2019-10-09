@@ -1,5 +1,3 @@
-load("blocks.scaled.RData")
-
 library(RGCCA)
 library(MASS)
 
@@ -8,17 +6,13 @@ for (f in c("sgcca.crit", "sgcca", "sgccak", "defl.select", "initsvd", "pm", "sc
 
 parser <- argparse::ArgumentParser()
 parser$add_argument("--job-id", required=T, metavar="integer")
+parser$add_argument("--omic", required=T, metavar="character")
 args <- parser$parse_args()
 
-c1s <- expand.grid(
-    lapply(
-        2:(length(blocks.scaled)-1),
-        function(x) seq(1 / sqrt(ncol(blocks.scaled[[x]])), 1, by = 0.5)
-    )
-)
+load(paste0(args$omic, ".RData"))
 
-c1s.1 <- rep(1, nrow(c1s))
-c1s <- as.matrix(cbind(c1s.1, c1s))
+c1s <- seq(1 / sqrt(ncol(blocks.scaled[[1]])), 1, by = 0.01)
+c1s <- as.matrix(cbind(c1s, c1s))
 
 J <- length(blocks.scaled)
 C <- matrix(0, J, J)
@@ -28,17 +22,15 @@ sgcca.perm <- sgcca.crit(
     A = blocks.scaled,
     C = C,
     c1s = c1s,
-    ncomp = rep(2, 4),
-    scheme = "factorial",
+    ncomp = rep(2, 2),
+    scheme = "horst",
     scale = FALSE
 )
 
 write.table(
     as.matrix(t(sgcca.perm)),
     file = paste0(args$job_id, ".tsv"),
-    append = TRUE,
     col.names = FALSE,
     row.names = FALSE,
     sep = "\t"
 )
-0.09683111
