@@ -8,7 +8,7 @@ wd1 <- "../rgccaLauncher/R/"
 for (f in c(list.files(wd1)[-1]))
     source(paste0(wd1, f))
 
-funcs <- c("sgcca.crit", "sgcca.permute.crit", "rgcca", "rgccak", "sgcca", "sgccak", "defl.select", "initsvd", "pm", "scale3", "cov3", "norm2")
+funcs <- c("sgcca.crit", "sgcca.permute.crit", "crossvalidation.gcca", "predict.gcca", "rgcca", "rgccak", "sgcca", "sgccak", "defl.select", "initsvd", "pm", "scale3", "cov3", "norm2")
 for (f in funcs)
     source(paste0("R/", f, ".R"))
 
@@ -84,7 +84,7 @@ HV %in% sort(gsub("[a-zA-Z.]", "",  rownames(rna_dat)))
 
 # Scaling
 blocks.scaled <- scaling(blocks.df, TRUE)
-load("blocks.scaled.RData")
+load("inst/extdata/blocks_without_cofounding/blocks.scaled.RData")
 
 sgcca.res <- rgcca.analyze(blocks = blocks.scaled, tau = c(1, 0.0735, 0.043, 0.143), scale = FALSE, type = "sgcca")
 selected_var <- lapply(sgcca.res$a, function(x) which(x[, 1] != 0 | x[, 2] != 0))
@@ -160,11 +160,11 @@ plotFingerprint(
 
 sapply(blocks.scaled[-1], function(x) 1/sqrt(ncol(x)))
 
-boot <- bootstrap(blocks = blocks.scaled, rgcca = sgcca.res, scale = FALSE, n_boot = 20000)
+boot <- bootstrap(blocks = blocks.scaled, rgcca = sgcca.res, scale = FALSE, n_boot = 1000)
 #boot2 <- boot[sample(1:length(boot), 500)]
-selected_var <- getBootstrap(rgcca = sgcca.res, W = boot2, i_block = 2, collapse = FALSE)
+selected_var <- getBootstrap(rgcca = sgcca.res, W = boot, i_block = 2, collapse = FALSE) # 4 H 45
 #plotBootstrap(selected_var, sgcca.res, superblock = FALSE)
 
 ggplot(selected_var, aes(x = abs(mean), y = weights, label = row.names(selected_var))) + geom_text(size=2) + labs(x = "Weights", y = "Non-zero occurences")
 
-leaveOneOut.gcca(sgcca.res, A = blocks.scaled)
+crossvalidation.gcca(sgcca.res, A = blocks.scaled, validation = "loo")
