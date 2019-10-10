@@ -1,13 +1,13 @@
 crossvalidation.gcca <- function(
     rgcca,
     A,
+    bloc_to_pred,
     validation = c("test", "kfold", "loo"),
     type = "regression",
     fit = "lm",
-    bloc_to_pred = "clinic",
     new_scaled = TRUE,
     k = 5,
-    rep = 2,
+    rep = 10,
     nb_cores = parallel::detectCores() - 1) {
 
     f <- quote(
@@ -20,7 +20,7 @@ crossvalidation.gcca <- function(
             else
                 tau <- rgcca$tau
 
-            rgcca <- rgcca.analyze(
+            rgcca_k <- rgcca.analyze(
                 Atrain,
                 rgcca$C,
                 tau = tau,
@@ -31,8 +31,15 @@ crossvalidation.gcca <- function(
                 verbose = FALSE
             )
 
+            for (k in seq_len(length(bigA))) {
+                for (j in seq_len(ncol(rgcca$a[[k]]))) {
+                    if (cor(rgcca$a[[k]][, j], rgcca_k$a[[k]][, j]) < 0) 
+                        rgcca_k$a[[k]][, j] <- -rgcca_k$a[[k]][, j]
+                }
+            }
+            
             predict.gcca(
-                rgcca,
+                rgcca_k,
                 A = Atrain,
                 newA = lapply(bigA, function(x) x[inds, ]),
                 type = type,

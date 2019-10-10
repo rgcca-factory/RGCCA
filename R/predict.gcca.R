@@ -239,7 +239,7 @@ predict.gcca = function(
         score = switch(
           fit,
           "lm"  = {
-            reslm  = lm(y.train ~ ., data = comp.train)
+            reslm  = lm(y.train ~ ., data = comp.train, na.action = "na.exclude")
             ychapo = predict(reslm, comp.test)
             if (any(is.na(ychapo))) warning("NA in predictions.")
             #mean(y.test - ychapo**2)
