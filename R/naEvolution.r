@@ -11,13 +11,13 @@
 #' @title Evolution of fairness of rgcca with increasing missing values
 #' @examples 
 
-naEvolution=function(A,prctNA=c(0.1,0.2,0.3),listMethods=c("mean"),typeNA="block")
+naEvolution=function(A,prctNA=c(0.1,0.2,0.3),listMethods=c("mean"),typeNA="block",ncomp=rep(1,length(A)))
 {
   resultComparison=list()
   for(prct in prctNA)
   {
     resultComparison[[as.character(prct)]]=list()
-    resultComparison[[as.character(prct)]]=whichNAmethod(A,listMethods=listMethods,patternNA=rep(prct,length(A)),typeNA=typeNA)
+    resultComparison[[as.character(prct)]]=whichNAmethod(A,listMethods=listMethods,patternNA=rep(prct,length(A)),typeNA=typeNA,ncomp=ncomp)
   }
   return(resultComparison)
 }

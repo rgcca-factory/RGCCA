@@ -76,7 +76,7 @@ createNA=function(A,option="block",pNA=0.1,nAllRespondants=4,output="list")
 	
 	if(option=="ponc") # valeurs ponctuelles en conservant un nombre d'individu complets
 	{
-		n=nrow(A[[i]])
+	  n=nrow(A[[1]])
 		allResp=sample(1:n,nAllRespondants)
 		restData=(1:n)[!(1:n)%in%allResp]
 	

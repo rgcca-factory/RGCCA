@@ -122,12 +122,12 @@
 #' text(result.rgcca$Y[[1]], result.rgcca$Y[[2]], Russett[, 1], col = lab)
 #' text(Ytest[, 1], Ytest[, 2], substr(Russett[, 1], 1, 1), col = lab)
 #' @export rgcca
-rgcca=function (A, C = 1 - diag(length(A)), tau = rep(1, length(A)),  ncomp = rep(1, length(A)), scheme = "centroid", scale = TRUE,   init = "svd", bias = TRUE, tol = 1e-08, verbose = TRUE,sameBlockWeight=TRUE,na.rm=TRUE,returnA=FALSE) 
+rgcca=function (A, C = 1 - diag(length(A)), tau = rep(1, length(A)),  ncomp = rep(1, length(A)), scheme = "centroid", scale = TRUE,   init = "svd", bias = TRUE, tol = 1e-08, verbose = TRUE,sameBlockWeight=TRUE,na.rm=TRUE,returnA=FALSE,estimateNA=FALSE) 
 {
+  print("debut")
   shave.matlist <- function(mat_list, nb_cols) mapply(function(m,nbcomp) m[, 1:nbcomp, drop = FALSE], mat_list, nb_cols, SIMPLIFY = FALSE)
   shave.veclist <- function(vec_list, nb_elts) mapply(function(m, nbcomp) m[1:nbcomp], vec_list, nb_elts, SIMPLIFY = FALSE)
   A0=A
-  
   if (any(ncomp < 1)) {stop("Compute at least one component per block!")}	
   pjs <- sapply(A, NCOL) #nombre de variables par bloc
   nb_row <- NROW(A[[1]]) #nombre de lignes
@@ -157,7 +157,14 @@ rgcca=function (A, C = 1 - diag(length(A)), tau = rep(1, length(A)),  ncomp = re
   }
   if (scale == TRUE) 
   {
-    A = lapply(A, function(x) scale2(x,scale=TRUE, bias = bias)) # le biais indique si on recherche la variance biaisee ou non
+    if(estimateNA)
+    {
+      A = lapply(A, function(x) scale2(x,scale=TRUE, bias = bias)) # le biais indique si on recherche la variance biaisee ou non
+    }
+    else
+    {
+      A = lapply(A, function(x) scale2(x,scale=TRUE, bias = bias)) # le biais indique si on recherche la variance biaisee ou non
+    }
     if(sameBlockWeight)
     {
       A = lapply(A, function(x) x/sqrt(NCOL(x)))
@@ -166,11 +173,19 @@ rgcca=function (A, C = 1 - diag(length(A)), tau = rep(1, length(A)),  ncomp = re
   }
   if (scale == FALSE)
   { 
-    A = lapply(A, function(x) scale2(x, scale=FALSE, bias = bias)) 
-    if(sameBlockWeight)
+    if(estimateNA)
     {
-      A = lapply(A, function(x) {covarMat=cov2(x,bias=bias);varianceBloc=sum(diag(covarMat)); return(x/sqrt(varianceBloc))})
+      
     }
+    else
+    {
+      A = lapply(A, function(x) scale2(x, scale=FALSE, bias = bias)) 
+      if(sameBlockWeight)
+      {
+        A = lapply(A, function(x) {covarMat=cov2(x,bias=bias);varianceBloc=sum(diag(covarMat)); return(x/sqrt(varianceBloc))})
+      }      
+    }
+
   }
 
   # Superblock option
@@ -184,7 +199,7 @@ rgcca=function (A, C = 1 - diag(length(A)), tau = rep(1, length(A)),  ncomp = re
     ncomp=c(ncomp,ncomp[1])
     #tau=c(tau,0)
   }
-
+  print("debut2")
   AVE_X = list() 
   AVE_outer <- vector()
   ndefl <- ncomp - 1
@@ -197,12 +212,27 @@ rgcca=function (A, C = 1 - diag(length(A)), tau = rep(1, length(A)),  ncomp = re
   # cas ou le nombre de composantes
   if (N == 0) 
   { # cas ou on n'a qu'un axe à calculer par bloc
-    result <- rgccak(A, C, tau = tau, scheme = scheme, init = init, bias = bias, tol = tol, verbose = verbose,na.rm=na.rm)
+    
+    result <- rgccak(A, C, tau = tau, scheme = scheme, init = init, bias = bias, tol = tol, verbose = verbose,na.rm=na.rm,estimateNA=estimateNA)
+    if(estimateNA)
+    {
+      A<-result$A
+    }
     # result contient le resultat de rgcca
     Y <- NULL 
     for (b in 1:J) Y[[b]] <- result$Y[, b, drop = FALSE]
-    for (j in 1:J) AVE_X[[j]] = mean(cor(A[[j]], Y[[j]],use="pairwise.complete.obs")^2,na.rm=TRUE)#correlation moyenne entre le bloc et la composante (au carré)
-    AVE_outer <- sum(pjs * unlist(AVE_X))/sum(pjs) 
+ 
+    for (j in 1:J)
+    {
+      print(dim(A[[j]]))
+      print(dim(Y[[j]]))
+      print("A")
+      print(head(A[[j]]))
+      print("y")
+      print(head(Y[[j]]))
+        AVE_X[[j]] = mean(cor(A[[j]], Y[[j]],use="pairwise.complete.obs")^2,na.rm=TRUE)#correlation moyenne entre le bloc et la composante (au carré)
+    }
+         AVE_outer <- sum(pjs * unlist(AVE_X))/sum(pjs) 
     AVE <- list(AVE_X = AVE_X, AVE_outer = AVE_outer, AVE_inner = result$AVE_inner)
     a <- lapply(result$a, cbind)
     for (b in 1:J) {
@@ -211,7 +241,10 @@ rgcca=function (A, C = 1 - diag(length(A)), tau = rep(1, length(A)),  ncomp = re
       colnames(Y[[b]]) = "comp1"
     }
     out <- list(Y = Y, a = a, astar = a, C = C, tau = result$tau,  scheme = scheme, ncomp = ncomp, crit = result$crit, primal_dual = primal_dual, AVE = AVE,A=A0)
+    if(estimateNA){out[["imputedA"]]=A}
+    
     class(out) <- "rgcca"
+    
     return(out)
   }
   Y <- NULL
@@ -275,6 +308,10 @@ rgcca=function (A, C = 1 - diag(length(A)), tau = rep(1, length(A)),  ncomp = re
   }
   
   # ajout de na.rm et de use
+  print(dim(A[[j]]))
+  print(dim(Y[[j]]))
+  print(head(A[[j]]))
+  print(head(Y[[j]]))
   for (j in 1:J) AVE_X[[j]] = apply(cor(A[[j]], Y[[j]],use="pairwise.complete.obs")^2, 	2, mean,na.rm=TRUE)
   outer = matrix(unlist(AVE_X), nrow = max(ncomp))
   
@@ -284,6 +321,8 @@ rgcca=function (A, C = 1 - diag(length(A)), tau = rep(1, length(A)),  ncomp = re
   names(a)=names(A)
   AVE_X = shave.veclist(AVE_X, ncomp)
   AVE <- list(AVE_X = AVE_X, AVE_outer_model = AVE_outer, AVE_inner_model = AVE_inner)
+  
+  print("fin")
   if(returnA)
   {
     out <- list(Y = shave.matlist(Y, ncomp), a = shave.matlist(a,ncomp), astar = shave.matlist(astar, ncomp), C = C, tau = tau_mat, 
@@ -293,7 +332,7 @@ rgcca=function (A, C = 1 - diag(length(A)), tau = rep(1, length(A)),  ncomp = re
     out <- list(Y = shave.matlist(Y, ncomp), a = shave.matlist(a,ncomp), astar = shave.matlist(astar, ncomp), C = C, tau = tau_mat, 
                 scheme = scheme, ncomp = ncomp, crit = crit, primal_dual = primal_dual,	AVE = AVE)
   }
-  class(out) <- "rgcca"
+   class(out) <- "rgcca"
 
   return(out)
 }
