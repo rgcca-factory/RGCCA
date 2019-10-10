@@ -1,7 +1,7 @@
 # '# Test RGCCAk
 # 
 # '''
-
+#setwd("/home/caroline.peltier/Bureau/RGCCA")
 
 
 #---------------------------------------------------------------------

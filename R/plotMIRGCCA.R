@@ -21,7 +21,7 @@
 #' @title plotMIRGCCA: plots the results of MIRGCCA
 #' @examples 
 
-plotMIRGCCA=function(mi.obj,opt.ell="distr",multiple="ellipse",indnames=TRUE,varnames=TRUE,blocks=c(1,1),axes=c(1,2),selec="all",xlim=NULL,threshold=0.5,cex=1,output="R",filename="rgcca.png")
+plotMIRGCCA=function(mi.obj,opt.ell="distr",multiple="ell",indnames=TRUE,varnames=TRUE,blocks=c(1,1),axes=c(1,2),selec="all",xlim=NULL,threshold=0.5,cex=1,output="R",filename="rgcca.png")
 {
   rgcca0=mi.obj$rgcca0
   rgccaList=mi.obj$rgccaList  
@@ -60,7 +60,7 @@ plotMIRGCCA=function(mi.obj,opt.ell="distr",multiple="ellipse",indnames=TRUE,var
   plot(NULL,xlim=c(minim,maxim),ylim=c(minim,maxim),xaxt="n",yaxt="n",main="Sample plot")
   rect(par("usr")[1], par("usr")[3], par("usr")[2], par("usr")[4], col = "#e9ebec",border="#e9ebec")
   grid(nx = NULL, ny = NULL, col = "white", lty = "dotted",  lwd = par("lwd"), equilogs = TRUE)
-  
+  nsuj=dim(rgcca0$Y[[1]])[1]
   if(!indnames)
   {
     points(rgcca0$Y[[blocks[1]]][,axes[1]],rgcca0$Y[[blocks[2]]][,axes[2]],pch=16,col=rainbow(nsuj))
@@ -71,7 +71,6 @@ plotMIRGCCA=function(mi.obj,opt.ell="distr",multiple="ellipse",indnames=TRUE,var
   }
   abline(v=0,col="grey")
   abline(h=0,col="grey")
-  nsuj=dim(resprocrustes[[i]])[1]
   if(multiple=="seg")
   {
     for(i in 1:niter)
@@ -90,7 +89,7 @@ plotMIRGCCA=function(mi.obj,opt.ell="distr",multiple="ellipse",indnames=TRUE,var
         tablePoints=rbind(tablePoints,c(resprocrustes[[i]][k,1],resprocrustes[[i]][k,2]))
       }
       if(opt.ell=="distr"){radius=1.96}else{radius=1.96/sqrt(niter)}
-      ellipse(center=c(mean(tablePoints[,1],na.rm=T),mean(tablePoints[,2],na.rm=T)),shape=cov((tablePoints)),radius=radius,col=rainbow(nsuj)[k],lwd=0.5,center.pch = FALSE)
+      car::ellipse(center=c(mean(tablePoints[,1],na.rm=T),mean(tablePoints[,2],na.rm=T)),shape=cov(tablePoints),radius=radius,col=rainbow(nsuj)[k],lwd=0.5,center.pch = FALSE)
     }
   }
   
@@ -164,7 +163,6 @@ plotMIRGCCA=function(mi.obj,opt.ell="distr",multiple="ellipse",indnames=TRUE,var
   if(varnames)
   {
     selectBool=(abs(x0)>threshold)|(abs(y0)>threshold)
-    print(selectBool)
     text(x0[selectBool],y0[selectBool],colnames(superbloc0)[selectBool],col=varCol,cex=cex)
   }
   else{points(x0,y0,col=varCol,pch=16)}

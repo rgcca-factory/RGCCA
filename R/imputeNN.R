@@ -12,23 +12,21 @@
 #' @title imputeNN: Impute with k-Nearest Neighbors
 #' @examples 
 #'  data();...
-
-imputeNN <- function(
-    A,
-    k = 1,
-    output = "mean",
-    klim = NULL,
-    scale = TRUE,
-    sameBlockWeight = TRUE) {
-    
-    # TODO: no case for non euclidian
-    distance <- function(vec, mat, method = "euclidean") {
-        if (method == "euclidean") {
-            res <- apply(mat, 1, function(v) {
-                return(sqrt(sum((v - vec)^2)))
-            })
-        }
-        return(res)
+imputeNN=function(A,k=1,output="mean", klim=NULL,scale=TRUE,sameBlockWeight=TRUE)
+{
+   
+  if(is.null(rownames(A[[1]])))
+  {
+    stop("rownames are required for each matrix of A")
+  }
+  if(is.null(colnames(A[[1]])))
+  {
+   stop("colnames are required for each matrix of A")  }
+   distance=function(vec,mat,method="euclidean")
+  {
+    if(method=="euclidean") 
+    {
+      res=apply(mat,1,function(v){return(sqrt(sum((v-vec)^2)))})
     }
     
     # Each variable is divided by its standard deviations, if scale =TRUE
@@ -43,53 +41,75 @@ imputeNN <- function(
         debutBlock <- c(1, 1 + cumsum(group)[1:(length(group) - 1)])
         finBlock <- cumsum(group)
 
-        for (u in 1:length(finBlock)) {
-            variances <- apply(superblockNAs[, debutBlock[u]:finBlock[u]], 2, var, na.rm = T)
-            D[, debutBlock[u]:finBlock[u]] <- 1/sqrt(sum(variances))
-        }
+ 
+  # dectection of subjects with missing data
 
-    } else
-        D <- matrix(1, dim(superblockNA)[1], dim(superblockNA)[2])
+  namesInd=rownames(A[[1]])
 
-    superblockNAs2 <- superblockNAs * D
-    # dectection of subjects with missing data
-    namesInd <- rownames(A[[1]])
-    posNA <- which(is.na(superblockNAs2), arr.ind = T)
-    nbNA <- dim(posNA)[1]
-    nbLineNA <- namesInd[unique(as.vector(posNA[, "row"]))]
-    J <- length(A)
-
-    # for each subject with missing values
-    for (i in nbLineNA) {
-
-        distances <- NULL
-        # select the not-NA variables for this subject
-        colForComparison <- colnames(superblockNAs2)[!is.na(superblockNAs2[as.character(i), ])]
-        # select all the complete subjects
-        linesWithoutNaInCFC <- (apply(superblockNAs2, 1, sum))
-        rowForComparison <- names(linesWithoutNaInCFC[!is.na(linesWithoutNaInCFC)])
-
-        if (length(rowForComparison) <= 5)
-            stop("Not enough subjects with complete data (<=5)")
-        if (k == "all") 
-            k <- length(rowForComparison)
-
-        if (length(rowForComparison) > 5) {
-
-            # calculation of distances between the subject and all the complete subjects
-            distances <- distance(
-                superblockNAs2[as.character(i), 
-                colForComparison], 
-                superblockNAs2[rowForComparison, colForComparison]
-            )
-            
-            # group=cutree(hclust(dist(distances)),2)
-            if (k == 1) {
-                nameMin <- names(distances)[which.min(distances)]
-                for (j in 1:J) {
-                  A[[j]][as.character(i), is.na(A[[j]][as.character(i), ])] <- A[[j]][nameMin, 
-                    is.na(A[[j]][as.character(i), ])]
-                }
+  posNA=which(is.na(superblockNAs2),arr.ind=T)
+  nbNA=dim(posNA)[1]
+  nbLineNA=namesInd[unique(as.vector(posNA[,"row"]))]
+  J=length(A)
+  # for each subject with missing values
+  for(i in nbLineNA)
+  {
+    distances=NULL
+    # select the not-NA variables for this subject
+    colForComparison=colnames(superblockNAs2)[!is.na(superblockNAs2[as.character(i),])]
+    # select all the complete subjects
+    linesWithoutNaInCFC=(apply(superblockNAs2,1,sum))
+    rowForComparison=names(linesWithoutNaInCFC[!is.na(linesWithoutNaInCFC)])
+    if(length(rowForComparison)<=5){stop("Not enough subjects with complete data (<=5)")}
+    if(k=="all"){k=length(rowForComparison)}
+    if(length(rowForComparison)>5)
+    {
+      # calculation of distances between the subject and all the complete subjects
+      distances=distance(superblockNAs2[as.character(i), colForComparison],superblockNAs2[rowForComparison, colForComparison])
+     
+      #group=cutree(hclust(dist(distances)),2)
+      if(k==1)
+      { 
+        nameMin=names(distances)[which.min(distances)]
+        for(j in 1:J){A[[j]][as.character(i),is.na(A[[j]][as.character(i),])]=A[[j]][nameMin,is.na(A[[j]][as.character(i),])]}
+      }
+      if(k=="all"){k=length(rowForComparison)}
+      if(k=="auto"||(k>1& k<=length(rowForComparison)))
+      {
+        # sorting the distances
+        orderedDistance=sort(distances)
+        if(k=="auto"){knb=kChoice(orderedDistance,klim=klim)}else{knb=k} 
+        contributors=names(orderedDistance)[1:knb]
+        
+        # calculating a vector of weights for each subject: each weight component correspond to the inverse of proportion of distances between the subject and one complete subject
+        
+        if(output=="weightedMean"){w=(1/(orderedDistance/sum(orderedDistance)))[1:knb]}
+        
+        if(output=="random"){randomIndex=contributors[sample(knb,1)]}
+        for(j in 1:J) # imputation for each block
+        {
+          naCol=which(is.na(A[[j]][as.character(i),]))
+          nameContributors=as.character(contributors)
+         
+          if(length(naCol)>0)
+          {
+            mat=A[[j]][nameContributors,naCol]
+            if(length(naCol)==1)
+            {
+              if(output=="weightedMean")
+              {
+                names(mat)=nameContributors
+                lineToImpute=weighted.mean(mat,w)
+              }
+              if(output=="mean")
+              {
+                names(mat)=nameContributors
+                lineToImpute=mean(mat)
+              }
+              if(output=="random")
+              {
+                names(mat)=nameContributors
+                lineToImpute=mat[randomIndex]
+              }
             }
 
             if (k == "all")
@@ -156,6 +176,9 @@ imputeNN <- function(
                 }
                 
             }
+            A[[j]][as.character(i),naCol]=lineToImpute
+          }
+         
         }
     }
     return(A)
