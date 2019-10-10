@@ -188,7 +188,6 @@ while (continue)
       #=t(as.matrix(w))%*%t(scaledConcatenedBlocks)/sum(w*w)
       # sigma est la somme des résidus
       residuals=apply(scaledConcatenedBlocks, 1, function(x) (lm(x~0+w)$residuals))
-      print(w[1:3])
       sigma=sqrt(sum(residuals^2/(J*nsuj)))
       centeredXhat=gamma%*%t(w)
       #print(dim(centeredXhat))
@@ -296,14 +295,12 @@ while (continue)
     colnames( Alist[[j]])=colnames(A[[j]])
   }
   names(Alist)=names(A)
-  
 }
 
 if(graph)
 {
   vec=rep(NA,i-1)
-  for(k in 1:(i-1)){vec[k]=criterion[[k]]
-  }
+  for(k in 1:(i-1)){vec[k]=criterion[[k]]  }
   # x11()
   png("objective.png")
   plot(vec[-1], xlab = "iteration", ylab = "objective",pch=16)

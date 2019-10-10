@@ -111,8 +111,10 @@ imputeSB=function(A,tau,ni=50,tol=1e-8,graph=FALSE,ncomp=NULL,naxis=1,scale=TRUE
     stdev = matrix(attr(X2NA, "scaled:scale"),
                    nrow = NROW(X2NA),ncol=NCOL(X2NA), byrow = TRUE)
     
-
+# Reconstruction ! ! !
     Xhat = (y%*%t(a))*stdev*(1/D) + moy
+    
+    # 
     X1NA[indNA] = Xhat[indNA]
     Alist=list()
     for(j in 1:length(nvar))
@@ -164,8 +166,6 @@ imputeSB=function(A,tau,ni=50,tol=1e-8,graph=FALSE,ncomp=NULL,naxis=1,scale=TRUE
    plot(critRGCCA, xlab = "iteration", ylab = "criterion",pch=16)
    dev.off()
   }
-  
-  
-  
+
   return(list(A=Alist,crit=unlist(critRGCCA),stab=unlist(criterion)))
 }

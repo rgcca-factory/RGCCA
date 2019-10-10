@@ -33,7 +33,7 @@
 #' @importFrom MASS ginv
 #' @importFrom stats cor rnorm
 #' @importFrom graphics plot
-rgccak=function (A, C, tau = "optimal", scheme = "centroid", scale = TRUE,verbose = FALSE, init = "svd", bias = TRUE, tol = 1e-08,na.rm=TRUE) 
+rgccak=function (A, C, tau = "optimal", scheme = "centroid", scale = TRUE,verbose = FALSE, init = "svd", bias = TRUE, tol = 1e-08,na.rm=TRUE,estimateNA=FALSE) 
 {
 # A liste de matrices "blocs" dans un ordre précis (cf matrice connexion)
 # C matrice de connexion, 
@@ -53,8 +53,10 @@ rgccak=function (A, C, tau = "optimal", scheme = "centroid", scale = TRUE,verbos
     if(scheme=="centroid"){g <- function(x) abs(x)}
       
     }else {g<-scheme}
-  
+   print("a")
     A <- lapply(A, as.matrix) # liste de blocs
+    # initialisation du A
+    
     J <- length(A) # nombre de blocs
     n <- NROW(A[[1]]) # nombre d'individus
     pjs <- sapply(A, NCOL) # nombre de variables par bloc
@@ -86,6 +88,7 @@ rgccak=function (A, C, tau = "optimal", scheme = "centroid", scale = TRUE,verbos
     else {
         stop("init should be either random or by SVD.")
     }
+    print("b")
     N = ifelse(bias, n, n - 1)
 	# premiers reglages avant la boucle : initialisation du premier Y (correspondant à la fonction à maximiser)
     for (j in which.primal) 
@@ -93,7 +96,9 @@ rgccak=function (A, C, tau = "optimal", scheme = "centroid", scale = TRUE,verbos
      	 ifelse(tau[j] == 1,
      	  {
             a[[j]] <- drop(1/sqrt(t(a[[j]]) %*% a[[j]])) * a[[j]] # calcul de la premiere composante (les aj sont les wj) : on les norme dans ce cas : c'eest la condition |w|=1
+            # Remplir les valeurs de A manquantes avec la strategie
             Y[, j] <- pm(A[[j]] , a[[j]],na.rm=na.rm) # projection du bloc sur la premiere composante
+            print("c")
            
         }, 
         {
@@ -106,7 +111,7 @@ rgccak=function (A, C, tau = "optimal", scheme = "centroid", scale = TRUE,verbos
             M[[j]] <- ginv(tau[j] * diag(pjs[j]) + ((1 - tau[j])) *nmat^(-1)* (pm(t(A[[j]]) , A[[j]],na.rm=na.rm))) #calcul de la fonction à minimiser ?
             #-----------------------
            
-             a[[j]] <- drop(1/sqrt(t(a[[j]])%*% M[[j]]%*%a[[j]]) )* ( M[[j]] %*% a[[j]]) # calcul premiere composante (à creuser)
+            a[[j]] <- drop(1/sqrt(t(a[[j]])%*% M[[j]]%*%a[[j]]) )* ( M[[j]] %*% a[[j]]) # calcul premiere composante (à creuser)
             Y[, j] <-pm( A[[j]] ,a[[j]],na.rm=na.rm) # projection du bloc sur la premiere composante
         })
     }
@@ -147,18 +152,40 @@ rgccak=function (A, C, tau = "optimal", scheme = "centroid", scale = TRUE,verbos
       Yold <- Y #valeur de f
        for (j in which.primal)
       { # on parcourt les blocs pour estimer wj = a[[j]] : c'est le rouage de la pres
+         print("entree repeat")
           dgx = dg(cov2(Y[, j], Y, bias = bias))# covariance entre les différents blocs: dgx indique + - 1
-          ifelse(tau[j] == 1, 
+          if(tau[j] == 1)
           { # si tau = 1
              Z[, j] = rowSums(matrix(rep(C[j, ], n), n, J, byrow = TRUE) * matrix(rep(dgx, n), n, J, byrow = TRUE) * Y,na.rm=na.rm)
 		         a[[j]] = drop(1/sqrt(pm(pm(t(Z[, j]) ,A[[j]],na.rm=na.rm) ,  pm( t(A[[j]]) ,Z[, j],na.rm=na.rm),na.rm=na.rm))) *pm (t(A[[j]]), Z[,  j],na.rm=na.rm)  
-			      Y[, j] =pm( A[[j]], a[[j]],na.rm=na.rm) #Nouvelle estimation de j
-           },
+			       Y[, j] =pm( A[[j]], a[[j]],na.rm=na.rm) #Nouvelle estimation de j
+			
+#------------------ si on estime les données manquantes dans le cas où tau=1
+			      if(estimateNA)
+			      {
+			        print(dim(A[[j]]))
+			        for(k in 1:dim(A[[j]])[2])
+			        {
+			          missing=is.na(A[[j]][,k])
+			          print(length(missing))
+			          if(length(missing)>0)
+			          {
+			            A[[j]][missing,k]=a[[j]][k]*Z[missing,j]
+			            print("imputed values")
+			            print(A[[j]][,k])
+			          }
+			          print("centering")
+			        	 A[[j]][,k]=scale(A[[j]][,k])
+			        	 print( A[[j]][,k])
+			        }
+			        
+			     }
+           }else
 			      { # si tau different de 1
               Z[, j] = rowSums(matrix(rep(C[j, ], n), n,  J, byrow = TRUE) * matrix(rep(dgx, n), n,  J, byrow = TRUE) * Y,na.rm=na.rm)
              a[[j]] = drop(1/sqrt(pm(pm(t(Z[, j]) ,A[[j]],na.rm=na.rm) , pm( pm( M[[j]] , t(A[[j]]),na.rm=na.rm) , Z[, j],na.rm=na.rm),na.rm=na.rm))) * pm(M[[j]],pm( t(A[[j]]) ,Z[, j]))
             Y[, j] = pm(A[[j]] ,a[[j]],na.rm=na.rm)
-          })
+          }
        }
 
       for (j in which.dual)
@@ -180,7 +207,7 @@ rgccak=function (A, C, tau = "optimal", scheme = "centroid", scale = TRUE,verbos
             Y[, j] =pm( A[[j]], a[[j]],na.rm=na.rm)
           })
       }
-      
+      print("f")
       crit[iter] <- sum(C * g(cov2(Y, bias = bias)),na.rm=na.rm)
       if (verbose & (iter%%1) == 0) 
       cat(" Iter: ", formatC(iter, width = 3, format = "d"), " Fit:", formatC(crit[iter], digits = 8, width = 10, format = "f"), " Dif: ", formatC(crit[iter] - crit_old, digits = 8, width = 10, format = "f"),   "\n")
@@ -200,6 +227,6 @@ rgccak=function (A, C, tau = "optimal", scheme = "centroid", scale = TRUE,verbos
         plot(crit[1:iter], xlab = "iteration", ylab = "criteria")
     AVEinner <- sum(C * cor(Y)^2/2)/(sum(C)/2)
 	#	AVEinner=diag(cov(res$Y[[1]]))/sum(diag(cov(A[[1]] )))
-    result <- list(Y = Y, a = a, crit = crit, AVE_inner = AVEinner,  C = C, tau = tau, scheme = scheme)
+    result <- list(Y = Y, a = a, crit = crit, AVE_inner = AVEinner,  C = C, tau = tau, scheme = scheme,A=A)
     return(result)
 }

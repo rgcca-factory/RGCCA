@@ -38,8 +38,8 @@ comparison=function(rgcca1,rgcca2,nAxe=1,selec=10,selectPatient=NULL,indNA=NULL)
     }
    if(dim(rgcca1[["Y"]][[i]])[2]==1)
    {
-     rvComplete[i]=cor(as.vector(rgcca1[["Y"]][[i]][selectPatient,]),as.vector(rgcca2[["Y"]][[i]][selectPatient,]))
-      rv[i]=cor(as.vector(rgcca1[["Y"]][[i]][selectAllPatient,]),as.vector(rgcca2[["Y"]][[i]][selectAllPatient,]))
+     rvComplete[i]=diffNorm2(as.vector(rgcca1[["Y"]][[i]][selectPatient,]),as.vector(rgcca2[["Y"]][[i]][selectPatient,]))
+      rv[i]=diffNorm2(as.vector(rgcca1[["Y"]][[i]][selectAllPatient,]),as.vector(rgcca2[["Y"]][[i]][selectAllPatient,]))
     }
     
     testBm=biomarker(resRGCCA=rgcca2,block=i,axes=1,selec=selec)

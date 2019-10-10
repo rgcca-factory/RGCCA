@@ -35,8 +35,6 @@ load(file="resultRgccak_Tau1");load(file="resultRgccak_Tau0");load(file="resultR
 setwd("./../..");
 
 # loading the new function output
-
-
  X_agric =as.matrix(Russett[,c("gini","farm","rent")]);
  X_ind = as.matrix(Russett[,c("gnpr","labo")]);
  X_polit = as.matrix(Russett[ , c("demostab", "dictator")]);
@@ -44,6 +42,7 @@ setwd("./../..");
  C = matrix(c(0, 0, 1, 0, 0, 1, 1, 1, 0), 3, 3);
 
 T1=Sys.time();resultRgccak_Tau1_test = rgccak(A, C, tau = c(1, 1, 1), scheme = "factorial", scale = TRUE);T2=Sys.time();Tdiff_Tau1_test=T2-T1; #0.1548102 
+
 T1=Sys.time();resultRgccak_Tau0_test= rgccak(A, C, tau = c(0, 0, 0), scheme = "factorial", scale = TRUE);T2=Sys.time();Tdiff_Tau0_test=T2-T1 ; # 0.008856535
 T1=Sys.time();resultRgccak_TauOpt_test = rgccak(A, C, tau = rep("optimal",3), scheme = "factorial", scale = TRUE);T2=Sys.time();Tdiff_TauOpt_test=T2-T1; #0.008605003 secs
 
@@ -56,11 +55,11 @@ all.equal(resultRgccak_TauOpt,resultRgccak_TauOpt_test);
 # Checking new functionalities : Comparison of new rgcca 
 #---------------------------------------------------------------------
 
-
+library(MASS)
 X_agric =as.matrix(Russett[,c("gini","farm","rent")]);
 X_ind = as.matrix(Russett[,c("gnpr","labo")]);
-X_ind[3,]=NA;
 X_polit = as.matrix(Russett[ , c("demostab", "dictator")]);
+X_ind[3,]=NA;
 X_polit[1:2,]=NA;
 A = list(X_agric, X_ind, X_polit);
 
@@ -69,5 +68,12 @@ T1=Sys.time();resultRgccak_Tau1NA_test = rgccak(A, C, tau = c(1, 1, 1), scheme =
 T1=Sys.time();resultRgccak_Tau0NA_test = rgccak(A, C, tau = c(0, 0, 0), scheme = "factorial", scale = TRUE);T2=Sys.time();Tdiff_Tau0=T2-T1;# 0.001989126
 T1=Sys.time();resultRgccak_TauOptNA_test =rgccak(A, C, tau = rep("optimal",3), scheme = "factorial", scale = TRUE);T2=Sys.time();Tdiff_TauOpt=T2-T1;#0.002758265
 
-
-
+# ajout du parametre estimateNA=TRUE
+A = list(X_agric, X_ind, X_polit);
+Aref=lapply(A,scale)
+A[[1]][1,2]=NA
+A[[2]][c(3,4),]=NA
+C=matrix(1,3,3)-diag(3)
+A=lapply(A,scale2)
+rgccak(A,C,tau=c(1,1,1), scheme = "factorial", scale = TRUE)
+resRgccak=rgccak(A,C,tau=c(1,1,1), scheme = "factorial", scale = TRUE,estimateNA=TRUE)

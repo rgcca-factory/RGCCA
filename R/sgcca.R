@@ -110,7 +110,7 @@
 #'@export sgcca
 
 
-sgcca <- function (A, C = 1-diag(length(A)), c1 = rep(1, length(A)), ncomp = rep(1, length(A)), scheme = "centroid", scale = TRUE, init = "svd", bias = TRUE, tol = .Machine$double.eps, verbose = FALSE){
+sgcca <- function (A, C = 1-diag(length(A)), c1 = rep(1, length(A)), ncomp = rep(1, length(A)), scheme = "centroid", scale = TRUE, init = "svd", bias = TRUE, tol = .Machine$double.eps, verbose = FALSE,returnA=FALSE){
 
   ndefl <- ncomp-1
   N <- max(ndefl)
@@ -277,13 +277,20 @@ sgcca <- function (A, C = 1-diag(length(A)), c1 = rep(1, length(A)), ncomp = rep
                 AVE_outer = AVE_outer,
                 AVE_inner = AVE_inner)
     
-    out <- list(Y = shave.matlist(Y, ncomp), 
+    if(!returnA){out <- list(Y = shave.matlist(Y, ncomp), 
                 a = shave.matlist(a, ncomp), 
                 astar = shave.matlist(astar, ncomp),
                 C = C, c1 = c1, scheme = scheme,
                 ncomp = ncomp, crit = crit,
                 AVE = AVE
-                )
+                )}
+    if(returnA){out <- list(Y = shave.matlist(Y, ncomp), 
+                            a = shave.matlist(a, ncomp), 
+                            astar = shave.matlist(astar, ncomp),
+                            C = C, c1 = c1, scheme = scheme,
+                            ncomp = ncomp, crit = crit,
+                            AVE = AVE,A=A
+    )}
     class(out) <- "sgcca"
     return(out)
     

@@ -12,7 +12,7 @@
 # data(Russett)
 # X_agric =as.matrix(Russett[,c("gini","farm","rent")])
 # X_ind = as.matrix(Russett[,c("gnpr","labo")])
-# X_polit = as.matrix(Russett[ , c("demostab", "dictator")])
+# X_polit = as.matrix(Russett[ , c("demostab", "dictatur")])
 # A = list(X_agric, X_ind, X_polit)
 # 
 # C = matrix(c(0, 0, 1, 0, 0, 1, 1, 1, 0), 3, 3)
@@ -45,6 +45,9 @@ T1=Sys.time();resultRgcca_TauOpt_test = rgcca(A, C, ncomp=rep(2,3),tau = rep("op
 rgccaTest1=all.equal(resultRgcca_Tau1,resultRgcca_Tau1_test);
 rgccaTest2=all.equal(resultRgcca_Tau0,resultRgcca_Tau0_test);
 rgccaTest3=all.equal(resultRgcca_TauOpt,resultRgcca_TauOpt_test) ;
+rgccaTest1
+rgccaTest2
+rgccaTest3
 #---------------------------------------------------------------------
 # Checking new functionalities : Comparison of new rgcca 
 #---------------------------------------------------------------------
@@ -69,7 +72,7 @@ T1=Sys.time();resultRgcca_Tau0NA_test = rgcca(A, ncomp=rep(2,3),C, tau = c(0, 0,
 data(Russett);
 X_agric =as.matrix(Russett[,c("gini","farm","rent")]);
 X_ind = as.matrix(Russett[,c("gnpr","labo")]);
-X_polit = as.matrix(Russett[ , c("demostab", "dictator")]);
+X_polit = as.matrix(Russett[ , c("demostab", "dictatur")]);
 A = list(X_agric, X_ind, X_polit);
 C = matrix(c(0, 0, 1, 0, 0, 1, 1, 1, 0), 3, 3);
 resultRgcca_nonScale_test = rgcca(A, C,ncomp=rep(2,3), tau = c(1, 1, 1), scheme = "factorial", scale = FALSE,verbose=FALSE);
@@ -80,10 +83,45 @@ rgccaTest4=all.equal(resultRgcca_nonScale ,resultRgcca_nonScale_test[1:10]);
 data(Russett);
 X_agric =as.matrix(Russett[,c("gini","farm","rent")]);
 X_ind = as.matrix(Russett[,c("gnpr","labo")]);
-X_polit = as.matrix(Russett[ , c("demostab", "dictator")]);
+X_polit = as.matrix(Russett[ , c("demostab", "dictatur")]);
 X_agric[c(2,4),]=NA;
 X_ind[1,]=NA;
 X_polit[5,1]=NA;
 A = list(X_agric, X_ind, X_polit);
 C = matrix(c(0, 0, 1, 0, 0, 1, 1, 1, 0), 3, 3);
 rgcca(A=A,ncomp=rep(2,3),scale=TRUE,sameBlockWeight=TRUE,tau= c(1, 1, 1),verbose=FALSE);
+
+
+X_agric =as.matrix(Russett[,c("gini","farm","rent")])
+X_ind = as.matrix(Russett[,c("gnpr","labo")])
+X_polit = as.matrix(Russett[ , c("demostab", "dictator")])
+A = list(X_agric, X_ind, X_polit)
+C = matrix(c(0, 0, 1, 0, 0, 1, 1, 1, 0), 3, 3)
+result.rgcca = RGCCA::rgcca(A, C, tau = c(1, 1, 1), scheme = "factorial", scale = TRUE)
+head(as.matrix(scale(X_agric)*sqrt(47/46)/sqrt(3))%*%result.rgcca$a[[1]])
+head(result.rgcca$Y[[1]])
+# on retrouve bien le resultat...
+# avec RGCCA maintenant...
+namesFiles=dir("./R");
+sapply(namesFiles,function(x){source(paste0("./R/",x))});
+result.rgcca.test = rgcca(A, C, tau = c(1, 1, 1), scheme = "factorial", scale = TRUE,returnA=TRUE)
+head(as.matrix(scale(X_agric)*sqrt(47/46)/sqrt(3))%*%result.rgcca.test$a[[1]])
+head(result.rgcca.test$Y[[1]])
+
+# On teste le parametre estimateNA=TRUE pour les options suivantes : 
+# -scale=TRUE, tau=1, dual=FALSE et ncomp=rep(1)
+A = list(X_agric, X_ind, X_polit);
+Aref=lapply(A,scale)
+A[[1]][1,2]=NA
+A[[2]][c(3,4,5),]=NA
+A[[3]][c(6:10),]=NA
+C=matrix(1,3,3)-diag(3)
+result.rgcca.test = rgcca(A, C, tau = c(1, 1, 1), ncomp=rep(1,3),scheme = "factorial", scale = TRUE,returnA=TRUE,estimateNA=FALSE)
+result.rgcca.test = rgcca(A, C, tau = c(1, 1, 1), ncomp=rep(1,3),scheme = "factorial", scale = TRUE,returnA=TRUE,estimateNA=TRUE)
+result.rgcca.test$imputedA[[1]][1,2]
+Aref[[2]][c(3,4,5),]
+result.rgcca.test$imputedA[[2]][3:5,]
+Aref[[3]][c(6:10),]
+result.rgcca.test$imputedA[[3]][c(6:10),]
+
+

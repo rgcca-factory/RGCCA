@@ -21,22 +21,48 @@ refData= list(X_agric, X_ind, X_polit)
 #-----------------------------------------------
 C=matrix(1,2,2);diag(C)=0
 A=list(refData[[1]],refData[[1]])
-resRgcca=rgcca(A,C,scale=FALSE,ncomp=rep(2,2))
-resPca=prcomp((A2[[1]]),scale=FALSE)
+resRgcca=rgcca(A,C,scale=FALSE,ncomp=rep(2,2),sameBlockWeight=FALSE)
+resPca=prcomp((A[[1]]),scale=FALSE)
 cor(resPca$x[,1:2],resRgcca$Y[[1]]) # composante 2 inversée
 cor(resRgcca$a[[1]][,1],resPca$rotation[,1])
 cor(resRgcca$a[[1]][,2],resPca$rotation[,2])
+resRgcca$Y[[1]][1:10,]
+resPca$x[1:10,]
+# On retrouve EXACTEMENT les mêmes axes
 
 #-----------------------------------------------
-# Find back unscaled PCA without superblock
+# Find back scaled PCA without superblock
 #-----------------------------------------------
 C=matrix(1,2,2);diag(C)=0
 A=list(refData[[1]],refData[[1]])
-resRgcca=rgcca(A,C,scale=TRUE,ncomp=rep(2,2))
-resPca=prcomp((A2[[1]]),scale=TRUE)
+resRgcca=rgcca(A,C,scale=TRUE,ncomp=rep(2,2),sameBlockWeight=FALSE,bias=FALSE)
+resPca=prcomp((A[[1]]),scale=TRUE)
 cor(resPca$x[,1:2],resRgcca$Y[[1]]) # composante 2 inversée
 cor(resRgcca$a[[1]][,1],resPca$rotation[,1])
 cor(resRgcca$a[[1]][,2],resPca$rotation[,2])
+resRgcca$Y[[1]][1:10,]
+resPca$x[1:10,]
+
+# reconstruction à l'aide de la PCA
+as.matrix(scale(A[[1]])%*%resPca$rotation[,1])[1:10,]
+
+# reconstruction à l'aide de la RGCCA
+scaledA=scale(A[[1]])
+gamma=apply(scaledA,1,function(x){lm(x~0+resRgcca$a[[1]][,1])$coefficients[1]})
+
+scaledA[1:10,]
+((as.matrix(gamma))%*%t(as.matrix(resRgcca$a[[1]][,1])))[1:10,]
+#Y=
+-1.5027039/0.94401172*(as.matrix(gamma))%*%t(as.matrix(resRgcca$a[[1]][,1]))
+
+# test valeurs manquante et imputePCA
+refDataNA=refData[[1]]
+refDataNA[1,3]=NA
+refDataNA[2,2]=NA
+resImputePCA=imputePCA(refDataNA,ncp=1,scale=TRUE,method="EM")
+resImputePCA$fittedX[1,3]
+resImputePCA$fittedX[2,2]
+imputeEM(imputeEM(A=A,ncomp=rep(1,3),scale=TRUE,sameBlockWeight=TRUE,tau=rep(1,3),naxis=1,ni=50,C=matrix(1,3,3)-diag(3),tol=1e-6,scheme="centroid")
 
 #-----------------------------------------------
 # Finding back the results of RGCCA with SGCCA
@@ -312,4 +338,71 @@ W=is.na(do.call(cbind,testData))
 Anew[W]
 refDataS[W]
 
-  
+# Illustrating the role of tau
+v1=scale(c(0,1,0,2,0),scale=FALSE)
+v2=scale(c(1,2,3,4,5),scale=FALSE)
+w1=scale(c(0,1,0,2,0),scale=FALSE)
+w2=scale(c(20,3,14,16,1),scale=FALSE)
+X1=data.frame(v1,v2);rownames(X1)=paste("S",1:5);colnames(X1)=paste("A",1:2)
+X2=data.frame(w1,w2);rownames(X2)=paste("S",1:5);colnames(X2)=paste("B",1:2)
+graphics.off()
+split.screen(c(1,2))
+screen(1)
+plot(X1,xlim=c(-10,10),ylim=c(-10,10))
+text(v1,v2,paste("S",1:5))
+screen(2)
+plot(X2,xlim=c(-10,10),ylim=c(-10,10))
+text(w1,w2,paste("S",1:5))
+
+res1=rgcca(A=list(X1,X2),ncomp=c(2,2),tau=c(1,1),returnA=TRUE,scale=FALSE)
+plotRGCCA2(res1,pch=16,indnames = TRUE)
+res2=rgcca(A=list(X1,X2),ncomp=c(2,2),tau=c(0,0),returnA=TRUE,scale=FALSE)
+plotRGCCA2(res2,pch=16,indnames = TRUE)
+graphics.off()
+split.screen(c(1,2))
+screen(1)
+plot(X1,xlim=c(-10,10),ylim=c(-10,10))
+text(v1,v2,paste("S",1:5))
+abline(a=0,b=res1$astar[[1]][2,1]/res1$astar[[1]][1,1],col="red")
+abline(a=0,b=res2$astar[[1]][2,1]/res2$astar[[1]][1,1],col="blue")
+screen(2)
+plot(X2,xlim=c(-10,10),ylim=c(-10,10))
+text(w1,w2,paste("S",1:5))
+abline(a=0,b=res1$astar[[2]][2,1]/res1$astar[[2]][1,1],col="red")
+abline(a=0,b=res2$astar[[2]][2,1]/res2$astar[[2]][1,1],col="blue")
+
+# si scale=TRUE
+v1=scale(c(0,1,0,-1,0,0),scale=TRUE)
+v2=scale(c(1,2,3,4,5,6),scale=TRUE)
+w1=scale(c(0,1,0,-1,0,0),scale=TRUE)
+w2=scale(c(2,4,6,7,9,11),scale=TRUE)
+X1=data.frame(v1,v2);rownames(X1)=paste("S",1:5);colnames(X1)=paste("A",1:2)
+X2=data.frame(w1,w2);rownames(X2)=paste("S",1:5);colnames(X2)=paste("B",1:2)
+graphics.off()
+split.screen(c(1,2))
+screen(1)
+plot(X1,xlim=c(-10,10),ylim=c(-10,10))
+text(v1,v2,paste("S",1:6))
+screen(2)
+plot(X2,xlim=c(-10,10),ylim=c(-10,10))
+text(w1,w2,paste("S",1:6))
+
+res1=rgcca(A=list(X1,X2),ncomp=c(2,2),tau=c(1,1),returnA=TRUE,scale=TRUE)
+plotRGCCA2(res1,pch=16,indnames = TRUE)
+res2=rgcca(A=list(X1,X2),ncomp=c(2,2),tau=c(0,0),returnA=TRUE,scale=TRUE)
+plotRGCCA2(res2,pch=16,indnames = TRUE)
+graphics.off()
+split.screen(c(1,2))
+screen(1)
+plot(X1,xlim=c(-3,3),ylim=c(-3,3))
+text(v1,v2,paste("S",1:6))
+abline(a=0,b=res1$astar[[1]][2,1]/res1$astar[[1]][1,1],col="red")
+abline(a=0,b=res2$astar[[1]][2,1]/res2$astar[[1]][1,1],col="blue")
+legend("bottomright",fill=c("red","blue"),legend=c("tau=1","tau=0"))
+screen(2)
+plot(X2,xlim=c(-3,3),ylim=c(-3,3))
+text(w1,w2,paste("S",1:))
+abline(a=0,b=res1$astar[[2]][2,1]/res1$astar[[2]][1,1],col="red")
+abline(a=0,b=res2$astar[[2]][2,1]/res2$astar[[2]][1,1],col="blue")
+
+
