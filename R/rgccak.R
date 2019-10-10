@@ -53,7 +53,7 @@ rgccak=function (A, C, tau = "optimal", scheme = "centroid", scale = TRUE,verbos
     if(scheme=="centroid"){g <- function(x) abs(x)}
       
     }else {g<-scheme}
-   print("a")
+  
     A <- lapply(A, as.matrix) # liste de blocs
     # initialisation du A
     
@@ -88,7 +88,7 @@ rgccak=function (A, C, tau = "optimal", scheme = "centroid", scale = TRUE,verbos
     else {
         stop("init should be either random or by SVD.")
     }
-    print("b")
+   
     N = ifelse(bias, n, n - 1)
 	# premiers reglages avant la boucle : initialisation du premier Y (correspondant à la fonction à maximiser)
     for (j in which.primal) 
@@ -98,7 +98,7 @@ rgccak=function (A, C, tau = "optimal", scheme = "centroid", scale = TRUE,verbos
             a[[j]] <- drop(1/sqrt(t(a[[j]]) %*% a[[j]])) * a[[j]] # calcul de la premiere composante (les aj sont les wj) : on les norme dans ce cas : c'eest la condition |w|=1
             # Remplir les valeurs de A manquantes avec la strategie
             Y[, j] <- pm(A[[j]] , a[[j]],na.rm=na.rm) # projection du bloc sur la premiere composante
-            print("c")
+           
            
         }, 
         {
@@ -152,7 +152,7 @@ rgccak=function (A, C, tau = "optimal", scheme = "centroid", scale = TRUE,verbos
       Yold <- Y #valeur de f
        for (j in which.primal)
       { # on parcourt les blocs pour estimer wj = a[[j]] : c'est le rouage de la pres
-         print("entree repeat")
+         
           dgx = dg(cov2(Y[, j], Y, bias = bias))# covariance entre les différents blocs: dgx indique + - 1
           if(tau[j] == 1)
           { # si tau = 1
@@ -163,18 +163,18 @@ rgccak=function (A, C, tau = "optimal", scheme = "centroid", scale = TRUE,verbos
 #------------------ si on estime les données manquantes dans le cas où tau=1
 			      if(estimateNA)
 			      {
-			        print(dim(A[[j]]))
+			       
 			        for(k in 1:dim(A[[j]])[2])
 			        {
 			          missing=is.na(A[[j]][,k])
-			          print(length(missing))
+			         
 			          if(length(missing)>0)
 			          {
 			            A[[j]][missing,k]=a[[j]][k]*Z[missing,j]
-			            print("imputed values")
+			           
 			            print(A[[j]][,k])
 			          }
-			          print("centering")
+			         
 			        	 A[[j]][,k]=scale(A[[j]][,k])
 			        	 print( A[[j]][,k])
 			        }
@@ -207,7 +207,7 @@ rgccak=function (A, C, tau = "optimal", scheme = "centroid", scale = TRUE,verbos
             Y[, j] =pm( A[[j]], a[[j]],na.rm=na.rm)
           })
       }
-      print("f")
+     
       crit[iter] <- sum(C * g(cov2(Y, bias = bias)),na.rm=na.rm)
       if (verbose & (iter%%1) == 0) 
       cat(" Iter: ", formatC(iter, width = 3, format = "d"), " Fit:", formatC(crit[iter], digits = 8, width = 10, format = "f"), " Dif: ", formatC(crit[iter] - crit_old, digits = 8, width = 10, format = "f"),   "\n")

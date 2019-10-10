@@ -38,17 +38,16 @@ X_agric =as.matrix(Russett[,c("gini","farm","rent")])
 X_ind = as.matrix(Russett[,c("gnpr","labo")])
 X_polit = as.matrix(Russett[ , c("demostab", "dictator")])
 A = list(agri=X_agric, ind=X_ind, polit=X_polit)
-listResults=naEvolution(A=A,listMethods=c("complete","nipals","imputeInRgcca"),prctNA=c(0.1,0.2,0.3),typeNA="ponc",ncomp=rep(1,3))
+#ponctual
+listResults=naEvolution(A=A,listMethods=c("complete","nipals","imputeInRgcca"),prctNA=c(0.05,0.1,0.15,0.2,0.25,0.3),typeNA="ponc",ncomp=rep(1,3))
+plotEvol(listResults,output="a",barType = "stderr",ylim=c(0,0.3))
+plotEvol(listResults,ylim=c(0.6,1),output="rv")
+plotEvol(listResults,ylim=c(0.9,1),output="rvComplete",barType = "stderr")
+# block
+listResults=naEvolution(A=A,listMethods=c("complete","nipals","imputeInRgcca"),prctNA=c(0.05,0.1,0.15,0.2,0.25,0.3),typeNA="block",ncomp=rep(1,3))
 plotEvol(listResults,ylim=c(0.9,1),output="a",block=1,barType = "stderr")
 plotEvol(listResults,ylim=c(0.6,1),output="rv")
 plotEvol(listResults,ylim=c(0.9,1),output="rvComplete",barType = "stderr")
-plotEvol(listResults,ylim=c(0,1),output="rmse",barType = "stderr")
-
-listResults=naEvolution(A=A,listMethods=c("complete","nipals","imputeInRgcca"),prctNA=c(0.1,0.2,0.3),typeNA="block",ncomp=rep(1,3))
-plotEvol(listResults,ylim=c(0.9,1),output="a",block=1,barType = "stderr")
-plotEvol(listResults,ylim=c(0.6,1),output="rv")
-plotEvol(listResults,ylim=c(0.9,1),output="rvComplete",barType = "stderr")
-plotEvol(listResults,ylim=c(0,1),output="rmse",barType = "stderr")
 
 # differences ponctuelles
 listResults=naEvolution(A=A,listMethods=c("pca","complete","mean","nipals","iterativeSB","em","sem","imputeInRgcca"),prctNA=c(0.1,0.2,0.3),typeNA="ponc")
