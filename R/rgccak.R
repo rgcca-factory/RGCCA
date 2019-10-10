@@ -13,6 +13,7 @@
 #' @param init The mode of initialization to use in the RGCCA algorithm. The alternatives are either by Singular Value Decompostion or random (default : "svd").
 #' @param bias A logical value for either a biaised or unbiaised estimator of the var/cov.
 #' @param tol Stopping value for convergence.
+#' @param na.rm If TRUE, NIPALS algorithm taking missing values into account is run. RGCCA is run only on available data.
 #' @return \item{Y}{A \eqn{n * J} matrix of RGCCA outer components}
 #' @return \item{Z}{A \eqn{n * J} matrix of RGCCA inner components}
 #' @return \item{a}{A list of outer weight vectors}
@@ -32,245 +33,200 @@
 #' @importFrom MASS ginv
 #' @importFrom stats cor rnorm
 #' @importFrom graphics plot
-
-rgccak <- function (A, C, tau = "optimal", scheme = "centroid", scale = FALSE, 
-                    verbose = FALSE, init="svd", bias = TRUE, tol = 1e-8) {
-  A <- lapply(A, as.matrix)
-  J <- length(A)
-  n <- NROW(A[[1]])
-  pjs <- sapply(A,NCOL)
-  Y <- matrix(0, n, J)
-  
-  #if (scale == TRUE) A <- lapply(A, function(x) scale2(x, bias = bias))
-  if (!is.numeric(tau)) tau = sapply(A, tau.estimate)
-
-  
-  a <- alpha <- M <- Minv <- K <- list()
-  which.primal <- which((n>=pjs)==1)
-  which.dual <- which((n<pjs)==1)
-    
-    
-  ####################################
-  # Initialisation and normalisation #
-  ####################################
-  
-  if (init=="svd") {
-    #SVD Initialisation of a_j or \alpha_j
-    for (j in which.primal){
-      a[[j]] <- initsvd(A[[j]])
-    }
-    for (j in which.dual){
-      alpha[[j]] <- initsvd(A[[j]])
-      K[[j]] <- A[[j]]%*%t(A[[j]])
-    }
-  } else if (init=="random") {
-    #Random Initialisation of a_j or \alpha_j
-    for (j in which.primal) {
-      a[[j]] <- rnorm(pjs[j])
-    }
-    for (j in which.dual) {
-      alpha[[j]] <- rnorm(n)
-      K[[j]] <- A[[j]]%*%t(A[[j]])
-    }
-  } else {
-    stop("init should be either random or by SVD.")
-  }
-  
-  N = ifelse(bias, n, n-1)  
-    
-  # Normalisation of a_j or \alpha_j
-  for (j in which.primal) {
-    ifelse( tau[j] == 1, {
-      a[[j]] <- drop(1/sqrt(t(a[[j]]) %*% a[[j]])) * a[[j]]
-      Y[, j] <- A[[j]] %*% a[[j]] } , {
-      M[[j]] <- ginv(tau[j] * diag(pjs[j]) + ((1 - tau[j])/(N)) * (t(A[[j]]) %*% A[[j]]))
-      a[[j]] <- drop(1/sqrt(t(a[[j]]) %*% M[[j]] %*% a[[j]])) * M[[j]] %*% a[[j]]
-      Y[, j] <- A[[j]] %*% a[[j]]}
-    )
-  }
-    
-  for (j in which.dual) {
-      ifelse(tau[j] == 1, {alpha[[j]] = drop(1/sqrt(t(alpha[[j]])%*%K[[j]]%*% alpha[[j]]))*alpha[[j]]
-                           a[[j]] = t(A[[j]])%*%alpha[[j]]
-                           Y[, j] = A[[j]] %*% a[[j]]}
-                        , {M[[j]] = tau[j]*diag(n)+(1-tau[j])/(N)*K[[j]]
-                          Minv[[j]] = ginv(M[[j]])
-                          alpha[[j]] = drop(1/sqrt(t(alpha[[j]]) %*% M[[j]]%*%K[[j]]%*% alpha[[j]]))*alpha[[j]]
-                          a[[j]] = t(A[[j]])%*%alpha[[j]]
-                          Y[, j] = A[[j]] %*% a[[j]]}
-            )
-  }
-  
-  ifelse((mode(scheme) != "function"), {h <- function(x) switch(scheme,horst=x,factorial=x**2,centroid=abs(x))
-                                        crit_old <- sum(C*h(cov2(Y, bias = bias)))}
-                                     ,  crit_old <- sum(C*scheme(cov2(Y, bias = bias)))
-  )
-    
-  iter = 1
-  crit = numeric()
-  Z = matrix(0, NROW(A[[1]]), J)
-  a_old = a
-  if (mode(scheme) == "function") 
-    dg = Deriv::Deriv(scheme, env = parent.frame())
-  
-  repeat {
-    Yold <- Y
-    
-    if (mode(scheme) == "function"){
+rgccak=function (A, C, tau = "optimal", scheme = "centroid", scale = TRUE,verbose = FALSE, init = "svd", bias = TRUE, tol = 1e-08,na.rm=TRUE,estimateNA=FALSE) 
+{
+# A liste de matrices "blocs" dans un ordre précis (cf matrice connexion)
+# C matrice de connexion, 
+# tau = 0 ou 1
+# scheme : fonction g
+# scale: transformations appliquées aux blocs
+# verbose : affichage
+# init : initialisation
+# biais : covariance estimée avec ou sans biais
+# tol: critère d'arret de l'algorithme
+ 
+    if(mode(scheme) != "function") 
+    {
+    if(!scheme %in% c("horst","factorial","centroid")){stop("Please choose scheme as 'horst','factorial','centroid' or as a convex function")}
+    if(scheme=="horst"){ g <- function(x) x}
+    if(scheme=="factorial"){ g <- function(x)  x^2}  
+    if(scheme=="centroid"){g <- function(x) abs(x)}
       
-      ############
-      # g scheme #
-      ############
-      
-        for (j in which.primal){
-          dgx = dg(cov2(Y[, j], Y, bias = bias))
-          # assign(formalArgs(scheme), cov2(Y[, j], Y, bias = bias))
-          # dgx = as.vector(attr(eval(dg), "grad"))
-          ifelse(tau[j]==1, {Z[, j] = rowSums(matrix(rep(C[j, ], n), n, J, byrow = TRUE) * matrix(rep(dgx, n), n, J, byrow = TRUE) * Y)
-                             a[[j]] = drop(1/sqrt(t(Z[, j]) %*% A[[j]] %*% t(A[[j]]) %*% Z[, j])) * (t(A[[j]]) %*% Z[, j])
-                             Y[, j] = A[[j]] %*% a[[j]]}
-                 , {Z[, j] = rowSums(matrix(rep(C[j, ], n), n, J, byrow = TRUE) * matrix(rep(dgx, n), n, J, byrow = TRUE) * Y)
-                    a[[j]] = drop(1/sqrt(t(Z[, j]) %*% A[[j]] %*% M[[j]] %*% t(A[[j]]) %*% Z[, j])) * (M[[j]] %*% t(A[[j]]) %*% Z[, j])
-                    Y[, j] = A[[j]] %*% a[[j]]}
-          )
-        }
-      
-        for (j in which.dual) {
-          dgx = dg(cov2(Y[, j], Y, bias = bias))
-          # assign(formalArgs(scheme), cov2(Y[, j], Y, bias = bias))
-          # dgx = as.vector(attr(eval(dg), "grad"))
-          ifelse(tau[j]==1, {Z[, j] = rowSums(matrix(rep(C[j, ], n), n, J, byrow = TRUE) * matrix(rep(dgx, n), n, J, byrow = TRUE) * Y)
-                             alpha[[j]] = drop(1/sqrt(t(Z[, j]) %*% K[[j]] %*% Z[, j])) * Z[, j]
-                             a[[j]] = t(A[[j]])%*% alpha[[j]]
-                             Y[, j] = A[[j]] %*% a[[j]]}
-                 , {Z[, j] = rowSums(matrix(rep(C[j, ], n), n, J, byrow = TRUE) * matrix(rep(dgx, n), n, J, byrow = TRUE) * Y)
-                    alpha[[j]] = drop(1/sqrt(t(Z[, j]) %*% K[[j]] %*% Minv[[j]] %*% Z[, j])) * (Minv[[j]] %*% Z[, j])
-                    a[[j]] = t(A[[j]])%*% alpha[[j]]
-                    Y[, j] = A[[j]] %*% a[[j]]}
-          )
-        }
-      }  
-        
-    else{
-    ################
-    # Horst Scheme #
-    ################
-    if (scheme == "horst") {
-                                
+    }else {g<-scheme}
+  
+    A <- lapply(A, as.matrix) # liste de blocs
+    # initialisation du A
+    
+    J <- length(A) # nombre de blocs
+    n <- NROW(A[[1]]) # nombre d'individus
+    pjs <- sapply(A, NCOL) # nombre de variables par bloc
+    Y <- matrix(0, n, J)
+    if (!is.numeric(tau)) # cas ou on estime le tau de manière intelligente (a creuser)
+        tau = sapply(A, tau.estimate) # d'après Schafer and Strimmer
+    a <- alpha <- M <- Minv <- K <- list() # initialisation variables internes
+    which.primal <- which((n >= pjs) == 1) # on raisonne differement suivant la taille du bloc
+    which.dual <- which((n < pjs) == 1)
+    if (init == "svd") { #initialisation intelligente dans les différents cas (a creuser)
         for (j in which.primal) {
-          ifelse(tau[j]==1, {Z[, j] = rowSums(matrix(rep(C[j, ], n), n, J, byrow = TRUE) * Y)
-                             a[[j]] = drop(1/sqrt(t(Z[, j]) %*% A[[j]] %*% t(A[[j]]) %*% Z[, j])) * t(A[[j]]) %*% Z[, j]
-                             Y[, j] = A[[j]] %*% a[[j]]}
-                          , {Z[, j] = rowSums(matrix(rep(C[j, ], n), n, J, byrow = TRUE) * Y)
-                             a[[j]] = drop(1/sqrt(t(Z[, j]) %*% A[[j]] %*% M[[j]] %*% t(A[[j]]) %*% Z[, j])) * M[[j]] %*% t(A[[j]]) %*% Z[, j]
-                             Y[, j] = A[[j]] %*% a[[j]]}
-                )
+            a[[j]] <- initsvd(A[[j]]) # pas la
+			
         }
-             
-              
         for (j in which.dual) {
-          ifelse(tau[j]==1, {Z[, j] = rowSums(matrix(rep(C[j, ], n), n, J, byrow = TRUE) * Y) 
-                             alpha[[j]] = drop(1/sqrt(t(Z[, j]) %*% K[[j]] %*% Z[, j]))* Z[, j]
-                             a[[j]] = t(A[[j]])%*% alpha[[j]]
-                             Y[, j] = A[[j]] %*% a[[j]]}
-          
-                          , {Z[, j] = rowSums(matrix(rep(C[j, ], n), n, J, byrow = TRUE) * Y) 
-                             alpha[[j]] = drop(1/sqrt(t(Z[, j]) %*% K[[j]] %*% Minv[[j]] %*% Z[, j]))*(Minv[[j]] %*% Z[, j])
-                             a[[j]] = t(A[[j]])%*% alpha[[j]]
-                             Y[, j] = A[[j]] %*% a[[j]]}
-                )
+            alpha[[j]] <- initsvd(A[[j]])
+            K[[j]] <-pm( A[[j]] , t(A[[j]]),na.rm=na.rm) #A*t(A) plutot que t(A)*A
         }
     }
-
-    ####################
-    # Factorial Scheme #
-    ####################
-    
-    if (scheme == "factorial") {
-                                              
-        for (j in which.primal){
-          ifelse(tau[j]==1, {Z[, j] = rowSums(matrix(rep(C[j, ], n), n, J, byrow = TRUE) * matrix(rep(cov2(Y[, j], Y, bias = bias), n), n, J, byrow = TRUE) * Y)
-                             a[[j]] = drop(1/sqrt(t(Z[, j]) %*% A[[j]] %*% t(A[[j]]) %*% Z[, j])) * (t(A[[j]]) %*% Z[, j])
-                             Y[, j] = A[[j]] %*% a[[j]]}
-                          , {Z[, j] = rowSums(matrix(rep(C[j, ], n), n, J, byrow = TRUE) * matrix(rep(cov2(Y[, j], Y, bias = bias), n), n, J, byrow = TRUE) * Y)
-                             a[[j]] = drop(1/sqrt(t(Z[, j]) %*% A[[j]] %*% M[[j]] %*% t(A[[j]]) %*% Z[, j])) * (M[[j]] %*% t(A[[j]]) %*% Z[, j])
-                             Y[, j] = A[[j]] %*% a[[j]]}
-                )
+    else if (init == "random") {
+        for (j in which.primal) {
+            a[[j]] <- rnorm(pjs[j]) # on initialise suivant la loi normale
         }
-          
         for (j in which.dual) {
-          ifelse(tau[j]==1, {Z[, j] = rowSums(matrix(rep(C[j, ], n), n, J, byrow = TRUE) * matrix(rep(cov2(Y[, j], Y, bias = bias), n), n, J, byrow = TRUE) * Y)
-                             alpha[[j]] = drop(1/sqrt(t(Z[, j]) %*% K[[j]] %*% Z[, j])) * Z[, j]
-                             a[[j]] = t(A[[j]])%*% alpha[[j]]
-                             Y[, j] = A[[j]] %*% a[[j]]}
-                          , {Z[, j] = rowSums(matrix(rep(C[j, ], n), n, J, byrow = TRUE) * matrix(rep(cov2(Y[, j], Y, bias = bias), n), n, J, byrow = TRUE) * Y)
-                            alpha[[j]] = drop(1/sqrt(t(Z[, j]) %*% K[[j]] %*% Minv[[j]] %*% Z[, j])) * (Minv[[j]] %*% Z[, j])
-                            a[[j]] = t(A[[j]])%*% alpha[[j]]
-                            Y[, j] = A[[j]] %*% a[[j]]}
-                )
+            alpha[[j]] <- rnorm(n)
+            K[[j]] <- pm(A[[j]] , t(A[[j]]),na.rm=na.rm) #A*t(A) plutot que t(A)*A
         }
     }
-
-    ###################
-    # Centroid Scheme #
-    ###################
-    
-    if (scheme == "centroid") {
-      for (j in which.primal) {
-        ifelse(tau[j]==1, {Z[, j] = rowSums(matrix(rep(C[j, ], n), n, J, byrow = TRUE) * sign(matrix(rep(cov2(Y[, j], Y, bias = bias), n), n, J, byrow = TRUE)) * Y)
-                           a[[j]] = drop(1/sqrt(t(Z[, j]) %*% A[[j]] %*% t(A[[j]]) %*% Z[, j])) * (t(A[[j]]) %*% Z[, j])
-                           Y[, j] = A[[j]] %*% a[[j]]}
-                        , {Z[, j] = rowSums(matrix(rep(C[j, ], n), n, J, byrow = TRUE) * sign(matrix(rep(cov2(Y[, j], Y, bias = bias), n), n, J, byrow = TRUE)) * Y)
-                           a[[j]] = drop(1/sqrt(t(Z[, j]) %*% A[[j]] %*% M[[j]] %*% t(A[[j]]) %*% Z[, j])) * (M[[j]] %*% t(A[[j]]) %*% Z[, j])
-                           Y[, j] = A[[j]] %*% a[[j]]}
-              )
-      }
-      
-      for (j in which.dual) {
-        ifelse(tau[j]==1, {Z[, j] = rowSums(matrix(rep(C[j, ], n), n, J, byrow = TRUE) * sign(matrix(rep(cov2(Y[, j], Y, bias = bias), n), n, J, byrow = TRUE)) * Y)
-                           alpha[[j]] = drop(1/sqrt(t(Z[, j]) %*% K[[j]] %*% Z[, j])) * Z[, j]
-                           a[[j]] = t(A[[j]])%*% alpha[[j]]
-                           Y[, j] = A[[j]] %*% a[[j]]}
-                        , {Z[, j] = rowSums(matrix(rep(C[j, ], n), n, J, byrow = TRUE) * sign(matrix(rep(cov2(Y[, j], Y, bias = bias), n), n, J, byrow = TRUE)) * Y)
-                           alpha[[j]] = drop(1/sqrt(t(Z[, j]) %*% K[[j]] %*% Minv[[j]] %*% Z[, j])) * (Minv[[j]] %*% Z[, j])
-                           a[[j]] = t(A[[j]])%*% alpha[[j]]
-                           Y[, j] = A[[j]] %*% a[[j]]}
-        )
-      }
+    else {
+        stop("init should be either random or by SVD.")
     }
+   
+    N = ifelse(bias, n, n - 1)
+	# premiers reglages avant la boucle : initialisation du premier Y (correspondant à la fonction à maximiser)
+    for (j in which.primal) 
+    {
+     	 ifelse(tau[j] == 1,
+     	  {
+            a[[j]] <- drop(1/sqrt(t(a[[j]]) %*% a[[j]])) * a[[j]] # calcul de la premiere composante (les aj sont les wj) : on les norme dans ce cas : c'eest la condition |w|=1
+            # Remplir les valeurs de A manquantes avec la strategie
+            Y[, j] <- pm(A[[j]] , a[[j]],na.rm=na.rm) # projection du bloc sur la premiere composante
+           
+           
+        }, 
+        {
+           # M[[j]] <- ginv(tau[j] * diag(pjs[j]) + ((1 - tau[j])/(N)) * (pm(t(A[[j]]) , A[[j]],na.rm=na.rm))) #calcul de la fonction à minimiser ?
+         
+            
+            #-taking NA into account in the N
+            nmat=ifelse(bias,t(!is.na(A[[j]]))%*%(!is.na(A[[j]])),t(!is.na(A[[j]]))%*%(!is.na(A[[j]]))-1)
+            nmat[nmat==0]=NA
+            M[[j]] <- ginv(tau[j] * diag(pjs[j]) + ((1 - tau[j])) *nmat^(-1)* (pm(t(A[[j]]) , A[[j]],na.rm=na.rm))) #calcul de la fonction à minimiser ?
+            #-----------------------
+           
+            a[[j]] <- drop(1/sqrt(t(a[[j]])%*% M[[j]]%*%a[[j]]) )* ( M[[j]] %*% a[[j]]) # calcul premiere composante (à creuser)
+            Y[, j] <-pm( A[[j]] ,a[[j]],na.rm=na.rm) # projection du bloc sur la premiere composante
+        })
+    }
+    for (j in which.dual)
+    {
+        ifelse(tau[j] == 1, {
+            alpha[[j]] = drop(1/sqrt(t(alpha[[j]]) %*% K[[j]] %*%  alpha[[j]])) * alpha[[j]]
+            a[[j]] =pm( t(A[[j]]), alpha[[j]],na.rm=na.rm)
+            Y[, j] =pm( A[[j]], a[[j]],na.rm=na.rm)
+        }, {
+          
+           # M[[j]] = tau[j] * diag(n) + (1 - tau[j])/(N) * K[[j]]  # contraire de la matrice de covariace
+           
+           #----taking NA into account in the N
+            nmat=ifelse(bias,t(!is.na(A[[j]]))%*%(!is.na(A[[j]])),t(!is.na(A[[j]]))%*%(!is.na(A[[j]]))-1)
+            nmat[nmat==0]=NA
+            M[[j]] <- tau[j] * diag(n) + ((1 - tau[j])) *nmat^(-1)* K[[j]] #calcul de la fonction à minimiser ?
+            #-----------------------
+            
+             Minv[[j]] = ginv(M[[j]])
+            alpha[[j]] = drop(1/sqrt(t(alpha[[j]])%*% M[[j]]%*% K[[j]]%*% alpha[[j]])) * alpha[[j]]
+            a[[j]] =pm( t(A[[j]]), alpha[[j]],na.rm=na.rm)
+            Y[, j] = pm(A[[j]] ,a[[j]],na.rm=na.rm) 
+        })
     }
 
+			# ajout de na.rm=TRUE
+    crit_old <- sum(C * g(cov2(Y, bias = bias)),na.rm=na.rm)# critere d'arret: h(cov(Y))
+    iter = 1
+    crit = numeric()
+    Z = matrix(0, NROW(A[[1]]), J)
+    a_old = a
     
-    ifelse((mode(scheme) != "function"), {g <- function(x) switch(scheme,horst=x,factorial=x**2,centroid=abs(x))
-    crit[iter] <- sum(C*g(cov2(Y, bias = bias)))}
-    , crit[iter] <- sum(C*scheme(cov2(Y, bias = bias)))
-    )    
-    
-    if (verbose & (iter %% 1)==0)
-      cat(" Iter: ",formatC(iter,width=3, format="d"),
-          " Fit:",  formatC(crit[iter], digits=8, width=10, format="f"),
-          " Dif: ", formatC(crit[iter]-crit_old, digits=8, width=10, format="f"),
-          "\n")
-    
-    stopping_criteria = c(drop(crossprod(Reduce("c", mapply("-", a, a_old))))
-                          , crit[iter]-crit_old)
-    
-    if ( any(stopping_criteria < tol) | (iter > 1000)) 
-      break
-    
-    crit_old = crit[iter]
-    a_old <- a
-    iter <- iter + 1
-    
-  }
-  
-  if (iter > 1000) warning("The RGCCA algorithm did not converge after 1000 iterations.")
-  if(iter<1000 & verbose) cat("The RGCCA algorithm converged to a stationary point after", iter-1, "iterations \n")
-  if (verbose) plot(crit[1:iter], xlab = "iteration", ylab = "criteria")
-  
-  AVEinner <- sum(C * cor(Y)^2/2)/(sum(C)/2)
-  result <- list(Y = Y, a = a, crit = crit, 
-                 AVE_inner = AVEinner, C = C, tau = tau, scheme = scheme)
-  
-  return(result)
+    dg = Deriv::Deriv(g, env = parent.frame())# on dérive la fonction g
+   
+    repeat 
+    { # on rentre dans la boucle a proprement parler
+      Yold <- Y #valeur de f
+       for (j in which.primal)
+      { # on parcourt les blocs pour estimer wj = a[[j]] : c'est le rouage de la pres
+         
+          dgx = dg(cov2(Y[, j], Y, bias = bias))# covariance entre les différents blocs: dgx indique + - 1
+          if(tau[j] == 1)
+          { # si tau = 1
+             Z[, j] = rowSums(matrix(rep(C[j, ], n), n, J, byrow = TRUE) * matrix(rep(dgx, n), n, J, byrow = TRUE) * Y,na.rm=na.rm)
+		         a[[j]] = drop(1/sqrt(pm(pm(t(Z[, j]) ,A[[j]],na.rm=na.rm) ,  pm( t(A[[j]]) ,Z[, j],na.rm=na.rm),na.rm=na.rm))) *pm (t(A[[j]]), Z[,  j],na.rm=na.rm)  
+			       Y[, j] =pm( A[[j]], a[[j]],na.rm=na.rm) #Nouvelle estimation de j
+			
+#------------------ si on estime les données manquantes dans le cas où tau=1
+			      if(estimateNA)
+			      {
+			       
+			        for(k in 1:dim(A[[j]])[2])
+			        {
+			          missing=is.na(A[[j]][,k])
+			         
+			          if(length(missing)>0)
+			          {
+			            A[[j]][missing,k]=a[[j]][k]*Z[missing,j]
+			           
+			            print(A[[j]][,k])
+			          }
+			         
+			        	 A[[j]][,k]=scale(A[[j]][,k])
+			        	 print( A[[j]][,k])
+			        }
+			        
+			     }
+           }else
+			      { # si tau different de 1
+              Z[, j] = rowSums(matrix(rep(C[j, ], n), n,  J, byrow = TRUE) * matrix(rep(dgx, n), n,  J, byrow = TRUE) * Y,na.rm=na.rm)
+             a[[j]] = drop(1/sqrt(pm(pm(t(Z[, j]) ,A[[j]],na.rm=na.rm) , pm( pm( M[[j]] , t(A[[j]]),na.rm=na.rm) , Z[, j],na.rm=na.rm),na.rm=na.rm))) * pm(M[[j]],pm( t(A[[j]]) ,Z[, j]))
+            Y[, j] = pm(A[[j]] ,a[[j]],na.rm=na.rm)
+          }
+       }
+
+      for (j in which.dual)
+      {
+          dgx = dg(cov2(Y[, j], Y, bias = bias))
+          ifelse(tau[j] == 1, 
+            {
+              Z[, j] = rowSums(matrix(rep(C[j, ], n), n, J, byrow = TRUE) * matrix(rep(dgx, n), n, J, byrow = TRUE) * Y,na.rm=na.rm)
+              alpha[[j]] = drop(1/sqrt(t(Z[, j]) %*% K[[j]] %*% Z[, j])) * Z[, j]
+              a[[j]] =pm( t(A[[j]]) , alpha[[j]],na.rm=na.rm)
+              Y[, j] =pm( A[[j]], a[[j]],na.rm=na.rm)
+           }, 
+           {
+            Z[, j] = rowSums(matrix(rep(C[j, ], n), n, J, byrow = TRUE) * matrix(rep(dgx, n), n, J, byrow = TRUE) * Y,na.rm=na.rm)
+          #  alpha[[j]] = drop(1/sqrt(pm(pm(pm(t(Z[, j]), K[[j]] ),  Minv[[j]]) , Z[, j]))) * pm(Minv[[j]] , Z[,  j])
+			alpha[[j]] = drop(1/sqrt(t(Z[, j])%*% K[[j]] %*% Minv[[j]]%*% Z[, j])) * (Minv[[j]] %*% Z[,  j])
+                   
+		   a[[j]] =pm( t(A[[j]]) , alpha[[j]],na.rm=na.rm)
+            Y[, j] =pm( A[[j]], a[[j]],na.rm=na.rm)
+          })
+      }
+     
+      crit[iter] <- sum(C * g(cov2(Y, bias = bias)),na.rm=na.rm)
+      if (verbose & (iter%%1) == 0) 
+      cat(" Iter: ", formatC(iter, width = 3, format = "d"), " Fit:", formatC(crit[iter], digits = 8, width = 10, format = "f"), " Dif: ", formatC(crit[iter] - crit_old, digits = 8, width = 10, format = "f"),   "\n")
+      stopping_criteria = c(drop(crossprod(Reduce("c", mapply("-", a, a_old)))), crit[iter] - crit_old)
+
+      if (any(stopping_criteria < tol) | (iter > 1000)) # critère d'arret de la boucle
+          break
+      crit_old = crit[iter]
+      a_old <- a
+      iter <- iter + 1
+    }
+    if (iter > 1000) 
+        warning("The RGCCA algorithm did not converge after 1000 iterations.")
+    if (iter < 1000 & verbose) 
+        cat("The RGCCA algorithm converged to a stationary point after",  iter - 1, "iterations \n")
+    if (verbose) 
+        plot(crit[1:iter], xlab = "iteration", ylab = "criteria")
+    AVEinner <- sum(C * cor(Y)^2/2)/(sum(C)/2)
+	#	AVEinner=diag(cov(res$Y[[1]]))/sum(diag(cov(A[[1]] )))
+    result <- list(Y = Y, a = a, crit = crit, AVE_inner = AVEinner,  C = C, tau = tau, scheme = scheme,A=A)
+    return(result)
 }
