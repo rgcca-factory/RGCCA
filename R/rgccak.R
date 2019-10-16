@@ -44,7 +44,7 @@ rgccak=function (A, C, tau = "optimal", scheme = "centroid", scale = TRUE,verbos
 # init : initialisation
 # biais : covariance estimée avec ou sans biais
 # tol: critère d'arret de l'algorithme
- print("new version")
+
     if(mode(scheme) != "function") 
     {
     if(!scheme %in% c("horst","factorial","centroid")){stop("Please choose scheme as 'horst','factorial','centroid' or as a convex function")}
@@ -53,7 +53,7 @@ rgccak=function (A, C, tau = "optimal", scheme = "centroid", scale = TRUE,verbos
     if(scheme=="centroid"){g <- function(x) abs(x)}
       
     }else {g<-scheme}
-    A0 <-A
+    
     A <- lapply(A, as.matrix) # liste de blocs
     # initialisation du A
    # A=lapply(A,function(M){M[is.na(M)]<-0;return(M)})
@@ -150,7 +150,6 @@ rgccak=function (A, C, tau = "optimal", scheme = "centroid", scale = TRUE,verbos
     repeat 
     { # on rentre dans la boucle a proprement parler
       Yold <- Y #valeur de f
-      print(paste("iter",iter))
        for (j in which.primal)
       { # on parcourt les blocs pour estimer wj = a[[j]] : c'est le rouage de la pres
          
@@ -161,75 +160,6 @@ rgccak=function (A, C, tau = "optimal", scheme = "centroid", scale = TRUE,verbos
 		         a[[j]] = drop(1/sqrt(pm(pm(t(Z[, j]) ,A[[j]],na.rm=na.rm) ,  pm( t(A[[j]]) ,Z[, j],na.rm=na.rm),na.rm=na.rm))) *pm (t(A[[j]]), Z[,  j],na.rm=na.rm)  
 			       Y[, j] =pm( A[[j]], a[[j]],na.rm=na.rm) #Nouvelle estimation de j
 			
-#------------------ si on estime les données manquantes dans le cas où tau=1
-			      if(estimateNA %in% c("first","iterative"))
-			      {
-			   #    print(paste("block",j))
-			        for(k in 1:NCOL(A[[j]]))
-			        {
-			         
-			        
-			         # if(estimateNA=="first"){missing=is.na(A[[j]][,k])} # n'est valable qu'au premier
-			          if(estimateNA=="first"){missing=is.na(A0[[j]][,k])} # n'est valable qu'au premier
-			          #if(estimateNA=="iterative"){missing=is.na(A[[j]][,k])} 
-			           if(estimateNA=="iterative"){  missing=is.na(A0[[j]][,k])}
-			          if(sum(missing)>0)
-			          {
-			             #if(estimateNA=="first")
-			            #{
-			            #  A[[j]][missing,k]=a[[j]][k]*Z[missing,j];
-			            #  A[[j]][,k]=scale(A[[j]][,k])
-			            #}
-			            if(estimateNA=="first")
-			            {
-			              #A[[j]][missing,k]=a[[j]][k]*Z[missing,j];
-
-			              Ainter= A0[[j]][,k]
-			              Ainter[missing]=a[[j]][k]*Z[missing,j]
-			              if(j==1 && k==2) 
-			              {
-			             #  print("avant scaling observed")
-			              # print(A[[j]][!missing,k][1])
-			               print("avt scaling missing")
-			               print(Ainter[missing])
-			              }
-			              A[[j]][,k]=scale(Ainter)
-			              if(j==1&& k==2)
-			              {
-			               # print("apres scaling observed")
-			               # print(A[[j]][!missing,k][1])
-			                print("apres scaling missing")
-			                print(A[[j]][missing,k][1])
-			              }
-			             
-			              
-			            }
-			            if(estimateNA=="new")
-			            {
-			              ones=c(1,length(missing))
-			              K=diag(!missing)
-			              resol=solveLagrangien(K,w,x_obs,n)
-			              alpha=resol[1]
-			              mu=resol[2]
-			              lambda=resol[3]
-			              nu=resol[4]
-			              x_miss=(a[[j]][k]*Z[missing,j]+nu%*%ones)/lambda
-			              
-			            }
-			         
-			           if(estimateNA=="iterative")
-			           {
-			             A[[j]][missing,k]=scale(a[[j]][k]*Z[missing,j])
-			           } 
-			           # print("apres boucle")
-			           # print(A[[j]][!missing,k][1])
-			          }
-			         
-			        #A[[j]][,k]=scale(A[[j]][,k])
-			        #	 print( A[[j]][,k])
-			        }
-			        
-			     }
            }else
 			      { # si tau different de 1
               Z[, j] = rowSums(matrix(rep(C[j, ], n), n,  J, byrow = TRUE) * matrix(rep(dgx, n), n,  J, byrow = TRUE) * Y,na.rm=na.rm)
@@ -261,14 +191,8 @@ rgccak=function (A, C, tau = "optimal", scheme = "centroid", scale = TRUE,verbos
       crit[iter] <- sum(C * g(cov2(Y, bias = bias)),na.rm=na.rm)
       if (verbose & (iter%%1) == 0) 
       cat(" Iter: ", formatC(iter, width = 3, format = "d"), " Fit:", formatC(crit[iter], digits = 8, width = 10, format = "f"), " Dif: ", formatC(crit[iter] - crit_old, digits = 8, width = 10, format = "f"),   "\n")
-     # stopping_criteria = c(drop(crossprod(Reduce("c", mapply("-", a, a_old)))), crit[iter] - crit_old)
-      stopping_criteria =crit[iter]-crit_old
-      print(paste("new crit",crit[iter]))
-      print(paste("old_crit",crit_old))
-      if(stopping_criteria<0){print("The algorithm does not improve the criterion"); stopping_criteria=abs(stopping_criteria)}
- 
-      print(paste("stop",stopping_criteria))
-      print(tol)
+      stopping_criteria = c(drop(crossprod(Reduce("c", mapply("-", a, a_old)))), crit[iter] - crit_old)
+    
       if (any(stopping_criteria < tol) | (iter > 1000)) # critère d'arret de la boucle
           break
       crit_old = crit[iter]

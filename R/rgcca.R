@@ -124,7 +124,7 @@
 #' @export rgcca
 rgcca=function (A, C = 1 - diag(length(A)), tau = rep(1, length(A)),  ncomp = rep(1, length(A)), scheme = "centroid", scale = TRUE,   init = "svd", bias = TRUE, tol = 1e-08, verbose = TRUE,sameBlockWeight=TRUE,na.rm=TRUE,returnA=FALSE,estimateNA="no") 
 {
-  print("debut")
+
   shave.matlist <- function(mat_list, nb_cols) mapply(function(m,nbcomp) m[, 1:nbcomp, drop = FALSE], mat_list, nb_cols, SIMPLIFY = FALSE)
   shave.veclist <- function(vec_list, nb_elts) mapply(function(m, nbcomp) m[1:nbcomp], vec_list, nb_elts, SIMPLIFY = FALSE)
   A0=A
@@ -189,7 +189,7 @@ rgcca=function (A, C = 1 - diag(length(A)), tau = rep(1, length(A)),  ncomp = re
     ncomp=c(ncomp,ncomp[1])
     #tau=c(tau,0)
   }
-  print("debut2")
+
   AVE_X = list() 
   AVE_outer <- vector()
   ndefl <- ncomp - 1
@@ -214,12 +214,7 @@ rgcca=function (A, C = 1 - diag(length(A)), tau = rep(1, length(A)),  ncomp = re
  
     for (j in 1:J)
     {
-      print(dim(A[[j]]))
-      print(dim(Y[[j]]))
-      print("A")
-      print(head(A[[j]]))
-      print("y")
-      print(head(Y[[j]]))
+  
         AVE_X[[j]] = mean(cor(A[[j]], Y[[j]],use="pairwise.complete.obs")^2,na.rm=TRUE)#correlation moyenne entre le bloc et la composante (au carré)
     }
          AVE_outer <- sum(pjs * unlist(AVE_X))/sum(pjs) 
@@ -298,10 +293,6 @@ rgcca=function (A, C = 1 - diag(length(A)), tau = rep(1, length(A)),  ncomp = re
   }
   
   # ajout de na.rm et de use
-  print(dim(A[[j]]))
-  print(dim(Y[[j]]))
-  print(head(A[[j]]))
-  print(head(Y[[j]]))
   for (j in 1:J) AVE_X[[j]] = apply(cor(A[[j]], Y[[j]],use="pairwise.complete.obs")^2, 	2, mean,na.rm=TRUE)
   outer = matrix(unlist(AVE_X), nrow = max(ncomp))
   
@@ -311,8 +302,7 @@ rgcca=function (A, C = 1 - diag(length(A)), tau = rep(1, length(A)),  ncomp = re
   names(a)=names(A)
   AVE_X = shave.veclist(AVE_X, ncomp)
   AVE <- list(AVE_X = AVE_X, AVE_outer_model = AVE_outer, AVE_inner_model = AVE_inner)
-  
-  print("fin")
+
   if(returnA)
   {
     out <- list(Y = shave.matlist(Y, ncomp), a = shave.matlist(a,ncomp), astar = shave.matlist(astar, ncomp), C = C, tau = tau_mat, 

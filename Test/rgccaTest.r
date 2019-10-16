@@ -52,7 +52,6 @@ rgccaTest3
 # Checking new functionalities : Comparison of new rgcca 
 #---------------------------------------------------------------------
 #  Missing values
-
 data(Russett);
 X_agric =as.matrix(Russett[,c("gini","farm","rent")]);
 X_ind = as.matrix(Russett[,c("gnpr","labo")]);
@@ -77,9 +76,7 @@ A = list(X_agric, X_ind, X_polit);
 C = matrix(c(0, 0, 1, 0, 0, 1, 1, 1, 0), 3, 3);
 resultRgcca_nonScale_test = rgcca(A, C,ncomp=rep(2,3), tau = c(1, 1, 1), scheme = "factorial", scale = FALSE,verbose=FALSE);
 resultRgcca_nonScale  = RGCCA::rgcca(A, ncomp=rep(2,3),C, tau = c(1, 1, 1), scheme = "factorial", scale = FALSE,verbose=FALSE);
-rgccaTest4=all.equal(resultRgcca_nonScale ,resultRgcca_nonScale_test[1:10]);
-
-# other test
+# other tests
 data(Russett);
 X_agric =as.matrix(Russett[,c("gini","farm","rent")]);
 X_ind = as.matrix(Russett[,c("gnpr","labo")]);
@@ -91,7 +88,7 @@ A = list(X_agric, X_ind, X_polit);
 C = matrix(c(0, 0, 1, 0, 0, 1, 1, 1, 0), 3, 3);
 rgcca(A=A,ncomp=rep(2,3),scale=TRUE,sameBlockWeight=TRUE,tau= c(1, 1, 1),verbose=FALSE);
 
-
+# Checking axes
 X_agric =as.matrix(Russett[,c("gini","farm","rent")])
 X_ind = as.matrix(Russett[,c("gnpr","labo")])
 X_polit = as.matrix(Russett[ , c("demostab", "dictator")])
@@ -101,9 +98,8 @@ result.rgcca = RGCCA::rgcca(A, C, tau = c(1, 1, 1), scheme = "factorial", scale 
 head(as.matrix(scale(X_agric)*sqrt(47/46)/sqrt(3))%*%result.rgcca$a[[1]])
 head(result.rgcca$Y[[1]])
 # on retrouve bien le resultat...
+
 # avec RGCCA maintenant...
-namesFiles=dir("./R");
-sapply(namesFiles,function(x){source(paste0("./R/",x))});
 result.rgcca.test = rgcca(A, C, tau = c(1, 1, 1), scheme = "factorial", scale = TRUE,returnA=TRUE)
 head(as.matrix(scale(X_agric)*sqrt(47/46)/sqrt(3))%*%result.rgcca.test$a[[1]])
 head(result.rgcca.test$Y[[1]])
