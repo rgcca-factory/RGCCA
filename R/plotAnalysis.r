@@ -1,8 +1,10 @@
 plotAnalysis=function(listFinale,output="rv",fileName=NULL,ylim=NULL,block="all",barType="sd",namePlot=NULL,width=480,height=480)
 { #output : "rv", "pct" ou "a"
   #barType="sd" or "stdErr"
+    
+    # TODO: par(new=TRUE)
   if(is.null(namePlot)){namePlot=output}
-  graphics.off()
+  #graphics.off()
   if(!is.null(fileName)){png(paste(fileName,".png",sep=""),width=width,height=height)}
   nameData= names(listFinale)
   abscisse=as.numeric(substr(nameData,5,7));names(abscisse)=nameData

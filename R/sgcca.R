@@ -118,7 +118,7 @@ sgcca <- function (A, C = 1-diag(length(A)), c1 = rep(1, length(A)), ncomp = rep
   pjs <- sapply(A,NCOL)
   nb_ind <- NROW(A[[1]])
   AVE_X = list()
-  AVE_outer <- rep(NA,max(ncomp))  
+  AVE_outer <- rep(NA,max(ncomp))
   
   if ( any(ncomp < 1) ) stop("One must compute at least one component per block!")
   if (any(ncomp-pjs > 0)) stop("For each block, choose a number of components smaller than the number of variables!")
