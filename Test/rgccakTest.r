@@ -75,5 +75,5 @@ A[[1]][1,2]=NA
 A[[2]][c(3,4),]=NA
 C=matrix(1,3,3)-diag(3)
 A=lapply(A,scale2)
-rgccak(A,C,tau=c(1,1,1), scheme = "factorial", scale = TRUE)
-resRgccak=rgccak(A,C,tau=c(1,1,1), scheme = "factorial", scale = TRUE,estimateNA=TRUE)
+rgccak(A,C,tau=c(1,1,1), scheme = "factorial", scale = TRUE,verbose=TRUE)
+resRgccak=rgccak(A,C,tau=c(1,1,1), scheme = "factorial", scale = TRUE,estimateNA=TRUE,tol=1e-16,verbose=TRUE)
