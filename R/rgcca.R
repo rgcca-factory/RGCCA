@@ -132,8 +132,8 @@ rgcca=function (A, C = 1 - diag(length(A)), tau = rep(1, length(A)),  ncomp = re
   pjs <- sapply(A, NCOL) #nombre de variables par bloc
   nb_row <- NROW(A[[1]]) #nombre de lignes
   
-  # Verifications des commandes entrées par l'utilisateur
-  if (any(ncomp - pjs > 0))  # le nombre de composantes doit être inférieur au nombre de variables
+  # Verifications des commandes entrees par l'utilisateur
+  if (any(ncomp - pjs > 0))  # le nombre de composantes doit etre inferieur au nombre de variables
     stop("For each block, choose a number of components smaller than the number of variables!")
   if (mode(scheme) != "function") {
     if ((scheme != "horst") & (scheme != "factorial") & (scheme != 
@@ -147,7 +147,7 @@ rgcca=function (A, C = 1 - diag(length(A)), tau = rep(1, length(A)),  ncomp = re
   if (mode(scheme) == "function" & verbose) {
     cat("Computation of the RGCCA block components based on the g scheme \n")
   }
-  if (!is.numeric(tau) & verbose) { #tau peut etre estimé
+  if (!is.numeric(tau) & verbose) { #tau peut etre estime
     cat("Optimal Shrinkage intensity paramaters are estimated \n")
   }
   else {
@@ -164,7 +164,7 @@ rgcca=function (A, C = 1 - diag(length(A)), tau = rep(1, length(A)),  ncomp = re
     {
       A = lapply(A, function(x) x/sqrt(NCOL(x)))
     }
-    # on divise chaque bloc par la racine du nombre de variables pour avoir chaque poids pour le même bloc
+    # on divise chaque bloc par la racine du nombre de variables pour avoir chaque poids pour le meme bloc
   }
   if (scale == FALSE)
   { 
@@ -196,12 +196,12 @@ rgcca=function (A, C = 1 - diag(length(A)), tau = rep(1, length(A)),  ncomp = re
   N <- max(ndefl)
   nb_ind <- NROW(A[[1]])
   J <- length(A)
-  # si le nombre d'individu est inférieur au nombre de variables: primal, sinon dual
+  # si le nombre d'individu est inferieur au nombre de variables: primal, sinon dual
   primal_dual = rep("primal", J)
   primal_dual[which(nb_row < pjs)] = "dual"
   # cas ou le nombre de composantes
   if (N == 0) 
-  { # cas ou on n'a qu'un axe à calculer par bloc
+  { # cas ou on n'a qu'un axe a calculer par bloc
     
     result <- rgccak(A, C, tau = tau, scheme = scheme, init = init, bias = bias, tol = tol, verbose = verbose,na.rm=na.rm,estimateNA=estimateNA)
     if(estimateNA%in%c("iterative","first"))
@@ -220,7 +220,7 @@ rgcca=function (A, C = 1 - diag(length(A)), tau = rep(1, length(A)),  ncomp = re
       print(head(A[[j]]))
       print("y")
       print(head(Y[[j]]))
-        AVE_X[[j]] = mean(cor(A[[j]], Y[[j]],use="pairwise.complete.obs")^2,na.rm=TRUE)#correlation moyenne entre le bloc et la composante (au carré)
+        AVE_X[[j]] = mean(cor(A[[j]], Y[[j]],use="pairwise.complete.obs")^2,na.rm=TRUE)#correlation moyenne entre le bloc et la composante (au carre)
     }
          AVE_outer <- sum(pjs * unlist(AVE_X))/sum(pjs) 
     AVE <- list(AVE_X = AVE_X, AVE_outer = AVE_outer, AVE_inner = result$AVE_inner)
