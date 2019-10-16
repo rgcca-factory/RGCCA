@@ -9,3 +9,6 @@ Description: Multi-block data analysis concerns the analysis of several sets of 
 License: GPL (>= 2)
 Depends: MASS
 Packaged: 2013-07-24 16:36:37 UTC; arthur
+Suggests: 
+    testthat
+RoxygenNote: 6.1.1

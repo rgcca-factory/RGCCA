@@ -1,5 +1,5 @@
 readDataset=function(bloc=c("C","I","L","M","T"))
-{	# lit le fichier de données dans un repertoire qui contient les noms du bloc en csv
+{	# lit le fichier de donnees dans un repertoire qui contient les noms du bloc en csv
 	listMat=list()
 	for(i in 1:length(bloc))
 	{

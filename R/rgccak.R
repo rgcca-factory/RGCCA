@@ -35,15 +35,15 @@
 #' @importFrom graphics plot
 rgccak=function (A, C, tau = "optimal", scheme = "centroid", scale = TRUE,verbose = FALSE, init = "svd", bias = TRUE, tol = 1e-08,na.rm=TRUE,estimateNA="no") 
 {
-# A liste de matrices "blocs" dans un ordre précis (cf matrice connexion)
+# A liste de matrices "blocs" dans un ordre precis (cf matrice connexion)
 # C matrice de connexion, 
 # tau = 0 ou 1
 # scheme : fonction g
-# scale: transformations appliquées aux blocs
+# scale: transformations appliquees aux blocs
 # verbose : affichage
 # init : initialisation
-# biais : covariance estimée avec ou sans biais
-# tol: critère d'arret de l'algorithme
+# biais : covariance estimee avec ou sans biais
+# tol: critere d'arret de l'algorithme
  print("new version")
     if(mode(scheme) != "function") 
     {
@@ -61,12 +61,12 @@ rgccak=function (A, C, tau = "optimal", scheme = "centroid", scale = TRUE,verbos
     n <- NROW(A[[1]]) # nombre d'individus
     pjs <- sapply(A, NCOL) # nombre de variables par bloc
     Y <- matrix(0, n, J)
-    if (!is.numeric(tau)) # cas ou on estime le tau de manière intelligente (a creuser)
-        tau = sapply(A, tau.estimate) # d'après Schafer and Strimmer
+    if (!is.numeric(tau)) # cas ou on estime le tau de maniere intelligente (a creuser)
+        tau = sapply(A, tau.estimate) # d'apres Schafer and Strimmer
     a <- alpha <- M <- Minv <- K <- list() # initialisation variables internes
     which.primal <- which((n >= pjs) == 1) # on raisonne differement suivant la taille du bloc
     which.dual <- which((n < pjs) == 1)
-    if (init == "svd") { #initialisation intelligente dans les différents cas (a creuser)
+    if (init == "svd") { #initialisation intelligente dans les differents cas (a creuser)
         for (j in which.primal) {
             a[[j]] <- initsvd(A[[j]]) # pas la
 			
@@ -90,7 +90,7 @@ rgccak=function (A, C, tau = "optimal", scheme = "centroid", scale = TRUE,verbos
     }
    
     N = ifelse(bias, n, n - 1)
-	# premiers reglages avant la boucle : initialisation du premier Y (correspondant à la fonction à maximiser)
+	# premiers reglages avant la boucle : initialisation du premier Y (correspondant a la fonction a maximiser)
     for (j in which.primal) 
     {
      	 ifelse(tau[j] == 1,
@@ -102,16 +102,16 @@ rgccak=function (A, C, tau = "optimal", scheme = "centroid", scale = TRUE,verbos
            
         }, 
         {
-           # M[[j]] <- ginv(tau[j] * diag(pjs[j]) + ((1 - tau[j])/(N)) * (pm(t(A[[j]]) , A[[j]],na.rm=na.rm))) #calcul de la fonction à minimiser ?
+           # M[[j]] <- ginv(tau[j] * diag(pjs[j]) + ((1 - tau[j])/(N)) * (pm(t(A[[j]]) , A[[j]],na.rm=na.rm))) #calcul de la fonction a minimiser ?
          
             
             #-taking NA into account in the N
             nmat=ifelse(bias,t(!is.na(A[[j]]))%*%(!is.na(A[[j]])),t(!is.na(A[[j]]))%*%(!is.na(A[[j]]))-1)
             nmat[nmat==0]=NA
-            M[[j]] <- ginv(tau[j] * diag(pjs[j]) + ((1 - tau[j])) *nmat^(-1)* (pm(t(A[[j]]) , A[[j]],na.rm=na.rm))) #calcul de la fonction à minimiser ?
+            M[[j]] <- ginv(tau[j] * diag(pjs[j]) + ((1 - tau[j])) *nmat^(-1)* (pm(t(A[[j]]) , A[[j]],na.rm=na.rm))) #calcul de la fonction a minimiser ?
             #-----------------------
            
-            a[[j]] <- drop(1/sqrt(t(a[[j]])%*% M[[j]]%*%a[[j]]) )* ( M[[j]] %*% a[[j]]) # calcul premiere composante (à creuser)
+            a[[j]] <- drop(1/sqrt(t(a[[j]])%*% M[[j]]%*%a[[j]]) )* ( M[[j]] %*% a[[j]]) # calcul premiere composante (a creuser)
             Y[, j] <-pm( A[[j]] ,a[[j]],na.rm=na.rm) # projection du bloc sur la premiere composante
         })
     }
@@ -128,7 +128,7 @@ rgccak=function (A, C, tau = "optimal", scheme = "centroid", scale = TRUE,verbos
            #----taking NA into account in the N
             nmat=ifelse(bias,t(!is.na(A[[j]]))%*%(!is.na(A[[j]])),t(!is.na(A[[j]]))%*%(!is.na(A[[j]]))-1)
             nmat[nmat==0]=NA
-            M[[j]] <- tau[j] * diag(n) + ((1 - tau[j])) *nmat^(-1)* K[[j]] #calcul de la fonction à minimiser ?
+            M[[j]] <- tau[j] * diag(n) + ((1 - tau[j])) *nmat^(-1)* K[[j]] #calcul de la fonction a minimiser ?
             #-----------------------
             
              Minv[[j]] = ginv(M[[j]])
@@ -145,7 +145,7 @@ rgccak=function (A, C, tau = "optimal", scheme = "centroid", scale = TRUE,verbos
     Z = matrix(0, NROW(A[[1]]), J)
     a_old = a
     
-    dg = Deriv::Deriv(g, env = parent.frame())# on dérive la fonction g
+    dg = Deriv::Deriv(g, env = parent.frame())# on derive la fonction g
    
     repeat 
     { # on rentre dans la boucle a proprement parler
@@ -154,14 +154,14 @@ rgccak=function (A, C, tau = "optimal", scheme = "centroid", scale = TRUE,verbos
        for (j in which.primal)
       { # on parcourt les blocs pour estimer wj = a[[j]] : c'est le rouage de la pres
          
-          dgx = dg(cov2(Y[, j], Y, bias = bias))# covariance entre les différents blocs: dgx indique + - 1
+          dgx = dg(cov2(Y[, j], Y, bias = bias))# covariance entre les differents blocs: dgx indique + - 1
           if(tau[j] == 1)
           { # si tau = 1
              Z[, j] = rowSums(matrix(rep(C[j, ], n), n, J, byrow = TRUE) * matrix(rep(dgx, n), n, J, byrow = TRUE) * Y,na.rm=na.rm)
 		         a[[j]] = drop(1/sqrt(pm(pm(t(Z[, j]) ,A[[j]],na.rm=na.rm) ,  pm( t(A[[j]]) ,Z[, j],na.rm=na.rm),na.rm=na.rm))) *pm (t(A[[j]]), Z[,  j],na.rm=na.rm)  
 			       Y[, j] =pm( A[[j]], a[[j]],na.rm=na.rm) #Nouvelle estimation de j
 			
-#------------------ si on estime les données manquantes dans le cas où tau=1
+#------------------ si on estime les donnees manquantes dans le cas ou tau=1
 			      if(estimateNA %in% c("first","iterative"))
 			      {
 			   #    print(paste("block",j))
@@ -269,7 +269,7 @@ rgccak=function (A, C, tau = "optimal", scheme = "centroid", scale = TRUE,verbos
  
       print(paste("stop",stopping_criteria))
       print(tol)
-      if (any(stopping_criteria < tol) | (iter > 1000)) # critère d'arret de la boucle
+      if (any(stopping_criteria < tol) | (iter > 1000)) # critere d'arret de la boucle
           break
       crit_old = crit[iter]
       a_old <- a

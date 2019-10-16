@@ -6,11 +6,14 @@ test_that("test_pm",{
     set.seed(34); B=matrix(rnorm(20),5,4)
     
     # loading the new function output
-    T1=Sys.time();pmToGet=A%*%B;T2=Sys.time(); Tdiff1=T2-T1
-    T1=Sys.time();pmRes=pm(A,B);T2=Sys.time();Tdiff2=T2-T1
+    pmToGet=A%*%B;
+    pmRes=pm(A,B);
     # testing the same results than previously
     all.equal(pmToGet,pmRes)
-    Tdiff2-Tdiff1       
+    expect_true(all.equal(pmToGet,pmRes))
+})
+
+test_that("test_pmNA",{
     # loading the new function output
     A[3,5]=0
     B[1,1]=0

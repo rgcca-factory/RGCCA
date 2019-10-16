@@ -15,7 +15,7 @@
 pm=function(M1,M2,na.rm=TRUE)
 {
   M1b=as.matrix(M1); M2b=as.matrix(M2)
-  if(dim(M1b)[2]!=dim(M2b)[1]){stop("matrices should have a number of rows/culumns compatible with matricial product")}
+  if(dim(M1b)[2]!=dim(M2b)[1]){stop("matrices should have a number of rows/columns compatible with matricial product")}
   
   if(na.rm)
   {

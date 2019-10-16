@@ -186,7 +186,7 @@ while (continue)
       w1=w[,1]
       gamma=apply(scaledConcatenedBlocks, 1, function(x) lm(x~0+w)$coefficients[1])
       #=t(as.matrix(w))%*%t(scaledConcatenedBlocks)/sum(w*w)
-      # sigma est la somme des résidus
+      # sigma est la somme des residus
       residuals=apply(scaledConcatenedBlocks, 1, function(x) (lm(x~0+w)$residuals))
       sigma=sqrt(sum(residuals^2/(J*nsuj)))
       centeredXhat=gamma%*%t(w)
