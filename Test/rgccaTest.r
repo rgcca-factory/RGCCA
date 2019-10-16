@@ -115,13 +115,23 @@ Aref=lapply(A,scale)
 A[[1]][1,2]=NA
 A[[2]][c(3,4,5),]=NA
 A[[3]][c(6:10),]=NA
+
 C=matrix(1,3,3)-diag(3)
-result.rgcca.test = rgcca(A, C, tau = c(1, 1, 1), ncomp=rep(1,3),scheme = "factorial", scale = TRUE,returnA=TRUE,estimateNA=FALSE)
-result.rgcca.test = rgcca(A, C, tau = c(1, 1, 1), ncomp=rep(1,3),scheme = "factorial", scale = TRUE,returnA=TRUE,estimateNA=TRUE)
+result.rgcca.test1 = rgcca(A, C, tau = c(1, 1, 1), ncomp=rep(1,3),scheme = "factorial", scale = TRUE,returnA=TRUE,estimateNA="iterative",sameBlockWeight=FALSE,tol=1e-20)
+result.rgcca.test2 = rgcca(A, C, tau = c(1, 1, 1), ncomp=rep(1,3),scheme = "factorial", scale = TRUE,returnA=TRUE,estimateNA="first",sameBlockWeight=FALSE,tol=1e-20)
+plot(result.rgcca.test2$crit)
+result.rgcca.test1$a[[1]]
+result.rgcca.test2$a[[1]] # les valeurs manquantes explosent sans contrainte
+result.rgcca.ref $a[[1]]
+result.rgcca.ref = rgcca(Aref, C, tau = c(1, 1, 1), ncomp=rep(1,3),scheme = "factorial", scale = TRUE,returnA=TRUE,estimateNA="no",sameBlockWeight=FALSE,tol=1e-20)
 result.rgcca.test$imputedA[[1]][1,2]
 Aref[[2]][c(3,4,5),]
 result.rgcca.test$imputedA[[2]][3:5,]
 Aref[[3]][c(6:10),]
 result.rgcca.test$imputedA[[3]][c(6:10),]
 
+result.rgcca.nipals = rgcca(A, C, tau = c(1, 1, 1), ncomp=rep(1,3),scheme = "factorial", scale = TRUE,returnA=TRUE,estimateNA=FALSE,na.rm=TRUE)
 
+data.frame(Reduce("rbind",result.rgcca.ref$a),
+Reduce("rbind",result.rgcca.nipals$a),
+Reduce("rbind",result.rgcca.test$a))
