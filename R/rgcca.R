@@ -122,7 +122,7 @@
 #' text(result.rgcca$Y[[1]], result.rgcca$Y[[2]], Russett[, 1], col = lab)
 #' text(Ytest[, 1], Ytest[, 2], substr(Russett[, 1], 1, 1), col = lab)
 #' @export rgcca
-rgcca=function (A, C = 1 - diag(length(A)), tau = rep(1, length(A)),  ncomp = rep(1, length(A)), scheme = "centroid", scale = TRUE,   init = "svd", bias = TRUE, tol = 1e-08, verbose = TRUE,sameBlockWeight=TRUE,na.rm=TRUE,returnA=FALSE,estimateNA=FALSE) 
+rgcca=function (A, C = 1 - diag(length(A)), tau = rep(1, length(A)),  ncomp = rep(1, length(A)), scheme = "centroid", scale = TRUE,   init = "svd", bias = TRUE, tol = 1e-08, verbose = TRUE,sameBlockWeight=TRUE,na.rm=TRUE,returnA=FALSE,estimateNA="no") 
 {
   print("debut")
   shave.matlist <- function(mat_list, nb_cols) mapply(function(m,nbcomp) m[, 1:nbcomp, drop = FALSE], mat_list, nb_cols, SIMPLIFY = FALSE)
@@ -157,14 +157,9 @@ rgcca=function (A, C = 1 - diag(length(A)), tau = rep(1, length(A)),  ncomp = re
   }
   if (scale == TRUE) 
   {
-    if(estimateNA)
-    {
-      A = lapply(A, function(x) scale2(x,scale=TRUE, bias = bias)) # le biais indique si on recherche la variance biaisee ou non
-    }
-    else
-    {
-      A = lapply(A, function(x) scale2(x,scale=TRUE, bias = bias)) # le biais indique si on recherche la variance biaisee ou non
-    }
+    
+     A = lapply(A, function(x) scale2(x,scale=TRUE, bias = bias)) # le biais indique si on recherche la variance biaisee ou non
+    
     if(sameBlockWeight)
     {
       A = lapply(A, function(x) x/sqrt(NCOL(x)))
@@ -173,18 +168,13 @@ rgcca=function (A, C = 1 - diag(length(A)), tau = rep(1, length(A)),  ncomp = re
   }
   if (scale == FALSE)
   { 
-    if(estimateNA)
-    {
-      
-    }
-    else
-    {
+  
       A = lapply(A, function(x) scale2(x, scale=FALSE, bias = bias)) 
       if(sameBlockWeight)
       {
         A = lapply(A, function(x) {covarMat=cov2(x,bias=bias);varianceBloc=sum(diag(covarMat)); return(x/sqrt(varianceBloc))})
       }      
-    }
+    
 
   }
 
@@ -196,8 +186,8 @@ rgcca=function (A, C = 1 - diag(length(A)), tau = rep(1, length(A)),  ncomp = re
     C[length(A),1:(length(A)-1)]=1
     C[1:(length(A)-1),length(A)]=1
     pjs=c(pjs,sum(pjs))
-    ncomp=c(ncomp,1)
-    tau=c(tau,0)
+    ncomp=c(ncomp,ncomp[1])
+    #tau=c(tau,0)
   }
   print("debut2")
   AVE_X = list() 
@@ -214,7 +204,7 @@ rgcca=function (A, C = 1 - diag(length(A)), tau = rep(1, length(A)),  ncomp = re
   { # cas ou on n'a qu'un axe à calculer par bloc
     
     result <- rgccak(A, C, tau = tau, scheme = scheme, init = init, bias = bias, tol = tol, verbose = verbose,na.rm=na.rm,estimateNA=estimateNA)
-    if(estimateNA)
+    if(estimateNA%in%c("iterative","first"))
     {
       A<-result$A
     }
@@ -241,7 +231,7 @@ rgcca=function (A, C = 1 - diag(length(A)), tau = rep(1, length(A)),  ncomp = re
       colnames(Y[[b]]) = "comp1"
     }
     out <- list(Y = Y, a = a, astar = a, C = C, tau = result$tau,  scheme = scheme, ncomp = ncomp, crit = result$crit, primal_dual = primal_dual, AVE = AVE,A=A0)
-    if(estimateNA){out[["imputedA"]]=A}
+    if(estimateNA %in% c("iterative","first")){out[["imputedA"]]=A}
     
     class(out) <- "rgcca"
     

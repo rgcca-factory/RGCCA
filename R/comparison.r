@@ -11,6 +11,7 @@
 #' @title comparison of two RGCCA results
 #' @examples 
 #'  data();...
+#'  
 
 comparison=function(rgcca1,rgcca2,nAxe=1,selec=10,selectPatient=NULL,indNA=NULL)
 {
