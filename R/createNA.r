@@ -5,7 +5,6 @@
 #' @param nAllRespondant If the option "ponc" is chosen,nAllRespondant corresponds to the number of complete individuals required
 #' @return \item{A}{a list of NA}
 #' @title Create a list with missing data (for simulation)
-#' @export scale2
 
 createNA=function(A,option="block",pNA=0.1,nAllRespondants=4,output="list")
 {

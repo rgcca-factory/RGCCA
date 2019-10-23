@@ -1,16 +1,19 @@
-
 #'Plots the impact of increasing missing data on RGCCA
-#'
-#'#'
-#' @param listFinale
-#' @param output="rv"
-#' @param fileName=NULL
-#' @param ylim=c(0.8,1)
-#' @param block="all"
-#' @param barType="sd"
-#' @param namePlot=NULL
-#' @param width=480
-#' @param height=480
+#' @param listFinale A list resulting of naEvolution
+#' @param output="rv": Can be also "a" for correlations between axes, "bm" for the percent of similar biomarkers, "rvComplete" if the RV is calculated only on complete dataset, or "rmse" for Root Mean Squares Error.
+#' @param fileName=NULL name of the file where the plot is saved
+#' @param ylim=c(0.8,1) y limits
+#' @param block="all" or a number indicating the position of the chosen block in the initial list
+#' @param barType="sd" or "stderr". Indicates which error bar to build
+#' @param namePlot=NULL Name of the file
+#' @param width=480 width of the saved file
+#' @param height=480 height of the saved file
+#' @examples 
+#' set.seed(42);X1=matrix(rnorm(350),70,5);X2=matrix(rnorm(280),70,4)
+#' A=list(X1,X2)
+#' listResults=naEvolution(refData=A,prctNA=c(0.1,0.2,0.3,0.4),
+#' listMethods=c("mean","complete","nipals","knn4"))
+#' plotEvol(listFinale=listResults,ylim=c(0,1),output="a")
 
 plotEvol=function(listFinale,output="rv",fileName=NULL,ylim=NULL,block="all",barType="sd",namePlot=NULL,width=480,height=480)
 { #output : "rv", "pct" ou "a"

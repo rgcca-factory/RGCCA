@@ -2,7 +2,7 @@
 #' Only one component per block for the time being
 #' 
 #' 
-#' @param A A list that contains the J blocks of variables \mathbf{X_1}, \mathbf{X_2}, ..., \mathbf{X_J}
+#' @param A A list that contains the J blocks of variables X_1, X_2, ..., X_J
 #' @param c1s A matrix containing sets of constraint variables, one row by set. If null, sgcca.permute takes 10 sets between min values ($1/sqrt(ncol)$) and 1
 #' @param nperm Number of permutation tested for each set of constraint
 #' @param C A design matrix that describes the relationships between blocks (default: complete design)
@@ -10,12 +10,12 @@
 #' @param plot A logical, should a plot of coeffi
 #' @param n_cores For linux and MacOS number of cores used for parallelisation
 #' @param ncomp Number of component computed for each block
-#' @value A list containing :
-#' @value \item {pval}
-#' @value \item {zstat}
-#' @value \item {bestpenalties}
-#' @value \item {permcrit} 
-#' @value \item {crit}
+#' @return A list containing :
+#' @return \item{pval}{Pvalue}
+#' @return \item{zstat}{Statistic Z}
+#' @return \item{bestpenalties}{Penalties corresponding to the best Z-statistic}
+#' @return \item{permcrit}{RGCCA criteria obtained with permutation set}
+#' @return \item{crit}{ RGCCA criterion for the original dataset}
 #' @examples
 #' library(RGCCA)
 #' library(PMA)

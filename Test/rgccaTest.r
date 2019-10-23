@@ -83,7 +83,7 @@ rgccaTest4=all.equal(resultRgcca_nonScale ,resultRgcca_nonScale_test[1:10]);
 data(Russett);
 X_agric =as.matrix(Russett[,c("gini","farm","rent")]);
 X_ind = as.matrix(Russett[,c("gnpr","labo")]);
-X_polit = as.matrix(Russett[ , c("demostab", "dictatur")]);
+X_polit = as.matrix(Russett[ , c("demostab", "dictator")]);
 X_agric[c(2,4),]=NA;
 X_ind[1,]=NA;
 X_polit[5,1]=NA;
@@ -118,7 +118,11 @@ A[[3]][c(6:10),]=NA
 
 C=matrix(1,3,3)-diag(3)
 result.rgcca.test1 = rgcca(A, C, tau = c(1, 1, 1), ncomp=rep(1,3),scheme = "factorial", scale = TRUE,returnA=TRUE,estimateNA="iterative",sameBlockWeight=FALSE,tol=1e-20)
-result.rgcca.test2 = rgcca(A, C, tau = c(1, 1, 1), ncomp=rep(1,3),scheme = "factorial", scale = TRUE,returnA=TRUE,estimateNA="first",sameBlockWeight=FALSE,tol=1e-20)
+result.rgcca.test2 = rgcca(A, C=, tau = c(1, 1, 1), ncomp=rep(1,3),scheme = "factorial", scale = TRUE,returnA=TRUE,estimateNA="first",sameBlockWeight=FALSE,tol=1e-20)
+result.rgcca.test3 = rgcca(A, C="superblock", tau = c(1, 1, 1), ncomp=rep(1,3),scheme = "factorial", scale = TRUE,returnA=TRUE,estimateNA="superblock",sameBlockWeight=FALSE,tol=1e-20)
+result.rgcca.test1 = rgcca(A, C, tau = c(1, 1, 1), ncomp=rep(1,3),scheme = "factorial", scale = TRUE,returnA=TRUE,estimateNA="iterative",sameBlockWeight=FALSE,tol=1e-20,verbose=TRUE)
+result.rgcca.test1 = rgcca(A, C, tau = c(1, 1, 1), ncomp=rep(1,3),scheme = "factorial", scale = TRUE,returnA=TRUE,estimateNA="iterative",sameBlockWeight=FALSE,tol=1e-6,verbose=TRUE)
+
 plot(result.rgcca.test2$crit)
 result.rgcca.test1$a[[1]]
 result.rgcca.test2$a[[1]] # les valeurs manquantes explosent sans contrainte

@@ -2,7 +2,6 @@
 #'
 #'This method is used for the implementation of EM algorithm for missing data
 #'
-#' @param A A list of J blocks
 #' @param A A matrix with J dimensions (to be changed for superblock ?)
 #' @param tau A vector of tau values with the same length as A
 #' @param ni An integer for the maximal number of iterations before convergence
@@ -15,14 +14,14 @@
 #' @param scheme scheme chosene for RGCCA (is not useful when superblock=TRUE)
 #'  @param bias A logical value indicating if variance should be biased or not
 #' @param superblock Boolean, if TRUE, the missing values are estimated with the superblock
-#' @return \item{A} A list of blocks imputed
-#' @return \item{stab} Convergence criterion : abs(1-obj_k/obj_{k-1})
-#' @return \item{obj} Vector containing the mean square error between the predict values and the original non missing values at each iteration
-#'@return \item{crit} RGCCA criterion
-#'@return \item{moy} Estimated mean obtained for each variable  (required for the addNoise function)
-#'@return \item{stdev} Estimated standard deviations of each variable obtained  (required for the addNoise function)
-#'@return \item{sigma}Estimated standard deviations for the noise obtained  (required for the addNoise function)
-#'@return \item{indNA} Position of missing values
+#' @return \item{A}{A list of blocks imputed}
+#' @return \item{stab}{Convergence criterion : abs(1-obj_k/obj_{k-1})}
+#' @return \item{obj}{Vector containing the mean square error between the predict values and the original non missing values at each iteration}
+#'@return \item{crit}{RGCCA criterion}
+#'@return \item{moy}{Estimated mean obtained for each variable  (required for the addNoise function)}
+#'@return \item{stdev}{Estimated standard deviations of each variable obtained  (required for the addNoise function)}
+#'@return \item{sigma}{Estimated standard deviations for the noise obtained  (required for the addNoise function)}
+#'@return \item{indNA}{Position of missing values}
 
 #' @title imputeSB: impute with superblock method
 #' @examples
@@ -39,7 +38,10 @@ imputeEM = function(A,
                     sameBlockWeight = TRUE,
                     scheme = "centroid",
                     bias = TRUE,
-                    superblock = FALSE)
+                    superblock = FALSE,
+                    noise=FALSE,
+                    verbose=FALSE,
+                    tolEM=1e-3)
 {
   #listWithoutNA
   nvar = sapply(A, NCOL)
@@ -51,6 +53,7 @@ imputeEM = function(A,
     return(which(is.na(x), arr.ind = TRUE))
   })
   # Imputing Alist by the mean
+  #----------------------------
   Alist = lapply(A, function(X) {
     if (is.list(X)) {
       X = as.matrix(X)
@@ -81,7 +84,7 @@ imputeEM = function(A,
   
   
   # Normalize the blocks
-  scaledConcatenedBlocks = scale2(concatenedBlocks, scale = scale, bias = TRUE)
+  scaledConcatenedBlocks = scale2(concatenedBlocks, scale = scale, bias = FALSE)
   
   # calculating the D matrix with the weight by number of variables in each block
   # D=matrix(1,dim(concatened
@@ -97,7 +100,6 @@ imputeEM = function(A,
 #
 # initialization
 i=1
-
 diff=objective=old=criterion=list()
 criterionFinal=objectiveFinal=list()
 continue=TRUE
@@ -109,7 +111,6 @@ if(superblock)
 {
   C2=matrix(1,J+1,J+1);C2[1:J,1:J]=0; C2[J+1,J+1]=0
   tau2=c(tau,0) # mode A for the blocks and mode B for superblock (design for CPCA2 )
-  
 }
 while (continue)
 {
@@ -125,27 +126,24 @@ while (continue)
                       ncomp = ncomp2,
                       scheme = "factorial",
                       scale = scale, init = "svd",
-                      verbose = FALSE, tol = tol,sameBlockWeight=sameBlockWeight)
+                      verbose = verbose, tol = tol,sameBlockWeight=FALSE,returnA=TRUE)
     
   }
   if(!superblock)
   {
-    fit.rgcca = rgcca(A=Alist, tau = tau,C=C,
+   fit.rgcca = rgcca(A=Alist, tau = tau,C=C,
                       ncomp = ncomp,
                       scheme = scheme,
                       scale = scale, init = "svd",
-                      verbose = FALSE, tol = tol,sameBlockWeight=sameBlockWeight)
+                      verbose = verbose, tol = tol,sameBlockWeight=sameBlockWeight,returnA=TRUE)
   }
-  
-  
-  # si on veut le critere comme somme des deux composantes
   
   # Criteria for one component only
   if(naxis==1)
   {
     critRGCCA=c(critRGCCA,fit.rgcca$crit[[1]][1])
   }
-  # Criteria for one component only
+  # Criteria for two component only
   #  if(naxis==2)
   #  {
   #    critRGCCA=c(critRGCCA,fit.rgcca$crit[[1]][1]+fit.rgcca$crit[[2]][1])
@@ -160,29 +158,30 @@ while (continue)
   {
     # Getting back the global weights
     w = fit.rgcca$astar[[J+1]]
-    moy = matrix(attr(scaledConcatenedBlocks, "scaled:center"), nrow = NROW(scaledConcatenedBlocks), ncol=sum(nvar), byrow = TRUE)
-    stdev = matrix(attr(scaledConcatenedBlocks, "scaled:scale"),
-                   nrow = NROW(scaledConcatenedBlocks),ncol=sum(nvar), byrow = TRUE)
-    
+   # moy = matrix(attr(scaledConcatenedBlocks, "scaled:center"), nrow = NROW(scaledConcatenedBlocks), ncol=sum(nvar), byrow = TRUE)
+   # stdev = matrix(attr(scaledConcatenedBlocks, "scaled:scale"),
+   #                nrow = NROW(scaledConcatenedBlocks),ncol=sum(nvar), byrow = TRUE)
+    A0SB=scale2(fit.rgcca$A[[J+1]],scale=scale,bias=FALSE)
+    moy=matrix(attr(A0SB, "scaled:center"),nrow=NROW(A0SB),ncol=NCOL(A0SB),byrow=TRUE)
+    stdev=matrix(attr(A0SB, "scaled:scale"),nrow=NROW(A0SB),ncol=NCOL(A0SB),byrow=TRUE)
     # TO DO for more than two components required
-    if(naxis>1)
-    {
-      gamma=NULL
-      sigma=NULL
-      for(k in 1:naxis)
-      { # regression of the relevant block on the y
-        gamma=cbind(gamma,apply(scaledConcatenedBlocks, 1, function(x) lm(x~0+w[,k])$coefficients[1]))
-        residuals=apply(scaledConcatenedBlocks, 1, function(x) (lm(x~0+w)$residuals))
-        sigma=cbind(sigma,sqrt(sum(residuals^2/(J*nsuj))))
-        # if(noise){eps=matrix(rnorm(dim(moy)[1]*dim(moy)[2],m=0,sd=sigma),nrow=dim(moy)[1],ncol=dim(moy)[2])}else{eps=0}
-      }
-      Xhat =(gamma%*%t(w))*stdev + moy
-      concatenedXhat= Xhat
-    }
+    #if(naxis>1)
+    #{
+    #  gamma=NULL
+    #  sigma=NULL
+      # for(k in 1:naxis)
+      # { # regression of the relevant block on the y
+      #   gamma=cbind(gamma,apply(scaledConcatenedBlocks, 1, function(x) lm(x~0+w[,k])$coefficients[1]))
+      #   residuals=apply(scaledConcatenedBlocks, 1, function(x) (lm(x~0+w)$residuals))
+      #   sigma=cbind(sigma,sqrt(sum(residuals^2/(J*nsuj))))
+      #   # if(noise){eps=matrix(rnorm(dim(moy)[1]*dim(moy)[2],m=0,sd=sigma),nrow=dim(moy)[1],ncol=dim(moy)[2])}else{eps=0}
+      # }
+      # Xhat =(gamma%*%t(w))*stdev + moy
+      # concatenedXhat= Xhat
+    #}
     # if only 1 component is required
     if(naxis==1)
     {
-      
       w1=w[,1]
       gamma=apply(scaledConcatenedBlocks, 1, function(x) lm(x~0+w)$coefficients[1])
       #=t(as.matrix(w))%*%t(scaledConcatenedBlocks)/sum(w*w)
@@ -191,14 +190,8 @@ while (continue)
       sigma=sqrt(sum(residuals^2/(J*nsuj)))
       centeredXhat=gamma%*%t(w)
       #print(dim(centeredXhat))
-      #if(noise){eps=matrix(rnorm(dim(moy)[1]*dim(moy)[2],m=0,sd=sigma),nrow=dim(moy)[1],ncol=dim(moy)[2])}else{eps=0}
-      Xhat =(centeredXhat)*stdev + moy
-      print("sd")
-      print(stdev[1,1:5])
-      print("moy")
-      print(moy[1,1:5])
-      print(Xhat[1:5,1:5])
-      
+      if(noise){eps=matrix(rnorm(dim(moy)[1]*dim(moy)[2],m=0,sd=sigma),nrow=dim(moy)[1],ncol=dim(moy)[2])}else{eps=0}
+      Xhat =(centeredXhat+eps)*stdev + moy
       concatenedCenteredXhat=centeredXhat
       concatenedXhat= Xhat
     }
@@ -213,21 +206,31 @@ while (continue)
     {
       w = fit.rgcca$astar[[j]]
       w=w[,1:naxis]
-      moy[[j]] = matrix(attr(scaledConcatenedBlocks, "scaled:center")[debutBlock[j]:finBlock[j]],
-                        nrow = NROW(scaledConcatenedBlocks), ncol=length(debutBlock[j]:finBlock[j]), byrow = TRUE)
-      stdev[[j]]  = matrix(attr(scaledConcatenedBlocks, "scaled:scale")[debutBlock[j]:finBlock[j]],
-                           nrow = NROW(scaledConcatenedBlocks),ncol=length(debutBlock[j]:finBlock[j]), byrow = TRUE)
+      # Calculations of mean and standard deviations
+      #moy[[j]] = matrix(attr(scaledConcatenedBlocks, "scaled:center")[debutBlock[j]:finBlock[j]],
+       #                 nrow = NROW(scaledConcatenedBlocks), ncol=length(debutBlock[j]:finBlock[j]), byrow = TRUE)
+      #stdev[[j]]  = matrix(attr(scaledConcatenedBlocks, "scaled:scale")[debutBlock[j]:finBlock[j]],
+       #                    nrow = NROW(scaledConcatenedBlocks),ncol=length(debutBlock[j]:finBlock[j]), byrow = TRUE)
+         
       
-      if(naxis==1)
+  
+      
+      A0J=scale2(fit.rgcca$A[[j]],scale=scale, bias=FALSE)
+      moy[[j]]= matrix(attr(A0J, "scaled:center"),
+                       nrow = NROW(A0J), ncol=NCOL(A0J), byrow = TRUE)
+      if(scale)
+      {stdev[[j]]=matrix(attr(A0J, "scaled:scale"),
+                        nrow = NROW(A0J), ncol=NCOL(A0J), byrow = TRUE) }
+        else{stdev[[j]]=1}   
+       if(naxis==1)
       {
         gamma=apply(scaledConcatenedBlocks[,debutBlock[j]:finBlock[j]], 1, function(x) lm(x~0+w)$coefficients[1])
         residuals=apply(scaledConcatenedBlocks[,debutBlock[j]:finBlock[j]], 1, function(x) (lm(x~0+w)$residuals))
         sigma[[j]]=sqrt(sum(residuals^2/(J*nsuj)))
-        
         # mean and standard deviation of each variables are saved
         centeredXhat[[j]]=matrix(gamma,ncol=naxis)%*%matrix(w,nrow=naxis)
-        #if(noise){eps=matrix(rnorm(dim(moy)[1]*dim(moy)[2],m=0,sd=sigma),nrow=dim(moy)[1],ncol=dim(moy)[2])}else{eps=0}
-        Xhat[[j]] = (centeredXhat[[j]])*stdev[[j]]  + moy[[j]]
+        if(noise){eps=matrix(rnorm(dim(moy)[1]*dim(moy)[2],m=0,sd=sigma[[j]]),nrow=dim(moy)[1],ncol=dim(moy)[2])}else{eps=0}
+        Xhat[[j]] = (centeredXhat[[j]]+eps)*stdev[[j]]  + moy[[j]]
       }
       # if(naxis>1)
       # {
@@ -247,7 +250,7 @@ while (continue)
   
   # concatened blocks is imputed by concatenedXhat  and Alist, concatenedBlocks and  scaledConcatenedBlock are reaffected
   concatenedBlocks[indNA] = concatenedXhat[indNA]
-  scaledConcatenedBlocks = scale2(concatenedBlocks, scale=scale,bias = TRUE)
+  scaledConcatenedBlocks = scale2(concatenedBlocks, scale=scale,bias = FALSE)
   
   # Criteria of convergence are calculated
   #----------------------------------------
@@ -259,11 +262,11 @@ while (continue)
   old[[i+1]] <- objective[[i]]
   if (!is.nan(criterion[[i]]))
   {
-    if (criterion[[i]] < tol && (i > 2) )
+    if (criterion[[i]] < tolEM && (i > 2) )
     {
       continue <- FALSE
     }
-    if(objective[[i]]<tol)
+    if(objective[[i]]<tolEM)
     {
       continue=FALSE
       if ( verbose)
@@ -277,14 +280,14 @@ while (continue)
     continue <- FALSE
     warning(paste("The RGCCA imputation algorithm did not converge after ", ni, " iterations"))
   }
-  print(objective[[i]])
-  print(criterion[[i]])
+ # print(objective[[i]])
+ # print(criterion[[i]])
   
   # When the algorithm stops, some noise can be added to the model
   #----------------------------------------------------------------
   
   i<- i + 1
-  print(i)
+  print(paste0("iteration in EM algo:",i))
   # Reaffecting Alist
   #----------------------
   Alist=list()
@@ -310,5 +313,7 @@ if(graph)
   plot(critRGCCA, xlab = "iteration", ylab = "RGCCA criterion",pch=16)
   dev.off()
 }
+
 return(list(A=Alist,crit=unlist(critRGCCA),stab=unlist(criterion),obj=unlist(objective),stdev=stdev,sigma=sigma,moy=moy,indNA=indNA2))
+
 }

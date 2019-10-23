@@ -12,3 +12,6 @@ Packaged: 2013-07-24 16:36:37 UTC; arthur
 Suggests: 
     testthat
 RoxygenNote: 6.1.1
+Imports: 
+    nnet,
+    parallel

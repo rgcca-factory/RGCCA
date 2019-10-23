@@ -8,24 +8,24 @@
 # scale_size_bloc : A boolean giving the possibility to scale the blocks by the square root of their column number
 # bigA : to permeform data reduction for cross-validation, the dataset where A and newA were extracted
 # Examples
-library(RGCCA)
-data("Russett")
-blocks = list(
-agriculture = Russett[, 1:3],
-industry = Russett[, 4:5],
-politic = Russett[, 6:11]
-)
-C = connection = matrix(c(0, 0, 1,
-0, 0, 1,
-1, 1, 0),
-3, 3)
-A = lapply(blocks, function(x) x[1:32,])
-A = lapply(A, function(x) scale2 (x, bias = TRUE) / sqrt(NCOL(x)) )
-object = sgcca(A, C = C, c1 = c(0.7,0.8,0.7), ncomp = c(3,2,4), verbose = F)
-newA = lapply(blocks, function(x) x[-c(1:32),])
-newA = lapply( newA, function(x) x[, sample(1:NCOL(x))] )
-newA = sample(newA, length(newA))
-bloc_to_pred = "industry"
+# library(RGCCA)
+# data("Russett")
+# blocks = list(
+# agriculture = Russett[, 1:3],
+# industry = Russett[, 4:5],
+# politic = Russett[, 6:11]
+# )
+# C = connection = matrix(c(0, 0, 1,
+# 0, 0, 1,
+# 1, 1, 0),
+# 3, 3)
+# A = lapply(blocks, function(x) x[1:32,])
+# A = lapply(A, function(x) scale2 (x, bias = TRUE) / sqrt(NCOL(x)) )
+# object = sgcca(A, C = C, c1 = c(0.7,0.8,0.7), ncomp = c(3,2,4), verbose = F)
+# newA = lapply(blocks, function(x) x[-c(1:32),])
+# newA = lapply( newA, function(x) x[, sample(1:NCOL(x))] )
+# newA = sample(newA, length(newA))
+# bloc_to_pred = "industry"
 # y.train = kmeans(A[[bloc_to_pred]], 3)$cluster
 # y.test = kmeans(newA[[bloc_to_pred]], 3)$cluster
 # ( res  = predict.gcca(object, A, newA, "regression", "lm", "industry", bigA = blocks) )

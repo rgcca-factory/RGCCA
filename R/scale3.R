@@ -6,7 +6,7 @@
 #' @param center if TRUE, all variables are centered
 #' @param scale if TRUE, all variables are scaled
 #' @param bias if TRUE, the estimator of variance is SS/sqrt(n-1), if FALSE, it is SS/sqrt(n)
-#' @return \item{A} The resulting list of matrices
+#' @return \item{A}{The resulting list of matrices}
 #' @title scale3
 #' @examples 
 #'  data();...

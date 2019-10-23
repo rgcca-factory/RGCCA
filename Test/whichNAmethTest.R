@@ -40,6 +40,7 @@ plotAnalysis(resultComparison,output="rv",fileName=NULL,block="all",barType="sd"
 plotAnalysis(resultComparison,output="rvComplete",fileName=NULL,block="all",barType="sd",namePlot=NULL,width=480,height=480,ylim=NULL)
 plotAnalysis(listFinale=resultComparison,output="a",fileName=NULL,block="all",barType="sd",namePlot=NULL,width=480,height=480,ylim=c(0.95,1))
 plotAnalysis(listFinale=resultComparison,output="bm",fileName=NULL,block="all",barType="sd",namePlot=NULL,width=480,height=480,ylim=c(0,1))
+resultComparison=whichNAmethod(A,listMethods=c("nipals","em"),patternNA=rep(0.1,3),tol=1e-3)
 
 #-----------------
 # test on biosca

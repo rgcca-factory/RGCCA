@@ -4,6 +4,7 @@ rm(list=ls())
 library(RGCCA)
 library(MASS)
 library(nipals)
+library(parallel)
 namesFiles=dir("./R")
 namesFiles2=namesFiles[!namesFiles%in%c("find.biomarkers.R","optspars_cv.R","plotOptpars3D.R","plotOptspars.R","weight.bootstrap.R")]
 # loading functions in R directory
@@ -14,7 +15,7 @@ for(i in 1:length(namesFiles2))
   print(namesFiles2[i])
   source(paste0("./R/",namesFiles2[i]))
 }
-library(parallel)
+
 
 
 set.seed(42);X1=matrix(rnorm(350),70,5);X2=matrix(rnorm(280),70,4)
@@ -46,13 +47,14 @@ library(FactoMineR)
 library(parallel)
 X_agric =as.matrix(Russett[,c("gini","farm","rent")])
 X_ind = as.matrix(Russett[,c("gnpr","labo")])
-X_polit = as.matrix(Russett[ , c("demostab", "dictator")])
+X_polit = as.matrix(Russett[ , colnames(Russett)%in%c("demostab", "dictatur","dictator")])
 A = list(agri=X_agric, ind=X_ind, polit=X_polit)
 #ponctual
-listResults=naEvolution(A=A,listMethods=c("complete","nipals","imputeInRgcca1","imputeInRgcca2","pca"),prctNA=c(0.05,0.1,0.15,0.2,0.25,0.3,0.4),typeNA="ponc",ncomp=rep(1,3),sameBlockWeight=FALSE)
-plotEvol(listResults,output="a",barType = "stderr",ylim=c(0,0.2))
+listResults=naEvolution(A=A,listMethods=c("complete","nipals","imputeInRgcca1","imputeInRgcca2","imputeInRgccaSB","pca"),prctNA=c(0.05,0.1,0.15,0.2,0.25,0.3,0.4),typeNA="ponc",ncomp=rep(1,3),sameBlockWeight=FALSE)
+listResults=naEvolution(A=A,listMethods=c("complete","nipals","sem1","pca"),prctNA=c(0.1,0.2,0.3),typeNA="ponc",ncomp=rep(1,3),sameBlockWeight=FALSE)
+plotEvol(listResults,output="a",barType = "stderr",ylim=c(0,1))
 # block
-listResults=naEvolution(A=A,listMethods=c("complete","nipals","imputeInRgcca1","imputeInRgcca2","pca"),prctNA=c(0.05,0.1,0.15,0.2,0.25,0.3),typeNA="block",ncomp=rep(1,3))
+listResults=naEvolution(A=A,listMethods=c("complete","nipals","imputeInRgcca1","imputeInRgcca2","imputeInRgccaSB","pca"),prctNA=c(0.05,0.1,0.15,0.2,0.25,0.3),typeNA="block",ncomp=rep(1,3))
 plotEvol(listResults,ylim=c(0,0.1),output="a",barType = "stderr")
 
 # differences ponctuelles

@@ -5,13 +5,12 @@
 #' @param nAxe=1 Number of axes taken into account during the comparison
 #' @param selec Number of biomarkers to be selected
 #' @param selectPatient A vector allowing to select only some patients for the RV calculation
-#' @return \item{A} A list containing: a: the correlation between axes, rv: the rv coefficient, bm the biomarkers
-#' @return \item{crit} Convergence criterion : abs(1-obj_k/obj_{k-1})
-#' @return \item{obj} Vector containing the mean square error between the predict values and the original non missing values at each iteration
+#' @return \item{A}{A list containing: a: the correlation between axes, rv: the rv coefficient, bm the biomarkers}
+#' @return \item{crit}{Convergence criterion : abs(1-obj_k/obj_{k-1})}
+#' @return \item{obj}{Vector containing the mean square error between the predict values and the original non missing values at each iteration}
 #' @title comparison of two RGCCA results
 #' @examples 
 #'  data();...
-#'  
 
 comparison=function(rgcca1,rgcca2,nAxe=1,selec=10,selectPatient=NULL,indNA=NULL)
 {

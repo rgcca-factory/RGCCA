@@ -1,16 +1,15 @@
 #'Analysis of the comparison of different NA methods on RGCCA
-#'
 #' @param refData A list of complete blocks
 #' @param noIntersect if TRUE, no RGCCA on complete data is run
 #' @param C,tau,scale,scheme,sameBlockWeight parameters of RGCCA
-#' @
-#' @return \item{A} A list containing: a: the correlation between axes, rv: the rv coefficient, bm the biomarkers
-#' @return \item{crit} Convergence criterion : abs(1-obj_k/obj_{k-1})
-#' @return \item{obj} Vector containing the mean square error between the predict values and the original non missing values at each iteration
+#' @return \item{A}{A list containing: a: the correlation between axes, rv: the rv coefficient, bm the biomarkers}
+#' @return \item{crit}{Convergence criterion : abs(1-obj_k/obj_{k-1})}
+#' @return \item{obj}{Vector containing the mean square error between the predict values and the original non missing values at each iteration}
 #' @title comparison of two RGCCA results
 #' @examples 
 #'  data();...
-
+#' @importFrom parallel mclapply
+#' @importFrom grDevices graphics.off
 analysis=function(refData,noIntersect=TRUE,C=NULL,tau=NULL,scale=TRUE,nAxe=2,scheme="centroid",sameBlockWeight=TRUE,wd=getwd(),blocknames=NULL,nbTestFiles=20)
 {
   nBlock=length(refData)

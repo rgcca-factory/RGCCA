@@ -1,8 +1,3 @@
-# print.rgcca <- function(x,verbose=FALSE,...) {
-#   nbloc <- length(x$Y)
-#   cat("Outputs for RGCCA: \n")
-# }
-
 #' Regularized Generalized Canonical Correlation Analysis (RGCCA) is a generalization
 #' of regularized canonical correlation analysis to three or more sets of variables. 
 #' Given \eqn{J} matrices \eqn{\mathbf{X_1}, \mathbf{X_2}, ..., \mathbf{X_J}} that represent 
@@ -122,9 +117,14 @@
 #' text(result.rgcca$Y[[1]], result.rgcca$Y[[2]], Russett[, 1], col = lab)
 #' text(Ytest[, 1], Ytest[, 2], substr(Russett[, 1], 1, 1), col = lab)
 #' @export rgcca
+#' @importFrom grDevices dev.off png rainbow
+#' @importFrom graphics abline axis close.screen grid legend lines par points rect screen segments split.screen text
+#' @importFrom stats binomial glm lm predict sd var weighted.mean
+#' @importFrom utils read.table write.table
+
+
 rgcca=function (A, C = 1 - diag(length(A)), tau = rep(1, length(A)),  ncomp = rep(1, length(A)), scheme = "centroid", scale = TRUE,   init = "svd", bias = TRUE, tol = 1e-08, verbose = TRUE,sameBlockWeight=TRUE,na.rm=TRUE,returnA=FALSE,estimateNA="no") 
 {
-  print("debut")
   shave.matlist <- function(mat_list, nb_cols) mapply(function(m,nbcomp) m[, 1:nbcomp, drop = FALSE], mat_list, nb_cols, SIMPLIFY = FALSE)
   shave.veclist <- function(vec_list, nb_elts) mapply(function(m, nbcomp) m[1:nbcomp], vec_list, nb_elts, SIMPLIFY = FALSE)
   A0=A
@@ -159,7 +159,6 @@ rgcca=function (A, C = 1 - diag(length(A)), tau = rep(1, length(A)),  ncomp = re
   {
     
      A = lapply(A, function(x) scale2(x,scale=TRUE, bias = bias)) # le biais indique si on recherche la variance biaisee ou non
-    
     if(sameBlockWeight)
     {
       A = lapply(A, function(x) x/sqrt(NCOL(x)))
@@ -174,8 +173,6 @@ rgcca=function (A, C = 1 - diag(length(A)), tau = rep(1, length(A)),  ncomp = re
       {
         A = lapply(A, function(x) {covarMat=cov2(x,bias=bias);varianceBloc=sum(diag(covarMat)); return(x/sqrt(varianceBloc))})
       }      
-    
-
   }
 
   # Superblock option
@@ -185,11 +182,11 @@ rgcca=function (A, C = 1 - diag(length(A)), tau = rep(1, length(A)),  ncomp = re
     C=matrix(0,length(A),length(A))
     C[length(A),1:(length(A)-1)]=1
     C[1:(length(A)-1),length(A)]=1
+    tau=c(tau,1)
     pjs=c(pjs,sum(pjs))
     ncomp=c(ncomp,ncomp[1])
     #tau=c(tau,0)
   }
-  print("debut2")
   AVE_X = list() 
   AVE_outer <- vector()
   ndefl <- ncomp - 1
@@ -214,13 +211,7 @@ rgcca=function (A, C = 1 - diag(length(A)), tau = rep(1, length(A)),  ncomp = re
  
     for (j in 1:J)
     {
-      print(dim(A[[j]]))
-      print(dim(Y[[j]]))
-      print("A")
-      print(head(A[[j]]))
-      print("y")
-      print(head(Y[[j]]))
-        AVE_X[[j]] = mean(cor(A[[j]], Y[[j]],use="pairwise.complete.obs")^2,na.rm=TRUE)#correlation moyenne entre le bloc et la composante (au carre)
+         AVE_X[[j]] = mean(cor(A[[j]], Y[[j]],use="pairwise.complete.obs")^2,na.rm=TRUE)#correlation moyenne entre le bloc et la composante (au carre)
     }
          AVE_outer <- sum(pjs * unlist(AVE_X))/sum(pjs) 
     AVE <- list(AVE_X = AVE_X, AVE_outer = AVE_outer, AVE_inner = result$AVE_inner)
@@ -231,7 +222,7 @@ rgcca=function (A, C = 1 - diag(length(A)), tau = rep(1, length(A)),  ncomp = re
       colnames(Y[[b]]) = "comp1"
     }
     out <- list(Y = Y, a = a, astar = a, C = C, tau = result$tau,  scheme = scheme, ncomp = ncomp, crit = result$crit, primal_dual = primal_dual, AVE = AVE,A=A0)
-    if(estimateNA %in% c("iterative","first")){out[["imputedA"]]=A}
+    if(estimateNA %in% c("iterative","first","superblock")){out[["imputedA"]]=A}
     
     class(out) <- "rgcca"
     
@@ -298,10 +289,7 @@ rgcca=function (A, C = 1 - diag(length(A)), tau = rep(1, length(A)),  ncomp = re
   }
   
   # ajout de na.rm et de use
-  print(dim(A[[j]]))
-  print(dim(Y[[j]]))
-  print(head(A[[j]]))
-  print(head(Y[[j]]))
+
   for (j in 1:J) AVE_X[[j]] = apply(cor(A[[j]], Y[[j]],use="pairwise.complete.obs")^2, 	2, mean,na.rm=TRUE)
   outer = matrix(unlist(AVE_X), nrow = max(ncomp))
   
@@ -312,7 +300,6 @@ rgcca=function (A, C = 1 - diag(length(A)), tau = rep(1, length(A)),  ncomp = re
   AVE_X = shave.veclist(AVE_X, ncomp)
   AVE <- list(AVE_X = AVE_X, AVE_outer_model = AVE_outer, AVE_inner_model = AVE_inner)
   
-  print("fin")
   if(returnA)
   {
     out <- list(Y = shave.matlist(Y, ncomp), a = shave.matlist(a,ncomp), astar = shave.matlist(astar, ncomp), C = C, tau = tau_mat, 

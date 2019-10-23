@@ -6,7 +6,7 @@ library(nipals)
 namesFiles=dir("./R")
 namesFiles2=namesFiles[!namesFiles%in%c("find.biomarkers.R","optspars_cv.R","plotOptpars3D.R","plotOptspars.R","weight.bootstrap.R")]
 # loading functions in R directory
-sapply(namesFiles,function(x){source(paste0("./R/",x))})
+#sapply(namesFiles,function(x){source(paste0("./R/",x))})
 
 for(i in 1:length(namesFiles2))
 {

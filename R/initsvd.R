@@ -5,6 +5,8 @@
 #' @return A matrix with n lines and n columns
 #' @title Initialisation by SVD decomposition of X
 #' @examples
+#' X=matrix(rnorm(15),3,5)
+#' resInitsvdTest=initsvd(X)
 #' @export initsvd
 initsvd <- function(X,dual=TRUE) {
 # verifier le scale

@@ -15,6 +15,9 @@ test_that("test_pm",{
 
 test_that("test_pmNA",{
     # loading the new function output
+    set.seed(42); A=matrix(rnorm(15),3,5)
+    set.seed(34); B=matrix(rnorm(20),5,4)
+    
     A[3,5]=0
     B[1,1]=0
     T1=Sys.time();pmToGet=A%*%B;T2=Sys.time(); Tdiff1=T2-T1
