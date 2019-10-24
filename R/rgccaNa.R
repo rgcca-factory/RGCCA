@@ -43,7 +43,7 @@
 #' A_ref2=lapply(A_ref,scale)
 #' A2=lapply(A,scale)
 
-rgccaNa=function (A,method, C = 1 - diag(length(A)), tau = rep(1, length(A)), refData=NULL,    ncomp = rep(1, length(A)), scheme = "centroid", scale = TRUE,   init = "svd", bias = TRUE, tol = 1e-08, verbose = TRUE,na.impute="none",na.niter=10,na.keep=NULL,nboot=10,sameBlockWeight=TRUE,returnA=FALSE,knn.k="all",knn.output="weightedMean",knn.klim=NULL,knn.sameBlockWeight=TRUE,pca.ncp=1,verbose=TRUE) 
+rgccaNa=function (A,method, C = 1 - diag(length(A)), tau = rep(1, length(A)), refData=NULL,    ncomp = rep(1, length(A)), scheme = "centroid", scale = TRUE,   init = "svd", bias = TRUE, tol = 1e-08, verbose = TRUE,na.impute="none",na.niter=10,na.keep=NULL,nboot=10,sameBlockWeight=TRUE,returnA=FALSE,knn.k="all",knn.output="weightedMean",knn.klim=NULL,knn.sameBlockWeight=TRUE,pca.ncp=1) 
 { 
   nvar = sapply(A, NCOL)
   superblockAsList=function(superblock,A)
@@ -115,10 +115,11 @@ rgccaNa=function (A,method, C = 1 - diag(length(A)), tau = rep(1, length(A)), re
         A2=imputeNN(A ,output=knn.output,k=as.numeric(substr(method,4,4)),klim=knn.klim,sameBlockWeight=knn.sameBlockWeight);method=paste(method,":",knn.k,sep="")
       }
   }
-  if(method!="imputeInRgcca1"&&method!="imputeInRgcca2"&&method!="imputeInRgccaSB"){resRgcca=rgcca(A2,C=C,ncomp=ncomp,verbose=FALSE,scale=scale,sameBlockWeight=sameBlockWeight,tau=tau,scheme=scheme,returnA=TRUE,tol=tol,estimateNA="no")}
+  if(method!="imputeInRgcca1"&&method!="imputeInRgcca2"&&method!="imputeInRgccaSB"&&method!="imputeInRgccaLL"){resRgcca=rgcca(A2,C=C,ncomp=ncomp,verbose=FALSE,scale=scale,sameBlockWeight=sameBlockWeight,tau=tau,scheme=scheme,returnA=TRUE,tol=tol,estimateNA="no")}
   if(method=="imputeInRgcca1"){resRgcca=rgcca(A,C=C,ncomp=ncomp,verbose=FALSE,scale=scale,sameBlockWeight=sameBlockWeight,tau=tau,scheme=scheme,returnA=TRUE,tol=tol,estimateNA="iterative");A2=resRgcca$imputedA;}
   if(method=="imputeInRgcca2"){resRgcca=rgcca(A,C=C,ncomp=ncomp,verbose=FALSE,scale=scale,sameBlockWeight=sameBlockWeight,tau=tau,scheme=scheme,returnA=TRUE,tol=tol,estimateNA="first");A2=resRgcca$imputedA;}
   if(method=="imputeInRgccaSB"){resRgcca=rgcca(A,C=C,ncomp=ncomp,verbose=FALSE,scale=scale,sameBlockWeight=sameBlockWeight,tau=tau,scheme=scheme,returnA=TRUE,tol=tol,estimateNA="superblock");A2=resRgcca$imputedA[1:length(A)];}
+  if(method=="imputeInRgccaLL"){resRgcca=rgcca(A,C=C,ncomp=ncomp,verbose=TRUE,scale=scale,sameBlockWeight=sameBlockWeight,tau=tau,scheme=scheme,returnA=TRUE,tol=tol,estimateNA="lebrusquet");A2=resRgcca$imputedA[1:length(A)];}
   
 	return(list(imputedA=A2,rgcca=resRgcca,method,indNA=indNA))
 

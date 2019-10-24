@@ -139,3 +139,6 @@ result.rgcca.nipals = rgcca(A, C, tau = c(1, 1, 1), ncomp=rep(1,3),scheme = "fac
 data.frame(Reduce("rbind",result.rgcca.ref$a),
 Reduce("rbind",result.rgcca.nipals$a),
 Reduce("rbind",result.rgcca.test$a))
+
+
+result.rgcca.test1 = rgcca(A, C, tau = c(1, 1, 1), ncomp=rep(1,3),scheme = "horst", scale = TRUE,returnA=TRUE,estimateNA="lebrusquet",sameBlockWeight=TRUE,tol=1e-6,verbose=TRUE)

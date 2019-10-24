@@ -8,7 +8,6 @@
 #' If tau = "optimal" the shrinkage intensity paramaters are estimated using the Schafer and Strimmer (2005) 
 #' analytical formula. 
 #' @param scheme The value is "horst", "factorial", "centroid" or any diffentiable convex scheme function g designed by the user (default: "centroid").
-#' @param scale  if scale = TRUE, each block is standardized to zero means and unit variances (default: TRUE).
 #' @param verbose  Will report progress while computing if verbose = TRUE (default: TRUE).
 #' @param init The mode of initialization to use in the RGCCA algorithm. The alternatives are either by Singular Value Decompostion or random (default : "svd").
 #' @param bias A logical value for either a biaised or unbiaised estimator of the var/cov.
@@ -33,7 +32,7 @@
 #' @importFrom MASS ginv
 #' @importFrom stats cor rnorm
 #' @importFrom graphics plot
-rgccak=function (A, C, tau = "optimal", scheme = "centroid", scale = TRUE,verbose = FALSE, init = "svd", bias = TRUE, tol = 1e-08,na.rm=TRUE,estimateNA="no") 
+rgccak=function (A, C, tau = "optimal", scheme = "centroid",verbose = FALSE, init = "svd", bias = TRUE, tol = 1e-08,na.rm=TRUE,estimateNA="no",sameBlockWeight=TRUE) 
 {
 # A liste de matrices "blocs" dans un ordre precis (cf matrice connexion)
 # C matrice de connexion, 
@@ -53,8 +52,14 @@ rgccak=function (A, C, tau = "optimal", scheme = "centroid", scale = TRUE,verbos
       
     }else {g<-scheme}
     A0 <-A
-    A <- lapply(A, as.matrix) # liste de blocs
-    # initialisation du A
+    A <- lapply(A, as.matrix)
+    if(estimateNA=="lebrusquet")
+    {
+        A =imputeColmeans(A) 
+       # liste de blocs
+    }
+    # initialisation du A à la moyenne
+
    # A=lapply(A,function(M){M[is.na(M)]<-0;return(M)})
     J <- length(A) # nombre de blocs
     n <- NROW(A[[1]]) # nombre d'individus
@@ -157,12 +162,14 @@ rgccak=function (A, C, tau = "optimal", scheme = "centroid", scale = TRUE,verbos
           if(tau[j] == 1)
           { # si tau = 1
              Z[, j] = rowSums(matrix(rep(C[j, ], n), n, J, byrow = TRUE) * matrix(rep(dgx, n), n, J, byrow = TRUE) * Y,na.rm=na.rm)
-		         a[[j]] = drop(1/sqrt(pm(pm(t(Z[, j]) ,A[[j]],na.rm=na.rm) ,  pm( t(A[[j]]) ,Z[, j],na.rm=na.rm),na.rm=na.rm))) *pm (t(A[[j]]), Z[,  j],na.rm=na.rm)  
-			       Y[, j] =pm( A[[j]], a[[j]],na.rm=na.rm) #Nouvelle estimation de j
-			
+		     a[[j]] = drop(1/sqrt(pm(pm(t(Z[, j]) ,A[[j]],na.rm=na.rm) ,  pm( t(A[[j]]) ,Z[, j],na.rm=na.rm),na.rm=na.rm))) *pm (t(A[[j]]), Z[,  j],na.rm=na.rm)  
+		      Y[, j] =pm( A[[j]], a[[j]],na.rm=na.rm) #Nouvelle estimation de j
+		
 #------------------ si on estime les donnees manquantes dans le cas ou tau=1
-			      if(estimateNA %in% c("first","iterative","superblock"))
-			      { print("estimateNA")
+			      if(estimateNA %in% c("first","iterative","superblock","new","lebrusquet"))
+			      { 
+			         
+
 			   #    print(paste("block",j))
 			        if(estimateNA=="superblock"){missing=is.na(A0[[j]][,k])}
 			        if(estimateNA=="superblock")
@@ -177,63 +184,77 @@ rgccak=function (A, C, tau = "optimal", scheme = "centroid", scale = TRUE,verbos
 			        }
 			        for(k in 1:NCOL(A[[j]]))
 			        {
-			         
-			        
-			         # if(estimateNA=="first"){missing=is.na(A[[j]][,k])} # n'est valable qu'au premier
-			          if(estimateNA=="first"){missing=is.na(A0[[j]][,k])} # n'est valable qu'au premier
-			          #if(estimateNA=="iterative"){missing=is.na(A[[j]][,k])} 
-			          if(estimateNA=="iterative"){  missing=is.na(A0[[j]][,k])}
-			          if(sum(missing)>0)
-			          {
-			             #if(estimateNA=="first")
-			            #{
-			            #  A[[j]][missing,k]=a[[j]][k]*Z[missing,j];
-			            #  A[[j]][,k]=scale(A[[j]][,k])
-			            #}
-			            if(estimateNA=="first")
+			            if(estimateNA=="lebrusquet")
 			            {
-			              #A[[j]][missing,k]=a[[j]][k]*Z[missing,j];
-
-			              Ainter= A0[[j]][,k]
-			              Ainter[missing]=a[[j]][k]*Z[missing,j]
-			              if(j==1 && k==2) 
-			              {
-			             #  print("avant scaling observed")
-			              # print(A[[j]][!missing,k][1])
-			               print("avt scaling missing")
-			               print(Ainter[missing])
-			              }
-			              A[[j]][,k]=scale(Ainter)
-			              if(j==1&& k==2)
-			              {
-			               # print("apres scaling observed")
-			               # print(A[[j]][!missing,k][1])
-			                print("apres scaling missing")
-			                print(A[[j]][missing,k][1])
-			              }
-			            }
-			            if(estimateNA=="new")
-			            {
-			              ones=c(1,length(missing))
-			              K=diag(!missing)
-			              resol=solveLagrangien(K,w,x_obs,n)
-			              alpha=resol[1]
-			              mu=resol[2]
-			              lambda=resol[3]
-			              nu=resol[4]
-			              x_miss=(a[[j]][k]*Z[missing,j]+nu%*%ones)/lambda
-			            }
-			           
-			           if(estimateNA=="iterative")
-			           {
-			             A[[j]][missing,k]=scale(a[[j]][k]*Z[missing,j])
-			           } 
-			           # print("apres boucle")
-			           # print(A[[j]][!missing,k][1])
-			          }
-			         
-			        #A[[j]][,k]=scale(A[[j]][,k])
-			        #	 print( A[[j]][,k])
+			                missing=is.na(A0[[j]][,k])
+			                if(sum(missing)!=0)
+			                { 
+			                     sum(C * g(cov2(Y, bias = bias)),na.rm=na.rm)
+			                    newx_k=leb(x_k=A[[j]][,k],missing,z=Z[,j],sameBlockWeight=sameBlockWeight,weight=sqrt(pjs[j]))
+			                    A[[j]][,k]=newx_k
+			                    
+			                    # mean(xres)
+			                    # t(xres)%*%xres
+			                }
+			                
+			            } 
+			        # 
+			        #  # if(estimateNA=="first"){missing=is.na(A[[j]][,k])} # n'est valable qu'au premier
+			        #   if(estimateNA=="first"){missing=is.na(A0[[j]][,k])} # n'est valable qu'au premier
+			        #   #if(estimateNA=="iterative"){missing=is.na(A[[j]][,k])} 
+			        #   if(estimateNA=="iterative"){  missing=is.na(A0[[j]][,k])}
+			        #   if(sum(missing)>0)
+			        #   {
+			        #      #if(estimateNA=="first")
+			        #     #{
+			        #     #  A[[j]][missing,k]=a[[j]][k]*Z[missing,j];
+			        #     #  A[[j]][,k]=scale(A[[j]][,k])
+			        #     #}
+			        #     if(estimateNA=="first")
+			        #     {
+			        #       #A[[j]][missing,k]=a[[j]][k]*Z[missing,j];
+			        # 
+			        #       Ainter= A0[[j]][,k]
+			        #       Ainter[missing]=a[[j]][k]*Z[missing,j]
+			        #       if(j==1 && k==2) 
+			        #       {
+			        #      #  print("avant scaling observed")
+			        #       # print(A[[j]][!missing,k][1])
+			        #        print("avt scaling missing")
+			        #        print(Ainter[missing])
+			        #       }
+			        #       A[[j]][,k]=scale(Ainter)
+			        #       if(j==1&& k==2)
+			        #       {
+			        #        # print("apres scaling observed")
+			        #        # print(A[[j]][!missing,k][1])
+			        #         print("apres scaling missing")
+			        #         print(A[[j]][missing,k][1])
+			        #       }
+			        #     }
+			        #     if(estimateNA=="new")
+			        #     {
+			        #       ones=c(1,length(missing))
+			        #       K=diag(!missing)
+			        #       resol=solveLagrangien(K,w,x_obs,n)
+			        #       alpha=resol[1]
+			        #       mu=resol[2]
+			        #       lambda=resol[3]
+			        #       nu=resol[4]
+			        #       x_miss=(a[[j]][k]*Z[missing,j]+nu%*%ones)/lambda
+			        #     }
+			        #    
+			        #    if(estimateNA=="iterative")
+			        #    {
+			        #      A[[j]][missing,k]=scale(a[[j]][k]*Z[missing,j])
+			        #    }
+			        #    
+			        #    # print("apres boucle")
+			        #    # print(A[[j]][!missing,k][1])
+			        #   }
+			        #  
+			        # #A[[j]][,k]=scale(A[[j]][,k])
+			        # #	 print( A[[j]][,k])
 			        }
 			        
 			      }
@@ -266,12 +287,15 @@ rgccak=function (A, C, tau = "optimal", scheme = "centroid", scale = TRUE,verbos
           })
       }
     # print(lapply(A,head))
+
       crit[iter] <- sum(C * g(cov2(Y, bias = bias)),na.rm=na.rm)
       if (verbose & (iter%%1) == 0) 
       cat(" Iter: ", formatC(iter, width = 3, format = "d"), " Fit:", formatC(crit[iter], digits = 8, width = 10, format = "f"), " Dif: ", formatC(crit[iter] - crit_old, digits = 8, width = 10, format = "f"),   "\n")
       stopping_criteria = c(drop(crossprod(Reduce("c", mapply("-", a, a_old)))), crit[iter] - crit_old)
      
-       if (any(stopping_criteria < tol) | (iter > 1000)) # critere d'arret de la boucle
+      # if (any(stopping_criteria < tol) | (iter > 1000)) # critere d'arret de la boucle
+           if (any(abs(stopping_criteria) < tol) | (iter > 1000)) # critere d'arret de la boucle
+               
           break
       crit_old = crit[iter]
       a_old <- a

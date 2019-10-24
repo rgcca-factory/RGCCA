@@ -22,13 +22,13 @@
 #' sameBlockWeight=FALSE)
 #' plotEvol(listResults,output="a",barType = "stderr",ylim=c(0,0.2))
 #' @export naEvolution
-naEvolution=function(A,prctNA=c(0.1,0.2,0.3),listMethods=c("mean"),typeNA="block",ncomp=rep(1,length(A)),sameBlockWeight=TRUE,scale=TRUE,nDatasets=20,tol=1e-6,verbose=FALSE)
+naEvolution=function(A,prctNA=c(0.1,0.2,0.3),listMethods=c("mean"),typeNA="block",ncomp=rep(1,length(A)),sameBlockWeight=TRUE,scale=TRUE,nDatasets=20,tol=1e-6,verbose=FALSE,scheme="centroid")
 {
   resultComparison=list()
   for(prct in prctNA)
   { print(paste("pourcent=",prct))
     resultComparison[[as.character(prct)]]=list()
-    resultComparison[[as.character(prct)]]=whichNAmethod(A=A,listMethods=listMethods,patternNA=rep(prct,length(A)),typeNA=typeNA,ncomp=ncomp,sameBlockWeight=sameBlockWeight,scale=scale,nDatasets=nDatasets,tol=tol,verbose=verbose)
+    resultComparison[[as.character(prct)]]=whichNAmethod(A=A,listMethods=listMethods,patternNA=rep(prct,length(A)),typeNA=typeNA,ncomp=ncomp,sameBlockWeight=sameBlockWeight,scale=scale,nDatasets=nDatasets,tol=tol,verbose=verbose,scheme=scheme)
   }
   return(resultComparison)
 }
