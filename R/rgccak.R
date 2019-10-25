@@ -190,7 +190,8 @@ rgccak=function (A, C, tau = "optimal", scheme = "centroid",verbose = FALSE, ini
 			                if(sum(missing)!=0)
 			                { 
 			                     sum(C * g(cov2(Y, bias = bias)),na.rm=na.rm)
-			                    newx_k=leb(x_k=A[[j]][,k],missing,z=Z[,j],sameBlockWeight=sameBlockWeight,weight=sqrt(pjs[j]))
+			                  
+			                    newx_k=leb(x_k=A[[j]][,k],missing,z=Z[,j],sameBlockWeight=sameBlockWeight,weight=sqrt(pjs[j]),argmax=ifelse(a[[j]][k]>0,TRUE,FALSE))
 			                    A[[j]][,k]=newx_k
 			                    
 			                    # mean(xres)

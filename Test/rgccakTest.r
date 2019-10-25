@@ -197,4 +197,40 @@ cor(nip2$Y[,1],refRgcca2$Y[,1])
 cor(res1$a[[1]],refRgcca$a[[1]])
 cor(nip1$a[[1]],refRgcca$a[[1]])
 
+#--------------------
+# simulated dataset
+#--------------------
+n=50
+n_miss=20
+Z=rnorm(n)
+X1=cbind(Z+rnorm(n=n,sd=0.8),-0.5*Z+3+rnorm(n,sd=0.8),Z+rnorm(n,0.7))
+X2=cbind(2-rnorm(m=rnorm(n),sd=0.5,n)*Z,3*Z+rnorm(n=n))
+A=list(X1,X2)
+A1=lapply(A,scale)
+A2=lapply(A1,function(x){return(x/sqrt(ncol(x)))})
+refRgcca1=rgccak(A=A1,C=matrix(1,2,2)-diag(2),tau=rep(1,2),,sameBlockWeight=FALSE,init="svd")
 
+refRgcca2=rgccak(A=A2,C=matrix(1,2,2)-diag(2),tau=rep(1,2),,sameBlockWeight=TRUE,init="svd")
+corLL=corNipals=nLL=nNipals=rep(NA,n)
+for(i in 1:100)
+{
+    ind_miss1=sample(n_miss,1:n)
+    ind_miss2=sample(n_miss,1:n)
+    ind_miss3=sample(n_miss,1:n)
+    A1_miss=A1;A1_miss[[1]][ind_miss1,1]=NA;A1_miss[[1]][ind_miss2,2]=NA;A1_miss[[1]][ind_miss3,3]=NA
+    nip1=rgccak(A=A1_miss,C=matrix(1,2,2)-diag(2),tau=rep(1,2),sameBlockWeight=FALSE,init="svd")
+    res1=rgccak(A=A1_miss,C=matrix(1,2,2)-diag(2),tau=rep(1,2),sameBlockWeight=FALSE,init="svd",estimateNA="lebrusquet")
+   
+    corLL[i]=abs(cor(    res1$a[[1]],    refRgcca1$a[[1]]))
+    corNipals[i]=abs(cor(    nip1$a[[1]],    refRgcca1$a[[1]]))
+
+    nLL[i]= min(sum((res1$a[[1]]-refRgcca1$a[[1]])^2),sum((res1$a[[1]]+refRgcca1$a[[1]])^2))
+    nNipals[i]= min(sum((nip1$a[[1]]-refRgcca1$a[[1]])^2),sum((nip1$a[[1]]+refRgcca1$a[[1]])^2))
+    
+}
+summary(corLL)
+summary(corNipals)
+summary(nLL)
+summary(nNipals)
+library(ggplot2)
+boxplot(cbind(corLL,corNipals))

@@ -1,4 +1,4 @@
-leb=function(x_k,missing,z,sameBlockWeight=TRUE,weight=NULL)
+leb=function(x_k,missing,z,sameBlockWeight=TRUE,weight=NULL,argmax=TRUE)
 {#leb(x_k=A[[j]][,k],missing,z=Z[,j])
     n=length(x_k)
     indices_miss=which(missing)
@@ -18,8 +18,15 @@ leb=function(x_k,missing,z,sameBlockWeight=TRUE,weight=NULL)
     M3=diag(resSvd$d)%*%t(resSvd$v)
     #solve(M3)-resSvd$v%*%diag(1/(resSvd$d))
     normyres=sqrt(t((t(solve(M3))%*%t(M2)%*%matrix(z,ncol=1)))%*%(t(solve(M3))%*%t(M2)%*%matrix(z,ncol=1)))
-    yres=sqrt(n)*(t(solve(M3))%*%t(M2)%*%matrix(z,ncol=1))/as.numeric(normyres)
-    if(sameBlockWeight){yres=yres/weight}
+    if(argmax)
+    {
+        yres=sqrt(n)*(t(solve(M3))%*%t(M2)%*%matrix(z,ncol=1))/as.numeric(normyres)
+    }
+    if(!argmax)
+    {
+        yres=-sqrt(n)*(t(solve(M3))%*%t(M2)%*%matrix(z,ncol=1))/as.numeric(normyres)
+    }
+      if(sameBlockWeight){yres=yres/weight}
     # t(yres)%*%yres
     ures=solve(M3)%*%yres
     xres=M2%*%ures
