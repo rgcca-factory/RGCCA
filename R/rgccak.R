@@ -56,6 +56,8 @@ rgccak=function (A, C, tau = "optimal", scheme = "centroid",verbose = FALSE, ini
     if(estimateNA=="lebrusquet")
     {
         A =imputeColmeans(A) 
+        A=lapply(A,scale2,bias=TRUE)
+        if(sameBlockWeight){A=lapply(A,function(x){return(x/sqrt(NCOL(x)))})}
        # liste de blocs
     }
     # initialisation du A à la moyenne
@@ -154,7 +156,7 @@ rgccak=function (A, C, tau = "optimal", scheme = "centroid",verbose = FALSE, ini
     repeat 
     { # on rentre dans la boucle a proprement parler
       Yold <- Y #valeur de f
-    #  print(paste("iter",iter))
+      #print(paste("iter",iter))
        for (j in which.primal)
       { # on parcourt les blocs pour estimer wj = a[[j]] : c'est le rouage de la pres
          
@@ -163,7 +165,7 @@ rgccak=function (A, C, tau = "optimal", scheme = "centroid",verbose = FALSE, ini
           { # si tau = 1
              Z[, j] = rowSums(matrix(rep(C[j, ], n), n, J, byrow = TRUE) * matrix(rep(dgx, n), n, J, byrow = TRUE) * Y,na.rm=na.rm)
 		     a[[j]] = drop(1/sqrt(pm(pm(t(Z[, j]) ,A[[j]],na.rm=na.rm) ,  pm( t(A[[j]]) ,Z[, j],na.rm=na.rm),na.rm=na.rm))) *pm (t(A[[j]]), Z[,  j],na.rm=na.rm)  
-		      Y[, j] =pm( A[[j]], a[[j]],na.rm=na.rm) #Nouvelle estimation de j
+		     # Y[, j] =pm( A[[j]], a[[j]],na.rm=na.rm) #Nouvelle estimation de j
 		
 #------------------ si on estime les donnees manquantes dans le cas ou tau=1
 			      if(estimateNA %in% c("first","iterative","superblock","new","lebrusquet"))
@@ -182,23 +184,24 @@ rgccak=function (A, C, tau = "optimal", scheme = "centroid",verbose = FALSE, ini
 			                }
 			            }
 			        }
+			       # Ainter=A
 			        for(k in 1:NCOL(A[[j]]))
 			        {
 			            if(estimateNA=="lebrusquet")
 			            {
-			                missing=is.na(A0[[j]][,k])
+			                
+			                 missing=is.na(A0[[j]][,k])
 			                if(sum(missing)!=0)
 			                { 
-			                     sum(C * g(cov2(Y, bias = bias)),na.rm=na.rm)
-			                  
-			                    newx_k=leb(x_k=A[[j]][,k],missing,z=Z[,j],sameBlockWeight=sameBlockWeight,weight=sqrt(pjs[j]),argmax=ifelse(a[[j]][k]>0,TRUE,FALSE))
+			                    newx_k=leb(x_k=A[[j]][,k],missing,z=Z[,j],sameBlockWeight=sameBlockWeight,weight=sqrt(pjs[j]),argmax=ifelse(a[[j]][k]>0,TRUE,FALSE),graph=ifelse(k==1,TRUE,FALSE))
+			                    # on affecte le nouveau k
 			                    A[[j]][,k]=newx_k
-			                    
-			                    # mean(xres)
-			                    # t(xres)%*%xres
+			                   # Ainter[[j]][,k]=newx_k
+			        
 			                }
 			                
 			            } 
+			            
 			        # 
 			        #  # if(estimateNA=="first"){missing=is.na(A[[j]][,k])} # n'est valable qu'au premier
 			        #   if(estimateNA=="first"){missing=is.na(A0[[j]][,k])} # n'est valable qu'au premier
@@ -259,6 +262,7 @@ rgccak=function (A, C, tau = "optimal", scheme = "centroid",verbose = FALSE, ini
 			        }
 			        
 			      }
+		     Y[, j] =pm( A[[j]], a[[j]],na.rm=na.rm)
 			       
            }else
 			      { # si tau different de 1

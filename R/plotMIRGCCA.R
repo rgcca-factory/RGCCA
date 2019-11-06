@@ -78,7 +78,7 @@ plotMIRGCCA=function(mi.obj,opt.ell="distr",multiple="ell",indnames=TRUE,varname
   nsuj=dim(rgcca0$Y[[1]])[1]
   if(!indnames)
   {
-    points(rgcca0$Y[[blocks[1]]][,axes[1]],rgcca0$Y[[blocks[2]]][,axes[2]],pch=16,col=rainbow(nsuj))
+    points(rgcca0$Y[[blocks[1]]][,axes[1]],rgcca0$Y[[blocks[2]]][,axes[2]],pch=16,col=rainbow(nsuj),cex=cex)
   }
   else
   {

@@ -16,8 +16,6 @@ for(i in 1:length(namesFiles2))
   source(paste0("./R/",namesFiles2[i]))
 }
 
-
-
 set.seed(42);X1=matrix(rnorm(350),70,5);X2=matrix(rnorm(280),70,4)
 A=list(X1,X2)
 listResults=naEvolution(A=A,prctNA=c(0.1,0.2,0.3,0.4),listMethods=c("mean","complete"))
@@ -28,7 +26,7 @@ plotEvol(listResults,ylim=NULL)
 #---------------------
 X_agric =as.matrix(Russett[,c("gini","farm","rent")])
 X_ind = as.matrix(Russett[,c("gnpr","labo")])
-X_polit = as.matrix(Russett[ , c("demostab", "dictator")])
+X_polit = as.matrix(Russett[ , colnames(Russett)%in%c("demostab", "dictator","dictatur")])
 X_agric[c(2,4),]=NA
 X_ind[1,]=NA
 X_polit[5,1]=NA

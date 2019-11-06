@@ -40,10 +40,13 @@ A = list(agri=X_agric, ind=X_ind, polit=X_polit)
 # pour le cas le plus simple : tau=1 scale = TRUE, sameBlockWeight=TRUE
 listResults=naEvolution(A=A,listMethods=c("complete","nipals","em","pca","sem","imputeInRgccaLL"),prctNA=c(0.1,0.2,0.3,0.4),typeNA = "ponc",nDatasets=10,sameBlockWeight = TRUE,scale=TRUE,tol=1e-6,verbose=TRUE,scheme="horst")
 
+listResults=naEvolution(A=A,listMethods=c("complete","nipals","em","sem","pca"),prctNA=c(0.05,0.1,0.15,0.2,0.25),typeNA = "ponc",nDatasets=20,sameBlockWeight = TRUE,scale=TRUE,tol=1e-6,verbose=TRUE,scheme="horst")
+
+plotEvol(listResults,ylim=c(0,0.3),output="a")
 
 listResults=naEvolution(A=A,listMethods=c("complete","nipals","em","pca","sem"),prctNA=c(0.1,0.2,0.3),typeNA = "ponc",nDatasets=1,sameBlockWeight = TRUE,scale=TRUE,tol=1e-6,verbose=TRUE)
 
-plotEvol(listResults,ylim=c(0,0.5),output="a")
+
 plotEvol(listResults,ylim=c(0,2),output="rmse")
 # le cas EM tourne mais et donne des résultats corrects!
 
