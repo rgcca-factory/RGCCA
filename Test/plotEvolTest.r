@@ -17,7 +17,7 @@ for(i in 1:length(namesFiles2))
 
 set.seed(42);X1=matrix(rnorm(350),70,5);X2=matrix(rnorm(280),70,4)
 A=list(X1,X2)
-listResults=naEvolution(refData=A,prctNA=c(0.1,0.2,0.3,0.4),listMethods=c("mean","complete","nipals","em","sem1","knn4","complete"))
+listResults=naEvolution(A=A,prctNA=c(0.1,0.2,0.3,0.4),listMethods=c("mean","complete","nipals","em","sem1","knn4","complete"))
 plotEvol(listFinale=listResults,ylim=c(0,1),output="a")
 
 #--------------------
@@ -33,6 +33,18 @@ X_ind = as.matrix(Russett[,c("gnpr","labo")])
 X_polit = as.matrix(Russett[ , colnames(Russett)%in%c("demostab", "dictatur","dictator")])
 A = list(agri=X_agric, ind=X_ind, polit=X_polit)
 
+listResults=naEvolution(A=A,listMethods=c("complete","nipals","pca","em","sem"),prctNA=c(0.05,0.1,0.15,0.2,0.25),typeNA = "ponc",nDatasets=20,sameBlockWeight = TRUE,scale=TRUE,tol=1e-6,verbose=TRUE)
+
+plotEvol(listResults,output="a",barType="stderr",names.arg=c("complete","available","pca","iterative","superblock"))
+
+plotEvol(listResults,output="a",barType="stderr",names.arg=c("complete","available","pca","iterative","superblock"),block=1,,main="")
+
+plotEvol(listResults,output="a",barType="stderr",names.arg=c("complete","available","pca","iterative","superblock"),block=2,,main="")
+
+plotEvol(listResults,output="a",barType="stderr",names.arg=c("complete","available","pca","iterative","superblock"),block=3,,main="")
+
+output="a";barType="stderr";names.arg=c("complete","available","pca","iterative","superblock");block=2;main=""
+
 # TODO
 # 1- Corriger le superbloc en scale = FALSE et sameBlockWeight=TRUE
 # 2- 
@@ -42,12 +54,24 @@ listResults=naEvolution(A=A,listMethods=c("complete","nipals","em","pca","sem","
 
 listResults=naEvolution(A=A,listMethods=c("complete","nipals","em","sem","pca"),prctNA=c(0.05,0.1,0.15,0.2,0.25),typeNA = "ponc",nDatasets=20,sameBlockWeight = TRUE,scale=TRUE,tol=1e-6,verbose=TRUE,scheme="horst")
 
-plotEvol(listResults,ylim=c(0,0.3),output="a")
-
-listResults=naEvolution(A=A,listMethods=c("complete","nipals","em","pca","sem"),prctNA=c(0.1,0.2,0.3),typeNA = "ponc",nDatasets=1,sameBlockWeight = TRUE,scale=TRUE,tol=1e-6,verbose=TRUE)
 
 
-plotEvol(listResults,ylim=c(0,2),output="rmse")
+listResults=naEvolution(A=A,listMethods=c("complete","nipals","em","sem","pca","emy","emw"),prctNA=c(0.05,0.1,0.15,0.2,0.25),typeNA = "ponc",nDatasets=20,sameBlockWeight = TRUE,scale=TRUE,tol=1e-6,verbose=TRUE,scheme="horst")
+
+listResults=naEvolution(A=A,listMethods=c("complete","nipals","em","sem"),prctNA=c(0.05,0.1,0.15,0.2,0.25),typeNA = "ponc",nDatasets=20,sameBlockWeight = TRUE,scale=TRUE,tol=1e-6,verbose=TRUE,scheme="horst")
+setwd("/home/caroline.peltier/Bureau/latex/PLS congress")
+png("compSD.png")
+plotEvol(listResults,output="a",barType="sd",,names.arg=c("complete","available","iterative","superblock"))
+dev.off()
+png("compSTDERR.png")
+plotEvol(listResults,output="a",barType="stderr",names.arg=c("complete","available","iterative","superblock"))
+dev.off()
+
+
+listResults=naEvolution(A=A,listMethods=c("complete","nipals","emy","pca","semy"),prctNA=c(0.1,0.2,0.3),typeNA = "ponc",nDatasets=1,sameBlockWeight = TRUE,scale=TRUE,tol=1e-6,verbose=TRUE)
+
+
+plotEvol(listResults,ylim=c(0,2),output="rmse",arg.names=c("complete","available","iterative","iterative-superblock")))
 # le cas EM tourne mais et donne des résultats corrects!
 
 #  tau=1 scale = TRUE, sameBlockWeight=FALSE

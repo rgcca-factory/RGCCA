@@ -39,9 +39,10 @@ imputeEM = function(A,
                     scheme = "centroid",
                     bias = TRUE,
                     superblock = FALSE,
-                    noise=FALSE,
                     verbose=FALSE,
-                    tolEM=1e-3)
+                    tolEM=1e-3,
+                    reg="y"
+                    )
 {
   #listWithoutNA
   nvar = sapply(A, NCOL)
@@ -54,26 +55,7 @@ imputeEM = function(A,
   })
   # Imputing Alist by the mean
   #----------------------------
-  Alist = lapply(A, function(X) {
-    if (is.list(X)) {
-      X = as.matrix(X)
-    }
-    if (is.matrix(X))
-    {
-      m = apply(X, 2, function(x) {
-        return(mean(x, na.rm = TRUE))
-      })
-      indNA = which(is.na(X), arr.ind = TRUE)
-      X[indNA] = m[indNA[, 2]]
-      return(X)
-    }
-    if (is.vector(X))
-    {
-      m = mean(X, na.rm = TRUE)
-      X[is.na(X)] = m
-      return(X)
-    }
-  })
+  Alist=imputeColmeans(A)
   # Calculating starts and ends of each block in the superbblock
   group = unlist(lapply(A, "NCOL"))
   debutBlock = c(1, 1 + cumsum(group)[1:(length(group) - 1)])
@@ -97,7 +79,7 @@ imputeEM = function(A,
 #     D[,debutBlock[u]:finBlock[u]]=1/sqrt(var_group)
 #   }
 # }
-#
+
 # initialization
 i=1
 diff=objective=old=criterion=list()
@@ -115,7 +97,6 @@ if(superblock)
 while (continue)
 {
   diff[[i]]=objective[[i]]=old[[i+1]]=criterion[[i]]=list()
-  
   # building of a list with superblock
   if(superblock)
   {
@@ -156,62 +137,71 @@ while (continue)
   
   if(superblock)
   {
-    # Getting back the global weights
-    w = fit.rgcca$astar[[J+1]]
-    y=fit.rgcca$Y[[J+1]][,1]
-   # moy = matrix(attr(scaledConcatenedBlocks, "scaled:center"), nrow = NROW(scaledConcatenedBlocks), ncol=sum(nvar), byrow = TRUE)
-   # stdev = matrix(attr(scaledConcatenedBlocks, "scaled:scale"),
-   #                nrow = NROW(scaledConcatenedBlocks),ncol=sum(nvar), byrow = TRUE)
+    # Getting back the global weights, means and sd for reconstruction
     A0SB=scale2(fit.rgcca$A[[J+1]],scale=scale,bias=FALSE)
     moy=matrix(attr(A0SB, "scaled:center"),nrow=NROW(A0SB),ncol=NCOL(A0SB),byrow=TRUE)
     stdev=matrix(attr(A0SB, "scaled:scale"),nrow=NROW(A0SB),ncol=NCOL(A0SB),byrow=TRUE)
-    # TO DO for more than two components required
-    #if(naxis>1)
-    #{
-    #  gamma=NULL
-    #  sigma=NULL
-      # for(k in 1:naxis)
-      # { # regression of the relevant block on the y
-      #   gamma=cbind(gamma,apply(scaledConcatenedBlocks, 1, function(x) lm(x~0+w[,k])$coefficients[1]))
-      #   residuals=apply(scaledConcatenedBlocks, 1, function(x) (lm(x~0+w)$residuals))
-      #   sigma=cbind(sigma,sqrt(sum(residuals^2/(J*nsuj))))
-      #   # if(noise){eps=matrix(rnorm(dim(moy)[1]*dim(moy)[2],m=0,sd=sigma),nrow=dim(moy)[1],ncol=dim(moy)[2])}else{eps=0}
-      # }
-      # Xhat =(gamma%*%t(w))*stdev + moy
-      # concatenedXhat= Xhat
-    #}
     # if only 1 component is required
     if(naxis==1)
     {
+        w = fit.rgcca$astar[[J+1]]
+        y=fit.rgcca$Y[[J+1]][,1]
+        
       # Regression sur w
-     # w1=w[,1]
-     # gamma=apply(scaledConcatenedBlocks, 1, function(x) lm(x~0+w)$coefficients[1])
-      #=t(as.matrix(w))%*%t(scaledConcatenedBlocks)/sum(w*w)
-      # sigma est la somme des residus
-     # residuals=apply(scaledConcatenedBlocks, 1, function(x) (lm(x~0+w)$residuals))
-     # sigma=sqrt(sum(residuals^2/(J*nsuj)))
-     # centeredXhat=gamma%*%t(w)
-     # if(noise){eps=matrix(rnorm(dim(moy)[1]*dim(moy)[2],m=0,sd=sigma),nrow=dim(moy)[1],ncol=dim(moy)[2])}else{eps=0}
-      
+     if(reg=="w")
+     {
+          w1=w[,1]
+          gamma=apply(scaledConcatenedBlocks, 1, function(x) lm(x~0+w)$coefficients[1])
+         #=t(as.matrix(w))%*%t(scaledConcatenedBlocks)/sum(w*w)
+         # sigma est la somme des residus
+          residuals=apply(scaledConcatenedBlocks, 1, function(x) (lm(x~0+w)$residuals))
+          sigma=sqrt(sum(residuals^2/(J*nsuj)))
+          centeredXhat=gamma%*%t(w)
+   #       if(noise){eps=matrix(rnorm(dim(moy)[1]*dim(moy)[2],m=0,sd=sigma),nrow=dim(moy)[1],ncol=dim(moy)[2])}else{eps=0}
+     }
     # regression sur y
-     #    w1=w[,1]
-     #    gamma=apply(scaledConcatenedBlocks, 2, function(x) lm(x~0+y)$coefficients[1])
-     #    residuals=apply(scaledConcatenedBlocks, 2, function(x) (lm(x~0+y)$residuals))
-     #    sigma=sqrt(sum(residuals^2/(J*nsuj)))
-     #    centeredXhat=matrix(y,ncol=naxis)%*%matrix(gamma,nrow=naxis)
-     #    if(noise){eps=matrix(rnorm(dim(moy)[1]*dim(moy)[2],m=0,sd=sigma),nrow=dim(moy)[1],ncol=dim(moy)[2])}else{eps=0}
-     
-    # y pur     
-         w1=w[,1]
-       #  gamma=apply(scaledConcatenedBlocks, 2, function(x) lm(x~0+y)$coefficients[1])
-         residuals=0
-         sigma=sqrt(sum(residuals^2/(J*nsuj)))
-         centeredXhat=matrix(y,ncol=naxis)%*%matrix(w,nrow=naxis)
-         if(noise){eps=matrix(rnorm(dim(moy)[1]*dim(moy)[2],m=0,sd=sigma),nrow=dim(moy)[1],ncol=dim(moy)[2])}else{eps=0}
-         
-      Xhat =(centeredXhat+eps)*stdev + moy
+    if(reg=="y")
+    {
+            w1=w[,1]
+            gamma=apply(scaledConcatenedBlocks, 2, function(x) lm(x~0+y)$coefficients[1])
+            residuals=apply(scaledConcatenedBlocks, 2, function(x) (lm(x~0+y)$residuals))
+            sigma=sqrt(sum(residuals^2/(J*nsuj)))
+            centeredXhat=matrix(y,ncol=naxis)%*%matrix(gamma,nrow=naxis)
+   #         if(noise){eps=matrix(rnorm(dim(moy)[1]*dim(moy)[2],m=0,sd=sigma),nrow=dim(moy)[1],ncol=dim(moy)[2])}else{eps=0}
+        
+    }
+    # y pur  
+    if(reg=="no")
+    {
+        
+        w1=w[,1]
+        #  gamma=apply(scaledConcatenedBlocks, 2, function(x) lm(x~0+y)$coefficients[1])
+        residuals=0
+        sigma=sqrt(sum(residuals^2/(J*nsuj)))
+        centeredXhat=matrix(y,ncol=naxis)%*%matrix(w,nrow=naxis)
+     #   if(noise){eps=matrix(rnorm(dim(moy)[1]*dim(moy)[2],m=0,sd=sigma),nrow=dim(moy)[1],ncol=dim(moy)[2])}else{eps=0}
+        
+    }         
+      Xhat =centeredXhat*stdev + moy
       concatenedCenteredXhat=centeredXhat
       concatenedXhat= Xhat
+    }
+    if(naxis>1)
+    {
+        w = fit.rgcca$astar[[J+1]]
+        y=fit.rgcca$Y[[J+1]][,1:naxis]
+        gamma=NULL
+        sigma=NULL
+        for(k in 1:naxis)
+        { # regression of the relevant block on the y
+            gamma=rbind(gamma,apply(scaledConcatenedBlocks, 2, function(x) lm(x~0+y[,k])$coefficients[1]))
+        }
+        centeredXhat=matrix(y,ncol=naxis)%*%matrix(gamma,nrow=naxis)
+        residuals=(scaledConcatenedBlocks-centeredXhat)
+        sigma=sqrt(sum(residuals^2/(J*nsuj)))
+        Xhat = centeredXhat*stdev + moy
+        concatenedCenteredXhat=centeredXhat
+        concatenedXhat= Xhat
     }
     #Russett[1:10,]
   }
@@ -225,14 +215,6 @@ while (continue)
       w = fit.rgcca$astar[[j]]
       w=w[,1:naxis]
       # Calculations of mean and standard deviations
-      #moy[[j]] = matrix(attr(scaledConcatenedBlocks, "scaled:center")[debutBlock[j]:finBlock[j]],
-       #                 nrow = NROW(scaledConcatenedBlocks), ncol=length(debutBlock[j]:finBlock[j]), byrow = TRUE)
-      #stdev[[j]]  = matrix(attr(scaledConcatenedBlocks, "scaled:scale")[debutBlock[j]:finBlock[j]],
-       #                    nrow = NROW(scaledConcatenedBlocks),ncol=length(debutBlock[j]:finBlock[j]), byrow = TRUE)
-         
-      
-  
-      
       A0J=scale2(fit.rgcca$A[[j]],scale=scale, bias=FALSE)
       moy[[j]]= matrix(attr(A0J, "scaled:center"),
                        nrow = NROW(A0J), ncol=NCOL(A0J), byrow = TRUE)
@@ -243,43 +225,60 @@ while (continue)
        if(naxis==1)
       {
      #   # version regression sur w   
-     #   gamma=apply(scaledConcatenedBlocks[,debutBlock[j]:finBlock[j]], 1, function(x) lm(x~0+w)$coefficients[1])
-     #   residuals=apply(scaledConcatenedBlocks[,debutBlock[j]:finBlock[j]], 1, function(x) (lm(x~0+w)$residuals))
-     #   sigma[[j]]=sqrt(sum(residuals^2/(J*nsuj)))
-     #   centeredXhat[[j]]=matrix(gamma,ncol=naxis)%*%matrix(w,nrow=naxis)
-     #   if(noise){eps=matrix(rnorm(dim(moy)[1]*dim(moy)[2],m=0,sd=sigma[[j]]),nrow=dim(moy)[1],ncol=dim(moy)[2])}else{eps=0}
-      
+           
+           if(reg=="w")
+           {
+                 gamma=apply(scaledConcatenedBlocks[,debutBlock[j]:finBlock[j]], 1, function(x) lm(x~0+w)$coefficients[1])
+                 residuals=apply(scaledConcatenedBlocks[,debutBlock[j]:finBlock[j]], 1, function(x) (lm(x~0+w)$residuals))
+                 sigma[[j]]=sqrt(sum(residuals^2/(J*nsuj)))
+                 centeredXhat[[j]]=matrix(gamma,ncol=naxis)%*%matrix(w,nrow=naxis)
+          #       if(noise){eps=matrix(rnorm(dim(moy)[1]*dim(moy)[2],m=0,sd=sigma[[j]]),nrow=dim(moy)[1],ncol=dim(moy)[2])}else{eps=0}
+               
+           }
+  
      # version regression sur y
-     #   y=fit.rgcca$Y[[j]][,1]
-     #   gamma=apply(scaledConcatenedBlocks[,debutBlock[j]:finBlock[j]], 2, function(x) lm(x~0+y)$coefficients[1])
-     #   residuals=apply(scaledConcatenedBlocks[,debutBlock[j]:finBlock[j]], 2, function(x) (lm(x~0+y)$residuals))
-     #   sigma[[j]]=sqrt(sum(residuals^2/(J*nsuj)))
-     #   centeredXhat[[j]]=matrix(y,ncol=naxis)%*%matrix(gamma,nrow=naxis)
-     #   if(noise){eps=matrix(rnorm(dim(moy)[1]*dim(moy)[2],m=0,sd=sigma[[j]]),nrow=dim(moy)[1],ncol=dim(moy)[2])}else{eps=0}
-        
+           if(reg=="y")
+           {
+                  y=fit.rgcca$Y[[j]][,1]
+                  gamma=apply(scaledConcatenedBlocks[,debutBlock[j]:finBlock[j]], 2, function(x) lm(x~0+y)$coefficients[1])
+                  residuals=apply(scaledConcatenedBlocks[,debutBlock[j]:finBlock[j]], 2, function(x) (lm(x~0+y)$residuals))
+                  sigma[[j]]=sqrt(sum(residuals^2/(J*nsuj)))
+                  centeredXhat[[j]]=matrix(y,ncol=naxis)%*%matrix(gamma,nrow=naxis)
+           #       if(noise){eps=matrix(rnorm(dim(moy)[1]*dim(moy)[2],m=0,sd=sigma[[j]]),nrow=dim(moy)[1],ncol=dim(moy)[2])}else{eps=0}
+           }
+           
         # version y pure
-        y=fit.rgcca$Y[[j]][,1]
-        gamma=apply(scaledConcatenedBlocks[,debutBlock[j]:finBlock[j]], 2, function(x) lm(x~0+y)$coefficients[1])
-        centeredXhat[[j]]=matrix(y,ncol=naxis)%*%matrix(w,nrow=naxis)
-        residuals=0;
-        sigma[[j]]=sqrt(sum(residuals^2/(J*nsuj)))
+           if(reg=="no")
+           {
+               y=fit.rgcca$Y[[j]][,1]
+               gamma=apply(scaledConcatenedBlocks[,debutBlock[j]:finBlock[j]], 2, function(x) lm(x~0+y)$coefficients[1])
+               centeredXhat[[j]]=matrix(y,ncol=naxis)%*%matrix(w,nrow=naxis)
+               residuals=0;
+               sigma[[j]]=sqrt(sum(residuals^2/(J*nsuj)))
+           #    if(noise){eps=matrix(rnorm(dim(moy)[1]*dim(moy)[2],m=0,sd=sigma[[j]]),nrow=dim(moy)[1],ncol=dim(moy)[2])}else{eps=0}
+               
+           }
+     
         
-        if(noise){eps=matrix(rnorm(dim(moy)[1]*dim(moy)[2],m=0,sd=sigma[[j]]),nrow=dim(moy)[1],ncol=dim(moy)[2])}else{eps=0}
-        
-        
-                Xhat[[j]] = (centeredXhat[[j]]+eps)*stdev[[j]]  + moy[[j]]
+                Xhat[[j]] = (centeredXhat[[j]])*stdev[[j]]  + moy[[j]]
       }
-      # if(naxis>1)
-      # {
-      #   gamma=NULL
-      #   residuals=NULL
-      #   for(k in 1:naxis)
-      #   { # regression of the relevant block on the y
-      #     gamma=cbind(gamma,apply(scaledConcatenedBlocks, 1, function(x) lm(x~w[,k])$coefficients[2]))
-      #     residuals=cbind(residuals,apply(scaledConcatenedBlocks, 1, function(x) lm(x~w[,k])$residuals))
-      #   }
-      #   Xhat[[j]] =(gamma%*%t(w))*stdev[[j]]  + moy[[j]]
-      # }
+       if(naxis>1)
+       {
+         gamma=NULL
+         residuals=NULL
+         y=fit.rgcca$Y[[j]][,1:naxis]
+         for(k in 1:naxis)
+         { # regression of the relevant block on the y
+           gamma=rbind(gamma,apply(scaledConcatenedBlocks[,debutBlock[j]:finBlock[j]], 2, function(x) lm(x~y[,k])$coefficients[2]))
+         #  residuals=cbind(residuals,apply(scaledConcatenedBlocks, 1, function(x) lm(x~w[,k])$residuals))
+         }
+         centeredXhat[[j]]=y%*%gamma
+         residuals=scaledConcatenedBlocks[,debutBlock[j]:finBlock[j]]-centeredXhat[[j]]
+        print(residuals)
+          sigma[[j]]=sqrt(sum(residuals^2/(J*nsuj)))
+          
+         Xhat[[j]] =centeredXhat[[j]]*stdev[[j]] + moy[[j]]
+       }
     }
     concatenedCenteredXhat=Reduce(cbind,centeredXhat)
     concatenedXhat= Reduce(cbind,Xhat)
