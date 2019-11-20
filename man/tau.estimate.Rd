@@ -4,10 +4,12 @@
 \alias{tau.estimate}
 \title{Optimal shrinkage intensity parameters.}
 \usage{
-tau.estimate(x)
+tau.estimate(x, na.rm = TRUE)
 }
 \arguments{
 \item{x}{Data set on which the covariance matrix is estimated.}
+
+\item{na.rm}{if TRUE, calculations are made on available data}
 }
 \value{
 \item{tau}{Optimal shrinkage intensity parameter}

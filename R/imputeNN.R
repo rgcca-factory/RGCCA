@@ -20,7 +20,7 @@
 #'  colnames(X3)=paste("A",10:16,sep="")
 #' A=list(X1,X2,X3)  
 #' Ares=imputeNN(A,k=1,output="mean", klim=NULL,scale=TRUE,sameBlockWeight=TRUE)
-
+#' @export
 
 imputeNN <- function(
   A,
@@ -106,12 +106,13 @@ imputeNN <- function(
       if (k == "auto" || (k > 1 & k <= length(rowForComparison))) {
         # sorting the distances
         orderedDistance <- sort(distances)
-        
-        if (k == "auto")
-          knb <- kChoice(orderedDistance, klim = klim)
-        else
+       # /!\ To be uncommented 
+       # if (k == "auto")
+       #   knb <- kChoice(orderedDistance, klim = klim)
+            
+       # else
           knb <- k
-        
+          # /!\end  To be uncommented 
         contributors <- names(orderedDistance)[1:knb]
         
         # calculating a vector of weights for each subject: each weight component

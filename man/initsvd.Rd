@@ -8,6 +8,8 @@ initsvd(X, dual = TRUE)
 }
 \arguments{
 \item{X}{A matrix with n lines and p columns}
+
+\item{dual}{TRUE by default, allow to study the transposed matrix X when the number of rows is lower that the number of columns}
 }
 \value{
 A matrix with n lines and n columns

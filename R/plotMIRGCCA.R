@@ -9,7 +9,7 @@
 #' @param axes  vector of two integers choosing the components in the blocks. By default c(1,2) (first two axes)
 #' @param selec number of variabes to be selected in the "fingerprints"
 #' @param xlim by default, NULL
-#' @param threshod threshold for displaying the more correlated variables (default 0.5)
+#' @param threshold threshold for displaying the more correlated variables (default 0.5)
 #' @param cex size of tht text
 #' @param output "R" or "png"
 #' @param filename name of the saved file
@@ -35,7 +35,10 @@
 #' res$rgccaList[[2]]$Y[[1]]
 #' res[[1]]$A
 #' plotMIRGCCA(res,multiple="ell",indnames=FALSE)
-
+#' @importFrom grDevices graphics.off
+#' @importFrom vegan procrustes
+#' @importFrom car ellipse
+#' @export
 plotMIRGCCA=function(mi.obj,opt.ell="distr",multiple="ell",indnames=TRUE,varnames=TRUE,blocks=c(1,1),axes=c(1,2),selec="all",xlim=NULL,threshold=0.5,cex=1,output="R",filename="rgcca.png")
 {
   rgcca0=mi.obj$rgcca0

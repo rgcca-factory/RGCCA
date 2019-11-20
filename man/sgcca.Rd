@@ -35,6 +35,8 @@ If c1 is a matrix, each row \eqn{h} defines the constraints applied to the weigh
 \item{tol}{Stopping value for convergence.}
 
 \item{verbose}{Will report progress while computing if verbose = TRUE (default: TRUE).}
+
+\item{returnA}{If TRUE, returns the original A list}
 }
 \value{
 \item{Y}{A list of \eqn{J} elements. Each element of Y is a matrix that contains the SGCCA components for each block.}

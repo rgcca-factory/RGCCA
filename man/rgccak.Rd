@@ -4,9 +4,9 @@
 \alias{rgccak}
 \title{Internal function for computing the RGCCA parameters (RGCCA block components, outer weight vectors, etc.).}
 \usage{
-rgccak(A, C, tau = "optimal", scheme = "centroid", scale = TRUE,
-  verbose = FALSE, init = "svd", bias = TRUE, tol = 1e-08,
-  na.rm = TRUE, estimateNA = "no")
+rgccak(A, C, tau = "optimal", scheme = "centroid", verbose = FALSE,
+  init = "svd", bias = TRUE, tol = 1e-08, na.rm = TRUE,
+  estimateNA = "no", sameBlockWeight = TRUE)
 }
 \arguments{
 \item{A}{A list that contains the \eqn{J} blocks of variables. Either the blocks (\eqn{X_1, X_2, ..., X_J}) or the residual matrices (\eqn{X_{h1}, X_{h2}, ..., X_{hJ}}).}
@@ -19,8 +19,6 @@ analytical formula.}
 
 \item{scheme}{The value is "horst", "factorial", "centroid" or any diffentiable convex scheme function g designed by the user (default: "centroid").}
 
-\item{scale}{if scale = TRUE, each block is standardized to zero means and unit variances (default: TRUE).}
-
 \item{verbose}{Will report progress while computing if verbose = TRUE (default: TRUE).}
 
 \item{init}{The mode of initialization to use in the RGCCA algorithm. The alternatives are either by Singular Value Decompostion or random (default : "svd").}
@@ -30,6 +28,10 @@ analytical formula.}
 \item{tol}{Stopping value for convergence.}
 
 \item{na.rm}{If TRUE, NIPALS algorithm taking missing values into account is run. RGCCA is run only on available data.}
+
+\item{estimateNA}{to choose between "no","first","iterative","superblock","new","lebrusquet") TO BE DEVELOPPED}
+
+\item{sameBlockWeight}{useful in lebrusquet}
 }
 \value{
 \item{Y}{A \eqn{n * J} matrix of RGCCA outer components}

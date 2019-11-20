@@ -10,6 +10,8 @@ pm(M1, M2, na.rm = TRUE)
 \item{M1}{A matrix with n1 lines and p columns}
 
 \item{M2}{A matrix with p lines and n2 columns}
+
+\item{na.rm}{if TRUE calculates the matricial product only on available data. Else returns NA.}
 }
 \value{
 \item{X}{The resulting matrix with n1 lines and n2 columns}

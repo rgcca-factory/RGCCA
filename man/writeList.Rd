@@ -16,6 +16,6 @@ The function writeList write
 }
 \examples{
 set.seed(42);X1=matrix(rnorm(35),7,5);X2=matrix(rnorm(28),7,4)
-sA=list(X1,X2)
-swriteList(A,wd=getwd())
+A=list(X1,X2)
+writeList(A,wd=getwd())
 }

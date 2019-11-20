@@ -4,20 +4,28 @@
 \alias{whichNAmethod}
 \title{comparison of two RGCCA results}
 \usage{
-whichNAmethod(A, listNAdataset = NULL, listMethods, nDatasets = 20,
-  patternNA = NULL, typeNA = "block", ncomp = rep(2, length(A)),
-  sameBlockWeight = FALSE)
+whichNAmethod(A, listNAdataset = NULL, C = matrix(1, length(A),
+  length(A)) - diag(length(A)), tau = rep(1, length(A)), listMethods,
+  nDatasets = 20, patternNA = NULL, typeNA = "block",
+  ncomp = rep(2, length(A)), sameBlockWeight = TRUE, scale = TRUE,
+  tol = 1e-06, verbose = TRUE, scheme = "centroid", seed = NULL)
 }
 \arguments{
 \item{A}{A list of complete blocks}
 
 \item{listNAdataset}{if TRUE, no RGCCA on complete data is run}
 
+\item{C, tau, scale, scheme, sameBlockWeight, ncomp, tol, verbose}{parameters of RGCCA}
+
 \item{listMethods}{vector containing a list of methods ("mean","complete","nipals"...)}
 
 \item{nDatasets}{Number of simulated dataset}
 
-\item{C, tau, scale, scheme, sameBlockWeight}{parameters of RGCCA}
+\item{patternNA}{number of missing data required}
+
+\item{typeNA}{structure of missing data required ("ponc" or "block")}
+
+\item{seed}{if filled (by a number), the randomness is reproducible.}
 }
 \value{
 \item{A}{A list of dataset indicators containg a list of rgcca with a  list of criterion. }

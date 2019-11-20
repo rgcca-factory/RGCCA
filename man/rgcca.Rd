@@ -37,7 +37,11 @@ If tau is a matrix, tau[k, j] is associated with \eqn{\mathbf{X}_{jk}} (\eqn{k}t
 
 \item{sameBlockWeight}{A logical value indicating if the different blocks should have the same weight in the analysis (default, sameBlockWeight=TRUE)}
 
+\item{na.rm}{If TRUE, runs rgcca only on available data.}
+
 \item{returnA}{A logical value indicating if the A list should be return as a result (default, sameBlockWeight=FALSE)}
+
+\item{estimateNA}{If TRUE, missing values are estimated during the RGCCA calculation}
 }
 \value{
 \item{Y}{A list of \eqn{J} elements. Each element of \eqn{Y} is a matrix that contains the RGCCA components for the corresponding block.}
@@ -94,12 +98,12 @@ It should be noted that the numbers of components per block can differ from one 
 data(Russett)
 X_agric =as.matrix(Russett[,c("gini","farm","rent")])
 X_ind = as.matrix(Russett[,c("gnpr","labo")])
-X_polit = as.matrix(Russett[ , c("demostab", "dictatur")])
+X_polit = as.matrix(Russett[ , c("demostab", "dictator")])
 A = list(X_agric, X_ind, X_polit)
 #Define the design matrix (output = C) 
 C = matrix(c(0, 0, 1, 0, 0, 1, 1, 1, 0), 3, 3)
 result.rgcca = rgcca(A, C, tau = c(1, 1, 1), scheme = "factorial", scale = TRUE)
-lab = as.vector(apply(Russett[, 10:12], 1, which.max))
+lab = as.vector(apply(Russett[, 9:11], 1, which.max))
 plot(result.rgcca$Y[[1]], result.rgcca$Y[[2]], col = "white", 
      xlab = "Y1 (Agric. inequality)", ylab = "Y2 (Industrial Development)")
 text(result.rgcca$Y[[1]], result.rgcca$Y[[2]], Russett[, 1], col = lab, cex = .7)
@@ -143,7 +147,7 @@ for (i in 1:nrow(Russett)){
  Ytest[i, 2] = Btest[[2]]\%*\%resB$a[[2]]
  Ytest[i, 3] = Btest[[3]]\%*\%resB$a[[3]]
 }
-lab = apply(Russett[, 10:12], 1, which.max)
+lab = apply(Russett[, 9:11], 1, which.max)
 plot(result.rgcca$Y[[1]], result.rgcca$Y[[2]], col = "white", 
      xlab = "Y1 (Agric. inequality)", ylab = "Y2 (Ind. Development)")
 text(result.rgcca$Y[[1]], result.rgcca$Y[[2]], Russett[, 1], col = lab)

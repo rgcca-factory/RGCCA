@@ -1,6 +1,7 @@
 #' Estimation of the optimal shrinkage parameters as described in [1,2] and implemented 
 #' in a more general version within the SHIP package [2]. 
 #' @param x  Data set on which the covariance matrix is estimated.
+#' @param na.rm if TRUE, calculations are made on available data
 #' @return \item{tau}{Optimal shrinkage intensity parameter}
 #' @title Optimal shrinkage intensity parameters.
 #' @references [1] Schaefer J. and Strimmer K., 2005. A shrinkage approach to large-scale covariance matrix estimation and implications for functional genomics. Statist. Appl. Genet. Mol. Biol. 4:32.

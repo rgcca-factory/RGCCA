@@ -1,17 +1,18 @@
-#'Calculates the covariance on the available data
+#' cov3
 #'
+#' Calculates the covariance on the available data
 #'
-#' @param a matrix x
+#' @param x a matrix x
 #' @param y a matrix with same size as x
 #' @param bias if TRUE, the estimator of variance is SS/sqrt(n-1), if FALSE, it is SS/sqrt(n)
-#' @title cov3
 #' @examples 
-#' set.seed(42);X1=matrix(rnorm(35),7,5);
-#'set.seed(22);X2=matrix(rnorm(35),7,5);
-
-#'# Check old functionalities
-#'cov3(X1,bias=FALSE)==cov(X1)
-#'cov3(X1,X2,bias=FALSE)==cov(X1,X2)
+#' library(RGCCA)
+#' X1=matrix(rnorm(35),7,5);
+#' X2=matrix(rnorm(35),7,5);
+#' # Check old functionalities
+#' cov3(X1,bias=FALSE)==cov(X1)
+#' cov3(X1,X2,bias=FALSE)==cov(X1,X2)
+#' @export
 cov3=function (x, y = NULL, bias = TRUE) 
 {
   n = NROW(x)

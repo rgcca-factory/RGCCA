@@ -4,7 +4,7 @@
 \alias{comparison}
 \title{comparison of two RGCCA results}
 \usage{
-comparison(rgcca1, rgcca2, nAxe = 1, selec = 10,
+comparison(rgcca1, rgcca2, naxis = 1, selec = 10,
   selectPatient = NULL, indNA = NULL)
 }
 \arguments{
@@ -12,11 +12,13 @@ comparison(rgcca1, rgcca2, nAxe = 1, selec = 10,
 
 \item{rgcca2}{Another result of RGCCA function}
 
+\item{naxis}{Number of axes taken into account during the comparison}
+
 \item{selec}{Number of biomarkers to be selected}
 
 \item{selectPatient}{A vector allowing to select only some patients for the RV calculation}
 
-\item{nAxe=1}{Number of axes taken into account during the comparison}
+\item{indNA}{index of missing values (to be used in RMSE)}
 }
 \value{
 \item{A}{A list containing: a: the correlation between axes, rv: the rv coefficient, bm the biomarkers}
@@ -29,5 +31,5 @@ comparison(rgcca1, rgcca2, nAxe = 1, selec = 10,
 Compares 2 RGCCA
 }
 \examples{
- data();...
+ #DO NOT RUN
 }

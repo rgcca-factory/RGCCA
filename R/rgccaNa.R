@@ -14,6 +14,13 @@
 #' @param init The mode of initialization to use in RGCCA algorithm. The alternatives are either by Singular Value Decompostion ("svd") or random ("random") (Default: "svd").
 #' @param bias A logical value for biaised or unbiaised estimator of the var/cov (default: bias = TRUE).
 #' @param tol The stopping value for convergence.
+#' @param sameBlockWeight TRUE by default : each block have the same weight in the RGCCA analysis. If FALSE, the weight of each block depends on the number of variables of the block
+#' @param returnA If TRUE, the initial A list is returned
+#' @param knn.k Number of k nearest neighbors
+#' @param knn.output "mean", "random" or "weightedMean" : returns respectively the average of the k nearest neigbors, one selected randomly, or an average weighted by the distance of the k NN
+#' @param knn.klim k limits (if k is not a number, optimal k between klim[1] and klim[2] is calculated )
+#' @param knn.sameBlockWeight if TRUE the distance for Nearest Neigbors takes the size of blocks into account
+#' @param pca.ncp Number of components chosen in PCA 
 #' @return \item{Y}{A list of \eqn{J} elements. Each element of \eqn{Y} is a matrix that contains the RGCCA components for the corresponding block.}
 #' @return \item{a}{A list of \eqn{J} elements. Each element of \eqn{a} is a matrix that contains the outer weight vectors for each block.}
 #' @return \item{astar}{A list of \eqn{J} elements. Each element of astar is a matrix defined as Y[[j]][, h] = A[[j]]\%*\%astar[[j]][, h].}
@@ -29,7 +36,7 @@
 #' @references Schafer J. and Strimmer K., (2005), A shrinkage approach to large-scale covariance matrix estimation and implications for functional genomics. Statist. Appl. Genet. Mol. Biol. 4:32.
 #' @title Regularized Generalized Canonical Correlation Analysis (RGCCA) 
 #' @examples
-#' library(missMDA)
+#' data(Russett)
 #' X_agric =as.matrix(Russett[,c("gini","farm","rent")])
 #' X_ind = as.matrix(Russett[,c("gnpr","labo")])
 #' X_polit = as.matrix(Russett[ , c("demostab", "dictator")])
@@ -43,7 +50,7 @@
 #' A_ref2=lapply(A_ref,scale)
 #' A2=lapply(A,scale)
 
-rgccaNa=function (A,method, C = 1 - diag(length(A)), tau = rep(1, length(A)), refData=NULL,    ncomp = rep(1, length(A)), scheme = "centroid", scale = TRUE,   init = "svd", bias = TRUE, tol = 1e-08, verbose = TRUE,na.impute="none",na.niter=10,na.keep=NULL,nboot=10,sameBlockWeight=TRUE,returnA=FALSE,knn.k="all",knn.output="weightedMean",knn.klim=NULL,knn.sameBlockWeight=TRUE,pca.ncp=1) 
+rgccaNa=function (A,method, C = 1 - diag(length(A)), tau = rep(1, length(A)),    ncomp = rep(1, length(A)), scheme = "centroid", scale = TRUE,   init = "svd", bias = TRUE, tol = 1e-08, verbose = TRUE,sameBlockWeight=TRUE,returnA=FALSE,knn.k="all",knn.output="weightedMean",knn.klim=NULL,knn.sameBlockWeight=TRUE,pca.ncp=1) 
 { 
   nvar = sapply(A, NCOL)
   superblockAsList=function(superblock,A)

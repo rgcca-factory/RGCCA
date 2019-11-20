@@ -4,6 +4,11 @@
 #'
 #' @param A A matrix with J dimensions (to be changed for superblock ?)
 #' @param tau A vector of tau values with the same length as A
+#' @param C A matrix of connection
+#' @param bias FALSE by default. If TRUE, estimation of variance/covariance parameters with division by n-1 instead of n
+#' @param verbose FALSE by default. If TRUE, displays results of convergence for each iteration
+#' @param tolEM threshold to be reached to assess convergence. 
+#' @param reg "y" by default. Reconstruction is made by regression of the A rows on w ("w"),the A columns on Y ("y")  or without any regression with yw ("no")
 #' @param ni An integer for the maximal number of iterations before convergence
 #' @param tol The stopping value for convergence.
 #' @param graph if graph = TRUE, graphics are plotted/saved
@@ -24,8 +29,7 @@
 #'@return \item{indNA}{Position of missing values}
 
 #' @title imputeSB: impute with superblock method
-#' @examples
-#'  data();...
+
 imputeEM = function(A,
                     C,
                     tau,

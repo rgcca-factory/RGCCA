@@ -13,6 +13,8 @@
 #' @param bias A logical value for either a biaised or unbiaised estimator of the var/cov.
 #' @param tol Stopping value for convergence.
 #' @param na.rm If TRUE, NIPALS algorithm taking missing values into account is run. RGCCA is run only on available data.
+#' @param estimateNA to choose between "no","first","iterative","superblock","new","lebrusquet") TO BE DEVELOPPED
+#' @param sameBlockWeight useful in lebrusquet 
 #' @return \item{Y}{A \eqn{n * J} matrix of RGCCA outer components}
 #' @return \item{Z}{A \eqn{n * J} matrix of RGCCA inner components}
 #' @return \item{a}{A list of outer weight vectors}
@@ -32,17 +34,9 @@
 #' @importFrom MASS ginv
 #' @importFrom stats cor rnorm
 #' @importFrom graphics plot
+#' @importFrom Deriv Deriv
 rgccak=function (A, C, tau = "optimal", scheme = "centroid",verbose = FALSE, init = "svd", bias = TRUE, tol = 1e-08,na.rm=TRUE,estimateNA="no",sameBlockWeight=TRUE) 
 {
-# A liste de matrices "blocs" dans un ordre precis (cf matrice connexion)
-# C matrice de connexion, 
-# tau = 0 ou 1
-# scheme : fonction g
-# scale: transformations appliquees aux blocs
-# verbose : affichage
-# init : initialisation
-# biais : covariance estimee avec ou sans biais
-# tol: critere d'arret de l'algorithme
      if(mode(scheme) != "function") 
     {
     if(!scheme %in% c("horst","factorial","centroid")){stop("Please choose scheme as 'horst','factorial','centroid' or as a convex function")}
@@ -60,7 +54,7 @@ rgccak=function (A, C, tau = "optimal", scheme = "centroid",verbose = FALSE, ini
         if(sameBlockWeight){A=lapply(A,function(x){return(x/sqrt(NCOL(x)))})}
        # liste de blocs
     }
-    # initialisation du A à la moyenne
+    # initialisation du A a la moyenne
 
    # A=lapply(A,function(M){M[is.na(M)]<-0;return(M)})
     J <- length(A) # nombre de blocs
@@ -99,10 +93,11 @@ rgccak=function (A, C, tau = "optimal", scheme = "centroid",verbose = FALSE, ini
 	# premiers reglages avant la boucle : initialisation du premier Y (correspondant a la fonction a maximiser)
     for (j in which.primal) 
     {
-     	 ifelse(tau[j] == 1,
-     	  {
+        ifelse(tau[j] == 1,
+        {
             a[[j]] <- drop(1/sqrt(t(a[[j]]) %*% a[[j]])) * a[[j]] # calcul de la premiere composante (les aj sont les wj) : on les norme dans ce cas : c'eest la condition |w|=1
-            # Remplir les valeurs de A manquantes avec la strategie
+            if(a[[j]][1]<0){a[[j]]=-a[[j]]}
+             # Remplir les valeurs de A manquantes avec la strategie
             Y[, j] <- pm(A[[j]] , a[[j]],na.rm=na.rm) # projection du bloc sur la premiere composante
            
            
@@ -118,6 +113,7 @@ rgccak=function (A, C, tau = "optimal", scheme = "centroid",verbose = FALSE, ini
             #-----------------------
            
             a[[j]] <- drop(1/sqrt(t(a[[j]])%*% M[[j]]%*%a[[j]]) )* ( M[[j]] %*% a[[j]]) # calcul premiere composante (a creuser)
+            if(a[[j]][1]<0){a[[j]]=-a[[j]]}
             Y[, j] <-pm( A[[j]] ,a[[j]],na.rm=na.rm) # projection du bloc sur la premiere composante
         })
     }
@@ -126,6 +122,7 @@ rgccak=function (A, C, tau = "optimal", scheme = "centroid",verbose = FALSE, ini
         ifelse(tau[j] == 1, {
             alpha[[j]] = drop(1/sqrt(t(alpha[[j]]) %*% K[[j]] %*%  alpha[[j]])) * alpha[[j]]
             a[[j]] =pm( t(A[[j]]), alpha[[j]],na.rm=na.rm)
+            if(a[[j]][1]<0){a[[j]]=-a[[j]]}
             Y[, j] =pm( A[[j]], a[[j]],na.rm=na.rm)
         }, {
           
@@ -139,6 +136,7 @@ rgccak=function (A, C, tau = "optimal", scheme = "centroid",verbose = FALSE, ini
             
              Minv[[j]] = ginv(M[[j]])
             alpha[[j]] = drop(1/sqrt(t(alpha[[j]])%*% M[[j]]%*% K[[j]]%*% alpha[[j]])) * alpha[[j]]
+            if(a[[j]][1]<0){a[[j]]=-a[[j]]}
             a[[j]] =pm( t(A[[j]]), alpha[[j]],na.rm=na.rm)
             Y[, j] = pm(A[[j]] ,a[[j]],na.rm=na.rm) 
         })
@@ -165,6 +163,7 @@ rgccak=function (A, C, tau = "optimal", scheme = "centroid",verbose = FALSE, ini
           { # si tau = 1
              Z[, j] = rowSums(matrix(rep(C[j, ], n), n, J, byrow = TRUE) * matrix(rep(dgx, n), n, J, byrow = TRUE) * Y,na.rm=na.rm)
 		     a[[j]] = drop(1/sqrt(pm(pm(t(Z[, j]) ,A[[j]],na.rm=na.rm) ,  pm( t(A[[j]]) ,Z[, j],na.rm=na.rm),na.rm=na.rm))) *pm (t(A[[j]]), Z[,  j],na.rm=na.rm)  
+		     if(a[[j]][1]<0){a[[j]]=-a[[j]]}
 		     # Y[, j] =pm( A[[j]], a[[j]],na.rm=na.rm) #Nouvelle estimation de j
 		
 #------------------ si on estime les donnees manquantes dans le cas ou tau=1
@@ -268,7 +267,8 @@ rgccak=function (A, C, tau = "optimal", scheme = "centroid",verbose = FALSE, ini
 			      { # si tau different de 1
               Z[, j] = rowSums(matrix(rep(C[j, ], n), n,  J, byrow = TRUE) * matrix(rep(dgx, n), n,  J, byrow = TRUE) * Y,na.rm=na.rm)
              a[[j]] = drop(1/sqrt(pm(pm(t(Z[, j]) ,A[[j]],na.rm=na.rm) , pm( pm( M[[j]] , t(A[[j]]),na.rm=na.rm) , Z[, j],na.rm=na.rm),na.rm=na.rm))) * pm(M[[j]],pm( t(A[[j]]) ,Z[, j]))
-            Y[, j] = pm(A[[j]] ,a[[j]],na.rm=na.rm)
+             if(a[[j]][1]<0){a[[j]]=-a[[j]]}
+             Y[, j] = pm(A[[j]] ,a[[j]],na.rm=na.rm)
           }
        }
 
@@ -280,6 +280,7 @@ rgccak=function (A, C, tau = "optimal", scheme = "centroid",verbose = FALSE, ini
               Z[, j] = rowSums(matrix(rep(C[j, ], n), n, J, byrow = TRUE) * matrix(rep(dgx, n), n, J, byrow = TRUE) * Y,na.rm=na.rm)
               alpha[[j]] = drop(1/sqrt(t(Z[, j]) %*% K[[j]] %*% Z[, j])) * Z[, j]
               a[[j]] =pm( t(A[[j]]) , alpha[[j]],na.rm=na.rm)
+              if(a[[j]][1]<0){a[[j]]=-a[[j]]}
               Y[, j] =pm( A[[j]], a[[j]],na.rm=na.rm)
            }, 
            {
@@ -288,6 +289,7 @@ rgccak=function (A, C, tau = "optimal", scheme = "centroid",verbose = FALSE, ini
 			alpha[[j]] = drop(1/sqrt(t(Z[, j])%*% K[[j]] %*% Minv[[j]]%*% Z[, j])) * (Minv[[j]] %*% Z[,  j])
                    
 		   a[[j]] =pm( t(A[[j]]) , alpha[[j]],na.rm=na.rm)
+		   if(a[[j]][1]<0){a[[j]]=-a[[j]]}
             Y[, j] =pm( A[[j]], a[[j]],na.rm=na.rm)
           })
       }

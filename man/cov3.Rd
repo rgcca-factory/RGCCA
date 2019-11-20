@@ -7,18 +7,19 @@
 cov3(x, y = NULL, bias = TRUE)
 }
 \arguments{
+\item{x}{a matrix x}
+
 \item{y}{a matrix with same size as x}
 
 \item{bias}{if TRUE, the estimator of variance is SS/sqrt(n-1), if FALSE, it is SS/sqrt(n)}
-
-\item{a}{matrix x}
 }
 \description{
 Calculates the covariance on the available data
 }
 \examples{
-set.seed(42);X1=matrix(rnorm(35),7,5);
-set.seed(22);X2=matrix(rnorm(35),7,5);
+library(RGCCA)
+X1=matrix(rnorm(35),7,5);
+X2=matrix(rnorm(35),7,5);
 # Check old functionalities
 cov3(X1,bias=FALSE)==cov(X1)
 cov3(X1,X2,bias=FALSE)==cov(X1,X2)

@@ -39,7 +39,8 @@
 #' @param tol The stopping value for convergence.
 #' @param sameBlockWeight A logical value indicating if the different blocks should have the same weight in the analysis (default, sameBlockWeight=TRUE)
 #' @param returnA A logical value indicating if the A list should be return as a result (default, sameBlockWeight=FALSE)
-
+#' @param na.rm If TRUE, runs rgcca only on available data.
+#' @param estimateNA If TRUE, missing values are estimated during the RGCCA calculation
 #' @return \item{Y}{A list of \eqn{J} elements. Each element of \eqn{Y} is a matrix that contains the RGCCA components for the corresponding block.}
 #' @return \item{a}{A list of \eqn{J} elements. Each element of \eqn{a} is a matrix that contains the outer weight vectors for each block.}
 #' @return \item{astar}{A list of \eqn{J} elements. Each element of astar is a matrix defined as Y[[j]][, h] = A[[j]]\%*\%astar[[j]][, h].}
@@ -61,12 +62,12 @@
 #' data(Russett)
 #' X_agric =as.matrix(Russett[,c("gini","farm","rent")])
 #' X_ind = as.matrix(Russett[,c("gnpr","labo")])
-#' X_polit = as.matrix(Russett[ , c("demostab", "dictatur")])
+#' X_polit = as.matrix(Russett[ , c("demostab", "dictator")])
 #' A = list(X_agric, X_ind, X_polit)
 #' #Define the design matrix (output = C) 
 #' C = matrix(c(0, 0, 1, 0, 0, 1, 1, 1, 0), 3, 3)
 #' result.rgcca = rgcca(A, C, tau = c(1, 1, 1), scheme = "factorial", scale = TRUE)
-#' lab = as.vector(apply(Russett[, 10:12], 1, which.max))
+#' lab = as.vector(apply(Russett[, 9:11], 1, which.max))
 #' plot(result.rgcca$Y[[1]], result.rgcca$Y[[2]], col = "white", 
 #'      xlab = "Y1 (Agric. inequality)", ylab = "Y2 (Industrial Development)")
 #' text(result.rgcca$Y[[1]], result.rgcca$Y[[2]], Russett[, 1], col = lab, cex = .7)
@@ -111,7 +112,7 @@
 #'  Ytest[i, 2] = Btest[[2]]%*%resB$a[[2]]
 #'  Ytest[i, 3] = Btest[[3]]%*%resB$a[[3]]
 #' }
-#' lab = apply(Russett[, 10:12], 1, which.max)
+#' lab = apply(Russett[, 9:11], 1, which.max)
 #' plot(result.rgcca$Y[[1]], result.rgcca$Y[[2]], col = "white", 
 #'      xlab = "Y1 (Agric. inequality)", ylab = "Y2 (Ind. Development)")
 #' text(result.rgcca$Y[[1]], result.rgcca$Y[[2]], Russett[, 1], col = lab)
@@ -121,7 +122,9 @@
 #' @importFrom graphics abline axis close.screen grid legend lines par points rect screen segments split.screen text
 #' @importFrom stats binomial glm lm predict sd var weighted.mean
 #' @importFrom utils read.table write.table
-
+#' @import FactoMineR 
+#' @import missMDA
+#' @importFrom grDevices graphics.off
 
 rgcca=function (A, C = 1 - diag(length(A)), tau = rep(1, length(A)),  ncomp = rep(1, length(A)), scheme = "centroid", scale = TRUE,   init = "svd", bias = TRUE, tol = 1e-08, verbose = TRUE,sameBlockWeight=TRUE,na.rm=TRUE,returnA=FALSE,estimateNA="no") 
 {

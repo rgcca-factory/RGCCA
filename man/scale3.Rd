@@ -25,5 +25,6 @@ Uses cov3 to scale a list of matrix (taking into account the missing values)
 This method is used for the implementation of EM algorithm for missing data
 }
 \examples{
- data();...
+X1=matrix(rnorm(15),5,3)
+scale3(X1)
 }

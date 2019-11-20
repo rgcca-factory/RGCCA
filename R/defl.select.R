@@ -24,7 +24,7 @@ defl.select=function (yy, rr, nncomp, nn, nbloc)
   pdefl <- list()
   for (q in 1:nbloc) {
     if (nn <= nncomp[q]) {
-      defltmp <- RGCCA:::deflation(as.matrix(rr[[q]]), as.matrix(yy[, q]))
+      defltmp <- deflation(as.matrix(rr[[q]]), as.matrix(yy[, q]))
       resdefl[[q]] <- defltmp$R
       pdefl[[q]]=as.matrix(defltmp$p)
     }

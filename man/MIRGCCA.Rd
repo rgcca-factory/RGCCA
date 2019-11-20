@@ -7,10 +7,12 @@
 MIRGCCA(A, option = "knn", superblock = TRUE, k = 5, ni = 5,
   scale = TRUE, sameBlockWeight = TRUE, tau, klim = NULL,
   output = "mean", scheme = "centroid", tol = 1e-08,
-  returnA = TRUE, C = NULL, ncomp = rep(2, length(A)))
+  returnA = TRUE, C = NULL, ncomp = rep(2, length(A)), naxis = 1)
 }
 \arguments{
 \item{A}{A list that contains the \eqn{J} blocks of variables \eqn{\mathbf{X_1}, \mathbf{X_2}, ..., \mathbf{X_J}}.}
+
+\item{option}{"knn" for k Nearest Neigbors or "em" for Expectation Maximization}
 
 \item{superblock}{TRUE if the A list should be returned in the output, FALSE ifelse}
 
@@ -42,11 +44,7 @@ If tau is a matrix, tau[k, j] is associated with \eqn{\mathbf{X}_{jk}} (\eqn{k}t
 
 \item{ncomp}{A \eqn{1 \times J} vector that contains the numbers of components for each block (default: rep(1, length(A)), which gives one component per block.)}
 
-\item{tol}{The stopping value for convergence.}
-
-\item{ncomp}{vector containing the number of components per block in RGCCA}
-
-\item{naxis}{number of component to select in the superblock for the estimation of missing data}
+\item{naxis}{number of component to select in the superblock for the estimation of missing data for "em" option}
 }
 \value{
 \item{rgcca0}{RGCCA results for the reference dataset}
@@ -71,10 +69,8 @@ colnames(X2)=paste("B",1:4)
 colnames(X3)=paste("C",1:7)
 X1[1,]=NA
 X2[7,1]=NA
-X2[5,1]=NA
-X3[3,1:2]=NA
-A=list(X1,X2,X3)
-# test for knn
-res=MIRGCCA(A,k=4,ni=5,scale=TRUE,sameBlockWeight=FALSE,
-tau=rep(0,3),klim=NULL,output="weightedMean",scheme="centroid",tol=1e-16)
+ X2[5,1]=NA
+ X3[3,1:2]=NA
+ A=list(X1,X2,X3)
+res=MIRGCCA(A,k=3,ni=5,scale=TRUE,sameBlockWeight=TRUE,tau=rep(0,3))
 }

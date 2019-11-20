@@ -1,12 +1,14 @@
 #' Create a dataset with missing values
 #' @param A A list of complete matrices with the same number of lines
+#' @param output list by default, else, can return the concatened list.
+#' @param seed if NULL, the creation of missing data is totally random (and consequently unreproducible), if numeric value, select randomness according to a seed (and reproducible).
 #' @param option "bloc" if the structure of missing data is by block or "ponc" if it is random across variables
 #' @param pNA A logical value. If scale = TRUE, each column is transformed to have unit variance (default = TRUE).
-#' @param nAllRespondant If the option "ponc" is chosen,nAllRespondant corresponds to the number of complete individuals required
+#' @param nAllRespondants If the option "ponc" is chosen,nAllRespondant corresponds to the number of complete individuals required
 #' @return \item{A}{a list of NA}
 #' @title Create a list with missing data (for simulation)
 
-createNA=function(A,option="block",pNA=0.1,nAllRespondants=4,output="list")
+createNA=function(A,option="block",pNA=0.1,nAllRespondants=4,output="list",seed=NULL)
 {
   if(length(pNA)==1){pNA=rep(pNA,length(A))}
   if(length(pNA)!=1 & length(pNA)!=length(A)){stop("pNA should be a number between 0 and 1 or a vector of the same size as A ")}
@@ -24,6 +26,7 @@ createNA=function(A,option="block",pNA=0.1,nAllRespondants=4,output="list")
 			nbNAparBloc=round(pNA[i]*n)	
 			if(nbNAparBloc!=0)
 			{
+			 if(!is.null(seed)){set.seed(seed+i)}
 		  	indToRemove[[i]]=sample(1:n, nbNAparBloc, replace = FALSE)	
 		  	 A[[i]][indToRemove[[i]],]=NA
 		  }
@@ -42,6 +45,7 @@ createNA=function(A,option="block",pNA=0.1,nAllRespondants=4,output="list")
     if(length(indToTake)==0){indicesToUse=1:n}else{indicesToUse=(1:n)[!(1:n)%in%indToTake]}
 	  if(nbNAparBloc!=0)
 	  {
+	      if(!is.null(seed)){set.seed(seed+length(A))}
 	    indToRemove[[nbloc]]=sample(indicesToUse, min(length(indicesToUse),nbNAparBloc), replace = FALSE)	
 	    A[[nbloc]][indToRemove[[nbloc]],]=NA
 	   }
@@ -65,6 +69,7 @@ createNA=function(A,option="block",pNA=0.1,nAllRespondants=4,output="list")
 			if(nbNA!=0)
 			{
 				listeIndicePossible=merge(1:n,1:p)
+				if(!is.null(seed)){set.seed(seed+i)}
 				indToRemove=sample(1:(n*p), nbNA, replace = FALSE)
 				listeIndicesToRemove=listeIndicePossible[indToRemove,]		
 				for(j in 1:length(indToRemove)){A[[i]][listeIndicesToRemove[j,"x"],listeIndicesToRemove[j,"y"]]=NA}
@@ -86,6 +91,7 @@ createNA=function(A,option="block",pNA=0.1,nAllRespondants=4,output="list")
 			if(nbNA!=0)
 			{
 				listeIndicePossible=merge(restData,1:p)
+				if(!is.null(seed)){set.seed(seed+i)}
 				indToRemove=sample(1:dim(listeIndicePossible)[1], nbNA, replace = FALSE)
 				listeIndicesToRemove=listeIndicePossible[indToRemove,]		
 				for(j in 1:length(indToRemove)){A[[i]][listeIndicesToRemove[j,"x"],listeIndicesToRemove[j,"y"]]=NA}

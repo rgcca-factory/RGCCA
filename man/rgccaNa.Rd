@@ -5,12 +5,11 @@
 \title{Regularized Generalized Canonical Correlation Analysis (RGCCA)}
 \usage{
 rgccaNa(A, method, C = 1 - diag(length(A)), tau = rep(1, length(A)),
-  refData = NULL, ncomp = rep(1, length(A)), scheme = "centroid",
-  scale = TRUE, init = "svd", bias = TRUE, tol = 1e-08,
-  verbose = TRUE, na.impute = "none", na.niter = 10,
-  na.keep = NULL, nboot = 10, sameBlockWeight = TRUE,
-  returnA = FALSE, knn.k = "all", knn.output = "weightedMean",
-  knn.klim = NULL, knn.sameBlockWeight = TRUE, pca.ncp = 1)
+  ncomp = rep(1, length(A)), scheme = "centroid", scale = TRUE,
+  init = "svd", bias = TRUE, tol = 1e-08, verbose = TRUE,
+  sameBlockWeight = TRUE, returnA = FALSE, knn.k = "all",
+  knn.output = "weightedMean", knn.klim = NULL,
+  knn.sameBlockWeight = TRUE, pca.ncp = 1)
 }
 \arguments{
 \item{A}{A list that contains the \eqn{J} blocks of variables \eqn{\mathbf{X_1}, \mathbf{X_2}, ..., \mathbf{X_J}}.}
@@ -38,6 +37,20 @@ If tau is a matrix, tau[k, j] is associated with \eqn{\mathbf{X}_{jk}} (\eqn{k}t
 \item{tol}{The stopping value for convergence.}
 
 \item{verbose}{If verbose = TRUE, the progress will be report while computing (default: TRUE).}
+
+\item{sameBlockWeight}{TRUE by default : each block have the same weight in the RGCCA analysis. If FALSE, the weight of each block depends on the number of variables of the block}
+
+\item{returnA}{If TRUE, the initial A list is returned}
+
+\item{knn.k}{Number of k nearest neighbors}
+
+\item{knn.output}{"mean", "random" or "weightedMean" : returns respectively the average of the k nearest neigbors, one selected randomly, or an average weighted by the distance of the k NN}
+
+\item{knn.klim}{k limits (if k is not a number, optimal k between klim[1] and klim[2] is calculated )}
+
+\item{knn.sameBlockWeight}{if TRUE the distance for Nearest Neigbors takes the size of blocks into account}
+
+\item{pca.ncp}{Number of components chosen in PCA}
 }
 \value{
 \item{Y}{A list of \eqn{J} elements. Each element of \eqn{Y} is a matrix that contains the RGCCA components for the corresponding block.}
@@ -64,7 +77,7 @@ If tau is a matrix, tau[k, j] is associated with \eqn{\mathbf{X}_{jk}} (\eqn{k}t
 imputeRGCCA allows to choose the imputation method before running RGCCA
 }
 \examples{
-library(missMDA)
+data(Russett)
 X_agric =as.matrix(Russett[,c("gini","farm","rent")])
 X_ind = as.matrix(Russett[,c("gnpr","labo")])
 X_polit = as.matrix(Russett[ , c("demostab", "dictator")])

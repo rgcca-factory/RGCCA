@@ -25,7 +25,11 @@ sgcca.permute.crit(A, c1s = NULL, nperm = 20, C = 1 -
 
 \item{plot}{A logical, should a plot of coeffi}
 
+\item{tol}{Tolerance}
+
 \item{n_cores}{For linux and MacOS number of cores used for parallelisation}
+
+\item{scale}{If TRUE, the data is scaled}
 }
 \value{
 A list containing :
@@ -43,34 +47,4 @@ A list containing :
 \description{
 Run through a set of constraint parameters c1s to select the best with permutation
 Only one component per block for the time being
-}
-\examples{
-library(RGCCA)
-library(PMA)
-
-# Create correlated blocks
-
-u <- matrix(rnorm(50),ncol=1)
-
-v1 <- matrix(c(rep(.5,25),rep(0,75)),ncol=1)
-v2 <- matrix(c(rep(1,25),rep(0,25)),ncol=1)
-v3 <- matrix(c(rep(.5,25),rep(0,175)),ncol=1)
-
-x1 <- u\%*\%t(v1) + matrix(rnorm(50*100),ncol=100)
-x2 <- u\%*\%t(v2) + matrix(rnorm(50*50),ncol=50)
-x3 <- u\%*\%t(v3) + matrix(rnorm(50*200),ncol=200)
-
-xlist <- list(x1, x2, x3)
-
-# Search for the best sparsity penalities for SGCCA
-
-perm.sgcca = sgcca.permute.crit(xlist, nperm = 10)
-out.sgcca = sgcca(xlist, c1 = perm.sgcca$bestpenalties)
-
-par(mfrow=c(3,1), mar = rep(2,4))
-PlotCGH(out.sgcca$a[[1]], chrom=rep(1,ncol(x1)))
-PlotCGH(out.sgcca$a[[2]], chrom=rep(2,ncol(x2)))
-PlotCGH(out.sgcca$a[[3]], chrom=rep(3,ncol(x3)))
-title(main = "SGCCA.permute, C by default", outer = TRUE, line = -2)
-
 }

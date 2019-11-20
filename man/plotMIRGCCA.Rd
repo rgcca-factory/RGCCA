@@ -28,13 +28,13 @@ plotMIRGCCA(mi.obj, opt.ell = "distr", multiple = "ell",
 
 \item{xlim}{by default, NULL}
 
+\item{threshold}{threshold for displaying the more correlated variables (default 0.5)}
+
 \item{cex}{size of tht text}
 
 \item{output}{"R" or "png"}
 
 \item{filename}{name of the saved file}
-
-\item{threshod}{threshold for displaying the more correlated variables (default 0.5)}
 }
 \value{
 \item{rgcca0}{RGCCA results for the reference dataset}

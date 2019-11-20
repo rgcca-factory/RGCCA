@@ -6,26 +6,30 @@
 \usage{
 plotEvol(listFinale, output = "rv", fileName = NULL, ylim = NULL,
   block = "all", barType = "sd", namePlot = NULL, width = 480,
-  height = 480)
+  height = 480, names.arg = NULL, main = NULL)
 }
 \arguments{
 \item{listFinale}{A list resulting of naEvolution}
 
-\item{output="rv":}{Can be also "a" for correlations between axes, "bm" for the percent of similar biomarkers, "rvComplete" if the RV is calculated only on complete dataset, or "rmse" for Root Mean Squares Error.}
+\item{output}{="rv": Can be also "a" for correlations between axes, "bm" for the percent of similar biomarkers, "rvComplete" if the RV is calculated only on complete dataset, or "rmse" for Root Mean Squares Error.}
 
-\item{fileName=NULL}{name of the file where the plot is saved}
+\item{fileName}{=NULL name of the file where the plot is saved}
 
-\item{ylim=c(0.8, 1)}{y limits}
+\item{ylim}{=c(0.8,1) y limits}
 
-\item{block="all"}{or a number indicating the position of the chosen block in the initial list}
+\item{block}{="all" or a number indicating the position of the chosen block in the initial list}
 
-\item{barType="sd"}{or "stderr". Indicates which error bar to build}
+\item{barType}{="sd" or "stderr". Indicates which error bar to build}
 
-\item{namePlot=NULL}{Name of the file}
+\item{namePlot}{=NULL Name of the file}
 
-\item{width=480}{width of the saved file}
+\item{width}{=480 width of the saved file}
 
-\item{height=480}{height of the saved file}
+\item{height}{=480 height of the saved file}
+
+\item{names.arg}{renaming the methods}
+
+\item{main}{title of the graphic}
 }
 \description{
 Plots the impact of increasing missing data on RGCCA
@@ -33,7 +37,7 @@ Plots the impact of increasing missing data on RGCCA
 \examples{
 set.seed(42);X1=matrix(rnorm(350),70,5);X2=matrix(rnorm(280),70,4)
 A=list(X1,X2)
-listResults=naEvolution(refData=A,prctNA=c(0.1,0.2,0.3,0.4),
+listResults=naEvolution(A=A,prctNA=c(0.1,0.2,0.3,0.4),
 listMethods=c("mean","complete","nipals","knn4"))
 plotEvol(listFinale=listResults,ylim=c(0,1),output="a")
 }

@@ -6,12 +6,14 @@
 \usage{
 imputeSB(A, tau = rep(1, length(A)), ni = 50, tol = 1e-08,
   graph = FALSE, ncomp = NULL, naxis = 1, scale = TRUE,
-  sameBlockWeight = TRUE, bias = TRUE)
+  sameBlockWeight = TRUE, bias = TRUE, verbose = FALSE)
 }
 \arguments{
 \item{A}{A list of J blocks}
 
 \item{tau}{A vector of tau values with the same length as A}
+
+\item{ni}{Number of iterations}
 
 \item{tol}{The stopping value for convergence.}
 
@@ -26,6 +28,8 @@ imputeSB(A, tau = rep(1, length(A)), ni = 50, tol = 1e-08,
 \item{sameBlockWeight}{A logical value indicating if the different blocks should have the same weight in the analysis (default, sameBlockWeight=TRUE)}
 
 \item{bias}{A logical value indicating if variance should be biased or not}
+
+\item{verbose}{If TRUE, displays the differents RGCCA steps}
 }
 \value{
 \item{A}{A list of blocks imputed}
@@ -39,7 +43,4 @@ Impute with superblock method
 }
 \details{
 This method is used for the implementation of EM algorithm for missing data
-}
-\examples{
- data();...
 }

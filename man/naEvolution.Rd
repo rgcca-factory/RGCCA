@@ -6,18 +6,25 @@
 \usage{
 naEvolution(A, prctNA = c(0.1, 0.2, 0.3), listMethods = c("mean"),
   typeNA = "block", ncomp = rep(1, length(A)),
-  sameBlockWeight = FALSE)
+  sameBlockWeight = TRUE, scale = TRUE, nDatasets = 20,
+  tol = 1e-06, verbose = FALSE, scheme = "centroid", seed = NULL,
+  C = matrix(1, length(A), length(A)) - diag(length(A)), tau = rep(1,
+  length(A)))
 }
 \arguments{
 \item{A}{A list of complete blocks}
 
+\item{prctNA}{if number, percentage of missing data required for each block. If a vector with the same size as A, the percentage can be adapted for each block. If a list of values, this percent is calculated per variable}
+
 \item{listMethods}{Vector containing the names of the methods to use : "complete","nipals","em","knn1","knn10"....}
 
-\item{listNAdataset}{if TRUE, no RGCCA on complete data is run}
+\item{typeNA}{"block" if the missing data are blockwise or "ponc" if they are random}
 
-\item{C, tau, scale, scheme, sameBlockWeight}{parameters of RGCCA}
+\item{nDatasets}{Number of simulated datasets}
 
-\item{nDatasets}{Number of simulated dataset}
+\item{seed}{NULL by default (no reproducibility). A number representing the seed (for reproducibility)}
+
+\item{C, tau, scale, scheme, sameBlockWeight, ncomp, tol, verbose}{parameters of RGCCA}
 }
 \value{
 \item{resultComparison}{A list of dataset indicators containg a list of rgcca with a list of criterion. }

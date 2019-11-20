@@ -6,10 +6,13 @@
 \usage{
 imputeEM(A, C, tau, ni = 50, tol = 1e-08, graph = FALSE,
   ncomp = NULL, naxis = 1, scale = TRUE, sameBlockWeight = TRUE,
-  scheme = "centroid", bias = TRUE, superblock = FALSE)
+  scheme = "centroid", bias = TRUE, superblock = FALSE,
+  verbose = FALSE, tolEM = 0.001, reg = "y")
 }
 \arguments{
 \item{A}{A matrix with J dimensions (to be changed for superblock ?)}
+
+\item{C}{A matrix of connection}
 
 \item{tau}{A vector of tau values with the same length as A}
 
@@ -30,7 +33,15 @@ imputeEM(A, C, tau, ni = 50, tol = 1e-08, graph = FALSE,
 \item{scheme}{scheme chosene for RGCCA (is not useful when superblock=TRUE)
 @param bias A logical value indicating if variance should be biased or not}
 
+\item{bias}{FALSE by default. If TRUE, estimation of variance/covariance parameters with division by n-1 instead of n}
+
 \item{superblock}{Boolean, if TRUE, the missing values are estimated with the superblock}
+
+\item{verbose}{FALSE by default. If TRUE, displays results of convergence for each iteration}
+
+\item{tolEM}{threshold to be reached to assess convergence.}
+
+\item{reg}{"y" by default. Reconstruction is made by regression of the A rows on w ("w"),the A columns on Y ("y")  or without any regression with yw ("no")}
 }
 \value{
 \item{A}{A list of blocks imputed}
@@ -54,7 +65,4 @@ Impute with superblock method
 }
 \details{
 This method is used for the implementation of EM algorithm for missing data
-}
-\examples{
- data();...
 }

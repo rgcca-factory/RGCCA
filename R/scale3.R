@@ -9,7 +9,9 @@
 #' @return \item{A}{The resulting list of matrices}
 #' @title scale3
 #' @examples 
-#'  data();...
+#' X1=matrix(rnorm(15),5,3)
+#' scale3(X1)
+#' @export
 scale3=function (A, center = TRUE, scale = TRUE, bias = TRUE) 
 {
   if (center == TRUE & scale == TRUE) {

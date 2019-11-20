@@ -9,7 +9,6 @@ The Russett data set (Russett, 1964) are studied in Gifi (1990). Three blocks of
 \format{
   A data frame with 47 observations on the following 12 variables.
   \describe{
-    \item{\code{PAYS}}{a character vector}
     \item{\code{gini}}{a numeric vector}
     \item{\code{farm}}{a numeric vector}
     \item{\code{rent}}{a numeric vector}
@@ -20,7 +19,7 @@ The Russett data set (Russett, 1964) are studied in Gifi (1990). Three blocks of
     \item{\code{death}}{a numeric vector}
     \item{\code{demostab}}{a numeric vector}
     \item{\code{demoinst}}{a numeric vector}
-    \item{\code{dictatur}}{a numeric vector}
+    \item{\code{dictator}}{a numeric vector}
   }
 }
 \references{Russett B.M. (1964), Inequality and Instability: The Relation of Land Tenure to Politics, World Politics 16:3, 442-454.
@@ -34,7 +33,7 @@ data(Russett)
 X_agric =as.matrix(Russett[,c("gini","farm","rent")])
 X_ind = as.matrix(Russett[,c("gnpr","labo")])
 X_polit = as.matrix(Russett[ , c("inst", "ecks", "death", "demostab", 
-                                 "demoinst", "dictatur")])
+                                 "demoinst", "dictator")])
 A = list(X_agric, X_ind, X_polit)
 }
 \keyword{datasets}

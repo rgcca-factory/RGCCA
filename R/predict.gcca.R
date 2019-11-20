@@ -33,6 +33,10 @@
 # ( res  = predict.gcca(object, A ) )
 # ( res  = predict.gcca(object, A, newA = newA, type = "regression", fit = "lm", y.train = A[[bloc_to_pred]], y.test = newA[[bloc_to_pred]] ) )
 # ( res  = predict.gcca(object, A, newA = newA, type = "classification", fit = "lda", y.train = y.train, y.test = y.test ) )
+#' @importFrom MASS lda
+#' @importFrom nnet multinom
+
+
 predict.gcca = function(
     object,
     A,
@@ -303,7 +307,7 @@ predict.gcca = function(
           # y.test = kmeans(y.test, K)$cluster
           fit,
           "lda"      = {
-            library("MASS")
+           # library("MASS")
             reslda     = lda(x = comp.train, grouping = y.train)
             class.fit  = predict(reslda, comp.test)$class
           },
@@ -312,7 +316,7 @@ predict.gcca = function(
             # y.train = kmeans(y.train, K)$cluster -1
             # y.test =  kmeans(y.test, K)$cluster -1
             if (ngroups > 2) {
-              library("nnet")
+             # library("nnet")
               reslog      = nnet::multinom(y.train ~ ., data = comp.train, trace = FALSE)
               class.fit   = predict(reslog, newdata = comp.test)
             }else if (ngroups == 2) {
