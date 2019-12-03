@@ -2,7 +2,7 @@
 #' Only one component per block for the time being
 #' 
 #' 
-#' @param A A list that contains the J blocks of variables \mathbf{X_1}, \mathbf{X_2}, ..., \mathbf{X_J}
+#' @param A A list that contains the J blocks of variables X_1, X_2, ..., X_J
 #' @param c1s A matrix containing sets of constraint variables, one row by set. If null, sgcca.permute takes 10 sets between min values ($1/sqrt(ncol)$) and 1
 #' @param nperm Number of permutation tested for each set of constraint
 #' @param C A design matrix that describes the relationships between blocks (default: complete design)
@@ -10,41 +10,14 @@
 #' @param plot A logical, should a plot of coeffi
 #' @param n_cores For linux and MacOS number of cores used for parallelisation
 #' @param ncomp Number of component computed for each block
-#' @value A list containing :
-#' @value \item {pval}
-#' @value \item {zstat}
-#' @value \item {bestpenalties}
-#' @value \item {permcrit} 
-#' @value \item {crit}
-#' @examples
-#' library(RGCCA)
-#' library(PMA)
-#' 
-#' # Create correlated blocks
-#' 
-#' u <- matrix(rnorm(50),ncol=1)
-#' 
-#' v1 <- matrix(c(rep(.5,25),rep(0,75)),ncol=1)
-#' v2 <- matrix(c(rep(1,25),rep(0,25)),ncol=1)
-#' v3 <- matrix(c(rep(.5,25),rep(0,175)),ncol=1)
-#'
-#' x1 <- u%*%t(v1) + matrix(rnorm(50*100),ncol=100)
-#' x2 <- u%*%t(v2) + matrix(rnorm(50*50),ncol=50)
-#' x3 <- u%*%t(v3) + matrix(rnorm(50*200),ncol=200)
-#'
-#' xlist <- list(x1, x2, x3)
-#' 
-#' # Search for the best sparsity penalities for SGCCA
-#' 
-#' perm.sgcca = sgcca.permute.crit(xlist, nperm = 10)
-#' out.sgcca = sgcca(xlist, c1 = perm.sgcca$bestpenalties)
-#' 
-#' par(mfrow=c(3,1), mar = rep(2,4))
-#' PlotCGH(out.sgcca$a[[1]], chrom=rep(1,ncol(x1)))
-#' PlotCGH(out.sgcca$a[[2]], chrom=rep(2,ncol(x2)))
-#' PlotCGH(out.sgcca$a[[3]], chrom=rep(3,ncol(x3)))
-#' title(main = "SGCCA.permute, C by default", outer = TRUE, line = -2)
-#' 
+#' @param tol Tolerance
+#' @param scale If TRUE, the data is scaled
+#' @return A list containing :
+#' @return \item{pval}{Pvalue}
+#' @return \item{zstat}{Statistic Z}
+#' @return \item{bestpenalties}{Penalties corresponding to the best Z-statistic}
+#' @return \item{permcrit}{RGCCA criteria obtained with permutation set}
+#' @return \item{crit}{ RGCCA criterion for the original dataset}
 #'@export sgcca.permute.crit
 
 sgcca.permute.crit <- function(
@@ -58,7 +31,22 @@ sgcca.permute.crit <- function(
     tol = .Machine$double.eps,
     n_cores = parallel::detectCores() - 1,
     scale = TRUE) {
-
+    # u <- matrix(rnorm(50),ncol=1)
+    # v1 <- matrix(c(rep(.5,25),rep(0,75)),ncol=1)
+    # v2 <- matrix(c(rep(1,25),rep(0,25)),ncol=1)
+    # v3 <- matrix(c(rep(.5,25),rep(0,175)),ncol=1)
+    # x1 <- u%*%t(v1) + matrix(rnorm(50*100),ncol=100)
+    # x2 <- u%*%t(v2) + matrix(rnorm(50*50),ncol=50)
+    # x3 <- u%*%t(v3) + matrix(rnorm(50*200),ncol=200)
+    # xlist <- list(x1, x2, x3)
+    # # Search for the best sparsity penalities for SGCCA
+    # perm.sgcca = sgcca.permute.crit(xlist, nperm = 10)
+    # out.sgcca = sgcca(xlist, c1 = perm.sgcca$bestpenalties)
+    # par(mfrow=c(3,1), mar = rep(2,4))
+    # PlotCGH(out.sgcca$a[[1]], chrom=rep(1,ncol(x1)))
+    # PlotCGH(out.sgcca$a[[2]], chrom=rep(2,ncol(x2)))
+    # PlotCGH(out.sgcca$a[[3]], chrom=rep(3,ncol(x3)))
+    # title(main = "SGCCA.permute, C by default", outer = TRUE, line = -2)
     if (is.null(c1s)) {
         c1s <- matrix(NA, nrow = 10, ncol = length(A))
         for (k in 1:length(A))
@@ -68,7 +56,7 @@ sgcca.permute.crit <- function(
     crits <- sgcca.crit(
             A,
             C,
-            c1 = c1s,
+            c1s = c1s,
             ncomp = ncomp,
             scheme = scheme,
             tol = tol,
@@ -77,7 +65,7 @@ sgcca.permute.crit <- function(
         )
     
     cat("Permutation in progress...")
-
+# To uncomment when it is tested
     if (Sys.info()["sysname"] == "Windows") {
 
         n_cores <- parallel::detectCores() - 1
@@ -100,15 +88,15 @@ sgcca.permute.crit <- function(
             ),
             envir = e
         )
+# /!\ To be uncomment (packaging)
+       # parallel::clusterEvalQ(cl, library(devtools))
 
-        parallel::clusterEvalQ(cl, library(devtools))
-        
-        tryCatch({
-            parallel::clusterEvalQ(cl, load_all("RGCCA/R/."))
-        }, error = function(e) {
-            warning("error : probably an issue with the localisation of RGCCA functions")
-        })
-
+       # tryCatch({
+        #     parallel::clusterEvalQ(cl, load_all("RGCCA/R/."))
+        # }, error = function(e) {
+        #     warning("error : probably an issue with the localisation of RGCCA functions")
+        # })
+# /!\ End to be uncomment (packaging)
         # Close cluster even if there is an error or a warning with sgcca.crit
         permcrit <- tryCatch({
             parallel::parSapply(cl, 1:nperm, function(x)
@@ -127,7 +115,7 @@ sgcca.permute.crit <- function(
         })
 
         parallel::stopCluster(cl)
-        
+
         if (is.null(permcrit))
             return(NULL)
 

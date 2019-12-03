@@ -2,3 +2,5 @@
 \.idea/
 
 \.Rhistory
+.Rproj.user
+\.RData

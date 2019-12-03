@@ -14,6 +14,13 @@
 #' @param init The mode of initialization to use in RGCCA algorithm. The alternatives are either by Singular Value Decompostion ("svd") or random ("random") (Default: "svd").
 #' @param bias A logical value for biaised or unbiaised estimator of the var/cov (default: bias = TRUE).
 #' @param tol The stopping value for convergence.
+#' @param sameBlockWeight TRUE by default : each block have the same weight in the RGCCA analysis. If FALSE, the weight of each block depends on the number of variables of the block
+#' @param returnA If TRUE, the initial A list is returned
+#' @param knn.k Number of k nearest neighbors
+#' @param knn.output "mean", "random" or "weightedMean" : returns respectively the average of the k nearest neigbors, one selected randomly, or an average weighted by the distance of the k NN
+#' @param knn.klim k limits (if k is not a number, optimal k between klim[1] and klim[2] is calculated )
+#' @param knn.sameBlockWeight if TRUE the distance for Nearest Neigbors takes the size of blocks into account
+#' @param pca.ncp Number of components chosen in PCA 
 #' @return \item{Y}{A list of \eqn{J} elements. Each element of \eqn{Y} is a matrix that contains the RGCCA components for the corresponding block.}
 #' @return \item{a}{A list of \eqn{J} elements. Each element of \eqn{a} is a matrix that contains the outer weight vectors for each block.}
 #' @return \item{astar}{A list of \eqn{J} elements. Each element of astar is a matrix defined as Y[[j]][, h] = A[[j]]\%*\%astar[[j]][, h].}
@@ -29,9 +36,21 @@
 #' @references Schafer J. and Strimmer K., (2005), A shrinkage approach to large-scale covariance matrix estimation and implications for functional genomics. Statist. Appl. Genet. Mol. Biol. 4:32.
 #' @title Regularized Generalized Canonical Correlation Analysis (RGCCA) 
 #' @examples
-#' @export imputeRGCCA
+#' data(Russett)
+#' X_agric =as.matrix(Russett[,c("gini","farm","rent")])
+#' X_ind = as.matrix(Russett[,c("gnpr","labo")])
+#' X_polit = as.matrix(Russett[ , c("demostab", "dictator")])
+#' X_agric[c(2,4),]=NA
+#' X_ind[1,]=NA
+#' X_polit[5,1]=NA
+#' A = list(agri=X_agric, ind=X_ind, polit=X_polit)
+#' A_ref=list(agri=as.matrix(Russett[,c("gini","farm","rent")]),
+#' ind=as.matrix(Russett[,c("gnpr","labo")]),
+#' polit=as.matrix(Russett[ , c("demostab", "dictator")]))
+#' A_ref2=lapply(A_ref,scale)
+#' A2=lapply(A,scale)
 
-rgccaNa=function (A,method, C = 1 - diag(length(A)), tau = rep(1, length(A)), refData=NULL,    ncomp = rep(1, length(A)), scheme = "centroid", scale = TRUE,   init = "svd", bias = TRUE, tol = 1e-08, verbose = TRUE,na.impute="none",na.niter=10,na.keep=NULL,nboot=10,sameBlockWeight=TRUE,returnA=FALSE,knn.k="all",knn.output="weightedMean",knn.klim=NULL,knn.sameBlockWeight=TRUE,pca.ncp=1) 
+rgccaNa=function (A,method, C = 1 - diag(length(A)), tau = rep(1, length(A)),    ncomp = rep(1, length(A)), scheme = "centroid", scale = TRUE,   init = "svd", bias = TRUE, tol = 1e-08, verbose = TRUE,sameBlockWeight=TRUE,returnA=FALSE,knn.k="all",knn.output="weightedMean",knn.klim=NULL,knn.sameBlockWeight=TRUE,pca.ncp=1) 
 { 
   nvar = sapply(A, NCOL)
   superblockAsList=function(superblock,A)
@@ -65,31 +84,36 @@ rgccaNa=function (A,method, C = 1 - diag(length(A)), tau = rep(1, length(A)), re
   }
   if(method=="rpca")
   {
-    imputedSuperblock= imputePCA(do.call(cbind,A), ncp = pca.ncp, scale = TRUE, method ="regularized")$completeObs 
+    imputedSuperblock= missMDA::imputePCA(do.call(cbind,A), ncp = pca.ncp, scale = TRUE, method ="regularized")$completeObs 
      A2=superblockAsList(imputedSuperblock, A)
   }   
 #
 #	if(method=="rgccaPca"){	  A2= imputeSuperblock(A,method="em",opt="rgcca",ncp=ncp,scaleBlock=scaleBlock)}
 	if(method=="mfa")	
 	{	 
-	  imputedSuperblock= 	res.comp=imputeMFA(X=do.call(cbind,A), group=nvar, ncp = 1, type=rep("s",length(nvar)), method = "em")$completeObs
+	  imputedSuperblock=imputeMFA(X=do.call(cbind,A), group=nvar, ncp = 1, type=rep("s",length(nvar)), method = "em")$completeObs
 	  A2=superblockAsList(imputedSuperblock, A)
 	}
 
- 	if(method=="iterativeSB")	{	  A2=imputeSB(A,ncomp=ncomp,scale=scale,sameBlockWeight=sameBlockWeight,tau=tau,tol=1e-8,ni=10)$A	}
-  if(method=="em")	{	  A2=imputeEM(A=A,ncomp=ncomp,scale=scale,sameBlockWeight=sameBlockWeight,tau=tau,naxis=1,ni=50,C=C,tol=1e-6)$A	}
-  if(substr(method,1,3)=="sem")
-  {
-    if(substr(method,4,4)=="")
-    {
-      A2=imputeEM(A=A,superblock=TRUE,ncomp=ncomp,scale=scale,sameBlockWeight=sameBlockWeight,tau=tau,naxis=1,ni=50,C=C,tol=1e-6)$A
-    }
-    else
-    {
-      A2=imputeEM(A=A,superblock=TRUE,ncomp=ncomp,scale=scale,sameBlockWeight=sameBlockWeight,tau=tau,naxis=as.numeric(substr(method,4,4)),ni=50,C=C,tol=1e-6)$A
-    }
-  }
-  if(method=="ems")	{	  A2=imputeEM(A=A,superblock=TRUE,ncomp=ncomp,scale=scale,sameBlockWeight=sameBlockWeight,tau=tau,naxis=1,ni=50,C=C,tol=1e-6)$A	}
+ 	if(method=="iterativeSB")	{	  A2=imputeSB(A,ncomp=ncomp,scale=scale,sameBlockWeight=sameBlockWeight,tau=tau,tol=tol,ni=10)$A	}
+    if(method=="em")	{	  A2=imputeEM(A=A,ncomp=ncomp,scale=scale,sameBlockWeight=sameBlockWeight,tau=tau,naxis=1,ni=50,C=C,tol=tol,verbose=verbose,reg="y")$A	}
+   if(substr(method,1,3)=="sem")
+   {
+     if(substr(method,4,4)=="")
+     {
+       A2=imputeEM(A=A,superblock=TRUE,ncomp=ncomp,scale=scale,sameBlockWeight=sameBlockWeight,tau=tau,naxis=1,ni=50,C=C,tol=tol,verbose=verbose,reg="y")$A
+     }
+     else
+     {
+       A2=imputeEM(A=A,superblock=TRUE,ncomp=ncomp,scale=scale,sameBlockWeight=sameBlockWeight,tau=tau,naxis=as.numeric(substr(method,4,4)),ni=50,C=C,tol=tol,verbose=verbose,reg="y")$A
+     }
+   }
+ # if(method=="old"){}
+  if(method=="emo")	{	  A2=imputeEM(A=A,ncomp=ncomp,scale=scale,sameBlockWeight=sameBlockWeight,tau=tau,naxis=1,ni=50,C=C,tol=tol,verbose=verbose,reg="no")$A	}
+  if(method=="emw")	{	  A2=imputeEM(A=A,ncomp=ncomp,scale=scale,sameBlockWeight=sameBlockWeight,tau=tau,naxis=1,ni=50,C=C,tol=tol,verbose=verbose,reg="w")$A	}
+#  if(method=="semy")	{	  A2=imputeEM(A=A,ncomp=ncomp,superblock=TRUE,scale=scale,sameBlockWeight=sameBlockWeight,tau=tau,naxis=1,ni=50,C=C,tol=tol,verbose=verbose,reg="y")$A[1:length(A)]	}
+#  if(method=="semw")	{	  A2=imputeEM(A=A,ncomp=ncomp,superblock=TRUE,scale=scale,sameBlockWeight=sameBlockWeight,tau=tau,naxis=1,ni=50,C=C,tol=tol,verbose=verbose,reg="w")$A[1:length(A)]	}
+  
   
   if(method=="nipals"){na.rm=TRUE;A2=A}
   
@@ -104,9 +128,11 @@ rgccaNa=function (A,method, C = 1 - diag(length(A)), tau = rep(1, length(A)), re
         A2=imputeNN(A ,output=knn.output,k=as.numeric(substr(method,4,4)),klim=knn.klim,sameBlockWeight=knn.sameBlockWeight);method=paste(method,":",knn.k,sep="")
       }
   }
-  if(method!="imputeInRgcca1"&&method!="imputeInRgcca2"){resRgcca=rgcca(A2,C=C,ncomp=ncomp,verbose=FALSE,scale=scale,sameBlockWeight=sameBlockWeight,tau=tau,scheme=scheme,returnA=TRUE,tol=tol,estimateNA="no")}
+  if(method!="imputeInRgcca1"&&method!="imputeInRgcca2"&&method!="imputeInRgccaSB"&&method!="imputeInRgccaLL"){resRgcca=rgcca(A2,C=C,ncomp=ncomp,verbose=FALSE,scale=scale,sameBlockWeight=sameBlockWeight,tau=tau,scheme=scheme,returnA=TRUE,tol=tol,estimateNA="no")}
   if(method=="imputeInRgcca1"){resRgcca=rgcca(A,C=C,ncomp=ncomp,verbose=FALSE,scale=scale,sameBlockWeight=sameBlockWeight,tau=tau,scheme=scheme,returnA=TRUE,tol=tol,estimateNA="iterative");A2=resRgcca$imputedA;}
   if(method=="imputeInRgcca2"){resRgcca=rgcca(A,C=C,ncomp=ncomp,verbose=FALSE,scale=scale,sameBlockWeight=sameBlockWeight,tau=tau,scheme=scheme,returnA=TRUE,tol=tol,estimateNA="first");A2=resRgcca$imputedA;}
+  if(method=="imputeInRgccaSB"){resRgcca=rgcca(A,C=C,ncomp=ncomp,verbose=FALSE,scale=scale,sameBlockWeight=sameBlockWeight,tau=tau,scheme=scheme,returnA=TRUE,tol=tol,estimateNA="superblock");A2=resRgcca$imputedA[1:length(A)];}
+  if(method=="imputeInRgccaLL"){resRgcca=rgcca(A,C=C,ncomp=ncomp,verbose=TRUE,scale=scale,sameBlockWeight=sameBlockWeight,tau=tau,scheme=scheme,returnA=TRUE,tol=tol,estimateNA="lebrusquet");A2=resRgcca$imputedA[1:length(A)];}
   
 	return(list(imputedA=A2,rgcca=resRgcca,method,indNA=indNA))
 

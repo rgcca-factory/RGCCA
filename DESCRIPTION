@@ -6,6 +6,18 @@ Date: 2013-07-24
 Author: Arthur Tenenhaus and Vincent Guillemot
 Maintainer: Arthur Tenenhaus <arthur.tenenhaus@supelec.fr>
 Description: Multi-block data analysis concerns the analysis of several sets of variables (blocks) observed on the same group of individuals. The main aims of the RGCCA package are: (i) to study the relationships between blocks and (ii) to identify subsets of variables of each block which are active in their relationships with the other blocks.
-License: GPL (>= 2)
+License: GPL-3
 Depends: MASS
 Packaged: 2013-07-24 16:36:37 UTC; arthur
+Suggests: 
+    testthat
+RoxygenNote: 6.1.1
+Imports: 
+    nnet,
+    parallel,
+    FactoMineR,
+    missMDA,
+    vegan,
+    grDevices,
+    Deriv,
+    car

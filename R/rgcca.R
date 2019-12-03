@@ -1,8 +1,3 @@
-# print.rgcca <- function(x,verbose=FALSE,...) {
-#   nbloc <- length(x$Y)
-#   cat("Outputs for RGCCA: \n")
-# }
-
 #' Regularized Generalized Canonical Correlation Analysis (RGCCA) is a generalization
 #' of regularized canonical correlation analysis to three or more sets of variables. 
 #' Given \eqn{J} matrices \eqn{\mathbf{X_1}, \mathbf{X_2}, ..., \mathbf{X_J}} that represent 
@@ -44,7 +39,8 @@
 #' @param tol The stopping value for convergence.
 #' @param sameBlockWeight A logical value indicating if the different blocks should have the same weight in the analysis (default, sameBlockWeight=TRUE)
 #' @param returnA A logical value indicating if the A list should be return as a result (default, sameBlockWeight=FALSE)
-
+#' @param na.rm If TRUE, runs rgcca only on available data.
+#' @param estimateNA If TRUE, missing values are estimated during the RGCCA calculation
 #' @return \item{Y}{A list of \eqn{J} elements. Each element of \eqn{Y} is a matrix that contains the RGCCA components for the corresponding block.}
 #' @return \item{a}{A list of \eqn{J} elements. Each element of \eqn{a} is a matrix that contains the outer weight vectors for each block.}
 #' @return \item{astar}{A list of \eqn{J} elements. Each element of astar is a matrix defined as Y[[j]][, h] = A[[j]]\%*\%astar[[j]][, h].}
@@ -66,12 +62,12 @@
 #' data(Russett)
 #' X_agric =as.matrix(Russett[,c("gini","farm","rent")])
 #' X_ind = as.matrix(Russett[,c("gnpr","labo")])
-#' X_polit = as.matrix(Russett[ , c("demostab", "dictatur")])
+#' X_polit = as.matrix(Russett[ , c("demostab", "dictator")])
 #' A = list(X_agric, X_ind, X_polit)
 #' #Define the design matrix (output = C) 
 #' C = matrix(c(0, 0, 1, 0, 0, 1, 1, 1, 0), 3, 3)
 #' result.rgcca = rgcca(A, C, tau = c(1, 1, 1), scheme = "factorial", scale = TRUE)
-#' lab = as.vector(apply(Russett[, 10:12], 1, which.max))
+#' lab = as.vector(apply(Russett[, 9:11], 1, which.max))
 #' plot(result.rgcca$Y[[1]], result.rgcca$Y[[2]], col = "white", 
 #'      xlab = "Y1 (Agric. inequality)", ylab = "Y2 (Industrial Development)")
 #' text(result.rgcca$Y[[1]], result.rgcca$Y[[2]], Russett[, 1], col = lab, cex = .7)
@@ -116,15 +112,22 @@
 #'  Ytest[i, 2] = Btest[[2]]%*%resB$a[[2]]
 #'  Ytest[i, 3] = Btest[[3]]%*%resB$a[[3]]
 #' }
-#' lab = apply(Russett[, 10:12], 1, which.max)
+#' lab = apply(Russett[, 9:11], 1, which.max)
 #' plot(result.rgcca$Y[[1]], result.rgcca$Y[[2]], col = "white", 
 #'      xlab = "Y1 (Agric. inequality)", ylab = "Y2 (Ind. Development)")
 #' text(result.rgcca$Y[[1]], result.rgcca$Y[[2]], Russett[, 1], col = lab)
 #' text(Ytest[, 1], Ytest[, 2], substr(Russett[, 1], 1, 1), col = lab)
 #' @export rgcca
+#' @importFrom grDevices dev.off png rainbow
+#' @importFrom graphics abline axis close.screen grid legend lines par points rect screen segments split.screen text
+#' @importFrom stats binomial glm lm predict sd var weighted.mean
+#' @importFrom utils read.table write.table
+#' @import FactoMineR 
+#' @import missMDA
+#' @importFrom grDevices graphics.off
+
 rgcca=function (A, C = 1 - diag(length(A)), tau = rep(1, length(A)),  ncomp = rep(1, length(A)), scheme = "centroid", scale = TRUE,   init = "svd", bias = TRUE, tol = 1e-08, verbose = TRUE,sameBlockWeight=TRUE,na.rm=TRUE,returnA=FALSE,estimateNA="no") 
 {
-  print("debut")
   shave.matlist <- function(mat_list, nb_cols) mapply(function(m,nbcomp) m[, 1:nbcomp, drop = FALSE], mat_list, nb_cols, SIMPLIFY = FALSE)
   shave.veclist <- function(vec_list, nb_elts) mapply(function(m, nbcomp) m[1:nbcomp], vec_list, nb_elts, SIMPLIFY = FALSE)
   A0=A
@@ -132,8 +135,8 @@ rgcca=function (A, C = 1 - diag(length(A)), tau = rep(1, length(A)),  ncomp = re
   pjs <- sapply(A, NCOL) #nombre de variables par bloc
   nb_row <- NROW(A[[1]]) #nombre de lignes
   
-  # Verifications des commandes entrées par l'utilisateur
-  if (any(ncomp - pjs > 0))  # le nombre de composantes doit être inférieur au nombre de variables
+  # Verifications des commandes entrees par l'utilisateur
+  if (any(ncomp - pjs > 0))  # le nombre de composantes doit etre inferieur au nombre de variables
     stop("For each block, choose a number of components smaller than the number of variables!")
   if (mode(scheme) != "function") {
     if ((scheme != "horst") & (scheme != "factorial") & (scheme != 
@@ -147,7 +150,7 @@ rgcca=function (A, C = 1 - diag(length(A)), tau = rep(1, length(A)),  ncomp = re
   if (mode(scheme) == "function" & verbose) {
     cat("Computation of the RGCCA block components based on the g scheme \n")
   }
-  if (!is.numeric(tau) & verbose) { #tau peut etre estimé
+  if (!is.numeric(tau) & verbose) { #tau peut etre estime
     cat("Optimal Shrinkage intensity paramaters are estimated \n")
   }
   else {
@@ -159,12 +162,11 @@ rgcca=function (A, C = 1 - diag(length(A)), tau = rep(1, length(A)),  ncomp = re
   {
     
      A = lapply(A, function(x) scale2(x,scale=TRUE, bias = bias)) # le biais indique si on recherche la variance biaisee ou non
-    
     if(sameBlockWeight)
     {
       A = lapply(A, function(x) x/sqrt(NCOL(x)))
     }
-    # on divise chaque bloc par la racine du nombre de variables pour avoir chaque poids pour le même bloc
+    # on divise chaque bloc par la racine du nombre de variables pour avoir chaque poids pour le meme bloc
   }
   if (scale == FALSE)
   { 
@@ -174,8 +176,6 @@ rgcca=function (A, C = 1 - diag(length(A)), tau = rep(1, length(A)),  ncomp = re
       {
         A = lapply(A, function(x) {covarMat=cov2(x,bias=bias);varianceBloc=sum(diag(covarMat)); return(x/sqrt(varianceBloc))})
       }      
-    
-
   }
 
   # Superblock option
@@ -185,26 +185,26 @@ rgcca=function (A, C = 1 - diag(length(A)), tau = rep(1, length(A)),  ncomp = re
     C=matrix(0,length(A),length(A))
     C[length(A),1:(length(A)-1)]=1
     C[1:(length(A)-1),length(A)]=1
+    tau=c(tau,1)
     pjs=c(pjs,sum(pjs))
     ncomp=c(ncomp,ncomp[1])
     #tau=c(tau,0)
   }
-  print("debut2")
   AVE_X = list() 
   AVE_outer <- vector()
   ndefl <- ncomp - 1
   N <- max(ndefl)
   nb_ind <- NROW(A[[1]])
   J <- length(A)
-  # si le nombre d'individu est inférieur au nombre de variables: primal, sinon dual
+  # si le nombre d'individu est inferieur au nombre de variables: primal, sinon dual
   primal_dual = rep("primal", J)
   primal_dual[which(nb_row < pjs)] = "dual"
   # cas ou le nombre de composantes
   if (N == 0) 
-  { # cas ou on n'a qu'un axe à calculer par bloc
+  { # cas ou on n'a qu'un axe a calculer par bloc
     
-    result <- rgccak(A, C, tau = tau, scheme = scheme, init = init, bias = bias, tol = tol, verbose = verbose,na.rm=na.rm,estimateNA=estimateNA)
-    if(estimateNA%in%c("iterative","first"))
+    result <- rgccak(A, C, tau = tau, scheme = scheme, init = init, bias = bias, tol = tol, verbose = verbose,na.rm=na.rm,estimateNA=estimateNA,sameBlockWeight=sameBlockWeight)
+    if(estimateNA%in%c("iterative","first","lebrusquet"))
     {
       A<-result$A
     }
@@ -214,13 +214,7 @@ rgcca=function (A, C = 1 - diag(length(A)), tau = rep(1, length(A)),  ncomp = re
  
     for (j in 1:J)
     {
-      print(dim(A[[j]]))
-      print(dim(Y[[j]]))
-      print("A")
-      print(head(A[[j]]))
-      print("y")
-      print(head(Y[[j]]))
-        AVE_X[[j]] = mean(cor(A[[j]], Y[[j]],use="pairwise.complete.obs")^2,na.rm=TRUE)#correlation moyenne entre le bloc et la composante (au carré)
+         AVE_X[[j]] = mean(cor(A[[j]], Y[[j]],use="pairwise.complete.obs")^2,na.rm=TRUE)#correlation moyenne entre le bloc et la composante (au carre)
     }
          AVE_outer <- sum(pjs * unlist(AVE_X))/sum(pjs) 
     AVE <- list(AVE_X = AVE_X, AVE_outer = AVE_outer, AVE_inner = result$AVE_inner)
@@ -231,7 +225,7 @@ rgcca=function (A, C = 1 - diag(length(A)), tau = rep(1, length(A)),  ncomp = re
       colnames(Y[[b]]) = "comp1"
     }
     out <- list(Y = Y, a = a, astar = a, C = C, tau = result$tau,  scheme = scheme, ncomp = ncomp, crit = result$crit, primal_dual = primal_dual, AVE = AVE,A=A0)
-    if(estimateNA %in% c("iterative","first")){out[["imputedA"]]=A}
+    if(estimateNA %in% c("iterative","first","superblock","lebrusquet")){out[["imputedA"]]=A}
     
     class(out) <- "rgcca"
     
@@ -298,10 +292,7 @@ rgcca=function (A, C = 1 - diag(length(A)), tau = rep(1, length(A)),  ncomp = re
   }
   
   # ajout de na.rm et de use
-  print(dim(A[[j]]))
-  print(dim(Y[[j]]))
-  print(head(A[[j]]))
-  print(head(Y[[j]]))
+
   for (j in 1:J) AVE_X[[j]] = apply(cor(A[[j]], Y[[j]],use="pairwise.complete.obs")^2, 	2, mean,na.rm=TRUE)
   outer = matrix(unlist(AVE_X), nrow = max(ncomp))
   
@@ -312,7 +303,6 @@ rgcca=function (A, C = 1 - diag(length(A)), tau = rep(1, length(A)),  ncomp = re
   AVE_X = shave.veclist(AVE_X, ncomp)
   AVE <- list(AVE_X = AVE_X, AVE_outer_model = AVE_outer, AVE_inner_model = AVE_inner)
   
-  print("fin")
   if(returnA)
   {
     out <- list(Y = shave.matlist(Y, ncomp), a = shave.matlist(a,ncomp), astar = shave.matlist(astar, ncomp), C = C, tau = tau_mat, 

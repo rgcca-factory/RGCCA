@@ -15,18 +15,34 @@
 #' @param scale  If scale = TRUE, each block is standardized to zero means and unit variances (default: TRUE).
 #' @param tol The stopping value for convergence.
 #' @param sameBlockWeight A logical value indicating if the different blocks should have the same weight in the analysis (default, sameBlockWeight=TRUE)
-#' @param tol The stopping value for convergence.
-#' @param ncomp vector containing the number of components per block in RGCCA
-#' @param naxis number of component to select in the superblock for the estimation of missing data
+#' @param naxis number of component to select in the superblock for the estimation of missing data for "em" option
 #' @param returnA TRUE if the A list should be returned in the output, FALSE ifelse
-#' @return \item{rgcca0} RGCCA results for the reference dataset
-#' @return \item{data} list of imputed data obtained
-#' @return \item{rgccaList} list of RGCCA obtained
+#' @param superblock TRUE if the A list should be returned in the output, FALSE ifelse
+#' @param klim TRUE if the A list should be returned in the output, FALSE ifelse
+#' @param output TRUE if the A list should be returned in the output, FALSE ifelse
+#' @param option "knn" for k Nearest Neigbors or "em" for Expectation Maximization
+#' @return \item{rgcca0}{RGCCA results for the reference dataset}
+#' @return \item{data}{list of imputed data obtained}
+#' @return \item{rgccaList}{list of RGCCA obtained}
 #' @title MIRGCCA: Multiple imputation for RGCCA
 #' @examples 
-MIRGCCA=function(A,option="knn",superblock=TRUE,k=5,ni=5,scale=TRUE,sameBlockWeight=TRUE,tau,klim=NULL,output="mean",scheme="centroid",tol=1e-8,returnA=TRUE,C=NULL,ncomp=rep(2,length(A)))
+#' set.seed(42);X1=matrix(rnorm(500),100,5);
+#' set.seed(22);X2=matrix(rnorm(400),100,4);
+#' set.seed(2);X3=matrix(rnorm(700),100,7);
+#' rownames(X1)=rownames(X2)=rownames(X3)=paste("S",1:100,sep="")
+#' colnames(X1)=paste("A",1:5)
+#' colnames(X2)=paste("B",1:4)
+#' colnames(X3)=paste("C",1:7)
+#' X1[1,]=NA
+#' X2[7,1]=NA
+#'  X2[5,1]=NA
+#'  X3[3,1:2]=NA
+#'  A=list(X1,X2,X3)
+#' res=MIRGCCA(A,k=3,ni=5,scale=TRUE,sameBlockWeight=TRUE,tau=rep(0,3))
+#' @export
+MIRGCCA=function(A,option="knn",superblock=TRUE,k=5,ni=5,scale=TRUE,sameBlockWeight=TRUE,tau,klim=NULL,output="mean",scheme="centroid",tol=1e-8,returnA=TRUE,C=NULL,ncomp=rep(2,length(A)),naxis=1)
 {
-  if(option=="knn")
+     if(option=="knn")
   {
     dataTest0=imputeNN(A=A,output=output,k=k,klim=klim)
     if(!is.null(dataTest0))
@@ -47,10 +63,11 @@ MIRGCCA=function(A,option="knn",superblock=TRUE,k=5,ni=5,scale=TRUE,sameBlockWei
   {
 
      
-      rgcca0=rgcca(dataTest0,ncomp=rep(2,length(A)),scale=scale,sameBlockWeight=sameBlockWeight,tau=tau,verbose=FALSE,scheme=scheme,tol=tol,returnA=returnA)
-      dataTest=resRgcca2=list()
-      resImpute=imputeEM(A=A,tau=tau,C=C,scheme=scheme,ncomp=ncomp,superblock=superblock,naxis = 1)
+       dataTest=resRgcca2=list()
+      resImpute=imputeEM(A=A,tau=tau,C=C,scheme=scheme,ncomp=ncomp,superblock=superblock,naxis = naxis)
       dataTest0=resImpute$A
+      rgcca0=rgcca(dataTest0,ncomp=rep(2,length(A)),scale=scale,sameBlockWeight=sameBlockWeight,tau=tau,verbose=FALSE,scheme=scheme,tol=tol,returnA=returnA)
+      
       for(i in 1:ni)
       {
         print(i)
