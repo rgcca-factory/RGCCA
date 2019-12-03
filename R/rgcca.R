@@ -204,7 +204,7 @@ rgcca=function (A, C = 1 - diag(length(A)), tau = rep(1, length(A)),  ncomp = re
   { # cas ou on n'a qu'un axe a calculer par bloc
     
     result <- rgccak(A, C, tau = tau, scheme = scheme, init = init, bias = bias, tol = tol, verbose = verbose,na.rm=na.rm,estimateNA=estimateNA,sameBlockWeight=sameBlockWeight)
-    if(estimateNA%in%c("iterative","first"))
+    if(estimateNA%in%c("iterative","first","lebrusquet"))
     {
       A<-result$A
     }
@@ -225,7 +225,7 @@ rgcca=function (A, C = 1 - diag(length(A)), tau = rep(1, length(A)),  ncomp = re
       colnames(Y[[b]]) = "comp1"
     }
     out <- list(Y = Y, a = a, astar = a, C = C, tau = result$tau,  scheme = scheme, ncomp = ncomp, crit = result$crit, primal_dual = primal_dual, AVE = AVE,A=A0)
-    if(estimateNA %in% c("iterative","first","superblock")){out[["imputedA"]]=A}
+    if(estimateNA %in% c("iterative","first","superblock","lebrusquet")){out[["imputedA"]]=A}
     
     class(out) <- "rgcca"
     

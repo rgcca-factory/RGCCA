@@ -20,7 +20,7 @@
 #' @export
 #' @importFrom parallel mclapply
 
-whichNAmethod=function(A,listNAdataset=NULL,C=matrix(1,length(A),length(A))-diag(length(A)), tau=rep(1,length(A)),listMethods,nDatasets=20,patternNA=NULL,typeNA="block",ncomp=rep(2,length(A)),sameBlockWeight=TRUE,scale=TRUE,tol=1e-6,verbose=TRUE,scheme="centroid",seed=NULL)
+whichNAmethod=function(A,listNAdataset=NULL,C=matrix(1,length(A),length(A))-diag(length(A)), tau=rep(1,length(A)),listMethods,nDatasets=20,patternNA=NULL,typeNA="block",ncomp=rep(2,length(A)),sameBlockWeight=TRUE,scale=TRUE,tol=1e-6,verbose=FALSE,scheme="centroid",seed=NULL)
 {
   if(is.null(patternNA)){patternNA=sapply(A,function(X){return(sum(is.na(X))/(dim(X)[1]*dim(X)[2]))})}
   if(is.vector(patternNA)){if(length(patternNA)!=length(A)){stop("patternNA should have the same size as length(A)")}}
@@ -40,7 +40,6 @@ whichNAmethod=function(A,listNAdataset=NULL,C=matrix(1,length(A),length(A))-diag
     )
   }
 
-  print("reference RGCCA")
   referenceRgcca=rgcca(referenceDataset,C=C,tau=tau,ncomp=ncomp,returnA=TRUE,verbose=verbose,sameBlockWeight=sameBlockWeight,scale=scale,tol=tol,scheme=scheme)
   print("comparisons of RGCCA with the different methods...(this could take some time)")
   resultComparison=NULL
@@ -49,7 +48,7 @@ whichNAmethod=function(A,listNAdataset=NULL,C=matrix(1,length(A),length(A))-diag
     selectCompletePatient=listNAdataset[[i]]$subjectKept
     indicators=NULL
     for(method in listMethods)
-    {  print(method)
+    {  
         methodRgcca=rgccaNa(A=listNAdataset[[i]]$dat,C=C,tau=tau,method=method,ncomp=ncomp,returnA=TRUE,sameBlockWeight=sameBlockWeight,scale=scale,tol=tol,verbose=verbose,scheme=scheme)
        indicators[[method]]=comparison(rgcca1=referenceRgcca,rgcca2=methodRgcca$rgcca,selectPatient=selectCompletePatient,indNA=methodRgcca$indNA)
     }

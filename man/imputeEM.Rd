@@ -2,7 +2,7 @@
 % Please edit documentation in R/imputeEM.R
 \name{imputeEM}
 \alias{imputeEM}
-\title{imputeSB: impute with superblock method}
+\title{imputeEM: impute with superblock method}
 \usage{
 imputeEM(A, C, tau, ni = 50, tol = 1e-08, graph = FALSE,
   ncomp = NULL, naxis = 1, scale = TRUE, sameBlockWeight = TRUE,
@@ -41,7 +41,7 @@ imputeEM(A, C, tau, ni = 50, tol = 1e-08, graph = FALSE,
 
 \item{tolEM}{threshold to be reached to assess convergence.}
 
-\item{reg}{"y" by default. Reconstruction is made by regression of the A rows on w ("w"),the A columns on Y ("y")  or without any regression with yw ("no")}
+\item{reg}{'y' by default. Reconstruction is made by regression of the A rows on w ('w'),the A columns on Y ('y')  or without any regression with yw ('no')}
 }
 \value{
 \item{A}{A list of blocks imputed}

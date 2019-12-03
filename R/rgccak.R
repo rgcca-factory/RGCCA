@@ -47,13 +47,13 @@ rgccak=function (A, C, tau = "optimal", scheme = "centroid",verbose = FALSE, ini
     }else {g<-scheme}
     A0 <-A
     A <- lapply(A, as.matrix)
-    if(estimateNA=="lebrusquet")
-    {
-        A =imputeColmeans(A) 
-        A=lapply(A,scale2,bias=TRUE)
-        if(sameBlockWeight){A=lapply(A,function(x){return(x/sqrt(NCOL(x)))})}
-       # liste de blocs
-    }
+     if(estimateNA=="lebrusquet")
+     {
+         A =imputeColmeans(A) 
+       #  A=lapply(A,scale2,bias=TRUE)
+       #  if(sameBlockWeight){A=lapply(A,function(x){return(x/sqrt(NCOL(x)))})}
+        # liste de blocs
+     }
     # initialisation du A a la moyenne
 
    # A=lapply(A,function(M){M[is.na(M)]<-0;return(M)})
@@ -62,7 +62,7 @@ rgccak=function (A, C, tau = "optimal", scheme = "centroid",verbose = FALSE, ini
     pjs <- sapply(A, NCOL) # nombre de variables par bloc
     Y <- matrix(0, n, J)
     if (!is.numeric(tau)) # cas ou on estime le tau de maniere intelligente (a creuser)
-        tau = sapply(A, tau.estimate) # d'apres Schafer and Strimmer
+        tau = sapply(A, tau.estimate) # d apres Schafer and Strimmer
     a <- alpha <- M <- Minv <- K <- list() # initialisation variables internes
     which.primal <- which((n >= pjs) == 1) # on raisonne differement suivant la taille du bloc
     which.dual <- which((n < pjs) == 1)
@@ -96,16 +96,11 @@ rgccak=function (A, C, tau = "optimal", scheme = "centroid",verbose = FALSE, ini
         ifelse(tau[j] == 1,
         {
             a[[j]] <- drop(1/sqrt(t(a[[j]]) %*% a[[j]])) * a[[j]] # calcul de la premiere composante (les aj sont les wj) : on les norme dans ce cas : c'eest la condition |w|=1
-            if(a[[j]][1]<0){a[[j]]=-a[[j]]}
-             # Remplir les valeurs de A manquantes avec la strategie
+          #  if(a[[j]][1]<0){a[[j]]=-a[[j]]}
             Y[, j] <- pm(A[[j]] , a[[j]],na.rm=na.rm) # projection du bloc sur la premiere composante
-           
-           
         }, 
         {
            # M[[j]] <- ginv(tau[j] * diag(pjs[j]) + ((1 - tau[j])/(N)) * (pm(t(A[[j]]) , A[[j]],na.rm=na.rm))) #calcul de la fonction a minimiser ?
-         
-            
             #-taking NA into account in the N
             nmat=ifelse(bias,t(!is.na(A[[j]]))%*%(!is.na(A[[j]])),t(!is.na(A[[j]]))%*%(!is.na(A[[j]]))-1)
             nmat[nmat==0]=NA
@@ -113,7 +108,7 @@ rgccak=function (A, C, tau = "optimal", scheme = "centroid",verbose = FALSE, ini
             #-----------------------
            
             a[[j]] <- drop(1/sqrt(t(a[[j]])%*% M[[j]]%*%a[[j]]) )* ( M[[j]] %*% a[[j]]) # calcul premiere composante (a creuser)
-            if(a[[j]][1]<0){a[[j]]=-a[[j]]}
+         #   if(a[[j]][1]<0){a[[j]]=-a[[j]]}
             Y[, j] <-pm( A[[j]] ,a[[j]],na.rm=na.rm) # projection du bloc sur la premiere composante
         })
     }
@@ -122,7 +117,7 @@ rgccak=function (A, C, tau = "optimal", scheme = "centroid",verbose = FALSE, ini
         ifelse(tau[j] == 1, {
             alpha[[j]] = drop(1/sqrt(t(alpha[[j]]) %*% K[[j]] %*%  alpha[[j]])) * alpha[[j]]
             a[[j]] =pm( t(A[[j]]), alpha[[j]],na.rm=na.rm)
-            if(a[[j]][1]<0){a[[j]]=-a[[j]]}
+       #     if(a[[j]][1]<0){a[[j]]=-a[[j]]}
             Y[, j] =pm( A[[j]], a[[j]],na.rm=na.rm)
         }, {
           
@@ -136,7 +131,7 @@ rgccak=function (A, C, tau = "optimal", scheme = "centroid",verbose = FALSE, ini
             
              Minv[[j]] = ginv(M[[j]])
             alpha[[j]] = drop(1/sqrt(t(alpha[[j]])%*% M[[j]]%*% K[[j]]%*% alpha[[j]])) * alpha[[j]]
-            if(a[[j]][1]<0){a[[j]]=-a[[j]]}
+         #   if(a[[j]][1]<0){a[[j]]=-a[[j]]}
             a[[j]] =pm( t(A[[j]]), alpha[[j]],na.rm=na.rm)
             Y[, j] = pm(A[[j]] ,a[[j]],na.rm=na.rm) 
         })
@@ -163,7 +158,7 @@ rgccak=function (A, C, tau = "optimal", scheme = "centroid",verbose = FALSE, ini
           { # si tau = 1
              Z[, j] = rowSums(matrix(rep(C[j, ], n), n, J, byrow = TRUE) * matrix(rep(dgx, n), n, J, byrow = TRUE) * Y,na.rm=na.rm)
 		     a[[j]] = drop(1/sqrt(pm(pm(t(Z[, j]) ,A[[j]],na.rm=na.rm) ,  pm( t(A[[j]]) ,Z[, j],na.rm=na.rm),na.rm=na.rm))) *pm (t(A[[j]]), Z[,  j],na.rm=na.rm)  
-		     if(a[[j]][1]<0){a[[j]]=-a[[j]]}
+		   #  if(a[[j]][1]<0){a[[j]]=-a[[j]]}
 		     # Y[, j] =pm( A[[j]], a[[j]],na.rm=na.rm) #Nouvelle estimation de j
 		
 #------------------ si on estime les donnees manquantes dans le cas ou tau=1
@@ -192,7 +187,19 @@ rgccak=function (A, C, tau = "optimal", scheme = "centroid",verbose = FALSE, ini
 			                 missing=is.na(A0[[j]][,k])
 			                if(sum(missing)!=0)
 			                { 
-			                    newx_k=leb(x_k=A[[j]][,k],missing,z=Z[,j],sameBlockWeight=sameBlockWeight,weight=sqrt(pjs[j]),argmax=ifelse(a[[j]][k]>0,TRUE,FALSE),graph=ifelse(k==1,TRUE,FALSE))
+			                    #print("in")
+			                    #if(k==1)
+			                    #{
+			                        title=paste("bloc",j,",var",k,"iter",iter)
+			                       # png(filename=paste(title,".png",sep=""))
+			                        newx_k=leb(x_k=A[[j]][,k],missing,z=Z[,j],sameBlockWeight=TRUE,weight=sqrt(pjs[j]),argmax=ifelse(a[[j]][k]>0,TRUE,FALSE),graph=TRUE,main=title,abscissa=A0[[j]][,k])
+			                       # dev.off()
+			                    #}
+    			                 #else
+    			                 #{
+    			                 #    newx_k=leb(x_k=A[[j]][,k],missing,z=Z[,j],sameBlockWeight=TRUE,weight=sqrt(pjs[j]),argmax=ifelse(a[[j]][k]>0,TRUE,FALSE),graph=FALSE,main=title)
+    			                     
+    			                 #}
 			                    # on affecte le nouveau k
 			                    A[[j]][,k]=newx_k
 			                   # Ainter[[j]][,k]=newx_k
@@ -267,7 +274,7 @@ rgccak=function (A, C, tau = "optimal", scheme = "centroid",verbose = FALSE, ini
 			      { # si tau different de 1
               Z[, j] = rowSums(matrix(rep(C[j, ], n), n,  J, byrow = TRUE) * matrix(rep(dgx, n), n,  J, byrow = TRUE) * Y,na.rm=na.rm)
              a[[j]] = drop(1/sqrt(pm(pm(t(Z[, j]) ,A[[j]],na.rm=na.rm) , pm( pm( M[[j]] , t(A[[j]]),na.rm=na.rm) , Z[, j],na.rm=na.rm),na.rm=na.rm))) * pm(M[[j]],pm( t(A[[j]]) ,Z[, j]))
-             if(a[[j]][1]<0){a[[j]]=-a[[j]]}
+           #  if(a[[j]][1]<0){a[[j]]=-a[[j]]}
              Y[, j] = pm(A[[j]] ,a[[j]],na.rm=na.rm)
           }
        }
@@ -280,7 +287,7 @@ rgccak=function (A, C, tau = "optimal", scheme = "centroid",verbose = FALSE, ini
               Z[, j] = rowSums(matrix(rep(C[j, ], n), n, J, byrow = TRUE) * matrix(rep(dgx, n), n, J, byrow = TRUE) * Y,na.rm=na.rm)
               alpha[[j]] = drop(1/sqrt(t(Z[, j]) %*% K[[j]] %*% Z[, j])) * Z[, j]
               a[[j]] =pm( t(A[[j]]) , alpha[[j]],na.rm=na.rm)
-              if(a[[j]][1]<0){a[[j]]=-a[[j]]}
+          #    if(a[[j]][1]<0){a[[j]]=-a[[j]]}
               Y[, j] =pm( A[[j]], a[[j]],na.rm=na.rm)
            }, 
            {
@@ -289,7 +296,7 @@ rgccak=function (A, C, tau = "optimal", scheme = "centroid",verbose = FALSE, ini
 			alpha[[j]] = drop(1/sqrt(t(Z[, j])%*% K[[j]] %*% Minv[[j]]%*% Z[, j])) * (Minv[[j]] %*% Z[,  j])
                    
 		   a[[j]] =pm( t(A[[j]]) , alpha[[j]],na.rm=na.rm)
-		   if(a[[j]][1]<0){a[[j]]=-a[[j]]}
+		#   if(a[[j]][1]<0){a[[j]]=-a[[j]]}
             Y[, j] =pm( A[[j]], a[[j]],na.rm=na.rm)
           })
       }
@@ -297,13 +304,13 @@ rgccak=function (A, C, tau = "optimal", scheme = "centroid",verbose = FALSE, ini
 
       crit[iter] <- sum(C * g(cov2(Y, bias = bias)),na.rm=na.rm)
       if (verbose & (iter%%1) == 0) 
-      cat(" Iter: ", formatC(iter, width = 3, format = "d"), " Fit:", formatC(crit[iter], digits = 8, width = 10, format = "f"), " Dif: ", formatC(crit[iter] - crit_old, digits = 8, width = 10, format = "f"),   "\n")
-      stopping_criteria = c(drop(crossprod(Reduce("c", mapply("-", a, a_old)))), crit[iter] - crit_old)
+      {
+          cat(" Iter: ", formatC(iter, width = 3, format = "d"), " Fit:", formatC(crit[iter], digits = 8, width = 10, format = "f"), " Dif: ", formatC(crit[iter] - crit_old, digits = 8, width = 10, format = "f"),   "\n")
+      }
+       stopping_criteria = c(drop(crossprod(Reduce("c", mapply("-", a, a_old)))), crit[iter] - crit_old)
      
-      # if (any(stopping_criteria < tol) | (iter > 1000)) # critere d'arret de la boucle
-           if (any(abs(stopping_criteria) < tol) | (iter > 1000)) # critere d'arret de la boucle
-               
-          break
+       if (any(stopping_criteria < tol) | (iter > 1000)) # critere d'arret de la boucle
+        {break}  
       crit_old = crit[iter]
       a_old <- a
       iter <- iter + 1

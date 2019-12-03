@@ -8,7 +8,7 @@ whichNAmethod(A, listNAdataset = NULL, C = matrix(1, length(A),
   length(A)) - diag(length(A)), tau = rep(1, length(A)), listMethods,
   nDatasets = 20, patternNA = NULL, typeNA = "block",
   ncomp = rep(2, length(A)), sameBlockWeight = TRUE, scale = TRUE,
-  tol = 1e-06, verbose = TRUE, scheme = "centroid", seed = NULL)
+  tol = 1e-06, verbose = FALSE, scheme = "centroid", seed = NULL)
 }
 \arguments{
 \item{A}{A list of complete blocks}

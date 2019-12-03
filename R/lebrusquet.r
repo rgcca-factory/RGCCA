@@ -1,6 +1,6 @@
-leb=function(x_k,missing,z,sameBlockWeight=TRUE,weight=NULL,argmax=TRUE,graph=FALSE)
+leb=function(x_k,missing,z,sameBlockWeight=TRUE,weight=NULL,argmax=TRUE,graph=FALSE,main=NULL,abscissa=NULL)
 {#leb(x_k=A[[j]][,k],missing,z=Z[,j])
-
+ xold=x_k
     n=length(x_k)
     indices_miss=which(missing)
     n_miss=length(indices_miss); 
@@ -33,8 +33,21 @@ leb=function(x_k,missing,z,sameBlockWeight=TRUE,weight=NULL,argmax=TRUE,graph=FA
     xres=M2%*%ures
     if(graph)
     {
-        plot(x_k[indices_obs],xres[indices_obs])
-        points(x_k[indices_miss],xres[indices_miss],pch=15,col="red")
+        if(is.null(abscissa))
+        {
+            plot(x_k[indices_obs],xres[indices_obs],main=ifelse(is.null(main),"graph",main))
+            points(x_k[indices_miss],xres[indices_miss],pch=15,col="red")
+            abline(a=0,b=1)
+        }
+        else
+        {
+            plot(abscissa[indices_obs],xres[indices_obs],main=paste(ifelse(is.null(main),"graph",main),round(ures[1],digits=2)),xlim=c(min(xres,abscissa,na.rm=T),max(xres,abscissa,na.rm=T)),ylim=c(min(xres,abscissa,na.rm=T),max(xres,abscissa,na.rm=T)))
+            points(xold[indices_miss],xres[indices_miss],pch=15,col="red")
+            abline(a=0,b=1)
+           xold=xres  
+        }
+       
+       
     }
     return(xres)
 }
