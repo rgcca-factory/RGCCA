@@ -37,13 +37,16 @@ leb=function(x_k,missing,z,sameBlockWeight=TRUE,weight=NULL,argmax=TRUE,graph=FA
         {
             plot(x_k[indices_obs],xres[indices_obs],main=ifelse(is.null(main),"graph",main))
             points(x_k[indices_miss],xres[indices_miss],pch=15,col="red")
+         
             abline(a=0,b=1)
         }
         else
         {
-            plot(abscissa[indices_obs],xres[indices_obs],main=paste(ifelse(is.null(main),"graph",main),round(ures[1],digits=2)),xlim=c(min(xres,abscissa,na.rm=T),max(xres,abscissa,na.rm=T)),ylim=c(min(xres,abscissa,na.rm=T),max(xres,abscissa,na.rm=T)))
+            coeff=round(lm(xres[indices_obs]~abscissa[indices_obs])$coefficients,digits=2)
+            plot(abscissa[indices_obs],xres[indices_obs],main=paste(ifelse(is.null(main),"graph",main),"a=",coeff[2],"alp=",round(ures[1],digits=2)),xlim=c(min(xres,abscissa,na.rm=T),max(xres,abscissa,na.rm=T)),ylim=c(min(xres,abscissa,na.rm=T),max(xres,abscissa,na.rm=T)))
             points(xold[indices_miss],xres[indices_miss],pch=15,col="red")
             abline(a=0,b=1)
+            
            xold=xres  
         }
        

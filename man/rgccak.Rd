@@ -6,7 +6,8 @@
 \usage{
 rgccak(A, C, tau = "optimal", scheme = "centroid", verbose = FALSE,
   init = "svd", bias = TRUE, tol = 1e-08, na.rm = TRUE,
-  estimateNA = "no", sameBlockWeight = TRUE)
+  estimateNA = "no", scale = TRUE, sameBlockWeight = TRUE,
+  initImpute = "rand")
 }
 \arguments{
 \item{A}{A list that contains the \eqn{J} blocks of variables. Either the blocks (\eqn{X_1, X_2, ..., X_J}) or the residual matrices (\eqn{X_{h1}, X_{h2}, ..., X_{hJ}}).}
