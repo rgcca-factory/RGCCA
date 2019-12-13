@@ -31,23 +31,44 @@ check_blocks <- function(blocks, init = FALSE, add_NAlines=FALSE) {
         stop(paste(msg, "should at least have two elements."))
     
     if (is.null(names(blocks)))
-        stop(paste(msg, "elements of the list should have names."))
+    {
+        #        stop(paste(msg, "elements of the list should have names."))
+        names(blocks)=paste0("block",1:length(blocks))
+        warning("Warnings in check_blocks(A):\n blocks of the list had no names. The blocks were named block1,... blockJ in the order of the entered list")
+    }
+    # Gestion of the case of one variable only
+    blocks=lapply(blocks,as.matrix)
     
-    if (any(sapply(blocks, function(x) is.null(row.names(x)))))
-        stop(paste(msg, "elements of the list should have rownames."))
     
+    if (all(sapply(blocks, function(x) is.null(row.names(x)))))
+    {
+        if(sd(sapply(blocks,function(x)dim(x)[1]))==0)
+        {
+            blocks=lapply(blocks,function(x){rownames(x)=paste0("S",1:(dim(x)[1]));return(x)})
+            print("Warnings in check_blocks(A):\n Elements of the list have no rownames. They were named as S1,...Sn")
+        }
+        else
+        {
+            stop(paste(msg, "elements of the list should have rownames."))  
+        }
+       
+    }
     if (any(sapply(blocks, function(x) is.null(colnames(x)))))
         stop(paste(msg, "elements of the list should have colnames."))
     
     inters_rows <- Reduce(intersect, lapply(blocks, row.names))
  
     if (length(inters_rows) == 0)
-        stop(paste(msg, "elements of the list should have at least a common rowname."))
+        warnings(paste(msg, "elements of the list should have at least a common rowname."))
     
     equal_rows <- Reduce(identical, lapply(blocks, row.names))
     
-    if (length(blocks) > 1 && !equal_rows)
-        blocks <- common_rows(blocks)
+    if(!add_NAlines)
+    {
+        if (length(blocks) > 1 && !equal_rows)
+            blocks <- common_rows(blocks)
+    }
+  
    
     
     if (init) {
@@ -63,8 +84,25 @@ check_blocks <- function(blocks, init = FALSE, add_NAlines=FALSE) {
         if (is.character(blocks[[i]]))
             blocks[[i]] <- to_numeric(blocks[[i]])
    # Add lines if subjects are missing
-    union_rows <- Reduce(union, lapply(blocks,row.names))
-    
+    if(add_NAlines)
+    {
+        union_rows <- Reduce(union, lapply(blocks,row.names))
+        blocks=lapply(blocks,function(x)
+        {
+            if(sum(!union_rows%in%rownames(x))!=0)
+            {
+                warnings("Some subjects are not present in some blocks. NA lines were added to have blocks with same dimensions") 
+                y=matrix(NA,length(union_rows),dim(x)[2]);colnames(y)=colnames(x);rownames(y)=union_rows
+                y[rownames(x),]=x
+                return(y)
+            }
+            else
+            {
+                x=x[union_rows,]
+            }
+        })
+    }
+   
     # if any(sapply(blocks, is.character)) # optimization ?
     # if (any(is.na(unlist(blocks)))) {
     #     warning(paste(msg, "an element contains NA that will be imputed by mean."))

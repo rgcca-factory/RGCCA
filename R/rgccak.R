@@ -15,6 +15,8 @@
 #' @param na.rm If TRUE, NIPALS algorithm taking missing values into account is run. RGCCA is run only on available data.
 #' @param estimateNA to choose between "no","first","iterative","superblock","new","lebrusquet") TO BE DEVELOPPED
 #' @param sameBlockWeight useful in lebrusquet 
+#' @param scale TRUE if scaled (used in superblock method)
+#' @param initImpute 'rand' or 'mean': initialization for optimization method
 #' @return \item{Y}{A \eqn{n * J} matrix of RGCCA outer components}
 #' @return \item{Z}{A \eqn{n * J} matrix of RGCCA inner components}
 #' @return \item{a}{A list of outer weight vectors}
@@ -301,7 +303,7 @@ rgccak=function (A, C, tau = "optimal", scheme = "centroid",verbose = FALSE, ini
 			                    #{
 			                        title=paste("bloc",j,",var",k,"iter",iter)
 			                        png(filename=paste(title,".png",sep=""))
-			                        newx_k=leb(x_k=A[[j]][,k],missing,z=Z[,j],sameBlockWeight=TRUE,weight=sqrt(pjs[j]),argmax=ifelse(a[[j]][k]>0,TRUE,FALSE),graph=TRUE,main=title,abscissa=A0[[j]][,k])
+			                        newx_k=leb(x_k=A[[j]][,k],missing,z=Z[,j],sameBlockWeight=TRUE,weight=sqrt(pjs[j]),argmax=ifelse(a[[j]][k]>0,TRUE,FALSE),graph=FALSE,main=title,abscissa=A0[[j]][,k])
 			                        dev.off()
 			                    #}
     			                 #else

@@ -32,7 +32,11 @@ analytical formula.}
 
 \item{estimateNA}{to choose between "no","first","iterative","superblock","new","lebrusquet") TO BE DEVELOPPED}
 
+\item{scale}{TRUE if scaled (used in superblock method)}
+
 \item{sameBlockWeight}{useful in lebrusquet}
+
+\item{initImpute}{'rand' or 'mean': initialization for optimization method}
 }
 \value{
 \item{Y}{A \eqn{n * J} matrix of RGCCA outer components}

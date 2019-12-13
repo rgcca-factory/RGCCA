@@ -20,4 +20,6 @@ Imports:
     vegan,
     grDevices,
     Deriv,
-    car
+    car,
+    graphics,
+    stats

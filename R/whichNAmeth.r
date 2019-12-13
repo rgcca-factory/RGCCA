@@ -22,7 +22,7 @@
 
 whichNAmethod=function(A,listNAdataset=NULL,C=matrix(1,length(A),length(A))-diag(length(A)), tau=rep(1,length(A)),listMethods,nDatasets=20,patternNA=NULL,typeNA="block",ncomp=rep(2,length(A)),sameBlockWeight=TRUE,scale=TRUE,tol=1e-6,verbose=FALSE,scheme="centroid",seed=NULL)
 {
-  if(is.null(patternNAobs)){patternNA=determine_patternNA(A,graph=FALSE)$pctNAbyBlock}
+  if(is.null(patternNA)){patternNA=determine_patternNA(A,graph=FALSE)$pctNAbyBlock}
   if(is.vector(patternNA)){if(length(patternNA)!=length(A)){stop("patternNA should have the same size as length(A)")}}
   referenceDataset=intersection(A)
 
