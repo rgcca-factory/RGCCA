@@ -15,6 +15,8 @@
 #' @param na.rm If TRUE, NIPALS algorithm taking missing values into account is run. RGCCA is run only on available data.
 #' @param estimateNA to choose between "no","first","iterative","superblock","new","lebrusquet") TO BE DEVELOPPED
 #' @param sameBlockWeight useful in lebrusquet 
+#' @param scale TRUE if scaled (used in superblock method)
+#' @param initImpute 'rand' or 'mean': initialization for optimization method
 #' @return \item{Y}{A \eqn{n * J} matrix of RGCCA outer components}
 #' @return \item{Z}{A \eqn{n * J} matrix of RGCCA inner components}
 #' @return \item{a}{A list of outer weight vectors}
@@ -35,28 +37,97 @@
 #' @importFrom stats cor rnorm
 #' @importFrom graphics plot
 #' @importFrom Deriv Deriv
-rgccak=function (A, C, tau = "optimal", scheme = "centroid",verbose = FALSE, init = "svd", bias = TRUE, tol = 1e-08,na.rm=TRUE,estimateNA="no",sameBlockWeight=TRUE) 
+rgccak=function (A, C, tau = "optimal", scheme = "centroid",verbose = FALSE, init = "svd", bias = TRUE, tol = 1e-08,na.rm=TRUE,estimateNA="no",scale=TRUE,sameBlockWeight=TRUE,initImpute="rand") 
 {
+    
+    
      if(mode(scheme) != "function") 
     {
     if(!scheme %in% c("horst","factorial","centroid")){stop("Please choose scheme as 'horst','factorial','centroid' or as a convex function")}
     if(scheme=="horst"){ g <- function(x) x}
     if(scheme=="factorial"){ g <- function(x)  x^2}  
     if(scheme=="centroid"){g <- function(x) abs(x)}
-      
+   
     }else {g<-scheme}
     A0 <-A
     A <- lapply(A, as.matrix)
+    # Initialisation of missing values
      if(estimateNA=="lebrusquet")
      {
-         A =imputeColmeans(A) 
+       #  A =imputeColmeans(A) 
+         
+         
+         
+         A = lapply(A,function(x)
+                {
+                    res=apply(x,2,function(t)
+                            {
+                                m=mean(t,na.rm=TRUE)
+                                s=sd(t,na.rm=TRUE)
+                                t[is.na(t)]=rnorm(sum(is.na(t),mean=m,sd=s))
+                                return(t)
+                            });
+                            return(res)
+                 })
        #  A=lapply(A,scale2,bias=TRUE)
        #  if(sameBlockWeight){A=lapply(A,function(x){return(x/sqrt(NCOL(x)))})}
         # liste de blocs
      }
-    # initialisation du A a la moyenne
-
-   # A=lapply(A,function(M){M[is.na(M)]<-0;return(M)})
+    if(estimateNA=="superblock")
+    { # unscaled A ! ! ! 
+        if(initImpute=="rand")
+        {
+            A = lapply(A,function(x)
+            {
+                res=apply(x,2,function(t)
+                {
+                    m=mean(t,na.rm=TRUE)
+                    s=sd(t,na.rm=TRUE)
+                    t[is.na(t)]=rnorm(sum(is.na(t)),mean=m,sd=s)
+                    return(t)
+                });
+                return(res)
+            })    
+        }
+        if(initImpute=="colMeans")
+        {
+            A =imputeColmeans(A) 
+        }
+        Binit=A
+        if (scale == TRUE) 
+        {
+            
+            A1 = lapply(A, function(x) scale2(x,scale=TRUE, bias = bias)) # le biais indique si on recherche la variance biaisee ou non
+            if(sameBlockWeight)
+            {
+                A = lapply(A1, function(x) {y=x/sqrt(NCOL(x));return(y)} )
+            }
+            else
+            {
+                A=A1
+            }
+            # on divise chaque bloc par la racine du nombre de variables pour avoir chaque poids pour le meme bloc
+        }
+        if (scale == FALSE)
+        { 
+            
+            A1 = lapply(A, function(x) scale2(x, scale=FALSE, bias = bias)) 
+            if(sameBlockWeight)
+            {
+                A = lapply(A1, function(x) {covarMat=cov2(x,bias=bias);varianceBloc=sum(diag(covarMat)); return(x/sqrt(varianceBloc))})
+            }
+            else
+            {
+                A=A1
+            }
+            
+        }
+        means=lapply(A1,function(x){M=matrix(rep(attributes(x)$'scaled:center' ,dim(x)[1]),dim(x)[1],dim(x)[2],byrow=TRUE);return(M)})
+        stdev=lapply(A1,function(x){M=matrix(rep(attributes(x)$'scaled:scale' ,dim(x)[1]),dim(x)[1],dim(x)[2],byrow=TRUE);return(M)})
+        if(sameBlockWeight){stdev=lapply(stdev,function(x){return(x/sqrt(NCOL(x)))})}
+        
+    }
+    
     J <- length(A) # nombre de blocs
     n <- NROW(A[[1]]) # nombre d'individus
     pjs <- sapply(A, NCOL) # nombre de variables par bloc
@@ -152,7 +223,7 @@ rgccak=function (A, C, tau = "optimal", scheme = "centroid",verbose = FALSE, ini
       #print(paste("iter",iter))
        for (j in which.primal)
       { # on parcourt les blocs pour estimer wj = a[[j]] : c'est le rouage de la pres
-         
+        # print(j)
           dgx = dg(cov2(Y[, j], Y, bias = bias))# covariance entre les differents blocs: dgx indique + - 1
           if(tau[j] == 1)
           { # si tau = 1
@@ -165,35 +236,75 @@ rgccak=function (A, C, tau = "optimal", scheme = "centroid",verbose = FALSE, ini
 			      if(estimateNA %in% c("first","iterative","superblock","new","lebrusquet"))
 			      { 
 			         
-
-			   #    print(paste("block",j))
-			        if(estimateNA=="superblock"){missing=is.na(A0[[j]][,k])}
-			        if(estimateNA=="superblock")
+    
+	    	        if(estimateNA=="superblock")
 			        {
-			            if(j==length(A))
+			             for(k in 1:dim(A[[j]])[2])
+		                {
+			                 missing=is.na(A0[[j]][,k])
+                            if(sum(missing)>0)
+                            {
+                                S_k=sum(missing)*sum(A[[j]][!missing,k]^2,na.rm=TRUE)/sum(!missing)# Variance part allowed for missing data
+                                x_miss=sqrt(S_k)*a[[j]][k]*missing*Z[,j]/sqrt(sum((a[[j]][k]*missing*Z[,j])^2,na.rm=TRUE))
+                                Binit[[j]][,k]=(means[[j]][,k]*missing+stdev[[j]][,k]*missing*x_miss)+(rep(1,length(missing))-missing)*Binit[[j]][,k]
+                                
+                            }
+		                       # A[[j]][missing,k]=x_miss[missing]
+		                 
+		                  
+                      }
+	    	   
+			            if (scale == TRUE) 
 			            {
-			                for(k in 1:dim(A[[j]])[2])
+			                A1[[j]]= scale2(Binit[[j]],scale=TRUE, bias = bias)# le biais indique si on recherche la variance biaisee ou non
+			                if(sameBlockWeight)
 			                {
-			                    A[[j]][missing,k]=scale(a[[j]][k]*Z[missing,j])
+			                    A[[j]]= A1[[j]] /sqrt(NCOL(A[[j]]))
 			                }
+			                else
+			                {
+			                    A[[j]]=A1[[j]]
+			                }
+			                # on divise chaque bloc par la racine du nombre de variables pour avoir chaque poids pour le meme bloc
 			            }
+			            if (scale == FALSE)
+			            { 
+			                
+			                A1[[j]] = scale2(Binit[[j]], scale=FALSE, bias = bias)
+			                if(sameBlockWeight)
+			                {   covarMat=cov2(A1[[j]],bias=bias);varianceBloc=sum(diag(covarMat))
+			                    A[[j]] = A1[[j]]/sqrt(varianceBloc)
+			                }
+			                else
+			                {
+			                    A[[j]]=A1[[j]]
+			                }
+			                
+			            }
+	    	         
+			            means[[j]]=matrix(rep(attributes(A1[[j]])$'scaled:center' ,dim(A1[[j]])[1]),dim(A1[[j]])[1],dim(A1[[j]])[2],byrow=TRUE)
+			     
+			            stdev[[j]]=matrix(rep(attributes(A1[[j]])$'scaled:scale' ,dim(A1[[j]])[1]),dim(A1[[j]])[1],dim(A1[[j]])[2],byrow=TRUE)
+			            if(sameBlockWeight){ stdev[[j]]=stdev[[j]]*sqrt(NCOL(A1[[j]]))}
+			            
 			        }
 			       # Ainter=A
-			        for(k in 1:NCOL(A[[j]]))
-			        {
-			            if(estimateNA=="lebrusquet")
-			            {
+    			     if(estimateNA=="lebrusquet")
+    			     {
+        		        for(k in 1:NCOL(A[[j]]))
+        		        {
+			           
 			                
 			                 missing=is.na(A0[[j]][,k])
 			                if(sum(missing)!=0)
 			                { 
-			                    #print("in")
+			                    
 			                    #if(k==1)
 			                    #{
 			                        title=paste("bloc",j,",var",k,"iter",iter)
-			                       # png(filename=paste(title,".png",sep=""))
-			                        newx_k=leb(x_k=A[[j]][,k],missing,z=Z[,j],sameBlockWeight=TRUE,weight=sqrt(pjs[j]),argmax=ifelse(a[[j]][k]>0,TRUE,FALSE),graph=TRUE,main=title,abscissa=A0[[j]][,k])
-			                       # dev.off()
+			                        png(filename=paste(title,".png",sep=""))
+			                        newx_k=leb(x_k=A[[j]][,k],missing,z=Z[,j],sameBlockWeight=TRUE,weight=sqrt(pjs[j]),argmax=ifelse(a[[j]][k]>0,TRUE,FALSE),graph=FALSE,main=title,abscissa=A0[[j]][,k])
+			                        dev.off()
 			                    #}
     			                 #else
     			                 #{

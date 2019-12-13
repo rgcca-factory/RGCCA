@@ -158,25 +158,34 @@ rgcca=function (A, C = 1 - diag(length(A)), tau = rep(1, length(A)),  ncomp = re
       cat("Shrinkage intensity paramaters are chosen manually \n")
     }
   }
-  if (scale == TRUE) 
-  {
-    
-     A = lapply(A, function(x) scale2(x,scale=TRUE, bias = bias)) # le biais indique si on recherche la variance biaisee ou non
-    if(sameBlockWeight)
-    {
-      A = lapply(A, function(x) x/sqrt(NCOL(x)))
-    }
-    # on divise chaque bloc par la racine du nombre de variables pour avoir chaque poids pour le meme bloc
-  }
-  if (scale == FALSE)
-  { 
-  
-      A = lapply(A, function(x) scale2(x, scale=FALSE, bias = bias)) 
-      if(sameBlockWeight)
+  # if(estimateNA=="superblock")
+  # {
+  #     
+  # }
+  # else
+  # {
+      if (scale == TRUE) 
       {
-        A = lapply(A, function(x) {covarMat=cov2(x,bias=bias);varianceBloc=sum(diag(covarMat)); return(x/sqrt(varianceBloc))})
-      }      
-  }
+          
+          A = lapply(A, function(x) scale2(x,scale=TRUE, bias = bias)) # le biais indique si on recherche la variance biaisee ou non
+          if(sameBlockWeight)
+          {
+              A = lapply(A, function(x) {y=x/sqrt(NCOL(x));return(y)} )
+          }
+          # on divise chaque bloc par la racine du nombre de variables pour avoir chaque poids pour le meme bloc
+      }
+      if (scale == FALSE)
+      { 
+          
+          A = lapply(A, function(x) scale2(x, scale=FALSE, bias = bias)) 
+          if(sameBlockWeight)
+          {
+              A = lapply(A, function(x) {covarMat=cov2(x,bias=bias);varianceBloc=sum(diag(covarMat)); return(x/sqrt(varianceBloc))})
+          }
+          
+      }
+      
+#  }
 
   # Superblock option
   if(!is.matrix(C)&& C=="superblock")
@@ -203,8 +212,8 @@ rgcca=function (A, C = 1 - diag(length(A)), tau = rep(1, length(A)),  ncomp = re
   if (N == 0) 
   { # cas ou on n'a qu'un axe a calculer par bloc
     
-    result <- rgccak(A, C, tau = tau, scheme = scheme, init = init, bias = bias, tol = tol, verbose = verbose,na.rm=na.rm,estimateNA=estimateNA,sameBlockWeight=sameBlockWeight)
-    if(estimateNA%in%c("iterative","first","lebrusquet"))
+    result <- rgccak(A, C, tau = tau, scheme = scheme, init = init, bias = bias, tol = tol, verbose = verbose,na.rm=na.rm,estimateNA=estimateNA,sameBlockWeight=sameBlockWeight,scale=scale)
+    if(estimateNA%in%c("iterative","first","lebrusquet","superblock"))
     {
       A<-result$A
     }
