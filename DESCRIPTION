@@ -22,4 +22,11 @@ Imports:
     Deriv,
     car,
     graphics,
-    stats
+    stats,
+    ggplot2,
+    igraph,
+    methods,
+    optparse,
+    plotly,
+    scales,
+    visNetwork
