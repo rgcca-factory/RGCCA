@@ -10,7 +10,15 @@ License: GPL-3
 Depends: MASS
 Packaged: 2013-07-24 16:36:37 UTC; arthur
 Suggests: 
-    testthat
+    testthat,
+   devtools,
+    bsplus,
+    knitr,
+    rmarkdown,
+    pander,
+    shiny,
+    shinyjs,
+    ggrepel
 RoxygenNote: 6.1.1
 Imports: 
     nnet,
@@ -30,3 +38,5 @@ Imports:
     plotly,
     scales,
     visNetwork
+VignetteBuilder: knitr
+biocViews: Visualization, PrincipalComponent, DimensionReduction, StructuralEquationModels
