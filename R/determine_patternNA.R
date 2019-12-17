@@ -11,6 +11,9 @@
 #'X1[2,2]=NA
 #'X1[11,]=NA
 #'X2[1:10,1]=NA
+#'colnames(X1)=paste0("A",1:5)
+#'colnames(X2)=paste0("B",1:5)
+#'colnames(X3)=paste0("C",1:5)
 #'A=list(bloc1=X1,bloc2=X2,bloc3=X3)
 #'determine_patternNA(A)
 #' @export
@@ -22,7 +25,7 @@ determine_patternNA=function(A,graph=TRUE)
 
     #A=checkSize(A)
     #A=checkRownames(A)
-    
+    A=check_blocks(A,add_NAlines = TRUE)
     pctNA=lapply(A,function(x)
         {res=apply(x,2,function(y){
             return(sum(is.na(y))/length(y))
