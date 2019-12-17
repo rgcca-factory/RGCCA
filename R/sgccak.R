@@ -22,6 +22,7 @@
 #' @return \item{scheme}{The scheme chosen by the user (user specified).}
 #' @title Internal function for computing the SGCCA parameters (SGCCA block components, outer weight vectors etc.)
 #' @export sgccak 
+#' @importFrom Deriv Deriv
 sgccak <-  function(A, C, c1 = rep(1, length(A)), scheme = "centroid", scale = FALSE,
                     tol = .Machine$double.eps, init="svd", bias = TRUE, verbose = TRUE){
 

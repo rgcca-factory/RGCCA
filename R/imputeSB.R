@@ -11,12 +11,12 @@
 #' @param  scale  If scale = TRUE, each block is standardized to zero means and unit variances (default: TRUE).
 #' @param sameBlockWeight A logical value indicating if the different blocks should have the same weight in the analysis (default, sameBlockWeight=TRUE)
 #' @param bias A logical value indicating if variance should be biased or not
-#' @return \item{A} A list of blocks imputed
-#' @return \item{crit} Convergence criterion : abs(1-obj_k/obj_{k-1})
-#' @return \item{obj} Vector containing the mean square error between the predict values and the original non missing values at each iteration
+#' @param verbose If TRUE, displays the differents RGCCA steps
+#' @param ni Number of iterations
+#' @return \item{A}{A list of blocks imputed}
+#' @return \item{crit}{Convergence criterion : abs(1-obj_k/obj_{k-1})}
+#' @return \item{obj}{Vector containing the mean square error between the predict values and the original non missing values at each iteration}
 #' @title imputeSB: impute with superblock method
-#' @examples 
-#'  data();...
 
 # TODO: tau did not have a default value
 # TODO: scheme in par
@@ -30,7 +30,9 @@ imputeSB <- function(
   naxis = 1,
   scale = TRUE,
   sameBlockWeight = TRUE,
-  bias = TRUE) {
+  bias = TRUE,
+  verbose=FALSE
+  ) {
   
   # listWithoutNA
   nvar <- sapply(A, NCOL)

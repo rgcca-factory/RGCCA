@@ -1,26 +1,44 @@
 #'Plots multiple imputation for RGCCA
-#'
 #' This method allows multiple imputation for RGCCA to be represented.
 #' @param mi.obj Result of MIRGCCA
 #' @param opt.ell "distr" or "ci"
 #' @param multiple "ell" or "seg"  representation of multiple points: can be "ell" for ellipses or "seg" for segments
 #' @param indnames if TRUE, the names of individuals are displayed
 #' @param varnames if TRUE, the names of variables are displayed
-
 #' @param blocks vector of two integers choosing the block(s)represented by the two axes of the block. By default c(1,1) (block 1 for two axes)
 #' @param axes  vector of two integers choosing the components in the blocks. By default c(1,2) (first two axes)
 #' @param selec number of variabes to be selected in the "fingerprints"
 #' @param xlim by default, NULL
-#' @param threshod
-#' @param cex
-#' @param output
-#' @param filename
-#' @return \item{rgcca0} RGCCA results for the reference dataset
-#' @return \item{data} list of imputed data obtained
-#' @return \item{rgccaList} list of RGCCA obtained
+#' @param threshold threshold for displaying the more correlated variables (default 0.5)
+#' @param cex size of tht text
+#' @param output "R" or "png"
+#' @param filename name of the saved file
+#' @return \item{rgcca0}{RGCCA results for the reference dataset}
+#' @return \item{data}{list of imputed data obtained}
+#' @return \item{rgccaList}{list of RGCCA obtained}
 #' @title plotMIRGCCA: plots the results of MIRGCCA
 #' @examples 
-
+#' set.seed(42);X1=matrix(rnorm(500),100,5);
+#' set.seed(22);X2=matrix(rnorm(400),100,4);
+#' set.seed(2);X3=matrix(rnorm(700),100,7);
+#' X1[1,]=NA
+#' X2[7,1]=NA
+#' X2[5,1]=NA
+#' X3[3,1:2]=NA
+#' rownames(X1)=rownames(X2)=rownames(X3)=paste("S",1:100,sep="")
+#' colnames(X1)=paste("A",1:5,sep="")
+#' colnames(X2)=paste("A",8:11,sep="")
+#' colnames(X3)=paste("A",12:18,sep="")
+#' A=list(X1,X2,X3)
+#' res=MIRGCCA(A,k=4,ni=5,scale=TRUE,sameBlockWeight=FALSE,tau=rep(0,3),
+#' klim=NULL,output="mean",scheme="centroid",tol=1e-16,returnA=TRUE)
+#' res$rgccaList[[2]]$Y[[1]]
+#' res[[1]]$A
+#' plotMIRGCCA(res,multiple="ell",indnames=FALSE)
+#' @importFrom grDevices graphics.off
+#' @importFrom vegan procrustes
+#' @importFrom car ellipse
+#' @export
 plotMIRGCCA=function(mi.obj,opt.ell="distr",multiple="ell",indnames=TRUE,varnames=TRUE,blocks=c(1,1),axes=c(1,2),selec="all",xlim=NULL,threshold=0.5,cex=1,output="R",filename="rgcca.png")
 {
   rgcca0=mi.obj$rgcca0
@@ -63,7 +81,7 @@ plotMIRGCCA=function(mi.obj,opt.ell="distr",multiple="ell",indnames=TRUE,varname
   nsuj=dim(rgcca0$Y[[1]])[1]
   if(!indnames)
   {
-    points(rgcca0$Y[[blocks[1]]][,axes[1]],rgcca0$Y[[blocks[2]]][,axes[2]],pch=16,col=rainbow(nsuj))
+    points(rgcca0$Y[[blocks[1]]][,axes[1]],rgcca0$Y[[blocks[2]]][,axes[2]],pch=16,col=rainbow(nsuj),cex=cex)
   }
   else
   {

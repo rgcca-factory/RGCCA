@@ -12,7 +12,7 @@ plotAnalysis=function(listFinale,output="rv",fileName=NULL,ylim=NULL,block="all"
   pas=1 
   par(las=1)
   J=length(listFinale[[1]][[1]][[1]]) #nblock
-  close.screen(all=TRUE)
+  close.screen(all.screens=TRUE)
   if(block=="all"){ split.screen(c(2,2));toPlot=1:J}else{toPlot=block:block}
   # print(toPlot)
   namesMethod=names(listFinale[[1]])

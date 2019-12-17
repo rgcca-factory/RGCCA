@@ -8,12 +8,15 @@
 #' If tau = "optimal" the shrinkage intensity paramaters are estimated using the Schafer and Strimmer (2005) 
 #' analytical formula. 
 #' @param scheme The value is "horst", "factorial", "centroid" or any diffentiable convex scheme function g designed by the user (default: "centroid").
-#' @param scale  if scale = TRUE, each block is standardized to zero means and unit variances (default: TRUE).
 #' @param verbose  Will report progress while computing if verbose = TRUE (default: TRUE).
 #' @param init The mode of initialization to use in the RGCCA algorithm. The alternatives are either by Singular Value Decompostion or random (default : "svd").
 #' @param bias A logical value for either a biaised or unbiaised estimator of the var/cov.
 #' @param tol Stopping value for convergence.
 #' @param na.rm If TRUE, NIPALS algorithm taking missing values into account is run. RGCCA is run only on available data.
+#' @param estimateNA to choose between "no","first","iterative","superblock","new","lebrusquet") TO BE DEVELOPPED
+#' @param sameBlockWeight useful in lebrusquet 
+#' @param scale TRUE if scaled (used in superblock method)
+#' @param initImpute 'rand' or 'mean': initialization for optimization method
 #' @return \item{Y}{A \eqn{n * J} matrix of RGCCA outer components}
 #' @return \item{Z}{A \eqn{n * J} matrix of RGCCA inner components}
 #' @return \item{a}{A list of outer weight vectors}
@@ -33,40 +36,108 @@
 #' @importFrom MASS ginv
 #' @importFrom stats cor rnorm
 #' @importFrom graphics plot
-rgccak=function (A, C, tau = "optimal", scheme = "centroid", scale = TRUE,verbose = FALSE, init = "svd", bias = TRUE, tol = 1e-08,na.rm=TRUE,estimateNA="no") 
+#' @importFrom Deriv Deriv
+rgccak=function (A, C, tau = "optimal", scheme = "centroid",verbose = FALSE, init = "svd", bias = TRUE, tol = 1e-08,na.rm=TRUE,estimateNA="no",scale=TRUE,sameBlockWeight=TRUE,initImpute="rand") 
 {
-# A liste de matrices "blocs" dans un ordre précis (cf matrice connexion)
-# C matrice de connexion, 
-# tau = 0 ou 1
-# scheme : fonction g
-# scale: transformations appliquées aux blocs
-# verbose : affichage
-# init : initialisation
-# biais : covariance estimée avec ou sans biais
-# tol: critère d'arret de l'algorithme
-
-    if(mode(scheme) != "function") 
+    
+    
+     if(mode(scheme) != "function") 
     {
     if(!scheme %in% c("horst","factorial","centroid")){stop("Please choose scheme as 'horst','factorial','centroid' or as a convex function")}
     if(scheme=="horst"){ g <- function(x) x}
     if(scheme=="factorial"){ g <- function(x)  x^2}  
     if(scheme=="centroid"){g <- function(x) abs(x)}
-      
+   
     }else {g<-scheme}
+    A0 <-A
+    A <- lapply(A, as.matrix)
+    # Initialisation of missing values
+     if(estimateNA=="lebrusquet")
+     {
+       #  A =imputeColmeans(A) 
+         
+         
+         
+         A = lapply(A,function(x)
+                {
+                    res=apply(x,2,function(t)
+                            {
+                                m=mean(t,na.rm=TRUE)
+                                s=sd(t,na.rm=TRUE)
+                                t[is.na(t)]=rnorm(sum(is.na(t),mean=m,sd=s))
+                                return(t)
+                            });
+                            return(res)
+                 })
+       #  A=lapply(A,scale2,bias=TRUE)
+       #  if(sameBlockWeight){A=lapply(A,function(x){return(x/sqrt(NCOL(x)))})}
+        # liste de blocs
+     }
+    if(estimateNA=="superblock")
+    { # unscaled A ! ! ! 
+        if(initImpute=="rand")
+        {
+            A = lapply(A,function(x)
+            {
+                res=apply(x,2,function(t)
+                {
+                    m=mean(t,na.rm=TRUE)
+                    s=sd(t,na.rm=TRUE)
+                    t[is.na(t)]=rnorm(sum(is.na(t)),mean=m,sd=s)
+                    return(t)
+                });
+                return(res)
+            })    
+        }
+        if(initImpute=="colMeans")
+        {
+            A =imputeColmeans(A) 
+        }
+        Binit=A
+        if (scale == TRUE) 
+        {
+            
+            A1 = lapply(A, function(x) scale2(x,scale=TRUE, bias = bias)) # le biais indique si on recherche la variance biaisee ou non
+            if(sameBlockWeight)
+            {
+                A = lapply(A1, function(x) {y=x/sqrt(NCOL(x));return(y)} )
+            }
+            else
+            {
+                A=A1
+            }
+            # on divise chaque bloc par la racine du nombre de variables pour avoir chaque poids pour le meme bloc
+        }
+        if (scale == FALSE)
+        { 
+            
+            A1 = lapply(A, function(x) scale2(x, scale=FALSE, bias = bias)) 
+            if(sameBlockWeight)
+            {
+                A = lapply(A1, function(x) {covarMat=cov2(x,bias=bias);varianceBloc=sum(diag(covarMat)); return(x/sqrt(varianceBloc))})
+            }
+            else
+            {
+                A=A1
+            }
+            
+        }
+        means=lapply(A1,function(x){M=matrix(rep(attributes(x)$'scaled:center' ,dim(x)[1]),dim(x)[1],dim(x)[2],byrow=TRUE);return(M)})
+        stdev=lapply(A1,function(x){M=matrix(rep(attributes(x)$'scaled:scale' ,dim(x)[1]),dim(x)[1],dim(x)[2],byrow=TRUE);return(M)})
+        if(sameBlockWeight){stdev=lapply(stdev,function(x){return(x/sqrt(NCOL(x)))})}
+        
+    }
     
-    A <- lapply(A, as.matrix) # liste de blocs
-    # initialisation du A
-   # A=lapply(A,function(M){M[is.na(M)]<-0;return(M)})
     J <- length(A) # nombre de blocs
     n <- NROW(A[[1]]) # nombre d'individus
     pjs <- sapply(A, NCOL) # nombre de variables par bloc
     Y <- matrix(0, n, J)
-    if (!is.numeric(tau)) # cas ou on estime le tau de manière intelligente (a creuser)
-        tau = sapply(A, tau.estimate) # d'après Schafer and Strimmer
+    if (!is.numeric(tau)) # cas ou on estime le tau de maniere intelligente (a creuser)
+        tau = sapply(A, tau.estimate) # d apres Schafer and Strimmer
     a <- alpha <- M <- Minv <- K <- list() # initialisation variables internes
     which.primal <- which((n >= pjs) == 1) # on raisonne differement suivant la taille du bloc
     which.dual <- which((n < pjs) == 1)
-    if (init == "svd") { #initialisation intelligente dans les différents cas (a creuser)
+    if (init == "svd") { #initialisation intelligente dans les differents cas (a creuser)
         for (j in which.primal) {
             a[[j]] <- initsvd(A[[j]]) # pas la
 			
@@ -90,28 +161,25 @@ rgccak=function (A, C, tau = "optimal", scheme = "centroid", scale = TRUE,verbos
     }
    
     N = ifelse(bias, n, n - 1)
-	# premiers reglages avant la boucle : initialisation du premier Y (correspondant à la fonction à maximiser)
+	# premiers reglages avant la boucle : initialisation du premier Y (correspondant a la fonction a maximiser)
     for (j in which.primal) 
     {
-     	 ifelse(tau[j] == 1,
-     	  {
+        ifelse(tau[j] == 1,
+        {
             a[[j]] <- drop(1/sqrt(t(a[[j]]) %*% a[[j]])) * a[[j]] # calcul de la premiere composante (les aj sont les wj) : on les norme dans ce cas : c'eest la condition |w|=1
-            # Remplir les valeurs de A manquantes avec la strategie
+          #  if(a[[j]][1]<0){a[[j]]=-a[[j]]}
             Y[, j] <- pm(A[[j]] , a[[j]],na.rm=na.rm) # projection du bloc sur la premiere composante
-           
-           
         }, 
         {
-           # M[[j]] <- ginv(tau[j] * diag(pjs[j]) + ((1 - tau[j])/(N)) * (pm(t(A[[j]]) , A[[j]],na.rm=na.rm))) #calcul de la fonction à minimiser ?
-         
-            
+           # M[[j]] <- ginv(tau[j] * diag(pjs[j]) + ((1 - tau[j])/(N)) * (pm(t(A[[j]]) , A[[j]],na.rm=na.rm))) #calcul de la fonction a minimiser ?
             #-taking NA into account in the N
             nmat=ifelse(bias,t(!is.na(A[[j]]))%*%(!is.na(A[[j]])),t(!is.na(A[[j]]))%*%(!is.na(A[[j]]))-1)
             nmat[nmat==0]=NA
-            M[[j]] <- ginv(tau[j] * diag(pjs[j]) + ((1 - tau[j])) *nmat^(-1)* (pm(t(A[[j]]) , A[[j]],na.rm=na.rm))) #calcul de la fonction à minimiser ?
+            M[[j]] <- ginv(tau[j] * diag(pjs[j]) + ((1 - tau[j])) *nmat^(-1)* (pm(t(A[[j]]) , A[[j]],na.rm=na.rm))) #calcul de la fonction a minimiser ?
             #-----------------------
            
-            a[[j]] <- drop(1/sqrt(t(a[[j]])%*% M[[j]]%*%a[[j]]) )* ( M[[j]] %*% a[[j]]) # calcul premiere composante (à creuser)
+            a[[j]] <- drop(1/sqrt(t(a[[j]])%*% M[[j]]%*%a[[j]]) )* ( M[[j]] %*% a[[j]]) # calcul premiere composante (a creuser)
+         #   if(a[[j]][1]<0){a[[j]]=-a[[j]]}
             Y[, j] <-pm( A[[j]] ,a[[j]],na.rm=na.rm) # projection du bloc sur la premiere composante
         })
     }
@@ -120,6 +188,7 @@ rgccak=function (A, C, tau = "optimal", scheme = "centroid", scale = TRUE,verbos
         ifelse(tau[j] == 1, {
             alpha[[j]] = drop(1/sqrt(t(alpha[[j]]) %*% K[[j]] %*%  alpha[[j]])) * alpha[[j]]
             a[[j]] =pm( t(A[[j]]), alpha[[j]],na.rm=na.rm)
+       #     if(a[[j]][1]<0){a[[j]]=-a[[j]]}
             Y[, j] =pm( A[[j]], a[[j]],na.rm=na.rm)
         }, {
           
@@ -128,11 +197,12 @@ rgccak=function (A, C, tau = "optimal", scheme = "centroid", scale = TRUE,verbos
            #----taking NA into account in the N
             nmat=ifelse(bias,t(!is.na(A[[j]]))%*%(!is.na(A[[j]])),t(!is.na(A[[j]]))%*%(!is.na(A[[j]]))-1)
             nmat[nmat==0]=NA
-            M[[j]] <- tau[j] * diag(n) + ((1 - tau[j])) *nmat^(-1)* K[[j]] #calcul de la fonction à minimiser ?
+            M[[j]] <- tau[j] * diag(n) + ((1 - tau[j])) *nmat^(-1)* K[[j]] #calcul de la fonction a minimiser ?
             #-----------------------
             
              Minv[[j]] = ginv(M[[j]])
             alpha[[j]] = drop(1/sqrt(t(alpha[[j]])%*% M[[j]]%*% K[[j]]%*% alpha[[j]])) * alpha[[j]]
+         #   if(a[[j]][1]<0){a[[j]]=-a[[j]]}
             a[[j]] =pm( t(A[[j]]), alpha[[j]],na.rm=na.rm)
             Y[, j] = pm(A[[j]] ,a[[j]],na.rm=na.rm) 
         })
@@ -145,26 +215,178 @@ rgccak=function (A, C, tau = "optimal", scheme = "centroid", scale = TRUE,verbos
     Z = matrix(0, NROW(A[[1]]), J)
     a_old = a
     
-    dg = Deriv::Deriv(g, env = parent.frame())# on dérive la fonction g
+    dg = Deriv::Deriv(g, env = parent.frame())# on derive la fonction g
    
     repeat 
     { # on rentre dans la boucle a proprement parler
       Yold <- Y #valeur de f
+      #print(paste("iter",iter))
        for (j in which.primal)
       { # on parcourt les blocs pour estimer wj = a[[j]] : c'est le rouage de la pres
-         
-          dgx = dg(cov2(Y[, j], Y, bias = bias))# covariance entre les différents blocs: dgx indique + - 1
+        # print(j)
+          dgx = dg(cov2(Y[, j], Y, bias = bias))# covariance entre les differents blocs: dgx indique + - 1
           if(tau[j] == 1)
           { # si tau = 1
              Z[, j] = rowSums(matrix(rep(C[j, ], n), n, J, byrow = TRUE) * matrix(rep(dgx, n), n, J, byrow = TRUE) * Y,na.rm=na.rm)
-		         a[[j]] = drop(1/sqrt(pm(pm(t(Z[, j]) ,A[[j]],na.rm=na.rm) ,  pm( t(A[[j]]) ,Z[, j],na.rm=na.rm),na.rm=na.rm))) *pm (t(A[[j]]), Z[,  j],na.rm=na.rm)  
-			       Y[, j] =pm( A[[j]], a[[j]],na.rm=na.rm) #Nouvelle estimation de j
-			
+		     a[[j]] = drop(1/sqrt(pm(pm(t(Z[, j]) ,A[[j]],na.rm=na.rm) ,  pm( t(A[[j]]) ,Z[, j],na.rm=na.rm),na.rm=na.rm))) *pm (t(A[[j]]), Z[,  j],na.rm=na.rm)  
+		   #  if(a[[j]][1]<0){a[[j]]=-a[[j]]}
+		     # Y[, j] =pm( A[[j]], a[[j]],na.rm=na.rm) #Nouvelle estimation de j
+		
+#------------------ si on estime les donnees manquantes dans le cas ou tau=1
+			      if(estimateNA %in% c("first","iterative","superblock","new","lebrusquet"))
+			      { 
+			         
+    
+	    	        if(estimateNA=="superblock")
+			        {
+			             for(k in 1:dim(A[[j]])[2])
+		                {
+			                 missing=is.na(A0[[j]][,k])
+                            if(sum(missing)>0)
+                            {
+                                S_k=sum(missing)*sum(A[[j]][!missing,k]^2,na.rm=TRUE)/sum(!missing)# Variance part allowed for missing data
+                                x_miss=sqrt(S_k)*a[[j]][k]*missing*Z[,j]/sqrt(sum((a[[j]][k]*missing*Z[,j])^2,na.rm=TRUE))
+                                Binit[[j]][,k]=(means[[j]][,k]*missing+stdev[[j]][,k]*missing*x_miss)+(rep(1,length(missing))-missing)*Binit[[j]][,k]
+                                
+                            }
+		                       # A[[j]][missing,k]=x_miss[missing]
+		                 
+		                  
+                      }
+	    	   
+			            if (scale == TRUE) 
+			            {
+			                A1[[j]]= scale2(Binit[[j]],scale=TRUE, bias = bias)# le biais indique si on recherche la variance biaisee ou non
+			                if(sameBlockWeight)
+			                {
+			                    A[[j]]= A1[[j]] /sqrt(NCOL(A[[j]]))
+			                }
+			                else
+			                {
+			                    A[[j]]=A1[[j]]
+			                }
+			                # on divise chaque bloc par la racine du nombre de variables pour avoir chaque poids pour le meme bloc
+			            }
+			            if (scale == FALSE)
+			            { 
+			                
+			                A1[[j]] = scale2(Binit[[j]], scale=FALSE, bias = bias)
+			                if(sameBlockWeight)
+			                {   covarMat=cov2(A1[[j]],bias=bias);varianceBloc=sum(diag(covarMat))
+			                    A[[j]] = A1[[j]]/sqrt(varianceBloc)
+			                }
+			                else
+			                {
+			                    A[[j]]=A1[[j]]
+			                }
+			                
+			            }
+	    	         
+			            means[[j]]=matrix(rep(attributes(A1[[j]])$'scaled:center' ,dim(A1[[j]])[1]),dim(A1[[j]])[1],dim(A1[[j]])[2],byrow=TRUE)
+			     
+			            stdev[[j]]=matrix(rep(attributes(A1[[j]])$'scaled:scale' ,dim(A1[[j]])[1]),dim(A1[[j]])[1],dim(A1[[j]])[2],byrow=TRUE)
+			            if(sameBlockWeight){ stdev[[j]]=stdev[[j]]*sqrt(NCOL(A1[[j]]))}
+			            
+			        }
+			       # Ainter=A
+    			     if(estimateNA=="lebrusquet")
+    			     {
+        		        for(k in 1:NCOL(A[[j]]))
+        		        {
+			           
+			                
+			                 missing=is.na(A0[[j]][,k])
+			                if(sum(missing)!=0)
+			                { 
+			                    
+			                    #if(k==1)
+			                    #{
+			                        title=paste("bloc",j,",var",k,"iter",iter)
+			                        png(filename=paste(title,".png",sep=""))
+			                        newx_k=leb(x_k=A[[j]][,k],missing,z=Z[,j],sameBlockWeight=TRUE,weight=sqrt(pjs[j]),argmax=ifelse(a[[j]][k]>0,TRUE,FALSE),graph=FALSE,main=title,abscissa=A0[[j]][,k])
+			                        dev.off()
+			                    #}
+    			                 #else
+    			                 #{
+    			                 #    newx_k=leb(x_k=A[[j]][,k],missing,z=Z[,j],sameBlockWeight=TRUE,weight=sqrt(pjs[j]),argmax=ifelse(a[[j]][k]>0,TRUE,FALSE),graph=FALSE,main=title)
+    			                     
+    			                 #}
+			                    # on affecte le nouveau k
+			                    A[[j]][,k]=newx_k
+			                   # Ainter[[j]][,k]=newx_k
+			        
+			                }
+			                
+			            } 
+			            
+			        # 
+			        #  # if(estimateNA=="first"){missing=is.na(A[[j]][,k])} # n'est valable qu'au premier
+			        #   if(estimateNA=="first"){missing=is.na(A0[[j]][,k])} # n'est valable qu'au premier
+			        #   #if(estimateNA=="iterative"){missing=is.na(A[[j]][,k])} 
+			        #   if(estimateNA=="iterative"){  missing=is.na(A0[[j]][,k])}
+			        #   if(sum(missing)>0)
+			        #   {
+			        #      #if(estimateNA=="first")
+			        #     #{
+			        #     #  A[[j]][missing,k]=a[[j]][k]*Z[missing,j];
+			        #     #  A[[j]][,k]=scale(A[[j]][,k])
+			        #     #}
+			        #     if(estimateNA=="first")
+			        #     {
+			        #       #A[[j]][missing,k]=a[[j]][k]*Z[missing,j];
+			        # 
+			        #       Ainter= A0[[j]][,k]
+			        #       Ainter[missing]=a[[j]][k]*Z[missing,j]
+			        #       if(j==1 && k==2) 
+			        #       {
+			        #      #  print("avant scaling observed")
+			        #       # print(A[[j]][!missing,k][1])
+			        #        print("avt scaling missing")
+			        #        print(Ainter[missing])
+			        #       }
+			        #       A[[j]][,k]=scale(Ainter)
+			        #       if(j==1&& k==2)
+			        #       {
+			        #        # print("apres scaling observed")
+			        #        # print(A[[j]][!missing,k][1])
+			        #         print("apres scaling missing")
+			        #         print(A[[j]][missing,k][1])
+			        #       }
+			        #     }
+			        #     if(estimateNA=="new")
+			        #     {
+			        #       ones=c(1,length(missing))
+			        #       K=diag(!missing)
+			        #       resol=solveLagrangien(K,w,x_obs,n)
+			        #       alpha=resol[1]
+			        #       mu=resol[2]
+			        #       lambda=resol[3]
+			        #       nu=resol[4]
+			        #       x_miss=(a[[j]][k]*Z[missing,j]+nu%*%ones)/lambda
+			        #     }
+			        #    
+			        #    if(estimateNA=="iterative")
+			        #    {
+			        #      A[[j]][missing,k]=scale(a[[j]][k]*Z[missing,j])
+			        #    }
+			        #    
+			        #    # print("apres boucle")
+			        #    # print(A[[j]][!missing,k][1])
+			        #   }
+			        #  
+			        # #A[[j]][,k]=scale(A[[j]][,k])
+			        # #	 print( A[[j]][,k])
+			        }
+			        
+			      }
+		     Y[, j] =pm( A[[j]], a[[j]],na.rm=na.rm)
+			       
            }else
 			      { # si tau different de 1
               Z[, j] = rowSums(matrix(rep(C[j, ], n), n,  J, byrow = TRUE) * matrix(rep(dgx, n), n,  J, byrow = TRUE) * Y,na.rm=na.rm)
              a[[j]] = drop(1/sqrt(pm(pm(t(Z[, j]) ,A[[j]],na.rm=na.rm) , pm( pm( M[[j]] , t(A[[j]]),na.rm=na.rm) , Z[, j],na.rm=na.rm),na.rm=na.rm))) * pm(M[[j]],pm( t(A[[j]]) ,Z[, j]))
-            Y[, j] = pm(A[[j]] ,a[[j]],na.rm=na.rm)
+           #  if(a[[j]][1]<0){a[[j]]=-a[[j]]}
+             Y[, j] = pm(A[[j]] ,a[[j]],na.rm=na.rm)
           }
        }
 
@@ -176,6 +398,7 @@ rgccak=function (A, C, tau = "optimal", scheme = "centroid", scale = TRUE,verbos
               Z[, j] = rowSums(matrix(rep(C[j, ], n), n, J, byrow = TRUE) * matrix(rep(dgx, n), n, J, byrow = TRUE) * Y,na.rm=na.rm)
               alpha[[j]] = drop(1/sqrt(t(Z[, j]) %*% K[[j]] %*% Z[, j])) * Z[, j]
               a[[j]] =pm( t(A[[j]]) , alpha[[j]],na.rm=na.rm)
+          #    if(a[[j]][1]<0){a[[j]]=-a[[j]]}
               Y[, j] =pm( A[[j]], a[[j]],na.rm=na.rm)
            }, 
            {
@@ -184,17 +407,21 @@ rgccak=function (A, C, tau = "optimal", scheme = "centroid", scale = TRUE,verbos
 			alpha[[j]] = drop(1/sqrt(t(Z[, j])%*% K[[j]] %*% Minv[[j]]%*% Z[, j])) * (Minv[[j]] %*% Z[,  j])
                    
 		   a[[j]] =pm( t(A[[j]]) , alpha[[j]],na.rm=na.rm)
+		#   if(a[[j]][1]<0){a[[j]]=-a[[j]]}
             Y[, j] =pm( A[[j]], a[[j]],na.rm=na.rm)
           })
       }
-     
+    # print(lapply(A,head))
+
       crit[iter] <- sum(C * g(cov2(Y, bias = bias)),na.rm=na.rm)
       if (verbose & (iter%%1) == 0) 
-      cat(" Iter: ", formatC(iter, width = 3, format = "d"), " Fit:", formatC(crit[iter], digits = 8, width = 10, format = "f"), " Dif: ", formatC(crit[iter] - crit_old, digits = 8, width = 10, format = "f"),   "\n")
-      stopping_criteria = c(drop(crossprod(Reduce("c", mapply("-", a, a_old)))), crit[iter] - crit_old)
-    
-      if (any(stopping_criteria < tol) | (iter > 1000)) # critère d'arret de la boucle
-          break
+      {
+          cat(" Iter: ", formatC(iter, width = 3, format = "d"), " Fit:", formatC(crit[iter], digits = 8, width = 10, format = "f"), " Dif: ", formatC(crit[iter] - crit_old, digits = 8, width = 10, format = "f"),   "\n")
+      }
+       stopping_criteria = c(drop(crossprod(Reduce("c", mapply("-", a, a_old)))), crit[iter] - crit_old)
+     
+       if (any(stopping_criteria < tol) | (iter > 1000)) # critere d'arret de la boucle
+        {break}  
       crit_old = crit[iter]
       a_old <- a
       iter <- iter + 1
@@ -207,6 +434,11 @@ rgccak=function (A, C, tau = "optimal", scheme = "centroid", scale = TRUE,verbos
         plot(crit[1:iter], xlab = "iteration", ylab = "criteria")
     AVEinner <- sum(C * cor(Y)^2/2)/(sum(C)/2)
 	#	AVEinner=diag(cov(res$Y[[1]]))/sum(diag(cov(A[[1]] )))
-    result <- list(Y = Y, a = a, crit = crit, AVE_inner = AVEinner,  C = C, tau = tau, scheme = scheme,A=A)
-    return(result)
+    if(estimateNA!="no")
+    {
+        result <- list(Y = Y, a = a, crit = crit, AVE_inner = AVEinner,  C = C, tau = tau, scheme = scheme,A=A)
+    }
+    else{result <- list(Y = Y, a = a, crit = crit, AVE_inner = AVEinner,  C = C, tau = tau, scheme = scheme)}
+    
+       return(result)
 }
