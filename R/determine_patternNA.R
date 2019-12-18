@@ -46,7 +46,8 @@ determine_patternNA=function(A,graph=TRUE)
       par(mar=c(2,1,4,1))
       for(i in 1:length(A))
       {
-          image(t(is.na(A[[i]])),main=paste0(names(A)[i],"\n(",nvar[i]," var.,",sum(completeSubjectByBlock[,i]), "/",NROW(A[[i]])," complete ind.)"),xaxt="n",yaxt="n",col=c("light blue","black"))
+          mat=apply(is.na(A[[i]]),2,rev)
+          image(t(mat),main=paste0(names(A)[i],"\n(",nvar[i]," var.,",sum(completeSubjectByBlock[,i]), "/",NROW(A[[i]])," complete ind.)"),xaxt="n",yaxt="n",col=c("light blue","black"))
       }
   }
   return(list(pctNA=pctNA,pctNAbyBlock=pctNAbyBlock,completeSubjectByBlock=completeSubjectByBlock))

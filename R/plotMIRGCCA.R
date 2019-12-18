@@ -64,7 +64,7 @@ plotMIRGCCA=function(mi.obj,opt.ell="distr",multiple="ell",indnames=TRUE,varname
       
     }
   }
-  graphics.off()
+ # graphics.off()
   if(output=="png"){png(filename=filename)}
   split.screen(c(2,2))
   screen(n=1)

@@ -26,3 +26,11 @@ createNA(A, option = "block", pNA = 0.1, nAllRespondants = 4,
 \description{
 Create a dataset with missing values
 }
+\examples{
+data(Russett)
+X1=Russett[,1:3]
+X2=Russett[,4:5]
+X3=Russett[,8:11]
+A=list(agri=X1,ind=X2,polit=X3)
+createNA(A,pNA=0.2)
+}

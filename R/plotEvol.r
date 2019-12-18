@@ -21,14 +21,16 @@
 plotEvol=function(listFinale,output="rv",fileName=NULL,ylim=NULL,block="all",barType="sd",namePlot=NULL,width=480,height=480,names.arg=NULL,main=NULL)
 { #output : "rv", "pct" ou "a"
   #barType="sd" or "stdErr"
+    graphics.off()
   if(is.null(namePlot)){namePlot=output}
-  graphics.off()
+
+ # graphics.off()
   if(!is.null(fileName)){png(paste(fileName,".png",sep=""),width=width,height=height)}
   nameData= names(listFinale)
   abscisse=as.numeric(nameData)
   par(las=1)
   J=length(listFinale[[1]][[1]][[1]][[1]]) #nblock
-  if(block=="all"&&J<5){ split.screen(c(2,2));toPlot=1:J}else{toPlot=block:block}
+  if(block=="all"&&J<5){   split.screen(c(2,2));toPlot=1:J}else{toPlot=block:block}
   namesMethod=as.character(names(listFinale[[1]][[1]]))
   #colMethod=rainbow(5)[1:length(namesMethod)]
   colMethod=c("cornflowerblue","chocolate1","chartreuse3","red","blueviolet","darkturquoise","darkgoldenrod1","coral","bisque4","darkorchid1","deepskyblue1")[1:length(namesMethod)]
@@ -37,8 +39,8 @@ plotEvol=function(listFinale,output="rv",fileName=NULL,ylim=NULL,block="all",bar
   names(colMethod)=names(nMeth)=namesMethod
   moyenne=list()
   ecartType=list()
-  ymin=rep(1,length(toPlot));names(ymin)=toPlot; print(ymin)
-  ymax=rep(0,length(toPlot));names(ymax)=toPlot;print(ymax)
+  ymin=rep(1,length(toPlot));names(ymin)=toPlot; 
+  ymax=rep(0,length(toPlot));names(ymax)=toPlot;
   for(j in toPlot)
   { 
     moyenne[[j]]=ecartType[[j]]=matrix(NA,length(abscisse),length(namesMethod));
@@ -69,9 +71,7 @@ plotEvol=function(listFinale,output="rv",fileName=NULL,ylim=NULL,block="all",bar
       }
     }
   }
-  print("y")
-  print(ymin)
-  print(ymax)
+
   # Plotting results
   for(j in toPlot)
   { 
@@ -83,10 +83,7 @@ plotEvol=function(listFinale,output="rv",fileName=NULL,ylim=NULL,block="all",bar
      {
          if(is.null(ylim)){Ylim=c(ymin,ymax)}else{Ylim=ylim}
      }
-      print("y")
-      print(ymin[j])
-      print(ymax[j])
-      print(ylim)
+      
     if(block=="all"){screen(j)}
     par(mar=c(5, 4, 4, 2) + 0.1)
     par(mgp=c(3,1,0))
@@ -94,7 +91,6 @@ plotEvol=function(listFinale,output="rv",fileName=NULL,ylim=NULL,block="all",bar
     par(mar=c(3,3,1,1))
     plot(NULL,main=title,xlim=c(0,length(abscisse)),ylim=Ylim,xlab="Proportion of missing values",ylab="",bty="n",xaxt="n")
     axis(side = 1,col="grey",line=0,at=-0.5+1:length(abscisse),labels=abscisse)
-    
     axis(side = 2,col="grey",line=0)
     rect(par("usr")[1], par("usr")[3], par("usr")[2], par("usr")[4], col = 
            "#e9ebec",border="#e9ebec")

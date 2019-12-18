@@ -35,6 +35,7 @@
 #' @references Tenenhaus A. et al., (2013), Kernel Generalized Canonical Correlation Analysis, submitted.
 #' @references Schafer J. and Strimmer K., (2005), A shrinkage approach to large-scale covariance matrix estimation and implications for functional genomics. Statist. Appl. Genet. Mol. Biol. 4:32.
 #' @title Regularized Generalized Canonical Correlation Analysis (RGCCA) 
+#' @export
 #' @examples
 #' data(Russett)
 #' X_agric =as.matrix(Russett[,c("gini","farm","rent")])
@@ -44,11 +45,8 @@
 #' X_ind[1,]=NA
 #' X_polit[5,1]=NA
 #' A = list(agri=X_agric, ind=X_ind, polit=X_polit)
-#' A_ref=list(agri=as.matrix(Russett[,c("gini","farm","rent")]),
-#' ind=as.matrix(Russett[,c("gnpr","labo")]),
-#' polit=as.matrix(Russett[ , c("demostab", "dictator")]))
-#' A_ref2=lapply(A_ref,scale)
-#' A2=lapply(A,scale)
+#' rgccaNa(A,method="nipals")
+#' rgccaNa(A,method="knn2")
 
 rgccaNa=function (A,method, C = 1 - diag(length(A)), tau = rep(1, length(A)),    ncomp = rep(1, length(A)), scheme = "centroid", scale = TRUE,   init = "svd", bias = TRUE, tol = 1e-08, verbose = TRUE,sameBlockWeight=TRUE,returnA=FALSE,knn.k="all",knn.output="weightedMean",knn.klim=NULL,knn.sameBlockWeight=TRUE,pca.ncp=1) 
 { 

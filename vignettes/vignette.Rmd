@@ -132,7 +132,7 @@ blocks = load_blocks(file = "data/agriculture.tsv,data/industry.tsv,data/politic
 
 The connection between the blocks will be used by the RGCCA and must be set by ```set_connection``` function. A group of samples will be used to color them in the samples plot and must be set by ```load_response``` function. For both functions, the ```blocks``` parameter, set at the previous step, is required. The other parameters are optional. The user could import a file containing either (```file``` parameter) : (i) a symmetric matrix with 1 giving a connection between two blocs, or 0 otherwise; (ii) a univariate vector (qualitative or quantitative) or a disjunctive table for the response. By default, the column separator is the tabulation and could be set (```sep``` argument). For the ```load_response```, a header could be specified (```header``` parameter).
 
-```{r connection,  echo = TRUE, inlcude = TRUE}
+```{r connection,  echo = TRUE, include = TRUE}
 # Optional parameters
 response <- connection <- NULL
 
@@ -161,7 +161,7 @@ for (x in 1:length(files)) {
 
 SGCCA is run from the RGCCA package by using two components for a biplot visualization. The S/RGCCA function doesn't names the blocks in their outputs. This step is required to generate biplots.
 
-```{r rgcca}
+```{r rgcca, fig.height = 4, fig.width = 4, fig.align = "center"}
 sgcca_out = rgcca.analyze(blocks = blocks)
 plot_network(sgcca_out)
 ```
@@ -182,29 +182,29 @@ nmark = 100
 ## With the superblock, by default on the first and the second components
 
 ### Samples plot
-```{r}
+```{r, fig.height = 4, fig.width = 4, fig.align = "center"}
 plot_ind(sgcca_out)
 ```
 
 ### Corcircle plot
-```{r}
+```{r, fig.height = 4, fig.width = 4, fig.align = "center"}
 plot_var_2D(sgcca_out)
 ```
 
 ### Fingerprint plot
-```{r}
+```{r, fig.height = 4, fig.width = 4, fig.align = "center"}
 plot_var_1D(sgcca_out)
 ```
 
 ### Best explained blocks
-```{r}
+```{r, fig.height = 4, fig.width = 4, fig.align = "center"}
 plot_ave(sgcca_out)
 ```
 
 ## With the politic block, on the 2nd and the 3rd components
 
 ### Samples plot
-```{r}
+```{r,fig.height = 4, fig.width = 4, fig.align = "center"}
 plot_ind(
     rgcca = sgcca_out,
     resp = response,
@@ -214,7 +214,7 @@ plot_ind(
 ```
 
 ### Corcircle plot
-```{r}
+```{r, fig.height = 4, fig.width = 4, fig.align = "center"}
 plot_var_2D(
     rgcca = sgcca_out,
     compx = comp1,
@@ -223,7 +223,7 @@ plot_var_2D(
 ```
 
 ### Fingerprint plot
-```{r}
+```{r, fig.height = 4, fig.width = 4, fig.align = "center"}
 plot_var_1D(
     rgcca = sgcca_out,
     comp = comp1,

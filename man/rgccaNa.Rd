@@ -85,11 +85,8 @@ X_agric[c(2,4),]=NA
 X_ind[1,]=NA
 X_polit[5,1]=NA
 A = list(agri=X_agric, ind=X_ind, polit=X_polit)
-A_ref=list(agri=as.matrix(Russett[,c("gini","farm","rent")]),
-ind=as.matrix(Russett[,c("gnpr","labo")]),
-polit=as.matrix(Russett[ , c("demostab", "dictator")]))
-A_ref2=lapply(A_ref,scale)
-A2=lapply(A,scale)
+rgccaNa(A,method="nipals")
+rgccaNa(A,method="knn2")
 }
 \references{
 Tenenhaus A. and Tenenhaus M., (2011), Regularized Generalized Canonical Correlation Analysis, Psychometrika, Vol. 76, Nr 2, pp 257-284.
