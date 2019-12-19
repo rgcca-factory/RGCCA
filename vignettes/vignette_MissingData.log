@@ -1,7 +1,7 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.20 (MiKTeX 2.9.7000) (preloaded format=pdflatex 2019.4.24)  18 DEC 2019 16:27
+This is pdfTeX, Version 3.14159265-2.6-1.40.20 (MiKTeX 2.9.7000) (preloaded format=pdflatex 2019.4.24)  19 DEC 2019 10:29
 entering extended mode
-**/tmp/Rtmp32r10F/preview-3aaa2cf55a7e.dir/vignette_MissingData.tex
-(/tmp/Rtmp32r10F/preview-3aaa2cf55a7e.dir/vignette_MissingData.tex
+**/tmp/RtmpAeiQ2i/preview-dc345a553a5.dir/vignette_MissingData.tex
+(/tmp/RtmpAeiQ2i/preview-dc345a553a5.dir/vignette_MissingData.tex
 LaTeX2e <2018-12-01>
 (/home/caroline.peltier/.miktex/texmfs/install/tex/latex/base/article.cls
 Document Class: article 2018/09/03 v1.4i Standard LaTeX document class
@@ -1413,48 +1413,48 @@ LaTeX Font Info:    Font shape `T1/ptm/bx/n' in size <14.4> not available
 (vignette_MissingData.toc
 LaTeX Font Info:    Font shape `T1/ptm/bx/n' in size <10> not available
 (Font)              Font shape `T1/ptm/b/n' tried instead on input line 2.
-LaTeX Font Info:    Try loading font information for OT1+lmr on input line 6.
+LaTeX Font Info:    Try loading font information for OT1+lmr on input line 5.
 (/home/caroline.peltier/.miktex/texmfs/install/tex/latex/lm/ot1lmr.fd
 File: ot1lmr.fd 2009/10/30 v1.6 Font defs for Latin Modern
 ) (/home/caroline.peltier/.miktex/texmfs/install/tex/latex/microtype/mt-cmr.cfg
 File: mt-cmr.cfg 2013/05/19 v2.2 microtype config. file: Computer Modern Roman 
 (RS)
 )
-LaTeX Font Info:    Try loading font information for OML+lmm on input line 6.
+LaTeX Font Info:    Try loading font information for OML+lmm on input line 5.
 (/home/caroline.peltier/.miktex/texmfs/install/tex/latex/lm/omllmm.fd
 File: omllmm.fd 2009/10/30 v1.6 Font defs for Latin Modern
 )
-LaTeX Font Info:    Try loading font information for OMS+lmsy on input line 6.
+LaTeX Font Info:    Try loading font information for OMS+lmsy on input line 5.
 (/home/caroline.peltier/.miktex/texmfs/install/tex/latex/lm/omslmsy.fd
 File: omslmsy.fd 2009/10/30 v1.6 Font defs for Latin Modern
 )
-LaTeX Font Info:    Try loading font information for OMX+lmex on input line 6.
+LaTeX Font Info:    Try loading font information for OMX+lmex on input line 5.
 (/home/caroline.peltier/.miktex/texmfs/install/tex/latex/lm/omxlmex.fd
 File: omxlmex.fd 2009/10/30 v1.6 Font defs for Latin Modern
 )
 LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <10> on input line 6.
+(Font)              <10> on input line 5.
 LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <7> on input line 6.
+(Font)              <7> on input line 5.
 LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <5> on input line 6.
-LaTeX Font Info:    Try loading font information for U+msa on input line 6.
+(Font)              <5> on input line 5.
+LaTeX Font Info:    Try loading font information for U+msa on input line 5.
 (/home/caroline.peltier/.miktex/texmfs/install/tex/latex/amsfonts/umsa.fd
 File: umsa.fd 2013/01/14 v3.01 AMS symbols A
 ) (/home/caroline.peltier/.miktex/texmfs/install/tex/latex/microtype/mt-msa.cfg
 File: mt-msa.cfg 2006/02/04 v1.1 microtype config. file: AMS symbols (a) (RS)
 )
-LaTeX Font Info:    Try loading font information for U+msb on input line 6.
+LaTeX Font Info:    Try loading font information for U+msb on input line 5.
 (/home/caroline.peltier/.miktex/texmfs/install/tex/latex/amsfonts/umsb.fd
 File: umsb.fd 2013/01/14 v3.01 AMS symbols B
 ) (/home/caroline.peltier/.miktex/texmfs/install/tex/latex/microtype/mt-msb.cfg
 File: mt-msb.cfg 2005/06/01 v1.0 microtype config. file: AMS symbols (b) (RS)
 )
-LaTeX Font Info:    Try loading font information for U+lasy on input line 6.
+LaTeX Font Info:    Try loading font information for U+lasy on input line 5.
 (/home/caroline.peltier/.miktex/texmfs/install/tex/latex/base/ulasy.fd
 File: ulasy.fd 1998/08/17 v2.2e LaTeX symbol font definitions
 )
-LaTeX Font Info:    Try loading font information for U+wasy on input line 6.
+LaTeX Font Info:    Try loading font information for U+wasy on input line 5.
 (/home/caroline.peltier/.miktex/texmfs/install/tex/latex/wasysym/uwasy.fd
 File: uwasy.fd 2003/10/30 v2.0 Wasy-2 symbol font definitions
 ))
@@ -1477,327 +1477,318 @@ Package xcolor Warning: Incompatible color definition on input line 227.
 
 Package xcolor Warning: Incompatible color definition on input line 227.
 
+
+Package xcolor Warning: Incompatible color definition on input line 233.
+
 [1
 Non-PDF special ignored!
 <special> header=psfrag.pro
 
 {/home/caroline.peltier/.miktex/texmfs/data/pdftex/config/pdftex.map}]
 
-Package xcolor Warning: Incompatible color definition on input line 233.
-
-
 Package xcolor Warning: Incompatible color definition on input line 238.
 
 
 Package xcolor Warning: Incompatible color definition on input line 238.
 
-
-Package xcolor Warning: Incompatible color definition on input line 260.
-
-
-Package xcolor Warning: Incompatible color definition on input line 266.
-
-
-Package xcolor Warning: Incompatible color definition on input line 266.
-
-LaTeX Font Info:    Try loading font information for TS1+ptm on input line 292.
+LaTeX Font Info:    Try loading font information for TS1+ptm on input line 264.
 
 (/home/caroline.peltier/.miktex/texmfs/install/tex/latex/psnfss/ts1ptm.fd
 File: ts1ptm.fd 2001/06/04 font definitions for TS1/ptm.
-) [2]
+)
 
-Package xcolor Warning: Incompatible color definition on input line 338.
-
-
-Package xcolor Warning: Incompatible color definition on input line 346.
+Package xcolor Warning: Incompatible color definition on input line 310.
 
 
-Package xcolor Warning: Incompatible color definition on input line 346.
+Package xcolor Warning: Incompatible color definition on input line 318.
 
 
-Package xcolor Warning: Incompatible color definition on input line 377.
+Package xcolor Warning: Incompatible color definition on input line 318.
+
+[2]
+
+Package xcolor Warning: Incompatible color definition on input line 349.
 
 
-Package xcolor Warning: Incompatible color definition on input line 381.
+Package xcolor Warning: Incompatible color definition on input line 353.
 
 
-Package xcolor Warning: Incompatible color definition on input line 381.
+Package xcolor Warning: Incompatible color definition on input line 353.
 
 LaTeX Font Info:    Font shape `T1/ptm/bx/n' in size <12> not available
-(Font)              Font shape `T1/ptm/b/n' tried instead on input line 398.
+(Font)              Font shape `T1/ptm/b/n' tried instead on input line 370.
+
+Package xcolor Warning: Incompatible color definition on input line 381.
+
+
+Package xcolor Warning: Incompatible color definition on input line 386.
+
+
+Package xcolor Warning: Incompatible color definition on input line 386.
+
+
+Package xcolor Warning: Incompatible color definition on input line 392.
+
+
+Package xcolor Warning: Incompatible color definition on input line 397.
+
+
+Package xcolor Warning: Incompatible color definition on input line 397.
+
 [3]
 
-Package xcolor Warning: Incompatible color definition on input line 409.
+Package xcolor Warning: Incompatible color definition on input line 440.
 
 
-Package xcolor Warning: Incompatible color definition on input line 414.
+Package xcolor Warning: Incompatible color definition on input line 444.
 
 
-Package xcolor Warning: Incompatible color definition on input line 414.
+Package xcolor Warning: Incompatible color definition on input line 444.
 
 
-Package xcolor Warning: Incompatible color definition on input line 420.
-
-
-Package xcolor Warning: Incompatible color definition on input line 425.
-
-
-Package xcolor Warning: Incompatible color definition on input line 425.
-
-
-Package xcolor Warning: Incompatible color definition on input line 468.
-
-
-Package xcolor Warning: Incompatible color definition on input line 472.
-
-
-Package xcolor Warning: Incompatible color definition on input line 472.
-
-
-Overfull \hbox (4.24498pt too wide) in paragraph at lines 477--477
+Overfull \hbox (4.24498pt too wide) in paragraph at lines 449--449
 []\T1/pcr/m/n/10 ## Warning in check_blocks(A, add_NAlines = TRUE): Warnings in
  check_blocks(A):[] 
  []
 
 
-Overfull \hbox (184.24498pt too wide) in paragraph at lines 477--477
+Overfull \hbox (184.24498pt too wide) in paragraph at lines 449--449
 []\T1/pcr/m/n/10 ##  blocks of the list had no names. The blocks were named blo
 ck1,... blockJ in the order of the entered list[] 
  []
 
-</tmp/Rtmp32r10F/preview-3aaa2cf55a7e.dir/vignette_MissingData_files/figure-lat
-ex/unnamed-chunk-6-1.pdf, id=114, 487.8225pt x 189.70876pt>
-File: /tmp/Rtmp32r10F/preview-3aaa2cf55a7e.dir/vignette_MissingData_files/figur
-e-latex/unnamed-chunk-6-1.pdf Graphic file (type pdf)
-<use /tmp/Rtmp32r10F/preview-3aaa2cf55a7e.dir/vignette_MissingData_files/figure
--latex/unnamed-chunk-6-1.pdf>
-Package pdftex.def Info: /tmp/Rtmp32r10F/preview-3aaa2cf55a7e.dir/vignette_Miss
-ingData_files/figure-latex/unnamed-chunk-6-1.pdf  used on input line 479.
+</tmp/RtmpAeiQ2i/preview-dc345a553a5.dir/vignette_MissingData_files/figure-late
+x/unnamed-chunk-5-1.pdf, id=109, 487.8225pt x 189.70876pt>
+File: /tmp/RtmpAeiQ2i/preview-dc345a553a5.dir/vignette_MissingData_files/figure
+-latex/unnamed-chunk-5-1.pdf Graphic file (type pdf)
+<use /tmp/RtmpAeiQ2i/preview-dc345a553a5.dir/vignette_MissingData_files/figure-
+latex/unnamed-chunk-5-1.pdf>
+Package pdftex.def Info: /tmp/RtmpAeiQ2i/preview-dc345a553a5.dir/vignette_Missi
+ngData_files/figure-latex/unnamed-chunk-5-1.pdf  used on input line 451.
 (pdftex.def)             Requested size: 469.76321pt x 182.68568pt.
-[4]
 
-Package xcolor Warning: Incompatible color definition on input line 481.
-
-
-Package xcolor Warning: Incompatible color definition on input line 485.
+Package xcolor Warning: Incompatible color definition on input line 453.
 
 
-Package xcolor Warning: Incompatible color definition on input line 485.
+Package xcolor Warning: Incompatible color definition on input line 457.
 
 
-Package xcolor Warning: Incompatible color definition on input line 492.
+Package xcolor Warning: Incompatible color definition on input line 457.
 
 
-Package xcolor Warning: Incompatible color definition on input line 497.
+Package xcolor Warning: Incompatible color definition on input line 464.
 
 
-Package xcolor Warning: Incompatible color definition on input line 497.
+Package xcolor Warning: Incompatible color definition on input line 469.
 
 
-Overfull \hbox (4.24498pt too wide) in paragraph at lines 502--502
+Package xcolor Warning: Incompatible color definition on input line 469.
+
+
+Overfull \hbox (4.24498pt too wide) in paragraph at lines 474--474
 []\T1/pcr/m/n/10 ## Warning in check_blocks(A, add_NAlines = TRUE): Warnings in
  check_blocks(A):[] 
  []
 
 
-Overfull \hbox (184.24498pt too wide) in paragraph at lines 502--502
+Overfull \hbox (184.24498pt too wide) in paragraph at lines 474--474
 []\T1/pcr/m/n/10 ##  blocks of the list had no names. The blocks were named blo
 ck1,... blockJ in the order of the entered list[] 
  []
 
-</tmp/Rtmp32r10F/preview-3aaa2cf55a7e.dir/vignette_MissingData_files/figure-lat
-ex/unnamed-chunk-7-1.pdf, id=119, 487.8225pt x 189.70876pt>
-File: /tmp/Rtmp32r10F/preview-3aaa2cf55a7e.dir/vignette_MissingData_files/figur
-e-latex/unnamed-chunk-7-1.pdf Graphic file (type pdf)
-<use /tmp/Rtmp32r10F/preview-3aaa2cf55a7e.dir/vignette_MissingData_files/figure
--latex/unnamed-chunk-7-1.pdf>
-Package pdftex.def Info: /tmp/Rtmp32r10F/preview-3aaa2cf55a7e.dir/vignette_Miss
-ingData_files/figure-latex/unnamed-chunk-7-1.pdf  used on input line 504.
+</tmp/RtmpAeiQ2i/preview-dc345a553a5.dir/vignette_MissingData_files/figure-late
+x/unnamed-chunk-6-1.pdf, id=110, 487.8225pt x 189.70876pt>
+File: /tmp/RtmpAeiQ2i/preview-dc345a553a5.dir/vignette_MissingData_files/figure
+-latex/unnamed-chunk-6-1.pdf Graphic file (type pdf)
+<use /tmp/RtmpAeiQ2i/preview-dc345a553a5.dir/vignette_MissingData_files/figure-
+latex/unnamed-chunk-6-1.pdf>
+Package pdftex.def Info: /tmp/RtmpAeiQ2i/preview-dc345a553a5.dir/vignette_Missi
+ngData_files/figure-latex/unnamed-chunk-6-1.pdf  used on input line 476.
 (pdftex.def)             Requested size: 469.76321pt x 182.68568pt.
-[5 </tmp/Rtmp32r10F/preview-3aaa2cf55a7e.dir/vignette_MissingData_files/figure-
-latex/unnamed-chunk-6-1.pdf> </tmp/Rtmp32r10F/preview-3aaa2cf55a7e.dir/vignette
-_MissingData_files/figure-latex/unnamed-chunk-7-1.pdf>] [6]
+[4 </tmp/RtmpAeiQ2i/preview-dc345a553a5.dir/vignette_MissingData_files/figure-l
+atex/unnamed-chunk-5-1.pdf>] [5 </tmp/RtmpAeiQ2i/preview-dc345a553a5.dir/vignet
+te_MissingData_files/figure-latex/unnamed-chunk-6-1.pdf>]
 
-Package xcolor Warning: Incompatible color definition on input line 582.
-
-
-Package xcolor Warning: Incompatible color definition on input line 587.
+Package xcolor Warning: Incompatible color definition on input line 554.
 
 
-Package xcolor Warning: Incompatible color definition on input line 587.
+Package xcolor Warning: Incompatible color definition on input line 559.
 
 
-Package xcolor Warning: Incompatible color definition on input line 617.
+Package xcolor Warning: Incompatible color definition on input line 559.
+
+[6]
+
+Package xcolor Warning: Incompatible color definition on input line 589.
 
 
-Package xcolor Warning: Incompatible color definition on input line 624.
+Package xcolor Warning: Incompatible color definition on input line 596.
 
 
-Package xcolor Warning: Incompatible color definition on input line 624.
+Package xcolor Warning: Incompatible color definition on input line 596.
 
 
-Package xcolor Warning: Incompatible color definition on input line 643.
+Package xcolor Warning: Incompatible color definition on input line 615.
 
+
+Package xcolor Warning: Incompatible color definition on input line 620.
+
+
+Package xcolor Warning: Incompatible color definition on input line 620.
+
+
+Package xcolor Warning: Incompatible color definition on input line 644.
+
+
+Package xcolor Warning: Incompatible color definition on input line 649.
+
+
+Package xcolor Warning: Incompatible color definition on input line 649.
+
+</tmp/RtmpAeiQ2i/preview-dc345a553a5.dir/vignette_MissingData_files/figure-late
+x/unnamed-chunk-10-1.pdf, id=137, 405.515pt x 403.5075pt>
+File: /tmp/RtmpAeiQ2i/preview-dc345a553a5.dir/vignette_MissingData_files/figure
+-latex/unnamed-chunk-10-1.pdf Graphic file (type pdf)
+<use /tmp/RtmpAeiQ2i/preview-dc345a553a5.dir/vignette_MissingData_files/figure-
+latex/unnamed-chunk-10-1.pdf>
+Package pdftex.def Info: /tmp/RtmpAeiQ2i/preview-dc345a553a5.dir/vignette_Missi
+ngData_files/figure-latex/unnamed-chunk-10-1.pdf  used on input line 651.
+(pdftex.def)             Requested size: 405.52017pt x 403.51266pt.
 [7]
 
-Package xcolor Warning: Incompatible color definition on input line 648.
+Package xcolor Warning: Incompatible color definition on input line 653.
 
 
-Package xcolor Warning: Incompatible color definition on input line 648.
+Package xcolor Warning: Incompatible color definition on input line 657.
 
 
-Package xcolor Warning: Incompatible color definition on input line 672.
+Package xcolor Warning: Incompatible color definition on input line 657.
 
-
-Package xcolor Warning: Incompatible color definition on input line 677.
-
-
-Package xcolor Warning: Incompatible color definition on input line 677.
-
-</tmp/Rtmp32r10F/preview-3aaa2cf55a7e.dir/vignette_MissingData_files/figure-lat
-ex/unnamed-chunk-11-1.pdf, id=152, 405.515pt x 403.5075pt>
-File: /tmp/Rtmp32r10F/preview-3aaa2cf55a7e.dir/vignette_MissingData_files/figur
-e-latex/unnamed-chunk-11-1.pdf Graphic file (type pdf)
-<use /tmp/Rtmp32r10F/preview-3aaa2cf55a7e.dir/vignette_MissingData_files/figure
--latex/unnamed-chunk-11-1.pdf>
-Package pdftex.def Info: /tmp/Rtmp32r10F/preview-3aaa2cf55a7e.dir/vignette_Miss
-ingData_files/figure-latex/unnamed-chunk-11-1.pdf  used on input line 679.
+</tmp/RtmpAeiQ2i/preview-dc345a553a5.dir/vignette_MissingData_files/figure-late
+x/unnamed-chunk-11-1.pdf, id=148, 405.515pt x 403.5075pt>
+File: /tmp/RtmpAeiQ2i/preview-dc345a553a5.dir/vignette_MissingData_files/figure
+-latex/unnamed-chunk-11-1.pdf Graphic file (type pdf)
+<use /tmp/RtmpAeiQ2i/preview-dc345a553a5.dir/vignette_MissingData_files/figure-
+latex/unnamed-chunk-11-1.pdf>
+Package pdftex.def Info: /tmp/RtmpAeiQ2i/preview-dc345a553a5.dir/vignette_Missi
+ngData_files/figure-latex/unnamed-chunk-11-1.pdf  used on input line 663.
 (pdftex.def)             Requested size: 405.52017pt x 403.51266pt.
+[8 </tmp/RtmpAeiQ2i/preview-dc345a553a5.dir/vignette_MissingData_files/figure-l
+atex/unnamed-chunk-10-1.pdf>] [9 </tmp/RtmpAeiQ2i/preview-dc345a553a5.dir/vigne
+tte_MissingData_files/figure-latex/unnamed-chunk-11-1.pdf>]
 
-Package xcolor Warning: Incompatible color definition on input line 681.
-
-[8 </tmp/Rtmp32r10F/preview-3aaa2cf55a7e.dir/vignette_MissingData_files/figure-
-latex/unnamed-chunk-11-1.pdf>]
-
-Package xcolor Warning: Incompatible color definition on input line 685.
+Package xcolor Warning: Incompatible color definition on input line 696.
 
 
-Package xcolor Warning: Incompatible color definition on input line 685.
+Package xcolor Warning: Incompatible color definition on input line 700.
 
-</tmp/Rtmp32r10F/preview-3aaa2cf55a7e.dir/vignette_MissingData_files/figure-lat
-ex/unnamed-chunk-12-1.pdf, id=165, 405.515pt x 403.5075pt>
-File: /tmp/Rtmp32r10F/preview-3aaa2cf55a7e.dir/vignette_MissingData_files/figur
-e-latex/unnamed-chunk-12-1.pdf Graphic file (type pdf)
-<use /tmp/Rtmp32r10F/preview-3aaa2cf55a7e.dir/vignette_MissingData_files/figure
--latex/unnamed-chunk-12-1.pdf>
-Package pdftex.def Info: /tmp/Rtmp32r10F/preview-3aaa2cf55a7e.dir/vignette_Miss
-ingData_files/figure-latex/unnamed-chunk-12-1.pdf  used on input line 691.
-(pdftex.def)             Requested size: 405.52017pt x 403.51266pt.
-[9 </tmp/Rtmp32r10F/preview-3aaa2cf55a7e.dir/vignette_MissingData_files/figure-
+
+Package xcolor Warning: Incompatible color definition on input line 700.
+
+
+Overfull \hbox (46.24498pt too wide) in paragraph at lines 705--705
+[]\T1/pcr/m/n/10 ## [1] "comparisons of RGCCA with the different methods...(thi
+s could take some time)"[] 
+ []
+
+
+Package xcolor Warning: Incompatible color definition on input line 707.
+
+
+Package xcolor Warning: Incompatible color definition on input line 711.
+
+
+Package xcolor Warning: Incompatible color definition on input line 711.
+
+</tmp/RtmpAeiQ2i/preview-dc345a553a5.dir/vignette_MissingData_files/figure-late
+x/unnamed-chunk-12-1.pdf, id=173, 399.4925pt x 409.53pt>
+File: /tmp/RtmpAeiQ2i/preview-dc345a553a5.dir/vignette_MissingData_files/figure
+-latex/unnamed-chunk-12-1.pdf Graphic file (type pdf)
+<use /tmp/RtmpAeiQ2i/preview-dc345a553a5.dir/vignette_MissingData_files/figure-
+latex/unnamed-chunk-12-1.pdf>
+Package pdftex.def Info: /tmp/RtmpAeiQ2i/preview-dc345a553a5.dir/vignette_Missi
+ngData_files/figure-latex/unnamed-chunk-12-1.pdf  used on input line 713.
+(pdftex.def)             Requested size: 399.5098pt x 409.54773pt.
+
+Package xcolor Warning: Incompatible color definition on input line 720.
+
+[10 </tmp/RtmpAeiQ2i/preview-dc345a553a5.dir/vignette_MissingData_files/figure-
 latex/unnamed-chunk-12-1.pdf>]
 
 Package xcolor Warning: Incompatible color definition on input line 724.
 
 
-Package xcolor Warning: Incompatible color definition on input line 728.
+Package xcolor Warning: Incompatible color definition on input line 724.
 
 
-Package xcolor Warning: Incompatible color definition on input line 728.
-
-
-Overfull \hbox (46.24498pt too wide) in paragraph at lines 733--733
+Overfull \hbox (46.24498pt too wide) in paragraph at lines 748--748
 []\T1/pcr/m/n/10 ## [1] "comparisons of RGCCA with the different methods...(thi
 s could take some time)"[] 
  []
 
 
-Package xcolor Warning: Incompatible color definition on input line 735.
+Overfull \hbox (46.24498pt too wide) in paragraph at lines 748--748
+[]\T1/pcr/m/n/10 ## [1] "comparisons of RGCCA with the different methods...(thi
+s could take some time)"[] 
+ []
 
 
-Package xcolor Warning: Incompatible color definition on input line 739.
+Overfull \hbox (46.24498pt too wide) in paragraph at lines 748--748
+[]\T1/pcr/m/n/10 ## [1] "comparisons of RGCCA with the different methods...(thi
+s could take some time)"[] 
+ []
 
 
-Package xcolor Warning: Incompatible color definition on input line 739.
+Overfull \hbox (46.24498pt too wide) in paragraph at lines 748--748
+[]\T1/pcr/m/n/10 ## [1] "comparisons of RGCCA with the different methods...(thi
+s could take some time)"[] 
+ []
 
-</tmp/Rtmp32r10F/preview-3aaa2cf55a7e.dir/vignette_MissingData_files/figure-lat
-ex/unnamed-chunk-13-1.pdf, id=178, 399.4925pt x 409.53pt>
-File: /tmp/Rtmp32r10F/preview-3aaa2cf55a7e.dir/vignette_MissingData_files/figur
-e-latex/unnamed-chunk-13-1.pdf Graphic file (type pdf)
-<use /tmp/Rtmp32r10F/preview-3aaa2cf55a7e.dir/vignette_MissingData_files/figure
--latex/unnamed-chunk-13-1.pdf>
-Package pdftex.def Info: /tmp/Rtmp32r10F/preview-3aaa2cf55a7e.dir/vignette_Miss
-ingData_files/figure-latex/unnamed-chunk-13-1.pdf  used on input line 741.
-(pdftex.def)             Requested size: 399.5098pt x 409.54773pt.
 
-Package xcolor Warning: Incompatible color definition on input line 748.
+Overfull \hbox (46.24498pt too wide) in paragraph at lines 748--748
+[]\T1/pcr/m/n/10 ## [1] "comparisons of RGCCA with the different methods...(thi
+s could take some time)"[] 
+ []
 
-[10 </tmp/Rtmp32r10F/preview-3aaa2cf55a7e.dir/vignette_MissingData_files/figure
--latex/unnamed-chunk-13-1.pdf>]
+
+Overfull \hbox (46.24498pt too wide) in paragraph at lines 748--748
+[]\T1/pcr/m/n/10 ## [1] "comparisons of RGCCA with the different methods...(thi
+s could take some time)"[] 
+ []
+
+
+Overfull \hbox (46.24498pt too wide) in paragraph at lines 748--748
+[]\T1/pcr/m/n/10 ## [1] "comparisons of RGCCA with the different methods...(thi
+s could take some time)"[] 
+ []
+
+
+Package xcolor Warning: Incompatible color definition on input line 750.
+
 
 Package xcolor Warning: Incompatible color definition on input line 754.
 
 
 Package xcolor Warning: Incompatible color definition on input line 754.
-
-
-Overfull \hbox (46.24498pt too wide) in paragraph at lines 778--778
-[]\T1/pcr/m/n/10 ## [1] "comparisons of RGCCA with the different methods...(thi
-s could take some time)"[] 
- []
-
-
-Overfull \hbox (46.24498pt too wide) in paragraph at lines 778--778
-[]\T1/pcr/m/n/10 ## [1] "comparisons of RGCCA with the different methods...(thi
-s could take some time)"[] 
- []
-
-
-Overfull \hbox (46.24498pt too wide) in paragraph at lines 778--778
-[]\T1/pcr/m/n/10 ## [1] "comparisons of RGCCA with the different methods...(thi
-s could take some time)"[] 
- []
-
-
-Overfull \hbox (46.24498pt too wide) in paragraph at lines 778--778
-[]\T1/pcr/m/n/10 ## [1] "comparisons of RGCCA with the different methods...(thi
-s could take some time)"[] 
- []
-
-
-Overfull \hbox (46.24498pt too wide) in paragraph at lines 778--778
-[]\T1/pcr/m/n/10 ## [1] "comparisons of RGCCA with the different methods...(thi
-s could take some time)"[] 
- []
-
-
-Overfull \hbox (46.24498pt too wide) in paragraph at lines 778--778
-[]\T1/pcr/m/n/10 ## [1] "comparisons of RGCCA with the different methods...(thi
-s could take some time)"[] 
- []
-
-
-Overfull \hbox (46.24498pt too wide) in paragraph at lines 778--778
-[]\T1/pcr/m/n/10 ## [1] "comparisons of RGCCA with the different methods...(thi
-s could take some time)"[] 
- []
-
-
-Package xcolor Warning: Incompatible color definition on input line 780.
-
-
-Package xcolor Warning: Incompatible color definition on input line 784.
-
-
-Package xcolor Warning: Incompatible color definition on input line 784.
 
 [11]
-Package atveryend Info: Empty hook `BeforeClearDocument' on input line 799.
-Package atveryend Info: Empty hook `AfterLastShipout' on input line 799.
+Package atveryend Info: Empty hook `BeforeClearDocument' on input line 769.
+Package atveryend Info: Empty hook `AfterLastShipout' on input line 769.
 (vignette_MissingData.aux)
-Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 799.
-Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 799.
+Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 769.
+Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 769.
 Package rerunfilecheck Info: File `vignette_MissingData.out' has not changed.
-(rerunfilecheck)             Checksum: 1B9E9B0BF33B25D60AE12B7F5E1869F2;3657.
-Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 799.
+(rerunfilecheck)             Checksum: 6BC3C0B50A59CFDD874C7764F6B3516F;3468.
+Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 769.
  ) 
 Here is how much of TeX's memory you used:
- 37770 strings out of 494864
- 826997 string characters out of 3177643
- 1078848 words of memory out of 3000000
- 40568 multiletter control sequences out of 15000+200000
+ 37767 strings out of 494864
+ 826922 string characters out of 3177643
+ 1076848 words of memory out of 3000000
+ 40566 multiletter control sequences out of 15000+200000
  62997 words of font info for 114 fonts, out of 3000000 for 9000
  0 hyphenation exceptions out of 8191
- 62i,7n,96p,1024b,609s stack positions out of 5000i,500n,10000p,200000b,50000s
+ 62i,6n,96p,1023b,609s stack positions out of 5000i,500n,10000p,200000b,50000s
 {/home/caroline.peltier/.miktex/texmfs/install/fonts/enc/dvips/lm/lm-mathsy.e
 nc}{/home/caroline.peltier/.miktex/texmfs/install/fonts/enc/dvips/lm/lm-mathit.
 enc}{/home/caroline.peltier/.miktex/texmfs/install/fonts/enc/dvips/lm/lm-mathex
@@ -1818,9 +1809,9 @@ pfb></home/caroline.peltier/.miktex/texmfs/install/fonts/type1/urw/courier/ucrr
 b8a.pfb></home/caroline.peltier/.miktex/texmfs/install/fonts/type1/urw/times/ut
 mr8a.pfb></home/caroline.peltier/.miktex/texmfs/install/fonts/type1/urw/times/u
 tmri8a.pfb>
-Output written on vignette_MissingData.pdf (11 pages, 246776 bytes).
+Output written on vignette_MissingData.pdf (11 pages, 244322 bytes).
 PDF statistics:
- 255 PDF objects out of 1000 (max. 8388607)
- 32 named destinations out of 1000 (max. 500000)
- 14510 words of extra memory for PDF output out of 17280 (max. 10000000)
+ 250 PDF objects out of 1000 (max. 8388607)
+ 31 named destinations out of 1000 (max. 500000)
+ 14502 words of extra memory for PDF output out of 17280 (max. 10000000)
 

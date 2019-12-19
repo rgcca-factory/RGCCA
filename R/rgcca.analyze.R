@@ -10,6 +10,7 @@
 #' @param response An integer giving the index of a block considered as a 
 #' response among a list of blocks
 #' @param tol An integer for the stopping value for convergence
+#' @param sameBlockWeight If TRUE, all blocks are weighted by their own variance: all the blocks have the same weight
 #' @return A RGCCA object
 #' @examples
 #' library(RGCCA)
@@ -42,8 +43,15 @@ rgcca.analyze <- function(
     scale = TRUE,
     init = "svd",
     bias = TRUE, 
-    tol = 1e-08) {
+    tol = 1e-08,
+    sameBlockWeight =TRUE)
+{
 
+    match.arg(type, c("rgcca", "cpca-w", "gcca", "hpca", "maxbet-b", "maxbet", "maxdiff-b",
+                      "maxdiff", "maxvar-a", "maxvar-b", "maxvar", "niles", "r-maxvar", "rcon-pca",
+                      "ridge-gca", "sabscor", "ssqcor", "ssqcor", "ssqcov-1", "ssqcov-2", "ssqcov",
+                      "sum-pca", "sumcor", "sumcov-1", "sumcov-2", "sumcov.", "sabscov", "plspm","cca", "ra", "ifa", "pls","pca","sgcca"))
+    
     tau <- elongate_arg(tau, blocks)
     ncomp <- elongate_arg(ncomp, blocks)
 
@@ -107,7 +115,8 @@ rgcca.analyze <- function(
             scale = FALSE,
             init = init,
             bias = bias,
-            tol = tol
+            tol = tol,
+            sameBlockWeight =TRUE
         )
     )
     func[[par]] <- opt$tau

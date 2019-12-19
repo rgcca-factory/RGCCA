@@ -3,15 +3,15 @@ title: "The RGCCA package for Regularized/Sparse Generalized Canonical Correlati
 author: "Etienne CAMENEN"
 date: "`r Sys.Date()`"
 output:
+  html_document:
+    df_print: paged
+    toc: yes
+  word_document:
+    toc: yes
   pdf_document:
     fig_height: 6
     fig_width: 6
     number_sections: yes
-    toc: yes
-  word_document:
-    toc: yes
-  html_document:
-    df_print: paged
     toc: yes
 header-includes:
 - \usepackage{amsfonts}
@@ -53,8 +53,8 @@ header-includes:
 - \usepackage{microtype}
 vignette: >
   %\VignetteIndexEntry{The RGCCA package for Regularized/Sparse Generalized Canonical Correlation Analysis}
-  %\VignetteEngine{knitr::rmarkdown}
   \usepackage[utf8]{inputenc}
+  %\VignetteEngine{knitr::rmarkdown}
 ---
 
 # Multiblock data analysis with the RGCCA package
@@ -65,12 +65,14 @@ We consider J data matrices X1 ,..., XJ. Each n × pj data matrix Xj = [ xj1, ..
 
 
 getwd()
+set.seed(1)
+
 # Load functions
 wd <- "../R/"
 for (f in list.files(wd))
         source(paste0(wd, f))
 
-load_libraries(c("RGCCA", "ggplot2", "optparse", "scales", "igraph", "ggrepel"))
+load_libraries(c("RGCCA", "ggplot2", "optparse", "scales", "igraph", "ggrepel", "plotly"))
 
 # Load the data
 data("Russett")
@@ -132,7 +134,7 @@ blocks = load_blocks(file = "data/agriculture.tsv,data/industry.tsv,data/politic
 
 The connection between the blocks will be used by the RGCCA and must be set by ```set_connection``` function. A group of samples will be used to color them in the samples plot and must be set by ```load_response``` function. For both functions, the ```blocks``` parameter, set at the previous step, is required. The other parameters are optional. The user could import a file containing either (```file``` parameter) : (i) a symmetric matrix with 1 giving a connection between two blocs, or 0 otherwise; (ii) a univariate vector (qualitative or quantitative) or a disjunctive table for the response. By default, the column separator is the tabulation and could be set (```sep``` argument). For the ```load_response```, a header could be specified (```header``` parameter).
 
-```{r connection,  echo = TRUE, include = TRUE}
+```{r connection,  echo = TRUE, inlcude = TRUE}
 # Optional parameters
 response <- connection <- NULL
 
@@ -161,9 +163,9 @@ for (x in 1:length(files)) {
 
 SGCCA is run from the RGCCA package by using two components for a biplot visualization. The S/RGCCA function doesn't names the blocks in their outputs. This step is required to generate biplots.
 
-```{r rgcca, fig.height = 4, fig.width = 4, fig.align = "center"}
-sgcca_out = rgcca.analyze(blocks = blocks)
-plot_network(sgcca_out)
+```{r rgcca}
+rgcca_out = rgcca.analyze(blocks = blocks)
+plot_network(rgcca_out)
 ```
 
 
@@ -182,31 +184,54 @@ nmark = 100
 ## With the superblock, by default on the first and the second components
 
 ### Samples plot
-```{r, fig.height = 4, fig.width = 4, fig.align = "center"}
-plot_ind(sgcca_out)
+```{r}
+plot_ind(rgcca_out)
 ```
 
 ### Corcircle plot
-```{r, fig.height = 4, fig.width = 4, fig.align = "center"}
-plot_var_2D(sgcca_out)
+```{r}
+plot_var_2D(rgcca_out)
 ```
 
 ### Fingerprint plot
-```{r, fig.height = 4, fig.width = 4, fig.align = "center"}
-plot_var_1D(sgcca_out)
+```{r}
+plot_var_1D(rgcca_out)
 ```
 
 ### Best explained blocks
-```{r, fig.height = 4, fig.width = 4, fig.align = "center"}
-plot_ave(sgcca_out)
+```{r}
+plot_ave(rgcca_out)
+```
+
+### Cross-validation score
+```{r}
+loo <- rgcca_crossvalidation(rgcca_out, n_cores = 2)
+# Cross-validation score (leave-one-out)
+round(loo$scores, 3)
+plot_ind(rgcca_out, predicted = loo)
+```
+
+### Bootstrap
+```{r}
+boot <- bootstrap(rgcca_out, n_boot = 5, n_cores = 2)
+selected.var <- get_bootstrap(rgcca_out, boot, n_cores = 2) # Get the bootrstap on the clinic block
+plot_bootstrap_2D(selected.var)
+plot_bootstrap_1D(selected.var)
+```
+
+### Permutation
+```{r}
+perm <- rgcca_permutation(blocks, nperm = 5, n_cores = 2)
+head(order_df(cbind(perm$penalties, perm$zstat), ncol(perm$penalties) + 1))
+plot_permut_2D(perm)
 ```
 
 ## With the politic block, on the 2nd and the 3rd components
 
 ### Samples plot
-```{r,fig.height = 4, fig.width = 4, fig.align = "center"}
+```{r}
 plot_ind(
-    rgcca = sgcca_out,
+    rgcca = rgcca_out,
     resp = response,
     compx = comp1,
     compy = comp2,
@@ -214,18 +239,18 @@ plot_ind(
 ```
 
 ### Corcircle plot
-```{r, fig.height = 4, fig.width = 4, fig.align = "center"}
+```{r}
 plot_var_2D(
-    rgcca = sgcca_out,
+    rgcca = rgcca_out,
     compx = comp1,
     compy = comp2,
     i_block = 3)
 ```
 
 ### Fingerprint plot
-```{r, fig.height = 4, fig.width = 4, fig.align = "center"}
+```{r}
 plot_var_1D(
-    rgcca = sgcca_out,
+    rgcca = rgcca_out,
     comp = comp1,
     n_mark = nmark, 
     i_block = 3,

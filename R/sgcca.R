@@ -34,6 +34,7 @@
 #' @param verbose  Will report progress while computing if verbose = TRUE (default: TRUE).
 #' @param tol Stopping value for convergence.
 #' @param returnA If TRUE, returns the original A list
+#' @param sameBlockWeight If TRUE, all blocks are weighted by their own variance: all the blocks have the same weight
 #' @return \item{Y}{A list of \eqn{J} elements. Each element of Y is a matrix that contains the SGCCA components for each block.}
 #' @return \item{a}{A list of \eqn{J} elements. Each element of a is a matrix that contains the outer weight vectors for each block.}
 #' @return \item{astar}{A list of \eqn{J} elements. Each element of astar is a matrix defined as Y[[j]][, h] = A[[j]]\%*\%astar[[j]][, h]}
@@ -111,7 +112,7 @@
 #'@export sgcca
 
 
-sgcca <- function (A, C = 1-diag(length(A)), c1 = rep(1, length(A)), ncomp = rep(1, length(A)), scheme = "centroid", scale = TRUE, init = "svd", bias = TRUE, tol = .Machine$double.eps, verbose = FALSE,returnA=FALSE){
+sgcca <- function (A, C = 1-diag(length(A)), c1 = rep(1, length(A)), ncomp = rep(1, length(A)), scheme = "centroid", scale = TRUE, init = "svd", bias = TRUE, tol = .Machine$double.eps, verbose = FALSE,returnA=FALSE,sameBlockWeight=TRUE){
 
   ndefl <- ncomp-1
   N <- max(ndefl)
@@ -151,7 +152,18 @@ sgcca <- function (A, C = 1-diag(length(A)), c1 = rep(1, length(A)), ncomp = rep
     
     if (scale == TRUE) {
       A = lapply(A, function(x) scale3(x, bias = bias)) #TO CHECK
-      A = lapply(A, function(x) x/sqrt(NCOL(x)))
+      if(sameBlockWeight) 
+      {
+          A = lapply(A, function(x) x/sqrt(NCOL(x)))
+      }
+    }
+    if(scale == FALSE)
+    {
+        A = lapply(A, function(x) scale3(x,scale=FALSE, bias = bias)) 
+        if(sameBlockWeight) 
+        {
+          #TODO  A = lapply(A, function(x) x/sqrt(NCOL(x)))
+        }
     }
     ####################################
     # sgcca with 1 component per block #

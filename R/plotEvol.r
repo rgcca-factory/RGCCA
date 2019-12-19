@@ -21,10 +21,11 @@
 plotEvol=function(listFinale,output="rv",fileName=NULL,ylim=NULL,block="all",barType="sd",namePlot=NULL,width=480,height=480,names.arg=NULL,main=NULL)
 { #output : "rv", "pct" ou "a"
   #barType="sd" or "stdErr"
-    graphics.off()
+  #  graphics.off()
   if(is.null(namePlot)){namePlot=output}
 
- # graphics.off()
+  graphics.off()
+  #x11()
   if(!is.null(fileName)){png(paste(fileName,".png",sep=""),width=width,height=height)}
   nameData= names(listFinale)
   abscisse=as.numeric(nameData)

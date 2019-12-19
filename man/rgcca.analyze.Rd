@@ -8,7 +8,7 @@ rgcca.analyze(blocks, connection = 1 - diag(length(blocks)),
   response = NULL, superblock = TRUE, tau = rep(1, length(blocks)),
   ncomp = rep(2, length(blocks)), type = "rgcca", verbose = TRUE,
   scheme = "factorial", scale = TRUE, init = "svd", bias = TRUE,
-  tol = 1e-08)
+  tol = 1e-08, sameBlockWeight = TRUE)
 }
 \arguments{
 \item{blocks}{A list of matrix}
@@ -27,7 +27,9 @@ shrinkage parameter for covariance maximization}
 \item{ncomp}{A vector of integer giving the number of component for each
 blocks}
 
-\item{type}{A character giving the type of analysis}
+\item{type}{A character giving the type of analysis: c('rgcca', 'cpca-w', 'gcca', 'hpca', 'maxbet-b', 'maxbet', 'maxdiff-b','maxdiff', 'maxvar-a', 'maxvar-b', 'maxvar', 'niles', 'r-maxvar', 'rcon-pca',
+'ridge-gca', 'sabscor', 'ssqcor', 'ssqcor', 'ssqcov-1', 'ssqcov-2', 'ssqcov',
+'sum-pca', 'sumcor', 'sumcov-1', 'sumcov-2', 'sumcov.', 'sabscov', 'plspm','cca', 'ra', 'ifa', 'pls','pca')}
 
 \item{verbose}{A boolean to display the progress of the analysis}
 
@@ -41,6 +43,8 @@ for alorithm initialization}
 \item{bias}{A boolean for a biased variance estimator}
 
 \item{tol}{An integer for the stopping value for convergence}
+
+\item{sameBlockWeight}{If TRUE, all blocks are weighted by their own variance: all the blocks have the same weight}
 }
 \value{
 A RGCCA object

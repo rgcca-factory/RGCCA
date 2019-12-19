@@ -87,7 +87,10 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ```{r, echo = FALSE, warning=FALSE, message = FALSE}
 library(ggplot2)
-library(mvbutils)
+library(FactoMineR)
+library(parallel)
+library(vegan)
+library(missMDA)
 ```
 
 
@@ -97,12 +100,6 @@ In literature, many solutions exist to deal with missing data: NIPALS-type algor
 
 In this work, several solutions are investigated and compared on simulations and on multi-source biological data. Furthermore, a methodology for choosing the best NA solution according to the dataset is given.  
 
-# An example dataset: Russett 
-```{r}
-library(RGCCA)
-data(Russett)
-head(Russett)
-```
 
 # An example dataset: Russett 
 ```{r}
@@ -239,7 +236,7 @@ The idea is to compare the results of the different "missing methods" to the ori
 \item output="bm": percentage of similar top ten of variables
 \end{itemize}
 
-```{r}
+```{r, fig.height = 6, fig.width = 6, fig.align = "center"}
 res=whichNAmethod(A_missing,listMethods=c("knn1","knn2","knn3","knn4","mean"),patternNA=patternNA$pctNAbyBlock)
 plotWhichNAmethod(res,output="a",ylim=NULL)
 ```
@@ -247,10 +244,10 @@ plotWhichNAmethod(res,output="a",ylim=NULL)
 In this case, the best method for the similarities between weights is 
 
 # Behavior with increasing missing data proportion
-```{r}
-listResults=naEvolution(A=A,listMethods=c("complete","nipals","pca"),
-prctNA=c(0.05,0.1,0.15,0.2,0.25,0.3,0.4),typeNA="ponc",ncomp=rep(1,3),
-sameBlockWeight=FALSE)
+```{r, fig.height = 6, fig.width = 6, fig.align = "center"}
+listResults=naEvolution(A=A,listMethods=c("complete","nipals","pca"),prctNA=c(0.05,0.1,0.15,0.2,0.25,0.3,0.4),typeNA="ponc",ncomp=rep(1,3),sameBlockWeight=FALSE)
+```
+```{r, fig.height = 6, fig.width = 6, fig.align = "center"}
 plotEvol(listResults,output="a",barType = "stderr",ylim=c(0,0.2))
 ```
 
