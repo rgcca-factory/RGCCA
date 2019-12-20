@@ -8,7 +8,9 @@ rgcca.analyze(blocks, connection = 1 - diag(length(blocks)),
   response = NULL, superblock = TRUE, tau = rep(1, length(blocks)),
   ncomp = rep(2, length(blocks)), type = "rgcca", verbose = TRUE,
   scheme = "factorial", scale = TRUE, init = "svd", bias = TRUE,
-  tol = 1e-08, sameBlockWeight = TRUE)
+  tol = 1e-08, sameBlockWeight = TRUE, method = "complete",
+  knn.k = "all", knn.output = "weightedMean", knn.klim = NULL,
+  knn.sameBlockWeight = TRUE, pca.ncp = 1)
 }
 \arguments{
 \item{blocks}{A list of matrix}
@@ -45,6 +47,18 @@ for alorithm initialization}
 \item{tol}{An integer for the stopping value for convergence}
 
 \item{sameBlockWeight}{If TRUE, all blocks are weighted by their own variance: all the blocks have the same weight}
+
+\item{method}{Either a character corresponding to the used method ("complete","knn","em","sem") or a function taking a list of J blocks (A) as only parameter and returning the imputed list.}
+
+\item{knn.k}{Number of k nearest neighbors}
+
+\item{knn.output}{"mean", "random" or "weightedMean" : returns respectively the average of the k nearest neigbors, one selected randomly, or an average weighted by the distance of the k NN}
+
+\item{knn.klim}{k limits (if k is not a number, optimal k between klim[1] and klim[2] is calculated )}
+
+\item{knn.sameBlockWeight}{if TRUE the distance for Nearest Neigbors takes the size of blocks into account}
+
+\item{pca.ncp}{Number of components chosen in PCA}
 }
 \value{
 A RGCCA object

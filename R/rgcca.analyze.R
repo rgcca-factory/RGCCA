@@ -2,6 +2,7 @@
 #'
 #' Performs a r/sgcca with predefined parameters
 #' @inheritParams select_analysis
+#' @inheritParams rgccaNa
 #' @param scale A boolean scaling the blocks
 #' @param init A character among "svd" (Singular Value Decompostion) or "random"
 #' for alorithm initialization
@@ -44,7 +45,8 @@ rgcca.analyze <- function(
     init = "svd",
     bias = TRUE, 
     tol = 1e-08,
-    sameBlockWeight =TRUE)
+    sameBlockWeight =TRUE,
+    method="complete",knn.k="all",knn.output="weightedMean",knn.klim=NULL,knn.sameBlockWeight=TRUE,pca.ncp=1)
 {
 
     match.arg(type, c("rgcca", "cpca-w", "gcca", "hpca", "maxbet-b", "maxbet", "maxdiff-b",
@@ -98,10 +100,10 @@ rgcca.analyze <- function(
         message("RGCCA in progress ...")
 
     if (tolower(type) == "sgcca") {
-        gcca <- RGCCA::sgcca
+        gcca <- RGCCA::sgccaNa
         par <- "c1"
     } else{
-        gcca <- RGCCA::rgcca
+        gcca <- RGCCA::rgccaNa
         par <- "tau"
     }
 
@@ -112,16 +114,23 @@ rgcca.analyze <- function(
             ncomp = opt$ncomp,
             verbose = FALSE,
             scheme = opt$scheme,
-            scale = FALSE,
+            scale = scale,
             init = init,
             bias = bias,
             tol = tol,
-            sameBlockWeight =TRUE
+            sameBlockWeight =sameBlockWeight,
+            method=method,
+            knn.k=knn.k,
+            knn.output=knn.output,
+            knn.klim=knn.klim,
+            knn.sameBlockWeight=knn.sameBlockWeight,
+            pca.ncp=pca.ncp
         )
     )
     func[[par]] <- opt$tau
 
-    func_out <- eval(as.call(func))
+    func_out <- eval(as.call(func)) $rgcca
+     print(names(func_out))
     for (i in c("a", "astar", "Y"))
         names(func_out[[i]]) <- names(opt$blocks)
     names(func_out$AVE$AVE_X) <- names(opt$blocks)

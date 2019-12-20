@@ -2,7 +2,6 @@
 # 
 # '''
 #setwd("/home/caroline.peltier/Bureau/RGCCA")
-print("rgccaNA")
 data(Russett)
 library(missMDA)
 # Russetts
