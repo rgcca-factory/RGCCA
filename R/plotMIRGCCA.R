@@ -66,8 +66,7 @@ plotMIRGCCA=function(mi.obj,opt.ell="distr",multiple="ell",indnames=TRUE,varname
   }
  # graphics.off()
   if(output=="png"){png(filename=filename)}
-  split.screen(c(2,2))
-  screen(n=1)
+  par(mfrow=c(2,2))
   par(mar=c(1,1,3,1))
   if(is.null(xlim))
   {
@@ -148,7 +147,7 @@ plotMIRGCCA=function(mi.obj,opt.ell="distr",multiple="ell",indnames=TRUE,varname
   sdx=apply(x,2,"sd",na.rm=T)
   sdy=apply(y,2,"sd",na.rm=T)
   
-  screen(n=2)
+ 
   par(mar=c(1,1,3,1))
   indices1=sort(abs(x[1,]),index.return=T,decreasing=TRUE,na.last=TRUE)$ix
   #barplot(rev(x[indices1]),horiz=FALSE,main=paste("Axis 1 (","",")",sep=""))
@@ -158,12 +157,12 @@ plotMIRGCCA=function(mi.obj,opt.ell="distr",multiple="ell",indnames=TRUE,varname
   if(is.numeric(selec)){selectionX=selectionY=1:selec}
   corInfo(rev( (x[1,indices1])[selectionX]),main="Axis 1",sdV=round(rev(sdx[indices1])[selectionX],digits=2),cex=1)
   
-  screen(n=3)
+
   par(mar=c(1,1,3,1))
   indices2=sort(abs(y[1,]),index.return=T,decreasing=TRUE,na.last=TRUE)$ix
   corInfo(rev((y[1,indices2])[selectionY]),main="Axis 2",sdV=round(rev(sdy[indices2])[selectionY],digits=2),cex=1)
   
-  screen(n=4)
+ 
   par(mar=c(1,1,3,1))
   plot(NULL,xlim=c(-1,1),ylim=c(-1,1),xlab=paste("Comp 1 (",names(rgcca0$A)[1],")",sep=""),ylab=paste("Comp 2(",names(rgcca0$A)[2],")",sep=""),xaxt="n",yaxt="n")
   rect(par("usr")[1], par("usr")[3], par("usr")[2], par("usr")[4], col = "#e9ebec",border="#e9ebec")
@@ -187,5 +186,6 @@ plotMIRGCCA=function(mi.obj,opt.ell="distr",multiple="ell",indnames=TRUE,varname
   abline(v=0)
   abline(h=0)
   if(output=="png"){dev.off()}
+  par(mfrow=c(1,1))
   
 }

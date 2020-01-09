@@ -1,6 +1,6 @@
-#' Histogram of a fingerprint
+#' Barplot of a fingerprint
 #'
-#' Histogram of the higher outer weight vectors for a component of a block 
+#' Barplot of the higher outer weight vectors for a component of a block 
 #' (by default, the superblock or the last one) analysed by R/SGCCA
 #'
 #' @inheritParams plot_var_2D

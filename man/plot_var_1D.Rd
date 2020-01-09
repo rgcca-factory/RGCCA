@@ -2,7 +2,7 @@
 % Please edit documentation in R/plot_var_1D.R
 \name{plot_var_1D}
 \alias{plot_var_1D}
-\title{Histogram of a fingerprint}
+\title{Barplot of a fingerprint}
 \usage{
 plot_var_1D(rgcca, comp = 1, n_mark = 100, i_block = length(rgcca$a),
   type = "cor", collapse = FALSE, cex = 1, cex_sub = 16 * cex,
@@ -30,7 +30,7 @@ or "weight" for the weight of the RGCCA}
 \item{cex_axis}{An integer for the size of the axis text}
 }
 \description{
-Histogram of the higher outer weight vectors for a component of a block 
+Barplot of the higher outer weight vectors for a component of a block 
 (by default, the superblock or the last one) analysed by R/SGCCA
 }
 \examples{

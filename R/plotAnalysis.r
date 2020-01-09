@@ -14,7 +14,8 @@
 #' listResults=whichNAmethod(A=A,patternNA=c(0.1,0.2),
 #' listMethods=c("mean","complete","nipals","knn4"))
 #' plotWhichNAmethod(listFinale=listResults,ylim=c(0,1),output="a")
-#' @importFrom grDevices graphics.off
+#' @importFrom grDevices graphics.off 
+#' @importFrom graphics plot.new
 #' @export
 
 
@@ -23,6 +24,7 @@ plotWhichNAmethod=function(listFinale,output="rv",fileName=NULL,ylim=NULL,block=
   #barType="sd" or "stdErr"
     
     # TODO: par(new=TRUE)
+    
   if(is.null(namePlot)){namePlot=output}
   #graphics.off()
   if(!is.null(fileName)){png(paste(fileName,".png",sep=""),width=width,height=height)}
@@ -32,8 +34,16 @@ plotWhichNAmethod=function(listFinale,output="rv",fileName=NULL,ylim=NULL,block=
   pas=1 
   par(las=1)
   J=length(listFinale[[1]][[1]][[1]]) #nblock
-  close.screen(all.screens=TRUE)
-  if(block=="all"){ split.screen(c(2,2));toPlot=1:J}else{toPlot=block:block}
+ # close.screen(all.screens=TRUE)
+  if(block=="all")
+  { 
+      par(mfrow=c(floor(sqrt(J)+1),floor(sqrt(J)+1)));toPlot=1:J
+    #  split.screen(c(floor(sqrt(J)+1),floor(sqrt(J)+1)));toPlot=1:J
+  }
+  else
+  {
+      toPlot=block:block
+  }
   # print(toPlot)
   namesMethod=names(listFinale[[1]])
   #colMethod=rainbow(5)[1:length(namesMethod)]
@@ -42,7 +52,7 @@ plotWhichNAmethod=function(listFinale,output="rv",fileName=NULL,ylim=NULL,block=
   names(colMethod)=names(nMeth)=namesMethod
   for(j in toPlot)
   {
-    if(block=="all"){screen(j)}
+    #if(block=="all"){screen(j)}
     par(mar=c(5, 4, 4, 2) + 0.1)
     par(mgp=c(3,1,0))
  
@@ -90,12 +100,20 @@ plotWhichNAmethod=function(listFinale,output="rv",fileName=NULL,ylim=NULL,block=
   }
   if(block=="all")
   {
-    screen(4)
-    legend("center",legend=namesMethod,fill=colMethod,box.lwd=0)
+  #  screen(J+1)
+      plot.new()
+      par(cex=0.8)
+    legend("center",legend=namesMethod,fill=colMethod,box.lwd=0,,bty="n")
   }
   if(is.numeric(block))
   {
-    legend("bottomleft",legend=namesMethod,fill=colMethod,box.lwd=0)
+      par(cex=0.8)
+    legend("bottomleft",legend=namesMethod,fill=colMethod,box.lwd=0,bty="n")
   }
+  
   if(!is.null(fileName)){dev.off()}
+  #par(new=TRUE)
+  par(mfrow=c(1,1))
+  par(mar=c(5,4,3,3))
+  par(cex=1)
 }

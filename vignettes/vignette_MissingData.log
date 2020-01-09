@@ -1,7 +1,7 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.20 (MiKTeX 2.9.7000) (preloaded format=pdflatex 2019.4.24)  19 DEC 2019 10:29
+This is pdfTeX, Version 3.14159265-2.6-1.40.20 (MiKTeX 2.9.7000) (preloaded format=pdflatex 2019.4.24)  20 DEC 2019 14:59
 entering extended mode
-**/tmp/RtmpAeiQ2i/preview-dc345a553a5.dir/vignette_MissingData.tex
-(/tmp/RtmpAeiQ2i/preview-dc345a553a5.dir/vignette_MissingData.tex
+**/tmp/RtmpwmdZFS/preview-6ef97244120d.dir/vignette_MissingData.tex
+(/tmp/RtmpwmdZFS/preview-6ef97244120d.dir/vignette_MissingData.tex
 LaTeX2e <2018-12-01>
 (/home/caroline.peltier/.miktex/texmfs/install/tex/latex/base/article.cls
 Document Class: article 2018/09/03 v1.4i Standard LaTeX document class
@@ -1546,25 +1546,19 @@ Package xcolor Warning: Incompatible color definition on input line 444.
 Package xcolor Warning: Incompatible color definition on input line 444.
 
 
-Overfull \hbox (4.24498pt too wide) in paragraph at lines 449--449
-[]\T1/pcr/m/n/10 ## Warning in check_blocks(A, add_NAlines = TRUE): Warnings in
- check_blocks(A):[] 
- []
-
-
 Overfull \hbox (184.24498pt too wide) in paragraph at lines 449--449
 []\T1/pcr/m/n/10 ##  blocks of the list had no names. The blocks were named blo
 ck1,... blockJ in the order of the entered list[] 
  []
 
-</tmp/RtmpAeiQ2i/preview-dc345a553a5.dir/vignette_MissingData_files/figure-late
-x/unnamed-chunk-5-1.pdf, id=109, 487.8225pt x 189.70876pt>
-File: /tmp/RtmpAeiQ2i/preview-dc345a553a5.dir/vignette_MissingData_files/figure
--latex/unnamed-chunk-5-1.pdf Graphic file (type pdf)
-<use /tmp/RtmpAeiQ2i/preview-dc345a553a5.dir/vignette_MissingData_files/figure-
-latex/unnamed-chunk-5-1.pdf>
-Package pdftex.def Info: /tmp/RtmpAeiQ2i/preview-dc345a553a5.dir/vignette_Missi
-ngData_files/figure-latex/unnamed-chunk-5-1.pdf  used on input line 451.
+</tmp/RtmpwmdZFS/preview-6ef97244120d.dir/vignette_MissingData_files/figure-lat
+ex/unnamed-chunk-5-1.pdf, id=109, 487.8225pt x 189.70876pt>
+File: /tmp/RtmpwmdZFS/preview-6ef97244120d.dir/vignette_MissingData_files/figur
+e-latex/unnamed-chunk-5-1.pdf Graphic file (type pdf)
+<use /tmp/RtmpwmdZFS/preview-6ef97244120d.dir/vignette_MissingData_files/figure
+-latex/unnamed-chunk-5-1.pdf>
+Package pdftex.def Info: /tmp/RtmpwmdZFS/preview-6ef97244120d.dir/vignette_Miss
+ingData_files/figure-latex/unnamed-chunk-5-1.pdf  used on input line 451.
 (pdftex.def)             Requested size: 469.76321pt x 182.68568pt.
 
 Package xcolor Warning: Incompatible color definition on input line 453.
@@ -1585,29 +1579,23 @@ Package xcolor Warning: Incompatible color definition on input line 469.
 Package xcolor Warning: Incompatible color definition on input line 469.
 
 
-Overfull \hbox (4.24498pt too wide) in paragraph at lines 474--474
-[]\T1/pcr/m/n/10 ## Warning in check_blocks(A, add_NAlines = TRUE): Warnings in
- check_blocks(A):[] 
- []
-
-
 Overfull \hbox (184.24498pt too wide) in paragraph at lines 474--474
 []\T1/pcr/m/n/10 ##  blocks of the list had no names. The blocks were named blo
 ck1,... blockJ in the order of the entered list[] 
  []
 
-</tmp/RtmpAeiQ2i/preview-dc345a553a5.dir/vignette_MissingData_files/figure-late
-x/unnamed-chunk-6-1.pdf, id=110, 487.8225pt x 189.70876pt>
-File: /tmp/RtmpAeiQ2i/preview-dc345a553a5.dir/vignette_MissingData_files/figure
--latex/unnamed-chunk-6-1.pdf Graphic file (type pdf)
-<use /tmp/RtmpAeiQ2i/preview-dc345a553a5.dir/vignette_MissingData_files/figure-
-latex/unnamed-chunk-6-1.pdf>
-Package pdftex.def Info: /tmp/RtmpAeiQ2i/preview-dc345a553a5.dir/vignette_Missi
-ngData_files/figure-latex/unnamed-chunk-6-1.pdf  used on input line 476.
+</tmp/RtmpwmdZFS/preview-6ef97244120d.dir/vignette_MissingData_files/figure-lat
+ex/unnamed-chunk-6-1.pdf, id=110, 487.8225pt x 189.70876pt>
+File: /tmp/RtmpwmdZFS/preview-6ef97244120d.dir/vignette_MissingData_files/figur
+e-latex/unnamed-chunk-6-1.pdf Graphic file (type pdf)
+<use /tmp/RtmpwmdZFS/preview-6ef97244120d.dir/vignette_MissingData_files/figure
+-latex/unnamed-chunk-6-1.pdf>
+Package pdftex.def Info: /tmp/RtmpwmdZFS/preview-6ef97244120d.dir/vignette_Miss
+ingData_files/figure-latex/unnamed-chunk-6-1.pdf  used on input line 476.
 (pdftex.def)             Requested size: 469.76321pt x 182.68568pt.
-[4 </tmp/RtmpAeiQ2i/preview-dc345a553a5.dir/vignette_MissingData_files/figure-l
-atex/unnamed-chunk-5-1.pdf>] [5 </tmp/RtmpAeiQ2i/preview-dc345a553a5.dir/vignet
-te_MissingData_files/figure-latex/unnamed-chunk-6-1.pdf>]
+[4 </tmp/RtmpwmdZFS/preview-6ef97244120d.dir/vignette_MissingData_files/figure-
+latex/unnamed-chunk-5-1.pdf>] [5 </tmp/RtmpwmdZFS/preview-6ef97244120d.dir/vign
+ette_MissingData_files/figure-latex/unnamed-chunk-6-1.pdf>]
 
 Package xcolor Warning: Incompatible color definition on input line 554.
 
@@ -1645,15 +1633,15 @@ Package xcolor Warning: Incompatible color definition on input line 649.
 
 Package xcolor Warning: Incompatible color definition on input line 649.
 
-</tmp/RtmpAeiQ2i/preview-dc345a553a5.dir/vignette_MissingData_files/figure-late
-x/unnamed-chunk-10-1.pdf, id=137, 405.515pt x 403.5075pt>
-File: /tmp/RtmpAeiQ2i/preview-dc345a553a5.dir/vignette_MissingData_files/figure
--latex/unnamed-chunk-10-1.pdf Graphic file (type pdf)
-<use /tmp/RtmpAeiQ2i/preview-dc345a553a5.dir/vignette_MissingData_files/figure-
-latex/unnamed-chunk-10-1.pdf>
-Package pdftex.def Info: /tmp/RtmpAeiQ2i/preview-dc345a553a5.dir/vignette_Missi
-ngData_files/figure-latex/unnamed-chunk-10-1.pdf  used on input line 651.
-(pdftex.def)             Requested size: 405.52017pt x 403.51266pt.
+</tmp/RtmpwmdZFS/preview-6ef97244120d.dir/vignette_MissingData_files/figure-lat
+ex/unnamed-chunk-10-1.pdf, id=137, 333.245pt x 331.2375pt>
+File: /tmp/RtmpwmdZFS/preview-6ef97244120d.dir/vignette_MissingData_files/figur
+e-latex/unnamed-chunk-10-1.pdf Graphic file (type pdf)
+<use /tmp/RtmpwmdZFS/preview-6ef97244120d.dir/vignette_MissingData_files/figure
+-latex/unnamed-chunk-10-1.pdf>
+Package pdftex.def Info: /tmp/RtmpwmdZFS/preview-6ef97244120d.dir/vignette_Miss
+ingData_files/figure-latex/unnamed-chunk-10-1.pdf  used on input line 651.
+(pdftex.def)             Requested size: 333.25941pt x 331.25183pt.
 [7]
 
 Package xcolor Warning: Incompatible color definition on input line 653.
@@ -1664,18 +1652,18 @@ Package xcolor Warning: Incompatible color definition on input line 657.
 
 Package xcolor Warning: Incompatible color definition on input line 657.
 
-</tmp/RtmpAeiQ2i/preview-dc345a553a5.dir/vignette_MissingData_files/figure-late
-x/unnamed-chunk-11-1.pdf, id=148, 405.515pt x 403.5075pt>
-File: /tmp/RtmpAeiQ2i/preview-dc345a553a5.dir/vignette_MissingData_files/figure
--latex/unnamed-chunk-11-1.pdf Graphic file (type pdf)
-<use /tmp/RtmpAeiQ2i/preview-dc345a553a5.dir/vignette_MissingData_files/figure-
-latex/unnamed-chunk-11-1.pdf>
-Package pdftex.def Info: /tmp/RtmpAeiQ2i/preview-dc345a553a5.dir/vignette_Missi
-ngData_files/figure-latex/unnamed-chunk-11-1.pdf  used on input line 663.
-(pdftex.def)             Requested size: 405.52017pt x 403.51266pt.
-[8 </tmp/RtmpAeiQ2i/preview-dc345a553a5.dir/vignette_MissingData_files/figure-l
-atex/unnamed-chunk-10-1.pdf>] [9 </tmp/RtmpAeiQ2i/preview-dc345a553a5.dir/vigne
-tte_MissingData_files/figure-latex/unnamed-chunk-11-1.pdf>]
+</tmp/RtmpwmdZFS/preview-6ef97244120d.dir/vignette_MissingData_files/figure-lat
+ex/unnamed-chunk-11-1.pdf, id=148, 333.245pt x 331.2375pt>
+File: /tmp/RtmpwmdZFS/preview-6ef97244120d.dir/vignette_MissingData_files/figur
+e-latex/unnamed-chunk-11-1.pdf Graphic file (type pdf)
+<use /tmp/RtmpwmdZFS/preview-6ef97244120d.dir/vignette_MissingData_files/figure
+-latex/unnamed-chunk-11-1.pdf>
+Package pdftex.def Info: /tmp/RtmpwmdZFS/preview-6ef97244120d.dir/vignette_Miss
+ingData_files/figure-latex/unnamed-chunk-11-1.pdf  used on input line 663.
+(pdftex.def)             Requested size: 333.25941pt x 331.25183pt.
+[8 </tmp/RtmpwmdZFS/preview-6ef97244120d.dir/vignette_MissingData_files/figure-
+latex/unnamed-chunk-10-1.pdf>] [9 </tmp/RtmpwmdZFS/preview-6ef97244120d.dir/vig
+nette_MissingData_files/figure-latex/unnamed-chunk-11-1.pdf>]
 
 Package xcolor Warning: Incompatible color definition on input line 696.
 
@@ -1700,20 +1688,18 @@ Package xcolor Warning: Incompatible color definition on input line 711.
 
 Package xcolor Warning: Incompatible color definition on input line 711.
 
-</tmp/RtmpAeiQ2i/preview-dc345a553a5.dir/vignette_MissingData_files/figure-late
-x/unnamed-chunk-12-1.pdf, id=173, 399.4925pt x 409.53pt>
-File: /tmp/RtmpAeiQ2i/preview-dc345a553a5.dir/vignette_MissingData_files/figure
--latex/unnamed-chunk-12-1.pdf Graphic file (type pdf)
-<use /tmp/RtmpAeiQ2i/preview-dc345a553a5.dir/vignette_MissingData_files/figure-
-latex/unnamed-chunk-12-1.pdf>
-Package pdftex.def Info: /tmp/RtmpAeiQ2i/preview-dc345a553a5.dir/vignette_Missi
-ngData_files/figure-latex/unnamed-chunk-12-1.pdf  used on input line 713.
-(pdftex.def)             Requested size: 399.5098pt x 409.54773pt.
+</tmp/RtmpwmdZFS/preview-6ef97244120d.dir/vignette_MissingData_files/figure-lat
+ex/unnamed-chunk-12-1.pdf, id=173, 405.515pt x 398.48875pt>
+File: /tmp/RtmpwmdZFS/preview-6ef97244120d.dir/vignette_MissingData_files/figur
+e-latex/unnamed-chunk-12-1.pdf Graphic file (type pdf)
+<use /tmp/RtmpwmdZFS/preview-6ef97244120d.dir/vignette_MissingData_files/figure
+-latex/unnamed-chunk-12-1.pdf>
+Package pdftex.def Info: /tmp/RtmpwmdZFS/preview-6ef97244120d.dir/vignette_Miss
+ingData_files/figure-latex/unnamed-chunk-12-1.pdf  used on input line 713.
+(pdftex.def)             Requested size: 405.52637pt x 398.49992pt.
 
 Package xcolor Warning: Incompatible color definition on input line 720.
 
-[10 </tmp/RtmpAeiQ2i/preview-dc345a553a5.dir/vignette_MissingData_files/figure-
-latex/unnamed-chunk-12-1.pdf>]
 
 Package xcolor Warning: Incompatible color definition on input line 724.
 
@@ -1732,7 +1718,8 @@ Overfull \hbox (46.24498pt too wide) in paragraph at lines 748--748
 s could take some time)"[] 
  []
 
-
+[10 </tmp/RtmpwmdZFS/preview-6ef97244120d.dir/vignette_MissingData_files/figure
+-latex/unnamed-chunk-12-1.pdf>]
 Overfull \hbox (46.24498pt too wide) in paragraph at lines 748--748
 []\T1/pcr/m/n/10 ## [1] "comparisons of RGCCA with the different methods...(thi
 s could take some time)"[] 
@@ -1771,24 +1758,34 @@ Package xcolor Warning: Incompatible color definition on input line 754.
 
 Package xcolor Warning: Incompatible color definition on input line 754.
 
-[11]
-Package atveryend Info: Empty hook `BeforeClearDocument' on input line 769.
-Package atveryend Info: Empty hook `AfterLastShipout' on input line 769.
+</tmp/RtmpwmdZFS/preview-6ef97244120d.dir/vignette_MissingData_files/figure-lat
+ex/unnamed-chunk-14-1.pdf, id=186, 418.56375pt x 274.02374pt>
+File: /tmp/RtmpwmdZFS/preview-6ef97244120d.dir/vignette_MissingData_files/figur
+e-latex/unnamed-chunk-14-1.pdf Graphic file (type pdf)
+<use /tmp/RtmpwmdZFS/preview-6ef97244120d.dir/vignette_MissingData_files/figure
+-latex/unnamed-chunk-14-1.pdf>
+Package pdftex.def Info: /tmp/RtmpwmdZFS/preview-6ef97244120d.dir/vignette_Miss
+ingData_files/figure-latex/unnamed-chunk-14-1.pdf  used on input line 756.
+(pdftex.def)             Requested size: 418.56271pt x 274.02307pt.
+[11 </tmp/RtmpwmdZFS/preview-6ef97244120d.dir/vignette_MissingData_files/figure
+-latex/unnamed-chunk-14-1.pdf>]
+Package atveryend Info: Empty hook `BeforeClearDocument' on input line 767.
+Package atveryend Info: Empty hook `AfterLastShipout' on input line 767.
 (vignette_MissingData.aux)
-Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 769.
-Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 769.
+Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 767.
+Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 767.
 Package rerunfilecheck Info: File `vignette_MissingData.out' has not changed.
 (rerunfilecheck)             Checksum: 6BC3C0B50A59CFDD874C7764F6B3516F;3468.
-Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 769.
+Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 767.
  ) 
 Here is how much of TeX's memory you used:
- 37767 strings out of 494864
- 826922 string characters out of 3177643
+ 37771 strings out of 494864
+ 827404 string characters out of 3177643
  1076848 words of memory out of 3000000
- 40566 multiletter control sequences out of 15000+200000
+ 40570 multiletter control sequences out of 15000+200000
  62997 words of font info for 114 fonts, out of 3000000 for 9000
  0 hyphenation exceptions out of 8191
- 62i,6n,96p,1023b,609s stack positions out of 5000i,500n,10000p,200000b,50000s
+ 62i,6n,96p,1024b,609s stack positions out of 5000i,500n,10000p,200000b,50000s
 {/home/caroline.peltier/.miktex/texmfs/install/fonts/enc/dvips/lm/lm-mathsy.e
 nc}{/home/caroline.peltier/.miktex/texmfs/install/fonts/enc/dvips/lm/lm-mathit.
 enc}{/home/caroline.peltier/.miktex/texmfs/install/fonts/enc/dvips/lm/lm-mathex
@@ -1809,9 +1806,9 @@ pfb></home/caroline.peltier/.miktex/texmfs/install/fonts/type1/urw/courier/ucrr
 b8a.pfb></home/caroline.peltier/.miktex/texmfs/install/fonts/type1/urw/times/ut
 mr8a.pfb></home/caroline.peltier/.miktex/texmfs/install/fonts/type1/urw/times/u
 tmri8a.pfb>
-Output written on vignette_MissingData.pdf (11 pages, 244322 bytes).
+Output written on vignette_MissingData.pdf (11 pages, 254516 bytes).
 PDF statistics:
- 250 PDF objects out of 1000 (max. 8388607)
+ 259 PDF objects out of 1000 (max. 8388607)
  31 named destinations out of 1000 (max. 500000)
- 14502 words of extra memory for PDF output out of 17280 (max. 10000000)
+ 14507 words of extra memory for PDF output out of 17280 (max. 10000000)
 

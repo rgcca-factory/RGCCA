@@ -23,15 +23,21 @@ plotEvol=function(listFinale,output="rv",fileName=NULL,ylim=NULL,block="all",bar
   #barType="sd" or "stdErr"
   #  graphics.off()
   if(is.null(namePlot)){namePlot=output}
-
-  graphics.off()
-  #x11()
   if(!is.null(fileName)){png(paste(fileName,".png",sep=""),width=width,height=height)}
   nameData= names(listFinale)
   abscisse=as.numeric(nameData)
-  par(las=1)
   J=length(listFinale[[1]][[1]][[1]][[1]]) #nblock
-  if(block=="all"&&J<5){   split.screen(c(2,2));toPlot=1:J}else{toPlot=block:block}
+  if(block=="all"&&J<5)
+  {  
+    #  close.screen(all.screens = TRUE) ;
+    #  split.screen(c(floor(sqrt(J)+1),floor(sqrt(J)+1)))
+      par(mfrow=c(floor(sqrt(J)+1),floor(sqrt(J)+1)));toPlot=1:J
+     
+  }
+  else
+  {
+      toPlot=block:block
+  }
   namesMethod=as.character(names(listFinale[[1]][[1]]))
   #colMethod=rainbow(5)[1:length(namesMethod)]
   colMethod=c("cornflowerblue","chocolate1","chartreuse3","red","blueviolet","darkturquoise","darkgoldenrod1","coral","bisque4","darkorchid1","deepskyblue1")[1:length(namesMethod)]
@@ -40,6 +46,7 @@ plotEvol=function(listFinale,output="rv",fileName=NULL,ylim=NULL,block="all",bar
   names(colMethod)=names(nMeth)=namesMethod
   moyenne=list()
   ecartType=list()
+
   ymin=rep(1,length(toPlot));names(ymin)=toPlot; 
   ymax=rep(0,length(toPlot));names(ymax)=toPlot;
   for(j in toPlot)
@@ -84,8 +91,10 @@ plotEvol=function(listFinale,output="rv",fileName=NULL,ylim=NULL,block="all",bar
      {
          if(is.null(ylim)){Ylim=c(ymin,ymax)}else{Ylim=ylim}
      }
-      
-    if(block=="all"){screen(j)}
+ 
+    #if(block=="all"){print(j);screen(j)}
+
+    par(las=1)
     par(mar=c(5, 4, 4, 2) + 0.1)
     par(mgp=c(3,1,0))
     if(is.null(main)){title=paste(namePlot,": Block",j)}else{title=main}
@@ -112,16 +121,23 @@ plotEvol=function(listFinale,output="rv",fileName=NULL,ylim=NULL,block="all",bar
     abline(v=da+pas*max(nMeth),col="dark grey",lty=2)
   }
   # Plotting legend
+
   if(is.null(names.arg)||length(names.arg)!=length(namesMethod)){leg=namesMethod}else{leg=names.arg}
   if(block=="all")
   {
-    screen(4)
-    legend("center",legend=leg,fill=colMethod,box.lwd=0)
+    #screen(J+1)
+      plot.new()
+    par(cex=0.8)
+    
+    legend("center",legend=leg,fill=colMethod,box.lwd=0,bty="n")
   }
   if(is.numeric(block))
   {
-    legend("topleft",legend=leg,fill=colMethod,box.lwd=0)
+      par(cex=0.8)
+    legend("topleft",legend=leg,fill=colMethod,box.lwd=0,bty="n")
   }
+par(mfrow=c(1,1))
   if(!is.null(fileName)){dev.off()}
+  
 }
 

@@ -12,7 +12,7 @@ resPCA= rgcca.analyze (
      blocks=A,
      connection = 1 - diag(length(A)),
      response = NULL,
-     superblock = TRUE,
+     superblock = FALSE,
      tau = rep(1, length(A)),
      ncomp = rep(2, length(A)),
      type = "pca",
@@ -29,19 +29,26 @@ resPCAprcomp=prcomp(A[[1]],scale=TRUE)
 
 varExplPrComp=as.vector((resPCAprcomp$sdev)^2/sum((resPCAprcomp$sdev)^2))[1]
 varExplRgcca=resPCA$AVE$AVE_X[[1]][1]
-pca_ind=cor(resPCAprcomp$x[,1],resPCA$Y[[1]][,1])==1
-pca_var=cor(resPCAprcomp$rotation[,1],resPCA$astar[[1]][,1])==1
+pca_ind=abs(cor(resPCAprcomp$x[,1],resPCA$Y[[1]][,1]))==1
+pca_ind2=abs(cor(resPCAprcomp$x[,2],resPCA$Y[[1]][,2]))==1
+pca_var=abs(cor(resPCAprcomp$rotation[,1],resPCA$astar[[1]][,1]))==1
+pca_var2=abs(cor(resPCAprcomp$rotation[,2],resPCA$astar[[1]][,2]))==1
+
 pca_eig=abs(varExplPrComp-varExplRgcca)<1e-8
 test_that("pca_ind",{expect_true(pca_ind)})
 test_that("pca_var",{expect_true(pca_var)})
 test_that("pca_eig",{expect_true(pca_eig)})
+test_that("pca_ind2",{expect_true(pca_ind2)})
+test_that("pca_var2",{expect_true(pca_var2)})
+
+
 
 # unscaled PCA
 unscaledPCA= rgcca.analyze (
     blocks=A,
     connection = 1 - diag(length(A)),
     response = NULL,
-    superblock = TRUE,
+    superblock = FALSE,
     tau = rep(1, length(A)),
     ncomp = rep(2, length(A)),
     type = "pca",
@@ -54,11 +61,43 @@ unscaledPCA= rgcca.analyze (
 unscaledPCAprcomp=prcomp(A[[1]],scale=FALSE)
 unscaledvarExplPrComp=as.vector((unscaledPCAprcomp$sdev)^2/sum((unscaledPCAprcomp$sdev)^2))[1]
 unscaledvarExplRgcca=unscaledPCA$AVE$AVE_X[[1]][1]
-upca_ind=cor(unscaledPCAprcomp$x[,1],unscaledPCA$Y[[1]][,1])==1
-upca_var=cor(unscaledPCAprcomp$rotation[,1],unscaledPCA$astar[[1]][,1])==1
+upca_ind=abs(cor(unscaledPCAprcomp$x[,1],unscaledPCA$Y[[1]][,1]))==1
+upca_var=abs(cor(unscaledPCAprcomp$rotation[,1],unscaledPCA$astar[[1]][,1]))==1
+upca_ind2=abs(cor(unscaledPCAprcomp$x[,2],unscaledPCA$Y[[1]][,2]))==1
+upca_var2=abs(cor(unscaledPCAprcomp$rotation[,2],unscaledPCA$astar[[1]][,2]))==1
+
 test_that("upca_ind",{expect_true(upca_ind)})
 test_that("upca_var",{expect_true(upca_var)})
+test_that("upca_ind2",{expect_true(upca_ind)})
+test_that("upca_var2",{expect_true(upca_var)})
+
+
 #testthat("upca_eig",{expect_true(abs(unscaledvarExplPrComp-unscaledvarExplRgcca<1e-8))}) #TODO
+
+# With superblock
+data(Russett)
+X_agric =as.matrix(Russett[,c("gini","farm","rent")]);
+X_ind = as.matrix(Russett[,c("gnpr","labo")]);
+X_polit = as.matrix(Russett[ , c("demostab", "dictator")]);
+A = list(X_agric[,1],X_agric[,2],X_agric[,3]);
+scaledPCASB= rgcca.analyze (
+    blocks=A,
+    connection = 1 - diag(length(A)),
+    response = NULL,
+    superblock = TRUE,
+    tau = rep(1, length(A)),
+    ncomp = rep(1, length(A)),
+    type = "rgcca",
+    verbose = TRUE,
+    scheme = "factorial",
+    scale = TRUE,
+    init = "svd",
+    bias = TRUE, 
+    tol = 1e-08)
+pcaSB=prcomp(cbind(X_agric,X_ind,X_polit),scale=TRUE)
+pcasb_ind=abs(cor(pcaSB$x[,1],scaledPCASB$Y[[1]][,1]))==1
+#pcasb_var=abs(cor(pcaSB$rotation[,1],scaledPCASB$astar[[1]][,1]))==1
+
 #------------PLS 
  library(pls)
  res_pls = plsr(X_polit ~ X_agric, ncomp = 1, method = "simpls")
@@ -71,8 +110,8 @@ test_that("upca_var",{expect_true(upca_var)})
     sameBlockWeight=FALSE)
  
 # 
- cor_X = drop(cor(res_pls$projection, pls_with_rgcca$a[[1]]))
- cor_Y = drop(cor(res_pls$Yloadings, pls_with_rgcca$a[[2]]))
+ cor_X = abs(cor(res_pls$fitted.values[,,1][,1], pls_with_rgcca$Y[[1]]))
+ cor_Y = abs(drop(cor(res_pls$Yloadings, pls_with_rgcca$a[[2]])))
  cor_X
  cor_Y
 # 
