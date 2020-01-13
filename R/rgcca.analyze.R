@@ -100,10 +100,10 @@ rgcca.analyze <- function(
         message("RGCCA in progress ...")
 
     if (tolower(type) == "sgcca") {
-        gcca <- RGCCA::sgccaNa
+        gcca <- sgccaNa
         par <- "c1"
     } else{
-        gcca <- RGCCA::rgccaNa
+        gcca <- rgccaNa
         par <- "tau"
     }
 
@@ -130,7 +130,7 @@ rgcca.analyze <- function(
     func[[par]] <- opt$tau
 
     func_out <- eval(as.call(func)) $rgcca
-     print(names(func_out))
+  #   print(names(func_out))
     for (i in c("a", "astar", "Y"))
         names(func_out[[i]]) <- names(opt$blocks)
     names(func_out$AVE$AVE_X) <- names(opt$blocks)

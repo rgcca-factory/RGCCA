@@ -5,7 +5,7 @@
 \title{Extract a bootstrap}
 \usage{
 get_bootstrap(rgcca, w, comp = 1, i_block = length(w[[1]]),
-  collapse = TRUE, n_cores = parallel::detectCores() - 1)
+  collapse = FALSE, n_cores = parallel::detectCores() - 1)
 }
 \arguments{
 \item{rgcca}{A list giving the results of a R/SGCCA}
