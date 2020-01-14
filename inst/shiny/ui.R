@@ -73,7 +73,8 @@ load_libraries(c(
     "plotly",
     "visNetwork",
     "shiny",
-    "shinyjs"
+    "shinyjs",
+    "MASS"
 ))
 
 if (BSPLUS) {

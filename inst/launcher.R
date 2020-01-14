@@ -417,7 +417,7 @@ opt <- list(
         collapse = ",")
 )
 
-load_libraries(c("RGCCA", "ggplot2", "optparse", "scales", "igraph", "ggrepel"))
+load_libraries(c("RGCCA", "ggplot2", "optparse", "scales", "igraph", "ggrepel", "MASS"))
 
 tryCatch(
     opt <- check_arg(parse_args(getArgs())),
