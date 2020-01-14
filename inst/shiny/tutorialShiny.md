@@ -38,7 +38,7 @@ This format recommendation could be viewed with **the mouse over the question ma
 By default, the character used in ```column separator``` parameter is the ```tabulation```. Change the separator to another one (e.g.,```semicolon```) to observe an error notification: 
 > "politic block file has only one column. Check the separator."
 
-![load_file_text](../../img/shiny/load_file_text.png)
+![load_file_text](../../img/shiny/loadData.png)
  
 *Fig. 1 : File loading panel (on the top right). The browsing box is used to load the blocks and the last one, to select the column separator.*
 

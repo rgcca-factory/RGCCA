@@ -11,7 +11,7 @@ Depends: MASS
 Packaged: 2013-07-24 16:36:37 UTC; arthur
 Suggests: 
     testthat,
-   devtools,
+    devtools,
     bsplus,
     knitr,
     rmarkdown,
@@ -28,7 +28,6 @@ Imports:
     vegan,
     grDevices,
     Deriv,
-    car,
     graphics,
     stats,
     ggplot2,

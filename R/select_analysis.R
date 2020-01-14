@@ -104,8 +104,8 @@ select_analysis <- function(
     if (length(grep("pls-?pm", tolower(type))) == 1) {
         scheme <- setScheme("centroid")
         tau <- setTau(rep(0, J))
-        # TODO: superblock allowed in PLS-PM, whos gonna call : Arthur
     }
+    #TODO : remove pls-pm
 
     else if (tolower(type) == "pca") {
         if (length(blocks) != 1)

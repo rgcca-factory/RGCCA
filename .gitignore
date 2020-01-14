@@ -1,10 +1,13 @@
 *.pdf
 *.log
 *.tsv
+*.html
 *.RData
+*.Rproj
 
 \.idea/
 \.Rhistory
 .Rproj.user
 \.RData
-\.Rproj*
+vignettes/data/
+vignettes/images/

@@ -37,7 +37,7 @@
 #' plotMIRGCCA(res,multiple="ell",indnames=FALSE)
 #' @importFrom grDevices graphics.off
 #' @importFrom vegan procrustes
-#' @importFrom car ellipse
+# @importFrom car ellipse
 #' @export
 plotMIRGCCA=function(mi.obj,opt.ell="distr",multiple="ell",indnames=TRUE,varnames=TRUE,blocks=c(1,1),axes=c(1,2),selec="all",xlim=NULL,threshold=0.5,cex=1,output="R",filename="rgcca.png")
 {
@@ -106,7 +106,7 @@ plotMIRGCCA=function(mi.obj,opt.ell="distr",multiple="ell",indnames=TRUE,varname
         tablePoints=rbind(tablePoints,c(resprocrustes[[i]][k,1],resprocrustes[[i]][k,2]))
       }
       if(opt.ell=="distr"){radius=1.96}else{radius=1.96/sqrt(niter)}
-      car::ellipse(center=c(mean(tablePoints[,1],na.rm=T),mean(tablePoints[,2],na.rm=T)),shape=cov(tablePoints),radius=radius,col=rainbow(nsuj)[k],lwd=0.5,center.pch = FALSE)
+      #car::ellipse(center=c(mean(tablePoints[,1],na.rm=T),mean(tablePoints[,2],na.rm=T)),shape=cov(tablePoints),radius=radius,col=rainbow(nsuj)[k],lwd=0.5,center.pch = FALSE)
     }
   }
   
