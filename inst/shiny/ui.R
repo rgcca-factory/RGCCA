@@ -12,8 +12,9 @@ rm(list = ls())
 options(shiny.maxRequestSize = 30 * 1024 ^ 2)
 
 setInfo <- function(., text) {
-    shinyInput_label_embed(icon("question") %>%
-                                bs_embed_tooltip(title = text))
+    shinyInput_label_embed(
+        icon("question") %>%
+            bs_embed_tooltip(title = text))
 }
 
 # Global variables
@@ -44,7 +45,7 @@ multiple_blocks_super  <<- c(
 analyse_methods  <<- list(one_block, two_blocks, multiple_blocks, multiple_blocks_super)
 reac_var  <<- reactiveVal()
 id_block_y <<- id_block <<- id_block_resp <<- analysis <<- 
-boot <<- analysis_type <<- NULL
+boot <<- analysis_type <<- crossval <<- selected.var <<- NULL
 clickSep <<- FALSE
 if_text <<- TRUE
 compx <<- 1
@@ -118,7 +119,6 @@ ui <- fluidPage(
                 uiOutput("analysis_type_custom"),
                 uiOutput("nb_compcustom"),
                 uiOutput("scale_custom"),
-
                 radioButtons(
                     "init",
                     label = "Mode of initialization",
@@ -127,7 +127,6 @@ ui <- fluidPage(
                     selected = "svd"
                 ),
 
-
                 uiOutput("superblock_custom"),
                 checkboxInput(
                     inputId = "supervised",
@@ -135,16 +134,18 @@ ui <- fluidPage(
                     value = FALSE
                 ),
 
-                conditionalPanel(condition = "input.supervised || input.analysis_type == 'RA'",
-                                uiOutput("blocks_names_response")),
+                conditionalPanel(
+                    condition = "input.supervised || input.analysis_type == 'RA'",
+                    uiOutput("blocks_names_response")),
 
                 uiOutput("connection_custom"),
                 uiOutput("tau_opt_custom"),
                 uiOutput("tau_custom"),
                 uiOutput("scheme_custom"),
-
+                actionButton(inputId = "run_analysis",
+                    label = "Run analysis"),
                 sliderInput(
-                    inputId = "boot",
+                    inputId = "nboot",
                     label = "Number of boostraps",
                     min = 5,
                     max = 100,
@@ -152,9 +153,33 @@ ui <- fluidPage(
                     step = 5
                 ),
                 actionButton(inputId = "run_boot",
-                            label = "Run bootstrap"),
-                actionButton(inputId = "run_analysis",
-                            label = "Run Analysis")
+                    label = "Run bootstrap"),
+                radioButtons(
+                    "crossval",
+                    label = "Type of validation",
+                    choices = c(`Train-test` = "test",
+                                `K-fold` = "kfold",
+                                `Leave-one-out` = "loo"),
+                    selected = "loo"
+                ),
+                actionButton(inputId = "run_crossval",
+                    label = "Run cross-validation"),
+                sliderInput(
+                    inputId = "nperm",
+                    label = "Number of permutations",
+                    min = 5,
+                    max = 100,
+                    value = 10,
+                    step = 5
+                ),
+                radioButtons(
+                    "perm",
+                    label = "Type of permutation",
+                    choices = c(`Number of components` = 1,
+                                `Sparsity` = 2),
+                ),
+                actionButton(inputId = "run_perm",
+                    label = "Run permutation")
             ),
 
             # Graphical parameters
@@ -172,9 +197,12 @@ ui <- fluidPage(
                 uiOutput("compy_custom"),
                 uiOutput("nb_mark_custom"),
                 uiOutput("response_custom"),
-
-                actionButton(inputId = "save_all",
-                            label = "Save all")
+                checkboxInput(
+                    inputId = "show_crossval",
+                    label = "Display cross-validation",
+                    value = TRUE
+                ),
+                actionButton(inputId = "save_all", label = "Save all")
             )
 
         )
@@ -213,6 +241,11 @@ ui <- fluidPage(
                 "Bootstrap",
                 plotlyOutput("bootstrapPlot", height = 700),
                 actionButton("bootstrap_save", "Save")
+            ),
+            tabPanel(
+                "Permutation",
+                dataTableOutput("permutationPlot"),
+                # actionButton("permutation_save", "Save")
             )
         )
 

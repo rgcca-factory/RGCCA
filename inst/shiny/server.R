@@ -514,11 +514,18 @@ server <- function(input, output, session) {
             input$response,
             input$names_block_x,
             input$names_block_y,
-            input$boot,
+            input$nboot,
+            input$nperm,
+            input$perm,
+            input$run_perm,
+            input$run_crossval,
+            input$crossval,
+            input$show_crossval,
             input$text,
             input$names_block_response,
             input$supervised,
             input$run_analysis,
+            input$run_boot,
             input$nb_mark_custom,
             input$blocks_names_custom_x
         )
@@ -535,7 +542,14 @@ server <- function(input, output, session) {
             return(f)
     }
 
-    samples <- function() {
+    samples <- function(reponse_name = "") {
+
+        if (!input$show_crossval)
+            crossval <- NULL
+
+        if (!is.null(input$response))
+            reponse_name <- getExtension(input$response$name)
+
         isolate({
             plot_ind(
                 rgcca = rgcca_out,
@@ -545,7 +559,8 @@ server <- function(input, output, session) {
                 i_block = id_block,
                 text = if_text,
                 i_block_y = id_block_y,
-                reponse_name = getExtension(input$response$name)
+                reponse_name = reponse_name,
+                predicted = crossval
             )
         })
     }
@@ -575,8 +590,17 @@ server <- function(input, output, session) {
     design <- function()
         plot_network2(rgcca_out)
 
-    plotBoot <- function()
-        plot_bootstrap(boot, compx, nb_mark, id_block)
+    plotBoot <- function(){
+        refresh <- c(input$names_block_x, id_block, input$blocks_names_custom_x)
+        plot_bootstrap_2D(selected.var)
+    }
+
+    viewPerm <- function(){
+        head(
+            order_df(cbind(perm$penalties, `Z-score` = perm$zstat), ncol(perm$penalties) + 1), 
+            n = nb_mark)
+         # colnames
+    }
 
     ################################################ Analysis ################################################
 
@@ -671,34 +695,68 @@ server <- function(input, output, session) {
                 ),
                 .GlobalEnv)
 
-        # print(length(rgcca_out))
-        # 
-        # if (length(rgcca_out) == 1) {
-        #     assign("analysis", NULL, .GlobalEnv)
-        #     return(NULL)
-        # }
-
-        #getBoot()
     }
 
-    getBoot <- function()
+    getCrossVal <-  function(){
         assign(
-            "boot",
-            bootstrap(
-                blocks,
-                input$boot,
-                connection,
-                tau,
-                ncomp,
-                input$scheme,
-                input$scale,
-                input$init,
-                TRUE,
-                analysis_type
-            ),
+            "crossval",
+            rgcca_crossvalidation(rgcca_out, validation = input$crossval),
             .GlobalEnv
         )
+        show("show_crossval")
+    }
 
+    getPerm <-  function(){
+        isolate({
+            if (length(grep("[SR]GCCA", analysis_type)) == 1 && !input$tau_opt)
+                tau <- getTau()
+        })
+
+        if (!is.null(input$supervised) && input$supervised)
+            response <- input$supervised
+        else
+            response <- NULL
+
+        if (input$perm == 1) {
+            p_c1 <- FALSE
+            p_ncomp <- TRUE
+        } else{
+            p_c1 <- TRUE
+            p_ncomp <- FALSE
+        }
+
+        assign("perm",
+               rgcca_permutation(
+                    blocks_without_superb,
+                    p_c1 = p_c1,
+                    p_ncomp = p_ncomp,
+                    nperm = input$nperm,
+                    connection = connection,
+                    response = input$names_block_response,
+                    superblock = (!is.null(input$supervised) &&
+                        !is.null(input$superblock) && input$superblock),
+                    tau = tau,
+                    ncomp = input$nb_comp,
+                    scheme = input$scheme,
+                    scale = FALSE,
+                    init = input$init,
+                    bias = TRUE,
+                    type = analysis_type
+                ),
+                .GlobalEnv)
+ 
+        show(selector = "#navbar li a[data-value=Permutation]")
+    }
+
+    getBoot <-  function(){
+        assign(
+            "boot",
+            bootstrap(rgcca_out, n_boot = input$nboot),
+            .GlobalEnv
+        )
+        assign("selected.var", NULL, .GlobalEnv)
+        show(selector = "#navbar li a[data-value=Bootstrap]")
+    }
 
     load_responseShiny = function() {
         response <- showWarn(
@@ -733,8 +791,7 @@ server <- function(input, output, session) {
 
         if (is.matrix(connection)) {
             assign("connection", connection, .GlobalEnv)
-            assign("analysis", NULL, .GlobalEnv)
-            assign("boot", NULL, .GlobalEnv)
+            cleanup_analysis_par()
         }
 
     }
@@ -743,7 +800,7 @@ server <- function(input, output, session) {
         blocks <- setParRGCCA()
 
         if (!is.null(blocks)) {
-            assign("analysis", NULL, .GlobalEnv)
+           cleanup_analysis_par()
             assign("blocks", blocks, .GlobalEnv)
             set_connectionShiny()
             setIdBlock()
@@ -796,23 +853,27 @@ server <- function(input, output, session) {
 
     observeEvent(c(input$navbar, input$tabset), {
         toggle(
+            condition = (input$navbar != "Bootstrap"),
+               id = "compx_custom")
+        toggle(
             condition = (input$navbar == "Fingerprint"),
                id = "nb_mark_custom")
         toggle(
-            condition = (input$navbar != "Fingerprint"),
+            condition = ( ! input$navbar %in% c("Fingerprint", "Bootstrap")),
                id = "text")
         toggle(
-            condition = (input$navbar != "Fingerprint"),
+            condition = ( ! input$navbar %in% c("Fingerprint", "Bootstrap")),
                id = "compy_custom")
         toggle(
-            condition = (input$navbar == "Samples" && length(input$blocks$datapath) > 1),
+            condition = (input$navbar == "Samples" && 
+                    length(input$blocks$datapath) > 1),
                id = "blocks_names_custom_y")
         toggle(
             condition = (input$navbar == "Samples"),
                id = "response")
         toggle(
             condition = (
-                !is.null(analysis) && !input$navbar %in% c("Connection", "AVE")
+                !is.null(analysis) && !input$navbar %in% c("Connection", "AVE", "Permutation")
             ),
             selector = "#tabset li a[data-value=Graphic]"
         )
@@ -820,7 +881,7 @@ server <- function(input, output, session) {
 
 
     observeEvent(input$navbar, {
-        if (!is.null(analysis) && input$navbar %in% c("Connection", "AVE"))
+        if (!is.null(analysis) && input$navbar %in% c("Connection", "AVE", "Permutation"))
             updateTabsetPanel(session, "tabset", selected = "RGCCA")
         else if (!is.null(analysis))
             updateTabsetPanel(session, "tabset", selected = "Graphic")
@@ -832,8 +893,14 @@ server <- function(input, output, session) {
 
         hide(selector = "#tabset li a[data-value=RGCCA]")
         hide(selector = "#navbar li a[data-value=Bootstrap]")
+        hide(selector = "#navbar li a[data-value=Permutation]")
         hide(id = "run_boot")
-        hide(id = "boot")
+        hide(id = "nboot")
+        hide(id = "run_perm")
+        hide(id = "nperm")
+        hide(id = "perm")
+        hide("show_crossval")
+        hide(id = "crossval")
         hide(id = "header")
         hide(id = "init")
         hide(id = "navbar")
@@ -862,8 +929,7 @@ server <- function(input, output, session) {
         paths <- paste(input$blocks$datapath, collapse = ",")
         names <- paste(input$blocks$name, collapse = ",")
 
-        assign("analysis", NULL, .GlobalEnv)
-        hide(id = "navbar")
+        cleanup_analysis_par()
 
         assign("blocks_unscaled",
                showWarn(
@@ -939,17 +1005,39 @@ server <- function(input, output, session) {
             setUiConnection()
             showWarn(message("Connection file loaded."), show = FALSE)
             assign("connection_file", NULL, .GlobalEnv)
-            assign("analysis", NULL, .GlobalEnv)
+            cleanup_analysis_par()
         }
     })
-
+    
+    cleanup_analysis_par <- function(){
+        assign("analysis", NULL, .GlobalEnv)
+        assign("boot", NULL, .GlobalEnv)
+        assign("selected.var", NULL, .GlobalEnv)
+        hide(id = "run_boot")
+        hide(id = "nboot")
+        hide(id = "run_perm")
+        hide(id = "nperm")
+        hide(id = "perm")
+        hide(selector = "#navbar li a[data-value=Bootstrap]")
+        hide(selector = "#navbar li a[data-value=Permutation]")
+        assign("crossval", NULL, .GlobalEnv)
+        hide(id = "run_crossval")
+        hide(id = "crossval")
+    }
 
     observeEvent(input$run_analysis, {
         if (!is.null(getInfile())) {
             assign("analysis", setRGCCA(), .GlobalEnv)
 
             show(id = "navbar")
-
+            show(id = "nboot")
+            show(id = "run_boot")
+            show(id = "run_perm")
+            show(id = "nperm")
+            show(id = "perm")
+            toggle(id = "run_crossval", condition = input$supervised)
+            toggle(id = "crossval", condition = input$supervised)
+            updateTabsetPanel(session, "navbar", selected = "Connection")
             # for (i in c('bootstrap_save', 'fingerprint_save', 'corcircle_save',
             # 'samples_save', 'ave_save')) setToggleSaveButton(i)
         }
@@ -1017,6 +1105,16 @@ server <- function(input, output, session) {
         if (blocksExists())
             getBoot()
     })
+    
+    observeEvent(input$run_perm, {
+        if (blocksExists())
+            getPerm()
+    })
+
+    observeEvent(input$run_crossval, {
+        if (blocksExists() && input$supervised)
+            getCrossVal()
+    })
 
     observeEvent(input$names_block_x, {
         isolate({
@@ -1031,7 +1129,7 @@ server <- function(input, output, session) {
             }
         })
     }, priority = 30)
-    
+
     observeEvent(c(input$superblock, input$supervised), {
         reac_var(length(blocks))
         assign("id_block", reac_var(), .GlobalEnv)
@@ -1082,24 +1180,23 @@ server <- function(input, output, session) {
     })
 
     msgSave <- function()
-            showWarn(message(paste("Save in", getwd())), show = FALSE)
+        showWarn(message(paste("Save in", getwd())), show = FALSE)
 
-    observeEvent(c(input$text, input$compx, input$compy, input$nb_mark),
-                {
-                    if (!is.null(analysis)) {
-                        assign("if_text", input$text, .GlobalEnv)
-                        assign("compx", input$compx, .GlobalEnv)
-                        assign("compy", input$compy, .GlobalEnv)
-                        if (!is.null(input$nb_mark))
-                            assign("nb_mark", input$nb_mark, .GlobalEnv)
-                    }
-                })
+    observeEvent(c(input$text, input$compx, input$compy, input$nb_mark), {
+            if (!is.null(analysis)) {
+                assign("if_text", input$text, .GlobalEnv)
+                assign("compx", input$compx, .GlobalEnv)
+                assign("compy", input$compy, .GlobalEnv)
+                if (!is.null(input$nb_mark))
+                    assign("nb_mark", input$nb_mark, .GlobalEnv)
+            }
+        })
 
     observeEvent(input$response, {
         if (!is.null(input$response)) {
             assign("response_file",
-                    input$response$datapath,
-                    .GlobalEnv)
+                input$response$datapath,
+                .GlobalEnv)
             assign("response", load_responseShiny(), .GlobalEnv)
             setUiResponse()
             showWarn(samples(), warn = TRUE)
@@ -1209,13 +1306,37 @@ server <- function(input, output, session) {
     output$bootstrapPlot <- renderPlotly({
 
         getDynamicVariables()
+        refresh <- c(input$names_block_x, id_block, input$blocks_names_custom_x)
 
         if (!is.null(analysis) & !is.null(boot)) {
+            
+            if (is.null(selected.var))
+                assign(
+                    "selected.var", 
+                    get_bootstrap(rgcca_out, boot, compx, id_block),
+                    .GlobalEnv
+                )
+
             observeEvent(input$bootstrap_save, {
                 save_plot("bootstrap.pdf", plotBoot())
                 msgSave()
             })
-            plot_dynamic_histogram(plotBoot())
+            ggplotly(plotBoot())
+        }
+
+    })
+
+    output$permutationPlot <- renderDataTable({
+
+        getDynamicVariables()
+
+        if (!is.null(analysis) & !is.null(perm)) {
+
+            # observeEvent(input$permutation_save, {
+            #     save("perm.tsv", viewPerm())
+            #     msgSave()
+            # })
+           viewPerm()
         }
 
     })
