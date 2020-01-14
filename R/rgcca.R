@@ -133,6 +133,9 @@ rgcca=function (A, C = 1 - diag(length(A)), tau = rep(1, length(A)),  ncomp = re
   A0=A
   if (any(ncomp < 1)) {stop("Compute at least one component per block!")}	
   pjs <- sapply(A, NCOL) #nombre de variables par bloc
+  varij <- sapply(A,function(x){covarMat=cov2(x,bias=bias);varianceBloc=sum(diag(covarMat));return(varianceBloc)})
+ # print("varij")
+ # print(varij)
   nb_row <- NROW(A[[1]]) #nombre de lignes
   
   # Verifications des commandes entrees par l'utilisateur
@@ -170,7 +173,12 @@ rgcca=function (A, C = 1 - diag(length(A)), tau = rep(1, length(A)),  ncomp = re
           A = lapply(A, function(x) scale2(x,scale=TRUE, bias = bias)) # le biais indique si on recherche la variance biaisee ou non
           if(sameBlockWeight)
           {
-              A = lapply(A, function(x) {y=x/sqrt(NCOL(x));return(y)} )
+              A = lapply(A, function(x) 
+                  {
+                    y=x/sqrt(NCOL(x));
+                    return(y)
+                  } 
+            )
           }
           # on divise chaque bloc par la racine du nombre de variables pour avoir chaque poids pour le meme bloc
       }
@@ -180,7 +188,12 @@ rgcca=function (A, C = 1 - diag(length(A)), tau = rep(1, length(A)),  ncomp = re
           A = lapply(A, function(x) scale2(x, scale=FALSE, bias = bias)) 
           if(sameBlockWeight)
           {
-              A = lapply(A, function(x) {covarMat=cov2(x,bias=bias);varianceBloc=sum(diag(covarMat)); return(x/sqrt(varianceBloc))})
+              A = lapply(A, function(x) 
+                    {
+                        covarMat=cov2(x,bias=bias);
+                        varianceBloc=sum(diag(covarMat)); 
+                        return(x/sqrt(varianceBloc))
+                    })
           }
           
       }
@@ -220,12 +233,14 @@ rgcca=function (A, C = 1 - diag(length(A)), tau = rep(1, length(A)),  ncomp = re
     # result contient le resultat de rgcca
     Y <- NULL 
     for (b in 1:J) Y[[b]] <- result$Y[, b, drop = FALSE]
- 
-    for (j in 1:J)
-    {
-         AVE_X[[j]] = mean(cor(A[[j]], Y[[j]],use="pairwise.complete.obs")^2,na.rm=TRUE)#correlation moyenne entre le bloc et la composante (au carre)
-    }
-         AVE_outer <- sum(pjs * unlist(AVE_X))/sum(pjs) 
+  
+        for (j in 1:J)
+        {
+           # AVE_X[[j]] = mean(cor(A[[j]], Y[[j]],use="pairwise.complete.obs")^2,na.rm=TRUE)
+            AVE_X[[j]]=diag(cov(Y[[j]]))/sum(diag(cov(A[[j]] )))
+        } 
+        AVE_outer <- sum(pjs * unlist(AVE_X))/sum(pjs) 
+   
     AVE <- list(AVE_X = AVE_X, AVE_outer = AVE_outer, AVE_inner = result$AVE_inner)
     a <- lapply(result$a, cbind)
     for (b in 1:J) {
@@ -299,10 +314,17 @@ rgcca=function (A, C = 1 - diag(length(A)), tau = rep(1, length(A)),  ncomp = re
     rownames(Y[[b]]) = rownames(A[[b]])
     colnames(Y[[b]]) = paste0("comp", 1:max(ncomp))
   }
-  
-  # ajout de na.rm et de use
 
-  for (j in 1:J) AVE_X[[j]] = apply(cor(A[[j]], Y[[j]],use="pairwise.complete.obs")^2, 	2, mean,na.rm=TRUE)
+  for (j in 1:J)
+  {
+       # AVE_X[[j]] = apply(cor(A[[j]], Y[[j]],use="pairwise.complete.obs")^2, 	2, mean,na.rm=TRUE)
+       # print("AVEinner 1")
+       # print( AVE_X[[j]])
+       # print("AVEinner 2")
+       # AVEinner2=diag(cov(Y[[j]]))/sum(diag(cov(A[[j]] )))
+       # print(AVEinner2)    
+        AVE_X[[j]]=diag(cov(Y[[j]]))/sum(diag(cov(A[[j]] )))
+  }
   outer = matrix(unlist(AVE_X), nrow = max(ncomp))
   
   for (j in 1:max(ncomp)) AVE_outer[j] <- sum(pjs * outer[j,])/sum(pjs)

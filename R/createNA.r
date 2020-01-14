@@ -7,7 +7,14 @@
 #' @param nAllRespondants If the option "ponc" is chosen,nAllRespondant corresponds to the number of complete individuals required
 #' @return \item{A}{a list of NA}
 #' @title Create a list with missing data (for simulation)
-
+#' @export
+#' @examples 
+#' data(Russett)
+#' X1=Russett[,1:3]
+#' X2=Russett[,4:5]
+#' X3=Russett[,8:11]
+#' A=list(agri=X1,ind=X2,polit=X3)
+#' createNA(A,pNA=0.2)
 createNA=function(A,option="block",pNA=0.1,nAllRespondants=4,output="list",seed=NULL)
 {
   if(length(pNA)==1){pNA=rep(pNA,length(A))}
@@ -118,7 +125,7 @@ createNA=function(A,option="block",pNA=0.1,nAllRespondants=4,output="list",seed=
                
                 nbNA=round(pNA[[i]][j]*n)
                 indToRemove[[i]][[j]]=sample(1:n,nbNA)
-                print(indToRemove[[i]][[j]])
+             
                 A[[i]][indToRemove[[i]][[j]],j]=NA
             }
         }

@@ -1,0 +1,264 @@
+---
+title: "The RGCCA package for Regularized/Sparse Generalized Canonical Correlation Analysis"
+author: "Etienne CAMENEN"
+date: "`r Sys.Date()`"
+output:
+  html_document:
+    df_print: paged
+    toc: yes
+  word_document:
+    toc: yes
+  pdf_document:
+    fig_height: 6
+    fig_width: 6
+    number_sections: yes
+    toc: yes
+header-includes:
+- \usepackage{amsfonts}
+- \usepackage{algorithm2e}
+- \usepackage{times}
+- \usepackage{bm}
+- \usepackage{soul}
+- \usepackage{epsfig}
+- \usepackage{amssymb}
+- \usepackage{natbib}
+- \usepackage{lscape}
+- \usepackage{graphicx}
+- \usepackage{tikz}
+- \usetikzlibrary{arrows}
+- \usepackage{amsmath}
+- \usepackage{color}
+- \usepackage{float}
+- \usepackage{amsfonts}
+- \usepackage{latexsym}
+- \usepackage{graphicx,psfrag,color}
+- \usepackage{amsmath,amssymb}
+- \usepackage{multirow}
+- \usepackage{amsthm}
+- \usepackage{enumerate}
+- \usepackage{enumitem}
+- \usepackage{setspace}
+- \usepackage{subfigure}
+- \usepackage{longtable}
+- \usepackage{etoolbox}
+- \usepackage{pdfpages}
+- \usepackage[mathscr]{euscript}
+- \usepackage[T1]{fontenc}
+- \usepackage[english]{babel}
+- \usepackage[misc]{ifsym}
+- \usepackage{wasysym}
+- \usepackage{hyperref}
+- \usepackage{breakurl}
+- \usepackage{pgfplots}
+- \usepackage{microtype}
+vignette: >
+  %\VignetteIndexEntry{The RGCCA package for Regularized/Sparse Generalized Canonical Correlation Analysis}
+  \usepackage[utf8]{inputenc}
+  %\VignetteEngine{knitr::rmarkdown}
+---
+
+# Multiblock data analysis with the RGCCA package
+
+We consider J data matrices X1 ,..., XJ. Each n × pj data matrix Xj = [ xj1, ..., xjpj ] is called a block and represents a set of pj variables observed on n individuals. The number and the nature of the variables may differ from one block to another, but the individuals must be the same across blocks. We assume that all variables are centered. The objective of RGCCA is to find, for each block, a weighted composite of variables (called block component) yj = Xj . aj, j = 1 ,..., J (where aj is a column-vector with pj elements) summarizing the relevant information between and within the blocks. The block components are obtained such that (i) block components explain well their own block and/or (ii) block components that are assumed to be connected are highly correlated. In addition, RGCCA integrates a variable selection procedure, called SGCCA, allowing the identification of the most relevant features.
+
+```{r setup, include = FALSE, echo = FALSE, warning = FALSE, message = FALSE}
+
+
+getwd()
+set.seed(1)
+
+# Load functions
+wd <- "../R/"
+for (f in list.files(wd))
+        source(paste0(wd, f))
+
+load_libraries(c("RGCCA", "ggplot2", "optparse", "scales", "igraph", "ggrepel", "plotly"))
+
+# Load the data
+data("Russett")
+
+#Creates the blocks
+agriculture = Russett[, 1:3]
+industry = Russett[, 4:5]
+politic = Russett[, 6:11]
+
+# Creates optional files
+response = factor( apply(Russett[, 9:11], 1, which.max),
+                   labels = colnames(Russett)[9:11] )
+connection = matrix(c(0, 0, 0, 1,
+                      0, 0, 0, 1,
+                      0, 0, 0, 1,
+                      1, 1, 1, 0),
+                    4, 4)
+
+# Save the Russett files
+files = c("agriculture", "industry", "politic", "response", "connection")
+
+# Creates the files (in .tsv format for example)
+if (!file.exists("data"))
+  dir.create("data")
+
+# Without row and column names for connection files
+sapply(1:length(files), function(x) {
+
+  bool = (files[x] != "connection")
+
+  write.table(
+    x = get(files[x]),
+    file = paste("data/", files[x], ".tsv", sep = ""),
+    row.names = bool,
+    col.names = bool,
+    sep = "\t")
+})
+
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  fig.path = "images/"
+)
+
+```
+
+
+# Load the inputs
+## Load the blocks
+
+The blocks are loaded with the function ```load_blocks```. The first argument of this function (```superblock```) required a bolean giving the presence (TRUE) / absence (FALSE) of a superblock. The second one corresponds to a character giving the list of the file path separated by a comma (argument ```file```). By default, the name of the blocks corresponds to those of the files (```names``` argument) and could be set. By default, the tabulation is used as a column separator (```sep``` argument) and the first row is considered as a header (```header``` parameter).
+
+```{r blocks}
+# Warning : separators by default are tabulation
+blocks = load_blocks(file = "data/agriculture.tsv,data/industry.tsv,data/politic.tsv")
+```
+
+## Load the groups of response and the connection between blocks
+
+The connection between the blocks will be used by the RGCCA and must be set by ```set_connection``` function. A group of samples will be used to color them in the samples plot and must be set by ```load_response``` function. For both functions, the ```blocks``` parameter, set at the previous step, is required. The other parameters are optional. The user could import a file containing either (```file``` parameter) : (i) a symmetric matrix with 1 giving a connection between two blocs, or 0 otherwise; (ii) a univariate vector (qualitative or quantitative) or a disjunctive table for the response. By default, the column separator is the tabulation and could be set (```sep``` argument). For the ```load_response```, a header could be specified (```header``` parameter).
+
+```{r connection,  echo = TRUE, inlcude = TRUE}
+# Optional parameters
+response <- connection <- NULL
+
+# Uncomment the parameters below to try without this settings
+response = load_response(blocks = blocks, file = "data/response.tsv")
+connection = load_connection(file = "data/connection.tsv")
+```
+
+
+## View the inputs
+
+```{r views, echo=FALSE, results = "asis"}
+
+for (x in 1:length(files)) {
+  
+  tab = get(files[x])
+  if (x > 3) colnames(tab) = rep(NULL, NCOL(tab))
+  
+  pander::pandoc.table(head(tab),
+                       caption = files[x])
+}
+```
+
+
+# Run S/RGCCA
+
+SGCCA is run from the RGCCA package by using two components for a biplot visualization. The S/RGCCA function doesn't names the blocks in their outputs. This step is required to generate biplots.
+
+```{r rgcca}
+rgcca_out = rgcca.analyze(blocks = blocks)
+plot_network(rgcca_out)
+```
+
+
+# Vizualise the analysis
+
+Both the samples and the variables could be visualized by using biplots functions (respectively ```plot_ind``` and ```plot_var_2D```). Histograms are used to visualized in decreasing order the variables with the higher weights and the blocks with the higher Average Variance Explained (AVE).
+
+These functions take the results of a sgcca or a rgcca (```rgcca``` parameter) and the components to visualize : either ```compx``` and ```compy``` for biplots or  ```comp``` for histograms. By default, ```compx``` = ```comp``` = 1 and ```compy``` = 2. The presence or the absence of a superblock among the analysis could be specified for ```plot_var_2D``` and ```plot_var_1D``` to color the variables according to their blocks. By default, the last block is plotted, corresponding to the superblock if selected (```i_block``` parameter). ```plot_var_2D```, which is a corcircle plot, required the ```blocks``` for the correlation with the selected component. ```plot_var_2D``` could use the response variable to color the samples by groups. By default, the first 100th higher weights are used for the ```plot_var_1D``` and could be set by using the ```n_mark``` argument.
+
+```{r}
+comp1 = 1
+comp2 = 2
+nmark = 100
+```
+
+## With the superblock, by default on the first and the second components
+
+### Samples plot
+```{r}
+plot_ind(rgcca_out)
+```
+
+### Corcircle plot
+```{r}
+plot_var_2D(rgcca_out)
+```
+
+### Fingerprint plot
+```{r}
+plot_var_1D(rgcca_out)
+```
+
+### Best explained blocks
+```{r}
+plot_ave(rgcca_out)
+```
+
+### Cross-validation score
+```{r}
+loo <- rgcca_crossvalidation(rgcca_out, n_cores = 2)
+# Cross-validation score (leave-one-out)
+round(loo$scores, 3)
+plot_ind(rgcca_out, predicted = loo)
+```
+
+### Bootstrap
+```{r}
+boot <- bootstrap(rgcca_out, n_boot = 5, n_cores = 2)
+selected.var <- get_bootstrap(rgcca_out, boot, n_cores = 2) # Get the bootrstap on the clinic block
+plot_bootstrap_2D(selected.var)
+plot_bootstrap_1D(selected.var)
+```
+
+### Permutation
+```{r}
+perm <- rgcca_permutation(blocks, nperm = 5, n_cores = 2)
+head(order_df(cbind(perm$penalties, perm$zstat), ncol(perm$penalties) + 1))
+plot_permut_2D(perm)
+```
+
+## With the politic block, on the 2nd and the 3rd components
+
+### Samples plot
+```{r}
+plot_ind(
+    rgcca = rgcca_out,
+    resp = response,
+    compx = comp1,
+    compy = comp2,
+    i_block = 3)
+```
+
+### Corcircle plot
+```{r}
+plot_var_2D(
+    rgcca = rgcca_out,
+    compx = comp1,
+    compy = comp2,
+    i_block = 3)
+```
+
+### Fingerprint plot
+```{r}
+plot_var_1D(
+    rgcca = rgcca_out,
+    comp = comp1,
+    n_mark = nmark, 
+    i_block = 3,
+    type = "weight")
+```
+
+
+```{r, echo = FALSE}
+# Remove the temp/ folder
+unlink("data", recursive = TRUE)
+```

@@ -2,6 +2,7 @@
 #'
 #' Performs a r/sgcca with predefined parameters
 #' @inheritParams select_analysis
+#' @inheritParams rgccaNa
 #' @param scale A boolean scaling the blocks
 #' @param init A character among "svd" (Singular Value Decompostion) or "random"
 #' for alorithm initialization
@@ -10,6 +11,7 @@
 #' @param response An integer giving the index of a block considered as a 
 #' response among a list of blocks
 #' @param tol An integer for the stopping value for convergence
+#' @param sameBlockWeight If TRUE, all blocks are weighted by their own variance: all the blocks have the same weight
 #' @return A RGCCA object
 #' @examples
 #' library(RGCCA)
@@ -42,8 +44,16 @@ rgcca.analyze <- function(
     scale = TRUE,
     init = "svd",
     bias = TRUE, 
-    tol = 1e-08) {
+    tol = 1e-08,
+    sameBlockWeight =TRUE,
+    method="complete",knn.k="all",knn.output="weightedMean",knn.klim=NULL,knn.sameBlockWeight=TRUE,pca.ncp=1)
+{
 
+    match.arg(type, c("rgcca", "cpca-w", "gcca", "hpca", "maxbet-b", "maxbet", "maxdiff-b",
+                      "maxdiff", "maxvar-a", "maxvar-b", "maxvar", "niles", "r-maxvar", "rcon-pca",
+                      "ridge-gca", "sabscor", "ssqcor", "ssqcor", "ssqcov-1", "ssqcov-2", "ssqcov",
+                      "sum-pca", "sumcor", "sumcov-1", "sumcov-2", "sumcov.", "sabscov", "plspm","cca", "ra", "ifa", "pls","pca","sgcca"))
+    
     tau <- elongate_arg(tau, blocks)
     ncomp <- elongate_arg(ncomp, blocks)
 
@@ -90,10 +100,10 @@ rgcca.analyze <- function(
         message("RGCCA in progress ...")
 
     if (tolower(type) == "sgcca") {
-        gcca <- RGCCA::sgcca
+        gcca <- sgccaNa
         par <- "c1"
     } else{
-        gcca <- RGCCA::rgcca
+        gcca <- rgccaNa
         par <- "tau"
     }
 
@@ -104,15 +114,23 @@ rgcca.analyze <- function(
             ncomp = opt$ncomp,
             verbose = FALSE,
             scheme = opt$scheme,
-            scale = FALSE,
+            scale = scale,
             init = init,
             bias = bias,
-            tol = tol
+            tol = tol,
+            sameBlockWeight =sameBlockWeight,
+            method=method,
+            knn.k=knn.k,
+            knn.output=knn.output,
+            knn.klim=knn.klim,
+            knn.sameBlockWeight=knn.sameBlockWeight,
+            pca.ncp=pca.ncp
         )
     )
     func[[par]] <- opt$tau
 
-    func_out <- eval(as.call(func))
+    func_out <- eval(as.call(func)) $rgcca
+  #   print(names(func_out))
     for (i in c("a", "astar", "Y"))
         names(func_out[[i]]) <- names(opt$blocks)
     names(func_out$AVE$AVE_X) <- names(opt$blocks)

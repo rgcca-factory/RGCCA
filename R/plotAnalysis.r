@@ -1,8 +1,30 @@
-plotAnalysis=function(listFinale,output="rv",fileName=NULL,ylim=NULL,block="all",barType="sd",namePlot=NULL,width=480,height=480)
+#'Plots the impact of increasing missing data on RGCCA
+#' @param listFinale A list resulting of which NA method
+#' @param output ="rv": Can be also "a" for correlations between axes, "bm" for the percent of similar biomarkers, "rvComplete" if the RV is calculated only on complete dataset, or "rmse" for Root Mean Squares Error.
+#' @param fileName =NULL name of the file where the plot is saved
+#' @param ylim =c(0.8,1) y limits
+#' @param block ="all" or a number indicating the position of the chosen block in the initial list
+#' @param barType ="sd" or "stderr". Indicates which error bar to build
+#' @param namePlot =NULL Name of the file
+#' @param width =480 width of the saved file
+#' @param height =480 height of the saved file
+#' @examples 
+#' set.seed(42);X1=matrix(rnorm(350),70,5);X2=matrix(rnorm(280),70,4);X1[1,1]=NA;X2[2,]=NA
+#' A=list(X1,X2)
+#' listResults=whichNAmethod(A=A,patternNA=c(0.1,0.2),
+#' listMethods=c("mean","complete","nipals","knn4"))
+#' plotWhichNAmethod(listFinale=listResults,ylim=c(0,1),output="a")
+#' @importFrom grDevices graphics.off 
+#' @importFrom graphics plot.new
+#' @export
+
+
+plotWhichNAmethod=function(listFinale,output="rv",fileName=NULL,ylim=NULL,block="all",barType="sd",namePlot=NULL,width=480,height=480)
 { #output : "rv", "pct" ou "a"
   #barType="sd" or "stdErr"
     
     # TODO: par(new=TRUE)
+    
   if(is.null(namePlot)){namePlot=output}
   #graphics.off()
   if(!is.null(fileName)){png(paste(fileName,".png",sep=""),width=width,height=height)}
@@ -12,8 +34,16 @@ plotAnalysis=function(listFinale,output="rv",fileName=NULL,ylim=NULL,block="all"
   pas=1 
   par(las=1)
   J=length(listFinale[[1]][[1]][[1]]) #nblock
-  close.screen(all.screens=TRUE)
-  if(block=="all"){ split.screen(c(2,2));toPlot=1:J}else{toPlot=block:block}
+ # close.screen(all.screens=TRUE)
+  if(block=="all")
+  { 
+      par(mfrow=c(floor(sqrt(J)+1),floor(sqrt(J)+1)));toPlot=1:J
+    #  split.screen(c(floor(sqrt(J)+1),floor(sqrt(J)+1)));toPlot=1:J
+  }
+  else
+  {
+      toPlot=block:block
+  }
   # print(toPlot)
   namesMethod=names(listFinale[[1]])
   #colMethod=rainbow(5)[1:length(namesMethod)]
@@ -22,7 +52,7 @@ plotAnalysis=function(listFinale,output="rv",fileName=NULL,ylim=NULL,block="all"
   names(colMethod)=names(nMeth)=namesMethod
   for(j in toPlot)
   {
-    if(block=="all"){screen(j)}
+    #if(block=="all"){screen(j)}
     par(mar=c(5, 4, 4, 2) + 0.1)
     par(mgp=c(3,1,0))
  
@@ -40,13 +70,18 @@ plotAnalysis=function(listFinale,output="rv",fileName=NULL,ylim=NULL,block="all"
     if(is.null(ylim))
     { 
           minim=min(moyenne-ecartType)
+          maxim=max(moyenne+ecartType)
         if(!is.na(minim))
         {
-          ylim=c(minim,1)
+          Ylim=c(minim,maxim)
         }
-        else{ylim=c(0,1)}
+        else{Ylim=ylim}
     }
-    plot(NULL,main=paste(namePlot,": Block",j),xlim=c(0,length(namesMethod)-1),ylim=ylim,xlab="Methods",ylab="Correlation",bty="n")
+    else
+    {
+        Ylim=ylim
+    }
+    plot(NULL,main=paste(namePlot,": Block",j),xlim=c(0,length(namesMethod)-1),ylim=Ylim,xlab="Methods",ylab="Correlation",bty="n",xaxt="n")
     axis(side = 1,col="grey",line=0)
     axis(side = 2,col="grey",line=0)
     rect(par("usr")[1], par("usr")[3], par("usr")[2], par("usr")[4], col = 
@@ -65,12 +100,20 @@ plotAnalysis=function(listFinale,output="rv",fileName=NULL,ylim=NULL,block="all"
   }
   if(block=="all")
   {
-    screen(4)
-    legend("center",legend=namesMethod,fill=colMethod,box.lwd=0)
+  #  screen(J+1)
+      plot.new()
+      par(cex=0.8)
+    legend("center",legend=namesMethod,fill=colMethod,box.lwd=0,,bty="n")
   }
   if(is.numeric(block))
   {
-    legend("bottomleft",legend=namesMethod,fill=colMethod,box.lwd=0)
+      par(cex=0.8)
+    legend("bottomleft",legend=namesMethod,fill=colMethod,box.lwd=0,bty="n")
   }
+  
   if(!is.null(fileName)){dev.off()}
+  #par(new=TRUE)
+  par(mfrow=c(1,1))
+  par(mar=c(5,4,3,3))
+  par(cex=1)
 }

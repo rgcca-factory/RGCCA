@@ -10,7 +10,9 @@
 #' @param ncomp A vector of integer giving the number of component for each
 #' blocks
 #' @param scheme A character giving the link function for covariance maximization
-#' @param type A character giving the type of analysis
+#' @param type A character giving the type of analysis: c('rgcca', 'cpca-w', 'gcca', 'hpca', 'maxbet-b', 'maxbet', 'maxdiff-b','maxdiff', 'maxvar-a', 'maxvar-b', 'maxvar', 'niles', 'r-maxvar', 'rcon-pca',
+#' 'ridge-gca', 'sabscor', 'ssqcor', 'ssqcor', 'ssqcov-1', 'ssqcov-2', 'ssqcov',
+#' 'sum-pca', 'sumcor', 'sumcov-1', 'sumcov-2', 'sumcov.', 'sabscov', 'plspm','cca', 'ra', 'ifa', 'pls','pca')
 #' @param verbose A boolean displaying the warnings
 #' @param quiet A boolean hidding the warnings
 #' @return \item{blocks}{A list of matrix}

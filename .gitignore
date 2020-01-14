@@ -4,3 +4,7 @@
 \.Rhistory
 .Rproj.user
 \.RData
+
+\.Rproj*
+
+\.RData
