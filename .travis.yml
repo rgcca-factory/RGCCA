@@ -28,6 +28,7 @@ r_packages:
   - bsplus
   - vegan
   - pls
+  - nipals
 
 install:
   - Rscript -e 'install.packages("devtools",repos = "http://cran.us.r-project.org")'
