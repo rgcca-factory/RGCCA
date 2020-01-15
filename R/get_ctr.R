@@ -45,8 +45,10 @@ get_ctr <- function(
 
     if (type == "cor")
         f <- function(x){
-            cor(
-                rgcca$blocks[[i_block_2]],
+            
+                intb=rgcca$blocks[[i_block_2]][rownames(rgcca$Y[[i_block_2]]),]
+                print(intb)
+                cor(intb,
                 rgcca$Y[[i_block]][, x],
                 use = "pairwise.complete.obs"
             )

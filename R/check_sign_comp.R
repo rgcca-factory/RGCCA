@@ -1,3 +1,4 @@
+# #'@export
 # Test on the sign of the correlation
 check_sign_comp <- function(rgcca, w){
 

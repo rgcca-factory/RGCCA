@@ -9,7 +9,8 @@
 #' @param collapse A boolean to combine the variables of each blocks as result
 #' @examples
 #' setMatrix = function(nrow, ncol, iter = 3) lapply(seq(iter),
-#'     function(x) matrix(runif(nrow * ncol), nrow, ncol))
+#'     function(x) {y=matrix(runif(nrow * ncol), nrow, ncol); 
+#'     rownames(y)=paste0("S",1:nrow);return(y)})
 #' blocks = setMatrix(10, 5)
 #' blocks[[4]] = Reduce(cbind, blocks)
 #' for (i in seq(4)) {

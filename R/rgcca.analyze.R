@@ -130,11 +130,14 @@ rgcca.analyze <- function(
     func[[par]] <- opt$tau
 
     func_out <- eval(as.call(func)) $rgcca
-  #   print(names(func_out))
+   # rgcca$blocks <- rgcca$A
+
+      #   print(names(func_out))
     for (i in c("a", "astar", "Y"))
         names(func_out[[i]]) <- names(opt$blocks)
     names(func_out$AVE$AVE_X) <- names(opt$blocks)
     func_out$blocks <- opt$blocks
+   
     func_out$superblock <- opt$superblock
     for (i in c("scale", "init", "bias", "tol", "verbose"))
         func_out[[i]] <- as.list(environment())[[i]]

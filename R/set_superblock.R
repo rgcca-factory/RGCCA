@@ -1,3 +1,4 @@
+# #' @export
 set_superblock <- function(blocks, superblock = FALSE, type = "rgcca") {
 
     if (superblock | tolower(type) == "pca") {

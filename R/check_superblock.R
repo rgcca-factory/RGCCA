@@ -1,3 +1,4 @@
+# #' @export
 check_superblock <- function(is_supervised = NULL, is_superblock = NULL) {
     if (!is.null(is_supervised)) {
         warn_connection("supervized method with a response")
