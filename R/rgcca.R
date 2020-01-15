@@ -323,11 +323,11 @@ rgcca=function (A, C = 1 - diag(length(A)), tau = rep(1, length(A)),  ncomp = re
        # print("AVEinner 2")
        # AVEinner2=diag(cov(Y[[j]]))/sum(diag(cov(A[[j]] )))
        # print(AVEinner2)    
-        AVE_X[[j]]=diag(cov(Y[[j]]))/sum(diag(cov(A[[j]] )))
+        AVE_X[[j]]=diag(cov2(Y[[j]]))/sum(diag(cov2(A[[j]] )),na.rm=TRUE)
   }
   outer = matrix(unlist(AVE_X), nrow = max(ncomp))
   
-  for (j in 1:max(ncomp)) AVE_outer[j] <- sum(pjs * outer[j,])/sum(pjs)
+  for (j in 1:max(ncomp)) AVE_outer[j] <- sum(pjs * outer[j,],na.rm=na.rm)/sum(pjs)
   Y = shave.matlist(Y, ncomp)
   names(Y)=names(A)
   names(a)=names(A)

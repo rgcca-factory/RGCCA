@@ -2,6 +2,7 @@
 #'
 #' @param c A symmetric matrix containing 1 and 0
 #' @inheritParams set_connection
+#' @export
 check_connection <- function(c, blocks) {
 
     msg <- "The connection file should"
