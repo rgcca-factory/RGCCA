@@ -66,27 +66,27 @@ sgccaNa=function (A,method, C = 1 - diag(length(A)), c1 = rep(1, length(A)),    
   na.rm=FALSE
   if(method=="complete"){A2=intersection(A)}
   if(method=="mean"){		 A2=imputeColmeans(A) }
-	if(method=="pca")	
-	{  
-	  imputedSuperblock= imputePCA(X=do.call(cbind,A), ncp = pca.ncp, scale = TRUE, method ="em")$completeObs 
-	  A2=superblockAsList(imputedSuperblock, A)
-	}
   if(is.function(method))
   {
     A2=method(A)
   }
-  if(method=="rpca")
-  {
-    imputedSuperblock= missMDA::imputePCA(do.call(cbind,A), ncp = pca.ncp, scale = TRUE, method ="regularized")$completeObs 
-     A2=superblockAsList(imputedSuperblock, A)
-  }   
-#
-#	if(method=="rgccaPca"){	  A2= imputeSuperblock(A,method="em",opt="rgcca",ncp=ncp,scaleBlock=scaleBlock)}
-	if(method=="mfa")	
-	{	 
-	  imputedSuperblock=imputeMFA(X=do.call(cbind,A), group=nvar, ncp = 1, type=rep("s",length(nvar)), method = "em")$completeObs
-	  A2=superblockAsList(imputedSuperblock, A)
-	}
+#   if(method=="pca")	
+#   {  
+#       imputedSuperblock= imputePCA(X=do.call(cbind,A), ncp = pca.ncp, scale = TRUE, method ="em")$completeObs 
+#       A2=superblockAsList(imputedSuperblock, A)
+#   }
+#   if(method=="rpca")
+#   {
+#     imputedSuperblock= missMDA::imputePCA(do.call(cbind,A), ncp = pca.ncp, scale = TRUE, method ="regularized")$completeObs 
+#      A2=superblockAsList(imputedSuperblock, A)
+#   }   
+# #
+# #	if(method=="rgccaPca"){	  A2= imputeSuperblock(A,method="em",opt="rgcca",ncp=ncp,scaleBlock=scaleBlock)}
+# 	if(method=="mfa")	
+# 	{	 
+# 	  imputedSuperblock=imputeMFA(X=do.call(cbind,A), group=nvar, ncp = 1, type=rep("s",length(nvar)), method = "em")$completeObs
+# 	  A2=superblockAsList(imputedSuperblock, A)
+# 	}
 
 #  	if(method=="iterativeSB")	{	  A2=imputeSB(A,ncomp=ncomp,scale=scale,sameBlockWeight=sameBlockWeight,c1=c1,tol=tol,ni=10)$A	}
 #     if(method=="em")	{	  A2=imputeEM(A=A,ncomp=ncomp,scale=scale,sameBlockWeight=sameBlockWeight,c1=c1,naxis=1,ni=50,C=C,tol=tol,verbose=verbose,reg="y")$A	}

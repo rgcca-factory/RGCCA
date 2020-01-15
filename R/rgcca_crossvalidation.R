@@ -60,7 +60,8 @@ rgcca_crossvalidation <- function(
                 verbose = FALSE,
                 init = rgcca$init,
                 bias = rgcca$bias,
-                tol = rgcca$tol
+                tol = rgcca$tol,
+                method="complete"
             )
 
             rgcca_k$a <- check_sign_comp(rgcca, rgcca_k$a)

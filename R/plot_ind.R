@@ -60,13 +60,14 @@ plot_ind <- function(
     cex_sub = 16 * cex,
     cex_point = 3 * cex,
     cex_lab = 19 * cex
-    ) {
+    )
+{
 
     if (is.null(i_block_y))
         i_block_y <- i_block
     
     resp <- check_response(resp, rgcca$Y)
-
+  
     df <- get_comp(
         rgcca = rgcca,
         resp = resp,

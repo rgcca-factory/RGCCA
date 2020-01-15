@@ -12,14 +12,13 @@
 #' @title Evolution of fairness of rgcca with increasing missing values
 #' @examples 
 #' data(Russett)
-#' library(FactoMineR)
 #' library(parallel)
 #' X_agric =as.matrix(Russett[,c("gini","farm","rent")])
 #' X_ind = as.matrix(Russett[,c("gnpr","labo")])
 #' X_polit = as.matrix(Russett[ , c("demostab", "dictator")])
 #' A = list(agri=X_agric, ind=X_ind, polit=X_polit)
 #' #ponctual
-#' listResults=naEvolution(A=A,listMethods=c("complete","nipals","pca"),
+#' listResults=naEvolution(A=A,listMethods=c("complete","nipals","mean"),
 #' prctNA=c(0.05,0.1,0.15,0.2,0.25,0.3,0.4),typeNA="ponc",ncomp=rep(1,3),
 #' sameBlockWeight=FALSE)
 #' plotEvol(listResults,output="a",barType = "stderr",ylim=c(0,0.2))

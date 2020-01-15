@@ -23,8 +23,6 @@ RoxygenNote: 6.1.1
 Imports: 
     nnet,
     parallel,
-    FactoMineR,
-    missMDA,
     vegan,
     grDevices,
     Deriv,

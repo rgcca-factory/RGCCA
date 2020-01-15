@@ -29,7 +29,16 @@ get_comp <- function(
     i_block_z = i_block,
     predicted = NULL){
     
-    df <- data.frame(
+    if(!compx%in% 1:NCOL(rgcca$Y[[i_block]])){stop(paste0("compx is higher than the number of components chosen in RGCCA (", NCOL(rgcca$Y[[i_block]]),") in the block ", i_block,". Please use rgcca with the ncomp option to obtain more than compx components, or use compx lower than ",NCOL(rgcca$Y[[i_block]]) ))}
+    if(!compy%in% 1:NCOL(rgcca$Y[[i_block_y]])){stop(paste0("compy is higher than the number of components chosen in RGCCA (", NCOL(rgcca$Y[[i_block_y]]),") in the block ", i_block_y,". Please use rgcca with the ncomp option to obtain more than compy components, or use compy lower than ",NCOL(rgcca$Y[[i_block_y]]) ))}
+    if(!is.null(compz))
+    {
+        if(!compz%in% 1:NCOL(rgcca$Y[[i_block_z]]))
+        {stop(paste("compz is higher than the number of components (", NCOL(rgcca$Y[[i_block_z]]),") in the block ", i_block_z))
+        }
+    }
+    
+         df <- data.frame(
         rgcca$Y[[i_block]][, compx],
         rgcca$Y[[i_block_y]][, compy],
         rgcca$Y[[i_block_z]][, compz]

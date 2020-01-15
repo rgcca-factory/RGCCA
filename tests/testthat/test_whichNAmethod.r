@@ -1,5 +1,5 @@
 library(parallel)
-library(FactoMineR)
+
 
 # test on random data
 #---------------------
