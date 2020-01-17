@@ -3,16 +3,17 @@ print.rgcca <- function(x)
   cat("Call: ")
   dput(x$call)
   cat("\n\n")
-  if(max(eval(x$call$ncomp))==1)
-  {
-      cat("Sum_{j,k} c_jk g(cov(X_ja_j, X_ka_k) = ", sep = "", 
-          paste(round(x$crit[length(x$crit)], 4), sep = "", " "), fill = TRUE)
-  }
-  else
+  
+  if(is.list(x$crit))
   {
       critByNcomp=sapply(x$crit,function(t){return(t[length(t)])})
       cat("Sum_{j,k} c_jk g(cov(X_ja_j, X_ka_k) = ", sep = "", 
           paste(round(sum(critByNcomp), 4), sep = "", " "), fill = TRUE)
+  }
+  else
+  {
+      cat("Sum_{j,k} c_jk g(cov(X_ja_j, X_ka_k) = ", sep = "", 
+          paste(round(x$crit[length(x$crit)], 4), sep = "", " "), fill = TRUE)
   }
   cat("There are J =", NCOL(x$C), "blocks.", fill = TRUE)
   cat("The design matrix is:\n") 

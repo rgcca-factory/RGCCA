@@ -37,8 +37,7 @@ plot2D <- function(
     cex_sub = 16 * cex,
     cex_point = 3 * cex,
     cex_lab = 19 * cex) {
-
-    if (!isTRUE(text)) {
+     if (!isTRUE(text)) {
         func <- quote(geom_point(size = cex_point))
         if (!is.numeric(na.omit(group)))
             func$mapping <- aes(shape = as.factor(group))
@@ -113,5 +112,4 @@ plot2D <- function(
         # quantitative response
     } else
         p + scale_color_gradientn(colours = colours, na.value = "black")
-
 }
