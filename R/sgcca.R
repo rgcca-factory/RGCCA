@@ -113,7 +113,7 @@
 
 
 sgcca <- function (A, C = 1-diag(length(A)), c1 = rep(1, length(A)), ncomp = rep(1, length(A)), scheme = "centroid", scale = TRUE, init = "svd", bias = TRUE, tol = .Machine$double.eps, verbose = FALSE,returnA=FALSE,sameBlockWeight=TRUE){
-
+  call=match.call()
   ndefl <- ncomp-1
   N <- max(ndefl)
   J <- length(A)
@@ -203,7 +203,7 @@ sgcca <- function (A, C = 1-diag(length(A)), c1 = rep(1, length(A)), ncomp = rep
         out <- list(Y=Y, a=a, astar=a, 
                     C=C, scheme=scheme, c1=c1, ncomp=ncomp, 
                     crit = result$crit[length(result$crit)],
-                    AVE = AVE)
+                    AVE = AVE,call=call)
         class(out) <- "sgcca"
         return(out)
     }
@@ -295,14 +295,14 @@ sgcca <- function (A, C = 1-diag(length(A)), c1 = rep(1, length(A)), ncomp = rep
                 astar = shave.matlist(astar, ncomp),
                 C = C, c1 = c1, scheme = scheme,
                 ncomp = ncomp, crit = crit,
-                AVE = AVE
+                AVE = AVE,call=call
                 )}
     if(returnA){out <- list(Y = shave.matlist(Y, ncomp), 
                             a = shave.matlist(a, ncomp), 
                             astar = shave.matlist(astar, ncomp),
                             C = C, c1 = c1, scheme = scheme,
                             ncomp = ncomp, crit = crit,
-                            AVE = AVE,A=A
+                            AVE = AVE,A=A,call=call
     )}
     class(out) <- "sgcca"
     return(out)

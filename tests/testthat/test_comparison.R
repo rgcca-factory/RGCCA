@@ -4,7 +4,7 @@
 #setwd("/home/caroline.peltier/Bureau/RGCCA")
 library(RGCCA)
 library(MASS)
-library(nipals)
+
 data(Russett)
 X_agric =as.matrix(Russett[,c("gini","farm","rent")])
 X_ind = as.matrix(Russett[,c("gnpr","labo")])

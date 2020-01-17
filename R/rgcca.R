@@ -130,6 +130,7 @@ rgcca=function (A, C = 1 - diag(length(A)), tau = rep(1, length(A)),  ncomp = re
   shave.matlist <- function(mat_list, nb_cols) mapply(function(m,nbcomp) m[, 1:nbcomp, drop = FALSE], mat_list, nb_cols, SIMPLIFY = FALSE)
   shave.veclist <- function(vec_list, nb_elts) mapply(function(m, nbcomp) m[1:nbcomp], vec_list, nb_elts, SIMPLIFY = FALSE)
   A0=A
+    call = match.call()
   if (any(ncomp < 1)) {stop("Compute at least one component per block!")}	
   pjs <- sapply(A, NCOL) #nombre de variables par bloc
   varij <- sapply(A,function(x){covarMat=cov2(x,bias=bias);varianceBloc=sum(diag(covarMat));return(varianceBloc)})
@@ -160,12 +161,7 @@ rgcca=function (A, C = 1 - diag(length(A)), tau = rep(1, length(A)),  ncomp = re
       cat("Shrinkage intensity paramaters are chosen manually \n")
     }
   }
-  # if(estimateNA=="superblock")
-  # {
-  #     
-  # }
-  # else
-  # {
+
       if (scale == TRUE) 
       {
           
@@ -247,7 +243,7 @@ rgcca=function (A, C = 1 - diag(length(A)), tau = rep(1, length(A)),  ncomp = re
       rownames(Y[[b]]) = rownames(A[[b]])
       colnames(Y[[b]]) = "comp1"
     }
-    out <- list(Y = Y, a = a, astar = a, C = C, tau = result$tau,  scheme = scheme, ncomp = ncomp, crit = result$crit, primal_dual = primal_dual, AVE = AVE,A=A0)
+    out <- list(Y = Y, a = a, astar = a, C = C, tau = result$tau,  scheme = scheme, ncomp = ncomp, crit = result$crit, primal_dual = primal_dual, AVE = AVE,A=A0,call=call)
     if(estimateNA %in% c("iterative","first","superblock","lebrusquet")){out[["imputedA"]]=A}
     
     class(out) <- "rgcca"
@@ -308,7 +304,7 @@ rgcca=function (A, C = 1 - diag(length(A)), tau = rep(1, length(A)),  ncomp = re
     # ajout
     astar[[b]][, N + 1] <- rgcca.result$a[[b]] - astar[[b]][, (1:N), drop = F] %*% drop(t(a[[b]][, (N + 1)]) %*%P[[b]][, 1:(N), drop = F])
     #astar[[b]][,N+1] <- rgcca.result$a[[b]] - astar[[b]][,(1:N),drop=F] %*% drop( t(a[[b]][,(N+1)]) %*% P[[b]][,1:(N),drop=F] ) 
-    
+  
     rownames(a[[b]]) = rownames(astar[[b]]) = colnames(A[[b]])
     rownames(Y[[b]]) = rownames(A[[b]])
     colnames(Y[[b]]) = paste0("comp", 1:max(ncomp))
@@ -336,11 +332,11 @@ rgcca=function (A, C = 1 - diag(length(A)), tau = rep(1, length(A)),  ncomp = re
   if(returnA)
   {
     out <- list(Y = shave.matlist(Y, ncomp), a = shave.matlist(a,ncomp), astar = shave.matlist(astar, ncomp), C = C, tau = tau_mat, 
-                scheme = scheme, ncomp = ncomp, crit = crit, primal_dual = primal_dual,	AVE = AVE,A=A0)
+                scheme = scheme, ncomp = ncomp, crit = crit, primal_dual = primal_dual,	AVE = AVE,A=A0,call=call)
   } else
   {
     out <- list(Y = shave.matlist(Y, ncomp), a = shave.matlist(a,ncomp), astar = shave.matlist(astar, ncomp), C = C, tau = tau_mat, 
-                scheme = scheme, ncomp = ncomp, crit = crit, primal_dual = primal_dual,	AVE = AVE)
+                scheme = scheme, ncomp = ncomp, crit = crit, primal_dual = primal_dual,	AVE = AVE,call=call)
   }
    class(out) <- "rgcca"
 

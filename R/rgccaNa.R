@@ -50,7 +50,7 @@
 
 rgccaNa=function (A,method, C = 1 - diag(length(A)), tau = rep(1, length(A)),    ncomp = rep(1, length(A)), scheme = "centroid", scale = TRUE,   init = "svd", bias = TRUE, tol = 1e-08, verbose = TRUE,sameBlockWeight=TRUE,returnA=FALSE,knn.k="all",knn.output="weightedMean",knn.klim=NULL,knn.sameBlockWeight=TRUE,pca.ncp=1) 
 { 
-     
+    call=match.call() 
   nvar = sapply(A, NCOL)
   superblockAsList=function(superblock,A)
   {
@@ -133,7 +133,7 @@ rgccaNa=function (A,method, C = 1 - diag(length(A)), tau = rep(1, length(A)),   
   if(method=="imputeInRgcca2"){resRgcca=rgcca(A,C=C,ncomp=ncomp,verbose=FALSE,scale=scale,sameBlockWeight=sameBlockWeight,tau=tau,scheme=scheme,returnA=TRUE,tol=tol,estimateNA="first");A2=resRgcca$imputedA;}
   if(method=="imputeInRgccaSB"){resRgcca=rgcca(A,C=C,ncomp=ncomp,verbose=FALSE,scale=scale,sameBlockWeight=sameBlockWeight,tau=tau,scheme=scheme,returnA=TRUE,tol=tol,estimateNA="superblock");A2=resRgcca$imputedA[1:length(A)];}
   if(method=="imputeInRgccaLL"){resRgcca=rgcca(A,C=C,ncomp=ncomp,verbose=TRUE,scale=scale,sameBlockWeight=sameBlockWeight,tau=tau,scheme=scheme,returnA=TRUE,tol=tol,estimateNA="lebrusquet");A2=resRgcca$imputedA[1:length(A)];}
-  
-	return(list(imputedA=A2,rgcca=resRgcca,method,indNA=indNA))
+  out=list(imputedA=A2,rgcca=resRgcca,method,indNA=indNA)
+	return(out)
 
 }

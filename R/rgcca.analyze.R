@@ -48,7 +48,7 @@ rgcca.analyze <- function(
     sameBlockWeight =TRUE,
     method="complete",knn.k="all",knn.output="weightedMean",knn.klim=NULL,knn.sameBlockWeight=TRUE,pca.ncp=1)
 {
-
+    call=match.call()
     match.arg(tolower(type), c("rgcca", "cpca-w", "gcca", "hpca", "maxbet-b", "maxbet", "maxdiff-b",
                       "maxdiff", "maxvar-a", "maxvar-b", "maxvar", "niles", "r-maxvar", "rcon-pca",
                       "ridge-gca", "sabscor", "ssqcor", "ssqcor", "ssqcov-1", "ssqcov-2", "ssqcov",
