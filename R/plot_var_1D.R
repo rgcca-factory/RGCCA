@@ -38,8 +38,7 @@ plot_var_1D <- function(
         collapse = collapse,
         remove_var = FALSE
     )
-    if(NCOL(rgcca$Y[[i_block]])<2){stop("This output is available only for blocks with more than 2 variables, and at least 2 components per block")}
-    
+
     if (i_block < length(rgcca$a) || is(rgcca, "pca"))
         rgcca$superblock <- FALSE
     

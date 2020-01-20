@@ -28,12 +28,15 @@ plot_ave <- function(
         rgcca$ncomp = rgcca$ncomp[1]
         rgcca$a = rgcca$a[1]
     }
-    
+
     names(rgcca$AVE$AVE_X) <- NULL
     ave <- 100 * unlist(rgcca$AVE$AVE_X)
     blocks <- factor(unlist(lapply(seq(length(names(rgcca$a))),
             function(x) rep(names(rgcca$a)[x], rgcca$ncomp[x]))),
         levels = names(rgcca$a))
+    
+    if (is.null(names(ave)))
+        names(ave) <- rep(1, length(ave))
     ncomp <- as.factor(names(ave))
 
     y_ave_cum <- lapply(

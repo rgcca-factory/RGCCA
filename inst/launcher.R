@@ -394,14 +394,14 @@ load_libraries <- function(librairies) {
 opt <- list(
     directory = ".",
     separator = "\t",
-    type = "rgcca",
-    ncomp = 2,
+    type = "pca",
+    ncomp = 1,
     tau = "optimal",
     scheme = "factorial",
     init = 1,
     block = 0,
     compx = 1,
-    compy = 2,
+    compy = 1,
     nmark = 100,
     o1 = "individuals.pdf",
     o2 = "corcircle.pdf",
@@ -412,7 +412,7 @@ opt <- list(
     o7 = "variables.tsv",
     o8 = "rgcca_result.RData",
     datasets = paste0("inst/extdata/",
-        c("agriculture","industry", "politic"),
+        c("demoinst"),
         ".tsv",
         collapse = ",")
 )
@@ -510,8 +510,8 @@ save_plot(opt$o4, ave)
 design <- function() plot_network(rgcca_out)
 save_plot(opt$o5, design)
 
-save_ind(rgcca_out, 1, 2, opt$o6)
-save_var(rgcca_out, 1, 2, opt$o7)
+save_ind(rgcca_out, opt$compx, opt$compy, opt$o6)
+save_var(rgcca_out, opt$compx, opt$compy, opt$o7)
 
 if (!is.null(opt$response)) {
     crossval <- rgcca_crossvalidation(rgcca_out)

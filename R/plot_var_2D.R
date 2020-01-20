@@ -52,7 +52,6 @@ plot_var_2D <- function(
     cex_lab = 19 * cex) {
    
     x <- y <- NULL
-    if(NCOL(rgcca$Y[[i_block]])<2){stop("This output is available only for blocks with more than 2 variables, and at least 2 components per block")}
     df <- get_ctr2(
         rgcca = rgcca,
         compx = compx,
