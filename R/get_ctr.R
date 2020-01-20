@@ -65,7 +65,7 @@ get_ctr <- function(
 
     data.frame(
         sapply(
-            c(compx, compy, compz[compz >= rgcca$ncomp[i_block]]),
+            c(compx, compy, compz[compz >= rgcca$call$ncomp[i_block]]),
             function(x) f(x)
         ),
         row.names = row.names

@@ -28,7 +28,7 @@ plot_network <- function(rgcca) {
 
     if (all(is.na(nodes[, par]))) {
         nodes[, par] <- rep("optimal", length(rgcca$blocks))
-        V(net)$tau <- rep(1, length(rgcca$blocks))
+        V(net)$call$tau <- rep(1, length(rgcca$blocks))
     }
 
     V(net)$color <- "khaki2"

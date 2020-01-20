@@ -7,9 +7,8 @@
 rgccaNa(A, method, C = 1 - diag(length(A)), tau = rep(1, length(A)),
   ncomp = rep(1, length(A)), scheme = "centroid", scale = TRUE,
   init = "svd", bias = TRUE, tol = 1e-08, verbose = TRUE,
-  sameBlockWeight = TRUE, knn.k = "all",
-  knn.output = "weightedMean", knn.klim = NULL,
-  knn.sameBlockWeight = TRUE, pca.ncp = 1)
+  sameBlockWeight = TRUE, knn.k = "all", knn.output = "weightedMean",
+  knn.klim = NULL, knn.sameBlockWeight = TRUE, pca.ncp = 1)
 }
 \arguments{
 \item{A}{A list that contains the \eqn{J} blocks of variables \eqn{\mathbf{X_1}, \mathbf{X_2}, ..., \mathbf{X_J}}.}

@@ -6,7 +6,8 @@
 \usage{
 MIRGCCA(A, option = "knn", superblock = TRUE, k = 5, ni = 5,
   scale = TRUE, sameBlockWeight = TRUE, tau, klim = NULL,
-  output = "mean", scheme = "centroid", tol = 1e-08, C = NULL, ncomp = rep(2, length(A)), naxis = 1)
+  output = "mean", scheme = "centroid", tol = 1e-08, C = NULL,
+  ncomp = rep(2, length(A)), naxis = 1)
 }
 \arguments{
 \item{A}{A list that contains the \eqn{J} blocks of variables \eqn{\mathbf{X_1}, \mathbf{X_2}, ..., \mathbf{X_J}}.}

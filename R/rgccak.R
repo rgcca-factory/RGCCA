@@ -24,9 +24,9 @@
 # #' @return \item{converg}{Speed of convergence of the algorithm to reach the tolerance.}
 #' @return \item{AVE}{Indicators of model quality based on the Average Variance Explained (AVE): 
 #' AVE(for one block), AVE(outer model), AVE(inner model).}
-#' @return \item{C}{A design matrix that describes the relationships between blocks (user specified).}
+#' @return \item{call}{Call of the function}
+#' @return \item{crit}{A vector that contains the values of the objective function at each iterations.}
 #' @return \item{tau}{\eqn{1 * J} vector containing the value for the tau penalties applied to each of the \eqn{J} blocks of data (user specified)}
-#' @return \item{scheme}{The scheme chosen by the user (user specified).}
 #' @references Tenenhaus M., Tenenhaus A. and Groenen PJF (2017), Regularized generalized canonical correlation analysis: A framework for sequential multiblock component methods, Psychometrika, in press
 #' @references Tenenhaus A., Philippe C., & Frouin V. (2015). Kernel Generalized Canonical Correlation Analysis. Computational Statistics and Data Analysis, 90, 114-131.
 #' @references Tenenhaus A. and Tenenhaus M., (2011), Regularized Generalized Canonical Correlation Analysis, Psychometrika, Vol. 76, Nr 2, pp 257-284.
@@ -440,9 +440,9 @@ rgccak=function (A, C, tau = "optimal", scheme = "centroid",verbose = FALSE, ini
 	
     if(estimateNA!="no")
     {
-        result <- list(Y = Y, a = a, crit = crit, AVE_inner = AVEinner,  C = C, tau = tau, scheme = scheme,A=A,call=call)
+        result <- list(Y = Y, a = a, crit = crit, AVE_inner = AVEinner, A=A,call=call)
     }
-    else{result <- list(Y = Y, a = a, crit = crit, AVE_inner = AVEinner,  C = C, tau = tau, scheme = scheme,call=call)}
+    else{result <- list(Y = Y, a = a, crit = crit, AVE_inner = AVEinner,call=call)}
     
        return(result)
 }

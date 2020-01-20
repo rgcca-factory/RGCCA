@@ -223,7 +223,7 @@ predict.gcca = function(
         # vector of character giving the name of the block and the number of the component
         col_names = paste( unlist(mapply(function(name, times) rep(name, times),
                                          names(newA)[-newbloc_y],
-                                         object$ncomp)),
+                                         object$call$ncomp)),
                            names,
                            sep = "_")
         colnames(res) = col_names
@@ -231,7 +231,7 @@ predict.gcca = function(
         return(res)
       }
 
-    object$ncomp = object$ncomp[MATCH][-newbloc_y]
+    object$call$ncomp = object$call$ncomp[MATCH][-newbloc_y]
     comp.train = getComp("train")
     comp.test = getComp("test")
 
@@ -277,7 +277,7 @@ predict.gcca = function(
               object$call$C = object$C[MATCH, MATCH]
               comp = list()
               
-              for (i in 1:max(object$ncomp)) {
+              for (i in 1:max(object$call$ncomp)) {
 
                 comp[[i]] =  matrix(NA,
                                     NROW(comp.test),

@@ -43,10 +43,8 @@
 #' @return \item{Y}{A list of \eqn{J} elements. Each element of \eqn{Y} is a matrix that contains the RGCCA components for the corresponding block.}
 #' @return \item{a}{A list of \eqn{J} elements. Each element of \eqn{a} is a matrix that contains the outer weight vectors for each block.}
 #' @return \item{astar}{A list of \eqn{J} elements. Each element of astar is a matrix defined as Y[[j]][, h] = A[[j]]\%*\%astar[[j]][, h].}
-#' @return \item{C}{A design matrix that describes the relation between blocks (user specified).}
 #' @return \item{tau}{A vector or matrix that contains the values of the shrinkage parameters applied to each block and each dimension (user specified).}
-#' @return \item{scheme}{The scheme chosen by the user (user specified).}
-#' @return \item{ncomp}{A \eqn{1 \times J} vector that contains the numbers of components for each block (user specified).}
+#' @return \item{call}{Call of the function}#' @return \item{crit}{A vector that contains the values of the objective function at each iterations.}
 #' @return \item{crit}{A vector that contains the values of the criteria across iterations.}
 #' @return \item{mode}{A \eqn{1 \times J} vector that contains the formulation ("primal" or "dual") applied to each of the \eqn{J} blocks within the RGCCA alogrithm} 
 #' @return \item{AVE}{indicators of model quality based on the Average Variance Explained (AVE): AVE(for one block), AVE(outer model), AVE(inner model).}
@@ -243,7 +241,7 @@ rgcca=function (A, C = 1 - diag(length(A)), tau = rep(1, length(A)),  ncomp = re
       rownames(Y[[b]]) = rownames(A[[b]])
       colnames(Y[[b]]) = "comp1"
     }
-    out <- list(Y = Y, a = a, astar = a, C = C, tau = result$tau,  scheme = scheme, ncomp = ncomp, crit = result$crit, primal_dual = primal_dual, AVE = AVE,A=A0,call=call)
+    out <- list(Y = Y, a = a, astar = a, C = C, tau = result$call$tau,  scheme = scheme, ncomp = ncomp, crit = result$crit, primal_dual = primal_dual, AVE = AVE,A=A0,call=call)
     if(estimateNA %in% c("iterative","first","superblock","lebrusquet")){out[["imputedA"]]=A}
     
     class(out) <- "rgcca"
@@ -268,7 +266,7 @@ rgcca=function (A, C = 1 - diag(length(A)), tau = rep(1, length(A)),  ncomp = re
       rgcca.result <- rgccak(R, C, tau = tau, scheme = scheme,init = init, bias = bias, tol = tol, verbose = verbose,na.rm=na.rm)
     else rgcca.result <- rgccak(R, C, tau = tau[n, ], scheme = scheme, init = init, bias = bias, tol = tol, verbose = verbose,na.rm=na.rm)
     if (!is.numeric(tau)) 
-      tau_mat[n, ] = rgcca.result$tau
+      tau_mat[n, ] = rgcca.result$call$tau
     AVE_inner[n] <- rgcca.result$AVE_inner
     crit[[n]] <- rgcca.result$crit
     # deflation
@@ -296,7 +294,7 @@ rgcca=function (A, C = 1 - diag(length(A)), tau = rep(1, length(A)),  ncomp = re
   else rgcca.result <- rgccak(R, C, tau = tau[N + 1, ], scheme = scheme, init = init, bias = bias, tol = tol, verbose = verbose)
   crit[[N + 1]] <- rgcca.result$crit
   if (!is.numeric(tau)) 
-    tau_mat[N + 1, ] = rgcca.result$tau
+    tau_mat[N + 1, ] = rgcca.result$call$tau
   AVE_inner[max(ncomp)] <- rgcca.result$AVE_inner
   for (b in 1:J) {
     Y[[b]][, N + 1] <- rgcca.result$Y[, b]
@@ -328,8 +326,8 @@ rgcca=function (A, C = 1 - diag(length(A)), tau = rep(1, length(A)),  ncomp = re
   names(a)=names(A)
   AVE_X = shave.veclist(AVE_X, ncomp)
   AVE <- list(AVE_X = AVE_X, AVE_outer_model = AVE_outer, AVE_inner_model = AVE_inner)
-  out <- list(Y = shave.matlist(Y, ncomp), a = shave.matlist(a,ncomp), astar = shave.matlist(astar, ncomp), C = C, tau = tau_mat,
-                scheme = scheme, ncomp = ncomp, crit = crit, primal_dual = primal_dual,	AVE = AVE,call=call)
+  out <- list(Y = shave.matlist(Y, ncomp), a = shave.matlist(a,ncomp), astar = shave.matlist(astar, ncomp),  tau = tau_mat,
+                crit = crit, primal_dual = primal_dual,	AVE = AVE,call=call)
 
    class(out) <- "rgcca"
 

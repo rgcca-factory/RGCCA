@@ -34,7 +34,7 @@ get_bootstrap <- function(
             i_block <- length(rgcca$a)
     }
     
-    if (comp > min(rgcca$ncomp))
+    if (comp > min(rgcca$call$ncomp))
         stop("Selected dimension was not associated to every blocks",
              exit_code = 113)
     

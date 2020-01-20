@@ -159,5 +159,6 @@ rgcca.analyze <- function(
         func_out[[i]] <- as.list(environment())[[i]]
 
     class(func_out) <- tolower(type)
+    func_out$call=call
     invisible(func_out)
 }

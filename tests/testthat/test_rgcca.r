@@ -15,12 +15,9 @@ T1=Sys.time();resultRgcca_Tau0_test= rgcca(A, C, ncomp=rep(2,3),tau = c(0, 0, 0)
 T1=Sys.time();resultRgcca_TauOpt_test = rgcca(A, C, ncomp=rep(2,3),tau = rep("optimal",3), scheme = "factorial", scale = TRUE,verbose=FALSE);T2=Sys.time();Tdiff_TauOpt_test=T2-T1 ;# 0.04306483   secs
 
 # testing the same results than previously
-rgccaTest1=resultRgcca_Tau1$a[[1]]==resultRgcca_Tau1_test$a[[1]]
-
-rgccaTest2=all.equal(resultRgcca_Tau0,resultRgcca_Tau0_test);
-rgccaTest3=all.equal(resultRgcca_TauOpt,resultRgcca_TauOpt_test) ;
+rgccaTest1=round(abs(cor(resultRgcca_Tau1$a[[1]][,1],resultRgcca_Tau1_test$a[[1]][,1])),digits=7)==1
 
 test_that("test_rgcca_tau1",{
-      expect_true(TRUE)
+      expect_true(rgccaTest1)
 })
 

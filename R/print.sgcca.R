@@ -8,7 +8,7 @@ print.sgcca <- function(x)
   cat("There are J =", NCOL(x$call$C), "blocks.", fill = TRUE)
   cat("The design matrix is:\n") 
   colnames(x$call$C) = rownames(x$call$C) = names(x$a) ; print(x$call$C)
-  cat("The", x$scheme, "scheme was used.", fill = TRUE)
+  cat("The", x$call$scheme, "scheme was used.", fill = TRUE)
   for (i in 1:NCOL(x$call$C)) {
     cat("\n The sparsity parameter used for block", i, "was:", 
           round(x$c1[i], 4), fill = TRUE)

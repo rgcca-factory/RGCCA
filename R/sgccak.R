@@ -18,8 +18,7 @@
 #' @return \item{crit}{The values of the objective function at each iteration of the iterative procedure.}
 #' @return \item{converg}{Speed of convergence of the alogrithm to reach the tolerance.}
 #' @return \item{AVE}{Indicators of model quality based on the Average Variance Explained (AVE): AVE(for one block), AVE(outer model), AVE(inner model).}
-#' @return \item{C}{A design matrix that describes the relationships between blocks (user specified).}
-#' @return \item{scheme}{The scheme chosen by the user (user specified).}
+#' @return \item{call}{Call of the function}
 #' @title Internal function for computing the SGCCA parameters (SGCCA block components, outer weight vectors etc.)
 #' @export sgccak 
 #' @importFrom Deriv Deriv
@@ -127,7 +126,7 @@ sgccak <-  function(A, C, c1 = rep(1, length(A)), scheme = "centroid", scale = F
   AVE_inner  <- sum(C*cor(Y)^2/2)/(sum(C)/2) # AVE inner model
   
   result <- list(Y = Y, a = a, crit = crit[which(crit != 0)], 
-                 AVE_inner = AVE_inner, C = C, c1, scheme = scheme,call=call)
+                 AVE_inner = AVE_inner,call=call)
   return(result)                                                                          
 }
 

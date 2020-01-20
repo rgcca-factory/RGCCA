@@ -262,23 +262,23 @@ check_arg <- function(opt) {
     if (is.null(opt$datasets))
         stop(paste0("datasets is required."), exit_code = 121)
     
-    if (is.null(opt$scheme))
-        opt$scheme <- "factorial"
-    else if (!opt$scheme %in% seq(4)) {
+    if (is.null(opt$call$scheme))
+        opt$call$scheme <- "factorial"
+    else if (!opt$call$scheme %in% seq(4)) {
         stop(
             paste0(
                 "scheme should be comprise between 1 and 4 [by default: 2], not be equal to ",
-                opt$scheme,
+                opt$call$scheme,
                 "."
             ),
             exit_code = 122
         )
     } else {
         schemes <- c("horst", "factorial", "centroid")
-        if (opt$scheme == 4)
-            opt$scheme <- function(x) x ^ 4
+        if (opt$call$scheme == 4)
+            opt$call$scheme <- function(x) x ^ 4
         else
-            opt$scheme <- schemes[opt$scheme]
+            opt$call$scheme <- schemes[opt$call$scheme]
     }
 
     if (!opt$separator %in% seq(3)) {
@@ -329,7 +329,7 @@ post_check_arg <- function(opt, rgcca) {
     }
 
     for (x in c("compx", "compy"))
-        opt[[x]] <- check_compx(x, opt[[x]], rgcca$ncomp, opt$block)
+        opt[[x]] <- check_compx(x, opt[[x]], rgcca$call$ncomp, opt$block)
 
     return(opt)
 }
@@ -450,9 +450,9 @@ rgcca_out <- rgcca.analyze(
     connection = connection,
     response = opt$response,
     superblock = opt$superblock,
-    tau = opt$tau,
-    ncomp = opt$ncomp,
-    scheme = opt$scheme,
+    tau = opt$call$tau,
+    ncomp = opt$call$ncomp,
+    scheme = opt$call$scheme,
     scale = opt$scale,
     type = opt$type
 )
@@ -461,7 +461,7 @@ opt <- post_check_arg(opt, rgcca_out)
 
 ########## Plot ##########
 
-if (rgcca_out$ncomp[opt$block] == 1 && is.null(opt$block_y)) {
+if (rgcca_out$call$ncomp[opt$block] == 1 && is.null(opt$block_y)) {
     warning("With a number of component of 1, a second block should be chosen to perform an individual plot")
 } else {
     (
@@ -479,7 +479,7 @@ if (rgcca_out$ncomp[opt$block] == 1 && is.null(opt$block_y)) {
     save_plot(opt$o1, individual_plot)
 }
 
-if (rgcca_out$ncomp[opt$block] > 1) {
+if (rgcca_out$call$ncomp[opt$block] > 1) {
     (
         corcircle <- plot_var_2D(
             rgcca_out,
@@ -531,9 +531,9 @@ perm <- rgcca_permutation(
     connection = connection,
     response = opt$response, 
     superblock = opt$superblock,
-    tau = opt$tau,
-    ncomp = opt$ncomp,
-    scheme = opt$scheme,
+    tau = opt$call$tau,
+    ncomp = opt$call$ncomp,
+    scheme = opt$call$scheme,
     scale = opt$scale,
     type = opt$type, 
     nperm = 5)

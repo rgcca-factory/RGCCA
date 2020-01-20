@@ -41,7 +41,7 @@ rgcca_crossvalidation <- function(
             if (is(rgcca, "sgcca"))
                 tau <- rgcca$c1
             else
-                tau <- rgcca$tau
+                tau <- rgcca$call$tau
 
             if (rgcca$superblock) {
                 Atrain <- Atrain[-length(Atrain)]
@@ -53,8 +53,8 @@ rgcca_crossvalidation <- function(
                 rgcca$call$C,
                 superblock = rgcca$superblock,
                 tau = tau,
-                ncomp = rgcca$ncomp,
-                scheme = rgcca$scheme,
+                ncomp = rgcca$call$ncomp,
+                scheme = rgcca$call$scheme,
                 scale = FALSE,
                 type = class(rgcca),
                 verbose = FALSE,

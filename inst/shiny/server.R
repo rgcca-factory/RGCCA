@@ -11,7 +11,7 @@
 server <- function(input, output, session) {
     ################################################ Render UI ################################################
 
-    output$tau_custom <- renderUI({
+    output$call$tau_custom <- renderUI({
         refresh <- c(input$superblock)
         isolate (setAnalysis())
         setTauUI()
@@ -69,7 +69,7 @@ server <- function(input, output, session) {
             input$nb_comp,
             input$block,
             input$sep,
-            input$scheme,
+            input$call$scheme,
             input$scale,
             input$superblock,
             input$supervised
@@ -241,7 +241,7 @@ server <- function(input, output, session) {
         return(ui)
     })
 
-    output$tau_opt_custom <- renderUI({
+    output$call$tau_opt_custom <- renderUI({
         ui <- checkboxInput(inputId = "tau_opt",
                             label = "Use an optimal tau",
                             value = TRUE)
@@ -257,7 +257,7 @@ server <- function(input, output, session) {
         return(ui)
     })
 
-    output$scheme_custom <- renderUI({
+    output$call$scheme_custom <- renderUI({
         ui <- radioButtons(
             inputId = "scheme",
             label = "Scheme function",
@@ -500,14 +500,14 @@ server <- function(input, output, session) {
             input$blocks,
             input$superblock,
             input$connection,
-            input$scheme,
+            input$call$scheme,
             input$nb_mark,
             input$scale,
             input$init,
             input$compx,
             input$compy,
-            input$tau,
-            input$tau_opt,
+            input$call$tau,
+            input$call$tau_opt,
             input$analysis_type,
             input$connection,
             input$nb_comp,
@@ -621,7 +621,7 @@ server <- function(input, output, session) {
             analysis_type <- input$analysis_type
 
         # Tau is set to optimal by default
-        if (is.null(input$tau_opt)  || (input$tau_opt && analysis_type != "SGCCA"))
+        if (is.null(input$call$tau_opt)  || (input$call$tau_opt && analysis_type != "SGCCA"))
             tau <- "optimal"
         else{
             # otherwise the tau value fixed by the user is used
@@ -667,7 +667,7 @@ server <- function(input, output, session) {
         # Load the analysis
 
         isolate({
-            if (length(grep("[SR]GCCA", analysis_type)) == 1 && !input$tau_opt)
+            if (length(grep("[SR]GCCA", analysis_type)) == 1 && !input$call$tau_opt)
                 tau <- getTau()
         })
 
@@ -686,7 +686,7 @@ server <- function(input, output, session) {
                             !is.null(input$superblock) && input$superblock),
                         tau = tau,
                         ncomp = input$nb_comp,
-                        scheme = input$scheme,
+                        scheme = input$call$scheme,
                         scale = FALSE,
                         init = input$init,
                         bias = TRUE,
@@ -708,7 +708,7 @@ server <- function(input, output, session) {
 
     getPerm <-  function(){
         isolate({
-            if (length(grep("[SR]GCCA", analysis_type)) == 1 && !input$tau_opt)
+            if (length(grep("[SR]GCCA", analysis_type)) == 1 && !input$call$tau_opt)
                 tau <- getTau()
         })
 
@@ -737,7 +737,7 @@ server <- function(input, output, session) {
                         !is.null(input$superblock) && input$superblock),
                     tau = tau,
                     ncomp = input$nb_comp,
-                    scheme = input$scheme,
+                    scheme = input$call$scheme,
                     scale = FALSE,
                     init = input$init,
                     bias = TRUE,
@@ -1048,9 +1048,9 @@ server <- function(input, output, session) {
             input$superblock,
             input$supervised,
             input$nb_comp,
-            input$scheme,
+            input$call$scheme,
             input$init,
-            input$tau_opt,
+            input$call$tau_opt,
             input$analysis_type
         ),
         {
@@ -1075,7 +1075,7 @@ server <- function(input, output, session) {
                     hide(i)
             }
 
-            if (!is.null(input$tau_opt) && !input$tau_opt)
+            if (!is.null(input$call$tau_opt) && !input$call$tau_opt)
                 setTauUI()
 
         },

@@ -57,7 +57,7 @@ get_ctr2 <- function(
                 function(x)
                     apply(
                         sapply(
-                            c(compx, compy, compz[compz >= rgcca$ncomp[x]]),
+                            c(compx, compy, compz[compz >= rgcca$call$ncomp[x]]),
                             function(y) rgcca$a[[x]][, y] != 0), 
                         1, 
                         function(z) Reduce("|", z)

@@ -34,18 +34,18 @@ bootstrap_k <- function(
 
     if (is.null(blocks)) {
         blocks <- rgcca$blocks
-        connection <- rgcca$blocks
-        ncomp <- rgcca$ncomp
-        scheme <- rgcca$scheme
-        bias <- rgcca$bias
-        tol <- rgcca$tol
-        superblock <- rgcca$superblock
+        connection <- rgcca$C
+        ncomp <- rgcca$call$ncomp
+        scheme <- rgcca$call$scheme
+        bias <- rgcca$call$bias
+        tol <- rgcca$call$tol
+        superblock <- rgcca$call$superblock
         type <- class(rgcca)
 
         if (is(rgcca, "sgcca"))
-            tau <- rgcca$c1
+            tau <- rgcca$call$c1
         else
-            tau <- rgcca$tau
+            tau <- rgcca$call$tau
 
         if (superblock) {
             blocks <- blocks[-length(blocks)]

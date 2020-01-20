@@ -234,7 +234,7 @@ rgcca_predict = function(
         col_names <- paste(unlist(mapply(
                 function(name, times)  rep(name, times),
                 names(newA)[-newbloc_y],
-                rgcca$ncomp
+                rgcca$call$ncomp
             )), names,  sep = "_")
         colnames(res) <- col_names
 
@@ -242,7 +242,7 @@ rgcca_predict = function(
     }
 
 
-    rgcca$ncomp <- rgcca$ncomp[MATCH][-newbloc_y]
+    rgcca$call$ncomp <- rgcca$call$ncomp[MATCH][-newbloc_y]
     comp.train <- getComp("train")
     comp.test <- getComp("test")
 
@@ -292,7 +292,7 @@ rgcca_predict = function(
                     rgcca$call$C <- rgcca$call$C[MATCH, MATCH]
                     comp <- list()
                     
-                    for (i in seq(max(rgcca$ncomp))) {
+                    for (i in seq(max(rgcca$call$ncomp))) {
                         comp[[i]] <-  matrix(
                             NA,
                             NROW(comp.test),
