@@ -99,20 +99,20 @@ pcasb_ind=abs(cor(pcaSB$x[,1],scaledPCASB$Y[[1]][,1]))==1
 #pcasb_var=abs(cor(pcaSB$rotation[,1],scaledPCASB$astar[[1]][,1]))==1
 
 #------------PLS 
- res_pls = plsr(X_polit ~ X_agric, ncomp = 1, method = "simpls")
- A = list(X_agric,X_polit);
- pls_with_rgcca= rgcca.analyze (
-     blocks=A,
-     connection=matrix(c(0,1,1,0),2,2),
-     tau=rep(1,2),
-     ncomp = rep(1, length(A)),
-    sameBlockWeight=FALSE)
- 
-# 
- cor_X = abs(cor(res_pls$fitted.values[,,1][,1], pls_with_rgcca$Y[[1]]))
- cor_Y = abs(drop(cor(res_pls$Yloadings, pls_with_rgcca$a[[2]])))
- cor_X
- cor_Y
+#  res_pls = plsr(X_polit ~ X_agric, ncomp = 1, method = "simpls")
+#  A = list(X_agric,X_polit);
+#  pls_with_rgcca= rgcca.analyze (
+#      blocks=A,
+#      connection=matrix(c(0,1,1,0),2,2),
+#      tau=rep(1,2),
+#      ncomp = rep(1, length(A)),
+#     sameBlockWeight=FALSE)
+#  
+# # 
+#  cor_X = abs(cor(res_pls$fitted.values[,,1][,1], pls_with_rgcca$Y[[1]]))
+#  cor_Y = abs(drop(cor(res_pls$Yloadings, pls_with_rgcca$a[[2]])))
+#  cor_X
+#  cor_Y
 # 
 # cor_X
 # cor_Y
