@@ -7,7 +7,7 @@
 sgcca(A, C = 1 - diag(length(A)), c1 = rep(1, length(A)),
   ncomp = rep(1, length(A)), scheme = "centroid", scale = TRUE,
   init = "svd", bias = TRUE, tol = .Machine$double.eps,
-  verbose = FALSE, returnA = FALSE, sameBlockWeight = TRUE)
+  verbose = FALSE, sameBlockWeight = TRUE)
 }
 \arguments{
 \item{A}{A list that contains the \eqn{J} blocks of variables \eqn{X_1, X_2, ..., X_J}.}
@@ -36,7 +36,6 @@ If c1 is a matrix, each row \eqn{h} defines the constraints applied to the weigh
 
 \item{verbose}{Will report progress while computing if verbose = TRUE (default: TRUE).}
 
-\item{returnA}{If TRUE, returns the original A list}
 
 \item{sameBlockWeight}{If TRUE, all blocks are weighted by their own variance: all the blocks have the same weight}
 }

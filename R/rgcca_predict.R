@@ -289,7 +289,7 @@ rgcca_predict = function(
                     # TODO ??? check case for vector
                     comp.test
                 } else{
-                    rgcca$C <- rgcca$C[MATCH, MATCH]
+                    rgcca$call$C <- rgcca$call$C[MATCH, MATCH]
                     comp <- list()
                     
                     for (i in seq(max(rgcca$ncomp))) {
@@ -307,11 +307,11 @@ rgcca_predict = function(
                                 comp[[i]][, n] <- comp.test[, pos]
                         }
                         comp[[i]] <- sum(abs(
-                                cor(comp[[i]], use = "pairwise.complete.obs") * rgcca$C
-                            )[upper.tri(rgcca$C)], na.rm = TRUE)
+                                cor(comp[[i]], use = "pairwise.complete.obs") * rgcca$call$C
+                            )[upper.tri(rgcca$call$C)], na.rm = TRUE)
                         if (comp[[i]] == 0)
                             comp[[i]] <-  NA
-                        # (cor(comp[[i]], use = "pairwise.complete.obs")*rgcca$C)[upper.tri(rgcca$C)]**2
+                        # (cor(comp[[i]], use = "pairwise.complete.obs")*rgcca$call$C)[upper.tri(rgcca$call$C)]**2
                     }
                     score <- mean(unlist(comp), na.rm = TRUE)
                 }

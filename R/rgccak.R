@@ -40,7 +40,8 @@
 rgccak=function (A, C, tau = "optimal", scheme = "centroid",verbose = FALSE, init = "svd", bias = TRUE, tol = 1e-08,na.rm=TRUE,estimateNA="no",scale=TRUE,sameBlockWeight=TRUE,initImpute="rand") 
 {
     
-    
+    call=list(A=A, C=C,tau= tau , scheme = scheme,verbose = verbose, init = init, bias = bias, tol = tol,na.rm=na.rm,estimateNA=estimateNA,scale=scale,sameBlockWeight=sameBlockWeight,initImpute=initImpute) 
+        
      if(mode(scheme) != "function") 
     {
     if(!scheme %in% c("horst","factorial","centroid")){stop("Please choose scheme as 'horst','factorial','centroid' or as a convex function")}
@@ -439,9 +440,9 @@ rgccak=function (A, C, tau = "optimal", scheme = "centroid",verbose = FALSE, ini
 	
     if(estimateNA!="no")
     {
-        result <- list(Y = Y, a = a, crit = crit, AVE_inner = AVEinner,  C = C, tau = tau, scheme = scheme,A=A)
+        result <- list(Y = Y, a = a, crit = crit, AVE_inner = AVEinner,  C = C, tau = tau, scheme = scheme,A=A,call=call)
     }
-    else{result <- list(Y = Y, a = a, crit = crit, AVE_inner = AVEinner,  C = C, tau = tau, scheme = scheme)}
+    else{result <- list(Y = Y, a = a, crit = crit, AVE_inner = AVEinner,  C = C, tau = tau, scheme = scheme,call=call)}
     
        return(result)
 }

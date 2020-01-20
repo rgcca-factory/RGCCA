@@ -5,7 +5,7 @@
 #' @inheritParams rgccaNa
 #' @param scale A boolean scaling the blocks
 #' @param init A character among "svd" (Singular Value Decompostion) or "random"
-#' for alorithm initialization
+#' for algorithm initialization
 #' @param bias A boolean for a biased variance estimator
 #' @param verbose A boolean to display the progress of the analysis
 #' @param response An integer giving the index of a block considered as a 
@@ -48,7 +48,23 @@ rgcca.analyze <- function(
     sameBlockWeight =TRUE,
     method="complete",knn.k="all",knn.output="weightedMean",knn.klim=NULL,knn.sameBlockWeight=TRUE,pca.ncp=1)
 {
-    call=match.call()
+   # call=match.call()
+    call=list(   blocks=blocks,
+                 connection =connection,
+                 response = response,
+                 superblock = superblock,
+                 tau = tau,
+                 ncomp = ncomp,
+                 type = type,
+                 verbose = verbose,
+                 scheme = scheme,
+                 scale = scale,
+                 init = init,
+                 bias = bias, 
+                 tol = tol,
+                 sameBlockWeight =sameBlockWeight,
+                 method=method,knn.k=knn.k,knn.output=knn.output,knn.klim=knn.klim,knn.sameBlockWeight=knn.klim,pca.ncp=pca.ncp)
+    
     match.arg(tolower(type), c("rgcca", "cpca-w", "gcca", "hpca", "maxbet-b", "maxbet", "maxdiff-b",
                       "maxdiff", "maxvar-a", "maxvar-b", "maxvar", "niles", "r-maxvar", "rcon-pca",
                       "ridge-gca", "sabscor", "ssqcor", "ssqcor", "ssqcov-1", "ssqcov-2", "ssqcov",

@@ -274,7 +274,7 @@ predict.gcca = function(
             if (is.null(newA[[1]])) { # TODO ??? check case for vector
               comp.test
             }else{
-              object$C = object$C[MATCH, MATCH]
+              object$call$C = object$C[MATCH, MATCH]
               comp = list()
               
               for (i in 1:max(object$ncomp)) {
@@ -289,7 +289,7 @@ predict.gcca = function(
                   if (length(pos) > 0)
                     comp[[i]][, n] = comp.test[, pos]
                 }
-                comp[[i]] = sum(abs(cor(comp[[i]], use = "pairwise.complete.obs")*object$C)[upper.tri(object$C)], na.rm = TRUE)
+                comp[[i]] = sum(abs(cor(comp[[i]], use = "pairwise.complete.obs")*object$call$C)[upper.tri(object$call$C)], na.rm = TRUE)
                 if (comp[[i]] == 0)
                     comp[[i]] =  NA
                 # (cor(comp[[i]], use = "pairwise.complete.obs")*object$C)[upper.tri(object$C)]**2

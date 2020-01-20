@@ -113,7 +113,7 @@
 
 
 sgcca <- function (A, C = 1-diag(length(A)), c1 = rep(1, length(A)), ncomp = rep(1, length(A)), scheme = "centroid", scale = TRUE, init = "svd", bias = TRUE, tol = .Machine$double.eps, verbose = FALSE,returnA=FALSE,sameBlockWeight=TRUE){
-  call=match.call()
+  call=list(A=A, C = C, c1 = c1, ncomp = ncomp, scheme = scheme, scale = scale, init = init, bias = bias, tol = tol, verbose = verbose,returnA=returnA,sameBlockWeight=sameBlockWeight)
   ndefl <- ncomp-1
   N <- max(ndefl)
   J <- length(A)

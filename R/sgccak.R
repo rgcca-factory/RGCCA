@@ -26,6 +26,8 @@
 sgccak <-  function(A, C, c1 = rep(1, length(A)), scheme = "centroid", scale = FALSE,
                     tol = .Machine$double.eps, init="svd", bias = TRUE, verbose = TRUE){
 
+     call=list(A, C, c1 = c1, scheme = scheme, scale = scale,
+               tol = tol, init=init, bias = bias, verbose = verbose)
   J <- length(A)
   pjs = sapply(A, NCOL)
   AVE_X <- rep(0, J)
@@ -125,7 +127,7 @@ sgccak <-  function(A, C, c1 = rep(1, length(A)), scheme = "centroid", scale = F
   AVE_inner  <- sum(C*cor(Y)^2/2)/(sum(C)/2) # AVE inner model
   
   result <- list(Y = Y, a = a, crit = crit[which(crit != 0)], 
-                 AVE_inner = AVE_inner, C = C, c1, scheme = scheme)
+                 AVE_inner = AVE_inner, C = C, c1, scheme = scheme,call=call)
   return(result)                                                                          
 }
 

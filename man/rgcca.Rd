@@ -7,7 +7,7 @@
 rgcca(A, C = 1 - diag(length(A)), tau = rep(1, length(A)),
   ncomp = rep(1, length(A)), scheme = "centroid", scale = TRUE,
   init = "svd", bias = TRUE, tol = 1e-08, verbose = TRUE,
-  sameBlockWeight = TRUE, na.rm = TRUE, returnA = FALSE,
+  sameBlockWeight = TRUE, na.rm = TRUE,
   estimateNA = "no")
 }
 \arguments{
@@ -38,8 +38,6 @@ If tau is a matrix, tau[k, j] is associated with \eqn{\mathbf{X}_{jk}} (\eqn{k}t
 \item{sameBlockWeight}{A logical value indicating if the different blocks should have the same weight in the analysis (default, sameBlockWeight=TRUE)}
 
 \item{na.rm}{If TRUE, runs rgcca only on available data.}
-
-\item{returnA}{A logical value indicating if the A list should be return as a result (default, sameBlockWeight=FALSE)}
 
 \item{estimateNA}{If TRUE, missing values are estimated during the RGCCA calculation}
 }

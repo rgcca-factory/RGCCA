@@ -22,7 +22,7 @@ crossvalidation.gcca <- function(
 
             rgcca_k <- rgcca.analyze(
                 Atrain,
-                rgcca$C,
+                rgcca$call$C,
                 tau = tau,
                 ncomp = rgcca$ncomp,
                 scheme = rgcca$scheme,

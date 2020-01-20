@@ -7,7 +7,7 @@
 rgccaNa(A, method, C = 1 - diag(length(A)), tau = rep(1, length(A)),
   ncomp = rep(1, length(A)), scheme = "centroid", scale = TRUE,
   init = "svd", bias = TRUE, tol = 1e-08, verbose = TRUE,
-  sameBlockWeight = TRUE, returnA = FALSE, knn.k = "all",
+  sameBlockWeight = TRUE, knn.k = "all",
   knn.output = "weightedMean", knn.klim = NULL,
   knn.sameBlockWeight = TRUE, pca.ncp = 1)
 }
@@ -39,8 +39,6 @@ If tau is a matrix, tau[k, j] is associated with \eqn{\mathbf{X}_{jk}} (\eqn{k}t
 \item{verbose}{If verbose = TRUE, the progress will be report while computing (default: TRUE).}
 
 \item{sameBlockWeight}{TRUE by default : each block have the same weight in the RGCCA analysis. If FALSE, the weight of each block depends on the number of variables of the block}
-
-\item{returnA}{If TRUE, the initial A list is returned}
 
 \item{knn.k}{Number of k nearest neighbors}
 

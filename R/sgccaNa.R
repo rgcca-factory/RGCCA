@@ -11,7 +11,6 @@
 #' @param bias A logical value for biaised or unbiaised estimator of the var/cov (default: bias = TRUE).
 #' @param tol The stopping value for convergence.
 #' @param sameBlockWeight TRUE by default : each block have the same weight in the RGCCA analysis. If FALSE, the weight of each block depends on the number of variables of the block
-#' @param returnA If TRUE, the initial A list is returned
 #' @param knn.k Number of k nearest neighbors
 #' @param knn.output "mean", "random" or "weightedMean" : returns respectively the average of the k nearest neigbors, one selected randomly, or an average weighted by the distance of the k NN
 #' @param knn.klim k limits (if k is not a number, optimal k between klim[1] and klim[2] is calculated )
@@ -43,7 +42,7 @@
 #' rgccaNa(A,method="nipals")
 #' rgccaNa(A,method="knn2")
 
-sgccaNa=function (A,method, C = 1 - diag(length(A)), c1 = rep(1, length(A)),    ncomp = rep(1, length(A)), scheme = "centroid", scale = TRUE,   init = "svd", bias = TRUE, tol = 1e-08, verbose = TRUE,sameBlockWeight=TRUE,returnA=FALSE,knn.k="all",knn.output="weightedMean",knn.klim=NULL,knn.sameBlockWeight=TRUE,pca.ncp=1) 
+sgccaNa=function (A,method, C = 1 - diag(length(A)), c1 = rep(1, length(A)),    ncomp = rep(1, length(A)), scheme = "centroid", scale = TRUE,   init = "svd", bias = TRUE, tol = 1e-08, verbose = TRUE,sameBlockWeight=TRUE,knn.k="all",knn.output="weightedMean",knn.klim=NULL,knn.sameBlockWeight=TRUE,pca.ncp=1)
 { 
   nvar = sapply(A, NCOL)
   superblockAsList=function(superblock,A)
@@ -122,7 +121,7 @@ sgccaNa=function (A,method, C = 1 - diag(length(A)), c1 = rep(1, length(A)),    
       }
   }
   
-  resRgcca=sgcca(A2,c1=c1,ncomp=ncomp,verbose=FALSE,scale=scale,sameBlockWeight=sameBlockWeight,scheme=scheme,returnA=TRUE,tol=tol)
+  resRgcca=sgcca(A2,c1=c1,ncomp=ncomp,verbose=FALSE,scale=scale,sameBlockWeight=sameBlockWeight,scheme=scheme,tol=tol)
  return(list(imputedA=A2,rgcca=resRgcca,method,indNA=indNA))
 
 }

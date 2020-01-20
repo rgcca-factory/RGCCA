@@ -40,7 +40,7 @@ whichNAmethod=function(A,listNAdataset=NULL,C=matrix(1,length(A),length(A))-diag
     )
   }
 
-  referenceRgcca=rgcca(referenceDataset,C=C,tau=tau,ncomp=ncomp,returnA=TRUE,verbose=verbose,sameBlockWeight=sameBlockWeight,scale=scale,tol=tol,scheme=scheme)
+  referenceRgcca=rgcca(referenceDataset,C=C,tau=tau,ncomp=ncomp,verbose=verbose,sameBlockWeight=sameBlockWeight,scale=scale,tol=tol,scheme=scheme)
   print("comparisons of RGCCA with the different methods...(this could take some time)")
   resultComparison=NULL
   resultComparison=mclapply(1:nDatasets,function(i)
@@ -49,7 +49,7 @@ whichNAmethod=function(A,listNAdataset=NULL,C=matrix(1,length(A),length(A))-diag
     indicators=NULL
     for(method in listMethods)
     {  
-        methodRgcca=rgccaNa(A=listNAdataset[[i]]$dat,C=C,tau=tau,method=method,ncomp=ncomp,returnA=TRUE,sameBlockWeight=sameBlockWeight,scale=scale,tol=tol,verbose=verbose,scheme=scheme)
+        methodRgcca=rgccaNa(A=listNAdataset[[i]]$dat,C=C,tau=tau,method=method,ncomp=ncomp,sameBlockWeight=sameBlockWeight,scale=scale,tol=tol,verbose=verbose,scheme=scheme)
        indicators[[method]]=comparison(rgcca1=referenceRgcca,rgcca2=methodRgcca$rgcca,selectPatient=selectCompletePatient,indNA=methodRgcca$indNA)
     }
     return(indicators)

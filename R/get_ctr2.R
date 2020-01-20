@@ -41,7 +41,6 @@ get_ctr2 <- function(
         blocks.all <- rgcca$blocks
         rgcca$blocks <- rep(list(Reduce(cbind, rgcca$blocks)), length(rgcca$blocks))
         names(rgcca$blocks) <- names(blocks.all)
-       # rgcca$A=rgcca$blocks
     }
 
     df <- get_ctr(rgcca, compx, compy, compz, i_block, type, collapse)
