@@ -99,7 +99,6 @@ pcasb_ind=abs(cor(pcaSB$x[,1],scaledPCASB$Y[[1]][,1]))==1
 #pcasb_var=abs(cor(pcaSB$rotation[,1],scaledPCASB$astar[[1]][,1]))==1
 
 #------------PLS 
- library(pls)
  res_pls = plsr(X_polit ~ X_agric, ncomp = 1, method = "simpls")
  A = list(X_agric,X_polit);
  pls_with_rgcca= rgcca.analyze (
