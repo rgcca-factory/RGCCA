@@ -21,7 +21,7 @@
 #' @export
 rgcca_crossvalidation <- function(
     rgcca,
-    i_block = length(rgcca$blocks),
+    i_block = length(rgcca$call$blocks),
     validation = "loo",
     type = "regression",
     fit = "lm",
@@ -29,7 +29,7 @@ rgcca_crossvalidation <- function(
     k = 5,
     n_cores = parallel::detectCores() - 1) {
     
-    bloc_to_pred = names(rgcca$blocks)[i_block]
+    bloc_to_pred = names(rgcca$call$blocks)[i_block]
 
     match.arg(validation, c("test", "kfold", "loo"))
 
@@ -39,7 +39,7 @@ rgcca_crossvalidation <- function(
             Atrain <- lapply(bigA, function(x) x[-inds, ])
 
             if (is(rgcca, "sgcca"))
-                tau <- rgcca$c1
+                tau <- rgcca$call$c1
             else
                 tau <- rgcca$call$tau
 
@@ -58,9 +58,9 @@ rgcca_crossvalidation <- function(
                 scale = FALSE,
                 type = class(rgcca),
                 verbose = FALSE,
-                init = rgcca$init,
-                bias = rgcca$bias,
-                tol = rgcca$tol,
+                init = rgcca$call$init,
+                bias = rgcca$call$bias,
+                tol = rgcca$call$tol,
                 method="complete"
             )
 
@@ -78,19 +78,19 @@ rgcca_crossvalidation <- function(
         }
     )
 
-    bigA <- rgcca$blocks
+    bigA <- rgcca$call$blocks
 
     if (validation == "loo")
-        v_inds <- seq(nrow(rgcca$blocks[[1]]))
+        v_inds <- seq(nrow(rgcca$call$blocks[[1]]))
     if (validation == "kfold") {
-        v_inds <- sample(nrow(rgcca$blocks[[1]]))
+        v_inds <- sample(nrow(rgcca$call$blocks[[1]]))
         v_inds <- split(v_inds, sort(v_inds %% k))
     }
 
     if (validation == "test") {
         inds <- sample(
-            nrow(rgcca$blocks[[1]]),
-            size = nrow(rgcca$blocks[[1]]) * 0.3)
+            nrow(rgcca$call$blocks[[1]]),
+            size = nrow(rgcca$call$blocks[[1]]) * 0.3)
         scores <- list(eval(f)())
         preds <- scores$res
     }else{
@@ -106,7 +106,7 @@ rgcca_crossvalidation <- function(
     if (validation %in% c("loo", "kfold")) {
         # concatenation of each test set to provide predictions for each block
         preds <- lapply(
-            seq(length(rgcca$blocks)),
+            seq(length(rgcca$call$blocks)),
             function(x) Reduce(
                 rbind, 
                 lapply(
@@ -116,10 +116,10 @@ rgcca_crossvalidation <- function(
                 )
             )
 
-        names(preds) <- names(rgcca$blocks)
+        names(preds) <- names(rgcca$call$blocks)
 
     for (x in seq(length(preds)))
-        row.names(preds[[x]]) <- row.names(rgcca$blocks[[1]])
+        row.names(preds[[x]]) <- row.names(rgcca$call$blocks[[1]])
 
     }
 

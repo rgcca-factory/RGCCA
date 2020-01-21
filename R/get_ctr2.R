@@ -22,25 +22,26 @@ get_ctr2 <- function(
     compx = 1,
     compy = 2,
     compz = NULL,
-    i_block = length(rgcca$blocks),
+    i_block = length(rgcca$call$blocks),
     type = "cor",
     n_mark = 100,
     collapse = FALSE,
     remove_var = TRUE) {
 
     x <- y <- selectedVar <- NULL
+    blocks <- rgcca$call$blocks
 
     if (collapse) {
         if (rgcca$superblock) {
             
-            rgcca$blocks <- rgcca$blocks[-length(rgcca$blocks)]
-            if (i_block > length(rgcca$blocks))
-                i_block <- length(rgcca$blocks)
+            blocks <- blocks[-length(blocks)]
+            if (i_block > length(blocks))
+                i_block <- length(blocks)
         }
         rgcca$superblock <- TRUE
-        blocks.all <- rgcca$blocks
-        rgcca$blocks <- rep(list(Reduce(cbind, rgcca$blocks)), length(rgcca$blocks))
-        names(rgcca$blocks) <- names(blocks.all)
+        blocks.all <- blocks
+        blocks <- rep(list(Reduce(cbind, blocks)), length(blocks))
+        names(blocks) <- names(blocks.all)
     }
 
     df <- get_ctr(rgcca, compx, compy, compz, i_block, type, collapse)
@@ -93,7 +94,7 @@ get_ctr2 <- function(
                 unlist(
                     lapply(
                         seq(length(selectedVar)),
-                        function(x) which(colnames(rgcca$blocks[[length(rgcca$blocks)]]) == selectedVar[x])
+                        function(x) which(colnames(blocks[[length(blocks)]]) == selectedVar[x])
                     )
                 )
             ]

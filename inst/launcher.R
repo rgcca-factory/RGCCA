@@ -262,23 +262,23 @@ check_arg <- function(opt) {
     if (is.null(opt$datasets))
         stop(paste0("datasets is required."), exit_code = 121)
     
-    if (is.null(opt$call$scheme))
-        opt$call$scheme <- "factorial"
-    else if (!opt$call$scheme %in% seq(4)) {
+    if (is.null(opt$scheme))
+        opt$scheme <- "factorial"
+    else if (!opt$scheme %in% seq(4)) {
         stop(
             paste0(
                 "scheme should be comprise between 1 and 4 [by default: 2], not be equal to ",
-                opt$call$scheme,
+                opt$scheme,
                 "."
             ),
             exit_code = 122
         )
     } else {
         schemes <- c("horst", "factorial", "centroid")
-        if (opt$call$scheme == 4)
-            opt$call$scheme <- function(x) x ^ 4
+        if (opt$scheme == 4)
+            opt$scheme <- function(x) x ^ 4
         else
-            opt$call$scheme <- schemes[opt$call$scheme]
+            opt$scheme <- schemes[opt$scheme]
     }
 
     if (!opt$separator %in% seq(3)) {
@@ -323,8 +323,8 @@ post_check_arg <- function(opt, rgcca) {
     for (x in c("block", "block_y")) {
         if (!is.null(opt[[x]])) {
             if (opt[[x]] == 0)
-                opt[[x]] <- length(rgcca$blocks)
-            opt[[x]] <- check_blockx(x, opt[[x]], rgcca$blocks)
+                opt[[x]] <- length(rgcca$call$blocks)
+            opt[[x]] <- check_blockx(x, opt[[x]], rgcca$call$blocks)
         }
     }
 
@@ -450,9 +450,9 @@ rgcca_out <- rgcca.analyze(
     connection = connection,
     response = opt$response,
     superblock = opt$superblock,
-    tau = opt$call$tau,
-    ncomp = opt$call$ncomp,
-    scheme = opt$call$scheme,
+    tau = opt$tau,
+    ncomp = opt$ncomp,
+    scheme = opt$scheme,
     scale = opt$scale,
     type = opt$type
 )
@@ -531,9 +531,9 @@ perm <- rgcca_permutation(
     connection = connection,
     response = opt$response, 
     superblock = opt$superblock,
-    tau = opt$call$tau,
-    ncomp = opt$call$ncomp,
-    scheme = opt$call$scheme,
+    tau = opt$tau,
+    ncomp = opt$ncomp,
+    scheme = opt$scheme,
     scale = opt$scale,
     type = opt$type, 
     nperm = 5)

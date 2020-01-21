@@ -10,7 +10,7 @@ save_ind <- function(
         rgcca$Y,
         function(x) x[, c(compx, compy)]))
     colnames(inds) <- as.vector(sapply(
-        names(rgcca$blocks),
+        names(rgcca$call$blocks),
         function(x) paste0(x, ".axis", c(compx, compy))))
 
     write.table(inds, file, sep = "\t")

@@ -31,8 +31,7 @@
 #' @importFrom visNetwork visNetwork visNodes visEdges
 #' @importFrom igraph graph_from_data_frame V<- E<-
 #' @importFrom methods is
-rgcca.analyze <- function(
-    blocks,
+rgcca.analyze <- function(blocks,
     connection = 1 - diag(length(blocks)),
     response = NULL,
     superblock = TRUE,
@@ -43,33 +42,21 @@ rgcca.analyze <- function(
     scheme = "factorial",
     scale = TRUE,
     init = "svd",
-    bias = TRUE, 
+    bias = TRUE,
     tol = 1e-08,
-    sameBlockWeight =TRUE,
-    method="complete",knn.k="all",knn.output="weightedMean",knn.klim=NULL,knn.sameBlockWeight=TRUE,pca.ncp=1)
-{
-   # call=match.call()
-    call=list(   blocks=blocks,
-                 connection =connection,
-                 response = response,
-                 superblock = superblock,
-                 tau = tau,
-                 ncomp = ncomp,
-                 type = type,
-                 verbose = verbose,
-                 scheme = scheme,
-                 scale = scale,
-                 init = init,
-                 bias = bias, 
-                 tol = tol,
-                 sameBlockWeight =sameBlockWeight,
-                 method=method,knn.k=knn.k,knn.output=knn.output,knn.klim=knn.klim,knn.sameBlockWeight=knn.klim,pca.ncp=pca.ncp)
-    
+    sameBlockWeight = TRUE,
+    method = "complete",
+    knn.k = "all",
+    knn.output = "weightedMean",
+    knn.klim = NULL,
+    knn.sameBlockWeight = TRUE,
+    pca.ncp = 1) {
+
     match.arg(tolower(type), c("rgcca", "cpca-w", "gcca", "hpca", "maxbet-b", "maxbet", "maxdiff-b",
                       "maxdiff", "maxvar-a", "maxvar-b", "maxvar", "niles", "r-maxvar", "rcon-pca",
                       "ridge-gca", "sabscor", "ssqcor", "ssqcor", "ssqcov-1", "ssqcov-2", "ssqcov",
                       "sum-pca", "sumcor", "sumcov-1", "sumcov-2", "sumcov.", "sabscov", "plspm","cca", "ra", "ifa", "pls","pca","sgcca"))
-    
+
     tau <- elongate_arg(tau, blocks)
     ncomp <- elongate_arg(ncomp, blocks)
 
@@ -134,31 +121,51 @@ rgcca.analyze <- function(
             init = init,
             bias = bias,
             tol = tol,
-            sameBlockWeight =sameBlockWeight,
-            method=method,
-            knn.k=knn.k,
-            knn.output=knn.output,
-            knn.klim=knn.klim,
-            knn.sameBlockWeight=knn.sameBlockWeight,
-            pca.ncp=pca.ncp
+            sameBlockWeight = sameBlockWeight,
+            method = method,
+            knn.k = knn.k,
+            knn.output = knn.output,
+            knn.klim = knn.klim,
+            knn.sameBlockWeight = knn.sameBlockWeight,
+            pca.ncp = pca.ncp
         )
     )
     func[[par]] <- opt$tau
 
-    func_out <- eval(as.call(func)) $rgcca
-   # rgcca$blocks <- rgcca$A
+    func_out <- eval(as.call(func))$rgcca
+   # rgcca$call$blocks <- rgcca$A #TODO
 
-      #   print(names(func_out))
     for (i in c("a", "astar", "Y"))
         names(func_out[[i]]) <- names(opt$blocks)
     names(func_out$AVE$AVE_X) <- names(opt$blocks)
-    func_out$blocks <- opt$blocks
    
-    func_out$superblock <- opt$superblock
-    for (i in c("scale", "init", "bias", "tol", "verbose"))
-        func_out[[i]] <- as.list(environment())[[i]]
+    func_out$superblock <- superblock # TODO
 
     class(func_out) <- tolower(type)
-    func_out$call=call
+    func_out$call <- list(
+        blocks = opt$blocks,
+        connection = opt$connection,
+        superblock = superblock,
+        tau = opt$tau,
+        ncomp = opt$ncomp,
+        scheme = opt$scheme
+               )
+
+    for (i in c(
+        "scale",
+        "init",
+        "bias",
+        "tol",
+        "verbose",
+        "response",
+        "sameBlockWeight",
+        "method",
+        "knn.k",
+        "knn.output",
+        "knn.klim",
+        "pca.ncp"
+    ))
+        func_out$call[[i]] <- as.list(environment())[[i]]
+
     invisible(func_out)
 }

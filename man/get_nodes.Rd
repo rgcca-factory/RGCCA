@@ -13,7 +13,7 @@ get_nodes(rgcca, tau = NULL)
 shrinkage parameter for covariance maximization}
 }
 \value{
-A dataframe with rgcca$blocks in rows and the number of variables, of rows 
+A dataframe with rgcca$call$blocks in rows and the number of variables, of rows
 and tau or c1 in columns
 }
 \description{

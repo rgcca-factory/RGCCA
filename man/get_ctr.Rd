@@ -5,7 +5,7 @@
 \title{Variable contribution}
 \usage{
 get_ctr(rgcca, compx = 1, compy = 2, compz = NULL,
-  i_block = length(rgcca$blocks), type = "cor", collapse = FALSE)
+  i_block = length(rgcca$call$blocks), type = "cor", collapse = FALSE)
 }
 \arguments{
 \item{rgcca}{A list giving the results of a R/SGCCA}

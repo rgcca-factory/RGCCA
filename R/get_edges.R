@@ -19,7 +19,7 @@ get_edges <- function(rgcca) {
         for (i in seq(J)) {
             if (i > k && rgcca$call$C[i, j] > 0)
                 edges[[length(edges) + 1]] <-
-                    c(names(rgcca$blocks)[j], names(rgcca$blocks)[i], rgcca$call$C[i, j])
+                    c(names(rgcca$call$blocks)[j], names(rgcca$call$blocks)[i], rgcca$call$C[i, j])
         }
         k <- k + 1
     }

@@ -5,7 +5,7 @@
 \title{Get the indexes of the analysis}
 \usage{
 get_ctr2(rgcca, compx = 1, compy = 2, compz = NULL,
-  i_block = length(rgcca$blocks), type = "cor", n_mark = 100,
+  i_block = length(rgcca$call$blocks), type = "cor", n_mark = 100,
   collapse = FALSE, remove_var = TRUE)
 }
 \arguments{

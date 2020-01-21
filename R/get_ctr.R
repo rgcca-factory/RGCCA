@@ -29,24 +29,24 @@ get_ctr <- function(
     compx = 1,
     compy = 2,
     compz = NULL,
-    i_block = length(rgcca$blocks),
+    i_block = length(rgcca$call$blocks),
     type = "cor",
     collapse = FALSE) {
     
     match.arg(type, c("cor", "weight"))
     stopifnot(!missing(rgcca))
 
+    blocks <- rgcca$call$blocks
+
     if (!collapse)
         i_block_2 <- i_block
     else
         i_block_2 <- 1
 
-    row.names = colnames(rgcca$blocks[[i_block]])
+    row.names = colnames(blocks[[i_block]])
     if (type == "cor")
         f <- function(x){
-                
-                intb=rgcca$blocks[[i_block_2]][rownames(rgcca$Y[[i_block_2]]),]
-                cor(intb,
+                cor(blocks[[i_block_2]][rownames(rgcca$Y[[i_block_2]]), ],
                 rgcca$Y[[i_block]][, x],
                 use = "pairwise.complete.obs"
             )
@@ -57,7 +57,7 @@ get_ctr <- function(
         else
             f <- function(x) unlist(
                 sapply(
-                    seq(length(rgcca$blocks)),
+                    seq(length(blocks)),
                     function(y) rgcca$a[[y]][, x]
                 )
             )

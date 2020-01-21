@@ -28,13 +28,13 @@ bootstrap_k <- function(
     superblock = TRUE) {
 
     if (is.null(blocks))
-        blocks.all <- rgcca$blocks
+        blocks.all <- rgcca$call$blocks
     else
         blocks.all <- blocks
 
     if (is.null(blocks)) {
-        blocks <- rgcca$blocks
-        connection <- rgcca$C
+        blocks <- rgcca$call$blocks
+        connection <- rgcca$call$connection
         ncomp <- rgcca$call$ncomp
         scheme <- rgcca$call$scheme
         bias <- rgcca$call$bias
