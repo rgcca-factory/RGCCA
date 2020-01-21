@@ -63,7 +63,7 @@ get_ctr <- function(
             )
     }
 
-    data.frame(
+    res <- data.frame(
         sapply(
             c(compx, compy, compz[compz >= rgcca$ncomp[i_block]]),
             function(x) f(x),
@@ -71,5 +71,7 @@ get_ctr <- function(
         ),
         row.names = row.names
     )
+    colnames(res) <- seq(2) # for save_var
+    return(res)
 
 }

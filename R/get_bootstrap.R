@@ -131,7 +131,7 @@ get_bootstrap <- function(
         df$color <- as.factor(get_bloc_var(rgcca$a, collapse = collapse))
 
     zero_var <- which(df[, 1] == 0)
-    if (length(zero_var) != 0)
+    if (NROW(df) > 1 && length(zero_var) != 0)
         df <- df[-zero_var, ]
 
     b <- data.frame(order_df(df, index, allCol = TRUE), order = NROW(df):1)

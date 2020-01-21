@@ -118,23 +118,28 @@ rgcca.analyze <- function(
             init = init,
             bias = bias,
             tol = tol,
-            sameBlockWeight =sameBlockWeight,
-            method=method,
-            knn.k=knn.k,
-            knn.output=knn.output,
-            knn.klim=knn.klim,
-            knn.sameBlockWeight=knn.sameBlockWeight,
-            pca.ncp=pca.ncp
+            sameBlockWeight = sameBlockWeight,
+            method = method,
+            knn.k = knn.k,
+            knn.output = knn.output,
+            knn.klim = knn.klim,
+            knn.sameBlockWeight = knn.sameBlockWeight,
+            pca.ncp = pca.ncp
         )
     )
     func[[par]] <- opt$tau
 
-    func_out <- eval(as.call(func)) $rgcca
+    func_out <- eval(as.call(func))$rgcca
    # rgcca$blocks <- rgcca$A
 
       #   print(names(func_out))
-    for (i in c("a", "astar", "Y"))
+    for (i in c("a", "astar", "Y")) {
         names(func_out[[i]]) <- names(opt$blocks)
+        for (j in seq(length(opt$blocks))) {
+            if (i %in%  c("a", "astar") && NCOL(opt$blocks[[j]]) == 1)
+                row.names(func_out[[i]][[j]]) <- colnames(opt$blocks[[j]])
+        }
+    }
     names(func_out$AVE$AVE_X) <- names(opt$blocks)
     func_out$blocks <- opt$blocks
    

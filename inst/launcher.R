@@ -394,14 +394,14 @@ load_libraries <- function(librairies) {
 opt <- list(
     directory = ".",
     separator = "\t",
-    type = "pca",
-    ncomp = 1,
+    type = "rgcca",
+    ncomp = 2,
     tau = "optimal",
     scheme = "factorial",
     init = 1,
     block = 0,
     compx = 1,
-    compy = 1,
+    compy = 2,
     nmark = 100,
     o1 = "individuals.pdf",
     o2 = "corcircle.pdf",
@@ -412,7 +412,7 @@ opt <- list(
     o7 = "variables.tsv",
     o8 = "rgcca_result.RData",
     datasets = paste0("inst/extdata/",
-        c("demoinst"),
+        c("agriculture", "industry", "politic"),
         ".tsv",
         collapse = ",")
 )

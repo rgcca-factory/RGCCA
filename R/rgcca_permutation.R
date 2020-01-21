@@ -89,8 +89,7 @@ rgcca_permutation <- function(
         par = par,
         perm = FALSE,
         type = type,
-        n_cores = 1,
-        ...
+        n_cores = 1
     )
 
     cat("Permutation in progress...")
@@ -146,19 +145,18 @@ rgcca_permutation <- function(
     #         return(NULL)
     # 
     # } else {
-        permcrit <- simplify2array(parallel::mclapply(
+        permcrit <- as.matrix(simplify2array(parallel::mclapply(
             seq(nperm),
             function(x){
                 res <- rgcca_permutation_k(
                     blocks = blocks,
                     par = par,
                     type = type,
-                    n_cores = 1,
-                    ...
+                    n_cores = 1
                 )
                 return(res)
                 },
-            mc.cores = n_cores))
+            mc.cores = n_cores)))
     # }
 
     cat("OK.\n", append = TRUE)
@@ -171,8 +169,12 @@ rgcca_permutation <- function(
             mean(permcrit[i, ] >= crits[i]))
     zs <- sapply(
         seq(NROW(par)), 
-        function(i)
-            (crits[i] - mean(permcrit[i, ])) / (sd(permcrit[i, ])))
+        function(i){
+            z <- (crits[i] - mean(permcrit[i, ])) / (sd(permcrit[i, ]))
+            if (is.na(z))
+                z <- 0
+            return(z)
+        })
 
     list(
         pvals = pvals,
