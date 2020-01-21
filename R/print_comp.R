@@ -31,10 +31,13 @@ print_comp <- function(rgcca, n = NULL, i = NULL, outer = FALSE) {
     else
         varText <- paste0(nvar, " variables, ")
     
-    ave <- quote(paste0(round(AVE[n] * 100, 1), "%"))
+    ave <- quote(paste0(round(AVE[seq(n)] * 100, 1), "%"))
     if (isTRUE(outer)) {
         AVE <- rgcca$AVE$AVE_outer
-        n <- c(1, 2)
+        if (length(rgcca_out$AVE$AVE_outer) > 1)
+            n <- 2
+        else 
+            n <- 1
         paste0("First outer comp. : ", paste(eval(ave), collapse = " & "))
     } else {
         AVE <- rgcca$AVE$AVE_X[[i]]

@@ -23,7 +23,7 @@ bootstrap_k <- function(
     scheme = "factorial",
     init = "svd",
     bias = TRUE,
-    tol = 1e-08,
+    tol = 1e-03,
     type = "rgcca",
     superblock = TRUE) {
 
@@ -41,6 +41,7 @@ bootstrap_k <- function(
         tol <- rgcca$tol
         superblock <- rgcca$superblock
         type <- class(rgcca)
+        init <- rgcca$init
 
         if (is(rgcca, "sgcca"))
             tau <- rgcca$c1
@@ -61,7 +62,7 @@ bootstrap_k <- function(
     else
         boot_blocks <- lapply(
             blocks, 
-            function(x) scale2(x[id_boot,], scale = FALSE))
+            function(x) scale2(x[id_boot, , drop = FALSE], scale = FALSE))
 
     boot_blocks <- remove_null_sd(boot_blocks)
 
@@ -83,9 +84,9 @@ bootstrap_k <- function(
 
     # Add removed variables
     missing_var <- lapply(
-        seq(length(w)),
-        function(x) setdiff(colnames(blocks.all[[x]]), rownames(w[[x]]))
-    )
+            seq(length(w)),
+            function(x) setdiff(colnames(blocks.all[[x]]), rownames(w[[x]]))
+        )
 
     missing_tab <- lapply(
         seq(length(w)),
@@ -105,7 +106,7 @@ bootstrap_k <- function(
             w[[x]]
         })
 
-    w <- lapply(seq(length(w)), function(x) w[[x]][colnames(blocks.all[[x]]), ])
+    w <- lapply(seq(length(w)), function(x) w[[x]][colnames(blocks.all[[x]]), , drop = FALSE])
 
     names(w) <- names(blocks.all)
 

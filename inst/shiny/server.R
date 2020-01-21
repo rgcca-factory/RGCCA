@@ -56,7 +56,7 @@ server <- function(input, output, session) {
         sliderInput(
             inputId = "nb_comp",
             label = "Number of components",
-            min = 2,
+            min = 1,
             max = getDefaultComp(),
             value = 2,
             step = 1

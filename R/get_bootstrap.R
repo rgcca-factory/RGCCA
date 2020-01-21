@@ -24,36 +24,36 @@ get_bootstrap <- function(
     i_block = length(w[[1]]),
     collapse = FALSE,
     n_cores = parallel::detectCores() - 1) {
-    
+
     if (n_cores == 0)
         n_cores <- 1
-    
+
     if (collapse && rgcca$superblock) {
         rgcca$a <- rgcca$a[-length(rgcca$a)]
         if (i_block > length(rgcca$a))
             i_block <- length(rgcca$a)
     }
-    
+
     if (comp > min(rgcca$ncomp))
         stop("Selected dimension was not associated to every blocks",
              exit_code = 113)
-    
+
     cat("Binding in progress...")
-    
+
     mean <- weight <- sd <- occ <- list()
-    
+
     if (collapse)
         J <- seq(length(rgcca$a))
     else
         J <- i_block
-    
+
     for (i in J) {
-        
+
         w_bind <- parallel::mclapply(w,
                                      function(x)
                                          x[[i]][, comp],
                                      mc.cores = n_cores)
-        
+
         weight[[i]] <- rgcca$a[[i]][, comp]
         w_select <- matrix(
             unlist(w_bind),
@@ -63,9 +63,9 @@ get_bootstrap <- function(
         )
         colnames(w_select) <- names(weight[[i]])
         rm(w_bind); gc()
-        
+
         n <- seq(NCOL(w_select))
-        
+
         if (is(rgcca, "sgcca")) {
             
             occ[[i]] <- unlist(
@@ -75,32 +75,35 @@ get_bootstrap <- function(
                                    mc.cores = n_cores))
             
         }
-        
+
         mean[[i]] <- unlist(parallel::mclapply(n,
                                                function(x) mean(w_select[,x]),
                                                mc.cores = n_cores
         ))
-        sd[[i]] <- unlist(
-            parallel::mclapply(n,
-                               function(x) sd(w_select[,x]),
-                               mc.cores = n_cores
-            ))
-        
+        if (NCOL(w_select) == 1)
+            sd[[i]] <- 1
+        else
+            sd[[i]] <- unlist(
+                parallel::mclapply(n,
+                                   function(x) sd(w_select[,x]),
+                                   mc.cores = n_cores
+                ))
+
         rm(w_select); gc()
     }
-    
+
     rm(w); gc()
-    
+
     occ <- unlist(occ)
     mean <- unlist(mean)
     weight <- unlist(weight)
     sd <- unlist(sd)
-    
+
     cat("OK.\n", append = TRUE)
-    
+
     p.vals <- pnorm(0, mean = abs(mean), sd = sd)
     tail <- qnorm(1 - .05 / 2)
-    
+
     df <- data.frame(
         mean = mean,
         rgcca = weight,
@@ -110,7 +113,7 @@ get_bootstrap <- function(
         p.vals,
         BH = p.adjust(p.vals, method = "BH")
     )
-    
+
     if (is(rgcca, "sgcca")) {
         index <- 8
         df$occ <- occ
@@ -123,14 +126,14 @@ get_bootstrap <- function(
                 df$sign[i] <- "*"
         
     }
-    
+
     if (collapse)
         df$color <- as.factor(get_bloc_var(rgcca$a, collapse = collapse))
-    
+
     zero_var <- which(df[, 1] == 0)
     if (length(zero_var) != 0)
         df <- df[-zero_var, ]
-    
+
     b <- data.frame(order_df(df, index, allCol = TRUE), order = NROW(df):1)
     attributes(b)$indexes <-
         list(
@@ -141,6 +144,6 @@ get_bootstrap <- function(
         )
     attributes(b)$type <- class(rgcca)
     class(b) <- c(class(b), "bootstrap")
-    
+
     return(b)
 }

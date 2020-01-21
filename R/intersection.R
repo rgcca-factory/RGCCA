@@ -38,7 +38,13 @@ intersection=function(A)
 			}
 		}
 		)
-	final=Reduce(intersect, lapply(newList,function(x){if(!is.null(dim(x))){return(rownames(x))}else{print("one column");return(names(x))}}))
+	final = Reduce(intersect, lapply(newList, function(x) {
+	    if (!is.null(dim(x))) {
+	        return(rownames(x))
+	    } else{
+	        return(names(x))
+	    }
+	}))
 	if(length(final)>3)
 	{
   	interlist=lapply(newList,function(x){if(!is.null(dim(x))){x[final,]}else{x[final]}})
