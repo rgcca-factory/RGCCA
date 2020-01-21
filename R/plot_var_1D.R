@@ -27,6 +27,8 @@ plot_var_1D <- function(
     cex = 1,
     cex_sub = 16 * cex,
     cex_axis = 10 * cex) {
+    
+    check_ncol(rgcca$a, i_block)
 
     df <- get_ctr2(
         rgcca = rgcca,

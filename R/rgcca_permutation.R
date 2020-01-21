@@ -89,7 +89,8 @@ rgcca_permutation <- function(
         par = par,
         perm = FALSE,
         type = type,
-        n_cores = 1
+        n_cores = 1,
+        ...
     )
 
     cat("Permutation in progress...")
@@ -152,7 +153,8 @@ rgcca_permutation <- function(
                     blocks = blocks,
                     par = par,
                     type = type,
-                    n_cores = 1
+                    n_cores = 1,
+                    ...
                 )
                 return(res)
                 },
@@ -171,7 +173,7 @@ rgcca_permutation <- function(
         seq(NROW(par)), 
         function(i){
             z <- (crits[i] - mean(permcrit[i, ])) / (sd(permcrit[i, ]))
-            if (is.na(z))
+            if (is.na(z) || z == "Inf")
                 z <- 0
             return(z)
         })

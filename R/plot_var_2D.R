@@ -75,6 +75,8 @@ plot_var_2D <- function(
     # PCA case: remove the superblock in legend
     if (identical(rgcca$blocks[[1]], rgcca$blocks[[2]]))
         rgcca$superblock <- FALSE
+    
+    check_ncol(rgcca$a, i_block)
 
     p <- plot2D(
         rgcca,

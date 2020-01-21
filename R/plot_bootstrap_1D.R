@@ -32,6 +32,8 @@ plot_bootstrap_1D <- function(
     cex_sub = 16 * cex,
     cex_axis = 10 * cex) {
 
+    check_ncol(list(b), 1)
+
     set_occ <- function(x) {
         match.arg(x, names(attributes(b)$indexes))
         if (x == "occ" && !x %in% colnames(b))

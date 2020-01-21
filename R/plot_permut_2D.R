@@ -31,6 +31,8 @@ plot_permut_2D <- function(
         "crit" = y_title <- "RGCCA criterion"
     )
 
+    check_ncol(list(perm$zstat), 1)
+
     y <- unlist(perm[type])
     best <- which.max(y)
     n <- seq(nrow(perm$penalties))

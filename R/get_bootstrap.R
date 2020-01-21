@@ -25,6 +25,8 @@ get_bootstrap <- function(
     collapse = FALSE,
     n_cores = parallel::detectCores() - 1) {
 
+    check_ncol(rgcca$Y, i_block)
+
     if (n_cores == 0)
         n_cores <- 1
 

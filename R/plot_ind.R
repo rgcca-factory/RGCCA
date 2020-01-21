@@ -65,7 +65,9 @@ plot_ind <- function(
 
     if (is.null(i_block_y))
         i_block_y <- i_block
-    
+
+    check_ncol(rgcca$Y, i_block)
+
     resp <- check_response(resp, rgcca$Y)
   
     df <- get_comp(
