@@ -34,7 +34,7 @@ print_comp <- function(rgcca, n = NULL, i = NULL, outer = FALSE) {
     ave <- quote(paste0(round(AVE[seq(n)] * 100, 1), "%"))
     if (isTRUE(outer)) {
         AVE <- rgcca$AVE$AVE_outer
-        if (length(rgcca_out$AVE$AVE_outer) > 1)
+        if (length(rgcca$AVE$AVE_outer) > 1)
             n <- 2
         else 
             n <- 1
