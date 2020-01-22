@@ -7,12 +7,12 @@ save_var <- function(
 
     indexes <- c("cor", "weight")
 
-    vars <- Reduce(rbind, lapply(seq(length(rgcca$blocks)), function(i)
+    vars <- Reduce(rbind, lapply(seq(length(rgcca$call$blocks)), function(i)
             data.frame(
                 Reduce(cbind,
                         lapply(indexes, function(x)
                             get_ctr(rgcca, compx, compy, i_block = i, type = x))),
-                names(rgcca$blocks)[i]
+                names(rgcca$call$blocks)[i]
             )))
 
     colnames(vars) <- c(as.vector(sapply(indexes, function(x)

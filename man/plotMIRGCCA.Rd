@@ -61,7 +61,7 @@ colnames(X2)=paste("A",8:11,sep="")
 colnames(X3)=paste("A",12:18,sep="")
 A=list(X1,X2,X3)
 res=MIRGCCA(A,k=4,ni=5,scale=TRUE,sameBlockWeight=FALSE,tau=rep(0,3),
-klim=NULL,output="mean",scheme="centroid",tol=1e-16,returnA=TRUE)
+klim=NULL,output="mean",scheme="centroid",tol=1e-16)
 res$rgccaList[[2]]$Y[[1]]
 res[[1]]$A
 plotMIRGCCA(res,multiple="ell",indnames=FALSE)

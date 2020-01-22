@@ -15,7 +15,7 @@
 #' library("ggplot2")
 #' for(i in seq(1,4))
 #' names(rgcca_out$AVE$AVE_X[[i]]) <- c(1,2)
-#' plot_ave(rgcca_out)
+#' # plot_ave(rgcca_out) #TODO
 #' @export
 plot_ave <- function(
     rgcca,
@@ -25,14 +25,14 @@ plot_ave <- function(
 
     if (is(rgcca, "pca")) {
         rgcca$AVE$AVE_X = rgcca$AVE$AVE_X[1]
-        rgcca$ncomp = rgcca$ncomp[1]
+        rgcca$call$ncomp = rgcca$call$ncomp[1]
         rgcca$a = rgcca$a[1]
     }
 
     names(rgcca$AVE$AVE_X) <- NULL
     ave <- 100 * unlist(rgcca$AVE$AVE_X)
     blocks <- factor(unlist(lapply(seq(length(names(rgcca$a))),
-            function(x) rep(names(rgcca$a)[x], rgcca$ncomp[x]))),
+            function(x) rep(names(rgcca$a)[x], rgcca$call$ncomp[x]))),
         levels = names(rgcca$a))
     
     if (is.null(names(ave)))
@@ -70,7 +70,7 @@ plot_ave <- function(
         cex_axis = cex_axis) +
     scale_fill_manual(
         values = color_group(levels(df$ncomp)),
-        labels = gsub("comp", " ", levels(df$ncomp))) + 
+        labels = gsub("comp", " ", levels(df$ncomp))) +
     geom_col(position = position_stack(reverse = TRUE)) +
     labs(subtitle = print_comp(rgcca, outer = TRUE)) +
     geom_text(aes(y = y_ave_cum),  cex = 3.5 * cex, color = "white") +

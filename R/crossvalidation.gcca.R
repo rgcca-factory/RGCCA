@@ -16,16 +16,16 @@ crossvalidation.gcca <- function(
             Atrain <- lapply(bigA, function(x) x[-inds, ])
 
             if (class(rgcca) == "sgcca")
-                tau <- rgcca$c1
+                tau <- rgcca$call$c1
             else
-                tau <- rgcca$tau
+                tau <- rgcca$call$tau
 
             rgcca_k <- rgcca.analyze(
                 Atrain,
-                rgcca$C,
+                rgcca$call$connection,
                 tau = tau,
-                ncomp = rgcca$ncomp,
-                scheme = rgcca$scheme,
+                ncomp = rgcca$call$ncomp,
+                scheme = rgcca$call$scheme,
                 scale = FALSE,
                 type = class(rgcca),
                 verbose = FALSE

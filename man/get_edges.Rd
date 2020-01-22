@@ -10,7 +10,7 @@ get_edges(rgcca)
 \item{rgcca}{A list giving the results of a R/SGCCA}
 }
 \value{
-A dataframe with tuples of connected rgcca$A
+A dataframe with tuples of connected rgcca$call$blocks
 }
 \description{
 Creates the edges for a design matrix

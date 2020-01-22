@@ -28,7 +28,7 @@ names(rgcca_out$a) <- LETTERS[seq(4)]
 library("ggplot2")
 for(i in seq(1,4))
 names(rgcca_out$AVE$AVE_X[[i]]) <- c(1,2)
-plot_ave(rgcca_out)
+# plot_ave(rgcca_out) #TODO
 }
 \seealso{
 \code{\link[RGCCA]{rgcca}}, \code{\link[RGCCA]{sgcca}}

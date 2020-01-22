@@ -223,7 +223,7 @@ predict.gcca = function(
         # vector of character giving the name of the block and the number of the component
         col_names = paste( unlist(mapply(function(name, times) rep(name, times),
                                          names(newA)[-newbloc_y],
-                                         object$ncomp)),
+                                         object$call$ncomp)),
                            names,
                            sep = "_")
         colnames(res) = col_names
@@ -231,7 +231,7 @@ predict.gcca = function(
         return(res)
       }
 
-    object$ncomp = object$ncomp[MATCH][-newbloc_y]
+    object$call$ncomp = object$call$ncomp[MATCH][-newbloc_y]
     comp.train = getComp("train")
     comp.test = getComp("test")
 
@@ -274,10 +274,10 @@ predict.gcca = function(
             if (is.null(newA[[1]])) { # TODO ??? check case for vector
               comp.test
             }else{
-              object$C = object$C[MATCH, MATCH]
+              object$call$C = object$C[MATCH, MATCH]
               comp = list()
               
-              for (i in 1:max(object$ncomp)) {
+              for (i in 1:max(object$call$ncomp)) {
 
                 comp[[i]] =  matrix(NA,
                                     NROW(comp.test),
@@ -289,7 +289,7 @@ predict.gcca = function(
                   if (length(pos) > 0)
                     comp[[i]][, n] = comp.test[, pos]
                 }
-                comp[[i]] = sum(abs(cor(comp[[i]], use = "pairwise.complete.obs")*object$C)[upper.tri(object$C)], na.rm = TRUE)
+                comp[[i]] = sum(abs(cor(comp[[i]], use = "pairwise.complete.obs")*object$call$C)[upper.tri(object$call$C)], na.rm = TRUE)
                 if (comp[[i]] == 0)
                     comp[[i]] =  NA
                 # (cor(comp[[i]], use = "pairwise.complete.obs")*object$C)[upper.tri(object$C)]**2

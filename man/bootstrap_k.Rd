@@ -25,7 +25,7 @@ blocks}
 \item{scheme}{A character giving the link function for covariance maximization}
 
 \item{init}{A character among "svd" (Singular Value Decompostion) or "random"
-for alorithm initialization}
+for algorithm initialization}
 
 \item{bias}{A boolean for a biased variance estimator}
 

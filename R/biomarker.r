@@ -6,10 +6,9 @@ biomarker <- function(
     selec = "all",
     percentBm = 0.5) {
 
-    if ("A" %in% names(resRGCCA))
-        A <- as.matrix(resRGCCA$A[[block]])
-    else
-        A <- as.matrix(listData[[block]])
+  
+   A <- as.matrix(resRGCCA$call$A[[block]])
+  
     
     x <- rep(NA, ncol(A))
 

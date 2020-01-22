@@ -29,14 +29,14 @@ get_bootstrap <- function(
 
     if (n_cores == 0)
         n_cores <- 1
-
-    if (collapse && rgcca$superblock) {
+    
+    if (collapse && rgcca$call$superblock) {
         rgcca$a <- rgcca$a[-length(rgcca$a)]
         if (i_block > length(rgcca$a))
             i_block <- length(rgcca$a)
     }
-
-    if (comp > min(rgcca$ncomp))
+    
+    if (comp > min(rgcca$call$ncomp))
         stop("Selected dimension was not associated to every blocks",
              exit_code = 113)
 
@@ -50,12 +50,12 @@ get_bootstrap <- function(
         J <- i_block
 
     for (i in J) {
-
-        w_bind <- parallel::mclapply(w,
-                                     function(x)
-                                         x[[i]][, comp],
-                                     mc.cores = n_cores)
-
+        
+        w_bind <- parallel::mclapply(
+            w,
+            function(x) x[[i]][, comp],
+             mc.cores = n_cores)
+        
         weight[[i]] <- rgcca$a[[i]][, comp]
         w_select <- matrix(
             unlist(w_bind),
@@ -93,14 +93,16 @@ get_bootstrap <- function(
 
         rm(w_select); gc()
     }
-
+    
+    print(w)
     rm(w); gc()
 
     occ <- unlist(occ)
     mean <- unlist(mean)
     weight <- unlist(weight)
     sd <- unlist(sd)
-
+    
+    print(sd)
     cat("OK.\n", append = TRUE)
 
     p.vals <- pnorm(0, mean = abs(mean), sd = sd)
@@ -115,7 +117,9 @@ get_bootstrap <- function(
         p.vals,
         BH = p.adjust(p.vals, method = "BH")
     )
-
+    
+    print(df)
+    
     if (is(rgcca, "sgcca")) {
         index <- 8
         df$occ <- occ

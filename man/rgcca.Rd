@@ -7,8 +7,7 @@
 rgcca(A, C = 1 - diag(length(A)), tau = rep(1, length(A)),
   ncomp = rep(1, length(A)), scheme = "centroid", scale = TRUE,
   init = "svd", bias = TRUE, tol = 1e-08, verbose = TRUE,
-  sameBlockWeight = TRUE, na.rm = TRUE, returnA = FALSE,
-  estimateNA = "no")
+  sameBlockWeight = TRUE, na.rm = TRUE, estimateNA = "no")
 }
 \arguments{
 \item{A}{A list that contains the \eqn{J} blocks of variables \eqn{\mathbf{X_1}, \mathbf{X_2}, ..., \mathbf{X_J}}.}
@@ -39,8 +38,6 @@ If tau is a matrix, tau[k, j] is associated with \eqn{\mathbf{X}_{jk}} (\eqn{k}t
 
 \item{na.rm}{If TRUE, runs rgcca only on available data.}
 
-\item{returnA}{A logical value indicating if the A list should be return as a result (default, sameBlockWeight=FALSE)}
-
 \item{estimateNA}{If TRUE, missing values are estimated during the RGCCA calculation}
 }
 \value{
@@ -50,13 +47,9 @@ If tau is a matrix, tau[k, j] is associated with \eqn{\mathbf{X}_{jk}} (\eqn{k}t
 
 \item{astar}{A list of \eqn{J} elements. Each element of astar is a matrix defined as Y[[j]][, h] = A[[j]]\%*\%astar[[j]][, h].}
 
-\item{C}{A design matrix that describes the relation between blocks (user specified).}
-
 \item{tau}{A vector or matrix that contains the values of the shrinkage parameters applied to each block and each dimension (user specified).}
 
-\item{scheme}{The scheme chosen by the user (user specified).}
-
-\item{ncomp}{A \eqn{1 \times J} vector that contains the numbers of components for each block (user specified).}
+\item{call}{Call of the function}#' @return \item{crit}{A vector that contains the values of the objective function at each iterations.}
 
 \item{crit}{A vector that contains the values of the criteria across iterations.}
 

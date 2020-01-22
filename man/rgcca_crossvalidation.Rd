@@ -4,7 +4,7 @@
 \alias{rgcca_crossvalidation}
 \title{Cross-validation}
 \usage{
-rgcca_crossvalidation(rgcca, i_block = length(rgcca$blocks),
+rgcca_crossvalidation(rgcca, i_block = length(rgcca$call$blocks),
   validation = "loo", type = "regression", fit = "lm",
   new_scaled = TRUE, k = 5, n_cores = parallel::detectCores() - 1)
 }

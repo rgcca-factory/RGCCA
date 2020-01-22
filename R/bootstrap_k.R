@@ -28,25 +28,25 @@ bootstrap_k <- function(
     superblock = TRUE) {
 
     if (is.null(blocks))
-        blocks.all <- rgcca$blocks
+        blocks.all <- rgcca$call$blocks
     else
         blocks.all <- blocks
 
     if (is.null(blocks)) {
-        blocks <- rgcca$blocks
-        connection <- rgcca$blocks
-        ncomp <- rgcca$ncomp
-        scheme <- rgcca$scheme
-        bias <- rgcca$bias
-        tol <- rgcca$tol
-        superblock <- rgcca$superblock
+        blocks <- rgcca$call$blocks
+        connection <- rgcca$call$connection
+        ncomp <- rgcca$call$ncomp
+        scheme <- rgcca$call$scheme
+        bias <- rgcca$call$bias
+        tol <- rgcca$call$tol
+        superblock <- rgcca$call$superblock
         type <- class(rgcca)
         init <- rgcca$init
 
         if (is(rgcca, "sgcca"))
-            tau <- rgcca$c1
+            tau <- rgcca$call$c1
         else
-            tau <- rgcca$tau
+            tau <- rgcca$call$tau
 
         if (superblock) {
             blocks <- blocks[-length(blocks)]

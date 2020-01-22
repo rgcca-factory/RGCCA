@@ -7,7 +7,7 @@
 sgcca(A, C = 1 - diag(length(A)), c1 = rep(1, length(A)),
   ncomp = rep(1, length(A)), scheme = "centroid", scale = TRUE,
   init = "svd", bias = TRUE, tol = .Machine$double.eps,
-  verbose = FALSE, returnA = FALSE, sameBlockWeight = TRUE)
+  verbose = FALSE, sameBlockWeight = TRUE)
 }
 \arguments{
 \item{A}{A list that contains the \eqn{J} blocks of variables \eqn{X_1, X_2, ..., X_J}.}
@@ -36,8 +36,6 @@ If c1 is a matrix, each row \eqn{h} defines the constraints applied to the weigh
 
 \item{verbose}{Will report progress while computing if verbose = TRUE (default: TRUE).}
 
-\item{returnA}{If TRUE, returns the original A list}
-
 \item{sameBlockWeight}{If TRUE, all blocks are weighted by their own variance: all the blocks have the same weight}
 }
 \value{
@@ -47,15 +45,7 @@ If c1 is a matrix, each row \eqn{h} defines the constraints applied to the weigh
 
 \item{astar}{A list of \eqn{J} elements. Each element of astar is a matrix defined as Y[[j]][, h] = A[[j]]\%*\%astar[[j]][, h]}
 
-\item{C}{A design matrix that describes the relationships between blocks (user specified).}
-
-\item{scheme}{The scheme chosen by the user (user specified).}
-
-\item{c1}{A vector or matrix that contains the value of c1 applied to each block \eqn{\mathbf{X}_j}, \eqn{ j=1, \ldots, J} and each dimension (user specified).}
-
-\item{ncomp}{A \eqn{1 \times J} vector that contains the number of components for each block (user specified).}
-
-\item{crit}{A vector that contains the values of the objective function at each iterations.}
+\item{call}{Call of the function}#' @return \item{crit}{A vector that contains the values of the objective function at each iterations.}
 
 \item{AVE}{Indicators of model quality based on the Average Variance Explained (AVE): AVE(for one block), AVE(outer model), AVE(inner model).}
 }

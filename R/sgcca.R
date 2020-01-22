@@ -33,16 +33,11 @@
 #' @param bias A logical value for biaised or unbiaised estimator of the var/cov.
 #' @param verbose  Will report progress while computing if verbose = TRUE (default: TRUE).
 #' @param tol Stopping value for convergence.
-#' @param returnA If TRUE, returns the original A list
 #' @param sameBlockWeight If TRUE, all blocks are weighted by their own variance: all the blocks have the same weight
 #' @return \item{Y}{A list of \eqn{J} elements. Each element of Y is a matrix that contains the SGCCA components for each block.}
 #' @return \item{a}{A list of \eqn{J} elements. Each element of a is a matrix that contains the outer weight vectors for each block.}
 #' @return \item{astar}{A list of \eqn{J} elements. Each element of astar is a matrix defined as Y[[j]][, h] = A[[j]]\%*\%astar[[j]][, h]}
-#' @return \item{C}{A design matrix that describes the relationships between blocks (user specified).}
-#' @return \item{scheme}{The scheme chosen by the user (user specified).}
-#' @return \item{c1}{A vector or matrix that contains the value of c1 applied to each block \eqn{\mathbf{X}_j}, \eqn{ j=1, \ldots, J} and each dimension (user specified).}
-#' @return \item{ncomp}{A \eqn{1 \times J} vector that contains the number of components for each block (user specified).}
-#' @return \item{crit}{A vector that contains the values of the objective function at each iterations.}
+#' @return \item{call}{Call of the function}#' @return \item{crit}{A vector that contains the values of the objective function at each iterations.}
 #' @return \item{AVE}{Indicators of model quality based on the Average Variance Explained (AVE): AVE(for one block), AVE(outer model), AVE(inner model).}
 #' @references Tenenhaus, A., Philippe, C., Guillemot, V., Le Cao, K. A., Grill, J., and Frouin, V. , "Variable selection for generalized canonical correlation analysis.," Biostatistics, vol. 15, no. 3, pp. 569-583, 2014. 
 #' @title Variable Selection For Generalized Canonical Correlation Analysis (SGCCA)
@@ -112,8 +107,8 @@
 #'@export sgcca
 
 
-sgcca <- function (A, C = 1-diag(length(A)), c1 = rep(1, length(A)), ncomp = rep(1, length(A)), scheme = "centroid", scale = TRUE, init = "svd", bias = TRUE, tol = .Machine$double.eps, verbose = FALSE,returnA=FALSE,sameBlockWeight=TRUE){
-  call=match.call()
+sgcca <- function (A, C = 1-diag(length(A)), c1 = rep(1, length(A)), ncomp = rep(1, length(A)), scheme = "centroid", scale = TRUE, init = "svd", bias = TRUE, tol = .Machine$double.eps, verbose = FALSE,sameBlockWeight=TRUE){
+  call=list(A=A, C = C, c1 = c1, ncomp = ncomp, scheme = scheme, scale = scale, init = init, bias = bias, tol = tol, verbose = verbose,sameBlockWeight=sameBlockWeight)
   ndefl <- ncomp-1
   N <- max(ndefl)
   J <- length(A)
@@ -290,20 +285,13 @@ sgcca <- function (A, C = 1-diag(length(A)), c1 = rep(1, length(A)), ncomp = rep
                 AVE_outer = AVE_outer,
                 AVE_inner = AVE_inner)
     
-    if(!returnA){out <- list(Y = shave.matlist(Y, ncomp), 
+  out <- list(Y = shave.matlist(Y, ncomp),
                 a = shave.matlist(a, ncomp), 
                 astar = shave.matlist(astar, ncomp),
-                C = C, c1 = c1, scheme = scheme,
-                ncomp = ncomp, crit = crit,
+                crit = crit,
                 AVE = AVE,call=call
-                )}
-    if(returnA){out <- list(Y = shave.matlist(Y, ncomp), 
-                            a = shave.matlist(a, ncomp), 
-                            astar = shave.matlist(astar, ncomp),
-                            C = C, c1 = c1, scheme = scheme,
-                            ncomp = ncomp, crit = crit,
-                            AVE = AVE,A=A,call=call
-    )}
+                )
+
     class(out) <- "sgcca"
     return(out)
     

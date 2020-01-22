@@ -726,7 +726,7 @@ scale = FALSE, verbose = FALSE)
 The optimal shrinkage parameters are given by:
 
 ```{r}
-rgcca_optimal_factorial$tau
+rgcca_optimal_factorial$call$tau
 ```
 
 This automatic estimation of the shrinkage parameters allows one to come closer to the correlation criterion, even in the case of high multicollinearity or when the number of individuals is smaller than the number of variables.

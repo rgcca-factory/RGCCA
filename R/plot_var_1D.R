@@ -42,7 +42,7 @@ plot_var_1D <- function(
     )
 
     if (i_block < length(rgcca$a) || is(rgcca, "pca"))
-        rgcca$superblock <- FALSE
+        rgcca$call$superblock <- FALSE
     
     J <- names(rgcca$a)
 
@@ -59,7 +59,7 @@ plot_var_1D <- function(
 
     # if the superblock is selected, color the text of the y-axis according
     # to their belonging to each blocks
-    if ((rgcca$superblock && i_block == length(rgcca$a)) || collapse) {
+    if ((rgcca$call$superblock && i_block == length(rgcca$a)) || collapse) {
         color <- factor(df$resp)
         levels(color) <- color_group(color)
         p <- ggplot(df, aes(order, df[, 1], fill = df$resp))
@@ -92,7 +92,7 @@ plot_var_1D <- function(
     if (length(color) != 1)
         p <- order_color(rgcca$a, p, matched, collapse)
 
-    if ((!rgcca$superblock || i_block != length(rgcca$a)) && !collapse)
+    if ((!rgcca$call$superblock || i_block != length(rgcca$a)) && !collapse)
             p <- p + theme(legend.position = "none")
 
     return(p)

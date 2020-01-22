@@ -25,12 +25,13 @@ bootstrap <- function(
     n_cores = parallel::detectCores() - 1,
     ...) {
 
+    # TODO : nboot > 1
     stopifnot(!missing(rgcca))
 
     if (n_cores == 0)
         n_cores <- 1
 
-    # if (any(unlist(lapply(rgcca$blocks, NCOL) > 1000)))
+    # if (any(unlist(lapply(rgcca$call$blocks, NCOL) > 1000)))
     #     verbose <- TRUE
 
     cat("Bootstrap in progress...")

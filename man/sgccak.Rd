@@ -41,9 +41,7 @@ with \eqn{p_j} the number of variables of \eqn{X_j} and with c1[j] between 0 and
 
 \item{AVE}{Indicators of model quality based on the Average Variance Explained (AVE): AVE(for one block), AVE(outer model), AVE(inner model).}
 
-\item{C}{A design matrix that describes the relationships between blocks (user specified).}
-
-\item{scheme}{The scheme chosen by the user (user specified).}
+\item{call}{Call of the function}
 }
 \description{
 The function sgccak() is called by sgcca() and does not have to be used by the user. 

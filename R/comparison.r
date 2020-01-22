@@ -35,7 +35,7 @@ comparison=function(rgcca1,rgcca2,naxis=1,selec=10,selectPatient=NULL,indNA=NULL
     #else{ return(NA)}
   }
   selectAllPatient=intersect(rownames(rgcca1[["Y"]][[1]]),rownames(rgcca2[["Y"]][[1]]))
-  J=length(rgcca1$A)
+  J=length(rgcca1$call$A)
   com=rv=pctBm=rvComplete=rmse=rep(NA,J)
   for(i in 1:J)
   {
@@ -59,9 +59,9 @@ comparison=function(rgcca1,rgcca2,naxis=1,selec=10,selectPatient=NULL,indNA=NULL
     {
       if(dim(rgcca1$Y[[i]])[1]==dim(rgcca2$Y[[i]])[1])
       {
-        stdev=apply(rgcca1$A[[i]],2,sd)
-        denom=matrix(rep(stdev,dim(rgcca1$Y[[i]])[1]),nrow=dim(rgcca1$Y[[i]])[1],ncol=dim(rgcca1$A[[i]])[2],byrow = TRUE)
-        difRel=(rgcca1$A[[i]]-rgcca2$A[[i]]) /denom  
+        stdev=apply(rgcca1$call$A[[i]],2,sd)
+        denom=matrix(rep(stdev,dim(rgcca1$Y[[i]])[1]),nrow=dim(rgcca1$Y[[i]])[1],ncol=dim(rgcca1$call$A[[i]])[2],byrow = TRUE)
+        difRel=(rgcca1$call$A[[i]]-rgcca2$call$A[[i]]) /denom
         rmse[i]=sqrt(sum(difRel[indNA[[i]]]^2)/prod(dim(indNA[[i]])))
       }
     }

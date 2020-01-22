@@ -27,8 +27,8 @@ plot_network <- function(rgcca) {
         directed = FALSE)
 
     if (all(is.na(nodes[, par]))) {
-        nodes[, par] <- rep("optimal", length(rgcca$blocks))
-        V(net)$tau <- rep(1, length(rgcca$blocks))
+        nodes[, par] <- rep("optimal", length(rgcca$call$blocks))
+        V(net)$call$tau <- rep(1, length(rgcca$call$blocks))
     }
 
     V(net)$color <- "khaki2"
@@ -54,7 +54,7 @@ plot_network <- function(rgcca) {
         vertex.label.dist = 6,
         vertex.label.degree = 1.5,
         vertex.size = 23,
-        main = paste0("Common rows between blocks : ", NROW(rgcca$blocks[[1]]))
+        main = paste0("Common rows between blocks : ", NROW(rgcca$call$blocks[[1]]))
     )
 
 }

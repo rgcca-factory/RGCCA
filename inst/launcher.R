@@ -323,13 +323,13 @@ post_check_arg <- function(opt, rgcca) {
     for (x in c("block", "block_y")) {
         if (!is.null(opt[[x]])) {
             if (opt[[x]] == 0)
-                opt[[x]] <- length(rgcca$blocks)
-            opt[[x]] <- check_blockx(x, opt[[x]], rgcca$blocks)
+                opt[[x]] <- length(rgcca$call$blocks)
+            opt[[x]] <- check_blockx(x, opt[[x]], rgcca$call$blocks)
         }
     }
 
     for (x in c("compx", "compy"))
-        opt[[x]] <- check_compx(x, opt[[x]], rgcca$ncomp, opt$block)
+        opt[[x]] <- check_compx(x, opt[[x]], rgcca$call$ncomp, opt$block)
 
     return(opt)
 }
@@ -461,7 +461,7 @@ opt <- post_check_arg(opt, rgcca_out)
 
 ########## Plot ##########
 
-if (rgcca_out$ncomp[opt$block] == 1 && is.null(opt$block_y)) {
+if (rgcca_out$call$ncomp[opt$block] == 1 && is.null(opt$block_y)) {
     warning("With a number of component of 1, a second block should be chosen to perform an individual plot")
 } else {
     (
@@ -479,7 +479,7 @@ if (rgcca_out$ncomp[opt$block] == 1 && is.null(opt$block_y)) {
     save_plot(opt$o1, individual_plot)
 }
 
-if (rgcca_out$ncomp[opt$block] > 1) {
+if (rgcca_out$call$ncomp[opt$block] > 1) {
     (
         corcircle <- plot_var_2D(
             rgcca_out,

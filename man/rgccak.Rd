@@ -50,11 +50,11 @@ analytical formula.}
 \item{AVE}{Indicators of model quality based on the Average Variance Explained (AVE): 
 AVE(for one block), AVE(outer model), AVE(inner model).}
 
-\item{C}{A design matrix that describes the relationships between blocks (user specified).}
+\item{call}{Call of the function}
+
+\item{crit}{A vector that contains the values of the objective function at each iterations.}
 
 \item{tau}{\eqn{1 * J} vector containing the value for the tau penalties applied to each of the \eqn{J} blocks of data (user specified)}
-
-\item{scheme}{The scheme chosen by the user (user specified).}
 }
 \description{
 The function rgccak() is called by rgcca() and does not have to be used by the user. 

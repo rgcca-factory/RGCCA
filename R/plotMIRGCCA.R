@@ -31,7 +31,7 @@
 #' colnames(X3)=paste("A",12:18,sep="")
 #' A=list(X1,X2,X3)
 #' res=MIRGCCA(A,k=4,ni=5,scale=TRUE,sameBlockWeight=FALSE,tau=rep(0,3),
-#' klim=NULL,output="mean",scheme="centroid",tol=1e-16,returnA=TRUE)
+#' klim=NULL,output="mean",scheme="centroid",tol=1e-16)
 #' res$rgccaList[[2]]$Y[[1]]
 #' res[[1]]$A
 #' plotMIRGCCA(res,multiple="ell",indnames=FALSE)
@@ -44,7 +44,7 @@ plotMIRGCCA=function(mi.obj,opt.ell="distr",multiple="ell",indnames=TRUE,varname
   rgcca0=mi.obj$rgcca0
   rgccaList=mi.obj$rgccaList  
   resprocrustes=list()
-  nsuj=dim(rgcca0$A[[blocks[1]]])[1]
+  nsuj=dim(rgcca0$call$A[[blocks[1]]])[1]
   niter=length(mi.obj$rgccaList)
   for(i in 1:niter)
   {
@@ -116,7 +116,7 @@ plotMIRGCCA=function(mi.obj,opt.ell="distr",multiple="ell",indnames=TRUE,varname
     y=origine[2]+r*sin(seq(0,2*pi,length.out=100))
     lines(x,y,col="black")
   }
-  A0=rgcca0$A
+  A0=rgcca0$call$A
   if(blocks[1]==blocks[2]){superbloc0=A0[[blocks[1]]];varCol="blue"}	
   if(blocks[1]!=blocks[2])
   {	
@@ -127,7 +127,7 @@ plotMIRGCCA=function(mi.obj,opt.ell="distr",multiple="ell",indnames=TRUE,varname
   x=y=matrix(NA,niter,ncol(superbloc0))
   for(i in 1:niter)
   {
-    A=mi.obj$rgccaList[[i]]$A
+    A=mi.obj$rgccaList[[i]]$call$A
     
     if(blocks[1]==blocks[2]){superbloc=A[[blocks[1]]];varCol="blue"}	
     if(blocks[1]!=blocks[2])
@@ -164,7 +164,7 @@ plotMIRGCCA=function(mi.obj,opt.ell="distr",multiple="ell",indnames=TRUE,varname
   
  
   par(mar=c(1,1,3,1))
-  plot(NULL,xlim=c(-1,1),ylim=c(-1,1),xlab=paste("Comp 1 (",names(rgcca0$A)[1],")",sep=""),ylab=paste("Comp 2(",names(rgcca0$A)[2],")",sep=""),xaxt="n",yaxt="n")
+  plot(NULL,xlim=c(-1,1),ylim=c(-1,1),xlab=paste("Comp 1 (",names(rgcca0$call$A)[1],")",sep=""),ylab=paste("Comp 2(",names(rgcca0$call$A)[2],")",sep=""),xaxt="n",yaxt="n")
   rect(par("usr")[1], par("usr")[3], par("usr")[2], par("usr")[4], col = "#e9ebec",border="#e9ebec")
   grid(nx = NULL, ny = NULL, col = "white", lty = "dotted",  lwd = par("lwd"), equilogs = TRUE)
   
