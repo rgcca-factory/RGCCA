@@ -130,7 +130,6 @@ rgcca.analyze <- function(blocks,
             pca.ncp = pca.ncp
         )
     )
-    func[[par]] <- opt$tau
 
     func_out <- eval(as.call(func))$rgcca
    # rgcca$call$blocks <- rgcca$A #TODO
@@ -138,7 +137,7 @@ rgcca.analyze <- function(blocks,
     for (i in c("a", "astar", "Y"))
         names(func_out[[i]]) <- names(opt$blocks)
     names(func_out$AVE$AVE_X) <- names(opt$blocks)
-   
+
     func_out$superblock <- superblock # TODO
 
     class(func_out) <- tolower(type)
@@ -146,10 +145,11 @@ rgcca.analyze <- function(blocks,
         blocks = opt$blocks,
         connection = opt$connection,
         superblock = superblock,
-        tau = opt$tau,
         ncomp = opt$ncomp,
         scheme = opt$scheme
-               )
+    )
+
+    func_out$call[[par]] <- opt$tau
 
     for (i in c(
         "scale",

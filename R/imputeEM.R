@@ -150,7 +150,7 @@ imputeEM <-
             if (superblock) {
                 # Getting back the global weights, means and sd for reconstruction
                 A0SB <-
-                    scale2(fit.rgcca$call$A[[J + 1]], scale = scale, bias = FALSE)
+                    scale2(fit.rgcca$call$blocks[[J + 1]], scale = scale, bias = FALSE)
                 moy <-
                     matrix(
                         attr(A0SB, "scaled:center"),
@@ -258,7 +258,7 @@ imputeEM <-
                     w <- w[, 1:naxis]
                     # Calculations of mean and standard deviations
                     A0J <-
-                        scale2(fit.rgcca$call$A[[j]],
+                        scale2(fit.rgcca$call$blocks[[j]],
                                scale = scale,
                                bias = FALSE)
                     moy[[j]] <-

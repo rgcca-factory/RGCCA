@@ -45,12 +45,12 @@ rgcca_crossvalidation <- function(
 
             if (rgcca$superblock) {
                 Atrain <- Atrain[-length(Atrain)]
-                rgcca$call$C <- NULL
+                rgcca$call$connection <- NULL
             }
 
             rgcca_k <- rgcca.analyze(
                 Atrain,
-                rgcca$call$C,
+                rgcca$call$connection,
                 superblock = rgcca$superblock,
                 tau = tau,
                 ncomp = rgcca$call$ncomp,

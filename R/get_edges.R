@@ -1,7 +1,7 @@
 #' Creates the edges for a design matrix
 #' 
 #' @inheritParams plot_ind
-#' @return A dataframe with tuples of connected rgcca$call$A
+#' @return A dataframe with tuples of connected rgcca$call$blocks
 #' @examples
 #' data("Russett")
 #' blocks = list(agriculture = Russett[, seq(3)], industry = Russett[, 4:5],
@@ -11,15 +11,15 @@
 #' @export
 get_edges <- function(rgcca) {
 
-    J <- NCOL(rgcca$call$C)
+    J <- NCOL(rgcca$call$connection)
     edges <- list()
 
     k <- 0
     for (j in seq(J)) {
         for (i in seq(J)) {
-            if (i > k && rgcca$call$C[i, j] > 0)
+            if (i > k && rgcca$call$connection[i, j] > 0)
                 edges[[length(edges) + 1]] <-
-                    c(names(rgcca$call$blocks)[j], names(rgcca$call$blocks)[i], rgcca$call$C[i, j])
+                    c(names(rgcca$call$blocks)[j], names(rgcca$call$blocks)[i], rgcca$call$connection[i, j])
         }
         k <- k + 1
     }
