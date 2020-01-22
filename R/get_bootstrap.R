@@ -94,7 +94,6 @@ get_bootstrap <- function(
         rm(w_select); gc()
     }
     
-    print(w)
     rm(w); gc()
 
     occ <- unlist(occ)
@@ -102,7 +101,6 @@ get_bootstrap <- function(
     weight <- unlist(weight)
     sd <- unlist(sd)
     
-    print(sd)
     cat("OK.\n", append = TRUE)
 
     p.vals <- pnorm(0, mean = abs(mean), sd = sd)
@@ -117,8 +115,6 @@ get_bootstrap <- function(
         p.vals,
         BH = p.adjust(p.vals, method = "BH")
     )
-    
-    print(df)
     
     if (is(rgcca, "sgcca")) {
         index <- 8

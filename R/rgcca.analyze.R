@@ -134,7 +134,7 @@ rgcca.analyze <- function(blocks,
     func_out <- eval(as.call(func))$rgcca
    # rgcca$call$blocks <- rgcca$A #TODO
 
-    for (i in c("a", "astar", "Y"))
+    for (i in c("a", "astar", "Y")) {
         names(func_out[[i]]) <- names(opt$blocks)
         for (j in seq(length(opt$blocks))) {
             if (i %in%  c("a", "astar") && NCOL(opt$blocks[[j]]) == 1)

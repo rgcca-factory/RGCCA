@@ -34,7 +34,7 @@ get_ctr2 <- function(
     if (collapse) {
         if (rgcca$call$superblock) {
             
-            blocks <- blocks[-length(blocks)]
+            blocks <- blocks[-length(blocks), drop = FALSE]
             if (i_block > length(blocks))
                 i_block <- length(blocks)
         }
