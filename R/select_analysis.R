@@ -101,13 +101,7 @@ select_analysis <- function(
     } else
         superblock <- FALSE
 
-    if (length(grep("pls-?pm", tolower(type))) == 1) {
-        scheme <- setScheme("centroid")
-        tau <- setTau(rep(0, J))
-    }
-    #TODO : remove pls-pm
-
-    else if (tolower(type) == "pca") {
+    if (tolower(type) == "pca") {
         if (length(blocks) != 1)
             check_nblocks(blocks, type)
 
@@ -265,14 +259,16 @@ select_analysis <- function(
         }
 
     }
-
     else if (length(grep("[sr]gcca", tolower(type))) != 1) {
+        analysis <- c("rgcca", "cpca-w", "gcca", "hpca", "maxbet-b", "maxbet", 
+            "maxdiff-b","maxdiff", "maxvar-a", "maxvar-b", "maxvar", "niles", 
+            "r-maxvar", "rcon-pca", "ridge-gca", "sabscor", "ssqcor", "ssqcor", 
+            "ssqcov-1", "ssqcov-2", "ssqcov", "sum-pca", "sumcor", "sumcov-1", 
+            "sumcov-2", "sumcov", "sabscov", "plspm", "cca", "ra", "ifa", "pls",
+            "pca", "sgcca")
         stop(
-            "Wrong type of analysis. Please select one among the following
-            list: rgcca, cpca-w, gcca, hpca, maxbet-b, maxbet, maxdiff-b,
-            maxdiff, maxvar-a, maxvar-b, maxvar, niles, r-maxvar, rcon-pca,
-            ridge-gca, sabscor, ssqcor, ssqcor, ssqcov-1, ssqcov-2, ssqcov,
-            sum-pca, sumcor, sumcov-1, sumcov-2, sumcov., sabscov, plspm.",
+            paste0("Wrong type of analysis. Please select one among the following
+            list: ", paste(analysis, collapse = ", ")),
             exit_code = 112
         )
     }
