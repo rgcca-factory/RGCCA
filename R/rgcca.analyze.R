@@ -138,8 +138,6 @@ rgcca.analyze <- function(blocks,
         names(func_out[[i]]) <- names(opt$blocks)
     names(func_out$AVE$AVE_X) <- names(opt$blocks)
 
-    func_out$superblock <- superblock # TODO
-
     class(func_out) <- tolower(type)
     func_out$call <- list(
         blocks = opt$blocks,

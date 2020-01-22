@@ -32,13 +32,13 @@ get_ctr2 <- function(
     blocks <- rgcca$call$blocks
 
     if (collapse) {
-        if (rgcca$superblock) {
+        if (rgcca$call$superblock) {
             
             blocks <- blocks[-length(blocks)]
             if (i_block > length(blocks))
                 i_block <- length(blocks)
         }
-        rgcca$superblock <- TRUE
+        rgcca$call$superblock <- TRUE
         blocks.all <- blocks
         blocks <- rep(list(Reduce(cbind, blocks)), length(blocks))
         names(blocks) <- names(blocks.all)
@@ -83,7 +83,7 @@ get_ctr2 <- function(
         selectedVar <- row.names(df)
 
     # group by blocks
-    if (rgcca$superblock & (collapse | (i_block == length(rgcca$a)))) {
+    if (rgcca$call$superblock & (collapse | (i_block == length(rgcca$a)))) {
 
         if (collapse)
             resp <- get_bloc_var(lapply(blocks.all, t), TRUE)

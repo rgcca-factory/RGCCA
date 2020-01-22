@@ -30,7 +30,7 @@ plot_bootstrap <- function(
     if (NROW(df) > n_mark)
         df <- df[seq(n_mark), ]
 
-    if (rgcca$superblock) {
+    if (rgcca$call$superblock) {
         color2 <- factor(df$color)
         levels(color2) <- color_group(color2)
         p <- ggplot(df, aes(order, mean, fill = color))
@@ -58,14 +58,14 @@ plot_bootstrap <- function(
                 geom_errorbar(aes(ymin = intneg, ymax = intpos))
     }
 
-    if (rgcca$superblock)
+    if (rgcca$call$superblock)
         col <- J
     else
         col <- J[-length(J)]
 
-    if (rgcca$superblock) {
+    if (rgcca$call$superblock) {
         matched <- match(rev(unique(df$color)), col)
-        p <- order_color(rgcca$a, p, matched, rgcca$superblock)
+        p <- order_color(rgcca$a, p, matched, rgcca$call$superblock)
     }
 
     return(p)

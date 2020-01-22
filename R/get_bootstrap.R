@@ -28,7 +28,7 @@ get_bootstrap <- function(
     if (n_cores == 0)
         n_cores <- 1
     
-    if (collapse && rgcca$superblock) {
+    if (collapse && rgcca$call$superblock) {
         rgcca$a <- rgcca$a[-length(rgcca$a)]
         if (i_block > length(rgcca$a))
             i_block <- length(rgcca$a)
@@ -49,10 +49,10 @@ get_bootstrap <- function(
     
     for (i in J) {
         
-        w_bind <- parallel::mclapply(w,
-                                     function(x)
-                                         x[[i]][, comp],
-                                     mc.cores = n_cores)
+        w_bind <- parallel::mclapply(
+            w,
+            function(x) x[[i]][, comp],
+             mc.cores = n_cores)
         
         weight[[i]] <- rgcca$a[[i]][, comp]
         w_select <- matrix(
@@ -89,6 +89,7 @@ get_bootstrap <- function(
         rm(w_select); gc()
     }
     
+    print(w)
     rm(w); gc()
     
     occ <- unlist(occ)
@@ -96,6 +97,7 @@ get_bootstrap <- function(
     weight <- unlist(weight)
     sd <- unlist(sd)
     
+    print(sd)
     cat("OK.\n", append = TRUE)
     
     p.vals <- pnorm(0, mean = abs(mean), sd = sd)
@@ -110,6 +112,8 @@ get_bootstrap <- function(
         p.vals,
         BH = p.adjust(p.vals, method = "BH")
     )
+    
+    print(df)
     
     if (is(rgcca, "sgcca")) {
         index <- 8

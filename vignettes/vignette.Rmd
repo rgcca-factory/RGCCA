@@ -213,7 +213,7 @@ plot_ind(rgcca_out, predicted = loo)
 
 ### Bootstrap
 ```{r}
-boot <- bootstrap(rgcca_out, n_boot = 1, n_cores = 2)
+boot <- bootstrap(rgcca_out, n_boot = 2, n_cores = 2)
 selected.var <- get_bootstrap(rgcca_out, boot, n_cores = 2) # Get the bootstrap on the clinic block
 plot_bootstrap_2D(selected.var)
 plot_bootstrap_1D(selected.var)
