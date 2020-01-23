@@ -1,5 +1,6 @@
 os:
   - linux
+  - osx
 
 language: r
 
@@ -14,9 +15,11 @@ r:
 #- macos
 #
 jobs:
-  include:
+  exclude:
+    if: branch =~ ^feature
+      os: osx
     if: branch =~ ^fature
-    os: osx
+      os: linux
 
 git:
   depth: 1
