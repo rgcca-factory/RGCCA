@@ -37,7 +37,7 @@ install:
   - R -e 'devtools::install_deps(dep = T)'
 
 script:
-  - if: branch =~ ^feature/
+  - if: branch =~ ^feature
     - R -e 'devtools::document()'
     - R CMD build .
     - R CMD check *tar.gz
