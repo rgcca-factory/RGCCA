@@ -7,7 +7,7 @@
 bootstrap_k(rgcca, blocks = NULL, connection = 1 -
   diag(length(blocks)), tau = rep(1, length(blocks)), ncomp = rep(2,
   length(blocks)), scheme = "factorial", init = "svd", bias = TRUE,
-  tol = 1e-08, type = "rgcca", superblock = TRUE)
+  tol = 0.001, type = "rgcca", superblock = TRUE)
 }
 \arguments{
 \item{rgcca}{A list giving the results of a R/SGCCA}
