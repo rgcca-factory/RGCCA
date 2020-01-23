@@ -8,7 +8,7 @@ r:
   - oldrel
   - 3.5
   - 3.4
-  - 3.3
+#  - 3.3
 
 git:
   depth: 1
@@ -37,9 +37,11 @@ install:
   - R -e 'devtools::install_deps(dep = T)'
 
 script:
-  - R -e 'devtools::document()'
-  - R CMD build .
-  - R CMD check *tar.gz
+  - if: branch =~ ^feature/
+    - R -e 'devtools::document()'
+    - R CMD build .
+    - R CMD check *tar.gz
+  #- if: branch =~ ^dev
 
 after_script:
   - Rscript inst/launcher.R -h
