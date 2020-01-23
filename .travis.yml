@@ -1,6 +1,5 @@
 os:
   - linux
- # - osx
 
 language: r
 
@@ -14,12 +13,10 @@ r:
 #- features
 #- macos
 #
-#jobs:
-#  include:
-#  - stage: features
-#  - stage: macos
-#    if: branch = develop
-#    os: osx
+jobs:
+  include:
+    if: branch =~ ^fature
+    os: osx
 
 git:
   depth: 1
@@ -53,7 +50,9 @@ script:
     R CMD build .
     R CMD check *tar.gz
   fi
-  #- if: branch =~ ^dev
+  if [ "$TRAVIS_BRANCH" =~ ^fature ]; then
+    ./functional_tests.sh
+  fi
 
 after_script:
   - Rscript inst/launcher.R -h
