@@ -37,10 +37,10 @@ install:
   - R -e 'devtools::install_deps(dep = T)'
 
 script:
-  - if [[ branch =~ ^feature ]] ; then
-    R -e 'devtools::document()'
-    R CMD build .
-    R CMD check *tar.gz
+  - if [ "$TRAVIS_BRANCH" =~ ^feature ] ; then
+      R -e 'devtools::document()'
+      R CMD build .
+      R CMD check *tar.gz
   fi
   #- if: branch =~ ^dev
 
