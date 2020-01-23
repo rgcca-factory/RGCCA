@@ -394,7 +394,7 @@ load_libraries <- function(librairies) {
 opt <- list(
     directory = ".",
     separator = "\t",
-    type = "rgcca",
+    type = "pca",
     ncomp = 2,
     tau = "optimal",
     scheme = "factorial",
@@ -411,8 +411,8 @@ opt <- list(
     o6 = "individuals.tsv",
     o7 = "variables.tsv",
     o8 = "rgcca_result.RData",
-    datasets = paste0("inst/extdata/",
-        c("agriculture", "industry", "politic"),
+    datasets = paste0("/network/lustre/iss01/home/etienne.camenen/DATA/nucleipark/blocks_full/metabolomic.tsv",
+        c("metabolomic"),
         ".tsv",
         collapse = ",")
 )

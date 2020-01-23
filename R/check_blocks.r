@@ -45,7 +45,7 @@ check_blocks <- function(blocks, init = FALSE, add_NAlines=FALSE) {
         if(sd(sapply(blocks,function(x)dim(x)[1]))==0)
         {
             blocks=lapply(blocks,function(x){rownames(x)=paste0("S",1:(dim(x)[1]));return(x)})
-            print("Warnings in check_blocks(A):\n Elements of the list have no rownames. They were named as S1,...Sn")
+            print("Warnings in check_blocks(A):\n Elements of the list have no rownames. They were named as S1,...Sn") #TODO : verify
         }
         else
         {

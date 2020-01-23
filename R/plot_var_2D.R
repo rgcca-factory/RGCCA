@@ -8,9 +8,14 @@
 #' @param n_mark An integer giving the number of top variables to select
 #' @param collapse A boolean to combine the variables of each blocks as result
 #' @examples
-#' setMatrix = function(nrow, ncol, iter = 3) lapply(seq(iter),
-#'     function(x) {y=matrix(runif(nrow * ncol), nrow, ncol); 
-#'     rownames(y)=paste0("S",1:nrow);return(y)})
+#' setMatrix = function(nrow, ncol, iter = 3) 
+#'     lapply(
+#'         seq(iter),
+#'         function(x) {
+#'             y <- matrix(runif(nrow * ncol), nrow, ncol)
+#'             rownames(y) <- paste0("S",1:nrow)
+#'             return(y)
+#'         })
 #' blocks = setMatrix(10, 5)
 #' blocks[[4]] = Reduce(cbind, blocks)
 #' for (i in seq(4)) {
@@ -19,12 +24,12 @@
 #' }
 #' coord = setMatrix(10, 2, 4)
 #' a = setMatrix(5, 2)
-#' a[[4]] = matrix(runif(15 * 2), 15, 2)
+#' a[[4]] = setMatrix(15, 2, 1)[[1]]
 #' AVE_X = lapply(seq(4), function(x) runif(2))
-#' rgcca_out = list(Y = coord, a = a, AVE = list(AVE_X = AVE_X), blocks = blocks)
-#' names(rgcca_out$a) <- LETTERS[seq(4)] -> names(rgcca_out$blocks)
+#' rgcca_out = list(Y = coord, a = a, AVE = list(AVE_X = AVE_X), call = list(blocks = blocks))
+#' names(rgcca_out$a) <- LETTERS[seq(4)] -> names(rgcca_out$call$blocks)
 #' # Using a superblock
-#' rgcca_out$superblock = TRUE
+#' rgcca_out$call$superblock = TRUE
 #' plot_var_2D(rgcca_out, 1, 2)
 #' # Using the first block
 #' plot_var_2D(rgcca_out, 1, 2, 1)
@@ -50,7 +55,7 @@ plot_var_2D <- function(
     cex_sub = 16 * cex,
     cex_point = 3 * cex,
     cex_lab = 19 * cex) {
-   
+
     x <- y <- NULL
     df <- get_ctr2(
         rgcca = rgcca,
@@ -75,7 +80,7 @@ plot_var_2D <- function(
     # PCA case: remove the superblock in legend
     if (identical(rgcca$call$blocks[[1]], rgcca$call$blocks[[2]]))
         rgcca$call$superblock <- FALSE
-    
+
     check_ncol(rgcca$a, i_block)
 
     p <- plot2D(

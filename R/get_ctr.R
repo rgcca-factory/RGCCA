@@ -6,6 +6,8 @@
 #' @param type A character giving the choice ot the index between cor or weight
 #' @param compz An integer giving the index of the analysis component used
 #' for the z-axis
+#' @param i_block_2 An integer giving the index of a list of blocks to be 
+#' correlated to i_block if this option is selected (default to i_block)
 #' @examples
 #' library(RGCCA)
 #' data("Russett")
@@ -19,7 +21,7 @@
 #' superblocks <- rep(list(Reduce(cbind, c(blocks[1], blocks[3]))), 2)
 #' names(superblocks) <- names(blocks)[c(1, 3)]
 #' rgcca_out = rgcca.analyze(blocks[c(1,3)], ncomp = c(3,4))
-#' rgcca_out$blocks = superblocks
+#' rgcca_out$call$blocks = superblocks
 #' get_ctr(rgcca_out, compz = 3, i_block = 1, type = "cor", collapse = TRUE)
 #' get_ctr(rgcca_out, 2, 1, 3, 1, "weight", TRUE)
 #' @return A dataframe containing the indexes for each selected components
@@ -31,32 +33,56 @@ get_ctr <- function(
     compz = NULL,
     i_block = length(rgcca$call$blocks),
     type = "cor",
-    collapse = FALSE) {
-    
+    collapse = FALSE,
+    i_block_2 = NULL) {
+
     match.arg(type, c("cor", "weight"))
     stopifnot(!missing(rgcca))
 
     blocks <- rgcca$call$blocks
 
-    if (!collapse)
-        i_block_2 <- i_block
-    else
-        i_block_2 <- 1
+    if (!collapse) {
+        row.names <- colnames(blocks[[i_block]])
+    }else{
+        if (rgcca$call$superblock)
+            blocks <- blocks[-length(blocks)]
+        row.names <- unlist(lapply(blocks, colnames))
+    }
 
-    row.names = colnames(blocks[[i_block]])
-    if (type == "cor")
-        f <- function(x){
-                cor(blocks[[i_block_2]][rownames(rgcca$Y[[i_block_2]]), ],
-                rgcca$Y[[i_block]][, x],
-                use = "pairwise.complete.obs"
-            )
-        }
-    else{
+    if (type == "cor") {
+        if (!collapse)
+            f <- function(x){
+                    if (is.null(i_block_2))
+                        i_block_2 <- i_block
+                    cor(
+                        blocks[[i_block_2]][rownames(rgcca$Y[[i_block]]), ],
+                        rgcca$Y[[i_block]][, x],
+                        use = "pairwise.complete.obs"
+                    )
+            }
+        else
+            f <- function(x){
+                unlist(
+                    lapply(
+                        seq(length(blocks)),
+                        function(y){    
+                            if (is.null(i_block_2))
+                                i_block_2 <- y
+                            cor(
+                                blocks[[i_block_2]][rownames(rgcca$Y[[y]]), ],
+                                rgcca$Y[[y]][, x],
+                                use = "pairwise.complete.obs"
+                            )
+                        }
+                    )
+                )
+            }
+    }else{
         if (!collapse)
             f <- function(x) rgcca$a[[i_block]][, x]
         else
             f <- function(x) unlist(
-                sapply(
+                lapply(
                     seq(length(blocks)),
                     function(y) rgcca$a[[y]][, x]
                 )
@@ -65,13 +91,15 @@ get_ctr <- function(
 
     res <- data.frame(
         sapply(
-            c(compx, compy, compz[compz >= rgcca$call$ncomp[i_block]]),
+            c(compx, compy, compz),
             function(x) f(x),
             simplify = FALSE
         ),
         row.names = row.names
     )
-    colnames(res) <- seq(2) # for save_var
+    colnames(res) <- seq(NCOL(res)) # for save_var
     return(res)
 
 }
+
+#[compz >= rgcca$call$ncomp[i_block]]

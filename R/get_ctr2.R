@@ -33,7 +33,7 @@ get_ctr2 <- function(
 
     if (collapse) {
         if (rgcca$call$superblock) {
-            
+
             blocks <- blocks[-length(blocks), drop = FALSE]
             if (i_block > length(blocks))
                 i_block <- length(blocks)
@@ -54,13 +54,14 @@ get_ctr2 <- function(
             J <- i_block
 
         selectedVar <- unlist(
-            lapply(J,
+            lapply(
+                J,
                 function(x)
                     apply(
                         sapply(
                             c(compx, compy, compz[compz >= rgcca$call$ncomp[x]]),
-                            function(y) rgcca$a[[x]][, y] != 0), 
-                        1, 
+                            function(y) rgcca$a[[x]][, y] != 0),
+                        1,
                         function(z) Reduce("|", z)
                     )
                 )
