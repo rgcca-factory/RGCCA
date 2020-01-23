@@ -1,6 +1,6 @@
 os:
   - linux
-  - osx
+ # - osx
 
 language: r
 
@@ -9,6 +9,17 @@ r:
   - 3.5
   - 3.4
 #  - 3.3
+
+stages:
+- features
+- macos
+
+jobs:
+  include:
+  - stage: features
+  - stage: macos
+    if: branch = develop
+    os: osx
 
 git:
   depth: 1
@@ -37,11 +48,11 @@ install:
   - R -e 'devtools::install_deps(dep = T)'
 
 script:
-  - if [ "$TRAVIS_BRANCH" =~ ^feature ] ; then
-      R -e 'devtools::document()'
-      R CMD build .
-      R CMD check *tar.gz
-  fi
+  #- if [ "$TRAVIS_BRANCH" =~ ^feature ] ; then
+  - R -e 'devtools::document()'
+  - R CMD build .
+  - R CMD check *tar.gz
+  #fi
   #- if: branch =~ ^dev
 
 after_script:
