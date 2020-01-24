@@ -21,7 +21,6 @@ getArgs <- function() {
             opt_str = c("-d", "--datasets"),
             type = "character",
             metavar = "path list",
-            default = opt[20],
             help = "List of comma-separated file paths corresponding to the
             blocks to be analyzed (one per block and without spaces between
             them; e.g., path/file1.txt,path/file2.txt) [required]"
@@ -411,7 +410,7 @@ opt <- list(
     o6 = "individuals.tsv",
     o7 = "variables.tsv",
     o8 = "rgcca_result.RData",
-    datasets = paste0("inst/extdata/",
+    datasets = paste0("/network/lustre/iss01/home/etienne.camenen/DATA/nucleipark/blocks_full/metabolomic.tsv",
         c("agriculture", "industry", "politic"),
         ".tsv",
         collapse = ",")

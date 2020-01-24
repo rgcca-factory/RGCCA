@@ -27,7 +27,7 @@ plot_var_1D <- function(
     cex = 1,
     cex_sub = 16 * cex,
     cex_axis = 10 * cex) {
-    
+
     check_ncol(rgcca$a, i_block)
 
     df <- get_ctr2(
@@ -43,7 +43,7 @@ plot_var_1D <- function(
 
     if (i_block < length(rgcca$a) || is(rgcca, "pca"))
         rgcca$call$superblock <- FALSE
-    
+
     J <- names(rgcca$a)
 
     title <- ifelse(type == "cor",
