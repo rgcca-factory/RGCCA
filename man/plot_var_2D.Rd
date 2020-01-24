@@ -46,18 +46,18 @@ construction of the RGCCA components
 }
 \examples{
 setMatrix = function(nrow, ncol, iter = 3) 
-    lapply(
-        seq(iter),
-        function(x) {
-            y <- matrix(runif(nrow * ncol), nrow, ncol)
-            rownames(y) <- paste0("S",1:nrow)
-            return(y)
-        })
+ lapply(
+     seq(iter),
+     function(x) {
+         y <- matrix(runif(nrow * ncol), nrow, ncol)
+         rownames(y) <- paste0("S",1:nrow)
+         return(y)
+     })
 blocks = setMatrix(10, 5)
 blocks[[4]] = Reduce(cbind, blocks)
 for (i in seq(4)) {
-    colnames(blocks[[i]]) = paste0( LETTERS[i],
-    as.character(seq(NCOL(blocks[[i]]))))
+ colnames(blocks[[i]]) = paste0( LETTERS[i],
+ as.character(seq(NCOL(blocks[[i]]))))
 }
 coord = setMatrix(10, 2, 4)
 a = setMatrix(5, 2)
@@ -67,14 +67,14 @@ rgcca_out = list(Y = coord, a = a, AVE = list(AVE_X = AVE_X), call = list(blocks
 names(rgcca_out$a) <- LETTERS[seq(4)] -> names(rgcca_out$call$blocks)
 # Using a superblock
 rgcca_out$call$superblock = TRUE
+rgcca_out$call$ncomp = rep(3, 4)
 plot_var_2D(rgcca_out, 1, 2)
 # Using the first block
 plot_var_2D(rgcca_out, 1, 2, 1)
 library(RGCCA)
 data("Russett")
 blocks = list(agriculture = Russett[, seq(3)], industry = Russett[, 4:5],
-    politic = Russett[, 6:11] )
+ politic = Russett[, 6:11] )
 rgcca_out = rgcca.analyze(blocks)
 # Without superblock but with the of all variables to the first block
-plot_var_2D(rgcca_out, collapse = TRUE)
 }

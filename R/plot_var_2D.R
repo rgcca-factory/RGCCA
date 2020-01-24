@@ -12,7 +12,7 @@
 #'  lapply(
 #'      seq(iter),
 #'      function(x) {
-#          y <- matrix(runif(nrow * ncol), nrow, ncol)
+#'          y <- matrix(runif(nrow * ncol), nrow, ncol)
 #'          rownames(y) <- paste0("S",1:nrow)
 #'          return(y)
 #'      })
