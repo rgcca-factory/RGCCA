@@ -2,7 +2,8 @@ get_comp_all <- function(
     rgcca,
     newA = rgcca$call$blocks,
     type = "train",
-    newbloc_y = .Machine$integer.max) {
+    newbloc_y = .Machine$integer.max,
+    pred) {
 
     names <- unlist(lapply(rgcca$Y[-newbloc_y], colnames))
 
@@ -23,7 +24,7 @@ get_comp_all <- function(
                 function(name, times)  rep(name, times),
                 names(newA)[-newbloc_y],
                 rgcca$call$ncomp
-        )), names,  
+        )), names,
         sep = "_")
 
     return(res)

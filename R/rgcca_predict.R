@@ -219,8 +219,8 @@ rgcca_predict = function(
 
     rgcca$Y <- rgcca$Y[MATCH]
     rgcca$call$ncomp <- rgcca$call$ncomp[MATCH][-newbloc_y]
-    comp.train <- get_comp_all(rgcca, newbloc_y = newbloc_y)
-    comp.test <- get_comp_all(rgcca, type = "test", newbloc_y = newbloc_y)
+    comp.train <- get_comp_all(rgcca, newA, newbloc_y = newbloc_y)
+    comp.test <- get_comp_all(rgcca, newA, type = "test", newbloc_y = newbloc_y, pred)
 
     # Scores
     res <- NULL
@@ -273,9 +273,7 @@ rgcca_predict = function(
                             abs(
                                 cor[[i]] * rgcca$call$connection
                             )[upper.tri(rgcca$call$connection)], 
-                            na.rm = TRUE)
-                        if (cor[[i]] == 0)
-                            cor[[i]] <- NA               
+                            na.rm = TRUE)     
                     }
                     score <- mean(unlist(cor), na.rm = TRUE)
                 }
