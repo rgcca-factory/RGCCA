@@ -70,7 +70,7 @@ select_analysis <- function(
     warnSuper <- function(x) {
         if (length(x) < (length(blocks))) {
             warn.msg.super <<- c(warn.msg.super, deparse(substitute(x)))
-            return(c(x, x[1]))
+            return(c(x, max(x)))
         } else
             return(x)
     }
