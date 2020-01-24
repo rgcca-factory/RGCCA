@@ -43,17 +43,18 @@ comparison=function(rgcca1,rgcca2,naxis=1,selec=10,selectPatient=NULL,indNA=NULL
     com[i]=diffNorm2(rgcca1[["astar"]][[i]][,naxis],rgcca2[["astar"]][[i]][,naxis])
     if(dim(rgcca1[["Y"]][[i]])[2]>1)
     {
-      rvComplete[i]=coeffRV(rgcca1[["Y"]][[i]][selectPatient,1:2],rgcca2[["Y"]][[i]][selectPatient,1:2])$rv
-      rv[i]=coeffRV(rgcca1[["Y"]][[i]][selectAllPatient,1:2],rgcca2[["Y"]][[i]][selectAllPatient,1:2])$rv
+      rvComplete[i]=1-coeffRV(rgcca1[["Y"]][[i]][selectPatient,1:2],rgcca2[["Y"]][[i]][selectPatient,1:2])$rv
+      rv[i]=1-coeffRV(rgcca1[["Y"]][[i]][selectAllPatient,1:2],rgcca2[["Y"]][[i]][selectAllPatient,1:2])$rv
     }
    if(dim(rgcca1[["Y"]][[i]])[2]==1)
    {
+       print("only 1 component: the criteria of RV is replaced by a norm difference")
      rvComplete[i]=diffNorm2(as.vector(rgcca1[["Y"]][[i]][selectPatient,]),as.vector(rgcca2[["Y"]][[i]][selectPatient,]))
       rv[i]=diffNorm2(as.vector(rgcca1[["Y"]][[i]][selectAllPatient,]),as.vector(rgcca2[["Y"]][[i]][selectAllPatient,]))
     }
     
     testBm=biomarker(resRGCCA=rgcca2,block=i,axes=1,selec=selec)
-    pctBm[i]=sum(names(testBm)%in%names(refBm))/length(refBm)	
+    pctBm[i]=1-sum(names(testBm)%in%names(refBm))/length(refBm)	
     
     if(!is.null(indNA[[i]]))
     {
