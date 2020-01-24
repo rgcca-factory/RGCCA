@@ -47,8 +47,8 @@ get_ctr <- function(
         row.names <- unlist(lapply(blocks, colnames))
     }
 
-    
-    cor_fun <- function(x, y){    
+    if (type == "cor")
+        f2 <- function(x, y){    
         if (is.null(i_block_2))
             i_block_2 <- y
         cor(
@@ -57,13 +57,8 @@ get_ctr <- function(
             use = "pairwise.complete.obs"
         )
     }
-    
-    weight_fun <- function(x, y) rgcca$a[[y]][, x]
-
-    if (type == "cor")
-        f2 <- cor_fun
     else
-        f2 <- weight_fun
+        f2 <- function(x, y) rgcca$a[[y]][, x]
 
     if (!collapse)
         f <- function(x)
