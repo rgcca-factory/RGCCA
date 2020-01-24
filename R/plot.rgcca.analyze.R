@@ -12,7 +12,7 @@
 #' resRgcca=rgcca.analyze(blocks=A,connection=C,
 #' tau=rep(1,3),ncomp=rep(2,3),superblock=FALSE)
 # plot.rgcca.analyze(resRgcca,i_block=1,nrow=2,ncol=1)
-#' @importFrom gridExtra gridArrange
+#' @importFrom gridExtra grid.arrange
 #' @export
 plot.rgcca.analyze=function(resRgcca,...)
 {
