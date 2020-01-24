@@ -50,18 +50,9 @@ server <- function(input, output, session) {
     })
 
     output$nb_compcustom <- renderUI({
-        # Set dynamically the maximum number of component that should be used
-        # in the analysis
-
-        sliderInput(
-            inputId = "nb_comp",
-            label = "Number of components",
-            min = 1,
-            max = getDefaultComp(),
-            value = 2,
-            step = 1
-        )
-
+        refresh <- c(input$superblock)
+        isolate (setAnalysis())
+        setCompUI()
     })
 
     refreshAnalysis <- function()
@@ -130,6 +121,19 @@ server <- function(input, output, session) {
                                 step = .01
                             )
                         }))
+    }
+
+    setCompUI <- function(superblock = NULL) {
+        lapply(1:(length(blocks)), function(i) {
+            sliderInput(
+                inputId = paste0("ncomp", i),
+                label = paste("Number of components for", names(getNames())[i]),
+                min = 1,
+                max = getMaxComp()[i],
+                value = 2,
+                step = 1
+            )
+        })
     }
 
     setNamesInput <- function(x, label = NULL, bool = TRUE) {
@@ -356,24 +360,19 @@ server <- function(input, output, session) {
         return(ui)
     }
 
-    getMinComp <- function() {
-        # Get the maximum number of component allowed in an analysis based
-        # on the minimum umber of column among the blocks
-
-        if (!is.null(input$blocks)) {
-            blocks <- getInfile()
-            if (!is.null(blocks)) {
-                min <- min(sapply(blocks, NCOL))
-                if (min > 5)
+    getMaxComp <- function(){
+        comp <- sapply(
+            blocks,
+            function(x) {
+                comp <- NCOL(x)
+                if (comp > 5)
                     return(5)
                 else
-                    return(min)
+                    return(comp)
             }
-        }
-        return(2)
-
+        )
     }
-
+   
     getNames <- function() {
         # Get the names of the blocks
 
@@ -397,18 +396,6 @@ server <- function(input, output, session) {
         } else
             return(100)
 
-    }
-
-    getDefaultComp <- function() {
-        # Set the maximum of component to the minimum
-        # number of column among the blocks but not higher than 5
-
-        min <- getMinComp()
-
-        if (min < 5)
-            return (min)
-        else
-            return (5)
     }
 
     getDefaultCol <- function() {
@@ -612,6 +599,14 @@ server <- function(input, output, session) {
         return(tau)
     }
 
+    getNcomp <- function() {
+        ncomp <- integer(0)
+        for (i in 1:(length(blocks_without_superb) + ifelse(input$superblock, 1, 0)))
+            ncomp <- c(ncomp, input[[paste0("ncomp", i)]])
+
+        return(ncomp)
+    }
+
     setParRGCCA <- function(verbose = TRUE) {
         blocks <- blocks_without_superb
 
@@ -685,7 +680,7 @@ server <- function(input, output, session) {
                         superblock = (!is.null(input$supervised) &&
                             !is.null(input$superblock) && input$superblock),
                         tau = tau,
-                        ncomp = input$nb_comp,
+                        ncomp = getNcomp(),
                         scheme = input$scheme,
                         scale = FALSE,
                         init = input$init,
@@ -736,7 +731,7 @@ server <- function(input, output, session) {
                     superblock = (!is.null(input$supervised) &&
                         !is.null(input$superblock) && input$superblock),
                     tau = tau,
-                    ncomp = input$nb_comp,
+                    ncomp = getNcomp(),
                     scheme = input$scheme,
                     scale = FALSE,
                     init = input$init,
@@ -1074,6 +1069,8 @@ server <- function(input, output, session) {
                 ))
                     hide(i)
             }
+
+            setCompUI()
 
             if (!is.null(input$tau_opt) && !input$tau_opt)
                 setTauUI()
