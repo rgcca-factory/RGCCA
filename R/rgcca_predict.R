@@ -217,34 +217,10 @@ rgcca_predict = function(
             stop("Please, train and test sets do not have the same name")
     }
 
-    # Prediction
-    getComp <- function(type = c("train", "test")) {
-        comps <- rgcca$Y[MATCH]
-        names <- unlist(lapply(comps[-newbloc_y], colnames))
-
-        if (type ==  "train")
-            y <- lapply(seq(length(rgcca$call$blocks)), function(x)
-                comps[[x]][row.names(rgcca$call$blocks[[x]]), ])
-        else
-            y <- pred
-
-        # matrix of Y for all selected blocks and all components
-        res  <- as.data.frame(Reduce("cbind", y[-newbloc_y]))
-        # vector of character giving the name of the block and the number of the component
-        col_names <- paste(unlist(mapply(
-                function(name, times)  rep(name, times),
-                names(newA)[-newbloc_y],
-                rgcca$call$ncomp
-            )), names,  sep = "_")
-        colnames(res) <- col_names
-
-        return(res)
-    }
-
-
+    rgcca$Y <- rgcca$Y[MATCH]
     rgcca$call$ncomp <- rgcca$call$ncomp[MATCH][-newbloc_y]
-    comp.train <- getComp("train")
-    comp.test <- getComp("test")
+    comp.train <- get_comp_all(rgcca, newbloc_y = newbloc_y)
+    comp.test <- get_comp_all(rgcca, type = "test", newbloc_y = newbloc_y)
 
     # Scores
     res <- NULL
@@ -290,30 +266,18 @@ rgcca_predict = function(
                     comp.test
                 } else{
                     rgcca$call$connection <- rgcca$call$connection[MATCH, MATCH]
-                    comp <- list()
-                    
-                    for (i in seq(max(rgcca$call$ncomp))) {
-                        comp[[i]] <-  matrix(
-                            NA,
-                            NROW(comp.test),
-                            length(newA),
-                            dimnames = list(rownames(comp.test), names(newA))
-                        )
-                        
-                        for (n in names(newA)) {
-                            pos <- grep(paste0(n, "_comp", i),
-                                names(comp.test))
-                            if (length(pos) > 0)
-                                comp[[i]][, n] <- comp.test[, pos]
-                        }
-                        comp[[i]] <- sum(abs(
-                                cor(comp[[i]], use = "pairwise.complete.obs") * rgcca$call$connection
-                            )[upper.tri(rgcca$call$connection)], na.rm = TRUE)
-                        if (comp[[i]] == 0)
-                            comp[[i]] <-  NA
-                        # (cor(comp[[i]], use = "pairwise.complete.obs")*rgcca$call$connection)[upper.tri(rgcca$call$connection)]**2
+                    cor <- get_cor_all(rgcca, newA, comp.test)
+
+                    for (i in seq(length(cor))) {
+                        cor[[i]] <- mean(
+                            abs(
+                                cor[[i]] * rgcca$call$connection
+                            )[upper.tri(rgcca$call$connection)], 
+                            na.rm = TRUE)
+                        if (cor[[i]] == 0)
+                            cor[[i]] <- NA               
                     }
-                    score <- mean(unlist(comp), na.rm = TRUE)
+                    score <- mean(unlist(cor), na.rm = TRUE)
                 }
             })
         class.fit <- NULL

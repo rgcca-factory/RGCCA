@@ -6,8 +6,6 @@
 #' @inherit plot_ind
 #' @inherit set_connection
 #' @param comps A matrix containg the components of all the blocks
-# comps <- Reduce("cbind", lapply(seq(length(rgcca_out$call$blocks)), function(x) rgcca_out$Y[[x]]))
-# colnames(comps) <- unlist(lapply(seq(length(rgcca$call$blocks)), function(x) paste0(names(rgcca$call$blocks)[x], "_comp", seq(2))))
 #' @examples
 #' library(RGCCA)
 #' data("Russett")
@@ -20,7 +18,7 @@
 get_cor_all <- function(
     rgcca, 
     blocks = rgcca$call$blocks, 
-    comps = get_comp_all(rgcca_out)){
+    comps = get_comp_all(rgcca)){
 
     comp <- list()
 
