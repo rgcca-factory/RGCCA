@@ -41,7 +41,7 @@ plot_var_1D <- function(
         remove_var = FALSE
     )
 
-    if (i_block < length(rgcca$a) || is(rgcca, "pca"))
+    if (i_block < length(rgcca$a) || rgcca$call$type == "pca")
         rgcca$call$superblock <- FALSE
 
     J <- names(rgcca$a)

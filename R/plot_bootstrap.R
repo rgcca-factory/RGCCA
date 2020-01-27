@@ -53,7 +53,7 @@ plot_bootstrap <- function(
             geom_line(aes(x = order, y = mean), inherit.aes = FALSE, lwd = 0.7) +
             geom_point(aes(x = order, y = mean), inherit.aes = FALSE, size = 1.5)
 
-        if (is(rgcca, "rgcca" ))
+        if (!rgcca$call$type %in% c("spls", "spca", "sgcca"))
             p <- p +
                 geom_errorbar(aes(ymin = intneg, ymax = intpos))
     }

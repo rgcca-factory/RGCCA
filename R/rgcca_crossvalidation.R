@@ -38,7 +38,7 @@ rgcca_crossvalidation <- function(
 
             Atrain <- lapply(bigA, function(x) x[-inds, ])
 
-            if (is(rgcca, "sgcca"))
+            if (rgcca$call$type %in% c("spls", "spca", "sgcca"))
                 tau <- rgcca$call$c1
             else
                 tau <- rgcca$call$tau

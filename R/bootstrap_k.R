@@ -43,7 +43,7 @@ bootstrap_k <- function(
         type <- rgcca$call$type
         init <- rgcca$call$init
 
-        if (is(rgcca, "sgcca"))
+        if (rgcca$call$type %in% c("sgcca","spls","spca"))
             tau <- rgcca$call$c1
         else
             tau <- rgcca$call$tau
@@ -65,7 +65,7 @@ bootstrap_k <- function(
             function(x) scale2(x[id_boot, , drop = FALSE], scale = FALSE))
 
     boot_blocks <- remove_null_sd(boot_blocks)
-
+print("rgcca")
     # Get boostraped weights
     w <- rgcca.analyze(
         boot_blocks,

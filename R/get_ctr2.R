@@ -46,7 +46,7 @@ get_ctr2 <- function(
 
     df <- get_ctr(rgcca, compx, compy, compz, i_block, type, collapse)
 
-    if (is(rgcca, "sgcca")) {
+    if (rgcca$call$type %in% c("spls", "spca", "sgcca") ){
 
         if (collapse)
             J <- seq(length(rgcca$a))

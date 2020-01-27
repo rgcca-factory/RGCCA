@@ -68,7 +68,7 @@ get_bootstrap <- function(
 
         n <- seq(NCOL(w_select))
 
-        if (is(rgcca, "sgcca")) {
+        if (rgcca$call$type %in% c("spls", "spca", "sgcca")) {
             
             occ[[i]] <- unlist(
                 parallel::mclapply(n,
@@ -116,7 +116,7 @@ get_bootstrap <- function(
         BH = p.adjust(p.vals, method = "BH")
     )
     
-    if (is(rgcca, "sgcca")) {
+    if (rgcca$call$type %in% c("spls", "spca", "sgcca")) {
         index <- 8
         df$occ <- occ
     }else{

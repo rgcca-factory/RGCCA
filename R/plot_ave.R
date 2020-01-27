@@ -23,7 +23,7 @@ plot_ave <- function(
     cex_sub = 16 * cex,
     cex_axis = 10 * cex) {
 
-    if (is(rgcca, "pca")) {
+    if (rgcca$call$type =="pca") {
         rgcca$AVE$AVE_X = rgcca$AVE$AVE_X[1]
         rgcca$call$ncomp = rgcca$call$ncomp[1]
         rgcca$a = rgcca$a[1]

@@ -65,6 +65,7 @@ a[[4]] = setMatrix(15, 2, 1)[[1]]
 AVE_X = lapply(seq(4), function(x) runif(2))
 rgcca_out = list(Y = coord, a = a, AVE = list(AVE_X = AVE_X), call = list(blocks = blocks))
 names(rgcca_out$a) <- LETTERS[seq(4)] -> names(rgcca_out$call$blocks)
+rgcca_out$call$type="rgcca"
 # Using a superblock
 rgcca_out$call$superblock = TRUE
 rgcca_out$call$ncomp = rep(3, 4)

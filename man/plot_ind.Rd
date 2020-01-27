@@ -57,10 +57,12 @@ rgcca_out = list(Y = coord, AVE = list(AVE_X = AVE_X))
 # Using a superblock
 resp = as.matrix(rep(LETTERS[seq(3)], each = 5))
 row.names(resp) = seq(15)
+rgcca_out$call$type="rgcca"
 plot_ind(rgcca_out, resp)
 # Using the first block
 resp = as.matrix(runif(15, min=-15, max = 15))
 row.names(resp) = seq(15)
+rgcca_out$call$type="rgcca"
 plot_ind(rgcca_out, resp, 1, 2, 1)
 data(Russett)
 X_agric =as.matrix(Russett[,c("gini","farm","rent")])
@@ -68,6 +70,7 @@ X_ind = as.matrix(Russett[,c("gnpr","labo")])
 X_polit = as.matrix(Russett[ , c("demostab", "dictator")])
 A = list(X_agric, X_ind, X_polit)
 C = matrix(c(0, 0, 1, 0, 0, 1, 1, 1, 0), 3, 3)
-result.rgcca = rgcca(A, C, tau = c(1, 1, 1), scheme = "factorial", scale = TRUE,ncomp=rep(2,3))
+result.rgcca = rgcca.analyze(A, C, tau = c(1, 1, 1), scheme = "factorial", 
+scale = TRUE,ncomp=rep(2,3))
 plot_ind(result.rgcca,i_block=1)
 }

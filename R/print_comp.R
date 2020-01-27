@@ -13,6 +13,7 @@
 #' AVE = list(c(0.6, 0.5), c(0.7, 0.45))
 #' rgcca_out = list(AVE = list(AVE_X = AVE))
 #' # For the superblock (or the last block)
+#' rgcca_out$call$type="rgcca"
 #' print_comp(rgcca_out, 1)
 #' # "Axis 1 (70%)"
 #' # For the first block
@@ -26,7 +27,7 @@ print_comp <- function(rgcca, n = NULL, i = NULL, outer = FALSE) {
         i <- length(rgcca$AVE$AVE_X)
 
     nvar <- sum(rgcca$a[[i]][, n] != 0)
-    if (!is(rgcca, "sgcca") | nvar == length(rgcca$a[[i]][, n]))
+    if (!rgcca$call$type %in% c("spls", "spca", "sgcca") | nvar == length(rgcca$a[[i]][, n]))
         varText <- ""
     else
         varText <- paste0(nvar, " variables, ")
