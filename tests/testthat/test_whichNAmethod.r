@@ -19,7 +19,16 @@ X_agric =as.matrix(Russett[,c("gini","farm","rent")])
 X_ind = as.matrix(Russett[,c("gnpr","labo")])
 X_polit = as.matrix(Russett[ , c("demostab", "dictator")])
 A = list(X_agric, X_ind, X_polit)
-#A_miss=createNA(A, )
+
+# Test on russett with only one variable
+data(Russett)
+X_agric =as.matrix(Russett[,c("gini","farm","rent")])
+X_ind = as.matrix(Russett[,c("gnpr","labo")])
+X_polit = as.matrix(Russett[ , c("demostab")])
+A = list(agri=X_agric, ind=X_ind,polit= X_polit)
+A_miss=createNA(A)
+determine_patternNA(A_miss$dat)
+
 #resultComparison2=whichNAmethod(A,rgccaType="c",listMethods=c("complete","mean","nipals","singleBlock","allInclusive"),typeNA="ponc",patternNA=rep(0.1,3),seed=1,nDatasets = 20)
 #plotWhichNAmethod(listFinale=resultComparison2,ylim=c(0,0.2),output="a")
 

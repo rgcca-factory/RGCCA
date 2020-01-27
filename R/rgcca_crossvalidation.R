@@ -56,7 +56,7 @@ rgcca_crossvalidation <- function(
                 ncomp = rgcca$call$ncomp,
                 scheme = rgcca$call$scheme,
                 scale = FALSE,
-                type = class(rgcca),
+                type = rgcca$call$type,
                 verbose = FALSE,
                 init = rgcca$call$init,
                 bias = rgcca$call$bias,

@@ -166,9 +166,11 @@ rgcca.analyze <- function(blocks,
         "knn.k",
         "knn.output",
         "knn.klim",
-        "pca.ncp"
+        "pca.ncp",
+        "type"
     ))
         func_out$call[[i]] <- as.list(environment())[[i]]
-
+  
+    class(func_out) <- "rgcca.analyze"
     invisible(func_out)
 }

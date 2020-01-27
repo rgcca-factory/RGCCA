@@ -34,6 +34,7 @@ Imports:
     optparse,
     plotly,
     scales,
-    visNetwork
+    visNetwork,
+    gridExtra
 VignetteBuilder: knitr
 biocViews: Visualization, PrincipalComponent, DimensionReduction, StructuralEquationModels

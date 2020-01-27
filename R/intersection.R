@@ -19,6 +19,7 @@
 intersection=function(A)
 {
 	A=lapply(A,as.matrix)
+
 #	lapply(A,function(x){if(is.null(rownames(x))){print("one matrix has no colnames")}})
 	newList=lapply(A,
 		function(x) 
@@ -30,11 +31,13 @@ intersection=function(A)
 		  }
 			vecNA=apply(x,1,sum);
 			if(dim(x)[1]>1)
-			{return(x[which(!is.na(vecNA)),])}
+			{return(x[which(!is.na(vecNA)),,drop=FALSE])}
 			else
 			{
-				y=x[which(!is.na(x)),];
-				rownames(y)=rownames(x)[which(!is.na(x),)];return(y)
+				y=x[which(!is.na(x)),,drop=FALSE];
+				rownames(y)=rownames(x)[which(!is.na(x),)];
+		
+				return(y)
 			}
 		}
 		)
@@ -47,7 +50,7 @@ intersection=function(A)
 	}))
 	if(length(final)>3)
 	{
-  	interlist=lapply(newList,function(x){if(!is.null(dim(x))){x[final,]}else{x[final]}})
+  	interlist=lapply(newList,function(x){if(!is.null(dim(x))){x[final,,drop=FALSE]}else{x[final,,drop=FALSE]}})
 	}
 	else
 	{print("less than 3 subjects in the intersection");interlist=NA}
