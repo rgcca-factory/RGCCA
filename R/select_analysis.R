@@ -101,17 +101,18 @@ select_analysis <- function(
     } else
         superblock <- FALSE
 
-    if (tolower(type) == "pca") {
+    if (length(grep("[s]pca", tolower(type))) == 1) {
         if (length(blocks) != 1)
             check_nblocks(blocks, type)
 
         scheme <- setScheme("horst")
-        tau <- setTau(c(1, 1))
         setSuperbloc()
+        if (tolower(type) == "pca")
+            tau <- setTau(c(1, 1))
     }
 
     # 2 Blocks cases
-    else if (tolower(type) %in% c("cca", "ra", "ifa", "pls")) {
+    else if (tolower(type) %in% c("cca", "ra", "ifa", "pls", "spls")) {
         set2Block(type)
 
         if (tolower(type) == "cca")
@@ -265,7 +266,7 @@ select_analysis <- function(
             "r-maxvar", "rcon-pca", "ridge-gca", "sabscor", "ssqcor", "ssqcor", 
             "ssqcov-1", "ssqcov-2", "ssqcov", "sum-pca", "sumcor", "sumcov-1", 
             "sumcov-2", "sumcov", "sabscov", "plspm", "cca", "ra", "ifa", "pls",
-            "pca", "sgcca")
+            "pca", "sgcca", "spls", "spca")
         stop(
             paste0("Wrong type of analysis. Please select one among the following
             list: ", paste(analysis, collapse = ", ")),
