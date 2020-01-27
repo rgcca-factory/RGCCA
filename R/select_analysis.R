@@ -101,7 +101,7 @@ select_analysis <- function(
     } else
         superblock <- FALSE
 
-    if (length(grep("[s]pca", tolower(type))) == 1) {
+    if (length(grep("s?pca", tolower(type))) == 1) {
         if (length(blocks) != 1)
             check_nblocks(blocks, type)
 
