@@ -23,9 +23,6 @@ biomarker <- function(
     if (selec == "all")
         selectionX <- 1:length(x)
 
-    if(selec=="sig")
-        selectionX <- 1:round(percentBm * length(x))
-        
     if (is.numeric(selec))
         selectionX <- 1:(min(selec, round(percentBm * length(x))))
 
