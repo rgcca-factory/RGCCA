@@ -7,15 +7,15 @@ biomarker <- function(
     percentBm = 0.5) {
 
   
-   A <- as.matrix(resRGCCA$call$A[[block]])
+   A <- as.matrix(resRGCCA$call$blocks[[block]])
   
     
-    x <- rep(NA, ncol(A))
+    x <- rep(NA, NCOL(A))
 
-    for (i in 1:ncol(A))
+    for (i in 1:NCOL(A))
         x[i] <- cor(
-                A[, i],
-                as.matrix(resRGCCA$Y[[block]][, axes]),
+                A[rownames(resRGCCA$Y[[block]]), i],
+                as.matrix(resRGCCA$Y[[block]][rownames(resRGCCA$Y[[block]]), axes]),
                 use = "pairwise.complete.obs"
             )
 
@@ -23,6 +23,9 @@ biomarker <- function(
     if (selec == "all")
         selectionX <- 1:length(x)
 
+    if(selec=="sig")
+        selectionX <- 1:round(percentBm * length(x))
+        
     if (is.numeric(selec))
         selectionX <- 1:(min(selec, round(percentBm * length(x))))
 
