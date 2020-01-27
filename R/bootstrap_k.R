@@ -43,7 +43,7 @@ bootstrap_k <- function(
         type <- class(rgcca)
         init <- rgcca$init
 
-        if (is(rgcca, "sgcca"))
+        if (class(rgcca) %in% c("sgcca", "spls", "spca"))
             tau <- rgcca$call$c1
         else
             tau <- rgcca$call$tau

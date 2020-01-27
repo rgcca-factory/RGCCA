@@ -13,7 +13,7 @@
 #' @export
 get_nodes <- function(rgcca, tau = NULL) {
 
-    if (is(rgcca, "sgcca")) {
+    if (class(rgcca) %in% c("sgcca", "spls", "spca")) {
         par_rgcca <- "c1"
         par.name <- "sparsity"
     } else
