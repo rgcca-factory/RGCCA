@@ -6,8 +6,14 @@ biomarker <- function(
     selec = "all",
     percentBm = 0.5) {
 
-  
-   A <- as.matrix(resRGCCA$call$blocks[[block]])
+   if(class(resRGCCA)=="rgcca")
+   {
+       A <- as.matrix(resRGCCA$call$A[[block]])
+   }
+   if(class(resRGCCA)=="rgcca.analyze")
+   {
+       A <- as.matrix(resRGCCA$call$blocks[[block]])
+   }
   
     
     x <- rep(NA, NCOL(A))
