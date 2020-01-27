@@ -60,7 +60,7 @@ plot_bootstrap_2D <- function(
         return(abs(as.double(x)))
     }
 
-    ggplot(
+    p <- ggplot(
         b,
         aes(
             x = transform_x(b[, x]),
@@ -84,4 +84,21 @@ plot_bootstrap_2D <- function(
         axis.title.x = axis(margin(20, 0, 0, 0))
     ) +
     scale_color_manual(values = color_group(seq(2)))
+
+
+    limites <- function(p, x){
+        if (x %in% c("sign", "occ")) {
+            func <- get(paste0(deparse(substitute(x)), "lim"))
+            if (x == "sign")
+                p <- p + func(0, 1)
+            else if (x == "occ")
+                p <- p + func(NA, 1)
+        }
+        return(p)
+    }
+
+    p <- limites(p, x)
+    p <- limites(p, y)
+
+    return(p)
 }
