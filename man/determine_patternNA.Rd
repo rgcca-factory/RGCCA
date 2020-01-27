@@ -12,6 +12,10 @@ determine_patternNA(A, graph = "all", legend = FALSE,
 \item{A}{list of blocks}
 
 \item{graph}{if TRUE, the pattern of missing values is plotted}
+
+\item{legend}{if TRUE the legend is plotted}
+
+\item{outlierVisible}{if FALSE, the outliers will be -2 if negative, 2 if positive}
 }
 \value{
 a list containing the percentage of missing values per variable (pctNA), the percentage of missing values per block (pctNAbyBlock), and the complete individuals percentage (completeSubjectByBlock)

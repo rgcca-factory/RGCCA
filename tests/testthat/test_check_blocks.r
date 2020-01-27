@@ -5,12 +5,12 @@
  rand_mat <- function(x) matrix(runif(9), 3, 3)
  A = lapply(1:3, rand_mat)
  A[[4]]=c(1,2,-1)
- try(check_blocks(A))
- geterrmessage()
+ # try(check_blocks(A))
+ # geterrmessage()
  names(A) <- LETTERS[1:3]
  # importance of colnames
- try(check_blocks(A))
- geterrmessage()
+# try(check_blocks(A))
+# geterrmessage()
  A=lapply(A,as.matrix)
  for(i in 1:length(A))
  {

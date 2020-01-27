@@ -19,7 +19,7 @@
 intersection=function(A)
 {
 	A=lapply(A,as.matrix)
-	print(lapply(A,dim))
+
 #	lapply(A,function(x){if(is.null(rownames(x))){print("one matrix has no colnames")}})
 	newList=lapply(A,
 		function(x) 

@@ -7,6 +7,8 @@
 \method{plot}{rgcca.analyze}(resRgcca, ...)
 }
 \arguments{
+\item{resRgcca}{Result of rgcca.analyze function}
+
 \item{...}{parameters from plot_ind or plot_var_2D}
 }
 \description{

@@ -40,8 +40,8 @@ bootstrap_k <- function(
         bias <- rgcca$call$bias
         tol <- rgcca$call$tol
         superblock <- rgcca$call$superblock
-        type <- class(rgcca)
-        init <- rgcca$init
+        type <- rgcca$call$type
+        init <- rgcca$call$init
 
         if (is(rgcca, "sgcca"))
             tau <- rgcca$call$c1

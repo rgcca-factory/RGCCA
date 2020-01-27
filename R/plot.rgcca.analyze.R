@@ -2,6 +2,7 @@
 #' Plots 
 #' @title Regularized Generalized Canonical Correlation Analysis (RGCCA) 
 #' @param ... parameters from plot_ind or plot_var_2D
+#' @param resRgcca Result of rgcca.analyze function
 #' @examples
 #' data(Russett)
 #' X_agric =as.matrix(Russett[,c("gini","farm","rent")]);

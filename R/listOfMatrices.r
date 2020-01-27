@@ -1,7 +1,5 @@
 listOfMatrices=function(A)
-{#
-    #
-    #
+{
     B=A
     i=1;continue=TRUE
     while(continue & i<length(A)+1)
@@ -17,7 +15,7 @@ listOfMatrices=function(A)
     {
         if(is.null(dim(A[[i]])))
         {
-            print("one !")
+            print(paste0("Warnings: block ",i,"has no dimensions and was transformed as matrix"))
             B[[i]]=matrix(A[[i]],ncol=1)
             rownames(B[[i]])=names(A[[i]])
             colnames(B[[i]])=names(A)[i]

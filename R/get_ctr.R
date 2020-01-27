@@ -44,6 +44,7 @@ get_ctr <- function(
         i_block_2 <- 1
 
     row.names = colnames(blocks[[i_block]])
+   
     if (type == "cor")
         f <- function(x){
                 cor(blocks[[i_block_2]][rownames(rgcca$Y[[i_block_2]]), ],
