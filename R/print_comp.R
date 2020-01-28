@@ -20,11 +20,7 @@
 #' print_comp(rgcca_out, 2, 1)
 #' # "Axis 2 (50%)"
 #' @export
-print_comp <- function(rgcca, n = NULL, i = NULL, outer = FALSE) {
-    
-    # by default, take the last block
-    if (is.null(i))
-        i <- length(rgcca$AVE$AVE_X)
+print_comp <- function(rgcca, n = 1, i = length(rgcca$AVE$AVE_X), outer = FALSE) {
 
     nvar <- sum(rgcca$a[[i]][, n] != 0)
     if (!rgcca$call$type %in% c("spls", "spca", "sgcca") | nvar == length(rgcca$a[[i]][, n]))
@@ -32,11 +28,11 @@ print_comp <- function(rgcca, n = NULL, i = NULL, outer = FALSE) {
     else
         varText <- paste0(nvar, " variables, ")
     
-    ave <- quote(paste0(round(AVE[seq(n)] * 100, 1), "%"))
+    ave <- quote(paste0(round(AVE[n] * 100, 1), "%"))
     if (isTRUE(outer)) {
         AVE <- rgcca$AVE$AVE_outer
         if (length(rgcca$AVE$AVE_outer) > 1)
-            n <- 2
+            n <- seq(2)
         else 
             n <- 1
         paste0("First outer comp. : ", paste(eval(ave), collapse = " & "))
