@@ -60,7 +60,7 @@ plot_bootstrap_2D <- function(
         return(abs(as.double(x)))
     }
 
-    ggplot(
+    p <- ggplot(
         b,
         aes(
             x = transform_x(b[, x]),
@@ -68,9 +68,7 @@ plot_bootstrap_2D <- function(
             label = row.names(b),
             color = as.factor(mean > 0)
     )) +
-    geom_text(
-        size = cex_point * 0.75
-    ) +
+    geom_text(size = cex_point * 0.75) +
     labs(
         y =  attributes(b)$indexes[[y]],
         x =  attributes(b)$indexes[[x]],
@@ -81,7 +79,30 @@ plot_bootstrap_2D <- function(
     theme(
         legend.position = "none",
         axis.title.y = axis(margin(0, 20, 0, 0)),
-        axis.title.x = axis(margin(20, 0, 0, 0))
+        axis.title.x = axis(margin(20, 0, 0, 0)),
+        axis.text = element_text(size = 13 * cex)
     ) +
     scale_color_manual(values = color_group(seq(2)))
+
+
+    limites <- function(p, x){
+        if (x %in% c("sign", "occ")) {
+            axis <- deparse(substitute(x))
+            func <- get(paste0(axis, "lim"))
+            p <- p + func(0, 1)
+            if (x == "sign") {
+                p <- p + 
+                    get(paste("scale", axis, "discrete", sep = "_"))(
+                        labels = c("ns", "*"),
+                        limits = c(0, 1)
+                    )
+            }
+        }
+        return(p)
+    }
+
+    p <- suppressMessages(limites(p, x))
+    p <- suppressMessages(limites(p, y))
+
+    return(p)
 }
