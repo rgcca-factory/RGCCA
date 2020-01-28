@@ -28,6 +28,7 @@ plot_bootstrap_1D <- function(
     x = "br",
     y = "occ",
     n = 50,
+    title = attributes(b)$indexes[[x]],
     ...) {
 
     check_ncol(list(b), 1)
@@ -58,7 +59,7 @@ plot_bootstrap_1D <- function(
     plot_histogram(
         p,
         b,
-        attributes(b)$indexes[[x]],
+        title,
         color,
         low_col = color_group(seq(3))[1],
         mid_col = "white",

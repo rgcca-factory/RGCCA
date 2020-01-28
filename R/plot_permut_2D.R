@@ -19,6 +19,7 @@ plot_permut_2D <- function(
     perm, 
     type = "zstat",
     cex = 1,
+    title = NULL,
     cex_main = 25 * cex,
     cex_sub = 16 * cex,
     cex_point = 3 * cex,
@@ -50,15 +51,18 @@ plot_permut_2D <- function(
         )
     }
 
+    if (is.null(title))
+        title <- paste0(
+                "Permutation scores \n(best value : ",
+                paste(round(perm$penalties[best,], 2), collapse = ", "),
+                ")"
+            )
+
     p <- ggplot(data = df, mapping = aes(x = df[, 1], y = df[, 2], ymin = 0)) + 
         theme_classic() +
         geom_line(size = 1) +
         labs(
-            title = paste0(
-                "Permutation scores \n(best value : ",
-                paste(round(perm$penalties[best,], 2), collapse = ", "),
-                ")"
-            ), 
+            title = title, 
             x = "Index of combination",
             y = y_title
         ) +

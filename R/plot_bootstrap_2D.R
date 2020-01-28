@@ -26,6 +26,7 @@ plot_bootstrap_2D <- function(
     b,
     x = "br",
     y = "occ",
+    title = "Variable selection\nby bootstrap",
     cex = 1,
     cex_main = 25 * cex,
     cex_sub = 16 * cex,
@@ -73,7 +74,7 @@ plot_bootstrap_2D <- function(
     labs(
         y =  attributes(b)$indexes[[y]],
         x =  attributes(b)$indexes[[x]],
-        title = "Variable selection\nby bootstrap"
+        title = title
     ) +
     theme_classic() +
     theme_perso(cex, cex_main, cex_sub) +
