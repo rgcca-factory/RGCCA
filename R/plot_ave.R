@@ -21,6 +21,7 @@ plot_ave <- function(
     rgcca,
     cex = 1,
     title = "Average Variance Explained",
+    colors = NULL,
     ...) {
 
     if (rgcca$call$type == "pca") {
@@ -70,7 +71,7 @@ plot_ave <- function(
         cex = cex,
         ...) +
     scale_fill_manual(
-        values = color_group(levels(df$ncomp)),
+        values = color_group(levels(df$ncomp), colors = colors),
         labels = gsub("comp", " ", levels(df$ncomp))) +
     geom_col(position = position_stack(reverse = TRUE)) +
     labs(subtitle = print_comp(rgcca, outer = TRUE)) +

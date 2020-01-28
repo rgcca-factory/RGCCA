@@ -25,6 +25,7 @@ plot_var_1D <- function(
     type = "cor",
     collapse = FALSE,
     title = NULL,
+    colors = NULL,
     ...) {
 
     check_ncol(rgcca$a, i_block)
@@ -61,7 +62,7 @@ plot_var_1D <- function(
     # to their belonging to each blocks
     if ((rgcca$call$superblock && i_block == length(rgcca$a)) || collapse) {
         color <- factor(df$resp)
-        levels(color) <- color_group(color)
+        levels(color) <- color_group(color, colors = colors)
         p <- ggplot(df, aes(order, df[, 1], fill = df$resp))
     } else {
         color <- "black"

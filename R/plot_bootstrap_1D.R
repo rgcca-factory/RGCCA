@@ -29,6 +29,9 @@ plot_bootstrap_1D <- function(
     y = "occ",
     n = 50,
     title = attributes(b)$indexes[[x]],
+    low_col = color_group(seq(3))[1],
+    mid_col = "white",
+    high_col = color_group(seq(3))[3],
     ...) {
 
     check_ncol(list(b), 1)
@@ -61,9 +64,9 @@ plot_bootstrap_1D <- function(
         b,
         title,
         color,
-        low_col = color_group(seq(3))[1],
-        mid_col = "white",
-        high_col = color_group(seq(3))[3],
+        low_col = low_col,
+        mid_col = mid_col,
+        high_col = high_col,
         ...) +
     labs(fill = attributes(b)$indexes[[y]])
 }

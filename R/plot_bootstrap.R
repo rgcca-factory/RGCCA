@@ -20,6 +20,7 @@ plot_bootstrap <- function(
     rgcca,
     show_boot = TRUE,
     n_mark = 30,
+    colors = NULL,
     ...) {
 
     color <- intneg <- intpos <- NULL
@@ -30,7 +31,7 @@ plot_bootstrap <- function(
 
     if (rgcca$call$superblock) {
         color2 <- factor(df$color)
-        levels(color2) <- color_group(color2)
+        levels(color2) <- color_group(color2, colors)
         p <- ggplot(df, aes(order, mean, fill = color))
     } else{
         color2 <- "black"

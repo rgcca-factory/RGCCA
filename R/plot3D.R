@@ -35,6 +35,7 @@ plot3D <- function(
     i_block_z = i_block,
     text = TRUE,
     title = "Sample plot",
+    colors = NULL,
     type = "ind",
     cex = 1,
     cex_point = 3 * cex,
@@ -63,7 +64,7 @@ plot3D <- function(
                 labels = colorRampPalette(c("#A50026", midcol,  "#313695"))(n),
                 include.lowest = TRUE)
         else
-            color_group(seq(length(unique(df$resp))))
+            color_group(seq(length(unique(df$resp))), colors = colors)
     }
 
     subdf <- function(x) 
@@ -85,7 +86,7 @@ plot3D <- function(
             )
         )
 
-        color <- color_group(seq(length(l)))[x]
+        color <- color_group(seq(length(l)), colors = colors)[x]
 
         if (text) {
             func$mode <- "text"

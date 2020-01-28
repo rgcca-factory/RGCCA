@@ -39,7 +39,7 @@ plot2D <- function(
     p = NULL,
     text = TRUE,
     i_block_y = i_block,
-    colours = c("blue", "gray", "#cd5b45"),
+    colors = NULL,
     collapse = FALSE,
     no_overlap = FALSE,
     cex = 1,
@@ -117,6 +117,9 @@ plot2D <- function(
             axis.line = element_blank()
         )
 
+    if (is.null(colors))
+        colours <- c("blue", "gray", "#cd5b45")
+
     if (length(unique(group)) != 1 && is(p, "p_var2D")) {
         order_color(rgcca$a, p, collapse = collapse)
         # For qualitative response OR no response
@@ -124,7 +127,7 @@ plot2D <- function(
                 length(unique(group)) <= 5 || 
             all( levels(as.factor(group)) %in% c("obs", "pred") )
         ) {
-        p + scale_color_manual(values = color_group(group))
+        p + scale_color_manual(values = color_group(group, colors))
         # quantitative response
     } else
         p + scale_color_gradientn(colours = colours, na.value = "black")
