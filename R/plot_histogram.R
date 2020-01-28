@@ -24,7 +24,7 @@
 plot_histogram <- function(
     p,
     df,
-    title = "",
+    title = "Histogram",
     color = "black",
     low_col = "khaki2",
     high_col = "coral3",
@@ -35,9 +35,9 @@ plot_histogram <- function(
     cex_axis = 10 * cex) {
     
 
-    if (NROW(df) <= 10 || title == "Average Variance Explained") {
+    if (NROW(df) <= 10 || is(p, "p_ave")) {
         width <- NULL
-        if (title == "Average Variance Explained")
+        if (is(p, "p_ave"))
             cex_axis <- 12
     } else
         width <- 1
@@ -74,7 +74,7 @@ plot_histogram <- function(
             plot.margin = margin(0, 0, mar, 0, "mm")
     )
 
-    if (title != "Average Variance Explained") {
+    if  (!is(p, "p_ave")) {
             p <- p +
                 scale_x_continuous(breaks = df$order, labels = rownames(df)) +
                 labs(fill = "Blocks")

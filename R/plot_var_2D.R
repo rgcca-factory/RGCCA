@@ -84,6 +84,7 @@ plot_var_2D <- function(
 
     check_ncol(rgcca$a, i_block)
 
+    class(p) <- c(class(p), "p_var2D")
     p <- plot2D(
         rgcca,
         df,
@@ -116,6 +117,5 @@ plot_var_2D <- function(
     if ((!rgcca$call$superblock || i_block != length(rgcca$a)) && !collapse)
         p <- p + theme(legend.position = "none")
 
-    class(p) <- c(class(p), "p_var2D")
     return(p)
 }

@@ -24,6 +24,7 @@ plot_var_1D <- function(
     i_block = length(rgcca$a),
     type = "cor",
     collapse = FALSE,
+    title = NULL,
     ...) {
 
     check_ncol(rgcca$a, i_block)
@@ -44,7 +45,8 @@ plot_var_1D <- function(
 
     J <- names(rgcca$a)
 
-    title <- ifelse(type == "cor",
+    if (is.null(title))
+        title <- ifelse(type == "cor",
             "Variable correlations with",
             "Variable weights on")
 
@@ -66,6 +68,7 @@ plot_var_1D <- function(
         p <- ggplot(df, aes(order, df[, 1], fill = abs(df[, 1])))
     }
 
+    class(p) <- c(class(p), "p_var1D")
     p <- plot_histogram(
         p,
         df,

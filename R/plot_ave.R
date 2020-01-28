@@ -20,6 +20,7 @@
 plot_ave <- function(
     rgcca,
     cex = 1,
+    title = "Average Variance Explained",
     ...) {
 
     if (rgcca$call$type == "pca") {
@@ -60,10 +61,12 @@ plot_ave <- function(
             label = ave_label
         ))
 
+    class(p) <- c(class(p), "p_ave")
+
     p <- plot_histogram(
         p, 
         df, 
-        "Average Variance Explained",
+        title,
         cex = cex,
         ...) +
     scale_fill_manual(

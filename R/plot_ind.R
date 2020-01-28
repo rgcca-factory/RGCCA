@@ -87,6 +87,8 @@ plot_ind <- function(
     }else
         p <- NULL
 
+    if (!is.null(p))
+        class(p) <- c(class(p), "p_ind")
 
     p <- plot2D(
             rgcca,
@@ -108,6 +110,5 @@ plot_ind <- function(
     if (length(unique(df$resp)) == 1)
         p <- p + theme(legend.position = "none")
 
-    class(p) <- c(class(p), "p_ind")
     return(p)
 }
