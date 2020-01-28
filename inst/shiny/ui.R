@@ -65,7 +65,7 @@ for (f in list.files(appDir))
 # maxdiff-b, maxdiff, maxvar-a, maxvar-b, maxvar, niles, r-maxvar,
 # rcon-pca, ridge-gca, , ssqcov-1, ssqcov-2, , sum-pca, sumcov-1, sumcov-2
 
-load_libraries(c(
+suppressPackageStartupMessages(load_libraries(c(
     "RGCCA",
     "ggplot2",
     "scales",
@@ -75,7 +75,7 @@ load_libraries(c(
     "shiny",
     "shinyjs",
     "MASS"
-))
+)))
 
 if (BSPLUS) {
     load_libraries("devtools")
