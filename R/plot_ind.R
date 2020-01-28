@@ -56,6 +56,7 @@ plot_ind <- function(
     reponse_name = "Response",
     no_overlap = FALSE,
     predicted = NULL,
+    title = "Sample space",
     ...){
 
     if (is.null(i_block_y))
@@ -90,7 +91,7 @@ plot_ind <- function(
     p <- plot2D(
             rgcca,
             df,
-            "Sample",
+            title,
             df$resp,
             reponse_name,
             compx,
@@ -105,7 +106,8 @@ plot_ind <- function(
 
     # remove legend if missing
     if (length(unique(df$resp)) == 1)
-        p + theme(legend.position = "none")
-    else
-        p
+        p <- p + theme(legend.position = "none")
+
+    class(p) <- c(class(p), "p_ind")
+    return(p)
 }

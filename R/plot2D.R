@@ -70,8 +70,10 @@ plot2D <- function(
         }
     }
 
-    if (is.null(p))
+    if (is.null(p)) {
         p <- ggplot(df, aes(df[, 1], df[, 2], colour = as.factor(group)))
+        class(p) <- c(class(p), "p_ind")
+    }
 
     if (length(name_group) > 15)
         name_group <- name_group[seq(15)]
@@ -98,7 +100,7 @@ plot2D <- function(
             linetype = "dashed",
             size = 1
         ) + labs(
-                title = paste(title, "space"),
+                title = title,
                 x = print_comp(rgcca, compx, i_block),
                 y = print_comp(rgcca, compy, i_block_y),
             color = name_group,
@@ -115,7 +117,7 @@ plot2D <- function(
             axis.line = element_blank()
         )
 
-    if (length(unique(group)) != 1 && title == "Variable") {
+    if (length(unique(group)) != 1 && is(p, "p_var2D")) {
         order_color(rgcca$a, p, collapse = collapse)
         # For qualitative response OR no response
     } else if ( is.character2(group[!is.na(group)]) ||

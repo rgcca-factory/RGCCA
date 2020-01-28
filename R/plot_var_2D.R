@@ -54,6 +54,7 @@ plot_var_2D <- function(
     n_mark = 100,
     collapse = FALSE,
     no_overlap = FALSE,
+    title = "Variable space",
     ...) {
 
     x <- y <- NULL
@@ -86,7 +87,7 @@ plot_var_2D <- function(
     p <- plot2D(
         rgcca,
         df,
-        "Variable",
+        title,
         df$resp,
         "Blocks",
         compx,
@@ -113,7 +114,8 @@ plot_var_2D <- function(
 
     # remove legend if not on superblock
     if ((!rgcca$call$superblock || i_block != length(rgcca$a)) && !collapse)
-        p + theme(legend.position = "none")
-    else
-        p
+        p <- p + theme(legend.position = "none")
+
+    class(p) <- c(class(p), "p_var2D")
+    return(p)
 }

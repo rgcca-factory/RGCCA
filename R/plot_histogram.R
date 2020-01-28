@@ -89,6 +89,5 @@ plot_histogram <- function(
             }
     }
 
-
     return(p)
 }
