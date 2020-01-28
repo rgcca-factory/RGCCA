@@ -3,6 +3,7 @@
 #' Correlation circle highlighting the contribution of each variables to the
 #' construction of the RGCCA components
 #' @inheritParams plot_ind
+#' @inheritParams plot2D
 #' @param remove_var A bolean to keep only the 100 variables of each
 #' component with the biggest correlation#'
 #' @param n_mark An integer giving the number of top variables to select
@@ -53,10 +54,7 @@ plot_var_2D <- function(
     n_mark = 100,
     collapse = FALSE,
     no_overlap = FALSE,
-    cex = 1,
-    cex_sub = 16 * cex,
-    cex_point = 3 * cex,
-    cex_lab = 19 * cex) {
+    ...) {
 
     x <- y <- NULL
     df <- get_ctr2(
@@ -97,10 +95,7 @@ plot_var_2D <- function(
         text = text,
         collapse =  collapse,
         no_overlap = no_overlap,
-        cex = cex,
-        cex_sub = cex_sub,
-        cex_point = cex_point,
-        cex_lab = cex_lab
+        ...
         ) +
         geom_path(
             aes(x, y),

@@ -27,6 +27,7 @@ plot_bootstrap_2D <- function(
     x = "br",
     y = "occ",
     cex = 1,
+    cex_main = 25 * cex,
     cex_sub = 16 * cex,
     cex_point = 3 * cex,
     cex_lab = 19 * cex){
@@ -75,7 +76,7 @@ plot_bootstrap_2D <- function(
         title = "Variable selection\nby bootstrap"
     ) +
     theme_classic() +
-    theme_perso(cex, cex_sub) +
+    theme_perso(cex, cex_main, cex_sub) +
     theme(
         legend.position = "none",
         axis.title.y = axis(margin(0, 20, 0, 0)),

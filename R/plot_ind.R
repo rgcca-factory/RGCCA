@@ -2,6 +2,7 @@
 #'
 #' Plot the two components of a RGCCA
 #'
+#' @inheritParams plot2D
 #' @param rgcca A list giving the results of a R/SGCCA
 #' @param resp A vector of characters corresponding either to a qualitative
 #' variable with levels or a continuous variable
@@ -17,10 +18,6 @@
 #' @param reponse_name A character giving the legend title
 #' @param no_overlap A boolean to avoid overlap in plotted text
 #' @param predicted A list containing as  2nd element a matrix of predicted components
-#' @param cex An integer for the size of the plot parameters
-#' @param cex_sub An integer for the size of the subtitle
-#' @param cex_point An integer for the size of the points or the text in the plot
-#' @param cex_lab An integer for the size of the axis titles
 #' @examples
 #' coord = lapply(seq(3),
 #'    function(x) matrix(runif(15 * 2, min = -1), 15, 2))
@@ -59,12 +56,7 @@ plot_ind <- function(
     reponse_name = "Response",
     no_overlap = FALSE,
     predicted = NULL,
-    cex = 1,
-    cex_sub = 16 * cex,
-    cex_point = 3 * cex,
-    cex_lab = 19 * cex
-    )
-{
+    ...){
 
     if (is.null(i_block_y))
         i_block_y <- i_block
@@ -82,9 +74,6 @@ plot_ind <- function(
         i_block_y = i_block_y,
         predicted = predicted
     )
-
-    if (NROW(df) > 100)
-        cex_point <- 2
 
     if (!is.null(predicted))
             p <- ggplot(df, aes(df[, 1], df[, 2], color = df$resp))
@@ -111,10 +100,7 @@ plot_ind <- function(
             text,
             i_block_y,
             no_overlap = no_overlap,
-            cex = cex,
-            cex_sub = cex_sub,
-            cex_point = cex_point,
-            cex_lab = cex_lab
+            ...
         )
 
     # remove legend if missing

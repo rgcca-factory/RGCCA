@@ -19,6 +19,7 @@ plot_permut_2D <- function(
     perm, 
     type = "zstat",
     cex = 1,
+    cex_main = 25 * cex,
     cex_sub = 16 * cex,
     cex_point = 3 * cex,
     cex_lab = 19 * cex) {
@@ -61,7 +62,7 @@ plot_permut_2D <- function(
             x = "Index of combination",
             y = y_title
         ) +
-        theme_perso(cex, cex_sub) +
+        theme_perso(cex, cex_main, cex_sub) +
         theme(
             axis.text = element_text(size = 10, face = "bold"),
             axis.title.y = axis(margin(0, 20, 0, 0)),

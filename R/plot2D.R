@@ -2,7 +2,6 @@
 #'
 #' Plots RGCCA components in a bi-dimensional space
 #'
-#' @inheritParams plot_ind
 #' @inheritParams plot_var_2D
 #' @param df A dataframe
 #' @param title A character with the name of the space (either "Variables" or
@@ -12,6 +11,11 @@
 #' "Response")
 #' @param p A ggplot object
 #' @param colours A vectof of character to color quantitative dat
+#' @param cex An integer for the size of the plot parameters
+#' @param cex_main An integer for the size of the title
+#' @param cex_sub An integer for the size of the subtitle
+#' @param cex_point An integer for the size of the points or the text in the plot
+#' @param cex_lab An integer for the size of the axis titles
 #' @examples
 #' #df = as.data.frame(matrix(runif(20*2, min = -1), 20, 2))
 #' #AVE = lapply(seq(4), function(x) runif(2))
@@ -39,9 +43,14 @@ plot2D <- function(
     collapse = FALSE,
     no_overlap = FALSE,
     cex = 1,
+    cex_main = 25 * cex,
     cex_sub = 16 * cex,
     cex_point = 3 * cex,
     cex_lab = 19 * cex) {
+
+    if (NROW(df) > 100)
+        cex_point <- 2
+
      if (!isTRUE(text)) {
         func <- quote(geom_point(size = cex_point))
         if (!is.numeric(na.omit(group)))
@@ -97,7 +106,7 @@ plot2D <- function(
         ) + 
         scale_y_continuous(breaks = NULL) +
         scale_x_continuous(breaks = NULL) +
-        theme_perso(cex, cex_sub) +
+        theme_perso(cex, cex_main, cex_sub) +
         theme(
             legend.key.width = unit(nchar(name_group), "mm"),
             axis.text = element_blank(),

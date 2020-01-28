@@ -28,9 +28,7 @@ plot_bootstrap_1D <- function(
     x = "br",
     y = "occ",
     n = 50,
-    cex = 1,
-    cex_sub = 16 * cex,
-    cex_axis = 10 * cex) {
+    ...) {
 
     check_ncol(list(b), 1)
 
@@ -65,8 +63,6 @@ plot_bootstrap_1D <- function(
         low_col = color_group(seq(3))[1],
         mid_col = "white",
         high_col = color_group(seq(3))[3],
-        cex = cex,
-        cex_sub = cex_sub,
-        cex_axis = cex_axis) +
+        ...) +
     labs(fill = attributes(b)$indexes[[y]])
 }

@@ -30,6 +30,7 @@ plot_histogram <- function(
     high_col = "coral3",
     mid_col = NULL,    
     cex = 1,
+    cex_main = 25 * cex,
     cex_sub = 16 * cex,
     cex_axis = 10 * cex) {
     
@@ -59,7 +60,7 @@ plot_histogram <- function(
     p <- p + geom_bar(stat = "identity", width = width) +
         coord_flip() + labs(title = title,  x = "", y = "") +
         theme_classic() +
-        theme_perso(cex, cex_sub) +
+        theme_perso(cex, cex_main, cex_sub) +
         theme(
             axis.text.y = axis(),
             axis.text.x = axis(),

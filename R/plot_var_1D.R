@@ -24,9 +24,7 @@ plot_var_1D <- function(
     i_block = length(rgcca$a),
     type = "cor",
     collapse = FALSE,
-    cex = 1,
-    cex_sub = 16 * cex,
-    cex_axis = 10 * cex) {
+    ...) {
 
     check_ncol(rgcca$a, i_block)
 
@@ -73,9 +71,7 @@ plot_var_1D <- function(
         df,
         title,
         as.character(color),
-        cex = cex,
-        cex_sub = cex_sub,
-        cex_axis = cex_axis
+        ...
     ) +
     labs(subtitle = print_comp(rgcca, comp, i_block))
 
