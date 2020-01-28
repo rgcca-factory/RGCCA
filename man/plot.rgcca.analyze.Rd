@@ -4,7 +4,7 @@
 \alias{plot.rgcca.analyze}
 \title{Regularized Generalized Canonical Correlation Analysis (RGCCA)}
 \usage{
-\method{plot}{rgcca.analyze}(resRgcca, ...)
+\method{plot}{rgcca.analyze}(resRgcca, i_block...)
 }
 \arguments{
 \item{resRgcca}{Result of rgcca.analyze function}

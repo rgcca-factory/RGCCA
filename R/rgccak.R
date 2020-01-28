@@ -138,12 +138,13 @@ rgccak=function (A, C, tau = "optimal", scheme = "centroid",verbose = FALSE, ini
     a <- alpha <- M <- Minv <- K <- list() # initialisation variables internes
     which.primal <- which((n >= pjs) == 1) # on raisonne differement suivant la taille du bloc
     which.dual <- which((n < pjs) == 1)
+    
+
     if (init == "svd") { #initialisation intelligente dans les differents cas (a creuser)
         for (j in which.primal) {
             a[[j]] <- initsvd(A[[j]]) # pas la
-			
         }
-        for (j in which.dual) {
+        for (j in which.dual) { 
             alpha[[j]] <- initsvd(A[[j]])
             K[[j]] <-pm( A[[j]] , t(A[[j]]),na.rm=na.rm) #A*t(A) plutot que t(A)*A
         }

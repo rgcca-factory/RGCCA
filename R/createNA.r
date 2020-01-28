@@ -17,7 +17,7 @@
 #' createNA(A,pNA=0.2)
 createNA=function(A,option="block",pNA=0.1,nAllRespondants=4,output="list",seed=NULL)
 {
-   
+  
   A= listOfMatrices(A)
   if(length(pNA)==1){pNA=rep(pNA,length(A))}
   if(length(pNA)!=1 & length(pNA)!=length(A)){stop("pNA should be a number between 0 and 1 or a vector of the same size as A ")}

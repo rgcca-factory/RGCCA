@@ -14,7 +14,7 @@
 #' tau=rep(1,3),ncomp=rep(2,3),superblock=FALSE)
 #' @importFrom gridExtra grid.arrange
 #' @export
-plot.rgcca.analyze=function(resRgcca,...)
+plot.rgcca.analyze=function(resRgcca,i_block...)
 {
     p1<-plot_ind(resRgcca,...)
     p2<-plot_var_2D(resRgcca,...)
@@ -22,6 +22,6 @@ plot.rgcca.analyze=function(resRgcca,...)
    # p3<-plot_ave(resRgcca)
    # p4<-plot_network(resRgcca)
     #p5<-grid.arrange(p1,p2,p3,p4,nrow=2,ncol=2)
-       p5<-grid.arrange(p1,p2,nrow=2,ncol=1,cex=1.2)
+       p5<-grid.arrange(p1,p2,nrow=2,ncol=1)
     return(p5)
 }

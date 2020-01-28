@@ -19,7 +19,7 @@
 #' 
 #' @export defl.select
 defl.select=function (yy, rr, nncomp, nn, nbloc) 
-{
+{ 
   resdefl <- NULL
   pdefl <- list()
   for (q in 1:nbloc) {
@@ -28,7 +28,7 @@ defl.select=function (yy, rr, nncomp, nn, nbloc)
       resdefl[[q]] <- defltmp$R
       pdefl[[q]]=as.matrix(defltmp$p)
     }
-    else {
+    else { 
       resdefl[[q]] <- rr[[q]]
       pdefl[[q]] <- rep(0, NCOL(rr[[q]]))
     }
