@@ -5,7 +5,7 @@
 #'
 #' @inheritParams plot_ind
 #' @inheritParams plot_histogram
-#' @seealso \code{\link[RGCCA]{rgcca}}, \code{\link[RGCCA]{sgcca}}
+#' @seealso \code{\link[RGCCA]{rgccad}}, \code{\link[RGCCA]{sgcca}}
 #' @examples
 #' random_val = function(y=1) lapply(seq(4),
 #' function(x) matrix(runif(4), y, 2))

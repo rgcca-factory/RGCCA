@@ -4,10 +4,12 @@
 \alias{plot.rgcca.analyze}
 \title{Regularized Generalized Canonical Correlation Analysis (RGCCA)}
 \usage{
-\method{plot}{rgcca.analyze}(resRgcca, i_block...)
+\method{plot}{rgcca.analyze}(resRgcca, i_block, ...)
 }
 \arguments{
 \item{resRgcca}{Result of rgcca.analyze function}
+
+\item{i_block}{number of block to plot}
 
 \item{...}{parameters from plot_ind or plot_var_2D}
 }

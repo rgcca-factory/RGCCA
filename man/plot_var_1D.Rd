@@ -41,5 +41,5 @@ rgcca_out = rgcca.analyze(blocks)
 plot_var_1D(rgcca_out, collapse = TRUE)
 }
 \seealso{
-\code{\link[RGCCA]{rgcca}}, \code{\link[RGCCA]{sgcca}}
+\code{\link[RGCCA]{rgccad}}, \code{\link[RGCCA]{sgcca}}
 }

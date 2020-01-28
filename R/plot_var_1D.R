@@ -9,7 +9,7 @@
 #' @param type A string giving the criterion to selects biomarkers : either 
 #' "cor" for correlation between the component and the block
 #' or "weight" for the weight of the RGCCA
-#' @seealso \code{\link[RGCCA]{rgcca}}, \code{\link[RGCCA]{sgcca}}
+#' @seealso \code{\link[RGCCA]{rgccad}}, \code{\link[RGCCA]{sgcca}}
 #' @examples
 #' data("Russett")
 #' blocks = list(agriculture = Russett[, seq(3)], industry = Russett[, 4:5],

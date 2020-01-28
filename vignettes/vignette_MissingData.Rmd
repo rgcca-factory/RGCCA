@@ -176,7 +176,7 @@ The resulting RGCCA can be obtained in two method : entering na.rm=TRUE in usual
 
 ```{r}
 C=matrix(1,length(A),length(A))-diag(length(A))
-rgcca_nipals=rgcca(A=A_missing,C=C,tau=rep(1,length(A)),verbose=FALSE)
+rgcca_nipals=rgccad(A=A_missing,C=C,tau=rep(1,length(A)),verbose=FALSE)
 rgcca_nipals2=rgccaNa(A=A_missing,C=C,tau=rep(1,length(A)),method="nipals")
 names(rgcca_nipals2)
 ```

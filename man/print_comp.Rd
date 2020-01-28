@@ -34,5 +34,5 @@ print_comp(rgcca_out, 2, 1)
 # "Axis 2 (50\%)"
 }
 \seealso{
-\code{\link[RGCCA]{rgcca}}, \code{\link[RGCCA]{sgcca}}
+\code{\link[RGCCA]{rgccad}}, \code{\link[RGCCA]{sgcca}}
 }

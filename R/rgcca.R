@@ -13,12 +13,12 @@
 #' the connections between blocks. Elements of the (symmetric) design matrix \eqn{\mathbf{C} = (c_{jk})} 
 #' is equal to 1 if block \eqn{j} and block \eqn{k} are connected, and 0 otherwise.
 #' The objective is to find a fixed point of the stationary equations related to the RGCCA optimization 
-#' problem. The function rgcca() implements a monotonically convergent algorithm (i.e. the bounded 
+#' problem. The function rgccad() implements a monotonically convergent algorithm (i.e. the bounded
 #' criteria to be maximized increases at each step of the iterative procedure) that is very 
 #' similar to the PLS algorithm proposed by Herman Wold. Moreover, depending on the 
 #' dimensionality of each block \eqn{\mathbf{X}_j}, \eqn{j = 1, \ldots, J}, the primal (when \eqn{n > p_j}) algorithm or 
 #' the dual (when \eqn{n < p_j}) algorithm is used (see Tenenhaus et al. 2013). 
-#' Moreover, by deflation strategy, rgcca() allow to compute several RGCCA block 
+#' Moreover, by deflation strategy, rgccad() allow to compute several RGCCA block
 #' components (specified by ncomp) for each block. Block components of each block are guaranteed to 
 #' be orthogonal with the use of the deflation. The so-called symmetric deflation is considered in
 #' this implementation, i.e. each block is deflated with respect to its own component.
@@ -63,7 +63,7 @@
 #' A = list(X_agric, X_ind, X_polit)
 #' #Define the design matrix (output = C) 
 #' C = matrix(c(0, 0, 1, 0, 0, 1, 1, 1, 0), 3, 3)
-#' result.rgcca = rgcca(A, C, tau = c(1, 1, 1), scheme = "factorial", scale = TRUE)
+#' result.rgcca = rgccad(A, C, tau = c(1, 1, 1), scheme = "factorial", scale = TRUE)
 #' lab = as.vector(apply(Russett[, 9:11], 1, which.max))
 #' plot(result.rgcca$Y[[1]], result.rgcca$Y[[2]], col = "white", 
 #'      xlab = "Y1 (Agric. inequality)", ylab = "Y2 (Industrial Development)")
@@ -75,7 +75,7 @@
 #' ############################
 #' # plot(y1, y2) for (RGCCA) #
 #' ############################
-#' result.rgcca = rgcca(A, C, tau = rep(1, 3), ncomp = c(2, 2, 1), 
+#' result.rgcca = rgccad(A, C, tau = rep(1, 3), ncomp = c(2, 2, 1),
 #'                      scheme = "factorial", verbose = TRUE)
 # 'layout(t(1:2))
 #' plot(result.rgcca$Y[[1]][, 1], result.rgcca$Y[[2]][, 1], col = "white", xlab = "Y1 (GE)", 
@@ -89,13 +89,13 @@
 #' # example 3: RGCCA and leave one out #
 #' ######################################
 #' Ytest = matrix(0, 47, 3)
-#' result.rgcca = rgcca(A, C, tau = rep(1, 3), ncomp = rep(1, 3), 
+#' result.rgcca = rgccad(A, C, tau = rep(1, 3), ncomp = rep(1, 3),
 #'                      scheme = "factorial", verbose = TRUE)
 #'                      
 #' for (i in 1:nrow(Russett)){
 #'  B = lapply(A, function(x) x[-i, ])
 #'  B = lapply(B, scale2)
-#'  resB = rgcca(B, C, tau = rep(1, 3), scheme = "factorial", scale = FALSE, verbose = FALSE)
+#'  resB = rgccad(B, C, tau = rep(1, 3), scheme = "factorial", scale = FALSE, verbose = FALSE)
 #'  #  look for potential conflicting sign among components within the loo loop.
 #'  for (k in 1:length(B)){
 #'    if (cor(result.rgcca$a[[k]], resB$a[[k]]) >= 0) 
@@ -114,7 +114,7 @@
 #'      xlab = "Y1 (Agric. inequality)", ylab = "Y2 (Ind. Development)")
 #' text(result.rgcca$Y[[1]], result.rgcca$Y[[2]], Russett[, 1], col = lab)
 #' text(Ytest[, 1], Ytest[, 2], substr(Russett[, 1], 1, 1), col = lab)
-#' @export rgcca
+#' @export rgccad
 #' @importFrom grDevices dev.off png rainbow
 #' @importFrom graphics abline axis close.screen grid legend lines par points rect screen segments split.screen text
 #' @importFrom stats binomial glm lm predict sd var weighted.mean
@@ -122,7 +122,7 @@
 
 #' @importFrom grDevices graphics.off
 
-rgcca=function (A, C = 1 - diag(length(A)), tau = rep(1, length(A)),  ncomp = rep(1, length(A)), scheme = "centroid", scale = TRUE,   init = "svd", bias = TRUE, tol = 1e-08, verbose = TRUE,sameBlockWeight=TRUE,na.rm=TRUE,estimateNA="no")
+rgccad=function (A, C = 1 - diag(length(A)), tau = rep(1, length(A)),  ncomp = rep(1, length(A)), scheme = "centroid", scale = TRUE,   init = "svd", bias = TRUE, tol = 1e-08, verbose = TRUE,sameBlockWeight=TRUE,na.rm=TRUE,estimateNA="no")
 {
   shave.matlist <- function(mat_list, nb_cols) mapply(function(m,nbcomp) m[, 1:nbcomp, drop = FALSE], mat_list, nb_cols, SIMPLIFY = FALSE)
   shave.veclist <- function(vec_list, nb_elts) mapply(function(m, nbcomp) m[1:nbcomp], vec_list, nb_elts, SIMPLIFY = FALSE)
