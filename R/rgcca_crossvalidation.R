@@ -14,7 +14,7 @@
 #' data("Russett")
 #' blocks = list(agriculture = Russett[, seq(3)], industry = Russett[, 4:5],
 #'     politic = Russett[, 6:11] )
-#' rgcca_out = rgcca.analyze(blocks)
+#' rgcca_out = rgcca(blocks)
 #' rgcca_crossvalidation(rgcca_out, validation = "kfold", k = 5, n_cores = 1)
 #' rgcca_crossvalidation(rgcca_out,  validation = "test", n_cores = 1)$scores
 #' rgcca_crossvalidation(rgcca_out, n_cores = 1)
@@ -48,7 +48,7 @@ rgcca_crossvalidation <- function(
                 rgcca$call$connection <- NULL
             }
 
-            rgcca_k <- rgcca.analyze(
+            rgcca_k <- rgcca(
                 Atrain,
                 rgcca$call$connection,
                 superblock = rgcca$call$superblock,

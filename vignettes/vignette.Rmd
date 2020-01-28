@@ -164,7 +164,7 @@ for (x in 1:length(files)) {
 SGCCA is run from the RGCCA package by using two components for a biplot visualization. The S/RGCCA function doesn't names the blocks in their outputs. This step is required to generate biplots.
 
 ```{r rgcca}
-rgcca_out = rgcca.analyze(blocks = blocks)
+rgcca_out = rgcca(blocks = blocks)
 plot_network(rgcca_out)
 ```
 

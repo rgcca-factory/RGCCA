@@ -1,4 +1,4 @@
-print.rgcca <- function(x) 
+print.rgccad <- function(x) 
 {
   cat("Call: ")
   dput(x$call)

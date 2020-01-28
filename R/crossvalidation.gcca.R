@@ -20,7 +20,7 @@ crossvalidation.gcca <- function(
             else
                 tau <- rgcca$call$tau
 
-            rgcca_k <- rgcca.analyze(
+            rgcca_k <- rgcca(
                 Atrain,
                 rgcca$call$connection,
                 tau = tau,

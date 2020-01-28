@@ -35,11 +35,11 @@ comparison=function(rgcca1,rgcca2,naxis=1,selec=10,selectPatient=NULL,indNA=NULL
     #else{ return(NA)}
   }
   selectAllPatient=intersect(rownames(rgcca1[["Y"]][[1]]),rownames(rgcca2[["Y"]][[1]]))
-  if(class(rgcca1)=="rgcca")
+  if(class(rgcca1)=="rgccad")
   {
     J=length(rgcca1$call$A)
   }
-  if(class(rgcca1)=="rgcca.analyze")
+  if(class(rgcca1)=="rgcca")
   {
       J=length(rgcca1$call$blocks)
   }

@@ -35,7 +35,7 @@ rgcca_permutation_k <- function(
                         tau <- par[[2]][i, ]
                         type <- "sgcca"
                 })
-                crit <- rgcca.analyze(
+                crit <- rgcca(
                         blocks = blocks,
                         connection = connection,
                         response = response,

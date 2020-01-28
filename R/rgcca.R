@@ -244,7 +244,7 @@ rgccad=function (A, C = 1 - diag(length(A)), tau = rep(1, length(A)),  ncomp = r
     out <- list(Y = Y, a = a, astar = a, C = C, tau = result$call$tau,  scheme = scheme, ncomp = ncomp, crit = result$crit, primal_dual = primal_dual, AVE = AVE,A=A0,call=call)
     if(estimateNA %in% c("iterative","first","superblock","lebrusquet")){out[["imputedA"]]=A}
     
-    class(out) <- "rgcca"
+    class(out) <- "rgccad"
     
     return(out)
   }
@@ -329,7 +329,7 @@ rgccad=function (A, C = 1 - diag(length(A)), tau = rep(1, length(A)),  ncomp = r
   out <- list(Y = shave.matlist(Y, ncomp), a = shave.matlist(a,ncomp), astar = shave.matlist(astar, ncomp),  tau = tau_mat,
                 crit = crit, primal_dual = primal_dual,	AVE = AVE,call=call)
 
-   class(out) <- "rgcca"
+   class(out) <- "rgccad"
 
   return(out)
 }

@@ -18,7 +18,7 @@
 #' data("Russett")
 #' blocks = list(agriculture = Russett[, seq(3)], industry = Russett[, 4:5],
 #'     politic = Russett[, 6:11] )
-#' rgcca.analyze(blocks)
+#' rgcca(blocks)
 #' @export
 #' @import ggplot2
 #' @importFrom grDevices dev.off rgb colorRamp pdf colorRampPalette
@@ -31,7 +31,7 @@
 #' @importFrom visNetwork visNetwork visNodes visEdges
 #' @importFrom igraph graph_from_data_frame V<- E<-
 #' @importFrom methods is
-rgcca.analyze <- function(blocks,
+rgcca <- function(blocks,
     connection = 1 - diag(length(blocks)),
     response = NULL,
     superblock = TRUE,
@@ -173,6 +173,6 @@ rgcca.analyze <- function(blocks,
     ))
         func_out$call[[i]] <- as.list(environment())[[i]]
   
-    class(func_out) <- "rgcca.analyze"
+    class(func_out) <- "rgcca"
     invisible(func_out)
 }

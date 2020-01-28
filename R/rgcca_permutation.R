@@ -3,7 +3,7 @@
 #' 
 #' @inheritParams set_connection
 #' @inheritParams bootstrap
-#' @inheritParams rgcca.analyze
+#' @inheritParams rgcca
 #' @param p_c1 A matrix, a vector or an integer containing sets of constraint 
 #' variables, one row by set. By default, sgcca.permute takes 10 sets between 
 #' min values ($1/sqrt(ncol)$) and 1

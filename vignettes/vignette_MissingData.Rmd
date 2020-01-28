@@ -243,7 +243,8 @@ In this case, the best method for the similarities between weights is
 
 # Behavior with increasing missing data proportion
 ```{r, fig.height = 6, fig.width = 6, fig.align = "center"}
-listResults=naEvolution(A=A,listMethods=c("complete","nipals","mean"),prctNA=c(0.05,0.1,0.15,0.2,0.25,0.3,0.4),typeNA="ponc",ncomp=rep(1,3),sameBlockWeight=FALSE)
+names(A)=c("agri","ind","polit")
+listResults=naEvolution(A=A,listMethods=c("complete","nipals","mean"),prctNA=c(0.05,0.1,0.15,0.2,0.25,0.3,0.4),typeNA="ponc",ncomp=rep(1,3),sameBlockWeight=FALSE,nDatasets = 10)
 ```
 ```{r, fig.height = 4, fig.width = 6, fig.align = "center"}
 plotEvol(listResults,output="a",barType = "stderr")

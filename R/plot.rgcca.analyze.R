@@ -2,7 +2,7 @@
 #' Plots 
 #' @title Regularized Generalized Canonical Correlation Analysis (RGCCA) 
 #' @param ... parameters from plot_ind or plot_var_2D
-#' @param resRgcca Result of rgcca.analyze function
+#' @param resRgcca Result of rgcca function
 #' @param i_block number of block to plot
 #' @examples
 #' data(Russett)
@@ -11,11 +11,11 @@
 #' X_polit = as.matrix(Russett[ , c("demostab", "dictator")]);
 #' A = list(X_agric, X_ind, X_polit);
 #' C = matrix(c(0, 0, 1, 0, 0, 1, 1, 1, 0), 3, 3);
-#' resRgcca=rgcca.analyze(blocks=A,connection=C,
+#' resRgcca=rgcca(blocks=A,connection=C,
 #' tau=rep(1,3),ncomp=rep(2,3),superblock=FALSE)
 #' @importFrom gridExtra grid.arrange
 #' @export
-plot.rgcca.analyze=function(resRgcca,i_block,...)
+plot.rgcca=function(resRgcca,i_block,...)
 {
     p1<-plot_ind(resRgcca,...)
     p2<-plot_var_2D(resRgcca,...)

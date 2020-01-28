@@ -673,7 +673,7 @@ server <- function(input, output, session) {
 
         assign("rgcca_out",
                showWarn(
-                   rgcca.analyze(
+                   rgcca(
                         blocks_without_superb,
                         connection = connection,
                         response = input$names_block_response,

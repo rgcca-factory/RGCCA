@@ -10,7 +10,7 @@
 #' data("Russett")
 #' blocks = list(agriculture = Russett[, seq(3)], industry = Russett[, 4:5],
 #'     politic = Russett[, 6:11] )
-#' rgcca_out = rgcca.analyze(blocks)
+#' rgcca_out = rgcca(blocks)
 #' response = factor( apply(Russett[, 9:11], 1, which.max),
 #'                   labels = colnames(Russett)[9:11] )
 #' get_comp(rgcca_out, as.matrix(response))
