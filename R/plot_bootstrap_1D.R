@@ -28,9 +28,9 @@ plot_bootstrap_1D <- function(
     x = "br",
     y = "occ",
     n = 50,
-    cex = 1,
-    cex_sub = 16 * cex,
-    cex_axis = 10 * cex) {
+    title = attributes(b)$indexes[[x]],
+    colors = c(color_group(seq(3))[1],  "white", color_group(seq(3))[3]),
+    ...) {
 
     check_ncol(list(b), 1)
 
@@ -46,9 +46,9 @@ plot_bootstrap_1D <- function(
     y <- set_occ(y)
 
     if (y == "sign") 
-        color = seq(2)
+        group = seq(2)
     else
-        color = 1
+        group = NA
 
     b <- head(b, n)
     p <- ggplot(
@@ -60,13 +60,9 @@ plot_bootstrap_1D <- function(
     plot_histogram(
         p,
         b,
-        attributes(b)$indexes[[x]],
-        color,
-        low_col = color_group(seq(3))[1],
-        mid_col = "white",
-        high_col = color_group(seq(3))[3],
-        cex = cex,
-        cex_sub = cex_sub,
-        cex_axis = cex_axis) +
+        title,
+        group,
+        colors,
+        ...) +
     labs(fill = attributes(b)$indexes[[y]])
 }

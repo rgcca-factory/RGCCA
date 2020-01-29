@@ -24,9 +24,9 @@ plot_var_1D <- function(
     i_block = length(rgcca$a),
     type = "cor",
     collapse = FALSE,
-    cex = 1,
-    cex_sub = 16 * cex,
-    cex_axis = 10 * cex) {
+    title = NULL,
+    colors = NULL,
+    ...) {
 
     check_ncol(rgcca$a, i_block)
 
@@ -46,12 +46,14 @@ plot_var_1D <- function(
 
     J <- names(rgcca$a)
 
-    title <- ifelse(type == "cor",
+    if (is.null(title))
+        title <- ifelse(type == "cor",
             "Variable correlations with",
             "Variable weights on")
 
     # sort in decreasing order
     df <- data.frame(order_df(df, 1, TRUE), order = NROW(df):1)
+    class(df) <- c(class(df), "d_var1D")
 
     # max threshold for n
     if (NROW(df) >= n_mark)
@@ -61,7 +63,7 @@ plot_var_1D <- function(
     # to their belonging to each blocks
     if ((rgcca$call$superblock && i_block == length(rgcca$a)) || collapse) {
         color <- factor(df$resp)
-        levels(color) <- color_group(color)
+        levels(color) <- color_group(color, colors = colors)
         p <- ggplot(df, aes(order, df[, 1], fill = df$resp))
     } else {
         color <- "black"
@@ -73,9 +75,7 @@ plot_var_1D <- function(
         df,
         title,
         as.character(color),
-        cex = cex,
-        cex_sub = cex_sub,
-        cex_axis = cex_axis
+        ...
     ) +
     labs(subtitle = print_comp(rgcca, comp, i_block))
 
@@ -90,7 +90,7 @@ plot_var_1D <- function(
 
     # Force all the block names to appear on the legend
     if (length(color) != 1)
-        p <- order_color(rgcca$a, p, matched, collapse)
+        p <- order_color(rgcca$a, p, matched, collapse, colors)
 
     if ((!rgcca$call$superblock || i_block != length(rgcca$a)) && !collapse)
             p <- p + theme(legend.position = "none")

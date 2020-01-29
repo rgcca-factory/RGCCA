@@ -3,6 +3,7 @@
 #' Correlation circle highlighting the contribution of each variables to the
 #' construction of the RGCCA components
 #' @inheritParams plot_ind
+#' @inheritParams plot2D
 #' @param remove_var A bolean to keep only the 100 variables of each
 #' component with the biggest correlation#'
 #' @param n_mark An integer giving the number of top variables to select
@@ -53,10 +54,8 @@ plot_var_2D <- function(
     n_mark = 100,
     collapse = FALSE,
     no_overlap = FALSE,
-    cex = 1,
-    cex_sub = 16 * cex,
-    cex_point = 3 * cex,
-    cex_lab = 19 * cex) {
+    title = "Variable space",
+    ...) {
 
     x <- y <- NULL
     df <- get_ctr2(
@@ -69,6 +68,7 @@ plot_var_2D <- function(
         collapse = collapse,
         remove_var = remove_var
     )
+    class(df) <- c(class(df), "d_var2D")
 
     if (collapse && rgcca$call$superblock) {
         if (i_block == length(rgcca$a))
@@ -88,7 +88,7 @@ plot_var_2D <- function(
     p <- plot2D(
         rgcca,
         df,
-        "Variable",
+        title,
         df$resp,
         "Blocks",
         compx,
@@ -97,28 +97,25 @@ plot_var_2D <- function(
         text = text,
         collapse =  collapse,
         no_overlap = no_overlap,
-        cex = cex,
-        cex_sub = cex_sub,
-        cex_point = cex_point,
-        cex_lab = cex_lab
-        ) +
-        geom_path(
-            aes(x, y),
-            data = plot_circle(),
-            col = "grey",
-            size = 1
-        ) +
-        geom_path(
-            aes(x, y),
-            data = plot_circle() / 2,
-            col = "grey",
-            size = 1,
-            lty = 2
-        )
+        ...
+    ) +
+    geom_path(
+        aes(x, y),
+        data = plot_circle(),
+        col = "grey",
+        size = 1
+    ) +
+    geom_path(
+        aes(x, y),
+        data = plot_circle() / 2,
+        col = "grey",
+        size = 1,
+        lty = 2
+    )
 
     # remove legend if not on superblock
     if ((!rgcca$call$superblock || i_block != length(rgcca$a)) && !collapse)
-        p + theme(legend.position = "none")
-    else
-        p
+        p <- p + theme(legend.position = "none")
+
+    return(p)
 }

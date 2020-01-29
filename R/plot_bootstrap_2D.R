@@ -26,7 +26,10 @@ plot_bootstrap_2D <- function(
     b,
     x = "br",
     y = "occ",
+    title = "Variable selection\nby bootstrap",
+    colors = NULL,
     cex = 1,
+    cex_main = 25 * cex,
     cex_sub = 16 * cex,
     cex_point = 3 * cex,
     cex_lab = 19 * cex){
@@ -72,17 +75,17 @@ plot_bootstrap_2D <- function(
     labs(
         y =  attributes(b)$indexes[[y]],
         x =  attributes(b)$indexes[[x]],
-        title = "Variable selection\nby bootstrap"
+        title = title
     ) +
     theme_classic() +
-    theme_perso(cex, cex_sub) +
+    theme_perso(cex, cex_main, cex_sub) +
     theme(
         legend.position = "none",
         axis.title.y = axis(margin(0, 20, 0, 0)),
         axis.title.x = axis(margin(20, 0, 0, 0)),
         axis.text = element_text(size = 13 * cex)
     ) +
-    scale_color_manual(values = color_group(seq(2)))
+    scale_color_manual(values = color_group(seq(2), colors = colors))
 
 
     limites <- function(p, x){

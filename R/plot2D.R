@@ -2,7 +2,6 @@
 #'
 #' Plots RGCCA components in a bi-dimensional space
 #'
-#' @inheritParams plot_ind
 #' @inheritParams plot_var_2D
 #' @param df A dataframe
 #' @param title A character with the name of the space (either "Variables" or
@@ -12,6 +11,11 @@
 #' "Response")
 #' @param p A ggplot object
 #' @param colours A vectof of character to color quantitative dat
+#' @param cex An integer for the size of the plot parameters
+#' @param cex_main An integer for the size of the title
+#' @param cex_sub An integer for the size of the subtitle
+#' @param cex_point An integer for the size of the points or the text in the plot
+#' @param cex_lab An integer for the size of the axis titles
 #' @examples
 #' #df = as.data.frame(matrix(runif(20*2, min = -1), 20, 2))
 #' #AVE = lapply(seq(4), function(x) runif(2))
@@ -35,13 +39,18 @@ plot2D <- function(
     p = NULL,
     text = TRUE,
     i_block_y = i_block,
-    colours = c("blue", "gray", "#cd5b45"),
+    colors = NULL,
     collapse = FALSE,
     no_overlap = FALSE,
     cex = 1,
+    cex_main = 25 * cex,
     cex_sub = 16 * cex,
     cex_point = 3 * cex,
     cex_lab = 19 * cex) {
+
+    if (NROW(df) > 100)
+        cex_point <- 2
+
      if (!isTRUE(text)) {
         func <- quote(geom_point(size = cex_point))
         if (!is.numeric(na.omit(group)))
@@ -61,8 +70,9 @@ plot2D <- function(
         }
     }
 
-    if (is.null(p))
+    if (is.null(p)) {
         p <- ggplot(df, aes(df[, 1], df[, 2], colour = as.factor(group)))
+    }
 
     if (length(name_group) > 15)
         name_group <- name_group[seq(15)]
@@ -89,7 +99,7 @@ plot2D <- function(
             linetype = "dashed",
             size = 1
         ) + labs(
-                title = paste(title, "space"),
+                title = title,
                 x = print_comp(rgcca, compx, i_block),
                 y = print_comp(rgcca, compy, i_block_y),
             color = name_group,
@@ -97,7 +107,7 @@ plot2D <- function(
         ) + 
         scale_y_continuous(breaks = NULL) +
         scale_x_continuous(breaks = NULL) +
-        theme_perso(cex, cex_sub) +
+        theme_perso(cex, cex_main, cex_sub) +
         theme(
             legend.key.width = unit(nchar(name_group), "mm"),
             axis.text = element_blank(),
@@ -106,14 +116,17 @@ plot2D <- function(
             axis.line = element_blank()
         )
 
-    if (length(unique(group)) != 1 && title == "Variable") {
-        order_color(rgcca$a, p, collapse = collapse)
+    if (is.null(colors))
+        colours <- c("blue", "gray", "#cd5b45")
+
+    if (length(unique(group)) != 1 && is(df, "d_var2D")) {
+        order_color(rgcca$a, p, collapse = collapse, colors)
         # For qualitative response OR no response
     } else if ( is.character2(group[!is.na(group)]) ||
                 length(unique(group)) <= 5 || 
             all( levels(as.factor(group)) %in% c("obs", "pred") )
         ) {
-        p + scale_color_manual(values = color_group(group))
+        p + scale_color_manual(values = color_group(group, colors))
         # quantitative response
     } else
         p + scale_color_gradientn(colours = colours, na.value = "black")

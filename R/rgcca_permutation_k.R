@@ -48,7 +48,8 @@ rgcca_permutation_k <- function(
                         init = init,
                         bias = bias,
                         tol = tol,
-                        method="complete"
+                        quiet = TRUE,
+                        method = "complete"
                     )$crit
                 return(mean(sapply(crit, function(x) x[length(x)])))
             },

@@ -20,9 +20,8 @@ plot_bootstrap <- function(
     rgcca,
     show_boot = TRUE,
     n_mark = 30,
-    cex = 1,
-    cex_sub = 16 * cex,
-    cex_axis = 10 * cex) {
+    colors = NULL,
+    ...) {
 
     color <- intneg <- intpos <- NULL
     J <- names(rgcca$a)
@@ -32,7 +31,7 @@ plot_bootstrap <- function(
 
     if (rgcca$call$superblock) {
         color2 <- factor(df$color)
-        levels(color2) <- color_group(color2)
+        levels(color2) <- color_group(color2, colors)
         p <- ggplot(df, aes(order, mean, fill = color))
     } else{
         color2 <- "black"
@@ -44,9 +43,7 @@ plot_bootstrap <- function(
         df,
         "Variable mean",
         as.character(color2),
-        cex = cex,
-        cex_sub = cex_sub,
-        cex_axis = cex_axis)
+        ...)
 
     if (show_boot) {
         p <- p +
@@ -65,7 +62,7 @@ plot_bootstrap <- function(
 
     if (rgcca$call$superblock) {
         matched <- match(rev(unique(df$color)), col)
-        p <- order_color(rgcca$a, p, matched, rgcca$call$superblock)
+        p <- order_color(rgcca$a, p, matched, rgcca$call$superblock, colors)
     }
 
     return(p)

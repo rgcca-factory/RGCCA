@@ -3,7 +3,7 @@
 #' Default font for a vertical barplot.
 #'
 #' @inheritParams plot2D
-#' @param color A vector of character giving the colors for the rows
+#' @param group A vector of character giving the group for the rows
 #' @param low_col A character giving the color used for the lowest part of
 #' the gradient
 #' @param high_col A character giving the color used for the highest part of
@@ -24,19 +24,20 @@
 plot_histogram <- function(
     p,
     df,
-    title = "",
-    color = "black",
-    low_col = "khaki2",
-    high_col = "coral3",
-    mid_col = NULL,    
+    title = "Histogram",
+    group = NA,
+    colors = NULL,
     cex = 1,
+    cex_main = 25 * cex,
     cex_sub = 16 * cex,
-    cex_axis = 10 * cex) {
-    
+    cex_axis = 10 * cex
+) {
 
-    if (NROW(df) <= 10 || title == "Average Variance Explained") {
+    colors <- check_colors(colors)
+
+    if (NROW(df) <= 10 || is(df, "d_ave")) {
         width <- NULL
-        if (title == "Average Variance Explained")
+        if (is(df, "d_ave"))
             cex_axis <- 12
     } else
         width <- 1
@@ -59,7 +60,7 @@ plot_histogram <- function(
     p <- p + geom_bar(stat = "identity", width = width) +
         coord_flip() + labs(title = title,  x = "", y = "") +
         theme_classic() +
-        theme_perso(cex, cex_sub) +
+        theme_perso(cex, cex_main, cex_sub) +
         theme(
             axis.text.y = axis(),
             axis.text.x = axis(),
@@ -73,21 +74,20 @@ plot_histogram <- function(
             plot.margin = margin(0, 0, mar, 0, "mm")
     )
 
-    if (title != "Average Variance Explained") {
+    if  (!is(df, "d_ave")) {
             p <- p +
                 scale_x_continuous(breaks = df$order, labels = rownames(df)) +
                 labs(fill = "Blocks")
-            if (length(color) == 1) {
-                if (is.null(mid_col)) {
+            if (length(group) == 1) {
+                if (is.na(colors[2])) {
                     p <- p +
-                        scale_fill_gradient(low = low_col, high = high_col) +
+                        scale_fill_gradient(low = colors[1], high = colors[3]) +
                         theme(legend.position = "none")
                 }else
                     p <- p +
-                        scale_fill_gradient2(low = low_col, high = high_col, mid = mid_col)
+                        scale_fill_gradient2(low = colors[1], high = colors[3], mid = colors[2])
             }
     }
-
 
     return(p)
 }
