@@ -103,16 +103,16 @@ rgccaNa=function (A,method, C = 1 - diag(length(A)), tau = rep(1, length(A)),   
    {
      if(substr(method,4,4)=="")
      {
-       A2=imputeEM(A=A,superblock=TRUE,ncomp=ncomp,scale=scale,sameBlockWeight=sameBlockWeight,tau=tau,naxis=1,ni=50,C=C,tol=tol,verbose=verbose,reg="y")$A
+       A2=imputeEM(A=A,superblock=TRUE,ncomp=ncomp,scale=scale,sameBlockWeight=sameBlockWeight,tau=tau,naxis=1,ni=50,C=C,tol=tol,verbose=FALSE,reg="y")$A
      }
      else
      {
-       A2=imputeEM(A=A,superblock=TRUE,ncomp=ncomp,scale=scale,sameBlockWeight=sameBlockWeight,tau=tau,naxis=as.numeric(substr(method,4,4)),ni=50,C=C,tol=tol,verbose=verbose,reg="y")$A
+       A2=imputeEM(A=A,superblock=TRUE,ncomp=ncomp,scale=scale,sameBlockWeight=sameBlockWeight,tau=tau,naxis=as.numeric(substr(method,4,4)),ni=50,C=C,tol=tol,verbose=FALSE,reg="y")$A
      }
    }
  # if(method=="old"){}
-  if(method=="emo")	{	  A2=imputeEM(A=A,ncomp=ncomp,scale=scale,sameBlockWeight=sameBlockWeight,tau=tau,naxis=1,ni=50,C=C,tol=tol,verbose=verbose,reg="no")$A	}
-  if(method=="emw")	{	  A2=imputeEM(A=A,ncomp=ncomp,scale=scale,sameBlockWeight=sameBlockWeight,tau=tau,naxis=1,ni=50,C=C,tol=tol,verbose=verbose,reg="w")$A	}
+  if(method=="emo")	{	  A2=imputeEM(A=A,ncomp=ncomp,scale=scale,sameBlockWeight=sameBlockWeight,tau=tau,naxis=1,ni=50,C=C,tol=tol,verbose=FALSE,reg="no")$A	}
+  if(method=="emw")	{	  A2=imputeEM(A=A,ncomp=ncomp,scale=scale,sameBlockWeight=sameBlockWeight,tau=tau,naxis=1,ni=50,C=C,tol=tol,verbose=FALSE,reg="w")$A	}
 #  if(method=="semy")	{	  A2=imputeEM(A=A,ncomp=ncomp,superblock=TRUE,scale=scale,sameBlockWeight=sameBlockWeight,tau=tau,naxis=1,ni=50,C=C,tol=tol,verbose=verbose,reg="y")$A[1:length(A)]	}
 #  if(method=="semw")	{	  A2=imputeEM(A=A,ncomp=ncomp,superblock=TRUE,scale=scale,sameBlockWeight=sameBlockWeight,tau=tau,naxis=1,ni=50,C=C,tol=tol,verbose=verbose,reg="w")$A[1:length(A)]	}
   
@@ -130,11 +130,11 @@ rgccaNa=function (A,method, C = 1 - diag(length(A)), tau = rep(1, length(A)),   
         A2=imputeNN(A ,output=knn.output,k=as.numeric(substr(method,4,4)),klim=knn.klim,sameBlockWeight=knn.sameBlockWeight);method=paste(method,":",knn.k,sep="")
       }
   }
-  if(method!="imputeInRgcca1"&&method!="imputeInRgcca2"&&method!="imputeInRgccaSB"&&method!="imputeInRgccaLL"){resRgcca=rgccad(A2,C=C,ncomp=ncomp,verbose=FALSE,scale=scale,sameBlockWeight=sameBlockWeight,tau=tau,scheme=scheme,tol=tol,estimateNA="no")}
-  if(method=="imputeInRgcca1"){resRgcca=rgccad(A,C=C,ncomp=ncomp,verbose=FALSE,scale=scale,sameBlockWeight=sameBlockWeight,tau=tau,scheme=scheme,tol=tol,estimateNA="iterative");A2=resRgcca$imputedA;}
-  if(method=="imputeInRgcca2"){resRgcca=rgccad(A,C=C,ncomp=ncomp,verbose=FALSE,scale=scale,sameBlockWeight=sameBlockWeight,tau=tau,scheme=scheme,tol=tol,estimateNA="first");A2=resRgcca$imputedA;}
-  if(method=="imputeInRgccaSB"){resRgcca=rgccad(A,C=C,ncomp=ncomp,verbose=FALSE,scale=scale,sameBlockWeight=sameBlockWeight,tau=tau,scheme=scheme,tol=tol,estimateNA="superblock");A2=resRgcca$imputedA[1:length(A)];}
-  if(method=="imputeInRgccaLL"){resRgcca=rgccad(A,C=C,ncomp=ncomp,verbose=TRUE,scale=scale,sameBlockWeight=sameBlockWeight,tau=tau,scheme=scheme,tol=tol,estimateNA="lebrusquet");A2=resRgcca$imputedA[1:length(A)];}
+  if(method!="imputeInRgcca1"&&method!="imputeInRgcca2"&&method!="imputeInRgccaSB"&&method!="imputeInRgccaLL"){resRgcca=rgcca(A2,C=C,ncomp=ncomp,verbose=verbose,scale=scale,sameBlockWeight=sameBlockWeight,tau=tau,scheme=scheme,tol=tol,estimateNA="no")}
+  if(method=="imputeInRgcca1"){resRgcca=rgcca(A,C=C,ncomp=ncomp,verbose=FALSE,scale=scale,sameBlockWeight=sameBlockWeight,tau=tau,scheme=scheme,tol=tol,estimateNA="iterative");A2=resRgcca$imputedA;}
+  if(method=="imputeInRgcca2"){resRgcca=rgcca(A,C=C,ncomp=ncomp,verbose=FALSE,scale=scale,sameBlockWeight=sameBlockWeight,tau=tau,scheme=scheme,tol=tol,estimateNA="first");A2=resRgcca$imputedA;}
+  if(method=="imputeInRgccaSB"){resRgcca=rgcca(A,C=C,ncomp=ncomp,verbose=FALSE,scale=scale,sameBlockWeight=sameBlockWeight,tau=tau,scheme=scheme,tol=tol,estimateNA="superblock");A2=resRgcca$imputedA[1:length(A)];}
+  if(method=="imputeInRgccaLL"){resRgcca=rgcca(A,C=C,ncomp=ncomp,verbose=TRUE,scale=scale,sameBlockWeight=sameBlockWeight,tau=tau,scheme=scheme,tol=tol,estimateNA="lebrusquet");A2=resRgcca$imputedA[1:length(A)];}
   out=list(imputedA=A2,rgcca=resRgcca,method,indNA=indNA)
 	return(out)
 
