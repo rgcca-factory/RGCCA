@@ -61,7 +61,7 @@
 #' # rgcca algorithm using the dual formulation for X1 and X2 
 #' # and the dual formulation for X3
 #' A[[3]] = A[[3]][, -3]
-#' result.rgcca = rgcca(A, C, tau, ncomp = c(2, 2, 1), scheme = "factorial", verbose = TRUE)
+#' result.rgcca = rgccad(A, C, tau, ncomp = c(2, 2, 1), scheme = "factorial", verbose = TRUE)
 #' # sgcca algorithm
 #' result.sgcca = sgcca(A, C, c1 = c(.071,.2, 1), ncomp = c(2, 2, 1), 
 #'                      scheme = "centroid", verbose = TRUE)

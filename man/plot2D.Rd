@@ -64,6 +64,6 @@ Plots RGCCA components in a bi-dimensional space
 data(Russett)
 blocks = list(agriculture = Russett[, seq(3)], industry = Russett[, 4:5],
 politic = Russett[, 6:11] )
-# rgcca_out = rgcca.analyze(blocks)
+# rgcca_out = rgcca(blocks)
 # plot2D(rgcca_out)
 }

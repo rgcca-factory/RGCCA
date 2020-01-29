@@ -31,5 +31,5 @@ names(rgcca_out$AVE$AVE_X[[i]]) <- c(1,2)
 # plot_ave(rgcca_out) #TODO
 }
 \seealso{
-\code{\link[RGCCA]{rgcca}}, \code{\link[RGCCA]{sgcca}}
+\code{\link[RGCCA]{rgccad}}, \code{\link[RGCCA]{sgcca}}
 }

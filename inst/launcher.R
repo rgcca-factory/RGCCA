@@ -444,7 +444,7 @@ blocks <- load_blocks(opt$datasets, opt$names, opt$separator)
 group <- load_response(blocks, opt$group, opt$separator, opt$header)
 connection <- load_connection(file = opt$connection, sep = opt$separator)
 
-rgcca_out <- rgcca.analyze(
+rgcca_out <- rgcca(
     blocks = blocks,
     connection = connection,
     response = opt$response,

@@ -46,13 +46,13 @@ MIRGCCA=function(A,option="knn",superblock=TRUE,k=5,ni=5,scale=TRUE,sameBlockWei
     dataTest0=imputeNN(A=A,output=output,k=k,klim=klim)
     if(!is.null(dataTest0))
     {
-      rgcca0=rgcca(dataTest0,ncomp=rep(2,length(A)),scale=scale,sameBlockWeight=sameBlockWeight,tau=tau,verbose=FALSE,scheme=scheme,tol=tol)
+      rgcca0=rgccad(dataTest0,ncomp=rep(2,length(A)),scale=scale,sameBlockWeight=sameBlockWeight,tau=tau,verbose=FALSE,scheme=scheme,tol=tol)
       #plotRGCCA2(rgcca0,indnames=TRUE,varnames=TRUE)
       dataTest=resRgcca2=resprocrustes=list()
       for(i in 1:ni)
       {
         dataTest[[i]]=imputeNN(A=A,output="random",k=k,klim=klim)
-        resRgcca2[[i]]=rgcca(dataTest[[i]],ncomp=rep(2,length(dataTest[[i]])),scale=scale,sameBlockWeight=sameBlockWeight,tau=tau,verbose=FALSE,scheme=scheme,tol=tol)
+        resRgcca2[[i]]=rgccad(dataTest[[i]],ncomp=rep(2,length(dataTest[[i]])),scale=scale,sameBlockWeight=sameBlockWeight,tau=tau,verbose=FALSE,scheme=scheme,tol=tol)
       }
       return(list(rgcca0=rgcca0,data=dataTest,rgccaList=resRgcca2))
     }
@@ -65,14 +65,16 @@ MIRGCCA=function(A,option="knn",superblock=TRUE,k=5,ni=5,scale=TRUE,sameBlockWei
        dataTest=resRgcca2=list()
       resImpute=imputeEM(A=A,tau=tau,C=C,scheme=scheme,ncomp=ncomp,superblock=superblock,naxis = naxis)
       dataTest0=resImpute$A
-      rgcca0=rgcca(dataTest0,ncomp=rep(2,length(A)),scale=scale,sameBlockWeight=sameBlockWeight,tau=tau,verbose=FALSE,scheme=scheme,tol=tol)
+      rgcca0=rgccad(dataTest0,ncomp=rep(2,length(A)),scale=scale,sameBlockWeight=sameBlockWeight,tau=tau,verbose=FALSE,scheme=scheme,tol=tol)
       
       for(i in 1:ni)
       {
         print(i)
          dataTest[[i]]=addNoise(resImpute)
-        resRgcca2[[i]]=rgcca(dataTest[[i]],ncomp=rep(2,length(dataTest[[i]])),scale=scale,sameBlockWeight=sameBlockWeight,tau=tau,verbose=FALSE,scheme=scheme,tol=tol)
+        resRgcca2[[i]]=rgccad(dataTest[[i]],ncomp=rep(2,length(dataTest[[i]])),scale=scale,sameBlockWeight=sameBlockWeight,tau=tau,verbose=FALSE,scheme=scheme,tol=tol)
       }
   }
-  return(list(rgcca0=rgcca0,data=dataTest,rgccaList=resRgcca2))
+    obj=list(rgcca0=rgcca0,data=dataTest,rgccaList=resRgcca2)
+    #class(obj) <- "MIRGCCA"
+  return(obj)
 }

@@ -159,7 +159,7 @@ where $s_j$ is a user defined positive constant that determines the amount of sp
 It is possible to obtain more than one block-component per block for RGCCA and SGCCA. Higher stage block components can be obtained using a deflation strategy. This strategy forces all the block components within a block to be uncorrelated. This deflation procedure can be iterated in a very flexible way.  It is not necessary to keep all the blocks in the procedure at all stages: the number of components summarizing a block can vary from one block to another (see [@Tenenhaus2017] for details).
 
 ## Implementation
-The function `rgcca()`of the RGCCA package implements a monotonically convergent algorithm for the optimization problem (\ref{optim_RGCCA}) - i.e. the bounded criterion to be maximized increases at each step of the iterative procedure -, which hits at convergence a stationary point of (\ref{optim_RGCCA}).  Two numerically equivalent approaches for solving the RGCCA optimization problem are available. A primal formulation described in [@Tenenhaus2017 ; @Tenenhaus2011] requires the handling of matrices of dimension $p_j \times p_j$. A dual formulation described in [@Tenenhaus2015] requires the handling of matrices of dimension $n \times n$ . Therefore, the primal formulation of the RGCCA algorithm will be used when $n>p_j$ and the dual form will be preferred when $n\le p_j$ . The `rgcca()` function of the RGCCA package implements these two formulations and selects automatically the best one. The SGCCA algorithm is similar to the RGCCA algorithm and keeps the same convergence properties. The algorithm associated with the optimization problem (2) is available through the function `sgcca()` of the RGCCA package.
+The function `rgccad()`of the RGCCA package implements a monotonically convergent algorithm for the optimization problem (\ref{optim_RGCCA}) - i.e. the bounded criterion to be maximized increases at each step of the iterative procedure -, which hits at convergence a stationary point of (\ref{optim_RGCCA}).  Two numerically equivalent approaches for solving the RGCCA optimization problem are available. A primal formulation described in [@Tenenhaus2017 ; @Tenenhaus2011] requires the handling of matrices of dimension $p_j \times p_j$. A dual formulation described in [@Tenenhaus2015] requires the handling of matrices of dimension $n \times n$ . Therefore, the primal formulation of the RGCCA algorithm will be used when $n>p_j$ and the dual form will be preferred when $n\le p_j$ . The `rgccad()` function of the RGCCA package implements these two formulations and selects automatically the best one. The SGCCA algorithm is similar to the RGCCA algorithm and keeps the same convergence properties. The algorithm associated with the optimization problem (2) is available through the function `sgcca()` of the RGCCA package.
 
 ##	Special cases of RGCCA
 
@@ -188,7 +188,7 @@ Table: Special cases of RGCCA in a situtation of $J \ge 2$ blocks. When $\tau_J+
 
 For all the methods of Table 1, a single very simple monotonically convergent gradient-based algorithm is implemented within the RGCCA package and gives at convergence a solution of the stationary equations related to the optimization problem (\ref{optim_RGCCA}). In addition, SGCCA offers a sparse counterpart to all the covariance-based methods of RGCCA. From these perspectives, R/SGCCA provide a general framework for exploratory data analysis of multiblock datasets that has immediate practical consequences for a unified statistical analysis and implementation strategy. 
 
-The methods cited in Table 1 are recovered with the `rgcca()` function by appropriately tuning the arguments `C`, `tau` and `scheme` associated with the triplet ($\ma C$, $\tau_j$, $g$). All the methods of Table 1 are obtained as follows:
+The methods cited in Table 1 are recovered with the `rgccad()` function by appropriately tuning the arguments `C`, `tau` and `scheme` associated with the triplet ($\ma C$, $\tau_j$, $g$). All the methods of Table 1 are obtained as follows:
 
 ### Principal Component Analysis.
 
@@ -199,14 +199,14 @@ Principal Component Analysis is defined as the following optimization problem
 \label{PCA1}
 \end{equation}
 
-and is obtained with the `rgcca()` function as follows:
+and is obtained with the `rgccad()` function as follows:
 
 ```{r, eval = FALSE}
 # one block X 
 # Design matrix C
 # Shrinkage parameters tau = c(tau1, tau2)
 
-pca.with.rgcca = rgcca(A = list(X, X), 
+pca.with.rgcca = rgccad(A = list(X, X),
                        C = matrix(c(0, 1, 1, 0), 2, 2),
                        tau = c(1, 1))
 ```
@@ -221,7 +221,7 @@ Canonical Correlation Analysis is defined as the following optimization problem
 \label{CCA}
 \end{equation}
 
-and is obtained with the `rgcca()` function as follows:
+and is obtained with the `rgccad()` function as follows:
 
 
 ```{r, eval = FALSE}
@@ -229,7 +229,7 @@ and is obtained with the `rgcca()` function as follows:
 # Design matrix C
 # Shrinkage parameters tau = c(tau1, tau2)
 
-cca.with.rgcca = rgcca(A= list(X1, X2), 
+cca.with.rgcca = rgccad(A= list(X1, X2),
                        C = matrix(c(0, 1, 1, 0), 2, 2),
                        tau = c(0, 0))
 ```
@@ -244,7 +244,7 @@ PLS regression is defined as the following optimization problem
 \label{PLS}
 \end{equation}
 
-and is obtained with the `rgcca()` function as follows:
+and is obtained with the `rgccad()` function as follows:
 
 
 ```{r, eval = FALSE}
@@ -252,7 +252,7 @@ and is obtained with the `rgcca()` function as follows:
 # Design matrix C
 # Shrinkage parameters tau = c(tau1, tau2)
 
-pls.with.rgcca = rgcca(A= list(X1, X2), 
+pls.with.rgcca = rgccad(A= list(X1, X2),
                        C = matrix(c(0, 1, 1, 0), 2, 2),
                        tau = c(1, 1))
 ```
@@ -268,14 +268,14 @@ var}\left(\X_1\ma a_1\right)^{1/2} \mathrm{~s.t.~} \Vert \ma a_1 \Vert = \text{v
 \label{RA}
 \end{equation}
 
-and is obtained with the `rgcca()` function as follows:
+and is obtained with the `rgccad()` function as follows:
 
 ```{r, eval = FALSE}
 # X1 = Block1 and X2 = Block2 
 # Design matrix C
 # Shrinkage parameters tau = c(tau1, tau2)
 
-ra.with.rgcca = rgcca(A= list(X1, X2), 
+ra.with.rgcca = rgccad(A= list(X1, X2),
                        C = matrix(c(0, 1, 1, 0), 2, 2),
                        tau = c(1, 0))
 ```
@@ -291,14 +291,14 @@ Regularized Canonical Correlation Analysis is defined as the following optimizat
 \label{rCCA}
 \end{equation}
 
-and is obtained with the `rgcca()` function as follows:
+and is obtained with the `rgccad()` function as follows:
 
 ```{r, eval = FALSE}
 # X1 = Block1 and X2 = Block2 
 # Design matrix C
 # Shrinkage parameters tau = c(tau1, tau2)
 
-rcca.with.rgcca = rgcca(A= list(X1, X2), 
+rcca.with.rgcca = rgccad(A= list(X1, X2),
                        C = matrix(c(0, 1, 1, 0), 2, 2),
                        tau = c(0<tau1<1, 0<tau2<1))
 ```
@@ -321,7 +321,7 @@ SUMCOV-1 is defined as the following optimization problem
 \underset{\ma a_1, \ma a_2, \ldots,\ma a_J} {\text{maximize}} \displaystyle \sum_{j, k = 1}^J \text{cov}(\ma X_j\ma a_j, \ma X_k\ma a_k) \text{~~s.t~~} \Vert \ma a_j \Vert = 1, j=1, \ldots, J
 \end{equation}
 
-and is obtained with the `rgcca()` function as follows:
+and is obtained with the `rgccad()` function as follows:
 
 
 ```{r, eval = FALSE}
@@ -329,7 +329,7 @@ and is obtained with the `rgcca()` function as follows:
 # J*J Design matrix C
 # Shrinkage parameters tau = c(tau1, ...,  tauJ)
 
-sumcov.with.rgcca = rgcca(A= list(X1, ..., XJ), 
+sumcov.with.rgcca = rgccad(A= list(X1, ..., XJ),
                        C = matrix(1, J, J),
                        tau = rep(1, J),
                        scheme = "horst")
@@ -343,14 +343,14 @@ SSQCOV-1 is defined as the following optimization problem
 \underset{\ma a_1, \ma a_2, \ldots,\ma a_J} {\text{maximize}} \displaystyle \sum_{j, k = 1}^J \text{cov}^2(\ma X_j\ma a_j, \ma X_k\ma a_k) \text{~~s.t~~} \Vert \ma a_j \Vert = 1, j=1, \ldots, J
 \end{equation}
 
-and is obtained with the `rgcca()` function as follows:
+and is obtained with the `rgccad()` function as follows:
 
 ```{r, eval = FALSE}
 # X1 = Block1, ..., XJ = BlockJ
 # J*J Design matrix C
 # Shrinkage parameters tau = c(tau1, ...,  tauJ)
 
-ssqcov.with.rgcca = rgcca(A= list(X1, ..., XJ), 
+ssqcov.with.rgcca = rgccad(A= list(X1, ..., XJ),
                        C = matrix(1, J, J),
                        tau = rep(1, J),
                        scheme = "factorial")
@@ -364,14 +364,14 @@ SABSCOV is defined as the following optimization problem
 \underset{\ma a_1, \ma a_2, \ldots,\ma a_J} {\text{maximize}} \displaystyle \sum_{j, k = 1}^J \vert \text{cov}(\ma X_j\ma a_j, \ma X_k\ma a_k) \vert \text{~~s.t~~} \Vert \ma a_j \Vert = 1, j=1, \ldots, J
 \end{equation}
 
-and is obtained with the `rgcca()` function as follows:
+and is obtained with the `rgccad()` function as follows:
 
 ```{r, eval = FALSE}
 # X1 = Block1, ..., XJ = BlockJ
 # J*J Design matrix C
 # Shrinkage parameters tau = c(tau1, ...,  tauJ)
 
-sabscov.with.rgcca = rgcca(A= list(X1, ..., XJ), 
+sabscov.with.rgcca = rgccad(A= list(X1, ..., XJ),
                        C = matrix(1, J, J),
                        tau = rep(1, J),
                        scheme = "centroid")
@@ -386,14 +386,14 @@ SUMCOR is defined as the following optimization problem
 \underset{\ma a_1, \ma a_2, \ldots,\ma a_J} {\text{maximize}} \displaystyle \sum_{j, k = 1}^J \text{cor}(\ma X_j\ma a_j, \ma X_k\ma a_k) \text{~~s.t~~} \text{var}(\X_j \ma a_j) = 1, j=1, \ldots, J
 \end{equation}
 
-and is obtained with the `rgcca()` function as follows:
+and is obtained with the `rgccad()` function as follows:
 
 ```{r, eval = FALSE}
 # X1 = Block1, ..., XJ = BlockJ
 # J*J Design matrix C
 # Shrinkage parameters tau = c(tau1, ...,  tauJ)
 
-sumcor.with.rgcca = rgcca(A= list(X1, ..., XJ), 
+sumcor.with.rgcca = rgccad(A= list(X1, ..., XJ),
                        C = matrix(1, J, J),
                        tau = rep(0, J),
                        scheme = "horst")
@@ -407,14 +407,14 @@ SSQCOR is defined as the following optimization problem
 \underset{\ma a_1, \ma a_2, \ldots,\ma a_J} {\text{maximize}} \displaystyle \sum_{j, k = 1; k \ne j}^J  \text{cor}^2(\ma X_j\ma a_j, \ma X_k\ma a_k) \text{~~s.t~~} \text{var}(\X_j \ma a_j) = 1, j=1, \ldots, J
 \end{equation}
 
-and is obtained with the `rgcca()` function as follows:
+and is obtained with the `rgccad()` function as follows:
 
 ```{r, eval = FALSE}
 # X1 = Block1, ..., XJ = BlockJ
 # J*J Design matrix C
 # Shrinkage parameters tau1, ...,  tauJ
 
-ssqcor.with.rgcca = rgcca(A= list(X1, ..., XJ), 
+ssqcor.with.rgcca = rgccad(A= list(X1, ..., XJ),
                        C = matrix(1, J, J),
                        tau = rep(0, J),
                        scheme = "factorial")
@@ -428,7 +428,7 @@ SABSCOR is defined as the following optimization problem
 \underset{\ma a_1, \ma a_2, \ldots,\ma a_J} {\text{maximize}} \displaystyle \sum_{j, k = 1}^J \vert \text{cor}(\ma X_j\ma a_j, \ma X_k\ma a_k) \vert \text{~~s.t~~} \text{var}(\X_j \ma a_j) = 1, j=1, \ldots, J
 \end{equation}
 
-and is obtained with the `rgcca()` function as follows:
+and is obtained with the `rgccad()` function as follows:
 
 
 ```{r, eval = FALSE}
@@ -436,7 +436,7 @@ and is obtained with the `rgcca()` function as follows:
 # J*J Design matrix C
 # Shrinkage parameters tau = c(tau1, ...,  tauJ)
 
-sabscor.with.rgcca = rgcca(A= list(X1, ..., XJ), 
+sabscor.with.rgcca = rgccad(A= list(X1, ..., XJ),
                       C = matrix(1, J, J),
                        tau = rep(0, J),
                        scheme = "centroid")
@@ -450,14 +450,14 @@ SUMCOV-2 is obtained from following optimization problem
 \underset{\ma a_1, \ma a_2, \ldots,\ma a_J} {\text{maximize}} \displaystyle \sum_{j, k = 1 ; j \ne k}^J  \text{cov}(\ma X_j\ma a_j, \ma X_k\ma a_k) \text{~~s.t~~} \Vert \ma a_j \Vert = 1, j=1, \ldots, J
 \end{equation}
 
-and is obtained with the `rgcca()` function as follows:
+and is obtained with the `rgccad()` function as follows:
 
 ```{r, eval = FALSE}
 # X1 = Block1, ..., XJ = BlockJ
 # J*J Design matrix C
 C = matrix(1, J, J) ; diag(C) = 0
 # Shrinkage parameters tau = c(tau1, ...,  tauJ)
-maxbet.with.rgcca = rgcca(A= list(X1, ..., XJ), 
+maxbet.with.rgcca = rgccad(A= list(X1, ..., XJ),
                        C = C,
                        tau = rep(1, J),
                        scheme = "horst")
@@ -471,14 +471,14 @@ SSQCOV-2 is obtained from following optimization problem
 \underset{\ma a_1, \ma a_2, \ldots,\ma a_J} {\text{maximize}} \displaystyle \sum_{j, k = 1; j \ne k}^J \text{cov}^2(\ma X_j\ma a_j, \ma X_k\ma a_k) \text{~~s.t~~} \Vert \ma a_j \Vert = 1, j=1, \ldots, J
 \end{equation}
 
-and is obtained with the `rgcca()` function as follows:
+and is obtained with the `rgccad()` function as follows:
 
 ```{r, eval = FALSE}
 # X1 = Block1, ..., XJ = BlockJ
 # J*J Design matrix C
 C = matrix(1, J, J) ; diag(C) = 0
 # Shrinkage parameters tau = c(tau1, ...,  tauJ)
-maxbetb.with.rgcca = rgcca(A= list(X1, ..., XJ), 
+maxbetb.with.rgcca = rgccad(A= list(X1, ..., XJ),
                        C = C,
                        tau = rep(1, J),
                        scheme = "factorial")
@@ -492,7 +492,7 @@ For Carroll's Generalized Canonical Correlation Analysis (GCCA), a superblock $\
 \underset{\ma a_1, \ma a_2, \ldots,\ma a_J} {\text{maximize}} \displaystyle \sum_{j=1}^J \text{cor}^2(\ma X_j\ma a_j, \ma X_{J+1}\ma a_{J+1}) \text{~~s.t~~} \text{var}(\X_j \ma a_j) = 1, j=1, \ldots, J+1
 \end{equation}
 
-and is obtained with the `rgcca()` function as follows:
+and is obtained with the `rgccad()` function as follows:
 
 
 ```{r, eval = FALSE}
@@ -504,7 +504,7 @@ C = matrix(c(0, 0, 0, ..., 0, 1,
                   ...
              1, 1, 1, ..., 1, 0), J+1, J+1)
 # Shrinkage parameters tau = c(tau1, ...,  tauJ, tau_{J+1})
-gcca.with.rgcca = rgcca(A= list(X1, ..., XJ, cbind(X1, ..., XJ)), 
+gcca.with.rgcca = rgccad(A= list(X1, ..., XJ, cbind(X1, ..., XJ)),
                        C = C,
                        tau = rep(0, J+1),
                        scheme = "factorial")
@@ -518,7 +518,7 @@ For Multiple Co-Inertia Analysis (MCOA) a superblock $\ma X_{J+1} = [\ma X_1, \d
 \underset{\ma a_1, \ma a_2, \ldots,\ma a_J} {\text{maximize}} \displaystyle \sum_{j=1}^J \text{cor}^2(\ma X_j\ma a_j, \ma X_{J+1}\ma a_{J+1})\times \text{var}(\X_j\ma a_j), \text{~~s.t~~} \Vert \ma a_j \Vert = 1, j=1, \ldots, J \text{~~and~~} \text{var}(\X_{J+1}\ma a_{J+1}) = 1
 \end{equation}
 
-and is obtained with the `rgcca()` function as follows:
+and is obtained with the `rgccad()` function as follows:
 
 
 ```{r, eval = FALSE}
@@ -530,7 +530,7 @@ C = matrix(c(0, 0, 0, ..., 0, 1,
                    ...
              1, 1, 1, ..., 1, 0), J+1, J+1)
 # Shrinkage parameters tau = c(tau1, ...,  tauJ, tau_{J+1})
-mcoa.with.rgcca = rgcca(A= list(X1, ..., XJ, cbind(X1, ..., XJ)), 
+mcoa.with.rgcca = rgccad(A= list(X1, ..., XJ, cbind(X1, ..., XJ)),
                        C = C,
                        tau = c(rep(1, J), 0),
                        scheme = "factorial")
@@ -545,7 +545,7 @@ For Hierarchical Principal Component Analysis (HPCA), a superblock $\ma X_{J+1} 
 \underset{\ma a_1, \ma a_2, \ldots,\ma a_J} {\text{maximize}} \displaystyle \sum_{j=1}^J \text{cov}^4(\ma X_j\ma a_j, \ma X_{J+1}\ma a_{J+1}), \text{~~s.t~~} \Vert \ma a_j \Vert = 1, j=1, \ldots, J \text{~~and~~} \text{var}(\X_{J+1}\ma a_{J+1}) = 1
 \end{equation}
 
-and is obtained with the `rgcca()` function as follows:
+and is obtained with the `rgccad()` function as follows:
 
 ```{r, eval = FALSE}
 # X1 = Block1, ..., XJ = BlockJ, X_{J+1} = [X1, ..., XJ]
@@ -556,7 +556,7 @@ C = matrix(c(0, 0, 0, ..., 0, 1,
                   ...
              1, 1, 1, ..., 1, 0), J+1, J+1)
 # Shrinkage parameters tau = c(tau1, ...,  tauJ, tau_{J+1})
-hpca.with.rgcca = rgcca(A= list(X1, ..., XJ, cbind(X1, ..., XJ)), 
+hpca.with.rgcca = rgccad(A= list(X1, ..., XJ, cbind(X1, ..., XJ)),
                        C = C,
                        tau = c(rep(1, J), 0),
                        #flexible design of the scheme function
@@ -571,7 +571,7 @@ Let $\ma X =[\ma x_1, \ldots, \ma x_p]$ be a $n \times p$ data matrix. PCA can b
 \underset{\ma a}{\text{maximize}} \displaystyle \sum_{j=1}^p \text{cor}^2(\ma x_{j}, \ma X \ma a) \text{~~s.t~~} \text{var}(\ma X \ma a)=1
 \end{equation}
 
-and is obtained with the `rgcca()` function as follows:
+and is obtained with the `rgccad()` function as follows:
 
 ```{r, eval = FALSE}
 # one block X = [x1, ..., xJ] with J variables x1, ..., xJ
@@ -582,7 +582,7 @@ C = matrix(c(0, 0, 0, ..., 0, 1,
                   ...
              1, 1, 1, ..., 1, 0), J+1, J+1)
 # Shrinkage parameters tau = c(tau1, ...,  tauJ, tau_{J+1})
-pca.with.rgcca = rgcca(list(x1, ..., xJ, X), 
+pca.with.rgcca = rgccad(list(x1, ..., xJ, X),
                        C = C,
                        tau = c(rep(0, J+1), 0),
                        #flexible design of the scheme function
@@ -635,7 +635,7 @@ sapply(A, head)
 A = lapply(A, function(x) scale2(x, bias = TRUE))
 ```
 
-We note that to make blocks comparable, a possible strategy is to standardize the variables and then to divide each block by the square root of its number of variables [@Westerhuis1998]. This two-step procedure leads to $\mathrm{tr}(\ma X_j^t \ma X_j )=n$  for each block (i.e. the sum of the eigenvalues of the covariance matrix of $\ma X_j$ is equal to $1$ whatever the block). Such a preprocessing is reached by setting the `scale` argument to `TRUE` (default value) in the `rgcca()` and `sgcca()` functions.
+We note that to make blocks comparable, a possible strategy is to standardize the variables and then to divide each block by the square root of its number of variables [@Westerhuis1998]. This two-step procedure leads to $\mathrm{tr}(\ma X_j^t \ma X_j )=n$  for each block (i.e. the sum of the eigenvalues of the covariance matrix of $\ma X_j$ is equal to $1$ whatever the block). Such a preprocessing is reached by setting the `scale` argument to `TRUE` (default value) in the `rgccad()` and `sgcca()` functions.
 
 **Definition of the design matrix $\mathbf{C}$.** From Russett's hypotheses, it is difficult for a country to escape dictatorship when its agricultural inequality is above-average and its industrial development below-average. These hypotheses on the relationships between blocks are depicted in Figure \ref{fig:C}.
 
@@ -664,11 +664,11 @@ C = matrix(c(0, 0, 1,
 C
 ```
 
-RGCCA using the pre-defined design matrix $\ma C$, the factorial scheme ($g(x) = x^2$) and mode B for all blocks (full correlation criterion) is obtained by specifying appropriately the `C`, `scheme` and `tau` arguments of the `rgcca()` function. The `verbose` argument (default value = `TRUE`) indicates that the progress will be reported while computing and that a plot representing the convergence of the algorithm will be returned.
+RGCCA using the pre-defined design matrix $\ma C$, the factorial scheme ($g(x) = x^2$) and mode B for all blocks (full correlation criterion) is obtained by specifying appropriately the `C`, `scheme` and `tau` arguments of the `rgccad()` function. The `verbose` argument (default value = `TRUE`) indicates that the progress will be reported while computing and that a plot representing the convergence of the algorithm will be returned.
 
 
 ```{r}
-rgcca_B_factorial = rgcca(A, C, tau = rep(0, 3), scheme = "factorial",
+rgcca_B_factorial = rgccad(A, C, tau = rep(0, 3), scheme = "factorial",
 scale = FALSE, verbose = TRUE)
 ```
 
@@ -719,7 +719,7 @@ and corresponds exactly to the results reported in [@Tenenhaus2011, see last col
 We mention that, for each block $j$, an "optimal" shrinkage parameter $\tau_j$ can be obtained from the Schafer and Strimmer analytical formula [@Schafer2005] by using the `tau` argument of the rgcca funtion:
 
 ```{r}
-rgcca_optimal_factorial = rgcca(A, C, tau = "optimal", scheme = "factorial",
+rgcca_optimal_factorial = rgccad(A, C, tau = "optimal", scheme = "factorial",
 scale = FALSE, verbose = FALSE)
 ```
 
@@ -773,7 +773,7 @@ C = matrix(c(0, 0, 0, 1,
 0, 0, 0, 1,
 1, 1, 1, 0), 4, 4)
 
-rgcca.hpca = rgcca(A, C, tau = c(1, 1, 1, 0), verbose = FALSE,
+rgcca.hpca = rgccad(A, C, tau = c(1, 1, 1, 0), verbose = FALSE,
 ncomp = rep(2, 4),
 #flexible design of the scheme function
 scheme = function(x) x^4,
@@ -891,10 +891,10 @@ C
 
 **Determination of the shrinkage parameters.** In this situation, the optimal shrinkage parameters should be chosen so as to minimize the test error rate determined by cross-validation (grid search). This has been done in [@Tenenhaus2015]. A function that implements this cross validation procedure is not yet included in the RGCCA package but can be found in http://biodev.cea.fr/sgcca/. Work is in progress to include this function within the RGCCA package. Due to the dimensionality of each block, the shrinkage parameters $\tau_1 = 1$, $\tau_2 = 1$ and $\tau_3 = 0$ are found to offer a good compromise between stability and correlation [@Tenenhaus2015]. Notice that $\tau_3$ was set to 0 because we were not looking for a block component $\ma y_3$ that explained its own block well (since $\ma X_3$ is a group coding matrix) but one that correlated with its neighboring components. In addition, usin the `ncomp` argument, one component per block have been asked (`ncomp = c(1, 1, 1)`).
 
-From the dimension of each block ($n>p$ or $n\leq p$), the `rgcca()` function selects automatically the dual formulation for $\ma X_1$ and $\ma X_2$ and the primal one for $\ma X_3$.
+From the dimension of each block ($n>p$ or $n\leq p$), the `rgccad()` function selects automatically the dual formulation for $\ma X_1$ and $\ma X_2$ and the primal one for $\ma X_3$.
 
 ```{r, eval = FALSE}
-rgcca.glioma = rgcca(A, C, tau = c(1, 1, 0), ncomp = c(1, 1, 1),
+rgcca.glioma = rgccad(A, C, tau = c(1, 1, 0), ncomp = c(1, 1, 1),
                      scale = TRUE, scheme = "horst", verbose = FALSE)
 ```
 
@@ -907,7 +907,7 @@ rgcca.glioma$primal_dual
 The dual formulation make the RGCCA algorithm highly efficient even in a high dimensional setting.
 
 ```{r, eval = FALSE}
-system.time(rgcca(A, C, tau = c(1, 1, 0), ncomp = c(1, 1, 1),
+system.time(rgccad(A, C, tau = c(1, 1, 0), ncomp = c(1, 1, 1),
                   scheme = "horst", verbose = FALSE)
 )
 ```
@@ -1162,12 +1162,12 @@ At last, the McKeon's measure quantifies the homogeneity of a set of block compo
   \label{mckeon}
 \end{equation}
   
-Formula (\ref{mckeon}) allows evaluating the homogeneity of the solution of any multiblock component methods. The McKeon measure (not yet implemented within the RGCCA package but easily derived from the `rgcca()` function, see below) can be used to evaluate the proximities of the $3$ blocks. The computation of the McKeon's measure was carried out using RGCCA (full between-block connections, $\tau_j=1$ for all blocks, and $g(x) = x$ for a fair analysis).
+Formula (\ref{mckeon}) allows evaluating the homogeneity of the solution of any multiblock component methods. The McKeon measure (not yet implemented within the RGCCA package but easily derived from the `rgccad()` function, see below) can be used to evaluate the proximities of the $3$ blocks. The computation of the McKeon's measure was carried out using RGCCA (full between-block connections, $\tau_j=1$ for all blocks, and $g(x) = x$ for a fair analysis).
   
 ```{r, eval = FALSE}
 rI = function(A){
     J = length(A)
-    res = rgcca(A, scale = TRUE, verbose = FALSE)
+    res = rgccad(A, scale = TRUE, verbose = FALSE)
     Y = Reduce("cbind", res$Y)
     rI = 1/(J-1)*(cov2(rowSums(Y))/sum(apply(Y, 2, cov2))-1)
 }

@@ -8,7 +8,7 @@
 #' @param collapse A boolean to combine the variables of each blocks as result
 #' @return A vector of character giving block names for each corresponding 
 #' variable.
-#' @seealso \code{\link[RGCCA]{rgcca}}, \code{\link[RGCCA]{sgcca}}
+#' @seealso \code{\link[RGCCA]{rgccad}}, \code{\link[RGCCA]{sgcca}}
 #' @examples
 #' rgcca_out = list(a = rep(NA, 4))
 #' names(rgcca_out$a) = LETTERS[seq(4)]

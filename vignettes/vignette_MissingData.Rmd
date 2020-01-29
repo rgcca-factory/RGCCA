@@ -176,7 +176,7 @@ The resulting RGCCA can be obtained in two method : entering na.rm=TRUE in usual
 
 ```{r}
 C=matrix(1,length(A),length(A))-diag(length(A))
-rgcca_nipals=rgcca(A=A_missing,C=C,tau=rep(1,length(A)),verbose=FALSE)
+rgcca_nipals=rgccad(A=A_missing,C=C,tau=rep(1,length(A)),verbose=FALSE)
 rgcca_nipals2=rgccaNa(A=A_missing,C=C,tau=rep(1,length(A)),method="nipals")
 names(rgcca_nipals2)
 ```
@@ -207,10 +207,10 @@ Regarding the relevant variables, the standard deviation of the correlations bet
 
 ```{r, fig.height = 5, fig.width = 5, fig.align = "center"}
 mi_rgcca=MIRGCCA(A=A_missing,k=3,ni=5,scale=TRUE,sameBlockWeight=TRUE,tau=rep(1,3))
-plotMIRGCCA(mi.obj=mi_rgcca,multiple="ell",indnames=FALSE)
+plot_MIRGCCA(mi.obj=mi_rgcca,multiple="ell",indnames=FALSE)
 ```
 ```{r, fig.height = 5, fig.width = 5, fig.align = "center"}
-plotMIRGCCA(mi.obj=mi_rgcca,multiple="seg",indnames=FALSE)
+plot_MIRGCCA(mi.obj=mi_rgcca,multiple="seg",indnames=FALSE)
 
 ```
 
@@ -243,7 +243,8 @@ In this case, the best method for the similarities between weights is
 
 # Behavior with increasing missing data proportion
 ```{r, fig.height = 6, fig.width = 6, fig.align = "center"}
-listResults=naEvolution(A=A,listMethods=c("complete","nipals","mean"),prctNA=c(0.05,0.1,0.15,0.2,0.25,0.3,0.4),typeNA="ponc",ncomp=rep(1,3),sameBlockWeight=FALSE)
+names(A)=c("agri","ind","polit")
+listResults=naEvolution(A=A,listMethods=c("complete","nipals","mean"),prctNA=c(0.05,0.1,0.15,0.2,0.25,0.3,0.4),typeNA="ponc",ncomp=rep(1,3),sameBlockWeight=FALSE,nDatasets = 10)
 ```
 ```{r, fig.height = 4, fig.width = 6, fig.align = "center"}
 plotEvol(listResults,output="a",barType = "stderr")

@@ -57,7 +57,7 @@ AVE(for one block), AVE(outer model), AVE(inner model).}
 \item{tau}{\eqn{1 * J} vector containing the value for the tau penalties applied to each of the \eqn{J} blocks of data (user specified)}
 }
 \description{
-The function rgccak() is called by rgcca() and does not have to be used by the user. 
+The function rgccak() is called by rgccad() and does not have to be used by the user.
 The function rgccak() computes the RGCCA block components, outer weight vectors, etc., 
 for each block and each dimension. Depending on the dimensionality of each block \eqn{X_j , j = 1, ..., J}, 
 the primal (when \eqn{n > p_j}) or the dual (when \eqn{n < p_j}) algorithm is used (see Tenenhaus et al. 2015)

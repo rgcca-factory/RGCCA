@@ -108,7 +108,7 @@ imputeEM <-
                 ASB <- c(Alist, list(concatenedBlocks))
                 names(ASB) <- c(names(Alist), "Superblock")
                 fit.rgcca <-
-                    rgcca(
+                    rgccad(
                         A = ASB,
                         tau = tau2,
                         C = C2,
@@ -123,7 +123,7 @@ imputeEM <-
                 
             }
             if (!superblock) {
-                fit.rgcca <- rgcca(
+                fit.rgcca <- rgccad(
                     A = Alist,
                     tau = tau,
                     C = C,

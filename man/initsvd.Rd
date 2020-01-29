@@ -15,7 +15,7 @@ initsvd(X, dual = TRUE)
 A matrix with n lines and n columns
 }
 \description{
-The function initsvd() is called by rgcca() and does not have to be used by the user. 
+The function initsvd() is called by rgccad() and does not have to be used by the user.
 initsvd() enables the computation of initial scores of subjects for RGCCA based on SVD decomposition
 If missing values, they are imputed by colmeans
 }

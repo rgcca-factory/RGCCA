@@ -30,7 +30,7 @@ library(RGCCA)
 data("Russett")
 blocks = list(agriculture = Russett[, seq(3)], industry = Russett[, 4:5],
     politic = Russett[, 6:11] )
-rgcca_out = rgcca.analyze(blocks)
+rgcca_out = rgcca(blocks)
 boot = bootstrap(rgcca_out, 2, FALSE, n_cores = 1)
 selected.var = get_bootstrap(rgcca_out, boot, n_cores = 1)
 plot_bootstrap(selected.var, rgcca_out)

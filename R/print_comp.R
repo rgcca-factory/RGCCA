@@ -8,7 +8,7 @@
 #' @param i An integer giving the index of a list of blocks
 #' @param outer A boolean for ave plot case
 #' @return A string for the variance on the component
-#' @seealso \code{\link[RGCCA]{rgcca}}, \code{\link[RGCCA]{sgcca}}
+#' @seealso \code{\link[RGCCA]{rgccad}}, \code{\link[RGCCA]{sgcca}}
 #' @examples
 #' AVE = list(c(0.6, 0.5), c(0.7, 0.45))
 #' rgcca_out = list(AVE = list(AVE_X = AVE))

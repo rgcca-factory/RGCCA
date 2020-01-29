@@ -2,7 +2,7 @@
 #'
 #' Internal function for computing boostrap of RGCCA
 #'
-#' @inheritParams rgcca.analyze
+#' @inheritParams rgcca
 #' @inheritParams plot_var_2D
 #' @return A list of RGCCA bootstrap weights
 #' @examples
@@ -10,7 +10,7 @@
 #' data("Russett")
 #' blocks = list(agriculture = Russett[, seq(3)], industry = Russett[, 4:5],
 #'     politic = Russett[, 6:11] )
-#' rgcca_out = rgcca.analyze(blocks)
+#' rgcca_out = rgcca(blocks)
 #' bootstrap_k(rgcca_out)
 #' bootstrap_k(rgcca_out, lapply(blocks, scale), superblock = FALSE)
 #' @export
@@ -67,7 +67,7 @@ bootstrap_k <- function(
     boot_blocks <- remove_null_sd(boot_blocks)
 print("rgcca")
     # Get boostraped weights
-    w <- rgcca.analyze(
+    w <- rgcca(
         boot_blocks,
         connection,
         superblock = superblock,

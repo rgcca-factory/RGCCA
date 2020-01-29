@@ -13,10 +13,11 @@
 #' @param cex size of tht text
 #' @param output "R" or "png"
 #' @param filename name of the saved file
+#' @param ... further graphical parameters
 #' @return \item{rgcca0}{RGCCA results for the reference dataset}
 #' @return \item{data}{list of imputed data obtained}
 #' @return \item{rgccaList}{list of RGCCA obtained}
-#' @title plotMIRGCCA: plots the results of MIRGCCA
+#' @title plot_MIRGCCA: plots the results of MIRGCCA
 #' @examples 
 #' set.seed(42);X1=matrix(rnorm(500),100,5);
 #' set.seed(22);X2=matrix(rnorm(400),100,4);
@@ -34,12 +35,12 @@
 #' klim=NULL,output="mean",scheme="centroid",tol=1e-16)
 #' res$rgccaList[[2]]$Y[[1]]
 #' res[[1]]$A
-#' plotMIRGCCA(res,multiple="ell",indnames=FALSE)
+#' plot_MIRGCCA(res,multiple="ell",indnames=FALSE)
 #' @importFrom grDevices graphics.off
 #' @importFrom vegan procrustes
 # @importFrom car ellipse
 #' @export
-plotMIRGCCA=function(mi.obj,opt.ell="distr",multiple="ell",indnames=TRUE,varnames=TRUE,blocks=c(1,1),axes=c(1,2),selec="all",xlim=NULL,threshold=0.5,cex=1,output="R",filename="rgcca.png")
+plot_MIRGCCA=function(mi.obj,opt.ell="distr",multiple="ell",indnames=TRUE,varnames=TRUE,blocks=c(1,1),axes=c(1,2),selec="all",xlim=NULL,threshold=0.5,cex=1,output="R",filename="rgcca.png",...)
 {
   rgcca0=mi.obj$rgcca0
   rgccaList=mi.obj$rgccaList  
@@ -56,11 +57,11 @@ plotMIRGCCA=function(mi.obj,opt.ell="distr",multiple="ell",indnames=TRUE,varname
     text(0.3,seq(0,1,length.out=length(vec)),names(vec),cex=cex)
     if(is.null(sdV))
     {
-      text(0.7,seq(0,1,length.out=length(vec)),round(vec,digits=2),col=ifelse(vec>0,"dark green","red"),cex=cex)
+      text(0.7,seq(0,1,length.out=length(vec)),round(vec,digits=2),col=ifelse(vec>0,"dark green","red"),cex=cex,...)
     }
     else
     {
-      text(0.7,seq(0,1,length.out=length(vec)),paste(round(vec,digits=2),"+/-",sdV,sep=""),cex=cex,col=ifelse(vec>0,"dark green","red"))
+      text(0.7,seq(0,1,length.out=length(vec)),paste(round(vec,digits=2),"+/-",sdV,sep=""),cex=cex,col=ifelse(vec>0,"dark green","red"),...)
       
     }
   }
@@ -74,7 +75,7 @@ plotMIRGCCA=function(mi.obj,opt.ell="distr",multiple="ell",indnames=TRUE,varname
     maxim=max(max(rgcca0$Y[[blocks[1]]][,axes[1]]),max(rgcca0$Y[[blocks[2]]][,axes[2]]))
   }
   else{minim=xlim[1];maxim=xlim[2]}
-  plot(NULL,xlim=c(minim,maxim),ylim=c(minim,maxim),xaxt="n",yaxt="n",main="Sample plot")
+  plot(NULL,xlim=c(minim,maxim),ylim=c(minim,maxim),xaxt="n",yaxt="n",main="Sample plot",...)
   rect(par("usr")[1], par("usr")[3], par("usr")[2], par("usr")[4], col = "#e9ebec",border="#e9ebec")
   grid(nx = NULL, ny = NULL, col = "white", lty = "dotted",  lwd = par("lwd"), equilogs = TRUE)
   nsuj=dim(rgcca0$Y[[1]])[1]

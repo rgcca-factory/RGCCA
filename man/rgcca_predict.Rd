@@ -46,7 +46,7 @@ C = connection = matrix(c(0, 0, 1,
 3, 3)
 A = lapply(blocks, function(x) x[1:32,])
 A = lapply(A, function(x) scale2 (x, bias = TRUE) / sqrt(NCOL(x)) )
-object = rgcca.analyze(A, connection = C, tau = c(0.7,0.8,0.7), 
+object = rgcca(A, connection = C, tau = c(0.7,0.8,0.7),
     ncomp = c(3,2,4), superblock = FALSE)
 newA = lapply(blocks, function(x) x[-c(1:32),])
 newA = lapply( newA, function(x) x[, sample(1:NCOL(x))] )

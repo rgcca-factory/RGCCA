@@ -8,7 +8,7 @@ A = list(X_agric);
 #C = matrix(c(0, 0, 1, 0, 0, 1, 1, 1, 0), 3, 3);
 
 # scaled PCA
-resPCA= rgcca.analyze (
+resPCA= rgcca (
      blocks=A,
      connection = 1 - diag(length(A)),
      response = NULL,
@@ -44,7 +44,7 @@ test_that("pca_var2",{expect_true(pca_var2)})
 
 
 # unscaled PCA
-unscaledPCA= rgcca.analyze (
+unscaledPCA= rgcca (
     blocks=A,
     connection = 1 - diag(length(A)),
     response = NULL,
@@ -80,7 +80,7 @@ X_agric =as.matrix(Russett[,c("gini","farm","rent")]);
 X_ind = as.matrix(Russett[,c("gnpr","labo")]);
 X_polit = as.matrix(Russett[ , c("demostab", "dictator")]);
 A = list(X_agric[,1],X_agric[,2],X_agric[,3]);
-scaledPCASB= rgcca.analyze (
+scaledPCASB= rgcca (
     blocks=A,
     connection = 1 - diag(length(A)),
     response = NULL,
@@ -101,7 +101,7 @@ pcasb_ind=abs(cor(pcaSB$x[,1],scaledPCASB$Y[[1]][,1]))==1
 #------------PLS 
 #  res_pls = plsr(X_polit ~ X_agric, ncomp = 1, method = "simpls")
 #  A = list(X_agric,X_polit);
-#  pls_with_rgcca= rgcca.analyze (
+#  pls_with_rgcca= rgcca (
 #      blocks=A,
 #      connection=matrix(c(0,1,1,0),2,2),
 #      tau=rep(1,2),
@@ -124,7 +124,7 @@ pcasb_ind=abs(cor(pcaSB$x[,1],scaledPCASB$Y[[1]][,1]))==1
 # plot(cor_X*res_rgcca$a[[2]], col = "red", pch = 16, main = "Y_loadings", ylab = "loadings")
 # points(res_pls$Yloadings/norm2(res_pls$Yloadings))
 
-# rgcca.analyze (
+# rgcca (
 #     blocks,
 #     connection = 1 - diag(length(blocks)),
 #     response = NULL,
@@ -146,7 +146,7 @@ pcasb_ind=abs(cor(pcaSB$x[,1],scaledPCASB$Y[[1]][,1]))==1
  X_ind = as.matrix(Russett[,c("gnpr","labo")]);
  X_polit = as.matrix(Russett[ , c("demostab")]);
  A = list(X_agric,X_ind,X_agric);
- resPCA= rgcca.analyze (
+ resPCA= rgcca (
      blocks=A,
      connection = 1 - diag(length(A)),
      response = NULL,

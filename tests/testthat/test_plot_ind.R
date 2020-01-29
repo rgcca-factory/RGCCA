@@ -20,7 +20,7 @@ row.names(resp) = seq(15)
 # Using the predict 
 data(Russett)
  blocks = list(agri=Russett[,1:3],ind=Russett[,4:5],polit=Russett[,8:11])
- rgcca_out = rgcca.analyze(blocks = blocks)
+ rgcca_out = rgcca(blocks = blocks)
  loo <- rgcca_crossvalidation(rgcca_out, n_cores = 2)
 
  #> [1] 0.086

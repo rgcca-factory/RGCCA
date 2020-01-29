@@ -53,7 +53,7 @@ library(RGCCA)
 data("Russett")
 blocks = list(agriculture = Russett[, seq(3)],
     politic = Russett[, 6:11] )
-rgcca_out = rgcca.analyze(blocks, ncomp = rep(3, 2))
+rgcca_out = rgcca(blocks, ncomp = rep(3, 2))
 df = get_comp(rgcca_out, compz = 3)
 plot3D(df, rgcca_out, i_block = 2)
 plot3D(df, rgcca_out, i_block = 2, text = FALSE)

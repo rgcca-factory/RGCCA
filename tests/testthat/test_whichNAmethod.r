@@ -21,6 +21,8 @@ names(A)=c("bloc1","bloc2")
 
 resultComparison=whichNAmethod(A,ncomp=rep(2,4),listMethods=c("nipals","mean"),patternNA=rep(0.1,2),seed=1:20)
 resultComparison2=whichNAmethod(A,listMethods=c("nipals","mean"),patternNA=rep(0.1,2),seed=1:20)
+resultComparison3=whichNAmethod(A,listMethods=c("nipals","mean"),patternNA=rep(0.1,2),seed=1:20,nDatasets = 1)
+
 test_that("whichNAmethod_1",{expect_true(all.equal(resultComparison,resultComparison2))})
 
 

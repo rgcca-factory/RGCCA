@@ -9,12 +9,12 @@
 #' @param type A string giving the criterion to selects biomarkers : either 
 #' "cor" for correlation between the component and the block
 #' or "weight" for the weight of the RGCCA
-#' @seealso \code{\link[RGCCA]{rgcca}}, \code{\link[RGCCA]{sgcca}}
+#' @seealso \code{\link[RGCCA]{rgccad}}, \code{\link[RGCCA]{sgcca}}
 #' @examples
 #' data("Russett")
 #' blocks = list(agriculture = Russett[, seq(3)], industry = Russett[, 4:5],
 #'     politic = Russett[, 6:11] )
-#' rgcca_out = rgcca.analyze(blocks)
+#' rgcca_out = rgcca(blocks)
 #' plot_var_1D(rgcca_out, collapse = TRUE)
 #' @export
 plot_var_1D <- function(

@@ -27,5 +27,5 @@ get_bloc_var(rgcca_out)
 # a, b, c
 }
 \seealso{
-\code{\link[RGCCA]{rgcca}}, \code{\link[RGCCA]{sgcca}}
+\code{\link[RGCCA]{rgccad}}, \code{\link[RGCCA]{sgcca}}
 }

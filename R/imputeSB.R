@@ -95,10 +95,10 @@ imputeSB <- function(
     diff[[i]] <- objective[[i]] <- old[[i + 1]] <- criterion[[i]] <- list()
     
     # building of a list with superblock ASB = c(Alist, list(X1NA))
-    # names(ASB)=c(names(Alist),'Superblock') fit.rgcca = rgcca(A=ASB, tau =
+    # names(ASB)=c(names(Alist),'Superblock') fit.rgcca = rgccad(A=ASB, tau =
     # tau2,C=C2, ncomp = ncomp2, scheme = 'factorial', scale = scale, init = 'svd',
     # verbose = FALSE, tol = tol,sameBlockWeight=sameBlockWeight)
-    fit.rgcca <- rgcca(
+    fit.rgcca <- rgccad(
       A = Alist,
       tau = tau,
       C = "superblock",
