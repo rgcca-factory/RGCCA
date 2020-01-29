@@ -38,12 +38,13 @@ rgcca <- function(blocks,
     tau = rep(1, length(blocks)),
     ncomp = rep(2, length(blocks)),
     type = "rgcca",
-    verbose = TRUE,
+    verbose = FALSE,
     scheme = "factorial",
     scale = TRUE,
     init = "svd",
     bias = TRUE,
     tol = 1e-08,
+    quiet = FALSE,
     sameBlockWeight = TRUE,
     method = "complete",
     knn.k = "all",
@@ -69,12 +70,13 @@ rgcca <- function(blocks,
         ncomp = ncomp,
         scheme = scheme,
         superblock = superblock,
-        type  = type
+        type  = type,
+        quiet = quiet
     )
 
     opt$blocks <- scaling(blocks, scale)
-    superblock <- check_superblock(response, opt$superblock)
-    opt$blocks <- set_superblock(opt$blocks, opt$superblock, type)
+    superblock <- check_superblock(response, opt$superblock, !quiet)
+    opt$blocks <- set_superblock(opt$blocks, opt$superblock, type, !quiet)
 
     if (!is.null(response)) {
         # || tolower(type) == "ra"
@@ -101,7 +103,7 @@ rgcca <- function(blocks,
             warn_on <- TRUE
     }
 
-    if (warn_on & verbose)
+    if (warn_on && !quiet)
         message("RGCCA in progress ...")
 
     if (tolower(type) %in% c("sgcca", "spca", "spls")) {
@@ -117,7 +119,7 @@ rgcca <- function(blocks,
             A = opt$blocks,
             C = opt$connection,
             ncomp = opt$ncomp,
-            verbose = FALSE,
+            verbose = verbose,
             scheme = opt$scheme,
             scale = scale,
             init = init,
