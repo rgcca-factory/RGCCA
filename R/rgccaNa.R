@@ -20,6 +20,7 @@
 #' @param knn.klim k limits (if k is not a number, optimal k between klim[1] and klim[2] is calculated )
 #' @param knn.sameBlockWeight if TRUE the distance for Nearest Neigbors takes the size of blocks into account
 #' @param pca.ncp Number of components chosen in PCA 
+#' @param ni number of iterations for em or sem methods
 #' @return \item{Y}{A list of \eqn{J} elements. Each element of \eqn{Y} is a matrix that contains the RGCCA components for the corresponding block.}
 #' @return \item{a}{A list of \eqn{J} elements. Each element of \eqn{a} is a matrix that contains the outer weight vectors for each block.}
 #' @return \item{astar}{A list of \eqn{J} elements. Each element of astar is a matrix defined as Y[[j]][, h] = A[[j]]\%*\%astar[[j]][, h].}
@@ -48,7 +49,7 @@
 #' rgccaNa(A,method="knn2")
 
 rgccaNa=function (A,method, C = 1 - diag(length(A)), tau = rep(1, length(A)),    ncomp = rep(1, length(A)), scheme = "centroid", scale = TRUE,   init = "svd", bias = TRUE, tol = 1e-08, verbose = TRUE,
-                  sameBlockWeight=TRUE,knn.k="all",knn.output="weightedMean",knn.klim=NULL,knn.sameBlockWeight=TRUE,pca.ncp=1)
+                  sameBlockWeight=TRUE,knn.k="all",knn.output="weightedMean",knn.klim=NULL,knn.sameBlockWeight=TRUE,pca.ncp=1,ni=50)
 { 
   #  call=match.call() 
     call=list(A=A,method=method, C =C, tau = tau,    ncomp = ncomp, scheme = scheme, scale = scale,   init = init, bias = bias, tol =tol, verbose = verbose,sameBlockWeight=sameBlockWeight,knn.k=knn.k,knn.output=knn.output,knn.klim=knn.klim,knn.sameBlockWeight=sameBlockWeight,pca.ncp=pca.ncp)
@@ -98,7 +99,7 @@ rgccaNa=function (A,method, C = 1 - diag(length(A)), tau = rep(1, length(A)),   
 # 	}
 
  	if(method=="iterativeSB")	{	  A2=imputeSB(A,ncomp=ncomp,scale=scale,sameBlockWeight=sameBlockWeight,tau=tau,tol=tol,ni=10)$A	}
-    if(method=="em")	{	  A2=imputeEM(A=A,ncomp=ncomp,scale=scale,sameBlockWeight=sameBlockWeight,tau=tau,naxis=1,ni=50,C=C,tol=tol,verbose=verbose,reg="y")$A	}
+    if(method=="em")	{	  A2=imputeEM(A=A,ncomp=ncomp,scale=scale,sameBlockWeight=sameBlockWeight,tau=tau,naxis=1,ni=ni,C=C,tol=tol,verbose=verbose,reg="y")$A	}
    if(substr(method,1,3)=="sem")
    {
      if(substr(method,4,4)=="")
@@ -111,8 +112,8 @@ rgccaNa=function (A,method, C = 1 - diag(length(A)), tau = rep(1, length(A)),   
      }
    }
  # if(method=="old"){}
-  if(method=="emo")	{	  A2=imputeEM(A=A,ncomp=ncomp,scale=scale,sameBlockWeight=sameBlockWeight,tau=tau,naxis=1,ni=50,C=C,tol=tol,verbose=FALSE,reg="no")$A	}
-  if(method=="emw")	{	  A2=imputeEM(A=A,ncomp=ncomp,scale=scale,sameBlockWeight=sameBlockWeight,tau=tau,naxis=1,ni=50,C=C,tol=tol,verbose=FALSE,reg="w")$A	}
+  if(method=="emo")	{	  A2=imputeEM(A=A,ncomp=ncomp,scale=scale,sameBlockWeight=sameBlockWeight,tau=tau,naxis=1,ni=ni,C=C,tol=tol,verbose=FALSE,reg="no")$A	}
+  if(method=="emw")	{	  A2=imputeEM(A=A,ncomp=ncomp,scale=scale,sameBlockWeight=sameBlockWeight,tau=tau,naxis=1,ni=ni,C=C,tol=tol,verbose=FALSE,reg="w")$A	}
 #  if(method=="semy")	{	  A2=imputeEM(A=A,ncomp=ncomp,superblock=TRUE,scale=scale,sameBlockWeight=sameBlockWeight,tau=tau,naxis=1,ni=50,C=C,tol=tol,verbose=verbose,reg="y")$A[1:length(A)]	}
 #  if(method=="semw")	{	  A2=imputeEM(A=A,ncomp=ncomp,superblock=TRUE,scale=scale,sameBlockWeight=sameBlockWeight,tau=tau,naxis=1,ni=50,C=C,tol=tol,verbose=verbose,reg="w")$A[1:length(A)]	}
   

@@ -204,8 +204,9 @@ rgccak=function (A, C, tau = "optimal", scheme = "centroid",verbose = FALSE, ini
             
              Minv[[j]] = ginv(M[[j]])
             alpha[[j]] = drop(1/sqrt(t(alpha[[j]])%*% M[[j]]%*% K[[j]]%*% alpha[[j]])) * alpha[[j]]
+           
+            a[[j]] =pm( t(A[[j]]), alpha[[j]],na.rm=na.rm) 
             if(a[[j]][1]<0){a[[j]]=-a[[j]]}
-            a[[j]] =pm( t(A[[j]]), alpha[[j]],na.rm=na.rm)
             Y[, j] = pm(A[[j]] ,a[[j]],na.rm=na.rm) 
         })
     }
