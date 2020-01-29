@@ -11,7 +11,7 @@ rgcca_permutation_k <- function(
     scale = TRUE,
     init = "svd",
     bias = TRUE,
-    tol = 1e-08,
+    tol = 1e-03,
     type = "rgcca",
     superblock = TRUE,
     perm = TRUE,
@@ -19,7 +19,7 @@ rgcca_permutation_k <- function(
 
     if (perm) {
         for (k in seq(length(blocks)))
-            blocks[[k]] <- blocks[[k]][sample(seq(nrow(blocks[[k]]))),]
+            blocks[[k]] <- as.matrix(blocks[[k]][sample(seq(NROW(blocks[[k]]))), ])
     }
 
     simplify2array(
@@ -51,7 +51,7 @@ rgcca_permutation_k <- function(
                         quiet = TRUE,
                         method = "complete"
                     )$crit
-                return(mean(sapply(crit, function(x) x[length(x)])))
+                return(sum(sapply(crit, function(x) x[length(x)])))
             },
         mc.cores = n_cores))
 }

@@ -31,7 +31,8 @@
 #' @importFrom visNetwork visNetwork visNodes visEdges
 #' @importFrom igraph graph_from_data_frame V<- E<-
 #' @importFrom methods is
-rgcca <- function(blocks,
+rgcca <- function(
+    blocks,
     connection = 1 - diag(length(blocks)),
     response = NULL,
     superblock = TRUE,
@@ -71,11 +72,12 @@ rgcca <- function(blocks,
         scheme = scheme,
         superblock = superblock,
         type  = type,
-        quiet = quiet
+        quiet = quiet,
+        response = response
     )
 
     opt$blocks <- scaling(blocks, scale)
-    superblock <- check_superblock(response, opt$superblock, !quiet)
+    opt$superblock <- check_superblock(response, opt$superblock, !quiet)
     opt$blocks <- set_superblock(opt$blocks, opt$superblock, type, !quiet)
 
     if (!is.null(response)) {
@@ -151,7 +153,7 @@ rgcca <- function(blocks,
     func_out$call <- list(
         blocks = opt$blocks,
         connection = opt$connection,
-        superblock = superblock,
+        superblock = opt$superblock,
         ncomp = opt$ncomp,
         scheme = opt$scheme
     )
@@ -174,8 +176,12 @@ rgcca <- function(blocks,
         "type"
     ))
         func_out$call[[i]] <- as.list(environment())[[i]]
-   # adding potential modified A to the list of outputs (if imputed or restricted -only complete)
-    if(method!="nipals"){func_out$usedBlocks=func_out$A}
+
+    # adding potential modified A to the list of outputs 
+    # (if imputed or restricted -only complete)
+    if (method != "nipals")
+        func_out$usedBlocks <- func_out$A
+
     class(func_out) <- "rgcca"
     invisible(func_out)
 }
