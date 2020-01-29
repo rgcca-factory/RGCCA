@@ -30,7 +30,7 @@ rgcca_crossvalidation <- function(
     n_cores = parallel::detectCores() - 1) {
     
     bloc_to_pred = names(rgcca$call$blocks)[i_block]
-
+   
     match.arg(validation, c("test", "kfold", "loo"))
 
     f <- quote(
@@ -78,19 +78,21 @@ rgcca_crossvalidation <- function(
         }
     )
 
-    bigA <- rgcca$call$blocks
+    #bigA <- rgcca$call$blocks
 
+        bigA<-intersection(rgcca$call$blocks)
+    
     if (validation == "loo")
-        v_inds <- seq(nrow(rgcca$call$blocks[[1]]))
+        v_inds <- seq(nrow(bigA[[1]]))
     if (validation == "kfold") {
-        v_inds <- sample(nrow(rgcca$call$blocks[[1]]))
+        v_inds <- sample(nrow(bigA[[1]]))
         v_inds <- split(v_inds, sort(v_inds %% k))
     }
 
     if (validation == "test") {
         inds <- sample(
-            nrow(rgcca$call$blocks[[1]]),
-            size = nrow(rgcca$call$blocks[[1]]) * 0.3)
+            nrow(bigA[[1]]),
+            size = nrow(bigA[[1]]) * 0.3)
         scores <- list(eval(f)())
         preds <- scores$res
     }else{
@@ -119,7 +121,7 @@ rgcca_crossvalidation <- function(
         names(preds) <- names(rgcca$call$blocks)
 
     for (x in seq(length(preds)))
-        row.names(preds[[x]]) <- row.names(rgcca$call$blocks[[1]])
+        row.names(preds[[x]]) <- row.names(bigA[[1]])
 
     }
 

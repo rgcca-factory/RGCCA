@@ -327,7 +327,7 @@ rgccad=function (A, C = 1 - diag(length(A)), tau = rep(1, length(A)),  ncomp = r
   AVE_X = shave.veclist(AVE_X, ncomp)
   AVE <- list(AVE_X = AVE_X, AVE_outer_model = AVE_outer, AVE_inner_model = AVE_inner)
   out <- list(Y = shave.matlist(Y, ncomp), a = shave.matlist(a,ncomp), astar = shave.matlist(astar, ncomp),  tau = tau_mat,
-                crit = crit, primal_dual = primal_dual,	AVE = AVE,call=call)
+                crit = crit, primal_dual = primal_dual,	AVE = AVE,A=A,call=call)
 
    class(out) <- "rgccad"
 
