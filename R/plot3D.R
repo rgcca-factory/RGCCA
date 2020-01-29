@@ -41,11 +41,13 @@ plot3D <- function(
     cex_point = 3 * cex,
     cex_lab = 19 * cex) {
 
-    if (length(unique(df$resp)) == 1) {
-        df$resp = as.factor(rep("a", length(df$resp)))
-        midcol = "#cd5b45"
+    colors <- check_colors(colors)
+
+    if (is.na(colors[2]) && length(unique(df$resp)) == 1) {
+        df$resp <- as.factor(rep("a", length(df$resp)))
+        midcol <- "#cd5b45"
     } else
-        midcol = "gray"
+        midcol <- "gray"
 
     axis <- function(x, i)
         list(
@@ -61,7 +63,7 @@ plot3D <- function(
             cut(
                 x,
                 breaks = n,
-                labels = colorRampPalette(c("#A50026", midcol,  "#313695"))(n),
+                labels = colorRampPalette(c(colors[1], colors[2], colors[3]))(n),
                 include.lowest = TRUE)
         else
             color_group(seq(length(unique(df$resp))), colors = colors)
@@ -124,7 +126,7 @@ plot3D <- function(
             showlegend = FALSE,
             color = df$resp,
             size = I(200),
-            colors = c("#A50026", midcol,  "#313695"),
+            colors = c(colors[1], colors[2], colors[3]),
             visible = visible
         )
 

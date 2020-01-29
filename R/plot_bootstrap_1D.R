@@ -29,9 +29,7 @@ plot_bootstrap_1D <- function(
     y = "occ",
     n = 50,
     title = attributes(b)$indexes[[x]],
-    low_col = color_group(seq(3))[1],
-    mid_col = "white",
-    high_col = color_group(seq(3))[3],
+    colors = c(color_group(seq(3))[1],  "white", color_group(seq(3))[3]),
     ...) {
 
     check_ncol(list(b), 1)
@@ -48,9 +46,9 @@ plot_bootstrap_1D <- function(
     y <- set_occ(y)
 
     if (y == "sign") 
-        color = seq(2)
+        group = seq(2)
     else
-        color = 1
+        group = NA
 
     b <- head(b, n)
     p <- ggplot(
@@ -63,10 +61,8 @@ plot_bootstrap_1D <- function(
         p,
         b,
         title,
-        color,
-        low_col = low_col,
-        mid_col = mid_col,
-        high_col = high_col,
+        group,
+        colors,
         ...) +
     labs(fill = attributes(b)$indexes[[y]])
 }

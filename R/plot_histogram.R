@@ -3,7 +3,7 @@
 #' Default font for a vertical barplot.
 #'
 #' @inheritParams plot2D
-#' @param color A vector of character giving the colors for the rows
+#' @param group A vector of character giving the group for the rows
 #' @param low_col A character giving the color used for the lowest part of
 #' the gradient
 #' @param high_col A character giving the color used for the highest part of
@@ -25,15 +25,15 @@ plot_histogram <- function(
     p,
     df,
     title = "Histogram",
-    color = "black",
-    low_col = "khaki2",
-    high_col = "coral3",
-    mid_col = NULL,    
+    group = NA,
+    colors = NULL,
     cex = 1,
     cex_main = 25 * cex,
     cex_sub = 16 * cex,
-    cex_axis = 10 * cex) {
-    
+    cex_axis = 10 * cex
+) {
+
+    colors <- check_colors(colors)
 
     if (NROW(df) <= 10 || is(df, "d_ave")) {
         width <- NULL
@@ -78,14 +78,14 @@ plot_histogram <- function(
             p <- p +
                 scale_x_continuous(breaks = df$order, labels = rownames(df)) +
                 labs(fill = "Blocks")
-            if (length(color) == 1) {
-                if (is.null(mid_col)) {
+            if (length(group) == 1) {
+                if (is.na(colors[2])) {
                     p <- p +
-                        scale_fill_gradient(low = low_col, high = high_col) +
+                        scale_fill_gradient(low = colors[1], high = colors[3]) +
                         theme(legend.position = "none")
                 }else
                     p <- p +
-                        scale_fill_gradient2(low = low_col, high = high_col, mid = mid_col)
+                        scale_fill_gradient2(low = colors[1], high = colors[3], mid = colors[2])
             }
     }
 
