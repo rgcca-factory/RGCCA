@@ -1,7 +1,7 @@
 #'# rgccacrossvalidation test
 
 #'''
-#' data("Russett")
+ data("Russett")
  blocks = list(agriculture = Russett[, seq(3)], industry = Russett[, 4:5],
  politic = Russett[, 6:11] )
 rgcca_out = rgcca(blocks)
@@ -18,4 +18,7 @@ blocksNA = list(agriculture = RussettWithNA[, seq(3)], industry = RussettWithNA[
 
 # cross validation
 rgcca_out = rgcca(blocksNA)
-#rgcca_crossvalidation(rgcca_out, n_cores = 1)
+# avec la method complete -> ne fonctionne pas
+rgcca_crossvalidation(rgcca_out, n_cores = 1)
+
+

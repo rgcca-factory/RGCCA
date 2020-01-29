@@ -62,7 +62,7 @@ rgcca <- function(blocks,
 
     tau <- elongate_arg(tau, blocks)
     ncomp <- elongate_arg(ncomp, blocks)
-
+    
     opt <- select_analysis(
         blocks = blocks,
         connection = connection,
@@ -174,7 +174,8 @@ rgcca <- function(blocks,
         "type"
     ))
         func_out$call[[i]] <- as.list(environment())[[i]]
-  
+   # adding potential modified A to the list of outputs (if imputed or restricted -only complete)
+    if(method!="nipals"){func_out$usedBlocks=func_out$A}
     class(func_out) <- "rgcca"
     invisible(func_out)
 }
