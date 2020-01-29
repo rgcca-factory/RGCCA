@@ -53,6 +53,7 @@ plot_var_1D <- function(
 
     # sort in decreasing order
     df <- data.frame(order_df(df, 1, TRUE), order = NROW(df):1)
+    class(df) <- c(class(df), "d_var1D")
 
     # max threshold for n
     if (NROW(df) >= n_mark)
@@ -69,7 +70,6 @@ plot_var_1D <- function(
         p <- ggplot(df, aes(order, df[, 1], fill = abs(df[, 1])))
     }
 
-    class(p) <- c(class(p), "p_var1D")
     p <- plot_histogram(
         p,
         df,

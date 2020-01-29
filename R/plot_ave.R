@@ -35,7 +35,7 @@ plot_ave <- function(
     blocks <- factor(unlist(lapply(seq(length(names(rgcca$a))),
             function(x) rep(names(rgcca$a)[x], rgcca$call$ncomp[x]))),
         levels = names(rgcca$a))
-    
+
     if (is.null(names(ave)))
         names(ave) <- rep(1, length(ave))
     ncomp <- as.factor(names(ave))
@@ -53,6 +53,7 @@ plot_ave <- function(
     ave_label[ave_label < max(y_ave_cum) / 20] <- ""
 
     df <- data.frame(ave, blocks, ncomp, stringsAsFactors = FALSE)
+    class(df) <- c(class(df), "d_ave")
 
     p <- ggplot(data = df, 
         aes(
@@ -61,8 +62,6 @@ plot_ave <- function(
             fill = ncomp,
             label = ave_label
         ))
-
-    class(p) <- c(class(p), "p_ave")
 
     p <- plot_histogram(
         p, 

@@ -35,9 +35,9 @@ plot_histogram <- function(
     cex_axis = 10 * cex) {
     
 
-    if (NROW(df) <= 10 || is(p, "p_ave")) {
+    if (NROW(df) <= 10 || is(df, "d_ave")) {
         width <- NULL
-        if (is(p, "p_ave"))
+        if (is(df, "d_ave"))
             cex_axis <- 12
     } else
         width <- 1
@@ -74,7 +74,7 @@ plot_histogram <- function(
             plot.margin = margin(0, 0, mar, 0, "mm")
     )
 
-    if  (!is(p, "p_ave")) {
+    if  (!is(df, "d_ave")) {
             p <- p +
                 scale_x_continuous(breaks = df$order, labels = rownames(df)) +
                 labs(fill = "Blocks")

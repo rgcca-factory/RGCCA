@@ -68,6 +68,7 @@ plot_var_2D <- function(
         collapse = collapse,
         remove_var = remove_var
     )
+    class(df) <- c(class(df), "d_var2D")
 
     if (collapse && rgcca$call$superblock) {
         if (i_block == length(rgcca$a))
@@ -84,7 +85,6 @@ plot_var_2D <- function(
 
     check_ncol(rgcca$a, i_block)
 
-    class(p) <- c(class(p), "p_var2D")
     p <- plot2D(
         rgcca,
         df,
@@ -98,20 +98,20 @@ plot_var_2D <- function(
         collapse =  collapse,
         no_overlap = no_overlap,
         ...
-        ) +
-        geom_path(
-            aes(x, y),
-            data = plot_circle(),
-            col = "grey",
-            size = 1
-        ) +
-        geom_path(
-            aes(x, y),
-            data = plot_circle() / 2,
-            col = "grey",
-            size = 1,
-            lty = 2
-        )
+    ) +
+    geom_path(
+        aes(x, y),
+        data = plot_circle(),
+        col = "grey",
+        size = 1
+    ) +
+    geom_path(
+        aes(x, y),
+        data = plot_circle() / 2,
+        col = "grey",
+        size = 1,
+        lty = 2
+    )
 
     # remove legend if not on superblock
     if ((!rgcca$call$superblock || i_block != length(rgcca$a)) && !collapse)

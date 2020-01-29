@@ -72,7 +72,6 @@ plot2D <- function(
 
     if (is.null(p)) {
         p <- ggplot(df, aes(df[, 1], df[, 2], colour = as.factor(group)))
-        class(p) <- c(class(p), "p_ind")
     }
 
     if (length(name_group) > 15)
@@ -120,7 +119,7 @@ plot2D <- function(
     if (is.null(colors))
         colours <- c("blue", "gray", "#cd5b45")
 
-    if (length(unique(group)) != 1 && is(p, "p_var2D")) {
+    if (length(unique(group)) != 1 && is(df, "d_var2D")) {
         order_color(rgcca$a, p, collapse = collapse)
         # For qualitative response OR no response
     } else if ( is.character2(group[!is.na(group)]) ||

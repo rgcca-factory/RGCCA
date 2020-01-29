@@ -65,7 +65,7 @@ plot_ind <- function(
     check_ncol(rgcca$Y, i_block)
 
     resp <- check_response(resp, rgcca$Y)
-  
+
     df <- get_comp(
         rgcca = rgcca,
         resp = resp,
@@ -75,6 +75,7 @@ plot_ind <- function(
         i_block_y = i_block_y,
         predicted = predicted
     )
+    class(df) <- c(class(df), "d_ind")
 
     if (!is.null(predicted))
             p <- ggplot(df, aes(df[, 1], df[, 2], color = df$resp))
@@ -87,8 +88,6 @@ plot_ind <- function(
     }else
         p <- NULL
 
-    if (!is.null(p))
-        class(p) <- c(class(p), "p_ind")
 
     p <- plot2D(
             rgcca,
