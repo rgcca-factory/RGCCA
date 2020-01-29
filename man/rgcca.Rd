@@ -6,11 +6,11 @@
 \usage{
 rgcca(blocks, connection = 1 - diag(length(blocks)), response = NULL,
   superblock = TRUE, tau = rep(1, length(blocks)), ncomp = rep(2,
-  length(blocks)), type = "rgcca", verbose = TRUE,
+  length(blocks)), type = "rgcca", verbose = FALSE,
   scheme = "factorial", scale = TRUE, init = "svd", bias = TRUE,
-  tol = 1e-08, sameBlockWeight = TRUE, method = "complete",
-  knn.k = "all", knn.output = "weightedMean", knn.klim = NULL,
-  knn.sameBlockWeight = TRUE, pca.ncp = 1)
+  tol = 1e-08, quiet = FALSE, sameBlockWeight = TRUE,
+  method = "complete", knn.k = "all", knn.output = "weightedMean",
+  knn.klim = NULL, knn.sameBlockWeight = TRUE, pca.ncp = 1)
 }
 \arguments{
 \item{blocks}{A list of matrix}
@@ -45,6 +45,8 @@ for algorithm initialization}
 \item{bias}{A boolean for a biased variance estimator}
 
 \item{tol}{An integer for the stopping value for convergence}
+
+\item{quiet}{A boolean hidding the warnings}
 
 \item{sameBlockWeight}{If TRUE, all blocks are weighted by their own variance: all the blocks have the same weight}
 
