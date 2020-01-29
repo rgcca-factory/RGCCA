@@ -207,10 +207,10 @@ Regarding the relevant variables, the standard deviation of the correlations bet
 
 ```{r, fig.height = 5, fig.width = 5, fig.align = "center"}
 mi_rgcca=MIRGCCA(A=A_missing,k=3,ni=5,scale=TRUE,sameBlockWeight=TRUE,tau=rep(1,3))
-plotMIRGCCA(mi.obj=mi_rgcca,multiple="ell",indnames=FALSE)
+plot_MIRGCCA(mi.obj=mi_rgcca,multiple="ell",indnames=FALSE)
 ```
 ```{r, fig.height = 5, fig.width = 5, fig.align = "center"}
-plotMIRGCCA(mi.obj=mi_rgcca,multiple="seg",indnames=FALSE)
+plot_MIRGCCA(mi.obj=mi_rgcca,multiple="seg",indnames=FALSE)
 
 ```
 

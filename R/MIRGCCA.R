@@ -74,5 +74,7 @@ MIRGCCA=function(A,option="knn",superblock=TRUE,k=5,ni=5,scale=TRUE,sameBlockWei
         resRgcca2[[i]]=rgccad(dataTest[[i]],ncomp=rep(2,length(dataTest[[i]])),scale=scale,sameBlockWeight=sameBlockWeight,tau=tau,verbose=FALSE,scheme=scheme,tol=tol)
       }
   }
-  return(list(rgcca0=rgcca0,data=dataTest,rgccaList=resRgcca2))
+    obj=list(rgcca0=rgcca0,data=dataTest,rgccaList=resRgcca2)
+    #class(obj) <- "MIRGCCA"
+  return(obj)
 }
