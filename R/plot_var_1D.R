@@ -90,7 +90,7 @@ plot_var_1D <- function(
 
     # Force all the block names to appear on the legend
     if (length(color) != 1)
-        p <- order_color(rgcca$a, p, matched, collapse)
+        p <- order_color(rgcca$a, p, matched, collapse, colors)
 
     if ((!rgcca$call$superblock || i_block != length(rgcca$a)) && !collapse)
             p <- p + theme(legend.position = "none")

@@ -120,7 +120,7 @@ plot2D <- function(
         colours <- c("blue", "gray", "#cd5b45")
 
     if (length(unique(group)) != 1 && is(df, "d_var2D")) {
-        order_color(rgcca$a, p, collapse = collapse)
+        order_color(rgcca$a, p, collapse = collapse, colors)
         # For qualitative response OR no response
     } else if ( is.character2(group[!is.na(group)]) ||
                 length(unique(group)) <= 5 || 

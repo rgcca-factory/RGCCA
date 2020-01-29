@@ -62,7 +62,7 @@ plot_bootstrap <- function(
 
     if (rgcca$call$superblock) {
         matched <- match(rev(unique(df$color)), col)
-        p <- order_color(rgcca$a, p, matched, rgcca$call$superblock)
+        p <- order_color(rgcca$a, p, matched, rgcca$call$superblock, colors)
     }
 
     return(p)
