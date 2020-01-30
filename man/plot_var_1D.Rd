@@ -5,8 +5,7 @@
 \title{Barplot of a fingerprint}
 \usage{
 plot_var_1D(rgcca, comp = 1, n_mark = 100, i_block = length(rgcca$a),
-  type = "cor", collapse = FALSE, cex = 1, cex_sub = 16 * cex,
-  cex_axis = 10 * cex)
+  type = "cor", collapse = FALSE, title = NULL, colors = NULL, ...)
 }
 \arguments{
 \item{rgcca}{A list giving the results of a R/SGCCA}
@@ -23,17 +22,27 @@ or "weight" for the weight of the RGCCA}
 
 \item{collapse}{A boolean to combine the variables of each blocks as result}
 
-\item{cex}{An integer for the size of the plot parameters}
-
-\item{cex_sub}{An integer for the size of the subtitle}
-
-\item{cex_axis}{An integer for the size of the axis text}
+\item{title}{A character with the name of the space (either "Variables" or
+"Samples")}
 }
 \description{
 Barplot of the higher outer weight vectors for a component of a block 
 (by default, the superblock or the last one) analysed by R/SGCCA
 }
 \examples{
+weights = lapply(seq(3), function(x) matrix(runif(7*2), 7, 2))
+for (i in seq(3))
+row.names(weights[[i]]) <- paste0(letters[i],
+     letters[seq(NROW(weights[[i]]))])
+weights[[4]] = Reduce(rbind, weights)
+rgcca_out = list(a = weights, call = list(type="rgcca", ncomp = rep(2,4)))
+names(rgcca_out$a) = LETTERS[seq(4)]
+rgcca_out$call$blocks = lapply(rgcca_out$a, t)
+rgcca_out$call$superblock = TRUE
+# With the 1rst component of the superblock
+plot_var_1D(rgcca_out, 1, type = "weight")
+# With the 2nd component of the 1rst block by selecting the ten higher weights
+plot_var_1D(rgcca_out, 2, 10, 1, type = "weight")
 data("Russett")
 blocks = list(agriculture = Russett[, seq(3)], industry = Russett[, 4:5],
     politic = Russett[, 6:11] )

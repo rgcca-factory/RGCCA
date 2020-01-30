@@ -25,7 +25,7 @@
 #' @export
 plot_bootstrap_1D <- function(
     b,
-    x = "br",
+    x = "rgcca",
     y = "occ",
     n = 50,
     title = attributes(b)$indexes[[x]],
@@ -57,7 +57,7 @@ plot_bootstrap_1D <- function(
             y = b[, x],
             fill = b[, y]))
 
-    plot_histogram(
+    p <- plot_histogram(
         p,
         b,
         title,
@@ -65,4 +65,10 @@ plot_bootstrap_1D <- function(
         colors,
         ...) +
     labs(fill = attributes(b)$indexes[[y]])
+
+    if (x == "rgcca")
+    p <- p +
+        geom_errorbar(aes(ymin = intneg, ymax = intpos))
+
+    return(p)
 }

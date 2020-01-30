@@ -14,7 +14,7 @@
 #' data("Russett")
 #' blocks = list(agriculture = Russett[, seq(3)], industry = Russett[, 4:5],
 #'     politic = Russett[, 6:11] )
-#' rgcca_out = rgcca(blocks)
+#' rgcca_out = rgcca(blocks, response = 3)
 #' rgcca_crossvalidation(rgcca_out, validation = "kfold", k = 5, n_cores = 1)
 #' rgcca_crossvalidation(rgcca_out,  validation = "test", n_cores = 1)$scores
 #' rgcca_crossvalidation(rgcca_out, n_cores = 1)
@@ -28,15 +28,18 @@ rgcca_crossvalidation <- function(
     new_scaled = TRUE,
     k = 5,
     n_cores = parallel::detectCores() - 1) {
-    
-    bloc_to_pred = names(rgcca$call$blocks)[i_block]
-   
+
+    if (is.null(rgcca$call$response))
+        stop("This function requiered a RGCCA in a supervised mode.")
+
+    bloc_to_pred <- names(rgcca$call$blocks)[i_block]
+
     match.arg(validation, c("test", "kfold", "loo"))
 
     f <- quote(
         function(){
 
-            Atrain <- lapply(bigA, function(x) x[-inds, ])
+            Atrain <- lapply(bigA, function(x) x[-inds, , drop = FALSE])
 
             if (rgcca$call$type %in% c("spls", "spca", "sgcca"))
                 tau <- rgcca$call$c1
@@ -48,9 +51,13 @@ rgcca_crossvalidation <- function(
                 rgcca$call$connection <- NULL
             }
 
+            if (!is.null(rgcca$call$response))
+                response <- length(rgcca$call$blocks)
+
             rgcca_k <- rgcca(
                 Atrain,
                 rgcca$call$connection,
+                response = response,
                 superblock = rgcca$call$superblock,
                 tau = tau,
                 ncomp = rgcca$call$ncomp,
@@ -61,14 +68,14 @@ rgcca_crossvalidation <- function(
                 init = rgcca$call$init,
                 bias = rgcca$call$bias,
                 tol = rgcca$call$tol,
-                method="complete"
+                method = "complete"
             )
 
             rgcca_k$a <- check_sign_comp(rgcca, rgcca_k$a)
 
             rgcca_predict(
                 rgcca_k,
-                newA = lapply(bigA, function(x) x[inds, ]),
+                newA = lapply(bigA, function(x) x[inds, , drop = FALSE]),
                 type = type,
                 fit = fit,
                 bloc_to_pred = bloc_to_pred,
@@ -79,9 +86,8 @@ rgcca_crossvalidation <- function(
     )
 
     #bigA <- rgcca$call$blocks
+    bigA <- intersection(rgcca$call$blocks)
 
-        bigA<-intersection(rgcca$call$blocks)
-    
     if (validation == "loo")
         v_inds <- seq(nrow(bigA[[1]]))
     if (validation == "kfold") {
@@ -118,7 +124,7 @@ rgcca_crossvalidation <- function(
                 )
             )
 
-        names(preds) <- names(rgcca$call$blocks)
+    names(preds) <- names(rgcca$call$blocks)
 
     for (x in seq(length(preds)))
         row.names(preds[[x]]) <- row.names(bigA[[1]])

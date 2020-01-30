@@ -29,13 +29,13 @@ get_bootstrap <- function(
 
     if (n_cores == 0)
         n_cores <- 1
-    
+
     if (collapse && rgcca$call$superblock) {
         rgcca$a <- rgcca$a[-length(rgcca$a)]
         if (i_block > length(rgcca$a))
             i_block <- length(rgcca$a)
     }
-    
+
     if (comp > min(rgcca$call$ncomp))
         stop("Selected dimension was not associated to every blocks",
              exit_code = 113)
@@ -50,12 +50,12 @@ get_bootstrap <- function(
         J <- i_block
 
     for (i in J) {
-        
+
         w_bind <- parallel::mclapply(
             w,
             function(x) x[[i]][, comp],
              mc.cores = n_cores)
-        
+
         weight[[i]] <- rgcca$a[[i]][, comp]
         w_select <- matrix(
             unlist(w_bind),
@@ -69,7 +69,7 @@ get_bootstrap <- function(
         n <- seq(NCOL(w_select))
 
         if (rgcca$call$type %in% c("spls", "spca", "sgcca")) {
-            
+
             occ[[i]] <- unlist(
                 parallel::mclapply(n,
                                    function(x)
@@ -93,18 +93,18 @@ get_bootstrap <- function(
 
         rm(w_select); gc()
     }
-    
-    rm(w); gc()
 
     occ <- unlist(occ)
     mean <- unlist(mean)
     weight <- unlist(weight)
-    sd <- unlist(sd)
-    
+    sd <- unlist(sd) / sqrt(length(w))
+
     cat("OK.\n", append = TRUE)
 
-    p.vals <- pnorm(0, mean = abs(mean), sd = sd)
-    tail <- qnorm(1 - .05 / 2)
+    p.vals <- 2 * pt(abs(weight)/sd, lower.tail = FALSE, df = length(w) - 1)
+    tail <- qt(1 - .05 / 2, df = length(w) - 1)
+
+    rm(w); gc()
 
     df <- data.frame(
         mean = mean,
@@ -115,7 +115,7 @@ get_bootstrap <- function(
         p.vals,
         BH = p.adjust(p.vals, method = "BH")
     )
-    
+
     if (rgcca$call$type %in% c("spls", "spca", "sgcca")) {
         index <- 8
         df$occ <- occ
@@ -142,7 +142,8 @@ get_bootstrap <- function(
             mean = "Mean bootstrap weights",
             br = "Bootstrap-ratio",
             sign = "Significant 95% interval",
-            occ = "Non-zero occurences"
+            occ = "Non-zero occurences",
+            rgcca = "RGCCA weights"
         )
     attributes(b)$type <- class(rgcca)
     class(b) <- c(class(b), "bootstrap")

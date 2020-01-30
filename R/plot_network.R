@@ -11,7 +11,11 @@
 #' rgcca_out = rgcca(blocks)
 #' plot_network(rgcca_out)
 #' @export
-plot_network <- function(rgcca) {
+plot_network <- function(
+    rgcca, 
+    title = paste0("Common rows between blocks : ",
+                   NROW(rgcca$call$blocks[[1]]))) {
+
     # Avoid random
     set.seed(1)
     V <- E <- NULL
@@ -54,7 +58,7 @@ plot_network <- function(rgcca) {
         vertex.label.dist = 6,
         vertex.label.degree = 1.5,
         vertex.size = 23,
-        main = paste0("Common rows between blocks : ", NROW(rgcca$call$blocks[[1]]))
+        main = title
     )
 
 }

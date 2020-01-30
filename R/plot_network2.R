@@ -11,7 +11,10 @@
 #' rgcca_out = rgcca(blocks)
 #' plot_network2(rgcca_out)
 #' @export
-plot_network2 <- function(rgcca) {
+plot_network2 <- function(
+    rgcca, 
+    title = paste0("Common rows between blocks : ",
+                        NROW(rgcca$call$blocks[[1]]))) {
 
     nodes <- get_nodes(rgcca)
     edges <- get_edges(rgcca)
@@ -38,8 +41,7 @@ plot_network2 <- function(rgcca) {
         nodes,
         edges,
         main = list(
-            text = paste0("Common rows between blocks : ",
-                        NROW(rgcca$call$blocks[[1]])),
+            text = title,
             style = "font-family:sans;font-weight:bold;font-size:28px;text-align:center;"
         )
     ) %>%

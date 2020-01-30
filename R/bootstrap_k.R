@@ -25,15 +25,11 @@ bootstrap_k <- function(
     bias = TRUE,
     tol = 1e-03,
     type = "rgcca",
-    superblock = TRUE) {
-
-    if (is.null(blocks))
-        blocks.all <- rgcca$call$blocks
-    else
-        blocks.all <- blocks
+    superblock = TRUE,
+    response = NULL) {
 
     if (is.null(blocks)) {
-        blocks <- rgcca$call$blocks
+        blocks <- rgcca$call$blocks -> blocks.all
         connection <- rgcca$call$connection
         ncomp <- rgcca$call$ncomp
         scheme <- rgcca$call$scheme
@@ -52,25 +48,34 @@ bootstrap_k <- function(
             blocks <- blocks[-length(blocks)]
             connection <- NULL
         }
+
+        if (!is.null(rgcca$call$response))
+            response <- length(rgcca$call$blocks)
+
+    } else
+        blocks.all <- blocks
+
+    boot_blocks <- list(NULL, NULL, NULL)
+    while (any(sapply(boot_blocks, function(x) length(x)) == 0)) {
+        # Shuffle rows
+        id_boot <- sample(NROW(blocks[[1]]), replace = TRUE)
+
+        if (any(sapply(blocks, function(x) is.null(attr(x, 'scaled:center')))))
+                stop("Blocks should be scaled before performing bootstraps.")
+        else
+            boot_blocks <- lapply(
+                blocks, 
+                function(x) scale2(x[id_boot, , drop = FALSE], scale = FALSE))
+
+        boot_blocks <- remove_null_sd(boot_blocks)
     }
 
-    # Shuffle rows
-    id_boot <- sample(NROW(blocks[[1]]), replace = TRUE)
-
-    if (any(sapply(blocks, function(x) is.null(attr(x, 'scaled:center')))))
-            stop("Blocks should be scaled before performing bootstraps.")
-    else
-        boot_blocks <- lapply(
-            blocks, 
-            function(x) scale2(x[id_boot, , drop = FALSE], scale = FALSE))
-
-    boot_blocks <- remove_null_sd(boot_blocks)
-print("rgcca")
     # Get boostraped weights
     w <- rgcca(
         boot_blocks,
         connection,
         superblock = superblock,
+        response = response,
         tau = tau,
         ncomp = ncomp,
         scheme = scheme,

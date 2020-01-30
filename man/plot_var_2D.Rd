@@ -6,8 +6,7 @@
 \usage{
 plot_var_2D(rgcca, compx = 1, compy = 2, i_block = length(rgcca$a),
   text = TRUE, remove_var = TRUE, n_mark = 100, collapse = FALSE,
-  no_overlap = FALSE, cex = 1, cex_sub = 16 * cex, cex_point = 3 *
-  cex, cex_lab = 19 * cex)
+  no_overlap = FALSE, title = "Variable space", ...)
 }
 \arguments{
 \item{rgcca}{A list giving the results of a R/SGCCA}
@@ -32,13 +31,8 @@ component with the biggest correlation#'}
 
 \item{no_overlap}{A boolean to avoid overlap in plotted text}
 
-\item{cex}{An integer for the size of the plot parameters}
-
-\item{cex_sub}{An integer for the size of the subtitle}
-
-\item{cex_point}{An integer for the size of the points or the text in the plot}
-
-\item{cex_lab}{An integer for the size of the axis titles}
+\item{title}{A character with the name of the space (either "Variables" or
+"Samples")}
 }
 \description{
 Correlation circle highlighting the contribution of each variables to the
@@ -78,4 +72,5 @@ blocks = list(agriculture = Russett[, seq(3)], industry = Russett[, 4:5],
  politic = Russett[, 6:11] )
 rgcca_out = rgcca(blocks)
 # Without superblock but with the of all variables to the first block
+plot_var_2D(rgcca_out, collapse = TRUE)
 }

@@ -5,8 +5,8 @@
 \title{Run through a set of constraint parameters c1s to select the best with permutation
 Only one component per block for the time being}
 \usage{
-rgcca_permutation(blocks, type = "rgcca", p_c1 = FALSE,
-  p_ncomp = TRUE, nperm = 20, n_cores = parallel::detectCores() - 1,
+rgcca_permutation(blocks, type = "rgcca", p_c1 = TRUE,
+  p_ncomp = FALSE, nperm = 20, n_cores = parallel::detectCores() - 1,
   ...)
 }
 \arguments{
@@ -28,7 +28,7 @@ combinations as the maximum number of columns in each block}
 
 \item{n_cores}{An integer for the number of cores used in parallelization}
 
-\item{...}{Others RGCCA parameters #TODO}
+\item{...}{other RGCCA parameters # TODO}
 }
 \value{
 A list containing :
@@ -46,7 +46,7 @@ data("Russett")
 A = list(agriculture = Russett[, seq(3)], industry = Russett[, 4:5],
     politic = Russett[, 6:11] )
 rgcca_permutation(A, nperm = 2, n_cores = 1)
-rgcca_permutation(A, p_c1 = TRUE, nperm = 2, n_cores = 1)
+rgcca_permutation(A, p_ncomp = TRUE, nperm = 2, n_cores = 1)
 rgcca_permutation(A, p_c1 = 0.8, nperm = 2, n_cores = 1)
 rgcca_permutation(A, p_c1 = c(0.6, 0.75, 0.5), nperm = 2, n_cores = 1)
 rgcca_permutation(A, p_c1 = matrix(c(0.6, 0.75, 0.5), 3, 3, byrow = T), nperm = 2, n_cores = 1)

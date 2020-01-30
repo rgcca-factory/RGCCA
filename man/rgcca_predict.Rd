@@ -6,7 +6,7 @@
 \usage{
 rgcca_predict(rgcca, newA, type = "regression", fit = "lm",
   bloc_to_pred = NULL, y.train = NULL, y.test = NULL, bigA = NULL,
-  new_scaled = FALSE, scale_size_bloc = TRUE)
+  new_scaled = TRUE, scale_size_bloc = TRUE)
 }
 \arguments{
 \item{rgcca}{A list giving the results of a R/SGCCA}
@@ -47,7 +47,7 @@ C = connection = matrix(c(0, 0, 1,
 A = lapply(blocks, function(x) x[1:32,])
 A = lapply(A, function(x) scale2 (x, bias = TRUE) / sqrt(NCOL(x)) )
 object = rgcca(A, connection = C, tau = c(0.7,0.8,0.7),
-    ncomp = c(3,2,4), superblock = FALSE)
+    ncomp = c(3,2,4), superblock = FALSE, response = 3)
 newA = lapply(blocks, function(x) x[-c(1:32),])
 newA = lapply( newA, function(x) x[, sample(1:NCOL(x))] )
 newA = sample(newA, length(newA))

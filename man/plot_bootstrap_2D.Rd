@@ -4,8 +4,10 @@
 \alias{plot_bootstrap_2D}
 \title{Plot a bootstrap in 2D}
 \usage{
-plot_bootstrap_2D(b, x = "br", y = "occ", cex = 1, cex_sub = 16 *
-  cex, cex_point = 3 * cex, cex_lab = 19 * cex)
+plot_bootstrap_2D(b, x = "br", y = "occ",
+  title = "Variable selection\\nby bootstrap", colors = NULL,
+  cex = 1, cex_main = 25 * cex, cex_sub = 16 * cex, cex_point = 3 *
+  cex, cex_lab = 19 * cex)
 }
 \arguments{
 \item{b}{A matrix of boostrap}
@@ -14,7 +16,12 @@ plot_bootstrap_2D(b, x = "br", y = "occ", cex = 1, cex_sub = 16 *
 
 \item{y}{A character for the column to plot in y-axis}
 
+\item{title}{A character with the name of the space (either "Variables" or
+"Samples")}
+
 \item{cex}{An integer for the size of the plot parameters}
+
+\item{cex_main}{An integer for the size of the title}
 
 \item{cex_sub}{An integer for the size of the subtitle}
 

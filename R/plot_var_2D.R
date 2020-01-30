@@ -42,7 +42,7 @@
 #'  politic = Russett[, 6:11] )
 #' rgcca_out = rgcca(blocks)
 #' # Without superblock but with the of all variables to the first block
-# plot_var_2D(rgcca_out, collapse = TRUE)
+#' plot_var_2D(rgcca_out, collapse = TRUE)
 #' @export
 plot_var_2D <- function(
     rgcca,

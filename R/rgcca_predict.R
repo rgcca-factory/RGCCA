@@ -28,7 +28,7 @@
 #' A = lapply(blocks, function(x) x[1:32,])
 #' A = lapply(A, function(x) scale2 (x, bias = TRUE) / sqrt(NCOL(x)) )
 #' object = rgcca(A, connection = C, tau = c(0.7,0.8,0.7),
-#'     ncomp = c(3,2,4), superblock = FALSE)
+#'     ncomp = c(3,2,4), superblock = FALSE, response = 3)
 #' newA = lapply(blocks, function(x) x[-c(1:32),])
 #' newA = lapply( newA, function(x) x[, sample(1:NCOL(x))] )
 #' newA = sample(newA, length(newA))
@@ -55,8 +55,9 @@ rgcca_predict = function(
     y.train = NULL,
     y.test = NULL,
     bigA = NULL,
-    new_scaled = FALSE,
+    new_scaled = TRUE,
     scale_size_bloc = TRUE) {
+
     match.arg(type, c("regression", "classification"))
     match.arg(fit, c("lm", "cor", "lda", "logistic"))
     astar <- rgcca$astar
@@ -69,7 +70,7 @@ rgcca_predict = function(
     if (type == "regression" &&
             (fit == "lda" || fit == "logistic"))
         stop("Please, regression prediction only works with LM and COR")
-    
+
     if (missing(y.train) || missing(y.test)) {
         if (!missing(bloc_to_pred) &&
                 !bloc_to_pred %in% names(rgcca$call$blocks))
@@ -82,7 +83,7 @@ rgcca_predict = function(
         newp  <- sapply(newA, length)
     else
         # case of blocks to be predicted
-        newp <- sapply(newA, ncol)
+        newp <- sapply(newA, NCOL)
     newB  <- length(newA)
 
     # Check similarity between TRAIN and TEST set
@@ -126,7 +127,7 @@ rgcca_predict = function(
                 attr(x, t_attr)[y]
         else
             f_attr <- function(x, y)
-                x[, y]
+                x[, y, drop = FALSE]
 
         # Deals with attributes from a dataframe
         if (isTRUE(g))
@@ -176,12 +177,8 @@ rgcca_predict = function(
         colnames(rgcca$astar[[i]]) <- colnames(rgcca$Y[[i]])
     astar <- reorderList(rgcca$astar, g = TRUE)
 
-    if (is.null(dim(newA[[1]])))
-        pred <- lapply(seq(length(newA)), function(x)
-            t(as.matrix(newA[[x]])) %*% astar[[x]])
-    else
-        pred <- lapply(seq(length(newA)), function(x)
-            as.matrix(newA[[x]]) %*% astar[[x]])
+    pred <- lapply(seq(length(newA)), function(x)
+        as.matrix(newA[[x]]) %*% astar[[x]])
 
     if (missing(bloc_to_pred))
         return(list(pred = pred))
@@ -197,7 +194,7 @@ rgcca_predict = function(
     # Y definition
 
     if (missing(y.train))
-        y.train <- rgcca$call$blocks[[bloc_y]][, MATCH_col[[newbloc_y]]]
+        y.train <- rgcca$call$blocks[[bloc_y]][, MATCH_col[[newbloc_y]], drop = FALSE]
 
     # TODO : sampled columns for y.test
 
@@ -228,33 +225,36 @@ rgcca_predict = function(
     if (type == "regression") {
         score <- switch(fit,
             "lm"  = {
+
                 reslm  <- lm(y.train ~ ., data = comp.train, na.action = "na.exclude")
                 ychapo <- predict(reslm, comp.test)
+
                 if (any(is.na(ychapo)))
                     warning("NA in predictions.")
-                #mean(y.test - ychapo**2)
-                # mean(diag(abs(cor(y.test, ychapo))))
-                # apply(y.test - ychapo, 2, function(x) mean(abs(x)))
+
                 if (is.null(bigA))
                     bigA <- rgcca$call$blocks
-                m <- function(x)
-                    apply(bigA[[bloc_to_pred]], 2, x)
 
-                if (is.null(dim(newA[[1]]))) {
-                    f <- quote(y[x])
-                } else
-                    f <- quote(y[, x])
+                m <- function(x)
+                    apply(bigA[[bloc_to_pred]], 2, x) # TODO
+
+                f <- quote(
+                    if (is.null(dim(y)))
+                       y[x]
+                    else
+                        y[, x]
+                )
 
                 r <- function(y)
-                        sapply(seq(ncol(bigA[[bloc_to_pred]])), function(x)
-                            (eval(f) - m(min)[x]) / (m(max)[x] - m(min)[x]))
+                    sapply(seq(NCOL(bigA[[bloc_to_pred]])), function(x)
+                        (eval(f) - m(min)[x]) / (m(max)[x] - m(min)[x]))
 
-                if (is.null(dim(newA[[1]]))) {
-                    res <- abs(r(y.test) - r(ychapo))
+                res <- r(y.test) - r(ychapo)
+                if (is.null(dim(res))) {
+                    res <- abs(res)
                     score <- mean(res)
                 } else{
-                    res <- apply(r(y.test) - r(ychapo), 2, function(x)
-                        abs(x))
+                    res <- apply(res, 2, function(x) abs(x))
                     score <- mean(apply(res, 2, mean))
                 }
 
@@ -279,11 +279,11 @@ rgcca_predict = function(
                 }
             })
         class.fit <- NULL
+
     } else if (type == "classification") {
         ngroups   <- nlevels(as.factor(y.train))
         class.fit <- switch(fit,
             "lda"      = {
-                print(comp.train)
                 reslda     <- lda(x = comp.train, grouping = y.train)
                 class.fit  <- predict(reslda, comp.test)$class
             },

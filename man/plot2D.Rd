@@ -6,13 +6,11 @@
 \usage{
 plot2D(rgcca, df, title = "Biplot", group, name_group = "Response",
   compx = 1, compy = 2, i_block = NULL, p = NULL, text = TRUE,
-  i_block_y = i_block, colours = c("blue", "gray", "#cd5b45"),
-  collapse = FALSE, no_overlap = FALSE, cex = 1, cex_sub = 16 *
+  i_block_y = i_block, colors = NULL, collapse = FALSE,
+  no_overlap = FALSE, cex = 1, cex_main = 25 * cex, cex_sub = 16 *
   cex, cex_point = 3 * cex, cex_lab = 19 * cex)
 }
 \arguments{
-\item{rgcca}{A list giving the results of a R/SGCCA}
-
 \item{df}{A dataframe}
 
 \item{title}{A character with the name of the space (either "Variables" or
@@ -23,35 +21,21 @@ plot2D(rgcca, df, title = "Biplot", group, name_group = "Response",
 \item{name_group}{A character giving the type of groups (either "Blocs" or
 "Response")}
 
-\item{compx}{An integer giving the index of the analysis component used
-for the x-axis}
-
-\item{compy}{An integer giving the index of the analysis component used
-for the y-axis}
-
-\item{i_block}{An integer giving the index of a list of blocks}
-
 \item{p}{A ggplot object}
-
-\item{text}{A bolean to represent the points with their row names (TRUE)
-or with circles (FALSE)}
-
-\item{i_block_y}{An integer giving the index of a list of blocks (another
-one, different from the one used in i_block)}
-
-\item{colours}{A vectof of character to color quantitative dat}
 
 \item{collapse}{A boolean to combine the variables of each blocks as result}
 
-\item{no_overlap}{A boolean to avoid overlap in plotted text}
-
 \item{cex}{An integer for the size of the plot parameters}
+
+\item{cex_main}{An integer for the size of the title}
 
 \item{cex_sub}{An integer for the size of the subtitle}
 
 \item{cex_point}{An integer for the size of the points or the text in the plot}
 
 \item{cex_lab}{An integer for the size of the axis titles}
+
+\item{colours}{A vectof of character to color quantitative dat}
 }
 \description{
 Plots RGCCA components in a bi-dimensional space

@@ -11,7 +11,6 @@
 #' components, one row by set. By default, sgcca.permute takes as many 
 #' combinations as the maximum number of columns in each block
 #' @param nperm Number of permutation tested for each set of constraint
-#' @param ... Others RGCCA parameters #TODO
 #' @return A list containing :
 #' @return \item{pval}{Pvalue}
 #' @return \item{zstat}{Statistic Z}
@@ -22,7 +21,7 @@
 #' A = list(agriculture = Russett[, seq(3)], industry = Russett[, 4:5],
 #'     politic = Russett[, 6:11] )
 #' rgcca_permutation(A, nperm = 2, n_cores = 1)
-#' rgcca_permutation(A, p_c1 = TRUE, nperm = 2, n_cores = 1)
+#' rgcca_permutation(A, p_ncomp = TRUE, nperm = 2, n_cores = 1)
 #' rgcca_permutation(A, p_c1 = 0.8, nperm = 2, n_cores = 1)
 #' rgcca_permutation(A, p_c1 = c(0.6, 0.75, 0.5), nperm = 2, n_cores = 1)
 #' rgcca_permutation(A, p_c1 = matrix(c(0.6, 0.75, 0.5), 3, 3, byrow = T), nperm = 2, n_cores = 1)
@@ -33,14 +32,14 @@
 rgcca_permutation <- function(
     blocks,
     type = "rgcca",
-    p_c1 = FALSE,
-    p_ncomp = TRUE,
+    p_c1 = TRUE,
+    p_ncomp = FALSE,
     nperm = 20,
     n_cores = parallel::detectCores() - 1,
     ...) {
 
     if (any(p_ncomp == FALSE) && any(p_c1 == FALSE))
-        stop("Select one parameter among 'p_c1' or 'p_ncomp' to optimize. By default, p_ncomp is selected.")
+        stop("Select one parameter among 'p_c1' or 'p_ncomp' to optimize. By default, p_c1 is selected.")
 
     ncols <- sapply(blocks, NCOL)
     min_c1s <- sapply(ncols, function(x) 1 / sqrt(x))
@@ -166,11 +165,11 @@ rgcca_permutation <- function(
     par <- par[[2]]
 
     pvals <- sapply(
-        seq(NROW(par)), 
+        seq(NROW(par)),
         function(i)
             mean(permcrit[i, ] >= crits[i]))
     zs <- sapply(
-        seq(NROW(par)), 
+        seq(NROW(par)),
         function(i){
             z <- (crits[i] - mean(permcrit[i, ])) / (sd(permcrit[i, ]))
             if (is.na(z) || z == "Inf")

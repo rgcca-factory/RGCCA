@@ -35,7 +35,8 @@ select_analysis <- function(
     superblock = TRUE,
     type  = "rgcca",
     verbose = TRUE,
-    quiet = FALSE) {
+    quiet = FALSE,
+    response = NULL) {
 
     J <- length(blocks)
     msg_superblock <- "a superbloc is used"
@@ -68,7 +69,7 @@ select_analysis <- function(
     }
 
     warnSuper <- function(x) {
-        if (length(x) < (length(blocks))) {
+        if (length(x) < (length(blocks)) && is.null(response)) {
             warn.msg.super <<- c(warn.msg.super, deparse(substitute(x)))
             return(c(x, max(x)))
         } else

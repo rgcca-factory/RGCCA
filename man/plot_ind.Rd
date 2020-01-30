@@ -7,8 +7,7 @@
 plot_ind(rgcca, resp = rep(1, NROW(rgcca$Y[[1]])), compx = 1,
   compy = 2, i_block = length(rgcca$Y), text = TRUE,
   i_block_y = i_block, reponse_name = "Response", no_overlap = FALSE,
-  predicted = NULL, cex = 1, cex_sub = 16 * cex, cex_point = 3 *
-  cex, cex_lab = 19 * cex)
+  predicted = NULL, title = "Sample space", ...)
 }
 \arguments{
 \item{rgcca}{A list giving the results of a R/SGCCA}
@@ -36,13 +35,8 @@ one, different from the one used in i_block)}
 
 \item{predicted}{A list containing as  2nd element a matrix of predicted components}
 
-\item{cex}{An integer for the size of the plot parameters}
-
-\item{cex_sub}{An integer for the size of the subtitle}
-
-\item{cex_point}{An integer for the size of the points or the text in the plot}
-
-\item{cex_lab}{An integer for the size of the axis titles}
+\item{title}{A character with the name of the space (either "Variables" or
+"Samples")}
 }
 \description{
 Plot the two components of a RGCCA
