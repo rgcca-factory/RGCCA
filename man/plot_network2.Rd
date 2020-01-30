@@ -4,10 +4,14 @@
 \alias{plot_network2}
 \title{Plot the connection between blocks (dynamic plot)}
 \usage{
-plot_network2(rgcca)
+plot_network2(rgcca, title = paste0("Common rows between blocks : ",
+  NROW(rgcca$call$blocks[[1]])))
 }
 \arguments{
 \item{rgcca}{A list giving the results of a R/SGCCA}
+
+\item{title}{A character with the name of the space (either "Variables" or
+"Samples")}
 }
 \value{
 A dataframe with tuples of connected blocks

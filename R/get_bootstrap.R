@@ -94,8 +94,6 @@ get_bootstrap <- function(
         rm(w_select); gc()
     }
 
-    rm(w); gc()
-
     occ <- unlist(occ)
     mean <- unlist(mean)
     weight <- unlist(weight)
@@ -105,6 +103,8 @@ get_bootstrap <- function(
 
     p.vals <- 2 * pt(abs(weight)/sd, lower.tail = FALSE, df = length(w) - 1)
     tail <- qt(1 - .05 / 2, df = length(w) - 1)
+
+    rm(w); gc()
 
     df <- data.frame(
         mean = mean,

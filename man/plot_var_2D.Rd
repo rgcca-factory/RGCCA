@@ -72,4 +72,5 @@ blocks = list(agriculture = Russett[, seq(3)], industry = Russett[, 4:5],
  politic = Russett[, 6:11] )
 rgcca_out = rgcca(blocks)
 # Without superblock but with the of all variables to the first block
+plot_var_2D(rgcca_out, collapse = TRUE)
 }

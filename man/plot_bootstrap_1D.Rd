@@ -4,7 +4,7 @@
 \alias{plot_bootstrap_1D}
 \title{Plot a bootstrap in 1D}
 \usage{
-plot_bootstrap_1D(b, x = "br", y = "occ", n = 50,
+plot_bootstrap_1D(b, x = "rgcca", y = "occ", n = 50,
   title = attributes(b)$indexes[[x]],
   colors = c(color_group(seq(3))[1], "white", color_group(seq(3))[3]),
   ...)
