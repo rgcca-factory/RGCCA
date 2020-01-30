@@ -25,7 +25,8 @@ bootstrap_k <- function(
     bias = TRUE,
     tol = 1e-03,
     type = "rgcca",
-    superblock = TRUE) {
+    superblock = TRUE,
+    response = NULL) {
 
     if (is.null(blocks)) {
         blocks <- rgcca$call$blocks -> blocks.all
@@ -47,6 +48,10 @@ bootstrap_k <- function(
             blocks <- blocks[-length(blocks)]
             connection <- NULL
         }
+
+        if (!is.null(rgcca$call$response))
+            response <- length(rgcca$call$blocks)
+
     } else
         blocks.all <- blocks
 
@@ -70,6 +75,7 @@ bootstrap_k <- function(
         boot_blocks,
         connection,
         superblock = superblock,
+        response = response,
         tau = tau,
         ncomp = ncomp,
         scheme = scheme,
