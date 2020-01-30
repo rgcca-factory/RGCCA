@@ -14,7 +14,7 @@
 #' data("Russett")
 #' blocks = list(agriculture = Russett[, seq(3)], industry = Russett[, 4:5],
 #'     politic = Russett[, 6:11] )
-#' rgcca_out = rgcca(blocks)
+#' rgcca_out = rgcca(blocks, response = 3)
 #' rgcca_crossvalidation(rgcca_out, validation = "kfold", k = 5, n_cores = 1)
 #' rgcca_crossvalidation(rgcca_out,  validation = "test", n_cores = 1)$scores
 #' rgcca_crossvalidation(rgcca_out, n_cores = 1)
@@ -28,12 +28,12 @@ rgcca_crossvalidation <- function(
     new_scaled = TRUE,
     k = 5,
     n_cores = parallel::detectCores() - 1) {
-    
-    if (!is.null(rgcca$call$response))
+
+    if (is.null(rgcca$call$response))
         stop("This function requiered a RGCCA in a supervised mode.")
-    
+
     bloc_to_pred <- names(rgcca$call$blocks)[i_block]
-   
+
     match.arg(validation, c("test", "kfold", "loo"))
 
     f <- quote(

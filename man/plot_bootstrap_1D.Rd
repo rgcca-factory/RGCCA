@@ -4,8 +4,10 @@
 \alias{plot_bootstrap_1D}
 \title{Plot a bootstrap in 1D}
 \usage{
-plot_bootstrap_1D(b, x = "br", y = "occ", n = 50, cex = 1,
-  cex_sub = 16 * cex, cex_axis = 10 * cex)
+plot_bootstrap_1D(b, x = "br", y = "occ", n = 50,
+  title = attributes(b)$indexes[[x]],
+  colors = c(color_group(seq(3))[1], "white", color_group(seq(3))[3]),
+  ...)
 }
 \arguments{
 \item{b}{A matrix of boostrap}
@@ -16,11 +18,8 @@ plot_bootstrap_1D(b, x = "br", y = "occ", n = 50, cex = 1,
 
 \item{n}{An integer giving the number maximum of top variables}
 
-\item{cex}{An integer for the size of the plot parameters}
-
-\item{cex_sub}{An integer for the size of the subtitle}
-
-\item{cex_axis}{An integer for the size of the axis text}
+\item{title}{A character with the name of the space (either "Variables" or
+"Samples")}
 }
 \description{
 Histogram of the best variables of an RGCCA bootstrap with, on the x-axis,

@@ -7,7 +7,7 @@
 select_analysis(blocks = blocks, connection = 1 - diag(length(blocks)),
   tau = rep(1, length(blocks)), ncomp = rep(1, length(blocks)),
   scheme = "centroid", superblock = TRUE, type = "rgcca",
-  verbose = TRUE, quiet = FALSE)
+  verbose = TRUE, quiet = FALSE, response = NULL)
 }
 \arguments{
 \item{blocks}{A list of matrix}

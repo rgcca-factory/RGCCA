@@ -4,7 +4,7 @@
 \alias{color_group}
 \title{Groups of color}
 \usage{
-color_group(x)
+color_group(x, colors = NULL)
 }
 \arguments{
 \item{x}{A vector}

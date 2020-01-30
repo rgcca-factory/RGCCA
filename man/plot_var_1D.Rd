@@ -5,8 +5,7 @@
 \title{Barplot of a fingerprint}
 \usage{
 plot_var_1D(rgcca, comp = 1, n_mark = 100, i_block = length(rgcca$a),
-  type = "cor", collapse = FALSE, cex = 1, cex_sub = 16 * cex,
-  cex_axis = 10 * cex)
+  type = "cor", collapse = FALSE, title = NULL, colors = NULL, ...)
 }
 \arguments{
 \item{rgcca}{A list giving the results of a R/SGCCA}
@@ -23,11 +22,8 @@ or "weight" for the weight of the RGCCA}
 
 \item{collapse}{A boolean to combine the variables of each blocks as result}
 
-\item{cex}{An integer for the size of the plot parameters}
-
-\item{cex_sub}{An integer for the size of the subtitle}
-
-\item{cex_axis}{An integer for the size of the axis text}
+\item{title}{A character with the name of the space (either "Variables" or
+"Samples")}
 }
 \description{
 Barplot of the higher outer weight vectors for a component of a block 

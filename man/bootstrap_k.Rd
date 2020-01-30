@@ -7,7 +7,7 @@
 bootstrap_k(rgcca, blocks = NULL, connection = 1 -
   diag(length(blocks)), tau = rep(1, length(blocks)), ncomp = rep(2,
   length(blocks)), scheme = "factorial", init = "svd", bias = TRUE,
-  tol = 0.001, type = "rgcca", superblock = TRUE)
+  tol = 0.001, type = "rgcca", superblock = TRUE, response = NULL)
 }
 \arguments{
 \item{rgcca}{A list giving the results of a R/SGCCA}
@@ -37,6 +37,9 @@ for algorithm initialization}
 
 \item{superblock}{A boolean giving the presence (TRUE) / absence (FALSE) of
 a superblock}
+
+\item{response}{An integer giving the index of a block considered as a 
+response among a list of blocks}
 }
 \value{
 A list of RGCCA bootstrap weights
