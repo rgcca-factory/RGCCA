@@ -29,6 +29,9 @@ rgcca_crossvalidation <- function(
     k = 5,
     n_cores = parallel::detectCores() - 1) {
     
+    if (!is.null(rgcca$call$response))
+        stop("This function requiered a RGCCA in a supervised mode.")
+    
     bloc_to_pred <- names(rgcca$call$blocks)[i_block]
    
     match.arg(validation, c("test", "kfold", "loo"))

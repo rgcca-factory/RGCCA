@@ -203,14 +203,6 @@ plot_var_1D(rgcca_out)
 plot_ave(rgcca_out)
 ```
 
-### Cross-validation score
-```{r}
-loo <- rgcca_crossvalidation(rgcca_out, n_cores = 2)
-# Cross-validation score (leave-one-out)
-round(loo$scores, 3)
-plot_ind(rgcca_out, predicted = loo)
-```
-
 ### Bootstrap
 ```{r}
 boot <- bootstrap(rgcca_out, n_boot = 2, n_cores = 2)
@@ -257,6 +249,16 @@ plot_var_1D(
     type = "weight")
 ```
 
+
+### Supervized mode
+```{r}
+rgcca_out = rgcca(blocks = blocks, response = 3)
+plot_network(rgcca_out)
+loo <- rgcca_crossvalidation(rgcca_out, n_cores = 2)
+# Cross-validation score (leave-one-out)
+round(loo$scores, 3)
+plot_ind(rgcca_out, predicted = loo)
+```
 
 ```{r, echo = FALSE}
 # Remove the temp/ folder
