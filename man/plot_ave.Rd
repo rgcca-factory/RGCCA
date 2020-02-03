@@ -14,6 +14,8 @@ plot_ave(rgcca, cex = 1, title = "Average Variance Explained",
 
 \item{title}{A character with the name of the space (either "Variables" or
 "Samples")}
+
+\item{colors}{reoresenting a vector of colors}
 }
 \description{
 Histogram of the model quality (based on Average Variance Explained)

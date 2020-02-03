@@ -8,6 +8,7 @@
 #' @param klim Vector of two integers with klim(1)<klim(2). if k=auto, it is optimised between klim(1) and klim(2)
 #' @param  scale  If scale = TRUE, each block is standardized to zero means and unit variances (default: TRUE).
 #' @param sameBlockWeight A logical value indicating if the different blocks should have the same weight in the analysis (default, sameBlockWeight=TRUE)
+#' @param superblock if TRUE the distance between two subjects is calculated on the superblock. If FALSE the distance is calculated by blocks. 
 #' @return \item{A}{A list of the imputed blocks}
 #' @title imputeNN: Impute with k-Nearest Neighbors
 #' @examples 

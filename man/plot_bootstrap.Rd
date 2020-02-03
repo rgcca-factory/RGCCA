@@ -15,6 +15,8 @@ plot_bootstrap(df, rgcca, show_boot = TRUE, n_mark = 30,
 \item{show_boot}{A boolean to show the bootstrap mean and sd on the graphic}
 
 \item{n_mark}{An integer giving the number of top variables to select}
+
+\item{colors}{reoresenting a vector of colors}
 }
 \description{
 Plot the top variables from a bootstrap

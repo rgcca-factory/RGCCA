@@ -24,6 +24,8 @@ or "weight" for the weight of the RGCCA}
 
 \item{title}{A character with the name of the space (either "Variables" or
 "Samples")}
+
+\item{colors}{reoresenting a vector of colors}
 }
 \description{
 Barplot of the higher outer weight vectors for a component of a block 

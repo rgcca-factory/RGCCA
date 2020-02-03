@@ -38,6 +38,7 @@
 #' plot_MIRGCCA(res,multiple="ell",indnames=FALSE)
 #' @importFrom grDevices graphics.off
 #' @importFrom vegan procrustes
+#' @importFrom stats qt
 # @importFrom car ellipse
 #' @export
 plot_MIRGCCA=function(mi.obj,opt.ell="distr",multiple="ell",indnames=TRUE,varnames=TRUE,blocks=c(1,1),axes=c(1,2),selec="all",xlim=NULL,threshold=0.5,cex=1,output="R",filename="rgcca.png",...)

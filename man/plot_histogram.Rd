@@ -18,6 +18,8 @@ plot_histogram(p, df, title = "Histogram", group = NA, colors = NULL,
 
 \item{group}{A vector of character giving the group for the rows}
 
+\item{colors}{reoresenting a vector of colors}
+
 \item{cex}{An integer for the size of the plot parameters}
 
 \item{cex_main}{An integer for the size of the title}

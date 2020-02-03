@@ -39,7 +39,7 @@ whichNAmethod=function(A,listNAdataset=NULL,C=matrix(1,length(A),length(A))-diag
         }
     )
   }
- print("ok")
+
   referenceRgcca=rgccad(referenceDataset,C=C,tau=tau,ncomp=ncomp,verbose=verbose,sameBlockWeight=sameBlockWeight,scale=scale,tol=tol,scheme=scheme)
   print("comparisons of RGCCA with the different methods...(this could take some time)")
   resultComparison=NULL

@@ -4,6 +4,7 @@
 #' @param graph if TRUE, the pattern of missing values is plotted
 #' @param legend if TRUE the legend is plotted
 #' @param outlierVisible if FALSE, the outliers will be -2 if negative, 2 if positive
+#' @param scale if TRUE all the variables are scaled before graphical representation
 #' @return a list containing the percentage of missing values per variable (pctNA), the percentage of missing values per block (pctNAbyBlock), and the complete individuals percentage (completeSubjectByBlock)
 #' @examples 
 #' X1=matrix(rnorm(150),30,5)

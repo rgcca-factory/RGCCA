@@ -5,6 +5,8 @@
 #' @inheritParams plot2D
 #' @inheritParams get_comp
 #' @param type A character for the type of plot : either "ind" for individual plot or "var" for corcircle
+#' @param colors reoresenting a vector of colors
+#' 
 #' @examples
 #' library(RGCCA)
 #' data("Russett")

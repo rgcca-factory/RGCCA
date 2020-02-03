@@ -20,6 +20,8 @@ plot_bootstrap_1D(b, x = "br", y = "occ", n = 50,
 
 \item{title}{A character with the name of the space (either "Variables" or
 "Samples")}
+
+\item{colors}{reoresenting a vector of colors}
 }
 \description{
 Histogram of the best variables of an RGCCA bootstrap with, on the x-axis,

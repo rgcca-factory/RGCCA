@@ -10,7 +10,8 @@
 #' @param height =480 height of the saved file
 #' @examples 
 #' set.seed(42);X1=matrix(rnorm(350),70,5);X2=matrix(rnorm(280),70,4);X1[1,1]=NA;X2[2,]=NA
-#' A=list(X1,X2)
+#' colnames(X1)=paste("A",1:5);colnames(X2)=paste("B",1:4); 
+#' rownames(X1)=rownames(X2)=paste0("S",1:70);A=list(X1,X2);
 #' listResults=whichNAmethod(A=A,patternNA=c(0.1,0.2),
 #' listMethods=c("mean","complete","nipals","knn4"))
 #' plotWhichNAmethod(listFinale=listResults,ylim=c(0,1),output="a")
