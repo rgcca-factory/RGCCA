@@ -4,9 +4,9 @@
 \alias{plot_histogram}
 \title{Histogram settings}
 \usage{
-plot_histogram(p, df, title = "", color = "black",
-  low_col = "khaki2", high_col = "coral3", mid_col = NULL, cex = 1,
-  cex_sub = 16 * cex, cex_axis = 10 * cex)
+plot_histogram(p, df, title = "Histogram", group = NA, colors = NULL,
+  cex = 1, cex_main = 25 * cex, cex_sub = 16 * cex, cex_axis = 10 *
+  cex)
 }
 \arguments{
 \item{p}{A ggplot object}
@@ -16,7 +16,15 @@ plot_histogram(p, df, title = "", color = "black",
 \item{title}{A character with the name of the space (either "Variables" or
 "Samples")}
 
-\item{color}{A vector of character giving the colors for the rows}
+\item{group}{A vector of character giving the group for the rows}
+
+\item{cex}{An integer for the size of the plot parameters}
+
+\item{cex_main}{An integer for the size of the title}
+
+\item{cex_sub}{An integer for the size of the subtitle}
+
+\item{cex_axis}{An integer for the size of the axis text}
 
 \item{low_col}{A character giving the color used for the lowest part of
 the gradient}
@@ -26,12 +34,6 @@ the gradient}
 
 \item{mid_col}{A character giving the color used for the middle part of
 the gradient}
-
-\item{cex}{An integer for the size of the plot parameters}
-
-\item{cex_sub}{An integer for the size of the subtitle}
-
-\item{cex_axis}{An integer for the size of the axis text}
 }
 \description{
 Default font for a vertical barplot.

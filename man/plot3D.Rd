@@ -6,8 +6,8 @@
 \usage{
 plot3D(df, rgcca, compx = 1, compy = 2, compz = 3, i_block = 1,
   i_block_y = i_block, i_block_z = i_block, text = TRUE,
-  title = "Sample plot", type = "ind", cex = 1, cex_point = 3 *
-  cex, cex_lab = 19 * cex)
+  title = "Sample plot", colors = NULL, type = "ind", cex = 1,
+  cex_point = 3 * cex, cex_lab = 19 * cex)
 }
 \arguments{
 \item{df}{A dataframe}

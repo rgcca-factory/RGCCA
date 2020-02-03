@@ -19,7 +19,7 @@
 #' @export
 
 
-plotWhichNAmethod=function(listFinale,output="rv",fileName=NULL,ylim=NULL,block="all",barType="sd",namePlot=NULL,width=480,height=480)
+plotWhichNAmethod=function(listFinale,output="rv",fileName=NULL,ylim=NULL,block="all",barType="sd",namePlot=NULL,width=480,height=480,ylab="")
 { #output : "rv", "pct" ou "a"
   #barType="sd" or "stdErr"
     
@@ -81,7 +81,7 @@ plotWhichNAmethod=function(listFinale,output="rv",fileName=NULL,ylim=NULL,block=
     {
         Ylim=ylim
     }
-    plot(NULL,main=paste(namePlot,": Block",j),xlim=c(0,length(namesMethod)-1),ylim=Ylim,xlab="Methods",ylab="Correlation",bty="n",xaxt="n")
+    plot(NULL,main=paste(namePlot,": Block",j),xlim=c(0,length(namesMethod)-1),ylim=Ylim,xlab="Methods",ylab=ylab,bty="n",xaxt="n")
     axis(side = 1,col="grey",line=0)
     axis(side = 2,col="grey",line=0)
     rect(par("usr")[1], par("usr")[3], par("usr")[2], par("usr")[4], col = 

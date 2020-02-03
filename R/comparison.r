@@ -17,20 +17,20 @@ comparison=function(rgcca1,rgcca2,naxis=1,selec=10,selectPatient=NULL,indNA=NULL
 {
   diffNorm2=function(vec1,vec2)
   {
-    # if(length(vec1)>3)
-    # {
-    #   if(!is.null(vec1)&!is.null(vec2))
-    #   {
-    #     c1= cor(vec1,vec2)
-    #     c2= cor(vec1,-vec2)
-    #     return(max(c1,c2))	
-    #   }
-    # }
-    # if(length(vec1)<4){
+     if(length(vec1)>=4)
+     {
+       if(!is.null(vec1)&!is.null(vec2))
+       {
+         c1= cor(vec1,vec2)
+         c2= cor(vec1,-vec2)
+         return(1-max(c1,c2))	
+       }
+     }
+     if(length(vec1)<4){
       d1=sqrt((vec1[1]-vec2[1])^2+(vec1[2]-vec2[2])^2)
       d2=sqrt((vec1[1]+vec2[1])^2+(vec1[2]+vec2[2])^2)
       return(min(d1,d2))
-    #   }
+       }
    
     #else{ return(NA)}
   }

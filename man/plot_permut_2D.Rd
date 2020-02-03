@@ -4,8 +4,9 @@
 \alias{plot_permut_2D}
 \title{Plot permuation in 2D}
 \usage{
-plot_permut_2D(perm, type = "zstat", cex = 1, cex_sub = 16 * cex,
-  cex_point = 3 * cex, cex_lab = 19 * cex)
+plot_permut_2D(perm, type = "zstat", cex = 1, title = NULL,
+  cex_main = 25 * cex, cex_sub = 16 * cex, cex_point = 3 * cex,
+  cex_lab = 19 * cex)
 }
 \arguments{
 \item{perm}{A permutation object from a RGCCA analyse}
@@ -13,13 +14,8 @@ plot_permut_2D(perm, type = "zstat", cex = 1, cex_sub = 16 * cex,
 \item{type}{An string giving the type of the index to look at (among 'crit' for
 the RGCCA criterion and 'zstat' for the pseudo Z-score)}
 
-\item{cex}{An integer for the size of the plot parameters}
-
-\item{cex_sub}{An integer for the size of the subtitle}
-
-\item{cex_point}{An integer for the size of the points or the text in the plot}
-
-\item{cex_lab}{An integer for the size of the axis titles}
+\item{title}{A character with the name of the space (either "Variables" or
+"Samples")}
 }
 \description{
 Plot permuation in 2D

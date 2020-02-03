@@ -4,16 +4,16 @@
 \alias{plot_ave}
 \title{Histogram of Average Variance Explained}
 \usage{
-plot_ave(rgcca, cex = 1, cex_sub = 16 * cex, cex_axis = 10 * cex)
+plot_ave(rgcca, cex = 1, title = "Average Variance Explained",
+  colors = NULL, ...)
 }
 \arguments{
 \item{rgcca}{A list giving the results of a R/SGCCA}
 
 \item{cex}{An integer for the size of the plot parameters}
 
-\item{cex_sub}{An integer for the size of the subtitle}
-
-\item{cex_axis}{An integer for the size of the axis text}
+\item{title}{A character with the name of the space (either "Variables" or
+"Samples")}
 }
 \description{
 Histogram of the model quality (based on Average Variance Explained)

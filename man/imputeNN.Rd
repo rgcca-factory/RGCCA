@@ -5,7 +5,7 @@
 \title{imputeNN: Impute with k-Nearest Neighbors}
 \usage{
 imputeNN(A, k = 1, output = "mean", klim = NULL, scale = TRUE,
-  sameBlockWeight = TRUE)
+  sameBlockWeight = TRUE, superblock = TRUE)
 }
 \arguments{
 \item{A}{A list of J blocks}

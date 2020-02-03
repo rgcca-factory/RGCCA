@@ -4,8 +4,8 @@
 \alias{plot_bootstrap}
 \title{Plot a bootstrap}
 \usage{
-plot_bootstrap(df, rgcca, show_boot = TRUE, n_mark = 30, cex = 1,
-  cex_sub = 16 * cex, cex_axis = 10 * cex)
+plot_bootstrap(df, rgcca, show_boot = TRUE, n_mark = 30,
+  colors = NULL, ...)
 }
 \arguments{
 \item{df}{A dataframe}
@@ -15,12 +15,6 @@ plot_bootstrap(df, rgcca, show_boot = TRUE, n_mark = 30, cex = 1,
 \item{show_boot}{A boolean to show the bootstrap mean and sd on the graphic}
 
 \item{n_mark}{An integer giving the number of top variables to select}
-
-\item{cex}{An integer for the size of the plot parameters}
-
-\item{cex_sub}{An integer for the size of the subtitle}
-
-\item{cex_axis}{An integer for the size of the axis text}
 }
 \description{
 Plot the top variables from a bootstrap

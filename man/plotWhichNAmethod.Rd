@@ -6,7 +6,7 @@
 \usage{
 plotWhichNAmethod(listFinale, output = "rv", fileName = NULL,
   ylim = NULL, block = "all", barType = "sd", namePlot = NULL,
-  width = 480, height = 480)
+  width = 480, height = 480, ylab = "")
 }
 \arguments{
 \item{listFinale}{A list resulting of which NA method}

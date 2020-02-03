@@ -21,7 +21,7 @@
 #' @export
 #'@importFrom graphics image
 #'@importFrom stats na.omit
-determine_patternNA=function(A,graph="all",legend=FALSE,outlierVisible=FALSE)
+determine_patternNA=function(A,graph="all",legend=FALSE,outlierVisible=TRUE,scale=TRUE)
 {
     # 
 
@@ -72,17 +72,23 @@ determine_patternNA=function(A,graph="all",legend=FALSE,outlierVisible=FALSE)
       par(mar=c(2,1,4,1))
       for(i in 1:length(A))
       {
+          print(i)
+         
           mat=apply(A[[i]],2,rev)
-          mat2=apply(mat,2,scale)
+          mat2=apply(mat,2,function(x) scale(x,scale=scale))
+          
+           minimum=-2*max(apply(mat2,2,function(x) sd(x,na.rm=TRUE)),na.rm=TRUE)
+          maximum=2*max(apply(mat2,2,function(x) sd(x,na.rm=TRUE)),na.rm=TRUE)
           if(!outlierVisible)
           {
-              mat2[mat2< (-2)]=-2
-              mat2[mat2>2]=2
+              mat2[mat2< minimum]=minimum
+              mat2[mat2>maximum]=maximum
           }
-         
-          plot(NULL,xlim=c(0,1),ylim=c(0,1),xaxt="n",yaxt="n",bty="n",,main=paste0(names(A)[i],"\n",nvar[i]," var.\n",sum(completeSubjectByBlock[,i]), "/",NROW(A[[i]])," complete ind."))
+         print(minimum)
+         print(maximum)
+          plot(NULL,xlim=c(0,1),ylim=c(0,1),xaxt="n",yaxt="n",bty="n",main=paste0(names(A)[i],"\n",nvar[i]," var.\n",sum(completeSubjectByBlock[,i]), "/",NROW(A[[i]])," complete ind."))
           rect(0,0,1,1,col="black")
-          image(t(mat2),breaks=seq(-2.0001,2.001,length.out=51),xaxt="n",yaxt="n",col=rainbow(50,start=0,end=0.5),add=TRUE)
+          image(t(mat2),breaks=seq(minimum,maximum,length.out=51),xaxt="n",yaxt="n",col=rainbow(50,start=0,end=0.5),add=TRUE)
       }
   }
   if(graph %in% names(A))
@@ -98,7 +104,7 @@ determine_patternNA=function(A,graph="all",legend=FALSE,outlierVisible=FALSE)
  {
      plot(NULL,xlim=c(0,1),ylim=c(0,50),bty="n",xaxt="n",yaxt="n")
      lapply(1:50,function(i){points(0.5,i,col=rainbow(50,start=0,end=0.5)[i],pch=15)})
-     text(0.6, 1, "-2");   text(0.6, 50, "2")
+     text(0.6, 1, "min");   text(0.6, 50, "max")
      
  }
   return(list(pctNA=pctNA,pctNAbyBlock=pctNAbyBlock,completeSubjectByBlock=completeSubjectByBlock,completeSubjects=completeSubjects, numberOfMissingBlocksPerSubject= numberOfMissingBlocksPerSubject,A=A))

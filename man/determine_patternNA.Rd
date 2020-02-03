@@ -6,7 +6,7 @@
 Determines the pattern of missing values and allows to use it to create datasets with the same pattern.}
 \usage{
 determine_patternNA(A, graph = "all", legend = FALSE,
-  outlierVisible = FALSE)
+  outlierVisible = TRUE, scale = TRUE)
 }
 \arguments{
 \item{A}{list of blocks}
