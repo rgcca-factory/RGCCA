@@ -2,7 +2,6 @@
 #'
 #' Histogram of the model quality (based on Average Variance Explained)
 #' for each blocks and sorted in decreasing order
-#'
 #' @inheritParams plot_ind
 #' @inheritParams plot_histogram
 #' @seealso \code{\link[RGCCA]{rgccad}}, \code{\link[RGCCA]{sgcca}}

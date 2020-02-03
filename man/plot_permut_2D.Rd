@@ -14,8 +14,18 @@ plot_permut_2D(perm, type = "zstat", cex = 1, title = NULL,
 \item{type}{An string giving the type of the index to look at (among 'crit' for
 the RGCCA criterion and 'zstat' for the pseudo Z-score)}
 
+\item{cex}{general size of the text}
+
 \item{title}{A character with the name of the space (either "Variables" or
 "Samples")}
+
+\item{cex_main}{= 25 * cex, size of the main text (title)}
+
+\item{cex_sub}{= 16 * cex, size of the subtitle text}
+
+\item{cex_point}{= 3 * cex, size of the point}
+
+\item{cex_lab}{= 19 * cex, size of the labels}
 }
 \description{
 Plot permuation in 2D

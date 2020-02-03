@@ -5,6 +5,7 @@
 #' Negative weights are colored in red and the positive ones are in green.
 #'
 #' @inheritParams plot2D
+#' @param colors reoresenting a vector of colors
 #' @param b A matrix of boostrap
 #' @param x A character for the column to plot in x-axis
 #' @param y A character for the column to plot in y-axis

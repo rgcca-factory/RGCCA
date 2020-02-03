@@ -19,6 +19,8 @@ plot_bootstrap_2D(b, x = "br", y = "occ",
 \item{title}{A character with the name of the space (either "Variables" or
 "Samples")}
 
+\item{colors}{reoresenting a vector of colors}
+
 \item{cex}{An integer for the size of the plot parameters}
 
 \item{cex_main}{An integer for the size of the title}

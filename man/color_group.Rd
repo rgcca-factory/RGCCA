@@ -8,6 +8,8 @@ color_group(x, colors = NULL)
 }
 \arguments{
 \item{x}{A vector}
+
+\item{colors}{reoresenting a vector of colors}
 }
 \value{
 A color vector of equal size to the input vector

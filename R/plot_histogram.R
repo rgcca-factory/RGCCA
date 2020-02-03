@@ -11,6 +11,7 @@
 #' @param mid_col A character giving the color used for the middle part of
 #' the gradient
 #' @param cex_axis An integer for the size of the axis text
+#' @param colors reoresenting a vector of colors
 #' @examples
 #' df = data.frame(x = runif(30), order = 30:1)
 #' library("ggplot2")

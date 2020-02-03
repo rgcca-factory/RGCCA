@@ -139,7 +139,7 @@ imputeEM <-
             
             # Criteria for one component only
             if (naxis == 1) {
-                critRGCCA <- c(critRGCCA, fit.rgcca$crit[[1]][1])
+                critRGCCA <- c(critRGCCA, fit.rgcca$crit[[1]][length(fit.rgcca$crit[[1]])])
             }
             # Criteria for two component only if(naxis==2) {
             # critRGCCA=c(critRGCCA,fit.rgcca$crit[[1]][1]+fit.rgcca$crit[[2]][1])
@@ -419,7 +419,7 @@ imputeEM <-
             # When the algorithm stops, some noise can be added to the model
             #----------------------------------------------------------------
             
-            i <- i + 1
+           
     # print(paste0("iteration in EM algo:", i))
             # Reaffecting Alist
             #----------------------
@@ -436,8 +436,9 @@ imputeEM <-
                 colnames(Alist[[j]]) <- colnames(A[[j]])
             }
             names(Alist) <- names(A)
+            i <- i + 1
         }
-        
+
         if (graph) {
             vec <- rep(NA, i - 1)
             for (k in 1:(i - 1)) {

@@ -6,7 +6,7 @@
 Determines the pattern of missing values and allows to use it to create datasets with the same pattern.}
 \usage{
 determine_patternNA(A, graph = "all", legend = FALSE,
-  outlierVisible = FALSE)
+  outlierVisible = TRUE, scale = TRUE)
 }
 \arguments{
 \item{A}{list of blocks}
@@ -16,6 +16,8 @@ determine_patternNA(A, graph = "all", legend = FALSE,
 \item{legend}{if TRUE the legend is plotted}
 
 \item{outlierVisible}{if FALSE, the outliers will be -2 if negative, 2 if positive}
+
+\item{scale}{if TRUE all the variables are scaled before graphical representation}
 }
 \value{
 a list containing the percentage of missing values per variable (pctNA), the percentage of missing values per block (pctNAbyBlock), and the complete individuals percentage (completeSubjectByBlock)

@@ -37,6 +37,8 @@ or with circles (FALSE)}
 \item{title}{A character with the name of the space (either "Variables" or
 "Samples")}
 
+\item{colors}{reoresenting a vector of colors}
+
 \item{type}{A character for the type of plot : either "ind" for individual plot or "var" for corcircle}
 
 \item{cex}{An integer for the size of the plot parameters}

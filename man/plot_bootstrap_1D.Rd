@@ -4,7 +4,7 @@
 \alias{plot_bootstrap_1D}
 \title{Plot a bootstrap in 1D}
 \usage{
-plot_bootstrap_1D(b, x = "rgcca", y = "occ", n = 50,
+plot_bootstrap_1D(b, x = "br", y = "occ", n = 50,
   title = attributes(b)$indexes[[x]],
   colors = c(color_group(seq(3))[1], "white", color_group(seq(3))[3]),
   ...)
@@ -20,6 +20,8 @@ plot_bootstrap_1D(b, x = "rgcca", y = "occ", n = 50,
 
 \item{title}{A character with the name of the space (either "Variables" or
 "Samples")}
+
+\item{colors}{reoresenting a vector of colors}
 }
 \description{
 Histogram of the best variables of an RGCCA bootstrap with, on the x-axis,

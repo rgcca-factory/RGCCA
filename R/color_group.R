@@ -2,6 +2,7 @@
 #' 
 #' Returns a color vector of equal size to the input vector
 #' @param x A vector
+#' @param colors reoresenting a vector of colors
 #' @return A color vector of equal size to the input vector
 #' @examples
 #' color_group(seq(10))

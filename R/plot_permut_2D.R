@@ -6,6 +6,13 @@
 #' @param perm A permutation object from a RGCCA analyse
 #' @param type An string giving the type of the index to look at (among 'crit' for
 #'  the RGCCA criterion and 'zstat' for the pseudo Z-score)
+#' @param cex general size of the text
+#' @param cex_main = 25 * cex, size of the main text (title)
+#' @param cex_sub = 16 * cex, size of the subtitle text 
+#' @param cex_point = 3 * cex, size of the point
+#' @param cex_lab = 19 * cex, size of the labels
+
+#' @param 
 #' @examples
 #' data("Russett")
 #' A = list(agriculture = Russett[, seq(3)], industry = Russett[, 4:5],
