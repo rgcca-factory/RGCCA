@@ -14,7 +14,8 @@ load_response <- function(
     file = NULL,
     sep = "\t",
     header = TRUE,
-    rownames = 1) {
+    rownames = 1,
+    dec = ".") {
 
     response <- NULL
 
@@ -25,7 +26,8 @@ load_response <- function(
             sep = sep,
             rownames = rownames,
             header = header,
-            one_column = TRUE
+            one_column = TRUE,
+            dec = dec
         )
     }
 

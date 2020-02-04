@@ -51,7 +51,7 @@ rgcca_permutation_k <- function(
                         quiet = TRUE,
                         method = "complete"
                     )$crit
-                return(sum(sapply(crit, function(x) x[length(x)])))
+                return(sum(sapply(crit, function(x) sum(x))))
             },
         mc.cores = n_cores))
 }

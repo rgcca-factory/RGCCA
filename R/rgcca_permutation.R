@@ -40,6 +40,9 @@ rgcca_permutation <- function(
 
     if (any(p_ncomp == FALSE) && any(p_c1 == FALSE))
         stop("Select one parameter among 'p_c1' or 'p_ncomp' to optimize. By default, p_c1 is selected.")
+    
+    if(length(blocks) < 1)
+        stop("Permutation required a number of blocks larger than 1.")
 
     ncols <- sapply(blocks, NCOL)
     min_c1s <- sapply(ncols, function(x) 1 / sqrt(x))
@@ -49,7 +52,7 @@ rgcca_permutation <- function(
             f <- quote(max)
         else
             f <- quote(max[x])
-        sapply(seq(ncols), function(x) seq(eval(f), min_c1s[x], len = 10))
+        sapply(seq(min_c1s), function(x) seq(eval(f), min_c1s[x], len = 10))
     }
 
     if (!any(p_ncomp == FALSE)) {

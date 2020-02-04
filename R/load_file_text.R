@@ -7,7 +7,7 @@
 #' \dontrun{
 #' load_file_text('data/agriculture.tsv')
 #' }
-load_file_text <- function(file, sep = "\t", rownames = 1, header = TRUE, one_column = FALSE) {
+load_file_text <- function(file, sep = "\t", rownames = 1, header = TRUE, one_column = FALSE, dec = ".") {
 
     if (!is.null(rownames) && rownames < 1)
         rownames <- NULL
@@ -19,7 +19,7 @@ load_file_text <- function(file, sep = "\t", rownames = 1, header = TRUE, one_co
             header = header,
             row.names = x,
             na.strings = "NA",
-            dec = ","
+            dec = dec
         ))
 
     tryCatch(

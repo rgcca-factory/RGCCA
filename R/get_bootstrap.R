@@ -145,11 +145,12 @@ get_bootstrap <- function(
         list(
             mean = "Mean bootstrap weights",
             br = "Bootstrap-ratio",
-            sign = "Significant 95% interval",
+            sign = "Significant 95% \nbootstrap interval",
             occ = "Non-zero occurences",
             rgcca = "RGCCA weights"
         )
     attributes(b)$type <- class(rgcca)
+    attributes(b)$n_boot <- n_boot
     class(b) <- c(class(b), "bootstrap")
 
     return(b)

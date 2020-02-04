@@ -18,7 +18,8 @@ load_blocks <- function(file,
     names = NULL,
     sep = "\t",
     header = TRUE,
-    rownames = 1) {
+    rownames = 1,
+    dec = ".") {
 
     # Parse args containing files path
     isXls <- (length(grep("xlsx?", file)) == 1)
@@ -68,7 +69,7 @@ load_blocks <- function(file,
                 fo <- block_filenames[i]
         }
 
-        df <- load_file(file, fi, sep, block_filenames[i], rownames, header)
+        df <- load_file(file, fi, sep, block_filenames[i], rownames, header, dec = dec)
 
         check_quantitative(df, fo, header)
         blocks[[fo]] <- df
