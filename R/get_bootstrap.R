@@ -17,6 +17,7 @@
 #' boot = bootstrap(rgcca_out, 2, FALSE, n_cores = 1)
 #' get_bootstrap(rgcca_out, boot, n_cores = 1)
 #' @export
+#' @importFrom stats pt
 get_bootstrap <- function(
     rgcca,
     w,

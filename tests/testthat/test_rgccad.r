@@ -21,3 +21,9 @@ test_that("test_rgcca_tau1",{
       expect_true(rgccaTest1)
 })
 
+# tests with different number of components
+X_agric =as.matrix(Russett[,c("gini","farm","rent")]);
+X_ind = as.matrix(Russett[,c("gnpr","labo")]);
+X_polit = as.matrix(Russett[ , c("demostab")]);
+A = list(X_agric, X_ind, X_polit);
+res=rgccad(A, C, ncomp=c(2,2,1),tau = c(1, 1, 1), scheme = "factorial", scale = TRUE,verbose=FALSE)

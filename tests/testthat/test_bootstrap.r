@@ -14,9 +14,8 @@
  blocks = list(agriculture = Russett[, seq(3)], industry = Russett[, 4:5],
                politic = Russett[, 6:11] )
  resRGCCA=rgcca(blocks,ncomp=c(2,2,2))
- #set.seed(seed=18)
-  resBootstrap=bootstrap(rgcca=resRGCCA,n_boot = 2)
-#  
+
+ resBootstrap=bootstrap(rgcca=resRGCCA)
  select_var=get_bootstrap(resRGCCA,resBootstrap)
 #  plot_bootstrap_1D(select_var)
 #  

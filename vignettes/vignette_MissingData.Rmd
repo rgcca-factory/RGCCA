@@ -96,17 +96,18 @@ library(vegan)
 Multidisciplinary approaches are now common in scientific research and provide multiple and heterogeneous sources of measures of a given phenomenon. These sources can be viewed as a collection of interconnected datasets and dedicated algorithms are mandatory for providing relevant information from multi-source data. Regularized Generalized Canonical Correlation Analysis (RGCCA) is a general statistical framework for multi-source data analysis [@Tenenhaus2011]. Multi-source data often have block-wise missing structure, i.e., data in one or more sources may be completely unobserved for a sample. The probability to observe block-wise missing structure increases with the number of sources. It is therefore mandatory to properly handle this block-wise missing structure within the framework of RGCCA.
 In literature, many solutions exist to deal with missing data: NIPALS-type algorithms, and imputation methods (simple or multiple). For the moment, these solutions are not applied to integrative analysis. 
 
-In this work, several solutions are investigated and compared on simulations and on multi-source biological data. Furthermore, a methodology for choosing the best NA solution according to the dataset is given.  
+In this work, several solutions are investigated and compared on simulations and on multi-source biological data. Furthermore, a methodology for choosing the best solution for missing-data according to the dataset is given.  
 
 
 # An example dataset: Russett 
+The example dataset is Russett.
 ```{r}
 library(RGCCA)
 data(Russett)
 head(Russett)
 ```
 
-The first step of the RGCCA is to define the blocks. Three blocks of variables have been defined for 47 countries. The variables that compose each block have been defined according to the nature of the variables.
+The first step of the RGCCA is to define the blocks of variables. Three blocks of variables have been defined for 47 countries. The variables that compose each block have been defined according to the nature of the variables.
 
 - The first block $\X_1$ = [GINI, FARM, RENT] is related to "Agricultural Inequality":
     + GINI = Inequality of land distribution,
@@ -178,6 +179,7 @@ The resulting RGCCA can be obtained in two method : entering na.rm=TRUE in usual
 C=matrix(1,length(A),length(A))-diag(length(A))
 rgcca_nipals=rgccad(A=A_missing,C=C,tau=rep(1,length(A)),verbose=FALSE)
 rgcca_nipals2=rgccaNa(A=A_missing,C=C,tau=rep(1,length(A)),method="nipals")
+
 names(rgcca_nipals2)
 ```
 # Using k-Nearest Neighbors

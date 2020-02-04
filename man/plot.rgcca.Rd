@@ -4,12 +4,25 @@
 \alias{plot.rgcca}
 \title{Regularized Generalized Canonical Correlation Analysis (RGCCA)}
 \usage{
-\method{plot}{rgcca}(x, i_block = NULL, ...)
+\method{plot}{rgcca}(x, resp = rep(1, NROW(x$Y[[1]])), i_block = 1,
+  compx = 1, compy = 2, remove_var = FALSE, ...)
 }
 \arguments{
 \item{x}{Result of rgcca function}
 
-\item{i_block}{number of block to plot}
+\item{resp}{A vector of characters corresponding either to a qualitative
+variable with levels or a continuous variable}
+
+\item{i_block}{An integer giving the index of a list of blocks}
+
+\item{compx}{An integer giving the index of the analysis component used
+for the x-axis}
+
+\item{compy}{An integer giving the index of the analysis component used
+for the y-axis}
+
+\item{remove_var}{A bolean to keep only the 100 variables of each
+component with the biggest correlation#'}
 
 \item{...}{parameters from plot_ind or plot_var_2D}
 }
@@ -26,4 +39,5 @@ A = list(X_agric, X_ind, X_polit);
 C = matrix(c(0, 0, 1, 0, 0, 1, 1, 1, 0), 3, 3);
 resRgcca=rgcca(blocks=A,connection=C,
 tau=rep(1,3),ncomp=rep(2,3),superblock=FALSE)
+plot(resRgcca)
 }

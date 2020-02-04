@@ -10,5 +10,5 @@ res=rgcca(A,type="rgcca")
 library(ggplot2)
 library(gridExtra)
 library(grid)
-plot(res)
+plot.rgcca(res)
 

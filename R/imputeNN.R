@@ -74,8 +74,16 @@ imputeNN <- function(
     finBlock <- cumsum(group)
     
     for (u in 1:length(finBlock)) {
-      variances <- apply(superblockNAs[, debutBlock[u]:finBlock[u]], 2, var, na.rm = T)
-      D[, debutBlock[u]:finBlock[u]] <- 1/sqrt(sum(variances))
+        
+      if(finBlock[u]-debutBlock[u]!=0)
+      {
+          variances <- apply(superblockNAs[, debutBlock[u]:finBlock[u]], 2, var, na.rm = T)
+      }
+      else
+      {
+          variances=var(superblockNAs[, debutBlock[u]:finBlock[u]], na.rm = T)
+      }
+           D[, debutBlock[u]:finBlock[u]] <- 1/sqrt(sum(variances))
     }
     
   } else

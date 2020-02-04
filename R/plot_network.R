@@ -47,8 +47,7 @@ plot_network <- function(
         sep = " ")
     V(net)$shape <- "square"
     E(net)$width <- E(net)$weight * 2
-
-    plot(
+      plot(
         net,
         cex.main = 5,
         edge.color = "gray70",
@@ -59,6 +58,7 @@ plot_network <- function(
         vertex.label.degree = 1.5,
         vertex.size = 23,
         main = title
+   
     )
 
 }
