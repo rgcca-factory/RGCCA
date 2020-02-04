@@ -20,6 +20,7 @@
 #' @param knn.klim k limits (if k is not a number, optimal k between klim[1] and klim[2] is calculated )
 #' @param knn.sameBlockWeight if TRUE the distance for Nearest Neigbors takes the size of blocks into account
 #' @param pca.ncp Number of components chosen in PCA 
+#' @param prescaling If TRUE, the scaling should be done outside of the function. Default at FALSE
 #' @param ni number of iterations for em or sem methods
 #' @return \item{Y}{A list of \eqn{J} elements. Each element of \eqn{Y} is a matrix that contains the RGCCA components for the corresponding block.}
 #' @return \item{a}{A list of \eqn{J} elements. Each element of \eqn{a} is a matrix that contains the outer weight vectors for each block.}
@@ -49,7 +50,7 @@
 #' rgccaNa(A,method="knn2")
 
 rgccaNa=function (A,method, C = 1 - diag(length(A)), tau = rep(1, length(A)),    ncomp = rep(1, length(A)), scheme = "centroid", scale = TRUE,   init = "svd", bias = TRUE, tol = 1e-08, verbose = TRUE,
-                  sameBlockWeight=TRUE,knn.k="all",knn.output="weightedMean",knn.klim=NULL,knn.sameBlockWeight=TRUE,pca.ncp=1,ni=50)
+                  sameBlockWeight=TRUE,knn.k="all",knn.output="weightedMean",knn.klim=NULL,knn.sameBlockWeight=TRUE,pca.ncp=1,ni=50,prescaling=FALSE)
 { 
   #  call=match.call() 
     call=list(A=A,method=method, C =C, tau = tau,    ncomp = ncomp, scheme = scheme, scale = scale,   init = init, bias = bias, tol =tol, verbose = verbose,sameBlockWeight=sameBlockWeight,knn.k=knn.k,knn.output=knn.output,knn.klim=knn.klim,knn.sameBlockWeight=sameBlockWeight,pca.ncp=pca.ncp)
@@ -131,11 +132,11 @@ rgccaNa=function (A,method, C = 1 - diag(length(A)), tau = rep(1, length(A)),   
         A2=imputeNN(A ,output=knn.output,k=as.numeric(substr(method,4,4)),klim=knn.klim,sameBlockWeight=knn.sameBlockWeight);method=paste(method,":",knn.k,sep="")
       }
   }
-  if(method!="imputeInRgcca1"&&method!="imputeInRgcca2"&&method!="imputeInRgccaSB"&&method!="imputeInRgccaLL"){resRgcca=rgccad(A2,C=C,ncomp=ncomp,verbose=verbose,scale=scale,sameBlockWeight=sameBlockWeight,tau=tau,scheme=scheme,tol=tol,estimateNA="no")}
-  if(method=="imputeInRgcca1"){resRgcca=rgccad(A,C=C,ncomp=ncomp,verbose=FALSE,scale=scale,sameBlockWeight=sameBlockWeight,tau=tau,scheme=scheme,tol=tol,estimateNA="iterative");A2=resRgcca$imputedA;}
-  if(method=="imputeInRgcca2"){resRgcca=rgccad(A,C=C,ncomp=ncomp,verbose=FALSE,scale=scale,sameBlockWeight=sameBlockWeight,tau=tau,scheme=scheme,tol=tol,estimateNA="first");A2=resRgcca$imputedA;}
-  if(method=="imputeInRgccaSB"){resRgcca=rgccad(A,C=C,ncomp=ncomp,verbose=FALSE,scale=scale,sameBlockWeight=sameBlockWeight,tau=tau,scheme=scheme,tol=tol,estimateNA="superblock");A2=resRgcca$imputedA[1:length(A)];}
-  if(method=="imputeInRgccaLL"){resRgcca=rgccad(A,C=C,ncomp=ncomp,verbose=TRUE,scale=scale,sameBlockWeight=sameBlockWeight,tau=tau,scheme=scheme,tol=tol,estimateNA="lebrusquet");A2=resRgcca$imputedA[1:length(A)];}
+  if(method!="imputeInRgcca1"&&method!="imputeInRgcca2"&&method!="imputeInRgccaSB"&&method!="imputeInRgccaLL"){resRgcca=rgccad(A2,C=C,ncomp=ncomp,verbose=verbose,scale=scale,sameBlockWeight=sameBlockWeight,tau=tau,scheme=scheme,tol=tol,estimateNA="no",prescaling=prescaling)}
+  if(method=="imputeInRgcca1"){resRgcca=rgccad(A,C=C,ncomp=ncomp,verbose=FALSE,scale=scale,sameBlockWeight=sameBlockWeight,tau=tau,scheme=scheme,tol=tol,estimateNA="iterative",prescaling=prescaling);A2=resRgcca$imputedA;}
+  if(method=="imputeInRgcca2"){resRgcca=rgccad(A,C=C,ncomp=ncomp,verbose=FALSE,scale=scale,sameBlockWeight=sameBlockWeight,tau=tau,scheme=scheme,tol=tol,estimateNA="first",prescaling=prescaling);A2=resRgcca$imputedA;}
+  if(method=="imputeInRgccaSB"){resRgcca=rgccad(A,C=C,ncomp=ncomp,verbose=FALSE,scale=scale,sameBlockWeight=sameBlockWeight,tau=tau,scheme=scheme,tol=tol,estimateNA="superblock",prescaling=prescaling);A2=resRgcca$imputedA[1:length(A)];}
+  if(method=="imputeInRgccaLL"){resRgcca=rgccad(A,C=C,ncomp=ncomp,verbose=TRUE,scale=scale,sameBlockWeight=sameBlockWeight,tau=tau,scheme=scheme,tol=tol,estimateNA="lebrusquet",prescaling=prescaling);A2=resRgcca$imputedA[1:length(A)];}
   out=list(imputedA=A2,rgcca=resRgcca,method,indNA=indNA)
 	return(out)
 

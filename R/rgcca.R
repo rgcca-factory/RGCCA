@@ -76,7 +76,7 @@ rgcca <- function(
         response = response
     )
 
-    opt$blocks <- scaling(blocks, scale)
+    opt$blocks <- scaling(blocks, scale,sameBlockWeight = sameBlockWeight)
     opt$superblock <- check_superblock(response, opt$superblock, !quiet)
     opt$blocks <- set_superblock(opt$blocks, opt$superblock, type, !quiet)
 

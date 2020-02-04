@@ -93,24 +93,27 @@ get_bootstrap <- function(
 
         rm(w_select); gc()
     }
+    
+    n_boot <- length(w)
+    rm(w); gc()
 
     occ <- unlist(occ)
     mean <- unlist(mean)
     weight <- unlist(weight)
-    sd <- unlist(sd) / sqrt(length(w))
+    sd <- unlist(sd) / sqrt(n_boot)
 
     cat("OK.\n", append = TRUE)
 
-    p.vals <- 2 * pt(abs(weight)/sd, lower.tail = FALSE, df = length(w) - 1)
-    tail <- qt(1 - .05 / 2, df = length(w) - 1)
+    p.vals <- 2 * pt(abs(weight)/sd, lower.tail = FALSE, df = n_boot - 1)
+    tail <- qt(1 - .05 / 2, df = n_boot - 1)
 
-    rm(w); gc()
+#
 
     df <- data.frame(
         mean = mean,
         rgcca = weight,
-        intneg = mean - tail * sd,
-        intpos = mean + tail * sd,
+        intneg = mean - (tail * sd/sqrt(n_boot)),
+        intpos = mean + (tail * sd/sqrt(n_boot)),
         br = abs(mean) / sd,
         p.vals,
         BH = p.adjust(p.vals, method = "BH")

@@ -11,8 +11,6 @@
 #' @param cex_sub = 16 * cex, size of the subtitle text 
 #' @param cex_point = 3 * cex, size of the point
 #' @param cex_lab = 19 * cex, size of the labels
-
-#' @param 
 #' @examples
 #' data("Russett")
 #' A = list(agriculture = Russett[, seq(3)], industry = Russett[, 4:5],

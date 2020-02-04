@@ -40,6 +40,7 @@
 #' @param sameBlockWeight A logical value indicating if the different blocks should have the same weight in the analysis (default, sameBlockWeight=TRUE)
 #' @param na.rm If TRUE, runs rgcca only on available data.
 #' @param estimateNA If TRUE, missing values are estimated during the RGCCA calculation
+#' @param prescaling If TRUE, the scaling-centering steps are not applied in this function, and should be before running rgccad
 #' @return \item{Y}{A list of \eqn{J} elements. Each element of \eqn{Y} is a matrix that contains the RGCCA components for the corresponding block.}
 #' @return \item{a}{A list of \eqn{J} elements. Each element of \eqn{a} is a matrix that contains the outer weight vectors for each block.}
 #' @return \item{astar}{A list of \eqn{J} elements. Each element of astar is a matrix defined as Y[[j]][, h] = A[[j]]\%*\%astar[[j]][, h].}
@@ -122,7 +123,7 @@
 
 #' @importFrom grDevices graphics.off
 
-rgccad=function (A, C = 1 - diag(length(A)), tau = rep(1, length(A)),  ncomp = rep(1, length(A)), scheme = "centroid", scale = TRUE,   init = "svd", bias = TRUE, tol = 1e-08, verbose = TRUE,sameBlockWeight=TRUE,na.rm=TRUE,estimateNA="no")
+rgccad=function (A, C = 1 - diag(length(A)), tau = rep(1, length(A)),  ncomp = rep(1, length(A)), scheme = "centroid", scale = TRUE,   init = "svd", bias = TRUE, tol = 1e-08, verbose = TRUE,sameBlockWeight=TRUE,na.rm=TRUE,estimateNA="no",prescaling=FALSE)
 {
   shave.matlist <- function(mat_list, nb_cols) mapply(function(m,nbcomp) m[, 1:nbcomp, drop = FALSE], mat_list, nb_cols, SIMPLIFY = FALSE)
   shave.veclist <- function(vec_list, nb_elts) mapply(function(m, nbcomp) m[1:nbcomp], vec_list, nb_elts, SIMPLIFY = FALSE)
@@ -159,37 +160,40 @@ rgccad=function (A, C = 1 - diag(length(A)), tau = rep(1, length(A)),  ncomp = r
       cat("Shrinkage intensity paramaters are chosen manually \n")
     }
   }
-
-      if (scale == TRUE) 
-      {
-          
-          A = lapply(A, function(x) scale2(x,scale=TRUE, bias = bias)) # le biais indique si on recherche la variance biaisee ou non
-          if(sameBlockWeight)
-          {
-              A = lapply(A, function(x) 
-                  {
+    if(!prescaling)
+    {
+        if (scale == TRUE) 
+        {
+            
+            A = lapply(A, function(x) scale2(x,scale=TRUE, bias = bias)) # le biais indique si on recherche la variance biaisee ou non
+            if(sameBlockWeight)
+            {
+                A = lapply(A, function(x) 
+                {
                     y=x/sqrt(NCOL(x));
                     return(y)
-                  } 
-            )
-          }
-          # on divise chaque bloc par la racine du nombre de variables pour avoir chaque poids pour le meme bloc
-      }
-      if (scale == FALSE)
-      { 
-          
-          A = lapply(A, function(x) scale2(x, scale=FALSE, bias = bias)) 
-          if(sameBlockWeight)
-          {
-              A = lapply(A, function(x) 
-                    {
-                        covarMat=cov2(x,bias=bias);
-                        varianceBloc=sum(diag(covarMat)); 
-                        return(x/sqrt(varianceBloc))
-                    })
-          }
-          
-      }
+                } 
+                )
+            }
+            # on divise chaque bloc par la racine du nombre de variables pour avoir chaque poids pour le meme bloc
+        }
+        if (scale == FALSE)
+        { 
+            
+            A = lapply(A, function(x) scale2(x, scale=FALSE, bias = bias)) 
+            if(sameBlockWeight)
+            {
+                A = lapply(A, function(x) 
+                {
+                    covarMat=cov2(x,bias=bias);
+                    varianceBloc=sum(diag(covarMat)); 
+                    return(x/sqrt(varianceBloc))
+                })
+            }
+            
+        } 
+    }
+
       
 #  }
 

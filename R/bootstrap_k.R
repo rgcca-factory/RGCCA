@@ -29,7 +29,7 @@ bootstrap_k <- function(
     response = NULL) {
 
     if (is.null(blocks)) {
-        blocks <- rgcca$call$blocks -> blocks.all
+        blocks <- intersection(rgcca$call$blocks) -> blocks.all
         connection <- rgcca$call$connection
         ncomp <- rgcca$call$ncomp
         scheme <- rgcca$call$scheme
@@ -53,7 +53,7 @@ bootstrap_k <- function(
             response <- length(rgcca$call$blocks)
 
     } else
-        blocks.all <- blocks
+        blocks.all <- intersection(blocks)
 
     boot_blocks <- list(NULL, NULL, NULL)
     while (any(sapply(boot_blocks, function(x) length(x)) == 0)) {

@@ -7,7 +7,8 @@
 rgccad(A, C = 1 - diag(length(A)), tau = rep(1, length(A)),
   ncomp = rep(1, length(A)), scheme = "centroid", scale = TRUE,
   init = "svd", bias = TRUE, tol = 1e-08, verbose = TRUE,
-  sameBlockWeight = TRUE, na.rm = TRUE, estimateNA = "no")
+  sameBlockWeight = TRUE, na.rm = TRUE, estimateNA = "no",
+  prescaling = FALSE)
 }
 \arguments{
 \item{A}{A list that contains the \eqn{J} blocks of variables \eqn{\mathbf{X_1}, \mathbf{X_2}, ..., \mathbf{X_J}}.}
@@ -39,6 +40,8 @@ If tau is a matrix, tau[k, j] is associated with \eqn{\mathbf{X}_{jk}} (\eqn{k}t
 \item{na.rm}{If TRUE, runs rgcca only on available data.}
 
 \item{estimateNA}{If TRUE, missing values are estimated during the RGCCA calculation}
+
+\item{prescaling}{If TRUE, the scaling-centering steps are not applied in this function, and should be before running rgccad}
 }
 \value{
 \item{Y}{A list of \eqn{J} elements. Each element of \eqn{Y} is a matrix that contains the RGCCA components for the corresponding block.}

@@ -10,6 +10,13 @@ X2[7,1]=NA
 X2[5,1]=NA
 A=list(X1,X2)
 Ainter=intersection(A=A)
+
+X1[1,]=NA
+X2[7,1]=NA
+X2[5,1]=NA
+A2=lapply(A,scale)
+Ainter=intersection(A=A2)
+
 test_that("intersection_1",{expect_true(dim(Ainter[[1]])[1]==4)})
 # too many subjects with missing values
 X3[3,1:2]=NA

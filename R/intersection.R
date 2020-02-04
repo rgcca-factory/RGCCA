@@ -20,6 +20,9 @@ intersection=function(A)
 {
 	A=lapply(A,as.matrix)
 
+    centering=lapply(A,function(x){attributes(x)$'scaled:center'})
+    scaling=lapply(A,function(x){attributes(x)$'scaled:scale'})
+    
 #	lapply(A,function(x){if(is.null(rownames(x))){print("one matrix has no colnames")}})
 	newList=lapply(A,
 		function(x) 
@@ -54,5 +57,16 @@ intersection=function(A)
 	}
 	else
 	{print("less than 3 subjects in the intersection");interlist=NA}
+    for (i in 1:length(interlist))
+    {
+        if(!is.null(centering[[i]]))
+        {
+            attr(interlist[[i]],"scaled:center")=centering[[i]]
+        }
+        if(!is.null(scaling[[i]]))
+        {
+            attr(interlist[[i]],"scaled:scale")=scaling[[i]]
+        }
+    }
 	return(interlist)
 }
