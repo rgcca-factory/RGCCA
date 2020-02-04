@@ -35,7 +35,10 @@ print.rgcca <- function(x,...)
   colnames(x$call$connection) = rownames(x$call$connection) = names(x$a) ; print(x$call$connection)
   cat("The", x$call$scheme, "scheme was used.", fill = TRUE)
   for (i in 1:NCOL(x$call$connection)) {
-    cat("The shrinkage parameter used for block", i, "was:", 
-          round(x$call$tau[i], 4), fill = TRUE,...)
+      tau <- x$call$tau[i]
+          if (tau != "optimal")
+              tau <- round(tau , 4)
+      cat("The shrinkage parameter used for block", i, "was:", 
+          tau, fill = TRUE,...)
   }
 }
