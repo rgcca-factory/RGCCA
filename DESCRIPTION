@@ -1,7 +1,7 @@
 Package: RGCCA
 Type: Package
 Title: RGCCA and Sparse GCCA for multi-block data analysis
-Version: 2.0
+Version: 3.0
 Date: 2013-07-24
 Author: Arthur Tenenhaus and Vincent Guillemot
 Maintainer: Arthur Tenenhaus <arthur.tenenhaus@supelec.fr>
