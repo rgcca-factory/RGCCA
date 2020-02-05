@@ -376,7 +376,7 @@ check_integer <- function(x, y = x, type = "scalar", float = FALSE, min = 1) {
 load_libraries <- function(librairies) {
     for (l in librairies) {
         if (!(l %in% installed.packages()[, "Package"]))
-            utils::install.packages(l, repos = "http://cran.us.r-project.org")
+            utils::install.packages(l, repos = "http://cran.wustl.edu")
         library(
             l,
             character.only = TRUE,

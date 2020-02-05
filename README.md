@@ -110,9 +110,9 @@ Required:
 
 ```
 sudo apt-get install -y git r-base && \
-    R -e 'install.packages(c("RGCCA", "ggplot2", "optparse", "scales", "igraph", "shiny"))' && \
-    git clone https://github.com/BrainAndSpineInstitute/rgcca_Rpackage && \
-	cd rgcca_Rpackage
+    R -e 'install.packages(c("RGCCA", "ggplot2", "optparse", "scales", "igraph", "shiny", ""))' && \
+    git clone https://github.com/rgcca-factory/RGCCA && \
+	cd RGCCA
 ```
 
 On Ubuntu, if dependencies errors appear for igraph and plotly, try :

@@ -54,7 +54,7 @@ plot_var_2D <- function(
     n_mark = 100,
     collapse = FALSE,
     no_overlap = FALSE,
-    title = "Correlation circle",
+    title = "Variable correlations with",
     ...) {
 
     x <- y <- NULL
