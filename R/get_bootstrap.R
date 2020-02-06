@@ -19,25 +19,25 @@
 #' @export
 #' @importFrom stats pt
 get_bootstrap <- function(
-    rgcca,
+   
     w,
     comp = 1,
     i_block = length(w[[1]]),
     collapse = FALSE,
     n_cores = parallel::detectCores() - 1) {
 
-    check_ncol(rgcca$Y, i_block)
+    check_ncol(w$w$rgcca$Y, i_block)
 
     if (n_cores == 0)
         n_cores <- 1
 
-    if (collapse && rgcca$call$superblock) {
-        rgcca$a <- rgcca$a[-length(rgcca$a)]
-        if (i_block > length(rgcca$a))
-            i_block <- length(rgcca$a)
+    if (collapse && w$rgcca$call$superblock) {
+        w$rgcca$a <- w$rgcca$a[-length(w$rgcca$a)]
+        if (i_block > length(w$rgcca$a))
+            i_block <- length(w$rgcca$a)
     }
 
-    if (comp > min(rgcca$call$ncomp))
+    if (comp > min(w$rgcca$call$ncomp))
         stop("Selected dimension was not associated to every blocks",
              exit_code = 113)
 
@@ -46,7 +46,7 @@ get_bootstrap <- function(
     mean <- weight <- sd <- occ <- list()
 
     if (collapse)
-        J <- seq(length(rgcca$a))
+        J <- seq(length(w$rgcca$a))
     else
         J <- i_block
 
@@ -57,7 +57,7 @@ get_bootstrap <- function(
             function(x) x[[i]][, comp],
              mc.cores = n_cores)
 
-        weight[[i]] <- rgcca$a[[i]][, comp]
+        weight[[i]] <- w$rgcca$a[[i]][, comp]
         w_select <- matrix(
             unlist(w_bind),
             nrow = length(w_bind),
@@ -69,7 +69,7 @@ get_bootstrap <- function(
 
         n <- seq(NCOL(w_select))
 
-        if (rgcca$call$type %in% c("spls", "spca", "sgcca")) {
+        if (w$rgcca$call$type %in% c("spls", "spca", "sgcca")) {
 
             occ[[i]] <- unlist(
                 parallel::mclapply(n,
@@ -112,17 +112,17 @@ get_bootstrap <- function(
 
     df <- data.frame(
         mean = mean,
-        rgcca = weight,
-        intneg = mean - (tail * sd/sqrt(n_boot)),
-        intpos = mean + (tail * sd/sqrt(n_boot)),
-        br = abs(mean) / sd,
+        estimate = weight,
+        lower_band = mean - (tail * sd/sqrt(n_boot)),
+        upper_band = mean + (tail * sd/sqrt(n_boot)),
+        bootstrap_ratio = abs(mean) / sd,
         p.vals,
         BH = p.adjust(p.vals, method = "BH")
     )
 
-    if (rgcca$call$type %in% c("spls", "spca", "sgcca")) {
+    if (w$rgcca$call$type %in% c("spls", "spca", "sgcca")) {
         index <- 8
-        df$occ <- occ
+        df$occurrences <- occ
     }else{
         index <- 5
         df$sign <- rep("", NROW(df))
@@ -134,7 +134,7 @@ get_bootstrap <- function(
     }
 
     if (collapse)
-        df$color <- as.factor(get_bloc_var(rgcca$a, collapse = collapse))
+        df$color <- as.factor(get_bloc_var(w$rgcca$a, collapse = collapse))
 
     zero_var <- which(df[, 1] == 0)
     if (NROW(df) > 1 && length(zero_var) != 0)
@@ -144,10 +144,10 @@ get_bootstrap <- function(
     attributes(b)$indexes <-
         list(
             mean = "Mean bootstrap weights",
-            br = "Bootstrap-ratio",
+            bootstrap_ratio = "Bootstrap-ratio",
             sign = "Significant 95% \nbootstrap interval",
-            occ = "Non-zero occurences",
-            rgcca = "RGCCA weights"
+            occurrences = "Non-zero occurrences",
+            estimate = "RGCCA weights"
         )
     attributes(b)$type <- class(rgcca)
     attributes(b)$n_boot <- n_boot

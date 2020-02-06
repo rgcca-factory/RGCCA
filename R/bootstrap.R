@@ -42,6 +42,7 @@ bootstrap <- function(
         mc.cores = n_cores)
 
     cat("OK.\n", append = TRUE)
-
-    return(W)
+    
+  
+    return(list(W=W,call=rgcca))
 }
