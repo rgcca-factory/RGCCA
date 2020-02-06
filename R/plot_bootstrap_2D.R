@@ -16,11 +16,11 @@
 #'     politic = Russett[, 6:11] )
 #' rgcca_out = rgcca(blocks, tau = 0.75, type = "sgcca")
 #' boot = bootstrap(rgcca_out, 2, n_cores = 1)
-#' selected.var = get_bootstrap(rgcca_out, boot, n_cores = 1)
+#' selected.var = get_bootstrap(boot, n_cores = 1)
 #' plot_bootstrap_2D(selected.var)
 #' rgcca_out = rgcca(blocks)
 #' boot = bootstrap(rgcca_out, 2, n_cores = 1)
-#' selected.var = get_bootstrap(rgcca_out, boot, n_cores = 1)
+#' selected.var = get_bootstrap(boot, n_cores = 1)
 #' plot_bootstrap_2D(selected.var)
 #' @export
 plot_bootstrap_2D <- function(
