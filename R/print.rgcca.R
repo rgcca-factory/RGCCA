@@ -18,7 +18,7 @@ print.rgcca <- function(x,...)
   cat("Call: ")
   dput(x$call[!names(x$call)%in%c("blocks")])
   cat("\n\n")
-  
+ 
   if(is.list(x$crit))
   {
       critByNcomp=sapply(x$crit,function(t){return(t[length(t)])})
@@ -33,8 +33,17 @@ print.rgcca <- function(x,...)
   cat("There are J =", NCOL(x$call$connection), "blocks.", fill = TRUE)
   cat("The design matrix is:\n") 
   colnames(x$call$connection) = rownames(x$call$connection) = names(x$a) ; print(x$call$connection)
-  cat("The", x$call$scheme, "scheme was used.", fill = TRUE)
-  for (i in 1:NCOL(x$call$connection)) {
+  if(is.function(x$call$scheme))
+  {
+      cat("The", deparse(x$call$scheme), "scheme was used.", fill = TRUE)
+  }
+  else
+  {
+      cat("The", x$call$scheme, "scheme was used.", fill = TRUE)
+      
+  }
+  
+   for (i in 1:NCOL(x$call$connection)) {
       tau <- x$call$tau[i]
           if (tau != "optimal")
               tau <- round(tau , 4)
