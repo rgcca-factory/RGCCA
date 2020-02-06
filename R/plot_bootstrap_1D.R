@@ -25,8 +25,8 @@
 #' @export
 plot_bootstrap_1D <- function(
     b,
-    x = "rgcca",
-    y = "occ",
+    x = "estimate",
+    y = "occurences",
     n = 50,
     title = paste0(attributes(b)$indexes[[x]],
                    "\n(",
@@ -39,7 +39,7 @@ plot_bootstrap_1D <- function(
 
     set_occ <- function(x) {
         match.arg(x, names(attributes(b)$indexes))
-        if (x == "occ" && !x %in% colnames(b))
+        if (x == "occurences" && !x %in% colnames(b))
             return("sign")
         else
             return(x)
@@ -69,9 +69,9 @@ plot_bootstrap_1D <- function(
         ...) +
     labs(fill = attributes(b)$indexes[[y]])
 
-    if (x == "rgcca")
-    p <- p +
-        geom_errorbar(aes(ymin = intneg, ymax = intpos))
+    if (x == "estimate")
+        p <- p +
+            geom_errorbar(aes(ymin = intneg, ymax = intpos))
 
     return(p)
 }
