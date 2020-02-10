@@ -62,11 +62,15 @@ plot2D <- function(
             get(f)(aes(label = rownames(df)),
             size = cex_point)
         )
-        
+
         if (no_overlap && NROW(df) <= 200) {
-            f = paste0(f, '_repel')
-            func$force = 0.2
-            func$max.iter = 500
+            if (("ggrepel" %in% installed.packages()[, "Package"])) {
+                f<-= paste0(f, '_repel')
+                func$force <- 0.2
+                func$max.iter <- 500
+            }
+            else
+                warning("Please install ggrepel.")
         }
     }
 
@@ -79,7 +83,7 @@ plot2D <- function(
 
     if (is.null(name_group))
         name_group <- 0
-    
+
     axis <- function(margin){
         element_text(
             face = "italic",
