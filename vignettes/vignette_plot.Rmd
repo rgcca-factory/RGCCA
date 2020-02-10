@@ -1,5 +1,5 @@
 ---
-title: "The RGCCA package for Regularized/Sparse Generalized Canonical Correlation Analysis"
+title: "Performs multi-variate analysis (PCA, CCA, PLS, R/SGCCA, etc.) and produces graphical outputs (e.g. variables and individuals plots)"
 author: "Etienne CAMENEN"
 date: "`r Sys.Date()`"
 output:
@@ -52,7 +52,7 @@ header-includes:
 - \usepackage{pgfplots}
 - \usepackage{microtype}
 vignette: >
-  %\VignetteIndexEntry{The RGCCA package for Regularized/Sparse Generalized Canonical Correlation Analysis}
+  %\VignetteIndexEntry{Performs multi-variate analysis (PCA, CCA, PLS, R/SGCCA, etc.) and produces graphical outputs (e.g. variables and individuals plots)}
   \usepackage[utf8]{inputenc}
   %\VignetteEngine{knitr::rmarkdown}
 ---
