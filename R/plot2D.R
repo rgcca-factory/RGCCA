@@ -17,25 +17,25 @@
 #' @param cex_point An integer for the size of the points or the text in the plot
 #' @param cex_lab An integer for the size of the axis titles
 #' @examples
-#' #df = as.data.frame(matrix(runif(20*2, min = -1), 20, 2))
-#' #AVE = lapply(seq(4), function(x) runif(2))
-#' #rgcca_out = list(AVE = list(AVE_X = AVE))
-#' #plot2D(rgcca_out, df, "Samples", rep(c("a","b"), each=10), "Response")
+#' df = as.data.frame(matrix(runif(20*2, min = -1), 20, 2))
+#' AVE = lapply(seq(4), function(x) runif(2))
+#' rgcca_out = list(AVE = list(AVE_X = AVE), call = list(type = "rgcca"))
+#' plot2D(rgcca_out, df, "Samples", rep(c("a","b"), each=10), "Response")
 #' data(Russett)
 #' blocks = list(agriculture = Russett[, seq(3)], industry = Russett[, 4:5],
 #' politic = Russett[, 6:11] )
-#' # rgcca_out = rgcca(blocks)
-#' # plot2D(rgcca_out)
+#' rgcca_out = rgcca(blocks)
+#' plot2D(rgcca_out, df)
 #' @export
 plot2D <- function(
     rgcca,
     df,
     title = "Biplot",
-    group,
+    group = 1,
     name_group = "Response",
     compx = 1,
     compy = 2,
-    i_block = NULL,
+    i_block = 1,
     p = NULL,
     text = TRUE,
     i_block_y = i_block,
@@ -62,11 +62,15 @@ plot2D <- function(
             get(f)(aes(label = rownames(df)),
             size = cex_point)
         )
-        
+
         if (no_overlap && NROW(df) <= 200) {
-            f = paste0(f, '_repel')
-            func$force = 0.2
-            func$max.iter = 500
+            if (("ggrepel" %in% installed.packages()[, "Package"])) {
+                f <- paste0(f, '_repel')
+                func$force <- 0.2
+                func$max.iter <- 500
+            }
+            else
+                warning("Please install ggrepel.")
         }
     }
 
@@ -79,7 +83,7 @@ plot2D <- function(
 
     if (is.null(name_group))
         name_group <- 0
-    
+
     axis <- function(margin){
         element_text(
             face = "italic",

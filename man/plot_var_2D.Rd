@@ -6,7 +6,7 @@
 \usage{
 plot_var_2D(rgcca, compx = 1, compy = 2, i_block = length(rgcca$a),
   text = TRUE, remove_var = TRUE, n_mark = 100, collapse = FALSE,
-  no_overlap = FALSE, title = "Correlation circle", ...)
+  no_overlap = FALSE, title = "Variable correlations with", ...)
 }
 \arguments{
 \item{rgcca}{A list giving the results of a R/SGCCA}

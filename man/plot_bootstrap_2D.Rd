@@ -5,7 +5,8 @@
 \title{Plot a bootstrap in 2D}
 \usage{
 plot_bootstrap_2D(b, x = "br", y = "occ",
-  title = "Variable selection\\nby bootstrap", colors = NULL,
+  title = paste("Variable selection \\nby",
+  attributes(selected.var)$n_boot, "bootstraps"), colors = NULL,
   cex = 1, cex_main = 25 * cex, cex_sub = 16 * cex, cex_point = 3 *
   cex, cex_lab = 19 * cex)
 }

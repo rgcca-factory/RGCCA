@@ -260,7 +260,7 @@ check_arg <- function(opt) {
 
     if (is.null(opt$datasets))
         stop(paste0("datasets is required."), exit_code = 121)
-    
+
     if (is.null(opt$scheme))
         opt$scheme <- "factorial"
     else if (!opt$scheme %in% seq(4)) {
@@ -372,11 +372,10 @@ check_integer <- function(x, y = x, type = "scalar", float = FALSE, min = 1) {
     return(y)
 }
 
-
 load_libraries <- function(librairies) {
     for (l in librairies) {
         if (!(l %in% installed.packages()[, "Package"]))
-            utils::install.packages(l, repos = "http://cran.wustl.edu")
+            utils::install.packages(l, repos = "cran.us.r-project.org")
         library(
             l,
             character.only = TRUE,
@@ -416,7 +415,8 @@ opt <- list(
         collapse = ",")
 )
 
-load_libraries(c("RGCCA", "ggplot2", "optparse", "scales", "igraph", "ggrepel", "MASS"))
+load_libraries(c("RGCCA", "ggplot2", "optparse", "scales", "igraph", "MASS"))
+try(load_libraries("ggrepel"), silent = TRUE)
 
 tryCatch(
     opt <- check_arg(parse_args(getArgs())),
