@@ -5,7 +5,7 @@
 \title{Create a list of matrix from loading files corresponding to blocks}
 \usage{
 load_blocks(file, names = NULL, sep = "\\t", header = TRUE,
-  rownames = 1)
+  rownames = 1, dec = ".")
 }
 \arguments{
 \item{file}{A character giving the path of a file}
