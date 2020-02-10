@@ -377,12 +377,13 @@ load_libraries <- function(librairies) {
     for (l in librairies) {
         if (!(l %in% installed.packages()[, "Package"]))
             utils::install.packages(l, repos = "http://cran.wustl.edu")
-        library(
-            l,
-            character.only = TRUE,
-            warn.conflicts = FALSE,
-            quietly = TRUE
-        )
+        suppressPackageStartupMessages(
+            library(
+                l,
+                character.only = TRUE,
+                warn.conflicts = FALSE,
+                quietly = TRUE
+        ))
     }
 }
 
@@ -520,7 +521,7 @@ if (!is.null(opt$response)) {
 
 # Bootstrap
 boot <- bootstrap(rgcca_out, n_boot = 5)
-selected.var <- get_bootstrap(rgcca_out, boot, opt$compx, opt$block)
+selected.var <- get_bootstrap(boot, opt$compx, opt$block)
 plot_bootstrap_2D(selected.var)
 plot_bootstrap_1D(selected.var)
 

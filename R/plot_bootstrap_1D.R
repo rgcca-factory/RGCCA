@@ -26,7 +26,7 @@
 plot_bootstrap_1D <- function(
     b,
     x = "estimate",
-    y = "occurences",
+    y = "occurrences",
     n = 50,
     title = paste0(attributes(b)$indexes[[x]],
                    "\n(",
@@ -39,7 +39,7 @@ plot_bootstrap_1D <- function(
 
     set_occ <- function(x) {
         match.arg(x, names(attributes(b)$indexes))
-        if (x == "occurences" && !x %in% colnames(b))
+        if (x == "occurrences" && !x %in% colnames(b))
             return("sign")
         else
             return(x)
@@ -71,7 +71,7 @@ plot_bootstrap_1D <- function(
 
     if (x == "estimate")
         p <- p +
-            geom_errorbar(aes(ymin = intneg, ymax = intpos))
+            geom_errorbar(aes(ymin = lower_band, ymax = upper_band))
 
     return(p)
 }

@@ -26,7 +26,7 @@
 plot_bootstrap_2D <- function(
     b,
     x = "bootstrap_ratio",
-    y = "occurences",
+    y = "occurrences",
     title = paste("Variable selection \nby",
            attributes(selected.var)$n_boot,
            "bootstraps"),
@@ -41,7 +41,7 @@ plot_bootstrap_2D <- function(
 
     set_occ <- function(x) {
         match.arg(x, names(attributes(b)$indexes))
-        if (x == "occurences" && !x %in% colnames(b))
+        if (x == "occurrences" && !x %in% colnames(b))
             return("sign")
         else
             return(x)
@@ -91,7 +91,7 @@ plot_bootstrap_2D <- function(
     scale_color_manual(values = color_group(seq(2), colors = colors))
 
     limites <- function(p, x){
-        if (x %in% c("sign", "occurences")) {
+        if (x %in% c("sign", "occurrences")) {
             axis <- deparse(substitute(x))
             func <- get(paste0(axis, "lim"))
             p <- p + func(0, 1)

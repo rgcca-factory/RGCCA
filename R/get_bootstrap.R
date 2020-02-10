@@ -14,14 +14,14 @@
 #' blocks = list(agriculture = Russett[, seq(3)], industry = Russett[, 4:5],
 #'     politic = Russett[, 6:11] )
 #' rgcca_out = rgcca(blocks)
-#' boot = bootstrap(rgcca_out, 2, FALSE, n_cores = 1)
+#' boot = bootstrap(rgcca_out, 2, superblock = FALSE, n_cores = 1)
 #' get_bootstrap(boot, n_cores = 1)
 #' @export
 #' @importFrom stats pt
 get_bootstrap <- function(
     b,
     comp = 1,
-    i_block = length(b[[1]]),
+    i_block = length(b[[1]][[1]]),
     collapse = FALSE,
     n_cores = parallel::detectCores() - 1) {
 
@@ -52,7 +52,7 @@ get_bootstrap <- function(
     for (i in J) {
 
         b_bind <- parallel::mclapply(
-            b,
+            b[[1]],
             function(x) x[[i]][, comp],
              mc.cores = n_cores)
 
