@@ -95,7 +95,6 @@ get_bootstrap <- function(
     }
     
     n_boot <- length(b)
-    rm(b); gc()
 
     occ <- unlist(occ)
     mean <- unlist(mean)
@@ -129,6 +128,8 @@ get_bootstrap <- function(
                 df$sign[i] <- "*"
         
     }
+    
+    rm(b); gc()
 
     if (collapse)
         df$color <- as.factor(get_bloc_var(b$rgcca$a, collapse = collapse))
