@@ -95,13 +95,15 @@ rgcca <- function(
     opt$superblock <- check_superblock(response, opt$superblock, !quiet)
     opt$blocks <- set_superblock(opt$blocks, opt$superblock, type, !quiet)
 
+
     if (!is.null(response)) {
         # || tolower(type) == "ra"
         response <- check_blockx("response", response, opt$blocks)
-        par <- c("blocks", "ncomp", "penalty")
-        for (i in seq(length(par)))
-            opt[[par[i]]] <- c(opt[[par[i]]][-response], opt[[par[i]]][response])
+        pars <- c("blocks", "ncomp", "penalty")
+        for (i in seq(length(pars)))
+            opt[[pars[i]]] <- c(opt[[pars[i]]][-response], opt[[pars[i]]][response])
     }
+
 
     if (!is.matrix(opt$connection) || !is.null(response))
         opt$connection <- set_connection(
