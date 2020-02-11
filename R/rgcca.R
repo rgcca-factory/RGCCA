@@ -36,7 +36,8 @@ rgcca <- function(
     connection = 1 - diag(length(blocks)),
     response = NULL,
     superblock = TRUE,
-    tau = rep(1, length(blocks)),
+    tau = NULL,
+    sparsity = NULL,
     ncomp = rep(2, length(blocks)),
     type = "rgcca",
     verbose = FALSE,
@@ -54,6 +55,24 @@ rgcca <- function(
     knn.sameBlockWeight = TRUE,
     pca.ncp = 1) {
 
+    if (tolower(type) %in% c("sgcca", "spca", "spls")) {
+        if (!missing(tau))
+           stop(paste0("penalty parameter required for ", tolower(type), "."))
+        if (is.null(sparsity))
+            sparsity <- rep(1, length(blocks))
+        gcca <- sgccaNa
+        par <- "c1"
+        penalty <- sparsity
+    } else{
+        if (!missing(sparsity))
+           stop(paste0("tau parameter required for ", tolower(type), "."))
+        if (is.null(tau))
+            tau <- rep(1, length(blocks))
+        gcca <- rgccaNa
+        par <- "tau"
+        penalty <- tau
+    }
+
     match.arg(tolower(type), c("rgcca", "cpca-w", "gcca", "hpca", "maxbet-b", "maxbet", 
             "maxdiff-b","maxdiff", "maxvar-a", "maxvar-b", "maxvar", "niles", 
             "r-maxvar", "rcon-pca", "ridge-gca", "sabscor", "ssqcor", "ssqcor", 
@@ -61,13 +80,13 @@ rgcca <- function(
             "sumcov-2", "sumcov", "sabscov", "plspm", "cca", "ra", "ifa", "pls",
             "pca", "sgcca", "spls", "spca"))
 
-    tau <- elongate_arg(tau, blocks)
+    penalty <- elongate_arg(penalty, blocks)
     ncomp <- elongate_arg(ncomp, blocks)
-    
+
     opt <- select_analysis(
         blocks = blocks,
         connection = connection,
-        tau = tau,
+        penalty = penalty,
         ncomp = ncomp,
         scheme = scheme,
         superblock = superblock,
@@ -83,7 +102,7 @@ rgcca <- function(
     if (!is.null(response)) {
         # || tolower(type) == "ra"
         response <- check_blockx("response", response, opt$blocks)
-        par <- c("blocks", "ncomp", "tau")
+        par <- c("blocks", "ncomp", "penalty")
         for (i in seq(length(par)))
             opt[[par[i]]] <- c(opt[[par[i]]][-response], opt[[par[i]]][response])
     }
@@ -95,7 +114,7 @@ rgcca <- function(
         )
 
     check_connection(opt$connection, opt$blocks)
-    opt$tau <- check_tau(opt$tau, opt$blocks, type)
+    opt$penalty <- check_tau(opt$penalty, opt$blocks, type)
     opt$ncomp <- check_ncomp(opt$ncomp, opt$blocks)
 
     warn_on <- FALSE
@@ -107,14 +126,6 @@ rgcca <- function(
 
     if (warn_on || !quiet)
         message("RGCCA in progress ...")
-
-    if (tolower(type) %in% c("sgcca", "spca", "spls")) {
-        gcca <- sgccaNa
-        par <- "c1"
-    } else{
-        gcca <- rgccaNa
-        par <- "tau"
-    }
 
     func <- quote(
         gcca(
@@ -137,7 +148,7 @@ rgcca <- function(
         )
     )
 
-    func[[par]] <- opt$tau
+    func[[par]] <- opt$penalty
     func_out <- eval(as.call(func))$rgcca
 
     for (i in c("a", "astar", "Y")) {
@@ -158,7 +169,7 @@ rgcca <- function(
         scheme = opt$scheme
     )
 
-    func_out$call[[par]] <- opt$tau
+    func_out$call[[par]] <- opt$penalty
 
     for (i in c(
         "scale",
