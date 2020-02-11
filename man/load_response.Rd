@@ -5,7 +5,7 @@
 \title{Create a matrix corresponding to the response}
 \usage{
 load_response(blocks = NULL, file = NULL, sep = "\\t",
-  header = TRUE, rownames = 1)
+  header = TRUE, rownames = 1, dec = ".")
 }
 \arguments{
 \item{blocks}{A list of matrix}

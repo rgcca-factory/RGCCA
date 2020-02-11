@@ -4,8 +4,9 @@
 \alias{plot_bootstrap_1D}
 \title{Plot a bootstrap in 1D}
 \usage{
-plot_bootstrap_1D(b, x = "rgcca", y = "occ", n = 50,
-  title = attributes(b)$indexes[[x]],
+plot_bootstrap_1D(b, x = "estimate", y = "occurrences", n = 50,
+  title = paste0(attributes(b)$indexes[[x]], "\\n(",
+  attributes(selected.var)$n_boot, " bootstraps)"),
   colors = c(color_group(seq(3))[1], "white", color_group(seq(3))[3]),
   ...)
 }
@@ -36,10 +37,10 @@ blocks = list(agriculture = Russett[, seq(3)], industry = Russett[, 4:5],
     politic = Russett[, 6:11] )
 rgcca_out = rgcca(blocks, tau = 0.75, type = "sgcca")
 boot = bootstrap(rgcca_out, 2, n_cores = 1)
-selected.var = get_bootstrap(rgcca_out, boot, n_cores = 1)
+selected.var = get_bootstrap(boot, n_cores = 1)
 plot_bootstrap_1D(selected.var)
 rgcca_out = rgcca(blocks)
 boot = bootstrap(rgcca_out, 2, n_cores = 1)
-selected.var = get_bootstrap(rgcca_out, boot, n_cores = 1)
+selected.var = get_bootstrap(boot, n_cores = 1)
 plot_bootstrap_1D(selected.var)
 }

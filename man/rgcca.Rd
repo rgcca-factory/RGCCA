@@ -8,7 +8,7 @@ rgcca(blocks, connection = 1 - diag(length(blocks)), response = NULL,
   superblock = TRUE, tau = rep(1, length(blocks)), ncomp = rep(2,
   length(blocks)), type = "rgcca", verbose = FALSE,
   scheme = "factorial", scale = TRUE, init = "svd", bias = TRUE,
-  tol = 1e-08, quiet = FALSE, sameBlockWeight = TRUE,
+  tol = 1e-08, quiet = TRUE, sameBlockWeight = TRUE,
   method = "complete", knn.k = "all", knn.output = "weightedMean",
   knn.klim = NULL, knn.sameBlockWeight = TRUE, pca.ncp = 1)
 }

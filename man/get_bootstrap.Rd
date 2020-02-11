@@ -4,14 +4,10 @@
 \alias{get_bootstrap}
 \title{Extract a bootstrap}
 \usage{
-get_bootstrap(rgcca, w, comp = 1, i_block = length(w[[1]]),
+get_bootstrap(b, comp = 1, i_block = length(b[[1]][[1]]),
   collapse = FALSE, n_cores = parallel::detectCores() - 1)
 }
 \arguments{
-\item{rgcca}{A list giving the results of a R/SGCCA}
-
-\item{w}{A list of list weights (one per bootstrap per blocks)}
-
 \item{comp}{An integer giving the index of the analysis components}
 
 \item{i_block}{An integer giving the index of a list of blocks}
@@ -19,6 +15,8 @@ get_bootstrap(rgcca, w, comp = 1, i_block = length(w[[1]]),
 \item{collapse}{A boolean to combine the variables of each blocks as result}
 
 \item{n_cores}{An integer for the number of cores used in parallelization}
+
+\item{w}{A list of list weights (one per bootstrap per blocks)}
 }
 \value{
 A matrix containing the means, 95% intervals, bootstrap ratio and p-values
@@ -32,6 +30,6 @@ data("Russett")
 blocks = list(agriculture = Russett[, seq(3)], industry = Russett[, 4:5],
     politic = Russett[, 6:11] )
 rgcca_out = rgcca(blocks)
-boot = bootstrap(rgcca_out, 2, FALSE, n_cores = 1)
-get_bootstrap(rgcca_out, boot, n_cores = 1)
+boot = bootstrap(rgcca_out, 2, superblock = FALSE, n_cores = 1)
+get_bootstrap(boot, n_cores = 1)
 }

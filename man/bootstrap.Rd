@@ -4,15 +4,13 @@
 \alias{bootstrap}
 \title{Compute bootstrap}
 \usage{
-bootstrap(rgcca, n_boot = 5, scale = FALSE,
-  n_cores = parallel::detectCores() - 1, ...)
+bootstrap(rgcca, n_boot = 5, n_cores = parallel::detectCores() - 1,
+  ...)
 }
 \arguments{
 \item{rgcca}{A list giving the results of a R/SGCCA}
 
 \item{n_boot}{A integer for the number of boostrap}
-
-\item{scale}{A boolean scaling the blocks}
 
 \item{n_cores}{An integer for the number of cores used in parallelization}
 
