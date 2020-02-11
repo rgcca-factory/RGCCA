@@ -4,7 +4,7 @@
 #' @inheritParams set_connection
 #' @inheritParams bootstrap
 #' @inheritParams rgcca
-#' @param p_sparsity A matrix, a vector or an integer containing sets of constraint 
+#' @param p_spars A matrix, a vector or an integer containing sets of constraint 
 #' variables, one row by set. By default, sgcca.permute takes 10 sets between 
 #' min values ($1/sqrt(ncol)$) and 1
 #' @param p_ncomp A matrix, a vector or an integer containing sets of number of 
@@ -22,9 +22,9 @@
 #'     politic = Russett[, 6:11] )
 #' rgcca_permutation(A, nperm = 2, n_cores = 1)
 #' rgcca_permutation(A, p_ncomp = TRUE, nperm = 2, n_cores = 1)
-#' rgcca_permutation(A, p_sparsity = 0.8, nperm = 2, n_cores = 1)
-#' rgcca_permutation(A, p_sparsity = c(0.6, 0.75, 0.5), nperm = 2, n_cores = 1)
-#' rgcca_permutation(A, p_sparsity = matrix(c(0.6, 0.75, 0.5), 3, 3, byrow = T), nperm = 2, n_cores = 1)
+#' rgcca_permutation(A, p_spars = 0.8, nperm = 2, n_cores = 1)
+#' rgcca_permutation(A, p_spars = c(0.6, 0.75, 0.5), nperm = 2, n_cores = 1)
+#' rgcca_permutation(A, p_spars = matrix(c(0.6, 0.75, 0.5), 3, 3, byrow = T), nperm = 2, n_cores = 1)
 #' rgcca_permutation(A, p_ncomp = 2, nperm = 2, n_cores = 1)
 #' rgcca_permutation(A, p_ncomp = c(2,2,3), nperm = 2, n_cores = 1)
 #' rgcca_permutation(A, p_ncomp = matrix(c(2,2,3), 3, 3, byrow = T), nperm = 2, n_cores = 1)
@@ -32,14 +32,14 @@
 rgcca_permutation <- function(
     blocks,
     type = "rgcca",
-    p_sparsity = TRUE,
+    p_spars = TRUE,
     p_ncomp = FALSE,
     nperm = 20,
     n_cores = parallel::detectCores() - 1,
     ...) {
 
-    if (any(p_ncomp == FALSE) && any(p_sparsity == FALSE))
-        stop("Select one parameter among 'p_sparsity' or 'p_ncomp' to optimize. By default, p_sparsity is selected.")
+    if (any(p_ncomp == FALSE) && any(p_spars == FALSE))
+        stop("Select one parameter among 'p_spars' or 'p_ncomp' to optimize. By default, p_spars is selected.")
 
     if (length(blocks) < 1)
         stop("Permutation required a number of blocks larger than 1.")
@@ -69,20 +69,20 @@ rgcca_permutation <- function(
         par <- list("ncomp", p_ncomp)
     }
 
-    if (!any(p_sparsity == FALSE)) {
-        if (identical(p_sparsity, TRUE))
-            p_sparsity <- set_spars()
-        else if (class(p_sparsity) %in% c("data.frame", "matrix"))
-            p_sparsity <- t(sapply(seq(NROW(p_sparsity)), function(x) check_tau(p_sparsity[x, ], blocks, type = "sgcca")))
+    if (!any(p_spars == FALSE)) {
+        if (identical(p_spars, TRUE))
+            p_spars <- set_spars()
+        else if (class(p_spars) %in% c("data.frame", "matrix"))
+            p_spars <- t(sapply(seq(NROW(p_spars)), function(x) check_tau(p_spars[x, ], blocks, type = "sgcca")))
         else{
-            if (any(p_sparsity < min_spars))
-                stop(paste0("p_sparsity should be upper than 1 / sqrt(NCOL(blocks)) : ", paste0(round(min_spars, 2), collapse = ",")))
-            p_sparsity <- check_tau(p_sparsity, blocks, type = "sgcca")
-            p_sparsity <- set_spars(max = p_sparsity)
+            if (any(p_spars < min_spars))
+                stop(paste0("p_spars should be upper than 1 / sqrt(NCOL(blocks)) : ", paste0(round(min_spars, 2), collapse = ",")))
+            p_spars <- check_tau(p_spars, blocks, type = "sgcca")
+            p_spars <- set_spars(max = p_spars)
         }
 
-        colnames(p_sparsity) <- names(blocks)
-        par <- list("sparsity", p_sparsity)
+        colnames(p_spars) <- names(blocks)
+        par <- list("sparsity", p_spars)
         type <- "sgcca"
     }
 
@@ -106,7 +106,7 @@ rgcca_permutation <- function(
     #         cl,
     #         c(
     #             "blocks",
-    #             "p_sparsity",
+    #             "p_spars",
     #             "nperm",
     #             "C",
     #             "ncomp",
