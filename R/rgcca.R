@@ -137,8 +137,8 @@ rgcca <- function(
         )
     )
 
+    func[[par]] <- opt$tau
     func_out <- eval(as.call(func))$rgcca
-   # rgcca$call$blocks <- rgcca$A #TODO
 
     for (i in c("a", "astar", "Y")) {
         names(func_out[[i]]) <- names(opt$blocks)
