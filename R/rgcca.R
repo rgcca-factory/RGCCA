@@ -36,8 +36,8 @@ rgcca <- function(
     connection = 1 - diag(length(blocks)),
     response = NULL,
     superblock = TRUE,
-    tau = NULL,
-    sparsity = NULL,
+    tau = rep(1, length(blocks)),
+    sparsity = rep(1, length(blocks)),
     ncomp = rep(2, length(blocks)),
     type = "rgcca",
     verbose = FALSE,
@@ -58,16 +58,12 @@ rgcca <- function(
     if (tolower(type) %in% c("sgcca", "spca", "spls")) {
         if (!missing(tau))
            stop(paste0("penalty parameter required for ", tolower(type), "."))
-        if (is.null(sparsity))
-            sparsity <- rep(1, length(blocks))
         gcca <- sgccaNa
         par <- "c1"
         penalty <- sparsity
-    } else{
+    }else{
         if (!missing(sparsity))
            stop(paste0("tau parameter required for ", tolower(type), "."))
-        if (is.null(tau))
-            tau <- rep(1, length(blocks))
         gcca <- rgccaNa
         par <- "tau"
         penalty <- tau

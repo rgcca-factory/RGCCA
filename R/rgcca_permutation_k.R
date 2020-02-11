@@ -1,11 +1,16 @@
 # An intern function used by sgcca.permute to perform multiple sgcca with permuted rows
-# rgcca_permutation_k(A = blocks, scale = FALSE)
+# data("Russett")
+# blocks = list(agriculture = Russett[, seq(3)], industry = Russett[, 4:5],
+#     politic = Russett[, 6:11] )
+# rgcca_out = rgcca(blocks)
+# rgcca_permutation_k(blocks)
 rgcca_permutation_k <- function(
     blocks,
     par = list("ncomps", expand.grid(rep(list(seq(2)), length(blocks)))),
     connection = 1 - diag(length(blocks)),
     response = NULL,
     tau = rep(1, length(blocks)),
+    sparsity = rep(1, length(blocks)),
     ncomp = rep(2, length(blocks)),
     scheme = "factorial",
     scale = TRUE,
@@ -26,21 +31,12 @@ rgcca_permutation_k <- function(
         parallel::mclapply(
             seq(NROW(par[[2]])),
             function(i) {
-                switch(
-                    par[[1]],
-                    "ncomp" = {
-                        ncomp <- par[[2]][i, ]
-                    },
-                    "c1" = {
-                        tau <- par[[2]][i, ]
-                        type <- "sgcca"
-                })
-                crit <- rgcca(
+                func <- quote(
+                    rgcca(
                         blocks = blocks,
                         connection = connection,
                         response = response,
                         superblock = superblock,
-                        tau = tau,
                         ncomp = ncomp,
                         scheme = scheme,
                         scale = scale,
@@ -50,7 +46,22 @@ rgcca_permutation_k <- function(
                         tol = tol,
                         quiet = TRUE,
                         method = "complete"
-                    )$crit
+                    ))
+                switch(
+                    par[[1]],
+                    "ncomp" = {
+                        ncomp <- par[[2]][i, ]
+                            if (tolower(type) %in% c("sgcca", "spca", "spls"))
+                                func[["penalty"]] <- sparsity
+                            else
+                                func[["tau"]] <- tau
+                    },
+                    "sparsity" = {
+                        func[[par[[1]]]] <- par[[2]][i, ]
+                        type <- "sgcca"
+                })
+                crit <- eval(as.call(func))$crit
+                
                 return(sum(sapply(crit, function(x) sum(x))))
             },
         mc.cores = n_cores))
