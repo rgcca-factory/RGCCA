@@ -1310,7 +1310,7 @@ server <- function(input, output, session) {
             if (is.null(selected.var))
                 assign(
                     "selected.var", 
-                    get_bootstrap(rgcca_out, boot, compx, id_block),
+                    get_bootstrap(boot, compx, id_block),
                     .GlobalEnv
                 )
 

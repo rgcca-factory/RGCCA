@@ -45,7 +45,7 @@ rgcca <- function(
     init = "svd",
     bias = TRUE,
     tol = 1e-08,
-    quiet = FALSE,
+    quiet = TRUE,
     sameBlockWeight = TRUE,
     method = "complete",
     knn.k = "all",
@@ -105,7 +105,7 @@ rgcca <- function(
             warn_on <- TRUE
     }
 
-    if (warn_on && !quiet)
+    if (warn_on || !quiet)
         message("RGCCA in progress ...")
 
     if (tolower(type) %in% c("sgcca", "spca", "spls")) {
@@ -137,8 +137,8 @@ rgcca <- function(
         )
     )
 
+    func[[par]] <- opt$tau
     func_out <- eval(as.call(func))$rgcca
-   # rgcca$call$blocks <- rgcca$A #TODO
 
     for (i in c("a", "astar", "Y")) {
         names(func_out[[i]]) <- names(opt$blocks)

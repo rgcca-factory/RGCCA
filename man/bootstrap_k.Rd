@@ -7,7 +7,8 @@
 bootstrap_k(rgcca, blocks = NULL, connection = 1 -
   diag(length(blocks)), tau = rep(1, length(blocks)), ncomp = rep(2,
   length(blocks)), scheme = "factorial", init = "svd", bias = TRUE,
-  tol = 0.001, type = "rgcca", superblock = TRUE, response = NULL)
+  tol = 0.001, type = "rgcca", scale = TRUE,
+  sameBlockWeight = TRUE, superblock = TRUE, response = NULL)
 }
 \arguments{
 \item{rgcca}{A list giving the results of a R/SGCCA}
@@ -34,6 +35,10 @@ for algorithm initialization}
 \item{type}{A character giving the type of analysis: c('rgcca', 'cpca-w', 'gcca', 'hpca', 'maxbet-b', 'maxbet', 'maxdiff-b','maxdiff', 'maxvar-a', 'maxvar-b', 'maxvar', 'niles', 'r-maxvar', 'rcon-pca',
 'ridge-gca', 'sabscor', 'ssqcor', 'ssqcor', 'ssqcov-1', 'ssqcov-2', 'ssqcov',
 'sum-pca', 'sumcor', 'sumcov-1', 'sumcov-2', 'sumcov.', 'sabscov', 'plspm','cca', 'ra', 'ifa', 'pls','pca')}
+
+\item{scale}{A boolean scaling the blocks}
+
+\item{sameBlockWeight}{If TRUE, all blocks are weighted by their own variance: all the blocks have the same weight}
 
 \item{superblock}{A boolean giving the presence (TRUE) / absence (FALSE) of
 a superblock}

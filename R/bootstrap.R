@@ -21,7 +21,6 @@
 bootstrap <- function(
     rgcca,
     n_boot = 5,
-    scale = FALSE,
     n_cores = parallel::detectCores() - 1,
     ...) {
 
@@ -43,5 +42,5 @@ bootstrap <- function(
 
     cat("OK.\n", append = TRUE)
 
-    return(W)
+    return(list(boostrap = W, rgcca = rgcca))
 }

@@ -17,7 +17,7 @@
  #set.seed(seed=18)
   resBootstrap=bootstrap(rgcca=resRGCCA,n_boot = 2, n_cores = 1)
 #  
- select_var=get_bootstrap(resRGCCA,resBootstrap, n_cores = 1)
+ select_var=get_bootstrap(resBootstrap, n_cores = 1)
 #  plot_bootstrap_1D(select_var)
 #  
 # testthat("bootstrap_1",{expect_true(abs(select_var["labo", 1]-mean(c(resBootstrap[[1]][[4]]["labo", 1], resBootstrap[[2]][[4]]["labo", 1])))<2e-16)})
@@ -32,7 +32,7 @@
 # resRGCCA=rgcca(blocks,ncomp=c(2,2,2))
 # set.seed(seed=18)
 # resBootstrap=bootstrap( rgcca=resRGCCA,n_boot = 2)
-# select_var=get_bootstrap(resRGCCA,resBootstrap)
+# select_var=get_bootstrap(resBootstrap)
 # plot_bootstrap_1D(select_var)
 # 
 # select_var["labo", 1]==mean(c(resBootstrap[[1]][[4]]["labo", 1], resBootstrap[[2]][[4]]["labo", 1]))

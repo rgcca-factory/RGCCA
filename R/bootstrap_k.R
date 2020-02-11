@@ -25,6 +25,8 @@ bootstrap_k <- function(
     bias = TRUE,
     tol = 1e-03,
     type = "rgcca",
+    scale = TRUE,
+    sameBlockWeight = TRUE,
     superblock = TRUE,
     response = NULL) {
 
@@ -38,6 +40,8 @@ bootstrap_k <- function(
         superblock <- rgcca$call$superblock
         type <- rgcca$call$type
         init <- rgcca$call$init
+        sameBlockWeight <- rgcca$call$scale
+        scale <- rgcca$call$scale
 
         if (rgcca$call$type %in% c("sgcca","spls","spca"))
             tau <- rgcca$call$c1
@@ -55,22 +59,18 @@ bootstrap_k <- function(
     } else
         blocks.all <- intersection(blocks)
 
-    boot_blocks <- list(NULL, NULL, NULL)
+    boot_blocks <- list(NULL)
     while (any(sapply(boot_blocks, function(x) length(x)) == 0)) {
-        # Shuffle rows
+
         id_boot <- sample(NROW(blocks[[1]]), replace = TRUE)
 
-        if (any(sapply(blocks, function(x) is.null(attr(x, 'scaled:center')))))
-                stop("Blocks should be scaled before performing bootstraps.")
-        else
-            boot_blocks <- lapply(
-                blocks, 
-                function(x) scale2(x[id_boot, , drop = FALSE], scale = FALSE))
+        boot_blocks <- lapply(
+            blocks, 
+            function(x) x[id_boot, , drop = FALSE])
 
         boot_blocks <- remove_null_sd(boot_blocks)
     }
 
-    # Get boostraped weights
     w <- rgcca(
         boot_blocks,
         connection,
@@ -79,7 +79,8 @@ bootstrap_k <- function(
         tau = tau,
         ncomp = ncomp,
         scheme = scheme,
-        scale = FALSE,
+        scale = scale,
+        sameBlockWeight = sameBlockWeight,
         type = type,
         verbose = FALSE,
         init = init,
