@@ -19,6 +19,7 @@ bootstrap_k <- function(
     blocks = NULL,
     connection = 1 - diag(length(blocks)),
     tau = rep(1, length(blocks)),
+    sparsity = rep(1, length(blocks)),
     ncomp = rep(2, length(blocks)),
     scheme = "factorial",
     init = "svd",
@@ -43,10 +44,13 @@ bootstrap_k <- function(
         sameBlockWeight <- rgcca$call$scale
         scale <- rgcca$call$scale
 
-        if (rgcca$call$type %in% c("sgcca","spls","spca"))
-            tau <- rgcca$call$c1
-        else
-            tau <- rgcca$call$tau
+        if (rgcca$call$type %in% c("sgcca","spls","spca")) {
+            penalty <- rgcca$call$c1
+            par <- "sparsity"
+        } else {
+            penalty <- rgcca$call$tau
+            par <- "tau"
+        }
 
         if (superblock) {
             blocks <- blocks[-length(blocks)]
@@ -56,8 +60,21 @@ bootstrap_k <- function(
         if (!is.null(rgcca$call$response))
             response <- length(rgcca$call$blocks)
 
-    } else
+    } else {
         blocks.all <- intersection(blocks)
+
+        if (tolower(type) %in% c("sgcca", "spca", "spls")) {
+            if (!missing(tau))
+               stop(paste0("penalty parameter required for ", tolower(type), "."))
+            par <- "sparsity"
+            penalty <- sparsity
+        } else {
+            if (!missing(sparsity))
+               stop(paste0("tau parameter required for ", tolower(type), "."))
+            par <- "tau"
+            penalty <- tau
+        }
+    }
 
     boot_blocks <- list(NULL)
     while (any(sapply(boot_blocks, function(x) length(x)) == 0)) {
@@ -71,22 +88,25 @@ bootstrap_k <- function(
         boot_blocks <- remove_null_sd(boot_blocks)
     }
 
-    w <- rgcca(
-        boot_blocks,
-        connection,
-        superblock = superblock,
-        response = response,
-        tau = tau,
-        ncomp = ncomp,
-        scheme = scheme,
-        scale = scale,
-        sameBlockWeight = sameBlockWeight,
-        type = type,
-        verbose = FALSE,
-        init = init,
-        bias = bias,
+    func <- quote(
+        rgcca(
+            boot_blocks,
+            connection,
+            superblock = superblock,
+            response = response,
+            ncomp = ncomp,
+            scheme = scheme,
+            scale = scale,
+            sameBlockWeight = sameBlockWeight,
+            type = type,
+            verbose = FALSE,
+            init = init,
+            bias = bias,
         tol = tol
-    )$a
+    ))
+    
+    func[[par]] <- penalty
+    w <- eval(as.call(func))$a
 
     # Add removed variables
     missing_var <- lapply(

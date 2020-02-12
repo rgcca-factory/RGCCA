@@ -8,9 +8,6 @@ get_nodes(rgcca, tau = NULL)
 }
 \arguments{
 \item{rgcca}{A list giving the results of a R/SGCCA}
-
-\item{tau}{A vector of float (or character for 'optimal' setting) giving the
-shrinkage parameter for covariance maximization}
 }
 \value{
 A dataframe with rgcca$call$blocks in rows and the number of variables, of rows

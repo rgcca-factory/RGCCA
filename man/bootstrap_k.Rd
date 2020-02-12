@@ -5,10 +5,11 @@
 \title{Compute bootstrap (internal)}
 \usage{
 bootstrap_k(rgcca, blocks = NULL, connection = 1 -
-  diag(length(blocks)), tau = rep(1, length(blocks)), ncomp = rep(2,
-  length(blocks)), scheme = "factorial", init = "svd", bias = TRUE,
-  tol = 0.001, type = "rgcca", scale = TRUE,
-  sameBlockWeight = TRUE, superblock = TRUE, response = NULL)
+  diag(length(blocks)), tau = rep(1, length(blocks)), sparsity = rep(1,
+  length(blocks)), ncomp = rep(2, length(blocks)),
+  scheme = "factorial", init = "svd", bias = TRUE, tol = 0.001,
+  type = "rgcca", scale = TRUE, sameBlockWeight = TRUE,
+  superblock = TRUE, response = NULL)
 }
 \arguments{
 \item{rgcca}{A list giving the results of a R/SGCCA}
@@ -17,8 +18,11 @@ bootstrap_k(rgcca, blocks = NULL, connection = 1 -
 
 \item{connection}{A matrix giving the connection between the blocks}
 
-\item{tau}{A vector of float (or character for 'optimal' setting) giving the
-shrinkage parameter for covariance maximization}
+\item{tau}{tau is either a \eqn{1 \times J} vector or a \eqn{\mathrm{max}(ncomp) \times J} matrix, and contains the values 
+of the shrinkage parameters (default: tau = 1, for each block and each dimension).
+If tau = "optimal" the shrinkage paramaters are estimated for each block and each dimension using the Schafer and Strimmer (2005)
+analytical formula . If tau is a \eqn{1\times J} numeric vector, tau[j] is identical across the dimensions of block \eqn{\mathbf{X}_j}. 
+If tau is a matrix, tau[k, j] is associated with \eqn{\mathbf{X}_{jk}} (\eqn{k}th residual matrix for block \eqn{j})}
 
 \item{ncomp}{A vector of integer giving the number of component for each
 blocks}

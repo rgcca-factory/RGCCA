@@ -526,19 +526,24 @@ plot_bootstrap_2D(selected.var)
 plot_bootstrap_1D(selected.var)
 
 # Permutation
-
 if (length(blocks) > 1) {
-    perm <- rgcca_permutation(
-        blocks,
-        connection = connection,
-        response = opt$response, 
-        superblock = opt$superblock,
-        tau = opt$tau,
-        ncomp = opt$ncomp,
-        scheme = opt$scheme,
-        scale = opt$scale,
-        type = opt$type, 
-        nperm = 5)
+    func <- quote(
+        rgcca_permutation(
+            blocks,
+            connection = connection,
+            response = opt$response, 
+            superblock = opt$superblock,
+            ncomp = opt$ncomp,
+            scheme = opt$scheme,
+            scale = opt$scale,
+            type = opt$type, 
+            nperm = 5)
+    )
+    if (tolower(opt$type) %in% c("sgcca", "spca", "spls"))
+        func[["tau"]] <- opt$tau
+    else
+        func[["sparsity"]] <- opt$tau
+    perm <- eval(as.call(func))
     plot_permut_2D(perm)
 }
 
