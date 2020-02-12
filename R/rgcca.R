@@ -120,6 +120,7 @@ rgcca <- function(
         gcca(
             A = opt$blocks,
             C = opt$connection,
+            tau=tau,
             ncomp = opt$ncomp,
             verbose = verbose,
             scheme = opt$scheme,

@@ -42,12 +42,25 @@ print.rgcca <- function(x,...)
       cat("The", x$call$scheme, "scheme was used.", fill = TRUE)
       
   }
-  
-   for (i in 1:NCOL(x$call$connection)) {
-      tau <- x$call$tau[i]
-          if (tau != "optimal")
-              tau <- round(tau , 4)
-      cat("The shrinkage parameter used for block", i, "was:", 
-          tau, fill = TRUE,...)
+  if(x$call$type %in% c("rgcca","sgcca"))   
+  {
+    if(!is.matrix(x$tau))
+    {
+        for (i in 1:NCOL(x$call$connection)) {
+            tau <- x$call$tau[i]
+            if (tau != "optimal")
+                tau <- round(tau , 4)
+            if(x$call$type=="rgcca"){param="regularization"}
+            if(x$call$type=="sgcca"){param="shrinkage"}
+            cat("The",param," parameter used for block", i, "was:", 
+                tau, fill = TRUE,...)
+        }
+    }
+    else
+    {
+        cat("The",param," parameter used for block", i, "was: \n")
+        print(round(x$tau,4))
+    }
+    
   }
 }

@@ -161,3 +161,24 @@ pcasb_ind=abs(cor(pcaSB$x[,1],scaledPCASB$Y[[1]][,1]))==1
      bias = TRUE, 
      tol = 1e-08)
  
+ 
+ data(Russett)
+ X_agric =as.matrix(Russett[,c("gini","farm","rent")]);
+ X_ind = as.matrix(Russett[,c("gnpr","labo")]);
+ X_polit = as.matrix(Russett[ , c("demostab")]);
+ A = list(X_agric,X_ind,X_agric);
+ resRGCCA= rgcca (
+     blocks=A,
+     connection = 1 - diag(length(A)),
+     response = NULL,
+     superblock = FALSE,
+     tau = rep("optimal", length(A)),
+     ncomp = rep(2, length(A)),
+     type = "rgcca",
+     verbose = TRUE,
+     scheme = "factorial",
+     scale = TRUE,
+     init = "svd",
+     bias = TRUE, 
+     tol = 1e-08)
+ 

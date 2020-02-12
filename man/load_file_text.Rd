@@ -5,7 +5,7 @@
 \title{Creates a matrix from loading a file}
 \usage{
 load_file_text(file, sep = "\\t", rownames = 1, header = TRUE,
-  one_column = FALSE)
+  one_column = FALSE, dec = ".")
 }
 \arguments{
 \item{file}{A character giving the path of a file}

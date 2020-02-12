@@ -40,7 +40,7 @@
 rgccak=function (A, C, tau = "optimal", scheme = "centroid",verbose = FALSE, init = "svd", bias = TRUE, tol = 1e-08,na.rm=TRUE,estimateNA="no",scale=TRUE,sameBlockWeight=TRUE,initImpute="rand") 
 {
     
-    call=list(A=A, C=C,tau= tau , scheme = scheme,verbose = verbose, init = init, bias = bias, tol = tol,na.rm=na.rm,estimateNA=estimateNA,scale=scale,sameBlockWeight=sameBlockWeight,initImpute=initImpute) 
+    call=list(A=A, C=C, scheme = scheme,verbose = verbose, init = init, bias = bias, tol = tol,na.rm=na.rm,estimateNA=estimateNA,scale=scale,sameBlockWeight=sameBlockWeight,initImpute=initImpute) 
         
      if(mode(scheme) != "function") 
     {
@@ -49,7 +49,18 @@ rgccak=function (A, C, tau = "optimal", scheme = "centroid",verbose = FALSE, ini
     if(scheme=="factorial"){ g <- function(x)  x^2}  
     if(scheme=="centroid"){g <- function(x) abs(x)}
    
-    }else {g<-scheme}
+     }else {g<-scheme}
+    
+    
+    J <- length(A) # nombre de blocs
+    n <- NROW(A[[1]]) # nombre d'individus
+    pjs <- sapply(A, NCOL) # nombre de variables par bloc
+    Y <- matrix(0, n, J)
+    if (!is.numeric(tau)) # cas ou on estime le tau de maniere intelligente (a creuser)
+        tau = sapply(A, tau.estimate) # d apres Schafer and Strimmer
+    
+    call$tau=tau
+    
     A0 <-A
     A <- lapply(A, as.matrix)
     # Initialisation of missing values
@@ -128,14 +139,7 @@ rgccak=function (A, C, tau = "optimal", scheme = "centroid",verbose = FALSE, ini
         if(sameBlockWeight){stdev=lapply(stdev,function(x){return(x/sqrt(NCOL(x)))})}
         
     }
-    
-    J <- length(A) # nombre de blocs
-    n <- NROW(A[[1]]) # nombre d'individus
-    pjs <- sapply(A, NCOL) # nombre de variables par bloc
-    Y <- matrix(0, n, J)
-    if (!is.numeric(tau)) # cas ou on estime le tau de maniere intelligente (a creuser)
-        tau = sapply(A, tau.estimate) # d apres Schafer and Strimmer
-    a <- alpha <- M <- Minv <- K <- list() # initialisation variables internes
+       a <- alpha <- M <- Minv <- K <- list() # initialisation variables internes
     which.primal <- which((n >= pjs) == 1) # on raisonne differement suivant la taille du bloc
     which.dual <- which((n < pjs) == 1)
     
@@ -439,7 +443,6 @@ rgccak=function (A, C, tau = "optimal", scheme = "centroid",verbose = FALSE, ini
     }
     AVEinner <- sum(C * cor(Y)^2/2)/(sum(C)/2)
 
-	
     if(estimateNA!="no")
     {
         result <- list(Y = Y, a = a, crit = crit, AVE_inner = AVEinner, A=A,call=call)
