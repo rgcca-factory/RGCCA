@@ -260,7 +260,7 @@ check_arg <- function(opt) {
 
     if (is.null(opt$datasets))
         stop(paste0("datasets is required."), exit_code = 121)
-    
+
     if (is.null(opt$scheme))
         opt$scheme <- "factorial"
     else if (!opt$scheme %in% seq(4)) {
@@ -372,17 +372,17 @@ check_integer <- function(x, y = x, type = "scalar", float = FALSE, min = 1) {
     return(y)
 }
 
-
 load_libraries <- function(librairies) {
     for (l in librairies) {
         if (!(l %in% installed.packages()[, "Package"]))
-            utils::install.packages(l, repos = "http://cran.wustl.edu")
-        library(
-            l,
-            character.only = TRUE,
-            warn.conflicts = FALSE,
-            quietly = TRUE
-        )
+            utils::install.packages(l, repos = "cran.us.r-project.org")
+        suppressPackageStartupMessages(
+            library(
+                l,
+                character.only = TRUE,
+                warn.conflicts = FALSE,
+                quietly = TRUE
+        ))
     }
 }
 
@@ -416,7 +416,8 @@ opt <- list(
         collapse = ",")
 )
 
-load_libraries(c("RGCCA", "ggplot2", "optparse", "scales", "igraph", "ggrepel", "MASS"))
+load_libraries(c("RGCCA", "ggplot2", "optparse", "scales", "igraph", "MASS"))
+try(load_libraries("ggrepel"), silent = TRUE)
 
 tryCatch(
     opt <- check_arg(parse_args(getArgs())),
@@ -520,24 +521,29 @@ if (!is.null(opt$response)) {
 
 # Bootstrap
 boot <- bootstrap(rgcca_out, n_boot = 5)
-selected.var <- get_bootstrap(rgcca_out, boot, opt$compx, opt$block)
+selected.var <- get_bootstrap(boot, opt$compx, opt$block)
 plot_bootstrap_2D(selected.var)
 plot_bootstrap_1D(selected.var)
 
 # Permutation
-
 if (length(blocks) > 1) {
-    perm <- rgcca_permutation(
-        blocks,
-        connection = connection,
-        response = opt$response, 
-        superblock = opt$superblock,
-        tau = opt$tau,
-        ncomp = opt$ncomp,
-        scheme = opt$scheme,
-        scale = opt$scale,
-        type = opt$type, 
-        nperm = 5)
+    func <- quote(
+        rgcca_permutation(
+            blocks,
+            connection = connection,
+            response = opt$response, 
+            superblock = opt$superblock,
+            ncomp = opt$ncomp,
+            scheme = opt$scheme,
+            scale = opt$scale,
+            type = opt$type, 
+            nperm = 5)
+    )
+    if (tolower(opt$type) %in% c("sgcca", "spca", "spls"))
+        func[["tau"]] <- opt$tau
+    else
+        func[["sparsity"]] <- opt$tau
+    perm <- eval(as.call(func))
     plot_permut_2D(perm)
 }
 

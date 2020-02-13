@@ -5,7 +5,7 @@
 #' @inheritParams plot_var_2D
 #' @inheritParams set_connection
 #' @param connection A matrix giving the connection between the blocks
-#' @param tau A vector of float (or character for 'optimal' setting) giving the
+#' @param penalty A vector of float (or character for 'optimal' setting) giving the
 #' shrinkage parameter for covariance maximization
 #' @param ncomp A vector of integer giving the number of component for each
 #' blocks
@@ -18,7 +18,7 @@
 #' @return \item{blocks}{A list of matrix}
 #' @return \item{scheme}{A character giving the link function for covariance
 #' maximization}
-#' @return \item{tau}{A vector of float (or character for 'optimal' setting) giving
+#' @return \item{penalty}{A vector of float (or character for 'optimal' setting) giving
 #' the shrinkage parameter for covariance maximization}
 #' @return \item{ncomp}{A vector of integer giving the number of component for each
 #' blocks}
@@ -29,7 +29,7 @@
 select_analysis <- function(
     blocks = blocks,
     connection = 1 - diag(length(blocks)),
-    tau = rep(1, length(blocks)),
+    penalty = rep(1, length(blocks)),
     ncomp = rep(1, length(blocks)),
     scheme = "centroid",
     superblock = TRUE,
@@ -53,8 +53,8 @@ select_analysis <- function(
         warn.type.value <<- c(warn.type.value, toString(x))
     }
 
-    setTau <- function(x) {
-        warnParam(tau, x)
+    setPenalty <- function(x) {
+        warnParam(penalty, x)
         return(x)
     }
 
@@ -96,7 +96,7 @@ select_analysis <- function(
     if (length(grep("[sr]gcca", tolower(type))) == 1) {
         if (superblock) {
             setSuperbloc(FALSE)
-            tau <- warnSuper(tau)
+            penalty <- warnSuper(penalty)
         } else
             superblock <- FALSE
     } else
@@ -109,7 +109,7 @@ select_analysis <- function(
         scheme <- setScheme("horst")
         setSuperbloc()
         if (tolower(type) == "pca")
-            tau <- setTau(c(1, 1))
+            penalty <- setPenalty(c(1, 1))
     }
 
     # 2 Blocks cases
@@ -117,13 +117,13 @@ select_analysis <- function(
         set2Block(type)
 
         if (tolower(type) == "cca")
-            tau <- setTau(c(0, 0))
+            penalty <- setPenalty(c(0, 0))
 
         else if (tolower(type) %in% c("ifa", "pls"))
-            tau <- setTau(c(1, 1))
+            penalty <- setPenalty(c(1, 1))
 
         else if (tolower(type) == "ra")
-            tau <- setTau(c(1, 0))
+            penalty <- setPenalty(c(1, 0))
 
     }
 
@@ -139,7 +139,7 @@ select_analysis <- function(
 
         # COR models
         if (tolower(type) %in% c("sumcor", "ssqcor", "sabscor")) {
-            tau <- setTau(rep(0, J))
+            penalty <- setPenalty(rep(0, J))
 
             switch(
                 tolower(type),
@@ -166,7 +166,7 @@ select_analysis <- function(
             "sabscov",
             "sabscov-1"
         )) {
-            tau <- setTau(rep(1, J))
+            penalty <- setPenalty(rep(1, J))
 
             if (tolower(type) %in% c("sumcov", "sumcov-1", "maxbet"))
                 scheme <- setScheme("horst")
@@ -193,12 +193,12 @@ select_analysis <- function(
 
         if (tolower(type) %in% c("sumcov-2", "maxdiff")) {
             scheme <- setScheme("horst")
-            tau <- setTau(rep(0, J))
+            penalty <- setPenalty(rep(0, J))
         }
 
         else if (tolower(type) %in% c("ssqcov-2", "maxdiff-b")) {
             scheme <- setScheme("factorial")
-            tau <- setTau(rep(1, J))
+            penalty <- setPenalty(rep(1, J))
         }
 
     }
@@ -224,13 +224,13 @@ select_analysis <- function(
 
         if (tolower(type) %in% c("maxvar-b", "gcca", "niles", "maxvar")) {
             scheme <- setScheme("factorial")
-            tau <- setTau(rep(0, J + 1))
+            penalty <- setPenalty(rep(0, J + 1))
         }
 
         else if (tolower(type) == "hpca") {
             scheme <- function(x)
                 x ^ 4
-            tau <- setTau(c(rep(1, J), 0))
+            penalty <- setPenalty(c(rep(1, J), 0))
         }
 
         else if (tolower(type) %in% c(
@@ -242,22 +242,22 @@ select_analysis <- function(
             "mcoa"
         )) {
             scheme <- setScheme("factorial")
-            tau <- setTau(c(rep(1, J), 0))
+            penalty <- setPenalty(c(rep(1, J), 0))
         }
 
         #TODO: verify these three last algo parameters
 
         else if (tolower(type) == "rcon-pca")
-            tau <- warnSuper(tau)
+            penalty <- warnSuper(penalty)
 
         else if (tolower(type) == "ridge-gca") {
             scheme <- setScheme("factorial")
-            tau <- setTau(c(tau[seq(J)], 0))
+            penalty <- setPenalty(c(penalty[seq(J)], 0))
         }
 
         else if (tolower(type) == "r-maxvar") {
             scheme <- setScheme("factorial")
-            tau <- warnSuper(tau)
+            penalty <- warnSuper(penalty)
         }
 
     }
@@ -329,7 +329,7 @@ select_analysis <- function(
 
     return(list(
         scheme = scheme,
-        tau = tau,
+        penalty = penalty,
         ncomp = ncomp,
         connection = connection,
         superblock = superblock

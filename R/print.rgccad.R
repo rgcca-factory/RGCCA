@@ -1,4 +1,4 @@
-print.rgccad <- function(x) 
+print.rgccad <- function(x, ...) 
 {
   cat("Call: ")
   dput(x$call)
@@ -26,7 +26,7 @@ print.rgccad <- function(x)
   {
       for (i in 1:NCOL(x$call$C)) {
           cat("The ",param," parameter used for block", i, "was:", 
-              round(x$tau[i], 4), fill = TRUE)
+              round(x$call$tau[i], 4), fill = TRUE)
       }
   }
  
@@ -34,7 +34,8 @@ print.rgccad <- function(x)
   {
       
       cat("The",param,"parameter matrix was:",fill=TRUE)
-      print(round(x$tau,4))
+      print(round(x$call$tau,4))
   }
   
 }
+

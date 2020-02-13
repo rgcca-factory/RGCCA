@@ -5,12 +5,13 @@
 \title{Performs a r/sgcca}
 \usage{
 rgcca(blocks, connection = 1 - diag(length(blocks)), response = NULL,
-  superblock = TRUE, tau = rep(1, length(blocks)), ncomp = rep(2,
-  length(blocks)), type = "rgcca", verbose = FALSE,
-  scheme = "factorial", scale = TRUE, init = "svd", bias = TRUE,
-  tol = 1e-08, quiet = FALSE, sameBlockWeight = TRUE,
-  method = "complete", knn.k = "all", knn.output = "weightedMean",
-  knn.klim = NULL, knn.sameBlockWeight = TRUE, pca.ncp = 1)
+  superblock = TRUE, tau = rep(1, length(blocks)), sparsity = rep(1,
+  length(blocks)), ncomp = rep(2, length(blocks)), type = "rgcca",
+  verbose = FALSE, scheme = "factorial", scale = TRUE,
+  init = "svd", bias = TRUE, tol = 1e-08, quiet = TRUE,
+  sameBlockWeight = TRUE, method = "complete", knn.k = "all",
+  knn.output = "weightedMean", knn.klim = NULL,
+  knn.sameBlockWeight = TRUE, pca.ncp = 1)
 }
 \arguments{
 \item{blocks}{A list of matrix}
@@ -23,8 +24,11 @@ response among a list of blocks}
 \item{superblock}{A boolean giving the presence (TRUE) / absence (FALSE) of
 a superblock}
 
-\item{tau}{A vector of float (or character for 'optimal' setting) giving the
-shrinkage parameter for covariance maximization}
+\item{tau}{tau is either a \eqn{1 \times J} vector or a \eqn{\mathrm{max}(ncomp) \times J} matrix, and contains the values 
+of the shrinkage parameters (default: tau = 1, for each block and each dimension).
+If tau = "optimal" the shrinkage paramaters are estimated for each block and each dimension using the Schafer and Strimmer (2005)
+analytical formula . If tau is a \eqn{1\times J} numeric vector, tau[j] is identical across the dimensions of block \eqn{\mathbf{X}_j}. 
+If tau is a matrix, tau[k, j] is associated with \eqn{\mathbf{X}_{jk}} (\eqn{k}th residual matrix for block \eqn{j})}
 
 \item{ncomp}{A vector of integer giving the number of component for each
 blocks}

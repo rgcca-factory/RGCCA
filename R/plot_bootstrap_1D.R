@@ -14,19 +14,19 @@
 #' data("Russett")
 #' blocks = list(agriculture = Russett[, seq(3)], industry = Russett[, 4:5],
 #'     politic = Russett[, 6:11] )
-#' rgcca_out = rgcca(blocks, tau = 0.75, type = "sgcca")
+#' rgcca_out = rgcca(blocks, sparsity = 0.75, type = "sgcca")
 #' boot = bootstrap(rgcca_out, 2, n_cores = 1)
-#' selected.var = get_bootstrap(rgcca_out, boot, n_cores = 1)
+#' selected.var = get_bootstrap(boot, n_cores = 1)
 #' plot_bootstrap_1D(selected.var)
 #' rgcca_out = rgcca(blocks)
 #' boot = bootstrap(rgcca_out, 2, n_cores = 1)
-#' selected.var = get_bootstrap(rgcca_out, boot, n_cores = 1)
+#' selected.var = get_bootstrap(boot, n_cores = 1)
 #' plot_bootstrap_1D(selected.var)
 #' @export
 plot_bootstrap_1D <- function(
     b,
-    x = "rgcca",
-    y = "occ",
+    x = "estimate",
+    y = "occurrences",
     n = 50,
     title = paste0(attributes(b)$indexes[[x]],
                    "\n(",
@@ -39,7 +39,7 @@ plot_bootstrap_1D <- function(
 
     set_occ <- function(x) {
         match.arg(x, names(attributes(b)$indexes))
-        if (x == "occ" && !x %in% colnames(b))
+        if (x == "occurrences" && !x %in% colnames(b))
             return("sign")
         else
             return(x)
@@ -69,9 +69,9 @@ plot_bootstrap_1D <- function(
         ...) +
     labs(fill = attributes(b)$indexes[[y]])
 
-    if (x == "rgcca")
-    p <- p +
-        geom_errorbar(aes(ymin = intneg, ymax = intpos))
+    if (x == "estimate")
+        p <- p +
+            geom_errorbar(aes(ymin = lower_band, ymax = upper_band))
 
     return(p)
 }

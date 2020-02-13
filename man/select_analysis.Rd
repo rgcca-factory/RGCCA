@@ -5,7 +5,7 @@
 \title{Define the analysis parameters}
 \usage{
 select_analysis(blocks = blocks, connection = 1 - diag(length(blocks)),
-  tau = rep(1, length(blocks)), ncomp = rep(1, length(blocks)),
+  penalty = rep(1, length(blocks)), ncomp = rep(1, length(blocks)),
   scheme = "centroid", superblock = TRUE, type = "rgcca",
   verbose = TRUE, quiet = FALSE, response = NULL)
 }
@@ -14,7 +14,7 @@ select_analysis(blocks = blocks, connection = 1 - diag(length(blocks)),
 
 \item{connection}{A matrix giving the connection between the blocks}
 
-\item{tau}{A vector of float (or character for 'optimal' setting) giving the
+\item{penalty}{A vector of float (or character for 'optimal' setting) giving the
 shrinkage parameter for covariance maximization}
 
 \item{ncomp}{A vector of integer giving the number of component for each
@@ -39,7 +39,7 @@ a superblock}
 \item{scheme}{A character giving the link function for covariance
 maximization}
 
-\item{tau}{A vector of float (or character for 'optimal' setting) giving
+\item{penalty}{A vector of float (or character for 'optimal' setting) giving
 the shrinkage parameter for covariance maximization}
 
 \item{ncomp}{A vector of integer giving the number of component for each

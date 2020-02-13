@@ -11,7 +11,7 @@
 #'     politic = Russett[, 6:11] )
 #' perm <- rgcca_permutation(A, nperm = 2, n_cores = 1)
 #' plot_permut_3D(perm)
-#' perm <- rgcca_permutation(A, p_c1 = TRUE, nperm = 2, n_cores = 1)
+#' perm <- rgcca_permutation(A, p_spars = TRUE, nperm = 2, n_cores = 1)
 #' plot_permut_3D(perm)
 # c1s <- expand.grid(
 #     lapply(
@@ -19,7 +19,7 @@
 #         function(x) seq(1 / sqrt(ncol(A[[x]])), 1, by = 0.1)
 #     )
 # )
-# perm <- rgcca_permutation(A, p_c1 = c1s, nperm = 2, n_cores = 1)
+# perm <- rgcca_permutation(A, p_spars = c1s, nperm = 2, n_cores = 1)
 # plot_permut_3D(perm)
 #' @export
 plot_permut_3D <- function(

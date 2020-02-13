@@ -14,19 +14,19 @@
 #' data("Russett")
 #' blocks = list(agriculture = Russett[, seq(3)], industry = Russett[, 4:5],
 #'     politic = Russett[, 6:11] )
-#' rgcca_out = rgcca(blocks, tau = 0.75, type = "sgcca")
+#' rgcca_out = rgcca(blocks, sparsity = 0.75, type = "sgcca")
 #' boot = bootstrap(rgcca_out, 2, n_cores = 1)
-#' selected.var = get_bootstrap(rgcca_out, boot, n_cores = 1)
+#' selected.var = get_bootstrap(boot, n_cores = 1)
 #' plot_bootstrap_2D(selected.var)
 #' rgcca_out = rgcca(blocks)
 #' boot = bootstrap(rgcca_out, 2, n_cores = 1)
-#' selected.var = get_bootstrap(rgcca_out, boot, n_cores = 1)
+#' selected.var = get_bootstrap(boot, n_cores = 1)
 #' plot_bootstrap_2D(selected.var)
 #' @export
 plot_bootstrap_2D <- function(
     b,
-    x = "br",
-    y = "occ",
+    x = "bootstrap_ratio",
+    y = "occurrences",
     title = paste("Variable selection \nby",
            attributes(selected.var)$n_boot,
            "bootstraps"),
@@ -41,7 +41,7 @@ plot_bootstrap_2D <- function(
 
     set_occ <- function(x) {
         match.arg(x, names(attributes(b)$indexes))
-        if (x == "occ" && !x %in% colnames(b))
+        if (x == "occurrences" && !x %in% colnames(b))
             return("sign")
         else
             return(x)
@@ -90,9 +90,8 @@ plot_bootstrap_2D <- function(
     ) +
     scale_color_manual(values = color_group(seq(2), colors = colors))
 
-
     limites <- function(p, x){
-        if (x %in% c("sign", "occ")) {
+        if (x %in% c("sign", "occurrences")) {
             axis <- deparse(substitute(x))
             func <- get(paste0(axis, "lim"))
             p <- p + func(0, 1)
