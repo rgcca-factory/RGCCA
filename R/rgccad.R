@@ -245,7 +245,8 @@ rgccad=function (A, C = 1 - diag(length(A)), tau = rep(1, length(A)),  ncomp = r
       rownames(Y[[b]]) = rownames(A[[b]])
       colnames(Y[[b]]) = "comp1"
     }
-    out <- list(Y = Y, a = a, astar = a, C = C, tau = result$call$tau,  scheme = scheme, ncomp = ncomp, crit = result$crit, primal_dual = primal_dual, AVE = AVE,A=A0,call=call)
+    call$tau=tau
+    out <- list(Y = Y, a = a, astar = a, C = C,  scheme = scheme, ncomp = ncomp, crit = result$crit, primal_dual = primal_dual, AVE = AVE,A=A0,call=call)
     if(estimateNA %in% c("iterative","first","superblock","lebrusquet")){out[["imputedA"]]=A}
     
     class(out) <- "rgccad"

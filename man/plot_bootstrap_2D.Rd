@@ -4,11 +4,7 @@
 \alias{plot_bootstrap_2D}
 \title{Plot a bootstrap in 2D}
 \usage{
-<<<<<<< HEAD
-plot_bootstrap_2D(b, x = "br", y = "occ",
-=======
 plot_bootstrap_2D(b, x = "bootstrap_ratio", y = "occurrences",
->>>>>>> develop
   title = paste("Variable selection \\nby",
   attributes(selected.var)$n_boot, "bootstraps"), colors = NULL,
   cex = 1, cex_main = 25 * cex, cex_sub = 16 * cex, cex_point = 3 *
