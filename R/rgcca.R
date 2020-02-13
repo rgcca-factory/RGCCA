@@ -95,6 +95,10 @@ rgcca <- function(
     opt$superblock <- check_superblock(response, opt$superblock, !quiet)
     opt$blocks <- set_superblock(opt$blocks, opt$superblock, type, !quiet)
 
+    if(opt$superblock && any(opt$tau)=="optimal")
+    {
+        stop("Optimal tau is not available with superblock option.")
+    }
 
     if (!is.null(response)) {
         # || tolower(type) == "ra"
@@ -142,7 +146,8 @@ rgcca <- function(
             knn.output = knn.output,
             knn.klim = knn.klim,
             knn.sameBlockWeight = knn.sameBlockWeight,
-            pca.ncp = pca.ncp
+            pca.ncp = pca.ncp,
+            prescaling = FALSE
         )
     )
 

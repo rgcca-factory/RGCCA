@@ -42,7 +42,7 @@
 #' rgccaNa(A,method="nipals")
 #' rgccaNa(A,method="knn2")
 
-sgccaNa=function (A,method, C = 1 - diag(length(A)), c1 = rep(1, length(A)),    ncomp = rep(1, length(A)), scheme = "centroid", scale = TRUE,   init = "svd", bias = TRUE, tol = 1e-08, verbose = TRUE,sameBlockWeight=TRUE,knn.k="all",knn.output="weightedMean",knn.klim=NULL,knn.sameBlockWeight=TRUE,pca.ncp=1)
+sgccaNa=function (A,method, C = 1 - diag(length(A)), c1 = rep(1, length(A)),    ncomp = rep(1, length(A)), scheme = "centroid", scale = TRUE,   init = "svd", bias = TRUE, tol = 1e-08, verbose = TRUE,sameBlockWeight=TRUE,knn.k="all",knn.output="weightedMean",knn.klim=NULL,knn.sameBlockWeight=TRUE,pca.ncp=1,prescaling=FALSE)
 { 
   nvar = sapply(A, NCOL)
   superblockAsList=function(superblock,A)
@@ -121,7 +121,7 @@ sgccaNa=function (A,method, C = 1 - diag(length(A)), c1 = rep(1, length(A)),    
       }
   }
   
-  resRgcca=sgcca(A2,c1=c1,ncomp=ncomp,verbose=FALSE,scale=scale,sameBlockWeight=sameBlockWeight,scheme=scheme,tol=tol)
+  resRgcca=sgcca(A2,c1=c1,ncomp=ncomp,verbose=FALSE,scale=scale,sameBlockWeight=sameBlockWeight,scheme=scheme,tol=tol,prescaling=prescaling)
  return(list(imputedA=A2,rgcca=resRgcca,method,indNA=indNA))
 
 }

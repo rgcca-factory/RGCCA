@@ -395,7 +395,7 @@ opt <- list(
     separator = "\t",
     type = "rgcca",
     ncomp = 2,
-    tau = "optimal",
+    tau = 1,
     scheme = "factorial",
     init = 1,
     block = 0,

@@ -8,7 +8,8 @@ sgccaNa(A, method, C = 1 - diag(length(A)), c1 = rep(1, length(A)),
   ncomp = rep(1, length(A)), scheme = "centroid", scale = TRUE,
   init = "svd", bias = TRUE, tol = 1e-08, verbose = TRUE,
   sameBlockWeight = TRUE, knn.k = "all", knn.output = "weightedMean",
-  knn.klim = NULL, knn.sameBlockWeight = TRUE, pca.ncp = 1)
+  knn.klim = NULL, knn.sameBlockWeight = TRUE, pca.ncp = 1,
+  prescaling = FALSE)
 }
 \arguments{
 \item{A}{A list that contains the \eqn{J} blocks of variables \eqn{\mathbf{X_1}, \mathbf{X_2}, ..., \mathbf{X_J}}.}
