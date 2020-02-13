@@ -120,7 +120,6 @@ rgcca <- function(
         gcca(
             A = opt$blocks,
             C = opt$connection,
-            tau=tau,
             ncomp = opt$ncomp,
             verbose = verbose,
             scheme = opt$scheme,
@@ -159,8 +158,8 @@ rgcca <- function(
         scheme = opt$scheme
     )
 
-    func_out$call[[par]] <- opt$tau
-
+    #func_out$call[[par]] <- opt$tau
+    func_out$call[[par]] <- func_out$tau
     for (i in c(
         "scale",
         "init",

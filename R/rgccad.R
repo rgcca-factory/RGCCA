@@ -129,7 +129,7 @@ rgccad=function (A, C = 1 - diag(length(A)), tau = rep(1, length(A)),  ncomp = r
   shave.veclist <- function(vec_list, nb_elts) mapply(function(m, nbcomp) m[1:nbcomp], vec_list, nb_elts, SIMPLIFY = FALSE)
   A0=A
   #  call = match.call()
-  call=list(A=A, C = C, tau = tau,  ncomp = ncomp, scheme = scheme, scale = scale,   init = init, bias = bias, tol =tol, verbose = verbose,sameBlockWeight=sameBlockWeight,na.rm=na.rm,estimateNA=estimateNA)
+  call=list(A=A, C = C,  ncomp = ncomp, scheme = scheme, scale = scale,   init = init, bias = bias, tol =tol, verbose = verbose,sameBlockWeight=sameBlockWeight,na.rm=na.rm,estimateNA=estimateNA)
   if (any(ncomp < 1)) {stop("Compute at least one component per block!")}	
   pjs <- sapply(A, NCOL) #nombre de variables par bloc
   varij <- sapply(A,function(x){covarMat=cov2(x,bias=bias);varianceBloc=sum(diag(covarMat));return(varianceBloc)})
@@ -329,6 +329,7 @@ rgccad=function (A, C = 1 - diag(length(A)), tau = rep(1, length(A)),  ncomp = r
   names(Y)=names(A)
   names(a)=names(A)
   AVE_X = shave.veclist(AVE_X, ncomp)
+  call$tau=tau
   AVE <- list(AVE_X = AVE_X, AVE_outer_model = AVE_outer, AVE_inner_model = AVE_inner)
   out <- list(Y = shave.matlist(Y, ncomp), a = shave.matlist(a,ncomp), astar = shave.matlist(astar, ncomp),  tau = tau_mat,
                 crit = crit, primal_dual = primal_dual,	AVE = AVE,A=A,call=call)

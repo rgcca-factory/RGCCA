@@ -59,8 +59,7 @@ rgccak=function (A, C, tau = "optimal", scheme = "centroid",verbose = FALSE, ini
     if (!is.numeric(tau)) # cas ou on estime le tau de maniere intelligente (a creuser)
         tau = sapply(A, tau.estimate) # d apres Schafer and Strimmer
     
-    call$tau=tau
-    
+
     A0 <-A
     A <- lapply(A, as.matrix)
     # Initialisation of missing values
@@ -443,6 +442,8 @@ rgccak=function (A, C, tau = "optimal", scheme = "centroid",verbose = FALSE, ini
     }
     AVEinner <- sum(C * cor(Y)^2/2)/(sum(C)/2)
 
+    call$tau=tau
+    
     if(estimateNA!="no")
     {
         result <- list(Y = Y, a = a, crit = crit, AVE_inner = AVEinner, A=A,call=call)
