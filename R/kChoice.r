@@ -1,0 +1,10 @@
+kChoice=function(distances,klim=NULL,type="diff")
+{
+    #kChoice(distances=c(0.10,10.12,0.40,1.00,1.80,1.90,1.91))
+  #kChoice(distances=c(0.10,10.12,0.40,1.00,1.80,1.90,1.91),klim=c(2,10))
+  if(is.null(klim)){klim=c(1,length(distances))}
+  if(type=="diff"){ecarts=diff(distances[klim[1]:klim[2]])}
+  if(type=="diffW"){ecarts=diff(distances[klim[1]:klim[2]])}
+  k=klim[1]+(which.max(ecarts)-1)
+  return(k)
+}

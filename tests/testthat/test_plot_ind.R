@@ -13,9 +13,16 @@ row.names(resp) = seq(15)
 plot_ind(rgcca_out, resp)
 # Using the first block
  resp = as.matrix(runif(15, min=-15, max = 15))
-row.names(resp) = seq(15)
+rownames(resp) = seq(15)
 #rgcca_out$call$type=
- #plot_ind(rgcca_out, resp, 1, 2, 1)
+ plot_ind(rgcca_out, resp, 1, 2, 1)
+ 
+
+# Using plot_ind
+ data(Russett)
+ blocks = list(agri=Russett[,1:3],ind=Russett[,4:5],polit=Russett[,8:11])
+ rgcca_out = rgcca(blocks = blocks, response = 3)
+ plot_ind( rgcca_out,resp=1:47,i_block=1)
  
 # Using the predict 
 data(Russett)
@@ -24,4 +31,7 @@ data(Russett)
  loo <- rgcca_crossvalidation(rgcca_out, n_cores = 2)
 
  plot_ind(rgcca_out, predicted = loo)
+ 
+ # using a color response vector
+ plot_ind(rgcca_out,resp=resp)
  

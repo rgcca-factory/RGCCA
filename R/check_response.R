@@ -11,7 +11,6 @@ check_response <- function(response = NULL, df = NULL) {
 
         if (!qualitative)
             response <- to_numeric(response)
-
         if (NCOL(response) > 1) {
             disjunctive <- unique(apply(response, 1, sum))
 

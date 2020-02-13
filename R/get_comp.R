@@ -43,8 +43,38 @@ get_comp <- function(
         rgcca$Y[[i_block_y]][, compy],
         rgcca$Y[[i_block_z]][, compz]
     )
-    
-    resp <- as.matrix(resp)
+  
+    if(is.vector(resp))
+    {
+        print("in")
+        resp2=matrix(resp,ncol=1)
+        if(!is.null(names(resp)))
+        {
+            rownames(resp2)=names(resp)
+        }
+        else
+        {
+           warnings("Response has no names.")
+           rownames(resp2)=names(rgcca$call$blocks[[1]][,1])
+        }
+        resp=resp2
+    }
+    else
+    {
+        resp <- as.matrix(resp)
+    }
+    if(dim(resp)[2]==1)
+    {
+         if(is.null(rownames(resp)))
+        {
+            warning("Response has no names. Same names as the first block are attributed")
+            rownames(resp)=names(rgcca$call$blocks[[i_block]][,1])
+        }
+    }
+    else
+    {
+        resp <- as.matrix(resp)
+    }
 
     if (!is.null(predicted)) {
         df2 <- predicted[[2]][[i_block]][, c(compx, compy, compz)]
@@ -77,8 +107,16 @@ get_comp <- function(
                 resp <- resp[row.names(rgcca$Y[[i_block]])]
             }
         } else {
-            warning("No row names have been found in the group file.")
-            resp <- rep("NA", NROW(df))
+            warning("No rownames have been found in the group file. Same rownames as the first block of RGCCA were applied.")
+            #resp <- rep("NA", NROW(df))
+            if(!is.null(dim(rgcca$call$blocks[[1]])))
+            {
+                rownames(resp)=rownames(rgcca$call$blocks[[1]])
+            }
+            else
+            {
+                rownames(resp)=names(rgcca$call$blocks[[1]]) 
+            }
         }
     }
 

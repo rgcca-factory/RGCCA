@@ -19,13 +19,23 @@ print.rgccad <- function(x, ...)
   cat("The design matrix is:\n") 
   colnames(x$call$C) = rownames(x$call$C) = names(x$a) ; print(x$call$C)
   cat("The", x$call$scheme, "scheme was used.", fill = TRUE)
-  
-  x$call$tau <- elongate_arg(x$call$tau, x$a)
-  for (i in 1:NCOL(x$call$C)) {
-    tau <- x$call$tau[i]
-      if (tau != "optimal")
-          tau <- round(tau , 4)
-      cat("The shrinkage parameter used for block", i, "was:", 
-          tau, fill = TRUE,...)
+
+ param="regularization"
+
+  if(is.vector(x$tau))
+  {
+      for (i in 1:NCOL(x$call$C)) {
+          cat("The ",param," parameter used for block", i, "was:", 
+              round(x$call$tau[i], 4), fill = TRUE)
+      }
   }
+ 
+  if(is.matrix(x$tau))
+  {
+      
+      cat("The",param,"parameter matrix was:",fill=TRUE)
+      print(round(x$call$tau,4))
+  }
+  
 }
+
