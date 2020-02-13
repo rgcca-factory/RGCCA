@@ -137,7 +137,7 @@ lapply(A,dim)
 # Creating and vizualizing dataset with missing values
 
 ## Creating a dataset with missing values from a complete dataset
-The function createNA transforms a complete dataset into a dataset with missing values. The parameter pNA specifies the probability of missing values around the dataset (pNA is a proportion), by block (if pNA is a vector of length(A)) or by variable (if pNA is a list of length (A)). The minimum number of complete individuals can be specified in the option "nAllRespondants". Two options are available for the missing data: either they are missing by block (option="block") or randomly in the block (option="ponc")
+The function createNA transforms a complete dataset into a dataset with missing values. The parameter pNA specifies the probability of missing values around the dataset (pNA is a proportion), by block (if pNA is a vector of length(A)) or by variable (if pNA is a list of length (A)). The minimum number of complete individuals can be specified in the option "nAllRespondants". Two options are available for the missing data: either they are missing by block (typeNA="block") or randomly in the block (typeNA="ponc")
 ```{r}
 res_create=createNA(A,pNA=0.2,seed=41)
 names(res_create)
@@ -155,7 +155,7 @@ names(patternNA)
 ```
 
 ```{r, fig.height = 3, fig.width = 7, fig.align = "center"}
-A_missing2=createNA(A,option="byvar",pNA=list(0.1*1:3,rep(0,2),rep(0.1,3)))$dat
+A_missing2=createNA(A,typeNA="byvar",pNA=list(0.1*1:3,rep(0,2),rep(0.1,3)))$dat
 determine_patternNA(A_missing2)
 
 ```
@@ -177,8 +177,8 @@ The resulting RGCCA can be obtained in two method : entering na.rm=TRUE in usual
 
 ```{r}
 C=matrix(1,length(A),length(A))-diag(length(A))
-rgcca_nipals=rgccad(A=A_missing,C=C,tau=rep(1,length(A)),verbose=FALSE)
-rgcca_nipals2=rgccaNa(A=A_missing,C=C,tau=rep(1,length(A)),method="nipals")
+rgcca_nipals=rgcca(blocks =A_missing,connection =C,tau=rep(1,length(A)),verbose=FALSE,method="nipals")
+rgcca_nipals2=rgccad(A=A_missing,C=C,tau=rep(1,length(A)),verbose=FALSE)
 
 names(rgcca_nipals2)
 ```
@@ -226,7 +226,7 @@ Among all these methods for dealing with missing data, we suspect that the best 
 
 To select the more appropriate method for a given dataset, simulations are made on the complete part of the dataset. This is based on the assumptions that the missing values were randomly distributed, and that the complete part is a representative part of the dataset. 
 
-whichNAmethod simulates nDatasets (20 by default) with missing values according to a specific pattern of missing values (patternNA) and options ("block","byvar" or "ponc"). plotWhichNAmethod allows to select one of the following indicators
+whichNAmethod simulates nDatasets (20 by default) with missing values according to a specific pattern of missing values (patternNA) and typeNA ("block","byvar" or "ponc"). plotWhichNAmethod allows to select one of the following indicators
 
 The idea is to compare the results of the different "missing methods" to the original results (known, as the initial dataset is complete)
 \begin{itemize}

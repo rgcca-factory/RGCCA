@@ -1,7 +1,9 @@
 print.sgcca <- function(x) 
 {
-  cat("Call: ")
-  dput(x$call)
+
+    cat("Call: ")
+    dput(x$call[!names(x$call)%in%c("A","C")])
+    
   cat("\n\n")
   cat("Sum_{j,k} c_jk g(cov(X_ja_j, X_ka_k) = ", sep = "", 
       paste(round(x$crit, 4), sep = "", " "), fill = TRUE)

@@ -73,8 +73,7 @@ determine_patternNA=function(A,graph="all",legend=FALSE,outlierVisible=TRUE,scal
       par(mar=c(2,1,4,1))
       for(i in 1:length(A))
       {
-          print(i)
-         
+
           mat=apply(A[[i]],2,rev)
           mat2=apply(mat,2,function(x) scale(x,scale=scale))
           
@@ -85,8 +84,7 @@ determine_patternNA=function(A,graph="all",legend=FALSE,outlierVisible=TRUE,scal
               mat2[mat2< minimum]=minimum
               mat2[mat2>maximum]=maximum
           }
-         print(minimum)
-         print(maximum)
+       
           plot(NULL,xlim=c(0,1),ylim=c(0,1),xaxt="n",yaxt="n",bty="n",main=paste0(names(A)[i],"\n",nvar[i]," var.\n",sum(completeSubjectByBlock[,i]), "/",NROW(A[[i]])," complete ind."))
           rect(0,0,1,1,col="black")
           image(t(mat2),breaks=seq(minimum,maximum,length.out=51),xaxt="n",yaxt="n",col=rainbow(50,start=0,end=0.5),add=TRUE)

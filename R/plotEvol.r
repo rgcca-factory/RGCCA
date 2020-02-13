@@ -23,7 +23,7 @@
 #' @export
 plotEvol=function(listFinale,output="rv",fileName=NULL,ylim=NULL,block="all",barType="sd",namePlot=NULL,width=480,height=480,names.arg=NULL,main=NULL)
 { #output : "rv", "pct" ou "a"
-  #barType="sd" or "stdErr"
+  #barType="sd" or "stderr"
   #  graphics.off()
   if(is.null(namePlot)){namePlot=output}
   if(!is.null(fileName)){png(paste(fileName,".png",sep=""),width=width,height=height)}

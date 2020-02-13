@@ -2,9 +2,9 @@
 #' @param A A list of complete matrices with the same number of lines
 #' @param output list by default, else, can return the concatened list.
 #' @param seed if NULL, the creation of missing data is totally random (and consequently unreproducible), if numeric value, select randomness according to a seed (and reproducible).
-#' @param option "bloc" if the structure of missing data is by block or "ponc" if it is random across variables
+#' @param typeNA "bloc" if the structure of missing data is by block or "ponc" if it is random across variables
 #' @param pNA A logical value. If scale = TRUE, each column is transformed to have unit variance (default = TRUE).
-#' @param nAllRespondants If the option "ponc" is chosen,nAllRespondant corresponds to the number of complete individuals required
+#' @param nAllRespondants If the typeNA "ponc" is chosen,nAllRespondant corresponds to the number of complete individuals required
 #' @return \item{A}{a list of NA}
 #' @title Create a list with missing data (for simulation)
 #' @export
@@ -15,17 +15,16 @@
 #' X3=Russett[,8:11]
 #' A=list(agri=X1,ind=X2,polit=X3)
 #' createNA(A,pNA=0.2)
-createNA=function(A,option="block",pNA=0.1,nAllRespondants=4,output="list",seed=NULL)
+createNA=function(A,typeNA="block",pNA=0.1,nAllRespondants=4,output="list",seed=NULL)
 {
-  
   A= listOfMatrices(A)
   if(length(pNA)==1){pNA=rep(pNA,length(A))}
   if(length(pNA)!=1 & length(pNA)!=length(A)){stop("pNA should be a number between 0 and 1 or a vector of the same size as A ")}
-  if(!option%in% c("block","rand","ponc","byvar")){stop("option should be chosen as 'block' or 'rand' or 'ponc' or 'byvar'")}
+  if(!typeNA%in% c("block","rand","ponc","byvar")){stop("typeNA should be chosen as 'block' or 'rand' or 'ponc' or 'byvar'")}
   
-    if(is.null(rownames(A[[1]]))){rownames(A[[1]])=paste("S",1:dim(A[[1]])[1],sep="")}
-    if(is.list(pNA)){warnings("The percentage of missing data is chosen by variable. 'byvar' option is chosen")}
-  if(option=="block")
+  if(is.null(rownames(A[[1]]))){rownames(A[[1]])=paste("S",1:dim(A[[1]])[1],sep="")}
+    if(is.list(pNA)){warnings("The percentage of missing data is chosen by variable. 'byvar' typeNA is chosen")}
+  if(typeNA=="block")
 	{
 	  # For all the one but the last one, 
 	  nbloc=length(A)
@@ -69,7 +68,7 @@ createNA=function(A,option="block",pNA=0.1,nAllRespondants=4,output="list",seed=
     
   }
    
-	if(option=="rand")
+	if(typeNA=="rand")
 	{
 		
 		for(i in 1:length(A))
@@ -89,7 +88,7 @@ createNA=function(A,option="block",pNA=0.1,nAllRespondants=4,output="list",seed=
 		}
 	}
 	
-	if(option=="ponc") # valeurs ponctuelles en conservant un nombre d'individu complets
+	if(typeNA=="ponc") # valeurs ponctuelles en conservant un nombre d'individu complets
 	{
 	  n=nrow(A[[1]])
 		allResp=sample(1:n,nAllRespondants)
@@ -112,7 +111,7 @@ createNA=function(A,option="block",pNA=0.1,nAllRespondants=4,output="list",seed=
 		W2=do.call(cbind,A)
 		subjectKept=rownames(A[[1]])[which(apply(W2,1,function(x){sum(is.na(x))})==0)]
 	}
-    if(option=="byvar")
+    if(typeNA=="byvar")
     {
         
         indToRemove=list()

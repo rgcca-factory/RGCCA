@@ -8,7 +8,7 @@
 #' @param namePlot =NULL Name of the file
 #' @param width =480 width of the saved file
 #' @param height =480 height of the saved file
-#' @param ylim limits of y
+#' @param ylab label of y-axis
 #' @examples 
 #' set.seed(42);X1=matrix(rnorm(350),70,5);X2=matrix(rnorm(280),70,4);X1[1,1]=NA;X2[2,]=NA
 #' colnames(X1)=paste("A",1:5);colnames(X2)=paste("B",1:4); 
@@ -23,10 +23,10 @@
 
 plotWhichNAmethod=function(listFinale,output="rv",fileName=NULL,ylim=NULL,block="all",barType="sd",namePlot=NULL,width=480,height=480,ylab="")
 { #output : "rv", "pct" ou "a"
-  #barType="sd" or "stdErr"
+  #barType="sd" or "stderr"
     
     # TODO: par(new=TRUE)
-    
+  
   if(is.null(namePlot)){namePlot=output}
   #graphics.off()
   if(!is.null(fileName)){png(paste(fileName,".png",sep=""),width=width,height=height)}
@@ -65,7 +65,7 @@ plotWhichNAmethod=function(listFinale,output="rv",fileName=NULL,ylim=NULL,block=
     {
       result=sapply(listFinale,function(x){return(x[[rg]][[output]][[j]])})
       moyenne[rg]=mean(result)
-      if(!barType %in% c("sd","stderr")){ecartType=0}
+      if(barType =="no"){ecartType=0}
       if(barType=="sd"){ecartType[rg]=sd(result)}
       if(barType=="stderr"){ecartType[rg]=sd(result)/sqrt(length(result))}
     } 

@@ -29,5 +29,5 @@ A = list(X_agric, X_ind, X_polit);
 res=rgccad(A, C, ncomp=c(2,2,1),tau = c(1, 1, 1), scheme = "factorial", scale = TRUE,verbose=FALSE)
 
 
-res=rgccad(A, C, ncomp=c(2,2,2),tau = rep("optimal",3), scheme = "factorial")
+res=rgccad(A, C, ncomp=c(2,2,2),tau = rep("optimal",3), scheme = "factorial",verbose=FALSE)
 

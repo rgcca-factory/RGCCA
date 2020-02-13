@@ -27,7 +27,7 @@ plotWhichNAmethod(listFinale, output = "rv", fileName = NULL,
 
 \item{height}{=480 height of the saved file}
 
-\item{ylim}{limits of y}
+\item{ylab}{label of y-axis}
 }
 \description{
 Plots the impact of increasing missing data on RGCCA
