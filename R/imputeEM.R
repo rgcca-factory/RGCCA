@@ -19,6 +19,8 @@
 #' @param scheme scheme chosene for RGCCA (is not useful when superblock=TRUE)
 #'  @param bias A logical value indicating if variance should be biased or not
 #' @param superblock Boolean, if TRUE, the missing values are estimated with the superblock
+#' @param quiet If TRUE, the potential warnings are not printed
+
 #' @return \item{A}{A list of blocks imputed}
 #' @return \item{stab}{Convergence criterion : abs(1-obj_k/obj_{k-1})}
 #' @return \item{obj}{Vector containing the mean square error between the predict values and the original non missing values at each iteration}
@@ -45,7 +47,8 @@ imputeEM <-
              superblock = FALSE,
              verbose = FALSE,
              tolEM = 0.001,
-             reg = "y") {
+             reg = "y",
+             quiet=FALSE) {
         # listWithoutNA
         nvar <- sapply(A, NCOL)
         nsuj <- dim(A[[1]])[1]
@@ -406,13 +409,17 @@ imputeEM <-
             }
             if (i > ni) {
                 continue <- FALSE
-                warning(
-                    paste(
-                        "The RGCCA imputation algorithm did not converge after ",
-                        ni,
-                        " iterations"
+                if(!quiet)
+                {
+                    warning(
+                        paste(
+                            "The RGCCA imputation algorithm did not converge after ",
+                            ni,
+                            " iterations"
+                        )
                     )
-                )
+                }
+             
             }
             # print(objective[[i]]) print(criterion[[i]])
             

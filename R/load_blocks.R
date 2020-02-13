@@ -3,6 +3,7 @@
 #' @param file A character giving the path of a file
 #' @param names A character giving a list of names for the blocks
 #' @param sep A character giving the column separator
+#' @param dec A character giving the decimal separator
 #' @param header A bolean giving the presence or the absence of the header
 #' @param rownames An integer corresponding to the column number of the row
 #' names (NULL otherwise)

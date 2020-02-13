@@ -938,7 +938,7 @@ In high-dimensional settings, the highest level of regularization ($\tau_j=1$) h
 ## SGCCA for the Glioma dataset
 
 The variable selection is achieved by adding, within the RGCCA optimization
-problem, a penalty promoting sparsity. For that purpose, an $\ell_1$ penalization on the weight vectors $\ma a_1, \ldots, \ma a_J$ is applied. the `c1` argument of `sgcca()` vary between 0 and 1 (larger values of `c1` correspond to less penalization) and control the amount of sparsity of the weight vectors $\ma a_1, \ldots, \ma a_J$. If `c1` is a vector, $\ell_1$-penalties are the same for all the weights corresponding to the same block but different components:
+problem, a penalty promoting sparsity. For that purpose, an $\ell_1$ penalization on the weight vectors $\ma a_1, \ldots, \ma a_J$ is applied. the `sparsity` argument of `sgcca()` vary between 0 and 1 (larger values of `sparsity` correspond to less penalization) and control the amount of sparsity of the weight vectors $\ma a_1, \ldots, \ma a_J$. If `sparsity` is a vector, $\ell_1$-penalties are the same for all the weights corresponding to the same block but different components:
   
 \begin{equation}
 \forall h, \Vert \ma a_j^{(h)} \Vert_{\ell_1} \leq c_{1j} \sqrt{p_j},
@@ -946,7 +946,7 @@ problem, a penalty promoting sparsity. For that purpose, an $\ell_1$ penalizatio
 
 with $p_j$ the number of variables of $\ma X_j$.
 
-If `c1` is a matrix, each row $h$ of `c1` defines the constraints applied to the weights corresponding to components $h$:
+If `sparsity` is a matrix, each row $h$ of `sparsity` defines the constraints applied to the weights corresponding to components $h$:
   
 \begin{equation}
 \forall h, \Vert \ma a_j^{(h)} \Vert_{\ell_1} \leq c_1[h,j] \sqrt{p_j}.
@@ -954,7 +954,7 @@ If `c1` is a matrix, each row $h$ of `c1` defines the constraints applied to the
 
 ```{r, eval = FALSE}
 # sgcca algorithm
-sgcca.glioma = sgcca(A, C, c1 = c(.071,.2, 1),
+sgcca.glioma = sgcca(A, C, sparsity = c(.071,.2, 1),
                      ncomp = c(1, 1, 1),
                      scheme = "centroid",
                      scale = TRUE,
@@ -1040,7 +1040,7 @@ In that case, the call of `sgcca()` is as follows:
     
 ```{r, eval = FALSE}
 sgcca.glioma = sgcca(B, C,
-                     c1 = c(.071,.2, 1/sqrt(NCOL(B[[3]]))+.2, 1),
+                     sparsity = c(.071,.2, 1/sqrt(NCOL(B[[3]]))+.2, 1),
                      ncomp = c(rep(2, (length(B)-1)),1),
                      scheme = "factorial", scale = TRUE,
                      verbose = FALSE
@@ -1113,13 +1113,13 @@ STAB = list()
 for (j in 1:J)
   STAB[[j]] = matrix(0, nb_boot, NCOL(B[[j]]))
   
-c1 = c(.071,.2, 1/sqrt(NCOL(B[[3]]))+.2, 1)
+sparsity = c(.071,.2, 1/sqrt(NCOL(B[[3]]))+.2, 1)
   
 B = lapply(B, cbind)
 for (i in 1:nb_boot){
   ind = sample(NROW(B[[1]]), replace = TRUE)
   Bscr = lapply(B, function(x) x[ind, ])
-  res = sgcca(Bscr, C, c1 = c1, ncomp = c(rep(1, length(B))),
+  res = sgcca(Bscr, C, sparsity = sparsity, ncomp = c(rep(1, length(B))),
               scheme = "factorial", scale = TRUE)
   for (j in 1:J) STAB[[j]][i, ] = res$a[[j]]
 }

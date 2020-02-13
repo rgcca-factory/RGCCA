@@ -9,7 +9,7 @@ rgccaNa(A, method, C = 1 - diag(length(A)), tau = rep(1, length(A)),
   init = "svd", bias = TRUE, tol = 1e-08, verbose = TRUE,
   sameBlockWeight = TRUE, knn.k = "all", knn.output = "weightedMean",
   knn.klim = NULL, knn.sameBlockWeight = TRUE, pca.ncp = 1,
-  ni = 50, prescaling = FALSE)
+  ni = 50, prescaling = FALSE, quiet = FALSE)
 }
 \arguments{
 \item{A}{A list that contains the \eqn{J} blocks of variables \eqn{\mathbf{X_1}, \mathbf{X_2}, ..., \mathbf{X_J}}.}
@@ -53,6 +53,8 @@ If tau is a matrix, tau[k, j] is associated with \eqn{\mathbf{X}_{jk}} (\eqn{k}t
 \item{ni}{number of iterations for em or sem methods}
 
 \item{prescaling}{If TRUE, the scaling should be done outside of the function. Default at FALSE}
+
+\item{quiet}{If TRUE, the potential warnings are not printed}
 }
 \value{
 \item{Y}{A list of \eqn{J} elements. Each element of \eqn{Y} is a matrix that contains the RGCCA components for the corresponding block.}

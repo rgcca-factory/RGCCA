@@ -8,6 +8,7 @@
 #' @param namePlot =NULL Name of the file
 #' @param width =480 width of the saved file
 #' @param height =480 height of the saved file
+#' @param ylim limits of y
 #' @examples 
 #' set.seed(42);X1=matrix(rnorm(350),70,5);X2=matrix(rnorm(280),70,4);X1[1,1]=NA;X2[2,]=NA
 #' colnames(X1)=paste("A",1:5);colnames(X2)=paste("B",1:4); 

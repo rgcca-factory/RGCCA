@@ -18,6 +18,8 @@ names (NULL otherwise)}
 \item{header}{A bolean giving the presence or the absence of the header}
 
 \item{one_column}{A boolean for a file with  an only-one column}
+
+\item{dec}{A character giving the decimal separator}
 }
 \value{
 A matrix containing the loaded file

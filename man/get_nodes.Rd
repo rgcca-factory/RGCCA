@@ -4,14 +4,16 @@
 \alias{get_nodes}
 \title{Creates the nodes for a design matrix}
 \usage{
-get_nodes(rgcca, tau = NULL)
+get_nodes(rgcca, penalty = NULL)
 }
 \arguments{
 \item{rgcca}{A list giving the results of a R/SGCCA}
+
+\item{penalty}{NULL, "optimal", "sparsity" or "tau"}
 }
 \value{
 A dataframe with rgcca$call$blocks in rows and the number of variables, of rows
-and tau or c1 in columns
+and tau or sparsity in columns
 }
 \description{
 Creates the nodes for a design matrix

@@ -4,22 +4,23 @@
 \alias{sgcca}
 \title{Variable Selection For Generalized Canonical Correlation Analysis (SGCCA)}
 \usage{
-sgcca(A, C = 1 - diag(length(A)), c1 = rep(1, length(A)),
+sgcca(A, C = 1 - diag(length(A)), sparsity = rep(1, length(A)),
   ncomp = rep(1, length(A)), scheme = "centroid", scale = TRUE,
   init = "svd", bias = TRUE, tol = .Machine$double.eps,
-  verbose = FALSE, sameBlockWeight = TRUE, prescaling = FALSE)
+  verbose = FALSE, sameBlockWeight = TRUE, prescaling = FALSE,
+  quiet = FALSE)
 }
 \arguments{
 \item{A}{A list that contains the \eqn{J} blocks of variables \eqn{X_1, X_2, ..., X_J}.}
 
 \item{C}{A design matrix that describes the relationships between blocks (default: complete design).}
 
-\item{c1}{Either a \eqn{1*J} vector or a \eqn{max(ncomp) * J} matrix encoding the L1 constraints applied to the outer weight vectors. 
-Elements of c1 vary between \eqn{1/sqrt(p_j)} and 1 (larger values of c1 correspond to less penalization). 
-If c1 is a vector, L1-penalties are the same for all the weights corresponding to the same block but different components: 
+\item{sparsity}{Either a \eqn{1*J} vector or a \eqn{max(ncomp) * J} matrix encoding the L1 constraints applied to the outer weight vectors.
+Elements of sparsity vary between \eqn{1/sqrt(p_j)} and 1 (larger values of sparsity correspond to less penalization).
+If sparsity is a vector, L1-penalties are the same for all the weights corresponding to the same block but different components:
 \deqn{for all h, |a_{j,h}|_{L_1} \le c_1[j] \sqrt{p_j},}
 with \eqn{p_j} the number of variables of \eqn{X_j}.
-If c1 is a matrix, each row \eqn{h} defines the constraints applied to the weights corresponding to components \eqn{h}:
+If sparsity is a matrix, each row \eqn{h} defines the constraints applied to the weights corresponding to components \eqn{h}:
 \deqn{for all h, |a_{j,h}|_{L_1} \le c_1[h,j] \sqrt{p_j}.}}
 
 \item{ncomp}{A \eqn{1*J} vector that contains the numbers of components for each block (default: rep(1, length(A)), which means one component per block).}
@@ -39,6 +40,8 @@ If c1 is a matrix, each row \eqn{h} defines the constraints applied to the weigh
 \item{sameBlockWeight}{If TRUE, all blocks are weighted by their own variance: all the blocks have the same weight}
 
 \item{prescaling}{if TRUE, the saling step is not run in sgcca}
+
+\item{quiet}{if TRUE, does not print warnings}
 }
 \value{
 \item{Y}{A list of \eqn{J} elements. Each element of Y is a matrix that contains the SGCCA components for each block.}
@@ -94,7 +97,7 @@ tau = c(1, 1, 0)
 A[[3]] = A[[3]][, -3]
 result.rgcca = rgccad(A, C, tau, ncomp = c(2, 2, 1), scheme = "factorial", verbose = TRUE)
 # sgcca algorithm
-result.sgcca = sgcca(A, C, c1 = c(.071,.2, 1), ncomp = c(2, 2, 1), 
+result.sgcca = sgcca(A, C, sparsity = c(.071,.2, 1), ncomp = c(2, 2, 1),
                      scheme = "centroid", verbose = TRUE)
 
 ############################
@@ -121,9 +124,9 @@ plot(result.sgcca$Y[[1]][, 1], result.sgcca$Y[[1]][, 2], col = "white", xlab = "
 text(result.sgcca$Y[[1]][, 1], result.sgcca$Y[[1]][, 2], Loc, col = as.numeric(Loc), cex = .6)
 
 # sgcca algorithm with multiple components and different L1 penalties for each components 
-# (-> c1 is a matrix)
+# (-> sparsity is a matrix)
 init = "random"
-result.sgcca = sgcca(A, C, c1 = matrix(c(.071,.2, 1, 0.06, 0.15, 1), nrow = 2, byrow = TRUE), 
+result.sgcca = sgcca(A, C, sparsity = matrix(c(.071,.2, 1, 0.06, 0.15, 1), nrow = 2, byrow = TRUE),
                      ncomp = c(2, 2, 1), scheme = "factorial", scale = TRUE, bias = TRUE, 
                      init = init, verbose = TRUE)
 # number of non zero elements per dimension
@@ -132,7 +135,7 @@ apply(result.sgcca$a[[1]], 2, function(x) sum(x!=0))
 apply(result.sgcca$a[[2]], 2, function(x) sum(x!=0)) 
      #(-> 85 non zero elements for a21 and 52 non zero elements for a22)
 init = "svd"
-result.sgcca = sgcca(A, C, c1 = matrix(c(.071,.2, 1, 0.06, 0.15, 1), nrow = 2, byrow = TRUE), 
+result.sgcca = sgcca(A, C, sparsity = matrix(c(.071,.2, 1, 0.06, 0.15, 1), nrow = 2, byrow = TRUE),
                      ncomp = c(2, 2, 1), scheme = "factorial", scale = TRUE, bias = TRUE, 
                      init = init, verbose = TRUE)}
 }

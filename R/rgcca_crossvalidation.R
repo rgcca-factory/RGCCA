@@ -42,7 +42,7 @@ rgcca_crossvalidation <- function(
             Atrain <- lapply(bigA, function(x) x[-inds, , drop = FALSE])
 
             if (rgcca$call$type %in% c("spls", "spca", "sgcca"))
-                tau <- rgcca$call$c1
+                tau <- rgcca$call$sparsity
             else
                 tau <- rgcca$call$tau
 

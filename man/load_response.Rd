@@ -18,6 +18,8 @@ load_response(blocks = NULL, file = NULL, sep = "\\t",
 
 \item{rownames}{An integer corresponding to the column number of the row
 names (NULL otherwise)}
+
+\item{dec}{A character giving the decimal separator}
 }
 \value{
 A matrix corresponding to the response

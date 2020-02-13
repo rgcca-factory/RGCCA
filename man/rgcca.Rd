@@ -30,6 +30,8 @@ If tau = "optimal" the shrinkage paramaters are estimated for each block and eac
 analytical formula . If tau is a \eqn{1\times J} numeric vector, tau[j] is identical across the dimensions of block \eqn{\mathbf{X}_j}. 
 If tau is a matrix, tau[k, j] is associated with \eqn{\mathbf{X}_{jk}} (\eqn{k}th residual matrix for block \eqn{j})}
 
+\item{sparsity}{A vector containing the sparsity coefficients (length J, between 0 and 1)}
+
 \item{ncomp}{A vector of integer giving the number of component for each
 blocks}
 

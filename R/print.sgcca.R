@@ -11,7 +11,7 @@ print.sgcca <- function(x)
   cat("The", x$call$scheme, "scheme was used.", fill = TRUE)
   for (i in 1:NCOL(x$call$C)) {
     cat("\n The sparsity parameter used for block", i, "was:", 
-          round(x$c1[i], 4), fill = TRUE)
+          round(x$sparsity[i], 4), fill = TRUE)
     cat("Number of non-zero elements of canonical variate(s) for block ", 
         i, ": ", sep = "")
     if (is.matrix(x$a[[i]])) 

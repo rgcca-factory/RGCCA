@@ -2,7 +2,7 @@
 #' @param A  A list that contains the \eqn{J} blocks of variables \eqn{\mathbf{X_1}, \mathbf{X_2}, ..., \mathbf{X_J}}.
 #' @param method  Either a character corresponding to the used method ("complete","knn","em","sem") or a function taking a list of J blocks (A) as only parameter and returning the imputed list. 
 #' @param C  A design matrix that describes the relationships between blocks (default: complete design).
-#' @param c1 A vector containing the sparsity coefficients (length J, between 0 and 1)
+#' @param sparsity A vector containing the sparsity coefficients (length J, between 0 and 1)
 #' @param ncomp  A \eqn{1 \times J} vector that contains the numbers of components for each block (default: rep(1, length(A)), which gives one component per block.)
 #' @param scheme The value is "horst", "factorial", "centroid" or the g function (default: "centroid").
 #' @param scale  If scale = TRUE, each block is standardized to zero means and unit variances (default: TRUE).
@@ -15,7 +15,9 @@
 #' @param knn.output "mean", "random" or "weightedMean" : returns respectively the average of the k nearest neigbors, one selected randomly, or an average weighted by the distance of the k NN
 #' @param knn.klim k limits (if k is not a number, optimal k between klim[1] and klim[2] is calculated )
 #' @param knn.sameBlockWeight if TRUE the distance for Nearest Neigbors takes the size of blocks into account
+#' @param quiet If TRUE, does not print warnings
 #' @param pca.ncp Number of components chosen in PCA 
+#' @param prescaling If TRUE, sgcce does NOT run scaling steps (they were calculated before)
 #' @return \item{Y}{A list of \eqn{J} elements. Each element of \eqn{Y} is a matrix that contains the RGCCA components for the corresponding block.}
 #' @return \item{a}{A list of \eqn{J} elements. Each element of \eqn{a} is a matrix that contains the outer weight vectors for each block.}
 #' @return \item{astar}{A list of \eqn{J} elements. Each element of astar is a matrix defined as Y[[j]][, h] = A[[j]]\%*\%astar[[j]][, h].}
@@ -42,7 +44,7 @@
 #' rgccaNa(A,method="nipals")
 #' rgccaNa(A,method="knn2")
 
-sgccaNa=function (A,method, C = 1 - diag(length(A)), c1 = rep(1, length(A)),    ncomp = rep(1, length(A)), scheme = "centroid", scale = TRUE,   init = "svd", bias = TRUE, tol = 1e-08, verbose = TRUE,sameBlockWeight=TRUE,knn.k="all",knn.output="weightedMean",knn.klim=NULL,knn.sameBlockWeight=TRUE,pca.ncp=1,prescaling=FALSE)
+sgccaNa=function (A,method, C = 1 - diag(length(A)), sparsity = rep(1, length(A)),    ncomp = rep(1, length(A)), scheme = "centroid", scale = TRUE,   init = "svd", bias = TRUE, tol = 1e-08, verbose = TRUE,sameBlockWeight=TRUE,knn.k="all",knn.output="weightedMean",knn.klim=NULL,knn.sameBlockWeight=TRUE,pca.ncp=1,prescaling=FALSE,quiet=FALSE)
 { 
   nvar = sapply(A, NCOL)
   superblockAsList=function(superblock,A)
@@ -87,13 +89,13 @@ sgccaNa=function (A,method, C = 1 - diag(length(A)), c1 = rep(1, length(A)),    
 # 	  A2=superblockAsList(imputedSuperblock, A)
 # 	}
 
-#  	if(method=="iterativeSB")	{	  A2=imputeSB(A,ncomp=ncomp,scale=scale,sameBlockWeight=sameBlockWeight,c1=c1,tol=tol,ni=10)$A	}
-#     if(method=="em")	{	  A2=imputeEM(A=A,ncomp=ncomp,scale=scale,sameBlockWeight=sameBlockWeight,c1=c1,naxis=1,ni=50,C=C,tol=tol,verbose=verbose,reg="y")$A	}
+#  	if(method=="iterativeSB")	{	  A2=imputeSB(A,ncomp=ncomp,scale=scale,sameBlockWeight=sameBlockWeight,sparsity=sparsity,tol=tol,ni=10)$A	}
+#     if(method=="em")	{	  A2=imputeEM(A=A,ncomp=ncomp,scale=scale,sameBlockWeight=sameBlockWeight,sparsity=sparsity,naxis=1,ni=50,C=C,tol=tol,verbose=verbose,reg="y")$A	}
 #    if(substr(method,1,3)=="sem")
 #    {
 #      if(substr(method,4,4)=="")
 #      {
-#        A2=imputeEM(A=A,superblock=TRUE,ncomp=ncomp,scale=scale,sameBlockWeight=sameBlockWeight,c1=tau,naxis=1,ni=50,C=C,tol=tol,verbose=verbose,reg="y")$A
+#        A2=imputeEM(A=A,superblock=TRUE,ncomp=ncomp,scale=scale,sameBlockWeight=sameBlockWeight,sparsity=tau,naxis=1,ni=50,C=C,tol=tol,verbose=verbose,reg="y")$A
 #      }
 #      else
 #      {
@@ -121,7 +123,7 @@ sgccaNa=function (A,method, C = 1 - diag(length(A)), c1 = rep(1, length(A)),    
       }
   }
   
-  resRgcca=sgcca(A2,c1=c1,ncomp=ncomp,verbose=FALSE,scale=scale,sameBlockWeight=sameBlockWeight,scheme=scheme,tol=tol,prescaling=prescaling)
+  resRgcca=sgcca(A2,sparsity=sparsity,ncomp=ncomp,verbose=FALSE,scale=scale,sameBlockWeight=sameBlockWeight,scheme=scheme,tol=tol,prescaling=prescaling,quiet=quiet)
  return(list(imputedA=A2,rgcca=resRgcca,method,indNA=indNA))
 
 }

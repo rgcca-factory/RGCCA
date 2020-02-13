@@ -2,7 +2,7 @@
 % Please edit documentation in R/plot2D.R
 \name{plot2D}
 \alias{plot2D}
-\title{Plot of components space}
+\title{Plots RGCCA components in a bi-dimensional space}
 \usage{
 plot2D(rgcca, df, title = "Biplot", group = 1,
   name_group = "Response", compx = 1, compy = 2, i_block = 1,
@@ -18,8 +18,7 @@ plot2D(rgcca, df, title = "Biplot", group = 1,
 
 \item{group}{A vector of character with levels used to color the points}
 
-\item{name_group}{A character giving the type of groups (either "Blocs" or
-"Response")}
+\item{name_group}{A character giving the type of groups (either "Blocs" or}
 
 \item{p}{A ggplot object}
 
@@ -39,15 +38,4 @@ plot2D(rgcca, df, title = "Biplot", group = 1,
 }
 \description{
 Plots RGCCA components in a bi-dimensional space
-}
-\examples{
-df = as.data.frame(matrix(runif(20*2, min = -1), 20, 2))
-AVE = lapply(seq(4), function(x) runif(2))
-rgcca_out = list(AVE = list(AVE_X = AVE), call = list(type = "rgcca"))
-plot2D(rgcca_out, df, "Samples", rep(c("a","b"), each=10), "Response")
-data(Russett)
-blocks = list(agriculture = Russett[, seq(3)], industry = Russett[, 4:5],
-politic = Russett[, 6:11] )
-rgcca_out = rgcca(blocks)
-plot2D(rgcca_out, df)
 }

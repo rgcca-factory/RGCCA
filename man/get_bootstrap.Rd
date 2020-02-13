@@ -8,6 +8,8 @@ get_bootstrap(b, comp = 1, i_block = length(b[[1]][[1]]),
   collapse = FALSE, n_cores = parallel::detectCores() - 1)
 }
 \arguments{
+\item{b}{A list of list weights (one per bootstrap per blocks)}
+
 \item{comp}{An integer giving the index of the analysis components}
 
 \item{i_block}{An integer giving the index of a list of blocks}
@@ -15,8 +17,6 @@ get_bootstrap(b, comp = 1, i_block = length(b[[1]][[1]]),
 \item{collapse}{A boolean to combine the variables of each blocks as result}
 
 \item{n_cores}{An integer for the number of cores used in parallelization}
-
-\item{w}{A list of list weights (one per bootstrap per blocks)}
 }
 \value{
 A matrix containing the means, 95% intervals, bootstrap ratio and p-values

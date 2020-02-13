@@ -6,7 +6,7 @@
 #' @inheritParams plot_histogram
 #' @inheritParams plot_var_2D
 #' @inheritParams plot_var_1D
-#' @param w A list of list weights (one per bootstrap per blocks)
+#' @param b A list of list weights (one per bootstrap per blocks)
 #' @return A matrix containing the means, 95% intervals, bootstrap ratio and p-values
 #' @examples
 #' library(RGCCA)

@@ -45,7 +45,7 @@ bootstrap_k <- function(
         scale <- rgcca$call$scale
 
         if (rgcca$call$type %in% c("sgcca","spls","spca")) {
-            penalty <- rgcca$call$c1
+            penalty <- rgcca$call$sparsity
             par <- "sparsity"
         } else {
             penalty <- rgcca$call$tau

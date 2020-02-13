@@ -23,7 +23,7 @@ comparison=function(rgcca1,rgcca2,naxis=1,selec=10,selectPatient=NULL,indNA=NULL
        {
          c1= cor(vec1,vec2)
          c2= cor(vec1,-vec2)
-         return(1-max(c1,c2))	
+         return(1-max(c1,c2))
        }
      }
      if(length(vec1)<4){

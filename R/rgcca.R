@@ -3,6 +3,7 @@
 #' Performs a r/sgcca with predefined parameters
 #' @inheritParams select_analysis
 #' @inheritParams rgccaNa
+#' @inheritParams sgccaNa
 #' @param scale A boolean scaling the blocks
 #' @param init A character among "svd" (Singular Value Decompostion) or "random"
 #' for algorithm initialization
@@ -56,14 +57,14 @@ rgcca <- function(
     pca.ncp = 1) {
 
     if (tolower(type) %in% c("sgcca", "spca", "spls")) {
-        if (!missing(tau))
-           stop(paste0("penalty parameter required for ", tolower(type), "."))
+        if (!missing(tau) && missing(sparsity))
+           stop(paste0("sparsity parameter required for ", tolower(type), "(instead of tau)."))
         gcca <- sgccaNa
-        par <- "c1"
+        par <- "sparsity"
         penalty <- sparsity
     }else{
-        if (!missing(sparsity))
-           stop(paste0("tau parameter required for ", tolower(type), "."))
+        if (!missing(sparsity) & missing(tau))
+           stop(paste0("tau parameter required for ", tolower(type), "(instead of sparsity)."))
         gcca <- rgccaNa
         par <- "tau"
         penalty <- tau

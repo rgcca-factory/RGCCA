@@ -4,12 +4,13 @@
 \alias{sgccaNa}
 \title{Regularized Generalized Canonical Correlation Analysis (RGCCA)}
 \usage{
-sgccaNa(A, method, C = 1 - diag(length(A)), c1 = rep(1, length(A)),
-  ncomp = rep(1, length(A)), scheme = "centroid", scale = TRUE,
-  init = "svd", bias = TRUE, tol = 1e-08, verbose = TRUE,
-  sameBlockWeight = TRUE, knn.k = "all", knn.output = "weightedMean",
-  knn.klim = NULL, knn.sameBlockWeight = TRUE, pca.ncp = 1,
-  prescaling = FALSE)
+sgccaNa(A, method, C = 1 - diag(length(A)), sparsity = rep(1,
+  length(A)), ncomp = rep(1, length(A)), scheme = "centroid",
+  scale = TRUE, init = "svd", bias = TRUE, tol = 1e-08,
+  verbose = TRUE, sameBlockWeight = TRUE, knn.k = "all",
+  knn.output = "weightedMean", knn.klim = NULL,
+  knn.sameBlockWeight = TRUE, pca.ncp = 1, prescaling = FALSE,
+  quiet = FALSE)
 }
 \arguments{
 \item{A}{A list that contains the \eqn{J} blocks of variables \eqn{\mathbf{X_1}, \mathbf{X_2}, ..., \mathbf{X_J}}.}
@@ -18,7 +19,7 @@ sgccaNa(A, method, C = 1 - diag(length(A)), c1 = rep(1, length(A)),
 
 \item{C}{A design matrix that describes the relationships between blocks (default: complete design).}
 
-\item{c1}{A vector containing the sparsity coefficients (length J, between 0 and 1)}
+\item{sparsity}{A vector containing the sparsity coefficients (length J, between 0 and 1)}
 
 \item{ncomp}{A \eqn{1 \times J} vector that contains the numbers of components for each block (default: rep(1, length(A)), which gives one component per block.)}
 
@@ -45,6 +46,10 @@ sgccaNa(A, method, C = 1 - diag(length(A)), c1 = rep(1, length(A)),
 \item{knn.sameBlockWeight}{if TRUE the distance for Nearest Neigbors takes the size of blocks into account}
 
 \item{pca.ncp}{Number of components chosen in PCA}
+
+\item{prescaling}{If TRUE, sgcce does NOT run scaling steps (they were calculated before)}
+
+\item{quiet}{If TRUE, does not print warnings}
 }
 \value{
 \item{Y}{A list of \eqn{J} elements. Each element of \eqn{Y} is a matrix that contains the RGCCA components for the corresponding block.}

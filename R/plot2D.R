@@ -1,4 +1,4 @@
-#' Plot of components space
+# 'Plot of components space
 #'
 #' Plots RGCCA components in a bi-dimensional space
 #'
@@ -8,7 +8,7 @@
 #' "Samples")
 #' @param group A vector of character with levels used to color the points
 #' @param name_group A character giving the type of groups (either "Blocs" or
-#' "Response")
+# "Response")
 #' @param p A ggplot object
 #' @param colours A vectof of character to color quantitative dat
 #' @param cex An integer for the size of the plot parameters
@@ -16,17 +16,17 @@
 #' @param cex_sub An integer for the size of the subtitle
 #' @param cex_point An integer for the size of the points or the text in the plot
 #' @param cex_lab An integer for the size of the axis titles
-#' @examples
-#' df = as.data.frame(matrix(runif(20*2, min = -1), 20, 2))
-#' AVE = lapply(seq(4), function(x) runif(2))
-#' rgcca_out = list(AVE = list(AVE_X = AVE), call = list(type = "rgcca"))
-#' plot2D(rgcca_out, df, "Samples", rep(c("a","b"), each=10), "Response")
-#' data(Russett)
-#' blocks = list(agriculture = Russett[, seq(3)], industry = Russett[, 4:5],
-#' politic = Russett[, 6:11] )
-#' rgcca_out = rgcca(blocks)
-#' plot2D(rgcca_out, df)
-#' @export
+# @examples
+# df = as.data.frame(matrix(runif(20*2, min = -1), 20, 2))
+# AVE = lapply(seq(4), function(x) runif(2))
+# rgcca_out = list(AVE = list(AVE_X = AVE), call = list(type = "rgcca"))
+# plot2D(rgcca_out, df, "Samples", rep(c("a","b"), each=10), "Response")
+# data(Russett)
+# blocks = list(agriculture = Russett[, seq(3)], industry = Russett[, 4:5],
+# politic = Russett[, 6:11] )
+# rgcca_out = rgcca(blocks)
+# plot2D(rgcca_out, df)
+
 plot2D <- function(
     rgcca,
     df,

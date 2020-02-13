@@ -1,12 +1,12 @@
 check_spars <- function(blocks, tau, type = "rgcca") {
-    # c1 : A vector of integer giving the spasity parameter for SGCCA (c1)
-    # Stop the program if at least one c1 parameter is not in the required interval
+    # sparsity : A vector of integer giving the spasity parameter for SGCCA (sparsity)
+    # Stop the program if at least one sparsity parameter is not in the required interval
 
     if (tolower(type) == "sgcca") {
         #the minimum value avalaible
-        min_c1 <- lapply(blocks, function(x) 1 / sqrt(NCOL(x)))
+        min_sparsity <- lapply(blocks, function(x) 1 / sqrt(NCOL(x)))
 
-        # Check c1 varying between 1/sqrt(pj) and 1
+        # Check sparsity varying between 1/sqrt(pj) and 1
         tau <- mapply(
             function(x, y) {
             x <- check_integer("sparsity", x, float = TRUE, min = 0)
@@ -17,7 +17,7 @@ check_spars <- function(blocks, tau, type = "rgcca") {
                         x,
                         ". For SGCCA, it must be comprise between 1/sqrt(number_column) (i.e., ",
                         toString(unlist(
-                            lapply(min_c1, function(x)
+                            lapply(min_sparsity, function(x)
                                 ceiling(x * 100) / 100)
                         ))
                         ,
@@ -27,7 +27,7 @@ check_spars <- function(blocks, tau, type = "rgcca") {
                 )
                 else
                     x
-        }, tau, min_c1)
+        }, tau, min_sparsity)
     }
     
     invisible(tau)

@@ -18,6 +18,8 @@ load_blocks(file, names = NULL, sep = "\\t", header = TRUE,
 
 \item{rownames}{An integer corresponding to the column number of the row
 names (NULL otherwise)}
+
+\item{dec}{A character giving the decimal separator}
 }
 \value{
 A list matrix corresponding to the blocks
