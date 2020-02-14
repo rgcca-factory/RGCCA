@@ -1,13 +1,10 @@
 #'Plots the impact of increasing missing data on RGCCA
 #' @param listFinale A list resulting of naEvolution
 #' @param output ="rv": Can be also "a" for correlations between axes, "bm" for the percent of similar biomarkers, "rvComplete" if the RV is calculated only on complete dataset, or "rmse" for Root Mean Squares Error.
-#' @param fileName =NULL name of the file where the plot is saved
 #' @param ylim =c(0.8,1) y limits
 #' @param block ="all" or a number indicating the position of the chosen block in the initial list
 #' @param barType ="sd" or "stderr". Indicates which error bar to build
-#' @param namePlot =NULL Name of the file
-#' @param width =480 width of the saved file
-#' @param height =480 height of the saved file
+#' @param main =NULL Title of the graph (before the block name)
 #' @param names.arg  renaming the methods
 #' @param main title of the graphic
 #' @examples 
@@ -21,12 +18,17 @@
 #' plotEvol(listFinale=listResults,ylim=c(0,1),output="a")
 #' @importFrom grDevices graphics.off
 #' @export
-plotEvol=function(listFinale,output="rv",fileName=NULL,ylim=NULL,block="all",barType="sd",namePlot=NULL,width=480,height=480,names.arg=NULL,main=NULL)
+plotEvol=function(listFinale,output="rv",ylim=NULL,block="all",barType="sd",main=NULL,width=480,height=480,names.arg=NULL)
 { #output : "rv", "pct" ou "a"
-  #barType="sd" or "stdErr"
+  #barType="sd" or "stderr"
   #  graphics.off()
-  if(is.null(namePlot)){namePlot=output}
-  if(!is.null(fileName)){png(paste(fileName,".png",sep=""),width=width,height=height)}
+  if(is.null(main)){main=output}
+    if(block!="all")
+    {
+        check_integer("block",block)
+    }
+    match.arg(barType,c("sd","stderr"))
+    match.arg(output,c("rv","rvComplete","bm","rmse","a"))
   nameData= names(listFinale)
   abscisse=as.numeric(nameData)
   J=length(listFinale[[1]][[1]][[1]][[1]]) #nblock
@@ -100,7 +102,7 @@ plotEvol=function(listFinale,output="rv",fileName=NULL,ylim=NULL,block="all",bar
     par(las=1)
     par(mar=c(5, 4, 4, 2) + 0.1)
     par(mgp=c(3,1,0))
-    if(is.null(main)){title=paste(namePlot,": Block",j)}else{title=main}
+    if(is.null(main)){title=paste(main,": Block",j)}else{title=main}
     par(mar=c(3,3,1,1))
     plot(NULL,main=title,xlim=c(0,length(abscisse)),ylim=Ylim,xlab="Proportion of missing values",ylab="",bty="n",xaxt="n")
     axis(side = 1,col="grey",line=0,at=-0.5+1:length(abscisse),labels=abscisse)
@@ -140,7 +142,6 @@ plotEvol=function(listFinale,output="rv",fileName=NULL,ylim=NULL,block="all",bar
     legend("topleft",legend=leg,fill=colMethod,box.lwd=0,bty="n")
   }
 par(mfrow=c(1,1))
-  if(!is.null(fileName)){dev.off()}
-  
+return(NULL)
 }
 

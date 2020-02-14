@@ -1,14 +1,11 @@
 #'Plots the impact of increasing missing data on RGCCA
 #' @param listFinale A list resulting of which NA method
 #' @param output ="rv": Can be also "a" for correlations between axes, "bm" for the percent of similar biomarkers, "rvComplete" if the RV is calculated only on complete dataset, or "rmse" for Root Mean Squares Error.
-#' @param fileName =NULL name of the file where the plot is saved
 #' @param ylim =c(0.8,1) y limits
 #' @param block ="all" or a number indicating the position of the chosen block in the initial list
 #' @param barType ="sd" or "stderr". Indicates which error bar to build
-#' @param namePlot =NULL Name of the file
-#' @param width =480 width of the saved file
-#' @param height =480 height of the saved file
-#' @param ylim limits of y
+#' @param main =NULL Name of the file
+#' @param ylab label of y-axis
 #' @examples 
 #' set.seed(42);X1=matrix(rnorm(350),70,5);X2=matrix(rnorm(280),70,4);X1[1,1]=NA;X2[2,]=NA
 #' colnames(X1)=paste("A",1:5);colnames(X2)=paste("B",1:4); 
@@ -21,16 +18,16 @@
 #' @export
 
 
-plotWhichNAmethod=function(listFinale,output="rv",fileName=NULL,ylim=NULL,block="all",barType="sd",namePlot=NULL,width=480,height=480,ylab="")
+plotWhichNAmethod=function(listFinale,output="rv",ylim=NULL,block="all",barType="sd",main=NULL,ylab="")
 { #output : "rv", "pct" ou "a"
-  #barType="sd" or "stdErr"
+  #barType="sd" or "stderr"
     
     # TODO: par(new=TRUE)
-    
-  if(is.null(namePlot)){namePlot=output}
+  match.arg(barType,c("sd","stderr"))
+  match.arg(output,c("rv","rvComplete","a","rmse","bm"))
+  if(is.null(main)){main=output}
   #graphics.off()
-  if(!is.null(fileName)){png(paste(fileName,".png",sep=""),width=width,height=height)}
-  nameData= names(listFinale)
+ nameData= names(listFinale)
   abscisse=as.numeric(substr(nameData,5,7));names(abscisse)=nameData
   abscisse=1:length(listFinale[[1]])
   pas=1 
@@ -65,7 +62,7 @@ plotWhichNAmethod=function(listFinale,output="rv",fileName=NULL,ylim=NULL,block=
     {
       result=sapply(listFinale,function(x){return(x[[rg]][[output]][[j]])})
       moyenne[rg]=mean(result)
-      if(!barType %in% c("sd","stderr")){ecartType=0}
+      if(barType =="no"){ecartType=0}
       if(barType=="sd"){ecartType[rg]=sd(result)}
       if(barType=="stderr"){ecartType[rg]=sd(result)/sqrt(length(result))}
     } 
@@ -83,7 +80,7 @@ plotWhichNAmethod=function(listFinale,output="rv",fileName=NULL,ylim=NULL,block=
     {
         Ylim=ylim
     }
-    plot(NULL,main=paste(namePlot,": Block",j),xlim=c(0,length(namesMethod)-1),ylim=Ylim,xlab="Methods",ylab=ylab,bty="n",xaxt="n")
+    plot(NULL,main=paste(main,": Block",j),xlim=c(0,length(namesMethod)-1),ylim=Ylim,xlab="Methods",ylab=ylab,bty="n",xaxt="n")
     axis(side = 1,col="grey",line=0)
     axis(side = 2,col="grey",line=0)
     rect(par("usr")[1], par("usr")[3], par("usr")[2], par("usr")[4], col = 
@@ -113,7 +110,6 @@ plotWhichNAmethod=function(listFinale,output="rv",fileName=NULL,ylim=NULL,block=
     legend("bottomleft",legend=namesMethod,fill=colMethod,box.lwd=0,bty="n")
   }
   
-  if(!is.null(fileName)){dev.off()}
   #par(new=TRUE)
   par(mfrow=c(1,1))
   par(mar=c(5,4,3,3))

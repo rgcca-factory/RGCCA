@@ -25,11 +25,28 @@
 #' @export naEvolution
 naEvolution=function(A,prctNA=c(0.1,0.2,0.3),listMethods=c("mean"),typeNA="block",ncomp=rep(1,length(A)),sameBlockWeight=TRUE,scale=TRUE,nDatasets=20,tol=1e-6,verbose=FALSE,scheme="centroid",seed=NULL,C=matrix(1,length(A),length(A))-diag(length(A)),tau=rep(1,length(A)))
 {
+     if(any(prctNA>1)){stop("prctNA should be a vector of proportion of missing data (between 0 and 1)")}
+    match.arg(typeNA,c("block","ponc","byVar","rand"))
+    check_ncomp(ncomp,A)
+    check_boolean("sameBlockWeight",sameBlockWeight)
+    check_boolean("scale",scale)
+    check_integer("nDatasets",nDatasets)
+    check_boolean("verbose",verbose)
+    check_integer("tol",tol,float=TRUE,min=0)
+    choices <- c("horst", "factorial", "centroid")
+    if (!scheme %in% (choices) && !is.function(scheme))
+        stop(paste0(scheme, " must be one of ", paste(choices, collapse = ", "), "' or a function."))
+    check_connection(C,A)
+    check_tau(tau,A)
+    if(!is.null(seed)){check_integer("seed",seed)}
+    
     resultComparison=list()
     i=0
     for(prct in prctNA)
     {
-        print(paste("pourcent=",prct))
+       if(verbose)
+            print(paste("pourcent=",prct))
+        
         resultComparison[[as.character(prct)]]=list()
         resultComparison[[as.character(prct)]]=whichNAmethod(A=A,C=C,tau=tau,listMethods=listMethods,patternNA=rep(prct,length(A)),typeNA=typeNA,ncomp=ncomp,sameBlockWeight=sameBlockWeight,scale=scale,nDatasets=nDatasets,tol=tol,verbose=verbose,scheme=scheme,seed=seed+i)
         i=i+10

@@ -39,8 +39,21 @@
 #'  A=list(X1,X2,X3)
 #' res=MIRGCCA(A,k=3,ni=5,scale=TRUE,sameBlockWeight=TRUE,tau=rep(0,3))
 #' @export
-MIRGCCA=function(A,option="knn",superblock=TRUE,k=5,ni=5,scale=TRUE,sameBlockWeight=TRUE,tau,klim=NULL,output="mean",scheme="centroid",tol=1e-8,C=NULL,ncomp=rep(2,length(A)),naxis=1)
+MIRGCCA=function(A,option="knn",superblock=TRUE,k=5,ni=5,scale=TRUE,sameBlockWeight=TRUE,tau=rep(1:length(A)),klim=NULL,output="mean",scheme="centroid",tol=1e-8,C=NULL,ncomp=rep(2,length(A)),naxis=1)
 {
+    match.arg(option,c("knn","em"))
+    check_boolean("superblock",superblock)
+    check_boolean("sameBlockWeight",sameBlockWeight)
+    check_tau(tau,A)
+    check_integer("tol",tol,float=TRUE,min=0)
+    check_integer("naxis",naxis)
+    check_boolean("scale",scale)
+    check_ncomp(ncomp,A)
+    check_integer("ni",ni)
+    choices <- c("horst", "factorial", "centroid")
+    if (!scheme %in% (choices) && !is.function(scheme))
+        stop(paste0(scheme, " must be one of ", paste(choices, collapse = ", "), "' or a function."))
+    
      if(option=="knn")
   {
     dataTest0=imputeNN(A=A,output=output,k=k,klim=klim)

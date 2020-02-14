@@ -4,16 +4,13 @@
 \alias{plotWhichNAmethod}
 \title{Plots the impact of increasing missing data on RGCCA}
 \usage{
-plotWhichNAmethod(listFinale, output = "rv", fileName = NULL,
-  ylim = NULL, block = "all", barType = "sd", namePlot = NULL,
-  width = 480, height = 480, ylab = "")
+plotWhichNAmethod(listFinale, output = "rv", ylim = NULL,
+  block = "all", barType = "sd", main = NULL, ylab = "")
 }
 \arguments{
 \item{listFinale}{A list resulting of which NA method}
 
 \item{output}{="rv": Can be also "a" for correlations between axes, "bm" for the percent of similar biomarkers, "rvComplete" if the RV is calculated only on complete dataset, or "rmse" for Root Mean Squares Error.}
-
-\item{fileName}{=NULL name of the file where the plot is saved}
 
 \item{ylim}{=c(0.8,1) y limits}
 
@@ -21,13 +18,9 @@ plotWhichNAmethod(listFinale, output = "rv", fileName = NULL,
 
 \item{barType}{="sd" or "stderr". Indicates which error bar to build}
 
-\item{namePlot}{=NULL Name of the file}
+\item{main}{=NULL Name of the file}
 
-\item{width}{=480 width of the saved file}
-
-\item{height}{=480 height of the saved file}
-
-\item{ylim}{limits of y}
+\item{ylab}{label of y-axis}
 }
 \description{
 Plots the impact of increasing missing data on RGCCA

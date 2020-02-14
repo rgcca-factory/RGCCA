@@ -16,7 +16,7 @@
 print.rgcca <- function(x,...) 
 {
   cat("Call: ")
-  dput(x$call[!names(x$call)%in%c("blocks")])
+  dput(x$call[!names(x$call)%in%c("blocks","connection")])
   cat("\n\n")
  
   if(is.list(x$crit))

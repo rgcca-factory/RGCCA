@@ -1,7 +1,9 @@
 print.rgccad <- function(x, ...) 
 {
-  cat("Call: ")
-  dput(x$call)
+
+    cat("Call: ")
+    dput(x$call[!names(x$call)%in%c("A")])
+    
   cat("\n\n")
   
   if(is.list(x$crit))
