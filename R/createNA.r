@@ -20,8 +20,13 @@ createNA=function(A,typeNA="block",pNA=0.1,nAllRespondants=4,output="list",seed=
   A= listOfMatrices(A)
   if(length(pNA)==1){pNA=rep(pNA,length(A))}
   if(length(pNA)!=1 & length(pNA)!=length(A)){stop("pNA should be a number between 0 and 1 or a vector of the same size as A ")}
-  if(!typeNA%in% c("block","rand","ponc","byvar")){stop("typeNA should be chosen as 'block' or 'rand' or 'ponc' or 'byvar'")}
-  
+   match.arg(typeNA,c("block","rand","ponc","byvar"))
+   match.arg(output,c("list","superblock"))
+   if(!is.null(seed))
+   {
+       check_integer("seed",seed)
+   }
+   check_integer(nAllRespondants)
   if(is.null(rownames(A[[1]]))){rownames(A[[1]])=paste("S",1:dim(A[[1]])[1],sep="")}
     if(is.list(pNA)){warnings("The percentage of missing data is chosen by variable. 'byvar' typeNA is chosen")}
   if(typeNA=="block")

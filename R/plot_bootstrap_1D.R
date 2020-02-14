@@ -30,11 +30,11 @@ plot_bootstrap_1D <- function(
     n = 50,
     title = paste0(attributes(b)$indexes[[x]],
                    "\n(",
-                   attributes(selected.var)$n_boot,
+                   attributes(b)$n_boot,
                    " bootstraps)"), 
     colors = c(color_group(seq(3))[1],  "white", color_group(seq(3))[3]),
     ...) {
-
+    lower_band <- NULL -> upper_band
     check_ncol(list(b), 1)
 
     set_occ <- function(x) {

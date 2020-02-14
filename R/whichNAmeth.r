@@ -21,10 +21,23 @@
 #' @importFrom parallel mclapply
 
 whichNAmethod=function(A,listNAdataset=NULL,C=matrix(1,length(A),length(A))-diag(length(A)), tau=rep(1,length(A)),
-                       listMethods,nDatasets=20,patternNA=NULL,typeNA="block",ncomp=rep(2,length(A)),sameBlockWeight=TRUE,scale=TRUE,tol=1e-6,verbose=FALSE,scheme="centroid",seed=NULL)
+                       listMethods,nDatasets=20,patternNA=NULL,typeNA="block",ncomp=rep(2,length(A)),sameBlockWeight=TRUE,scale=TRUE,tol=1e-6,
+                       verbose=FALSE,scheme="centroid",seed=NULL)
 {
-  #check_connection(C,A)
- # check_tau(tau,A)
+  check_connection(C,A)
+  check_tau(tau,A)
+  check_ncomp(tau,A)
+  check_integer("nDatasets",nDatasets)
+  check_boolean("sameBlockWeight",sameBlockWeight)
+  check_boolean("scale",scale)
+  check_boolean("verbose",verbose)
+  check_integer("tol",tol,float=TRUE,min=0)
+  choices <- c("horst", "factorial", "centroid")
+  if (!scheme %in% (choices) && !is.function(scheme))
+      stop(paste0(scheme, " must be one of ", paste(choices, collapse = ", "), "' or a function."))
+  
+#  if(length(seed)!=0){check_integer("seed",seed)}
+  match.arg(typeNA,c("block","ponc","rand","byVar"))
 
   if(is.null(patternNA)){patternNA=determine_patternNA(A,graph=FALSE)$pctNAbyBlock}
   if(is.vector(patternNA)){if(length(patternNA)!=length(A)){stop("patternNA should have the same size as length(A)")}}

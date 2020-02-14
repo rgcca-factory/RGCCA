@@ -4,16 +4,14 @@
 \alias{plotEvol}
 \title{Plots the impact of increasing missing data on RGCCA}
 \usage{
-plotEvol(listFinale, output = "rv", fileName = NULL, ylim = NULL,
-  block = "all", barType = "sd", namePlot = NULL, width = 480,
-  height = 480, names.arg = NULL, main = NULL)
+plotEvol(listFinale, output = "rv", ylim = NULL, block = "all",
+  barType = "sd", main = NULL, width = 480, height = 480,
+  names.arg = NULL)
 }
 \arguments{
 \item{listFinale}{A list resulting of naEvolution}
 
 \item{output}{="rv": Can be also "a" for correlations between axes, "bm" for the percent of similar biomarkers, "rvComplete" if the RV is calculated only on complete dataset, or "rmse" for Root Mean Squares Error.}
-
-\item{fileName}{=NULL name of the file where the plot is saved}
 
 \item{ylim}{=c(0.8,1) y limits}
 
@@ -21,11 +19,7 @@ plotEvol(listFinale, output = "rv", fileName = NULL, ylim = NULL,
 
 \item{barType}{="sd" or "stderr". Indicates which error bar to build}
 
-\item{namePlot}{=NULL Name of the file}
-
-\item{width}{=480 width of the saved file}
-
-\item{height}{=480 height of the saved file}
+\item{main}{=NULL Title of the graph (before the block name)}
 
 \item{names.arg}{renaming the methods}
 

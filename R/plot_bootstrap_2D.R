@@ -28,7 +28,7 @@ plot_bootstrap_2D <- function(
     x = "bootstrap_ratio",
     y = "occurrences",
     title = paste("Variable selection \nby",
-           attributes(selected.var)$n_boot,
+           attributes(b)$n_boot,
            "bootstraps"),
     colors = NULL,
     cex = 1,

@@ -28,6 +28,10 @@ determine_patternNA=function(A,graph="all",legend=FALSE,outlierVisible=TRUE,scal
 
     #A=checkSize(A)
     #A=checkRownames(A)
+  #  check_blocks(A,add_NAlines=TRUE)
+    check_boolean("legend",legend)
+    check_boolean("outlierVisible",outlierVisible)
+    check_boolean("scale",scale)
     A=check_blocks(A,add_NAlines = TRUE)
     pctNA=lapply(A,function(x)
         {

@@ -83,9 +83,7 @@ check_blocks <- function(blocks, init = FALSE, add_NAlines=FALSE) {
         if (length(blocks) > 1 && !equal_rows)
             blocks <- common_rows(blocks)
     }
-  
    
-    
     if (init) {
         blocks <- remove_null_sd(blocks)
         for (i in seq(length(blocks)))
