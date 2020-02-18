@@ -8,8 +8,6 @@ plot_ave(rgcca, cex = 1, title = "Average Variance Explained",
   colors = NULL, ...)
 }
 \arguments{
-\item{rgcca}{A list giving the results of a R/SGCCA}
-
 \item{cex}{An integer for the size of the plot parameters}
 
 \item{title}{A character with the name of the space (either "Variables" or

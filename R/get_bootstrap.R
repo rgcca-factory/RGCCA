@@ -94,7 +94,7 @@ get_bootstrap <- function(
         rm(b_select); gc()
     }
     
-    n_boot <- length(b)
+    n_boot <- length(b$bootstrap)
 
     occ <- unlist(occ)
     mean <- unlist(mean)
@@ -109,8 +109,8 @@ get_bootstrap <- function(
     df <- data.frame(
         mean = mean,
         estimate = weight,
-        lower_band = mean - (tail * sd/sqrt(n_boot)),
-        upper_band = mean + (tail * sd/sqrt(n_boot)),
+        lower_band = mean - (tail * sd),
+        upper_band = mean + (tail * sd),
         bootstrap_ratio = abs(mean) / sd,
         p.vals,
         BH = p.adjust(p.vals, method = "BH")

@@ -49,7 +49,7 @@ get_comp <- function(
   
     if(is.vector(resp))
     {
-        print("in")
+       
         resp2=matrix(resp,ncol=1)
         if(!is.null(names(resp)))
         {
@@ -71,7 +71,7 @@ get_comp <- function(
          if(is.null(rownames(resp)))
         {
             warning("Response has no names. Same names as the first block are attributed")
-            rownames(resp)=names(rgcca$call$blocks[[i_block]][,1])
+            rownames(resp)=names(rgcca$A[[i_block]][,1])
         }
     }
     else

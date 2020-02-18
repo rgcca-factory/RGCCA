@@ -4,16 +4,14 @@
 \alias{bootstrap_k}
 \title{Compute bootstrap (internal)}
 \usage{
-bootstrap_k(rgcca, blocks = NULL, connection = 1 -
+bootstrap_k(rgcca_res, blocks = NULL, connection = 1 -
   diag(length(blocks)), tau = rep(1, length(blocks)), sparsity = rep(1,
   length(blocks)), ncomp = rep(2, length(blocks)),
   scheme = "factorial", init = "svd", bias = TRUE, tol = 0.001,
   type = "rgcca", scale = TRUE, sameBlockWeight = TRUE,
-  superblock = TRUE, response = NULL)
+  superblock = TRUE, response = NULL, method = "complete")
 }
 \arguments{
-\item{rgcca}{A list giving the results of a R/SGCCA}
-
 \item{blocks}{A list of matrix}
 
 \item{connection}{A matrix giving the connection between the blocks}
@@ -51,6 +49,8 @@ a superblock}
 
 \item{response}{An integer giving the index of a block considered as a 
 response among a list of blocks}
+
+\item{method}{Either a character corresponding to the used method ("complete","knn","em","sem") or a function taking a list of J blocks (A) as only parameter and returning the imputed list.}
 }
 \value{
 A list of RGCCA bootstrap weights

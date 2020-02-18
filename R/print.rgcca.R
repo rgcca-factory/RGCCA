@@ -42,7 +42,7 @@ print.rgcca <- function(x,...)
       cat("The", x$call$scheme, "scheme was used.", fill = TRUE)
       
   }
-  if(x$call$type %in% c("rgcca","sgcca"))   
+  if(x$call$type %in% c("rgcca"))   
   {
     if(!is.matrix(x$tau))
     {
@@ -50,8 +50,9 @@ print.rgcca <- function(x,...)
             tau <- x$call$tau[i]
             if (tau != "optimal")
                 tau <- round(tau , 4)
-            if(x$call$type=="rgcca"){param="regularization"}
-            if(x$call$type=="sgcca"){param="shrinkage"}
+            
+            param="regularization"
+
             cat("The",param," parameter used for block", i, "was:", 
                 tau, fill = TRUE,...)
         }
@@ -61,6 +62,20 @@ print.rgcca <- function(x,...)
         cat("The",param," parameter used for block", i, "was: \n")
         print(round(x$tau,4))
     }
-    
+  }
+  if(x$call$type %in% c("sgcca"))
+      if(!is.matrix(x$sparsity))
+      {
+          for (i in 1:NCOL(x$call$connection)) {
+              sparsity <- x$call$sparsity[i]
+             param="shrinkage"
+              cat("The",param," parameter used for block", i, "was:", 
+                  sparsity, fill = TRUE,...)
+          }
+      }
+  else
+  {
+      cat("The",param," parameter used for block", i, "was: \n")
+      print(round(x$tau,4))
   }
 }

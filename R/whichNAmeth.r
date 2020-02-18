@@ -22,7 +22,7 @@
 
 whichNAmethod=function(A,listNAdataset=NULL,C=matrix(1,length(A),length(A))-diag(length(A)), tau=rep(1,length(A)),
                        listMethods,nDatasets=20,patternNA=NULL,typeNA="block",ncomp=rep(2,length(A)),sameBlockWeight=TRUE,scale=TRUE,tol=1e-6,
-                       verbose=FALSE,scheme="centroid",seed=NULL)
+                       verbose=FALSE,scheme="centroid",seed=NULL,typeRGCCA="rgcca",sparsity=NULL)
 {
   check_connection(C,A)
   check_tau(tau,A)
@@ -38,7 +38,7 @@ whichNAmethod=function(A,listNAdataset=NULL,C=matrix(1,length(A),length(A))-diag
   
 #  if(length(seed)!=0){check_integer("seed",seed)}
   match.arg(typeNA,c("block","ponc","rand","byVar"))
-
+  match.arg(typeRGCCA,c("rgcca","sgcca"))
   if(is.null(patternNA)){patternNA=determine_patternNA(A,graph=FALSE)$pctNAbyBlock}
   if(is.vector(patternNA)){if(length(patternNA)!=length(A)){stop("patternNA should have the same size as length(A)")}}
   referenceDataset=intersection(A)
@@ -58,8 +58,16 @@ whichNAmethod=function(A,listNAdataset=NULL,C=matrix(1,length(A),length(A))-diag
     )
   }
 
-  referenceRgcca=rgccad(referenceDataset,C=C,tau=tau,ncomp=ncomp,verbose=verbose,sameBlockWeight=sameBlockWeight,scale=scale,tol=tol,scheme=scheme)
-  if(verbose)    {  print("comparisons of RGCCA with the different methods...(this could take some time)")}
+  if(typeRGCCA=="rgcca")
+  {
+      referenceRgcca=rgccad(referenceDataset,C=C,tau=tau,ncomp=ncomp,verbose=verbose,sameBlockWeight=sameBlockWeight,scale=scale,tol=tol,scheme=scheme)
+      if(verbose)    {  print("comparisons of RGCCA with the different methods...(this could take some time)")}
+  }
+  if(typeRGCCA=="sgcca")
+  {
+      referenceRgcca=sgcca(referenceDataset,C=C,sparsity=sparsity,ncomp=ncomp,verbose=verbose,sameBlockWeight=sameBlockWeight,scale=scale,tol=tol,scheme=scheme)
+      if(verbose)    {  print("comparisons of SGCCA with the different methods...(this could take some time)")}
+  }
   resultComparison=NULL
   resultComparison=mclapply(1:nDatasets,function(i)
   {  
@@ -67,8 +75,15 @@ whichNAmethod=function(A,listNAdataset=NULL,C=matrix(1,length(A),length(A))-diag
     indicators=NULL
     for(method in listMethods)
     {  
+        if(typeRGCCA=="rgcca")
+        {
         methodRgcca=rgccaNa(A=listNAdataset[[i]]$dat,C=C,tau=tau,method=method,ncomp=ncomp,sameBlockWeight=sameBlockWeight,scale=scale,tol=tol,verbose=FALSE,scheme=scheme)
-       indicators[[method]]=comparison(rgcca1=referenceRgcca,rgcca2=methodRgcca$rgcca,selectPatient=selectCompletePatient,indNA=methodRgcca$indNA)
+        }
+        if(typeRGCCA=="sgcca")
+        {
+            methodRgcca=sgccaNa(A=listNAdataset[[i]]$dat,C=C,sparsity=sparsity,method=method,ncomp=ncomp,sameBlockWeight=sameBlockWeight,scale=scale,tol=tol,verbose=FALSE,scheme=scheme)
+        }
+        indicators[[method]]=comparison(rgcca1=referenceRgcca,rgcca2=methodRgcca$rgcca,selectPatient=selectCompletePatient,indNA=methodRgcca$indNA)
     }
     return(indicators)
   })

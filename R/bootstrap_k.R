@@ -15,7 +15,7 @@
 #' bootstrap_k(rgcca_out, lapply(blocks, scale), superblock = FALSE)
 #' @export
 bootstrap_k <- function(
-    rgcca,
+    rgcca_res,
     blocks = NULL,
     connection = 1 - diag(length(blocks)),
     tau = rep(1, length(blocks)),
@@ -29,26 +29,28 @@ bootstrap_k <- function(
     scale = TRUE,
     sameBlockWeight = TRUE,
     superblock = TRUE,
-    response = NULL) {
+    response = NULL,
+    method = "complete") {
 
     if (is.null(blocks)) {
-        blocks <- intersection(rgcca$call$blocks) -> blocks.all
-        connection <- rgcca$call$connection
-        ncomp <- rgcca$call$ncomp
-        scheme <- rgcca$call$scheme
-        bias <- rgcca$call$bias
-        tol <- rgcca$call$tol
-        superblock <- rgcca$call$superblock
-        type <- rgcca$call$type
-        init <- rgcca$call$init
-        sameBlockWeight <- rgcca$call$scale
-        scale <- rgcca$call$scale
+        blocks <- rgcca_res$call$blocks -> blocks.all
+        method <- rgcca_res$call$method
+        connection <- rgcca_res$call$connection
+        ncomp <- rgcca_res$call$ncomp
+        scheme <- rgcca_res$call$scheme
+        bias <- rgcca_res$call$bias
+        tol <- rgcca_res$call$tol
+        superblock <- rgcca_res$call$superblock
+        type <- rgcca_res$call$type
+        init <- rgcca_res$call$init
+        sameBlockWeight <- rgcca_res$call$sameBlockWeight 
+        scale <- rgcca_res$call$scale
 
-        if (rgcca$call$type %in% c("sgcca","spls","spca")) {
-            penalty <- rgcca$call$sparsity
+        if (rgcca_res$call$type %in% c("sgcca","spls","spca")) {
+            penalty <- rgcca_res$call$sparsity
             par <- "sparsity"
         } else {
-            penalty <- rgcca$call$tau
+            penalty <- rgcca_res$call$tau
             par <- "tau"
         }
 
@@ -57,25 +59,28 @@ bootstrap_k <- function(
             connection <- NULL
         }
 
-        if (!is.null(rgcca$call$response))
-            response <- length(rgcca$call$blocks)
+        if (!is.null(rgcca_res$call$response))
+            response <- length(rgcca_res$call$blocks)
 
     } else {
-        blocks.all <- intersection(blocks)
+        blocks.all <- blocks
 
         if (tolower(type) %in% c("sgcca", "spca", "spls")) {
-            if (!missing(tau))
-               stop(paste0("penalty parameter required for ", tolower(type), "."))
+            if (!missing(tau) & missing(sparsity)){stop(paste0("sparsity parameter required for ", tolower(type), "instead of tau."))}
+               
             par <- "sparsity"
             penalty <- sparsity
         } else {
-            if (!missing(sparsity))
-               stop(paste0("tau parameter required for ", tolower(type), "."))
+            if (!missing(sparsity) & missing(tau))
+            {
+                stop(paste0("tau parameter required for ", tolower(type), "instead of sparsity."))
+            }
+              
             par <- "tau"
             penalty <- tau
         }
     }
-
+print(penalty)
     boot_blocks <- list(NULL)
     while (any(sapply(boot_blocks, function(x) length(x)) == 0)) {
 
@@ -102,6 +107,7 @@ bootstrap_k <- function(
             verbose = FALSE,
             init = init,
             bias = bias,
+            method=method,
         tol = tol
     ))
     
@@ -136,7 +142,7 @@ bootstrap_k <- function(
 
     names(w) <- names(blocks.all)
 
-    w <- check_sign_comp(rgcca, w)
+    w <- check_sign_comp(rgcca_res, w)
 
     return(w)
 }

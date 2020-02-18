@@ -4,12 +4,10 @@
 \alias{bootstrap}
 \title{Compute bootstrap}
 \usage{
-bootstrap(rgcca, n_boot = 5, n_cores = parallel::detectCores() - 1,
+bootstrap(rgcca_res, n_boot = 5, n_cores = parallel::detectCores() - 1,
   ...)
 }
 \arguments{
-\item{rgcca}{A list giving the results of a R/SGCCA}
-
 \item{n_boot}{A integer for the number of boostrap}
 
 \item{n_cores}{An integer for the number of cores used in parallelization}
@@ -20,7 +18,8 @@ bootstrap(rgcca, n_boot = 5, n_cores = parallel::detectCores() - 1,
 A list of RGCCA bootstrap weights
 }
 \description{
-Computing boostrap of RGCCA
+Bootstrapping individuals for obtaining confidence intervals for weights of RGCCCA (draw with replacement).
+Requires then the use of get_bootstrap, to extract the component and block of interest.
 }
 \examples{
 library(RGCCA)
@@ -31,4 +30,7 @@ rgcca_out = rgcca(blocks)
 bootstrap(rgcca_out, n_boot = 2, n_cores = 1)
 bootstrap(rgcca_out, n_boot = 2, n_cores = 1, blocks = lapply(blocks, scale),
  superblock = FALSE)
+}
+\seealso{
+get_bootstrap, plot_bootstrap_1D
 }

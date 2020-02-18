@@ -9,8 +9,6 @@ get_ctr2(rgcca, compx = 1, compy = 2, compz = NULL,
   collapse = FALSE, remove_var = TRUE)
 }
 \arguments{
-\item{rgcca}{A list giving the results of a R/SGCCA}
-
 \item{compx}{An integer giving the index of the analysis component used
 for the x-axis}
 
