@@ -38,7 +38,7 @@ plot_histogram <- function(
         check_integer(i, get(i))
 
     stopifnot(is(p, "ggplot"))
-    colors <- check_colors(colors)
+    check_colors(colors)
     title <- paste0(title, collapse = " ")
     group <- as.vector(group)
 
@@ -82,18 +82,20 @@ plot_histogram <- function(
     )
 
     if  (!is(df, "d_ave")) {
-            p <- p +
-                scale_x_continuous(breaks = df$order, labels = rownames(df)) +
-                labs(fill = "Blocks")
-            if (length(group) == 1) {
-                if (is.na(colors[2])) {
-                    p <- p +
-                        scale_fill_gradient(low = colors[1], high = colors[3]) +
-                        theme(legend.position = "none")
-                }else
-                    p <- p +
-                        scale_fill_gradient2(low = colors[1], high = colors[3], mid = colors[2])
+        p <- p +
+            scale_x_continuous(breaks = df$order, labels = rownames(df)) +
+            labs(fill = "Blocks")
+        if (length(group) == 1){
+            if (is.null(colors)){
+                colors <- c("blue", "gray", "#cd5b45")
+                print("hereXXXX")
             }
+            p <- p +
+                scale_fill_gradientn(colors = colors, na.value = "black")
+        } else  if ((is.character2(group[!is.na(group)]) ||
+                            length(unique(group)) <= 5 )) {
+            p <- p + scale_fill_manual(values = color_group(group, colors))
+        }
     }
 
     return(p)

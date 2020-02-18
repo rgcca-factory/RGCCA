@@ -45,7 +45,12 @@ plot3D <- function(
 
     stopifnot(is(rgcca, "rgcca"))
     check_boolean("text", text)
-    colors <- check_colors(colors)
+    if (is.null(colors)) {
+        colors <- "#A50026"
+        colors[2] <- NA
+        colors[3] <- "#313695"
+    }else
+        check_colors(colors)
     title <- paste0(title, collapse = " ")
     match.arg(type, c("ind", "var"))
     for (i in c("i_block", "i_block_y", "i_block_z"))
@@ -71,6 +76,14 @@ plot3D <- function(
                         size = cex_lab * 0.75
                     )
             )
+
+   if(!is.character2(df$resp)){
+      if (is.null(colors)){
+        colors <- "#A50026"
+        colors[2] <- NA
+        colors[3] <- "#313695"
+      }
+   }
 
     color <- function(x){
         n <- length(x)

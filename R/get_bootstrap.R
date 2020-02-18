@@ -94,7 +94,7 @@ get_bootstrap <- function(
         rm(b_select); gc()
     }
     
-    n_boot <- length(b$bootstrap)
+    n_boot <- length(b[[1]])
 
     occ <- unlist(occ)
     mean <- unlist(mean)

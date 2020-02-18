@@ -50,6 +50,7 @@ plot2D <- function(
     
     title <- paste0(title, collapse = " ")
     name_group <- paste0(title, collapse = " ")
+    check_colors(colors)
     for (i in c("cex", "cex_main", "cex_sub", "cex_point", "cex_lab"))
         check_integer(i, get(i))
     for (i in c("text", "no_overlap"))
@@ -127,20 +128,22 @@ plot2D <- function(
             axis.line = element_blank()
         )
 
-    if (is.null(colors))
-        colours <- c("blue", "gray", "#cd5b45")
-    else
-        check_colors(colors)
 
     if (length(unique(group)) != 1 && is(df, "d_var2D")) {
-        order_color(rgcca$a, p, collapse = collapse, colors)
+        p <- order_color(rgcca$a, p, collapse = collapse, colors = colors)
         # For qualitative response OR no response
     } else if ( is.character2(group[!is.na(group)]) ||
                 length(unique(group)) <= 5 || 
             all( levels(as.factor(group)) %in% c("obs", "pred") )
         ) {
-        p + scale_color_manual(values = color_group(group, colors))
+        p <- p + scale_color_manual(values = color_group(group, colors))
         # quantitative response
-    } else
-        p + scale_color_gradientn(colours = colours, na.value = "black")
+    } else{
+        if (is.null(colors))
+            colors <- c("blue", "gray", "#cd5b45")
+        p <- p + scale_color_gradientn(colours = colors, na.value = "black")
+    }
+    
+
+    return(p)
 }

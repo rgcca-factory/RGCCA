@@ -99,7 +99,9 @@ plot_var_2D <- function(
         collapse =  collapse,
         no_overlap = no_overlap,
         ...
-    ) +
+    )
+    
+    p <- p+
     geom_path(
         aes(x, y),
         data = plot_circle(),
@@ -113,7 +115,7 @@ plot_var_2D <- function(
         size = 1,
         lty = 2
     )
-
+    
     # remove legend if not on superblock
     if ((!rgcca$call$superblock || i_block != length(rgcca$a)) && !collapse)
         p <- p + theme(legend.position = "none")

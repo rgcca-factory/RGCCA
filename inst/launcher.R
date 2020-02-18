@@ -51,7 +51,6 @@ getArgs <- function() {
             opt_str = c("-r", "--response"),
             type = "integer",
             metavar = "integer",
-            default = 3,
             help = "Position of the response file for the supervised mode within
             the block path list [actives the supervised mode]"
         ),

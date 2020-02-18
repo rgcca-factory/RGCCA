@@ -27,7 +27,6 @@ plot_ave <- function(
 
     stopifnot(is(rgcca, "rgcca"))
     check_integer("cex", cex)
-    colors <- check_colors(colors)
 
     if (rgcca$call$type == "pca") {
         rgcca$AVE$AVE_X = rgcca$AVE$AVE_X[1]

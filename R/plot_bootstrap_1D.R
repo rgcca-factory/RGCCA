@@ -71,6 +71,7 @@ plot_bootstrap_1D <- function(
             order_df(b[, -NCOL(b)], x, allCol = TRUE),
             order = NROW(b):1),
         n_mark)
+    class(b) <- c(class(b), "d_boot1D")
 
     p <- ggplot(
         b,

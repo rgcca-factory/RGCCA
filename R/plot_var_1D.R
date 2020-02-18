@@ -42,7 +42,7 @@ plot_var_1D <- function(
     colors = NULL,
     ...) {
 
-    colors <- check_colors(colors)
+    check_colors(colors)
 
     df <- get_ctr2(
         rgcca = rgcca,
@@ -91,6 +91,7 @@ plot_var_1D <- function(
         df,
         title,
         as.character(color),
+        colors = colors,
         ...
     ) +
     labs(subtitle = print_comp(rgcca, comp, i_block))
@@ -106,7 +107,7 @@ plot_var_1D <- function(
 
     # Force all the block names to appear on the legend
     if (length(color) != 1)
-        p <- order_color(rgcca$a, p, matched, collapse, colors)
+        p <- suppressMessages(order_color(rgcca$a, p, matched, collapse, colors))
 
     if ((!rgcca$call$superblock || i_block != length(rgcca$a)) && !collapse)
             p <- p + theme(legend.position = "none")

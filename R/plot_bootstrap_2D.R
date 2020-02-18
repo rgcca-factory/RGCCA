@@ -42,8 +42,7 @@ plot_bootstrap_2D <- function(
     check_ncol(list(b), 1)
     for (i in c("cex", "cex_main", "cex_sub", "cex_point", "cex_lab"))
         check_integer(i, get(i))
-    if (!is.null(colors))
-        colors <- check_colors(colors)
+    check_colors(colors)
 
     set_occ <- function(x) {
         match.arg(x, names(attributes(b)$indexes))
