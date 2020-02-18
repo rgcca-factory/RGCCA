@@ -6,6 +6,9 @@
 \usage{
 get_edges(rgcca)
 }
+\arguments{
+\item{rgcca}{A list giving the results of a R/SGCCA}
+}
 \value{
 A dataframe with tuples of connected rgcca$call$blocks
 }

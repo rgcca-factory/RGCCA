@@ -4,16 +4,8 @@
 \alias{plot_bootstrap_1D}
 \title{Plot a bootstrap in 1D}
 \usage{
-<<<<<<< HEAD
 plot_bootstrap_1D(b, x = "estimate", y = "occurrences", n_mark = 50,
   title = NULL, colors = NULL, ...)
-=======
-plot_bootstrap_1D(b, x = "estimate", y = "occurrences", n = 50,
-  b0 = NULL, title = paste0(attributes(b)$indexes[[x]], "\\n(",
-  attributes(b)$n_boot, " bootstraps)"),
-  colors = c(color_group(seq(3))[1], "white", color_group(seq(3))[3]),
-  ...)
->>>>>>> ForNucleiparksSgccaWithNA
 }
 \arguments{
 \item{b}{A matrix of boostrap}

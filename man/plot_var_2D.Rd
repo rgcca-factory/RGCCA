@@ -9,6 +9,8 @@ plot_var_2D(rgcca, compx = 1, compy = 2, i_block = length(rgcca$a),
   no_overlap = FALSE, title = "Variable correlations with", ...)
 }
 \arguments{
+\item{rgcca}{A list giving the results of a R/SGCCA}
+
 \item{compx}{An integer giving the index of the analysis component used
 for the x-axis}
 

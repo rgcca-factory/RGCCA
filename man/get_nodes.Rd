@@ -7,6 +7,8 @@
 get_nodes(rgcca, penalty = NULL)
 }
 \arguments{
+\item{rgcca}{A list giving the results of a R/SGCCA}
+
 \item{penalty}{NULL, "optimal", "sparsity" or "tau"}
 }
 \value{

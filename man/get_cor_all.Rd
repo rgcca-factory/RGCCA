@@ -8,6 +8,8 @@ get_cor_all(rgcca, blocks = rgcca$call$blocks,
   comps = get_comp_all(rgcca))
 }
 \arguments{
+\item{rgcca}{A list giving the results of a R/SGCCA}
+
 \item{blocks}{A list of matrix}
 
 \item{comps}{A matrix containg the components of all the blocks}

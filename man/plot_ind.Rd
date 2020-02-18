@@ -4,13 +4,13 @@
 \alias{plot_ind}
 \title{Plot the two components of a RGCCA}
 \usage{
-plot_ind(rgcca_res, resp = rep(1, NROW(rgcca_res$Y[[1]])), compx = 1,
-  compy = 2, i_block = length(rgcca_res$Y), text = TRUE,
+plot_ind(rgcca, resp = rep(1, NROW(rgcca$Y[[1]])), compx = 1,
+  compy = 2, i_block = length(rgcca$Y), text = TRUE,
   i_block_y = i_block, reponse_name = "Response", no_overlap = FALSE,
   predicted = NULL, title = "Sample space", ...)
 }
 \arguments{
-\item{rgcca_res}{A list giving the results of a R/SGCCA}
+\item{rgcca}{A list giving the results of a R/SGCCA}
 
 \item{resp}{A vector of characters corresponding either to a qualitative
 variable with levels or a continuous variable}

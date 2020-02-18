@@ -88,8 +88,8 @@ rgcca <- function(
     for (i in c("superblock","verbose", "scale", "bias", "quiet", "knn.sameBlockWeight"))
         check_boolean(i, get(i))
 
-    choices <- list(c("horst", "factorial", "centroid"), c("complete","knn","em","sem"))
-    choice <- c(scheme, method)
+    choices <- list(c("horst", "factorial", "centroid"))
+    choice <- c(scheme)
     for (i in length(choices)) {
         if (!choice[i] %in% (choices[[i]]) && !is.function(choice[i]))
             stop(paste0(choice[i], " must be one of '", paste(choices[[i]], collapse = ", "), "' or a function."))

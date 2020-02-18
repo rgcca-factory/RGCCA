@@ -7,6 +7,8 @@
 print_comp(rgcca, n = 1, i = length(rgcca$AVE$AVE_X), outer = FALSE)
 }
 \arguments{
+\item{rgcca}{A list giving the results of a R/SGCCA}
+
 \item{n}{An integer giving the index of the analysis component}
 
 \item{i}{An integer giving the index of a list of blocks}

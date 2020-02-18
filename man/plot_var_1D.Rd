@@ -8,6 +8,8 @@ plot_var_1D(rgcca, comp = 1, n_mark = 100, i_block = length(rgcca$a),
   type = "cor", collapse = FALSE, title = NULL, colors = NULL, ...)
 }
 \arguments{
+\item{rgcca}{A list giving the results of a R/SGCCA}
+
 \item{comp}{An integer giving the index of the analysis components}
 
 \item{n_mark}{An integer giving the number of top variables to select}
