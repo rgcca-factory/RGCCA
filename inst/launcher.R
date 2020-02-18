@@ -445,17 +445,25 @@ blocks <- load_blocks(opt$datasets, opt$names, opt$separator)
 group <- load_response(blocks, opt$group, opt$separator, opt$header)
 connection <- load_connection(file = opt$connection, sep = opt$separator)
 
-rgcca_out <- rgcca(
-    blocks = blocks,
-    connection = connection,
-    response = opt$response,
-    superblock = opt$superblock,
-    tau = opt$tau,
-    ncomp = opt$ncomp,
-    scheme = opt$scheme,
-    scale = opt$scale,
-    type = opt$type
+func <- quote(
+    rgcca(
+        blocks = blocks,
+        connection = connection,
+        response = opt$response,
+        superblock = opt$superblock,
+        ncomp = opt$ncomp,
+        scheme = opt$scheme,
+        scale = opt$scale,
+        type = opt$type
+    )
 )
+if (tolower(opt$type) %in% c("sgcca", "spca", "spls")) {
+    func[["sparsity"]] <- opt$tau
+}else {
+    func[["tau"]] <- opt$tau
+}
+
+rgcca_out <- eval(as.call(func))
 
 opt <- post_check_arg(opt, rgcca_out)
 
