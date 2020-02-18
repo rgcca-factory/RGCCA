@@ -19,7 +19,7 @@
 #' plot_histogram(p, df, "This is my title")
 #' # Add colors per levels of a variable
 #' df$color = rep(c(1,2,3), each=10)
-#' p = ggplot(df, aes(order, x, fill = color))
+#' p = ggplot(df, aes(order, x, fill = as.character(color)))
 #' plot_histogram(p, df, "Histogram", as.character(df$color))
 #' @export
 plot_histogram <- function(
@@ -86,10 +86,8 @@ plot_histogram <- function(
             scale_x_continuous(breaks = df$order, labels = rownames(df)) +
             labs(fill = "Blocks")
         if (length(group) == 1){
-            if (is.null(colors)){
+            if (is.null(colors))
                 colors <- c("blue", "gray", "#cd5b45")
-                print("hereXXXX")
-            }
             p <- p +
                 scale_fill_gradientn(colors = colors, na.value = "black")
         } else  if ((is.character2(group[!is.na(group)]) ||

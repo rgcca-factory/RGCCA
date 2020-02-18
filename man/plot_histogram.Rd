@@ -47,6 +47,6 @@ p = ggplot(df, aes(order, x))
 plot_histogram(p, df, "This is my title")
 # Add colors per levels of a variable
 df$color = rep(c(1,2,3), each=10)
-p = ggplot(df, aes(order, x, fill = color))
+p = ggplot(df, aes(order, x, fill = as.character(color)))
 plot_histogram(p, df, "Histogram", as.character(df$color))
 }
