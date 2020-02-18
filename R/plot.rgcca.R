@@ -21,8 +21,8 @@ plot.rgcca=function(x,resp=rep(1, NROW(x$Y[[1]])),i_block=1,compx=1,compy=2,remo
 {
     if(is.null(i_block)){i_block=length(x$call$blocks)}
   
-    p1<-plot_ind(x,i_block=i_block,compx=compx,compy=compy,cex_sub=0.6,cex_main=14,cex_lab=12,resp=resp,...)
-    p2<-plot_var_2D(x,i_block=i_block,compx=compx,compy=compy,cex_sub=0.6,cex_main=14,cex_lab=12,remove_var=remove_var,...)
+    p1<-plot_ind(x,i_block=i_block,compx=compx,compy=compy,cex_sub=10,cex_main=14,cex_lab=12,resp=resp,...)
+    p2<-plot_var_2D(x,i_block=i_block,compx=compx,compy=compy,cex_sub=10,cex_main=14,cex_lab=12,remove_var=remove_var,...)
     
    # p3<-plot_ave(x)
    # p4<-plot_network(x)

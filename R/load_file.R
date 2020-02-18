@@ -1,12 +1,20 @@
 load_file <- function(
     file,
     file_text = file,
-    sep = "\t",
+    separator = "\t",
     sheet = 1,
     rownames = 1,
     header = TRUE,
     one_column = FALSE,
-    dec = ".") {
+    decimal = ".") {
+
+    match.arg(separator, c("\t", ",", ";"))
+    match.arg(decimal, c(",", "."))
+    check_boolean(header)
+    if (!is.null(rownames))
+        check_integer("rownames", rownames)
+     if (is.character2(sheet))
+        sheet <- paste0(sheet, collapse = " ")
 
     isXls <- length(grep("xlsx?", file))
     
@@ -16,11 +24,10 @@ load_file <- function(
     check_file(file)
     check_size_file(file)
 
-
     # TODO: add automatic separator setting
 
     if (!isXls)
-        load_file_text(file, sep, rownames, header, one_column, dec)
-    # else load_file_excel(file, 1, rownames, header = header, univariate = univariate)
+        load_file_text(file, separator, rownames, header, one_column, decimal)
+    # else load_file_excel(file, sheet, rownames, header = header, univariate = univariate)
 
 }

@@ -15,6 +15,9 @@ plot_network2 <- function(
     rgcca, 
     title = paste0("Common rows between blocks : ",
                         NROW(rgcca$call$blocks[[1]]))) {
+    
+    stopifnot(is(rgcca, "rgcca"))
+    title <- paste0(title, collapse = " ")
 
     nodes <- get_nodes(rgcca)
     edges <- get_edges(rgcca)

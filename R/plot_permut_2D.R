@@ -30,7 +30,10 @@ plot_permut_2D <- function(
     cex_point = 3 * cex,
     cex_lab = 19 * cex) {
 
+    stopifnot(is(perm, "permutation"))
     match.arg(type, c("crit", "zstat"))
+    for (i in c("cex", "cex_main", "cex_sub", "cex_point", "cex_lab"))
+        check_integer(i, get(i))
     
     switch(
         type,
@@ -62,6 +65,8 @@ plot_permut_2D <- function(
                 paste(round(perm$penalties[best,], 2), collapse = ", "),
                 ")"
             )
+    else
+        title <- paste0(title, collapse = " ")
 
     p <- ggplot(data = df, mapping = aes(x = df[, 1], y = df[, 2], ymin = 0)) + 
         theme_classic() +

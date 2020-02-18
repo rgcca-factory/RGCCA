@@ -58,8 +58,15 @@ rgcca_predict = function(
     new_scaled = TRUE,
     scale_size_bloc = TRUE) {
 
+    stopifnot(is(rgcca, "rgcca"))
     match.arg(type, c("regression", "classification"))
     match.arg(fit, c("lm", "cor", "lda", "logistic"))
+    if(!is.null(bigA))
+        check_blocks(bigA)
+
+    for (i in c("new_scaled", "scale_size_bloc"))
+            check_boolean(i, get(i))
+
     astar <- rgcca$astar
     p <- sapply(rgcca$call$blocks, ncol)
     B <- length(rgcca$call$blocks)

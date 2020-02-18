@@ -1,4 +1,5 @@
 check_compx <- function(x, y, ncomp, blockx) {
+    res <- check_integer(x, y, min = 1)
     if (y > ncomp[blockx]) {
         stop(
             paste0(
@@ -12,5 +13,5 @@ check_compx <- function(x, y, ncomp, blockx) {
             exit_code = 128
         )
     }
-    check_integer(x, y, min = 1)
+ return(res)
 }

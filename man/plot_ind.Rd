@@ -47,16 +47,16 @@ coord = lapply(seq(3),
 AVE_X = lapply(seq(3), function(x) runif(2))
 for (i in 1:length(coord))
 row.names(coord[[i]]) = seq(15)
-rgcca_out = list(Y = coord, AVE = list(AVE_X = AVE_X))
+rgcca_out = list(Y = coord, AVE = list(AVE_X = AVE_X), call = list(blocks = coord, ncomp = rep(2,3))) # TODO
 # Using a superblock
 resp = as.matrix(rep(LETTERS[seq(3)], each = 5))
 row.names(resp) = seq(15)
 rgcca_out$call$type="rgcca"
+class(rgcca_out) = "rgcca"
 plot_ind(rgcca_out, resp)
 # Using the first block
 resp = as.matrix(runif(15, min=-15, max = 15))
 row.names(resp) = seq(15)
-rgcca_out$call$type="rgcca"
 plot_ind(rgcca_out, resp, 1, 2, 1)
 data(Russett)
 X_agric =as.matrix(Russett[,c("gini","farm","rent")])

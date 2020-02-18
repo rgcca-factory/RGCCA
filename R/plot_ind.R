@@ -24,16 +24,16 @@
 #' AVE_X = lapply(seq(3), function(x) runif(2))
 #' for (i in 1:length(coord))
 #' row.names(coord[[i]]) = seq(15)
-#' rgcca_out = list(Y = coord, AVE = list(AVE_X = AVE_X))
+#' rgcca_out = list(Y = coord, AVE = list(AVE_X = AVE_X), call = list(blocks = coord, ncomp = rep(2,3))) # TODO
 #' # Using a superblock
 #' resp = as.matrix(rep(LETTERS[seq(3)], each = 5))
 #' row.names(resp) = seq(15)
 #' rgcca_out$call$type="rgcca"
+#' class(rgcca_out) = "rgcca"
 #' plot_ind(rgcca_out, resp)
 #' # Using the first block
-#' resp = as.matrix(runif(15, min=-15, max = 15))
+    #' resp = as.matrix(runif(15, min=-15, max = 15))
 #' row.names(resp) = seq(15)
-#' rgcca_out$call$type="rgcca"
 #' plot_ind(rgcca_out, resp, 1, 2, 1)
 #' data(Russett)
 #' X_agric =as.matrix(Russett[,c("gini","farm","rent")])
@@ -62,10 +62,6 @@ plot_ind <- function(
     if (is.null(i_block_y))
         i_block_y <- i_block
 
-    check_ncol(rgcca$Y, i_block)
-
-    resp <- check_response(resp, rgcca$Y)
-
     df <- get_comp(
         rgcca = rgcca,
         resp = resp,
@@ -78,12 +74,12 @@ plot_ind <- function(
     class(df) <- c(class(df), "d_ind")
 
     if (!is.null(predicted))
-            p <- ggplot(df, aes(df[, 1], df[, 2], color = df$resp))
+            p <- ggplot(df, aes(df[, 1], df[, 2], color = resp))
 
     else if (length(unique(as.matrix(df$resp))) > 5 && 
             !is.character2(as.vector(df$resp)) ) {
 
-        p <- ggplot(df, aes(df[, 1], df[, 2], color = df$resp))
+        p <- ggplot(df, aes(df[, 1], df[, 2], color = resp))
 
     }else
         p <- NULL

@@ -28,6 +28,17 @@ get_ctr2 <- function(
     collapse = FALSE,
     remove_var = TRUE) {
 
+    stopifnot(is(rgcca, "rgcca"))
+    check_blockx("i_block", i_block, rgcca$call$blocks)
+    check_ncol(rgcca$a, i_block)
+    for (i in c("compx", "compy", "compz")) {
+        if (!is.null(get(i)))
+            check_compx(i, get(i), rgcca$call$ncomp, i_block)
+    }
+    check_integer("n_mark", n_mark)
+    for (i in c("collapse", "remove_var"))
+        check_boolean(i, get(i))
+
     x <- y <- selectedVar <- NULL
     blocks <- rgcca$call$blocks
 

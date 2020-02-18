@@ -4,11 +4,8 @@
 \alias{plot_bootstrap_1D}
 \title{Plot a bootstrap in 1D}
 \usage{
-plot_bootstrap_1D(b, x = "estimate", y = "occurrences", n = 50,
-  title = paste0(attributes(b)$indexes[[x]], "\\n(",
-  attributes(b)$n_boot, " bootstraps)"),
-  colors = c(color_group(seq(3))[1], "white", color_group(seq(3))[3]),
-  ...)
+plot_bootstrap_1D(b, x = "estimate", y = "occurrences", n_mark = 50,
+  title = NULL, colors = NULL, ...)
 }
 \arguments{
 \item{b}{A matrix of boostrap}
@@ -17,7 +14,7 @@ plot_bootstrap_1D(b, x = "estimate", y = "occurrences", n = 50,
 
 \item{y}{A character for the column to color the bars}
 
-\item{n}{An integer giving the number maximum of top variables}
+\item{n_mark}{An integer giving the number maximum of top variables}
 
 \item{title}{A character with the name of the space (either "Variables" or
 "Samples")}

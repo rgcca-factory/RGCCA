@@ -25,7 +25,7 @@
 plot_histogram <- function(
     p,
     df,
-    title = "Histogram",
+    title = "",
     group = NA,
     colors = NULL,
     cex = 1,
@@ -34,7 +34,13 @@ plot_histogram <- function(
     cex_axis = 10 * cex
 ) {
 
+    for (i in c("cex", "cex_main", "cex_sub", "cex_axis"))
+        check_integer(i, get(i))
+
+    stopifnot(is(p, "ggplot"))
     colors <- check_colors(colors)
+    title <- paste0(title, collapse = " ")
+    group <- as.vector(group)
 
     if (NROW(df) <= 10 || is(df, "d_ave")) {
         width <- NULL

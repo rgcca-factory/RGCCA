@@ -63,6 +63,7 @@ rgcca_out$call$type="rgcca"
 # Using a superblock
 rgcca_out$call$superblock = TRUE
 rgcca_out$call$ncomp = rep(3, 4)
+class(rgcca_out) = "rgcca"
 plot_var_2D(rgcca_out, 1, 2)
 # Using the first block
 plot_var_2D(rgcca_out, 1, 2, 1)

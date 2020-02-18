@@ -43,7 +43,20 @@ plot3D <- function(
     cex_point = 3 * cex,
     cex_lab = 19 * cex) {
 
+    stopifnot(is(rgcca, "rgcca"))
+    check_boolean("text", text)
     colors <- check_colors(colors)
+    title <- paste0(title, collapse = " ")
+    match.arg(type, c("ind", "var"))
+    for (i in c("i_block", "i_block_y", "i_block_z"))
+            check_blockx(i, get(i), rgcca$call$blocks)
+    check_ncol(rgcca$Y, i_block)
+    for (i in c("compx", "compy", "compz")) {
+        if (!is.null(get(i)))
+            check_compx(i, get(i), rgcca$call$ncomp, i_block)
+    }
+    for (i in c("cex", "cex_point", "cex_lab"))
+        check_integer(i, get(i))
 
     if (is.na(colors[2]) && length(unique(df$resp)) == 1) {
         df$resp <- as.factor(rep("a", length(df$resp)))

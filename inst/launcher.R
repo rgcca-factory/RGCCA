@@ -51,6 +51,7 @@ getArgs <- function() {
             opt_str = c("-r", "--response"),
             type = "integer",
             metavar = "integer",
+            default = 3,
             help = "Position of the response file for the supervised mode within
             the block path list [actives the supervised mode]"
         ),
@@ -540,9 +541,9 @@ if (length(blocks) > 1) {
             nperm = 5)
     )
     if (tolower(opt$type) %in% c("sgcca", "spca", "spls"))
-        func[["tau"]] <- opt$tau
-    else
         func[["sparsity"]] <- opt$tau
+    else
+        func[["tau"]] <- opt$tau
     perm <- eval(as.call(func))
     plot_permut_2D(perm)
 }

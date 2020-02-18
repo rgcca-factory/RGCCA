@@ -29,22 +29,24 @@ rgcca_crossvalidation <- function(
     k = 5,
     n_cores = parallel::detectCores() - 1) {
 
+    stopifnot(is(rgcca, "rgcca"))
+    check_blockx("i_block", i_block, rgcca$call$blocks)
+    match.arg(validation, c("loo", "test", "kfold"))
+    check_integer("k", k)
+    check_integer("n_cores", n_cores, 0)
+
+    if (n_cores == 0)
+        n_cores <- 1
+
     if (is.null(rgcca$call$response))
         stop("This function requiered a RGCCA in a supervised mode.")
 
     bloc_to_pred <- names(rgcca$call$blocks)[i_block]
 
-    match.arg(validation, c("test", "kfold", "loo"))
-
     f <- quote(
         function(){
 
             Atrain <- lapply(bigA, function(x) x[-inds, , drop = FALSE])
-
-            if (rgcca$call$type %in% c("spls", "spca", "sgcca"))
-                tau <- rgcca$call$sparsity
-            else
-                tau <- rgcca$call$tau
 
             if (rgcca$call$superblock) {
                 Atrain <- Atrain[-length(Atrain)]
@@ -54,22 +56,30 @@ rgcca_crossvalidation <- function(
             if (!is.null(rgcca$call$response))
                 response <- length(rgcca$call$blocks)
 
-            rgcca_k <- rgcca(
-                Atrain,
-                rgcca$call$connection,
-                response = response,
-                superblock = rgcca$call$superblock,
-                tau = tau,
-                ncomp = rgcca$call$ncomp,
-                scheme = rgcca$call$scheme,
-                scale = FALSE,
-                type = rgcca$call$type,
-                verbose = FALSE,
-                init = rgcca$call$init,
-                bias = rgcca$call$bias,
-                tol = rgcca$call$tol,
-                method = "complete"
+            func <- quote(
+                rgcca(
+                    Atrain,
+                    rgcca$call$connection,
+                    response = response,
+                    superblock = rgcca$call$superblock,
+                    ncomp = rgcca$call$ncomp,
+                    scheme = rgcca$call$scheme,
+                    scale = FALSE,
+                    type = rgcca$call$type,
+                    verbose = FALSE,
+                    init = rgcca$call$init,
+                    bias = rgcca$call$bias,
+                    tol = rgcca$call$tol,
+                    method = "complete"
+                )
             )
+
+            if (rgcca$call$type %in% c("spls", "spca", "sgcca"))
+                func$sparsity <- rgcca$call$c1
+            else
+                func$tau <- rgcca$call$tau
+
+            rgcca_k <- eval(as.call(func))
 
             rgcca_k$a <- check_sign_comp(rgcca, rgcca_k$a)
 
@@ -85,7 +95,6 @@ rgcca_crossvalidation <- function(
         }
     )
 
-    #bigA <- rgcca$call$blocks
     bigA <- intersection(rgcca$call$blocks)
 
     if (validation == "loo")

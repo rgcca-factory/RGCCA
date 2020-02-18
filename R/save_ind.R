@@ -6,6 +6,13 @@ save_ind <- function(
     compy = 2,
     file = "individuals.tsv") {
     
+    stopifnot(is(rgcca, "rgcca"))
+    for (i in c("compx", "compy")) {
+        for (j in seq(length(rgcca$call$ncomp)))
+            check_compx(i, get(i), rgcca$call$ncomp, j)
+    }
+    file <- paste0(file, collapse = " ")
+    
     inds <- Reduce(cbind, lapply(
         rgcca$Y,
         function(x) x[, c(compx, compy)]))

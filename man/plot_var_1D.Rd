@@ -41,6 +41,7 @@ rgcca_out = list(a = weights, call = list(type="rgcca", ncomp = rep(2,4)))
 names(rgcca_out$a) = LETTERS[seq(4)]
 rgcca_out$call$blocks = lapply(rgcca_out$a, t)
 rgcca_out$call$superblock = TRUE
+class(rgcca_out) = "rgcca"
 # With the 1rst component of the superblock
 plot_var_1D(rgcca_out, 1, type = "weight")
 # With the 2nd component of the 1rst block by selecting the ten higher weights

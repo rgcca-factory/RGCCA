@@ -29,7 +29,8 @@ load_response <- function(
             one_column = TRUE,
             dec = dec
         )
-    }
+    }else
+        check_blocks(blocks)
 
     check_response(response, blocks)
 

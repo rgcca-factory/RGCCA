@@ -16,6 +16,9 @@ plot_network <- function(
     title = paste0("Common rows between blocks : ",
                    NROW(rgcca$call$blocks[[1]]))) {
 
+    stopifnot(is(rgcca, "rgcca"))
+    title <- paste0(title, collapse = " ")
+
     # Avoid random
     set.seed(1)
     V <- E <- NULL

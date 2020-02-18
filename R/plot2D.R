@@ -30,7 +30,7 @@
 plot2D <- function(
     rgcca,
     df,
-    title = "Biplot",
+    title = "",
     group = 1,
     name_group = "Response",
     compx = 1,
@@ -47,6 +47,13 @@ plot2D <- function(
     cex_sub = 16 * cex,
     cex_point = 3 * cex,
     cex_lab = 19 * cex) {
+    
+    title <- paste0(title, collapse = " ")
+    name_group <- paste0(title, collapse = " ")
+    for (i in c("cex", "cex_main", "cex_sub", "cex_point", "cex_lab"))
+        check_integer(i, get(i))
+    for (i in c("text", "no_overlap"))
+        check_boolean(i, get(i))
 
     if (NROW(df) > 100)
         cex_point <- 2
@@ -122,6 +129,8 @@ plot2D <- function(
 
     if (is.null(colors))
         colours <- c("blue", "gray", "#cd5b45")
+    else
+        check_colors(colors)
 
     if (length(unique(group)) != 1 && is(df, "d_var2D")) {
         order_color(rgcca$a, p, collapse = collapse, colors)

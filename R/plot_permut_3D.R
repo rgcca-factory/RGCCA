@@ -33,7 +33,13 @@ plot_permut_3D <- function(
     cex_point = 3 * cex,
     cex_lab = 19 * cex) {
 
+    stopifnot(is(perm, "permutation"))
     match.arg(type, c("crit", "zstat"))
+    check_boolean("sign", sign)
+    for (i in c("cex","cex_point", "cex_lab"))
+        check_integer(i, get(i))
+    for (i in c("i_block", "i_block_y", "i_block_z"))
+        check_blockx(i, get(i), perm$penalties[1,])
 
     switch(
         type,

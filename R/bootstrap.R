@@ -24,8 +24,9 @@ bootstrap <- function(
     n_cores = parallel::detectCores() - 1,
     ...) {
 
-    # TODO : nboot > 1
-    stopifnot(!missing(rgcca))
+    stopifnot(is(rgcca, "rgcca"))
+    check_integer("n_boot", n_boot)
+    check_integer("n_cores", n_cores, 0)
 
     if (n_cores == 0)
         n_cores <- 1

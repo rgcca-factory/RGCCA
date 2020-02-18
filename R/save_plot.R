@@ -11,6 +11,9 @@
 #' #save_plot('Rplot.png', p)
 #' @export
 save_plot <- function(f, p) {
+    
+    stopifnot(is(p, "ggplot") || is.function(p))
+    f <- paste0(f, collapse = " ")
 
     # get suffixe of filename
     format <- unlist(strsplit(f, ".", fixed = "TRUE"))

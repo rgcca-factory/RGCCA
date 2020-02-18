@@ -8,7 +8,7 @@
 #' @param b A matrix of boostrap
 #' @param x A character for the column used in the plot
 #' @param y A character for the column to color the bars
-#' @param n An integer giving the number maximum of top variables
+#' @param n_mark An integer giving the number maximum of top variables
 #' @examples
 #' library(RGCCA)
 #' data("Russett")
@@ -27,13 +27,26 @@ plot_bootstrap_1D <- function(
     b,
     x = "estimate",
     y = "occurrences",
-    n = 50,
-    title = paste0(attributes(b)$indexes[[x]],
+    n_mark = 50,
+    title = NULL, 
+    colors = NULL,
+    ...) {
+
+    stopifnot(is(b, "bootstrap"))
+    check_integer("n_mark", n_mark)
+
+    if (is.null(title))
+        title <- paste0(attributes(b)$indexes[[x]],
                    "\n(",
                    attributes(b)$n_boot,
-                   " bootstraps)"), 
-    colors = c(color_group(seq(3))[1],  "white", color_group(seq(3))[3]),
-    ...) {
+                   " bootstraps)")
+    if (is.null(colors)) {
+        if (!(y %in% c("occurrences", "sign")))
+            colors <- c(color_group(seq(3))[1],  "gray", color_group(seq(3))[3])
+        else
+            colors <- c(color_group(seq(3))[1], color_group(seq(3))[3])
+    }
+
     lower_band <- NULL -> upper_band
     check_ncol(list(b), 1)
 
@@ -53,7 +66,12 @@ plot_bootstrap_1D <- function(
     else
         group = NA
 
-    b <- head(b, n)
+    b <- head(
+        data.frame(
+            order_df(b[, -NCOL(b)], x, allCol = TRUE),
+            order = NROW(b):1),
+        n_mark)
+
     p <- ggplot(
         b,
         aes(x = order,

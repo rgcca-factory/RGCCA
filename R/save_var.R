@@ -5,6 +5,13 @@ save_var <- function(
     compy = 2,
     file = "variables.tsv") {
 
+    stopifnot(is(rgcca, "rgcca"))
+    for (i in c("compx", "compy")) {
+        for (j in seq(length(rgcca$call$ncomp)))
+            check_compx(i, get(i), rgcca$call$ncomp, j)
+    }
+    file <- paste0(file, collapse = " ")
+
     indexes <- c("cor", "weight")
 
     vars <- Reduce(rbind, lapply(seq(length(rgcca$call$blocks)), function(i)

@@ -4,7 +4,7 @@
 \alias{plot_histogram}
 \title{Histogram settings}
 \usage{
-plot_histogram(p, df, title = "Histogram", group = NA, colors = NULL,
+plot_histogram(p, df, title = "", group = NA, colors = NULL,
   cex = 1, cex_main = 25 * cex, cex_sub = 16 * cex, cex_axis = 10 *
   cex)
 }

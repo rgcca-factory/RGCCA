@@ -4,7 +4,7 @@
 \alias{is.character2}
 \title{Test for character vector}
 \usage{
-is.character2(x)
+is.character2(x, type = "any")
 }
 \arguments{
 \item{x}{A matrix or a vector}

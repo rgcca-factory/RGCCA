@@ -38,6 +38,9 @@ rgcca_permutation <- function(
     n_cores = parallel::detectCores() - 1,
     ...) {
 
+    check_integer("nperm", nperm)
+    check_integer("n_cores", n_cores, 0)
+
     if (any(p_ncomp == FALSE) && any(p_spars == FALSE))
         stop("Select one parameter among 'p_spars' or 'p_ncomp' to optimize. By default, p_spars is selected.")
 
@@ -180,12 +183,15 @@ rgcca_permutation <- function(
             return(z)
         })
 
-    list(
-        pvals = pvals,
-        zstat = zs,
-        bestpenalties = par[which.max(zs), ],
-        permcrit = permcrit,
-        crit = crits,
-        penalties = par
+    structure(
+        list(
+            pvals = pvals,
+            zstat = zs,
+            bestpenalties = par[which.max(zs), ],
+            permcrit = permcrit,
+            crit = crits,
+            penalties = par
+        ),
+        class = "permutation"
     )
 }

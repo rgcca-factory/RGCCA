@@ -69,13 +69,31 @@ rgcca <- function(
         par <- "tau"
         penalty <- tau
     }
+    
+    match.arg(init, c("svd", "random"))
+    match.arg(knn.output, c("mean", "random", "weightedMean" ))
+    check_method(type)
+    if (!is.null(response))
+        check_blockx("response", response, blocks)
+    check_integer("tol", tol, float = TRUE, min = 0)
 
-    match.arg(tolower(type), c("rgcca", "cpca-w", "gcca", "hpca", "maxbet-b", "maxbet", 
-            "maxdiff-b","maxdiff", "maxvar-a", "maxvar-b", "maxvar", "niles", 
-            "r-maxvar", "rcon-pca", "ridge-gca", "sabscor", "ssqcor", "ssqcor", 
-            "ssqcov-1", "ssqcov-2", "ssqcov", "sum-pca", "sumcor", "sumcov-1", 
-            "sumcov-2", "sumcov", "sabscov", "plspm", "cca", "ra", "ifa", "pls",
-            "pca", "sgcca", "spls", "spca"))
+    for (i in c("pca.ncp", "knn.klim")) {
+        if (!(i == "knn.klim" && is.null(get(i))))
+            check_integer(i, get(i))
+    }
+
+    if (!knn.k %in% c("all", "auto"))
+        check_integer("knn.k", knn.k)
+
+    for (i in c("superblock","verbose", "scale", "bias", "quiet", "knn.sameBlockWeight"))
+        check_boolean(i, get(i))
+
+    choices <- list(c("horst", "factorial", "centroid"), c("complete","knn","em","sem"))
+    choice <- c(scheme, method)
+    for (i in length(choices)) {
+        if (!choice[i] %in% (choices[[i]]) && !is.function(choice[i]))
+            stop(paste0(choice[i], " must be one of '", paste(choices[[i]], collapse = ", "), "' or a function."))
+    }
 
     penalty <- elongate_arg(penalty, blocks)
     ncomp <- elongate_arg(ncomp, blocks)

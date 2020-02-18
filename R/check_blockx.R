@@ -1,4 +1,5 @@
 check_blockx <- function(x, y, blocks){
+    x <- check_min_integer(x, y, blocks)
     if (y > length(blocks))
         stop(
             paste0(
@@ -11,5 +12,5 @@ check_blockx <- function(x, y, blocks){
             ),
             exit_code = 133
         )
-    check_min_integer(x, y, blocks)
+    return(x)
 }
