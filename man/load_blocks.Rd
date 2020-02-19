@@ -4,22 +4,22 @@
 \alias{load_blocks}
 \title{Create a list of matrix from loading files corresponding to blocks}
 \usage{
-load_blocks(file, names = NULL, sep = "\\t", header = TRUE,
-  rownames = 1, dec = ".")
+load_blocks(file, names = NULL, separator = "\\t", header = TRUE,
+  rownames = 1, decimal = ".")
 }
 \arguments{
 \item{file}{A character giving the path of a file}
 
 \item{names}{A character giving a list of names for the blocks}
 
-\item{sep}{A character giving the column separator}
+\item{separator}{A character giving the column separator}
 
 \item{header}{A bolean giving the presence or the absence of the header}
 
 \item{rownames}{An integer corresponding to the column number of the row
 names (NULL otherwise)}
 
-\item{dec}{A character giving the decimal separator}
+\item{decimal}{A character giving the decimal separator}
 }
 \value{
 A list matrix corresponding to the blocks

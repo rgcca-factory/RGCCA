@@ -4,7 +4,6 @@
 #' @return A dataframe with tuples of connected blocks
 #' @examples
 #' library(igraph)
-#' library(RGCCA)
 #' data("Russett")
 #' blocks = list(agriculture = Russett[, seq(3)], industry = Russett[, 4:5],
 #'     politic = Russett[, 6:11] )
@@ -18,6 +17,8 @@ plot_network <- function(
 
     stopifnot(is(rgcca, "rgcca"))
     title <- paste0(title, collapse = " ")
+
+    load_libraries("igraph")
 
     # Avoid random
     set.seed(1)

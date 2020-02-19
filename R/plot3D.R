@@ -8,7 +8,7 @@
 #' @param colors reoresenting a vector of colors
 #' 
 #' @examples
-#' library(RGCCA)
+#' library(plotly)
 #' data("Russett")
 #' blocks = list(agriculture = Russett[, seq(3)],
 #'     politic = Russett[, 6:11] )
@@ -62,6 +62,8 @@ plot3D <- function(
     }
     for (i in c("cex", "cex_point", "cex_lab"))
         check_integer(i, get(i))
+
+    load_libraries("plotly")
 
     if (is.na(colors[2]) && length(unique(df$resp)) == 1) {
         df$resp <- as.factor(rep("a", length(df$resp)))

@@ -4,22 +4,22 @@
 \alias{load_response}
 \title{Create a matrix corresponding to the response}
 \usage{
-load_response(blocks = NULL, file = NULL, sep = "\\t",
-  header = TRUE, rownames = 1, dec = ".")
+load_response(blocks = NULL, file = NULL, separator = "\\t",
+  header = TRUE, rownames = 1, decimal = ".")
 }
 \arguments{
 \item{blocks}{A list of matrix}
 
 \item{file}{A character giving the path of a file}
 
-\item{sep}{A character giving the column separator}
+\item{separator}{A character giving the column separator}
 
 \item{header}{A bolean giving the presence or the absence of the header}
 
 \item{rownames}{An integer corresponding to the column number of the row
 names (NULL otherwise)}
 
-\item{dec}{A character giving the decimal separator}
+\item{decimal}{A character giving the decimal separator}
 }
 \value{
 A matrix corresponding to the response

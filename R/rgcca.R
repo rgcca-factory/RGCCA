@@ -27,10 +27,10 @@
 #' @importFrom stats cor quantile runif sd na.omit p.adjust pnorm qnorm weights
 #' @importFrom utils read.table write.table packageVersion installed.packages head
 #' @importFrom scales hue_pal
-#' @importFrom optparse OptionParser make_option parse_args
-#' @importFrom plotly layout ggplotly style plotly_build %>% plot_ly add_trace
-#' @importFrom visNetwork visNetwork visNodes visEdges
-#' @importFrom igraph graph_from_data_frame V<- E<-
+# @importFrom optparse OptionParser make_option parse_args
+# @importFrom plotly layout ggplotly style plotly_build %>% plot_ly add_trace
+# @importFrom visNetwork visNetwork visNodes visEdges
+# @importFrom igraph graph_from_data_frame V<- E<-
 #' @importFrom methods is
 rgcca <- function(
     blocks,

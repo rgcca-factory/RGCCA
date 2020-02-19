@@ -72,13 +72,15 @@ plot2D <- function(
         )
 
         if (no_overlap && NROW(df) <= 200) {
+            tryCatch(load_libraries("ggrepel"), silent = TRUE)
             if (("ggrepel" %in% installed.packages()[, "Package"])) {
                 f <- paste0(f, '_repel')
                 func$force <- 0.2
                 func$max.iter <- 500
             }
-            else
+            else{
                 warning("Please install ggrepel.")
+            }
         }
     }
 

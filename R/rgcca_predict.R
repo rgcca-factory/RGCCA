@@ -44,7 +44,7 @@
 #' ( res  = rgcca_predict(object, newA = newA, type = "classification",
 #' fit = "lda", y.train = y.train, y.test = y.test ) )
 #' @importFrom MASS lda
-#' @importFrom nnet multinom
+# @importFrom nnet multinom
 #' @export
 rgcca_predict = function(
     rgcca,

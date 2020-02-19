@@ -51,7 +51,7 @@ or with circles (FALSE)}
 Plot in 3 dimensions either to visualize the components of an analyse or the variables
 }
 \examples{
-library(RGCCA)
+library(plotly)
 data("Russett")
 blocks = list(agriculture = Russett[, seq(3)],
     politic = Russett[, 6:11] )

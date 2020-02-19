@@ -4,13 +4,13 @@
 \alias{load_file_text}
 \title{Creates a matrix from loading a file}
 \usage{
-load_file_text(file, sep = "\\t", rownames = 1, header = TRUE,
-  one_column = FALSE, dec = ".")
+load_file_text(file, separator = "\\t", rownames = 1, header = TRUE,
+  one_column = FALSE, decimal = ".")
 }
 \arguments{
 \item{file}{A character giving the path of a file}
 
-\item{sep}{A character giving the column separator}
+\item{separator}{A character giving the column separator}
 
 \item{rownames}{An integer corresponding to the column number of the row
 names (NULL otherwise)}
@@ -19,7 +19,7 @@ names (NULL otherwise)}
 
 \item{one_column}{A boolean for a file with  an only-one column}
 
-\item{dec}{A character giving the decimal separator}
+\item{decimal}{A character giving the decimal separator}
 }
 \value{
 A matrix containing the loaded file
