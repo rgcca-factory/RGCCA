@@ -713,17 +713,17 @@ server <- function(input, output, session) {
             response <- NULL
 
         if (input$perm == 1) {
-            p_c1 <- FALSE
+            p_spars <- FALSE
             p_ncomp <- TRUE
         } else{
-            p_c1 <- TRUE
+            p_spars <- TRUE
             p_ncomp <- FALSE
         }
 
         assign("perm",
                rgcca_permutation(
                     blocks_without_superb,
-                    p_c1 = p_c1,
+                    p_spars = p_spars,
                     p_ncomp = p_ncomp,
                     nperm = input$nperm,
                     connection = connection,
@@ -810,7 +810,7 @@ server <- function(input, output, session) {
             toggle(
                 condition = (
                     input$analysis_type %in% c("RGCCA", "SGCCA") 
-                    && length(input$blocks$datapath) > 2
+                    && length(blocks) > 2
             ),
             id = id)
 
@@ -922,7 +922,11 @@ server <- function(input, output, session) {
 
         # Load the blocks
         paths <- paste(input$blocks$datapath, collapse = ",")
-        names <- paste(input$blocks$name, collapse = ",")
+
+        if (length(grep("xlsx?", paths)))
+            names <- NULL
+        else
+            names <- paste(input$blocks$name, collapse = ",")
 
         cleanup_analysis_par()
 

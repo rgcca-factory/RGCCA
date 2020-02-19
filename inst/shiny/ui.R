@@ -74,7 +74,8 @@ load_libraries(c(
     "visNetwork",
     "shiny",
     "shinyjs",
-    "MASS"
+    "MASS",
+    "openxlsx"
 ))
 
 if (BSPLUS) {
