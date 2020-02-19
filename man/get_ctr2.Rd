@@ -26,7 +26,7 @@ for the z-axis}
 
 \item{n_mark}{An integer giving the number of top variables to select}
 
-\item{collapse}{A boolean to combine the variables of each blocks as result}
+\item{collapse}{A boolean to combine the variables of each block as result}
 
 \item{remove_var}{A bolean to keep only the 100 variables of each
 component with the biggest correlation#'}

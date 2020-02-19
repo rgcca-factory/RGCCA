@@ -4,13 +4,15 @@
 \alias{plot3D}
 \title{Plot in 3 dimensions}
 \usage{
-plot3D(df, rgcca, compx = 1, compy = 2, compz = 3, i_block = 1,
+plot3D(df, rgcca_res, compx = 1, compy = 2, compz = 3, i_block = 1,
   i_block_y = i_block, i_block_z = i_block, text = TRUE,
   title = "Sample plot", colors = NULL, type = "ind", cex = 1,
   cex_point = 3 * cex, cex_lab = 19 * cex)
 }
 \arguments{
 \item{df}{A dataframe}
+
+\item{rgcca_res}{A list giving the results of a R/SGCCA}
 
 \item{compx}{An integer giving the index of the analysis component used
 for the x-axis}

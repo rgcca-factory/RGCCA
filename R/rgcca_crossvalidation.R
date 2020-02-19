@@ -20,8 +20,8 @@
 #' rgcca_crossvalidation(rgcca_out, n_cores = 1)
 #' @export
 rgcca_crossvalidation <- function(
-    rgcca,
-    i_block = length(rgcca$call$blocks),
+    rgcca_res,
+    i_block = length(rgcca_res$call$blocks),
     validation = "loo",
     type = "regression",
     fit = "lm",
@@ -29,8 +29,8 @@ rgcca_crossvalidation <- function(
     k = 5,
     n_cores = parallel::detectCores() - 1) {
 
-    stopifnot(is(rgcca, "rgcca"))
-    check_blockx("i_block", i_block, rgcca$call$blocks)
+    stopifnot(is(rgcca_res, "rgcca"))
+    check_blockx("i_block", i_block, rgcca_res$call$blocks)
     match.arg(validation, c("loo", "test", "kfold"))
     check_integer("k", k)
     check_integer("n_cores", n_cores, 0)
@@ -38,50 +38,50 @@ rgcca_crossvalidation <- function(
     if (n_cores == 0)
         n_cores <- 1
 
-    if (is.null(rgcca$call$response))
+    if (is.null(rgcca_res$call$response))
         stop("This function requiered a RGCCA in a supervised mode.")
 
-    bloc_to_pred <- names(rgcca$call$blocks)[i_block]
+    bloc_to_pred <- names(rgcca_res$call$blocks)[i_block]
 
     f <- quote(
         function(){
 
             Atrain <- lapply(bigA, function(x) x[-inds, , drop = FALSE])
 
-            if (rgcca$call$superblock) {
+            if (rgcca_res$call$superblock) {
                 Atrain <- Atrain[-length(Atrain)]
-                rgcca$call$connection <- NULL
+                rgcca_res$call$connection <- NULL
             }
 
-            if (!is.null(rgcca$call$response))
-                response <- length(rgcca$call$blocks)
+            if (!is.null(rgcca_res$call$response))
+                response <- length(rgcca_res$call$blocks)
 
             func <- quote(
                 rgcca(
                     Atrain,
-                    rgcca$call$connection,
+                    rgcca_res$call$connection,
                     response = response,
-                    superblock = rgcca$call$superblock,
-                    ncomp = rgcca$call$ncomp,
-                    scheme = rgcca$call$scheme,
+                    superblock = rgcca_res$call$superblock,
+                    ncomp = rgcca_res$call$ncomp,
+                    scheme = rgcca_res$call$scheme,
                     scale = FALSE,
-                    type = rgcca$call$type,
+                    type = rgcca_res$call$type,
                     verbose = FALSE,
-                    init = rgcca$call$init,
-                    bias = rgcca$call$bias,
-                    tol = rgcca$call$tol,
+                    init = rgcca_res$call$init,
+                    bias = rgcca_res$call$bias,
+                    tol = rgcca_res$call$tol,
                     method = "complete"
                 )
             )
 
-            if (rgcca$call$type %in% c("spls", "spca", "sgcca"))
-                func$sparsity <- rgcca$call$c1
+            if (rgcca_res$call$type %in% c("spls", "spca", "sgcca"))
+                func$sparsity <- rgcca_res$call$c1
             else
-                func$tau <- rgcca$call$tau
+                func$tau <- rgcca_res$call$tau
 
             rgcca_k <- eval(as.call(func))
 
-            rgcca_k$a <- check_sign_comp(rgcca, rgcca_k$a)
+            rgcca_k$a <- check_sign_comp(rgcca_res, rgcca_k$a)
 
             rgcca_predict(
                 rgcca_k,
@@ -95,7 +95,7 @@ rgcca_crossvalidation <- function(
         }
     )
 
-    bigA <- intersection(rgcca$call$blocks)
+    bigA <- intersection(rgcca_res$call$blocks)
 
     if (validation == "loo")
         v_inds <- seq(nrow(bigA[[1]]))
@@ -123,7 +123,7 @@ rgcca_crossvalidation <- function(
     if (validation %in% c("loo", "kfold")) {
         # concatenation of each test set to provide predictions for each block
         preds <- lapply(
-            seq(length(rgcca$call$blocks)),
+            seq(length(rgcca_res$call$blocks)),
             function(x) Reduce(
                 rbind, 
                 lapply(
@@ -133,7 +133,7 @@ rgcca_crossvalidation <- function(
                 )
             )
 
-    names(preds) <- names(rgcca$call$blocks)
+    names(preds) <- names(rgcca_res$call$blocks)
 
     for (x in seq(length(preds)))
         row.names(preds[[x]]) <- row.names(bigA[[1]])

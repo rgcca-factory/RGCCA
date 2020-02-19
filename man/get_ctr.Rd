@@ -24,7 +24,7 @@ for the z-axis}
 
 \item{type}{A character giving the choice ot the index between cor or weight}
 
-\item{collapse}{A boolean to combine the variables of each blocks as result}
+\item{collapse}{A boolean to combine the variables of each block as result}
 
 \item{i_block_2}{An integer giving the index of a list of blocks to be 
 correlated to i_block if this option is selected (default to i_block)}

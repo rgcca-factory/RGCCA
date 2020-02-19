@@ -22,6 +22,7 @@
 #' @param cex_sub An integer for the size of the subtitle
 #' @param cex_point An integer for the size of the points or the text in the plot
 #' @param cex_lab An integer for the size of the axis titles
+#' @param collapse A boolean to combine the variables of each block as result
 # @examples
 # df = as.data.frame(matrix(runif(20*2, min = -1), 20, 2))
 # AVE = lapply(seq(4), function(x) runif(2))

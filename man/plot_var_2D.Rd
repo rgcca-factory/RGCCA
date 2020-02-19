@@ -28,7 +28,7 @@ component with the biggest correlation#'}
 
 \item{n_mark}{An integer giving the number of top variables to select}
 
-\item{collapse}{A boolean to combine the variables of each blocks as result}
+\item{collapse}{A boolean to combine the variables of each block as result}
 
 \item{no_overlap}{A boolean to avoid overlap in plotted text}
 

@@ -44,7 +44,7 @@ or with circles (FALSE)}
 
 \item{n_mark}{An integer giving the number of top variables to select}
 
-\item{collapse}{A boolean to combine the variables of each blocks as result}
+\item{collapse}{A boolean to combine the variables of each block as result}
 
 \item{cex_sub}{An integer for the size of the subtitle}
 

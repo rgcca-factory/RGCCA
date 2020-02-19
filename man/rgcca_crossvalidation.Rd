@@ -4,11 +4,13 @@
 \alias{rgcca_crossvalidation}
 \title{Cross-validation}
 \usage{
-rgcca_crossvalidation(rgcca, i_block = length(rgcca$call$blocks),
+rgcca_crossvalidation(rgcca_res, i_block = length(rgcca_res$call$blocks),
   validation = "loo", type = "regression", fit = "lm",
   new_scaled = TRUE, k = 5, n_cores = parallel::detectCores() - 1)
 }
 \arguments{
+\item{rgcca_res}{A list giving the results of a R/SGCCA}
+
 \item{i_block}{An integer giving the index of a list of blocks}
 
 \item{validation}{A character given the method for validation aong test 

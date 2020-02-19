@@ -36,6 +36,8 @@ plot2D(rgcca_res, df, title = "", group = 1, name_group = "Response",
 
 \item{colors}{A vectof of character to color quantitative data}
 
+\item{collapse}{A boolean to combine the variables of each block as result}
+
 \item{no_overlap}{If TRUE, the potential overlaps are reduced}
 
 \item{cex}{An integer for the size of the plot parameters}

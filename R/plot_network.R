@@ -12,19 +12,19 @@
 #' plot_network(rgcca_out)
 #' @export
 plot_network <- function(
-    rgcca, 
+    rgcca_res, 
     title = paste0("Common rows between blocks : ",
-                   NROW(rgcca$call$blocks[[1]]))) {
+                   NROW(rgcca_res$call$blocks[[1]]))) {
 
-    stopifnot(is(rgcca, "rgcca"))
+    stopifnot(is(rgcca_res, "rgcca"))
     title <- paste0(title, collapse = " ")
 
     # Avoid random
     set.seed(1)
     V <- E <- NULL
         
-    nodes <- get_nodes(rgcca)
-    edges <- get_edges(rgcca)
+    nodes <- get_nodes(rgcca_res)
+    edges <- get_edges(rgcca_res)
 
     par <- ifelse("sparsity" %in% names(nodes), "sparsity", "tau")
 
@@ -34,8 +34,8 @@ plot_network <- function(
         directed = FALSE)
 
     if (all(is.na(nodes[, par]))) {
-        nodes[, par] <- rep("optimal", length(rgcca$call$blocks))
-        V(net)$call$tau <- rep(1, length(rgcca$call$blocks))
+        nodes[, par] <- rep("optimal", length(rgcca_res$call$blocks))
+        V(net)$call$tau <- rep(1, length(rgcca_res$call$blocks))
     }
 
     V(net)$color <- "khaki2"

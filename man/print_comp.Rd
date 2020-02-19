@@ -4,9 +4,12 @@
 \alias{print_comp}
 \title{Print the variance of a component}
 \usage{
-print_comp(rgcca, n = 1, i = length(rgcca$AVE$AVE_X), outer = FALSE)
+print_comp(rgcca_res, n = 1, i = length(rgcca_res$AVE$AVE_X),
+  outer = FALSE)
 }
 \arguments{
+\item{rgcca_res}{A list giving the results of a R/SGCCA}
+
 \item{n}{An integer giving the index of the analysis component}
 
 \item{i}{An integer giving the index of a list of blocks}

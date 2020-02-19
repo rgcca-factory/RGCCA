@@ -21,7 +21,7 @@ plot_var_1D(rgcca_res, comp = 1, n_mark = 100,
 "cor" for correlation between the component and the block
 or "weight" for the weight of the RGCCA}
 
-\item{collapse}{A boolean to combine the variables of each blocks as result}
+\item{collapse}{A boolean to combine the variables of each block as result}
 
 \item{title}{A character with the name of the space (either "Variables" or
 "Samples")}

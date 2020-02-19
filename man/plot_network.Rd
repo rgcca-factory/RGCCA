@@ -4,10 +4,12 @@
 \alias{plot_network}
 \title{Plot the connection between blocks}
 \usage{
-plot_network(rgcca, title = paste0("Common rows between blocks : ",
-  NROW(rgcca$call$blocks[[1]])))
+plot_network(rgcca_res, title = paste0("Common rows between blocks : ",
+  NROW(rgcca_res$call$blocks[[1]])))
 }
 \arguments{
+\item{rgcca_res}{A list giving the results of a R/SGCCA}
+
 \item{title}{A character with the name of the space (either "Variables" or
 "Samples")}
 }
