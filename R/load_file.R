@@ -28,6 +28,7 @@ load_file <- function(
 
     if (!isXls)
         load_file_text(file, separator, rownames, header, one_column, decimal)
-    # else load_file_excel(file, sheet, rownames, header = header, univariate = univariate)
+    else
+        load_file_excel(file, sheet, rownames, header = header)
 
 }

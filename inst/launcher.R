@@ -416,7 +416,7 @@ opt <- list(
         collapse = ",")
 )
 
-load_libraries(c("RGCCA", "ggplot2", "optparse", "scales", "igraph", "MASS"))
+load_libraries(c("RGCCA", "ggplot2", "optparse", "scales", "igraph", "MASS", "openxlsx"))
 try(load_libraries("ggrepel"), silent = TRUE)
 
 tryCatch(
@@ -446,7 +446,7 @@ tryCatch({
     
     blocks <- load_blocks(opt$datasets, opt$names, opt$separator)
     group <- load_response(blocks, opt$group, opt$separator, opt$header)
-    connection <- load_connection(file = opt$connection, sep = opt$separator)
+    connection <- load_connection(file = opt$connection, separator = opt$separator)
     
     func <- quote(
         rgcca(

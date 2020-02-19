@@ -18,10 +18,11 @@ Suggests:
     pander,
     shiny,
     shinyjs,
-    ggrepel
+    ggrepel,
+    plotly,
+    nnet,
 RoxygenNote: 6.1.1
 Imports: 
-    nnet,
     parallel,
     vegan,
     grDevices,
@@ -32,7 +33,6 @@ Imports:
     igraph,
     methods,
     optparse,
-    plotly,
     scales,
     visNetwork,
     gridExtra

@@ -2,8 +2,8 @@
 #'
 #' @param file A character giving the path of a file
 #' @param names A character giving a list of names for the blocks
-#' @param sep A character giving the column separator
-#' @param dec A character giving the decimal separator
+#' @param separator A character giving the column separator
+#' @param decimal A character giving the decimal separator
 #' @param header A bolean giving the presence or the absence of the header
 #' @param rownames An integer corresponding to the column number of the row
 #' names (NULL otherwise)
@@ -15,12 +15,13 @@
 #'     "agric,ind,polit")
 #' }
 #' @export
-load_blocks <- function(file,
+load_blocks <- function(
+    file,
     names = NULL,
-    sep = "\t",
+    separator = "\t",
     header = TRUE,
     rownames = 1,
-    dec = ".") {
+    decimal = ".") {
 
     # Parse args containing files path
     isXls <- (length(grep("xlsx?", file)) == 1)
@@ -30,11 +31,9 @@ load_blocks <- function(file,
         block_filenames <- char_to_list(file)
     else {
         # # if xls, check file exists
-        # check_file(file)
-        # # load the xls
-        # wb = loadWorkbook(file)
+        check_file(file)
         # # load the blocks
-        # block_filenames = names(getSheets(wb))
+        block_filenames = getSheetNames(file)
     }
 
     # Parse optional names of blocks
@@ -54,7 +53,6 @@ load_blocks <- function(file,
     for (i in seq(length(block_filenames))) {
         if (!isXls) {
             fi <- block_filenames[i]
-            check_file(fi)
         }
 
         #Get names of blocs
@@ -70,7 +68,7 @@ load_blocks <- function(file,
                 fo <- block_filenames[i]
         }
 
-        df <- load_file(file, fi, sep, block_filenames[i], rownames, header, dec = dec)
+        df <- load_file(file, fi, separator, block_filenames[i], rownames, header, decimal = decimal)
 
         check_quantitative(df, fo, header)
         blocks[[fo]] <- df
