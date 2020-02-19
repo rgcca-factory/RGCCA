@@ -4,12 +4,6 @@
 #'
 #' @inheritParams plot2D
 #' @param group A vector of character giving the group for the rows
-#' @param low_col A character giving the color used for the lowest part of
-#' the gradient
-#' @param high_col A character giving the color used for the highest part of
-#' the gradient
-#' @param mid_col A character giving the color used for the middle part of
-#' the gradient
 #' @param cex_axis An integer for the size of the axis text
 #' @param colors reoresenting a vector of colors
 #' @examples

@@ -4,12 +4,12 @@
 \alias{get_ctr2}
 \title{Get the indexes of the analysis}
 \usage{
-get_ctr2(rgcca, compx = 1, compy = 2, compz = NULL,
-  i_block = length(rgcca$call$blocks), type = "cor", n_mark = 100,
-  collapse = FALSE, remove_var = TRUE)
+get_ctr2(rgcca_res, compx = 1, compy = 2, compz = NULL,
+  i_block = length(rgcca_res$call$blocks), type = "cor",
+  n_mark = 100, collapse = FALSE, remove_var = TRUE)
 }
 \arguments{
-\item{rgcca}{A list giving the results of a R/SGCCA}
+\item{rgcca_res}{A list giving the results of a R/SGCCA}
 
 \item{compx}{An integer giving the index of the analysis component used
 for the x-axis}

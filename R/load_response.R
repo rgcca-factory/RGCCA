@@ -23,11 +23,11 @@ load_response <- function(
 
         response <- load_file(
             file,
-            sep = sep,
+            separator = sep,
             rownames = rownames,
             header = header,
             one_column = TRUE,
-            dec = dec
+            decimal = dec
         )
     }else
         check_blocks(blocks)

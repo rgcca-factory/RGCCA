@@ -139,7 +139,7 @@ lapply(A,dim)
 ## Creating a dataset with missing values from a complete dataset
 The function createNA transforms a complete dataset into a dataset with missing values. The parameter pNA specifies the probability of missing values around the dataset (pNA is a proportion), by block (if pNA is a vector of length(A)) or by variable (if pNA is a list of length (A)). The minimum number of complete individuals can be specified in the option "nAllRespondants". Two options are available for the missing data: either they are missing by block (typeNA="block") or randomly in the block (typeNA="ponc")
 ```{r}
-res_create=createNA(A,pNA=0.2,seed=41)
+res_create=createNA(blocks=A,pNA=0.2,seed=41)
 names(res_create)
 A_missing=res_create$dat
 lapply(A_missing,head)
@@ -150,12 +150,12 @@ createNA return a list containing the data with missing values, the position of 
 
 To visualize a dataset with missing values, the function determine_patternNA can be used. It also return the percent of missing values per variables and per block.
 ```{r, fig.height = 3, fig.width = 7, fig.align = "center"}
-patternNA=determine_patternNA(A=A_missing)
+patternNA=determine_patternNA(blocks=A_missing)
 names(patternNA)
 ```
 
 ```{r, fig.height = 3, fig.width = 7, fig.align = "center"}
-A_missing2=createNA(A,typeNA="byvar",pNA=list(0.1*1:3,rep(0,2),rep(0.1,3)))$dat
+A_missing2=createNA(blocks=A,typeNA="byvar",pNA=list(0.1*1:3,rep(0,2),rep(0.1,3)))$dat
 determine_patternNA(A_missing2)
 
 ```
@@ -246,7 +246,7 @@ In this case, the best method for the similarities between weights is
 # Behavior with increasing missing data proportion
 ```{r, fig.height = 6, fig.width = 6, fig.align = "center"}
 names(A)=c("agri","ind","polit")
-listResults=naEvolution(A=A,listMethods=c("complete","nipals","mean"),prctNA=c(0.05,0.1,0.15,0.2,0.25,0.3,0.4),typeNA="ponc",ncomp=rep(1,3),sameBlockWeight=FALSE,nDatasets = 10)
+listResults=naEvolution(blocks=A,listMethods=c("complete","nipals","mean"),prctNA=c(0.05,0.1,0.15,0.2,0.25,0.3,0.4),typeNA="ponc",ncomp=rep(1,3),sameBlockWeight=FALSE,nDatasets = 10,connection=C)
 ```
 ```{r, fig.height = 4, fig.width = 6, fig.align = "center"}
 plotEvol(listResults,output="a",barType = "stderr")

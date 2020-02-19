@@ -12,6 +12,8 @@ bootstrap_k(rgcca_res, blocks = NULL, connection = 1 -
   superblock = TRUE, response = NULL, method = "complete")
 }
 \arguments{
+\item{rgcca_res}{Result of rgcca function}
+
 \item{blocks}{A list of matrix}
 
 \item{connection}{A matrix giving the connection between the blocks}

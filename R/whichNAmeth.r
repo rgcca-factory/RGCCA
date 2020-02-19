@@ -1,32 +1,32 @@
 #' Analysis of the comparison of different NA methods on RGCCA
-#' @param A A list of complete blocks
 #' @param listNAdataset if TRUE, no RGCCA on complete data is run
-#' @param C,tau,scale,scheme,sameBlockWeight,ncomp,tol,verbose parameters of RGCCA
+#' @inheritParams rgcca
 #' @param listMethods vector containing a list of methods ("mean","complete","nipals"...)
 #' @param nDatasets Number of simulated dataset
 #' @param patternNA number of missing data required
 #' @param typeNA structure of missing data required ("ponc" or "block")
 #' @param seed if filled (by a number), the randomness is reproducible.
+#' @param typeRGCCA type of RGCCA ("sgcca","rgcca"...).
 #' @return \item{A}{A list of dataset indicators containg a list of rgcca with a  list of criterion. }
 #' @return \item{crit}{Convergence criterion : abs(1-obj_k/obj_{k-1})}
 #' @return \item{obj}{Vector containing the mean square error between the predicted values and the original non missing values at each iteration}
 #' @title comparison of two RGCCA results
 #' @examples 
 #' set.seed(42);X1=matrix(rnorm(350),70,5);X2=matrix(rnorm(280),70,4);
-#' colnames(X1)=paste("A",1:5);colnames(X2)=paste("B",1:4);
+#' colnames(X1)=paste("blocks",1:5);colnames(X2)=paste("B",1:4);
 #' rownames(X1)=rownames(X2)=paste("S",1:70)
 #' A=list(X1,X2);
 #' res=whichNAmethod(A,listMethods=c("nipals","mean"),patternNA=rep(0.1,2))
 #' @export
 #' @importFrom parallel mclapply
 
-whichNAmethod=function(A,listNAdataset=NULL,C=matrix(1,length(A),length(A))-diag(length(A)), tau=rep(1,length(A)),
-                       listMethods,nDatasets=20,patternNA=NULL,typeNA="block",ncomp=rep(2,length(A)),sameBlockWeight=TRUE,scale=TRUE,tol=1e-6,
+whichNAmethod=function(blocks,listNAdataset=NULL,connection=matrix(1,length(blocks),length(blocks))-diag(length(blocks)), tau=rep(1,length(blocks)),
+                       listMethods,nDatasets=20,patternNA=NULL,typeNA="block",ncomp=rep(2,length(blocks)),sameBlockWeight=TRUE,scale=TRUE,tol=1e-6,
                        verbose=FALSE,scheme="centroid",seed=NULL,typeRGCCA="rgcca",sparsity=NULL)
 {
-  check_connection(C,A)
-  check_tau(tau,A)
-  check_ncomp(tau,A)
+  check_connection(connection,blocks)
+  check_tau(tau,blocks)
+  check_ncomp(tau,blocks)
   check_integer("nDatasets",nDatasets)
   check_boolean("sameBlockWeight",sameBlockWeight)
   check_boolean("scale",scale)
@@ -39,9 +39,9 @@ whichNAmethod=function(A,listNAdataset=NULL,C=matrix(1,length(A),length(A))-diag
 #  if(length(seed)!=0){check_integer("seed",seed)}
   match.arg(typeNA,c("block","ponc","rand","byVar"))
   match.arg(typeRGCCA,c("rgcca","sgcca"))
-  if(is.null(patternNA)){patternNA=determine_patternNA(A,graph=FALSE)$pctNAbyBlock}
-  if(is.vector(patternNA)){if(length(patternNA)!=length(A)){stop("patternNA should have the same size as length(A)")}}
-  referenceDataset=intersection(A)
+  if(is.null(patternNA)){patternNA=determine_patternNA(blocks,graph=FALSE)$pctNAbyBlock}
+  if(is.vector(patternNA)){if(length(patternNA)!=length(blocks)){stop("patternNA should have the same size as length(blocks)")}}
+  referenceDataset=intersection(blocks)
 
   # Getting list of datasets stemming from referenceDataset with the same pattern of missing values
   if(is.null(listNAdataset))
@@ -51,21 +51,21 @@ whichNAmethod=function(A,listNAdataset=NULL,C=matrix(1,length(A),length(A))-diag
     listNAdataset=lapply(1:nDatasets,function(i)
         {
             if(!is.null(seed)&&length(seed)==nDatasets)
-                {   createNA(A=referenceDataset,typeNA=typeNA,pNA=patternNA,nAllRespondants=10,output="list",seed=seed[i])}
+                {   createNA(blocks=referenceDataset,typeNA=typeNA,pNA=patternNA,nAllRespondants=10,output="list",seed=seed[i])}
             else
-                {   createNA(A=referenceDataset,typeNA=typeNA,pNA=patternNA,nAllRespondants=10,output="list",seed=NULL)}
+                {   createNA(blocks=referenceDataset,typeNA=typeNA,pNA=patternNA,nAllRespondants=10,output="list",seed=NULL)}
         }
     )
   }
 
   if(typeRGCCA=="rgcca")
   {
-      referenceRgcca=rgccad(referenceDataset,C=C,tau=tau,ncomp=ncomp,verbose=verbose,sameBlockWeight=sameBlockWeight,scale=scale,tol=tol,scheme=scheme)
+      referenceRgcca=rgccad(referenceDataset,C=connection,tau=tau,ncomp=ncomp,verbose=verbose,sameBlockWeight=sameBlockWeight,scale=scale,tol=tol,scheme=scheme)
       if(verbose)    {  print("comparisons of RGCCA with the different methods...(this could take some time)")}
   }
   if(typeRGCCA=="sgcca")
   {
-      referenceRgcca=sgcca(referenceDataset,C=C,sparsity=sparsity,ncomp=ncomp,verbose=verbose,sameBlockWeight=sameBlockWeight,scale=scale,tol=tol,scheme=scheme)
+      referenceRgcca=sgcca(referenceDataset,C=connection,sparsity=sparsity,ncomp=ncomp,verbose=verbose,sameBlockWeight=sameBlockWeight,scale=scale,tol=tol,scheme=scheme)
       if(verbose)    {  print("comparisons of SGCCA with the different methods...(this could take some time)")}
   }
   resultComparison=NULL
@@ -77,11 +77,11 @@ whichNAmethod=function(A,listNAdataset=NULL,C=matrix(1,length(A),length(A))-diag
     {  
         if(typeRGCCA=="rgcca")
         {
-        methodRgcca=rgccaNa(A=listNAdataset[[i]]$dat,C=C,tau=tau,method=method,ncomp=ncomp,sameBlockWeight=sameBlockWeight,scale=scale,tol=tol,verbose=FALSE,scheme=scheme)
+        methodRgcca=rgccaNa(A=listNAdataset[[i]]$dat,C=connection,tau=tau,method=method,ncomp=ncomp,sameBlockWeight=sameBlockWeight,scale=scale,tol=tol,verbose=FALSE,scheme=scheme)
         }
         if(typeRGCCA=="sgcca")
         {
-            methodRgcca=sgccaNa(A=listNAdataset[[i]]$dat,C=C,sparsity=sparsity,method=method,ncomp=ncomp,sameBlockWeight=sameBlockWeight,scale=scale,tol=tol,verbose=FALSE,scheme=scheme)
+            methodRgcca=sgccaNa(A=listNAdataset[[i]]$dat,C=connection,sparsity=sparsity,method=method,ncomp=ncomp,sameBlockWeight=sameBlockWeight,scale=scale,tol=tol,verbose=FALSE,scheme=scheme)
         }
         indicators[[method]]=comparison(rgcca1=referenceRgcca,rgcca2=methodRgcca$rgcca,selectPatient=selectCompletePatient,indNA=methodRgcca$indNA)
     }

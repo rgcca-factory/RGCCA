@@ -5,7 +5,11 @@
 \title{Regularized Generalized Canonical Correlation Analysis (RGCCA)}
 \usage{
 \method{plot}{rgcca}(x, resp = rep(1, NROW(x$Y[[1]])), i_block = 1,
-  compx = 1, compy = 2, remove_var = FALSE, ...)
+  compx = 1, compy = 2, remove_var = FALSE, text_var = TRUE,
+  text_ind = TRUE, response_name = "Response", no_overlap = FALSE,
+  title_var = "Variable correlations with", title_ind = "Sample space",
+  n_mark = 100, collapse = FALSE, cex_sub = 10, cex_main = 14,
+  cex_lab = 12, ...)
 }
 \arguments{
 \item{x}{Result of rgcca function}
@@ -24,7 +28,31 @@ for the y-axis}
 \item{remove_var}{A bolean to keep only the 100 variables of each
 component with the biggest correlation#'}
 
-\item{...}{parameters from plot_ind or plot_var_2D}
+\item{text_var}{A bolean to represent the variables with their row names (TRUE)
+or with circles (FALSE)}
+
+\item{text_ind}{A bolean to represent the individuals with their row names (TRUE)
+or with circles (FALSE)}
+
+\item{response_name}{A character giving the legend title}
+
+\item{no_overlap}{A boolean to avoid overlap in plotted text}
+
+\item{title_var}{Character for the title of the variable space}
+
+\item{title_ind}{Character for the title of the individual space}
+
+\item{n_mark}{An integer giving the number of top variables to select}
+
+\item{collapse}{A boolean to combine the variables of each blocks as result}
+
+\item{cex_sub}{An integer for the size of the subtitle}
+
+\item{cex_main}{An integer for the size of the title}
+
+\item{cex_lab}{An integer for the size of the axis titles}
+
+\item{...}{Further graphical parameters applied to both (individual and variable) spaces}
 }
 \description{
 plot 

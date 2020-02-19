@@ -1,7 +1,7 @@
 #'print.rgcca
 #' Print rgcca results
 #' @param x a result of rgcca function
-#' @param ... other parameters 
+#' @param ... other parameters used in print (for the displaying of matrices)
 #' @export
 #' @examples 
 #' data(Russett)
@@ -54,13 +54,13 @@ print.rgcca <- function(x,...)
             param="regularization"
 
             cat("The",param," parameter used for block", i, "was:", 
-                tau, fill = TRUE,...)
+                tau, fill = TRUE)
         }
     }
     else
     {
         cat("The",param," parameter used for block", i, "was: \n")
-        print(round(x$tau,4))
+        print(round(x$tau,4),...)
     }
   }
   if(x$call$type %in% c("sgcca"))
@@ -70,12 +70,12 @@ print.rgcca <- function(x,...)
               sparsity <- x$call$sparsity[i]
              param="shrinkage"
               cat("The",param," parameter used for block", i, "was:", 
-                  sparsity, fill = TRUE,...)
+                  sparsity, fill = TRUE)
           }
       }
   else
   {
       cat("The",param," parameter used for block", i, "was: \n")
-      print(round(x$tau,4))
+      print(round(x$tau,4),...)
   }
 }

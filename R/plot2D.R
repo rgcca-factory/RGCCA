@@ -2,7 +2,13 @@
 #'
 #' Plots RGCCA components in a bi-dimensional space
 #'
-#' @inheritParams plot_var_2D
+#' @param compx Integer corresponding to the number of x-component
+#' @param compy Integer corresponding to the number of y-component
+#' @param i_block Integer corresponding to the first block
+#' @param text If TRUE, labels are plotted. If FALSE points are plotted.
+#' @param i_block_y Integer corresponding to the second block
+#' @param no_overlap If TRUE, the potential overlaps are reduced
+#' @param rgcca_res Result of rgcca function
 #' @param df A dataframe
 #' @param title A character with the name of the space (either "Variables" or
 #' "Samples")
@@ -10,7 +16,7 @@
 #' @param name_group A character giving the type of groups (either "Blocs" or
 # "Response")
 #' @param p A ggplot object
-#' @param colours A vectof of character to color quantitative dat
+#' @param colors A vectof of character to color quantitative data
 #' @param cex An integer for the size of the plot parameters
 #' @param cex_main An integer for the size of the title
 #' @param cex_sub An integer for the size of the subtitle
@@ -28,7 +34,7 @@
 # plot2D(rgcca_out, df)
 
 plot2D <- function(
-    rgcca,
+    rgcca_res,
     df,
     title = "",
     group = 1,
@@ -111,8 +117,8 @@ plot2D <- function(
             size = 1
         ) + labs(
                 title = title,
-                x = print_comp(rgcca, compx, i_block),
-                y = print_comp(rgcca, compy, i_block_y),
+                x = print_comp(rgcca_res, compx, i_block),
+                y = print_comp(rgcca_res, compy, i_block_y),
             color = name_group,
             shape = name_group
         ) + 
@@ -133,7 +139,7 @@ plot2D <- function(
         check_colors(colors)
 
     if (length(unique(group)) != 1 && is(df, "d_var2D")) {
-        order_color(rgcca$a, p, collapse = collapse, colors)
+        order_color(rgcca_res$a, p, collapse = collapse, colors)
         # For qualitative response OR no response
     } else if ( is.character2(group[!is.na(group)]) ||
                 length(unique(group)) <= 5 || 

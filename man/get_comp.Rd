@@ -4,12 +4,12 @@
 \alias{get_comp}
 \title{Get the components of the analysis}
 \usage{
-get_comp(rgcca, resp = rep(1, NROW(rgcca$Y[[1]])), compx = 1,
-  compy = 2, compz = NULL, i_block = length(rgcca$Y),
+get_comp(rgcca_res, resp = rep(1, NROW(rgcca_res$Y[[1]])), compx = 1,
+  compy = 2, compz = NULL, i_block = length(rgcca_res$Y),
   i_block_y = i_block, i_block_z = i_block, predicted = NULL)
 }
 \arguments{
-\item{rgcca}{A list giving the results of a R/SGCCA}
+\item{rgcca_res}{A list giving the results of a R/SGCCA}
 
 \item{resp}{A vector of characters corresponding either to a qualitative
 variable with levels or a continuous variable}

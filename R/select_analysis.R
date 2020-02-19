@@ -4,6 +4,7 @@
 #'
 #' @inheritParams plot_var_2D
 #' @inheritParams set_connection
+#' @param response Integer representing the number of the response block
 #' @param connection A matrix giving the connection between the blocks
 #' @param penalty A vector of float (or character for 'optimal' setting) giving the
 #' shrinkage parameter for covariance maximization

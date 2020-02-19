@@ -9,8 +9,6 @@ rgcca_predict(rgcca, newA, type = "regression", fit = "lm",
   new_scaled = TRUE, scale_size_bloc = TRUE)
 }
 \arguments{
-\item{rgcca}{A list giving the results of a R/SGCCA}
-
 \item{newA}{A list of either a dataframe/matrix or a vector giving the blocks to be predicted}
 
 \item{type}{A character corresponding to the type of prediction among : regression or classification}

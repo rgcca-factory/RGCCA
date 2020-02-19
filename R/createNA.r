@@ -1,5 +1,5 @@
 #' Create a dataset with missing values
-#' @param A A list of complete matrices with the same number of lines
+#' @param blocks A list of complete matrices with the same number of lines
 #' @param output list by default, else, can return the concatened list.
 #' @param seed if NULL, the creation of missing data is totally random (and consequently unreproducible), if numeric value, select randomness according to a seed (and reproducible).
 #' @param typeNA "bloc" if the structure of missing data is by block or "ponc" if it is random across variables
@@ -15,11 +15,11 @@
 #' X3=Russett[,8:11]
 #' A=list(agri=X1,ind=X2,polit=X3)
 #' createNA(A,pNA=0.2)
-createNA=function(A,typeNA="block",pNA=0.1,nAllRespondants=4,output="list",seed=NULL)
+createNA=function(blocks,typeNA="block",pNA=0.1,nAllRespondants=4,output="list",seed=NULL)
 {
-  A= listOfMatrices(A)
-  if(length(pNA)==1){pNA=rep(pNA,length(A))}
-  if(length(pNA)!=1 & length(pNA)!=length(A)){stop("pNA should be a number between 0 and 1 or a vector of the same size as A ")}
+  blocks= listOfMatrices(blocks)
+  if(length(pNA)==1){pNA=rep(pNA,length(blocks))}
+  if(length(pNA)!=1 & length(pNA)!=length(blocks)){stop("pNA should be a number between 0 and 1 or a vector of the same size as blocks ")}
    match.arg(typeNA,c("block","rand","ponc","byvar"))
    match.arg(output,c("list","superblock"))
    if(!is.null(seed))
@@ -27,59 +27,59 @@ createNA=function(A,typeNA="block",pNA=0.1,nAllRespondants=4,output="list",seed=
        check_integer("seed",seed)
    }
    check_integer(nAllRespondants)
-  if(is.null(rownames(A[[1]]))){rownames(A[[1]])=paste("S",1:dim(A[[1]])[1],sep="")}
+  if(is.null(rownames(blocks[[1]]))){rownames(blocks[[1]])=paste("S",1:dim(blocks[[1]])[1],sep="")}
     if(is.list(pNA)){warnings("The percentage of missing data is chosen by variable. 'byvar' typeNA is chosen")}
   if(typeNA=="block")
 	{
 	  # For all the one but the last one, 
-	  nbloc=length(A)
+	  nbloc=length(blocks)
 	  indToRemove=list()
-		for(i in 1:(length(A)-1))
+		for(i in 1:(length(blocks)-1))
 		{
-			n=nrow(A[[i]])
-			p=ncol(A[[i]])
+			n=nrow(blocks[[i]])
+			p=ncol(blocks[[i]])
 			nbNAparBloc=round(pNA[i]*n)	
 			if(nbNAparBloc!=0)
 			{
 			 if(!is.null(seed)){set.seed(seed+i)}
 		  	indToRemove[[i]]=sample(1:n, nbNAparBloc, replace = FALSE)	
-		  	 A[[i]][indToRemove[[i]],]=NA
+		  	 blocks[[i]][indToRemove[[i]],]=NA
 		    }
 			else
 			{
 				indToRemove=NA
 			}
 		}
-	   n=nrow(A[[nbloc]])
-	  p=ncol(A[[nbloc]])
-	  nbNAparBloc=round(pNA[length(A)]*n)	
+	   n=nrow(blocks[[nbloc]])
+	  p=ncol(blocks[[nbloc]])
+	  nbNAparBloc=round(pNA[length(blocks)]*n)	
 	  # The last block can not be a missing line if all other blocks are missing
 	  #---------------------------------------------------------------------------
-	  W=do.call(cbind,A[1:(nbloc-1)])
+	  W=do.call(cbind,blocks[1:(nbloc-1)])
     indToTake=which(apply(W,1,function(x){sum(!is.na(x))})==0) #index with missing data for all first blocks
     if(length(indToTake)==0){indicesToUse=1:n}else{indicesToUse=(1:n)[!(1:n)%in%indToTake]}
 	  if(nbNAparBloc!=0)
 	  {
-	      if(!is.null(seed)){set.seed(seed+length(A))}
+	      if(!is.null(seed)){set.seed(seed+length(blocks))}
 	    indToRemove[[nbloc]]=sample(indicesToUse, min(length(indicesToUse),nbNAparBloc), replace = FALSE)	
-	    A[[nbloc]][indToRemove[[nbloc]],]=NA
+	    blocks[[nbloc]][indToRemove[[nbloc]],]=NA
 	   }
 	  else
 	  {
 	    indToRemove=NA
 	  }
-    W2=do.call(cbind,A)
-    subjectKept=rownames(A[[1]])[which(apply(W2,1,function(x){sum(is.na(x))})==0)]
+    W2=do.call(cbind,blocks)
+    subjectKept=rownames(blocks[[1]])[which(apply(W2,1,function(x){sum(is.na(x))})==0)]
     
   }
    
 	if(typeNA=="rand")
 	{
 		
-		for(i in 1:length(A))
+		for(i in 1:length(blocks))
 		{
-			n=nrow(A[[i]])
-			p=ncol(A[[i]])
+			n=nrow(blocks[[i]])
+			p=ncol(blocks[[i]])
 			nbNA=round(pNA[i]*n*p)
 			if(nbNA!=0)
 			{
@@ -87,7 +87,7 @@ createNA=function(A,typeNA="block",pNA=0.1,nAllRespondants=4,output="list",seed=
 				if(!is.null(seed)){set.seed(seed+i)}
 				indToRemove=sample(1:(n*p), nbNA, replace = FALSE)
 				listeIndicesToRemove=listeIndicePossible[indToRemove,]		
-				for(j in 1:length(indToRemove)){A[[i]][listeIndicesToRemove[j,"x"],listeIndicesToRemove[j,"y"]]=NA}
+				for(j in 1:length(indToRemove)){blocks[[i]][listeIndicesToRemove[j,"x"],listeIndicesToRemove[j,"y"]]=NA}
 			}
 			else{indToRemove=NA}
 		}
@@ -95,13 +95,13 @@ createNA=function(A,typeNA="block",pNA=0.1,nAllRespondants=4,output="list",seed=
 	
 	if(typeNA=="ponc") # valeurs ponctuelles en conservant un nombre d'individu complets
 	{
-	  n=nrow(A[[1]])
+	  n=nrow(blocks[[1]])
 		allResp=sample(1:n,nAllRespondants)
 		restData=(1:n)[!(1:n)%in%allResp]
 	
-		for(i in 1:length(A))
+		for(i in 1:length(blocks))
 		{
-			p=ncol(A[[i]])
+			p=ncol(blocks[[i]])
 			nbNA=round(pNA[i]*n*p)
 			if(nbNA!=0)
 			{
@@ -109,37 +109,37 @@ createNA=function(A,typeNA="block",pNA=0.1,nAllRespondants=4,output="list",seed=
 				if(!is.null(seed)){set.seed(seed+i)}
 				indToRemove=sample(1:dim(listeIndicePossible)[1], nbNA, replace = FALSE)
 				listeIndicesToRemove=listeIndicePossible[indToRemove,]		
-				for(j in 1:length(indToRemove)){A[[i]][listeIndicesToRemove[j,"x"],listeIndicesToRemove[j,"y"]]=NA}
+				for(j in 1:length(indToRemove)){blocks[[i]][listeIndicesToRemove[j,"x"],listeIndicesToRemove[j,"y"]]=NA}
 			}
 			else{indToRemove=NA}
 		}
-		W2=do.call(cbind,A)
-		subjectKept=rownames(A[[1]])[which(apply(W2,1,function(x){sum(is.na(x))})==0)]
+		W2=do.call(cbind,blocks)
+		subjectKept=rownames(blocks[[1]])[which(apply(W2,1,function(x){sum(is.na(x))})==0)]
 	}
     if(typeNA=="byvar")
     {
         
         indToRemove=list()
-        if(length(pNA)!=length(A)){stop("If pNA is a list, it should have the same length as A")}
-        for(i in 1:length(A))
+        if(length(pNA)!=length(blocks)){stop("If pNA is a list, it should have the same length as blocks")}
+        for(i in 1:length(blocks))
         {
-            n=nrow(A[[i]])
+            n=nrow(blocks[[i]])
             
             indToRemove[[i]]=list()
-            if(length(pNA[[i]])!=dim(A[[i]])[2]){stop(paste("pNA[",i,"] should have the same length that the number of variable in A[",i,"]"))}
-            for(j in 1:dim(A[[i]])[2])
+            if(length(pNA[[i]])!=dim(blocks[[i]])[2]){stop(paste("pNA[",i,"] should have the same length that the number of variable in blocks[",i,"]"))}
+            for(j in 1:dim(blocks[[i]])[2])
             {
                
                 nbNA=round(pNA[[i]][j]*n)
                 indToRemove[[i]][[j]]=sample(1:n,nbNA)
              
-                A[[i]][indToRemove[[i]][[j]],j]=NA
+                blocks[[i]][indToRemove[[i]][[j]],j]=NA
             }
         }
-        W2=do.call(cbind,A)
-        subjectKept=rownames(A[[1]])[which(apply(W2,1,function(x){sum(is.na(x))})==0)]
+        W2=do.call(cbind,blocks)
+        subjectKept=rownames(blocks[[1]])[which(apply(W2,1,function(x){sum(is.na(x))})==0)]
     }
 		
-  if(output=="list"){res=list(dat=A,naPos=indToRemove,subjectKept=subjectKept)}else{res=do.call(cbind,A)}
+  if(output=="list"){res=list(dat=blocks,naPos=indToRemove,subjectKept=subjectKept)}else{res=do.call(cbind,blocks)}
 	return(res)
 }

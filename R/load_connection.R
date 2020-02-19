@@ -2,7 +2,7 @@ load_connection <- function(file = NULL, separator = "\t"){
     if (!is.null(file))
         load_file(
             file = file,
-            sep = separator,
+            separator = separator,
             rownames = NULL,
             header = FALSE
         )

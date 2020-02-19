@@ -4,12 +4,13 @@
 \alias{plot_var_2D}
 \title{Plot of variables space}
 \usage{
-plot_var_2D(rgcca, compx = 1, compy = 2, i_block = length(rgcca$a),
-  text = TRUE, remove_var = TRUE, n_mark = 100, collapse = FALSE,
-  no_overlap = FALSE, title = "Variable correlations with", ...)
+plot_var_2D(rgcca_res, compx = 1, compy = 2,
+  i_block = length(rgcca_res$a), text = TRUE, remove_var = TRUE,
+  n_mark = 100, collapse = FALSE, no_overlap = FALSE,
+  title = "Variable correlations with", ...)
 }
 \arguments{
-\item{rgcca}{A list giving the results of a R/SGCCA}
+\item{rgcca_res}{A list giving the results of a R/SGCCA}
 
 \item{compx}{An integer giving the index of the analysis component used
 for the x-axis}
@@ -33,6 +34,8 @@ component with the biggest correlation#'}
 
 \item{title}{A character with the name of the space (either "Variables" or
 "Samples")}
+
+\item{...}{Further graphical parameters (see plot2D)}
 }
 \description{
 Correlation circle highlighting the contribution of each variables to the

@@ -4,13 +4,15 @@
 \alias{plot2D}
 \title{Plots RGCCA components in a bi-dimensional space}
 \usage{
-plot2D(rgcca, df, title = "", group = 1, name_group = "Response",
+plot2D(rgcca_res, df, title = "", group = 1, name_group = "Response",
   compx = 1, compy = 2, i_block = 1, p = NULL, text = TRUE,
   i_block_y = i_block, colors = NULL, collapse = FALSE,
   no_overlap = FALSE, cex = 1, cex_main = 25 * cex, cex_sub = 16 *
   cex, cex_point = 3 * cex, cex_lab = 19 * cex)
 }
 \arguments{
+\item{rgcca_res}{Result of rgcca function}
+
 \item{df}{A dataframe}
 
 \item{title}{A character with the name of the space (either "Variables" or
@@ -20,9 +22,21 @@ plot2D(rgcca, df, title = "", group = 1, name_group = "Response",
 
 \item{name_group}{A character giving the type of groups (either "Blocs" or}
 
+\item{compx}{Integer corresponding to the number of x-component}
+
+\item{compy}{Integer corresponding to the number of y-component}
+
+\item{i_block}{Integer corresponding to the first block}
+
 \item{p}{A ggplot object}
 
-\item{collapse}{A boolean to combine the variables of each blocks as result}
+\item{text}{If TRUE, labels are plotted. If FALSE points are plotted.}
+
+\item{i_block_y}{Integer corresponding to the second block}
+
+\item{colors}{A vectof of character to color quantitative data}
+
+\item{no_overlap}{If TRUE, the potential overlaps are reduced}
 
 \item{cex}{An integer for the size of the plot parameters}
 
@@ -33,8 +47,6 @@ plot2D(rgcca, df, title = "", group = 1, name_group = "Response",
 \item{cex_point}{An integer for the size of the points or the text in the plot}
 
 \item{cex_lab}{An integer for the size of the axis titles}
-
-\item{colours}{A vectof of character to color quantitative dat}
 }
 \description{
 Plots RGCCA components in a bi-dimensional space

@@ -12,8 +12,6 @@ plot3D(df, rgcca, compx = 1, compy = 2, compz = 3, i_block = 1,
 \arguments{
 \item{df}{A dataframe}
 
-\item{rgcca}{A list giving the results of a R/SGCCA}
-
 \item{compx}{An integer giving the index of the analysis component used
 for the x-axis}
 

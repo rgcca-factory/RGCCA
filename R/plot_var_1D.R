@@ -32,10 +32,10 @@
 #' plot_var_1D(rgcca_out, collapse = TRUE)
 #' @export
 plot_var_1D <- function(
-    rgcca,
+    rgcca_res,
     comp = 1,
     n_mark = 100,
-    i_block = length(rgcca$a),
+    i_block = length(rgcca_res$a),
     type = "cor",
     collapse = FALSE,
     title = NULL,
@@ -45,7 +45,7 @@ plot_var_1D <- function(
     colors <- check_colors(colors)
 
     df <- get_ctr2(
-        rgcca = rgcca,
+        rgcca_res = rgcca_res,
         compx = comp,
         compy = comp,
         i_block = i_block,
@@ -56,10 +56,10 @@ plot_var_1D <- function(
     )
     resp <- df$resp
 
-    if (i_block < length(rgcca$a) || rgcca$call$type == "pca")
-        rgcca$call$superblock <- FALSE
+    if (i_block < length(rgcca_res$a) || rgcca_res$call$type == "pca")
+        rgcca_res$call$superblock <- FALSE
 
-    J <- names(rgcca$a)
+    J <- names(rgcca_res$a)
 
     if (is.null(title))
         title <- ifelse(type == "cor",
@@ -77,7 +77,7 @@ plot_var_1D <- function(
     # if the superblock is selected, color the text of the y-axis according
     # to their belonging to each blocks
 
-    if ((rgcca$call$superblock && i_block == length(rgcca$a)) || collapse) {
+    if ((rgcca_res$call$superblock && i_block == length(rgcca_res$a)) || collapse) {
         color <- factor(resp)
         levels(color) <- color_group(color, colors = colors)
         p <- ggplot(df, aes(order, df[, 1], fill = resp))
@@ -93,7 +93,7 @@ plot_var_1D <- function(
         as.character(color),
         ...
     ) +
-    labs(subtitle = print_comp(rgcca, comp, i_block))
+    labs(subtitle = print_comp(rgcca_res, comp, i_block))
 
     # If some blocks have any variables in the top hit, selects the ones
     # corresponding
@@ -106,9 +106,9 @@ plot_var_1D <- function(
 
     # Force all the block names to appear on the legend
     if (length(color) != 1)
-        p <- order_color(rgcca$a, p, matched, collapse, colors)
+        p <- order_color(rgcca_res$a, p, matched, collapse, colors)
 
-    if ((!rgcca$call$superblock || i_block != length(rgcca$a)) && !collapse)
+    if ((!rgcca_res$call$superblock || i_block != length(rgcca_res$a)) && !collapse)
             p <- p + theme(legend.position = "none")
 
     return(p)
