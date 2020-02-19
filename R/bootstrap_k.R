@@ -80,7 +80,7 @@ bootstrap_k <- function(
             penalty <- tau
         }
     }
-print(penalty)
+
     boot_blocks <- list(NULL)
     while (any(sapply(boot_blocks, function(x) length(x)) == 0)) {
 

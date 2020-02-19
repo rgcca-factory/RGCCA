@@ -20,14 +20,14 @@
 # A[[1]][2, 3] <- runif(1)
 # init : boolean (FALSE by default) for the first block checking
 
-check_blocks <- function(blocks, init = FALSE, add_NAlines=FALSE) {
+check_blocks <- function(blocks, init = FALSE, n = 2, add_NAlines=FALSE) {
     
     msg <- "In blocks arg:"
     
     if (!is.list(blocks))
         stop(paste(msg, "is not a list."))
     
-    if (!init && length(blocks) < 2)
+    if (!init && length(blocks) < n)
         stop(paste(msg, "should at least have two elements."))
     
     if (is.null(names(blocks)))

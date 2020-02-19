@@ -30,7 +30,7 @@ load_response <- function(
             dec = dec
         )
     }else
-        check_blocks(blocks)
+        check_blocks(blocks, n = 1)
 
     check_response(response, blocks)
 

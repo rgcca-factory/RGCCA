@@ -1,11 +1,7 @@
 stop <- function(
-    message,
-    exit_code = "1",
-    call = NULL) {
+    message = "",
+    exit_code = 1) {
 
-    base::stop(
-        structure(
-            class = c(exit_code, "simpleError", "error", "condition"),
-            list(message = message, call. = NULL)
-    ))
+    base::stop(rlang::error_cnd(.subclass = exit_code, message = message))
 }
+        
