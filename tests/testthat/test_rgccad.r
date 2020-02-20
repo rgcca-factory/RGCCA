@@ -31,3 +31,37 @@ res=rgccad(A, C, ncomp=c(2,2,1),tau = c(1, 1, 1), scheme = "factorial", scale = 
 
 res=rgccad(A, C, ncomp=c(2,2,2),tau = rep("optimal",3), scheme = "factorial",verbose=FALSE)
 
+
+ #############
+ # Example 1 #
+ #############
+ data(Russett)
+ X_agric =as.matrix(Russett[,c("gini","farm","rent")])
+ X_ind = as.matrix(Russett[,c("gnpr","labo")])
+ X_polit = as.matrix(Russett[ , c("demostab", "dictator")])
+ A = list(X_agric, X_ind, X_polit)
+ #Define the design matrix (output = C) 
+ C = matrix(c(0, 0, 1, 0, 0, 1, 1, 1, 0), 3, 3)
+ result.rgcca = rgccad(A, C, tau = c(1, 1, 1), scheme = "factorial", scale = TRUE)
+ lab = as.vector(apply(Russett[, 9:11], 1, which.max))
+ plot(result.rgcca$Y[[1]], result.rgcca$Y[[2]], col = "white", 
+      xlab = "Y1 (Agric. inequality)", ylab = "Y2 (Industrial Development)")
+ text(result.rgcca$Y[[1]], result.rgcca$Y[[2]], Russett[, 1], col = lab, cex = .7)
+
+ ############################################
+ # Example 2: RGCCA and multiple components #
+ ############################################
+ ############################
+ # plot(y1, y2) for (RGCCA) #
+ ############################
+ result.rgcca = rgccad(A, C, tau = rep(1, 3), ncomp = c(2, 2, 1),
+                      scheme = "factorial", verbose = TRUE)
+layout(t(1:2))
+ plot(result.rgcca$Y[[1]][, 1], result.rgcca$Y[[2]][, 1], col = "white", xlab = "Y1 (GE)", 
+ ylab = "Y2 (CGH)", main = "Factorial plan of RGCCA")
+ text(result.rgcca$Y[[1]][, 1], result.rgcca$Y[[2]][, 1], Russett[, 1], col = lab, cex = .6)
+ plot(result.rgcca$Y[[1]][, 1], result.rgcca$Y[[1]][, 2], col = "white", xlab = "Y1 (GE)", 
+     ylab = "Y2 (GE)", main = "Factorial plan of RGCCA")
+ text(result.rgcca$Y[[1]][, 1], result.rgcca$Y[[1]][, 2], Russett[, 1], col = lab, cex = .6)
+
+

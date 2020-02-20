@@ -17,8 +17,4 @@ Returns a vector resulting from the soft thresholding of \eqn{x} given sumabs
 \description{
 The function soft.threshold() soft-thresholds a vector such that the L1-norm constraint is satisfied.
 }
-\examples{
-x <- rnorm(10)
-soft.threshold(x,0.5)
-}
 \keyword{manip}

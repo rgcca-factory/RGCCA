@@ -32,7 +32,6 @@
 #' @references Tenenhaus A. and Tenenhaus M., (2011), Regularized Generalized Canonical Correlation Analysis, Psychometrika, Vol. 76, Nr 2, pp 257-284.
 #' @references Schafer J. and Strimmer K., (2005), A shrinkage approach to large-scale covariance matrix estimation and implications for functional genomics. Statist. Appl. Genet. Mol. Biol. 4:32.
 #' @title Internal function for computing the RGCCA parameters (RGCCA block components, outer weight vectors, etc.).
-#' @export rgccak
 #' @importFrom MASS ginv
 #' @importFrom stats cor rnorm
 #' @importFrom graphics plot

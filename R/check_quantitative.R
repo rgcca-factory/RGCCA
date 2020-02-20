@@ -4,15 +4,7 @@
 #' @param fo A character giving the name of the tested file
 #' @param h A bolean giving either the presence (TRUE) or absence (FALSE) of
 #'  a header
-#' @examples
-#' df = matrix(runif(20), 10, 2)
-#' check_quantitative(df, 'data')
-#' \dontrun{
-#' df[,2] = LETTERS[seq(10)]
-#' check_quantitative(df, 'data', TRUE)
-#' # Error
-#' }
-#' @export
+
 check_quantitative <- function(df, fo, h = FALSE) {
     qualitative <- is.character2(df)
 
