@@ -1,4 +1,5 @@
-print.sgcca.permute <- function (x) 
+#' Prints the results of RGCCA
+print.rgcca.permute <- function (x) 
 {
   cat("Call: ")
   dput(x$call)

@@ -2,4 +2,8 @@
 
 #'''
  df = matrix(runif(20), 10, 2)
- check_quantitative(df, 'data')
+r= check_quantitative(df, 'data')
+ test_that("test_check_quantitative",{
+     expect_true(is.null(r))
+ })
+ 

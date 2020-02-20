@@ -42,7 +42,7 @@ res=rgccad(A, C, ncomp=c(2,2,2),tau = rep("optimal",3), scheme = "factorial",ver
  A = list(X_agric, X_ind, X_polit)
  #Define the design matrix (output = C) 
  C = matrix(c(0, 0, 1, 0, 0, 1, 1, 1, 0), 3, 3)
- result.rgcca = rgccad(A, C, tau = c(1, 1, 1), scheme = "factorial", scale = TRUE)
+ result.rgcca = rgccad(A, C, tau = c(1, 1, 1), scheme = "factorial", scale = TRUE,verbose=FALSE)
  lab = as.vector(apply(Russett[, 9:11], 1, which.max))
  plot(result.rgcca$Y[[1]], result.rgcca$Y[[2]], col = "white", 
       xlab = "Y1 (Agric. inequality)", ylab = "Y2 (Industrial Development)")
@@ -55,7 +55,7 @@ res=rgccad(A, C, ncomp=c(2,2,2),tau = rep("optimal",3), scheme = "factorial",ver
  # plot(y1, y2) for (RGCCA) #
  ############################
  result.rgcca = rgccad(A, C, tau = rep(1, 3), ncomp = c(2, 2, 1),
-                      scheme = "factorial", verbose = TRUE)
+                      scheme = "factorial", verbose = FALSE)
 layout(t(1:2))
  plot(result.rgcca$Y[[1]][, 1], result.rgcca$Y[[2]][, 1], col = "white", xlab = "Y1 (GE)", 
  ylab = "Y2 (CGH)", main = "Factorial plan of RGCCA")

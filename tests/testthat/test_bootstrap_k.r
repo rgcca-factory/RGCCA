@@ -4,4 +4,9 @@
      politic = Russett[, 6:11] )
  rgcca_out = rgcca(blocks)
  bootstrap_k(rgcca_out)
- bootstrap_k(rgcca_out, lapply(blocks, scale), superblock = FALSE)
+resb= bootstrap_k(rgcca_out, lapply(blocks, scale), superblock = FALSE)
+
+ test_that("test_bootstrapk",{
+     expect_true(length(resb)==3)
+ })
+ 

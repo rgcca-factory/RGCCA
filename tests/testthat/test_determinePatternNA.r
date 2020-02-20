@@ -14,9 +14,9 @@ colnames(X3)=paste0("C",1:5)
 A=list(bloc1=X1,bloc2=X2,bloc3=X3)
 res=determine_patternNA(A)
 # Check old functionalities
-test_that("determine_patternNA_1",{expect_true(sum(res$pctNA$bloc3)==0)})
-test_that("determine_patternNA_2",{expect_true(length(res$pctNAbyBlock)==3)})
-test_that("determine_patternNA_3",{expect_true(dim(res$completeSubjectByBlock)[2]==3)})
+test_that("test_determine_patternNA_1",{expect_true(sum(res$pctNA$bloc3)==0)})
+test_that("test_determine_patternNA_2",{expect_true(length(res$pctNAbyBlock)==3)})
+test_that("test_determine_patternNA_3",{expect_true(dim(res$completeSubjectByBlock)[2]==3)})
 
 # setwd("/home/caroline.peltier/Bureau/RGCCA/R")
 # lapply(list.files(),source)

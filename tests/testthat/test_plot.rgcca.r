@@ -1,4 +1,4 @@
-#'# plot.rgcca
+#' plot.rgcca
 #'''
 data(Russett)
 X_agric =as.matrix(Russett[,c("gini","farm","rent")]);

@@ -23,7 +23,7 @@ jdd$dat[[2]][jdd$subjectKept,]
 
 res=createNA(A,typeNA="block",pNA=c(0.5,0.5),seed=30)
 res2=createNA(A,typeNA="block",pNA=c(0.5,0.5),seed=30)
-test_that("createNA_",{expect_true(all.equal(res,res2))})
+test_that("createNA_3",{expect_true(all.equal(res,res2))})
 
 # with only one variable in one block
 set.seed(42);X1=matrix(rnorm(500),100,5);X2=matrix(rnorm(400),100,4)

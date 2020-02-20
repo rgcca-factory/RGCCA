@@ -1,4 +1,4 @@
-
+#' Test MIRGCCA
  set.seed(42);X1=matrix(rnorm(500),100,5);
  set.seed(22);X2=matrix(rnorm(400),100,4);
  set.seed(2);X3=matrix(rnorm(700),100,7);
