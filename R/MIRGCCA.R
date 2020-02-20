@@ -3,18 +3,7 @@
 #' This method allows multiple imputation for RGCCA with several options.
 #' @param ni number of imputations
 #' @param k Integer representing the number of neighbors or "auto" or "all"
-#' @param A  A list that contains the \eqn{J} blocks of variables \eqn{\mathbf{X_1}, \mathbf{X_2}, ..., \mathbf{X_J}}.
-#' @param C  A design matrix that describes the relationships between blocks (default: complete design).
-#' @param tau tau is either a \eqn{1 \times J} vector or a \eqn{\mathrm{max}(ncomp) \times J} matrix, and contains the values 
-#' of the shrinkage parameters (default: tau = 1, for each block and each dimension).
-#' If tau = "optimal" the shrinkage paramaters are estimated for each block and each dimension using the Schafer and Strimmer (2005)
-#' analytical formula . If tau is a \eqn{1\times J} numeric vector, tau[j] is identical across the dimensions of block \eqn{\mathbf{X}_j}. 
-#' If tau is a matrix, tau[k, j] is associated with \eqn{\mathbf{X}_{jk}} (\eqn{k}th residual matrix for block \eqn{j})
-#' @param ncomp  A \eqn{1 \times J} vector that contains the numbers of components for each block (default: rep(1, length(A)), which gives one component per block.)
-#' @param scheme The value is "horst", "factorial", "centroid" or the g function (default: "centroid").
-#' @param scale  If scale = TRUE, each block is standardized to zero means and unit variances (default: TRUE).
-#' @param tol The stopping value for convergence.
-#' @param sameBlockWeight A logical value indicating if the different blocks should have the same weight in the analysis (default, sameBlockWeight=TRUE)
+#' @inheritParams rgcca
 #' @param naxis number of component to select in the superblock for the estimation of missing data for "em" option
 #' @param superblock TRUE if the A list should be returned in the output, FALSE ifelse
 #' @param klim TRUE if the A list should be returned in the output, FALSE ifelse
@@ -39,8 +28,10 @@
 #'  A=list(X1,X2,X3)
 #' res=MIRGCCA(A,k=3,ni=5,scale=TRUE,sameBlockWeight=TRUE,tau=rep(0,3))
 #' @export
-MIRGCCA=function(A,option="knn",superblock=TRUE,k=5,ni=5,scale=TRUE,sameBlockWeight=TRUE,tau=rep(1:length(A)),klim=NULL,output="mean",scheme="centroid",tol=1e-8,C=NULL,ncomp=rep(2,length(A)),naxis=1)
+MIRGCCA=function(blocks,option="knn",superblock=TRUE,k=5,ni=5,scale=TRUE,sameBlockWeight=TRUE,tau=rep(1:length(A)),klim=NULL,output="mean",scheme="centroid",tol=1e-8,connection=NULL,ncomp=rep(2,length(A)),naxis=1)
 {
+    A=blocks
+    C=connection
     match.arg(option,c("knn","em"))
     check_boolean("superblock",superblock)
     check_boolean("sameBlockWeight",sameBlockWeight)

@@ -4,19 +4,20 @@
 \alias{rgccaNa}
 \title{Regularized Generalized Canonical Correlation Analysis (RGCCA)}
 \usage{
-rgccaNa(A, method, C = 1 - diag(length(A)), tau = rep(1, length(A)),
-  ncomp = rep(1, length(A)), scheme = "centroid", scale = TRUE,
-  init = "svd", bias = TRUE, tol = 1e-08, verbose = TRUE,
-  sameBlockWeight = TRUE, knn.k = "all", knn.output = "weightedMean",
-  knn.klim = NULL, knn.sameBlockWeight = TRUE, pca.ncp = 1,
-  ni = 50, prescaling = FALSE, quiet = FALSE)
+rgccaNa(blocks, method, connection = 1 - diag(length(A)), tau = rep(1,
+  length(A)), ncomp = rep(1, length(A)), scheme = "centroid",
+  scale = TRUE, init = "svd", bias = TRUE, tol = 1e-08,
+  verbose = TRUE, sameBlockWeight = TRUE, knn.k = "all",
+  knn.output = "weightedMean", knn.klim = NULL,
+  knn.sameBlockWeight = TRUE, pca.ncp = 1, ni = 50,
+  prescaling = FALSE, quiet = FALSE)
 }
 \arguments{
-\item{A}{A list that contains the \eqn{J} blocks of variables \eqn{\mathbf{X_1}, \mathbf{X_2}, ..., \mathbf{X_J}}.}
+\item{blocks}{A list that contains the \eqn{J} blocks of variables \eqn{\mathbf{X_1}, \mathbf{X_2}, ..., \mathbf{X_J}}.}
 
 \item{method}{Either a character corresponding to the used method ("complete","knn","em","sem") or a function taking a list of J blocks (A) as only parameter and returning the imputed list.}
 
-\item{C}{A design matrix that describes the relationships between blocks (default: complete design).}
+\item{connection}{A design matrix that describes the relationships between blocks (default: complete design).}
 
 \item{tau}{tau is either a \eqn{1 \times J} vector or a \eqn{\mathrm{max}(ncomp) \times J} matrix, and contains the values 
 of the shrinkage parameters (default: tau = 1, for each block and each dimension).

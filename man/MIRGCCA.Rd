@@ -4,13 +4,13 @@
 \alias{MIRGCCA}
 \title{MIRGCCA: Multiple imputation for RGCCA}
 \usage{
-MIRGCCA(A, option = "knn", superblock = TRUE, k = 5, ni = 5,
+MIRGCCA(blocks, option = "knn", superblock = TRUE, k = 5, ni = 5,
   scale = TRUE, sameBlockWeight = TRUE, tau = rep(1:length(A)),
   klim = NULL, output = "mean", scheme = "centroid", tol = 1e-08,
-  C = NULL, ncomp = rep(2, length(A)), naxis = 1)
+  connection = NULL, ncomp = rep(2, length(A)), naxis = 1)
 }
 \arguments{
-\item{A}{A list that contains the \eqn{J} blocks of variables \eqn{\mathbf{X_1}, \mathbf{X_2}, ..., \mathbf{X_J}}.}
+\item{blocks}{A list of matrix}
 
 \item{option}{"knn" for k Nearest Neigbors or "em" for Expectation Maximization}
 
@@ -20,9 +20,9 @@ MIRGCCA(A, option = "knn", superblock = TRUE, k = 5, ni = 5,
 
 \item{ni}{number of imputations}
 
-\item{scale}{If scale = TRUE, each block is standardized to zero means and unit variances (default: TRUE).}
+\item{scale}{A boolean scaling the blocks}
 
-\item{sameBlockWeight}{A logical value indicating if the different blocks should have the same weight in the analysis (default, sameBlockWeight=TRUE)}
+\item{sameBlockWeight}{If TRUE, all blocks are weighted by their own variance: all the blocks have the same weight}
 
 \item{tau}{tau is either a \eqn{1 \times J} vector or a \eqn{\mathrm{max}(ncomp) \times J} matrix, and contains the values 
 of the shrinkage parameters (default: tau = 1, for each block and each dimension).
@@ -34,13 +34,14 @@ If tau is a matrix, tau[k, j] is associated with \eqn{\mathbf{X}_{jk}} (\eqn{k}t
 
 \item{output}{TRUE if the A list should be returned in the output, FALSE ifelse}
 
-\item{scheme}{The value is "horst", "factorial", "centroid" or the g function (default: "centroid").}
+\item{scheme}{A character giving the link function for covariance maximization}
 
-\item{tol}{The stopping value for convergence.}
+\item{tol}{An integer for the stopping value for convergence}
 
-\item{C}{A design matrix that describes the relationships between blocks (default: complete design).}
+\item{connection}{A matrix giving the connection between the blocks}
 
-\item{ncomp}{A \eqn{1 \times J} vector that contains the numbers of components for each block (default: rep(1, length(A)), which gives one component per block.)}
+\item{ncomp}{A vector of integer giving the number of component for each
+blocks}
 
 \item{naxis}{number of component to select in the superblock for the estimation of missing data for "em" option}
 }

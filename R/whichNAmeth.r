@@ -77,11 +77,11 @@ whichNAmethod=function(blocks,listNAdataset=NULL,connection=matrix(1,length(bloc
     {  
         if(typeRGCCA=="rgcca")
         {
-        methodRgcca=rgccaNa(A=listNAdataset[[i]]$dat,C=connection,tau=tau,method=method,ncomp=ncomp,sameBlockWeight=sameBlockWeight,scale=scale,tol=tol,verbose=FALSE,scheme=scheme)
+        methodRgcca=rgccaNa(blocks=listNAdataset[[i]]$dat,connection=connection,tau=tau,method=method,ncomp=ncomp,sameBlockWeight=sameBlockWeight,scale=scale,tol=tol,verbose=FALSE,scheme=scheme)
         }
         if(typeRGCCA=="sgcca")
         {
-            methodRgcca=sgccaNa(A=listNAdataset[[i]]$dat,C=connection,sparsity=sparsity,method=method,ncomp=ncomp,sameBlockWeight=sameBlockWeight,scale=scale,tol=tol,verbose=FALSE,scheme=scheme)
+            methodRgcca=sgccaNa(blocks=listNAdataset[[i]]$dat,connection=connection,sparsity=sparsity,method=method,ncomp=ncomp,sameBlockWeight=sameBlockWeight,scale=scale,tol=tol,verbose=FALSE,scheme=scheme)
         }
         indicators[[method]]=comparison(rgcca1=referenceRgcca,rgcca2=methodRgcca$rgcca,selectPatient=selectCompletePatient,indNA=methodRgcca$indNA)
     }

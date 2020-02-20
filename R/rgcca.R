@@ -150,8 +150,8 @@ rgcca <- function(
 
     func <- quote(
         gcca(
-            A = opt$blocks,
-            C = opt$connection,
+            blocks = opt$blocks,
+            connection = opt$connection,
             ncomp = opt$ncomp,
             verbose = verbose,
             scheme = opt$scheme,
