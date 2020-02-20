@@ -56,6 +56,9 @@ rgcca <- function(
     knn.sameBlockWeight = TRUE,
     pca.ncp = 1) {
 
+    if (!missing(sparsity) && missing(type))
+        type <- "sgcca"
+
     if (tolower(type) %in% c("sgcca", "spca", "spls")) {
         if (!missing(tau) && missing(sparsity))
            stop(paste0("sparsity parameter required for ", tolower(type), "(instead of tau)."))
@@ -69,7 +72,7 @@ rgcca <- function(
         par <- "tau"
         penalty <- tau
     }
-    
+
     match.arg(init, c("svd", "random"))
     match.arg(knn.output, c("mean", "random", "weightedMean" ))
     check_method(type)
@@ -87,13 +90,6 @@ rgcca <- function(
 
     for (i in c("superblock","verbose", "scale", "bias", "quiet", "knn.sameBlockWeight"))
         check_boolean(i, get(i))
-
-    choices <- list(c("horst", "factorial", "centroid"))
-    choice <- c(scheme)
-    for (i in length(choices)) {
-        if (!choice[i] %in% (choices[[i]]) && !is.function(choice[i]))
-            stop(paste0(choice[i], " must be one of '", paste(choices[[i]], collapse = ", "), "' or a function."))
-    }
 
     penalty <- elongate_arg(penalty, blocks)
     ncomp <- elongate_arg(ncomp, blocks)
