@@ -4,13 +4,13 @@
 \alias{plot_ind}
 \title{Plot the two components of a RGCCA}
 \usage{
-plot_ind(rgcca, resp = rep(1, NROW(rgcca$Y[[1]])), compx = 1,
-  compy = 2, i_block = length(rgcca$Y), text = TRUE,
-  i_block_y = i_block, reponse_name = "Response", no_overlap = FALSE,
-  predicted = NULL, title = "Sample space", ...)
+plot_ind(rgcca_res, resp = rep(1, NROW(rgcca_res$Y[[1]])), compx = 1,
+  compy = 2, i_block = length(rgcca_res$Y), text = TRUE,
+  i_block_y = i_block, response_name = "Response",
+  no_overlap = FALSE, predicted = NULL, title = "Sample space", ...)
 }
 \arguments{
-\item{rgcca}{A list giving the results of a R/SGCCA}
+\item{rgcca_res}{A list giving the results of a R/SGCCA}
 
 \item{resp}{A vector of characters corresponding either to a qualitative
 variable with levels or a continuous variable}
@@ -29,7 +29,7 @@ or with circles (FALSE)}
 \item{i_block_y}{An integer giving the index of a list of blocks (another
 one, different from the one used in i_block)}
 
-\item{reponse_name}{A character giving the legend title}
+\item{response_name}{A character giving the legend title}
 
 \item{no_overlap}{A boolean to avoid overlap in plotted text}
 
@@ -37,6 +37,8 @@ one, different from the one used in i_block)}
 
 \item{title}{A character with the name of the space (either "Variables" or
 "Samples")}
+
+\item{...}{Further graphical parameters (see plot2D functions)}
 }
 \description{
 Plot the two components of a RGCCA
@@ -47,7 +49,8 @@ coord = lapply(seq(3),
 AVE_X = lapply(seq(3), function(x) runif(2))
 for (i in 1:length(coord))
 row.names(coord[[i]]) = seq(15)
-rgcca_out = list(Y = coord, AVE = list(AVE_X = AVE_X), call = list(blocks = coord, ncomp = rep(2,3))) # TODO
+rgcca_out = list(Y = coord, AVE = list(AVE_X = AVE_X), 
+call = list(blocks = coord, ncomp = rep(2,3))) # TODO
 # Using a superblock
 resp = as.matrix(rep(LETTERS[seq(3)], each = 5))
 row.names(resp) = seq(15)

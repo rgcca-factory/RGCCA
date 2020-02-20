@@ -4,11 +4,11 @@
 \alias{get_cor_all}
 \title{Correlation between the blocks}
 \usage{
-get_cor_all(rgcca, blocks = rgcca$call$blocks,
-  comps = get_comp_all(rgcca))
+get_cor_all(rgcca_res, blocks = rgcca_res$call$blocks,
+  comps = get_comp_all(rgcca_res))
 }
 \arguments{
-\item{rgcca}{A list giving the results of a R/SGCCA}
+\item{rgcca_res}{A list giving the results of a R/SGCCA}
 
 \item{blocks}{A list of matrix}
 

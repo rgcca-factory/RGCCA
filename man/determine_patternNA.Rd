@@ -5,11 +5,11 @@
 \title{determine_patternNA
 Determines the pattern of missing values and allows to use it to create datasets with the same pattern.}
 \usage{
-determine_patternNA(A, graph = "all", legend = FALSE,
+determine_patternNA(blocks, graph = "all", legend = FALSE,
   outlierVisible = TRUE, scale = TRUE)
 }
 \arguments{
-\item{A}{list of blocks}
+\item{blocks}{list of blocks}
 
 \item{graph}{if TRUE, the pattern of missing values is plotted}
 

@@ -15,11 +15,3 @@ List of the matrices imputed by colmeans
 \description{
 Impute a list of matrices by the colmeans
 }
-\examples{
-#############
-# Example 1 #
-#############
-A=matrix(rnorm(15),3,5);A[3,5]=NA
-B=matrix(rnorm(15),3,5);A[3,]=NA
-imputeColmeans(list(A,B))
-}

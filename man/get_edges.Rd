@@ -4,13 +4,13 @@
 \alias{get_edges}
 \title{Creates the edges for a design matrix}
 \usage{
-get_edges(rgcca)
+get_edges(rgcca_res)
 }
 \arguments{
-\item{rgcca}{A list giving the results of a R/SGCCA}
+\item{rgcca_res}{A list giving the results of a R/SGCCA}
 }
 \value{
-A dataframe with tuples of connected rgcca$call$blocks
+A dataframe with tuples of connected rgcca_res$call$blocks
 }
 \description{
 Creates the edges for a design matrix

@@ -28,7 +28,7 @@
 #' @export
 plot3D <- function(
     df,
-    rgcca,
+    rgcca_res,
     compx = 1,
     compy = 2,
     compz = 3,
@@ -43,7 +43,7 @@ plot3D <- function(
     cex_point = 3 * cex,
     cex_lab = 19 * cex) {
 
-    stopifnot(is(rgcca, "rgcca"))
+    stopifnot(is(rgcca_res, "rgcca"))
     check_boolean("text", text)
     if (is.null(colors)) {
         colors <- "#A50026"
@@ -54,11 +54,11 @@ plot3D <- function(
     title <- paste0(title, collapse = " ")
     match.arg(type, c("ind", "var"))
     for (i in c("i_block", "i_block_y", "i_block_z"))
-            check_blockx(i, get(i), rgcca$call$blocks)
-    check_ncol(rgcca$Y, i_block)
+            check_blockx(i, get(i), rgcca_res$call$blocks)
+    check_ncol(rgcca_res$Y, i_block)
     for (i in c("compx", "compy", "compz")) {
         if (!is.null(get(i)))
-            check_compx(i, get(i), rgcca$call$ncomp, i_block)
+            check_compx(i, get(i), rgcca_res$call$ncomp, i_block)
     }
     for (i in c("cex", "cex_point", "cex_lab"))
         check_integer(i, get(i))
@@ -73,7 +73,7 @@ plot3D <- function(
 
     axis <- function(x, i)
         list(
-                title = paste0("<i>", print_comp(rgcca, x, i), "</i>"),
+                title = paste0("<i>", print_comp(rgcca_res, x, i), "</i>"),
                 titlefont = list(
                         size = cex_lab * 0.75
                     )

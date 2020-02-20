@@ -27,15 +27,6 @@ plot_histogram(p, df, title = "", group = NA, colors = NULL,
 \item{cex_sub}{An integer for the size of the subtitle}
 
 \item{cex_axis}{An integer for the size of the axis text}
-
-\item{low_col}{A character giving the color used for the lowest part of
-the gradient}
-
-\item{high_col}{A character giving the color used for the highest part of
-the gradient}
-
-\item{mid_col}{A character giving the color used for the middle part of
-the gradient}
 }
 \description{
 Default font for a vertical barplot.

@@ -8,7 +8,11 @@ bootstrap(rgcca, n_boot = 5, n_cores = parallel::detectCores() - 1,
   ...)
 }
 \arguments{
+<<<<<<< HEAD
 \item{rgcca}{A list giving the results of a R/SGCCA}
+=======
+\item{rgcca_res}{Result of a RGCCA}
+>>>>>>> Documentation
 
 \item{n_boot}{A integer for the number of boostrap}
 

@@ -16,13 +16,13 @@
 #' @return A list of matrix containg the pairwise correlation of the blocks
 #' @export
 get_cor_all <- function(
-    rgcca, 
-    blocks = rgcca$call$blocks, 
-    comps = get_comp_all(rgcca)){
+    rgcca_res, 
+    blocks = rgcca_res$call$blocks, 
+    comps = get_comp_all(rgcca_res)){
 
     comp <- list()
 
-    for (i in seq(max(rgcca$call$ncomp))) {
+    for (i in seq(max(rgcca_res$call$ncomp))) {
         comp[[i]] <-  matrix(
             NA,
             NROW(comps),

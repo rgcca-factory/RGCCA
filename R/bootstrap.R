@@ -4,6 +4,7 @@
 #'
 #' @inheritParams rgcca
 #' @inheritParams plot_var_2D
+#' @param rgcca_res Result of a RGCCA
 #' @param n_boot A integer for the number of boostrap
 #' @param n_cores An integer for the number of cores used in parallelization 
 #' @param ... other RGCCA parameters # TODO
@@ -19,12 +20,12 @@
 #'  superblock = FALSE)
 #' @export
 bootstrap <- function(
-    rgcca,
+    rgcca_res,
     n_boot = 5,
     n_cores = parallel::detectCores() - 1,
     ...) {
 
-    stopifnot(is(rgcca, "rgcca"))
+    stopifnot(is(rgcca_res, "rgcca"))
     check_integer("n_boot", n_boot)
     check_integer("n_cores", n_cores, 0)
 
@@ -38,10 +39,10 @@ bootstrap <- function(
 
     W <- parallel::mclapply(
         seq(n_boot), 
-        function(x) bootstrap_k(rgcca, ...), 
+        function(x) bootstrap_k(rgcca_res, ...), 
         mc.cores = n_cores)
 
     cat("OK.\n", append = TRUE)
 
-    return(list(boostrap = W, rgcca = rgcca))
+    return(list(bootstrap = W, rgcca = rgcca_res))
 }

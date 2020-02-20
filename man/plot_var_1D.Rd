@@ -4,11 +4,12 @@
 \alias{plot_var_1D}
 \title{Barplot of a fingerprint}
 \usage{
-plot_var_1D(rgcca, comp = 1, n_mark = 100, i_block = length(rgcca$a),
-  type = "cor", collapse = FALSE, title = NULL, colors = NULL, ...)
+plot_var_1D(rgcca_res, comp = 1, n_mark = 100,
+  i_block = length(rgcca_res$a), type = "cor", collapse = FALSE,
+  title = NULL, colors = NULL, ...)
 }
 \arguments{
-\item{rgcca}{A list giving the results of a R/SGCCA}
+\item{rgcca_res}{A list giving the results of a R/SGCCA}
 
 \item{comp}{An integer giving the index of the analysis components}
 
@@ -20,12 +21,14 @@ plot_var_1D(rgcca, comp = 1, n_mark = 100, i_block = length(rgcca$a),
 "cor" for correlation between the component and the block
 or "weight" for the weight of the RGCCA}
 
-\item{collapse}{A boolean to combine the variables of each blocks as result}
+\item{collapse}{A boolean to combine the variables of each block as result}
 
 \item{title}{A character with the name of the space (either "Variables" or
 "Samples")}
 
 \item{colors}{reoresenting a vector of colors}
+
+\item{...}{Further graphical parameters (see plot2D)}
 }
 \description{
 Barplot of the higher outer weight vectors for a component of a block 

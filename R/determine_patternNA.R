@@ -1,6 +1,6 @@
 #' determine_patternNA
 #' Determines the pattern of missing values and allows to use it to create datasets with the same pattern.
-#' @param A list of blocks
+#' @param blocks list of blocks
 #' @param graph if TRUE, the pattern of missing values is plotted
 #' @param legend if TRUE the legend is plotted
 #' @param outlierVisible if FALSE, the outliers will be -2 if negative, 2 if positive
@@ -22,7 +22,7 @@
 #' @export
 #'@importFrom graphics image
 #'@importFrom stats na.omit
-determine_patternNA=function(A,graph="all",legend=FALSE,outlierVisible=TRUE,scale=TRUE)
+determine_patternNA=function(blocks,graph="all",legend=FALSE,outlierVisible=TRUE,scale=TRUE)
 {
     # 
 
@@ -32,8 +32,8 @@ determine_patternNA=function(A,graph="all",legend=FALSE,outlierVisible=TRUE,scal
     check_boolean("legend",legend)
     check_boolean("outlierVisible",outlierVisible)
     check_boolean("scale",scale)
-    A=check_blocks(A,add_NAlines = TRUE)
-    pctNA=lapply(A,function(x)
+    blocks=check_blocks(blocks,add_NAlines = TRUE)
+    pctNA=lapply(blocks,function(x)
         {
             if(!is.null(dim(x))||dim(x)[2]==1)
             {
@@ -48,8 +48,8 @@ determine_patternNA=function(A,graph="all",legend=FALSE,outlierVisible=TRUE,scal
             }
         return(res)
         })
-    pctNAbyBlock=sapply(A,function(X){return(sum(is.na(X))/(dim(X)[1]*dim(X)[2]))})
-    completeSubjectByBlock=sapply(A,function(x)
+    pctNAbyBlock=sapply(blocks,function(X){return(sum(is.na(X))/(dim(X)[1]*dim(X)[2]))})
+    completeSubjectByBlock=sapply(blocks,function(x)
         {
             
             res=apply(x,1,function(y)
@@ -58,13 +58,13 @@ determine_patternNA=function(A,graph="all",legend=FALSE,outlierVisible=TRUE,scal
                 })
             
         })
-    names(completeSubjectByBlock)=rownames(A[[1]])
-    completeSubjectsBool=apply(Reduce(cbind,A),1,function(x){sum(is.na(x))==0})
-    completeSubjects=rownames(A[[1]])[completeSubjectsBool]
-    numberOfMissingBlocksPerSubject=    sapply(rownames(A[[1]]),function(k)
+    names(completeSubjectByBlock)=rownames(blocks[[1]])
+    completeSubjectsBool=apply(Reduce(cbind,blocks),1,function(x){sum(is.na(x))==0})
+    completeSubjects=rownames(blocks[[1]])[completeSubjectsBool]
+    numberOfMissingBlocksPerSubject=    sapply(rownames(blocks[[1]]),function(k)
     {
         
-        y=sum(sapply(A,function(x)
+        y=sum(sapply(blocks,function(x)
         { 
             return(sum(!is.na(x[k,]))==0)
         }))
@@ -72,13 +72,13 @@ determine_patternNA=function(A,graph="all",legend=FALSE,outlierVisible=TRUE,scal
     })
     if(graph=="all")
   {
-      nvar=sapply(A,NCOL)
-      par(mfrow=c(1,ifelse(legend,length(A)+1,length(A))))
+      nvar=sapply(blocks,NCOL)
+      par(mfrow=c(1,ifelse(legend,length(blocks)+1,length(blocks))))
       par(mar=c(2,1,4,1))
-      for(i in 1:length(A))
+      for(i in 1:length(blocks))
       {
 
-          mat=apply(A[[i]],2,rev)
+          mat=apply(blocks[[i]],2,rev)
           mat2=apply(mat,2,function(x) scale(x,scale=scale))
           
            minimum=-2*max(apply(mat2,2,function(x) sd(x,na.rm=TRUE)),na.rm=TRUE)
@@ -89,18 +89,18 @@ determine_patternNA=function(A,graph="all",legend=FALSE,outlierVisible=TRUE,scal
               mat2[mat2>maximum]=maximum
           }
        
-          plot(NULL,xlim=c(0,1),ylim=c(0,1),xaxt="n",yaxt="n",bty="n",main=paste0(names(A)[i],"\n",nvar[i]," var.\n",sum(completeSubjectByBlock[,i]), "/",NROW(A[[i]])," complete ind."))
+          plot(NULL,xlim=c(0,1),ylim=c(0,1),xaxt="n",yaxt="n",bty="n",main=paste0(names(blocks)[i],"\n",nvar[i]," var.\n",sum(completeSubjectByBlock[,i]), "/",NROW(blocks[[i]])," complete ind."))
           rect(0,0,1,1,col="black")
           image(t(mat2),breaks=seq(minimum,maximum,length.out=51),xaxt="n",yaxt="n",col=rainbow(50,start=0,end=0.5),add=TRUE)
       }
   }
-  if(graph %in% names(A))
+  if(graph %in% names(blocks))
   {
-      nvar=NCOL(A[[graph]])
+      nvar=NCOL(blocks[[graph]])
       par(mfrow=c(1,1))
-      mat=apply(A[[graph]],2,rev)
+      mat=apply(blocks[[graph]],2,rev)
       par(bg="black")
-      image(bg="black",t(mat),main=paste0(names(A)[graph],"\n(",nvar," var.,",sum(completeSubjectByBlock[,graph]), "/",NROW(A[[graph]])," complete ind.)"),xaxt="n",yaxt="n",col=c("light blue","black"))
+      image(bg="black",t(mat),main=paste0(names(blocks)[graph],"\n(",nvar," var.,",sum(completeSubjectByBlock[,graph]), "/",NROW(blocks[[graph]])," complete ind.)"),xaxt="n",yaxt="n",col=c("light blue","black"))
       par(bg="white")
       }
  if(legend)
@@ -110,5 +110,5 @@ determine_patternNA=function(A,graph="all",legend=FALSE,outlierVisible=TRUE,scal
      text(0.6, 1, "min");   text(0.6, 50, "max")
      
  }
-  return(list(pctNA=pctNA,pctNAbyBlock=pctNAbyBlock,completeSubjectByBlock=completeSubjectByBlock,completeSubjects=completeSubjects, numberOfMissingBlocksPerSubject= numberOfMissingBlocksPerSubject,A=A))
+  return(list(pctNA=pctNA,pctNAbyBlock=pctNAbyBlock,completeSubjectByBlock=completeSubjectByBlock,completeSubjects=completeSubjects, numberOfMissingBlocksPerSubject= numberOfMissingBlocksPerSubject,blocks=blocks))
 }

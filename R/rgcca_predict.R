@@ -47,7 +47,7 @@
 # @importFrom nnet multinom
 #' @export
 rgcca_predict = function(
-    rgcca,
+    rgcca_res,
     newA,
     type = "regression",
     fit = "lm",
@@ -58,7 +58,7 @@ rgcca_predict = function(
     new_scaled = TRUE,
     scale_size_bloc = TRUE) {
 
-    stopifnot(is(rgcca, "rgcca"))
+    stopifnot(is(rgcca_res, "rgcca"))
     match.arg(type, c("regression", "classification"))
     match.arg(fit, c("lm", "cor", "lda", "logistic"))
     if(!is.null(bigA))
@@ -67,9 +67,9 @@ rgcca_predict = function(
     for (i in c("new_scaled", "scale_size_bloc"))
             check_boolean(i, get(i))
 
-    astar <- rgcca$astar
-    p <- sapply(rgcca$call$blocks, ncol)
-    B <- length(rgcca$call$blocks)
+    astar <- rgcca_res$astar
+    p <- sapply(rgcca_res$call$blocks, ncol)
+    B <- length(rgcca_res$call$blocks)
 
     if (type == "classification" && (fit == "cor" || fit == "lm"))
         stop("Please, classification prediction only works with LDA and LOGISTIC")
@@ -80,7 +80,7 @@ rgcca_predict = function(
 
     if (missing(y.train) || missing(y.test)) {
         if (!missing(bloc_to_pred) &&
-                !bloc_to_pred %in% names(rgcca$call$blocks))
+                !bloc_to_pred %in% names(rgcca_res$call$blocks))
             stop("Please, block to predict do not exist")
     }
 
@@ -94,13 +94,13 @@ rgcca_predict = function(
     newB  <- length(newA)
 
     # Check similarity between TRAIN and TEST set
-    if (is.null(names(rgcca$call$blocks)) ||  is.null(names(newA)))
+    if (is.null(names(rgcca_res$call$blocks)) ||  is.null(names(newA)))
         stop("Please, blocs do not have names")
 
     if (B != newB)
         stop("Please, number of blocs is not the same")
 
-    MATCH <- match(names(newA), names(rgcca$call$blocks))
+    MATCH <- match(names(newA), names(rgcca_res$call$blocks))
 
     if (sum(is.na(MATCH)) != 0)
         stop("Please, blocs in new data did not exist in old data")
@@ -117,7 +117,7 @@ rgcca_predict = function(
 
     MATCH_col <-
         mapply(function(x, y)
-            match(get_dim(x)(x), get_dim(y)(y)), newA, rgcca$call$blocks[MATCH])
+            match(get_dim(x)(x), get_dim(y)(y)), newA, rgcca_res$call$blocks[MATCH])
 
     if (sum(unique(is.na(MATCH_col))) != 0)
         stop("Please, some columns names are not the same between the two blocks")
@@ -171,8 +171,8 @@ rgcca_predict = function(
         newA <- mapply(
             scl_fun,
             newA,
-            reorderList(rgcca$call$blocks, t_attr = "scaled:center"),
-            reorderList(rgcca$call$blocks, t_attr = "scaled:scale"),
+            reorderList(rgcca_res$call$blocks, t_attr = "scaled:center"),
+            reorderList(rgcca_res$call$blocks, t_attr = "scaled:scale"),
             SIMPLIFY = FALSE
         )
 
@@ -180,9 +180,9 @@ rgcca_predict = function(
 
 
     # Dimension Reduction
-    for (i in seq(length(rgcca$call$blocks)))
-        colnames(rgcca$astar[[i]]) <- colnames(rgcca$Y[[i]])
-    astar <- reorderList(rgcca$astar, g = TRUE)
+    for (i in seq(length(rgcca_res$call$blocks)))
+        colnames(rgcca_res$astar[[i]]) <- colnames(rgcca_res$Y[[i]])
+    astar <- reorderList(rgcca_res$astar, g = TRUE)
 
     pred <- lapply(seq(length(newA)), function(x)
         as.matrix(newA[[x]]) %*% astar[[x]])
@@ -190,7 +190,7 @@ rgcca_predict = function(
     if (missing(bloc_to_pred))
         return(list(pred = pred))
 
-    bloc_y <- match(bloc_to_pred, names(rgcca$call$blocks))
+    bloc_y <- match(bloc_to_pred, names(rgcca_res$call$blocks))
 
     if (missing(bloc_to_pred) && is.null(colnames(y.train)))
         newbloc_y <- .Machine$integer.max
@@ -201,7 +201,7 @@ rgcca_predict = function(
     # Y definition
 
     if (missing(y.train))
-        y.train <- rgcca$call$blocks[[bloc_y]][, MATCH_col[[newbloc_y]], drop = FALSE]
+        y.train <- rgcca_res$call$blocks[[bloc_y]][, MATCH_col[[newbloc_y]], drop = FALSE]
 
     # TODO : sampled columns for y.test
 
@@ -221,10 +221,10 @@ rgcca_predict = function(
             stop("Please, train and test sets do not have the same name")
     }
 
-    rgcca$Y <- rgcca$Y[MATCH]
-    rgcca$call$ncomp <- rgcca$call$ncomp[MATCH][-newbloc_y]
-    comp.train <- get_comp_all(rgcca, newA, newbloc_y = newbloc_y)
-    comp.test <- get_comp_all(rgcca, newA, type = "test", newbloc_y = newbloc_y, pred)
+    rgcca_res$Y <- rgcca_res$Y[MATCH]
+    rgcca_res$call$ncomp <- rgcca_res$call$ncomp[MATCH][-newbloc_y]
+    comp.train <- get_comp_all(rgcca_res, newA, newbloc_y = newbloc_y)
+    comp.test <- get_comp_all(rgcca_res, newA, type = "test", newbloc_y = newbloc_y, pred)
 
     # Scores
     res <- NULL
@@ -240,7 +240,7 @@ rgcca_predict = function(
                     warning("NA in predictions.")
 
                 if (is.null(bigA))
-                    bigA <- rgcca$call$blocks
+                    bigA <- rgcca_res$call$blocks
 
                 m <- function(x)
                     apply(bigA[[bloc_to_pred]], 2, x) # TODO
@@ -272,14 +272,14 @@ rgcca_predict = function(
                     # TODO ??? check case for vector
                     comp.test
                 } else{
-                    rgcca$call$connection <- rgcca$call$connection[MATCH, MATCH]
-                    cor <- get_cor_all(rgcca, newA, comp.test)
+                    rgcca_res$call$connection <- rgcca_res$call$connection[MATCH, MATCH]
+                    cor <- get_cor_all(rgcca_res, newA, comp.test)
 
                     for (i in seq(length(cor))) {
                         cor[[i]] <- mean(
                             abs(
-                                cor[[i]] * rgcca$call$connection
-                            )[upper.tri(rgcca$call$connection)], 
+                                cor[[i]] * rgcca_res$call$connection
+                            )[upper.tri(rgcca_res$call$connection)], 
                             na.rm = TRUE)     
                     }
                     score <- mean(unlist(cor), na.rm = TRUE)

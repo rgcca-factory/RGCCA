@@ -23,6 +23,8 @@
 #' selected.var = get_bootstrap(boot, n_cores = 1)
 #' plot_bootstrap_2D(selected.var)
 #' @export
+#' @seealso \code{\link[RGCCA]{bootstrap}}, \code{\link[RGCCA]{get_bootstrap}}
+
 plot_bootstrap_2D <- function(
     b,
     x = "bootstrap_ratio",

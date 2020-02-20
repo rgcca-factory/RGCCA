@@ -7,7 +7,8 @@
 #' @param remove_var A bolean to keep only the 100 variables of each
 #' component with the biggest correlation#'
 #' @param n_mark An integer giving the number of top variables to select
-#' @param collapse A boolean to combine the variables of each blocks as result
+#' @param collapse A boolean to combine the variables of each block as result
+#' @param ... Further graphical parameters (see plot2D)
 #' @examples
 #' setMatrix = function(nrow, ncol, iter = 3) 
 #'  lapply(
@@ -46,10 +47,10 @@
 #' plot_var_2D(rgcca_out, collapse = TRUE)
 #' @export
 plot_var_2D <- function(
-    rgcca,
+    rgcca_res,
     compx = 1,
     compy = 2,
-    i_block = length(rgcca$a),
+    i_block = length(rgcca_res$a),
     text = TRUE,
     remove_var = TRUE,
     n_mark = 100,
@@ -60,7 +61,7 @@ plot_var_2D <- function(
 
     x <- y <- NULL
     df <- get_ctr2(
-        rgcca = rgcca,
+        rgcca_res = rgcca_res,
         compx = compx,
         compy = compy,
         i_block = i_block,
@@ -71,23 +72,23 @@ plot_var_2D <- function(
     )
     class(df) <- c(class(df), "d_var2D")
 
-    if (collapse && rgcca$call$superblock) {
-        if (i_block == length(rgcca$a))
-            i_block <- length(rgcca$a) - 1
-        rgcca$a <- rgcca$a[-length(rgcca$a)]
+    if (collapse && rgcca_res$call$superblock) {
+        if (i_block == length(rgcca_res$a))
+            i_block <- length(rgcca_res$a) - 1
+        rgcca_res$a <- rgcca_res$a[-length(rgcca_res$a)]
     }
 
-    if (i_block < length(rgcca$a) || rgcca$call$type == "pca")
-        rgcca$call$superblock <- FALSE
+    if (i_block < length(rgcca_res$a) || rgcca_res$call$type == "pca")
+        rgcca_res$call$superblock <- FALSE
 
     # PCA case: remove the superblock in legend
-    if (identical(rgcca$call$blocks[[1]], rgcca$call$blocks[[2]]))
-        rgcca$call$superblock <- FALSE
+    if (identical(rgcca_res$call$blocks[[1]], rgcca_res$call$blocks[[2]]))
+        rgcca_res$call$superblock <- FALSE
 
-    check_ncol(rgcca$a, i_block)
+    check_ncol(rgcca_res$a, i_block)
 
     p <- plot2D(
-        rgcca,
+        rgcca_res,
         df,
         title,
         df$resp,
@@ -117,7 +118,7 @@ plot_var_2D <- function(
     )
     
     # remove legend if not on superblock
-    if ((!rgcca$call$superblock || i_block != length(rgcca$a)) && !collapse)
+    if ((!rgcca_res$call$superblock || i_block != length(rgcca_res$a)) && !collapse)
         p <- p + theme(legend.position = "none")
 
     return(p)

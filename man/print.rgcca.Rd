@@ -10,7 +10,7 @@ Print rgcca results}
 \arguments{
 \item{x}{a result of rgcca function}
 
-\item{...}{other parameters}
+\item{...}{other parameters used in print (for the displaying of matrices)}
 }
 \description{
 print.rgcca

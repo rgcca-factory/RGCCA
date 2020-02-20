@@ -4,19 +4,26 @@
 \alias{whichNAmethod}
 \title{comparison of two RGCCA results}
 \usage{
-whichNAmethod(A, listNAdataset = NULL, C = matrix(1, length(A),
-  length(A)) - diag(length(A)), tau = rep(1, length(A)), listMethods,
-  nDatasets = 20, patternNA = NULL, typeNA = "block",
-  ncomp = rep(2, length(A)), sameBlockWeight = TRUE, scale = TRUE,
-  tol = 1e-06, verbose = FALSE, scheme = "centroid", seed = NULL,
+whichNAmethod(blocks, listNAdataset = NULL, connection = matrix(1,
+  length(blocks), length(blocks)) - diag(length(blocks)), tau = rep(1,
+  length(blocks)), listMethods, nDatasets = 20, patternNA = NULL,
+  typeNA = "block", ncomp = rep(2, length(blocks)),
+  sameBlockWeight = TRUE, scale = TRUE, tol = 1e-06,
+  verbose = FALSE, scheme = "centroid", seed = NULL,
   typeRGCCA = "rgcca", sparsity = NULL)
 }
 \arguments{
-\item{A}{A list of complete blocks}
+\item{blocks}{A list of matrix}
 
 \item{listNAdataset}{if TRUE, no RGCCA on complete data is run}
 
-\item{C, tau, scale, scheme, sameBlockWeight, ncomp, tol, verbose}{parameters of RGCCA}
+\item{connection}{A matrix giving the connection between the blocks}
+
+\item{tau}{tau is either a \eqn{1 \times J} vector or a \eqn{\mathrm{max}(ncomp) \times J} matrix, and contains the values 
+of the shrinkage parameters (default: tau = 1, for each block and each dimension).
+If tau = "optimal" the shrinkage paramaters are estimated for each block and each dimension using the Schafer and Strimmer (2005)
+analytical formula . If tau is a \eqn{1\times J} numeric vector, tau[j] is identical across the dimensions of block \eqn{\mathbf{X}_j}. 
+If tau is a matrix, tau[k, j] is associated with \eqn{\mathbf{X}_{jk}} (\eqn{k}th residual matrix for block \eqn{j})}
 
 \item{listMethods}{vector containing a list of methods ("mean","complete","nipals"...)}
 
@@ -26,7 +33,24 @@ whichNAmethod(A, listNAdataset = NULL, C = matrix(1, length(A),
 
 \item{typeNA}{structure of missing data required ("ponc" or "block")}
 
+\item{ncomp}{A vector of integer giving the number of component for each
+blocks}
+
+\item{sameBlockWeight}{If TRUE, all blocks are weighted by their own variance: all the blocks have the same weight}
+
+\item{scale}{A boolean scaling the blocks}
+
+\item{tol}{An integer for the stopping value for convergence}
+
+\item{verbose}{A boolean to display the progress of the analysis}
+
+\item{scheme}{A character giving the link function for covariance maximization}
+
 \item{seed}{if filled (by a number), the randomness is reproducible.}
+
+\item{typeRGCCA}{type of RGCCA ("sgcca","rgcca"...).}
+
+\item{sparsity}{A vector containing the sparsity coefficients (length J, between 0 and 1)}
 }
 \value{
 \item{A}{A list of dataset indicators containg a list of rgcca with a  list of criterion. }
@@ -40,7 +64,7 @@ Analysis of the comparison of different NA methods on RGCCA
 }
 \examples{
 set.seed(42);X1=matrix(rnorm(350),70,5);X2=matrix(rnorm(280),70,4);
-colnames(X1)=paste("A",1:5);colnames(X2)=paste("B",1:4);
+colnames(X1)=paste("blocks",1:5);colnames(X2)=paste("B",1:4);
 rownames(X1)=rownames(X2)=paste("S",1:70)
 A=list(X1,X2);
 res=whichNAmethod(A,listMethods=c("nipals","mean"),patternNA=rep(0.1,2))

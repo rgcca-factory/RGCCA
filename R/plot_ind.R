@@ -3,7 +3,7 @@
 #' Plot the two components of a RGCCA
 #'
 #' @inheritParams plot2D
-#' @param rgcca A list giving the results of a R/SGCCA
+#' @param rgcca_res A list giving the results of a R/SGCCA
 #' @param resp A vector of characters corresponding either to a qualitative
 #' variable with levels or a continuous variable
 #' @param compx An integer giving the index of the analysis component used
@@ -15,16 +15,18 @@
 #' or with circles (FALSE)
 #' @param i_block_y An integer giving the index of a list of blocks (another
 #' one, different from the one used in i_block)
-#' @param reponse_name A character giving the legend title
+#' @param response_name A character giving the legend title
 #' @param no_overlap A boolean to avoid overlap in plotted text
 #' @param predicted A list containing as  2nd element a matrix of predicted components
+#' @param ... Further graphical parameters (see plot2D functions)
 #' @examples
 #' coord = lapply(seq(3),
 #'    function(x) matrix(runif(15 * 2, min = -1), 15, 2))
 #' AVE_X = lapply(seq(3), function(x) runif(2))
 #' for (i in 1:length(coord))
 #' row.names(coord[[i]]) = seq(15)
-#' rgcca_out = list(Y = coord, AVE = list(AVE_X = AVE_X), call = list(blocks = coord, ncomp = rep(2,3))) # TODO
+#' rgcca_out = list(Y = coord, AVE = list(AVE_X = AVE_X), 
+#' call = list(blocks = coord, ncomp = rep(2,3))) # TODO
 #' # Using a superblock
 #' resp = as.matrix(rep(LETTERS[seq(3)], each = 5))
 #' row.names(resp) = seq(15)
@@ -46,14 +48,14 @@
 #' plot_ind(result.rgcca,i_block=1)
 #' @export
 plot_ind <- function(
-    rgcca,
-    resp = rep(1, NROW(rgcca$Y[[1]])),
+    rgcca_res,
+    resp = rep(1, NROW(rgcca_res$Y[[1]])),
     compx = 1,
     compy = 2,
-    i_block = length(rgcca$Y),
+    i_block = length(rgcca_res$Y),
     text = TRUE,
     i_block_y = i_block,
-    reponse_name = "Response",
+    response_name = "Response",
     no_overlap = FALSE,
     predicted = NULL,
     title = "Sample space",
@@ -63,7 +65,7 @@ plot_ind <- function(
         i_block_y <- i_block
 
     df <- get_comp(
-        rgcca = rgcca,
+        rgcca_res = rgcca_res,
         resp = resp,
         compx = compx,
         compy = compy,
@@ -86,11 +88,11 @@ plot_ind <- function(
 
 
     p <- plot2D(
-            rgcca,
+            rgcca_res,
             df,
             title,
             df$resp,
-            reponse_name,
+            response_name,
             compx,
             compy,
             i_block,

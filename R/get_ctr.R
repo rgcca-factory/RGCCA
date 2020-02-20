@@ -24,25 +24,25 @@
 #' @return A dataframe containing the indexes for each selected components
 #' @export
 get_ctr <- function(
-    rgcca,
+    rgcca_res,
     compx = 1,
     compy = 2,
     compz = NULL,
-    i_block = length(rgcca$call$blocks),
+    i_block = length(rgcca_res$call$blocks),
     type = "cor",
     collapse = FALSE,
     i_block_2 = NULL) {
 
     match.arg(type, c("cor", "weight"))
-    stopifnot(!missing(rgcca))
+    stopifnot(!missing(rgcca_res))
 
-    blocks <- rgcca$call$blocks
+    blocks <- rgcca_res$call$blocks
     y <- NULL
 
     if (!collapse)
         row.names <- colnames(blocks[[i_block]])
     else{
-        if (rgcca$call$superblock)
+        if (rgcca_res$call$superblock)
             blocks <- blocks[-length(blocks)]
         row.names <- unlist(lapply(blocks, colnames))
     }
@@ -52,13 +52,13 @@ get_ctr <- function(
         if (is.null(i_block_2))
             i_block_2 <- y
         cor(
-            blocks[[i_block_2]][rownames(rgcca$Y[[y]]), ],
-            rgcca$Y[[y]][, x],
+            blocks[[i_block_2]][rownames(rgcca_res$Y[[y]]), ],
+            rgcca_res$Y[[y]][, x],
             use = "pairwise.complete.obs"
         )
     }
     else
-        f2 <- function(x, y) rgcca$a[[y]][, x]
+        f2 <- function(x, y) rgcca_res$a[[y]][, x]
 
     if (!collapse)
         f <- function(x)
@@ -77,7 +77,7 @@ get_ctr <- function(
         sapply(
             c(compx, compy, compz),
             function(x){
-                if (x > rgcca$call$ncomp[i_block])
+                if (x > rgcca_res$call$ncomp[i_block])
                     stop("The index of the selected analysis component doesn't exist.")
                 f(x)
             },

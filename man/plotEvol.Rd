@@ -5,8 +5,7 @@
 \title{Plots the impact of increasing missing data on RGCCA}
 \usage{
 plotEvol(listFinale, output = "rv", ylim = NULL, block = "all",
-  barType = "sd", main = NULL, width = 480, height = 480,
-  names.arg = NULL)
+  barType = "sd", main = NULL, names.arg = NULL)
 }
 \arguments{
 \item{listFinale}{A list resulting of naEvolution}
@@ -22,8 +21,6 @@ plotEvol(listFinale, output = "rv", ylim = NULL, block = "all",
 \item{main}{=NULL Title of the graph (before the block name)}
 
 \item{names.arg}{renaming the methods}
-
-\item{main}{title of the graphic}
 }
 \description{
 Plots the impact of increasing missing data on RGCCA
@@ -34,7 +31,7 @@ colnames(X1)=paste("A",1:5)
 colnames(X2)=paste("B",1:4)
 rownames(X1)=rownames(X2)=paste("S",1:70)
 A=list(X1,X2)
-listResults=naEvolution(A=A,prctNA=c(0.1,0.2,0.3,0.4),
+listResults=naEvolution(blocks=A,prctNA=c(0.1,0.2,0.3,0.4),
 listMethods=c("mean","complete","nipals","knn4"))
 plotEvol(listFinale=listResults,ylim=c(0,1),output="a")
 }

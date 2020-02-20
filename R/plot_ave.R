@@ -19,40 +19,40 @@
 #' plot_ave(rgcca_out)
 #' @export
 plot_ave <- function(
-    rgcca,
+    rgcca_res,
     cex = 1,
     title = "Average Variance Explained",
     colors = NULL,
     ...) {
 
-    stopifnot(is(rgcca, "rgcca"))
+    stopifnot(is(rgcca_res, "rgcca"))
     check_integer("cex", cex)
 
-    if (rgcca$call$type == "pca") {
-        rgcca$AVE$AVE_X = rgcca$AVE$AVE_X[1]
-        rgcca$call$ncomp = rgcca$call$ncomp[1]
-        rgcca$a = rgcca$a[1]
+    if (rgcca_res$call$type == "pca") {
+        rgcca_res$AVE$AVE_X = rgcca_res$AVE$AVE_X[1]
+        rgcca_res$call$ncomp = rgcca_res$call$ncomp[1]
+        rgcca_res$a = rgcca_res$a[1]
     }
 
-    names(rgcca$AVE$AVE_X) <- NULL
-    ave <- 100 * unlist(rgcca$AVE$AVE_X)
-    blocks <- factor(unlist(lapply(seq(length(names(rgcca$a))),
-            function(x) rep(names(rgcca$a)[x], rgcca$call$ncomp[x]))),
-        levels = names(rgcca$a))
+    names(rgcca_res$AVE$AVE_X) <- NULL
+    ave <- 100 * unlist(rgcca_res$AVE$AVE_X)
+    blocks <- factor(unlist(lapply(seq(length(names(rgcca_res$a))),
+            function(x) rep(names(rgcca_res$a)[x], rgcca_res$call$ncomp[x]))),
+        levels = names(rgcca_res$a))
 
     if (is.null(names(ave)))
         names(ave) <- rep(1, length(ave))
     ncomp <- as.factor(names(ave))
 
     y_ave_cum <- lapply(
-        lapply(rgcca$AVE$AVE_X, 
+        lapply(rgcca_res$AVE$AVE_X, 
             function(x) round(100 * cumsum(x), 1)), 
         function(x) c(0, x))
     y_ave_cum <- unlist(lapply(y_ave_cum, function(x)
             unlist(lapply(seq(length(x)),
                 function(i) (x[i - 1] + x[i]) / 2))))
 
-    ave_label <- unlist(lapply(rgcca$AVE$AVE_X, function(x)
+    ave_label <- unlist(lapply(rgcca_res$AVE$AVE_X, function(x)
             round(100 * x, 1)))
     ave_label[ave_label < max(y_ave_cum) / 20] <- ""
 
@@ -77,7 +77,7 @@ plot_ave <- function(
         values = color_group(levels(df$ncomp), colors = colors),
         labels = gsub("comp", " ", levels(df$ncomp))) +
     geom_col(position = position_stack(reverse = TRUE)) +
-    labs(subtitle = print_comp(rgcca, outer = TRUE)) +
+    labs(subtitle = print_comp(rgcca_res, outer = TRUE)) +
     geom_text(aes(y = y_ave_cum),  cex = 3.5 * cex, color = "white") +
     labs(fill = "Components")
 

@@ -11,22 +11,22 @@
 #' plot_network2(rgcca_out)
 #' @export
 plot_network2 <- function(
-    rgcca, 
+    rgcca_res, 
     title = paste0("Common rows between blocks : ",
-                        NROW(rgcca$call$blocks[[1]]))) {
+                        NROW(rgcca_res$call$blocks[[1]]))) {
     
-    stopifnot(is(rgcca, "rgcca"))
+    stopifnot(is(rgcca_res, "rgcca"))
     title <- paste0(title, collapse = " ")
 
     load_libraries("visNetwork")
 
-    nodes <- get_nodes(rgcca)
-    edges <- get_edges(rgcca)
+    nodes <- get_nodes(rgcca_res)
+    edges <- get_edges(rgcca_res)
 
     par <- ifelse("sparsity" %in% names(nodes), "sparsity", "tau")
 
     if (all(is.na(nodes[, par])))
-        nodes[, par] <- rep("optimal", length(rgcca$call$blocks))
+        nodes[, par] <- rep("optimal", length(rgcca_res$call$blocks))
 
     nodes$title <- nodes$id
     nodes$label <- paste(nodes$id,
@@ -39,7 +39,7 @@ plot_network2 <- function(
             sep = " ")
 
     edges$width <- edges$weight * 2
-    nodes$color.background <- rep("#eee685", length(rgcca$call$blocks))
+    nodes$color.background <- rep("#eee685", length(rgcca_res$call$blocks))
 
     visNetwork(
         nodes,

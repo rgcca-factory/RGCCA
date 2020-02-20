@@ -14,7 +14,7 @@ get_bootstrap(b, comp = 1, i_block = length(b[[1]][[1]]),
 
 \item{i_block}{An integer giving the index of a list of blocks}
 
-\item{collapse}{A boolean to combine the variables of each blocks as result}
+\item{collapse}{A boolean to combine the variables of each block as result}
 
 \item{n_cores}{An integer for the number of cores used in parallelization}
 }

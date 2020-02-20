@@ -32,6 +32,8 @@ a superblock}
 \item{verbose}{A boolean displaying the warnings}
 
 \item{quiet}{A boolean hidding the warnings}
+
+\item{response}{Integer representing the number of the response block}
 }
 \value{
 \item{blocks}{A list of matrix}

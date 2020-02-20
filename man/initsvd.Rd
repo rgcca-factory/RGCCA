@@ -19,7 +19,3 @@ The function initsvd() is called by rgccad() and does not have to be used by the
 initsvd() enables the computation of initial scores of subjects for RGCCA based on SVD decomposition
 If missing values, they are imputed by colmeans
 }
-\examples{
-X=matrix(rnorm(15),3,5)
-resInitsvdTest=initsvd(X)
-}

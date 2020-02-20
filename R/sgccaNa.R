@@ -1,7 +1,7 @@
 #' imputeRGCCA allows to choose the imputation method before running RGCCA
-#' @param A  A list that contains the \eqn{J} blocks of variables \eqn{\mathbf{X_1}, \mathbf{X_2}, ..., \mathbf{X_J}}.
+#' @param blocks  A list that contains the \eqn{J} blocks of variables \eqn{\mathbf{X_1}, \mathbf{X_2}, ..., \mathbf{X_J}}.
 #' @param method  Either a character corresponding to the used method ("complete","knn","em","sem") or a function taking a list of J blocks (A) as only parameter and returning the imputed list. 
-#' @param C  A design matrix that describes the relationships between blocks (default: complete design).
+#' @param connection  A design matrix that describes the relationships between blocks (default: complete design).
 #' @param sparsity A vector containing the sparsity coefficients (length J, between 0 and 1)
 #' @param ncomp  A \eqn{1 \times J} vector that contains the numbers of components for each block (default: rep(1, length(A)), which gives one component per block.)
 #' @param scheme The value is "horst", "factorial", "centroid" or the g function (default: "centroid").
@@ -44,8 +44,10 @@
 #' rgccaNa(A,method="nipals")
 #' rgccaNa(A,method="knn2")
 
-sgccaNa=function (A,method, C = 1 - diag(length(A)), sparsity = rep(1, length(A)),    ncomp = rep(1, length(A)), scheme = "centroid", scale = TRUE,   init = "svd", bias = TRUE, tol = 1e-08, verbose = TRUE,sameBlockWeight=TRUE,knn.k="all",knn.output="weightedMean",knn.klim=NULL,knn.sameBlockWeight=TRUE,pca.ncp=1,prescaling=FALSE,quiet=FALSE)
+sgccaNa=function (blocks,method, connection = 1 - diag(length(A)), sparsity = rep(1, length(A)),    ncomp = rep(1, length(A)), scheme = "centroid", scale = TRUE,   init = "svd", bias = TRUE, tol = 1e-08, verbose = TRUE,sameBlockWeight=TRUE,knn.k="all",knn.output="weightedMean",knn.klim=NULL,knn.sameBlockWeight=TRUE,pca.ncp=1,prescaling=FALSE,quiet=FALSE)
 { 
+  A=blocks
+  C=connection
   nvar = sapply(A, NCOL)
   superblockAsList=function(superblock,A)
   {

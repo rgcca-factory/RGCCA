@@ -4,27 +4,46 @@
 \alias{naEvolution}
 \title{Evolution of fairness of rgcca with increasing missing values}
 \usage{
-naEvolution(A, prctNA = c(0.1, 0.2, 0.3), listMethods = c("mean"),
-  typeNA = "block", ncomp = rep(1, length(A)),
+naEvolution(blocks, prctNA = c(0.1, 0.2, 0.3), listMethods = c("mean"),
+  typeNA = "block", ncomp = rep(1, length(blocks)),
   sameBlockWeight = TRUE, scale = TRUE, nDatasets = 20,
   tol = 1e-06, verbose = FALSE, scheme = "centroid", seed = NULL,
-  C = matrix(1, length(A), length(A)) - diag(length(A)), tau = rep(1,
-  length(A)))
+  connection = matrix(1, length(blocks), length(blocks)) -
+  diag(length(blocks)), tau = rep(1, length(blocks)))
 }
 \arguments{
-\item{A}{A list of complete blocks}
+\item{blocks}{A list of matrix}
 
-\item{prctNA}{if number, percentage of missing data required for each block. If a vector with the same size as A, the percentage can be adapted for each block. If a list of values, this percent is calculated per variable}
+\item{prctNA}{if number, percentage of missing data required for each block. If a vector with the same size as blocks, the percentage can be adapted for each block. If a list of values, this percent is calculated per variable}
 
-\item{listMethods}{Vector containing the names of the methods to use : "complete","nipals","em","knn1","knn10"....}
+\item{listMethods}{vector containing a list of methods ("mean","complete","nipals"...)}
 
-\item{typeNA}{"block" if the missing data are blockwise or "ponc" if they are random}
+\item{typeNA}{structure of missing data required ("ponc" or "block")}
 
-\item{nDatasets}{Number of simulated datasets}
+\item{ncomp}{A vector of integer giving the number of component for each
+blocks}
+
+\item{sameBlockWeight}{If TRUE, all blocks are weighted by their own variance: all the blocks have the same weight}
+
+\item{scale}{A boolean scaling the blocks}
+
+\item{nDatasets}{Number of simulated dataset}
+
+\item{tol}{An integer for the stopping value for convergence}
+
+\item{verbose}{A boolean to display the progress of the analysis}
+
+\item{scheme}{A character giving the link function for covariance maximization}
 
 \item{seed}{NULL by default (no reproducibility). A number representing the seed (for reproducibility)}
 
-\item{C, tau, scale, scheme, sameBlockWeight, ncomp, tol, verbose}{parameters of RGCCA}
+\item{connection}{A matrix giving the connection between the blocks}
+
+\item{tau}{tau is either a \eqn{1 \times J} vector or a \eqn{\mathrm{max}(ncomp) \times J} matrix, and contains the values 
+of the shrinkage parameters (default: tau = 1, for each block and each dimension).
+If tau = "optimal" the shrinkage paramaters are estimated for each block and each dimension using the Schafer and Strimmer (2005)
+analytical formula . If tau is a \eqn{1\times J} numeric vector, tau[j] is identical across the dimensions of block \eqn{\mathbf{X}_j}. 
+If tau is a matrix, tau[k, j] is associated with \eqn{\mathbf{X}_{jk}} (\eqn{k}th residual matrix for block \eqn{j})}
 }
 \value{
 \item{resultComparison}{A list of dataset indicators containg a list of rgcca with a list of criterion. }
@@ -44,7 +63,7 @@ X_ind = as.matrix(Russett[,c("gnpr","labo")])
 X_polit = as.matrix(Russett[ , c("demostab", "dictator")])
 A = list(agri=X_agric, ind=X_ind, polit=X_polit)
 #ponctual
-listResults=naEvolution(A=A,listMethods=c("complete","nipals","mean"),
+listResults=naEvolution(blocks=A,listMethods=c("complete","nipals","mean"),
 prctNA=c(0.05,0.1,0.15,0.2,0.25,0.3,0.4),typeNA="ponc",ncomp=rep(1,3),
 sameBlockWeight=FALSE)
 plotEvol(listResults,output="a",barType = "stderr",ylim=c(0,0.2))

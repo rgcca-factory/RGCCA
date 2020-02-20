@@ -22,7 +22,6 @@
 #' @return \item{AVE}{Indicators of model quality based on the Average Variance Explained (AVE): AVE(for one block), AVE(outer model), AVE(inner model).}
 #' @return \item{call}{Call of the function}
 #' @title Internal function for computing the SGCCA parameters (SGCCA block components, outer weight vectors etc.)
-#' @export sgccak 
 #' @importFrom Deriv Deriv
 sgccak <-  function(A, C, sparsity = rep(1, length(A)), scheme = "centroid", scale = FALSE,
                     tol = .Machine$double.eps, init="svd", bias = TRUE, verbose = TRUE,quiet=FALSE){

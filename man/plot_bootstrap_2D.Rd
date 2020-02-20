@@ -50,3 +50,6 @@ boot = bootstrap(rgcca_out, 2, n_cores = 1)
 selected.var = get_bootstrap(boot, n_cores = 1)
 plot_bootstrap_2D(selected.var)
 }
+\seealso{
+\code{\link[RGCCA]{bootstrap}}, \code{\link[RGCCA]{get_bootstrap}}
+}
