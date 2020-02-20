@@ -21,7 +21,7 @@
 get_bootstrap <- function(
     b,
     comp = 1,
-    i_block = length(b[[1]][[1]]),
+    i_block = length(b$bootstrap[[1]]),
     collapse = FALSE,
     n_cores = parallel::detectCores() - 1) {
 
@@ -52,7 +52,7 @@ get_bootstrap <- function(
     for (i in J) {
 
         b_bind <- parallel::mclapply(
-            b[[1]],
+            b$bootstrap,
             function(x) x[[i]][, comp],
              mc.cores = n_cores)
 
@@ -94,7 +94,7 @@ get_bootstrap <- function(
         rm(b_select); gc()
     }
     
-    n_boot <- length(b[[1]])
+    n_boot <- length(b$bootstrap[[1]])
 
     occ <- unlist(occ)
     mean <- unlist(mean)

@@ -72,7 +72,7 @@ plot_histogram <- function(
             labs(fill = "Blocks")
         if (length(group) == 1){
             if (is.null(colors))
-                colors <- c("blue", "gray", "#cd5b45")
+                colors <- c(color_group(seq(3))[3],  "gray", color_group(seq(3))[1])
             p <- p +
                 scale_fill_gradientn(colors = colors, na.value = "black")
         } else  if ((is.character2(group[!is.na(group)]) ||
