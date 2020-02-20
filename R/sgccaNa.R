@@ -73,44 +73,6 @@ sgccaNa=function (blocks,method, connection = 1 - diag(length(A)), sparsity = re
   {
     A2=method(A)
   }
-#   if(method=="pca")	
-#   {  
-#       imputedSuperblock= imputePCA(X=do.call(cbind,A), ncp = pca.ncp, scale = TRUE, method ="em")$completeObs 
-#       A2=superblockAsList(imputedSuperblock, A)
-#   }
-#   if(method=="rpca")
-#   {
-#     imputedSuperblock= missMDA::imputePCA(do.call(cbind,A), ncp = pca.ncp, scale = TRUE, method ="regularized")$completeObs 
-#      A2=superblockAsList(imputedSuperblock, A)
-#   }   
-# #
-# #	if(method=="rgccaPca"){	  A2= imputeSuperblock(A,method="em",opt="rgcca",ncp=ncp,scaleBlock=scaleBlock)}
-# 	if(method=="mfa")	
-# 	{	 
-# 	  imputedSuperblock=imputeMFA(X=do.call(cbind,A), group=nvar, ncp = 1, type=rep("s",length(nvar)), method = "em")$completeObs
-# 	  A2=superblockAsList(imputedSuperblock, A)
-# 	}
-
-#  	if(method=="iterativeSB")	{	  A2=imputeSB(A,ncomp=ncomp,scale=scale,sameBlockWeight=sameBlockWeight,sparsity=sparsity,tol=tol,ni=10)$A	}
-#     if(method=="em")	{	  A2=imputeEM(A=A,ncomp=ncomp,scale=scale,sameBlockWeight=sameBlockWeight,sparsity=sparsity,naxis=1,ni=50,C=C,tol=tol,verbose=verbose,reg="y")$A	}
-#    if(substr(method,1,3)=="sem")
-#    {
-#      if(substr(method,4,4)=="")
-#      {
-#        A2=imputeEM(A=A,superblock=TRUE,ncomp=ncomp,scale=scale,sameBlockWeight=sameBlockWeight,sparsity=tau,naxis=1,ni=50,C=C,tol=tol,verbose=verbose,reg="y")$A
-#      }
-#      else
-#      {
-#        A2=imputeEM(A=A,superblock=TRUE,ncomp=ncomp,scale=scale,sameBlockWeight=sameBlockWeight,tau=tau,naxis=as.numeric(substr(method,4,4)),ni=50,C=C,tol=tol,verbose=verbose,reg="y")$A
-#      }
-#    }
-#  # if(method=="old"){}
-#   if(method=="emo")	{	  A2=imputeEM(A=A,ncomp=ncomp,scale=scale,sameBlockWeight=sameBlockWeight,tau=tau,naxis=1,ni=50,C=C,tol=tol,verbose=verbose,reg="no")$A	}
-#   if(method=="emw")	{	  A2=imputeEM(A=A,ncomp=ncomp,scale=scale,sameBlockWeight=sameBlockWeight,tau=tau,naxis=1,ni=50,C=C,tol=tol,verbose=verbose,reg="w")$A	}
-# #  if(method=="semy")	{	  A2=imputeEM(A=A,ncomp=ncomp,superblock=TRUE,scale=scale,sameBlockWeight=sameBlockWeight,tau=tau,naxis=1,ni=50,C=C,tol=tol,verbose=verbose,reg="y")$A[1:length(A)]	}
-# #  if(method=="semw")	{	  A2=imputeEM(A=A,ncomp=ncomp,superblock=TRUE,scale=scale,sameBlockWeight=sameBlockWeight,tau=tau,naxis=1,ni=50,C=C,tol=tol,verbose=verbose,reg="w")$A[1:length(A)]	}
-#   
-  
   if(method=="nipals"){na.rm=TRUE;A2=A}
   
   if(substr(method,1,3)=="knn")
@@ -124,7 +86,7 @@ sgccaNa=function (blocks,method, connection = 1 - diag(length(A)), sparsity = re
         A2=imputeNN(A ,output=knn.output,k=as.numeric(substr(method,4,4)),klim=knn.klim,sameBlockWeight=knn.sameBlockWeight);method=paste(method,":",knn.k,sep="")
       }
   }
-  
+
   resRgcca=sgcca(A2,sparsity=sparsity,ncomp=ncomp,verbose=FALSE,scale=scale,sameBlockWeight=sameBlockWeight,scheme=scheme,tol=tol,prescaling=prescaling,quiet=quiet)
  return(list(imputedA=A2,rgcca=resRgcca,method,indNA=indNA))
 

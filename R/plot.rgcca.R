@@ -40,5 +40,5 @@ plot.rgcca=function(x,resp=rep(1, NROW(x$Y[[1]])),i_block=1,compx=1,compy=2,remo
      #  p5<-grid.arrange(p1,p2,nrow=1,ncol=2,top = titlePlot)
    p5<-grid.arrange(p1,p2,nrow=1,ncol=2,top = titlePlot)
    
-    return(p5)
+    invisible(p5)
 }

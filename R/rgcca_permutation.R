@@ -36,8 +36,9 @@ rgcca_permutation <- function(
     p_ncomp = FALSE,
     nperm = 20,
     n_cores = parallel::detectCores() - 1,
+    quiet=TRUE,
     ...) {
-
+    call=list(type=type,p_spars=p_spars,p_ncomp=p_ncomp,nperm=nperm,quiet=quiet)
     check_integer("nperm", nperm)
     check_integer("n_cores", n_cores, 0)
 
@@ -95,6 +96,7 @@ rgcca_permutation <- function(
         perm = FALSE,
         type = type,
         n_cores = 1,
+        quiet=quiet,
         ...
     )
 
@@ -159,6 +161,7 @@ rgcca_permutation <- function(
                     par = par,
                     type = type,
                     n_cores = 1,
+                    quiet=quiet,
                     ...
                 )
                 return(res)
@@ -185,6 +188,7 @@ rgcca_permutation <- function(
 
     structure(
         list(
+            call=call,
             pvals = pvals,
             zstat = zs,
             bestpenalties = par[which.max(zs), ],

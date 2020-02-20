@@ -10,9 +10,9 @@
  get_comp(rgcca_out, as.matrix(response))
  response = as.matrix(runif(NROW(blocks[[1]])))
  row.names(response) = row.names(blocks[[1]])
-res= get_comp(rgcca_out, response)
+res=get_comp(rgcca_out, response)
 
 test_that("get_comp",
           {
-              expect_true(length(res)==9)
+              expect_true(length(res)==3)
               })

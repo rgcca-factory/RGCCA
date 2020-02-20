@@ -4,7 +4,7 @@
 \alias{get_bootstrap}
 \title{Extract a bootstrap}
 \usage{
-get_bootstrap(b, comp = 1, i_block = length(b[[1]][[1]]),
+get_bootstrap(b, comp = 1, i_block = length(b$bootstrap[[1]]),
   collapse = FALSE, n_cores = parallel::detectCores() - 1)
 }
 \arguments{

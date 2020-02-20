@@ -178,7 +178,7 @@ sgcca <- function (A, C = 1-diag(length(A)), sparsity = rep(1, length(A)), ncomp
     AVE_X = list()
     AVE_outer <- rep(NA,max(ncomp))
     if (N == 0) {
-        result <- sgccak(A, C, sparsity, scheme, init = init, bias = bias, tol = tol, verbose = verbose)
+        result <- sgccak(A, C, sparsity, scheme, init = init, bias = bias, tol = tol, verbose = verbose,quiet=quiet)
         # No deflation (No residual matrices generated).
         Y <- NULL
         for (b in 1:J) Y[[b]] <- result$Y[,b, drop = FALSE]
@@ -226,14 +226,13 @@ sgcca <- function (A, C = 1-diag(length(A)), sparsity = rep(1, length(A)), ncomp
     #      Determination of SGCCA components     #
     ##############################################
     
-    
-    
+
     for (n in 1:N) {
       if (verbose) cat(paste0("Computation of the SGCCA block components #", n, " is under progress... \n"))
       if(is.vector(sparsity)){
-        sgcca.result <- sgccak(R, C, sparsity = sparsity , scheme=scheme, init = init, bias = bias, tol = tol, verbose=verbose)
+        sgcca.result <- sgccak(R, C, sparsity = sparsity , scheme=scheme, init = init, bias = bias, tol = tol, verbose=verbose,quiet=quiet)
       } else{
-        sgcca.result <- sgccak(R, C, sparsity = sparsity[n, ] , scheme=scheme, init = init, bias = bias, tol = tol, verbose=verbose)
+        sgcca.result <- sgccak(R, C, sparsity = sparsity[n, ] , scheme=scheme, init = init, bias = bias, tol = tol, verbose=verbose,quiet=quiet)
       }
       AVE_inner[n] <- sgcca.result$AVE_inner
       crit[[n]] <- sgcca.result$crit
@@ -241,10 +240,10 @@ sgcca <- function (A, C = 1-diag(length(A)), sparsity = rep(1, length(A)), ncomp
       
       for (b in 1:J) Y[[b]][,n] <- sgcca.result$Y[ ,b]
       for (q in which(n <ndefl)) if(sum(sgcca.result$a[[q]]!=0) <= 1)
-     {
+     { 
         if(!quiet)
         {
-            warning(sprintf("Deflation failed because only one variable was selected for block #",q,"! \n"))
+            warning(sprintf("Deflation failed because only one variable was selected for block ",q,"! \n"))
             
         }
      }
@@ -264,9 +263,9 @@ sgcca <- function (A, C = 1-diag(length(A)), sparsity = rep(1, length(A)), ncomp
     }
     if (verbose) cat(paste0("Computation of the SGCCA block components #", N+1, " is under progress...\n"))
     if(is.vector(sparsity)) {
-      sgcca.result <- sgccak(R, C, sparsity = sparsity, scheme=scheme, init = init, bias = bias, tol = tol, verbose=verbose)
+      sgcca.result <- sgccak(R, C, sparsity = sparsity, scheme=scheme, init = init, bias = bias, tol = tol, verbose=verbose,quiet=quiet)
     } else{
-      sgcca.result <- sgccak(R, C, sparsity = sparsity[N+1, ], scheme=scheme, init = init, bias = bias, tol = tol, verbose=verbose)
+      sgcca.result <- sgccak(R, C, sparsity = sparsity[N+1, ], scheme=scheme, init = init, bias = bias, tol = tol, verbose=verbose,quiet=quiet)
     }
     AVE_inner[max(ncomp)] <- sgcca.result$AVE_inner
     

@@ -81,3 +81,9 @@ blocks = list(agriculture = Russett[, seq(3)], industry = Russett[, 4:5],
     politic = Russett[, 6:11] )
 rgcca(blocks)
 }
+\seealso{
+\code{\link[RGCCA]{plot.rgcca}}, \code{\link[RGCCA]{print.rgcca}},
+\code{\link[RGCCA]{rgcca_crossvalidation}},
+\code{\link[RGCCA]{rgcca_permutation}}
+\code{\link[RGCCA]{rgcca_predict}}
+}

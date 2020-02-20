@@ -7,7 +7,7 @@ Only one component per block for the time being}
 \usage{
 rgcca_permutation(blocks, type = "rgcca", p_spars = TRUE,
   p_ncomp = FALSE, nperm = 20, n_cores = parallel::detectCores() - 1,
-  ...)
+  quiet = TRUE, ...)
 }
 \arguments{
 \item{blocks}{A list of matrix}
@@ -27,6 +27,8 @@ combinations as the maximum number of columns in each block}
 \item{nperm}{Number of permutation tested for each set of constraint}
 
 \item{n_cores}{An integer for the number of cores used in parallelization}
+
+\item{quiet}{A boolean hidding the warnings}
 
 \item{...}{other RGCCA parameters # TODO}
 }

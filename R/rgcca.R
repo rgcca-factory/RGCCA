@@ -32,6 +32,10 @@
 # @importFrom visNetwork visNetwork visNodes visEdges
 # @importFrom igraph graph_from_data_frame V<- E<-
 #' @importFrom methods is
+#' @seealso \code{\link[RGCCA]{plot.rgcca}}, \code{\link[RGCCA]{print.rgcca}},
+#' \code{\link[RGCCA]{rgcca_crossvalidation}},
+#' \code{\link[RGCCA]{rgcca_permutation}}
+#' \code{\link[RGCCA]{rgcca_predict}} 
 rgcca <- function(
     blocks,
     connection = 1 - diag(length(blocks)),
@@ -65,6 +69,7 @@ rgcca <- function(
         gcca <- sgccaNa
         par <- "sparsity"
         penalty <- sparsity
+       
     }else{
         if (!missing(sparsity) & missing(tau))
            stop(paste0("tau parameter required for ", tolower(type), "(instead of sparsity)."))

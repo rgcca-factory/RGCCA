@@ -20,6 +20,7 @@ rgcca_permutation_k <- function(
     type = "rgcca",
     superblock = TRUE,
     perm = TRUE,
+    quiet = TRUE,
     n_cores = parallel::detectCores() - 1) {
 
     if (perm) {
@@ -44,7 +45,7 @@ rgcca_permutation_k <- function(
                         init = init,
                         bias = bias,
                         tol = tol,
-                        quiet = TRUE,
+                        quiet = quiet,
                         method = "complete"
                     ))
                 switch(
