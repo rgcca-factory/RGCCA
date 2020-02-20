@@ -441,7 +441,6 @@ opt$superblock <- !("superblock" %in% names(opt))
 opt$scale <- !("scale" %in% names(opt))
 opt$text <- !("text" %in% names(opt))
 
-status <- 0
 tryCatch({
     
     blocks <- load_blocks(opt$datasets, opt$names, opt$separator)
@@ -562,10 +561,6 @@ tryCatch({
     
 
     }, error = function(e){
-        if(class(e)[1] %in% c("simpleError", "error", "condition" ))
-            status <<- 1
-        else
-            status <<- class(e)[1]
-        message(e$message)
+        if (!class(e)[1] %in% c("simpleError", "error", "condition" ))
+            quit(status = class(e)[1])
 })
-quit(status = status)

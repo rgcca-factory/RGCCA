@@ -16,9 +16,9 @@ get_comp <- function(
     i_block_y = i_block,
     i_block_z = i_block,
     predicted = NULL){
-    
+
     stopifnot(is(rgcca_res, "rgcca"))
-    resp <- check_response(resp, rgcca_res$Y)
+    resp <- as.matrix(check_response(resp, rgcca_res$Y))
     for (i in c("i_block", "i_block_y", "i_block_z")) {
         if (!is.null(get(i)))
             check_blockx(i, get(i), rgcca_res$call$blocks)
@@ -34,38 +34,6 @@ get_comp <- function(
         rgcca_res$Y[[i_block_y]][, compy],
         rgcca_res$Y[[i_block_z]][, compz]
     )
-  
-    if(is.vector(resp))
-    {
-       
-        resp2=matrix(resp,ncol=1)
-        if(!is.null(names(resp)))
-        {
-            rownames(resp2)=names(resp)
-        }
-        else
-        {
-           warnings("Response has no names.")
-           rownames(resp2)=names(rgcca_res$call$blocks[[1]][,1])
-        }
-        resp=resp2
-    }
-    else
-    {
-        resp <- as.matrix(resp)
-    }
-    if(dim(resp)[2]==1)
-    {
-         if(is.null(rownames(resp)))
-        {
-            warning("Response has no names. Same names as the first block are attributed")
-            rownames(resp)=names(rgcca_res$A[[i_block]][,1])
-        }
-    }
-    else
-    {
-        resp <- as.matrix(resp)
-    }
 
     if (!is.null(predicted)) {
         df2 <- predicted[[2]][[i_block]][, c(compx, compy, compz)]
@@ -74,7 +42,7 @@ get_comp <- function(
         df <- rbind(df1, df2)
         resp <- c(rep("obs",NROW(df2)),rep("pred",NROW(df2)))
 
-    } else if (length(unique(as.matrix(resp))) > 1) {
+    } else if (length(unique(resp)) > 1) {
         names <- row.names(resp)
         resp <- apply(as.matrix(resp), 1, as.character)
 
@@ -98,16 +66,11 @@ get_comp <- function(
                 resp <- resp[row.names(rgcca_res$Y[[i_block]])]
             }
         } else {
-            warning("No rownames have been found in the group file. Same rownames as the first block of RGCCA were applied.")
-            #resp <- rep("NA", NROW(df))
-            if(!is.null(dim(rgcca_res$call$blocks[[1]])))
-            {
-                rownames(resp)=rownames(rgcca_res$call$blocks[[1]])
-            }
-            else
-            {
-                rownames(resp)=names(rgcca_res$call$blocks[[1]]) 
-            }
+            # warning("No rownames have been found in the group file. The rownames of the selected block of RGCCA have been used.")
+            # resp <- rep("NA", NROW(df))
+            # rownames(resp) <- rownames(rgcca_res$A[[i_block]])
+            if (length(resp) != NROW(rgcca_res$A[[i_block]]))
+                stop("resp argument should have the same size than the number of rows in the selected block.")
         }
     }
 
