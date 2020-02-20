@@ -9,6 +9,7 @@
 #' @param x A character for the column used in the plot
 #' @param y A character for the column to color the bars
 #' @param n_mark An integer giving the number maximum of top variables
+#' @param ... Other parameters (see plot_histogram)
 #' @examples
 #' library(RGCCA)
 #' data("Russett")

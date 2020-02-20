@@ -26,7 +26,7 @@
 #' @return \item{connection}{matrix giving the connection between the blocks}
 #' @return \item{superblock}{A boolean giving the presence (TRUE) / absence (FALSE)
 #' of a superblock}
-#' @export
+
 select_analysis <- function(
     blocks = blocks,
     connection = 1 - diag(length(blocks)),

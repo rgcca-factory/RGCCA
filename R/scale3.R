@@ -8,10 +8,7 @@
 #' @param bias if TRUE, the estimator of variance is SS/sqrt(n-1), if FALSE, it is SS/sqrt(n)
 #' @return \item{A}{The resulting list of matrices}
 #' @title scale3
-#' @examples 
-#' X1=matrix(rnorm(15),5,3)
-#' scale3(X1)
-#' @export
+
 scale3=function (A, center = TRUE, scale = TRUE, bias = TRUE) 
 {
   if (center == TRUE & scale == TRUE) {

@@ -23,7 +23,8 @@ Suggests:
     optparse,
     igraph,
     visNetwork,
-    nnet
+    nnet,
+    openxlsx
 RoxygenNote: 6.1.1
 Imports: 
     parallel,
@@ -35,6 +36,7 @@ Imports:
     ggplot2,
     methods,
     scales,
-    gridExtra
+    gridExtra,
+    rlang
 VignetteBuilder: knitr
 biocViews: Visualization, PrincipalComponent, DimensionReduction, StructuralEquationModels

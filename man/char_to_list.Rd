@@ -15,7 +15,3 @@ A vector of characters whitout spaces
 \description{
 Convert a character in a vector
 }
-\examples{
-s = '1,2, 3'
-char_to_list(s)
-}

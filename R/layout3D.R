@@ -1,5 +1,5 @@
 layout3D <- function(p, title, cex, scene){
-    layout(
+    plotly::layout(
         p,
         autosize = TRUE,
         margin = list(

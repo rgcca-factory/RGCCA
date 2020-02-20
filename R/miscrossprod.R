@@ -4,7 +4,6 @@
 #' @param y  A numeric vector.
 #' @return \item{d.p}{The dot product between x and y: \eqn{x^ty}}
 #' @title Cross product function for inputs with missing data.
-#' @export miscrossprod
 
 miscrossprod <- function(x,y) {
   d.p =  sum(drop(x)*drop(y), na.rm = TRUE)

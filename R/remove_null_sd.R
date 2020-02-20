@@ -2,11 +2,7 @@
 #'
 #' @param list_m A list of dataframe
 #' @return A list of dataframe
-#' @examples
-#' df = sapply(seq(3), function(x) runif(10))
-#' df = cbind(df, rep(1, 10))
-#' remove_null_sd(list(df))
-#' @export
+
 remove_null_sd <- function(list_m) {
     
     names <- names(list_m)

@@ -35,17 +35,3 @@ A dataframe containing the indexes for each selected components
 \description{
 Extract the contibution of variables to the model by using correlation or weight
 }
-\examples{
-library(RGCCA)
-data("Russett")
-blocks = list(agriculture = Russett[, seq(3)], industry = Russett[, 4:5],
-    politic = Russett[, 6:11] )
-rgcca_out = rgcca(blocks, ncomp = c(3,2,4))
-get_ctr(rgcca_out)
-# On the first block and with weights
-get_ctr(rgcca_out, 2, 1, i_block = 1, type = "weight")
-# With 3 components and on the variables of two blocks
-rgcca_out = rgcca(blocks[c(1,3)], ncomp = c(3,4))
-get_ctr(rgcca_out, compz = 3, i_block = 1, type = "cor", collapse = TRUE)
-get_ctr(rgcca_out, 2, 1, 3, 1, "weight", TRUE)
-}

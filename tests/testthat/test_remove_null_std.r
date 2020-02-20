@@ -6,3 +6,4 @@
  df2=remove_null_sd(list(df))
  test_that("remove_null_std",{expect_true(dim(df2[[1]])[2]==3)})
  
+ 

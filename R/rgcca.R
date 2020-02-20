@@ -166,7 +166,8 @@ rgcca <- function(
             knn.klim = knn.klim,
             knn.sameBlockWeight = knn.sameBlockWeight,
             pca.ncp = pca.ncp,
-            prescaling = FALSE
+            prescaling = FALSE,
+            quiet=quiet
         )
     )
 

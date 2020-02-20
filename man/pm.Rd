@@ -19,11 +19,3 @@ pm(M1, M2, na.rm = TRUE)
 \description{
 Product for Matrix (pm) is a generalization of the matricial product %*% for matrices with missing data. Missing data are replaced by 0.
 }
-\examples{
-#############
-# Example 1 #
-#############
-A=matrix(rnorm(15),3,5);A[3,5]=NA
-B=matrix(rnorm(20),5,4);
-pm(A,B)
-}

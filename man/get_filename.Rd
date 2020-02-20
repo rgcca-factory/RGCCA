@@ -15,8 +15,3 @@ A character for the name of the file
 \description{
 Get the file name from a path
 }
-\examples{
-fi = '/name.lastname/dirPath/fileName.tsv'
-get_filename(fi)
-# fileName
-}

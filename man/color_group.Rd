@@ -17,6 +17,3 @@ A color vector of equal size to the input vector
 \description{
 Returns a color vector of equal size to the input vector
 }
-\examples{
-color_group(seq(10))
-}

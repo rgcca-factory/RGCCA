@@ -32,13 +32,3 @@ one, different from the one used in i_block)}
 \description{
 Plot permuation in 3D
 }
-\examples{
-library("plotly")
-data("Russett")
-A = list(agriculture = Russett[, seq(3)], industry = Russett[, 4:5],
-    politic = Russett[, 6:11] )
-perm <- rgcca_permutation(A, nperm = 2, n_cores = 1)
-plot_permut_3D(perm)
-perm <- rgcca_permutation(A, p_spars = TRUE, nperm = 2, n_cores = 1)
-plot_permut_3D(perm)
-}

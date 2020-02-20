@@ -4,12 +4,8 @@
 #' @param superblock A boolean giving the presence (TRUE) / absence (FALSE) of
 #' a superblock
 #' @return A matrix corresponding to the connection between the blocks
-#' @examples
-#' \dontrun{
-#' blocks = lapply(seq(4), function(x) matrix(runif(47 * 5), 47, 5))
-#' set_connection (blocks, 'data/connection.tsv')
-#' }
-#' @export
+
+
 set_connection <- function(
     blocks,
     superblock = FALSE

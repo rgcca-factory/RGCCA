@@ -15,10 +15,3 @@ A dataframe with tuples of connected rgcca_res$call$blocks
 \description{
 Creates the edges for a design matrix
 }
-\examples{
-data("Russett")
-blocks = list(agriculture = Russett[, seq(3)], industry = Russett[, 4:5],
-    politic = Russett[, 6:11] )
-rgcca_out = rgcca(blocks)
-get_edges(rgcca_out)
-}

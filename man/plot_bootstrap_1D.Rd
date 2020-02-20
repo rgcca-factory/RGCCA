@@ -20,6 +20,8 @@ plot_bootstrap_1D(b, x = "estimate", y = "occurrences", n_mark = 50,
 "Samples")}
 
 \item{colors}{reoresenting a vector of colors}
+
+\item{...}{Other parameters (see plot_histogram)}
 }
 \description{
 Histogram of the best variables of an RGCCA bootstrap with, on the x-axis,

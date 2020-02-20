@@ -16,11 +16,3 @@ cov3(x, y = NULL, bias = TRUE)
 \description{
 Calculates the covariance on the available data
 }
-\examples{
-library(RGCCA)
-X1=matrix(rnorm(35),7,5);
-X2=matrix(rnorm(35),7,5);
-# Check old functionalities
-cov3(X1,bias=FALSE)==cov(X1)
-cov3(X1,X2,bias=FALSE)==cov(X1,X2)
-}

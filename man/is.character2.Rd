@@ -8,6 +8,8 @@ is.character2(x, type = "any")
 }
 \arguments{
 \item{x}{A matrix or a vector}
+
+\item{type}{Character for a function ("any" by default) among "any" or "all"}
 }
 \value{
 A bolean for the presence (FALSE) or the absence (TRUE) of at least
@@ -15,11 +17,4 @@ one quantitative variable
 }
 \description{
 Tests if a dataframe is composed only by qualitative variables
-}
-\examples{
-x = matrix(c(runif(10), LETTERS[seq(10)]), 10, 2)
-is.character2(x)
-# TRUE
-is.character2(LETTERS[seq(10)])
-# TRUE
 }

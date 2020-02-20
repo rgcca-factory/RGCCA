@@ -23,17 +23,6 @@ A string for the variance on the component
 Prints the percent of explained variance for a component of a block 
 (by default, the superblock or the last one) analysed by R/SGCCA
 }
-\examples{
-AVE = list(c(0.6, 0.5), c(0.7, 0.45))
-rgcca_out = list(AVE = list(AVE_X = AVE))
-# For the superblock (or the last block)
-rgcca_out$call$type="rgcca"
-print_comp(rgcca_out, 1)
-# "Axis 1 (70\%)"
-# For the first block
-print_comp(rgcca_out, 2, 1)
-# "Axis 2 (50\%)"
-}
 \seealso{
 \code{\link[RGCCA]{rgccad}}, \code{\link[RGCCA]{sgcca}}
 }

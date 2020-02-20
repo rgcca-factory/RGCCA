@@ -6,15 +6,8 @@
 #' @inheritParams plot_var_2D
 #' @param rgcca_res Result of rgcca function
 #' @return A list of RGCCA bootstrap weights
-#' @examples
-#' library(RGCCA)
-#' data("Russett")
-#' blocks = list(agriculture = Russett[, seq(3)], industry = Russett[, 4:5],
-#'     politic = Russett[, 6:11] )
-#' rgcca_out = rgcca(blocks)
-#' bootstrap_k(rgcca_out)
-#' bootstrap_k(rgcca_out, lapply(blocks, scale), superblock = FALSE)
-#' @export
+
+
 bootstrap_k <- function(
     rgcca_res,
     blocks = NULL,

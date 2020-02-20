@@ -20,12 +20,6 @@ variable.
 Get a vector of block names for each corresponding variable. The last block 
 is considered as the superblock and ignored.
 }
-\examples{
-rgcca_out = list(a = rep(NA, 4))
-names(rgcca_out$a) = LETTERS[seq(4)]
-get_bloc_var(rgcca_out)
-# a, b, c
-}
 \seealso{
 \code{\link[RGCCA]{rgccad}}, \code{\link[RGCCA]{sgcca}}
 }

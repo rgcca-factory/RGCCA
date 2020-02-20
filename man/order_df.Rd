@@ -19,7 +19,3 @@ A datafram with ordered values
 \description{
 Rank values of a dataframe in decreasing order
 }
-\examples{
-df = sapply(seq(2), function(x) runif(10))
-order_df(df)
-}

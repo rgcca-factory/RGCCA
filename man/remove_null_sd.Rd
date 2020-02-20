@@ -15,8 +15,3 @@ A list of dataframe
 \description{
 Remove column having a standard deviation equals to 0
 }
-\examples{
-df = sapply(seq(3), function(x) runif(10))
-df = cbind(df, rep(1, 10))
-remove_null_sd(list(df))
-}

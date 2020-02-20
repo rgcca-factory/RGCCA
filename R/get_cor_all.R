@@ -6,15 +6,8 @@
 #' @inherit plot_ind
 #' @inherit set_connection
 #' @param comps A matrix containg the components of all the blocks
-#' @examples
-#' library(RGCCA)
-#' data("Russett")
-#' blocks = list(agriculture = Russett[, seq(3)], industry = Russett[, 4:5],
-#'     politic = Russett[, 6:11] )
-#' rgcca_out = rgcca(blocks)
-#' get_cor_all(rgcca_out)
+
 #' @return A list of matrix containg the pairwise correlation of the blocks
-#' @export
 get_cor_all <- function(
     rgcca_res, 
     blocks = rgcca_res$call$blocks, 

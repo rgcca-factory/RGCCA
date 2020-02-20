@@ -2,13 +2,9 @@
 #' 
 #' @inheritParams plot_ind
 #' @return A dataframe with tuples of connected rgcca_res$call$blocks
-#' @examples
-#' data("Russett")
-#' blocks = list(agriculture = Russett[, seq(3)], industry = Russett[, 4:5],
-#'     politic = Russett[, 6:11] )
-#' rgcca_out = rgcca(blocks)
-#' get_edges(rgcca_out)
-#' @export
+
+
+
 get_edges <- function(rgcca_res) {
 
     J <- NCOL(rgcca_res$call$connection)

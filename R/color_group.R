@@ -4,9 +4,7 @@
 #' @param x A vector
 #' @param colors reoresenting a vector of colors
 #' @return A color vector of equal size to the input vector
-#' @examples
-#' color_group(seq(10))
-#' @export
+
 color_group <- function(x, colors = NULL) {
 
     if (is.null(colors))

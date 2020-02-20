@@ -2,11 +2,26 @@
 % Please edit documentation in R/load_file_excel.R
 \name{load_file_excel}
 \alias{load_file_excel}
-\title{names (NULL otherwise)}
+\title{Creates a data frame from an Excel file loading}
 \usage{
 load_file_excel(file, sheet = 1, rownames = 1, header = TRUE,
   num = TRUE)
 }
+\arguments{
+\item{file}{A character giving the file name}
+
+\item{sheet}{A character giving the sheet name}
+
+\item{rownames}{An integer corresponding to the column number of the row
+names (NULL otherwise)}
+
+\item{header}{A bolean giving the presence or the absence of the header}
+
+\item{num}{A bolean giving the presence or the absence of numerical values}
+}
+\value{
+A matrix containing the loaded file
+}
 \description{
-names (NULL otherwise)
+Creates a data frame from an Excel file loading
 }
