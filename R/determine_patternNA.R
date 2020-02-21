@@ -58,7 +58,7 @@ determine_patternNA=function(blocks,graph="all",legend=FALSE,outlierVisible=TRUE
                 })
             
         })
-    names(completeSubjectByBlock)=rownames(blocks[[1]])
+    rownames(completeSubjectByBlock)=rownames(blocks[[1]])
     completeSubjectsBool=apply(Reduce(cbind,blocks),1,function(x){sum(is.na(x))==0})
     completeSubjects=rownames(blocks[[1]])[completeSubjectsBool]
     numberOfMissingBlocksPerSubject=    sapply(rownames(blocks[[1]]),function(k)

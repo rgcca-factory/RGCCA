@@ -38,7 +38,7 @@
 #' \code{\link[RGCCA]{rgcca_predict}} 
 rgcca <- function(
     blocks,
-    connection = 1 - diag(length(blocks)),
+    connection = matrix(1,length(blocks),length(blocks)) - diag(length(blocks)),
     response = NULL,
     superblock = TRUE,
     tau = rep(1, length(blocks)),
