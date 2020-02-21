@@ -25,7 +25,12 @@ get_bootstrap <- function(
     collapse = FALSE,
     n_cores = parallel::detectCores() - 1) {
 
+    stopifnot(is(b, "bootstrap"))
+    check_compx("comp", comp, b$rgcca$call$ncomp, i_block)
     check_ncol(b$rgcca$Y, i_block)
+    check_blockx("i_block", i_block, b$rgcca$call$blocks)
+    check_boolean("collapse", collapse)
+    check_integer("n_cores", n_cores, 0)
 
     if (n_cores == 0)
         n_cores <- 1
@@ -149,7 +154,7 @@ get_bootstrap <- function(
         )
     attributes(b)$type <- class(rgcca)
     attributes(b)$n_boot <- n_boot
-    class(b) <- c(class(b), "bootstrap")
+    class(b) <- c(class(b), "df_bootstrap")
 
     return(b)
 }

@@ -33,7 +33,7 @@ plot_bootstrap_1D <- function(
     colors = NULL,
     ...) {
 
-    stopifnot(is(b, "bootstrap"))
+    stopifnot(is(b, "df_bootstrap"))
     check_integer("n_mark", n_mark)
 
     if (is.null(title))

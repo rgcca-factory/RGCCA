@@ -44,5 +44,5 @@ bootstrap <- function(
 
     cat("OK.\n", append = TRUE)
 
-    return(list(bootstrap = W, rgcca = rgcca_res))
+    return(structure(list(bootstrap = W, rgcca = rgcca_res), class = "bootstrap"))
 }

@@ -416,7 +416,7 @@ opt <- list(
         collapse = ",")
 )
 
-load_libraries(c("RGCCA", "ggplot2", "optparse", "scales", "igraph", "MASS", "openxlsx"))
+load_libraries(c("RGCCA", "ggplot2", "optparse", "scales", "igraph", "MASS", "openxlsx", "rlang"))
 try(load_libraries("ggrepel"), silent = TRUE)
 
 tryCatch(
@@ -441,12 +441,13 @@ opt$superblock <- !("superblock" %in% names(opt))
 opt$scale <- !("scale" %in% names(opt))
 opt$text <- !("text" %in% names(opt))
 
+status <- 0
 tryCatch({
-    
+
     blocks <- load_blocks(opt$datasets, opt$names, opt$separator)
-    group <- load_response(blocks, opt$group, opt$separator, opt$header)
+    group <- load_response(blocks, "/home/etienne.camenen/bin/RGCCA/inst/extdata/political_system2.xlsx", opt$separator, opt$header)
     connection <- load_connection(file = opt$connection, separator = opt$separator)
-    
+
     func <- quote(
         rgcca(
             blocks = blocks,
@@ -559,8 +560,11 @@ tryCatch({
     
     save(rgcca_out, file = opt$o8)
     
-
     }, error = function(e){
-        if (!class(e)[1] %in% c("simpleError", "error", "condition" ))
-            quit(status = class(e)[1])
+        if (class(e)[1] %in% c("simpleError", "error", "condition" ))
+            status <<- 1
+        else
+            status <<- class(e)[1]
+        message(e$message)
 })
+quit(status = status)

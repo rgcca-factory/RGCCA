@@ -39,7 +39,7 @@ plot_bootstrap_2D <- function(
     cex_point = 3 * cex,
     cex_lab = 19 * cex){
 
-    stopifnot(is(b, "bootstrap"))
+    stopifnot(is(b, "df_bootstrap"))
     title <- paste0(title, collapse = " ")
     check_ncol(list(b), 1)
     for (i in c("cex", "cex_main", "cex_sub", "cex_point", "cex_lab"))
