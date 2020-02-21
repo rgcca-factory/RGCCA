@@ -147,7 +147,7 @@ rgcca <- function(
     }
 
     if (warn_on || !quiet)
-        message("RGCCA in progress ...")
+        message("Analysis in progress ...")
     
     func <- quote(
         gcca(

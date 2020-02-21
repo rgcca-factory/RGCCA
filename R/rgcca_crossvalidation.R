@@ -39,7 +39,7 @@ rgcca_crossvalidation <- function(
         n_cores <- 1
 
     if (is.null(rgcca_res$call$response))
-        stop("This function requiered a RGCCA in a supervised mode.")
+        stop("This function required an analysis in a supervised mode.")
 
     bloc_to_pred <- names(rgcca_res$call$blocks)[i_block]
 
