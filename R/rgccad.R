@@ -126,6 +126,7 @@
 
 rgccad=function (A, C = 1 - diag(length(A)), tau = rep(1, length(A)),  ncomp = rep(1, length(A)), scheme = "centroid", scale = TRUE,   init = "svd", bias = TRUE, tol = 1e-08, verbose = TRUE,sameBlockWeight=TRUE,na.rm=TRUE,estimateNA="no",prescaling=FALSE,quiet=FALSE)
 {
+  
   shave.matlist <- function(mat_list, nb_cols) mapply(function(m,nbcomp) m[, 1:nbcomp, drop = FALSE], mat_list, nb_cols, SIMPLIFY = FALSE)
   shave.veclist <- function(vec_list, nb_elts) mapply(function(m, nbcomp) m[1:nbcomp], vec_list, nb_elts, SIMPLIFY = FALSE)
   A0=A
@@ -133,7 +134,6 @@ rgccad=function (A, C = 1 - diag(length(A)), tau = rep(1, length(A)),  ncomp = r
   call=list(A=A, C = C,  ncomp = ncomp, scheme = scheme, scale = scale,   init = init, bias = bias, tol =tol, verbose = verbose,sameBlockWeight=sameBlockWeight,na.rm=na.rm,estimateNA=estimateNA)
   if (any(ncomp < 1)) {stop("Compute at least one component per block!")}	
   pjs <- sapply(A, NCOL) #nombre de variables par bloc
-  varij <- sapply(A,function(x){covarMat=cov2(x,bias=bias);varianceBloc=sum(diag(covarMat));return(varianceBloc)})
  # print("varij")
  # print(varij)
   nb_row <- NROW(A[[1]]) #nombre de lignes
@@ -180,14 +180,23 @@ rgccad=function (A, C = 1 - diag(length(A)), tau = rep(1, length(A)),  ncomp = r
         }
         if (scale == FALSE)
         { 
-            
+             
             A = lapply(A, function(x) scale2(x, scale=FALSE, bias = bias)) 
             if(sameBlockWeight)
             {
                 A = lapply(A, function(x) 
                 {
-                    covarMat=cov2(x,bias=bias);
-                    varianceBloc=sum(diag(covarMat)); 
+                    if(dim(x)[1]>dim(x)[2])
+                    {
+                        covarMat=cov2(x,bias=bias);
+                        varianceBloc=sum(diag(covarMat)); 
+                    }
+                    else
+                    {
+                        covarMat=cov2(t(x),bias=bias);
+                        varianceBloc=sum(diag(covarMat)); 
+                    }
+                  
                     return(x/sqrt(varianceBloc))
                 })
             }
@@ -222,8 +231,9 @@ rgccad=function (A, C = 1 - diag(length(A)), tau = rep(1, length(A)),  ncomp = r
   # cas ou le nombre de composantes
   if (N == 0) 
   { # cas ou on n'a qu'un axe a calculer par bloc
-    
+  
     result <- rgccak(A, C, tau = tau, scheme = scheme, init = init, bias = bias, tol = tol, verbose = verbose,na.rm=na.rm,estimateNA=estimateNA,sameBlockWeight=sameBlockWeight,scale=scale)
+   
     if(estimateNA%in%c("iterative","first","lebrusquet","superblock"))
     {
       A<-result$call$A
@@ -235,7 +245,15 @@ rgccad=function (A, C = 1 - diag(length(A)), tau = rep(1, length(A)),  ncomp = r
         for (j in 1:J)
         {
            # AVE_X[[j]] = mean(cor(A[[j]], Y[[j]],use="pairwise.complete.obs")^2,na.rm=TRUE)
-            AVE_X[[j]]=diag(cov(Y[[j]]))/sum(diag(cov(A[[j]] )))
+             if( dim(A[[j]])[1]>dim(A[[j]])[2])
+             {
+                 AVE_X[[j]]=diag(cov(Y[[j]]))/sum(diag(cov(A[[j]] )))
+             }
+             else
+             {
+                 AVE_X[[j]]=diag(cov(Y[[j]]))/sum(diag(t(cov(A[[j]]) )))
+             }
+             
         } 
         AVE_outer <- sum(pjs * unlist(AVE_X))/sum(pjs) 
    
@@ -265,12 +283,13 @@ rgccad=function (A, C = 1 - diag(length(A)), tau = rep(1, length(A)),  ncomp = r
   for (b in 1:J) P[[b]] <- a[[b]] <- astar[[b]] <- matrix(NA, pjs[[b]], N + 1)
   for (b in 1:J) Y[[b]] <- matrix(NA, nb_ind, N + 1)
   for (n in 1:N) 
-  {
+  { 
      if (verbose) 
       cat(paste0("Computation of the RGCCA block components #", n, " is under progress...\n"))
     if (is.vector(tau))  
       rgcca.result <- rgccak(R, C, tau = tau, scheme = scheme,init = init, bias = bias, tol = tol, verbose = verbose,na.rm=na.rm)
     else rgcca.result <- rgccak(R, C, tau = tau[n, ], scheme = scheme, init = init, bias = bias, tol = tol, verbose = verbose,na.rm=na.rm)
+   
     if (!is.numeric(tau)) 
       tau_mat[n, ] = rgcca.result$call$tau
     AVE_inner[n] <- rgcca.result$AVE_inner
@@ -321,8 +340,17 @@ rgccad=function (A, C = 1 - diag(length(A)), tau = rep(1, length(A)),  ncomp = r
        # print( AVE_X[[j]])
        # print("AVEinner 2")
        # AVEinner2=diag(cov(Y[[j]]))/sum(diag(cov(A[[j]] )))
-       # print(AVEinner2)    
-        AVE_X[[j]]=diag(cov2(Y[[j]]))/sum(diag(cov2(A[[j]] )),na.rm=TRUE)
+       # print(AVEinner2)  
+        if(dim(A[[j]])[1]>dim(A[[j]])[2])
+        {
+            AVE_X[[j]]=diag(cov2(Y[[j]]))/sum(diag(cov2(A[[j]] )),na.rm=TRUE)
+        }
+      else
+      {
+          AVE_X[[j]]=diag(cov2(Y[[j]]))/sum(diag(cov2(t(A[[j]]) )),na.rm=TRUE)
+          
+      }
+       
   }
   outer = matrix(unlist(AVE_X), nrow = max(ncomp))
   

@@ -28,10 +28,13 @@ plot_permut_2D <- function(
     cex_main = 25 * cex,
     cex_sub = 16 * cex,
     cex_point = 3 * cex,
-    cex_lab = 19 * cex) {
+    cex_lab = 19 * cex
+    ) {
+  
 
-    stopifnot(is(perm, "permutation"))
-    match.arg(type, c("crit", "zstat"))
+   
+    
+        match.arg(type, c("crit", "zstat"))
     for (i in c("cex", "cex_main", "cex_sub", "cex_point", "cex_lab"))
         check_integer(i, get(i))
     

@@ -5,7 +5,7 @@
 #' @inheritParams bootstrap
 #' @inheritParams rgcca
 #' @param p_spars A matrix, a vector or an integer containing sets of constraint 
-#' variables, one row by set. By default, sgcca.permute takes 10 sets between 
+#' variables, one row by combination. By default, sgcca.permute takes 10 sets between 
 #' min values ($1/sqrt(ncol)$) and 1
 #' @param p_ncomp A matrix, a vector or an integer containing sets of number of 
 #' components, one row by set. By default, sgcca.permute takes as many 
@@ -17,6 +17,7 @@
 #' @return \item{bestpenalties}{Penalties corresponding to the best Z-statistic}
 #' @return \item{permcrit}{RGCCA criteria obtained with permutation set}
 #' @return \item{crit}{ RGCCA criterion for the original dataset}
+#' @examples
 #' data("Russett")
 #' A = list(agriculture = Russett[, seq(3)], industry = Russett[, 4:5],
 #'     politic = Russett[, 6:11] )

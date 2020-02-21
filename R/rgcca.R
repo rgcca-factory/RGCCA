@@ -148,7 +148,7 @@ rgcca <- function(
 
     if (warn_on || !quiet)
         message("RGCCA in progress ...")
-
+    
     func <- quote(
         gcca(
             blocks = opt$blocks,
