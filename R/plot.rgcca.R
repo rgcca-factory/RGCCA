@@ -28,7 +28,7 @@ plot.rgcca=function(x,resp=rep(1, NROW(x$Y[[1]])),i_block=1,compx=1,compy=2,remo
 {
     if(is.null(i_block)){i_block=length(x$call$blocks)}
   
-    p1<-plot_ind(x,i_block=i_block,compx=compx,compy=compy,cex_sub=cex_sub,cex_main=cex_main,cex_lab=cex_lab,resp=resp,response_name=response_name,text=text_ind,title=title_var,...)
+    p1<-plot_ind(x,i_block=i_block,compx=compx,compy=compy,cex_sub=cex_sub,cex_main=cex_main,cex_lab=cex_lab,resp=resp,response_name=response_name,text=text_ind,title=title_ind,...)
     p2<-plot_var_2D(x,i_block=i_block,compx=compx,compy=compy,cex_sub=cex_sub,cex_main=cex_main,cex_lab=cex_lab,remove_var=remove_var,text=text_var,no_overlap=no_overlap,title=title_var,n_mark = n_mark,collapse=collapse)
     
    # p3<-plot_ave(x)
