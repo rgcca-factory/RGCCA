@@ -66,7 +66,6 @@ for (f in list.files(appDir))
 # rcon-pca, ridge-gca, , ssqcov-1, ssqcov-2, , sum-pca, sumcov-1, sumcov-2
 
 load_libraries(c(
-    "RGCCA",
     "ggplot2",
     "scales",
     "igraph",
