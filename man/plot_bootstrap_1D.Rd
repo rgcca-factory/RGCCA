@@ -4,8 +4,10 @@
 \alias{plot_bootstrap_1D}
 \title{Plot a bootstrap in 1D}
 \usage{
-plot_bootstrap_1D(b, x = "estimate", y = "occurrences", n_mark = 50,
-  title = NULL, colors = NULL, ...)
+plot_bootstrap_1D(b = NULL, df_b = NULL, x = "estimate",
+  y = "occurrences", n_mark = 50, title = NULL, colors = NULL,
+  comp = 1, i_block = length(b$bootstrap[[1]]), collapse = FALSE,
+  n_cores = parallel::detectCores() - 1, ...)
 }
 \arguments{
 \item{b}{A matrix of boostrap}
@@ -20,6 +22,14 @@ plot_bootstrap_1D(b, x = "estimate", y = "occurrences", n_mark = 50,
 "Samples")}
 
 \item{colors}{reoresenting a vector of colors}
+
+\item{comp}{An integer giving the index of the analysis components}
+
+\item{i_block}{An integer giving the index of a list of blocks}
+
+\item{collapse}{A boolean to combine the variables of each block as result}
+
+\item{n_cores}{An integer for the number of cores used in parallelization}
 
 \item{...}{Other parameters (see plot_histogram)}
 }
@@ -36,10 +46,10 @@ blocks = list(agriculture = Russett[, seq(3)], industry = Russett[, 4:5],
     politic = Russett[, 6:11] )
 rgcca_out = rgcca(blocks, sparsity = 0.75, type = "sgcca")
 boot = bootstrap(rgcca_out, 2, n_cores = 1)
-selected.var = get_bootstrap(boot, n_cores = 1)
-plot_bootstrap_1D(selected.var)
+plot_bootstrap_1D(boot, n_cores = 1)
 rgcca_out = rgcca(blocks)
 boot = bootstrap(rgcca_out, 2, n_cores = 1)
 selected.var = get_bootstrap(boot, n_cores = 1)
-plot_bootstrap_1D(selected.var)
+plot_bootstrap_1D(boot, n_cores = 1)
+plot_bootstrap_1D(df_b = selected.var)
 }

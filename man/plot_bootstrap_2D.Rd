@@ -4,10 +4,12 @@
 \alias{plot_bootstrap_2D}
 \title{Plot a bootstrap in 2D}
 \usage{
-plot_bootstrap_2D(b, x = "bootstrap_ratio", y = "occurrences",
-  title = paste("Variable selection \\nby", attributes(b)$n_boot,
-  "bootstraps"), colors = NULL, cex = 1, cex_main = 25 * cex,
-  cex_sub = 16 * cex, cex_point = 3 * cex, cex_lab = 19 * cex)
+plot_bootstrap_2D(b = NULL, df_b = NULL, x = "bootstrap_ratio",
+  y = "occurrences", title = paste("Variable selection \\nby",
+  attributes(b)$n_boot, "bootstraps"), colors = NULL, cex = 1,
+  cex_main = 25 * cex, cex_sub = 16 * cex, cex_point = 3 * cex,
+  cex_lab = 19 * cex, comp = 1, i_block = length(b$bootstrap[[1]]),
+  collapse = FALSE, n_cores = parallel::detectCores() - 1)
 }
 \arguments{
 \item{b}{A matrix of boostrap}
@@ -30,6 +32,14 @@ plot_bootstrap_2D(b, x = "bootstrap_ratio", y = "occurrences",
 \item{cex_point}{An integer for the size of the points or the text in the plot}
 
 \item{cex_lab}{An integer for the size of the axis titles}
+
+\item{comp}{An integer giving the index of the analysis components}
+
+\item{i_block}{Integer corresponding to the first block}
+
+\item{collapse}{A boolean to combine the variables of each block as result}
+
+\item{n_cores}{An integer for the number of cores used in parallelization}
 }
 \description{
 Biplot of the top variables from a SGCCA bootstrap with the number of
@@ -43,12 +53,12 @@ blocks = list(agriculture = Russett[, seq(3)], industry = Russett[, 4:5],
     politic = Russett[, 6:11] )
 rgcca_out = rgcca(blocks, sparsity = 0.75, type = "sgcca")
 boot = bootstrap(rgcca_out, 2, n_cores = 1)
-selected.var = get_bootstrap(boot, n_cores = 1)
-plot_bootstrap_2D(selected.var)
+plot_bootstrap_2D(boot, n_cores = 1)
 rgcca_out = rgcca(blocks)
 boot = bootstrap(rgcca_out, 2, n_cores = 1)
 selected.var = get_bootstrap(boot, n_cores = 1)
-plot_bootstrap_2D(selected.var)
+plot_bootstrap_2D(boot, n_cores = 1)
+plot_bootstrap_2D(df_b = selected.var)
 }
 \seealso{
 \code{\link[RGCCA]{bootstrap}}, \code{\link[RGCCA]{get_bootstrap}}

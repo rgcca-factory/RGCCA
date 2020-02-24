@@ -63,6 +63,15 @@ rgcca <- function(
     if (!missing(sparsity) && missing(type))
         type <- "sgcca"
 
+    if (!missing(connection) && missing(superblock))
+        superblock <- FALSE
+
+    if (!missing(response) && missing(superblock))
+        superblock <- FALSE
+
+    # if (!missing(superblock) && !(missing(response) || missing(connection)))
+        
+
     if (tolower(type) %in% c("sgcca", "spca", "spls")) {
         if (!missing(tau) && missing(sparsity))
            stop(paste0("sparsity parameter required for ", tolower(type), "(instead of tau)."))
@@ -115,10 +124,8 @@ rgcca <- function(
     opt$superblock <- check_superblock(response, opt$superblock, !quiet)
     opt$blocks <- set_superblock(opt$blocks, opt$superblock, type, !quiet)
 
-    if(opt$superblock && any(opt$tau)=="optimal")
-    {
+    if (opt$superblock && any(opt$tau) == "optimal")
         stop("Optimal tau is not available with superblock option.")
-    }
 
     if (!is.null(response)) {
         # || tolower(type) == "ra"
@@ -146,7 +153,7 @@ rgcca <- function(
             warn_on <- TRUE
     }
 
-    if (warn_on || !quiet)
+    if (warn_on && !quiet)
         message("Analysis in progress ...")
     
     func <- quote(

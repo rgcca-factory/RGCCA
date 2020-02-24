@@ -529,13 +529,15 @@ server <- function(input, output, session) {
             return(f)
     }
 
-    samples <- function(reponse_name = "") {
+    samples <- function() {
 
         if (!input$show_crossval)
             crossval <- NULL
 
         if (!is.null(input$response))
-            reponse_name <- getExtension(input$response$name)
+            response_name <- getExtension(input$response$name)
+        else
+            response_name = ""
 
         isolate({
             plot_ind(
@@ -546,7 +548,7 @@ server <- function(input, output, session) {
                 i_block = id_block,
                 text = if_text,
                 i_block_y = id_block_y,
-                reponse_name = reponse_name,
+                response_name = response_name,
                 predicted = crossval
             )
         })

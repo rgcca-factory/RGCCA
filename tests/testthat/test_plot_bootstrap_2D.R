@@ -5,9 +5,10 @@
  rgcca_out = rgcca(blocks, sparsity = 0.75, type = "sgcca")
  boot = bootstrap(rgcca_out, 2, n_cores = 1)
  selected.var = get_bootstrap(boot, n_cores = 1)
- plot_bootstrap_2D(selected.var)
+ plot_bootstrap_2D(boot, n_cores = 1)
  rgcca_out = rgcca(blocks)
  boot = bootstrap(rgcca_out, 2, n_cores = 1)
  selected.var = get_bootstrap(boot, n_cores = 1)
- plot_bootstrap_2D(selected.var)
+ plot_bootstrap_2D(boot, n_cores = 1)
+ plot_bootstrap_2D(df_b = selected.var)
 
