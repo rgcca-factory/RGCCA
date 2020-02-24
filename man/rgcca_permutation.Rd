@@ -17,7 +17,7 @@ rgcca_permutation(blocks, type = "rgcca", p_spars = TRUE,
 'sum-pca', 'sumcor', 'sumcov-1', 'sumcov-2', 'sumcov.', 'sabscov', 'plspm','cca', 'ra', 'ifa', 'pls','pca')}
 
 \item{p_spars}{A matrix, a vector or an integer containing sets of constraint 
-variables, one row by set. By default, sgcca.permute takes 10 sets between 
+variables, one row by combination. By default, sgcca.permute takes 10 sets between 
 min values ($1/sqrt(ncol)$) and 1}
 
 \item{p_ncomp}{A matrix, a vector or an integer containing sets of number of 
@@ -44,6 +44,12 @@ A list containing :
 \item{permcrit}{RGCCA criteria obtained with permutation set}
 
 \item{crit}{ RGCCA criterion for the original dataset}
+}
+\description{
+Run through a set of constraint parameters sparsitys to select the best with permutation
+Only one component per block for the time being
+}
+\examples{
 data("Russett")
 A = list(agriculture = Russett[, seq(3)], industry = Russett[, 4:5],
     politic = Russett[, 6:11] )
@@ -55,8 +61,4 @@ rgcca_permutation(A, p_spars = matrix(c(0.6, 0.75, 0.5), 3, 3, byrow = T), nperm
 rgcca_permutation(A, p_ncomp = 2, nperm = 2, n_cores = 1)
 rgcca_permutation(A, p_ncomp = c(2,2,3), nperm = 2, n_cores = 1)
 rgcca_permutation(A, p_ncomp = matrix(c(2,2,3), 3, 3, byrow = T), nperm = 2, n_cores = 1)
-}
-\description{
-Run through a set of constraint parameters sparsitys to select the best with permutation
-Only one component per block for the time being
 }

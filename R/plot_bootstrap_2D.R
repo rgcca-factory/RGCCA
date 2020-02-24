@@ -5,6 +5,7 @@
 #' Negative weights are colored in red and the positive ones are in green.
 #'
 #' @inheritParams plot2D
+#' @inheritParams get_bootstrap
 #' @param colors reoresenting a vector of colors
 #' @param b A matrix of boostrap
 #' @param x A character for the column to plot in x-axis
@@ -26,7 +27,8 @@
 #' @seealso \code{\link[RGCCA]{bootstrap}}, \code{\link[RGCCA]{get_bootstrap}}
 
 plot_bootstrap_2D <- function(
-    b,
+    b = NULL,
+    df_b = NULL,
     x = "bootstrap_ratio",
     y = "occurrences",
     title = paste("Variable selection \nby",
@@ -37,18 +39,29 @@ plot_bootstrap_2D <- function(
     cex_main = 25 * cex,
     cex_sub = 16 * cex,
     cex_point = 3 * cex,
-    cex_lab = 19 * cex){
+    cex_lab = 19 * cex,
+    comp = 1,
+    i_block = length(b$bootstrap[[1]]),
+    collapse = FALSE,
+    n_cores = parallel::detectCores() - 1) {
 
-    stopifnot(is(b, "df_bootstrap"))
+    if (missing(b) && missing(df_b))
+        stop("Please select a bootstrap object.")
+    if (!is.null(b)) {
+        df_b <- get_bootstrap(b, comp, i_block, collapse, n_cores)
+    }
+    if (!is.null(df_b))
+        stopifnot(is(df_b, "df_bootstrap"))
+
     title <- paste0(title, collapse = " ")
-    check_ncol(list(b), 1)
+    check_ncol(list(df_b), 1)
     for (i in c("cex", "cex_main", "cex_sub", "cex_point", "cex_lab"))
         check_integer(i, get(i))
     check_colors(colors)
 
     set_occ <- function(x) {
-        match.arg(x, names(attributes(b)$indexes))
-        if (x == "occurrences" && !x %in% colnames(b))
+        match.arg(x, names(attributes(df_b)$indexes))
+        if (x == "occurrences" && !x %in% colnames(df_b))
             return("sign")
         else
             return(x)
@@ -74,17 +87,17 @@ plot_bootstrap_2D <- function(
     }
 
     p <- ggplot(
-        b,
+        df_b,
         aes(
-            x = transform_x(b[, x]),
-            y = transform_x(b[, y]),
-            label = row.names(b),
+            x = transform_x(df_b[, x]),
+            y = transform_x(df_b[, y]),
+            label = row.names(df_b),
             color = as.factor(mean > 0)
     )) +
     geom_text(size = cex_point * 0.75) +
     labs(
-        y =  attributes(b)$indexes[[y]],
-        x =  attributes(b)$indexes[[x]],
+        y =  attributes(df_b)$indexes[[y]],
+        x =  attributes(df_b)$indexes[[x]],
         title = title
     ) +
     theme_classic() +

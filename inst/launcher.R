@@ -445,7 +445,7 @@ status <- 0
 tryCatch({
 
     blocks <- load_blocks(opt$datasets, opt$names, opt$separator)
-    group <- load_response(blocks, "/home/etienne.camenen/bin/RGCCA/inst/extdata/political_system2.xlsx", opt$separator, opt$header)
+    group <- load_response(blocks, opt$group, opt$separator, opt$header)
     connection <- load_connection(file = opt$connection, separator = opt$separator)
 
     func <- quote(
@@ -533,8 +533,8 @@ tryCatch({
     # Bootstrap
     boot <- bootstrap(rgcca_out, n_boot = 5)
     selected.var <- get_bootstrap(boot, opt$compx, opt$block)
-    plot_bootstrap_2D(selected.var)
-    plot_bootstrap_1D(selected.var)
+    plot_bootstrap_2D(df_b = selected.var)
+    plot_bootstrap_1D(df_b = selected.var)
     
     # Permutation
     if (length(blocks) > 1) {
