@@ -10,6 +10,7 @@
 #' @param b A matrix of boostrap
 #' @param x A character for the column to plot in x-axis
 #' @param y A character for the column to plot in y-axis
+#' @param df_b Result of get_bootstrap functions or dataframe #TODO
 #' @examples
 #' library(RGCCA)
 #' data("Russett")

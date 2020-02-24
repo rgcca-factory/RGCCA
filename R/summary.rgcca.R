@@ -1,6 +1,6 @@
 #'print.rgcca
 #' Print rgcca results
-#' @param x a result of rgcca function
+#' @param object a result of rgcca function
 #' @param ... other parameters used in print (for the displaying of matrices)
 #' @export
 #' @examples 
@@ -13,41 +13,41 @@
 #'res = rgcca(A, C, ncomp=rep(2,3),tau = c(1, 1, 1), scheme = "factorial", scale = TRUE,verbose=FALSE)
 #'print(res)
 
-summary.rgcca <- function(x,...) 
+summary.rgcca <- function(object,...) 
 {
   cat("Call: ")
-  dput(x$call[!names(x$call)%in%c("blocks","connection")])
+  dput(object$call[!names(object$call)%in%c("blocks","connection")])
   cat("\n\n")
  
-  if(is.list(x$crit))
+  if(is.list(object$crit))
   {
-      critByNcomp=sapply(x$crit,function(t){return(t[length(t)])})
+      critByNcomp=sapply(object$crit,function(t){return(t[length(t)])})
       cat("Sum_{j,k} c_jk g(cov(X_ja_j, X_ka_k) = ", sep = "", 
           paste(round(sum(critByNcomp), 4), sep = "", " "), fill = TRUE)
   }
   else
   {
       cat("Sum_{j,k} c_jk g(cov(X_ja_j, X_ka_k) = ", sep = "", 
-          paste(round(x$crit[length(x$crit)], 4), sep = "", " "), fill = TRUE)
+          paste(round(object$crit[length(object$crit)], 4), sep = "", " "), fill = TRUE)
   }
-  cat("There are J =", NCOL(x$call$connection), "blocks.", fill = TRUE)
+  cat("There are J =", NCOL(object$call$connection), "blocks.", fill = TRUE)
   cat("The design matrix is:\n") 
-  colnames(x$call$connection) = rownames(x$call$connection) = names(x$a) ; print(x$call$connection)
-  if(is.function(x$call$scheme))
+  colnames(object$call$connection) = rownames(object$call$connection) = names(object$a) ; print(object$call$connection)
+  if(is.function(object$call$scheme))
   {
-      cat("The", deparse(x$call$scheme), "scheme was used.", fill = TRUE)
+      cat("The", deparse(object$call$scheme), "scheme was used.", fill = TRUE)
   }
   else
   {
-      cat("The", x$call$scheme, "scheme was used.", fill = TRUE)
+      cat("The", object$call$scheme, "scheme was used.", fill = TRUE)
       
   }
-  if(x$call$type %in% c("rgcca"))   
+  if(object$call$type %in% c("rgcca"))   
   {param="regularization"
-    if(!is.matrix(x$tau))
+    if(!is.matrix(object$tau))
     {
-        for (i in 1:NCOL(x$call$connection)) {
-            tau <- x$call$tau[i]
+        for (i in 1:NCOL(object$call$connection)) {
+            tau <- object$call$tau[i]
             if (tau != "optimal")
                 tau <- round(tau , 4)
             
@@ -60,14 +60,14 @@ summary.rgcca <- function(x,...)
     else
     {
         cat("The",param," parameter used for block", i, "was: \n")
-        print(round(x$tau,4),...)
+        print(round(object$tau,4),...)
     }
   }
-  if(x$call$type %in% c("sgcca"))
-      if(!is.matrix(x$sparsity))
+  if(object$call$type %in% c("sgcca"))
+      if(!is.matrix(object$sparsity))
       {
-          for (i in 1:NCOL(x$call$connection)) {
-              sparsity <- x$call$sparsity[i]
+          for (i in 1:NCOL(object$call$connection)) {
+              sparsity <- object$call$sparsity[i]
              param="shrinkage"
               cat("The",param," parameter used for block", i, "was:", 
                   sparsity, fill = TRUE)
@@ -76,6 +76,6 @@ summary.rgcca <- function(x,...)
   else
   {
       cat("The",param," parameter used for block", i, "was: \n")
-      print(round(x$tau,4),...)
+      print(round(object$tau,4),...)
   }
 }

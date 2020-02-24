@@ -12,13 +12,13 @@
 #' rownames(X1)=rownames(X2)=paste0("S",1:70);A=list(X1,X2);
 #' listResults=whichNAmethod(blocks=A,patternNA=c(0.1,0.2),
 #' listMethods=c("mean","complete","nipals","knn4"))
-#' plot.whichNAmethod(x=listResults,ylim=c(0,1),output="a")
+#' plot(x=listResults,ylim=c(0,1),output="a")
 #' @importFrom grDevices graphics.off 
 #' @importFrom graphics plot.new
 #' @export
 
 
-plot.whichNAmethod=function(x,output="rv",ylim=NULL,block="all",barType="sd",main=NULL,ylab="")
+plot.whichNAmethod=function(x,output="rv",ylim=NULL,block="all",barType="sd",main=NULL,ylab="",...)
 { #output : "rv", "pct" ou "a"
   #barType="sd" or "stderr"
     

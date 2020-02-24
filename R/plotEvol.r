@@ -6,6 +6,7 @@
 #' @param barType ="sd" or "stderr". Indicates which error bar to build
 #' @param main =NULL Title of the graph (before the block name)
 #' @param names.arg  renaming the methods
+#' @param ... Further plot parameters...
 #' @examples 
 #' set.seed(42);X1=matrix(rnorm(350),70,5);X2=matrix(rnorm(280),70,4)
 #' colnames(X1)=paste("A",1:5)
@@ -17,7 +18,7 @@
 #' plot(x=listResults,ylim=c(0,1),output="a")
 #' @importFrom grDevices graphics.off
 #' @export
-plot.naEvolution=function(x,output="rv",ylim=NULL,block="all",barType="sd",main=NULL,names.arg=NULL)
+plot.naEvolution=function(x,output="rv",ylim=NULL,block="all",barType="sd",main=NULL,names.arg=NULL,...)
 { #output : "rv", "pct" ou "a"
   #barType="sd" or "stderr"
   #  graphics.off()
@@ -103,7 +104,7 @@ plot.naEvolution=function(x,output="rv",ylim=NULL,block="all",barType="sd",main=
     par(mgp=c(3,1,0))
     if(is.null(main)){title=paste(main,": Block",j)}else{title=main}
     par(mar=c(3,3,1,1))
-    plot(NULL,main=title,xlim=c(0,length(abscisse)),ylim=Ylim,xlab="Proportion of missing values",ylab="",bty="n",xaxt="n")
+    plot(NULL,main=title,xlim=c(0,length(abscisse)),ylim=Ylim,xlab="Proportion of missing values",ylab="",bty="n",xaxt="n",...)
     axis(side = 1,col="grey",line=0,at=-0.5+1:length(abscisse),labels=abscisse)
     axis(side = 2,col="grey",line=0)
     rect(par("usr")[1], par("usr")[3], par("usr")[2], par("usr")[4], col = 

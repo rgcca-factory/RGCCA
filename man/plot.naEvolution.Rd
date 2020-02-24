@@ -4,11 +4,12 @@
 \alias{plot.naEvolution}
 \title{Plots the impact of increasing missing data on RGCCA}
 \usage{
-\method{plot}{naEvolution}(listFinale, output = "rv", ylim = NULL,
-  block = "all", barType = "sd", main = NULL, names.arg = NULL)
+\method{plot}{naEvolution}(x, output = "rv", ylim = NULL,
+  block = "all", barType = "sd", main = NULL, names.arg = NULL,
+  ...)
 }
 \arguments{
-\item{listFinale}{A list resulting of naEvolution}
+\item{x}{A list resulting of naEvolution}
 
 \item{output}{="rv": Can be also "a" for correlations between axes, "bm" for the percent of similar biomarkers, "rvComplete" if the RV is calculated only on complete dataset, or "rmse" for Root Mean Squares Error.}
 
@@ -21,6 +22,8 @@
 \item{main}{=NULL Title of the graph (before the block name)}
 
 \item{names.arg}{renaming the methods}
+
+\item{...}{Further plot parameters...}
 }
 \description{
 Plots the impact of increasing missing data on RGCCA
@@ -33,5 +36,5 @@ rownames(X1)=rownames(X2)=paste("S",1:70)
 A=list(X1,X2)
 listResults=naEvolution(blocks=A,prctNA=c(0.1,0.2,0.3,0.4),
 listMethods=c("mean","complete","nipals","knn4"))
-plot(listFinale=listResults,ylim=c(0,1),output="a")
+plot(x=listResults,ylim=c(0,1),output="a")
 }

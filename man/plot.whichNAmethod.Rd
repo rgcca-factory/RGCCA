@@ -4,11 +4,11 @@
 \alias{plot.whichNAmethod}
 \title{Plots the impact of increasing missing data on RGCCA}
 \usage{
-\method{plot}{whichNAmethod}(listFinale, output = "rv", ylim = NULL,
-  block = "all", barType = "sd", main = NULL, ylab = "")
+\method{plot}{whichNAmethod}(x, output = "rv", ylim = NULL,
+  block = "all", barType = "sd", main = NULL, ylab = "", ...)
 }
 \arguments{
-\item{listFinale}{A list resulting of which NA method}
+\item{x}{A list resulting of which NA method}
 
 \item{output}{="rv": Can be also "a" for correlations between axes, "bm" for the percent of similar biomarkers, "rvComplete" if the RV is calculated only on complete dataset, or "rmse" for Root Mean Squares Error.}
 
@@ -31,5 +31,5 @@ colnames(X1)=paste("A",1:5);colnames(X2)=paste("B",1:4);
 rownames(X1)=rownames(X2)=paste0("S",1:70);A=list(X1,X2);
 listResults=whichNAmethod(blocks=A,patternNA=c(0.1,0.2),
 listMethods=c("mean","complete","nipals","knn4"))
-plot.whichNAmethod(listFinale=listResults,ylim=c(0,1),output="a")
+plot(x=listResults,ylim=c(0,1),output="a")
 }
