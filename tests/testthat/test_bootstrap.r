@@ -32,11 +32,11 @@
  blocks[[1]][4,]=NA
  resRGCCA=rgcca(blocks,ncomp=c(2,2,2))
  set.seed(seed=18)
- resBootstrap=bootstrap( rgcca=resRGCCA,n_boot = 2)
- select_var=get_bootstrap(resBootstrap)
- plot_bootstrap_1D(select_var)
+ resBootstrap=bootstrap( rgcca=resRGCCA, n_boot = 2, n_cores = 1)
+ select_var=get_bootstrap(resBootstrap, n_cores = 1)
+ plot_bootstrap_1D(df_b = select_var)
  
-  test_that("test_bootstrap1",{expect_true(select_var["labo", 1]==mean(c(resBootstrap[[1]][[4]]["labo", 1], resBootstrap[[2]][[4]]["labo", 1]))
+  test_that("test_bootstrap1",{expect_true(select_var["labo", 1]==mean(c(resBootstrap$bootstrap[[1]][[4]]["labo", 1], resBootstrap$bootstrap[[2]][[4]]["labo", 1]))
 ) })
  
  test_that("test_bootstrap2",{expect_true(select_var["labo", 2]==resRGCCA$a[[4]]["labo", 1]) })
