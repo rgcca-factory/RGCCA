@@ -15,6 +15,8 @@
 \arguments{
 \item{x}{Result of rgcca function}
 
+\item{type}{Type among c("ind","var","both","ave","top","network"). "ind" for individual graph, "var" for variable graph, "both" for both, "ave" for the variance average in each block, "net"for network}
+
 \item{resp}{A vector of characters corresponding either to a qualitative
 variable with levels or a continuous variable}
 

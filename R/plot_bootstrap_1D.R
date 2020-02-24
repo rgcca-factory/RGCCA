@@ -6,6 +6,7 @@
 #' the boostrap  (according to an ascending gradient from red to blue)
 #' @inheritParams plot_histogram
 #' @inheritParams get_bootstrap
+#' @param df_b Result of get_bootstrap functions or dataframe #TODO
 #' @param b A matrix of boostrap
 #' @param x A character for the column used in the plot
 #' @param y A character for the column to color the bars

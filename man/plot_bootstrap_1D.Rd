@@ -12,6 +12,8 @@ plot_bootstrap_1D(b = NULL, df_b = NULL, x = "estimate",
 \arguments{
 \item{b}{A matrix of boostrap}
 
+\item{df_b}{Result of get_bootstrap functions or dataframe #TODO}
+
 \item{x}{A character for the column used in the plot}
 
 \item{y}{A character for the column to color the bars}

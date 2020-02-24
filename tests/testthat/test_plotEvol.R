@@ -11,6 +11,6 @@ rownames(X1)=rownames(X2)=paste("S",1:70)
  
  res=1
  #graphics.off()
- res=plot(listFinale=listResults,ylim=c(0,1),output="a")
+ res=plot.naEvolution(x=listResults,ylim=c(0,1),output="a")
  test_that("naEvolution_1",{expect_true(is.null(res))})
 

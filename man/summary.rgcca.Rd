@@ -5,10 +5,10 @@
 \title{print.rgcca
 Print rgcca results}
 \usage{
-\method{summary}{rgcca}(x, ...)
+\method{summary}{rgcca}(object, ...)
 }
 \arguments{
-\item{x}{a result of rgcca function}
+\item{object}{a result of rgcca function}
 
 \item{...}{other parameters used in print (for the displaying of matrices)}
 }

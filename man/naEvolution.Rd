@@ -66,5 +66,5 @@ A = list(agri=X_agric, ind=X_ind, polit=X_polit)
 listResults=naEvolution(blocks=A,listMethods=c("complete","nipals","mean"),
 prctNA=c(0.05,0.1,0.15,0.2,0.25,0.3,0.4),typeNA="ponc",ncomp=rep(1,3),
 sameBlockWeight=FALSE)
-plotEvol(listResults,output="a",barType = "stderr",ylim=c(0,0.2))
+plot(listResults,output="a",barType = "stderr",ylim=c(0,0.2))
 }

@@ -14,6 +14,8 @@ plot_bootstrap_2D(b = NULL, df_b = NULL, x = "bootstrap_ratio",
 \arguments{
 \item{b}{A matrix of boostrap}
 
+\item{df_b}{Result of get_bootstrap functions or dataframe #TODO}
+
 \item{x}{A character for the column to plot in x-axis}
 
 \item{y}{A character for the column to plot in y-axis}
