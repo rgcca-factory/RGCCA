@@ -4,9 +4,10 @@
 \alias{plot.rgcca}
 \title{Regularized Generalized Canonical Correlation Analysis (RGCCA)}
 \usage{
-\method{plot}{rgcca}(x, resp = rep(1, NROW(x$Y[[1]])), i_block = 1,
-  compx = 1, compy = 2, remove_var = FALSE, text_var = TRUE,
-  text_ind = TRUE, response_name = "Response", no_overlap = FALSE,
+\method{plot}{rgcca}(x, type = "both", resp = rep(1, NROW(x$Y[[1]])),
+  i_block = 1, i_block_y = i_block, compx = 1, compy = 2,
+  remove_var = FALSE, text_var = TRUE, text_ind = TRUE,
+  response_name = "Response", no_overlap = FALSE, title = NULL,
   title_var = "Variable correlations with", title_ind = "Sample space",
   n_mark = 100, collapse = FALSE, cex_sub = 10, cex_main = 14,
   cex_lab = 12, ...)
@@ -18,6 +19,9 @@
 variable with levels or a continuous variable}
 
 \item{i_block}{An integer giving the index of a list of blocks}
+
+\item{i_block_y}{An integer giving the index of a list of blocks (another
+one, different from the one used in i_block)}
 
 \item{compx}{An integer giving the index of the analysis component used
 for the x-axis}
@@ -37,6 +41,9 @@ or with circles (FALSE)}
 \item{response_name}{A character giving the legend title}
 
 \item{no_overlap}{A boolean to avoid overlap in plotted text}
+
+\item{title}{A character with the name of the space (either "Variables" or
+"Samples")}
 
 \item{title_var}{Character for the title of the variable space}
 

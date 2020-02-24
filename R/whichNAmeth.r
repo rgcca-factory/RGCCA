@@ -87,5 +87,6 @@ whichNAmethod=function(blocks,listNAdataset=NULL,connection=matrix(1,length(bloc
     }
     return(indicators)
   })
+  class(resultComparison)<- "whichNAmethod"
   return(resultComparison)
 }

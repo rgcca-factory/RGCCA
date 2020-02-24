@@ -110,5 +110,7 @@ determine_patternNA=function(blocks,graph="all",legend=FALSE,outlierVisible=TRUE
      text(0.6, 1, "min");   text(0.6, 50, "max")
      
  }
-  return(list(pctNA=pctNA,pctNAbyBlock=pctNAbyBlock,completeSubjectByBlock=completeSubjectByBlock,completeSubjects=completeSubjects, numberOfMissingBlocksPerSubject= numberOfMissingBlocksPerSubject,blocks=blocks))
+   patternNA=list(pctNA=pctNA,pctNAbyBlock=pctNAbyBlock,completeSubjectByBlock=completeSubjectByBlock,completeSubjects=completeSubjects, numberOfMissingBlocksPerSubject= numberOfMissingBlocksPerSubject,blocks=blocks)
+   class(patternNA)="patternNA"
+   return(patternNA)
 }

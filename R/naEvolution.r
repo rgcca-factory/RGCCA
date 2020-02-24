@@ -47,5 +47,6 @@ naEvolution=function(blocks,prctNA=c(0.1,0.2,0.3),listMethods=c("mean"),typeNA="
         resultComparison[[as.character(prct)]]=whichNAmethod(blocks=blocks,connection=connection,tau=tau,listMethods=listMethods,patternNA=rep(prct,length(blocks)),typeNA=typeNA,ncomp=ncomp,sameBlockWeight=sameBlockWeight,scale=scale,nDatasets=nDatasets,tol=tol,verbose=verbose,scheme=scheme,seed=seed+i)
         i=i+10
     }
+    class(resultComparison)<-"naEvolution"
     return(resultComparison)
 }

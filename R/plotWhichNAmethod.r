@@ -1,5 +1,5 @@
 #'Plots the impact of increasing missing data on RGCCA
-#' @param listFinale A list resulting of which NA method
+#' @param x A list resulting of which NA method
 #' @param output ="rv": Can be also "a" for correlations between axes, "bm" for the percent of similar biomarkers, "rvComplete" if the RV is calculated only on complete dataset, or "rmse" for Root Mean Squares Error.
 #' @param ylim =c(0.8,1) y limits
 #' @param block ="all" or a number indicating the position of the chosen block in the initial list
@@ -12,13 +12,13 @@
 #' rownames(X1)=rownames(X2)=paste0("S",1:70);A=list(X1,X2);
 #' listResults=whichNAmethod(blocks=A,patternNA=c(0.1,0.2),
 #' listMethods=c("mean","complete","nipals","knn4"))
-#' plotWhichNAmethod(listFinale=listResults,ylim=c(0,1),output="a")
+#' plot.whichNAmethod(x=listResults,ylim=c(0,1),output="a")
 #' @importFrom grDevices graphics.off 
 #' @importFrom graphics plot.new
 #' @export
 
 
-plotWhichNAmethod=function(listFinale,output="rv",ylim=NULL,block="all",barType="sd",main=NULL,ylab="")
+plot.whichNAmethod=function(x,output="rv",ylim=NULL,block="all",barType="sd",main=NULL,ylab="")
 { #output : "rv", "pct" ou "a"
   #barType="sd" or "stderr"
     
@@ -27,12 +27,12 @@ plotWhichNAmethod=function(listFinale,output="rv",ylim=NULL,block="all",barType=
   match.arg(output,c("rv","rvComplete","a","rmse","bm"))
   if(is.null(main)){main=output}
   #graphics.off()
- nameData= names(listFinale)
+ nameData= names(x)
   abscisse=as.numeric(substr(nameData,5,7));names(abscisse)=nameData
-  abscisse=1:length(listFinale[[1]])
+  abscisse=1:length(x[[1]])
   pas=1 
   par(las=1)
-  J=length(listFinale[[1]][[1]][[1]]) #nblock
+  J=length(x[[1]][[1]][[1]]) #nblock
  # close.screen(all.screens=TRUE)
   if(block=="all")
   { 
@@ -44,7 +44,7 @@ plotWhichNAmethod=function(listFinale,output="rv",ylim=NULL,block="all",barType=
       toPlot=block:block
   }
   # print(toPlot)
-  namesMethod=names(listFinale[[1]])
+  namesMethod=names(x[[1]])
   #colMethod=rainbow(5)[1:length(namesMethod)]
   colMethod=c("cornflowerblue","chocolate1","chartreuse3","red","blueviolet","darkturquoise","darkgoldenrod1","coral","bisque4","darkorchid1","deepskyblue1")[1:length(namesMethod)]
   nMeth=0:length(namesMethod)
@@ -60,7 +60,7 @@ plotWhichNAmethod=function(listFinale,output="rv",ylim=NULL,block="all",barType=
     
     for(rg in namesMethod)
     {
-      result=sapply(listFinale,function(x){return(x[[rg]][[output]][[j]])})
+      result=sapply(x,function(x){return(x[[rg]][[output]][[j]])})
       moyenne[rg]=mean(result)
       if(barType =="no"){ecartType=0}
       if(barType=="sd"){ecartType[rg]=sd(result)}

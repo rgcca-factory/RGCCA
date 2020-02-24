@@ -212,10 +212,6 @@ rgcca <- function(
     ))
         func_out$call[[i]] <- as.list(environment())[[i]]
 
-    # adding potential modified A to the list of outputs 
-    # (if imputed or restricted -only complete)
-    if (method != "nipals")
-        func_out$usedBlocks <- func_out$A
 
     class(func_out) <- "rgcca"
     invisible(func_out)

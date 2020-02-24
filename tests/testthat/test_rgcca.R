@@ -189,6 +189,7 @@ pcasb_ind=abs(cor(pcaSB$x[,1],scaledPCASB$Y[[1]][,1]))==1
  X_ind = as.matrix(Russett[,c("gnpr","labo")]);
  X_polit = as.matrix(Russett[ , c("demostab")]);
  A = list(X_agric,X_ind,X_agric);
+ names(A)=c("Agri","Ind","Agri")
  resRGCCA= rgcca (
      blocks=A,
      connection = 1 - diag(length(A)),

@@ -237,7 +237,7 @@ The idea is to compare the results of the different "missing methods" to the ori
 ```{r, fig.height = 6, fig.width = 6, fig.align = "center"}
 res=whichNAmethod(A_missing,listMethods=c("knn1","knn2","knn3","knn4","mean"),
                   patternNA=patternNA$pctNAbyBlock,nDatasets = 5)
-plotWhichNAmethod(res,output="a",ylim=c(0,1))
+plot(res,output="a",ylim=c(0,1))
 ```
 
 In this case, the best method for the similarities between weights is 
@@ -250,7 +250,7 @@ listResults=naEvolution(blocks=A,listMethods=c("complete","nipals","mean"),
        ,nDatasets = 10)
 ```
 ```{r, fig.height = 4, fig.width = 6, fig.align = "center"}
-plotEvol(listResults,output="a",barType = "stderr")
+plot(listResults,output="a",barType = "stderr")
 ```
 
 

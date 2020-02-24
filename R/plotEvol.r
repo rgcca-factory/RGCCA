@@ -1,5 +1,5 @@
 #'Plots the impact of increasing missing data on RGCCA
-#' @param listFinale A list resulting of naEvolution
+#' @param x A list resulting of naEvolution
 #' @param output ="rv": Can be also "a" for correlations between axes, "bm" for the percent of similar biomarkers, "rvComplete" if the RV is calculated only on complete dataset, or "rmse" for Root Mean Squares Error.
 #' @param ylim =c(0.8,1) y limits
 #' @param block ="all" or a number indicating the position of the chosen block in the initial list
@@ -14,10 +14,10 @@
 #' A=list(X1,X2)
 #' listResults=naEvolution(blocks=A,prctNA=c(0.1,0.2,0.3,0.4),
 #' listMethods=c("mean","complete","nipals","knn4"))
-#' plotEvol(listFinale=listResults,ylim=c(0,1),output="a")
+#' plot(x=listResults,ylim=c(0,1),output="a")
 #' @importFrom grDevices graphics.off
 #' @export
-plotEvol=function(listFinale,output="rv",ylim=NULL,block="all",barType="sd",main=NULL,names.arg=NULL)
+plot.naEvolution=function(x,output="rv",ylim=NULL,block="all",barType="sd",main=NULL,names.arg=NULL)
 { #output : "rv", "pct" ou "a"
   #barType="sd" or "stderr"
   #  graphics.off()
@@ -28,9 +28,9 @@ plotEvol=function(listFinale,output="rv",ylim=NULL,block="all",barType="sd",main
     }
     match.arg(barType,c("sd","stderr"))
     match.arg(output,c("rv","rvComplete","bm","rmse","a"))
-  nameData= names(listFinale)
+  nameData= names(x)
   abscisse=as.numeric(nameData)
-  J=length(listFinale[[1]][[1]][[1]][[1]]) #nblock
+  J=length(x[[1]][[1]][[1]][[1]]) #nblock
   if(block=="all"&&J<5)
   {  
     #  close.screen(all.screens = TRUE) ;
@@ -42,7 +42,7 @@ plotEvol=function(listFinale,output="rv",ylim=NULL,block="all",barType="sd",main
   {
       toPlot=block:block
   }
-  namesMethod=as.character(names(listFinale[[1]][[1]]))
+  namesMethod=as.character(names(x[[1]][[1]]))
   #colMethod=rainbow(5)[1:length(namesMethod)]
   colMethod=c("cornflowerblue","chocolate1","chartreuse3","red","blueviolet","darkturquoise","darkgoldenrod1","coral","bisque4","darkorchid1","deepskyblue1")[1:length(namesMethod)]
   nMeth=0:length(namesMethod)
@@ -63,7 +63,7 @@ plotEvol=function(listFinale,output="rv",ylim=NULL,block="all",barType="sd",main
       for(rg in namesMethod)
       {  
       
-        result=sapply(listFinale[[da]],function(x){return(x[[rg]][[output]][j])})
+        result=sapply(x[[da]],function(x){return(x[[rg]][[output]][j])})
       
         moyenne[[j]][da,rg]=mean(result)
         if(!barType %in% c("sd","stderr")){ecartType[[j]][da,rg]=0}

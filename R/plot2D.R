@@ -108,7 +108,23 @@ plot2D <- function(
             margin = margin
         )
     }
-
+    names_blocks=names(rgcca_res$call$blocks)
+    if(is.null(names_blocks))
+    {
+        names_blocks=paste("Block", 1:length(rgcca_res$call$blocks))
+    }
+    if(i_block!=i_block_y)
+    {
+        xlab=paste0(print_comp(rgcca_res, compx, i_block)," - ", names_blocks[i_block])
+        ylab=paste0(print_comp(rgcca_res, compy, i_block_y)," - ", names_blocks[i_block_y])
+    }
+    else
+    {
+        xlab=print_comp(rgcca_res, compx, i_block)
+        ylab=print_comp(rgcca_res, compy, i_block_y)
+        
+    }
+        
     p <- p + eval(as.call(func)) + theme_classic() + geom_vline(
             xintercept = 0,
             col = "grey",
@@ -121,8 +137,8 @@ plot2D <- function(
             size = 1
         ) + labs(
                 title = title,
-                x = print_comp(rgcca_res, compx, i_block),
-                y = print_comp(rgcca_res, compy, i_block_y),
+                x = xlab,
+                y = ylab,
             color = name_group,
             shape = name_group
         ) + 

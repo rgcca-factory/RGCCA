@@ -62,7 +62,5 @@ plot_network <- function(
         vertex.label.degree = 1.5,
         vertex.size = 23,
         main = title
-   
     )
-
 }
