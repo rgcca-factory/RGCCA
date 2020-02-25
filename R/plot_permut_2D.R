@@ -11,15 +11,7 @@
 #' @param cex_sub = 16 * cex, size of the subtitle text 
 #' @param cex_point = 3 * cex, size of the point
 #' @param cex_lab = 19 * cex, size of the labels
-#' @examples
-#' data("Russett")
-#' A = list(agriculture = Russett[, seq(3)], industry = Russett[, 4:5],
-#'     politic = Russett[, 6:11] )
-#' perm <- rgcca_permutation(A, nperm = 2, n_cores = 1)
-#' plot_permut_2D(perm)
-#' perm <- rgcca_permutation(A, p_spars = TRUE, nperm = 2, n_cores = 1)
-#' plot_permut_2D(perm)
-#' @export
+
 plot_permut_2D <- function(
     perm, 
     type = "zstat",

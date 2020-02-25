@@ -9,8 +9,8 @@
   remove_var = FALSE, text_var = TRUE, text_ind = TRUE,
   response_name = "Response", no_overlap = FALSE, title = NULL,
   title_var = "Variable correlations with", title_ind = "Sample space",
-  n_mark = 100, collapse = FALSE, cex_sub = 10, cex_main = 14,
-  cex_lab = 12, ...)
+  n_mark = 100, collapse = FALSE, cex = 1, cex_sub = 10,
+  cex_main = 14, cex_lab = 12, colors = NULL, ...)
 }
 \arguments{
 \item{x}{Result of rgcca function}
@@ -55,11 +55,15 @@ or with circles (FALSE)}
 
 \item{collapse}{A boolean to combine the variables of each block as result}
 
+\item{cex}{An integer for the size of the plot parameters}
+
 \item{cex_sub}{An integer for the size of the subtitle}
 
 \item{cex_main}{An integer for the size of the title}
 
 \item{cex_lab}{An integer for the size of the axis titles}
+
+\item{colors}{representing a vector of the colors used in the graph. Either a vector of integers (each integer corresponding to a color) or of characters corresponding to names of colors (as "blue",see colors()) or RGB code ("#FFFFFF").}
 
 \item{...}{Further graphical parameters applied to both (individual and variable) spaces}
 }

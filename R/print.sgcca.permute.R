@@ -1,6 +1,7 @@
 #' Prints the results of permutation rgcca
 #' @param x result of rgcca_permutation
-print.permutation <- function (x) 
+#' @param ... Further print parameters
+print.permutation <- function (x,...) 
 {
   cat("Call: ")
   dput(x$call)
@@ -21,5 +22,5 @@ print.permutation <- function (x)
   rownames(c1s) = 1:NROW(c1s)
     cat(fill = TRUE)
   cat("Tuning parameters used: ", fill = TRUE)
-  print(c1s, quote = FALSE)
+  print(c1s, quote = FALSE,...)
 }

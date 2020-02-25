@@ -200,7 +200,7 @@ plot_var_1D(rgcca_out)
 
 ### Best explained blocks
 ```{r}
-plot_ave(rgcca_out)
+plot(rgcca_out,type="ave")
 ```
 
 ### Bootstrap
