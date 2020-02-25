@@ -6,7 +6,7 @@
 \usage{
 \method{plot}{bootstrap}(x, type = "1D",
   i_block = length(x$rgcca$call$blocks), colors = NULL, title = NULL,
-  cex = 1, ...)
+  cex = 1, n_cores = parallel::detectCores() - 1, ...)
 }
 \arguments{
 \item{x}{result of get_bootstrap}
@@ -21,6 +21,8 @@
 "Samples")}
 
 \item{cex}{An integer for the size of the plot parameters}
+
+\item{n_cores}{An integer for the number of cores used in parallelization}
 
 \item{...}{Other parameters (see plot_histogram)}
 }

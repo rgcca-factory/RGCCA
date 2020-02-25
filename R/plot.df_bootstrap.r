@@ -4,7 +4,7 @@
 #' @inheritParams plot_bootstrap_1D
 #' @inheritParams plot_bootstrap_2D
 #' @export
-plot.bootstrap=function(x,type="1D",i_block=length(x$rgcca$call$blocks),colors=NULL,title=NULL,cex=1,...)
+plot.bootstrap=function(x,type="1D",i_block=length(x$rgcca$call$blocks),colors=NULL,title=NULL,cex=1,n_cores= parallel::detectCores() - 1,...)
 {
     if(type=="1D")
     {
@@ -19,7 +19,7 @@ plot.bootstrap=function(x,type="1D",i_block=length(x$rgcca$call$blocks),colors=N
             comp = 1,
             i_block = i_block,
             collapse = FALSE,
-            n_cores = parallel::detectCores() - 1,
+            n_cores =n_cores,
             ...)
     }
     if(type=="2D")
@@ -41,7 +41,7 @@ plot.bootstrap=function(x,type="1D",i_block=length(x$rgcca$call$blocks),colors=N
             comp = 1,
             i_block = i_block,
             collapse = FALSE,
-            n_cores = parallel::detectCores() - 1)
+            n_cores = n_cores)
     }
     plot(p1)
 }
