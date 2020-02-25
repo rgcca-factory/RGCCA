@@ -13,10 +13,12 @@
 plot_network <- function(
     rgcca_res, 
     title = paste0("Common rows between blocks : ",
-                   NROW(rgcca_res$call$blocks[[1]]))) {
+                   NROW(rgcca_res$call$blocks[[1]])),
+    colors =  "#eee685") {
 
     stopifnot(is(rgcca_res, "rgcca"))
     title <- paste0(title, collapse = " ")
+    check_colors(colors)
 
     load_libraries("igraph")
 
@@ -38,8 +40,8 @@ plot_network <- function(
         nodes[, par] <- rep("optimal", length(rgcca_res$call$blocks))
         V(net)$call$tau <- rep(1, length(rgcca_res$call$blocks))
     }
-
-    V(net)$color <- "khaki2"
+    
+    V(net)$color <- as.vector(colors[1])
     V(net)$label <- paste(
         nodes$id,
         "\nP =",
