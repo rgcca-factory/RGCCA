@@ -30,12 +30,3 @@ the RGCCA criterion and 'zstat' for the pseudo Z-score)}
 \description{
 Plot permuation in 2D
 }
-\examples{
-data("Russett")
-A = list(agriculture = Russett[, seq(3)], industry = Russett[, 4:5],
-    politic = Russett[, 6:11] )
-perm <- rgcca_permutation(A, nperm = 2, n_cores = 1)
-plot_permut_2D(perm)
-perm <- rgcca_permutation(A, p_spars = TRUE, nperm = 2, n_cores = 1)
-plot_permut_2D(perm)
-}

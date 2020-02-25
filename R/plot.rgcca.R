@@ -9,6 +9,7 @@
 #' or with circles (FALSE)
 #' @param title_ind Character for the title of the individual space 
 #' @param title_var Character for the title of the variable space 
+#' @param colors representing a vector of the colors used in the graph. Either a vector of integers (each integer corresponding to a color) or of characters corresponding to names of colors (as "blue",see colors()) or RGB code ("#FFFFFF").
 #' @param ... Further graphical parameters applied to both (individual and variable) spaces
 #' @inheritParams plot_ind
 #' @inheritParams plot2D
@@ -25,43 +26,47 @@
 #' plot(resRgcca)
 #' @importFrom gridExtra grid.arrange
 #' @export
-plot.rgcca=function(x,type="both",resp=rep(1, NROW(x$Y[[1]])),i_block=1,i_block_y=i_block,compx=1,compy=2,remove_var=FALSE,text_var=TRUE,text_ind=TRUE,response_name= "Response",no_overlap=FALSE,title=NULL,title_var="Variable correlations with",title_ind= "Sample space",n_mark=100,collapse=FALSE,cex_sub=10,cex_main=14,cex_lab=12,...)
+plot.rgcca=function(x,type="both",resp=rep(1, NROW(x$Y[[1]])),i_block=1,i_block_y=i_block,compx=1,compy=2,remove_var=FALSE,text_var=TRUE,text_ind=TRUE,response_name= "Response",no_overlap=FALSE,title=NULL,title_var="Variable correlations with",title_ind= "Sample space",n_mark=100,collapse=FALSE,cex=1,cex_sub=10,cex_main=14,cex_lab=12,colors=NULL,...)
 {
     match.arg(type,c("ind","var","both","ave","top","network"))
     
     if(type=="both")
     {
         if(is.null(i_block)){i_block=length(x$call$blocks)}
-        p1<-plot_ind(x,i_block=i_block,i_block_y=i_block_y,compx=compx,compy=compy,cex_sub=cex_sub,cex_main=cex_main,cex_lab=cex_lab,resp=resp,response_name=response_name,text=text_ind,title=title_ind,...)
-        p2<-plot_var_2D(x,i_block=i_block,compx=compx,compy=compy,cex_sub=cex_sub,cex_main=cex_main,cex_lab=cex_lab,remove_var=remove_var,text=text_var,no_overlap=no_overlap,title=title_var,n_mark = n_mark,collapse=collapse)
+        p1<-plot_ind(x,i_block=i_block,i_block_y=i_block_y,compx=compx,compy=compy,cex_sub=cex_sub,cex_main=cex_main,cex_lab=cex_lab,resp=resp,response_name=response_name,text=text_ind,title=title_ind,colors=colors,...)
+        p2<-plot_var_2D(x,i_block=i_block,compx=compx,compy=compy,cex_sub=cex_sub,cex_main=cex_main,cex_lab=cex_lab,remove_var=remove_var,text=text_var,no_overlap=no_overlap,title=title_var,n_mark = n_mark,collapse=collapse,colors=colors,...)
         titlePlot=toupper(names(x$call$blocks)[i_block])
         p5<-grid.arrange(p1,p2,nrow=1,ncol=2,top = titlePlot)
+        plot(p5)
     }
     if(type=="var")
     {
-        
-        p5<-plot_var_2D(x,i_block=i_block,compx=compx,compy=compy,cex_sub=cex_sub,cex_main=cex_main,cex_lab=cex_lab,remove_var=remove_var,text=text_var,no_overlap=no_overlap,title=title_var,n_mark = n_mark,collapse=collapse)
-    }
+       p5 <- plot_var_2D(x,i_block=i_block,compx=compx,compy=compy,cex_sub=cex_sub,cex_main=cex_main,cex_lab=cex_lab,remove_var=remove_var,text=text_var,no_overlap=no_overlap,title=title_var,n_mark = n_mark,collapse=collapse,colors=colors)
+        plot(p5)
+     }
     if(type=="ind")
     {
-        p5<-plot_ind(x,i_block=i_block,i_block_y=i_block_y,compx=compx,compy=compy,cex_sub=cex_sub,cex_main=cex_main,cex_lab=cex_lab,resp=resp,response_name=response_name,text=text_ind,title=title_ind,...)
-    }
+        p5<-plot_ind(x,i_block=i_block,i_block_y=i_block_y,compx=compx,compy=compy,cex_sub=cex_sub,cex_main=cex_main,cex_lab=cex_lab,resp=resp,response_name=response_name,text=text_ind,title=title_ind,colors=colors,...)
+        plot(p5)
+     }
     if(type=="ave")
     {
         if(is.null(title)){title="Average Variance Explained"}
         p5 <- plot_ave (x,
-            cex = cex_lab,
+            cex = cex,
             title = title,
             colors = colors,
             ...)
+        plot(p5)
     }
     if(type=="network")
     {
         if(is.null(title)){title=paste0("Common rows between blocks : ",
-                                        NROW(rgcca_res$call$blocks[[1]]))}
+                                        NROW(x$call$blocks[[1]]))}
         plot_network (
             x, 
             title = title)
+        p5<-NULL
     }
       
 

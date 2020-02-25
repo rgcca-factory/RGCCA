@@ -21,6 +21,8 @@
 \item{main}{=NULL Name of the file}
 
 \item{ylab}{label of y-axis}
+
+\item{...}{Further graphical parameters in plot}
 }
 \description{
 Plots the impact of increasing missing data on RGCCA

@@ -4,10 +4,12 @@
 \alias{print.permutation}
 \title{Prints the results of permutation rgcca}
 \usage{
-\method{print}{permutation}(x)
+\method{print}{permutation}(x, ...)
 }
 \arguments{
 \item{x}{result of rgcca_permutation}
+
+\item{...}{Further print parameters}
 }
 \description{
 Prints the results of permutation rgcca

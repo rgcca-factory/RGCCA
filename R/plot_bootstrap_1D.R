@@ -104,7 +104,7 @@ plot_bootstrap_1D <- function(
 
     if (x == "estimate")
         p <- p +
-            geom_errorbar(aes(ymin = lower_band, ymax = upper_band))
+            geom_errorbar(aes(ymin = lower_band, ymax = upper_band,width=0.5))
 
     return(p)
 }

@@ -6,6 +6,7 @@
 #' @param barType ="sd" or "stderr". Indicates which error bar to build
 #' @param main =NULL Name of the file
 #' @param ylab label of y-axis
+#' @param ... Further graphical parameters in plot
 #' @examples 
 #' set.seed(42);X1=matrix(rnorm(350),70,5);X2=matrix(rnorm(280),70,4);X1[1,1]=NA;X2[2,]=NA
 #' colnames(X1)=paste("A",1:5);colnames(X2)=paste("B",1:4); 
@@ -80,7 +81,7 @@ plot.whichNAmethod=function(x,output="rv",ylim=NULL,block="all",barType="sd",mai
     {
         Ylim=ylim
     }
-    plot(NULL,main=paste(main,": Block",j),xlim=c(0,length(namesMethod)-1),ylim=Ylim,xlab="Methods",ylab=ylab,bty="n",xaxt="n")
+    plot(NULL,main=paste(main,": Block",j),xlim=c(0,length(namesMethod)-1),ylim=Ylim,xlab="Methods",ylab=ylab,bty="n",xaxt="n",...)
     axis(side = 1,col="grey",line=0)
     axis(side = 2,col="grey",line=0)
     rect(par("usr")[1], par("usr")[3], par("usr")[2], par("usr")[4], col = 
@@ -110,7 +111,6 @@ plot.whichNAmethod=function(x,output="rv",ylim=NULL,block="all",barType="sd",mai
     legend("bottomleft",legend=namesMethod,fill=colMethod,box.lwd=0,bty="n")
   }
   
-  #par(new=TRUE)
   par(mfrow=c(1,1))
   par(mar=c(5,4,3,3))
   par(cex=1)
