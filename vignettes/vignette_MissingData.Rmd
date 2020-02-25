@@ -224,7 +224,7 @@ Among all these methods for dealing with missing data, we suspect that the best 
 
 To select the more appropriate method for a given dataset, simulations are made on the complete part of the dataset. This is based on the assumptions that the missing values were randomly distributed, and that the complete part is a representative part of the dataset. 
 
-whichNAmethod simulates nDatasets (20 by default) with missing values according to a specific pattern of missing values (patternNA) and typeNA ("block","byvar" or "ponc"). plotWhichNAmethod allows to select one of the following indicators
+whichNAmethod simulates nDatasets (20 by default) with missing values according to a specific pattern of missing values (patternNA) and typeNA ("block","byvar" or "ponc"). The plot function allows to select one of the following indicators
 
 The idea is to compare the results of the different "missing methods" to the original results (known, as the initial dataset is complete)
 \begin{itemize}

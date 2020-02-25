@@ -165,7 +165,7 @@ SGCCA is run from the RGCCA package by using two components for a biplot visuali
 
 ```{r rgcca}
 rgcca_out = rgcca(blocks = blocks)
-plot_network(rgcca_out)
+plot(rgcca_out,type="network")
 ```
 
 
@@ -185,17 +185,17 @@ nmark = 100
 
 ### Samples plot
 ```{r}
-plot_ind(rgcca_out)
+plot(rgcca_out,type="ind")
 ```
 
 ### Corcircle plot
 ```{r}
-plot_var_2D(rgcca_out)
+plot(rgcca_out,type="var")
 ```
 
 ### Fingerprint plot
 ```{r}
-plot_var_1D(rgcca_out)
+plot(rgcca_out,type="weight")
 ```
 
 ### Best explained blocks
@@ -206,43 +206,42 @@ plot(rgcca_out,type="ave")
 ### Bootstrap
 ```{r}
 boot <- bootstrap(rgcca_out, n_boot = 2, n_cores = 2)
-plot_bootstrap_2D(boot, n_cores = 2)
-plot_bootstrap_1D(boot, n_cores = 2)
+plot(boot, n_cores = 2,type="2D")
+plot(boot, n_cores = 2,type="2D")
 ```
 
 ### Permutation
 ```{r}
 perm <- rgcca_permutation(blocks, nperm = 5, n_cores = 2)
 head(order_df(cbind(perm$penalties, perm$zstat), ncol(perm$penalties) + 1))
-plot_permut_2D(perm)
+plot(perm)
 ```
 
 ## With the politic block, on the 2nd and the 3rd components
 
 ### Samples plot
 ```{r}
-plot_ind(
-    rgcca = rgcca_out,
+plot(x = rgcca_out,
     resp = response,
     compx = comp1,
     compy = comp2,
-    i_block = 3)
+    i_block = 3, type="ind")
 ```
 
 ### Corcircle plot
 ```{r}
-plot_var_2D(
-    rgcca = rgcca_out,
+plot(
+    x = rgcca_out,
     compx = comp1,
     compy = comp2,
-    i_block = 3)
+    i_block = 3,type="var")
 ```
 
 ### Fingerprint plot
 ```{r}
-plot_var_1D(
-    rgcca = rgcca_out,
-    comp = comp1,
+plot(
+    x = rgcca_out,
+    compx = comp1,
     n_mark = nmark, 
     i_block = 3,
     type = "weight")

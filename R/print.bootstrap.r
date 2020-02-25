@@ -5,6 +5,6 @@
 print.bootstrap=function(x,...)
 {
     print(paste0(length(x),"bootstrap(s) were run with the following RGCCA parameters"),...)
-    print(rgcca$call)
+    print(x$rgcca$call)
     
 }
