@@ -1,5 +1,5 @@
 #' plot.permutation
-#' @param x result of rgcca_permutation
+#' @param x result of rgcca_permutation (see  \code{\link[RGCCA]{rgcca_permutation}} )
 #' @param main title of the plot
 #' @inheritParams plot_permut_2D
 #' @param ... Further graphical parameters

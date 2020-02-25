@@ -13,9 +13,9 @@
   cex_main = 14, cex_lab = 12, colors = NULL, ...)
 }
 \arguments{
-\item{x}{Result of rgcca function}
+\item{x}{Result of rgcca function  (see\code{\link[RGCCA]{rgcca}} )}
 
-\item{type}{Type among c("ind","var","both","ave","top","network"). "ind" for individual graph, "var" for variable graph, "both" for both, "ave" for the variance average in each block, "net"for network}
+\item{type}{Type among c("ind","var","both","ave","cor","weight","network"). "ind" for individual graph, "var" for variable graph, "both" for both, "ave" for the variance average in each block, "net"for network, "weight" for plotting the top weights in compx, or "cor" for the top correlation with the compx.}
 
 \item{resp}{A vector of characters corresponding either to a qualitative
 variable with levels or a continuous variable}
@@ -80,5 +80,6 @@ A = list(X_agric, X_ind, X_polit);
 C = matrix(c(0, 0, 1, 0, 0, 1, 1, 1, 0), 3, 3);
 resRgcca=rgcca(blocks=A,connection=C,
 tau=rep(1,3),ncomp=rep(2,3),superblock=FALSE)
-plot(resRgcca)
+plot(resRgcca,type="cor")
+plot(resRgcca,type="cor")
 }

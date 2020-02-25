@@ -8,7 +8,7 @@ bootstrap(rgcca_res, n_boot = 5, n_cores = parallel::detectCores() - 1,
   ...)
 }
 \arguments{
-\item{rgcca_res}{Result of a RGCCA}
+\item{rgcca_res}{Result of a RGCCA (see  \code{\link[RGCCA]{rgcca}} )}
 
 \item{n_boot}{A integer for the number of boostrap}
 
@@ -20,7 +20,7 @@ bootstrap(rgcca_res, n_boot = 5, n_cores = parallel::detectCores() - 1,
 A list of RGCCA bootstrap weights
 }
 \description{
-Computing boostrap of RGCCA
+Computing boostrap of RGCCA in order to visualize the stability of the weights found in RGCCA
 }
 \examples{
 library(RGCCA)
@@ -31,4 +31,7 @@ rgcca_out = rgcca(blocks)
 bootstrap(rgcca_out, n_boot = 2, n_cores = 1)
 bootstrap(rgcca_out, n_boot = 2, n_cores = 1, blocks = lapply(blocks, scale),
  superblock = FALSE)
+}
+\seealso{
+\code{\link[RGCCA]{plot.bootstrap}} , \code{\link[RGCCA]{print.bootstrap}}
 }

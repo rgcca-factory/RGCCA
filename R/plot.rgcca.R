@@ -1,8 +1,8 @@
 #' plot 
 #' Plots 
 #' @title Regularized Generalized Canonical Correlation Analysis (RGCCA) 
-#' @param x Result of rgcca function
-#' @param type Type among c("ind","var","both","ave","top","network"). "ind" for individual graph, "var" for variable graph, "both" for both, "ave" for the variance average in each block, "net"for network
+#' @param x Result of rgcca function  (see\code{\link[RGCCA]{rgcca}} )
+#' @param type Type among c("ind","var","both","ave","cor","weight","network"). "ind" for individual graph, "var" for variable graph, "both" for both, "ave" for the variance average in each block, "net"for network, "weight" for plotting the top weights in compx, or "cor" for the top correlation with the compx.
 #' @param text_ind A bolean to represent the individuals with their row names (TRUE)
 #' or with circles (FALSE)
 #' @param text_var A bolean to represent the variables with their row names (TRUE)
@@ -23,7 +23,9 @@
 #' C = matrix(c(0, 0, 1, 0, 0, 1, 1, 1, 0), 3, 3);
 #' resRgcca=rgcca(blocks=A,connection=C,
 #' tau=rep(1,3),ncomp=rep(2,3),superblock=FALSE)
-#' plot(resRgcca)
+#' plot(resRgcca,type="cor")
+#' plot(resRgcca,type="cor")
+
 #' @importFrom gridExtra grid.arrange
 #' @export
 plot.rgcca=function(x,type="both",resp=rep(1, NROW(x$Y[[1]])),i_block=1,i_block_y=i_block,compx=1,compy=2,remove_var=FALSE,text_var=TRUE,text_ind=TRUE,response_name= "Response",no_overlap=FALSE,title=NULL,title_var="Variable correlations with",title_ind= "Sample space",n_mark=100,collapse=FALSE,cex=1,cex_sub=10,cex_main=14,cex_lab=12,colors=NULL,...)

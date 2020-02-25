@@ -1,10 +1,9 @@
 #' Compute bootstrap
 #'
-#' Computing boostrap of RGCCA
-#'
+#' Computing boostrap of RGCCA in order to visualize the stability of the weights found in RGCCA
 #' @inheritParams rgcca
 #' @inheritParams plot_var_2D
-#' @param rgcca_res Result of a RGCCA
+#' @param rgcca_res Result of a RGCCA (see  \code{\link[RGCCA]{rgcca}} )
 #' @param n_boot A integer for the number of boostrap
 #' @param n_cores An integer for the number of cores used in parallelization 
 #' @param ... other RGCCA parameters # TODO
@@ -19,6 +18,7 @@
 #' bootstrap(rgcca_out, n_boot = 2, n_cores = 1, blocks = lapply(blocks, scale),
 #'  superblock = FALSE)
 #' @export
+#' @seealso \code{\link[RGCCA]{plot.bootstrap}} , \code{\link[RGCCA]{print.bootstrap}} 
 bootstrap <- function(
     rgcca_res,
     n_boot = 5,

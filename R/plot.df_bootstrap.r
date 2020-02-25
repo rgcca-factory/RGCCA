@@ -1,6 +1,7 @@
 #' plot.df_bootstrap
+#' 
 #' @param type "1D" or "2D"
-#' @param x result of get_bootstrap
+#' @param x result of bootstrap  \code{\link[RGCCA]{bootstrap}} 
 #' @inheritParams plot_bootstrap_1D
 #' @inheritParams plot_bootstrap_2D
 #' @export

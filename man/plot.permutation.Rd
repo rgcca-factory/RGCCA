@@ -9,7 +9,7 @@
   cex_lab = 19 * cex, ...)
 }
 \arguments{
-\item{x}{result of rgcca_permutation}
+\item{x}{result of rgcca_permutation (see  \code{\link[RGCCA]{rgcca_permutation}} )}
 
 \item{type}{An string giving the type of the index to look at (among 'crit' for
 the RGCCA criterion and 'zstat' for the pseudo Z-score)}

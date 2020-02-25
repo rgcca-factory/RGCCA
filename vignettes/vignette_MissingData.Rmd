@@ -148,16 +148,16 @@ createNA return a list containing the data with missing values, the position of 
 
 ## Vizualizing a dataset with missing values, and getting the pattern of missing values
 
-To visualize a dataset with missing values, the function determine_patternNA can be used. It also return the percent of missing values per variables and per block.
+To visualize a dataset with missing values, the function get_patternNA can be used. It also return the percent of missing values per variables and per block.
 ```{r, fig.height = 3, fig.width = 7, fig.align = "center"}
-patternNA=determine_patternNA(blocks=A_missing)
+patternNA=get_patternNA(blocks=A_missing)
 names(patternNA)
 ```
 
 ```{r, fig.height = 3, fig.width = 7, fig.align = "center"}
 A_missing2=createNA(blocks=A,typeNA="byvar",
                     pNA=list(0.1*1:3,rep(0,2),rep(0.1,3)))$dat
-d=determine_patternNA(A_missing2)
+d=get_patternNA(A_missing2)
 
 ```
 

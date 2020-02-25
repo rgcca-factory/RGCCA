@@ -9,7 +9,7 @@
   cex = 1, n_cores = parallel::detectCores() - 1, ...)
 }
 \arguments{
-\item{x}{result of get_bootstrap}
+\item{x}{result of bootstrap  \code{\link[RGCCA]{bootstrap}}}
 
 \item{type}{"1D" or "2D"}
 
