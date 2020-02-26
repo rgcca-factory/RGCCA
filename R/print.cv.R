@@ -5,6 +5,10 @@
 #' @inheritParams rgcca_predict
 #' @inheritParams bootstrap
 #' @inheritParams plot_ind
+#' @param validation A character given the method for validation aong test 
+#' (for test-train sets), kfold (for k-fold with k=5 by default) and loo 
+#' (for leave-one-out)
+#' @param k An integer given the parameter for k-fold method (5, by default)
 #' @examples
 #' library(RGCCA)
 #' data("Russett")
@@ -137,7 +141,7 @@ rgcca_crossvalidation <- function(
     }
 
     scores <- mean(unlist(lapply(scores, function(x) x$score)))
-    results=list(scores = scores, preds = preds,rgcca_res=rgcca_res)
+    results=list(list(scores = scores, preds = preds,rgcca_res=rgcca_res))
     class(results) <- "cv"
     return(results)
 }

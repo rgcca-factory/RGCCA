@@ -4,15 +4,20 @@
 \alias{MIRGCCA}
 \title{MIRGCCA: Multiple imputation for RGCCA}
 \usage{
-MIRGCCA(blocks, option = "knn", superblock = TRUE, k = 5, ni = 5,
-  scale = TRUE, sameBlockWeight = TRUE, tau = rep(1:length(A)),
-  klim = NULL, output = "mean", scheme = "centroid", tol = 1e-08,
-  connection = NULL, ncomp = rep(2, length(A)), naxis = 1)
+MIRGCCA(blocks, option = "knn", type = "rgcca", superblock = TRUE,
+  k = 5, ni = 5, scale = TRUE, sameBlockWeight = TRUE,
+  tau = rep(1:length(A)), klim = NULL, output = "mean",
+  scheme = "centroid", tol = 1e-08, connection = NULL,
+  ncomp = rep(2, length(A)), naxis = 1)
 }
 \arguments{
 \item{blocks}{A list of matrix}
 
 \item{option}{"knn" for k Nearest Neigbors or "em" for Expectation Maximization}
+
+\item{type}{A character giving the type of analysis: c('rgcca', 'cpca-w', 'gcca', 'hpca', 'maxbet-b', 'maxbet', 'maxdiff-b','maxdiff', 'maxvar-a', 'maxvar-b', 'maxvar', 'niles', 'r-maxvar', 'rcon-pca',
+'ridge-gca', 'sabscor', 'ssqcor', 'ssqcor', 'ssqcov-1', 'ssqcov-2', 'ssqcov',
+'sum-pca', 'sumcor', 'sumcov-1', 'sumcov-2', 'sumcov.', 'sabscov', 'plspm','cca', 'ra', 'ifa', 'pls','pca')}
 
 \item{superblock}{TRUE if the A list should be returned in the output, FALSE ifelse}
 

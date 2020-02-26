@@ -39,7 +39,7 @@ whichNAmethod=function(blocks,listNAdataset=NULL,connection=matrix(1,length(bloc
 #  if(length(seed)!=0){check_integer("seed",seed)}
   match.arg(typeNA,c("block","ponc","rand","byVar"))
   match.arg(typeRGCCA,c("rgcca","sgcca"))
-  if(is.null(patternNA)){patternNA=get_patternNA(blocks,graph=FALSE)$pctNAbyBlock}
+  if(is.null(patternNA)){patternNA=get_patternNA(blocks)$pctNAbyBlock}
   if(is.vector(patternNA)){if(length(patternNA)!=length(blocks)){stop("patternNA should have the same size as length(blocks)")}}
   referenceDataset=intersection(blocks)
 

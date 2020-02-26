@@ -251,7 +251,7 @@ plot(
 ### Supervized mode
 ```{r}
 rgcca_out = rgcca(blocks = blocks, response = 3)
-plot_network(rgcca_out)
+plot(rgcca_out,type="network")
 loo <- rgcca_crossvalidation(rgcca_out, n_cores = 2)
 # Cross-validation score (leave-one-out)
 round(loo$scores, 3)

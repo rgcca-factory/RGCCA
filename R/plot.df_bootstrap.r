@@ -7,6 +7,7 @@
 #' @export
 plot.bootstrap=function(x,type="1D",i_block=length(x$rgcca$call$blocks),colors=NULL,title=NULL,cex=1,n_cores= parallel::detectCores() - 1,...)
 {
+    
     if(type=="1D")
     {
         p1=plot_bootstrap_1D(

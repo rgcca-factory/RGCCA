@@ -18,6 +18,7 @@
 #' @param response_name A character giving the legend title
 #' @param no_overlap A boolean to avoid overlap in plotted text
 #' @param predicted A list containing as  2nd element a matrix of predicted components
+#' @param legend TRUE if the legend should be plotted, FALSE ifelse.
 #' @param ... Further graphical parameters (see plot2D functions)
 #' @examples
 #' coord = lapply(seq(3),
@@ -59,6 +60,7 @@ plot_ind <- function(
     no_overlap = FALSE,
     predicted = NULL,
     title = "Sample space",
+    legend=TRUE,
     ...){
 
     if (is.null(i_block_y))
@@ -104,7 +106,7 @@ plot_ind <- function(
         )
 
     # remove legend if missing
-    if (length(unique(df$resp)) == 1)
+    if (length(unique(df$resp)) == 1||legend==FALSE)
         p <- p + theme(legend.position = "none")
 
     return(p)

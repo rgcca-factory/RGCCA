@@ -7,7 +7,8 @@
 plot_ind(rgcca_res, resp = rep(1, NROW(rgcca_res$Y[[1]])), compx = 1,
   compy = 2, i_block = length(rgcca_res$Y), text = TRUE,
   i_block_y = i_block, response_name = "Response",
-  no_overlap = FALSE, predicted = NULL, title = "Sample space", ...)
+  no_overlap = FALSE, predicted = NULL, title = "Sample space",
+  legend = TRUE, ...)
 }
 \arguments{
 \item{rgcca_res}{A list giving the results of a R/SGCCA}
@@ -37,6 +38,8 @@ one, different from the one used in i_block)}
 
 \item{title}{A character with the name of the space (either "Variables" or
 "Samples")}
+
+\item{legend}{TRUE if the legend should be plotted, FALSE ifelse.}
 
 \item{...}{Further graphical parameters (see plot2D functions)}
 }

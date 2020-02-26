@@ -311,10 +311,13 @@ rgcca_predict = function(
     }
 
 
-    list(
+    result=list(
         pred = pred,
         class.fit = class.fit,
         score = score,
-        res = res
+        res = res,
+        rgcca_res=rgcca_res
     )
+    class(result)="predict"
+    return(result)
 }
