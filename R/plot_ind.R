@@ -35,7 +35,7 @@
 #' class(rgcca_out) = "rgcca"
 #' plot_ind(rgcca_out, resp)
 #' # Using the first block
-    #' resp = as.matrix(runif(15, min=-15, max = 15))
+#' resp = as.matrix(runif(15, min=-15, max = 15))
 #' row.names(resp) = seq(15)
 #' plot_ind(rgcca_out, resp, 1, 2, 1)
 #' data(Russett)
@@ -44,7 +44,7 @@
 #' X_polit = as.matrix(Russett[ , c("demostab", "dictator")])
 #' A = list(X_agric, X_ind, X_polit)
 #' C = matrix(c(0, 0, 1, 0, 0, 1, 1, 1, 0), 3, 3)
-#' result.rgcca = rgcca(A, C, tau = c(1, 1, 1), scheme = "factorial",
+#' result.rgcca = rgcca(A, connection=C, tau = c(1, 1, 1), scheme = "factorial",
 #' scale = TRUE,ncomp=rep(2,3))
 #' plot_ind(result.rgcca,i_block=1)
 #' @export

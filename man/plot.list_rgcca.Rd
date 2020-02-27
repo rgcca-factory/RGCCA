@@ -4,7 +4,7 @@
 \alias{plot.list_rgcca}
 \title{Regularized Generalized Canonical Correlation Analysis (RGCCA)}
 \usage{
-\method{plot}{list_rgcca}(x, type = "both", resp = rep(1,
+\method{plot}{list_rgcca}(x, type = "ind", resp = rep(1,
   NROW(x$Y[[1]])), i_block = 1, i_block_y = i_block, compx = 1,
   compy = 2, remove_var = FALSE, text_var = TRUE, text_ind = TRUE,
   response_name = "Response", no_overlap = FALSE, title = NULL,
@@ -75,14 +75,18 @@ plot
 Plots
 }
 \examples{
-data(Russett)
-X_agric =as.matrix(Russett[,c("gini","farm","rent")]);
-X_ind = as.matrix(Russett[,c("gnpr","labo")]);
-X_polit = as.matrix(Russett[ , c("demostab", "dictator")]);
-A = list(X_agric, X_ind, X_polit);
-C = matrix(c(0, 0, 1, 0, 0, 1, 1, 1, 0), 3, 3);
-resRgcca=rgcca(blocks=A,connection=C,
-tau=rep(1,3),ncomp=rep(2,3),superblock=FALSE)
-plot(resRgcca,type="cor")
-plot(resRgcca,type="cor")
+set.seed(42);X1=matrix(rnorm(500),100,5);
+set.seed(22);X2=matrix(rnorm(400),100,4);
+set.seed(2);X3=matrix(rnorm(700),100,7);
+rownames(X1)=rownames(X2)=rownames(X3)=paste("S",1:100,sep="")
+colnames(X1)=paste("A",1:5)
+colnames(X2)=paste("B",1:4)
+colnames(X3)=paste("C",1:7)
+X1[1,]=NA
+X2[7,1]=NA
+X2[5,1]=NA
+X3[3,1:2]=NA
+A=list(X1,X2,X3)
+res=MIRGCCA(A,k=3,ni=5,scale=TRUE,sameBlockWeight=TRUE,tau=rep(1,3))
+plot(res,type="ind")
 }

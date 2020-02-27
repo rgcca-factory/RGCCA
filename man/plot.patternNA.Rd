@@ -2,8 +2,7 @@
 % Please edit documentation in R/plot.patternNA.r
 \name{plot.patternNA}
 \alias{plot.patternNA}
-\title{plot.patternNA
-Plots an object of class patternNA}
+\title{plot.patternNA}
 \usage{
 \method{plot}{patternNA}(x, type = "all", legend = TRUE,
   scale = TRUE, outlierVisible = FALSE, ...)
@@ -11,7 +10,7 @@ Plots an object of class patternNA}
 \arguments{
 \item{x}{an object from get_patternNA (see \code{\link[RGCCA]{get_patternNA}} )}
 
-\item{type}{if TRUE, the pattern of missing values is plotted}
+\item{type}{"all" if all blocks should be plotted, ifelse an integer corresponding to the position of the block to be plotted in the initial list}
 
 \item{legend}{if TRUE the legend is plotted}
 
@@ -22,7 +21,6 @@ Plots an object of class patternNA}
 \item{...}{Further graphical parameters (see \code{\link[graphics]{plot}})}
 }
 \description{
-plot.patternNA
 Plots an object of class patternNA
 }
 \examples{
@@ -39,4 +37,7 @@ colnames(X3)=paste0("C",1:5)
 A=list(bloc1=X1,bloc2=X2,bloc3=X3)
 p=get_patternNA(A)
 plot(p)
+}
+\seealso{
+\link{get_patternNA}, \link{plot.patternNA}, \link{whichNAmethod}
 }

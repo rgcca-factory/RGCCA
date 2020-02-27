@@ -12,7 +12,7 @@ naEvolution(blocks, prctNA = c(0.1, 0.2, 0.3), listMethods = c("mean"),
   diag(length(blocks)), tau = rep(1, length(blocks)))
 }
 \arguments{
-\item{blocks}{A list of matrix}
+\item{blocks}{A list that contains the \eqn{J} blocks of variables \eqn{\mathbf{X_1}, \mathbf{X_2}, ..., \mathbf{X_J}}.}
 
 \item{prctNA}{if number, percentage of missing data required for each block. If a vector with the same size as blocks, the percentage can be adapted for each block. If a list of values, this percent is calculated per variable}
 
@@ -20,28 +20,27 @@ naEvolution(blocks, prctNA = c(0.1, 0.2, 0.3), listMethods = c("mean"),
 
 \item{typeNA}{structure of missing data required ("ponc" or "block")}
 
-\item{ncomp}{A vector of integer giving the number of component for each
-blocks}
+\item{ncomp}{A \eqn{1 \times J} vector that contains the numbers of components for each block (default: rep(1, length(A)), which gives one component per block.). It can be estimated by using \link{rgcca_permutation}.}
 
-\item{sameBlockWeight}{If TRUE, all blocks are weighted by their own variance: all the blocks have the same weight}
+\item{sameBlockWeight}{TRUE by default : each block have the same weight in the RGCCA analysis. If FALSE, the weight of each block depends on the number of variables of the block}
 
-\item{scale}{A boolean scaling the blocks}
+\item{scale}{If scale = TRUE, each block is standardized to zero means and unit variances (default: TRUE).}
 
 \item{nDatasets}{Number of simulated dataset}
 
-\item{tol}{An integer for the stopping value for convergence}
+\item{tol}{The stopping value for convergence.}
 
-\item{verbose}{A boolean to display the progress of the analysis}
+\item{verbose}{If verbose = TRUE, the progress will be report while computing (default: TRUE).}
 
-\item{scheme}{A character giving the link function for covariance maximization}
+\item{scheme}{The value is "horst", "factorial", "centroid" or the g function (default: "centroid").}
 
 \item{seed}{NULL by default (no reproducibility). A number representing the seed (for reproducibility)}
 
-\item{connection}{A matrix giving the connection between the blocks}
+\item{connection}{A design matrix that describes the relationships between blocks (default: complete design).}
 
-\item{tau}{tau is either a \eqn{1 \times J} vector or a \eqn{\mathrm{max}(ncomp) \times J} matrix, and contains the values 
-of the shrinkage parameters (default: tau = 1, for each block and each dimension).
-If tau = "optimal" the shrinkage paramaters are estimated for each block and each dimension using the Schafer and Strimmer (2005)
+\item{tau}{Used for type="rgcca" only. tau is either a \eqn{1 \times J} vector or a \eqn{\mathrm{max}(ncomp) \times J} matrix, and contains the values 
+of the regularization parameters (default: tau = 1, for each block and each dimension).
+If tau = "optimal" the regularization paramaters are estimated for each block and each dimension using the Schafer and Strimmer (2005)
 analytical formula . If tau is a \eqn{1\times J} numeric vector, tau[j] is identical across the dimensions of block \eqn{\mathbf{X}_j}. 
 If tau is a matrix, tau[k, j] is associated with \eqn{\mathbf{X}_{jk}} (\eqn{k}th residual matrix for block \eqn{j})}
 }

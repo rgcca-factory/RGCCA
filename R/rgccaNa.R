@@ -2,27 +2,27 @@
 #' @param blocks  A list that contains the \eqn{J} blocks of variables \eqn{\mathbf{X_1}, \mathbf{X_2}, ..., \mathbf{X_J}}.
 #' @param method  Either a character corresponding to the used method ("complete","knn","em","sem") or a function taking a list of J blocks (A) as only parameter and returning the imputed list. 
 #' @param connection  A design matrix that describes the relationships between blocks (default: complete design).
-#' @param tau tau is either a \eqn{1 \times J} vector or a \eqn{\mathrm{max}(ncomp) \times J} matrix, and contains the values 
-#' of the shrinkage parameters (default: tau = 1, for each block and each dimension).
-#' If tau = "optimal" the shrinkage paramaters are estimated for each block and each dimension using the Schafer and Strimmer (2005)
+#' @param tau Used for type="rgcca" only. tau is either a \eqn{1 \times J} vector or a \eqn{\mathrm{max}(ncomp) \times J} matrix, and contains the values 
+#' of the regularization parameters (default: tau = 1, for each block and each dimension).
+#' If tau = "optimal" the regularization paramaters are estimated for each block and each dimension using the Schafer and Strimmer (2005)
 #' analytical formula . If tau is a \eqn{1\times J} numeric vector, tau[j] is identical across the dimensions of block \eqn{\mathbf{X}_j}. 
 #' If tau is a matrix, tau[k, j] is associated with \eqn{\mathbf{X}_{jk}} (\eqn{k}th residual matrix for block \eqn{j})
-#' @param ncomp  A \eqn{1 \times J} vector that contains the numbers of components for each block (default: rep(1, length(A)), which gives one component per block.)
 #' @param scheme The value is "horst", "factorial", "centroid" or the g function (default: "centroid").
 #' @param scale  If scale = TRUE, each block is standardized to zero means and unit variances (default: TRUE).
+#' @param sameBlockWeight TRUE by default : each block have the same weight in the RGCCA analysis. If FALSE, the weight of each block depends on the number of variables of the block
+#' @param ncomp  A \eqn{1 \times J} vector that contains the numbers of components for each block (default: rep(1, length(A)), which gives one component per block.). It can be estimated by using \link{rgcca_permutation}.
 #' @param verbose  If verbose = TRUE, the progress will be report while computing (default: TRUE).
+#' @param quiet If TRUE, does not print warnings
 #' @param init The mode of initialization to use in RGCCA algorithm. The alternatives are either by Singular Value Decompostion ("svd") or random ("random") (Default: "svd").
 #' @param bias A logical value for biaised or unbiaised estimator of the var/cov (default: bias = TRUE).
 #' @param tol The stopping value for convergence.
-#' @param sameBlockWeight TRUE by default : each block have the same weight in the RGCCA analysis. If FALSE, the weight of each block depends on the number of variables of the block
-#' @param knn.k Number of k nearest neighbors
-#' @param knn.output "mean", "random" or "weightedMean" : returns respectively the average of the k nearest neigbors, one selected randomly, or an average weighted by the distance of the k NN
-#' @param knn.klim k limits (if k is not a number, optimal k between klim[1] and klim[2] is calculated )
-#' @param knn.sameBlockWeight if TRUE the distance for Nearest Neigbors takes the size of blocks into account
+#' @param knn.k  Used only if missing values in the blocks are estimated by k-NN methods. Number of k nearest neighbors. Can also be "auto" for automatic selection.
+#' @param knn.output "mean", "random" or "weightedMean" : Used only if missing values in the blocks are estimated by k-NN methods. Returns respectively the average of the k nearest neigbors, one selected randomly, or an average weighted by the distance of the k NN
+#' @param knn.klim Used only if missing values in the blocks are estimated by k-NN methods, and if knn.k is "auto". k limits (if k is not a number, optimal k between klim[1] and klim[2] is calculated )
+#' @param knn.sameBlockWeight Used only if missing values in the blocks are estimated by k-NN methods.if TRUE the distance for Nearest Neigbors takes the size of blocks into account
 #' @param pca.ncp Number of components chosen in PCA 
 #' @param prescaling If TRUE, the scaling should be done outside of the function. Default at FALSE
 #' @param ni number of iterations for em or sem methods
-#' @param quiet If TRUE, the potential warnings are not printed
 #' @return \item{Y}{A list of \eqn{J} elements. Each element of \eqn{Y} is a matrix that contains the RGCCA components for the corresponding block.}
 #' @return \item{a}{A list of \eqn{J} elements. Each element of \eqn{a} is a matrix that contains the outer weight vectors for each block.}
 #' @return \item{astar}{A list of \eqn{J} elements. Each element of astar is a matrix defined as Y[[j]][, h] = A[[j]]\%*\%astar[[j]][, h].}

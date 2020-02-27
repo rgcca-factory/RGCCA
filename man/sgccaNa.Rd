@@ -19,9 +19,9 @@ sgccaNa(blocks, method, connection = 1 - diag(length(A)),
 
 \item{connection}{A design matrix that describes the relationships between blocks (default: complete design).}
 
-\item{sparsity}{A vector containing the sparsity coefficients (length J, between 0 and 1)}
+\item{sparsity}{Used for type="sgcca" or "spls" only. A vector containing the sparsity coefficients (length J, between 0 and 1). It can be estimated by using \link{rgcca_permutation}.}
 
-\item{ncomp}{A \eqn{1 \times J} vector that contains the numbers of components for each block (default: rep(1, length(A)), which gives one component per block.)}
+\item{ncomp}{A \eqn{1 \times J} vector that contains the numbers of components for each block (default: rep(1, length(A)), which gives one component per block.). It can be estimated by using \link{rgcca_permutation}.}
 
 \item{scheme}{The value is "horst", "factorial", "centroid" or the g function (default: "centroid").}
 
@@ -37,17 +37,17 @@ sgccaNa(blocks, method, connection = 1 - diag(length(A)),
 
 \item{sameBlockWeight}{TRUE by default : each block have the same weight in the RGCCA analysis. If FALSE, the weight of each block depends on the number of variables of the block}
 
-\item{knn.k}{Number of k nearest neighbors}
+\item{knn.k}{Used only if missing values in the blocks are estimated by k-NN methods. Number of k nearest neighbors. Can also be "auto" for automatic selection.}
 
-\item{knn.output}{"mean", "random" or "weightedMean" : returns respectively the average of the k nearest neigbors, one selected randomly, or an average weighted by the distance of the k NN}
+\item{knn.output}{"mean", "random" or "weightedMean" : Used only if missing values in the blocks are estimated by k-NN methods. Returns respectively the average of the k nearest neigbors, one selected randomly, or an average weighted by the distance of the k NN}
 
-\item{knn.klim}{k limits (if k is not a number, optimal k between klim[1] and klim[2] is calculated )}
+\item{knn.klim}{Used only if missing values in the blocks are estimated by k-NN methods, and if knn.k is "auto". k limits (if k is not a number, optimal k between klim[1] and klim[2] is calculated )}
 
-\item{knn.sameBlockWeight}{if TRUE the distance for Nearest Neigbors takes the size of blocks into account}
+\item{knn.sameBlockWeight}{Used only if missing values in the blocks are estimated by k-NN methods.if TRUE the distance for Nearest Neigbors takes the size of blocks into account}
 
 \item{pca.ncp}{Number of components chosen in PCA}
 
-\item{prescaling}{If TRUE, sgcce does NOT run scaling steps (they were calculated before)}
+\item{prescaling}{If TRUE, sgcca does NOT run scaling steps (they were calculated before)}
 
 \item{quiet}{If TRUE, does not print warnings}
 }

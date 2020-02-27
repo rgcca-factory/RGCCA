@@ -2,26 +2,25 @@
 % Please edit documentation in R/whichNAmeth.r
 \name{whichNAmethod}
 \alias{whichNAmethod}
-\title{comparison of two RGCCA results}
+\title{whichNAmethod}
 \usage{
-whichNAmethod(blocks, listNAdataset = NULL, connection = matrix(1,
+whichNAmethod(blocks, typeNA = "block", connection = matrix(1,
   length(blocks), length(blocks)) - diag(length(blocks)), tau = rep(1,
   length(blocks)), listMethods, nDatasets = 20, patternNA = NULL,
-  typeNA = "block", ncomp = rep(2, length(blocks)),
-  sameBlockWeight = TRUE, scale = TRUE, tol = 1e-06,
-  verbose = FALSE, scheme = "centroid", seed = NULL,
-  typeRGCCA = "rgcca", sparsity = NULL)
+  ncomp = rep(2, length(blocks)), sameBlockWeight = TRUE,
+  scale = TRUE, tol = 1e-06, verbose = FALSE, scheme = "centroid",
+  seed = NULL, typeRGCCA = "rgcca", sparsity = NULL)
 }
 \arguments{
-\item{blocks}{A list of matrix}
+\item{blocks}{A list that contains the \eqn{J} blocks of variables \eqn{\mathbf{X_1}, \mathbf{X_2}, ..., \mathbf{X_J}}.}
 
-\item{listNAdataset}{if TRUE, no RGCCA on complete data is run}
+\item{typeNA}{structure of missing data required ("ponc" or "block")}
 
-\item{connection}{A matrix giving the connection between the blocks}
+\item{connection}{A design matrix that describes the relationships between blocks (default: complete design).}
 
-\item{tau}{tau is either a \eqn{1 \times J} vector or a \eqn{\mathrm{max}(ncomp) \times J} matrix, and contains the values 
-of the shrinkage parameters (default: tau = 1, for each block and each dimension).
-If tau = "optimal" the shrinkage paramaters are estimated for each block and each dimension using the Schafer and Strimmer (2005)
+\item{tau}{Used for type="rgcca" only. tau is either a \eqn{1 \times J} vector or a \eqn{\mathrm{max}(ncomp) \times J} matrix, and contains the values 
+of the regularization parameters (default: tau = 1, for each block and each dimension).
+If tau = "optimal" the regularization paramaters are estimated for each block and each dimension using the Schafer and Strimmer (2005)
 analytical formula . If tau is a \eqn{1\times J} numeric vector, tau[j] is identical across the dimensions of block \eqn{\mathbf{X}_j}. 
 If tau is a matrix, tau[k, j] is associated with \eqn{\mathbf{X}_{jk}} (\eqn{k}th residual matrix for block \eqn{j})}
 
@@ -31,36 +30,37 @@ If tau is a matrix, tau[k, j] is associated with \eqn{\mathbf{X}_{jk}} (\eqn{k}t
 
 \item{patternNA}{number of missing data required}
 
-\item{typeNA}{structure of missing data required ("ponc" or "block")}
+\item{ncomp}{A \eqn{1 \times J} vector that contains the numbers of components for each block (default: rep(1, length(A)), which gives one component per block.). It can be estimated by using \link{rgcca_permutation}.}
 
-\item{ncomp}{A vector of integer giving the number of component for each
-blocks}
+\item{sameBlockWeight}{TRUE by default : each block have the same weight in the RGCCA analysis. If FALSE, the weight of each block depends on the number of variables of the block}
 
-\item{sameBlockWeight}{If TRUE, all blocks are weighted by their own variance: all the blocks have the same weight}
+\item{scale}{If scale = TRUE, each block is standardized to zero means and unit variances (default: TRUE).}
 
-\item{scale}{A boolean scaling the blocks}
+\item{tol}{The stopping value for convergence.}
 
-\item{tol}{An integer for the stopping value for convergence}
+\item{verbose}{If verbose = TRUE, the progress will be report while computing (default: TRUE).}
 
-\item{verbose}{A boolean to display the progress of the analysis}
-
-\item{scheme}{A character giving the link function for covariance maximization}
+\item{scheme}{The value is "horst", "factorial", "centroid" or the g function (default: "centroid").}
 
 \item{seed}{if filled (by a number), the randomness is reproducible.}
 
-\item{typeRGCCA}{type of RGCCA ("sgcca","rgcca"...).}
+\item{typeRGCCA}{type of analysis to be run ("sgcca"or rgcca"...).}
 
-\item{sparsity}{A vector containing the sparsity coefficients (length J, between 0 and 1)}
+\item{sparsity}{Used for type="sgcca" or "spls" only. A vector containing the sparsity coefficients (length J, between 0 and 1). It can be estimated by using \link{rgcca_permutation}.}
 }
 \value{
-\item{A}{A list of dataset indicators containg a list of rgcca with a  list of criterion. }
-
-\item{crit}{Convergence criterion : abs(1-obj_k/obj_{k-1})}
-
-\item{obj}{Vector containing the mean square error between the predicted values and the original non missing values at each iteration}
+a whichNAmethod object: a list of length nDataset containing. Each element of this list corresponding to each simulated dataset is
+a list whose names are the chosen missing methods. Each element of such a list is also a list containing
+\itemize{ 
+\item{a}{A vector of size J (number of blocks) corresponding to the norm of difference between the original weight (first axis) and the simulated one for each block }
+ \item{rv}{A vector of size J (number of blocks) corresponding to the rv coefficient between the original individual map (first axis) and the simulated one for each block }
+ \item{bm}{A vector of size J (number of blocks) corresponding to the percent of different top ten variables correlated with first axis and the simulated one for each block}
+\item{rvComplete}{A vector of size J (number of blocks) corresponding to the rv coefficient between the original individual map (first axis) and the simulated one for each block ONLY on the complete individuals}
+\item{rmse}{Available only if imputation. A vector of size J (number of blocks) corresponding to the Root Mean Square Error between the original scores and the simulated ones for each block}
+}
 }
 \description{
-Analysis of the comparison of different NA methods on RGCCA
+Analysis of the comparison of different methods to deal with missing data in RGCCA or SGCCA.
 }
 \examples{
 set.seed(42);X1=matrix(rnorm(350),70,5);X2=matrix(rnorm(280),70,4);
@@ -68,4 +68,7 @@ colnames(X1)=paste("blocks",1:5);colnames(X2)=paste("B",1:4);
 rownames(X1)=rownames(X2)=paste("S",1:70)
 A=list(X1,X2);
 res=whichNAmethod(A,listMethods=c("nipals","mean"),patternNA=rep(0.1,2))
+}
+\seealso{
+\link{plot.whichNAmethod}, \link{naEvolution}
 }

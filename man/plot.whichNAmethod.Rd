@@ -2,19 +2,19 @@
 % Please edit documentation in R/plotWhichNAmethod.r
 \name{plot.whichNAmethod}
 \alias{plot.whichNAmethod}
-\title{Plots the impact of increasing missing data on RGCCA}
+\title{Which missing method to choose ?}
 \usage{
 \method{plot}{whichNAmethod}(x, output = "rv", ylim = NULL,
-  block = "all", barType = "sd", main = NULL, ylab = "", ...)
+  i_block = "all", barType = "sd", main = NULL, ylab = "", ...)
 }
 \arguments{
-\item{x}{A list resulting of which NA method}
+\item{x}{A list resulting of whichNAmethod (see \link{whichNAmethod})}
 
 \item{output}{="rv": Can be also "a" for correlations between axes, "bm" for the percent of similar biomarkers, "rvComplete" if the RV is calculated only on complete dataset, or "rmse" for Root Mean Squares Error.}
 
 \item{ylim}{=c(0.8,1) y limits}
 
-\item{block}{="all" or a number indicating the position of the chosen block in the initial list}
+\item{i_block}{="all" or a number indicating the position of the chosen block in the initial list}
 
 \item{barType}{="sd" or "stderr". Indicates which error bar to build}
 

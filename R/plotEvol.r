@@ -1,5 +1,7 @@
+#' plot.naEvolution
+#' 
 #'Plots the impact of increasing missing data on RGCCA
-#' @param x A list resulting of naEvolution
+#' @param x A list resulting of naEvolution (\link{naEvolution})
 #' @param output ="rv": Can be also "a" for correlations between axes, "bm" for the percent of similar biomarkers, "rvComplete" if the RV is calculated only on complete dataset, or "rmse" for Root Mean Squares Error.
 #' @param ylim =c(0.8,1) y limits
 #' @param block ="all" or a number indicating the position of the chosen block in the initial list

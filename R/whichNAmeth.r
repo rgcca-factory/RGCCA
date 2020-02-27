@@ -1,16 +1,22 @@
-#' Analysis of the comparison of different NA methods on RGCCA
-#' @param listNAdataset if TRUE, no RGCCA on complete data is run
+#' whichNAmethod
+#' 
+#' Analysis of the comparison of different methods to deal with missing data in RGCCA or SGCCA.
 #' @inheritParams rgcca
 #' @param listMethods vector containing a list of methods ("mean","complete","nipals"...)
 #' @param nDatasets Number of simulated dataset
 #' @param patternNA number of missing data required
 #' @param typeNA structure of missing data required ("ponc" or "block")
 #' @param seed if filled (by a number), the randomness is reproducible.
-#' @param typeRGCCA type of RGCCA ("sgcca","rgcca"...).
-#' @return \item{A}{A list of dataset indicators containg a list of rgcca with a  list of criterion. }
-#' @return \item{crit}{Convergence criterion : abs(1-obj_k/obj_{k-1})}
-#' @return \item{obj}{Vector containing the mean square error between the predicted values and the original non missing values at each iteration}
-#' @title comparison of two RGCCA results
+#' @param typeRGCCA type of analysis to be run ("sgcca"or rgcca"...).
+#' @return a whichNAmethod object: a list of length nDataset containing. Each element of this list corresponding to each simulated dataset is
+#' a list whose names are the chosen missing methods. Each element of such a list is also a list containing
+#' \itemize{ 
+#' \item{a}{A vector of size J (number of blocks) corresponding to the norm of difference between the original weight (first axis) and the simulated one for each block }
+#'  \item{rv}{A vector of size J (number of blocks) corresponding to the rv coefficient between the original individual map (first axis) and the simulated one for each block }
+#'  \item{bm}{A vector of size J (number of blocks) corresponding to the percent of different top ten variables correlated with first axis and the simulated one for each block}
+#' \item{rvComplete}{A vector of size J (number of blocks) corresponding to the rv coefficient between the original individual map (first axis) and the simulated one for each block ONLY on the complete individuals}
+#' \item{rmse}{Available only if imputation. A vector of size J (number of blocks) corresponding to the Root Mean Square Error between the original scores and the simulated ones for each block}
+#' }
 #' @examples 
 #' set.seed(42);X1=matrix(rnorm(350),70,5);X2=matrix(rnorm(280),70,4);
 #' colnames(X1)=paste("blocks",1:5);colnames(X2)=paste("B",1:4);
@@ -19,9 +25,9 @@
 #' res=whichNAmethod(A,listMethods=c("nipals","mean"),patternNA=rep(0.1,2))
 #' @export
 #' @importFrom parallel mclapply
-
-whichNAmethod=function(blocks,listNAdataset=NULL,connection=matrix(1,length(blocks),length(blocks))-diag(length(blocks)), tau=rep(1,length(blocks)),
-                       listMethods,nDatasets=20,patternNA=NULL,typeNA="block",ncomp=rep(2,length(blocks)),sameBlockWeight=TRUE,scale=TRUE,tol=1e-6,
+#' @seealso \link{plot.whichNAmethod}, \link{naEvolution}
+whichNAmethod=function(blocks,typeNA="block",connection=matrix(1,length(blocks),length(blocks))-diag(length(blocks)), tau=rep(1,length(blocks)),
+                       listMethods,nDatasets=20,patternNA=NULL,ncomp=rep(2,length(blocks)),sameBlockWeight=TRUE,scale=TRUE,tol=1e-6,
                        verbose=FALSE,scheme="centroid",seed=NULL,typeRGCCA="rgcca",sparsity=NULL)
 {
   check_connection(connection,blocks)
@@ -44,8 +50,8 @@ whichNAmethod=function(blocks,listNAdataset=NULL,connection=matrix(1,length(bloc
   referenceDataset=intersection(blocks)
 
   # Getting list of datasets stemming from referenceDataset with the same pattern of missing values
-  if(is.null(listNAdataset))
-  {
+#  if(is.null(listNAdataset))
+#  {
     if(verbose){
         print("creation of datasets with NA...")}
     listNAdataset=lapply(1:nDatasets,function(i)
@@ -56,7 +62,7 @@ whichNAmethod=function(blocks,listNAdataset=NULL,connection=matrix(1,length(bloc
                 {   createNA(blocks=referenceDataset,typeNA=typeNA,pNA=patternNA,nAllRespondants=10,output="list",seed=NULL)}
         }
     )
-  }
+#  }
 
   if(typeRGCCA=="rgcca")
   {

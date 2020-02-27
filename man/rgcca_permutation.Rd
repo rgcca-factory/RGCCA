@@ -28,7 +28,7 @@ combinations as the maximum number of columns in each block}
 
 \item{n_cores}{An integer for the number of cores used in parallelization}
 
-\item{quiet}{A boolean hidding the warnings}
+\item{quiet}{If TRUE, does not print warnings}
 
 \item{...}{other RGCCA parameters # TODO}
 }

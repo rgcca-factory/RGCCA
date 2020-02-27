@@ -1,6 +1,7 @@
 #'print.rgcca
+#' 
 #' Print rgcca results
-#' @param x a result of rgcca function
+#' @param x a result of rgcca function (see \code{\link{rgcca}})
 #' @param ... other parameters used in print (for the displaying of matrices)
 #' @export
 #' @examples 
@@ -10,7 +11,8 @@
 #'X_polit = as.matrix(Russett[ , c("demostab", "dictator")]);
 #'A = list(X_agric, X_ind, X_polit);
 #'C = matrix(c(0, 0, 1, 0, 0, 1, 1, 1, 0), 3, 3);
-#'res = rgcca(A, C, ncomp=rep(2,3),tau = c(1, 1, 1), scheme = "factorial", scale = TRUE,verbose=FALSE)
+#'res = rgcca(A, connection=C, ncomp=rep(2,3),tau = c(1, 1, 1), 
+#'scheme = "factorial", scale = TRUE,verbose=FALSE)
 #'print(res)
 
 print.rgcca <- function(x,...) 

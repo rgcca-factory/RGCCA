@@ -19,9 +19,9 @@
  blocks[[1]][4,]=NA
  resRGCCA2=rgcca(blocks,ncomp=c(2,2,2),method="nipals")
  
- #res=list(rgcca0=resRGCCA1,rgccaList=list(resRGCCA2))
- #class(res)="list_rgcca"
- #plot.list_rgcca(res)
+res=list(rgcca0=resRGCCA1,rgccaList=list(resRGCCA2))
+ class(res)="list_rgcca"
+ plot(res)
 
  set.seed(42);X1=matrix(rnorm(500),100,5);
  set.seed(22);X2=matrix(rnorm(400),100,4);
@@ -36,15 +36,10 @@
    X3[3,1:2]=NA
    A=list(X1,X2,X3)
   res=MIRGCCA(A,k=3,ni=5,scale=TRUE,sameBlockWeight=TRUE,tau=rep(1,3))
- plot.list_rgcca(res,type="ind")
- 
- 
- plot.list_rgcca(res,type="var",list_rgcca=res$rgccaList)
- 
- 
- plot.list_rgcca(res,type="weight",list_rgcca=res$rgccaList)
- 
- plot.list_rgcca(res,type="cor",list_rgcca=res$rgccaList)
+ plot(res,type="ind")
+ plot(res,type="var",list_rgcca=res$rgccaList)
+ plot(res,type="weight",list_rgcca=res$rgccaList)
+ plot(res,type="cor",list_rgcca=res$rgccaList)
  
 
  

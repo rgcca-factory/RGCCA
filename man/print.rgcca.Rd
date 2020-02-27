@@ -2,18 +2,16 @@
 % Please edit documentation in R/print.rgcca.R
 \name{print.rgcca}
 \alias{print.rgcca}
-\title{print.rgcca
-Print rgcca results}
+\title{print.rgcca}
 \usage{
 \method{print}{rgcca}(x, ...)
 }
 \arguments{
-\item{x}{a result of rgcca function}
+\item{x}{a result of rgcca function (see \code{\link{rgcca}})}
 
 \item{...}{other parameters used in print (for the displaying of matrices)}
 }
 \description{
-print.rgcca
 Print rgcca results
 }
 \examples{
@@ -23,6 +21,7 @@ X_ind = as.matrix(Russett[,c("gnpr","labo")]);
 X_polit = as.matrix(Russett[ , c("demostab", "dictator")]);
 A = list(X_agric, X_ind, X_polit);
 C = matrix(c(0, 0, 1, 0, 0, 1, 1, 1, 0), 3, 3);
-res = rgcca(A, C, ncomp=rep(2,3),tau = c(1, 1, 1), scheme = "factorial", scale = TRUE,verbose=FALSE)
+res = rgcca(A, connection=C, ncomp=rep(2,3),tau = c(1, 1, 1), 
+scheme = "factorial", scale = TRUE,verbose=FALSE)
 print(res)
 }

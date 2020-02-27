@@ -11,7 +11,7 @@ MIRGCCA(blocks, option = "knn", type = "rgcca", superblock = TRUE,
   ncomp = rep(2, length(A)), naxis = 1)
 }
 \arguments{
-\item{blocks}{A list of matrix}
+\item{blocks}{A list that contains the \eqn{J} blocks of variables \eqn{\mathbf{X_1}, \mathbf{X_2}, ..., \mathbf{X_J}}.}
 
 \item{option}{"knn" for k Nearest Neigbors or "em" for Expectation Maximization}
 
@@ -25,13 +25,13 @@ MIRGCCA(blocks, option = "knn", type = "rgcca", superblock = TRUE,
 
 \item{ni}{number of imputations}
 
-\item{scale}{A boolean scaling the blocks}
+\item{scale}{If scale = TRUE, each block is standardized to zero means and unit variances (default: TRUE).}
 
-\item{sameBlockWeight}{If TRUE, all blocks are weighted by their own variance: all the blocks have the same weight}
+\item{sameBlockWeight}{TRUE by default : each block have the same weight in the RGCCA analysis. If FALSE, the weight of each block depends on the number of variables of the block}
 
-\item{tau}{tau is either a \eqn{1 \times J} vector or a \eqn{\mathrm{max}(ncomp) \times J} matrix, and contains the values 
-of the shrinkage parameters (default: tau = 1, for each block and each dimension).
-If tau = "optimal" the shrinkage paramaters are estimated for each block and each dimension using the Schafer and Strimmer (2005)
+\item{tau}{Used for type="rgcca" only. tau is either a \eqn{1 \times J} vector or a \eqn{\mathrm{max}(ncomp) \times J} matrix, and contains the values 
+of the regularization parameters (default: tau = 1, for each block and each dimension).
+If tau = "optimal" the regularization paramaters are estimated for each block and each dimension using the Schafer and Strimmer (2005)
 analytical formula . If tau is a \eqn{1\times J} numeric vector, tau[j] is identical across the dimensions of block \eqn{\mathbf{X}_j}. 
 If tau is a matrix, tau[k, j] is associated with \eqn{\mathbf{X}_{jk}} (\eqn{k}th residual matrix for block \eqn{j})}
 
@@ -39,14 +39,13 @@ If tau is a matrix, tau[k, j] is associated with \eqn{\mathbf{X}_{jk}} (\eqn{k}t
 
 \item{output}{TRUE if the A list should be returned in the output, FALSE ifelse}
 
-\item{scheme}{A character giving the link function for covariance maximization}
+\item{scheme}{The value is "horst", "factorial", "centroid" or the g function (default: "centroid").}
 
-\item{tol}{An integer for the stopping value for convergence}
+\item{tol}{The stopping value for convergence.}
 
-\item{connection}{A matrix giving the connection between the blocks}
+\item{connection}{A design matrix that describes the relationships between blocks (default: complete design).}
 
-\item{ncomp}{A vector of integer giving the number of component for each
-blocks}
+\item{ncomp}{A \eqn{1 \times J} vector that contains the numbers of components for each block (default: rep(1, length(A)), which gives one component per block.). It can be estimated by using \link{rgcca_permutation}.}
 
 \item{naxis}{number of component to select in the superblock for the estimation of missing data for "em" option}
 }

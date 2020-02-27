@@ -19,13 +19,13 @@ rgccaNa(blocks, method, connection = 1 - diag(length(A)), tau = rep(1,
 
 \item{connection}{A design matrix that describes the relationships between blocks (default: complete design).}
 
-\item{tau}{tau is either a \eqn{1 \times J} vector or a \eqn{\mathrm{max}(ncomp) \times J} matrix, and contains the values 
-of the shrinkage parameters (default: tau = 1, for each block and each dimension).
-If tau = "optimal" the shrinkage paramaters are estimated for each block and each dimension using the Schafer and Strimmer (2005)
+\item{tau}{Used for type="rgcca" only. tau is either a \eqn{1 \times J} vector or a \eqn{\mathrm{max}(ncomp) \times J} matrix, and contains the values 
+of the regularization parameters (default: tau = 1, for each block and each dimension).
+If tau = "optimal" the regularization paramaters are estimated for each block and each dimension using the Schafer and Strimmer (2005)
 analytical formula . If tau is a \eqn{1\times J} numeric vector, tau[j] is identical across the dimensions of block \eqn{\mathbf{X}_j}. 
 If tau is a matrix, tau[k, j] is associated with \eqn{\mathbf{X}_{jk}} (\eqn{k}th residual matrix for block \eqn{j})}
 
-\item{ncomp}{A \eqn{1 \times J} vector that contains the numbers of components for each block (default: rep(1, length(A)), which gives one component per block.)}
+\item{ncomp}{A \eqn{1 \times J} vector that contains the numbers of components for each block (default: rep(1, length(A)), which gives one component per block.). It can be estimated by using \link{rgcca_permutation}.}
 
 \item{scheme}{The value is "horst", "factorial", "centroid" or the g function (default: "centroid").}
 
@@ -41,13 +41,13 @@ If tau is a matrix, tau[k, j] is associated with \eqn{\mathbf{X}_{jk}} (\eqn{k}t
 
 \item{sameBlockWeight}{TRUE by default : each block have the same weight in the RGCCA analysis. If FALSE, the weight of each block depends on the number of variables of the block}
 
-\item{knn.k}{Number of k nearest neighbors}
+\item{knn.k}{Used only if missing values in the blocks are estimated by k-NN methods. Number of k nearest neighbors. Can also be "auto" for automatic selection.}
 
-\item{knn.output}{"mean", "random" or "weightedMean" : returns respectively the average of the k nearest neigbors, one selected randomly, or an average weighted by the distance of the k NN}
+\item{knn.output}{"mean", "random" or "weightedMean" : Used only if missing values in the blocks are estimated by k-NN methods. Returns respectively the average of the k nearest neigbors, one selected randomly, or an average weighted by the distance of the k NN}
 
-\item{knn.klim}{k limits (if k is not a number, optimal k between klim[1] and klim[2] is calculated )}
+\item{knn.klim}{Used only if missing values in the blocks are estimated by k-NN methods, and if knn.k is "auto". k limits (if k is not a number, optimal k between klim[1] and klim[2] is calculated )}
 
-\item{knn.sameBlockWeight}{if TRUE the distance for Nearest Neigbors takes the size of blocks into account}
+\item{knn.sameBlockWeight}{Used only if missing values in the blocks are estimated by k-NN methods.if TRUE the distance for Nearest Neigbors takes the size of blocks into account}
 
 \item{pca.ncp}{Number of components chosen in PCA}
 
@@ -55,7 +55,7 @@ If tau is a matrix, tau[k, j] is associated with \eqn{\mathbf{X}_{jk}} (\eqn{k}t
 
 \item{prescaling}{If TRUE, the scaling should be done outside of the function. Default at FALSE}
 
-\item{quiet}{If TRUE, the potential warnings are not printed}
+\item{quiet}{If TRUE, does not print warnings}
 }
 \value{
 \item{Y}{A list of \eqn{J} elements. Each element of \eqn{Y} is a matrix that contains the RGCCA components for the corresponding block.}

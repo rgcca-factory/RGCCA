@@ -1,7 +1,8 @@
 #' plot.patternNA
+#' 
 #' Plots an object of class patternNA 
 #' @param x an object from get_patternNA (see \code{\link[RGCCA]{get_patternNA}} )
-#' @param type if TRUE, the pattern of missing values is plotted
+#' @param type "all" if all blocks should be plotted, ifelse an integer corresponding to the position of the block to be plotted in the initial list
 #' @param legend if TRUE the legend is plotted
 #' @param outlierVisible if FALSE, the outliers will be -2* standard deviations if negative, 2 standard deviations if positive
 #' @param scale if TRUE all the variables are scaled before graphical representation
@@ -21,6 +22,7 @@
 #'A=list(bloc1=X1,bloc2=X2,bloc3=X3)
 #'p=get_patternNA(A)
 #'plot(p)
+#'@seealso \link{get_patternNA}, \link{plot.patternNA}, \link{whichNAmethod}
 plot.patternNA=function(x,type="all",legend=TRUE,scale=TRUE,outlierVisible=FALSE,...)
 {
     blocks=x$blocks

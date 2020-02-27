@@ -70,7 +70,7 @@ X_ind = as.matrix(Russett[,c("gnpr","labo")])
 X_polit = as.matrix(Russett[ , c("demostab", "dictator")])
 A = list(X_agric, X_ind, X_polit)
 C = matrix(c(0, 0, 1, 0, 0, 1, 1, 1, 0), 3, 3)
-result.rgcca = rgcca(A, C, tau = c(1, 1, 1), scheme = "factorial",
+result.rgcca = rgcca(A, connection=C, tau = c(1, 1, 1), scheme = "factorial",
 scale = TRUE,ncomp=rep(2,3))
 plot_ind(result.rgcca,i_block=1)
 }

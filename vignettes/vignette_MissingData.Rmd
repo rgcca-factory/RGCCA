@@ -207,8 +207,10 @@ Regarding the relevant variables, the standard deviation of the correlations bet
 
 ```{r, fig.height = 5, fig.width = 5, fig.align = "center"}
 mi_rgcca=MIRGCCA(blocks=A_missing,k=3,ni=5,tau=rep(1,3))
- plot(mi_rgcca,type="cor",list_rgcca=mi_rgcca$rgccaList)
- 
+ plot(mi_rgcca,type="cor")
+ plot(mi_rgcca,type="ind")
+ plot(mi_rgcca,type="var")
+
 ```
 
 # Using Josse-type algorithms

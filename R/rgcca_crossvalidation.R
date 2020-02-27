@@ -15,6 +15,7 @@
 #' rgcca_crossvalidation(rgcca_out,  validation = "test", n_cores = 1)$scores
 #' rgcca_crossvalidation(rgcca_out, n_cores = 1)
 #' @export
+#' @seealso \link{rgcca}, \link{rgcca_predict}, \link{plot.predict}
 rgcca_crossvalidation <- function(
     rgcca_res,
     i_block = length(rgcca_res$call$blocks),

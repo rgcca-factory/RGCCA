@@ -2,8 +2,7 @@
 % Please edit documentation in R/determine_patternNA.R
 \name{get_patternNA}
 \alias{get_patternNA}
-\title{get_patternNA
-Determines the pattern of missing values and allows to use it to create datasets with the same pattern.}
+\title{get_patternNA}
 \usage{
 get_patternNA(blocks)
 }
@@ -11,11 +10,16 @@ get_patternNA(blocks)
 \item{blocks}{list of blocks}
 }
 \value{
-a list containing the percentage of missing values per variable (pctNA), the percentage of missing values per block (pctNAbyBlock), and the complete individuals percentage (completeSubjectByBlock)
+a object patternNA, which corresponds to a list containing:
+\itemize{
+\item the percentage of missing values per variable (\code{pctNA})
+\item the percentage of missing values per block (\code{pctNAbyBlock})
+\item the complete individuals percentage (\code{completeSubjectByBlock})
+\item the final blocks (with potential additional NA lines) (\code{blocks})
+}
 }
 \description{
-get_patternNA
-Determines the pattern of missing values and allows to use it to create datasets with the same pattern.
+Determines the pattern of missing values and allows to use it to create datasets with the same pattern. Also add NA lines if one individual is present in a block and not in another one.
 }
 \examples{
 X1=matrix(rnorm(150),30,5)
