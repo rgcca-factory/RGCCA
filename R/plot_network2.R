@@ -13,10 +13,12 @@
 plot_network2 <- function(
     rgcca_res, 
     title = paste0("Common rows between blocks : ",
-                        NROW(rgcca_res$call$blocks[[1]]))) {
+                        NROW(rgcca_res$call$blocks[[1]])),
+    colors =  "#eee685") {
     
     stopifnot(is(rgcca_res, "rgcca"))
     title <- paste0(title, collapse = " ")
+    check_colors(colors)
 
     load_libraries("visNetwork")
 
@@ -39,7 +41,7 @@ plot_network2 <- function(
             sep = " ")
 
     edges$width <- edges$weight * 2
-    nodes$color.background <- rep("#eee685", length(rgcca_res$call$blocks))
+    nodes$color.background <- rep(as.vector(colors[1]), length(rgcca_res$call$blocks))
 
     visNetwork(
         nodes,

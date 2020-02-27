@@ -153,9 +153,9 @@ print(colors)
             axis.line = element_blank()
         )
 
-
+    
     if (length(unique(group)) != 1 && is(df, "d_var2D")) {
-        order_color(rgcca_res$a, p, collapse = collapse, colors)
+        p <- order_color(rgcca_res$a, p, collapse = collapse, colors = colors)
         # For qualitative response OR no response
     } else if ( is.character2(group[!is.na(group)]) ||
                 length(unique(group)) <= 5 || 
@@ -168,7 +168,6 @@ print(colors)
             colors <- c("blue", "gray", "#cd5b45")
         p <- p + scale_color_gradientn(colours = colors, na.value = "black")
     }
-    
 
     return(p)
 }
