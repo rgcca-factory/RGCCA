@@ -62,6 +62,7 @@ rgcca_crossvalidation <- function(
                     ncomp = rgcca_res$call$ncomp,
                     scheme = rgcca_res$call$scheme,
                     scale = FALSE,
+                    sameBlockWeight = FALSE,
                     type = rgcca_res$call$type,
                     verbose = FALSE,
                     init = rgcca_res$call$init,

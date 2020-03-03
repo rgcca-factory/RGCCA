@@ -13,8 +13,7 @@
 #' @param scale_size_bloc A boolean giving the possibility to scale the blocks by the square root of their column number
 #' @param new_scaled A boolean scaling the blocks to predict
 #' @param bigA to permeform data reduction for cross-validation, the dataset where A and newA were extracted
-#' @examples 
-#' library(RGCCA)
+#' @examples
 #' data("Russett")
 #' blocks = list(
 #' agriculture = Russett[, 1:3],
@@ -25,11 +24,12 @@
 #' 0, 0, 1,
 #' 1, 1, 0),
 #' 3, 3)
-#' A = lapply(blocks, function(x) x[1:32,])
-#' A = lapply(A, function(x) scale2 (x, bias = TRUE) / sqrt(NCOL(x)) )
-#' object = rgcca(A, connection = C, tau = c(0.7,0.8,0.7),
+#' object1 = rgcca(blocks, connection = C, tau = c(0.7,0.8,0.7),
 #'     ncomp = c(3,2,4), superblock = FALSE, response = 3)
-#' newA = lapply(blocks, function(x) x[-c(1:32),])
+#' A = lapply(object1$call$blocks, function(x) x[1:32,])
+#' object = rgcca(A, connection = C, tau = c(0.7,0.8,0.7),
+#'     ncomp = c(3,2,4), scale = FALSE, sameBlockWeight = FALSE, superblock = FALSE, response = 3)
+#' newA = lapply(object1$call$blocks, function(x) x[-c(1:32),])
 #' newA = lapply( newA, function(x) x[, sample(1:NCOL(x))] )
 #' newA = sample(newA, length(newA))
 #' bloc_to_pred = "industry"
@@ -234,8 +234,17 @@ rgcca_predict = function(
         score <- switch(fit,
             "lm"  = {
 
-                reslm  <- lm(y ~ ., data = cbind(comp.train, y = y.train), na.action = "na.exclude")
-                ychapo <- predict(reslm, cbind(comp.test, y = y.test))
+                ychapo <- sapply(
+                    colnames(y.train),
+                    function(x) {
+                        predict(
+                            lm(
+                                as.formula(paste(x, " ~ .")),
+                                data = cbind(comp.train, y.train), 
+                                na.action = "na.exclude"
+                            ), 
+                        cbind(comp.test, y.test))
+                    })
     
                 if (any(is.na(ychapo)))
                     warning("NA in predictions.")

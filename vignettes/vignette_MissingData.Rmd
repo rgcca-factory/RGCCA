@@ -209,7 +209,7 @@ Regarding the relevant variables, the standard deviation of the correlations bet
 mi_rgcca=MIRGCCA(blocks=A_missing,k=3,ni=5,tau=rep(1,3))
  plot(mi_rgcca,type="cor")
  plot(mi_rgcca,type="ind")
- plot(mi_rgcca,type="var")
+ #plot(mi_rgcca,type="var") #TODO
 
 ```
 
