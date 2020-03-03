@@ -9,7 +9,7 @@
 #'     politic = Russett[, 6:11] )
 #' perm <- rgcca_permutation(A, nperm = 2, n_cores = 1)
 #' plot(perm)
-#' perm <- rgcca_permutation(A, p_spars = TRUE, nperm = 2, n_cores = 1)
+#' perm <- rgcca_permutation(A, perm.par = "sparsity", nperm = 2, n_cores = 1)
 #' plot(perm)
 #' @export
 plot.permutation=function(x,type="zstat",cex = 1, main= NULL, cex_main = 25 * cex,                          cex_sub = 16 * cex,

@@ -6,7 +6,7 @@
 # rgcca_permutation_k(blocks)
 rgcca_permutation_k <- function(
     blocks,
-    par = list("ncomps", expand.grid(rep(list(seq(2)), length(blocks)))),
+    par = list("ncomp", expand.grid(rep(list(seq(2)), length(blocks)))),
     connection = 1 - diag(length(blocks)),
     response = NULL,
     tau = rep(1, length(blocks)),
@@ -48,19 +48,16 @@ rgcca_permutation_k <- function(
                         quiet = quiet,
                         method = "complete"
                     ))
-                switch(
-                    par[[1]],
-                    "ncomp" = {
-                        ncomp <- par[[2]][i, ]
-                            if (tolower(type) %in% c("sgcca", "spca", "spls"))
-                                func[["penalty"]] <- sparsity
-                            else
-                                func[["tau"]] <- tau
-                    },
-                    "sparsity" = {
-                        func[[par[[1]]]] <- par[[2]][i, ]
-                        type <- "sgcca"
-                })
+
+                if(par[[1]] == "ncomp") {
+                    ncomp <- par[[2]][i, ]
+                    if (tolower(type) %in% c("sgcca", "spca", "spls"))
+                        func[["penalty"]] <- sparsity
+                    else
+                        func[["tau"]] <- tau
+                } else
+                    func[[par[[1]]]] <- par[[2]][i, ]
+                
                 crit <- eval(as.call(func))$crit
                 
                 return(sum(sapply(crit, function(x) sum(x))))

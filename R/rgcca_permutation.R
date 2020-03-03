@@ -22,37 +22,39 @@
 #' A = list(agriculture = Russett[, seq(3)], industry = Russett[, 4:5],
 #'     politic = Russett[, 6:11] )
 #' rgcca_permutation(A, nperm = 2, n_cores = 1)
-#' rgcca_permutation(A, p_ncomp = TRUE, nperm = 2, n_cores = 1)
-#' rgcca_permutation(A, p_spars = 0.8, nperm = 2, n_cores = 1)
-#' rgcca_permutation(A, p_spars = c(0.6, 0.75, 0.5), nperm = 2, n_cores = 1)
-#' rgcca_permutation(A, p_spars = matrix(c(0.6, 0.75, 0.5), 3, 3, byrow = TRUE),
+#'     rgcca_permutation(A, perm.par = "ncomp", nperm = 2, n_cores = 1)
+#' rgcca_permutation(A, perm.par = "sparsity", perm.value = 0.8, nperm = 2, n_cores = 1)
+#' rgcca_permutation(A, perm.par = "sparsity", perm.value = c(0.6, 0.75, 0.5), nperm = 2, n_cores = 1)
+#' rgcca_permutation(A, perm.par = "sparsity", perm.value = matrix(c(0.6, 0.75, 0.5), 3, 3, byrow = TRUE),
 #'  nperm = 2, n_cores = 1)
-#' rgcca_permutation(A, p_ncomp = 2, nperm = 2, n_cores = 1)
-#' rgcca_permutation(A, p_ncomp = c(2,2,3), nperm = 2, n_cores = 1)
-#' rgcca_permutation(A, p_ncomp = matrix(c(2,2,3), 3, 3, byrow = TRUE), 
+#' rgcca_permutation(A, perm.par = "tau", perm.value = 0.8, nperm = 2, n_cores = 1)
+#' rgcca_permutation(A, perm.par = "tau", perm.value = c(0.6, 0.75, 0.5), nperm = 2, n_cores = 1)
+#' rgcca_permutation(A, perm.par = "tau", perm.value = matrix(c(0.6, 0.75, 0.5), 3, 3, byrow = TRUE),
+#'                   nperm = 2, n_cores = 1)
+#' rgcca_permutation(A, perm.par = "ncomp", perm.value = 2, nperm = 2, n_cores = 1)
+#' rgcca_permutation(A, perm.par = "ncomp", perm.value = c(2,2,3), nperm = 2, n_cores = 1)
+#' rgcca_permutation(A, perm.par = "ncomp", perm.value = matrix(c(2,2,3), 3, 3, byrow = TRUE), 
 #' nperm = 2, n_cores = 1)
 #' @export
 rgcca_permutation <- function(
     blocks,
     type = "rgcca",
-    p_spars = TRUE,
-    p_ncomp = FALSE,
+    perm.par = "tau",
+    perm.value = NULL,
     nperm = 20,
     n_cores = parallel::detectCores() - 1,
     quiet=TRUE,
     ...) {
-    call=list(type=type,p_spars=p_spars,p_ncomp=p_ncomp,nperm=nperm,quiet=quiet)
+    call=list(type=type, perm.par = perm.par, perm.value = perm.value, nperm=nperm, quiet=quiet)
     check_integer("nperm", nperm)
     check_integer("n_cores", n_cores, 0)
 
-    if (any(p_ncomp == FALSE) && any(p_spars == FALSE))
-        stop("Select one parameter among 'p_spars' or 'p_ncomp' to optimize. By default, p_spars is selected.")
+    match.arg(perm.par, c("tau", "sparsity", "ncomp"))
 
     if (length(blocks) < 1)
         stop("Permutation required a number of blocks larger than 1.")
 
     ncols <- sapply(blocks, NCOL)
-    min_spars <- sapply(ncols, function(x) 1 / sqrt(x))
 
     set_spars <- function(max = 1) {
         if (length(max) == 1)
@@ -61,37 +63,50 @@ rgcca_permutation <- function(
             f <- quote(max[x])
         sapply(seq(min_spars), function(x) seq(eval(f), min_spars[x], len = 10))
     }
-
-    if (!any(p_ncomp == FALSE)) {
-        if (!class(p_ncomp) %in% c("data.frame", "matrix")) {
-            if (isTRUE(p_ncomp) || any(p_ncomp > ncols)) {
-                ncols[ncols > 5] <- 5
-                p_ncomp <- ncols
-            }else
-                p_ncomp <- check_ncomp(p_ncomp, blocks)
-            p_ncomp <- lapply(p_ncomp, function(x) seq(x))
-            p_ncomp <- expand.grid(p_ncomp)
-        }else
-            p_ncomp <- t(sapply(seq(NROW(p_ncomp)), function(x) check_ncomp(p_ncomp[x, ], blocks, 1)))
-        par <- list("ncomp", p_ncomp)
-    }
-
-    if (!any(p_spars == FALSE)) {
-        if (identical(p_spars, TRUE))
-            p_spars <- set_spars()
-        else if (class(p_spars) %in% c("data.frame", "matrix"))
-            p_spars <- t(sapply(seq(NROW(p_spars)), function(x) check_tau(p_spars[x, ], blocks, type = "sgcca")))
-        else{
-            if (any(p_spars < min_spars))
-                stop(paste0("p_spars should be upper than 1 / sqrt(NCOL(blocks)) : ", paste0(round(min_spars, 2), collapse = ",")))
-            p_spars <- check_tau(p_spars, blocks, type = "sgcca")
-            p_spars <- set_spars(max = p_spars)
+    
+    set_penalty <- function () {
+        
+        if(perm.par == "sparsity"){
+            type <<- "sgcca"
+            min_spars <<- sapply(ncols, function(x) 1 / sqrt(x))
+        }else{
+            type <<- "rgcca"
+            min_spars <<- sapply(ncols, function(x) 0)
         }
-
-        colnames(p_spars) <- names(blocks)
-        par <- list("sparsity", p_spars)
-        type <- "sgcca"
+        
+        if (is.null(perm.value))
+            perm.value <- set_spars()
+        else if (class(perm.value) %in% c("data.frame", "matrix"))
+            perm.value <- t(sapply(seq(NROW(perm.value)), function(x) check_tau(perm.value[x, ], blocks, type = type)))
+        else{
+            if (any(perm.value < min_spars))
+                stop(paste0("perm.value should be upper than : ", paste0(round(min_spars, 2), collapse = ",")))
+            perm.value <- check_tau(perm.value, blocks, type = type)
+            perm.value <- set_spars(max = perm.value)
+        }
+        
+        colnames(perm.value) <- names(blocks)
+        return(list(perm.par, perm.value))
     }
+
+    switch(
+        perm.par,
+        "ncomp" = {
+        if (!class(perm.value) %in% c("data.frame", "matrix")) {
+            if (is.null(perm.value) || any(perm.value > ncols)) {
+                ncols[ncols > 5] <- 5
+                perm.value <- ncols
+            }else
+                perm.value <- check_ncomp(perm.value, blocks)
+            perm.value <- lapply(perm.value, function(x) seq(x))
+            perm.value <- expand.grid(perm.value)
+        }else
+            perm.value <- t(sapply(seq(NROW(perm.value)), function(x) check_ncomp(perm.value[x, ], blocks, 1)))
+        par <- list(perm.par, perm.value)
+    },
+    "sparsity" = par <- set_penalty(),
+    "tau" = par <- set_penalty()
+    )
 
     crits <- rgcca_permutation_k(
         blocks,
