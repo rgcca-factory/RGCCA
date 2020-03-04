@@ -1,4 +1,6 @@
 #' plot.permutation
+#' Plots a permutation object. The parameters tuned for maximizing RGCCA criteria is displayed in the title. 
+#' In x, the index of combination (number corresponding to the rownames of tuning parameters object). In ordinate, a score depending of the type parameter (RGCCA criterion for crit, and zstat for the pseudo z-scores)
 #' @param x result of rgcca_permutation (see  \code{\link[RGCCA]{rgcca_permutation}} )
 #' @param main title of the plot
 #' @inheritParams plot_permut_2D

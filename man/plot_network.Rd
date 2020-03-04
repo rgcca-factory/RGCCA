@@ -5,7 +5,7 @@
 \title{Plot the connection between blocks}
 \usage{
 plot_network(rgcca_res, title = paste0("Common rows between blocks : ",
-  NROW(rgcca_res$call$blocks[[1]])))
+  NROW(rgcca_res$call$blocks[[1]])), colors = "#eee685")
 }
 \arguments{
 \item{rgcca_res}{A list giving the results of a R/SGCCA}

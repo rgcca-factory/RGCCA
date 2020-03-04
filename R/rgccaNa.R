@@ -1,6 +1,14 @@
 #' imputeRGCCA allows to choose the imputation method before running RGCCA
 #' @param blocks  A list that contains the \eqn{J} blocks of variables \eqn{\mathbf{X_1}, \mathbf{X_2}, ..., \mathbf{X_J}}.
 #' @param method  Either a character corresponding to the used method ("complete","knn","em","sem") or a function taking a list of J blocks (A) as only parameter and returning the imputed list. 
+#' \itemize{
+#' \item{\code{"mean"}}{ corresponds to an imputation by the colmeans}
+#' \item{\code{"complete"}}{ corresponds to run RGCCA only on the complete subjects (subjects with missing data are removed)}
+#' \item{\code{"nipals"}}{ corresponds to run RGCCA on all available data (NIPALS algorithm)}
+#' \item{\code{"em"}}{ corresponds to impute the data with EM-type algorithms}
+#' \item{\code{"sem"}}{ corresponds to impute the data with EM-type algorithms with superblock approach}
+#' \item{\code{"knn1"}}{ corresponds to impute the data with the 1-Nearest Neighbor. 1 can be replace by another number (such as knn3) to impute with the 3-Nearest Neighbors.}}
+
 #' @param connection  A design matrix that describes the relationships between blocks (default: complete design).
 #' @param tau Used for type="rgcca" only. tau is either a \eqn{1 \times J} vector or a \eqn{\mathrm{max}(ncomp) \times J} matrix, and contains the values 
 #' of the regularization parameters (default: tau = 1, for each block and each dimension).

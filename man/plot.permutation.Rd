@@ -2,7 +2,9 @@
 % Please edit documentation in R/plot.rgcca_permutation.R
 \name{plot.permutation}
 \alias{plot.permutation}
-\title{plot.permutation}
+\title{plot.permutation
+Plots a permutation object. The parameters tuned for maximizing RGCCA criteria is displayed in the title. 
+In x, the index of combination (number corresponding to the rownames of tuning parameters object). In ordinate, a score depending of the type parameter (RGCCA criterion for crit, and zstat for the pseudo z-scores)}
 \usage{
 \method{plot}{permutation}(x, type = "zstat", cex = 1, main = NULL,
   cex_main = 25 * cex, cex_sub = 16 * cex, cex_point = 3 * cex,
@@ -30,6 +32,8 @@ the RGCCA criterion and 'zstat' for the pseudo Z-score)}
 }
 \description{
 plot.permutation
+Plots a permutation object. The parameters tuned for maximizing RGCCA criteria is displayed in the title. 
+In x, the index of combination (number corresponding to the rownames of tuning parameters object). In ordinate, a score depending of the type parameter (RGCCA criterion for crit, and zstat for the pseudo z-scores)
 }
 \examples{
 data("Russett")

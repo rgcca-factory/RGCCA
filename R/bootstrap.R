@@ -4,17 +4,19 @@
 #' @inheritParams rgcca
 #' @inheritParams plot_var_2D
 #' @param rgcca_res Result of a RGCCA (see  \code{\link[RGCCA]{rgcca}} )
-#' @param n_boot A integer for the number of boostrap
+#' @param n_boot A integer for the number of boostraps
 #' @param n_cores An integer for the number of cores used in parallelization 
 #' @param ... other RGCCA parameters # TODO
-#' @return A list of RGCCA bootstrap weights
+#' @return A list containing two elements: bootstrap and rgcca. bootstrap is a list of produced rgccas while rgcca is the original rgcca.
 #' @examples
 #' library(RGCCA)
 #' data("Russett")
 #' blocks = list(agriculture = Russett[, seq(3)], industry = Russett[, 4:5],
 #'     politic = Russett[, 6:11] )
 #' rgcca_out = rgcca(blocks)
-#' bootstrap(rgcca_out, n_boot = 2, n_cores = 1)
+#' b=bootstrap(rgcca_out, n_boot = 2, n_cores = 1)
+#' plot(b)
+#' plot(b,type="2D")
 #' bootstrap(rgcca_out, n_boot = 2, n_cores = 1, blocks = lapply(blocks, scale),
 #'  superblock = FALSE)
 #' @export

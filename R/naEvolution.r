@@ -2,10 +2,8 @@
 #' @inheritParams whichNAmethod
 #' @param prctNA if number, percentage of missing data required for each block. If a vector with the same size as blocks, the percentage can be adapted for each block. If a list of values, this percent is calculated per variable
 #' @param seed NULL by default (no reproducibility). A number representing the seed (for reproducibility)
-#' @return \item{resultComparison}{A list of dataset indicators containg a list of rgcca with a list of criterion. }
-#' @return \item{crit}{Convergence criterion : abs(1-obj_k/obj_{k-1})}
-#' @return \item{obj}{Vector containing the mean square error between the predict values and the original non missing values at each iteration}
-#' @title Evolution of fairness of rgcca with increasing missing values
+#' @return resultComparison A list of length pNA. Each element of the list is a result of whichNAmethod (see \link{whichNAmethod})
+#' @title Evolution of quality of rgcca with increasing missing values
 #' @examples 
 #' data(Russett)
 #' library(parallel)
@@ -17,7 +15,7 @@
 #' listResults=naEvolution(blocks=A,listMethods=c("complete","nipals","mean"),
 #' prctNA=c(0.05,0.1,0.15,0.2,0.25,0.3,0.4),typeNA="ponc",ncomp=rep(1,3),
 #' sameBlockWeight=FALSE)
-#' plot(listResults,output="a",barType = "stderr",ylim=c(0,0.2))
+#' plot(listResults,output="a",bars = "stderr",ylim=c(0,0.2))
 #' @export naEvolution
 naEvolution=function(blocks,prctNA=c(0.1,0.2,0.3),listMethods=c("mean"),typeNA="block",ncomp=rep(1,length(blocks)),sameBlockWeight=TRUE,scale=TRUE,nDatasets=20,tol=1e-6,verbose=FALSE,scheme="centroid",seed=NULL,connection=matrix(1,length(blocks),length(blocks))-diag(length(blocks)),tau=rep(1,length(blocks)))
 {

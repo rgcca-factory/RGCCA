@@ -2,8 +2,7 @@
 % Please edit documentation in R/rgcca_permutation.R
 \name{rgcca_permutation}
 \alias{rgcca_permutation}
-\title{Run through a set of constraint parameters sparsitys to select the best with permutation
-Only one component per block for the time being}
+\title{Tuning RGCCA parameters}
 \usage{
 rgcca_permutation(blocks, type = "rgcca", p_spars = TRUE,
   p_ncomp = FALSE, nperm = 20, n_cores = parallel::detectCores() - 1,
@@ -17,7 +16,7 @@ rgcca_permutation(blocks, type = "rgcca", p_spars = TRUE,
 'sum-pca', 'sumcor', 'sumcov-1', 'sumcov-2', 'sumcov.', 'sabscov', 'plspm','cca', 'ra', 'ifa', 'pls','pca')}
 
 \item{p_spars}{A matrix, a vector or an integer containing sets of constraint 
-variables, one row by combination. By default, sgcca.permute takes 10 sets between 
+variables to be tested, one row by combination. By default, sgcca.permute takes 10 sets between 
 min values ($1/sqrt(ncol)$) and 1}
 
 \item{p_ncomp}{A matrix, a vector or an integer containing sets of number of 
@@ -33,7 +32,7 @@ combinations as the maximum number of columns in each block}
 \item{...}{other RGCCA parameters # TODO}
 }
 \value{
-A list containing :
+A object permutation, which is a list containing :
 
 \item{pval}{Pvalue}
 
@@ -46,8 +45,8 @@ A list containing :
 \item{crit}{ RGCCA criterion for the original dataset}
 }
 \description{
-Run through a set of constraint parameters sparsitys to select the best with permutation
-Only one component per block for the time being
+Run through a set of constraint parameters sparsitys (or number of selected components) to select the best with permutation
+The sparsity parameter is tuned with only one component per block.
 }
 \examples{
 data("Russett")
@@ -61,6 +60,8 @@ rgcca_permutation(A, p_spars = matrix(c(0.6, 0.75, 0.5), 3, 3, byrow = TRUE),
  nperm = 2, n_cores = 1)
 rgcca_permutation(A, p_ncomp = 2, nperm = 2, n_cores = 1)
 rgcca_permutation(A, p_ncomp = c(2,2,3), nperm = 2, n_cores = 1)
-rgcca_permutation(A, p_ncomp = matrix(c(2,2,3), 3, 3, byrow = TRUE), 
+res=rgcca_permutation(A, p_ncomp = matrix(c(2,2,3), 3, 3, byrow = TRUE), 
 nperm = 2, n_cores = 1)
+plot(res)
+print(res)
 }

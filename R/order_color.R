@@ -1,7 +1,7 @@
 # Reorder the color of a ggplot (in case of a missing modality)
 order_color <- function(df, p, matched = NULL, collapse = FALSE, colors = NULL) {
-
-    J <- names(df)
+   
+    J <- names(df); print(J)
     if (is.null(matched)) {
         matched <- seq(length(J))
         f <- "color"

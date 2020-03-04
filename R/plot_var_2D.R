@@ -59,8 +59,8 @@ plot_var_2D <- function(
     title = "Variable correlations with",
     resp=NULL,
     colors=NULL,
+    color_by_block=TRUE,
     ...) {
-
     x <- y <- NULL
     df <- get_ctr2(
         rgcca_res = rgcca_res,
@@ -74,7 +74,6 @@ plot_var_2D <- function(
         resp=resp
     )
     class(df) <- c(class(df), "d_var2D")
-
     if (collapse && rgcca_res$call$superblock) {
         if (i_block == length(rgcca_res$a))
             i_block <- length(rgcca_res$a) - 1
@@ -90,6 +89,7 @@ plot_var_2D <- function(
 
     check_ncol(rgcca_res$a, i_block)
 
+
     p <- plot2D(
         rgcca_res,
         df,
@@ -103,6 +103,7 @@ plot_var_2D <- function(
         collapse =  collapse,
         no_overlap = no_overlap,
         colors=colors,
+        color_by_block=color_by_block,
         ...
     )
     

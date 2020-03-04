@@ -1,17 +1,18 @@
-#' Run through a set of constraint parameters sparsitys to select the best with permutation
-#' Only one component per block for the time being
+#' Tuning RGCCA parameters
 #' 
+#' Run through a set of parameters (sparsity or number of selected components) with permutation to select the one maximizing RGCCA criterion 
+#' The sparsity parameter is tuned with only one component per block.
 #' @inheritParams set_connection
 #' @inheritParams bootstrap
 #' @inheritParams rgcca
 #' @param p_spars A matrix, a vector or an integer containing sets of constraint 
-#' variables, one row by combination. By default, sgcca.permute takes 10 sets between 
+#' variables to be tested, one row by combination. By default, sgcca.permute takes 10 sets between 
 #' min values ($1/sqrt(ncol)$) and 1
 #' @param p_ncomp A matrix, a vector or an integer containing sets of number of 
 #' components, one row by set. By default, sgcca.permute takes as many 
 #' combinations as the maximum number of columns in each block
 #' @param nperm Number of permutation tested for each set of constraint
-#' @return A list containing :
+#' @return A object permutation, which is a list containing :
 #' @return \item{pval}{Pvalue}
 #' @return \item{zstat}{Statistic Z}
 #' @return \item{bestpenalties}{Penalties corresponding to the best Z-statistic}
@@ -29,8 +30,10 @@
 #'  nperm = 2, n_cores = 1)
 #' rgcca_permutation(A, p_ncomp = 2, nperm = 2, n_cores = 1)
 #' rgcca_permutation(A, p_ncomp = c(2,2,3), nperm = 2, n_cores = 1)
-#' rgcca_permutation(A, p_ncomp = matrix(c(2,2,3), 3, 3, byrow = TRUE), 
+#' res=rgcca_permutation(A, p_ncomp = matrix(c(2,2,3), 3, 3, byrow = TRUE), 
 #' nperm = 2, n_cores = 1)
+#' plot(res)
+#' print(res)
 #' @export
 rgcca_permutation <- function(
     blocks,

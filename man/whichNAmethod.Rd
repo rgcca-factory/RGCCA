@@ -4,17 +4,31 @@
 \alias{whichNAmethod}
 \title{whichNAmethod}
 \usage{
-whichNAmethod(blocks, typeNA = "block", connection = matrix(1,
-  length(blocks), length(blocks)) - diag(length(blocks)), tau = rep(1,
-  length(blocks)), listMethods, nDatasets = 20, patternNA = NULL,
-  ncomp = rep(2, length(blocks)), sameBlockWeight = TRUE,
-  scale = TRUE, tol = 1e-06, verbose = FALSE, scheme = "centroid",
-  seed = NULL, typeRGCCA = "rgcca", sparsity = NULL)
+whichNAmethod(blocks, listMethods = c("complete", "nipals"),
+  typeNA = "block", nDatasets = 20, patternNA = NULL,
+  connection = matrix(1, length(blocks), length(blocks)) -
+  diag(length(blocks)), tau = rep(1, length(blocks)), ncomp = rep(2,
+  length(blocks)), sameBlockWeight = TRUE, scale = TRUE, tol = 1e-06,
+  verbose = FALSE, scheme = "centroid", seed = NULL,
+  typeRGCCA = "rgcca", sparsity = NULL)
 }
 \arguments{
 \item{blocks}{A list that contains the \eqn{J} blocks of variables \eqn{\mathbf{X_1}, \mathbf{X_2}, ..., \mathbf{X_J}}.}
 
-\item{typeNA}{structure of missing data required ("ponc" or "block")}
+\item{listMethods}{vector containing a list of methods ("mean","complete","nipals"...)
+\itemize{
+\item{\code{"mean"}}{ corresponds to an imputation by the colmeans}
+\item{\code{"complete"}}{ corresponds to run RGCCA only on the complete subjects (subjects with missing data are removed)}
+\item{\code{"nipals"}}{ corresponds to run RGCCA on all available data (NIPALS algorithm)}
+\item{\code{"em"}}{ corresponds to impute the data with EM-type algorithms}
+\item{\code{"sem"}}{ corresponds to impute the data with EM-type algorithms with superblock approach}
+\item{\code{"knn1"}}{ corresponds to impute the data with the 1-Nearest Neighbor. 1 can be replace by another number (such as knn3) to impute with the 3-Nearest Neighbors.}}}
+
+\item{typeNA}{structure of missing data required ("ponc" or "block" or "byVar")}
+
+\item{nDatasets}{Number of simulated datasets}
+
+\item{patternNA}{pattern of missing values required. If NULL, result of \link{get_patternNA},else, vector containing the percent of missing data for each block if typeNA="ponc" or "block. If type NA="byVar",list of the same size than blocks. Each element of this list should be a vector whose length is the number of variable in the block, containing for each variable the proportion of missing values.}
 
 \item{connection}{A design matrix that describes the relationships between blocks (default: complete design).}
 
@@ -23,12 +37,6 @@ of the regularization parameters (default: tau = 1, for each block and each dime
 If tau = "optimal" the regularization paramaters are estimated for each block and each dimension using the Schafer and Strimmer (2005)
 analytical formula . If tau is a \eqn{1\times J} numeric vector, tau[j] is identical across the dimensions of block \eqn{\mathbf{X}_j}. 
 If tau is a matrix, tau[k, j] is associated with \eqn{\mathbf{X}_{jk}} (\eqn{k}th residual matrix for block \eqn{j})}
-
-\item{listMethods}{vector containing a list of methods ("mean","complete","nipals"...)}
-
-\item{nDatasets}{Number of simulated dataset}
-
-\item{patternNA}{number of missing data required}
 
 \item{ncomp}{A \eqn{1 \times J} vector that contains the numbers of components for each block (default: rep(1, length(A)), which gives one component per block.). It can be estimated by using \link{rgcca_permutation}.}
 
@@ -52,11 +60,11 @@ If tau is a matrix, tau[k, j] is associated with \eqn{\mathbf{X}_{jk}} (\eqn{k}t
 a whichNAmethod object: a list of length nDataset containing. Each element of this list corresponding to each simulated dataset is
 a list whose names are the chosen missing methods. Each element of such a list is also a list containing
 \itemize{ 
-\item{a}{A vector of size J (number of blocks) corresponding to the norm of difference between the original weight (first axis) and the simulated one for each block }
- \item{rv}{A vector of size J (number of blocks) corresponding to the rv coefficient between the original individual map (first axis) and the simulated one for each block }
- \item{bm}{A vector of size J (number of blocks) corresponding to the percent of different top ten variables correlated with first axis and the simulated one for each block}
-\item{rvComplete}{A vector of size J (number of blocks) corresponding to the rv coefficient between the original individual map (first axis) and the simulated one for each block ONLY on the complete individuals}
-\item{rmse}{Available only if imputation. A vector of size J (number of blocks) corresponding to the Root Mean Square Error between the original scores and the simulated ones for each block}
+\item{a}{: A vector of size J (number of blocks) corresponding to the norm of difference between the original weight (first axis) and the simulated one for each block }
+ \item{rv}{: A vector of size J (number of blocks) corresponding to the rv coefficient between the original individual map (first axis) and the simulated one for each block }
+ \item{bm}{: A vector of size J (number of blocks) corresponding to the percent of different top ten variables correlated with first axis and the simulated one for each block}
+\item{rvComplete}{: A vector of size J (number of blocks) corresponding to the rv coefficient between the original individual map (first axis) and the simulated one for each block ONLY on the complete individuals}
+\item{rmse}{: Available only if imputation. A vector of size J (number of blocks) corresponding to the Root Mean Square Error between the original scores and the simulated ones for each block}
 }
 }
 \description{

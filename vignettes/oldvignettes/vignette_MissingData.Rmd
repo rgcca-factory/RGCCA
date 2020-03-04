@@ -249,7 +249,7 @@ listResults=naEvolution(blocks=A,listMethods=c("complete","nipals","mean"),
        ,nDatasets = 10)
 ```
 ```{r, fig.height = 4, fig.width = 6, fig.align = "center"}
-plot(listResults,output="a",barType = "stderr")
+plot(listResults,output="a",bars = "stderr")
 ```
 
 

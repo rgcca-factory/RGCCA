@@ -1,11 +1,20 @@
-#' plot.df_bootstrap
+#' plot.bootstrap
 #' 
+#' Plots the results of a bootstrap object. The representation can be with bars (1D) or (2D) #TODO
 #' @param type "1D" or "2D"
 #' @param x result of bootstrap  \code{\link[RGCCA]{bootstrap}} 
 #' @inheritParams plot_bootstrap_1D
 #' @inheritParams plot_bootstrap_2D
 #' @export
-plot.bootstrap=function(x,type="1D",i_block=length(x$rgcca$call$blocks),colors=NULL,title=NULL,cex=1,n_cores= parallel::detectCores() - 1,...)
+#' @examples
+#' library(RGCCA)
+#' data("Russett")
+#' blocks = list(agriculture = Russett[, seq(3)], industry = Russett[, 4:5],
+#'     politic = Russett[, 6:11] )
+#' rgcca_out = rgcca(blocks)
+#' b=bootstrap(rgcca_out, n_boot = 2, n_cores = 1)
+#' plot(b)
+plot.bootstrap=function(x,type="1D",i_block=length(x$rgcca$call$blocks),bars="sd",colors=NULL,title=NULL,cex=1,n_cores= parallel::detectCores() - 1,...)
 {
     
     if(type=="1D")
