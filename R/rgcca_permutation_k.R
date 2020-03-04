@@ -28,39 +28,73 @@ rgcca_permutation_k <- function(
             blocks[[k]] <- as.matrix(blocks[[k]][sample(seq(NROW(blocks[[k]]))), ])
     }
 
-    simplify2array(
-        parallel::mclapply(
-            seq(NROW(par[[2]])),
-            function(i) {
-                func <- quote(
-                    rgcca(
-                        blocks = blocks,
-                        connection = connection,
-                        response = response,
-                        superblock = superblock,
-                        ncomp = ncomp,
-                        scheme = scheme,
-                        scale = scale,
-                        type = type,
-                        init = init,
-                        bias = bias,
-                        tol = tol,
-                        quiet = quiet,
-                        method = "complete"
-                    ))
+    gcca <- quote(
+        function(i) {
+            func <- quote(
+                rgcca(
+                    blocks = blocks,
+                    connection = connection,
+                    response = response,
+                    superblock = superblock,
+                    ncomp = ncomp,
+                    scheme = scheme,
+                    scale = scale,
+                    type = type,
+                    init = init,
+                    bias = bias,
+                    tol = tol,
+                    quiet = quiet,
+                    method = "complete"
+                ))
 
-                if(par[[1]] == "ncomp") {
-                    ncomp <- par[[2]][i, ]
-                    if (tolower(type) %in% c("sgcca", "spca", "spls"))
-                        func[["penalty"]] <- sparsity
-                    else
-                        func[["tau"]] <- tau
-                } else
-                    func[[par[[1]]]] <- par[[2]][i, ]
-                
-                crit <- eval(as.call(func))$crit
-                
-                return(sum(sapply(crit, function(x) sum(x))))
-            },
-        mc.cores = n_cores))
+            if(par[[1]] == "ncomp") {
+                ncomp <- par[[2]][i, ]
+                if (tolower(type) %in% c("sgcca", "spca", "spls"))
+                    func[["penalty"]] <- sparsity
+                else
+                    func[["tau"]] <- tau
+            } else
+                func[[par[[1]]]] <- par[[2]][i, ]
+
+            crit <- eval(as.call(func))$crit
+
+            return(sum(sapply(crit, function(x) sum(x))))
+        })
+
+    if (Sys.info()["sysname"] == "Windows") {
+
+        e <- environment()
+        cl <- parallel::makeCluster(n_cores)
+
+        parallel::clusterExport(
+            cl,
+            names(formals("rgcca_permutation_k")),
+            envir = e
+        )
+
+        parallel::clusterEvalQ(cl, library(RGCCA))
+
+        res <- tryCatch({
+            parallel::parSapply(
+            cl,
+            seq(NROW(par[[2]])),
+            eval(as.call(gcca))
+            )
+        }, error = function(e) print(e))
+
+        if(!is.null(cl)) {
+            parallel::stopCluster(cl)
+            cl <- c()
+        }
+
+        return(res)
+
+    }else{
+
+        simplify2array(
+            parallel::mclapply(
+                seq(NROW(par[[2]])),
+                eval(as.call(gcca)),
+            mc.cores = n_cores))
+    }
 }
