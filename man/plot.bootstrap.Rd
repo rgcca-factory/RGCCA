@@ -2,7 +2,7 @@
 % Please edit documentation in R/plot.df_bootstrap.r
 \name{plot.bootstrap}
 \alias{plot.bootstrap}
-\title{plot.bootstrap}
+\title{Plots a bootstrap object}
 \usage{
 \method{plot}{bootstrap}(x, type = "1D",
   i_block = length(x$rgcca$call$blocks), bars = "sd", colors = NULL,

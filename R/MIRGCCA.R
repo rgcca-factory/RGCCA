@@ -1,5 +1,5 @@
-#'Multiple imputation for RGCCA
-#'
+#' Multiple imputation for RGCCA
+#' 
 #' This method allows multiple imputation for RGCCA with several options.
 #' @param ni number of imputations
 #' @param k Integer representing the number of neighbors or "auto" or "all"
@@ -9,10 +9,10 @@
 #' @param klim TRUE if the A list should be returned in the output, FALSE ifelse
 #' @param output TRUE if the A list should be returned in the output, FALSE ifelse
 #' @param option "knn" for k Nearest Neigbors or "em" for Expectation Maximization
-#' @return \item{rgcca0}{RGCCA results for the reference dataset}
-#' @return \item{data}{list of imputed data obtained}
-#' @return \item{rgccaList}{list of RGCCA obtained}
-#' @title MIRGCCA: Multiple imputation for RGCCA
+#' @return A list_rgcca object containing
+#' \itemize{\item{rgcca0}{ RGCCA results for the reference dataset}
+#' \item{data}{ list of imputed data obtained}
+#'  \item{rgccaList}{ list of RGCCA obtained}}
 #' @examples 
 #' set.seed(42);X1=matrix(rnorm(500),100,5);
 #' set.seed(22);X2=matrix(rnorm(400),100,4);
@@ -27,6 +27,7 @@
 #'  X3[3,1:2]=NA
 #'  A=list(X1,X2,X3)
 #' res=MIRGCCA(A,k=3,ni=5,scale=TRUE,sameBlockWeight=TRUE,tau=rep(0,3))
+#' @seealso \link{\code{plot.list_rgcca}}
 #' @export
 MIRGCCA=function(blocks,option="knn",type="rgcca",superblock=TRUE,k=5,ni=5,scale=TRUE,sameBlockWeight=TRUE,tau=rep(1:length(A)),klim=NULL,output="mean",scheme="centroid",tol=1e-8,connection=NULL,ncomp=rep(2,length(A)),naxis=1)
 {

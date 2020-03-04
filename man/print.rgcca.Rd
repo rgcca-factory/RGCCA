@@ -2,7 +2,8 @@
 % Please edit documentation in R/print.rgcca.R
 \name{print.rgcca}
 \alias{print.rgcca}
-\title{print.rgcca}
+\title{Printing rgcca results
+Prints the call of rgcca results}
 \usage{
 \method{print}{rgcca}(x, ...)
 }
@@ -12,7 +13,8 @@
 \item{...}{other parameters used in print (for the displaying of matrices)}
 }
 \description{
-Print rgcca results
+Printing rgcca results
+Prints the call of rgcca results
 }
 \examples{
 data(Russett)

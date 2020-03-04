@@ -1,16 +1,6 @@
-#' plot.rgcca
-#'  
+#' Plots for RGCCA
+#' 
 #' Plots different outputs of the results obtained by a rgcca function 
-#' @details 
-#' \itemize{
-#'  \item "ind" for individual graph: Y of rgcca are plotted. In abscissa Y[[i_block]][,compx], in ordinate, Y[[i_block_y]][,compy]. Each point correspond to one individual. It can be colored with the resp. options. The colors by default can be modified in colors options.
-#' \item  "var" for variable graph: in abscissa, the correlations with the first axis, in ordinate, the correlation with the second axis. 
-#' \item "both": displays both ind and var graph (this requires only one block (i_block=i_block_y) and at least two components in the rgcca calculation (ncomp>1 for this block)
-#' \item "ave": displays the variance average in each block
-#' \item "net": displays the graphical network corresponding to the connection matrix used in the rgcca
-#' \item "cor": barplot corresponding to the correlation of each variable with a chosen axis (specified by i_block and compx). Variables are sorted from the highest to the lowest and only the highest are displayed (to modify the number, use the parameter n_marks)
-#' \item "weight":barplot corresponding to the correlation of each variable with a chosen axis (specified by i_block and compx). Variables are sorted from the highest to the lowest and only the highest are displayed (to modify the number, use the parameter n_marks)
-#' }
 #' @param x Result of rgcca function  (see\code{\link[RGCCA]{rgcca}} )
 #' @param type Type among c("ind","var","both","ave","cor","weight","network").  See details.
 #' @param text_ind A bolean to represent the individuals with their row names (TRUE)
@@ -24,6 +14,16 @@
 #' @inheritParams plot_ind
 #' @inheritParams plot2D
 #' @inheritParams plot_var_2D
+#' @details 
+#' \itemize{
+#'  \item "ind" for individual graph: Y of rgcca are plotted. In abscissa Y[[i_block]][,compx], in ordinate, Y[[i_block_y]][,compy]. Each point correspond to one individual. It can be colored with the resp. options. The colors by default can be modified in colors options.
+#' \item  "var" for variable graph: in abscissa, the correlations with the first axis, in ordinate, the correlation with the second axis. 
+#' \item "both": displays both ind and var graph (this requires only one block (i_block=i_block_y) and at least two components in the rgcca calculation (ncomp>1 for this block)
+#' \item "ave": displays the variance average in each block
+#' \item "net": displays the graphical network corresponding to the connection matrix used in the rgcca
+#' \item "cor": barplot corresponding to the correlation of each variable with a chosen axis (specified by i_block and compx). Variables are sorted from the highest to the lowest and only the highest are displayed (to modify the number, use the parameter n_marks)
+#' \item "weight":barplot corresponding to the correlation of each variable with a chosen axis (specified by i_block and compx). Variables are sorted from the highest to the lowest and only the highest are displayed (to modify the number, use the parameter n_marks)
+#' }
 #' @examples
 #' data(Russett)
 #' X_agric =as.matrix(Russett[,c("gini","farm","rent")]);

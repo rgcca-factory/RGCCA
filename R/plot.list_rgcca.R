@@ -1,16 +1,9 @@
-#' plot 
-#' Plots 
-#' @title Regularized Generalized Canonical Correlation Analysis (RGCCA) 
-#' @param x Result of rgcca function  (see\code{\link[RGCCA]{rgcca}} )
-#' @param type Type among c("ind","var","both","ave","cor","weight","network"). "ind" for individual graph, "var" for variable graph, "both" for both, "ave" for the variance average in each block, "net"for network, "weight" for plotting the top weights in compx, or "cor" for the top correlation with the compx.
-#' @param text_ind A bolean to represent the individuals with their row names (TRUE)
-#' or with circles (FALSE)
-#' @param text_var A bolean to represent the variables with their row names (TRUE)
-#' or with circles (FALSE)
-#' @param title_ind Character for the title of the individual space 
-#' @param title_var Character for the title of the variable space 
-#' @param colors representing a vector of the colors used in the graph. Either a vector of integers (each integer corresponding to a color) or of characters corresponding to names of colors (as "blue",see colors()) or RGB code ("#FFFFFF").
-#' @param ... Further graphical parameters applied to both (individual and variable) spaces
+#' plots a list_rgcca object 
+#' 
+#' @param x Result of MIRGCCA function (see\code{\link[RGCCA]{MIRGCCA}} ) or a list containing 
+#' \itemize{\item{rgcca0}{ RGCCA results for the reference dataset}
+#' \item{data}{ list of imputed data obtained}
+#'  \item{rgccaList}{ list of RGCCA obtained}}  
 #' @inheritParams plot.rgcca
 #' @examples
 #' set.seed(42);X1=matrix(rnorm(500),100,5);

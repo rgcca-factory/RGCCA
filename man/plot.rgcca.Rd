@@ -2,9 +2,7 @@
 % Please edit documentation in R/plot.rgcca.R
 \name{plot.rgcca}
 \alias{plot.rgcca}
-\title{plot.rgcca
- 
-Plots different outputs of the results obtained by a rgcca function}
+\title{Plots for RGCCA}
 \usage{
 \method{plot}{rgcca}(x, type = "both", i_block = length(x$A),
   i_block_y = i_block, compx = 1, compy = 2, resp = rep(1,
@@ -71,8 +69,6 @@ or with circles (FALSE)}
 \item{...}{Further graphical parameters applied to both (individual and variable) spaces}
 }
 \description{
-plot.rgcca
- 
 Plots different outputs of the results obtained by a rgcca function
 }
 \details{

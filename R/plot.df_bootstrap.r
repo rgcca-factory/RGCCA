@@ -1,4 +1,4 @@
-#' plot.bootstrap
+#' Plots a bootstrap object
 #' 
 #' Plots the results of a bootstrap object. The representation can be with bars (1D) or (2D) #TODO
 #' @param type "1D" or "2D"
