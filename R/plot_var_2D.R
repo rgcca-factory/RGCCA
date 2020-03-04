@@ -59,7 +59,6 @@ plot_var_2D <- function(
     title = "Variable correlations with",
     resp=NULL,
     colors=NULL,
-    color_by_block=TRUE,
     ...) {
     x <- y <- NULL
     df <- get_ctr2(
@@ -103,7 +102,6 @@ plot_var_2D <- function(
         collapse =  collapse,
         no_overlap = no_overlap,
         colors=colors,
-        color_by_block=color_by_block,
         ...
     )
     

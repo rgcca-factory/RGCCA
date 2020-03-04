@@ -5,8 +5,7 @@
 \title{plot.naEvolution}
 \usage{
 \method{plot}{naEvolution}(x, output = "rv", ylim = NULL,
-  block = "all", bars = "sd", main = NULL, names.arg = NULL,
-  ...)
+  block = "all", bars = "sd", main = NULL, names.arg = NULL, ...)
 }
 \arguments{
 \item{x}{A list resulting of naEvolution (\link{naEvolution})}

@@ -15,8 +15,8 @@
 #'     politic = Russett[, 6:11] )
 #' rgcca_out = rgcca(blocks)
 #' b=bootstrap(rgcca_out, n_boot = 2, n_cores = 1)
-#' plot(b)
-#' plot(b,type="2D")
+#' plot(b,n_cores=1)
+#' plot(b,type="2D",n_cores=1)
 #' bootstrap(rgcca_out, n_boot = 2, n_cores = 1, blocks = lapply(blocks, scale),
 #'  superblock = FALSE)
 #' @export

@@ -1276,6 +1276,7 @@ knitr::opts_chunk$set(
 The blocks are loaded with the function ```load_blocks```. The first argument of this function (```superblock```) required a bolean giving the presence (TRUE) / absence (FALSE) of a superblock. The second one corresponds to a character giving the list of the file path separated by a comma (argument ```file```). By default, the name of the blocks corresponds to those of the files (```names``` argument) and could be set. By default, the tabulation is used as a column separator (```sep``` argument) and the first row is considered as a header (```header``` parameter).
 
 ```{r blocks}
+library(rlang)
 # Warning : separators by default are tabulation
 blocks = load_blocks(file = "data/agriculture.tsv,data/industry.tsv,data/politic.tsv")
 ```
@@ -1356,13 +1357,13 @@ plot(rgcca_out,type="ave")
 #### Bootstrap
 ```{r}
 boot <- bootstrap(rgcca_out, n_boot = 2, n_cores = 2)
-plot(boot, n_cores = 2,type="2D")
-plot(boot, n_cores = 2,type="2D")
+#plot(boot, n_cores = 2,type="2D")
+#plot(boot, n_cores = 2,type="2D")
 ```
 
 #### Permutation
 ```{r}
-perm <- rgcca_permutation(blocks, nperm = 5, n_cores = 2)
+perm <- rgcca_permutation(blocks, nperm = 5, n_cores = 1)
 head(order_df(cbind(perm$penalties, perm$zstat), ncol(perm$penalties) + 1))
 plot(perm)
 ```

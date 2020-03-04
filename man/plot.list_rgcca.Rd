@@ -10,8 +10,7 @@
   response_name = "Response", no_overlap = FALSE, title = NULL,
   title_var = "Variable correlations with", title_ind = "Sample space",
   n_mark = 100, collapse = FALSE, cex = 1, cex_sub = 10,
-  cex_main = 14, cex_lab = 12, colors = NULL, errorbar = "CIscore",
-  ...)
+  cex_main = 14, cex_lab = 12, colors = NULL, errorbar = "ci", ...)
 }
 \arguments{
 \item{x}{Result of rgcca function  (see\code{\link[RGCCA]{rgcca}} )}

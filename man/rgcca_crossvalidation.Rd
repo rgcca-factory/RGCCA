@@ -34,7 +34,7 @@ rgcca_crossvalidation(rgcca_res, i_block = length(rgcca_res$call$blocks),
 \description{
 Cross-validation for RGCCA
 
-Cross-validation for RGCCA
+Uses cross-validation to validate a predictive model of RGCCA
 }
 \examples{
 library(RGCCA)

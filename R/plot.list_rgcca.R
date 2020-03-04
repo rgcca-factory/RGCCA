@@ -79,7 +79,7 @@ plot.list_rgcca=function(x,type="ind",resp=rep(1, NROW(x$Y[[1]])),i_block=1,i_bl
           colt=c()
          nvar=dim(rgcca_res$a[[i_block]])[1]
          resp=1
-         p1 <- plot_var_2D(rgcca_res,resp=resp,i_block=i_block,compx=compx,compy=compy,cex_sub=cex_sub,cex_main=cex_main,cex_lab=cex_lab,remove_var=remove_var,text=text_var,no_overlap=no_overlap,title=title_var,n_mark = n_mark,collapse=collapse,colors=colors[1:nvar],color_by_block=FALSE)
+         p1 <- plot_var_2D(rgcca_res,resp=resp,i_block=i_block,compx=compx,compy=compy,cex_sub=cex_sub,cex_main=cex_main,cex_lab=cex_lab,remove_var=remove_var,text=text_var,no_overlap=no_overlap,title=title_var,n_mark = n_mark,collapse=collapse,colors=colors[1:nvar])
          
         
          for(i in 1:(length(list_rgcca)))

@@ -13,7 +13,7 @@
 #'     politic = Russett[, 6:11] )
 #' rgcca_out = rgcca(blocks)
 #' b=bootstrap(rgcca_out, n_boot = 2, n_cores = 1)
-#' plot(b)
+#' plot(b,n_cores=1)
 plot.bootstrap=function(x,type="1D",i_block=length(x$rgcca$call$blocks),bars="sd",colors=NULL,title=NULL,cex=1,n_cores= parallel::detectCores() - 1,...)
 {
     

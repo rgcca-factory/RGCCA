@@ -2,11 +2,11 @@
 % Please edit documentation in R/plot.df_bootstrap.r
 \name{plot.bootstrap}
 \alias{plot.bootstrap}
-\title{plot.df_bootstrap}
+\title{plot.bootstrap}
 \usage{
 \method{plot}{bootstrap}(x, type = "1D",
-  i_block = length(x$rgcca$call$blocks), colors = NULL, title = NULL,
-  cex = 1, n_cores = parallel::detectCores() - 1, ...)
+  i_block = length(x$rgcca$call$blocks), bars = "sd", colors = NULL,
+  title = NULL, cex = 1, n_cores = parallel::detectCores() - 1, ...)
 }
 \arguments{
 \item{x}{result of bootstrap  \code{\link[RGCCA]{bootstrap}}}
@@ -14,6 +14,8 @@
 \item{type}{"1D" or "2D"}
 
 \item{i_block}{An integer giving the index of a list of blocks}
+
+\item{bars}{A character among "sd" for standard deviations, "stderr" for the standard error, "ci" for confidence interval of scores and "cim" for the confidence intervall of the mean.}
 
 \item{colors}{reoresenting a vector of colors}
 
@@ -27,5 +29,14 @@
 \item{...}{Other parameters (see plot_histogram)}
 }
 \description{
-plot.df_bootstrap
+Plots the results of a bootstrap object. The representation can be with bars (1D) or (2D) #TODO
+}
+\examples{
+library(RGCCA)
+data("Russett")
+blocks = list(agriculture = Russett[, seq(3)], industry = Russett[, 4:5],
+    politic = Russett[, 6:11] )
+rgcca_out = rgcca(blocks)
+b=bootstrap(rgcca_out, n_boot = 2, n_cores = 1)
+plot(b,n_cores=1)
 }

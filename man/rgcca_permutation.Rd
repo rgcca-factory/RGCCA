@@ -45,7 +45,7 @@ A object permutation, which is a list containing :
 \item{crit}{ RGCCA criterion for the original dataset}
 }
 \description{
-Run through a set of constraint parameters sparsitys (or number of selected components) to select the best with permutation
+Run through a set of parameters (sparsity or number of selected components) with permutation to select the one maximizing RGCCA criterion 
 The sparsity parameter is tuned with only one component per block.
 }
 \examples{
