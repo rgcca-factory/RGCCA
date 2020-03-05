@@ -122,80 +122,46 @@ rgcca_permutation <- function(
 
     cat("Permutation in progress...")
 
-    if (Sys.info()["sysname"] == "Windows") {
+    varlist <- c()
 
-        e <- environment()
-        cl <- parallel::makeCluster(n_cores)
-        varlist <- c()
+    for (i in c(
+        "blocks",
+        "par",
+        "n_cores",
+        "quiet",
+        "connection",
+        "response",
+        "tau",
+        "ncomp",
+        "sparsity",
+        "scheme",
+        "scale",
+        "init",
+        "bias",
+        "tol",
+        "type",
+        "superblock",
+        "rgcca_permutation_k",
+        "parallelize"
+    )){
+        if(exists(i))
+            varlist <- c(varlist, i)
+    }
 
-        for (i in c(
-            "blocks",
-            "par",
-            "n_cores",
-            "quiet",
-            "connection",
-            "response",
-            "tau",
-            "ncomp",
-            "sparsity",
-            "scheme",
-            "scale",
-            "init",
-            "bias",
-            "tol",
-            "type",
-            "superblock",
-            "rgcca_permutation_k",
-            "parallelize"
-        )){
-            if(exists(i))
-                varlist <- c(varlist, i)
-        }
-
-        parallel::clusterExport(
-            cl,
-            varlist,
-            envir = e
-        )
-
-        parallel::clusterEvalQ(cl, library(RGCCA))
-
-        # Close cluster even if there is an error or a warning with rgcca_permutation_k
-        permcrit <- #tryCatch({
-            parallel::parSapply(
-                cl,
-                seq(nperm), 
-                function(x)
-                    rgcca_permutation_k(
-                        blocks = blocks,
-                        par = par,
-                        type = type,
-                        n_cores = 1,
-                        quiet = quiet
-                    ))
-        #}, error = function(e) print(e))
-
-        if(!is.null(cl)) {
-            parallel::stopCluster(cl)
-            cl <- c()
-        }
-
-    } else {
-        permcrit <- as.matrix(simplify2array(parallel::mclapply(
-            seq(nperm),
-            function(x){
-                res <- rgcca_permutation_k(
+    permcrit <- parallelize(
+        varlist,
+            seq(nperm), 
+            function(x)
+                rgcca_permutation_k(
                     blocks = blocks,
                     par = par,
                     type = type,
                     n_cores = 1,
                     quiet = quiet,
                     ...
-                )
-                return(res)
-                },
-            mc.cores = n_cores)))
-    }
+                ),
+    n_cores = n_cores,
+    envir = environment())
 
     cat("OK.\n", append = TRUE)
 

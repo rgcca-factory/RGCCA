@@ -67,8 +67,7 @@ rgcca_permutation_k <- function(
         if(exists(i))
             varlist <- c(varlist, i)
     }
-    
-    print(varlist)
+
     parallelize(
         varlist,
         seq(NROW(par[[2]])),
