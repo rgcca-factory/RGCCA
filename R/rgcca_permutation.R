@@ -142,7 +142,8 @@ rgcca_permutation <- function(
         "type",
         "superblock",
         "rgcca_permutation_k",
-        "parallelize"
+        "parallelize",
+        "load_libraries"
     )){
         if(exists(i))
             varlist <- c(varlist, i)

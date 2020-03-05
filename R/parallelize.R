@@ -1,8 +1,20 @@
 #' Set a list of ocket for parralel package in Windows
 #' f : a function to parralelize
 #' nperm : a vector object for a lapply type function
-#' varlist : character vector of names of objects to export                                                                                                                                                                                                                                                                                                                                                                          
-parallelize <- function(varlist, nperm, f, n_cores = parallel::detectCores() - 1, envir = environment(), applyFunc = "parSapply"){
+#' varlist : character vector of names of objects to export                                                  
+parallelize <- function(varlist,
+    nperm,
+    f,
+    n_cores = NULL,
+    envir = environment(),
+    applyFunc = "parSapply") {
+        
+    load_libraries("parallel")
+    if (!("parallel" %in% installed.packages()[, "Package"]))
+        stop("'parallel' package required and not available.")
+
+    if(is.null(n_cores))
+        n_cores <- parallel::detectCores() - 1
 
     if (Sys.info()["sysname"] == "Windows") {
 
@@ -15,6 +27,7 @@ parallelize <- function(varlist, nperm, f, n_cores = parallel::detectCores() - 1
         )
  
         parallel::clusterEvalQ(cl, library(RGCCA))
+        parallel::clusterEvalQ(cl, library(parallel))
 
         res <- tryCatch({
             get(applyFunc)(
