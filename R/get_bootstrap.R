@@ -56,10 +56,13 @@ get_bootstrap <- function(
 
     for (i in J) {
 
-        b_bind <- parallel::mclapply(
+        b_bind <- parallelize(
+            c(),
             b$bootstrap,
             function(x) x[[i]][, comp],
-             mc.cores = n_cores)
+            n_cores = n_cores,
+            envir = environment(),
+            applyFunc = "parLapply")
 
         weight[[i]] <- b$rgcca$a[[i]][, comp]
         b_select <- matrix(
@@ -76,24 +79,37 @@ get_bootstrap <- function(
         if (b$rgcca$call$type %in% c("spls", "spca", "sgcca")) {
 
             occ[[i]] <- unlist(
-                parallel::mclapply(n,
-                                   function(x)
-                                       sum(b_select[, x] != 0) / length(b_select[, x]),
-                                   mc.cores = n_cores))
+                parallelize(
+                    c(),
+                    n,
+                   function(x)
+                       sum(b_select[, x] != 0) / length(b_select[, x]),
+                   n_cores = n_cores,
+                   envir = environment(),
+                   applyFunc = "parLapply"))
             
         }
 
-        mean[[i]] <- unlist(parallel::mclapply(n,
-                                               function(x) mean(b_select[,x]),
-                                               mc.cores = n_cores
+        mean[[i]] <- unlist(
+            parallelize(
+            c(),
+            n,
+           function(x) mean(b_select[,x]),
+           n_cores = n_cores,
+           envir = environment(),
+           applyFunc = "parLapply"
         ))
         if (NCOL(b_select) == 1)
             sd[[i]] <- 1
         else
             sd[[i]] <- unlist(
-                parallel::mclapply(n,
-                                   function(x) sd(b_select[,x]),
-                                   mc.cores = n_cores
+                parallelize(
+                    c(),
+                    n,
+                   function(x) sd(b_select[,x]),
+                   n_cores = n_cores,
+                   envir = environment(),
+                   applyFunc = "parLapply"
                 ))
 
         rm(b_select); gc()

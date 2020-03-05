@@ -109,15 +109,27 @@ rgcca_crossvalidation <- function(
         scores <- list(eval(f)())
         preds <- scores$res
     }else{
-        scores <- parallel::mclapply(
+
+        varlist <- c()
+        
+        for (i in names(formals("rgcca_permutation_k"))){
+            if(exists(i))
+                varlist <- c(varlist, i)
+        }
+
+        scores <- parallelize(
+            c(varlist, "check_sign_comp"),
             seq(length(v_inds)), 
             function(i){
                 inds <- unlist(v_inds[i])
                 eval(f)()
-            }, mc.cores = n_cores
+            },
+            n_cores = n_cores,
+            envir = environment(),
+            applyFunc = "parLapply"
         )
     }
-
+    
     if (validation %in% c("loo", "kfold")) {
         # concatenation of each test set to provide predictions for each block
         preds <- lapply(

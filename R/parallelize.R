@@ -2,12 +2,12 @@
 #' f : a function to parralelize
 #' nperm : a vector object for a lapply type function
 #' varlist : character vector of names of objects to export                                                                                                                                                                                                                                                                                                                                                                          
-parallelize <- function(varlist, nperm, f, n_cores = parallel::detectCores() - 1, envir = environment()){
+parallelize <- function(varlist, nperm, f, n_cores = parallel::detectCores() - 1, envir = environment(), applyFunc = "parSapply"){
 
     if (Sys.info()["sysname"] == "Windows") {
 
         cl <- parallel::makeCluster(n_cores)
-        
+
         parallel::clusterExport(
             cl,
             varlist,
@@ -17,7 +17,7 @@ parallelize <- function(varlist, nperm, f, n_cores = parallel::detectCores() - 1
         parallel::clusterEvalQ(cl, library(RGCCA))
 
         res <- tryCatch({
-            parallel::parSapply(
+            get(applyFunc)(
                 cl,
                 nperm,
                 f)

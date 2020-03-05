@@ -1,8 +1,6 @@
 #' Compute bootstrap
 #'
 #' Computing boostrap of RGCCA in order to visualize the stability of the weights found in RGCCA
-#' @inheritParams rgcca
-#' @inheritParams plot_var_2D
 #' @param rgcca_res Result of a RGCCA (see  \code{\link[RGCCA]{rgcca}} )
 #' @param n_boot A integer for the number of boostrap
 #' @param n_cores An integer for the number of cores used in parallelization 
@@ -37,10 +35,13 @@ bootstrap <- function(
 
     cat("Bootstrap in progress...")
 
-    W <- parallel::mclapply(
+    W <- parallelize(
+        c("bootstrap_k", "remove_null_sd", "check_sign_comp"),
         seq(n_boot), 
         function(x) bootstrap_k(rgcca_res, ...), 
-        mc.cores = n_cores)
+        n_cores = n_cores,
+        envir = environment(),
+        applyFunc = "parLapply")
 
     cat("OK.\n", append = TRUE)
 
