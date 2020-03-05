@@ -61,40 +61,18 @@ rgcca_permutation_k <- function(
             return(sum(sapply(crit, function(x) sum(x))))
         })
 
-    if (Sys.info()["sysname"] == "Windows") {
-
-        e <- environment()
-        cl <- parallel::makeCluster(n_cores)
-
-        parallel::clusterExport(
-            cl,
-            names(formals("rgcca_permutation_k")),
-            envir = e
-        )
-
-        parallel::clusterEvalQ(cl, library(RGCCA))
-
-        res <- tryCatch({
-            parallel::parSapply(
-            cl,
-            seq(NROW(par[[2]])),
-            eval(as.call(gcca))
-            )
-        }, error = function(e) print(e))
-
-        if(!is.null(cl)) {
-            parallel::stopCluster(cl)
-            cl <- c()
-        }
-
-        return(res)
-
-    }else{
-
-        simplify2array(
-            parallel::mclapply(
-                seq(NROW(par[[2]])),
-                eval(as.call(gcca)),
-            mc.cores = n_cores))
+    varlist <- c()
+    
+    for (i in names(formals("rgcca_permutation_k"))){
+        if(exists(i))
+            varlist <- c(varlist, i)
     }
+    
+    print(varlist)
+    parallelize(
+        varlist,
+        seq(NROW(par[[2]])),
+        eval(as.call(gcca)),
+        n_cores = n_cores,
+        envir = environment())
 }

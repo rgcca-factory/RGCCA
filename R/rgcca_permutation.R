@@ -126,34 +126,42 @@ rgcca_permutation <- function(
 
         e <- environment()
         cl <- parallel::makeCluster(n_cores)
+        varlist <- c()
+
+        for (i in c(
+            "blocks",
+            "par",
+            "n_cores",
+            "quiet",
+            "connection",
+            "response",
+            "tau",
+            "ncomp",
+            "sparsity",
+            "scheme",
+            "scale",
+            "init",
+            "bias",
+            "tol",
+            "type",
+            "superblock",
+            "rgcca_permutation_k",
+            "parallelize"
+        )){
+            if(exists(i))
+                varlist <- c(varlist, i)
+        }
 
         parallel::clusterExport(
             cl,
-            c(
-                "blocks",
-                "par",
-                "quiet",
-                "connection",
-                "response",
-                "tau",
-                "ncomp",
-                "sparsity",
-                "scheme",
-                "scale",
-                "init",
-                "bias",
-                "tol",
-                "type",
-                "superblock",
-                "rgcca_permutation_k"
-            ),
+            varlist,
             envir = e
         )
 
         parallel::clusterEvalQ(cl, library(RGCCA))
 
         # Close cluster even if there is an error or a warning with rgcca_permutation_k
-        permcrit <- tryCatch({
+        permcrit <- #tryCatch({
             parallel::parSapply(
                 cl,
                 seq(nperm), 
@@ -165,7 +173,7 @@ rgcca_permutation <- function(
                         n_cores = 1,
                         quiet = quiet
                     ))
-        }, error = function(e) print(e))
+        #}, error = function(e) print(e))
 
         if(!is.null(cl)) {
             parallel::stopCluster(cl)
