@@ -3,39 +3,39 @@
 #' nperm : a vector object for a lapply type function
 #' varlist : character vector of names of objects to export                                                  
 parallelize <- function(
-    varlist,
-    nperm,
-    f,
-    n_cores = NULL,
-    envir = environment(),
-    applyFunc = "parSapply") {
-        
+varlist = c(),
+nperm,
+f,
+n_cores = NULL,
+envir = environment(),
+applyFunc = "parSapply") {
+
     load_libraries("parallel")
     if (!("parallel" %in% installed.packages()[, "Package"]))
-        stop("'parallel' package required and not available.")
+    stop("'parallel' package required and not available.")
 
     if(is.null(n_cores))
-        n_cores <- parallel::detectCores() - 1
+    n_cores <- parallel::detectCores() - 1
 
     if (Sys.info()["sysname"] == "Windows") {
 
         cl <- parallel::makeCluster(n_cores)
 
         parallel::clusterExport(
-            cl,
-            varlist,
-            envir = envir
+        cl,
+        varlist,
+        envir = envir
         )
- 
+
         parallel::clusterEvalQ(cl, library(RGCCA))
         parallel::clusterEvalQ(cl, library(parallel))
 
         res <- tryCatch({
             get(applyFunc)(
-                cl,
-                nperm,
-                f)
-        }, error = function(e) print(e), 
+            cl,
+            nperm,
+            f)
+        }, error = function(err) stop(err$message),
         finally = {
             parallel::stopCluster(cl)
             cl <- c()
