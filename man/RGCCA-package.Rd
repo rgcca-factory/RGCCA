@@ -28,7 +28,7 @@ cv=rgcca_crossvalidation(res_rgcca, n_cores = 1)
 plot(cv)
 b=bootstrap(res_rgcca, n_cores=1)
 plot(b, n_cores=1)
-perm=rgcca_permutation(res_rgcca, n_cores=1)
+perm=rgcca_permutation(blocks, n_cores=1)
 plot(perm)
 
 blockNA=blocks

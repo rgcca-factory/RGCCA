@@ -2,7 +2,8 @@
 #' f : a function to parralelize
 #' nperm : a vector object for a lapply type function
 #' varlist : character vector of names of objects to export                                                  
-parallelize <- function(varlist,
+parallelize <- function(
+    varlist,
     nperm,
     f,
     n_cores = NULL,
@@ -43,11 +44,13 @@ parallelize <- function(varlist,
 
     }else{
 
-        res <- simplify2array(
-            parallel::mclapply(
-                nperm,
-                f,
-                mc.cores = n_cores))
+        res <- parallel::mclapply(
+            nperm,
+            f,
+            mc.cores = n_cores)
+
+        if (applyFunc == "parSapply")
+           res <- simplify2array(res)
     }
 
     return(res)
