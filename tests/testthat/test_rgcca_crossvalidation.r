@@ -1,16 +1,13 @@
-#'# rgccacrossvalidation test
-
-#'''
 set.seed(1)
 
 data("Russett")
-block <- list(
+blocks <- list(
     agriculture = Russett[, seq(3)],
     industry = Russett[, 4:5],
     politic = Russett[, 6:11] )
 
 test_that("rgcca_cv_default", {
-        rgcca_out <- rgcca(block, response = 3)
+        rgcca_out <- rgcca(blocks, response = 3)
         res <- rgcca_crossvalidation(rgcca_out, n_cores = 1)
         expect_equal(length(res), 3)
         expect_is(res, "cv")
@@ -20,12 +17,12 @@ test_that("rgcca_cv_default", {
         expect_is(pred[[1]], "matrix")
         expect_true(all(sapply(pred, NCOL) == 2))
         expect_true(all(sapply(pred, NROW) == 47))
-        expect_identical(round(res$scores, 8), 0.09185037)
+        expect_identical(round(res$scores, 4), 0.0919)
     }
 )
 
 test_that("rgcca_cv_with_args", {
-    rgcca_out <- rgcca(block, response = 3)
+    rgcca_out <- rgcca(blocks, response = 3)
     expect_is(rgcca_crossvalidation(rgcca_out, validation = "kfold", k = 5, n_cores = 1), "cv")
     expect_is(rgcca_crossvalidation(rgcca_out,  validation = "test", n_cores = 1), "cv") # TODO : warnings
     }

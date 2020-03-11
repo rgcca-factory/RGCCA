@@ -34,9 +34,11 @@ bootstrap <- function(
     #     verbose <- TRUE
 
     cat("Bootstrap in progress...")
-
+    
+    blocks <- NULL
+    
     W <- parallelize(
-        c("bootstrap_k", "remove_null_sd", "check_sign_comp"),
+        c("bootstrap_k", "remove_null_sd", "check_sign_comp", "set_rgcca", "blocks"),
         seq(n_boot), 
         function(x) bootstrap_k(rgcca_res, ...), 
         n_cores = n_cores,

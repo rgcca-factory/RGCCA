@@ -57,20 +57,14 @@ n_cores = parallel::detectCores() - 1) {
 
         crit <- eval(as.call(func))$crit
 
-            return(sum(sapply(crit, function(x) sum(x))))
-        })
-
-    varlist <- c()
-    
-    for (i in names(formals("rgcca_permutation_k"))){
-        if(exists(i))
-            varlist <- c(varlist, i)
-    }
+        return(sum(sapply(crit, function(x) sum(x))))
+    })
 
     parallelize(
-        varlist,
-        seq(NROW(par[[2]])),
-        eval(as.call(gcca)),
-        n_cores = n_cores,
-        envir = environment())
+    c(),
+    seq(NROW(par[[2]])),
+    eval(as.call(gcca)),
+    n_cores = n_cores,
+    envir = environment())
 }
+

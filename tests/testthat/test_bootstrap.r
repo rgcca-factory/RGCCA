@@ -1,9 +1,5 @@
-#'# test bootstrap
-
-#'''
-
 data("Russett")
-block <- list(
+blocks <- list(
     agriculture = Russett[, seq(3)],
     industry = Russett[, 4:5],
     politic = Russett[, 6:11] )
@@ -30,6 +26,7 @@ test_that("bootstrap_default", {
 })
 
 test_that("bootstrap_with_args", {
+    rgcca_out <- rgcca(blocks, superblock = FALSE)
     expect_is(
         bootstrap(
             rgcca_out, 

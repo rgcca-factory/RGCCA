@@ -1,8 +1,6 @@
-library(rlang)
-
 test_that(
 "rgcca_permutation_default", {data("Russett")
-    block <- list(
+    blocks <- list(
         agriculture = Russett[, seq(3)],
         industry = Russett[, 4:5],
         politic = Russett[, 6:11] )
