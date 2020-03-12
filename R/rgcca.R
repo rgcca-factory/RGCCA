@@ -270,7 +270,7 @@ rgcca <- function(
     )
 
     func_out$call[[par]] <- opt$penalty
-
+    
     for (i in c(
         "scale",
         "init",

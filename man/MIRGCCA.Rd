@@ -74,5 +74,5 @@ X2[7,1]=NA
 res=MIRGCCA(A,k=3,ni=5,scale=TRUE,sameBlockWeight=TRUE,tau=rep(0,3))
 }
 \seealso{
-\link{\code{plot.list_rgcca}}
+\code{\link{plot.list_rgcca}}
 }

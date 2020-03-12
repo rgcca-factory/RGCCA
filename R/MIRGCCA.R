@@ -27,7 +27,7 @@
 #'  X3[3,1:2]=NA
 #'  A=list(X1,X2,X3)
 #' res=MIRGCCA(A,k=3,ni=5,scale=TRUE,sameBlockWeight=TRUE,tau=rep(0,3))
-#' @seealso \link{\code{plot.list_rgcca}}
+#' @seealso \code{\link{plot.list_rgcca}}
 #' @export
 MIRGCCA=function(blocks,option="knn",type="rgcca",superblock=TRUE,k=5,ni=5,scale=TRUE,sameBlockWeight=TRUE,tau=rep(1:length(A)),klim=NULL,output="mean",scheme="centroid",tol=1e-8,connection=NULL,ncomp=rep(2,length(A)),naxis=1)
 {
