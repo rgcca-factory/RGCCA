@@ -9,4 +9,12 @@ C = matrix(c(0, 0, 1, 0, 0, 1, 1, 1, 0), 3, 3);
 res = rgcca(A, ncomp=rep(1,3),tau = c(1, 1, 1), scheme = "factorial", scale = TRUE,verbose=FALSE,superblock=FALSE)
 print(res)
 
+res = rgcca(A, ncomp=rep(1,3),type="sgcca",sparsity= c(1, 1, 1), scheme = "factorial", scale = TRUE,verbose=FALSE,superblock=FALSE)
+print(res)
+
+res = rgcca(A, ncomp=rep(2,3),tau = "optimal", scheme = "factorial", scale = TRUE,verbose=FALSE,superblock=FALSE)
+print(res)
+
+
+
 
