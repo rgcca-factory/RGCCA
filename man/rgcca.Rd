@@ -143,7 +143,7 @@ X_polit = as.matrix(Russett[ , c("demostab", "dictator")])
 A = list(X_agric, X_ind, X_polit);names(A)=c("Agri","Indus","Polit")
 #Define the design matrix (output = C) 
 C = matrix(c(0, 0, 1, 0, 0, 1, 1, 1, 0), 3, 3)
-result.rgcca = rgcca(A,type="rgcca", C, tau = c(1, 1, 1),superblock=FALSE,
+result.rgcca = rgcca(A,type="rgcca", connection=C, tau = c(1, 1, 1),superblock=FALSE,
  scheme = "factorial", scale = TRUE)
 lab = as.vector(apply(Russett[, 9:11], 1, which.max))
 plot(result.rgcca,type="ind",i_block=1,i_block_y=2,resp=lab)

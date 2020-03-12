@@ -441,13 +441,13 @@ rgccak=function (A, C, tau = "optimal", scheme = "centroid",verbose = FALSE, ini
     }
     AVEinner <- sum(C * cor(Y)^2/2)/(sum(C)/2)
 
-    call$tau=tau
+     call$tau=tau
     
     if(estimateNA!="no")
     {
-        result <- list(Y = Y, a = a, crit = crit, AVE_inner = AVEinner, A=A,call=call)
+        result <- list(Y = Y, a = a, crit = crit, AVE_inner = AVEinner, A=A,call=call,tau=tau)
     }
-    else{result <- list(Y = Y, a = a, crit = crit, AVE_inner = AVEinner,call=call)}
+    else{result <- list(Y = Y, a = a, crit = crit, AVE_inner = AVEinner,call=call,tau=tau)}
     
        return(result)
 }
