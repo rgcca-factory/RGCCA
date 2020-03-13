@@ -12,8 +12,6 @@ plot_network(rgcca_res, title = paste0("Common rows between blocks : ",
 
 \item{title}{A character with the name of the space (either "Variables" or
 "Samples")}
-
-\item{colors}{Colors}
 }
 \value{
 A dataframe with tuples of connected blocks

@@ -59,7 +59,6 @@ rgcca_permutation_k <- function(
     for (i in n) {
         # dynamically asssign these values
         assign(args_dot_names[i], args_values[i])
-        print(args_values[i])
         # send them to the clusters to parallelize
         varlist <- c(varlist, args_dot_names[i])
         # without this procedure rgcca_crossvalidation(rgcca_res, blocks = blocks2)
