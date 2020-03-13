@@ -22,7 +22,7 @@
 #' data("Russett")
 #' A = list(agriculture = Russett[, seq(3)], industry = Russett[, 4:5],
 #'     politic = Russett[, 6:11] )
-#' rgcca_permutation(A, nperm = 2, n_cores = 1)
+#' res = rgcca_permutation(A, nperm = 2, n_cores = 1)
 #'     rgcca_permutation(A, perm.par = "ncomp", nperm = 2, n_cores = 1)
 #' rgcca_permutation(A, perm.par = "sparsity", perm.value = 0.8, nperm = 2, n_cores = 1)
 #' rgcca_permutation(A, perm.par = "sparsity", perm.value = c(0.6, 0.75, 0.5), nperm = 2, n_cores = 1)
@@ -126,44 +126,37 @@ rgcca_permutation <- function(
     cat("Permutation in progress...")
 
     varlist <- c()
-
-    for (i in c(
-        "blocks",
-        "par",
-        "n_cores",
-        "quiet",
-        "connection",
-        "response",
-        "tau",
-        "ncomp",
-        "sparsity",
-        "scheme",
-        "scale",
-        "init",
-        "bias",
-        "tol",
-        "type",
-        "superblock",
-        "rgcca_permutation_k",
-        "parallelize",
-        "load_libraries"
-    )){
-        if(exists(i))
-            varlist <- c(varlist, i)
+    # get the parameter dot-dot-dot
+    args_values <- c(...)
+    # get the names of the arguments of function expect the ...
+    args_func_names <- names(as.list(args("rgcca_crossvalidation")))
+    # get only the names of the ... args
+    args_dot_names <- setdiff(names(as.list(match.call()[-1])), args_func_names)
+    n <- args_values
+    if (!is.null(n))
+        n <- seq(length(args_values))
+    for (i in n) {
+        # dynamically asssign these values
+        assign(args_dot_names[i], args_values[i])
+        # send them to the clusters to parallelize
+        varlist <- c(varlist, args_dot_names[i])
+        # without this procedure rgcca_crossvalidation(rgcca_res, blocks = blocks2)
+        # or rgcca_crossvalidation(rgcca_res, blocks = lapply(blocks, scale)
+        # does not work.
     }
 
     permcrit <- parallelize(
-        varlist,
-            seq(nperm), 
-            function(x)
-                rgcca_permutation_k(
-                    blocks = blocks,
-                    par = par,
-                    type = type,
-                    n_cores = 1,
-                    quiet = quiet,
-                    ...
-                ),
+        c(varlist, "rgcca_permutation_k", "parallelize", "load_libraries"),
+        seq(nperm), 
+        function(x)
+            rgcca_permutation_k(
+                blocks = blocks,
+                par = par,
+                type = type,
+                n_cores = 1,
+                quiet = quiet,
+                ...
+            ),
     n_cores = n_cores,
     envir = environment())
 
