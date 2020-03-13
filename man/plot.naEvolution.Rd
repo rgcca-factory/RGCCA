@@ -2,14 +2,13 @@
 % Please edit documentation in R/plotEvol.r
 \name{plot.naEvolution}
 \alias{plot.naEvolution}
-\title{Plots the impact of increasing missing data on RGCCA}
+\title{plot.naEvolution}
 \usage{
 \method{plot}{naEvolution}(x, output = "rv", ylim = NULL,
-  block = "all", barType = "sd", main = NULL, names.arg = NULL,
-  ...)
+  block = "all", bars = "sd", main = NULL, names.arg = NULL, ...)
 }
 \arguments{
-\item{x}{A list resulting of naEvolution}
+\item{x}{A list resulting of naEvolution (\link{naEvolution})}
 
 \item{output}{="rv": Can be also "a" for correlations between axes, "bm" for the percent of similar biomarkers, "rvComplete" if the RV is calculated only on complete dataset, or "rmse" for Root Mean Squares Error.}
 
@@ -17,7 +16,7 @@
 
 \item{block}{="all" or a number indicating the position of the chosen block in the initial list}
 
-\item{barType}{="sd" or "stderr". Indicates which error bar to build}
+\item{bars}{="sd" or "stderr". Indicates which error bar to build}
 
 \item{main}{=NULL Title of the graph (before the block name)}
 

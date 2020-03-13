@@ -33,7 +33,6 @@ rgcca_predict(rgcca_res, newA, type = "regression", fit = "lm",
 Predict a new block from a RGCCA
 }
 \examples{
-library(RGCCA)
 data("Russett")
 blocks = list(
 agriculture = Russett[, 1:3],
@@ -44,11 +43,12 @@ C = connection = matrix(c(0, 0, 1,
 0, 0, 1,
 1, 1, 0),
 3, 3)
-A = lapply(blocks, function(x) x[1:32,])
-A = lapply(A, function(x) scale2 (x, bias = TRUE) / sqrt(NCOL(x)) )
-object = rgcca(A, connection = C, tau = c(0.7,0.8,0.7),
+object1 = rgcca(blocks, connection = C, tau = c(0.7,0.8,0.7),
     ncomp = c(3,2,4), superblock = FALSE, response = 3)
-newA = lapply(blocks, function(x) x[-c(1:32),])
+A = lapply(object1$call$blocks, function(x) x[1:32,])
+object = rgcca(A, connection = C, tau = c(0.7,0.8,0.7),
+    ncomp = c(3,2,4), scale = FALSE, sameBlockWeight = FALSE, superblock = FALSE, response = 3)
+newA = lapply(object1$call$blocks, function(x) x[-c(1:32),])
 newA = lapply( newA, function(x) x[, sample(1:NCOL(x))] )
 newA = sample(newA, length(newA))
 bloc_to_pred = "industry"

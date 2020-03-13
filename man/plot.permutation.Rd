@@ -2,14 +2,16 @@
 % Please edit documentation in R/plot.rgcca_permutation.R
 \name{plot.permutation}
 \alias{plot.permutation}
-\title{plot.permutation}
+\title{plot.permutation
+Plots a permutation object. The parameters tuned for maximizing RGCCA criteria is displayed in the title. 
+In x, the index of combination (number corresponding to the rownames of tuning parameters object). In ordinate, a score depending of the type parameter (RGCCA criterion for crit, and zstat for the pseudo z-scores)}
 \usage{
 \method{plot}{permutation}(x, type = "zstat", cex = 1, main = NULL,
   cex_main = 25 * cex, cex_sub = 16 * cex, cex_point = 3 * cex,
   cex_lab = 19 * cex, ...)
 }
 \arguments{
-\item{x}{result of rgcca_permutation}
+\item{x}{result of rgcca_permutation (see  \code{\link[RGCCA]{rgcca_permutation}} )}
 
 \item{type}{An string giving the type of the index to look at (among 'crit' for
 the RGCCA criterion and 'zstat' for the pseudo Z-score)}
@@ -30,6 +32,8 @@ the RGCCA criterion and 'zstat' for the pseudo Z-score)}
 }
 \description{
 plot.permutation
+Plots a permutation object. The parameters tuned for maximizing RGCCA criteria is displayed in the title. 
+In x, the index of combination (number corresponding to the rownames of tuning parameters object). In ordinate, a score depending of the type parameter (RGCCA criterion for crit, and zstat for the pseudo z-scores)
 }
 \examples{
 data("Russett")
@@ -37,6 +41,6 @@ A = list(agriculture = Russett[, seq(3)], industry = Russett[, 4:5],
     politic = Russett[, 6:11] )
 perm <- rgcca_permutation(A, nperm = 2, n_cores = 1)
 plot(perm)
-perm <- rgcca_permutation(A, p_spars = TRUE, nperm = 2, n_cores = 1)
+perm <- rgcca_permutation(A, perm.par = "sparsity", nperm = 2, n_cores = 1)
 plot(perm)
 }

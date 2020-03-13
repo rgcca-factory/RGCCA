@@ -4,55 +4,12 @@
 \alias{bootstrap_k}
 \title{Compute bootstrap (internal)}
 \usage{
-bootstrap_k(rgcca_res, blocks = NULL, connection = 1 -
-  diag(length(blocks)), tau = rep(1, length(blocks)), sparsity = rep(1,
-  length(blocks)), ncomp = rep(2, length(blocks)),
-  scheme = "factorial", init = "svd", bias = TRUE, tol = 0.001,
-  type = "rgcca", scale = TRUE, sameBlockWeight = TRUE,
-  superblock = TRUE, response = NULL, method = "complete")
+bootstrap_k(rgcca_res, ...)
 }
 \arguments{
 \item{rgcca_res}{Result of rgcca function}
 
-\item{blocks}{A list of matrix}
-
-\item{connection}{A matrix giving the connection between the blocks}
-
-\item{tau}{tau is either a \eqn{1 \times J} vector or a \eqn{\mathrm{max}(ncomp) \times J} matrix, and contains the values 
-of the shrinkage parameters (default: tau = 1, for each block and each dimension).
-If tau = "optimal" the shrinkage paramaters are estimated for each block and each dimension using the Schafer and Strimmer (2005)
-analytical formula . If tau is a \eqn{1\times J} numeric vector, tau[j] is identical across the dimensions of block \eqn{\mathbf{X}_j}. 
-If tau is a matrix, tau[k, j] is associated with \eqn{\mathbf{X}_{jk}} (\eqn{k}th residual matrix for block \eqn{j})}
-
-\item{sparsity}{A vector containing the sparsity coefficients (length J, between 0 and 1)}
-
-\item{ncomp}{A vector of integer giving the number of component for each
-blocks}
-
-\item{scheme}{A character giving the link function for covariance maximization}
-
-\item{init}{A character among "svd" (Singular Value Decompostion) or "random"
-for algorithm initialization}
-
-\item{bias}{A boolean for a biased variance estimator}
-
-\item{tol}{An integer for the stopping value for convergence}
-
-\item{type}{A character giving the type of analysis: c('rgcca', 'cpca-w', 'gcca', 'hpca', 'maxbet-b', 'maxbet', 'maxdiff-b','maxdiff', 'maxvar-a', 'maxvar-b', 'maxvar', 'niles', 'r-maxvar', 'rcon-pca',
-'ridge-gca', 'sabscor', 'ssqcor', 'ssqcor', 'ssqcov-1', 'ssqcov-2', 'ssqcov',
-'sum-pca', 'sumcor', 'sumcov-1', 'sumcov-2', 'sumcov.', 'sabscov', 'plspm','cca', 'ra', 'ifa', 'pls','pca')}
-
-\item{scale}{A boolean scaling the blocks}
-
-\item{sameBlockWeight}{If TRUE, all blocks are weighted by their own variance: all the blocks have the same weight}
-
-\item{superblock}{A boolean giving the presence (TRUE) / absence (FALSE) of
-a superblock}
-
-\item{response}{An integer giving the index of a block considered as a 
-response among a list of blocks}
-
-\item{method}{Either a character corresponding to the used method ("complete","knn","em","sem") or a function taking a list of J blocks (A) as only parameter and returning the imputed list.}
+\item{...}{Further graphical parameters (see plot2D)}
 }
 \value{
 A list of RGCCA bootstrap weights

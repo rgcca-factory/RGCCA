@@ -13,8 +13,7 @@
 #' @param scale_size_bloc A boolean giving the possibility to scale the blocks by the square root of their column number
 #' @param new_scaled A boolean scaling the blocks to predict
 #' @param bigA to permeform data reduction for cross-validation, the dataset where A and newA were extracted
-#' @examples 
-#' library(RGCCA)
+#' @examples
 #' data("Russett")
 #' blocks = list(
 #' agriculture = Russett[, 1:3],
@@ -25,11 +24,12 @@
 #' 0, 0, 1,
 #' 1, 1, 0),
 #' 3, 3)
-#' A = lapply(blocks, function(x) x[1:32,])
-#' A = lapply(A, function(x) scale2 (x, bias = TRUE) / sqrt(NCOL(x)) )
-#' object = rgcca(A, connection = C, tau = c(0.7,0.8,0.7),
+#' object1 = rgcca(blocks, connection = C, tau = c(0.7,0.8,0.7),
 #'     ncomp = c(3,2,4), superblock = FALSE, response = 3)
-#' newA = lapply(blocks, function(x) x[-c(1:32),])
+#' A = lapply(object1$call$blocks, function(x) x[1:32,])
+#' object = rgcca(A, connection = C, tau = c(0.7,0.8,0.7),
+#'     ncomp = c(3,2,4), scale = FALSE, sameBlockWeight = FALSE, superblock = FALSE, response = 3)
+#' newA = lapply(object1$call$blocks, function(x) x[-c(1:32),])
 #' newA = lapply( newA, function(x) x[, sample(1:NCOL(x))] )
 #' newA = sample(newA, length(newA))
 #' bloc_to_pred = "industry"
@@ -115,9 +115,10 @@ rgcca_predict = function(
             return(names)
     }
 
-    MATCH_col <-
-        mapply(function(x, y)
-            match(get_dim(x)(x), get_dim(y)(y)), newA, rgcca_res$call$blocks[MATCH])
+    MATCH_col <-  mapply(
+        function(x, y) match(get_dim(x)(x), get_dim(y)(y)), 
+        newA, 
+        rgcca_res$call$blocks[MATCH])
 
     if (sum(unique(is.na(MATCH_col))) != 0)
         stop("Please, some columns names are not the same between the two blocks")
@@ -233,9 +234,18 @@ rgcca_predict = function(
         score <- switch(fit,
             "lm"  = {
 
-                reslm  <- lm(y.train ~ ., data = comp.train, na.action = "na.exclude")
-                ychapo <- predict(reslm, comp.test)
-
+                ychapo <- sapply(
+                    colnames(y.train),
+                    function(x) {
+                        predict(
+                            lm(
+                                as.formula(paste(x, " ~ .")),
+                                data = cbind(comp.train, y.train), 
+                                na.action = "na.exclude"
+                            ), 
+                        cbind(comp.test, y.test))
+                    })
+    
                 if (any(is.na(ychapo)))
                     warning("NA in predictions.")
 
@@ -291,30 +301,31 @@ rgcca_predict = function(
         ngroups   <- nlevels(as.factor(y.train))
         class.fit <- switch(fit,
             "lda"      = {
-                reslda     <- lda(x = comp.train, grouping = y.train)
+                reslda     <- lda(x = comp.train, grouping = y.train, na.action = "na.exclude")
                 class.fit  <- predict(reslda, comp.test)$class
             },
             "logistic" = {
                 if (ngroups > 2) {
-                    reslog      <- nnet::multinom(y.train ~ ., data = comp.train, trace = FALSE)
-                    class.fit   <- predict(reslog, newdata = comp.test)
+                    reslog      <- nnet::multinom(y ~ ., data = cbind(comp.train, y = y.train), trace = FALSE, na.action = "na.exclude")
+                    class.fit   <- predict(reslog, newdata = cbind(comp.test, y = y.test))
                 } else if (ngroups == 2) {
-                    reslog      <- glm(y.train ~ ., data = comp.train, family = binomial)
-                    class.fit   <- predict(reslog, type = "response", newdata = comp.test)
-                    if (type == "classification") {
-                        class.fit.class <- class.fit > 0.5 # TODO: cutoff parameter
-                        class.fit       <- factor(as.numeric(class.fit.class))
-                    }
+                    reslog      <- glm(y ~ ., data = cbind(comp.train, y = y.train), family = binomial)
+                    class.fit   <- predict(reslog, type = "response", newdata = cbind(comp.test, y = y.test))
+                    class.fit.class <- class.fit > 0.5 # TODO: cutoff parameter
+                    class.fit       <- factor(as.numeric(class.fit.class))
                 }
             })
         score <- sum(class.fit == y.test) / length(y.test)
     }
 
 
-    list(
+    result=list(
         pred = pred,
         class.fit = class.fit,
         score = score,
-        res = res
+        res = res,
+        rgcca_res=rgcca_res
     )
+    class(result)="predict"
+    return(result)
 }

@@ -15,6 +15,7 @@ scaling <- function(
         if (sameBlockWeight) {
             blocks <- lapply(blocks, function(x) {
                 y <- x / sqrt(NCOL(x))
+                attr(y, "scaled:scale") <-attr(x, "scaled:scale")* sqrt(NCOL(x))
                 return(y)
             })
         }

@@ -264,8 +264,8 @@ rgccad=function (A, C = 1 - diag(length(A)), tau = rep(1, length(A)),  ncomp = r
       rownames(Y[[b]]) = rownames(A[[b]])
       colnames(Y[[b]]) = "comp1"
     }
-    call$tau=tau
-    out <- list(Y = Y, a = a, astar = a, C = C,  scheme = scheme, ncomp = ncomp, crit = result$crit, primal_dual = primal_dual, AVE = AVE,A=A0,call=call)
+    tau=result$tau
+    out <- list(Y = Y, a = a, astar = a, C = C,  scheme = scheme, ncomp = ncomp, crit = result$crit, primal_dual = primal_dual, AVE = AVE,A=A0,tau=tau,call=call)
     if(estimateNA %in% c("iterative","first","superblock","lebrusquet")){out[["imputedA"]]=A}
     
     class(out) <- "rgccad"
@@ -291,7 +291,7 @@ rgccad=function (A, C = 1 - diag(length(A)), tau = rep(1, length(A)),  ncomp = r
     else rgcca.result <- rgccak(R, C, tau = tau[n, ], scheme = scheme, init = init, bias = bias, tol = tol, verbose = verbose,na.rm=na.rm)
    
     if (!is.numeric(tau)) 
-      tau_mat[n, ] = rgcca.result$call$tau
+      tau_mat[n, ] = rgcca.result$tau
     AVE_inner[n] <- rgcca.result$AVE_inner
     crit[[n]] <- rgcca.result$crit
     # deflation
@@ -319,7 +319,7 @@ rgccad=function (A, C = 1 - diag(length(A)), tau = rep(1, length(A)),  ncomp = r
   else rgcca.result <- rgccak(R, C, tau = tau[N + 1, ], scheme = scheme, init = init, bias = bias, tol = tol, verbose = verbose)
   crit[[N + 1]] <- rgcca.result$crit
   if (!is.numeric(tau)) 
-    tau_mat[N + 1, ] = rgcca.result$call$tau
+    tau_mat[N + 1, ] = rgcca.result$tau
   AVE_inner[max(ncomp)] <- rgcca.result$AVE_inner
   for (b in 1:J) {
     Y[[b]][, N + 1] <- rgcca.result$Y[, b]
@@ -359,7 +359,7 @@ rgccad=function (A, C = 1 - diag(length(A)), tau = rep(1, length(A)),  ncomp = r
   names(Y)=names(A)
   names(a)=names(A)
   AVE_X = shave.veclist(AVE_X, ncomp)
-  call$tau=tau
+ 
   AVE <- list(AVE_X = AVE_X, AVE_outer_model = AVE_outer, AVE_inner_model = AVE_inner)
   out <- list(Y = shave.matlist(Y, ncomp), a = shave.matlist(a,ncomp), astar = shave.matlist(astar, ncomp),  tau = tau_mat,
                 crit = crit, primal_dual = primal_dual,	AVE = AVE,A=A,call=call)

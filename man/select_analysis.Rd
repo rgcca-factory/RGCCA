@@ -12,7 +12,7 @@ select_analysis(blocks = blocks, connection = 1 - diag(length(blocks)),
 \arguments{
 \item{blocks}{A list of matrix}
 
-\item{connection}{A matrix giving the connection between the blocks}
+\item{connection}{A design matrix (J*J) that describes the relationships between blocks (default: complete design).}
 
 \item{penalty}{A vector of float (or character for 'optimal' setting) giving the
 shrinkage parameter for covariance maximization}
@@ -33,7 +33,7 @@ a superblock}
 
 \item{quiet}{A boolean hidding the warnings}
 
-\item{response}{Integer representing the number of the response block}
+\item{response}{Integer representing the number of the response block. Indeed, when a supervised analysis is chosen (plspm, pls), the response block has to be specified.}
 }
 \value{
 \item{blocks}{A list of matrix}

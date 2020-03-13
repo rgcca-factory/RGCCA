@@ -2,17 +2,22 @@
 % Please edit documentation in R/MIRGCCA.R
 \name{MIRGCCA}
 \alias{MIRGCCA}
-\title{MIRGCCA: Multiple imputation for RGCCA}
+\title{Multiple imputation for RGCCA}
 \usage{
-MIRGCCA(blocks, option = "knn", superblock = TRUE, k = 5, ni = 5,
-  scale = TRUE, sameBlockWeight = TRUE, tau = rep(1:length(A)),
-  klim = NULL, output = "mean", scheme = "centroid", tol = 1e-08,
-  connection = NULL, ncomp = rep(2, length(A)), naxis = 1)
+MIRGCCA(blocks, option = "knn", type = "rgcca", superblock = TRUE,
+  k = 5, ni = 5, scale = TRUE, sameBlockWeight = TRUE,
+  tau = rep(1:length(A)), klim = NULL, output = "mean",
+  scheme = "centroid", tol = 1e-08, connection = NULL,
+  ncomp = rep(2, length(A)), naxis = 1)
 }
 \arguments{
-\item{blocks}{A list of matrix}
+\item{blocks}{A list that contains the \eqn{J} blocks of variables \eqn{\mathbf{X_1}, \mathbf{X_2}, ..., \mathbf{X_J}}.}
 
 \item{option}{"knn" for k Nearest Neigbors or "em" for Expectation Maximization}
+
+\item{type}{A character giving the type of analysis: c('rgcca', 'cpca-w', 'gcca', 'hpca', 'maxbet-b', 'maxbet', 'maxdiff-b','maxdiff', 'maxvar-a', 'maxvar-b', 'maxvar', 'niles', 'r-maxvar', 'rcon-pca',
+'ridge-gca', 'sabscor', 'ssqcor', 'ssqcor', 'ssqcov-1', 'ssqcov-2', 'ssqcov',
+'sum-pca', 'sumcor', 'sumcov-1', 'sumcov-2', 'sumcov.', 'sabscov', 'plspm','cca', 'ra', 'ifa', 'pls','pca')}
 
 \item{superblock}{TRUE if the A list should be returned in the output, FALSE ifelse}
 
@@ -20,13 +25,13 @@ MIRGCCA(blocks, option = "knn", superblock = TRUE, k = 5, ni = 5,
 
 \item{ni}{number of imputations}
 
-\item{scale}{A boolean scaling the blocks}
+\item{scale}{If scale = TRUE, each block is standardized to zero means and unit variances (default: TRUE).}
 
-\item{sameBlockWeight}{If TRUE, all blocks are weighted by their own variance: all the blocks have the same weight}
+\item{sameBlockWeight}{TRUE by default : each block have the same weight in the RGCCA analysis. If FALSE, the weight of each block depends on the number of variables of the block}
 
-\item{tau}{tau is either a \eqn{1 \times J} vector or a \eqn{\mathrm{max}(ncomp) \times J} matrix, and contains the values 
-of the shrinkage parameters (default: tau = 1, for each block and each dimension).
-If tau = "optimal" the shrinkage paramaters are estimated for each block and each dimension using the Schafer and Strimmer (2005)
+\item{tau}{Used for type="rgcca" only. tau is either a \eqn{1 \times J} vector or a \eqn{\mathrm{max}(ncomp) \times J} matrix, and contains the values 
+of the regularization parameters (default: tau = 1, for each block and each dimension).
+If tau = "optimal" the regularization paramaters are estimated for each block and each dimension using the Schafer and Strimmer (2005)
 analytical formula . If tau is a \eqn{1\times J} numeric vector, tau[j] is identical across the dimensions of block \eqn{\mathbf{X}_j}. 
 If tau is a matrix, tau[k, j] is associated with \eqn{\mathbf{X}_{jk}} (\eqn{k}th residual matrix for block \eqn{j})}
 
@@ -34,28 +39,23 @@ If tau is a matrix, tau[k, j] is associated with \eqn{\mathbf{X}_{jk}} (\eqn{k}t
 
 \item{output}{TRUE if the A list should be returned in the output, FALSE ifelse}
 
-\item{scheme}{A character giving the link function for covariance maximization}
+\item{scheme}{The value is "horst", "factorial", "centroid" or the g function (default: "centroid").}
 
-\item{tol}{An integer for the stopping value for convergence}
+\item{tol}{The stopping value for convergence.}
 
-\item{connection}{A matrix giving the connection between the blocks}
+\item{connection}{A design matrix that describes the relationships between blocks (default: complete design).}
 
-\item{ncomp}{A vector of integer giving the number of component for each
-blocks}
+\item{ncomp}{A \eqn{1 \times J} vector that contains the numbers of components for each block (default: rep(1, length(A)), which gives one component per block.). It can be estimated by using \link{rgcca_permutation}.}
 
 \item{naxis}{number of component to select in the superblock for the estimation of missing data for "em" option}
 }
 \value{
-\item{rgcca0}{RGCCA results for the reference dataset}
-
-\item{data}{list of imputed data obtained}
-
-\item{rgccaList}{list of RGCCA obtained}
+A list_rgcca object containing
+\itemize{\item{rgcca0}{ RGCCA results for the reference dataset}
+\item{data}{ list of imputed data obtained}
+ \item{rgccaList}{ list of RGCCA obtained}}
 }
 \description{
-Multiple imputation for RGCCA
-}
-\details{
 This method allows multiple imputation for RGCCA with several options.
 }
 \examples{
@@ -72,4 +72,7 @@ X2[7,1]=NA
  X3[3,1:2]=NA
  A=list(X1,X2,X3)
 res=MIRGCCA(A,k=3,ni=5,scale=TRUE,sameBlockWeight=TRUE,tau=rep(0,3))
+}
+\seealso{
+\code{\link{plot.list_rgcca}}
 }

@@ -1,5 +1,7 @@
 #' plot.permutation
-#' @param x result of rgcca_permutation
+#' Plots a permutation object. The parameters tuned for maximizing RGCCA criteria is displayed in the title. 
+#' In x, the index of combination (number corresponding to the rownames of tuning parameters object). In ordinate, a score depending of the type parameter (RGCCA criterion for crit, and zstat for the pseudo z-scores)
+#' @param x result of rgcca_permutation (see  \code{\link[RGCCA]{rgcca_permutation}} )
 #' @param main title of the plot
 #' @inheritParams plot_permut_2D
 #' @param ... Further graphical parameters
@@ -9,7 +11,7 @@
 #'     politic = Russett[, 6:11] )
 #' perm <- rgcca_permutation(A, nperm = 2, n_cores = 1)
 #' plot(perm)
-#' perm <- rgcca_permutation(A, p_spars = TRUE, nperm = 2, n_cores = 1)
+#' perm <- rgcca_permutation(A, perm.par = "sparsity", nperm = 2, n_cores = 1)
 #' plot(perm)
 #' @export
 plot.permutation=function(x,type="zstat",cex = 1, main= NULL, cex_main = 25 * cex,                          cex_sub = 16 * cex,

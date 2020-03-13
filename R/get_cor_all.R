@@ -3,10 +3,9 @@
 #' Calculates the pairwise correlation between each block for each of the 
 #' components of the analysis
 #'  
-#' @inherit plot_ind
-#' @inherit set_connection
+#' @inheritParams plot_ind
+#' @inheritParams set_connection
 #' @param comps A matrix containg the components of all the blocks
-
 #' @return A list of matrix containg the pairwise correlation of the blocks
 get_cor_all <- function(
     rgcca_res, 

@@ -1,8 +1,8 @@
-#' plot 
-#' Plots 
-#' @title Regularized Generalized Canonical Correlation Analysis (RGCCA) 
-#' @param x Result of rgcca function
-#' @param type Type among c("ind","var","both","ave","top","network"). "ind" for individual graph, "var" for variable graph, "both" for both, "ave" for the variance average in each block, "net"for network
+#' Plots for RGCCA
+#' 
+#' Plots different outputs of the results obtained by a rgcca function 
+#' @param x Result of rgcca function  (see\code{\link[RGCCA]{rgcca}} )
+#' @param type Type among c("ind","var","both","ave","cor","weight","network").  See details.
 #' @param text_ind A bolean to represent the individuals with their row names (TRUE)
 #' or with circles (FALSE)
 #' @param text_var A bolean to represent the variables with their row names (TRUE)
@@ -14,6 +14,16 @@
 #' @inheritParams plot_ind
 #' @inheritParams plot2D
 #' @inheritParams plot_var_2D
+#' @details 
+#' \itemize{
+#'  \item "ind" for individual graph: Y of rgcca are plotted. In abscissa Y[[i_block]][,compx], in ordinate, Y[[i_block_y]][,compy]. Each point correspond to one individual. It can be colored with the resp. options. The colors by default can be modified in colors options.
+#' \item  "var" for variable graph: in abscissa, the correlations with the first axis, in ordinate, the correlation with the second axis. 
+#' \item "both": displays both ind and var graph (this requires only one block (i_block=i_block_y) and at least two components in the rgcca calculation (ncomp>1 for this block)
+#' \item "ave": displays the variance average in each block
+#' \item "net": displays the graphical network corresponding to the connection matrix used in the rgcca
+#' \item "cor": barplot corresponding to the correlation of each variable with a chosen axis (specified by i_block and compx). Variables are sorted from the highest to the lowest and only the highest are displayed (to modify the number, use the parameter n_marks)
+#' \item "weight":barplot corresponding to the correlation of each variable with a chosen axis (specified by i_block and compx). Variables are sorted from the highest to the lowest and only the highest are displayed (to modify the number, use the parameter n_marks)
+#' }
 #' @examples
 #' data(Russett)
 #' X_agric =as.matrix(Russett[,c("gini","farm","rent")]);
@@ -23,10 +33,14 @@
 #' C = matrix(c(0, 0, 1, 0, 0, 1, 1, 1, 0), 3, 3);
 #' resRgcca=rgcca(blocks=A,connection=C,
 #' tau=rep(1,3),ncomp=rep(2,3),superblock=FALSE)
-#' plot(resRgcca)
+#' plot(resRgcca,type="cor")
+#' plot(resRgcca,type="weight")
+#' plot(resRgcca,type="ind")
+#' plot(resRgcca,type="var")
+#' plot(resRgcca,type="both")
 #' @importFrom gridExtra grid.arrange
 #' @export
-plot.rgcca=function(x,type="both",resp=rep(1, NROW(x$Y[[1]])),i_block=1,i_block_y=i_block,compx=1,compy=2,remove_var=FALSE,text_var=TRUE,text_ind=TRUE,response_name= "Response",no_overlap=FALSE,title=NULL,title_var="Variable correlations with",title_ind= "Sample space",n_mark=100,collapse=FALSE,cex=1,cex_sub=10,cex_main=14,cex_lab=12,colors=NULL,...)
+plot.rgcca=function(x,type="both",i_block=length(x$A),i_block_y=i_block,compx=1,compy=2,resp=rep(1, NROW(x$Y[[1]])),remove_var=FALSE,text_var=TRUE,text_ind=TRUE,response_name= "Response",no_overlap=FALSE,title=NULL,title_var="Variable correlations with",title_ind= "Sample space",n_mark=100,collapse=FALSE,cex=1,cex_sub=10,cex_main=14,cex_lab=12,colors=NULL,...)
 {
     match.arg(type,c("ind","var","both","ave","cor","weight","network"))
     

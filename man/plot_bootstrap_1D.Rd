@@ -6,8 +6,8 @@
 \usage{
 plot_bootstrap_1D(b = NULL, df_b = NULL, x = "estimate",
   y = "occurrences", n_mark = 50, title = NULL, colors = NULL,
-  comp = 1, i_block = length(b$bootstrap[[1]]), collapse = FALSE,
-  n_cores = parallel::detectCores() - 1, ...)
+  comp = 1, bars = "sd", i_block = length(b$bootstrap[[1]]),
+  collapse = FALSE, n_cores = parallel::detectCores() - 1, ...)
 }
 \arguments{
 \item{b}{A matrix of boostrap}
@@ -26,6 +26,8 @@ plot_bootstrap_1D(b = NULL, df_b = NULL, x = "estimate",
 \item{colors}{reoresenting a vector of colors}
 
 \item{comp}{An integer giving the index of the analysis components}
+
+\item{bars}{A character among "sd" for standard deviations, "stderr" for the standard error, "ci" for confidence interval of scores and "cim" for the confidence intervall of the mean.}
 
 \item{i_block}{An integer giving the index of a list of blocks}
 

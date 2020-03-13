@@ -40,7 +40,7 @@ X_ind = as.matrix(Russett[,c("gnpr","labo")])
 X_polit = as.matrix(Russett[ , c("demostab")])
 A = list(agri=X_agric, ind=X_ind,polit= X_polit)
 A_miss=createNA(A)
-determine_patternNA(A_miss$dat)
+get_patternNA(A_miss$dat)
 
 #resultComparison2=whichNAmethod(A,rgccaType="c",listMethods=c("complete","mean","nipals","singleBlock","allInclusive"),typeNA="ponc",patternNA=rep(0.1,3),seed=1,nDatasets = 20)
 #plotWhichNAmethod(listFinale=resultComparison2,ylim=c(0,0.2),output="a")

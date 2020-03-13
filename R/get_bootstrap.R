@@ -6,6 +6,7 @@
 #' @inheritParams plot_histogram
 #' @inheritParams plot_var_2D
 #' @inheritParams plot_var_1D
+#' @param bars A character among "sd" for standard deviations, "stderr" for the standard error, "ci" for confidence interval of scores and "cim" for the confidence intervall of the mean.
 #' @param b A list of list weights (one per bootstrap per blocks)
 #' @return A matrix containing the means, 95% intervals, bootstrap ratio and p-values
 #' @examples
@@ -22,6 +23,7 @@ get_bootstrap <- function(
     b,
     comp = 1,
     i_block = length(b$bootstrap[[1]]),
+    bars="sd",
     collapse = FALSE,
     n_cores = parallel::detectCores() - 1) {
     stopifnot(is(b, "bootstrap"))
@@ -56,10 +58,13 @@ get_bootstrap <- function(
 
     for (i in J) {
 
-        b_bind <- parallel::mclapply(
+        b_bind <- parallelize(
+            c(),
             b$bootstrap,
             function(x) x[[i]][, comp],
-             mc.cores = n_cores)
+            n_cores = n_cores,
+            envir = environment(),
+            applyFunc = "parLapply")
 
         weight[[i]] <- b$rgcca$a[[i]][, comp]
         b_select <- matrix(
@@ -76,24 +81,37 @@ get_bootstrap <- function(
         if (b$rgcca$call$type %in% c("spls", "spca", "sgcca")) {
 
             occ[[i]] <- unlist(
-                parallel::mclapply(n,
-                                   function(x)
-                                       sum(b_select[, x] != 0) / length(b_select[, x]),
-                                   mc.cores = n_cores))
+                parallelize(
+                    c(),
+                    n,
+                   function(x)
+                       sum(b_select[, x] != 0) / length(b_select[, x]),
+                   n_cores = n_cores,
+                   envir = environment(),
+                   applyFunc = "parLapply"))
             
         }
 
-        mean[[i]] <- unlist(parallel::mclapply(n,
-                                               function(x) mean(b_select[,x]),
-                                               mc.cores = n_cores
+        mean[[i]] <- unlist(
+            parallelize(
+            c(),
+            n,
+           function(x) mean(b_select[,x]),
+           n_cores = n_cores,
+           envir = environment(),
+           applyFunc = "parLapply"
         ))
         if (NCOL(b_select) == 1)
             sd[[i]] <- 1
         else
             sd[[i]] <- unlist(
-                parallel::mclapply(n,
-                                   function(x) sd(b_select[,x]),
-                                   mc.cores = n_cores
+                parallelize(
+                    c(),
+                    n,
+                   function(x) sd(b_select[,x]),
+                   n_cores = n_cores,
+                   envir = environment(),
+                   applyFunc = "parLapply"
                 ))
 
         rm(b_select); gc()
@@ -104,18 +122,34 @@ get_bootstrap <- function(
     occ <- unlist(occ)
     mean <- unlist(mean)
     weight <- unlist(weight)
-    sd <- unlist(sd) / sqrt(n_boot)
+    sd <- unlist(sd) 
 
     cat("OK.\n", append = TRUE)
-
     p.vals <- 2 * pt(abs(weight)/sd, lower.tail = FALSE, df = n_boot - 1)
     tail <- qt(1 - .05 / 2, df = n_boot - 1)
+    
+    if(bars=="sd")
+    {
+        length_bar=sd
+     }
+    if(bars=="stderr")
+    {
+        length_bar=sd/sqrt(n_boot)
+    }
+    if(bars=="ci")
+    {
+        length_bar=tail*sd
+    }
+    if(bars=="cim")
+    {
+        length_bar=tail*sd/sqrt(n_boot)
+    }
 
     df <- data.frame(
         mean = mean,
         estimate = weight,
-        lower_band = mean - (tail * sd),
-        upper_band = mean + (tail * sd),
+        lower_band = mean -  length_bar,
+        upper_band = mean +  length_bar,
         bootstrap_ratio = abs(mean) / sd,
         p.vals,
         BH = p.adjust(p.vals, method = "BH")

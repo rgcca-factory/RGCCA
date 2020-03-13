@@ -7,7 +7,8 @@
 plot_ind(rgcca_res, resp = rep(1, NROW(rgcca_res$Y[[1]])), compx = 1,
   compy = 2, i_block = length(rgcca_res$Y), text = TRUE,
   i_block_y = i_block, response_name = "Response",
-  no_overlap = FALSE, predicted = NULL, title = "Sample space", ...)
+  no_overlap = FALSE, predicted = NULL, title = "Sample space",
+  legend = TRUE, ...)
 }
 \arguments{
 \item{rgcca_res}{A list giving the results of a R/SGCCA}
@@ -38,6 +39,8 @@ one, different from the one used in i_block)}
 \item{title}{A character with the name of the space (either "Variables" or
 "Samples")}
 
+\item{legend}{TRUE if the legend should be plotted, FALSE ifelse.}
+
 \item{...}{Further graphical parameters (see plot2D functions)}
 }
 \description{
@@ -67,7 +70,7 @@ X_ind = as.matrix(Russett[,c("gnpr","labo")])
 X_polit = as.matrix(Russett[ , c("demostab", "dictator")])
 A = list(X_agric, X_ind, X_polit)
 C = matrix(c(0, 0, 1, 0, 0, 1, 1, 1, 0), 3, 3)
-result.rgcca = rgcca(A, C, tau = c(1, 1, 1), scheme = "factorial",
+result.rgcca = rgcca(A, connection=C, tau = c(1, 1, 1), scheme = "factorial",
 scale = TRUE,ncomp=rep(2,3))
 plot_ind(result.rgcca,i_block=1)
 }

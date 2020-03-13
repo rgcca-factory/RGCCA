@@ -6,7 +6,7 @@
 \usage{
 get_ctr2(rgcca_res, compx = 1, compy = 2, compz = NULL,
   i_block = length(rgcca_res$call$blocks), type = "cor",
-  n_mark = 100, collapse = FALSE, remove_var = TRUE)
+  n_mark = 100, collapse = FALSE, remove_var = TRUE, resp = NULL)
 }
 \arguments{
 \item{rgcca_res}{A list giving the results of a R/SGCCA}
@@ -30,6 +30,9 @@ for the z-axis}
 
 \item{remove_var}{A bolean to keep only the 100 variables of each
 component with the biggest correlation#'}
+
+\item{resp}{A vector of characters corresponding either to a qualitative
+variable with levels or a continuous variable}
 }
 \value{
 A matrix containg the indexes (correlation of the blocks with a 

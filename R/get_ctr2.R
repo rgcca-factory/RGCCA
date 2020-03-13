@@ -14,7 +14,8 @@ get_ctr2 <- function(
     type = "cor",
     n_mark = 100,
     collapse = FALSE,
-    remove_var = TRUE) {
+    remove_var = TRUE,
+    resp=NULL) {
 
     stopifnot(is(rgcca_res, "rgcca"))
     check_blockx("i_block", i_block, rgcca_res$call$blocks)
@@ -83,26 +84,30 @@ get_ctr2 <- function(
         selectedVar <- row.names(df)
 
     # group by blocks
-    if (rgcca_res$call$superblock & (collapse | (i_block == length(rgcca_res$a)))) {
-
-        if (collapse)
-            resp <- get_bloc_var(lapply(blocks.all, t), TRUE)
-        else{
-            resp <- get_bloc_var(rgcca_res$a)
-
-            resp <- resp[
-                unlist(
-                    lapply(
-                        seq(length(selectedVar)),
-                        function(x) which(colnames(blocks[[length(blocks)]]) == selectedVar[x])
+    if(is.null(resp))
+    {
+        if (rgcca_res$call$superblock & (collapse | (i_block == length(rgcca_res$a)))) 
+        {
+            if (collapse)
+                resp <- get_bloc_var(lapply(blocks.all, t), TRUE)
+            else{
+                resp <- get_bloc_var(rgcca_res$a)
+                
+                resp <- resp[
+                    unlist(
+                        lapply(
+                            seq(length(selectedVar)),
+                            function(x) which(colnames(blocks[[length(blocks)]]) == selectedVar[x])
+                        )
                     )
-                )
-            ]
-        }
-        # df <- resp[row.names(df)]
-
-    } else
-        resp <- rep(1, NROW(df))
-
+                    ]
+            }
+            # df <- resp[row.names(df)]
+            
+        } else
+            resp <- rep(1, NROW(df))
+        
+    }
+   
     data.frame(df, resp)
 }

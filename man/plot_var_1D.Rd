@@ -26,7 +26,7 @@ or "weight" for the weight of the RGCCA}
 \item{title}{A character with the name of the space (either "Variables" or
 "Samples")}
 
-\item{colors}{reoresenting a vector of colors}
+\item{colors}{A vectof of character to color quantitative data}
 
 \item{...}{Further graphical parameters (see plot2D)}
 }

@@ -57,6 +57,8 @@ plot_var_2D <- function(
     collapse = FALSE,
     no_overlap = FALSE,
     title = "Variable correlations with",
+    resp=NULL,
+    colors=NULL,
     ...) {
 
     x <- y <- NULL
@@ -68,7 +70,8 @@ plot_var_2D <- function(
         type = "cor",
         n_mark = n_mark,
         collapse = collapse,
-        remove_var = remove_var
+        remove_var = remove_var,
+        resp=resp
     )
     class(df) <- c(class(df), "d_var2D")
 
@@ -99,6 +102,7 @@ plot_var_2D <- function(
         text = text,
         collapse =  collapse,
         no_overlap = no_overlap,
+        colors=colors,
         ...
     )
     
