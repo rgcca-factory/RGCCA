@@ -34,11 +34,31 @@ bootstrap <- function(
     #     verbose <- TRUE
 
     cat("Bootstrap in progress...")
-    
+
     blocks <- NULL
-    
+
+    varlist <- c()
+    # get the parameter dot-dot-dot
+    args_values <- c(...)
+    # get the names of the arguments of function expect the ...
+    args_func_names <- names(as.list(args("bootstrap")))
+    # get only the names of the ... args
+    args_dot_names <- setdiff(names(as.list(match.call()[-1])), args_func_names)
+    n <- args_values
+    if(!is.null(n))
+        n <- seq(length(args_values))
+    for (i in n) {
+        # dynamically asssign these values
+        assign(args_dot_names[i], args_values[i])
+        # send them to the clusters to parallelize
+        varlist <- c(varlist, args_dot_names[i])
+        # without this procedure rgcca_crossvalidation(rgcca_res, blocks = blocks2)
+        # or rgcca_crossvalidation(rgcca_res, blocks = lapply(blocks, scale)
+        # does not work.
+    }
+
     W <- parallelize(
-        c("bootstrap_k", "remove_null_sd", "check_sign_comp", "set_rgcca", "blocks"),
+        c(varlist, "bootstrap_k", "remove_null_sd", "check_sign_comp", "set_rgcca", "blocks"),
         seq(n_boot), 
         function(x) bootstrap_k(rgcca_res, ...), 
         n_cores = n_cores,

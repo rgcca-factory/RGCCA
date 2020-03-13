@@ -18,7 +18,7 @@
 #' @seealso \link{rgcca}, \link{rgcca_predict}, \link{plot.predict}
 rgcca_crossvalidation <- function(
     rgcca_res,
-    i_block = length(rgcca_res$call$blocks),
+    response = NULL,
     validation = "loo",
     type = "regression",
     fit = "lm",
@@ -28,7 +28,9 @@ rgcca_crossvalidation <- function(
     ...) {
 
     stopifnot(is(rgcca_res, "rgcca"))
-    check_blockx("i_block", i_block, rgcca_res$call$blocks)
+    if(is.null(response))
+        response <- rgcca_res$call$response
+    check_blockx("response", response, rgcca_res$call$blocks)
     match.arg(validation, c("loo", "test", "kfold"))
     check_integer("k", k)
     check_integer("n_cores", n_cores, 0)
@@ -39,12 +41,12 @@ rgcca_crossvalidation <- function(
     if (is.null(rgcca_res$call$response))
         stop("This function required an analysis in a supervised mode.")
 
-    bloc_to_pred <- names(rgcca_res$call$blocks)[i_block]
+    bloc_to_pred <- names(rgcca_res$call$blocks)[response]
 
     f <- quote(
         function(){
 
-            rgcca_k <- set_rgcca(rgcca_res, method = "complete", inds = inds, ...)
+            rgcca_k <- set_rgcca(rgcca_res, method = "complete", inds = inds, response = response, ...)
 
             rgcca_k$a <- check_sign_comp(rgcca_res, rgcca_k$a)
 
@@ -60,10 +62,12 @@ rgcca_crossvalidation <- function(
         }
     )
 
-    if (!is.null(rgcca_res))
-        rgcca_res$call$blocks <- intersection(rgcca_res$call$blocks) -> blocks
-    
-    bigA <- blocks
+    rgcca_res$call$blocks <- intersection(rgcca_res$call$blocks) -> bigA
+    # scaling(
+    #     blocks,
+    #     scale = rgcca$call$scale,
+    #     sameBlockWeight = rgcca$call$sameBlockWeight
+    # )
 
     if (validation == "loo")
         v_inds <- seq(nrow(bigA[[1]]))
@@ -81,10 +85,24 @@ rgcca_crossvalidation <- function(
     }else{
 
         varlist <- c()
-        
-        for (i in names(formals("rgcca_permutation_k"))){
-            if(exists(i))
-                varlist <- c(varlist, i)
+        # get the parameter dot-dot-dot
+        args_values <- c(...)
+        # get the names of the arguments of function expect the ...
+        args_func_names <- names(as.list(args("rgcca_crossvalidation")))
+        # get only the names of the ... args
+        args_dot_names <- setdiff(names(as.list(match.call()[-1])), args_func_names)
+        n <- args_values
+        print(n)
+        if(!is.null(n))
+            n <- seq(length(args_values))
+        for (i in n) {
+            # dynamically asssign these values
+            assign(args_dot_names[i], args_values[i])
+            # send them to the clusters to parallelize
+            varlist <- c(varlist, args_dot_names[i])
+            # without this procedure rgcca_crossvalidation(rgcca_res, blocks = blocks2)
+            # or rgcca_crossvalidation(rgcca_res, blocks = lapply(blocks, scale)
+            # does not work.
         }
 
         scores <- parallelize(
@@ -109,15 +127,14 @@ rgcca_crossvalidation <- function(
                 lapply(
                     scores,
                     function(y) y$pred[[x]]
-                    )
                 )
             )
+        )
 
         names(preds) <- names(rgcca_res$call$blocks)
 
         for (x in seq(length(preds)))
             row.names(preds[[x]]) <- row.names(bigA[[1]])
-
     }
 
     scores <- mean(unlist(lapply(scores, function(x) x$score)))
