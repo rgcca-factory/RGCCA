@@ -33,9 +33,9 @@ set_rgcca <- function(
         if (superblock) {
             J <- length(blocks)
             blocks <- blocks[-J]
-            for (i in c("tau", "sparsity", "ncomp")) {
-                    rgcca_res$call[[i]] <- rgcca_res$call[[i]][-J]
-            }
+            for (i in c("tau", "sparsity", "ncomp")) 
+                rgcca_res$call[[i]] <- rgcca_res$call[[i]][-J]
+
             connection <- NULL
         }
 
@@ -46,7 +46,11 @@ set_rgcca <- function(
         if (!is.null(rgcca_res$call$response))
             response <- length(rgcca_res$call$blocks)
 
-    }
+    }else
+        blocks <- scaling(blocks, scale, sameBlockWeight = sameBlockWeight)
+    
+    if (!boot)
+        blocks <- intersection(blocks)
 
     if (tolower(type) %in% c("sgcca", "spca", "spls")) {
 
@@ -68,13 +72,13 @@ set_rgcca <- function(
     if (boot) {
         boot_blocks <- list(NULL)
         while (any(sapply(boot_blocks, function(x) length(x)) == 0)) {
-            
+
             id_boot <- sample(NROW(blocks[[1]]), replace = TRUE)
-            
+
             boot_blocks <- lapply(
                 blocks, 
                 function(x) x[id_boot, , drop = FALSE])
-            
+
             boot_blocks <- remove_null_sd(boot_blocks)
         }
     }else
@@ -88,8 +92,8 @@ set_rgcca <- function(
             response = response,
             ncomp = ncomp,
             scheme = scheme,
-            scale = scale,
-            sameBlockWeight = sameBlockWeight,
+            scale = FALSE,
+            sameBlockWeight = FALSE,
             type = type,
             verbose = FALSE,
             init = init,
@@ -99,5 +103,7 @@ set_rgcca <- function(
         ))
 
     func[[par]] <- penalty
-    eval(as.call(func))
+    res <- eval(as.call(func))
+    attributes(res)$bigA_scaled <- blocks
+    return(res)
 }

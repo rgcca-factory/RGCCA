@@ -46,8 +46,12 @@ rgcca_crossvalidation <- function(
     f <- quote(
         function(){
 
-            rgcca_k <- set_rgcca(rgcca_res, method = "complete", inds = inds, response = response, ...)
-
+            rgcca_k <-
+                set_rgcca(rgcca_res,
+                          method = "complete",
+                          inds = inds,
+                          response = response,
+                          ...)
             rgcca_k$a <- check_sign_comp(rgcca_res, rgcca_k$a)
 
             rgcca_predict(
@@ -62,12 +66,15 @@ rgcca_crossvalidation <- function(
         }
     )
 
-    rgcca_res$call$blocks <- intersection(rgcca_res$call$blocks) -> bigA
-    # scaling(
-    #     blocks,
-    #     scale = rgcca$call$scale,
-    #     sameBlockWeight = rgcca$call$sameBlockWeight
-    # )
+    bigA <- attributes(
+        set_rgcca(
+            rgcca_res,
+            method = "complete",
+            inds = .Machine$integer.max,
+            response = response,
+            ...
+        )
+    )$bigA_scaled
 
     if (validation == "loo")
         v_inds <- seq(nrow(bigA[[1]]))
@@ -92,7 +99,6 @@ rgcca_crossvalidation <- function(
         # get only the names of the ... args
         args_dot_names <- setdiff(names(as.list(match.call()[-1])), args_func_names)
         n <- args_values
-        print(n)
         if(!is.null(n))
             n <- seq(length(args_values))
         for (i in n) {
