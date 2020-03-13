@@ -1,6 +1,6 @@
-#'print.rgcca
-#' 
-#' Print rgcca results
+#' Printing rgcca results
+#
+#' Prints the call of rgcca results
 #' @param x a result of rgcca function (see \code{\link{rgcca}})
 #' @param ... other parameters used in print (for the displaying of matrices)
 #' @export
@@ -46,38 +46,44 @@ print.rgcca <- function(x,...)
   }
   if(x$call$type %in% c("rgcca"))   
   {
+     param="regularization"
     if(!is.matrix(x$tau))
     {
-        for (i in 1:NCOL(x$call$connection)) {
+        for (i in 1:NCOL(x$call$connection)) 
+        {
             tau <- x$call$tau[i]
             if (tau != "optimal")
                 tau <- round(tau , 4)
-            
-            param="regularization"
-
-            cat("The",param," parameter used for block", i, "was:", 
-                tau, fill = TRUE)
+             cat("The",param," parameter used for block", i, "was:",  tau, fill = TRUE)
         }
     }
     else
     {
-        cat("The",param," parameter used for block", i, "was: \n")
+        
+        cat("The",param," parameters used were: \n")
         print(round(x$tau,4),...)
     }
   }
   if(x$call$type %in% c("sgcca"))
+  {
+      param="shrinkage"
       if(!is.matrix(x$sparsity))
       {
           for (i in 1:NCOL(x$call$connection)) {
               sparsity <- x$call$sparsity[i]
-             param="shrinkage"
+              
               cat("The",param," parameter used for block", i, "was:", 
                   sparsity, fill = TRUE)
           }
       }
-  else
-  {
-      cat("The",param," parameter used for block", i, "was: \n")
-      print(round(x$tau,4),...)
+      else
+      {
+          for (i in 1:NCOL(x$call$connection)) 
+        {
+          cat("The",param," parameters used were: \n")
+          print(round(x$sparsity,4),...)
+         }
+      }
   }
+   
 }

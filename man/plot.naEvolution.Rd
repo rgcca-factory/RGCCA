@@ -5,8 +5,7 @@
 \title{plot.naEvolution}
 \usage{
 \method{plot}{naEvolution}(x, output = "rv", ylim = NULL,
-  block = "all", barType = "sd", main = NULL, names.arg = NULL,
-  ...)
+  block = "all", bars = "sd", main = NULL, names.arg = NULL, ...)
 }
 \arguments{
 \item{x}{A list resulting of naEvolution (\link{naEvolution})}
@@ -17,7 +16,7 @@
 
 \item{block}{="all" or a number indicating the position of the chosen block in the initial list}
 
-\item{barType}{="sd" or "stderr". Indicates which error bar to build}
+\item{bars}{="sd" or "stderr". Indicates which error bar to build}
 
 \item{main}{=NULL Title of the graph (before the block name)}
 

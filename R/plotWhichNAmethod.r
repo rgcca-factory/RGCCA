@@ -5,7 +5,7 @@
 #' @param output ="rv": Can be also "a" for correlations between axes, "bm" for the percent of similar biomarkers, "rvComplete" if the RV is calculated only on complete dataset, or "rmse" for Root Mean Squares Error.
 #' @param ylim =c(0.8,1) y limits
 #' @param i_block ="all" or a number indicating the position of the chosen block in the initial list
-#' @param barType ="sd" or "stderr". Indicates which error bar to build
+#' @param bars ="sd" or "stderr". Indicates which error bar to build
 #' @param main =NULL Name of the file
 #' @param ylab label of y-axis
 #' @param ... Further graphical parameters in plot
@@ -21,12 +21,12 @@
 #' @export
 
 
-plot.whichNAmethod=function(x,output="rv",ylim=NULL,i_block="all",barType="sd",main=NULL,ylab="",...)
+plot.whichNAmethod=function(x,output="rv",ylim=NULL,i_block="all",bars="sd",main=NULL,ylab="",...)
 { #output : "rv", "pct" ou "a"
-  #barType="sd" or "stderr"
+  #bars="sd" or "stderr"
     
     # TODO: par(new=TRUE)
-  match.arg(barType,c("sd","stderr"))
+  match.arg(bars,c("sd","stderr"))
   match.arg(output,c("rv","rvComplete","a","rmse","bm"))
   if(is.null(main)){main=output}
   #graphics.off()
@@ -65,9 +65,9 @@ plot.whichNAmethod=function(x,output="rv",ylim=NULL,i_block="all",barType="sd",m
     {
       result=sapply(x,function(x){return(x[[rg]][[output]][[j]])})
       moyenne[rg]=mean(result)
-      if(barType =="no"){ecartType=0}
-      if(barType=="sd"){ecartType[rg]=sd(result)}
-      if(barType=="stderr"){ecartType[rg]=sd(result)/sqrt(length(result))}
+      if(bars =="no"){ecartType=0}
+      if(bars=="sd"){ecartType[rg]=sd(result)}
+      if(bars=="stderr"){ecartType[rg]=sd(result)/sqrt(length(result))}
     } 
     if(is.null(ylim))
     { 

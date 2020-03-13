@@ -2,7 +2,7 @@
 % Please edit documentation in R/naEvolution.r
 \name{naEvolution}
 \alias{naEvolution}
-\title{Evolution of fairness of rgcca with increasing missing values}
+\title{Evolution of quality of rgcca with increasing missing values}
 \usage{
 naEvolution(blocks, prctNA = c(0.1, 0.2, 0.3), listMethods = c("mean"),
   typeNA = "block", ncomp = rep(1, length(blocks)),
@@ -16,9 +16,16 @@ naEvolution(blocks, prctNA = c(0.1, 0.2, 0.3), listMethods = c("mean"),
 
 \item{prctNA}{if number, percentage of missing data required for each block. If a vector with the same size as blocks, the percentage can be adapted for each block. If a list of values, this percent is calculated per variable}
 
-\item{listMethods}{vector containing a list of methods ("mean","complete","nipals"...)}
+\item{listMethods}{vector containing a list of methods ("mean","complete","nipals"...)
+\itemize{
+\item{\code{"mean"}}{ corresponds to an imputation by the colmeans}
+\item{\code{"complete"}}{ corresponds to run RGCCA only on the complete subjects (subjects with missing data are removed)}
+\item{\code{"nipals"}}{ corresponds to run RGCCA on all available data (NIPALS algorithm)}
+\item{\code{"em"}}{ corresponds to impute the data with EM-type algorithms}
+\item{\code{"sem"}}{ corresponds to impute the data with EM-type algorithms with superblock approach}
+\item{\code{"knn1"}}{ corresponds to impute the data with the 1-Nearest Neighbor. 1 can be replace by another number (such as knn3) to impute with the 3-Nearest Neighbors.}}}
 
-\item{typeNA}{structure of missing data required ("ponc" or "block")}
+\item{typeNA}{structure of missing data required ("ponc" or "block" or "byVar")}
 
 \item{ncomp}{A \eqn{1 \times J} vector that contains the numbers of components for each block (default: rep(1, length(A)), which gives one component per block.). It can be estimated by using \link{rgcca_permutation}.}
 
@@ -26,7 +33,7 @@ naEvolution(blocks, prctNA = c(0.1, 0.2, 0.3), listMethods = c("mean"),
 
 \item{scale}{If scale = TRUE, each block is standardized to zero means and unit variances (default: TRUE).}
 
-\item{nDatasets}{Number of simulated dataset}
+\item{nDatasets}{Number of simulated datasets}
 
 \item{tol}{The stopping value for convergence.}
 
@@ -45,11 +52,7 @@ analytical formula . If tau is a \eqn{1\times J} numeric vector, tau[j] is ident
 If tau is a matrix, tau[k, j] is associated with \eqn{\mathbf{X}_{jk}} (\eqn{k}th residual matrix for block \eqn{j})}
 }
 \value{
-\item{resultComparison}{A list of dataset indicators containg a list of rgcca with a list of criterion. }
-
-\item{crit}{Convergence criterion : abs(1-obj_k/obj_{k-1})}
-
-\item{obj}{Vector containing the mean square error between the predict values and the original non missing values at each iteration}
+resultComparison A list of length pNA. Each element of the list is a result of whichNAmethod (see \link{whichNAmethod})
 }
 \description{
 Analysis of the comparison of different NA methods on RGCCA for increasing percent of missing data in each block
@@ -65,5 +68,5 @@ A = list(agri=X_agric, ind=X_ind, polit=X_polit)
 listResults=naEvolution(blocks=A,listMethods=c("complete","nipals","mean"),
 prctNA=c(0.05,0.1,0.15,0.2,0.25,0.3,0.4),typeNA="ponc",ncomp=rep(1,3),
 sameBlockWeight=FALSE)
-plot(listResults,output="a",barType = "stderr",ylim=c(0,0.2))
+plot(listResults,output="a",bars = "stderr",ylim=c(0,0.2))
 }

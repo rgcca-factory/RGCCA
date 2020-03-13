@@ -50,7 +50,14 @@ If tau is a matrix, tau[k, j] is associated with \eqn{\mathbf{X}_{jk}} (\eqn{k}t
 \item{superblock}{A boolean giving the presence (TRUE) / absence (FALSE) of
 a superblock}
 
-\item{method}{Either a character corresponding to the used method ("complete","knn","em","sem") or a function taking a list of J blocks (A) as only parameter and returning the imputed list.}
+\item{method}{Either a character corresponding to the used method ("complete","knn","em","sem") or a function taking a list of J blocks (A) as only parameter and returning the imputed list. 
+\itemize{
+\item{\code{"mean"}}{ corresponds to an imputation by the colmeans}
+\item{\code{"complete"}}{ corresponds to run RGCCA only on the complete subjects (subjects with missing data are removed)}
+\item{\code{"nipals"}}{ corresponds to run RGCCA on all available data (NIPALS algorithm)}
+\item{\code{"em"}}{ corresponds to impute the data with EM-type algorithms}
+\item{\code{"sem"}}{ corresponds to impute the data with EM-type algorithms with superblock approach}
+\item{\code{"knn1"}}{ corresponds to impute the data with the 1-Nearest Neighbor. 1 can be replace by another number (such as knn3) to impute with the 3-Nearest Neighbors.}}}
 
 \item{verbose}{If verbose = TRUE, the progress will be report while computing (default: TRUE).}
 
@@ -136,7 +143,7 @@ X_polit = as.matrix(Russett[ , c("demostab", "dictator")])
 A = list(X_agric, X_ind, X_polit);names(A)=c("Agri","Indus","Polit")
 #Define the design matrix (output = C) 
 C = matrix(c(0, 0, 1, 0, 0, 1, 1, 1, 0), 3, 3)
-result.rgcca = rgcca(A,type="rgcca", C, tau = c(1, 1, 1),superblock=FALSE,
+result.rgcca = rgcca(A,type="rgcca", connection=C, tau = c(1, 1, 1),superblock=FALSE,
  scheme = "factorial", scale = TRUE)
 lab = as.vector(apply(Russett[, 9:11], 1, which.max))
 plot(result.rgcca,type="ind",i_block=1,i_block_y=2,resp=lab)

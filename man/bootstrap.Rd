@@ -10,14 +10,14 @@ bootstrap(rgcca_res, n_boot = 5, n_cores = parallel::detectCores() - 1,
 \arguments{
 \item{rgcca_res}{Result of a RGCCA (see  \code{\link[RGCCA]{rgcca}} )}
 
-\item{n_boot}{A integer for the number of boostrap}
+\item{n_boot}{A integer for the number of boostraps}
 
 \item{n_cores}{An integer for the number of cores used in parallelization}
 
 \item{...}{other RGCCA parameters # TODO}
 }
 \value{
-A list of RGCCA bootstrap weights
+A list containing two elements: bootstrap and rgcca. bootstrap is a list of produced rgccas while rgcca is the original rgcca.
 }
 \description{
 Computing boostrap of RGCCA in order to visualize the stability of the weights found in RGCCA
@@ -28,7 +28,9 @@ data("Russett")
 blocks = list(agriculture = Russett[, seq(3)], industry = Russett[, 4:5],
     politic = Russett[, 6:11] )
 rgcca_out = rgcca(blocks)
-bootstrap(rgcca_out, n_boot = 2, n_cores = 1)
+b=bootstrap(rgcca_out, n_boot = 2, n_cores = 1)
+plot(b,n_cores=1)
+plot(b,type="2D",n_cores=1)
 bootstrap(rgcca_out, n_boot = 2, n_cores = 1, blocks = lapply(blocks, scale),
  superblock = FALSE)
 }

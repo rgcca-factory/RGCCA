@@ -5,7 +5,8 @@
 \title{Extract a bootstrap}
 \usage{
 get_bootstrap(b, comp = 1, i_block = length(b$bootstrap[[1]]),
-  collapse = FALSE, n_cores = parallel::detectCores() - 1)
+  bars = "sd", collapse = FALSE, n_cores = parallel::detectCores() -
+  1)
 }
 \arguments{
 \item{b}{A list of list weights (one per bootstrap per blocks)}
@@ -13,6 +14,8 @@ get_bootstrap(b, comp = 1, i_block = length(b$bootstrap[[1]]),
 \item{comp}{An integer giving the index of the analysis components}
 
 \item{i_block}{An integer giving the index of a list of blocks}
+
+\item{bars}{A character among "sd" for standard deviations, "stderr" for the standard error, "ci" for confidence interval of scores and "cim" for the confidence intervall of the mean.}
 
 \item{collapse}{A boolean to combine the variables of each block as result}
 

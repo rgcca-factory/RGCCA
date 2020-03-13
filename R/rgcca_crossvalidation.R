@@ -1,7 +1,6 @@
 #' Cross-validation
 #' 
-#' Cross-validation for RGCCA
-#' 
+#' Uses cross-validation to validate a predictive model of RGCCA
 #' @inheritParams rgcca_predict
 #' @inheritParams bootstrap
 #' @inheritParams plot_ind

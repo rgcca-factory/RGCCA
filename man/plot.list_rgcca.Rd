@@ -2,7 +2,7 @@
 % Please edit documentation in R/plot.list_rgcca.R
 \name{plot.list_rgcca}
 \alias{plot.list_rgcca}
-\title{Regularized Generalized Canonical Correlation Analysis (RGCCA)}
+\title{plots a list_rgcca object}
 \usage{
 \method{plot}{list_rgcca}(x, type = "ind", resp = rep(1,
   NROW(x$Y[[1]])), i_block = 1, i_block_y = i_block, compx = 1,
@@ -10,13 +10,15 @@
   response_name = "Response", no_overlap = FALSE, title = NULL,
   title_var = "Variable correlations with", title_ind = "Sample space",
   n_mark = 100, collapse = FALSE, cex = 1, cex_sub = 10,
-  cex_main = 14, cex_lab = 12, colors = NULL, errorbar = "CIscore",
-  ...)
+  cex_main = 14, cex_lab = 12, colors = NULL, errorbar = "ci", ...)
 }
 \arguments{
-\item{x}{Result of rgcca function  (see\code{\link[RGCCA]{rgcca}} )}
+\item{x}{Result of MIRGCCA function (see\code{\link[RGCCA]{MIRGCCA}} ) or a list containing 
+\itemize{\item{rgcca0}{ RGCCA results for the reference dataset}
+\item{data}{ list of imputed data obtained}
+ \item{rgccaList}{ list of RGCCA obtained}}}
 
-\item{type}{Type among c("ind","var","both","ave","cor","weight","network"). "ind" for individual graph, "var" for variable graph, "both" for both, "ave" for the variance average in each block, "net"for network, "weight" for plotting the top weights in compx, or "cor" for the top correlation with the compx.}
+\item{type}{Type among c("ind","var","both","ave","cor","weight","network").  See details.}
 
 \item{resp}{A vector of characters corresponding either to a qualitative
 variable with levels or a continuous variable}
@@ -71,8 +73,7 @@ or with circles (FALSE)}
 \item{...}{Further graphical parameters applied to both (individual and variable) spaces}
 }
 \description{
-plot 
-Plots
+plots a list_rgcca object
 }
 \examples{
 set.seed(42);X1=matrix(rnorm(500),100,5);

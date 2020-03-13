@@ -2,7 +2,7 @@
 % Please edit documentation in R/MIRGCCA.R
 \name{MIRGCCA}
 \alias{MIRGCCA}
-\title{MIRGCCA: Multiple imputation for RGCCA}
+\title{Multiple imputation for RGCCA}
 \usage{
 MIRGCCA(blocks, option = "knn", type = "rgcca", superblock = TRUE,
   k = 5, ni = 5, scale = TRUE, sameBlockWeight = TRUE,
@@ -50,16 +50,12 @@ If tau is a matrix, tau[k, j] is associated with \eqn{\mathbf{X}_{jk}} (\eqn{k}t
 \item{naxis}{number of component to select in the superblock for the estimation of missing data for "em" option}
 }
 \value{
-\item{rgcca0}{RGCCA results for the reference dataset}
-
-\item{data}{list of imputed data obtained}
-
-\item{rgccaList}{list of RGCCA obtained}
+A list_rgcca object containing
+\itemize{\item{rgcca0}{ RGCCA results for the reference dataset}
+\item{data}{ list of imputed data obtained}
+ \item{rgccaList}{ list of RGCCA obtained}}
 }
 \description{
-Multiple imputation for RGCCA
-}
-\details{
 This method allows multiple imputation for RGCCA with several options.
 }
 \examples{
@@ -76,4 +72,7 @@ X2[7,1]=NA
  X3[3,1:2]=NA
  A=list(X1,X2,X3)
 res=MIRGCCA(A,k=3,ni=5,scale=TRUE,sameBlockWeight=TRUE,tau=rep(0,3))
+}
+\seealso{
+\code{\link{plot.list_rgcca}}
 }

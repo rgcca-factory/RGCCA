@@ -49,7 +49,7 @@ plot_bootstrap_2D <- function(
     if (missing(b) && missing(df_b))
         stop("Please select a bootstrap object.")
     if (!is.null(b)) {
-        df_b <- get_bootstrap(b, comp, i_block, collapse, n_cores)
+        df_b <- get_bootstrap(b, comp, i_block, collapse=collapse, n_cores=n_cores)
     }
     if (!is.null(df_b))
         stopifnot(is(df_b, "df_bootstrap"))

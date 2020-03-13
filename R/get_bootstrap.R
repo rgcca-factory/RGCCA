@@ -6,6 +6,7 @@
 #' @inheritParams plot_histogram
 #' @inheritParams plot_var_2D
 #' @inheritParams plot_var_1D
+#' @param bars A character among "sd" for standard deviations, "stderr" for the standard error, "ci" for confidence interval of scores and "cim" for the confidence intervall of the mean.
 #' @param b A list of list weights (one per bootstrap per blocks)
 #' @return A matrix containing the means, 95% intervals, bootstrap ratio and p-values
 #' @examples
@@ -22,6 +23,7 @@ get_bootstrap <- function(
     b,
     comp = 1,
     i_block = length(b$bootstrap[[1]]),
+    bars="sd",
     collapse = FALSE,
     n_cores = parallel::detectCores() - 1) {
     stopifnot(is(b, "bootstrap"))
@@ -120,18 +122,34 @@ get_bootstrap <- function(
     occ <- unlist(occ)
     mean <- unlist(mean)
     weight <- unlist(weight)
-    sd <- unlist(sd) / sqrt(n_boot)
+    sd <- unlist(sd) 
 
     cat("OK.\n", append = TRUE)
-
     p.vals <- 2 * pt(abs(weight)/sd, lower.tail = FALSE, df = n_boot - 1)
     tail <- qt(1 - .05 / 2, df = n_boot - 1)
+    
+    if(bars=="sd")
+    {
+        length_bar=sd
+     }
+    if(bars=="stderr")
+    {
+        length_bar=sd/sqrt(n_boot)
+    }
+    if(bars=="ci")
+    {
+        length_bar=tail*sd
+    }
+    if(bars=="cim")
+    {
+        length_bar=tail*sd/sqrt(n_boot)
+    }
 
     df <- data.frame(
         mean = mean,
         estimate = weight,
-        lower_band = mean - (tail * sd),
-        upper_band = mean + (tail * sd),
+        lower_band = mean -  length_bar,
+        upper_band = mean +  length_bar,
         bootstrap_ratio = abs(mean) / sd,
         p.vals,
         BH = p.adjust(p.vals, method = "BH")

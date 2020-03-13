@@ -5,7 +5,7 @@
 \title{Which missing method to choose ?}
 \usage{
 \method{plot}{whichNAmethod}(x, output = "rv", ylim = NULL,
-  i_block = "all", barType = "sd", main = NULL, ylab = "", ...)
+  i_block = "all", bars = "sd", main = NULL, ylab = "", ...)
 }
 \arguments{
 \item{x}{A list resulting of whichNAmethod (see \link{whichNAmethod})}
@@ -16,7 +16,7 @@
 
 \item{i_block}{="all" or a number indicating the position of the chosen block in the initial list}
 
-\item{barType}{="sd" or "stderr". Indicates which error bar to build}
+\item{bars}{="sd" or "stderr". Indicates which error bar to build}
 
 \item{main}{=NULL Name of the file}
 

@@ -75,6 +75,8 @@ bibliography: biblio.bib
 \newcommand{\bsx}{\boldsymbol{x}}
 \newcommand{\bsxi}{\boldsymbol{\xi}}
 \newcommand{\bsa}{\boldsymbol{\alpha}}
+\newcommand{\mat}[1]{\textbf{\text{#1}}}
+
 \bibliographystyle{apalike}
 \bibliography{biblio}
 
@@ -159,7 +161,7 @@ where $s_j$ is a user defined positive constant that determines the amount of sp
 It is possible to obtain more than one block-component per block for RGCCA and SGCCA. Higher stage block components can be obtained using a deflation strategy. This strategy forces all the block components within a block to be uncorrelated. This deflation procedure can be iterated in a very flexible way.  It is not necessary to keep all the blocks in the procedure at all stages: the number of components summarizing a block can vary from one block to another (see [@Tenenhaus2017] for details).
 
 ## Implementation
-The function `rgccad()`of the RGCCA package implements a monotonically convergent algorithm for the optimization problem (\ref{optim_RGCCA}) - i.e. the bounded criterion to be maximized increases at each step of the iterative procedure -, which hits at convergence a stationary point of (\ref{optim_RGCCA}).  Two numerically equivalent approaches for solving the RGCCA optimization problem are available. A primal formulation described in [@Tenenhaus2017 ; @Tenenhaus2011] requires the handling of matrices of dimension $p_j \times p_j$. A dual formulation described in [@Tenenhaus2015] requires the handling of matrices of dimension $n \times n$ . Therefore, the primal formulation of the RGCCA algorithm will be used when $n>p_j$ and the dual form will be preferred when $n\le p_j$ . The `rgccad()` function of the RGCCA package implements these two formulations and selects automatically the best one. The SGCCA algorithm is similar to the RGCCA algorithm and keeps the same convergence properties. The algorithm associated with the optimization problem (2) is available through the function `sgcca()` of the RGCCA package.
+The function `rgcca()`of the RGCCA package implements a monotonically convergent algorithm for the optimization problem (\ref{optim_RGCCA}) - i.e. the bounded criterion to be maximized increases at each step of the iterative procedure -, which hits at convergence a stationary point of (\ref{optim_RGCCA}).  Two numerically equivalent approaches for solving the RGCCA optimization problem are available. A primal formulation described in [@Tenenhaus2017 ; @Tenenhaus2011] requires the handling of matrices of dimension $p_j \times p_j$. A dual formulation described in [@Tenenhaus2015] requires the handling of matrices of dimension $n \times n$ . Therefore, the primal formulation of the RGCCA algorithm will be used when $n>p_j$ and the dual form will be preferred when $n\le p_j$ . The `rgcca()` function of the RGCCA package implements these two formulations and selects automatically the best one. The SGCCA algorithm is similar to the RGCCA algorithm and keeps the same convergence properties. The algorithm associated with the optimization problem (2) is available through the function `rgcca()` with the sgcca option (type="sgcca" )in the RGCCA package.
 
 ##	Special cases of RGCCA
 
@@ -188,7 +190,7 @@ Table: Special cases of RGCCA in a situtation of $J \ge 2$ blocks. When $\tau_J+
 
 For all the methods of Table 1, a single very simple monotonically convergent gradient-based algorithm is implemented within the RGCCA package and gives at convergence a solution of the stationary equations related to the optimization problem (\ref{optim_RGCCA}). In addition, SGCCA offers a sparse counterpart to all the covariance-based methods of RGCCA. From these perspectives, R/SGCCA provide a general framework for exploratory data analysis of multiblock datasets that has immediate practical consequences for a unified statistical analysis and implementation strategy. 
 
-The methods cited in Table 1 are recovered with the `rgccad()` function by appropriately tuning the arguments `C`, `tau` and `scheme` associated with the triplet ($\ma C$, $\tau_j$, $g$). All the methods of Table 1 are obtained as follows:
+The methods cited in Table 1 are recovered with the `rgcca()` function by appropriately tuning the arguments `connection`, `tau` and `scheme` associated with the triplet ($\ma C$, $\tau_j$, $g$). All the methods of Table 1 are obtained as follows:
 
 ### Principal Component Analysis.
 
@@ -199,18 +201,22 @@ Principal Component Analysis is defined as the following optimization problem
 \label{PCA1}
 \end{equation}
 
-and is obtained with the `rgccad()` function as follows:
+and is obtained with the `rgcca()` function as follows:
 
 ```{r, eval = FALSE}
 # one block X 
 # Design matrix C
 # Shrinkage parameters tau = c(tau1, tau2)
 
-pca.with.rgcca = rgccad(A = list(X, X),
-                       C = matrix(c(0, 1, 1, 0), 2, 2),
-                       tau = c(1, 1))
+pca.with.rgcca = rgcca(blocks = list(X, X),
+                       connection = matrix(c(0, 1, 1, 0), 2, 2),
+                       tau = c(1, 1), type="rgcca")
 ```
+or
+```{r, eval = FALSE}
 
+pca.with.rgcca = rgcca(blocks = list(X), type="pca")
+```
 ### Canonical Correlation Analysis
 
 Canonical Correlation Analysis is defined as the following optimization problem 
@@ -221,7 +227,7 @@ Canonical Correlation Analysis is defined as the following optimization problem
 \label{CCA}
 \end{equation}
 
-and is obtained with the `rgccad()` function as follows:
+and is obtained with the `rgcca()` function as follows:
 
 
 ```{r, eval = FALSE}
@@ -229,9 +235,15 @@ and is obtained with the `rgccad()` function as follows:
 # Design matrix C
 # Shrinkage parameters tau = c(tau1, tau2)
 
-cca.with.rgcca = rgccad(A= list(X1, X2),
-                       C = matrix(c(0, 1, 1, 0), 2, 2),
-                       tau = c(0, 0))
+cca.with.rgcca = rgcca(blocks= list(X1, X2),
+                       connection = matrix(c(0, 1, 1, 0), 2, 2),superblock=FALSE,
+                       tau = c(0, 0), type="rgcca")
+```
+
+or
+```{r, eval = FALSE}
+cca.with.rgcca = rgcca(blocks= list(X1, X2),
+                       type="cca")
 ```
 
 ### PLS regression ($\approx$ Interbattery factor analysis)
@@ -244,7 +256,7 @@ PLS regression is defined as the following optimization problem
 \label{PLS}
 \end{equation}
 
-and is obtained with the `rgccad()` function as follows:
+and is obtained with the `rgcca()` function as follows:
 
 
 ```{r, eval = FALSE}
@@ -252,10 +264,16 @@ and is obtained with the `rgccad()` function as follows:
 # Design matrix C
 # Shrinkage parameters tau = c(tau1, tau2)
 
-pls.with.rgcca = rgccad(A= list(X1, X2),
-                       C = matrix(c(0, 1, 1, 0), 2, 2),
+pls.with.rgcca = rgcca(blocks= list(X1, X2),
+                       connection= matrix(c(0, 1, 1, 0), 2, 2),superblock=FALSE,
                        tau = c(1, 1))
 ```
+or
+
+```{r, eval = FALSE}
+pls.with.rgcca = rgcca(blocks= list(X1, X2),type="pls")
+```
+
 
 ### Redundancy Analysis of $\X_1$ with respect to $\X_2$
 
@@ -268,15 +286,16 @@ var}\left(\X_1\ma a_1\right)^{1/2} \mathrm{~s.t.~} \Vert \ma a_1 \Vert = \text{v
 \label{RA}
 \end{equation}
 
-and is obtained with the `rgccad()` function as follows:
+and is obtained with the `rgcca()` function as follows:
 
 ```{r, eval = FALSE}
 # X1 = Block1 and X2 = Block2 
 # Design matrix C
 # Shrinkage parameters tau = c(tau1, tau2)
 
-ra.with.rgcca = rgccad(A= list(X1, X2),
-                       C = matrix(c(0, 1, 1, 0), 2, 2),
+ra.with.rgcca = rgcca(blocks= list(X1, X2),
+                       connection = matrix(c(0, 1, 1, 0), 2, 2),
+                       superblock=FALSE,
                        tau = c(1, 0))
 ```
 
@@ -291,15 +310,16 @@ Regularized Canonical Correlation Analysis is defined as the following optimizat
 \label{rCCA}
 \end{equation}
 
-and is obtained with the `rgccad()` function as follows:
+and is obtained with the `rgcca()` function as follows:
 
 ```{r, eval = FALSE}
 # X1 = Block1 and X2 = Block2 
 # Design matrix C
 # Shrinkage parameters tau = c(tau1, tau2)
 
-rcca.with.rgcca = rgccad(A= list(X1, X2),
-                       C = matrix(c(0, 1, 1, 0), 2, 2),
+rcca.with.rgcca = rgcca(blocks= list(X1, X2),
+                       connection = matrix(c(0, 1, 1, 0), 2, 2),
+                       superblock=FALSE,
                        tau = c(0<tau1<1, 0<tau2<1))
 ```
 
@@ -321,20 +341,29 @@ SUMCOV-1 is defined as the following optimization problem
 \underset{\ma a_1, \ma a_2, \ldots,\ma a_J} {\text{maximize}} \displaystyle \sum_{j, k = 1}^J \text{cov}(\ma X_j\ma a_j, \ma X_k\ma a_k) \text{~~s.t~~} \Vert \ma a_j \Vert = 1, j=1, \ldots, J
 \end{equation}
 
-and is obtained with the `rgccad()` function as follows:
+and is obtained with the `rgcca()` function as follows:
 
 
 ```{r, eval = FALSE}
 # X1 = Block1, ..., XJ = BlockJ
-# J*J Design matrix C
+# J*J Design matrix connection
 # Shrinkage parameters tau = c(tau1, ...,  tauJ)
 
-sumcov.with.rgcca = rgccad(A= list(X1, ..., XJ),
-                       C = matrix(1, J, J),
+sumcov.with.rgcca = rgcca(blocks= list(X1, ..., XJ),
+                       connection = matrix(1, J, J),
                        tau = rep(1, J),
-                       scheme = "horst")
+                       scheme = "horst",
+                       superblock=FALSE
+                       )
 ```
+or
+```{r, eval = FALSE}
+# X1 = Block1, ..., XJ = BlockJ
+# J*J Design matrix connection
+# Shrinkage parameters tau = c(tau1, ...,  tauJ)
 
+sumcov.with.rgcca = rgcca(blocks= list(X1, ..., XJ), type="sumcov-1")
+```
 ### SSQCOV-1
 
 SSQCOV-1 is defined as the following optimization problem 
@@ -343,17 +372,26 @@ SSQCOV-1 is defined as the following optimization problem
 \underset{\ma a_1, \ma a_2, \ldots,\ma a_J} {\text{maximize}} \displaystyle \sum_{j, k = 1}^J \text{cov}^2(\ma X_j\ma a_j, \ma X_k\ma a_k) \text{~~s.t~~} \Vert \ma a_j \Vert = 1, j=1, \ldots, J
 \end{equation}
 
-and is obtained with the `rgccad()` function as follows:
+and is obtained with the `rgcca()` function as follows:
 
 ```{r, eval = FALSE}
 # X1 = Block1, ..., XJ = BlockJ
-# J*J Design matrix C
+# J*J Design matrix connection
 # Shrinkage parameters tau = c(tau1, ...,  tauJ)
 
-ssqcov.with.rgcca = rgccad(A= list(X1, ..., XJ),
-                       C = matrix(1, J, J),
+ssqcov.with.rgcca = rgcca(blocks= list(X1, ..., XJ),
+                       connection = matrix(1, J, J),
                        tau = rep(1, J),
-                       scheme = "factorial")
+                       scheme = "factorial",
+                       superblock=FALSE)
+```
+or
+```{r, eval = FALSE}
+# X1 = Block1, ..., XJ = BlockJ
+# J*J Design matrix connection
+# Shrinkage parameters tau = c(tau1, ...,  tauJ)
+
+ssqcov.with.rgcca = rgcca(blocks= list(X1, ..., XJ), type="ssqcov")
 ```
 
 ### SABSCOV
@@ -364,17 +402,26 @@ SABSCOV is defined as the following optimization problem
 \underset{\ma a_1, \ma a_2, \ldots,\ma a_J} {\text{maximize}} \displaystyle \sum_{j, k = 1}^J \vert \text{cov}(\ma X_j\ma a_j, \ma X_k\ma a_k) \vert \text{~~s.t~~} \Vert \ma a_j \Vert = 1, j=1, \ldots, J
 \end{equation}
 
-and is obtained with the `rgccad()` function as follows:
+and is obtained with the `rgcca()` function as follows:
 
 ```{r, eval = FALSE}
 # X1 = Block1, ..., XJ = BlockJ
-# J*J Design matrix C
+# J*J Design matrix connection
 # Shrinkage parameters tau = c(tau1, ...,  tauJ)
 
-sabscov.with.rgcca = rgccad(A= list(X1, ..., XJ),
-                       C = matrix(1, J, J),
+sabscov.with.rgcca = rgcca(blocks= list(X1, ..., XJ),
+                       connection = matrix(1, J, J),
                        tau = rep(1, J),
-                       scheme = "centroid")
+                       scheme = "centroid",
+                       superblock=FALSE)
+```
+or
+```{r, eval = FALSE}
+# X1 = Block1, ..., XJ = BlockJ
+# J*J Design matrix connection
+# Shrinkage parameters tau = c(tau1, ...,  tauJ)
+
+sabscov.with.rgcca = rgcca(blocks= list(X1, ..., XJ),type="sabscov")
 ```
 
 ### SUMCOR
@@ -386,19 +433,27 @@ SUMCOR is defined as the following optimization problem
 \underset{\ma a_1, \ma a_2, \ldots,\ma a_J} {\text{maximize}} \displaystyle \sum_{j, k = 1}^J \text{cor}(\ma X_j\ma a_j, \ma X_k\ma a_k) \text{~~s.t~~} \text{var}(\X_j \ma a_j) = 1, j=1, \ldots, J
 \end{equation}
 
-and is obtained with the `rgccad()` function as follows:
+and is obtained with the `rgcca()` function as follows:
 
 ```{r, eval = FALSE}
 # X1 = Block1, ..., XJ = BlockJ
 # J*J Design matrix C
 # Shrinkage parameters tau = c(tau1, ...,  tauJ)
 
-sumcor.with.rgcca = rgccad(A= list(X1, ..., XJ),
-                       C = matrix(1, J, J),
+sumcor.with.rgcca = rgcca(blocks= list(X1, ..., XJ),
+                       connection = matrix(1, J, J),
                        tau = rep(0, J),
-                       scheme = "horst")
+                       scheme = "horst",
+                       superblock=FALSE)
 ```
+or
+```{r, eval = FALSE}
+# X1 = Block1, ..., XJ = BlockJ
+# J*J Design matrix connection
+# Shrinkage parameters tau = c(tau1, ...,  tauJ)
 
+sumcor.with.rgcca = rgcca(blocks= list(X1, ..., XJ),type="sumcor")
+```
 ### SSQCOR
 
 SSQCOR is defined as the following optimization problem 
@@ -407,19 +462,28 @@ SSQCOR is defined as the following optimization problem
 \underset{\ma a_1, \ma a_2, \ldots,\ma a_J} {\text{maximize}} \displaystyle \sum_{j, k = 1; k \ne j}^J  \text{cor}^2(\ma X_j\ma a_j, \ma X_k\ma a_k) \text{~~s.t~~} \text{var}(\X_j \ma a_j) = 1, j=1, \ldots, J
 \end{equation}
 
-and is obtained with the `rgccad()` function as follows:
+and is obtained with the `rgcca()` function as follows:
 
+```{r, eval = FALSE}
+# X1 = Block1, ..., XJ = BlockJ
+# J*J Design matrix connection
+# Shrinkage parameters tau1, ...,  tauJ
+
+ssqcor.with.rgcca = rgcca(blocks= list(X1, ..., XJ),
+                       connection = matrix(1, J, J),
+                       tau = rep(0, J),
+                       scheme = "factorial",
+                       superblock=FALSE)
+```
+or
 ```{r, eval = FALSE}
 # X1 = Block1, ..., XJ = BlockJ
 # J*J Design matrix C
 # Shrinkage parameters tau1, ...,  tauJ
 
-ssqcor.with.rgcca = rgccad(A= list(X1, ..., XJ),
-                       C = matrix(1, J, J),
-                       tau = rep(0, J),
-                       scheme = "factorial")
+ssqcor.with.rgcca = rgcca(blocks= list(X1, ..., XJ),
+                       type="ssqcor")
 ```
-
 ### SABSCOR
 
 SABSCOR is defined as the following optimization problem 
@@ -428,18 +492,28 @@ SABSCOR is defined as the following optimization problem
 \underset{\ma a_1, \ma a_2, \ldots,\ma a_J} {\text{maximize}} \displaystyle \sum_{j, k = 1}^J \vert \text{cor}(\ma X_j\ma a_j, \ma X_k\ma a_k) \vert \text{~~s.t~~} \text{var}(\X_j \ma a_j) = 1, j=1, \ldots, J
 \end{equation}
 
-and is obtained with the `rgccad()` function as follows:
+and is obtained with the `rgcca()` function as follows:
 
 
 ```{r, eval = FALSE}
 # X1 = Block1, ..., XJ = BlockJ
-# J*J Design matrix C
+# J*J Design matrix connection
 # Shrinkage parameters tau = c(tau1, ...,  tauJ)
 
-sabscor.with.rgcca = rgccad(A= list(X1, ..., XJ),
-                      C = matrix(1, J, J),
+sabscor.with.rgcca = rgcca(blocks= list(X1, ..., XJ),
+                      connection = matrix(1, J, J),
                        tau = rep(0, J),
-                       scheme = "centroid")
+                       scheme = "centroid",
+                      superblock=FALSE)
+```
+or
+```{r, eval = FALSE}
+# X1 = Block1, ..., XJ = BlockJ
+# J*J Design matrix connection
+# Shrinkage parameters tau = c(tau1, ...,  tauJ)
+
+sabscor.with.rgcca = rgcca(blocks= list(X1, ..., XJ),
+                     type="sabscor")
 ```
 
 ### SUMCOV-2
@@ -450,17 +524,26 @@ SUMCOV-2 is obtained from following optimization problem
 \underset{\ma a_1, \ma a_2, \ldots,\ma a_J} {\text{maximize}} \displaystyle \sum_{j, k = 1 ; j \ne k}^J  \text{cov}(\ma X_j\ma a_j, \ma X_k\ma a_k) \text{~~s.t~~} \Vert \ma a_j \Vert = 1, j=1, \ldots, J
 \end{equation}
 
-and is obtained with the `rgccad()` function as follows:
+and is obtained with the `rgcca()` function as follows:
 
 ```{r, eval = FALSE}
 # X1 = Block1, ..., XJ = BlockJ
 # J*J Design matrix C
 C = matrix(1, J, J) ; diag(C) = 0
 # Shrinkage parameters tau = c(tau1, ...,  tauJ)
-maxbet.with.rgcca = rgccad(A= list(X1, ..., XJ),
-                       C = C,
+maxbet.with.rgcca = rgcca(blocks= list(X1, ..., XJ),
+                       connection = C,
                        tau = rep(1, J),
+                       superblock=FALSE,
                        scheme = "horst")
+```
+or
+```{r, eval = FALSE}
+# X1 = Block1, ..., XJ = BlockJ
+# J*J Design matrix C
+# C = matrix(1, J, J) ; diag(C) = 0
+# Shrinkage parameters tau = c(tau1, ...,  tauJ)
+maxbet.with.rgcca = rgcca(blocks= list(X1, ..., XJ),type="maxbet"
 ```
 
 ### SSQCOV-2
@@ -471,19 +554,27 @@ SSQCOV-2 is obtained from following optimization problem
 \underset{\ma a_1, \ma a_2, \ldots,\ma a_J} {\text{maximize}} \displaystyle \sum_{j, k = 1; j \ne k}^J \text{cov}^2(\ma X_j\ma a_j, \ma X_k\ma a_k) \text{~~s.t~~} \Vert \ma a_j \Vert = 1, j=1, \ldots, J
 \end{equation}
 
-and is obtained with the `rgccad()` function as follows:
+and is obtained with the `rgcca()` function as follows:
 
 ```{r, eval = FALSE}
 # X1 = Block1, ..., XJ = BlockJ
 # J*J Design matrix C
 C = matrix(1, J, J) ; diag(C) = 0
 # Shrinkage parameters tau = c(tau1, ...,  tauJ)
-maxbetb.with.rgcca = rgccad(A= list(X1, ..., XJ),
-                       C = C,
+maxbetb.with.rgcca = rgcca(blocks= list(X1, ..., XJ),
+                       connection = C,
                        tau = rep(1, J),
+                       superblock=FALSE,
                        scheme = "factorial")
 ```
-
+or
+```{r, eval = FALSE}
+maxbetb.with.rgcca = rgcca(blocks= list(X1, ..., XJ),type="maxbet-b")
+```
+or
+```{r, eval = FALSE}
+maxbetb.with.rgcca = rgcca(blocks= list(X1, ..., XJ),type="ssqcov-2")
+```
 ### Generalized CCA [@Carroll1968a]
 
 For Carroll's Generalized Canonical Correlation Analysis (GCCA), a superblock $\ma X_{J+1} = \left[\ma X_1, \dots, \ma X_J \right]$ defined as the concatenation of all the blocks is introduced. GCCA is defined as the following optimization problem 
@@ -492,7 +583,7 @@ For Carroll's Generalized Canonical Correlation Analysis (GCCA), a superblock $\
 \underset{\ma a_1, \ma a_2, \ldots,\ma a_J} {\text{maximize}} \displaystyle \sum_{j=1}^J \text{cor}^2(\ma X_j\ma a_j, \ma X_{J+1}\ma a_{J+1}) \text{~~s.t~~} \text{var}(\X_j \ma a_j) = 1, j=1, \ldots, J+1
 \end{equation}
 
-and is obtained with the `rgccad()` function as follows:
+and is obtained with the `rgcca()` function as follows:
 
 
 ```{r, eval = FALSE}
@@ -504,12 +595,20 @@ C = matrix(c(0, 0, 0, ..., 0, 1,
                   ...
              1, 1, 1, ..., 1, 0), J+1, J+1)
 # Shrinkage parameters tau = c(tau1, ...,  tauJ, tau_{J+1})
-gcca.with.rgcca = rgccad(A= list(X1, ..., XJ, cbind(X1, ..., XJ)),
-                       C = C,
+gcca.with.rgcca = rgcca(blocks= list(X1, ..., XJ, cbind(X1, ..., XJ)),
+                       connection = C,
                        tau = rep(0, J+1),
+                       superblock=FALSE,
                        scheme = "factorial")
 ```
-
+or
+```{r, eval = FALSE}
+gcca.with.rgcca = rgcca(blocks= list(X1, ..., XJ, cbind(X1, ..., XJ)),
+                       connection = C,
+                       superblock=FALSE,
+                       tau = rep(0, J+1),
+                       scheme = "factorial") #TODO
+```
 ### Multiple Co-Inertia Analysis
 
 For Multiple Co-Inertia Analysis (MCOA) a superblock $\ma X_{J+1} = [\ma X_1, \dots, \ma X_J$ defined as the concatenation of all the blocks is introduced. MCOA is defined as the following optimization problem 
@@ -518,7 +617,7 @@ For Multiple Co-Inertia Analysis (MCOA) a superblock $\ma X_{J+1} = [\ma X_1, \d
 \underset{\ma a_1, \ma a_2, \ldots,\ma a_J} {\text{maximize}} \displaystyle \sum_{j=1}^J \text{cor}^2(\ma X_j\ma a_j, \ma X_{J+1}\ma a_{J+1})\times \text{var}(\X_j\ma a_j), \text{~~s.t~~} \Vert \ma a_j \Vert = 1, j=1, \ldots, J \text{~~and~~} \text{var}(\X_{J+1}\ma a_{J+1}) = 1
 \end{equation}
 
-and is obtained with the `rgccad()` function as follows:
+and is obtained with the `rgcca()` function as follows:
 
 
 ```{r, eval = FALSE}
@@ -530,8 +629,9 @@ C = matrix(c(0, 0, 0, ..., 0, 1,
                    ...
              1, 1, 1, ..., 1, 0), J+1, J+1)
 # Shrinkage parameters tau = c(tau1, ...,  tauJ, tau_{J+1})
-mcoa.with.rgcca = rgccad(A= list(X1, ..., XJ, cbind(X1, ..., XJ)),
-                       C = C,
+mcoa.with.rgcca = rgcca(blocks= list(X1, ..., XJ, cbind(X1, ..., XJ)),
+                       connection= C,
+                       superblock=FALSE,
                        tau = c(rep(1, J), 0),
                        scheme = "factorial")
 ```
@@ -545,7 +645,7 @@ For Hierarchical Principal Component Analysis (HPCA), a superblock $\ma X_{J+1} 
 \underset{\ma a_1, \ma a_2, \ldots,\ma a_J} {\text{maximize}} \displaystyle \sum_{j=1}^J \text{cov}^4(\ma X_j\ma a_j, \ma X_{J+1}\ma a_{J+1}), \text{~~s.t~~} \Vert \ma a_j \Vert = 1, j=1, \ldots, J \text{~~and~~} \text{var}(\X_{J+1}\ma a_{J+1}) = 1
 \end{equation}
 
-and is obtained with the `rgccad()` function as follows:
+and is obtained with the `rgcca()` function as follows:
 
 ```{r, eval = FALSE}
 # X1 = Block1, ..., XJ = BlockJ, X_{J+1} = [X1, ..., XJ]
@@ -556,9 +656,10 @@ C = matrix(c(0, 0, 0, ..., 0, 1,
                   ...
              1, 1, 1, ..., 1, 0), J+1, J+1)
 # Shrinkage parameters tau = c(tau1, ...,  tauJ, tau_{J+1})
-hpca.with.rgcca = rgccad(A= list(X1, ..., XJ, cbind(X1, ..., XJ)),
-                       C = C,
+hpca.with.rgcca = rgcca(blocks= list(X1, ..., XJ, cbind(X1, ..., XJ)),
+                       connection= C,
                        tau = c(rep(1, J), 0),
+                       superblock=FALSE,
                        #flexible design of the scheme function
                        scheme = function(x) x^4) 
 ```
@@ -571,7 +672,7 @@ Let $\ma X =[\ma x_1, \ldots, \ma x_p]$ be a $n \times p$ data matrix. PCA can b
 \underset{\ma a}{\text{maximize}} \displaystyle \sum_{j=1}^p \text{cor}^2(\ma x_{j}, \ma X \ma a) \text{~~s.t~~} \text{var}(\ma X \ma a)=1
 \end{equation}
 
-and is obtained with the `rgccad()` function as follows:
+and is obtained with the `rgcca()` function as follows:
 
 ```{r, eval = FALSE}
 # one block X = [x1, ..., xJ] with J variables x1, ..., xJ
@@ -582,9 +683,10 @@ C = matrix(c(0, 0, 0, ..., 0, 1,
                   ...
              1, 1, 1, ..., 1, 0), J+1, J+1)
 # Shrinkage parameters tau = c(tau1, ...,  tauJ, tau_{J+1})
-pca.with.rgcca = rgccad(list(x1, ..., xJ, X),
-                       C = C,
+pca.with.rgcca = rgcca(list(x1, ..., xJ, X),
+                       connection= C,
                        tau = c(rep(0, J+1), 0),
+                       superblock=FALSE,
                        #flexible design of the scheme function
                        scheme = function(x) x^2) 
 ```
@@ -635,7 +737,7 @@ sapply(A, head)
 A = lapply(A, function(x) scale2(x, bias = TRUE))
 ```
 
-We note that to make blocks comparable, a possible strategy is to standardize the variables and then to divide each block by the square root of its number of variables [@Westerhuis1998]. This two-step procedure leads to $\mathrm{tr}(\ma X_j^t \ma X_j )=n$  for each block (i.e. the sum of the eigenvalues of the covariance matrix of $\ma X_j$ is equal to $1$ whatever the block). Such a preprocessing is reached by setting the `scale` argument to `TRUE` (default value) in the `rgccad()` and `sgcca()` functions.
+We note that to make blocks comparable, a possible strategy is to standardize the variables and then to divide each block by the square root of its number of variables [@Westerhuis1998]. This two-step procedure leads to $\mathrm{tr}(\ma X_j^t \ma X_j )=n$  for each block (i.e. the sum of the eigenvalues of the covariance matrix of $\ma X_j$ is equal to $1$ whatever the block). Such a preprocessing is reached by setting the `scale` argument to `TRUE` (default value) in the `rgcca()` functions.
 
 **Definition of the design matrix $\mathbf{C}$.** From Russett's hypotheses, it is difficult for a country to escape dictatorship when its agricultural inequality is above-average and its industrial development below-average. These hypotheses on the relationships between blocks are depicted in Figure \ref{fig:C}.
 
@@ -664,11 +766,11 @@ C = matrix(c(0, 0, 1,
 C
 ```
 
-RGCCA using the pre-defined design matrix $\ma C$, the factorial scheme ($g(x) = x^2$) and mode B for all blocks (full correlation criterion) is obtained by specifying appropriately the `C`, `scheme` and `tau` arguments of the `rgccad()` function. The `verbose` argument (default value = `TRUE`) indicates that the progress will be reported while computing and that a plot representing the convergence of the algorithm will be returned.
+RGCCA using the pre-defined design matrix $\ma C$, the factorial scheme ($g(x) = x^2$) and mode B for all blocks (full correlation criterion) is obtained by specifying appropriately the `C`, `scheme` and `tau` arguments of the `rgcca()` function. The `verbose` argument (default value = `TRUE`) indicates that the progress will be reported while computing and that a plot representing the convergence of the algorithm will be returned.
 
 
-```{r}
-rgcca_B_factorial = rgccad(A, C, tau = rep(0, 3), scheme = "factorial",
+```{r, fig.height = 3, fig.width = 5}
+rgcca_B_factorial = rgcca(blocks=A, connection=C, tau = rep(0, 3), scheme = "factorial",
 scale = FALSE, verbose = TRUE)
 ```
 
@@ -719,7 +821,7 @@ and corresponds exactly to the results reported in [@Tenenhaus2011, see last col
 We mention that, for each block $j$, an "optimal" shrinkage parameter $\tau_j$ can be obtained from the Schafer and Strimmer analytical formula [@Schafer2005] by using the `tau` argument of the rgcca funtion:
 
 ```{r}
-rgcca_optimal_factorial = rgccad(A, C, tau = "optimal", scheme = "factorial",
+rgcca_optimal_factorial = rgcca(blocks=A, connection=C, tau = "optimal", scheme = "factorial",
 scale = FALSE, verbose = FALSE)
 ```
 
@@ -733,7 +835,7 @@ This automatic estimation of the shrinkage parameters allows one to come closer 
 
 At last, as a component-based method, RGCCA provides the users with graphical representations, including factor plot, correlation circle. This graphical displays allows visualizing the sources of variability within blocks, the relationships between variables within and between blocks and the amount of correlation between blocks. The graphical display of the countries obtained by crossing $\ma X_1 \ma a_1$ = Agricultural Inequality and $\ma X_2 \ma a_2$ = Industrial Development and marked with their political regime in 1960 is shown in below.
 
-```{r, eval=TRUE, fig.align='center', fig.cap = 'graphical display of the countries obtained by crossing y1 and y2 and labeled according to their political regime'}
+```{r, eval=TRUE, fig.align='center', fig.cap = 'graphical display of the countries obtained by crossing y1 and y2 and labeled according to their political regime',fig.height = 3, fig.width = 5}
 df = data.frame(political_regime =
 factor(apply(Russett[, 9:11], 1, which.max),
 labels = c("demostab", "demoinst", "dictator")),
@@ -751,6 +853,7 @@ legend.title = element_blank())
 
 p
 ```
+
 
 Countries aggregate together when they share similarities. It may be noted that the lower left quadrant concentrates on dictatorships. It is difficult for a country to escape dictatorship when its industrial development is below-average and its agricultural inequality is above average. It is worth pointing out that some unstable democracies located in this quadrant (or close to it) became dictatorships for a period of time after 1960: Greece (1967-1974), Brazil (1964-1985), Chili (1973-1990), and Argentina (1966-1973).
 
@@ -773,7 +876,7 @@ C = matrix(c(0, 0, 0, 1,
 0, 0, 0, 1,
 1, 1, 1, 0), 4, 4)
 
-rgcca.hpca = rgccad(A, C, tau = c(1, 1, 1, 0), verbose = FALSE,
+rgcca.hpca = rgcca(blocks=A, connection=C, tau = c(1, 1, 1, 0), verbose = FALSE,
 ncomp = rep(2, 4),
 #flexible design of the scheme function
 scheme = function(x) x^4,
@@ -782,7 +885,7 @@ scale = TRUE)
 
 For HPCA, the countries can be represented in the space spanned by the two first global components.
 
-```{r, fig.align='center', fig.cap = 'graphical display of the countries obtained by crossing the two first compoent of the superblock and labeled according to their political regime'}
+```{r, fig.align='center', fig.cap = 'graphical display of the countries obtained by crossing the two first compoent of the superblock and labeled according to their political regime',fig.height = 3, fig.width = 5}
 
 df1 = data.frame(political_regime =
 factor(apply(Russett[, 9:11], 1, which.max),
@@ -806,7 +909,7 @@ Despite some overlap, the first global component exhibits a separation/continuum
 
 Moreover, the correlation circle plot highlights the contribution of each variable to the contruction of the global components. This figure shows the original variables projected on the compromise space.
 
-```{r, eval=TRUE, fig.align='center', fig.pos="!!h", TRUE, fig.cap = 'correlation circle plot - two first components of the superblock. Variables are colored according to their block membership'}
+```{r, eval=TRUE, fig.align='center', fig.pos="!!h", TRUE, fig.cap = 'correlation circle plot - two first components of the superblock. Variables are colored according to their block membership',fig.height = 3, fig.width = 5}
 df2 = data.frame(comp1 = cor(Russett, rgcca.hpca$Y[[4]])[, 1],
 comp2 = cor(Russett, rgcca.hpca$Y[[4]])[, 2],
 BLOCK = rep(c("X1", "X2", "X3"), sapply(A[1:3], NCOL)))
@@ -891,10 +994,10 @@ C
 
 **Determination of the shrinkage parameters.** In this situation, the optimal shrinkage parameters should be chosen so as to minimize the test error rate determined by cross-validation (grid search). This has been done in [@Tenenhaus2015]. A function that implements this cross validation procedure is not yet included in the RGCCA package but can be found in http://biodev.cea.fr/sgcca/. Work is in progress to include this function within the RGCCA package. Due to the dimensionality of each block, the shrinkage parameters $\tau_1 = 1$, $\tau_2 = 1$ and $\tau_3 = 0$ are found to offer a good compromise between stability and correlation [@Tenenhaus2015]. Notice that $\tau_3$ was set to 0 because we were not looking for a block component $\ma y_3$ that explained its own block well (since $\ma X_3$ is a group coding matrix) but one that correlated with its neighboring components. In addition, usin the `ncomp` argument, one component per block have been asked (`ncomp = c(1, 1, 1)`).
 
-From the dimension of each block ($n>p$ or $n\leq p$), the `rgccad()` function selects automatically the dual formulation for $\ma X_1$ and $\ma X_2$ and the primal one for $\ma X_3$.
+From the dimension of each block ($n>p$ or $n\leq p$), the `rgcca()` function selects automatically the dual formulation for $\ma X_1$ and $\ma X_2$ and the primal one for $\ma X_3$.
 
 ```{r, eval = FALSE}
-rgcca.glioma = rgccad(A, C, tau = c(1, 1, 0), ncomp = c(1, 1, 1),
+rgcca.glioma = rgcca(blocks=A, connection=C, tau = c(1, 1, 0), ncomp = c(1, 1, 1),
                      scale = TRUE, scheme = "horst", verbose = FALSE)
 ```
 
@@ -907,14 +1010,14 @@ rgcca.glioma$primal_dual
 The dual formulation make the RGCCA algorithm highly efficient even in a high dimensional setting.
 
 ```{r, eval = FALSE}
-system.time(rgccad(A, C, tau = c(1, 1, 0), ncomp = c(1, 1, 1),
+system.time(rgcca(blocks=A, connection=C, tau = c(1, 1, 0), ncomp = c(1, 1, 1),
                   scheme = "horst", verbose = FALSE)
 )
 ```
 
 As previously, RGCCA enables visual inspection of the spatial relationships between classes. This facilitates assessment of the quality of the classification and makes it possible to readily determine which components capture the discriminant information.
 
-```{r, eval=FALSE, fig.align='center'}
+```{r, eval=FALSE, fig.align='center',fig.height = 3, fig.width = 5}
 df1 = data.frame(Loc = Loc,
                  GE1 = rgcca.glioma$Y[[1]][, 1],
                  CGH1 = rgcca.glioma$Y[[2]][, 1])
@@ -938,7 +1041,7 @@ In high-dimensional settings, the highest level of regularization ($\tau_j=1$) h
 ## SGCCA for the Glioma dataset
 
 The variable selection is achieved by adding, within the RGCCA optimization
-problem, a penalty promoting sparsity. For that purpose, an $\ell_1$ penalization on the weight vectors $\ma a_1, \ldots, \ma a_J$ is applied. the `sparsity` argument of `sgcca()` vary between 0 and 1 (larger values of `sparsity` correspond to less penalization) and control the amount of sparsity of the weight vectors $\ma a_1, \ldots, \ma a_J$. If `sparsity` is a vector, $\ell_1$-penalties are the same for all the weights corresponding to the same block but different components:
+problem, a penalty promoting sparsity. For that purpose, an $\ell_1$ penalization on the weight vectors $\ma a_1, \ldots, \ma a_J$ is applied. the `sparsity` argument of `rgcca()` vary between 0 and 1 (larger values of `sparsity` correspond to less penalization) and control the amount of sparsity of the weight vectors $\ma a_1, \ldots, \ma a_J$. If `sparsity` is a vector, $\ell_1$-penalties are the same for all the weights corresponding to the same block but different components:
   
 \begin{equation}
 \forall h, \Vert \ma a_j^{(h)} \Vert_{\ell_1} \leq c_{1j} \sqrt{p_j},
@@ -954,7 +1057,7 @@ If `sparsity` is a matrix, each row $h$ of `sparsity` defines the constraints ap
 
 ```{r, eval = FALSE}
 # sgcca algorithm
-sgcca.glioma = sgcca(A, C, sparsity = c(.071,.2, 1),
+sgcca.glioma = rgcca(blocks=A, connection=C,type="sgcca", sparsity = c(.071,.2, 1),
                      ncomp = c(1, 1, 1),
                      scheme = "centroid",
                      scale = TRUE,
@@ -975,7 +1078,7 @@ nb_zero_CGH = sum(sgcca.glioma$a[[2]] != 0)
 
 One component per block has been built (GE1 for $\ma X_1$ and CGH1 $\ma X_2$), and the graphical display of the tumors obtained by crossing GE1 and CGH1 and labeled according to their location is shown below.
 
-```{r, eval=FALSE, fig.align='center', fig.cap = 'graphical display of the tumors obtained by crossing GE1 and CGH1 land abeled according to their location.'}
+```{r, eval=FALSE, fig.align='center', fig.cap = 'graphical display of the tumors obtained by crossing GE1 and CGH1 land abeled according to their location.',fig.height = 3, fig.width = 5}
 df1 = data.frame(Loc = Loc,
                  GE1 = sgcca.glioma$Y[[1]][, 1],
                  CGH1 = sgcca.glioma$Y[[2]][, 1])
@@ -1036,10 +1139,10 @@ C[, nb_block-1] = 1 ; C[nb_block-1, ] = 1 ; diag(C) = 0
 C
 ```
   
-In that case, the call of `sgcca()` is as follows:
+In that case, the call of `rgcca(,type="sgcca")` is as follows:
     
 ```{r, eval = FALSE}
-sgcca.glioma = sgcca(B, C,
+sgcca.glioma = rgcca(blocks=B, connection=C,type="sgcca",
                      sparsity = c(.071,.2, 1/sqrt(NCOL(B[[3]]))+.2, 1),
                      ncomp = c(rep(2, (length(B)-1)),1),
                      scheme = "factorial", scale = TRUE,
@@ -1049,7 +1152,7 @@ sgcca.glioma = sgcca(B, C,
   
 and allows for the graphical representations of the individuals and the variables in a common space.
   
-```{r, eval = FALSE, fig.align = 'center', fig.cap = 'factor plot - two first components of the superblock. individuals are colored according to their group membership'}
+```{r, eval = FALSE, fig.align = 'center', fig.cap = 'factor plot - two first components of the superblock. individuals are colored according to their group membership',fig.height = 3, fig.width = 5}
   
 df1 = data.frame(Loc = Loc, sgcca.glioma$Y[[3]])
   
@@ -1067,7 +1170,7 @@ p1
 ![SGCCA with the superblock. Graphical display of the tumors obtained by crossing the two first superblock components and labeled according to their location.](../img/vignette_rgcca/glioma_sgcca_superblock_indiv.png)
 
 
-```{r, eval = FALSE, fig.align = 'center', fig.cap = 'correlation circle plot - two first components of the superblock. Variables are colored according to their block membership'}
+```{r, eval = FALSE, fig.align = 'center', fig.cap = 'correlation circle plot - two first components of the superblock. Variables are colored according to their block membership',fig.height = 3, fig.width = 5}
 ind.select = unlist(lapply(sgcca.glioma$a[1:(length(B)-2)],
                            function(x) x[, 1]!=0 | x[, 2]!=0))
 VAR.SELECT = B[[(length(B)-1)]][, ind.select]
@@ -1144,7 +1247,7 @@ g1
 
 ![Stability selection for GE.](../img/vignette_rgcca/stab_ge.png)
 
-```{r, eval = FALSE}
+```{r, eval = FALSE,fig.height = 3, fig.width = 5}
 stabCGH = data.frame(CGH_symbol = names(count_sort[[2]])[1:top],
                      Count = count_sort[[2]][1:top]/nb_boot)
   
@@ -1162,12 +1265,12 @@ At last, the McKeon's measure quantifies the homogeneity of a set of block compo
   \label{mckeon}
 \end{equation}
   
-Formula (\ref{mckeon}) allows evaluating the homogeneity of the solution of any multiblock component methods. The McKeon measure (not yet implemented within the RGCCA package but easily derived from the `rgccad()` function, see below) can be used to evaluate the proximities of the $3$ blocks. The computation of the McKeon's measure was carried out using RGCCA (full between-block connections, $\tau_j=1$ for all blocks, and $g(x) = x$ for a fair analysis).
+Formula (\ref{mckeon}) allows evaluating the homogeneity of the solution of any multiblock component methods. The McKeon measure (not yet implemented within the RGCCA package but easily derived from the `rgcca()` function, see below) can be used to evaluate the proximities of the $3$ blocks. The computation of the McKeon's measure was carried out using RGCCA (full between-block connections, $\tau_j=1$ for all blocks, and $g(x) = x$ for a fair analysis).
   
 ```{r, eval = FALSE}
 rI = function(A){
     J = length(A)
-    res = rgccad(A, scale = TRUE, verbose = FALSE)
+    res = rgcca(blocks=A, scale = TRUE, verbose = FALSE)
     Y = Reduce("cbind", res$Y)
     rI = 1/(J-1)*(cov2(rowSums(Y))/sum(apply(Y, 2, cov2))-1)
 }
@@ -1201,6 +1304,358 @@ LOC 0.7886703 0.3741613 1.0000000
 
 This suggests that the tumor location in the brain is more dependent on gene expression than on chromosomal imbalances and that this dependency is stronger that the dependency between gene expression and chromosomal imbalances.
   
+
+
+# Plots
+
+## Multiblock data analysis with the RGCCA package
+
+We consider J data matrices X1 ,..., XJ. Each n × pj data matrix Xj = [ xj1, ..., xjpj ] is called a block and represents a set of pj variables observed on n individuals. The number and the nature of the variables may differ from one block to another, but the individuals must be the same across blocks. We assume that all variables are centered. The objective of RGCCA is to find, for each block, a weighted composite of variables (called block component) yj = Xj . aj, j = 1 ,..., J (where aj is a column-vector with pj elements) summarizing the relevant information between and within the blocks. The block components are obtained such that (i) block components explain well their own block and/or (ii) block components that are assumed to be connected are highly correlated. In addition, RGCCA integrates a variable selection procedure, called SGCCA, allowing the identification of the most relevant features.
+
+```{r echo = FALSE, warning = FALSE, message = FALSE}
+
+
+getwd()
+set.seed(1)
+
+# Load functions
+wd <- "../R/"
+for (f in list.files(wd))
+        source(paste0(wd, f))
+
+load_libraries(c("RGCCA", "ggplot2", "optparse", "scales", "igraph", "ggrepel", "plotly"))
+
+# Load the data
+data("Russett")
+
+#Creates the blocks
+agriculture = Russett[, 1:3]
+industry = Russett[, 4:5]
+politic = Russett[, 6:11]
+
+# Creates optional files
+response = factor( apply(Russett[, 9:11], 1, which.max),
+                   labels = colnames(Russett)[9:11] )
+connection = matrix(c(0, 0, 0, 1,
+                      0, 0, 0, 1,
+                      0, 0, 0, 1,
+                      1, 1, 1, 0),
+                    4, 4)
+
+# Save the Russett files
+files = c("agriculture", "industry", "politic", "response", "connection")
+
+# Creates the files (in .tsv format for example)
+if (!file.exists("data"))
+  dir.create("data")
+
+# Without row and column names for connection files
+sapply(1:length(files), function(x) {
+
+  bool = (files[x] != "connection")
+
+  write.table(
+    x = get(files[x]),
+    file = paste("data/", files[x], ".tsv", sep = ""),
+    row.names = bool,
+    col.names = bool,
+    sep = "\t")
+})
+
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  fig.path = "images/"
+)
+
+```
+
+
+## Load the inputs
+### Load the blocks
+
+The blocks are loaded with the function ```load_blocks```. The first argument of this function (```superblock```) required a bolean giving the presence (TRUE) / absence (FALSE) of a superblock. The second one corresponds to a character giving the list of the file path separated by a comma (argument ```file```). By default, the name of the blocks corresponds to those of the files (```names``` argument) and could be set. By default, the tabulation is used as a column separator (```sep``` argument) and the first row is considered as a header (```header``` parameter).
+
+```{r blocks}
+library(rlang)
+# Warning : separators by default are tabulation
+blocks = load_blocks(file = "data/agriculture.tsv,data/industry.tsv,data/politic.tsv")
+```
+
+### Load the groups of response and the connection between blocks
+
+The connection between the blocks will be used by the RGCCA and must be set by ```set_connection``` function. A group of samples will be used to color them in the samples plot and must be set by ```load_response``` function. For both functions, the ```blocks``` parameter, set at the previous step, is required. The other parameters are optional. The user could import a file containing either (```file``` parameter) : (i) a symmetric matrix with 1 giving a connection between two blocs, or 0 otherwise; (ii) a univariate vector (qualitative or quantitative) or a disjunctive table for the response. By default, the column separator is the tabulation and could be set (```sep``` argument). For the ```load_response```, a header could be specified (```header``` parameter).
+
+```{r  echo = TRUE}
+# Optional parameters
+response <- connection <- NULL
+
+# Uncomment the parameters below to try without this settings
+response = load_response(blocks = blocks, file = "data/response.tsv")
+connection = load_connection(file = "data/connection.tsv")
+```
+
+
+### View the inputs
+
+```{r views, echo=FALSE, results = "asis"}
+
+for (x in 1:length(files)) {
+  
+  tab = get(files[x])
+  if (x > 3) colnames(tab) = rep(NULL, NCOL(tab))
+  
+  pander::pandoc.table(head(tab),
+                       caption = files[x])
+}
+```
+
+
+## Run S/RGCCA
+
+SGCCA is run from the RGCCA package by using two components for a biplot visualization. The S/RGCCA function doesn't names the blocks in their outputs. This step is required to generate biplots.
+
+```{r, fig.height = 3, fig.width = 5}
+rgcca_out = rgcca(blocks = blocks)
+plot(rgcca_out,type="network")
+```
+
+
+## Vizualise the analysis
+
+Both the samples and the variables could be visualized by using biplots functions (respectively ```plot_ind``` and ```plot_var_2D```). Histograms are used to visualized in decreasing order the variables with the higher weights and the blocks with the higher Average Variance Explained (AVE).
+
+These functions take the results of a sgcca or a rgcca (```rgcca``` parameter) and the components to visualize : either ```compx``` and ```compy``` for biplots or  ```comp``` for histograms. By default, ```compx``` = ```comp``` = 1 and ```compy``` = 2. The presence or the absence of a superblock among the analysis could be specified for ```plot_var_2D``` and ```plot_var_1D``` to color the variables according to their blocks. By default, the last block is plotted, corresponding to the superblock if selected (```i_block``` parameter). ```plot_var_2D```, which is a corcircle plot, required the ```blocks``` for the correlation with the selected component. ```plot_var_2D``` could use the response variable to color the samples by groups. By default, the first 100th higher weights are used for the ```plot_var_1D``` and could be set by using the ```n_mark``` argument.
+
+```{r}
+comp1 = 1
+comp2 = 2
+nmark = 100
+```
+
+### With the superblock, by default on the first and the second components
+
+#### Samples plot
+```{r, fig.height = 3, fig.width = 5, fig.align = "center"}
+plot(rgcca_out,type="ind")
+```
+
+#### Corcircle plot
+```{r}
+plot(rgcca_out,type="var")
+```
+
+#### Fingerprint plot
+```{r, fig.height = 3, fig.width = 5, fig.align = "center"}
+plot(rgcca_out,type="weight")
+```
+
+#### Best explained blocks
+```{r, fig.height = 3, fig.width = 5, fig.align = "center"}
+plot(rgcca_out,type="ave")
+```
+
+#### Bootstrap
+```{r}
+boot <- bootstrap(rgcca_out, n_boot = 2, n_cores = 2)
+#plot(boot, n_cores = 2,type="2D")
+#plot(boot, n_cores = 2,type="2D")
+```
+
+#### Permutation
+```{r, fig.height = 3, fig.width = 5, fig.align = "center"}
+perm <- rgcca_permutation(blocks, nperm = 5, n_cores = 1)
+head(order_df(cbind(perm$penalties, perm$zstat), ncol(perm$penalties) + 1))
+plot(perm)
+```
+
+### With the politic block, on the 2nd and the 3rd components
+
+#### Samples plot
+```{r, fig.height = 3, fig.width = 5, fig.align = "center"}
+plot(x = rgcca_out,
+    resp = response,
+    compx = comp1,
+    compy = comp2,
+    i_block = 3, type="ind")
+```
+
+#### Corcircle plot
+```{r, fig.height = 3, fig.width = 5, fig.align = "center"}
+plot(
+    x = rgcca_out,
+    compx = comp1,
+    compy = comp2,
+    i_block = 3,type="var")
+```
+
+#### Fingerprint plot
+```{r, fig.height = 3, fig.width = 5, fig.align = "center"}
+plot(
+    x = rgcca_out,
+    compx = comp1,
+    n_mark = nmark, 
+    i_block = 3,
+    type = "weight")
+```
+
+
+#### Supervized mode
+```{r, fig.height = 3, fig.width = 5, fig.align = "center"}
+rgcca_out = rgcca(blocks = blocks, response = 3)
+plot(rgcca_out,type="network")
+loo <- rgcca_crossvalidation(rgcca_out, n_cores = 2)
+# Cross-validation score (leave-one-out)
+round(loo$scores, 3)
+plot_ind(rgcca_out, predicted = loo)
+```
+
+# Dealing with missing data
+
+```{r, echo = FALSE, warning=FALSE, message = FALSE}
+library(ggplot2)
+library(parallel)
+library(vegan)
+```
+
+
+## Introduction
+ Multi-source data often have block-wise missing structure, i.e., data in one or more sources may be completely unobserved for a sample. The probability to observe block-wise missing structure increases with the number of sources. It is therefore mandatory to properly handle this block-wise missing structure within the framework of RGCCA.
+In literature, many solutions exist to deal with missing data: NIPALS-type algorithms, and imputation methods (simple or multiple). Until now, these solutions were not applied to integrative analysis. 
+
+In this section, we present several solutions and offer a methodology for choosing the best solution for missing-data according to the dataset. All the tools are available in RGCCA package.  
+
+
+## An example dataset: Russett 
+The example dataset is Russett.
+```{r eval=FALSE}
+library(RGCCA)
+data(Russett)
+head(Russett)
+```
+
+The first step of the RGCCA is to define the blocks of variables. Three blocks of variables have been defined for 47 countries. The variables that compose each block have been defined according to the nature of the variables.
+
+```{r}
+X_agric = as.matrix(Russett[,c("gini","farm","rent")])
+X_ind = as.matrix(Russett[,c("gnpr","labo")])
+X_polit = as.matrix(Russett[ , c("inst", "ecks",  "death")])
+A = list(X_agric, X_ind, X_polit)
+```
+## Creating and vizualizing dataset with missing values
+
+### Creating a dataset with missing values from a complete dataset
+The function createNA transforms a complete dataset into a dataset with missing values. The parameter pNA specifies the probability of missing values around the dataset (pNA is a proportion), by block (if pNA is a vector of length(blocks)) or by variable (if pNA is a list of length (blocks)). The minimum number of complete individuals can be specified in the option "nAllRespondants". Two options are available for the missing data: either they are missing by block (typeNA="block") or randomly in the block (typeNA="ponc")
+```{r}
+res_create=createNA(blocks=A,pNA=0.2,seed=41)
+names(res_create)
+A_missing=res_create$dat
+lapply(A_missing,head)
+```
+createNA return a list containing the data with missing values, the position of missing values and the complete subjects kept in the analysis.
+
+### Vizualizing a dataset with missing values, and getting the pattern of missing values
+
+To visualize a dataset with missing values, the function get_patternNA can be used. It also return the percent of missing values per variables and per block.
+```{r, fig.height = 3, fig.width = 7, fig.align = "center"}
+patternNA=get_patternNA(blocks=A_missing)
+names(patternNA)
+```
+
+```{r, fig.height = 3, fig.width = 7, fig.align = "center"}
+A_missing2=createNA(blocks=A,typeNA="byvar",
+                    pNA=list(0.1*1:3,rep(0,2),rep(0.1,3)))$dat
+d=get_patternNA(A_missing2)
+
+```
+
+## Using complete data only
+The complete data approach is the less risky, but can conduct to a large loss of data, potentially leading to less significant results. It is the one used by default in most software solutions. 
+```{r}
+A_inter=intersection(A_missing)
+lapply(A_inter,dim)
+```
+## Using NIPALS algorithm 
+
+### Principle
+This approach is based on NIPALS algorithm and PLS-PM approach, and consists in re-writing the algorithm by ignoring the missing values. Thus, calculating a matricial product without taking into account missing values is equivalent to replace the missing value by zero, regression on missing value removes the observation, and correlations are made pairwise. Thus, contrarily to the complete data approach, all existing data are taken into account during the analysis. 
+
+The resulting RGCCA can be entering method="nipals" in usual rgcca
+
+### R Code
+
+```{r}
+rgcca_nipals=rgcca(blocks =A_missing,superblock=F,verbose=FALSE,method="nipals")
+
+```
+## Using k-Nearest Neighbors
+
+We chose here the hotdeck procedure based on the k nearest neighbors. Note that each block $X_j$ is previously centered and scaled. The neighborood notion is based on the euclidean distance between individuals weighted by the number of variables (in order to give the same weight to each block). Thus, the distance between two individuals $i_1$ and $i_2$ can be formalized as: 
+$$d(i_1,i_2)=\sum_{j=1}^J\left( \frac{1}{card(P_j)}\sum_{p\in P_j}(\mat{X}_j(i_1,p)-\mat{X}_j(i_2,p))^2\right)$$
+$P_j$ being the set of variables where $i_1$ and $i_2$ are not missing.
+For each missing value, the distance between the related individual and all the complete individuals are calculated. 
+
+
+```{r}
+rgcca_knnA=rgcca(blocks=A_missing,superblock=F,method="knnA")
+rgcca_knn3=rgcca(blocks=A_missing,superblock=F,method="knn3")
+```
+
+### Multiple imputation
+
+
+Here, we chose the 5-NN. RGCCA is run M (=5) times on the M resulted imputed dataset. 
+
+In order to represent RGCCA, a "reference" representation space must be chosen in order to project all the M results. For example, it can be the space of the RGCCA imputed by the 1-nearest neighbor. We choose here to take the space of the RGCCA of imputation by the average of all individuals weighted by the inverse of their distance with the individual with missing data. 
+Regarding the pool of sample plot, procrustean rotation is run for superimpose each of the M RGCCA individual plot on the reference representation space. Thus, each individual correspond to M points. They can be linked by segments or summarized in an ellipse in order to represent the variability due to the estimation of missing data. 
+Regarding the pool of variable plot, only the representation variable space is shown in order to not overload the graph.
+
+Regarding the relevant variables, the standard deviation of the correlations between their scores and first and second axis were added.
+
+
+```{r, fig.height = 3, fig.width = 5, fig.align = "center"}
+mi_rgcca=MIRGCCA(blocks=A_missing,k=3,ni=5,tau=rep(1,3))
+ plot(mi_rgcca,type="cor")
+ plot(mi_rgcca,type="ind")
+```
+
+
+## Which method to use?
+Among all these methods for dealing with missing data, we suspect that the best is dataset-depending, and the ideal is to compare the method results to choose the more adapted to the dataset.
+
+
+### Simulations on complete dataset according to this pattern
+
+To select the more appropriate method for a given dataset, simulations are made on the complete part of the dataset. This is based on the assumptions that the missing values were randomly distributed, and that the complete part is a representative part of the dataset. 
+
+whichNAmethod simulates nDatasets (20 by default) with missing values according to a specific pattern of missing values (patternNA) and typeNA ("block","byvar" or "ponc"). The plot function allows to select one of the following indicators
+
+The idea is to compare the results of the different "missing methods" to the original results (known, as the initial dataset is complete)
+\begin{itemize}
+\item output="a": distance between the weights of missing and original RGCCA
+\item output="rv": rv coefficient for all individuals on the 1-2 map between missing and original RGCCA (complete method can not be run with this option)
+\item output="rvComplete": rv coefficient for complete individuals only on the 1-2 map between missing and reference case 
+\item output="bm": percentage of similar top ten of variables
+\end{itemize}
+
+```{r, fig.height = 6, fig.width = 6, fig.align = "center"}
+res=whichNAmethod(A_missing,listMethods=c("knn1","knn2","knn3","knn4","mean"),
+                  patternNA=patternNA$pctNAbyBlock,nDatasets = 5)
+plot(res,output="a",ylim=c(0,1))
+```
+
+In this case, the best method for the similarities between weights is 
+
+## Behavior with increasing missing data proportion
+```{r, fig.height = 6, fig.width = 6, fig.align = "center"}
+names(A)=c("agri","ind","polit")
+listResults=naEvolution(blocks=A,listMethods=c("complete","nipals","mean"),
+        prctNA=c(0.05,0.1,0.15,0.2,0.25,0.3,0.4),typeNA="ponc",ncomp=rep(1,3),
+       ,nDatasets = 10)
+```
+```{r, fig.height = 4, fig.width = 6, fig.align = "center"}
+plot(listResults,output="a",bars = "stderr")
+```
 # Conclusion
   
 This package gathers fifty years of multiblock component methods and offers a unified implementation stategy for these methods. Work is in progress to include within the RGCCA package:
@@ -1214,6 +1669,7 @@ This package gathers fifty years of multiblock component methods and offers a un
 - multiblock data faces two types of missing data structure: (i) if an observation i has missing values on a whole block j and (ii) if an observation i has some missing values on a block j (but not all). For these two situations, it is possible to exploit the algorithmic solution proposed for PLS path modeling to deal with missing data (see [@Tenenhaus2005],  page 171). Work is in progress to implement this missing data solution within the RGCCA package.
 
 - At last, RGCCA for multigroup data [@Tenenhaus2014b] and for multiway data [@Tenenhaus2015c] has been proposed but not yet implemented in the RGGCA package. These two methods remain to be integrated into the package. 
+
 
 # References
 

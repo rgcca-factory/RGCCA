@@ -5,7 +5,7 @@
 #' @param output ="rv": Can be also "a" for correlations between axes, "bm" for the percent of similar biomarkers, "rvComplete" if the RV is calculated only on complete dataset, or "rmse" for Root Mean Squares Error.
 #' @param ylim =c(0.8,1) y limits
 #' @param block ="all" or a number indicating the position of the chosen block in the initial list
-#' @param barType ="sd" or "stderr". Indicates which error bar to build
+#' @param bars ="sd" or "stderr". Indicates which error bar to build
 #' @param main =NULL Title of the graph (before the block name)
 #' @param names.arg  renaming the methods
 #' @param ... Further plot parameters...
@@ -20,16 +20,16 @@
 #' plot(x=listResults,ylim=c(0,1),output="a")
 #' @importFrom grDevices graphics.off
 #' @export
-plot.naEvolution=function(x,output="rv",ylim=NULL,block="all",barType="sd",main=NULL,names.arg=NULL,...)
+plot.naEvolution=function(x,output="rv",ylim=NULL,block="all",bars="sd",main=NULL,names.arg=NULL,...)
 { #output : "rv", "pct" ou "a"
-  #barType="sd" or "stderr"
+  #bars="sd" or "stderr"
   #  graphics.off()
   if(is.null(main)){main=output}
     if(block!="all")
     {
         check_integer("block",block)
     }
-    match.arg(barType,c("sd","stderr"))
+    match.arg(bars,c("sd","stderr"))
     match.arg(output,c("rv","rvComplete","bm","rmse","a"))
   nameData= names(x)
   abscisse=as.numeric(nameData)
@@ -69,9 +69,9 @@ plot.naEvolution=function(x,output="rv",ylim=NULL,block="all",barType="sd",main=
         result=sapply(x[[da]],function(x){return(x[[rg]][[output]][j])})
       
         moyenne[[j]][da,rg]=mean(result)
-        if(!barType %in% c("sd","stderr")){ecartType[[j]][da,rg]=0}
-        if(barType=="sd"){ecartType[[j]][da,rg]=sd(result)}
-        if(barType=="stderr"){ecartType[[j]][da,rg]=sd(result)/sqrt(length(result))}
+        if(!bars %in% c("sd","stderr")){ecartType[[j]][da,rg]=0}
+        if(bars=="sd"){ecartType[[j]][da,rg]=sd(result)}
+        if(bars=="stderr"){ecartType[[j]][da,rg]=sd(result)/sqrt(length(result))}
         if(length(toPlot)>1)
         {
             ymin[j]=min(ymin[j],min(moyenne[[j]][da,rg]-ecartType[[j]][da,rg]))

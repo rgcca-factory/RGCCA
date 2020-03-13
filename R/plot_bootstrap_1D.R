@@ -35,6 +35,7 @@ plot_bootstrap_1D <- function(
     title = NULL, 
     colors = NULL,
     comp = 1,
+    bars = "sd",
     i_block = length(b$bootstrap[[1]]),
     collapse = FALSE,
     n_cores = parallel::detectCores() - 1,
@@ -43,7 +44,7 @@ plot_bootstrap_1D <- function(
     if (missing(b) && missing(df_b))
         stop("Please select a bootstrap object.")
     if (!is.null(b)) {
-        df_b <- get_bootstrap(b, comp, i_block, collapse, n_cores)
+        df_b <- get_bootstrap(b, comp, i_block, collapse, n_cores, bars=bars)
     }
     if (!is.null(df_b))
         stopifnot(is(df_b, "df_bootstrap"))

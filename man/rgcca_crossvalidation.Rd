@@ -34,7 +34,7 @@ rgcca_crossvalidation(rgcca_res, response = NULL, validation = "loo",
 \description{
 Cross-validation for RGCCA
 
-Cross-validation for RGCCA
+Uses cross-validation to validate a predictive model of RGCCA
 }
 \examples{
 library(RGCCA)
