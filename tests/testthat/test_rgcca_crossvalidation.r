@@ -47,7 +47,7 @@ test_that("rgcca_cv_with_args", {
     #         validation = "test", 
     #         n_cores = 1), 
     #     0.1057) # TODO : warnings
-    # }
+    }
 )
 
 test_that("rgcca_cv_withNA", {

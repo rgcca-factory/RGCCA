@@ -7,8 +7,8 @@ f : a function to parralelize
 nperm : a vector object for a lapply type function
 varlist : character vector of names of objects to export}
 \usage{
-parallelize(varlist, nperm, f, n_cores = NULL, envir = environment(),
-  applyFunc = "parSapply")
+parallelize(varlist = c(), nperm, f, n_cores = NULL,
+  envir = environment(), applyFunc = "parSapply")
 }
 \description{
 Set a list of ocket for parralel package in Windows
