@@ -7,18 +7,18 @@ get_nodes <- function(rgcca_res) {
 
     if ( rgcca_res$call$type %in% c("sgcca", "spls", "spca")) {
         par_rgcca <- "sparsity"
-        par.name <- "sparsity"
+        par_name <- "sparsity"
     } else
-        par_rgcca <- par.name <- "tau"
+        par_rgcca <- par_name <- "tau"
 
     if (is.matrix(rgcca_res$call[[par_rgcca]]))
-        penalty <-  unlist(lapply(seq(NCOL(rgcca_res$call[[par_rgcca]])),
+        penalty <-  unlist(
+            lapply(
+                seq(NCOL(rgcca_res$call[[par_rgcca]])),
             function(x)
-                Reduce(paste, rgcca_res$call[[par_rgcca]][, x])))
+                Reduce(paste, round(rgcca_res$call[[par_rgcca]][, x], 2))))
     else
-        penalty <- rgcca_res$call[[par_rgcca]]
-
-    penalty <- round(as.vector(penalty), 2)
+        penalty <- round(rgcca_res$call[[par_rgcca]], 2)
 
     nrow <- unlist(lapply(rgcca_res$call$blocks, function(x)
             ifelse(
@@ -29,7 +29,7 @@ get_nodes <- function(rgcca_res) {
 
     values <- list(names(rgcca_res$call$blocks), unlist(lapply(rgcca_res$call$blocks, NCOL)), nrow, penalty)
     nodes <- as.data.frame(matrix(unlist(values), length(rgcca_res$call$blocks), length(values)))
-    colnames(nodes) <- c("id", "P", "nrow", par.name)
+    colnames(nodes) <- c("id", "P", "nrow", par_name)
 
-    return(nodes)
+    return(nodes) 
 }

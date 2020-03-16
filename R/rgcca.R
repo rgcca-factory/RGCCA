@@ -280,8 +280,6 @@ rgcca <- function(
     if(!is.null(func_out$tau))
         func_out$tau <- NULL
 
-   # print(func_out$tau)
-    print( opt$penalty)
     for (i in c(
         "scale",
         "init",
