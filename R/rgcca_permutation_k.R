@@ -20,8 +20,7 @@ rgcca_permutation_k <- function(
         blocks[[k]] <- as.matrix(blocks[[k]][sample(seq(NROW(blocks[[k]]))), ])
     }
 
-    gcca <- quote(
-    function(i) {
+    gcca <- function(i) {
         func <- quote(
             rgcca(
                 blocks = blocks,
@@ -33,18 +32,17 @@ rgcca_permutation_k <- function(
             ))
 
         if(par[[1]] == "ncomp") {
-            ncomp <- par[[2]][i, ]
             if (tolower(type) %in% c("sgcca", "spca", "spls"))
-            func[["penalty"]] <- sparsity
+                func[["penalty"]] <- sparsity
             else
-            func[["tau"]] <- tau
-        } else
+                func[["tau"]] <- tau
+        }
         func[[par[[1]]]] <- par[[2]][i, ]
 
         crit <- eval(as.call(func))$crit
 
-        return(sum(sapply(crit, function(x) sum(x))))
-    })
+        return(sum(sapply(crit, sum)))
+    }
 
     varlist <- c()
     # get the parameter dot-dot-dot
@@ -69,7 +67,7 @@ rgcca_permutation_k <- function(
     parallelize(
         varlist,
         seq(NROW(par[[2]])),
-        eval(as.call(gcca)),
+        gcca,
         n_cores = n_cores,
         envir = environment()
     )

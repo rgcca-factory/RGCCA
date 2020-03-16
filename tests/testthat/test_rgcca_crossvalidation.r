@@ -40,7 +40,7 @@ test_that("rgcca_cv_with_args", {
             validation = "kfold",
             k = 5,
             n_cores = 1),
-        0.1122)
+        0.1083)
     # test_structure_cv(
     #     rgcca_crossvalidation(
     #         rgcca_out, 
