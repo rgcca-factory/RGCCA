@@ -608,7 +608,7 @@ server <- function(input, output, session) {
 
         return(ncomp)
     }
-
+    
     setParRGCCA <- function(verbose = TRUE) {
         blocks <- blocks_without_superb
 

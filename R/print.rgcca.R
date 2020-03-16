@@ -52,9 +52,7 @@ print.rgcca <- function(x,...)
         for (i in 1:NCOL(x$call$connection)) 
         {
             tau <- x$call$tau[i]
-            if (tau != "optimal")
-                tau <- round(tau , 4)
-             cat("The",param," parameter used for block", i, "was:",  tau, fill = TRUE)
+             cat("The",param," parameter used for block", i, "was:",  round(tau,4), fill = TRUE)
         }
     }
     else

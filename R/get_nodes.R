@@ -18,8 +18,7 @@ get_nodes <- function(rgcca_res) {
     else
         penalty <- rgcca_res$call[[par_rgcca]]
 
-    if (!any(penalty == "optimal"))
-        penalty <- round(as.vector(penalty), 2)
+    penalty <- round(as.vector(penalty), 2)
 
     nrow <- unlist(lapply(rgcca_res$call$blocks, function(x)
             ifelse(

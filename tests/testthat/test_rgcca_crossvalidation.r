@@ -33,14 +33,14 @@ test_that("rgcca_cv_default", {
 )
 
 test_that("rgcca_cv_with_args", {
-    rgcca_out <- rgcca(blocks, response = 2)
+    rgcca_out <- rgcca(blocks, response = 1)
     test_structure_cv(
         rgcca_crossvalidation(
             rgcca_out,
             validation = "kfold",
             k = 5,
             n_cores = 1),
-        0.0919)
+        0.1122)
     # test_structure_cv(
     #     rgcca_crossvalidation(
     #         rgcca_out, 

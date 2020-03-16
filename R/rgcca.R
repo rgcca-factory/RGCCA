@@ -269,8 +269,19 @@ rgcca <- function(
         scheme = opt$scheme
     )
 
-    func_out$call[[par]] <- opt$penalty
-    
+    is_optimal <- any(opt$penalty == "optimal")
+    func_out$call[["optimal"]] <- is_optimal
+
+    if(is_optimal){
+        func_out$call[[par]] <- func_out$tau
+    }else
+        func_out$call[[par]] <- opt$penalty
+
+    if(!is.null(func_out$tau))
+        func_out$tau <- NULL
+
+   # print(func_out$tau)
+    print( opt$penalty)
     for (i in c(
         "scale",
         "init",
@@ -286,8 +297,6 @@ rgcca <- function(
         "type"
     ))
         func_out$call[[i]] <- as.list(environment())[[i]]
-    func_out$call[["tau"]] <- func_out$tau
-    func_out$call[["optimal"]] <- any(opt$tau) == "optimal"
 
     class(func_out) <- "rgcca"
     invisible(func_out)

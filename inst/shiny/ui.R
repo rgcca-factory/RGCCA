@@ -101,7 +101,6 @@ ui <- fluidPage(
             id = "tabset",
             tabPanel(
                 "Data",
-
                 uiOutput("file_custom"),
                 uiOutput("sep_custom"),
                 checkboxInput(
@@ -142,7 +141,8 @@ ui <- fluidPage(
                 uiOutput("tau_opt_custom"),
                 uiOutput("tau_custom"),
                 uiOutput("scheme_custom"),
-                actionButton(inputId = "run_analysis",
+                actionButton(
+                    inputId = "run_analysis",
                     label = "Run analysis"),
                 sliderInput(
                     inputId = "nboot",
@@ -162,7 +162,8 @@ ui <- fluidPage(
                                 `Leave-one-out` = "loo"),
                     selected = "loo"
                 ),
-                actionButton(inputId = "run_crossval",
+                actionButton(
+                    inputId = "run_crossval",
                     label = "Run cross-validation"),
                 sliderInput(
                     inputId = "nperm",
@@ -245,7 +246,7 @@ ui <- fluidPage(
             tabPanel(
                 "Permutation",
                 dataTableOutput("permutationPlot"),
-                # actionButton("permutation_save", "Save")
+                actionButton("permutation_save", "Save")
             )
         )
 

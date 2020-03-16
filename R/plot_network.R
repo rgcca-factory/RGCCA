@@ -36,11 +36,6 @@ plot_network <- function(
         vertices = nodes,
         directed = FALSE)
 
-    if (all(is.na(nodes[, par]))) {
-        nodes[, par] <- rep("optimal", length(rgcca_res$call$blocks))
-        V(net)$call$tau <- rep(1, length(rgcca_res$call$blocks))
-    }
-    
     V(net)$color <- as.vector(colors[1])
     V(net)$label <- paste(
         nodes$id,

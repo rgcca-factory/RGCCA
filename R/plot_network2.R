@@ -27,9 +27,6 @@ plot_network2 <- function(
 
     par <- ifelse("sparsity" %in% names(nodes), "sparsity", "tau")
 
-    if (all(is.na(nodes[, par])))
-        nodes[, par] <- rep("optimal", length(rgcca_res$call$blocks))
-
     nodes$title <- nodes$id
     nodes$label <- paste(nodes$id,
             "\nP =",
