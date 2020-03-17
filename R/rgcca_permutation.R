@@ -22,15 +22,19 @@
 #' data("Russett")
 #' A = list(agriculture = Russett[, seq(3)], industry = Russett[, 4:5],
 #'     politic = Russett[, 6:11] )
-#' rgcca_permutation(A, nperm = 2, n_cores = 1)
-#' rgcca_permutation(A, p_ncomp = TRUE, nperm = 2, n_cores = 1)
-#' rgcca_permutation(A, p_spars = 0.8, nperm = 2, n_cores = 1)
-#' rgcca_permutation(A, p_spars = c(0.6, 0.75, 0.5), nperm = 2, n_cores = 1)
-#' rgcca_permutation(A, p_spars = matrix(c(0.6, 0.75, 0.5), 3, 3, byrow = TRUE),
+#' res = rgcca_permutation(A, nperm = 2, n_cores = 1)
+#'     rgcca_permutation(A, perm.par = "ncomp", nperm = 2, n_cores = 1)
+#' rgcca_permutation(A, perm.par = "sparsity", perm.value = 0.8, nperm = 2, n_cores = 1)
+#' rgcca_permutation(A, perm.par = "sparsity", perm.value = c(0.6, 0.75, 0.5), nperm = 2, n_cores = 1)
+#' rgcca_permutation(A, perm.par = "sparsity", perm.value = matrix(c(0.6, 0.75, 0.5), 3, 3, byrow = TRUE),
 #'  nperm = 2, n_cores = 1)
-#' rgcca_permutation(A, p_ncomp = 2, nperm = 2, n_cores = 1)
-#' rgcca_permutation(A, p_ncomp = c(2,2,3), nperm = 2, n_cores = 1)
-#' res=rgcca_permutation(A, p_ncomp = matrix(c(2,2,3), 3, 3, byrow = TRUE), 
+#' rgcca_permutation(A, perm.par = "tau", perm.value = 0.8, nperm = 2, n_cores = 1)
+#' rgcca_permutation(A, perm.par = "tau", perm.value = c(0.6, 0.75, 0.5), nperm = 2, n_cores = 1)
+#' rgcca_permutation(A, perm.par = "tau", perm.value = matrix(c(0.6, 0.75, 0.5), 3, 3, byrow = TRUE),
+#'                   nperm = 2, n_cores = 1)
+#' rgcca_permutation(A, perm.par = "ncomp", perm.value = 2, nperm = 2, n_cores = 1)
+#' rgcca_permutation(A, perm.par = "ncomp", perm.value = c(2,2,3), nperm = 2, n_cores = 1)
+#' rgcca_permutation(A, perm.par = "ncomp", perm.value = matrix(c(2,2,3), 3, 3, byrow = TRUE), 
 #' nperm = 2, n_cores = 1)
 #' plot(res)
 #' print(res)
@@ -38,24 +42,24 @@
 rgcca_permutation <- function(
     blocks,
     type = "rgcca",
-    p_spars = TRUE,
-    p_ncomp = FALSE,
+    perm.par = "tau",
+    perm.value = NULL,
     nperm = 20,
     n_cores = parallel::detectCores() - 1,
-    quiet=TRUE,
+    quiet = TRUE,
     ...) {
-    call=list(type=type,p_spars=p_spars,p_ncomp=p_ncomp,nperm=nperm,quiet=quiet)
+
+    # call <- as.list(formals(rgcca_permutation))
+    call=list(type=type, perm.par = perm.par, perm.value = perm.value, nperm=nperm, quiet=quiet)
     check_integer("nperm", nperm)
     check_integer("n_cores", n_cores, 0)
 
-    if (any(p_ncomp == FALSE) && any(p_spars == FALSE))
-        stop("Select one parameter among 'p_spars' or 'p_ncomp' to optimize. By default, p_spars is selected.")
+    match.arg(perm.par, c("tau", "sparsity", "ncomp"))
 
     if (length(blocks) < 1)
         stop("Permutation required a number of blocks larger than 1.")
 
     ncols <- sapply(blocks, NCOL)
-    min_spars <- sapply(ncols, function(x) 1 / sqrt(x))
 
     set_spars <- function(max = 1) {
         if (length(max) == 1)
@@ -64,37 +68,50 @@ rgcca_permutation <- function(
             f <- quote(max[x])
         sapply(seq(min_spars), function(x) seq(eval(f), min_spars[x], len = 10))
     }
+    
+    set_penalty <- function () {
 
-    if (!any(p_ncomp == FALSE)) {
-        if (!class(p_ncomp) %in% c("data.frame", "matrix")) {
-            if (isTRUE(p_ncomp) || any(p_ncomp > ncols)) {
-                ncols[ncols > 5] <- 5
-                p_ncomp <- ncols
-            }else
-                p_ncomp <- check_ncomp(p_ncomp, blocks)
-            p_ncomp <- lapply(p_ncomp, function(x) seq(x))
-            p_ncomp <- expand.grid(p_ncomp)
-        }else
-            p_ncomp <- t(sapply(seq(NROW(p_ncomp)), function(x) check_ncomp(p_ncomp[x, ], blocks, 1)))
-        par <- list("ncomp", p_ncomp)
-    }
-
-    if (!any(p_spars == FALSE)) {
-        if (identical(p_spars, TRUE))
-            p_spars <- set_spars()
-        else if (class(p_spars) %in% c("data.frame", "matrix"))
-            p_spars <- t(sapply(seq(NROW(p_spars)), function(x) check_tau(p_spars[x, ], blocks, type = "sgcca")))
-        else{
-            if (any(p_spars < min_spars))
-                stop(paste0("p_spars should be upper than 1 / sqrt(NCOL(blocks)) : ", paste0(round(min_spars, 2), collapse = ",")))
-            p_spars <- check_tau(p_spars, blocks, type = "sgcca")
-            p_spars <- set_spars(max = p_spars)
+        if(perm.par == "sparsity"){
+            type <<- "sgcca"
+            min_spars <<- sapply(ncols, function(x) 1 / sqrt(x))
+        }else{
+            type <<- "rgcca"
+            min_spars <<- sapply(ncols, function(x) 0)
         }
 
-        colnames(p_spars) <- names(blocks)
-        par <- list("sparsity", p_spars)
-        type <- "sgcca"
+        if (is.null(perm.value))
+            perm.value <- set_spars()
+        else if (class(perm.value) %in% c("data.frame", "matrix"))
+            perm.value <- t(sapply(seq(NROW(perm.value)), function(x) check_tau(perm.value[x, ], blocks, type = type)))
+        else{
+            if (any(perm.value < min_spars))
+                stop(paste0("perm.value should be upper than : ", paste0(round(min_spars, 2), collapse = ",")))
+            perm.value <- check_tau(perm.value, blocks, type = type)
+            perm.value <- set_spars(max = perm.value)
+        }
+
+        colnames(perm.value) <- names(blocks)
+        return(list(perm.par, perm.value))
     }
+
+    switch(
+        perm.par,
+        "ncomp" = {
+        if (!class(perm.value) %in% c("data.frame", "matrix")) {
+            if (is.null(perm.value) || any(perm.value > ncols)) {
+                ncols[ncols > 5] <- 5
+                perm.value <- ncols
+            }else
+                perm.value <- check_ncomp(perm.value, blocks)
+            perm.value <- lapply(perm.value, function(x) seq(x))
+            perm.value <- expand.grid(perm.value)
+        }else
+            perm.value <- t(sapply(seq(NROW(perm.value)), function(x) check_ncomp(perm.value[x, ], blocks, 1)))
+        par <- list(perm.par, perm.value)
+    },
+    "sparsity" = par <- set_penalty(),
+    "tau" = par <- set_penalty()
+    )
 
     crits <- rgcca_permutation_k(
         blocks,
@@ -107,73 +124,41 @@ rgcca_permutation <- function(
     )
 
     cat("Permutation in progress...")
-    # To uncomment when it is tested
-    # if (Sys.info()["sysname"] == "Windows") {
-    # 
-    #     e <- environment()
-    #     cl <- parallel::makeCluster(n_cores)
-    # 
-    #     parallel::clusterExport(
-    #         cl,
-    #         c(
-    #             "blocks",
-    #             "p_spars",
-    #             "nperm",
-    #             "C",
-    #             "ncomp",
-    #             "scheme",
-    #             "out",
-    #             "crit",
-    #             "crits",
-    #             "tol"
-    #         ),
-    #         envir = e
-    #     )
 
-        # /!\ To be uncomment (packaging)
-        # parallel::clusterEvalQ(cl, library(devtools))
+    varlist <- c()
+    # get the parameter dot-dot-dot
+    args_values <- c(...)
+    # get the names of the arguments of function expect the ...
+    args_func_names <- names(as.list(args("rgcca_crossvalidation")))
+    # get only the names of the ... args
+    args_dot_names <- setdiff(names(as.list(match.call()[-1])), args_func_names)
+    n <- args_values
+    if (!is.null(n))
+        n <- seq(length(args_values))
+    for (i in n) {
+        # dynamically asssign these values
+        assign(args_dot_names[i], args_values[i])
+        # send them to the clusters to parallelize
+        varlist <- c(varlist, args_dot_names[i])
+        # without this procedure rgcca_crossvalidation(rgcca_res, blocks = blocks2)
+        # or rgcca_crossvalidation(rgcca_res, blocks = lapply(blocks, scale)
+        # does not work.
+    }
 
-        # tryCatch({
-        #     parallel::clusterEvalQ(cl, load_all("RGCCA/R/."))
-        # }, error = function(e) {
-        #     warning("error : probably an issue with the localisation of RGCCA functions")
-        # })
-# /!\ End to be uncomment (packaging)
-        # Close cluster even if there is an error or a warning with rgcca_permutation_k
-    #     permcrit <- tryCatch({
-    #         parallel::parSapply(cl, seq(nperm), function(x)
-    #             rgcca_permutation_k(
-    #                 blocks = blocks,
-    #                 par = par,
-    #                 type = type,
-    #                 ...
-    #             ))
-    #     }, error = function(e) {
-    #         warning("an error occured with rgcca_permutation_k")
-    #         return(NULL)
-    #     })
-    # 
-    #     parallel::stopCluster(cl)
-    # 
-    #     if (is.null(permcrit))
-    #         return(NULL)
-    # 
-    # } else {
-        permcrit <- as.matrix(simplify2array(parallel::mclapply(
-            seq(nperm),
-            function(x){
-                res <- rgcca_permutation_k(
-                    blocks = blocks,
-                    par = par,
-                    type = type,
-                    n_cores = 1,
-                    quiet=quiet,
-                    ...
-                )
-                return(res)
-                },
-            mc.cores = n_cores)))
-    # }
+    permcrit <- parallelize(
+        c(varlist, "rgcca_permutation_k", "parallelize", "load_libraries"),
+        seq(nperm), 
+        function(x)
+            rgcca_permutation_k(
+                blocks = blocks,
+                par = par,
+                type = type,
+                n_cores = 1,
+                quiet = quiet,
+                ...
+            ),
+    n_cores = n_cores,
+    envir = environment())
 
     cat("OK.\n", append = TRUE)
 

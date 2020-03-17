@@ -62,7 +62,7 @@ plot2D <- function(
         check_integer(i, get(i))
     for (i in c("text", "no_overlap"))
         check_boolean(i, get(i))
-
+print(colors)
     if (NROW(df) > 100)
         cex_point <- 2
 
@@ -154,8 +154,8 @@ plot2D <- function(
         )
 
     
-    if (length(unique(group)) != 1 && is(df, "d_var2D")) { print("in")
-       # p <- order_color(rgcca_res$a, p, collapse = collapse, colors = colors)
+    if (length(unique(group)) != 1 && is(df, "d_var2D")) {
+        p <- order_color(rgcca_res$a, p, collapse = collapse, colors = colors)
         # For qualitative response OR no response
     } else if ( is.character2(group[!is.na(group)]) ||
                 length(unique(group)) <= 5 || 

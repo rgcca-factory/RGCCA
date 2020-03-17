@@ -3,13 +3,13 @@ get_comp_all <- function(
     newA = rgcca$call$blocks,
     type = "train",
     newbloc_y = .Machine$integer.max,
-    pred) {
+    pred = NULL) {
 
     names <- unlist(lapply(rgcca$Y[-newbloc_y], colnames))
 
     if (type ==  "train")
         y <- lapply(
-            seq(length(rgcca$call$blocks)), 
+            seq(length(rgcca$Y)), 
             function(x) rgcca$Y[[x]][row.names(rgcca$call$blocks[[x]]), ])
     else
         y <- pred

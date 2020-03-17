@@ -1,8 +1,6 @@
 #' Compute bootstrap
 #'
 #' Computing boostrap of RGCCA in order to visualize the stability of the weights found in RGCCA
-#' @inheritParams rgcca
-#' @inheritParams plot_var_2D
 #' @param rgcca_res Result of a RGCCA (see  \code{\link[RGCCA]{rgcca}} )
 #' @param n_boot A integer for the number of boostraps
 #' @param n_cores An integer for the number of cores used in parallelization 
@@ -39,10 +37,35 @@ bootstrap <- function(
 
     cat("Bootstrap in progress...")
 
-    W <- parallel::mclapply(
+    blocks <- NULL
+
+    varlist <- c()
+    # get the parameter dot-dot-dot
+    args_values <- c(...)
+    # get the names of the arguments of function expect the ...
+    args_func_names <- names(as.list(args("bootstrap")))
+    # get only the names of the ... args
+    args_dot_names <- setdiff(names(as.list(match.call()[-1])), args_func_names)
+    n <- args_values
+    if(!is.null(n))
+        n <- seq(length(args_values))
+    for (i in n) {
+        # dynamically asssign these values
+        assign(args_dot_names[i], args_values[i])
+        # send them to the clusters to parallelize
+        varlist <- c(varlist, args_dot_names[i])
+        # without this procedure rgcca_crossvalidation(rgcca_res, blocks = blocks2)
+        # or rgcca_crossvalidation(rgcca_res, blocks = lapply(blocks, scale)
+        # does not work.
+    }
+
+    W <- parallelize(
+        c(varlist, "bootstrap_k", "remove_null_sd", "check_sign_comp", "set_rgcca", "blocks"),
         seq(n_boot), 
         function(x) bootstrap_k(rgcca_res, ...), 
-        mc.cores = n_cores)
+        n_cores = n_cores,
+        envir = environment(),
+        applyFunc = "parLapply")
 
     cat("OK.\n", append = TRUE)
 

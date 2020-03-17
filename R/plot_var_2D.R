@@ -60,6 +60,7 @@ plot_var_2D <- function(
     resp=NULL,
     colors=NULL,
     ...) {
+
     x <- y <- NULL
     df <- get_ctr2(
         rgcca_res = rgcca_res,
@@ -73,6 +74,7 @@ plot_var_2D <- function(
         resp=resp
     )
     class(df) <- c(class(df), "d_var2D")
+
     if (collapse && rgcca_res$call$superblock) {
         if (i_block == length(rgcca_res$a))
             i_block <- length(rgcca_res$a) - 1
@@ -87,7 +89,6 @@ plot_var_2D <- function(
         rgcca_res$call$superblock <- FALSE
 
     check_ncol(rgcca_res$a, i_block)
-
 
     p <- plot2D(
         rgcca_res,
