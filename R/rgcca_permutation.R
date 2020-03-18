@@ -129,7 +129,7 @@ rgcca_permutation <- function(
     # get the parameter dot-dot-dot
     args_values <- c(...)
     # get the names of the arguments of function expect the ...
-    args_func_names <- names(as.list(args("rgcca_crossvalidation")))
+    args_func_names <- names(as.list(args("rgcca_permutation")))
     # get only the names of the ... args
     args_dot_names <- setdiff(names(as.list(match.call()[-1])), args_func_names)
     n <- args_values
