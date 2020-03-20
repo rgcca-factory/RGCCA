@@ -1,6 +1,7 @@
 #' Plot the connection between blocks
 #' 
 #' @inheritParams plot_ind
+#' @param colors colors of the network
 #' @return A dataframe with tuples of connected blocks
 #' @examples
 #' library(igraph)

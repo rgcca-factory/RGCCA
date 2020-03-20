@@ -7,7 +7,7 @@ blocks <- list(
     politic = Russett[, 6:11])
 
 test_structure_cv <- function(res, scores, nrow = 47){
-    expect_equal(length(res), 3)
+    expect_equal(length(res), 7)
     expect_is(res, "cv")
     expect_is(res$rgcca, "rgcca")
     pred <- res$preds
@@ -17,6 +17,7 @@ test_structure_cv <- function(res, scores, nrow = 47){
     expect_true(all(sapply(pred, NROW) == nrow))
     expect_identical(round(res$scores, 4), scores)
 }
+
 
 test_that("rgcca_cv_default", {
         rgcca_out <- rgcca(blocks, response = 1)

@@ -5,12 +5,12 @@
 #' @inheritParams set_connection
 #' @inheritParams bootstrap
 #' @inheritParams rgcca
-#' @param p_spars A matrix, a vector or an integer containing sets of constraint 
+#' @param perm.par "sparsity","tau" or "ncomp".
+#' @param perm.value  If perm.par="sparsity", a matrix, a vector or an integer containing sets of constraint 
 #' variables to be tested, one row by combination. By default, sgcca.permute takes 10 sets between 
-#' min values ($1/sqrt(ncol)$) and 1
-#' @param p_ncomp A matrix, a vector or an integer containing sets of number of 
+#' min values ($1/sqrt(ncol)$) and 1. If perm.par="ncomp", a matrix, a vector or an integer containing sets of number of 
 #' components, one row by set. By default, sgcca.permute takes as many 
-#' combinations as the maximum number of columns in each block
+#' combinations as the maximum number of columns in each block. If perm.par="tau",... #TODO
 #' @param nperm Number of permutation tested for each set of constraint
 #' @return A object permutation, which is a list containing :
 #' @return \item{pval}{Pvalue}
@@ -22,21 +22,28 @@
 #' data("Russett")
 #' A = list(agriculture = Russett[, seq(3)], industry = Russett[, 4:5],
 #'     politic = Russett[, 6:11] )
-#' res = rgcca_permutation(A, nperm = 2, n_cores = 1)
+#' res = rgcca_permutation(A, nperm = 5, n_cores = 1)
 #'     rgcca_permutation(A, perm.par = "ncomp", nperm = 2, n_cores = 1)
-#' rgcca_permutation(A, perm.par = "sparsity", perm.value = 0.8, nperm = 2, n_cores = 1)
-#' rgcca_permutation(A, perm.par = "sparsity", perm.value = c(0.6, 0.75, 0.5), nperm = 2, n_cores = 1)
-#' rgcca_permutation(A, perm.par = "sparsity", perm.value = matrix(c(0.6, 0.75, 0.5), 3, 3, byrow = TRUE),
-#'  nperm = 2, n_cores = 1)
-#' rgcca_permutation(A, perm.par = "tau", perm.value = 0.8, nperm = 2, n_cores = 1)
-#' rgcca_permutation(A, perm.par = "tau", perm.value = c(0.6, 0.75, 0.5), nperm = 2, n_cores = 1)
-#' rgcca_permutation(A, perm.par = "tau", perm.value = matrix(c(0.6, 0.75, 0.5), 3, 3, byrow = TRUE),
-#'                   nperm = 2, n_cores = 1)
-#' rgcca_permutation(A, perm.par = "ncomp", perm.value = 2, nperm = 2, n_cores = 1)
-#' rgcca_permutation(A, perm.par = "ncomp", perm.value = c(2,2,3), nperm = 2, n_cores = 1)
-#' rgcca_permutation(A, perm.par = "ncomp", perm.value = matrix(c(2,2,3), 3, 3, byrow = TRUE), 
+#' rgcca_permutation(A, perm.par = "sparsity", perm.value = 0.8, nperm = 2,
+#'  n_cores = 1)
+#' rgcca_permutation(A, perm.par = "sparsity", perm.value = c(0.6, 0.75, 0.5), 
 #' nperm = 2, n_cores = 1)
-#' plot(res)
+#' rgcca_permutation(A, perm.par = "sparsity", 
+#' perm.value = matrix(c(0.6, 0.75, 0.5), 3, 3, byrow = TRUE),
+#'  nperm = 2, n_cores = 1)
+#' rgcca_permutation(A, perm.par = "tau", perm.value = 0.8, nperm = 2, 
+#' n_cores = 1)
+#' rgcca_permutation(A, perm.par = "tau", perm.value = c(0.6, 0.75, 0.5),
+#'  nperm = 2, n_cores = 1)
+#' rgcca_permutation(A, perm.par = "tau", perm.value = 
+#' matrix(c(0.6, 0.75, 0.5), 3, 3, byrow = TRUE),  nperm = 2, n_cores = 1)
+#' rgcca_permutation(A, perm.par = "ncomp", perm.value = 2, nperm = 2
+#' , n_cores = 1)
+#' rgcca_permutation(A, perm.par = "ncomp", perm.value = c(2,2,3), nperm = 2,
+#'  n_cores = 1)
+#' rgcca_permutation(A, perm.par = "ncomp", 
+#' perm.value = matrix(c(2,2,3), 3, 3, byrow = TRUE), nperm = 2, n_cores = 1)
+#' plot(res,type="crit")
 #' print(res)
 #' @export
 rgcca_permutation <- function(

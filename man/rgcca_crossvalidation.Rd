@@ -15,6 +15,8 @@ rgcca_crossvalidation(rgcca_res, response = NULL, validation = "loo",
 \arguments{
 \item{rgcca_res}{A list giving the results of a R/SGCCA}
 
+\item{response}{number of the response blocks in the list}
+
 \item{validation}{A character given the method for validation aong test 
 (for test-train sets), kfold (for k-fold with k=5 by default) and loo 
 (for leave-one-out)}
@@ -47,8 +49,8 @@ library(RGCCA)
 data("Russett")
 blocks = list(agriculture = Russett[, seq(3)], industry = Russett[, 4:5],
     politic = Russett[, 6:11] )
-rgcca_out = rgcca(blocks, response = 3)
-rgcca_crossvalidation(rgcca_out, validation = "kfold", k = 5, n_cores = 1)
+rgcca_out = rgcca(blocks, response = 3,superblock=FALSE)
+res=rgcca_crossvalidation(rgcca_out, validation = "kfold", k = 5, n_cores = 1)
 rgcca_crossvalidation(rgcca_out,  validation = "test", n_cores = 1)$scores
 rgcca_crossvalidation(rgcca_out, n_cores = 1)
 }

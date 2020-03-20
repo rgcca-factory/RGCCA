@@ -2,6 +2,7 @@
 #' 
 #' Uses cross-validation to validate a predictive model of RGCCA
 #' @inheritParams rgcca_predict
+#' @param response number of the response blocks in the list
 #' @inheritParams bootstrap
 #' @inheritParams plot_ind
 #' @examples
@@ -9,8 +10,8 @@
 #' data("Russett")
 #' blocks = list(agriculture = Russett[, seq(3)], industry = Russett[, 4:5],
 #'     politic = Russett[, 6:11] )
-#' rgcca_out = rgcca(blocks, response = 3)
-#' rgcca_crossvalidation(rgcca_out, validation = "kfold", k = 5, n_cores = 1)
+#' rgcca_out = rgcca(blocks, response = 3,superblock=FALSE)
+#' res=rgcca_crossvalidation(rgcca_out, validation = "kfold", k = 5, n_cores = 1)
 #' rgcca_crossvalidation(rgcca_out,  validation = "test", n_cores = 1)$scores
 #' rgcca_crossvalidation(rgcca_out, n_cores = 1)
 #' @export
@@ -122,7 +123,12 @@ rgcca_crossvalidation <- function(
             applyFunc = "parLapply"
         )
     }
-
+    list_rgcca=lapply(scores,function(x) return(x$rgcca_res))
+    list_pred=lapply(scores,function(x) return(x$pred))
+    list_scores=sapply(scores, function(x) x$score)
+    list_res=lapply(scores, function(x) return(x$res))
+    list_class.fit=lapply(scores, function(x) return(x$class.fit))
+    
     if (validation %in% c("loo", "kfold")) {
         # concatenation of each test set to provide predictions for each block
         preds <- lapply(
@@ -141,10 +147,9 @@ rgcca_crossvalidation <- function(
         for (x in seq(length(preds)))
             row.names(preds[[x]]) <- row.names(bigA[[1]])
     }
-
-    scores <- mean(unlist(lapply(scores, function(x) x$score)))
+     scores <- mean(unlist(lapply(scores, function(x) x$score)))
 
     structure(
-        list(scores = scores, preds = preds, rgcca_res = rgcca_res),
+        list(scores = scores, preds = preds, rgcca_res = rgcca_res,list_scores=list_scores,list_pred=list_pred,list_rgcca=list_rgcca,list_class=list_class.fit),
         class = "cv")
 }
