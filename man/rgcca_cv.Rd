@@ -2,9 +2,7 @@
 % Please edit documentation in R/rgcca_cv.r
 \name{rgcca_cv}
 \alias{rgcca_cv}
-\title{This function is dedicated to supervised approaches (with response parameter in rgcca not NULL). 
-It allows to test a grid of parameters (sparsity, ncomp or tau) with cross-validation approaches. 
-This cross-validation is based on RMSE for quantitative response.}
+\title{rgcca_cv}
 \usage{
 rgcca_cv(blocks, type = "rgcca", response = length(blocks),
   par = "ncomp", par_value = NULL, validation = "kfold",

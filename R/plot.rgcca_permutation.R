@@ -27,6 +27,6 @@ plot.permutation=function(x,type="zstat",cex = 1, main= NULL, cex_main = 25 * ce
             ...
         )
         plot(p1)
-        invisible(p1)
+        #invisible(p1)
    
 }
