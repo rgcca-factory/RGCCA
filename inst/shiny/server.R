@@ -726,6 +726,7 @@ server <- function(input, output, session) {
                                       !is.null(input$superblock) && input$superblock),
                     scheme = input$scheme,
                     scale = FALSE,
+                    ncomp = getNcomp(),
                     init = input$init,
                     bias = TRUE,
                     type = analysis_type

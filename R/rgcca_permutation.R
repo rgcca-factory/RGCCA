@@ -135,8 +135,6 @@ rgcca_permutation <- function(
     for (i in n) {
         if (!is.null(args_names[i])) {
             # dynamically asssign these values
-            
-            print(args_values[[i]])
             assign(args_names[i], args_values[[i]])
             # send them to the clusters to parallelize
             varlist <- c(varlist, args_names[i])

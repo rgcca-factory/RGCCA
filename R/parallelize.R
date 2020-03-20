@@ -3,12 +3,12 @@
 #' nperm : a vector object for a lapply type function
 #' varlist : character vector of names of objects to export                                                  
 parallelize <- function(
-varlist = c(),
-nperm,
-f,
-n_cores = NULL,
-envir = environment(),
-applyFunc = "parSapply") {
+    varlist = c(),
+    nperm,
+    f,
+    n_cores = NULL,
+    envir = environment(),
+    applyFunc = "parSapply") {
 
     load_libraries("parallel")
     if (!("parallel" %in% installed.packages()[, "Package"]))
@@ -22,12 +22,10 @@ applyFunc = "parSapply") {
         cl <- parallel::makeCluster(n_cores)
 
         parallel::clusterExport(
-        cl,
-        varlist,
-        envir = envir
+            cl,
+            varlist,
+            envir = envir
         )
-        
-        print(envir$tau)
 
         parallel::clusterEvalQ(cl, library(RGCCA))
         parallel::clusterEvalQ(cl, library(parallel))

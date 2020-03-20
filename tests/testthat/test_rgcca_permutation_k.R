@@ -27,7 +27,7 @@ test_that(
                                 ncomp = par[i, ]
                             )$crit,
                             sum))),
-            rgcca_permutation_k(blocks, , n_cores = 1, perm = FALSE)
+            rgcca_permutation_k(blocks, perm = FALSE, n_cores = 1)
         )
     }
 )
@@ -44,11 +44,11 @@ test_that(
                             rgcca(
                                 blocks, 
                                 tol = 1e-3, 
-                                tau = "optimal", 
+                                tau = 0, 
                                 ncomp = par[i, ]
                             )$crit,
                             sum))),
-            rgcca_permutation_k(blocks, , n_cores = 1, tau = "optimal", perm = FALSE)
+            rgcca_permutation_k(blocks, tau = 0, perm = FALSE, n_cores = 1)
         )
     }
 )
