@@ -33,8 +33,12 @@ set_rgcca <- function(
         if (superblock) {
             J <- length(blocks)
             blocks <- blocks[-J]
-            for (i in c("tau", "sparsity", "ncomp")) 
-                rgcca_res$call[[i]] <- rgcca_res$call[[i]][-J]
+            for (i in c("tau", "sparsity", "ncomp")) {
+                if (class(rgcca_res$call[[i]]) %in% c("matrix", "data.frame"))
+                  rgcca_res$call[[i]] <- rgcca_res$call[[i]][,-J]
+                else
+                  rgcca_res$call[[i]] <- rgcca_res$call[[i]][-J]
+            }
 
             connection <- NULL
         }
@@ -48,7 +52,7 @@ set_rgcca <- function(
 
     }else
         blocks <- scaling(blocks, scale, sameBlockWeight = sameBlockWeight)
-    
+
     if (!boot)
         blocks <- intersection(blocks)
 
@@ -103,6 +107,7 @@ set_rgcca <- function(
         ))
 
     func[[par]] <- penalty
+
     res <- eval(as.call(func))
     attributes(res)$bigA_scaled <- blocks
     return(res)

@@ -26,6 +26,8 @@ applyFunc = "parSapply") {
         varlist,
         envir = envir
         )
+        
+        print(envir$tau)
 
         parallel::clusterEvalQ(cl, library(RGCCA))
         parallel::clusterEvalQ(cl, library(parallel))

@@ -90,28 +90,28 @@ rgcca_crossvalidation <- function(
         preds <- scores$res
     }else{
 
-        varlist <- c()
+        varlist <- c(ls(getNamespace("RGCCA")))
         # get the parameter dot-dot-dot
-        args_values <- c(...)
-        # get the names of the arguments of function expect the ...
-        args_func_names <- names(as.list(args("rgcca_crossvalidation")))
-        # get only the names of the ... args
-        args_dot_names <- setdiff(names(as.list(match.call()[-1])), args_func_names)
+        args_values <- list(...)
+        args_names <- names(args_values)
         n <- args_values
-        if(!is.null(n))
+        if (!is.null(n))
             n <- seq(length(args_values))
         for (i in n) {
-            # dynamically asssign these values
-            assign(args_dot_names[i], args_values[i])
-            # send them to the clusters to parallelize
-            varlist <- c(varlist, args_dot_names[i])
-            # without this procedure rgcca_crossvalidation(rgcca_res, blocks = blocks2)
-            # or rgcca_crossvalidation(rgcca_res, blocks = lapply(blocks, scale)
-            # does not work.
+            if (!is.null(args_names[i])) {
+                print(args_values)
+                # dynamically asssign these values
+                assign(args_names[i], args_values[[i]])
+                # send them to the clusters to parallelize
+                varlist <- c(varlist, args_names[i])
+                # without this procedure rgcca_crossvalidation(rgcca_res, blocks = blocks2)
+                # or rgcca_crossvalidation(rgcca_res, blocks = lapply(blocks, scale)
+                # does not work.
+            }
         }
 
         scores <- parallelize(
-            c(varlist, "check_sign_comp", "set_rgcca"),
+            varlist,
             seq(length(v_inds)), 
             function(i){
                 inds <- unlist(v_inds[i])

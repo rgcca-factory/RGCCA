@@ -156,6 +156,9 @@ rgcca <- function(
         penalty <- tau
     }
 
+    # if (superblock && any(penalty == "optimal"))
+    #     stop("Optimal tau is not available with superblock option.")
+
     match.arg(init, c("svd", "random"))
     match.arg(knn.output, c("mean", "random", "weightedMean" ))
     check_method(type)
@@ -192,9 +195,6 @@ rgcca <- function(
     opt$blocks <- scaling(blocks, scale,sameBlockWeight = sameBlockWeight)
     opt$superblock <- check_superblock(response, opt$superblock, !quiet)
     opt$blocks <- set_superblock(opt$blocks, opt$superblock, type, !quiet)
-
-    if (opt$superblock && any(opt$tau) == "optimal")
-        stop("Optimal tau is not available with superblock option.")
 
     if (!is.null(response)) {
         # || tolower(type) == "ra"

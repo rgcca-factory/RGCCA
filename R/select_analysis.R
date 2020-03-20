@@ -69,11 +69,16 @@ select_analysis <- function(
     }
 
     warnSuper <- function(x) {
-        if (length(x) < (length(blocks)) && is.null(response)) {
+        print(x)
+        if (class(x) %in% c("matrix", "data.frame") && NCOL(x) < (length(blocks)) && is.null(response)){
+            warn.msg.super <<- c(warn.msg.super, deparse(substitute(x)))
+            return(cbind(x, 1))
+        }else if (length(x) < (length(blocks)) && is.null(response)) {
             warn.msg.super <<- c(warn.msg.super, deparse(substitute(x)))
             return(c(x, max(x)))
-        } else
+        } else{
             return(x)
+        }
     }
 
     setSuperbloc <- function(verbose = TRUE) {

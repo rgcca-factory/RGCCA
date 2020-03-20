@@ -73,7 +73,8 @@ load_libraries(c(
     "visNetwork",
     "shiny",
     "shinyjs",
-    "MASS"
+    "MASS",
+    "rlang"
 ))
 
 if (BSPLUS) {
@@ -176,8 +177,9 @@ ui <- fluidPage(
                 radioButtons(
                     "perm",
                     label = "Type of permutation",
-                    choices = c(`Number of components` = 1,
-                                `Sparsity` = 2),
+                    choices = c(`Number of components` = "ncomp",
+                                Sparsity = "sparsity",
+                                Tau = "tau"),
                 ),
                 actionButton(inputId = "run_perm",
                     label = "Run permutation")
