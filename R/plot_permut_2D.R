@@ -4,6 +4,7 @@
 #' 
 #' @inheritParams plot_var_2D
 #' @param perm A permutation object from a RGCCA analyse
+#' @param bars Among "points", "stderr" or "sd": representation of the variability
 #' @param type An string giving the type of the index to look at (among 'crit' for
 #'  the RGCCA criterion and 'zstat' for the pseudo Z-score)
 #' @param cex general size of the text
@@ -20,7 +21,8 @@ plot_permut_2D <- function(
     cex_main = 25 * cex,
     cex_sub = 16 * cex,
     cex_point = 3 * cex,
-    cex_lab = 19 * cex
+    cex_lab = 19 * cex,
+    bars="points"
     ) {
   
 
@@ -104,16 +106,29 @@ plot_permut_2D <- function(
             yintercept = c(1.96, 2.58, 3.29)
         )
     else
-        for (i in NCOL(perm$permcrit)) {
-            p <- p + geom_line(
-                aes(
-                    x = df[, 1],
-                    y = perm$permcrit[, i]
-                ),
-                col = "grey",
-                size = 1
-            )
+    {
+        dft=NULL
+        for (i in 1:NCOL(perm$permcrit)) {
+            #print(i)
+            x = df[, 1]
+            y = perm$permcrit[, i]
+            dfi=cbind(x,y)
+            dft=rbind(dft,dfi)
+        }   
+      #  print(dft)
+        dft=as.data.frame(dft)
+        if(bars=="points")
+        {
+            p<- p+geom_point(data=dft,aes(x=dft[,1],y=dft[,2]),colour="green",size=0.8)
         }
+        if(bars=="sd")
+        {
+            
+        }
+         
+    }
+     
+       plot(p)
 
     return(p)
 

@@ -6,7 +6,7 @@
 \usage{
 plot_permut_2D(perm, type = "zstat", cex = 1, title = NULL,
   cex_main = 25 * cex, cex_sub = 16 * cex, cex_point = 3 * cex,
-  cex_lab = 19 * cex)
+  cex_lab = 19 * cex, bars = "points")
 }
 \arguments{
 \item{perm}{A permutation object from a RGCCA analyse}
@@ -26,6 +26,8 @@ the RGCCA criterion and 'zstat' for the pseudo Z-score)}
 \item{cex_point}{= 3 * cex, size of the point}
 
 \item{cex_lab}{= 19 * cex, size of the labels}
+
+\item{bars}{Among "points", "stderr" or "sd": representation of the variability}
 }
 \description{
 Plot permuation in 2D

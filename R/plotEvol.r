@@ -144,6 +144,6 @@ plot.naEvolution=function(x,output="rv",ylim=NULL,block="all",bars="sd",main=NUL
     legend("topleft",legend=leg,fill=colMethod,box.lwd=0,bty="n")
   }
 par(mfrow=c(1,1))
-return(NULL)
+
 }
 

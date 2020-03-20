@@ -11,18 +11,19 @@
 #'     politic = Russett[, 6:11] )
 #' perm <- rgcca_permutation(A, nperm = 2, n_cores = 1)
 #' plot(perm)
-#' perm <- rgcca_permutation(A, perm.par = "sparsity", nperm = 2, n_cores = 1)
+#' perm <- rgcca_permutation(A, perm.par = "sparsity", nperm = 5, n_cores = 1)
+#' plot(perm,type="crit")
 #' plot(perm)
 #' @export
 plot.permutation=function(x,type="zstat",cex = 1, main= NULL, cex_main = 25 * cex,                          cex_sub = 16 * cex,
                           cex_point = 3 * cex, cex_lab = 19 * cex,...)
 {
-   
         p1 <- plot_permut_2D(
             x, 
             type = type,
             cex = 1,
             title = main,
+            bars="points",
             ...
         )
         plot(p1)
