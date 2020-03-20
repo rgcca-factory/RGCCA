@@ -40,7 +40,7 @@
 #' plot(resRgcca,type="both")
 #' @importFrom gridExtra grid.arrange
 #' @export
-plot.rgcca=function(x,type=NULL,i_block=length(x$A),i_block_y=i_block,compx=1,compy=2,resp=rep(1, NROW(x$Y[[1]])),remove_var=FALSE,text_var=TRUE,text_ind=TRUE,response_name= "Response",no_overlap=FALSE,title=NULL,title_var="Variable correlations with",title_ind= "Sample space",n_mark=100,collapse=FALSE,cex=1,cex_sub=10,cex_main=14,cex_lab=12,colors=NULL,...)
+plot.rgcca=function(x,type="weight",i_block=length(x$A),i_block_y=i_block,compx=1,compy=2,resp=rep(1, NROW(x$Y[[1]])),remove_var=FALSE,text_var=TRUE,text_ind=TRUE,response_name= "Response",no_overlap=FALSE,title=NULL,title_var="Variable correlations with",title_ind= "Sample space",n_mark=100,collapse=FALSE,cex=1,cex_sub=10,cex_main=14,cex_lab=12,colors=NULL,...)
 {
     match.arg(type,c("ind","var","both","ave","cor","weight","network"))
     if(i_block!=i_block_y & is.null(type)){ type="weight"}
