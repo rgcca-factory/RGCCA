@@ -156,8 +156,8 @@ rgcca <- function(
         penalty <- tau
     }
 
-    # if (superblock && any(penalty == "optimal"))
-    #     stop("Optimal tau is not available with superblock option.")
+    if (superblock && any(penalty == "optimal"))
+        stop("Optimal tau is not available with superblock option.")
 
     match.arg(init, c("svd", "random"))
     match.arg(knn.output, c("mean", "random", "weightedMean" ))

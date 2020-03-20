@@ -19,16 +19,16 @@ test_structure_cv <- function(res, scores, nrow = 47){
 }
 
 test_that("rgcca_cv_default", {
-        rgcca_out <- rgcca(blocks, response = 2)
+        rgcca_out <- rgcca(blocks, response = 1)
         test_structure_cv(
             rgcca_crossvalidation(rgcca_out, n_cores = 1),
-            0.0923)
+            0.1071)
         test_structure_cv(
             rgcca_crossvalidation(
                 rgcca_out,
                 blocks = blocks,
                 n_cores = 1), 
-            scores = 0.0923)
+            scores = 0.1071)
     }
 )
 
@@ -62,11 +62,11 @@ test_that("rgcca_cv_withNA", {
         politic = RussettWithNA[, 6:11])
 
     # cross validation
-    rgcca_out <- rgcca(blocksNA, response = 3)
+    rgcca_out <- rgcca(blocksNA, response = 1)
     # avec la method complete -> ne fonctionne pas
     test_structure_cv(
         rgcca_crossvalidation(rgcca_out, n_cores = 1),
-        0.0938, 
+        0.1118,
         nrow = 44)
     }
 )

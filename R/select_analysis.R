@@ -74,7 +74,10 @@ select_analysis <- function(
             return(cbind(x, 1))
         }else if (length(x) < (length(blocks)) && is.null(response)) {
             warn.msg.super <<- c(warn.msg.super, deparse(substitute(x)))
-            return(c(x, max(x)))
+            if(deparse(substitute(x)) == "ncomp")
+                return(c(x, max(x)))
+            else
+                return(c(x, 1))
         } else{
             return(x)
         }

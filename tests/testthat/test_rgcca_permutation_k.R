@@ -34,7 +34,7 @@ test_that(
 
 test_that(
     "rgcca_permutationk_optimal_tau", {
-        test_structure(rgcca_permutation_k(blocks, tau = "optimal", n_cores = 1))
+        test_structure(rgcca_permutation_k(blocks, tau = "optimal", superblock = FALSE, n_cores = 1))
         expect_identical(
             sapply(
                 seq(NROW(par)), 
