@@ -5,12 +5,12 @@
 #' @inheritParams set_connection
 #' @inheritParams bootstrap
 #' @inheritParams rgcca
-#' @param p_spars A matrix, a vector or an integer containing sets of constraint 
+#' @param perm.par "sparsity","tau" or "ncomp".
+#' @param perm.value  If perm.par="sparsity", a matrix, a vector or an integer containing sets of constraint 
 #' variables to be tested, one row by combination. By default, sgcca.permute takes 10 sets between 
-#' min values ($1/sqrt(ncol)$) and 1
-#' @param p_ncomp A matrix, a vector or an integer containing sets of number of 
+#' min values ($1/sqrt(ncol)$) and 1. If perm.par="ncomp", a matrix, a vector or an integer containing sets of number of 
 #' components, one row by set. By default, sgcca.permute takes as many 
-#' combinations as the maximum number of columns in each block
+#' combinations as the maximum number of columns in each block. If perm.par="tau",... #TODO
 #' @param nperm Number of permutation tested for each set of constraint
 #' @return A object permutation, which is a list containing :
 #' @return \item{pval}{Pvalue}
@@ -22,21 +22,28 @@
 #' data("Russett")
 #' A = list(agriculture = Russett[, seq(3)], industry = Russett[, 4:5],
 #'     politic = Russett[, 6:11] )
-#' res = rgcca_permutation(A, nperm = 2, n_cores = 1)
+#' res = rgcca_permutation(A, nperm = 5, n_cores = 1)
 #'     rgcca_permutation(A, perm.par = "ncomp", nperm = 2, n_cores = 1)
-#' rgcca_permutation(A, perm.par = "sparsity", perm.value = 0.8, nperm = 2, n_cores = 1)
-#' rgcca_permutation(A, perm.par = "sparsity", perm.value = c(0.6, 0.75, 0.5), nperm = 2, n_cores = 1)
-#' rgcca_permutation(A, perm.par = "sparsity", perm.value = matrix(c(0.6, 0.75, 0.5), 3, 3, byrow = TRUE),
-#'  nperm = 2, n_cores = 1)
-#' rgcca_permutation(A, perm.par = "tau", perm.value = 0.8, nperm = 2, n_cores = 1)
-#' rgcca_permutation(A, perm.par = "tau", perm.value = c(0.6, 0.75, 0.5), nperm = 2, n_cores = 1)
-#' rgcca_permutation(A, perm.par = "tau", perm.value = matrix(c(0.6, 0.75, 0.5), 3, 3, byrow = TRUE),
-#'                   nperm = 2, n_cores = 1)
-#' rgcca_permutation(A, perm.par = "ncomp", perm.value = 2, nperm = 2, n_cores = 1)
-#' rgcca_permutation(A, perm.par = "ncomp", perm.value = c(2,2,3), nperm = 2, n_cores = 1)
-#' rgcca_permutation(A, perm.par = "ncomp", perm.value = matrix(c(2,2,3), 3, 3, byrow = TRUE), 
+#' rgcca_permutation(A, perm.par = "sparsity", perm.value = 0.8, nperm = 2,
+#'  n_cores = 1)
+#' rgcca_permutation(A, perm.par = "sparsity", perm.value = c(0.6, 0.75, 0.5), 
 #' nperm = 2, n_cores = 1)
-#' plot(res)
+#' rgcca_permutation(A, perm.par = "sparsity", 
+#' perm.value = matrix(c(0.6, 0.75, 0.5), 3, 3, byrow = TRUE),
+#'  nperm = 2, n_cores = 1)
+#' rgcca_permutation(A, perm.par = "tau", perm.value = 0.8, nperm = 2, 
+#' n_cores = 1)
+#' rgcca_permutation(A, perm.par = "tau", perm.value = c(0.6, 0.75, 0.5),
+#'  nperm = 2, n_cores = 1)
+#' rgcca_permutation(A, perm.par = "tau", perm.value = 
+#' matrix(c(0.6, 0.75, 0.5), 3, 3, byrow = TRUE),  nperm = 2, n_cores = 1)
+#' rgcca_permutation(A, perm.par = "ncomp", perm.value = 2, nperm = 2
+#' , n_cores = 1)
+#' rgcca_permutation(A, perm.par = "ncomp", perm.value = c(2,2,3), nperm = 2,
+#'  n_cores = 1)
+#' rgcca_permutation(A, perm.par = "ncomp", 
+#' perm.value = matrix(c(2,2,3), 3, 3, byrow = TRUE), nperm = 2, n_cores = 1)
+#' plot(res,type="crit")
 #' print(res)
 #' @export
 rgcca_permutation <- function(
@@ -125,28 +132,27 @@ rgcca_permutation <- function(
 
     cat("Permutation in progress...")
 
-    varlist <- c()
+    varlist <- c(ls(getNamespace("RGCCA")))
     # get the parameter dot-dot-dot
-    args_values <- c(...)
-    # get the names of the arguments of function expect the ...
-    args_func_names <- names(as.list(args("rgcca_crossvalidation")))
-    # get only the names of the ... args
-    args_dot_names <- setdiff(names(as.list(match.call()[-1])), args_func_names)
+    args_values <- list(...)
+    args_names <- names(args_values)
     n <- args_values
     if (!is.null(n))
         n <- seq(length(args_values))
     for (i in n) {
-        # dynamically asssign these values
-        assign(args_dot_names[i], args_values[i])
-        # send them to the clusters to parallelize
-        varlist <- c(varlist, args_dot_names[i])
-        # without this procedure rgcca_crossvalidation(rgcca_res, blocks = blocks2)
-        # or rgcca_crossvalidation(rgcca_res, blocks = lapply(blocks, scale)
-        # does not work.
+        if (!is.null(args_names[i])) {
+            # dynamically asssign these values
+            assign(args_names[i], args_values[[i]])
+            # send them to the clusters to parallelize
+            varlist <- c(varlist, args_names[i])
+            # without this procedure rgcca_crossvalidation(rgcca_res, blocks = blocks2)
+            # or rgcca_crossvalidation(rgcca_res, blocks = lapply(blocks, scale)
+            # does not work.
+        }
     }
 
     permcrit <- parallelize(
-        c(varlist, "rgcca_permutation_k", "parallelize", "load_libraries"),
+        varlist,
         seq(nperm), 
         function(x)
             rgcca_permutation_k(

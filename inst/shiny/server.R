@@ -581,7 +581,7 @@ server <- function(input, output, session) {
 
     plotBoot <- function(){
         refresh <- c(input$names_block_x, id_block, input$blocks_names_custom_x)
-        plot_bootstrap_2D(selected.var)
+        plot_bootstrap_2D(df_b = selected.var)
     }
 
     viewPerm <- function(){
@@ -608,7 +608,7 @@ server <- function(input, output, session) {
 
         return(ncomp)
     }
-
+    
     setParRGCCA <- function(verbose = TRUE) {
         blocks <- blocks_without_superb
 
@@ -714,33 +714,31 @@ server <- function(input, output, session) {
         else
             response <- NULL
 
-        if (input$perm == 1) {
-            p_spars <- FALSE
-            p_ncomp <- TRUE
-        } else{
-            p_spars <- TRUE
-            p_ncomp <- FALSE
-        }
-
-        assign("perm",
-               rgcca_permutation(
+        assign("perm", {
+            func <- quote(
+                rgcca_permutation(
                     blocks_without_superb,
-                    p_spars = p_spars,
-                    p_ncomp = p_ncomp,
+                    perm.par = input$perm,
                     nperm = input$nperm,
                     connection = connection,
                     response = input$names_block_response,
                     superblock = (!is.null(input$supervised) &&
-                        !is.null(input$superblock) && input$superblock),
-                    tau = tau,
-                    ncomp = getNcomp(),
+                                      !is.null(input$superblock) && input$superblock),
                     scheme = input$scheme,
                     scale = FALSE,
+                    ncomp = getNcomp(),
                     init = input$init,
                     bias = TRUE,
                     type = analysis_type
-                ),
-                .GlobalEnv)
+                )
+            )
+            if (tolower(analysis_type) %in% c("sgcca", "spca", "spls"))
+                func[["sparsity"]] <- tau
+            else
+                func[["tau"]] <- tau
+            eval(as.call(func))
+        },
+        .GlobalEnv)
  
         show(selector = "#navbar li a[data-value=Permutation]")
     }

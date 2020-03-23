@@ -62,7 +62,6 @@ plot2D <- function(
         check_integer(i, get(i))
     for (i in c("text", "no_overlap"))
         check_boolean(i, get(i))
-print(colors)
     if (NROW(df) > 100)
         cex_point <- 2
 

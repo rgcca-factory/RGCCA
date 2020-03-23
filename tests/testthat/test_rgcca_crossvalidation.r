@@ -7,7 +7,7 @@ blocks <- list(
     politic = Russett[, 6:11])
 
 test_structure_cv <- function(res, scores, nrow = 47){
-    expect_equal(length(res), 3)
+    expect_equal(length(res), 7)
     expect_is(res, "cv")
     expect_is(res$rgcca, "rgcca")
     pred <- res$preds
@@ -18,29 +18,30 @@ test_structure_cv <- function(res, scores, nrow = 47){
     expect_identical(round(res$scores, 4), scores)
 }
 
+
 test_that("rgcca_cv_default", {
-        rgcca_out <- rgcca(blocks, response = 2)
+        rgcca_out <- rgcca(blocks, response = 1)
         test_structure_cv(
             rgcca_crossvalidation(rgcca_out, n_cores = 1),
-            0.0923)
+            0.1071)
         test_structure_cv(
             rgcca_crossvalidation(
                 rgcca_out,
                 blocks = blocks,
                 n_cores = 1), 
-            scores = 0.0923)
+            scores = 0.1071)
     }
 )
 
 test_that("rgcca_cv_with_args", {
-    rgcca_out <- rgcca(blocks, response = 2)
+    rgcca_out <- rgcca(blocks, response = 1)
     test_structure_cv(
         rgcca_crossvalidation(
             rgcca_out,
             validation = "kfold",
             k = 5,
             n_cores = 1),
-        0.0919)
+        0.1083)
     # test_structure_cv(
     #     rgcca_crossvalidation(
     #         rgcca_out, 
@@ -62,11 +63,11 @@ test_that("rgcca_cv_withNA", {
         politic = RussettWithNA[, 6:11])
 
     # cross validation
-    rgcca_out <- rgcca(blocksNA, response = 3)
+    rgcca_out <- rgcca(blocksNA, response = 1)
     # avec la method complete -> ne fonctionne pas
     test_structure_cv(
         rgcca_crossvalidation(rgcca_out, n_cores = 1),
-        0.0938, 
+        0.1118,
         nrow = 44)
     }
 )

@@ -4,15 +4,17 @@
 \alias{plot.cv}
 \title{plot.cv}
 \usage{
-\method{plot}{cv}(x, ...)
+\method{plot}{cv}(x, type = "ind", ...)
 }
 \arguments{
 \item{x}{result of rgcca_crossvalidation (see  \code{\link[RGCCA]{rgcca_crossvalidation}} )}
 
+\item{type}{"ind"}
+
 \item{...}{Further graphical parameters (see plot2D functions)}
 }
 \description{
-plot.cv
+Plots the results of rgcca_cv (in abscissa, the configurations, in ordinates the RMSE on test dataset)
 }
 \examples{
 data(Russett)

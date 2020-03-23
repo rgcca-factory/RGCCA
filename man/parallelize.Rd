@@ -2,17 +2,24 @@
 % Please edit documentation in R/parallelize.R
 \name{parallelize}
 \alias{parallelize}
-\title{Set a list of ocket for parralel package in Windows
-f : a function to parralelize
-nperm : a vector object for a lapply type function
-varlist : character vector of names of objects to export}
+\title{Set a list of ocket for parralel package in Windows}
 \usage{
 parallelize(varlist = c(), nperm, f, n_cores = NULL,
   envir = environment(), applyFunc = "parSapply")
 }
+\arguments{
+\item{varlist}{: character vector of names of objects to export}
+
+\item{nperm}{: a vector object for a lapply type function}
+
+\item{f}{: a function to parralelize}
+
+\item{envir}{: environment}
+
+\item{varlist}{: character vector of names of objects to export}
+
+\item{applyFunc:}{function to be applied}
+}
 \description{
 Set a list of ocket for parralel package in Windows
-f : a function to parralelize
-nperm : a vector object for a lapply type function
-varlist : character vector of names of objects to export
 }

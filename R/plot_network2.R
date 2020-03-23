@@ -1,6 +1,7 @@
 #' Plot the connection between blocks (dynamic plot)
 #' 
 #' @inheritParams plot_ind
+#' @param colors colors of the network
 #' @return A dataframe with tuples of connected blocks
 #' @examples
 #' library(visNetwork)
@@ -26,9 +27,6 @@ plot_network2 <- function(
     edges <- get_edges(rgcca_res)
 
     par <- ifelse("sparsity" %in% names(nodes), "sparsity", "tau")
-
-    if (all(is.na(nodes[, par])))
-        nodes[, par] <- rep("optimal", length(rgcca_res$call$blocks))
 
     nodes$title <- nodes$id
     nodes$label <- paste(nodes$id,
