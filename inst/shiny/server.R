@@ -7,7 +7,7 @@
 # Abstract: Performs multi-variate analysis (PCA, CCA, PLS, R/SGCCA, etc.)
 # and produces textual and graphical outputs (e.g. variables and individuals
 # plots).
-
+    
 server <- function(input, output, session) {
     ################################################ Render UI ################################################
 
@@ -248,7 +248,7 @@ server <- function(input, output, session) {
     output$tau_opt_custom <- renderUI({
         ui <- checkboxInput(inputId = "tau_opt",
                             label = "Use an optimal tau",
-                            value = TRUE)
+                            value = FALSE)
 
         if (BSPLUS)
             ui <- shinyInput_label_embed(
