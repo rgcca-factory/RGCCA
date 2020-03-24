@@ -129,8 +129,8 @@ plot_permut_2D <- function(
         }
          
     }
-    p<- p+ scale_x_continuous(breaks=1:nrow(df),  labels=rownames(df))
-    p<-p + theme(axis.text.x = element_text(angle=45))
+  #  p<- p+ scale_x_continuous(breaks=1:nrow(df),  labels=rownames(df))
+  #  p<-p + theme(axis.text.x = element_text(angle=45))
        plot(p)
 
     return(p)

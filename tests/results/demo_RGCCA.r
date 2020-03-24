@@ -14,18 +14,18 @@ response = matrix(apply(Russett[, 9:11], 1, which.max),ncol=1)
 rownames(response)=rownames(Russett)
 response=matrix( Russett[, 11],ncol=1);rownames(response)=rownames(Russett)
 
-resRGCCA=rgcca(blocks,ncomp=c(2,2,2),scheme=function(x) x^4, type="sgcca",sparsity = c(.6, .75, .5, 1))
+resRGCCA=rgcca(blocks,ncomp=c(2,2,2),scheme=function(x) x^4, type="sgcca",sparsity = c(.6, .75, .5))
 print(resRGCCA)
 summary(resRGCCA)
 names(resRGCCA)
 plot(resRGCCA)
-
-plot(resRGCCA,resp=response,i_block=4)
-plot(resRGCCA,resp=response,i_block=4,type="ave")
-plot(resRGCCA,resp=response,i_block=4,type="network")
-plot(resRGCCA,resp=response,i_block=4,type="var")
-plot(resRGCCA,resp=response,i_block=4,type="ind")
-plot(resRGCCA,resp=response,i_block=4,type="cor")
+i_block=1
+plot(resRGCCA,resp=response,i_block=i_block)
+plot(resRGCCA,resp=response,i_block=i_block,type="ave")
+plot(resRGCCA,resp=response,i_block=i_block,type="network")
+plot(resRGCCA,resp=response,i_block=i_block,type="var")
+plot(resRGCCA,resp=response,i_block=i_block,type="ind")
+plot(resRGCCA,resp=response,i_block=i_block,type="cor")
 
 # choice of parameters
 #---------------------

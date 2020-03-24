@@ -22,8 +22,10 @@
 #' rgcca_out = rgcca(blocks)
 #' boot = bootstrap(rgcca_out, 2, n_cores = 1)
 #' selected.var = get_bootstrap(boot, n_cores = 1)
-#' plot_bootstrap_2D(boot, n_cores = 1)
-#' plot_bootstrap_2D(df_b = selected.var)
+#' print("i")
+#'# plot_bootstrap_2D(boot, n_cores = 1)
+#' print("j")
+#' #plot_bootstrap_2D(df_b = selected.var,n_cores=1)
 #' @export
 #' @seealso \code{\link[RGCCA]{bootstrap}}, \code{\link[RGCCA]{get_bootstrap}}
 
@@ -53,7 +55,7 @@ plot_bootstrap_2D <- function(
     }
     if (!is.null(df_b))
         stopifnot(is(df_b, "df_bootstrap"))
-
+print(df_b)
     title <- paste0(title, collapse = " ")
     check_ncol(list(df_b), 1)
     for (i in c("cex", "cex_main", "cex_sub", "cex_point", "cex_lab"))
@@ -70,7 +72,10 @@ plot_bootstrap_2D <- function(
 
     x <- set_occ(x)
     y <- set_occ(y)
-
+print("in")
+print(y)
+print(x)
+print(attributes(df_b)$indexes[[y]])
     axis <- function(margin){
         element_text(
         face = "italic",
@@ -111,6 +116,7 @@ plot_bootstrap_2D <- function(
     ) +
     scale_color_manual(values = color_group(seq(2), colors = colors))
 
+print(color_group(seq(2),colors=colors))
     limites <- function(p, x){
         if (x %in% c("sign", "occurrences")) {
             axis <- deparse(substitute(x))
@@ -126,9 +132,10 @@ plot_bootstrap_2D <- function(
         }
         return(p)
     }
-
+print(p)
     p <- suppressMessages(limites(p, x))
     p <- suppressMessages(limites(p, y))
-
+print("in4")
+print(p)
     return(p)
 }

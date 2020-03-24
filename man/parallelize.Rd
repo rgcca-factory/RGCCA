@@ -2,7 +2,8 @@
 % Please edit documentation in R/parallelize.R
 \name{parallelize}
 \alias{parallelize}
-\title{Set a list of ocket for parralel package in Windows}
+\title{parallelize
+Set a list of ocket for parralel package in Windows}
 \usage{
 parallelize(varlist = c(), nperm, f, n_cores = NULL,
   envir = environment(), applyFunc = "parSapply")
@@ -14,12 +15,13 @@ parallelize(varlist = c(), nperm, f, n_cores = NULL,
 
 \item{f}{: a function to parralelize}
 
+\item{n_cores}{: number of cores to be used}
+
 \item{envir}{: environment}
 
-\item{varlist}{: character vector of names of objects to export}
-
-\item{applyFunc:}{function to be applied}
+\item{applyFunc}{: function to be applied}
 }
 \description{
+parallelize
 Set a list of ocket for parralel package in Windows
 }

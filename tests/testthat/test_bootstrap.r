@@ -22,7 +22,7 @@ test_that("bootstrap_default", {
     select_var <- get_bootstrap(boot, n_cores = 1)
     expect_is(select_var, "df_bootstrap")
     expect_is(select_var, "data.frame")
-    expect_identical(NROW(select_var), NCOL(rgcca_out$call$blocks[[4]]))
+    expect_identical(NROW(select_var), NCOL(rgcca_out$call$blocks[[length(rgcca_out$call$blocks)]]))
 })
 
 test_that("bootstrap_with_args", {
@@ -47,8 +47,8 @@ plot_bootstrap_1D(df_b = select_var)
 
 test_that("test_bootstrap_na_values", {
     expect_equal(
-        select_var["labo", 1],
-        mean(c(resBootstrap$bootstrap[[1]][[4]]["labo", 1], resBootstrap$bootstrap[[2]][[4]]["labo", 1]))
+        select_var["demostab", 1],
+        mean(c(resBootstrap$bootstrap[[1]][[3]]["demostab", 1], resBootstrap$bootstrap[[2]][[3]]["demostab", 1]))
     )
-    expect_true(select_var["labo", 2] == resRGCCA$a[[4]]["labo", 1])
+    expect_true(select_var["demostab", 2] == resRGCCA$a[[3]]["demostab", 1])
 })
