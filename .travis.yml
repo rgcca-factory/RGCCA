@@ -23,9 +23,6 @@ r_packages:
   - igraph
   - ggrepel
   - devtools
-  - shiny
-  - shinyjs
-  - bsplus
   - vegan
 
 install:

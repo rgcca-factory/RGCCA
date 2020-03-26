@@ -327,6 +327,9 @@ post_check_arg <- function(opt, rgcca) {
         }
     }
 
+    if (opt$ncomp == 1)
+        opt$compy <- 1
+
     for (x in c("compx", "compy"))
         opt[[x]] <- check_compx(x, opt[[x]], rgcca$call$ncomp, opt$block)
 
@@ -416,7 +419,7 @@ opt <- list(
         collapse = ",")
 )
 
-load_libraries(c("ggplot2", "optparse", "scales", "igraph", "MASS", "openxlsx", "rlang", "Deriv"))
+load_libraries(c("ggplot2", "optparse", "scales", "igraph", "MASS", "rlang", "Deriv"))
 try(load_libraries("ggrepel"), silent = TRUE)
 
 tryCatch(
@@ -523,41 +526,6 @@ tryCatch({
     
     save_ind(rgcca_out, opt$compx, opt$compy, opt$o6)
     save_var(rgcca_out, opt$compx, opt$compy, opt$o7)
-    
-    if (!is.null(opt$response)) {
-        crossval <- rgcca_crossvalidation(rgcca_out)
-        cat(paste("Cross-validation score (leave-one-out) :", crossval$scores))
-        plot_ind(rgcca_out, predicted = crossval)
-    }
-    
-    # Bootstrap
-    boot <- bootstrap(rgcca_out, n_boot = 5)
-    selected.var <- get_bootstrap(boot, opt$compx, opt$block)
-    plot_bootstrap_2D(df_b = selected.var)
-    plot_bootstrap_1D(df_b = selected.var)
-    
-    # Permutation
-    if (length(blocks) > 1) {
-        func <- quote(
-            rgcca_permutation(
-                blocks,
-                connection = connection,
-                response = opt$response, 
-                superblock = opt$superblock,
-                ncomp = opt$ncomp,
-                scheme = opt$scheme,
-                scale = opt$scale,
-                type = opt$type, 
-                nperm = 5)
-        )
-        if (tolower(opt$type) %in% c("sgcca", "spca", "spls"))
-            func[["sparsity"]] <- opt$tau
-        else
-            func[["tau"]] <- opt$tau
-        perm <- eval(as.call(func))
-        plot_permut_2D(perm)
-    }
-    
     save(rgcca_out, file = opt$o8)
     
     }, error = function(e){
