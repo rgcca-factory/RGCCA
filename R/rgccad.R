@@ -121,7 +121,7 @@
 #' @importFrom graphics abline axis close.screen grid legend lines par points rect screen segments split.screen text
 #' @importFrom stats binomial glm lm predict sd var weighted.mean
 #' @importFrom utils read.table write.table
-
+#' @importFrom stats as.formula qt
 #' @importFrom grDevices graphics.off
 
 rgccad=function (A, C = 1 - diag(length(A)), tau = rep(1, length(A)),  ncomp = rep(1, length(A)), scheme = "centroid", scale = TRUE,   init = "svd", bias = TRUE, tol = 1e-08, verbose = TRUE,sameBlockWeight=TRUE,na.rm=TRUE,estimateNA="no",prescaling=FALSE,quiet=FALSE)

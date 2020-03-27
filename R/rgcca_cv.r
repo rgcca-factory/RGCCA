@@ -37,9 +37,9 @@ rgcca_cv=function( blocks,
           ...)
 {
     check_integer("n_cores", n_cores, 0)
-    
     match.arg(par, c("tau", "sparsity", "ncomp"))
-    
+    min_spars <- NULL
+
     if (length(blocks) < 1)
         stop("Permutation required a number of blocks larger than 1.")
     

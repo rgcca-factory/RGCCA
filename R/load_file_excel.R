@@ -23,7 +23,7 @@ load_file_excel = function(
     if (!is.null(rownames) && rownames < 1)
         rownames <- NULL
 
-    df <- read.xlsx(
+    df <- openxlsx::read.xlsx(
             file,
             sheet,
             colNames = header,

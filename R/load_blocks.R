@@ -33,7 +33,7 @@ load_blocks <- function(
         # # if xls, check file exists
         check_file(file)
         # # load the blocks
-        block_filenames = getSheetNames(file)
+        block_filenames = openxlsx::getSheetNames(file)
     }
 
     # Parse optional names of blocks

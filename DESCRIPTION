@@ -23,6 +23,7 @@ Suggests:
     optparse,
     igraph,
     visNetwork,
+    magrittr,
     nnet,
     openxlsx
 RoxygenNote: 6.1.1

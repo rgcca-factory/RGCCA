@@ -25,6 +25,7 @@
 #'@seealso \link{get_patternNA}, \link{plot.patternNA}, \link{whichNAmethod}
 plot.patternNA=function(x,type="all",legend=TRUE,scale=TRUE,outlierVisible=FALSE,...)
 {
+    completeSubjectByBlock <- NULL
     blocks=x$blocks
     if(type=="all")
     {

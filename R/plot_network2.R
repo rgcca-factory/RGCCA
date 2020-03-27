@@ -22,6 +22,7 @@ plot_network2 <- function(
     check_colors(colors)
 
     load_libraries("visNetwork")
+    `%>%` <- magrittr::`%>%`
 
     nodes <- get_nodes(rgcca_res)
     edges <- get_edges(rgcca_res)
@@ -41,7 +42,7 @@ plot_network2 <- function(
     edges$width <- edges$weight * 2
     nodes$color.background <- rep(as.vector(colors[1]), length(rgcca_res$call$blocks))
 
-    visNetwork(
+    visNetwork::visNetwork(
         nodes,
         edges,
         main = list(
@@ -49,7 +50,7 @@ plot_network2 <- function(
             style = "font-family:sans;font-weight:bold;font-size:28px;text-align:center;"
         )
     ) %>%
-        visNodes(
+        visNetwork::visNodes(
             borderWidth = 2,
             shape = "square",
             shadow = TRUE,
@@ -57,7 +58,7 @@ plot_network2 <- function(
                 border = "gray",
                 highlight = list(background = "black", border = "darkred")
             )
-        ) %>% visEdges(
+        ) %>% visNetwork::visEdges(
             smooth = FALSE,
             shadow = TRUE,
             dashes = TRUE,

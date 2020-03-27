@@ -15,6 +15,7 @@
 #'    plot(res)
 plot.cval=function(x,bars="sd",alpha=0.05,...)
 {
+    config <- NULL -> y
     match.arg(bars,c("sd","stderr","ci","cim","points"))
     mean_b=apply(x,1,mean)
     main=paste0("Mean CV criterion according to the configuration set\n (",ncol(x)," runs)")

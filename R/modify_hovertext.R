@@ -50,5 +50,5 @@ modify_hovertext <- function(p, hovertext = TRUE) {
         }
     }
     # Remove the x- and y- axis onOverMouse
-    (style(p, hoverinfo = "none", traces = traces))
+    (plotly::style(p, hoverinfo = "none", traces = traces))
 }
