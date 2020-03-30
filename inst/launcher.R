@@ -1,5 +1,5 @@
 # Author: Etienne CAMENEN
-# Date: 2019
+# Date: 2020
 # Contact: arthur.tenenhaus@l2s.centralesupelec.fr
 # Key-words: omics, RGCCA, multi-block
 # EDAM operation: analysis, correlation, visualisation
@@ -98,14 +98,14 @@ getArgs <- function() {
             single values or a comma-separated list (e.g 2,2,3,2)."
         ),
         make_option(
-            opt_str = "--tau",
+            opt_str = "--penalty",
             type = "character",
             metavar = "float list",
             default = opt[5],
-            help = "A regularization parameter for each block (i.e., tau)
+            help = "For RGCA, a regularization parameter for each block (i.e., tau)
             [default: %default]. Tau varies from 0 (maximizing the correlation)
             to 1 (maximizing the covariance). For SGCCA, tau is automatically
-            set to 1. A shrinkage parameter can be defined instead for
+            set to 1 and shrinkage parameter can be defined instead for
             automatic variable selection, varying from the square root of the
             variable number (the fewest selected variables) to 1 (all the
             variables are included). It can be a single value or a
@@ -143,7 +143,7 @@ getArgs <- function() {
             opt_str = "--text",
             type = "logical",
             action = "store_false",
-            help = "Display the name of the points instead of shapes when
+            help = "DO NOT display the name of the points instead of shapes when
             plotting"
         ),
         make_option(
@@ -309,7 +309,7 @@ check_arg <- function(opt) {
 
     check_integer("nmark", opt$nmark, min = 2)
     
-    for (x in c("ncomp", "tau"))
+    for (x in c("ncomp", "penalty"))
         opt[[x]] <- char_to_list(opt[[x]])
 
     return(opt)
@@ -398,7 +398,7 @@ opt <- list(
     separator = "\t",
     type = "rgcca",
     ncomp = 2,
-    tau = 1,
+    penalty = 1,
     scheme = "factorial",
     init = 1,
     block = 0,
@@ -464,9 +464,9 @@ tryCatch({
         )
     )
     if (tolower(opt$type) %in% c("sgcca", "spca", "spls")) {
-        func[["sparsity"]] <- opt$tau
+        func[["sparsity"]] <- opt$penalty
     }else {
-        func[["tau"]] <- opt$tau
+        func[["tau"]] <- opt$penalty
     }
     
     rgcca_out <- eval(as.call(func))
