@@ -95,7 +95,7 @@ ui <- fluidPage(
             ")"
         )
     ),
-    tags$a(href = "https://github.com/BrainAndSpineInstitute/rgcca_Rpackage/blob/master/inst/shiny/tutorialShiny.md", "Go to the tutorial"),
+    tags$a(href = "https://github.com/rgcca-factory/RGCCA/blob/release/3.0.0/inst/shiny/tutorialShiny.md", "Go to the tutorial"),
     useShinyjs(),
     sidebarLayout(sidebarPanel(
         tabsetPanel(
