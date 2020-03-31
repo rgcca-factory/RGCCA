@@ -68,12 +68,14 @@ server <- function(input, output, session) {
 
     output$compx_custom <- renderUI({
         refresh <- refreshAnalysis()
-        isolate(uiComp("x", 1, input$navbar != "Fingerprint"))
+        refresh <- input$names_block_x
+        isolate(uiComp("x", 1, id_block, input$navbar != "Fingerprint"))
     })
 
     output$compy_custom <- renderUI({
         refresh <- refreshAnalysis()
-        uiComp("y", 2)
+        refresh <- input$names_block_y
+        uiComp("y", 2, id_block_y)
     })
 
     output$analysis_type_custom <- renderUI({
@@ -170,7 +172,7 @@ server <- function(input, output, session) {
         }
     }
 
-    uiComp <- function(x, y, bool = TRUE) {
+    uiComp <- function(x, y, id_block, bool = TRUE) {
         label <- "Component"
 
         if (bool)
@@ -180,7 +182,7 @@ server <- function(input, output, session) {
             inputId = paste0("comp", x),
             label = label,
             min = 1,
-            max = input$nb_comp,
+            max = getNcomp()[id_block],
             value = y,
             step = 1
         )

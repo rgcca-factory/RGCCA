@@ -102,7 +102,7 @@ getArgs <- function() {
             type = "character",
             metavar = "float list",
             default = opt[5],
-            help = "For RGCA, a regularization parameter for each block (i.e., tau)
+            help = "For RGCCA, a regularization parameter for each block (i.e., tau)
             [default: %default]. Tau varies from 0 (maximizing the correlation)
             to 1 (maximizing the covariance). For SGCCA, tau is automatically
             set to 1 and shrinkage parameter can be defined instead for
