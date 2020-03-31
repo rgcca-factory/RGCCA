@@ -12,7 +12,7 @@ load_file_text(file, separator = "\\t", rownames = 1, header = TRUE,
 
 \item{separator}{A character giving the column separator}
 
-\item{rownames}{An integer corresponding to the column number of the row#'}
+\item{rownames}{An integer corresponding to the column number of the rownames (NULL otherwise)}
 
 \item{header}{A bolean giving the presence or the absence of the header}
 

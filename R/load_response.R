@@ -30,7 +30,7 @@ load_response <- function(
             decimal = decimal
         )
     }else
-        check_blocks(blocks, n = 1)
+        check_blocks(blocks, , allow_unnames = FALSE, n = 1)
 
     check_response(response, blocks)
 
