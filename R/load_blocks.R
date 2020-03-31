@@ -5,7 +5,8 @@
 #' @param separator A character giving the column separator
 #' @param decimal A character giving the decimal separator
 #' @param header A bolean giving the presence or the absence of the header
-#' @param rownames An integer corresponding to the column number of the row
+#' @param rownames An integer corresponding to the column number of the row#' 
+#' @param allow_unnames An bolean to allow the blocks not having rownames
 #' names (NULL otherwise)
 #' @return A list matrix corresponding to the blocks
 #' @examples
@@ -21,7 +22,8 @@ load_blocks <- function(
     separator = "\t",
     header = TRUE,
     rownames = 1,
-    decimal = ".") {
+    decimal = ".",
+    allow_unnames = TRUE) {
 
     # Parse args containing files path
     isXls <- (length(grep("xlsx?", file)) == 1)
@@ -74,6 +76,6 @@ load_blocks <- function(
         blocks[[fo]] <- df
     }
 
-    blocks <- check_blocks(blocks, init = TRUE)
+    blocks <- check_blocks(blocks, init = TRUE, allow_unnames = allow_unnames)
 
 }

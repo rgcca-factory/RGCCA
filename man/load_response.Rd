@@ -16,8 +16,7 @@ load_response(blocks = NULL, file = NULL, separator = "\\t",
 
 \item{header}{A bolean giving the presence or the absence of the header}
 
-\item{rownames}{An integer corresponding to the column number of the row
-names (NULL otherwise)}
+\item{rownames}{An integer corresponding to the column number of the row#'}
 
 \item{decimal}{A character giving the decimal separator}
 }

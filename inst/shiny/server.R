@@ -942,7 +942,8 @@ server <- function(input, output, session) {
                         file = paths,
                         names = names,
                         sep = input$sep,
-                        header = TRUE
+                        header = TRUE,
+                        allow_unnames = FALSE
                     )
                 ),
                 .GlobalEnv)

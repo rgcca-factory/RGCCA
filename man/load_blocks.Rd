@@ -5,7 +5,7 @@
 \title{Create a list of matrix from loading files corresponding to blocks}
 \usage{
 load_blocks(file, names = NULL, separator = "\\t", header = TRUE,
-  rownames = 1, decimal = ".")
+  rownames = 1, decimal = ".", allow_unnames = TRUE)
 }
 \arguments{
 \item{file}{A character giving the path of a file}
@@ -16,10 +16,12 @@ load_blocks(file, names = NULL, separator = "\\t", header = TRUE,
 
 \item{header}{A bolean giving the presence or the absence of the header}
 
-\item{rownames}{An integer corresponding to the column number of the row
-names (NULL otherwise)}
+\item{rownames}{An integer corresponding to the column number of the row#'}
 
 \item{decimal}{A character giving the decimal separator}
+
+\item{allow_unnames}{An bolean to allow the blocks not having rownames
+names (NULL otherwise)}
 }
 \value{
 A list matrix corresponding to the blocks
