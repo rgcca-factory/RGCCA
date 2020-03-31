@@ -46,7 +46,7 @@ plot.list_rgcca=function(x,type="ind",resp=rep(1, NROW(x$Y[[1]])),i_block=1,i_bl
               rgcca_res = list_rgcca[[i]],
               compx = compx,
               compy = compy,
-              i_block = i_block,
+              i_block_x = i_block,
               i_block_y = i_block_y,
               predicted = NULL
           )

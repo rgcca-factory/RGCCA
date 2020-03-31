@@ -29,7 +29,7 @@ for the z-axis}
 one, different from the one used in i_block)}
 
 \item{i_block_z}{An integer giving the index of a list of blocks (another
-one, different from the one used in i_block)}
+one, different from the one used in i_block_x)}
 
 \item{text}{A bolean to represent the points with their row names (TRUE)
 or with circles (FALSE)}

@@ -71,7 +71,7 @@ plot_ind <- function(
         resp = resp,
         compx = compx,
         compy = compy,
-        i_block = i_block,
+        i_block_x = i_block,
         i_block_y = i_block_y,
         predicted = predicted
     )
