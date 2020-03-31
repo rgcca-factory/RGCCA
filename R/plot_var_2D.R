@@ -81,7 +81,7 @@ plot_var_2D <- function(
         rgcca_res$a <- rgcca_res$a[-length(rgcca_res$a)]
     }
 
-    if (i_block < length(rgcca_res$a) || rgcca_res$call$type == "pca")
+    if (i_block < length(rgcca_res$a) || tolower(rgcca_res$call$type) == "pca")
         rgcca_res$call$superblock <- FALSE
 
     # PCA case: remove the superblock in legend

@@ -56,7 +56,7 @@ plot_var_1D <- function(
     )
     resp <- df$resp
 
-    if (i_block < length(rgcca_res$a) || rgcca_res$call$type == "pca")
+    if (i_block < length(rgcca_res$a) || tolower(rgcca_res$call$type) == "pca")
         rgcca_res$call$superblock <- FALSE
 
     J <- names(rgcca_res$a)

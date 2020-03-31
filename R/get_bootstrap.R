@@ -78,7 +78,7 @@ get_bootstrap <- function(
 
         n <- seq(NCOL(b_select))
 
-        if (b$rgcca$call$type %in% c("spls", "spca", "sgcca")) {
+        if (tolower(b$rgcca$call$type) %in% c("spls", "spca", "sgcca")) {
 
             occ[[i]] <- unlist(
                 parallelize(
@@ -155,7 +155,7 @@ get_bootstrap <- function(
         BH = p.adjust(p.vals, method = "BH")
     )
 
-    if (b$rgcca$call$type %in% c("spls", "spca", "sgcca")) {
+    if (tolower(b$rgcca$call$type) %in% c("spls", "spca", "sgcca")) {
         index <- 8
         df$occurrences <- occ
     }else{
