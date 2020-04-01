@@ -536,10 +536,13 @@ server <- function(input, output, session) {
         if (!input$show_crossval)
             crossval <- NULL
 
-        if (!is.null(input$response))
+        if(!is.null(crossval)){
+            response_name <- "Response"
+            response <- rep(1, NROW(rgcca_out$Y[[1]]))
+        }else if (!is.null(input$response))
             response_name <- getExtension(input$response$name)
         else
-            response_name = ""
+            response_name <- ""
 
         isolate({
             plot_ind(
@@ -706,7 +709,9 @@ server <- function(input, output, session) {
             rgcca_crossvalidation(rgcca_out, validation = input$crossval),
             .GlobalEnv
         )
+        showWarn(message(paste("CV score:", round(crossval$score, 4))), show = FALSE)
         show("show_crossval")
+        updateTabsetPanel(session, "navbar", selected = "Samples")
     }
 
     getPerm <-  function(){
@@ -1232,8 +1237,14 @@ server <- function(input, output, session) {
                     if_text
                 ), warn = FALSE)
 
-            if (length(unique(na.omit(response))) < 2 || (length(unique(response)) > 5 && !is.character2(na.omit(response))))
+            if (length(unique(na.omit(response))) < 2 ||
+                (length(unique(response)) > 5 &&
+                !is.character2(na.omit(response))) &&
+                !is.null(crossval)) {
+
                 p <- p %>% layout(showlegend = FALSE)
+            }
+
             p
 
         }

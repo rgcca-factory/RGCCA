@@ -106,7 +106,7 @@ plot_ind <- function(
         )
 
     # remove legend if missing
-    if (length(unique(df$resp)) == 1||legend==FALSE)
+    if (length(unique(df$resp)) == 1 || !legend)
         p <- p + theme(legend.position = "none")
 
     return(p)
