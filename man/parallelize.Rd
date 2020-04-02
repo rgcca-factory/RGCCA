@@ -2,7 +2,7 @@
 % Please edit documentation in R/parallelize.R
 \name{parallelize}
 \alias{parallelize}
-\title{Set a list of ocket for parralel package in Windows}
+\title{Set a list of sockets for parralel package}
 \usage{
 parallelize(varlist = c(), nperm, f, n_cores = NULL,
   envir = environment(), applyFunc = "parSapply")
@@ -21,5 +21,5 @@ parallelize(varlist = c(), nperm, f, n_cores = NULL,
 \item{applyFunc}{function to be applied}
 }
 \description{
-Set a list of ocket for parralel package in Windows
+Set a list of sockets for parralel package
 }
