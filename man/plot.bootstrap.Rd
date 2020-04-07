@@ -4,9 +4,17 @@
 \alias{plot.bootstrap}
 \title{Plots a bootstrap object}
 \usage{
-\method{plot}{bootstrap}(x, type = "1D",
-  i_block = length(x$rgcca$call$blocks), bars = "sd", colors = NULL,
-  title = NULL, cex = 1, n_cores = parallel::detectCores() - 1, ...)
+\method{plot}{bootstrap}(
+  x,
+  type = "1D",
+  i_block = length(x$rgcca$call$blocks),
+  bars = "sd",
+  colors = NULL,
+  title = NULL,
+  cex = 1,
+  n_cores = parallel::detectCores() - 1,
+  ...
+)
 }
 \arguments{
 \item{x}{result of bootstrap  \code{\link[RGCCA]{bootstrap}}}

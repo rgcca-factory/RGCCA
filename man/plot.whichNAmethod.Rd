@@ -4,8 +4,16 @@
 \alias{plot.whichNAmethod}
 \title{Which missing method to choose ?}
 \usage{
-\method{plot}{whichNAmethod}(x, output = "rv", ylim = NULL,
-  i_block = "all", bars = "sd", main = NULL, ylab = "", ...)
+\method{plot}{whichNAmethod}(
+  x,
+  output = "rv",
+  ylim = NULL,
+  i_block = "all",
+  bars = "sd",
+  main = NULL,
+  ylab = "",
+  ...
+)
 }
 \arguments{
 \item{x}{A list resulting of whichNAmethod (see \link{whichNAmethod})}

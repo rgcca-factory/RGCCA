@@ -4,8 +4,14 @@
 \alias{comparison}
 \title{comparison of two RGCCA results}
 \usage{
-comparison(rgcca1, rgcca2, naxis = 1, selec = 10,
-  selectPatient = NULL, indNA = NULL)
+comparison(
+  rgcca1,
+  rgcca2,
+  naxis = 1,
+  selec = 10,
+  selectPatient = NULL,
+  indNA = NULL
+)
 }
 \arguments{
 \item{rgcca1}{A result of a RGCCA function}

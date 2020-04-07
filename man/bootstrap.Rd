@@ -4,8 +4,7 @@
 \alias{bootstrap}
 \title{Compute bootstrap}
 \usage{
-bootstrap(rgcca_res, n_boot = 5, n_cores = parallel::detectCores() - 1,
-  ...)
+bootstrap(rgcca_res, n_boot = 5, n_cores = parallel::detectCores() - 1, ...)
 }
 \arguments{
 \item{rgcca_res}{Result of a RGCCA (see  \code{\link[RGCCA]{rgcca}} )}
@@ -31,6 +30,7 @@ rgcca_out = rgcca(blocks)
 b=bootstrap(rgcca_out, n_boot = 2, n_cores = 1)
 plot(b,n_cores=1)
 plot(b,type="2D",n_cores=1)
+rgcca_out = rgcca(blocks, superblock = FALSE)
 bootstrap(rgcca_out, n_boot = 2, n_cores = 1, blocks = lapply(blocks, scale),
  superblock = FALSE)
 }

@@ -4,11 +4,27 @@
 \alias{plot2D}
 \title{Plots RGCCA components in a bi-dimensional space}
 \usage{
-plot2D(rgcca_res, df, title = "", group = 1, name_group = "Response",
-  compx = 1, compy = 2, i_block = 1, p = NULL, text = TRUE,
-  i_block_y = i_block, colors = NULL, collapse = FALSE,
-  no_overlap = FALSE, cex = 1, cex_main = 25 * cex, cex_sub = 16 *
-  cex, cex_point = 3 * cex, cex_lab = 19 * cex)
+plot2D(
+  rgcca_res,
+  df,
+  title = "",
+  group = 1,
+  name_group = "Response",
+  compx = 1,
+  compy = 2,
+  i_block = 1,
+  p = NULL,
+  text = TRUE,
+  i_block_y = i_block,
+  colors = NULL,
+  collapse = FALSE,
+  no_overlap = FALSE,
+  cex = 1,
+  cex_main = 25 * cex,
+  cex_sub = 16 * cex,
+  cex_point = 3 * cex,
+  cex_lab = 19 * cex
+)
 }
 \arguments{
 \item{rgcca_res}{Result of rgcca function}

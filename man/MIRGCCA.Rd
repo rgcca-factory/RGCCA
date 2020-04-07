@@ -4,11 +4,24 @@
 \alias{MIRGCCA}
 \title{Multiple imputation for RGCCA}
 \usage{
-MIRGCCA(blocks, option = "knn", type = "rgcca", superblock = TRUE,
-  k = 5, ni = 5, scale = TRUE, sameBlockWeight = TRUE,
-  tau = rep(1:length(A)), klim = NULL, output = "mean",
-  scheme = "centroid", tol = 1e-08, connection = NULL,
-  ncomp = rep(2, length(A)), naxis = 1)
+MIRGCCA(
+  blocks,
+  option = "knn",
+  type = "rgcca",
+  superblock = TRUE,
+  k = 5,
+  ni = 5,
+  scale = TRUE,
+  sameBlockWeight = TRUE,
+  tau = rep(1:length(A)),
+  klim = NULL,
+  output = "mean",
+  scheme = "centroid",
+  tol = 1e-08,
+  connection = NULL,
+  ncomp = rep(2, length(A)),
+  naxis = 1
+)
 }
 \arguments{
 \item{blocks}{A list that contains the \eqn{J} blocks of variables \eqn{\mathbf{X_1}, \mathbf{X_2}, ..., \mathbf{X_J}}.}

@@ -657,7 +657,7 @@ server <- function(input, output, session) {
         if ( (!is.null(input$superblock) && input$superblock) && 
                 ( toupper(analysis_type) %in% c("PCA", "RGCCA", "SGCCA")) ||
                 analysis_type %in% multiple_blocks_super ){
-            blocks <- c(blocks, Superblock = list(Reduce(cbind, blocks)))
+            blocks <- c(blocks, superblock = list(Reduce(cbind, blocks)))
         }
 
         assign("tau", tau, .GlobalEnv)
@@ -679,13 +679,10 @@ server <- function(input, output, session) {
         else
             response <- NULL
 
-        if(tolower(analysis_type) == "pca")
-            blocks <- blocks_without_superb
-
         assign("rgcca_out",
                showWarn(
                    rgcca(
-                        blocks,
+                       blocks_without_superb,
                         connection = connection,
                         response = input$names_block_response,
                         superblock = (!is.null(input$supervised) &&

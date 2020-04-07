@@ -4,11 +4,23 @@
 \alias{rgccad}
 \title{Regularized Generalized Canonical Correlation Analysis (RGCCA)}
 \usage{
-rgccad(A, C = 1 - diag(length(A)), tau = rep(1, length(A)),
-  ncomp = rep(1, length(A)), scheme = "centroid", scale = TRUE,
-  init = "svd", bias = TRUE, tol = 1e-08, verbose = TRUE,
-  sameBlockWeight = TRUE, na.rm = TRUE, estimateNA = "no",
-  prescaling = FALSE, quiet = FALSE)
+rgccad(
+  A,
+  C = 1 - diag(length(A)),
+  tau = rep(1, length(A)),
+  ncomp = rep(1, length(A)),
+  scheme = "centroid",
+  scale = TRUE,
+  init = "svd",
+  bias = TRUE,
+  tol = 1e-08,
+  verbose = TRUE,
+  sameBlockWeight = TRUE,
+  na.rm = TRUE,
+  estimateNA = "no",
+  prescaling = FALSE,
+  quiet = FALSE
+)
 }
 \arguments{
 \item{A}{A list that contains the \eqn{J} blocks of variables \eqn{\mathbf{X_1}, \mathbf{X_2}, ..., \mathbf{X_J}}.}
