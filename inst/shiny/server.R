@@ -1324,19 +1324,18 @@ server <- function(input, output, session) {
         refresh <- c(input$names_block_x, id_block, input$blocks_names_custom_x)
 
         if (!is.null(analysis) & !is.null(boot)) {
-            
-            if (is.null(selected.var))
-                assign(
-                    "selected.var", 
-                    get_bootstrap(boot, compx, id_block),
-                    .GlobalEnv
-                )
+
+            assign(
+                "selected.var", 
+                get_bootstrap(boot, compx, id_block),
+                .GlobalEnv
+            )
 
             observeEvent(input$bootstrap_save, {
                 save_plot("bootstrap.pdf", plotBoot())
                 msgSave()
             })
-            ggplotly(plotBoot())
+            modify_hovertext(ggplotly(plotBoot()), boot = TRUE)
         }
 
     })
