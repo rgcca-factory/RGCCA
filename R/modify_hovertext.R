@@ -33,8 +33,10 @@ modify_hovertext <- function(p, hovertext = TRUE, boot = FALSE) {
             # keep only the (x, y) coordinates with the key df[, ]
             # and the response if exists
             l_text = unlist(lapply(l_text, function(x, y) {
-                if (!is.character2(x[2]))
-                    round(as.numeric(x[2]), 3)
+
+                if ((boot && !is.character2(x[2]))
+                    || x[1] %in% paste0("df[, ", c(1, 2), "]"))
+                        round(as.numeric(x[2]), 3)
                 else if (x[1] == "resp")
                     x[2]
             }))
