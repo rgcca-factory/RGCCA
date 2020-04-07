@@ -44,7 +44,7 @@ multiple_blocks_super  <<- c(
     )
 analyse_methods  <<- list(one_block, two_blocks, multiple_blocks, multiple_blocks_super)
 reac_var  <<- reactiveVal()
-id_block_y <<- id_block <<- id_block_resp <<- analysis <<- 
+id_block_y <<- id_block <<- id_block_resp <<- analysis <<- connection <<-
 boot <<- analysis_type <<- crossval <<- selected.var <<- crossval <<- NULL
 clickSep <<- FALSE
 if_text <<- TRUE

@@ -675,7 +675,7 @@ server <- function(input, output, session) {
         })
 
         if (!is.null(input$supervised) && input$supervised)
-            response <- input$supervised
+            response <- input$names_block_response
         else
             response <- NULL
 
@@ -684,7 +684,7 @@ server <- function(input, output, session) {
                    rgcca(
                        blocks_without_superb,
                         connection = connection,
-                        response = input$names_block_response,
+                        response = response,
                         superblock = (!is.null(input$supervised) &&
                             !is.null(input$superblock) && input$superblock),
                         tau = tau,
