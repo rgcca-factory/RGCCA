@@ -1335,7 +1335,9 @@ server <- function(input, output, session) {
                 save_plot("bootstrap.pdf", plotBoot())
                 msgSave()
             })
-            modify_hovertext(ggplotly(plotBoot()), boot = TRUE)
+            p <- modify_hovertext(ggplotly(plotBoot()), boot = TRUE) 
+            p$x$layout$margin$t <- 100 
+            p 
         }
 
     })
