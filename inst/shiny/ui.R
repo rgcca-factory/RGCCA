@@ -205,6 +205,15 @@ ui <- fluidPage(
                     label = "Display cross-validation",
                     value = TRUE
                 ),
+                radioButtons(
+                    "indexes",
+                    label = "Type of indexes",
+                    choices = c(
+                        Correlation = "cor",
+                        Weights = "weight")
+                ),
+                uiOutput("b_x_custom"),
+                uiOutput("b_y_custom"),
                 actionButton(inputId = "save_all", label = "Save all")
             )
 

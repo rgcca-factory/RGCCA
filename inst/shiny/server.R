@@ -92,6 +92,23 @@ server <- function(input, output, session) {
             )
         )
     })
+    
+    output$b_x_custom <- renderUI(b_index("x"))
+    output$b_y_custom <- renderUI(b_index("y"))
+
+    b_index <- function(x) {
+        selectInput(
+            inputId = paste0("b_", x),
+            paste("Bootstrap indexes for", x, "axis"),
+            choices = list(
+                `RGCCA weights` = "estimate",
+                `Bootstrap-ratio` = "bootstrap_ratio",
+                `Significant 95% interval` = "sign",
+                `Non-zero occurences` = "occurrences",
+                `Mean bootstrap weights` = "mean"
+            )
+        )
+    }
 
     ################################################ UI function ################################################
 
@@ -569,13 +586,13 @@ server <- function(input, output, session) {
             n_mark = nb_mark
         )
 
-    fingerprint <- function()
+    fingerprint <- function(type)
         plot_var_1D(
             rgcca = rgcca_out,
             comp = compx,
             n_mark = nb_mark,
             i_block = id_block,
-            type = "cor"
+            type = type
         )
 
     ave <- function()
@@ -586,7 +603,7 @@ server <- function(input, output, session) {
 
     plotBoot <- function(){
         refresh <- c(input$names_block_x, id_block, input$blocks_names_custom_x)
-        plot_bootstrap_2D(df_b = selected.var)
+        plot_bootstrap_2D(df_b = selected.var, x = input$b_x, y = input$b_y)
     }
 
     viewPerm <- function(){
@@ -873,7 +890,16 @@ server <- function(input, output, session) {
                id = "blocks_names_custom_y")
         toggle(
             condition = (input$navbar == "Samples"),
-               id = "response")
+               id = "response_custom")
+        toggle(
+            condition = (input$navbar == "Fingerprint"),
+            id = "indexes")
+        toggle(
+            condition = (input$navbar == "Bootstrap"),
+            id = "b_x_custom")
+        toggle(
+            condition = (input$navbar == "Bootstrap"),
+            id = "b_y_custom")
         toggle(
             condition = (
                 !is.null(analysis) && !input$navbar %in% c("Connection", "AVE", "Permutation")
@@ -1179,7 +1205,7 @@ server <- function(input, output, session) {
         if (blocksExists()) {
             save_plot("samples_plot.pdf", samples())
             save_plot("corcircle.pdf", corcircle())
-            save_plot("fingerprint.pdf", fingerprint())
+            save_plot("fingerprint.pdf", fingerprint(input$indexes))
             save_plot("AVE.pdf", ave())
             save_var(rgcca_out, 1, 2)
             save_ind(rgcca_out, 1, 2)
@@ -1275,11 +1301,11 @@ server <- function(input, output, session) {
         if (!is.null(analysis)) {
 
             observeEvent(input$fingerprint_save, {
-                save_plot("fingerprint.pdf", fingerprint())
+                save_plot("fingerprint.pdf", fingerprint(input$indexes))
                 msgSave()
             })
 
-            p <- modify_mousehover(plot_dynamic(fingerprint(), ax2, "text"))
+            p <- modify_mousehover(plot_dynamic(fingerprint(input$indexes), ax2, "text"))
             n <- sapply(p$x$data, function(x) !is.null(x$orientation))
 
             for (i in 1:length(n[n]))
