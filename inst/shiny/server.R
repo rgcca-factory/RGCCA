@@ -93,21 +93,35 @@ server <- function(input, output, session) {
         )
     })
     
-    output$b_x_custom <- renderUI(b_index("x"))
-    output$b_y_custom <- renderUI(b_index("y"))
+    output$b_x_custom <- renderUI(b_index("x", "bootstrap_ratio"))
+    output$b_y_custom <- renderUI({
+            b_index("y", 
+                if(tolower(input$analysis_type) == "sgcca")
+                    "occurrences"
+                else
+                    "sign")
+        })
 
-    b_index <- function(x) {
+    b_index <- function(x, y) {
+        
+        l_choices <- list(
+            `RGCCA weights` = "estimate",
+            `Bootstrap-ratio` = "bootstrap_ratio",
+            `Mean bootstrap weights` = "mean"
+        )
+        
+        if (tolower(input$analysis_type) == "sgcca")
+            l_choices[["Non-zero occurences"]] <- "occurrences"
+        else
+            l_choices[["Significant 95% interval"]] <- "sign"
+
         selectInput(
             inputId = paste0("b_", x),
             paste("Bootstrap indexes for", x, "axis"),
-            choices = list(
-                `RGCCA weights` = "estimate",
-                `Bootstrap-ratio` = "bootstrap_ratio",
-                `Significant 95% interval` = "sign",
-                `Non-zero occurences` = "occurrences",
-                `Mean bootstrap weights` = "mean"
-            )
+            choices = l_choices,
+            selected = y
         )
+            
     }
 
     ################################################ UI function ################################################
@@ -697,22 +711,28 @@ server <- function(input, output, session) {
             response <- NULL
 
         assign("rgcca_out",
-               showWarn(
-                   rgcca(
-                       blocks_without_superb,
-                        connection = connection,
-                        response = response,
-                        superblock = (!is.null(input$supervised) &&
-                            !is.null(input$superblock) && input$superblock),
-                        tau = tau,
-                        ncomp = getNcomp(),
-                        scheme = input$scheme,
-                        scale = FALSE,
-                        init = input$init,
-                        bias = TRUE,
-                        type = analysis_type
-                    )
-                ),
+               showWarn({
+                   func <- quote(
+                       rgcca(
+                           blocks_without_superb,
+                            connection = connection,
+                            response = response,
+                            superblock = (!is.null(input$supervised) &&
+                                !is.null(input$superblock) && input$superblock),
+                            ncomp = getNcomp(),
+                            scheme = input$scheme,
+                            scale = FALSE,
+                            init = input$init,
+                            bias = TRUE,
+                            type = analysis_type
+                        )
+                   )
+                   if (tolower(analysis_type) %in% c("sgcca", "spca", "spls"))
+                       func[["sparsity"]] <- tau
+                   else
+                       func[["tau"]] <- tau
+                   eval(as.call(func))
+                }),
                 .GlobalEnv)
 
     }
