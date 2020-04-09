@@ -256,7 +256,7 @@ ui <- fluidPage(
             ),
             tabPanel(
                 "Permutation",
-                dataTableOutput("permutationPlot"),
+                plotlyOutput("permutationPlot", height = 700),
                 actionButton("permutation_save", "Save")
             )
         )

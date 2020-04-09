@@ -24,11 +24,8 @@ plot_permut_2D <- function(
     cex_lab = 19 * cex,
     bars="points"
     ) {
-  
 
-   
-    
-        match.arg(type, c("crit", "zstat"))
+    match.arg(type, c("crit", "zstat"))
     for (i in c("cex", "cex_main", "cex_sub", "cex_point", "cex_lab"))
         check_integer(i, get(i))
     
@@ -70,7 +67,7 @@ plot_permut_2D <- function(
         geom_line(size = 1) +
         labs(
             title = title, 
-            x = "Index of combination",
+            x = "Combinations",
             y = y_title
         ) +
         theme_perso(cex, cex_main, cex_sub) +

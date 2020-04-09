@@ -1210,6 +1210,8 @@ server <- function(input, output, session) {
             save_var(rgcca_out, 1, 2)
             save_ind(rgcca_out, 1, 2)
             save(analysis, file = "rgcca_result.RData")
+            save_plot("bootstrap.pdf", plotBoot())
+            save("perm.pdf", plot_permut_2D(perm))
             msgSave()
         }
     })
@@ -1305,19 +1307,7 @@ server <- function(input, output, session) {
                 msgSave()
             })
 
-            p <- modify_mousehover(plot_dynamic(fingerprint(input$indexes), ax2, "text"))
-            n <- sapply(p$x$data, function(x) !is.null(x$orientation))
-
-            for (i in 1:length(n[n]))
-                p$x$data[[i]]$text <-
-                round(as.double(
-                    sub(
-                        "order: .*<br />df\\[, 1\\]: (.*)<.*",
-                        "\\1\\",
-                        p$x$data[[i]]$text
-                    )
-                ), 3)
-            p
+            modify_hovertext(ggplotly(fingerprint(input$indexes)), hovertext = F, type = "var1D")
         }
 
     })
@@ -1361,24 +1351,26 @@ server <- function(input, output, session) {
                 save_plot("bootstrap.pdf", plotBoot())
                 msgSave()
             })
-            p <- modify_hovertext(ggplotly(plotBoot()), boot = TRUE) 
+            p <- modify_hovertext(ggplotly(plotBoot()), type= "boot") 
             p$x$layout$margin$t <- 100 
             p 
         }
 
     })
 
-    output$permutationPlot <- renderDataTable({
+    output$permutationPlot <- renderPlotly({
 
         getDynamicVariables()
 
         if (!is.null(analysis) & !is.null(perm)) {
 
-            # observeEvent(input$permutation_save, {
-            #     save("perm.tsv", viewPerm())
-            #     msgSave()
-            # })
-           viewPerm()
+            observeEvent(input$permutation_save, {
+                save("perm.pdf", plot_permut_2D(perm))
+                msgSave()
+            })
+            p <- modify_hovertext(ggplotly(plot_permut_2D(perm)), hovertext = F, type = "perm") 
+            p$x$layout$margin$t <- 100 
+            p
         }
 
     })
