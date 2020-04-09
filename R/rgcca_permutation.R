@@ -131,7 +131,7 @@ rgcca_permutation <- function(
         ...
     )
 
-    cat("Permutation in progress...")
+    message("Permutation in progress...", appendLF = FALSE)
 
     varlist <- c(ls(getNamespace("RGCCA")))
     # get the parameter dot-dot-dot
@@ -167,7 +167,7 @@ rgcca_permutation <- function(
     n_cores = n_cores,
     envir = environment())
 
-    cat("OK.\n", append = TRUE)
+    message("OK.")
 
     par <- par[[2]]
 

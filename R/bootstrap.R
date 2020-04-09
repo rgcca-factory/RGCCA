@@ -36,7 +36,7 @@ bootstrap <- function(
     # if (any(unlist(lapply(rgcca$call$blocks, NCOL) > 1000)))
     #     verbose <- TRUE
 
-    cat("Bootstrap in progress...")
+    message("Bootstrap in progress...", appendLF = F)
 
     blocks <- NULL
 
@@ -67,7 +67,7 @@ bootstrap <- function(
         envir = environment(),
         applyFunc = "parLapply")
 
-    cat("OK.\n", append = TRUE)
+    message("OK.")
 
     return(structure(list(bootstrap = W, rgcca = rgcca_res), class = "bootstrap"))
 }

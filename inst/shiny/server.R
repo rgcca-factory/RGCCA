@@ -781,7 +781,7 @@ server <- function(input, output, session) {
                 func[["sparsity"]] <- tau
             else
                 func[["tau"]] <- tau
-            eval(as.call(func))
+            showWarn(eval(as.call(func)))
         },
         .GlobalEnv)
  
@@ -791,7 +791,7 @@ server <- function(input, output, session) {
     getBoot <-  function(){
         assign(
             "boot",
-            bootstrap(rgcca_out, n_boot = input$nboot),
+            showWarn(bootstrap(rgcca_out, n_boot = input$nboot)),
             .GlobalEnv
         )
         assign("selected.var", NULL, .GlobalEnv)
