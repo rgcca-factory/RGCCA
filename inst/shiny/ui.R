@@ -44,7 +44,7 @@ multiple_blocks_super  <<- c(
     )
 analyse_methods  <<- list(one_block, two_blocks, multiple_blocks, multiple_blocks_super)
 reac_var  <<- reactiveVal()
-id_block_y <<- id_block <<- id_block_resp <<- analysis <<- connection <<-
+id_block_y <<- id_block <<- id_block_resp <<- analysis <<- connection <<- perm <<- boot <<-
 boot <<- analysis_type <<- crossval <<- selected.var <<- crossval <<- NULL
 clickSep <<- FALSE
 if_text <<- TRUE
@@ -149,7 +149,7 @@ ui <- fluidPage(
                     inputId = "nboot",
                     label = "Number of boostraps",
                     min = 5,
-                    max = 100,
+                    max = 1000,
                     value = 10,
                     step = 5
                 ),
@@ -170,7 +170,7 @@ ui <- fluidPage(
                     inputId = "nperm",
                     label = "Number of permutations",
                     min = 5,
-                    max = 100,
+                    max = 1000,
                     value = 10,
                     step = 5
                 ),

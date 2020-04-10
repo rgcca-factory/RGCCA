@@ -1230,8 +1230,10 @@ server <- function(input, output, session) {
             save_var(rgcca_out, 1, 2)
             save_ind(rgcca_out, 1, 2)
             save(analysis, file = "rgcca_result.RData")
-            save_plot("bootstrap.pdf", plotBoot())
-            save("perm.pdf", plot_permut_2D(perm))
+            if(!is.null(boot))
+                save_plot("bootstrap.pdf", plotBoot())
+            # if(!is.null(perm))
+            #     save("perm.pdf", plot_permut_2D(perm))
             msgSave()
         }
     })

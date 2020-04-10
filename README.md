@@ -134,7 +134,7 @@ If the Linux dependencies installation step was not executed previously (e.g., f
 
 [Shiny](https://shiny.rstudio.com/) is a R framework providing a "user-friendly" web interface. When a parameter of the analysis is modified (e.g. the block to visualize), its impact can be directly observed on the graphical outputs.
 
-After installing [Rstudio](https://www.rstudio.com/products/rstudio/download/#download), open ```inst/shiny/server.R``` file with it. In the RStudio upper menu, go to "Tools", "Install packages" and write "shiny" in the textual field. Then, the application could be launched by clicking on the ```Run App button``` in the upper right corner of the script menu bar. Click [here](https://github.com/BrainAndSpineInstitute/rgcca_Rpackage/blob/master/inst/shiny/tutorialShiny.md) to read the tutorial.
+After installing [Rstudio](https://www.rstudio.com/products/rstudio/download/#download), open ```inst/shiny/server.R``` file with it. In the RStudio upper menu, go to "Tools", "Install packages" and write "shiny" in the textual field. Then, the application could be launched by clicking on the ```Run App button``` in the upper right corner of the script menu bar. Click [here](https://github.com/rgcca-factory/RGCCA/blob/release/3.0.0/inst/shiny/tutorialShiny.md) to read the tutorial.
 
 
 ### Vignette
