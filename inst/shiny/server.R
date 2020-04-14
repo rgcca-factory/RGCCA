@@ -575,19 +575,18 @@ server <- function(input, output, session) {
         else
             response_name <- ""
 
-        isolate({
+        if(!is.null(compx))
             plot_ind(
                 rgcca = rgcca_out,
                 resp = response,
-                compx = compx,
-                compy = compy,
+                compx = input$compx,
+                compy = input$compy,
                 i_block = id_block,
                 text = if_text,
                 i_block_y = id_block_y,
                 response_name = response_name,
                 predicted = crossval
             )
-        })
     }
 
     corcircle <- function()
@@ -1224,11 +1223,15 @@ server <- function(input, output, session) {
     observeEvent(input$save_all, {
         if (blocksExists()) {
             save_plot("samples_plot.pdf", samples())
-            save_plot("corcircle.pdf", corcircle())
-            save_plot("fingerprint.pdf", fingerprint(input$indexes))
+            try(save_plot("corcircle.pdf", corcircle()), silent = TRUE)
+            try(save_plot("fingerprint.pdf", fingerprint(input$indexes)), silent = TRUE)
             save_plot("AVE.pdf", ave())
-            save_var(rgcca_out, 1, 2)
-            save_ind(rgcca_out, 1, 2)
+            if(any(NCOL(blocks) == 1))
+                compy <- 1
+            else 
+                compy <- 2
+            save_var(rgcca_out, 1, compy)
+            save_ind(rgcca_out, 1, compy)
             save(analysis, file = "rgcca_result.RData")
             if(!is.null(boot))
                 save_plot("bootstrap.pdf", plotBoot())
@@ -1278,18 +1281,21 @@ server <- function(input, output, session) {
                 msgSave()
             })
 
+            p <- samples()
+            
+            if(is(p, "plotly")) {
             p <- showWarn(
                 modify_hovertext(
-                    plot_dynamic(samples(), NULL, "text", TRUE, TRUE),
+                    plot_dynamic(p, NULL, "text", TRUE, TRUE),
                     if_text
                 ), warn = FALSE)
 
             if (length(unique(na.omit(response))) < 2 ||
                 (length(unique(response)) > 5 &&
                 !is.character2(na.omit(response))) &&
-                !is.null(crossval)) {
-
+                !is.null(crossval))
                 p <- p %>% layout(showlegend = FALSE)
+
             }
 
             p

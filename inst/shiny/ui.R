@@ -46,6 +46,7 @@ analyse_methods  <<- list(one_block, two_blocks, multiple_blocks, multiple_block
 reac_var  <<- reactiveVal()
 id_block_y <<- id_block <<- id_block_resp <<- analysis <<- connection <<- perm <<- boot <<-
 boot <<- analysis_type <<- crossval <<- selected.var <<- crossval <<- NULL
+tickvals <<- ticktext <<- c(0)
 clickSep <<- FALSE
 if_text <<- TRUE
 compx <<- 1
