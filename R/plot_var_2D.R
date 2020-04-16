@@ -128,7 +128,5 @@ plot_var_2D <- function(
     {
         p <- p + theme(legend.position = "none")
     }
-      
-
     return(p)
 }

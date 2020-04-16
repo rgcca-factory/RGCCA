@@ -335,21 +335,25 @@ rgccad=function (A, C = 1 - diag(length(A)), tau = rep(1, length(A)),  ncomp = r
 
   for (j in 1:J)
   {
-       # AVE_X[[j]] = apply(cor(A[[j]], Y[[j]],use="pairwise.complete.obs")^2, 	2, mean,na.rm=TRUE)
+        AVE_X[[j]] = apply(cor(A[[j]], Y[[j]],use="pairwise.complete.obs")^2, 	2, mean,na.rm=TRUE)
        # print("AVEinner 1")
        # print( AVE_X[[j]])
        # print("AVEinner 2")
        # AVEinner2=diag(cov(Y[[j]]))/sum(diag(cov(A[[j]] )))
        # print(AVEinner2)  
-        if(dim(A[[j]])[1]>dim(A[[j]])[2])
-        {
-            AVE_X[[j]]=diag(cov2(Y[[j]]))/sum(diag(cov2(A[[j]] )),na.rm=TRUE)
-        }
-      else
-      {
-          AVE_X[[j]]=diag(cov2(Y[[j]]))/sum(diag(cov2(t(A[[j]]) )),na.rm=TRUE)
-          
-      }
+       # if(dim(A[[j]])[1]>dim(A[[j]])[2])
+       # {
+           print(diag(cov2(Y[[j]])))
+           print(sum(diag(cov2(A[[j]]))))
+            
+       #     print(sum(diag(cov2(A[[j]]))))
+       #     
+       #     AVE_X[[j]]=diag(cov2(Y[[j]]))/sum(diag(cov2(A[[j]] )),na.rm=TRUE)
+       # }
+      #else
+      #{
+      #    AVE_X[[j]]=diag(cov2(Y[[j]]))/sum(diag(cov2(t(A[[j]]) )),na.rm=TRUE)
+      #}
        
   }
   outer = matrix(unlist(AVE_X), nrow = max(ncomp))
