@@ -4,14 +4,14 @@
 \alias{check_quantitative}
 \title{Check if a dataframe contains no qualitative variables}
 \usage{
-check_quantitative(df, fo, h = FALSE)
+check_quantitative(df, fo, header = FALSE)
 }
 \arguments{
 \item{df}{A dataframe or a matrix}
 
 \item{fo}{A character giving the name of the tested file}
 
-\item{h}{A bolean giving either the presence (TRUE) or absence (FALSE) of
+\item{header}{A bolean giving either the presence (TRUE) or absence (FALSE) of
 a header}
 }
 \description{

@@ -2,10 +2,10 @@
 #'
 #' @param df A dataframe or a matrix
 #' @param fo A character giving the name of the tested file
-#' @param h A bolean giving either the presence (TRUE) or absence (FALSE) of
+#' @param header A bolean giving either the presence (TRUE) or absence (FALSE) of
 #'  a header
 
-check_quantitative <- function(df, fo, h = FALSE) {
+check_quantitative <- function(df, fo, header = FALSE) {
     qualitative <- is.character2(df)
 
     if (qualitative) {
@@ -14,7 +14,7 @@ check_quantitative <- function(df, fo, h = FALSE) {
             "contains qualitative data. Please, transform them in a disjunctive table."
         )
 
-        if (!h)
+        if (!header)
             msg <- paste0(msg, "Possible mistake: header parameter is disabled, check if the file doesn't have one.")
 
         stop(paste(msg, "\n"), exit_code = 100)

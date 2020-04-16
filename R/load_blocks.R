@@ -69,7 +69,7 @@ load_blocks <- function(
 
         df <- load_file(file, fi, separator, block_filenames[i], rownames, header, decimal = decimal)
 
-        check_quantitative(df, fo, header)
+        check_quantitative(df[, -rownames], fo, header)
         blocks[[fo]] <- df
     }
 
