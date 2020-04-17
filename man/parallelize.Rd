@@ -2,12 +2,7 @@
 % Please edit documentation in R/parallelize.R
 \name{parallelize}
 \alias{parallelize}
-<<<<<<< HEAD
 \title{Set a list of sockets for parralel package}
-=======
-\title{parallelize
-Set a list of ocket for parralel package in Windows}
->>>>>>> develop
 \usage{
 parallelize(varlist = c(), nperm, f, n_cores = NULL,
   envir = environment(), applyFunc = "parSapply")
@@ -19,7 +14,6 @@ parallelize(varlist = c(), nperm, f, n_cores = NULL,
 
 \item{f}{a function to parralelize}
 
-<<<<<<< HEAD
 \item{n_cores}{An integer for the number of cores used in parallelization}
 
 \item{envir}{environment}
@@ -28,15 +22,4 @@ parallelize(varlist = c(), nperm, f, n_cores = NULL,
 }
 \description{
 Set a list of sockets for parralel package
-=======
-\item{n_cores}{: number of cores to be used}
-
-\item{envir}{: environment}
-
-\item{applyFunc}{: function to be applied}
-}
-\description{
-parallelize
-Set a list of ocket for parralel package in Windows
->>>>>>> develop
 }
