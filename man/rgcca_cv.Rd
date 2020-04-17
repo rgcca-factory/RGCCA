@@ -50,12 +50,11 @@ It allows to test a grid of parameters (sparsity, ncomp or tau) with cross-valid
 This cross-validation is based on RMSE for quantitative response.
 }
 \examples{
-{
 data("Russett")
 blocks <- list(
     agriculture = Russett[, seq(3)],
     industry = Russett[, 4:5],
     politic = Russett[, 6:11])
     res=rgcca_cv(blocks, type="rgcca",par="tau",par_value=c(0,0.2,0.3),n_cv=1,n_cores=1)
-    }
+    
 }
