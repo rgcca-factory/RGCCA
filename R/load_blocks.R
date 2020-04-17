@@ -5,8 +5,7 @@
 #' @param separator A character giving the column separator
 #' @param decimal A character giving the decimal separator
 #' @param header A bolean giving the presence or the absence of the header
-#' @param rownames An integer corresponding to the column number of the row
-#' names (NULL otherwise)
+#' @param rownames An integer corresponding to the column number of the rownames (NULL otherwise)
 #' @return A list matrix corresponding to the blocks
 #' @examples
 #' \dontrun{
@@ -33,7 +32,7 @@ load_blocks <- function(
         # # if xls, check file exists
         check_file(file)
         # # load the blocks
-        block_filenames = getSheetNames(file)
+        block_filenames = openxlsx::getSheetNames(file)
     }
 
     # Parse optional names of blocks
@@ -70,10 +69,10 @@ load_blocks <- function(
 
         df <- load_file(file, fi, separator, block_filenames[i], rownames, header, decimal = decimal)
 
-        check_quantitative(df, fo, header)
+        check_quantitative(df[, -rownames], fo, header, warn_separator = TRUE)
         blocks[[fo]] <- df
     }
 
-    blocks <- check_blocks(blocks, init = TRUE)
+    blocks <- check_blocks(blocks, init = TRUE, allow_unnames = FALSE)
 
 }

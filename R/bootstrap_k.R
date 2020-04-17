@@ -11,8 +11,8 @@ bootstrap_k <- function(
     ...) {
 
     blocks_all <- rgcca_res$call$blocks
-    rgcca_res <- set_rgcca(rgcca_res, boot = TRUE, ...)
-    w <- rgcca_res$a
+    rgcca_res_boot <- set_rgcca(rgcca_res, boot = TRUE, ...)
+    w <- rgcca_res_boot$a
 
     # Add removed variables
     missing_var <- lapply(

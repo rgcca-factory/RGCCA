@@ -5,7 +5,6 @@
 #' @inheritParams plot3D
 #' @inheritParams plot_permut_2D
 #' @param sign A boolean to color by groups of alpha = 0.05, 0.01 or 0.001
-
 # @export
 plot_permut_3D <- function(
     perm,
@@ -27,6 +26,7 @@ plot_permut_3D <- function(
         check_blockx(i, get(i), perm$penalties[1,])
 
     load_libraries("plotly")
+    `%>%` <- plotly::`%>%`
 
     switch(
         type,
@@ -47,7 +47,7 @@ plot_permut_3D <- function(
             + as.double(zstat$z > qnorm(1 - 0.01 / 2))
             + as.double(zstat$z > qnorm(1 - 0.001 / 2))
 
-    plotly::plot_ly(
+    p <- plotly::plot_ly(
         zstat,
         x = ~ zstat[, 1],
         y = ~ zstat[, 2],
@@ -66,8 +66,8 @@ plot_permut_3D <- function(
             cmin = 0,
             cmax = max(zstat$z)
         )
-    ) %>% 
-    add_trace(type = "scatter3d", mode = "markers") %>% 
+    )
+    plotly::add_trace(p, type = "scatter3d", mode = "markers") %>% 
     layout3D(
         title = paste0(
             "Permutation scores \n(best value : ",

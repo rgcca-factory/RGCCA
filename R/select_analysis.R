@@ -84,7 +84,7 @@ select_analysis <- function(
     }
 
     setSuperbloc <- function(verbose = TRUE) {
-        blocks <<- c(blocks, Superblock = list(Reduce(cbind, blocks)))
+        blocks <<- c(blocks, superblock = list(Reduce(cbind, blocks)))
         superblock <<- TRUE
         connection <<- NULL
         ncomp <<- warnSuper(ncomp)

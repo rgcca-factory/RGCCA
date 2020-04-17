@@ -71,7 +71,7 @@ plot_ind <- function(
         resp = resp,
         compx = compx,
         compy = compy,
-        i_block = i_block,
+        i_block_x = i_block,
         i_block_y = i_block_y,
         predicted = predicted
     )
@@ -106,7 +106,7 @@ plot_ind <- function(
         )
 
     # remove legend if missing
-    if (length(unique(df$resp)) == 1||legend==FALSE)
+    if (length(unique(df$resp)) == 1 || !legend)
         p <- p + theme(legend.position = "none")
 
     return(p)

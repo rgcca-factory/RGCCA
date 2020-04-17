@@ -5,8 +5,8 @@
 \title{Get the components of the analysis}
 \usage{
 get_comp(rgcca_res, resp = rep(1, NROW(rgcca_res$Y[[1]])), compx = 1,
-  compy = 2, compz = NULL, i_block = length(rgcca_res$Y),
-  i_block_y = i_block, i_block_z = i_block, predicted = NULL)
+  compy = 2, compz = NULL, i_block_x = length(rgcca_res$Y),
+  i_block_y = i_block_x, i_block_z = i_block_x, predicted = NULL)
 }
 \arguments{
 \item{rgcca_res}{A list giving the results of a R/SGCCA}
@@ -23,13 +23,13 @@ for the y-axis}
 \item{compz}{An integer giving the index of the analysis component used
 for the z-axis}
 
-\item{i_block}{An integer giving the index of a list of blocks}
+\item{i_block_x}{An integer giving the index of a list of blocks}
 
 \item{i_block_y}{An integer giving the index of a list of blocks (another
 one, different from the one used in i_block)}
 
 \item{i_block_z}{An integer giving the index of a list of blocks (another
-one, different from the one used in i_block)}
+one, different from the one used in i_block_x)}
 
 \item{predicted}{A list containing as  2nd element a matrix of predicted components}
 }

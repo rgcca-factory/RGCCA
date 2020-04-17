@@ -72,7 +72,7 @@ rgcca_crossvalidation <- function(
                 )
             )
 
-            if (rgcca_res$call$type %in% c("spls", "spca", "sgcca"))
+            if (tolower(rgcca_res$call$type) %in% c("spls", "spca", "sgcca"))
                 func$sparsity <- rgcca_res$call$c1
             else
                 func$tau <- rgcca_res$call$tau

@@ -15,6 +15,7 @@
 #' b=bootstrap(rgcca_out, n_boot = 2, n_cores = 1)
 #' plot(b,n_cores=1)
 #' plot(b,type="2D",n_cores=1)
+#' rgcca_out = rgcca(blocks, superblock = FALSE)
 #' bootstrap(rgcca_out, n_boot = 2, n_cores = 1, blocks = lapply(blocks, scale),
 #'  superblock = FALSE)
 #' @export
@@ -35,7 +36,7 @@ bootstrap <- function(
     # if (any(unlist(lapply(rgcca$call$blocks, NCOL) > 1000)))
     #     verbose <- TRUE
 
-    cat("Bootstrap in progress...")
+    message("Bootstrap in progress...", appendLF = F)
 
     blocks <- NULL
 
@@ -66,7 +67,7 @@ bootstrap <- function(
         envir = environment(),
         applyFunc = "parLapply")
 
-    cat("OK.\n", append = TRUE)
+    message("OK.")
 
     return(structure(list(bootstrap = W, rgcca = rgcca_res), class = "bootstrap"))
 }

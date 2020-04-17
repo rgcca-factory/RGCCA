@@ -68,12 +68,14 @@ server <- function(input, output, session) {
 
     output$compx_custom <- renderUI({
         refresh <- refreshAnalysis()
-        isolate(uiComp("x", 1, input$navbar != "Fingerprint"))
+        refresh <- input$names_block_x
+        isolate(uiComp("x", 1, id_block, input$navbar != "Fingerprint"))
     })
 
     output$compy_custom <- renderUI({
         refresh <- refreshAnalysis()
-        uiComp("y", 2)
+        refresh <- input$names_block_y
+        uiComp("y", min(getNcomp()), id_block_y)
     })
 
     output$analysis_type_custom <- renderUI({
@@ -90,6 +92,37 @@ server <- function(input, output, session) {
             )
         )
     })
+    
+    output$b_x_custom <- renderUI(b_index("x", "bootstrap_ratio"))
+    output$b_y_custom <- renderUI({
+            b_index("y", 
+                if(tolower(input$analysis_type) == "sgcca")
+                    "occurrences"
+                else
+                    "sign")
+        })
+
+    b_index <- function(x, y) {
+        
+        l_choices <- list(
+            `RGCCA weights` = "estimate",
+            `Bootstrap-ratio` = "bootstrap_ratio",
+            `Mean bootstrap weights` = "mean"
+        )
+        
+        if (tolower(input$analysis_type) == "sgcca")
+            l_choices[["Non-zero occurences"]] <- "occurrences"
+        else
+            l_choices[["Significant 95% interval"]] <- "sign"
+
+        selectInput(
+            inputId = paste0("b_", x),
+            paste("Bootstrap indexes for", x, "axis"),
+            choices = l_choices,
+            selected = y
+        )
+            
+    }
 
     ################################################ UI function ################################################
 
@@ -170,7 +203,7 @@ server <- function(input, output, session) {
         }
     }
 
-    uiComp <- function(x, y, bool = TRUE) {
+    uiComp <- function(x, y, id_block, bool = TRUE) {
         label <- "Component"
 
         if (bool)
@@ -180,7 +213,7 @@ server <- function(input, output, session) {
             inputId = paste0("comp", x),
             label = label,
             min = 1,
-            max = input$nb_comp,
+            max = getNcomp()[id_block],
             value = y,
             step = 1
         )
@@ -534,24 +567,26 @@ server <- function(input, output, session) {
         if (!input$show_crossval)
             crossval <- NULL
 
-        if (!is.null(input$response))
+        if(!is.null(crossval)){
+            response_name <- "Response"
+            response <- rep(1, NROW(rgcca_out$Y[[1]]))
+        }else if (!is.null(input$response))
             response_name <- getExtension(input$response$name)
         else
-            response_name = ""
+            response_name <- ""
 
-        isolate({
+        if(!is.null(compx))
             plot_ind(
                 rgcca = rgcca_out,
                 resp = response,
-                compx = compx,
-                compy = compy,
+                compx = input$compx,
+                compy = input$compy,
                 i_block = id_block,
                 text = if_text,
                 i_block_y = id_block_y,
                 response_name = response_name,
                 predicted = crossval
             )
-        })
     }
 
     corcircle <- function()
@@ -564,13 +599,13 @@ server <- function(input, output, session) {
             n_mark = nb_mark
         )
 
-    fingerprint <- function()
+    fingerprint <- function(type)
         plot_var_1D(
             rgcca = rgcca_out,
             comp = compx,
             n_mark = nb_mark,
             i_block = id_block,
-            type = "cor"
+            type = type
         )
 
     ave <- function()
@@ -581,7 +616,7 @@ server <- function(input, output, session) {
 
     plotBoot <- function(){
         refresh <- c(input$names_block_x, id_block, input$blocks_names_custom_x)
-        plot_bootstrap_2D(df_b = selected.var)
+        plot_bootstrap_2D(df_b = selected.var, x = input$b_x, y = input$b_y)
     }
 
     viewPerm <- function(){
@@ -650,9 +685,10 @@ server <- function(input, output, session) {
         }
 
         if ( (!is.null(input$superblock) && input$superblock) && 
-                ( analysis_type %in% c("PCA", "RGCCA", "SGCCA")) ||
-                analysis_type %in% multiple_blocks_super )
-            blocks <- c(blocks, Superblock = list(Reduce(cbind, blocks)))
+                ( toupper(analysis_type) %in% c("PCA", "RGCCA", "SGCCA")) ||
+                analysis_type %in% multiple_blocks_super ){
+            blocks <- c(blocks, superblock = list(Reduce(cbind, blocks)))
+        }
 
         assign("tau", tau, .GlobalEnv)
         assign("analysis_type", analysis_type, .GlobalEnv)
@@ -669,27 +705,33 @@ server <- function(input, output, session) {
         })
 
         if (!is.null(input$supervised) && input$supervised)
-            response <- input$supervised
+            response <- input$names_block_response
         else
             response <- NULL
 
         assign("rgcca_out",
-               showWarn(
-                   rgcca(
-                        blocks_without_superb,
-                        connection = connection,
-                        response = input$names_block_response,
-                        superblock = (!is.null(input$supervised) &&
-                            !is.null(input$superblock) && input$superblock),
-                        tau = tau,
-                        ncomp = getNcomp(),
-                        scheme = input$scheme,
-                        scale = FALSE,
-                        init = input$init,
-                        bias = TRUE,
-                        type = analysis_type
-                    )
-                ),
+               showWarn({
+                   func <- quote(
+                       rgcca(
+                           blocks_without_superb,
+                            connection = connection,
+                            response = response,
+                            superblock = (!is.null(input$supervised) &&
+                                !is.null(input$superblock) && input$superblock),
+                            ncomp = getNcomp(),
+                            scheme = input$scheme,
+                            scale = FALSE,
+                            init = input$init,
+                            bias = TRUE,
+                            type = analysis_type
+                        )
+                   )
+                   if (tolower(analysis_type) %in% c("sgcca", "spca", "spls"))
+                       func[["sparsity"]] <- tau
+                   else
+                       func[["tau"]] <- tau
+                   eval(as.call(func))
+                }),
                 .GlobalEnv)
 
     }
@@ -700,7 +742,9 @@ server <- function(input, output, session) {
             rgcca_crossvalidation(rgcca_out, validation = input$crossval),
             .GlobalEnv
         )
+        showWarn(message(paste("CV score:", round(crossval$score, 4))), show = FALSE)
         show("show_crossval")
+        updateTabsetPanel(session, "navbar", selected = "Samples")
     }
 
     getPerm <-  function(){
@@ -736,7 +780,7 @@ server <- function(input, output, session) {
                 func[["sparsity"]] <- tau
             else
                 func[["tau"]] <- tau
-            eval(as.call(func))
+            showWarn(eval(as.call(func)))
         },
         .GlobalEnv)
  
@@ -746,7 +790,7 @@ server <- function(input, output, session) {
     getBoot <-  function(){
         assign(
             "boot",
-            bootstrap(rgcca_out, n_boot = input$nboot),
+            showWarn(bootstrap(rgcca_out, n_boot = input$nboot)),
             .GlobalEnv
         )
         assign("selected.var", NULL, .GlobalEnv)
@@ -865,7 +909,16 @@ server <- function(input, output, session) {
                id = "blocks_names_custom_y")
         toggle(
             condition = (input$navbar == "Samples"),
-               id = "response")
+               id = "response_custom")
+        toggle(
+            condition = (input$navbar == "Fingerprint"),
+            id = "indexes")
+        toggle(
+            condition = (input$navbar == "Bootstrap"),
+            id = "b_x_custom")
+        toggle(
+            condition = (input$navbar == "Bootstrap"),
+            id = "b_y_custom")
         toggle(
             condition = (
                 !is.null(analysis) && !input$navbar %in% c("Connection", "AVE", "Permutation")
@@ -1170,12 +1223,20 @@ server <- function(input, output, session) {
     observeEvent(input$save_all, {
         if (blocksExists()) {
             save_plot("samples_plot.pdf", samples())
-            save_plot("corcircle.pdf", corcircle())
-            save_plot("fingerprint.pdf", fingerprint())
+            try(save_plot("corcircle.pdf", corcircle()), silent = TRUE)
+            try(save_plot("fingerprint.pdf", fingerprint(input$indexes)), silent = TRUE)
             save_plot("AVE.pdf", ave())
-            save_var(rgcca_out, 1, 2)
-            save_ind(rgcca_out, 1, 2)
+            if(any(NCOL(blocks) == 1))
+                compy <- 1
+            else 
+                compy <- 2
+            save_var(rgcca_out, 1, compy)
+            save_ind(rgcca_out, 1, compy)
             save(analysis, file = "rgcca_result.RData")
+            if(!is.null(boot))
+                save_plot("bootstrap.pdf", plotBoot())
+            # if(!is.null(perm))
+            #     save("perm.pdf", plot_permut_2D(perm))
             msgSave()
         }
     })
@@ -1220,14 +1281,23 @@ server <- function(input, output, session) {
                 msgSave()
             })
 
+            p <- samples()
+            
+            if(is(p, "plotly")) {
             p <- showWarn(
                 modify_hovertext(
-                    plot_dynamic(samples(), NULL, "text", TRUE, TRUE),
+                    plot_dynamic(p, NULL, "text", TRUE, TRUE),
                     if_text
                 ), warn = FALSE)
 
-            if (length(unique(na.omit(response))) < 2 || (length(unique(response)) > 5 && !is.character2(na.omit(response))))
+            if (length(unique(na.omit(response))) < 2 ||
+                (length(unique(response)) > 5 &&
+                !is.character2(na.omit(response))) &&
+                !is.null(crossval))
                 p <- p %>% layout(showlegend = FALSE)
+
+            }
+
             p
 
         }
@@ -1261,23 +1331,11 @@ server <- function(input, output, session) {
         if (!is.null(analysis)) {
 
             observeEvent(input$fingerprint_save, {
-                save_plot("fingerprint.pdf", fingerprint())
+                save_plot("fingerprint.pdf", fingerprint(input$indexes))
                 msgSave()
             })
 
-            p <- modify_mousehover(plot_dynamic(fingerprint(), ax2, "text"))
-            n <- sapply(p$x$data, function(x) !is.null(x$orientation))
-
-            for (i in 1:length(n[n]))
-                p$x$data[[i]]$text <-
-                round(as.double(
-                    sub(
-                        "order: .*<br />df\\[, 1\\]: (.*)<.*",
-                        "\\1\\",
-                        p$x$data[[i]]$text
-                    )
-                ), 3)
-            p
+            modify_hovertext(ggplotly(fingerprint(input$indexes)), hovertext = F, type = "var1D")
         }
 
     })
@@ -1310,34 +1368,37 @@ server <- function(input, output, session) {
         refresh <- c(input$names_block_x, id_block, input$blocks_names_custom_x)
 
         if (!is.null(analysis) & !is.null(boot)) {
-            
-            if (is.null(selected.var))
-                assign(
-                    "selected.var", 
-                    get_bootstrap(boot, compx, id_block),
-                    .GlobalEnv
-                )
+
+            assign(
+                "selected.var", 
+                get_bootstrap(boot, compx, id_block),
+                .GlobalEnv
+            )
 
             observeEvent(input$bootstrap_save, {
                 save_plot("bootstrap.pdf", plotBoot())
                 msgSave()
             })
-            ggplotly(plotBoot())
+            p <- modify_hovertext(ggplotly(plotBoot()), type= "boot") 
+            p$x$layout$margin$t <- 100 
+            p 
         }
 
     })
 
-    output$permutationPlot <- renderDataTable({
+    output$permutationPlot <- renderPlotly({
 
         getDynamicVariables()
 
         if (!is.null(analysis) & !is.null(perm)) {
 
-            # observeEvent(input$permutation_save, {
-            #     save("perm.tsv", viewPerm())
-            #     msgSave()
-            # })
-           viewPerm()
+            observeEvent(input$permutation_save, {
+                save("perm.pdf", plot_permut_2D(perm))
+                msgSave()
+            })
+            p <- modify_hovertext(ggplotly(plot_permut_2D(perm)), hovertext = F, type = "perm") 
+            p$x$layout$margin$t <- 100 
+            p
         }
 
     })

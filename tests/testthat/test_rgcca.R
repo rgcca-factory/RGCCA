@@ -29,11 +29,12 @@ resPCAprcomp=prcomp(A[[1]],scale=TRUE)
 
 varExplPrComp=as.vector((resPCAprcomp$sdev)^2/sum((resPCAprcomp$sdev)^2))[1]
 varExplRgcca=resPCA$AVE$AVE_X[[1]][1]
+pca_varexpl=round(varExplPrComp-varExplRgcca,digits=4)==0
 pca_ind=abs(cor(resPCAprcomp$x[,1],resPCA$Y[[1]][,1]))==1
 pca_ind2=abs(cor(resPCAprcomp$x[,2],resPCA$Y[[1]][,2]))==1
 pca_var=abs(cor(resPCAprcomp$rotation[,1],resPCA$astar[[1]][,1]))==1
 pca_var2=abs(cor(resPCAprcomp$rotation[,2],resPCA$astar[[1]][,2]))==1
-
+test_that("pca_varexpl",{expect_true(pca_varexpl)})
 pca_eig=abs(varExplPrComp-varExplRgcca)<1e-8
 test_that("pca_ind",{expect_true(pca_ind)})
 test_that("pca_var",{expect_true(pca_var)})
@@ -54,6 +55,7 @@ unscaledPCA= rgcca (
     type = "pca",
     verbose = FALSE,
     scheme = "factorial",
+    sameBlockWeight = FALSE,
     scale = FALSE,
     init = "svd",
     bias = TRUE, 
@@ -61,6 +63,7 @@ unscaledPCA= rgcca (
 unscaledPCAprcomp=prcomp(A[[1]],scale=FALSE)
 unscaledvarExplPrComp=as.vector((unscaledPCAprcomp$sdev)^2/sum((unscaledPCAprcomp$sdev)^2))[1]
 unscaledvarExplRgcca=unscaledPCA$AVE$AVE_X[[1]][1]
+upca_varexpl=round(unscaledvarExplPrComp-unscaledvarExplRgcca,digits=4)==0
 upca_ind=abs(cor(unscaledPCAprcomp$x[,1],unscaledPCA$Y[[1]][,1]))==1
 upca_var=abs(cor(unscaledPCAprcomp$rotation[,1],unscaledPCA$astar[[1]][,1]))==1
 upca_ind2=abs(cor(unscaledPCAprcomp$x[,2],unscaledPCA$Y[[1]][,2]))==1
@@ -70,7 +73,7 @@ test_that("upca_ind",{expect_true(upca_ind)})
 test_that("upca_var",{expect_true(upca_var)})
 test_that("upca_ind2",{expect_true(upca_ind)})
 test_that("upca_var2",{expect_true(upca_var)})
-
+#test_that("upca_varexpl",{expect_true(upca_varexpl)})
 
 #testthat("upca_eig",{expect_true(abs(unscaledvarExplPrComp-unscaledvarExplRgcca<1e-8))}) #TODO
 
@@ -205,4 +208,5 @@ pcasb_ind=abs(cor(pcaSB$x[,1],scaledPCASB$Y[[1]][,1]))==1
      bias = TRUE, 
      tol = 1e-08,quiet=FALSE)
  
+ resRGCCA
  

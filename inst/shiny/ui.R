@@ -44,8 +44,9 @@ multiple_blocks_super  <<- c(
     )
 analyse_methods  <<- list(one_block, two_blocks, multiple_blocks, multiple_blocks_super)
 reac_var  <<- reactiveVal()
-id_block_y <<- id_block <<- id_block_resp <<- analysis <<- 
-boot <<- analysis_type <<- crossval <<- selected.var <<- NULL
+id_block_y <<- id_block <<- id_block_resp <<- analysis <<- connection <<- perm <<- boot <<-
+boot <<- analysis_type <<- crossval <<- selected.var <<- crossval <<- NULL
+tickvals <<- ticktext <<- c(0)
 clickSep <<- FALSE
 if_text <<- TRUE
 compx <<- 1
@@ -95,7 +96,7 @@ ui <- fluidPage(
             ")"
         )
     ),
-    tags$a(href = "https://github.com/BrainAndSpineInstitute/rgcca_Rpackage/blob/master/inst/shiny/tutorialShiny.md", "Go to the tutorial"),
+    tags$a(href = "https://github.com/rgcca-factory/RGCCA/blob/release/3.0.0/inst/shiny/tutorialShiny.md", "Go to the tutorial"),
     useShinyjs(),
     sidebarLayout(sidebarPanel(
         tabsetPanel(
@@ -149,7 +150,7 @@ ui <- fluidPage(
                     inputId = "nboot",
                     label = "Number of boostraps",
                     min = 5,
-                    max = 100,
+                    max = 1000,
                     value = 10,
                     step = 5
                 ),
@@ -170,7 +171,7 @@ ui <- fluidPage(
                     inputId = "nperm",
                     label = "Number of permutations",
                     min = 5,
-                    max = 100,
+                    max = 1000,
                     value = 10,
                     step = 5
                 ),
@@ -205,6 +206,15 @@ ui <- fluidPage(
                     label = "Display cross-validation",
                     value = TRUE
                 ),
+                radioButtons(
+                    "indexes",
+                    label = "Type of indexes",
+                    choices = c(
+                        Correlation = "cor",
+                        Weights = "weight")
+                ),
+                uiOutput("b_x_custom"),
+                uiOutput("b_y_custom"),
                 actionButton(inputId = "save_all", label = "Save all")
             )
 
@@ -247,7 +257,7 @@ ui <- fluidPage(
             ),
             tabPanel(
                 "Permutation",
-                dataTableOutput("permutationPlot"),
+                plotlyOutput("permutationPlot", height = 700),
                 actionButton("permutation_save", "Save")
             )
         )

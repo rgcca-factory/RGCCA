@@ -15,6 +15,7 @@
 #'    plot(res)
 plot.cval=function(x,bars="sd",alpha=0.05,...)
 {
+    config <- NULL -> y
     match.arg(bars,c("sd","stderr","ci","cim","points"))
     mean_b=apply(x,1,mean)
     main=paste0("Mean CV criterion according to the configuration set\n (",ncol(x)," runs)")
@@ -68,8 +69,8 @@ plot.cval=function(x,bars="sd",alpha=0.05,...)
     p<- p+geom_point(x=optimal_x,y=optimal_y,colour="green")
    # p<-p+geom_text(label=rownames(x)[which.min(mean_b)],x=optimal_x,y=optimal_y+decalage,colour="green")
     p<-p+ggtitle(main)
-    p<- p+ scale_x_continuous(breaks=1:nrow(x),  labels=rownames(x))
-    p<-p + theme(axis.text.x = element_text(angle=45))
+#    p<- p+ scale_x_continuous(breaks=1:nrow(x),  labels=rownames(x))
+#    p<-p + theme(axis.text.x = element_text(angle=45))
     plot(p)
     return(df)
 }

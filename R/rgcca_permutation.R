@@ -60,8 +60,9 @@ rgcca_permutation <- function(
     call=list(type=type, perm.par = perm.par, perm.value = perm.value, nperm=nperm, quiet=quiet)
     check_integer("nperm", nperm)
     check_integer("n_cores", n_cores, 0)
-
     match.arg(perm.par, c("tau", "sparsity", "ncomp"))
+    
+    min_spars <- NULL
 
     if (length(blocks) < 1)
         stop("Permutation required a number of blocks larger than 1.")
@@ -130,7 +131,7 @@ rgcca_permutation <- function(
         ...
     )
 
-    cat("Permutation in progress...")
+    message("Permutation in progress...", appendLF = FALSE)
 
     varlist <- c(ls(getNamespace("RGCCA")))
     # get the parameter dot-dot-dot
@@ -166,7 +167,7 @@ rgcca_permutation <- function(
     n_cores = n_cores,
     envir = environment())
 
-    cat("OK.\n", append = TRUE)
+    message("OK.")
 
     par <- par[[2]]
 
