@@ -4,16 +4,9 @@
 \alias{rgcca_permutation}
 \title{Tuning RGCCA parameters}
 \usage{
-rgcca_permutation(
-  blocks,
-  type = "rgcca",
-  perm.par = "tau",
-  perm.value = NULL,
-  nperm = 20,
-  n_cores = parallel::detectCores() - 1,
-  quiet = TRUE,
-  ...
-)
+rgcca_permutation(blocks, type = "rgcca", perm.par = "tau",
+  perm.value = NULL, nperm = 20, n_cores = parallel::detectCores() -
+  1, quiet = TRUE, ...)
 }
 \arguments{
 \item{blocks}{A list of matrix}

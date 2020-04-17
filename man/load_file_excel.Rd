@@ -4,7 +4,8 @@
 \alias{load_file_excel}
 \title{Creates a data frame from an Excel file loading}
 \usage{
-load_file_excel(file, sheet = 1, rownames = 1, header = TRUE, num = TRUE)
+load_file_excel(file, sheet = 1, rownames = 1, header = TRUE,
+  num = TRUE)
 }
 \arguments{
 \item{file}{A character giving the file name}

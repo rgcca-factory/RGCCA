@@ -4,14 +4,8 @@
 \alias{load_file_text}
 \title{Creates a matrix from loading a file}
 \usage{
-load_file_text(
-  file,
-  separator = "\\t",
-  rownames = 1,
-  header = TRUE,
-  one_column = FALSE,
-  decimal = "."
-)
+load_file_text(file, separator = "\\t", rownames = 1, header = TRUE,
+  one_column = FALSE, decimal = ".")
 }
 \arguments{
 \item{file}{A character giving the path of a file}

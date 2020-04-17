@@ -4,14 +4,8 @@
 \alias{load_response}
 \title{Create a matrix corresponding to the response}
 \usage{
-load_response(
-  blocks = NULL,
-  file = NULL,
-  separator = "\\t",
-  header = TRUE,
-  rownames = 1,
-  decimal = "."
-)
+load_response(blocks = NULL, file = NULL, separator = "\\t",
+  header = TRUE, rownames = 1, decimal = ".")
 }
 \arguments{
 \item{blocks}{A list of matrix}

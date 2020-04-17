@@ -4,18 +4,9 @@
 \alias{rgcca_predict}
 \title{Predict RGCCA}
 \usage{
-rgcca_predict(
-  rgcca_res,
-  newA,
-  type = "regression",
-  fit = "lm",
-  bloc_to_pred = NULL,
-  y.train = NULL,
-  y.test = NULL,
-  bigA = NULL,
-  new_scaled = TRUE,
-  scale_size_bloc = TRUE
-)
+rgcca_predict(rgcca_res, newA, type = "regression", fit = "lm",
+  bloc_to_pred = NULL, y.train = NULL, y.test = NULL, bigA = NULL,
+  new_scaled = TRUE, scale_size_bloc = TRUE)
 }
 \arguments{
 \item{rgcca_res}{A list giving the results of a R/SGCCA}

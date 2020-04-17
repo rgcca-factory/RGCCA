@@ -4,23 +4,11 @@
 \alias{rgcca_cv}
 \title{rgcca_cv}
 \usage{
-rgcca_cv(
-  blocks,
-  type = "rgcca",
-  response = length(blocks),
-  par = "ncomp",
-  par_value = NULL,
-  validation = "kfold",
-  type_cv = "regression",
-  fit = "lm",
-  k = 5,
-  n_cv = 20,
-  one_value_per_cv = FALSE,
-  n_cores = parallel::detectCores() - 1,
-  quiet = TRUE,
-  superblock = FALSE,
-  ...
-)
+rgcca_cv(blocks, type = "rgcca", response = length(blocks),
+  par = "ncomp", par_value = NULL, validation = "kfold",
+  type_cv = "regression", fit = "lm", k = 5, n_cv = 20,
+  one_value_per_cv = FALSE, n_cores = parallel::detectCores() - 1,
+  quiet = TRUE, superblock = FALSE, ...)
 }
 \arguments{
 \item{blocks}{A list that contains the \eqn{J} blocks of variables \eqn{\mathbf{X_1}, \mathbf{X_2}, ..., \mathbf{X_J}}.}

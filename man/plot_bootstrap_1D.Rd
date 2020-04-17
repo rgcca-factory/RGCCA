@@ -4,21 +4,10 @@
 \alias{plot_bootstrap_1D}
 \title{Plot a bootstrap in 1D}
 \usage{
-plot_bootstrap_1D(
-  b = NULL,
-  df_b = NULL,
-  x = "estimate",
-  y = "occurrences",
-  n_mark = 50,
-  title = NULL,
-  colors = NULL,
-  comp = 1,
-  bars = "sd",
-  i_block = length(b$bootstrap[[1]]),
-  collapse = FALSE,
-  n_cores = parallel::detectCores() - 1,
-  ...
-)
+plot_bootstrap_1D(b = NULL, df_b = NULL, x = "estimate",
+  y = "occurrences", n_mark = 50, title = NULL, colors = NULL,
+  comp = 1, bars = "sd", i_block = length(b$bootstrap[[1]]),
+  collapse = FALSE, n_cores = parallel::detectCores() - 1, ...)
 }
 \arguments{
 \item{b}{A matrix of boostrap}

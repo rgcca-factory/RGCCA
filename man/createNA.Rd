@@ -4,14 +4,8 @@
 \alias{createNA}
 \title{Create a list with missing data (for simulation)}
 \usage{
-createNA(
-  blocks,
-  typeNA = "block",
-  pNA = 0.1,
-  nAllRespondants = 4,
-  output = "list",
-  seed = NULL
-)
+createNA(blocks, typeNA = "block", pNA = 0.1, nAllRespondants = 4,
+  output = "list", seed = NULL)
 }
 \arguments{
 \item{blocks}{A list of complete matrices with the same number of lines}
