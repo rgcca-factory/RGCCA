@@ -16,7 +16,7 @@ get_ctr2 <- function(
     collapse = FALSE,
     remove_var = TRUE,
     resp=NULL) {
-
+ 
     stopifnot(is(rgcca_res, "rgcca"))
     check_blockx("i_block", i_block, rgcca_res$call$blocks)
     check_ncol(rgcca_res$a, i_block)
@@ -46,7 +46,7 @@ get_ctr2 <- function(
 
     df <- get_ctr(rgcca_res, compx, compy, compz, i_block, type, collapse)
 
-    if (rgcca_res$call$type %in% c("spls", "spca", "sgcca") ){
+    if (tolower(rgcca_res$call$type) %in% c("spls", "spca", "sgcca") ){
 
         if (collapse)
             J <- seq(length(rgcca_res$a))
@@ -85,7 +85,7 @@ get_ctr2 <- function(
 
     # group by blocks
     if(is.null(resp))
-    {
+    { 
         if (rgcca_res$call$superblock & (collapse | (i_block == length(rgcca_res$a)))) 
         {
             if (collapse)

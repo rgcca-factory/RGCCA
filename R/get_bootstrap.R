@@ -78,7 +78,7 @@ get_bootstrap <- function(
 
         n <- seq(NCOL(b_select))
 
-        if (b$rgcca$call$type %in% c("spls", "spca", "sgcca")) {
+        if (tolower(b$rgcca$call$type) %in% c("spls", "spca", "sgcca")) {
 
             occ[[i]] <- unlist(
                 parallelize(
@@ -155,7 +155,7 @@ get_bootstrap <- function(
         BH = p.adjust(p.vals, method = "BH")
     )
 
-    if (b$rgcca$call$type %in% c("spls", "spca", "sgcca")) {
+    if (tolower(b$rgcca$call$type) %in% c("spls", "spca", "sgcca")) {
         index <- 8
         df$occurrences <- occ
     }else{
@@ -180,11 +180,11 @@ get_bootstrap <- function(
     b <- data.frame(order_df(df, index, allCol = TRUE), order = NROW(df):1)
     attributes(b)$indexes <-
         list(
-            estimate = "Mean bootstrap weights",
+            estimate = "RGCCA weights",
             bootstrap_ratio = "Bootstrap-ratio",
             sign = "Significant 95% \nbootstrap interval",
             occurrences = "Non-zero occurences",
-            rgcca = "RGCCA weights"
+            mean = "Mean bootstrap weights"
         )
     attributes(b)$type <- class(rgcca)
     attributes(b)$n_boot <- n_boot

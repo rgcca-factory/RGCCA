@@ -1,10 +1,10 @@
-#' Set a list of ocket for parralel package in Windows
-#' @param f : a function to parralelize
-#' @param nperm : a vector object for a lapply type function
-#' @param varlist : character vector of names of objects to export  
-#' @param envir : environment                                                  
-#' @param varlist : character vector of names of objects to export                                                  
-#' @param applyFunc: function to be applied
+#' Set a list of sockets for parralel package
+#' @param f a function to parralelize
+#' @param nperm a vector object for a lapply type function
+#' @param varlist character vector of names of objects to export  
+#' @param envir environment                                               
+#' @param applyFunc function to be applied
+#' @inheritParams bootstrap
 parallelize <- function(
     varlist = c(),
     nperm,

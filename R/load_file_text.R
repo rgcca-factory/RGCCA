@@ -31,8 +31,11 @@ load_file_text <- function(
     tryCatch(
         f <- func(),
     error = function(e) {
-        if (e$message == "duplicate 'row.names' are not allowed")
+        msg <- "duplicate 'row.names' are not allowed"
+        if (e$message == msg){
+            message(paste0(msg, "; rownames have been removed from dataset."))
             f <<- func(NULL)
+        }
     })
 
     if (!one_column && NCOL(f) == 0)

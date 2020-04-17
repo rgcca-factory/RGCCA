@@ -43,7 +43,8 @@ plot_var_1D <- function(
     ...) {
 
     check_colors(colors)
-
+    if(rgcca_res$call$superblock==FALSE){collapse=FALSE}
+    
     df <- get_ctr2(
         rgcca_res = rgcca_res,
         compx = comp,
@@ -56,10 +57,9 @@ plot_var_1D <- function(
     )
     resp <- df$resp
 
-    if (i_block < length(rgcca_res$a) || rgcca_res$call$type == "pca")
+    if (i_block < length(rgcca_res$a) || tolower(rgcca_res$call$type) == "pca")
         rgcca_res$call$superblock <- FALSE
-
-    J <- names(rgcca_res$a)
+     J <- names(rgcca_res$a)
 
     if (is.null(title))
         title <- ifelse(type == "cor",

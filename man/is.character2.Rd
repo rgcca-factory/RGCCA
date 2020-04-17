@@ -4,12 +4,14 @@
 \alias{is.character2}
 \title{Test for character vector}
 \usage{
-is.character2(x, type = "any")
+is.character2(x, type = "any", warn_separator = FALSE)
 }
 \arguments{
 \item{x}{A matrix or a vector}
 
 \item{type}{Character for a function ("any" by default) among "any" or "all"}
+
+\item{warn_separator}{A bolean to print warning for bad separator use}
 }
 \value{
 A bolean for the presence (FALSE) or the absence (TRUE) of at least

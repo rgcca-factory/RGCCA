@@ -20,7 +20,7 @@
 # A[[1]][2, 3] <- runif(1)
 # init : boolean (FALSE by default) for the first block checking
 
-check_blocks <- function(blocks, init = FALSE, n = 2, add_NAlines=FALSE) {
+check_blocks <- function(blocks, init = FALSE, n = 2, add_NAlines=FALSE, allow_unnames =  TRUE) {
     
     msg <- "In blocks arg:"
     
@@ -30,9 +30,7 @@ check_blocks <- function(blocks, init = FALSE, n = 2, add_NAlines=FALSE) {
     if (!init && length(blocks) < n)
         stop(paste(msg, "should at least have two elements."))
     
-    if (is.null(names(blocks)))
-    {
-        #        stop(paste(msg, "elements of the list should have names."))
+    if (is.null(names(blocks))){
         names(blocks)=paste0("block",1:length(blocks))
         warning("Warnings in check_blocks(A):\n blocks of the list had no names. The blocks were named block1,... blockJ in the order of the entered list")
     }
@@ -41,17 +39,13 @@ check_blocks <- function(blocks, init = FALSE, n = 2, add_NAlines=FALSE) {
  
     nameBlocks=names(blocks)
     
-    if (all(sapply(blocks, function(x) is.null(row.names(x)))))
-    {
-        if(sd(sapply(blocks,function(x)dim(x)[1]))==0)
-        {
+    if (all(sapply(blocks, function(x) is.null(row.names(x))))){
+        if(sd(sapply(blocks,function(x)dim(x)[1]))==0 && allow_unnames){
             blocks=lapply(blocks,function(x){rownames(x)=paste0("S",1:(dim(x)[1]));return(x)})
             print("Warnings in check_blocks(A):\n Elements of the list have no rownames. They were named as S1,...Sn") #TODO : verify
         }
         else
-        {
-            stop(paste(msg, "elements of the list should have rownames."))  
-        }
+            stop(paste(msg, "elements of the list should have rownames."))
        
     }
     
@@ -74,7 +68,7 @@ check_blocks <- function(blocks, init = FALSE, n = 2, add_NAlines=FALSE) {
     inters_rows <- Reduce(intersect, lapply(blocks, row.names))
  
     if (length(inters_rows) == 0)
-        warnings(paste(msg, "elements of the list should have at least a common rowname."))
+        stop(paste(msg, "elements of the list should have at least a common rowname."))
     
     equal_rows <- Reduce(identical, lapply(blocks, row.names))
     
@@ -91,10 +85,7 @@ check_blocks <- function(blocks, init = FALSE, n = 2, add_NAlines=FALSE) {
     }
     
     if (any(sapply(blocks, is.character2)))
-    {
-       print(sapply(blocks, is.character2))
         stop(paste(msg, "an element contains non-numeric data."))
-    }
       
     
     for (i in seq(length(blocks)))

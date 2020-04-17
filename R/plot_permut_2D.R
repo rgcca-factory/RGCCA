@@ -24,11 +24,8 @@ plot_permut_2D <- function(
     cex_lab = 19 * cex,
     bars="points"
     ) {
-  
 
-   
-    
-        match.arg(type, c("crit", "zstat"))
+    match.arg(type, c("crit", "zstat"))
     for (i in c("cex", "cex_main", "cex_sub", "cex_point", "cex_lab"))
         check_integer(i, get(i))
     
@@ -45,7 +42,8 @@ plot_permut_2D <- function(
     n <- seq(nrow(perm$penalties))
 
     df <- as.data.frame(cbind(seq(NROW(perm$penalties)), y))
-    rownames(df) <- sapply(n, function(x) paste(round(perm$penalties[x, ],2), collapse = "-"))
+    #rownames(df) <- sapply(n, function(x) paste(round(perm$penalties[x, ],2), collapse = "-"))
+    rownames(df)<- n
     colnames(df) <- c("iter", type)
 
     axis <- function(margin){
@@ -70,7 +68,7 @@ plot_permut_2D <- function(
         geom_line(size = 1) +
         labs(
             title = title, 
-            x = "Index of combination",
+            x = "Combinations",
             y = y_title
         ) +
         theme_perso(cex, cex_main, cex_sub) +
@@ -120,7 +118,7 @@ plot_permut_2D <- function(
      
         if(bars=="points")
         {
-            print("point")
+        
             p<- p+geom_point(data=dft,aes(x=dft[,1],y=dft[,2]),colour="green",size=0.8)
         }
         if(bars=="sd")
@@ -130,7 +128,7 @@ plot_permut_2D <- function(
          
     }
     p<- p+ scale_x_continuous(breaks=1:nrow(df),  labels=rownames(df))
-    p<-p + theme(axis.text.x = element_text(angle=45))
+  #  p<-p + theme(axis.text.x = element_text(angle=45))
        plot(p)
 
     return(p)

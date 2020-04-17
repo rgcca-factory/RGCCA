@@ -1323,7 +1323,7 @@ wd <- "../R/"
 for (f in list.files(wd))
         source(paste0(wd, f))
 
-load_libraries(c("RGCCA", "ggplot2", "optparse", "scales", "igraph", "ggrepel", "plotly"))
+load_libraries(c("ggplot2", "scales", "igraph", "ggrepel"))
 
 # Load the data
 data("Russett")

@@ -28,7 +28,14 @@ scaling <- function(
 
         if (sameBlockWeight) {
             blocks <- lapply(blocks, function(x) {
-                covarMat <- cov2(x, bias = bias)
+                if(dim(x)[1]>dim(x)[2])
+                {
+                    covarMat <- cov2(x, bias = bias) 
+                }
+                else
+                {
+                    covarMat <- cov2(t(x), bias = bias) 
+                }
                 varianceBloc <- sum(diag(covarMat))
                 res <- x / sqrt(varianceBloc)
                 attr(res, "scaled:scale") <- rep(sqrt(sum(diag(covarMat))), dim(x)[2])

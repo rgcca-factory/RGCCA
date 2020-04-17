@@ -109,7 +109,7 @@ imputeEM <-
             if (superblock) {
                 # creation of the superblock
                 ASB <- c(Alist, list(concatenedBlocks))
-                names(ASB) <- c(names(Alist), "Superblock")
+                names(ASB) <- c(names(Alist), "superblock")
                 fit.rgcca <-
                     rgccad(
                         A = ASB,

@@ -22,8 +22,10 @@
 #' rgcca_out = rgcca(blocks)
 #' boot = bootstrap(rgcca_out, 2, n_cores = 1)
 #' selected.var = get_bootstrap(boot, n_cores = 1)
-#' plot_bootstrap_2D(boot, n_cores = 1)
-#' plot_bootstrap_2D(df_b = selected.var)
+#' print("i")
+#'# plot_bootstrap_2D(boot, n_cores = 1)
+#'print("j")
+#' #plot_bootstrap_2D(df_b = selected.var,n_cores=1)
 #' @export
 #' @seealso \code{\link[RGCCA]{bootstrap}}, \code{\link[RGCCA]{get_bootstrap}}
 

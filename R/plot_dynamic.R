@@ -19,17 +19,18 @@ plot_dynamic <- function(f,
             ticks = "",
             titlefont = list(size = 23))
 
+    `%>%` <- plotly::`%>%`
     # Convert a ggplot into a plotly object add a layout with predefined
     # formats for
     # x- and y- axis set the style to show onMouseOver text
-    p <- plotly_build(
-            ggplotly(f, dynamicTicks = dynamicTicks) %>%
-            layout(
+    p <- plotly::plotly_build(
+        plotly::ggplotly(f, dynamicTicks = dynamicTicks) %>%
+            plotly::layout(
                 xaxis = ax,
                 yaxis = ax,
                 annotations = list(showarrow = FALSE, text = "")
             ) %>% 
-            style(hoverinfo = text)
+            plotly::style(hoverinfo = text)
         )
     
     if (legend) {

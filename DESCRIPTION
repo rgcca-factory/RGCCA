@@ -23,9 +23,10 @@ Suggests:
     optparse,
     igraph,
     visNetwork,
+    magrittr,
     nnet,
     openxlsx
-RoxygenNote: 6.1.1
+RoxygenNote: 7.1.0
 Imports: 
     parallel,
     vegan,

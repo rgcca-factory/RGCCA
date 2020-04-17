@@ -7,7 +7,6 @@
 #' @param type A character for the type of plot : either "ind" for individual plot or "var" for corcircle
 #' @param colors reoresenting a vector of colors
 #' 
-
 plot3D <- function(
     df,
     rgcca_res,
@@ -46,6 +45,7 @@ plot3D <- function(
         check_integer(i, get(i))
 
     load_libraries("plotly")
+    `%>%` <- plotly::`%>%`
 
     if (is.na(colors[2]) && length(unique(df$resp)) == 1) {
         df$resp <- as.factor(rep("a", length(df$resp)))
@@ -89,7 +89,7 @@ plot3D <- function(
         l <- levels(df$resp)
 
         func <- quote(
-            add_trace(
+            plotly::add_trace(
                 p,
                 name = l[x],
                 x = ~ subdf(x)[, 1],
@@ -120,7 +120,6 @@ plot3D <- function(
         eval(func)
     }
 
-
     if (!is.character2(df$resp)) {
 
         if (text)
@@ -128,7 +127,7 @@ plot3D <- function(
         else
             visible <- TRUE
 
-        p <- plot_ly(
+        p <- plotly::plot_ly(
             name = "samples",
             x = ~ df[, 1],
             y = ~ df[, 2],
@@ -144,7 +143,7 @@ plot3D <- function(
 
         if (text) {
             p <- p %>%
-                add_trace(
+              plotly::add_trace(
                     name = "samples",
                     x = ~ df[, 1],
                     y = ~ df[, 2],
@@ -162,14 +161,14 @@ plot3D <- function(
         }
 
     }else{
-        p <- plot_ly()
+        p <- plotly::plot_ly()
         
         for (i in seq(length(levels(df$resp))))
             p <- p %>% add_trace_manual(i)
     }
 
     p <- p %>%
-        layout(
+      plotly::layout(
             autosize = TRUE,
             margin = list(
                 l = 50,
@@ -194,7 +193,7 @@ plot3D <- function(
 
     plot_circle3D <- function(p, x, y, z){
         df <- cbind(plot_circle(), 0)
-        add_trace(
+        plotly::add_trace(
             p = p,
             x = df[, x],
             y = df[, y],

@@ -121,7 +121,7 @@
 #' @importFrom graphics abline axis close.screen grid legend lines par points rect screen segments split.screen text
 #' @importFrom stats binomial glm lm predict sd var weighted.mean
 #' @importFrom utils read.table write.table
-
+#' @importFrom stats as.formula qt
 #' @importFrom grDevices graphics.off
 
 rgccad=function (A, C = 1 - diag(length(A)), tau = rep(1, length(A)),  ncomp = rep(1, length(A)), scheme = "centroid", scale = TRUE,   init = "svd", bias = TRUE, tol = 1e-08, verbose = TRUE,sameBlockWeight=TRUE,na.rm=TRUE,estimateNA="no",prescaling=FALSE,quiet=FALSE)
@@ -244,15 +244,15 @@ rgccad=function (A, C = 1 - diag(length(A)), tau = rep(1, length(A)),  ncomp = r
   
         for (j in 1:J)
         {
-           # AVE_X[[j]] = mean(cor(A[[j]], Y[[j]],use="pairwise.complete.obs")^2,na.rm=TRUE)
-             if( dim(A[[j]])[1]>dim(A[[j]])[2])
-             {
-                 AVE_X[[j]]=diag(cov(Y[[j]]))/sum(diag(cov(A[[j]] )))
-             }
-             else
-             {
-                 AVE_X[[j]]=diag(cov(Y[[j]]))/sum(diag(t(cov(A[[j]]) )))
-             }
+            AVE_X[[j]] = mean(cor(A[[j]], Y[[j]],use="pairwise.complete.obs")^2,na.rm=TRUE)
+           #  if( dim(A[[j]])[1]>dim(A[[j]])[2])
+           #  {
+           #      AVE_X[[j]]=diag(cov(Y[[j]]))/sum(diag(cov(A[[j]] )))
+           #  }
+           #  else
+           #  {
+           #      AVE_X[[j]]=diag(cov(Y[[j]]))/sum(diag(t(cov(A[[j]]) )))
+           #  }
              
         } 
         AVE_outer <- sum(pjs * unlist(AVE_X))/sum(pjs) 
@@ -335,21 +335,25 @@ rgccad=function (A, C = 1 - diag(length(A)), tau = rep(1, length(A)),  ncomp = r
 
   for (j in 1:J)
   {
-       # AVE_X[[j]] = apply(cor(A[[j]], Y[[j]],use="pairwise.complete.obs")^2, 	2, mean,na.rm=TRUE)
+        AVE_X[[j]] = apply(cor(A[[j]], Y[[j]],use="pairwise.complete.obs")^2, 	2, mean,na.rm=TRUE)
        # print("AVEinner 1")
        # print( AVE_X[[j]])
        # print("AVEinner 2")
        # AVEinner2=diag(cov(Y[[j]]))/sum(diag(cov(A[[j]] )))
        # print(AVEinner2)  
-        if(dim(A[[j]])[1]>dim(A[[j]])[2])
-        {
-            AVE_X[[j]]=diag(cov2(Y[[j]]))/sum(diag(cov2(A[[j]] )),na.rm=TRUE)
-        }
-      else
-      {
-          AVE_X[[j]]=diag(cov2(Y[[j]]))/sum(diag(cov2(t(A[[j]]) )),na.rm=TRUE)
-          
-      }
+       # if(dim(A[[j]])[1]>dim(A[[j]])[2])
+       # {
+      #    print(diag(cov2(Y[[j]])))
+       #    print(sum(diag(cov2(A[[j]]))))
+            
+       #     print(sum(diag(cov2(A[[j]]))))
+       #     
+       #     AVE_X[[j]]=diag(cov2(Y[[j]]))/sum(diag(cov2(A[[j]] )),na.rm=TRUE)
+       # }
+      #else
+      #{
+      #    AVE_X[[j]]=diag(cov2(Y[[j]]))/sum(diag(cov2(t(A[[j]]) )),na.rm=TRUE)
+      #}
        
   }
   outer = matrix(unlist(AVE_X), nrow = max(ncomp))

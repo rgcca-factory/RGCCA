@@ -27,6 +27,7 @@
 plot.list_rgcca=function(x,type="ind",resp=rep(1, NROW(x$Y[[1]])),i_block=1,i_block_y=i_block,compx=1,compy=2,remove_var=FALSE,text_var=TRUE,text_ind=TRUE,response_name= "Response",no_overlap=FALSE,title=NULL,title_var="Variable correlations with",title_ind= "Sample space",n_mark=100,collapse=FALSE,cex=1,cex_sub=10,cex_main=14,cex_lab=12,colors=NULL,errorbar="ci",...)
 {
 
+    lower_band <- NULL -> upper_band
     rgcca_res=x$rgcca0
     list_rgcca=x$rgccaList
     nRgcca=length(list_rgcca)
@@ -45,7 +46,7 @@ plot.list_rgcca=function(x,type="ind",resp=rep(1, NROW(x$Y[[1]])),i_block=1,i_bl
               rgcca_res = list_rgcca[[i]],
               compx = compx,
               compy = compy,
-              i_block = i_block,
+              i_block_x = i_block,
               i_block_y = i_block_y,
               predicted = NULL
           )

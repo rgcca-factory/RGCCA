@@ -56,7 +56,7 @@ plot2D <- function(
     cex_lab = 19 * cex) {
     
     title <- paste0(title, collapse = " ")
-    name_group <- paste0(title, collapse = " ")
+    name_group <- paste0(name_group, collapse = " ")
     check_colors(colors)
     for (i in c("cex", "cex_main", "cex_sub", "cex_point", "cex_lab"))
         check_integer(i, get(i))
