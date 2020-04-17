@@ -19,12 +19,12 @@
 #' Moreover, we stress that the numbers of components per block could differ from one block to another. 
 #' @param A  A list that contains the \eqn{J} blocks of variables \eqn{X_1, X_2, ..., X_J}.
 #' @param C  A design matrix that describes the relationships between blocks (default: complete design).
-#' @param c1 Either a \eqn{1*J} vector or a \eqn{max(ncomp) * J} matrix encoding the L1 constraints applied to the outer weight vectors. 
-#' Elements of c1 vary between \eqn{1/sqrt(p_j)} and 1 (larger values of c1 correspond to less penalization). 
-#' If c1 is a vector, L1-penalties are the same for all the weights corresponding to the same block but different components: 
+#' @param sparsity Either a \eqn{1*J} vector or a \eqn{max(ncomp) * J} matrix encoding the L1 constraints applied to the outer weight vectors.
+#' Elements of sparsity vary between \eqn{1/sqrt(p_j)} and 1 (larger values of sparsity correspond to less penalization).
+#' If sparsity is a vector, L1-penalties are the same for all the weights corresponding to the same block but different components:
 #' \deqn{for all h, |a_{j,h}|_{L_1} \le c_1[j] \sqrt{p_j},}
 #' with \eqn{p_j} the number of variables of \eqn{X_j}.
-#' If c1 is a matrix, each row \eqn{h} defines the constraints applied to the weights corresponding to components \eqn{h}:
+#' If sparsity is a matrix, each row \eqn{h} defines the constraints applied to the weights corresponding to components \eqn{h}:
 #' \deqn{for all h, |a_{j,h}|_{L_1} \le c_1[h,j] \sqrt{p_j}.}
 #' @param ncomp  A \eqn{1*J} vector that contains the numbers of components for each block (default: rep(1, length(A)), which means one component per block).
 #' @param scheme Either  "horst", "factorial" or "centroid" (Default: "centroid").
@@ -33,14 +33,13 @@
 #' @param bias A logical value for biaised or unbiaised estimator of the var/cov.
 #' @param verbose  Will report progress while computing if verbose = TRUE (default: TRUE).
 #' @param tol Stopping value for convergence.
+#' @param sameBlockWeight If TRUE, all blocks are weighted by their own variance: all the blocks have the same weight
+#' @param prescaling if TRUE, the saling step is not run in sgcca
+#' @param quiet if TRUE, does not print warnings
 #' @return \item{Y}{A list of \eqn{J} elements. Each element of Y is a matrix that contains the SGCCA components for each block.}
 #' @return \item{a}{A list of \eqn{J} elements. Each element of a is a matrix that contains the outer weight vectors for each block.}
 #' @return \item{astar}{A list of \eqn{J} elements. Each element of astar is a matrix defined as Y[[j]][, h] = A[[j]]\%*\%astar[[j]][, h]}
-#' @return \item{C}{A design matrix that describes the relationships between blocks (user specified).}
-#' @return \item{scheme}{The scheme chosen by the user (user specified).}
-#' @return \item{c1}{A vector or matrix that contains the value of c1 applied to each block \eqn{\mathbf{X}_j}, \eqn{ j=1, \ldots, J} and each dimension (user specified).}
-#' @return \item{ncomp}{A \eqn{1 \times J} vector that contains the number of components for each block (user specified).}
-#' @return \item{crit}{A vector that contains the values of the objective function at each iterations.}
+#' @return \item{call}{Call of the function}#' @return \item{crit}{A vector that contains the values of the objective function at each iterations.}
 #' @return \item{AVE}{Indicators of model quality based on the Average Variance Explained (AVE): AVE(for one block), AVE(outer model), AVE(inner model).}
 #' @references Tenenhaus, A., Philippe, C., Guillemot, V., Le Cao, K. A., Grill, J., and Frouin, V. , "Variable selection for generalized canonical correlation analysis.," Biostatistics, vol. 15, no. 3, pp. 569-583, 2014. 
 #' @title Variable Selection For Generalized Canonical Correlation Analysis (SGCCA)
@@ -64,9 +63,9 @@
 #' # rgcca algorithm using the dual formulation for X1 and X2 
 #' # and the dual formulation for X3
 #' A[[3]] = A[[3]][, -3]
-#' result.rgcca = rgcca(A, C, tau, ncomp = c(2, 2, 1), scheme = "factorial", verbose = TRUE)
+#' result.rgcca = rgccad(A, C, tau, ncomp = c(2, 2, 1), scheme = "factorial", verbose = TRUE)
 #' # sgcca algorithm
-#' result.sgcca = sgcca(A, C, c1 = c(.071,.2, 1), ncomp = c(2, 2, 1), 
+#' result.sgcca = sgcca(A, C, sparsity = c(.071,.2, 1), ncomp = c(2, 2, 1),
 #'                      scheme = "centroid", verbose = TRUE)
 #' 
 #' ############################
@@ -93,9 +92,9 @@
 #' text(result.sgcca$Y[[1]][, 1], result.sgcca$Y[[1]][, 2], Loc, col = as.numeric(Loc), cex = .6)
 #' 
 #' # sgcca algorithm with multiple components and different L1 penalties for each components 
-#' # (-> c1 is a matrix)
+#' # (-> sparsity is a matrix)
 #' init = "random"
-#' result.sgcca = sgcca(A, C, c1 = matrix(c(.071,.2, 1, 0.06, 0.15, 1), nrow = 2, byrow = TRUE), 
+#' result.sgcca = sgcca(A, C, sparsity = matrix(c(.071,.2, 1, 0.06, 0.15, 1), nrow = 2, byrow = TRUE),
 #'                      ncomp = c(2, 2, 1), scheme = "factorial", scale = TRUE, bias = TRUE, 
 #'                      init = init, verbose = TRUE)
 #' # number of non zero elements per dimension
@@ -104,33 +103,33 @@
 #' apply(result.sgcca$a[[2]], 2, function(x) sum(x!=0)) 
 #'      #(-> 85 non zero elements for a21 and 52 non zero elements for a22)
 #' init = "svd"
-#' result.sgcca = sgcca(A, C, c1 = matrix(c(.071,.2, 1, 0.06, 0.15, 1), nrow = 2, byrow = TRUE), 
+#' result.sgcca = sgcca(A, C, sparsity = matrix(c(.071,.2, 1, 0.06, 0.15, 1), nrow = 2, byrow = TRUE),
 #'                      ncomp = c(2, 2, 1), scheme = "factorial", scale = TRUE, bias = TRUE, 
 #'                      init = init, verbose = TRUE)}
 #'@export sgcca
 
 
-sgcca <- function (A, C = 1-diag(length(A)), c1 = rep(1, length(A)), ncomp = rep(1, length(A)), scheme = "centroid", scale = TRUE, init = "svd", bias = TRUE, tol = .Machine$double.eps, verbose = FALSE){
-
+sgcca <- function (A, C = 1-diag(length(A)), sparsity = rep(1, length(A)), ncomp = rep(1, length(A)), scheme = "centroid", scale = TRUE, init = "svd", bias = TRUE, tol = .Machine$double.eps, verbose = FALSE,sameBlockWeight=TRUE,prescaling=FALSE,quiet=FALSE){
+  call=list(A=A, C = C, sparsity = sparsity, ncomp = ncomp, scheme = scheme, scale = scale, init = init, bias = bias, tol = tol, verbose = verbose,sameBlockWeight=sameBlockWeight)
   ndefl <- ncomp-1
   N <- max(ndefl)
   J <- length(A)
   pjs <- sapply(A,NCOL)
   nb_ind <- NROW(A[[1]])
   AVE_X = list()
-  AVE_outer <- rep(NA,max(ncomp))  
+  AVE_outer <- rep(NA,max(ncomp))
   
   if ( any(ncomp < 1) ) stop("One must compute at least one component per block!")
   if (any(ncomp-pjs > 0)) stop("For each block, choose a number of components smaller than the number of variables!")
   
-  if (is.vector(c1)){
-    if (any(c1 < 1/sqrt(pjs) | c1 > 1 )) 
-      stop("L1 constraints (c1) must vary between 1/sqrt(p_j) and 1.")
+  if (is.vector(sparsity)){
+    if (any(sparsity < 1/sqrt(pjs) | sparsity > 1 ))
+      stop("L1 constraints (sparsity) must vary between 1/sqrt(p_j) and 1.")
   }
   
-  if (is.matrix(c1)){
-    if (any(apply(c1, 1, function(x) any(x < 1/sqrt(pjs))))) 
-      stop("L1 constraints (c1) must vary between 1/sqrt(p_j) and 1.")
+  if (is.matrix(sparsity)){
+    if (any(apply(sparsity, 1, function(x) any(x < 1/sqrt(pjs)))))
+      stop("L1 constraints (sparsity) must vary between 1/sqrt(p_j) and 1.")
   }
   
 ###################################################
@@ -147,11 +146,25 @@ sgcca <- function (A, C = 1-diag(length(A)), c1 = rep(1, length(A)), ncomp = rep
   
   
     #-------------------------------------------------------
-    
-    if (scale == TRUE) {
-      A = lapply(A, function(x) scale2(x, bias = bias))
-      A = lapply(A, function(x) x/sqrt(NCOL(x)))
+    if(!prescaling)
+    {
+        if (scale == TRUE) {
+            A = lapply(A, function(x) scale3(x, bias = bias)) #TO CHECK
+            if(sameBlockWeight) 
+            {
+                A = lapply(A, function(x) x/sqrt(NCOL(x)))
+            }
+        }
+        if(scale == FALSE)
+        {
+            A = lapply(A, function(x) scale3(x,scale=FALSE, bias = bias)) 
+            if(sameBlockWeight) 
+            {
+                #TODO  A = lapply(A, function(x) x/sqrt(NCOL(x)))
+            }
+        }
     }
+  
     ####################################
     # sgcca with 1 component per block #
     ####################################
@@ -165,12 +178,12 @@ sgcca <- function (A, C = 1-diag(length(A)), c1 = rep(1, length(A)), ncomp = rep
     AVE_X = list()
     AVE_outer <- rep(NA,max(ncomp))
     if (N == 0) {
-        result <- sgccak(A, C, c1, scheme, init = init, bias = bias, tol = tol, verbose = verbose)
+        result <- sgccak(A, C, sparsity, scheme, init = init, bias = bias, tol = tol, verbose = verbose,quiet=quiet)
         # No deflation (No residual matrices generated).
         Y <- NULL
         for (b in 1:J) Y[[b]] <- result$Y[,b, drop = FALSE]
         #Average Variance Explained (AVE) per block
-        for (j in 1:J) AVE_X[[j]] =  mean(cor(A[[j]], Y[[j]])^2)
+        for (j in 1:J) AVE_X[[j]] =  mean(cor(A[[j]], Y[[j]],use="pairwise.complete.obs")^2,na.rm=TRUE)
         
         #AVE outer 
         AVE_outer <- sum(pjs * unlist(AVE_X))/sum(pjs)
@@ -188,9 +201,9 @@ sgcca <- function (A, C = 1-diag(length(A)), c1 = rep(1, length(A)), ncomp = rep
         }
         
         out <- list(Y=Y, a=a, astar=a, 
-                    C=C, scheme=scheme, c1=c1, ncomp=ncomp, 
+                    C=C, scheme=scheme, sparsity=sparsity, ncomp=ncomp,
                     crit = result$crit[length(result$crit)],
-                    AVE = AVE)
+                    AVE = AVE,A=A,call=call)
         class(out) <- "sgcca"
         return(out)
     }
@@ -213,21 +226,27 @@ sgcca <- function (A, C = 1-diag(length(A)), c1 = rep(1, length(A)), ncomp = rep
     #      Determination of SGCCA components     #
     ##############################################
     
-    
-    
+
     for (n in 1:N) {
       if (verbose) cat(paste0("Computation of the SGCCA block components #", n, " is under progress... \n"))
-      if(is.vector(c1)){
-        sgcca.result <- sgccak(R, C, c1 = c1 , scheme=scheme, init = init, bias = bias, tol = tol, verbose=verbose) 
+      if(is.vector(sparsity)){
+        sgcca.result <- sgccak(R, C, sparsity = sparsity , scheme=scheme, init = init, bias = bias, tol = tol, verbose=verbose,quiet=quiet)
       } else{
-        sgcca.result <- sgccak(R, C, c1 = c1[n, ] , scheme=scheme, init = init, bias = bias, tol = tol, verbose=verbose)
+        sgcca.result <- sgccak(R, C, sparsity = sparsity[n, ] , scheme=scheme, init = init, bias = bias, tol = tol, verbose=verbose,quiet=quiet)
       }
       AVE_inner[n] <- sgcca.result$AVE_inner
       crit[[n]] <- sgcca.result$crit
       
       
       for (b in 1:J) Y[[b]][,n] <- sgcca.result$Y[ ,b]
-      for (q in which(n <ndefl)) if(sum(sgcca.result$a[[q]]!=0) <= 1) warning(sprintf("Deflation failed because only one variable was selected for block #",q,"! \n"))
+      for (q in which(n <ndefl)) if(sum(sgcca.result$a[[q]]!=0) <= 1)
+     { 
+        if(!quiet)
+        {
+            warning(sprintf("Deflation failed because only one variable was selected for block ",q,"! \n"))
+            
+        }
+     }
 	    defla.result <- defl.select(sgcca.result$Y, R, ndefl, n, nbloc = J)
       R <- defla.result$resdefl
       for (b in 1:J) {
@@ -243,10 +262,10 @@ sgcca <- function (A, C = 1-diag(length(A)), c1 = rep(1, length(A)), ncomp = rep
       }     
     }
     if (verbose) cat(paste0("Computation of the SGCCA block components #", N+1, " is under progress...\n"))
-    if(is.vector(c1)) {
-      sgcca.result <- sgccak(R, C, c1 = c1, scheme=scheme, init = init, bias = bias, tol = tol, verbose=verbose) 
+    if(is.vector(sparsity)) {
+      sgcca.result <- sgccak(R, C, sparsity = sparsity, scheme=scheme, init = init, bias = bias, tol = tol, verbose=verbose,quiet=quiet)
     } else{
-      sgcca.result <- sgccak(R, C, c1 = c1[N+1, ], scheme=scheme, init = init, bias = bias, tol = tol, verbose=verbose)
+      sgcca.result <- sgccak(R, C, sparsity = sparsity[N+1, ], scheme=scheme, init = init, bias = bias, tol = tol, verbose=verbose,quiet=quiet)
     }
     AVE_inner[max(ncomp)] <- sgcca.result$AVE_inner
     
@@ -264,11 +283,11 @@ sgcca <- function (A, C = 1-diag(length(A)), c1 = rep(1, length(A)), ncomp = rep
     shave.veclist <- function(vec_list, nb_elts) mapply(function(m, nbcomp) m[1:nbcomp], vec_list, nb_elts, SIMPLIFY=FALSE)    
     
     #Average Variance Explained (AVE) per block
-    for (j in 1:J) AVE_X[[j]] =  apply(cor(A[[j]], Y[[j]])^2, 2, mean)
-    
+    for (j in 1:J) AVE_X[[j]] =  apply(cor(A[[j]], Y[[j]],use="pairwise.complete.obs")^2, 2, function(x) {return(mean(x,is.na=TRUE))})
+
     #AVE outer 
     outer = matrix(unlist(AVE_X), nrow = max(ncomp))
-    for (j in 1:max(ncomp)) AVE_outer[j] <- sum(pjs * outer[j, ])/sum(pjs)
+    for (j in 1:max(ncomp)) AVE_outer[j] <- sum(pjs * outer[j, ],na.rm=T)/sum(pjs) # TO CHECK FOR NA.RM=TRUE
     
     Y = shave.matlist(Y, ncomp)
     AVE_X = shave.veclist(AVE_X, ncomp)
@@ -277,13 +296,13 @@ sgcca <- function (A, C = 1-diag(length(A)), c1 = rep(1, length(A)), ncomp = rep
                 AVE_outer = AVE_outer,
                 AVE_inner = AVE_inner)
     
-    out <- list(Y = shave.matlist(Y, ncomp), 
+  out <- list(Y = shave.matlist(Y, ncomp),
                 a = shave.matlist(a, ncomp), 
                 astar = shave.matlist(astar, ncomp),
-                C = C, c1 = c1, scheme = scheme,
-                ncomp = ncomp, crit = crit,
-                AVE = AVE
+                crit = crit,
+                AVE = AVE,A=A,call=call
                 )
+
     class(out) <- "sgcca"
     return(out)
     

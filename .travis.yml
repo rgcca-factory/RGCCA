@@ -1,0 +1,40 @@
+language: r
+
+r:
+  - 3.6
+  - 3.5
+  - 3.4
+#  - 3.3
+
+git:
+  depth: 1
+
+#branches:
+#  only:
+#    - master
+
+r_packages:
+  - RGCCA
+  - ggplot2
+  - optparse
+  - scales
+  - plotly
+  - visNetwork
+  - igraph
+  - ggrepel
+  - devtools
+  - vegan
+
+install:
+  - Rscript -e 'install.packages("devtools",repos = "http://cran.wustl.edu")'
+  - R -e 'devtools::install_deps(dep = T)'
+
+script:
+  - R -e 'devtools::document()'
+  - R CMD build .
+  - R CMD check *tar.gz
+
+after_script:
+  - Rscript inst/launcher.R -h
+  - Rscript inst/launcher.R -d inst/extdata/agriculture.tsv
+  - ls -larth

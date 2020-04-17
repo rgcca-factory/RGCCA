@@ -4,27 +4,30 @@
 #' @param A  A list that contains the \eqn{J} blocks of variables from which block components are constructed. 
 #' It could be eiher the original matrices (\eqn{X_1, X_2, ..., X_J}) or the residual matrices (\eqn{X_{h1}, X_{h2}, ..., X_{hJ}}).
 #' @param C  A design matrix that describes the relationships between blocks.
-#' @param c1 A \eqn{1 * J} vector that contains the value of c1 applied to each block. The L1 bound on a[[j]] is 
+#' @param sparsity A \eqn{1 * J} vector that contains the value of sparsity applied to each block. The L1 bound on a[[j]] is
 #' \deqn{ \|a_{j}\|_{\ell_1} \leq c_1[j] \sqrt{p_j}.}
-#' with \eqn{p_j} the number of variables of \eqn{X_j} and with c1[j] between 0 and 1 (larger L1 bound corresponds to less penalization).
+#' with \eqn{p_j} the number of variables of \eqn{X_j} and with sparsity[j] between 0 and 1 (larger L1 bound corresponds to less penalization).
 #' @param scheme  Either "horst", "factorial" or "centroid" (default: centroid).
 #' @param scale  If scale = TRUE, each block is standardized to zero means and unit variances (default: TRUE).
 #' @param init Mode of initialization of the SGCCA algorithm. Either by Singular Value Decompostion ("svd") or random ("random") (default: "svd").
 #' @param bias Logical value for biaised (\eqn{1/n}) or unbiaised (\eqn{1/(n-1)}) estimator of the var/cov.
 #' @param verbose  Reports progress while computing, if verbose = TRUE (default: TRUE).
 #' @param tol Stopping value for convergence.
+#' @param quiet If TRUE, does not print warnings
+
 #' @return \item{Y}{A \eqn{n * J} matrix of SGCCA block components.}
 #' @return \item{a}{A list of \eqn{J} elements. Each element contains the outer weight vector of each block.}
 #' @return \item{crit}{The values of the objective function at each iteration of the iterative procedure.}
 #' @return \item{converg}{Speed of convergence of the alogrithm to reach the tolerance.}
 #' @return \item{AVE}{Indicators of model quality based on the Average Variance Explained (AVE): AVE(for one block), AVE(outer model), AVE(inner model).}
-#' @return \item{C}{A design matrix that describes the relationships between blocks (user specified).}
-#' @return \item{scheme}{The scheme chosen by the user (user specified).}
+#' @return \item{call}{Call of the function}
 #' @title Internal function for computing the SGCCA parameters (SGCCA block components, outer weight vectors etc.)
-#' @export sgccak 
-sgccak <-  function(A, C, c1 = rep(1, length(A)), scheme = "centroid", scale = FALSE,
-                    tol = .Machine$double.eps, init="svd", bias = TRUE, verbose = TRUE){
+#' @importFrom Deriv Deriv
+sgccak <-  function(A, C, sparsity = rep(1, length(A)), scheme = "centroid", scale = FALSE,
+                    tol = .Machine$double.eps, init="svd", bias = TRUE, verbose = TRUE,quiet=FALSE){
 
+     call=list(A, C, sparsity = sparsity, scheme = scheme, scale = scale,
+               tol = tol, init=init, bias = bias, verbose = verbose)
   J <- length(A)
   pjs = sapply(A, NCOL)
   AVE_X <- rep(0, J)
@@ -33,16 +36,17 @@ sgccak <-  function(A, C, c1 = rep(1, length(A)), scheme = "centroid", scale = F
   #  Choose J arbitrary vectors
   if (init=="svd") {
     #SVD Initialisation of a_j or \alpha_j
-    a <- lapply(A, function(x) return(svd(x,nu=0,nv=1)$v)) #
-  } else if (init=="random") {
+    a<- lapply(A, function(x) return(initsvd(x,dual=FALSE))) 
+    a<- lapply(a,function(x) return(as.vector(x)))
+   } else if (init=="random") {
     a <- lapply(pjs,rnorm)
-  } else {
+    } else {
     stop("init should be either random or svd.")
-  }
+    }
 
-  if (any( c1 < 1/sqrt(pjs) | c1 > 1 )) stop("L1 constraints must vary between 1/sqrt(p_j) and 1.") 
+  if (any( sparsity < 1/sqrt(pjs) | sparsity > 1 )) stop("L1 constraints must vary between 1/sqrt(p_j) and 1.")
   
-  const <- c1*sqrt(pjs)
+  const <- sparsity*sqrt(pjs)
   #	Apply the constraints of the general otpimization problem
   #	and compute the outer components
   iter <- 1
@@ -118,12 +122,18 @@ sgccak <-  function(A, C, c1 = rep(1, length(A)), scheme = "centroid", scale = F
   if(iter<1000 & verbose) cat("The SGCCA algorithm converged to a stationary point after", iter-1, "iterations \n") 
   if (verbose) plot(crit, xlab = "iteration", ylab = "criteria")
   
-  for (q in 1:J) if(sum(a[[q]]!=0) <= 1) warning(sprintf("Deflation failed because only one variable was selected for block #",q))
+  for (q in 1:J) if(sum(a[[q]]!=0) <= 1) 
+      {
+        if(!quiet)
+        {
+            warning(sprintf("Deflation failed because only one variable was selected for block #",q))
+        }
+     }
   
   AVE_inner  <- sum(C*cor(Y)^2/2)/(sum(C)/2) # AVE inner model
   
   result <- list(Y = Y, a = a, crit = crit[which(crit != 0)], 
-                 AVE_inner = AVE_inner, C = C, c1, scheme = scheme)
+                 AVE_inner = AVE_inner,call=call)
   return(result)                                                                          
 }
 
