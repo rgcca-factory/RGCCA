@@ -55,7 +55,7 @@ plot_bootstrap_2D <- function(
     }
     if (!is.null(df_b))
         stopifnot(is(df_b, "df_bootstrap"))
-print(df_b)
+
     title <- paste0(title, collapse = " ")
     check_ncol(list(df_b), 1)
     for (i in c("cex", "cex_main", "cex_sub", "cex_point", "cex_lab"))
@@ -72,10 +72,7 @@ print(df_b)
 
     x <- set_occ(x)
     y <- set_occ(y)
-print("in")
-print(y)
-print(x)
-print(attributes(df_b)$indexes[[y]])
+
     axis <- function(margin){
         element_text(
         face = "italic",
@@ -116,7 +113,6 @@ print(attributes(df_b)$indexes[[y]])
     ) +
     scale_color_manual(values = color_group(seq(2), colors = colors))
 
-print(color_group(seq(2),colors=colors))
     limites <- function(p, x){
         if (x %in% c("sign", "occurrences")) {
             axis <- deparse(substitute(x))
@@ -132,10 +128,9 @@ print(color_group(seq(2),colors=colors))
         }
         return(p)
     }
-print(p)
+
     p <- suppressMessages(limites(p, x))
     p <- suppressMessages(limites(p, y))
-print("in4")
-print(p)
+
     return(p)
 }

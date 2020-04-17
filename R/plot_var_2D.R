@@ -75,7 +75,7 @@ plot_var_2D <- function(
         resp=resp
     )
     class(df) <- c(class(df), "d_var2D")
- plot(df)
+
     if (collapse && rgcca_res$call$superblock) {
         if (i_block == length(rgcca_res$a))
             i_block <- length(rgcca_res$a) - 1
@@ -123,7 +123,7 @@ plot_var_2D <- function(
     )
     
     # remove legend if not on superblock
-    print(!collapse)
+  
     if ((!rgcca_res$call$superblock || i_block != length(rgcca_res$a)) && !collapse)
     {
         p <- p + theme(legend.position = "none")

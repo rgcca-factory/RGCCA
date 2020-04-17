@@ -120,7 +120,7 @@ rgcca <- function(
     bias = TRUE,
     tol = 1e-08,
     response = NULL,
-    superblock = FALSE,
+    superblock = TRUE,
     method = "complete",
     verbose = FALSE,
     quiet = TRUE,

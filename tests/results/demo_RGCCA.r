@@ -41,6 +41,7 @@ plot(res_permut)
 res_cv=rgcca_cv(blocks=blocks,par="tau",par_value=perm.values,n_cv=10)
 print(res_cv)
 plot(res_cv)
+
 # variable selection (post process? significant variables)
 resBootstrap=bootstrap(resRGCCA,n_boot = 5)
 plot(resBootstrap) 
@@ -139,8 +140,8 @@ resRGCCA=rgcca(blocks,ncomp=c(2,2,1),superblock=FALSE)
 summary(resRGCCA)
 print(resRGCCA)
 names(resRGCCA)
-plot(resRGCCA)
-plot_ind(resRGCCA,compy=1)
+plot(resRGCCA,i_block=1)
+#plot_ind(resRGCCA,compy=1)
 plot_var_2D(resRGCCA,i_block=3) # mettre un message d'erreur plus approprié ! !
 plot_var_2D(resRGCCA,i_block=2)
 plot_var_1D(resRGCCA,i_block=2) #TODO
@@ -149,22 +150,13 @@ plot_ave(resRGCCA)
 
 # choice of c1
 #res_permut=rgcca_permutation(blocks=blocks,type="sgcca",p_c1=TRUE)
-res_permut=rgcca_permutation(blocks=blocks,ncomp=c(2,2,1),p_c1=TRUE) # runs
-library(plotly)
-ggplotly(plot_permut_2D(res_permut))
-head(order_df(cbind(res_permut$penalties, res_permut$zstat), ncol(res_permut$penalties) + 1))
-c1=order_df(cbind(res_permut$penalties, res_permut$zstat), ncol(res_permut$penalties) + 1)[1,1:length(blocks)]
-
+res_permut=rgcca_permutation(blocks=blocks,ncomp=c(2,2,1),perm.par="tau",perm.value=c(0.5,0.6,0.7)) # runs
+plot(res_permut)
 #choice of the number of components
-res_permut=rgcca_permutation(blocks=blocks,p_ncomp=TRUE)
-head(order_df(cbind(res_permut$penalties, res_permut$zstat), ncol(res_permut$penalties) + 1))
-ncomp=order_df(cbind(res_permut$penalties, res_permut$zstat), ncol(res_permut$penalties) + 1)[1,1:length(blocks)]
-plot_permut_3D(res_permut)
-
+res_permut=rgcca_permutation(blocks=blocks,perm.par="ncomp")
+plot(res_permut)
 
 # variable selection (post process? significant variables)
 resBootstrap=bootstrap(resRGCCA)
-selected.var=get_bootstrap(resRGCCA,resBootstrap)
-selected.var
-plot(resBootstrap) 
+plot(resBootstrap,i_block=2) 
 

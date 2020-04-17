@@ -120,7 +120,7 @@ plot_permut_2D <- function(
      
         if(bars=="points")
         {
-            print("point")
+        
             p<- p+geom_point(data=dft,aes(x=dft[,1],y=dft[,2]),colour="green",size=0.8)
         }
         if(bars=="sd")
