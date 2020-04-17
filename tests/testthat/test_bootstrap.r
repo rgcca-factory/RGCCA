@@ -44,7 +44,7 @@ set.seed(seed = 18)
 resBootstrap <- bootstrap( rgcca=resRGCCA, n_boot = 2, n_cores = 1)
 select_var <- get_bootstrap(resBootstrap, n_cores = 1)
 plot_bootstrap_1D(df_b = select_var)
-
+#plot(resBootstrap)
 test_that("test_bootstrap_na_values", {
     expect_equal(
         select_var["demostab", 1],

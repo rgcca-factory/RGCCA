@@ -343,8 +343,8 @@ rgccad=function (A, C = 1 - diag(length(A)), tau = rep(1, length(A)),  ncomp = r
        # print(AVEinner2)  
        # if(dim(A[[j]])[1]>dim(A[[j]])[2])
        # {
-           print(diag(cov2(Y[[j]])))
-           print(sum(diag(cov2(A[[j]]))))
+      #    print(diag(cov2(Y[[j]])))
+       #    print(sum(diag(cov2(A[[j]]))))
             
        #     print(sum(diag(cov2(A[[j]]))))
        #     

@@ -9,7 +9,7 @@ rgcca(blocks, type = "rgcca", scale = TRUE, sameBlockWeight = TRUE,
   diag(length(blocks)), scheme = "factorial", ncomp = rep(2,
   length(blocks)), tau = rep(1, length(blocks)), sparsity = rep(1,
   length(blocks)), init = "svd", bias = TRUE, tol = 1e-08,
-  response = NULL, superblock = FALSE, method = "complete",
+  response = NULL, superblock = TRUE, method = "complete",
   verbose = FALSE, quiet = TRUE, knn.k = "all",
   knn.output = "weightedMean", knn.klim = NULL,
   knn.sameBlockWeight = TRUE)

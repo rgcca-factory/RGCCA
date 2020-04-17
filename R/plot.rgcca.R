@@ -49,7 +49,7 @@ plot.rgcca=function(x,type="weight",i_block=length(x$A),i_block_y=i_block,compx=
     if(type=="both")
     {
         if(is.null(i_block)){i_block=length(x$call$blocks)}
-        p1<-plot_ind(x,i_block=i_block,i_block_y=i_block_y,compx=compx,compy=compy,cex_sub=cex_sub,cex_main=cex_main,cex_lab=cex_lab,resp=resp,response_name=response_name,text=text_ind,title=title_ind,colors=colors,...)
+        p1<-plot_ind(x,i_block=i_block,i_block_y=i_block_y,compx=compx,compy=compy,cex_sub=cex_sub,cex_main=cex_main,cex_lab=cex_lab,resp=resp,response_name=response_name,text=text_ind,title=title_ind,colors=colors,no_overlap=no_overlap,...)
         p2<-plot_var_2D(x,i_block=i_block,compx=compx,compy=compy,cex_sub=cex_sub,cex_main=cex_main,cex_lab=cex_lab,remove_var=remove_var,text=text_var,no_overlap=no_overlap,title=title_var,n_mark = n_mark,collapse=collapse,colors=colors,...)
         titlePlot=toupper(names(x$call$blocks)[i_block])
         p5<-grid.arrange(p1,p2,nrow=1,ncol=2,top = titlePlot)

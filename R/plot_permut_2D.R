@@ -45,7 +45,8 @@ plot_permut_2D <- function(
     n <- seq(nrow(perm$penalties))
 
     df <- as.data.frame(cbind(seq(NROW(perm$penalties)), y))
-    rownames(df) <- sapply(n, function(x) paste(round(perm$penalties[x, ],2), collapse = "-"))
+    #rownames(df) <- sapply(n, function(x) paste(round(perm$penalties[x, ],2), collapse = "-"))
+    rownames(df)<- n
     colnames(df) <- c("iter", type)
 
     axis <- function(margin){
@@ -129,7 +130,7 @@ plot_permut_2D <- function(
         }
          
     }
-  #  p<- p+ scale_x_continuous(breaks=1:nrow(df),  labels=rownames(df))
+    p<- p+ scale_x_continuous(breaks=1:nrow(df),  labels=rownames(df))
   #  p<-p + theme(axis.text.x = element_text(angle=45))
        plot(p)
 

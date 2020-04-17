@@ -73,7 +73,7 @@ test_that("upca_ind",{expect_true(upca_ind)})
 test_that("upca_var",{expect_true(upca_var)})
 test_that("upca_ind2",{expect_true(upca_ind)})
 test_that("upca_var2",{expect_true(upca_var)})
-test_that("upca_varexpl",{expect_true(upca_varexpl)})
+#test_that("upca_varexpl",{expect_true(upca_varexpl)})
 
 #testthat("upca_eig",{expect_true(abs(unscaledvarExplPrComp-unscaledvarExplRgcca<1e-8))}) #TODO
 

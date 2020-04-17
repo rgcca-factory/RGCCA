@@ -24,7 +24,7 @@
 #' selected.var = get_bootstrap(boot, n_cores = 1)
 #' print("i")
 #'# plot_bootstrap_2D(boot, n_cores = 1)
-#' print("j")
+#'print("j")
 #' #plot_bootstrap_2D(df_b = selected.var,n_cores=1)
 #' @export
 #' @seealso \code{\link[RGCCA]{bootstrap}}, \code{\link[RGCCA]{get_bootstrap}}
