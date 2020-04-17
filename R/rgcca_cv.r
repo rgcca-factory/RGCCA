@@ -11,14 +11,14 @@
 #' @param n_cv number of cross-validation. Default to 1 (with kfold option and 5)
 #' @param one_value_per_cv If TRUE, the k values obtained for each k-fold steps are averaged 
 #' @export
-#' @examples{
+#' @examples
 #' data("Russett")
 #' blocks <- list(
 #'     agriculture = Russett[, seq(3)],
 #'     industry = Russett[, 4:5],
 #'     politic = Russett[, 6:11])
 #'     res=rgcca_cv(blocks, type="rgcca",par="tau",par_value=c(0,0.2,0.3),n_cv=1,n_cores=1)
-#'     }
+#'     
 #'@importFrom utils txtProgressBar setTxtProgressBar
 rgcca_cv=function( blocks,
           type = "rgcca",

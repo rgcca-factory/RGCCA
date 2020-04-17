@@ -62,6 +62,7 @@ plot_var_2D <- function(
     ...) {
 
     x <- y <- NULL
+    if(rgcca_res$call$superblock==FALSE){collapse=FALSE;}
     df <- get_ctr2(
         rgcca_res = rgcca_res,
         compx = compx,
@@ -122,8 +123,10 @@ plot_var_2D <- function(
     )
     
     # remove legend if not on superblock
+  
     if ((!rgcca_res$call$superblock || i_block != length(rgcca_res$a)) && !collapse)
+    {
         p <- p + theme(legend.position = "none")
-
+    }
     return(p)
 }
