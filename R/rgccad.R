@@ -244,15 +244,15 @@ rgccad=function (A, C = 1 - diag(length(A)), tau = rep(1, length(A)),  ncomp = r
   
         for (j in 1:J)
         {
-           # AVE_X[[j]] = mean(cor(A[[j]], Y[[j]],use="pairwise.complete.obs")^2,na.rm=TRUE)
-             if( dim(A[[j]])[1]>dim(A[[j]])[2])
-             {
-                 AVE_X[[j]]=diag(cov(Y[[j]]))/sum(diag(cov(A[[j]] )))
-             }
-             else
-             {
-                 AVE_X[[j]]=diag(cov(Y[[j]]))/sum(diag(t(cov(A[[j]]) )))
-             }
+            AVE_X[[j]] = mean(cor(A[[j]], Y[[j]],use="pairwise.complete.obs")^2,na.rm=TRUE)
+           #  if( dim(A[[j]])[1]>dim(A[[j]])[2])
+           #  {
+           #      AVE_X[[j]]=diag(cov(Y[[j]]))/sum(diag(cov(A[[j]] )))
+           #  }
+           #  else
+           #  {
+           #      AVE_X[[j]]=diag(cov(Y[[j]]))/sum(diag(t(cov(A[[j]]) )))
+           #  }
              
         } 
         AVE_outer <- sum(pjs * unlist(AVE_X))/sum(pjs) 
