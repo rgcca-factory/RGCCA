@@ -18,9 +18,8 @@
 #' @seealso \link{rgcca}, \link{rgcca_predict}, \link{plot.predict}
 rgcca_crossvalidation <- function(
     rgcca_res,
-    response = NULL,
     validation = "loo",
-    type = "regression",
+    model = "regression",
     fit = "lm",
     new_scaled = TRUE,
     k = 5,
@@ -28,8 +27,10 @@ rgcca_crossvalidation <- function(
     ...) {
 
     stopifnot(is(rgcca_res, "rgcca"))
+    if (is.null(rgcca_res$call$response))
+      stop("This function required an analysis in a supervised mode.")
     if(is.null(response))
-        response <- rgcca_res$call$response
+        response <- length(rgcca_res$call$blocks)
     check_blockx("response", response, rgcca_res$call$blocks)
     match.arg(validation, c("loo", "test", "kfold"))
     check_integer("k", k)
@@ -38,17 +39,12 @@ rgcca_crossvalidation <- function(
     if (n_cores == 0)
         n_cores <- 1
 
-    if (is.null(rgcca_res$call$response))
-        stop("This function required an analysis in a supervised mode.")
-
     bloc_to_pred <- names(rgcca_res$call$blocks)[response]
 
     f <- quote(
         function(){
 
-            rgcca_k <-
-                set_rgcca(rgcca_res,
-                          method = "complete",
+            rgcca_k <- set_rgcca(rgcca_res,
                           inds = inds,
                           response = response,
                           ...)
@@ -57,7 +53,7 @@ rgcca_crossvalidation <- function(
             rgcca_predict(
                 rgcca_k,
                 newA = lapply(bigA, function(x) x[inds, , drop = FALSE]),
-                type = type,
+                model = model,
                 fit = fit,
                 bloc_to_pred = bloc_to_pred,
                 bigA = bigA,
@@ -69,7 +65,6 @@ rgcca_crossvalidation <- function(
     bigA <- attributes(
         set_rgcca(
             rgcca_res,
-            method = "complete",
             inds = .Machine$integer.max,
             response = response,
             ...
@@ -100,7 +95,6 @@ rgcca_crossvalidation <- function(
             n <- seq(length(args_values))
         for (i in n) {
             if (!is.null(args_names[i])) {
-                print(args_values)
                 # dynamically asssign these values
                 assign(args_names[i], args_values[[i]])
                 # send them to the clusters to parallelize
@@ -149,7 +143,16 @@ rgcca_crossvalidation <- function(
     }
      scores <- mean(unlist(lapply(scores, function(x) x$score)))
 
-    structure(
-        list(scores = scores, preds = preds, rgcca_res = rgcca_res,list_scores=list_scores,list_pred=list_pred,list_rgcca=list_rgcca,list_class=list_class.fit),
-        class = "cv")
+     structure(
+         list(
+             scores = scores,
+             preds = preds,
+             rgcca_res = rgcca_res,
+             list_scores = list_scores,
+             list_pred = list_pred,
+             list_rgcca = list_rgcca,
+             list_class = list_class.fit
+         ),
+         class = "cv"
+     )
 }
