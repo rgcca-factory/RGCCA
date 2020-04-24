@@ -1416,14 +1416,14 @@ for (x in 1:length(files)) {
 SGCCA is run from the RGCCA package by using two components for a biplot visualization. The S/RGCCA function doesn't names the blocks in their outputs. This step is required to generate biplots.
 
 ```{r, fig.height = 3, fig.width = 5}
-rgcca_out = rgcca(blocks = blocks)
+rgcca_out = rgcca(blocks = blocks,ncomp=2)
 plot(rgcca_out,type="network")
 ```
 
 
 ## Vizualise the analysis
 
-Both the samples and the variables could be visualized by using biplots functions (respectively ```plot_ind``` and ```plot_var_2D```). Histograms are used to visualized in decreasing order the variables with the higher weights and the blocks with the higher Average Variance Explained (AVE).
+Both the samples and the variables could be visualized by using graphical functions (respectively ```plot_ind``` and ```plot_var_2D```). Histograms are used to visualized in decreasing order the variables with the higher weights and the blocks with the higher Average Variance Explained (AVE).
 
 These functions take the results of a sgcca or a rgcca (```rgcca``` parameter) and the components to visualize : either ```compx``` and ```compy``` for biplots or  ```comp``` for histograms. By default, ```compx``` = ```comp``` = 1 and ```compy``` = 2. The presence or the absence of a superblock among the analysis could be specified for ```plot_var_2D``` and ```plot_var_1D``` to color the variables according to their blocks. By default, the last block is plotted, corresponding to the superblock if selected (```i_block``` parameter). ```plot_var_2D```, which is a corcircle plot, required the ```blocks``` for the correlation with the selected component. ```plot_var_2D``` could use the response variable to color the samples by groups. By default, the first 100th higher weights are used for the ```plot_var_1D``` and could be set by using the ```n_mark``` argument.
 
@@ -1502,7 +1502,7 @@ plot(
 
 #### Supervized mode
 ```{r, fig.height = 3, fig.width = 5, fig.align = "center"}
-rgcca_out = rgcca(blocks = blocks, response = 3)
+rgcca_out = rgcca(blocks = blocks, ncomp=2,response = 3)
 plot(rgcca_out,type="network")
 loo <- rgcca_crossvalidation(rgcca_out, n_cores = 2)
 # Cross-validation score (leave-one-out)
@@ -1585,7 +1585,7 @@ The resulting RGCCA can be entering method="nipals" in usual rgcca
 ### R Code
 
 ```{r}
-rgcca_nipals=rgcca(blocks =A_missing,superblock=F,verbose=FALSE,method="nipals")
+rgcca_nipals=rgcca(blocks =A_missing,superblock=F,verbose=FALSE,method="nipals",ncomp=2)
 
 ```
 ## Using k-Nearest Neighbors
@@ -1597,8 +1597,8 @@ For each missing value, the distance between the related individual and all the 
 
 
 ```{r}
-rgcca_knnA=rgcca(blocks=A_missing,superblock=F,method="knnA")
-rgcca_knn3=rgcca(blocks=A_missing,superblock=F,method="knn3")
+rgcca_knnA=rgcca(blocks=A_missing,superblock=F,method="knnA",ncomp=2)
+rgcca_knn3=rgcca(blocks=A_missing,superblock=F,method="knn3",ncomp=2)
 ```
 
 ### Multiple imputation
@@ -1614,7 +1614,7 @@ Regarding the relevant variables, the standard deviation of the correlations bet
 
 
 ```{r, fig.height = 3, fig.width = 5, fig.align = "center"}
-mi_rgcca=MIRGCCA(blocks=A_missing,k=3,ni=5,tau=rep(1,3))
+mi_rgcca=MIRGCCA(blocks=A_missing,k=3,ni=5,tau=rep(1,3),ncomp=2)
  plot(mi_rgcca,type="cor")
  plot(mi_rgcca,type="ind")
 ```

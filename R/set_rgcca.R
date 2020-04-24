@@ -12,7 +12,7 @@ set_rgcca <- function(
     type = "rgcca",
     scale = TRUE,
     sameBlockWeight = TRUE,
-    superblock = TRUE,
+    superblock = FALSE,
     response = NULL,
     method = "complete",
     boot = FALSE,

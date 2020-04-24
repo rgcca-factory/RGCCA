@@ -4,7 +4,7 @@
 \alias{rgcca}
 \title{Regularized (or Sparse) Generalized Canonical Correlation Analysis (R/SGCCA)}
 \usage{
-rgcca(blocks, type = "rgcca", scale = TRUE, sameBlockWeight = TRUE,
+rgcca(blocks, type = "rgcca", scale = TRUE, sameBlockWeight = FALSE,
   connection = matrix(1, length(blocks), length(blocks)) -
   diag(length(blocks)), scheme = "factorial", ncomp = rep(2,
   length(blocks)), tau = rep(1, length(blocks)), sparsity = rep(1,

@@ -233,7 +233,7 @@ rgccad=function (A, C = 1 - diag(length(A)), tau = rep(1, length(A)),  ncomp = r
   { # cas ou on n'a qu'un axe a calculer par bloc
   
     result <- rgccak(A, C, tau = tau, scheme = scheme, init = init, bias = bias, tol = tol, verbose = verbose,na.rm=na.rm,estimateNA=estimateNA,sameBlockWeight=sameBlockWeight,scale=scale)
-   
+ 
     if(estimateNA%in%c("iterative","first","lebrusquet","superblock"))
     {
       A<-result$call$A
@@ -244,6 +244,7 @@ rgccad=function (A, C = 1 - diag(length(A)), tau = rep(1, length(A)),  ncomp = r
   
         for (j in 1:J)
         {
+            
             AVE_X[[j]] = mean(cor(A[[j]], Y[[j]],use="pairwise.complete.obs")^2,na.rm=TRUE)
            #  if( dim(A[[j]])[1]>dim(A[[j]])[2])
            #  {

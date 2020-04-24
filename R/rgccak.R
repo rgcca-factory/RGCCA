@@ -202,11 +202,8 @@ rgccak=function (A, C, tau = "optimal", scheme = "centroid",verbose = FALSE, ini
             nmat=ifelse(bias,t(!is.na(A[[j]]))%*%(!is.na(A[[j]])),t(!is.na(A[[j]]))%*%(!is.na(A[[j]]))-1)
             nmat[nmat==0]=NA
             M[[j]] <- tau[j] * diag(n) + ((1 - tau[j])) *nmat^(-1)* K[[j]] #calcul de la fonction a minimiser ?
-            #-----------------------
-            
              Minv[[j]] = ginv(M[[j]])
             alpha[[j]] = drop(1/sqrt(t(alpha[[j]])%*% M[[j]]%*% K[[j]]%*% alpha[[j]])) * alpha[[j]]
-           
             a[[j]] =pm( t(A[[j]]), alpha[[j]],na.rm=na.rm) 
             if(a[[j]][1]<0){a[[j]]=-a[[j]]}
             Y[, j] = pm(A[[j]] ,a[[j]],na.rm=na.rm) 

@@ -9,7 +9,8 @@ remove_null_sd <- function(list_m) {
     
     column_sd_null <- lapply(list_m, 
                              function(x)
-                                 which(apply(x, 2, sd) == 0))
+                                 which(apply(x, 2, function(y){return(sd(y[!is.na(y)]) == 0)} ))
+    )
     blocks_index <- seq(1, length(list_m))[
         unlist(
             lapply(

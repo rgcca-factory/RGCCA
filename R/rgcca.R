@@ -110,7 +110,7 @@ rgcca <- function(
     blocks,
     type = "rgcca",
     scale = TRUE,
-    sameBlockWeight = TRUE,
+    sameBlockWeight = FALSE,
     connection = matrix(1,length(blocks),length(blocks)) - diag(length(blocks)),
     scheme = "factorial",
     ncomp = rep(2, length(blocks)),
