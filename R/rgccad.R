@@ -266,6 +266,7 @@ rgccad=function (A, C = 1 - diag(length(A)), tau = rep(1, length(A)),  ncomp = r
       colnames(Y[[b]]) = "comp1"
     }
     tau=result$tau
+    if(is.vector(tau)){names(tau)=names(A)}
     out <- list(Y = Y, a = a, astar = a, C = C,  scheme = scheme, ncomp = ncomp, crit = result$crit, primal_dual = primal_dual, AVE = AVE,A=A0,tau=tau,call=call)
     if(estimateNA %in% c("iterative","first","superblock","lebrusquet")){out[["imputedA"]]=A}
     
@@ -279,8 +280,16 @@ rgccad=function (A, C = 1 - diag(length(A)), tau = rep(1, length(A)),  ncomp = r
   R <- A
   P <- a <- astar <- NULL
   if (is.numeric(tau)) 
-    tau_mat = tau
-  else tau_mat = matrix(NA, max(ncomp), J)
+  {
+      tau_mat = tau  
+      if(is.vector(tau_mat)){names(tau_mat)=names(A)}
+      if(is.matrix(tau_mat)){colnames(tau_mat)=names(A)}
+  }
+  else
+  {
+      tau_mat = matrix(NA, max(ncomp), J)
+        colnames(tau_mat)=names(A)
+  }
   for (b in 1:J) P[[b]] <- a[[b]] <- astar[[b]] <- matrix(NA, pjs[[b]], N + 1)
   for (b in 1:J) Y[[b]] <- matrix(NA, nb_ind, N + 1)
   for (n in 1:N) 

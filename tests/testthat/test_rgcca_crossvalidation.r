@@ -20,9 +20,9 @@ test_structure_cv <- function(res, scores, nrow = 47){
 
 
 test_that("rgcca_cv_default", {
-        rgcca_out <- rgcca(blocks, response = 1)
+        rgcca_out <- rgcca(blocks, response = 1,superblock=TRUE,ncomp=2,scale=TRUE,sameBlockWeight=TRUE)
         test_structure_cv(
-            rgcca_crossvalidation(rgcca_out, n_cores = 1),
+            rgcca_crossvalidation(rgcca_out, n_cores = 1,superblock=TRUE,ncomp=2),
             0.1071)
         test_structure_cv(
             rgcca_crossvalidation(
@@ -34,13 +34,13 @@ test_that("rgcca_cv_default", {
 )
 
 test_that("rgcca_cv_with_args", {
-    rgcca_out <- rgcca(blocks, response = 1)
+    rgcca_out <- rgcca(blocks, response = 1,superblock=TRUE)
     test_structure_cv(
         rgcca_crossvalidation(
             rgcca_out,
             validation = "kfold",
             k = 5,
-            n_cores = 1),
+            n_cores = 1,superblock=TRUE),
         0.1083)
     # test_structure_cv(
     #     rgcca_crossvalidation(

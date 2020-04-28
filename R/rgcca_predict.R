@@ -12,7 +12,7 @@
 #' @param y.test A dataframe or a matrix giving the block to be predicted
 #' @param scale_size_bloc A boolean giving the possibility to scale the blocks by the square root of their column number
 #' @param new_scaled A boolean scaling the blocks to predict
-#' @param bigA to permeform data reduction for cross-validation, the dataset where A and newA were extracted
+#' @param bigA to perform data reduction for cross-validation, the dataset where A and newA were extracted
 #' @examples
 #' data("Russett")
 #' blocks = list(

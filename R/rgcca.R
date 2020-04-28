@@ -110,7 +110,7 @@ rgcca <- function(
     blocks,
     type = "rgcca",
     scale = TRUE,
-    sameBlockWeight = FALSE,
+    sameBlockWeight = TRUE,
     connection = matrix(1,length(blocks),length(blocks)) - diag(length(blocks)),
     scheme = "factorial",
     ncomp = rep(2, length(blocks)),
@@ -120,7 +120,7 @@ rgcca <- function(
     bias = TRUE,
     tol = 1e-08,
     response = NULL,
-    superblock = TRUE,
+    superblock = FALSE,
     method = "complete",
     verbose = FALSE,
     quiet = TRUE,
@@ -162,6 +162,10 @@ rgcca <- function(
     match.arg(init, c("svd", "random"))
     match.arg(knn.output, c("mean", "random", "weightedMean" ))
     check_method(type)
+    
+    # Check blocks size, adds NA lines if some subjects are missing...
+    blocks=check_blocks(blocks,add_NAlines=TRUE,n=1)
+    
     if (!is.null(response))
         check_blockx("response", response, blocks)
     check_integer("tol", tol, float = TRUE, min = 0)

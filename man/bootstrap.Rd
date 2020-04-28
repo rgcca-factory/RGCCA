@@ -32,7 +32,7 @@ b=bootstrap(rgcca_out, n_boot = 2, n_cores = 1)
 plot(b,n_cores=1)
 plot(b,type="2D",n_cores=1)
 rgcca_out = rgcca(blocks, superblock = FALSE)
-bootstrap(rgcca_out, n_boot = 2, n_cores = 1, blocks = lapply(blocks, scale),
+b=bootstrap(rgcca_out, n_boot = 2, n_cores = 1, blocks = lapply(blocks, scale),
  superblock = FALSE)
 }
 \seealso{

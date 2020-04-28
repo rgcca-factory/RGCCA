@@ -23,7 +23,7 @@ rgcca_predict(rgcca_res, newA, type = "regression", fit = "lm",
 
 \item{y.test}{A dataframe or a matrix giving the block to be predicted}
 
-\item{bigA}{to permeform data reduction for cross-validation, the dataset where A and newA were extracted}
+\item{bigA}{to perform data reduction for cross-validation, the dataset where A and newA were extracted}
 
 \item{new_scaled}{A boolean scaling the blocks to predict}
 

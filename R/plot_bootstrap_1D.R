@@ -49,7 +49,6 @@ plot_bootstrap_1D <- function(
     if (!is.null(df_b))
         stopifnot(is(df_b, "df_bootstrap"))
     check_integer("n_mark", n_mark)
-
     if (is.null(title))
         title <- paste0(attributes(df_b)$indexes[[x]],
                    "\n(",
@@ -84,8 +83,7 @@ plot_bootstrap_1D <- function(
     df_b <- head(
         data.frame(
             order_df(df_b[, -NCOL(df_b)], x, allCol = TRUE),
-            order = NROW(df_b):1),
-        n_mark)
+            order = NROW(df_b):1),  n_mark)
     class(df_b) <- c(class(df_b), "d_boot1D")
 
     p <- ggplot(

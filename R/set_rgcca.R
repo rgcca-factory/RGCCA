@@ -5,31 +5,29 @@ set_rgcca <- function(
     tau = 1,
     sparsity = 1,
     ncomp = 2,
-    scheme = "factorial",
-    init = "svd",
+    scheme = NULL,
+    init = NULL,
     bias = TRUE,
     tol = 1e-03,
-    type = "rgcca",
-    scale = TRUE,
-    sameBlockWeight = TRUE,
-    superblock = FALSE,
+    type = NULL,
+    scale = NULL,
+    sameBlockWeight = NULL,
+    superblock = NULL,
     response = NULL,
     method = "complete",
     boot = FALSE,
     inds = NULL) {
 
-    if (is.null(blocks)) {
+    if(is.null(scale)){    scale <- rgcca_res$call$scale }
+    if(is.null(sameBlockWeight)){    sameBlockWeight <- rgcca_res$call$sameBlockWeight }
+    if(is.null(superblock)){     superblock <- rgcca_res$call$superblock }
+    if(is.null(method)){    method <- rgcca_res$call$method }
+    if(is.null(scheme)){     scheme <- rgcca_res$call$scheme}
+    if(is.null(bias)){     bias <- rgcca_res$call$bias}
+    if(is.null(type)){   type <- rgcca_res$call$type}
+    if(is.null(init)){     init <- rgcca_res$call$init}
+     if (is.null(blocks)) {
         blocks <- rgcca_res$call$blocks
-        method <- rgcca_res$call$method
-        connection <- rgcca_res$call$connection
-        scheme <- rgcca_res$call$scheme
-        bias <- rgcca_res$call$bias
-        superblock <- rgcca_res$call$superblock
-        type <- rgcca_res$call$type
-        init <- rgcca_res$call$init
-        scale <- FALSE
-        sameBlockWeight <- FALSE
-
         if (superblock) {
             J <- length(blocks)
             blocks <- blocks[-J]
@@ -50,8 +48,8 @@ set_rgcca <- function(
         if (!is.null(rgcca_res$call$response))
             response <- length(rgcca_res$call$blocks)
 
-    }else
-        blocks <- scaling(blocks, scale, sameBlockWeight = sameBlockWeight)
+  }else
+#        blocks <- scaling(blocks, scale, sameBlockWeight = sameBlockWeight)
 
     if (!boot)
         blocks <- intersection(blocks)
@@ -96,8 +94,8 @@ set_rgcca <- function(
             response = response,
             ncomp = ncomp,
             scheme = scheme,
-            scale = FALSE,
-            sameBlockWeight = FALSE,
+            scale = scale,
+            sameBlockWeight = sameBlockWeight,
             type = type,
             verbose = FALSE,
             init = init,

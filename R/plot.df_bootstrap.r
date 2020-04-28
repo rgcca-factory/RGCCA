@@ -14,23 +14,24 @@
 #' rgcca_out = rgcca(blocks)
 #' b=bootstrap(rgcca_out, n_boot = 2, n_cores = 1)
 #' plot(b,n_cores=1)
-plot.bootstrap=function(x,type="1D",i_block=length(x$rgcca$call$blocks),bars="sd",colors=NULL,title=NULL,cex=1,n_cores= parallel::detectCores() - 1,...)
+plot.bootstrap=function(x,type="1D",i_block=length(x$rgcca$call$blocks),n_mark=30,bars="sd",colors=NULL,title=NULL,cex=1,n_cores= parallel::detectCores() - 1,...)
 {
     
     if(type=="1D")
     {
-        p1=plot_bootstrap_1D(
+            p1=plot_bootstrap_1D(
             b = x,
             df_b = NULL,
             x = "estimate",
             y = "occurrences",
-            n_mark = 50,
+            n_mark = n_mark,
             title = title, 
             colors = colors,
             comp = 1,
             i_block = i_block,
             collapse = FALSE,
             n_cores =n_cores,
+            bars=bars,
             ...)
     }
     if(type=="2D")

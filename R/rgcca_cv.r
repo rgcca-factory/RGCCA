@@ -1,6 +1,6 @@
 #' rgcca_cv
 #'
-#' This function is dedicated to supervised approaches (with response parameter in rgcca not NULL). 
+#' This function is dedicated to supervised approaches (with response parameter in rgcca not NULL). By default, it is the last block in blocks.
 #' It allows to test a grid of parameters (sparsity, ncomp or tau) with cross-validation approaches. 
 #' This cross-validation is based on RMSE for quantitative response. 
 #' @inheritParams rgcca_crossvalidation
