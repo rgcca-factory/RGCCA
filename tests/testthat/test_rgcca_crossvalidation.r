@@ -23,13 +23,13 @@ test_that("rgcca_cv_default", {
         rgcca_out <- rgcca(blocks, response = 1)
         test_structure_cv(
             rgcca_crossvalidation(rgcca_out, n_cores = 1),
-            0.1071)
+            0.1001)
         test_structure_cv(
             rgcca_crossvalidation(
                 rgcca_out,
                 blocks = blocks,
                 n_cores = 1), 
-            scores = 0.1071)
+            scores = 0.1001)
     }
 )
 
@@ -41,7 +41,7 @@ test_that("rgcca_cv_with_args", {
             validation = "kfold",
             k = 5,
             n_cores = 1),
-        0.1083)
+        0.0997)
     # test_structure_cv(
     #     rgcca_crossvalidation(
     #         rgcca_out, 
@@ -67,7 +67,7 @@ test_that("rgcca_cv_withNA", {
     # avec la method complete -> ne fonctionne pas
     test_structure_cv(
         rgcca_crossvalidation(rgcca_out, n_cores = 1),
-        0.1118,
+        0.1019,
         nrow = 44)
     }
 )
