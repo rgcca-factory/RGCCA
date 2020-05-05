@@ -4,7 +4,7 @@
 \alias{rgcca_predict}
 \title{Predict RGCCA}
 \usage{
-rgcca_predict(rgcca_res, newA, type = "regression", fit = "lm",
+rgcca_predict(rgcca_res, newA, model = "regression", fit = "lm",
   bloc_to_pred = NULL, y.train = NULL, y.test = NULL, bigA = NULL,
   new_scaled = TRUE, scale_size_bloc = TRUE)
 }
@@ -13,7 +13,7 @@ rgcca_predict(rgcca_res, newA, type = "regression", fit = "lm",
 
 \item{newA}{A list of either a dataframe/matrix or a vector giving the blocks to be predicted}
 
-\item{type}{A character corresponding to the type of prediction among : regression or classification}
+\item{model}{A character corresponding to the model of prediction among : regression or classification}
 
 \item{fit}{A character giving the function used to compare the trained and the tested models}
 
@@ -57,9 +57,9 @@ y.test = kmeans(newA[[bloc_to_pred]], 3)$cluster
 ( res  = rgcca_predict(object, newA, bloc_to_pred = "industry", bigA = blocks) )
 ( res  = rgcca_predict(object, newA, "regression", "cor", "industry") )
 ( res  = rgcca_predict(object, newA) )
-( res  = rgcca_predict(object, newA = newA, type = "regression", fit = "lm",
+( res  = rgcca_predict(object, newA = newA, model = "regression", fit = "lm",
 y.train = A[[bloc_to_pred]], y.test = newA[[bloc_to_pred]] ) )
 library(MASS)
-( res  = rgcca_predict(object, newA = newA, type = "classification",
+( res  = rgcca_predict(object, newA = newA, model = "classification",
 fit = "lda", y.train = y.train, y.test = y.test ) )
 }

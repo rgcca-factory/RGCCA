@@ -18,7 +18,6 @@ boot <- bootstrap(rgcca_out,n_boot=n_boot,n_cores=1)
 res=get_bootstrap(boot,n_cores=1)
 plot(boot,i_block=1,bars="ci",n_mark=10,n_cores=1)
 plot(boot,i_block=1,bars="ci",n_cores=1)
-
 plot(boot,i_block=1,bars="sd",n_mark=10,n_cores=1)
 
 
@@ -55,7 +54,7 @@ test_that("bootstrap_with_args", {
 
 blocks[[1]][1:3, 1] <- NA
 blocks[[1]][4,] <- NA
-resRGCCA <- rgcca(blocks, ncomp = c(2,2,2),superblock=FALSE)
+resRGCCA <- rgcca(blocks, ncomp = c(2,2),superblock=FALSE)
 set.seed(seed = 18)
 resBootstrap <- bootstrap( rgcca=resRGCCA, n_boot = 2, n_cores = 1)
 select_var <- get_bootstrap(resBootstrap, n_cores = 1)

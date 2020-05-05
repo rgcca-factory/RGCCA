@@ -4,24 +4,22 @@
 \alias{rgcca_crossvalidation}
 \title{Cross-validation}
 \usage{
-rgcca_crossvalidation(rgcca_res, response = NULL, validation = "loo",
-  type = "regression", fit = "lm", new_scaled = TRUE, k = 5,
+rgcca_crossvalidation(rgcca_res, validation = "loo",
+  model = "regression", fit = "lm", new_scaled = TRUE, k = 5,
   n_cores = parallel::detectCores() - 1, ...)
 
-rgcca_crossvalidation(rgcca_res, response = NULL, validation = "loo",
-  type = "regression", fit = "lm", new_scaled = TRUE, k = 5,
+rgcca_crossvalidation(rgcca_res, validation = "loo",
+  model = "regression", fit = "lm", new_scaled = TRUE, k = 5,
   n_cores = parallel::detectCores() - 1, ...)
 }
 \arguments{
 \item{rgcca_res}{A list giving the results of a R/SGCCA}
 
-\item{response}{number of the response blocks in the list}
-
 \item{validation}{A character given the method for validation aong test 
 (for test-train sets), kfold (for k-fold with k=5 by default) and loo 
 (for leave-one-out)}
 
-\item{type}{A character corresponding to the type of prediction among : regression or classification}
+\item{model}{A character corresponding to the model of prediction among : regression or classification}
 
 \item{fit}{A character giving the function used to compare the trained and the tested models}
 
@@ -32,6 +30,8 @@ rgcca_crossvalidation(rgcca_res, response = NULL, validation = "loo",
 \item{n_cores}{An integer for the number of cores used in parallelization}
 
 \item{...}{other RGCCA parameters # TODO}
+
+\item{response}{number of the response blocks in the list}
 }
 \description{
 Cross-validation for RGCCA

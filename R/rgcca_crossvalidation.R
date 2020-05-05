@@ -2,7 +2,6 @@
 #' 
 #' Uses cross-validation to validate a predictive model of RGCCA
 #' @inheritParams rgcca_predict
-#' @param response number of the response blocks in the list
 #' @inheritParams bootstrap
 #' @inheritParams plot_ind
 #' @examples
@@ -18,9 +17,8 @@
 #' @seealso \link{rgcca}, \link{rgcca_predict}, \link{plot.predict}
 rgcca_crossvalidation <- function(
     rgcca_res,
-    response = NULL,
     validation = "loo",
-    type = "regression",
+    model = "regression",
     fit = "lm",
     new_scaled = TRUE,
     k = 5,
@@ -28,9 +26,9 @@ rgcca_crossvalidation <- function(
     ...) {
 
     stopifnot(is(rgcca_res, "rgcca"))
-    if(is.null(response))
-        response <- rgcca_res$call$response
-    check_blockx("response", response, rgcca_res$call$blocks)
+    if(is.null(rgcca_res$call$response)){
+       stop("This function required an analysis in a supervised mode")}
+   
     match.arg(validation, c("loo", "test", "kfold"))
     check_integer("k", k)
     check_integer("n_cores", n_cores, 0)
@@ -38,26 +36,21 @@ rgcca_crossvalidation <- function(
     if (n_cores == 0)
         n_cores <- 1
 
-    if (is.null(rgcca_res$call$response))
-        stop("This function required an analysis in a supervised mode.")
-
-    bloc_to_pred <- names(rgcca_res$call$blocks)[response]
+    bloc_to_pred <- names(rgcca_res$call$blocks)[length(rgcca_res$call$blocks)]
 
     f <- quote(
         function(){
 
             rgcca_k <-
                 set_rgcca(rgcca_res,
-                          method = "complete",
                           inds = inds,
-                          response = response,
                           ...)
             rgcca_k$a <- check_sign_comp(rgcca_res, rgcca_k$a)
 
             rgcca_predict(
                 rgcca_k,
                 newA = lapply(bigA, function(x) x[inds, , drop = FALSE]),
-                type = type,
+                model = model,
                 fit = fit,
                 bloc_to_pred = bloc_to_pred,
                 bigA = bigA,
@@ -69,9 +62,7 @@ rgcca_crossvalidation <- function(
     bigA <- attributes(
         set_rgcca(
             rgcca_res,
-            method = "complete",
             inds = .Machine$integer.max,
-            response = response,
             ...
         )
     )$bigA_scaled

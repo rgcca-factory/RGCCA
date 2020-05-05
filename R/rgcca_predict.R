@@ -7,7 +7,7 @@
 #' @param fit A character giving the function used to compare the trained and the tested models
 #' @param bloc_to_pred A character giving the block to predicted (must be the same name among train and test set)
 #TODO: either an integer for block_to_pred
-#' @param type A character corresponding to the type of prediction among : regression or classification
+#' @param model A character corresponding to the model of prediction among : regression or classification
 #' @param y.train A dataframe or a matrix giving the block used as a response in the training
 #' @param y.test A dataframe or a matrix giving the block to be predicted
 #' @param scale_size_bloc A boolean giving the possibility to scale the blocks by the square root of their column number
@@ -38,10 +38,10 @@
 #' ( res  = rgcca_predict(object, newA, bloc_to_pred = "industry", bigA = blocks) )
 #' ( res  = rgcca_predict(object, newA, "regression", "cor", "industry") )
 #' ( res  = rgcca_predict(object, newA) )
-#' ( res  = rgcca_predict(object, newA = newA, type = "regression", fit = "lm",
+#' ( res  = rgcca_predict(object, newA = newA, model = "regression", fit = "lm",
 #' y.train = A[[bloc_to_pred]], y.test = newA[[bloc_to_pred]] ) )
 #' library(MASS)
-#' ( res  = rgcca_predict(object, newA = newA, type = "classification",
+#' ( res  = rgcca_predict(object, newA = newA, model = "classification",
 #' fit = "lda", y.train = y.train, y.test = y.test ) )
 #' @importFrom MASS lda
 # @importFrom nnet multinom
@@ -49,7 +49,7 @@
 rgcca_predict = function(
     rgcca_res,
     newA,
-    type = "regression",
+    model = "regression",
     fit = "lm",
     bloc_to_pred = NULL,
     y.train = NULL,
@@ -59,7 +59,7 @@ rgcca_predict = function(
     scale_size_bloc = TRUE) {
 
     stopifnot(is(rgcca_res, "rgcca"))
-    match.arg(type, c("regression", "classification"))
+    match.arg(model, c("regression", "classification"))
     match.arg(fit, c("lm", "cor", "lda", "logistic"))
     if(!is.null(bigA))
         check_blocks(bigA)
@@ -71,10 +71,10 @@ rgcca_predict = function(
     p <- sapply(rgcca_res$call$blocks, ncol)
     B <- length(rgcca_res$call$blocks)
 
-    if (type == "classification" && (fit == "cor" || fit == "lm"))
+    if (model == "classification" && (fit == "cor" || fit == "lm"))
         stop("Please, classification prediction only works with LDA and LOGISTIC")
 
-    if (type == "regression" &&
+    if (model == "regression" &&
             (fit == "lda" || fit == "logistic"))
         stop("Please, regression prediction only works with LM and COR")
 
@@ -162,13 +162,15 @@ rgcca_predict = function(
             
             res <- scale(data, center, scale)
             
-            if (scale_size_bloc)
-                res / sqrt(length(data))
-            else
-                res
+          #  if (scale_size_bloc)
+          #      res / sqrt(length(data))
+          #  else
+           #     res
 
         }
-
+        
+        print(newA[[1]][1,])
+        print(reorderList(rgcca_res$call$blocks, t_attr = "scaled:scale"))
         newA <- mapply(
             scl_fun,
             newA,
@@ -176,6 +178,10 @@ rgcca_predict = function(
             reorderList(rgcca_res$call$blocks, t_attr = "scaled:scale"),
             SIMPLIFY = FALSE
         )
+        
+       # print(reorderList(rgcca_res$call$blocks, t_attr = "scaled:center"))
+       # print(reorderList(rgcca_res$call$blocks, t_attr = "scaled:scale"))
+        print(newA[[1]][1,])
 
     }
 
@@ -186,8 +192,14 @@ rgcca_predict = function(
     astar <- reorderList(rgcca_res$astar, g = TRUE)
 
     pred <- lapply(seq(length(newA)), function(x)
-        as.matrix(newA[[x]]) %*% astar[[x]])
-
+    {
+        M=as.matrix(newA[[x]]) %*% astar[[x]]
+        rownames(M)=rownames(newA[[x]])
+        colnames(M)=colnames(astar[[x]])
+        return(M)
+    }
+       )
+    names(pred)=names(newA)
     if (missing(bloc_to_pred))
         return(list(pred = pred))
 
@@ -230,7 +242,7 @@ rgcca_predict = function(
     # Scores
     res <- NULL
 
-    if (type == "regression") {
+    if (model == "regression") {
         score <- switch(fit,
             "lm"  = {
 
@@ -297,7 +309,7 @@ rgcca_predict = function(
             })
         class.fit <- NULL
 
-    } else if (type == "classification") {
+    } else if (model == "classification") {
         ngroups   <- nlevels(as.factor(y.train))
         class.fit <- switch(fit,
             "lda"      = {
