@@ -1,11 +1,4 @@
-data("Russett")
-blocks <- list(
-    agriculture = Russett[, seq(3)],
-    industry = Russett[, 4:5],
-    politic = Russett[, 6:11] )
-rgcca_out <- rgcca(blocks)
-boot <- bootstrap(rgcca_out, n_boot = 2, n_cores = 1)
-
+# Bootstrap with random data
 nv1=10
 nv2=100
 a=matrix(rnorm(100*nv1),100,nv1);rownames(a)=paste("a",1:100);colnames(a)=paste("s",1:nv1)
@@ -14,16 +7,26 @@ blocks=list(a=a,b=b)
 rgcca_out=rgcca(blocks)    
 n_boot=100
 boot <- bootstrap(rgcca_out,n_boot=n_boot,n_cores=1)
-
 res=get_bootstrap(boot,n_cores=1)
 plot(boot,i_block=1,bars="ci",n_mark=10,n_cores=1)
 plot(boot,i_block=1,bars="ci",n_cores=1)
 plot(boot,i_block=1,bars="sd",n_mark=10,n_cores=1)
 
 
+
+# Bootstrap on Russett
+data("Russett")
+blocks <- list(
+    agriculture = Russett[, seq(3)],
+    industry = Russett[, 4:5],
+    politic = Russett[, 6:11] )
+rgcca_out <- rgcca(blocks)
+boot <- bootstrap(rgcca_out, n_boot = 2, n_cores = 1)
+
+
 test_that("get_bootstrap_default", {
     expect_equal(length(boot), 2)
-    expect_equal(length(boot$bootstrap), n_boot)
+    expect_equal(length(boot$bootstrap), 2)
     boot1 <- boot$bootstrap[[1]]
     expect_is(boot, "bootstrap")
     expect_is(boot$rgcca, "rgcca")
@@ -54,12 +57,12 @@ test_that("bootstrap_with_args", {
 
 blocks[[1]][1:3, 1] <- NA
 blocks[[1]][4,] <- NA
-resRGCCA <- rgcca(blocks, ncomp = c(2,2),superblock=FALSE)
+resRGCCA <- rgcca(blocks, ncomp = c(2,2,2),superblock=FALSE)
 set.seed(seed = 18)
 resBootstrap <- bootstrap( rgcca=resRGCCA, n_boot = 2, n_cores = 1)
 select_var <- get_bootstrap(resBootstrap, n_cores = 1)
 plot_bootstrap_1D(df_b = select_var,n_cores=1)
-#plot(resBootstrap)
+
 test_that("test_bootstrap_na_values", {
     expect_equal(
         select_var["demostab", 1],

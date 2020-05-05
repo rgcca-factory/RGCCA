@@ -80,8 +80,8 @@ set_rgcca <- function(
             boot_blocks <- lapply(
                 blocks, 
                 function(x) x[id_boot, , drop = FALSE])
-# TODO : to be replaced by
-#            boot_blocks <- remove_null_sd(boot_blocks)
+# TODO : to be replaced by something
+           boot_blocks <- remove_null_sd(boot_blocks)
         }
     }else
     {

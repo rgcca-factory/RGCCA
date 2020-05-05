@@ -168,9 +168,6 @@ rgcca_predict = function(
            #     res
 
         }
-        
-        print(newA[[1]][1,])
-        print(reorderList(rgcca_res$call$blocks, t_attr = "scaled:scale"))
         newA <- mapply(
             scl_fun,
             newA,
@@ -178,10 +175,7 @@ rgcca_predict = function(
             reorderList(rgcca_res$call$blocks, t_attr = "scaled:scale"),
             SIMPLIFY = FALSE
         )
-        
-       # print(reorderList(rgcca_res$call$blocks, t_attr = "scaled:center"))
-       # print(reorderList(rgcca_res$call$blocks, t_attr = "scaled:scale"))
-        print(newA[[1]][1,])
+
 
     }
 

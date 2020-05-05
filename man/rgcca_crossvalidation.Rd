@@ -30,8 +30,6 @@ rgcca_crossvalidation(rgcca_res, validation = "loo",
 \item{n_cores}{An integer for the number of cores used in parallelization}
 
 \item{...}{other RGCCA parameters # TODO}
-
-\item{response}{number of the response blocks in the list}
 }
 \description{
 Cross-validation for RGCCA

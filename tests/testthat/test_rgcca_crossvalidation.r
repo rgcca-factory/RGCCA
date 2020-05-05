@@ -21,7 +21,7 @@ blocks <- list(
  
  
  test_that("rgcca_cv_default", {
-         rgcca_out <- rgcca(blocks, response = 1,superblock=TRUE,ncomp=2,scale=TRUE,sameBlockWeight=TRUE)
+         rgcca_out <- rgcca(blocks, response = 1,superblock=FALSE,ncomp=2,scale=TRUE,sameBlockWeight=TRUE)
          res2=set_rgcca(rgcca_out,blocks=blocks)
          test_structure_cv(
              rgcca_crossvalidation(rgcca_out,n_cores=1),
@@ -35,13 +35,7 @@ blocks <- list(
      }
  )
 
- 
- rgcca_crossvalidation(
-     rgcca_out,
-     validation = "kfold",
-     k = 5,
-     n_cores = 1,superblock=TRUE)
- 
+
  
  test_that("rgcca_cv_with_args", {
      rgcca_out <- rgcca(blocks, response = 1,ncomp=2,superblock=TRUE)

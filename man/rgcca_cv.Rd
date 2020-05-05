@@ -17,7 +17,7 @@ rgcca_cv(blocks, type = "rgcca", response = length(blocks),
 'ridge-gca', 'sabscor', 'ssqcor', 'ssqcor', 'ssqcov-1', 'ssqcov-2', 'ssqcov',
 'sum-pca', 'sumcor', 'sumcov-1', 'sumcov-2', 'sumcov.', 'sabscov', 'plspm','cca', 'ra', 'ifa', 'pls','pca')}
 
-\item{response}{number of the response blocks in the list}
+\item{response}{Integer representing the number of the response block. Indeed, when a supervised analysis is chosen (plspm, pls), the response block has to be specified.}
 
 \item{par}{"sparsity", "tau" or "ncomp".}
 

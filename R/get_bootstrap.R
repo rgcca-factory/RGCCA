@@ -25,7 +25,9 @@ get_bootstrap <- function(
     i_block = length(b$bootstrap[[1]]),
     bars="sd",
     collapse = FALSE,
-    n_cores = parallel::detectCores() - 1) {
+    n_cores = parallel::detectCores() - 1,
+    test="student")
+    {
     stopifnot(is(b, "bootstrap"))
 
     check_compx("comp", comp, b$rgcca$call$ncomp, i_block)
@@ -125,7 +127,7 @@ get_bootstrap <- function(
     sd <- unlist(sd) 
 
     cat("OK.\n", append = TRUE)
-    p.vals <- 2 * pt(abs(weight)/sd, lower.tail = FALSE, df = n_boot - 1)
+    p.vals <- 2 * pt(abs(weight)/(sd/sqrt(n_boot)), lower.tail = FALSE, df = n_boot - 1)
     tail <- qt(1 - .05 / 2, df = n_boot - 1)
     
     if(bars=="sd")
@@ -148,6 +150,7 @@ get_bootstrap <- function(
     df <- data.frame(
         mean = mean,
         estimate = weight,
+        sd=sd,
         lower_band = mean -  length_bar,
         upper_band = mean +  length_bar,
         bootstrap_ratio = abs(mean) / sd,
@@ -163,7 +166,9 @@ get_bootstrap <- function(
         df$sign <- rep("", NROW(df))
         
         for (i in seq(NROW(df)))
-            if (df$lower_band[i]/df$upper_band[i] > 0)
+            #if (df$lower_band[i]/df$upper_band[i] > 0)
+            #if (abs(df$mean[i]/(df$sd[i]/sqrt(n_boot))) > qt(0.95/2,df=n_boot-1))
+            if(p.vals[i]<0.05)
                 df$sign[i] <- "*"
         
     }

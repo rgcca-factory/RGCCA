@@ -47,15 +47,15 @@ rgcca_crossvalidation <- function(
                           ...)
             rgcca_k$a <- check_sign_comp(rgcca_res, rgcca_k$a)
 
-            rgcca_predict(
-                rgcca_k,
-                newA = lapply(bigA, function(x) x[inds, , drop = FALSE]),
-                model = model,
-                fit = fit,
-                bloc_to_pred = bloc_to_pred,
-                bigA = bigA,
-                new_scaled = TRUE
-            )
+             rgcca_predict(
+                 rgcca_k,
+                 newA = lapply(bigA, function(x) x[inds, , drop = FALSE]),
+                 model = model,
+                 fit = fit,
+                 bloc_to_pred = bloc_to_pred,
+                 bigA = bigA,
+                 new_scaled = TRUE
+             )
         }
     )
 
