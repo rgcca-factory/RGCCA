@@ -34,12 +34,15 @@ plot(resRGCCA,resp=response,i_block=i_block,type="cor")
 perm.values = matrix(c(0.6, 0.75, 0.5,0.7, 0.75, 0.5,0.8, 0.75, 0.5), 3, 3, byrow = TRUE)
 res_permut=rgcca_permutation(blocks=blocks,perm.par="tau",perm.value=perm.values,nperm=10)
 print(res_permut)
+summary(res_permut)
 plot(res_permut,type="crit")
 plot(res_permut)
 
-# crossvalidation
-res_cv=rgcca_cv(blocks=blocks,par="tau",par_value=perm.values,n_cv=10)
+# crossvalidation (by leave-one-out)
+res_cv=rgcca_cv(blocks=blocks,par="tau",par_value=perm.values)
+res_cv=rgcca_cv(blocks=blocks,par="tau",par_value=perm.values,validation="kfold",k=10)
 print(res_cv)
+summary(res_cv)
 plot(res_cv)
 
 # variable selection (post process? significant variables)
@@ -47,6 +50,7 @@ resBootstrap=bootstrap(resRGCCA,n_boot = 5)
 plot(resBootstrap) 
 plot(resBootstrap,type="2D") 
 print(resBootstrap)
+summary(resBootstrap)
 
 
 #-------------------------

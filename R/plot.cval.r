@@ -72,5 +72,5 @@ plot.cval=function(x,bars="sd",alpha=0.05,...)
 #    p<- p+ scale_x_continuous(breaks=1:nrow(x),  labels=rownames(x))
 #    p<-p + theme(axis.text.x = element_text(angle=45))
     plot(p)
-    return(df)
+    invisible(df)
 }

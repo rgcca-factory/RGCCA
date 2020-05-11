@@ -183,7 +183,8 @@ rgcca_permutation <- function(
                 z <- 0
             return(z)
         })
-
+    rownames(par) = 1:NROW(par)
+    colnames(par)=names(blocks)
     structure(
         list(
             call=call,

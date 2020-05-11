@@ -36,7 +36,7 @@ check_blocks <- function(blocks, init = FALSE, n = 2, add_NAlines=FALSE, allow_u
     # Completing block names
     if (is.null(names(blocks))){
         names(blocks)=paste0("block",1:length(blocks))
-        warning("Warnings in check_blocks(A):\n blocks of the list had no names. The blocks were named block1,... blockJ in the order of the entered list")
+        cat("In check_blocks(A):\n blocks of the list had no names. The blocks were named block1,... blockJ in the order of the entered list")
     }
     # Gestion of the case of one variable only
     blocks=lapply(blocks,as.matrix)

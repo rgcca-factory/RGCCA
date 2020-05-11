@@ -18,9 +18,21 @@
 print.rgcca <- function(x,...) 
 {
   cat("Call: ")
-  dput(x$call[!names(x$call)%in%c("blocks","connection")])
-  cat("\n\n")
- 
+    dput(x$call[!names(x$call)%in%c("blocks","connection","scheme")],control=c())
+  cat("\n")
+  cat("There are J =", NCOL(x$call$connection), "blocks.", fill = TRUE)
+  cat("The design matrix is:\n") 
+  colnames(x$call$connection) = rownames(x$call$connection) = names(x$a) ; print(x$call$connection)
+  cat("\n")
+   if(is.function(x$call$scheme))
+  {
+      cat("The", deparse(x$call$scheme), "scheme was used.", fill = TRUE)
+  }
+  else
+  {
+      cat("The", x$call$scheme, "scheme was used.", fill = TRUE)
+      
+  }
   if(is.list(x$crit))
   {
       critByNcomp=sapply(x$crit,function(t){return(t[length(t)])})
@@ -32,18 +44,7 @@ print.rgcca <- function(x,...)
       cat("Sum_{j,k} c_jk g(cov(X_ja_j, X_ka_k) = ", sep = "", 
           paste(round(x$crit[length(x$crit)], 4), sep = "", " "), fill = TRUE)
   }
-  cat("There are J =", NCOL(x$call$connection), "blocks.", fill = TRUE)
-  cat("The design matrix is:\n") 
-  colnames(x$call$connection) = rownames(x$call$connection) = names(x$a) ; print(x$call$connection)
-  if(is.function(x$call$scheme))
-  {
-      cat("The", deparse(x$call$scheme), "scheme was used.", fill = TRUE)
-  }
-  else
-  {
-      cat("The", x$call$scheme, "scheme was used.", fill = TRUE)
-      
-  }
+  cat("\n")
   if(x$call$type %in% c("rgcca"))   
   {
      param="regularization"
@@ -52,13 +53,13 @@ print.rgcca <- function(x,...)
         for (i in 1:NCOL(x$call$connection)) 
         {
             tau <- x$call$tau[i]
-             cat("The",param," parameter used for block", i, "was:",  round(tau,4), fill = TRUE)
+             cat("The",param,"parameter used for block", i, "was:",  round(tau,4), fill = TRUE)
         }
     }
     else
     {
         
-        cat("The",param," parameters used were: \n")
+        cat("The",param,"parameters used were: \n")
         print(round(x$tau,4),...)
     }
   }
@@ -70,7 +71,7 @@ print.rgcca <- function(x,...)
           for (i in 1:NCOL(x$call$connection)) {
               sparsity <- x$call$sparsity[i]
               
-              cat("The",param," parameter used for block", i, "was:", 
+              cat("The",param,"parameter used for block", i, "was:", 
                   sparsity, fill = TRUE)
           }
       }
@@ -78,7 +79,7 @@ print.rgcca <- function(x,...)
       {
           for (i in 1:NCOL(x$call$connection)) 
         {
-          cat("The",param," parameters used were: \n")
+          cat("The",param,"parameters used were: \n")
           print(round(x$sparsity,4),...)
          }
       }

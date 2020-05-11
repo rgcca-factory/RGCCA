@@ -7,6 +7,7 @@ blocks <- list(
     politic = Russett[, 6:11])
 
 
+
  test_structure_cv <- function(res, scores, nrow = 47,val=TRUE){
      expect_equal(length(res), 8)
      expect_is(res, "cv")

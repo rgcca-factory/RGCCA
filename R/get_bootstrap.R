@@ -48,7 +48,7 @@ get_bootstrap <- function(
         stop("Selected dimension was not associated to every blocks",
              exit_code = 113)
 
-    cat("Binding in progress...")
+ #   cat("Binding in progress...")
 
     mean <- weight <- sd <- occ <- list()
 
