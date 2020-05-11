@@ -68,6 +68,7 @@ check_blocks <- function(blocks, init = FALSE, n = 2, add_NAlines=FALSE, allow_u
     {
         stop(paste(msg, "elements of the list should have colnames."))
     }
+    
     # Dealing with rownames (if one of them is missing but the block sizes are the sames)
     if(any(sapply(blocks, function(x) is.null(row.names(x)))))
     {

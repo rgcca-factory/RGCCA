@@ -209,7 +209,7 @@ rgcca_predict = function(
     # Y definition
 
     if (missing(y.train))
-        y.train <- rgcca_res$call$blocks[[bloc_y]][, MATCH_col[[newbloc_y]], drop = FALSE]
+        y.train <- rgcca_res$A[[bloc_y]][, MATCH_col[[newbloc_y]], drop = FALSE]
 
     # TODO : sampled columns for y.test
 
@@ -310,15 +310,8 @@ rgcca_predict = function(
 
     } else if (model == "classification") {
         ngroups   <- nlevels(as.factor(y.train))
-    #    print(comp.train)
-    #    print(y.train)
-        print(dim(comp.train))
-        print(colnames(comp.train))
-        
         class.fit <- switch(fit,
             "lda"      = {
-                #print(comp.train)
-                #print(as.matrix(comp.train))
                 reslda     <- lda(x = comp.train, grouping = y.train, na.action = "na.exclude")
                 class.fit  <- predict(reslda, comp.test)$class
             },

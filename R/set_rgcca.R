@@ -28,7 +28,8 @@ set_rgcca <- function(
     if(is.null(type)){   type <- rgcca_res$call$type}
     if(is.null(init)){     init <- rgcca_res$call$init}
      if (is.null(blocks)) {
-        blocks <- rgcca_res$call$blocks
+      #  blocks <- rgcca_res$call$blocks
+         blocks=rgcca_res$A 
         if (superblock) {
             J <- length(blocks)
             blocks <- blocks[-J]

@@ -1,6 +1,6 @@
 get_comp_all <- function(
     rgcca,
-    newA = rgcca$call$blocks,
+    newA = rgcca$A,
     type = "train",
     newbloc_y = .Machine$integer.max,
     pred = NULL) {

@@ -11,7 +11,6 @@
 #'     politic = Russett[, 6:11] )
 #' rgcca_out = rgcca(blocks, response = 3,superblock=FALSE)
 #' res=rgcca_crossvalidation(rgcca_out, validation = "kfold", k = 5, n_cores = 1)
-#' rgcca_crossvalidation(rgcca_out,  validation = "test", n_cores = 1)$scores
 #' rgcca_crossvalidation(rgcca_out, n_cores = 1)
 #' @export
 #' @seealso \link{rgcca}, \link{rgcca_predict}, \link{plot.predict}
@@ -74,11 +73,12 @@ rgcca_crossvalidation <- function(
         v_inds <- split(v_inds, sort(v_inds %% k))
     }
     if (validation == "test") {
-        inds <- sample(
-            nrow(bigA[[1]]),
-            size = nrow(bigA[[1]]) * 0.3)
-        scores <- list(eval(f)())
-        preds <- scores$res
+        print("to be implemented")
+        # inds <- sample(
+        #     nrow(bigA[[1]]),
+        #     size = nrow(bigA[[1]]) * 0.3)
+        # scores <- list(eval(f)())
+        # preds <- scores$res
     }else{
         varlist <- c(ls(getNamespace("RGCCA")))
         # get the parameter dot-dot-dot
