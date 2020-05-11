@@ -7,7 +7,7 @@ Plots a permutation object. The parameters tuned for maximizing RGCCA criteria i
 In x, the index of combination (number corresponding to the rownames of tuning parameters object). In ordinate, a score depending of the type parameter (RGCCA criterion for crit, and zstat for the pseudo z-scores)}
 \usage{
 \method{plot}{permutation}(x, type = "zstat", cex = 1, main = NULL,
-  cex_main = 25 * cex, cex_sub = 16 * cex, cex_point = 3 * cex,
+  cex_main = 14 * cex, cex_sub = 12 * cex, cex_point = 3 * cex,
   cex_lab = 19 * cex, ...)
 }
 \arguments{

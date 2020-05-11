@@ -63,8 +63,8 @@ plot_var_1D <- function(
 
     if (is.null(title))
         title <- ifelse(type == "cor",
-            "Variable correlations with",
-            "Variable weights on")
+            "Variable correlations",
+            "Variable weights")
 
     # sort in decreasing order
     df <- data.frame(order_df(df, 1, TRUE), order = NROW(df):1)

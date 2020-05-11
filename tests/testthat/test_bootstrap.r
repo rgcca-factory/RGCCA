@@ -42,13 +42,13 @@ blocks[[1]][4,] <- NA
 resRGCCA <- rgcca(blocks, ncomp = c(2,2,2),superblock=FALSE)
 set.seed(seed = 18)
 resBootstrap <- bootstrap( rgcca=resRGCCA, n_boot = 2, n_cores = 1)
-select_var <- get_bootstrap(resBootstrap, n_cores = 1)
+select_var <- get_bootstrap(resBootstrap, n_cores = 1,display_order=TRUE)
 plot_bootstrap_1D(df_b = select_var)
 #plot(resBootstrap)
 test_that("test_bootstrap_na_values", {
     expect_equal(
         select_var["demostab", 1],
-        mean(c(resBootstrap$bootstrap[[1]][[3]]["demostab", 1], resBootstrap$bootstrap[[2]][[3]]["demostab", 1]))
+        mean(c(resBootstrap$bootstrap[[1]][["politic"]]["demostab", ]))
     )
     expect_true(select_var["demostab", "estimate"] == resRGCCA$a[[3]]["demostab", 1])
 })

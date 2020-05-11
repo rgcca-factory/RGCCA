@@ -5,7 +5,7 @@ blocks <- list(
     politic = Russett[, 6:11] )
 rgcca_out <- rgcca(blocks, sparsity = 0.75, type = "sgcca")
 boot <- bootstrap(rgcca_out, 2, n_cores = 1)
-selected.var <- get_bootstrap(boot, n_cores = 1)
+selected.var <- get_bootstrap(boot, n_cores = 1,display_order=TRUE)
 
 test_that("plot_boot_default", {
     expect_is(plot_bootstrap_2D(boot, n_cores = 1), "ggplot")
@@ -13,7 +13,7 @@ test_that("plot_boot_default", {
 
 rgcca_out <- rgcca(blocks)
 boot <- bootstrap(rgcca_out, 2, n_cores = 1)
-selected.var <- get_bootstrap(boot, n_cores = 1)
+selected.var <- get_bootstrap(boot, n_cores = 1,display_order=TRUE)
 
 test_that("plot_boot_with_args", {
     expect_is(plot_bootstrap_2D(boot, n_cores = 1), "ggplot")

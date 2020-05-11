@@ -56,7 +56,7 @@ plot_var_2D <- function(
     n_mark = 100,
     collapse = FALSE,
     no_overlap = FALSE,
-    title = "Variable correlations with",
+    title = "Variable correlations",
     resp=NULL,
     colors=NULL,
     ...) {

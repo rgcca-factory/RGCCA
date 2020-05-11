@@ -53,7 +53,7 @@ boot = bootstrap(rgcca_out, 2, n_cores = 1)
 plot_bootstrap_1D(boot, n_cores = 1)
 rgcca_out = rgcca(blocks)
 boot = bootstrap(rgcca_out, 2, n_cores = 1)
-selected.var = get_bootstrap(boot, n_cores = 1)
+selected.var = get_bootstrap(boot, n_cores = 1,display_order=TRUE)
 plot_bootstrap_1D(boot, n_cores = 1)
 plot_bootstrap_1D(df_b = selected.var)
 }

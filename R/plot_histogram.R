@@ -14,8 +14,8 @@ plot_histogram <- function(
     group = NA,
     colors = NULL,
     cex = 1,
-    cex_main = 25 * cex,
-    cex_sub = 16 * cex,
+    cex_main = 14 * cex,
+    cex_sub = 12 * cex,
     cex_axis = 10 * cex
 ) {
 
@@ -34,11 +34,11 @@ plot_histogram <- function(
     } else
         width <- 1
 
-    if (NROW(df) < 3)
-        mar <- 60
-    else if (NROW(df) < 5)
-        mar <- 30
-    else
+   # if (NROW(df) < 3)
+   #     mar <- 60
+   # else if (NROW(df) < 5)
+   #     mar <- 30
+   # else
         mar <- 0
 
     axis <- function(margin){

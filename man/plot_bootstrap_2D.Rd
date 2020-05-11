@@ -7,8 +7,8 @@
 plot_bootstrap_2D(b = NULL, df_b = NULL, x = "bootstrap_ratio",
   y = "occurrences", title = paste("Variable selection \\nby",
   attributes(b)$n_boot, "bootstraps"), colors = NULL, cex = 1,
-  cex_main = 25 * cex, cex_sub = 16 * cex, cex_point = 3 * cex,
-  cex_lab = 19 * cex, comp = 1, i_block = length(b$bootstrap[[1]]),
+  cex_main = 14 * cex, cex_sub = 12 * cex, cex_point = 3 * cex,
+  cex_lab = 10 * cex, comp = 1, i_block = length(b$bootstrap[[1]]),
   collapse = FALSE, n_cores = parallel::detectCores() - 1)
 }
 \arguments{
@@ -58,7 +58,7 @@ boot = bootstrap(rgcca_out, 2, n_cores = 1)
 plot_bootstrap_2D(boot, n_cores = 1)
 rgcca_out = rgcca(blocks)
 boot = bootstrap(rgcca_out, 2, n_cores = 1)
-selected.var = get_bootstrap(boot, n_cores = 1)
+selected.var = get_bootstrap(boot, n_cores = 1,display_order=TRUE)
 print("i")
 # plot_bootstrap_2D(boot, n_cores = 1)
 print("j")

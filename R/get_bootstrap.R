@@ -8,6 +8,7 @@
 #' @inheritParams plot_var_1D
 #' @param bars A character among "sd" for standard deviations, "stderr" for the standard error, "ci" for confidence interval of scores and "cim" for the confidence intervall of the mean.
 #' @param b A list of list weights (one per bootstrap per blocks)
+#' @param display_order If TRUE the order is indicated
 #' @return A matrix containing the means, 95% intervals, bootstrap ratio and p-values
 #' @examples
 #' library(RGCCA)
@@ -25,7 +26,8 @@ get_bootstrap <- function(
     i_block = length(b$bootstrap[[1]]),
     bars="sd",
     collapse = FALSE,
-    n_cores = parallel::detectCores() - 1)
+    n_cores = parallel::detectCores() - 1,
+    display_order=FALSE)
     {
     stopifnot(is(b, "bootstrap"))
 
@@ -34,98 +36,15 @@ get_bootstrap <- function(
     check_blockx("i_block", i_block, b$rgcca$call$blocks)
     check_boolean("collapse", collapse)
     check_integer("n_cores", n_cores, 0)
-
-    if (n_cores == 0)
-        n_cores <- 1
-
-    if (collapse && b$rgcca$call$superblock) {
-        b$rgcca$a <- b$rgcca$a[-length(b$rgcca$a)]
-        if (i_block > length(b$rgcca$a))
-            i_block <- length(b$rgcca$a)
-    }
-
-    if (comp > min(b$rgcca$call$ncomp))
-        stop("Selected dimension was not associated to every blocks",
-             exit_code = 113)
-
- #   cat("Binding in progress...")
-
-    mean <- weight <- sd <- occ <- list()
-
-    if (collapse)
-        J <- seq(length(b$rgcca$a))
-    else
-        J <- i_block
-
-    for (i in J) {
-
-        b_bind <- parallelize(
-            c(),
-            b$bootstrap,
-            function(x) x[[i]][, comp],
-            n_cores = n_cores,
-            envir = environment(),
-            applyFunc = "parLapply")
-
-        weight[[i]] <- b$rgcca$a[[i]][, comp]
-        b_select <- matrix(
-            unlist(b_bind),
-            nrow = length(b_bind),
-            ncol = length(b_bind[[1]]),
-            byrow = TRUE
-        )
-        colnames(b_select) <- names(weight[[i]])
-        rm(b_bind); gc()
-
-        n <- seq(NCOL(b_select))
-
-        if (tolower(b$rgcca$call$type) %in% c("spls", "spca", "sgcca")) {
-
-            occ[[i]] <- unlist(
-                parallelize(
-                    c(),
-                    n,
-                   function(x)
-                       sum(b_select[, x] != 0) / length(b_select[, x]),
-                   n_cores = n_cores,
-                   envir = environment(),
-                   applyFunc = "parLapply"))
-            
-        }
-
-        mean[[i]] <- unlist(
-            parallelize(
-            c(),
-            n,
-           function(x) mean(b_select[,x]),
-           n_cores = n_cores,
-           envir = environment(),
-           applyFunc = "parLapply"
-        ))
-        if (NCOL(b_select) == 1)
-            sd[[i]] <- 1
-        else
-            sd[[i]] <- unlist(
-                parallelize(
-                    c(),
-                    n,
-                   function(x) sd(b_select[,x]),
-                   n_cores = n_cores,
-                   envir = environment(),
-                   applyFunc = "parLapply"
-                ))
-
-        rm(b_select); gc()
-    }
+    bootstrapped=b$bootstrap[[comp]][[i_block]]
+    n_boot=dim(bootstrapped)[2]
+    mean=apply(bootstrapped,1,mean)
+    sd=apply(bootstrapped,1,sd)
+    weight <- b$rgcca$a[[i_block]][, comp]
+    occ <- apply(bootstrapped,1,
+            function(x)
+                sum(x!= 0) / length(x))
     
-    n_boot <- length(b$bootstrap)
-
-    occ <- unlist(occ)
-    mean <- unlist(mean)
-    weight <- unlist(weight)
-    sd <- unlist(sd) 
-
-    cat("OK.\n", append = TRUE)
     p.vals <- 2 * pt(abs(weight)/sd, lower.tail = FALSE, df = n_boot - 1)
     tail <- qt(1 - .05 / 2, df = n_boot - 1)
     
@@ -180,9 +99,16 @@ get_bootstrap <- function(
     zero_var <- which(df[, 1] == 0)
     if (NROW(df) > 1 && length(zero_var) != 0)
         df <- df[-zero_var, ]
-
-    b <- data.frame(order_df(df, index, allCol = TRUE), order = NROW(df):1)
-    attributes(b)$indexes <-
+    if(!display_order)
+    {
+        df=df[,c("mean","estimate","sd","lower_band","upper_band","p.vals","BH")] 
+        b <- data.frame(order_df(df, index, allCol = TRUE)   )
+    }
+    if(display_order)
+    {
+        b <- data.frame(order_df(df, index, allCol = TRUE), order = NROW(df):1) 
+    }
+       attributes(b)$indexes <-
         list(
             estimate = "RGCCA weights",
             bootstrap_ratio = "Bootstrap-ratio",

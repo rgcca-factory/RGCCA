@@ -46,10 +46,11 @@ summary(res_cv)
 plot(res_cv)
 
 # variable selection (post process? significant variables)
-resBootstrap=bootstrap(resRGCCA,n_boot = 5)
+resBootstrap=bootstrap(resRGCCA,n_boot = 1000)
 plot(resBootstrap) 
 plot(resBootstrap,type="2D") 
 print(resBootstrap)
+get_bootstrap(resBootstrap)
 summary(resBootstrap)
 
 

@@ -25,6 +25,17 @@ bootstrap <- function(
     n_boot = 5,
     n_cores = parallel::detectCores() - 1,
     ...) {
+    ndefl_max=max(rgcca_res$call$ncomp)
+    list_res=list()
+    for(i in 1:ndefl_max)
+    {
+        list_res[[i]]=list()
+        for(block in names(rgcca_res$call$blocks))
+        {
+            list_res[[i]][[block]]=matrix(NA,dim(rgcca_res$call$blocks[[block]])[2],n_boot)
+            rownames( list_res[[i]][[block]])=colnames(rgcca_res$call$blocks[[block]])
+        }
+    }
 
     stopifnot(is(rgcca_res, "rgcca"))
     check_integer("n_boot", n_boot)
@@ -62,12 +73,32 @@ bootstrap <- function(
     W <- parallelize(
         varlist,
         seq(n_boot), 
-        function(x) bootstrap_k(rgcca_res, ...), 
+        function(x) {
+            resBoot=bootstrap_k(rgcca_res, ...)
+        }
+        , 
         n_cores = n_cores,
         envir = environment(),
         applyFunc = "parLapply")
+    # 
+    for(k in seq(n_boot))
+    {
+             for(i in 1:ndefl_max)
+            {
+                for(j in 1:length(rgcca_res$call$blocks))
+                {
+                    block=names(rgcca_res$call$blocks)[j]
+                   
+                    if(i<=dim(W[[k]][[block]])[2])
+                   {
+                        list_res[[i]][[block]][,k]= W[[k]][[block]][,i]
+                  } 
+                }
+             }
+        }
+    
 
     message("OK.")
 
-    return(structure(list(bootstrap = W, rgcca = rgcca_res), class = "bootstrap"))
+    return(structure(list(bootstrap =list_res, rgcca = rgcca_res), class = "bootstrap"))
 }
