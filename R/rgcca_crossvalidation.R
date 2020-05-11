@@ -20,7 +20,7 @@ rgcca_crossvalidation <- function(
     validation = "loo",
     model = "regression",
     fit = "lm",
-    new_scaled = TRUE,
+#    new_scaled = TRUE,
     k = 5,
     n_cores = parallel::detectCores() - 1,
     ...) {
@@ -44,7 +44,7 @@ rgcca_crossvalidation <- function(
             rgcca_k <-
                 set_rgcca(rgcca_res,
                           inds = inds,
-                          ...)
+                          ...) #Rgcca on all individuals but inds
             rgcca_k$a <- check_sign_comp(rgcca_res, rgcca_k$a)
 
              rgcca_predict(
@@ -53,8 +53,8 @@ rgcca_crossvalidation <- function(
                  model = model,
                  fit = fit,
                  bloc_to_pred = bloc_to_pred,
-                 bigA = bigA,
-                 new_scaled = TRUE
+                # bigA = bigA,
+                 new_scaled = FALSE
              )
         }
     )
@@ -73,7 +73,6 @@ rgcca_crossvalidation <- function(
         v_inds <- sample(nrow(bigA[[1]]))
         v_inds <- split(v_inds, sort(v_inds %% k))
     }
-
     if (validation == "test") {
         inds <- sample(
             nrow(bigA[[1]]),
@@ -81,7 +80,6 @@ rgcca_crossvalidation <- function(
         scores <- list(eval(f)())
         preds <- scores$res
     }else{
-
         varlist <- c(ls(getNamespace("RGCCA")))
         # get the parameter dot-dot-dot
         args_values <- list(...)
@@ -91,7 +89,6 @@ rgcca_crossvalidation <- function(
             n <- seq(length(args_values))
         for (i in n) {
             if (!is.null(args_names[i])) {
-                print(args_values)
                 # dynamically asssign these values
                 assign(args_names[i], args_values[[i]])
                 # send them to the clusters to parallelize
@@ -138,9 +135,9 @@ rgcca_crossvalidation <- function(
         for (x in seq(length(preds)))
             row.names(preds[[x]]) <- row.names(bigA[[1]])
     }
-     scores <- mean(unlist(lapply(scores, function(x) x$score)))
+     scores <- mean(unlist(lapply(scores, function(x) x$score)),na.rm=T)
 
     structure(
-        list(scores = scores, preds = preds, rgcca_res = rgcca_res,list_scores=list_scores,list_pred=list_pred,list_rgcca=list_rgcca,list_class=list_class.fit),
+        list(scores = scores, preds = preds, rgcca_res = rgcca_res,list_scores=list_scores,list_pred=list_pred,list_rgcca=list_rgcca,list_class=list_class.fit,list_res=list_res),
         class = "cv")
 }

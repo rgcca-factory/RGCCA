@@ -12,7 +12,6 @@
 #' @param y.test A dataframe or a matrix giving the block to be predicted
 #' @param scale_size_bloc A boolean giving the possibility to scale the blocks by the square root of their column number
 #' @param new_scaled A boolean scaling the blocks to predict
-#' @param bigA to perform data reduction for cross-validation, the dataset where A and newA were extracted
 #' @examples
 #' data("Russett")
 #' blocks = list(
@@ -35,7 +34,7 @@
 #' bloc_to_pred = "industry"
 #' y.train = kmeans(A[[bloc_to_pred]], 3)$cluster
 #' y.test = kmeans(newA[[bloc_to_pred]], 3)$cluster
-#' ( res  = rgcca_predict(object, newA, bloc_to_pred = "industry", bigA = blocks) )
+#' ( res  = rgcca_predict(object, newA, bloc_to_pred = "industry") )
 #' ( res  = rgcca_predict(object, newA, "regression", "cor", "industry") )
 #' ( res  = rgcca_predict(object, newA) )
 #' ( res  = rgcca_predict(object, newA = newA, model = "regression", fit = "lm",
@@ -54,15 +53,17 @@ rgcca_predict = function(
     bloc_to_pred = NULL,
     y.train = NULL,
     y.test = NULL,
-    bigA = NULL,
+  #  bigA = NULL,
     new_scaled = TRUE,
     scale_size_bloc = TRUE) {
 
+#rgcca_res$call$blocks=intersection(rgcca_res$call$blocks)
+#print(model)
     stopifnot(is(rgcca_res, "rgcca"))
     match.arg(model, c("regression", "classification"))
     match.arg(fit, c("lm", "cor", "lda", "logistic"))
-    if(!is.null(bigA))
-        check_blocks(bigA)
+   # if(!is.null(bigA))
+   #     check_blocks(bigA)
 
     for (i in c("new_scaled", "scale_size_bloc"))
             check_boolean(i, get(i))
@@ -168,6 +169,8 @@ rgcca_predict = function(
            #     res
 
         }
+   
+        
         newA <- mapply(
             scl_fun,
             newA,
@@ -175,10 +178,7 @@ rgcca_predict = function(
             reorderList(rgcca_res$call$blocks, t_attr = "scaled:scale"),
             SIMPLIFY = FALSE
         )
-
-
     }
-
 
     # Dimension Reduction
     for (i in seq(length(rgcca_res$call$blocks)))
@@ -194,6 +194,7 @@ rgcca_predict = function(
     }
        )
     names(pred)=names(newA)
+    
     if (missing(bloc_to_pred))
         return(list(pred = pred))
 
@@ -239,13 +240,12 @@ rgcca_predict = function(
     if (model == "regression") {
         score <- switch(fit,
             "lm"  = {
-
                 ychapo <- sapply(
                     colnames(y.train),
                     function(x) {
                         predict(
                             lm(
-                                as.formula(paste(x, " ~ .")),
+                                as.formula(paste(x, " ~ ",paste(colnames(comp.train),collapse="+"))),
                                 data = cbind(comp.train, y.train), 
                                 na.action = "na.exclude"
                             ), 
@@ -255,11 +255,11 @@ rgcca_predict = function(
                 if (any(is.na(ychapo)))
                     warning("NA in predictions.")
 
-                if (is.null(bigA))
-                    bigA <- rgcca_res$call$blocks
+             #   if (is.null(bigA))
+             #       bigA <- rgcca_res$call$blocks
 
-                m <- function(x)
-                    apply(bigA[[bloc_to_pred]], 2, x) # TODO
+             #   m <- function(x)
+             #       apply(bigA[[bloc_to_pred]], 2, x) # TODO
 
                 f <- quote(
                     if (is.null(dim(y)))
@@ -268,17 +268,21 @@ rgcca_predict = function(
                         y[, x]
                 )
 
-                r <- function(y)
-                    sapply(seq(NCOL(bigA[[bloc_to_pred]])), function(x)
-                        (eval(f) - m(min)[x]) / (m(max)[x] - m(min)[x]))
+             #   r <- function(y)
+             #       sapply(seq(NCOL(bigA[[bloc_to_pred]])), function(x)
+             #           (eval(f) - m(min)[x]) / (m(max)[x] - m(min)[x]))
 
-                res <- r(y.test) - r(ychapo)
+             #   res <- r(y.test) - r(ychapo)
+                prediction=ychapo
+                res=y.test-ychapo
                 if (is.null(dim(res))) {
-                    res <- abs(res)
-                    score <- mean(res)
+                    #res <- abs(res)
+                    score <- sqrt(mean(res^2))
                 } else{
-                    res <- apply(res, 2, function(x) abs(x))
-                    score <- mean(apply(res, 2, mean))
+                  #  res <- apply(res, 2, function(x) abs(x))
+                    res2 <- apply(res,2,function(x){return(sqrt(mean(x^2)))})
+                    score <- sqrt(mean(res2^2))
+                    #score <- mean(apply(res, 2, mean))
                 }
 
 
@@ -290,7 +294,7 @@ rgcca_predict = function(
                 } else{
                     rgcca_res$call$connection <- rgcca_res$call$connection[MATCH, MATCH]
                     cor <- get_cor_all(rgcca_res, newA, comp.test)
-
+                    print(cor)
                     for (i in seq(length(cor))) {
                         cor[[i]] <- mean(
                             abs(
@@ -298,6 +302,7 @@ rgcca_predict = function(
                             )[upper.tri(rgcca_res$call$connection)], 
                             na.rm = TRUE)     
                     }
+                    
                     score <- mean(unlist(cor), na.rm = TRUE)
                 }
             })
@@ -305,8 +310,15 @@ rgcca_predict = function(
 
     } else if (model == "classification") {
         ngroups   <- nlevels(as.factor(y.train))
+    #    print(comp.train)
+    #    print(y.train)
+        print(dim(comp.train))
+        print(colnames(comp.train))
+        
         class.fit <- switch(fit,
             "lda"      = {
+                #print(comp.train)
+                #print(as.matrix(comp.train))
                 reslda     <- lda(x = comp.train, grouping = y.train, na.action = "na.exclude")
                 class.fit  <- predict(reslda, comp.test)$class
             },
@@ -321,17 +333,30 @@ rgcca_predict = function(
                     class.fit       <- factor(as.numeric(class.fit.class))
                 }
             })
-        score <- sum(class.fit == y.test) / length(y.test)
+        res=class.fit == y.test
+        score <- sum(res) / length(y.test)
     }
-
-
+#    print(prediction)
+# print(head(prediction))
+#nb.row=ifelse(is.null(dim(prediction)),1,dim(prediction)[1])
+#nb.col=ifelse(is.null(dim(prediction)),length(prediction),dim(prediction)[2])
+ #v.means=reorderList(rgcca_res$call$blocks, t_attr = "scaled:center")[[bloc_to_pred]]
+ #m.means=matrix(v.means,nb.row,nb.col,byrow=TRUE);colnames(m.means)=names(v.means)
+ #v.sds=reorderList(rgcca_res$call$blocks, t_attr = "scaled:scale")[[bloc_to_pred]]
+ #print(v.sds)
+ #m.sds=matrix(v.sds,nb.row,nb.col,byrow=TRUE);colnames(m.sds)=names(v.sds)
+ #pred_A=prediction*m.sds+m.means
+#print(matrix(rep(v.means,NROW(prediction),nrows=NROW(prediction),ncol=length(v.means),byrow=TRUE)))
     result=list(
         pred = pred,
+    #    pred_A=pred_A,
+    #    prediction=prediction,
         class.fit = class.fit,
         score = score,
         res = res,
         rgcca_res=rgcca_res
     )
+
     class(result)="predict"
     return(result)
 }

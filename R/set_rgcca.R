@@ -1,3 +1,4 @@
+# inds : individuals removed from the blocks (for crossvalidation)
 set_rgcca <- function(
     rgcca_res,
     blocks = NULL,

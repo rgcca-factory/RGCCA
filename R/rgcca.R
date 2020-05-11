@@ -121,7 +121,7 @@ rgcca <- function(
     tol = 1e-08,
     response = NULL,
     superblock = FALSE,
-    method = "complete",
+    method = "nipals",
     verbose = FALSE,
     quiet = TRUE,
     knn.k = "all",

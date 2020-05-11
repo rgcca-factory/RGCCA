@@ -163,45 +163,11 @@ rgccad=function (A, C = 1 - diag(length(A)), tau = rep(1, length(A)),  ncomp = r
   }
     if(!prescaling)
     {
-        if (scale == TRUE) 
-        {
-            
-            A = lapply(A, function(x) scale2(x,scale=TRUE, bias = bias)) # le biais indique si on recherche la variance biaisee ou non
-            if(sameBlockWeight)
-            {
-                A = lapply(A, function(x) 
-                {
-                    y=x/sqrt(NCOL(x));
-                    return(y)
-                } 
-                )
-            }
-            # on divise chaque bloc par la racine du nombre de variables pour avoir chaque poids pour le meme bloc
-        }
-        if (scale == FALSE)
-        { 
-             
-            A = lapply(A, function(x) scale2(x, scale=FALSE, bias = bias)) 
-            if(sameBlockWeight)
-            {
-                A = lapply(A, function(x) 
-                {
-                    if(dim(x)[1]>dim(x)[2])
-                    {
-                        covarMat=cov2(x,bias=bias);
-                        varianceBloc=sum(diag(covarMat)); 
-                    }
-                    else
-                    {
-                        covarMat=cov2(t(x),bias=bias);
-                        varianceBloc=sum(diag(covarMat)); 
-                    }
-                  
-                    return(x/sqrt(varianceBloc))
-                })
-            }
-            
-        } 
+        A<-scaling(
+            A,
+            scale = scale,
+            bias = bias,
+            sameBlockWeight = sameBlockWeight)
     }
 
       

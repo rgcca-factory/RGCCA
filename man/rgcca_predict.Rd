@@ -5,7 +5,7 @@
 \title{Predict RGCCA}
 \usage{
 rgcca_predict(rgcca_res, newA, model = "regression", fit = "lm",
-  bloc_to_pred = NULL, y.train = NULL, y.test = NULL, bigA = NULL,
+  bloc_to_pred = NULL, y.train = NULL, y.test = NULL,
   new_scaled = TRUE, scale_size_bloc = TRUE)
 }
 \arguments{
@@ -22,8 +22,6 @@ rgcca_predict(rgcca_res, newA, model = "regression", fit = "lm",
 \item{y.train}{A dataframe or a matrix giving the block used as a response in the training}
 
 \item{y.test}{A dataframe or a matrix giving the block to be predicted}
-
-\item{bigA}{to perform data reduction for cross-validation, the dataset where A and newA were extracted}
 
 \item{new_scaled}{A boolean scaling the blocks to predict}
 
@@ -54,7 +52,7 @@ newA = sample(newA, length(newA))
 bloc_to_pred = "industry"
 y.train = kmeans(A[[bloc_to_pred]], 3)$cluster
 y.test = kmeans(newA[[bloc_to_pred]], 3)$cluster
-( res  = rgcca_predict(object, newA, bloc_to_pred = "industry", bigA = blocks) )
+( res  = rgcca_predict(object, newA, bloc_to_pred = "industry") )
 ( res  = rgcca_predict(object, newA, "regression", "cor", "industry") )
 ( res  = rgcca_predict(object, newA) )
 ( res  = rgcca_predict(object, newA = newA, model = "regression", fit = "lm",

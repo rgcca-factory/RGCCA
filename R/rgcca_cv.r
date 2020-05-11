@@ -29,7 +29,7 @@ rgcca_cv=function( blocks,
           type_cv = "regression",
           fit = "lm",
           k=5,
-          n_cv = 20,
+          n_cv = 1,
           one_value_per_cv=FALSE,
           n_cores = parallel::detectCores() - 1,
           quiet = TRUE,
@@ -53,7 +53,6 @@ rgcca_cv=function( blocks,
         sapply(seq(min_spars), function(x) seq(eval(f), min_spars[x], len = 10))
     }
     set_penalty <- function () {
-        
         if(par == "sparsity"){
             type <<- "sgcca"
             min_spars <<- sapply(ncols, function(x) 1 / sqrt(x))
@@ -126,7 +125,7 @@ rgcca_cv=function( blocks,
                         validation = validation,
                         model = type_cv,
                         fit = fit,
-                        new_scaled = TRUE,
+                       # new_scaled = TRUE,
                         k = k,
                         n_cores =n_cores)$scores)
                 }
@@ -138,7 +137,7 @@ rgcca_cv=function( blocks,
                         validation = validation,
                         model = type_cv,
                         fit = fit,
-                        new_scaled = TRUE,
+                        #new_scaled = TRUE,
                         k = k,
                         n_cores =n_cores)$list_scores)
                 }

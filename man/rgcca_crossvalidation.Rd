@@ -5,11 +5,11 @@
 \title{Cross-validation}
 \usage{
 rgcca_crossvalidation(rgcca_res, validation = "loo",
-  model = "regression", fit = "lm", new_scaled = TRUE, k = 5,
+  model = "regression", fit = "lm", k = 5,
   n_cores = parallel::detectCores() - 1, ...)
 
 rgcca_crossvalidation(rgcca_res, validation = "loo",
-  model = "regression", fit = "lm", new_scaled = TRUE, k = 5,
+  model = "regression", fit = "lm", k = 5,
   n_cores = parallel::detectCores() - 1, ...)
 }
 \arguments{
@@ -22,8 +22,6 @@ rgcca_crossvalidation(rgcca_res, validation = "loo",
 \item{model}{A character corresponding to the model of prediction among : regression or classification}
 
 \item{fit}{A character giving the function used to compare the trained and the tested models}
-
-\item{new_scaled}{A boolean scaling the blocks to predict}
 
 \item{k}{An integer given the parameter for k-fold method (5, by default)}
 

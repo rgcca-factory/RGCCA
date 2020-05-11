@@ -6,8 +6,9 @@ blocks <- list(
     industry = Russett[, 4:5],
     politic = Russett[, 6:11])
 
+
  test_structure_cv <- function(res, scores, nrow = 47){
-     expect_equal(length(res), 7)
+     expect_equal(length(res), 8)
      expect_is(res, "cv")
      expect_is(res$rgcca, "rgcca")
      pred <- res$preds
@@ -15,49 +16,42 @@ blocks <- list(
      expect_is(pred[[1]], "matrix")
      expect_true(all(sapply(pred, NCOL) == 2))
      expect_true(all(sapply(pred, NROW) == nrow))
-#    expect_identical(round(res$scores, 4), scores) #TODO
+    expect_identical(round(res$scores, 4), round(scores,4)) #TODO
      expect_identical(res$rgcca,rgcca_out)
  }
  
- 
- test_that("rgcca_cv_default", {
-         rgcca_out <- rgcca(blocks, response = 1,superblock=FALSE,ncomp=2,scale=TRUE,sameBlockWeight=TRUE)
-         res2=set_rgcca(rgcca_out,blocks=blocks)
-         test_structure_cv(
-             rgcca_crossvalidation(rgcca_out,n_cores=1),
-             0.114)
-         test_structure_cv(
-             rgcca_crossvalidation(
-                 rgcca_out,
-                 blocks = blocks,
-                 n_cores = 1), 
-             scores =  0.114)
-     }
- )
+ # Cross-validation to find out the best sparsity parameters
 
+ #test_that("rgcca_cv_default", {
+ #        rgcca_out <- rgcca(blocks, response = 1,superblock=FALSE,ncomp=2,scale=TRUE,sameBlockWeight=TRUE)
+       #  res2=set_rgcca(rgcca_out,blocks=blocks)
+ #        test_structure_cv(
+ #            rgcca_crossvalidation(rgcca_out,n_cores=1),
+ #            0.4851943)
+ #    }
+ #)
 
- 
- test_that("rgcca_cv_with_args", {
-     rgcca_out <- rgcca(blocks, response = 1,ncomp=2,superblock=TRUE)
-     test_structure_cv(
-         rgcca_crossvalidation(
-             rgcca_out,
-             validation = "kfold",
-             k = 5,
-             n_cores = 1,superblock=TRUE),
-         0.1083)
+# test_that("rgcca_cv_with_args", {
+#     rgcca_out <- rgcca(blocks, response = 1,ncomp=2)
+#     test_structure_cv(
+#         rgcca_crossvalidation(
+#             rgcca_out,
+#         validation = "kfold",
+#             k = 5,
+#             n_cores = 1),
+#0.4851943)
      # test_structure_cv(
      #     rgcca_crossvalidation(
 #     #         rgcca_out, 
 #     #         validation = "test", 
 #     #         n_cores = 1), 
 #     #     0.1057) # TODO : warnings
-     }
- )
+#     }
+# )
 # 
-# test_that("rgcca_cv_withNA", {
-# 
-#     RussettWithNA <- Russett
+ # Cross-validation to find out the best number of components
+ # Cross-validation with missing values
+#RussettWithNA <- Russett
 #     RussettWithNA[1:2,1:3] <- NA
 #     RussettWithNA[3,4:5] <- NA
 #     RussettWithNA[3,1] <- NA
@@ -65,13 +59,15 @@ blocks <- list(
 #         agriculture = RussettWithNA[, seq(3)], 
 #         industry = RussettWithNA[, 4:5],
 #         politic = RussettWithNA[, 6:11])
-# 
-#     # cross validation
+ 
+     # cross validation
 #     rgcca_out <- rgcca(blocksNA, response = 1,ncomp=2)
-#     # avec la method complete -> ne fonctionne pas
-#     test_structure_cv(
-#         rgcca_crossvalidation(rgcca_out, n_cores = 1),
-#         0.1118,
-#         nrow = 44)
-#     }
-# )
+    # rgcca_out <-rgcca(blocksNA, response=1,ncomp=2,method="complete")
+     # avec la method complete -> ne fonctionne pas
+  
+ #    rgcca_out <- rgcca(blocksNA, response = 1, tol = 1E-03,method="nipals")
+ #    cv = rgcca_crossvalidation(rgcca_out, n_cores = 1)
+ #    test_that("rgcca_cv_withNA2", {
+ #        round(cv$scores,digits=3)==0.481
+ #    })
+    

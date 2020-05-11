@@ -25,8 +25,7 @@ get_bootstrap <- function(
     i_block = length(b$bootstrap[[1]]),
     bars="sd",
     collapse = FALSE,
-    n_cores = parallel::detectCores() - 1,
-    test="student")
+    n_cores = parallel::detectCores() - 1)
     {
     stopifnot(is(b, "bootstrap"))
 
@@ -127,7 +126,7 @@ get_bootstrap <- function(
     sd <- unlist(sd) 
 
     cat("OK.\n", append = TRUE)
-    p.vals <- 2 * pt(abs(weight)/(sd/sqrt(n_boot)), lower.tail = FALSE, df = n_boot - 1)
+    p.vals <- 2 * pt(abs(weight)/sd, lower.tail = FALSE, df = n_boot - 1)
     tail <- qt(1 - .05 / 2, df = n_boot - 1)
     
     if(bars=="sd")
