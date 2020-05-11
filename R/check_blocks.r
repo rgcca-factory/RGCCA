@@ -68,7 +68,14 @@ check_blocks <- function(blocks, init = FALSE, n = 2, add_NAlines=FALSE, allow_u
     {
         stop(paste(msg, "elements of the list should have colnames."))
     }
-    
+    # if one of the colnames is identical in one block and another one
+    if(sum(duplicated(unlist(sapply(blocks,colnames))))!=0)
+    {
+        cat("At least one variable name is duplicated: the block names are added for avoiding confusion")
+        blocks_i=lapply(1:length(blocks),function(i){x=blocks[[i]];colnames(x)=paste(names(blocks)[i],colnames(blocks[[i]]),sep="_");return(x)})
+        names(blocks_i)=names(blocks)
+        blocks=blocks_i
+    }
     # Dealing with rownames (if one of them is missing but the block sizes are the sames)
     if(any(sapply(blocks, function(x) is.null(row.names(x)))))
     {
