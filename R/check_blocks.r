@@ -106,8 +106,8 @@ check_blocks <- function(blocks, init = FALSE, n = 2, add_NAlines=FALSE, allow_u
     }
     
     if (any(sapply(blocks, is.character2)))
-        stop(paste(msg, "an element contains non-numeric data."))
-      
+        warnings(paste(msg, "an element contains non-numeric data.They will be replaced by NAs"))
+
     
     for (i in seq(length(blocks)))
         if (is.character(blocks[[i]]))

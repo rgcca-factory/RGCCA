@@ -32,7 +32,7 @@ plot(resRGCCA,resp=response,i_block=i_block,type="cor")
 
 # permutation
 perm.values = matrix(c(0.6, 0.75, 0.5,0.7, 0.75, 0.5,0.8, 0.75, 0.5), 3, 3, byrow = TRUE)
-res_permut=rgcca_permutation(blocks=blocks,perm.par="tau",perm.value=perm.values,nperm=10)
+res_permut=rgcca_permutation(blocks=blocks,perm.par="tau",perm.value=perm.values,nperm=100)
 print(res_permut)
 summary(res_permut)
 plot(res_permut,type="crit")
@@ -46,11 +46,10 @@ summary(res_cv)
 plot(res_cv)
 
 # variable selection (post process? significant variables)
-resBootstrap=bootstrap(resRGCCA,n_boot = 1000)
+resBootstrap=bootstrap(resRGCCA,n_boot = 100)
 plot(resBootstrap) 
 plot(resBootstrap,type="2D") 
 print(resBootstrap)
-get_bootstrap(resBootstrap)
 summary(resBootstrap)
 
 

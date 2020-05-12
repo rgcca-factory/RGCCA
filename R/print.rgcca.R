@@ -18,7 +18,18 @@
 print.rgcca <- function(x,...) 
 {
   cat("Call: ")
-    dput(x$call[!names(x$call)%in%c("blocks","connection","scheme")],control=c())
+  names_call=c("type","superblock","scale","sameBlockWeight","init","bias","tol","method","ncomp")
+  char_to_print=""
+  for(name in names_call)
+  {
+      if(name=="ncomp"){if(length(x$call$ncomp)>1){value=(paste(x$call$ncomp,sep="",collapse=","))}}
+      if(name!="ncomp"){value=x$call[[name]]}
+      quo=ifelse(is.character(value),"'","")
+      vir=ifelse(name==names_call[length(names_call)],"",", ")
+      char_to_print=paste(char_to_print,name,'=',quo,value,quo,vir, collapse="",sep="")
+  }
+  cat(char_to_print)
+   
   cat("\n")
   cat("There are J =", NCOL(x$call$connection), "blocks.", fill = TRUE)
   cat("The design matrix is:\n") 
@@ -65,7 +76,7 @@ print.rgcca <- function(x,...)
   }
   if(x$call$type %in% c("sgcca"))
   {
-      param="shrinkage"
+      param="sparsity"
       if(!is.matrix(x$sparsity))
       {
           for (i in 1:NCOL(x$call$connection)) {
