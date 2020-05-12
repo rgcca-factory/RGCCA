@@ -88,6 +88,6 @@ X2[7,1]=NA
 X2[5,1]=NA
 X3[3,1:2]=NA
 A=list(X1,X2,X3)
-res=MIRGCCA(A,k=3,ni=5,scale=TRUE,sameBlockWeight=TRUE,tau=rep(1,3))
+res=MIRGCCA(A,k=3,ni=5,scale=TRUE,scale_block=TRUE,tau=rep(1,3))
 plot(res,type="ind")
 }

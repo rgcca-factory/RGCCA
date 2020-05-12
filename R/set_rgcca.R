@@ -12,7 +12,7 @@ set_rgcca <- function(
     tol = 1e-03,
     type = NULL,
     scale = NULL,
-    sameBlockWeight = NULL,
+    scale_block = NULL,
     superblock = NULL,
     response = NULL,
     method = "complete",
@@ -20,7 +20,7 @@ set_rgcca <- function(
     inds = NULL) {
 
     if(is.null(scale)){    scale <- rgcca_res$call$scale }
-    if(is.null(sameBlockWeight)){    sameBlockWeight <- rgcca_res$call$sameBlockWeight }
+    if(is.null(scale_block)){    scale_block <- rgcca_res$call$scale_block }
     if(is.null(superblock)){     superblock <- rgcca_res$call$superblock }
     if(is.null(method)){    method <- rgcca_res$call$method }
     if(is.null(scheme)){     scheme <- rgcca_res$call$scheme}
@@ -51,7 +51,7 @@ set_rgcca <- function(
             response <- length(rgcca_res$call$blocks)
 
   }else
-#        blocks <- scaling(blocks, scale, sameBlockWeight = sameBlockWeight)
+#        blocks <- scaling(blocks, scale, scale_block = scale_block)
 
     if (!boot)
         blocks <- intersection(blocks)
@@ -107,7 +107,7 @@ set_rgcca <- function(
             ncomp = ncomp,
             scheme = scheme,
             scale = scale,
-            sameBlockWeight = sameBlockWeight,
+            scale_block = scale_block,
             type = type,
             verbose = FALSE,
             init = init,

@@ -7,9 +7,9 @@
 sgccaNa(blocks, method, connection = 1 - diag(length(A)),
   sparsity = rep(1, length(A)), ncomp = rep(1, length(A)),
   scheme = "centroid", scale = TRUE, init = "svd", bias = TRUE,
-  tol = 1e-08, verbose = TRUE, sameBlockWeight = TRUE,
+  tol = 1e-08, verbose = TRUE, scale_block = TRUE,
   knn.k = "all", knn.output = "weightedMean", knn.klim = NULL,
-  knn.sameBlockWeight = TRUE, pca.ncp = 1, prescaling = FALSE,
+  knn.scale_block = TRUE, pca.ncp = 1, prescaling = FALSE,
   quiet = FALSE)
 }
 \arguments{
@@ -35,7 +35,7 @@ sgccaNa(blocks, method, connection = 1 - diag(length(A)),
 
 \item{verbose}{If verbose = TRUE, the progress will be report while computing (default: TRUE).}
 
-\item{sameBlockWeight}{TRUE by default : each block have the same weight in the RGCCA analysis. If FALSE, the weight of each block depends on the number of variables of the block}
+\item{scale_block}{TRUE by default : each block have the same weight in the RGCCA analysis. If FALSE, the weight of each block depends on the number of variables of the block}
 
 \item{knn.k}{Used only if missing values in the blocks are estimated by k-NN methods. Number of k nearest neighbors. Can also be "auto" for automatic selection.}
 
@@ -43,7 +43,7 @@ sgccaNa(blocks, method, connection = 1 - diag(length(A)),
 
 \item{knn.klim}{Used only if missing values in the blocks are estimated by k-NN methods, and if knn.k is "auto". k limits (if k is not a number, optimal k between klim[1] and klim[2] is calculated )}
 
-\item{knn.sameBlockWeight}{Used only if missing values in the blocks are estimated by k-NN methods.if TRUE the distance for Nearest Neigbors takes the size of blocks into account}
+\item{knn.scale_block}{Used only if missing values in the blocks are estimated by k-NN methods.if TRUE the distance for Nearest Neigbors takes the size of blocks into account}
 
 \item{pca.ncp}{Number of components chosen in PCA}
 

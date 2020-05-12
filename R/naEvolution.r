@@ -14,15 +14,15 @@
 #' #ponctual
 #' listResults=naEvolution(blocks=A,listMethods=c("complete","nipals","mean"),
 #' prctNA=c(0.05,0.1,0.15,0.2,0.25,0.3,0.4),typeNA="ponc",ncomp=rep(1,3),
-#' sameBlockWeight=FALSE)
+#' scale_block=FALSE)
 #' plot(listResults,output="a",bars = "stderr",ylim=c(0,0.2))
 #' @export naEvolution
-naEvolution=function(blocks,prctNA=c(0.1,0.2,0.3),listMethods=c("mean"),typeNA="block",ncomp=rep(1,length(blocks)),sameBlockWeight=TRUE,scale=TRUE,nDatasets=20,tol=1e-6,verbose=FALSE,scheme="centroid",seed=NULL,connection=matrix(1,length(blocks),length(blocks))-diag(length(blocks)),tau=rep(1,length(blocks)))
+naEvolution=function(blocks,prctNA=c(0.1,0.2,0.3),listMethods=c("mean"),typeNA="block",ncomp=rep(1,length(blocks)),scale_block=TRUE,scale=TRUE,nDatasets=20,tol=1e-6,verbose=FALSE,scheme="centroid",seed=NULL,connection=matrix(1,length(blocks),length(blocks))-diag(length(blocks)),tau=rep(1,length(blocks)))
 {
      if(any(prctNA>1)){stop("prctNA should be a vector of proportion of missing data (between 0 and 1)")}
     match.arg(typeNA,c("block","ponc","byVar","rand"))
     check_ncomp(ncomp,blocks)
-    check_boolean("sameBlockWeight",sameBlockWeight)
+    check_boolean("scale_block",scale_block)
     check_boolean("scale",scale)
     check_integer("nDatasets",nDatasets)
     check_boolean("verbose",verbose)
@@ -42,7 +42,7 @@ naEvolution=function(blocks,prctNA=c(0.1,0.2,0.3),listMethods=c("mean"),typeNA="
             print(paste("pourcent=",prct))
         
         resultComparison[[as.character(prct)]]=list()
-        resultComparison[[as.character(prct)]]=whichNAmethod(blocks=blocks,connection=connection,tau=tau,listMethods=listMethods,patternNA=rep(prct,length(blocks)),typeNA=typeNA,ncomp=ncomp,sameBlockWeight=sameBlockWeight,scale=scale,nDatasets=nDatasets,tol=tol,verbose=verbose,scheme=scheme,seed=seed+i)
+        resultComparison[[as.character(prct)]]=whichNAmethod(blocks=blocks,connection=connection,tau=tau,listMethods=listMethods,patternNA=rep(prct,length(blocks)),typeNA=typeNA,ncomp=ncomp,scale_block=scale_block,scale=scale,nDatasets=nDatasets,tol=tol,verbose=verbose,scheme=scheme,seed=seed+i)
         i=i+10
     }
     class(resultComparison)<-"naEvolution"

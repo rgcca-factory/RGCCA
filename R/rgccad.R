@@ -37,7 +37,7 @@
 #' @param init The mode of initialization to use in RGCCA algorithm. The alternatives are either by Singular Value Decompostion ("svd") or random ("random") (Default: "svd").
 #' @param bias A logical value for biaised or unbiaised estimator of the var/cov (default: bias = TRUE).
 #' @param tol The stopping value for convergence.
-#' @param sameBlockWeight A logical value indicating if the different blocks should have the same weight in the analysis (default, sameBlockWeight=TRUE)
+#' @param scale_block A logical value indicating if the different blocks should have the same weight in the analysis (default, scale_block=TRUE)
 #' @param na.rm If TRUE, runs rgcca only on available data.
 #' @param estimateNA If TRUE, missing values are estimated during the RGCCA calculation
 #' @param prescaling If TRUE, the scaling-centering steps are not applied in this function, and should be before running rgccad
@@ -124,14 +124,14 @@
 #' @importFrom stats as.formula qt
 #' @importFrom grDevices graphics.off
 
-rgccad=function (A, C = 1 - diag(length(A)), tau = rep(1, length(A)),  ncomp = rep(1, length(A)), scheme = "centroid", scale = TRUE,   init = "svd", bias = TRUE, tol = 1e-08, verbose = TRUE,sameBlockWeight=TRUE,na.rm=TRUE,estimateNA="no",prescaling=FALSE,quiet=FALSE)
+rgccad=function (A, C = 1 - diag(length(A)), tau = rep(1, length(A)),  ncomp = rep(1, length(A)), scheme = "centroid", scale = TRUE,   init = "svd", bias = TRUE, tol = 1e-08, verbose = TRUE,scale_block=TRUE,na.rm=TRUE,estimateNA="no",prescaling=FALSE,quiet=FALSE)
 {
   
   shave.matlist <- function(mat_list, nb_cols) mapply(function(m,nbcomp) m[, 1:nbcomp, drop = FALSE], mat_list, nb_cols, SIMPLIFY = FALSE)
   shave.veclist <- function(vec_list, nb_elts) mapply(function(m, nbcomp) m[1:nbcomp], vec_list, nb_elts, SIMPLIFY = FALSE)
   A0=A
   #  call = match.call()
-  call=list(A=A, C = C,  ncomp = ncomp, scheme = scheme, scale = scale,   init = init, bias = bias, tol =tol, verbose = verbose,sameBlockWeight=sameBlockWeight,na.rm=na.rm,estimateNA=estimateNA)
+  call=list(A=A, C = C,  ncomp = ncomp, scheme = scheme, scale = scale,   init = init, bias = bias, tol =tol, verbose = verbose,scale_block=scale_block,na.rm=na.rm,estimateNA=estimateNA)
   if (any(ncomp < 1)) {stop("Compute at least one component per block!")}	
   pjs <- sapply(A, NCOL) #nombre de variables par bloc
  # print("varij")
@@ -167,7 +167,7 @@ rgccad=function (A, C = 1 - diag(length(A)), tau = rep(1, length(A)),  ncomp = r
             A,
             scale = scale,
             bias = bias,
-            sameBlockWeight = sameBlockWeight)
+            scale_block = scale_block)
     }
 
       
@@ -198,7 +198,7 @@ rgccad=function (A, C = 1 - diag(length(A)), tau = rep(1, length(A)),  ncomp = r
   if (N == 0) 
   { # cas ou on n'a qu'un axe a calculer par bloc
   
-    result <- rgccak(A, C, tau = tau, scheme = scheme, init = init, bias = bias, tol = tol, verbose = verbose,na.rm=na.rm,estimateNA=estimateNA,sameBlockWeight=sameBlockWeight,scale=scale)
+    result <- rgccak(A, C, tau = tau, scheme = scheme, init = init, bias = bias, tol = tol, verbose = verbose,na.rm=na.rm,estimateNA=estimateNA,scale_block=scale_block,scale=scale)
  
     if(estimateNA%in%c("iterative","first","lebrusquet","superblock"))
     {

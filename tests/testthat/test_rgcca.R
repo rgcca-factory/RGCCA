@@ -55,7 +55,7 @@ unscaledPCA= rgcca (
     type = "pca",
     verbose = FALSE,
     scheme = "factorial",
-    sameBlockWeight = FALSE,
+    scale_block = FALSE,
     scale = FALSE,
     init = "svd",
     bias = TRUE, 
@@ -109,7 +109,7 @@ pcasb_ind=abs(cor(pcaSB$x[,1],scaledPCASB$Y[[1]][,1]))==1
 #      connection=matrix(c(0,1,1,0),2,2),
 #      tau=rep(1,2),
 #      ncomp = rep(1, length(A)),
-#     sameBlockWeight=FALSE)
+#     scale_block=FALSE)
 #  
 # # 
 #  cor_X = abs(cor(res_pls$fitted.values[,,1][,1], pls_with_rgcca$Y[[1]]))

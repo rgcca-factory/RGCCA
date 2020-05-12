@@ -25,7 +25,7 @@ blocks <- list(
 # Crossvalidation with leave-one-out 
 #----------------------------------------
  # Cross-validation to find out the prediction error when agri is response and with 1 comp
- rgcca_out <- rgcca(blocks, response = 1,superblock=FALSE,ncomp=1,scale=TRUE,sameBlockWeight=TRUE)
+ rgcca_out <- rgcca(blocks, response = 1,superblock=FALSE,ncomp=1,scale=TRUE,scale_block=TRUE)
  test_that("rgcca_cv_default_1", {
      test_structure_cv(
          rgcca_crossvalidation(rgcca_res=rgcca_out,n_cores=1),
@@ -33,7 +33,7 @@ blocks <- list(
  }
  )
  # Cross-validation to find out the prediction error when agri is response and with 2 comp
- rgcca_out <- rgcca(blocks, response = 1,superblock=FALSE,ncomp=2,scale=TRUE,sameBlockWeight=TRUE)
+ rgcca_out <- rgcca(blocks, response = 1,superblock=FALSE,ncomp=2,scale=TRUE,scale_block=TRUE)
  test_that("rgcca_cv_default_2", {
           test_structure_cv(
              rgcca_crossvalidation(rgcca_res=rgcca_out,n_cores=1),

@@ -15,7 +15,7 @@
 #' @param ncomp vector containing the number of components per block in RGCCA
 #' @param naxis number of component to select for the estimation of missing data
 #' @param  scale  If scale = TRUE, each block is standardized to zero means and unit variances (default: TRUE).
-#' @param sameBlockWeight A logical value indicating if the different blocks should have the same weight in the analysis (default, sameBlockWeight=TRUE)
+#' @param scale_block A logical value indicating if the different blocks should have the same weight in the analysis (default, scale_block=TRUE)
 #' @param scheme scheme chosene for RGCCA (is not useful when superblock=TRUE)
 #'  @param bias A logical value indicating if variance should be biased or not
 #' @param superblock Boolean, if TRUE, the missing values are estimated with the superblock
@@ -41,7 +41,7 @@ imputeEM <-
              ncomp = NULL,
              naxis = 1,
              scale = TRUE,
-             sameBlockWeight = TRUE,
+             scale_block = TRUE,
              scheme = "centroid",
              bias = TRUE,
              superblock = FALSE,
@@ -77,7 +77,7 @@ imputeEM <-
         
         # calculating the D matrix with the weight by number of variables in
         # each block D=matrix(1,dim(concatened
-        # Blocks)[1],dim(concatenedBlocks)[2]) if(sameBlockWeight) { for(u in
+        # Blocks)[1],dim(concatenedBlocks)[2]) if(scale_block) { for(u in
         # 1:length(finBlock)) { var_group=sum(apply(
         # scaledConcatenedBlocks[,debutBlock[u]:finBlock[u]],2,'cov2'))
         # D[,debutBlock[u]:finBlock[u]]=1/sqrt(var_group) } }
@@ -121,7 +121,7 @@ imputeEM <-
                         init = "svd",
                         verbose = verbose,
                         tol = tol,
-                        sameBlockWeight = FALSE
+                        scale_block = FALSE
                     )
                 
             }
@@ -136,7 +136,7 @@ imputeEM <-
                     init = "svd",
                     verbose = verbose,
                     tol = tol,
-                    sameBlockWeight = sameBlockWeight
+                    scale_block = scale_block
                 )
             }
             

@@ -5,7 +5,7 @@
 \title{imputeNN: Impute with k-Nearest Neighbors}
 \usage{
 imputeNN(A, k = 1, output = "mean", klim = NULL, scale = TRUE,
-  sameBlockWeight = TRUE, superblock = TRUE)
+  scale_block = TRUE, superblock = TRUE)
 }
 \arguments{
 \item{A}{A list of J blocks}
@@ -18,7 +18,7 @@ imputeNN(A, k = 1, output = "mean", klim = NULL, scale = TRUE,
 
 \item{scale}{If scale = TRUE, each block is standardized to zero means and unit variances (default: TRUE).}
 
-\item{sameBlockWeight}{A logical value indicating if the different blocks should have the same weight in the analysis (default, sameBlockWeight=TRUE)}
+\item{scale_block}{A logical value indicating if the different blocks should have the same weight in the analysis (default, scale_block=TRUE)}
 
 \item{superblock}{if TRUE the distance between two subjects is calculated on the superblock. If FALSE the distance is calculated by blocks.}
 }

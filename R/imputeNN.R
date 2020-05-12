@@ -7,7 +7,7 @@
 #' @param output "mean","random" or "weightedMean". Corresponds to the kind of output required by the user. If "random" is chosen, the imputation will be done by selecting one neighbor among the k nearests. If "mean" is chosen, the imputation will be done by averaging all k-neighbors scores. If "weightedMean" is chosen, this average is weighted by the inverse of the distance.
 #' @param klim Vector of two integers with klim(1)<klim(2). if k=auto, it is optimised between klim(1) and klim(2)
 #' @param  scale  If scale = TRUE, each block is standardized to zero means and unit variances (default: TRUE).
-#' @param sameBlockWeight A logical value indicating if the different blocks should have the same weight in the analysis (default, sameBlockWeight=TRUE)
+#' @param scale_block A logical value indicating if the different blocks should have the same weight in the analysis (default, scale_block=TRUE)
 #' @param superblock if TRUE the distance between two subjects is calculated on the superblock. If FALSE the distance is calculated by blocks. 
 #' @return \item{A}{A list of the imputed blocks}
 #' @title imputeNN: Impute with k-Nearest Neighbors
@@ -18,7 +18,7 @@ imputeNN <- function(
   output = "mean",
   klim = NULL,
   scale = TRUE,
-  sameBlockWeight = TRUE,
+  scale_block = TRUE,
   superblock=TRUE
   ) {
 
@@ -30,7 +30,7 @@ imputeNN <- function(
             output = output,
             klim = klim,
             scale = scale,
-            sameBlockWeight = FALSE,
+            scale_block = FALSE,
             superblock=TRUE
         )})
         return(B)
@@ -53,9 +53,9 @@ imputeNN <- function(
 
    superblockNAs <- scale3(superblockNA, scale = scale)
   
-  # Each block is divided by its standard deviations, if sameBlockWeight=TRUE
+  # Each block is divided by its standard deviations, if scale_block=TRUE
 
-  if (sameBlockWeight&!is.matrix(A)) {
+  if (scale_block&!is.matrix(A)) {
  
     group <- unlist(lapply(A, "NCOL"))
     D <- matrix(0, dim(superblockNA)[1], dim(superblockNA)[2])

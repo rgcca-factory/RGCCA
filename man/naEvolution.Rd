@@ -6,7 +6,7 @@
 \usage{
 naEvolution(blocks, prctNA = c(0.1, 0.2, 0.3), listMethods = c("mean"),
   typeNA = "block", ncomp = rep(1, length(blocks)),
-  sameBlockWeight = TRUE, scale = TRUE, nDatasets = 20,
+  scale_block = TRUE, scale = TRUE, nDatasets = 20,
   tol = 1e-06, verbose = FALSE, scheme = "centroid", seed = NULL,
   connection = matrix(1, length(blocks), length(blocks)) -
   diag(length(blocks)), tau = rep(1, length(blocks)))
@@ -29,7 +29,7 @@ naEvolution(blocks, prctNA = c(0.1, 0.2, 0.3), listMethods = c("mean"),
 
 \item{ncomp}{A \eqn{1 \times J} vector that contains the numbers of components for each block (default: rep(1, length(A)), which gives one component per block.). It can be estimated by using \link{rgcca_permutation}.}
 
-\item{sameBlockWeight}{TRUE by default : each block have the same weight in the RGCCA analysis. If FALSE, the weight of each block depends on the number of variables of the block}
+\item{scale_block}{TRUE by default : each block have the same weight in the RGCCA analysis. If FALSE, the weight of each block depends on the number of variables of the block}
 
 \item{scale}{If scale = TRUE, each block is standardized to zero means and unit variances (default: TRUE).}
 
@@ -67,6 +67,6 @@ A = list(agri=X_agric, ind=X_ind, polit=X_polit)
 #ponctual
 listResults=naEvolution(blocks=A,listMethods=c("complete","nipals","mean"),
 prctNA=c(0.05,0.1,0.15,0.2,0.25,0.3,0.4),typeNA="ponc",ncomp=rep(1,3),
-sameBlockWeight=FALSE)
+scale_block=FALSE)
 plot(listResults,output="a",bars = "stderr",ylim=c(0,0.2))
 }

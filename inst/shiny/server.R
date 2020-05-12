@@ -1038,7 +1038,7 @@ server <- function(input, output, session) {
         if (blocksExists()) {
             assign(
                 "blocks_without_superb",
-                scaling(blocks_unscaled, input$scale, TRUE),
+                scaling(blocks_unscaled, scale=input$scale, scale_block=TRUE),
                 .GlobalEnv
             )
             setAnalysis()

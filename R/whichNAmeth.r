@@ -34,14 +34,14 @@
 #' @importFrom parallel mclapply
 #' @seealso \link{plot.whichNAmethod}, \link{naEvolution}
 whichNAmethod=function(blocks,listMethods=c("complete","nipals"),typeNA="block",nDatasets=20,patternNA=NULL,connection=matrix(1,length(blocks),length(blocks))-diag(length(blocks)), tau=rep(1,length(blocks)),
-                       ncomp=rep(2,length(blocks)),sameBlockWeight=TRUE,scale=TRUE,tol=1e-6,
+                       ncomp=rep(2,length(blocks)),scale_block=TRUE,scale=TRUE,tol=1e-6,
                        verbose=FALSE,scheme="centroid",seed=NULL,typeRGCCA="rgcca",sparsity=NULL)
 {
   check_connection(connection,blocks)
   check_tau(tau,blocks)
   check_ncomp(tau,blocks)
   check_integer("nDatasets",nDatasets)
-  check_boolean("sameBlockWeight",sameBlockWeight)
+  check_boolean("scale_block",scale_block)
   check_boolean("scale",scale)
   check_boolean("verbose",verbose)
   check_integer("tol",tol,float=TRUE,min=0)
@@ -73,12 +73,12 @@ whichNAmethod=function(blocks,listMethods=c("complete","nipals"),typeNA="block",
 
   if(typeRGCCA=="rgcca")
   {
-      referenceRgcca=rgccad(referenceDataset,C=connection,tau=tau,ncomp=ncomp,verbose=verbose,sameBlockWeight=sameBlockWeight,scale=scale,tol=tol,scheme=scheme)
+      referenceRgcca=rgccad(referenceDataset,C=connection,tau=tau,ncomp=ncomp,verbose=verbose,scale_block=scale_block,scale=scale,tol=tol,scheme=scheme)
       if(verbose)    {  print("comparisons of RGCCA with the different methods...(this could take some time)")}
   }
   if(typeRGCCA=="sgcca")
   {
-      referenceRgcca=sgcca(referenceDataset,C=connection,sparsity=sparsity,ncomp=ncomp,verbose=verbose,sameBlockWeight=sameBlockWeight,scale=scale,tol=tol,scheme=scheme)
+      referenceRgcca=sgcca(referenceDataset,C=connection,sparsity=sparsity,ncomp=ncomp,verbose=verbose,scale_block=scale_block,scale=scale,tol=tol,scheme=scheme)
       if(verbose)    {  print("comparisons of SGCCA with the different methods...(this could take some time)")}
   }
   resultComparison=NULL
@@ -90,11 +90,11 @@ whichNAmethod=function(blocks,listMethods=c("complete","nipals"),typeNA="block",
     {  
         if(typeRGCCA=="rgcca")
         {
-        methodRgcca=rgccaNa(blocks=listNAdataset[[i]]$dat,connection=connection,tau=tau,method=method,ncomp=ncomp,sameBlockWeight=sameBlockWeight,scale=scale,tol=tol,verbose=FALSE,scheme=scheme)
+        methodRgcca=rgccaNa(blocks=listNAdataset[[i]]$dat,connection=connection,tau=tau,method=method,ncomp=ncomp,scale_block=scale_block,scale=scale,tol=tol,verbose=FALSE,scheme=scheme)
         }
         if(typeRGCCA=="sgcca")
         {
-            methodRgcca=sgccaNa(blocks=listNAdataset[[i]]$dat,connection=connection,sparsity=sparsity,method=method,ncomp=ncomp,sameBlockWeight=sameBlockWeight,scale=scale,tol=tol,verbose=FALSE,scheme=scheme)
+            methodRgcca=sgccaNa(blocks=listNAdataset[[i]]$dat,connection=connection,sparsity=sparsity,method=method,ncomp=ncomp,scale_block=scale_block,scale=scale,tol=tol,verbose=FALSE,scheme=scheme)
         }
         indicators[[method]]=comparison(rgcca1=referenceRgcca,rgcca2=methodRgcca$rgcca,selectPatient=selectCompletePatient,indNA=methodRgcca$indNA)
     }

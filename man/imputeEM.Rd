@@ -5,7 +5,7 @@
 \title{imputeEM: impute with superblock method}
 \usage{
 imputeEM(A, C, tau, ni = 50, tol = 1e-08, graph = FALSE,
-  ncomp = NULL, naxis = 1, scale = TRUE, sameBlockWeight = TRUE,
+  ncomp = NULL, naxis = 1, scale = TRUE, scale_block = TRUE,
   scheme = "centroid", bias = TRUE, superblock = FALSE,
   verbose = FALSE, tolEM = 0.001, reg = "y", quiet = FALSE)
 }
@@ -28,7 +28,7 @@ imputeEM(A, C, tau, ni = 50, tol = 1e-08, graph = FALSE,
 
 \item{scale}{If scale = TRUE, each block is standardized to zero means and unit variances (default: TRUE).}
 
-\item{sameBlockWeight}{A logical value indicating if the different blocks should have the same weight in the analysis (default, sameBlockWeight=TRUE)}
+\item{scale_block}{A logical value indicating if the different blocks should have the same weight in the analysis (default, scale_block=TRUE)}
 
 \item{scheme}{scheme chosene for RGCCA (is not useful when superblock=TRUE)
 @param bias A logical value indicating if variance should be biased or not}

@@ -14,7 +14,7 @@
 #' @param tol Stopping value for convergence.
 #' @param na.rm If TRUE, NIPALS algorithm taking missing values into account is run. RGCCA is run only on available data.
 #' @param estimateNA to choose between "no","first","iterative","superblock","new","lebrusquet") TO BE DEVELOPPED
-#' @param sameBlockWeight useful in lebrusquet 
+#' @param scale_block useful in lebrusquet
 #' @param scale TRUE if scaled (used in superblock method)
 #' @param initImpute 'rand' or 'mean': initialization for optimization method
 #' @return \item{Y}{A \eqn{n * J} matrix of RGCCA outer components}
@@ -36,10 +36,10 @@
 #' @importFrom stats cor rnorm
 #' @importFrom graphics plot
 #' @importFrom Deriv Deriv
-rgccak=function (A, C, tau = "optimal", scheme = "centroid",verbose = FALSE, init = "svd", bias = TRUE, tol = 1e-08,na.rm=TRUE,estimateNA="no",scale=TRUE,sameBlockWeight=TRUE,initImpute="rand") 
+rgccak=function (A, C, tau = "optimal", scheme = "centroid",verbose = FALSE, init = "svd", bias = TRUE, tol = 1e-08,na.rm=TRUE,estimateNA="no",scale=TRUE,scale_block=TRUE,initImpute="rand")
 {
     
-    call=list(A=A, C=C, scheme = scheme,verbose = verbose, init = init, bias = bias, tol = tol,na.rm=na.rm,estimateNA=estimateNA,scale=scale,sameBlockWeight=sameBlockWeight,initImpute=initImpute) 
+    call=list(A=A, C=C, scheme = scheme,verbose = verbose, init = init, bias = bias, tol = tol,na.rm=na.rm,estimateNA=estimateNA,scale=scale,scale_block=scale_block,initImpute=initImpute)
         
      if(mode(scheme) != "function") 
     {
@@ -80,7 +80,7 @@ rgccak=function (A, C, tau = "optimal", scheme = "centroid",verbose = FALSE, ini
                             return(res)
                  })
        #  A=lapply(A,scale2,bias=TRUE)
-       #  if(sameBlockWeight){A=lapply(A,function(x){return(x/sqrt(NCOL(x)))})}
+       #  if(scale_block){A=lapply(A,function(x){return(x/sqrt(NCOL(x)))})}
         # liste de blocs
      }
     if(estimateNA=="superblock")
@@ -108,7 +108,7 @@ rgccak=function (A, C, tau = "optimal", scheme = "centroid",verbose = FALSE, ini
         {
             
             A1 = lapply(A, function(x) scale2(x,scale=TRUE, bias = bias)) # le biais indique si on recherche la variance biaisee ou non
-            if(sameBlockWeight)
+            if(scale_block)
             {
                 A = lapply(A1, function(x) {y=x/sqrt(NCOL(x));return(y)} )
             }
@@ -122,7 +122,7 @@ rgccak=function (A, C, tau = "optimal", scheme = "centroid",verbose = FALSE, ini
         { 
             
             A1 = lapply(A, function(x) scale2(x, scale=FALSE, bias = bias)) 
-            if(sameBlockWeight)
+            if(scale_block)
             {
                 A = lapply(A1, function(x) {covarMat=cov2(x,bias=bias);varianceBloc=sum(diag(covarMat)); return(x/sqrt(varianceBloc))})
             }
@@ -134,7 +134,7 @@ rgccak=function (A, C, tau = "optimal", scheme = "centroid",verbose = FALSE, ini
         }
         means=lapply(A1,function(x){M=matrix(rep(attributes(x)$'scaled:center' ,dim(x)[1]),dim(x)[1],dim(x)[2],byrow=TRUE);return(M)})
         stdev=lapply(A1,function(x){M=matrix(rep(attributes(x)$'scaled:scale' ,dim(x)[1]),dim(x)[1],dim(x)[2],byrow=TRUE);return(M)})
-        if(sameBlockWeight){stdev=lapply(stdev,function(x){return(x/sqrt(NCOL(x)))})}
+        if(scale_block){stdev=lapply(stdev,function(x){return(x/sqrt(NCOL(x)))})}
         
     }
        a <- alpha <- M <- Minv <- K <- list() # initialisation variables internes
@@ -259,7 +259,7 @@ rgccak=function (A, C, tau = "optimal", scheme = "centroid",verbose = FALSE, ini
 			            if (scale == TRUE) 
 			            {
 			                A1[[j]]= scale2(Binit[[j]],scale=TRUE, bias = bias)# le biais indique si on recherche la variance biaisee ou non
-			                if(sameBlockWeight)
+			                if(scale_block)
 			                {
 			                    A[[j]]= A1[[j]] /sqrt(NCOL(A[[j]]))
 			                }
@@ -273,7 +273,7 @@ rgccak=function (A, C, tau = "optimal", scheme = "centroid",verbose = FALSE, ini
 			            { 
 			                
 			                A1[[j]] = scale2(Binit[[j]], scale=FALSE, bias = bias)
-			                if(sameBlockWeight)
+			                if(scale_block)
 			                {   covarMat=cov2(A1[[j]],bias=bias);varianceBloc=sum(diag(covarMat))
 			                    A[[j]] = A1[[j]]/sqrt(varianceBloc)
 			                }
@@ -287,7 +287,7 @@ rgccak=function (A, C, tau = "optimal", scheme = "centroid",verbose = FALSE, ini
 			            means[[j]]=matrix(rep(attributes(A1[[j]])$'scaled:center' ,dim(A1[[j]])[1]),dim(A1[[j]])[1],dim(A1[[j]])[2],byrow=TRUE)
 			     
 			            stdev[[j]]=matrix(rep(attributes(A1[[j]])$'scaled:scale' ,dim(A1[[j]])[1]),dim(A1[[j]])[1],dim(A1[[j]])[2],byrow=TRUE)
-			            if(sameBlockWeight){ stdev[[j]]=stdev[[j]]*sqrt(NCOL(A1[[j]]))}
+			            if(scale_block){ stdev[[j]]=stdev[[j]]*sqrt(NCOL(A1[[j]]))}
 			            
 			        }
 			       # Ainter=A
@@ -305,12 +305,12 @@ rgccak=function (A, C, tau = "optimal", scheme = "centroid",verbose = FALSE, ini
 			                    #{
 			                        title=paste("bloc",j,",var",k,"iter",iter)
 			                        png(filename=paste(title,".png",sep=""))
-			                        newx_k=leb(x_k=A[[j]][,k],missing,z=Z[,j],sameBlockWeight=TRUE,weight=sqrt(pjs[j]),argmax=ifelse(a[[j]][k]>0,TRUE,FALSE),graph=FALSE,main=title,abscissa=A0[[j]][,k])
+			                        newx_k=leb(x_k=A[[j]][,k],missing,z=Z[,j],scale_block=TRUE,weight=sqrt(pjs[j]),argmax=ifelse(a[[j]][k]>0,TRUE,FALSE),graph=FALSE,main=title,abscissa=A0[[j]][,k])
 			                        dev.off()
 			                    #}
     			                 #else
     			                 #{
-    			                 #    newx_k=leb(x_k=A[[j]][,k],missing,z=Z[,j],sameBlockWeight=TRUE,weight=sqrt(pjs[j]),argmax=ifelse(a[[j]][k]>0,TRUE,FALSE),graph=FALSE,main=title)
+    			                 #    newx_k=leb(x_k=A[[j]][,k],missing,z=Z[,j],scale_block=TRUE,weight=sqrt(pjs[j]),argmax=ifelse(a[[j]][k]>0,TRUE,FALSE),graph=FALSE,main=title)
     			                     
     			                 #}
 			                    # on affecte le nouveau k

@@ -1,4 +1,4 @@
-leb=function(x_k,missing,z,sameBlockWeight=TRUE,weight=NULL,argmax=TRUE,graph=FALSE,main=NULL,abscissa=NULL)
+leb=function(x_k,missing,z,scale_block=TRUE,weight=NULL,argmax=TRUE,graph=FALSE,main=NULL,abscissa=NULL)
 {#leb(x_k=A[[j]][,k],missing,z=Z[,j])
  xold=x_k
     n=length(x_k)
@@ -27,7 +27,7 @@ leb=function(x_k,missing,z,sameBlockWeight=TRUE,weight=NULL,argmax=TRUE,graph=FA
     {
        yres=-sqrt(n)*(t(solve(M3))%*%t(M2)%*%matrix(z,ncol=1))/as.numeric(normyres)
     }
-    if(sameBlockWeight){yres=yres/weight}
+    if(scale_block){yres=yres/weight}
     # t(yres)%*%yres
     ures=solve(M3)%*%yres
     xres=M2%*%ures

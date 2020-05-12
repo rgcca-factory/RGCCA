@@ -110,7 +110,7 @@ rgcca <- function(
     blocks,
     type = "rgcca",
     scale = TRUE,
-    sameBlockWeight = TRUE,
+    scale_block = TRUE,
     connection = matrix(1,length(blocks),length(blocks)) - diag(length(blocks)),
     scheme = "factorial",
     ncomp = rep(2, length(blocks)),
@@ -127,7 +127,7 @@ rgcca <- function(
     knn.k = "all",
     knn.output = "weightedMean",
     knn.klim = NULL,
-    knn.sameBlockWeight = TRUE) {
+    knn.scale_block = TRUE) {
 
     if (!missing(sparsity) && missing(type))
         type <- "sgcca"
@@ -178,7 +178,7 @@ rgcca <- function(
     if (!knn.k %in% c("all", "auto"))
         check_integer("knn.k", knn.k)
 
-    for (i in c("superblock","verbose", "scale", "bias", "quiet", "knn.sameBlockWeight"))
+    for (i in c("superblock","verbose", "scale", "bias", "quiet", "knn.scale_block"))
         check_boolean(i, get(i))
 
     penalty <- elongate_arg(penalty, blocks)
@@ -196,7 +196,7 @@ rgcca <- function(
         response = response
     )
 
-    opt$blocks <- scaling(blocks, scale,sameBlockWeight = sameBlockWeight)
+    opt$blocks <- scaling(blocks, scale,scale_block = scale_block)
     opt$superblock <- check_superblock(response, opt$superblock, !quiet)
     opt$blocks <- set_superblock(opt$blocks, opt$superblock, type, !quiet)
 
@@ -240,12 +240,12 @@ rgcca <- function(
             init = init,
             bias = bias,
             tol = tol,
-            sameBlockWeight = sameBlockWeight,
+            scale_block = scale_block,
             method = method,
             knn.k = knn.k,
             knn.output = knn.output,
             knn.klim = knn.klim,
-            knn.sameBlockWeight = knn.sameBlockWeight,
+            knn.scale_block = knn.scale_block,
             pca.ncp =1,
             prescaling = FALSE,
             quiet=quiet
@@ -291,7 +291,7 @@ rgcca <- function(
         "tol",
         "verbose",
         "response",
-        "sameBlockWeight",
+        "scale_block",
         "method",
         "knn.k",
         "knn.output",

@@ -33,7 +33,7 @@
 #' @param bias A logical value for biaised or unbiaised estimator of the var/cov.
 #' @param verbose  Will report progress while computing if verbose = TRUE (default: TRUE).
 #' @param tol Stopping value for convergence.
-#' @param sameBlockWeight If TRUE, all blocks are weighted by their own variance: all the blocks have the same weight
+#' @param scale_block If TRUE, all blocks are weighted by their own variance: all the blocks have the same weight
 #' @param prescaling if TRUE, the saling step is not run in sgcca
 #' @param quiet if TRUE, does not print warnings
 #' @return \item{Y}{A list of \eqn{J} elements. Each element of Y is a matrix that contains the SGCCA components for each block.}
@@ -109,8 +109,8 @@
 #'@export sgcca
 
 
-sgcca <- function (A, C = 1-diag(length(A)), sparsity = rep(1, length(A)), ncomp = rep(1, length(A)), scheme = "centroid", scale = TRUE, init = "svd", bias = TRUE, tol = .Machine$double.eps, verbose = FALSE,sameBlockWeight=TRUE,prescaling=FALSE,quiet=FALSE){
-  call=list(A=A, C = C, sparsity = sparsity, ncomp = ncomp, scheme = scheme, scale = scale, init = init, bias = bias, tol = tol, verbose = verbose,sameBlockWeight=sameBlockWeight)
+sgcca <- function (A, C = 1-diag(length(A)), sparsity = rep(1, length(A)), ncomp = rep(1, length(A)), scheme = "centroid", scale = TRUE, init = "svd", bias = TRUE, tol = .Machine$double.eps, verbose = FALSE,scale_block=TRUE,prescaling=FALSE,quiet=FALSE){
+  call=list(A=A, C = C, sparsity = sparsity, ncomp = ncomp, scheme = scheme, scale = scale, init = init, bias = bias, tol = tol, verbose = verbose,scale_block=scale_block)
   ndefl <- ncomp-1
   N <- max(ndefl)
   J <- length(A)
@@ -150,7 +150,7 @@ sgcca <- function (A, C = 1-diag(length(A)), sparsity = rep(1, length(A)), ncomp
     {
         if (scale == TRUE) {
             A = lapply(A, function(x) scale3(x, bias = bias)) #TO CHECK
-            if(sameBlockWeight) 
+            if(scale_block)
             {
                 A = lapply(A, function(x) x/sqrt(NCOL(x)))
             }
@@ -158,7 +158,7 @@ sgcca <- function (A, C = 1-diag(length(A)), sparsity = rep(1, length(A)), ncomp
         if(scale == FALSE)
         {
             A = lapply(A, function(x) scale3(x,scale=FALSE, bias = bias)) 
-            if(sameBlockWeight) 
+            if(scale_block)
             {
                 #TODO  A = lapply(A, function(x) x/sqrt(NCOL(x)))
             }

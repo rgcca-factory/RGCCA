@@ -5,7 +5,7 @@
 #' @param sparsity Used for type="sgcca" or "spls" only. A vector containing the sparsity coefficients (length J, between 0 and 1). It can be estimated by using \link{rgcca_permutation}.
 #' @param scheme The value is "horst", "factorial", "centroid" or the g function (default: "centroid").
 #' @param scale  If scale = TRUE, each block is standardized to zero means and unit variances (default: TRUE).
-#' @param sameBlockWeight TRUE by default : each block have the same weight in the RGCCA analysis. If FALSE, the weight of each block depends on the number of variables of the block
+#' @param scale_block TRUE by default : each block have the same weight in the RGCCA analysis. If FALSE, the weight of each block depends on the number of variables of the block
 #' @param ncomp  A \eqn{1 \times J} vector that contains the numbers of components for each block (default: rep(1, length(A)), which gives one component per block.). It can be estimated by using \link{rgcca_permutation}.
 #' @param verbose  If verbose = TRUE, the progress will be report while computing (default: TRUE).
 #' @param quiet If TRUE, does not print warnings
@@ -15,7 +15,7 @@
 #' @param knn.k  Used only if missing values in the blocks are estimated by k-NN methods. Number of k nearest neighbors. Can also be "auto" for automatic selection.
 #' @param knn.output "mean", "random" or "weightedMean" : Used only if missing values in the blocks are estimated by k-NN methods. Returns respectively the average of the k nearest neigbors, one selected randomly, or an average weighted by the distance of the k NN
 #' @param knn.klim Used only if missing values in the blocks are estimated by k-NN methods, and if knn.k is "auto". k limits (if k is not a number, optimal k between klim[1] and klim[2] is calculated )
-#' @param knn.sameBlockWeight Used only if missing values in the blocks are estimated by k-NN methods.if TRUE the distance for Nearest Neigbors takes the size of blocks into account
+#' @param knn.scale_block Used only if missing values in the blocks are estimated by k-NN methods.if TRUE the distance for Nearest Neigbors takes the size of blocks into account
 #' @param pca.ncp Number of components chosen in PCA 
 #' @param prescaling If TRUE, sgcca does NOT run scaling steps (they were calculated before)
 #' @return \item{Y}{A list of \eqn{J} elements. Each element of \eqn{Y} is a matrix that contains the RGCCA components for the corresponding block.}
@@ -44,7 +44,7 @@
 #' rgccaNa(A,method="nipals")
 #' rgccaNa(A,method="knn2")
 
-sgccaNa=function (blocks,method, connection = 1 - diag(length(A)), sparsity = rep(1, length(A)),    ncomp = rep(1, length(A)), scheme = "centroid", scale = TRUE,   init = "svd", bias = TRUE, tol = 1e-08, verbose = TRUE,sameBlockWeight=TRUE,knn.k="all",knn.output="weightedMean",knn.klim=NULL,knn.sameBlockWeight=TRUE,pca.ncp=1,prescaling=FALSE,quiet=FALSE)
+sgccaNa=function (blocks,method, connection = 1 - diag(length(A)), sparsity = rep(1, length(A)),    ncomp = rep(1, length(A)), scheme = "centroid", scale = TRUE,   init = "svd", bias = TRUE, tol = 1e-08, verbose = TRUE,scale_block=TRUE,knn.k="all",knn.output="weightedMean",knn.klim=NULL,knn.scale_block=TRUE,pca.ncp=1,prescaling=FALSE,quiet=FALSE)
 { 
   A=blocks
   C=connection
@@ -79,15 +79,15 @@ sgccaNa=function (blocks,method, connection = 1 - diag(length(A)), sparsity = re
   {
       if(substr(method,4,4)=="A")
       {
-        A2=imputeNN(A ,output=knn.output,k="all",klim=knn.klim,sameBlockWeight=knn.sameBlockWeight);method=paste(method,":",knn.k,sep="")
+        A2=imputeNN(A ,output=knn.output,k="all",klim=knn.klim,scale_block=knn.scale_block);method=paste(method,":",knn.k,sep="")
       }
       else
       {
-        A2=imputeNN(A ,output=knn.output,k=as.numeric(substr(method,4,4)),klim=knn.klim,sameBlockWeight=knn.sameBlockWeight);method=paste(method,":",knn.k,sep="")
+        A2=imputeNN(A ,output=knn.output,k=as.numeric(substr(method,4,4)),klim=knn.klim,scale_block=knn.scale_block);method=paste(method,":",knn.k,sep="")
       }
   }
 
-  resRgcca=sgcca(A2,sparsity=sparsity,ncomp=ncomp,verbose=FALSE,scale=scale,sameBlockWeight=sameBlockWeight,scheme=scheme,tol=tol,prescaling=prescaling,quiet=quiet)
+  resRgcca=sgcca(A2,sparsity=sparsity,ncomp=ncomp,verbose=FALSE,scale=scale,scale_block=scale_block,scheme=scheme,tol=tol,prescaling=prescaling,quiet=quiet)
  return(list(imputedA=A2,rgcca=resRgcca,method,indNA=indNA))
 
 }

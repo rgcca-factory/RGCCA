@@ -2,7 +2,7 @@ scaling <- function(
     blocks,
     scale = TRUE,
     bias = TRUE,
-    sameBlockWeight = TRUE) {
+    scale_block = TRUE) {
 
     if (scale) {
 
@@ -12,7 +12,7 @@ scaling <- function(
                 scale2(x, scale = TRUE, bias = bias))  
         # le biais indique si on recherche la variance biaisee ou non
 
-        if (sameBlockWeight) {
+        if (scale_block) {
             blocks <- lapply(blocks, function(x) {
                 y <- x / sqrt(NCOL(x))
                 attr(y, "scaled:scale") <-attr(x, "scaled:scale")* sqrt(NCOL(x))
@@ -26,7 +26,7 @@ scaling <- function(
             blocks, 
             function(x) scale2(x, scale = FALSE, bias = bias))
 
-        if (sameBlockWeight) {
+        if (scale_block) {
             blocks <- lapply(blocks, function(x) {
                 if(dim(x)[1]>dim(x)[2])
                 {
