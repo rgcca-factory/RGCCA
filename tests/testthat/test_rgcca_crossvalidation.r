@@ -6,10 +6,10 @@ blocks <- list(
     industry = Russett[, 4:5],
     politic = Russett[, 6:11])
 
-test_structure_cv <- function(res, scores, nrow = 47){
+test_structure_cv <- function(res, scores, rgcca_out, nrow = 47){
     expect_equal(length(res), 7)
     expect_is(res, "cv")
-    expect_is(res$rgcca, "rgcca")
+    expect_identical(res$rgcca, rgcca_out)
     pred <- res$preds
     expect_is(pred, "list")
     expect_is(pred[[1]], "matrix")
@@ -23,13 +23,15 @@ test_that("rgcca_cv_default", {
         rgcca_out <- rgcca(blocks, response = 1)
         test_structure_cv(
             rgcca_crossvalidation(rgcca_out, n_cores = 1),
-            0.1001)
+            0.1001,
+            rgcca_out)
         test_structure_cv(
             rgcca_crossvalidation(
                 rgcca_out,
                 blocks = blocks,
                 n_cores = 1), 
-            scores = 0.1001)
+            scores = 0.1001,
+            rgcca_out)
     }
 )
 
@@ -41,7 +43,8 @@ test_that("rgcca_cv_with_args", {
             validation = "kfold",
             k = 5,
             n_cores = 1),
-        0.0997)
+        0.0997,
+        rgcca_out)
     # test_structure_cv(
     #     rgcca_crossvalidation(
     #         rgcca_out, 
@@ -68,6 +71,7 @@ test_that("rgcca_cv_withNA", {
     test_structure_cv(
         rgcca_crossvalidation(rgcca_out, n_cores = 1),
         0.1019,
+        rgcca_out,
         nrow = 44)
     }
 )

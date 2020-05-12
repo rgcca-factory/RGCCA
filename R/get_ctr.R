@@ -6,10 +6,9 @@
 #' @param type A character giving the choice ot the index between cor or weight
 #' @param compz An integer giving the index of the analysis component used
 #' for the z-axis
-#' @param i_block_2 An integer giving the index of a list of blocks to be 
-#' correlated to i_block if this option is selected (default to i_block)
+#' @param collapse_each A bolean, if collapse is actived, to get the correlation 
+#' of each blocks to the i_block (FALSE, default) or to itself (TRUE)
 #' @return A dataframe containing the indexes for each selected components
-
 get_ctr <- function(
     rgcca_res,
     compx = 1,
@@ -18,7 +17,7 @@ get_ctr <- function(
     i_block = length(rgcca_res$call$blocks),
     type = "cor",
     collapse = FALSE,
-    i_block_2 = NULL) {
+    collapse_auto = FALSE) {
 
     match.arg(type, c("cor", "weight"))
     stopifnot(!missing(rgcca_res))
@@ -36,11 +35,11 @@ get_ctr <- function(
 
     if (type == "cor")
         f2 <- function(x, y){    
-        if (is.null(i_block_2))
-            i_block_2 <- y
+        if (collapse_auto)
+            i_block <- y
         cor(
-            blocks[[i_block_2]][rownames(rgcca_res$Y[[y]]), ],
-            rgcca_res$Y[[y]][, x],
+            blocks[[y]][rownames(rgcca_res$Y[[y]]), ],
+            rgcca_res$Y[[i_block]][, x],
             use = "pairwise.complete.obs"
         )
     }

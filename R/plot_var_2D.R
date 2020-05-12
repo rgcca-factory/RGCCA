@@ -62,7 +62,8 @@ plot_var_2D <- function(
     ...) {
 
     x <- y <- NULL
-    if(rgcca_res$call$superblock==FALSE){collapse=FALSE;}
+    # if (rgcca_res$call$superblock)
+    #   collapse <- FALSE
     df <- get_ctr2(
         rgcca_res = rgcca_res,
         compx = compx,
