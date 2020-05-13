@@ -4,28 +4,21 @@
 \alias{plot.rgcca}
 \title{Plots for RGCCA}
 \usage{
-\method{plot}{rgcca}(x, type = "weight", i_block = length(x$A),
-  i_block_y = i_block, compx = 1, compy = 2, resp = rep(1,
-  NROW(x$Y[[1]])), remove_var = FALSE, text_var = TRUE,
-  text_ind = TRUE, response_name = "Response", no_overlap = FALSE,
-  title = NULL, n_mark = 100, collapse = FALSE, cex = 1,
-  cex_sub = 12, cex_main = 14, cex_lab = 12, colors = NULL, ...)
+\method{plot}{rgcca}(x, type = "weight", block = length(x$A),
+  comp = 1:2, resp = rep(1, NROW(x$Y[[1]])), remove_var = FALSE,
+  text_var = TRUE, text_ind = TRUE, response_name = "Response",
+  no_overlap = FALSE, title = NULL, n_mark = 100, collapse = FALSE,
+  cex = 1, cex_sub = 12, cex_main = 14, cex_lab = 12,
+  colors = NULL, ...)
 }
 \arguments{
 \item{x}{Result of rgcca function  (see\code{\link[RGCCA]{rgcca}} )}
 
 \item{type}{Type among c("ind","var","both","ave","cor","weight","network").  See details.}
 
-\item{i_block}{An integer giving the index of a list of blocks}
+\item{block}{vector representing the components to plot}
 
-\item{i_block_y}{An integer giving the index of a list of blocks (another
-one, different from the one used in i_block)}
-
-\item{compx}{An integer giving the index of the analysis component used
-for the x-axis}
-
-\item{compy}{An integer giving the index of the analysis component used
-for the y-axis}
+\item{comp}{vector representing the components to plot}
 
 \item{resp}{A vector of characters corresponding either to a qualitative
 variable with levels or a continuous variable}

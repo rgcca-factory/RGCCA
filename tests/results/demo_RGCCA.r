@@ -22,13 +22,14 @@ summary(resRGCCA)
 names(resRGCCA)
 plot(resRGCCA)
 i_block=1
-plot(resRGCCA,resp=response,i_block=i_block)
+plot(resRGCCA,resp=response,block=1)
+plot(resRGCCA,resp=response,block=1,comp=2)
 
-plot(resRGCCA,resp=response,i_block=i_block,type="ave")
-plot(resRGCCA,resp=response,i_block=i_block,type="network")
-plot(resRGCCA,resp=response,i_block=i_block,type="var")
-plot(resRGCCA,resp=response,i_block=i_block,type="ind")
-plot(resRGCCA,resp=response,i_block=i_block,type="cor")
+plot(resRGCCA,resp=response,type="ave")
+plot(resRGCCA,resp=response,type="network")
+plot(resRGCCA,resp=response,type="var")
+plot(resRGCCA,resp=response,type="ind")
+plot(resRGCCA,resp=response,type="cor")
 
 # choice of parameters
 #---------------------

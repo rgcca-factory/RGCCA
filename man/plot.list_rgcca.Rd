@@ -22,17 +22,6 @@
 \item{resp}{A vector of characters corresponding either to a qualitative
 variable with levels or a continuous variable}
 
-\item{i_block}{An integer giving the index of a list of blocks}
-
-\item{i_block_y}{An integer giving the index of a list of blocks (another
-one, different from the one used in i_block)}
-
-\item{compx}{An integer giving the index of the analysis component used
-for the x-axis}
-
-\item{compy}{An integer giving the index of the analysis component used
-for the y-axis}
-
 \item{remove_var}{A bolean to keep only the 100 variables of each
 component with the biggest correlation#'}
 

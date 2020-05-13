@@ -10,6 +10,8 @@
 #' @param title  Character for the title of the plot 
 #' @param colors representing a vector of the colors used in the graph. Either a vector of integers (each integer corresponding to a color) or of characters corresponding to names of colors (as "blue",see colors()) or RGB code ("#FFFFFF").
 #' @param ... Further graphical parameters applied to both (individual and variable) spaces
+#' @param comp vector representing the components to plot
+#' @param block vector representing the components to plot
 #' @inheritParams plot_ind
 #' @inheritParams plot2D
 #' @inheritParams plot_var_2D
@@ -39,17 +41,24 @@
 #' plot(resRgcca,type="both")
 #' @importFrom gridExtra grid.arrange
 #' @export
-plot.rgcca=function(x,type="weight",i_block=length(x$A),i_block_y=i_block,compx=1,compy=2,resp=rep(1, NROW(x$Y[[1]])),remove_var=FALSE,text_var=TRUE,text_ind=TRUE,response_name= "Response",no_overlap=FALSE,title=NULL,n_mark=100,collapse=FALSE,cex=1,cex_sub=12,cex_main=14,cex_lab=12,colors=NULL,...)
+plot.rgcca=function(x,type="weight",block=length(x$A),comp=1:2,resp=rep(1, NROW(x$Y[[1]])),remove_var=FALSE,text_var=TRUE,text_ind=TRUE,response_name= "Response",no_overlap=FALSE,title=NULL,n_mark=100,collapse=FALSE,cex=1,cex_sub=12,cex_main=14,cex_lab=12,colors=NULL,...)
 {
     match.arg(type,c("ind","var","both","ave","cor","weight","network"))
+   
+    if(length(comp)==1){comp=rep(comp,2)}
+    compx=comp[1]
+    compy=comp[2]
+    if(length(block)==1){block=rep(block,2)}
+    i_block=block[1]
+    i_block_y=block[2]
     if(i_block!=i_block_y & is.null(type)){ type="weight"}
     if(i_block==i_block_y & is.null(type)){ type="both"}
      
     if(type=="both")
     {
         if(is.null(i_block)){i_block=length(x$call$blocks)}
-        p1<-plot_ind(x,i_block=i_block,i_block_y=i_block_y,compx=compx,compy=compy,cex_sub=cex_sub,cex_main=cex_main,cex_lab=cex_lab,resp=resp,response_name=response_name,text=text_ind,title="Sample space",colors=colors,no_overlap=no_overlap,...)
-        p2<-plot_var_2D(x,i_block=i_block,compx=compx,compy=compy,cex_sub=cex_sub,cex_main=cex_main,cex_lab=cex_lab,remove_var=remove_var,text=text_var,no_overlap=no_overlap,title="Variable correlations",n_mark = n_mark,collapse=collapse,colors=colors,...)
+        p1<-plot_ind(x,i_block=i_block,i_block_y=i_block_y,compx=compx,compy=compy,cex_sub=cex_sub,cex_main=cex_main,cex_lab=cex_lab,resp=resp,response_name=response_name,text=text_ind,title="Sample space",colors=col,no_overlap=no_overlap,...)
+        p2<-plot_var_2D(x,i_block=i_block,compx=compx,compy=compy,cex_sub=cex_sub,cex_main=cex_main,cex_lab=cex_lab,remove_var=remove_var,text=text_var,no_overlap=no_overlap,title="Variable correlations",n_mark = n_mark,collapse=collapse,colors=col,...)
         if(is.null(title)){title=toupper(names(x$call$blocks)[i_block])}
         p5<-grid.arrange(p1,p2,nrow=1,ncol=2,top = title)
         plot(p5)
@@ -106,7 +115,7 @@ plot.rgcca=function(x,type="weight",i_block=length(x$A),i_block_y=i_block,compx=
     }
     if(type=="weight")
     {
-        if(is.null(title)){title= paste0(names(x$call$blocks)[i_block],": Variable weights")}
+        if(is.null(title)){title= paste0("Variable weights:",names(x$call$blocks)[i_block])}
         
         p5=plot_var_1D(x,
                     comp = compx,
