@@ -24,9 +24,16 @@
 #' @param errorbar ("CImean","CIscores","sd")
 #' @importFrom gridExtra grid.arrange
 #' @export
-plot.list_rgcca=function(x,type="ind",resp=rep(1, NROW(x$Y[[1]])),i_block=1,i_block_y=i_block,compx=1,compy=2,remove_var=FALSE,text_var=TRUE,text_ind=TRUE,response_name= "Response",no_overlap=FALSE,title=NULL,n_mark=100,collapse=FALSE,cex=1,cex_sub=10,cex_main=14,cex_lab=12,colors=NULL,errorbar="ci",...)
+plot.list_rgcca=function(x,type="ind",resp=rep(1, NROW(x$Y[[1]])),block=1,comp=1:2,remove_var=FALSE,text_var=TRUE,text_ind=TRUE,response_name= "Response",no_overlap=FALSE,title=NULL,n_mark=100,collapse=FALSE,cex=1,cex_sub=10,cex_main=14,cex_lab=12,colors=NULL,errorbar="ci",...)
 {
 
+    if(length(comp)==1){comp=rep(comp,2)}
+    compx=comp[1]
+    compy=comp[2]
+    if(length(block)==1){block=rep(block,2)}
+    i_block=block[1]
+    i_block_y=block[2]
+    
     lower_band <- NULL -> upper_band
     rgcca_res=x$rgcca0
     list_rgcca=x$rgccaList

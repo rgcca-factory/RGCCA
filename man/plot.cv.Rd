@@ -20,7 +20,7 @@ Plots the results of rgcca_cv (in abscissa, the configurations, in ordinates the
 data(Russett)
 blocks = list(agriculture = Russett[, seq(3)], industry = Russett[, 4:5],
              politic = Russett[, 6:11] )
-rgcca_out = rgcca(blocks, response = 3)
+rgcca_out = rgcca(blocks, response = 3,ncomp=2)
 cv=rgcca_crossvalidation(rgcca_out, validation = "kfold", k = 5, n_cores = 1)
 plot(cv)
 }

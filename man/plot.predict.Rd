@@ -2,7 +2,7 @@
 % Please edit documentation in R/plot.predict.R
 \name{plot.predict}
 \alias{plot.predict}
-\title{plot.cv}
+\title{plot.predict}
 \usage{
 \method{plot}{predict}(x, ...)
 }
@@ -12,13 +12,8 @@
 \item{...}{Further graphical parameters (see plot2D functions)}
 }
 \description{
-plot.cv
+plot.predict
 }
 \examples{
 data(Russett)
-blocks = list(agriculture = Russett[, seq(3)], industry = Russett[, 4:5],
-             politic = Russett[, 6:11] )
-rgcca_out = rgcca(blocks, response = 3)
-cv=rgcca_crossvalidation(rgcca_out, validation = "kfold", k = 5, n_cores = 1)
-plot(cv)
 }

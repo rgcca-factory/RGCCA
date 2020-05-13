@@ -1475,27 +1475,25 @@ plot(perm)
 ```{r, fig.height = 3, fig.width = 5, fig.align = "center"}
 plot(x = rgcca_out,
     resp = response,
-    compx = comp1,
-    compy = comp2,
-    i_block = 3, type="ind")
+    comp = c(comp1,comp2),
+    block = 3, type="ind")
 ```
 
 #### Corcircle plot
 ```{r, fig.height = 3, fig.width = 5, fig.align = "center"}
 plot(
     x = rgcca_out,
-    compx = comp1,
-    compy = comp2,
-    i_block = 3,type="var")
+    comp=c(comp1,comp2),
+    block = 3,type="var")
 ```
 
 #### Fingerprint plot
 ```{r, fig.height = 3, fig.width = 5, fig.align = "center"}
 plot(
     x = rgcca_out,
-    compx = comp1,
+    comp = comp1,
     n_mark = nmark, 
-    i_block = 3,
+    block = 3,
     type = "weight")
 ```
 

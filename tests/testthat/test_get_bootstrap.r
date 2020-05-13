@@ -20,7 +20,7 @@ blocks <- list(
     agriculture = Russett[, seq(3)],
     industry = Russett[, 4:5],
     politic = Russett[, 6:11] )
-rgcca_out <- rgcca(blocks)
+rgcca_out <- rgcca(blocks,ncomp=2)
 boot <- bootstrap(rgcca_out, n_boot = 2, n_cores = 1)
 
 
@@ -44,7 +44,7 @@ test_that("bootstrap_default", {
 })
 
 test_that("bootstrap_with_args", {
-    rgcca_out <- rgcca(blocks, superblock = FALSE)
+    rgcca_out <- rgcca(blocks, superblock = FALSE,ncomp=2)
     expect_is(
         bootstrap(
             rgcca_out, 
@@ -57,7 +57,7 @@ test_that("bootstrap_with_args", {
 
 blocks[[1]][1:3, 1] <- NA
 blocks[[1]][4,] <- NA
-resRGCCA <- rgcca(blocks, ncomp = c(2,2,2),superblock=FALSE)
+resRGCCA <- rgcca(blocks,superblock=FALSE,ncomp=2)
 set.seed(seed = 18)
 resBootstrap <- bootstrap( rgcca=resRGCCA, n_boot = 2, n_cores = 1)
 select_var <- get_bootstrap(resBootstrap, n_cores = 1,display_order=TRUE)

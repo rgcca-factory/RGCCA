@@ -68,7 +68,7 @@
 #' result.rgcca = rgcca(A,type="rgcca", connection=C, tau = c(1, 1, 1),superblock=FALSE,
 #'  scheme = "factorial", scale = TRUE)
 #' lab = as.vector(apply(Russett[, 9:11], 1, which.max))
-#' plot(result.rgcca,type="ind",i_block=1,i_block_y=2,resp=lab)
+#' plot(result.rgcca,type="ind",block=1:2,comp=rep(1,2),resp=lab)
 #' ############################################
 #' # Example 2: RGCCA and multiple components #
 #' ############################################
@@ -113,7 +113,7 @@ rgcca <- function(
     scale_block = TRUE,
     connection = matrix(1,length(blocks),length(blocks)) - diag(length(blocks)),
     scheme = "factorial",
-    ncomp = rep(2, length(blocks)),
+    ncomp = rep(1, length(blocks)),
     tau = rep(1, length(blocks)),
     sparsity = rep(1, length(blocks)),
     init = "svd",

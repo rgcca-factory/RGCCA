@@ -5,7 +5,7 @@ set_rgcca <- function(
     connection = NULL,
     tau = 1,
     sparsity = 1,
-    ncomp = 2,
+    ncomp = NULL,
     scheme = NULL,
     init = NULL,
     bias = TRUE,
@@ -27,6 +27,7 @@ set_rgcca <- function(
     if(is.null(bias)){     bias <- rgcca_res$call$bias}
     if(is.null(type)){   type <- rgcca_res$call$type}
     if(is.null(init)){     init <- rgcca_res$call$init}
+    if(is.null(ncomp)){        ncomp <- rgcca_res$call$ncomp}
      if (is.null(blocks)) {
       #  blocks <- rgcca_res$call$blocks
          blocks=rgcca_res$A 
@@ -45,7 +46,7 @@ set_rgcca <- function(
 
         sparsity <- rgcca_res$call$sparsity
         tau <- rgcca_res$call$tau
-        ncomp <- rgcca_res$call$ncomp
+
 
         if (!is.null(rgcca_res$call$response))
             response <- length(rgcca_res$call$blocks)

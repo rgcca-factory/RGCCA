@@ -3,7 +3,24 @@ blocks <- list(
     agriculture = Russett[, seq(3)],
     industry = Russett[, 4:5],
     politic = Russett[, 6:11] )
-rgcca_out <- rgcca(blocks)
+ncomp=1
+rgcca_out <- rgcca(blocks,ncomp=1)
+boot <- bootstrap(rgcca_out, n_boot = 4, n_cores = 1)
+
+test_that("bootstrap_default_1", {
+    expect_equal(length(boot), 2)
+    expect_equal(length(boot$bootstrap), 1)
+    boot1 <- boot$bootstrap[[1]]
+    expect_is(boot, "bootstrap")
+    expect_is(boot$rgcca, "rgcca")
+    expect_is(boot1, "list")
+    expect_is(boot1[[1]], "matrix")
+    expect_true(all(sapply(boot1, NCOL) == 4))
+    expect_identical(sapply(boot1, NROW), sapply(rgcca_out$call$blocks, NCOL))
+})
+
+# ncomp=2
+rgcca_out <- rgcca(blocks,ncomp=2)
 boot <- bootstrap(rgcca_out, n_boot = 2, n_cores = 1)
 
 test_that("bootstrap_default", {

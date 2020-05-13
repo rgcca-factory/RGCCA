@@ -5,11 +5,11 @@
 \title{plots a list_rgcca object}
 \usage{
 \method{plot}{list_rgcca}(x, type = "ind", resp = rep(1,
-  NROW(x$Y[[1]])), i_block = 1, i_block_y = i_block, compx = 1,
-  compy = 2, remove_var = FALSE, text_var = TRUE, text_ind = TRUE,
-  response_name = "Response", no_overlap = FALSE, title = NULL,
-  n_mark = 100, collapse = FALSE, cex = 1, cex_sub = 10,
-  cex_main = 14, cex_lab = 12, colors = NULL, errorbar = "ci", ...)
+  NROW(x$Y[[1]])), block = 1, comp = 1:2, remove_var = FALSE,
+  text_var = TRUE, text_ind = TRUE, response_name = "Response",
+  no_overlap = FALSE, title = NULL, n_mark = 100, collapse = FALSE,
+  cex = 1, cex_sub = 10, cex_main = 14, cex_lab = 12,
+  colors = NULL, errorbar = "ci", ...)
 }
 \arguments{
 \item{x}{Result of MIRGCCA function (see\code{\link[RGCCA]{MIRGCCA}} ) or a list containing 
@@ -21,6 +21,10 @@
 
 \item{resp}{A vector of characters corresponding either to a qualitative
 variable with levels or a continuous variable}
+
+\item{block}{vector representing the components to plot}
+
+\item{comp}{vector representing the components to plot}
 
 \item{remove_var}{A bolean to keep only the 100 variables of each
 component with the biggest correlation#'}

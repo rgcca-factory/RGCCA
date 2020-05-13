@@ -6,7 +6,7 @@ X_ind = as.matrix(Russett[,c("gnpr","labo")]);
 X_polit = as.matrix(Russett[ , c("demostab", "dictator")]);
 A = list(agri=X_agric,ind=X_ind,polit=X_polit);
 
-res=rgcca(A,type="rgcca")
+res=rgcca(A,type="rgcca",ncomp=2)
 library(ggplot2)
 library(gridExtra)
 library(grid)

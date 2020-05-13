@@ -24,13 +24,13 @@ rownames(resp) = seq(15)
 # Using plot_ind
  data(Russett)
  blocks = list(agri=Russett[,1:3],ind=Russett[,4:5],polit=Russett[,8:11])
- rgcca_out = rgcca(blocks = blocks, response = 3)
+ rgcca_out = rgcca(blocks = blocks, response = 3,ncomp=2)
  plot_ind( rgcca_out,resp=1:47,i_block=1)
  
 # Using the predict 
 data(Russett)
  blocks = list(agri=Russett[,1:3],ind=Russett[,4:5],polit=Russett[,8:11])
- rgcca_out = rgcca(blocks = blocks, response = 3)
+ rgcca_out = rgcca(blocks = blocks, response = 3,ncomp=2)
  loo <- rgcca_crossvalidation(rgcca_out, n_cores = 2)
 
  plot_ind(rgcca_out, predicted = loo)

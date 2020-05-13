@@ -47,6 +47,5 @@ bootstrap_k <- function(
             drop = FALSE])
 
     names(w) <- names(rgcca_res$call$blocks)
-
-    check_sign_comp(rgcca_res, w)
+   check_sign_comp(rgcca_res, w)
 }

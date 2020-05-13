@@ -46,7 +46,7 @@ check_blocks <- function(blocks, init = FALSE, n = 2, add_NAlines=FALSE, allow_u
     if (all(sapply(blocks, function(x) is.null(row.names(x))))){
         if(sd(sapply(blocks,function(x)dim(x)[1]))==0 && allow_unnames){
             blocks=lapply(blocks,function(x){rownames(x)=paste0("S",1:(dim(x)[1]));return(x)})
-            print("Warnings in check_blocks(A):\n Elements of the list have no rownames. They were named as S1,...Sn") #TODO : verify
+            cat("Warnings in check_blocks(A):\n Elements of the list have no rownames. They were named as S1,...Sn") #TODO : verify
         }
         else
             stop(paste(msg, "elements of the list should have rownames."))
@@ -106,7 +106,7 @@ check_blocks <- function(blocks, init = FALSE, n = 2, add_NAlines=FALSE, allow_u
     }
     
     if (any(sapply(blocks, is.character2)))
-        warnings(paste(msg, "an element contains non-numeric data.They will be replaced by NAs"))
+        cat(paste(msg, "an element contains non-numeric data.They will be replaced by NAs"))
 
     
     for (i in seq(length(blocks)))

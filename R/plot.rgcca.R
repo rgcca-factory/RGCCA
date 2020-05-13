@@ -57,8 +57,8 @@ plot.rgcca=function(x,type="weight",block=length(x$A),comp=1:2,resp=rep(1, NROW(
     if(type=="both")
     {
         if(is.null(i_block)){i_block=length(x$call$blocks)}
-        p1<-plot_ind(x,i_block=i_block,i_block_y=i_block_y,compx=compx,compy=compy,cex_sub=cex_sub,cex_main=cex_main,cex_lab=cex_lab,resp=resp,response_name=response_name,text=text_ind,title="Sample space",colors=col,no_overlap=no_overlap,...)
-        p2<-plot_var_2D(x,i_block=i_block,compx=compx,compy=compy,cex_sub=cex_sub,cex_main=cex_main,cex_lab=cex_lab,remove_var=remove_var,text=text_var,no_overlap=no_overlap,title="Variable correlations",n_mark = n_mark,collapse=collapse,colors=col,...)
+        p1<-plot_ind(x,i_block=i_block,i_block_y=i_block_y,compx=compx,compy=compy,cex_sub=cex_sub,cex_main=cex_main,cex_lab=cex_lab,resp=resp,response_name=response_name,text=text_ind,title="Sample space",colors=colors,no_overlap=no_overlap,...)
+        p2<-plot_var_2D(x,i_block=i_block,compx=compx,compy=compy,cex_sub=cex_sub,cex_main=cex_main,cex_lab=cex_lab,remove_var=remove_var,text=text_var,no_overlap=no_overlap,title="Variable correlations",n_mark = n_mark,collapse=collapse,colors=colors,...)
         if(is.null(title)){title=toupper(names(x$call$blocks)[i_block])}
         p5<-grid.arrange(p1,p2,nrow=1,ncol=2,top = title)
         plot(p5)
