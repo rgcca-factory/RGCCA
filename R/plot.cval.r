@@ -15,44 +15,46 @@
 #'    plot(res)
 plot.cval=function(x,bars="sd",alpha=0.05,...)
 {
+    
     config <- NULL -> y
+    mat_cval=x$cv
     match.arg(bars,c("sd","stderr","ci","cim","points"))
-    mean_b=apply(x,1,mean)
-    main=paste0("Mean CV criterion according to the configuration set\n (",ncol(x)," runs)")
-    if(bars!="none"&&dim(x)[2]<3){bars=="none"; warning("Standard deviations can not be calculated with less than 3 columns in x")}
+    mean_b=apply(mat_cval,1,mean)
+    main=paste0("Mean CV criterion according to the configuration set\n (",x$call$validation,":",ifelse(x$call$validation=="kfold", paste0("with ",x$call$k," folds and ",x$call$n_cv," runs)"),")"))
+    if(bars!="none"&&dim(mat_cval)[2]<3){bars=="none"; warning("Standard deviations can not be calculated with less than 3 columns in mat_cval")}
     if(bars!="none")
     {
         if(bars=="sd")
         {
-            inf_b=mean_b-apply(x,1,sd)
-            sup_b=mean_b+apply(x,1,sd)
+            inf_b=mean_b-apply(mat_cval,1,sd)
+            sup_b=mean_b+apply(mat_cval,1,sd)
         }
         if(bars=="stderr")
         {
-            inf_b=mean_b-apply(x,1,function(y){sd(y)/sqrt(length(y))})
-            sup_b=mean_b+apply(x,1,function(y){sd(y)/sqrt(length(y))})
+            inf_b=mean_b-apply(mat_cval,1,function(y){sd(y)/sqrt(length(y))})
+            sup_b=mean_b+apply(mat_cval,1,function(y){sd(y)/sqrt(length(y))})
         }
         if(bars=="cim")
         {
-            stat=qt(1-alpha/2,df=dim(x)[2]-1)
-            inf_b=mean_b-apply(x,1,function(y){stat*sd(y)/sqrt(length(y))})
-            sup_b=mean_b+apply(x,1,function(y){stat*sd(y)/sqrt(length(y))})
+            stat=qt(1-alpha/2,df=dim(mat_cval)[2]-1)
+            inf_b=mean_b-apply(mat_cval,1,function(y){stat*sd(y)/sqrt(length(y))})
+            sup_b=mean_b+apply(mat_cval,1,function(y){stat*sd(y)/sqrt(length(y))})
         }
         if(bars=="ci")
         {
-            stat=qt(1-alpha/2,df=dim(x)[2]-1)
-            inf_b=mean_b-apply(x,1,function(y){stat*sd(y)})
-            sup_b=mean_b+apply(x,1,function(y){stat*sd(y)})
+            stat=qt(1-alpha/2,df=dim(mat_cval)[2]-1)
+            inf_b=mean_b-apply(mat_cval,1,function(y){stat*sd(y)})
+            sup_b=mean_b+apply(mat_cval,1,function(y){stat*sd(y)})
         }
         if(bars=="points")
         {
-            inf_b=apply(x,1,function(y){min(y)})
-            sup_b=apply(x,1,function(y){max(y)})
+            inf_b=apply(mat_cval,1,function(y){min(y)})
+            sup_b=apply(mat_cval,1,function(y){max(y)})
         }
         
     }
     
-    df=data.frame(config=1:nrow(x),mean=mean_b,inf=inf_b,sup=sup_b)
+    df=data.frame(config=1:nrow(mat_cval),mean=mean_b,inf=inf_b,sup=sup_b)
     p<- ggplot(data=df,aes(x=config,y=mean))+geom_point()
     if(bars!="none"&& bars!="points")
     {
@@ -60,7 +62,7 @@ plot.cval=function(x,bars="sd",alpha=0.05,...)
     }
     if(bars=="points")
     {
-        df2=data.frame(config=rep(1:nrow(x),ncol(x)),y=as.vector(x))
+        df2=data.frame(config=rep(1:nrow(mat_cval),ncol(mat_cval)),y=as.vector(mat_cval))
         p<-p+geom_point(data=df2,aes(x=config,y=y),colour="grey")
     }
     optimal_x=df[which.min(df[,"mean"]),"config"]

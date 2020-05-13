@@ -8,7 +8,6 @@
   NROW(x$Y[[1]])), i_block = 1, i_block_y = i_block, compx = 1,
   compy = 2, remove_var = FALSE, text_var = TRUE, text_ind = TRUE,
   response_name = "Response", no_overlap = FALSE, title = NULL,
-  title_var = "Variable correlations with", title_ind = "Sample space",
   n_mark = 100, collapse = FALSE, cex = 1, cex_sub = 10,
   cex_main = 14, cex_lab = 12, colors = NULL, errorbar = "ci", ...)
 }
@@ -47,12 +46,7 @@ or with circles (FALSE)}
 
 \item{no_overlap}{A boolean to avoid overlap in plotted text}
 
-\item{title}{A character with the name of the space (either "Variables" or
-"Samples")}
-
-\item{title_var}{Character for the title of the variable space}
-
-\item{title_ind}{Character for the title of the individual space}
+\item{title}{Character for the title of the plot}
 
 \item{n_mark}{An integer giving the number of top variables to select}
 

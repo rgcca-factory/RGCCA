@@ -80,9 +80,11 @@ rgcca_permutation <- function(
     set_penalty <- function () {
 
         if(perm.par == "sparsity"){
+            if(type!="sgcca"){cat("As par=='sparsity', the type parameter was replaced by 'sgcca'")}
             type <<- "sgcca"
             min_spars <<- sapply(ncols, function(x) 1 / sqrt(x))
         }else{
+            if(type!="rgcca"){cat("As par!='sparsity', the type parameter was replaced by 'rgcca'")}
             type <<- "rgcca"
             min_spars <<- sapply(ncols, function(x) 0)
         }

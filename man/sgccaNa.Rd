@@ -7,8 +7,8 @@
 sgccaNa(blocks, method, connection = 1 - diag(length(A)),
   sparsity = rep(1, length(A)), ncomp = rep(1, length(A)),
   scheme = "centroid", scale = TRUE, init = "svd", bias = TRUE,
-  tol = 1e-08, verbose = TRUE, scale_block = TRUE,
-  knn.k = "all", knn.output = "weightedMean", knn.klim = NULL,
+  tol = 1e-08, verbose = TRUE, scale_block = TRUE, knn.k = "all",
+  knn.output = "weightedMean", knn.klim = NULL,
   knn.scale_block = TRUE, pca.ncp = 1, prescaling = FALSE,
   quiet = FALSE)
 }

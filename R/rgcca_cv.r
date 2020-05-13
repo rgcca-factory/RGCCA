@@ -36,6 +36,7 @@ rgcca_cv=function( blocks,
           superblock=FALSE,
           ...)
 {
+    if(validation=="loo"){if(n_cv!=1){cat("n_cv value was replaced by 1 (is not relevant for loo option)")};n_cv=1}
     check_integer("n_cores", n_cores, 0)
     match.arg(par, c("tau", "sparsity", "ncomp"))
     min_spars <- NULL
@@ -54,9 +55,11 @@ rgcca_cv=function( blocks,
     }
     set_penalty <- function () {
         if(par == "sparsity"){
+            if(type!="sgcca"){cat("As par=='sparsity', the type parameter was replaced by 'sgcca'")}
             type <<- "sgcca"
             min_spars <<- sapply(ncols, function(x) 1 / sqrt(x))
         }else{
+            if(type=="sgcca"){cat("As par!='sparsity', the type parameter was replaced by 'rgcca'")}
             type <<- "rgcca"
             min_spars <<- sapply(ncols, function(x) 0)
         }
@@ -145,11 +148,23 @@ rgcca_cv=function( blocks,
             }
             res[i,]=as.numeric(res_i)
             Sys.sleep(0.5); setTxtProgressBar(pb, i)
-            
+            mat_cval=res
         }
     
     Sys.sleep(1)
-    class(res)="cval"
-    return(res)
+    call=list(n_cv=n_cv,
+              response=response,
+              par = par,
+              par_value = par_value,
+              validation = validation,
+              type_cv = type_cv,
+              fit = fit,
+              k=k,
+              n_cv = n_cv,
+              one_value_per_cv=one_value_per_cv
+    )
+    res2=list(cv=mat_cval,call=call)
+    class(res2)="cval"
+    return(res2)
     
 }

@@ -15,12 +15,15 @@ rownames(response)=rownames(Russett)
 response=matrix( Russett[, 11],ncol=1);rownames(response)=rownames(Russett)
 
 resRGCCA=rgcca(blocks,ncomp=c(2,2,2),scheme=function(x) x^4, type="sgcca",sparsity = c(.6, .75, .5))
+resRGCCA=rgcca(blocks,ncomp=2,scheme="horst", type="rgcca",tau = c(.6, .75, .5))
+
 print(resRGCCA)
 summary(resRGCCA)
 names(resRGCCA)
 plot(resRGCCA)
 i_block=1
 plot(resRGCCA,resp=response,i_block=i_block)
+
 plot(resRGCCA,resp=response,i_block=i_block,type="ave")
 plot(resRGCCA,resp=response,i_block=i_block,type="network")
 plot(resRGCCA,resp=response,i_block=i_block,type="var")

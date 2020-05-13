@@ -6,8 +6,8 @@
 \usage{
 naEvolution(blocks, prctNA = c(0.1, 0.2, 0.3), listMethods = c("mean"),
   typeNA = "block", ncomp = rep(1, length(blocks)),
-  scale_block = TRUE, scale = TRUE, nDatasets = 20,
-  tol = 1e-06, verbose = FALSE, scheme = "centroid", seed = NULL,
+  scale_block = TRUE, scale = TRUE, nDatasets = 20, tol = 1e-06,
+  verbose = FALSE, scheme = "centroid", seed = NULL,
   connection = matrix(1, length(blocks), length(blocks)) -
   diag(length(blocks)), tau = rep(1, length(blocks)))
 }

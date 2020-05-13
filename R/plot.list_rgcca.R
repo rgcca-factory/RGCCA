@@ -24,7 +24,7 @@
 #' @param errorbar ("CImean","CIscores","sd")
 #' @importFrom gridExtra grid.arrange
 #' @export
-plot.list_rgcca=function(x,type="ind",resp=rep(1, NROW(x$Y[[1]])),i_block=1,i_block_y=i_block,compx=1,compy=2,remove_var=FALSE,text_var=TRUE,text_ind=TRUE,response_name= "Response",no_overlap=FALSE,title=NULL,title_var="Variable correlations with",title_ind= "Sample space",n_mark=100,collapse=FALSE,cex=1,cex_sub=10,cex_main=14,cex_lab=12,colors=NULL,errorbar="ci",...)
+plot.list_rgcca=function(x,type="ind",resp=rep(1, NROW(x$Y[[1]])),i_block=1,i_block_y=i_block,compx=1,compy=2,remove_var=FALSE,text_var=TRUE,text_ind=TRUE,response_name= "Response",no_overlap=FALSE,title=NULL,n_mark=100,collapse=FALSE,cex=1,cex_sub=10,cex_main=14,cex_lab=12,colors=NULL,errorbar="ci",...)
 {
 
     lower_band <- NULL -> upper_band
@@ -37,6 +37,8 @@ plot.list_rgcca=function(x,type="ind",resp=rep(1, NROW(x$Y[[1]])),i_block=1,i_bl
          colors=c(rainbow(10),rainbow(10,s=0.7),rainbow(10,v=0.7),rainbow(10,s=0.5),rainbow(10,v=0.5),rainbow(max(n-50,0),s=0.3))
   if(type=="ind")
   {
+      if(is.null(title)){title=paste0(names(rgcca_res$call$blocks)[i_block],": Sample space")}
+      
       resp=1:n
       p1<-plot_ind(rgcca_res,resp=resp, i_block=i_block,i_block_y = i_block_y,compx=compx,compy=compy,legend=FALSE,colors=colors[1:n],cex=cex,cex_sub=cex_sub,cex_main=cex_main,cex_lab=cex_lab) 
       colt=c()
@@ -69,11 +71,12 @@ plot.list_rgcca=function(x,type="ind",resp=rep(1, NROW(x$Y[[1]])),i_block=1,i_bl
      
   if(type=="var")
      {
+        if(is.null(title)){title=paste0(names(rgcca_res$call$blocks)[i_block],": Variable correlations")}
         
           colt=c()
          nvar=dim(rgcca_res$a[[i_block]])[1]
          resp=1
-         p1 <- plot_var_2D(rgcca_res,resp=resp,i_block=i_block,compx=compx,compy=compy,cex_sub=cex_sub,cex_main=cex_main,cex_lab=cex_lab,remove_var=remove_var,text=text_var,no_overlap=no_overlap,title=title_var,n_mark = n_mark,collapse=collapse,colors=colors[1:nvar])
+         p1 <- plot_var_2D(rgcca_res,resp=resp,i_block=i_block,compx=compx,compy=compy,cex_sub=cex_sub,cex_main=cex_main,cex_lab=cex_lab,remove_var=remove_var,text=text_var,no_overlap=no_overlap,title=title,n_mark = n_mark,collapse=collapse,colors=colors[1:nvar])
          
         
          for(i in 1:(length(list_rgcca)))
@@ -109,7 +112,8 @@ plot.list_rgcca=function(x,type="ind",resp=rep(1, NROW(x$Y[[1]])),i_block=1,i_bl
   }
   if(type=="cor")
   {
-       
+      if(is.null(title)){title=paste0(names(rgcca_res$call$blocks)[i_block],": Variable correlations")}
+      
            
       attributes=colnames(rgcca_res$A[[i_block]])
      # list_rgcca_sup_a=lapply(1:length(list_rgcca),function(i)
@@ -145,6 +149,8 @@ plot.list_rgcca=function(x,type="ind",resp=rep(1, NROW(x$Y[[1]])),i_block=1,i_bl
   }
   if(type=="weight")
   {
+      if(is.null(title)){title=paste0(names(rgcca_res$call$blocks)[i_block],": Variable weight")}
+      
       for(i in 1:length(list_rgcca))
       {
           if(cor(list_rgcca[[i]]$Y[[i_block]][,compx], rgcca_res$Y[[i_block]][,compx])<0){list_rgcca[[i]]$a[[i_block]][,compx]=-list_rgcca[[i]]$a[[i_block]][,compx];list_rgcca[[i]]$Y[[i_block]][,compx]=-list_rgcca[[i]]$Y[[i_block]][,compx]}
