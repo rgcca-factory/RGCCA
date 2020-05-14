@@ -44,7 +44,7 @@ get_bootstrap <- function(
     occ <- apply(bootstrapped,1,
             function(x)
                 sum(x!= 0) / length(x))
-    
+    print("in")
     p.vals <- 2 * pt(abs(weight)/sd, lower.tail = FALSE, df = n_boot - 1)
     tail <- qt(1 - .05 / 2, df = n_boot - 1)
     
@@ -60,11 +60,11 @@ get_bootstrap <- function(
     {
         length_bar=tail*sd
     }
-    if(bars=="cim")
-    {
-        length_bar=tail*sd/sqrt(n_boot)
-    }
-
+    # if(bars=="cim")
+    # {
+    #     length_bar=tail*sd/sqrt(n_boot)
+    # }
+    # 
     df <- data.frame(
         mean = mean,
         estimate = weight,
@@ -75,12 +75,16 @@ get_bootstrap <- function(
         p.vals,
         BH = p.adjust(p.vals, method = "BH")
     )
-
+print("before if")
     if (tolower(b$rgcca$call$type) %in% c("spls", "spca", "sgcca")) {
-        index <- 8
-        df$occurrences <- occ
-    }else{
-        index <- 5
+          df$occurrences <- occ
+          index <- which(colnames(df)=="occurrences")
+          print("here")
+        db <- data.frame(order_df(df, index, allCol = TRUE), order = NROW(df):1) 
+        print("out")
+    }
+    else
+    {
         df$sign <- rep("", NROW(df))
         
         for (i in seq(NROW(df)))
@@ -88,27 +92,29 @@ get_bootstrap <- function(
             #if (abs(df$mean[i]/(df$sd[i]/sqrt(n_boot))) > qt(0.95/2,df=n_boot-1))
             if(p.vals[i]<0.05)
                 df$sign[i] <- "*"
-        
+        if(!display_order)
+        {
+            df=df[,c("mean","estimate","sd","lower_band","upper_band","p.vals","BH")] 
+            index <- which(colnames(df)=="mean")
+            db <- data.frame(order_df(df, index, allCol = TRUE)   )
+        }
+        if(display_order)
+        {
+            index <- which(colnames(df)=="mean")
+            db <- data.frame(order_df(df, index, allCol = TRUE), order = NROW(df):1) 
+        }     
     }
     
-    rm(b); gc()
+   # rm(b); gc()
 
     if (collapse)
-        df$color <- as.factor(get_bloc_var(b$rgcca$a, collapse = collapse))
+        db$color <- as.factor(get_bloc_var(b$rgcca$a, collapse = collapse))
 
     zero_var <- which(df[, 1] == 0)
     if (NROW(df) > 1 && length(zero_var) != 0)
-        df <- df[-zero_var, ]
-    if(!display_order)
-    {
-        df=df[,c("mean","estimate","sd","lower_band","upper_band","p.vals","BH")] 
-        b <- data.frame(order_df(df, index, allCol = TRUE)   )
-    }
-    if(display_order)
-    {
-        b <- data.frame(order_df(df, index, allCol = TRUE), order = NROW(df):1) 
-    }
-       attributes(b)$indexes <-
+        db <- db[-zero_var, ]
+   
+       attributes(db)$indexes <-
         list(
             estimate = "RGCCA weights",
             bootstrap_ratio = "Bootstrap-ratio",
@@ -116,8 +122,8 @@ get_bootstrap <- function(
             occurrences = "Non-zero occurences",
             mean = "Mean bootstrap weights"
         )
-    attributes(b)$type <- class(rgcca)
-    attributes(b)$n_boot <- n_boot
-    class(b) <- c(class(b), "df_bootstrap")
-    return(b)
+    attributes(db)$type <- class(rgcca)
+    attributes(db)$n_boot <- n_boot
+    class(db) <- c(class(db), "df_bootstrap")
+    return(db)
 }

@@ -15,26 +15,28 @@ blocks = list(agriculture = Russett[, seq(3)], industry = Russett[, 4:5],
 # unsupervised rgcca - exploratory approach with rgcca
 #-------------------
 # Step one - tuning the parameters
-res_permut=rgcca_permutation(blocks=blocks,type="rgcca",scheme="horst")
+res_permut=rgcca_permutation(blocks=blocks,type="rgcca",scheme="factorial")
 res_permut
 names(res_permut)
 plot(res_permut)
 plot(res_permut, type="crit")
 tau_res=res_permut$bestpenalties
-# Step two - vizualizing rgcca
+# Stepi two - vizualizing rgcca
 resRgcca=rgcca(blocks,tau=tau_res)
 plot(resRgcca)
 resRgcca=rgcca(blocks,tau=tau_res,ncomp=c(2,2,3))
 plot(resRgcca,block=1)
 plot(resRgcca,comp=2)
+plot(resRgcca,type="network")
 response=matrix( Russett[, 11],ncol=1);rownames(response)=rownames(Russett)
 plot(resRgcca,type="ind",resp=response,block=2)
 plot(resRgcca,type="ind",resp=response,block=1)
+plot(resRgcca,type="ind",resp=response,block=1:2,comp=c(1,1))
 plot(resRgcca,type="var",block=2)
 # Step three -boostrapping the results
 resBootstrap=bootstrap(resRgcca,n_boot = 100)
 plot(resBootstrap,block=1)
-plot(resBootstrap,type="2D")
+#plot(resBootstrap,type="2D")
 print(resBootstrap)
 
 # Supervized approach
@@ -54,10 +56,32 @@ plot(res_rgcca,type="ind",resp=response)
 boot=bootstrap(res_rgcca)
 plot(boot,comp=2)
 
+# SGCCA
+#=======
+# unsupervised sgcca - exploratory approach with rgcca
+#-------------------
 
-# With one dimension
-res=rgcca(blocks,type="sparsity")
+# supervised sgcca
+#-----------------
+res=rgcca_cv(blocks,par="sparsity",type="sgcca")
+plot(res)
+
+res_sparsity=rgcca(blocks,sparsity=res$bestpenalties)
+plot(res_sparsity)
+
+res_sparsity=rgcca(blocks,sparsity=c(0.6,0.8,0.5))
+plot(res_sparsity)
+
+res=bootstrap(res_sparsity,n_boot=100)
+get_bootstrap(b=res)
+plot(res)
 # With two dimensions
+
+
+
+
+
+#===============================================================================================
 resRGCCA=rgcca(blocks,ncomp=c(2,2,2),scheme=function(x) x^4, type="sgcca",sparsity = c(.6, .75, .5))
 resRGCCA=rgcca(blocks,ncomp=2,scheme="horst", type="rgcca",tau = c(.6, .75, .5))
 response=matrix( Russett[, 11],ncol=1);rownames(response)=rownames(Russett)

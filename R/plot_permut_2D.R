@@ -12,7 +12,7 @@
 #' @param cex_sub = 16 * cex, size of the subtitle text 
 #' @param cex_point = 3 * cex, size of the point
 #' @param cex_lab = 19 * cex, size of the labels
-
+#' @importFrom ggplot2 ggplot
 plot_permut_2D <- function(
     perm, 
     type = "zstat",

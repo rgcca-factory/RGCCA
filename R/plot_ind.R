@@ -48,6 +48,7 @@
 #' scale = TRUE,ncomp=rep(2,3))
 #' plot_ind(result.rgcca,i_block=1)
 #' @export
+
 plot_ind <- function(
     rgcca_res,
     resp = rep(1, NROW(rgcca_res$Y[[1]])),

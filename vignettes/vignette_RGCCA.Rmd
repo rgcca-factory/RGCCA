@@ -85,9 +85,6 @@ bibliography: biblio.bib
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-```{r, echo = FALSE, warning=FALSE, message = FALSE}
-library(ggplot2)
-```
 
 
 # Introduction
@@ -836,22 +833,7 @@ This automatic estimation of the shrinkage parameters allows one to come closer 
 At last, as a component-based method, RGCCA provides the users with graphical representations, including factor plot, correlation circle. This graphical displays allows visualizing the sources of variability within blocks, the relationships between variables within and between blocks and the amount of correlation between blocks. The graphical display of the countries obtained by crossing $\ma X_1 \ma a_1$ = Agricultural Inequality and $\ma X_2 \ma a_2$ = Industrial Development and marked with their political regime in 1960 is shown in below.
 
 ```{r, eval=TRUE, fig.align='center', fig.cap = 'graphical display of the countries obtained by crossing y1 and y2 and labeled according to their political regime',fig.height = 3, fig.width = 5}
-df = data.frame(political_regime =
-factor(apply(Russett[, 9:11], 1, which.max),
-labels = c("demostab", "demoinst", "dictator")),
-comp1 = rgcca_B_factorial$Y[[1]][, 1],
-comp2 = rgcca_B_factorial$Y[[2]][, 1])
-
-p <- ggplot(df, aes(comp1, comp2)) +
-geom_vline(xintercept = 0) +
-geom_hline(yintercept = 0) +
-ggtitle("Factor plot (Russett data)") +
-geom_text(aes(colour = political_regime, label= rownames(df)),
-vjust=0,nudge_y = 0.03,size = 3 )+
-theme(legend.position="bottom", legend.box = "horizontal",
-legend.title = element_blank())
-
-p
+plot(rgcca_B_factorial, block=1:2,comp=1)
 ```
 
 
@@ -884,58 +866,14 @@ scale = TRUE)
 ```
 
 For HPCA, the countries can be represented in the space spanned by the two first global components.
-
-```{r, fig.align='center', fig.cap = 'graphical display of the countries obtained by crossing the two first compoent of the superblock and labeled according to their political regime',fig.height = 3, fig.width = 5}
-
-df1 = data.frame(political_regime =
-factor(apply(Russett[, 9:11], 1, which.max),
-labels = c("demostab", "demoinst", "dictator")),
-rgcca.hpca$Y[[4]]
-)
-
-p1 <- ggplot(df1, aes(comp1, comp2)) +
-geom_vline(xintercept = 0) +
-geom_hline(yintercept = 0) +
-ggtitle("Factor plot (Russett data) - Common Space") +
-geom_text(aes(colour = political_regime, label= rownames(df1)),
-vjust=0,nudge_y = 0.03,size = 3)+
-theme(legend.position="bottom", legend.box = "horizontal",
-legend.title = element_blank())
-
-p1
-```
-
 Despite some overlap, the first global component exhibits a separation/continuum among regimes. 
 
 Moreover, the correlation circle plot highlights the contribution of each variable to the contruction of the global components. This figure shows the original variables projected on the compromise space.
 
-```{r, eval=TRUE, fig.align='center', fig.pos="!!h", TRUE, fig.cap = 'correlation circle plot - two first components of the superblock. Variables are colored according to their block membership',fig.height = 3, fig.width = 5}
-df2 = data.frame(comp1 = cor(Russett, rgcca.hpca$Y[[4]])[, 1],
-comp2 = cor(Russett, rgcca.hpca$Y[[4]])[, 2],
-BLOCK = rep(c("X1", "X2", "X3"), sapply(A[1:3], NCOL)))
-
-# Circle
-circleFun <- function(center = c(-1,1),diameter = 1, npoints = 100){
-r = diameter / 2
-tt <- seq(0,2*pi,length.out = npoints)
-xx <- center[1] + r * cos(tt)
-yy <- center[2] + r * sin(tt)
-return(data.frame(x = xx, y = yy))
-}
-
-circle <- circleFun(c(0,0),2,npoints = 100)
-
-p2 <-ggplot(df2, aes(comp1, comp2), colour = BLOCK) +
-geom_path(aes(x,y), data=circle) +
-geom_vline(xintercept = 0) +
-geom_hline(yintercept = 0) +
-ggtitle("Correlation Circle (Russett data) - Common Space") +
-geom_text(aes(colour = BLOCK, label= rownames(df2)),
-vjust=0,nudge_y = 0.03,size = 3)+
-theme(legend.position="bottom", legend.box = "horizontal",
-legend.title = element_blank())
-
-p2
+```{r, fig.align='center', fig.cap = 'graphical display of the countries obtained by crossing the two first compoent of the superblock and labeled according to their political regime',fig.height = 3, fig.width = 5} 
+response=apply(Russett[, 9:11], 1, which.max)
+plot(rgcca.hpca,resp=response,type="ind")
+plot(rgcca.hpca,resp=response,type="var")
 ```
 
 A variable that is highly expressed for a category of individuals is projected with a high weight (far from the origin) in the direction of that category.
@@ -1018,23 +956,10 @@ system.time(rgcca(blocks=A, connection=C, tau = c(1, 1, 0), ncomp = c(1, 1, 1),
 As previously, RGCCA enables visual inspection of the spatial relationships between classes. This facilitates assessment of the quality of the classification and makes it possible to readily determine which components capture the discriminant information.
 
 ```{r, eval=FALSE, fig.align='center',fig.height = 3, fig.width = 5}
-df1 = data.frame(Loc = Loc,
-                 GE1 = rgcca.glioma$Y[[1]][, 1],
-                 CGH1 = rgcca.glioma$Y[[2]][, 1])
-
-p1 <- ggplot(df1, aes(GE1, CGH1)) +
-  geom_vline(xintercept = 0) +
-  geom_hline(yintercept = 0) +
-  ggtitle("Factor plot (Glioma data) - GE block") +
-  geom_text(aes(colour = Loc, label= rownames(df1)),
-            vjust=0,nudge_y = 0.03,size = 3 )+
-  theme(legend.position="bottom", legend.box = "horizontal",
-        legend.title = element_blank())
-
-p1
+plot(rgcca.glioma,type="ind",block=1:2,comp=1)
 ```
 
-![RGCCA dual formulation. Graphical display of the tumors obtained by crossing GE1 and CGH1 and labeled according to their location.](../img/vignette_rgcca/glioma_rgcca_indiv.png)
+
 
 In high-dimensional settings, the highest level of regularization ($\tau_j=1$) has proven to be necessary or even insufficient. Additional penalties that promote sparsity are often required.
 
@@ -1079,23 +1004,9 @@ nb_zero_CGH = sum(sgcca.glioma$a[[2]] != 0)
 One component per block has been built (GE1 for $\ma X_1$ and CGH1 $\ma X_2$), and the graphical display of the tumors obtained by crossing GE1 and CGH1 and labeled according to their location is shown below.
 
 ```{r, eval=FALSE, fig.align='center', fig.cap = 'graphical display of the tumors obtained by crossing GE1 and CGH1 land abeled according to their location.',fig.height = 3, fig.width = 5}
-df1 = data.frame(Loc = Loc,
-                 GE1 = sgcca.glioma$Y[[1]][, 1],
-                 CGH1 = sgcca.glioma$Y[[2]][, 1])
-  
-p1 <- ggplot(df1, aes(GE1, CGH1)) +
-    geom_vline(xintercept = 0) +
-    geom_hline(yintercept = 0) +
-    ggtitle("Factor plot (Glioma data)") +
-    geom_text(aes(colour = Loc, label= rownames(df1)),
-              vjust=0,nudge_y = 0.03,size = 3 )+
-    theme(legend.position="bottom", legend.box = "horizontal",
-          legend.title = element_blank())
-  
-p1
+plot(sgcca.glioma,type="ind",block=1:2,comp=1)
 ```
 
-![SGCCA. Graphical display of the tumors obtained by crossing GE1 and CGH1 and labeled according to their location.](../img/vignette_rgcca/glioma_sgcca_indiv.png)
 
 We observe that the GE block contains much more discriminative information than the CGH block.
   
@@ -1136,73 +1047,21 @@ and encoded in the design matrix as follows:
 nb_block = 4 #length(B)
 C = matrix(0, nb_block, nb_block)
 C[, nb_block-1] = 1 ; C[nb_block-1, ] = 1 ; diag(C) = 0
-C
+
 ```
   
 In that case, the call of `rgcca(,type="sgcca")` is as follows:
     
 ```{r, eval = FALSE}
-sgcca.glioma = rgcca(blocks=B, connection=C,type="sgcca",
-                     sparsity = c(.071,.2, 1/sqrt(NCOL(B[[3]]))+.2, 1),
-                     ncomp = c(rep(2, (length(B)-1)),1),
-                     scheme = "factorial", scale = TRUE,
-                     verbose = FALSE
-)
+plot(sgcca.glioma,type="ind",comp=1,block=1:2)
 ```
   
 and allows for the graphical representations of the individuals and the variables in a common space.
-  
-```{r, eval = FALSE, fig.align = 'center', fig.cap = 'factor plot - two first components of the superblock. individuals are colored according to their group membership',fig.height = 3, fig.width = 5}
-  
-df1 = data.frame(Loc = Loc, sgcca.glioma$Y[[3]])
-  
-p1 <- ggplot(df1, aes(comp1, comp2)) +
-    geom_vline(xintercept = 0) +
-    geom_hline(yintercept = 0) +
-    ggtitle("Factor plot (Glioma data) - super block") +
-    geom_text(aes(colour = Loc, label= rownames(df1)),
-              vjust=0,nudge_y = 0.03,size = 3)+
-    theme(legend.position="bottom", legend.box = "horizontal",
-          legend.title = element_blank())
-p1
-```
 
-![SGCCA with the superblock. Graphical display of the tumors obtained by crossing the two first superblock components and labeled according to their location.](../img/vignette_rgcca/glioma_sgcca_superblock_indiv.png)
 
 
 ```{r, eval = FALSE, fig.align = 'center', fig.cap = 'correlation circle plot - two first components of the superblock. Variables are colored according to their block membership',fig.height = 3, fig.width = 5}
-ind.select = unlist(lapply(sgcca.glioma$a[1:(length(B)-2)],
-                           function(x) x[, 1]!=0 | x[, 2]!=0))
-VAR.SELECT = B[[(length(B)-1)]][, ind.select]
-BLOCK = rep("CGH", NCOL(VAR.SELECT))
-BLOCK[grep("A", colnames(VAR.SELECT))] = "GE"
-  
-df = data.frame(comp1 = cor(VAR.SELECT, sgcca.glioma$Y[[(length(B)-1)]][, 1]),
-                comp2 = cor(VAR.SELECT, sgcca.glioma$Y[[(length(B)-1)]][, 2]),
-                BLOCK)
-  
-# Circle
-circleFun <- function(center = c(-1,1),diameter = 1, npoints = 100){
-    r = diameter / 2
-    tt <- seq(0,2*pi,length.out = npoints)
-    xx <- center[1] + r * cos(tt)
-    yy <- center[2] + r * sin(tt)
-    return(data.frame(x = xx, y = yy))
-}
-  
-circle <- circleFun(c(0,0),2,npoints = 100)
-  
-p <-ggplot(df, aes(comp1, comp2), colour = BLOCK) +
-    geom_path(aes(x,y), data=circle) +
-    geom_vline(xintercept = 0) +
-    geom_hline(yintercept = 0) +
-    ggtitle("Correlation Circle") +
-    geom_text(aes(colour = BLOCK, label= rownames(df)),
-              vjust=0,nudge_y = 0.03,size = 2)+
-    theme(legend.position="bottom", legend.box = "horizontal",
-          legend.title = element_blank())
-  
-p
+plot(type="var")
 ```
 
 ![SGCCA with the superblock. correlation circle plot - two first components of the superblock. Variables are colored according to their block membership.](../img/vignette_rgcca/glioma_sgcca_superblock_var.png)
@@ -1210,53 +1069,12 @@ p
 Moreover, it is possible to use a bootstrap resampling method to assess the stability of the variable selection process of SGCCA. B (e.g. 500) bootstrap samples of the same size as the original data is repeatedly sampled with replacement from the original data. SGCCA is then applied to each bootstrap sample to obtain the SGCCA estimates. The percentage of times a specific variable had a non-null weight across bootstrap sample can be derived. Work is in progress to include this function within the RGCCA package but an R code is given below.
   
 ```{r, eval = FALSE}
-nb_boot = 500 # number of bootstrap samples
-J = length(B)-2
-STAB = list()
-for (j in 1:J)
-  STAB[[j]] = matrix(0, nb_boot, NCOL(B[[j]]))
-  
-sparsity = c(.071,.2, 1/sqrt(NCOL(B[[3]]))+.2, 1)
-  
-B = lapply(B, cbind)
-for (i in 1:nb_boot){
-  ind = sample(NROW(B[[1]]), replace = TRUE)
-  Bscr = lapply(B, function(x) x[ind, ])
-  res = sgcca(Bscr, C, sparsity = sparsity, ncomp = c(rep(1, length(B))),
-              scheme = "factorial", scale = TRUE)
-  for (j in 1:J) STAB[[j]][i, ] = res$a[[j]]
-}
-  
-for (j in 1:J) colnames(STAB[[j]]) = colnames(B[[j]])
-  
-top = 30
-count = lapply(STAB, function(x) apply(x, 2, function(y) sum(y!=0)))
-count_sort = lapply(count, function(x) sort(x, decreasing = TRUE))
+res.boot=bootstrap(res.sgcca,n_boot=10)
+plot(res.boot)
 ```
  
 The 30 top variables for GE and CGH are represented below:
-  
-```{r, eval = FALSE}
-stabGE = data.frame(GE_symbol = names(count_sort[[1]])[1:top],
-                    Count = count_sort[[1]][1:top]/nb_boot)
-
-g1 <- ggplot(stabGE, aes(x = reorder(GE_symbol, Count), y = Count)) +
-      coord_flip() + geom_bar(stat = "identity")
-g1
-```
-
-![Stability selection for GE.](../img/vignette_rgcca/stab_ge.png)
-
-```{r, eval = FALSE,fig.height = 3, fig.width = 5}
-stabCGH = data.frame(CGH_symbol = names(count_sort[[2]])[1:top],
-                     Count = count_sort[[2]][1:top]/nb_boot)
-  
-g2 <- ggplot(stabCGH, aes(x = reorder(CGH_symbol, Count), y = Count)) +
-      coord_flip() + geom_bar(stat = "identity")
-g2
-```
-
-![Stability selection for CGH.](../img/vignette_rgcca/stab_cgh.png)
+ 
 
 At last, the McKeon's measure quantifies the homogeneity of a set of block components and is defined by the following formula:
     
@@ -1377,7 +1195,6 @@ knitr::opts_chunk$set(
 The blocks are loaded with the function ```load_blocks```. The first argument of this function (```superblock```) required a bolean giving the presence (TRUE) / absence (FALSE) of a superblock. The second one corresponds to a character giving the list of the file path separated by a comma (argument ```file```). By default, the name of the blocks corresponds to those of the files (```names``` argument) and could be set. By default, the tabulation is used as a column separator (```sep``` argument) and the first row is considered as a header (```header``` parameter).
 
 ```{r blocks}
-library(rlang)
 # Warning : separators by default are tabulation
 blocks = load_blocks(file = "data/agriculture.tsv,data/industry.tsv,data/politic.tsv")
 ```
@@ -1509,12 +1326,6 @@ plot_ind(rgcca_out, predicted = loo)
 ```
 
 # Dealing with missing data
-
-```{r, echo = FALSE, warning=FALSE, message = FALSE}
-library(ggplot2)
-library(parallel)
-library(vegan)
-```
 
 
 ## Introduction

@@ -20,11 +20,12 @@ print.permutation <- function (x,...)
   print(c1s, quote = FALSE,...)
   cat("\n")
   
-  tab <- round(cbind(x$pvals, x$zstat, x$crit, rowMeans(x$permcrit)), 
+  
+  tab <- round(cbind(x$means,x$sds, x$zstat, x$crit, rowMeans(x$permcrit),x$pvals), 
                3)
   dimnames(tab) <- list(paste("Tuning parameter set ", 
-                              sep = "", 1:length(x$pvals)), c("P-Value", 
-                                                              "Z", "Crit", "Crit Perm"))
+                              sep = "", 1:length(x$pvals)), c( "Mean","Sd",
+                                                              "Z", "Crit", "Crit Perm","P-Value"))
   print(tab, quote = FALSE,...)
 
 

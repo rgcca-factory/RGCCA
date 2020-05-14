@@ -147,7 +147,7 @@ rgcca_permutation <- function(
     }
     
     pb <- txtProgressBar(max=dim(par[[2]])[1])
-    crits=rep(NA,nrow(par[[2]]))
+    crits=means=sds=rep(NA,nrow(par[[2]]))
     permcrit=matrix(NA,nrow(par[[2]]),nperm)
     for(i in 1:nrow(par[[2]]))
     {
@@ -181,6 +181,8 @@ rgcca_permutation <- function(
         envir = environment()
         )
         permcrit[i,] =res
+        means[i]=mean(permcrit[i,],na.rm=T)
+        sds[i]=sd(permcrit[i,],na.rm=T)
         setTxtProgressBar(pb, i)
     }
  
@@ -204,11 +206,13 @@ rgcca_permutation <- function(
     structure(
         list(
             call=call,
-            pvals = pvals,
             zstat = zs,
             bestpenalties = par[which.max(zs), ],
             permcrit = permcrit,
+            means=means,
+            sds=sds,
             crit = crits,
+            pvals = pvals,
             penalties = par
         ),
         class = "permutation"

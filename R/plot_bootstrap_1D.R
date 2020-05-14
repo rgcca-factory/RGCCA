@@ -26,6 +26,7 @@
 #' plot_bootstrap_1D(boot, n_cores = 1)
 #' plot_bootstrap_1D(df_b = selected.var)
 #' @export
+#' @importFrom ggplot2 ggplot
 plot_bootstrap_1D <- function(
     b = NULL,
     df_b = NULL,
