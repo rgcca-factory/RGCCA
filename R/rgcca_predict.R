@@ -61,8 +61,8 @@ rgcca_predict = function(
     stopifnot(is(rgcca_res, "rgcca"))
     match.arg(model, c("regression", "classification"))
     match.arg(fit, c("lm", "cor", "lda", "logistic"))
-    if(!is.null(bigA))
-        check_blocks(bigA)
+    # if(!is.null(bigA))
+    #     check_blocks(bigA)
 
     for (i in c("new_scaled", "scale_size_bloc"))
             check_boolean(i, get(i))
@@ -162,10 +162,10 @@ rgcca_predict = function(
             
             res <- scale(data, center, scale)
             
-            if (scale_size_bloc)
-                res / sqrt(length(data))
-            else
-                res
+            # if (scale_size_bloc)
+            #     res / sqrt(length(data))
+            # else
+            #     res
 
         }
 
@@ -186,7 +186,14 @@ rgcca_predict = function(
     astar <- reorderList(rgcca_res$astar, g = TRUE)
 
     pred <- lapply(seq(length(newA)), function(x)
-        as.matrix(newA[[x]]) %*% astar[[x]])
+    {
+        M=as.matrix(newA[[x]]) %*% astar[[x]]
+        rownames(M)=rownames(newA[[x]])
+        colnames(M)=colnames(astar[[x]])
+        return(M)
+    }
+    )
+    names(pred)=names(newA)
 
     if (missing(bloc_to_pred))
         return(list(pred = pred))
@@ -202,7 +209,7 @@ rgcca_predict = function(
     # Y definition
 
     if (missing(y.train))
-        y.train <- rgcca_res$call$blocks[[bloc_y]][, MATCH_col[[newbloc_y]], drop = FALSE]
+        y.train <- rgcca_res$A[[bloc_y]][, MATCH_col[[newbloc_y]], drop = FALSE]
 
     # TODO : sampled columns for y.test
 
@@ -239,40 +246,44 @@ rgcca_predict = function(
                     function(x) {
                         predict(
                             lm(
-                                as.formula(paste(x, " ~ .")),
+                                as.formula(paste(x, " ~ ",paste(colnames(comp.train),collapse="+"))),
                                 data = cbind(comp.train, y.train), 
                                 na.action = "na.exclude"
                             ), 
-                        cbind(comp.test, y.test))
+                            cbind(comp.test, y.test))
                     })
-    
+                
                 if (any(is.na(ychapo)))
                     warning("NA in predictions.")
-
-                if (is.null(bigA))
-                    bigA <- rgcca_res$call$blocks
-
-                m <- function(x)
-                    apply(bigA[[bloc_to_pred]], 2, x) # TODO
-
+                
+                #   if (is.null(bigA))
+                #       bigA <- rgcca_res$call$blocks
+                
+                #   m <- function(x)
+                #       apply(bigA[[bloc_to_pred]], 2, x) # TODO
+                
                 f <- quote(
                     if (is.null(dim(y)))
-                       y[x]
+                        y[x]
                     else
                         y[, x]
                 )
-
-                r <- function(y)
-                    sapply(seq(NCOL(bigA[[bloc_to_pred]])), function(x)
-                        (eval(f) - m(min)[x]) / (m(max)[x] - m(min)[x]))
-
-                res <- r(y.test) - r(ychapo)
+                
+                #   r <- function(y)
+                #       sapply(seq(NCOL(bigA[[bloc_to_pred]])), function(x)
+                #           (eval(f) - m(min)[x]) / (m(max)[x] - m(min)[x]))
+                
+                #   res <- r(y.test) - r(ychapo)
+                prediction=ychapo
+                res=y.test-ychapo
                 if (is.null(dim(res))) {
-                    res <- abs(res)
-                    score <- mean(res)
+                    #res <- abs(res)
+                    score <- sqrt(mean(res^2))
                 } else{
-                    res <- apply(res, 2, function(x) abs(x))
-                    score <- mean(apply(res, 2, mean))
+                    #  res <- apply(res, 2, function(x) abs(x))
+                    res2 <- apply(res,2,function(x){return(sqrt(mean(x^2)))})
+                    score <- sqrt(mean(res2^2))
+                    #score <- mean(apply(res, 2, mean))
                 }
 
 

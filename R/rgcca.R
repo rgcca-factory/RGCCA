@@ -162,7 +162,7 @@ rgcca <- function(
     match.arg(init, c("svd", "random"))
     match.arg(knn.output, c("mean", "random", "weightedMean" ))
     check_method(type)
-    blocks <- check_blocks(blocks, init = TRUE)
+    blocks <- check_blocks(blocks, init = TRUE, add_NAlines=TRUE,n=1)
     if (!is.null(response))
         check_blockx("response", response, blocks)
     check_integer("tol", tol, float = TRUE, min = 0)
