@@ -36,7 +36,7 @@ is.character2 <- function(x, type = "any", warn_separator = FALSE) {
             })))
     
     if (warn_separator && comma_msg)
-        stop("Wrong separator. Please, select the comma separator parameter.")
+        stop_rgcca("Wrong separator. Please, select the comma separator parameter.")
     
     res
 }

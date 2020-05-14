@@ -6,7 +6,7 @@
 #' @param group A vector of character giving the group for the rows
 #' @param cex_axis An integer for the size of the axis text
 #' @param colors reoresenting a vector of colors
-
+#' @importFrom ggplot2 ggplot
 plot_histogram <- function(
     p,
     df,

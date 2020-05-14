@@ -26,7 +26,7 @@ rgcca_crossvalidation <- function(
 
     stopifnot(is(rgcca_res, "rgcca"))
     if(is.null(rgcca_res$call$response)){
-       stop("This function required an analysis in a supervised mode")}
+       stop_rgcca("This function required an analysis in a supervised mode")}
    
     match.arg(validation, c("loo", "test", "kfold"))
     check_integer("k", k)

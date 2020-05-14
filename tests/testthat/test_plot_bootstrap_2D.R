@@ -31,6 +31,6 @@ rgcca_out <- rgcca(
 
 boot <- bootstrap(rgcca_out, 2, n_cores = 1)
 test_that("plot_boot_object", {
-    expect_is(plot(boot, i_block = 3, n_cores = 1), "ggplot")
+    expect_is(plot(boot, block = 3, n_cores = 1), "ggplot")
     expect_is(plot(boot, type = "2D", n_cores = 1), "ggplot")
 })

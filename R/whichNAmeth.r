@@ -47,13 +47,13 @@ whichNAmethod=function(blocks,listMethods=c("complete","nipals"),typeNA="block",
   check_integer("tol",tol,float=TRUE,min=0)
   choices <- c("horst", "factorial", "centroid")
   if (!scheme %in% (choices) && !is.function(scheme))
-      stop(paste0(scheme, " must be one of ", paste(choices, collapse = ", "), "' or a function."))
+      stop_rgcca(paste0(scheme, " must be one of ", paste(choices, collapse = ", "), "' or a function."))
   
 #  if(length(seed)!=0){check_integer("seed",seed)}
   match.arg(typeNA,c("block","ponc","rand","byVar"))
   match.arg(typeRGCCA,c("rgcca","sgcca"))
   if(is.null(patternNA)){patternNA=get_patternNA(blocks)$pctNAbyBlock}
-  if(is.vector(patternNA)){if(length(patternNA)!=length(blocks)){stop("patternNA should have the same size as length(blocks)")}}
+  if(is.vector(patternNA)){if(length(patternNA)!=length(blocks)){stop_rgcca("patternNA should have the same size as length(blocks)")}}
   referenceDataset=intersection(blocks)
 
   # Getting list of datasets stemming from referenceDataset with the same pattern of missing values

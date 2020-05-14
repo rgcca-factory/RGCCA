@@ -129,6 +129,7 @@ rgcca <- function(
     knn.klim = NULL,
     knn.scale_block = TRUE) {
 
+    if(length(blocks)==1){type="pca";message("type='rgcca' is not available for one block only. type was transformed as 'pca'.")}
     if (!missing(sparsity) && missing(type))
         type <- "sgcca"
 
@@ -143,21 +144,21 @@ rgcca <- function(
 
     if (tolower(type) %in% c("sgcca", "spca", "spls")) {
         if (!missing(tau) && missing(sparsity))
-           stop(paste0("sparsity parameter required for ", tolower(type), "(instead of tau)."))
+           stop_rgcca(paste0("sparsity parameter required for ", tolower(type), "(instead of tau)."))
         gcca <- sgccaNa
         par <- "sparsity"
         penalty <- sparsity
        
     }else{
         if (!missing(sparsity) & missing(tau))
-           stop(paste0("tau parameter required for ", tolower(type), "(instead of sparsity)."))
+           stop_rgcca(paste0("tau parameter required for ", tolower(type), "(instead of sparsity)."))
         gcca <- rgccaNa
         par <- "tau"
         penalty <- tau
     }
 
     if (superblock && any(penalty == "optimal"))
-        stop("Optimal tau is not available with superblock option.")
+        stop_rgcca("Optimal tau is not available with superblock option.")
 
     match.arg(init, c("svd", "random"))
     match.arg(knn.output, c("mean", "random", "weightedMean" ))

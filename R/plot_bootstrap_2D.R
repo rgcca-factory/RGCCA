@@ -49,7 +49,7 @@ plot_bootstrap_2D <- function(
     n_cores = parallel::detectCores() - 1) {
 
     if (missing(b) && missing(df_b))
-        stop("Please select a bootstrap object.")
+        stop_rgcca("Please select a bootstrap object.")
     if (!is.null(b)) {
         df_b <- get_bootstrap(b, comp, i_block, collapse=collapse, n_cores=n_cores,display_order=TRUE)
     }

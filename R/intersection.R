@@ -29,7 +29,7 @@ intersection=function(A)
 		{
 		  if(is.null(rownames(x)))
 		  {
-		    warnings("No rownames in matrix, they were initialized as S1,...Sn");
+		    warnings("No rownames in matrix, they were initialized as S1,...Sn \n");
 		    rownames(x)=paste0("S",1:dim(x)[1])
 		  }
 			vecNA=apply(x,1,sum);

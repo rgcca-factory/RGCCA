@@ -13,6 +13,12 @@ print.permutation <- function (x,...)
   cat("Call: ")
  dput(x$call,control=c())
   cat("\n")
+  c1s <- round(x$penalties, 4)
+  rownames(c1s) = 1:NROW(c1s)
+  cat(fill = TRUE)
+  cat("Tuning parameters used: ", fill = TRUE)
+  print(c1s, quote = FALSE,...)
+  cat("\n")
   
   tab <- round(cbind(x$pvals, x$zstat, x$crit, rowMeans(x$permcrit)), 
                3)
@@ -21,13 +27,7 @@ print.permutation <- function (x,...)
                                                               "Z", "Crit", "Crit Perm"))
   print(tab, quote = FALSE,...)
 
-  c1s <- round(x$penalties, 4)
-  rownames(c1s) = 1:NROW(c1s)
-    cat(fill = TRUE)
-  cat("Tuning parameters used: ", fill = TRUE)
-  print(c1s, quote = FALSE,...)
-  
-  cat("\n")
+
   cat("Tuning parameters corresponding to highest z score: \n")
   cat(paste(round(x$bestpenalties, 3), collapse=", "))
    cat("\n")            

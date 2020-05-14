@@ -11,7 +11,7 @@ check_spars <- function(blocks, tau, type = "rgcca") {
             function(x, y) {
             x <- check_integer("sparsity", x, float = TRUE, min = 0)
             if (x < y | x > 1)
-                stop(
+                stop_rgcca(
                     paste0(
                         "Sparsity parameter is equals to ",
                         x,

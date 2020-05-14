@@ -5,8 +5,8 @@
 \title{Plots a bootstrap object}
 \usage{
 \method{plot}{bootstrap}(x, type = "1D",
-  i_block = length(x$rgcca$call$blocks), n_mark = 30, bars = "sd",
-  colors = NULL, title = NULL, cex = 1,
+  block = length(x$rgcca$call$blocks), comp = 1, n_mark = 30,
+  bars = "sd", colors = NULL, title = NULL, cex = 1,
   n_cores = parallel::detectCores() - 1, ...)
 }
 \arguments{
@@ -14,7 +14,9 @@
 
 \item{type}{"1D" or "2D"}
 
-\item{i_block}{An integer giving the index of a list of blocks}
+\item{block}{number of the block to be plotted}
+
+\item{comp}{number of the component to be plotted}
 
 \item{n_mark}{An integer giving the number maximum of top variables}
 

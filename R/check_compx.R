@@ -1,7 +1,7 @@
 check_compx <- function(x, y, ncomp, blockx) {
     res <- check_integer(x, y, min = 1)
     if (y > ncomp[blockx]) {
-        stop(
+        stop_rgcca(
             paste0(
                 x,
                 " is currently equals to ",

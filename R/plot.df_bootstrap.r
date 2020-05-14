@@ -3,6 +3,8 @@
 #' Plots the results of a bootstrap object. The representation can be with bars (1D) or (2D) #TODO
 #' @param type "1D" or "2D"
 #' @param x result of bootstrap  \code{\link[RGCCA]{bootstrap}} 
+#' @param block number of the block to be plotted
+#' @param comp number of the component to be plotted
 #' @inheritParams plot_bootstrap_1D
 #' @inheritParams plot_bootstrap_2D
 #' @export
@@ -14,7 +16,7 @@
 #' rgcca_out = rgcca(blocks)
 #' b=bootstrap(rgcca_out, n_boot = 2, n_cores = 1)
 #' plot(b,n_cores=1)
-plot.bootstrap=function(x,type="1D",i_block=length(x$rgcca$call$blocks),n_mark=30,bars="sd",colors=NULL,title=NULL,cex=1,n_cores= parallel::detectCores() - 1,...)
+plot.bootstrap=function(x,type="1D",block=length(x$rgcca$call$blocks),comp=1,n_mark=30,bars="sd",colors=NULL,title=NULL,cex=1,n_cores= parallel::detectCores() - 1,...)
 {
     
     if(type=="1D")
@@ -27,8 +29,8 @@ plot.bootstrap=function(x,type="1D",i_block=length(x$rgcca$call$blocks),n_mark=3
             n_mark = n_mark,
             title = title, 
             colors = colors,
-            comp = 1,
-            i_block = i_block,
+            comp = comp,
+            i_block = block,
             collapse = FALSE,
             n_cores =n_cores,
             bars=bars,
@@ -50,8 +52,8 @@ plot.bootstrap=function(x,type="1D",i_block=length(x$rgcca$call$blocks),n_mark=3
             cex_sub = 12 * cex,
             cex_point = 10 * cex,
             cex_lab = 10 * cex,
-            comp = 1,
-            i_block = i_block,
+            comp = comp,
+            i_block = block,
             collapse = FALSE,
             n_cores = n_cores)
     }

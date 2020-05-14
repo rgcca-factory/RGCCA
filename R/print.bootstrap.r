@@ -8,7 +8,7 @@ print.bootstrap=function(x,...)
     ncompmax=min(x$rgcca$call$ncomp)
     for(comp in 1:ncompmax)
     {
-        cat(paste("Dimension:",comp))
+        cat(paste("Dimension:",comp,"\n"))
         print(Reduce(rbind,lapply(1:length(x$rgcca$call$blocks),
                                   function(block)
                                   { b=get_bootstrap(b=x,

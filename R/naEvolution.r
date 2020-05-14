@@ -19,7 +19,7 @@
 #' @export naEvolution
 naEvolution=function(blocks,prctNA=c(0.1,0.2,0.3),listMethods=c("mean"),typeNA="block",ncomp=rep(1,length(blocks)),scale_block=TRUE,scale=TRUE,nDatasets=20,tol=1e-6,verbose=FALSE,scheme="centroid",seed=NULL,connection=matrix(1,length(blocks),length(blocks))-diag(length(blocks)),tau=rep(1,length(blocks)))
 {
-     if(any(prctNA>1)){stop("prctNA should be a vector of proportion of missing data (between 0 and 1)")}
+     if(any(prctNA>1)){stop_rgcca("prctNA should be a vector of proportion of missing data (between 0 and 1)")}
     match.arg(typeNA,c("block","ponc","byVar","rand"))
     check_ncomp(ncomp,blocks)
     check_boolean("scale_block",scale_block)
@@ -29,7 +29,7 @@ naEvolution=function(blocks,prctNA=c(0.1,0.2,0.3),listMethods=c("mean"),typeNA="
     check_integer("tol",tol,float=TRUE,min=0)
     choices <- c("horst", "factorial", "centroid")
     if (!scheme %in% (choices) && !is.function(scheme))
-        stop(paste0(scheme, " must be one of ", paste(choices, collapse = ", "), "' or a function."))
+        stop_rgcca(paste0(scheme, " must be one of ", paste(choices, collapse = ", "), "' or a function."))
     check_connection(connection,blocks)
     check_tau(tau,blocks)
     if(!is.null(seed)){check_integer("seed",seed)}

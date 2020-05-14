@@ -73,7 +73,7 @@ get_comp <- function(
             # resp <- rep("NA", NROW(df))
             # rownames(resp) <- rownames(rgcca_res$A[[i_block_x]])
             if (length(resp) != NROW(rgcca_res$A[[i_block_x]]))
-                stop("resp argument should have the same size than the number of rows in the selected block.")
+                stop_rgcca("resp argument should have the same size than the number of rows in the selected block.")
         }
     } else
         resp <- resp[seq(NROW(df)), ]

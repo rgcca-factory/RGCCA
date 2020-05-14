@@ -63,8 +63,8 @@ plot.list_rgcca=function(x,type="ind",resp=rep(1, NROW(x$Y[[1]])),block=1,comp=1
           if(cor(df1[,2], rgcca_res$Y[[i_block_y]][,compy])<0){df1[,2]=-df1[,2]}
           
           colnames(df1)=c("axis1","axis2")
-          if(dim(df1)[1]!=length(resp)){stop("two rgcca have two different numbers of subjects")}
-          if(all.equal(rownames(df1),rownames(rgcca_res$Y[[i_block]]))!=TRUE){stop("not same names in rgcca")}
+          if(dim(df1)[1]!=length(resp)){stop_rgcca("two rgcca have two different numbers of subjects")}
+          if(all.equal(rownames(df1),rownames(rgcca_res$Y[[i_block]]))!=TRUE){stop_rgcca("not same names in rgcca")}
           
           if(i==1){dft=df1;}else{    dft<-rbind(dft,df1)}
           colt=c(colt,colors[1:n])
@@ -104,8 +104,8 @@ plot.list_rgcca=function(x,type="ind",resp=rep(1, NROW(x$Y[[1]])),block=1,comp=1
              )
              colnames(df1)=c("axis1","axis2")
 
-             if(dim(df1)[1]!=dim(rgcca_res$a[[i_block]])[1]){stop("two rgcca have two different numbers of subjects")}
-             if(all.equal(rownames(df1),rownames(rgcca_res$a[[i_block]]))!=TRUE){stop("not same names in rgcca")}
+             if(dim(df1)[1]!=dim(rgcca_res$a[[i_block]])[1]){stop_rgcca("two rgcca have two different numbers of subjects")}
+             if(all.equal(rownames(df1),rownames(rgcca_res$a[[i_block]]))!=TRUE){stop_rgcca("not same names in rgcca")}
              
              if(i==1){dft=df1;}else{    dft<-rbind(dft,df1)}
              colt=c(colt,colors[1:nvar])

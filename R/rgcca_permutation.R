@@ -65,7 +65,7 @@ rgcca_permutation <- function(
     min_spars <- NULL
 
     if (length(blocks) < 1)
-        stop("Permutation required a number of blocks larger than 1.")
+        stop_rgcca("Permutation required a number of blocks larger than 1.\n")
 
     ncols <- sapply(blocks, NCOL)
 
@@ -80,11 +80,11 @@ rgcca_permutation <- function(
     set_penalty <- function () {
 
         if(perm.par == "sparsity"){
-            if(type!="sgcca"){cat("As par=='sparsity', the type parameter was replaced by 'sgcca'")}
+            if(type!="sgcca"){cat("As par=='sparsity', the type parameter was replaced by 'sgcca'\n")}
             type <<- "sgcca"
             min_spars <<- sapply(ncols, function(x) 1 / sqrt(x))
         }else{
-            if(type!="rgcca"){cat("As par!='sparsity', the type parameter was replaced by 'rgcca'")}
+            if(type!="rgcca"){cat("As par!='sparsity', the type parameter was replaced by 'rgcca'\n")}
             type <<- "rgcca"
             min_spars <<- sapply(ncols, function(x) 0)
         }
@@ -95,7 +95,7 @@ rgcca_permutation <- function(
             perm.value <- t(sapply(seq(NROW(perm.value)), function(x) check_tau(perm.value[x, ], blocks, type = type)))
         else{
             if (any(perm.value < min_spars))
-                stop(paste0("perm.value should be upper than : ", paste0(round(min_spars, 2), collapse = ",")))
+                stop_rgcca(paste0("perm.value should be upper than : ", paste0(round(min_spars, 2), collapse = ",")))
             perm.value <- check_tau(perm.value, blocks, type = type)
             perm.value <- set_spars(max = perm.value)
         }
@@ -123,17 +123,9 @@ rgcca_permutation <- function(
     "tau" = par <- set_penalty()
     )
 
-    crits <- rgcca_permutation_k(
-        blocks,
-        par = par,
-        perm = FALSE,
-        type = type,
-        n_cores = 1,
-        quiet=quiet,
-        ...
-    )
 
-    message("Permutation in progress...", appendLF = FALSE)
+
+    message("Permutation in progress...\n", appendLF = FALSE)
 
     varlist <- c(ls(getNamespace("RGCCA")))
     # get the parameter dot-dot-dot
@@ -153,23 +145,45 @@ rgcca_permutation <- function(
             # does not work.
         }
     }
-
-    permcrit <- parallelize(
-        varlist,
-        seq(nperm), 
-        function(x)
-            rgcca_permutation_k(
-                blocks = blocks,
-                par = par,
-                type = type,
-                n_cores = 1,
-                quiet = quiet,
-                ...
-            ),
-    n_cores = n_cores,
-    envir = environment())
-
-    message("OK.")
+    
+    pb <- txtProgressBar(max=dim(par[[2]])[1])
+    crits=rep(NA,nrow(par[[2]]))
+    permcrit=matrix(NA,nrow(par[[2]]),nperm)
+    for(i in 1:nrow(par[[2]]))
+    {
+        
+        crits[i] <- rgcca_permutation_k(
+            blocks,
+            par = par[[1]],
+            par_value=par[[2]][i,],
+            perm = FALSE,
+            type = type,
+            n_cores = 1,
+            quiet=quiet,
+            ...
+        )
+        
+      
+        res<- parallelize(
+            varlist,
+            seq(nperm), 
+            function(x)
+                rgcca_permutation_k(
+                    blocks = blocks,
+                    par = par[[1]],
+                    par_value=par[[2]][i,],
+                    type = type,
+                    n_cores = 1,
+                    quiet = quiet,
+                    ...
+                ),
+        n_cores = n_cores,
+        envir = environment()
+        )
+        permcrit[i,] =res
+        setTxtProgressBar(pb, i)
+    }
+ 
 
     par <- par[[2]]
 

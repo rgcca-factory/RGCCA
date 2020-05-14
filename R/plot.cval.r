@@ -20,7 +20,7 @@ plot.cval=function(x,bars="sd",alpha=0.05,...)
     mat_cval=x$cv
     match.arg(bars,c("sd","stderr","ci","cim","points"))
     mean_b=apply(mat_cval,1,mean)
-    main=paste0("Mean CV criterion according to the configuration set\n (",x$call$validation,":",ifelse(x$call$validation=="kfold", paste0("with ",x$call$k," folds and ",x$call$n_cv," runs)"),")"))
+    main=paste0("Mean CV criterion according to the configuration set\n (",x$call$validation,ifelse(x$call$validation=="kfold", paste0(": with ",x$call$k," folds and ",x$call$n_cv," runs)"),")"))
     if(bars!="none"&&dim(mat_cval)[2]<3){bars=="none"; warning("Standard deviations can not be calculated with less than 3 columns in mat_cval")}
     if(bars!="none")
     {

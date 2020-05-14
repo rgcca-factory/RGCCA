@@ -43,7 +43,7 @@ rgccak=function (A, C, tau = "optimal", scheme = "centroid",verbose = FALSE, ini
         
      if(mode(scheme) != "function") 
     {
-    if(!scheme %in% c("horst","factorial","centroid")){stop("Please choose scheme as 'horst','factorial','centroid' or as a convex function")}
+    if(!scheme %in% c("horst","factorial","centroid")){stop_rgcca("Please choose scheme as 'horst','factorial','centroid' or as a convex function")}
     if(scheme=="horst"){ g <- function(x) x}
     if(scheme=="factorial"){ g <- function(x)  x^2}  
     if(scheme=="centroid"){g <- function(x) abs(x)}
@@ -161,7 +161,7 @@ rgccak=function (A, C, tau = "optimal", scheme = "centroid",verbose = FALSE, ini
         }
     }
     else {
-        stop("init should be either random or by SVD.")
+        stop_rgcca("init should be either random or by SVD.")
     }
    
     N = ifelse(bias, n, n - 1)

@@ -12,7 +12,7 @@ check_size_blocks <- function(blocks, x, y = x) {
     }
 
     if (dim_y != length(blocks))
-        stop(
+        stop_rgcca(
             paste0(
                 x,
                 " should have the same ", 

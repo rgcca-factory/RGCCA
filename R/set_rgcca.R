@@ -60,7 +60,7 @@ set_rgcca <- function(
     if (tolower(type) %in% c("sgcca", "spca", "spls")) {
 
         if (!is.null(blocks) && !missing(tau) && missing(sparsity))
-            stop(paste0("sparsity parameter required for ", tolower(type), "instead of tau."))
+            stop_rgcca(paste0("sparsity parameter required for ", tolower(type), "instead of tau."))
 
         par <- "sparsity"
         penalty <- sparsity
@@ -68,7 +68,7 @@ set_rgcca <- function(
     } else {
 
         if (!is.null(blocks) && !missing(sparsity) && missing(tau))
-            stop(paste0("tau parameter required for ", tolower(type), "instead of sparsity."))
+            stop_rgcca(paste0("tau parameter required for ", tolower(type), "instead of sparsity."))
 
         par <- "tau"
         penalty <- tau

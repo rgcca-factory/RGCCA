@@ -15,6 +15,17 @@
 #'    print(res)
 print.cval=function(x,bars="sd",alpha=0.05,...)
 {
+    
+    cat("Call: ")
+    dput(x$call,control=c())
+    cat("\n")
+    c1s <- round(x$penalties, 4)
+    rownames(c1s) = 1:NROW(c1s)
+    cat(fill = TRUE)
+    cat("Tuning parameters used: ", fill = TRUE)
+    print(c1s, quote = FALSE,...)
+    cat("\n")
+    
     mat_cval=x$cv
     mean_b=apply(mat_cval,1,mean)
 
@@ -58,7 +69,7 @@ print.cval=function(x,bars="sd",alpha=0.05,...)
     
     print(df)
     
-    cat(paste("The best configuration was:", rownames(mat_cval)[optimal_ind],"for a value of ", round(optimal_y,digits=2)),"\n",...)
+    cat(paste("The best configuration was:", paste(round(x$bestpenalties,digits=3),collapse=" "),"for a value of ", round(optimal_y,digits=2)),"\n",...)
 
 
 }

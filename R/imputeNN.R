@@ -101,10 +101,10 @@ imputeNN <- function(
     rowForComparison=rowForComparison[rowForComparison!=i]
     
     if (length(rowForComparison) <= 4)
-      stop("Not enough subjects with complete data (<=4)")
+      stop_rgcca("Not enough subjects with complete data (<=4)")
     if (k == "all") 
       k=length(rowForComparison)
-    if(length(colForComparison)==0){stop("One subject is missing for all blocks. Please change your imputation function, or choose superblock=TRUE")}
+    if(length(colForComparison)==0){stop_rgcca("One subject is missing for all blocks. Please change your imputation function, or choose superblock=TRUE")}
     if (length(rowForComparison) > 4)
     {
        

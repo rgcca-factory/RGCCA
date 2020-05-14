@@ -73,16 +73,16 @@ rgcca_predict = function(
     B <- length(rgcca_res$call$blocks)
 
     if (model == "classification" && (fit == "cor" || fit == "lm"))
-        stop("Please, classification prediction only works with LDA and LOGISTIC")
+        stop_rgcca("Please, classification prediction only works with LDA and LOGISTIC")
 
     if (model == "regression" &&
             (fit == "lda" || fit == "logistic"))
-        stop("Please, regression prediction only works with LM and COR")
+        stop_rgcca("Please, regression prediction only works with LM and COR")
 
     if (missing(y.train) || missing(y.test)) {
         if (!missing(bloc_to_pred) &&
                 !bloc_to_pred %in% names(rgcca_res$call$blocks))
-            stop("Please, block to predict do not exist")
+            stop_rgcca("Please, block to predict do not exist")
     }
 
     # Compute test parameters
@@ -96,18 +96,18 @@ rgcca_predict = function(
 
     # Check similarity between TRAIN and TEST set
     if (is.null(names(rgcca_res$call$blocks)) ||  is.null(names(newA)))
-        stop("Please, blocs do not have names")
+        stop_rgcca("Please, blocs do not have names")
 
     if (B != newB)
-        stop("Please, number of blocs is not the same")
+        stop_rgcca("Please, number of blocs is not the same")
 
     MATCH <- match(names(newA), names(rgcca_res$call$blocks))
 
     if (sum(is.na(MATCH)) != 0)
-        stop("Please, blocs in new data did not exist in old data")
+        stop_rgcca("Please, blocs in new data did not exist in old data")
 
     if (!identical(newp, p[MATCH]))
-        stop("Please, number of column is not the same")
+        stop_rgcca("Please, number of column is not the same")
 
     get_dim <- function(x) {
         if (!is.null(dim(x)))
@@ -122,7 +122,7 @@ rgcca_predict = function(
         rgcca_res$call$blocks[MATCH])
 
     if (sum(unique(is.na(MATCH_col))) != 0)
-        stop("Please, some columns names are not the same between the two blocks")
+        stop_rgcca("Please, some columns names are not the same between the two blocks")
 
     # Order a a list of matrix or dataframe according to : the index of each element in the list (MATCH);
     # the index of each column in each element (MATCH_COL)
@@ -226,7 +226,7 @@ rgcca_predict = function(
 
     if (!is.null(dim(newA[[1]]))) {
         if (any(colnames(y.train) != colnames(y.test)))
-            stop("Please, train and test sets do not have the same name")
+            stop_rgcca("Please, train and test sets do not have the same name")
     }
 
     rgcca_res$Y <- rgcca_res$Y[MATCH]

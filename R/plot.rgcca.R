@@ -40,17 +40,32 @@
 #' plot(resRgcca,type="var")
 #' plot(resRgcca,type="both")
 #' @importFrom gridExtra grid.arrange
+#' @importFrom ggplot2 ggplot
 #' @export
 plot.rgcca=function(x,type="weight",block=length(x$A),comp=1:2,resp=rep(1, NROW(x$Y[[1]])),remove_var=FALSE,text_var=TRUE,text_ind=TRUE,response_name= "Response",no_overlap=FALSE,title=NULL,n_mark=100,collapse=FALSE,cex=1,cex_sub=12,cex_main=14,cex_lab=12,colors=NULL,...)
 {
     match.arg(type,c("ind","var","both","ave","cor","weight","network"))
-   
-    if(length(comp)==1){comp=rep(comp,2)}
+     if(length(comp)==1){comp=rep(comp,2)}
     compx=comp[1]
     compy=comp[2]
-    if(length(block)==1){block=rep(block,2)}
+    if(length(block)==1)
+    {
+         if(x$call$ncomp[block]<2)
+          {
+                if(type%in%c("ind","var","both"))
+                {
+                    message("type='ind','var' or 'both' is not available for ncomp<2. type was replaced by 'weight'")
+                    type="weight"                    
+                }
+
+          }
+        block=rep(block,2)
+
+            
+    }
     i_block=block[1]
     i_block_y=block[2]
+      
     if(i_block!=i_block_y & is.null(type)){ type="weight"}
     if(i_block==i_block_y & is.null(type)){ type="both"}
      

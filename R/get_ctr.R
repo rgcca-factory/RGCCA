@@ -65,7 +65,7 @@ get_ctr <- function(
             c(compx, compy, compz),
             function(x){
                 if (x > rgcca_res$call$ncomp[i_block])
-                    stop("The index of the selected analysis component doesn't exist.")
+                    stop_rgcca("The index of the selected analysis component doesn't exist.")
                 f(x)
             },
             simplify = FALSE

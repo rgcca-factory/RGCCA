@@ -31,6 +31,7 @@
 #' rgcca_out = rgcca(blocks)
 #' plot_var_1D(rgcca_out, collapse = TRUE)
 #' @export
+#' @importFrom ggplot2 ggplot
 plot_var_1D <- function(
     rgcca_res,
     comp = 1,

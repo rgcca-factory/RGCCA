@@ -132,7 +132,7 @@ rgccad=function (A, C = 1 - diag(length(A)), tau = rep(1, length(A)),  ncomp = r
   A0=A
   #  call = match.call()
   call=list(A=A, C = C,  ncomp = ncomp, scheme = scheme, scale = scale,   init = init, bias = bias, tol =tol, verbose = verbose,scale_block=scale_block,na.rm=na.rm,estimateNA=estimateNA)
-  if (any(ncomp < 1)) {stop("Compute at least one component per block!")}	
+  if (any(ncomp < 1)) {stop_rgcca("Compute at least one component per block!")}
   pjs <- sapply(A, NCOL) #nombre de variables par bloc
  # print("varij")
  # print(varij)
@@ -140,11 +140,11 @@ rgccad=function (A, C = 1 - diag(length(A)), tau = rep(1, length(A)),  ncomp = r
   
   # Verifications des commandes entrees par l'utilisateur
   if (any(ncomp - pjs > 0))  # le nombre de composantes doit etre inferieur au nombre de variables
-    stop("For each block, choose a number of components smaller than the number of variables!")
+    stop_rgcca("For each block, choose a number of components smaller than the number of variables!")
   if (mode(scheme) != "function") {
     if ((scheme != "horst") & (scheme != "factorial") & (scheme != 
                                                          "centroid")) {
-      stop("Choose one of the three following schemes: horst, centroid, factorial or design the g function")
+      stop_rgcca("Choose one of the three following schemes: horst, centroid, factorial or design the g function")
     }
     if (verbose) 
       cat("Computation of the RGCCA block components based on the", 

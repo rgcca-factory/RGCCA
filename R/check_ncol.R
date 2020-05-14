@@ -4,7 +4,7 @@
 # return an error or NULL
 check_ncol <- function(x, i_block) {
     if (NROW(x[[i_block]]) < 2) {
-        stop(
+        stop_rgcca(
             "This output is available only for more than one variable."
         )
     }

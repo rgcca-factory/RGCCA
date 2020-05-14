@@ -44,7 +44,7 @@ MIRGCCA=function(blocks,option="knn",type="rgcca",superblock=TRUE,k=5,ni=5,scale
     check_integer("ni",ni)
     choices <- c("horst", "factorial", "centroid")
     if (!scheme %in% (choices) && !is.function(scheme))
-        stop(paste0(scheme, " must be one of ", paste(choices, collapse = ", "), "' or a function."))
+        stop_rgcca(paste0(scheme, " must be one of ", paste(choices, collapse = ", "), "' or a function."))
     
     if(option=="knn")
   {
@@ -61,7 +61,7 @@ MIRGCCA=function(blocks,option="knn",type="rgcca",superblock=TRUE,k=5,ni=5,scale
       }
   
     }
-    else{stop("not enough neighbors with complete data (<5)")}
+    else{stop_rgcca("not enough neighbors with complete data (<5)")}
   }
   if(option=="em")
   {

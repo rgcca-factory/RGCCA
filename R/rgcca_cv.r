@@ -25,7 +25,7 @@ rgcca_cv=function( blocks,
           response=length(blocks),
           par = "ncomp",
           par_value = NULL,
-          validation = "kfold",
+          validation = "loo",
           type_cv = "regression",
           fit = "lm",
           k=5,
@@ -36,13 +36,19 @@ rgcca_cv=function( blocks,
           superblock=FALSE,
           ...)
 {
-    if(validation=="loo"){if(n_cv!=1){cat("n_cv value was replaced by 1 (is not relevant for loo option)")};n_cv=1}
+    if(validation=="loo")
+    {
+        k=dim(blocks[[1]])[1]
+        if(n_cv!=1)
+        {
+            cat("n_cv value was replaced by 1 (is not relevant for loo option)")};n_cv=1
+        }
     check_integer("n_cores", n_cores, 0)
     match.arg(par, c("tau", "sparsity", "ncomp"))
     min_spars <- NULL
 
     if (length(blocks) < 1)
-        stop("Permutation required a number of blocks larger than 1.")
+        stop_rgcca("Permutation required a number of blocks larger than 1.")
     
     ncols <- sapply(blocks, NCOL)
     
@@ -70,7 +76,7 @@ rgcca_cv=function( blocks,
             par_value <- t(sapply(seq(NROW(par_value)), function(x) check_tau(par_value[x, ], blocks, type = type)))
         else{
             if (any(par_value < min_spars))
-                stop(paste0("par_value should be upper than : ", paste0(round(min_spars, 2), collapse = ",")))
+                stop_rgcca(paste0("par_value should be upper than : ", paste0(round(min_spars, 2), collapse = ",")))
             par_value <- check_tau(par_value, blocks, type = type)
             par_value <- set_spars(max = par_value)
         }
@@ -146,9 +152,13 @@ rgcca_cv=function( blocks,
                 }
               
             }
+  
             res[i,]=as.numeric(res_i)
-            Sys.sleep(0.5); setTxtProgressBar(pb, i)
+        
+            #Sys.sleep(0.5); 
+            setTxtProgressBar(pb, i)
             mat_cval=res
+            rownames(mat_cval)=1:NROW(mat_cval)
         }
     
     Sys.sleep(1)
@@ -163,7 +173,11 @@ rgcca_cv=function( blocks,
               n_cv = n_cv,
               one_value_per_cv=one_value_per_cv
     )
-    res2=list(cv=mat_cval,call=call)
+    par2=par[[2]]
+    rownames(par2) = 1:NROW(par2)
+    colnames(par2)=names(blocks)
+    
+    res2=list(cv=mat_cval,call=call,bestpenalties=par[[2]][which.min(apply(mat_cval,1,mean)),],penalties=par2)
     class(res2)="cval"
     return(res2)
     

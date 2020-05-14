@@ -15,7 +15,7 @@ parallelize <- function(
 
     load_libraries("parallel")
     if (!("parallel" %in% installed.packages()[, "Package"]))
-    stop("'parallel' package required and not available.")
+    stop_rgcca("'parallel' package required and not available.")
 
     if(is.null(n_cores))
     n_cores <- parallel::detectCores() - 1
@@ -38,7 +38,7 @@ parallelize <- function(
             cl,
             nperm,
             f)
-        }, error = function(err) stop(err$message),
+        }, error = function(err) stop_rgcca(err$message),
         finally = {
             parallel::stopCluster(cl)
             cl <- c()
