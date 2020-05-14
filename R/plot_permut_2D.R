@@ -12,7 +12,7 @@
 #' @param cex_sub = 16 * cex, size of the subtitle text 
 #' @param cex_point = 3 * cex, size of the point
 #' @param cex_lab = 19 * cex, size of the labels
-#' @importFrom ggplot2 ggplot
+#' @import ggplot2
 plot_permut_2D <- function(
     perm, 
     type = "zstat",
@@ -122,6 +122,18 @@ plot_permut_2D <- function(
             p<- p+geom_point(data=dft,aes(x=dft[,1],y=dft[,2]),colour="green",size=0.8)
         }
         if(bars=="sd")
+        {
+            
+        }
+        if(bars=="stderr")
+        {
+            
+        }
+        if(bars=="ci")
+        {
+            
+        }
+        if(bars=="quantile")
         {
             
         }

@@ -44,22 +44,34 @@ get_bootstrap <- function(
     occ <- apply(bootstrapped,1,
             function(x)
                 sum(x!= 0) / length(x))
-    print("in")
+    
     p.vals <- 2 * pt(abs(weight)/sd, lower.tail = FALSE, df = n_boot - 1)
     tail <- qt(1 - .05 / 2, df = n_boot - 1)
     
+    if(bars=="quantile")
+    {
+        lower_band=apply(bootstrapped,1,function(y){return(quantile(y,0.05))})
+        upper_band=apply(bootstrapped,1,function(y){return(quantile(y,0.95))})
+    }
     if(bars=="sd")
     {
         length_bar=sd
+        lower_band=mean-length_bar
+        upper_band=mean+length_bar
      }
     if(bars=="stderr")
     {
         length_bar=sd/sqrt(n_boot)
+        lower_band=mean-length_bar
+        upper_band=mean+length_bar
     }
     if(bars=="ci")
     {
         length_bar=tail*sd
+        lower_band=mean-length_bar
+        upper_band=mean+length_bar
     }
+    
     # if(bars=="cim")
     # {
     #     length_bar=tail*sd/sqrt(n_boot)
@@ -69,19 +81,19 @@ get_bootstrap <- function(
         mean = mean,
         estimate = weight,
         sd=sd,
-        lower_band = mean -  length_bar,
-        upper_band = mean +  length_bar,
+        lower_band = lower_band,
+        upper_band = upper_band,
         bootstrap_ratio = abs(mean) / sd,
         p.vals,
         BH = p.adjust(p.vals, method = "BH")
     )
-print("before if")
+
     if (tolower(b$rgcca$call$type) %in% c("spls", "spca", "sgcca")) {
           df$occurrences <- occ
           index <- which(colnames(df)=="occurrences")
-          print("here")
+       
         db <- data.frame(order_df(df, index, allCol = TRUE), order = NROW(df):1) 
-        print("out")
+   
     }
     else
     {

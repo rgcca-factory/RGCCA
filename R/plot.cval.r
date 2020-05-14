@@ -18,12 +18,17 @@ plot.cval=function(x,bars="sd",alpha=0.05,...)
     
     config <- NULL -> y
     mat_cval=x$cv
-    match.arg(bars,c("sd","stderr","ci","cim","points"))
+    match.arg(bars,c("quantile","sd","stderr","ci","points"))
     mean_b=apply(mat_cval,1,mean)
     main=paste0("Mean CV criterion according to the configuration set\n (",x$call$validation,ifelse(x$call$validation=="kfold", paste0(": with ",x$call$k," folds and ",x$call$n_cv," runs)"),")"))
     if(bars!="none"&&dim(mat_cval)[2]<3){bars=="none"; warning("Standard deviations can not be calculated with less than 3 columns in mat_cval")}
     if(bars!="none")
     {
+        if(bars=="quantile")
+        {
+            inf_b=apply(mat_cval,1,function(y){return(quantile(y,0.05))})
+            sup_b=apply(mat_cval,1,function(y){return(quantile(y,0.95))})
+        }
         if(bars=="sd")
         {
             inf_b=mean_b-apply(mat_cval,1,sd)
