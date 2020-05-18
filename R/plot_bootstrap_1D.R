@@ -105,6 +105,21 @@ plot_bootstrap_1D <- function(
     if (x == "estimate")
         p <- p +
             geom_errorbar(aes(ymin = lower_band, ymax = upper_band,width=0.5))
-
+    if(x =="occurrences")
+    {
+        n_boot=ifelse(!is.null(dim(b[[1]][[1]][[1]])),dim(b[[1]][[1]][[1]])[2],length(b[[1]][[1]][[1]]))
+        nvar=length(b$bootstrap[[1]][[i_block]][,1])
+        avg_p_occ=mean(df_b$occurrences)
+        probComp=avg_p_occ/nvar
+        
+        q1=qbinom(size=n_boot,prob=probComp,p=0.05/nvar,lower.tail = FALSE)
+        q2=qbinom(size=n_boot,prob=probComp,p=0.01/nvar,lower.tail = FALSE)
+        q3=qbinom(size=n_boot,prob=probComp,p=0.001/nvar,lower.tail = FALSE)
+        
+        
+        p <-p+geom_hline(yintercept = c(q1/n_boot,q2/n_boot,q3/n_boot),col=c("red","black","green"))
+        p
+        
+    }
     return(p)
 }

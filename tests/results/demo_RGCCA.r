@@ -44,8 +44,9 @@ print(resBootstrap)
 # Step one - tuning the parameters
 res=rgcca_cv(blocks,par="ncomp")
 res=rgcca_cv(blocks,par="tau")
-res
-plot(res)
+print(res,bars="stderr")
+plot(res,bars="quantile")
+plot(res,bars="ci")
 names(res)
 res$cv
 res$bestpenalties
@@ -55,6 +56,7 @@ plot(res_rgcca,type="ind",resp=response)
 # Step three - validating
 boot=bootstrap(res_rgcca)
 plot(boot,comp=2)
+
 
 # SGCCA
 #=======
@@ -73,8 +75,8 @@ res_sparsity=rgcca(blocks,sparsity=c(0.6,0.8,0.5))
 plot(res_sparsity)
 
 res=bootstrap(res_sparsity,n_boot=100)
-get_bootstrap(b=res)
-plot(res)
+get_bootstrap(b=res,i_block=1)
+plot(res,block=2)
 # With two dimensions
 
 

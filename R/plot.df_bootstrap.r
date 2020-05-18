@@ -22,7 +22,7 @@ plot.bootstrap=function(x,type="1D",block=length(x$rgcca$call$blocks),comp=1,n_m
     if(type=="1D")
     {
         
-        if(x$rgcca$call$type%in%c("sgcca","spls","spca")){x1="estimate";y1="occurrences";title=ifelse(is.null(title),paste0("Occurrences:",names(x$rgcca$call$blocks)[block]),title)}
+        if(x$rgcca$call$type%in%c("sgcca","spls","spca")){x1="occurrences";y1="estimate";title=ifelse(is.null(title),paste0("Occurrences:",names(x$rgcca$call$blocks)[block]),title)}
            else{x1="estimate";y1="sign";title=ifelse(is.null(title),paste0("Weights:",names(x$rgcca$call$blocks)[block]),title)}
            
          p1=plot_bootstrap_1D(
@@ -60,6 +60,7 @@ plot.bootstrap=function(x,type="1D",block=length(x$rgcca$call$blocks),comp=1,n_m
             i_block = block,
             collapse = FALSE,
             n_cores = n_cores)
+         #   sub="Green line indicates significance at 0.05 with Bonferroni correction")
     }
     plot(p1)
 }
