@@ -2,7 +2,7 @@
 #' 
 #'Plots the impact of increasing missing data on RGCCA
 #' @param x A list resulting of naEvolution (\link{naEvolution})
-#' @param output ="rv": Can be also "a" for correlations between axes, "bm" for the percent of similar biomarkers, "rvComplete" if the RV is calculated only on complete dataset, or "rmse" for Root Mean Squares Error.
+#' @param type ="rv": Can be also "a" for correlations between axes, "bm" for the percent of similar biomarkers, "rvComplete" if the RV is calculated only on complete dataset, or "rmse" for Root Mean Squares Error.
 #' @param ylim =c(0.8,1) y limits
 #' @param block ="all" or a number indicating the position of the chosen block in the initial list
 #' @param bars ="sd" or "stderr". Indicates which error bar to build
@@ -17,20 +17,20 @@
 #' A=list(X1,X2)
 #' listResults=naEvolution(blocks=A,prctNA=c(0.1,0.2,0.3,0.4),
 #' listMethods=c("mean","complete","nipals","knn4"))
-#' plot(x=listResults,ylim=c(0,1),output="a")
+#' plot(x=listResults,ylim=c(0,1),type="a")
 #' @importFrom grDevices graphics.off
 #' @export
-plot.naEvolution=function(x,output="rv",ylim=NULL,block="all",bars="sd",main=NULL,names.arg=NULL,...)
-{ #output : "rv", "pct" ou "a"
+plot.naEvolution=function(x,type="rv",ylim=NULL,block=length(x[[1]][[1]][[1]][[1]]),bars="sd",main=NULL,names.arg=NULL,...)
+{ #type : "rv", "pct" ou "a"
   #bars="sd" or "stderr"
   #  graphics.off()
-  if(is.null(main)){main=output}
+  if(is.null(main)){main=type}
     if(block!="all")
     {
         check_integer("block",block)
     }
     match.arg(bars,c("sd","stderr"))
-    match.arg(output,c("rv","rvComplete","bm","rmse","a"))
+    match.arg(type,c("rv","rvComplete","bm","rmse","a"))
   nameData= names(x)
   abscisse=as.numeric(nameData)
   J=length(x[[1]][[1]][[1]][[1]]) #nblock
@@ -66,7 +66,7 @@ plot.naEvolution=function(x,output="rv",ylim=NULL,block="all",bars="sd",main=NUL
       for(rg in namesMethod)
       {  
       
-        result=sapply(x[[da]],function(x){return(x[[rg]][[output]][j])})
+        result=sapply(x[[da]],function(x){return(x[[rg]][[type]][j])})
       
         moyenne[[j]][da,rg]=mean(result)
         if(!bars %in% c("sd","stderr")){ecartType[[j]][da,rg]=0}
@@ -118,7 +118,7 @@ plot.naEvolution=function(x,output="rv",ylim=NULL,block="all",bars="sd",main=NUL
       abline(v=da-1,col="dark grey",lty=2)
       for(rg in namesMethod)
       {
-        if(!(rg=="complete"&&output=="rv"))
+        if(!(rg=="complete"&&type=="rv"))
         {
         points(da-1+pas*nMeth[rg]+pas/2,moyenne[[j]][da,rg],pch=16,col=colMethod[rg])
         segments(da-1+pas*nMeth[rg]+pas/2,moyenne[[j]][da,rg]-ecartType[[j]][da,rg],da-1+pas*nMeth[rg]+pas/2,moyenne[[j]][da,rg]+ecartType[[j]][da,rg],col=colMethod[rg])

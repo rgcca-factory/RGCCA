@@ -1441,16 +1441,16 @@ whichNAmethod simulates nDatasets (20 by default) with missing values according 
 
 The idea is to compare the results of the different "missing methods" to the original results (known, as the initial dataset is complete)
 \begin{itemize}
-\item output="a": distance between the weights of missing and original RGCCA
-\item output="rv": rv coefficient for all individuals on the 1-2 map between missing and original RGCCA (complete method can not be run with this option)
-\item output="rvComplete": rv coefficient for complete individuals only on the 1-2 map between missing and reference case 
-\item output="bm": percentage of similar top ten of variables
+\item type="a": distance between the weights of missing and original RGCCA
+\item type="rv": rv coefficient for all individuals on the 1-2 map between missing and original RGCCA (complete method can not be run with this option)
+\item type="rvComplete": rv coefficient for complete individuals only on the 1-2 map between missing and reference case 
+\item type="bm": percentage of similar top ten of variables
 \end{itemize}
 
 ```{r, fig.height = 6, fig.width = 6, fig.align = "center"}
 res=whichNAmethod(A_missing,listMethods=c("knn1","knn2","knn3","knn4","mean"),
                   patternNA=patternNA$pctNAbyBlock,nDatasets = 5)
-plot(res,output="a",ylim=c(0,1))
+plot(res,type="a",ylim=c(0,1))
 ```
 
 In this case, the best method for the similarities between weights is 
@@ -1463,7 +1463,7 @@ listResults=naEvolution(blocks=A,listMethods=c("complete","nipals","mean"),
        ,nDatasets = 10)
 ```
 ```{r, fig.height = 4, fig.width = 6, fig.align = "center"}
-plot(listResults,output="a",bars = "stderr")
+plot(listResults,type="a",bars = "stderr")
 ```
 # Conclusion
   
