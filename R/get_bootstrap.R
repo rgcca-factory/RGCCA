@@ -43,7 +43,7 @@ get_bootstrap <- function(
     weight <- b$rgcca$a[[i_block]][, comp]
     occ <- apply(bootstrapped,1,
             function(x)
-                sum(x!= 0) / length(x))
+                sum(x!= 0) )
     
     p.vals <- 2 * pt(abs(weight)/sd, lower.tail = FALSE, df = n_boot - 1)
     tail <- qt(1 - .05 / 2, df = n_boot - 1)

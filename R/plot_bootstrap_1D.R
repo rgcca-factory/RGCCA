@@ -81,21 +81,21 @@ plot_bootstrap_1D <- function(
     else
         group = NA
 
-    df_b <- head(
+    df_b_head <- head(
         data.frame(
             order_df(df_b[, -NCOL(df_b)], x, allCol = TRUE),
             order = NROW(df_b):1),  n_mark)
     class(df_b) <- c(class(df_b), "d_boot1D")
 
     p <- ggplot(
-        df_b,
+        df_b_head,
         aes(x = order,
             y = df_b[, x],
             fill = df_b[, y]))
 
     p <- plot_histogram(
         p,
-        df_b,
+        df_b_head,
         title,
         group,
         colors,
@@ -109,15 +109,14 @@ plot_bootstrap_1D <- function(
     {
         n_boot=ifelse(!is.null(dim(b[[1]][[1]][[1]])),dim(b[[1]][[1]][[1]])[2],length(b[[1]][[1]][[1]]))
         nvar=length(b$bootstrap[[1]][[i_block]][,1])
-        avg_p_occ=mean(df_b$occurrences)
-        probComp=avg_p_occ/nvar
+        avg_n_occ=sum(df_b$occurrences)/n_boot
+        probComp= avg_n_occ/nvar
         
-        q1=qbinom(size=n_boot,prob=probComp,p=0.05/nvar,lower.tail = FALSE)
-        q2=qbinom(size=n_boot,prob=probComp,p=0.01/nvar,lower.tail = FALSE)
-        q3=qbinom(size=n_boot,prob=probComp,p=0.001/nvar,lower.tail = FALSE)
+        q1=qbinom(size=n_boot,prob=probComp,p=1-0.05/nvar)
+        q2=qbinom(size=n_boot,prob=probComp,p=1-0.01/nvar)
+        q3=qbinom(size=n_boot,prob=probComp,p=1-0.001/nvar)
         
-        
-        p <-p+geom_hline(yintercept = c(q1/n_boot,q2/n_boot,q3/n_boot),col=c("red","black","green"))
+        p <-p+geom_hline(yintercept = c(q1,q2,q3),col=c("red","black","green"))
         p
         
     }
