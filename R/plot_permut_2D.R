@@ -38,7 +38,7 @@ plot_permut_2D <- function(
     check_ncol(list(perm$zstat), 1)
 
     y <- unlist(perm[type])
-    best <- which.max(y)
+    best <- which.max(unlist(perm["zstat"]))
     n <- seq(nrow(perm$penalties))
 
     df <- as.data.frame(cbind(seq(NROW(perm$penalties)), y))

@@ -11,8 +11,31 @@
 print.permutation <- function (x,...) 
 {
   cat("Call: ")
- dput(x$call,control=c())
+    names_call=c("type","perm.par","perm.value","nperm","quiet","method","tol","scale","scale_block")
+    char_to_print=""
+    for(name in names_call)
+    {
+        if(name=="ncomp"){if(length(x$call$ncomp)>1){value=(paste(x$call$ncomp,sep="",collapse=","));value=paste0("c(",value,")")}}
+        if(name!="ncomp"){value=x$call[[name]]}
+        quo=ifelse(is.character(value)&name!="ncomp","'","")
+        vir=ifelse(name==names_call[length(names_call)],"",", ")
+        char_to_print=paste(char_to_print,name,'=',quo,value,quo,vir, collapse="",sep="")
+    }
+    cat(char_to_print)
+    
   cat("\n")
+  cat("The design matrix is:\n") 
+  colnames(x$call$connection) = rownames(x$call$connection) = names(x$a) ; print(x$call$connection)
+  cat("\n")
+  if(is.function(x$call$scheme))
+  {
+      cat("The", deparse(x$call$scheme), "scheme was used.", fill = TRUE)
+  }
+  else
+  {
+      cat("The", x$call$scheme, "scheme was used.", fill = TRUE)
+      
+  }
   c1s <- round(x$penalties, 4)
   rownames(c1s) = 1:NROW(c1s)
   cat(fill = TRUE)

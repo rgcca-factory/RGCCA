@@ -15,7 +15,7 @@ print.bootstrap=function(x,...)
                                                       i_block=block,
                                                     comp=comp,
                                                     bars="ci",
-                                                    display_order =TRUE)
+                                                    display_order =FALSE)
                                   ;return(b)}
             )))
     }

@@ -48,16 +48,29 @@
 #' @export
 rgcca_permutation <- function(
     blocks,
-    type = "rgcca",
     perm.par = "tau",
     perm.value = NULL,
     nperm = 20,
     n_cores = parallel::detectCores() - 1,
     quiet = TRUE,
+    type = "rgcca",
+    scale = TRUE,
+    scale_block = TRUE,
+    connection = matrix(1,length(blocks),length(blocks)) - diag(length(blocks)),
+    scheme = "factorial",
+    ncomp = rep(1, length(blocks)),
+    tau = rep(1, length(blocks)),
+    sparsity = rep(1, length(blocks)),
+    init = "svd",
+    bias = TRUE,
+    tol = 1e-08,
+    response = NULL,
+    superblock = FALSE,
+    method = "nipals",
     ...) {
 
     # call <- as.list(formals(rgcca_permutation))
-    call=list(type=type, perm.par = perm.par, perm.value = perm.value, nperm=nperm, quiet=quiet)
+    call=list(type=type, perm.par = perm.par, perm.value = perm.value, nperm=nperm, quiet=quiet,connection=connection,method=method,tol=tol,scheme=scheme,scale=scale,scale_block=scale_block)
     check_integer("nperm", nperm)
     check_integer("n_cores", n_cores, 0)
     match.arg(perm.par, c("tau", "sparsity", "ncomp"))

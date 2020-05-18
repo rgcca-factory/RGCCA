@@ -93,6 +93,15 @@ get_bootstrap <- function(
           index <- which(colnames(df)=="occurrences")
        
         db <- data.frame(order_df(df, index, allCol = TRUE), order = NROW(df):1) 
+        if(!display_order)
+        {
+            df=df[,c("occurrences","mean","estimate","sd","lower_band","upper_band","p.vals","BH")] 
+            db <- data.frame(order_df(df, index, allCol = TRUE)   )
+        }
+        if(display_order)
+        {
+            db <- data.frame(order_df(df, index, allCol = TRUE), order = NROW(df):1) 
+        }  
    
     }
     else

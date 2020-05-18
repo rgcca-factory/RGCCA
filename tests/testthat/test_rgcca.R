@@ -210,3 +210,4 @@ pcasb_ind=abs(cor(pcaSB$x[,1],scaledPCASB$Y[[1]][,1]))==1
  
  resRGCCA
  
+ 
