@@ -19,7 +19,7 @@ set_rgcca <- function(
     inds = NULL) {
 
     if (is.null(blocks)) {
-        blocks <- rgcca_res$call$blocks
+        blocks <- rgcca_res$A
         method <- rgcca_res$call$method
         connection <- rgcca_res$call$connection
         scheme <- rgcca_res$call$scheme
