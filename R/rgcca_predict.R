@@ -187,7 +187,9 @@ rgcca_predict = function(
 
     pred <- lapply(seq(length(newA)), function(x)
     {
-        M=as.matrix(newA[[x]]) %*% astar[[x]]
+        #M=as.matrix(newA[[x]]) %*% astar[[x]]
+        M=pm(as.matrix(newA[[x]]), astar[[x]])
+        
         rownames(M)=rownames(newA[[x]])
         colnames(M)=colnames(astar[[x]])
         return(M)
@@ -230,6 +232,7 @@ rgcca_predict = function(
     }
 
     rgcca_res$Y <- rgcca_res$Y[MATCH]
+    comp.test.cor <- get_comp_all(rgcca_res, newA, type = "test", pred = pred)
     rgcca_res$call$ncomp <- rgcca_res$call$ncomp[MATCH][-newbloc_y]
     comp.train <- get_comp_all(rgcca_res, newA, newbloc_y = newbloc_y)
     comp.test <- get_comp_all(rgcca_res, newA, type = "test", newbloc_y = newbloc_y, pred)
@@ -277,11 +280,11 @@ rgcca_predict = function(
                 res=y.test-ychapo
                 if (is.null(dim(res))) {
                     #res <- abs(res)
-                    score <- sqrt(mean(res^2))
+                    score <- sqrt(mean(res^2,na.rm=T))
                 } else{
                   #  res <- apply(res, 2, function(x) abs(x))
-                    res2 <- apply(res,2,function(x){return(sqrt(mean(x^2)))})
-                    score <- sqrt(mean(res2^2))
+                    res2 <- apply(res,2,function(x){return(sqrt(mean(x^2,na.rm=T)))})
+                    score <- sqrt(mean(res2^2,na.rm=T))
                     #score <- mean(apply(res, 2, mean))
                 }
 
@@ -293,8 +296,9 @@ rgcca_predict = function(
                     comp.test
                 } else{
                     rgcca_res$call$connection <- rgcca_res$call$connection[MATCH, MATCH]
-                    cor <- get_cor_all(rgcca_res, newA, comp.test)
-                    print(cor)
+                   # cor <- get_cor_all(rgcca_res, newA, comp.test)
+                    cor <- get_cor_all(rgcca_res, newA, comp.test.cor)
+                    
                     for (i in seq(length(cor))) {
                         cor[[i]] <- mean(
                             abs(
@@ -320,7 +324,7 @@ rgcca_predict = function(
                     reslog      <- nnet::multinom(y ~ ., data = cbind(comp.train, y = y.train), trace = FALSE, na.action = "na.exclude")
                     class.fit   <- predict(reslog, newdata = cbind(comp.test, y = y.test))
                 } else if (ngroups == 2) {
-                    reslog      <- glm(y ~ ., data = cbind(comp.train, y = y.train), family = binomial)
+                    reslog      <- glm(y ~ ., data = cbind(comp.train, y = y.train), family = binomial,na.action="na.exclude")
                     class.fit   <- predict(reslog, type = "response", newdata = cbind(comp.test, y = y.test))
                     class.fit.class <- class.fit > 0.5 # TODO: cutoff parameter
                     class.fit       <- factor(as.numeric(class.fit.class))

@@ -27,6 +27,7 @@
 #' plot_bootstrap_1D(df_b = selected.var)
 #' @export
 #' @importFrom ggplot2 ggplot
+#' @importFrom stats qbinom
 plot_bootstrap_1D <- function(
     b = NULL,
     df_b = NULL,
