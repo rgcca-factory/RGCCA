@@ -11,7 +11,7 @@
 print.permutation <- function (x,...) 
 {
   cat("Call: ")
-    names_call=c("type","perm.par","perm.value","nperm","quiet","method","tol","scale","scale_block")
+    names_call=c("type","perm.par","perm.value","nperm","quiet","method","tol","scale","scale_block","superblock")
     char_to_print=""
     for(name in names_call)
     {
