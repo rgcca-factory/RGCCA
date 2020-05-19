@@ -129,6 +129,31 @@ rgcca <- function(
     knn.klim = NULL,
     knn.scale_block = TRUE) {
 
+    
+    
+    if(class(blocks)=="permutation")
+    {
+        message("All parameters were imported by permutation object provided in the block parameter")
+        scale_block=blocks$call$scale_block
+        scale=blocks$call$scale
+        scheme=blocks$call$scheme
+        connection=blocks$call$connection
+        tol=blocks$call$tol
+        method=blocks$call$method
+        if(blocks$call$perm.par=="tau")
+        {
+            tau=blocks$call$res_permut$bestpenalties 
+        }
+        if(blocks$call$perm.par=="ncomp")
+        {
+            ncomp=blocks$call$res_permut$bestpenalties 
+        }
+        if(blocks$call$perm.par=="sparsity")
+        {
+            sparsity=blocks$call$res_permut$bestpenalties 
+        }
+        blocks<-blocks$call$blocks
+    }
     if(length(blocks)==1){type="pca";message("type='rgcca' is not available for one block only. type was transformed as 'pca'.")}
     if (!missing(sparsity) && missing(type))
         type <- "sgcca"

@@ -70,7 +70,7 @@ rgcca_permutation <- function(
     ...) {
 
     # call <- as.list(formals(rgcca_permutation))
-    call=list(type=type, perm.par = perm.par, perm.value = perm.value, nperm=nperm, quiet=quiet,connection=connection,method=method,tol=tol,scheme=scheme,scale=scale,scale_block=scale_block)
+    call=list(type=type, perm.par = perm.par, perm.value = perm.value, nperm=nperm, quiet=quiet,connection=connection,method=method,tol=tol,scheme=scheme,scale=scale,scale_block=scale_block,blocks=blocks,superblock=superblock)
     check_integer("nperm", nperm)
     check_integer("n_cores", n_cores, 0)
     match.arg(perm.par, c("tau", "sparsity", "ncomp"))
@@ -173,6 +173,11 @@ rgcca_permutation <- function(
             type = type,
             n_cores = 1,
             quiet=quiet,
+            superblock=superblock,
+            scale=scale,
+            scale_block=scale_block,
+            scheme=scheme,
+            tol=tol,
             ...
         )
         

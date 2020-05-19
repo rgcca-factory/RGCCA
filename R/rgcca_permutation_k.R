@@ -13,6 +13,10 @@ rgcca_permutation_k <- function(
     perm = TRUE,
     quiet = TRUE,
     n_cores = parallel::detectCores() - 1,
+    superblock=FALSE,
+    scale=TRUE,
+    scale_block=TRUE,
+    scheme="factorial",
     ...) {
         
         if (perm) {
@@ -30,6 +34,10 @@ rgcca_permutation_k <- function(
             tol = tol,
             quiet = quiet,
             method = "complete",
+            superblock=superblock,
+            scale=scale,
+            scale_block=scale_block,
+            scheme=scheme,
             ...
         )
         

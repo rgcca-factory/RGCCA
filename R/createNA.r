@@ -47,7 +47,7 @@ createNA=function(blocks,typeNA="block",pNA=0.1,nAllRespondants=4,output="list",
 		    }
 			else
 			{
-				indToRemove=NA
+				indToRemove[[i]]=NA
 			}
 		}
 	   n=nrow(blocks[[nbloc]])
@@ -66,7 +66,7 @@ createNA=function(blocks,typeNA="block",pNA=0.1,nAllRespondants=4,output="list",
 	   }
 	  else
 	  {
-	    indToRemove=NA
+	    indToRemove[[nbloc]]=NA
 	  }
     W2=do.call(cbind,blocks)
     subjectKept=rownames(blocks[[1]])[which(apply(W2,1,function(x){sum(is.na(x))})==0)]

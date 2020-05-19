@@ -136,6 +136,35 @@ plot(resBootstrap,type="2D")
 print(resBootstrap)
 summary(resBootstrap)
 
+#-----------------------------
+# RGCCA With superblock
+#--------------------------
+
+# Step one - tuning the parameters
+res_permut=rgcca_permutation(blocks=blocks,superblock=TRUE,type="rgcca",scheme="factorial",nperm=100)
+print(res_permut)
+names(res_permut)
+plot(res_permut)
+plot(res_permut, type="crit")
+tau_res=res_permut$bestpenalties
+# Stepi two - vizualizing rgcca
+resRgcca=rgcca(blocks,tau=tau_res)
+plot(resRgcca)
+resRgcca=rgcca(blocks,tau=tau_res,ncomp=c(2,2,3))
+plot(resRgcca,block=1)
+plot(resRgcca,comp=2)
+plot(resRgcca,type="network")
+response=matrix( Russett[, 11],ncol=1);rownames(response)=rownames(Russett)
+plot(resRgcca,type="ind",resp=response,block=2)
+plot(resRgcca,type="ind",resp=response,block=1)
+plot(resRgcca,type="ind",resp=response,block=1:2,comp=c(1,1))
+plot(resRgcca,type="var",block=2)
+# Step three -boostrapping the results
+resBootstrap=bootstrap(resRgcca,n_boot = 100)
+plot(resBootstrap,block=1)
+#plot(resBootstrap,type="2D")
+print(resBootstrap)
+
 
 #-------------------------
 # rgcca with NA functions
