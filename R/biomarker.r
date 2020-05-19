@@ -23,7 +23,7 @@ biomarker <- function(
     {
         A <- as.matrix(resRGCCA$call$A[[block]])   
     }
-    print(summary(A))
+
     x <- rep(NA, NCOL(A))
 
     for (i in 1:NCOL(A))

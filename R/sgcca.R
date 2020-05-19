@@ -148,21 +148,22 @@ sgcca <- function (A, C = 1-diag(length(A)), sparsity = rep(1, length(A)), ncomp
     #-------------------------------------------------------
     if(!prescaling)
     {
-        if (scale == TRUE) {
-            A = lapply(A, function(x) scale3(x, bias = bias)) #TO CHECK
-            if(scale_block)
-            {
-                A = lapply(A, function(x) x/sqrt(NCOL(x)))
-            }
-        }
-        if(scale == FALSE)
-        {
-            A = lapply(A, function(x) scale3(x,scale=FALSE, bias = bias)) 
-            if(scale_block)
-            {
-                #TODO  A = lapply(A, function(x) x/sqrt(NCOL(x)))
-            }
-        }
+        A=scaling(A,scale=scale,bias=bias,scale_block=scale_block)
+        # if (scale == TRUE) {
+        #     A = lapply(A, function(x) scale3(x, bias = bias)) #TO CHECK
+        #     if(scale_block)
+        #     {
+        #         A = lapply(A, function(x) x/sqrt(NCOL(x)))
+        #     }
+        # }
+        # if(scale == FALSE)
+        # {
+        #     A = lapply(A, function(x) scale3(x,scale=FALSE, bias = bias)) 
+        #     if(scale_block)
+        #     {
+        #         #TODO  A = lapply(A, function(x) x/sqrt(NCOL(x)))
+        #     }
+        # }
     }
   
     ####################################

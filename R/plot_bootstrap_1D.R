@@ -85,13 +85,14 @@ plot_bootstrap_1D <- function(
         data.frame(
             order_df(df_b[, -NCOL(df_b)], x, allCol = TRUE),
             order = NROW(df_b):1),  n_mark)
-    class(df_b) <- c(class(df_b), "d_boot1D")
-
+    df_b_head<-df_b_head[df_b_head[,"sd"]!=0,]
+    class(df_b_head) <- c(class(df_b), "d_boot1D")
+    
     p <- ggplot(
         df_b_head,
         aes(x = order,
-            y = df_b[, x],
-            fill = df_b[, y]))
+            y = df_b_head[, x],
+            fill = df_b_head[, y]))
 
     p <- plot_histogram(
         p,
