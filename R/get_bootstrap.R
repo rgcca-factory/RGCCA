@@ -38,8 +38,16 @@ get_bootstrap <- function(
     check_integer("n_cores", n_cores, 0)
     bootstrapped=b$bootstrap[[comp]][[i_block]]
     n_boot=dim(bootstrapped)[2]
-    mean=apply(bootstrapped,1,mean)
-    sd=apply(bootstrapped,1,sd)
+    if(tolower(b$rgcca$call$type) %in% c("spls", "spca", "sgcca"))
+    {
+        mean=apply(bootstrapped,1,function(x){mean(x[x!=0],na.rm=T)})
+        sd=apply(bootstrapped,1,function(x){sd(x[x!=0],na.rm=T)})
+    }
+    else
+    {
+        mean=apply(bootstrapped,1,mean)
+        sd=apply(bootstrapped,1,sd)
+    }
     weight <- b$rgcca$a[[i_block]][, comp]
     occ <- apply(bootstrapped,1,
             function(x)
@@ -88,15 +96,16 @@ get_bootstrap <- function(
         BH = p.adjust(p.vals, method = "BH")
     )
 
-    if (tolower(b$rgcca$call$type) %in% c("spls", "spca", "sgcca")) {
+    if (tolower(b$rgcca$call$type) %in% c("spls", "spca", "sgcca")) 
+    {
           df$occurrences <- occ
           index <- which(colnames(df)=="occurrences")
-       
         db <- data.frame(order_df(df, index, allCol = TRUE), order = NROW(df):1) 
         if(!display_order)
         {
-            df=df[,c("occurrences","mean","estimate","sd","lower_band","upper_band","p.vals","BH")] 
-            db <- data.frame(order_df(df, index, allCol = TRUE)   )
+            
+             db <- data.frame(order_df(df, index, allCol = TRUE)   )
+             db <- db[,c("occurrences","mean","estimate","sd","lower_band","upper_band","p.vals","BH")] 
         }
         if(display_order)
         {
@@ -115,9 +124,10 @@ get_bootstrap <- function(
                 df$sign[i] <- "*"
         if(!display_order)
         {
-            df=df[,c("mean","estimate","sd","lower_band","upper_band","p.vals","BH")] 
-            index <- which(colnames(df)=="mean")
+             index <- which(colnames(df)=="mean")
             db <- data.frame(order_df(df, index, allCol = TRUE)   )
+            db <- db[,c("mean","estimate","sd","lower_band","upper_band","p.vals","BH")] 
+            
         }
         if(display_order)
         {
