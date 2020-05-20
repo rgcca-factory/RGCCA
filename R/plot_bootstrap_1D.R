@@ -81,6 +81,7 @@ plot_bootstrap_1D <- function(
     else
         group = NA
 
+    n_boot <- attributes(df_b)$n_boot
     df_b <- head(
         data.frame(
             order_df(df_b[, -NCOL(df_b)], x, allCol = TRUE),
@@ -106,6 +107,21 @@ plot_bootstrap_1D <- function(
     if (x == "estimate")
         p <- p +
             geom_errorbar(aes(ymin = lower_band, ymax = upper_band,width=0.5))
+
+    if(x =="occurrences") {
+        #n_boot=ifelse(!is.null(dim(b[[1]][[1]][[1]])),dim(b[[1]][[1]][[1]])[2],length(b[[1]][[1]][[1]]))
+        #nvar=length(b$bootstrap[[1]][[i_block]][,1])
+        nvar <- NROW(df_b)
+        avg_n_occ <- sum(df_b$occurrences) / n_boot
+        probComp <- avg_n_occ / nvar
+
+        getbinom <- function(x) qbinom(size = n_boot, prob = probComp, p = 1 - x / nvar) / 100
+
+        p <- p + geom_hline(
+          yintercept = c(getbinom(.05), getbinom(.01), getbinom(.001)), 
+          col = c("red4","red","coral")
+        )
+    }
 
     return(p)
 }
