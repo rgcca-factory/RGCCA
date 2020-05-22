@@ -68,14 +68,22 @@ rgcca_permutation <- function(
     check_integer("nperm", nperm)
     check_integer("n_cores", n_cores, 0)
     match.arg(perm.par, c("tau", "sparsity"))
-    
     min_spars <- NULL
 
     if (length(blocks) < 1)
         stop_rgcca("Permutation required a number of blocks larger than 1.\n")
 
-    ncols <- sapply(blocks, NCOL)
-
+    if(!superblock)
+    {
+        ncols <- sapply(blocks, NCOL)
+    }
+    else
+    {
+        ncol_block=sapply(blocks, NCOL)
+        ncols <- c(ncol_block,sum(ncol_block))
+        names(ncols)=c(names(ncol_block),"superblock")
+    }
+ 
     set_spars <- function(max = 1) {
         if (length(max) == 1)
             f <- quote(max)
@@ -83,7 +91,6 @@ rgcca_permutation <- function(
             f <- quote(max[x])
         sapply(seq(min_spars), function(x) seq(eval(f), min_spars[x], len = 10))
     }
-    
     set_penalty <- function () {
 
         if(perm.par == "sparsity"){
@@ -99,15 +106,26 @@ rgcca_permutation <- function(
         if (is.null(perm.value))
             perm.value <- set_spars()
         else if (class(perm.value) %in% c("data.frame", "matrix"))
-            perm.value <- t(sapply(seq(NROW(perm.value)), function(x) check_tau(perm.value[x, ], blocks, type = type)))
-        else{
+        {
+            if(perm.par=="tau")
+            {
+                perm.value <- t(sapply(seq(NROW(perm.value)), function(x) check_tau(perm.value[x, ], blocks, type = type,superblock=superblock)))
+            }
+                     
+        }
+                else{
             if (any(perm.value < min_spars))
                 stop_rgcca(paste0("perm.value should be upper than : ", paste0(round(min_spars, 2), collapse = ",")))
-            perm.value <- check_tau(perm.value, blocks, type = type)
-            perm.value <- set_spars(max = perm.value)
+     #   print("in")
+             if(perm.par=="tau"){perm.value <- check_tau(perm.value, blocks, type = type,superblock=superblock)}
+     #      print("out") 
+           if(perm.par=="sparsity"){perm.value <- set_spars(max = perm.value)}
         }
 
-        colnames(perm.value) <- names(blocks)
+        if(superblock){coln=c(names(blocks),"superblock")}
+        else{coln=names(blocks)}
+        if(is.null(dim(perm.value))){perm.value=matrix(perm.value,nrow=1)}
+        colnames(perm.value) <- coln
         return(list(perm.par, perm.value))
     }
 
@@ -129,8 +147,6 @@ rgcca_permutation <- function(
     "sparsity" = par <- set_penalty(),
     "tau" = par <- set_penalty()
     )
-
-
 
     message("Permutation in progress...\n", appendLF = FALSE)
 
@@ -174,8 +190,6 @@ rgcca_permutation <- function(
             tol=tol,
             ...
         )
-        
-      
         res<- parallelize(
             varlist,
             seq(nperm), 
@@ -187,6 +201,11 @@ rgcca_permutation <- function(
                     type = type,
                     n_cores = 1,
                     quiet = quiet,
+                    superblock=superblock,
+                    scheme=scheme,
+                    tol=tol,
+                    scale=scale,
+                    scale_block=scale_block,
                     ...
                 ),
         n_cores = n_cores,
@@ -200,7 +219,6 @@ rgcca_permutation <- function(
  
 
     par <- par[[2]]
-
     pvals <- sapply(
         seq(NROW(par)),
         function(i)
@@ -214,7 +232,9 @@ rgcca_permutation <- function(
             return(z)
         })
     rownames(par) = 1:NROW(par)
-    colnames(par)=names(blocks)
+    if(superblock){coln=c(names(blocks),"superblock")}
+    else{coln=names(blocks)}
+    colnames(par)=coln
     structure(
         list(
             call=call,
