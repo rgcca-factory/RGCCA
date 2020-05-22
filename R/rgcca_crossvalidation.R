@@ -23,20 +23,19 @@ rgcca_crossvalidation <- function(
     fit = "lm",
     new_scaled = TRUE,
     k = 5,
+    bloc_to_pred = names(rgcca_res$call$blocks)[length(rgcca_res$call$blocks)],
     n_cores = parallel::detectCores() - 1,
     ...) {
 
     stopifnot(is(rgcca_res, "rgcca"))
-    if (is.null(rgcca_res$call$response))
-      stop("This function required an analysis in a supervised mode.")
+    # if (is.null(rgcca_res$call$response))
+    #   stop("This function required an analysis in a supervised mode.")
     match.arg(validation, c("loo", "test", "kfold"))
     check_integer("k", k)
     check_integer("n_cores", n_cores, 0)
 
     if (n_cores == 0)
         n_cores <- 1
-
-    bloc_to_pred <- names(rgcca_res$call$blocks)[length(rgcca_res$call$blocks)]
 
     f <- quote(
         function(){
