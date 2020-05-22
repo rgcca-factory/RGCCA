@@ -82,6 +82,7 @@ plot_bootstrap_1D <- function(
         group = NA
 
     n_boot <- attributes(df_b)$n_boot
+    y_title <- attributes(df_b)$indexes[[y]]
     df_b <- head(
         data.frame(
             order_df(df_b[, -NCOL(df_b)], x, allCol = TRUE),
@@ -102,7 +103,7 @@ plot_bootstrap_1D <- function(
         group,
         colors,
         ...) +
-    labs(fill = attributes(df_b)$indexes[[y]])
+    labs(fill = y_title)
 
     if (x == "estimate")
         p <- p +
@@ -122,6 +123,6 @@ plot_bootstrap_1D <- function(
           col = c("red4","red","coral")
         )
     }
-
+    
     return(p)
 }
