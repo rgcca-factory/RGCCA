@@ -7,6 +7,9 @@ X_polit = as.matrix(Russett[ , c("demostab", "dictator")]);
 A = list(X_agric);
 #C = matrix(c(0, 0, 1, 0, 0, 1, 1, 1, 0), 3, 3);
 
+
+
+
 # scaled PCA
 resPCA= rgcca (
      blocks=A,
@@ -210,4 +213,18 @@ pcasb_ind=abs(cor(pcaSB$x[,1],scaledPCASB$Y[[1]][,1]))==1
  
  resRGCCA
  
+ data(Russett)
+ X_agric =as.matrix(Russett[,c("gini","farm","rent")]);
+ X_ind = as.matrix(Russett[,c("gnpr","labo")]);
+ X_polit = as.matrix(Russett[ , c("demostab")]);
+ A = list(X_agric,X_ind,X_agric);
+ names(A)=c("Agri","Ind","Polit")
+ 
+ C0=matrix(0,3,3);C0[2:3,1]=1;C0[1,2:3]=1
+ C1=matrix(0,3,3);C1[1:2,3]=1;C1[3,1:2]=1
+ A1=list(A[[2]],A[[3]],A[[1]])
+ resRgccaNipals3=rgcca(blocks=A1,connection=C1,type="rgcca",method="nipals",ncomp=2)
+ resRgccaNipals=rgcca(blocks=A,connection=C0,type="rgcca",method="nipals",ncomp=2)
+ head(resRgccaNipals3$Y[[3]])
+ head(resRgccaNipals$Y[[1]])
  

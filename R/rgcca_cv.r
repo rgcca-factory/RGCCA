@@ -36,6 +36,7 @@ rgcca_cv=function( blocks,
           superblock=FALSE,
           ...)
 {
+    if(superblock){stop_rgcca("Cross-validation is only possible without superblock")}
     if(validation=="loo")
     {
         k=dim(blocks[[1]])[1]

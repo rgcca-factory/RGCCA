@@ -96,7 +96,6 @@ data("Russett")
 A = list(agriculture = Russett[, seq(3)], industry = Russett[, 4:5],
     politic = Russett[, 6:11] )
 res = rgcca_permutation(A, nperm = 5, n_cores = 1)
-    rgcca_permutation(A, perm.par = "ncomp", nperm = 2, n_cores = 1)
 rgcca_permutation(A, perm.par = "sparsity", perm.value = 0.8, nperm = 2,
  n_cores = 1)
 rgcca_permutation(A, perm.par = "sparsity", perm.value = c(0.6, 0.75, 0.5), 
@@ -110,12 +109,5 @@ rgcca_permutation(A, perm.par = "tau", perm.value = c(0.6, 0.75, 0.5),
  nperm = 2, n_cores = 1)
 rgcca_permutation(A, perm.par = "tau", perm.value = 
 matrix(c(0.6, 0.75, 0.5), 3, 3, byrow = TRUE),  nperm = 2, n_cores = 1)
-rgcca_permutation(A, perm.par = "ncomp", perm.value = 2, nperm = 2
-, n_cores = 1)
-rgcca_permutation(A, perm.par = "ncomp", perm.value = c(2,2,3), nperm = 2,
- n_cores = 1)
-rgcca_permutation(A, perm.par = "ncomp", 
-perm.value = matrix(c(2,2,3), 3, 3, byrow = TRUE), nperm = 2, n_cores = 1)
-plot(res,type="crit")
 print(res)
 }
