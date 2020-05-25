@@ -98,18 +98,27 @@ rgcca_crossvalidation <- function(
                 # does not work.
             }
         }
-
-        scores <- parallelize(
-            varlist,
-            seq(length(v_inds)), 
-            function(i){
-                inds <- unlist(v_inds[i])
-                eval(f)()
-            },
-            n_cores = n_cores,
-            envir = environment(),
-            applyFunc = "parLapply"
-        )
+        if(length(v_inds)>20)
+        {
+            scores <- parallelize(
+                varlist,
+                seq(length(v_inds)), 
+                function(i){
+                    inds <- unlist(v_inds[i])
+                    eval(f)()
+                },
+                n_cores = n_cores,
+                envir = environment(),
+                applyFunc = "parLapply"
+            )    
+        }
+        if(length(v_inds)<=20)
+        {
+            scores=lapply(seq(length(v_inds)),function(i){ inds <- unlist(v_inds[i])
+            eval(f)()})
+        }
+        
+        
     }
     list_rgcca=lapply(scores,function(x) return(x$rgcca_res))
     list_pred=lapply(scores,function(x) return(x$pred))

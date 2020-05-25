@@ -22,28 +22,34 @@ parallelize <- function(
 
     if (Sys.info()["sysname"] == "Windows") {
 
-        cl <- parallel::makeCluster(n_cores)
-
-        parallel::clusterExport(
-            cl,
-            varlist,
-            envir = envir
-        )
-
-        parallel::clusterEvalQ(cl, library(RGCCA))
-        parallel::clusterEvalQ(cl, library(parallel))
-
-        res <- tryCatch({
-            get(applyFunc)(
-            cl,
-            nperm,
-            f)
-        }, error = function(err) stop_rgcca(err$message),
-        finally = {
-            parallel::stopCluster(cl)
-            cl <- c()
-        })
-
+      
+            cl <- parallel::makeCluster(n_cores)
+            
+            parallel::clusterExport(
+                cl,
+                varlist,
+                envir = envir
+            )
+            
+            
+            parallel::clusterEvalQ(cl, library(RGCCA))
+      
+            # library(parallel)
+            parallel::clusterEvalQ(cl, library(parallel))
+            # print("all okay")
+            res <- tryCatch({
+                get(applyFunc)(
+                    cl,
+                    nperm,
+                    f)
+            }, error = function(err) stop_rgcca(err$message),
+            finally = {
+                parallel::stopCluster(cl)
+                cl <- c()
+            })
+            
+      
+        
 
     }else{
 

@@ -116,9 +116,7 @@ rgcca_permutation <- function(
                 else{
             if (any(perm.value < min_spars))
                 stop_rgcca(paste0("perm.value should be upper than : ", paste0(round(min_spars, 2), collapse = ",")))
-     #   print("in")
              if(perm.par=="tau"){perm.value <- check_tau(perm.value, blocks, type = type,superblock=superblock)}
-     #      print("out") 
            if(perm.par=="sparsity"){perm.value <- set_spars(max = perm.value)}
         }
 
@@ -168,13 +166,13 @@ rgcca_permutation <- function(
             # does not work.
         }
     }
-    
+
     pb <- txtProgressBar(max=dim(par[[2]])[1])
     crits=means=sds=rep(NA,nrow(par[[2]]))
     permcrit=matrix(NA,nrow(par[[2]]),nperm)
     for(i in 1:nrow(par[[2]]))
     {
-        
+      
         crits[i] <- rgcca_permutation_k(
             blocks,
             par = par[[1]],
@@ -190,27 +188,51 @@ rgcca_permutation <- function(
             tol=tol,
             ...
         )
-        res<- parallelize(
-            varlist,
-            seq(nperm), 
-            function(x)
-                rgcca_permutation_k(
-                    blocks = blocks,
-                    par = par[[1]],
-                    par_value=par[[2]][i,],
-                    type = type,
-                    n_cores = 1,
-                    quiet = quiet,
-                    superblock=superblock,
-                    scheme=scheme,
-                    tol=tol,
-                    scale=scale,
-                    scale_block=scale_block,
-                    ...
-                ),
-        n_cores = n_cores,
-        envir = environment()
-        )
+          
+        if(nperm>20)
+        {
+            res<- parallelize(
+                varlist,
+                seq(nperm), 
+                function(x)
+                    rgcca_permutation_k(
+                        blocks = blocks,
+                        par = par[[1]],
+                        par_value=par[[2]][i,],
+                        type = type,
+                        n_cores = n_cores,
+                        quiet = quiet,
+                        superblock=superblock,
+                        scheme=scheme,
+                        tol=tol,
+                        scale=scale,
+                        scale_block=scale_block,
+                        ...
+                    ),
+                n_cores = n_cores,
+                envir = environment(),
+                applyFunc = "parSapply"
+            )   
+        }
+        if(nperm<=20)
+        {
+            res=sapply(seq(nperm),function(i)  {rgcca_permutation_k(
+                blocks = blocks,
+                par = par[[1]],
+                par_value=par[[2]][i,],
+                type = type,
+                n_cores = n_cores,
+                quiet = quiet,
+                superblock=superblock,
+                scheme=scheme,
+                tol=tol,
+                scale=scale,
+                scale_block=scale_block,
+                ...
+            )})
+        }
+         
+        
         permcrit[i,] =res
         means[i]=mean(permcrit[i,],na.rm=T)
         sds[i]=sd(permcrit[i,],na.rm=T)
