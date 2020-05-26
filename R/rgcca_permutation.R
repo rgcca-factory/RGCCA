@@ -216,7 +216,7 @@ rgcca_permutation <- function(
         }
         if(nperm<=20)
         {
-            res=sapply(seq(nperm),function(i)  {rgcca_permutation_k(
+            res=sapply(seq(nperm),function(k)  {rgcca_permutation_k(
                 blocks = blocks,
                 par = par[[1]],
                 par_value=par[[2]][i,],
@@ -243,12 +243,12 @@ rgcca_permutation <- function(
     par <- par[[2]]
     pvals <- sapply(
         seq(NROW(par)),
-        function(i)
-            mean(permcrit[i, ] >= crits[i]))
+        function(k)
+            mean(permcrit[k, ] >= crits[k]))
     zs <- sapply(
         seq(NROW(par)),
-        function(i){
-            z <- (crits[i] - mean(permcrit[i, ])) / (sd(permcrit[i, ]))
+        function(k){
+            z <- (crits[k] - mean(permcrit[k, ])) / (sd(permcrit[k, ]))
             if (is.na(z) || z == "Inf")
                 z <- 0
             return(z)

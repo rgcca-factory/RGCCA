@@ -4,9 +4,9 @@ blocks <- list(
     industry = Russett[, 4:5],
     politic = Russett[, 6:11] )
 
-res=rgcca_permutation(blocks, n_cores = 4,nperm = 100)
+#res=rgcca_permutation(blocks, n_cores = 1,nperm = 100)
 
-res=rgcca_permutation(blocks, n_cores = 4,nperm = 10)
+res=rgcca_permutation(blocks, n_cores = 1,nperm = 5)
 
 test_that("rgcca_permutation_default", {
         expect_is(rgcca_permutation(blocks, n_cores = 1), "permutation")
