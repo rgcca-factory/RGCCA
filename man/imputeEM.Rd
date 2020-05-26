@@ -4,10 +4,25 @@
 \alias{imputeEM}
 \title{imputeEM: impute with superblock method}
 \usage{
-imputeEM(A, C, tau, ni = 50, tol = 1e-08, graph = FALSE,
-  ncomp = NULL, naxis = 1, scale = TRUE, scale_block = TRUE,
-  scheme = "centroid", bias = TRUE, superblock = FALSE,
-  verbose = FALSE, tolEM = 0.001, reg = "y", quiet = FALSE)
+imputeEM(
+  A,
+  C,
+  tau,
+  ni = 50,
+  tol = 1e-08,
+  graph = FALSE,
+  ncomp = NULL,
+  naxis = 1,
+  scale = TRUE,
+  scale_block = TRUE,
+  scheme = "centroid",
+  bias = TRUE,
+  superblock = FALSE,
+  verbose = FALSE,
+  tolEM = 0.001,
+  reg = "y",
+  quiet = FALSE
+)
 }
 \arguments{
 \item{A}{A matrix with J dimensions (to be changed for superblock ?)}

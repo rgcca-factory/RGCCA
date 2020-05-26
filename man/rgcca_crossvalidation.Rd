@@ -4,13 +4,33 @@
 \alias{rgcca_crossvalidation}
 \title{Cross-validation}
 \usage{
-rgcca_crossvalidation(rgcca_res, validation = "loo",
-  model = "regression", fit = "lm", k = 5,
-  n_cores = parallel::detectCores() - 1, ...)
+rgcca_crossvalidation(
+  rgcca_res,
+  validation = "loo",
+  model = "regression",
+  fit = "lm",
+  k = 5,
+  n_cores = parallel::detectCores() - 1,
+  scale = TRUE,
+  scale_block = TRUE,
+  tol = 1e-08,
+  scheme = "factorial",
+  ...
+)
 
-rgcca_crossvalidation(rgcca_res, validation = "loo",
-  model = "regression", fit = "lm", k = 5,
-  n_cores = parallel::detectCores() - 1, ...)
+rgcca_crossvalidation(
+  rgcca_res,
+  validation = "loo",
+  model = "regression",
+  fit = "lm",
+  k = 5,
+  n_cores = parallel::detectCores() - 1,
+  scale = TRUE,
+  scale_block = TRUE,
+  tol = 1e-08,
+  scheme = "factorial",
+  ...
+)
 }
 \arguments{
 \item{rgcca_res}{A list giving the results of a R/SGCCA}

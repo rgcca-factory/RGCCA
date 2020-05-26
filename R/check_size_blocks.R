@@ -2,8 +2,7 @@ check_size_blocks <- function(blocks, x, y = x) {
     
     if (identical(x, y))
         x <- ""
-
-    if (class(y) %in% c("matrix", "data.frame")) {
+    if (any(class(y) %in% c("matrix", "data.frame"))) {
         dim_y <- NCOL(y)
         dim_type <- "number of columns"
     }else{

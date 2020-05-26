@@ -4,11 +4,27 @@
 \alias{rgcca_cv}
 \title{rgcca_cv}
 \usage{
-rgcca_cv(blocks, type = "rgcca", response = length(blocks),
-  par = "ncomp", par_value = NULL, validation = "kfold",
-  type_cv = "regression", fit = "lm", k = 5, n_cv = 1,
-  one_value_per_cv = FALSE, n_cores = parallel::detectCores() - 1,
-  quiet = TRUE, superblock = FALSE, ...)
+rgcca_cv(
+  blocks,
+  type = "rgcca",
+  response = length(blocks),
+  par = "ncomp",
+  par_value = NULL,
+  validation = "kfold",
+  type_cv = "regression",
+  fit = "lm",
+  k = 5,
+  n_cv = 1,
+  one_value_per_cv = FALSE,
+  n_cores = parallel::detectCores() - 1,
+  quiet = TRUE,
+  superblock = FALSE,
+  scale = TRUE,
+  scale_block = TRUE,
+  tol = 1e-06,
+  scheme = "factorial",
+  ...
+)
 }
 \arguments{
 \item{blocks}{A list that contains the \eqn{J} blocks of variables \eqn{\mathbf{X_1}, \mathbf{X_2}, ..., \mathbf{X_J}}.}
@@ -43,6 +59,14 @@ rgcca_cv(blocks, type = "rgcca", response = length(blocks),
 
 \item{superblock}{A boolean giving the presence (TRUE) / absence (FALSE) of
 a superblock}
+
+\item{scale}{If scale = TRUE, each block is standardized to zero means and unit variances (default: TRUE).}
+
+\item{scale_block}{TRUE by default : each block have the same weight in the RGCCA analysis. If FALSE, the weight of each block depends on the number of variables of the block}
+
+\item{tol}{The stopping value for convergence.}
+
+\item{scheme}{The value is "horst", "factorial", "centroid" or the g function (default: "centroid").}
 
 \item{...}{other RGCCA parameters # TODO}
 }

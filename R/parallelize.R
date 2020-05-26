@@ -5,6 +5,13 @@
 #' @param envir environment                                               
 #' @param applyFunc function to be applied
 #' @inheritParams bootstrap
+#' @importFrom parallel stopCluster
+#' @importFrom parallel clusterExport
+#' @importFrom parallel clusterEvalQ
+#' @importFrom parallel makeCluster
+#' @importFrom parallel detectCores
+#' @importFrom parallel parLapply
+#' @importFrom parallel parSapply
 parallelize <- function(
     varlist = c(),
     nperm,
@@ -13,29 +20,29 @@ parallelize <- function(
     envir = environment(),
     applyFunc = "parSapply") {
 
-    load_libraries("parallel")
-    if (!("parallel" %in% installed.packages()[, "Package"]))
-    stop_rgcca("'parallel' package required and not available.")
+#    load_libraries("parallel")
+#   if (!("parallel" %in% installed.packages()[, "Package"]))
+#    stop_rgcca("'parallel' package required and not available.")
 
     if(is.null(n_cores))
-    n_cores <- parallel::detectCores() - 1
+    n_cores <- detectCores() - 1
 
     if (Sys.info()["sysname"] == "Windows") {
 
       
-            cl <- parallel::makeCluster(n_cores)
+            cl <- makeCluster(n_cores)
             
-            parallel::clusterExport(
+            clusterExport(
                 cl,
                 varlist,
                 envir = envir
             )
             
             
-            parallel::clusterEvalQ(cl, library(RGCCA))
+            clusterEvalQ(cl, library(RGCCA))
       
             # library(parallel)
-            parallel::clusterEvalQ(cl, library(parallel))
+            clusterEvalQ(cl, library(parallel))
             # print("all okay")
             res <- tryCatch({
                 get(applyFunc)(
@@ -44,7 +51,7 @@ parallelize <- function(
                     f)
             }, error = function(err) stop_rgcca(err$message),
             finally = {
-                parallel::stopCluster(cl)
+                stopCluster(cl)
                 cl <- c()
             })
             
@@ -53,7 +60,7 @@ parallelize <- function(
 
     }else{
 
-        res <- parallel::mclapply(
+        res <- mclapply(
             nperm,
             f,
             mc.cores = n_cores)

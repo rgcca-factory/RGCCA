@@ -133,7 +133,7 @@ rgcca <- function(
     
     if(class(blocks)=="permutation")
     {
-        message("All parameters were imported by permutation object provided in the block parameter")
+        message("All parameters were imported by permutation object provided in the blocks parameter")
         scale_block=blocks$call$scale_block
         scale=blocks$call$scale
         scheme=blocks$call$scheme
@@ -142,15 +142,38 @@ rgcca <- function(
         method=blocks$call$method
         if(blocks$call$perm.par=="tau")
         {
-            tau=blocks$call$res_permut$bestpenalties 
+            tau=blocks$bestpenalties 
         }
         if(blocks$call$perm.par=="ncomp")
         {
-            ncomp=blocks$call$res_permut$bestpenalties 
+            ncomp=blocks$bestpenalties 
         }
         if(blocks$call$perm.par=="sparsity")
         {
-            sparsity=blocks$call$res_permut$bestpenalties 
+            sparsity=blocks$bestpenalties 
+        }
+        blocks<-blocks$call$blocks
+    }
+    if(class(blocks)=="cval")
+    {
+        message("All parameters were imported by a cval object provided in the blocks parameter")
+        scale_block=blocks$call$scale_block
+        scale=blocks$call$scale
+        scheme=blocks$call$scheme
+        response=blocks$call$response
+        tol=blocks$call$tol
+        method=blocks$call$method
+        if(blocks$call$par[[1]]=="tau")
+        {
+            tau=blocks$bestpenalties 
+        }
+        if(blocks$call$par[[1]]=="ncomp")
+        {
+            ncomp=blocks$bestpenalties 
+        }
+        if(blocks$call$par[[1]]=="sparsity")
+        {
+            sparsity=blocks$bestpenalties 
         }
         blocks<-blocks$call$blocks
     }
@@ -190,8 +213,8 @@ rgcca <- function(
     check_method(type)
     
     # Check blocks size, adds NA lines if some subjects are missing...
+
     blocks=check_blocks(blocks,add_NAlines=TRUE,n=1)
-    
     if (!is.null(response))
         check_blockx("response", response, blocks)
     check_integer("tol", tol, float = TRUE, min = 0)

@@ -4,13 +4,24 @@
 \alias{whichNAmethod}
 \title{whichNAmethod}
 \usage{
-whichNAmethod(blocks, listMethods = c("complete", "nipals"),
-  typeNA = "block", nDatasets = 20, patternNA = NULL,
-  connection = matrix(1, length(blocks), length(blocks)) -
-  diag(length(blocks)), tau = rep(1, length(blocks)), ncomp = rep(2,
-  length(blocks)), scale_block = TRUE, scale = TRUE, tol = 1e-06,
-  verbose = FALSE, scheme = "centroid", seed = NULL,
-  typeRGCCA = "rgcca", sparsity = NULL)
+whichNAmethod(
+  blocks,
+  listMethods = c("complete", "nipals"),
+  typeNA = "block",
+  nDatasets = 20,
+  patternNA = NULL,
+  connection = matrix(1, length(blocks), length(blocks)) - diag(length(blocks)),
+  tau = rep(1, length(blocks)),
+  ncomp = rep(2, length(blocks)),
+  scale_block = TRUE,
+  scale = TRUE,
+  tol = 1e-06,
+  verbose = FALSE,
+  scheme = "centroid",
+  seed = NULL,
+  typeRGCCA = "rgcca",
+  sparsity = NULL
+)
 }
 \arguments{
 \item{blocks}{A list that contains the \eqn{J} blocks of variables \eqn{\mathbf{X_1}, \mathbf{X_2}, ..., \mathbf{X_J}}.}

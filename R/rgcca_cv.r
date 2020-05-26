@@ -34,6 +34,10 @@ rgcca_cv=function( blocks,
           n_cores = parallel::detectCores() - 1,
           quiet = TRUE,
           superblock=FALSE,
+          scale=TRUE,
+          scale_block=TRUE,
+          tol=1e-6,
+          scheme="factorial",
           ...)
 {
     if(superblock){stop_rgcca("Cross-validation is only possible without superblock")}
@@ -114,15 +118,15 @@ rgcca_cv=function( blocks,
         {
             if(par[[1]]=="ncomp")
             {
-                rgcca_res=rgcca(blocks=blocks, type=type,response=response,ncomp=par[[2]][i,],superblock=superblock,...)
+                rgcca_res=rgcca(blocks=blocks, type=type,response=response,ncomp=par[[2]][i,],superblock=superblock,scale=scale,scale_block=scale_block,scheme=scheme,tol=tol,...)
             }
             if(par[[1]]=="sparsity")
             {
-                rgcca_res=rgcca(blocks=blocks, type="sgcca",response=response,sparsity=par[[2]][i,],superblock=superblock,...)
+                rgcca_res=rgcca(blocks=blocks, type="sgcca",response=response,sparsity=par[[2]][i,],superblock=superblock,scale=scale,scale_block=scale_block,scheme=scheme,tol=tol,...)
             }
             if(par[[1]]=="tau")
             {
-                rgcca_res=rgcca(blocks=blocks, type=type,response=response,tau=par[[2]][i,],superblock=superblock,...)
+                rgcca_res=rgcca(blocks=blocks, type=type,response=response,tau=par[[2]][i,],superblock=superblock,scale=scale,scale_block=scale_block,scheme=scheme,tol=tol,...)
             }
             res_i=c()
             for(n in 1:n_cv)
@@ -137,7 +141,11 @@ rgcca_cv=function( blocks,
                         fit = fit,
                        # new_scaled = TRUE,
                         k = k,
-                        n_cores =n_cores)$scores)
+                       scale=scale,
+                       scale_block=scale_block,
+                       tol=tol,
+                       scheme=scheme,
+                      n_cores =n_cores)$scores)
                 }
                 else
                 {
@@ -149,6 +157,10 @@ rgcca_cv=function( blocks,
                         fit = fit,
                         #new_scaled = TRUE,
                         k = k,
+                        scale=scale,
+                        scale_block=scale_block,
+                        tol=tol,
+                        scheme=scheme,
                         n_cores =n_cores)$list_scores)
                 }
               
@@ -171,8 +183,13 @@ rgcca_cv=function( blocks,
               type_cv = type_cv,
               fit = fit,
               k=k,
-              n_cv = n_cv,
-              one_value_per_cv=one_value_per_cv
+              one_value_per_cv=one_value_per_cv,
+              superblock=FALSE,
+              scale=scale,
+              scale_block=scale_block,
+              tol=tol,
+              scheme=scheme,
+              bloks=blocks
     )
     par2=par[[2]]
     rownames(par2) = 1:NROW(par2)

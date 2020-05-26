@@ -4,10 +4,18 @@
 \alias{select_analysis}
 \title{Define the analysis parameters}
 \usage{
-select_analysis(blocks = blocks, connection = 1 - diag(length(blocks)),
-  penalty = rep(1, length(blocks)), ncomp = rep(1, length(blocks)),
-  scheme = "centroid", superblock = TRUE, type = "rgcca",
-  verbose = TRUE, quiet = FALSE, response = NULL)
+select_analysis(
+  blocks = blocks,
+  connection = 1 - diag(length(blocks)),
+  penalty = rep(1, length(blocks)),
+  ncomp = rep(1, length(blocks)),
+  scheme = "centroid",
+  superblock = TRUE,
+  type = "rgcca",
+  verbose = TRUE,
+  quiet = FALSE,
+  response = NULL
+)
 }
 \arguments{
 \item{blocks}{A list of matrix}

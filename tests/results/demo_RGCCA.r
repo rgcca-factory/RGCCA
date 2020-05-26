@@ -22,6 +22,7 @@ plot(res_permut)
 plot(res_permut, type="crit")
 tau_res=res_permut$bestpenalties
 # Stepi two - vizualizing rgcca
+resRgcca=rgcca(res_permut)
 resRgcca=rgcca(blocks,tau=tau_res)
 plot(resRgcca)
 resRgcca=rgcca(blocks,tau=tau_res,ncomp=c(2,2,3))
@@ -42,8 +43,10 @@ print(resBootstrap)
 # Supervized approach
 #--------------------
 # Step one - tuning the parameters
-res=rgcca_cv(blocks,par="ncomp")
-res=rgcca_cv(blocks,par="tau")
+res_cv=rgcca_cv(blocks,par="ncomp")
+res_cv=rgcca_cv(blocks,par="tau")
+
+rgcca(res_cv)
 print(res,bars="stderr")
 plot(res,bars="quantile")
 plot(res,bars="ci")

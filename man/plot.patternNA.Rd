@@ -4,8 +4,7 @@
 \alias{plot.patternNA}
 \title{plot.patternNA}
 \usage{
-\method{plot}{patternNA}(x, type = "all", legend = TRUE,
-  scale = TRUE, outlierVisible = FALSE, ...)
+\method{plot}{patternNA}(x, type = "all", legend = TRUE, scale = TRUE, outlierVisible = FALSE, ...)
 }
 \arguments{
 \item{x}{an object from get_patternNA (see \code{\link[RGCCA]{get_patternNA}} )}
@@ -39,5 +38,5 @@ p=get_patternNA(A)
 plot(p)
 }
 \seealso{
-\link{get_patternNA}, \link{plot.patternNA}, \link{whichNAmethod}
+\link{get_patternNA},\link{whichNAmethod}
 }

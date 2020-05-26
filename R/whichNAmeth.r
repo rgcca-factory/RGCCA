@@ -97,7 +97,6 @@ whichNAmethod=function(blocks,listMethods=c("complete","nipals"),typeNA="block",
         {
             methodRgcca=sgccaNa(blocks=listNAdataset[[i]]$dat,connection=connection,sparsity=sparsity,method=method,ncomp=ncomp,scale_block=scale_block,scale=scale,tol=tol,verbose=FALSE,scheme=scheme)
         }
-        print("ok up to comparison")
         
         indicators[[method]]=comparison(rgcca1=referenceRgcca,rgcca2=methodRgcca$rgcca,selectPatient=selectCompletePatient,indNA=methodRgcca$indNA)
     }

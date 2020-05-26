@@ -22,6 +22,10 @@ rgcca_crossvalidation <- function(
 #    new_scaled = TRUE,
     k = 5,
     n_cores = parallel::detectCores() - 1,
+    scale=TRUE,
+    scale_block=TRUE,
+    tol=1e-8,
+    scheme="factorial",
     ...) {
 
     stopifnot(is(rgcca_res, "rgcca"))
@@ -42,6 +46,11 @@ rgcca_crossvalidation <- function(
 
             rgcca_k <-
                 set_rgcca(rgcca_res,
+                          scale=scale,
+                          scale_block=scale_block,
+                          tol=tol,
+                          scheme=scheme,
+                          superblock=FALSE,
                           inds = inds,
                           ...) #Rgcca on all individuals but inds
             rgcca_k$a <- check_sign_comp(rgcca_res, rgcca_k$a)
@@ -61,6 +70,10 @@ rgcca_crossvalidation <- function(
     bigA <- attributes(
         set_rgcca(
             rgcca_res,
+            scale=scale,
+            scale_block=scale_block,
+            tol=tol,
+            scheme=scheme,
             inds = .Machine$integer.max,
             ...
         )
