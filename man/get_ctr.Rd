@@ -4,16 +4,9 @@
 \alias{get_ctr}
 \title{Variable contribution}
 \usage{
-get_ctr(
-  rgcca_res,
-  compx = 1,
-  compy = 2,
-  compz = NULL,
-  i_block = length(rgcca_res$call$blocks),
-  type = "cor",
-  collapse = FALSE,
-  i_block_2 = NULL
-)
+get_ctr(rgcca_res, compx = 1, compy = 2, compz = NULL,
+  i_block = length(rgcca_res$call$blocks), type = "cor",
+  collapse = FALSE, i_block_2 = NULL)
 }
 \arguments{
 \item{rgcca_res}{A list giving the results of a R/SGCCA}

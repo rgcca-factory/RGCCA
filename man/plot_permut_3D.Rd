@@ -4,17 +4,9 @@
 \alias{plot_permut_3D}
 \title{Plot permuation in 3D}
 \usage{
-plot_permut_3D(
-  perm,
-  type = "zstat",
-  sign = FALSE,
-  i_block = 1,
-  i_block_y = 2,
-  i_block_z = 3,
-  cex = 1,
-  cex_point = 3 * cex,
-  cex_lab = 19 * cex
-)
+plot_permut_3D(perm, type = "zstat", sign = FALSE, i_block = 1,
+  i_block_y = 2, i_block_z = 3, cex = 1, cex_point = 3 * cex,
+  cex_lab = 19 * cex)
 }
 \arguments{
 \item{perm}{A permutation object from a RGCCA analyse}

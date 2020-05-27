@@ -4,7 +4,8 @@
 \alias{bootstrap}
 \title{Compute bootstrap}
 \usage{
-bootstrap(rgcca_res, n_boot = 5, n_cores = parallel::detectCores() - 1, ...)
+bootstrap(rgcca_res, n_boot = 5, n_cores = parallel::detectCores() - 1,
+  ...)
 }
 \arguments{
 \item{rgcca_res}{Result of a RGCCA (see  \code{\link[RGCCA]{rgcca}} )}

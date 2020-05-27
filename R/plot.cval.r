@@ -4,6 +4,9 @@
 #'@param bars among "sd" for standard deviations, "stderr" for standard error (standard deviations divided by sqrt(n), ci for confidence interal, cim for confidence interval of the mean.
 #'@param alpha used for confidence interval bars (ci or cim), risk. Default to 0.05
 #'@param ... Further plot options
+#'@param cex_main  size of the plot title 
+#'@param cex 1 size of elements of the plot 
+#'@param cex_sub  size of the plot subtitle 
 #'@export 
 #'@examples
 #'data("Russett")
@@ -13,7 +16,8 @@
 #'     politic = Russett[, 6:11])
 #'     res=rgcca_cv(blocks, type="rgcca",par="tau",par_value=c(0,0.2,0.3),n_cv=1,n_cores=1)
 #'    plot(res)
-plot.cval=function(x,bars="sd",alpha=0.05,...)
+#'@importFrom ggplot2 ggplot
+plot.cval=function(x,bars="sd",alpha=0.05,cex = 1, cex_main = 14 * cex, cex_sub = 10 * cex,...)
 {
     
     config <- NULL -> y
@@ -75,7 +79,7 @@ plot.cval=function(x,bars="sd",alpha=0.05,...)
     decalage= (max(df[,"mean"])-min(df[,"mean"]))/10
     p<- p+geom_point(x=optimal_x,y=optimal_y,colour="green")
    # p<-p+geom_text(label=rownames(x)[which.min(mean_b)],x=optimal_x,y=optimal_y+decalage,colour="green")
-    p<-p+ggtitle(main)
+    p<-p+ggtitle(main)+theme_perso(cex, cex_main, cex_sub)
 #    p<- p+ scale_x_continuous(breaks=1:nrow(x),  labels=rownames(x))
 #    p<-p + theme(axis.text.x = element_text(angle=45))
     plot(p)

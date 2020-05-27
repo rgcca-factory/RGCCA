@@ -12,6 +12,7 @@
 #' @importFrom parallel detectCores
 #' @importFrom parallel parLapply
 #' @importFrom parallel parSapply
+#' @importFrom parallel mclapply
 parallelize <- function(
     varlist = c(),
     nperm,
@@ -25,24 +26,24 @@ parallelize <- function(
 #    stop_rgcca("'parallel' package required and not available.")
 
     if(is.null(n_cores))
-    n_cores <- detectCores() - 1
+    n_cores <- parallel::detectCores() - 1
 
     if (Sys.info()["sysname"] == "Windows") {
 
       
-            cl <- makeCluster(n_cores)
+            cl <- parallel::makeCluster(n_cores)
             
-            clusterExport(
+            parallel::clusterExport(
                 cl,
                 varlist,
                 envir = envir
             )
             
             
-            clusterEvalQ(cl, library(RGCCA))
+            parallel::clusterEvalQ(cl, library(RGCCA))
       
             # library(parallel)
-            clusterEvalQ(cl, library(parallel))
+            parallel::clusterEvalQ(cl, library(parallel))
             # print("all okay")
             res <- tryCatch({
                 get(applyFunc)(
@@ -51,7 +52,7 @@ parallelize <- function(
                     f)
             }, error = function(err) stop_rgcca(err$message),
             finally = {
-                stopCluster(cl)
+                parallel::stopCluster(cl)
                 cl <- c()
             })
             
@@ -60,7 +61,7 @@ parallelize <- function(
 
     }else{
 
-        res <- mclapply(
+        res <- parallel::mclapply(
             nperm,
             f,
             mc.cores = n_cores)

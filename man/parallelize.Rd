@@ -4,14 +4,8 @@
 \alias{parallelize}
 \title{Set a list of sockets for parralel package}
 \usage{
-parallelize(
-  varlist = c(),
-  nperm,
-  f,
-  n_cores = NULL,
-  envir = environment(),
-  applyFunc = "parSapply"
-)
+parallelize(varlist = c(), nperm, f, n_cores = NULL,
+  envir = environment(), applyFunc = "parSapply")
 }
 \arguments{
 \item{varlist}{character vector of names of objects to export}

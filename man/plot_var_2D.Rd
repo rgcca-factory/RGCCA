@@ -4,21 +4,10 @@
 \alias{plot_var_2D}
 \title{Plot of variables space}
 \usage{
-plot_var_2D(
-  rgcca_res,
-  compx = 1,
-  compy = 2,
-  i_block = length(rgcca_res$a),
-  text = TRUE,
-  remove_var = TRUE,
-  n_mark = 100,
-  collapse = FALSE,
-  no_overlap = FALSE,
-  title = "Variable correlations",
-  resp = NULL,
-  colors = NULL,
-  ...
-)
+plot_var_2D(rgcca_res, compx = 1, compy = 2,
+  i_block = length(rgcca_res$a), text = TRUE, remove_var = TRUE,
+  n_mark = 100, collapse = FALSE, no_overlap = FALSE,
+  title = "Variable correlations", resp = NULL, colors = NULL, ...)
 }
 \arguments{
 \item{rgcca_res}{A list giving the results of a R/SGCCA}

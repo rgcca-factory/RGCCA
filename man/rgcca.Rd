@@ -4,29 +4,15 @@
 \alias{rgcca}
 \title{Regularized (or Sparse) Generalized Canonical Correlation Analysis (R/SGCCA)}
 \usage{
-rgcca(
-  blocks,
-  type = "rgcca",
-  scale = TRUE,
-  scale_block = TRUE,
-  connection = matrix(1, length(blocks), length(blocks)) - diag(length(blocks)),
-  scheme = "factorial",
-  ncomp = rep(1, length(blocks)),
-  tau = rep(1, length(blocks)),
-  sparsity = rep(1, length(blocks)),
-  init = "svd",
-  bias = TRUE,
-  tol = 1e-08,
-  response = NULL,
-  superblock = FALSE,
-  method = "nipals",
-  verbose = FALSE,
-  quiet = TRUE,
-  knn.k = "all",
-  knn.output = "weightedMean",
-  knn.klim = NULL,
-  knn.scale_block = TRUE
-)
+rgcca(blocks, type = "rgcca", scale = TRUE, scale_block = TRUE,
+  connection = matrix(1, length(blocks), length(blocks)) -
+  diag(length(blocks)), scheme = "factorial", ncomp = rep(1,
+  length(blocks)), tau = rep(1, length(blocks)), sparsity = rep(1,
+  length(blocks)), init = "svd", bias = TRUE, tol = 1e-08,
+  response = NULL, superblock = FALSE, method = "nipals",
+  verbose = FALSE, quiet = TRUE, knn.k = "all",
+  knn.output = "weightedMean", knn.klim = NULL,
+  knn.scale_block = TRUE)
 }
 \arguments{
 \item{blocks}{A list that contains the \eqn{J} blocks of variables \eqn{\mathbf{X_1}, \mathbf{X_2}, ..., \mathbf{X_J}}.}

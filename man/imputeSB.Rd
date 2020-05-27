@@ -4,19 +4,9 @@
 \alias{imputeSB}
 \title{imputeSB: impute with superblock method}
 \usage{
-imputeSB(
-  A,
-  tau = rep(1, length(A)),
-  ni = 50,
-  tol = 1e-08,
-  graph = FALSE,
-  ncomp = NULL,
-  naxis = 1,
-  scale = TRUE,
-  scale_block = TRUE,
-  bias = TRUE,
-  verbose = FALSE
-)
+imputeSB(A, tau = rep(1, length(A)), ni = 50, tol = 1e-08,
+  graph = FALSE, ncomp = NULL, naxis = 1, scale = TRUE,
+  scale_block = TRUE, bias = TRUE, verbose = FALSE)
 }
 \arguments{
 \item{A}{A list of J blocks}

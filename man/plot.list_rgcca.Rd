@@ -4,28 +4,12 @@
 \alias{plot.list_rgcca}
 \title{plots a list_rgcca object}
 \usage{
-\method{plot}{list_rgcca}(
-  x,
-  type = "ind",
-  resp = rep(1, NROW(x$Y[[1]])),
-  block = 1,
-  comp = 1:2,
-  remove_var = FALSE,
-  text_var = TRUE,
-  text_ind = TRUE,
-  response_name = "Response",
-  no_overlap = FALSE,
-  title = NULL,
-  n_mark = 100,
-  collapse = FALSE,
-  cex = 1,
-  cex_sub = 10,
-  cex_main = 14,
-  cex_lab = 12,
-  colors = NULL,
-  errorbar = "ci",
-  ...
-)
+\method{plot}{list_rgcca}(x, type = "ind", resp = rep(1,
+  NROW(x$Y[[1]])), block = 1, comp = 1:2, remove_var = FALSE,
+  text_var = TRUE, text_ind = TRUE, response_name = "Response",
+  no_overlap = FALSE, title = NULL, n_mark = 100, collapse = FALSE,
+  cex = 1, cex_sub = 10, cex_main = 14, cex_lab = 12,
+  colors = NULL, errorbar = "ci", ...)
 }
 \arguments{
 \item{x}{Result of MIRGCCA function (see\code{\link[RGCCA]{MIRGCCA}} ) or a list containing 

@@ -4,7 +4,8 @@
 \alias{plot.cval}
 \title{plot.cval}
 \usage{
-\method{plot}{cval}(x, bars = "sd", alpha = 0.05, ...)
+\method{plot}{cval}(x, bars = "sd", alpha = 0.05, cex = 1,
+  cex_main = 14 * cex, cex_sub = 10 * cex, ...)
 }
 \arguments{
 \item{x}{result of rgcca_cv function (see \link{rgcca_cv})}
@@ -12,6 +13,12 @@
 \item{bars}{among "sd" for standard deviations, "stderr" for standard error (standard deviations divided by sqrt(n), ci for confidence interal, cim for confidence interval of the mean.}
 
 \item{alpha}{used for confidence interval bars (ci or cim), risk. Default to 0.05}
+
+\item{cex}{1 size of elements of the plot}
+
+\item{cex_main}{size of the plot title}
+
+\item{cex_sub}{size of the plot subtitle}
 
 \item{...}{Further plot options}
 }

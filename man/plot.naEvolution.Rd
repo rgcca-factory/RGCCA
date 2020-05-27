@@ -4,16 +4,9 @@
 \alias{plot.naEvolution}
 \title{plot.naEvolution}
 \usage{
-\method{plot}{naEvolution}(
-  x,
-  type = "rv",
-  ylim = NULL,
-  block = length(x[[1]][[1]][[1]][[1]]),
-  bars = "sd",
-  main = NULL,
-  names.arg = NULL,
-  ...
-)
+\method{plot}{naEvolution}(x, type = "rv", ylim = NULL,
+  block = length(x[[1]][[1]][[1]][[1]]), bars = "sd", main = NULL,
+  names.arg = NULL, ...)
 }
 \arguments{
 \item{x}{A list resulting of naEvolution (\link{naEvolution})}

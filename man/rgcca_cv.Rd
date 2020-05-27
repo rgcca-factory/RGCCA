@@ -4,27 +4,13 @@
 \alias{rgcca_cv}
 \title{rgcca_cv}
 \usage{
-rgcca_cv(
-  blocks,
-  type = "rgcca",
-  response = length(blocks),
-  par = "ncomp",
-  par_value = NULL,
-  validation = "kfold",
-  type_cv = "regression",
-  fit = "lm",
-  k = 5,
-  n_cv = 1,
-  one_value_per_cv = FALSE,
-  n_cores = parallel::detectCores() - 1,
-  quiet = TRUE,
-  superblock = FALSE,
-  scale = TRUE,
-  scale_block = TRUE,
-  tol = 1e-06,
-  scheme = "factorial",
-  ...
-)
+rgcca_cv(blocks, type = "rgcca", response = length(blocks),
+  par = "ncomp", par_value = NULL, validation = "kfold",
+  type_cv = "regression", fit = "lm", k = 5, n_cv = 1,
+  one_value_per_cv = FALSE, n_cores = parallel::detectCores() - 1,
+  quiet = TRUE, superblock = FALSE, scale = TRUE,
+  scale_block = TRUE, tol = 1e-06, scheme = "factorial",
+  method = "nipals", ...)
 }
 \arguments{
 \item{blocks}{A list that contains the \eqn{J} blocks of variables \eqn{\mathbf{X_1}, \mathbf{X_2}, ..., \mathbf{X_J}}.}
@@ -67,6 +53,15 @@ a superblock}
 \item{tol}{The stopping value for convergence.}
 
 \item{scheme}{The value is "horst", "factorial", "centroid" or the g function (default: "centroid").}
+
+\item{method}{Either a character corresponding to the used method ("complete","knn","em","sem") or a function taking a list of J blocks (A) as only parameter and returning the imputed list. 
+\itemize{
+\item{\code{"mean"}}{ corresponds to an imputation by the colmeans}
+\item{\code{"complete"}}{ corresponds to run RGCCA only on the complete subjects (subjects with missing data are removed)}
+\item{\code{"nipals"}}{ corresponds to run RGCCA on all available data (NIPALS algorithm)}
+\item{\code{"em"}}{ corresponds to impute the data with EM-type algorithms}
+\item{\code{"sem"}}{ corresponds to impute the data with EM-type algorithms with superblock approach}
+\item{\code{"knn1"}}{ corresponds to impute the data with the 1-Nearest Neighbor. 1 can be replace by another number (such as knn3) to impute with the 3-Nearest Neighbors.}}}
 
 \item{...}{other RGCCA parameters # TODO}
 }

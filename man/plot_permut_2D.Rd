@@ -4,17 +4,9 @@
 \alias{plot_permut_2D}
 \title{Plot permuation in 2D}
 \usage{
-plot_permut_2D(
-  perm,
-  type = "zstat",
-  cex = 1,
-  title = NULL,
-  cex_main = 14 * cex,
-  cex_sub = 12 * cex,
-  cex_point = 3 * cex,
-  cex_lab = 10 * cex,
-  bars = "points"
-)
+plot_permut_2D(perm, type = "zstat", cex = 1, title = NULL,
+  cex_main = 14 * cex, cex_sub = 12 * cex, cex_point = 3 * cex,
+  cex_lab = 10 * cex, bars = "points")
 }
 \arguments{
 \item{perm}{A permutation object from a RGCCA analyse}

@@ -38,6 +38,7 @@ rgcca_cv=function( blocks,
           scale_block=TRUE,
           tol=1e-6,
           scheme="factorial",
+          method="nipals",
           ...)
 {
     if(superblock){stop_rgcca("Cross-validation is only possible without superblock")}
@@ -118,15 +119,15 @@ rgcca_cv=function( blocks,
         {
             if(par[[1]]=="ncomp")
             {
-                rgcca_res=rgcca(blocks=blocks, type=type,response=response,ncomp=par[[2]][i,],superblock=superblock,scale=scale,scale_block=scale_block,scheme=scheme,tol=tol,...)
+                rgcca_res=rgcca(blocks=blocks, type=type,response=response,ncomp=par[[2]][i,],superblock=superblock,scale=scale,scale_block=scale_block,scheme=scheme,tol=tol,method=method,...)
             }
             if(par[[1]]=="sparsity")
             {
-                rgcca_res=rgcca(blocks=blocks, type="sgcca",response=response,sparsity=par[[2]][i,],superblock=superblock,scale=scale,scale_block=scale_block,scheme=scheme,tol=tol,...)
+                rgcca_res=rgcca(blocks=blocks, type="sgcca",response=response,sparsity=par[[2]][i,],superblock=superblock,scale=scale,scale_block=scale_block,scheme=scheme,tol=tol,method=method,...)
             }
             if(par[[1]]=="tau")
             {
-                rgcca_res=rgcca(blocks=blocks, type=type,response=response,tau=par[[2]][i,],superblock=superblock,scale=scale,scale_block=scale_block,scheme=scheme,tol=tol,...)
+                rgcca_res=rgcca(blocks=blocks, type=type,response=response,tau=par[[2]][i,],superblock=superblock,scale=scale,scale_block=scale_block,scheme=scheme,tol=tol,method=method,...)
             }
             res_i=c()
             for(n in 1:n_cv)
@@ -145,6 +146,7 @@ rgcca_cv=function( blocks,
                        scale_block=scale_block,
                        tol=tol,
                        scheme=scheme,
+                       method=method,
                       n_cores =n_cores)$scores)
                 }
                 else
@@ -161,6 +163,7 @@ rgcca_cv=function( blocks,
                         scale_block=scale_block,
                         tol=tol,
                         scheme=scheme,
+                        method=method,
                         n_cores =n_cores)$list_scores)
                 }
               
@@ -189,7 +192,8 @@ rgcca_cv=function( blocks,
               scale_block=scale_block,
               tol=tol,
               scheme=scheme,
-              bloks=blocks
+              method=method,
+              blocks=blocks
     )
     par2=par[[2]]
     rownames(par2) = 1:NROW(par2)

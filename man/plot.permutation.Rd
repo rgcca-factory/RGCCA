@@ -6,17 +6,9 @@
 Plots a permutation object. The parameters tuned for maximizing RGCCA criteria is displayed in the title. 
 In x, the index of combination (number corresponding to the rownames of tuning parameters object). In ordinate, a score depending of the type parameter (RGCCA criterion for crit, and zstat for the pseudo z-scores)}
 \usage{
-\method{plot}{permutation}(
-  x,
-  type = "crit",
-  cex = 1,
-  main = NULL,
-  cex_main = 14 * cex,
-  cex_sub = 12 * cex,
-  cex_point = 3 * cex,
-  cex_lab = 19 * cex,
-  ...
-)
+\method{plot}{permutation}(x, type = "crit", cex = 1, main = NULL,
+  cex_main = 14 * cex, cex_sub = 12 * cex, cex_point = 3 * cex,
+  cex_lab = 19 * cex, ...)
 }
 \arguments{
 \item{x}{result of rgcca_permutation (see  \code{\link[RGCCA]{rgcca_permutation}} )}

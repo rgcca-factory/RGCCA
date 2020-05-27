@@ -4,33 +4,17 @@
 \alias{rgcca_crossvalidation}
 \title{Cross-validation}
 \usage{
-rgcca_crossvalidation(
-  rgcca_res,
-  validation = "loo",
-  model = "regression",
-  fit = "lm",
-  k = 5,
-  n_cores = parallel::detectCores() - 1,
-  scale = TRUE,
-  scale_block = TRUE,
-  tol = 1e-08,
-  scheme = "factorial",
-  ...
-)
+rgcca_crossvalidation(rgcca_res, validation = "loo",
+  model = "regression", fit = "lm", k = 5,
+  n_cores = parallel::detectCores() - 1, scale = TRUE,
+  scale_block = TRUE, tol = 1e-08, scheme = "factorial",
+  method = "nipals", ...)
 
-rgcca_crossvalidation(
-  rgcca_res,
-  validation = "loo",
-  model = "regression",
-  fit = "lm",
-  k = 5,
-  n_cores = parallel::detectCores() - 1,
-  scale = TRUE,
-  scale_block = TRUE,
-  tol = 1e-08,
-  scheme = "factorial",
-  ...
-)
+rgcca_crossvalidation(rgcca_res, validation = "loo",
+  model = "regression", fit = "lm", k = 5,
+  n_cores = parallel::detectCores() - 1, scale = TRUE,
+  scale_block = TRUE, tol = 1e-08, scheme = "factorial",
+  method = "nipals", ...)
 }
 \arguments{
 \item{rgcca_res}{A list giving the results of a R/SGCCA}
@@ -46,6 +30,23 @@ rgcca_crossvalidation(
 \item{k}{An integer given the parameter for k-fold method (5, by default)}
 
 \item{n_cores}{An integer for the number of cores used in parallelization}
+
+\item{scale}{If scale = TRUE, each block is standardized to zero means and unit variances (default: TRUE).}
+
+\item{scale_block}{TRUE by default : each block have the same weight in the RGCCA analysis. If FALSE, the weight of each block depends on the number of variables of the block}
+
+\item{tol}{The stopping value for convergence.}
+
+\item{scheme}{The value is "horst", "factorial", "centroid" or the g function (default: "centroid").}
+
+\item{method}{Either a character corresponding to the used method ("complete","knn","em","sem") or a function taking a list of J blocks (A) as only parameter and returning the imputed list. 
+\itemize{
+\item{\code{"mean"}}{ corresponds to an imputation by the colmeans}
+\item{\code{"complete"}}{ corresponds to run RGCCA only on the complete subjects (subjects with missing data are removed)}
+\item{\code{"nipals"}}{ corresponds to run RGCCA on all available data (NIPALS algorithm)}
+\item{\code{"em"}}{ corresponds to impute the data with EM-type algorithms}
+\item{\code{"sem"}}{ corresponds to impute the data with EM-type algorithms with superblock approach}
+\item{\code{"knn1"}}{ corresponds to impute the data with the 1-Nearest Neighbor. 1 can be replace by another number (such as knn3) to impute with the 3-Nearest Neighbors.}}}
 
 \item{...}{other RGCCA parameters # TODO}
 }

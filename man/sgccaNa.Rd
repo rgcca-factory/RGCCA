@@ -4,27 +4,13 @@
 \alias{sgccaNa}
 \title{Regularized Generalized Canonical Correlation Analysis (RGCCA)}
 \usage{
-sgccaNa(
-  blocks,
-  method,
-  connection = 1 - diag(length(A)),
-  sparsity = rep(1, length(A)),
-  ncomp = rep(1, length(A)),
-  scheme = "centroid",
-  scale = TRUE,
-  init = "svd",
-  bias = TRUE,
-  tol = 1e-08,
-  verbose = TRUE,
-  scale_block = TRUE,
-  knn.k = "all",
-  knn.output = "weightedMean",
-  knn.klim = NULL,
-  knn.scale_block = TRUE,
-  pca.ncp = 1,
-  prescaling = FALSE,
-  quiet = FALSE
-)
+sgccaNa(blocks, method, connection = 1 - diag(length(A)),
+  sparsity = rep(1, length(A)), ncomp = rep(1, length(A)),
+  scheme = "centroid", scale = TRUE, init = "svd", bias = TRUE,
+  tol = 1e-08, verbose = TRUE, scale_block = TRUE, knn.k = "all",
+  knn.output = "weightedMean", knn.klim = NULL,
+  knn.scale_block = TRUE, pca.ncp = 1, prescaling = FALSE,
+  quiet = FALSE)
 }
 \arguments{
 \item{blocks}{A list that contains the \eqn{J} blocks of variables \eqn{\mathbf{X_1}, \mathbf{X_2}, ..., \mathbf{X_J}}.}

@@ -4,21 +4,12 @@
 \alias{plot_ind}
 \title{Plot the two components of a RGCCA}
 \usage{
-plot_ind(
-  rgcca_res,
-  resp = rep(1, NROW(rgcca_res$Y[[1]])),
-  compx = 1,
-  compy = 2,
-  i_block = length(rgcca_res$Y),
-  text = TRUE,
-  i_block_y = i_block,
-  response_name = "Response",
-  no_overlap = FALSE,
-  predicted = NULL,
-  title = paste0(names(rgcca_res$call$blocks)[i_block], ": Sample space"),
-  legend = TRUE,
-  ...
-)
+plot_ind(rgcca_res, resp = rep(1, NROW(rgcca_res$Y[[1]])), compx = 1,
+  compy = 2, i_block = length(rgcca_res$Y), text = TRUE,
+  i_block_y = i_block, response_name = "Response",
+  no_overlap = FALSE, predicted = NULL,
+  title = paste0(names(rgcca_res$call$blocks)[i_block],
+  ": Sample space"), legend = TRUE, ...)
 }
 \arguments{
 \item{rgcca_res}{A list giving the results of a R/SGCCA}

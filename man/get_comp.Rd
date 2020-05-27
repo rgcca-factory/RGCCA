@@ -4,17 +4,9 @@
 \alias{get_comp}
 \title{Get the components of the analysis}
 \usage{
-get_comp(
-  rgcca_res,
-  resp = rep(1, NROW(rgcca_res$Y[[1]])),
-  compx = 1,
-  compy = 2,
-  compz = NULL,
-  i_block_x = length(rgcca_res$Y),
-  i_block_y = i_block_x,
-  i_block_z = i_block_x,
-  predicted = NULL
-)
+get_comp(rgcca_res, resp = rep(1, NROW(rgcca_res$Y[[1]])), compx = 1,
+  compy = 2, compz = NULL, i_block_x = length(rgcca_res$Y),
+  i_block_y = i_block_x, i_block_z = i_block_x, predicted = NULL)
 }
 \arguments{
 \item{rgcca_res}{A list giving the results of a R/SGCCA}

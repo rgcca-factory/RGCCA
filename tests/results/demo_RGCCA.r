@@ -16,7 +16,7 @@ blocks = list(agriculture = Russett[, seq(3)], industry = Russett[, 4:5],
 #-------------------
 # Step one - tuning the parameters
 res_permut=rgcca_permutation(blocks=blocks,type="rgcca",scheme="factorial",nperm=100)
-print.permutation(res_permut)
+print(res_permut)
 names(res_permut)
 plot(res_permut)
 plot(res_permut, type="crit")
@@ -46,15 +46,15 @@ print(resBootstrap)
 res_cv=rgcca_cv(blocks,par="ncomp")
 res_cv=rgcca_cv(blocks,par="tau")
 
-rgcca(res_cv)
-print(res,bars="stderr")
-plot(res,bars="quantile")
-plot(res,bars="ci")
-names(res)
-res$cv
-res$bestpenalties
+res=rgcca(res_cv)
+print(res_cv,bars="stderr")
+plot(res_cv,bars="quantile")
+plot(res_cv,bars="ci")
+names(res_cv)
+res_cv$cv
+res_cv$bestpenalties
 # Step two - vizualizing
-res_rgcca=rgcca(blocks,tau=res$bestpenalties,ncomp=2)
+res_rgcca=rgcca(blocks,tau=res_cv$bestpenalties,ncomp=2)
 plot(res_rgcca,type="ind",resp=response)
 # Step three - validating
 boot=bootstrap(res_rgcca)
@@ -151,17 +151,19 @@ plot(res_permut)
 plot(res_permut, type="crit")
 tau_res=res_permut$bestpenalties
 # Stepi two - vizualizing rgcca
-resRgcca=rgcca(blocks,tau=tau_res)
+resRgcca=rgcca(blocks,tau=tau_res,superblock=TRUE)
 plot(resRgcca)
-resRgcca=rgcca(blocks,tau=tau_res,ncomp=c(2,2,3))
+resRgcca=rgcca(blocks,tau=tau_res,ncomp=c(2,2,3),superblock=TRUE)
 plot(resRgcca,block=1)
 plot(resRgcca,comp=2)
 plot(resRgcca,type="network")
 response=matrix( Russett[, 11],ncol=1);rownames(response)=rownames(Russett)
+
 plot(resRgcca,type="ind",resp=response,block=2)
 plot(resRgcca,type="ind",resp=response,block=1)
 plot(resRgcca,type="ind",resp=response,block=1:2,comp=c(1,1))
 plot(resRgcca,type="var",block=2)
+
 # Step three -boostrapping the results
 resBootstrap=bootstrap(resRgcca,n_boot = 100)
 plot(resBootstrap,block=1)
@@ -185,11 +187,11 @@ plot(res_pattern)
 
 # choosing NA method
 resWhich=whichNAmethod(blocksNA,listMethods = c("complete","nipals","knn4","em","sem"))
-plot(resWhich,output="a",bars="stderr")
+plot(resWhich,type="a",bars="stderr")
 resRgcca=rgcca(blocksNA,method="knn4")
 
 resNaEvol=naEvolution(blocksNA,listMethods = c("complete","nipals","knn4"),prctNA=c(0.1,0.2,0.3))
-plot(resNaEvol,output="a")
+plot(resNaEvol,type="a")
 
 #MIRGCCA
 resMIRGCCA=MIRGCCA(blocks=blocksNA,option="knn",k=5,tau=rep(1,3))
@@ -211,10 +213,10 @@ plot(resRGCCANA2,type="cor") # cor (rgcca$A,)
 plot(resRGCCANA2,type="network")
 
 resRGCCANA3=rgcca(blocksNA,method="mean")
-plot_ind(resRGCCANA3)
-plot_var_2D(resRGCCANA3)
-plot_var_1D(resRGCCANA3)
-plot_ave(resRGCCANA3)
+plot(resRGCCANA2,type="ave")
+plot(resRGCCANA2,type="both") 
+plot(resRGCCANA2,type="cor") # cor (rgcca$A,) 
+plot(resRGCCANA2,type="network")
 
 res_permut=rgcca_permutation(blocks=blocksNA)
 plot(res_permut)

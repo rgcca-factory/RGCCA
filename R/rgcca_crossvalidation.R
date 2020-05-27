@@ -2,6 +2,7 @@
 #' 
 #' Uses cross-validation to validate a predictive model of RGCCA
 #' @inheritParams rgcca_predict
+#' @inheritParams rgcca
 #' @inheritParams bootstrap
 #' @inheritParams plot_ind
 #' @examples
@@ -26,6 +27,7 @@ rgcca_crossvalidation <- function(
     scale_block=TRUE,
     tol=1e-8,
     scheme="factorial",
+    method="nipals",
     ...) {
 
     stopifnot(is(rgcca_res, "rgcca"))
@@ -52,6 +54,7 @@ rgcca_crossvalidation <- function(
                           scheme=scheme,
                           superblock=FALSE,
                           inds = inds,
+                          method = method,
                           ...) #Rgcca on all individuals but inds
             rgcca_k$a <- check_sign_comp(rgcca_res, rgcca_k$a)
 
@@ -74,6 +77,7 @@ rgcca_crossvalidation <- function(
             scale_block=scale_block,
             tol=tol,
             scheme=scheme,
+            method=method,
             inds = .Machine$integer.max,
             ...
         )

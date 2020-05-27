@@ -4,29 +4,14 @@
 \alias{rgcca_permutation}
 \title{Tuning RGCCA parameters}
 \usage{
-rgcca_permutation(
-  blocks,
-  perm.par = "tau",
-  perm.value = NULL,
-  nperm = 20,
-  n_cores = parallel::detectCores() - 1,
-  quiet = TRUE,
-  type = "rgcca",
-  scale = TRUE,
-  scale_block = TRUE,
-  connection = matrix(1, length(blocks), length(blocks)) - diag(length(blocks)),
-  scheme = "factorial",
-  ncomp = rep(1, length(blocks)),
-  tau = rep(1, length(blocks)),
-  sparsity = rep(1, length(blocks)),
-  init = "svd",
-  bias = TRUE,
-  tol = 1e-08,
-  response = NULL,
-  superblock = FALSE,
-  method = "nipals",
-  ...
-)
+rgcca_permutation(blocks, perm.par = "tau", perm.value = NULL,
+  nperm = 20, n_cores = parallel::detectCores() - 1, quiet = TRUE,
+  type = "rgcca", scale = TRUE, scale_block = TRUE,
+  connection = matrix(1, length(blocks), length(blocks)) -
+  diag(length(blocks)), scheme = "factorial", ncomp = rep(1,
+  length(blocks)), tau = rep(1, length(blocks)), sparsity = rep(1,
+  length(blocks)), init = "svd", bias = TRUE, tol = 1e-08,
+  response = NULL, superblock = FALSE, method = "nipals", ...)
 }
 \arguments{
 \item{blocks}{A list of matrix}

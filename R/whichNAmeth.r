@@ -83,7 +83,7 @@ whichNAmethod=function(blocks,listMethods=c("complete","nipals"),typeNA="block",
     
     }
   resultComparison=NULL
-  resultComparison=mclapply(1:nDatasets,function(i)
+  resultComparison=parallel::mclapply(1:nDatasets,function(i)
   {  
     selectCompletePatient=listNAdataset[[i]]$subjectKept
     indicators=NULL
