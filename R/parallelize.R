@@ -21,9 +21,9 @@ parallelize <- function(
     envir = environment(),
     applyFunc = "parSapply") {
 
-#    load_libraries("parallel")
-#   if (!("parallel" %in% installed.packages()[, "Package"]))
-#    stop_rgcca("'parallel' package required and not available.")
+    load_libraries("parallel")
+   if (!("parallel" %in% installed.packages()[, "Package"]))
+    stop_rgcca("'parallel' package required and not available.")
 
     if(is.null(n_cores))
     n_cores <- parallel::detectCores() - 1
@@ -55,12 +55,7 @@ parallelize <- function(
                 parallel::stopCluster(cl)
                 cl <- c()
             })
-            
-      
-        
-
     }else{
-
         res <- parallel::mclapply(
             nperm,
             f,
@@ -69,6 +64,5 @@ parallelize <- function(
         if (applyFunc == "parSapply")
            res <- simplify2array(res)
     }
-
     return(res)
 }
