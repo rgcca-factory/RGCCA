@@ -259,7 +259,7 @@ rgcca <- function(
     if (!is.matrix(opt$connection) || !is.null(response))
         opt$connection <- set_connection(
             opt$blocks,
-            response=response
+            superblock=opt$superblock,response=response
         )
 
     check_connection(opt$connection, opt$blocks)

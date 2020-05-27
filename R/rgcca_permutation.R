@@ -5,6 +5,7 @@
 #' @inheritParams set_connection
 #' @inheritParams bootstrap
 #' @inheritParams rgcca
+#' @param rgcca_res a result of rgcca (from whom all parameters will be imported)
 #' @param perm.par "sparsity","tau" or "ncomp".
 #' @param perm.value  If perm.par="sparsity", a matrix, a vector or an integer containing sets of constraint 
 #' variables to be tested, one row by combination. By default, sgcca.permute takes 10 sets between 
@@ -63,9 +64,23 @@ rgcca_permutation <- function(
     rgcca_res=NULL,
     ...) 
     {
-    if(class(blocks)=="permutation")
+   
+    if(class(rgcca_res)=="rgcca")
     {
-        blocks<-blocks$call$blocks
+        message("All parameters were imported by a rgcca object provided in the blocks parameter")
+        scale_block=rgcca_res$call$scale_block
+        scale=rgcca_res$call$scale
+        scheme=rgcca_res$call$scheme
+        response=rgcca_res$call$response
+        tol=rgcca_res$call$tol
+        method=rgcca_res$call$method
+        bias=rgcca_res$call$bias
+        blocks<-rgcca_res$call$raw
+        superblock=rgcca_res$call$superblock
+        connection=rgcca_res$call$connection
+        tau=rgcca_res$call$tau
+        ncomp=rgcca_res$call$ncomp
+        sparsity=rgcca_res$call$sparsity
     }
     # call <- as.list(formals(rgcca_permutation))
     call=list(type=type, perm.par = perm.par, perm.value = perm.value, nperm=nperm, quiet=quiet,connection=connection,method=method,tol=tol,scheme=scheme,scale=scale,scale_block=scale_block,blocks=blocks,superblock=superblock)

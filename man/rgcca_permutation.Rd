@@ -73,7 +73,7 @@ a superblock}
 \item{\code{"sem"}}{ corresponds to impute the data with EM-type algorithms with superblock approach}
 \item{\code{"knn1"}}{ corresponds to impute the data with the 1-Nearest Neighbor. 1 can be replace by another number (such as knn3) to impute with the 3-Nearest Neighbors.}}}
 
-\item{rgcca_res}{Result of a RGCCA (see  \code{\link[RGCCA]{rgcca}} )}
+\item{rgcca_res}{a result of rgcca (from whom all parameters will be imported)}
 
 \item{...}{other RGCCA parameters # TODO}
 }

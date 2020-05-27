@@ -10,6 +10,7 @@
 #' @param type_cv  type of crossvalidation. Default to "regression" #TODO
 #' @param n_cv number of cross-validation. Default to 1 (with kfold option and 5)
 #' @param one_value_per_cv If TRUE, the k values obtained for each k-fold steps are averaged 
+#' @param rgcca_res a result of rgcca (from whom all parameters will be imported)
 #' @export
 #' @examples
 #' data("Russett")
@@ -39,9 +40,28 @@ rgcca_cv=function( blocks,
           tol=1e-6,
           scheme="factorial",
           method="nipals",
+          rgcca_res=NULL,
           ...)
 {
 
+    if(class(rgcca_res)=="rgcca")
+    {
+        message("All parameters were imported by a rgcca object provided in the blocks parameter")
+        scale_block=rgcca_res$call$scale_block
+        scale=rgcca_res$call$scale
+        scheme=rgcca_res$call$scheme
+        response=rgcca_res$call$response
+        tol=rgcca_res$call$tol
+        method=rgcca_res$call$method
+        bias=rgcca_res$call$bias
+        blocks<-rgcca_res$call$raw
+        superblock=rgcca_res$call$superblock
+        connection=rgcca_res$call$connection
+        tau=rgcca_res$call$tau
+        ncomp=rgcca_res$call$ncomp
+        sparsity=rgcca_res$call$sparsity
+    }
+    
     if(is.null(response)){ stop("response is required for rgcca_cv (it is an integer comprised between 1 and the number of blocks) ")}
     if(superblock){stop_rgcca("Cross-validation is only possible without superblock")}
     if(validation=="loo")

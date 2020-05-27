@@ -9,7 +9,8 @@ rgcca_cv(blocks, type = "rgcca", response = NULL, par = "ncomp",
   fit = "lm", k = 5, n_cv = 1, one_value_per_cv = FALSE,
   n_cores = parallel::detectCores() - 1, quiet = TRUE,
   superblock = FALSE, scale = TRUE, scale_block = TRUE,
-  tol = 1e-06, scheme = "factorial", method = "nipals", ...)
+  tol = 1e-06, scheme = "factorial", method = "nipals",
+  rgcca_res = NULL, ...)
 }
 \arguments{
 \item{blocks}{A list that contains the \eqn{J} blocks of variables \eqn{\mathbf{X_1}, \mathbf{X_2}, ..., \mathbf{X_J}}.}
@@ -61,6 +62,8 @@ a superblock}
 \item{\code{"em"}}{ corresponds to impute the data with EM-type algorithms}
 \item{\code{"sem"}}{ corresponds to impute the data with EM-type algorithms with superblock approach}
 \item{\code{"knn1"}}{ corresponds to impute the data with the 1-Nearest Neighbor. 1 can be replace by another number (such as knn3) to impute with the 3-Nearest Neighbors.}}}
+
+\item{rgcca_res}{a result of rgcca (from whom all parameters will be imported)}
 
 \item{...}{other RGCCA parameters # TODO}
 }
