@@ -60,9 +60,13 @@ rgcca_permutation <- function(
     response = NULL,
     superblock = FALSE,
     method = "nipals",
-    ...) {
-
-    
+    rgcca_res=NULL,
+    ...) 
+    {
+    if(class(blocks)=="permutation")
+    {
+        blocks<-blocks$call$blocks
+    }
     # call <- as.list(formals(rgcca_permutation))
     call=list(type=type, perm.par = perm.par, perm.value = perm.value, nperm=nperm, quiet=quiet,connection=connection,method=method,tol=tol,scheme=scheme,scale=scale,scale_block=scale_block,blocks=blocks,superblock=superblock)
     check_integer("nperm", nperm)

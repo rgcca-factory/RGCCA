@@ -14,7 +14,7 @@
 #'     agriculture = Russett[, seq(3)],
 #'     industry = Russett[, 4:5],
 #'     politic = Russett[, 6:11])
-#'     res=rgcca_cv(blocks, type="rgcca",par="tau",par_value=c(0,0.2,0.3),n_cv=1,n_cores=1)
+#'     res=rgcca_cv(blocks, response=3,type="rgcca",par="tau",par_value=c(0,0.2,0.3),n_cv=1,n_cores=1)
 #'    plot(res)
 #'@importFrom ggplot2 ggplot
 plot.cval=function(x,bars="sd",alpha=0.05,cex = 1, cex_main = 14 * cex, cex_sub = 10 * cex,...)

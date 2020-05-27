@@ -11,7 +11,8 @@ rgcca_permutation(blocks, perm.par = "tau", perm.value = NULL,
   diag(length(blocks)), scheme = "factorial", ncomp = rep(1,
   length(blocks)), tau = rep(1, length(blocks)), sparsity = rep(1,
   length(blocks)), init = "svd", bias = TRUE, tol = 1e-08,
-  response = NULL, superblock = FALSE, method = "nipals", ...)
+  response = NULL, superblock = FALSE, method = "nipals",
+  rgcca_res = NULL, ...)
 }
 \arguments{
 \item{blocks}{A list of matrix}
@@ -58,7 +59,7 @@ If tau is a matrix, tau[k, j] is associated with \eqn{\mathbf{X}_{jk}} (\eqn{k}t
 
 \item{tol}{The stopping value for convergence.}
 
-\item{response}{Integer representing the number of the response block. Indeed, when a supervised analysis is chosen (plspm, pls), the response block has to be specified.}
+\item{response}{if not NULL, number corresponding to the response block}
 
 \item{superblock}{A boolean giving the presence (TRUE) / absence (FALSE) of
 a superblock}
@@ -71,6 +72,8 @@ a superblock}
 \item{\code{"em"}}{ corresponds to impute the data with EM-type algorithms}
 \item{\code{"sem"}}{ corresponds to impute the data with EM-type algorithms with superblock approach}
 \item{\code{"knn1"}}{ corresponds to impute the data with the 1-Nearest Neighbor. 1 can be replace by another number (such as knn3) to impute with the 3-Nearest Neighbors.}}}
+
+\item{rgcca_res}{Result of a RGCCA (see  \code{\link[RGCCA]{rgcca}} )}
 
 \item{...}{other RGCCA parameters # TODO}
 }

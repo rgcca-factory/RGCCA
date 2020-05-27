@@ -128,8 +128,6 @@ rgcca <- function(
     knn.output = "weightedMean",
     knn.klim = NULL,
     knn.scale_block = TRUE) {
-
-    
     
     if(class(blocks)=="permutation")
     {
@@ -244,7 +242,7 @@ rgcca <- function(
         quiet = quiet,
         response = response
     )
-
+    raw=blocks
     opt$blocks <- scaling(blocks, scale,scale_block = scale_block)
     opt$superblock <- check_superblock(response, opt$superblock, !quiet)
     opt$blocks <- set_superblock(opt$blocks, opt$superblock, type, !quiet)
@@ -252,16 +250,16 @@ rgcca <- function(
     if (!is.null(response)) {
         # || tolower(type) == "ra"
         response <- check_blockx("response", response, opt$blocks)
-        pars <- c("blocks", "ncomp", "penalty")
-        for (i in seq(length(pars)))
-            opt[[pars[i]]] <- c(opt[[pars[i]]][-response], opt[[pars[i]]][response])
+        #pars <- c("blocks", "ncomp", "penalty")
+        #for (i in seq(length(pars)))
+        #    opt[[pars[i]]] <- c(opt[[pars[i]]][-response], opt[[pars[i]]][response])
     }
 
 
     if (!is.matrix(opt$connection) || !is.null(response))
         opt$connection <- set_connection(
             opt$blocks,
-            (opt$superblock | !is.null(response))
+            response=response
         )
 
     check_connection(opt$connection, opt$blocks)
@@ -319,7 +317,8 @@ rgcca <- function(
         connection = opt$connection,
         superblock = opt$superblock,
         ncomp = opt$ncomp,
-        scheme = opt$scheme
+        scheme = opt$scheme,
+        raw=raw
     )
 
     is_optimal <- any(opt$penalty == "optimal")

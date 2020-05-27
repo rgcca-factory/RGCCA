@@ -17,12 +17,12 @@
 #'     agriculture = Russett[, seq(3)],
 #'     industry = Russett[, 4:5],
 #'     politic = Russett[, 6:11])
-#'     res=rgcca_cv(blocks, type="rgcca",par="tau",par_value=c(0,0.2,0.3),n_cv=1,n_cores=1)
+#'     res=rgcca_cv(blocks,response=3, type="rgcca",par="tau",par_value=c(0,0.2,0.3),n_cv=1,n_cores=1)
 #'     
 #'@importFrom utils txtProgressBar setTxtProgressBar
 rgcca_cv=function( blocks,
           type = "rgcca",
-          response=length(blocks),
+          response=NULL,
           par = "ncomp",
           par_value = NULL,
           validation = "kfold",
@@ -41,6 +41,8 @@ rgcca_cv=function( blocks,
           method="nipals",
           ...)
 {
+
+    if(is.null(response)){ stop("response is required for rgcca_cv (it is an integer comprised between 1 and the number of blocks) ")}
     if(superblock){stop_rgcca("Cross-validation is only possible without superblock")}
     if(validation=="loo")
     {

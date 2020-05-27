@@ -18,7 +18,7 @@ set_rgcca <- function(
     method = "complete",
     boot = FALSE,
     inds = NULL) {
-
+    if(is.null(connection)){    connection <- rgcca_res$call$connection }
     if(is.null(scale)){    scale <- rgcca_res$call$scale }
     if(is.null(scale_block)){    scale_block <- rgcca_res$call$scale_block }
     if(is.null(superblock)){     superblock <- rgcca_res$call$superblock }
@@ -30,7 +30,7 @@ set_rgcca <- function(
     if(is.null(ncomp)){        ncomp <- rgcca_res$call$ncomp}
      if (is.null(blocks)) {
       #  blocks <- rgcca_res$call$blocks
-         blocks=rgcca_res$A 
+         blocks=rgcca_res$call$raw
         if (superblock) {
             J <- length(blocks)
             blocks <- blocks[-J]
@@ -102,7 +102,7 @@ set_rgcca <- function(
     func <- quote(
         rgcca(
             boot_blocks,
-            connection,
+            connection=connection,
             superblock = superblock,
             response = response,
             ncomp = ncomp,

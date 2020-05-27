@@ -4,13 +4,12 @@
 \alias{rgcca_cv}
 \title{rgcca_cv}
 \usage{
-rgcca_cv(blocks, type = "rgcca", response = length(blocks),
-  par = "ncomp", par_value = NULL, validation = "kfold",
-  type_cv = "regression", fit = "lm", k = 5, n_cv = 1,
-  one_value_per_cv = FALSE, n_cores = parallel::detectCores() - 1,
-  quiet = TRUE, superblock = FALSE, scale = TRUE,
-  scale_block = TRUE, tol = 1e-06, scheme = "factorial",
-  method = "nipals", ...)
+rgcca_cv(blocks, type = "rgcca", response = NULL, par = "ncomp",
+  par_value = NULL, validation = "kfold", type_cv = "regression",
+  fit = "lm", k = 5, n_cv = 1, one_value_per_cv = FALSE,
+  n_cores = parallel::detectCores() - 1, quiet = TRUE,
+  superblock = FALSE, scale = TRUE, scale_block = TRUE,
+  tol = 1e-06, scheme = "factorial", method = "nipals", ...)
 }
 \arguments{
 \item{blocks}{A list that contains the \eqn{J} blocks of variables \eqn{\mathbf{X_1}, \mathbf{X_2}, ..., \mathbf{X_J}}.}
@@ -76,6 +75,6 @@ blocks <- list(
     agriculture = Russett[, seq(3)],
     industry = Russett[, 4:5],
     politic = Russett[, 6:11])
-    res=rgcca_cv(blocks, type="rgcca",par="tau",par_value=c(0,0.2,0.3),n_cv=1,n_cores=1)
+    res=rgcca_cv(blocks,response=3, type="rgcca",par="tau",par_value=c(0,0.2,0.3),n_cv=1,n_cores=1)
     
 }
