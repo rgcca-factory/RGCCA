@@ -7,6 +7,11 @@ ncomp=1
 rgcca_out <- rgcca(blocks,ncomp=1)
 boot <- bootstrap(rgcca_out, n_boot = 4, n_cores = 1)
 
+init=Sys.time();boot <- bootstrap(rgcca_out, n_boot = 1000, n_cores = 1);Sys.time()-init
+init=Sys.time();boot <- bootstrap(rgcca_out, n_boot = 1000, para=FALSE);Sys.time()-init
+init=Sys.time();boot <- bootstrap(rgcca_out, n_boot = 1000, para=TRUE);Sys.time()-init
+
+
 test_that("bootstrap_default_1", {
     expect_equal(length(boot), 2)
     expect_equal(length(boot$bootstrap), 1)
@@ -42,17 +47,17 @@ test_that("bootstrap_default", {
     expect_identical(NROW(select_var), NCOL(rgcca_out$call$blocks[[length(rgcca_out$call$blocks)]]))
 })
 
-test_that("bootstrap_with_args", {
-    rgcca_out <- rgcca(blocks, superblock = FALSE)
-    expect_is(
-        bootstrap(
-            rgcca_out, 
-            n_boot = 2, 
-            n_cores = 1, 
-            blocks = lapply(blocks, scale),
-            superblock = FALSE),
-        "bootstrap")
-})
+# test_that("bootstrap_with_args", {
+#     rgcca_out <- rgcca(blocks, superblock = FALSE)
+#     expect_is(
+#         bootstrap(
+#             rgcca_out, 
+#             n_boot = 2, 
+#             n_cores = 1, 
+#             blocks = lapply(blocks, scale),
+#             superblock = FALSE),
+#         "bootstrap")
+# })
 
 blocks[[1]][1:3, 1] <- NA
 blocks[[1]][4,] <- NA

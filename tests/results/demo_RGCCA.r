@@ -18,7 +18,7 @@ blocks = list(agriculture = Russett[, seq(3)], industry = Russett[, 4:5],
 res_permut=rgcca_permutation(blocks=blocks,type="rgcca",scheme="factorial",nperm=100)
 print(res_permut)
 names(res_permut)
-plot(res_permut)
+plot(res_permut,type="zstat")
 plot(res_permut, type="crit")
 tau_res=res_permut$bestpenalties
 # Stepi two - vizualizing rgcca
@@ -43,8 +43,8 @@ print(resBootstrap)
 # Supervized approach
 #--------------------
 # Step one - tuning the parameters
-res_cv=rgcca_cv(blocks,par="ncomp")
-res_cv=rgcca_cv(blocks,par="tau")
+res_cv=rgcca_cv(blocks,response=3,par="ncomp")
+res_cv=rgcca_cv(blocks,response=3,par="tau")
 
 res=rgcca(res_cv)
 print(res_cv,bars="stderr")
@@ -68,7 +68,7 @@ plot(boot,comp=2)
 
 # supervised sgcca
 #-----------------
-res=rgcca_cv(blocks,par="sparsity",type="sgcca")
+res=rgcca_cv(blocks,response=3,par="sparsity",type="sgcca")
 plot(res)
 
 res_sparsity=rgcca(blocks,sparsity=res$bestpenalties)
@@ -126,8 +126,8 @@ plot(res_permut,type="crit")
 plot(res_permut)
 
 # crossvalidation (by leave-one-out)
-res_cv=rgcca_cv(blocks=blocks,par="tau",par_value=perm.values)
-res_cv=rgcca_cv(blocks=blocks,par="tau",par_value=perm.values,validation="kfold",k=10)
+res_cv=rgcca_cv(blocks=blocks,response=3,par="tau",par_value=perm.values)
+res_cv=rgcca_cv(blocks=blocks,response=3,par="tau",par_value=perm.values,validation="kfold",k=10)
 print(res_cv)
 summary(res_cv)
 plot(res_cv)
@@ -223,7 +223,7 @@ plot(res_permut)
 print(res_permut)
 #choice of the number of components
 par_value=matrix(c(1,1,1,2,2,1),2,3)
-resCV=rgcca_cv(blocks,type="rgcca",par="ncomp",par_value=par_value,validation="kfold",k=5)
+resCV=rgcca_cv(blocks,response=3,type="rgcca",par="ncomp",par_value=par_value,validation="kfold",k=5)
 plot(resCV)
 print(resCV)
 

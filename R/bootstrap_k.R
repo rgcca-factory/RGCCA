@@ -7,11 +7,10 @@
 #' @param rgcca_res Result of rgcca function
 #' @return A list of RGCCA bootstrap weights
 bootstrap_k <- function(
-    rgcca_res,
-    ...) {
+    rgcca_res) {
 
     blocks_all <- rgcca_res$call$blocks
-    rgcca_res_boot <- set_rgcca(rgcca_res, boot = TRUE, ...)
+    rgcca_res_boot <- set_rgcca(rgcca_res, boot = TRUE)
     w <- rgcca_res_boot$a
 
     # Add removed variables

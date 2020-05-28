@@ -8,13 +8,13 @@ rgcca_crossvalidation(rgcca_res, validation = "loo",
   model = "regression", fit = "lm", k = 5,
   n_cores = parallel::detectCores() - 1, scale = TRUE,
   scale_block = TRUE, tol = 1e-08, scheme = "factorial",
-  method = "nipals", ...)
+  method = "nipals", para = NULL, ...)
 
 rgcca_crossvalidation(rgcca_res, validation = "loo",
   model = "regression", fit = "lm", k = 5,
   n_cores = parallel::detectCores() - 1, scale = TRUE,
   scale_block = TRUE, tol = 1e-08, scheme = "factorial",
-  method = "nipals", ...)
+  method = "nipals", para = NULL, ...)
 }
 \arguments{
 \item{rgcca_res}{A list giving the results of a R/SGCCA}
@@ -48,7 +48,9 @@ rgcca_crossvalidation(rgcca_res, validation = "loo",
 \item{\code{"sem"}}{ corresponds to impute the data with EM-type algorithms with superblock approach}
 \item{\code{"knn1"}}{ corresponds to impute the data with the 1-Nearest Neighbor. 1 can be replace by another number (such as knn3) to impute with the 3-Nearest Neighbors.}}}
 
-\item{...}{other RGCCA parameters # TODO}
+\item{para}{if TRUE parallelization is run, if FALSE, no parallelisation is run. If NULL (default) parallelization is always used except for Windows in case of length(nperm)<10}
+
+\item{...}{Further graphical parameters (see plot2D functions)}
 }
 \description{
 Cross-validation for RGCCA

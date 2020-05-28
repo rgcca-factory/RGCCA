@@ -42,18 +42,18 @@ test_that("bootstrap_default", {
     expect_is(select_var, "data.frame")
     expect_identical(NROW(select_var), NCOL(rgcca_out$call$blocks[[length(rgcca_out$call$blocks)]]))
 })
-
-test_that("bootstrap_with_args", {
-    rgcca_out <- rgcca(blocks, superblock = FALSE,ncomp=2)
-    expect_is(
-        bootstrap(
-            rgcca_out, 
-            n_boot = 2, 
-            n_cores = 1, 
-            blocks = lapply(blocks, scale),
-            superblock = FALSE),
-        "bootstrap")
-})
+# 
+# test_that("bootstrap_with_args", {
+#     rgcca_out <- rgcca(blocks, superblock = FALSE,ncomp=2)
+#     expect_is(
+#         bootstrap(
+#             rgcca_out, 
+#             n_boot = 2, 
+#             n_cores = 1, 
+#             blocks = lapply(blocks, scale),
+#             superblock = FALSE),
+#         "bootstrap")
+# })
 
 blocks[[1]][1:3, 1] <- NA
 blocks[[1]][4,] <- NA

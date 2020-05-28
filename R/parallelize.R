@@ -4,6 +4,7 @@
 #' @param varlist character vector of names of objects to export  
 #' @param envir environment                                               
 #' @param applyFunc function to be applied
+#' @param para if TRUE parallelization is run, if FALSE, no parallelisation is run. If NULL (default) parallelization is always used except for Windows in case of length(nperm)<10
 #' @inheritParams bootstrap
 #' @importFrom parallel stopCluster
 #' @importFrom parallel clusterExport
@@ -19,18 +20,33 @@ parallelize <- function(
     f,
     n_cores = NULL,
     envir = environment(),
-    applyFunc = "parSapply") {
-
-    load_libraries("parallel")
-   if (!("parallel" %in% installed.packages()[, "Package"]))
-    stop_rgcca("'parallel' package required and not available.")
-
-    if(is.null(n_cores))
-    n_cores <- parallel::detectCores() - 1
-
-    if (Sys.info()["sysname"] == "Windows") {
-
-      
+    applyFunc = "parSapply", 
+    para=NULL) {
+    if(is.null(para))
+    {
+        if( Sys.info()["sysname"] == "Windows"& length(nperm)<10)
+        {
+            para=FALSE
+        }
+        else
+        {
+            para=TRUE
+        }
+       
+    }
+    
+    if(para)
+    {
+        load_libraries("parallel")
+        if (!("parallel" %in% installed.packages()[, "Package"]))
+            stop_rgcca("'parallel' package required and not available.")
+        
+        if(is.null(n_cores))
+            n_cores <- parallel::detectCores() - 1
+        
+        if (Sys.info()["sysname"] == "Windows") {
+            
+            
             cl <- parallel::makeCluster(n_cores)
             
             parallel::clusterExport(
@@ -41,7 +57,7 @@ parallelize <- function(
             
             
             parallel::clusterEvalQ(cl, library(RGCCA))
-      
+            
             # library(parallel)
             parallel::clusterEvalQ(cl, library(parallel))
             # print("all okay")
@@ -55,14 +71,27 @@ parallelize <- function(
                 parallel::stopCluster(cl)
                 cl <- c()
             })
-    }else{
-        res <- parallel::mclapply(
-            nperm,
-            f,
-            mc.cores = n_cores)
-
-        if (applyFunc == "parSapply")
-           res <- simplify2array(res)
+            
+            
+        }else{
+            res <- parallel::mclapply(
+                nperm,
+                f,
+                mc.cores = n_cores)
+            
+            if (applyFunc == "parSapply")
+                res <- simplify2array(res)
+        }
+        
     }
+    else
+    {
+        res=lapply(
+            nperm,
+            f)
+        if (applyFunc == "parSapply")
+            res <- simplify2array(res)
+    }
+   
     return(res)
 }
