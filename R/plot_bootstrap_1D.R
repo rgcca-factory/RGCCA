@@ -51,7 +51,7 @@ plot_bootstrap_1D <- function(
     if (!is.null(df_b))
         stopifnot(is(df_b, "df_bootstrap"))
     check_integer("n_mark", n_mark)
-    if (is.null(title))
+
         title <- paste0(attributes(df_b)$indexes[[x]],
                    "\n(",
                    attributes(df_b)$n_boot,

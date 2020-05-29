@@ -7,9 +7,9 @@ ncomp=1
 rgcca_out <- rgcca(blocks,ncomp=1)
 boot <- bootstrap(rgcca_out, n_boot = 4, n_cores = 1)
 
-init=Sys.time();boot <- bootstrap(rgcca_out, n_boot = 1000, n_cores = 1);Sys.time()-init
-init=Sys.time();boot <- bootstrap(rgcca_out, n_boot = 1000, para=FALSE);Sys.time()-init
-init=Sys.time();boot <- bootstrap(rgcca_out, n_boot = 1000, para=TRUE);Sys.time()-init
+#init=Sys.time();boot <- bootstrap(rgcca_out, n_boot = 1000, n_cores = 1);Sys.time()-init
+#init=Sys.time();boot <- bootstrap(rgcca_out, n_boot = 1000, para=FALSE);Sys.time()-init
+#init=Sys.time();boot <- bootstrap(rgcca_out, n_boot = 1000, para=TRUE);Sys.time()-init
 
 
 test_that("bootstrap_default_1", {

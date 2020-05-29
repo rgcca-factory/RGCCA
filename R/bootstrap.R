@@ -4,7 +4,7 @@
 #' @param rgcca_res Result of a RGCCA (see  \code{\link[RGCCA]{rgcca}} )
 #' @param n_boot A integer for the number of boostraps
 #' @param n_cores An integer for the number of cores used in parallelization 
-#' @param ... other RGCCA parameters # TODO
+#' @param para if TRUE parallelization is run, if FALSE, no parallelisation is run. If NULL (default) parallelization is always used except for Windows in case of length(nperm)<10
 #' @return A list containing two elements: bootstrap and rgcca. bootstrap is a list of produced rgccas while rgcca is the original rgcca.
 #' @examples
 #' library(RGCCA)
@@ -15,20 +15,18 @@
 #' b=bootstrap(rgcca_out, n_boot = 2, n_cores = 1)
 #' plot(b,n_cores=1)
 #' plot(b,type="2D",n_cores=1)
-#' rgcca_out = rgcca(blocks, superblock = FALSE)
-#' b=bootstrap(rgcca_out, n_boot = 2, n_cores = 1, blocks = lapply(blocks, scale),
-#'  superblock = FALSE)
 #' @export
 #' @seealso \code{\link[RGCCA]{plot.bootstrap}} , \code{\link[RGCCA]{print.bootstrap}} 
 bootstrap <- function(
     rgcca_res,
     n_boot = 5,
     n_cores = parallel::detectCores() - 1,
-    ...) {
+    para=NULL) {
+    
     ndefl_max=max(rgcca_res$call$ncomp)
     list_res=list()
     for(i in 1:ndefl_max)
-    {
+    { 
         list_res[[i]]=list()
         for(block in names(rgcca_res$call$blocks))
         {
@@ -53,52 +51,68 @@ bootstrap <- function(
 
     varlist <- c(ls(getNamespace("RGCCA")))
     # get the parameter dot-dot-dot
-    args_values <- list(...)
-    args_names <- names(args_values)
-    n <- args_values
-    if (!is.null(n))
-        n <- seq(length(args_values))
-    for (i in n) {
-        if (!is.null(args_names[i])) {
-            # dynamically asssign these values
-            assign(args_names[i], args_values[[i]])
-            # send them to the clusters to parallelize
-            varlist <- c(varlist, args_names[i])
-            # without this procedure rgcca_crossvalidation(rgcca_res, blocks = blocks2)
-            # or rgcca_crossvalidation(rgcca_res, blocks = lapply(blocks, scale)
-            # does not work.
-        }
-    }
-
+    # args_values <- list(...)
+    # args_names <- names(args_values)
+    # n <- args_values
+    # if (!is.null(n))
+    #     n <- seq(length(args_values))
+    # for (i in n) {
+    #     if (!is.null(args_names[i])) {
+    #         # dynamically asssign these values
+    #         assign(args_names[i], args_values[[i]])
+    #         # send them to the clusters to parallelize
+    #         varlist <- c(varlist, args_names[i])
+    #         # without this procedure rgcca_crossvalidation(rgcca_res, blocks = blocks2)
+    #         # or rgcca_crossvalidation(rgcca_res, blocks = lapply(blocks, scale)
+    #         # does not work.
+    #     }
+    # }
+ 
+    
     W <- parallelize(
         varlist,
         seq(n_boot), 
         function(x) {
-            resBoot=bootstrap_k(rgcca_res, ...)
+            resBoot=bootstrap_k(rgcca_res)
         }
         , 
         n_cores = n_cores,
         envir = environment(),
-        applyFunc = "parLapply")
-    # 
-    for(k in seq(n_boot))
-    {
-             for(i in 1:ndefl_max)
-            {
-                for(j in 1:length(rgcca_res$call$blocks))
-                {
-                    block=names(rgcca_res$call$blocks)[j]
-                   
-                    if(i<=dim(W[[k]][[block]])[2])
+        applyFunc = "parLapply",
+        para=para
+        )
+#return(W)
+       
+       for(k in seq(n_boot))
+       {
+          
+               for(i in 1:ndefl_max)
+              {
+                   for(j in 1:length(rgcca_res$call$blocks))
                    {
-                        list_res[[i]][[block]][,k]= W[[k]][[block]][,i]
-                  } 
+                       block=names(rgcca_res$call$blocks)[j]
+                   
+                       if(!is.null(names(W[[k]])))
+                       {
+                         
+                           if(i<=dim(W[[k]][[block]])[2])
+                          {
+                              
+                               list_res[[i]][[block]][,k]=W[[k]][[block]][,i]
+                
+                            } 
+                       }
+                       else
+                       {
+                           print("here")
+                           list_res[[i]][[block]][,k]=rep(NA,length(list_res[[i]][[block]][,k]))
+                       }
+                   }
                 }
-             }
-        }
-    
-
-    message("OK.")
-
-    return(structure(list(bootstrap =list_res, rgcca = rgcca_res), class = "bootstrap"))
+           }
+      
+       
+      # message("OK.")
+      
+      return(structure(list(bootstrap =list_res, rgcca = rgcca_res), class = "bootstrap"))
 }

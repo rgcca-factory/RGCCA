@@ -4,12 +4,10 @@
 \alias{bootstrap_k}
 \title{Compute bootstrap (internal)}
 \usage{
-bootstrap_k(rgcca_res, ...)
+bootstrap_k(rgcca_res)
 }
 \arguments{
 \item{rgcca_res}{Result of rgcca function}
-
-\item{...}{Further graphical parameters (see plot2D)}
 }
 \value{
 A list of RGCCA bootstrap weights

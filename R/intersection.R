@@ -19,7 +19,6 @@
 intersection=function(A)
 {
 	A=lapply(A,as.matrix)
-
     centering=lapply(A,function(x){attributes(x)$'scaled:center'})
     scaling=lapply(A,function(x){attributes(x)$'scaled:scale'})
     

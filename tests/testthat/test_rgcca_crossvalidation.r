@@ -29,7 +29,7 @@ blocks <- list(
  test_that("rgcca_cv_default_1", {
      test_structure_cv(
          rgcca_crossvalidation(rgcca_res=rgcca_out,n_cores=1),
-         0.3513888)
+         0.35159)
  }
  )
  # Cross-validation to find out the prediction error when agri is response and with 2 comp
@@ -37,7 +37,7 @@ blocks <- list(
  test_that("rgcca_cv_default_2", {
           test_structure_cv(
              rgcca_crossvalidation(rgcca_res=rgcca_out,n_cores=1),
-             0.356643)
+             0.3567585)
      }
  )
 

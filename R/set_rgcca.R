@@ -15,7 +15,7 @@ set_rgcca <- function(
     scale_block = NULL,
     superblock = NULL,
     response = NULL,
-    method = "complete",
+    method = NULL,
     boot = FALSE,
     inds = NULL) {
     if(is.null(connection)){    connection <- rgcca_res$call$connection }
@@ -49,7 +49,7 @@ set_rgcca <- function(
 
 
         if (!is.null(rgcca_res$call$response))
-            response <- length(rgcca_res$call$blocks)
+            response <- rgcca_res$call$response
 
   }else
 #        blocks <- scaling(blocks, scale, scale_block = scale_block)
@@ -79,11 +79,11 @@ set_rgcca <- function(
         while (any(sapply(boot_blocks, function(x) length(x)) == 0)) {
 
             id_boot <- sample(NROW(blocks[[1]]), replace = TRUE)
-
+            print(id_boot)
             boot_blocks <- lapply(
                 blocks, 
                 function(x) x[id_boot, , drop = FALSE])
-# TODO : to be replaced by something
+# TODO : to be replaced by something else
            boot_blocks <- remove_null_sd(boot_blocks)
         }
     }else

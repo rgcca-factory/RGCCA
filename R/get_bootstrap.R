@@ -16,7 +16,7 @@
 #' blocks = list(agriculture = Russett[, seq(3)], industry = Russett[, 4:5],
 #'     politic = Russett[, 6:11] )
 #' rgcca_out = rgcca(blocks)
-#' boot = bootstrap(rgcca_out, 5, superblock = FALSE, n_cores = 1)
+#' boot = bootstrap(rgcca_out, 5, n_cores = 1)
 #' get_bootstrap(boot, n_cores = 1)
 #' @export
 #' @importFrom stats pt
@@ -37,7 +37,8 @@ get_bootstrap <- function(
     check_boolean("collapse", collapse)
     check_integer("n_cores", n_cores, 0)
     bootstrapped=b$bootstrap[[comp]][[i_block]]
-    n_boot=dim(bootstrapped)[2]
+    #n_boot=dim(bootstrapped)[2]
+    n_boot=sum(!is.na(bootstrapped[1,]))
     if(tolower(b$rgcca$call$type) %in% c("spls", "spca", "sgcca"))
     {
         mean=apply(bootstrapped,1,function(x){mean(x[x!=0],na.rm=T)})
@@ -45,13 +46,13 @@ get_bootstrap <- function(
     }
     else
     {
-        mean=apply(bootstrapped,1,mean)
-        sd=apply(bootstrapped,1,sd)
+        mean=apply(bootstrapped,1,function(x){mean(x,na.rm=T)})
+        sd=apply(bootstrapped,1,function(x){sd(x,na.rm=T)})
     }
     weight <- b$rgcca$a[[i_block]][, comp]
     occ <- apply(bootstrapped,1,
             function(x)
-                sum(x!= 0) )
+                sum(x!= 0,na.rm=T) )
     
     p.vals <- 2 * pt(abs(weight)/sd, lower.tail = FALSE, df = n_boot - 1)
     tail <- qt(1 - .05 / 2, df = n_boot - 1)
