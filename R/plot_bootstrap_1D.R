@@ -27,102 +27,98 @@
 #' plot_bootstrap_1D(df_b = selected.var)
 #' @export
 plot_bootstrap_1D <- function(
-    b = NULL,
-    df_b = NULL,
-    x = "estimate",
-    y = "occurrences",
-    n_mark = 50,
-    title = NULL, 
-    colors = NULL,
-    comp = 1,
-    bars = "sd",
-    i_block = length(b$bootstrap[[1]]),
-    collapse = FALSE,
-    n_cores = parallel::detectCores() - 1,
-    ...) {
-
-    if (missing(b) && missing(df_b))
-        stop("Please select a bootstrap object.")
-    if (!is.null(b)) {
-        df_b <- get_bootstrap(b, comp, i_block, collapse, n_cores, bars=bars)
-    }
-    if (!is.null(df_b))
-        stopifnot(is(df_b, "df_bootstrap"))
-    check_integer("n_mark", n_mark)
-
-    if (is.null(title))
-        title <- paste0(attributes(df_b)$indexes[[x]],
-                   "\n(",
-                   attributes(df_b)$n_boot,
-                   " bootstraps)")
-    if (is.null(colors)) {
-        if (!(y %in% c("occurrences", "sign")))
-            colors <- c(color_group(seq(3))[1],  "gray", color_group(seq(3))[3])
-        else
-            colors <- c(color_group(seq(3))[1], color_group(seq(3))[3])
-    }
-
-    lower_band <- NULL -> upper_band
-    check_ncol(list(df_b), 1)
-
-    set_occ <- function(x) {
-        match.arg(x, names(attributes(df_b)$indexes))
-        if (x == "occurrences" && !x %in% colnames(df_b))
-            return("sign")
-        else
-            return(x)
-    }
-
-    x <- set_occ(x)
-    y <- set_occ(y)
-
-    if (y == "sign") 
-        group = seq(2)
+  b = NULL,
+  df_b = NULL,
+  x = "estimate",
+  y = "occurrences",
+  n_mark = 50,
+  title = NULL, 
+  colors = NULL,
+  comp = 1,
+  bars = "sd",
+  i_block = length(b$bootstrap[[1]]),
+  collapse = FALSE,
+  n_cores = parallel::detectCores() - 1,
+  ...) {
+  
+  if (missing(b) && missing(df_b))
+    stop("Please select a bootstrap object.")
+  if (!is.null(b)) {
+    df_b <- get_bootstrap(b, comp, i_block, collapse, n_cores, bars=bars)
+  }
+  if (!is.null(df_b))
+    stopifnot(is(df_b, "df_bootstrap"))
+  check_integer("n_mark", n_mark)
+  
+  if (is.null(title))
+    title <- paste0(attributes(df_b)$indexes[[x]],
+                    "\n(",
+                    attributes(df_b)$n_boot,
+                    " bootstraps)")
+  if (is.null(colors)) {
+    if (!(y %in% c("occurrences", "sign")))
+      colors <- c(color_group(seq(3))[1],  "gray", color_group(seq(3))[3])
     else
-        group = NA
-
-    n_boot <- attributes(df_b)$n_boot
-    y_title <- attributes(df_b)$indexes[[y]]
-    df_b <- head(
-        data.frame(
-            order_df(df_b[, -NCOL(df_b)], x, allCol = TRUE),
-            order = NROW(df_b):1),
-        n_mark)
-    class(df_b) <- c(class(df_b), "d_boot1D")
-
-    p <- ggplot(
-        df_b,
-        aes(x = order,
-            y = df_b[, x],
-            fill = df_b[, y]))
-
-    p <- plot_histogram(
-        p,
-        df_b,
-        title,
-        group,
-        colors,
-        ...) +
+      colors <- c(color_group(seq(3))[1], color_group(seq(3))[3])
+  }
+  
+  lower_band <- NULL -> upper_band
+  check_ncol(list(df_b), 1)
+  
+  set_occ <- function(x) {
+    match.arg(x, names(attributes(df_b)$indexes))
+    if (x == "occurrences" && !x %in% colnames(df_b))
+      return("sign")
+    else
+      return(x)
+  }
+  
+  x <- set_occ(x)
+  y <- set_occ(y)
+  
+  if (y == "sign") 
+    group = seq(2)
+  else
+    group = NA
+  
+  n_boot <- attributes(df_b)$n_boot
+  nvar <- attributes(df_b)$n_var
+  avg_n_occ <- sum(df_b$occurrences*n_boot) / n_boot
+  y_title <- attributes(df_b)$indexes[[y]]
+  df_b <- head(
+    data.frame(
+      order_df(df_b[, -NCOL(df_b)], x, allCol = TRUE),
+      order = NROW(df_b):1),
+    n_mark)
+  class(df_b) <- c(class(df_b), "d_boot1D")
+  
+  p <- ggplot(
+    df_b,
+    aes(x = order,
+        y = df_b[, x],
+        fill = df_b[, y]))
+  
+  p <- plot_histogram(
+    p,
+    df_b,
+    title,
+    group,
+    colors,
+    ...) +
     labs(fill = y_title)
-
-    if (x == "estimate")
-        p <- p +
-            geom_errorbar(aes(ymin = lower_band, ymax = upper_band,width=0.5))
-
-    if(x =="occurrences") {
-        #n_boot=ifelse(!is.null(dim(b[[1]][[1]][[1]])),dim(b[[1]][[1]][[1]])[2],length(b[[1]][[1]][[1]]))
-        #nvar=length(b$bootstrap[[1]][[i_block]][,1])
-        nvar <- NROW(df_b)
-        avg_n_occ <- sum(df_b$occurrences) / n_boot
-        probComp <- avg_n_occ / nvar
-
-        getbinom <- function(x) qbinom(size = n_boot, prob = probComp, p = 1 - x / nvar) / 100
-
-        p <- p + geom_hline(
-          yintercept = c(getbinom(.05), getbinom(.01), getbinom(.001)), 
-          col = c("red4","red","coral")
-        )
-    }
+  
+  if (x == "estimate")
+    p <- p +
+    geom_errorbar(aes(ymin = lower_band, ymax = upper_band,width=0.5))
+  
+  if(x =="occurrences") {
+    getbinom <- function(x) qbinom(size = n_boot, prob = avg_n_occ / nvar, p = 1 - x / nvar) / n_boot
     
-    return(p)
+    p <- p + geom_hline(
+      yintercept = c(getbinom(.05), getbinom(.01), getbinom(.001)), 
+      col = c("red4","red","coral")
+    )
+  }
+  
+  return(p)
 }

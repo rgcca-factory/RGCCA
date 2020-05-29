@@ -19,7 +19,7 @@ get_ctr <- function(
     collapse = FALSE,
     collapse_auto = FALSE) {
 
-    match.arg(type, c("cor", "weight"))
+    match.arg(type, c("cor", "weight", "cor.test"))
     stopifnot(!missing(rgcca_res))
 
     blocks <- rgcca_res$call$blocks
@@ -33,15 +33,21 @@ get_ctr <- function(
         row.names <- unlist(lapply(blocks, colnames))
     }
 
-    if (type == "cor")
+    if (length((grep("cor", tolower(type)))))
         f2 <- function(x, y){    
         if (collapse_auto)
             i_block <- y
-        cor(
-            blocks[[y]][rownames(rgcca_res$Y[[y]]), ],
+        res <- lapply(
+          seq(NCOL(blocks[[y]])),
+          function (z) get(type)(
+            blocks[[y]][rownames(rgcca_res$Y[[y]]), z],
             rgcca_res$Y[[i_block]][, x],
             use = "pairwise.complete.obs"
-        )
+          ))
+        if (type == "cor.test")
+            sapply(res, function(z) z$p.value)
+        else
+            unlist(res)
     }
     else
         f2 <- function(x, y) rgcca_res$a[[y]][, x]

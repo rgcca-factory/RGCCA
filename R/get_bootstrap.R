@@ -173,6 +173,7 @@ get_bootstrap <- function(
     if (collapse)
         df$color <- as.factor(get_bloc_var(b$rgcca$a, collapse = collapse))
 
+    n_var <- NROW(df)
     zero_var <- which(df[, 1] == 0)
     if (NROW(df) > 1 && length(zero_var) != 0)
         df <- df[-zero_var, ]
@@ -188,6 +189,7 @@ get_bootstrap <- function(
         )
     attributes(b)$type <- class(rgcca)
     attributes(b)$n_boot <- n_boot
+    attributes(b)$n_var <- n_var
     class(b) <- c(class(b), "df_bootstrap")
     return(b)
 }

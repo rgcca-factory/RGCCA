@@ -15,7 +15,8 @@ get_ctr2 <- function(
     n_mark = 100,
     collapse = FALSE,
     remove_var = TRUE,
-    resp=NULL) {
+    resp=NULL, 
+    hideNullWeights = FALSE) {
  
     stopifnot(is(rgcca_res, "rgcca"))
     check_blockx("i_block", i_block, rgcca_res$call$blocks)
@@ -47,7 +48,7 @@ get_ctr2 <- function(
     if (collapse)
       rgcca_res$call$superblock <- TRUE
 
-    if (tolower(rgcca_res$call$type) %in% c("spls", "spca", "sgcca")) {
+    if (hideNullWeights && tolower(rgcca_res$call$type) %in% c("spls", "spca", "sgcca")) {
         if (collapse)
             J <- seq(length(rgcca_res$a))
         else
