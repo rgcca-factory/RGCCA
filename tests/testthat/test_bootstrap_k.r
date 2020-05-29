@@ -6,7 +6,7 @@ blocks <- list(
 
 # ncomp=1
 rgcca_out <- rgcca(blocks, superblock = FALSE,ncomp=1)
-resb <- bootstrap_k(rgcca_out)
+resb <- bootstrap_k(rgcca_out, blocks, superblock = FALSE)
 
 test_that("test_bootstrapk_1", {
     expect_is(resb, "list")
@@ -18,7 +18,7 @@ test_that("test_bootstrapk_1", {
 
 # ncomp=2
 rgcca_out_2 <- rgcca(blocks, superblock = FALSE,ncomp=2)
-resb_2 <- bootstrap_k(rgcca_out_2)
+resb_2 <- bootstrap_k(rgcca_out_2, lapply(blocks, scale), superblock = FALSE)
 
 test_that("test_bootstrapk", {
         expect_is(resb_2, "list")

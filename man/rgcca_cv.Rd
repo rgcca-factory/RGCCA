@@ -10,7 +10,7 @@ rgcca_cv(blocks, type = "rgcca", response = NULL, par = "ncomp",
   n_cores = parallel::detectCores() - 1, quiet = TRUE,
   superblock = FALSE, scale = TRUE, scale_block = TRUE,
   tol = 1e-06, scheme = "factorial", method = "nipals",
-  rgcca_res = NULL, para = NULL, ...)
+  rgcca_res = NULL, ...)
 }
 \arguments{
 \item{blocks}{A list that contains the \eqn{J} blocks of variables \eqn{\mathbf{X_1}, \mathbf{X_2}, ..., \mathbf{X_J}}.}
@@ -65,9 +65,7 @@ a superblock}
 
 \item{rgcca_res}{a result of rgcca (from whom all parameters will be imported)}
 
-\item{para}{if TRUE parallelization is run, if FALSE, no parallelisation is run. If NULL (default) parallelization is always used except for Windows in case of length(nperm)<10}
-
-\item{...}{Further graphical parameters (see plot2D functions)}
+\item{...}{other RGCCA parameters # TODO}
 }
 \description{
 This function is dedicated to supervised approaches (with response parameter in rgcca not NULL). By default, it is the last block in blocks.

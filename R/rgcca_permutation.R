@@ -13,7 +13,6 @@
 #' components, one row by set. By default, sgcca.permute takes as many 
 #' combinations as the maximum number of columns in each block. If perm.par="tau",... #TODO
 #' @param nperm Number of permutation tested for each set of constraint
-#' @param para if TRUE parallelization is run, if FALSE, no parallelisation is run. If NULL (default) parallelization is always used except for Windows in case of length(nperm)<10
 #' @return A object permutation, which is a list containing :
 #' @return \item{pval}{Pvalue}
 #' @return \item{zstat}{Statistic Z}
@@ -63,8 +62,7 @@ rgcca_permutation <- function(
     superblock = FALSE,
     method = "nipals",
     rgcca_res=NULL,
-    para=NULL
-    ) 
+    ...) 
     {
    
     if(class(rgcca_res)=="rgcca")
@@ -171,22 +169,22 @@ rgcca_permutation <- function(
 
     varlist <- c(ls(getNamespace("RGCCA")))
     # get the parameter dot-dot-dot
-    # args_values <- list(...)
-    # args_names <- names(args_values)
-    # n <- args_values
-    # if (!is.null(n))
-    #     n <- seq(length(args_values))
-    # for (i in n) {
-    #     if (!is.null(args_names[i])) {
-    #         # dynamically asssign these values
-    #         assign(args_names[i], args_values[[i]])
-    #         # send them to the clusters to parallelize
-    #         varlist <- c(varlist, args_names[i])
-    #         # without this procedure rgcca_crossvalidation(rgcca_res, blocks = blocks2)
-    #         # or rgcca_crossvalidation(rgcca_res, blocks = lapply(blocks, scale)
-    #         # does not work.
-    #     }
-    # }
+    args_values <- list(...)
+    args_names <- names(args_values)
+    n <- args_values
+    if (!is.null(n))
+        n <- seq(length(args_values))
+    for (i in n) {
+        if (!is.null(args_names[i])) {
+            # dynamically asssign these values
+            assign(args_names[i], args_values[[i]])
+            # send them to the clusters to parallelize
+            varlist <- c(varlist, args_names[i])
+            # without this procedure rgcca_crossvalidation(rgcca_res, blocks = blocks2)
+            # or rgcca_crossvalidation(rgcca_res, blocks = lapply(blocks, scale)
+            # does not work.
+        }
+    }
 
     pb <- txtProgressBar(max=dim(par[[2]])[1])
     crits=means=sds=rep(NA,nrow(par[[2]]))
@@ -196,7 +194,6 @@ rgcca_permutation <- function(
       
         crits[i] <- rgcca_permutation_k(
             blocks,
-            connection=connection,
             par = par[[1]],
             par_value=par[[2]][i,],
             perm = FALSE,
@@ -207,10 +204,12 @@ rgcca_permutation <- function(
             scale=scale,
             scale_block=scale_block,
             scheme=scheme,
-            tol=tol
+            tol=tol,
+            ...
         )
           
-      
+        if(nperm>20)
+        {
             res<- parallelize(
                 varlist,
                 seq(nperm), 
@@ -227,15 +226,31 @@ rgcca_permutation <- function(
                         tol=tol,
                         scale=scale,
                         scale_block=scale_block,
-                        connection=connection,
-                        method=method
+                        ...
                     ),
                 n_cores = n_cores,
                 envir = environment(),
-                applyFunc = "parSapply",
-                para=para
+                applyFunc = "parSapply"
             )   
-       
+        }
+        if(nperm<=20)
+        {
+            res=sapply(seq(nperm),function(k)  {rgcca_permutation_k(
+                blocks = blocks,
+                par = par[[1]],
+                par_value=par[[2]][i,],
+                type = type,
+                n_cores = n_cores,
+                quiet = quiet,
+                superblock=superblock,
+                scheme=scheme,
+                tol=tol,
+                scale=scale,
+                scale_block=scale_block,
+                ...
+            )})
+        }
+         
         
         permcrit[i,] =res
         means[i]=mean(permcrit[i,],na.rm=T)

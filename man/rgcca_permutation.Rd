@@ -12,7 +12,7 @@ rgcca_permutation(blocks, perm.par = "tau", perm.value = NULL,
   length(blocks)), tau = rep(1, length(blocks)), sparsity = rep(1,
   length(blocks)), init = "svd", bias = TRUE, tol = 1e-08,
   response = NULL, superblock = FALSE, method = "nipals",
-  rgcca_res = NULL, para = NULL)
+  rgcca_res = NULL, ...)
 }
 \arguments{
 \item{blocks}{A list of matrix}
@@ -75,7 +75,7 @@ a superblock}
 
 \item{rgcca_res}{a result of rgcca (from whom all parameters will be imported)}
 
-\item{para}{if TRUE parallelization is run, if FALSE, no parallelisation is run. If NULL (default) parallelization is always used except for Windows in case of length(nperm)<10}
+\item{...}{other RGCCA parameters # TODO}
 }
 \value{
 A object permutation, which is a list containing :

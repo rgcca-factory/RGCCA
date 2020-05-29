@@ -5,13 +5,11 @@
 # rgcca_permutation_k(blocks)
 rgcca_permutation_k <- function(
     blocks,
-    connection=NULL,
     par = "ncomp",
     par_value=rep(1,length(blocks)),
     tol = 1e-03,
     type = "rgcca",
     sparsity = rep(1, length(blocks)),
-    tau=rep(1,length(blocks)),
     perm = TRUE,
     quiet = TRUE,
     n_cores = parallel::detectCores() - 1,
@@ -19,9 +17,7 @@ rgcca_permutation_k <- function(
     scale=TRUE,
     scale_block=TRUE,
     scheme="factorial",
-    method="nipals",
-    ncomp=rep(1,length(blocks)),
-    bias=FALSE) {
+    ...) {
         
         if (perm) {
             blocks_to_use=blocks
@@ -37,12 +33,12 @@ rgcca_permutation_k <- function(
             type = type,
             tol = tol,
             quiet = quiet,
-            method = method,
+            method = "complete",
             superblock=superblock,
             scale=scale,
             scale_block=scale_block,
             scheme=scheme,
-            connection=connection
+            ...
         )
         
         args[[par]] <- par_value

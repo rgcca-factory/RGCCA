@@ -5,7 +5,6 @@
 #' @inheritParams rgcca
 #' @inheritParams bootstrap
 #' @inheritParams plot_ind
-#' @param para if TRUE parallelization is run, if FALSE, no parallelisation is run. If NULL (default) parallelization is always used except for Windows in case of length(nperm)<10
 #' @examples
 #' library(RGCCA)
 #' data("Russett")
@@ -29,7 +28,6 @@ rgcca_crossvalidation <- function(
     tol=1e-8,
     scheme="factorial",
     method="nipals",
-    para=NULL,
     ...) {
 
     stopifnot(is(rgcca_res, "rgcca"))
@@ -117,7 +115,8 @@ rgcca_crossvalidation <- function(
                 # does not work.
             }
         }
-       
+        if(length(v_inds)>20)
+        {
             scores <- parallelize(
                 varlist,
                 seq(length(v_inds)), 
@@ -127,11 +126,14 @@ rgcca_crossvalidation <- function(
                 },
                 n_cores = n_cores,
                 envir = environment(),
-                applyFunc = "parLapply",
-                para=para
-            ) 
-            
-       
+                applyFunc = "parLapply"
+            )    
+        }
+        if(length(v_inds)<=20)
+        {
+            scores=lapply(seq(length(v_inds)),function(i){ inds <- unlist(v_inds[i])
+            eval(f)()})
+        }
         
         
     }
