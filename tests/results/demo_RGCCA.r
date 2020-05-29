@@ -206,6 +206,12 @@ plot(resRGCCANA1)
 plot(resRGCCANA1,type="cor") # cor (rgcca$A,) 
 plot(resRGCCANA1,type="network")
 
+resRGCCANA1=rgcca(blocksNA,method="em")
+plot(resRGCCANA1,type="ave")
+plot(resRGCCANA1) 
+plot(resRGCCANA1,type="cor") # cor (rgcca$A,) 
+plot(resRGCCANA1,type="network")
+
 resRGCCANA2=rgcca(blocksNA,method="nipals")
 plot(resRGCCANA2,type="ave")
 plot(resRGCCANA2) 

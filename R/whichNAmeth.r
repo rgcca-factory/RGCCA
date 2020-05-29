@@ -54,7 +54,7 @@ whichNAmethod=function(blocks,listMethods=c("complete","nipals"),typeNA="block",
   match.arg(typeRGCCA,c("rgcca","sgcca"))
   if(is.null(patternNA)){patternNA=get_patternNA(blocks)$pctNAbyBlock}
   if(is.vector(patternNA)){if(length(patternNA)!=length(blocks)){stop_rgcca("patternNA should have the same size as length(blocks)")}}
-  referenceDataset=intersection(blocks)
+  referenceDataset=intersection_list(blocks)
 
   # Getting list of datasets stemming from referenceDataset with the same pattern of missing values
 #  if(is.null(listNAdataset))

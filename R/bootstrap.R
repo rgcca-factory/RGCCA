@@ -104,7 +104,7 @@ bootstrap <- function(
                        }
                        else
                        {
-                           print("here")
+                           
                            list_res[[i]][[block]][,k]=rep(NA,length(list_res[[i]][[block]][,k]))
                        }
                    }

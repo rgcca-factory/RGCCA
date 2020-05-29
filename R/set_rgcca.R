@@ -55,7 +55,7 @@ set_rgcca <- function(
 #        blocks <- scaling(blocks, scale, scale_block = scale_block)
 
     if (!boot)
-        blocks <- intersection(blocks)
+        blocks <- intersection_list(blocks)
 
     if (tolower(type) %in% c("sgcca", "spca", "spls")) {
 
@@ -79,7 +79,6 @@ set_rgcca <- function(
         while (any(sapply(boot_blocks, function(x) length(x)) == 0)) {
 
             id_boot <- sample(NROW(blocks[[1]]), replace = TRUE)
-            print(id_boot)
             boot_blocks <- lapply(
                 blocks, 
                 function(x) x[id_boot, , drop = FALSE])

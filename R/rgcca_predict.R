@@ -57,7 +57,7 @@ rgcca_predict = function(
     new_scaled = TRUE,
     scale_size_bloc = TRUE) {
 
-#rgcca_res$call$blocks=intersection(rgcca_res$call$blocks)
+#rgcca_res$call$blocks=intersection_list(rgcca_res$call$blocks)
 #print(model)
     stopifnot(is(rgcca_res, "rgcca"))
     match.arg(model, c("regression", "classification"))

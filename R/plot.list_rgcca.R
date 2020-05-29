@@ -72,7 +72,7 @@ plot.list_rgcca=function(x,type="ind",resp=rep(1, NROW(x$Y[[1]])),block=1,comp=1
       }                
       
       p2<- p1+geom_point(data=dft,aes(x=dft[,1],y=dft[,2]),colour=colt,size=0.8)
-      plot(p2)
+      #plot(p2)
       
   }
      
@@ -113,7 +113,7 @@ plot.list_rgcca=function(x,type="ind",resp=rep(1, NROW(x$Y[[1]])),block=1,comp=1
          }                
          
          p2<- p1+geom_point(data=dft,aes(x=dft[,1],y=dft[,2]),colour=colt,size=0.8)
-         plot(p2)
+         #plot(p2)
          
      
   }

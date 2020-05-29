@@ -85,7 +85,7 @@ rgccaNa=function (blocks,method, connection = 1 - diag(length(A)), tau = rep(1, 
 	A0=A
 	indNA=lapply(A,function(x){return(which(is.na(x),arr.ind=TRUE))})
   na.rm=FALSE
-  if(method=="complete"){A2=intersection(A)}
+  if(method=="complete"){A2=intersection_list(A)}
   if(method=="mean"){		 A2=imputeColmeans(A) }
   if(is.function(method))
   {

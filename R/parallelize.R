@@ -27,11 +27,16 @@ parallelize <- function(
         if( Sys.info()["sysname"] == "Windows"& length(nperm)<10)
         {
             para=FALSE
+                   
         }
         else
         {
-            message("Windows can be slow for starting parallelization. Using para=FALSE can conduct to faster results for light calculations")
-            para=TRUE
+            if( Sys.info()["sysname"] == "Windows")
+            {
+                message("Windows can be slow for starting parallelization. Using para=FALSE can conduct to faster results for light calculations")
+            }
+                      
+           para=TRUE
         }
        
     }

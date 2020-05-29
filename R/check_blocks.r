@@ -92,7 +92,7 @@ check_blocks <- function(blocks, init = FALSE, n = 2, add_NAlines=FALSE, allow_u
     
     equal_rows <- Reduce(identical, lapply(blocks, row.names))
     
-    # If add_NAlines=FALSE, taking the intersection
+    # If add_NAlines=FALSE, taking the intersection_list
     if(!add_NAlines)
     {
         if (length(blocks) > 1 && !equal_rows)

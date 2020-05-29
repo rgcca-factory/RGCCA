@@ -49,8 +49,8 @@ head(resSgcca1$Y[[1]])
 # A_final_s=scaling(A_final,scale=TRUE,scale_block=TRUE,bias=FALSE)
 # A_final2_s=scaling(A_final2,scale=TRUE,scale_block=TRUE,bias=FALSE)
 # 
-# A_final_s_na=scaling(intersection(A_final),scale=TRUE,scale_block=TRUE,bias=FALSE)
-# A_final2_s_na=scaling(intersection(A_final2),scale=TRUE,scale_block=TRUE,bias=FALSE)
+# A_final_s_na=scaling(intersection_list(A_final),scale=TRUE,scale_block=TRUE,bias=FALSE)
+# A_final2_s_na=scaling(intersection_list(A_final2),scale=TRUE,scale_block=TRUE,bias=FALSE)
 # 
 # res1k=sgccak(A=A_final_s_na,C=Cfinal,sparsity=sparsity)
 # res2k=sgccak(A=A_final2_s_na,C=Cfinal2,sparsity=sparsity2)

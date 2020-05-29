@@ -1,7 +1,7 @@
 #' Keeps only subject without missing values
 #' @param A A list of matrices
 #' @return The intersected list from matrices
-#' @title Intersection
+#' @title intersection_list
 #' @examples
 #' set.seed(42);X1=matrix(rnorm(35),7,5);
 #'set.seed(22);X2=matrix(rnorm(28),7,4);
@@ -11,12 +11,12 @@
 #'X2[7,1]=NA
 #'X2[5,1]=NA
 #'A=list(X1,X2)
-#'intersection(A=A)
+#'intersection_list(A=A)
 #'# too many subjects with missing values
 #'X3[3,1:2]=NA
-#'intersection(A=list(X1,X2,X3))
-#' @export intersection
-intersection=function(A)
+#'intersection_list(A=list(X1,X2,X3))
+#' @export intersection_list
+intersection_list=function(A)
 {
 	A=lapply(A,as.matrix)
     centering=lapply(A,function(x){attributes(x)$'scaled:center'})
@@ -55,7 +55,7 @@ intersection=function(A)
   	interlist=lapply(newList,function(x){if(!is.null(dim(x))){x[final,,drop=FALSE]}else{x[final,,drop=FALSE]}})
 	}
 	else
-	{print("less than 3 subjects in the intersection");interlist=NA}
+	{print("less than 3 subjects in the intersection_list");interlist=NA}
     for (i in 1:length(interlist))
     {
         if(!is.null(centering[[i]]))

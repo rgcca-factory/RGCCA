@@ -93,7 +93,7 @@ rgcca_crossvalidation <- function(
         }
     )
 
-    bigA <- intersection(rgcca_res$call$blocks)
+    bigA <- intersection_list(rgcca_res$call$blocks)
 
     if (validation == "loo")
         v_inds <- seq(nrow(bigA[[1]]))
