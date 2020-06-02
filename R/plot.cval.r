@@ -64,7 +64,7 @@ plot.cval=function(x,bars="sd",alpha=0.05,cex = 1, cex_main = 14 * cex, cex_sub 
     }
     
     df=data.frame(config=1:nrow(mat_cval),mean=mean_b,inf=inf_b,sup=sup_b)
-    p<- ggplot(data=df,aes(x=config,y=mean))+geom_point()
+    p<- ggplot(data=df,aes(x=config,y=mean))+geom_point()+theme_classic() 
     if(bars!="none"&& bars!="points")
     {
         p<-p+geom_segment(data=df,aes(x=config,y=inf_b,xend=config,yend=sup_b),colour="grey")

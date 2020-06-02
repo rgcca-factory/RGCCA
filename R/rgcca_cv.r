@@ -5,7 +5,7 @@
 #' This cross-validation is based on RMSE for quantitative response. 
 #' @inheritParams rgcca_crossvalidation
 #' @inheritParams rgcca
-#' @param para if TRUE parallelization is run, if FALSE, no parallelisation is run. If NULL (default) parallelization is always used except for Windows in case of length(nperm)<10
+#' @param parallelization if TRUE parallelization is run, if FALSE, no parallelisation is run. If NULL (default) parallelization is always used except for Windows in case of length(nperm)<10
 #' @param par "sparsity", "tau" or "ncomp".
 #' @param par_value Grid of values to be tested. #TODO
 #' @param type_cv  type of crossvalidation. Default to "regression" #TODO
@@ -42,7 +42,7 @@ rgcca_cv=function( blocks,
           scheme="factorial",
           method="nipals",
           rgcca_res=NULL,
-          para=NULL,
+          parallelization=NULL,
           ...)
 {
 
@@ -172,7 +172,7 @@ rgcca_cv=function( blocks,
                        scheme=scheme,
                        method=method,
                       n_cores =n_cores,
-                      para=para)$scores)
+                      parallelization=parallelization)$scores)
                 }
                 else
                 {
@@ -189,7 +189,8 @@ rgcca_cv=function( blocks,
                         tol=tol,
                         scheme=scheme,
                         method=method,
-                        n_cores =n_cores,para=para)$list_scores)
+                        n_cores =n_cores,
+                        parallelization=parallelization)$list_scores)
                 }
               
             }

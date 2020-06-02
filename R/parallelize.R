@@ -4,7 +4,7 @@
 #' @param varlist character vector of names of objects to export  
 #' @param envir environment                                               
 #' @param applyFunc function to be applied
-#' @param para if TRUE parallelization is run, if FALSE, no parallelisation is run. If NULL (default) parallelization is always used except for Windows in case of length(nperm)<10
+#' @param parallelization if TRUE parallelization is run, if FALSE, no parallelisation is run. If NULL (default) parallelization is always used except for Windows in case of length(nperm)<10
 #' @inheritParams bootstrap
 #' @importFrom parallel stopCluster
 #' @importFrom parallel clusterExport
@@ -21,27 +21,27 @@ parallelize <- function(
     n_cores = NULL,
     envir = environment(),
     applyFunc = "parSapply", 
-    para=NULL) {
-    if(is.null(para))
+    parallelization=NULL) {
+    if(is.null(parallelization))
     {
         if( Sys.info()["sysname"] == "Windows"& length(nperm)<10)
         {
-            para=FALSE
-                   
+            parallelization=FALSE
+            message("No parallelization")       
         }
         else
         {
             if( Sys.info()["sysname"] == "Windows")
             {
-                message("Windows can be slow for starting parallelization. Using para=FALSE can conduct to faster results for light calculations")
+                message("Windows can be slow for starting parallelization. Using parallelization=FALSE can conduct to faster results for light calculations")
             }
                       
-           para=TRUE
+            parallelization=TRUE
         }
        
     }
-    
-    if(para)
+
+    if(parallelization)
     {
         load_libraries("parallel")
         if (!("parallel" %in% installed.packages()[, "Package"]))

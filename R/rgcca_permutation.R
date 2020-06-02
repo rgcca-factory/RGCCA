@@ -13,7 +13,7 @@
 #' components, one row by set. By default, sgcca.permute takes as many 
 #' combinations as the maximum number of columns in each block. If perm.par="tau",... #TODO
 #' @param nperm Number of permutation tested for each set of constraint
-#' @param para if TRUE parallelization is run, if FALSE, no parallelisation is run. If NULL (default) parallelization is always used except for Windows in case of length(nperm)<10
+#' @param parallelization if TRUE parallelization is run, if FALSE, no parallelisation is run. If NULL (default) parallelization is always used except for Windows in case of length(nperm)<10
 #' @return A object permutation, which is a list containing :
 #' @return \item{pval}{Pvalue}
 #' @return \item{zstat}{Statistic Z}
@@ -63,7 +63,7 @@ rgcca_permutation <- function(
     superblock = FALSE,
     method = "nipals",
     rgcca_res=NULL,
-    para=NULL
+    parallelization=NULL
     ) 
     {
    
@@ -233,7 +233,7 @@ rgcca_permutation <- function(
                 n_cores = n_cores,
                 envir = environment(),
                 applyFunc = "parSapply",
-                para=para
+                parallelization=parallelization
             )   
        
         

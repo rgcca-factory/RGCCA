@@ -4,7 +4,7 @@
 #' @param rgcca_res Result of a RGCCA (see  \code{\link[RGCCA]{rgcca}} )
 #' @param n_boot A integer for the number of boostraps
 #' @param n_cores An integer for the number of cores used in parallelization 
-#' @param para if TRUE parallelization is run, if FALSE, no parallelisation is run. If NULL (default) parallelization is always used except for Windows in case of length(nperm)<10
+#' @param parallelization if TRUE parallelization is run, if FALSE, no parallelisation is run. If NULL (default) parallelization is always used except for Windows in case of length(nperm)<10
 #' @return A list containing two elements: bootstrap and rgcca. bootstrap is a list of produced rgccas while rgcca is the original rgcca.
 #' @examples
 #' library(RGCCA)
@@ -21,7 +21,7 @@ bootstrap <- function(
     rgcca_res,
     n_boot = 5,
     n_cores = parallel::detectCores() - 1,
-    para=NULL) {
+    parallelization=NULL) {
     
     ndefl_max=max(rgcca_res$call$ncomp)
     list_res=list()
@@ -79,7 +79,7 @@ bootstrap <- function(
         n_cores = n_cores,
         envir = environment(),
         applyFunc = "parLapply",
-        para=para
+        parallelization=parallelization
         )
 #return(W)
        
