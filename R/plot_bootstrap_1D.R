@@ -38,6 +38,7 @@ plot_bootstrap_1D <- function(
   bars = "sd",
   i_block = length(b$bootstrap[[1]]),
   collapse = FALSE,
+  test =  TRUE,
   n_cores = parallel::detectCores() - 1,
   ...) {
   
@@ -111,12 +112,12 @@ plot_bootstrap_1D <- function(
     p <- p +
     geom_errorbar(aes(ymin = lower_band, ymax = upper_band,width=0.5))
   
-  if(x =="occurrences") {
+  if(x =="occurrences" && test) {
     getbinom <- function(x) qbinom(size = n_boot, prob = avg_n_occ / nvar, p = 1 - x / nvar) / n_boot
     
     p <- p + geom_hline(
-      yintercept = c(getbinom(.05), getbinom(.01), getbinom(.001)), 
-      col = c("red4","red","coral")
+      yintercept = getbinom(.05), 
+      col = "black"
     )
   }
   
