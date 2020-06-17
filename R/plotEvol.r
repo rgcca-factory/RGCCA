@@ -24,8 +24,7 @@ plot.naEvolution=function(x,type="rv",ylim=NULL,block=length(x[[1]][[1]][[1]][[1
 { #type : "rv", "pct" ou "a"
   #bars="sd" or "stderr"
   #  graphics.off()
-  if(is.null(main)){main=type}
-    if(block!="all")
+     if(block!="all")
     {
         check_integer("block",block)
     }
@@ -104,7 +103,7 @@ plot.naEvolution=function(x,type="rv",ylim=NULL,block=length(x[[1]][[1]][[1]][[1
     par(las=1)
     par(mar=c(5, 4, 4, 2) + 0.1)
     par(mgp=c(3,1,0))
-    if(is.null(main)){title=paste(main,": Block",j)}else{title=main}
+    if(is.null(main)){title=paste("Block",j)}else{title=main}
     par(mar=c(3,3,1,1))
     plot(NULL,main=title,xlim=c(0,length(abscisse)),ylim=Ylim,xlab="Proportion of missing values",ylab="",bty="n",xaxt="n",...)
     axis(side = 1,col="grey",line=0,at=-0.5+1:length(abscisse),labels=abscisse)

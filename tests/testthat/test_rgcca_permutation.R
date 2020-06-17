@@ -5,6 +5,8 @@ blocks <- list(
     politic = Russett[, 6:11] )
 
 res=rgcca_permutation(blocks, n_cores = 1,nperm = 21)
+#res_rgcca=rgcca(blocks)
+#res=rgcca_permutation(rgcca_res = res_rgcca, n_cores = 1,nperm = 21)
 
 res=rgcca_permutation(blocks, n_cores = 1,nperm = 10)
 

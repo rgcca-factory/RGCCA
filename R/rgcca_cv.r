@@ -45,10 +45,10 @@ rgcca_cv=function( blocks,
           parallelization=NULL,
           ...)
 {
-
+    if(!missing(blocks)&class(blocks)=="rgcca"){rgcca_res=blocks}
     if(class(rgcca_res)=="rgcca")
     {
-        message("All parameters were imported by a rgcca object provided in the blocks parameter")
+        message("All parameters were imported by a rgcca object provided in the blocks/rgcca_res parameter")
         scale_block=rgcca_res$call$scale_block
         scale=rgcca_res$call$scale
         scheme=rgcca_res$call$scheme

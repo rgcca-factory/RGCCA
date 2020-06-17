@@ -22,6 +22,7 @@ parallelize <- function(
     envir = environment(),
     applyFunc = "parSapply", 
     parallelization=NULL) {
+
     if(is.null(parallelization))
     {
         if( Sys.info()["sysname"] == "Windows"& length(nperm)<10)
@@ -38,7 +39,6 @@ parallelize <- function(
                       
             parallelization=TRUE
         }
-       
     }
 
     if(parallelization)

@@ -9,13 +9,14 @@ library(RGCCA)
 data(Russett)
 blocks = list(agriculture = Russett[, seq(3)], industry = Russett[, 4:5],
               politic = Russett[, 6:11] )
-
+resRgcca=rgcca(blocks)
+rgcca_permutation(resRgcca)
 # RGCCA
 #=======
 # unsupervised rgcca - exploratory approach with rgcca
 #-------------------
 # Step one - tuning the parameters
-res_permut=rgcca_permutation(blocks=blocks,type="rgcca",par="tau",scheme="factorial",nperm=100)
+res_permut=rgcca_permutation(blocks=blocks,type="rgcca",scheme="factorial",nperm=100)
 print(res_permut)
 names(res_permut)
 plot(res_permut,type="zstat")

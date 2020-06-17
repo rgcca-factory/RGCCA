@@ -5,8 +5,8 @@
 \title{Tuning RGCCA parameters}
 \usage{
 rgcca_permutation(blocks, perm.par = "tau", perm.value = NULL,
-  nperm = 20, n_cores = parallel::detectCores() - 1, quiet = TRUE,
-  type = "rgcca", scale = TRUE, scale_block = TRUE,
+  perm.length = 5, nperm = 20, n_cores = parallel::detectCores() - 1,
+  quiet = TRUE, type = "rgcca", scale = TRUE, scale_block = TRUE,
   connection = matrix(1, length(blocks), length(blocks)) -
   diag(length(blocks)), scheme = "factorial", ncomp = rep(1,
   length(blocks)), tau = rep(1, length(blocks)), sparsity = rep(1,
@@ -24,6 +24,8 @@ variables to be tested, one row by combination. By default, sgcca.permute takes 
 min values ($1/sqrt(ncol)$) and 1. If perm.par="ncomp", a matrix, a vector or an integer containing sets of number of 
 components, one row by set. By default, sgcca.permute takes as many 
 combinations as the maximum number of columns in each block. If perm.par="tau",... #TODO}
+
+\item{perm.length}{Useful if perm.value is NULL. Integer indicating the number of sets of parameters to be tested. The parameters are  then uniformly distributed.}
 
 \item{nperm}{Number of permutation tested for each set of constraint}
 

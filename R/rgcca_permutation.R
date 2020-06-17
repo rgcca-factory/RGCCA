@@ -7,6 +7,7 @@
 #' @inheritParams rgcca
 #' @param rgcca_res a result of rgcca (from whom all parameters will be imported)
 #' @param perm.par "sparsity","tau" or "ncomp".
+#' @param perm.length Useful if perm.value is NULL. Integer indicating the number of sets of parameters to be tested. The parameters are  then uniformly distributed.
 #' @param perm.value  If perm.par="sparsity", a matrix, a vector or an integer containing sets of constraint 
 #' variables to be tested, one row by combination. By default, sgcca.permute takes 10 sets between 
 #' min values ($1/sqrt(ncol)$) and 1. If perm.par="ncomp", a matrix, a vector or an integer containing sets of number of 
@@ -45,6 +46,7 @@ rgcca_permutation <- function(
     blocks,
     perm.par = "tau",
     perm.value = NULL,
+    perm.length=5,
     nperm = 20,
     n_cores = parallel::detectCores() - 1,
     quiet = TRUE,
@@ -66,10 +68,10 @@ rgcca_permutation <- function(
     parallelization=NULL
     ) 
     {
-   
+    if(!missing(blocks)&class(blocks)=="rgcca"){rgcca_res=blocks}
     if(class(rgcca_res)=="rgcca")
     {
-        message("All parameters were imported by a rgcca object provided in the blocks parameter")
+        message("All parameters were imported by a rgcca object provided in the blocks or rgcca_res parameter")
         scale_block=rgcca_res$call$scale_block
         scale=rgcca_res$call$scale
         scheme=rgcca_res$call$scheme
@@ -84,6 +86,7 @@ rgcca_permutation <- function(
         ncomp=rgcca_res$call$ncomp
         sparsity=rgcca_res$call$sparsity
     }
+   
     # call <- as.list(formals(rgcca_permutation))
     call=list(type=type, perm.par = perm.par, perm.value = perm.value, nperm=nperm, quiet=quiet,connection=connection,method=method,tol=tol,scheme=scheme,scale=scale,scale_block=scale_block,blocks=blocks,superblock=superblock)
     check_integer("nperm", nperm)
@@ -110,7 +113,7 @@ rgcca_permutation <- function(
             f <- quote(max)
         else
             f <- quote(max[x])
-        sapply(seq(min_spars), function(x) seq(eval(f), min_spars[x], len = 10))
+        sapply(seq(min_spars), function(x) seq(eval(f), min_spars[x], len = perm.length))
     }
     set_penalty <- function () {
 

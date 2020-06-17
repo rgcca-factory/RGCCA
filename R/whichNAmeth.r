@@ -15,6 +15,8 @@
 #' @param typeNA structure of missing data required ("ponc" or "block" or "byVar")
 #' @param seed if filled (by a number), the randomness is reproducible.
 #' @param typeRGCCA type of analysis to be run ("sgcca"or rgcca"...).
+#' @param ni number of iteration in em or superblock algorithm
+
 #' @return a whichNAmethod object: a list of length nDataset containing. Each element of this list corresponding to each simulated dataset is
 #' a list whose names are the chosen missing methods. Each element of such a list is also a list containing
 #' \itemize{ 
@@ -35,7 +37,7 @@
 #' @seealso \link{plot.whichNAmethod}, \link{naEvolution}
 whichNAmethod=function(blocks,listMethods=c("complete","nipals"),typeNA="block",nDatasets=20,patternNA=NULL,connection=matrix(1,length(blocks),length(blocks))-diag(length(blocks)), tau=rep(1,length(blocks)),
                        ncomp=rep(2,length(blocks)),scale_block=TRUE,scale=TRUE,tol=1e-6,
-                       verbose=FALSE,scheme="centroid",seed=NULL,typeRGCCA="rgcca",sparsity=NULL)
+                       verbose=FALSE,scheme="centroid",seed=NULL,typeRGCCA="rgcca",sparsity=NULL,ni=5)
 {
   check_connection(connection,blocks)
   check_tau(tau,blocks)
@@ -91,7 +93,7 @@ whichNAmethod=function(blocks,listMethods=c("complete","nipals"),typeNA="block",
     {  
         if(typeRGCCA=="rgcca")
         {
-        methodRgcca=rgccaNa(blocks=listNAdataset[[i]]$dat,connection=connection,tau=tau,method=method,ncomp=ncomp,scale_block=scale_block,scale=scale,tol=tol,verbose=FALSE,scheme=scheme)
+        methodRgcca=rgccaNa(blocks=listNAdataset[[i]]$dat,connection=connection,tau=tau,method=method,ncomp=ncomp,scale_block=scale_block,scale=scale,tol=tol,verbose=FALSE,scheme=scheme,ni=ni)
         }
         if(typeRGCCA=="sgcca")
         {

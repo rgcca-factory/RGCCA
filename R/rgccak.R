@@ -222,7 +222,7 @@ rgccak=function (A, C, tau = "optimal", scheme = "centroid",verbose = FALSE, ini
     repeat 
     { # on rentre dans la boucle a proprement parler
       Yold <- Y #valeur de f
-      #print(paste("iter",iter))
+
        for (j in which.primal)
       { # on parcourt les blocs pour estimer wj = a[[j]] : c'est le rouage de la pres
         # print(j)
@@ -237,8 +237,6 @@ rgccak=function (A, C, tau = "optimal", scheme = "centroid",verbose = FALSE, ini
 #------------------ si on estime les donnees manquantes dans le cas ou tau=1
 			      if(estimateNA %in% c("first","iterative","superblock","new","lebrusquet"))
 			      { 
-			         
-    
 	    	        if(estimateNA=="superblock")
 			        {
 			             for(k in 1:dim(A[[j]])[2])
@@ -251,9 +249,6 @@ rgccak=function (A, C, tau = "optimal", scheme = "centroid",verbose = FALSE, ini
                                 Binit[[j]][,k]=(means[[j]][,k]*missing+stdev[[j]][,k]*missing*x_miss)+(rep(1,length(missing))-missing)*Binit[[j]][,k]
                                 
                             }
-		                       # A[[j]][missing,k]=x_miss[missing]
-		                 
-		                  
                       }
 	    	   
 			            if (scale == TRUE) 
@@ -285,7 +280,6 @@ rgccak=function (A, C, tau = "optimal", scheme = "centroid",verbose = FALSE, ini
 			            }
 	    	         
 			            means[[j]]=matrix(rep(attributes(A1[[j]])$'scaled:center' ,dim(A1[[j]])[1]),dim(A1[[j]])[1],dim(A1[[j]])[2],byrow=TRUE)
-			     
 			            stdev[[j]]=matrix(rep(attributes(A1[[j]])$'scaled:scale' ,dim(A1[[j]])[1]),dim(A1[[j]])[1],dim(A1[[j]])[2],byrow=TRUE)
 			            if(scale_block){ stdev[[j]]=stdev[[j]]*sqrt(NCOL(A1[[j]]))}
 			            
@@ -437,14 +431,12 @@ rgccak=function (A, C, tau = "optimal", scheme = "centroid",verbose = FALSE, ini
         plot(crit[1:iter], xlab = "iteration", ylab = "criteria")
     }
     AVEinner <- sum(C * cor(Y)^2/2)/(sum(C)/2)
-
-     call$tau=tau
+    call$tau=tau
     
     if(estimateNA!="no")
     {
         result <- list(Y = Y, a = a, crit = crit, AVE_inner = AVEinner, A=A,call=call,tau=tau)
     }
     else{result <- list(Y = Y, a = a, crit = crit, AVE_inner = AVEinner,call=call,tau=tau)}
-    
-       return(result)
+    return(result)
 }
