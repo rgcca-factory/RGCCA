@@ -28,14 +28,14 @@ parallelize <- function(
         if( Sys.info()["sysname"] == "Windows"& length(nperm)<10)
         {
             parallelization=FALSE
-            message("No parallelization")       
+            #message("No parallelization")       
         }
         else
         {
-            if( Sys.info()["sysname"] == "Windows")
-            {
-                message("Windows can be slow for starting parallelization. Using parallelization=FALSE can conduct to faster results for light calculations")
-            }
+        #    if( Sys.info()["sysname"] == "Windows")
+        #    {
+        #        message("Windows can be slow for starting parallelization. Using parallelization=FALSE can conduct to faster results for light calculations")
+        #    }
                       
             parallelization=TRUE
         }
@@ -52,38 +52,39 @@ parallelize <- function(
         
         if (Sys.info()["sysname"] == "Windows") {
             
-               
-            cl <- parallel::makeCluster(n_cores)
-            
-            parallel::clusterExport(
-                cl,
-                varlist,
-                envir = envir
-            )
-            
-            
-            parallel::clusterEvalQ(cl, library(RGCCA))
-            
-            # library(parallel)
-            parallel::clusterEvalQ(cl, library(parallel))
-            # print("all okay")
-            res <- tryCatch({
-                get(applyFunc)(
-                    cl,
-                    nperm,
-                    f)
-            }, error = function(err) stop_rgcca(err$message),
-            finally = {
-                parallel::stopCluster(cl)
-                cl <- c()
-            })
-            
-            
-        }else{
+                
+             cl <- parallel::makeCluster(n_cores)
+             
+             parallel::clusterExport(
+                 cl,
+                 varlist,
+                 envir = envir
+             )
+             
+             
+             parallel::clusterEvalQ(cl, library(RGCCA))
+             
+             # library(parallel)
+             parallel::clusterEvalQ(cl, library(parallel))
+             # print("all okay")
+             res <- tryCatch({
+                 get(applyFunc)(
+                     cl,
+                     nperm,
+                     f)
+             }, error = function(err) stop_rgcca(err$message),
+             finally = {
+                 parallel::stopCluster(cl)
+                 cl <- c()
+             })
+             
+             
+         }else{
             res <- parallel::mclapply(
                 nperm,
                 f,
-                mc.cores = n_cores)
+                mc.cores = n_cores
+                )
             
             if (applyFunc == "parSapply")
                 res <- simplify2array(res)

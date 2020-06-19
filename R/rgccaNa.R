@@ -59,7 +59,7 @@
 #' rgccaNa(A,method="knn2")
 
 rgccaNa=function (blocks,method, connection = 1 - diag(length(A)), tau = rep(1, length(A)),    ncomp = rep(1, length(A)), scheme = "centroid", scale = TRUE,   init = "svd", bias = TRUE, tol = 1e-08, verbose = TRUE,
-                  scale_block=TRUE,knn.k="all",knn.output="weightedMean",knn.klim=NULL,knn.scale_block=TRUE,pca.ncp=1,ni=ni,prescaling=FALSE,quiet=FALSE)
+                  scale_block=TRUE,knn.k="all",knn.output="weightedMean",knn.klim=NULL,knn.scale_block=TRUE,pca.ncp=1,ni=20,prescaling=FALSE,quiet=FALSE)
 { 
   #  call=match.call() 
     A=blocks
@@ -110,7 +110,7 @@ rgccaNa=function (blocks,method, connection = 1 - diag(length(A)), tau = rep(1, 
 # 	  A2=superblockAsList(imputedSuperblock, A)
 # 	}
 
- 	if(method=="iterativeSB")	{	  A2=imputeSB(A,ncomp=ncomp,scale=scale,scale_block=scale_block,tau=tau,tol=tol,ni=ni)$A	}
+ 	if(method=="iterativeSB")	{	  A2=imputeSB(A=A,ncomp=ncomp,scale=scale,scale_block=scale_block,tau=tau,tol=tol,ni=ni)$A	}
     if(method=="em")	{	  A2=imputeEM(A=A,ncomp=ncomp,scale=scale,scale_block=scale_block,tau=tau,naxis=1,ni=ni,C=C,tol=tol,verbose=verbose,reg="y",quiet=quiet)$A	}
    if(substr(method,1,3)=="sem")
    {

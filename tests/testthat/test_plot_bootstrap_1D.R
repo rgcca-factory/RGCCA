@@ -3,6 +3,16 @@ blocks <- list(
     agriculture = Russett[, seq(3)],
     industry = Russett[, 4:5],
     politic = Russett[, 6:11] )
+# Rgcca
+#---------------
+rgcca_out <- rgcca(blocks, type = "rgcca")
+boot <- bootstrap(rgcca_out, 100, n_cores = 1)
+plot(boot)
+p<-plot(boot,block=1)
+p<-plot(boot,block=2)
+p+scale_fill_manual(values=c("blue","red"))
+# Sparsity
+#---------------
 rgcca_out <- rgcca(blocks, sparsity = 0.71, type = "sgcca")
 boot <- bootstrap(rgcca_out, 100, n_cores = 1)
 i_block=1

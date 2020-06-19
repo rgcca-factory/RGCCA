@@ -77,7 +77,9 @@ plot_histogram <- function(
                 scale_fill_gradientn(colors = colors, na.value = "black")
         } else  if ((is.character2(group[!is.na(group)]) ||
                             length(unique(group)) <= 5 )) {
-            p <- p + scale_fill_manual(values = color_group(group, colors))
+
+            cols=color_group(group, colors)
+           p <- p + scale_fill_manual(values = cols,limit=names(cols),drop=FALSE)
         }
     }
 

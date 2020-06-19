@@ -86,12 +86,11 @@ plot_var_1D <- function(
         color <- "black"
         p <- ggplot(df, aes(order, df[, 1], fill = abs(df[, 1])))
     }
-
     p <- plot_histogram(
         p,
         df,
         title,
-        as.character(color),
+        group=as.character(color),
         colors = colors,
         ...
     ) +

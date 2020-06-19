@@ -19,7 +19,7 @@
 #' @seealso \code{\link[RGCCA]{plot.bootstrap}} , \code{\link[RGCCA]{print.bootstrap}} 
 bootstrap <- function(
     rgcca_res,
-    n_boot = 5,
+    n_boot = 100,
     n_cores = parallel::detectCores() - 1,
     parallelization=NULL) {
     

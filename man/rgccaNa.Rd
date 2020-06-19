@@ -9,7 +9,7 @@ rgccaNa(blocks, method, connection = 1 - diag(length(A)), tau = rep(1,
   scale = TRUE, init = "svd", bias = TRUE, tol = 1e-08,
   verbose = TRUE, scale_block = TRUE, knn.k = "all",
   knn.output = "weightedMean", knn.klim = NULL,
-  knn.scale_block = TRUE, pca.ncp = 1, ni = 50, prescaling = FALSE,
+  knn.scale_block = TRUE, pca.ncp = 1, ni = 20, prescaling = FALSE,
   quiet = FALSE)
 }
 \arguments{

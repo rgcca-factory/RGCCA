@@ -116,7 +116,7 @@ get_bootstrap <- function(
     }
     else
     {
-        df$sign <- rep("", NROW(df))
+        df$sign <- rep("NS", NROW(df))
         
         for (i in seq(NROW(df)))
             #if (df$lower_band[i]/df$upper_band[i] > 0)

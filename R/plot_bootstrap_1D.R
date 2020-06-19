@@ -62,7 +62,6 @@ plot_bootstrap_1D <- function(
         else
             colors <- c(color_group(seq(3))[1], color_group(seq(3))[3])
     }
-
     lower_band <- NULL -> upper_band
     check_ncol(list(df_b), 1)
 
@@ -78,10 +77,11 @@ plot_bootstrap_1D <- function(
     y <- set_occ(y)
 
     if (y == "sign") 
-        group = seq(2)
+        group = c("NS","*")
     else
         group = NA
 
+    
     df_b_head <- head(
         data.frame(
             order_df(df_b[, -NCOL(df_b)], x, allCol = TRUE),

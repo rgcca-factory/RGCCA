@@ -44,11 +44,11 @@ print.permutation <- function (x,...)
   cat("\n")
   
   
-  tab <- round(cbind(x$means,x$sds, x$zstat, x$crit, rowMeans(x$permcrit),x$pvals), 
+  tab <- round(cbind( x$crit,x$means,x$sds, x$zstat,x$pvals), 
                3)
   dimnames(tab) <- list(paste("Tuning parameter set ", 
-                              sep = "", 1:length(x$pvals)), c( "Mean","Sd",
-                                                              "Z", "Crit", "Crit Perm","P-Value"))
+                              sep = "", 1:length(x$pvals)), c( "Crit","Crit Perm","Sd",
+                                                              "Z" ,"P-Value"))
   print(tab, quote = FALSE,...)
 
 
