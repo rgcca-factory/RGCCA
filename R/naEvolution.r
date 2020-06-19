@@ -13,9 +13,9 @@
 #' A = list(agri=X_agric, ind=X_ind, polit=X_polit)
 #' #ponctual
 #' listResults=naEvolution(blocks=A,listMethods=c("complete","nipals","mean"),
-#' prctNA=c(0.05,0.1,0.15,0.2,0.25,0.3,0.4),typeNA="ponc",ncomp=rep(1,3),
+#' prctNA=c(0.05,0.1,0.15,0.2,0.25,0.3,0.4),typeNA="ponc",ncomp=rep(1,3),nDataset=1,
 #' scale_block=FALSE)
-#' plot(listResults,output="a",bars = "stderr",ylim=c(0,0.2))
+#' plot(listResults,type="a",bars = "stderr",ylim=c(0,0.2))
 #' @export naEvolution
 naEvolution=function(blocks,prctNA=c(0.1,0.2,0.3),listMethods=c("mean"),typeNA="block",ncomp=rep(1,length(blocks)),scale_block=TRUE,scale=TRUE,nDatasets=20,tol=1e-6,verbose=FALSE,scheme="centroid",seed=NULL,connection=matrix(1,length(blocks),length(blocks))-diag(length(blocks)),tau=rep(1,length(blocks)))
 {

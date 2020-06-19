@@ -87,7 +87,12 @@ parallelize <- function(
                 )
             
             if (applyFunc == "parSapply")
+            {
+            
                 res <- simplify2array(res)
+         
+            }
+               
         }
         
     }

@@ -289,3 +289,17 @@ plot(res_permut)
 resBootstrap=bootstrap(resRGCCA)
 plot(resBootstrap,i_block=2) 
 
+# Tests with Glioma
+#----------------
+require(gliomaData)
+data(ge_cgh_locIGR)
+
+A <- ge_cgh_locIGR$multiblocks
+Loc <- factor(ge_cgh_locIGR$y) ; levels(Loc) <- colnames(ge_cgh_locIGR$multiblocks$y)
+C <-  matrix(c(0, 0, 1, 0, 0, 1, 1, 1, 0), 3, 3)
+tau = c(1, 1, 0)
+
+
+system.time(rgcca(A,connection=C,init="svd",scheme="factorial"))
+
+Reduce(intersect, lapply(A, row.names))

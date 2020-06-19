@@ -23,12 +23,20 @@ data(Russett)
 blocks = list(agriculture = Russett[, seq(3)], industry = Russett[, 4:5],
     politic = Russett[, 6:11] )
 res_rgcca=rgcca(blocks, response=3)
+
+t0=Sys.time()
+res_rgcca=rgcca(blocks, tau=0)
+print(Sys.time()-t0)
+
 cv=rgcca_cv(blocks,response=3,n_cores=1)
 plot(cv)
 b=bootstrap(res_rgcca, n_cores=1)
 plot(b, n_cores=1)
-perm=rgcca_permutation(blocks, n_cores=1)
-plot(perm)
+
+res_rgcca=rgcca(blocks, response=3)
+
+perm=rgcca_permutation(blocks, n_cores=1,nperm=100)
+b=bootstrap(res_rgcca, n_cores=1,n_boot=500)
 
 blockNA=blocks
 blocks[[1]][1,2]=NA

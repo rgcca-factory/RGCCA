@@ -210,7 +210,9 @@ rgcca_permutation <- function(
             scale=scale,
             scale_block=scale_block,
             scheme=scheme,
-            tol=tol
+            tol=tol,
+            ncomp=ncomp,
+            sparsity=sparsity
         )
           
       

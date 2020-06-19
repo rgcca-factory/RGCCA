@@ -16,7 +16,6 @@ remove_null_sd <- function(list_m) {
             lapply(
                 column_sd_null,
                 function(x) length(x) > 0))]
-    
     list_m <- lapply(
         seq(length(list_m)),
         function(x) {

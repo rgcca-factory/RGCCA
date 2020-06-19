@@ -5,7 +5,7 @@ scaling <- function(
     scale_block = TRUE) {
 
     if (scale) {
-
+    
         blocks <- lapply(
             blocks, 
             function(x)
@@ -18,6 +18,7 @@ scaling <- function(
                 attr(y, "scaled:scale") <-attr(x, "scaled:scale")* sqrt(NCOL(x))
                 return(y)
             })
+   
         }
         # on divise chaque bloc par la racine du nombre de variables pour avoir chaque
         # poids pour le meme bloc

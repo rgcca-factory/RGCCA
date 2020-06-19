@@ -22,6 +22,7 @@
 
 check_blocks <- function(blocks, init = FALSE, n = 2, add_NAlines=FALSE, allow_unnames =  TRUE) {
     
+  
     msg <- ""
     if(is.matrix(blocks))
     {
@@ -41,7 +42,7 @@ check_blocks <- function(blocks, init = FALSE, n = 2, add_NAlines=FALSE, allow_u
     # Gestion of the case of one variable only
     blocks=lapply(blocks,as.matrix)
     nameBlocks=names(blocks)
-    
+
     # Dealing with rownames (if they are all missing)
     if (all(sapply(blocks, function(x) is.null(row.names(x))))){
         if(sd(sapply(blocks,function(x)dim(x)[1]))==0 && allow_unnames){
@@ -52,6 +53,7 @@ check_blocks <- function(blocks, init = FALSE, n = 2, add_NAlines=FALSE, allow_u
             stop_rgcca(paste(msg, "elements of the list should have rownames.\n "))
     }
   
+    
     # Dealing with colnames (in case of one variable onaly)
      blocks1=lapply(1:length(blocks),function(i)
     {
@@ -76,6 +78,7 @@ check_blocks <- function(blocks, init = FALSE, n = 2, add_NAlines=FALSE, allow_u
         names(blocks_i)=names(blocks)
         blocks=blocks_i
     }
+ 
     # Dealing with rownames (if one of them is missing but the block sizes are the sames)
     if(any(sapply(blocks, function(x) is.null(row.names(x)))))
     {
@@ -85,30 +88,33 @@ check_blocks <- function(blocks, init = FALSE, n = 2, add_NAlines=FALSE, allow_u
             blocks=lapply(blocks,function(x){row.names(x)=matrixOfRownames[,1];return(x)})
         }
     }
+
     inters_rows <- Reduce(intersect, lapply(blocks, row.names))
  
     if (length(inters_rows) == 0)
         stop_rgcca(paste(msg, "elements of the list should have at least a common rowname.\n "))
-    
+
     equal_rows <- Reduce(identical, lapply(blocks, row.names))
-    
+
     # If add_NAlines=FALSE, taking the intersection_list
     if(!add_NAlines)
     {
+       
         if (length(blocks) > 1 && !equal_rows)
             blocks <- common_rows(blocks)
     }
    
     if (init) {
+   
         blocks <- remove_null_sd(blocks)
         for (i in seq(length(blocks)))
             attributes(blocks[[i]])$nrow <- nrow(blocks[[i]])
     }
     
-    if (any(sapply(blocks, is.character2)))
-        message(paste(msg, "an element contains non-numeric data.They will be replaced by NAs\n "))
+  
+ #   if (any(sapply(blocks, is.character2)))
+ #       message(paste(msg, "an element contains non-numeric data.They will be replaced by NAs\n "))
 
-    
     for (i in seq(length(blocks)))
         if (is.character(blocks[[i]]))
             blocks[[i]] <- to_numeric(blocks[[i]])
@@ -116,6 +122,7 @@ check_blocks <- function(blocks, init = FALSE, n = 2, add_NAlines=FALSE, allow_u
 
     if(add_NAlines)
     {
+      
         union_rows <- Reduce(union, lapply(blocks,row.names))
     
         blocks2=lapply(nameBlocks,function(name)
@@ -145,7 +152,7 @@ check_blocks <- function(blocks, init = FALSE, n = 2, add_NAlines=FALSE, allow_u
                 return(y)
             }
         })
-   
+
         names(blocks2)=nameBlocks
        blocks=blocks2 
        

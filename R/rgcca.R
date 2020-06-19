@@ -129,6 +129,7 @@ rgcca <- function(
     knn.klim = NULL,
     knn.scale_block = TRUE) {
     
+
     if(class(blocks)=="permutation")
     {
         message("All parameters were imported by permutation object provided in the blocks parameter")
@@ -175,7 +176,9 @@ rgcca <- function(
         }
         blocks<-blocks$call$blocks
     }
+
     if(length(blocks)==1){type="pca";message("type='rgcca' is not available for one block only. type was transformed as 'pca'.")}
+    
     if (!missing(sparsity) && missing(type))
         type <- "sgcca"
 
@@ -205,14 +208,17 @@ rgcca <- function(
 
     if (superblock && any(penalty == "optimal"))
         stop_rgcca("Optimal tau is not available with superblock option.")
-
+  
+    
     match.arg(init, c("svd", "random"))
     match.arg(knn.output, c("mean", "random", "weightedMean" ))
     check_method(type)
+  
     
     # Check blocks size, adds NA lines if some subjects are missing...
 
     blocks=check_blocks(blocks,add_NAlines=TRUE,n=1)
+
     if (!is.null(response))
         check_blockx("response", response, blocks)
     check_integer("tol", tol, float = TRUE, min = 0)
@@ -230,7 +236,7 @@ rgcca <- function(
 
     penalty <- elongate_arg(penalty, blocks)
     ncomp <- elongate_arg(ncomp, blocks)
-
+  
     opt <- select_analysis(
         blocks = blocks,
         connection = connection,
@@ -243,7 +249,10 @@ rgcca <- function(
         response = response
     )
     raw=blocks
+ 
+
     opt$blocks <- scaling(blocks, scale,scale_block = scale_block)
+
     opt$superblock <- check_superblock(response, opt$superblock, !quiet)
     opt$blocks <- set_superblock(opt$blocks, opt$superblock, type, !quiet)
 

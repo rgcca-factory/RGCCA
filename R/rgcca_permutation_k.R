@@ -22,31 +22,84 @@ rgcca_permutation_k <- function(
     method="nipals",
     ncomp=rep(1,length(blocks)),
     bias=FALSE) {
-        
+     t0=Sys.time()
         if (perm) {
             blocks_to_use=blocks
-            for (k in seq(length(blocks)))
-                blocks_to_use[[k]] <- as.matrix(blocks[[k]][sample(seq(NROW(blocks[[k]]))), ])
-                rownames(blocks_to_use[[k]])=rownames(blocks[[k]])
+            blocks_to_use=lapply(seq(length(blocks)),function(k)
+                { 
+                    blocks_to_use_k <- as.matrix(blocks[[k]][sample(seq(NROW(blocks[[k]]))), ])
+                    rownames(blocks_to_use_k)=rownames(blocks[[k]])
+                    return(blocks_to_use_k)
+                })
+            names(blocks_to_use)=names(blocks)
+
+            
+          #  for (k in seq(length(blocks)))
+          #      blocks_to_use[[k]] <- as.matrix(blocks[[k]][sample(seq(NROW(blocks[[k]]))), ])
+          #      rownames(blocks_to_use[[k]])=rownames(blocks[[k]])
         }else
         {
             blocks_to_use=blocks
         }
-        args <- list(
-            blocks = blocks_to_use,
-            type = type,
-            tol = tol,
-            quiet = quiet,
-            method = method,
-            superblock=superblock,
-            scale=scale,
-            scale_block=scale_block,
-            scheme=scheme,
-            connection=connection
-        )
-        
-        args[[par]] <- par_value
-        crit <- do.call(rgcca, args)$crit
+     print("block")
+     print(Sys.time()-t0)
+     t0=Sys.time()
+        if(par=="ncomp")
+        {
+            res <- rgcca(
+                blocks = blocks_to_use,
+                type = type,
+                tol = tol,
+                quiet = quiet,
+                method = method,
+                superblock=superblock,
+                scale=scale,
+                scale_block=scale_block,
+                scheme=scheme,
+                connection=connection,
+                ncomp=par_value,
+                sparsity=sparsity,
+                tau=tau
+            )
+        }
+        if(par=="tau")
+        {
+            res <- rgcca(
+                blocks = blocks_to_use,
+                type = type,
+                tol = tol,
+                quiet = quiet,
+                method = method,
+                superblock=superblock,
+                scale=scale,
+                scale_block=scale_block,
+                scheme=scheme,
+                connection=connection,
+                ncomp=ncomp,
+                sparsity=NULL,
+                tau=par_value
+            )
+        }
+        if(par=="sparsity")
+        {
+            res <- rgcca(
+                blocks = blocks_to_use,
+                type = type,
+                tol = tol,
+                quiet = quiet,
+                method = method,
+                superblock=superblock,
+                scale=scale,
+                scale_block=scale_block,
+                scheme=scheme,
+                connection=connection,
+                ncomp=ncomp,
+                sparsity=par_value,
+                tau=NULL
+            )
+        }
+     print(Sys.time()-t0)
+        crit <- res$crit
         return(sum(sapply(crit, sum)))
 
 }
