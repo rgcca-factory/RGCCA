@@ -872,17 +872,13 @@ server <- function(input, output, session) {
 
 
     observe({
-        print("here4")
         # Event related to input$analysis_type
         toggle(
             condition = (input$analysis_type == "RGCCA"),
             id = "tau_opt")
-        setToggle("tau_custom")
-        setToggle("scheme")
-        setToggle("superblock")
-        setToggle("connection")
+        for (i in c("tau_custom", "scheme", "superblock", "connection", "supervised" ))
+            setToggle(i)
         setToggle2("blocks_names_response")
-        setToggle("supervised")
         hide(selector = "#tabset li a[data-value=Graphic]")
         toggle(
             condition = (length(input$blocks$datapath) > 1), 
@@ -894,19 +890,16 @@ server <- function(input, output, session) {
 
 
     observeEvent(c(input$navbar, input$tabset), {
-        print("here3")
         toggle(
             condition = (input$navbar != "Bootstrap"),
                id = "compx_custom")
         toggle(
             condition = (input$navbar == "Fingerprint"),
                id = "nb_mark_custom")
-        toggle(
-            condition = ( ! input$navbar %in% c("Fingerprint", "Bootstrap")),
-               id = "text")
-        toggle(
-            condition = ( ! input$navbar %in% c("Fingerprint", "Bootstrap")),
-               id = "compy_custom")
+        for (i in c("text", "compy_custom"))
+            toggle(
+                condition = ( !input$navbar %in% c("Fingerprint", "Bootstrap")),
+                   id = i)
         toggle(
             condition = (input$navbar == "Samples" && 
                     length(input$blocks$datapath) > 1),
@@ -917,12 +910,8 @@ server <- function(input, output, session) {
         toggle(
             condition = (input$navbar == "Fingerprint"),
             id = "indexes")
-        toggle(
-            condition = (input$navbar == "Bootstrap"),
-            id = "b_x_custom")
-        toggle(
-            condition = (input$navbar == "Bootstrap"),
-            id = "b_y_custom")
+        for (i in c("b_x_custom", "b_y_custom"))
+            toggle(condition = (input$navbar == "Bootstrap"), id = i)
         toggle(
             condition = (
                 !is.null(analysis) && !input$navbar %in% c("Connection", "AVE", "Permutation")
@@ -933,7 +922,6 @@ server <- function(input, output, session) {
 
 
     observeEvent(input$navbar, {
-        print("here2")
         if (!is.null(analysis) && input$navbar %in% c("Connection", "AVE", "Permutation"))
             updateTabsetPanel(session, "tabset", selected = "RGCCA")
         else if (!is.null(analysis))
@@ -943,23 +931,11 @@ server <- function(input, output, session) {
 
     observe({
         # Initial events
-        print("here")
         hide(selector = "#tabset li a[data-value=RGCCA]")
-        hide(selector = "#navbar li a[data-value=Bootstrap]")
-        hide(selector = "#navbar li a[data-value=Permutation]")
-        for (t in c("Connection", "AVE", "Samples", "Corcircle", "Fingerprint"))
-            hide(selector = paste0("#navbar li a[data-value=", t, "]"))
-        hide(id = "run_boot")
-        hide(id = "nboot")
-        # hide(id = "run_perm")
-        # hide(id = "nperm")
-        # hide(id = "perm")
-        # hide("show_crossval")
-        # hide(id = "crossval")
-        hide(id = "header")
-        hide(id = "init")
-        hide(id = "navbar")
-        hide(id = "connection_save")
+        for (i in c("Connection", "AVE", "Samples", "Corcircle", "Fingerprint", "Bootstrap", "Permutation"))
+            hide(selector = paste0("#navbar li a[data-value=", i, "]"))
+        for (i in c("run_boot", "nboot", "header", "init", "navbar", "connection_save"))
+            hide(id = i)
     })
 
 
@@ -1069,32 +1045,28 @@ server <- function(input, output, session) {
     })
     
     cleanup_analysis_par <- function(){
-        print("coucou")
         assign("analysis", NULL, .GlobalEnv)
         assign("boot", NULL, .GlobalEnv)
         assign("selected.var", NULL, .GlobalEnv)
-        hide(id = "run_boot")
-        hide(id = "nboot")
-        for (t in c("Connection", "AVE", "Samples", "Corcircle", "Fingerprint"))
-            hide(selector = paste0("#navbar li a[data-value=", t, "]"))
+        for (i in c("run_boot", "nboot"))
+            hide(id = i)
+        for (i in c("Connection", "AVE", "Samples", "Corcircle", "Fingerprint", "Bootstrap", "Permutation"))
+            hide(selector = paste0("#navbar li a[data-value=", i, "]"))
         # hide(id = "run_perm")
         # hide(id = "nperm")
         # hide(id = "perm")
-        hide(selector = "#navbar li a[data-value=Bootstrap]")
-        hide(selector = "#navbar li a[data-value=Permutation]")
-        # assign("crossval", NULL, .GlobalEnv)
         # hide(id = "run_crossval")
         # hide(id = "crossval")
+        # assign("crossval", NULL, .GlobalEnv)
     }
 
     observeEvent(input$run_analysis, {
         if (!is.null(getInfile())) {
             assign("analysis", setRGCCA(), .GlobalEnv)
-            show(id = "navbar")
-            for (t in c("Connection", "AVE", "Samples", "Corcircle", "Fingerprint"))
-                show(selector = paste0("#navbar li a[data-value=", t, "]"))
-            show(id = "nboot")
-            show(id = "run_boot")
+            for (i in c("Connection", "AVE", "Samples", "Corcircle", "Fingerprint"))
+                show(selector = paste0("#navbar li a[data-value=", i, "]"))
+            for (i in c("navbar", "nboot", "run_boot"))
+                show(id = i)
             # show(id = "run_perm")
             # show(id = "nperm")
             # show(id = "perm")
