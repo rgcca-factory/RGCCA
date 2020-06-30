@@ -784,7 +784,9 @@ server <- function(input, output, session) {
         },
         .GlobalEnv)
  
+        show(id = "navbar")
         show(selector = "#navbar li a[data-value=Permutation]")
+        updateTabsetPanel(session, "tabset", selected = "Permutation")
     }
 
     getBoot <-  function(){
@@ -870,6 +872,7 @@ server <- function(input, output, session) {
 
 
     observe({
+        print("here4")
         # Event related to input$analysis_type
         toggle(
             condition = (input$analysis_type == "RGCCA"),
@@ -891,6 +894,7 @@ server <- function(input, output, session) {
 
 
     observeEvent(c(input$navbar, input$tabset), {
+        print("here3")
         toggle(
             condition = (input$navbar != "Bootstrap"),
                id = "compx_custom")
@@ -929,6 +933,7 @@ server <- function(input, output, session) {
 
 
     observeEvent(input$navbar, {
+        print("here2")
         if (!is.null(analysis) && input$navbar %in% c("Connection", "AVE", "Permutation"))
             updateTabsetPanel(session, "tabset", selected = "RGCCA")
         else if (!is.null(analysis))
@@ -938,17 +943,19 @@ server <- function(input, output, session) {
 
     observe({
         # Initial events
-
+        print("here")
         hide(selector = "#tabset li a[data-value=RGCCA]")
         hide(selector = "#navbar li a[data-value=Bootstrap]")
         hide(selector = "#navbar li a[data-value=Permutation]")
+        for (t in c("Connection", "AVE", "Samples", "Corcircle", "Fingerprint"))
+            hide(selector = paste0("#navbar li a[data-value=", t, "]"))
         hide(id = "run_boot")
         hide(id = "nboot")
-        hide(id = "run_perm")
-        hide(id = "nperm")
-        hide(id = "perm")
-        hide("show_crossval")
-        hide(id = "crossval")
+        # hide(id = "run_perm")
+        # hide(id = "nperm")
+        # hide(id = "perm")
+        # hide("show_crossval")
+        # hide(id = "crossval")
         hide(id = "header")
         hide(id = "init")
         hide(id = "navbar")
@@ -1062,33 +1069,37 @@ server <- function(input, output, session) {
     })
     
     cleanup_analysis_par <- function(){
+        print("coucou")
         assign("analysis", NULL, .GlobalEnv)
         assign("boot", NULL, .GlobalEnv)
         assign("selected.var", NULL, .GlobalEnv)
         hide(id = "run_boot")
         hide(id = "nboot")
-        hide(id = "run_perm")
-        hide(id = "nperm")
-        hide(id = "perm")
+        for (t in c("Connection", "AVE", "Samples", "Corcircle", "Fingerprint"))
+            hide(selector = paste0("#navbar li a[data-value=", t, "]"))
+        # hide(id = "run_perm")
+        # hide(id = "nperm")
+        # hide(id = "perm")
         hide(selector = "#navbar li a[data-value=Bootstrap]")
         hide(selector = "#navbar li a[data-value=Permutation]")
-        assign("crossval", NULL, .GlobalEnv)
-        hide(id = "run_crossval")
-        hide(id = "crossval")
+        # assign("crossval", NULL, .GlobalEnv)
+        # hide(id = "run_crossval")
+        # hide(id = "crossval")
     }
 
     observeEvent(input$run_analysis, {
         if (!is.null(getInfile())) {
             assign("analysis", setRGCCA(), .GlobalEnv)
-
             show(id = "navbar")
+            for (t in c("Connection", "AVE", "Samples", "Corcircle", "Fingerprint"))
+                show(selector = paste0("#navbar li a[data-value=", t, "]"))
             show(id = "nboot")
             show(id = "run_boot")
-            show(id = "run_perm")
-            show(id = "nperm")
-            show(id = "perm")
-            toggle(id = "run_crossval", condition = input$supervised)
-            toggle(id = "crossval", condition = input$supervised)
+            # show(id = "run_perm")
+            # show(id = "nperm")
+            # show(id = "perm")
+            # toggle(id = "run_crossval", condition = input$supervised)
+            # toggle(id = "crossval", condition = input$supervised)
             updateTabsetPanel(session, "navbar", selected = "Connection")
             # for (i in c('bootstrap_save', 'fingerprint_save', 'corcircle_save',
             # 'samples_save', 'ave_save')) setToggleSaveButton(i)
@@ -1390,7 +1401,7 @@ server <- function(input, output, session) {
 
         getDynamicVariables()
 
-        if (!is.null(analysis) & !is.null(perm)) {
+        if (!is.null(perm)) {
 
             observeEvent(input$permutation_save, {
                 save("perm.pdf", plot_permut_2D(perm))

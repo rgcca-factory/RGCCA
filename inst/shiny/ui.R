@@ -117,6 +117,34 @@ ui <- fluidPage(
 
             tabPanel(
                 "RGCCA",
+                radioButtons(
+                    "crossval",
+                    label = "Type of validation",
+                    choices = c(`Train-test` = "test",
+                                `K-fold` = "kfold",
+                                `Leave-one-out` = "loo"),
+                    selected = "loo"
+                ),
+                actionButton(
+                    inputId = "run_crossval",
+                    label = "Run cross-validation"),
+                sliderInput(
+                    inputId = "nperm",
+                    label = "Number of permutations",
+                    min = 5,
+                    max = 1000,
+                    value = 10,
+                    step = 5
+                ),
+                radioButtons(
+                    "perm",
+                    label = "Type of permutation",
+                    choices = c(`Number of components` = "ncomp",
+                                Sparsity = "sparsity",
+                                Tau = "tau"),
+                ),
+                actionButton(inputId = "run_perm",
+                    label = "Run permutation"),
                 uiOutput("analysis_type_custom"),
                 uiOutput("nb_compcustom"),
                 uiOutput("scale_custom"),
@@ -155,35 +183,7 @@ ui <- fluidPage(
                     step = 5
                 ),
                 actionButton(inputId = "run_boot",
-                    label = "Run bootstrap"),
-                radioButtons(
-                    "crossval",
-                    label = "Type of validation",
-                    choices = c(`Train-test` = "test",
-                                `K-fold` = "kfold",
-                                `Leave-one-out` = "loo"),
-                    selected = "loo"
-                ),
-                actionButton(
-                    inputId = "run_crossval",
-                    label = "Run cross-validation"),
-                sliderInput(
-                    inputId = "nperm",
-                    label = "Number of permutations",
-                    min = 5,
-                    max = 1000,
-                    value = 10,
-                    step = 5
-                ),
-                radioButtons(
-                    "perm",
-                    label = "Type of permutation",
-                    choices = c(`Number of components` = "ncomp",
-                                Sparsity = "sparsity",
-                                Tau = "tau"),
-                ),
-                actionButton(inputId = "run_perm",
-                    label = "Run permutation")
+                    label = "Run bootstrap")
             ),
 
             # Graphical parameters
