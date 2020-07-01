@@ -136,13 +136,6 @@ ui <- fluidPage(
                     value = 10,
                     step = 5
                 ),
-                radioButtons(
-                    "perm",
-                    label = "Type of permutation",
-                    choices = c(`Number of components` = "ncomp",
-                                Sparsity = "sparsity",
-                                Tau = "tau"),
-                ),
                 actionButton(inputId = "run_perm",
                     label = "Run permutation"),
                 uiOutput("analysis_type_custom"),

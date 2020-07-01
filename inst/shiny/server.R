@@ -536,7 +536,6 @@ server <- function(input, output, session) {
             input$names_block_y,
             input$nboot,
             input$nperm,
-            input$perm,
             input$run_perm,
             input$run_crossval,
             input$kfold,
@@ -623,7 +622,6 @@ server <- function(input, output, session) {
         head(
             order_df(cbind(perm$penalties, `Z-score` = perm$zstat), ncol(perm$penalties) + 1), 
             n = nb_mark)
-         # colnames
     }
 
     ################################################ Analysis ################################################
@@ -692,6 +690,11 @@ server <- function(input, output, session) {
 
         assign("tau", tau, .GlobalEnv)
         assign("analysis_type", analysis_type, .GlobalEnv)
+        
+        if (analysis_type != "SGCCA")
+             assign("perm.par", "tau", .GlobalEnv)
+        else
+            assign("perm.par", "sparsity", .GlobalEnv)
 
         return(blocks)
     }
@@ -762,7 +765,7 @@ server <- function(input, output, session) {
             func <- quote(
                 rgcca_permutation(
                     blocks_without_superb,
-                    perm.par = input$perm,
+                    perm.par = perm.par,
                     nperm = input$nperm,
                     connection = connection,
                     response = input$names_block_response,
@@ -786,7 +789,7 @@ server <- function(input, output, session) {
  
         show(id = "navbar")
         show(selector = "#navbar li a[data-value=Permutation]")
-        updateTabsetPanel(session, "tabset", selected = "Permutation")
+        updateTabsetPanel(session, "navbar", selected = "Permutation")
     }
 
     getBoot <-  function(){
@@ -936,7 +939,7 @@ server <- function(input, output, session) {
             hide(selector = paste0("#navbar li a[data-value=", i, "]"))
         for (i in c("run_boot", "nboot", "header", "init", "navbar", "connection_save"))
             hide(id = i)
-        for (i in c("perm", "nperm", "run_perm"))
+        for (i in c("nperm", "run_perm"))
             toggle(id = i, condition = !input$supervised)
         for (i in c("run_crossval", "kfold"))
             toggle(id = i, condition = input$supervised)
@@ -1058,7 +1061,6 @@ server <- function(input, output, session) {
             hide(selector = paste0("#navbar li a[data-value=", i, "]"))
         # hide(id = "run_perm")
         # hide(id = "nperm")
-        # hide(id = "perm")
         # hide(id = "run_crossval")
         # hide(id = "kfold")
         # assign("crossval", NULL, .GlobalEnv)
