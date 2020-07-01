@@ -539,7 +539,7 @@ server <- function(input, output, session) {
             input$perm,
             input$run_perm,
             input$run_crossval,
-            input$crossval,
+            input$kfold,
             input$show_crossval,
             input$text,
             input$names_block_response,
@@ -739,7 +739,7 @@ server <- function(input, output, session) {
     getCrossVal <-  function(){
         assign(
             "crossval",
-            rgcca_crossvalidation(rgcca_out, validation = input$crossval),
+            rgcca_crossvalidation(rgcca_out, validation = "kfold", k = input$kfold),
             .GlobalEnv
         )
         showWarn(message(paste("CV score:", round(crossval$score, 4))), show = FALSE)
@@ -936,6 +936,10 @@ server <- function(input, output, session) {
             hide(selector = paste0("#navbar li a[data-value=", i, "]"))
         for (i in c("run_boot", "nboot", "header", "init", "navbar", "connection_save"))
             hide(id = i)
+        for (i in c("perm", "nperm", "run_perm"))
+            toggle(id = i, condition = !input$supervised)
+        for (i in c("run_crossval", "kfold"))
+            toggle(id = i, condition = input$supervised)
     })
 
 
@@ -1056,7 +1060,7 @@ server <- function(input, output, session) {
         # hide(id = "nperm")
         # hide(id = "perm")
         # hide(id = "run_crossval")
-        # hide(id = "crossval")
+        # hide(id = "kfold")
         # assign("crossval", NULL, .GlobalEnv)
     }
 
@@ -1067,11 +1071,6 @@ server <- function(input, output, session) {
                 show(selector = paste0("#navbar li a[data-value=", i, "]"))
             for (i in c("navbar", "nboot", "run_boot"))
                 show(id = i)
-            # show(id = "run_perm")
-            # show(id = "nperm")
-            # show(id = "perm")
-            # toggle(id = "run_crossval", condition = input$supervised)
-            # toggle(id = "crossval", condition = input$supervised)
             updateTabsetPanel(session, "navbar", selected = "Connection")
             # for (i in c('bootstrap_save', 'fingerprint_save', 'corcircle_save',
             # 'samples_save', 'ave_save')) setToggleSaveButton(i)

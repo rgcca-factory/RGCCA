@@ -117,13 +117,13 @@ ui <- fluidPage(
 
             tabPanel(
                 "RGCCA",
-                radioButtons(
-                    "crossval",
-                    label = "Type of validation",
-                    choices = c(`Train-test` = "test",
-                                `K-fold` = "kfold",
-                                `Leave-one-out` = "loo"),
-                    selected = "loo"
+                sliderInput(
+                    inputId = "kfold",
+                    label = "Number of folds",
+                    min = 2,
+                    max = 10,
+                    value = 5,
+                    step = 1
                 ),
                 actionButton(
                     inputId = "run_crossval",
