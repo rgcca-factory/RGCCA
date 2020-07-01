@@ -1005,6 +1005,8 @@ server <- function(input, output, session) {
         # reactualiser l'analyse
         assign("nb_comp", 2, .GlobalEnv)
         assign("analysis_type", NULL, .GlobalEnv)
+        assign("analysis", NULL, .GlobalEnv)
+        assign("perm", NULL, .GlobalEnv)
         assign("response", NULL, .GlobalEnv)
         assign("connection", NULL, .GlobalEnv)
         assign("response_file", NULL, .GlobalEnv)
