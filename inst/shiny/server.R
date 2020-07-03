@@ -1270,7 +1270,6 @@ server <- function(input, output, session) {
             p <- samples()
             
             if (is(p, "plotly")) {
-                warning("ok")
             p <- showWarn(
                 modify_hovertext(
                     plot_dynamic(p, NULL, "text", TRUE, TRUE),
@@ -1334,7 +1333,7 @@ server <- function(input, output, session) {
 
         if (!is.null(analysis)) {
             observeEvent(input$ave_save, {
-                save_plot("AVE.pdf", ave())
+                save_plot("AVE.pdf", ave()) 
                 msgSave()
             })
             ave()
@@ -1345,6 +1344,10 @@ server <- function(input, output, session) {
     output$connectionPlot <- renderVisNetwork({
         getDynamicVariables()
         if (!is.null(analysis)) {
+            observeEvent(input$connection_save, {
+                save_plot("connection.pdf", design())
+                msgSave()
+            })
             design()
         }
     })

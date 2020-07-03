@@ -116,13 +116,14 @@ rgcca_permutation <- function(
         sapply(seq(min_spars), function(x) seq(eval(f), min_spars[x], len = perm.length))
     }
     set_penalty <- function () {
-
-        if(perm.par == "sparsity"){
-            if(type!="sgcca"){cat("As par=='sparsity', the type parameter was replaced by 'sgcca'\n")}
+        if (perm.par == "sparsity") {
+            if (!tolower(type) %in% c("spls", "spca", "sgcca"))
+                warning("The sparsity is chosen but the analyse was not sparse. By default, a SGCCA will be performed.")
             type <<- "sgcca"
             min_spars <<- sapply(ncols, function(x) 1 / sqrt(x))
         }else{
-            if(type!="rgcca"){cat("As par!='sparsity', the type parameter was replaced by 'rgcca'\n")}
+            if (tolower(type) %in% c("spls", "spca", "sgcca"))
+                warning("The tau is chosen but the analyse is sparse. By default, a RGCCA will be performed.")
             type <<- "rgcca"
             min_spars <<- sapply(ncols, function(x) 0)
         }
