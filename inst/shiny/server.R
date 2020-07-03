@@ -574,7 +574,7 @@ server <- function(input, output, session) {
         else
             response_name <- ""
 
-        if(!is.null(compx))
+        if(!is.null(input$compx))
             plot_ind(
                 rgcca = rgcca_out,
                 resp = response,
@@ -1269,7 +1269,8 @@ server <- function(input, output, session) {
 
             p <- samples()
             
-            if(is(p, "plotly")) {
+            if (is(p, "plotly")) {
+                warning("ok")
             p <- showWarn(
                 modify_hovertext(
                     plot_dynamic(p, NULL, "text", TRUE, TRUE),

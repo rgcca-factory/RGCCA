@@ -389,6 +389,9 @@ load_libraries <- function(librairies) {
     }
 }
 
+stop_rgcca <- function(message = "", exit_code = 1)
+    base::stop(error_cnd(.subclass = exit_code, message = message))
+
 ########## Main ##########
 
 # Get arguments : R packaging install, need an opt variable with associated
