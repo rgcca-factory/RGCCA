@@ -235,7 +235,7 @@ ui <- fluidPage(
             ),
             tabPanel(
                 "Corcircle",
-                plotlyOutput("corcirclePlot"),
+                plotlyOutput("corcirclePlot", height = 500),
                 actionButton("corcircle_save", "Save")
             ),
             tabPanel(

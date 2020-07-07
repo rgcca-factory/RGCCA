@@ -907,9 +907,8 @@ server <- function(input, output, session) {
             condition = (input$navbar == "Samples" && 
                     length(input$blocks$datapath) > 1),
                id = "blocks_names_custom_y")
-        toggle(
-            condition = (input$navbar == "Samples"),
-               id = "response_custom")
+        for (i in c("show_crossval", "response_custom"))
+            toggle(condition = (input$navbar == "Samples"), id = i)
         toggle(
             condition = (input$navbar == "Fingerprint"),
             id = "indexes")
@@ -1269,7 +1268,7 @@ server <- function(input, output, session) {
 
             p <- samples()
             
-            if (is(p, "plotly")) {
+            if (is(p, "gg")) {
             p <- showWarn(
                 modify_hovertext(
                     plot_dynamic(p, NULL, "text", TRUE, TRUE),
@@ -1321,7 +1320,9 @@ server <- function(input, output, session) {
                 msgSave()
             })
 
-            modify_hovertext(ggplotly(fingerprint(input$indexes)), hovertext = F, type = "var1D")
+            p <- modify_hovertext(ggplotly(fingerprint(input$indexes)), hovertext = F, type = "var1D")
+            p$x$layout$margin$t <- 100 
+            p
         }
 
     })
@@ -1386,8 +1387,9 @@ server <- function(input, output, session) {
                 save("perm.pdf", plot_permut_2D(perm))
                 msgSave()
             })
-            p <- modify_hovertext(ggplotly(plot_permut_2D(perm)), hovertext = F, type = "perm") 
-            p$x$layout$margin$t <- 100 
+            p <- plot_permut_2D(perm)
+            p <- modify_hovertext(ggplotly(p), hovertext = F, type = "perm", p_perm = p)
+            p$x$layout$margin$t <- 100
             p
         }
 

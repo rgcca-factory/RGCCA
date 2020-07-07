@@ -47,8 +47,7 @@ plot_permut_2D <- function(
     n <- seq(nrow(perm$penalties))
 
     df <- as.data.frame(cbind(seq(NROW(perm$penalties)), y))
-    #rownames(df) <- sapply(n, function(x) paste(round(perm$penalties[x, ],2), collapse = "-"))
-    rownames(df)<- n
+    rownames(df) <- n
     colnames(df) <- c("iter", type)
 
     axis <- function(margin){
@@ -108,46 +107,31 @@ plot_permut_2D <- function(
             linetype = "dashed",
             yintercept = c(1.96, 2.58, 3.29)
         )
-    else
-    {
-        dft=NULL
-        for (i in 1:NCOL(perm$permcrit)) {
-            #print(i)
-            x = df[, 1]
-            y = perm$permcrit[, i]
-            dfi=cbind(x,y)
-            dft=rbind(dft,dfi)
-        }   
-      #  print(dft)
-        dft=as.data.frame(dft)
+    else {
+        dft <- NULL
+        for (i in seq(NCOL(perm$permcrit))) {
+            x <- df[, 1]
+            y <- perm$permcrit[, i]
+            dfi <- cbind(x,y)
+            dft <- rbind(dft,dfi)
+        }
+        dft <- as.data.frame(dft)
      
-        if(bars=="points")
-        {
-        
-            p<- p+geom_point(data=dft,aes(x=dft[,1],y=dft[,2]),colour="green",size=0.8)
+        if (bars == "points")
+            p <- p + geom_point(data = dft,aes(x = dft[,1], y = dft[,2]), colour = "green", size = 0.8)
+        if (bars == "sd") {
         }
-        if(bars=="sd")
-        {
-            
+        if (bars == "stderr") {
         }
-        if(bars=="stderr")
-        {
-            
+        if (bars == "ci") {
         }
-        if(bars=="ci")
-        {
-            
+        if (bars == "quantile") {
         }
-        if(bars=="quantile")
-        {
-            
-        }
-         
+
     }
-    p<- p+ scale_x_continuous(breaks=1:nrow(df),  labels=rownames(df))
-  #  p<-p + theme(axis.text.x = element_text(angle=45))
-    #plot(p)
+
+    p <- p + scale_x_continuous(breaks = 1:nrow(df), labels = rownames(df))
+    attributes(p)$penalties <- perm$penalties
 
     return(p)
-
 }
