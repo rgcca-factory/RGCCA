@@ -566,15 +566,15 @@ server <- function(input, output, session) {
         if (!input$show_crossval)
             crossval <- NULL
 
-        if(!is.null(crossval)){
+        if (!is.null(crossval)) {
             response_name <- "Response"
             response <- rep(1, NROW(rgcca_out$Y[[1]]))
-        }else if (!is.null(input$response))
+        } else if (!is.null(input$response))
             response_name <- getExtension(input$response$name)
         else
             response_name <- ""
 
-        if(!is.null(input$compx))
+        if (!is.null(input$compx))
             plot_ind(
                 rgcca = rgcca_out,
                 resp = response,
@@ -589,14 +589,15 @@ server <- function(input, output, session) {
     }
 
     corcircle <- function()
-        plot_var_2D(
-            rgcca = rgcca_out,
-            compx = compx,
-            compy = compy,
-            i_block = id_block,
-            text = if_text,
-            n_mark = nb_mark
-        )
+        if (!is.null(input$compx))
+            plot_var_2D(
+                rgcca = rgcca_out,
+                compx = compx,
+                compy = compy,
+                i_block = id_block,
+                text = if_text,
+                n_mark = nb_mark
+            )
 
     fingerprint <- function(type)
         plot_var_1D(
@@ -1298,13 +1299,16 @@ server <- function(input, output, session) {
                 msgSave()
             })
 
-            p <- modify_hovertext(plot_dynamic(corcircle(), NULL, "text"), if_text)
-            n <- length(p$x$data)
-            (style(
-                p,
-                hoverinfo = "none",
-                traces = c(n, n - 1)
-            ))
+            p <- corcircle()
+            if (is(p, "gg")) {
+                p <- modify_hovertext(plot_dynamic(p, NULL, "text"), if_text)
+                n <- length(p$x$data)
+                (style(
+                    p,
+                    hoverinfo = "none",
+                    traces = c(n, n - 1)
+                ))
+            }
         }
 
     })
@@ -1319,9 +1323,7 @@ server <- function(input, output, session) {
                 save_plot("fingerprint.pdf", fingerprint(input$indexes))
                 msgSave()
             })
-
-            p <- modify_hovertext(ggplotly(fingerprint(input$indexes)), hovertext = F, type = "var1D")
-            p$x$layout$margin$t <- 100 
+            p <- modify_hovertext(plot_dynamic(fingerprint(input$indexes), type = "var1D"), hovertext = F, type = "var1D")
             p
         }
 
@@ -1370,8 +1372,8 @@ server <- function(input, output, session) {
                 save_plot("bootstrap.pdf", plotBoot())
                 msgSave()
             })
-            p <- modify_hovertext(ggplotly(plotBoot()), type= "boot") 
-            p$x$layout$margin$t <- 100 
+            p <- modify_hovertext(ggplotly(plotBoot()), type = "boot") 
+            p$x$layout$margin$t <- 100
             p 
         }
 
