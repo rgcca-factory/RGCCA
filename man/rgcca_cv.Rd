@@ -10,7 +10,9 @@ rgcca_cv(blocks, type = "rgcca", response = NULL, par = "ncomp",
   n_cores = parallel::detectCores() - 1, quiet = TRUE,
   superblock = FALSE, scale = TRUE, scale_block = TRUE,
   tol = 1e-06, scheme = "factorial", method = "nipals",
-  rgcca_res = NULL, parallelization = NULL, ...)
+  rgcca_res = NULL, parallelization = NULL, tau = rep(1,
+  length(blocks)), ncomp = rep(1, length(blocks)), sparsity = rep(1,
+  length(blocks)), init = "svd", bias = TRUE, ...)
 }
 \arguments{
 \item{blocks}{A list that contains the \eqn{J} blocks of variables \eqn{\mathbf{X_1}, \mathbf{X_2}, ..., \mathbf{X_J}}.}
@@ -66,6 +68,20 @@ a superblock}
 \item{rgcca_res}{a result of rgcca (from whom all parameters will be imported)}
 
 \item{parallelization}{if TRUE parallelization is run, if FALSE, no parallelisation is run. If NULL (default) parallelization is always used except for Windows in case of length(nperm)<10}
+
+\item{tau}{Used for type="rgcca" only. tau is either a \eqn{1 \times J} vector or a \eqn{\mathrm{max}(ncomp) \times J} matrix, and contains the values 
+of the regularization parameters (default: tau = 1, for each block and each dimension).
+If tau = "optimal" the regularization paramaters are estimated for each block and each dimension using the Schafer and Strimmer (2005)
+analytical formula . If tau is a \eqn{1\times J} numeric vector, tau[j] is identical across the dimensions of block \eqn{\mathbf{X}_j}. 
+If tau is a matrix, tau[k, j] is associated with \eqn{\mathbf{X}_{jk}} (\eqn{k}th residual matrix for block \eqn{j})}
+
+\item{ncomp}{A \eqn{1 \times J} vector that contains the numbers of components for each block (default: rep(1, length(A)), which gives one component per block.). It can be estimated by using \link{rgcca_permutation}.}
+
+\item{sparsity}{Used for type="sgcca" or "spls" only. A vector containing the sparsity coefficients (length J, between 0 and 1). It can be estimated by using \link{rgcca_permutation}.}
+
+\item{init}{The mode of initialization to use in RGCCA algorithm. The alternatives are either by Singular Value Decompostion ("svd") or random ("random") (Default: "svd").}
+
+\item{bias}{A logical value for biaised or unbiaised estimator of the var/cov (default: bias = TRUE).}
 
 \item{...}{Further graphical parameters (see plot2D functions)}
 }

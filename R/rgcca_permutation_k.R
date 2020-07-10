@@ -41,9 +41,7 @@ rgcca_permutation_k <- function(
         {
             blocks_to_use=blocks
         }
-     print("block")
-     print(Sys.time()-t0)
-     t0=Sys.time()
+
         if(par=="ncomp")
         {
             res <- rgcca(
@@ -98,7 +96,7 @@ rgcca_permutation_k <- function(
                 tau=NULL
             )
         }
-     print(Sys.time()-t0)
+   
         crit <- res$crit
         return(sum(sapply(crit, sum)))
 

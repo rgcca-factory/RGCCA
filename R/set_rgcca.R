@@ -1,4 +1,5 @@
 # inds : individuals removed from the blocks (for crossvalidation)
+# affects same parameters as rgcca_res (or other ones if specified) on a subset of individuals determined by inds (individuals to remove) 
 set_rgcca <- function(
     rgcca_res,
     blocks = NULL,
@@ -119,6 +120,6 @@ set_rgcca <- function(
     func[[par]] <- penalty
 
     res <- eval(as.call(func))
-    attributes(res)$bigA_scaled <- blocks
+  #  attributes(res)$bigA_scaled <- blocks
     return(res)
 }

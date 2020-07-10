@@ -7,11 +7,27 @@
 #' @param rgcca_res Result of rgcca function
 #' @return A list of RGCCA bootstrap weights
 bootstrap_k <- function(
-    rgcca_res) {
+    rgcca_res,type="weight") {
 
     blocks_all <- rgcca_res$call$blocks
     rgcca_res_boot <- set_rgcca(rgcca_res, method="nipals",boot = TRUE)
-    w <- rgcca_res_boot$a
+    if(type=="weight")
+    {
+        w <- rgcca_res_boot$a        
+    }
+    if(type=="cor")
+    {
+       
+                w=lapply(1:length(rgcca_res_boot$A),
+                 function(j)
+                {
+                     
+                     res=sapply(1:dim(rgcca_res_boot$A[[j]])[2],function(k){cor(rgcca_res_boot$Y[[j]][,1],rgcca_res_boot$A[[j]][,k],use="pairwise.complete.obs")})
+                     names(res)=colnames(rgcca_res_boot$A[[j]])
+                     return(res)
+                 })
+    }
+
 
     # Add removed variables
     missing_var <- lapply(
@@ -46,5 +62,9 @@ bootstrap_k <- function(
             drop = FALSE])
 
     names(w) <- names(rgcca_res$call$blocks)
-   check_sign_comp(rgcca_res, w)
+    if(type=="weight")
+    {
+        check_sign_comp(rgcca_res, w)        
+    }
+
 }

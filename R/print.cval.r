@@ -81,11 +81,11 @@ print.cval=function(x,bars="sd",alpha=0.05,...)
     optimal_y=df[optimal_ind,"mean"]
     cat(paste0(nrow(mat_cval)," configurations were tested. \n"))
     
-   cat(paste0("Validation: ",x$call$validation,ifelse(x$call$validation=="kfold", paste0(" with ",x$call$k," folds and ",x$call$n_cv," runs)"),")")),"\n")
+   cat(paste0("Validation: ",x$call$validation,ifelse(x$call$validation=="kfold", paste0(" with ",x$call$k," folds and ",x$call$n_cv," run(s))"),")")),"\n")
     
     print(df)
     
-    cat(paste("The best configuration was:", paste(round(x$bestpenalties,digits=3),collapse=" "),"for a value of ", round(optimal_y,digits=2)),"\n",...)
+    cat(paste("The best combination was:", paste(round(x$bestpenalties,digits=3),collapse=" "),"for a value of ", round(optimal_y,digits=2)),"\n",...)
 
 
 }

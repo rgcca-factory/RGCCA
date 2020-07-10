@@ -217,7 +217,7 @@ rgcca <- function(
     
     # Check blocks size, adds NA lines if some subjects are missing...
 
-    blocks=check_blocks(blocks,add_NAlines=TRUE,n=1)
+    blocks=check_blocks(blocks,add_NAlines=TRUE,n=1,init=TRUE)
 
     if (!is.null(response))
         check_blockx("response", response, blocks)

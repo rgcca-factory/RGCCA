@@ -4,17 +4,19 @@
 \alias{rgcca_crossvalidation}
 \title{Cross-validation}
 \usage{
-rgcca_crossvalidation(rgcca_res, validation = "loo",
-  model = "regression", fit = "lm", k = 5,
-  n_cores = parallel::detectCores() - 1, scale = TRUE,
-  scale_block = TRUE, tol = 1e-08, scheme = "factorial",
-  method = "nipals", parallelization = NULL, ...)
+rgcca_crossvalidation(rgcca_res, validation = "kfold",
+  model = "regression", fit = "lm", k = 5, scale = NULL,
+  scale_block = NULL, tol = 1e-08, scheme = NULL, method = NULL,
+  type = NULL, init = NULL, bias = NULL, connection = NULL,
+  ncomp = NULL, tau = NULL, sparsity = NULL,
+  n_cores = parallel::detectCores() - 1, parallelization = TRUE, ...)
 
-rgcca_crossvalidation(rgcca_res, validation = "loo",
-  model = "regression", fit = "lm", k = 5,
-  n_cores = parallel::detectCores() - 1, scale = TRUE,
-  scale_block = TRUE, tol = 1e-08, scheme = "factorial",
-  method = "nipals", parallelization = NULL, ...)
+rgcca_crossvalidation(rgcca_res, validation = "kfold",
+  model = "regression", fit = "lm", k = 5, scale = NULL,
+  scale_block = NULL, tol = 1e-08, scheme = NULL, method = NULL,
+  type = NULL, init = NULL, bias = NULL, connection = NULL,
+  ncomp = NULL, tau = NULL, sparsity = NULL,
+  n_cores = parallel::detectCores() - 1, parallelization = TRUE, ...)
 }
 \arguments{
 \item{rgcca_res}{A list giving the results of a R/SGCCA}
@@ -28,8 +30,6 @@ rgcca_crossvalidation(rgcca_res, validation = "loo",
 \item{fit}{A character giving the function used to compare the trained and the tested models}
 
 \item{k}{An integer given the parameter for k-fold method (5, by default)}
-
-\item{n_cores}{An integer for the number of cores used in parallelization}
 
 \item{scale}{If scale = TRUE, each block is standardized to zero means and unit variances (default: TRUE).}
 
@@ -47,6 +47,28 @@ rgcca_crossvalidation(rgcca_res, validation = "loo",
 \item{\code{"em"}}{ corresponds to impute the data with EM-type algorithms}
 \item{\code{"sem"}}{ corresponds to impute the data with EM-type algorithms with superblock approach}
 \item{\code{"knn1"}}{ corresponds to impute the data with the 1-Nearest Neighbor. 1 can be replace by another number (such as knn3) to impute with the 3-Nearest Neighbors.}}}
+
+\item{type}{A character giving the type of analysis: c('rgcca', 'cpca-w', 'gcca', 'hpca', 'maxbet-b', 'maxbet', 'maxdiff-b','maxdiff', 'maxvar-a', 'maxvar-b', 'maxvar', 'niles', 'r-maxvar', 'rcon-pca',
+'ridge-gca', 'sabscor', 'ssqcor', 'ssqcor', 'ssqcov-1', 'ssqcov-2', 'ssqcov',
+'sum-pca', 'sumcor', 'sumcov-1', 'sumcov-2', 'sumcov.', 'sabscov', 'plspm','cca', 'ra', 'ifa', 'pls','pca')}
+
+\item{init}{The mode of initialization to use in RGCCA algorithm. The alternatives are either by Singular Value Decompostion ("svd") or random ("random") (Default: "svd").}
+
+\item{bias}{A logical value for biaised or unbiaised estimator of the var/cov (default: bias = TRUE).}
+
+\item{connection}{A design matrix that describes the relationships between blocks (default: complete design).}
+
+\item{ncomp}{A \eqn{1 \times J} vector that contains the numbers of components for each block (default: rep(1, length(A)), which gives one component per block.). It can be estimated by using \link{rgcca_permutation}.}
+
+\item{tau}{Used for type="rgcca" only. tau is either a \eqn{1 \times J} vector or a \eqn{\mathrm{max}(ncomp) \times J} matrix, and contains the values 
+of the regularization parameters (default: tau = 1, for each block and each dimension).
+If tau = "optimal" the regularization paramaters are estimated for each block and each dimension using the Schafer and Strimmer (2005)
+analytical formula . If tau is a \eqn{1\times J} numeric vector, tau[j] is identical across the dimensions of block \eqn{\mathbf{X}_j}. 
+If tau is a matrix, tau[k, j] is associated with \eqn{\mathbf{X}_{jk}} (\eqn{k}th residual matrix for block \eqn{j})}
+
+\item{sparsity}{Used for type="sgcca" or "spls" only. A vector containing the sparsity coefficients (length J, between 0 and 1). It can be estimated by using \link{rgcca_permutation}.}
+
+\item{n_cores}{An integer for the number of cores used in parallelization}
 
 \item{parallelization}{if TRUE parallelization is run, if FALSE, no parallelisation is run. If NULL (default) parallelization is always used except for Windows in case of length(nperm)<10}
 

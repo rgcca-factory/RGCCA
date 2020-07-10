@@ -25,10 +25,9 @@ parallelize <- function(
 
     if(is.null(parallelization))
     {
-        if( Sys.info()["sysname"] == "Windows"& length(nperm)<10)
+        if( Sys.info()["sysname"] == "Windows")
         {
             parallelization=FALSE
-            #message("No parallelization")       
         }
         else
         {
@@ -41,7 +40,7 @@ parallelize <- function(
         }
     }
 
-    if(parallelization)
+    if(parallelization==TRUE)
     {
         load_libraries("parallel")
         if (!("parallel" %in% installed.packages()[, "Package"]))
@@ -50,36 +49,36 @@ parallelize <- function(
         if(is.null(n_cores))
             n_cores <- parallel::detectCores() - 1
         
-        if (Sys.info()["sysname"] == "Windows") {
+     #  if (Sys.info()["sysname"] == "Windows") {
             
-                
-             cl <- parallel::makeCluster(n_cores)
-             
-             parallel::clusterExport(
-                 cl,
-                 varlist,
-                 envir = envir
-             )
-             
-             
-             parallel::clusterEvalQ(cl, library(RGCCA))
-             
-             # library(parallel)
-             parallel::clusterEvalQ(cl, library(parallel))
-             # print("all okay")
-             res <- tryCatch({
-                 get(applyFunc)(
-                     cl,
-                     nperm,
-                     f)
-             }, error = function(err) stop_rgcca(err$message),
-             finally = {
-                 parallel::stopCluster(cl)
-                 cl <- c()
-             })
-             
-             
-         }else{
+             #    
+             # cl <- parallel::makeCluster(n_cores)
+             # 
+             # parallel::clusterExport(
+             #     cl,
+             #     varlist,
+             #     envir = envir
+             # )
+             # 
+             # 
+             # parallel::clusterEvalQ(cl, library(RGCCA))
+             # 
+             # # library(parallel)
+             # parallel::clusterEvalQ(cl, library(parallel))
+             # # print("all okay")
+         #      res <- tryCatch({
+         #         get(applyFunc)(
+         #             cl,
+         #             nperm,
+         #             f)
+         #     }, error = function(err) stop_rgcca(err$message),
+         #     finally = {
+         #         parallel::stopCluster(cl)
+         #         cl <- c()
+         #     })
+         #     
+         #     
+         # }else{
             res <- parallel::mclapply(
                 nperm,
                 f,
@@ -93,14 +92,25 @@ parallelize <- function(
          
             }
                
-        }
+      #  }
         
     }
-    else
+    if(parallelization==FALSE)
     {
         res=lapply(
             nperm,
             f)
+        if (applyFunc == "parSapply")
+            res <- simplify2array(res)
+    }
+    if(parallelization=="for")
+    {
+        res=NULL
+       for(i in 1:length(nperm))
+       {
+           print(i)
+           res[[i]]=f(nperm[i])
+       }
         if (applyFunc == "parSapply")
             res <- simplify2array(res)
     }
