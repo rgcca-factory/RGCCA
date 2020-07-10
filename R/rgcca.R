@@ -177,8 +177,15 @@ rgcca <- function(
         blocks<-blocks$call$blocks
     }
 
-    if(length(blocks)==1){type="pca";message("type='rgcca' is not available for one block only. type was transformed as 'pca'.")}
-    
+    if(length(blocks)==1){
+        if(type!="pca")
+        {
+            type="pca";
+            message("type='rgcca' is not available for one block only. type was transformed as 'pca'.")
+        }
+        
+    }
+         
     if (!missing(sparsity) && missing(type))
         type <- "sgcca"
 
