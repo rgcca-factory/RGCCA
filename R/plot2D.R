@@ -51,10 +51,10 @@ plot2D <- function(
     collapse = FALSE,
     no_overlap = FALSE,
     cex = 1,
-    cex_main = 25 * cex,
-    cex_sub = 16 * cex,
+    cex_main = 14 * cex,
+    cex_sub = 12 * cex,
     cex_point = 3 * cex,
-    cex_lab = 19 * cex) {
+    cex_lab = 10 * cex) {
     
     title <- paste0(title, collapse = " ")
     name_group <- paste0(name_group, collapse = " ")
