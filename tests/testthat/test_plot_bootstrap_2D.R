@@ -4,9 +4,10 @@ blocks <- list(
     industry = Russett[, 4:5],
     politic = Russett[, 6:11] )
 rgcca_out <- rgcca(blocks, sparsity = 0.75, type = "sgcca")
-boot <- bootstrap(rgcca_out, 2, n_cores = 1)
+boot <- bootstrap(rgcca_out, 15, n_cores = 1)
 selected.var <- get_bootstrap(boot, n_cores = 1,display_order=TRUE)
-
+plot(boot,type="2D")
+plot_bootstrap_2D(boot, n_cores = 1)
 test_that("plot_boot_default", {
     expect_is(plot_bootstrap_2D(boot, n_cores = 1), "ggplot")
 })   

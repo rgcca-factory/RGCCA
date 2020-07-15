@@ -88,14 +88,18 @@ plot_bootstrap_2D <- function(
         }
         return(abs(as.double(x)))
     }
+print(head(df_b))
+print(transform_x(df_b[, x]))
+print(transform_x(df_b[, y]))
+print(row.names(df_b))
 
     p <- ggplot(
         df_b,
         aes(
             x = transform_x(df_b[, x]),
             y = transform_x(df_b[, y]),
-            label = row.names(df_b),
-            color = as.factor(mean > 0)
+            label = row.names(df_b)#,
+           color = as.factor(mean > 0)
     )) +
     geom_text(size = cex_point * 0.75) +
     labs(
@@ -112,12 +116,12 @@ plot_bootstrap_2D <- function(
         axis.text = element_text(size = 13 * cex)
     ) +
     scale_color_manual(values = color_group(seq(2), colors = colors))
-
+plot(p)
     limites <- function(p, x){
         if (x %in% c("sign", "occurrences")) {
-            axis <- deparse(substitute(x))
-            func <- get(paste0(axis, "lim"))
-            p <- p + func(0, 1)
+            #axis <- deparse(substitute(x))
+            #func <- get(paste0(axis, "lim"))
+            #p <- p + func(0, 1)
             if (x == "sign") {
                 p <- p + 
                     get(paste("scale", axis, "discrete", sep = "_"))(
