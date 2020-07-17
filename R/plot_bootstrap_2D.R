@@ -28,7 +28,6 @@
 #' #plot_bootstrap_2D(df_b = selected.var,n_cores=1)
 #' @export
 #' @seealso \code{\link[RGCCA]{bootstrap}}, \code{\link[RGCCA]{get_bootstrap}}
-
 plot_bootstrap_2D <- function(
     b = NULL,
     df_b = NULL,
@@ -44,17 +43,21 @@ plot_bootstrap_2D <- function(
     cex_point = 3 * cex,
     cex_lab = 10 * cex,
     comp = 1,
-    i_block = length(b$bootstrap[[1]]),
+    i_block = NULL,
     collapse = FALSE,
     n_cores = parallel::detectCores() - 1) {
 
     if (missing(b) && missing(df_b))
         stop_rgcca("Please select a bootstrap object.")
-    if (!is.null(b)) {
-        df_b <- get_bootstrap(b, comp, i_block, collapse=collapse, n_cores=n_cores,display_order=TRUE)
-    }
-    if (!is.null(df_b))
+    else if (!is.null(b)) {
+        if (is.null(i_block))
+            i_block <- length(b$bootstrap[[1]])
+        df_b <- get_bootstrap(b, comp, i_block, collapse = collapse, n_cores = n_cores, display_order = TRUE)
+    } else if (!is.null(df_b)) {
+        if (is.null(i_block))
+            i_block <- attributes(df_b)$n_blocks
         stopifnot(is(df_b, "df_bootstrap"))
+    }
 
     title <- paste0(title, collapse = " ")
     check_ncol(list(df_b), 1)
@@ -83,7 +86,7 @@ plot_bootstrap_2D <- function(
 
     transform_x <- function(x){
         if ("*" %in% x) {
-            x[x == ""] <- 0
+            x[x == "NS"] <- 0
             x[x == "*"] <- 1
         }
         return(abs(as.double(x)))
@@ -111,7 +114,7 @@ plot_bootstrap_2D <- function(
         axis.title.x = axis(margin(20, 0, 0, 0)),
         axis.text = element_text(size = 13 * cex)
     ) +
-    scale_color_manual(values = color_group(seq(2), colors = colors))
+    scale_color_manual(values = as.vector(color_group(seq(2), colors = colors)))
 
     limites <- function(p, x){
         if (x %in% c("sign", "occurrences")) {

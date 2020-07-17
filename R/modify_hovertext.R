@@ -19,17 +19,16 @@ modify_hovertext <- function(p, hovertext = TRUE, type = "regular", p_perm = NUL
     if (type == "perm") {
         n <- 2
 
-    } else if (type == "regular") {
+    } else if (type %in% c("regular", "boot1D")) {
 
     traces <- which(lapply(
         p$x$data,
-        function(x) length(grep("intercept", x$text)) == 1) == TRUE)
+        function(x) x$mode == "lines") == TRUE)
 
-    # length of groups of points without traces and circle points
-    n <- which(sapply(p$x$data, function(x)
-        match("xintercept: 0", x$text) == 1)) - 1
+        # length of groups of points without traces and circle points
+        n <- length(p$x$data) - min(traces)
 
-    }else
+    } else
         n <- length(p$x$data)
 
     for (i in seq(n)) {
@@ -46,15 +45,15 @@ modify_hovertext <- function(p, hovertext = TRUE, type = "regular", p_perm = NUL
             # and the response if exists
             l_text = unlist(lapply(l_text, function(x, y) {
 
-                if ((type == "boot" && !is.character2(x[2]))
+                if ((grepl("boot", type) && !is.character2(x[2]))
                     || x[1] %in% paste0("df[, ", k, "]"))
                         round(as.numeric(x[2]), 3)
                 else if (type != "var1D" && x[1] == "resp")
                     x[2]
             }))
 
-            if (type %in% c("regular", "boot")) {
-                # do not print names because text = FALSE plots have'nt names
+            if (type == "regular" || grepl("boot", type)) {
+                # do not print names because text = FALSE plots have not names
                 name = ifelse(hovertext,
                             paste0("name: ", p$x$data[[i]]$text[j], "<br />"),
                             "")
@@ -68,7 +67,7 @@ modify_hovertext <- function(p, hovertext = TRUE, type = "regular", p_perm = NUL
                                     ""
                                 ))
             } else {
-                if (type == "perm") {
+                if (type == "regular" || grepl("boot", type)) {
                     res <- as.list(round(attributes(p_perm)$penalties[j, ], 3))
                     l_text <- paste0(
                         gsub("</?i>| ", "", p$x$layout$yaxis$title$text),
@@ -85,7 +84,7 @@ modify_hovertext <- function(p, hovertext = TRUE, type = "regular", p_perm = NUL
     }
 
     # Remove the x- and y- axis onOverMouse
-    if (type == "regular")
+    if (type %in% c("regular", "boot1D"))
         (plotly::style(p, hoverinfo = "none", traces = traces))
     else
         p

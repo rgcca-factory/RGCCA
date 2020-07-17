@@ -1272,7 +1272,7 @@ server <- function(input, output, session) {
             if (is(p, "gg")) {
             p <- showWarn(
                 modify_hovertext(
-                    plot_dynamic(p, NULL, "text", TRUE, TRUE),
+                    plot_dynamic(p, NULL, "text", TRUE),
                     if_text
                 ), warn = FALSE)
 
@@ -1372,9 +1372,7 @@ server <- function(input, output, session) {
                 save_plot("bootstrap.pdf", plotBoot())
                 msgSave()
             })
-            p <- modify_hovertext(ggplotly(plotBoot()), type = "boot") 
-            p$x$layout$margin$t <- 100
-            p 
+            p <- modify_hovertext(ggplotly(plotBoot()), type = "boot")
         }
 
     })
@@ -1390,9 +1388,7 @@ server <- function(input, output, session) {
                 msgSave()
             })
             p <- plot_permut_2D(perm)
-            p <- modify_hovertext(ggplotly(p), hovertext = F, type = "perm", p_perm = p)
-            p$x$layout$margin$t <- 100
-            p
+            modify_hovertext(plot_dynamic(p, type = "perm"), type = "perm", hovertext = F, p_perm = p)
         }
 
     })

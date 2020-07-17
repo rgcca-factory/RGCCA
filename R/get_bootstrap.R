@@ -154,8 +154,9 @@ get_bootstrap <- function(
             occurrences = "Non-zero occurences",
             mean = "Mean bootstrap weights"
         )
-    attributes(db)$type <- class(rgcca)
+    attributes(db)$type <- class(b$rgcca)
     attributes(db)$n_boot <- n_boot
+    attributes(db)$n_blocks <- length(b$rgcca$call$blocks)
     class(db) <- c(class(db), "df_bootstrap")
     return(db)
 }
