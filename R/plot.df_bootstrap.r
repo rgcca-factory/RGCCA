@@ -42,6 +42,8 @@ plot.bootstrap=function(x,type="1D",block=length(x$rgcca$call$blocks),comp=1,n_m
     }
     if(type=="2D")
     {
+        if(tolower(x$rgcca$call$type) %in% c("spls", "spca", "sgcca"))
+        {
         p1=plot_bootstrap_2D(
             b =x,
             df_b = NULL,
@@ -61,6 +63,29 @@ plot.bootstrap=function(x,type="1D",block=length(x$rgcca$call$blocks),comp=1,n_m
             collapse = FALSE,
             n_cores = n_cores)
          #   sub="Green line indicates significance at 0.05 with Bonferroni correction")
+        }
+      else
+        {
+        p1=plot_bootstrap_2D(
+            b =x,
+            df_b = NULL,
+            x = "bootstrap_ratio",
+            y = "occurrences",
+            title = paste("Variable selection \nby",
+                          attributes(x)$n_boot,
+                          "bootstraps"),
+            colors = NULL,
+            cex = cex,
+            cex_main = 14 * cex,
+            cex_sub = 12 * cex,
+            cex_point = 10 * cex,
+            cex_lab = 10 * cex,
+            comp = comp,
+            i_block = block,
+            collapse = FALSE,
+            n_cores = n_cores)
+        #   sub="Green line indicates significance at 0.05 with Bonferroni correction")
+    }
     }
     plot(p1)
 }

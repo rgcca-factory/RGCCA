@@ -16,3 +16,10 @@ plot(res,type="ind")
 plot(res,type="ave",colors=c("blue","red"))
 plot(res,type="network")
 
+
+res=rgcca(A,type="rgcca",superblock=TRUE,ncomp=2)
+plot(res,type="ind")
+plot(res,type="var")
+plot(res,type="ave",colors=c("blue","red"))
+plot(res,type="network")
+
