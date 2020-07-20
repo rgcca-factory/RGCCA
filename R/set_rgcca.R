@@ -32,14 +32,13 @@ set_rgcca <- function(
      if (is.null(blocks)) {
       #  blocks <- rgcca_res$call$blocks
          blocks=rgcca_res$call$raw
+         
         if (superblock) {
-            J <- length(blocks)
-            blocks <- blocks[-J]
             for (i in c("tau", "sparsity", "ncomp")) {
                 if (class(rgcca_res$call[[i]]) %in% c("matrix", "data.frame"))
-                  rgcca_res$call[[i]] <- rgcca_res$call[[i]][,-J]
+                  rgcca_res$call[[i]] <- rgcca_res$call[[i]]
                 else
-                  rgcca_res$call[[i]] <- rgcca_res$call[[i]][-J]
+                  rgcca_res$call[[i]] <- rgcca_res$call[[i]]
             }
 
             connection <- NULL
