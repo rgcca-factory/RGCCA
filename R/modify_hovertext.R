@@ -29,7 +29,10 @@ modify_hovertext <- function(p, hovertext = TRUE, type = "regular", perm = NULL)
         function(x) x$mode == "lines") == TRUE)
 
         # length of groups of points without traces and circle points
-        n <- length(p$x$data) - min(traces)
+        if (type == "regular")
+            n <- length(p$x$data) - min(traces)
+        else
+            n <- 2
 
     } else
         n <- length(p$x$data)
@@ -46,10 +49,15 @@ modify_hovertext <- function(p, hovertext = TRUE, type = "regular", perm = NULL)
 
             l_text = unlist(lapply(l_text, function(x) {
                 if (!is.na(x[1])) {
-                    if ((grepl("boot", type) && !is.character2(x[2]))
+                    if ((type == "boot" && !is.character2(x[2]))
                         || x[1] %in% paste0("df[, ", k, "]"))
                             round(as.numeric(x[2]), 3)
-                    else if (type != "var1D" && x[1] == "resp")
+                    else if (type == "boot1D" &&  x[1] != "order") {
+                        if (!is.character2(x[2]))
+                            round(as.numeric(x[2]), 3)
+                        else
+                            x[2]
+                    }else if (type != "var1D" && x[1] == "resp")
                         x[2]
                     else if (type == "cv" && x[1] == "mean")
                         round(as.numeric(x[2]), 3)
@@ -62,10 +70,22 @@ modify_hovertext <- function(p, hovertext = TRUE, type = "regular", perm = NULL)
                 name = ifelse(hovertext,
                             paste0("name: ", p$x$data[[i]]$text[j], "<br />"),
                             "")
+
+                parse <- function(x) gsub(" ?</?.> ?|\n", "", x)
+                if (type == "boot") {
+                    x_lab <- parse(p$x$layout$xaxis$title$text)
+                    y_lab <- parse(p$x$layout$yaxis$title$text)
+                } else if (type == "boot1D") {
+                    x_lab <-  gsub("\\(\\d* bootstraps\\)", "", parse(p$x$layout$title$text))
+                    y_lab <- parse(p$x$layout$annotations[[1]]$text)
+                } else {
+                    x_lab <- "x"
+                    y_lab <- "y"
+                }
                 # Overwrite the onMouseOver text with the (x, y) coordinates and
                 # the response if exists
                 p$x$data[[i]][attr][[1]][j] <-
-                    paste0(name,"x: ",l_text[1], "<br />y: ", l_text[2],
+                    paste0(name, x_lab, ": ", l_text[1], "<br />", y_lab, ": ", l_text[2],
                                 ifelse(
                                     length(l_text) == 3,
                                     paste0("<br />response: ", l_text[3]) ,
@@ -94,6 +114,11 @@ modify_hovertext <- function(p, hovertext = TRUE, type = "regular", perm = NULL)
             }
 
         }
+    }
+
+    if (type == "boot1D") {
+        for (i in traces)
+            p$x$data[[i]]$error_x$width <- 25
     }
 
     # Remove the x- and y- axis onOverMouse
