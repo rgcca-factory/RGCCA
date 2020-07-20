@@ -2,8 +2,8 @@
 # hovertext : a boolean for the use of hovertext (if TRUE) as the attribute 
 # to parse the onMouseOver text ("text" attribute, if FALSE)
 # type: class of graphic among regular, var1D, perm
-# p_perm: permutation plot object
-modify_hovertext <- function(p, hovertext = TRUE, type = "regular", p_perm = NULL) {
+# p_perm: permutation object
+modify_hovertext <- function(p, hovertext = TRUE, type = "regular", perm = NULL) {
 
     attr <- ifelse(hovertext, "hovertext", "text")
     # identify the order / id of the traces which corresponds to x- and y-axis 
@@ -18,7 +18,10 @@ modify_hovertext <- function(p, hovertext = TRUE, type = "regular", p_perm = NUL
 
     if (type == "perm") {
         n <- 2
-
+        traces <- c(3, 4)
+    } else if (type == "cv") {
+        traces <- 2
+        n <- 3
     } else if (type %in% c("regular", "boot1D")) {
 
     traces <- which(lapply(
@@ -41,15 +44,17 @@ modify_hovertext <- function(p, hovertext = TRUE, type = "regular", p_perm = NUL
                 as.list(strsplit(p$x$data[[i]][attr][[1]][j], "<br />")[[1]]),
                 function(x) strsplit(x, ": ")[[1]])
 
-            # keep only the (x, y) coordinates with the key df[, ]
-            # and the response if exists
-            l_text = unlist(lapply(l_text, function(x, y) {
-
-                if ((grepl("boot", type) && !is.character2(x[2]))
-                    || x[1] %in% paste0("df[, ", k, "]"))
+            l_text = unlist(lapply(l_text, function(x) {
+                if (!is.na(x[1])) {
+                    if ((grepl("boot", type) && !is.character2(x[2]))
+                        || x[1] %in% paste0("df[, ", k, "]"))
+                            round(as.numeric(x[2]), 3)
+                    else if (type != "var1D" && x[1] == "resp")
+                        x[2]
+                    else if (type == "cv" && x[1] == "mean")
                         round(as.numeric(x[2]), 3)
-                else if (type != "var1D" && x[1] == "resp")
-                    x[2]
+                } else 
+                    NA
             }))
 
             if (type == "regular" || grepl("boot", type)) {
@@ -67,10 +72,18 @@ modify_hovertext <- function(p, hovertext = TRUE, type = "regular", p_perm = NUL
                                     ""
                                 ))
             } else {
-                if (type == "regular" || grepl("boot", type)) {
-                    res <- as.list(round(attributes(p_perm)$penalties[j, ], 3))
+                if (type == "perm" || (type == "cv"  && i != 2)) {
+                    if (type == "cv" && i == 3)
+                        comb <- p$x$data[[i]]$x[1]
+                    else
+                        comb <- j
+                    res <- as.list(round(perm$penalties[comb, ], 3))
+                    if (type == "perm")
+                        label <- gsub("</?i>| ", "", p$x$layout$yaxis$title$text)
+                    else
+                        label <- "RMSE"
                     l_text <- paste0(
-                        gsub("</?i>| ", "", p$x$layout$yaxis$title$text),
+                        label,
                         ": ",
                         l_text)
                     for (b in seq(length(names(res))))
@@ -84,7 +97,7 @@ modify_hovertext <- function(p, hovertext = TRUE, type = "regular", p_perm = NUL
     }
 
     # Remove the x- and y- axis onOverMouse
-    if (type %in% c("regular", "boot1D"))
+    if (type %in% c("regular", "boot1D", "cv", "perm"))
         (plotly::style(p, hoverinfo = "none", traces = traces))
     else
         p

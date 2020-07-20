@@ -135,7 +135,7 @@ rgcca_cv=function( blocks,
     )
     
   
-    print(paste("Cross-validation for ", par[[1]], " is in progression..."))
+    print(paste("Cross-validation for", par[[1]], "is in progression..."))
     pb <- txtProgressBar(max=dim(par[[2]])[1])
     n_rep=ifelse(one_value_per_cv,n_cv,n_cv*k)
     res=matrix(NA,dim(par[[2]])[1],n_cv*k);rownames(res)=apply(round(par[[2]],digits=2),1,paste,collapse="-");

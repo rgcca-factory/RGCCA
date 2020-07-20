@@ -1387,8 +1387,7 @@ server <- function(input, output, session) {
                 save("perm.pdf", plot_permut_2D(perm))
                 msgSave()
             })
-            p <- plot_permut_2D(perm)
-            modify_hovertext(plot_dynamic(p, type = "perm"), type = "perm", hovertext = F, p_perm = p)
+            modify_hovertext(plot_dynamic(plot_permut_2D(perm), type = "perm"), type = "perm", hovertext = F, perm = perm)
         }
 
     })

@@ -89,7 +89,7 @@ plot_dynamic <- function(
 
     p$x$layout$margin$t <- 100
 
-    if (!grepl("1D", type)) {
+    if (!grepl("1D", type) && !type %in% c("perm", "cv")) {
         p <- config(
             p,
             modeBarButtons = list(
