@@ -87,7 +87,19 @@ plot.rgcca=function(x,type="weight",block=length(x$A),comp=1:2,resp=rep(1, NROW(
      }
     if(type=="ind")
     {
-        if(is.null(title)){title= paste0("Sample space: ",names(x$call$blocks)[i_block])}
+        
+        if(is.null(title))
+        {
+            if(i_block==i_block_y)
+            {
+                title= paste0("Sample space: ",names(x$call$blocks)[i_block])   
+            }
+            else
+            {
+                title="Sample space"
+            }
+            
+        }
         p5<-plot_ind(x,i_block=i_block,i_block_y=i_block_y,compx=compx,compy=compy,cex_sub=cex_sub,cex_main=cex_main,cex_lab=cex_lab,resp=resp,response_name=response_name,text=text_ind,title=title,colors=colors,...)
         plot(p5)
      }
