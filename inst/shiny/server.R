@@ -983,7 +983,7 @@ server <- function(input, output, session) {
         hide(selector = "#tabset li a[data-value=RGCCA]")
         for (i in c("Connection", "AVE", "Samples", "Corcircle", "Fingerprint", "Bootstrap", "Permutation", "Cross-validation"))
             hide(selector = paste0("#navbar li a[data-value=", i, "]"))
-        for (i in c("run_boot", "nboot", "header", "init", "navbar", "connection_save"))
+        for (i in c("run_boot", "nboot", "header", "init", "navbar", "connection_save", "run_crossval_single"))
             hide(id = i)
         for (i in c("nperm", "run_perm"))
             toggle(id = i, condition = !input$supervised)
@@ -1085,7 +1085,6 @@ server <- function(input, output, session) {
         }
     })
 
-
     observeEvent(input$connection, {
         hide(id = "navbar")
         if (blocksExists()) {
@@ -1108,11 +1107,8 @@ server <- function(input, output, session) {
             hide(id = i)
         for (i in c("Connection", "AVE", "Samples", "Corcircle", "Fingerprint", "Bootstrap", "Permutation", "Cross-validation"))
             hide(selector = paste0("#navbar li a[data-value=", i, "]"))
-        # hide(id = "run_perm")
-        # hide(id = "nperm")
-        # hide(id = "run_crossval")
-        # hide(id = "kfold")
-        # assign("crossval", NULL, .GlobalEnv)
+        hide(id = "run_crossval_sing")
+        assign("crossval", NULL, .GlobalEnv)
     }
 
     observeEvent(input$run_analysis, {
@@ -1122,6 +1118,7 @@ server <- function(input, output, session) {
                 show(selector = paste0("#navbar li a[data-value=", i, "]"))
             for (i in c("navbar", "nboot", "run_boot"))
                 show(id = i)
+            toggle(id = "run_crossval_single", condition = !is.null(rgcca_out$call$response))
             updateTabsetPanel(session, "navbar", selected = "Connection")
             # for (i in c('bootstrap_save', 'fingerprint_save', 'corcircle_save',
             # 'samples_save', 'ave_save')) setToggleSaveButton(i)
@@ -1201,6 +1198,11 @@ server <- function(input, output, session) {
     observeEvent(input$run_crossval, {
         if (blocksExists() && input$supervised)
             getCrossVal()
+    })
+
+    observeEvent(input$run_crossval_single, {
+        if (blocksExists() && input$supervised)
+            getCrossVal2()
     })
 
     observeEvent(input$names_block_x, {
@@ -1367,13 +1369,11 @@ server <- function(input, output, session) {
         getDynamicVariables()
 
         if (!is.null(analysis)) {
-
             observeEvent(input$fingerprint_save, {
                 save_plot("fingerprint.pdf", fingerprint(input$indexes))
                 msgSave()
             })
-            p <- modify_hovertext(plot_dynamic(fingerprint(input$indexes), type = "var1D"), hovertext = F, type = "var1D")
-            p
+            modify_hovertext(plot_dynamic(fingerprint(input$indexes), type = "var1D"), hovertext = F, type = "var1D")
         }
 
     })

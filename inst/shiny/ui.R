@@ -176,7 +176,10 @@ ui <- fluidPage(
                     step = 5
                 ),
                 actionButton(inputId = "run_boot",
-                    label = "Run bootstrap")
+                    label = "Run bootstrap"),
+                actionButton(
+                    inputId = "run_crossval_single",
+                    label = "Evaluate the model")
             ),
 
             # Graphical parameters
