@@ -4,7 +4,7 @@
 \alias{rgcca_cv}
 \title{rgcca_cv}
 \usage{
-rgcca_cv(blocks, type = "rgcca", response = NULL, par = "ncomp",
+rgcca_cv(blocks, type = "rgcca", response = NULL, par = "tau",
   par_value = NULL, validation = "kfold", type_cv = "regression",
   fit = "lm", k = 5, n_cv = 1, one_value_per_cv = FALSE,
   n_cores = parallel::detectCores() - 1, quiet = TRUE,

@@ -6,7 +6,7 @@
 \usage{
 get_bootstrap(b, comp = 1, i_block = length(b$bootstrap[[1]]),
   bars = "sd", collapse = FALSE, n_cores = parallel::detectCores() -
-  1, display_order = FALSE)
+  1, display_order = TRUE)
 }
 \arguments{
 \item{b}{A list of list weights (one per bootstrap per blocks)}

@@ -38,10 +38,11 @@ get_ctr2 <- function(
             if (i_block > length(blocks))
                 i_block <- length(blocks)
         }
-        rgcca_res$call$superblock <- TRUE
         blocks.all <- blocks
         blocks <- rep(list(Reduce(cbind, blocks)), length(blocks))
         names(blocks) <- names(blocks.all)
+        
+
     }
 
     df <- get_ctr(rgcca_res, compx, compy, compz, i_block, type, collapse)
@@ -86,7 +87,7 @@ get_ctr2 <- function(
     # group by blocks
     if(is.null(resp))
     { 
-        if (rgcca_res$call$superblock & (collapse | (i_block == length(rgcca_res$a)))) 
+        if ((rgcca_res$call$superblock && i_block == length(rgcca_res$a)) || collapse)
         {
             if (collapse)
                 resp <- get_bloc_var(lapply(blocks.all, t), TRUE)
