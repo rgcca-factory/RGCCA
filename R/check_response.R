@@ -4,7 +4,7 @@ check_response <- function(response = NULL, df = NULL) {
         qualitative <- is.character2(response)
 
         # if (length(qualitative) > 1)
-        #     stop(
+        #     stop_rgcca(
         #     "Please, select a response file with either qualitative data only or quantitative data only.",
         #     108
         #     )

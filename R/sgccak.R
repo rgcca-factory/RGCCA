@@ -41,10 +41,10 @@ sgccak <-  function(A, C, sparsity = rep(1, length(A)), scheme = "centroid", sca
    } else if (init=="random") {
     a <- lapply(pjs,rnorm)
     } else {
-    stop("init should be either random or svd.")
+    stop_rgcca("init should be either random or svd.")
     }
 
-  if (any( sparsity < 1/sqrt(pjs) | sparsity > 1 )) stop("L1 constraints must vary between 1/sqrt(p_j) and 1.")
+  if (any( sparsity < 1/sqrt(pjs) | sparsity > 1 )) stop_rgcca("L1 constraints must vary between 1/sqrt(p_j) and 1.")
   
   const <- sparsity*sqrt(pjs)
   #	Apply the constraints of the general otpimization problem

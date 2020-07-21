@@ -37,7 +37,7 @@
 #' @param init The mode of initialization to use in RGCCA algorithm. The alternatives are either by Singular Value Decompostion ("svd") or random ("random") (Default: "svd").
 #' @param bias A logical value for biaised or unbiaised estimator of the var/cov (default: bias = TRUE).
 #' @param tol The stopping value for convergence.
-#' @param sameBlockWeight A logical value indicating if the different blocks should have the same weight in the analysis (default, sameBlockWeight=TRUE)
+#' @param scale_block A logical value indicating if the different blocks should have the same weight in the analysis (default, scale_block=TRUE)
 #' @param na.rm If TRUE, runs rgcca only on available data.
 #' @param estimateNA If TRUE, missing values are estimated during the RGCCA calculation
 #' @param prescaling If TRUE, the scaling-centering steps are not applied in this function, and should be before running rgccad
@@ -124,15 +124,15 @@
 #' @importFrom stats as.formula qt
 #' @importFrom grDevices graphics.off
 
-rgccad=function (A, C = 1 - diag(length(A)), tau = rep(1, length(A)),  ncomp = rep(1, length(A)), scheme = "centroid", scale = TRUE,   init = "svd", bias = TRUE, tol = 1e-08, verbose = TRUE,sameBlockWeight=TRUE,na.rm=TRUE,estimateNA="no",prescaling=FALSE,quiet=FALSE)
+rgccad=function (A, C = 1 - diag(length(A)), tau = rep(1, length(A)),  ncomp = rep(1, length(A)), scheme = "centroid", scale = TRUE,   init = "svd", bias = TRUE, tol = 1e-08, verbose = TRUE,scale_block=TRUE,na.rm=TRUE,estimateNA="no",prescaling=FALSE,quiet=FALSE)
 {
   
   shave.matlist <- function(mat_list, nb_cols) mapply(function(m,nbcomp) m[, 1:nbcomp, drop = FALSE], mat_list, nb_cols, SIMPLIFY = FALSE)
   shave.veclist <- function(vec_list, nb_elts) mapply(function(m, nbcomp) m[1:nbcomp], vec_list, nb_elts, SIMPLIFY = FALSE)
   A0=A
   #  call = match.call()
-  call=list(A=A, C = C,  ncomp = ncomp, scheme = scheme, scale = scale,   init = init, bias = bias, tol =tol, verbose = verbose,sameBlockWeight=sameBlockWeight,na.rm=na.rm,estimateNA=estimateNA)
-  if (any(ncomp < 1)) {stop("Compute at least one component per block!")}	
+  call=list(A=A, C = C,  ncomp = ncomp, scheme = scheme, scale = scale,   init = init, bias = bias, tol =tol, verbose = verbose,scale_block=scale_block,na.rm=na.rm,estimateNA=estimateNA)
+  if (any(ncomp < 1)) {stop_rgcca("Compute at least one component per block!")}
   pjs <- sapply(A, NCOL) #nombre de variables par bloc
  # print("varij")
  # print(varij)
@@ -140,11 +140,11 @@ rgccad=function (A, C = 1 - diag(length(A)), tau = rep(1, length(A)),  ncomp = r
   
   # Verifications des commandes entrees par l'utilisateur
   if (any(ncomp - pjs > 0))  # le nombre de composantes doit etre inferieur au nombre de variables
-    stop("For each block, choose a number of components smaller than the number of variables!")
+    stop_rgcca("For each block, choose a number of components smaller than the number of variables!")
   if (mode(scheme) != "function") {
     if ((scheme != "horst") & (scheme != "factorial") & (scheme != 
                                                          "centroid")) {
-      stop("Choose one of the three following schemes: horst, centroid, factorial or design the g function")
+      stop_rgcca("Choose one of the three following schemes: horst, centroid, factorial or design the g function")
     }
     if (verbose) 
       cat("Computation of the RGCCA block components based on the", 
@@ -163,45 +163,11 @@ rgccad=function (A, C = 1 - diag(length(A)), tau = rep(1, length(A)),  ncomp = r
   }
     if(!prescaling)
     {
-        if (scale == TRUE) 
-        {
-            
-            A = lapply(A, function(x) scale2(x,scale=TRUE, bias = bias)) # le biais indique si on recherche la variance biaisee ou non
-            if(sameBlockWeight)
-            {
-                A = lapply(A, function(x) 
-                {
-                    y=x/sqrt(NCOL(x));
-                    return(y)
-                } 
-                )
-            }
-            # on divise chaque bloc par la racine du nombre de variables pour avoir chaque poids pour le meme bloc
-        }
-        if (scale == FALSE)
-        { 
-             
-            A = lapply(A, function(x) scale2(x, scale=FALSE, bias = bias)) 
-            if(sameBlockWeight)
-            {
-                A = lapply(A, function(x) 
-                {
-                    if(dim(x)[1]>dim(x)[2])
-                    {
-                        covarMat=cov2(x,bias=bias);
-                        varianceBloc=sum(diag(covarMat)); 
-                    }
-                    else
-                    {
-                        covarMat=cov2(t(x),bias=bias);
-                        varianceBloc=sum(diag(covarMat)); 
-                    }
-                  
-                    return(x/sqrt(varianceBloc))
-                })
-            }
-            
-        } 
+        A<-scaling(
+            A,
+            scale = scale,
+            bias = bias,
+            scale_block = scale_block)
     }
 
       
@@ -232,8 +198,8 @@ rgccad=function (A, C = 1 - diag(length(A)), tau = rep(1, length(A)),  ncomp = r
   if (N == 0) 
   { # cas ou on n'a qu'un axe a calculer par bloc
   
-    result <- rgccak(A, C, tau = tau, scheme = scheme, init = init, bias = bias, tol = tol, verbose = verbose,na.rm=na.rm,estimateNA=estimateNA,sameBlockWeight=sameBlockWeight,scale=scale)
-   
+    result <- rgccak(A, C, tau = tau, scheme = scheme, init = init, bias = bias, tol = tol, verbose = verbose,na.rm=na.rm,estimateNA=estimateNA,scale_block=scale_block,scale=scale)
+ 
     if(estimateNA%in%c("iterative","first","lebrusquet","superblock"))
     {
       A<-result$call$A
@@ -244,6 +210,7 @@ rgccad=function (A, C = 1 - diag(length(A)), tau = rep(1, length(A)),  ncomp = r
   
         for (j in 1:J)
         {
+            
             AVE_X[[j]] = mean(cor(A[[j]], Y[[j]],use="pairwise.complete.obs")^2,na.rm=TRUE)
            #  if( dim(A[[j]])[1]>dim(A[[j]])[2])
            #  {
@@ -265,6 +232,7 @@ rgccad=function (A, C = 1 - diag(length(A)), tau = rep(1, length(A)),  ncomp = r
       colnames(Y[[b]]) = "comp1"
     }
     tau=result$tau
+    if(is.vector(tau)){names(tau)=names(A)}
     out <- list(Y = Y, a = a, astar = a, C = C,  scheme = scheme, ncomp = ncomp, crit = result$crit, primal_dual = primal_dual, AVE = AVE,A=A0,tau=tau,call=call)
     if(estimateNA %in% c("iterative","first","superblock","lebrusquet")){out[["imputedA"]]=A}
     
@@ -278,8 +246,16 @@ rgccad=function (A, C = 1 - diag(length(A)), tau = rep(1, length(A)),  ncomp = r
   R <- A
   P <- a <- astar <- NULL
   if (is.numeric(tau)) 
-    tau_mat = tau
-  else tau_mat = matrix(NA, max(ncomp), J)
+  {
+      tau_mat = tau  
+      if(is.vector(tau_mat)){names(tau_mat)=names(A)}
+      if(is.matrix(tau_mat)){colnames(tau_mat)=names(A)}
+  }
+  else
+  {
+      tau_mat = matrix(NA, max(ncomp), J)
+        colnames(tau_mat)=names(A)
+  }
   for (b in 1:J) P[[b]] <- a[[b]] <- astar[[b]] <- matrix(NA, pjs[[b]], N + 1)
   for (b in 1:J) Y[[b]] <- matrix(NA, nb_ind, N + 1)
   for (n in 1:N) 

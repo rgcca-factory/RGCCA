@@ -17,7 +17,7 @@ check_quantitative <- function(df, fo, header = FALSE, warn_separator = FALSE) {
         if (!header)
             msg <- paste0(msg, "Possible mistake: header parameter is disabled, check if the file doesn't have one.")
 
-        stop(paste(msg, "\n"), exit_code = 100)
+        stop_rgcca(paste(msg, "\n"), exit_code = 100)
     }
 
 }

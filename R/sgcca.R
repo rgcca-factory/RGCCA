@@ -33,7 +33,7 @@
 #' @param bias A logical value for biaised or unbiaised estimator of the var/cov.
 #' @param verbose  Will report progress while computing if verbose = TRUE (default: TRUE).
 #' @param tol Stopping value for convergence.
-#' @param sameBlockWeight If TRUE, all blocks are weighted by their own variance: all the blocks have the same weight
+#' @param scale_block If TRUE, all blocks are weighted by their own variance: all the blocks have the same weight
 #' @param prescaling if TRUE, the saling step is not run in sgcca
 #' @param quiet if TRUE, does not print warnings
 #' @return \item{Y}{A list of \eqn{J} elements. Each element of Y is a matrix that contains the SGCCA components for each block.}
@@ -109,8 +109,8 @@
 #'@export sgcca
 
 
-sgcca <- function (A, C = 1-diag(length(A)), sparsity = rep(1, length(A)), ncomp = rep(1, length(A)), scheme = "centroid", scale = TRUE, init = "svd", bias = TRUE, tol = .Machine$double.eps, verbose = FALSE,sameBlockWeight=TRUE,prescaling=FALSE,quiet=FALSE){
-  call=list(A=A, C = C, sparsity = sparsity, ncomp = ncomp, scheme = scheme, scale = scale, init = init, bias = bias, tol = tol, verbose = verbose,sameBlockWeight=sameBlockWeight)
+sgcca <- function (A, C = 1-diag(length(A)), sparsity = rep(1, length(A)), ncomp = rep(1, length(A)), scheme = "centroid", scale = TRUE, init = "svd", bias = TRUE, tol = .Machine$double.eps, verbose = FALSE,scale_block=TRUE,prescaling=FALSE,quiet=FALSE){
+  call=list(A=A, C = C, sparsity = sparsity, ncomp = ncomp, scheme = scheme, scale = scale, init = init, bias = bias, tol = tol, verbose = verbose,scale_block=scale_block)
   ndefl <- ncomp-1
   N <- max(ndefl)
   J <- length(A)
@@ -119,24 +119,24 @@ sgcca <- function (A, C = 1-diag(length(A)), sparsity = rep(1, length(A)), ncomp
   AVE_X = list()
   AVE_outer <- rep(NA,max(ncomp))
   
-  if ( any(ncomp < 1) ) stop("One must compute at least one component per block!")
-  if (any(ncomp-pjs > 0)) stop("For each block, choose a number of components smaller than the number of variables!")
+  if ( any(ncomp < 1) ) stop_rgcca("One must compute at least one component per block!")
+  if (any(ncomp-pjs > 0)) stop_rgcca("For each block, choose a number of components smaller than the number of variables!")
   
   if (is.vector(sparsity)){
     if (any(sparsity < 1/sqrt(pjs) | sparsity > 1 ))
-      stop("L1 constraints (sparsity) must vary between 1/sqrt(p_j) and 1.")
+      stop_rgcca("L1 constraints (sparsity) must vary between 1/sqrt(p_j) and 1.")
   }
   
   if (is.matrix(sparsity)){
     if (any(apply(sparsity, 1, function(x) any(x < 1/sqrt(pjs)))))
-      stop("L1 constraints (sparsity) must vary between 1/sqrt(p_j) and 1.")
+      stop_rgcca("L1 constraints (sparsity) must vary between 1/sqrt(p_j) and 1.")
   }
   
 ###################################################
  
   if (mode(scheme) != "function") {
     if ((scheme != "horst" ) & (scheme != "factorial") & (scheme != "centroid")) {
-      stop("Choose one of the three following schemes: horst, centroid, factorial or design the g function")
+      stop_rgcca("Choose one of the three following schemes: horst, centroid, factorial or design the g function")
     }
     if (verbose) cat("Computation of the SGCCA block components based on the", scheme, "scheme \n")
   }
@@ -148,21 +148,22 @@ sgcca <- function (A, C = 1-diag(length(A)), sparsity = rep(1, length(A)), ncomp
     #-------------------------------------------------------
     if(!prescaling)
     {
-        if (scale == TRUE) {
-            A = lapply(A, function(x) scale3(x, bias = bias)) #TO CHECK
-            if(sameBlockWeight) 
-            {
-                A = lapply(A, function(x) x/sqrt(NCOL(x)))
-            }
-        }
-        if(scale == FALSE)
-        {
-            A = lapply(A, function(x) scale3(x,scale=FALSE, bias = bias)) 
-            if(sameBlockWeight) 
-            {
-                #TODO  A = lapply(A, function(x) x/sqrt(NCOL(x)))
-            }
-        }
+        A=scaling(A,scale=scale,bias=bias,scale_block=scale_block)
+        # if (scale == TRUE) {
+        #     A = lapply(A, function(x) scale3(x, bias = bias)) #TO CHECK
+        #     if(scale_block)
+        #     {
+        #         A = lapply(A, function(x) x/sqrt(NCOL(x)))
+        #     }
+        # }
+        # if(scale == FALSE)
+        # {
+        #     A = lapply(A, function(x) scale3(x,scale=FALSE, bias = bias)) 
+        #     if(scale_block)
+        #     {
+        #         #TODO  A = lapply(A, function(x) x/sqrt(NCOL(x)))
+        #     }
+        # }
     }
   
     ####################################

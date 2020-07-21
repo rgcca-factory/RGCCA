@@ -11,11 +11,11 @@ check_boolean <- function(x, y = x, type = "scalar") {
         x = ""
 
     if (any(is.na(y)))
-        stop(paste(x, "should not be NA."))
+        stop_rgcca(paste(x, "should not be NA."))
 
     if (!is(y, "logical"))
-        stop(paste(x, "should be TRUE or FALSE"))
+        stop_rgcca(paste(x, "should be TRUE or FALSE"))
 
     if (type == "scalar" && length(y) != 1)
-        stop(paste(x, "should be of length 1."))
+        stop_rgcca(paste(x, "should be of length 1."))
 }

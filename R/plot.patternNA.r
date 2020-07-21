@@ -22,7 +22,8 @@
 #'A=list(bloc1=X1,bloc2=X2,bloc3=X3)
 #'p=get_patternNA(A)
 #'plot(p)
-#'@seealso \link{get_patternNA}, \link{plot.patternNA}, \link{whichNAmethod}
+#'@seealso \link{get_patternNA},\link{whichNAmethod}
+
 plot.patternNA=function(x,type="all",legend=TRUE,scale=TRUE,outlierVisible=FALSE,...)
 {
     completeSubjectByBlock <- NULL

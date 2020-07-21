@@ -25,6 +25,9 @@ resultComparison3=whichNAmethod(A,listMethods=c("nipals","mean"),patternNA=rep(0
 
 test_that("whichNAmethod_1",{expect_true(all.equal(resultComparison,resultComparison2))})
 
+resultComparison3=whichNAmethod(A,typeRGCCA="sgcca",sparsity=rep(0.9,2),listMethods=c("nipals","mean"),patternNA=rep(0.1,2),seed=1:20,nDatasets = 1)
+
+
 
 # test on Russett
 data(Russett)

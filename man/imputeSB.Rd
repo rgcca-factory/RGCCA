@@ -6,7 +6,7 @@
 \usage{
 imputeSB(A, tau = rep(1, length(A)), ni = 50, tol = 1e-08,
   graph = FALSE, ncomp = NULL, naxis = 1, scale = TRUE,
-  sameBlockWeight = TRUE, bias = TRUE, verbose = FALSE)
+  scale_block = TRUE, bias = TRUE, verbose = FALSE)
 }
 \arguments{
 \item{A}{A list of J blocks}
@@ -25,7 +25,7 @@ imputeSB(A, tau = rep(1, length(A)), ni = 50, tol = 1e-08,
 
 \item{scale}{If scale = TRUE, each block is standardized to zero means and unit variances (default: TRUE).}
 
-\item{sameBlockWeight}{A logical value indicating if the different blocks should have the same weight in the analysis (default, sameBlockWeight=TRUE)}
+\item{scale_block}{A logical value indicating if the different blocks should have the same weight in the analysis (default, scale_block=TRUE)}
 
 \item{bias}{A logical value indicating if variance should be biased or not}
 

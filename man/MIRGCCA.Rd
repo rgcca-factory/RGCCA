@@ -5,7 +5,7 @@
 \title{Multiple imputation for RGCCA}
 \usage{
 MIRGCCA(blocks, option = "knn", type = "rgcca", superblock = TRUE,
-  k = 5, ni = 5, scale = TRUE, sameBlockWeight = TRUE,
+  k = 5, ni = 5, scale = TRUE, scale_block = TRUE,
   tau = rep(1:length(A)), klim = NULL, output = "mean",
   scheme = "centroid", tol = 1e-08, connection = NULL,
   ncomp = rep(2, length(A)), naxis = 1)
@@ -27,7 +27,7 @@ MIRGCCA(blocks, option = "knn", type = "rgcca", superblock = TRUE,
 
 \item{scale}{If scale = TRUE, each block is standardized to zero means and unit variances (default: TRUE).}
 
-\item{sameBlockWeight}{TRUE by default : each block have the same weight in the RGCCA analysis. If FALSE, the weight of each block depends on the number of variables of the block}
+\item{scale_block}{TRUE by default : each block have the same weight in the RGCCA analysis. If FALSE, the weight of each block depends on the number of variables of the block}
 
 \item{tau}{Used for type="rgcca" only. tau is either a \eqn{1 \times J} vector or a \eqn{\mathrm{max}(ncomp) \times J} matrix, and contains the values 
 of the regularization parameters (default: tau = 1, for each block and each dimension).
@@ -71,7 +71,7 @@ X2[7,1]=NA
  X2[5,1]=NA
  X3[3,1:2]=NA
  A=list(X1,X2,X3)
-res=MIRGCCA(A,k=3,ni=5,scale=TRUE,sameBlockWeight=TRUE,tau=rep(0,3))
+res=MIRGCCA(A,k=3,ni=5,scale=TRUE,scale_block=TRUE,tau=rep(0,3))
 }
 \seealso{
 \code{\link{plot.list_rgcca}}

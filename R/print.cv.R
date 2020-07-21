@@ -37,7 +37,7 @@ rgcca_crossvalidation <- function(
         n_cores <- 1
 
     if (is.null(rgcca_res$call$response))
-        stop("This function required an analysis in a supervised mode.")
+        stop_rgcca("This function required an analysis in a supervised mode.")
 
     bloc_to_pred <- names(rgcca_res$call$blocks)[i_block]
 
@@ -93,7 +93,7 @@ rgcca_crossvalidation <- function(
         }
     )
 
-    bigA <- intersection(rgcca_res$call$blocks)
+    bigA <- intersection_list(rgcca_res$call$blocks)
 
     if (validation == "loo")
         v_inds <- seq(nrow(bigA[[1]]))

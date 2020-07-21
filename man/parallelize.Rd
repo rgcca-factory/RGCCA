@@ -5,7 +5,8 @@
 \title{Set a list of sockets for parralel package}
 \usage{
 parallelize(varlist = c(), nperm, f, n_cores = NULL,
-  envir = environment(), applyFunc = "parSapply")
+  envir = environment(), applyFunc = "parSapply",
+  parallelization = NULL)
 }
 \arguments{
 \item{varlist}{character vector of names of objects to export}
@@ -19,6 +20,8 @@ parallelize(varlist = c(), nperm, f, n_cores = NULL,
 \item{envir}{environment}
 
 \item{applyFunc}{function to be applied}
+
+\item{parallelization}{if TRUE parallelization is run, if FALSE, no parallelisation is run. If NULL (default) parallelization is always used except for Windows in case of length(nperm)<10}
 }
 \description{
 Set a list of sockets for parralel package

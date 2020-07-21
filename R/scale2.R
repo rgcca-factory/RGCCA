@@ -14,7 +14,7 @@ scale2<-function (A, center = TRUE, scale = TRUE, bias = TRUE)
     std = sqrt(apply(A, 2, function(x) cov2(x, bias = bias)))
     if (any(std==0)) {
       sprintf("there were %d constant variables",sum(std==0))
-      std[std==0]=1
+      #std[std==0]=1
     }
     A = A/matrix(rep(std, NROW(A)), NROW(A), NCOL(A), byrow = TRUE)
     attr(A, "scaled:scale") = std

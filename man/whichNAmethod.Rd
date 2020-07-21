@@ -8,9 +8,9 @@ whichNAmethod(blocks, listMethods = c("complete", "nipals"),
   typeNA = "block", nDatasets = 20, patternNA = NULL,
   connection = matrix(1, length(blocks), length(blocks)) -
   diag(length(blocks)), tau = rep(1, length(blocks)), ncomp = rep(2,
-  length(blocks)), sameBlockWeight = TRUE, scale = TRUE, tol = 1e-06,
+  length(blocks)), scale_block = TRUE, scale = TRUE, tol = 1e-06,
   verbose = FALSE, scheme = "centroid", seed = NULL,
-  typeRGCCA = "rgcca", sparsity = NULL)
+  typeRGCCA = "rgcca", sparsity = NULL, ni = 5)
 }
 \arguments{
 \item{blocks}{A list that contains the \eqn{J} blocks of variables \eqn{\mathbf{X_1}, \mathbf{X_2}, ..., \mathbf{X_J}}.}
@@ -40,7 +40,7 @@ If tau is a matrix, tau[k, j] is associated with \eqn{\mathbf{X}_{jk}} (\eqn{k}t
 
 \item{ncomp}{A \eqn{1 \times J} vector that contains the numbers of components for each block (default: rep(1, length(A)), which gives one component per block.). It can be estimated by using \link{rgcca_permutation}.}
 
-\item{sameBlockWeight}{TRUE by default : each block have the same weight in the RGCCA analysis. If FALSE, the weight of each block depends on the number of variables of the block}
+\item{scale_block}{TRUE by default : each block have the same weight in the RGCCA analysis. If FALSE, the weight of each block depends on the number of variables of the block}
 
 \item{scale}{If scale = TRUE, each block is standardized to zero means and unit variances (default: TRUE).}
 
@@ -55,6 +55,8 @@ If tau is a matrix, tau[k, j] is associated with \eqn{\mathbf{X}_{jk}} (\eqn{k}t
 \item{typeRGCCA}{type of analysis to be run ("sgcca"or rgcca"...).}
 
 \item{sparsity}{Used for type="sgcca" or "spls" only. A vector containing the sparsity coefficients (length J, between 0 and 1). It can be estimated by using \link{rgcca_permutation}.}
+
+\item{ni}{number of iteration in em or superblock algorithm}
 }
 \value{
 a whichNAmethod object: a list of length nDataset containing. Each element of this list corresponding to each simulated dataset is

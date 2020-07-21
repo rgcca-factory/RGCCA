@@ -39,5 +39,5 @@ p=get_patternNA(A)
 plot(p)
 }
 \seealso{
-\link{get_patternNA}, \link{plot.patternNA}, \link{whichNAmethod}
+\link{get_patternNA},\link{whichNAmethod}
 }

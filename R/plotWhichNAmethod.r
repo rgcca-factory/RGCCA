@@ -2,9 +2,9 @@
 #' 
 #' Plots the impact of increasing missing data on RGCCA
 #' @param x A list resulting of whichNAmethod (see \link{whichNAmethod})
-#' @param output ="rv": Can be also "a" for correlations between axes, "bm" for the percent of similar biomarkers, "rvComplete" if the RV is calculated only on complete dataset, or "rmse" for Root Mean Squares Error.
+#' @param type ="rv": Can be also "a" for correlations between axes, "bm" for the percent of similar biomarkers, "rvComplete" if the RV is calculated only on complete dataset, or "rmse" for Root Mean Squares Error.
 #' @param ylim =c(0.8,1) y limits
-#' @param i_block ="all" or a number indicating the position of the chosen block in the initial list
+#' @param block ="all" or a number indicating the position of the chosen block in the initial list
 #' @param bars ="sd" or "stderr". Indicates which error bar to build
 #' @param main =NULL Name of the file
 #' @param ylab label of y-axis
@@ -15,20 +15,20 @@
 #' rownames(X1)=rownames(X2)=paste0("S",1:70);A=list(X1,X2);
 #' listResults=whichNAmethod(blocks=A,patternNA=c(0.1,0.2),
 #' listMethods=c("mean","complete","nipals","knn4"))
-#' plot(x=listResults,ylim=c(0,1),output="a")
+#' plot(x=listResults,ylim=c(0,1),type="a")
 #' @importFrom grDevices graphics.off 
 #' @importFrom graphics plot.new
 #' @export
 
 
-plot.whichNAmethod=function(x,output="rv",ylim=NULL,i_block="all",bars="sd",main=NULL,ylab="",...)
-{ #output : "rv", "pct" ou "a"
+plot.whichNAmethod=function(x,type="rv",ylim=NULL,block=length(x[[1]][[1]][[1]]),bars="sd",main=NULL,ylab="",...)
+{ #type : "rv", "pct" ou "a"
   #bars="sd" or "stderr"
     
     # TODO: par(new=TRUE)
   match.arg(bars,c("sd","stderr"))
-  match.arg(output,c("rv","rvComplete","a","rmse","bm"))
-  if(is.null(main)){main=output}
+  match.arg(type,c("rv","rvComplete","a","rmse","bm"))
+  if(is.null(main)){main=type}
   #graphics.off()
  nameData= names(x)
   abscisse=as.numeric(substr(nameData,5,7));names(abscisse)=nameData
@@ -37,14 +37,14 @@ plot.whichNAmethod=function(x,output="rv",ylim=NULL,i_block="all",bars="sd",main
   par(las=1)
   J=length(x[[1]][[1]][[1]]) #nblock
  # close.screen(all.screens=TRUE)
-  if(i_block=="all")
+  if(block=="all")
   { 
       par(mfrow=c(floor(sqrt(J)+1),floor(sqrt(J)+1)));toPlot=1:J
     #  split.screen(c(floor(sqrt(J)+1),floor(sqrt(J)+1)));toPlot=1:J
   }
   else
   {
-      toPlot=i_block:i_block
+      toPlot=block:block
   }
   # print(toPlot)
   namesMethod=names(x[[1]])
@@ -54,7 +54,7 @@ plot.whichNAmethod=function(x,output="rv",ylim=NULL,i_block="all",bars="sd",main
   names(colMethod)=names(nMeth)=namesMethod
   for(j in toPlot)
   {
-    #if(i_block=="all"){screen(j)}
+    #if(block=="all"){screen(j)}
     par(mar=c(5, 4, 4, 2) + 0.1)
     par(mgp=c(3,1,0))
  
@@ -63,7 +63,7 @@ plot.whichNAmethod=function(x,output="rv",ylim=NULL,i_block="all",bars="sd",main
     
     for(rg in namesMethod)
     {
-      result=sapply(x,function(x){return(x[[rg]][[output]][[j]])})
+      result=sapply(x,function(x){return(x[[rg]][[type]][[j]])})
       moyenne[rg]=mean(result)
       if(bars =="no"){ecartType=0}
       if(bars=="sd"){ecartType[rg]=sd(result)}
@@ -92,7 +92,7 @@ plot.whichNAmethod=function(x,output="rv",ylim=NULL,i_block="all",bars="sd",main
 
        for(rg in namesMethod)
       {
-        if(!(rg=="complete"&&output=="rv"))
+        if(!(rg=="complete"&&type=="rv"))
         {
           points(pas*nMeth[rg],moyenne[rg],pch=16,col=colMethod[rg])
           segments(pas*nMeth[rg],moyenne[rg]-ecartType[rg],pas*nMeth[rg],moyenne[rg]+ecartType[rg],col=colMethod[rg])
@@ -100,14 +100,14 @@ plot.whichNAmethod=function(x,output="rv",ylim=NULL,i_block="all",bars="sd",main
         }
      }
   }
-  if(i_block=="all")
+  if(block=="all")
   {
   #  screen(J+1)
       plot.new()
       par(cex=0.8)
     legend("center",legend=namesMethod,fill=colMethod,box.lwd=0,,bty="n")
   }
-  if(is.numeric(i_block))
+  if(is.numeric(block))
   {
       par(cex=0.8)
     legend("bottomleft",legend=namesMethod,fill=colMethod,box.lwd=0,bty="n")

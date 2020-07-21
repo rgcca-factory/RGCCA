@@ -4,17 +4,18 @@
 \alias{plot.whichNAmethod}
 \title{Which missing method to choose ?}
 \usage{
-\method{plot}{whichNAmethod}(x, output = "rv", ylim = NULL,
-  i_block = "all", bars = "sd", main = NULL, ylab = "", ...)
+\method{plot}{whichNAmethod}(x, type = "rv", ylim = NULL,
+  block = length(x[[1]][[1]][[1]]), bars = "sd", main = NULL,
+  ylab = "", ...)
 }
 \arguments{
 \item{x}{A list resulting of whichNAmethod (see \link{whichNAmethod})}
 
-\item{output}{="rv": Can be also "a" for correlations between axes, "bm" for the percent of similar biomarkers, "rvComplete" if the RV is calculated only on complete dataset, or "rmse" for Root Mean Squares Error.}
+\item{type}{="rv": Can be also "a" for correlations between axes, "bm" for the percent of similar biomarkers, "rvComplete" if the RV is calculated only on complete dataset, or "rmse" for Root Mean Squares Error.}
 
 \item{ylim}{=c(0.8,1) y limits}
 
-\item{i_block}{="all" or a number indicating the position of the chosen block in the initial list}
+\item{block}{="all" or a number indicating the position of the chosen block in the initial list}
 
 \item{bars}{="sd" or "stderr". Indicates which error bar to build}
 
@@ -33,5 +34,5 @@ colnames(X1)=paste("A",1:5);colnames(X2)=paste("B",1:4);
 rownames(X1)=rownames(X2)=paste0("S",1:70);A=list(X1,X2);
 listResults=whichNAmethod(blocks=A,patternNA=c(0.1,0.2),
 listMethods=c("mean","complete","nipals","knn4"))
-plot(x=listResults,ylim=c(0,1),output="a")
+plot(x=listResults,ylim=c(0,1),type="a")
 }

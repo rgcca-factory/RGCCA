@@ -7,7 +7,7 @@ check_nblocks <- function(blocks, type) {
         exit_code <- 111
     }
 
-    stop(
+    stop_rgcca(
         paste0(
             length(blocks),
             " blocks used in the analysis. ",

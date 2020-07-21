@@ -8,12 +8,13 @@
 # (otherwhise samplesPlot which do not have traces could not be convereted
 # in ggplotly)
 # return a plotly object
-plot_dynamic <- function(f,
+plot_dynamic <- function(
+    f,
     ax = NULL,
     text = "name+x+y",
-    legend = TRUE,
-    dynamicTicks = FALSE) {
-    
+    dynamicTicks = FALSE,
+    type = "regular") {
+
     if (is.null(ax))
         ax <- list(linecolor = "white",
             ticks = "",
@@ -23,23 +24,30 @@ plot_dynamic <- function(f,
     # Convert a ggplot into a plotly object add a layout with predefined
     # formats for
     # x- and y- axis set the style to show onMouseOver text
-    p <- plotly::plotly_build(
-        plotly::ggplotly(f, dynamicTicks = dynamicTicks) %>%
-            plotly::layout(
-                xaxis = ax,
-                yaxis = ax,
-                annotations = list(showarrow = FALSE, text = "")
-            ) %>% 
-            plotly::style(hoverinfo = text)
-        )
-    
-    if (legend) {
-        
+    if (type == "regular")
+        p <- plotly::plotly_build(
+            plotly::ggplotly(f, dynamicTicks = dynamicTicks) %>%
+                plotly::layout(
+                    xaxis = ax,
+                    yaxis = ax,
+                    annotations = list(showarrow = FALSE, text = "")
+                ) %>% 
+                plotly::style(hoverinfo = text)
+            )
+    else 
+        p <- ggplotly(f)
+
+    legend_title <- p$x$layout$annotations[[1]]$text
+    if (!is.null(legend_title) && legend_title != "") {
+
         # set on the top the position of the legend title
         p$x$layout$annotations[[1]]$yanchor <- "top"
+        # if \n in title
+        legend_title <- strsplit(p$x$layout$annotations[[1]]$text, "\n")[[1]]
         # Deals with a too short name of modalities
-        p$x$layout$margin$r <- nchar(p$x$layout$annotations[[1]]$text) * 13
-        p$x$layout$margin$t <- 100
+        p$x$layout$margin$r <- max(nchar(legend_title)) * 13
+        if (length(legend_title) > 1)
+            p$x$layout$annotations[[1]]$y = 1.05
         # for shiny corcircle, if text = TRUE, two legends will appear.
         # only the first one will be selected
         title <- unlist(strsplit(p$x$layout$annotations[[1]]$text, "<br />"))[1]
@@ -50,33 +58,58 @@ plot_dynamic <- function(f,
 
         # set the font for this title
         p$x$layout$annotations[[1]]$text <- paste0("<i><b>", title, "</b></i>")
-        # Sys.info()[['sysname']]
 
-        if (!is.null(f$labels$subtitle)) {
-            if (packageVersion("plotly") < 4.9)
-                p$x$layout$title <- paste0(
-                        p$x$layout$title,
-                        "<br><b>",
-                        "c",
-                        substring(f$labels$subtitle, 2),
-                        "</b>"
-                    )
-            else
-                p$x$layout$title$text <- paste0(
-                    p$x$layout$title$text,
+    }
+
+    if (!is.null(f$labels$subtitle)) {
+        if (packageVersion("plotly") < 4.9)
+            p$x$layout$title <- paste0(
+                    p$x$layout$title,
                     "<br><b>",
                     "c",
                     substring(f$labels$subtitle, 2),
                     "</b>"
                 )
-        }
+        else
+            p$x$layout$title$text <- paste0(
+                p$x$layout$title$text,
+                "<br><b>",
+                "c",
+                substring(f$labels$subtitle, 2),
+                "</b>"
+            )
     }
-    
+
     if (NCOL(f$data) == 3)
         p$sample_names <- lapply(
             levels(as.factor(f$data[, 3])), 
             function(x) row.names(subset(f$data, f$data[, 3] == x)))
     else
         p$sample_names <- list(row.names(f$data))
-    return(p)
+
+    p$x$layout$margin$t <- 100
+
+    if (!grepl("1D", type) && !type %in% c("perm", "cv")) {
+        p <- config(
+            p,
+            modeBarButtons = list(
+                list("toImage"),
+                list("resetScale2d"),
+                list("zoom2d"),
+                list("pan2d")
+            ),
+            displaylogo = FALSE
+        )
+    } else
+        p <- config(p, modeBarButtons = list(list("toImage")))
+
+    p$x$layout$title$y <- 0.95
+
+    config(
+        p,
+        editable = TRUE,
+        displaylogo = FALSE,
+        edits = list(shapePosition = F)
+    )  %>% 
+        layout(hovermode = "closest")
 }

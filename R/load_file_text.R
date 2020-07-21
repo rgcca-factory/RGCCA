@@ -39,7 +39,7 @@ load_file_text <- function(
     })
 
     if (!one_column && NCOL(f) == 0)
-        stop(paste(basename(file), "has an only-column. Check the separator."),
+        stop_rgcca(paste(basename(file), "has an only-column. Check the separator."),
         exit_code = 102)
 
     return(f)

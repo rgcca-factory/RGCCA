@@ -5,9 +5,8 @@
 #' @param f A character giving the name of a file
 #' @param p A ggplot object
 #' @examples
-#' library('ggplot2')
 #' df = as.data.frame(matrix(runif(20), 10, 2))
-#' p = ggplot(df, aes(df[, 1], df[, 2]))
+#' #p = ggplot(df, aes(df[, 1], df[, 2]))
 #' #save_plot('Rplot.png', p)
 #' @export
 save_plot <- function(f, p) {

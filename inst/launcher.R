@@ -259,12 +259,12 @@ check_arg <- function(opt) {
     # Check the validity of the arguments opt : an optionParser object
 
     if (is.null(opt$datasets))
-        stop(paste0("datasets is required."), exit_code = 121)
+        stop_rgcca(paste0("datasets is required."), exit_code = 121)
 
     if (is.null(opt$scheme))
         opt$scheme <- "factorial"
     else if (!opt$scheme %in% seq(4)) {
-        stop(
+        stop_rgcca(
             paste0(
                 "scheme should be comprise between 1 and 4 [by default: 2], not be equal to ",
                 opt$scheme,
@@ -281,7 +281,7 @@ check_arg <- function(opt) {
     }
 
     if (!opt$separator %in% seq(3)) {
-        stop(
+        stop_rgcca(
             paste0(
                 "separator should be comprise between 1 and 3 (1: Tabulation, 2: Semicolon, 3: Comma) [by default: 2], not be equal to ",
                 opt$separator,
@@ -295,7 +295,7 @@ check_arg <- function(opt) {
     }
 
     # if (! opt$init %in% 1:2 )
-    # stop(paste0('--init must be 1 or 2 (1: Singular Value
+    # stop_rgcca(paste0('--init must be 1 or 2 (1: Singular Value
     # Decompostion , 2: random) [by default: 1], not ', opt$init, '.'),
     #  exit_code = 124)
     # else
@@ -347,19 +347,19 @@ check_integer <- function(x, y = x, type = "scalar", float = FALSE, min = 1) {
     y <- suppressWarnings(as.double(as.matrix(y)))
 
     if (any(is.na(y)))
-        stop(paste(x, "should not be NA."))
+        stop_rgcca(paste(x, "should not be NA."))
 
     if (!is(y, "numeric"))
-        stop(paste(x, "should be numeric."))
+        stop_rgcca(paste(x, "should be numeric."))
     
     if (type == "scalar" && length(y) != 1)
-        stop(paste(x, "should be of length 1."))
+        stop_rgcca(paste(x, "should be of length 1."))
 
     if (!float)
         y <- as.integer(y)
     
     if (all(y < min))
-        stop(paste0(x, " should be higher than or equal to ", min, "."))
+        stop_rgcca(paste0(x, " should be higher than or equal to ", min, "."))
 
     if (type %in% c("matrix", "data.frame"))
         y <- matrix(
@@ -388,6 +388,9 @@ load_libraries <- function(librairies) {
         ))
     }
 }
+
+stop_rgcca <- function(message = "", exit_code = 1)
+    base::stop(error_cnd(.subclass = exit_code, message = message))
 
 ########## Main ##########
 
@@ -426,9 +429,9 @@ tryCatch(
     opt <- check_arg(parse_args(getArgs())),
     error = function(e) {
         if (length(grep("nextArg", e[[1]])) != 1)
-            stop(e[[1]], exit_code = 140)
+            stop_rgcca(e[[1]], exit_code = 140)
     }, warning = function(w)
-        stop(w[[1]], exit_code = 141)
+        stop_rgcca(w[[1]], exit_code = 141)
 )
 
 # Load functions

@@ -1,7 +1,7 @@
-check_tau <- function(tau, blocks, type = "rgcca") {
+check_tau <- function(tau, blocks, type = "rgcca",superblock=FALSE) {
     msg <- "tau should be comprise between 0 and 1 or should correspond to the character 'optimal' for automatic setting"
     tau1 <- tau
-
+    if(superblock){blocks[[length(blocks)+1]] <- Reduce(cbind,blocks);names(blocks)[length(blocks)]="superblock" }
     tryCatch({
         # Check value of each tau
         tau <- sapply(
@@ -10,7 +10,7 @@ check_tau <- function(tau, blocks, type = "rgcca") {
                 if (tau[x] != "optimal") {
                     y <- check_integer("tau", tau[x], float = TRUE, min = 0)
                     if (y > 1)
-                        stop(paste0(msg, " (currently equals to ", tau[x], ")."),
+                        stop_rgcca(paste0(msg, " (currently equals to ", tau[x], ")."),
                             exit_code = 129)
                     else
                         y
@@ -31,6 +31,6 @@ check_tau <- function(tau, blocks, type = "rgcca") {
         # if (length(tau) == 1)
         #     tau <- rep(tau[[1]], length(blocks))
     }, warning = function(w)
-        stop(msg, exit_code = 131)
+        stop_rgcca(msg, exit_code = 131)
     )
 }

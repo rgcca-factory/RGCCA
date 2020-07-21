@@ -9,7 +9,7 @@
 #' @param ncomp vector containing the number of components per block in RGCCA
 #' @param naxis number of component to select in the superblock for the estimation of missing data
 #' @param  scale  If scale = TRUE, each block is standardized to zero means and unit variances (default: TRUE).
-#' @param sameBlockWeight A logical value indicating if the different blocks should have the same weight in the analysis (default, sameBlockWeight=TRUE)
+#' @param scale_block A logical value indicating if the different blocks should have the same weight in the analysis (default, scale_block=TRUE)
 #' @param bias A logical value indicating if variance should be biased or not
 #' @param verbose If TRUE, displays the differents RGCCA steps
 #' @param ni Number of iterations
@@ -29,7 +29,7 @@ imputeSB <- function(
   ncomp = NULL,
   naxis = 1,
   scale = TRUE,
-  sameBlockWeight = TRUE,
+  scale_block = TRUE,
   bias = TRUE,
   verbose=FALSE
   ) {
@@ -61,7 +61,7 @@ imputeSB <- function(
   D <- matrix(1, dim(X1NA)[1], dim(X1NA)[2])
   X2NA <- scale2(X1NA, scale = scale, bias = TRUE)
   
-  if (sameBlockWeight) {
+  if (scale_block) {
     group <- unlist(lapply(A, "NCOL"))
     debutBlock <- c(1, 1 + cumsum(group)[1:(length(group) - 1)])
     finBlock <- cumsum(group)
@@ -97,7 +97,7 @@ imputeSB <- function(
     # building of a list with superblock ASB = c(Alist, list(X1NA))
     # names(ASB)=c(names(Alist),'superblock') fit.rgcca = rgccad(A=ASB, tau =
     # tau2,C=C2, ncomp = ncomp2, scheme = 'factorial', scale = scale, init = 'svd',
-    # verbose = FALSE, tol = tol,sameBlockWeight=sameBlockWeight)
+    # verbose = FALSE, tol = tol,scale_block=scale_block)
     fit.rgcca <- rgccad(
       A = Alist,
       tau = tau,
@@ -108,7 +108,7 @@ imputeSB <- function(
       init = "svd",
       verbose = FALSE,
       tol = tol,
-      sameBlockWeight = sameBlockWeight
+      scale_block = scale_block
     )
     # si on veut le critere comme somme des deux composantes
     # critRGCCA=c(critRGCCA,fit.rgcca$crit[[1]][length(fit.rgcca$crit[[1]])]+fit.rgcca$crit[[2]][length(fit.rgcca$crit[[2]])])

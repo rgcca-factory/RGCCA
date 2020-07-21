@@ -23,6 +23,7 @@
 #' @param cex_point An integer for the size of the points or the text in the plot
 #' @param cex_lab An integer for the size of the axis titles
 #' @param collapse A boolean to combine the variables of each block as result
+#' @importFrom ggplot2 ggplot
 # @examples
 # df = as.data.frame(matrix(runif(20*2, min = -1), 20, 2))
 # AVE = lapply(seq(4), function(x) runif(2))
@@ -50,10 +51,10 @@ plot2D <- function(
     collapse = FALSE,
     no_overlap = FALSE,
     cex = 1,
-    cex_main = 25 * cex,
-    cex_sub = 16 * cex,
+    cex_main = 14 * cex,
+    cex_sub = 12 * cex,
     cex_point = 3 * cex,
-    cex_lab = 19 * cex) {
+    cex_lab = 10 * cex) {
     
     title <- paste0(title, collapse = " ")
     name_group <- paste0(name_group, collapse = " ")

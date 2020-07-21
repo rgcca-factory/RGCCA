@@ -42,7 +42,7 @@
 #' data("Russett")
 #' blocks = list(agriculture = Russett[, seq(3)], industry = Russett[, 4:5],
 #'  politic = Russett[, 6:11] )
-#' rgcca_out = rgcca(blocks)
+#' rgcca_out = rgcca(blocks,ncomp=2)
 #' # Without superblock but with the of all variables to the first block
 #' plot_var_2D(rgcca_out, collapse = TRUE)
 #' @export
@@ -56,13 +56,13 @@ plot_var_2D <- function(
     n_mark = 100,
     collapse = FALSE,
     no_overlap = FALSE,
-    title = "Variable correlations with",
+    title = "Variable correlations",
     resp=NULL,
     colors=NULL,
     ...) {
 
     x <- y <- NULL
-    if(rgcca_res$call$superblock==FALSE){collapse=FALSE;}
+    #if(rgcca_res$call$superblock==FALSE){collapse=FALSE;}
     df <- get_ctr2(
         rgcca_res = rgcca_res,
         compx = compx,

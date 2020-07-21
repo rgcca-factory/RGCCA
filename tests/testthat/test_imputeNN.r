@@ -7,7 +7,7 @@
               output = "mean",
               klim = NULL,
               scale = TRUE,
-              sameBlockWeight = TRUE)
+              scale_block = TRUE)
 
  set.seed(42);X1=matrix(rnorm(500),100,5);
   set.seed(22);X2=matrix(rnorm(400),100,4);
@@ -17,10 +17,10 @@
   colnames(X1)=paste("A",1:5,sep="");colnames(X2)=paste("A",6:9,sep="");
   colnames(X3)=paste("A",10:16,sep="")
  A=list(X1,X2,X3)  
- Ares=imputeNN(A,k=1,output="mean", klim=NULL,scale=TRUE,sameBlockWeight=TRUE)
+ Ares=imputeNN(A,k=1,output="mean", klim=NULL,scale=TRUE,scale_block=TRUE)
  
 
- Ares=imputeNN(A,k=1,output="mean", klim=NULL,scale=TRUE,sameBlockWeight=TRUE,superblock=TRUE)
+ Ares=imputeNN(A,k=1,output="mean", klim=NULL,scale=TRUE,scale_block=TRUE,superblock=TRUE)
  A=list(X2,X2)
- Ares=imputeNN(A,k=1,output="mean", klim=NULL,scale=TRUE,sameBlockWeight=TRUE,superblock=FALSE)
+ Ares=imputeNN(A,k=1,output="mean", klim=NULL,scale=TRUE,scale_block=TRUE,superblock=FALSE)
  

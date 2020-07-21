@@ -4,13 +4,14 @@
 \alias{plot.naEvolution}
 \title{plot.naEvolution}
 \usage{
-\method{plot}{naEvolution}(x, output = "rv", ylim = NULL,
-  block = "all", bars = "sd", main = NULL, names.arg = NULL, ...)
+\method{plot}{naEvolution}(x, type = "rv", ylim = NULL,
+  block = length(x[[1]][[1]][[1]][[1]]), bars = "sd", main = NULL,
+  names.arg = NULL, ...)
 }
 \arguments{
 \item{x}{A list resulting of naEvolution (\link{naEvolution})}
 
-\item{output}{="rv": Can be also "a" for correlations between axes, "bm" for the percent of similar biomarkers, "rvComplete" if the RV is calculated only on complete dataset, or "rmse" for Root Mean Squares Error.}
+\item{type}{="rv": Can be also "a" for correlations between axes, "bm" for the percent of similar biomarkers, "rvComplete" if the RV is calculated only on complete dataset, or "rmse" for Root Mean Squares Error.}
 
 \item{ylim}{=c(0.8,1) y limits}
 
@@ -35,5 +36,5 @@ rownames(X1)=rownames(X2)=paste("S",1:70)
 A=list(X1,X2)
 listResults=naEvolution(blocks=A,prctNA=c(0.1,0.2,0.3,0.4),
 listMethods=c("mean","complete","nipals","knn4"))
-plot(x=listResults,ylim=c(0,1),output="a")
+plot(x=listResults,ylim=c(0,1),type="a")
 }

@@ -4,13 +4,15 @@
 \alias{set_connection}
 \title{Create a matrix corresponding to a connection between the blocks}
 \usage{
-set_connection(blocks, superblock = FALSE)
+set_connection(blocks, superblock = FALSE, response = NULL)
 }
 \arguments{
 \item{blocks}{A list of matrix}
 
 \item{superblock}{A boolean giving the presence (TRUE) / absence (FALSE) of
 a superblock}
+
+\item{response}{if not NULL, number corresponding to the response block}
 }
 \value{
 A matrix corresponding to the connection between the blocks

@@ -31,6 +31,7 @@
 #' rgcca_out = rgcca(blocks)
 #' plot_var_1D(rgcca_out, collapse = TRUE)
 #' @export
+#' @importFrom ggplot2 ggplot
 plot_var_1D <- function(
     rgcca_res,
     comp = 1,
@@ -63,8 +64,8 @@ plot_var_1D <- function(
 
     if (is.null(title))
         title <- ifelse(type == "cor",
-            "Variable correlations with",
-            "Variable weights on")
+            "Variable correlations",
+            "Variable weights")
 
     # sort in decreasing order
     df <- data.frame(order_df(df, 1, TRUE), order = NROW(df):1)
@@ -85,12 +86,11 @@ plot_var_1D <- function(
         color <- "black"
         p <- ggplot(df, aes(order, df[, 1], fill = abs(df[, 1])))
     }
-
     p <- plot_histogram(
         p,
         df,
         title,
-        as.character(color),
+        group=as.character(color),
         colors = colors,
         ...
     ) +

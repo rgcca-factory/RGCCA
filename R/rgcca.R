@@ -68,7 +68,7 @@
 #' result.rgcca = rgcca(A,type="rgcca", connection=C, tau = c(1, 1, 1),superblock=FALSE,
 #'  scheme = "factorial", scale = TRUE)
 #' lab = as.vector(apply(Russett[, 9:11], 1, which.max))
-#' plot(result.rgcca,type="ind",i_block=1,i_block_y=2,resp=lab)
+#' plot(result.rgcca,type="ind",block=1:2,comp=rep(1,2),resp=lab)
 #' ############################################
 #' # Example 2: RGCCA and multiple components #
 #' ############################################
@@ -110,25 +110,82 @@ rgcca <- function(
     blocks,
     type = "rgcca",
     scale = TRUE,
-    sameBlockWeight = TRUE,
+    scale_block = TRUE,
     connection = matrix(1,length(blocks),length(blocks)) - diag(length(blocks)),
     scheme = "factorial",
-    ncomp = rep(2, length(blocks)),
+    ncomp = rep(1, length(blocks)),
     tau = rep(1, length(blocks)),
     sparsity = rep(1, length(blocks)),
     init = "svd",
     bias = TRUE,
     tol = 1e-08,
     response = NULL,
-    superblock = TRUE,
-    method = "complete",
+    superblock = FALSE,
+    method = "nipals",
     verbose = FALSE,
     quiet = TRUE,
     knn.k = "all",
     knn.output = "weightedMean",
     knn.klim = NULL,
-    knn.sameBlockWeight = TRUE) {
+    knn.scale_block = TRUE) {
+    
 
+    if(class(blocks)=="permutation")
+    {
+        message("All parameters were imported by permutation object provided in the blocks parameter")
+        scale_block=blocks$call$scale_block
+        scale=blocks$call$scale
+        scheme=blocks$call$scheme
+        connection=blocks$call$connection
+        tol=blocks$call$tol
+        method=blocks$call$method
+        if(blocks$call$perm.par=="tau")
+        {
+            tau=blocks$bestpenalties 
+        }
+        if(blocks$call$perm.par=="ncomp")
+        {
+            ncomp=blocks$bestpenalties 
+        }
+        if(blocks$call$perm.par=="sparsity")
+        {
+            sparsity=blocks$bestpenalties 
+        }
+        blocks<-blocks$call$blocks
+    }
+    if(class(blocks)=="cval")
+    {
+        message("All parameters were imported by a cval object provided in the blocks parameter")
+        scale_block=blocks$call$scale_block
+        scale=blocks$call$scale
+        scheme=blocks$call$scheme
+        response=blocks$call$response
+        tol=blocks$call$tol
+        method=blocks$call$method
+        if(blocks$call$par[[1]]=="tau")
+        {
+            tau=blocks$bestpenalties 
+        }
+        if(blocks$call$par[[1]]=="ncomp")
+        {
+            ncomp=blocks$bestpenalties 
+        }
+        if(blocks$call$par[[1]]=="sparsity")
+        {
+            sparsity=blocks$bestpenalties 
+        }
+        blocks<-blocks$call$blocks
+    }
+
+    if(length(blocks)==1){
+        if(type!="pca")
+        {
+            type="pca";
+            message("type='rgcca' is not available for one block only. type was transformed as 'pca'.")
+        }
+        
+    }
+         
     if (!missing(sparsity) && missing(type))
         type <- "sgcca"
 
@@ -143,25 +200,32 @@ rgcca <- function(
 
     if (tolower(type) %in% c("sgcca", "spca", "spls")) {
         if (!missing(tau) && missing(sparsity))
-           stop(paste0("sparsity parameter required for ", tolower(type), "(instead of tau)."))
+           stop_rgcca(paste0("sparsity parameter required for ", tolower(type), "(instead of tau)."))
         gcca <- sgccaNa
         par <- "sparsity"
         penalty <- sparsity
        
     }else{
         if (!missing(sparsity) & missing(tau))
-           stop(paste0("tau parameter required for ", tolower(type), "(instead of sparsity)."))
+           stop_rgcca(paste0("tau parameter required for ", tolower(type), "(instead of sparsity)."))
         gcca <- rgccaNa
         par <- "tau"
         penalty <- tau
     }
 
     if (superblock && any(penalty == "optimal"))
-        stop("Optimal tau is not available with superblock option.")
-
+        stop_rgcca("Optimal tau is not available with superblock option.")
+  
+    
     match.arg(init, c("svd", "random"))
     match.arg(knn.output, c("mean", "random", "weightedMean" ))
     check_method(type)
+  
+    
+    # Check blocks size, adds NA lines if some subjects are missing...
+
+    blocks=check_blocks(blocks,add_NAlines=TRUE,n=1,init=TRUE)
+
     if (!is.null(response))
         check_blockx("response", response, blocks)
     check_integer("tol", tol, float = TRUE, min = 0)
@@ -174,12 +238,12 @@ rgcca <- function(
     if (!knn.k %in% c("all", "auto"))
         check_integer("knn.k", knn.k)
 
-    for (i in c("superblock","verbose", "scale", "bias", "quiet", "knn.sameBlockWeight"))
+    for (i in c("superblock","verbose", "scale", "bias", "quiet", "knn.scale_block"))
         check_boolean(i, get(i))
 
     penalty <- elongate_arg(penalty, blocks)
     ncomp <- elongate_arg(ncomp, blocks)
-
+  
     opt <- select_analysis(
         blocks = blocks,
         connection = connection,
@@ -191,24 +255,27 @@ rgcca <- function(
         quiet = quiet,
         response = response
     )
+    raw=blocks
+ 
 
-    opt$blocks <- scaling(blocks, scale,sameBlockWeight = sameBlockWeight)
+    opt$blocks <- scaling(blocks, scale,scale_block = scale_block)
+
     opt$superblock <- check_superblock(response, opt$superblock, !quiet)
     opt$blocks <- set_superblock(opt$blocks, opt$superblock, type, !quiet)
 
     if (!is.null(response)) {
         # || tolower(type) == "ra"
         response <- check_blockx("response", response, opt$blocks)
-        pars <- c("blocks", "ncomp", "penalty")
-        for (i in seq(length(pars)))
-            opt[[pars[i]]] <- c(opt[[pars[i]]][-response], opt[[pars[i]]][response])
+        #pars <- c("blocks", "ncomp", "penalty")
+        #for (i in seq(length(pars)))
+        #    opt[[pars[i]]] <- c(opt[[pars[i]]][-response], opt[[pars[i]]][response])
     }
 
 
     if (!is.matrix(opt$connection) || !is.null(response))
         opt$connection <- set_connection(
             opt$blocks,
-            (opt$superblock | !is.null(response))
+            superblock=opt$superblock,response=response
         )
 
     check_connection(opt$connection, opt$blocks)
@@ -236,12 +303,12 @@ rgcca <- function(
             init = init,
             bias = bias,
             tol = tol,
-            sameBlockWeight = sameBlockWeight,
+            scale_block = scale_block,
             method = method,
             knn.k = knn.k,
             knn.output = knn.output,
             knn.klim = knn.klim,
-            knn.sameBlockWeight = knn.sameBlockWeight,
+            knn.scale_block = knn.scale_block,
             pca.ncp =1,
             prescaling = FALSE,
             quiet=quiet
@@ -266,7 +333,8 @@ rgcca <- function(
         connection = opt$connection,
         superblock = opt$superblock,
         ncomp = opt$ncomp,
-        scheme = opt$scheme
+        scheme = opt$scheme,
+        raw=raw
     )
 
     is_optimal <- any(opt$penalty == "optimal")
@@ -287,7 +355,7 @@ rgcca <- function(
         "tol",
         "verbose",
         "response",
-        "sameBlockWeight",
+        "scale_block",
         "method",
         "knn.k",
         "knn.output",

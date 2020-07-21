@@ -1,6 +1,6 @@
 get_comp_all <- function(
     rgcca,
-    newA = rgcca$call$blocks,
+    newA = rgcca$A,
     type = "train",
     newbloc_y = .Machine$integer.max,
     pred = NULL) {
@@ -10,7 +10,7 @@ get_comp_all <- function(
     if (type ==  "train")
         y <- lapply(
             seq(length(rgcca$Y)), 
-            function(x) rgcca$Y[[x]][row.names(rgcca$call$blocks[[x]]), ])
+            function(x) rgcca$Y[[x]][row.names(rgcca$A[[x]]), ])
     else
         y <- pred
 

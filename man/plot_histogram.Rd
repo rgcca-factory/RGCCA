@@ -5,7 +5,7 @@
 \title{Histogram settings}
 \usage{
 plot_histogram(p, df, title = "", group = NA, colors = NULL,
-  cex = 1, cex_main = 25 * cex, cex_sub = 16 * cex, cex_axis = 10 *
+  cex = 1, cex_main = 14 * cex, cex_sub = 12 * cex, cex_axis = 10 *
   cex)
 }
 \arguments{

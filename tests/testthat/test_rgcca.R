@@ -7,6 +7,9 @@ X_polit = as.matrix(Russett[ , c("demostab", "dictator")]);
 A = list(X_agric);
 #C = matrix(c(0, 0, 1, 0, 0, 1, 1, 1, 0), 3, 3);
 
+
+
+
 # scaled PCA
 resPCA= rgcca (
      blocks=A,
@@ -55,7 +58,7 @@ unscaledPCA= rgcca (
     type = "pca",
     verbose = FALSE,
     scheme = "factorial",
-    sameBlockWeight = FALSE,
+    scale_block = FALSE,
     scale = FALSE,
     init = "svd",
     bias = TRUE, 
@@ -109,7 +112,7 @@ pcasb_ind=abs(cor(pcaSB$x[,1],scaledPCASB$Y[[1]][,1]))==1
 #      connection=matrix(c(0,1,1,0),2,2),
 #      tau=rep(1,2),
 #      ncomp = rep(1, length(A)),
-#     sameBlockWeight=FALSE)
+#     scale_block=FALSE)
 #  
 # # 
 #  cor_X = abs(cor(res_pls$fitted.values[,,1][,1], pls_with_rgcca$Y[[1]]))
@@ -148,14 +151,14 @@ pcasb_ind=abs(cor(pcaSB$x[,1],scaledPCASB$Y[[1]][,1]))==1
  X_agric =as.matrix(Russett[,c("gini","farm","rent")]);
  X_ind = as.matrix(Russett[,c("gnpr","labo")]);
  X_polit = as.matrix(Russett[ , c("demostab")]);
- A = list(X_agric,X_ind,X_agric);
+ A = list(X_agric,X_ind,X_polit);
  resPCA= rgcca (
      blocks=A,
      connection = 1 - diag(length(A)),
      response = NULL,
      superblock = FALSE,
      tau = rep(1, length(A)),
-     ncomp = rep(2, length(A)),
+     ncomp = c(2,2,1),
      type = "rgcca",
      verbose = FALSE,
      scheme = "factorial",
@@ -192,7 +195,7 @@ pcasb_ind=abs(cor(pcaSB$x[,1],scaledPCASB$Y[[1]][,1]))==1
  X_ind = as.matrix(Russett[,c("gnpr","labo")]);
  X_polit = as.matrix(Russett[ , c("demostab")]);
  A = list(X_agric,X_ind,X_agric);
- names(A)=c("Agri","Ind","Agri")
+ names(A)=c("Agri","Ind","Polit")
  resRGCCA= rgcca (
      blocks=A,
      connection = 1 - diag(length(A)),
@@ -209,4 +212,19 @@ pcasb_ind=abs(cor(pcaSB$x[,1],scaledPCASB$Y[[1]][,1]))==1
      tol = 1e-08,quiet=FALSE)
  
  resRGCCA
+ 
+ data(Russett)
+ X_agric =as.matrix(Russett[,c("gini","farm","rent")]);
+ X_ind = as.matrix(Russett[,c("gnpr","labo")]);
+ X_polit = as.matrix(Russett[ , c("demostab")]);
+ A = list(X_agric,X_ind,X_agric);
+ names(A)=c("Agri","Ind","Polit")
+ 
+ C0=matrix(0,3,3);C0[2:3,1]=1;C0[1,2:3]=1
+ C1=matrix(0,3,3);C1[1:2,3]=1;C1[3,1:2]=1
+ A1=list(A[[2]],A[[3]],A[[1]])
+ resRgccaNipals3=rgcca(blocks=A1,connection=C1,type="rgcca",method="nipals",ncomp=2)
+ resRgccaNipals=rgcca(blocks=A,connection=C0,type="rgcca",method="nipals",ncomp=2)
+ head(resRgccaNipals3$Y[[3]])
+ head(resRgccaNipals$Y[[1]])
  

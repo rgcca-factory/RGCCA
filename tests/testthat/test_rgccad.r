@@ -14,6 +14,9 @@ T1=Sys.time();resultRgcca_Tau1_test = rgccad(A, C, ncomp=rep(2,3),tau = c(1, 1, 
 T1=Sys.time();resultRgcca_Tau0_test= rgccad(A, C, ncomp=rep(2,3),tau = c(0, 0, 0), scheme = "factorial", scale = TRUE,verbose=FALSE);T2=Sys.time();Tdiff_Tau0_test=T2-T1;  # 0.03978729
 T1=Sys.time();resultRgcca_TauOpt_test = rgccad(A, C, ncomp=rep(2,3),tau = rep("optimal",3), scheme = "factorial", scale = TRUE,verbose=FALSE);T2=Sys.time();Tdiff_TauOpt_test=T2-T1 ;# 0.04306483   secs
 
+names(A)=c("agri","ind","demo")
+res = rgccad(A, C, ncomp=rep(2,3),tau = c(1, 0, 1), scheme = "factorial", scale = TRUE,verbose=FALSE)
+
 # testing pca
 res=rgccad(list(a1=A[[1]],b1=A[[1]]),C=matrix(c(0,1,1,0),2,2),tau=rep(1,2),ncomp=c(2,2))
 test_that("test_rgcca_ave1",{

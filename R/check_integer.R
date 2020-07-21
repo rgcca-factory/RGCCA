@@ -18,23 +18,23 @@ check_integer <- function(x, y = x, type = "scalar", float = FALSE, min = 1) {
     y <- tryCatch(
         as.double(as.matrix(y)),
         warning = function(w)
-            stop(paste(x, "should be numeric."))
+            stop_rgcca(paste(x, "should be numeric."))
         )
 
     if (any(is.na(y)))
-        stop(paste(x, "should not be NA."))
+        stop_rgcca(paste(x, "should not be NA."))
 
     if (!is(y, "numeric"))
-        stop(paste(x, "should be numeric."))
+        stop_rgcca(paste(x, "should be numeric."))
     
     if (type == "scalar" && length(y) != 1)
-        stop(paste(x, "should be of length 1."))
+        stop_rgcca(paste(x, "should be of length 1."))
 
     if (!float)
         y <- as.integer(y)
     
     if (all(y < min))
-        stop(paste0(x, " should be higher than or equal to ", min, "."))
+        stop_rgcca(paste0(x, " should be higher than or equal to ", min, "."))
 
     if (type %in% c("matrix", "data.frame"))
         y <- matrix(

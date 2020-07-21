@@ -4,34 +4,75 @@
 \alias{rgcca_crossvalidation}
 \title{Cross-validation}
 \usage{
-rgcca_crossvalidation(rgcca_res, response = NULL, validation = "loo",
-  type = "regression", fit = "lm", new_scaled = TRUE, k = 5,
-  n_cores = parallel::detectCores() - 1, ...)
+rgcca_crossvalidation(rgcca_res, validation = "kfold",
+  model = "regression", fit = "lm", k = 5, scale = NULL,
+  scale_block = NULL, tol = 1e-08, scheme = NULL, method = NULL,
+  type = NULL, init = NULL, bias = NULL, connection = NULL,
+  ncomp = NULL, tau = NULL, sparsity = NULL,
+  n_cores = parallel::detectCores() - 1, parallelization = TRUE, ...)
 
-rgcca_crossvalidation(rgcca_res, response = NULL, validation = "loo",
-  type = "regression", fit = "lm", new_scaled = TRUE, k = 5,
-  n_cores = parallel::detectCores() - 1, ...)
+rgcca_crossvalidation(rgcca_res, validation = "kfold",
+  model = "regression", fit = "lm", k = 5, scale = NULL,
+  scale_block = NULL, tol = 1e-08, scheme = NULL, method = NULL,
+  type = NULL, init = NULL, bias = NULL, connection = NULL,
+  ncomp = NULL, tau = NULL, sparsity = NULL,
+  n_cores = parallel::detectCores() - 1, parallelization = TRUE, ...)
 }
 \arguments{
 \item{rgcca_res}{A list giving the results of a R/SGCCA}
-
-\item{response}{number of the response blocks in the list}
 
 \item{validation}{A character given the method for validation aong test 
 (for test-train sets), kfold (for k-fold with k=5 by default) and loo 
 (for leave-one-out)}
 
-\item{type}{A character corresponding to the type of prediction among : regression or classification}
+\item{model}{A character corresponding to the model of prediction among : regression or classification}
 
 \item{fit}{A character giving the function used to compare the trained and the tested models}
 
-\item{new_scaled}{A boolean scaling the blocks to predict}
-
 \item{k}{An integer given the parameter for k-fold method (5, by default)}
+
+\item{scale}{If scale = TRUE, each block is standardized to zero means and unit variances (default: TRUE).}
+
+\item{scale_block}{TRUE by default : each block have the same weight in the RGCCA analysis. If FALSE, the weight of each block depends on the number of variables of the block}
+
+\item{tol}{The stopping value for convergence.}
+
+\item{scheme}{The value is "horst", "factorial", "centroid" or the g function (default: "centroid").}
+
+\item{method}{Either a character corresponding to the used method ("complete","knn","em","sem") or a function taking a list of J blocks (A) as only parameter and returning the imputed list. 
+\itemize{
+\item{\code{"mean"}}{ corresponds to an imputation by the colmeans}
+\item{\code{"complete"}}{ corresponds to run RGCCA only on the complete subjects (subjects with missing data are removed)}
+\item{\code{"nipals"}}{ corresponds to run RGCCA on all available data (NIPALS algorithm)}
+\item{\code{"em"}}{ corresponds to impute the data with EM-type algorithms}
+\item{\code{"sem"}}{ corresponds to impute the data with EM-type algorithms with superblock approach}
+\item{\code{"knn1"}}{ corresponds to impute the data with the 1-Nearest Neighbor. 1 can be replace by another number (such as knn3) to impute with the 3-Nearest Neighbors.}}}
+
+\item{type}{A character giving the type of analysis: c('rgcca', 'cpca-w', 'gcca', 'hpca', 'maxbet-b', 'maxbet', 'maxdiff-b','maxdiff', 'maxvar-a', 'maxvar-b', 'maxvar', 'niles', 'r-maxvar', 'rcon-pca',
+'ridge-gca', 'sabscor', 'ssqcor', 'ssqcor', 'ssqcov-1', 'ssqcov-2', 'ssqcov',
+'sum-pca', 'sumcor', 'sumcov-1', 'sumcov-2', 'sumcov.', 'sabscov', 'plspm','cca', 'ra', 'ifa', 'pls','pca')}
+
+\item{init}{The mode of initialization to use in RGCCA algorithm. The alternatives are either by Singular Value Decompostion ("svd") or random ("random") (Default: "svd").}
+
+\item{bias}{A logical value for biaised or unbiaised estimator of the var/cov (default: bias = TRUE).}
+
+\item{connection}{A design matrix that describes the relationships between blocks (default: complete design).}
+
+\item{ncomp}{A \eqn{1 \times J} vector that contains the numbers of components for each block (default: rep(1, length(A)), which gives one component per block.). It can be estimated by using \link{rgcca_permutation}.}
+
+\item{tau}{Used for type="rgcca" only. tau is either a \eqn{1 \times J} vector or a \eqn{\mathrm{max}(ncomp) \times J} matrix, and contains the values 
+of the regularization parameters (default: tau = 1, for each block and each dimension).
+If tau = "optimal" the regularization paramaters are estimated for each block and each dimension using the Schafer and Strimmer (2005)
+analytical formula . If tau is a \eqn{1\times J} numeric vector, tau[j] is identical across the dimensions of block \eqn{\mathbf{X}_j}. 
+If tau is a matrix, tau[k, j] is associated with \eqn{\mathbf{X}_{jk}} (\eqn{k}th residual matrix for block \eqn{j})}
+
+\item{sparsity}{Used for type="sgcca" or "spls" only. A vector containing the sparsity coefficients (length J, between 0 and 1). It can be estimated by using \link{rgcca_permutation}.}
 
 \item{n_cores}{An integer for the number of cores used in parallelization}
 
-\item{...}{other RGCCA parameters # TODO}
+\item{parallelization}{if TRUE parallelization is run, if FALSE, no parallelisation is run. If NULL (default) parallelization is always used except for Windows in case of length(nperm)<10}
+
+\item{...}{Further graphical parameters (see plot2D functions)}
 }
 \description{
 Cross-validation for RGCCA
@@ -51,7 +92,6 @@ blocks = list(agriculture = Russett[, seq(3)], industry = Russett[, 4:5],
     politic = Russett[, 6:11] )
 rgcca_out = rgcca(blocks, response = 3,superblock=FALSE)
 res=rgcca_crossvalidation(rgcca_out, validation = "kfold", k = 5, n_cores = 1)
-rgcca_crossvalidation(rgcca_out,  validation = "test", n_cores = 1)$scores
 rgcca_crossvalidation(rgcca_out, n_cores = 1)
 }
 \seealso{

@@ -7,8 +7,7 @@
 plot_var_2D(rgcca_res, compx = 1, compy = 2,
   i_block = length(rgcca_res$a), text = TRUE, remove_var = TRUE,
   n_mark = 100, collapse = FALSE, no_overlap = FALSE,
-  title = "Variable correlations with", resp = NULL, colors = NULL,
-  ...)
+  title = "Variable correlations", resp = NULL, colors = NULL, ...)
 }
 \arguments{
 \item{rgcca_res}{A list giving the results of a R/SGCCA}
@@ -80,7 +79,7 @@ library(RGCCA)
 data("Russett")
 blocks = list(agriculture = Russett[, seq(3)], industry = Russett[, 4:5],
  politic = Russett[, 6:11] )
-rgcca_out = rgcca(blocks)
+rgcca_out = rgcca(blocks,ncomp=2)
 # Without superblock but with the of all variables to the first block
 plot_var_2D(rgcca_out, collapse = TRUE)
 }
