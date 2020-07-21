@@ -73,7 +73,7 @@ bootstrap <- function(
         varlist,
         seq(n_boot), 
         function(x) {
-            resBoot=bootstrap_k(rgcca_res)
+            resBoot=bootstrap_k(rgcca_res,type="weight")
         }
         , 
         n_cores = n_cores,

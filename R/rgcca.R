@@ -177,8 +177,15 @@ rgcca <- function(
         blocks<-blocks$call$blocks
     }
 
-    if(length(blocks)==1){type="pca";message("type='rgcca' is not available for one block only. type was transformed as 'pca'.")}
-    
+    if(length(blocks)==1){
+        if(type!="pca")
+        {
+            type="pca";
+            message("type='rgcca' is not available for one block only. type was transformed as 'pca'.")
+        }
+        
+    }
+         
     if (!missing(sparsity) && missing(type))
         type <- "sgcca"
 
@@ -217,7 +224,7 @@ rgcca <- function(
     
     # Check blocks size, adds NA lines if some subjects are missing...
 
-    blocks=check_blocks(blocks,add_NAlines=TRUE,n=1)
+    blocks=check_blocks(blocks,add_NAlines=TRUE,n=1,init=TRUE)
 
     if (!is.null(response))
         check_blockx("response", response, blocks)

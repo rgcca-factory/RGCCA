@@ -1,6 +1,6 @@
 #' Predict RGCCA
 #' 
-#' Predict a new block from a RGCCA
+#' Predicts a new block from a RGCCA
 #' 
 #' @inheritParams plot_ind
 #' @param newA A list of either a dataframe/matrix or a vector giving the blocks to be predicted
@@ -55,8 +55,10 @@ rgcca_predict = function(
     y.test = NULL,
   #  bigA = NULL,
     new_scaled = TRUE,
-    scale_size_bloc = TRUE) {
-
+    scale_size_bloc = TRUE
+ #   regress_on="block" #TODO
+  ) {
+    prediction=NULL
 #rgcca_res$call$blocks=intersection_list(rgcca_res$call$blocks)
 #print(model)
     stopifnot(is(rgcca_res, "rgcca"))
@@ -153,7 +155,8 @@ rgcca_predict = function(
     # TODO: if new as an only individuals
     # scale before y_train and y_test attribution ? Otherwise, the response is not scaled
     # Scaling
-    if (!new_scaled) {
+    if (!new_scaled) { 
+       
         scl_fun <- function(data, center, scale) {
             # Use the scaling parameter of the training set on the tested set
             
@@ -169,8 +172,7 @@ rgcca_predict = function(
            #     res
 
         }
-   
-        
+
         newA <- mapply(
             scl_fun,
             newA,
@@ -179,7 +181,6 @@ rgcca_predict = function(
             SIMPLIFY = FALSE
         )
     }
-
     # Dimension Reduction
     for (i in seq(length(rgcca_res$call$blocks)))
         colnames(rgcca_res$astar[[i]]) <- colnames(rgcca_res$Y[[i]])
@@ -189,16 +190,15 @@ rgcca_predict = function(
     {
         #M=as.matrix(newA[[x]]) %*% astar[[x]]
         M=pm(as.matrix(newA[[x]]), astar[[x]])
-        
         rownames(M)=rownames(newA[[x]])
         colnames(M)=colnames(astar[[x]])
         return(M)
     }
        )
     names(pred)=names(newA)
-    
+
     if (missing(bloc_to_pred))
-        return(list(pred = pred))
+        return(list(pred_y = pred))
 
     bloc_y <- match(bloc_to_pred, names(rgcca_res$call$blocks))
 
@@ -214,11 +214,11 @@ rgcca_predict = function(
         y.train <- rgcca_res$A[[bloc_y]][, MATCH_col[[newbloc_y]], drop = FALSE]
 
     # TODO : sampled columns for y.test
-
     if (missing(y.test)) {
         # if (length(newbloc_y) < 1)
         #   warning("Please, bloc_to_pred and y.test are absent from testing set. Coeffcients only will be given in outpus.") #TODO
         y.test <- newA[[newbloc_y]]
+  
     } else{
         # if (is.na(newbloc_y))
         #   warning("Please, bloc_to_pred is absent from testing set")
@@ -239,58 +239,53 @@ rgcca_predict = function(
 
     # Scores
     res <- NULL
-
-    if (model == "regression") {
-        score <- switch(fit,
-            "lm"  = {
-                ychapo <- sapply(
-                    colnames(y.train),
-                    function(x) {
-                        predict(
-                            lm(
-                                as.formula(paste(x, " ~ ",paste(colnames(comp.train),collapse="+"))),
-                                data = cbind(comp.train, y.train), 
-                                na.action = "na.exclude"
-                            ), 
-                        cbind(comp.test, y.test))
-                    })
-    
-                if (any(is.na(ychapo)))
-                    warning("NA in predictions.")
-
-             #   if (is.null(bigA))
-             #       bigA <- rgcca_res$call$blocks
-
-             #   m <- function(x)
-             #       apply(bigA[[bloc_to_pred]], 2, x) # TODO
-
-                f <- quote(
-                    if (is.null(dim(y)))
-                       y[x]
-                    else
-                        y[, x]
-                )
-
-             #   r <- function(y)
-             #       sapply(seq(NCOL(bigA[[bloc_to_pred]])), function(x)
-             #           (eval(f) - m(min)[x]) / (m(max)[x] - m(min)[x]))
-
-             #   res <- r(y.test) - r(ychapo)
-                prediction=ychapo
-                res=y.test-ychapo
-                if (is.null(dim(res))) {
-                    #res <- abs(res)
-                    score <- sqrt(mean(res^2,na.rm=T))
-                } else{
-                  #  res <- apply(res, 2, function(x) abs(x))
-                    res2 <- apply(res,2,function(x){return(sqrt(mean(x^2,na.rm=T)))})
-                    score <- sqrt(mean(res2^2,na.rm=T))
-                    #score <- mean(apply(res, 2, mean))
-                }
-
-
-            },
-            "cor" = {
+    if (model == "regression") 
+    {
+        if(fit=="lm")
+        {
+              #  if(regress_on=="block")
+              #  {
+                    ychapo <- sapply(
+                        colnames(y.train),
+                        function(x) {
+                            predict(
+                                lm(
+                                    as.formula(paste(x, " ~ ",paste(colnames(comp.train),collapse="+"))),
+                                    data = cbind(comp.train, y.train), 
+                                    na.action = "na.exclude"
+                                ), 
+                                cbind(comp.test, y.test))
+                        })
+                    if (any(is.na(ychapo)))
+                        warning("NA in predictions.")
+                    
+                   f <- quote(
+                        if (is.null(dim(y)))
+                            y[x]
+                        else
+                            y[, x]
+                    )
+               
+                    prediction=ychapo
+                    res=y.test-ychapo
+           
+                    if (is.null(dim(res))||dim(res)[1]==1) { 
+                        rmse=sqrt(mean(res^2,na.rm=T))
+                        score <- rmse 
+                    } else{ 
+                        rmse<- apply(res,2,function(x){return(sqrt(mean(x^2,na.rm=T)))})
+                        score <- mean(rmse)
+                        #score <- mean(apply(res, 2, mean))
+                    }
+     
+             #   }
+             #   if(regress_on=="comp")
+             #   {
+                   #TODO
+             #   }
+        }
+        if(fit=="cor")
+        {
                 if (is.null(newA[[1]])) {
                     # TODO ??? check case for vector
                     comp.test
@@ -309,10 +304,12 @@ rgcca_predict = function(
                     
                     score <- mean(unlist(cor), na.rm = TRUE)
                 }
-            })
+            }
         class.fit <- NULL
-
-    } else if (model == "classification") {
+    
+    }
+    if (model == "classification")
+    {
         ngroups   <- nlevels(as.factor(y.train))
         class.fit <- switch(fit,
             "lda"      = {
@@ -344,10 +341,11 @@ rgcca_predict = function(
  #m.sds=matrix(v.sds,nb.row,nb.col,byrow=TRUE);colnames(m.sds)=names(v.sds)
  #pred_A=prediction*m.sds+m.means
 #print(matrix(rep(v.means,NROW(prediction),nrows=NROW(prediction),ncol=length(v.means),byrow=TRUE)))
+
     result=list(
         pred = pred,
     #    pred_A=pred_A,
-    #    prediction=prediction,
+        prediction=prediction,
         class.fit = class.fit,
         score = score,
         res = res,

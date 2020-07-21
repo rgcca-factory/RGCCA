@@ -19,7 +19,7 @@ print(res3)
 
 plot(res4,bars="stderr")
 
-res5=rgcca_cv(blocks,response=length(blocks), type="rgcca",par="sparsity",par_value=matrix(c(0.8,0.9,1,0.9,1,1),nrow=2,byrow = T),n_cv=5, one_value_per_cv = FALSE,n_cores=1)
+res5=rgcca_cv(blocks,response=length(blocks), type="rgcca",par="sparsity",par_value=matrix(c(0.8,0.9,1,0.9,1,1),nrow=2,byrow = T),n_cv=1, one_value_per_cv = FALSE,n_cores=1)
 plot(res5,bars="points")
 print(res5)
 

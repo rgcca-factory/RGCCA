@@ -4,10 +4,14 @@
 \alias{bootstrap_k}
 \title{Compute bootstrap (internal)}
 \usage{
-bootstrap_k(rgcca_res)
+bootstrap_k(rgcca_res, type = "weight")
 }
 \arguments{
 \item{rgcca_res}{Result of rgcca function}
+
+\item{type}{A character giving the type of analysis: c('rgcca', 'cpca-w', 'gcca', 'hpca', 'maxbet-b', 'maxbet', 'maxdiff-b','maxdiff', 'maxvar-a', 'maxvar-b', 'maxvar', 'niles', 'r-maxvar', 'rcon-pca',
+'ridge-gca', 'sabscor', 'ssqcor', 'ssqcor', 'ssqcov-1', 'ssqcov-2', 'ssqcov',
+'sum-pca', 'sumcor', 'sumcov-1', 'sumcov-2', 'sumcov.', 'sabscov', 'plspm','cca', 'ra', 'ifa', 'pls','pca')}
 }
 \value{
 A list of RGCCA bootstrap weights

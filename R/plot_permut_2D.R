@@ -20,7 +20,7 @@
 
 plot_permut_2D <- function(
     perm, 
-    type = "zstat",
+    type = "crit",
     cex = 1,
     title = NULL,
     cex_main = 14 * cex,

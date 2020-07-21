@@ -83,3 +83,24 @@ names(blocks)
 res$call$tau
 
 
+# Remonving one  
+
+#checking set_rgcca without default
+rgcca_out <- rgcca(blocks, response = 1,superblock=FALSE,ncomp=1,scale=TRUE,scale_block=TRUE,tol=1e-8)
+rgcca_set_1 <- set_rgcca(rgcca_out,tol=1e-8)
+test_that("set_rgcca_identical_for_ind0", {
+    expect_identical(all.equal(rgcca_out,rgcca_set_1),TRUE)
+}) 
+    
+
+blocks_2=lapply(blocks,function(x){return(x[-1,])});
+blocks_1=lapply(blocks,function(x){return(x[1,])});
+names(blocks_2)=names(blocks_1)=names(blocks)
+rgcca_out_2 <- rgcca(blocks_2, response = 1,superblock=FALSE,ncomp=1,scale=TRUE,scale_block=TRUE,tol=1e-8)
+rgcca_set_2 <- set_rgcca(rgcca_out,inds=1,tol=1e-8)
+
+test_that("set_rgcca_identical_for_ind1", {
+    expect_identical(all.equal(rgcca_out_2,rgcca_set_2),TRUE)
+}) 
+
+

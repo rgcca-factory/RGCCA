@@ -43,6 +43,11 @@ rgcca_cv=function( blocks,
           method="nipals",
           rgcca_res=NULL,
           parallelization=NULL,
+          tau=rep(1,length(blocks)),
+          ncomp=rep(1,length(blocks)),
+          sparsity=rep(1,length(blocks)),
+          init="svd",
+          bias=TRUE,
           ...)
 {
     if(!missing(blocks)&class(blocks)=="rgcca"){rgcca_res=blocks}
@@ -71,14 +76,16 @@ rgcca_cv=function( blocks,
         k=dim(blocks[[1]])[1]
         if(n_cv!=1)
         {
-            cat("n_cv value was replaced by 1 (is not relevant for loo option)")};n_cv=1
-        }
+            cat("n_cv value was replaced by 1 (is not relevant for loo option)")
+        };n_cv=1
+    }
+
     check_integer("n_cores", n_cores, 0)
     match.arg(par, c("tau", "sparsity", "ncomp"))
     min_spars <- NULL
 
     if (length(blocks) < 1)
-        stop_rgcca("Permutation required a number of blocks larger than 1.")
+        stop_rgcca("Crossvalidation required a number of blocks larger than 1.")
     
     ncols <- sapply(blocks, NCOL)
     
@@ -92,11 +99,11 @@ rgcca_cv=function( blocks,
     set_penalty <- function () {
         if(par == "sparsity"){
             if(type!="sgcca"){cat("As par=='sparsity', the type parameter was replaced by 'sgcca'")}
-            type <<- "sgcca"
+            type <- "sgcca"
             min_spars <<- sapply(ncols, function(x) 1 / sqrt(x))
         }else{
             if(type=="sgcca"){cat("As par!='sparsity', the type parameter was replaced by 'rgcca'")}
-            type <<- "rgcca"
+            type <- "rgcca"
             min_spars <<- sapply(ncols, function(x) 0)
         }
         
@@ -110,7 +117,7 @@ rgcca_cv=function( blocks,
             par_value <- check_tau(par_value, blocks, type = type)
             par_value <- set_spars(max = par_value)
         }
-        
+  
         colnames(par_value) <- names(blocks)
         return(list(par, par_value))
     }
@@ -133,7 +140,6 @@ rgcca_cv=function( blocks,
         "sparsity" = par <- set_penalty(),
         "tau" = par <- set_penalty()
     )
-    
   
     print(paste("Cross-validation for", par[[1]], "is in progression..."))
     pb <- txtProgressBar(max=dim(par[[2]])[1])
@@ -143,16 +149,17 @@ rgcca_cv=function( blocks,
         {
             if(par[[1]]=="ncomp")
             {
-                rgcca_res=rgcca(blocks=blocks, type=type,response=response,ncomp=par[[2]][i,],superblock=superblock,scale=scale,scale_block=scale_block,scheme=scheme,tol=tol,method=method,...)
+                rgcca_res=rgcca(blocks=blocks, type=type,response=response,ncomp=par[[2]][i,],superblock=superblock,scale=scale,scale_block=scale_block,scheme=scheme,tol=tol,method=method,tau=tau, sparsity=sparsity,bias=bias,init=init)
             }
             if(par[[1]]=="sparsity")
             {
-                rgcca_res=rgcca(blocks=blocks, type="sgcca",response=response,sparsity=par[[2]][i,],superblock=superblock,scale=scale,scale_block=scale_block,scheme=scheme,tol=tol,method=method,...)
+                rgcca_res=rgcca(blocks=blocks, type="sgcca",response=response,sparsity=par[[2]][i,],superblock=superblock,scale=scale,scale_block=scale_block,scheme=scheme,tol=tol,method=method, ncomp=ncomp,bias=bias,init=init)
             }
             if(par[[1]]=="tau")
             {
-                rgcca_res=rgcca(blocks=blocks, type=type,response=response,tau=par[[2]][i,],superblock=superblock,scale=scale,scale_block=scale_block,scheme=scheme,tol=tol,method=method,...)
+                rgcca_res=rgcca(blocks=blocks, type=type,response=response,tau=par[[2]][i,],superblock=superblock,scale=scale,scale_block=scale_block,scheme=scheme,tol=tol,method=method, ncomp=ncomp,bias=bias,init=init)
             }
+ 
             res_i=c()
             for(n in 1:n_cv)
             {
@@ -160,35 +167,24 @@ rgcca_cv=function( blocks,
                 {
                     res_i=c(res_i,rgcca_crossvalidation(
                         rgcca_res,
-                        response = response,
                         validation = validation,
                         model = type_cv,
                         fit = fit,
                        # new_scaled = TRUE,
                         k = k,
-                       scale=scale,
-                       scale_block=scale_block,
-                       tol=tol,
-                       scheme=scheme,
-                       method=method,
                       n_cores =n_cores,
-                      parallelization=parallelization)$scores)
+                      parallelization=parallelization
+                      )$scores)
                 }
                 else
                 {
                     res_i= c(res_i,rgcca_crossvalidation(
                         rgcca_res,
-                        response = response,
                         validation = validation,
                         model = type_cv,
                         fit = fit,
                         #new_scaled = TRUE,
                         k = k,
-                        scale=scale,
-                        scale_block=scale_block,
-                        tol=tol,
-                        scheme=scheme,
-                        method=method,
                         n_cores =n_cores,
                         parallelization=parallelization)$list_scores)
                 }

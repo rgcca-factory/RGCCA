@@ -19,12 +19,11 @@
 #'@importFrom ggplot2 ggplot
 plot.cval=function(x,bars="sd",alpha=0.05,cex = 1, cex_main = 14 * cex, cex_sub = 10 * cex,...)
 {
-    
-    config <- NULL -> y
+    configurations <- NULL -> y
     mat_cval=x$cv
     match.arg(bars,c("quantile","sd","stderr","ci","points"))
     mean_b=apply(mat_cval,1,mean)
-    main=paste0("Mean CV criterion according to the configuration set\n (",x$call$validation,ifelse(x$call$validation=="kfold", paste0(": with ",x$call$k," folds and ",x$call$n_cv," runs)"),")"))
+    main=paste0("Mean CV criterion (RMSE) according to the combination set\n (",x$call$validation,ifelse(x$call$validation=="kfold", paste0(": with ",x$call$k," folds", ifelse(x$call$n_cv>1,paste0("and ",x$call$n_cv," runs"),""),")"),")"))
     if(bars!="none"&&dim(mat_cval)[2]<3){bars=="none"; warning("Standard deviations can not be calculated with less than 3 columns in mat_cval")}
     if(bars!="none")
     {
@@ -63,18 +62,18 @@ plot.cval=function(x,bars="sd",alpha=0.05,cex = 1, cex_main = 14 * cex, cex_sub 
         
     }
     
-    df=data.frame(config=1:nrow(mat_cval),mean=mean_b,inf=inf_b,sup=sup_b)
-    p<- ggplot(data=df,aes(x=config,y=mean))+geom_point()+theme_classic() 
+    df=data.frame(configurations=1:nrow(mat_cval),mean=mean_b,inf=inf_b,sup=sup_b)
+    p<- ggplot(data=df,aes(x=configurations,y=mean))+geom_point()+theme_classic() 
     if(bars!="none"&& bars!="points")
     {
-        p<-p+geom_segment(data=df,aes(x=config,y=inf_b,xend=config,yend=sup_b),colour="grey")
+        p<-p+geom_segment(data=df,aes(x=configurations,y=inf_b,xend=configurations,yend=sup_b),colour="grey")
     }
     if(bars=="points")
     {
-        df2=data.frame(config=rep(1:nrow(mat_cval),ncol(mat_cval)),y=as.vector(mat_cval))
-        p<-p+geom_point(data=df2,aes(x=config,y=y),colour="grey")
+        df2=data.frame(configurations=rep(1:nrow(mat_cval),ncol(mat_cval)),y=as.vector(mat_cval))
+        p<-p+geom_point(data=df2,aes(x=configurations,y=y),colour="grey")
     }
-    optimal_x=df[which.min(df[,"mean"]),"config"]
+    optimal_x=df[which.min(df[,"mean"]),"configurations"]
     optimal_y=df[which.min(df[,"mean"]),"mean"]
     decalage= (max(df[,"mean"])-min(df[,"mean"]))/10
     p<- p+geom_point(x=optimal_x,y=optimal_y,colour="green")

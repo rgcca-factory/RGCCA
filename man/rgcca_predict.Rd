@@ -28,7 +28,7 @@ rgcca_predict(rgcca_res, newA, model = "regression", fit = "lm",
 \item{scale_size_bloc}{A boolean giving the possibility to scale the blocks by the square root of their column number}
 }
 \description{
-Predict a new block from a RGCCA
+Predicts a new block from a RGCCA
 }
 \examples{
 data("Russett")

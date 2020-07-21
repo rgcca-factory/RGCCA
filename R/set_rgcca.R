@@ -1,4 +1,5 @@
 # inds : individuals removed from the blocks (for crossvalidation)
+# affects same parameters as rgcca_res (or other ones if specified) on a subset of individuals determined by inds (individuals to remove) 
 set_rgcca <- function(
     rgcca_res,
     blocks = NULL,
@@ -31,14 +32,13 @@ set_rgcca <- function(
      if (is.null(blocks)) {
       #  blocks <- rgcca_res$call$blocks
          blocks=rgcca_res$call$raw
+         
         if (superblock) {
-            J <- length(blocks)
-            blocks <- blocks[-J]
             for (i in c("tau", "sparsity", "ncomp")) {
                 if (class(rgcca_res$call[[i]]) %in% c("matrix", "data.frame"))
-                  rgcca_res$call[[i]] <- rgcca_res$call[[i]][,-J]
+                  rgcca_res$call[[i]] <- rgcca_res$call[[i]]
                 else
-                  rgcca_res$call[[i]] <- rgcca_res$call[[i]][-J]
+                  rgcca_res$call[[i]] <- rgcca_res$call[[i]]
             }
 
             connection <- NULL
@@ -119,6 +119,6 @@ set_rgcca <- function(
     func[[par]] <- penalty
 
     res <- eval(as.call(func))
-    attributes(res)$bigA_scaled <- blocks
+  #  attributes(res)$bigA_scaled <- blocks
     return(res)
 }

@@ -22,10 +22,8 @@
 #' rgcca_out = rgcca(blocks)
 #' boot = bootstrap(rgcca_out, 2, n_cores = 1)
 #' selected.var = get_bootstrap(boot, n_cores = 1,display_order=TRUE)
-#' print("i")
-#'# plot_bootstrap_2D(boot, n_cores = 1)
-#'print("j")
-#' #plot_bootstrap_2D(df_b = selected.var,n_cores=1)
+#' plot_bootstrap_2D(boot, n_cores = 1)
+#' plot_bootstrap_2D(df_b = selected.var,n_cores=1)
 #' @export
 #' @seealso \code{\link[RGCCA]{bootstrap}}, \code{\link[RGCCA]{get_bootstrap}}
 plot_bootstrap_2D <- function(
@@ -91,20 +89,21 @@ plot_bootstrap_2D <- function(
         }
         return(abs(as.double(x)))
     }
-
     p <- ggplot(
         df_b,
         aes(
             x = transform_x(df_b[, x]),
             y = transform_x(df_b[, y]),
-            label = row.names(df_b),
-            color = as.factor(mean > 0)
+            label = row.names(df_b) 
+     #       ,
+     #     color = as.factor(!is.na(df_b[,"mean"]) & df_b[,"mean"] > 0  )
     )) +
-    geom_text(size = cex_point * 0.75) +
+    geom_text() +
     labs(
         y =  attributes(df_b)$indexes[[y]],
         x =  attributes(df_b)$indexes[[x]],
-        title = title
+        title = title,
+        color = "mean>0"
     ) +
     theme_classic() +
     theme_perso(cex, cex_main, cex_sub) +
@@ -119,8 +118,8 @@ plot_bootstrap_2D <- function(
     limites <- function(p, x){
         if (x %in% c("sign", "occurrences")) {
             axis <- deparse(substitute(x))
-            func <- get(paste0(axis, "lim"))
-            p <- p + func(0, 1)
+            #func <- get(paste0(axis, "lim"))
+            #p <- p + func(0, 1)
             if (x == "sign") {
                 p <- p + 
                     get(paste("scale", axis, "discrete", sep = "_"))(

@@ -19,7 +19,7 @@
 #' boot = bootstrap(rgcca_out, 5, n_cores = 1)
 #' get_bootstrap(boot, n_cores = 1)
 #' @export
-#' @importFrom stats pt
+#' @importFrom stats pt pbinom
 get_bootstrap <- function(
     b,
     comp = 1,
@@ -54,9 +54,24 @@ get_bootstrap <- function(
             function(x)
                 sum(x!= 0,na.rm=T) )
     
-    p.vals <- 2 * pt(abs(weight)/sd, lower.tail = FALSE, df = n_boot - 1)
-    tail <- qt(1 - .05 / 2, df = n_boot - 1)
-    
+     # p values if occurrences
+    if(tolower(b$rgcca$call$type) %in% c("spls", "spca", "sgcca"))
+    {
+        n_boot=ifelse(!is.null(dim(b[[1]][[1]][[1]])),dim(b[[1]][[1]][[1]])[2],length(b[[1]][[1]][[1]]))
+        nvar=length(b$bootstrap[[1]][[i_block]][,1])
+        avg_n_occ=sum(occ)/n_boot
+        probComp= avg_n_occ/nvar
+        q1=qbinom(size=n_boot,prob=probComp,p=1-0.05/nvar)
+        p.vals=pbinom(occ,size=n_boot,prob=probComp,lower.tail=FALSE)
+        
+    }
+    else
+    {
+        tail <- qt(1 - .05 / 2, df = n_boot - 1)
+        p.vals <- 2 * pt(abs(weight)/sd, lower.tail = FALSE, df = n_boot - 1)
+    }
+  
+   
     if(bars=="quantile")
     {
         lower_band=apply(bootstrapped,1,function(y){return(quantile(y,0.05))})
@@ -104,7 +119,6 @@ get_bootstrap <- function(
         db <- data.frame(order_df(df, index, allCol = TRUE), order = NROW(df):1) 
         if(!display_order)
         {
-            
              db <- data.frame(order_df(df, index, allCol = TRUE)   )
              db <- db[,c("occurrences","mean","estimate","sd","lower_band","upper_band","p.vals","BH")] 
         }
@@ -117,7 +131,6 @@ get_bootstrap <- function(
     else
     {
         df$sign <- rep("NS", NROW(df))
-        
         for (i in seq(NROW(df)))
             #if (df$lower_band[i]/df$upper_band[i] > 0)
             #if (abs(df$mean[i]/(df$sd[i]/sqrt(n_boot))) > qt(0.95/2,df=n_boot-1))
