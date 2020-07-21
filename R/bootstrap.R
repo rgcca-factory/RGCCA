@@ -81,8 +81,7 @@ bootstrap <- function(
         applyFunc = "parLapply",
         parallelization=parallelization
         )
-#return(W)
-       
+
        for(k in seq(n_boot))
        {
           
@@ -112,7 +111,7 @@ bootstrap <- function(
            }
       
        
-      # message("OK.")
+      message("OK.")
       
       return(structure(list(bootstrap =list_res, rgcca = rgcca_res), class = "bootstrap"))
 }

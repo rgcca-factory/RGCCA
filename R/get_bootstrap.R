@@ -27,7 +27,7 @@ get_bootstrap <- function(
     bars="sd",
     collapse = FALSE,
     n_cores = parallel::detectCores() - 1,
-    display_order=FALSE)
+    display_order=TRUE)
     {
     stopifnot(is(b, "bootstrap"))
 

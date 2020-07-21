@@ -248,6 +248,7 @@ rgcca_permutation <- function(
         sds[i]=sd(permcrit[i,],na.rm=T)
         setTxtProgressBar(pb, i)
     }
+    cat("\n")
  
 
     par <- par[[2]]
