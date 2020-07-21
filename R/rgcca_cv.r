@@ -25,7 +25,7 @@
 rgcca_cv=function( blocks,
           type = "rgcca",
           response=NULL,
-          par = "ncomp",
+          par = "tau",
           par_value = NULL,
           validation = "kfold",
           type_cv = "regression",

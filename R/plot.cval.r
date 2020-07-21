@@ -82,6 +82,5 @@ plot.cval=function(x,bars="sd",alpha=0.05,cex = 1, cex_main = 14 * cex, cex_sub 
     p<-p+ggtitle(main)+theme_perso(cex, cex_main, cex_sub)
 #    p<- p+ scale_x_continuous(breaks=1:nrow(x),  labels=rownames(x))
 #    p<-p + theme(axis.text.x = element_text(angle=45))
-    plot(p)
-    invisible(df)
+    return(p)
 }
