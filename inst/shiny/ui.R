@@ -252,6 +252,11 @@ ui <- fluidPage(
                 "Permutation",
                 plotlyOutput("permutationPlot", height = 700),
                 actionButton("permutation_save", "Save")
+            ),
+            tabPanel(
+                "Cross-validation",
+                plotlyOutput("cvPlot", height = 700),
+                actionButton("cv_save", "Save")
             )
         )
 
