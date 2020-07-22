@@ -29,10 +29,10 @@ modify_hovertext <- function(p, hovertext = TRUE, type = "regular", perm = NULL)
         function(x) x$mode == "lines") == TRUE)
 
         # length of groups of points without traces and circle points
-        if (type == "regular")
-            n <- length(p$x$data) - min(traces)
+        if (length(traces) > 1)
+            n <- min(traces) - 1
         else
-            n <- 2
+            n <- length(p$x$data)
 
     } else
         n <- length(p$x$data)
@@ -65,7 +65,7 @@ modify_hovertext <- function(p, hovertext = TRUE, type = "regular", perm = NULL)
                     } else
                         NA
                 }))
-    
+
                 if (type == "regular" || grepl("boot", type)) {
                     # do not print names because text = FALSE plots have not names
                     name = ifelse(hovertext,
@@ -79,6 +79,8 @@ modify_hovertext <- function(p, hovertext = TRUE, type = "regular", perm = NULL)
                     } else if (type == "boot1D") {
                         x_lab <-  gsub("\\(\\d* bootstraps\\)", "", parse(p$x$layout$title$text))
                         y_lab <- parse(p$x$layout$annotations[[1]]$text)
+                        if (length(y_lab) < 1)
+                            y_lab <- p$x$data[[length(p$x$data)]]$marker$colorbar$title
                     } else {
                         x_lab <- "x"
                         y_lab <- "y"
@@ -120,10 +122,10 @@ modify_hovertext <- function(p, hovertext = TRUE, type = "regular", perm = NULL)
 
     if (type == "boot1D")
         for (i in traces)
-                p$x$data[[i]]$error_x$width <- NULL
+            p$x$data[[i]]$error_x$width <- NULL
 
     # Remove the x- and y- axis onOverMouse
-    if (type %in% c("regular", "boot1D", "cv", "perm"))
+    if (type %in% c("regular", "boot1D", "cv", "perm")  && (length(traces) > 1))
         (plotly::style(p, hoverinfo = "none", traces = traces))
     else
         p

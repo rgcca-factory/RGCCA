@@ -81,13 +81,27 @@ plot_bootstrap_1D <- function(
     else
         group = NA
 
+
+    if (n_mark > NROW(df_b))
+        n_mark <- NROW(df_b)
     
+    if (!is.null(df_b$sign)) {
+        df_b$sign[df_b$sign == "*"] <- 1
+        df_b$sign[df_b$sign == "NS"] <- 0
+        df_b$sign <- as.numeric(df_b$sign)
+    }
+
     df_b_head <- head(
         data.frame(
             order_df(df_b[, -NCOL(df_b)], x, allCol = TRUE),
             order = NROW(df_b):1),  n_mark)
     df_b_head<-df_b_head[df_b_head[,"sd"]!=0,]
     class(df_b_head) <- c(class(df_b), "d_boot1D")
+    
+    if (!is.null(df_b_head$sign)) {
+        df_b_head$sign[df_b_head$sign == 1] <- "*"
+        df_b_head$sign[df_b_head$sign == 0] <- "NS"
+    }
     
     p <- ggplot(
         df_b_head,
