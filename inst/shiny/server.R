@@ -1325,11 +1325,13 @@ server <- function(input, output, session) {
                     if_text
                 ), warn = FALSE)
 
-            if (length(unique(na.omit(response))) < 2 ||
+            if (is.null(crossval) && 
+                    length(unique(na.omit(response))) < 2 ||
                 (length(unique(response)) > 5 &&
-                !is.character2(na.omit(response))) &&
-                !is.null(crossval))
+                !is.character2(na.omit(response)))){
+                print(is.null(crossval))
                 p <- p %>% layout(showlegend = FALSE)
+            }
 
             }
 
@@ -1421,7 +1423,7 @@ server <- function(input, output, session) {
                     save_plot("bootstrap.pdf", plotBoot())
                     msgSave()
                 })
-                p <- modify_hovertext(ggplotly(plotBoot()), type = "boot")
+               modify_hovertext(ggplotly(plotBoot()), type = "boot")
             }
         }, error = function(e) {
         })
