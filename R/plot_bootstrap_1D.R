@@ -104,7 +104,7 @@ plot_bootstrap_1D <- function(
         ...) +
     labs(fill = attributes(df_b)$indexes[[y]])
 
-    if (x == "estimate")
+    if (x == "estimate" && nrow(df_b_head) <= 50)
         p <- p +
             geom_errorbar(aes(ymin = lower_band, ymax = upper_band,width=0.5))
     if(x =="occurrences")

@@ -118,10 +118,9 @@ modify_hovertext <- function(p, hovertext = TRUE, type = "regular", perm = NULL)
         }
     }
 
-    if (type == "boot1D") {
+    if (type == "boot1D")
         for (i in traces)
-            p$x$data[[i]]$error_x$width <- 25
-    }
+                p$x$data[[i]]$error_x$width <- NULL
 
     # Remove the x- and y- axis onOverMouse
     if (type %in% c("regular", "boot1D", "cv", "perm"))

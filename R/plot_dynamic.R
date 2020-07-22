@@ -65,18 +65,18 @@ plot_dynamic <- function(
         if (packageVersion("plotly") < 4.9)
             p$x$layout$title <- paste0(
                     p$x$layout$title,
-                    "<br><b>",
+                    "<br><i>",
                     "c",
                     substring(f$labels$subtitle, 2),
-                    "</b>"
+                    "</i>"
                 )
         else
             p$x$layout$title$text <- paste0(
                 p$x$layout$title$text,
-                "<br><b>",
+                "<br><i>",
                 "c",
                 substring(f$labels$subtitle, 2),
-                "</b>"
+                "</i>"
             )
     }
 

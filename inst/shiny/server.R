@@ -93,10 +93,10 @@ server <- function(input, output, session) {
         )
     })
     
-    output$b_x_custom <- renderUI(b_index("x", "bootstrap_ratio"))
+    output$b_x_custom <- renderUI(b_index("x", "estimate"))
     output$b_y_custom <- renderUI({
             b_index("y", 
-                if(tolower(input$analysis_type) == "sgcca")
+                if (tolower(input$analysis_type) == "sgcca")
                     "occurrences"
                 else
                     "sign")
@@ -616,7 +616,12 @@ server <- function(input, output, session) {
 
     plotBoot <- function(){
         refresh <- c(input$names_block_x, id_block, input$blocks_names_custom_x)
-        plot_bootstrap_2D(df_b = selected.var, x = input$b_x, y = input$b_y)
+        plot_bootstrap_1D(
+            df_b = selected.var,
+            x = input$b_x,
+            y = input$b_y,
+            n_mark = nb_mark
+        )
     }
 
     viewPerm <- function(){
@@ -943,7 +948,7 @@ server <- function(input, output, session) {
             condition = (input$navbar != "Bootstrap"),
                id = "compx_custom")
         toggle(
-            condition = (input$navbar == "Fingerprint"),
+            condition = (input$navbar %in% c("Corcircle", "Fingerprint", "Bootstrap")),
                id = "nb_mark_custom")
         for (i in c("text", "compy_custom"))
             toggle(
@@ -1421,7 +1426,8 @@ server <- function(input, output, session) {
                     save_plot("bootstrap.pdf", plotBoot())
                     msgSave()
                 })
-               modify_hovertext(ggplotly(plotBoot()), type = "boot")
+               modify_hovertext(plot_dynamic(plotBoot(), type = "boot1D"), type = "boot1D", hovertext = FALSE)
+               # modify_hovertext(plot_dynamic(plotBoot()), type = "boot"), type = "boot")
             }
         }, error = function(e) {
         })
