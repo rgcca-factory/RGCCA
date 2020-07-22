@@ -793,7 +793,6 @@ server <- function(input, output, session) {
             .GlobalEnv
         )
         showWarn(message(paste("CV score:", round(crossval$score, 4))), show = FALSE)
-        show("show_crossval")
         updateTabsetPanel(session, "navbar", selected = "Samples")
     }
 
@@ -954,8 +953,8 @@ server <- function(input, output, session) {
             condition = (input$navbar == "Samples" && 
                     length(input$blocks$datapath) > 1),
                id = "blocks_names_custom_y")
-        for (i in c("show_crossval", "response_custom"))
-            toggle(condition = (input$navbar == "Samples"), id = i)
+        toggle(condition = input$navbar == "Samples", id = "response_custom")
+        toggle(condition = input$navbar == "Samples" && !is.null(crossval), id = "show_crossval")
         toggle(
             condition = (input$navbar == "Fingerprint"),
             id = "indexes")
@@ -1120,6 +1119,7 @@ server <- function(input, output, session) {
                 show(id = i)
             toggle(id = "run_crossval_single", condition = !is.null(rgcca_out$call$response))
             updateTabsetPanel(session, "navbar", selected = "Connection")
+            write(rgcca_out$call$connection, file = "connection.tsv", sep = "\t", ncolumns = ncol(rgcca_out$call$connection))
             # for (i in c('bootstrap_save', 'fingerprint_save', 'corcircle_save',
             # 'samples_save', 'ave_save')) setToggleSaveButton(i)
         }
@@ -1326,12 +1326,10 @@ server <- function(input, output, session) {
                 ), warn = FALSE)
 
             if (is.null(crossval) && 
-                    length(unique(na.omit(response))) < 2 ||
+                length(unique(na.omit(response))) < 2 ||
                 (length(unique(response)) > 5 &&
-                !is.character2(na.omit(response)))){
-                print(is.null(crossval))
+                !is.character2(na.omit(response))))
                 p <- p %>% layout(showlegend = FALSE)
-            }
 
             }
 
