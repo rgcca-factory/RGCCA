@@ -37,28 +37,37 @@ plot_dynamic <- function(
     else 
         p <- ggplotly(f)
 
-    legend_title <- p$x$layout$annotations[[1]]$text
-    if (!is.null(legend_title) && legend_title != "") {
+    legend_qual <- p$x$layout$annotations[[1]]$text
+    legend_quant <- p$x$data[[length(p$x$data)]]$marker$colorbar$title
+    if (!is.null(legend_qual))
+        legend_title <- legend_qual
+    else
+        legend_title <- legend_quant
 
-        # set on the top the position of the legend title
-        p$x$layout$annotations[[1]]$yanchor <- "top"
-        # if \n in title
-        legend_title <- strsplit(p$x$layout$annotations[[1]]$text, "\n")[[1]]
+    if (!is.null(legend_title) && legend_title != "") {
         # Deals with a too short name of modalities
-        p$x$layout$margin$r <- max(nchar(legend_title)) * 13
-        if (length(legend_title) > 1)
-            p$x$layout$annotations[[1]]$y = 1.05
+        p$x$layout$margin$r <- max(nchar(strsplit(legend_title, "\n")[[1]])) * 13
+        # if \n in title
+        if (type != "boot1D")
+            legend_title <- strsplit(legend_title, "\n")[[1]]
+
         # for shiny corcircle, if text = TRUE, two legends will appear.
         # only the first one will be selected
-        title <- unlist(strsplit(p$x$layout$annotations[[1]]$text, "<br />"))[1]
+        legend_title <- unlist(strsplit(legend_title, "<br />"))[1]
 
         # to prevent print a 'NA' when there is no legend in plot
-        if (is.na(title))
-            title <- ""
+        if (is.na(legend_title))
+            legend_title <- ""
 
         # set the font for this title
-        p$x$layout$annotations[[1]]$text <- paste0("<i><b>", title, "</b></i>")
-
+        if (!is.null(legend_qual)) {
+            p$x$layout$annotations[[1]]$text <- paste0("<i><b>", legend_title, "</b></i>")
+            # set on the top the position of the legend title
+            p$x$layout$annotations[[1]]$yanchor <- "top"
+                if (length(legend_title) > 1)
+            p$x$layout$annotations[[1]]$y = 1.05
+        } else
+            p$x$data[[length(p$x$data)]]$marker$colorbar$title <- paste0("<i><b>", legend_title, "</b></i>")
     }
 
     if (!is.null(f$labels$subtitle)) {
