@@ -165,20 +165,29 @@ rgcca_cv=function( blocks,
             {
                 if(one_value_per_cv)
                 {
-                    res_i=c(res_i,rgcca_crossvalidation(
+                    res_cv_n=rgcca_crossvalidation(
                         rgcca_res,
                         validation = validation,
                         model = type_cv,
                         fit = fit,
-                       # new_scaled = TRUE,
+                        # new_scaled = TRUE,
                         k = k,
-                      n_cores =n_cores,
-                      parallelization=parallelization
-                      )$scores)
+                        n_cores =n_cores,
+                        parallelization=parallelization
+                    )
+                    if(!is.null(res_cv_n))
+                    {
+                        res_i=c(res_i,res_cv_n$scores)
+                    }
+                    else
+                    {
+                        print("One cross-validation was stopped (at least one variable had null standard deviations)")
+                    }
+               
                 }
                 else
                 {
-                    res_i= c(res_i,rgcca_crossvalidation(
+                    res_cv_n=rgcca_crossvalidation(
                         rgcca_res,
                         validation = validation,
                         model = type_cv,
@@ -186,7 +195,9 @@ rgcca_cv=function( blocks,
                         #new_scaled = TRUE,
                         k = k,
                         n_cores =n_cores,
-                        parallelization=parallelization)$list_scores)
+                        parallelization=parallelization)
+                    
+                    res_i= c(res_i,res_cv_n$list_scores)
                 }
               
             }
