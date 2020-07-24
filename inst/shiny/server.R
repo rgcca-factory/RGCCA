@@ -945,9 +945,6 @@ server <- function(input, output, session) {
 
     observeEvent(c(input$navbar, input$tabset), {
         toggle(
-            condition = (input$navbar != "Bootstrap"),
-               id = "compx_custom")
-        toggle(
             condition = (input$navbar %in% c("Corcircle", "Fingerprint", "Bootstrap")),
                id = "nb_mark_custom")
         for (i in c("text", "compy_custom"))

@@ -30,13 +30,13 @@ print(Sys.time()-t0)
 
 cv=rgcca_cv(blocks,response=3,n_cores=1)
 plot(cv)
-b=bootstrap(res_rgcca, n_cores=1)
+b=bootstrap(res_rgcca, n_cores=1,n_boot=10)
 plot(b, n_cores=1)
 
 res_rgcca=rgcca(blocks, response=3)
 
-perm=rgcca_permutation(blocks, n_cores=1,nperm=100)
-b=bootstrap(res_rgcca, n_cores=1,n_boot=500)
+perm=rgcca_permutation(blocks, n_cores=1,nperm=10)
+b=bootstrap(res_rgcca, n_cores=1,n_boot=10)
 
 blockNA=blocks
 blocks[[1]][1,2]=NA

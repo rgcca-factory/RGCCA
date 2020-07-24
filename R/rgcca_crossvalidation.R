@@ -83,18 +83,25 @@ rgcca_crossvalidation <- function(
                           sparsity=sparsity,
                           type=type
                         ) #Rgcca on all individuals but inds
-  
-            rgcca_k$a <- check_sign_comp(rgcca_res, rgcca_k$a)
-
-             rgcca_predict(
-                 rgcca_k,
-                 newA = lapply(bigA, function(x) x[inds, , drop = FALSE]),
-                 model = model,
-                 fit = fit,
-                 bloc_to_pred = bloc_to_pred,
+            rgcca_k$a <- add_variables_submodel(rgcca_res, rgcca_k$a)
+            rgcca_k$astar <- add_variables_submodel(rgcca_res, rgcca_k$astar)
+            for (j in seq(length(rgcca_res$call$blocks))) {
+                rgcca_k$call$blocks[[j]] <- rgcca_res$call$blocks[[j]][-inds, , drop = FALSE]
+                attr(rgcca_k$call$blocks[[j]], "scaled:center") <- attr(rgcca_res$call$blocks[[j]], "scaled:center")
+                attr(rgcca_k$call$blocks[[j]], "scaled:scale") <- attr(rgcca_res$call$blocks[[j]], "scaled:scale")
+                rgcca_k$A[[j]] <- rgcca_res$A[[j]][-inds, , drop = FALSE]
+                attr(rgcca_k$A[[j]], "scaled:center") <- attr(rgcca_res$A[[j]], "scaled:center")
+                attr(rgcca_k$A[[j]], "scaled:scale") <- attr(rgcca_res$A[[j]], "scaled:scale")
+            }
+            rgcca_predict(
+                rgcca_k,
+                newA = lapply(rgcca_res$call$blocks, function(x) x[inds, , drop = FALSE]),
+                model = model,
+                fit = fit,
+                bloc_to_pred = bloc_to_pred,
                 # bigA = bigA,
-                 new_scaled = FALSE
-             )
+                new_scaled = FALSE
+            )
 
         }
     )
@@ -116,7 +123,6 @@ rgcca_crossvalidation <- function(
         # preds <- scores$res
     }else
         {
-
         varlist <- c(ls(getNamespace("RGCCA")))
         # get the parameter dot-dot-dot
         args_values <- list(...)
