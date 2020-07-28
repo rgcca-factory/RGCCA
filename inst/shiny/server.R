@@ -730,6 +730,7 @@ server <- function(input, output, session) {
                             ncomp = getNcomp(),
                             scheme = input$scheme,
                             scale = FALSE,
+                            scale_block = FALSE,
                             init = input$init,
                             bias = TRUE,
                             type = analysis_type
@@ -770,9 +771,11 @@ server <- function(input, output, session) {
                     superblock = (!is.null(input$supervised) &&
                                     !is.null(input$superblock) && input$superblock),
                     scale = FALSE,
+                    scale_block = FALSE,
                     scheme = input$scheme,
                     parallelization = TRUE,
                     init = input$init,
+                    new_scaled = TRUE,
                     ncomp = getNcomp()))
                 if (tolower(analysis_type) %in% c("sgcca", "spca", "spls")) {
                     func[["sparsity"]] <- tau
@@ -824,6 +827,7 @@ server <- function(input, output, session) {
                                       !is.null(input$superblock) && input$superblock),
                     scheme = input$scheme,
                     scale = FALSE,
+                    scale_block = FALSE,
                     ncomp = getNcomp(),
                     init = input$init,
                     bias = TRUE,
@@ -1115,17 +1119,26 @@ server <- function(input, output, session) {
     observeEvent(input$run_analysis, {
         if (!is.null(getInfile())) {
             assign("analysis", setRGCCA(), .GlobalEnv)
+            show(selector = "#tabset li a[data-value=RGCCA]")
             for (i in c("Connection", "AVE", "Samples", "Corcircle", "Fingerprint"))
                 show(selector = paste0("#navbar li a[data-value=", i, "]"))
             for (i in c("navbar", "nboot", "run_boot"))
                 show(id = i)
             toggle(id = "run_crossval_single", condition = !is.null(rgcca_out$call$response))
             updateTabsetPanel(session, "navbar", selected = "Connection")
-            write(rgcca_out$call$connection, file = "connection.tsv", sep = "\t", ncolumns = ncol(rgcca_out$call$connection))
+            save_connection(rgcca_out$call$connection)
             # for (i in c('bootstrap_save', 'fingerprint_save', 'corcircle_save',
             # 'samples_save', 'ave_save')) setToggleSaveButton(i)
+            save(rgcca_out, file = "rgcca_result.RData")
         }
     })
+
+    save_connection <- function(connection){
+        if_superblock <- grep("superblock", rownames(connection))
+        if (length(if_superblock) > 0)
+            connection <- connection[-if_superblock, -if_superblock]
+        write.table(connection, file = "connection.tsv", sep = "\t")
+    }
 
     observeEvent(
         c(
