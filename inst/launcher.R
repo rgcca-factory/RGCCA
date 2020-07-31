@@ -327,7 +327,7 @@ post_check_arg <- function(opt, rgcca) {
         }
     }
 
-    if (opt$ncomp == 1)
+    if (any(opt$ncomp == 1))
         opt$compy <- 1
 
     for (x in c("compx", "compy"))
@@ -526,11 +526,11 @@ tryCatch({
     # Creates design scheme
     design <- function() plot_network(rgcca_out)
     save_plot(opt$o5, design)
-    
+
     save_ind(rgcca_out, opt$compx, opt$compy, opt$o6)
     save_var(rgcca_out, opt$compx, opt$compy, opt$o7)
     save(rgcca_out, file = opt$o8)
-    
+
     }, error = function(e){
         if (class(e)[1] %in% c("simpleError", "error", "condition" ))
             status <<- 1

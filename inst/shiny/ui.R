@@ -86,17 +86,21 @@ if (BSPLUS) {
 }
 
 ui <- fluidPage(
-    titlePanel("R/SGCCA - The Shiny graphical interface"),
-    tags$div(
-        tags$strong("Authors: "),
-        tags$p(
-            "Etienne CAMENEN, Ivan MOSZER, Arthur TENENHAUS (",
-            tags$a(href = "arthur.tenenhaus@l2s.centralesupelec.fr",
-            "arthur.tenenhaus@l2s.centralesupelec.fr"),
-            ")"
-        )
+        titlePanel("R/SGCCA - The Shiny graphical interface"),
+        tags$div(
+            tags$p(
+                "Etienne CAMENEN, Ivan MOSZER, Arthur TENENHAUS (",
+                tags$a(href = "arthur.tenenhaus@l2s.centralesupelec.fr",
+                "arthur.tenenhaus@l2s.centralesupelec.fr"),
+                ")"
+            ),
+        tags$i("Multi-block data analysis concerns the analysis of several sets of variables (blocks) observed on the same group of individuals. The main aims of the RGCCA package are: to study the relationships between blocks and to identify subsets of variables of each block which are active in their relationships with the other blocks."),
+        tags$br(), tags$br()
     ),
-    tags$a(href = "https://github.com/rgcca-factory/RGCCA/blob/release/3.0.0/inst/shiny/tutorialShiny.md", "Go to the tutorial"),
+        tags$a(href = "https://github.com/rgcca-factory/RGCCA/blob/release/3.0.0/inst/shiny/tutorialShiny.md", "Go to the tutorial"),
+        tags$strong("|"),
+        tags$a(href = "https://www.youtube.com/watch?v=QCkEBsoP-tc", "Watch a demo", target = "_blank"),
+    tags$br(), tags$br(),
     useShinyjs(),
     sidebarLayout(sidebarPanel(
         tabsetPanel(
@@ -117,6 +121,14 @@ ui <- fluidPage(
 
             tabPanel(
                 "RGCCA",
+                radioButtons(
+                    "val",
+                    label = "Type of validation",
+                    choices = c(#`Train-test` = "test",
+                                `K-fold` = "kfold",
+                                `Leave-one-out` = "loo"),
+                    selected = "loo"
+                ),
                 sliderInput(
                     inputId = "kfold",
                     label = "Number of folds",
@@ -176,7 +188,10 @@ ui <- fluidPage(
                     step = 5
                 ),
                 actionButton(inputId = "run_boot",
-                    label = "Run bootstrap")
+                    label = "Run bootstrap"),
+                actionButton(
+                    inputId = "run_crossval_single",
+                    label = "Evaluate the model")
             ),
 
             # Graphical parameters
@@ -252,6 +267,11 @@ ui <- fluidPage(
                 "Permutation",
                 plotlyOutput("permutationPlot", height = 700),
                 actionButton("permutation_save", "Save")
+            ),
+            tabPanel(
+                "Cross-validation",
+                plotlyOutput("cvPlot", height = 700),
+                actionButton("cv_save", "Save")
             )
         )
 

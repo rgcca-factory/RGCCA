@@ -30,7 +30,11 @@ print(Sys.time()-t0)
 
 cv=rgcca_cv(blocks,response=3,n_cores=1)
 plot(cv)
+<<<<<<< HEAD
 b=bootstrap(res_rgcca, n_cores=1,nboot=10)
+=======
+b=bootstrap(res_rgcca, n_cores=1,n_boot=10)
+>>>>>>> shiny
 plot(b, n_cores=1)
 
 res_rgcca=rgcca(blocks, response=3)

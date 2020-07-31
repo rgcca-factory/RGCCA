@@ -22,7 +22,17 @@ check_connection <- function(c, blocks) {
     if (all(c == 0))
         stop_rgcca(paste(msg, "not contain only 0."), exit_code = 107)
 
-    invisible(check_size_blocks(blocks, "connection matrix", c))
+    if(is.null(rownames(c)) || is.null(colnames(c)))
+        rownames(c) <- names(blocks) -> colnames(c)
 
+    if (!all(rownames(c) %in% names(blocks)) || 
+        !all(colnames(c) %in% names(blocks)))
+        stop_rgcca(paste(msg,
+            "have the rownames and the colnames that match with the names of the blocks."),
+            exit_code = 108)
+
+    invisible(check_size_blocks(blocks, "connection matrix", c))
+    
+    return(c)
     # TODO: warning if superblock = TRUE
 }

@@ -22,13 +22,13 @@ Performs multi-variate analysis (PCA, CCA, PLS, R/SGCCA, etc.) and produces text
 ## Description
 
 
-We consider J data matrices X1 ,..., XJ. Each n × pj data matrix Xj = [ xj1, ..., xjpj ] is called a block and represents a set of pj variables observed on n individuals. The number and the nature of the variables may differ from one block to another, but the individuals must be the same across blocks. We assume that all variables are centered. The objective of RGCCA is to find, for each block, a weighted composite of variables (called block component) yj = Xj . aj, j = 1 ,..., J (where aj is a column-vector with pj elements) summarizing the relevant information between and within the blocks. The block components are obtained such that (i) block components explain well their own block and/or (ii) block components that are assumed to be connected are highly correlated. In addition, RGCCA integrates a variable selection procedure, called SGCCA, allowing the identification of the most relevant features (see [here](https://github.com/BrainAndSpineInstitute/rgcca_Rpackage/blob/master/README.md#rsgcca-from-the-cran-vignette-3) for more information).
+We consider J data matrices X1 ,..., XJ. Each n × pj data matrix Xj = [ xj1, ..., xjpj ] is called a block and represents a set of pj variables observed on n individuals. The number and the nature of the variables may differ from one block to another, but the individuals must be the same across blocks. We assume that all variables are centered. The objective of RGCCA is to find, for each block, a weighted composite of variables (called block component) yj = Xj . aj, j = 1 ,..., J (where aj is a column-vector with pj elements) summarizing the relevant information between and within the blocks. The block components are obtained such that (i) block components explain well their own block and/or (ii) block components that are assumed to be connected are highly correlated. In addition, RGCCA integrates a variable selection procedure, called SGCCA, allowing the identification of the most relevant features (see [here](https://github.com/rgcca-factory/RGCCA#algorithm) for more information).
 
 
 ## 1. Load the inputs ('Data' parameter tab)
 
-Before reading this tutorial, the Shiny application have to be [installed](https://github.com/BrainAndSpineInstitute/rgcca_Rpackage#installation) and [executed](https://github.com/BrainAndSpineInstitute/rgcca_Rpackage#execution).
-The ```inst/extdata``` folder includes three blocks with the same individuals (corresponding to the countries here) but different types of variables (agriculture, industry and politic variables). In this dataset, according to Russett (1964), a high agriculture inequality and a low industrial development lead to an unstable political regime. Load the three working examples ```agriculture.tsv```, ```industry.tsv``` and ```politic.tsv``` in the ```blocks``` box (**Fig. 1**) (CTRL + click for multiple selections). The accepted format is one (for PCA) or multiple CSV files containing a matrix with:
+Before reading this tutorial, the Shiny application have to be [installed](https://github.com/rgcca-factory/RGCCA#installation) and [executed](https://github.com/rgcca-factory/RGCCA#execution).
+The ```inst/extdata``` folder includes three blocks with the same individuals (corresponding to the countries here) but different types of variables (agriculture, industry and politic variables). In this dataset, according to Russett (1964), a high agriculture inequality and a low industrial development lead to an unstable political regime. Load the three working examples ```agriculture.tsv```, ```industry.tsv``` and ```politic.tsv``` in the ```blocks``` box (**Fig. 1**) (CTRL + click must be used for multiple file selection). The accepted format is one (for PCA) or multiple CSV files containing a matrix with:
 - quantitative values only, with decimals separated by '.' and missing values labelled as "NA"
 - samples in rows, labelled in the 1rst column with the same sample names between blocks (some samples could be missing in some blocks)
 - variables in columns, labelled in the 1rst line without duplications in variable names between blocks
@@ -45,7 +45,7 @@ By default, the character used in ```column separator``` parameter is the ```tab
 
 ## 2. Analysis parameters ('RGCCA' parameter tab)
 
-The analyse parameters are all set by default and the user could directly click on the ```run analysis``` button. To directly visualize the outputs, see the [last section](https://github.com/rgcca-factory/RGCCA/blob/release/3.0.0/inst/shiny/tutorialShiny.md#4-visualize-the-plot-tabs).
+The analyse parameters are all set by default and the user could directly click on the ```run analysis``` button. To directly visualize the outputs, see the [last section](https://github.com/rgcca-factory/RGCCA/blob/master/inst/shiny/tutorialShiny.md#4-visualize-the-plot-tabs).
 
 ### 2.1. Analysis methods
 
@@ -67,7 +67,9 @@ This parameters are only accessible with R/SGCCA.
 
 #### 2.3.1. Loading a connection file
 
-The downloaded folder contains a design matrix (```connection.tsv```) corresponding to the relationship between each block: 1 if two blocks are connected and 0 otherwise. The expected format should be tabulation-separated and do not have column and row names. It is a symmetric matrix with the same dimension as the number of blocks. This file allows to add *a priori* information of correlation hypothesis between the blocks. It will not be taken in account with a superblock (see next section). After disabling the ```use a superblock``` option, load this file into the ```Connection design``` file box and observe the result on the plots. The ```connection.tsv``` file contains 1 in all non-diagonal cells and makes the assumption that all the blocks are related.
+The downloaded folder contains a design matrix (```connection.tsv```) corresponding to the relationship between each block: 1 if two blocks are connected and 0 otherwise. The expected format should be tabulation-separated and have column and row names corresponding to the blocks names. It is a symmetric matrix with the same dimension as the number of blocks. This file allows to add *a priori* information of correlation hypothesis between the blocks. It will not be taken in account with a superblock (see next section). After disabling the ```use a superblock``` option, load this file into the ```Connection design``` file box and observe the result on the plots. The ```connection.tsv``` file contains 1 in all non-diagonal cells and makes the assumption that all the blocks are related. 
+
+A ```connection.tsv``` file will be automatically generated in the ```inst/shiny``` folder after running the analyse. This file corresponding to the connection matrix used by the model can be modified manually and reloaded in the software.
 
 #### 2.3.2. Superblock 
 By default, all the blocks are connected to a superblock, a concatenation of all the other blocks. The space spanned by global components is viewed as a compromise space that integrated all the modalities and facilitates the visualization of the results and their interpretation. To visualize the blocks without the superblock, disable the ```Use a superblock``` option.
@@ -80,7 +82,7 @@ If a superblock is used, supervised analysis is automatically disabled, and inve
 ### 2.4. Other R/SGCCA parameters
 
 #### 2.4.1. Shrinkage parameter (Tau)
-By selecting a RGCCA,```use an optimal tau``` is disabled andeach tau automatically set to 1 for each block (**Fig. 3**). One could make ```tau``` varying for each block from 1 (maximize the correlation between the variables of the selected block) to 0 (maximize the covariance). An optimal tau could not be set with a superblock configuration.
+By selecting a RGCCA,```use an optimal tau``` is disabled and each tau automatically set to 1 for each block (**Fig. 3**). One could make ```tau``` varying for each block from 1 (maximize the correlation between the variables of the selected block) to 0 (maximize the covariance). An optimal tau could not be set with a superblock configuration.
  
 #### 2.4.2. Sparsity coefficient
 By selecting a SGCCA, the ``` sparsity``` could be applied to each block. This coefficient varies from the inverse of the square root of the number of columns (the smaller set of variables) to 1 (all the variables are included).
@@ -95,20 +97,16 @@ Move again the cursor to an upper sparsity value to make it works.
 
 Only, the horst scheme penalizes structural negative correlation. The factorial scheme discriminates more strongly the blocks than the centroid one.
 
-### 2.5. Post-analysis functionalities
-After running the scan, new options appear at the bottom of the analysis panel. 
-These analysis are launched after clicking on their ```run [bootstrap/permutation/cross-validation]``` button. New graphical tabs will appear. To directly visualize the outputs, see the [last section](https://github.com/rgcca-factory/RGCCA/blob/release/3.0.0/inst/shiny/tutorialShiny.md#4-visualize-the-plot-tabs).
+### 2.5. Pre & post-analysis functionalities
+Before running the RGCCA analysis, the optimal tau (for non-sparse models) and the sparsity coefficient (for sparse ones) can be evaluated by comparing the performance of RGCCA with random models: (i) with random permutation of the lines within each of the blocks to break the link between them; (ii) if supervised, with random sampling of the individuals used for modeling and validation of the prediction on the remaining ones (cross-validation). Several combinations of parameters (tau or sparsity coefficient) are evaluated. The parameters of the best model can be manually entered into the model.
 
-#### 2.5.1. Number of bootstraps and permutations
-By default, the number of bootstraps and permutations is set to 10 runs and coul be increased up to 100 runs.
+After running the RGCCA analysis, a ```Run bootstrap``` button appears at the bottom of the analysis panel. If the analysis is supervised, the user could ```Evaluate the model``` (with 5 k-folds; see after).
 
-#### 2.5.2. Type of validation (supervised mode only)
-The evaluation of the performance of the model is based on two phases: the first consists of training the model with a first set of data, the second of evaluating it on a second set of data independent of the first. There are several ways of dividing its original data set into a training set and an evaluation set. 
-- One of these is the ```k-fold```. This consists in separating its data set into k equal parts. Only one part will be used for the evaluation phase and the other k-1 parts for the training phase. In the same way, each of the parts will be used for a new evaluation and the others for a training of the model. Here, a 5-fold is performed.
-- The ```leave-one-out``` is a special case of the k-fold where k corresponds to the number of lines of the original data set.
+These analysis are launched after clicking on their button. New graphical tabs will appear for each of these analysis. To directly visualize the outputs, see the [last section](https://github.com/rgcca-factory/RGCCA/blob/master/inst/shiny/tutorialShiny.md#4-visualize-the-plot-tabs).
 
-#### 2.5.3. Type of permutation
-A significant difference between N random effects models with block line permutation and a normal model allows tuning the choice of : the ```number of components```, ```sparsity``` or ```tau```.
+#### 2.5.1. Number of bootstraps, permutations, folds 
+By default, the number of bootstraps and permutations is set to 10 runs and could be increased up to 1000 runs.
+In cross-validation, the evaluation of the performance of the model is based on two phases: the first consists of training the model with a first set of data, the second of evaluating it on a second set of data independent of the first. There are several ways of dividing its original data set into a training set and an evaluation set. One of these is the ```k-fold```. This consists in separating its data set into k equal parts. Only one part will be used for the evaluation phase and the other k-1 parts for the training phase. In the same way, each of the parts will be used for a new evaluation and the others for a training of the model. By default, a 5-fold is performed.
 
 
 ## 3. Graphical parameters ('Graphic' parameter tab)
@@ -120,10 +118,10 @@ This parameter tab is observed only with the ```samples```, ```corcircle``` and 
 *Fig. 3 : When the samples tab is selected a graphical option panel appears, that includes: (i) the possibility to hide/print the names of the variables, (ii) the selection of the block to visualize, (iii) the components used in the plots, (iv) the loading of groups of response to color the samples and (v) a button to save all the plot in the folder of the Shiny application. In this example, the agriculture block will be selected as the block for the Y-axis.*
 
 ### 3.1. Display names
-If activated (by default), the ```display names``` option shows the name of the points in the ```samples``` and ```corcircle``` plot tabs. If disabled, shapes are shown instead of text: one per group of modality (see [section 3.4.](https://github.com/rgcca-factory/RGCCA/blob/release/3.0.0/inst/shiny/tutorialShiny.md#34-color-the-samples)).
+If activated (by default), the ```display names``` option shows the name of the points in the ```samples``` and ```corcircle``` plot tabs. If disabled, shapes are shown instead of text: one per group of modality (see [section 3.4.](https://github.com/rgcca-factory/RGCCA/blob/master/inst/shiny/tutorialShiny.md#34-color-the-samples)).
 
 ### 3.2. Block (for the x/y-axis)
-By default, if selected, the ```samples```, ```corcircle``` and ```fingerprint``` plot tabs are shown with the ```superblock``` (i.e., the concatenation of all blocs; see [section 2.3.2](https://github.com/rgcca-factory/RGCCA/blob/release/3.0.0/inst/shiny/tutorialShiny.md#232-superblocks)) to visualize all the blocs together. If this option is disabled, by default, the last blocks in the drop-down menu ```block``` is used. In this menu, choose another block (e.g., ```agriculture```) to update the plots with your selection (**Fig. 3**). For the ```samples``` tab only, a ```block for the x-axis``` and a ```block for the y-axis``` could be selected.
+By default, if selected, the ```samples```, ```corcircle``` and ```fingerprint``` plot tabs are shown with the ```superblock``` (i.e., the concatenation of all blocs; see [section 2.3.2](https://github.com/rgcca-factory/RGCCA/blob/master/inst/shiny/tutorialShiny.md#232-superblocks)) to visualize all the blocs together. If this option is disabled, by default, the last blocks in the drop-down menu ```block``` is used. In this menu, choose another block (e.g., ```agriculture```) to update the plots with your selection (**Fig. 3**). For the ```samples``` tab only, a ```block for the x-axis``` and a ```block for the y-axis``` could be selected.
 
 ### 3.3. Components (for the x/y-axis)
 The ```component``` of the analysis allows to choose the space where the points are visualised. For ```samples``` and ```corcircle``` biplots tabs, either ```component for the x-axis``` or ```component for the y-axis``` could be set. By default, they are respectively set to the first and the second components. Their choices are limited by the number of components selected in the analysis (defined in the 2.2. section). If the number of components in RGCCA were higher than two (not allowed in the Russet example, because of the industry block), the ```component for the x-axis```, for example, could be set to the third one.
@@ -138,22 +136,14 @@ On the ```samples``` plot tab only, one could select a variable to color the poi
 Available only for ```fingerprint``` plot tabs, the ```number of top variables``` is automatically set to the number of variables in the selected blocks until a maximum value of 100. For example, with Russet data, eleven "top" variables could be visualised by default on the superblock.
 
 ### 3.6. Save the graphics
-All graphics could be saved in the tool folder by running the ```Save all``` button (see the [description of the outputs](https://github.com/rgcca-factory/RGCCA/tree/release/3.0.0#output-files)).
+All graphics could be saved in the tool folder by running the ```Save all``` button (see the [description of the outputs](https://github.com/rgcca-factory/RGCCA/tree/master#output-files)).
 
 ### 3.7. Dynamic graph parameters header
-In ```samples```, ```corcircle``` and ```fingerprint``` tabs, a header will appear allowing to dynamically explore the graph (see [**Fig. 6**](https://github.com/rgcca-factory/RGCCA/blob/release/3.0.0/inst/shiny/tutorialShiny.md#43-samples)). From left to right: 
+In ```samples```, ```corcircle``` and ```fingerprint``` tabs, a header will appear allowing to dynamically explore the graph (see [**Fig. 6**](https://github.com/rgcca-factory/RGCCA/blob/master/inst/shiny/tutorialShiny.md#43-samples)). From left to right: 
 - camera icon saves the plot
 - magnifying icon zooms in the plot
 - crossed arrows moves the plot
-- dashed box makes rectangular selection
-- lasso icon makes a fly over selection
-- "+" icon zooms in
-- "-" icon zooms out
-- crossed arrows in a dashed box icon automatically scales the graph
 - home icons resets all the changes
-- spike lines icon shows the X- and Y- positions on the axes
-- label icon (by default) shows the label of a point on fly over
-- multiple labels icon shows the labels of a set of points with the nearest X-axis coordinates
 
 ### 3.8. Bootstrap indexes for x- and y- axis
 These options allow to customize the choice of parameters to be displayed in the X or Y axis.
@@ -164,7 +154,7 @@ These options allow to customize the choice of parameters to be displayed in the
 - ```RGCCA weights```
 
 ### 3.9 Display cross-validation
-If cross-validation is launched, this option shows or hides its predictions on the ```samples``` plot tab (see [**Fig. 6**](https://github.com/rgcca-factory/RGCCA/blob/release/3.0.0/inst/shiny/tutorialShiny.md#43-samples)).
+If cross-validation is launched, this option shows or hides its predictions on the ```samples``` plot tab (see [**Fig. 6**](https://github.com/rgcca-factory/RGCCA/blob/master/inst/shiny/tutorialShiny.md#43-samples)).
 
 ## 4. Visualize the plot tabs
 
@@ -181,10 +171,10 @@ After clicking on the ```run analysis``` button, a set of graphical tabs will ap
 Every modified data or analysis parameter resets the plot tabs and the analysis needs to be re-run to apply the changes.
 
 ### 4.1. Connection between blocks
-The first tab summarizes the connection between each block: a link corresponds to a "1" value, in the matrix connection file (**Fig. 4**; see [section 2.3.1.](https://github.com/rgcca-factory/RGCCA/blob/release/3.0.0/inst/shiny/tutorialShiny.md#231-loading-a-connection-file)). For each block:
+The first tab summarizes the connection between each block: a link corresponds to a "1" value, in the matrix connection file (**Fig. 4**; see [section 2.3.1.](https://github.com/rgcca-factory/RGCCA/blob/master/inst/shiny/tutorialShiny.md#231-loading-a-connection-file)). For each block:
 - "P" is the number of variables
 - "N" is the number of lines (here, each block has the same number of line)
-- "tau" is the shrinkage parameter and "sparsity" is the sparsity coefficient (see the [2.4.1 & 2.4.2 sections](https://github.com/rgcca-factory/RGCCA/blob/release/3.0.0/inst/shiny/tutorialShiny.md#24-other-rsgcca-parameters)). The tau parameter could be shown for each component if the optimal option is selected
+- "tau" is the shrinkage parameter and "sparsity" is the sparsity coefficient (see the [2.4.1 & 2.4.2 sections](https://github.com/rgcca-factory/RGCCA/blob/master/inst/shiny/tutorialShiny.md#24-other-rsgcca-parameters)). The tau parameter could be shown for each component if the optimal option is selected
 
 ![connection](../../img/shiny/connection.png)
 
@@ -230,7 +220,7 @@ Here, "labo" from the industry block (the amount of labor force in agriculture) 
 
 ### 4.5. Bootstrap
 
-If all the default options have been left, the graph represents the bootstrap ratio (average of the bootstrap weights divided by their standard error) on the X-axis according to their significance (*) or not (ns). 
+The graph represents the bootstrap ratio (average of the bootstrap weights divided by their standard error) on the X-axis according to their significance (*) or not (ns). 
 On this graph, the gross national product is the variable with the highest average weight among the bootstraps. Having a negative weight in the original RGCCA, it is coloured red.
 The unstable democracy and the land rent fluctuate around 0 and are therefore not considered positive. They have on average a very low and positive weight in the original RGCCA (in green).
 

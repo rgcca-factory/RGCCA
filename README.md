@@ -43,7 +43,7 @@ The quality and interpretability of the RGCCA block components yj = Xj . aj, j =
 
 *Fig. 1: The blocks (e.g., politic, agriculture, industry from Russet data [3]) should have some common individuals, a header and row names.*
 
-- ```connection``` (.tsv, .csv, .txt or .xls, xlsx): an optional file without header and without row names. This file describes the connections between the blocks (**design matrix**). It should contain 1 (if two blocks are related) or 0 values otherwise (**Fig. 2**). The columns are separated by tabulations. It is a symmetric matrix with the same dimension as the number of blocks. 
+- ```connection``` (.tsv, .csv, .txt or .xls, xlsx): an optional file describing the connections between the blocks (**design matrix**). The first column and the first line should have the same names as the blocks. It should contain 1 (if two blocks are related) or 0 values otherwise (**Fig. 2**). The columns are separated by tabulations. It is a symmetric matrix with the same dimension as the number of blocks.
     - By default, the design uses a **superblock** configuration, a block defined as the concatenation of all the other blocks. The space spanned by global components is viewed as a compromise space that integrated all the modalities and facilitates the visualization of the results and their interpretation. The design matrix has 1 values on the whole last line (and last column) except for the diagonal (i.e., all the blocks are connected to the superblock) and 0 values for the other cells (the blocks are not connected to each other). 
 
 ![connection](img/connection.png)

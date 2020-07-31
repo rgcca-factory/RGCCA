@@ -271,14 +271,19 @@ rgcca <- function(
         #    opt[[pars[i]]] <- c(opt[[pars[i]]][-response], opt[[pars[i]]][response])
     }
 
-
-    if (!is.matrix(opt$connection) || !is.null(response))
+    
+    if (!is.matrix(opt$connection) || !is.null(response)) {
         opt$connection <- set_connection(
             opt$blocks,
             superblock=opt$superblock,response=response
         )
+         opt$connection <- check_connection(opt$connection, opt$blocks)
+    } else if (is.matrix(opt$connection)) {
+        opt$connection <- check_connection(opt$connection, opt$blocks)
+        opt$connection <- opt$connection[names(blocks), names(blocks)]
+    }
+        
 
-    check_connection(opt$connection, opt$blocks)
     opt$penalty <- check_tau(opt$penalty, opt$blocks, type)
     opt$ncomp <- check_ncomp(opt$ncomp, opt$blocks)
 

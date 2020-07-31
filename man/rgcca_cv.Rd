@@ -12,7 +12,8 @@ rgcca_cv(blocks, type = "rgcca", response = NULL, par = "tau",
   tol = 1e-06, scheme = "factorial", method = "nipals",
   rgcca_res = NULL, parallelization = NULL, tau = rep(1,
   length(blocks)), ncomp = rep(1, length(blocks)), sparsity = rep(1,
-  length(blocks)), init = "svd", bias = TRUE, ...)
+  length(blocks)), init = "svd", bias = TRUE, new_scaled = FALSE,
+  ...)
 }
 \arguments{
 \item{blocks}{A list that contains the \eqn{J} blocks of variables \eqn{\mathbf{X_1}, \mathbf{X_2}, ..., \mathbf{X_J}}.}
@@ -27,15 +28,9 @@ rgcca_cv(blocks, type = "rgcca", response = NULL, par = "tau",
 
 \item{par_value}{Grid of values to be tested. #TODO}
 
-\item{validation}{A character given the method for validation aong test 
-(for test-train sets), kfold (for k-fold with k=5 by default) and loo 
-(for leave-one-out)}
-
 \item{type_cv}{type of crossvalidation. Default to "regression" #TODO}
 
 \item{fit}{A character giving the function used to compare the trained and the tested models}
-
-\item{k}{An integer given the parameter for k-fold method (5, by default)}
 
 \item{n_cv}{number of cross-validation. Default to 1 (with kfold option and 5)}
 
@@ -82,6 +77,8 @@ If tau is a matrix, tau[k, j] is associated with \eqn{\mathbf{X}_{jk}} (\eqn{k}t
 \item{init}{The mode of initialization to use in RGCCA algorithm. The alternatives are either by Singular Value Decompostion ("svd") or random ("random") (Default: "svd").}
 
 \item{bias}{A logical value for biaised or unbiaised estimator of the var/cov (default: bias = TRUE).}
+
+\item{new_scaled}{A boolean scaling the blocks to predict}
 
 \item{...}{Further graphical parameters (see plot2D functions)}
 }

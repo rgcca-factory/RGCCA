@@ -48,6 +48,7 @@ rgcca_cv=function( blocks,
           sparsity=rep(1,length(blocks)),
           init="svd",
           bias=TRUE,
+          new_scaled = FALSE,
           ...)
 {
     if(!missing(blocks)&class(blocks)=="rgcca"){rgcca_res=blocks}
@@ -70,13 +71,13 @@ rgcca_cv=function( blocks,
     }
     
     if(is.null(response)){ stop("response is required for rgcca_cv (it is an integer comprised between 1 and the number of blocks) ")}
-    if(superblock){stop_rgcca("Cross-validation is only possible without superblock")}
+    # if(superblock){stop_rgcca("Cross-validation is only possible without superblock")}
     if(validation=="loo")
     {
         k=dim(blocks[[1]])[1]
         if(n_cv!=1)
         {
-            cat("n_cv value was replaced by 1 (is not relevant for loo option)")
+            # cat("n_cv value was replaced by 1 (is not relevant for loo option)")
         };n_cv=1
     }
 
@@ -140,8 +141,8 @@ rgcca_cv=function( blocks,
         "sparsity" = par <- set_penalty(),
         "tau" = par <- set_penalty()
     )
-  
-    print(paste("Cross-validation for", par[[1]], "is in progression..."))
+ 
+    message(paste("Cross-validation for", par[[1]], "in progress...\n"), appendLF = FALSE)
     pb <- txtProgressBar(max=dim(par[[2]])[1])
     n_rep=ifelse(one_value_per_cv,n_cv,n_cv*k)
     res=matrix(NA,dim(par[[2]])[1],n_cv*k);rownames(res)=apply(round(par[[2]],digits=2),1,paste,collapse="-");
@@ -165,39 +166,28 @@ rgcca_cv=function( blocks,
             {
                 if(one_value_per_cv)
                 {
-                    res_cv_n=rgcca_crossvalidation(
+                    res_i=c(res_i,rgcca_crossvalidation(
                         rgcca_res,
                         validation = validation,
                         model = type_cv,
                         fit = fit,
-                        # new_scaled = TRUE,
+                        new_scaled = TRUE,
                         k = k,
-                        n_cores =n_cores,
-                        parallelization=parallelization
-                    )
-                    if(!is.null(res_cv_n))
-                    {
-                        res_i=c(res_i,res_cv_n$scores)
-                    }
-                    else
-                    {
-                        print("One cross-validation was stopped (at least one variable had null standard deviations)")
-                    }
-               
+                      n_cores =n_cores,
+                      parallelization=parallelization
+                      )$scores)
                 }
                 else
                 {
-                    res_cv_n=rgcca_crossvalidation(
+                    res_i= c(res_i,rgcca_crossvalidation(
                         rgcca_res,
                         validation = validation,
                         model = type_cv,
                         fit = fit,
-                        #new_scaled = TRUE,
+                        new_scaled = TRUE,
                         k = k,
                         n_cores =n_cores,
-                        parallelization=parallelization)
-                    
-                    res_i= c(res_i,res_cv_n$list_scores)
+                        parallelization=parallelization)$list_scores)
                 }
               
             }
@@ -208,8 +198,9 @@ rgcca_cv=function( blocks,
             setTxtProgressBar(pb, i)
             mat_cval=res
             rownames(mat_cval)=1:NROW(mat_cval)
-        }
-    
+    }
+
+    cat("\n")
     Sys.sleep(1)
     call=list(n_cv=n_cv,
               response=response,

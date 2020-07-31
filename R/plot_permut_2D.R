@@ -44,6 +44,7 @@ plot_permut_2D <- function(
 
     y <- unlist(perm[type])
     best <- which.max(unlist(perm["zstat"]))
+    y_best <- y[best]
     n <- seq(nrow(perm$penalties))
 
     df <- as.data.frame(cbind(seq(NROW(perm$penalties)), y))
@@ -88,8 +89,8 @@ plot_permut_2D <- function(
         geom_point(
             mapping = aes(
                 x = best,
-                y = y[best],
-                color = "red",
+                y = y_best,
+                color = I("red"),
                 shape = I(3)
             ),
             size = 5

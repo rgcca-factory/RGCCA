@@ -33,5 +33,6 @@ set_connection <- function(
             
     }
    
+    row.names(connection) <- names(blocks) -> colnames(connection)
     return(connection)
 }
