@@ -211,7 +211,7 @@ rgcca_predict = function(
     # Y definition
 
     if (missing(y.train))
-        y.train <- rgcca_res$A[[bloc_y]][, MATCH_col[[newbloc_y]], drop = FALSE]
+        y.train <- rgcca_res$call$blocks[[bloc_y]][, MATCH_col[[newbloc_y]], drop = FALSE]
 
     # TODO : sampled columns for y.test
     if (missing(y.test)) {

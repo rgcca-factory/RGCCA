@@ -765,8 +765,9 @@ server <- function(input, output, session) {
                     blocks,
                     type = analysis_type,
                     response = response,
+                    validation = input$val,
                     k = input$kfold,
-                    n_cv = 1,
+                    n_cv = 10,
                     n_cores = parallel::detectCores() - 1,
                     superblock = (!is.null(input$supervised) &&
                                     !is.null(input$superblock) && input$superblock),
@@ -797,7 +798,7 @@ server <- function(input, output, session) {
     getCrossVal2 <-  function(){
         assign(
             "crossval",
-            rgcca_crossvalidation(rgcca_out, validation = "kfold", k = input$kfold, n_cores = 1),
+            rgcca_crossvalidation(rgcca_out, validation = input$val, k = input$kfold, n_cores = 1),
             .GlobalEnv
         )
         showWarn(message(paste("CV score:", round(crossval$score, 4))), show = FALSE)
@@ -992,8 +993,9 @@ server <- function(input, output, session) {
             hide(id = i)
         for (i in c("nperm", "run_perm"))
             toggle(id = i, condition = !input$supervised)
-        for (i in c("run_crossval", "kfold"))
+        for (i in c("run_crossval", "val"))
             toggle(id = i, condition = input$supervised)
+        toggle(id = "kfold", condition = input$supervised && input$val == "kfold")
     })
 
 

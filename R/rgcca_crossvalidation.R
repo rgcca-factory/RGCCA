@@ -21,7 +21,7 @@ rgcca_crossvalidation <- function(
     validation = "kfold",
     model = "regression",
     fit = "lm",
-#    new_scaled = TRUE,
+    new_scaled = TRUE,
     k = 5,
     scale=NULL,
     scale_block=NULL,
@@ -56,7 +56,7 @@ rgcca_crossvalidation <- function(
        stop_rgcca("This function required an analysis in a supervised mode")}
    
     match.arg(validation, c("loo", "test", "kfold"))
-    check_integer("k", k)
+    check_integer("k", k, min = 2)
     check_integer("n_cores", n_cores, 0)
     response=rgcca_res$call$response
     bloc_to_pred <- names(rgcca_res$call$blocks)[response]
@@ -85,13 +85,12 @@ rgcca_crossvalidation <- function(
                         ) #Rgcca on all individuals but inds
             rgcca_k$a <- add_variables_submodel(rgcca_res, rgcca_k$a)
             rgcca_k$astar <- add_variables_submodel(rgcca_res, rgcca_k$astar)
-            for (j in seq(length(rgcca_res$call$blocks))) {
-                rgcca_k$call$blocks[[j]] <- rgcca_res$call$blocks[[j]][-inds, , drop = FALSE]
-                attr(rgcca_k$call$blocks[[j]], "scaled:center") <- attr(rgcca_res$call$blocks[[j]], "scaled:center")
-                attr(rgcca_k$call$blocks[[j]], "scaled:scale") <- attr(rgcca_res$call$blocks[[j]], "scaled:scale")
-                rgcca_k$A[[j]] <- rgcca_res$A[[j]][-inds, , drop = FALSE]
-                attr(rgcca_k$A[[j]], "scaled:center") <- attr(rgcca_res$A[[j]], "scaled:center")
-                attr(rgcca_k$A[[j]], "scaled:scale") <- attr(rgcca_res$A[[j]], "scaled:scale")
+            rgcca_k$call$blocks <- add_variables_data(rgcca_res, rgcca_k$call$blocks)
+            center_att <- add_variables_attr(rgcca_res, lapply(rgcca_k$call$blocks, function(i) attr(i, "scaled:center")), type = "center")
+            scale_attr <- add_variables_attr(rgcca_res, lapply(rgcca_k$call$blocks, function(i) attr(i, "scaled:scale")))
+            for (i in seq(length(rgcca_k$call$blocks))) {
+                attr(rgcca_k$call$blocks[[i]], "scaled:center") <- center_att[[i]]
+                attr(rgcca_k$call$blocks[[i]], "scaled:scale") <- scale_attr[[i]]
             }
             rgcca_predict(
                 rgcca_k,
@@ -100,7 +99,7 @@ rgcca_crossvalidation <- function(
                 fit = fit,
                 bloc_to_pred = bloc_to_pred,
                 # bigA = bigA,
-                new_scaled = FALSE
+                new_scaled = TRUE
             )
 
         }
