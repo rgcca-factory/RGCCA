@@ -43,14 +43,14 @@ blocks <- list(
      RGCCA:::set_rgcca(rgcca_out,
                inds = 1,tol=1e-5)
   newA=lapply(blocks,function(x){return(x[1,,drop=FALSE])})
- res_pred=rgcca_predict(rgcca_k,newA=newA,bloc_to_pred = "agriculture", new_scaled = FALSE)$score
- 
+ res_pred=rgcca_predict(rgcca_k,newA=newA,bloc_to_pred = "agriculture", new_scaled = FALSE)
+ res_pred_score=res_pred$score
  test_that("rgcca_crossvalidation_rmse",{expect_true(
-     round(res_pred,digits=5)== round(rgcca_cv$list_scores[1],digits=5)
+     round(res_pred_score,digits=5)== round(rgcca_cv$list_scores[1],digits=5)
  )})
  
 
- 
+ # Finding back 0.495311
  res=rep(NA,dim(blocks[[1]])[1])
  for(i in 1:dim(blocks[[1]])[1])
  {
@@ -60,6 +60,7 @@ blocks <- list(
      rgcca_out_i <- rgcca(A_moins_i, response = 1,superblock=FALSE,ncomp=1,scale=TRUE,scale_block=TRUE)
      res[i]=rgcca_predict(rgcca_out_i,A_i ,new_scaled=FALSE,bloc_to_pred="agriculture") $score
  }
+ mean(res)
 round(res-rgcca_cv$list_scores,digits=4)
  
  
