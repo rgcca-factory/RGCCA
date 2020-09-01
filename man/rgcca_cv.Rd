@@ -28,9 +28,13 @@ rgcca_cv(blocks, type = "rgcca", response = NULL, par = "tau",
 
 \item{par_value}{Grid of values to be tested. #TODO}
 
+\item{validation}{Among "loo", "kfold", "test".}
+
 \item{type_cv}{type of crossvalidation. Default to "regression" #TODO}
 
 \item{fit}{A character giving the function used to compare the trained and the tested models}
+
+\item{k}{when k fold is chosen, the k parameter.}
 
 \item{n_cv}{number of cross-validation. Default to 1 (with kfold option and 5)}
 

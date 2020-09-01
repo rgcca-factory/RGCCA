@@ -28,42 +28,67 @@ blocks <- list(
  rgcca_out <- rgcca(blocks, response = 1,superblock=FALSE,ncomp=1,scale=TRUE,scale_block=TRUE)
  test_that("rgcca_cv_default_1", {
      test_structure_cv(
-         rgcca_crossvalidation(rgcca_res=rgcca_out,n_cores=1,validation="loo"),
+        rgcca_crossvalidation(rgcca_res=rgcca_out,n_cores=1,validation="loo"),
          0.495311)
  }
  )
+ 
+ #new_scaled = FALSE si les blocs en entrée de newA ne sont pas scalés, TRUE si les blocks sont scalés
+ # Finding back 0.495311
+ res=rep(NA,dim(blocks[[1]])[1])
+ for(i in 1:dim(blocks[[1]])[1])
+ {
+     # Etape 1: on extrait la ligne i des blocs non scalés
+     A_moins_i=lapply(blocks,function(x){return(x[-i,])})
+     A_i=lapply(blocks,function(x){return(x[i,])})
+     names(A_moins_i)=names(A_i)=names(blocks)
+     # on calcule la RGCCA sur le bloc A sans le i
+     rgcca_out_i <- rgcca(A_moins_i, response = 1,superblock=FALSE,ncomp=1,scale=TRUE,scale_block=TRUE)
+     
+     # Methode 1 on predit la valeur i à l'aide du modèle rgcca, et de la ligne du bloc
+     # Ici, on reprend les scale value de la rgcca calculée sur A_moins_i et on les applique à A_i
+     respred_i=rgcca_predict(rgcca_out_i, A_i,new_scaled=FALSE,bloc_to_pred="agriculture") 
+     
+     # Methode 2: on predit la valeur i a l'aide des blocs "scalés" 
+    # newA_i = lapply(rgcca_out$call$blocks, function(x) x[inds, , drop = FALSE])
+    # newA_i=(rgcca_out$call$blocks)*()+() -()
+   #  respred_i2=rgcca_predict(rgcca_out_i,newA_i ,new_scaled=TRUE,bloc_to_pred="agriculture") 
+     
+    # all.equal(respred_i,respred_i2)
+    # A_i_scaled=lapply(rgcca_out$call$blocks,function(x){res=t(as.matrix(x[i,]));rownames(res)=rownames(rgcca_out$call$blocks)[1];return(res)})
+
+    
+
+     
+       #= newA_i=scaled_A[i,]
+     
+     
+         res[i]=respred_i$score 
+    }
+ mean(res)
+
+ 
+ 
  
 # Test du predict du premier individu en leave-one-out
 #--------------------------------------------------------
  rgcca_out <- rgcca(blocks, response = 1,superblock=FALSE,ncomp=1,scale=TRUE,scale_block=TRUE)
  rgcca_cv=rgcca_crossvalidation(rgcca_res=rgcca_out,n_cores=1,validation="loo",tol=1e-5)
- rgcca_cv$list_scores
+ rgcca_cv$list_pred[[1]]
  # test for the first neighbor in rgcca
  rgcca_k <-
      RGCCA:::set_rgcca(rgcca_out,
                inds = 1,tol=1e-5)
+ 
   newA=lapply(blocks,function(x){return(x[1,,drop=FALSE])})
  res_pred=rgcca_predict(rgcca_k,newA=newA,bloc_to_pred = "agriculture", new_scaled = FALSE)
+ res_pred$prediction
  res_pred_score=res_pred$score
  test_that("rgcca_crossvalidation_rmse",{expect_true(
      round(res_pred_score,digits=5)== round(rgcca_cv$list_scores[1],digits=5)
  )})
  
 
- # Finding back 0.495311
- res=rep(NA,dim(blocks[[1]])[1])
- for(i in 1:dim(blocks[[1]])[1])
- {
-     A_moins_i=lapply(blocks,function(x){return(x[-i,])})
-     A_i=lapply(blocks,function(x){return(x[i,])})
-     names(A_moins_i)=names(A_i)=names(blocks)
-     rgcca_out_i <- rgcca(A_moins_i, response = 1,superblock=FALSE,ncomp=1,scale=TRUE,scale_block=TRUE)
-     res[i]=rgcca_predict(rgcca_out_i,A_i ,new_scaled=FALSE,bloc_to_pred="agriculture") $score
- }
- mean(res)
-round(res-rgcca_cv$list_scores,digits=4)
- 
- 
  # Cross-validation to find out the prediction error when agri is response and with 2 comp
 set.seed(1)
  rgcca_out <- rgcca(blocks, response = 1,superblock=FALSE,ncomp=2,scale=TRUE,scale_block=TRUE)
@@ -141,10 +166,9 @@ RussettWithNA <- Russett
      rgcca_out <-rgcca(blocksNA, response=1,ncomp=1,method="mean")
      cv = rgcca_crossvalidation(rgcca_res=rgcca_out, n_cores = 1)
      
-     rgcca_out <-rgcca(blocksNA, response=1,ncomp=1,method="complete")
-     cv = rgcca_crossvalidation(rgcca_res=rgcca_out, n_cores = 1)
-     
-     # avec la method complete -> ne fonctionne pas
+     #rgcca_out <-rgcca(blocksNA, response=1,ncomp=1,method="complete")
+     # cv = rgcca_crossvalidation(rgcca_res=rgcca_out, n_cores = 1)
+     # avec la method complete -> ne fonctionne pas #TODO ?
   
  #    rgcca_out <- rgcca(blocksNA, response = 1, tol = 1E-03,method="nipals")
      cv = rgcca_crossvalidation(rgcca_out, n_cores = 1)

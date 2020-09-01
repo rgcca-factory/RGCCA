@@ -14,11 +14,15 @@ rgcca_crossvalidation(rgcca_res, validation = "kfold",
 \arguments{
 \item{rgcca_res}{A list giving the results of a R/SGCCA}
 
+\item{validation}{Among "loo", "kfold", "test".}
+
 \item{model}{A character corresponding to the model of prediction among : regression or classification}
 
 \item{fit}{A character giving the function used to compare the trained and the tested models}
 
 \item{new_scaled}{A boolean scaling the blocks to predict}
+
+\item{k}{when k fold is chosen, the k parameter.}
 
 \item{scale}{If scale = TRUE, each block is standardized to zero means and unit variances (default: TRUE).}
 

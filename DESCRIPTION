@@ -19,7 +19,6 @@ Suggests:
     shiny,
     shinyjs,
     ggrepel,
-    plotly,
     optparse,
     igraph,
     visNetwork,
@@ -38,6 +37,7 @@ Imports:
     methods,
     scales,
     gridExtra,
-    rlang
+    rlang,
+    plotly
 VignetteBuilder: knitr
 biocViews: Visualization, PrincipalComponent, DimensionReduction, StructuralEquationModels

@@ -181,6 +181,8 @@ rgcca_predict = function(
             SIMPLIFY = FALSE
         )
     }
+  
+
     # Dimension Reduction
     for (i in seq(length(rgcca_res$call$blocks)))
         colnames(rgcca_res$astar[[i]]) <- colnames(rgcca_res$Y[[i]])

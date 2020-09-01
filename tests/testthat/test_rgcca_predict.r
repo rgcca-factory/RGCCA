@@ -11,7 +11,6 @@ set.seed(1)
  1, 1, 0),
  3, 3)
  A = lapply(blocks, function(x) x[1:32,]);
- newA=lapply(A,scale)
 
  #-------------------------------------------------------------------------
  # Checking the Y with the prediction with the response block in last position
@@ -133,4 +132,27 @@ A_test=lapply(blocksNA,function(x) x[c(39:47),])
 object1 = rgcca(A, connection = C, tau = c(0.7,0.8,0.7),
                 ncomp = c(1,1,1), superblock = FALSE, response = 3)
 res_test  = rgcca_predict(object1, A_test,new_scaled=FALSE,bloc_to_pred="politic") 
+
+# Tester le parametre new_scaled
+#-------------------------------------
+rgcca_res_for_pred = rgcca(A, connection = C, tau = c(0.7,0.8,0.7),
+                           ncomp = 1, superblock = FALSE, response = 1)
+respred1=rgcca_predict(
+    rgcca_res_for_pred,
+    newA = rgcca_res_for_pred$call$blocks,
+    model = "regression",
+    fit = "lm",
+    new_scaled = TRUE
+)
+respred2=rgcca_predict(
+    rgcca_res_for_pred,
+    newA = A,
+    model = "regression",
+    fit = "lm",
+    new_scaled = FALSE
+)
+test_that("rgcca_predict_param_new_scaled",{expect_true(
+    all.equal(respred1,respred2)
+)})
+
 

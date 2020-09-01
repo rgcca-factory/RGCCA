@@ -8,6 +8,8 @@
 # (otherwhise samplesPlot which do not have traces could not be convereted
 # in ggplotly)
 # return a plotly object
+#'@importFrom graphics layout
+#'@importFrom plotly ggplotly config
 plot_dynamic <- function(
     f,
     ax = NULL,
