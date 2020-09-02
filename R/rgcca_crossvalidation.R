@@ -85,22 +85,25 @@ rgcca_crossvalidation <- function(
                           sparsity=sparsity,
                           type=type
                         ) #Rgcca on all individuals but inds
+           #  
+             rgcca_k_saved=rgcca_k
+             rgcca_k$a <- add_variables_submodel(rgcca_res, rgcca_k$a)
+             rgcca_k$astar <- add_variables_submodel(rgcca_res, rgcca_k$astar)
+             rgcca_k$call$blocks <- add_variables_data(rgcca_res, rgcca_k$call$blocks)
+          
+             center_att <- add_variables_attr(rgcca_res, lapply(rgcca_k_saved$call$blocks, function(i) attr(i, "scaled:center")), type = "center")
+          
+             scale_attr <- add_variables_attr(rgcca_res, lapply(rgcca_k_saved$call$blocks, function(i) attr(i, "scaled:scale")))
             
-            
-           # rgcca_k$a <- add_variables_submodel(rgcca_res, rgcca_k$a)
-            #rgcca_k$astar <- add_variables_submodel(rgcca_res, rgcca_k$astar)
-           # rgcca_k$call$blocks <- add_variables_data(rgcca_res, rgcca_k$call$blocks)
-           # center_att <- add_variables_attr(rgcca_res, lapply(rgcca_k$call$blocks, function(i) attr(i, "scaled:center")), type = "center")
-           # scale_attr <- add_variables_attr(rgcca_res, lapply(rgcca_k$call$blocks, function(i) attr(i, "scaled:scale")))
-           
-           # for (i in seq(length(rgcca_k$call$blocks))) {
-           #     attr(rgcca_k$call$blocks[[i]], "scaled:center") <- center_att[[i]]
-           #     attr(rgcca_k$call$blocks[[i]], "scaled:scale") <- scale_attr[[i]]
-           # }
+             for (i in seq(length(rgcca_k$call$blocks))) {
+                 attr(rgcca_k$call$blocks[[i]], "scaled:center") <- center_att[[i]]
+                 attr(rgcca_k$call$blocks[[i]], "scaled:scale") <- scale_attr[[i]]
+             }
             # Necessite les scale et les center en sortie
+             print("before predict")
            respred= rgcca_predict(
                 rgcca_k,
-                newA = lapply(rgcca_res$call$raw, function(x) x[inds, , drop = FALSE]),
+                newA = lapply(bigA, function(x) x[inds, , drop = FALSE]),
                 model = model,
                 fit = fit,
                 bloc_to_pred = bloc_to_pred,
@@ -110,8 +113,15 @@ rgcca_crossvalidation <- function(
 
         }
     )
-
-    bigA <- rgcca_res$call$raw
+    if(method!="complete")
+    {
+        bigA <- rgcca_res$call$raw
+    }
+    if(method=="complete")
+    {
+        bigA <- intersection_list(rgcca_res$call$raw)
+    }
+    
   
     if (validation == "loo")
         v_inds <- seq(nrow(bigA[[1]]))

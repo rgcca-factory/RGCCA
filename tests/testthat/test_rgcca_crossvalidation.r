@@ -33,6 +33,11 @@ blocks <- list(
  }
  )
  
+blocks2=blocks
+blocks2[[1]][,1]=0
+blocks2[[1]][1,1]=1
+rgcca_out2= rgcca(blocks2, response = 1,superblock=FALSE,ncomp=1,scale=TRUE,scale_block=TRUE)
+rescv= rgcca_crossvalidation(rgcca_res=rgcca_out2,n_cores=1,validation="loo")
  #new_scaled = FALSE si les blocs en entrée de newA ne sont pas scalés, TRUE si les blocks sont scalés
  # Finding back 0.495311
  res=rep(NA,dim(blocks[[1]])[1])
@@ -166,7 +171,7 @@ RussettWithNA <- Russett
      rgcca_out <-rgcca(blocksNA, response=1,ncomp=1,method="mean")
      cv = rgcca_crossvalidation(rgcca_res=rgcca_out, n_cores = 1)
      
-     #rgcca_out <-rgcca(blocksNA, response=1,ncomp=1,method="complete")
+   #  rgcca_out <-rgcca(blocksNA, response=1,ncomp=1,method="complete")
      # cv = rgcca_crossvalidation(rgcca_res=rgcca_out, n_cores = 1)
      # avec la method complete -> ne fonctionne pas #TODO ?
   

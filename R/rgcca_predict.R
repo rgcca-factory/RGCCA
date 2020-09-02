@@ -71,7 +71,22 @@ rgcca_predict = function(
             check_boolean(i, get(i))
 
     astar <- rgcca_res$astar
-    p <- sapply(rgcca_res$call$blocks, ncol)
+     blocks_rgcca_res=lapply(1:length(rgcca_res$call$blocks),
+                       function(i) 
+                       {
+                           if(dim(rgcca_res$call$blocks[[i]])[2]==0 )
+                           { 
+                               rgcca_res$call$blocks[[i]]=matrix(rgcca_res$call$blocks[[i]],ncol=1);colnames( rgcca_res$call$blocks[[i]])=names(rgcca_res$call$blocks)[i]
+                           }
+                           if(is.null(colnames(rgcca_res$call$blocks[[i]])))
+                           {
+                               colnames(rgcca_res$call$blocks[[i]])=names(rgcca_res$call$blocks)[i]
+                           }
+                           return(rgcca_res$call$blocks[[i]])
+                       });names(blocks_rgcca_res)=names(rgcca_res$call$blocks)
+
+    p <- sapply( blocks_rgcca_res, ncol)
+ 
     B <- length(rgcca_res$call$blocks)
 
     if (model == "classification" && (fit == "cor" || fit == "lm"))
@@ -101,7 +116,7 @@ rgcca_predict = function(
         stop_rgcca("Please, blocs do not have names")
 
     if (B != newB)
-        stop_rgcca("Please, number of blocs is not the same")
+        stop_rgcca("Please, number of blocks is not the same")
 
     MATCH <- match(names(newA), names(rgcca_res$call$blocks))
 
@@ -109,7 +124,7 @@ rgcca_predict = function(
         stop_rgcca("Please, blocs in new data did not exist in old data")
 
     if (!identical(newp, p[MATCH]))
-        stop_rgcca("Please, number of column is not the same")
+        stop_rgcca("Please, number of columns is not the same")
 
     get_dim <- function(x) {
         if (!is.null(dim(x)))
@@ -121,7 +136,7 @@ rgcca_predict = function(
     MATCH_col <-  mapply(
         function(x, y) match(get_dim(x)(x), get_dim(y)(y)), 
         newA, 
-        rgcca_res$call$blocks[MATCH])
+       blocks_rgcca_res[MATCH])
 
     if (sum(unique(is.na(MATCH_col))) != 0)
         stop_rgcca("Please, some columns names are not the same between the two blocks")
@@ -213,7 +228,7 @@ rgcca_predict = function(
     # Y definition
 
     if (missing(y.train))
-        y.train <- rgcca_res$call$blocks[[bloc_y]][, MATCH_col[[newbloc_y]], drop = FALSE]
+        y.train <- blocks_rgcca_res[[bloc_y]][, MATCH_col[[newbloc_y]], drop = FALSE]
 
     # TODO : sampled columns for y.test
     if (missing(y.test)) {
@@ -244,7 +259,8 @@ rgcca_predict = function(
     if (model == "regression") 
     {
         if(fit=="lm")
-        {
+        { 
+            
               #  if(regress_on=="block")
               #  {
                     ychapo <- sapply(
@@ -270,7 +286,7 @@ rgcca_predict = function(
                
                     prediction=ychapo
                     res=y.test-ychapo
-           
+       
                     if (is.null(dim(res))||dim(res)[1]==1) { 
                         rmse=sqrt(mean(res^2,na.rm=T))
                         score <- rmse 
