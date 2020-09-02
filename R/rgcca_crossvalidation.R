@@ -100,7 +100,6 @@ rgcca_crossvalidation <- function(
                  attr(rgcca_k$call$blocks[[i]], "scaled:scale") <- scale_attr[[i]]
              }
             # Necessite les scale et les center en sortie
-             print("before predict")
            respred= rgcca_predict(
                 rgcca_k,
                 newA = lapply(bigA, function(x) x[inds, , drop = FALSE]),

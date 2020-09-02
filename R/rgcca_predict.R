@@ -59,7 +59,7 @@ rgcca_predict = function(
  #   regress_on="block" #TODO
   ) {
     prediction=NULL
-#rgcca_res$call$blocks=intersection_list(rgcca_res$call$blocks)
+    if(rgcca_res$call$method=="complete"){rgcca_res$call$blocks=intersection_list(rgcca_res$call$blocks)}
 #print(model)
     stopifnot(is(rgcca_res, "rgcca"))
     match.arg(model, c("regression", "classification"))

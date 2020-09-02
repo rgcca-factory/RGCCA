@@ -171,8 +171,8 @@ RussettWithNA <- Russett
      rgcca_out <-rgcca(blocksNA, response=1,ncomp=1,method="mean")
      cv = rgcca_crossvalidation(rgcca_res=rgcca_out, n_cores = 1)
      
-   #  rgcca_out <-rgcca(blocksNA, response=1,ncomp=1,method="complete")
-     # cv = rgcca_crossvalidation(rgcca_res=rgcca_out, n_cores = 1)
+     rgcca_out <-rgcca(blocksNA, response=1,ncomp=1,method="complete")
+     cv = rgcca_crossvalidation(rgcca_res=rgcca_out, n_cores = 1)
      # avec la method complete -> ne fonctionne pas #TODO ?
   
  #    rgcca_out <- rgcca(blocksNA, response = 1, tol = 1E-03,method="nipals")
