@@ -264,9 +264,19 @@ ui <- fluidPage(
                 actionButton("bootstrap_save", "Save")
             ),
             tabPanel(
+                "Bootstrap Summary",
+                dataTableOutput("bootstrapTable"),
+                actionButton("bootstrap_t_save", "Save")
+            ),
+            tabPanel(
                 "Permutation",
                 plotlyOutput("permutationPlot", height = 700),
                 actionButton("permutation_save", "Save")
+            ),
+            tabPanel(
+                "Permutation Summary",
+                dataTableOutput("permutationTable"),
+                actionButton("permutation_t_save", "Save")
             ),
             tabPanel(
                 "Cross-validation",

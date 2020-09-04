@@ -845,6 +845,7 @@ server <- function(input, output, session) {
  
         show(id = "navbar")
         show(selector = "#navbar li a[data-value=Permutation]")
+        show(selector = "#navbar li a[data-value='Permutation Summary']")
         updateTabsetPanel(session, "navbar", selected = "Permutation")
     }
 
@@ -856,6 +857,7 @@ server <- function(input, output, session) {
         )
         assign("selected.var", NULL, .GlobalEnv)
         show(selector = "#navbar li a[data-value=Bootstrap]")
+        show(selector = "#navbar li a[data-value='Bootstrap Summary']")
     }
 
     load_responseShiny = function() {
@@ -969,7 +971,7 @@ server <- function(input, output, session) {
             toggle(condition = (input$navbar == "Bootstrap"), id = i)
         toggle(
             condition = (
-                !is.null(analysis) && !input$navbar %in% c("Connection", "AVE", "Permutation", "Cross-validation")
+                !is.null(analysis) && !input$navbar %in% c("Connection", "AVE", "Cross-validation", "'Bootstrap Summary'", "Permutation", "'Permutation Summary'")
             ),
             selector = "#tabset li a[data-value=Graphic]"
         )
@@ -987,7 +989,7 @@ server <- function(input, output, session) {
     observe({
         # Initial events
         hide(selector = "#tabset li a[data-value=RGCCA]")
-        for (i in c("Connection", "AVE", "Samples", "Corcircle", "Fingerprint", "Bootstrap", "Permutation", "Cross-validation"))
+        for (i in c("Connection", "AVE", "Samples", "Corcircle", "Fingerprint", "Bootstrap", "'Bootstrap Summary'", "Permutation", "'Permutation Summary'", "Cross-validation"))
             hide(selector = paste0("#navbar li a[data-value=", i, "]"))
         for (i in c("run_boot", "nboot", "header", "init", "navbar", "connection_save", "run_crossval_single"))
             hide(id = i)
@@ -1112,7 +1114,7 @@ server <- function(input, output, session) {
         assign("selected.var", NULL, .GlobalEnv)
         for (i in c("run_boot", "nboot"))
             hide(id = i)
-        for (i in c("Connection", "AVE", "Samples", "Corcircle", "Fingerprint", "Bootstrap", "Permutation", "Cross-validation"))
+        for (i in c("Connection", "AVE", "Samples", "Corcircle", "Fingerprint", "Bootstrap", "'Bootstrap Summary'", "Permutation", "'Permutation Summary'", "Cross-validation"))
             hide(selector = paste0("#navbar li a[data-value=", i, "]"))
         hide(id = "run_crossval_sing")
         assign("crossval", NULL, .GlobalEnv)
@@ -1428,12 +1430,6 @@ server <- function(input, output, session) {
     
             if (!is.null(analysis) & !is.null(boot)) {
     
-                assign(
-                    "selected.var", 
-                    get_bootstrap(boot, compx, id_block),
-                    .GlobalEnv
-                )
-    
                 observeEvent(input$bootstrap_save, {
                     save_plot("bootstrap.pdf", plotBoot())
                     msgSave()
@@ -1445,6 +1441,31 @@ server <- function(input, output, session) {
         })
 
     })
+
+    output$bootstrapTable <- renderDataTable({
+        tryCatch({
+            getDynamicVariables()
+            refresh <- c(input$names_block_x, id_block, input$blocks_names_custom_x)
+            
+            if (!is.null(analysis) & !is.null(boot)) {
+                
+                assign(
+                    "selected.var", 
+                    get_bootstrap(boot, compx, id_block),
+                    .GlobalEnv
+                )
+                
+                observeEvent(input$bootstrap_save, {
+                    save_plot("bootstrap.pdf", plotBoot())
+                    msgSave()
+                })
+                round(get_bootstrap(boot, compx, id_block, display_order = F), 3)
+            }
+        }, error = function(e) {
+        })
+        
+    })
+
 
     output$permutationPlot <- renderPlotly({
 
@@ -1458,6 +1479,20 @@ server <- function(input, output, session) {
             modify_hovertext(plot_dynamic(plot_permut_2D(perm), type = "perm"), type = "perm", hovertext = F, perm = perm)
         }
 
+    })
+    
+    output$permutationTable <- renderDataTable({
+        
+        getDynamicVariables()
+        
+        if (!is.null(perm)) {
+            # observeEvent(input$permutation_t_save, {
+            #     save("perm.pdf", plot_permut_2D(perm))
+            #     msgSave()
+            # })
+            summary.perm(perm)
+        }
+        
     })
 
     output$cvPlot <- renderPlotly({
