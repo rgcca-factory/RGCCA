@@ -46,7 +46,7 @@ rgcca_permutation <- function(
     blocks,
     perm.par = "tau",
     perm.value = NULL,
-    perm.length=5,
+    perm.length=10,
     nperm = 20,
     n_cores = parallel::detectCores() - 1,
     quiet = TRUE,
