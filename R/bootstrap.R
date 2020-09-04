@@ -68,7 +68,6 @@ bootstrap <- function(
     #     }
     # }
  
-    
     W <- parallelize(
         varlist,
         seq(n_boot), 
@@ -84,7 +83,6 @@ bootstrap <- function(
 
        for(k in seq(n_boot))
        {
-          
                for(i in 1:ndefl_max)
               {
                    for(j in 1:length(rgcca_res$call$blocks))
@@ -93,10 +91,8 @@ bootstrap <- function(
                    
                        if(!is.null(names(W[[k]])))
                        {
-                         
                            if(i<=dim(W[[k]][[block]])[2])
                           {
-                              
                                list_res[[i]][[block]][,k]=W[[k]][[block]][,i]
                 
                             } 

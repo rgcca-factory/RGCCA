@@ -35,12 +35,12 @@ plot_histogram <- function(
         width <- 1
 
    if (NROW(df) < 3)
-       mar <- 100
+       mar <- 50
    else if (NROW(df) <= 15)
-       mar <- 3 / NROW(df) * 100 - 10
+       mar <- round(3 / NROW(df) * 50)
    else
         mar <- 0
-    
+    print(mar)
     if (NROW(df) > 50)
         cex_axis <- 7
     if (NROW(df) > 75)

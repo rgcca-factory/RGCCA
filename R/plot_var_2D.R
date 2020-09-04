@@ -112,13 +112,13 @@ plot_var_2D <- function(
         aes(x, y),
         data = plot_circle(),
         col = "grey",
-        size = 1
+        size =  0.5
     ) +
     geom_path(
         aes(x, y),
         data = plot_circle() / 2,
         col = "grey",
-        size = 1,
+        size = 0.5,
         lty = 2
     )
     

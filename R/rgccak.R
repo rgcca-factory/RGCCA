@@ -37,8 +37,7 @@
 #' @importFrom graphics plot
 #' @importFrom Deriv Deriv
 rgccak=function (A, C, tau = "optimal", scheme = "centroid",verbose = FALSE, init = "svd", bias = TRUE, tol = 1e-08,na.rm=TRUE,estimateNA="no",scale=TRUE,scale_block=TRUE,initImpute="rand")
-{
-    
+{  
     call=list(A=A, C=C, scheme = scheme,verbose = verbose, init = init, bias = bias, tol = tol,na.rm=na.rm,estimateNA=estimateNA,scale=scale,scale_block=scale_block,initImpute=initImpute)
         
      if(mode(scheme) != "function") 
@@ -140,7 +139,6 @@ rgccak=function (A, C, tau = "optimal", scheme = "centroid",verbose = FALSE, ini
        a <- alpha <- M <- Minv <- K <- list() # initialisation variables internes
     which.primal <- which((n >= pjs) == 1) # on raisonne differement suivant la taille du bloc
     which.dual <- which((n < pjs) == 1)
-    
 
     if (init == "svd") { #initialisation intelligente dans les differents cas (a creuser)
         for (j in which.primal) {

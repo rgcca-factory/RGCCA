@@ -70,7 +70,7 @@ plot_permut_2D <- function(
 
     p <- ggplot(data = df, mapping = aes(x = df[, 1], y = df[, 2], ymin = 0)) + 
         theme_classic() +
-        geom_line(size = 1) +
+        geom_line(size = 0.5) +
         labs(
             title = title, 
             x = "Combinations",
@@ -81,8 +81,8 @@ plot_permut_2D <- function(
             axis.text = element_text(size = 10, face = "bold"),
             axis.title.y = axis(margin(0, 20, 0, 0)),
             axis.title.x = axis(margin(20, 0, 0, 0)),
-            axis.line = element_line(size = 1),
-            axis.ticks  = element_line(size = 1),
+            axis.line = element_line(size = 0.5),
+            axis.ticks  = element_line(size = 0.5),
             axis.ticks.length = unit(2, "mm"),
             legend.position = "none"
         ) + 
@@ -96,14 +96,14 @@ plot_permut_2D <- function(
             size = 5
         ) +
         geom_vline(
-            size = 1,
+            size =  0.5,
             color = "red",
             xintercept = best
         )
 
     if (type == "zstat")
         p <- p + geom_hline(
-            size = 1,
+            size = 0.5,
             color = "grey",
             linetype = "dashed",
             yintercept = c(1.96, 2.58, 3.29)

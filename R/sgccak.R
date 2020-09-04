@@ -36,7 +36,7 @@ sgccak <-  function(A, C, sparsity = rep(1, length(A)), scheme = "centroid", sca
   #  Choose J arbitrary vectors
   if (init=="svd") {
     #SVD Initialisation of a_j or \alpha_j
-    a<- lapply(A, function(x) return(initsvd(x,dual=FALSE))) 
+    a<- lapply(A, function(x) return(initsvd(x))) 
     a<- lapply(a,function(x) return(as.vector(x)))
    } else if (init=="random") {
     a <- lapply(pjs,rnorm)

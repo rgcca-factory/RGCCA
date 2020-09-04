@@ -128,7 +128,6 @@ rgcca <- function(
     knn.output = "weightedMean",
     knn.klim = NULL,
     knn.scale_block = TRUE) {
-    
 
     if(class(blocks)=="permutation")
     {
@@ -225,7 +224,6 @@ rgcca <- function(
     # Check blocks size, adds NA lines if some subjects are missing...
 
     blocks=check_blocks(blocks,add_NAlines=TRUE,n=1,init=TRUE)
-
     if (!is.null(response))
         check_blockx("response", response, blocks)
     check_integer("tol", tol, float = TRUE, min = 0)

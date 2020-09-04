@@ -7,9 +7,6 @@ X_polit = as.matrix(Russett[ , c("demostab", "dictator")]);
 A = list(X_agric);
 #C = matrix(c(0, 0, 1, 0, 0, 1, 1, 1, 0), 3, 3);
 
-
-
-
 # scaled PCA
 resPCA= rgcca (
      blocks=A,
@@ -216,8 +213,8 @@ pcasb_ind=abs(cor(pcaSB$x[,1],scaledPCASB$Y[[1]][,1]))==1
  data(Russett)
  X_agric =as.matrix(Russett[,c("gini","farm","rent")]);
  X_ind = as.matrix(Russett[,c("gnpr","labo")]);
- X_polit = as.matrix(Russett[ , c("demostab")]);
- A = list(X_agric,X_ind,X_agric);
+ X_polit = as.matrix(Russett[ , 6:11]);
+ A = list(X_agric,X_ind,X_polit);
  names(A)=c("Agri","Ind","Polit")
  
  C0=matrix(0,3,3);C0[2:3,1]=1;C0[1,2:3]=1
@@ -227,4 +224,28 @@ pcasb_ind=abs(cor(pcaSB$x[,1],scaledPCASB$Y[[1]][,1]))==1
  resRgccaNipals=rgcca(blocks=A,connection=C0,type="rgcca",method="nipals",ncomp=2)
  head(resRgccaNipals3$Y[[3]])
  head(resRgccaNipals$Y[[1]])
+ 
+ 
+ mat=matrix(rnorm(500),nrow=10,ncol=50);rownames(mat)=paste0("S",1:10);colnames(mat)=paste0("R",1:50)
+ A=list(mat)
+ resPCA= rgcca (
+     blocks=A,
+     connection = 1 - diag(length(A)),
+     response = NULL,
+     superblock = FALSE,
+     tau = rep(1, length(A)),
+     ncomp = rep(2, length(A)),
+     type = "pca",
+     verbose = FALSE,
+     scheme = "factorial",
+     scale = TRUE,
+     init = "svd",
+     bias = TRUE, 
+     tol = 1e-08)
+ 
+ names(resPCA)
+ (resPCA$astar)
+ resPCAprcomp=prcomp(A[[1]],scale=TRUE)
+ pca_ind=abs(cor(resPCAprcomp$x[,1],resPCA$Y[[1]][,1]))==1
+ 
  

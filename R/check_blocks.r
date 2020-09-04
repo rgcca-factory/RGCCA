@@ -88,9 +88,10 @@ check_blocks <- function(blocks, init = FALSE, n = 2, add_NAlines=FALSE, allow_u
             blocks=lapply(blocks,function(x){row.names(x)=matrixOfRownames[,1];return(x)})
         }
     }
-
+    
     inters_rows <- Reduce(intersect, lapply(blocks, row.names))
- 
+ #   if(length(inters_rows)<min(sapply(blocks,function(x){length(rownames(x))})))
+    
     if (length(inters_rows) == 0)
         stop_rgcca(paste(msg, "elements of the list should have at least a common rowname.\n "))
 

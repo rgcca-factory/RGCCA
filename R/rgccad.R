@@ -126,7 +126,7 @@
 
 rgccad=function (A, C = 1 - diag(length(A)), tau = rep(1, length(A)),  ncomp = rep(1, length(A)), scheme = "centroid", scale = TRUE,   init = "svd", bias = TRUE, tol = 1e-08, verbose = TRUE,scale_block=TRUE,na.rm=TRUE,estimateNA="no",prescaling=FALSE,quiet=FALSE)
 {
-  
+
   shave.matlist <- function(mat_list, nb_cols) mapply(function(m,nbcomp) m[, 1:nbcomp, drop = FALSE], mat_list, nb_cols, SIMPLIFY = FALSE)
   shave.veclist <- function(vec_list, nb_elts) mapply(function(m, nbcomp) m[1:nbcomp], vec_list, nb_elts, SIMPLIFY = FALSE)
   A0=A
@@ -161,6 +161,7 @@ rgccad=function (A, C = 1 - diag(length(A)), tau = rep(1, length(A)),  ncomp = r
       cat("Shrinkage intensity paramaters are chosen manually \n")
     }
   }
+
     if(!prescaling)
     {
         A<-scaling(

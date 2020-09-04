@@ -96,5 +96,19 @@ test_that("test_rgcca_tauOptya3",{
     prodYA3=resultRgccak_TauOpt$Y[,3]%*%t(resultRgccak_TauOpt$a[[3]])
     expect_true(all.equal(prodYA3,prodYA3_test))
 })
-
+# 
+# set.seed(seed=2)
+# A1=matrix(rnorm(500),10,50);rownames(A1)=paste0("S",1:10)
+# set.seed(seed=3)
+# A2=matrix(rnorm(300),10,30);rownames(A2)=paste0("S",1:10)
+# set.seed(seed=4)
+# A3=matrix(rnorm(20),10,2);rownames(A3)=paste0("S",1:10)
+# C=matrix(1,3,3)-diag(1,3)
+# blocks=list(A1=A1,A2=A2,A3=A3)
+# resrgcca_k=RGCCA:::rgccak(A=blocks,C=C,scheme="factorial",tau=rep(1,3))
+# #save(resrgcca,file="resRgcca_k_dual")
+# load("../tests/results/resRgcca_k_dual")
+# resrgcca_k$Y==resrgcca$Y
+# 
+# 
 

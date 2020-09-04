@@ -129,12 +129,12 @@ plot2D <- function(
             xintercept = 0,
             col = "grey",
             linetype = "dashed",
-            size = 1
+            size = 0.5
         ) + geom_hline(
             yintercept = 0,
             col = "grey",
             linetype = "dashed",
-            size = 1
+            size = 0.5
         ) + labs(
                 title = title,
                 x = xlab,

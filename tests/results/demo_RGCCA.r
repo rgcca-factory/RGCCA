@@ -8,7 +8,7 @@ library(RGCCA)
 #-----------------------------
 data(Russett)
 blocks = list(agriculture = Russett[, seq(3)], industry = Russett[, 4:5],
-              politic = Russett[, 6:11] )
+              politic = Russett[, 6:8] )
 
 resRgcca=rgcca(blocks)
 resRgcca$call$raw[[1]][1,]
@@ -50,7 +50,7 @@ plot(resRgcca,type="ind",resp=response,block=1)
 plot(resRgcca,type="ind",resp=response,block=1:2,comp=c(1,1))
 plot(resRgcca,type="var",block=2)
 # Step three -boostrapping the results
-resBootstrap=bootstrap(resRgcca,n_boot = 100)
+resBootstrap=bootstrap(resRgcca,n_boot = 1000)
 plot(resBootstrap,block=1)
 #plot(resBootstrap,type="2D")
 print(resBootstrap)
@@ -60,6 +60,14 @@ print(resBootstrap)
 # Step one - tuning the parameters
 res_cv=rgcca_cv(blocks,response=3,par="ncomp")
 res_cv=rgcca_cv(blocks,response=3,par="tau")
+
+block_y=matrix(apply(Russett[,9:11],1,which.max),ncol=1)
+rownames(block_y)=rownames(Russett)
+factor(block_y)
+blocks2=list(agri=Russett[,1:3],ind=Russett[,4:5],resp=block_y)
+rgcca_cv(blocks2,response=3,type_cv="classification",fit="lda")
+rgcca_cv(blocks2,response=3)
+rgcca_cv(blocks2,response=3,par="ncomp")
 
 res=rgcca(res_cv)
 print(res_cv,bars="stderr")
@@ -307,13 +315,39 @@ plot(resBootstrap,i_block=2)
 #----------------
 require(gliomaData)
 data(ge_cgh_locIGR)
-
 A <- ge_cgh_locIGR$multiblocks
+A[[1]]=cbind(A[[1]],A[[1]],A[[1]]);colnames(A[[1]])=paste("V",1:ncol(A[[1]]))
 Loc <- factor(ge_cgh_locIGR$y) ; levels(Loc) <- colnames(ge_cgh_locIGR$multiblocks$y)
 C <-  matrix(c(0, 0, 1, 0, 0, 1, 1, 1, 0), 3, 3)
+C2<- matrix(rep(1,9),3,3)-diag(1,3)
 tau = c(1, 1, 0)
+B=lapply(A,function(x) rbind(x,x,x,x,x,x,x,x,x,x))
+B=lapply(B,function(x){res=as.matrix(x)
+    rownames(res)=paste0("S",1:530);return(res)
+    })
+#B2=lapply(A,scale)
+#B3=lapply(B2,function(x)return(x/sqrt(ncol(x))))
+t0=Sys.time()
+res=rgcca(A=,C=C,init="random",scheme="factorial",tol=10^-8,scale=TRUE,verbose=TRUE)
+Sys.time()-t0
+res2=rgcca(blocks=A,connection=C,init="random",scheme="factorial",tol=10^-8,scale=TRUE,verbose=TRUE)
+res$Y[[1]]==res2$Y[[1]]
+summary(res$Y[[1]]-res2$Y[[1]])
 
-
-system.time(rgcca(A,connection=C,init="svd",scheme="factorial"))
-
-Reduce(intersect, lapply(A, row.names))
+data(ge_cgh_locIGR)
+A <- ge_cgh_locIGR$multiblocks
+A[[1]]=cbind(A[[1]],A[[1]],A[[1]]);colnames(A[[1]])=paste("V",1:ncol(A[[1]]))
+Loc <- factor(ge_cgh_locIGR$y) ; levels(Loc) <- colnames(ge_cgh_locIGR$multiblocks$y)
+C <-  matrix(c(0, 0, 1, 0, 0, 1, 1, 1, 0), 3, 3)
+C2<- matrix(rep(1,9),3,3)-diag(1,3)
+tau = c(1, 1, 0)
+B=lapply(A,function(x) rbind(x,x,x,x,x,x,x,x,x,x))
+B=lapply(B,function(x){res=as.matrix(x)
+rownames(res)=paste0("S",1:530);return(res)
+})
+t0=Sys.time()
+res=rgcca(A=B,C=C,init="random",scheme="factorial",tol=10^-8,scale=TRUE,verbose=TRUE,tau=rep(1,3))
+Sys.time()-t0
+remove.packages("RGCCA")
+res2=rgcca(blocks=B,connection=C,init="random",scheme="factorial",tol=10^-8,scale=TRUE,verbose=TRUE)
+summary(res$Y[[1]]+res2$Y[[1]])
