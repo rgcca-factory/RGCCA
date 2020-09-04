@@ -69,7 +69,7 @@ plot_bootstrap_1D(df_b = select_var)
 #plot(resBootstrap)
 test_that("test_bootstrap_na_values", {
     expect_equal(
-        select_var["demostab", 1],
+        select_var["demostab", "mean"],
         mean(c(resBootstrap$bootstrap[[1]][["politic"]]["demostab", ]))
     )
     expect_true(select_var["demostab", "estimate"] == resRGCCA$a[[3]]["demostab", 1])

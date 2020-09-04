@@ -16,7 +16,8 @@ print.bootstrap=function(x,...)
                                                     comp=comp,
                                                     bars="ci",
                                                     display_order =FALSE)
-                                  ;return(b)}
+                                    othercols=colnames(b)[-which(colnames(b)=="estimate")]
+                                  ;return(b[,c("estimate",othercols)])}
             )))
     }
     
