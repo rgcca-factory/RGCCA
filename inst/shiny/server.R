@@ -1429,13 +1429,19 @@ server <- function(input, output, session) {
             refresh <- c(input$names_block_x, id_block, input$blocks_names_custom_x)
     
             if (!is.null(analysis) & !is.null(boot)) {
-    
+
+                assign(
+                    "selected.var", 
+                    get_bootstrap(boot, compx, id_block),
+                    .GlobalEnv
+                )
+
                 observeEvent(input$bootstrap_save, {
                     save_plot("bootstrap.pdf", plotBoot())
                     msgSave()
                 })
+
                modify_hovertext(plot_dynamic(plotBoot(), type = "boot1D"), type = "boot1D", hovertext = FALSE)
-               # modify_hovertext(plot_dynamic(plotBoot()), type = "boot"), type = "boot")
             }
         }, error = function(e) {
         })
@@ -1455,16 +1461,20 @@ server <- function(input, output, session) {
                     .GlobalEnv
                 )
                 
-                observeEvent(input$bootstrap_save, {
-                    save_plot("bootstrap.pdf", plotBoot())
-                    msgSave()
-                })
-                round(get_bootstrap(boot, compx, id_block, display_order = F), 3)
+                # observeEvent(input$bootstrap_save, {
+                #     save_plot("bootstrap.pdf", plotBoot())
+                #     msgSave()
+                # })
+                df <- round(get_bootstrap(boot, compx, id_block, display_order = F), 3)
+                df <- cbind(row.names(df), df)
+                colnames(df) <- c("Variables", "Boot. mean", "RGCCA weights", "S.D.", "Upper limit", "Lower limit", "P-value", "B.H.")
+                df
             }
         }, error = function(e) {
+            print("e")
         })
         
-    })
+    }, options = list(pageLength = 10))
 
 
     output$permutationPlot <- renderPlotly({
@@ -1493,7 +1503,7 @@ server <- function(input, output, session) {
             summary.perm(perm)
         }
         
-    })
+    }, options = list(pageLength = 10))
 
     output$cvPlot <- renderPlotly({
 

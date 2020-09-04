@@ -25,7 +25,8 @@ plot_dynamic <- function(
     # formats for
     # x- and y- axis set the style to show onMouseOver text
     if (type == "regular")
-        p <- plotly::plotly_build(
+        p <- suppressWarnings(
+            plotly::plotly_build(
             plotly::ggplotly(f, dynamicTicks = dynamicTicks) %>%
                 plotly::layout(
                     xaxis = ax,
@@ -33,7 +34,7 @@ plot_dynamic <- function(
                     annotations = list(showarrow = FALSE, text = "")
                 ) %>% 
                 plotly::style(hoverinfo = text)
-            )
+            ))
     else 
         p <- ggplotly(f)
 
