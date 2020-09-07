@@ -254,8 +254,21 @@ rgcca <- function(
         response = response
     )
     raw=blocks
- 
-
+   if(!is.null(response))
+   {
+          if(mode(blocks[[response]])=="character")
+       {
+              print("The qualitative response variable is transformed as disjonctive table")
+           G=as.factor(blocks[[response]])
+           if(dim(blocks[[response]])[2]>2){stop("Not available for more than one character responses")}
+           y      <- data.frame(model.matrix( ~  G-1, data = G))
+           rownames(y) <- rownames(blocks[[response]])
+           blocks[[response]]=y
+       }
+       
+   
+   }
+  
     opt$blocks <- scaling(blocks, scale,scale_block = scale_block)
 
     opt$superblock <- check_superblock(response, opt$superblock, !quiet)
@@ -294,7 +307,7 @@ rgcca <- function(
 
     if (warn_on && !quiet)
         message("Analysis in progress ...")
-    
+
     func <- quote(
         gcca(
             blocks = opt$blocks,

@@ -89,8 +89,16 @@ check_blocks <- function(blocks, init = FALSE, n = 2, add_NAlines=FALSE, allow_u
         }
     }
     
+    lapply(blocks,function(x){
+        resdup=duplicated(rownames(x));
+        if(sum(resdup)!=0)
+            {
+                warning(paste0("Rownames are duplicated and were removed : ", rownames(x)[resdup],"\n"))
+            }
+        }
+        )
     inters_rows <- Reduce(intersect, lapply(blocks, row.names))
- #   if(length(inters_rows)<min(sapply(blocks,function(x){length(rownames(x))})))
+ #   if(length(inters_rows)<min(sapply(blocks,function(x){nrow(x)})))
     
     if (length(inters_rows) == 0)
         stop_rgcca(paste(msg, "elements of the list should have at least a common rowname.\n "))
@@ -104,21 +112,22 @@ check_blocks <- function(blocks, init = FALSE, n = 2, add_NAlines=FALSE, allow_u
         if (length(blocks) > 1 && !equal_rows)
             blocks <- common_rows(blocks)
     }
-   
+
     if (init) {
    
         blocks <- remove_null_sd(blocks)
         for (i in seq(length(blocks)))
             attributes(blocks[[i]])$nrow <- nrow(blocks[[i]])
     }
-    
+   
+
   
  #   if (any(sapply(blocks, is.character2)))
  #       message(paste(msg, "an element contains non-numeric data.They will be replaced by NAs\n "))
 
-    for (i in seq(length(blocks)))
-        if (is.character(blocks[[i]]))
-            blocks[[i]] <- to_numeric(blocks[[i]])
+#    for (i in seq(length(blocks)))
+#        if (is.character(blocks[[i]]))
+#            blocks[[i]] <- to_numeric(blocks[[i]])
    # Add lines if subjects are missing
 
     if(add_NAlines)

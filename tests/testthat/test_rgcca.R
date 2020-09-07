@@ -248,4 +248,27 @@ pcasb_ind=abs(cor(pcaSB$x[,1],scaledPCASB$Y[[1]][,1]))==1
  resPCAprcomp=prcomp(A[[1]],scale=TRUE)
  pca_ind=abs(cor(resPCAprcomp$x[,1],resPCA$Y[[1]][,1]))==1
  
+ # With a response and a qualitative variable to predict
+ data(Russett)
+ X_agric =as.matrix(Russett[,c("gini","farm","rent")]);
+ X_ind = as.matrix(Russett[,c("gnpr","labo")]);
+ X_polit = as.matrix(Russett[ , c("dictator")]);
+ X_polit[X_polit==1]="dictator"
+ X_polit[X_polit==0]="Non-dic"
+ A_quali = list(agric=X_agric,X_ind=X_ind,X_polit=X_polit);
+ res_rgcca_quali= rgcca (
+     blocks=A_quali,
+     connection = 1 - diag(length(A)),
+     response = 3,
+     superblock = FALSE,
+     tau = rep(1, length(A)),
+     ncomp = rep(2, length(A)),
+     type = "rgcca",
+     verbose = FALSE,
+     scheme = "factorial",
+     scale = TRUE,
+     init = "svd",
+     bias = TRUE, 
+     tol = 1e-08)
+ 
  

@@ -120,14 +120,27 @@ plot_permut_2D <- function(
      
         if (bars == "points")
             p <- p + geom_point(data = dft,aes(x = dft[,1], y = dft[,2]), colour = "green", size = 0.8)
-        if (bars == "sd") {
+         if (bars == "sd") {
+             tab=aggregate(dft,by=list(dft[,1]),sd)
+             tab2=aggregate(dft,by=list(dft[,1]),mean)
+             dat=data.frame(x=tab[,1],y=tab2[,"y"]-tab[,"y"],xend=tab[,1],yend=tab2[,"y"]+tab[,"y"])
+                p <- p+ geom_point(data=tab2,aes(x=tab2[,1],y=tab2[,3]))
+               p <- p + geom_segment(data=dat,aes(x=x,y=y,xend=xend,yend=yend),colour="green",size=0.5)
+         }
+        if (bars == "sderr") {
+            tab=aggregate(dft,by=list(dft[,1]),function(x){return(sd(x)/sqrt(n))})
+            tab2=aggregate(dft,by=list(dft[,1]),mean)
+            dat=data.frame(x=tab[,1],y=tab2[,"y"]-tab[,"y"],xend=tab[,1],yend=tab2[,"y"]+tab[,"y"])
+            p <- p+ geom_point(data=tab2,aes(x=tab2[,1],y=tab2[,3]))
+            p <- p + geom_segment(data=dat,aes(x=x,y=y,xend=xend,yend=yend),colour="green",size=0.5)
         }
-        if (bars == "stderr") {
-        }
-        if (bars == "ci") {
-        }
-        if (bars == "quantile") {
-        }
+        # }
+        # if (bars == "stderr") {
+        # }
+        # if (bars == "ci") {
+        # }
+        # if (bars == "quantile") {
+        # }
 
     }
 

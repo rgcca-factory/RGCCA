@@ -16,7 +16,7 @@
 #' plot(perm)
 #' @export
 #' @importFrom ggplot2 ggplot
-plot.permutation=function(x,type="crit",cex = 1, main= NULL, cex_main = 14 * cex,   cex_sub = 12 * cex,                          cex_point = 3 * cex, cex_lab = 19 * cex,...)
+plot.permutation=function(x,type="crit",cex = 1, main= NULL, cex_main = 14 * cex,   cex_sub = 12 * cex, bars="points" ,  cex_point = 3 * cex, cex_lab = 19 * cex,...)
 {
         p1 <- plot_permut_2D(
             x, 
@@ -25,7 +25,7 @@ plot.permutation=function(x,type="crit",cex = 1, main= NULL, cex_main = 14 * cex
             cex_main=cex_main,
             cex_sub=cex_sub,
             title = main,
-            bars="points",
+            bars=bars,
             ...
         )
         plot(p1)
