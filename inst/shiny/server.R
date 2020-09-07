@@ -278,6 +278,76 @@ server <- function(input, output, session) {
         return(ui)
     })
 
+    
+    output$nperm_custom <- renderUI({
+        ui <- sliderInput(
+            inputId = "nperm",
+            label = "Number of permutations",
+            min = 5,
+            max = 1000,
+            value = 10,
+            step = 5
+        )
+        if (BSPLUS)
+            ui <- shinyInput_label_embed(
+                ui,
+                icon("question") %>%
+                    bs_embed_tooltip(title = "To tune the sparsity coefficient (if the model is sparse) or tau
+                                     (otherwise), we observe the deviation between the model and a set of models
+                                     where the lines of each block are permuted. The model with the best 
+                                     combination of parameters is the one with the highest deviation.")
+            )
+        
+        return(ui)
+    })
+
+    output$nboot_custom <- renderUI({
+        ui <- sliderInput(
+            inputId = "nboot",
+            label = "Number of boostraps",
+            min = 5,
+            max = 1000,
+            value = 10,
+            step = 5
+        )
+        if (BSPLUS)
+            ui <- shinyInput_label_embed(
+                ui,
+                icon("question") %>%
+                    bs_embed_tooltip(title = "By taking several random samples from the dataset (bootstrap),
+                                     the importance of the variables may vary. The variables that are most 
+                                     often selected are those that are retained.")
+            )
+        
+        return(ui)
+    })
+
+    output$val_custom <- renderUI({
+        ui <- radioButtons(
+            "val",
+            label = "Type of validation",
+            choices = c(#`Train-test` = "test",
+                `K-fold` = "kfold",
+                `Leave-one-out` = "loo"),
+            selected = "loo"
+        )
+        if (BSPLUS)
+            ui <- shinyInput_label_embed(
+                ui,
+                icon("question") %>%
+                    bs_embed_tooltip(title = "To tune the sparsity coefficient (if the model is sparse) or
+                                     tau (otherwise), in supervised mode, we observe the performance (RMSE)
+                                     of a model from which individuals were randomly drawn. These individuals
+                                     can be divided into k folds where the model will be tested on each fold
+                                     and trained on the others. For small datasets (<30 samples), it is 
+                                     recommended to use as many folds as there are individuals (leave-one-out; 
+                                     loo). The best combination of parameters is the one where, on average, 
+                                     the samples perform best.")
+            )
+        
+        return(ui)
+    })
+    
     output$tau_opt_custom <- renderUI({
         ui <- checkboxInput(inputId = "tau_opt",
                             label = "Use an optimal tau",
@@ -997,11 +1067,11 @@ server <- function(input, output, session) {
         hide(selector = "#tabset li a[data-value=RGCCA]")
         for (i in c("Connection", "AVE", "Samples", "Corcircle", "Fingerprint", "Bootstrap", "'Bootstrap Summary'", "Permutation", "'Permutation Summary'", "Cross-validation"))
             hide(selector = paste0("#navbar li a[data-value=", i, "]"))
-        for (i in c("run_boot", "nboot", "header", "init", "navbar", "connection_save", "run_crossval_single"))
+        for (i in c("run_boot", "nboot_custom", "header", "init", "navbar", "connection_save", "run_crossval_single"))
             hide(id = i)
-        for (i in c("nperm", "run_perm"))
+        for (i in c("nperm_custom", "run_perm"))
             toggle(id = i, condition = !input$supervised)
-        for (i in c("run_crossval", "val"))
+        for (i in c("run_crossval", "val_custom"))
             toggle(id = i, condition = input$supervised)
         hide(id = "kfold")
         # toggle(id = "kfold", condition = input$supervised && input$val == "kfold")
@@ -1119,7 +1189,7 @@ server <- function(input, output, session) {
         assign("analysis", NULL, .GlobalEnv)
         assign("boot", NULL, .GlobalEnv)
         assign("selected.var", NULL, .GlobalEnv)
-        for (i in c("run_boot", "nboot"))
+        for (i in c("run_boot", "nboot_custom"))
             hide(id = i)
         for (i in c("Connection", "AVE", "Samples", "Corcircle", "Fingerprint", "Bootstrap", "'Bootstrap Summary'", "Permutation", "'Permutation Summary'", "Cross-validation"))
             hide(selector = paste0("#navbar li a[data-value=", i, "]"))
@@ -1133,7 +1203,7 @@ server <- function(input, output, session) {
             show(selector = "#tabset li a[data-value=RGCCA]")
             for (i in c("Connection", "AVE", "Samples", "Corcircle", "Fingerprint"))
                 show(selector = paste0("#navbar li a[data-value=", i, "]"))
-            for (i in c("navbar", "nboot", "run_boot"))
+            for (i in c("navbar", "nboot_custom", "run_boot"))
                 show(id = i)
             toggle(id = "run_crossval_single", condition = !is.null(rgcca_out$call$response))
             updateTabsetPanel(session, "navbar", selected = "Connection")

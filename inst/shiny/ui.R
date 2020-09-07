@@ -120,14 +120,7 @@ ui <- fluidPage(
 
             tabPanel(
                 "RGCCA",
-                radioButtons(
-                    "val",
-                    label = "Type of validation",
-                    choices = c(#`Train-test` = "test",
-                                `K-fold` = "kfold",
-                                `Leave-one-out` = "loo"),
-                    selected = "loo"
-                ),
+                uiOutput("val_custom"),
                 sliderInput(
                     inputId = "kfold",
                     label = "Number of folds",
@@ -139,14 +132,7 @@ ui <- fluidPage(
                 actionButton(
                     inputId = "run_crossval",
                     label = "Run cross-validation"),
-                sliderInput(
-                    inputId = "nperm",
-                    label = "Number of permutations",
-                    min = 5,
-                    max = 1000,
-                    value = 10,
-                    step = 5
-                ),
+                uiOutput("nperm_custom"),
                 actionButton(inputId = "run_perm",
                     label = "Run permutation"),
                 uiOutput("analysis_type_custom"),
@@ -186,14 +172,7 @@ ui <- fluidPage(
                 actionButton(
                     inputId = "run_analysis",
                     label = "Run analysis"),
-                sliderInput(
-                    inputId = "nboot",
-                    label = "Number of boostraps",
-                    min = 5,
-                    max = 1000,
-                    value = 10,
-                    step = 5
-                ),
+                uiOutput("nboot_custom"),
                 actionButton(inputId = "run_boot",
                     label = "Run bootstrap"),
                 actionButton(
