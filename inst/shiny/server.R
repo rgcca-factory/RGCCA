@@ -717,6 +717,12 @@ server <- function(input, output, session) {
             response <- input$names_block_response
         else
             response <- NULL
+        
+        # scheme_power <- input$power
+        # if (input$scheme == "factorial")
+        #     scheme <- function (x) x^as.integer(scheme_power)
+        # else
+            scheme <- input$scheme
 
         assign("rgcca_out",
                showWarn({
@@ -728,7 +734,7 @@ server <- function(input, output, session) {
                             superblock = (!is.null(input$supervised) &&
                                 !is.null(input$superblock) && input$superblock),
                             ncomp = getNcomp(),
-                            scheme = input$scheme,
+                            scheme = scheme,
                             scale = FALSE,
                             scale_block = FALSE,
                             init = input$init,
@@ -997,7 +1003,8 @@ server <- function(input, output, session) {
             toggle(id = i, condition = !input$supervised)
         for (i in c("run_crossval", "val"))
             toggle(id = i, condition = input$supervised)
-        toggle(id = "kfold", condition = input$supervised && input$val == "kfold")
+        hide(id = "kfold")
+        # toggle(id = "kfold", condition = input$supervised && input$val == "kfold")
     })
 
 

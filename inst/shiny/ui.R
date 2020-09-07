@@ -175,6 +175,14 @@ ui <- fluidPage(
                 uiOutput("tau_opt_custom"),
                 uiOutput("tau_custom"),
                 uiOutput("scheme_custom"),
+                # sliderInput(
+                #     inputId = "power",
+                #     label = "Power of the factorial",
+                #     min = 2,
+                #     max = 6,
+                #     value = 2,
+                #     step = 1
+                # ),
                 actionButton(
                     inputId = "run_analysis",
                     label = "Run analysis"),
