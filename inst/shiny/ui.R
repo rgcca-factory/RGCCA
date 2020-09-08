@@ -122,6 +122,14 @@ ui <- fluidPage(
                 "RGCCA",
                 uiOutput("val_custom"),
                 sliderInput(
+                    inputId = "ncv",
+                    label = "Number of cross-validation",
+                    min = 1,
+                    max = 100,
+                    value = 1,
+                    step = 1
+                ),
+                sliderInput(
                     inputId = "kfold",
                     label = "Number of folds",
                     min = 2,

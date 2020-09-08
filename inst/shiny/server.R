@@ -843,7 +843,7 @@ server <- function(input, output, session) {
                     response = response,
                     validation = input$val,
                     k = input$kfold,
-                    n_cv = 10,
+                    n_cv = input$ncv,
                     n_cores = parallel::detectCores() - 1,
                     superblock = (!is.null(input$supervised) &&
                                     !is.null(input$superblock) && input$superblock),
@@ -1074,6 +1074,7 @@ server <- function(input, output, session) {
         for (i in c("run_crossval", "val_custom"))
             toggle(id = i, condition = input$supervised)
         hide(id = "kfold")
+        toggle(id = "ncv", condition = input$supervised && input$val == "ncv")
         # toggle(id = "kfold", condition = input$supervised && input$val == "kfold")
     })
 
