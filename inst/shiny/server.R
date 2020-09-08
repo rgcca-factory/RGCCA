@@ -1418,7 +1418,7 @@ server <- function(input, output, session) {
             if (is(p, "gg")) {
             p <- showWarn(
                 modify_hovertext(
-                    plot_dynamic(p, NULL, "text", TRUE),
+                    plot_dynamic(p, NULL, "text", TRUE, format = input$format),
                     if_text
                 ), warn = FALSE)
 
@@ -1447,7 +1447,7 @@ server <- function(input, output, session) {
     
                 p <- corcircle()
                 if (is(p, "gg")) {
-                    p <- modify_hovertext(plot_dynamic(p, NULL, "text"), if_text)
+                    p <- modify_hovertext(plot_dynamic(p, NULL, "text", format = input$format), if_text)
                     n <- length(p$x$data)
                     (style(
                         p,
@@ -1470,7 +1470,7 @@ server <- function(input, output, session) {
                 save_plot("fingerprint.pdf", fingerprint(input$indexes))
                 msgSave()
             })
-            modify_hovertext(plot_dynamic(fingerprint(input$indexes), type = "var1D"), hovertext = F, type = "var1D")
+            modify_hovertext(plot_dynamic(fingerprint(input$indexes), type = "var1D", format = input$format), hovertext = F, type = "var1D")
         }
 
     })
@@ -1519,7 +1519,7 @@ server <- function(input, output, session) {
                     msgSave()
                 })
 
-               modify_hovertext(plot_dynamic(plotBoot(), type = "boot1D"), type = "boot1D", hovertext = FALSE)
+               modify_hovertext(plot_dynamic(plotBoot(), type = "boot1D", format = input$format), type = "boot1D", hovertext = FALSE)
             }
         }, error = function(e) {
         })
@@ -1564,7 +1564,7 @@ server <- function(input, output, session) {
                 save("perm.pdf", plot_permut_2D(perm))
                 msgSave()
             })
-            modify_hovertext(plot_dynamic(plot_permut_2D(perm), type = "perm"), type = "perm", hovertext = F, perm = perm)
+            modify_hovertext(plot_dynamic(plot_permut_2D(perm), type = "perm", format = input$format), type = "perm", hovertext = F, perm = perm)
         }
 
     })
@@ -1592,7 +1592,7 @@ server <- function(input, output, session) {
                 save("cv.pdf", plot(cv))
                 msgSave()
             })
-            modify_hovertext(plot_dynamic(plot(cv), type = "cv"), type = "cv", hovertext = F, perm = cv)
+            modify_hovertext(plot_dynamic(plot(cv), type = "cv", format = input$format), type = "cv", hovertext = F, perm = cv)
         }
 
     })

@@ -13,7 +13,8 @@ plot_dynamic <- function(
     ax = NULL,
     text = "name+x+y",
     dynamicTicks = FALSE,
-    type = "regular") {
+    type = "regular",
+    format = "png") {
 
     if (is.null(ax))
         ax <- list(linecolor = "white",
@@ -115,11 +116,15 @@ plot_dynamic <- function(
 
     p$x$layout$title$y <- 0.95
 
-    config(
-        p,
-        editable = TRUE,
-        displaylogo = FALSE,
-        edits = list(shapePosition = F)
+    config(p,
+           editable = TRUE,
+           displaylogo = FALSE,
+           edits = list(shapePosition = F),
+           toImageButtonOptions = list(
+               format = format,
+               width = 500,
+               height = 500
+           )
     )  %>% 
-        layout(hovermode = "closest")
+        plotly::layout(hovermode = "closest")
 }

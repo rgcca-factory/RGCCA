@@ -192,6 +192,16 @@ ui <- fluidPage(
 
             tabPanel(
                 "Graphic",
+                radioButtons(
+                    "format",
+                    label = "Output image format",
+                    choices = c(
+                        `jpeg` = "jpeg",
+                        `png` = "png",
+                        `svg` = "svg"
+                    ),
+                    selected = "png"
+                ),
                 checkboxInput(
                     inputId = "text",
                     label = "Display names",
