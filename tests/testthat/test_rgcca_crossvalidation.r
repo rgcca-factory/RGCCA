@@ -181,3 +181,13 @@ RussettWithNA <- Russett
  #        round(cv$scores,digits=3)==0.481
  #    })
     
+# Test avec scale=FALSE, scale_block=FALSE
+     rgcca_out_1 <- rgcca(blocks, response = 1,superblock=FALSE,ncomp=1,scale=TRUE,scale_block=TRUE)
+     rescv1=rgcca_crossvalidation(rgcca_res=rgcca_out_1,n_cores=1,validation="loo")
+     
+ 
+     blocks2=RGCCA:::scaling(blocks,scale=TRUE,scale_block=TRUE)
+     rgcca_out_2 <- rgcca(blocks2, response = 1,superblock=FALSE,ncomp=1,scale=TRUE,scale_block=TRUE)
+     rescv2=rgcca_crossvalidation(rgcca_res=rgcca_out_2,n_cores=1,validation="loo",scale_block=FALSE,scale=FALSE)
+     
+     all.equal(rescv1,rescv2)

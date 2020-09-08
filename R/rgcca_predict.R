@@ -10,7 +10,6 @@
 #' @param model A character corresponding to the model of prediction among : regression or classification
 #' @param y.train A dataframe or a matrix giving the block used as a response in the training
 #' @param y.test A dataframe or a matrix giving the block to be predicted
-#' @param scale_size_bloc A boolean giving the possibility to scale the blocks by the square root of their column number
 #' @param new_scaled A boolean scaling the blocks to predict
 #' @examples
 #' data("Russett")
@@ -54,8 +53,7 @@ rgcca_predict = function(
     y.train = NULL,
     y.test = NULL,
   #  bigA = NULL,
-    new_scaled = TRUE,
-    scale_size_bloc = TRUE
+    new_scaled = TRUE
  #   regress_on="block" #TODO
   ) {
     prediction=NULL
@@ -67,7 +65,7 @@ rgcca_predict = function(
    # if(!is.null(bigA))
    #     check_blocks(bigA)
 
-    for (i in c("new_scaled", "scale_size_bloc"))
+    for (i in c("new_scaled"))
             check_boolean(i, get(i))
 
     astar <- rgcca_res$astar
@@ -169,8 +167,8 @@ rgcca_predict = function(
 
     # TODO: if new as an only individuals
     # scale before y_train and y_test attribution ? Otherwise, the response is not scaled
-    # Scaling
-    if (!new_scaled) { 
+    # Scaling de newA (si besoin ie new_scaled=FALSE-cas usuel, et si la rgcca utilise des blocs scales)
+    if (!new_scaled  ) { 
        
         scl_fun <- function(data, center, scale) {
             # Use the scaling parameter of the training set on the tested set
@@ -187,22 +185,34 @@ rgcca_predict = function(
            #     res
 
         }
-
+        center_vector=reorderList(rgcca_res$call$blocks, t_attr = "scaled:center")
+        scaling_vector=reorderList(rgcca_res$call$blocks, t_attr = "scaled:scale")
+        # pas de scaling si scaling=FALSE, on divise par un vecteur de 1
+        new_scaling_vector=lapply(names(scaling_vector),function(i){
+            if(is.null(scaling_vector[[i]]))
+            {
+                vect_ones=rep(1,length(center_vector[[i]]))
+                names(vect_ones)=names(center_vector[[i]])
+                return(vect_ones)
+            }
+            else
+            {
+                return(scaling_vector[[i]])
+            }
+            })
         newA <- mapply(
             scl_fun,
             newA,
-            reorderList(rgcca_res$call$blocks, t_attr = "scaled:center"),
-            reorderList(rgcca_res$call$blocks, t_attr = "scaled:scale"),
+            center_vector,
+            new_scaling_vector,
             SIMPLIFY = FALSE
         )
     }
   
-
-    # Dimension Reduction
+# Dimension Reduction
     for (i in seq(length(rgcca_res$call$blocks)))
         colnames(rgcca_res$astar[[i]]) <- colnames(rgcca_res$Y[[i]])
     astar <- reorderList(rgcca_res$astar, g = TRUE)
-
     pred <- lapply(seq(length(newA)), function(x)
     {
         #M=as.matrix(newA[[x]]) %*% astar[[x]]
@@ -324,7 +334,6 @@ rgcca_predict = function(
                 }
             }
         class.fit <- NULL
-    
     }
     if (model == "classification")
     {

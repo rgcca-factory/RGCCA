@@ -9,6 +9,9 @@ blocks <- list(
 res=rgcca_cv(blocks,response=length(blocks),type="rgcca",par="tau",par_value=c(0,0.2,0.3),n_cv=1,n_cores=1)
 plot(res)
 
+res=rgcca_cv(blocks,response=length(blocks),type="rgcca",par="tau",par_value=c(0,0.2,0.3),n_cv=1,n_cores=1,scale=FALSE,scale_block=FALSE)
+
+
 res2=rgcca_cv(blocks,response=length(blocks), type="rgcca",par="tau",par_value=c(0,0.2,0.3),n_cv=5,n_cores=1)
 plot(res)
 res3=rgcca_cv(blocks,response=length(blocks), type="rgcca",par="tau",par_value=c(0,0.2,0.3),n_cv=5, one_value_per_cv = TRUE,n_cores=1)

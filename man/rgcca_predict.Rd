@@ -6,7 +6,7 @@
 \usage{
 rgcca_predict(rgcca_res, newA, model = "regression", fit = "lm",
   bloc_to_pred = NULL, y.train = NULL, y.test = NULL,
-  new_scaled = TRUE, scale_size_bloc = TRUE)
+  new_scaled = TRUE)
 }
 \arguments{
 \item{rgcca_res}{A list giving the results of a R/SGCCA}
@@ -24,8 +24,6 @@ rgcca_predict(rgcca_res, newA, model = "regression", fit = "lm",
 \item{y.test}{A dataframe or a matrix giving the block to be predicted}
 
 \item{new_scaled}{A boolean scaling the blocks to predict}
-
-\item{scale_size_bloc}{A boolean giving the possibility to scale the blocks by the square root of their column number}
 }
 \description{
 Predicts a new block from a RGCCA

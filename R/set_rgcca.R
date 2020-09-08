@@ -32,7 +32,7 @@ set_rgcca <- function(
      if (is.null(blocks)) {
       #  blocks <- rgcca_res$call$blocks
          blocks=rgcca_res$call$raw
-         
+         blocks = descale(blocks)
         if (superblock) {
             for (i in c("tau", "sparsity", "ncomp")) {
                 if (class(rgcca_res$call[[i]]) %in% c("matrix", "data.frame"))
