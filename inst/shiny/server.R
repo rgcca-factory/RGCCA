@@ -1028,6 +1028,20 @@ server <- function(input, output, session) {
             id = "blocks_names_custom_y")
     })
 
+    # observeEvent(c(input$compx, input$compy), {
+    #     for (i in c("Corcircle", "Samples"))
+    #         toggle(condition = !is.null(analysis) && !(input$compx < 2 && input$compy < 2),
+    #                selector = paste0("#navbar li a[data-value=", i, "]"))
+    # })
+
+    observeEvent(c(input$names_block_x), {
+        condition <- !is.null(analysis) && getNcomp()[id_block] > 1
+        if(condition)
+            updateTabsetPanel(session, "navbar", selected = "Samples")
+        for (i in c("Corcircle", "Fingerprint"))
+            toggle(condition = condition, 
+                   selector = paste0("#navbar li a[data-value=", i, "]"))
+    })
 
     observeEvent(c(input$navbar, input$tabset), {
         toggle(
@@ -1054,7 +1068,6 @@ server <- function(input, output, session) {
             ),
             selector = "#tabset li a[data-value=Graphic]"
         )
-        #toggle(condition = !is.null(analysis) && input$compx_custom > 1 && input$compy_custom > 1, selector = paste0("#navbar li a[data-value=Corcircle]"))
     })
 
 
@@ -1466,6 +1479,7 @@ server <- function(input, output, session) {
     })
 
     output$corcirclePlot <- renderPlotly({
+        tryCatch({
             getDynamicVariables()
     
             if (!is.null(analysis)) {
@@ -1487,21 +1501,23 @@ server <- function(input, output, session) {
                     ))
                 }
             }
-
+        }, error = function(e) {
+        })
     })
 
     output$fingerprintPlot <- renderPlotly({
-
-        getDynamicVariables()
-
-        if (!is.null(analysis)) {
-            observeEvent(input$fingerprint_save, {
-                save_plot("fingerprint.pdf", fingerprint(input$indexes))
-                msgSave()
-            })
-            modify_hovertext(plot_dynamic(fingerprint(input$indexes), type = "var1D", format = input$format), hovertext = F, type = "var1D")
-        }
-
+        tryCatch({
+            getDynamicVariables()
+    
+            if (!is.null(analysis)) {
+                observeEvent(input$fingerprint_save, {
+                    save_plot("fingerprint.pdf", fingerprint(input$indexes))
+                    msgSave()
+                })
+                modify_hovertext(plot_dynamic(fingerprint(input$indexes), type = "var1D", format = input$format), hovertext = F, type = "var1D")
+            }
+        }, error = function(e) {
+        })
     })
 
     output$bootstrapPlot <- renderPlotly({
