@@ -18,9 +18,9 @@ Performs multi-variate analysis (PCA, CCA, PLS, R/SGCCA, etc.) and produces text
 
 ---
 ## Contents
-  - #### [Description](#description)
-  - #### [1. Load the inputs ('Data' parameter tab)](#1-load-the-inputs-data-parameter-tab)
-  - #### [2. Analysis parameters ('RGCCA' parameter tab)](#2-analysis-parameters-rgcca-parameter-tab)
+  - [Description](#description)
+  - [1. Load the inputs ('Data' parameter tab)](#1-load-the-inputs-data-parameter-tab)
+  - [2. Analysis parameters ('RGCCA' parameter tab)](#2-analysis-parameters-rgcca-parameter-tab)
     - [2.1. Analysis methods](#21-analysis-methods)
     - [2.2. Number of components and scaling](#22-number-of-components-and-scaling)
     - [2.3. Connection between blocks](#23-connection-between-blocks)
@@ -33,7 +33,7 @@ Performs multi-variate analysis (PCA, CCA, PLS, R/SGCCA, etc.) and produces text
       - [2.4.3. Scheme function (advanced users)](#243-scheme-function-advanced-users)
     - [2.5. Pre & post-analysis functionalities](#25-pre--post-analysis-functionalities)
       - [2.5.1. Number of bootstraps, permutations, folds](#251-number-of-bootstraps-permutations-folds)
-  - #### [3. Graphical parameters ('Graphic' parameter tab)](#3-graphical-parameters-graphic-parameter-tab)
+  - [3. Graphical parameters ('Graphic' parameter tab)](#3-graphical-parameters-graphic-parameter-tab)
     - [3.1. Display names](#31-display-names)
     - [3.2. Block (for the x/y-axis)](#32-block-for-the-xy-axis)
     - [3.3. Components (for the x/y-axis)](#33-components-for-the-xy-axis)
@@ -43,7 +43,7 @@ Performs multi-variate analysis (PCA, CCA, PLS, R/SGCCA, etc.) and produces text
     - [3.7. Dynamic graph parameters header](#37-dynamic-graph-parameters-header)
     - [3.8. Bootstrap indexes for x- and y- axis](#38-bootstrap-indexes-for-x--and-y--axis)
     - [3.9 Display cross-validation](#39-display-cross-validation)
-  - #### [4. Visualize the plot tabs](#4-visualize-the-plot-tabs)
+  - [4. Visualize the plot tabs](#4-visualize-the-plot-tabs)
     - [4.1. Connection between blocks](#41-connection-between-blocks)
     - [4.2. Average variance explained (AVE)](#42-average-variance-explained-ave)
     - [4.3. Samples](#43-samples)
