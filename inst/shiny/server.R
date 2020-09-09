@@ -1054,6 +1054,7 @@ server <- function(input, output, session) {
             ),
             selector = "#tabset li a[data-value=Graphic]"
         )
+        #toggle(condition = !is.null(analysis) && input$compx_custom > 1 && input$compy_custom > 1, selector = paste0("#navbar li a[data-value=Corcircle]"))
     })
 
 
@@ -1214,8 +1215,6 @@ server <- function(input, output, session) {
             # for (i in c('bootstrap_save', 'fingerprint_save', 'corcircle_save',
             # 'samples_save', 'ave_save')) setToggleSaveButton(i)
             show("connection_save")
-            save_var(rgcca_out, 1, compy, file = "variables.txt")
-            save_ind(rgcca_out, 1, compy, file = "individuals.txt")
             save(rgcca_out, file = "rgcca_result.RData")
         }
     })
@@ -1367,8 +1366,8 @@ server <- function(input, output, session) {
                 compy <- 1
             else 
                 compy <- 2
-            save_var(rgcca_out, 1, compy, file = "variables.txt")
-            save_ind(rgcca_out, 1, compy, file = "individuals.txt")
+            save_var(rgcca_out, file = "variables.txt")
+            save_ind(rgcca_out, file = "individuals.txt")
             save(analysis, file = "rgcca_result.RData")
             if(!is.null(boot))
                 save_plot("bootstrap.pdf", plotBoot())
@@ -1443,8 +1442,9 @@ server <- function(input, output, session) {
                 msgSave()
             })
 
+            save_ind(rgcca_out, file = "individuals.txt")
             p <- samples()
-            
+
             if (is(p, "gg")) {
             p <- showWarn(
                 modify_hovertext(
@@ -1466,7 +1466,6 @@ server <- function(input, output, session) {
     })
 
     output$corcirclePlot <- renderPlotly({
-        tryCatch({
             getDynamicVariables()
     
             if (!is.null(analysis)) {
@@ -1474,8 +1473,10 @@ server <- function(input, output, session) {
                     save_plot("corcircle.pdf", corcircle())
                     msgSave()
                 })
-    
+                
+                save_var(rgcca_out, file = "variables.txt")
                 p <- corcircle()
+
                 if (is(p, "gg")) {
                     p <- modify_hovertext(plot_dynamic(p, NULL, "text", format = input$format), if_text)
                     n <- length(p$x$data)
@@ -1486,8 +1487,6 @@ server <- function(input, output, session) {
                     ))
                 }
             }
-        }, error = function(e) {
-        })
 
     })
 
