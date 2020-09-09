@@ -85,21 +85,28 @@ if (BSPLUS) {
 }
 
 ui <- fluidPage(
-        titlePanel("R/SGCCA - The Shiny graphical interface"),
-        tags$div(
-            tags$p(
-                "Etienne CAMENEN, Ivan MOSZER, Arthur TENENHAUS (",
-                tags$a(href = "arthur.tenenhaus@l2s.centralesupelec.fr",
-                "arthur.tenenhaus@l2s.centralesupelec.fr"),
-                ")"
-            ),
+    titlePanel("R/SGCCA - The Shiny graphical interface"),
+    tags$div(
+        tags$p(
+            "Etienne CAMENEN, Ivan MOSZER, Arthur TENENHAUS (",
+            tags$a(href = "arthur.tenenhaus@l2s.centralesupelec.fr",
+            "arthur.tenenhaus@l2s.centralesupelec.fr"),
+            ")"
+        ),
         tags$i("Multi-block data analysis concerns the analysis of several sets of variables (blocks) observed on the same group of individuals. The main aims of the RGCCA package are: to study the relationships between blocks and to identify subsets of variables of each block which are active in their relationships with the other blocks."),
         tags$br(), tags$br()
     ),
-        tags$a(href = "https://github.com/rgcca-factory/RGCCA/blob/release/3.0.0/inst/shiny/tutorialShiny.md", "Go to the tutorial"),
-        tags$strong("|"),
-        tags$a(href = "https://www.youtube.com/watch?v=QCkEBsoP-tc", "Watch a demo", target = "_blank"),
+    tags$a(href = "https://github.com/rgcca-factory/RGCCA/blob/release/3.0.0/inst/shiny/tutorialShiny.md", "Go to the tutorial"),
+    tags$strong("|"),
+    tags$a(href = "https://www.youtube.com/watch?v=QCkEBsoP-tc", "Watch a demo", target = "_blank"),
     tags$br(), tags$br(),
+    tags$style(".fa-camera {color:#c7c7c7}"),
+    tags$style(".fa-camera:hover {color:#7c7c7c}"),
+    tags$style("#connection_save {border-color:white}"),
+    tags$style("#connection_save:hover {background-color:white}"),
+    tags$style("#ave_save {border-color:white; left: 0%}"),
+    tags$style("#ave_save:hover {background-color:white}"),
+    tags$style(".js-plotly-plot .plotly .modebar {left: 0%}"),
     useShinyjs(),
     sidebarLayout(sidebarPanel(
         tabsetPanel(
@@ -239,13 +246,13 @@ ui <- fluidPage(
             id = "navbar",
             tabPanel(
                 "Connection",
-                visNetworkOutput("connectionPlot"),
-                actionButton("connection_save", "Save")
+                actionButton("connection_save", "", icon = icon("camera")),
+                visNetworkOutput("connectionPlot")
             ),
             tabPanel(
                 "AVE",
-                plotOutput("AVEPlot"),
-                actionButton("ave_save", "Save")
+                actionButton("ave_save", "", icon = icon("camera")),
+                plotOutput("AVEPlot")
             ),
             tabPanel(
                 "Samples",

@@ -1190,7 +1190,7 @@ server <- function(input, output, session) {
         assign("analysis", NULL, .GlobalEnv)
         assign("boot", NULL, .GlobalEnv)
         assign("selected.var", NULL, .GlobalEnv)
-        for (i in c("run_boot", "nboot_custom"))
+        for (i in c("run_boot", "nboot_custom", "connection_save"))
             hide(id = i)
         for (i in c("Connection", "AVE", "Samples", "Corcircle", "Fingerprint", "Bootstrap", "'Bootstrap Summary'", "Permutation", "'Permutation Summary'", "Cross-validation"))
             hide(selector = paste0("#navbar li a[data-value=", i, "]"))
@@ -1211,6 +1211,7 @@ server <- function(input, output, session) {
             save_connection(rgcca_out$call$connection)
             # for (i in c('bootstrap_save', 'fingerprint_save', 'corcircle_save',
             # 'samples_save', 'ave_save')) setToggleSaveButton(i)
+            show("connection_save")
             save(rgcca_out, file = "rgcca_result.RData")
         }
     })
@@ -1219,7 +1220,7 @@ server <- function(input, output, session) {
         if_superblock <- grep("superblock", rownames(connection))
         if (length(if_superblock) > 0)
             connection <- connection[-if_superblock, -if_superblock]
-        write.table(connection, file = "connection.tsv", sep = "\t")
+        write.table(connection, file = "connection.txt", sep = "\t")
     }
 
     observeEvent(
@@ -1247,9 +1248,9 @@ server <- function(input, output, session) {
                     "bootstrap_save",
                     "fingerprint_save",
                     "corcircle_save",
-                    "samples_save",
-                    "ave_save",
-                    "connection_save"
+                    "samples_save"#,
+                    # "ave_save",
+                    # "connection_save"
                 ))
                     hide(i)
             }
@@ -1362,8 +1363,8 @@ server <- function(input, output, session) {
                 compy <- 1
             else 
                 compy <- 2
-            save_var(rgcca_out, 1, compy)
-            save_ind(rgcca_out, 1, compy)
+            save_var(rgcca_out, 1, compy, file = "variables.txt")
+            save_ind(rgcca_out, 1, compy, file = "individuals.txt")
             save(analysis, file = "rgcca_result.RData")
             if(!is.null(boot))
                 save_plot("bootstrap.pdf", plotBoot())
@@ -1403,6 +1404,31 @@ server <- function(input, output, session) {
     }, priority = 10)
 
     ################################################ Outputs ################################################
+    
+    output$connectionPlot <- renderVisNetwork({
+        getDynamicVariables()
+        if (!is.null(analysis)) {
+            observeEvent(input$connection_save, {
+                save_plot("connection.pdf", design())
+                msgSave()
+            })
+            design()
+        }
+    })
+
+    output$AVEPlot <- renderPlot({
+        
+        getDynamicVariables()
+        
+        if (!is.null(analysis)) {
+            observeEvent(input$ave_save, {
+                save_plot("AVE.pdf", ave()) 
+                msgSave()
+            })
+            ave()
+        }
+        
+    })
 
     output$samplesPlot <- renderPlotly({
         getDynamicVariables()
@@ -1473,32 +1499,6 @@ server <- function(input, output, session) {
             modify_hovertext(plot_dynamic(fingerprint(input$indexes), type = "var1D", format = input$format), hovertext = F, type = "var1D")
         }
 
-    })
-
-
-    output$AVEPlot <- renderPlot({
-
-        getDynamicVariables()
-
-        if (!is.null(analysis)) {
-            observeEvent(input$ave_save, {
-                save_plot("AVE.pdf", ave()) 
-                msgSave()
-            })
-            ave()
-        }
-
-    })
-
-    output$connectionPlot <- renderVisNetwork({
-        getDynamicVariables()
-        if (!is.null(analysis)) {
-            observeEvent(input$connection_save, {
-                save_plot("connection.pdf", design())
-                msgSave()
-            })
-            design()
-        }
     })
 
     output$bootstrapPlot <- renderPlotly({
