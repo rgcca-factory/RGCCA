@@ -683,6 +683,9 @@ server <- function(input, output, session) {
 
     design <- function()
         plot_network2(rgcca_out)
+    
+    design2 <- function()
+        plot_network(rgcca_out)
 
     plotBoot <- function(){
         refresh <- c(input$names_block_x, id_block, input$blocks_names_custom_x)
@@ -1067,13 +1070,12 @@ server <- function(input, output, session) {
         hide(selector = "#tabset li a[data-value=RGCCA]")
         for (i in c("Connection", "AVE", "Samples", "Corcircle", "Fingerprint", "Bootstrap", "'Bootstrap Summary'", "Permutation", "'Permutation Summary'", "Cross-validation"))
             hide(selector = paste0("#navbar li a[data-value=", i, "]"))
-        for (i in c("run_boot", "nboot_custom", "header", "init", "navbar", "connection_save", "run_crossval_single"))
+        for (i in c("run_boot", "nboot_custom", "header", "init", "navbar", "connection_save", "run_crossval_single", "kfold", "save_all", "format"))
             hide(id = i)
         for (i in c("nperm_custom", "run_perm"))
             toggle(id = i, condition = !input$supervised)
         for (i in c("run_crossval", "val_custom"))
             toggle(id = i, condition = input$supervised)
-        hide(id = "kfold")
         toggle(id = "ncv", condition = input$supervised && input$val == "ncv")
         # toggle(id = "kfold", condition = input$supervised && input$val == "kfold")
     })
@@ -1212,6 +1214,8 @@ server <- function(input, output, session) {
             # for (i in c('bootstrap_save', 'fingerprint_save', 'corcircle_save',
             # 'samples_save', 'ave_save')) setToggleSaveButton(i)
             show("connection_save")
+            save_var(rgcca_out, 1, compy, file = "variables.txt")
+            save_ind(rgcca_out, 1, compy, file = "individuals.txt")
             save(rgcca_out, file = "rgcca_result.RData")
         }
     })
@@ -1409,7 +1413,7 @@ server <- function(input, output, session) {
         getDynamicVariables()
         if (!is.null(analysis)) {
             observeEvent(input$connection_save, {
-                save_plot("connection.pdf", design())
+                save_plot(paste0("connection.", input$format), design2)
                 msgSave()
             })
             design()
@@ -1422,7 +1426,7 @@ server <- function(input, output, session) {
         
         if (!is.null(analysis)) {
             observeEvent(input$ave_save, {
-                save_plot("AVE.pdf", ave()) 
+                save_plot(paste0("ave.", input$format), ave()) 
                 msgSave()
             })
             ave()

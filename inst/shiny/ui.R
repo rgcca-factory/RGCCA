@@ -102,10 +102,10 @@ ui <- fluidPage(
     tags$br(), tags$br(),
     tags$style(".fa-camera {color:#c7c7c7}"),
     tags$style(".fa-camera:hover {color:#7c7c7c}"),
-    tags$style("#connection_save {border-color:white}"),
-    tags$style("#connection_save:hover {background-color:white}"),
-    tags$style("#ave_save {border-color:white; left: 0%}"),
-    tags$style("#ave_save:hover {background-color:white}"),
+    tags$style("#connection_save, #ave_save {border-color:white; left: 0%}"),
+    tags$style("#connection_save:hover, #ave_save:hover {background-color:white}"),
+    tags$style("#connection_save:focus, #ave_save:focus {outline:none; background-color:white}"),
+    tags$style("#connection_save:active, #ave_save:active {box-shadow:none}"),
     tags$style(".js-plotly-plot .plotly .modebar {left: 0%}"),
     useShinyjs(),
     sidebarLayout(sidebarPanel(
@@ -204,8 +204,10 @@ ui <- fluidPage(
                     label = "Output image format",
                     choices = c(
                         `jpeg` = "jpeg",
-                        `png` = "png",
-                        `svg` = "svg"
+                        `png` = "png"#,
+                        #`svg` = "svg"
+                        # `tiff` = "tiff",
+                        # `pdf` = "pdf"
                     ),
                     selected = "png"
                 ),
