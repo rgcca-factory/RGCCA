@@ -644,10 +644,6 @@ sapply(A, head)
 
 **Preprocessing** In order to ensure comparability between variables standardization is applied (zero mean and unit variance).
 
-```{r}
-A = lapply(A, function(x) scale2(x, bias = TRUE))
-```
-
 We note that to make blocks comparable, a possible strategy is to standardize the variables and then to divide each block by the square root of its number of variables [@Westerhuis1998]. This two-step procedure leads to $\mathrm{tr}(\ma X_j^t \ma X_j )=n$  for each block (i.e. the sum of the eigenvalues of the covariance matrix of $\ma X_j$ is equal to $1$ whatever the block). Such a preprocessing is reached by setting the `scale` argument to `TRUE` (default value) in the `rgcca()` functions.
 
 **Definition of the design matrix $\mathbf{C}$.** From Russett's hypotheses, it is difficult for a country to escape dictatorship when its agricultural inequality is above-average and its industrial development below-average. These hypotheses on the relationships between blocks are depicted in Figure \ref{fig:C}.
@@ -681,8 +677,7 @@ RGCCA using the pre-defined design matrix $\ma C$, the factorial scheme ($g(x) =
 
 
 ```{r, fig.height = 3, fig.width = 5}
-rgcca_B_factorial = rgcca(blocks=A, connection=C, tau = rep(0, 3), scheme = "factorial",
-scale = FALSE, verbose = TRUE)
+rgcca_B_factorial = rgcca(blocks=A, connection=C, tau = rep(0, 3), scheme = "factorial", scale = TRUE, verbose = TRUE)
 ```
 
 
@@ -732,8 +727,7 @@ and corresponds exactly to the results reported in [@Tenenhaus2011, see last col
 We mention that, for each block $j$, an "optimal" shrinkage parameter $\tau_j$ can be obtained from the Schafer and Strimmer analytical formula [@Schafer2005] by using the `tau` argument of the rgcca funtion:
 
 ```{r}
-rgcca_optimal_factorial = rgcca(blocks=A, connection=C, tau = "optimal", scheme = "factorial",
-scale = FALSE, verbose = FALSE)
+rgcca_optimal_factorial = rgcca(blocks=A, connection=C, tau = "optimal", scheme = "factorial", scale = TRUE, verbose = FALSE)
 ```
 
 The optimal shrinkage parameters are given by:
@@ -747,7 +741,7 @@ This automatic estimation of the shrinkage parameters allows one to come closer 
 At last, as a component-based method, RGCCA provides the users with graphical representations, including factor plot, correlation circle. This graphical displays allows visualizing the sources of variability within blocks, the relationships between variables within and between blocks and the amount of correlation between blocks. The graphical display of the countries obtained by crossing $\ma X_1 \ma a_1$ = Agricultural Inequality and $\ma X_2 \ma a_2$ = Industrial Development and marked with their political regime in 1960 is shown in below.
 
 ```{r, eval=TRUE, fig.align='center', fig.cap = 'graphical display of the countries obtained by crossing y1 and y2 and labeled according to their political regime',fig.height = 3, fig.width = 5}
-plot(rgcca_B_factorial, block=1:2,comp=1,type="ind")
+plot(rgcca_B_factorial, block=1:2, comp=1, type="ind")
 ```
 
 
@@ -761,22 +755,13 @@ Here, $2$ components per block are specified using the `ncomp = rep(2, 4)` argum
 
 X_agric =as.matrix(Russett[,c("gini","farm","rent")])
 X_ind = as.matrix(Russett[,c("gnpr","labo")])
-X_polit = as.matrix(Russett[ , c("inst", "ecks",  "death",
-"demostab", "demoinst", "dictator")])
-A = list(X_agric = X_agric, X_ind = X_ind, X_polit = X_polit,
-Superblock = cbind(X_agric, X_ind, X_polit)
-)
-#Define the design matrix (output = C)
-C = matrix(c(0, 0, 0, 1,
-0, 0, 0, 1,
-0, 0, 0, 1,
-1, 1, 1, 0), 4, 4)
-
-rgcca.hpca = rgcca(blocks=A, connection=C, tau = c(1, 1, 1, 0), verbose = FALSE,
-ncomp = rep(2, 4),
-#flexible design of the scheme function
-scheme = function(x) x^4,
-scale = TRUE)
+X_polit = as.matrix(Russett[ , c("inst", "ecks",  "death")])
+A = list(X_agric = X_agric, X_ind = X_ind, X_polit = X_polit)
+rgcca.hpca = rgcca(blocks=A, tau = c(1, 1, 1, 0),
+                   verbose = FALSE, ncomp = rep(2, 4),
+                   #flexible design of the scheme function
+                   scheme = function(x) x^4,
+                   scale = TRUE, superblock = TRUE)
 ```
 
 For HPCA, the countries can be represented in the space spanned by the two first global components.
