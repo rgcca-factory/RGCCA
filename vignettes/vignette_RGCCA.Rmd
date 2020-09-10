@@ -784,9 +784,9 @@ Despite some overlap, the first global component exhibits a separation/continuum
 
 Moreover, the correlation circle plot highlights the contribution of each variable to the contruction of the global components. This figure shows the original variables projected on the compromise space.
 
-```{r, fig.align='center', fig.cap = 'graphical display of the countries obtained by crossing the two first compoent of the superblock and labeled according to their political regime',fig.height = 3, fig.width = 5} 
+```{r, fig.align='center', fig.cap = 'graphical display of the countries obtained by crossing the two first components of the superblock and labeled according to their political regime',fig.height = 3, fig.width = 5} 
 response=apply(Russett[, 9:11], 1, which.max)
-plot(rgcca.hpca,resp=response,type="ind")
+plot(rgcca.hpca,resp=response,type="ind", no_overlap = TRUE)
 plot(rgcca.hpca,resp=response,type="var")
 ```
 
