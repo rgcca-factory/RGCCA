@@ -50,7 +50,7 @@ test_that("rgcca_predict_one_ind",{expect_true(
 A = lapply(blocks, function(x) x[1:32,]);
 object1 = rgcca(A, connection = C, tau = c(0.7,0.8,0.7),
                 ncomp = c(3,2,4), superblock = FALSE, response = 3)
-res  = rgcca_predict(object1, A,new_scaled=FALSE,bloc_to_pred="politic") 
+res  = rgcca_predict(rgcca_res=object1, newA=A,new_scaled=FALSE,bloc_to_pred="politic") 
 test_that("rgcca_predict_one_ind_score",{expect_true(
     round(res$score,digits=2)==0.32
     )})
@@ -170,22 +170,22 @@ all.equal(respred1[[1]][[1]],rgcca_res_for_pred_unscaled$Y[[1]])
 # classfication and LDA
 #---------------------------------
 # Blocks for classification
-# blocks_for_classif = list(
-#     agriculture = Russett[, 1:3],
-#     industry = Russett[, 4:5],
-#     politic = matrix(Russett[, 11],ncol=1)
-# )
-# blocks_for_classif[["politic"]][blocks_for_classif[["politic"]][,1]==1,]="demo"
-# blocks_for_classif[["politic"]][blocks_for_classif[["politic"]][,1]==0,]="ndemo"
-# 
-# A = lapply(blocks_for_classif, function(x) x[1:32,]);
-# A_test=lapply(blocks_for_classif,function(x) x[c(39:47),])
-# object1 = rgcca(A, connection = C, tau = c(1,1,1),
-#                 ncomp = c(3,2,1), superblock = FALSE, response = 3)
-# res_test  = rgcca_predict(object1, newA=A,new_scaled=FALSE,fit="lda",model="classification",bloc_to_pred="politic") 
-#  
+ blocks_for_classif = list(
+     agriculture = Russett[, 1:3],
+     industry = Russett[, 4:5],
+     politic = matrix(Russett[, 11],ncol=1)
+ )
+ blocks_for_classif[["politic"]][blocks_for_classif[["politic"]][,1]==1,]="demo"
+ blocks_for_classif[["politic"]][blocks_for_classif[["politic"]][,1]==0,]="ndemo"
+ 
+ A = lapply(blocks_for_classif, function(x) x[1:32,]);
+ A_test=lapply(blocks_for_classif,function(x) x[c(39:47),])
+ object1 = rgcca(A, connection = C, tau = c(1,1,1),
+                 ncomp = c(3,2,1), superblock = FALSE, response = 3)
+ res_test  = rgcca_predict(object1, newA=A,new_scaled=FALSE,fit="lda",model="classification",bloc_to_pred="politic") 
+  
 #   res_test  = rgcca_predict(object1, A_test,new_scaled=FALSE,fit="lda",model="classification",bloc_to_pred="politic") 
-# test_that("rgcca_predict_two",{expect_true(
-     #    sum(!abs(res_test$pred[[1]]["Argentina",]- object1$Y[[1]]["Argentina",])<1e-12)==0
-     #)})
+ test_that("rgcca_predict_classif",{expect_true(
+     res_test$score==0.875
+     )})
 #     
