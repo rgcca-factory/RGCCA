@@ -19,6 +19,23 @@ Performs multi-variate analysis (PCA, CCA, PLS, R/SGCCA, etc.) and produces text
 
 ---
 
+## Contents
+  - [Description](#description)
+  - [Algorithm](#algorithm)
+  - [Input files](#input-files)
+  - [Output files](#output-files)
+  - [Installation](#installation)
+    - [Linux](#linux)
+    - [Windows & Mac](#windows--mac)
+  - [Execution](#execution)
+    - [Shiny interface](#shiny-interface)
+    - [Vignette](#vignette)
+    - [Command line](#command-line)
+      - [Files parameters](#files-parameters)
+      - [Analyse parameters](#analyse-parameters)
+      - [Graphical parameters](#graphical-parameters)
+  - [References](#references)
+
 ## Description
 A user-friendly multi-blocks analysis (Regularized Generalized Canonical Correlation Analysis, RGCCA) as described in [1] and [2] with all default settings predefined. The software produces figures to explore the analysis' results: individuals and variables projected on two components of the multi-block analysis, list of top variables and explained variance in the model.
  

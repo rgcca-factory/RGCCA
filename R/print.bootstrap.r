@@ -20,5 +20,4 @@ print.bootstrap=function(x,...)
                                   ;return(b[,c("estimate",othercols)])}
             )))
     }
-    
 }
