@@ -1,7 +1,7 @@
 #' Plot a bootstrap in 2D
 #'
 #' Biplot of the top variables from a SGCCA bootstrap with the number of
-#' non-zero occurences in x-axis and the boot-ratio (mean/sd) in y-axis.
+#' non-zero occurrences in x-axis and the boot-ratio (mean/sd) in y-axis.
 #' Negative weights are colored in red and the positive ones are in green.
 #'
 #' @inheritParams plot2D

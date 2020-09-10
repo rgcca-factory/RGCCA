@@ -111,7 +111,7 @@ server <- function(input, output, session) {
         )
         
         if (tolower(input$analysis_type) == "sgcca")
-            l_choices[["Non-zero occurences"]] <- "occurrences"
+            l_choices[["Non-zero occurrences"]] <- "occurrences"
         else
             l_choices[["Significant 95% interval"]] <- "sign"
 
@@ -437,7 +437,8 @@ server <- function(input, output, session) {
                     bs_embed_tooltip(title = "The design matrix is a symmetric
                     matrix of the length of the number of blocks describing
                     the connections between them. Two values are accepted :
-                    '1' for a connection between two blocks, or '0' otherwise.")
+                    '1' for a connection between two blocks, or '0' otherwise. 
+                    By default, all the blocks are connected together.")
             )
 
         conditionalPanel(
@@ -1564,7 +1565,7 @@ server <- function(input, output, session) {
                 # })
                 df <- round(get_bootstrap(boot, compx, id_block, display_order = F), 3)
                 df <- cbind(row.names(df), df)
-                colnames(df) <- c("Variables", "Boot. mean", "RGCCA weights", "S.D.", "Upper limit", "Lower limit", "P-value", "B.H.")
+                colnames(df) <- c("Variable", "Boot. mean", "RGCCA weight", "S.D.", "Lower limit", "Upper limit", "P-value", "B.H.")
                 df
             }
         }, error = function(e) {
