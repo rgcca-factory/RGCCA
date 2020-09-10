@@ -9,7 +9,7 @@ save_ind <- function(
     
     inds <- inds <- Reduce(cbind, rgcca$Y)
     colnames(inds) <- unlist(sapply(
-        names(rgcca_out$call$blocks),
+        names(rgcca$call$blocks),
         function(x) paste0(x, ".comp", seq(NCOL(rgcca$Y[[x]])))))
 
     write.table(inds, file, sep = "\t")

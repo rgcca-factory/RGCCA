@@ -36,6 +36,6 @@ summary.cv <- function(x, bars="sd", alpha=0.05) {
         
     }
     df <- round(data.frame(config=1:nrow(mat_cval),mean=mean_b,inf=inf_b,sup=sup_b), 3)
-    colnames(df) <- c("Mean RMSE", )
-    
+    colnames(df) <- c("Combination", "Mean RMSE", "Upper limit", "Lower limit")
+    df
 }
