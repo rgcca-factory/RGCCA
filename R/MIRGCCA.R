@@ -26,16 +26,16 @@
 #'  X2[5,1]=NA
 #'  X3[3,1:2]=NA
 #'  A=list(X1,X2,X3)
-#' res=MIRGCCA(A,k=3,ni=5,scale=TRUE,sameBlockWeight=TRUE,tau=rep(0,3))
+#' res=MIRGCCA(A,k=3,ni=5,scale=TRUE,scale_block=TRUE,tau=rep(0,3))
 #' @seealso \code{\link{plot.list_rgcca}}
 #' @export
-MIRGCCA=function(blocks,option="knn",type="rgcca",superblock=TRUE,k=5,ni=5,scale=TRUE,sameBlockWeight=TRUE,tau=rep(1:length(A)),klim=NULL,output="mean",scheme="centroid",tol=1e-8,connection=NULL,ncomp=rep(2,length(A)),naxis=1)
+MIRGCCA=function(blocks,option="knn",type="rgcca",superblock=TRUE,k=5,ni=5,scale=TRUE,scale_block=TRUE,tau=rep(1:length(A)),klim=NULL,output="mean",scheme="centroid",tol=1e-8,connection=NULL,ncomp=rep(2,length(A)),naxis=1)
 {
     A=blocks
     C=connection
     match.arg(option,c("knn","em"))
     check_boolean("superblock",superblock)
-    check_boolean("sameBlockWeight",sameBlockWeight)
+    check_boolean("scale_block",scale_block)
     check_tau(tau,A)
     check_integer("tol",tol,float=TRUE,min=0)
     check_integer("naxis",naxis)
@@ -44,24 +44,24 @@ MIRGCCA=function(blocks,option="knn",type="rgcca",superblock=TRUE,k=5,ni=5,scale
     check_integer("ni",ni)
     choices <- c("horst", "factorial", "centroid")
     if (!scheme %in% (choices) && !is.function(scheme))
-        stop(paste0(scheme, " must be one of ", paste(choices, collapse = ", "), "' or a function."))
+        stop_rgcca(paste0(scheme, " must be one of ", paste(choices, collapse = ", "), "' or a function."))
     
     if(option=="knn")
   {
     dataTest0=imputeNN(A=A,output=output,k=k,klim=klim)
     if(!is.null(dataTest0))
     {
-      rgcca0=rgcca(dataTest0,type=type,connection=connection,ncomp=rep(2,length(A)),scale=scale,sameBlockWeight=sameBlockWeight,tau=tau,verbose=FALSE,scheme=scheme,tol=tol)
+      rgcca0=rgcca(dataTest0,type=type,connection=connection,ncomp=rep(2,length(A)),scale=scale,scale_block=scale_block,tau=tau,verbose=FALSE,scheme=scheme,tol=tol)
       #plotRGCCA2(rgcca0,indnames=TRUE,varnames=TRUE)
       dataTest=resRgcca2=resprocrustes=list()
       for(i in 1:ni)
       {
         dataTest[[i]]=imputeNN(A=A,output="random",k=k,klim=klim)
-        resRgcca2[[i]]=rgcca(dataTest[[i]],type=type,connection=connection,ncomp=rep(2,length(dataTest[[i]])),scale=scale,sameBlockWeight=sameBlockWeight,tau=tau,verbose=FALSE,scheme=scheme,tol=tol)
+        resRgcca2[[i]]=rgcca(dataTest[[i]],type=type,connection=connection,ncomp=rep(2,length(dataTest[[i]])),scale=scale,scale_block=scale_block,tau=tau,verbose=FALSE,scheme=scheme,tol=tol)
       }
   
     }
-    else{stop("not enough neighbors with complete data (<5)")}
+    else{stop_rgcca("not enough neighbors with complete data (<5)")}
   }
   if(option=="em")
   {
@@ -70,13 +70,13 @@ MIRGCCA=function(blocks,option="knn",type="rgcca",superblock=TRUE,k=5,ni=5,scale
        dataTest=resRgcca2=list()
       resImpute=imputeEM(A=A,tau=tau,C=C,scheme=scheme,ncomp=ncomp,superblock=superblock,naxis = naxis)
       dataTest0=resImpute$A
-      rgcca0=rgcca(dataTest0,type=type,connection=connection,ncomp=rep(2,length(A)),scale=scale,sameBlockWeight=sameBlockWeight,tau=tau,verbose=FALSE,scheme=scheme,tol=tol)
+      rgcca0=rgcca(dataTest0,type=type,connection=connection,ncomp=rep(2,length(A)),scale=scale,scale_block=scale_block,tau=tau,verbose=FALSE,scheme=scheme,tol=tol)
       
       for(i in 1:ni)
       {
       #  print(i)
          dataTest[[i]]=addNoise(resImpute)
-        resRgcca2[[i]]=rgcca(dataTest[[i]],type=type,connection=connection,ncomp=rep(2,length(dataTest[[i]])),scale=scale,sameBlockWeight=sameBlockWeight,tau=tau,verbose=FALSE,scheme=scheme,tol=tol)
+        resRgcca2[[i]]=rgcca(dataTest[[i]],type=type,connection=connection,ncomp=rep(2,length(dataTest[[i]])),scale=scale,scale_block=scale_block,tau=tau,verbose=FALSE,scheme=scheme,tol=tol)
       }
   }
 

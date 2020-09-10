@@ -1,18 +1,14 @@
 #' Predict RGCCA
 #' 
-#' Predict a new block from a RGCCA
+#' Predicts a new block from a RGCCA
 #' 
 #' @inheritParams plot_ind
 #' @param newA A list of either a dataframe/matrix or a vector giving the blocks to be predicted
 #' @param fit A character giving the function used to compare the trained and the tested models
 #' @param bloc_to_pred A character giving the block to predicted (must be the same name among train and test set)
 #TODO: either an integer for block_to_pred
-#' @param type A character corresponding to the type of prediction among : regression or classification
-#' @param y.train A dataframe or a matrix giving the block used as a response in the training
-#' @param y.test A dataframe or a matrix giving the block to be predicted
-#' @param scale_size_bloc A boolean giving the possibility to scale the blocks by the square root of their column number
+#' @param model A character corresponding to the model of prediction among : regression or classification
 #' @param new_scaled A boolean scaling the blocks to predict
-#' @param bigA to permeform data reduction for cross-validation, the dataset where A and newA were extracted
 #' @examples
 #' data("Russett")
 #' blocks = list(
@@ -28,107 +24,42 @@
 #'     ncomp = c(3,2,4), superblock = FALSE, response = 3)
 #' A = lapply(object1$call$blocks, function(x) x[1:32,])
 #' object = rgcca(A, connection = C, tau = c(0.7,0.8,0.7),
-#'     ncomp = c(3,2,4), scale = FALSE, sameBlockWeight = FALSE, superblock = FALSE, response = 3)
+#'     ncomp = c(3,2,4), scale = FALSE, scale_block = FALSE, superblock = FALSE, response = 3)
 #' newA = lapply(object1$call$blocks, function(x) x[-c(1:32),])
 #' newA = lapply( newA, function(x) x[, sample(1:NCOL(x))] )
 #' newA = sample(newA, length(newA))
 #' bloc_to_pred = "industry"
-#' y.train = kmeans(A[[bloc_to_pred]], 3)$cluster
-#' y.test = kmeans(newA[[bloc_to_pred]], 3)$cluster
-#' ( res  = rgcca_predict(object, newA, bloc_to_pred = "industry", bigA = blocks) )
-#' ( res  = rgcca_predict(object, newA, "regression", "cor", "industry") )
-#' ( res  = rgcca_predict(object, newA) )
-#' ( res  = rgcca_predict(object, newA = newA, type = "regression", fit = "lm",
-#' y.train = A[[bloc_to_pred]], y.test = newA[[bloc_to_pred]] ) )
+#' to_pred_train = kmeans(A[[bloc_to_pred]], 3)$cluster
+#' to_pred_test = kmeans(newA[[bloc_to_pred]], 3)$cluster
+#' res  = rgcca_predict(object, newA, bloc_to_pred = "industry")
+#' # ( res  = rgcca_predict(object, newA, "regression", "cor", "industry") )
+#' res  = rgcca_predict(object, newA)
 #' library(MASS)
-#' ( res  = rgcca_predict(object, newA = newA, type = "classification",
-#' fit = "lda", y.train = y.train, y.test = y.test ) )
 #' @importFrom MASS lda
 # @importFrom nnet multinom
 #' @export
 rgcca_predict = function(
     rgcca_res,
     newA,
-    type = "regression",
+    model = "regression",
     fit = "lm",
     bloc_to_pred = NULL,
-    y.train = NULL,
-    y.test = NULL,
-    bigA = NULL,
-    new_scaled = TRUE,
-    scale_size_bloc = TRUE) {
-
-    stopifnot(is(rgcca_res, "rgcca"))
-    match.arg(type, c("regression", "classification"))
-    match.arg(fit, c("lm", "cor", "lda", "logistic"))
-    if(!is.null(bigA))
-        check_blocks(bigA)
-
-    for (i in c("new_scaled", "scale_size_bloc"))
-            check_boolean(i, get(i))
-
-    astar <- rgcca_res$astar
-    p <- sapply(rgcca_res$call$blocks, ncol)
-    B <- length(rgcca_res$call$blocks)
-
-    if (type == "classification" && (fit == "cor" || fit == "lm"))
-        stop("Please, classification prediction only works with LDA and LOGISTIC")
-
-    if (type == "regression" &&
-            (fit == "lda" || fit == "logistic"))
-        stop("Please, regression prediction only works with LM and COR")
-
-    if (missing(y.train) || missing(y.test)) {
-        if (!missing(bloc_to_pred) &&
-                !bloc_to_pred %in% names(rgcca_res$call$blocks))
-            stop("Please, block to predict do not exist")
-    }
-
-    # Compute test parameters
-    if (is.null(dim(newA[[1]])))
-        # case of variable to be predicted
-        newp  <- sapply(newA, length)
-    else
-        # case of blocks to be predicted
-        newp <- sapply(newA, NCOL)
-    newB  <- length(newA)
-
-    # Check similarity between TRAIN and TEST set
-    if (is.null(names(rgcca_res$call$blocks)) ||  is.null(names(newA)))
-        stop("Please, blocs do not have names")
-
-    if (B != newB)
-        stop("Please, number of blocs is not the same")
-
-    MATCH <- match(names(newA), names(rgcca_res$call$blocks))
-
-    if (sum(is.na(MATCH)) != 0)
-        stop("Please, blocs in new data did not exist in old data")
-
-    if (!identical(newp, p[MATCH]))
-        stop("Please, number of column is not the same")
-
+    new_scaled = TRUE
+ #   regress_on="block" #TODO
+  ) {
+    # Functions to be used
     get_dim <- function(x) {
         if (!is.null(dim(x)))
             return(colnames)
         else
             return(names)
     }
-
-    MATCH_col <-  mapply(
-        function(x, y) match(get_dim(x)(x), get_dim(y)(y)), 
-        newA, 
-        rgcca_res$call$blocks[MATCH])
-
-    if (sum(unique(is.na(MATCH_col))) != 0)
-        stop("Please, some columns names are not the same between the two blocks")
-
     # Order a a list of matrix or dataframe according to : the index of each element in the list (MATCH);
     # the index of each column in each element (MATCH_COL)
     # l : a list of dataframe or matrix
     # g : a bolean giving the condition to transpose each element of the matrix
     # t_attr : a character giving the name of an attribute of a dataframe or a matrix to order
-    reorderList <- function(l, g = FALSE , t_attr = NULL) {
+    reorderList <- function(l, g = FALSE , t_attr = NULL,MATCH,MATCH_col) {
         # Deals with a transposed matrix
         if (!is.null(t_attr))
             f_attr <- function(x, y)
@@ -148,143 +79,254 @@ rgcca_predict = function(
         mapply(function(x, y)
             g(f_attr(g(x), y)), l[MATCH], MATCH_col)
     }
-
-    # TODO: if new as an only individuals
-    # scale before y_train and y_test attribution ? Otherwise, the response is not scaled
-    # Scaling
-    if (!new_scaled) {
-        scl_fun <- function(data, center, scale) {
-            # Use the scaling parameter of the training set on the tested set
-            
+    scl_fun <- function(data, center, scale) {
+        # Use the scaling parameter of the training set on the tested set
+        if(length(center)!=0)
+        {
             if (is.null(dim(data)))
                 # Case of data is a vector
                 data <- t(as.matrix(data))
-            
-            res <- scale(data, center, scale)
-            
-            if (scale_size_bloc)
-                res / sqrt(length(data))
-            else
-                res
-
+            res <- scale(data, center, scale) 
         }
+        else
+        {
+            res<-data
+        }
+        return(res)
+    }
+    
+    # Checking the input parameters
+    if (model == "classification" && (fit == "cor" || fit == "lm"))
+        stop_rgcca("Please, classification prediction only works with LDA and LOGISTIC")
+    if (model == "regression" &&
+        (fit == "lda" || fit == "logistic"))
+        stop_rgcca("Please, regression prediction only works with LM and COR")
+    stopifnot(is(rgcca_res, "rgcca"))
+    match.arg(model, c("regression", "classification"))
+    match.arg(fit, c("lm", "cor", "lda", "logistic"))
+    for (i in c("new_scaled"))
+        check_boolean(i, get(i))
+    if (is.null(names(rgcca_res$call$blocks)) ||  is.null(names(newA)))
+        stop_rgcca("Please, blocs do not have names")
+    
+     # Initializations
+    prediction=NULL
+    if(rgcca_res$call$method=="complete"){rgcca_res$call$blocks=intersection_list(rgcca_res$call$blocks)}
+    astar <- rgcca_res$astar
+    
+    # Dealing with vectors instead of matrices 
+    blocks_rgcca_res=lapply(1:length(rgcca_res$call$blocks),
+                       function(i) 
+                        {
+                            if(dim(rgcca_res$call$blocks[[i]])[2]==0 )
+                            { 
+                                rgcca_res$call$blocks[[i]]=matrix(rgcca_res$call$blocks[[i]],ncol=1);colnames( rgcca_res$call$blocks[[i]])=names(rgcca_res$call$blocks)[i]
+                            }
+                            if(is.null(colnames(rgcca_res$call$blocks[[i]])))
+                            {
+                                colnames(rgcca_res$call$blocks[[i]])=names(rgcca_res$call$blocks)[i]
+                            }
+                            return(rgcca_res$call$blocks[[i]])
+                        })
+    names(blocks_rgcca_res)=names(rgcca_res$call$blocks)
+    newA1=lapply(1:length(newA),
+                            function(i) 
+                            {
+                                if(is.null(dim(newA[[i]])) )
+                                { 
+                                   newA[[i]]=matrix(newA[[i]],ncol=1);colnames( newA[[i]])=names(newA)[i]
+                                }
+                                return(newA[[i]])
+                            });names(newA1)=names(newA)
+    
+    # Getting newA2 with disjonctive table (for colnames comparable in response)
+    newA2=newA1
+    if(!is.null(bloc_to_pred))
+    {
+        if(mode(newA2[[bloc_to_pred]])=="character")
+        {
+            G=as.factor(newA[[bloc_to_pred]])
+            y <- data.frame(model.matrix( ~  G-1, data = G))
+            rownames(y) <- rownames(newA[[bloc_to_pred]])
+            newA2[[bloc_to_pred]]=y
+        }
+    }
+  
+    # Matching the columns in the predict function
+     if(model=="regression")
+     {  
+         MATCH <- match(names(newA1), names(rgcca_res$call$blocks))
+         MATCH_col <-  mapply(
+             function(x, y) match(get_dim(x)(x), get_dim(y)(y)), 
+             newA2, 
+             blocks_rgcca_res[MATCH]) 
+         MATCH_col2=MATCH_col
+     }
+     if(model=="classification")
+     {
+         MATCH <- match(names(newA1), names(rgcca_res$call$raw))
+         MATCH_col <-  mapply(
+             function(x, y) match(get_dim(x)(x), get_dim(y)(y)), 
+             newA1, 
+             rgcca_res$call$raw[MATCH])
+         MATCH_col2 <-  mapply(
+             function(x, y) match(get_dim(x)(x), get_dim(y)(y)), 
+             newA2, 
+             blocks_rgcca_res[MATCH]) 
+     }
 
-        newA <- mapply(
+    # Checking the matchings
+    p <- sapply( blocks_rgcca_res, ncol)
+    B <- length(rgcca_res$call$blocks)
+    # Matching newA and blocks
+    if (sum(is.na(MATCH)) != 0){stop_rgcca("Please, blocs in new data did not exist in old data")}
+    
+      if (sum(unique(is.na(MATCH_col))) != 0)
+        stop_rgcca("Please, some columns names are not the same between the two blocks")
+    newp <- sapply(newA2, NCOL)
+    newB  <- length(newA2)
+    if (sum(newp!=p[MATCH])!=0)
+        stop_rgcca("Please, number of columns is not the same")
+    if (B != newB)
+        stop_rgcca("Please, number of blocks is not the same")
+    
+    # Scaling de newA (si besoin ie new_scaled=FALSE-cas usuel, et si la rgcca utilise des blocs scales)
+    if (!new_scaled  ) { 
+        center_vector=reorderList(rgcca_res$call$blocks, t_attr = "scaled:center",MATCH=MATCH,MATCH_col=MATCH_col2)
+        scaling_vector=reorderList(rgcca_res$call$blocks, t_attr = "scaled:scale",MATCH=MATCH,MATCH_col=MATCH_col2)
+        #center_vector=lapply(rgcca_res$call$blocks,function(x)return(attr(x,"scaled:center")))
+        #scaling_vector=lapply(rgcca_res$call$blocks,function(x)return(attr(x,"scaled:scale")))
+        # No scaling if  scaling=FALSE, we divide by a vector of ones
+        new_scaling_vector=lapply(names(scaling_vector),function(i){
+             if(is.null(scaling_vector[[i]]))
+            {
+                vect_ones=rep(1,length(center_vector[[i]]))
+                names(vect_ones)=names(center_vector[[i]])
+                return(vect_ones)
+            }
+            else
+            {
+                return(scaling_vector[[i]])
+            }
+            })
+
+        newA3 <- mapply(
             scl_fun,
-            newA,
-            reorderList(rgcca_res$call$blocks, t_attr = "scaled:center"),
-            reorderList(rgcca_res$call$blocks, t_attr = "scaled:scale"),
+            newA2,
+            center_vector,
+            new_scaling_vector,
             SIMPLIFY = FALSE
         )
-
-    }
-
-
-    # Dimension Reduction
+    } else{ newA3=newA2}
+  
+# Dimension Reduction
     for (i in seq(length(rgcca_res$call$blocks)))
         colnames(rgcca_res$astar[[i]]) <- colnames(rgcca_res$Y[[i]])
-    astar <- reorderList(rgcca_res$astar, g = TRUE)
-
+    astar <- reorderList(rgcca_res$astar, g = TRUE,MATCH=MATCH,MATCH_col=MATCH_col2)
     pred <- lapply(seq(length(newA)), function(x)
-        as.matrix(newA[[x]]) %*% astar[[x]])
+    {
+        M=pm(as.matrix(newA3[[x]]), astar[[x]])
+        rownames(M)=rownames(newA[[x]])
+        colnames(M)=colnames(astar[[x]])
+        return(M)
+    }
+       )
+    names(pred)=names(newA)
 
     if (missing(bloc_to_pred))
-        return(list(pred = pred))
+        return(list(pred_y = pred))
 
     bloc_y <- match(bloc_to_pred, names(rgcca_res$call$blocks))
+    newbloc_y <- match(bloc_to_pred, names(newA3))
 
-    if (missing(bloc_to_pred) && is.null(colnames(y.train)))
-        newbloc_y <- .Machine$integer.max
-    else
-        newbloc_y <- match(bloc_to_pred, names(newA))
-
-
-    # Y definition
-
-    if (missing(y.train))
-        y.train <- rgcca_res$call$blocks[[bloc_y]][, MATCH_col[[newbloc_y]], drop = FALSE]
-
-    # TODO : sampled columns for y.test
-
-    if (missing(y.test)) {
-        # if (length(newbloc_y) < 1)
-        #   warning("Please, bloc_to_pred and y.test are absent from testing set. Coeffcients only will be given in outpus.") #TODO
-        y.test <- newA[[newbloc_y]]
-    } else{
-        # if (is.na(newbloc_y))
-        #   warning("Please, bloc_to_pred is absent from testing set")
-        # MATCH_col_y <- match(get_dim(y.train)(y.train), get_dim(y.test)(y.test))
-        # y.test <- y.test[MATCH_col_y]
+    # to_pred definition
+    if(model=="classification")
+    {
+        to_pred_train <- rgcca_res$call$raw[[bloc_y]][, MATCH_col[[newbloc_y]], drop = FALSE]
+        to_pred_test <- newA[[newbloc_y]]
+        
+       #  to_pred_train <- rgcca_res$call$raw[[bloc_y]]
+        # to_pred_test <- newA[[newbloc_y]]
     }
-
-    if (!is.null(dim(newA[[1]]))) {
-        if (any(colnames(y.train) != colnames(y.test)))
-            stop("Please, train and test sets do not have the same name")
+    if(model=="regression")
+    {
+       to_pred_train <- blocks_rgcca_res[[bloc_y]][, MATCH_col[[newbloc_y]], drop = FALSE]
+        to_pred_test <- newA3[[newbloc_y]] 
+       #  to_pred_train <- blocks_rgcca_res[[bloc_y]]
+       #  to_pred_test <- newA3[[newbloc_y]] 
+        
+        if (!is.null(dim(newA[[1]]))) {
+            if (any(colnames(to_pred_train) != colnames(to_pred_test)))
+                stop_rgcca("Please, train and test sets do not have the same name")
+        }
     }
-
+    
     rgcca_res$Y <- rgcca_res$Y[MATCH]
     rgcca_res$call$ncomp <- rgcca_res$call$ncomp[MATCH][-newbloc_y]
-    comp.train <- get_comp_all(rgcca_res, newA, newbloc_y = newbloc_y)
-    comp.test <- get_comp_all(rgcca_res, newA, type = "test", newbloc_y = newbloc_y, pred)
+    comp.train <- get_comp_all(rgcca_res, newA3, newbloc_y = newbloc_y)
+    comp.test <- get_comp_all(rgcca_res, newA3, type = "test", newbloc_y = newbloc_y, pred)
 
     # Scores
     res <- NULL
-
-    if (type == "regression") {
-        score <- switch(fit,
-            "lm"  = {
-
-                ychapo <- sapply(
-                    colnames(y.train),
-                    function(x) {
-                        predict(
-                            lm(
-                                as.formula(paste(x, " ~ .")),
-                                data = cbind(comp.train, y.train), 
-                                na.action = "na.exclude"
-                            ), 
-                        cbind(comp.test, y.test))
-                    })
-    
-                if (any(is.na(ychapo)))
-                    warning("NA in predictions.")
-
-                if (is.null(bigA))
-                    bigA <- rgcca_res$call$blocks
-
-                m <- function(x)
-                    apply(bigA[[bloc_to_pred]], 2, x) # TODO
-
-                f <- quote(
-                    if (is.null(dim(y)))
-                       y[x]
-                    else
-                        y[, x]
-                )
-
-                r <- function(y)
-                    sapply(seq(NCOL(bigA[[bloc_to_pred]])), function(x)
-                        (eval(f) - m(min)[x]) / (m(max)[x] - m(min)[x]))
-
-                res <- r(y.test) - r(ychapo)
-                if (is.null(dim(res))) {
-                    res <- abs(res)
-                    score <- mean(res)
-                } else{
-                    res <- apply(res, 2, function(x) abs(x))
-                    score <- mean(apply(res, 2, mean))
-                }
-
-
-            },
-            "cor" = {
-                if (is.null(newA[[1]])) {
+    if (model == "regression") 
+    {
+         
+        if(fit=="lm")
+        { 
+             
+              #  if(regress_on=="block")
+              #  {
+                    ychapo <- sapply(
+                        colnames(to_pred_train),
+                        function(x) {
+                            predict(
+                                lm(
+                                    as.formula(paste(x, " ~ ",paste(colnames(comp.train),collapse="+"))),
+                                    data = cbind(comp.train, to_pred_train), 
+                                    na.action = "na.exclude"
+                                ), 
+                                cbind(comp.test, to_pred_test))
+                        })
+                    if (any(is.na(ychapo)))
+                        warning("NA in predictions.")
+                    
+                   f <- quote(
+                        if (is.null(dim(y)))
+                            y[x]
+                        else
+                            y[, x]
+                    )
+               
+                    prediction=ychapo
+                    res=to_pred_test-ychapo
+       
+                    if (is.null(dim(res))||dim(res)[1]==1) { 
+                        rmse=sqrt(mean(res^2,na.rm=T))
+                        score <- rmse 
+                    } else{ 
+                        rmse<- apply(res,2,function(x){return(sqrt(mean(x^2,na.rm=T)))})
+                        score <- mean(rmse)
+                        #score <- mean(apply(res, 2, mean))
+                    }
+     
+             #   }
+             #   if(regress_on=="comp")
+             #   {
+                   #TODO
+             #   }
+        }
+        if(fit=="cor")
+        {
+            comp.test.cor <- get_comp_all(rgcca_res, newA=newA, type = "test", pred = pred)
+            
+                if (is.null(newA3[[1]])) {
                     # TODO ??? check case for vector
                     comp.test
                 } else{
-                    rgcca_res$call$connection <- rgcca_res$call$connection[MATCH, MATCH]
-                    cor <- get_cor_all(rgcca_res, newA, comp.test)
-
+                #    rgcca_res$call$connection <- rgcca_res$call$connection[MATCH, MATCH]
+                   # cor <- get_cor_all(rgcca_res, newA, comp.test)
+                    cor <- get_cor_all(rgcca_res, newA3, comp.test.cor)
+                    
                     for (i in seq(length(cor))) {
                         cor[[i]] <- mean(
                             abs(
@@ -292,40 +334,47 @@ rgcca_predict = function(
                             )[upper.tri(rgcca_res$call$connection)], 
                             na.rm = TRUE)     
                     }
+                    
                     score <- mean(unlist(cor), na.rm = TRUE)
                 }
-            })
+            }
         class.fit <- NULL
-
-    } else if (type == "classification") {
-        ngroups   <- nlevels(as.factor(y.train))
+    }
+    if (model == "classification")
+    {   
+        ngroups   <- nlevels(as.factor(to_pred_train))
         class.fit <- switch(fit,
             "lda"      = {
-                reslda     <- lda(x = comp.train, grouping = y.train, na.action = "na.exclude")
+                data_for_lda=cbind(comp.train,to_pred_train)
+                colnames(data_for_lda)[ncol(data_for_lda)]="quali"
+                reslda     <- lda(quali~., data=data_for_lda, na.action = "na.exclude")
                 class.fit  <- predict(reslda, comp.test)$class
             },
             "logistic" = {
                 if (ngroups > 2) {
-                    reslog      <- nnet::multinom(y ~ ., data = cbind(comp.train, y = y.train), trace = FALSE, na.action = "na.exclude")
-                    class.fit   <- predict(reslog, newdata = cbind(comp.test, y = y.test))
+                    reslog      <- nnet::multinom(y ~ ., data = cbind(comp.train, y = to_pred_train), trace = FALSE, na.action = "na.exclude")
+                    class.fit   <- predict(reslog, newdata = cbind(comp.test, y = to_pred_test))
                 } else if (ngroups == 2) {
-                    reslog      <- glm(y ~ ., data = cbind(comp.train, y = y.train), family = binomial)
-                    class.fit   <- predict(reslog, type = "response", newdata = cbind(comp.test, y = y.test))
+                    reslog      <- glm(y ~ ., data = cbind(comp.train, y = to_pred_train), family = binomial,na.action="na.exclude")
+                    class.fit   <- predict(reslog, type = "response", newdata = cbind(comp.test, y = to_pred_test))
                     class.fit.class <- class.fit > 0.5 # TODO: cutoff parameter
                     class.fit       <- factor(as.numeric(class.fit.class))
                 }
             })
-        score <- sum(class.fit == y.test) / length(y.test)
+        res=class.fit == to_pred_test
+        score <- sum(res) / length(to_pred_test)
     }
-
 
     result=list(
         pred = pred,
+    #    pred_A=pred_A,
+        prediction=prediction,
         class.fit = class.fit,
         score = score,
         res = res,
         rgcca_res=rgcca_res
     )
+
     class(result)="predict"
     return(result)
 }

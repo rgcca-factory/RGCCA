@@ -4,15 +4,15 @@
 \alias{rgcca}
 \title{Regularized (or Sparse) Generalized Canonical Correlation Analysis (R/SGCCA)}
 \usage{
-rgcca(blocks, type = "rgcca", scale = TRUE, sameBlockWeight = TRUE,
+rgcca(blocks, type = "rgcca", scale = TRUE, scale_block = TRUE,
   connection = matrix(1, length(blocks), length(blocks)) -
-  diag(length(blocks)), scheme = "factorial", ncomp = rep(2,
+  diag(length(blocks)), scheme = "factorial", ncomp = rep(1,
   length(blocks)), tau = rep(1, length(blocks)), sparsity = rep(1,
   length(blocks)), init = "svd", bias = TRUE, tol = 1e-08,
-  response = NULL, superblock = TRUE, method = "complete",
+  response = NULL, superblock = FALSE, method = "nipals",
   verbose = FALSE, quiet = TRUE, knn.k = "all",
   knn.output = "weightedMean", knn.klim = NULL,
-  knn.sameBlockWeight = TRUE)
+  knn.scale_block = TRUE)
 }
 \arguments{
 \item{blocks}{A list that contains the \eqn{J} blocks of variables \eqn{\mathbf{X_1}, \mathbf{X_2}, ..., \mathbf{X_J}}.}
@@ -23,7 +23,7 @@ rgcca(blocks, type = "rgcca", scale = TRUE, sameBlockWeight = TRUE,
 
 \item{scale}{If scale = TRUE, each block is standardized to zero means and unit variances (default: TRUE).}
 
-\item{sameBlockWeight}{TRUE by default : each block have the same weight in the RGCCA analysis. If FALSE, the weight of each block depends on the number of variables of the block}
+\item{scale_block}{TRUE by default : each block have the same weight in the RGCCA analysis. If FALSE, the weight of each block depends on the number of variables of the block}
 
 \item{connection}{A design matrix that describes the relationships between blocks (default: complete design).}
 
@@ -69,7 +69,7 @@ a superblock}
 
 \item{knn.klim}{Used only if missing values in the blocks are estimated by k-NN methods, and if knn.k is "auto". k limits (if k is not a number, optimal k between klim[1] and klim[2] is calculated )}
 
-\item{knn.sameBlockWeight}{Used only if missing values in the blocks are estimated by k-NN methods.if TRUE the distance for Nearest Neigbors takes the size of blocks into account}
+\item{knn.scale_block}{Used only if missing values in the blocks are estimated by k-NN methods.if TRUE the distance for Nearest Neigbors takes the size of blocks into account}
 }
 \value{
 A RGCCA object
@@ -146,7 +146,7 @@ C = matrix(c(0, 0, 1, 0, 0, 1, 1, 1, 0), 3, 3)
 result.rgcca = rgcca(A,type="rgcca", connection=C, tau = c(1, 1, 1),superblock=FALSE,
  scheme = "factorial", scale = TRUE)
 lab = as.vector(apply(Russett[, 9:11], 1, which.max))
-plot(result.rgcca,type="ind",i_block=1,i_block_y=2,resp=lab)
+plot(result.rgcca,type="ind",block=1:2,comp=rep(1,2),resp=lab)
 ############################################
 # Example 2: RGCCA and multiple components #
 ############################################

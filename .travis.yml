@@ -1,10 +1,10 @@
 language: r
 
 r:
+  - 4.0
   - 3.6
   - 3.5
   - 3.4
-#  - 3.3
 
 git:
   depth: 1
@@ -23,9 +23,6 @@ r_packages:
   - igraph
   - ggrepel
   - devtools
-  - shiny
-  - shinyjs
-  - bsplus
   - vegan
 
 install:

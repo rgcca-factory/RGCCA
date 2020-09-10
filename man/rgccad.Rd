@@ -7,7 +7,7 @@
 rgccad(A, C = 1 - diag(length(A)), tau = rep(1, length(A)),
   ncomp = rep(1, length(A)), scheme = "centroid", scale = TRUE,
   init = "svd", bias = TRUE, tol = 1e-08, verbose = TRUE,
-  sameBlockWeight = TRUE, na.rm = TRUE, estimateNA = "no",
+  scale_block = TRUE, na.rm = TRUE, estimateNA = "no",
   prescaling = FALSE, quiet = FALSE)
 }
 \arguments{
@@ -35,7 +35,7 @@ If tau is a matrix, tau[k, j] is associated with \eqn{\mathbf{X}_{jk}} (\eqn{k}t
 
 \item{verbose}{If verbose = TRUE, the progress will be report while computing (default: TRUE).}
 
-\item{sameBlockWeight}{A logical value indicating if the different blocks should have the same weight in the analysis (default, sameBlockWeight=TRUE)}
+\item{scale_block}{A logical value indicating if the different blocks should have the same weight in the analysis (default, scale_block=TRUE)}
 
 \item{na.rm}{If TRUE, runs rgcca only on available data.}
 

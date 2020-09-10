@@ -2,24 +2,27 @@
 % Please edit documentation in R/parallelize.R
 \name{parallelize}
 \alias{parallelize}
-\title{Set a list of ocket for parralel package in Windows}
+\title{Set a list of sockets for parralel package}
 \usage{
 parallelize(varlist = c(), nperm, f, n_cores = NULL,
-  envir = environment(), applyFunc = "parSapply")
+  envir = environment(), applyFunc = "parSapply",
+  parallelization = NULL)
 }
 \arguments{
-\item{varlist}{: character vector of names of objects to export}
+\item{varlist}{character vector of names of objects to export}
 
-\item{nperm}{: a vector object for a lapply type function}
+\item{nperm}{a vector object for a lapply type function}
 
-\item{f}{: a function to parralelize}
+\item{f}{a function to parralelize}
 
-\item{envir}{: environment}
+\item{n_cores}{An integer for the number of cores used in parallelization}
 
-\item{varlist}{: character vector of names of objects to export}
+\item{envir}{environment}
 
-\item{applyFunc:}{function to be applied}
+\item{applyFunc}{function to be applied}
+
+\item{parallelization}{if TRUE parallelization is run, if FALSE, no parallelisation is run. If NULL (default) parallelization is always used except for Windows in case of length(nperm)<10}
 }
 \description{
-Set a list of ocket for parralel package in Windows
+Set a list of sockets for parralel package
 }

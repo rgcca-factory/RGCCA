@@ -6,7 +6,7 @@ check_method <- function(method) {
         "sumcov-2", "sumcov", "sabscov", "plspm", "cca", "ra", "ifa", "pls",
         "pca", "sgcca", "spls", "spca")
     if (!tolower(method) %in% analysis)
-        stop(
+        stop_rgcca(
             paste0("Wrong type of analysis. Please select one among the following
             list: ", paste(analysis, collapse = ", ")),
             exit_code = 112

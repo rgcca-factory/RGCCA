@@ -19,13 +19,13 @@ Suggests:
     shiny,
     shinyjs,
     ggrepel,
-    plotly,
     optparse,
     igraph,
     visNetwork,
+    magrittr,
     nnet,
     openxlsx
-RoxygenNote: 6.1.1
+RoxygenNote: 7.1.0
 Imports: 
     parallel,
     vegan,
@@ -37,6 +37,7 @@ Imports:
     methods,
     scales,
     gridExtra,
-    rlang
+    rlang,
+    plotly
 VignetteBuilder: knitr
 biocViews: Visualization, PrincipalComponent, DimensionReduction, StructuralEquationModels

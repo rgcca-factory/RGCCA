@@ -6,7 +6,7 @@
 \usage{
 get_bootstrap(b, comp = 1, i_block = length(b$bootstrap[[1]]),
   bars = "sd", collapse = FALSE, n_cores = parallel::detectCores() -
-  1)
+  1, display_order = TRUE)
 }
 \arguments{
 \item{b}{A list of list weights (one per bootstrap per blocks)}
@@ -20,6 +20,8 @@ get_bootstrap(b, comp = 1, i_block = length(b$bootstrap[[1]]),
 \item{collapse}{A boolean to combine the variables of each block as result}
 
 \item{n_cores}{An integer for the number of cores used in parallelization}
+
+\item{display_order}{If TRUE the order is indicated}
 }
 \value{
 A matrix containing the means, 95% intervals, bootstrap ratio and p-values
@@ -33,6 +35,6 @@ data("Russett")
 blocks = list(agriculture = Russett[, seq(3)], industry = Russett[, 4:5],
     politic = Russett[, 6:11] )
 rgcca_out = rgcca(blocks)
-boot = bootstrap(rgcca_out, 2, superblock = FALSE, n_cores = 1)
+boot = bootstrap(rgcca_out, 5, n_cores = 1)
 get_bootstrap(boot, n_cores = 1)
 }

@@ -25,6 +25,8 @@ plot_network <- function(
 
     # Avoid random
     set.seed(1)
+    `V<-` <- igraph::`V<-`
+    `E<-` <- igraph::`E<-`
     V <- E <- NULL
         
     nodes <- get_nodes(rgcca_res)
@@ -32,7 +34,7 @@ plot_network <- function(
 
     par <- ifelse("sparsity" %in% names(nodes), "sparsity", "tau")
 
-    net <- graph_from_data_frame(
+    net <- igraph::graph_from_data_frame(
         d = edges,
         vertices = nodes,
         directed = FALSE)

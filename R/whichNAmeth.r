@@ -15,6 +15,8 @@
 #' @param typeNA structure of missing data required ("ponc" or "block" or "byVar")
 #' @param seed if filled (by a number), the randomness is reproducible.
 #' @param typeRGCCA type of analysis to be run ("sgcca"or rgcca"...).
+#' @param ni number of iteration in em or superblock algorithm
+
 #' @return a whichNAmethod object: a list of length nDataset containing. Each element of this list corresponding to each simulated dataset is
 #' a list whose names are the chosen missing methods. Each element of such a list is also a list containing
 #' \itemize{ 
@@ -34,27 +36,27 @@
 #' @importFrom parallel mclapply
 #' @seealso \link{plot.whichNAmethod}, \link{naEvolution}
 whichNAmethod=function(blocks,listMethods=c("complete","nipals"),typeNA="block",nDatasets=20,patternNA=NULL,connection=matrix(1,length(blocks),length(blocks))-diag(length(blocks)), tau=rep(1,length(blocks)),
-                       ncomp=rep(2,length(blocks)),sameBlockWeight=TRUE,scale=TRUE,tol=1e-6,
-                       verbose=FALSE,scheme="centroid",seed=NULL,typeRGCCA="rgcca",sparsity=NULL)
+                       ncomp=rep(2,length(blocks)),scale_block=TRUE,scale=TRUE,tol=1e-6,
+                       verbose=FALSE,scheme="centroid",seed=NULL,typeRGCCA="rgcca",sparsity=NULL,ni=5)
 {
   check_connection(connection,blocks)
   check_tau(tau,blocks)
   check_ncomp(tau,blocks)
   check_integer("nDatasets",nDatasets)
-  check_boolean("sameBlockWeight",sameBlockWeight)
+  check_boolean("scale_block",scale_block)
   check_boolean("scale",scale)
   check_boolean("verbose",verbose)
   check_integer("tol",tol,float=TRUE,min=0)
   choices <- c("horst", "factorial", "centroid")
   if (!scheme %in% (choices) && !is.function(scheme))
-      stop(paste0(scheme, " must be one of ", paste(choices, collapse = ", "), "' or a function."))
+      stop_rgcca(paste0(scheme, " must be one of ", paste(choices, collapse = ", "), "' or a function."))
   
 #  if(length(seed)!=0){check_integer("seed",seed)}
   match.arg(typeNA,c("block","ponc","rand","byVar"))
   match.arg(typeRGCCA,c("rgcca","sgcca"))
   if(is.null(patternNA)){patternNA=get_patternNA(blocks)$pctNAbyBlock}
-  if(is.vector(patternNA)){if(length(patternNA)!=length(blocks)){stop("patternNA should have the same size as length(blocks)")}}
-  referenceDataset=intersection(blocks)
+  if(is.vector(patternNA)){if(length(patternNA)!=length(blocks)){stop_rgcca("patternNA should have the same size as length(blocks)")}}
+  referenceDataset=intersection_list(blocks)
 
   # Getting list of datasets stemming from referenceDataset with the same pattern of missing values
 #  if(is.null(listNAdataset))
@@ -73,16 +75,17 @@ whichNAmethod=function(blocks,listMethods=c("complete","nipals"),typeNA="block",
 
   if(typeRGCCA=="rgcca")
   {
-      referenceRgcca=rgccad(referenceDataset,C=connection,tau=tau,ncomp=ncomp,verbose=verbose,sameBlockWeight=sameBlockWeight,scale=scale,tol=tol,scheme=scheme)
+      referenceRgcca=rgccad(referenceDataset,C=connection,tau=tau,ncomp=ncomp,verbose=verbose,scale_block=scale_block,scale=scale,tol=tol,scheme=scheme)
       if(verbose)    {  print("comparisons of RGCCA with the different methods...(this could take some time)")}
   }
   if(typeRGCCA=="sgcca")
   {
-      referenceRgcca=sgcca(referenceDataset,C=connection,sparsity=sparsity,ncomp=ncomp,verbose=verbose,sameBlockWeight=sameBlockWeight,scale=scale,tol=tol,scheme=scheme)
+      referenceRgcca=sgcca(referenceDataset,C=connection,sparsity=sparsity,ncomp=ncomp,verbose=verbose,scale_block=scale_block,scale=scale,tol=tol,scheme=scheme)
       if(verbose)    {  print("comparisons of SGCCA with the different methods...(this could take some time)")}
-  }
+    
+    }
   resultComparison=NULL
-  resultComparison=mclapply(1:nDatasets,function(i)
+  resultComparison=parallel::mclapply(1:nDatasets,function(i)
   {  
     selectCompletePatient=listNAdataset[[i]]$subjectKept
     indicators=NULL
@@ -90,12 +93,13 @@ whichNAmethod=function(blocks,listMethods=c("complete","nipals"),typeNA="block",
     {  
         if(typeRGCCA=="rgcca")
         {
-        methodRgcca=rgccaNa(blocks=listNAdataset[[i]]$dat,connection=connection,tau=tau,method=method,ncomp=ncomp,sameBlockWeight=sameBlockWeight,scale=scale,tol=tol,verbose=FALSE,scheme=scheme)
+        methodRgcca=rgccaNa(blocks=listNAdataset[[i]]$dat,connection=connection,tau=tau,method=method,ncomp=ncomp,scale_block=scale_block,scale=scale,tol=tol,verbose=FALSE,scheme=scheme,ni=ni)
         }
         if(typeRGCCA=="sgcca")
         {
-            methodRgcca=sgccaNa(blocks=listNAdataset[[i]]$dat,connection=connection,sparsity=sparsity,method=method,ncomp=ncomp,sameBlockWeight=sameBlockWeight,scale=scale,tol=tol,verbose=FALSE,scheme=scheme)
+            methodRgcca=sgccaNa(blocks=listNAdataset[[i]]$dat,connection=connection,sparsity=sparsity,method=method,ncomp=ncomp,scale_block=scale_block,scale=scale,tol=tol,verbose=FALSE,scheme=scheme)
         }
+        
         indicators[[method]]=comparison(rgcca1=referenceRgcca,rgcca2=methodRgcca$rgcca,selectPatient=selectCompletePatient,indNA=methodRgcca$indNA)
     }
     return(indicators)

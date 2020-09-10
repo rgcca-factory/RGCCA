@@ -19,7 +19,7 @@ createNA=function(blocks,typeNA="block",pNA=0.1,nAllRespondants=4,output="list",
 {
   blocks= listOfMatrices(blocks)
   if(length(pNA)==1){pNA=rep(pNA,length(blocks))}
-  if(length(pNA)!=1 & length(pNA)!=length(blocks)){stop("pNA should be a number between 0 and 1 or a vector of the same size as blocks ")}
+  if(length(pNA)!=1 & length(pNA)!=length(blocks)){stop_rgcca("pNA should be a number between 0 and 1 or a vector of the same size as blocks ")}
    match.arg(typeNA,c("block","rand","ponc","byvar"))
    match.arg(output,c("list","superblock"))
    if(!is.null(seed))
@@ -28,7 +28,7 @@ createNA=function(blocks,typeNA="block",pNA=0.1,nAllRespondants=4,output="list",
    }
    check_integer(nAllRespondants)
   if(is.null(rownames(blocks[[1]]))){rownames(blocks[[1]])=paste("S",1:dim(blocks[[1]])[1],sep="")}
-    if(is.list(pNA)){warnings("The percentage of missing data is chosen by variable. 'byvar' typeNA is chosen")}
+    if(is.list(pNA)){message("The percentage of missing data is chosen by variable. 'byvar' typeNA is chosen")}
   if(typeNA=="block")
 	{
 	  # For all the one but the last one, 
@@ -47,7 +47,7 @@ createNA=function(blocks,typeNA="block",pNA=0.1,nAllRespondants=4,output="list",
 		    }
 			else
 			{
-				indToRemove=NA
+				indToRemove[[i]]=NA
 			}
 		}
 	   n=nrow(blocks[[nbloc]])
@@ -66,7 +66,7 @@ createNA=function(blocks,typeNA="block",pNA=0.1,nAllRespondants=4,output="list",
 	   }
 	  else
 	  {
-	    indToRemove=NA
+	    indToRemove[[nbloc]]=NA
 	  }
     W2=do.call(cbind,blocks)
     subjectKept=rownames(blocks[[1]])[which(apply(W2,1,function(x){sum(is.na(x))})==0)]
@@ -120,13 +120,13 @@ createNA=function(blocks,typeNA="block",pNA=0.1,nAllRespondants=4,output="list",
     {
         
         indToRemove=list()
-        if(length(pNA)!=length(blocks)){stop("If pNA is a list, it should have the same length as blocks")}
+        if(length(pNA)!=length(blocks)){stop_rgcca("If pNA is a list, it should have the same length as blocks")}
         for(i in 1:length(blocks))
         {
             n=nrow(blocks[[i]])
             
             indToRemove[[i]]=list()
-            if(length(pNA[[i]])!=dim(blocks[[i]])[2]){stop(paste("pNA[",i,"] should have the same length that the number of variable in blocks[",i,"]"))}
+            if(length(pNA[[i]])!=dim(blocks[[i]])[2]){stop_rgcca(paste("pNA[",i,"] should have the same length that the number of variable in blocks[",i,"]"))}
             for(j in 1:dim(blocks[[i]])[2])
             {
                

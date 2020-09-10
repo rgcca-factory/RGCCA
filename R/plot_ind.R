@@ -48,6 +48,7 @@
 #' scale = TRUE,ncomp=rep(2,3))
 #' plot_ind(result.rgcca,i_block=1)
 #' @export
+#' @importFrom ggplot2 ggplot
 plot_ind <- function(
     rgcca_res,
     resp = rep(1, NROW(rgcca_res$Y[[1]])),
@@ -59,7 +60,7 @@ plot_ind <- function(
     response_name = "Response",
     no_overlap = FALSE,
     predicted = NULL,
-    title = "Sample space",
+    title = paste0(names(rgcca_res$call$blocks)[i_block],": Sample space"),
     legend=TRUE,
     ...){
 
@@ -71,7 +72,7 @@ plot_ind <- function(
         resp = resp,
         compx = compx,
         compy = compy,
-        i_block = i_block,
+        i_block_x = i_block,
         i_block_y = i_block_y,
         predicted = predicted
     )
@@ -106,7 +107,7 @@ plot_ind <- function(
         )
 
     # remove legend if missing
-    if (length(unique(df$resp)) == 1||legend==FALSE)
+    if (length(unique(df$resp)) == 1 || !legend)
         p <- p + theme(legend.position = "none")
 
     return(p)

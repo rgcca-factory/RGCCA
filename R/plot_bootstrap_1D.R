@@ -22,10 +22,12 @@
 #' plot_bootstrap_1D(boot, n_cores = 1)
 #' rgcca_out = rgcca(blocks)
 #' boot = bootstrap(rgcca_out, 2, n_cores = 1)
-#' selected.var = get_bootstrap(boot, n_cores = 1)
+#' selected.var = get_bootstrap(boot, n_cores = 1,display_order=TRUE)
 #' plot_bootstrap_1D(boot, n_cores = 1)
 #' plot_bootstrap_1D(df_b = selected.var)
 #' @export
+#' @importFrom ggplot2 ggplot
+#' @importFrom stats qbinom
 plot_bootstrap_1D <- function(
     b = NULL,
     df_b = NULL,
@@ -42,15 +44,14 @@ plot_bootstrap_1D <- function(
     ...) {
 
     if (missing(b) && missing(df_b))
-        stop("Please select a bootstrap object.")
+        stop_rgcca("Please select a bootstrap object.")
     if (!is.null(b)) {
-        df_b <- get_bootstrap(b, comp, i_block, collapse, n_cores, bars=bars)
+        df_b <- get_bootstrap(b, comp, i_block, collapse, n_cores, bars=bars,display_order = TRUE)
     }
     if (!is.null(df_b))
         stopifnot(is(df_b, "df_bootstrap"))
     check_integer("n_mark", n_mark)
 
-    if (is.null(title))
         title <- paste0(attributes(df_b)$indexes[[x]],
                    "\n(",
                    attributes(df_b)$n_boot,
@@ -61,7 +62,6 @@ plot_bootstrap_1D <- function(
         else
             colors <- c(color_group(seq(3))[1], color_group(seq(3))[3])
     }
-
     lower_band <- NULL -> upper_band
     check_ncol(list(df_b), 1)
 
@@ -77,35 +77,64 @@ plot_bootstrap_1D <- function(
     y <- set_occ(y)
 
     if (y == "sign") 
-        group = seq(2)
+        group = c("NS","*")
     else
         group = NA
 
-    df_b <- head(
+
+    if (n_mark > NROW(df_b))
+        n_mark <- NROW(df_b)
+    
+    if (!is.null(df_b$sign)) {
+        df_b$sign[df_b$sign == "*"] <- 1
+        df_b$sign[df_b$sign == "NS"] <- 0
+        df_b$sign <- as.numeric(df_b$sign)
+    }
+
+    df_b_head <- head(
         data.frame(
             order_df(df_b[, -NCOL(df_b)], x, allCol = TRUE),
-            order = NROW(df_b):1),
-        n_mark)
-    class(df_b) <- c(class(df_b), "d_boot1D")
-
+            order = NROW(df_b):1),  n_mark)
+    df_b_head<-df_b_head[df_b_head[,"sd"]!=0,]
+    class(df_b_head) <- c(class(df_b), "d_boot1D")
+    
+    if (!is.null(df_b_head$sign)) {
+        df_b_head$sign[df_b_head$sign == 1] <- "*"
+        df_b_head$sign[df_b_head$sign == 0] <- "NS"
+    }
+    
     p <- ggplot(
-        df_b,
+        df_b_head,
         aes(x = order,
-            y = df_b[, x],
-            fill = df_b[, y]))
+            y = df_b_head[, x],
+            fill = df_b_head[, y]))
 
     p <- plot_histogram(
         p,
-        df_b,
+        df_b_head,
         title,
         group,
         colors,
         ...) +
     labs(fill = attributes(df_b)$indexes[[y]])
 
-    if (x == "estimate")
+    if (x == "estimate" && nrow(df_b_head) <= 50)
         p <- p +
             geom_errorbar(aes(ymin = lower_band, ymax = upper_band,width=0.5))
-
+    if(x =="occurrences")
+    {
+        n_boot=ifelse(!is.null(dim(b[[1]][[1]][[1]])),dim(b[[1]][[1]][[1]])[2],length(b[[1]][[1]][[1]]))
+        nvar=length(b$bootstrap[[1]][[i_block]][,1])
+        avg_n_occ=sum(df_b$occurrences)/n_boot
+        probComp= avg_n_occ/nvar
+        
+        q1=qbinom(size=n_boot,prob=probComp,p=1-0.05/nvar)
+        q2=qbinom(size=n_boot,prob=probComp,p=1-0.01/nvar)
+        q3=qbinom(size=n_boot,prob=probComp,p=1-0.001/nvar)
+        
+        p <-p+geom_hline(yintercept = c(q1,q2,q3),col=c("red","black","green"))
+        p
+        
+    }
     return(p)
 }

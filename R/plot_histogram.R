@@ -6,7 +6,7 @@
 #' @param group A vector of character giving the group for the rows
 #' @param cex_axis An integer for the size of the axis text
 #' @param colors reoresenting a vector of colors
-
+#' @importFrom ggplot2 ggplot
 plot_histogram <- function(
     p,
     df,
@@ -14,11 +14,11 @@ plot_histogram <- function(
     group = NA,
     colors = NULL,
     cex = 1,
-    cex_main = 25 * cex,
-    cex_sub = 16 * cex,
+    cex_main = 14 * cex,
+    cex_sub = 12 * cex,
     cex_axis = 10 * cex
 ) {
-
+    
     for (i in c("cex", "cex_main", "cex_sub", "cex_axis"))
         check_integer(i, get(i))
 
@@ -34,12 +34,17 @@ plot_histogram <- function(
     } else
         width <- 1
 
-    if (NROW(df) < 3)
-        mar <- 60
-    else if (NROW(df) < 5)
-        mar <- 30
-    else
+   if (NROW(df) < 3)
+       mar <- 50
+   else if (NROW(df) <= 15)
+       mar <- round(3 / NROW(df) * 50)
+   else
         mar <- 0
+    print(mar)
+    if (NROW(df) > 50)
+        cex_axis <- 7
+    if (NROW(df) > 75)
+        cex_axis <- 5
 
     axis <- function(margin){
         element_text(
@@ -50,7 +55,8 @@ plot_histogram <- function(
     }
 
     p <- p + geom_bar(stat = "identity", width = width) +
-        coord_flip() + labs(title = title,  x = "", y = "") +
+        coord_flip() + 
+        labs(title = title,  x = "", y = "") +
         theme_classic() +
         theme_perso(cex, cex_main, cex_sub) +
         theme(
@@ -77,7 +83,9 @@ plot_histogram <- function(
                 scale_fill_gradientn(colors = colors, na.value = "black")
         } else  if ((is.character2(group[!is.na(group)]) ||
                             length(unique(group)) <= 5 )) {
-            p <- p + scale_fill_manual(values = color_group(group, colors))
+
+            cols=color_group(group, colors)
+           p <- p + scale_fill_manual(values = cols,limit=names(cols),drop=FALSE)
         }
     }
 

@@ -31,6 +31,7 @@
 #' rgcca_out = rgcca(blocks)
 #' plot_var_1D(rgcca_out, collapse = TRUE)
 #' @export
+#' @importFrom ggplot2 ggplot
 plot_var_1D <- function(
     rgcca_res,
     comp = 1,
@@ -43,7 +44,8 @@ plot_var_1D <- function(
     ...) {
 
     check_colors(colors)
-
+    if(rgcca_res$call$superblock==FALSE){collapse=FALSE}
+    
     df <- get_ctr2(
         rgcca_res = rgcca_res,
         compx = comp,
@@ -56,15 +58,14 @@ plot_var_1D <- function(
     )
     resp <- df$resp
 
-    if (i_block < length(rgcca_res$a) || rgcca_res$call$type == "pca")
+    if (i_block < length(rgcca_res$a) || tolower(rgcca_res$call$type) == "pca")
         rgcca_res$call$superblock <- FALSE
-
-    J <- names(rgcca_res$a)
+     J <- names(rgcca_res$a)
 
     if (is.null(title))
         title <- ifelse(type == "cor",
-            "Variable correlations with",
-            "Variable weights on")
+            "Variable correlations",
+            "Variable weights")
 
     # sort in decreasing order
     df <- data.frame(order_df(df, 1, TRUE), order = NROW(df):1)
@@ -85,12 +86,11 @@ plot_var_1D <- function(
         color <- "black"
         p <- ggplot(df, aes(order, df[, 1], fill = abs(df[, 1])))
     }
-
     p <- plot_histogram(
         p,
         df,
         title,
-        as.character(color),
+        group=as.character(color),
         colors = colors,
         ...
     ) +

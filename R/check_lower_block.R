@@ -1,9 +1,9 @@
 check_lower_blocks <- function(x, y, blocks)
     if (y > length(blocks))
-        stop(
+        stop_rgcca(
             paste0(
                 x,
-                " must be lower than ",
+                " should be lower than ",
                 length(blocks),
                 " (the maximum number of blocks), not be equal to ",
                 y,

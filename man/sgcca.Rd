@@ -7,7 +7,7 @@
 sgcca(A, C = 1 - diag(length(A)), sparsity = rep(1, length(A)),
   ncomp = rep(1, length(A)), scheme = "centroid", scale = TRUE,
   init = "svd", bias = TRUE, tol = .Machine$double.eps,
-  verbose = FALSE, sameBlockWeight = TRUE, prescaling = FALSE,
+  verbose = FALSE, scale_block = TRUE, prescaling = FALSE,
   quiet = FALSE)
 }
 \arguments{
@@ -37,7 +37,7 @@ If sparsity is a matrix, each row \eqn{h} defines the constraints applied to the
 
 \item{verbose}{Will report progress while computing if verbose = TRUE (default: TRUE).}
 
-\item{sameBlockWeight}{If TRUE, all blocks are weighted by their own variance: all the blocks have the same weight}
+\item{scale_block}{If TRUE, all blocks are weighted by their own variance: all the blocks have the same weight}
 
 \item{prescaling}{if TRUE, the saling step is not run in sgcca}
 

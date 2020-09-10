@@ -5,12 +5,11 @@
 \title{plots a list_rgcca object}
 \usage{
 \method{plot}{list_rgcca}(x, type = "ind", resp = rep(1,
-  NROW(x$Y[[1]])), i_block = 1, i_block_y = i_block, compx = 1,
-  compy = 2, remove_var = FALSE, text_var = TRUE, text_ind = TRUE,
-  response_name = "Response", no_overlap = FALSE, title = NULL,
-  title_var = "Variable correlations with", title_ind = "Sample space",
-  n_mark = 100, collapse = FALSE, cex = 1, cex_sub = 10,
-  cex_main = 14, cex_lab = 12, colors = NULL, errorbar = "ci", ...)
+  NROW(x$Y[[1]])), block = 1, comp = 1:2, remove_var = FALSE,
+  text_var = TRUE, text_ind = TRUE, response_name = "Response",
+  no_overlap = FALSE, title = NULL, n_mark = 100, collapse = FALSE,
+  cex = 1, cex_sub = 10, cex_main = 14, cex_lab = 12,
+  colors = NULL, errorbar = "ci", ...)
 }
 \arguments{
 \item{x}{Result of MIRGCCA function (see\code{\link[RGCCA]{MIRGCCA}} ) or a list containing 
@@ -23,16 +22,9 @@
 \item{resp}{A vector of characters corresponding either to a qualitative
 variable with levels or a continuous variable}
 
-\item{i_block}{An integer giving the index of a list of blocks}
+\item{block}{vector representing the components to plot}
 
-\item{i_block_y}{An integer giving the index of a list of blocks (another
-one, different from the one used in i_block)}
-
-\item{compx}{An integer giving the index of the analysis component used
-for the x-axis}
-
-\item{compy}{An integer giving the index of the analysis component used
-for the y-axis}
+\item{comp}{vector representing the components to plot}
 
 \item{remove_var}{A bolean to keep only the 100 variables of each
 component with the biggest correlation#'}
@@ -47,12 +39,7 @@ or with circles (FALSE)}
 
 \item{no_overlap}{A boolean to avoid overlap in plotted text}
 
-\item{title}{A character with the name of the space (either "Variables" or
-"Samples")}
-
-\item{title_var}{Character for the title of the variable space}
-
-\item{title_ind}{Character for the title of the individual space}
+\item{title}{Character for the title of the plot}
 
 \item{n_mark}{An integer giving the number of top variables to select}
 
@@ -88,6 +75,6 @@ X2[7,1]=NA
 X2[5,1]=NA
 X3[3,1:2]=NA
 A=list(X1,X2,X3)
-res=MIRGCCA(A,k=3,ni=5,scale=TRUE,sameBlockWeight=TRUE,tau=rep(1,3))
+res=MIRGCCA(A,k=3,ni=5,scale=TRUE,scale_block=TRUE,tau=rep(1,3))
 plot(res,type="ind")
 }

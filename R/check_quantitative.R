@@ -2,11 +2,11 @@
 #'
 #' @param df A dataframe or a matrix
 #' @param fo A character giving the name of the tested file
-#' @param h A bolean giving either the presence (TRUE) or absence (FALSE) of
+#' @param header A bolean giving either the presence (TRUE) or absence (FALSE) of
 #'  a header
-
-check_quantitative <- function(df, fo, h = FALSE) {
-    qualitative <- is.character2(df)
+#' @param warn_separator A bolean to print warning for bad separator use
+check_quantitative <- function(df, fo, header = FALSE, warn_separator = FALSE) {
+    qualitative <- is.character2(df, warn_separator = TRUE)
 
     if (qualitative) {
         msg <- paste(
@@ -14,10 +14,10 @@ check_quantitative <- function(df, fo, h = FALSE) {
             "contains qualitative data. Please, transform them in a disjunctive table."
         )
 
-        if (!h)
+        if (!header)
             msg <- paste0(msg, "Possible mistake: header parameter is disabled, check if the file doesn't have one.")
 
-        stop(paste(msg, "\n"), exit_code = 100)
+        stop_rgcca(paste(msg, "\n"), exit_code = 100)
     }
 
 }

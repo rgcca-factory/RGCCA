@@ -5,62 +5,99 @@
 # rgcca_permutation_k(blocks)
 rgcca_permutation_k <- function(
     blocks,
-    par = list("ncomp", expand.grid(rep(list(seq(2)), length(blocks)))),
+    connection=NULL,
+    par = "ncomp",
+    par_value=rep(1,length(blocks)),
     tol = 1e-03,
     type = "rgcca",
     sparsity = rep(1, length(blocks)),
+    tau=rep(1,length(blocks)),
     perm = TRUE,
     quiet = TRUE,
     n_cores = parallel::detectCores() - 1,
-    ...) {
+    superblock=FALSE,
+    scale=TRUE,
+    scale_block=TRUE,
+    scheme="factorial",
+    method="nipals",
+    ncomp=rep(1,length(blocks)),
+    bias=FALSE) {
+     t0=Sys.time()
+        if (perm) {
+            blocks_to_use=blocks
+            blocks_to_use=lapply(seq(length(blocks)),function(k)
+                { 
+                    blocks_to_use_k <- as.matrix(blocks[[k]][sample(seq(NROW(blocks[[k]]))), ])
+                    rownames(blocks_to_use_k)=rownames(blocks[[k]])
+                    return(blocks_to_use_k)
+                })
+            names(blocks_to_use)=names(blocks)
 
-    if (perm) {
-        for (k in seq(length(blocks)))
-        blocks[[k]] <- as.matrix(blocks[[k]][sample(seq(NROW(blocks[[k]]))), ])
-    }
-
-    gcca <- function(i) {
-        
-        
-        args <- list(
-            blocks = blocks,
-            type = type,
-            tol = tol,
-            quiet = quiet,
-            method = "complete",
-            ...
-        )
-        
-        args[[par[[1]]]] <- par[[2]][i, ]
-        crit <- do.call(rgcca, args)$crit
-        
-        return(sum(sapply(crit, sum)))
-    }
-
-    varlist <- c(ls(getNamespace("RGCCA")))
-    # get the parameter dot-dot-dot
-    args_values <- list(...)
-    args_names <- names(args_values)
-    n <- args_values
-    if (!is.null(n))
-        n <- seq(length(args_values))
-    for (i in n) {
-        if (!is.null(args_names[i])) {
-            # dynamically asssign these values
-            assign(args_names[i], args_values[[i]])
-            # send them to the clusters to parallelize
-            varlist <- c(varlist, args_names[i])
-            # without this procedure rgcca_crossvalidation(rgcca_res, blocks = blocks2)
-            # or rgcca_crossvalidation(rgcca_res, blocks = lapply(blocks, scale)
-            # does not work.
+            
+          #  for (k in seq(length(blocks)))
+          #      blocks_to_use[[k]] <- as.matrix(blocks[[k]][sample(seq(NROW(blocks[[k]]))), ])
+          #      rownames(blocks_to_use[[k]])=rownames(blocks[[k]])
+        }else
+        {
+            blocks_to_use=blocks
         }
-    }
 
-    parallelize(
-        varlist,
-        seq(NROW(par[[2]])),
-        gcca,
-        n_cores = n_cores,
-        envir = environment()
-    )
+        if(par=="ncomp")
+        {
+            res <- rgcca(
+                blocks = blocks_to_use,
+                type = type,
+                tol = tol,
+                quiet = quiet,
+                method = method,
+                superblock=superblock,
+                scale=scale,
+                scale_block=scale_block,
+                scheme=scheme,
+                connection=connection,
+                ncomp=par_value,
+                sparsity=sparsity,
+                tau=tau
+            )
+        }
+        if(par=="tau")
+        {
+            res <- rgcca(
+                blocks = blocks_to_use,
+                type = type,
+                tol = tol,
+                quiet = quiet,
+                method = method,
+                superblock=superblock,
+                scale=scale,
+                scale_block=scale_block,
+                scheme=scheme,
+                connection=connection,
+                ncomp=ncomp,
+                sparsity=NULL,
+                tau=par_value
+            )
+        }
+        if(par=="sparsity")
+        {
+            res <- rgcca(
+                blocks = blocks_to_use,
+                type = type,
+                tol = tol,
+                quiet = quiet,
+                method = method,
+                superblock=superblock,
+                scale=scale,
+                scale_block=scale_block,
+                scheme=scheme,
+                connection=connection,
+                ncomp=ncomp,
+                sparsity=par_value,
+                tau=NULL
+            )
+        }
+   
+        crit <- res$crit
+        return(sum(sapply(crit, sum)))
+
 }

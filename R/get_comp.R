@@ -2,42 +2,43 @@
 #' 
 #' @inheritParams plot_ind
 #' @inheritParams get_ctr
+#' @param i_block_x An integer giving the index of a list of blocks
 #' @param i_block_z An integer giving the index of a list of blocks (another
-#' one, different from the one used in i_block)
+#' one, different from the one used in i_block_x)
 #' @return A matrix containg each selected components and an associated response
-
 get_comp <- function(
     rgcca_res,
     resp = rep(1, NROW(rgcca_res$Y[[1]])),
     compx = 1,
     compy = 2,
     compz = NULL,
-    i_block = length(rgcca_res$Y),
-    i_block_y = i_block,
-    i_block_z = i_block,
+    i_block_x = length(rgcca_res$Y),
+    i_block_y = i_block_x,
+    i_block_z = i_block_x,
     predicted = NULL){
     
     stopifnot(is(rgcca_res, "rgcca"))
     resp <- as.matrix(check_response(resp, rgcca_res$Y))
 
-    for (i in c("i_block", "i_block_y", "i_block_z")) {
+    for (i in c("i_block_x", "i_block_y", "i_block_z")) {
         if (!is.null(get(i)))
             check_blockx(i, get(i), rgcca_res$call$blocks)
     }
-    check_ncol(rgcca_res$Y, i_block)
-    for (i in c("compx", "compy", "compz")) {
-        if (!is.null(get(i)))
-            check_compx(i, get(i), rgcca_res$call$ncomp, i_block)
+    check_ncol(rgcca_res$Y, i_block_x)
+    for (i in c("x", "y", "z")) {
+        j <- paste0("comp", i)
+        if (!is.null(get(j)))
+            check_compx(j, get(j), rgcca_res$call$ncomp, get(paste0("i_block_", i)))
     }
 
     df <- data.frame(
-        rgcca_res$Y[[i_block]][, compx],
+        rgcca_res$Y[[i_block_x]][, compx],
         rgcca_res$Y[[i_block_y]][, compy],
         rgcca_res$Y[[i_block_z]][, compz]
     )
 
     if (!is.null(predicted)) {
-        df2 <- predicted[[2]][[i_block]][, c(compx, compy, compz)]
+        df2 <- predicted[[2]][[i_block_x]][, c(compx, compy, compz)]
         colnames(df2) <- colnames(df)
         df1 <- df[rownames(df2),]
         df <- rbind(df1, df2)
@@ -50,7 +51,7 @@ get_comp <- function(
         if (!is.null(names)) {
 
             resp <- as.matrix(resp, row.names = names)
-            name_blocks <- row.names(rgcca_res$Y[[i_block]])
+            name_blocks <- row.names(rgcca_res$Y[[i_block_x]])
             diff_column <- setdiff(name_blocks, names)
 
             if (identical(diff_column, name_blocks)) {
@@ -64,15 +65,15 @@ get_comp <- function(
                 } else {
                     names(resp) <- names
                 }
-                resp <- resp[row.names(rgcca_res$Y[[i_block]])]
+                resp <- resp[row.names(rgcca_res$Y[[i_block_x]])]
             }
 
         } else {
             # warning("No rownames have been found in the group file. The rownames of the selected block of RGCCA have been used.")
             # resp <- rep("NA", NROW(df))
-            # rownames(resp) <- rownames(rgcca_res$A[[i_block]])
-            if (length(resp) != NROW(rgcca_res$A[[i_block]]))
-                stop("resp argument should have the same size than the number of rows in the selected block.")
+            # rownames(resp) <- rownames(rgcca_res$A[[i_block_x]])
+            if (length(resp) != NROW(rgcca_res$A[[i_block_x]]))
+                stop_rgcca("resp argument should have the same size than the number of rows in the selected block.")
         }
     } else
         resp <- resp[seq(NROW(df)), ]

@@ -43,6 +43,14 @@ comparison=function(rgcca1,rgcca2,naxis=1,selec=10,selectPatient=NULL,indNA=NULL
   {
       J=length(rgcca1$call$blocks)
   }
+  if(class(rgcca1)=="sgcca")
+  {
+      J=length(rgcca1$call$A)
+  }
+  if(class(rgcca1)=="sgccad")
+  {
+      J=length(rgcca1$call$A)
+  }
   com=rv=pctBm=rvComplete=rmse=rep(NA,J)
   for(i in 1:J)
   {

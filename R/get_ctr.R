@@ -9,7 +9,6 @@
 #' @param i_block_2 An integer giving the index of a list of blocks to be 
 #' correlated to i_block if this option is selected (default to i_block)
 #' @return A dataframe containing the indexes for each selected components
-
 get_ctr <- function(
     rgcca_res,
     compx = 1,
@@ -18,7 +17,7 @@ get_ctr <- function(
     i_block = length(rgcca_res$call$blocks),
     type = "cor",
     collapse = FALSE,
-    i_block_2 = NULL) {
+    i_block_2 = i_block) {
 
     match.arg(type, c("cor", "weight"))
     stopifnot(!missing(rgcca_res))
@@ -26,21 +25,19 @@ get_ctr <- function(
     blocks <- rgcca_res$call$blocks
     y <- NULL
 
-    if (!collapse)
+    if (!collapse) {
         row.names <- colnames(blocks[[i_block]])
-    else{
+    } else{
         if (rgcca_res$call$superblock)
             blocks <- blocks[-length(blocks)]
         row.names <- unlist(lapply(blocks, colnames))
     }
 
     if (type == "cor")
-        f2 <- function(x, y){    
-        if (is.null(i_block_2))
-            i_block_2 <- y
+        f2 <- function(x, y){
         cor(
-            blocks[[i_block_2]][rownames(rgcca_res$Y[[y]]), ],
-            rgcca_res$Y[[y]][, x],
+            blocks[[y]][rownames(rgcca_res$Y[[y]]), ],
+            rgcca_res$Y[[i_block]][, x],
             use = "pairwise.complete.obs"
         )
     }
@@ -49,7 +46,7 @@ get_ctr <- function(
 
     if (!collapse)
         f <- function(x)
-            f2(x, i_block)
+            f2(x, i_block_2)
     else
         f <- function(x){
             unlist(
@@ -65,7 +62,7 @@ get_ctr <- function(
             c(compx, compy, compz),
             function(x){
                 if (x > rgcca_res$call$ncomp[i_block])
-                    stop("The index of the selected analysis component doesn't exist.")
+                    stop_rgcca("The index of the selected analysis component doesn't exist.")
                 f(x)
             },
             simplify = FALSE

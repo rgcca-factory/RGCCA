@@ -44,8 +44,8 @@ multiple_blocks_super  <<- c(
     )
 analyse_methods  <<- list(one_block, two_blocks, multiple_blocks, multiple_blocks_super)
 reac_var  <<- reactiveVal()
-id_block_y <<- id_block <<- id_block_resp <<- analysis <<- 
-boot <<- analysis_type <<- crossval <<- selected.var <<- NULL
+id_block_y <<- id_block <<- id_block_resp <<- analysis <<- connection <<- perm <<- boot <<-
+boot <<- analysis_type <<- crossval <<- selected.var <<- crossval <<- NULL
 clickSep <<- FALSE
 if_text <<- TRUE
 compx <<- 1
@@ -87,15 +87,26 @@ if (BSPLUS) {
 ui <- fluidPage(
     titlePanel("R/SGCCA - The Shiny graphical interface"),
     tags$div(
-        tags$strong("Authors: "),
         tags$p(
             "Etienne CAMENEN, Ivan MOSZER, Arthur TENENHAUS (",
             tags$a(href = "arthur.tenenhaus@l2s.centralesupelec.fr",
             "arthur.tenenhaus@l2s.centralesupelec.fr"),
             ")"
-        )
+        ),
+        tags$i("Multi-block data analysis concerns the analysis of several sets of variables (blocks) observed on the same group of individuals. The main aims of the RGCCA package are: to study the relationships between blocks and to identify subsets of variables of each block which are active in their relationships with the other blocks."),
+        tags$br(), tags$br()
     ),
-    tags$a(href = "https://github.com/BrainAndSpineInstitute/rgcca_Rpackage/blob/master/inst/shiny/tutorialShiny.md", "Go to the tutorial"),
+    tags$a(href = "https://github.com/rgcca-factory/RGCCA/blob/release/3.0.0/inst/shiny/tutorialShiny.md", "Go to the tutorial"),
+    tags$strong("|"),
+    tags$a(href = "https://www.youtube.com/watch?v=QCkEBsoP-tc", "Watch a demo", target = "_blank"),
+    tags$br(), tags$br(),
+    tags$style(".fa-camera {color:#c7c7c7}"),
+    tags$style(".fa-camera:hover {color:#7c7c7c}"),
+    tags$style("#connection_save, #ave_save {border-color:white; left: 0%}"),
+    tags$style("#connection_save:hover, #ave_save:hover {background-color:white}"),
+    tags$style("#connection_save:focus, #ave_save:focus {outline:none; background-color:white}"),
+    tags$style("#connection_save:active, #ave_save:active {box-shadow:none}"),
+    tags$style(".js-plotly-plot .plotly .modebar {left: 0%}"),
     useShinyjs(),
     sidebarLayout(sidebarPanel(
         tabsetPanel(
@@ -116,6 +127,29 @@ ui <- fluidPage(
 
             tabPanel(
                 "RGCCA",
+                uiOutput("val_custom"),
+                sliderInput(
+                    inputId = "ncv",
+                    label = "Number of cross-validation",
+                    min = 1,
+                    max = 100,
+                    value = 1,
+                    step = 1
+                ),
+                sliderInput(
+                    inputId = "kfold",
+                    label = "Number of folds",
+                    min = 2,
+                    max = 10,
+                    value = 5,
+                    step = 1
+                ),
+                actionButton(
+                    inputId = "run_crossval",
+                    label = "Run cross-validation"),
+                uiOutput("nperm_custom"),
+                actionButton(inputId = "run_perm",
+                    label = "Run permutation"),
                 uiOutput("analysis_type_custom"),
                 uiOutput("nb_compcustom"),
                 uiOutput("scale_custom"),
@@ -142,53 +176,41 @@ ui <- fluidPage(
                 uiOutput("tau_opt_custom"),
                 uiOutput("tau_custom"),
                 uiOutput("scheme_custom"),
+                # sliderInput(
+                #     inputId = "power",
+                #     label = "Power of the factorial",
+                #     min = 2,
+                #     max = 6,
+                #     value = 2,
+                #     step = 1
+                # ),
                 actionButton(
                     inputId = "run_analysis",
                     label = "Run analysis"),
-                sliderInput(
-                    inputId = "nboot",
-                    label = "Number of boostraps",
-                    min = 5,
-                    max = 100,
-                    value = 10,
-                    step = 5
-                ),
+                uiOutput("nboot_custom"),
                 actionButton(inputId = "run_boot",
                     label = "Run bootstrap"),
-                radioButtons(
-                    "crossval",
-                    label = "Type of validation",
-                    choices = c(`Train-test` = "test",
-                                `K-fold` = "kfold",
-                                `Leave-one-out` = "loo"),
-                    selected = "loo"
-                ),
                 actionButton(
-                    inputId = "run_crossval",
-                    label = "Run cross-validation"),
-                sliderInput(
-                    inputId = "nperm",
-                    label = "Number of permutations",
-                    min = 5,
-                    max = 100,
-                    value = 10,
-                    step = 5
-                ),
-                radioButtons(
-                    "perm",
-                    label = "Type of permutation",
-                    choices = c(`Number of components` = "ncomp",
-                                Sparsity = "sparsity",
-                                Tau = "tau"),
-                ),
-                actionButton(inputId = "run_perm",
-                    label = "Run permutation")
+                    inputId = "run_crossval_single",
+                    label = "Evaluate the model")
             ),
 
             # Graphical parameters
 
             tabPanel(
                 "Graphic",
+                radioButtons(
+                    "format",
+                    label = "Output image format",
+                    choices = c(
+                        `jpeg` = "jpeg",
+                        `png` = "png"#,
+                        #`svg` = "svg"
+                        # `tiff` = "tiff",
+                        # `pdf` = "pdf"
+                    ),
+                    selected = "png"
+                ),
                 checkboxInput(
                     inputId = "text",
                     label = "Display names",
@@ -205,6 +227,15 @@ ui <- fluidPage(
                     label = "Display cross-validation",
                     value = TRUE
                 ),
+                radioButtons(
+                    "indexes",
+                    label = "Type of indexes",
+                    choices = c(
+                        Correlation = "cor",
+                        Weights = "weight")
+                ),
+                uiOutput("b_x_custom"),
+                uiOutput("b_y_custom"),
                 actionButton(inputId = "save_all", label = "Save all")
             )
 
@@ -217,13 +248,13 @@ ui <- fluidPage(
             id = "navbar",
             tabPanel(
                 "Connection",
-                visNetworkOutput("connectionPlot"),
-                actionButton("connection_save", "Save")
+                actionButton("connection_save", "", icon = icon("camera")),
+                visNetworkOutput("connectionPlot")
             ),
             tabPanel(
                 "AVE",
-                plotOutput("AVEPlot"),
-                actionButton("ave_save", "Save")
+                actionButton("ave_save", "", icon = icon("camera")),
+                plotOutput("AVEPlot")
             ),
             tabPanel(
                 "Samples",
@@ -232,7 +263,7 @@ ui <- fluidPage(
             ),
             tabPanel(
                 "Corcircle",
-                plotlyOutput("corcirclePlot"),
+                plotlyOutput("corcirclePlot", height = 500),
                 actionButton("corcircle_save", "Save")
             ),
             tabPanel(
@@ -246,9 +277,24 @@ ui <- fluidPage(
                 actionButton("bootstrap_save", "Save")
             ),
             tabPanel(
+                "Bootstrap Summary",
+                dataTableOutput("bootstrapTable"),
+                actionButton("bootstrap_t_save", "Save")
+            ),
+            tabPanel(
                 "Permutation",
-                dataTableOutput("permutationPlot"),
+                plotlyOutput("permutationPlot", height = 700),
                 actionButton("permutation_save", "Save")
+            ),
+            tabPanel(
+                "Permutation Summary",
+                dataTableOutput("permutationTable"),
+                actionButton("permutation_t_save", "Save")
+            ),
+            tabPanel(
+                "Cross-validation",
+                plotlyOutput("cvPlot", height = 700),
+                actionButton("cv_save", "Save")
             )
         )
 

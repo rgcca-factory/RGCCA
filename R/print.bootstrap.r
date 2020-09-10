@@ -4,7 +4,20 @@
 #'@export
 print.bootstrap=function(x,...)
 {
-    print(paste(length(x),"bootstrap(s) were run with the following RGCCA parameters"), ...)
-    print(x$rgcca$call)
-    
+    print(paste(dim(x$bootstrap[[1]][[1]])[2],"bootstrap(s) were run"),...)
+    ncompmax=min(x$rgcca$call$ncomp)
+    for(comp in 1:ncompmax)
+    {
+        cat(paste("Dimension:",comp,"\n"))
+        print(Reduce(rbind,lapply(1:length(x$rgcca$call$blocks),
+                                  function(block)
+                                  { b=get_bootstrap(b=x,
+                                                      i_block=block,
+                                                    comp=comp,
+                                                    bars="ci",
+                                                    display_order =FALSE)
+                                    othercols=colnames(b)[-which(colnames(b)=="estimate")]
+                                  ;return(b[,c("estimate",othercols)])}
+            )))
+    }
 }

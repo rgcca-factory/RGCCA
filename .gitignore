@@ -1,6 +1,8 @@
 *.pdf
 *.log
 *.tsv
+*.txt
+*.png
 *.html
 *.RData
 *.Rproj

@@ -14,7 +14,7 @@
 #' @param tol Stopping value for convergence.
 #' @param na.rm If TRUE, NIPALS algorithm taking missing values into account is run. RGCCA is run only on available data.
 #' @param estimateNA to choose between "no","first","iterative","superblock","new","lebrusquet") TO BE DEVELOPPED
-#' @param sameBlockWeight useful in lebrusquet 
+#' @param scale_block useful in lebrusquet
 #' @param scale TRUE if scaled (used in superblock method)
 #' @param initImpute 'rand' or 'mean': initialization for optimization method
 #' @return \item{Y}{A \eqn{n * J} matrix of RGCCA outer components}
@@ -36,14 +36,13 @@
 #' @importFrom stats cor rnorm
 #' @importFrom graphics plot
 #' @importFrom Deriv Deriv
-rgccak=function (A, C, tau = "optimal", scheme = "centroid",verbose = FALSE, init = "svd", bias = TRUE, tol = 1e-08,na.rm=TRUE,estimateNA="no",scale=TRUE,sameBlockWeight=TRUE,initImpute="rand") 
-{
-    
-    call=list(A=A, C=C, scheme = scheme,verbose = verbose, init = init, bias = bias, tol = tol,na.rm=na.rm,estimateNA=estimateNA,scale=scale,sameBlockWeight=sameBlockWeight,initImpute=initImpute) 
+rgccak=function (A, C, tau = "optimal", scheme = "centroid",verbose = FALSE, init = "svd", bias = TRUE, tol = 1e-08,na.rm=TRUE,estimateNA="no",scale=TRUE,scale_block=TRUE,initImpute="rand")
+{  
+    call=list(A=A, C=C, scheme = scheme,verbose = verbose, init = init, bias = bias, tol = tol,na.rm=na.rm,estimateNA=estimateNA,scale=scale,scale_block=scale_block,initImpute=initImpute)
         
      if(mode(scheme) != "function") 
     {
-    if(!scheme %in% c("horst","factorial","centroid")){stop("Please choose scheme as 'horst','factorial','centroid' or as a convex function")}
+    if(!scheme %in% c("horst","factorial","centroid")){stop_rgcca("Please choose scheme as 'horst','factorial','centroid' or as a convex function")}
     if(scheme=="horst"){ g <- function(x) x}
     if(scheme=="factorial"){ g <- function(x)  x^2}  
     if(scheme=="centroid"){g <- function(x) abs(x)}
@@ -80,7 +79,7 @@ rgccak=function (A, C, tau = "optimal", scheme = "centroid",verbose = FALSE, ini
                             return(res)
                  })
        #  A=lapply(A,scale2,bias=TRUE)
-       #  if(sameBlockWeight){A=lapply(A,function(x){return(x/sqrt(NCOL(x)))})}
+       #  if(scale_block){A=lapply(A,function(x){return(x/sqrt(NCOL(x)))})}
         # liste de blocs
      }
     if(estimateNA=="superblock")
@@ -108,7 +107,7 @@ rgccak=function (A, C, tau = "optimal", scheme = "centroid",verbose = FALSE, ini
         {
             
             A1 = lapply(A, function(x) scale2(x,scale=TRUE, bias = bias)) # le biais indique si on recherche la variance biaisee ou non
-            if(sameBlockWeight)
+            if(scale_block)
             {
                 A = lapply(A1, function(x) {y=x/sqrt(NCOL(x));return(y)} )
             }
@@ -122,7 +121,7 @@ rgccak=function (A, C, tau = "optimal", scheme = "centroid",verbose = FALSE, ini
         { 
             
             A1 = lapply(A, function(x) scale2(x, scale=FALSE, bias = bias)) 
-            if(sameBlockWeight)
+            if(scale_block)
             {
                 A = lapply(A1, function(x) {covarMat=cov2(x,bias=bias);varianceBloc=sum(diag(covarMat)); return(x/sqrt(varianceBloc))})
             }
@@ -134,13 +133,12 @@ rgccak=function (A, C, tau = "optimal", scheme = "centroid",verbose = FALSE, ini
         }
         means=lapply(A1,function(x){M=matrix(rep(attributes(x)$'scaled:center' ,dim(x)[1]),dim(x)[1],dim(x)[2],byrow=TRUE);return(M)})
         stdev=lapply(A1,function(x){M=matrix(rep(attributes(x)$'scaled:scale' ,dim(x)[1]),dim(x)[1],dim(x)[2],byrow=TRUE);return(M)})
-        if(sameBlockWeight){stdev=lapply(stdev,function(x){return(x/sqrt(NCOL(x)))})}
+        if(scale_block){stdev=lapply(stdev,function(x){return(x/sqrt(NCOL(x)))})}
         
     }
        a <- alpha <- M <- Minv <- K <- list() # initialisation variables internes
     which.primal <- which((n >= pjs) == 1) # on raisonne differement suivant la taille du bloc
     which.dual <- which((n < pjs) == 1)
-    
 
     if (init == "svd") { #initialisation intelligente dans les differents cas (a creuser)
         for (j in which.primal) {
@@ -161,7 +159,7 @@ rgccak=function (A, C, tau = "optimal", scheme = "centroid",verbose = FALSE, ini
         }
     }
     else {
-        stop("init should be either random or by SVD.")
+        stop_rgcca("init should be either random or by SVD.")
     }
    
     N = ifelse(bias, n, n - 1)
@@ -202,11 +200,8 @@ rgccak=function (A, C, tau = "optimal", scheme = "centroid",verbose = FALSE, ini
             nmat=ifelse(bias,t(!is.na(A[[j]]))%*%(!is.na(A[[j]])),t(!is.na(A[[j]]))%*%(!is.na(A[[j]]))-1)
             nmat[nmat==0]=NA
             M[[j]] <- tau[j] * diag(n) + ((1 - tau[j])) *nmat^(-1)* K[[j]] #calcul de la fonction a minimiser ?
-            #-----------------------
-            
              Minv[[j]] = ginv(M[[j]])
             alpha[[j]] = drop(1/sqrt(t(alpha[[j]])%*% M[[j]]%*% K[[j]]%*% alpha[[j]])) * alpha[[j]]
-           
             a[[j]] =pm( t(A[[j]]), alpha[[j]],na.rm=na.rm) 
             if(a[[j]][1]<0){a[[j]]=-a[[j]]}
             Y[, j] = pm(A[[j]] ,a[[j]],na.rm=na.rm) 
@@ -225,7 +220,7 @@ rgccak=function (A, C, tau = "optimal", scheme = "centroid",verbose = FALSE, ini
     repeat 
     { # on rentre dans la boucle a proprement parler
       Yold <- Y #valeur de f
-      #print(paste("iter",iter))
+
        for (j in which.primal)
       { # on parcourt les blocs pour estimer wj = a[[j]] : c'est le rouage de la pres
         # print(j)
@@ -240,8 +235,6 @@ rgccak=function (A, C, tau = "optimal", scheme = "centroid",verbose = FALSE, ini
 #------------------ si on estime les donnees manquantes dans le cas ou tau=1
 			      if(estimateNA %in% c("first","iterative","superblock","new","lebrusquet"))
 			      { 
-			         
-    
 	    	        if(estimateNA=="superblock")
 			        {
 			             for(k in 1:dim(A[[j]])[2])
@@ -254,15 +247,12 @@ rgccak=function (A, C, tau = "optimal", scheme = "centroid",verbose = FALSE, ini
                                 Binit[[j]][,k]=(means[[j]][,k]*missing+stdev[[j]][,k]*missing*x_miss)+(rep(1,length(missing))-missing)*Binit[[j]][,k]
                                 
                             }
-		                       # A[[j]][missing,k]=x_miss[missing]
-		                 
-		                  
                       }
 	    	   
 			            if (scale == TRUE) 
 			            {
 			                A1[[j]]= scale2(Binit[[j]],scale=TRUE, bias = bias)# le biais indique si on recherche la variance biaisee ou non
-			                if(sameBlockWeight)
+			                if(scale_block)
 			                {
 			                    A[[j]]= A1[[j]] /sqrt(NCOL(A[[j]]))
 			                }
@@ -276,7 +266,7 @@ rgccak=function (A, C, tau = "optimal", scheme = "centroid",verbose = FALSE, ini
 			            { 
 			                
 			                A1[[j]] = scale2(Binit[[j]], scale=FALSE, bias = bias)
-			                if(sameBlockWeight)
+			                if(scale_block)
 			                {   covarMat=cov2(A1[[j]],bias=bias);varianceBloc=sum(diag(covarMat))
 			                    A[[j]] = A1[[j]]/sqrt(varianceBloc)
 			                }
@@ -288,9 +278,8 @@ rgccak=function (A, C, tau = "optimal", scheme = "centroid",verbose = FALSE, ini
 			            }
 	    	         
 			            means[[j]]=matrix(rep(attributes(A1[[j]])$'scaled:center' ,dim(A1[[j]])[1]),dim(A1[[j]])[1],dim(A1[[j]])[2],byrow=TRUE)
-			     
 			            stdev[[j]]=matrix(rep(attributes(A1[[j]])$'scaled:scale' ,dim(A1[[j]])[1]),dim(A1[[j]])[1],dim(A1[[j]])[2],byrow=TRUE)
-			            if(sameBlockWeight){ stdev[[j]]=stdev[[j]]*sqrt(NCOL(A1[[j]]))}
+			            if(scale_block){ stdev[[j]]=stdev[[j]]*sqrt(NCOL(A1[[j]]))}
 			            
 			        }
 			       # Ainter=A
@@ -308,12 +297,12 @@ rgccak=function (A, C, tau = "optimal", scheme = "centroid",verbose = FALSE, ini
 			                    #{
 			                        title=paste("bloc",j,",var",k,"iter",iter)
 			                        png(filename=paste(title,".png",sep=""))
-			                        newx_k=leb(x_k=A[[j]][,k],missing,z=Z[,j],sameBlockWeight=TRUE,weight=sqrt(pjs[j]),argmax=ifelse(a[[j]][k]>0,TRUE,FALSE),graph=FALSE,main=title,abscissa=A0[[j]][,k])
+			                        newx_k=leb(x_k=A[[j]][,k],missing,z=Z[,j],scale_block=TRUE,weight=sqrt(pjs[j]),argmax=ifelse(a[[j]][k]>0,TRUE,FALSE),graph=FALSE,main=title,abscissa=A0[[j]][,k])
 			                        dev.off()
 			                    #}
     			                 #else
     			                 #{
-    			                 #    newx_k=leb(x_k=A[[j]][,k],missing,z=Z[,j],sameBlockWeight=TRUE,weight=sqrt(pjs[j]),argmax=ifelse(a[[j]][k]>0,TRUE,FALSE),graph=FALSE,main=title)
+    			                 #    newx_k=leb(x_k=A[[j]][,k],missing,z=Z[,j],scale_block=TRUE,weight=sqrt(pjs[j]),argmax=ifelse(a[[j]][k]>0,TRUE,FALSE),graph=FALSE,main=title)
     			                     
     			                 #}
 			                    # on affecte le nouveau k
@@ -440,14 +429,12 @@ rgccak=function (A, C, tau = "optimal", scheme = "centroid",verbose = FALSE, ini
         plot(crit[1:iter], xlab = "iteration", ylab = "criteria")
     }
     AVEinner <- sum(C * cor(Y)^2/2)/(sum(C)/2)
-
-     call$tau=tau
+    call$tau=tau
     
     if(estimateNA!="no")
     {
         result <- list(Y = Y, a = a, crit = crit, AVE_inner = AVEinner, A=A,call=call,tau=tau)
     }
     else{result <- list(Y = Y, a = a, crit = crit, AVE_inner = AVEinner,call=call,tau=tau)}
-    
-       return(result)
+    return(result)
 }

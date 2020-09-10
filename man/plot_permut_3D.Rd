@@ -21,7 +21,7 @@ plot_permut_3D(perm, type = "zstat", sign = FALSE, i_block = 1,
 one, different from the one used in i_block)}
 
 \item{i_block_z}{An integer giving the index of a list of blocks (another
-one, different from the one used in i_block)}
+one, different from the one used in i_block_x)}
 
 \item{cex}{An integer for the size of the plot parameters}
 

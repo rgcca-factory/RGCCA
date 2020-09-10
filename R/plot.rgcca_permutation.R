@@ -15,15 +15,17 @@
 #' plot(perm,type="crit")
 #' plot(perm)
 #' @export
-plot.permutation=function(x,type="zstat",cex = 1, main= NULL, cex_main = 25 * cex,                          cex_sub = 16 * cex,
-                          cex_point = 3 * cex, cex_lab = 19 * cex,...)
+#' @importFrom ggplot2 ggplot
+plot.permutation=function(x,type="crit",cex = 1, main= NULL, cex_main = 14 * cex,   cex_sub = 12 * cex, bars="points" ,  cex_point = 3 * cex, cex_lab = 19 * cex,...)
 {
         p1 <- plot_permut_2D(
             x, 
             type = type,
-            cex = 1,
+            cex = cex,
+            cex_main=cex_main,
+            cex_sub=cex_sub,
             title = main,
-            bars="points",
+            bars=bars,
             ...
         )
         plot(p1)

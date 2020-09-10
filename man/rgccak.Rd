@@ -6,7 +6,7 @@
 \usage{
 rgccak(A, C, tau = "optimal", scheme = "centroid", verbose = FALSE,
   init = "svd", bias = TRUE, tol = 1e-08, na.rm = TRUE,
-  estimateNA = "no", scale = TRUE, sameBlockWeight = TRUE,
+  estimateNA = "no", scale = TRUE, scale_block = TRUE,
   initImpute = "rand")
 }
 \arguments{
@@ -34,7 +34,7 @@ analytical formula.}
 
 \item{scale}{TRUE if scaled (used in superblock method)}
 
-\item{sameBlockWeight}{useful in lebrusquet}
+\item{scale_block}{useful in lebrusquet}
 
 \item{initImpute}{'rand' or 'mean': initialization for optimization method}
 }

@@ -1,10 +1,11 @@
+stop_rgcca <- function(
+message,
+exit_code = "1",
+call = NULL) {
 
-#' @importFrom rlang error_cnd
-
-stop <- function(
-    message = "",
-    exit_code = 1) {
-
-    base::stop(error_cnd(.subclass = exit_code, message = message))
-}
-        
+    base::stop(
+        structure(
+            class = c(exit_code, "simpleError", "error", "condition"),
+            list(message = message, call. = NULL)
+    ))
+ }

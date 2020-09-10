@@ -15,7 +15,15 @@ biomarker <- function(
        A <- as.matrix(resRGCCA$call$blocks[[block]])
    }
   
-    
+    if(class(resRGCCA)=="sgcca")
+    {
+        A <- as.matrix(resRGCCA$call$A[[block]])
+    }
+    if(class(resRGCCA)=="sgccad")
+    {
+        A <- as.matrix(resRGCCA$call$A[[block]])   
+    }
+
     x <- rep(NA, NCOL(A))
 
     for (i in 1:NCOL(A))

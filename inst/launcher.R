@@ -1,5 +1,5 @@
 # Author: Etienne CAMENEN
-# Date: 2019
+# Date: 2020
 # Contact: arthur.tenenhaus@l2s.centralesupelec.fr
 # Key-words: omics, RGCCA, multi-block
 # EDAM operation: analysis, correlation, visualisation
@@ -98,14 +98,14 @@ getArgs <- function() {
             single values or a comma-separated list (e.g 2,2,3,2)."
         ),
         make_option(
-            opt_str = "--tau",
+            opt_str = "--penalty",
             type = "character",
             metavar = "float list",
             default = opt[5],
-            help = "A regularization parameter for each block (i.e., tau)
+            help = "For RGCCA, a regularization parameter for each block (i.e., tau)
             [default: %default]. Tau varies from 0 (maximizing the correlation)
             to 1 (maximizing the covariance). For SGCCA, tau is automatically
-            set to 1. A shrinkage parameter can be defined instead for
+            set to 1 and shrinkage parameter can be defined instead for
             automatic variable selection, varying from the square root of the
             variable number (the fewest selected variables) to 1 (all the
             variables are included). It can be a single value or a
@@ -143,7 +143,7 @@ getArgs <- function() {
             opt_str = "--text",
             type = "logical",
             action = "store_false",
-            help = "Display the name of the points instead of shapes when
+            help = "DO NOT display the name of the points instead of shapes when
             plotting"
         ),
         make_option(
@@ -259,12 +259,12 @@ check_arg <- function(opt) {
     # Check the validity of the arguments opt : an optionParser object
 
     if (is.null(opt$datasets))
-        stop(paste0("datasets is required."), exit_code = 121)
+        stop_rgcca(paste0("datasets is required."), exit_code = 121)
 
     if (is.null(opt$scheme))
         opt$scheme <- "factorial"
     else if (!opt$scheme %in% seq(4)) {
-        stop(
+        stop_rgcca(
             paste0(
                 "scheme should be comprise between 1 and 4 [by default: 2], not be equal to ",
                 opt$scheme,
@@ -281,7 +281,7 @@ check_arg <- function(opt) {
     }
 
     if (!opt$separator %in% seq(3)) {
-        stop(
+        stop_rgcca(
             paste0(
                 "separator should be comprise between 1 and 3 (1: Tabulation, 2: Semicolon, 3: Comma) [by default: 2], not be equal to ",
                 opt$separator,
@@ -295,7 +295,7 @@ check_arg <- function(opt) {
     }
 
     # if (! opt$init %in% 1:2 )
-    # stop(paste0('--init must be 1 or 2 (1: Singular Value
+    # stop_rgcca(paste0('--init must be 1 or 2 (1: Singular Value
     # Decompostion , 2: random) [by default: 1], not ', opt$init, '.'),
     #  exit_code = 124)
     # else
@@ -309,7 +309,7 @@ check_arg <- function(opt) {
 
     check_integer("nmark", opt$nmark, min = 2)
     
-    for (x in c("ncomp", "tau"))
+    for (x in c("ncomp", "penalty"))
         opt[[x]] <- char_to_list(opt[[x]])
 
     return(opt)
@@ -326,6 +326,9 @@ post_check_arg <- function(opt, rgcca) {
             opt[[x]] <- check_blockx(x, opt[[x]], rgcca$call$blocks)
         }
     }
+
+    if (any(opt$ncomp == 1))
+        opt$compy <- 1
 
     for (x in c("compx", "compy"))
         opt[[x]] <- check_compx(x, opt[[x]], rgcca$call$ncomp, opt$block)
@@ -344,19 +347,19 @@ check_integer <- function(x, y = x, type = "scalar", float = FALSE, min = 1) {
     y <- suppressWarnings(as.double(as.matrix(y)))
 
     if (any(is.na(y)))
-        stop(paste(x, "should not be NA."))
+        stop_rgcca(paste(x, "should not be NA."))
 
     if (!is(y, "numeric"))
-        stop(paste(x, "should be numeric."))
+        stop_rgcca(paste(x, "should be numeric."))
     
     if (type == "scalar" && length(y) != 1)
-        stop(paste(x, "should be of length 1."))
+        stop_rgcca(paste(x, "should be of length 1."))
 
     if (!float)
         y <- as.integer(y)
     
     if (all(y < min))
-        stop(paste0(x, " should be higher than or equal to ", min, "."))
+        stop_rgcca(paste0(x, " should be higher than or equal to ", min, "."))
 
     if (type %in% c("matrix", "data.frame"))
         y <- matrix(
@@ -386,6 +389,9 @@ load_libraries <- function(librairies) {
     }
 }
 
+stop_rgcca <- function(message = "", exit_code = 1)
+    base::stop(error_cnd(.subclass = exit_code, message = message))
+
 ########## Main ##########
 
 # Get arguments : R packaging install, need an opt variable with associated
@@ -395,7 +401,7 @@ opt <- list(
     separator = "\t",
     type = "rgcca",
     ncomp = 2,
-    tau = 1,
+    penalty = 1,
     scheme = "factorial",
     init = 1,
     block = 0,
@@ -416,16 +422,16 @@ opt <- list(
         collapse = ",")
 )
 
-load_libraries(c("ggplot2", "optparse", "scales", "igraph", "MASS", "openxlsx", "rlang", "Deriv"))
+load_libraries(c("ggplot2", "optparse", "scales", "igraph", "MASS", "rlang", "Deriv"))
 try(load_libraries("ggrepel"), silent = TRUE)
 
 tryCatch(
     opt <- check_arg(parse_args(getArgs())),
     error = function(e) {
         if (length(grep("nextArg", e[[1]])) != 1)
-            stop(e[[1]], exit_code = 140)
+            stop_rgcca(e[[1]], exit_code = 140)
     }, warning = function(w)
-        stop(w[[1]], exit_code = 141)
+        stop_rgcca(w[[1]], exit_code = 141)
 )
 
 # Load functions
@@ -461,9 +467,9 @@ tryCatch({
         )
     )
     if (tolower(opt$type) %in% c("sgcca", "spca", "spls")) {
-        func[["sparsity"]] <- opt$tau
+        func[["sparsity"]] <- opt$penalty
     }else {
-        func[["tau"]] <- opt$tau
+        func[["tau"]] <- opt$penalty
     }
     
     rgcca_out <- eval(as.call(func))
@@ -520,46 +526,11 @@ tryCatch({
     # Creates design scheme
     design <- function() plot_network(rgcca_out)
     save_plot(opt$o5, design)
-    
+
     save_ind(rgcca_out, opt$compx, opt$compy, opt$o6)
     save_var(rgcca_out, opt$compx, opt$compy, opt$o7)
-    
-    if (!is.null(opt$response)) {
-        crossval <- rgcca_crossvalidation(rgcca_out)
-        cat(paste("Cross-validation score (leave-one-out) :", crossval$scores))
-        plot_ind(rgcca_out, predicted = crossval)
-    }
-    
-    # Bootstrap
-    boot <- bootstrap(rgcca_out, n_boot = 5)
-    selected.var <- get_bootstrap(boot, opt$compx, opt$block)
-    plot_bootstrap_2D(df_b = selected.var)
-    plot_bootstrap_1D(df_b = selected.var)
-    
-    # Permutation
-    if (length(blocks) > 1) {
-        func <- quote(
-            rgcca_permutation(
-                blocks,
-                connection = connection,
-                response = opt$response, 
-                superblock = opt$superblock,
-                ncomp = opt$ncomp,
-                scheme = opt$scheme,
-                scale = opt$scale,
-                type = opt$type, 
-                nperm = 5)
-        )
-        if (tolower(opt$type) %in% c("sgcca", "spca", "spls"))
-            func[["sparsity"]] <- opt$tau
-        else
-            func[["tau"]] <- opt$tau
-        perm <- eval(as.call(func))
-        plot_permut_2D(perm)
-    }
-    
     save(rgcca_out, file = opt$o8)
-    
+
     }, error = function(e){
         if (class(e)[1] %in% c("simpleError", "error", "condition" ))
             status <<- 1

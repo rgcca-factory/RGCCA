@@ -22,11 +22,11 @@ ellipse=function (center, shape, radius, log = "", center.pch = 19, center.cex =
         0 != length(grep(axis, log))
     }
     if (!(is.vector(center) && 2 == length(center))) 
-        stop("center must be a vector of length 2")
+        stop_rgcca("center must be a vector of length 2")
     if (!(is.matrix(shape) && all(2 == dim(shape)))) 
-        stop("shape must be a 2 by 2 matrix")
+        stop_rgcca("shape must be a 2 by 2 matrix")
     if (max(abs(shape - t(shape)))/max(abs(shape)) > 1e-10) 
-        stop("shape must be a symmetric matrix")
+        stop_rgcca("shape must be a symmetric matrix")
     angles <- (0:segments) * 2 * pi/segments
     unit.circle <- cbind(cos(angles), sin(angles))
     Q <- chol(shape, pivot = TRUE)

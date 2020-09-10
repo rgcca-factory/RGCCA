@@ -6,7 +6,7 @@ check_ncomp <- function(ncomp, blocks, min = 1) {
         function(x){
             y <- check_integer("ncomp", ncomp[x], min = min)
             if (y > NCOL(blocks[[x]])) {
-                stop(
+                stop_rgcca(
                     paste0(
                         "ncomp should be comprise between ", min ," and ",
                         NCOL(blocks[[x]]),

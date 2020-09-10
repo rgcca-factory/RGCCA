@@ -5,7 +5,7 @@
 #' and tau or sparsity in columns
 get_nodes <- function(rgcca_res) {
 
-    if ( rgcca_res$call$type %in% c("sgcca", "spls", "spca")) {
+    if ( tolower(rgcca_res$call$type) %in% c("sgcca", "spls", "spca")) {
         par_rgcca <- "sparsity"
         par_name <- "sparsity"
     } else

@@ -4,16 +4,17 @@ blocks <- list(
     industry = Russett[, 4:5],
     politic = Russett[, 6:11] )
 rgcca_out <- rgcca(blocks, sparsity = 0.75, type = "sgcca")
-boot <- bootstrap(rgcca_out, 2, n_cores = 1)
-selected.var <- get_bootstrap(boot, n_cores = 1)
-
+boot <- bootstrap(rgcca_out, 15, n_cores = 1)
+selected.var <- get_bootstrap(boot, n_cores = 1,display_order=TRUE)
+plot(boot,type="2D")
+plot_bootstrap_2D(boot, n_cores = 1)
 test_that("plot_boot_default", {
     expect_is(plot_bootstrap_2D(boot, n_cores = 1), "ggplot")
 })   
 
 rgcca_out <- rgcca(blocks)
 boot <- bootstrap(rgcca_out, 2, n_cores = 1)
-selected.var <- get_bootstrap(boot, n_cores = 1)
+selected.var <- get_bootstrap(boot, n_cores = 1,display_order=TRUE)
 
 test_that("plot_boot_with_args", {
     expect_is(plot_bootstrap_2D(boot, n_cores = 1), "ggplot")
@@ -26,11 +27,11 @@ rgcca_out <- rgcca(
     blocks,ncomp = c(2,2,2),
     scheme = function(x) x^4, 
     type = "sgcca",
-    sparsity = c(.6, .75, .5, 1)
+    sparsity = c(.6, .75, .5)
 )
 
 boot <- bootstrap(rgcca_out, 2, n_cores = 1)
 test_that("plot_boot_object", {
-    expect_is(plot(boot, i_block = 4, n_cores = 1), "ggplot")
+    expect_is(plot(boot, block = 3, n_cores = 1), "ggplot")
     expect_is(plot(boot, type = "2D", n_cores = 1), "ggplot")
 })

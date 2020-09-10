@@ -31,12 +31,15 @@ load_file_text <- function(
     tryCatch(
         f <- func(),
     error = function(e) {
-        if (e$message == "duplicate 'row.names' are not allowed")
+        msg <- "duplicate 'row.names' are not allowed"
+        if (e$message == msg){
+            message(paste0(msg, "; rownames have been removed from dataset."))
             f <<- func(NULL)
+        }
     })
 
     if (!one_column && NCOL(f) == 0)
-        stop(paste(basename(file), "has an only-column. Check the separator."),
+        stop_rgcca(paste(basename(file), "has an only-column. Check the separator."),
         exit_code = 102)
 
     return(f)
