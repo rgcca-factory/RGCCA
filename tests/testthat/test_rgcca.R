@@ -207,8 +207,7 @@ pcasb_ind=abs(cor(pcaSB$x[,1],scaledPCASB$Y[[1]][,1]))==1
      init = "svd",
      bias = TRUE, 
      tol = 1e-08,quiet=FALSE)
- 
- resRGCCA
+
  
  data(Russett)
  X_agric =as.matrix(Russett[,c("gini","farm","rent")]);

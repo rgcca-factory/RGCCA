@@ -94,7 +94,7 @@ rgcca_predict = function(
         }
         return(res)
     }
-    
+
     # Checking the input parameters
     if (model == "classification" && (fit == "cor" || fit == "lm"))
         stop_rgcca("Please, classification prediction only works with LDA and LOGISTIC")
@@ -145,10 +145,8 @@ rgcca_predict = function(
     {
         if(mode(newA2[[bloc_to_pred]])=="character")
         {
-            G=as.factor(newA[[bloc_to_pred]])
-            y <- data.frame(model.matrix( ~  G-1, data = G))
-            rownames(y) <- rownames(newA[[bloc_to_pred]])
-            newA2[[bloc_to_pred]]=y
+            if(length(unique(rgcca_res$call$raw[[bloc_to_pred]]))==1){stop("Only one level in the variable to predict")}
+            newA2[[bloc_to_pred]]=asDisjonctive(newA2[[bloc_to_pred]],levs=unique(rgcca_res$call$raw[[bloc_to_pred]]))
         }
     }
   
@@ -254,6 +252,7 @@ rgcca_predict = function(
         to_pred_test <- newA3[[newbloc_y]] 
        #  to_pred_train <- blocks_rgcca_res[[bloc_y]]
        #  to_pred_test <- newA3[[newbloc_y]] 
+
         
         if (!is.null(dim(newA[[1]]))) {
             if (any(colnames(to_pred_train) != colnames(to_pred_test)))
