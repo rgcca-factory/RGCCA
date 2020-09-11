@@ -354,6 +354,8 @@ rgcca_predict = function(
                     reslog      <- nnet::multinom(y ~ ., data = cbind(comp.train, y = to_pred_train), trace = FALSE, na.action = "na.exclude")
                     class.fit   <- predict(reslog, newdata = cbind(comp.test, y = to_pred_test))
                 } else if (ngroups == 2) {
+                    data_for_lda=cbind(comp.train,to_pred_train)
+                    colnames(data_for_lda)[ncol(data_for_lda)]="quali"
                     reslog      <- glm(y ~ ., data = cbind(comp.train, y = to_pred_train), family = binomial,na.action="na.exclude")
                     class.fit   <- predict(reslog, type = "response", newdata = cbind(comp.test, y = to_pred_test))
                     class.fit.class <- class.fit > 0.5 # TODO: cutoff parameter

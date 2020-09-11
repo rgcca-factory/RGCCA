@@ -20,7 +20,7 @@
 # A[[1]][2, 3] <- runif(1)
 # init : boolean (FALSE by default) for the first block checking
 
-check_blocks <- function(blocks, init = FALSE, n = 2, add_NAlines=FALSE, allow_unnames =  TRUE) {
+check_blocks <- function(blocks, init = FALSE, n = 2, add_NAlines=FALSE, allow_unnames =  TRUE,quiet=FALSE) {
     
   
     msg <- ""
@@ -73,8 +73,11 @@ check_blocks <- function(blocks, init = FALSE, n = 2, add_NAlines=FALSE, allow_u
     # if one of the colnames is identical in one block and another one
     if(sum(duplicated(unlist(sapply(blocks,colnames))))!=0)
     {
-        message("At least one variable name is duplicated: the block names are added for avoiding confusion \n")
-        blocks_i=lapply(1:length(blocks),function(i){x=blocks[[i]];colnames(x)=paste(names(blocks)[i],colnames(blocks[[i]]),sep="_");return(x)})
+        if(!quiet)
+        {
+            message("At least one variable name is duplicated: the block names are added for avoiding confusion \n")
+        }
+       blocks_i=lapply(1:length(blocks),function(i){x=blocks[[i]];colnames(x)=paste(names(blocks)[i],colnames(blocks[[i]]),sep="_");return(x)})
         names(blocks_i)=names(blocks)
         blocks=blocks_i
     }

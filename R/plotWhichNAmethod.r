@@ -8,6 +8,7 @@
 #' @param bars ="sd" or "stderr". Indicates which error bar to build
 #' @param main =NULL Name of the file
 #' @param ylab label of y-axis
+#' @legend If TRUE, the legend is displayed
 #' @param ... Further graphical parameters in plot
 #' @examples 
 #' set.seed(42);X1=matrix(rnorm(350),70,5);X2=matrix(rnorm(280),70,4);X1[1,1]=NA;X2[2,]=NA
@@ -21,7 +22,7 @@
 #' @export
 
 
-plot.whichNAmethod=function(x,type="rv",ylim=NULL,block=length(x[[1]][[1]][[1]]),bars="sd",main=NULL,ylab="",...)
+plot.whichNAmethod=function(x,type="rv",ylim=NULL,block=length(x[[1]][[1]][[1]]),bars="sd",main=NULL,ylab="",legend=TRUE,...)
 { #type : "rv", "pct" ou "a"
   #bars="sd" or "stderr"
     
@@ -100,20 +101,24 @@ plot.whichNAmethod=function(x,type="rv",ylim=NULL,block=length(x[[1]][[1]][[1]])
         }
      }
   }
-  if(block=="all")
+  if(legend)
   {
-  #  screen(J+1)
-      plot.new()
-      par(cex=0.8)
-    legend("center",legend=namesMethod,fill=colMethod,box.lwd=0,,bty="n")
+      if(block=="all")
+      {
+          #  screen(J+1)
+          plot.new()
+          par(cex=0.8)
+          legend("center",legend=namesMethod,fill=colMethod,box.lwd=0,,bty="n")
+      }
+      if(is.numeric(block))
+      {
+          par(cex=0.8)
+          legend("bottomleft",legend=namesMethod,fill=colMethod,box.lwd=0,bty="n")
+      }
+      
+      par(mfrow=c(1,1))
+      par(mar=c(5,4,3,3))
+      par(cex=1)  
   }
-  if(is.numeric(block))
-  {
-      par(cex=0.8)
-    legend("bottomleft",legend=namesMethod,fill=colMethod,box.lwd=0,bty="n")
-  }
-  
-  par(mfrow=c(1,1))
-  par(mar=c(5,4,3,3))
-  par(cex=1)
+
 }

@@ -6,7 +6,7 @@
 \usage{
 \method{plot}{whichNAmethod}(x, type = "rv", ylim = NULL,
   block = length(x[[1]][[1]][[1]]), bars = "sd", main = NULL,
-  ylab = "", ...)
+  ylab = "", legend = TRUE, ...)
 }
 \arguments{
 \item{x}{A list resulting of whichNAmethod (see \link{whichNAmethod})}
