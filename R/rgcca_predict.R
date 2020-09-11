@@ -322,7 +322,7 @@ rgcca_predict = function(
                     # TODO ??? check case for vector
                     comp.test
                 } else{
-                #    rgcca_res$call$connection <- rgcca_res$call$connection[MATCH, MATCH]
+                    rgcca_res$call$connection <- rgcca_res$call$connection[MATCH, MATCH]
                    # cor <- get_cor_all(rgcca_res, newA, comp.test)
                     cor <- get_cor_all(rgcca_res, newA3, comp.test.cor)
                     

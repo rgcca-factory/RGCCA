@@ -257,7 +257,7 @@ rgcca <- function(
     raw=blocks
    if(!is.null(response))
    {
-          if(mode(blocks[[response]])=="character")
+       if(mode(blocks[[response]])=="character")
        {
               print("The qualitative response variable is transformed as disjonctive table")
               if(length(unique(blocks[[response]]))==1){stop("Only one level in the variable to predict")}
@@ -323,7 +323,7 @@ rgcca <- function(
             knn.klim = knn.klim,
             knn.scale_block = knn.scale_block,
             pca.ncp =1,
-            prescaling = FALSE,
+            prescaling = TRUE,
             quiet=quiet
         )
     )
