@@ -23,6 +23,8 @@
 
 \item{ylab}{label of y-axis}
 
+\item{legend}{If TRUE, the legend is displayed}
+
 \item{...}{Further graphical parameters in plot}
 }
 \description{

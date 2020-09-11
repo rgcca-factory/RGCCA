@@ -8,7 +8,7 @@
 #' @param bars ="sd" or "stderr". Indicates which error bar to build
 #' @param main =NULL Name of the file
 #' @param ylab label of y-axis
-#' @legend If TRUE, the legend is displayed
+#' @param legend If TRUE, the legend is displayed
 #' @param ... Further graphical parameters in plot
 #' @examples 
 #' set.seed(42);X1=matrix(rnorm(350),70,5);X2=matrix(rnorm(280),70,4);X1[1,1]=NA;X2[2,]=NA
