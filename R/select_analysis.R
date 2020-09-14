@@ -12,7 +12,7 @@
 #' the blocks (activates the supervised mode).  
 #' @param connection A symmetric matrix (J*J) that describes the relationships 
 #' between blocks. Two values are accepted : '1' for a connection between two 
-#' blocks, or '0' otherwise. (default: all the blocks connected to each other).
+#' blocks, or '0' otherwise.
 #' @param penalty A vector of 1*J floats (or character for 'optimal' setting) 
 #' giving theshrinkage parameter for covariance maximization
 #' @param ncomp A vector of 1*J integers giving the number of component for 

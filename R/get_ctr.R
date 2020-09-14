@@ -7,7 +7,7 @@
 #' @param compz An integer giving the index of the analysis component used
 #' for the z-axis
 #' @param i_block_2 An integer giving the index of a list of blocks to be 
-#' correlated to i_block if this option is selected (default to i_block)
+#' correlated to i_block if this option is selected
 #' @return A dataframe containing the indexes for each selected components
 get_ctr <- function(
     rgcca_res,

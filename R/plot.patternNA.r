@@ -2,7 +2,7 @@
 #' 
 #' Plots an object of class patternNA
 #' @inheritParams plot_ind
-#' @param x an object from get_patternNA (see \code{\link[RGCCA]{get_patternNA}} )
+#' @param x A get_patternNA object (see \code{\link[RGCCA]{get_patternNA}} )
 #' @param type "all" if all blocks should be plotted, ifelse an integer corresponding to the position of the block to be plotted in the initial list
 #' @param outlierVisible if FALSE, the outliers will be -2* standard deviations if negative, 2 standard deviations if positive
 #' @param scale if TRUE all the variables are scaled before graphical representation

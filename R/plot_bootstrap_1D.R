@@ -7,11 +7,20 @@
 #' @inheritParams plot_histogram
 #' @inheritParams get_bootstrap
 #' @inheritParams plot_var_2D
-#' @param df_b Result of get_bootstrap functions or dataframe #TODO
-#' @param b A matrix of boostrap
-#' @param x A character for the column used in the plot
-#' @param y A character for the column to color the bars
+#' @param df_b A get_bootstrap object \code{\link[RGCCA]{get_bootstrap}}
+#' @param b A boostrap object \code{\link[RGCCA]{bootstrap}}
+#' @param x A character for the index used in the plot (see details).
+#' @param y A character for the index to color the bars (see details).
 #' @param ... Other parameters (see plot_histogram)
+#' @details 
+#' \itemize{
+#' \item 'estimate' for RGCCA weights
+#' \item 'bootstrap_ratio' for the mean of the bootstrap weights / their standard error
+#' \item 'sign' for significant 95% bootstrap interval
+#' \item 'estimate' for RGCCA weights
+#' \item 'occurrences' for non-zero occurences
+#' \item 'mean' for the mean of the bootstrap weights
+#' }
 #' @examples
 #' library(RGCCA)
 #' data("Russett")

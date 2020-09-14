@@ -1,7 +1,7 @@
 #' plot.cv
 #' 
 #' Plots the results of rgcca_cv (in abscissa, the configurations, in ordinates the RMSE on test dataset)
-#' @param x result of rgcca_crossvalidation (see  \code{\link[RGCCA]{rgcca_crossvalidation}} )
+#' @param x A rgcca_crossvalidation object (see \code{\link[RGCCA]{rgcca_crossvalidation}} )
 #' @inheritParams plot_ind
 #' @examples
 #' data(Russett)

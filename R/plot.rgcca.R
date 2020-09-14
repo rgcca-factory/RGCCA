@@ -3,15 +3,15 @@
 #' Plots different outputs of the results obtained by a rgcca function 
 #' @inheritParams plot_var_2D
 #' @inheritParams plot_var_1D
-#' @param x Result of rgcca function  (see\code{\link[RGCCA]{rgcca}} )
-#' @param type A character among 'ind', 'var', 'both', 'ave', 'cor', 'weight', 'network'. See details.
+#' @param x A RGCCA object (see \code{\link[RGCCA]{rgcca}} )
+#' @param type A character among 'ind', 'var', 'both', 'ave', 'cor', 'weight', 'network' (see details).
 #' @param text_ind A bolean to represent the individuals with their row names (TRUE)
 #' or with circles (FALSE)
 #' @param text_var A bolean to represent the variables with their row names (TRUE)
 #' or with circles (FALSE)
 #' @param title  A character for the title of the plot 
 #' @param ... Further graphical parameters applied to both (individual and variable) spaces
-#' @param block vector representing the components to plot
+#' @param block A vector of integers giving the index of a list of blocks or a block = 'all' for all of them
 #' @inheritParams plot_ind
 #' @inheritParams plot2D
 #' @inheritParams plot_var_2D

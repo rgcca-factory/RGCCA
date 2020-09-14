@@ -6,10 +6,19 @@
 #'
 #' @inheritParams plot2D
 #' @inheritParams get_bootstrap
-#' @param b A matrix of boostrap
-#' @param x A character for the column to plot in x-axis
-#' @param y A character for the column to plot in y-axis
-#' @param df_b Result of get_bootstrap functions or dataframe #TODO
+#' @param b A boostrap object \code{\link[RGCCA]{bootstrap}}
+#' @param x A character for the index to plot in x-axis (see details).
+#' @param y A character for the index to plot in y-axis (see details).
+#' @param df_b A get_bootstrap object \code{\link[RGCCA]{get_bootstrap}}
+#' @details 
+#' \itemize{
+#' \item 'estimate' for RGCCA weights
+#' \item 'bootstrap_ratio' for the mean of the bootstrap weights / their standard error
+#' \item 'sign' for significant 95% bootstrap interval
+#' \item 'estimate' for RGCCA weights
+#' \item 'occurrences' for non-zero occurences
+#' \item 'mean' for the mean of the bootstrap weights
+#' }
 #' @examples
 #' library(RGCCA)
 #' data("Russett")

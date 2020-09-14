@@ -4,7 +4,7 @@
 #' @inheritParams plot2D
 #' @param n_boot An integer for the number of boostraps
 #' @param n_cores An integer for the number of cores used in parallelization 
-#' @param parallelization if TRUE parallelization is run, if FALSE, no parallelisation is run. If NULL (default) parallelization is always used except for Windows in case of length(nperm)<10
+#' @param parallelization A logical value to run a parallelization. If parallelization = NULL (default), the parallelization is always performed except for Windows if length(nperm) < 10.
 #' @return A list containing two elements: bootstrap and rgcca. bootstrap is a list of produced rgccas while rgcca is the original rgcca.
 #' @examples
 #' library(RGCCA)

@@ -12,14 +12,18 @@
 #' @param initImpute 'rand' or 'mean': initialization for optimization method
 #' @return \item{Y}{A \eqn{n * J} matrix of RGCCA outer components}
 #' @return \item{Z}{A \eqn{n * J} matrix of RGCCA inner components}
-#' @return \item{a}{A list of outer weight vectors}
-#' @return \item{crit}{The values of the objective function to be optimized in each iteration of the iterative procedure.}
+#' @return \item{a}{A list of \eqn{J} elements. Each element of \eqn{a} is a matrix that contains the outer weight vectors for each block.}
+#' @return \item{crit}{A vector of integer that contains the values of the analysis criteria across iterations.}
 # #' @return \item{converg}{Speed of convergence of the algorithm to reach the tolerance.}
 #' @return \item{AVE}{Indicators of model quality based on the Average Variance Explained (AVE): 
 #' AVE(for one block), AVE(outer model), AVE(inner model).}
 #' @return \item{call}{Call of the function}
-#' @return \item{crit}{A vector that contains the values of the objective function at each iterations.}
-#' @return \item{tau}{\eqn{1 * J} vector containing the value for the tau penalties applied to each of the \eqn{J} blocks of data (user specified)}
+#' @return \item{crit}{A vector of integer that contains the values of the analysis criteria across iterations.}
+#' @return \item{tau}{Either a 1*J vector or a \eqn{\mathrm{max}(ncomp) \times J} matrix containing the values
+#' of the regularization parameters .Tau varies from 0 (maximizing the correlation) to 1 (maximizing the covariance).
+#' If tau = "optimal" the regularization paramaters are estimated for each block and each dimension using the Schafer and Strimmer (2005)
+#' analytical formula . If tau is a \eqn{1\times J} vector, tau[j] is identical across the dimensions of block \eqn{\mathbf{X}_j}.
+#' If tau is a matrix, tau[k, j] is associated with \eqn{\mathbf{X}_{jk}} (\eqn{k}th residual matrix for block \eqn{j}). It can be estimated by using \link{rgcca_permutation}.}
 #' @references Tenenhaus M., Tenenhaus A. and Groenen PJF (2017), Regularized generalized canonical correlation analysis: A framework for sequential multiblock component methods, Psychometrika, in press
 #' @references Tenenhaus A., Philippe C., & Frouin V. (2015). Kernel Generalized Canonical Correlation Analysis. Computational Statistics and Data Analysis, 90, 114-131.
 #' @references Tenenhaus A. and Tenenhaus M., (2011), Regularized Generalized Canonical Correlation Analysis, Psychometrika, Vol. 76, Nr 2, pp 257-284.

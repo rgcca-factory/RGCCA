@@ -38,7 +38,6 @@
 # politic = Russett[, 6:11] )
 # rgcca_out = rgcca(blocks)
 # plot2D(rgcca_out, df)
-
 plot2D <- function(
     rgcca_res,
     df,

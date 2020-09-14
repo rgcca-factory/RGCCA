@@ -6,21 +6,20 @@
 #' @inheritParams bootstrap
 #' @inheritParams rgcca
 #' @inheritParams plot2D
-#' @param perm.par "sparsity","tau" or "ncomp".
-#' @param perm.length Useful if perm.value is NULL. Integer indicating the number of sets of parameters to be tested. The parameters are  then uniformly distributed.
+#' @param perm.par A character giving the parameter to tune among "sparsity" or "tau".
+#' @param perm.length If perm.value = NULL, an integer indicating the number of sets of parameters to be tested. The parameters are uniformly distributed.
 #' @param perm.value  If perm.par="sparsity", a matrix, a vector or an integer containing sets of constraint 
 #' variables to be tested, one row by combination. By default, sgcca.permute takes 10 sets between 
 #' min values ($1/sqrt(ncol)$) and 1. If perm.par="ncomp", a matrix, a vector or an integer containing sets of number of 
 #' components, one row by set. By default, sgcca.permute takes as many 
 #' combinations as the maximum number of columns in each block. If perm.par="tau",... #TODO
-#' @param nperm Number of permutation tested for each set of constraint
-#' @param parallelization if TRUE parallelization is run, if FALSE, no parallelisation is run. If NULL (default) parallelization is always used except for Windows in case of length(nperm)<10
-#' @return A object permutation, which is a list containing :
-#' @return \item{pval}{Pvalue}
-#' @return \item{zstat}{Statistic Z}
+#' @param nperm An integer giving the number of permutation tested for each set of constraint
+#' @return A permutation object, which is a list containing :
+#' @return \item{pval}{The p-value}
+#' @return \item{zstat}{The Z statistic}
 #' @return \item{bestpenalties}{Penalties corresponding to the best Z-statistic}
-#' @return \item{permcrit}{RGCCA criteria obtained with permutation set}
-#' @return \item{crit}{ RGCCA criterion for the original dataset}
+#' @return \item{permcrit}{RGCCA criteria obtained with the permutation set}
+#' @return \item{crit}{A vector of integer giving the values of the RGCCA criteria across iterations.}
 #' @examples
 #' data("Russett")
 #' A = list(agriculture = Russett[, seq(3)], industry = Russett[, 4:5],
@@ -39,7 +38,6 @@
 #'  nperm = 2, n_cores = 1)
 #' rgcca_permutation(A, perm.par = "tau", perm.value = 
 #' matrix(c(0.6, 0.75, 0.5), 3, 3, byrow = TRUE),  nperm = 2, n_cores = 1)
-
 #' print(res)
 #' @export
 rgcca_permutation <- function(

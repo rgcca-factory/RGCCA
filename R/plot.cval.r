@@ -1,9 +1,9 @@
 #' plot.cval
 #'
 #' @inheritParams plot2D
-#'@param x result of rgcca_cv function (see \link{rgcca_cv})
-#'@param bars among "sd" for standard deviations, "stderr" for standard error (standard deviations divided by sqrt(n), ci for confidence interal, cim for confidence interval of the mean.
-#'@param alpha used for confidence interval bars (ci or cim), risk. Default to 0.05
+#'@param x A rgcca_cv object (see \link{rgcca_cv})
+#'@param bars A character among "sd" for standard deviations, "stderr" for standard error (standard deviations divided by sqrt(n), "ci" for confidence interal, "cim" for confidence interval of the mean.
+#'@param alpha A numeric value giving the risk for the confidence interval bars (ci or cim).
 #'@param ... Further plot options
 #'@export
 #'@examples
