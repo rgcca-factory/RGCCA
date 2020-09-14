@@ -117,9 +117,10 @@ getArgs <- function() {
             metavar = "integer",
             default = 2,
             help = "Link (i.e. scheme) function for covariance maximization
-            (1: x, 2: x^2, 3: |x|, 4: x^4) [default: %default]. Only, the x
-            function penalizes structural negative correlation. The x^4
-            function discriminates more strongly the blocks than the x^2 one."
+            (1: x, 2: x^2, 3: |x|, 4: x^4) [default: %default]. Onnly, the x
+            function ('horst scheme') penalizes structural negative correlation.
+            The x^2 function ('factorial scheme') discriminates more strongly
+            the blocks than the |x| ('centroid scheme') one."
         ),
         make_option(
             opt_str = "--scale",

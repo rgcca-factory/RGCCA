@@ -1,38 +1,37 @@
 #' Check the format of the connection matrix
 #'
-#' @param c A symmetric matrix containing 1 and 0
+#' @inheritParams rgccad
 #' @inheritParams set_connection
-
-check_connection <- function(c, blocks) {
+check_connection <- function(C, blocks) {
 
     msg <- "The connection file should"
 
-    if (!isSymmetric.matrix(unname(c)))
+    if (!isSymmetric.matrix(unname(C)))
         stop_rgcca(paste(msg, "be a symmetric matrix."), exit_code = 103)
 
-    # d <- unique(diag(c))
+    # d <- unique(diag(C))
     # if (length(d) != 1 || d != 0)
     #     stop_rgcca("The diagonal of the connection matrix file should be 0.",
     #         exit_code = 105)
 
-    x <- unique(c %in% c(0, 1))
+    x <- unique(C %in% c(0, 1))
     if (length(x) != 1 || x != TRUE)
         stop_rgcca(paste(msg, "contain only 0 or 1."), exit_code = 106)
 
-    if (all(c == 0))
+    if (all(C == 0))
         stop_rgcca(paste(msg, "not contain only 0."), exit_code = 107)
 
-    if(is.null(rownames(c)) || is.null(colnames(c)))
-        rownames(c) <- names(blocks) -> colnames(c)
+    if(is.null(rownames(C)) || is.null(colnames(C)))
+        rownames(C) <- names(blocks) -> colnames(C)
 
-    if (!all(rownames(c) %in% names(blocks)) || 
-        !all(colnames(c) %in% names(blocks)))
+    if (!all(rownames(C) %in% names(blocks)) || 
+        !all(colnames(C) %in% names(blocks)))
         stop_rgcca(paste(msg,
             "have the rownames and the colnames that match with the names of the blocks."),
             exit_code = 108)
 
-    invisible(check_size_blocks(blocks, "connection matrix", c))
+    invisible(check_size_blocks(blocks, "connection matrix", C))
     
-    return(c)
+    return(C)
     # TODO: warning if superblock = TRUE
 }

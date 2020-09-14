@@ -3,7 +3,7 @@
 #' RGCCA is a generalization
 #' of regularized canonical correlation analysis to three or more sets of variables. SGCCA extends RGCCA to address the issue of variable selection
 #' @details
-#' Given \eqn{J} matrices \eqn{\mathbf{X_1}, \mathbf{X_2}, ..., \mathbf{X_J}} that represent 
+#' Given J matrices \eqn{\mathbf{X_1}, \mathbf{X_2}, ..., \mathbf{X_J}} that represent 
 #' \eqn{J} sets of variables observed on the same set of \eqn{n} individuals. The matrices 
 #' \eqn{\mathbf{X_1}, \mathbf{X_2}, ..., \mathbf{X_J}} must have the same number of rows, 
 #' but may (and usually will) have different numbers of columns. The aim of RGCCA is to study 

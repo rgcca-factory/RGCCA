@@ -2,20 +2,13 @@
 #' The function rgccak() computes the RGCCA block components, outer weight vectors, etc., 
 #' for each block and each dimension. Depending on the dimensionality of each block \eqn{X_j , j = 1, ..., J}, 
 #' the primal (when \eqn{n > p_j}) or the dual (when \eqn{n < p_j}) algorithm is used (see Tenenhaus et al. 2015) 
-#' @param A  A list that contains the \eqn{J} blocks of variables. Either the blocks (\eqn{X_1, X_2, ..., X_J}) or the residual matrices (\eqn{X_{h1}, X_{h2}, ..., X_{hJ}}).
-#' @param C  A design matrix that describes the relationships between blocks. (Default: complete design).
-#' @param tau A \eqn{1 * J} vector that contains the values of the shrinkage parameters \eqn{\tau_j}, \eqn{ j=1, ..., J}. (Default: \eqn{\tau_j = 1}, \eqn{ j=1, ..., J}).
-#' If tau = "optimal" the shrinkage intensity paramaters are estimated using the Schafer and Strimmer (2005) 
-#' analytical formula. 
-#' @param scheme The value is "horst", "factorial", "centroid" or any diffentiable convex scheme function g designed by the user (default: "centroid").
-#' @param verbose  Will report progress while computing if verbose = TRUE (default: TRUE).
-#' @param init The mode of initialization to use in the RGCCA algorithm. The alternatives are either by Singular Value Decompostion or random (default : "svd").
-#' @param bias A logical value for either a biaised or unbiaised estimator of the var/cov.
-#' @param tol Stopping value for convergence.
+#' @inheritParams select_analysis
+#' @inheritParams rgccaNa
+#' @inheritParams rgccad
+#' @param A  A list that contains the \eqn{J} blocks of variables from which block components are constructed.
+#' It could be eiher the original matrices (\eqn{X_1, X_2, ..., X_J}) or the residual matrices (\eqn{X_{h1}, X_{h2}, ..., X_{hJ}}).
 #' @param na.rm If TRUE, NIPALS algorithm taking missing values into account is run. RGCCA is run only on available data.
 #' @param estimateNA to choose between "no","first","iterative","superblock","new","lebrusquet") TO BE DEVELOPPED
-#' @param scale_block useful in lebrusquet
-#' @param scale TRUE if scaled (used in superblock method)
 #' @param initImpute 'rand' or 'mean': initialization for optimization method
 #' @return \item{Y}{A \eqn{n * J} matrix of RGCCA outer components}
 #' @return \item{Z}{A \eqn{n * J} matrix of RGCCA inner components}
