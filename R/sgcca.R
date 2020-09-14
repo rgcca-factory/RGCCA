@@ -27,7 +27,7 @@
 #' with \eqn{p_j} the number of variables of \eqn{X_j}.
 #' If sparsity is a matrix, each row \eqn{h} defines the constraints applied to the weights corresponding to components \eqn{h}:
 #' \deqn{for all h, |a_{j,h}|_{L_1} \le c_1[h,j] \sqrt{p_j}.} It can be estimated by using \link{rgcca_permutation}.
-#' @return \item{Y}{A list of \eqn{J} elements. Each element of Y is a matrix that contains the SGCCA components for each block.}
+#' @return \item{Y}{A list of \eqn{J} elements. Each element of \eqn{Y} is a matrix that contains the analysis components for the corresponding block.}
 #' @return \item{a}{A list of \eqn{J} elements. Each element of a is a matrix that contains the outer weight vectors for each block.}
 #' @return \item{astar}{A list of \eqn{J} elements. Each element of astar is a matrix defined as Y[[j]][, h] = A[[j]]\%*\%astar[[j]][, h]}
 #' @return \item{call}{Call of the function}#' @return \item{crit}{A vector that contains the values of the objective function at each iterations.}

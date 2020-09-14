@@ -7,7 +7,7 @@
 #' @inheritParams sgcca
 #' @param A  A list that contains the \eqn{J} blocks of variables from which block components are constructed.
 #' It could be eiher the original matrices (\eqn{X_1, X_2, ..., X_J}) or the residual matrices (\eqn{X_{h1}, X_{h2}, ..., X_{hJ}}).
-#' @return \item{Y}{A \eqn{n * J} matrix of SGCCA block components.}
+#' @return \item{Y}{A list of \eqn{J} elements. Each element of \eqn{Y} is a matrix that contains the analysis components for the corresponding block.}
 #' @return \item{a}{A list of \eqn{J} elements. Each element contains the outer weight vector of each block.}
 #' @return \item{crit}{The values of the objective function at each iteration of the iterative procedure.}
 #' @return \item{converg}{Speed of convergence of the alogrithm to reach the tolerance.}

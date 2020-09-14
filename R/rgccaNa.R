@@ -28,18 +28,17 @@
 #' @param pca.ncp An integer giving the number of components chosen in PCA 
 #' @param prescaling A logical value indicating if the scaling should be done outside of the function.
 #' @param ni An integer giving the number of iterations for em or sem methods
-#' @return \item{Y}{A list of \eqn{J} elements. Each element of \eqn{Y} is a matrix that contains the RGCCA components for the corresponding block.}
+#' @return \item{Y}{A list of \eqn{J} elements. Each element of \eqn{Y} is a matrix that contains the analysis components for the corresponding block.}
 #' @return \item{a}{A list of \eqn{J} elements. Each element of \eqn{a} is a matrix that contains the outer weight vectors for each block.}
 #' @return \item{astar}{A list of \eqn{J} elements. Each element of astar is a matrix defined as Y[[j]][, h] = A[[j]]\%*\%astar[[j]][, h].}
 #' @return \item{C}{A symmetric matrix (J*J) that describes the relationships between blocks}
-#' @return \item{tau}{A vector or matrix that contains the values of the shrinkage parameters applied to each block and each dimension (user specified).}
-#' @return \item{scheme}{A character or a function giving the link function for 
-#' covariance maximization among "horst" (the identity function), "factorial"
-#'  (the squared values), "centroid" (the absolute values). Only, the horst 
-#'  scheme penalizes structural negative correlation. The factorial scheme 
-#'  discriminates more strongly the blocks than the centroid one.}
+#' @return \item{tau}{Either a 1*J vector or a \eqn{\mathrm{max}(ncomp) \times J} matrix containing the values 
+#' of the regularization parameters (default: tau = 1, for each block and each dimension). Tau varies from 0 (maximizing the correlation) to 1 (maximizing the covariance).
+#' If tau = "optimal" the regularization paramaters are estimated for each block and each dimension using the Schafer and Strimmer (2005)
+#' analytical formula . If tau is a \eqn{1\times J} vector, tau[j] is identical across the dimensions of block \eqn{\mathbf{X}_j}. 
+#' If tau is a matrix, tau[k, j] is associated with \eqn{\mathbf{X}_{jk}} (\eqn{k}th residual matrix for block \eqn{j}). It can be estimated by using \link{rgcca_permutation}.}
 #' @return \item{ncomp}{A vector of 1*J integers giving the number of component for each blocks}
-#' @return \item{crit}{A vector that contains the values of the criteria across iterations.}
+#' @return \item{crit}{A vector of integer that contains the values of the analysis criteria across iterations.}
 #' @return \item{mode}{A \eqn{1 \times J} vector that contains the formulation ("primal" or "dual") applied to each of the \eqn{J} blocks within the RGCCA alogrithm} 
 #' @return \item{AVE}{indicators of model quality based on the Average Variance Explained (AVE): AVE(for one block), AVE(outer model), AVE(inner model).}
 #' @references Tenenhaus A. and Tenenhaus M., (2011), Regularized Generalized Canonical Correlation Analysis, Psychometrika, Vol. 76, Nr 2, pp 257-284.

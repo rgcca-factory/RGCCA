@@ -1,6 +1,6 @@
 #' Creates a data frame from an Excel file loading
 #
-#' @param file A character giving the file name
+#' @inheritParams load_blocks
 #' @param sheet A character giving the sheet name
 #' @param rownames An integer corresponding to the column number of the row
 #' names (NULL otherwise)
