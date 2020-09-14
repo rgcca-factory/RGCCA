@@ -74,7 +74,8 @@ load_libraries(c(
     "shiny",
     "shinyjs",
     "MASS",
-    "rlang"
+    "rlang",
+    "DT"
 ))
 
 if (BSPLUS) {
@@ -278,7 +279,7 @@ ui <- fluidPage(
             ),
             tabPanel(
                 "Bootstrap Summary",
-                dataTableOutput("bootstrapTable"),
+                DT::dataTableOutput("bootstrapTable"),
                 actionButton("bootstrap_t_save", "Save")
             ),
             tabPanel(

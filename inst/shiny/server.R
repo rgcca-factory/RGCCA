@@ -1546,7 +1546,7 @@ server <- function(input, output, session) {
 
     })
 
-    output$bootstrapTable <- renderDataTable({
+    output$bootstrapTable <- DT::renderDataTable({
         tryCatch({
             getDynamicVariables()
             refresh <- c(input$names_block_x, id_block, input$blocks_names_custom_x)
@@ -1563,13 +1563,11 @@ server <- function(input, output, session) {
                 #     save_plot("bootstrap.pdf", plotBoot())
                 #     msgSave()
                 # })
-                df <- round(get_bootstrap(boot, compx, id_block, display_order = F), 3)
-                df <- cbind(row.names(df), df)
-                colnames(df) <- c("Variable", "Boot. mean", "RGCCA weight", "S.D.", "Lower limit", "Upper limit", "P-value", "B.H.")
+                df <- round(get_bootstrap(boot, compx, id_block, display_order = F), 3)[, -c(1, 3)]
+                colnames(df) <- c("RGCCA weight", "Lower limit", "Upper limit", "P-value", "B.H.")
                 df
             }
         }, error = function(e) {
-            print("e")
         })
         
     }, options = list(pageLength = 10))
