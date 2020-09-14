@@ -3,7 +3,7 @@
 #' Tests if a dataframe is composed only by qualitative variables
 #'
 #' @param x A matrix or a vector
-#' @param type Character for a function ("any" by default) among "any" or "all"
+#' @param type A character for a function ("any" by default) among "any" or "all"
 #' @return A bolean for the presence (FALSE) or the absence (TRUE) of at least
 #' one quantitative variable
 #' @param warn_separator A bolean to print warning for bad separator use

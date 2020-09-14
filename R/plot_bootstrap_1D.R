@@ -6,11 +6,11 @@
 #' the boostrap  (according to an ascending gradient from red to blue)
 #' @inheritParams plot_histogram
 #' @inheritParams get_bootstrap
+#' @inheritParams plot_var_2D
 #' @param df_b Result of get_bootstrap functions or dataframe #TODO
 #' @param b A matrix of boostrap
 #' @param x A character for the column used in the plot
 #' @param y A character for the column to color the bars
-#' @param n_mark An integer giving the number maximum of top variables
 #' @param ... Other parameters (see plot_histogram)
 #' @examples
 #' library(RGCCA)

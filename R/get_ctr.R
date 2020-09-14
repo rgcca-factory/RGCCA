@@ -3,7 +3,7 @@
 #' Extract the contibution of variables to the model by using correlation or weight
 #' 
 #' @inheritParams plot_var_2D
-#' @param type A character giving the choice ot the index between cor or weight
+#' @inheritParams plot_var_1D
 #' @param compz An integer giving the index of the analysis component used
 #' for the z-axis
 #' @param i_block_2 An integer giving the index of a list of blocks to be 

@@ -6,7 +6,7 @@
 #' @inheritParams plot_var_2D
 #' @inheritParams plot_histogram
 #' @param comp An integer giving the index of the analysis components
-#' @param type A string giving the criterion to selects biomarkers : either 
+#' @param type A character giving the criterion to selects variables : either
 #' "cor" for correlation between the component and the block
 #' or "weight" for the weight of the RGCCA
 #' @seealso \code{\link[RGCCA]{rgccad}}, \code{\link[RGCCA]{sgcca}}

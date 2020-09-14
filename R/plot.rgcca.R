@@ -1,16 +1,16 @@
 #' Plots for RGCCA
 #' 
 #' Plots different outputs of the results obtained by a rgcca function 
+#' @inheritParams plot_var_2D
+#' @inheritParams plot_var_1D
 #' @param x Result of rgcca function  (see\code{\link[RGCCA]{rgcca}} )
-#' @param type Type among c("ind","var","both","ave","cor","weight","network").  See details.
+#' @param type A character among 'ind', 'var', 'both', 'ave', 'cor', 'weight', 'network'. See details.
 #' @param text_ind A bolean to represent the individuals with their row names (TRUE)
 #' or with circles (FALSE)
 #' @param text_var A bolean to represent the variables with their row names (TRUE)
 #' or with circles (FALSE)
-#' @param title  Character for the title of the plot 
-#' @param colors representing a vector of the colors used in the graph. Either a vector of integers (each integer corresponding to a color) or of characters corresponding to names of colors (as "blue",see colors()) or RGB code ("#FFFFFF").
+#' @param title  A character for the title of the plot 
 #' @param ... Further graphical parameters applied to both (individual and variable) spaces
-#' @param comp vector representing the components to plot
 #' @param block vector representing the components to plot
 #' @inheritParams plot_ind
 #' @inheritParams plot2D

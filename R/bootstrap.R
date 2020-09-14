@@ -1,8 +1,8 @@
 #' Compute bootstrap
 #'
 #' Computing boostrap of RGCCA in order to visualize the stability of the weights found in RGCCA
-#' @param rgcca_res Result of a RGCCA (see  \code{\link[RGCCA]{rgcca}} )
-#' @param n_boot A integer for the number of boostraps
+#' @inheritParams plot2D
+#' @param n_boot An integer for the number of boostraps
 #' @param n_cores An integer for the number of cores used in parallelization 
 #' @param parallelization if TRUE parallelization is run, if FALSE, no parallelisation is run. If NULL (default) parallelization is always used except for Windows in case of length(nperm)<10
 #' @return A list containing two elements: bootstrap and rgcca. bootstrap is a list of produced rgccas while rgcca is the original rgcca.

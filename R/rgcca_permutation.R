@@ -5,7 +5,7 @@
 #' @inheritParams set_connection
 #' @inheritParams bootstrap
 #' @inheritParams rgcca
-#' @param rgcca_res a result of rgcca (from whom all parameters will be imported)
+#' @inheritParams plot2D
 #' @param perm.par "sparsity","tau" or "ncomp".
 #' @param perm.length Useful if perm.value is NULL. Integer indicating the number of sets of parameters to be tested. The parameters are  then uniformly distributed.
 #' @param perm.value  If perm.par="sparsity", a matrix, a vector or an integer containing sets of constraint 

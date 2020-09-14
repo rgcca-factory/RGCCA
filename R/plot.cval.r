@@ -1,13 +1,11 @@
 #' plot.cval
-#' 
+#'
+#' @inheritParams plot2D
 #'@param x result of rgcca_cv function (see \link{rgcca_cv})
 #'@param bars among "sd" for standard deviations, "stderr" for standard error (standard deviations divided by sqrt(n), ci for confidence interal, cim for confidence interval of the mean.
 #'@param alpha used for confidence interval bars (ci or cim), risk. Default to 0.05
 #'@param ... Further plot options
-#'@param cex_main  size of the plot title 
-#'@param cex 1 size of elements of the plot 
-#'@param cex_sub  size of the plot subtitle 
-#'@export 
+#'@export
 #'@examples
 #'data("Russett")
 #' blocks <- list(
