@@ -730,9 +730,9 @@ server <- function(input, output, session) {
         else
             analysis_type <- input$analysis_type
 
-        # Tau is set to optimal by default
-        if (is.null(input$tau_opt)  || (input$tau_opt && analysis_type != "SGCCA"))
-            tau <- "optimal"
+        # Tau is set to 1 by default
+        if (is.null(input$tau_opt))
+             tau <- 1
         else{
             # otherwise the tau value fixed by the user is used
             tau <- getTau()
@@ -783,7 +783,7 @@ server <- function(input, output, session) {
         # Load the analysis
 
         isolate({
-            if (length(grep("[SR]GCCA", analysis_type)) == 1 && !input$tau_opt)
+            if (length(grep("[SR]GCCA", analysis_type)) == 1)
                 tau <- getTau()
         })
 
@@ -829,7 +829,7 @@ server <- function(input, output, session) {
     getCrossVal <- function(){
 
             isolate({
-            if (length(grep("[SR]GCCA", analysis_type)) == 1 && !input$tau_opt)
+            if (length(grep("[SR]GCCA", analysis_type)) == 1)
                 tau <- getTau()
         })
 
@@ -871,6 +871,7 @@ server <- function(input, output, session) {
         )
 
         show(id = "navbar")
+        show(id = "run_analysis")
         show(selector = "#navbar li a[data-value=Cross-validation]")
         updateTabsetPanel(session, "navbar", selected = "Cross-validation")
     }
@@ -887,7 +888,7 @@ server <- function(input, output, session) {
 
     getPerm <-  function(){
         isolate({
-            if (length(grep("[SR]GCCA", analysis_type)) == 1 && !input$tau_opt)
+            if (length(grep("[SR]GCCA", analysis_type)) == 1)
                 tau <- getTau()
         })
 
@@ -924,6 +925,7 @@ server <- function(input, output, session) {
         .GlobalEnv)
  
         show(id = "navbar")
+        show(id= "run_analysis")
         show(selector = "#navbar li a[data-value=Permutation]")
         show(selector = "#navbar li a[data-value='Permutation Summary']")
         updateTabsetPanel(session, "navbar", selected = "Permutation")
@@ -1014,10 +1016,7 @@ server <- function(input, output, session) {
 
     observe({
         # Event related to input$analysis_type
-        toggle(
-            condition = (input$analysis_type == "RGCCA"),
-            id = "tau_opt")
-        for (i in c("tau_custom", "scheme", "superblock", "connection", "supervised" ))
+        for (i in c("tau_custom", "tau_opt", "scheme", "superblock", "connection", "supervised" ))
             setToggle(i)
         setToggle2("blocks_names_response")
         hide(selector = "#tabset li a[data-value=Graphic]")
@@ -1088,13 +1087,18 @@ server <- function(input, output, session) {
         for (i in c("run_boot", "nboot_custom", "header", "init", "navbar", "connection_save", "run_crossval_single", "kfold", "save_all", "format"))
             hide(id = i)
         for (i in c("nperm_custom", "run_perm"))
-            toggle(id = i, condition = !input$supervised)
+            toggle(id = i, condition = !input$supervised && !is.null(input$tau_opt) && input$tau_opt) 
         for (i in c("run_crossval", "val_custom"))
-            toggle(id = i, condition = input$supervised)
-        toggle(id = "ncv", condition = input$supervised && input$val == "ncv")
+            toggle(id = i, condition = input$supervised && !is.null(input$tau_opt) && input$tau_opt) 
+        toggle(id = "ncv", condition = input$supervised && input$val == "kfold" && !is.null(input$tau_opt) && input$tau_opt)
         # toggle(id = "kfold", condition = input$supervised && input$val == "kfold")
-    })
+        })
 
+    observeEvent(input$tau_opt, {
+        assign("perm", NULL, .GlobalEnv)
+        assign("cv", NULL, .GlobalEnv)
+        toggle(id = "run_analysis", condition = !is.null(input$tau_opt) && (!input$tau_opt || (input$tau_opt && (!is.null(perm) || !is.null(cv)))))
+    })
 
     onclick("sep", function(e) assign("clickSep", TRUE, .GlobalEnv))
 
@@ -1306,13 +1310,16 @@ server <- function(input, output, session) {
     })
     
     observeEvent(input$run_perm, {
-        if (blocksExists())
+        if (blocksExists()) {
             getPerm()
+        }
     })
 
     observeEvent(input$run_crossval, {
-        if (blocksExists() && input$supervised)
+        if (blocksExists() && input$supervised) {
             getCrossVal()
+            show(id = "run_analysis")
+        }
     })
 
     observeEvent(input$run_crossval_single, {

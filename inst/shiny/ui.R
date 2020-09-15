@@ -128,29 +128,6 @@ ui <- fluidPage(
 
             tabPanel(
                 "RGCCA",
-                uiOutput("val_custom"),
-                sliderInput(
-                    inputId = "ncv",
-                    label = "Number of cross-validation",
-                    min = 1,
-                    max = 100,
-                    value = 1,
-                    step = 1
-                ),
-                sliderInput(
-                    inputId = "kfold",
-                    label = "Number of folds",
-                    min = 2,
-                    max = 10,
-                    value = 5,
-                    step = 1
-                ),
-                actionButton(
-                    inputId = "run_crossval",
-                    label = "Run cross-validation"),
-                uiOutput("nperm_custom"),
-                actionButton(inputId = "run_perm",
-                    label = "Run permutation"),
                 uiOutput("analysis_type_custom"),
                 uiOutput("nb_compcustom"),
                 uiOutput("scale_custom"),
@@ -174,9 +151,32 @@ ui <- fluidPage(
                     uiOutput("blocks_names_response")),
 
                 uiOutput("connection_custom"),
+                uiOutput("scheme_custom"),
                 uiOutput("tau_opt_custom"),
                 uiOutput("tau_custom"),
-                uiOutput("scheme_custom"),
+                uiOutput("val_custom"),
+                sliderInput(
+                    inputId = "ncv",
+                    label = "Number of cross-validation",
+                    min = 1,
+                    max = 100,
+                    value = 1,
+                    step = 1
+                ),
+                sliderInput(
+                    inputId = "kfold",
+                    label = "Number of folds",
+                    min = 2,
+                    max = 10,
+                    value = 5,
+                    step = 1
+                ),
+                actionButton(
+                    inputId = "run_crossval",
+                    label = "Run cross-validation"),
+                uiOutput("nperm_custom"),
+                actionButton(inputId = "run_perm",
+                    label = "Run permutation"),
                 # sliderInput(
                 #     inputId = "power",
                 #     label = "Power of the factorial",
@@ -259,7 +259,7 @@ ui <- fluidPage(
             ),
             tabPanel(
                 "Samples",
-                plotlyOutput("samplesPlot", height = 700),
+                plotlyOutput("samplesPlot", height = 500),
                 actionButton("samples_save", "Save")
             ),
             tabPanel(
@@ -285,7 +285,7 @@ ui <- fluidPage(
             tabPanel(
                 "Permutation",
                 plotlyOutput("permutationPlot", height = 700),
-                actionButton("permutation_save", "Save")
+                # actionButton("permutation_save", "Save")
             ),
             tabPanel(
                 "Permutation Summary",
