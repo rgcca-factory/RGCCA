@@ -783,7 +783,11 @@ server <- function(input, output, session) {
         # Load the analysis
 
         isolate({
-            if (length(grep("[SR]GCCA", analysis_type)) == 1)
+            if (!is.null(cv))
+                tau <- cv$bestpenalties
+            else if (!is.null(perm))
+                tau <- perm$bestpenalties
+            else if (length(grep("[SR]GCCA", analysis_type)) == 1)
                 tau <- getTau()
         })
 
@@ -791,7 +795,7 @@ server <- function(input, output, session) {
             response <- input$names_block_response
         else
             response <- NULL
-        
+
         # scheme_power <- input$power
         # if (input$scheme == "factorial")
         #     scheme <- function (x) x^as.integer(scheme_power)
@@ -1094,7 +1098,7 @@ server <- function(input, output, session) {
         # toggle(id = "kfold", condition = input$supervised && input$val == "kfold")
         })
 
-    observeEvent(input$tau_opt, {
+    observeEvent(c(input$tau_opt, input$supervised), {
         assign("perm", NULL, .GlobalEnv)
         assign("cv", NULL, .GlobalEnv)
         toggle(id = "run_analysis", condition = !is.null(input$tau_opt) && (!input$tau_opt || (input$tau_opt && (!is.null(perm) || !is.null(cv)))))
@@ -1316,10 +1320,8 @@ server <- function(input, output, session) {
     })
 
     observeEvent(input$run_crossval, {
-        if (blocksExists() && input$supervised) {
+        if (blocksExists() && input$supervised)
             getCrossVal()
-            show(id = "run_analysis")
-        }
     })
 
     observeEvent(input$run_crossval_single, {
