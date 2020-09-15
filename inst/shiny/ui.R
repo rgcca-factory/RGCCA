@@ -295,7 +295,7 @@ ui <- fluidPage(
             tabPanel(
                 "Cross-validation",
                 plotlyOutput("cvPlot", height = 700),
-                actionButton("cv_save", "Save")
+                #actionButton("cv_save", "Save")
             )
         )
 

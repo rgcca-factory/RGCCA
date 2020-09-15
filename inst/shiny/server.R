@@ -1037,7 +1037,7 @@ server <- function(input, output, session) {
 
     observeEvent(c(input$names_block_x), {
         condition <- !is.null(analysis) && getNcomp()[id_block] > 1
-        if(condition)
+        if (!condition)
             updateTabsetPanel(session, "navbar", selected = "Samples")
         for (i in c("Corcircle", "Fingerprint"))
             toggle(condition = condition, 
@@ -1534,10 +1534,10 @@ server <- function(input, output, session) {
                     .GlobalEnv
                 )
 
-                observeEvent(input$bootstrap_save, {
-                    save_plot("bootstrap.pdf", plotBoot())
-                    msgSave()
-                })
+                # observeEvent(input$bootstrap_save, {
+                #     save_plot("bootstrap.pdf", plotBoot())
+                #     msgSave()
+                # })
 
                modify_hovertext(plot_dynamic(plotBoot(), type = "boot1D", format = input$format), type = "boot1D", hovertext = FALSE)
             }
@@ -1558,13 +1558,15 @@ server <- function(input, output, session) {
                     get_bootstrap(boot, compx, id_block),
                     .GlobalEnv
                 )
-                
-                # observeEvent(input$bootstrap_save, {
-                #     save_plot("bootstrap.pdf", plotBoot())
-                #     msgSave()
-                # })
+
                 df <- round(get_bootstrap(boot, compx, id_block, display_order = F), 3)[, -c(1, 3)]
                 colnames(df) <- c("RGCCA weight", "Lower limit", "Upper limit", "P-value", "B.H.")
+
+                observeEvent(input$bootstrap_t_save, {
+                    write.table(df, "summary_bootstrap.txt", sep = "\t")
+                    msgSave()
+                })
+
                 df
             }
         }, error = function(e) {
@@ -1578,10 +1580,10 @@ server <- function(input, output, session) {
         getDynamicVariables()
 
         if (!is.null(perm)) {
-            observeEvent(input$permutation_save, {
-                save("perm.pdf", plot_permut_2D(perm))
-                msgSave()
-            })
+        #     observeEvent(input$permutation_save, {
+        #         save("perm.pdf", plot_permut_2D(perm))
+        #         msgSave()
+        #     })
             modify_hovertext(plot_dynamic(plot_permut_2D(perm), type = "perm", format = input$format), type = "perm", hovertext = F, perm = perm)
         }
 
@@ -1592,11 +1594,15 @@ server <- function(input, output, session) {
         getDynamicVariables()
         
         if (!is.null(perm)) {
-            # observeEvent(input$permutation_t_save, {
-            #     save("perm.pdf", plot_permut_2D(perm))
-            #     msgSave()
-            # })
-            summary.perm(perm)
+
+            s_perm <- summary.perm(perm)
+
+            observeEvent(input$permutation_t_save, {
+                write.table(s_perm, "summary_permutation.txt", sep = "\t", row.names = FALSE)
+                msgSave()
+            })
+
+            s_perm
         }
         
     }, options = list(pageLength = 10))
@@ -1606,10 +1612,10 @@ server <- function(input, output, session) {
         getDynamicVariables()
 
         if (!is.null(cv)) {
-            observeEvent(input$cv_save, {
-                save("cv.pdf", plot(cv))
-                msgSave()
-            })
+            # observeEvent(input$cv_save, {
+            #     save("cv.pdf", plot(cv))
+            #     msgSave()
+            # })
             modify_hovertext(plot_dynamic(plot(cv), type = "cv", format = input$format), type = "cv", hovertext = F, perm = cv)
         }
 
