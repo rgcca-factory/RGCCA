@@ -127,12 +127,12 @@ server <- function(input, output, session) {
     ################################################ UI function ################################################
 
     setTauUI <- function(superblock = NULL) {
-        refresh <- c(input$superblock, input$supervised)
+        refresh <- c(input$superblock, input$supervised, input$tau_opt)
 
         if (!is.null(input$analysis_type) &&
             input$analysis_type == "SGCCA") {
             par_name <- "Sparsity"
-            cond <- "input.analysis_type == SGCCA"
+            cond <- "input.tau_opt == false && input.analysis_type == SGCCA"
         } else{
             par_name <- "Tau"
             cond <- "input.tau_opt == false"
@@ -150,7 +150,8 @@ server <- function(input, output, session) {
                                 max = 1,
                                 value = ifelse(
                                     is.null(input[[paste0("tau", i)]]),
-                                    1, input[[paste0("tau", i)]]),
+                                    1, 
+                                    input[[paste0("tau", i)]]),
                                 step = .01
                             )
                         }))
@@ -349,16 +350,25 @@ server <- function(input, output, session) {
     })
     
     output$tau_opt_custom <- renderUI({
+
+        if (!is.null(input$analysis_type) && input$analysis_type == "SGCCA") {
+            penalty <- "sparsity"
+            text <- "A sparsity coefficient varies from the square root of the variable number (the fewest selected variables) to 1 (all the variables are included)"
+        } else if (!is.null(input$analysis_type) && input$analysis_type == "RGCCA") {
+            penalty <- "tau"
+            text <- "A tau near 0 maximize the the correlation whereas a tau near 1 maximize the covariance"
+        } else
+            penalty <- text <- ""
+
         ui <- checkboxInput(inputId = "tau_opt",
-                            label = "Use an optimal tau",
+                            label = paste("Use an optimal", penalty),
                             value = FALSE)
 
         if (BSPLUS)
             ui <- shinyInput_label_embed(
                 ui,
                 icon("question") %>%
-                    bs_embed_tooltip(title = "A tau near 0 maximize the the
-                    correlation whereas a tau near 1 maximize the covariance")
+                    bs_embed_tooltip(title = text)
             )
 
         return(ui)
@@ -716,7 +726,7 @@ server <- function(input, output, session) {
 
     getNcomp <- function() {
         ncomp <- integer(0)
-        for (i in 1:(length(blocks_without_superb) + ifelse(input$superblock, 1, 0)))
+        for (i in 1:(length(blocks_without_superb)))
             ncomp <- c(ncomp, input[[paste0("ncomp", i)]])
 
         return(ncomp)
@@ -1010,7 +1020,7 @@ server <- function(input, output, session) {
 
     setToggle2 <- function(id)
             toggle(
-                condition = (input$analysis_type %in% c("RA", "RGCCA","SGCCA")),
+                condition = (input$analysis_type %in% c("RA", "RGCCA", "SGCCA")),
                    id = id)
 
 

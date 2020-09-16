@@ -54,7 +54,7 @@ rgcca_cv=function( blocks,
     if(!missing(blocks)&class(blocks)=="rgcca"){rgcca_res=blocks}
     if(class(rgcca_res)=="rgcca")
     {
-        message("All parameters were imported by a rgcca object provided in the blocks/rgcca_res parameter")
+        message("All parameters were imported from a rgcca object.")
         scale_block=rgcca_res$call$scale_block
         scale=rgcca_res$call$scale
         scheme=rgcca_res$call$scheme
