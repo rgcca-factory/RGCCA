@@ -726,7 +726,9 @@ server <- function(input, output, session) {
 
     getNcomp <- function() {
         ncomp <- integer(0)
-        for (i in 1:(length(blocks_without_superb)))
+        cond <- input$superblock && ( toupper(analysis_type) %in% c("PCA", "RGCCA", "SGCCA") ||
+                analysis_type %in% multiple_blocks_super)
+        for (i in 1:(length(blocks_without_superb) + ifelse(cond, 1, 0)))
             ncomp <- c(ncomp, input[[paste0("ncomp", i)]])
 
         return(ncomp)
@@ -774,7 +776,7 @@ server <- function(input, output, session) {
 
         if ( (!is.null(input$superblock) && input$superblock) && 
                 ( toupper(analysis_type) %in% c("PCA", "RGCCA", "SGCCA")) ||
-                analysis_type %in% multiple_blocks_super ){
+                analysis_type %in% multiple_blocks_super ) {
             blocks <- c(blocks, superblock = list(Reduce(cbind, blocks)))
         }
 
