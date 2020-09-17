@@ -1,9 +1,9 @@
 #' plot.patternNA
 #' 
-#' Plots an object of class patternNA 
-#' @param x an object from get_patternNA (see \code{\link[RGCCA]{get_patternNA}} )
+#' Plots an object of class patternNA
+#' @inheritParams plot_ind
+#' @param x A get_patternNA object (see \code{\link[RGCCA]{get_patternNA}} )
 #' @param type "all" if all blocks should be plotted, ifelse an integer corresponding to the position of the block to be plotted in the initial list
-#' @param legend if TRUE the legend is plotted
 #' @param outlierVisible if FALSE, the outliers will be -2* standard deviations if negative, 2 standard deviations if positive
 #' @param scale if TRUE all the variables are scaled before graphical representation
 #' @param ... Further graphical parameters (see \code{\link[graphics]{plot}})

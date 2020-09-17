@@ -1,5 +1,5 @@
 #' Impute a list of matrices by the colmeans
-#' @param A A list of matrices
+#' @inheritParams rgccad
 #' @return List of the matrices imputed by colmeans
 #' @title Product for Matrices with missing data (pm)
 

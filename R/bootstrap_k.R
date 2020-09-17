@@ -4,7 +4,6 @@
 #'
 #' @inheritParams rgcca
 #' @inheritParams plot_var_2D
-#' @param rgcca_res Result of rgcca function
 #' @return A list of RGCCA bootstrap weights
 bootstrap_k <- function(rgcca_res, type = "weight") {
 

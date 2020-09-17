@@ -1,5 +1,5 @@
 #'Print bootstrap
-#'@param x results of a bootstrap function
+#'@param x A bootstrap object (see \code{\link[RGCCA]{bootstrap}} )
 #'@param ... Further arguments in print
 #'@export
 print.bootstrap=function(x,...)

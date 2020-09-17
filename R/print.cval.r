@@ -1,6 +1,6 @@
 #' print.cval
 #' 
-#'@param x result of rgcca_cv function (see \link{rgcca_cv})
+#'@param x A rgcca_cv object (see \link{rgcca_cv})
 #'@param bars among "sd" for standard deviations, "stderr" for standard error (standard deviations divided by sqrt(n), ci for confidence interal, cim for confidence interval of the mean.
 #'@param alpha used for confidence interval bars (ci or cim), risk. Default to 0.05
 #'@param ... Further print options

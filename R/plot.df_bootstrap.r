@@ -1,10 +1,10 @@
 #' Plots a bootstrap object
 #' 
 #' Plots the results of a bootstrap object. The representation can be with bars (1D) or (2D) #TODO
-#' @param type "1D" or "2D"
-#' @param x result of bootstrap  \code{\link[RGCCA]{bootstrap}} 
-#' @param block number of the block to be plotted
-#' @param comp number of the component to be plotted
+#' @inheritParams plot_var_2D
+#' @inheritParams plot_var_1D
+#' @param type A character to select a type of plot among "1D" or "2D"
+#' @param x A bootstrap object (see \code{\link[RGCCA]{bootstrap}} )
 #' @inheritParams plot_bootstrap_1D
 #' @inheritParams plot_bootstrap_2D
 #' @export

@@ -3,7 +3,7 @@
 #' @param x A numeric vector, matrix or data.frame.
 #' @param y A numeric vector, matrix or data.frame.
 #' @param bias A logical value. If bias = TRUE, \eqn{n} is used to give a biased estimator of the (co)variance. 
-#' If bias = FALSE, \eqn{n-1} is used (default: TRUE).
+#' If bias = FALSE, \eqn{n-1} is used.
 #' @return \item{C}{Estimation of the variance (resp. covariance) of x (resp. x and y).}
 #' @title Variance and Covariance (Matrices)
 #' @importFrom stats cov

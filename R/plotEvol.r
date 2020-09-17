@@ -1,10 +1,10 @@
 #' plot.naEvolution
 #' 
 #'Plots the impact of increasing missing data on RGCCA
+#' @inheritParams plot_var_1D
 #' @param x A list resulting of naEvolution (\link{naEvolution})
 #' @param type ="rv": Can be also "a" for correlations between axes, "bm" for the percent of similar biomarkers, "rvComplete" if the RV is calculated only on complete dataset, or "rmse" for Root Mean Squares Error.
 #' @param ylim =c(0.8,1) y limits
-#' @param block ="all" or a number indicating the position of the chosen block in the initial list
 #' @param bars ="sd" or "stderr". Indicates which error bar to build
 #' @param main =NULL Title of the graph (before the block name)
 #' @param names.arg  renaming the methods

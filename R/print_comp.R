@@ -7,7 +7,7 @@
 #' @param n An integer giving the index of the analysis component
 #' @param i An integer giving the index of a list of blocks
 #' @param outer A boolean for ave plot case
-#' @return A string for the variance on the component
+#' @return A character for the variance on the component
 #' @seealso \code{\link[RGCCA]{rgccad}}, \code{\link[RGCCA]{sgcca}}
 
 print_comp <- function(rgcca_res, n = 1, i = length(rgcca_res$AVE$AVE_X), outer = FALSE) {

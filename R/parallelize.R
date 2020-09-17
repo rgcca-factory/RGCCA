@@ -4,7 +4,6 @@
 #' @param varlist character vector of names of objects to export  
 #' @param envir environment                                               
 #' @param applyFunc function to be applied
-#' @param parallelization if TRUE parallelization is run, if FALSE, no parallelisation is run. If NULL (default) parallelization is always used except for Windows in case of length(nperm)<10
 #' @inheritParams bootstrap
 #' @importFrom parallel stopCluster
 #' @importFrom parallel clusterExport
