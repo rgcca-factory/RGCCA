@@ -278,6 +278,76 @@ server <- function(input, output, session) {
         return(ui)
     })
 
+    
+    output$nperm_custom <- renderUI({
+        ui <- sliderInput(
+            inputId = "nperm",
+            label = "Number of permutations",
+            min = 5,
+            max = 1000,
+            value = 10,
+            step = 5
+        )
+        if (BSPLUS)
+            ui <- shinyInput_label_embed(
+                ui,
+                icon("question") %>%
+                    bs_embed_tooltip(title = "To tune the sparsity coefficient (if the model is sparse) or tau
+                                     (otherwise), we observe the deviation between the model and a set of models
+                                     where the lines of each block are permuted. The model with the best 
+                                     combination of parameters is the one with the highest deviation.")
+            )
+        
+        return(ui)
+    })
+
+    output$nboot_custom <- renderUI({
+        ui <- sliderInput(
+            inputId = "nboot",
+            label = "Number of boostraps",
+            min = 5,
+            max = 1000,
+            value = 10,
+            step = 5
+        )
+        if (BSPLUS)
+            ui <- shinyInput_label_embed(
+                ui,
+                icon("question") %>%
+                    bs_embed_tooltip(title = "By taking several random samples from the dataset (bootstrap),
+                                     the importance of the variables may vary. The variables that are most 
+                                     often selected are those that are retained.")
+            )
+        
+        return(ui)
+    })
+
+    output$val_custom <- renderUI({
+        ui <- radioButtons(
+            "val",
+            label = "Type of validation",
+            choices = c(#`Train-test` = "test",
+                `K-fold` = "kfold",
+                `Leave-one-out` = "loo"),
+            selected = "loo"
+        )
+        if (BSPLUS)
+            ui <- shinyInput_label_embed(
+                ui,
+                icon("question") %>%
+                    bs_embed_tooltip(title = "To tune the sparsity coefficient (if the model is sparse) or
+                                     tau (otherwise), in supervised mode, we observe the performance (RMSE)
+                                     of a model from which individuals were randomly drawn. These individuals
+                                     can be divided into k folds where the model will be tested on each fold
+                                     and trained on the others. For small datasets (<30 samples), it is 
+                                     recommended to use as many folds as there are individuals (leave-one-out; 
+                                     loo). The best combination of parameters is the one where, on average, 
+                                     the samples perform best.")
+            )
+        
+        return(ui)
+    })
+    
     output$tau_opt_custom <- renderUI({
         ui <- checkboxInput(inputId = "tau_opt",
                             label = "Use an optimal tau",
@@ -613,6 +683,9 @@ server <- function(input, output, session) {
 
     design <- function()
         plot_network2(rgcca_out)
+    
+    design2 <- function()
+        plot_network(rgcca_out)
 
     plotBoot <- function(){
         refresh <- c(input$names_block_x, id_block, input$blocks_names_custom_x)
@@ -717,6 +790,12 @@ server <- function(input, output, session) {
             response <- input$names_block_response
         else
             response <- NULL
+        
+        # scheme_power <- input$power
+        # if (input$scheme == "factorial")
+        #     scheme <- function (x) x^as.integer(scheme_power)
+        # else
+            scheme <- input$scheme
 
         assign("rgcca_out",
                showWarn({
@@ -728,7 +807,7 @@ server <- function(input, output, session) {
                             superblock = (!is.null(input$supervised) &&
                                 !is.null(input$superblock) && input$superblock),
                             ncomp = getNcomp(),
-                            scheme = input$scheme,
+                            scheme = scheme,
                             scale = FALSE,
                             scale_block = FALSE,
                             init = input$init,
@@ -767,7 +846,7 @@ server <- function(input, output, session) {
                     response = response,
                     validation = input$val,
                     k = input$kfold,
-                    n_cv = 10,
+                    n_cv = input$ncv,
                     n_cores = parallel::detectCores() - 1,
                     superblock = (!is.null(input$supervised) &&
                                     !is.null(input$superblock) && input$superblock),
@@ -845,6 +924,7 @@ server <- function(input, output, session) {
  
         show(id = "navbar")
         show(selector = "#navbar li a[data-value=Permutation]")
+        show(selector = "#navbar li a[data-value='Permutation Summary']")
         updateTabsetPanel(session, "navbar", selected = "Permutation")
     }
 
@@ -856,6 +936,7 @@ server <- function(input, output, session) {
         )
         assign("selected.var", NULL, .GlobalEnv)
         show(selector = "#navbar li a[data-value=Bootstrap]")
+        show(selector = "#navbar li a[data-value='Bootstrap Summary']")
     }
 
     load_responseShiny = function() {
@@ -947,6 +1028,20 @@ server <- function(input, output, session) {
             id = "blocks_names_custom_y")
     })
 
+    # observeEvent(c(input$compx, input$compy), {
+    #     for (i in c("Corcircle", "Samples"))
+    #         toggle(condition = !is.null(analysis) && !(input$compx < 2 && input$compy < 2),
+    #                selector = paste0("#navbar li a[data-value=", i, "]"))
+    # })
+
+    observeEvent(c(input$names_block_x), {
+        condition <- !is.null(analysis) && getNcomp()[id_block] > 1
+        if(condition)
+            updateTabsetPanel(session, "navbar", selected = "Samples")
+        for (i in c("Corcircle", "Fingerprint"))
+            toggle(condition = condition, 
+                   selector = paste0("#navbar li a[data-value=", i, "]"))
+    })
 
     observeEvent(c(input$navbar, input$tabset), {
         toggle(
@@ -969,7 +1064,7 @@ server <- function(input, output, session) {
             toggle(condition = (input$navbar == "Bootstrap"), id = i)
         toggle(
             condition = (
-                !is.null(analysis) && !input$navbar %in% c("Connection", "AVE", "Permutation", "Cross-validation")
+                !is.null(analysis) && !input$navbar %in% c("Connection", "AVE", "Cross-validation", "'Bootstrap Summary'", "Permutation", "'Permutation Summary'")
             ),
             selector = "#tabset li a[data-value=Graphic]"
         )
@@ -987,15 +1082,16 @@ server <- function(input, output, session) {
     observe({
         # Initial events
         hide(selector = "#tabset li a[data-value=RGCCA]")
-        for (i in c("Connection", "AVE", "Samples", "Corcircle", "Fingerprint", "Bootstrap", "Permutation", "Cross-validation"))
+        for (i in c("Connection", "AVE", "Samples", "Corcircle", "Fingerprint", "Bootstrap", "'Bootstrap Summary'", "Permutation", "'Permutation Summary'", "Cross-validation"))
             hide(selector = paste0("#navbar li a[data-value=", i, "]"))
-        for (i in c("run_boot", "nboot", "header", "init", "navbar", "connection_save", "run_crossval_single"))
+        for (i in c("run_boot", "nboot_custom", "header", "init", "navbar", "connection_save", "run_crossval_single", "kfold", "save_all", "format"))
             hide(id = i)
-        for (i in c("nperm", "run_perm"))
+        for (i in c("nperm_custom", "run_perm"))
             toggle(id = i, condition = !input$supervised)
-        for (i in c("run_crossval", "val"))
+        for (i in c("run_crossval", "val_custom"))
             toggle(id = i, condition = input$supervised)
-        toggle(id = "kfold", condition = input$supervised && input$val == "kfold")
+        toggle(id = "ncv", condition = input$supervised && input$val == "ncv")
+        # toggle(id = "kfold", condition = input$supervised && input$val == "kfold")
     })
 
 
@@ -1110,9 +1206,9 @@ server <- function(input, output, session) {
         assign("analysis", NULL, .GlobalEnv)
         assign("boot", NULL, .GlobalEnv)
         assign("selected.var", NULL, .GlobalEnv)
-        for (i in c("run_boot", "nboot"))
+        for (i in c("run_boot", "nboot_custom", "connection_save"))
             hide(id = i)
-        for (i in c("Connection", "AVE", "Samples", "Corcircle", "Fingerprint", "Bootstrap", "Permutation", "Cross-validation"))
+        for (i in c("Connection", "AVE", "Samples", "Corcircle", "Fingerprint", "Bootstrap", "'Bootstrap Summary'", "Permutation", "'Permutation Summary'", "Cross-validation"))
             hide(selector = paste0("#navbar li a[data-value=", i, "]"))
         hide(id = "run_crossval_sing")
         assign("crossval", NULL, .GlobalEnv)
@@ -1124,13 +1220,14 @@ server <- function(input, output, session) {
             show(selector = "#tabset li a[data-value=RGCCA]")
             for (i in c("Connection", "AVE", "Samples", "Corcircle", "Fingerprint"))
                 show(selector = paste0("#navbar li a[data-value=", i, "]"))
-            for (i in c("navbar", "nboot", "run_boot"))
+            for (i in c("navbar", "nboot_custom", "run_boot"))
                 show(id = i)
             toggle(id = "run_crossval_single", condition = !is.null(rgcca_out$call$response))
             updateTabsetPanel(session, "navbar", selected = "Connection")
             save_connection(rgcca_out$call$connection)
             # for (i in c('bootstrap_save', 'fingerprint_save', 'corcircle_save',
             # 'samples_save', 'ave_save')) setToggleSaveButton(i)
+            show("connection_save")
             save(rgcca_out, file = "rgcca_result.RData")
         }
     })
@@ -1139,7 +1236,7 @@ server <- function(input, output, session) {
         if_superblock <- grep("superblock", rownames(connection))
         if (length(if_superblock) > 0)
             connection <- connection[-if_superblock, -if_superblock]
-        write.table(connection, file = "connection.tsv", sep = "\t")
+        write.table(connection, file = "connection.txt", sep = "\t")
     }
 
     observeEvent(
@@ -1167,9 +1264,9 @@ server <- function(input, output, session) {
                     "bootstrap_save",
                     "fingerprint_save",
                     "corcircle_save",
-                    "samples_save",
-                    "ave_save",
-                    "connection_save"
+                    "samples_save"#,
+                    # "ave_save",
+                    # "connection_save"
                 ))
                     hide(i)
             }
@@ -1282,8 +1379,8 @@ server <- function(input, output, session) {
                 compy <- 1
             else 
                 compy <- 2
-            save_var(rgcca_out, 1, compy)
-            save_ind(rgcca_out, 1, compy)
+            save_var(rgcca_out, file = "variables.txt")
+            save_ind(rgcca_out, file = "individuals.txt")
             save(analysis, file = "rgcca_result.RData")
             if(!is.null(boot))
                 save_plot("bootstrap.pdf", plotBoot())
@@ -1323,6 +1420,31 @@ server <- function(input, output, session) {
     }, priority = 10)
 
     ################################################ Outputs ################################################
+    
+    output$connectionPlot <- renderVisNetwork({
+        getDynamicVariables()
+        if (!is.null(analysis)) {
+            observeEvent(input$connection_save, {
+                save_plot(paste0("connection.", input$format), design2)
+                msgSave()
+            })
+            design()
+        }
+    })
+
+    output$AVEPlot <- renderPlot({
+        
+        getDynamicVariables()
+        
+        if (!is.null(analysis)) {
+            observeEvent(input$ave_save, {
+                save_plot(paste0("ave.", input$format), ave()) 
+                msgSave()
+            })
+            ave()
+        }
+        
+    })
 
     output$samplesPlot <- renderPlotly({
         getDynamicVariables()
@@ -1333,12 +1455,13 @@ server <- function(input, output, session) {
                 msgSave()
             })
 
+            save_ind(rgcca_out, file = "individuals.txt")
             p <- samples()
-            
+
             if (is(p, "gg")) {
             p <- showWarn(
                 modify_hovertext(
-                    plot_dynamic(p, NULL, "text", TRUE),
+                    plot_dynamic(p, NULL, "text", TRUE, format = input$format),
                     if_text
                 ), warn = FALSE)
 
@@ -1364,10 +1487,12 @@ server <- function(input, output, session) {
                     save_plot("corcircle.pdf", corcircle())
                     msgSave()
                 })
-    
+                
+                save_var(rgcca_out, file = "variables.txt")
                 p <- corcircle()
+
                 if (is(p, "gg")) {
-                    p <- modify_hovertext(plot_dynamic(p, NULL, "text"), if_text)
+                    p <- modify_hovertext(plot_dynamic(p, NULL, "text", format = input$format), if_text)
                     n <- length(p$x$data)
                     (style(
                         p,
@@ -1378,47 +1503,21 @@ server <- function(input, output, session) {
             }
         }, error = function(e) {
         })
-
     })
 
     output$fingerprintPlot <- renderPlotly({
-
-        getDynamicVariables()
-
-        if (!is.null(analysis)) {
-            observeEvent(input$fingerprint_save, {
-                save_plot("fingerprint.pdf", fingerprint(input$indexes))
-                msgSave()
-            })
-            modify_hovertext(plot_dynamic(fingerprint(input$indexes), type = "var1D"), hovertext = F, type = "var1D")
-        }
-
-    })
-
-
-    output$AVEPlot <- renderPlot({
-
-        getDynamicVariables()
-
-        if (!is.null(analysis)) {
-            observeEvent(input$ave_save, {
-                save_plot("AVE.pdf", ave()) 
-                msgSave()
-            })
-            ave()
-        }
-
-    })
-
-    output$connectionPlot <- renderVisNetwork({
-        getDynamicVariables()
-        if (!is.null(analysis)) {
-            observeEvent(input$connection_save, {
-                save_plot("connection.pdf", design())
-                msgSave()
-            })
-            design()
-        }
+        tryCatch({
+            getDynamicVariables()
+    
+            if (!is.null(analysis)) {
+                observeEvent(input$fingerprint_save, {
+                    save_plot("fingerprint.pdf", fingerprint(input$indexes))
+                    msgSave()
+                })
+                modify_hovertext(plot_dynamic(fingerprint(input$indexes), type = "var1D", format = input$format), hovertext = F, type = "var1D")
+            }
+        }, error = function(e) {
+        })
     })
 
     output$bootstrapPlot <- renderPlotly({
@@ -1427,24 +1526,53 @@ server <- function(input, output, session) {
             refresh <- c(input$names_block_x, id_block, input$blocks_names_custom_x)
     
             if (!is.null(analysis) & !is.null(boot)) {
-    
+
                 assign(
                     "selected.var", 
                     get_bootstrap(boot, compx, id_block),
                     .GlobalEnv
                 )
-    
+
                 observeEvent(input$bootstrap_save, {
                     save_plot("bootstrap.pdf", plotBoot())
                     msgSave()
                 })
-               modify_hovertext(plot_dynamic(plotBoot(), type = "boot1D"), type = "boot1D", hovertext = FALSE)
-               # modify_hovertext(plot_dynamic(plotBoot()), type = "boot"), type = "boot")
+
+               modify_hovertext(plot_dynamic(plotBoot(), type = "boot1D", format = input$format), type = "boot1D", hovertext = FALSE)
             }
         }, error = function(e) {
         })
 
     })
+
+    output$bootstrapTable <- renderDataTable({
+        tryCatch({
+            getDynamicVariables()
+            refresh <- c(input$names_block_x, id_block, input$blocks_names_custom_x)
+            
+            if (!is.null(analysis) & !is.null(boot)) {
+                
+                assign(
+                    "selected.var", 
+                    get_bootstrap(boot, compx, id_block),
+                    .GlobalEnv
+                )
+                
+                # observeEvent(input$bootstrap_save, {
+                #     save_plot("bootstrap.pdf", plotBoot())
+                #     msgSave()
+                # })
+                df <- round(get_bootstrap(boot, compx, id_block, display_order = F), 3)
+                df <- cbind(row.names(df), df)
+                colnames(df) <- c("Variables", "Boot. mean", "RGCCA weights", "S.D.", "Upper limit", "Lower limit", "P-value", "B.H.")
+                df
+            }
+        }, error = function(e) {
+            print("e")
+        })
+        
+    }, options = list(pageLength = 10))
+
 
     output$permutationPlot <- renderPlotly({
 
@@ -1455,10 +1583,24 @@ server <- function(input, output, session) {
                 save("perm.pdf", plot_permut_2D(perm))
                 msgSave()
             })
-            modify_hovertext(plot_dynamic(plot_permut_2D(perm), type = "perm"), type = "perm", hovertext = F, perm = perm)
+            modify_hovertext(plot_dynamic(plot_permut_2D(perm), type = "perm", format = input$format), type = "perm", hovertext = F, perm = perm)
         }
 
     })
+    
+    output$permutationTable <- renderDataTable({
+        
+        getDynamicVariables()
+        
+        if (!is.null(perm)) {
+            # observeEvent(input$permutation_t_save, {
+            #     save("perm.pdf", plot_permut_2D(perm))
+            #     msgSave()
+            # })
+            summary.perm(perm)
+        }
+        
+    }, options = list(pageLength = 10))
 
     output$cvPlot <- renderPlotly({
 
@@ -1469,7 +1611,7 @@ server <- function(input, output, session) {
                 save("cv.pdf", plot(cv))
                 msgSave()
             })
-            modify_hovertext(plot_dynamic(plot(cv), type = "cv"), type = "cv", hovertext = F, perm = cv)
+            modify_hovertext(plot_dynamic(plot(cv), type = "cv", format = input$format), type = "cv", hovertext = F, perm = cv)
         }
 
     })

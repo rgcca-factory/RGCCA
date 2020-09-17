@@ -19,6 +19,23 @@ Performs multi-variate analysis (PCA, CCA, PLS, R/SGCCA, etc.) and produces text
 
 ---
 
+## Contents
+  - [Description](#description)
+  - [Algorithm](#algorithm)
+  - [Input files](#input-files)
+  - [Output files](#output-files)
+  - [Installation](#installation)
+    - [Linux](#linux)
+    - [Windows & Mac](#windows--mac)
+  - [Execution](#execution)
+    - [Shiny interface](#shiny-interface)
+    - [Vignette](#vignette)
+    - [Command line](#command-line)
+      - [Files parameters](#files-parameters)
+      - [Analyse parameters](#analyse-parameters)
+      - [Graphical parameters](#graphical-parameters)
+  - [References](#references)
+
 ## Description
 A user-friendly multi-blocks analysis (Regularized Generalized Canonical Correlation Analysis, RGCCA) as described in [1] and [2] with all default settings predefined. The software produces figures to explore the analysis' results: individuals and variables projected on two components of the multi-block analysis, list of top variables and explained variance in the model.
  
@@ -192,7 +209,7 @@ By default, the analysis: is a Regularised Generalised Canonical Correlation Ana
 - ```--superblock``` DO NOT use a superblock (i.e. a concatenation of all the blocks to visualize them all together in a consensus space). In this case, all blocks are assumed to be connected or a connection file could be used.
 - ```--ncomp``` (INTEGER) Number of components in the analysis for each block [default: 2]. The number should be higher than 1 and lower than the minimum number of variables among the blocks. It can be a single values or a comma-separated list (e.g 2,2,3,2).
 - ```--penalty``` (INTEGER/FLOAT) For RGCCA, a regularization parameter for each block (i.e., tau) [default: optimal value by an ad hoc algorithm]. Tau varies from 0 (maximizing the correlation) to 1 (maximizing the covariance). For SGCCA, tau is automatically set to 1 and a shrinkage parameter can be defined instead for automatic variable selection, varying from the square root of the variable number (the fewest selected variables) to 1 (all the variables are included). It can be a single values or a comma-separated list (e.g. 0,1,0.75,1).
-- ```-g (--scheme)``` (INTEGER) Link (i.e. scheme) function for covariance maximization (1: x, 2: x^2, 3: |x|, 4: x^4) [default: factorial]. Only, the x function penalizes structural negative correlation. The x^4 function discriminates more strongly the blocks than the x^2 one.
+- ```-g (--scheme)``` (INTEGER) Link (i.e. scheme) function for covariance maximization (1: x, 2: x^2, 3: |x|, 4: x^4) [default: factorial]. Only, the x function ('horst scheme') penalizes structural negative correlation. The x^2 function ('factorial scheme') discriminates more strongly the blocks than the |x| ('centroid scheme') one.
 
 #### Graphical parameters
 By default, the x-axis and y-axis are respectively the first and the second components, the number of top variables is 100 and  superblock is used.

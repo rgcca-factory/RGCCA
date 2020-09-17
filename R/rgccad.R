@@ -23,30 +23,21 @@
 #' be orthogonal with the use of the deflation. The so-called symmetric deflation is considered in
 #' this implementation, i.e. each block is deflated with respect to its own component.
 #' It should be noted that the numbers of components per block can differ from one block to another. 
-#' @param A  A list that contains the \eqn{J} blocks of variables \eqn{\mathbf{X_1}, \mathbf{X_2}, ..., \mathbf{X_J}}.
-#' @param C  A design matrix that describes the relationships between blocks (default: complete design).
-#' @param tau tau is either a \eqn{1 \times J} vector or a \eqn{\mathrm{max}(ncomp) \times J} matrix, and contains the values 
-#' of the shrinkage parameters (default: tau = 1, for each block and each dimension).
-#' If tau = "optimal" the shrinkage paramaters are estimated for each block and each dimension using the Schafer and Strimmer (2005)
-#' analytical formula . If tau is a \eqn{1\times J} numeric vector, tau[j] is identical across the dimensions of block \eqn{\mathbf{X}_j}. 
-#' If tau is a matrix, tau[k, j] is associated with \eqn{\mathbf{X}_{jk}} (\eqn{k}th residual matrix for block \eqn{j})
-#' @param ncomp  A \eqn{1 \times J} vector that contains the numbers of components for each block (default: rep(1, length(A)), which gives one component per block.)
-#' @param scheme The value is "horst", "factorial", "centroid" or the g function (default: "centroid").
-#' @param scale  If scale = TRUE, each block is standardized to zero means and unit variances (default: TRUE).
-#' @param verbose  If verbose = TRUE, the progress will be report while computing (default: TRUE).
-#' @param init The mode of initialization to use in RGCCA algorithm. The alternatives are either by Singular Value Decompostion ("svd") or random ("random") (Default: "svd").
-#' @param bias A logical value for biaised or unbiaised estimator of the var/cov (default: bias = TRUE).
-#' @param tol The stopping value for convergence.
-#' @param scale_block A logical value indicating if the different blocks should have the same weight in the analysis (default, scale_block=TRUE)
+#' @inheritParams select_analysis
+#' @inheritParams rgccaNa
+#' @param A  A list of matrices giving the \eqn{J} blocks of variables \eqn{\mathbf{X_1}, \mathbf{X_2}, ..., \mathbf{X_J}}.
+#' @param C  A symmetric matrix (J*J) that describes the relationships between blocks.
 #' @param na.rm If TRUE, runs rgcca only on available data.
 #' @param estimateNA If TRUE, missing values are estimated during the RGCCA calculation
-#' @param prescaling If TRUE, the scaling-centering steps are not applied in this function, and should be before running rgccad
-#' @param quiet If TRUE, does not print warnings
-#' @return \item{Y}{A list of \eqn{J} elements. Each element of \eqn{Y} is a matrix that contains the RGCCA components for the corresponding block.}
+#' @return \item{Y}{A list of \eqn{J} elements. Each element of \eqn{Y} is a matrix that contains the analysis components for the corresponding block.}
 #' @return \item{a}{A list of \eqn{J} elements. Each element of \eqn{a} is a matrix that contains the outer weight vectors for each block.}
 #' @return \item{astar}{A list of \eqn{J} elements. Each element of astar is a matrix defined as Y[[j]][, h] = A[[j]]\%*\%astar[[j]][, h].}
-#' @return \item{tau}{A vector or matrix that contains the values of the shrinkage parameters applied to each block and each dimension (user specified).}
-#' @return \item{call}{Call of the function}#' @return \item{crit}{A vector that contains the values of the objective function at each iterations.}
+#' @return \item{tau}{Either a 1*J vector or a \eqn{\mathrm{max}(ncomp) \times J} matrix containing the values
+#' of the regularization parameters. Tau varies from 0 (maximizing the correlation) to 1 (maximizing the covariance).
+#' If tau = "optimal" the regularization paramaters are estimated for each block and each dimension using the Schafer and Strimmer (2005)
+#' analytical formula . If tau is a \eqn{1\times J} vector, tau[j] is identical across the dimensions of block \eqn{\mathbf{X}_j}.
+#' If tau is a matrix, tau[k, j] is associated with \eqn{\mathbf{X}_{jk}} (\eqn{k}th residual matrix for block \eqn{j}). It can be estimated by using \link{rgcca_permutation}.}
+#' @return \item{call}{Call of the function}#' @return \item{crit}{A vector of integer that contains the values of the analysis criteria across iterations.}
 #' @return \item{crit}{A vector that contains the values of the criteria across iterations.}
 #' @return \item{mode}{A \eqn{1 \times J} vector that contains the formulation ("primal" or "dual") applied to each of the \eqn{J} blocks within the RGCCA alogrithm} 
 #' @return \item{AVE}{indicators of model quality based on the Average Variance Explained (AVE): AVE(for one block), AVE(outer model), AVE(inner model).}

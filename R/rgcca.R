@@ -3,7 +3,7 @@
 #' RGCCA is a generalization
 #' of regularized canonical correlation analysis to three or more sets of variables. SGCCA extends RGCCA to address the issue of variable selection
 #' @details
-#' Given \eqn{J} matrices \eqn{\mathbf{X_1}, \mathbf{X_2}, ..., \mathbf{X_J}} that represent 
+#' Given J matrices \eqn{\mathbf{X_1}, \mathbf{X_2}, ..., \mathbf{X_J}} that represent 
 #' \eqn{J} sets of variables observed on the same set of \eqn{n} individuals. The matrices 
 #' \eqn{\mathbf{X_1}, \mathbf{X_2}, ..., \mathbf{X_J}} must have the same number of rows, 
 #' but may (and usually will) have different numbers of columns. The aim of RGCCA is to study 
@@ -40,13 +40,16 @@
 #' @inheritParams rgccaNa
 #' @inheritParams sgccaNa
 #' @inheritParams select_analysis
-
 #' @return A RGCCA object
-#' @return \item{Y}{A list of \eqn{J} elements. Each element of \eqn{Y} is a matrix that contains the RGCCA components for the corresponding block.}
+#' @return \item{Y}{A list of \eqn{J} elements. Each element of \eqn{Y} is a matrix that contains the analysis components for the corresponding block.}
 #' @return \item{a}{A list of \eqn{J} elements. Each element of \eqn{a} is a matrix that contains the outer weight vectors for each block.}
 #' @return \item{astar}{A list of \eqn{J} elements. Each element of astar is a matrix defined as Y[[j]][, h] = A[[j]]\%*\%astar[[j]][, h].}
-#' @return \item{tau}{A vector or matrix that contains the values of the shrinkage parameters applied to each block and each dimension (user specified).}
-#' @return \item{crit}{A vector that contains the values of the criteria across iterations.}
+#' @return \item{tau}{Either a 1*J vector or a \eqn{\mathrm{max}(ncomp) \times J} matrix containing the values
+#' of the regularization parameters. Tau varies from 0 (maximizing the correlation) to 1 (maximizing the covariance).
+#' If tau = "optimal" the regularization paramaters are estimated for each block and each dimension using the Schafer and Strimmer (2005)
+#' analytical formula . If tau is a \eqn{1\times J} vector, tau[j] is identical across the dimensions of block \eqn{\mathbf{X}_j}.
+#' If tau is a matrix, tau[k, j] is associated with \eqn{\mathbf{X}_{jk}} (\eqn{k}th residual matrix for block \eqn{j}). It can be estimated by using \link{rgcca_permutation}.}
+#' @return \item{crit}{A vector of integer that contains the values of the analysis criteria across iterations.}
 #' @return \item{mode}{A \eqn{1 \times J} vector that contains the formulation ("primal" or "dual") applied to each of the \eqn{J} blocks within the RGCCA alogrithm} 
 #' @return \item{AVE}{indicators of model quality based on the Average Variance Explained (AVE): AVE(for one block), AVE(outer model), AVE(inner model).}
 #' @return \item{A}{ blocks used in the calculations. Imputed block if imputation method were chosen}

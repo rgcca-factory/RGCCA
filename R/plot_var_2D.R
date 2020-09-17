@@ -7,7 +7,6 @@
 #' @param remove_var A bolean to keep only the 100 variables of each
 #' component with the biggest correlation#'
 #' @param n_mark An integer giving the number of top variables to select
-#' @param collapse A boolean to combine the variables of each block as result
 #' @param ... Further graphical parameters (see plot2D)
 #' @examples
 #' setMatrix = function(nrow, ncol, iter = 3) 

@@ -1,5 +1,5 @@
 #' plot.predict
-#' @param x result of rgcca_predict (see  \code{\link[RGCCA]{rgcca_predict}} )
+#' @param x A rgcca_predict object (see \code{\link[RGCCA]{rgcca_predict}} )
 #' @inheritParams plot_ind
 #' @examples
 #' data(Russett)

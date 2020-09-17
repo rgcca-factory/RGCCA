@@ -3,22 +3,11 @@
 #' Plot the two components of a RGCCA
 #'
 #' @inheritParams plot2D
-#' @param rgcca_res A list giving the results of a R/SGCCA
 #' @param resp A vector of characters corresponding either to a qualitative
 #' variable with levels or a continuous variable
-#' @param compx An integer giving the index of the analysis component used
-#' for the x-axis
-#' @param compy An integer giving the index of the analysis component used
-#' for the y-axis
-#' @param i_block An integer giving the index of a list of blocks
-#' @param text A bolean to represent the points with their row names (TRUE)
-#' or with circles (FALSE)
-#' @param i_block_y An integer giving the index of a list of blocks (another
-#' one, different from the one used in i_block)
 #' @param response_name A character giving the legend title
-#' @param no_overlap A boolean to avoid overlap in plotted text
 #' @param predicted A list containing as  2nd element a matrix of predicted components
-#' @param legend TRUE if the legend should be plotted, FALSE ifelse.
+#' @param legend A logical value indicatif if the legend should be plotted
 #' @param ... Further graphical parameters (see plot2D functions)
 #' @examples
 #' coord = lapply(seq(3),

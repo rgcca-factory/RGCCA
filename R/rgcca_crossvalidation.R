@@ -5,9 +5,8 @@
 #' @inheritParams rgcca
 #' @inheritParams bootstrap
 #' @inheritParams plot_ind
-#' @param k when k fold is chosen, the k parameter.
-#' @param validation Among "loo", "kfold", "test".
-#' @param parallelization if TRUE parallelization is run, if FALSE, no parallelisation is run. If NULL (default) parallelization is always used except for Windows in case of length(nperm)<10
+#' @param k If validation = 'kfold', an integer giving the number of folds.
+#' @param validation A character for the type of validation among "loo", "kfold", "test".
 #' @examples
 #' library(RGCCA)
 #' data("Russett")

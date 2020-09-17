@@ -1,7 +1,7 @@
 #' get_patternNA
 #'
 #' Determines the pattern of missing values and allows to use it to create datasets with the same pattern. Also add NA lines if one individual is present in a block and not in another one.
-#' @param blocks list of blocks
+#' @inheritParams rgccaNa
 #' @return a object patternNA, which corresponds to a list containing:
 #' \itemize{
 #' \item the percentage of missing values per variable (\code{pctNA})

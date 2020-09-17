@@ -1,16 +1,15 @@
 #' Create a matrix corresponding to a connection between the blocks
 #'
-#' @param blocks A list of matrix
+#' @inheritParams rgccaNa
 #' @param superblock A boolean giving the presence (TRUE) / absence (FALSE) of
 #' a superblock
-#' @param response if not NULL, number corresponding to the response block
+#' @param response if not NULL, an integer giving the position of the response block within the blocks
 #' @return A matrix corresponding to the connection between the blocks
-
-
 set_connection <- function(
     blocks,
-    superblock = FALSE,response=NULL
-) {
+    superblock = FALSE,
+    response = NULL
+    ) {
 
     J <- length(blocks)
 

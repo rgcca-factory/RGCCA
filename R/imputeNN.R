@@ -1,14 +1,12 @@
 #'Impute with k-Nearest Neighbors
 #'
 #'This method is used for the implementation of EM algorithm for missing data
-#'
-#' @param A A list of J blocks
+#' @inheritParams select_analysis
+#' @inheritParams rgccad
 #' @param k number of nearest neighbors. Can also be "all" or "auto"
 #' @param output "mean","random" or "weightedMean". Corresponds to the kind of output required by the user. If "random" is chosen, the imputation will be done by selecting one neighbor among the k nearests. If "mean" is chosen, the imputation will be done by averaging all k-neighbors scores. If "weightedMean" is chosen, this average is weighted by the inverse of the distance.
 #' @param klim Vector of two integers with klim(1)<klim(2). if k=auto, it is optimised between klim(1) and klim(2)
-#' @param  scale  If scale = TRUE, each block is standardized to zero means and unit variances (default: TRUE).
-#' @param scale_block A logical value indicating if the different blocks should have the same weight in the analysis (default, scale_block=TRUE)
-#' @param superblock if TRUE the distance between two subjects is calculated on the superblock. If FALSE the distance is calculated by blocks. 
+#' @param superblock if TRUE the distance between two subjects is calculated on the superblock. If FALSE the distance is calculated by blocks.
 #' @return \item{A}{A list of the imputed blocks}
 #' @title imputeNN: Impute with k-Nearest Neighbors
 

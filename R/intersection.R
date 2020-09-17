@@ -1,5 +1,5 @@
 #' Keeps only subject without missing values
-#' @param A A list of matrices
+#' @inheritParams rgccad
 #' @return The intersected list from matrices
 #' @title intersection_list
 #' @examples

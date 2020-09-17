@@ -1,23 +1,15 @@
 #' The function sgccak() is called by sgcca() and does not have to be used by the user. 
 #' sgccak() enables the computation of SGCCA block components, outer weight vectors, etc., 
 #' for each block and each dimension. 
-#' @param A  A list that contains the \eqn{J} blocks of variables from which block components are constructed. 
+#' @inheritParams select_analysis
+#' @inheritParams rgccaNa
+#' @inheritParams rgccad
+#' @inheritParams sgcca
+#' @param A  A list that contains the \eqn{J} blocks of variables from which block components are constructed.
 #' It could be eiher the original matrices (\eqn{X_1, X_2, ..., X_J}) or the residual matrices (\eqn{X_{h1}, X_{h2}, ..., X_{hJ}}).
-#' @param C  A design matrix that describes the relationships between blocks.
-#' @param sparsity A \eqn{1 * J} vector that contains the value of sparsity applied to each block. The L1 bound on a[[j]] is
-#' \deqn{ \|a_{j}\|_{\ell_1} \leq c_1[j] \sqrt{p_j}.}
-#' with \eqn{p_j} the number of variables of \eqn{X_j} and with sparsity[j] between 0 and 1 (larger L1 bound corresponds to less penalization).
-#' @param scheme  Either "horst", "factorial" or "centroid" (default: centroid).
-#' @param scale  If scale = TRUE, each block is standardized to zero means and unit variances (default: TRUE).
-#' @param init Mode of initialization of the SGCCA algorithm. Either by Singular Value Decompostion ("svd") or random ("random") (default: "svd").
-#' @param bias Logical value for biaised (\eqn{1/n}) or unbiaised (\eqn{1/(n-1)}) estimator of the var/cov.
-#' @param verbose  Reports progress while computing, if verbose = TRUE (default: TRUE).
-#' @param tol Stopping value for convergence.
-#' @param quiet If TRUE, does not print warnings
-
-#' @return \item{Y}{A \eqn{n * J} matrix of SGCCA block components.}
-#' @return \item{a}{A list of \eqn{J} elements. Each element contains the outer weight vector of each block.}
-#' @return \item{crit}{The values of the objective function at each iteration of the iterative procedure.}
+#' @return \item{Y}{A list of \eqn{J} elements. Each element of \eqn{Y} is a matrix that contains the analysis components for the corresponding block.}
+#' @return \item{a}{A list of \eqn{J} elements. Each element of \eqn{a} is a matrix that contains the outer weight vectors for each block.}
+#' @return \item{crit}{A vector of integer that contains the values of the analysis criteria across iterations.}
 #' @return \item{converg}{Speed of convergence of the alogrithm to reach the tolerance.}
 #' @return \item{AVE}{Indicators of model quality based on the Average Variance Explained (AVE): AVE(for one block), AVE(outer model), AVE(inner model).}
 #' @return \item{call}{Call of the function}

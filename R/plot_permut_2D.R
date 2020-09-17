@@ -1,17 +1,13 @@
-#' Plot permuation in 2D
+#' Plot permutation in 2D
 #' 
-#' Plot permuation in 2D
+#' Plot permutation in 2D
 #' 
 #' @inheritParams plot_var_2D
-#' @param perm A permutation object from a RGCCA analyse
-#' @param bars Among "points", "stderr" or "sd": representation of the variability
-#' @param type An string giving the type of the index to look at (among 'crit' for
+#' @inheritParams plot2D
+#' @param perm A permutation object (see \code{\link[RGCCA]{rgcca_permutation}})
+#' @param bars A character giving representation of the variability among "points", "stderr" or "sd" 
+#' @param type A character giving the type of the index to look at (among 'crit' for
 #'  the RGCCA criterion and 'zstat' for the pseudo Z-score)
-#' @param cex general size of the text
-#' @param cex_main = 25 * cex, size of the main text (title)
-#' @param cex_sub = 16 * cex, size of the subtitle text 
-#' @param cex_point = 3 * cex, size of the point
-#' @param cex_lab = 19 * cex, size of the labels
 #' @importFrom ggplot2 ggplot
 #' @importFrom ggplot2 geom_point
 #' @importFrom ggplot2 geom_line
@@ -30,6 +26,7 @@ plot_permut_2D <- function(
     bars="points"
     ) {
 
+    xend <- yend <- NULL
     match.arg(type, c("crit", "zstat"))
     for (i in c("cex", "cex_main", "cex_sub", "cex_point", "cex_lab"))
         check_integer(i, get(i))
