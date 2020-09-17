@@ -56,6 +56,7 @@ server <- function(input, output, session) {
 
     output$nb_compcustom <- renderUI({
         refresh <- c(input$superblock, input$each_ncomp)
+        refreshAnalysis()
         isolate (setAnalysis())
         setCompUI()
     })
@@ -63,7 +64,7 @@ server <- function(input, output, session) {
     refreshAnalysis <- function()
         c(
             input$nb_comp,
-            input$block,
+            input$blocks,
             input$sep,
             input$scheme,
             input$scale,
@@ -131,8 +132,40 @@ server <- function(input, output, session) {
 
     ################################################ UI function ################################################
 
+    setTau <- function(par_name, i = "") {
+
+        label <- par_name
+        min <- sapply(
+            blocks, 
+            function (x)
+            ifelse(
+                par_name == "Tau",
+                0,
+                ceiling(1 / sqrt(NCOL(x)) * 100) / 100)
+        )
+
+        if (i != "") {
+            label <- paste(par_name, "for", names(getNames())[i])
+            min <- min[i]
+        } else
+            min <- max(min)
+
+        sliderInput(
+            inputId = paste0("tau", i),
+            label = label,
+            min = min,
+            max = 1,
+            value = ifelse(
+                is.null(input[[paste0("tau", i)]]),
+                1, 
+                input[[paste0("tau", i)]]),
+            step = .01
+        )
+    }
+    
     setTauUI <- function(superblock = NULL) {
         refresh <- c(input$superblock, input$supervised, input$tau_opt)
+        refreshAnalysis()
 
         if (!is.null(input$analysis_type) &&
             input$analysis_type == "SGCCA") {
@@ -143,46 +176,39 @@ server <- function(input, output, session) {
             cond <- "input.tau_opt == false"
         }
 
-        conditionalPanel(condition = cond,
-                        lapply(1:(length(blocks)), function(i) {
-                            sliderInput(
-                                inputId = paste0("tau", i),
-                                label = paste(par_name, "for", names(getNames())[i]),
-                                min = ifelse(
-                                    par_name == "Tau",
-                                    0,
-                                    ceiling(1 / sqrt(NCOL(blocks[[i]])) * 100) / 100),
-                                max = 1,
-                                value = ifelse(
-                                    is.null(input[[paste0("tau", i)]]),
-                                    1, 
-                                    input[[paste0("tau", i)]]),
-                                step = .01
-                            )
-                        }))
+        if (!input$each_tau)
+            conditionalPanel(condition = cond, setTau(par_name))
+        else
+            conditionalPanel(
+                condition = cond,
+                lapply(seq(length(blocks)), function(i) setTau(par_name, i)))
     }
 
     setCompUI <- function(superblock = NULL) {
-        if (!input$each_ncomp)
-            sliderInput(
-                inputId = "ncomp",
-                label = "Number of components",
-                min = 1,
-                max = min(getMaxComp()),
-                value = 2, #TODO: test with univariate
-                step = 1
-            )
-        else
-            lapply(1:(length(blocks)), function(i) {
+
+        setComp <- function(i = "") {
+
+            label <- "Number of components"
+            if (i != "") {
+               label <- paste(label, "for",  names(getNames())[i])
+               max <- getMaxComp()[i]
+            } else
+                max <- min(getMaxComp())
+
                 sliderInput(
                     inputId = paste0("ncomp", i),
-                    label = paste("Number of components for", names(getNames())[i]),
+                    label = label,
                     min = 1,
-                    max = getMaxComp()[i],
+                    max = max,
                     value = 2,
                     step = 1
                 )
-            })
+        }
+        
+        if (!input$each_ncomp)
+            setComp()
+        else
+            lapply(seq(length(blocks)), function(i) setComp(i))
     }
 
     setNamesInput <- function(x, label = NULL, bool = TRUE) {
@@ -736,9 +762,12 @@ server <- function(input, output, session) {
     ################################################ Analysis ################################################
 
     getTau <- function() {
-        tau <- integer(0)
-        for (i in 1:(length(blocks_without_superb) + ifelse(input$superblock, 1, 0)))
-            tau <- c(tau, input[[paste0("tau", i)]])
+        if (input$each_tau) {
+            tau <- integer(0)
+            for (i in 1:(length(blocks_without_superb) + ifelse(input$superblock, 1, 0)))
+                tau <- c(tau, input[[paste0("tau", i)]])
+        } else
+            tau <- input$tau
 
         return(tau)
     }
@@ -1293,7 +1322,11 @@ server <- function(input, output, session) {
             input$scheme,
             input$init,
             input$tau_opt,
-            input$analysis_type
+            input$analysis_type,
+            input$each_tau,
+            input$each_ncomp,
+            input$tau,
+            input$blocks
         ),
         {
             # Observe if analysis parameters are changed
