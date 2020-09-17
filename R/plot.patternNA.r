@@ -66,8 +66,8 @@ plot.patternNA=function(x,type="all",color="springgreen4",legend=FALSE,scale=TRU
         nvar=NCOL(blocks[[type]])
         par(mfrow=c(1,1))
         mat=apply(blocks[[type]],2,rev)
-        par(bg="black")
-        image(bg="black",t(mat),main=paste0(names(blocks)[type],"\n(",nvar," var.,",sum(completeSubjectByBlock[,type]), "/",NROW(blocks[[type]])," complete ind.)"),xaxt="n",yaxt="n",col=c("light blue","black"))
+      #  par(bg="black")
+        image(t(mat),main=paste0(names(blocks)[type],"\n(",nvar," var.,",sum(completeSubjectByBlock[,type]), "/",NROW(blocks[[type]])," complete ind.)"),xaxt="n",yaxt="n",col=c("light blue","black"))
         par(bg="white")
     }
     if(legend & color=="rainbow")

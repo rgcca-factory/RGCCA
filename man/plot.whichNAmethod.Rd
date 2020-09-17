@@ -6,7 +6,7 @@
 \usage{
 \method{plot}{whichNAmethod}(x, type = "rv", ylim = NULL,
   block = length(x[[1]][[1]][[1]]), bars = "sd", main = NULL,
-  ylab = "", legend = TRUE, ...)
+  ylab = "", legend = TRUE, namesForLegend = NULL, ...)
 }
 \arguments{
 \item{x}{A list resulting of whichNAmethod (see \link{whichNAmethod})}
@@ -24,6 +24,8 @@
 \item{ylab}{label of y-axis}
 
 \item{legend}{If TRUE, the legend is displayed}
+
+\item{namesForLegend}{names of the used methods to be plotted on the legend}
 
 \item{...}{Further graphical parameters in plot}
 }

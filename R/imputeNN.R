@@ -77,13 +77,14 @@ imputeNN <- function(
     
   } else
     D <- matrix(1, dim(superblockNA)[1], dim(superblockNA)[2])
-  
+
   superblockNAs2 <- superblockNAs * D
  
    # dectection of subjects with missing data
   if(is.matrix(A)){  namesInd <- rownames(A)}else{  namesInd <- rownames(A[[1]])}
 
   posNA <- which(is.na(superblockNAs2), arr.ind = T)
+
   nbNA <- dim(posNA)[1]
   nbLineNA <- namesInd[unique(as.vector(posNA[, "row"]))]
   if(is.matrix(A)){J=1}else{  J <- length(A)}
@@ -177,9 +178,13 @@ imputeNN <- function(
         if (output == "weightedMean")
           w <- (1/(orderedDistance/sum(orderedDistance)))[1:knb]
         if (output == "random")
-          randomIndex <- contributors[sample(knb, 1)]
-        
-        # imputation for each block
+        {   
+           
+            randomIndex <- contributors[sample(knb, 1)]
+    
+            
+        }
+         # imputation for each block
        
         for (j in 1:J) {
           if(J>1){naCol <- which(is.na(A[[j]][as.character(i), ]))}
