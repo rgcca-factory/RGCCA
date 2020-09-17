@@ -176,7 +176,7 @@ server <- function(input, output, session) {
             cond <- "input.tau_opt == false"
         }
 
-        if (!input$each_tau)
+        if (is.null(input$each_tau) || !input$each_tau)
             conditionalPanel(condition = cond, setTau(par_name))
         else
             conditionalPanel(
@@ -392,6 +392,23 @@ server <- function(input, output, session) {
             )
         
         return(ui)
+    })
+
+    output$each_tau_custom <- renderUI({
+
+            if (!is.null(input$analysis_type) && input$analysis_type == "SGCCA")
+                penalty <- "sparsity"
+            else if (!is.null(input$analysis_type) && input$analysis_type == "RGCCA")
+                penalty <- "tau"
+            else
+                penalty <- ""
+            
+            conditionalPanel(condition = "input.tau_opt == false",
+                checkboxInput(
+                        inputId = "each_tau",
+                        label = paste("Tune the", penalty, "for each block"),
+                        value = FALSE
+                    ))
     })
     
     output$tau_opt_custom <- renderUI({
@@ -762,7 +779,7 @@ server <- function(input, output, session) {
     ################################################ Analysis ################################################
 
     getTau <- function() {
-        if (input$each_tau) {
+        if (is.null(input$each_tau) || input$each_tau) {
             tau <- integer(0)
             for (i in 1:(length(blocks_without_superb) + ifelse(input$superblock, 1, 0)))
                 tau <- c(tau, input[[paste0("tau", i)]])
