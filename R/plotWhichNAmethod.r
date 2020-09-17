@@ -2,6 +2,7 @@
 #' 
 #' Plots the impact of increasing missing data on RGCCA
 #' @inheritParams plot_var_1D
+#' @inheritParams plot.rgcca
 #' @param x A list resulting of whichNAmethod (see \link{whichNAmethod})
 #' @param type ="rv": Can be also "a" for correlations between axes, "bm" for the percent of similar biomarkers, "rvComplete" if the RV is calculated only on complete dataset, or "rmse" for Root Mean Squares Error.
 #' @param ylim =c(0.8,1) y limits

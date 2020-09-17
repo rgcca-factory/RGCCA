@@ -1,11 +1,11 @@
-#' Get the components of the analysis
-#' 
-#' @inheritParams plot_ind
-#' @inheritParams get_ctr
-#' @param i_block_x An integer giving the index of a list of blocks
-#' @param i_block_z An integer giving the index of a list of blocks (another
-#' one, different from the one used in i_block_x)
-#' @return A matrix containg each selected components and an associated response
+# Get the components of the analysis
+# 
+# @inheritParams plot_ind
+# @inheritParams get_ctr
+# @param i_block_x An integer giving the index of a list of blocks
+# @param i_block_z An integer giving the index of a list of blocks (another
+# one, different from the one used in i_block_x)
+# @return A matrix containg each selected components and an associated response
 get_comp <- function(
     rgcca_res,
     resp = rep(1, NROW(rgcca_res$Y[[1]])),

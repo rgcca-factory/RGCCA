@@ -1,10 +1,10 @@
-#' Standardization (to zero means and unit variances) of matrix-like objects.
-#' @inheritParams rgccaNa
-#' @param A A numeric matrix.
-#' @param center A logical value. If center = TRUE, each column is translated to have zero mean.
-#' @return \item{A}{The centered and/or scaled matrix. The centering and scaling values (if any) are returned as attributes "scaled:center" and "scaled:scale".}
-#' @title Scaling and Centering of Matrix-like Objects
-#' @export scale2
+# Standardization (to zero means and unit variances) of matrix-like objects.
+# @inheritParams rgccaNa
+# @param A A numeric matrix.
+# @param center A logical value. If center = TRUE, each column is translated to have zero mean.
+# @return \item{A}{The centered and/or scaled matrix. The centering and scaling values (if any) are returned as attributes "scaled:center" and "scaled:scale".}
+# @title Scaling and Centering of Matrix-like Objects
+# @export scale2
 
 scale2<-function (A, center = TRUE, scale = TRUE, bias = TRUE) 
 {

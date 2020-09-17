@@ -8,7 +8,7 @@
   legend = FALSE, scale = TRUE, outlierVisible = FALSE, ...)
 }
 \arguments{
-\item{x}{an object from get_patternNA (see \code{\link[RGCCA]{get_patternNA}} )}
+\item{x}{A get_patternNA object (see \code{\link[RGCCA]{get_patternNA}} )}
 
 \item{type}{"all" if all blocks should be plotted, ifelse an integer corresponding to the position of the block to be plotted in the initial list}
 

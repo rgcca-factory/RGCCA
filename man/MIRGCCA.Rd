@@ -11,13 +11,15 @@ MIRGCCA(blocks, option = "knn", type = "rgcca", superblock = TRUE,
   ncomp = rep(2, length(A)), naxis = 1)
 }
 \arguments{
-\item{blocks}{A list that contains the \eqn{J} blocks of variables \eqn{\mathbf{X_1}, \mathbf{X_2}, ..., \mathbf{X_J}}.}
+\item{blocks}{A list of matrices giving the \eqn{J} blocks of variables \eqn{\mathbf{X_1}, \mathbf{X_2}, ..., \mathbf{X_J}}.}
 
 \item{option}{"knn" for k Nearest Neigbors or "em" for Expectation Maximization}
 
-\item{type}{A character giving the type of analysis: c('rgcca', 'cpca-w', 'gcca', 'hpca', 'maxbet-b', 'maxbet', 'maxdiff-b','maxdiff', 'maxvar-a', 'maxvar-b', 'maxvar', 'niles', 'r-maxvar', 'rcon-pca',
-'ridge-gca', 'sabscor', 'ssqcor', 'ssqcor', 'ssqcov-1', 'ssqcov-2', 'ssqcov',
-'sum-pca', 'sumcor', 'sumcov-1', 'sumcov-2', 'sumcov.', 'sabscov', 'plspm','cca', 'ra', 'ifa', 'pls','pca')}
+\item{type}{A character giving the type of analysis: rgcca, sgcca, pca, 
+pls, cca, ifa, ra, cpca-w, gcca, hpca, maxbet-b, maxbet, maxdiff-b,maxdiff,
+ maxvar-a, maxvar-b, maxvar, niles, r-maxvar, rcon-pca, ridge-gca, sabscor,
+ ssqcor, ssqcor, ssqcov-1, ssqcov-2, ssqcov,  sum-pca, sumcor, sumcov-1, 
+ sumcov-2, sumcov, sabscov, plspm}
 
 \item{superblock}{TRUE if the A list should be returned in the output, FALSE ifelse}
 
@@ -25,27 +27,34 @@ MIRGCCA(blocks, option = "knn", type = "rgcca", superblock = TRUE,
 
 \item{ni}{number of imputations}
 
-\item{scale}{If scale = TRUE, each block is standardized to zero means and unit variances (default: TRUE).}
+\item{scale}{A logical value indicating if each block is normalised and divided by the square root of its number of variables and then divided by the square root of its number of variables.}
 
-\item{scale_block}{TRUE by default : each block have the same weight in the RGCCA analysis. If FALSE, the weight of each block depends on the number of variables of the block}
+\item{scale_block}{A logical value indicating if each block have the same weight in the RGCCA analysis. Otherwise, the weight of each block depends on the number of variables of the block}
 
-\item{tau}{Used for type="rgcca" only. tau is either a \eqn{1 \times J} vector or a \eqn{\mathrm{max}(ncomp) \times J} matrix, and contains the values 
-of the regularization parameters (default: tau = 1, for each block and each dimension).
+\item{tau}{Either a 1*J vector or a \eqn{\mathrm{max}(ncomp) \times J} matrix containing the values 
+of the regularization parameters (default: tau = 1, for each block and each dimension). Tau varies from 0 (maximizing the correlation) to 1 (maximizing the covariance).
 If tau = "optimal" the regularization paramaters are estimated for each block and each dimension using the Schafer and Strimmer (2005)
-analytical formula . If tau is a \eqn{1\times J} numeric vector, tau[j] is identical across the dimensions of block \eqn{\mathbf{X}_j}. 
-If tau is a matrix, tau[k, j] is associated with \eqn{\mathbf{X}_{jk}} (\eqn{k}th residual matrix for block \eqn{j})}
+analytical formula . If tau is a \eqn{1\times J} vector, tau[j] is identical across the dimensions of block \eqn{\mathbf{X}_j}. 
+If tau is a matrix, tau[k, j] is associated with \eqn{\mathbf{X}_{jk}} (\eqn{k}th residual matrix for block \eqn{j}). It can be estimated by using \link{rgcca_permutation}.}
 
 \item{klim}{TRUE if the A list should be returned in the output, FALSE ifelse}
 
 \item{output}{TRUE if the A list should be returned in the output, FALSE ifelse}
 
-\item{scheme}{The value is "horst", "factorial", "centroid" or the g function (default: "centroid").}
+\item{scheme}{A character or a function giving the link function for 
+covariance maximization among "horst" (the identity function), "factorial"
+ (the squared values), "centroid" (the absolute values). Only, the horst 
+ scheme penalizes structural negative correlation. The factorial scheme 
+ discriminates more strongly the blocks than the centroid one.}
 
-\item{tol}{The stopping value for convergence.}
+\item{tol}{An integer giving the value for stopping the algorithm convergence.}
 
-\item{connection}{A design matrix that describes the relationships between blocks (default: complete design).}
+\item{connection}{A symmetric matrix (J*J) that describes the relationships 
+between blocks. Two values are accepted : '1' for a connection between two 
+blocks, or '0' otherwise.}
 
-\item{ncomp}{A \eqn{1 \times J} vector that contains the numbers of components for each block (default: rep(1, length(A)), which gives one component per block.). It can be estimated by using \link{rgcca_permutation}.}
+\item{ncomp}{A vector of 1*J integers giving the number of component for 
+each blocks}
 
 \item{naxis}{number of component to select in the superblock for the estimation of missing data for "em" option}
 }

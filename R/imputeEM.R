@@ -1,27 +1,27 @@
-#'Impute with superblock method
-#'
-#'This method is used for the implementation of EM algorithm for missing data
-#'
-#' @inheritParams select_analysis
-#' @inheritParams rgccaNa
-#' @inheritParams rgccad
-#' @param verbose FALSE by default. If TRUE, displays results of convergence for each iteration
-#' @param tolEM threshold to be reached to assess convergence.
-#' @param reg 'y' by default. Reconstruction is made by regression of the A rows on w ('w'),the A columns on Y ('y')  or without any regression with yw ('no')
-#' @param ni An integer for the maximal number of iterations before convergence
-#' @param graph if graph = TRUE, graphics are plotted/saved
-#' @param naxis number of component to select for the estimation of missing data
-#' @param superblock Boolean, if TRUE, the missing values are estimated with the superblock
+#Impute with superblock method
+#
+#This method is used for the implementation of EM algorithm for missing data
+#
+# @inheritParams select_analysis
+# @inheritParams rgccaNa
+# @inheritParams rgccad
+# @param verbose FALSE by default. If TRUE, displays results of convergence for each iteration
+# @param tolEM threshold to be reached to assess convergence.
+# @param reg 'y' by default. Reconstruction is made by regression of the A rows on w ('w'),the A columns on Y ('y')  or without any regression with yw ('no')
+# @param ni An integer for the maximal number of iterations before convergence
+# @param graph if graph = TRUE, graphics are plotted/saved
+# @param naxis number of component to select for the estimation of missing data
+# @param superblock Boolean, if TRUE, the missing values are estimated with the superblock
 
-#' @return \item{A}{A list of blocks imputed}
-#' @return \item{stab}{Convergence criterion : abs(1-obj_k/obj_{k-1})}
-#' @return \item{obj}{Vector containing the mean square error between the predict values and the original non missing values at each iteration}
-#'@return \item{crit}{RGCCA criterion}
-#'@return \item{moy}{Estimated mean obtained for each variable  (required for the addNoise function)}
-#'@return \item{stdev}{Estimated standard deviations of each variable obtained  (required for the addNoise function)}
-#'@return \item{sigma}{Estimated standard deviations for the noise obtained  (required for the addNoise function)}
-#'@return \item{indNA}{Position of missing values}
-#' @title imputeEM: impute with superblock method
+# @return \item{A}{A list of blocks imputed}
+# @return \item{stab}{Convergence criterion : abs(1-obj_k/obj_{k-1})}
+# @return \item{obj}{Vector containing the mean square error between the predict values and the original non missing values at each iteration}
+#@return \item{crit}{RGCCA criterion}
+#@return \item{moy}{Estimated mean obtained for each variable  (required for the addNoise function)}
+#@return \item{stdev}{Estimated standard deviations of each variable obtained  (required for the addNoise function)}
+#@return \item{sigma}{Estimated standard deviations for the noise obtained  (required for the addNoise function)}
+#@return \item{indNA}{Position of missing values}
+# @title imputeEM: impute with superblock method
 
 imputeEM <-
     function(A,

@@ -1,10 +1,10 @@
-#' Plot in 3 dimensions
-#' 
-#' Plot in 3 dimensions either to visualize the components of an analyse or the variables
-#' @inheritParams plot_ind
-#' @inheritParams plot2D
-#' @inheritParams get_comp
-#' @param type A character for the type of plot : either "ind" for individual plot or "var" for corcircle
+# Plot in 3 dimensions
+# 
+# Plot in 3 dimensions either to visualize the components of an analyse or the variables
+# @inheritParams plot_ind
+# @inheritParams plot2D
+# @inheritParams get_comp
+# @param type A character for the type of plot : either "ind" for individual plot or "var" for corcircle
 plot3D <- function(
     df,
     rgcca_res,

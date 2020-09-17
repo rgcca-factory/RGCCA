@@ -13,7 +13,7 @@ whichNAmethod(blocks, listMethods = c("complete", "nipals"),
   typeRGCCA = "rgcca", sparsity = NULL, ni = 5)
 }
 \arguments{
-\item{blocks}{A list that contains the \eqn{J} blocks of variables \eqn{\mathbf{X_1}, \mathbf{X_2}, ..., \mathbf{X_J}}.}
+\item{blocks}{A list of matrices giving the \eqn{J} blocks of variables \eqn{\mathbf{X_1}, \mathbf{X_2}, ..., \mathbf{X_J}}.}
 
 \item{listMethods}{vector containing a list of methods ("mean","complete","nipals"...)
 \itemize{
@@ -30,31 +30,44 @@ whichNAmethod(blocks, listMethods = c("complete", "nipals"),
 
 \item{patternNA}{pattern of missing values required. If NULL, result of \link{get_patternNA},else, vector containing the percent of missing data for each block if typeNA="ponc" or "block. If type NA="byVar",list of the same size than blocks. Each element of this list should be a vector whose length is the number of variable in the block, containing for each variable the proportion of missing values.}
 
-\item{connection}{A design matrix that describes the relationships between blocks (default: complete design).}
+\item{connection}{A symmetric matrix (J*J) that describes the relationships 
+between blocks. Two values are accepted : '1' for a connection between two 
+blocks, or '0' otherwise.}
 
-\item{tau}{Used for type="rgcca" only. tau is either a \eqn{1 \times J} vector or a \eqn{\mathrm{max}(ncomp) \times J} matrix, and contains the values 
-of the regularization parameters (default: tau = 1, for each block and each dimension).
+\item{tau}{Either a 1*J vector or a \eqn{\mathrm{max}(ncomp) \times J} matrix containing the values 
+of the regularization parameters (default: tau = 1, for each block and each dimension). Tau varies from 0 (maximizing the correlation) to 1 (maximizing the covariance).
 If tau = "optimal" the regularization paramaters are estimated for each block and each dimension using the Schafer and Strimmer (2005)
-analytical formula . If tau is a \eqn{1\times J} numeric vector, tau[j] is identical across the dimensions of block \eqn{\mathbf{X}_j}. 
-If tau is a matrix, tau[k, j] is associated with \eqn{\mathbf{X}_{jk}} (\eqn{k}th residual matrix for block \eqn{j})}
+analytical formula . If tau is a \eqn{1\times J} vector, tau[j] is identical across the dimensions of block \eqn{\mathbf{X}_j}. 
+If tau is a matrix, tau[k, j] is associated with \eqn{\mathbf{X}_{jk}} (\eqn{k}th residual matrix for block \eqn{j}). It can be estimated by using \link{rgcca_permutation}.}
 
-\item{ncomp}{A \eqn{1 \times J} vector that contains the numbers of components for each block (default: rep(1, length(A)), which gives one component per block.). It can be estimated by using \link{rgcca_permutation}.}
+\item{ncomp}{A vector of 1*J integers giving the number of component for 
+each blocks}
 
-\item{scale_block}{TRUE by default : each block have the same weight in the RGCCA analysis. If FALSE, the weight of each block depends on the number of variables of the block}
+\item{scale_block}{A logical value indicating if each block have the same weight in the RGCCA analysis. Otherwise, the weight of each block depends on the number of variables of the block}
 
-\item{scale}{If scale = TRUE, each block is standardized to zero means and unit variances (default: TRUE).}
+\item{scale}{A logical value indicating if each block is normalised and divided by the square root of its number of variables and then divided by the square root of its number of variables.}
 
-\item{tol}{The stopping value for convergence.}
+\item{tol}{An integer giving the value for stopping the algorithm convergence.}
 
-\item{verbose}{If verbose = TRUE, the progress will be report while computing (default: TRUE).}
+\item{verbose}{A logical value indicating if the progress of the analysis will be reported while computing.}
 
-\item{scheme}{The value is "horst", "factorial", "centroid" or the g function (default: "centroid").}
+\item{scheme}{A character or a function giving the link function for 
+covariance maximization among "horst" (the identity function), "factorial"
+ (the squared values), "centroid" (the absolute values). Only, the horst 
+ scheme penalizes structural negative correlation. The factorial scheme 
+ discriminates more strongly the blocks than the centroid one.}
 
 \item{seed}{if filled (by a number), the randomness is reproducible.}
 
 \item{typeRGCCA}{type of analysis to be run ("sgcca"or rgcca"...).}
 
-\item{sparsity}{Used for type="sgcca" or "spls" only. A vector containing the sparsity coefficients (length J, between 0 and 1). It can be estimated by using \link{rgcca_permutation}.}
+\item{sparsity}{Either a \eqn{1*J} vector or a \eqn{max(ncomp) * J} matrix encoding the L1 constraints applied to the outer weight vectors.
+Elements of sparsity vary between \eqn{1/sqrt(p_j)} and 1 (larger values of sparsity correspond to less penalization).
+If sparsity is a vector, L1-penalties are the same for all the weights corresponding to the same block but different components:
+\deqn{for all h, |a_{j,h}|_{L_1} \le c_1[j] \sqrt{p_j},}
+with \eqn{p_j} the number of variables of \eqn{X_j}.
+If sparsity is a matrix, each row \eqn{h} defines the constraints applied to the weights corresponding to components \eqn{h}:
+\deqn{for all h, |a_{j,h}|_{L_1} \le c_1[h,j] \sqrt{p_j}.} It can be estimated by using \link{rgcca_permutation}.}
 
 \item{ni}{number of iteration in em or superblock algorithm}
 }

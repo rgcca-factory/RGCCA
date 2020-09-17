@@ -7,7 +7,7 @@
 get_patternNA(blocks)
 }
 \arguments{
-\item{blocks}{list of blocks}
+\item{blocks}{A list of matrices giving the \eqn{J} blocks of variables \eqn{\mathbf{X_1}, \mathbf{X_2}, ..., \mathbf{X_J}}.}
 }
 \value{
 a object patternNA, which corresponds to a list containing:

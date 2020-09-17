@@ -10,47 +10,60 @@ select_analysis(blocks = blocks, connection = 1 - diag(length(blocks)),
   verbose = TRUE, quiet = FALSE, response = NULL)
 }
 \arguments{
-\item{blocks}{A list of matrix}
+\item{blocks}{A list of matrices giving the \eqn{J} blocks of variables \eqn{\mathbf{X_1}, \mathbf{X_2}, ..., \mathbf{X_J}}.}
 
-\item{connection}{A design matrix (J*J) that describes the relationships between blocks (default: complete design).}
+\item{connection}{A symmetric matrix (J*J) that describes the relationships 
+between blocks. Two values are accepted : '1' for a connection between two 
+blocks, or '0' otherwise.}
 
-\item{penalty}{A vector of float (or character for 'optimal' setting) giving the
-shrinkage parameter for covariance maximization}
+\item{penalty}{A vector of 1*J floats (or character for 'optimal' setting) 
+giving theshrinkage parameter for covariance maximization}
 
-\item{ncomp}{A vector of integer giving the number of component for each
-blocks}
+\item{ncomp}{A vector of 1*J integers giving the number of component for 
+each blocks}
 
-\item{scheme}{A character giving the link function for covariance maximization}
+\item{scheme}{A character or a function giving the link function for 
+covariance maximization among "horst" (the identity function), "factorial"
+ (the squared values), "centroid" (the absolute values). Only, the horst 
+ scheme penalizes structural negative correlation. The factorial scheme 
+ discriminates more strongly the blocks than the centroid one.}
 
 \item{superblock}{A boolean giving the presence (TRUE) / absence (FALSE) of
 a superblock}
 
-\item{type}{A character giving the type of analysis: c('rgcca', 'cpca-w', 'gcca', 'hpca', 'maxbet-b', 'maxbet', 'maxdiff-b','maxdiff', 'maxvar-a', 'maxvar-b', 'maxvar', 'niles', 'r-maxvar', 'rcon-pca',
-'ridge-gca', 'sabscor', 'ssqcor', 'ssqcor', 'ssqcov-1', 'ssqcov-2', 'ssqcov',
-'sum-pca', 'sumcor', 'sumcov-1', 'sumcov-2', 'sumcov.', 'sabscov', 'plspm','cca', 'ra', 'ifa', 'pls','pca')}
+\item{type}{A character giving the type of analysis: rgcca, sgcca, pca, 
+pls, cca, ifa, ra, cpca-w, gcca, hpca, maxbet-b, maxbet, maxdiff-b,maxdiff,
+ maxvar-a, maxvar-b, maxvar, niles, r-maxvar, rcon-pca, ridge-gca, sabscor,
+ ssqcor, ssqcor, ssqcov-1, ssqcov-2, ssqcov,  sum-pca, sumcor, sumcov-1, 
+ sumcov-2, sumcov, sabscov, plspm}
 
 \item{verbose}{A boolean displaying the warnings}
 
 \item{quiet}{A boolean hidding the warnings}
 
-\item{response}{Integer representing the number of the response block. Indeed, when a supervised analysis is chosen (plspm, pls), the response block has to be specified.}
+\item{response}{An integer giving the position of the response block within 
+the blocks (activates the supervised mode).}
 }
 \value{
 \item{blocks}{A list of matrix}
 
-\item{scheme}{A character giving the link function for covariance
-maximization}
+\item{scheme}{A character or a function giving the link function for 
+covariance maximization among "horst" (the identity function), "factorial"
+ (the squared values), "centroid" (the absolute values). Only, the horst 
+ scheme penalizes structural negative correlation. The factorial scheme 
+ discriminates more strongly the blocks than the centroid one.}
 
-\item{penalty}{A vector of float (or character for 'optimal' setting) giving
-the shrinkage parameter for covariance maximization}
+\item{penalty}{A vector of floats (or character for 'optimal' 
+setting) giving the shrinkage parameter for covariance maximization}
 
-\item{ncomp}{A vector of integer giving the number of component for each
-blocks}
+\item{ncomp}{A vector of 1*J integers giving the number of component 
+for each blocks}
 
-\item{connection}{matrix giving the connection between the blocks}
+\item{connection}{A symmetric matrix (J*J) that describes the 
+relationships between blocks}
 
-\item{superblock}{A boolean giving the presence (TRUE) / absence (FALSE)
-of a superblock}
+\item{superblock}{A boolean giving the presence (TRUE) / absence
+(FALSE) of a superblock}
 }
 \description{
 Define the correct parameters according to the type of the analysis

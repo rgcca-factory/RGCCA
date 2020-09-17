@@ -8,7 +8,7 @@ Prints the call of rgcca results}
 \method{print}{rgcca}(x, ...)
 }
 \arguments{
-\item{x}{a result of rgcca function (see \code{\link{rgcca}})}
+\item{x}{A RGCCA object (see \code{\link{rgcca}})}
 
 \item{...}{other parameters used in print (for the displaying of matrices)}
 }

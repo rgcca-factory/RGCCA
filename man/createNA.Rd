@@ -12,7 +12,7 @@ createNA(blocks, typeNA = "block", pNA = 0.1, nAllRespondants = 4,
 
 \item{typeNA}{"bloc" if the structure of missing data is by block or "ponc" if it is random across variables}
 
-\item{pNA}{A logical value. If scale = TRUE, each column is transformed to have unit variance (default = TRUE).}
+\item{pNA}{A logical value. If scale = TRUE, each column is transformed to have unit variance.}
 
 \item{nAllRespondants}{If the typeNA "ponc" is chosen,nAllRespondant corresponds to the number of complete individuals required}
 

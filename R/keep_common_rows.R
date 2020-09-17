@@ -1,7 +1,7 @@
-#' Keep only the rows with the same names among a list of dataframe
-#'
-#' @param list_m A list of dataframe
-#' @return A list of dataframe
+# Keep only the rows with the same names among a list of dataframe
+#
+# @param list_m A list of dataframe
+# @return A list of dataframe
 keep_common_rows <- function(list_m) {
 
     names <- names(list_m)

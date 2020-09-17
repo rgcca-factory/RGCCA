@@ -4,12 +4,10 @@
 \alias{plot.cv}
 \title{plot.cv}
 \usage{
-\method{plot}{cv}(x, type = "ind", ...)
+\method{plot}{cv}(x, ...)
 }
 \arguments{
-\item{x}{result of rgcca_crossvalidation (see  \code{\link[RGCCA]{rgcca_crossvalidation}} )}
-
-\item{type}{"ind"}
+\item{x}{A rgcca_crossvalidation object (see \code{\link[RGCCA]{rgcca_crossvalidation}} )}
 
 \item{...}{Further graphical parameters (see plot2D functions)}
 }

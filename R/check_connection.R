@@ -1,7 +1,7 @@
-#' Check the format of the connection matrix
-#'
-#' @inheritParams rgccad
-#' @inheritParams set_connection
+# Check the format of the connection matrix
+#
+# @inheritParams rgccad
+# @inheritParams set_connection
 check_connection <- function(C, blocks) {
 
     msg <- "The connection file should"

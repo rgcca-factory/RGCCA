@@ -10,20 +10,20 @@ plot_bootstrap_1D(b = NULL, df_b = NULL, x = "estimate",
   collapse = FALSE, n_cores = parallel::detectCores() - 1, ...)
 }
 \arguments{
-\item{b}{A matrix of boostrap}
+\item{b}{A boostrap object \code{\link[RGCCA]{bootstrap}}}
 
-\item{df_b}{Result of get_bootstrap functions or dataframe #TODO}
+\item{df_b}{A get_bootstrap object \code{\link[RGCCA]{get_bootstrap}}}
 
-\item{x}{A character for the column used in the plot}
+\item{x}{A character for the index used in the plot (see details).}
 
-\item{y}{A character for the column to color the bars}
+\item{y}{A character for the index to color the bars (see details).}
 
-\item{n_mark}{An integer giving the number maximum of top variables}
+\item{n_mark}{An integer giving the number of top variables to select}
 
 \item{title}{A character with the name of the space (either "Variables" or
 "Samples")}
 
-\item{colors}{reoresenting a vector of colors}
+\item{colors}{Either a vector of integers (each integer corresponding to a color) or of characters corresponding to names of colors (as "blue",see colors()) or RGB code ("#FFFFFF").}
 
 \item{comp}{An integer giving the index of the analysis components}
 
@@ -42,6 +42,16 @@ Histogram of the best variables of an RGCCA bootstrap with, on the x-axis,
 the number of non-zero occurrences (SGCCA) or the bootstrap-ratio
 (mean/sd; RCCA). The bars are colored according to the average weight of
 the boostrap  (according to an ascending gradient from red to blue)
+}
+\details{
+\itemize{
+\item 'estimate' for RGCCA weights
+\item 'bootstrap_ratio' for the mean of the bootstrap weights / their standard error
+\item 'sign' for significant 95% bootstrap interval
+\item 'estimate' for RGCCA weights
+\item 'occurrences' for non-zero occurences
+\item 'mean' for the mean of the bootstrap weights
+}
 }
 \examples{
 library(RGCCA)

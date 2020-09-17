@@ -1,9 +1,9 @@
-#' Get the indexes of the analysis
-#' 
-#' @inheritParams plot_var_2D
-#' @inheritParams get_ctr
-#' @return A matrix containg the indexes (correlation of the blocks with a 
-#' component or their weights) for each selected component and an associated response
+# Get the indexes of the analysis
+# 
+# @inheritParams plot_var_2D
+# @inheritParams get_ctr
+# @return A matrix containg the indexes (correlation of the blocks with a 
+# component or their weights) for each selected component and an associated response
 
 get_ctr2 <- function(
     rgcca_res,

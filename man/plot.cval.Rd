@@ -8,17 +8,17 @@
   cex_main = 14 * cex, cex_sub = 10 * cex, ...)
 }
 \arguments{
-\item{x}{result of rgcca_cv function (see \link{rgcca_cv})}
+\item{x}{A rgcca_cv object (see \link{rgcca_cv})}
 
-\item{bars}{among "sd" for standard deviations, "stderr" for standard error (standard deviations divided by sqrt(n), ci for confidence interal, cim for confidence interval of the mean.}
+\item{bars}{A character among "sd" for standard deviations, "stderr" for standard error (standard deviations divided by sqrt(n), "ci" for confidence interal, "cim" for confidence interval of the mean.}
 
-\item{alpha}{used for confidence interval bars (ci or cim), risk. Default to 0.05}
+\item{alpha}{A numeric value giving the risk for the confidence interval bars (ci or cim).}
 
-\item{cex}{1 size of elements of the plot}
+\item{cex}{An integer for the size of the plot parameters}
 
-\item{cex_main}{size of the plot title}
+\item{cex_main}{An integer for the size of the title}
 
-\item{cex_sub}{size of the plot subtitle}
+\item{cex_sub}{An integer for the size of the subtitle}
 
 \item{...}{Further plot options}
 }

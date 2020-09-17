@@ -8,13 +8,13 @@ bootstrap(rgcca_res, n_boot = 100, n_cores = parallel::detectCores() -
   1, parallelization = NULL)
 }
 \arguments{
-\item{rgcca_res}{Result of a RGCCA (see  \code{\link[RGCCA]{rgcca}} )}
+\item{rgcca_res}{A RGCCA object (see  \code{\link[RGCCA]{rgcca}} )}
 
-\item{n_boot}{A integer for the number of boostraps}
+\item{n_boot}{An integer for the number of boostraps}
 
 \item{n_cores}{An integer for the number of cores used in parallelization}
 
-\item{parallelization}{if TRUE parallelization is run, if FALSE, no parallelisation is run. If NULL (default) parallelization is always used except for Windows in case of length(nperm)<10}
+\item{parallelization}{A logical value to run a parallelization. If parallelization = NULL (default), the parallelization is always performed except for Windows if length(nperm) < 10.}
 }
 \value{
 A list containing two elements: bootstrap and rgcca. bootstrap is a list of produced rgccas while rgcca is the original rgcca.

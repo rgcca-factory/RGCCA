@@ -8,7 +8,7 @@ load_response(blocks = NULL, file = NULL, separator = "\\t",
   header = TRUE, rownames = 1, decimal = ".")
 }
 \arguments{
-\item{blocks}{A list of matrix}
+\item{blocks}{A list of matrices giving the \eqn{J} blocks of variables \eqn{\mathbf{X_1}, \mathbf{X_2}, ..., \mathbf{X_J}}.}
 
 \item{file}{A character giving the path of a file}
 

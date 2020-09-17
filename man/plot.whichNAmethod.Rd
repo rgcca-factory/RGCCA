@@ -15,7 +15,7 @@
 
 \item{ylim}{=c(0.8,1) y limits}
 
-\item{block}{="all" or a number indicating the position of the chosen block in the initial list}
+\item{block}{A vector of integers giving the index of a list of blocks or a block = 'all' for all of them}
 
 \item{bars}{="sd" or "stderr". Indicates which error bar to build}
 

@@ -87,7 +87,7 @@
 #'                      
 #' for (i in 1:nrow(Russett)){
 #'  B = lapply(A, function(x) x[-i, ])
-#'  B = lapply(B, scale2)
+#'  B = lapply(B, scale)
 #'  resB = rgccad(B, C, tau = rep(1, 3), scheme = "factorial", scale = FALSE, verbose = FALSE)
 #'  #  look for potential conflicting sign among components within the loo loop.
 #'  for (k in 1:length(B)){

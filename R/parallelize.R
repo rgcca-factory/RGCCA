@@ -1,18 +1,18 @@
-#' Set a list of sockets for parralel package
-#' @param f a function to parralelize
-#' @param nperm a vector object for a lapply type function
-#' @param varlist character vector of names of objects to export  
-#' @param envir environment                                               
-#' @param applyFunc function to be applied
-#' @inheritParams bootstrap
-#' @importFrom parallel stopCluster
-#' @importFrom parallel clusterExport
-#' @importFrom parallel clusterEvalQ
-#' @importFrom parallel makeCluster
-#' @importFrom parallel detectCores
-#' @importFrom parallel parLapply
-#' @importFrom parallel parSapply
-#' @importFrom parallel mclapply
+# Set a list of sockets for parralel package
+# @param f a function to parralelize
+# @param nperm a vector object for a lapply type function
+# @param varlist character vector of names of objects to export  
+# @param envir environment                                               
+# @param applyFunc function to be applied
+# @inheritParams bootstrap
+# @importFrom parallel stopCluster
+# @importFrom parallel clusterExport
+# @importFrom parallel clusterEvalQ
+# @importFrom parallel makeCluster
+# @importFrom parallel detectCores
+# @importFrom parallel parLapply
+# @importFrom parallel parSapply
+# @importFrom parallel mclapply
 parallelize <- function(
     varlist = c(),
     nperm,

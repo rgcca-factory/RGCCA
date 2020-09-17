@@ -11,9 +11,9 @@ sgcca(A, C = 1 - diag(length(A)), sparsity = rep(1, length(A)),
   quiet = FALSE)
 }
 \arguments{
-\item{A}{A list that contains the \eqn{J} blocks of variables \eqn{X_1, X_2, ..., X_J}.}
+\item{A}{A list of matrices giving the \eqn{J} blocks of variables \eqn{\mathbf{X_1}, \mathbf{X_2}, ..., \mathbf{X_J}}.}
 
-\item{C}{A design matrix that describes the relationships between blocks (default: complete design).}
+\item{C}{A symmetric matrix (J*J) that describes the relationships between blocks.}
 
 \item{sparsity}{Either a \eqn{1*J} vector or a \eqn{max(ncomp) * J} matrix encoding the L1 constraints applied to the outer weight vectors.
 Elements of sparsity vary between \eqn{1/sqrt(p_j)} and 1 (larger values of sparsity correspond to less penalization).
@@ -21,36 +21,41 @@ If sparsity is a vector, L1-penalties are the same for all the weights correspon
 \deqn{for all h, |a_{j,h}|_{L_1} \le c_1[j] \sqrt{p_j},}
 with \eqn{p_j} the number of variables of \eqn{X_j}.
 If sparsity is a matrix, each row \eqn{h} defines the constraints applied to the weights corresponding to components \eqn{h}:
-\deqn{for all h, |a_{j,h}|_{L_1} \le c_1[h,j] \sqrt{p_j}.}}
+\deqn{for all h, |a_{j,h}|_{L_1} \le c_1[h,j] \sqrt{p_j}.} It can be estimated by using \link{rgcca_permutation}.}
 
-\item{ncomp}{A \eqn{1*J} vector that contains the numbers of components for each block (default: rep(1, length(A)), which means one component per block).}
+\item{ncomp}{A vector of 1*J integers giving the number of component for 
+each blocks}
 
-\item{scheme}{Either  "horst", "factorial" or "centroid" (Default: "centroid").}
+\item{scheme}{A character or a function giving the link function for 
+covariance maximization among "horst" (the identity function), "factorial"
+ (the squared values), "centroid" (the absolute values). Only, the horst 
+ scheme penalizes structural negative correlation. The factorial scheme 
+ discriminates more strongly the blocks than the centroid one.}
 
-\item{scale}{If scale = TRUE, each block is standardized to zero means and unit variances and then divided by the square root of its number of variables (default: TRUE).}
+\item{scale}{A logical value indicating if each block is normalised and divided by the square root of its number of variables and then divided by the square root of its number of variables.}
 
-\item{init}{Mode of initialization use in the SGCCA algorithm, either by Singular Value Decompostion ("svd") or random ("random") (default : "svd").}
+\item{init}{A character giving the mode of initialization to use in the algorithm. The alternatives are either by Singular Value Decompostion ("svd") or random ("random") (default: "svd").}
 
-\item{bias}{A logical value for biaised or unbiaised estimator of the var/cov.}
+\item{bias}{A logical value for biaised (\eqn{1/n}) or unbiaised (\eqn{1/(n-1)}) estimator of the var/cov (default: bias = TRUE).}
 
-\item{tol}{Stopping value for convergence.}
+\item{tol}{An integer giving the value for stopping the algorithm convergence.}
 
-\item{verbose}{Will report progress while computing if verbose = TRUE (default: TRUE).}
+\item{verbose}{A boolean displaying the warnings}
 
-\item{scale_block}{If TRUE, all blocks are weighted by their own variance: all the blocks have the same weight}
+\item{scale_block}{A logical value indicating if each block have the same weight in the RGCCA analysis. Otherwise, the weight of each block depends on the number of variables of the block}
 
-\item{prescaling}{if TRUE, the saling step is not run in sgcca}
+\item{prescaling}{A logical value indicating if the scaling should be done outside of the function.}
 
-\item{quiet}{if TRUE, does not print warnings}
+\item{quiet}{A boolean hidding the warnings}
 }
 \value{
-\item{Y}{A list of \eqn{J} elements. Each element of Y is a matrix that contains the SGCCA components for each block.}
+\item{Y}{A list of \eqn{J} elements. Each element of \eqn{Y} is a matrix that contains the analysis components for the corresponding block.}
 
-\item{a}{A list of \eqn{J} elements. Each element of a is a matrix that contains the outer weight vectors for each block.}
+\item{a}{A list of \eqn{J} elements. Each element of \eqn{a} is a matrix that contains the outer weight vectors for each block.}
 
 \item{astar}{A list of \eqn{J} elements. Each element of astar is a matrix defined as Y[[j]][, h] = A[[j]]\%*\%astar[[j]][, h]}
 
-\item{call}{Call of the function}#' @return \item{crit}{A vector that contains the values of the objective function at each iterations.}
+\item{call}{Call of the function}#' @return \item{crit}{AA vector of integer that contains the values of the analysis criteria across iterations.}
 
 \item{AVE}{Indicators of model quality based on the Average Variance Explained (AVE): AVE(for one block), AVE(outer model), AVE(inner model).}
 }

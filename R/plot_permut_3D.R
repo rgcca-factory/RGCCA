@@ -1,11 +1,11 @@
-#' Plot permuation in 3D
-#' 
-#' Plot permuation in 3D
-#' 
-#' @inheritParams plot3D
-#' @inheritParams plot_permut_2D
-#' @param sign A boolean to color by groups of alpha = 0.05, 0.01 or 0.001
-# @export
+# Plot permuation in 3D
+# 
+# Plot permuation in 3D
+# 
+# @inheritParams plot3D
+# @inheritParams plot_permut_2D
+# @param sign A boolean to color by groups of alpha = 0.05, 0.01 or 0.001
+#@export
 plot_permut_3D <- function(
     perm,
     type = "zstat",
