@@ -6,7 +6,7 @@
 \usage{
 \method{plot}{naEvolution}(x, type = "rv", ylim = NULL,
   block = length(x[[1]][[1]][[1]][[1]]), bars = "sd", main = NULL,
-  names.arg = NULL, ...)
+  names.arg = NULL, legend = FALSE, ...)
 }
 \arguments{
 \item{x}{A list resulting of naEvolution (\link{naEvolution})}
@@ -22,6 +22,8 @@
 \item{main}{=NULL Title of the graph (before the block name)}
 
 \item{names.arg}{renaming the methods}
+
+\item{legend}{If TRUE the legend is diplayed}
 
 \item{...}{Further plot parameters...}
 }

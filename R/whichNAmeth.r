@@ -37,7 +37,7 @@
 #' @seealso \link{plot.whichNAmethod}, \link{naEvolution}
 whichNAmethod=function(blocks,listMethods=c("complete","nipals"),typeNA="block",nDatasets=20,patternNA=NULL,connection=matrix(1,length(blocks),length(blocks))-diag(length(blocks)), tau=rep(1,length(blocks)),
                        ncomp=rep(2,length(blocks)),scale_block=TRUE,scale=TRUE,tol=1e-6,
-                       verbose=FALSE,scheme="centroid",seed=NULL,typeRGCCA="rgcca",sparsity=NULL,ni=5)
+                       verbose=FALSE,scheme="factorial",seed=NULL,typeRGCCA="rgcca",sparsity=NULL,ni=5)
 {
   check_connection(connection,blocks)
   check_tau(tau,blocks)

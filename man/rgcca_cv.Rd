@@ -24,19 +24,19 @@ rgcca_cv(blocks, type = "rgcca", response = NULL, par = "tau",
 
 \item{response}{Integer representing the number of the response block. Indeed, when a supervised analysis is chosen (plspm, pls), the response block has to be specified.}
 
-\item{par}{"sparsity", "tau" or "ncomp".}
+\item{par}{"sparsity", "tau" or "ncomp", the parameter to be crossvalided}
 
-\item{par_value}{Grid of values to be tested. #TODO}
+\item{par_value}{Grid of values to be tested. Should be a matrix of size n*p with p the number of blocks and n the number of combinations to be tested.}
 
 \item{validation}{Among "loo", "kfold", "test".}
 
-\item{type_cv}{type of crossvalidation. Default to "regression" #TODO}
+\item{type_cv}{type of crossvalidation. Default to "regression", but can also be "classification"}
 
 \item{fit}{A character giving the function used to compare the trained and the tested models}
 
 \item{k}{when k fold is chosen, the k parameter.}
 
-\item{n_cv}{number of cross-validation. Default to 1 (with kfold option and 5)}
+\item{n_cv}{number of cross-validations (with kfold option). Default to 1}
 
 \item{one_value_per_cv}{If TRUE, the k values obtained for each k-fold steps are averaged}
 

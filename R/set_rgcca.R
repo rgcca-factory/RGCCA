@@ -56,7 +56,7 @@ set_rgcca <- function(
 
     if (!boot)
         blocks <- intersection_list(blocks)
-
+    
     if (tolower(type) %in% c("sgcca", "spca", "spls")) {
 
         if (!is.null(blocks) && !missing(tau) && missing(sparsity))
@@ -94,6 +94,14 @@ set_rgcca <- function(
         else
         {
             boot_blocks <- lapply(blocks, function(x) x[-inds, , drop = FALSE])
+            if(class(boot_blocks[[response]])=="character")
+            {
+                if(length(unique(boot_blocks[[response]]))==1)
+                {
+                    warning("One sample has no variablity. Resulted rgcca can not be run")
+                    return(NULL)
+                }
+            }
         }
     }
        

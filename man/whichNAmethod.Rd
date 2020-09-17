@@ -9,7 +9,7 @@ whichNAmethod(blocks, listMethods = c("complete", "nipals"),
   connection = matrix(1, length(blocks), length(blocks)) -
   diag(length(blocks)), tau = rep(1, length(blocks)), ncomp = rep(2,
   length(blocks)), scale_block = TRUE, scale = TRUE, tol = 1e-06,
-  verbose = FALSE, scheme = "centroid", seed = NULL,
+  verbose = FALSE, scheme = "factorial", seed = NULL,
   typeRGCCA = "rgcca", sparsity = NULL, ni = 5)
 }
 \arguments{
