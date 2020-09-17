@@ -5,12 +5,13 @@
 #' This cross-validation is based on RMSE for quantitative response. 
 #' @inheritParams rgcca_crossvalidation
 #' @inheritParams rgcca
-#' @inheritParams plot2D
-#' @param par A character giving the parameter to tune among "sparsity" or "tau".
-#' @param par_value Grid of values to be tested. #TODO
-#' @param type_cv  type of crossvalidation. Default to "regression" #TODO
-#' @param n_cv An integer giving the number of cross-validation to perform.
-#' @param one_value_per_cv A logical value indicating if the k values obtained for each k-fold steps are averaged.
+#' @param parallelization if TRUE parallelization is run, if FALSE, no parallelisation is run. If NULL (default) parallelization is always used except for Windows in case of length(nperm)<10
+#' @param par "sparsity", "tau" or "ncomp", the parameter to be crossvalided
+#' @param par_value Grid of values to be tested. Should be a matrix of size n*p with p the number of blocks and n the number of combinations to be tested.
+#' @param type_cv  type of crossvalidation. Default to "regression", but can also be "classification"
+#' @param n_cv number of cross-validations (with kfold option). Default to 1 
+#' @param one_value_per_cv If TRUE, the k values obtained for each k-fold steps are averaged 
+#' @param rgcca_res a result of rgcca (from whom all parameters will be imported)
 #' @export
 #' @examples
 #' data("Russett")

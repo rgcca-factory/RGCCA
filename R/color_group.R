@@ -1,9 +1,9 @@
-#' Groups of color
-#' 
-#' Returns a color vector of equal size to the input vector
-#' @inheritParams plot2D
-#' @param x A vector
-#' @return A color vector of equal size to the input vector
+# Groups of color
+# 
+# Returns a color vector of equal size to the input vector
+# @inheritParams plot2D
+# @param x A vector
+# @return A color vector of equal size to the input vector
 
 color_group <- function(x, colors = NULL) {
 

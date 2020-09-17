@@ -94,16 +94,16 @@ rgcca_predict = function(
         }
         return(res)
     }
-    
+
     # Checking the input parameters
     if (model == "classification" && (fit == "cor" || fit == "lm"))
         stop_rgcca("Please, classification prediction only works with LDA and LOGISTIC")
     if (model == "regression" &&
-        (fit == "lda" || fit == "logistic"))
+        (fit == "lda" ))
         stop_rgcca("Please, regression prediction only works with LM and COR")
     stopifnot(is(rgcca_res, "rgcca"))
     match.arg(model, c("regression", "classification"))
-    match.arg(fit, c("lm", "cor", "lda", "logistic"))
+    match.arg(fit, c("lm", "cor", "lda"))
     for (i in c("new_scaled"))
         check_boolean(i, get(i))
     if (is.null(names(rgcca_res$call$blocks)) ||  is.null(names(newA)))
@@ -145,10 +145,8 @@ rgcca_predict = function(
     {
         if(mode(newA2[[bloc_to_pred]])=="character")
         {
-            G=as.factor(newA[[bloc_to_pred]])
-            y <- data.frame(model.matrix( ~  G-1, data = G))
-            rownames(y) <- rownames(newA[[bloc_to_pred]])
-            newA2[[bloc_to_pred]]=y
+            if(length(unique(rgcca_res$call$raw[[bloc_to_pred]]))==1){stop("Only one level in the variable to predict")}
+            newA2[[bloc_to_pred]]=asDisjonctive(newA2[[bloc_to_pred]],levs=unique(rgcca_res$call$raw[[bloc_to_pred]]))
         }
     }
   
@@ -254,6 +252,7 @@ rgcca_predict = function(
         to_pred_test <- newA3[[newbloc_y]] 
        #  to_pred_train <- blocks_rgcca_res[[bloc_y]]
        #  to_pred_test <- newA3[[newbloc_y]] 
+
         
         if (!is.null(dim(newA[[1]]))) {
             if (any(colnames(to_pred_train) != colnames(to_pred_test)))
@@ -323,7 +322,7 @@ rgcca_predict = function(
                     # TODO ??? check case for vector
                     comp.test
                 } else{
-                #    rgcca_res$call$connection <- rgcca_res$call$connection[MATCH, MATCH]
+                    rgcca_res$call$connection <- rgcca_res$call$connection[MATCH, MATCH]
                    # cor <- get_cor_all(rgcca_res, newA, comp.test)
                     cor <- get_cor_all(rgcca_res, newA3, comp.test.cor)
                     
@@ -349,19 +348,25 @@ rgcca_predict = function(
                 colnames(data_for_lda)[ncol(data_for_lda)]="quali"
                 reslda     <- lda(quali~., data=data_for_lda, na.action = "na.exclude")
                 class.fit  <- predict(reslda, comp.test)$class
-            },
-            "logistic" = {
-                if (ngroups > 2) {
-                    reslog      <- nnet::multinom(y ~ ., data = cbind(comp.train, y = to_pred_train), trace = FALSE, na.action = "na.exclude")
-                    class.fit   <- predict(reslog, newdata = cbind(comp.test, y = to_pred_test))
-                } else if (ngroups == 2) {
-                    reslog      <- glm(y ~ ., data = cbind(comp.train, y = to_pred_train), family = binomial,na.action="na.exclude")
-                    class.fit   <- predict(reslog, type = "response", newdata = cbind(comp.test, y = to_pred_test))
-                    class.fit.class <- class.fit > 0.5 # TODO: cutoff parameter
-                    class.fit       <- factor(as.numeric(class.fit.class))
-                }
-            })
-        res=class.fit == to_pred_test
+            }#,
+            # "logistic" = {
+            #     if (ngroups > 2) {
+            #         reslog      <- nnet::multinom(y ~ ., data = cbind(comp.train, y = to_pred_train), trace = FALSE, na.action = "na.exclude")
+            #         class.fit   <- predict(reslog, newdata = cbind(comp.test, y = to_pred_test))
+            #     } else if (ngroups == 2) {
+            #         levs=levels(factor(to_pred_train))
+            #         to_pred_train=factor(to_pred_train,levels=levs)
+            #         to_pred_test=factor(to_pred_test,levels=levs)
+            #         data_for_lda=cbind(comp.train,to_pred_train)
+            #         colnames(data_for_lda)[ncol(data_for_lda)]="quali"
+            #         reslog      <- glm(y ~ ., data = cbind(comp.train, y = to_pred_train), family = binomial,na.action="na.exclude")
+            #         class.fit   <- predict(reslog, type = "response", newdata = cbind(comp.test, y = to_pred_test))
+            #         class.fit.class <- class.fit > 0.5 # TODO: cutoff parameter
+            #         class.fit       <- factor(class.fit.class)
+            #     }
+            # }
+            )
+        res=class.fit ==to_pred_test
         score <- sum(res) / length(to_pred_test)
     }
 

@@ -7,7 +7,7 @@
 \method{print}{bootstrap}(x, ...)
 }
 \arguments{
-\item{x}{results of a bootstrap function}
+\item{x}{A bootstrap object (see \code{\link[RGCCA]{bootstrap}} )}
 
 \item{...}{Further arguments in print}
 }

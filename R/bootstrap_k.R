@@ -1,10 +1,10 @@
-#' Compute bootstrap (internal)
-#'
-#' Internal function for computing boostrap of RGCCA
-#'
-#' @inheritParams rgcca
-#' @inheritParams plot_var_2D
-#' @return A list of RGCCA bootstrap weights
+# Compute bootstrap (internal)
+#
+# Internal function for computing boostrap of RGCCA
+#
+# @inheritParams rgcca
+# @inheritParams plot_var_2D
+# @return A list of RGCCA bootstrap weights
 bootstrap_k <- function(rgcca_res, type = "weight") {
 
     rgcca_res_boot <- set_rgcca(rgcca_res, method = "nipals", boot = TRUE)

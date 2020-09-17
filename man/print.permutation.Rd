@@ -7,7 +7,7 @@
 \method{print}{permutation}(x, ...)
 }
 \arguments{
-\item{x}{result of rgcca_permutation}
+\item{x}{A rgcca_permutation object (see  \code{\link[RGCCA]{rgcca_permutation}} )}
 
 \item{...}{Further print parameters}
 }

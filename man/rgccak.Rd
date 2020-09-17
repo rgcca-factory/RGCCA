@@ -10,31 +10,38 @@ rgccak(A, C, tau = "optimal", scheme = "centroid", verbose = FALSE,
   initImpute = "rand")
 }
 \arguments{
-\item{A}{A list that contains the \eqn{J} blocks of variables. Either the blocks (\eqn{X_1, X_2, ..., X_J}) or the residual matrices (\eqn{X_{h1}, X_{h2}, ..., X_{hJ}}).}
+\item{A}{A list that contains the \eqn{J} blocks of variables from which block components are constructed.
+It could be eiher the original matrices (\eqn{X_1, X_2, ..., X_J}) or the residual matrices (\eqn{X_{h1}, X_{h2}, ..., X_{hJ}}).}
 
-\item{C}{A design matrix that describes the relationships between blocks. (Default: complete design).}
+\item{C}{A symmetric matrix (J*J) that describes the relationships between blocks.}
 
-\item{tau}{A \eqn{1 * J} vector that contains the values of the shrinkage parameters \eqn{\tau_j}, \eqn{ j=1, ..., J}. (Default: \eqn{\tau_j = 1}, \eqn{ j=1, ..., J}).
-If tau = "optimal" the shrinkage intensity paramaters are estimated using the Schafer and Strimmer (2005) 
-analytical formula.}
+\item{tau}{Either a 1*J vector or a \eqn{\mathrm{max}(ncomp) \times J} matrix containing the values 
+of the regularization parameters (default: tau = 1, for each block and each dimension). Tau varies from 0 (maximizing the correlation) to 1 (maximizing the covariance).
+If tau = "optimal" the regularization paramaters are estimated for each block and each dimension using the Schafer and Strimmer (2005)
+analytical formula . If tau is a \eqn{1\times J} vector, tau[j] is identical across the dimensions of block \eqn{\mathbf{X}_j}. 
+If tau is a matrix, tau[k, j] is associated with \eqn{\mathbf{X}_{jk}} (\eqn{k}th residual matrix for block \eqn{j}). It can be estimated by using \link{rgcca_permutation}.}
 
-\item{scheme}{The value is "horst", "factorial", "centroid" or any diffentiable convex scheme function g designed by the user (default: "centroid").}
+\item{scheme}{A character or a function giving the link function for 
+covariance maximization among "horst" (the identity function), "factorial"
+ (the squared values), "centroid" (the absolute values). Only, the horst 
+ scheme penalizes structural negative correlation. The factorial scheme 
+ discriminates more strongly the blocks than the centroid one.}
 
-\item{verbose}{Will report progress while computing if verbose = TRUE (default: TRUE).}
+\item{verbose}{A boolean displaying the warnings}
 
-\item{init}{The mode of initialization to use in the RGCCA algorithm. The alternatives are either by Singular Value Decompostion or random (default : "svd").}
+\item{init}{A character giving the mode of initialization to use in the algorithm. The alternatives are either by Singular Value Decompostion ("svd") or random ("random") (default: "svd").}
 
-\item{bias}{A logical value for either a biaised or unbiaised estimator of the var/cov.}
+\item{bias}{A logical value for biaised (\eqn{1/n}) or unbiaised (\eqn{1/(n-1)}) estimator of the var/cov (default: bias = TRUE).}
 
-\item{tol}{Stopping value for convergence.}
+\item{tol}{An integer giving the value for stopping the algorithm convergence.}
 
 \item{na.rm}{If TRUE, NIPALS algorithm taking missing values into account is run. RGCCA is run only on available data.}
 
 \item{estimateNA}{to choose between "no","first","iterative","superblock","new","lebrusquet") TO BE DEVELOPPED}
 
-\item{scale}{TRUE if scaled (used in superblock method)}
+\item{scale}{A logical value indicating if each block is normalised and divided by the square root of its number of variables and then divided by the square root of its number of variables.}
 
-\item{scale_block}{useful in lebrusquet}
+\item{scale_block}{A logical value indicating if each block have the same weight in the RGCCA analysis. Otherwise, the weight of each block depends on the number of variables of the block}
 
 \item{initImpute}{'rand' or 'mean': initialization for optimization method}
 }
@@ -43,18 +50,22 @@ analytical formula.}
 
 \item{Z}{A \eqn{n * J} matrix of RGCCA inner components}
 
-\item{a}{A list of outer weight vectors}
+\item{a}{A list of \eqn{J} elements. Each element of \eqn{a} is a matrix that contains the outer weight vectors for each block.}
 
-\item{crit}{The values of the objective function to be optimized in each iteration of the iterative procedure.}
+\item{crit}{A vector of integer that contains the values of the analysis criteria across iterations.}
 
 \item{AVE}{Indicators of model quality based on the Average Variance Explained (AVE): 
 AVE(for one block), AVE(outer model), AVE(inner model).}
 
 \item{call}{Call of the function}
 
-\item{crit}{A vector that contains the values of the objective function at each iterations.}
+\item{crit}{A vector of integer that contains the values of the analysis criteria across iterations.}
 
-\item{tau}{\eqn{1 * J} vector containing the value for the tau penalties applied to each of the \eqn{J} blocks of data (user specified)}
+\item{tau}{Either a 1*J vector or a \eqn{\mathrm{max}(ncomp) \times J} matrix containing the values
+of the regularization parameters .Tau varies from 0 (maximizing the correlation) to 1 (maximizing the covariance).
+If tau = "optimal" the regularization paramaters are estimated for each block and each dimension using the Schafer and Strimmer (2005)
+analytical formula . If tau is a \eqn{1\times J} vector, tau[j] is identical across the dimensions of block \eqn{\mathbf{X}_j}.
+If tau is a matrix, tau[k, j] is associated with \eqn{\mathbf{X}_{jk}} (\eqn{k}th residual matrix for block \eqn{j}). It can be estimated by using \link{rgcca_permutation}.}
 }
 \description{
 The function rgccak() is called by rgccad() and does not have to be used by the user.

@@ -10,19 +10,19 @@
   n_cores = parallel::detectCores() - 1, ...)
 }
 \arguments{
-\item{x}{result of bootstrap  \code{\link[RGCCA]{bootstrap}}}
+\item{x}{A bootstrap object (see \code{\link[RGCCA]{bootstrap}} )}
 
-\item{type}{"1D" or "2D"}
+\item{type}{A character to select a type of plot among "1D" or "2D"}
 
-\item{block}{number of the block to be plotted}
+\item{block}{A vector of integers giving the index of a list of blocks or a block = 'all' for all of them}
 
-\item{comp}{number of the component to be plotted}
+\item{comp}{An integer giving the index of the analysis components}
 
-\item{n_mark}{An integer giving the number maximum of top variables}
+\item{n_mark}{An integer giving the number of top variables to select}
 
 \item{bars}{A character among "sd" for standard deviations, "stderr" for the standard error, "ci" for confidence interval of scores and "cim" for the confidence intervall of the mean.}
 
-\item{colors}{reoresenting a vector of colors}
+\item{colors}{Either a vector of integers (each integer corresponding to a color) or of characters corresponding to names of colors (as "blue",see colors()) or RGB code ("#FFFFFF").}
 
 \item{title}{A character with the name of the space (either "Variables" or
 "Samples")}
@@ -31,7 +31,7 @@
 
 \item{n_cores}{An integer for the number of cores used in parallelization}
 
-\item{...}{Other parameters (see plot_histogram)}
+\item{...}{Further graphical parameters (see plot2D)}
 }
 \description{
 Plots the results of a bootstrap object. The representation can be with bars (1D) or (2D) #TODO

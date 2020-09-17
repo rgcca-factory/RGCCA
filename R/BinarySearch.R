@@ -1,6 +1,6 @@
-#' Internal function which does not have to be used by the users 
-#' @author Arnaud Gloaguen
-#' @keywords internal
+# Internal function which does not have to be used by the users 
+# @author Arnaud Gloaguen
+# @keywords internal
 BinarySearch <-
 function(argu,sumabs){
   if(norm2(argu)==0 || sum(abs(argu/norm2(argu)))<=sumabs) return(0)

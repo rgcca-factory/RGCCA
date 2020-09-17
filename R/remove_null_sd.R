@@ -1,7 +1,7 @@
-#' Remove column having a standard deviation equals to 0
-#'
-#' @param list_m A list of dataframe
-#' @return A list of dataframe
+# Remove column having a standard deviation equals to 0
+#
+# @param list_m A list of dataframe
+# @return A list of dataframe
 
 remove_null_sd <- function(list_m) {
     

@@ -1,12 +1,11 @@
-#' Creates a data frame from an Excel file loading
-#
-#' @inheritParams load_blocks
-#' @param sheet A character giving the sheet name
-#' @param rownames An integer corresponding to the column number of the row
-#' names (NULL otherwise)
-#' @param header A bolean giving the presence or the absence of the header
-#' @param num A bolean giving the presence or the absence of numerical values
-#' @return A matrix containing the loaded file
+# Creates a data frame from an Excel file loading
+# @inheritParams load_blocks
+# @param sheet A character giving the sheet name
+# @param rownames An integer corresponding to the column number of the row
+# names (NULL otherwise)
+# @param header A bolean giving the presence or the absence of the header
+# @param num A bolean giving the presence or the absence of numerical values
+# @return A matrix containing the loaded file
 # @examples
 # \dontrun{
 # load_file_excel("data/blocks.xlsx", "industry")

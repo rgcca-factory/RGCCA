@@ -12,18 +12,18 @@ plot_bootstrap_2D(b = NULL, df_b = NULL, x = "bootstrap_ratio",
   n_cores = parallel::detectCores() - 1)
 }
 \arguments{
-\item{b}{A matrix of boostrap}
+\item{b}{A boostrap object \code{\link[RGCCA]{bootstrap}}}
 
-\item{df_b}{Result of get_bootstrap functions or dataframe #TODO}
+\item{df_b}{A get_bootstrap object \code{\link[RGCCA]{get_bootstrap}}}
 
-\item{x}{A character for the column to plot in x-axis}
+\item{x}{A character for the index to plot in x-axis (see details).}
 
-\item{y}{A character for the column to plot in y-axis}
+\item{y}{A character for the index to plot in y-axis (see details).}
 
 \item{title}{A character with the name of the space (either "Variables" or
 "Samples")}
 
-\item{colors}{reoresenting a vector of colors}
+\item{colors}{Either a vector of integers (each integer corresponding to a color) or of characters corresponding to names of colors (as "blue",see colors()) or RGB code ("#FFFFFF").}
 
 \item{cex}{An integer for the size of the plot parameters}
 
@@ -37,7 +37,7 @@ plot_bootstrap_2D(b = NULL, df_b = NULL, x = "bootstrap_ratio",
 
 \item{comp}{An integer giving the index of the analysis components}
 
-\item{i_block}{Integer corresponding to the first block}
+\item{i_block}{An integer giving the index of a list of blocks}
 
 \item{collapse}{A boolean to combine the variables of each block as result}
 
@@ -47,6 +47,16 @@ plot_bootstrap_2D(b = NULL, df_b = NULL, x = "bootstrap_ratio",
 Biplot of the top variables from a SGCCA bootstrap with the number of
 non-zero occurences in x-axis and the boot-ratio (mean/sd) in y-axis.
 Negative weights are colored in red and the positive ones are in green.
+}
+\details{
+\itemize{
+\item 'estimate' for RGCCA weights
+\item 'bootstrap_ratio' for the mean of the bootstrap weights / their standard error
+\item 'sign' for significant 95% bootstrap interval
+\item 'estimate' for RGCCA weights
+\item 'occurrences' for non-zero occurences
+\item 'mean' for the mean of the bootstrap weights
+}
 }
 \examples{
 library(RGCCA)

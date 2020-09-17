@@ -644,10 +644,6 @@ sapply(A, head)
 
 **Preprocessing** In order to ensure comparability between variables standardization is applied (zero mean and unit variance).
 
-```{r}
-A = lapply(A, function(x) scale2(x, bias = TRUE))
-```
-
 We note that to make blocks comparable, a possible strategy is to standardize the variables and then to divide each block by the square root of its number of variables [@Westerhuis1998]. This two-step procedure leads to $\mathrm{tr}(\ma X_j^t \ma X_j )=n$  for each block (i.e. the sum of the eigenvalues of the covariance matrix of $\ma X_j$ is equal to $1$ whatever the block). Such a preprocessing is reached by setting the `scale` argument to `TRUE` (default value) in the `rgcca()` functions.
 
 **Definition of the design matrix $\mathbf{C}$.** From Russett's hypotheses, it is difficult for a country to escape dictatorship when its agricultural inequality is above-average and its industrial development below-average. These hypotheses on the relationships between blocks are depicted in Figure \ref{fig:C}.
@@ -1143,10 +1139,6 @@ d=get_patternNA(A_missing2)
 
 ## Using complete data only
 The complete data approach is the less risky, but can conduct to a large loss of data, potentially leading to less significant results. It is the one used by default in most software solutions. 
-```{r}
-A_inter=intersection_list(A_missing)
-lapply(A_inter,dim)
-```
 ## Using NIPALS algorithm 
 
 ### Principle

@@ -6,29 +6,29 @@
 Plots a permutation object. The parameters tuned for maximizing RGCCA criteria is displayed in the title. 
 In x, the index of combination (number corresponding to the rownames of tuning parameters object). In ordinate, a score depending of the type parameter (RGCCA criterion for crit, and zstat for the pseudo z-scores)}
 \usage{
-\method{plot}{permutation}(x, type = "crit", cex = 1, main = NULL,
+\method{plot}{permutation}(x, type = "crit", cex = 1, title = NULL,
   cex_main = 14 * cex, cex_sub = 12 * cex, bars = "points",
   cex_point = 3 * cex, cex_lab = 19 * cex, ...)
 }
 \arguments{
 \item{x}{result of rgcca_permutation (see  \code{\link[RGCCA]{rgcca_permutation}} )}
 
-\item{type}{An string giving the type of the index to look at (among 'crit' for
+\item{type}{A character giving the type of the index to look at (among 'crit' for
 the RGCCA criterion and 'zstat' for the pseudo Z-score)}
 
-\item{cex}{general size of the text}
+\item{cex}{An integer for the size of the plot parameters}
 
-\item{main}{title of the plot}
+\item{title}{A character for the title of the plot}
 
-\item{cex_main}{= 25 * cex, size of the main text (title)}
+\item{cex_main}{An integer for the size of the title}
 
-\item{cex_sub}{= 16 * cex, size of the subtitle text}
+\item{cex_sub}{An integer for the size of the subtitle}
 
-\item{bars}{Among "points", "stderr" or "sd": representation of the variability}
+\item{bars}{A character giving representation of the variability among "points", "stderr" or "sd"}
 
-\item{cex_point}{= 3 * cex, size of the point}
+\item{cex_point}{An integer for the size of the points or the text in the plot}
 
-\item{cex_lab}{= 19 * cex, size of the labels}
+\item{cex_lab}{An integer for the size of the axis titles}
 
 \item{...}{Further graphical parameters}
 }

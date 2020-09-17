@@ -7,12 +7,12 @@
 set_connection(blocks, superblock = FALSE, response = NULL)
 }
 \arguments{
-\item{blocks}{A list of matrix}
+\item{blocks}{A list of matrices giving the \eqn{J} blocks of variables \eqn{\mathbf{X_1}, \mathbf{X_2}, ..., \mathbf{X_J}}.}
 
 \item{superblock}{A boolean giving the presence (TRUE) / absence (FALSE) of
 a superblock}
 
-\item{response}{if not NULL, number corresponding to the response block}
+\item{response}{if not NULL, an integer giving the position of the response block within the blocks}
 }
 \value{
 A matrix corresponding to the connection between the blocks

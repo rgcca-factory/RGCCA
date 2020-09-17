@@ -36,6 +36,7 @@ naEvolution=function(blocks,prctNA=c(0.1,0.2,0.3),listMethods=c("mean"),typeNA="
     
     resultComparison=list()
     i=0
+    
     for(prct in prctNA)
     {
        if(verbose)

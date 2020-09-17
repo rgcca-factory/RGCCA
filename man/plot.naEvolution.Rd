@@ -6,7 +6,7 @@
 \usage{
 \method{plot}{naEvolution}(x, type = "rv", ylim = NULL,
   block = length(x[[1]][[1]][[1]][[1]]), bars = "sd", main = NULL,
-  names.arg = NULL, ...)
+  names.arg = NULL, legend = FALSE, ...)
 }
 \arguments{
 \item{x}{A list resulting of naEvolution (\link{naEvolution})}
@@ -15,13 +15,15 @@
 
 \item{ylim}{=c(0.8,1) y limits}
 
-\item{block}{="all" or a number indicating the position of the chosen block in the initial list}
+\item{block}{A vector of integers giving the index of a list of blocks or a block = 'all' for all of them}
 
 \item{bars}{="sd" or "stderr". Indicates which error bar to build}
 
 \item{main}{=NULL Title of the graph (before the block name)}
 
 \item{names.arg}{renaming the methods}
+
+\item{legend}{If TRUE the legend is diplayed}
 
 \item{...}{Further plot parameters...}
 }

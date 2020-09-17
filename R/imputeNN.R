@@ -1,14 +1,14 @@
-#'Impute with k-Nearest Neighbors
-#'
-#'This method is used for the implementation of EM algorithm for missing data
-#' @inheritParams select_analysis
-#' @inheritParams rgccad
-#' @param k number of nearest neighbors. Can also be "all" or "auto"
-#' @param output "mean","random" or "weightedMean". Corresponds to the kind of output required by the user. If "random" is chosen, the imputation will be done by selecting one neighbor among the k nearests. If "mean" is chosen, the imputation will be done by averaging all k-neighbors scores. If "weightedMean" is chosen, this average is weighted by the inverse of the distance.
-#' @param klim Vector of two integers with klim(1)<klim(2). if k=auto, it is optimised between klim(1) and klim(2)
-#' @param superblock if TRUE the distance between two subjects is calculated on the superblock. If FALSE the distance is calculated by blocks.
-#' @return \item{A}{A list of the imputed blocks}
-#' @title imputeNN: Impute with k-Nearest Neighbors
+#Impute with k-Nearest Neighbors
+#
+#This method is used for the implementation of EM algorithm for missing data
+# @inheritParams select_analysis
+# @inheritParams rgccad
+# @param k number of nearest neighbors. Can also be "all" or "auto"
+# @param output "mean","random" or "weightedMean". Corresponds to the kind of output required by the user. If "random" is chosen, the imputation will be done by selecting one neighbor among the k nearests. If "mean" is chosen, the imputation will be done by averaging all k-neighbors scores. If "weightedMean" is chosen, this average is weighted by the inverse of the distance.
+# @param klim Vector of two integers with klim(1)<klim(2). if k=auto, it is optimised between klim(1) and klim(2)
+# @param superblock if TRUE the distance between two subjects is calculated on the superblock. If FALSE the distance is calculated by blocks.
+# @return \item{A}{A list of the imputed blocks}
+# @title imputeNN: Impute with k-Nearest Neighbors
 
 imputeNN <- function(
   A,
@@ -75,13 +75,14 @@ imputeNN <- function(
     
   } else
     D <- matrix(1, dim(superblockNA)[1], dim(superblockNA)[2])
-  
+
   superblockNAs2 <- superblockNAs * D
  
    # dectection of subjects with missing data
   if(is.matrix(A)){  namesInd <- rownames(A)}else{  namesInd <- rownames(A[[1]])}
 
   posNA <- which(is.na(superblockNAs2), arr.ind = T)
+
   nbNA <- dim(posNA)[1]
   nbLineNA <- namesInd[unique(as.vector(posNA[, "row"]))]
   if(is.matrix(A)){J=1}else{  J <- length(A)}
@@ -175,9 +176,13 @@ imputeNN <- function(
         if (output == "weightedMean")
           w <- (1/(orderedDistance/sum(orderedDistance)))[1:knb]
         if (output == "random")
-          randomIndex <- contributors[sample(knb, 1)]
-        
-        # imputation for each block
+        {   
+           
+            randomIndex <- contributors[sample(knb, 1)]
+    
+            
+        }
+         # imputation for each block
        
         for (j in 1:J) {
           if(J>1){naCol <- which(is.na(A[[j]][as.character(i), ]))}

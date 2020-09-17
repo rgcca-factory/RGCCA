@@ -8,12 +8,12 @@ plot_network(rgcca_res, title = paste0("Common rows between blocks : ",
   NROW(rgcca_res$call$blocks[[1]])), colors = "#eee685")
 }
 \arguments{
-\item{rgcca_res}{A list giving the results of a R/SGCCA}
+\item{rgcca_res}{A RGCCA object (see  \code{\link[RGCCA]{rgcca}} )}
 
 \item{title}{A character with the name of the space (either "Variables" or
 "Samples")}
 
-\item{colors}{colors of the network}
+\item{colors}{Either a vector of integers (each integer corresponding to a color) or of characters corresponding to names of colors (as "blue",see colors()) or RGB code ("#FFFFFF").}
 }
 \value{
 A dataframe with tuples of connected blocks

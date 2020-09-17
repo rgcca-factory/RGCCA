@@ -77,29 +77,7 @@ test_that("upca_var2",{expect_true(upca_var)})
 
 #testthat("upca_eig",{expect_true(abs(unscaledvarExplPrComp-unscaledvarExplRgcca<1e-8))}) #TODO
 
-# With superblock
-data(Russett)
-X_agric =as.matrix(Russett[,c("gini","farm","rent")]);
-X_ind = as.matrix(Russett[,c("gnpr","labo")]);
-X_polit = as.matrix(Russett[ , c("demostab", "dictator")]);
-A = list(X_agric[,1],X_agric[,2],X_agric[,3]);
-scaledPCASB= rgcca (
-    blocks=A,
-    connection = 1 - diag(length(A)),
-    response = NULL,
-    superblock = TRUE,
-    tau = rep(1, length(A)),
-    ncomp = rep(1, length(A)),
-    type = "rgcca",
-    verbose = TRUE,
-    scheme = "factorial",
-    scale = TRUE,
-    init = "svd",
-    bias = TRUE, 
-    tol = 1e-08)
-pcaSB=prcomp(cbind(X_agric,X_ind,X_polit),scale=TRUE)
-pcasb_ind=abs(cor(pcaSB$x[,1],scaledPCASB$Y[[1]][,1]))==1
-#pcasb_var=abs(cor(pcaSB$rotation[,1],scaledPCASB$astar[[1]][,1]))==1
+# With superblock  # TODO
 
 #------------PLS 
 #  res_pls = plsr(X_polit ~ X_agric, ncomp = 1, method = "simpls")
@@ -127,88 +105,27 @@ pcasb_ind=abs(cor(pcaSB$x[,1],scaledPCASB$Y[[1]][,1]))==1
 # plot(cor_X*res_rgcca$a[[2]], col = "red", pch = 16, main = "Y_loadings", ylab = "loadings")
 # points(res_pls$Yloadings/norm2(res_pls$Yloadings))
 
-# rgcca (
-#     blocks,
-#     connection = 1 - diag(length(blocks)),
-#     response = NULL,
-#     superblock = TRUE,
-#     tau = rep(1, length(blocks)),
-#     ncomp = rep(2, length(blocks)),
-#     type = "rgcca",
-#     verbose = TRUE,
-#     scheme = "factorial",
-#     scale = TRUE,
-#     init = "svd",
-#     bias = TRUE, 
-#     tol = 1e-08)
-# 
-
 # Test with block with 1 variable only
  data(Russett)
  X_agric =as.matrix(Russett[,c("gini","farm","rent")]);
  X_ind = as.matrix(Russett[,c("gnpr","labo")]);
  X_polit = as.matrix(Russett[ , c("demostab")]);
  A = list(X_agric,X_ind,X_polit);
- resPCA= rgcca (
-     blocks=A,
-     connection = 1 - diag(length(A)),
-     response = NULL,
-     superblock = FALSE,
-     tau = rep(1, length(A)),
-     ncomp = c(2,2,1),
-     type = "rgcca",
-     verbose = FALSE,
-     scheme = "factorial",
-     scale = TRUE,
-     init = "svd",
-     bias = TRUE, 
-     tol = 1e-08)
+ resPCA= rgcca ( blocks=A, ncomp = c(2,2,1),type = "rgcca",     verbose = FALSE)
  
- 
+ # with optimal tau
  data(Russett)
  X_agric =as.matrix(Russett[,c("gini","farm","rent")]);
  X_ind = as.matrix(Russett[,c("gnpr","labo")]);
  X_polit = as.matrix(Russett[ , c("demostab")]);
  A = list(X_agric,X_ind,X_agric);
- resRGCCA= rgcca (
-     blocks=A,
-     connection = 1 - diag(length(A)),
-     response = NULL,
-     superblock = FALSE,
-     tau = rep("optimal", length(A)),
-     ncomp = rep(2, length(A)),
-     type = "rgcca",
-     verbose = FALSE,
-     scheme = "factorial",
-     scale = TRUE,
-     init = "svd",
-     bias = TRUE, 
-     tol = 1e-08)
+ resRGCCA= rgcca( blocks=A,     connection = 1 - diag(length(A)),     response = NULL,     superblock = FALSE,     tau = rep("optimal", length(A)))
  
- # Testing quiet=TRUE/quiet=FALSE
- 
- data(Russett)
- X_agric =as.matrix(Russett[,c("gini","farm","rent")]);
- X_ind = as.matrix(Russett[,c("gnpr","labo")]);
- X_polit = as.matrix(Russett[ , c("demostab")]);
+ # Testing quiet=TRUE/quiet=FALSE with tau optimal
  A = list(X_agric,X_ind,X_agric);
  names(A)=c("Agri","Ind","Polit")
- resRGCCA= rgcca (
-     blocks=A,
-     connection = 1 - diag(length(A)),
-     response = NULL,
-     superblock = FALSE,
-     tau = rep("optimal", length(A)),
-     ncomp = rep(2, length(A)),
-     type = "rgcca",
-     verbose = FALSE,
-     scheme = "factorial",
-     scale = TRUE,
-     init = "svd",
-     bias = TRUE, 
-     tol = 1e-08,quiet=FALSE)
- 
- resRGCCA
+ resRGCCA= rgcca ( blocks=A, tau = rep("optimal", length(A)),   quiet=FALSE)
+
  
  data(Russett)
  X_agric =as.matrix(Russett[,c("gini","farm","rent")]);
@@ -257,18 +174,14 @@ pcasb_ind=abs(cor(pcaSB$x[,1],scaledPCASB$Y[[1]][,1]))==1
  X_polit[X_polit==0]="Non-dic"
  A_quali = list(agric=X_agric,X_ind=X_ind,X_polit=X_polit);
  res_rgcca_quali= rgcca (
-     blocks=A_quali,
-     connection = 1 - diag(length(A)),
-     response = 3,
-     superblock = FALSE,
-     tau = rep(1, length(A)),
-     ncomp = rep(2, length(A)),
-     type = "rgcca",
-     verbose = FALSE,
-     scheme = "factorial",
-     scale = TRUE,
-     init = "svd",
-     bias = TRUE, 
-     tol = 1e-08)
+     blocks=A_quali, connection = 1 - diag(length(A)),
+     response = 3)
  
- 
+#Checking the superbloc
+ rgcca_with_superblock= rgcca (
+     blocks=A,
+     superblock = TRUE)
+ head(lapply(A,function(x){y=scale2(x,scale=TRUE);return(y/sqrt(ncol(y)))})[[1]])
+ head(rgcca_with_superblock$call$blocks[[1]])
+ test_that("superblock",{expect_true( sum(head(rgcca_with_superblock$call$blocks[[length(A)+1]])[,1:ncol(A[[1]])]!=head(lapply(A,function(x){y=scale2(x,scale=TRUE);return(y/sqrt(ncol(y)))})[[1]]))==0
+ )})

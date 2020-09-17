@@ -227,7 +227,7 @@ rgcca <- function(
     
     # Check blocks size, adds NA lines if some subjects are missing...
 
-    blocks=check_blocks(blocks,add_NAlines=TRUE,n=1,init=TRUE)
+    blocks=check_blocks(blocks,add_NAlines=TRUE,n=1,init=TRUE,quiet=quiet)
     if (!is.null(response))
         check_blockx("response", response, blocks)
     check_integer("tol", tol, float = TRUE, min = 0)
@@ -260,16 +260,12 @@ rgcca <- function(
     raw=blocks
    if(!is.null(response))
    {
-          if(mode(blocks[[response]])=="character")
+       if(mode(blocks[[response]])=="character")
        {
               print("The qualitative response variable is transformed as disjonctive table")
-           G=as.factor(blocks[[response]])
-           if(dim(blocks[[response]])[2]>2){stop("Not available for more than one character responses")}
-           y      <- data.frame(model.matrix( ~  G-1, data = G))
-           rownames(y) <- rownames(blocks[[response]])
-           blocks[[response]]=y
+              if(length(unique(blocks[[response]]))==1){stop("Only one level in the variable to predict")}
+              blocks[[response]]=asDisjonctive(blocks[[response]])
        }
-       
    
    }
   
@@ -330,7 +326,7 @@ rgcca <- function(
             knn.klim = knn.klim,
             knn.scale_block = knn.scale_block,
             pca.ncp =1,
-            prescaling = FALSE,
+            prescaling = TRUE,
             quiet=quiet
         )
     )

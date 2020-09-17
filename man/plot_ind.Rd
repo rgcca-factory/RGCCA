@@ -12,7 +12,7 @@ plot_ind(rgcca_res, resp = rep(1, NROW(rgcca_res$Y[[1]])), compx = 1,
   ": Sample space"), legend = TRUE, ...)
 }
 \arguments{
-\item{rgcca_res}{A list giving the results of a R/SGCCA}
+\item{rgcca_res}{A RGCCA object (see  \code{\link[RGCCA]{rgcca}} )}
 
 \item{resp}{A vector of characters corresponding either to a qualitative
 variable with levels or a continuous variable}
@@ -40,7 +40,7 @@ one, different from the one used in i_block)}
 \item{title}{A character with the name of the space (either "Variables" or
 "Samples")}
 
-\item{legend}{TRUE if the legend should be plotted, FALSE ifelse.}
+\item{legend}{A logical value indicatif if the legend should be plotted}
 
 \item{...}{Further graphical parameters (see plot2D functions)}
 }

@@ -1,17 +1,17 @@
-#'Compares 2 RGCCA
-#'
-#' @param rgcca1 A result of a RGCCA function 
-#' @param rgcca2 Another result of RGCCA function
-#' @param selec Number of biomarkers to be selected
-#' @param selectPatient A vector allowing to select only some patients for the RV calculation
-#' @param naxis Number of axes taken into account during the comparison
-#' @param indNA index of missing values (to be used in RMSE)
-#' @return \item{A}{A list containing: a: the correlation between axes, rv: the rv coefficient, bm the biomarkers}
-#' @return \item{crit}{Convergence criterion : abs(1-obj_k/obj_{k-1})}
-#' @return \item{obj}{Vector containing the mean square error between the predict values and the original non missing values at each iteration}
-#' @title comparison of two RGCCA results
-#' @examples 
-#'  #DO NOT RUN
+#Compares 2 RGCCA
+#
+# @param rgcca1 A result of a RGCCA function 
+# @param rgcca2 Another result of RGCCA function
+# @param selec Number of biomarkers to be selected
+# @param selectPatient A vector allowing to select only some patients for the RV calculation
+# @param naxis Number of axes taken into account during the comparison
+# @param indNA index of missing values (to be used in RMSE)
+# @return \item{A}{A list containing: a: the correlation between axes, rv: the rv coefficient, bm the biomarkers}
+# @return \item{crit}{Convergence criterion : abs(1-obj_k/obj_{k-1})}
+# @return \item{obj}{Vector containing the mean square error between the predict values and the original non missing values at each iteration}
+# @title comparison of two RGCCA results
+# @examples 
+#  #DO NOT RUN
 
 comparison=function(rgcca1,rgcca2,naxis=1,selec=10,selectPatient=NULL,indNA=NULL)
 {

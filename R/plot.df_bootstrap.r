@@ -7,6 +7,7 @@
 #' @param x A bootstrap object (see \code{\link[RGCCA]{bootstrap}} )
 #' @inheritParams plot_bootstrap_1D
 #' @inheritParams plot_bootstrap_2D
+#' @inheritParams plot.rgcca
 #' @export
 #' @examples
 #' library(RGCCA)

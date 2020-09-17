@@ -7,7 +7,7 @@
 \method{print}{cval}(x, bars = "sd", alpha = 0.05, ...)
 }
 \arguments{
-\item{x}{result of rgcca_cv function (see \link{rgcca_cv})}
+\item{x}{A rgcca_cv object (see \link{rgcca_cv})}
 
 \item{bars}{among "sd" for standard deviations, "stderr" for standard error (standard deviations divided by sqrt(n), ci for confidence interal, cim for confidence interval of the mean.}
 
