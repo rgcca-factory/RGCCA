@@ -129,6 +129,11 @@ ui <- fluidPage(
             tabPanel(
                 "RGCCA",
                 uiOutput("analysis_type_custom"),
+                checkboxInput(
+                    inputId = "each_ncomp",
+                    label = "Tune the components for each block",
+                    value = FALSE
+                ),
                 uiOutput("nb_compcustom"),
                 uiOutput("scale_custom"),
                 radioButtons(
@@ -152,6 +157,11 @@ ui <- fluidPage(
 
                 uiOutput("connection_custom"),
                 uiOutput("scheme_custom"),
+                checkboxInput(
+                    inputId = "each_tau",
+                    label = "Tune the tau for each block",
+                    value = FALSE
+                ),
                 uiOutput("tau_opt_custom"),
                 uiOutput("tau_custom"),
                 uiOutput("val_custom"),

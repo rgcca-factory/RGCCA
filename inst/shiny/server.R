@@ -55,7 +55,7 @@ server <- function(input, output, session) {
     })
 
     output$nb_compcustom <- renderUI({
-        refresh <- c(input$superblock)
+        refresh <- c(input$superblock, input$each_ncomp)
         isolate (setAnalysis())
         setCompUI()
     })
@@ -163,16 +163,26 @@ server <- function(input, output, session) {
     }
 
     setCompUI <- function(superblock = NULL) {
-        lapply(1:(length(blocks)), function(i) {
+        if (!input$each_ncomp)
             sliderInput(
-                inputId = paste0("ncomp", i),
-                label = paste("Number of components for", names(getNames())[i]),
+                inputId = "ncomp",
+                label = "Number of components",
                 min = 1,
-                max = getMaxComp()[i],
-                value = 2,
+                max = min(getMaxComp()),
+                value = 2, #TODO: test with univariate
                 step = 1
             )
-        })
+        else
+            lapply(1:(length(blocks)), function(i) {
+                sliderInput(
+                    inputId = paste0("ncomp", i),
+                    label = paste("Number of components for", names(getNames())[i]),
+                    min = 1,
+                    max = getMaxComp()[i],
+                    value = 2,
+                    step = 1
+                )
+            })
     }
 
     setNamesInput <- function(x, label = NULL, bool = TRUE) {
@@ -215,11 +225,15 @@ server <- function(input, output, session) {
         if (bool)
             label <- paste0("Component for the ", x, "-axis")
 
+         comp <- getNcomp()
+        if (length(comp) > 1)
+            comp <- comp[id_block]
+
         sliderInput(
             inputId = paste0("comp", x),
             label = label,
             min = 1,
-            max = getNcomp()[id_block],
+            max = comp,
             value = y,
             step = 1
         )
@@ -730,11 +744,14 @@ server <- function(input, output, session) {
     }
 
     getNcomp <- function() {
-        ncomp <- integer(0)
-        cond <- input$superblock && ( toupper(analysis_type) %in% c("PCA", "RGCCA", "SGCCA") ||
-                analysis_type %in% multiple_blocks_super)
-        for (i in 1:(length(blocks_without_superb) + ifelse(cond, 1, 0)))
-            ncomp <- c(ncomp, input[[paste0("ncomp", i)]])
+        if (input$each_ncomp) {
+            ncomp <- integer(0)
+            cond <- input$superblock && ( toupper(analysis_type) %in% c("PCA", "RGCCA", "SGCCA") ||
+                    analysis_type %in% multiple_blocks_super)
+            for (i in 1:(length(blocks_without_superb) + ifelse(cond, 1, 0)))
+                ncomp <- c(ncomp, input[[paste0("ncomp", i)]])
+        } else
+            ncomp <- input$ncomp
 
         return(ncomp)
     }
@@ -1056,7 +1073,10 @@ server <- function(input, output, session) {
     # })
 
     observeEvent(c(input$names_block_x), {
-        condition <- !is.null(analysis) && getNcomp()[id_block] > 1
+        comp <- getNcomp()
+        if (length(comp) > 1)
+            comp <- comp[id_block]
+        condition <- !is.null(analysis) && comp > 1
         if (!condition)
             updateTabsetPanel(session, "navbar", selected = "Samples")
         for (i in c("Corcircle", "Fingerprint"))
@@ -1235,6 +1255,7 @@ server <- function(input, output, session) {
             hide(id = i)
         for (i in c("Connection", "AVE", "Samples", "Corcircle", "Fingerprint", "Bootstrap", "'Bootstrap Summary'", "Permutation", "'Permutation Summary'", "Cross-validation"))
             hide(selector = paste0("#navbar li a[data-value=", i, "]"))
+        updateTabsetPanel(session, "navbar", selected = "Connection")
         hide(id = "run_crossval_sing")
         assign("crossval", NULL, .GlobalEnv)
     }
