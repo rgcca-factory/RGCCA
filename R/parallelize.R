@@ -107,7 +107,7 @@ parallelize <- function(
         res=NULL
        for(i in 1:length(nperm))
        {
-           print(i)
+           #print(i)
            res[[i]]=f(nperm[i])
        }
         if (applyFunc == "parSapply")
