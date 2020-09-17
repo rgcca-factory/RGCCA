@@ -11,6 +11,11 @@
 server <- function(input, output, session) {
     ################################################ Render UI ################################################
 
+    
+    hide(selector = "#tabset li a[data-value=RGCCA]")
+    hide(id = "b_x_custom")
+    hide(id = "b_y_custom")
+    
     output$tau_custom <- renderUI({
         refresh <- c(input$superblock)
         isolate (setAnalysis())
@@ -702,8 +707,8 @@ server <- function(input, output, session) {
         refresh <- c(input$names_block_x, id_block, input$blocks_names_custom_x)
         plot_bootstrap_1D(
             df_b = selected.var,
-            x = input$b_x,
-            y = input$b_y,
+            # x = input$b_x,
+            # y = input$b_y,
             n_mark = nb_mark
         )
     }
@@ -1076,8 +1081,8 @@ server <- function(input, output, session) {
         toggle(
             condition = (input$navbar == "Fingerprint"),
             id = "indexes")
-        for (i in c("b_x_custom", "b_y_custom"))
-            toggle(condition = (input$navbar == "Bootstrap"), id = i)
+        # for (i in c("b_x_custom", "b_y_custom"))
+        #     toggle(condition = (input$navbar == "Bootstrap"), id = i)
         toggle(
             condition = (
                 !is.null(analysis) && !input$navbar %in% c("Connection", "AVE", "Cross-validation", "'Bootstrap Summary'", "Permutation", "'Permutation Summary'")
@@ -1097,7 +1102,6 @@ server <- function(input, output, session) {
 
     observe({
         # Initial events
-        hide(selector = "#tabset li a[data-value=RGCCA]")
         for (i in c("Connection", "AVE", "Samples", "Corcircle", "Fingerprint", "Bootstrap", "'Bootstrap Summary'", "Permutation", "'Permutation Summary'", "Cross-validation"))
             hide(selector = paste0("#navbar li a[data-value=", i, "]"))
         for (i in c("run_boot", "nboot_custom", "header", "init", "navbar", "connection_save", "run_crossval_single", "kfold", "save_all", "format"))
