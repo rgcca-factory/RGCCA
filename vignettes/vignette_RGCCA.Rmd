@@ -630,9 +630,9 @@ A = list(Agric = X_agric, Ind = X_ind, Polit = X_polit)
 sapply(A, head)
 ```
 
-**Preprocessing** In order to ensure comparability between variables standardization is applied (zero mean and unit variance).
+**Preprocessing** In order to ensure comparability between variables standardization is applied (zero mean and unit variance). Such a preprocessing is reached by setting the `scale` argument to `TRUE` (default value) in the `rgcca()` function.
 
-We note that to make blocks comparable, a possible strategy is to standardize the variables and then to divide each block by the square root of its number of variables [@Westerhuis1998]. This two-step procedure leads to $\mathrm{tr}(\ma X_j^t \ma X_j )=n$  for each block (i.e. the sum of the eigenvalues of the covariance matrix of $\ma X_j$ is equal to $1$ whatever the block). Such a preprocessing is reached by setting the `scale` argument to `TRUE` (default value) in the `rgcca()` functions.
+To make blocks comparable, a possible strategy is to standardize the variables and then to divide each block by the square root of its number of variables [@Westerhuis1998]. This two-step procedure leads to $\mathrm{tr}(\ma X_j^\top \ma X_j )=n$  for each block (i.e. the sum of the eigenvalues of the covariance matrix of $\ma X_j$ is equal to $1$ whatever the block). Such a preprocessing is reached by setting the `scale_block` argument to `TRUE` (default value) in the `rgcca()` function.
 
 **Definition of the design matrix $\mathbf{C}$.** From Russett's hypotheses, it is difficult for a country to escape dictatorship when its agricultural inequality is above-average and its industrial development below-average. These hypotheses on the relationships between blocks are depicted in Figure \ref{fig:C}.
 
@@ -661,7 +661,7 @@ C = matrix(c(0, 0, 1,
 C
 ```
 
-RGCCA using the pre-defined design matrix $\ma C$, the factorial scheme ($g(x) = x^2$) and mode B for all blocks (full correlation criterion) is obtained by specifying appropriately the `C`, `scheme` and `tau` arguments of the `rgcca()` function. The `verbose` argument (default value = `TRUE`) indicates that the progress will be reported while computing and that a plot representing the convergence of the algorithm will be returned.
+RGCCA using the pre-defined design matrix $\ma C$, the factorial scheme ($g(x) = x^2$) and mode B for all blocks (full correlation criterion) is obtained by specifying appropriately the `connection`, `scheme` and `tau` arguments of the `rgcca()` function. The `verbose` argument (default value = `TRUE`) indicates that the progress will be reported while computing and that a plot representing the convergence of the algorithm will be returned.
 
 
 ```{r, fig.height = 3, fig.width = 5}
@@ -687,20 +687,20 @@ rgcca_B_factorial$a # weight vectors
 
 and correspond exactly to the weight vectors reported in [@Tenenhaus2011, see Figure 4].
 
-The block weight vectors can also be vizualized using the generic plot function.
+The block weight vectors can also be visualized using the generic `plot()` function.
 
 ```{r}
 plot(rgcca_B_factorial, block = 1)
 ```
 
-The block components are also avalaible as output of `rgcca`. The first components of each block are given by:
+The block components are also available as output of the `rgcca()`. The first components of each block are given by:
 
 ```{r}
 Y = rgcca_B_factorial$Y
 lapply(Y, head)
 ```
 
-and can be cross-vizualized using the generic plot function (see below). 
+and can be cross-visualized using the generic `plot()` function (see below). 
 
 Moreover, using the idea of Average Variance Explained (AVE), the following indicators of model quality are proposed:
 
@@ -732,26 +732,11 @@ rgcca_B_factorial$AVE
 
 and corresponds exactly to the results reported in [@Tenenhaus2011, see last column of Table 7].
 
-The AVEs outer can also be vizualized using the generic plot function.
+The AVEs outer can also be visualized using the generic `plot()` function.
 
 ```{r,fig.align='center', fig.cap = 'Average variance explained of the various blocks',fig.height = 5, fig.width = 8}
 plot(rgcca_B_factorial, type = "ave")
 ```
-
-We mention that, for each block $j$, an "optimal" shrinkage parameter $\tau_j$ can be obtained from the Schafer and Strimmer analytical formula [@Schafer2005] by using the `tau` argument of the rgcca funtion:
-
-```{r}
-rgcca_optimal_factorial = rgcca(blocks=A, connection=C, tau = "optimal", scheme = "factorial", scale = TRUE, verbose = FALSE)
-```
-
-The optimal shrinkage parameters are given by:
-
-```{r}
-rgcca_optimal_factorial$call$tau
-```
-
-This automatic estimation of the shrinkage parameters allows one to come closer to the correlation criterion, even in the case of high multicollinearity or when the number of individuals is smaller than the number of variables.
-
 
 As a component-based method, RGCCA provides the users with graphical representations, including factor plot, correlation circle. This graphical displays allows visualizing the sources of variability within blocks, the relationships between variables within and between blocks and the amount of correlation between blocks. The graphical display of the countries obtained by crossing $\ma X_1 \ma a_1$ = Agricultural Inequality and $\ma X_2 \ma a_2$ = Industrial Development and marked with their political regime in 1960 is shown in below.
 
@@ -767,6 +752,58 @@ plot(rgcca_B_factorial, type = "ind",
 ```
 
 Countries aggregate together when they share similarities. It may be noted that the lower left quadrant concentrates on dictatorships. It is difficult for a country to escape dictatorship when its industrial development is below-average and its agricultural inequality is above average. It is worth pointing out that some unstable democracies located in this quadrant (or close to it) became dictatorships for a period of time after 1960: Greece (1967-1974), Brazil (1964-1985), Chili (1973-1990), and Argentina (1966-1973).
+
+**Assessment of the reliability of parameter estimates.** It is possible to use a bootstrap resampling method to assess the reliability of parameter estimates obtained using RGCCA. B bootstrap samples of the same size as the original data is repeatedly sampled with replacement from the original data. RGCCA is then applied to each bootstrap sample to obtain the RGCCA estimates. We calculate the mean and variance of the estimates across the bootstrap samples, from which we derived, bootstrap confidence intervals, t-ratio and p-value (under the assumption that the parameter estimates exhibited asymptotic normality) to indicate how reliably parameters were estimated. Since several p-values are constructed simultaneously, FDR correction can be applied for controlling the False Discovery Rate. This function is available using the `bootstrap()` function of the RGCCA package.
+
+```{r}
+boot.rgcca = bootstrap(rgcca_B_factorial, n_boot = 200)
+```
+
+The bootstrap results are displayed using the `plot()`function.
+
+```{r}
+plot(boot.rgcca, block = 2)
+```
+
+and detailed using the `print()` function.
+
+```{r}
+print(boot.rgcca)
+```
+
+**Choice of the shrinkage parameter.** We mention that, for each block $j$, an "optimal" shrinkage parameter $\tau_j$ can be obtained from the Schafer and Strimmer analytical formula [@Schafer2005] by using the `tau = "optimal"` argument of the `rgcca()` function:
+
+```{r}
+rgcca_optimal_factorial = rgcca(blocks=A, connection=C, tau = "optimal", scheme = "factorial", scale = TRUE, verbose = FALSE)
+```
+
+The optimal shrinkage parameters are given by:
+
+```{r}
+rgcca_optimal_factorial$call$tau
+```
+
+This automatic estimation of the shrinkage parameters allows one to come closer to the correlation criterion, even in the case of high multicollinearity or when the number of individuals is smaller than the number of variables.
+
+A permutation based strategy very similar to the one proposed in [@Witten2009] has been also integrated within the RGCCA package through the `rgcca_permutation()` function. This function is used to automatically select the shrinkage parameters for R/SGCCA. 
+
+For each set of shrinkage parameters (generally this will be a $J$-dimensional vector), repeat the following n_perm times, for (n_perm large) : 
+
+(a) The samples in $\mathbf X_1, \ldots, \mathbf X_J$ are randomly permuted to obtained data sets $\mathbf X_1^*, \ldots, \mathbf X_J^*$.
+
+(b) R/SGCCA is run on the permuted data set $\mathbf X_1^*, \ldots, \mathbf X_J^*$ to get block weight vectors $\mathbf w_1^*, \ldots, \mathbf w_J^*$.
+
+(c) Record $t^* = \displaystyle \sum_{j,k} c_{jk} g(\text{cov}(\mathbf X_j^*\mathbf w_j^*, \mathbf X_k^*\mathbf w_k^*))$.
+
+(2) R/SGCCA is run on the original data $\mathbf X_1, \ldots, \mathbf X_J$ to obtain the block weight vector $\mathbf w_1, \ldots, \mathbf w_J$.
+
+(3) Record $t = \displaystyle \sum_{j,k} c_{jk} g(\text{cov}(\mathbf X_j\mathbf w_j, \mathbf X_k\mathbf w_k))$.
+
+(4) The resulting p-value is given by the fraction of permuted totals that exceed the total on the real data. 
+
+Then choose the tuning parameters value that give the smallest value in step (4).
+
+
 
 Moreover, in the framework of consensus PCA and Hierarchical PCA, a superblock defined as the concatenation of all the blocks is also used and global components can be derived. The space spanned by the global components is viewed as a consensus space that integrated all the modalities and facilitates the visualization of the results and their interpretation.
 
@@ -805,7 +842,6 @@ It is often useful to vizualize jointly the sample space and the correlatin circ
 plot(fit.hpca, type="both", resp = lab)
 ```
 
-**Assessment of the reliability of parameter estimates.** It is possible to use a bootstrap resampling method to assess the reliability of parameter estimates obtained using RGCCA. B bootstrap samples of the same size as the original data is repeatedly sampled with replacement from the original data. RGCCA is then applied to each bootstrap sample to obtain the R/SGCCA estimates. For RGCCA, we calculate the mean and variance of the estimates across the bootstrap samples, from which we derived, bootstrap confidence intervals, t-ratio and p-value (under the assumption that the parameter estimates exhibited asymptotic normality) to indicate how reliably parameters were estimated. Since several p-values are constructed simultaneously, Bonferroni or FDR corrections can be applied for controlling the Family-Wise Error Rate or the False Discovery Rate, respectively. This function is not yet available in the current version of the RGCCA package and is available upon request.
 
 
 ## RGCCA (dual formulation) for the Glioma dataset 

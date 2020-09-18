@@ -1,7 +1,7 @@
 # Author: Etienne CAMENEN
 # Date: 2019
-# Contact: arthur.tenenhaus@l2s.centralesupelec.fr
-# Key-words: omics, RGCCA, multi-block
+# Contact: arthur.tenenhaus@centralesupelec.fr
+# Keywords: RGCCA, multi-block
 # EDAM operation: analysis, correlation, visualisation
 #
 # Abstract: Performs multi-variate analysis (PCA, CCA, PLS, R/SGCCA, etc.)
