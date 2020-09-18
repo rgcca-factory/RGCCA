@@ -74,7 +74,8 @@ load_libraries(c(
     "shiny",
     "shinyjs",
     "MASS",
-    "rlang"
+    "rlang",
+    "DT"
 ))
 
 if (BSPLUS) {
@@ -127,6 +128,38 @@ ui <- fluidPage(
 
             tabPanel(
                 "RGCCA",
+                uiOutput("analysis_type_custom"),
+                checkboxInput(
+                    inputId = "each_ncomp",
+                    label = "Tune the components for each block",
+                    value = FALSE
+                ),
+                uiOutput("nb_compcustom"),
+                uiOutput("scale_custom"),
+                radioButtons(
+                    "init",
+                    label = "Mode of initialization",
+                    choices = c(SVD = "svd",
+                                Random = "random"),
+                    selected = "svd"
+                ),
+
+                uiOutput("superblock_custom"),
+                checkboxInput(
+                    inputId = "supervised",
+                    label = "Supervised analysis",
+                    value = FALSE
+                ),
+
+                conditionalPanel(
+                    condition = "input.supervised || input.analysis_type == 'RA'",
+                    uiOutput("blocks_names_response")),
+
+                uiOutput("connection_custom"),
+                uiOutput("scheme_custom"),
+                uiOutput("tau_opt_custom"),
+                uiOutput("each_tau_custom"),
+                uiOutput("tau_custom"),
                 uiOutput("val_custom"),
                 sliderInput(
                     inputId = "ncv",
@@ -150,32 +183,6 @@ ui <- fluidPage(
                 uiOutput("nperm_custom"),
                 actionButton(inputId = "run_perm",
                     label = "Run permutation"),
-                uiOutput("analysis_type_custom"),
-                uiOutput("nb_compcustom"),
-                uiOutput("scale_custom"),
-                radioButtons(
-                    "init",
-                    label = "Mode of initialization",
-                    choices = c(SVD = "svd",
-                                Random = "random"),
-                    selected = "svd"
-                ),
-
-                uiOutput("superblock_custom"),
-                checkboxInput(
-                    inputId = "supervised",
-                    label = "Supervised analysis",
-                    value = FALSE
-                ),
-
-                conditionalPanel(
-                    condition = "input.supervised || input.analysis_type == 'RA'",
-                    uiOutput("blocks_names_response")),
-
-                uiOutput("connection_custom"),
-                uiOutput("tau_opt_custom"),
-                uiOutput("tau_custom"),
-                uiOutput("scheme_custom"),
                 # sliderInput(
                 #     inputId = "power",
                 #     label = "Power of the factorial",
@@ -258,7 +265,7 @@ ui <- fluidPage(
             ),
             tabPanel(
                 "Samples",
-                plotlyOutput("samplesPlot", height = 700),
+                plotlyOutput("samplesPlot", height = 500),
                 actionButton("samples_save", "Save")
             ),
             tabPanel(
@@ -278,13 +285,13 @@ ui <- fluidPage(
             ),
             tabPanel(
                 "Bootstrap Summary",
-                dataTableOutput("bootstrapTable"),
+                DT::dataTableOutput("bootstrapTable"),
                 actionButton("bootstrap_t_save", "Save")
             ),
             tabPanel(
                 "Permutation",
                 plotlyOutput("permutationPlot", height = 700),
-                actionButton("permutation_save", "Save")
+                # actionButton("permutation_save", "Save")
             ),
             tabPanel(
                 "Permutation Summary",
@@ -294,7 +301,7 @@ ui <- fluidPage(
             tabPanel(
                 "Cross-validation",
                 plotlyOutput("cvPlot", height = 700),
-                actionButton("cv_save", "Save")
+                #actionButton("cv_save", "Save")
             )
         )
 

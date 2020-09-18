@@ -18,6 +18,7 @@ Suggests:
     pander,
     shiny,
     shinyjs,
+    DT,
     ggrepel,
     optparse,
     igraph,
