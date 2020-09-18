@@ -7,9 +7,21 @@
 #' @inheritParams plot_var_2D
 #' @inheritParams plot_var_1D
 #' @param bars A character among "sd" for standard deviations, "stderr" for the standard error, "ci" for confidence interval of scores and "cim" for the confidence intervall of the mean.
-#' @param b A list of list weights (one per bootstrap per blocks)
-#' @param display_order If TRUE the order is indicated
-#' @return A matrix containing the means, 95% intervals, bootstrap ratio and p-values
+#' @param b A bootstrap object (see  \code{\link[RGCCA]{bootstrap}} )
+#' @param display_order A logical value to display the order of the variables
+#' @return A matrix containing the means, 95\% intervals, bootstrap ratio, p-values and other statistics (see details)
+#' @details 
+#' \itemize{
+#' \item 'mean' for the mean of the bootstrap weights
+#' \item 'estimate' for RGCCA weights
+#' \item 'sd' for the standard error of the bootstrap weights
+#' \item 'lower/upper_band' for the lower and upper intervals from to the 'bar' parameter
+#' \item 'bootstrap_ratio' for the mean of the bootstrap weights / their standard error
+#' \item 'p.vals' for p-values. The occurrences of  are distributed in accordance with the law
+#' \item 'BH' for Benjamini-Hochberg p-value adjustments
+#' \item 'occurrences' for non-zero occurences (for SGCCA) 
+#' \item 'sign' for significant 95% bootstrap interval (for RGCCA)
+#' }
 #' @examples
 #' library(RGCCA)
 #' data("Russett")
@@ -20,6 +32,7 @@
 #' get_bootstrap(boot, n_cores = 1)
 #' @export
 #' @importFrom stats pt pbinom
+#' @seealso \code{\link[RGCCA]{bootstrap}}, \code{\link[RGCCA]{plot.bootstrap}} , \code{\link[RGCCA]{print.bootstrap}} 
 get_bootstrap <- function(
     b,
     comp = 1,

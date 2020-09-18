@@ -1,9 +1,12 @@
 #' Plot a bootstrap in 1D
 #'
-#' Histogram of the best variables of an RGCCA bootstrap with, on the x-axis,
-#' the number of non-zero occurrences (SGCCA) or the bootstrap-ratio
-#' (mean/sd; RCCA). The bars are colored according to the average weight of
-#' the boostrap  (according to an ascending gradient from red to blue)
+#' Histogram of the best variables from a bootstrap with, on the x-axis,
+#' the number of non-zero occurrences (SGCCA) or the mean of the bootstrap weights 
+#' (RCCA). The bars are colored according to the significant 95% bootstrap 
+#' intervals ('*' or 'ns'; see 'p.vals' in details for 
+#' \code{\link[RGCCA]{get_bootstrap}}) for RGCCA and according to the occurences
+#'  of the weights which are not equal to zero (according to an ascending 
+#'  gradient from red to blue) for SGCCA.
 #' @inheritParams plot_histogram
 #' @inheritParams get_bootstrap
 #' @inheritParams plot_var_2D
@@ -17,7 +20,6 @@
 #' \item 'estimate' for RGCCA weights
 #' \item 'bootstrap_ratio' for the mean of the bootstrap weights / their standard error
 #' \item 'sign' for significant 95% bootstrap interval
-#' \item 'estimate' for RGCCA weights
 #' \item 'occurrences' for non-zero occurences
 #' \item 'mean' for the mean of the bootstrap weights
 #' }

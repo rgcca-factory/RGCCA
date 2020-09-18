@@ -1,6 +1,6 @@
 #' plot.cval
 #'
-#' @inheritParams plot2D
+#'@inheritParams plot2D
 #'@param x A rgcca_cv object (see \link{rgcca_cv})
 #'@param bars A character among "sd" for standard deviations, "stderr" for standard error (standard deviations divided by sqrt(n), "ci" for confidence interal, "cim" for confidence interval of the mean.
 #'@param alpha A numeric value giving the risk for the confidence interval bars (ci or cim).
@@ -21,7 +21,10 @@ plot.cval=function(x,bars="sd",alpha=0.05,cex = 1, cex_main = 14 * cex, cex_sub 
     mat_cval=x$cv
     match.arg(bars,c("quantile","sd","stderr","ci","points"))
     mean_b=apply(mat_cval,1,mean)
-    main=paste0("Mean CV criterion (RMSE) \naccording to the combination set\n (",x$call$validation,ifelse(x$call$validation=="kfold", paste0(": with ",x$call$k," folds", ifelse(x$call$n_cv>1,paste0("and ",x$call$n_cv," runs"),""),")"),")"))
+    main=paste0("RMSE according to the combinations \n (",x$call$validation,ifelse(x$call$validation=="kfold", paste0(": with ",x$call$k," folds", ifelse(x$call$n_cv>1,paste0("and ",x$call$n_cv," run",ifelse(x$call$n_cv==1,"","s")),""),")"),"),\n "))
+    main=paste0(main,"\nbest value, in green : ",
+            paste(round(x$bestpenalties,digits=2), collapse = ", "),")")
+    
     if(bars!="none"&&dim(mat_cval)[2]<3){bars=="none"; warning("Standard deviations can not be calculated with less than 3 columns in mat_cval")}
     if(bars!="none")
     {
@@ -61,7 +64,7 @@ plot.cval=function(x,bars="sd",alpha=0.05,cex = 1, cex_main = 14 * cex, cex_sub 
     }
     
     df=data.frame(configurations=1:nrow(mat_cval),mean=mean_b,inf=inf_b,sup=sup_b)
-    p<- ggplot(data=df,aes(x=configurations,y=mean))+geom_point()+theme_classic() 
+    p<- ggplot(data=df,aes(x=configurations,y=mean))+geom_point()+theme_classic() +xlab("Combinations")+ylab("Mean RMSE")
     if(bars!="none"&& bars!="points")
     {
         p<-p+geom_segment(data=df,aes(x=configurations,y=inf_b,xend=configurations,yend=sup_b),colour="grey")
