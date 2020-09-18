@@ -8,7 +8,10 @@
 #' \item 'mean' for the mean of the bootstrap weights
 #' \item 'sd' for the standard error of the bootstrap weights
 #' \item 'lower/upper_band' for the lower and upper intervals from to the 'bar' parameter
-#' \item 'p.vals' for p-values. The occurrences of  are distributed in accordance with the law
+#' \item 'p.vals' for p-values. In the case of SGCCA, the occurrences of the 
+#' bootstrap weights are distributed according to the binomial distribution 
+#' while for RGCCA, their absolute value weighted by their standard deviation 
+#' follows a normal distribution.
 #' \item 'BH' for Benjamini-Hochberg p-value adjustments
 #' }
 #'@export

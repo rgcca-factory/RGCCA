@@ -5,7 +5,7 @@
 #' @inheritParams rgcca
 #' @inheritParams bootstrap
 #' @inheritParams plot_ind
-#' @param k If validation = 'kfold', an integer giving the number of folds.
+#' @param k An integer giving the number of folds (if validation = 'kfold').
 #' @param validation A character for the type of validation among "loo", "kfold", "test".
 #' @examples
 #' library(RGCCA)

@@ -1,6 +1,6 @@
 #' Plot a bootstrap in 2D
 #'
-#' Biplot of the best variables from a bootstrap with, in x-axis, the number of
+#' Graph of the best variables from a bootstrap with, in x-axis, the number of
 #' non-zero occurences (SGCCA) or the significant 95% bootstrap 
 #' intervals (RGCCA; '*' or 'ns'; see 'p.vals' in details for 
 #' \code{\link[RGCCA]{get_bootstrap}}). In in y-axis are the bootstrap-ratios (mean/sd) .
