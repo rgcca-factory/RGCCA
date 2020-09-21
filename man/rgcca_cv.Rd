@@ -5,15 +5,15 @@
 \title{Tuning RGCCA parameters in 'supervised' mode}
 \usage{
 rgcca_cv(blocks, type = "rgcca", response = NULL, par_type = "tau",
-  par_value = NULL, validation = "kfold", type_cv = "regression",
-  fit = "lm", k = 5, n_run = 1, one_value_per_cv = FALSE,
-  n_cores = parallel::detectCores() - 1, quiet = TRUE,
-  superblock = FALSE, scale = TRUE, scale_block = TRUE,
-  tol = 1e-08, scheme = "factorial", method = "nipals",
-  rgcca_res = NULL, parallelization = NULL, tau = rep(1,
-  length(blocks)), ncomp = rep(1, length(blocks)), sparsity = rep(1,
-  length(blocks)), init = "svd", bias = TRUE, new_scaled = FALSE,
-  ...)
+  par_value = NULL, par_length = 10, validation = "kfold",
+  type_cv = "regression", fit = "lm", k = 5, n_run = 1,
+  one_value_per_cv = FALSE, n_cores = parallel::detectCores() - 1,
+  quiet = TRUE, superblock = FALSE, scale = TRUE,
+  scale_block = TRUE, tol = 1e-08, scheme = "factorial",
+  method = "nipals", rgcca_res = NULL, parallelization = NULL,
+  tau = rep(1, length(blocks)), ncomp = rep(1, length(blocks)),
+  sparsity = rep(1, length(blocks)), init = "svd", bias = TRUE,
+  new_scaled = FALSE, ...)
 }
 \arguments{
 \item{blocks}{A list of matrices giving the \eqn{J} blocks of variables \eqn{\mathbf{X_1}, \mathbf{X_2}, ..., \mathbf{X_J}}.}
@@ -34,6 +34,8 @@ of combinations to be tested), a vector (of p length) or a numeric value
 giving sets of penalties (tau for RGCCA, sparsity for SGCCA) to be tested, 
 one row by combination. By default, it takes 10 sets between min values (0
  for RGCCA and $1/sqrt(ncol)$ for SGCCA) and 1.}
+
+\item{par_length}{An integer indicating the number of sets of parameters to be tested (if perm.value = NULL). The parameters are uniformly distributed.}
 
 \item{validation}{A character for the type of validation among "loo", "kfold", "test".}
 

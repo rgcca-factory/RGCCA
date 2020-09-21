@@ -17,6 +17,7 @@
 #' giving sets of penalties (tau for RGCCA, sparsity for SGCCA) to be tested, 
 #' one row by combination. By default, it takes 10 sets between min values (0
 #'  for RGCCA and $1/sqrt(ncol)$ for SGCCA) and 1.
+#' @param par_length An integer indicating the number of sets of parameters to be tested (if perm.value = NULL). The parameters are uniformly distributed.
 #' @param type_cv  A character corresponding to the model of prediction : 'regression' or 'classification'.
 #' @param n_run An integer giving the number of cross-validations to be run (if validation = 'kfold').
 #' @param one_value_per_cv A logical value indicating if the k values are averaged for each k-fold steps.
@@ -43,6 +44,7 @@ rgcca_cv=function( blocks,
           response=NULL,
           par_type = "tau",
           par_value = NULL,
+          par_length=10,
           validation = "kfold",
           type_cv = "regression",
           fit = "lm",
@@ -111,7 +113,7 @@ rgcca_cv=function( blocks,
             f <- quote(max)
         else
             f <- quote(max[x])
-        sapply(seq(min_spars), function(x) seq(eval(f), min_spars[x], len = 10))
+        sapply(seq(min_spars), function(x) seq(eval(f), min_spars[x], len = par_length))
     }
     set_penalty <- function () {
         if(par_type == "sparsity"){

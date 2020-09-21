@@ -63,7 +63,7 @@ rgcca_permutation <- function(
     sparsity = rep(1, length(blocks)),
     init = "svd",
     bias = TRUE,
-    tol = 1e-8,
+    tol = 1e-08,
     response = NULL,
     superblock = FALSE,
     method = "nipals",
@@ -118,22 +118,27 @@ rgcca_permutation <- function(
             f <- quote(max[x])
         sapply(seq(min_spars), function(x) seq(eval(f), min_spars[x], len = par_length))
     }
-    set_penalty <- function () {
-        if (par_type == "sparsity") {
+    set_penalty <- function () 
+    {
+        # Selecting the minimal value
+        if (par_type == "sparsity") 
+        {
             if (!tolower(type) %in% c("spls", "spca", "sgcca"))
                 warning("The sparsity is chosen but the analyse was not sparse. By default, a SGCCA will be performed.")
             type <<- "sgcca"
             min_spars <<- sapply(ncols, function(x) 1 / sqrt(x))
-        }else{
+        }else
+        {
             if (tolower(type) %in% c("spls", "spca", "sgcca"))
                 warning("The tau is chosen but the analyse is sparse. By default, a RGCCA will be performed.")
             type <<- "rgcca"
             min_spars <<- sapply(ncols, function(x) 0)
         }
-
+        
+        
         if (is.null(par_value))
             par_value <- set_spars()
-        else if (class(par_value) %in% c("data.frame", "matrix"))
+        else if (class(par_value) %in% c("data.frame", "matrix")) #when a matrix is entered
         {
             if(par_type=="tau")
             {
@@ -141,10 +146,15 @@ rgcca_permutation <- function(
             }
                      
         }
-                else{
+        else #when a vector is entered
+        {
             if (any(par_value < min_spars))
                 stop_rgcca(paste0("par_value should be upper than : ", paste0(round(min_spars, 2), collapse = ",")))
-             if(par_type=="tau"){par_value <- check_tau(par_value, blocks, type = type,superblock=superblock)}
+             if(par_type=="tau")
+             {
+              par_value <- check_tau(par_value, blocks, type = type,superblock=superblock)
+              par_value <- set_spars(max = par_value)
+             }
            if(par_type=="sparsity"){par_value <- set_spars(max = par_value)}
         }
 
