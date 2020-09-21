@@ -1,27 +1,42 @@
-#' rgcca_cv
+#' Tuning RGCCA parameters in 'supervised' mode
 #'
-#' This function is dedicated to supervised approaches (with response parameter in rgcca not NULL). By default, it is the last block in blocks.
-#' It allows to test a grid of parameters (sparsity, ncomp or tau) with cross-validation approaches. 
-#' This cross-validation is based on RMSE for quantitative response. 
+#' This function is dedicated to supervised approaches (with a 'response' parameter in rgcca).
+#' To tune the sparsity coefficient (if the model is sparse) or tau 
+#' (otherwise), in supervised mode, we observe the performance (RMSE) of a 
+#' model from which individuals were randomly drawn. These individuals can be 
+#' divided into k folds where the model will be tested on each fold and trained
+#'  on the others. For small datasets (<30 samples), it is recommended to use 
+#'  as many folds as there are individuals (leave-one-out; loo). The best 
+#'  combination of parameters is the one where, on average, the samples perform best.
 #' @inheritParams rgcca_crossvalidation
 #' @inheritParams rgcca
-#' @param parallelization if TRUE parallelization is run, if FALSE, no parallelisation is run. If NULL (default) parallelization is always used except for Windows in case of length(nperm)<10
-#' @param par_type "sparsity", "tau" or "ncomp", the parameter to be crossvalided
-#' @param par_value Grid of values to be tested. Should be a matrix of size n*p with p the number of blocks and n the number of combinations to be tested.
-#' @param type_cv  type of crossvalidation. Default to "regression", but can also be "classification"
-#' @param n_run number of cross-validations (with kfold option). Default to 1 
-#' @param one_value_per_cv If TRUE, the k values obtained for each k-fold steps are averaged 
-#' @param rgcca_res a result of rgcca (from whom all parameters will be imported)
+#' @inheritParams bootstrap
+#' @param par_type A character giving the parameter to tune among "sparsity" or "tau".
+#' @param par_value A matrix (n*p, with p the number of blocks and n the number 
+#' of combinations to be tested), a vector (of p length) or a numeric value 
+#' giving sets of penalties (tau for RGCCA, sparsity for SGCCA) to be tested, 
+#' one row by combination. By default, it takes 10 sets between min values (0
+#'  for RGCCA and $1/sqrt(ncol)$ for SGCCA) and 1.
+#' @param type_cv  A character corresponding to the model of prediction : 'regression' or 'classification'.
+#' @param n_run An integer giving the number of cross-validations to be run (if validation = 'kfold').
+#' @param one_value_per_cv A logical value indicating if the k values are averaged for each k-fold steps.
 #' @export
+#' @return \item{cv}{A matrix giving the root-mean-square error (RMSE) between the predicted R/SGCCA and the observed R/SGCCA for each combination and each prediction (n_prediction = n_samples for validation = 'loo'; n_prediction = 'k' * 'n_cv' for validation = 'kfold').}
+#' @return \item{bestpenalties}{Penalties giving the best RMSE for each blocks}
+#' @return \item{penalties}{A matrix giving, for each blocks, the penalty combinations (tau or sparsity)}
 #' @examples
 #' data("Russett")
 #' blocks <- list(
 #'     agriculture = Russett[, seq(3)],
 #'     industry = Russett[, 4:5],
 #'     politic = Russett[, 6:11])
-#'     res=rgcca_cv(blocks,response=3, type="rgcca",par_type="tau",
-#'     par_value=c(0,0.2,0.3),n_run=1,n_cores=1)
-#'     
+#' res = rgcca_cv(blocks, response = 3, type="rgcca", 
+#' par_type = "sparsity", par_value = c(0.6, 0.75, 0.5), n_cv = 2, n_cores = 1)
+#' plot(res)
+#' rgcca_cv(blocks, response = 3, par_type = "tau", par_value = c(0.6, 0.75, 0.5)
+#' , n_run = 2, n_cores = 1)$bestpenalties
+#' rgcca_cv(blocks, response = 3, par_type = "sparsity", par_value = 0.8, n_run = 2, n_cores = 1)
+#' rgcca_cv(blocks, response = 3, par_type = "tau", par_value = 0.8, n_run = 2, n_cores = 1)
 #'@importFrom utils txtProgressBar setTxtProgressBar
 rgcca_cv=function( blocks,
           type = "rgcca",
@@ -39,7 +54,7 @@ rgcca_cv=function( blocks,
           superblock=FALSE,
           scale=TRUE,
           scale_block=TRUE,
-          tol=1e-6,
+          tol=1e-8,
           scheme="factorial",
           method="nipals",
           rgcca_res=NULL,
@@ -83,7 +98,7 @@ rgcca_cv=function( blocks,
     }
 
     check_integer("n_cores", n_cores, 0)
-    match.arg(par_type, c("tau", "sparsity", "ncomp"))
+    match.arg(par_type, c("tau", "sparsity","ncomp"))
     min_spars <- NULL
 
     if (length(blocks) < 1)

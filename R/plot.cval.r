@@ -22,7 +22,7 @@ plot.cval=function(x,bars="sd",alpha=0.05,cex = 1, cex_main = 14 * cex, cex_sub 
     mat_cval=x$cv
     match.arg(bars,c("quantile","sd","stderr","ci","points"))
     mean_b=apply(mat_cval,1,mean)
-    main=paste0("RMSE according to the combinations \n (",x$call$validation,ifelse(x$call$validation=="kfold", paste0(": with ",x$call$k," folds", ifelse(x$call$n_cv>1,paste0("and ",x$call$n_cv," run",ifelse(x$call$n_cv==1,"","s")),""),")"),"),\n "))
+    main=paste0("RMSE according to the combinations \n (",x$call$validation,ifelse(x$call$validation=="kfold", paste0(": with ",x$call$k," folds", ifelse(x$call$n_run>1,paste0("and ",x$call$n_run," run",ifelse(x$call$n_run==1,"","s")),""),")"),"),\n "))
     main=paste0(main,"\nbest value, in green : ",
             paste(round(x$bestpenalties,digits=2), collapse = ", "),")")
     

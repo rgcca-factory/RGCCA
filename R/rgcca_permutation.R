@@ -1,42 +1,47 @@
 #' Tuning RGCCA parameters
 #' 
-#' Run through a set of parameters (sparsity or number of selected components) with permutation to select the one maximizing RGCCA criterion 
-#' The sparsity parameter is tuned with only one component per block.
+#' To tune the sparsity coefficient (if the model is sparse) or tau 
+#' (otherwise), we observe the deviation between the model and a set of models 
+#'  where the lines of each block are permuted. The model with the best 
+#' combination of parameters is the one with the highest deviation with the 
+#' RGCCA criteria.
 #' @inheritParams set_connection
 #' @inheritParams bootstrap
 #' @inheritParams rgcca
 #' @inheritParams plot2D
 #' @param par_type A character giving the parameter to tune among "sparsity" or "tau".
-#' @param par_length If par_value = NULL, an integer indicating the number of sets of parameters to be tested. The parameters are uniformly distributed.
-#' @param par_value  If par_type="sparsity", a matrix, a vector or an integer containing sets of constraint 
-#' variables to be tested, one row by combination. By default, sgcca.permute takes 10 sets between 
-#' min values ($1/sqrt(ncol)$) and 1. If par_type="ncomp", a matrix, a vector or an integer containing sets of number of 
-#' components, one row by set. By default, sgcca.permute takes as many 
-#' combinations as the maximum number of columns in each block. If par_type="tau",... #TODO
+#' @param par_length An integer indicating the number of sets of parameters to be tested (if perm.value = NULL). The parameters are uniformly distributed.
+#' @param par_value A matrix (n*p, with p the number of blocks and n the number 
+#' of combinations to be tested), a vector (of p length) or a numeric value 
+#' giving sets of penalties (tau for RGCCA, sparsity for SGCCA) to be tested, 
+#' one row by combination. By default, it takes 10 sets between min values (0
+#'  for RGCCA and $1/sqrt(ncol)$ for SGCCA) and 1.
 #' @param n_run An integer giving the number of permutation tested for each set of constraint
-#' @return A permutation object, which is a list containing :
-#' @return \item{pval}{The p-value}
-#' @return \item{zstat}{The Z statistic}
-#' @return \item{bestpenalties}{Penalties corresponding to the best Z-statistic}
-#' @return \item{permcrit}{RGCCA criteria obtained with the permutation set}
-#' @return \item{crit}{A vector of integer giving the values of the RGCCA criteria across iterations.}
+#' @return \item{zstat}{The Z statistic is the difference, for each combination, between the non-permuted R/SGCCA criterion and the mean of the permuted R/SGCCA criteria divided by the standard deviation of the permuted R/SGCCA criteria.}
+#' @return \item{bestpenalties}{Penalties giving the best Z-statistic for each blocks}
+#' @return \item{permcrit}{A matrix of R/SGCCA criteria for each combination and each permutation}
+#' @return \item{means}{Mean of the permutated R/SGCCA criteria for each combination}
+#' @return \item{sds}{Standard deviation of the permutated R/SGCCA criteria for each combination}
+#' @return \item{crit}{R/SGCCA criterion for each combination}
+#' @return \item{pval}{The p-value is the fraction of the permuted R/SGCCA criteria, for each combination, that is greater than or equal to the non-permuted R/SGCCA criterion}
+#' @return \item{penalties}{A matrix giving, for each blocks, the penalty combinations (tau or sparsity)}
 #' @examples
 #' data("Russett")
-#' A = list(agriculture = Russett[, seq(3)], industry = Russett[, 4:5],
+#' blocks = list(agriculture = Russett[, seq(3)], industry = Russett[, 4:5],
 #'     politic = Russett[, 6:11] )
-#' res = rgcca_permutation(A, n_run = 5, n_cores = 1)
-#' rgcca_permutation(A, par_type = "sparsity", par_value = 0.8, n_run = 2,
+#' res = rgcca_permutation(blocks, n_run = 5, n_cores = 1)
+#' rgcca_permutation(blocks, par_type = "sparsity", par_value = 0.8, n_run = 2,
 #'  n_cores = 1)
-#' rgcca_permutation(A, par_type = "sparsity", par_value = c(0.6, 0.75, 0.5), 
+#' rgcca_permutation(blocks, par_type = "sparsity", par_value = c(0.6, 0.75, 0.5), 
 #' n_run = 2, n_cores = 1)
-#' rgcca_permutation(A, par_type = "sparsity", 
+#' rgcca_permutation(blocks, par_type = "sparsity", 
 #' par_value = matrix(c(0.6, 0.75, 0.5), 3, 3, byrow = TRUE),
 #'  n_run = 2, n_cores = 1)
-#' rgcca_permutation(A, par_type = "tau", par_value = 0.8, n_run = 2, 
+#' rgcca_permutation(blocks, par_type = "tau", par_value = 0.8, n_run= 2, 
 #' n_cores = 1)
-#' rgcca_permutation(A, par_type = "tau", par_value = c(0.6, 0.75, 0.5),
+#' rgcca_permutation(blocks, par_type = "tau", par_value = c(0.6, 0.75, 0.5),
 #'  n_run = 2, n_cores = 1)
-#' rgcca_permutation(A, par_type = "tau", par_value = 
+#' rgcca_permutation(blocks, par_type = "tau", par_value = 
 #' matrix(c(0.6, 0.75, 0.5), 3, 3, byrow = TRUE),  n_run = 2, n_cores = 1)
 #' print(res)
 #' @export
@@ -58,7 +63,7 @@ rgcca_permutation <- function(
     sparsity = rep(1, length(blocks)),
     init = "svd",
     bias = TRUE,
-    tol = 1e-08,
+    tol = 1e-8,
     response = NULL,
     superblock = FALSE,
     method = "nipals",

@@ -45,7 +45,7 @@ print.cval=function(x,bars="sd",alpha=0.05,...)
     optimal_y=df[optimal_ind,"Mean RMSE"]
     cat(paste0(nrow(x$cv)," configurations were tested. \n"))
     
-   cat(paste0("Validation: ",x$call$validation,ifelse(x$call$validation=="kfold", paste0(" with ",x$call$k," folds and ",x$call$n_cv," run(s))"),")")),"\n")
+   cat(paste0("Validation: ",x$call$validation,ifelse(x$call$validation=="kfold", paste0(" with ",x$call$k," folds and ",x$call$n_run," run(s))"),")")),"\n")
     
     print(df)
     
