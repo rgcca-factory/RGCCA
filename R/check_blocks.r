@@ -137,12 +137,10 @@ check_blocks <- function(blocks, init = FALSE, n = 2, add_NAlines=FALSE, allow_u
     {
       
         union_rows <- Reduce(union, lapply(blocks,row.names))
-    
         blocks2=lapply(nameBlocks,function(name)
         {
             if(sum(!union_rows%in%rownames(blocks[[name]]))!=0) # if some subjects are missing (in the rownames)
             {
-           
                 message("Some subjects are not present in some blocks. NA lines were added to have blocks with same dimensions")
                 y=matrix(NA,length(union_rows),ncol=ifelse(is.null(dim(blocks[[name]])),1,dim(blocks[[name]])[2]));
                 if(is.null(dim(blocks[[name]]))){colnames(y)=name}else{colnames(y)=colnames(blocks[[name]])};rownames(y)=union_rows

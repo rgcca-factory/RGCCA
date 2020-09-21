@@ -756,7 +756,7 @@ Countries aggregate together when they share similarities. It may be noted that 
 **Assessment of the reliability of parameter estimates.** It is possible to use a bootstrap resampling method to assess the reliability of parameter estimates obtained using RGCCA. B bootstrap samples of the same size as the original data is repeatedly sampled with replacement from the original data. RGCCA is then applied to each bootstrap sample to obtain the RGCCA estimates. We calculate the mean and variance of the estimates across the bootstrap samples, from which we derived, bootstrap confidence intervals, t-ratio and p-value (under the assumption that the parameter estimates exhibited asymptotic normality) to indicate how reliably parameters were estimated. Since several p-values are constructed simultaneously, FDR correction can be applied for controlling the False Discovery Rate. This function is available using the `bootstrap()` function of the RGCCA package.
 
 ```{r}
-boot.rgcca = bootstrap(rgcca_B_factorial, n_boot = 200)
+boot.rgcca = bootstrap(rgcca_B_factorial, n_boot = 200,n_cores=1)
 ```
 
 The bootstrap results are displayed using the `plot()`function.
@@ -1132,7 +1132,7 @@ round(loo$bestpenalties, 3)
 ## Obtaining tau with permutation: unsupervised approach
 #### Permutation
 ```{r, fig.height = 3, fig.width = 5, fig.align = "center"}
-perm <- rgcca_permutation(blocks, nperm = 5,n_cores=1)
+perm <- rgcca_permutation(blocks, n_run = 5,n_cores=1)
 plot(perm)
 ```
 

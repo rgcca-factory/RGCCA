@@ -4,30 +4,30 @@
 \alias{rgcca_permutation}
 \title{Tuning RGCCA parameters}
 \usage{
-rgcca_permutation(blocks, perm.par = "tau", perm.value = NULL,
-  perm.length = 10, nperm = 20, n_cores = parallel::detectCores() -
-  1, quiet = TRUE, type = "rgcca", scale = TRUE,
-  scale_block = TRUE, connection = matrix(1, length(blocks),
-  length(blocks)) - diag(length(blocks)), scheme = "factorial",
-  ncomp = rep(1, length(blocks)), tau = rep(1, length(blocks)),
-  sparsity = rep(1, length(blocks)), init = "svd", bias = TRUE,
-  tol = 1e-08, response = NULL, superblock = FALSE,
-  method = "nipals", rgcca_res = NULL, parallelization = NULL)
+rgcca_permutation(blocks, par_type = "tau", par_value = NULL,
+  par_length = 10, n_run = 20, n_cores = parallel::detectCores() - 1,
+  quiet = TRUE, type = "rgcca", scale = TRUE, scale_block = TRUE,
+  connection = matrix(1, length(blocks), length(blocks)) -
+  diag(length(blocks)), scheme = "factorial", ncomp = rep(1,
+  length(blocks)), tau = rep(1, length(blocks)), sparsity = rep(1,
+  length(blocks)), init = "svd", bias = TRUE, tol = 1e-08,
+  response = NULL, superblock = FALSE, method = "nipals",
+  rgcca_res = NULL, parallelization = NULL)
 }
 \arguments{
 \item{blocks}{A list of matrices giving the \eqn{J} blocks of variables \eqn{\mathbf{X_1}, \mathbf{X_2}, ..., \mathbf{X_J}}.}
 
-\item{perm.par}{A character giving the parameter to tune among "sparsity" or "tau".}
+\item{par_type}{A character giving the parameter to tune among "sparsity" or "tau".}
 
-\item{perm.value}{If perm.par="sparsity", a matrix, a vector or an integer containing sets of constraint 
+\item{par_value}{If par_type="sparsity", a matrix, a vector or an integer containing sets of constraint 
 variables to be tested, one row by combination. By default, sgcca.permute takes 10 sets between 
-min values ($1/sqrt(ncol)$) and 1. If perm.par="ncomp", a matrix, a vector or an integer containing sets of number of 
+min values ($1/sqrt(ncol)$) and 1. If par_type="ncomp", a matrix, a vector or an integer containing sets of number of 
 components, one row by set. By default, sgcca.permute takes as many 
-combinations as the maximum number of columns in each block. If perm.par="tau",... #TODO}
+combinations as the maximum number of columns in each block. If par_type="tau",... #TODO}
 
-\item{perm.length}{If perm.value = NULL, an integer indicating the number of sets of parameters to be tested. The parameters are uniformly distributed.}
+\item{par_length}{If par_value = NULL, an integer indicating the number of sets of parameters to be tested. The parameters are uniformly distributed.}
 
-\item{nperm}{An integer giving the number of permutation tested for each set of constraint}
+\item{n_run}{An integer giving the number of permutation tested for each set of constraint}
 
 \item{n_cores}{An integer for the number of cores used in parallelization}
 
@@ -115,19 +115,19 @@ The sparsity parameter is tuned with only one component per block.
 data("Russett")
 A = list(agriculture = Russett[, seq(3)], industry = Russett[, 4:5],
     politic = Russett[, 6:11] )
-res = rgcca_permutation(A, nperm = 5, n_cores = 1)
-rgcca_permutation(A, perm.par = "sparsity", perm.value = 0.8, nperm = 2,
+res = rgcca_permutation(A, n_run = 5, n_cores = 1)
+rgcca_permutation(A, par_type = "sparsity", par_value = 0.8, n_run = 2,
  n_cores = 1)
-rgcca_permutation(A, perm.par = "sparsity", perm.value = c(0.6, 0.75, 0.5), 
-nperm = 2, n_cores = 1)
-rgcca_permutation(A, perm.par = "sparsity", 
-perm.value = matrix(c(0.6, 0.75, 0.5), 3, 3, byrow = TRUE),
- nperm = 2, n_cores = 1)
-rgcca_permutation(A, perm.par = "tau", perm.value = 0.8, nperm = 2, 
+rgcca_permutation(A, par_type = "sparsity", par_value = c(0.6, 0.75, 0.5), 
+n_run = 2, n_cores = 1)
+rgcca_permutation(A, par_type = "sparsity", 
+par_value = matrix(c(0.6, 0.75, 0.5), 3, 3, byrow = TRUE),
+ n_run = 2, n_cores = 1)
+rgcca_permutation(A, par_type = "tau", par_value = 0.8, n_run = 2, 
 n_cores = 1)
-rgcca_permutation(A, perm.par = "tau", perm.value = c(0.6, 0.75, 0.5),
- nperm = 2, n_cores = 1)
-rgcca_permutation(A, perm.par = "tau", perm.value = 
-matrix(c(0.6, 0.75, 0.5), 3, 3, byrow = TRUE),  nperm = 2, n_cores = 1)
+rgcca_permutation(A, par_type = "tau", par_value = c(0.6, 0.75, 0.5),
+ n_run = 2, n_cores = 1)
+rgcca_permutation(A, par_type = "tau", par_value = 
+matrix(c(0.6, 0.75, 0.5), 3, 3, byrow = TRUE),  n_run = 2, n_cores = 1)
 print(res)
 }

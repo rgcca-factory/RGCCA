@@ -4,9 +4,9 @@
 \alias{rgcca_cv}
 \title{rgcca_cv}
 \usage{
-rgcca_cv(blocks, type = "rgcca", response = NULL, par = "tau",
+rgcca_cv(blocks, type = "rgcca", response = NULL, par_type = "tau",
   par_value = NULL, validation = "kfold", type_cv = "regression",
-  fit = "lm", k = 5, n_cv = 1, one_value_per_cv = FALSE,
+  fit = "lm", k = 5, n_run = 1, one_value_per_cv = FALSE,
   n_cores = parallel::detectCores() - 1, quiet = TRUE,
   superblock = FALSE, scale = TRUE, scale_block = TRUE,
   tol = 1e-06, scheme = "factorial", method = "nipals",
@@ -27,7 +27,7 @@ pls, cca, ifa, ra, cpca-w, gcca, hpca, maxbet-b, maxbet, maxdiff-b,maxdiff,
 \item{response}{An integer giving the position of the response block within 
 the blocks (activates the supervised mode).}
 
-\item{par}{"sparsity", "tau" or "ncomp", the parameter to be crossvalided}
+\item{par_type}{"sparsity", "tau" or "ncomp", the parameter to be crossvalided}
 
 \item{par_value}{Grid of values to be tested. Should be a matrix of size n*p with p the number of blocks and n the number of combinations to be tested.}
 
@@ -39,7 +39,7 @@ the blocks (activates the supervised mode).}
 
 \item{k}{If validation = 'kfold', an integer giving the number of folds.}
 
-\item{n_cv}{number of cross-validations (with kfold option). Default to 1}
+\item{n_run}{number of cross-validations (with kfold option). Default to 1}
 
 \item{one_value_per_cv}{If TRUE, the k values obtained for each k-fold steps are averaged}
 
@@ -111,6 +111,7 @@ blocks <- list(
     agriculture = Russett[, seq(3)],
     industry = Russett[, 4:5],
     politic = Russett[, 6:11])
-    res=rgcca_cv(blocks,response=3, type="rgcca",par="tau",par_value=c(0,0.2,0.3),n_cv=1,n_cores=1)
+    res=rgcca_cv(blocks,response=3, type="rgcca",par_type="tau",
+    par_value=c(0,0.2,0.3),n_run=1,n_cores=1)
     
 }

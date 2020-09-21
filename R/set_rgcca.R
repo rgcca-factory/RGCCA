@@ -81,7 +81,13 @@ set_rgcca <- function(
             id_boot <- sample(NROW(blocks[[1]]), replace = TRUE)
             boot_blocks <- lapply(
                 blocks, 
-                function(x) x[id_boot, , drop = FALSE])
+                function(x)
+                    {
+                        y= x[id_boot, , drop = FALSE]
+                        rownames(y)=paste("S",1:length(id_boot))
+                        return(y)
+                }
+                    )
 # TODO : to be replaced by something else
            boot_blocks <- remove_null_sd(boot_blocks)
         }

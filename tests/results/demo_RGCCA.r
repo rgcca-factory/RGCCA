@@ -58,8 +58,8 @@ print(resBootstrap)
 # Supervized approach
 #--------------------
 # Step one - tuning the parameters
-res_cv=rgcca_cv(blocks,response=3,par="ncomp")
-res_cv=rgcca_cv(blocks,response=3,par="tau")
+res_cv=rgcca_cv(blocks,response=3,par_type="ncomp")
+res_cv=rgcca_cv(blocks,response=3,par_type="tau")
 
 block_y=matrix(apply(Russett[,9:11],1,which.max),ncol=1)
 rownames(block_y)=rownames(Russett)
@@ -67,7 +67,7 @@ factor(block_y)
 blocks2=list(agri=Russett[,1:3],ind=Russett[,4:5],resp=block_y)
 rgcca_cv(blocks2,response=3,type_cv="classification",fit="lda")
 rgcca_cv(blocks2,response=3)
-rgcca_cv(blocks2,response=3,par="ncomp")
+rgcca_cv(blocks2,response=3,par_type="ncomp")
 
 res=rgcca(res_cv)
 print(res_cv,bars="stderr")
@@ -91,7 +91,7 @@ plot(boot,comp=2)
 
 # supervised sgcca
 #-----------------
-res=rgcca_cv(blocks,response=3,par="sparsity",type="sgcca")
+res=rgcca_cv(blocks,response=3,par_type="sparsity",type="sgcca")
 plot(res)
 
 res_sparsity=rgcca(blocks,sparsity=res$bestpenalties)
@@ -142,7 +142,7 @@ plot(resRGCCA,resp=response,type="cor")
 
 # permutation
 perm.values = matrix(c(0.6, 0.75, 0.5,0.7, 0.75, 0.5,0.8, 0.75, 0.5), 3, 3, byrow = TRUE)
-res_permut=rgcca_permutation(blocks=blocks,perm.par="tau",perm.value=perm.values,nperm=100)
+res_permut=rgcca_permutation(blocks=blocks,par_type="tau",par_value=perm.values,n_run=100)
 print(res_permut)
 summary(res_permut)
 plot(res_permut,type="crit")
@@ -167,7 +167,7 @@ summary(resBootstrap)
 #--------------------------
 
 # Step one - tuning the parameters
-res_permut=rgcca_permutation(blocks=blocks,superblock=TRUE,type="rgcca",scheme="factorial",nperm=100)
+res_permut=rgcca_permutation(blocks=blocks,superblock=TRUE,type="rgcca",scheme="factorial",n_run=100)
 print(res_permut)
 names(res_permut)
 plot(res_permut)
@@ -252,7 +252,7 @@ plot(res_permut)
 print(res_permut)
 #choice of the number of components
 par_value=matrix(c(1,1,1,2,2,1),2,3)
-resCV=rgcca_cv(blocks,response=3,type="rgcca",par="ncomp",par_value=par_value,validation="kfold",k=5)
+resCV=rgcca_cv(blocks,response=3,type="rgcca",par_type="ncomp",par_value=par_value,validation="kfold",k=5)
 plot(resCV)
 print(resCV)
 
@@ -301,10 +301,10 @@ plot_ave(resRGCCA)
 
 # choice of c1
 #res_permut=rgcca_permutation(blocks=blocks,type="sgcca",p_c1=TRUE)
-res_permut=rgcca_permutation(blocks=blocks,ncomp=c(2,2,1),perm.par="tau",perm.value=c(0.5,0.6,0.7)) # runs
+res_permut=rgcca_permutation(blocks=blocks,ncomp=c(2,2,1),par_type="tau",par_value=c(0.5,0.6,0.7)) # runs
 plot(res_permut)
 #choice of the number of components
-res_permut=rgcca_permutation(blocks=blocks,perm.par="ncomp")
+res_permut=rgcca_permutation(blocks=blocks,par_type="ncomp")
 plot(res_permut)
 
 # variable selection (post process? significant variables)

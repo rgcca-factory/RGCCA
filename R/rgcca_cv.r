@@ -6,10 +6,10 @@
 #' @inheritParams rgcca_crossvalidation
 #' @inheritParams rgcca
 #' @param parallelization if TRUE parallelization is run, if FALSE, no parallelisation is run. If NULL (default) parallelization is always used except for Windows in case of length(nperm)<10
-#' @param par "sparsity", "tau" or "ncomp", the parameter to be crossvalided
+#' @param par_type "sparsity", "tau" or "ncomp", the parameter to be crossvalided
 #' @param par_value Grid of values to be tested. Should be a matrix of size n*p with p the number of blocks and n the number of combinations to be tested.
 #' @param type_cv  type of crossvalidation. Default to "regression", but can also be "classification"
-#' @param n_cv number of cross-validations (with kfold option). Default to 1 
+#' @param n_run number of cross-validations (with kfold option). Default to 1 
 #' @param one_value_per_cv If TRUE, the k values obtained for each k-fold steps are averaged 
 #' @param rgcca_res a result of rgcca (from whom all parameters will be imported)
 #' @export
@@ -19,19 +19,20 @@
 #'     agriculture = Russett[, seq(3)],
 #'     industry = Russett[, 4:5],
 #'     politic = Russett[, 6:11])
-#'     res=rgcca_cv(blocks,response=3, type="rgcca",par="tau",par_value=c(0,0.2,0.3),n_cv=1,n_cores=1)
+#'     res=rgcca_cv(blocks,response=3, type="rgcca",par_type="tau",
+#'     par_value=c(0,0.2,0.3),n_run=1,n_cores=1)
 #'     
 #'@importFrom utils txtProgressBar setTxtProgressBar
 rgcca_cv=function( blocks,
           type = "rgcca",
           response=NULL,
-          par = "tau",
+          par_type = "tau",
           par_value = NULL,
           validation = "kfold",
           type_cv = "regression",
           fit = "lm",
           k=5,
-          n_cv = 1,
+          n_run = 1,
           one_value_per_cv=FALSE,
           n_cores = parallel::detectCores() - 1,
           quiet = TRUE,
@@ -75,14 +76,14 @@ rgcca_cv=function( blocks,
     if(validation=="loo")
     {
         k=dim(blocks[[1]])[1]
-        if(n_cv!=1)
+        if(n_run!=1)
         {
-            # cat("n_cv value was replaced by 1 (is not relevant for loo option)")
-        };n_cv=1
+            # cat("n_run value was replaced by 1 (is not relevant for loo option)")
+        };n_run=1
     }
 
     check_integer("n_cores", n_cores, 0)
-    match.arg(par, c("tau", "sparsity", "ncomp"))
+    match.arg(par_type, c("tau", "sparsity", "ncomp"))
     min_spars <- NULL
 
     if (length(blocks) < 1)
@@ -98,12 +99,12 @@ rgcca_cv=function( blocks,
         sapply(seq(min_spars), function(x) seq(eval(f), min_spars[x], len = 10))
     }
     set_penalty <- function () {
-        if(par == "sparsity"){
-            if(type!="sgcca"){cat("As par=='sparsity', the type parameter was replaced by 'sgcca'")}
+        if(par_type == "sparsity"){
+            if(type!="sgcca"){cat("As par_type=='sparsity', the type parameter was replaced by 'sgcca'")}
             type <- "sgcca"
             min_spars <<- sapply(ncols, function(x) 1 / sqrt(x))
         }else{
-            if(type=="sgcca"){cat("As par!='sparsity', the type parameter was replaced by 'rgcca'")}
+            if(type=="sgcca"){cat("As par_type!='sparsity', the type parameter was replaced by 'rgcca'")}
             type <- "rgcca"
             min_spars <<- sapply(ncols, function(x) 0)
         }
@@ -120,11 +121,11 @@ rgcca_cv=function( blocks,
         }
   
         colnames(par_value) <- names(blocks)
-        return(list(par, par_value))
+        return(list(par_type, par_value))
     }
     
     switch(
-        par,
+        par_type,
         "ncomp" = {
             if (!class(par_value) %in% c("data.frame", "matrix")) {
                 if (is.null(par_value) || any(par_value > ncols)) {
@@ -136,33 +137,33 @@ rgcca_cv=function( blocks,
                 par_value <- expand.grid(par_value)
             }else
                 par_value <- t(sapply(seq(NROW(par_value)), function(x) check_ncomp(par_value[x, ], blocks, 1)))
-            par <- list(par, par_value)
+            par_type <- list(par_type, par_value)
         },
-        "sparsity" = par <- set_penalty(),
-        "tau" = par <- set_penalty()
+        "sparsity" = par_type <- set_penalty(),
+        "tau" = par_type <- set_penalty()
     )
  
-    message(paste("Cross-validation for", par[[1]], "in progress...\n"), appendLF = FALSE)
-    pb <- txtProgressBar(max=dim(par[[2]])[1])
-    n_rep=ifelse(one_value_per_cv,n_cv,n_cv*k)
-    res=matrix(NA,dim(par[[2]])[1],n_cv*k);rownames(res)=apply(round(par[[2]],digits=2),1,paste,collapse="-");
-    for(i in 1:dim(par[[2]])[1])
+    message(paste("Cross-validation for", par_type[[1]], "in progress...\n"), appendLF = FALSE)
+    pb <- txtProgressBar(max=dim(par_type[[2]])[1])
+    n_rep=ifelse(one_value_per_cv,n_run,n_run*k)
+    res=matrix(NA,dim(par_type[[2]])[1],n_run*k);rownames(res)=apply(round(par_type[[2]],digits=2),1,paste,collapse="-");
+    for(i in 1:dim(par_type[[2]])[1])
         {
-            if(par[[1]]=="ncomp")
+            if(par_type[[1]]=="ncomp")
             {
-                rgcca_res=rgcca(blocks=blocks, type=type,response=response,ncomp=par[[2]][i,],superblock=superblock,scale=scale,scale_block=scale_block,scheme=scheme,tol=tol,method=method,tau=tau, sparsity=sparsity,bias=bias,init=init)
+                rgcca_res=rgcca(blocks=blocks, type=type,response=response,ncomp=par_type[[2]][i,],superblock=superblock,scale=scale,scale_block=scale_block,scheme=scheme,tol=tol,method=method,tau=tau, sparsity=sparsity,bias=bias,init=init)
             }
-            if(par[[1]]=="sparsity")
+            if(par_type[[1]]=="sparsity")
             {
-                rgcca_res=rgcca(blocks=blocks, type="sgcca",response=response,sparsity=par[[2]][i,],superblock=superblock,scale=scale,scale_block=scale_block,scheme=scheme,tol=tol,method=method, ncomp=ncomp,bias=bias,init=init)
+                rgcca_res=rgcca(blocks=blocks, type="sgcca",response=response,sparsity=par_type[[2]][i,],superblock=superblock,scale=scale,scale_block=scale_block,scheme=scheme,tol=tol,method=method, ncomp=ncomp,bias=bias,init=init)
             }
-            if(par[[1]]=="tau")
+            if(par_type[[1]]=="tau")
             {
-                rgcca_res=rgcca(blocks=blocks, type=type,response=response,tau=par[[2]][i,],superblock=superblock,scale=scale,scale_block=scale_block,scheme=scheme,tol=tol,method=method, ncomp=ncomp,bias=bias,init=init)
+                rgcca_res=rgcca(blocks=blocks, type=type,response=response,tau=par_type[[2]][i,],superblock=superblock,scale=scale,scale_block=scale_block,scheme=scheme,tol=tol,method=method, ncomp=ncomp,bias=bias,init=init)
             }
  
             res_i=c()
-            for(n in 1:n_cv)
+            for(n in 1:n_run)
             {
                 if(one_value_per_cv)
                 {
@@ -202,9 +203,9 @@ rgcca_cv=function( blocks,
 
     cat("\n")
     Sys.sleep(1)
-    call=list(n_cv=n_cv,
+    call=list(n_run=n_run,
               response=response,
-              par = par,
+              par_type = par_type,
               par_value = par_value,
               validation = validation,
               type_cv = type_cv,
@@ -219,11 +220,11 @@ rgcca_cv=function( blocks,
               method=method,
               blocks=blocks
     )
-    par2=par[[2]]
+    par2=par_type[[2]]
     rownames(par2) = 1:NROW(par2)
     colnames(par2)=names(blocks)
     
-    res2=list(cv=mat_cval,call=call,bestpenalties=par[[2]][which.min(apply(mat_cval,1,mean)),],penalties=par2)
+    res2=list(cv=mat_cval,call=call,bestpenalties=par_type[[2]][which.min(apply(mat_cval,1,mean)),],penalties=par2)
     class(res2)="cval"
     return(res2)
     

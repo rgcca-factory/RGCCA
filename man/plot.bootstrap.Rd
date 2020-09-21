@@ -34,7 +34,23 @@
 \item{...}{Further graphical parameters (see plot2D)}
 }
 \description{
-Plots the results of a bootstrap object. The representation can be with bars (1D) or (2D) #TODO
+Plots the results of a bootstrap object. The representation can be with bars 
+(1D) or a biplot (2D) (see details).
+}
+\details{
+\itemize{
+\item type = '1D': barplot of the best variables from a bootstrap with, on the x-axis,
+the number of non-zero occurrences (SGCCA) or the mean of the bootstrap weights 
+(RGCCA). The bars are colored according to the significant 95% bootstrap 
+intervals ('*' or 'ns'; see 'p.vals' in details for 
+\code{\link[RGCCA]{get_bootstrap}}) for RGCCA and according to the occurences
+ of the weights which are not equal to zero (according to an ascending 
+ gradient from red to blue) for SGCCA.
+\item type = '2D' : graph of the best variables from a bootstrap with, in x-axis, the number of
+non-zero occurences (SGCCA) or the significant 95% bootstrap 
+intervals (RGCCA). In in y-axis are the bootstrap-ratios (mean/sd) .
+Negative weights are colored in red and the positive ones are in green.
+}
 }
 \examples{
 library(RGCCA)
