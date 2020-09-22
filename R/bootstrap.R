@@ -36,8 +36,10 @@ bootstrap <- function(
     }
 
     stopifnot(is(rgcca_res, "rgcca"))
+    if (!is.null(parallelization))
+        check_boolean("parallelization", parallelization)
     check_integer("n_boot", n_boot)
-    check_integer("n_cores", n_cores, 0)
+    check_integer("n_cores", n_cores, min = 0)
 
     if (n_cores == 0)
         n_cores <- 1

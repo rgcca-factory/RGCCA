@@ -1,11 +1,11 @@
-#' Plots a bootstrap object
+#' Plot a bootstrap object
 #' 
-#' Plots the results of a bootstrap object. The representation can be with bars 
+#' Plot the results of a bootstrap object. The representation can be with bars
 #' (1D) or a biplot (2D) (see details).
 #' @inheritParams plot_var_2D
 #' @inheritParams plot_var_1D
 #' @param type A character to select a type of plot among "1D" or "2D"
-#' @param x A bootstrap object (see \code{\link[RGCCA]{bootstrap}} )
+#' @param x A bootstrap object (see \code{\link[RGCCA]{bootstrap}})
 #' @inheritParams plot_bootstrap_1D
 #' @inheritParams plot_bootstrap_2D
 #' @inheritParams plot.rgcca
@@ -34,10 +34,11 @@
 #' }
 plot.bootstrap=function(x,type="1D",block=length(x$rgcca$call$blocks),comp=1,n_mark=30,bars="sd",colors=NULL,title=NULL,cex=1,n_cores= parallel::detectCores() - 1,...)
 {
-    
+    stopifnot(is(x, "bootstrap"))
+    check_blockx("block", block, x$rgcca$call$blocks)
+    match.arg(type,c("1D","2D"))
     if(type=="1D")
     {
-        
         if(x$rgcca$call$type%in%c("sgcca","spls","spca")){x1="occurrences";y1="mean";title=ifelse(is.null(title),paste0("Occurrences:",names(x$rgcca$call$blocks)[block]),title)}
            else{x1="estimate";y1="sign";title=ifelse(is.null(title),paste0("Weights:",names(x$rgcca$call$blocks)[block]),title)}
            

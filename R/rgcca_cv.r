@@ -99,7 +99,11 @@ rgcca_cv=function( blocks,
         };n_run=1
     }
 
-    check_integer("n_cores", n_cores, 0)
+    check_boolean("one_value_per_cv", one_value_per_cv)
+    check_integer("n_cores", n_cores, min = 0)
+    check_integer("par_length", n_run)
+    check_integer("par_value", n_run, min = 0)
+    check_integer("n_run", n_run)
     match.arg(par_type, c("tau", "sparsity","ncomp"))
     min_spars <- NULL
 

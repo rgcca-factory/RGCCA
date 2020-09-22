@@ -1,6 +1,6 @@
 #' Which missing method to choose ?
 #' 
-#' Plots the impact of increasing missing data on RGCCA
+#' Plot the impact of increasing missing data on RGCCA
 #' @inheritParams plot_var_1D
 #' @inheritParams plot.rgcca
 #' @param x A list resulting of whichNAmethod (see \link{whichNAmethod})

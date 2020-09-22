@@ -1,7 +1,7 @@
 #' plot.patternNA
 #' 
-#' Plots an object of class patternNA
-#' @param x A get_patternNA object (see \code{\link[RGCCA]{get_patternNA}} )
+#' Plot an object of class patternNA
+#' @param x A get_patternNA object (see \code{\link[RGCCA]{get_patternNA}})
 #' @param type "all" if all blocks should be plotted, ifelse an integer corresponding to the position of the block to be plotted in the initial list
 #' @param legend if TRUE the legend is plotted
 #' @param color color of the non-missing data. If rainbow, depends of the values of the non-missing data

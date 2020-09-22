@@ -1,9 +1,15 @@
-#' plot.cval
+#'Plot cross-validation
 #'
+#'Plot a cross-validation object (tuning RGCA parameters in 'supervised' mode).
+#'The parameters tuned for maximizing RMSE is displayed in the title. In
+#'abscissa, the index of combination (number corresponding to the rownames of
+#''penalties' in the tuning parameters object). In ordinate, the average of the
+#'permuted RMSE criterion. The best parameters are in red by default.
 #'@inheritParams plot2D
 #'@param x A rgcca_cv object (see \link{rgcca_cv})
-#'@param bars A character among "sd" for standard deviations, "stderr" for standard error (standard deviations divided by sqrt(n), "ci" for confidence interal, "cim" for confidence interval of the mean.
-#'@param alpha A numeric value giving the risk for the confidence interval bars (ci or cim).
+#'@inheritParams get_bootstrap
+#'@param alpha A numeric value giving the risk for the confidence interval bars
+#'  ('ci' or 'cim').
 #'@param ... Further plot options
 #'@export
 #'@examples
@@ -16,16 +22,34 @@
 #'     n_run=1,n_cores=1)
 #'    plot(res)
 #'@importFrom ggplot2 ggplot
-plot.cval=function(x,bars="sd",alpha=0.05,cex = 1, cex_main = 14 * cex, cex_sub = 10 * cex,...)
+plot.cval=function(x, bars="sd", alpha = 0.05, cex = 1, cex_main = 14 * cex, cex_sub = 10 * cex, cex_lab = 10 * cex, colors = c("red", "grey"), ...)
 {
+
+    stopifnot(is(x, "cval"))
+    match.arg(bars,c("quantile", "sd", "stderr", "ci", "points", "cim"))
+    for (i in c("cex", "cex_main", "cex_sub", "cex_lab"))
+        check_integer(i, get(i))
+    check_integer(alpha, min = 0, float = TRUE)
+    check_colors(colors)
+    if (length(colors) < 2)
+        colors <- rep(colors, 2)
+
     configurations <- NULL -> y
     mat_cval=x$cv
-    match.arg(bars,c("quantile","sd","stderr","ci","points"))
+
     mean_b=apply(mat_cval,1,mean)
-    main=paste0("RMSE according to the combinations \n (",x$call$validation,ifelse(x$call$validation=="kfold", paste0(": with ",x$call$k," folds", ifelse(x$call$n_cv>1,paste0("and ",x$call$n_cv," run",ifelse(x$call$n_cv==1,"","s")),""),")"),";,\n "))
-    main=paste0(main,"\nbest value, in green : ",
+    main=paste0("RMSE \n (",x$call$validation,ifelse(x$call$validation=="kfold", paste0(": with ",x$call$k," folds", ifelse(x$call$n_cv>1,paste0("and ",x$call$n_cv," run",ifelse(x$call$n_cv==1,"","s")),""),";"),";\n "))
+    main=paste0(main,"\nbest parameters : ",
             paste(round(x$bestpenalties,digits=2), collapse = ", "),")")
     
+    axis <- function(margin){
+        element_text(
+            face = "italic",
+            size = cex_lab * 0.75,
+            margin = margin
+        )
+        }
+ 
     if(bars!="none"&&dim(mat_cval)[2]<3){bars=="none"; warning("Standard deviations can not be calculated with less than 3 columns in mat_cval")}
     if(bars!="none")
     {
@@ -65,22 +89,32 @@ plot.cval=function(x,bars="sd",alpha=0.05,cex = 1, cex_main = 14 * cex, cex_sub 
     }
     
     df=data.frame(configurations=1:nrow(mat_cval),mean=mean_b,inf=inf_b,sup=sup_b)
-    p<- ggplot(data=df,aes(x=configurations,y=mean))+geom_point()+theme_classic() +xlab("Combinations")+ylab("Mean RMSE")
+    p<- ggplot(data=df,aes(x=configurations,y=mean))+geom_point()+theme_classic() + xlab("Combinations")+ylab("Mean RMSE")
     if(bars!="none"&& bars!="points")
     {
-        p<-p+geom_segment(data=df,aes(x=configurations,y=inf_b,xend=configurations,yend=sup_b),colour="grey")
+        p<-p+geom_segment(data=df,aes(x=configurations,y=inf_b,xend=configurations,yend=sup_b),colour=colors[2])
     }
     if(bars=="points")
     {
         df2=data.frame(configurations=rep(1:nrow(mat_cval),ncol(mat_cval)),y=as.vector(mat_cval))
-        p<-p+geom_point(data=df2,aes(x=configurations,y=y),colour="grey")
+        p<-p+geom_point(data=df2,aes(x=configurations,y=y),colour=colors[2])
     }
     optimal_x=df[which.min(df[,"mean"]),"configurations"]
     optimal_y=df[which.min(df[,"mean"]),"mean"]
     decalage= (max(df[,"mean"])-min(df[,"mean"]))/10
-    p<- p+geom_point(x=optimal_x,y=optimal_y,colour="green")
+    p<- p+geom_point(x=optimal_x,y=optimal_y,colour= colors[1]) +
+        geom_segment(data=df,aes(x=optimal_x,y=inf_b[optimal_x],xend=optimal_x,yend=sup_b[optimal_x]),colour= colors[1], size = 0.4)
    # p<-p+geom_text(label=rownames(x)[which.min(mean_b)],x=optimal_x,y=optimal_y+decalage,colour="green")
-    p<-p+ggtitle(main)+theme_perso(cex, cex_main, cex_sub)
+    p<-p+ggtitle(main)+theme_perso(cex, cex_main, cex_sub) +
+        theme(
+            axis.text = element_text(size = 10, face = "bold"),
+            axis.title.y = axis(margin(0, 20, 0, 0)),
+            axis.title.x = axis(margin(20, 0, 0, 0)),
+            axis.line = element_line(size = 0.5),
+            axis.ticks  = element_line(size = 0.5),
+            axis.ticks.length = unit(2, "mm"),
+            legend.position = "none"
+        ) 
 #    p<- p+ scale_x_continuous(breaks=1:nrow(x),  labels=rownames(x))
 #    p<-p + theme(axis.text.x = element_text(angle=45))
     return(p)

@@ -7,7 +7,7 @@
 #' @inheritParams plot_var_2D
 #' @inheritParams plot_var_1D
 #' @param bars A character among "sd" for standard deviations, "stderr" for the standard error, "ci" for confidence interval of scores and "cim" for the confidence intervall of the mean.
-#' @param b A bootstrap object (see  \code{\link[RGCCA]{bootstrap}} )
+#' @param b A bootstrap object (see  \code{\link[RGCCA]{bootstrap}})
 #' @param display_order A logical value to display the order of the variables
 #' @return A matrix containing the means, 95\% intervals, bootstrap ratio, p-values and other statistics (see details)
 #' @details 
@@ -43,15 +43,16 @@ get_bootstrap <- function(
     bars="sd",
     collapse = FALSE,
     n_cores = parallel::detectCores() - 1,
-    display_order=TRUE)
-    {
-    stopifnot(is(b, "bootstrap"))
+    display_order=TRUE) {
 
+    stopifnot(is(b, "bootstrap"))
     check_compx("comp", comp, b$rgcca$call$ncomp, i_block)
     check_ncol(b$rgcca$Y, i_block)
     check_blockx("i_block", i_block, b$rgcca$call$blocks)
     check_boolean("collapse", collapse)
-    check_integer("n_cores", n_cores, 0)
+    check_integer("n_cores", n_cores, min = 0)
+    match.arg(bars,c("quantile", "sd", "stderr", "ci", "points", "cim"))
+
     bootstrapped=b$bootstrap[[comp]][[i_block]]
     #n_boot=dim(bootstrapped)[2]
     n_boot=sum(!is.na(bootstrapped[1,]))

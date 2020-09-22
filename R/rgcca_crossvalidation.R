@@ -55,10 +55,11 @@ rgcca_crossvalidation <- function(
     stopifnot(is(rgcca_res, "rgcca"))
     if(is.null(rgcca_res$call$response)){
        stop_rgcca("This function required an analysis in a supervised mode")}
-   
+    if (!is.null(parallelization))
+        check_boolean("parallelization", parallelization)
     match.arg(validation, c("loo", "test", "kfold"))
     check_integer("k", k, min = 2)
-    check_integer("n_cores", n_cores, 0)
+    check_integer("n_cores", n_cores, min = 0)
     response=rgcca_res$call$response
     bloc_to_pred <- names(rgcca_res$call$blocks)[response]
 

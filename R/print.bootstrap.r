@@ -1,5 +1,5 @@
 #'Print bootstrap
-#'@param x A bootstrap object (see \code{\link[RGCCA]{bootstrap}} )
+#'@param x A bootstrap object (see \code{\link[RGCCA]{bootstrap}})
 #'@param ... Further arguments in print
 #' @return A matrix containing for each variables of each blocks, the means, 95\% intervals, bootstrap ratio, p-values and other statistics (see details)
 #' @details 
