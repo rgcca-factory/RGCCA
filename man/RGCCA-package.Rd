@@ -37,7 +37,7 @@ plot(b, n_cores=1)
 
 res_rgcca=rgcca(blocks, response=3)
 
-perm=rgcca_permutation(blocks, n_cores=1,nperm=10)
+perm=rgcca_permutation(blocks, n_cores=1,n_run=10)
 b=bootstrap(res_rgcca, n_cores=1,n_boot=10)
 
 blockNA=blocks

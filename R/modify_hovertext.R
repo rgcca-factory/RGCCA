@@ -80,7 +80,7 @@ modify_hovertext <- function(p, hovertext = TRUE, type = "regular", perm = NULL)
                         x_lab <-  gsub("\\(\\d* bootstraps\\)", "", parse(p$x$layout$title$text))
                         y_lab <- parse(p$x$layout$annotations[[1]]$text)
                         if (length(y_lab) < 1)
-                            y_lab <- p$x$data[[length(p$x$data)]]$marker$colorbar$title
+                            y_lab <- parse(p$x$data[[length(p$x$data)]]$marker$colorbar$title)
                     } else {
                         x_lab <- "x"
                         y_lab <- "y"
@@ -124,8 +124,13 @@ modify_hovertext <- function(p, hovertext = TRUE, type = "regular", perm = NULL)
         for (i in traces)
             p$x$data[[i]]$error_x$width <- NULL
 
+    if (type %in% c("boot1D", "cv", "perm", "var1D")) {
+        p <- plotly::config(p, scrollZoom = FALSE)
+        p <- plotly::layout(p, xaxis = list(fixedrange = TRUE), yaxis = list(fixedrange = TRUE))
+    }
+
     # Remove the x- and y- axis onOverMouse
-    if (type %in% c("regular", "boot1D", "cv", "perm")  && (length(traces) > 1))
+    if (type %in% c("regular", "cv", "perm")  && (length(traces) > 1) || type == "boot1D")
         (plotly::style(p, hoverinfo = "none", traces = traces))
     else
         p

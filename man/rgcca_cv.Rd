@@ -2,18 +2,18 @@
 % Please edit documentation in R/rgcca_cv.r
 \name{rgcca_cv}
 \alias{rgcca_cv}
-\title{rgcca_cv}
+\title{Tuning RGCCA parameters in 'supervised' mode}
 \usage{
-rgcca_cv(blocks, type = "rgcca", response = NULL, par = "tau",
-  par_value = NULL, validation = "kfold", type_cv = "regression",
-  fit = "lm", k = 5, n_cv = 1, one_value_per_cv = FALSE,
-  n_cores = parallel::detectCores() - 1, quiet = TRUE,
-  superblock = FALSE, scale = TRUE, scale_block = TRUE,
-  tol = 1e-06, scheme = "factorial", method = "nipals",
-  rgcca_res = NULL, parallelization = NULL, tau = rep(1,
-  length(blocks)), ncomp = rep(1, length(blocks)), sparsity = rep(1,
-  length(blocks)), init = "svd", bias = TRUE, new_scaled = FALSE,
-  ...)
+rgcca_cv(blocks, type = "rgcca", response = NULL, par_type = "tau",
+  par_value = NULL, par_length = 10, validation = "kfold",
+  type_cv = "regression", fit = "lm", k = 5, n_run = 1,
+  one_value_per_cv = FALSE, n_cores = parallel::detectCores() - 1,
+  quiet = TRUE, superblock = FALSE, scale = TRUE,
+  scale_block = TRUE, tol = 1e-08, scheme = "factorial",
+  method = "nipals", rgcca_res = NULL, parallelization = NULL,
+  tau = rep(1, length(blocks)), ncomp = rep(1, length(blocks)),
+  sparsity = rep(1, length(blocks)), init = "svd", bias = TRUE,
+  new_scaled = FALSE, ...)
 }
 \arguments{
 \item{blocks}{A list of matrices giving the \eqn{J} blocks of variables \eqn{\mathbf{X_1}, \mathbf{X_2}, ..., \mathbf{X_J}}.}
@@ -27,21 +27,27 @@ pls, cca, ifa, ra, cpca-w, gcca, hpca, maxbet-b, maxbet, maxdiff-b,maxdiff,
 \item{response}{An integer giving the position of the response block within 
 the blocks (activates the supervised mode).}
 
-\item{par}{"sparsity", "tau" or "ncomp", the parameter to be crossvalided}
+\item{par_type}{A character giving the parameter to tune among "sparsity" or "tau".}
 
-\item{par_value}{Grid of values to be tested. Should be a matrix of size n*p with p the number of blocks and n the number of combinations to be tested.}
+\item{par_value}{A matrix (n*p, with p the number of blocks and n the number 
+of combinations to be tested), a vector (of p length) or a numeric value 
+giving sets of penalties (tau for RGCCA, sparsity for SGCCA) to be tested, 
+one row by combination. By default, it takes 10 sets between min values (0
+ for RGCCA and $1/sqrt(ncol)$ for SGCCA) and 1.}
+
+\item{par_length}{An integer indicating the number of sets of parameters to be tested (if perm.value = NULL). The parameters are uniformly distributed.}
 
 \item{validation}{A character for the type of validation among "loo", "kfold", "test".}
 
-\item{type_cv}{type of crossvalidation. Default to "regression", but can also be "classification"}
+\item{type_cv}{A character corresponding to the model of prediction : 'regression' or 'classification'.}
 
 \item{fit}{A character giving the function used to compare the trained and the tested models}
 
 \item{k}{If validation = 'kfold', an integer giving the number of folds.}
 
-\item{n_cv}{number of cross-validations (with kfold option). Default to 1}
+\item{n_run}{An integer giving the number of cross-validations to be run (if validation = 'kfold').}
 
-\item{one_value_per_cv}{If TRUE, the k values obtained for each k-fold steps are averaged}
+\item{one_value_per_cv}{A logical value indicating if the k values are averaged for each k-fold steps.}
 
 \item{n_cores}{An integer for the number of cores used in parallelization}
 
@@ -71,9 +77,9 @@ covariance maximization among "horst" (the identity function), "factorial"
 \item{\code{"sem"}}{ corresponds to impute the data with EM-type algorithms with superblock approach}
 \item{\code{"knn1"}}{ corresponds to impute the data with the 1-Nearest Neighbor. 1 can be replace by another number (such as knn3) to impute with the 3-Nearest Neighbors.}}}
 
-\item{rgcca_res}{a result of rgcca (from whom all parameters will be imported)}
+\item{rgcca_res}{A RGCCA object (see  \code{\link[RGCCA]{rgcca}} )}
 
-\item{parallelization}{if TRUE parallelization is run, if FALSE, no parallelisation is run. If NULL (default) parallelization is always used except for Windows in case of length(nperm)<10}
+\item{parallelization}{A logical value to run a parallelization. If parallelization = NULL (default), the parallelization is always performed except for Windows if length(nperm) < 10.}
 
 \item{tau}{Either a 1*J vector or a \eqn{\mathrm{max}(ncomp) \times J} matrix containing the values 
 of the regularization parameters (default: tau = 1, for each block and each dimension). Tau varies from 0 (maximizing the correlation) to 1 (maximizing the covariance).
@@ -100,10 +106,22 @@ If sparsity is a matrix, each row \eqn{h} defines the constraints applied to the
 
 \item{...}{Further graphical parameters (see plot2D functions)}
 }
+\value{
+\item{cv}{A matrix giving the root-mean-square error (RMSE) between the predicted R/SGCCA and the observed R/SGCCA for each combination and each prediction (n_prediction = n_samples for validation = 'loo'; n_prediction = 'k' * 'n_cv' for validation = 'kfold').}
+
+\item{bestpenalties}{Penalties giving the best RMSE for each blocks}
+
+\item{penalties}{A matrix giving, for each blocks, the penalty combinations (tau or sparsity)}
+}
 \description{
-This function is dedicated to supervised approaches (with response parameter in rgcca not NULL). By default, it is the last block in blocks.
-It allows to test a grid of parameters (sparsity, ncomp or tau) with cross-validation approaches. 
-This cross-validation is based on RMSE for quantitative response.
+This function is dedicated to supervised approaches (with a 'response' parameter in rgcca).
+To tune the sparsity coefficient (if the model is sparse) or tau 
+(otherwise), in supervised mode, we observe the performance (RMSE) of a 
+model from which individuals were randomly drawn. These individuals can be 
+divided into k folds where the model will be tested on each fold and trained
+ on the others. For small datasets (<30 samples), it is recommended to use 
+ as many folds as there are individuals (leave-one-out; loo). The best 
+ combination of parameters is the one where, on average, the samples perform best.
 }
 \examples{
 data("Russett")
@@ -111,6 +129,11 @@ blocks <- list(
     agriculture = Russett[, seq(3)],
     industry = Russett[, 4:5],
     politic = Russett[, 6:11])
-    res=rgcca_cv(blocks,response=3, type="rgcca",par="tau",par_value=c(0,0.2,0.3),n_cv=1,n_cores=1)
-    
+res = rgcca_cv(blocks, response = 3, type="rgcca", 
+par_type = "sparsity", par_value = c(0.6, 0.75, 0.5), n_cv = 2, n_cores = 1)
+plot(res)
+rgcca_cv(blocks, response = 3, par_type = "tau", par_value = c(0.6, 0.75, 0.5)
+, n_run = 2, n_cores = 1)$bestpenalties
+rgcca_cv(blocks, response = 3, par_type = "sparsity", par_value = 0.8, n_run = 2, n_cores = 1)
+rgcca_cv(blocks, response = 3, par_type = "tau", par_value = 0.8, n_run = 2, n_cores = 1)
 }

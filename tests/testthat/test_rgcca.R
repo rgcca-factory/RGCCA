@@ -34,6 +34,7 @@ pca_ind=abs(cor(resPCAprcomp$x[,1],resPCA$Y[[1]][,1]))==1
 pca_ind2=abs(cor(resPCAprcomp$x[,2],resPCA$Y[[1]][,2]))==1
 pca_var=abs(cor(resPCAprcomp$rotation[,1],resPCA$astar[[1]][,1]))==1
 pca_var2=abs(cor(resPCAprcomp$rotation[,2],resPCA$astar[[1]][,2]))==1
+
 test_that("pca_varexpl",{expect_true(pca_varexpl)})
 pca_eig=abs(varExplPrComp-varExplRgcca)<1e-8
 test_that("pca_ind",{expect_true(pca_ind)})

@@ -180,7 +180,7 @@ get_bootstrap <- function(
             estimate = "RGCCA weights",
             bootstrap_ratio = "Bootstrap-ratio",
             sign = "Significant 95% \nbootstrap interval",
-            occurrences = "Non-zero occurences",
+            occurrences = "Non-zero occurrences",
             mean = "Mean bootstrap weights"
         )
     attributes(db)$type <- class(b$rgcca)

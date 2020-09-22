@@ -41,9 +41,9 @@ In x, the index of combination (number corresponding to the rownames of tuning p
 data("Russett")
 A = list(agriculture = Russett[, seq(3)], industry = Russett[, 4:5],
     politic = Russett[, 6:11] )
-perm <- rgcca_permutation(A, nperm = 2, n_cores = 1)
+perm <- rgcca_permutation(A, n_run = 2, n_cores = 1)
 plot(perm)
-perm <- rgcca_permutation(A, perm.par = "sparsity", nperm = 5, n_cores = 1)
+perm <- rgcca_permutation(A, par_type = "sparsity", n_run = 5, n_cores = 1)
 plot(perm,type="crit")
 plot(perm)
 }

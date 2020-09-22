@@ -6,7 +6,7 @@
 #' data('Russett')
 #' A = list(agriculture = Russett[, seq(3)], industry = Russett[, 4:5],
 #'     politic = Russett[, 6:11] )
-#' res = rgcca_permutation(A, nperm = 5, n_cores = 1)
+#' res = rgcca_permutation(A, n_run = 5, n_cores = 1)
 #' print(res)
 print.permutation <- function(x, ...) {
 

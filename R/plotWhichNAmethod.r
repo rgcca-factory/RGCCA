@@ -57,7 +57,7 @@ plot.whichNAmethod=function(x,type="rv",ylim=NULL,block=length(x[[1]][[1]][[1]])
       namesForLegend=namesMethod
   }
 
-  print(namesMethod)
+ 
   #colMethod=rainbow(5)[1:length(namesMethod)]
   colMethod=c("cornflowerblue","chocolate1","chartreuse3","red","blueviolet","darkturquoise","darkgoldenrod1","coral","bisque4","darkorchid1","deepskyblue1")[1:length(namesMethod)]
   nMeth=0:length(namesMethod)
@@ -65,8 +65,8 @@ plot.whichNAmethod=function(x,type="rv",ylim=NULL,block=length(x[[1]][[1]][[1]])
   for(j in toPlot)
   {
     #if(block=="all"){screen(j)}
-    par(mar=c(5, 4, 4, 2) + 0.1)
-    par(mgp=c(3,1,0))
+    par(mar=c(3, 3, 3, 2) + 0.1)
+    #par(mgp=c(3,1,0))
  
     moyenne=rep(NA,length(namesMethod));names(moyenne)=namesMethod
     ecartType=rep(NA,length(namesMethod));names(ecartType)=namesMethod
@@ -93,8 +93,8 @@ plot.whichNAmethod=function(x,type="rv",ylim=NULL,block=length(x[[1]][[1]][[1]])
     {
         Ylim=ylim
     }
-    plot(NULL,main=paste(main,": Block",j),xlim=c(0,length(namesMethod)-1),ylim=Ylim,xlab="Methods",ylab=ylab,bty="n",xaxt="n",...)
-    axis(side = 1,col="grey",line=0)
+    plot(NULL,main=main,xlim=c(0,length(namesMethod)-1),ylim=Ylim,xlab="Methods",ylab=ylab,bty="n",xaxt="n",...)
+  #  axis(side = 1,col="grey",line=0,tick=FALSE,at=NA)
     axis(side = 2,col="grey",line=0)
     rect(par("usr")[1], par("usr")[3], par("usr")[2], par("usr")[4], col = 
            "#e9ebec",border="#e9ebec")
@@ -125,9 +125,10 @@ plot.whichNAmethod=function(x,type="rv",ylim=NULL,block=length(x[[1]][[1]][[1]])
           legend("bottomleft",legend=namesForLegend,fill=colMethod,box.lwd=0,bty="n")
       }
       
-      par(mfrow=c(1,1))
-      par(mar=c(5,4,3,3))
-      par(cex=1)  
+      
   }
+  par(mfrow=c(1,1))
+  par(mar=c(5,4,3,3))
+  par(cex=1)  
 
 }

@@ -4,30 +4,30 @@
 \alias{rgcca_permutation}
 \title{Tuning RGCCA parameters}
 \usage{
-rgcca_permutation(blocks, perm.par = "tau", perm.value = NULL,
-  perm.length = 10, nperm = 20, n_cores = parallel::detectCores() -
-  1, quiet = TRUE, type = "rgcca", scale = TRUE,
-  scale_block = TRUE, connection = matrix(1, length(blocks),
-  length(blocks)) - diag(length(blocks)), scheme = "factorial",
-  ncomp = rep(1, length(blocks)), tau = rep(1, length(blocks)),
-  sparsity = rep(1, length(blocks)), init = "svd", bias = TRUE,
-  tol = 1e-08, response = NULL, superblock = FALSE,
-  method = "nipals", rgcca_res = NULL, parallelization = NULL)
+rgcca_permutation(blocks, par_type = "tau", par_value = NULL,
+  par_length = 10, n_run = 20, n_cores = parallel::detectCores() - 1,
+  quiet = TRUE, type = "rgcca", scale = TRUE, scale_block = TRUE,
+  connection = matrix(1, length(blocks), length(blocks)) -
+  diag(length(blocks)), scheme = "factorial", ncomp = rep(1,
+  length(blocks)), tau = rep(1, length(blocks)), sparsity = rep(1,
+  length(blocks)), init = "svd", bias = TRUE, tol = 1e-08,
+  response = NULL, superblock = FALSE, method = "nipals",
+  rgcca_res = NULL, parallelization = NULL)
 }
 \arguments{
 \item{blocks}{A list of matrices giving the \eqn{J} blocks of variables \eqn{\mathbf{X_1}, \mathbf{X_2}, ..., \mathbf{X_J}}.}
 
-\item{perm.par}{A character giving the parameter to tune among "sparsity" or "tau".}
+\item{par_type}{A character giving the parameter to tune among "sparsity" or "tau".}
 
-\item{perm.value}{If perm.par="sparsity", a matrix, a vector or an integer containing sets of constraint 
-variables to be tested, one row by combination. By default, sgcca.permute takes 10 sets between 
-min values ($1/sqrt(ncol)$) and 1. If perm.par="ncomp", a matrix, a vector or an integer containing sets of number of 
-components, one row by set. By default, sgcca.permute takes as many 
-combinations as the maximum number of columns in each block. If perm.par="tau",... #TODO}
+\item{par_value}{A matrix (n*p, with p the number of blocks and n the number 
+of combinations to be tested), a vector (of p length) or a numeric value 
+giving sets of penalties (tau for RGCCA, sparsity for SGCCA) to be tested, 
+one row by combination. By default, it takes 10 sets between min values (0
+ for RGCCA and $1/sqrt(ncol)$ for SGCCA) and 1.}
 
-\item{perm.length}{If perm.value = NULL, an integer indicating the number of sets of parameters to be tested. The parameters are uniformly distributed.}
+\item{par_length}{An integer indicating the number of sets of parameters to be tested (if perm.value = NULL). The parameters are uniformly distributed.}
 
-\item{nperm}{An integer giving the number of permutation tested for each set of constraint}
+\item{n_run}{An integer giving the number of permutation tested for each set of constraint}
 
 \item{n_cores}{An integer for the number of cores used in parallelization}
 
@@ -95,39 +95,46 @@ a superblock}
 \item{parallelization}{A logical value to run a parallelization. If parallelization = NULL (default), the parallelization is always performed except for Windows if length(nperm) < 10.}
 }
 \value{
-A permutation object, which is a list containing :
+\item{zstat}{The Z statistic is the difference, for each combination, between the non-permuted R/SGCCA criterion and the mean of the permuted R/SGCCA criteria divided by the standard deviation of the permuted R/SGCCA criteria.}
 
-\item{pval}{The p-value}
+\item{bestpenalties}{Penalties giving the best Z-statistic for each blocks}
 
-\item{zstat}{The Z statistic}
+\item{permcrit}{A matrix of R/SGCCA criteria for each combination and each permutation}
 
-\item{bestpenalties}{Penalties corresponding to the best Z-statistic}
+\item{means}{Mean of the permutated R/SGCCA criteria for each combination}
 
-\item{permcrit}{RGCCA criteria obtained with the permutation set}
+\item{sds}{Standard deviation of the permutated R/SGCCA criteria for each combination}
 
-\item{crit}{A vector of integer giving the values of the RGCCA criteria across iterations.}
+\item{crit}{R/SGCCA criterion for each combination}
+
+\item{pval}{The p-value is the fraction of the permuted R/SGCCA criteria, for each combination, that is greater than or equal to the non-permuted R/SGCCA criterion}
+
+\item{penalties}{A matrix giving, for each blocks, the penalty combinations (tau or sparsity)}
 }
 \description{
-Run through a set of parameters (sparsity or number of selected components) with permutation to select the one maximizing RGCCA criterion 
-The sparsity parameter is tuned with only one component per block.
+To tune the sparsity coefficient (if the model is sparse) or tau 
+(otherwise), we observe the deviation between the model and a set of models 
+ where the lines of each block are permuted. The model with the best 
+combination of parameters is the one with the highest deviation with the 
+RGCCA criteria.
 }
 \examples{
 data("Russett")
-A = list(agriculture = Russett[, seq(3)], industry = Russett[, 4:5],
+blocks = list(agriculture = Russett[, seq(3)], industry = Russett[, 4:5],
     politic = Russett[, 6:11] )
-res = rgcca_permutation(A, nperm = 5, n_cores = 1)
-rgcca_permutation(A, perm.par = "sparsity", perm.value = 0.8, nperm = 2,
+res = rgcca_permutation(blocks, n_run = 5, n_cores = 1)
+rgcca_permutation(blocks, par_type = "sparsity", par_value = 0.8, n_run = 2,
  n_cores = 1)
-rgcca_permutation(A, perm.par = "sparsity", perm.value = c(0.6, 0.75, 0.5), 
-nperm = 2, n_cores = 1)
-rgcca_permutation(A, perm.par = "sparsity", 
-perm.value = matrix(c(0.6, 0.75, 0.5), 3, 3, byrow = TRUE),
- nperm = 2, n_cores = 1)
-rgcca_permutation(A, perm.par = "tau", perm.value = 0.8, nperm = 2, 
+rgcca_permutation(blocks, par_type = "sparsity", par_value = c(0.6, 0.75, 0.5), 
+n_run = 2, n_cores = 1)
+rgcca_permutation(blocks, par_type = "sparsity", 
+par_value = matrix(c(0.6, 0.75, 0.5), 3, 3, byrow = TRUE),
+ n_run = 2, n_cores = 1)
+rgcca_permutation(blocks, par_type = "tau", par_value = 0.8, n_run= 2, 
 n_cores = 1)
-rgcca_permutation(A, perm.par = "tau", perm.value = c(0.6, 0.75, 0.5),
- nperm = 2, n_cores = 1)
-rgcca_permutation(A, perm.par = "tau", perm.value = 
-matrix(c(0.6, 0.75, 0.5), 3, 3, byrow = TRUE),  nperm = 2, n_cores = 1)
+rgcca_permutation(blocks, par_type = "tau", par_value = c(0.6, 0.75, 0.5),
+ n_run = 2, n_cores = 1)
+rgcca_permutation(blocks, par_type = "tau", par_value = 
+matrix(c(0.6, 0.75, 0.5), 3, 3, byrow = TRUE),  n_run = 2, n_cores = 1)
 print(res)
 }
