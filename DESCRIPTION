@@ -29,7 +29,6 @@ Suggests:
 RoxygenNote: 7.1.0
 Imports: 
     parallel,
-    vegan,
     grDevices,
     Deriv,
     graphics,
@@ -38,7 +37,6 @@ Imports:
     methods,
     scales,
     gridExtra,
-    rlang,
     plotly
 VignetteBuilder: knitr
 biocViews: Visualization, PrincipalComponent, DimensionReduction, StructuralEquationModels
