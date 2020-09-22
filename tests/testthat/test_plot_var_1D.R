@@ -13,7 +13,6 @@
  # plot_var_1D(rgcca_out, 1, type = "weight")
  # With the 2nd component of the 1rst block by selecting the ten higher weights
  #plot_var_1D(rgcca_out, 2, 10, 1, type = "weight")
- library(RGCCA)
  data("Russett")
  blocks = list(agriculture = Russett[, seq(3)], industry = Russett[, 4:5],
      politic = Russett[, 6:11] )

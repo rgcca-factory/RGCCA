@@ -11,7 +11,6 @@
 #' @inheritParams plot.rgcca
 #' @export
 #' @examples
-#' library(RGCCA)
 #' data("Russett")
 #' blocks = list(agriculture = Russett[, seq(3)], industry = Russett[, 4:5],
 #'     politic = Russett[, 6:11] )

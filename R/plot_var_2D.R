@@ -37,7 +37,6 @@
 #' plot_var_2D(rgcca_out, 1, 2)
 #' # Using the first block
 #' plot_var_2D(rgcca_out, 1, 2, 1)
-#' library(RGCCA)
 #' data("Russett")
 #' blocks = list(agriculture = Russett[, seq(3)], industry = Russett[, 4:5],
 #'  politic = Russett[, 6:11] )

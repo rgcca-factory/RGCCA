@@ -53,8 +53,5 @@ print.permutation <- function(x, ...) {
     dimnames(tab) <- list(paste("Tuning parameter set ", sep = "", 1:length(x$pvals)), c("Crit", "Crit Perm", "Sd", "Z", "P-Value"))
     print(tab, quote = FALSE, ...)
 
-    cat("Tuning parameters corresponding to highest z score: \n")
-    cat(paste(round(x$bestpenalties, 3), collapse = ", "), "\n")
-    cat("Highest z score: ", max(x$zstat), "\n")
-    cat("P-value corresponding to highest z score: ", x$pvals[which.max(x$zstat)], fill = TRUE)
+    cat(paste0("\nThe best combination was: ", paste(round(x$bestpenalties, 3), collapse = ", "), " for a z score of ", round(max(x$zstat), 3), " and a p-value of ", round(x$pvals[which.max(x$zstat)], 3), ".\n"))
 }

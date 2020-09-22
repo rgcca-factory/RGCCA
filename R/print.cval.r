@@ -27,7 +27,7 @@ print.cval=function(x,bars="sd",alpha=0.05,...)
         char_to_print=paste(char_to_print,name,'=',quo,value,quo,vir, collapse="",sep="")
     }
     cat(char_to_print)
-    
+    cat("\n")
     
     c1s <- round(x$penalties, 4)
     rownames(c1s) = 1:NROW(c1s)
@@ -44,10 +44,12 @@ print.cval=function(x,bars="sd",alpha=0.05,...)
     cat(paste0(nrow(x$cv)," configurations were tested. \n"))
     
    cat(paste0("Validation: ",x$call$validation,ifelse(x$call$validation=="kfold", paste0(" with ",x$call$k," folds and ",x$call$n_run," run(s))"),")")),"\n")
-    
+
+    cat("\n")
     print(df)
+    cat("\n")
     
-    cat(paste("The best combination was:", paste(round(x$bestpenalties,digits=3),collapse=" "),"for a mean CV criterion (RMSE) of ", round(optimal_y,digits=2)),"\n",...)
+    cat(paste("The best combination was:", paste(round(x$bestpenalties,digits=3),collapse=", "),"for a mean CV criterion (RMSE) of ", round(optimal_y,digits=3)),".\n",...)
 
 
 }

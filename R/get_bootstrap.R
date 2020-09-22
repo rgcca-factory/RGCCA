@@ -26,7 +26,6 @@
 #' \item 'sign' for significant ('*') or not ('ns') p-values (alpha = 0.05)
 #' }
 #' @examples
-#' library(RGCCA)
 #' data("Russett")
 #' blocks = list(agriculture = Russett[, seq(3)], industry = Russett[, 4:5],
 #'     politic = Russett[, 6:11] )
