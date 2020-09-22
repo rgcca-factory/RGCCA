@@ -28,6 +28,7 @@ plot_permut_2D <- function(
 
     xend <- yend <- NULL
     match.arg(type, c("crit", "zstat"))
+    match.arg(bars,c("points","sd","stderr"))
     for (i in c("cex", "cex_main", "cex_sub", "cex_point", "cex_lab"))
         check_integer(i, get(i))
     
@@ -124,20 +125,14 @@ plot_permut_2D <- function(
                 p <- p+ geom_point(data=tab2,aes(x=tab2[,1],y=tab2[,3]))
                p <- p + geom_segment(data=dat,aes(x=x,y=y,xend=xend,yend=yend),colour="green",size=0.5)
          }
-        if (bars == "sderr") {
+        if (bars == "stderr") {
             tab=aggregate(dft,by=list(dft[,1]),function(x){return(sd(x)/sqrt(n))})
             tab2=aggregate(dft,by=list(dft[,1]),mean)
             dat=data.frame(x=tab[,1],y=tab2[,"y"]-tab[,"y"],xend=tab[,1],yend=tab2[,"y"]+tab[,"y"])
             p <- p+ geom_point(data=tab2,aes(x=tab2[,1],y=tab2[,3]))
             p <- p + geom_segment(data=dat,aes(x=x,y=y,xend=xend,yend=yend),colour="green",size=0.5)
         }
-        # }
-        # if (bars == "stderr") {
-        # }
-        # if (bars == "ci") {
-        # }
-        # if (bars == "quantile") {
-        # }
+   
 
     }
 

@@ -316,6 +316,18 @@ plot(resBootstrap,i_block=2)
 require(gliomaData)
 data(ge_cgh_locIGR)
 A <- ge_cgh_locIGR$multiblocks
+C <-  matrix(c(0, 0, 1, 0, 0, 1, 1, 1, 0), 3, 3)
+fit.sgcca = rgcca(blocks=A, connection=C,
+                  type="sgcca", sparsity = c(.071,.2, 1),
+                  ncomp = c(1, 1, 1),
+                  scheme = "horst",
+                  scale = TRUE, scale_block = TRUE,
+                  verbose = TRUE)
+
+rgcca_permutation(A, connection=C, par_type = "sparsity", n_run = 20)
+
+
+
 A[[1]]=cbind(A[[1]],A[[1]],A[[1]]);colnames(A[[1]])=paste("V",1:ncol(A[[1]]))
 Loc <- factor(ge_cgh_locIGR$y) ; levels(Loc) <- colnames(ge_cgh_locIGR$multiblocks$y)
 C <-  matrix(c(0, 0, 1, 0, 0, 1, 1, 1, 0), 3, 3)

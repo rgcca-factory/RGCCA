@@ -142,15 +142,15 @@ rgcca <- function(
         connection=blocks$call$connection
         tol=blocks$call$tol
         method=blocks$call$method
-        if(blocks$call$perm.par=="tau")
+        if(blocks$call$par_type=="tau")
         {
             tau=blocks$bestpenalties 
         }
-        if(blocks$call$perm.par=="ncomp")
+        if(blocks$call$par_type=="ncomp")
         {
             ncomp=blocks$bestpenalties 
         }
-        if(blocks$call$perm.par=="sparsity")
+        if(blocks$call$par_type=="sparsity")
         {
             sparsity=blocks$bestpenalties 
         }
@@ -165,15 +165,15 @@ rgcca <- function(
         response=blocks$call$response
         tol=blocks$call$tol
         method=blocks$call$method
-        if(blocks$call$par[[1]]=="tau")
+        if(blocks$call$par_type[[1]]=="tau")
         {
             tau=blocks$bestpenalties 
         }
-        if(blocks$call$par[[1]]=="ncomp")
+        if(blocks$call$par_type[[1]]=="ncomp")
         {
             ncomp=blocks$bestpenalties 
         }
-        if(blocks$call$par[[1]]=="sparsity")
+        if(blocks$call$par_type[[1]]=="sparsity")
         {
             sparsity=blocks$bestpenalties 
         }

@@ -5,6 +5,8 @@ X_agric =as.matrix(Russett[,c("gini","farm","rent")]);
 X_ind = as.matrix(Russett[,c("gnpr","labo")]);
 X_polit = as.matrix(Russett[ , c("demostab", "dictator")]);
 A = list(X_agric);
+
+
 #C = matrix(c(0, 0, 1, 0, 0, 1, 1, 1, 0), 3, 3);
 
 # scaled PCA
@@ -186,3 +188,15 @@ test_that("upca_var2",{expect_true(upca_var)})
  head(rgcca_with_superblock$call$blocks[[1]])
  test_that("superblock",{expect_true( sum(head(rgcca_with_superblock$call$blocks[[length(A)+1]])[,1:ncol(A[[1]])]!=head(lapply(A,function(x){y=scale2(x,scale=TRUE);return(y/sqrt(ncol(y)))})[[1]]))==0
  )})
+
+ # with permutation
+ X_agric =as.matrix(Russett[,c("gini","farm","rent")]);
+ X_ind = as.matrix(Russett[,c("gnpr","labo")]);
+ X_polit = as.matrix(Russett[ , 6:11]);
+ A = list(X_agric,X_ind,X_polit);
+ names(A)=c("Agri","Ind","Polit")
+ res_perm=rgcca_permutation(A)
+ rgcca(res_perm)
+ res_cv=rgcca_cv(A,response=1)
+ rgcca(res_cv)
+ 
