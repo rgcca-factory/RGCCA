@@ -43,7 +43,7 @@ one row by combination. By default, it takes 10 sets between min values (0
 
 \item{fit}{A character giving the function used to compare the trained and the tested models}
 
-\item{k}{If validation = 'kfold', an integer giving the number of folds.}
+\item{k}{An integer giving the number of folds (if validation = 'kfold').}
 
 \item{n_run}{An integer giving the number of cross-validations to be run (if validation = 'kfold').}
 
@@ -107,7 +107,7 @@ If sparsity is a matrix, each row \eqn{h} defines the constraints applied to the
 \item{...}{Further graphical parameters (see plot2D functions)}
 }
 \value{
-\item{cv}{A matrix giving the root-mean-square error (RMSE) between the predicted R/SGCCA and the observed R/SGCCA for each combination and each prediction (n_prediction = n_samples for validation = 'loo'; n_prediction = 'k' * 'n_cv' for validation = 'kfold').}
+\item{cv}{A matrix giving the root-mean-square error (RMSE) between the predicted R/SGCCA and the observed R/SGCCA for each combination and each prediction (n_prediction = n_samples for validation = 'loo'; n_prediction = 'k' * 'n_run' for validation = 'kfold').}
 
 \item{bestpenalties}{Penalties giving the best RMSE for each blocks}
 
@@ -130,7 +130,7 @@ blocks <- list(
     industry = Russett[, 4:5],
     politic = Russett[, 6:11])
 res = rgcca_cv(blocks, response = 3, type="rgcca", 
-par_type = "sparsity", par_value = c(0.6, 0.75, 0.5), n_cv = 2, n_cores = 1)
+par_type = "sparsity", par_value = c(0.6, 0.75, 0.5), n_run = 2, n_cores = 1)
 plot(res)
 rgcca_cv(blocks, response = 3, par_type = "tau", par_value = c(0.6, 0.75, 0.5)
 , n_run = 2, n_cores = 1)$bestpenalties

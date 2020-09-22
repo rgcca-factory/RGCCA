@@ -44,7 +44,7 @@ plot_bootstrap_2D(b = NULL, df_b = NULL, x = "bootstrap_ratio",
 \item{n_cores}{An integer for the number of cores used in parallelization}
 }
 \description{
-Biplot of the best variables from a bootstrap with, in x-axis, the number of
+Graph of the best variables from a bootstrap with, in x-axis, the number of
 non-zero occurences (SGCCA) or the significant 95% bootstrap 
 intervals (RGCCA; '*' or 'ns'; see 'p.vals' in details for 
 \code{\link[RGCCA]{get_bootstrap}}). In in y-axis are the bootstrap-ratios (mean/sd) .

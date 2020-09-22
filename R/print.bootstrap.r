@@ -1,8 +1,7 @@
 #'Print bootstrap
 #'@param x A bootstrap object (see \code{\link[RGCCA]{bootstrap}} )
 #'@param ... Further arguments in print
-#' @return A matrix containing for each variables of each blocks, the means, 95\% intervals, bootstrap ratio, p-values and other statistics (see details)
-#' @details 
+#' @return A matrix containing for each variables of each blocks, the means, 95\% intervals, bootstrap ratio, p-values and other statistics
 #' \itemize{
 #' \item 'estimate' for RGCCA weights
 #' \item 'mean' for the mean of the bootstrap weights
@@ -25,7 +24,7 @@ print.bootstrap=function(x,...)
         print(Reduce(rbind,lapply(1:length(x$rgcca$call$blocks),
                                   function(block)
                                   { b=get_bootstrap(b=x,
-                                                      i_block=block,
+                                                      block=block,
                                                     comp=comp,
                                                     bars="ci",
                                                     display_order =FALSE)

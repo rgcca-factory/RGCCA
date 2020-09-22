@@ -22,7 +22,7 @@
 #' @param n_run An integer giving the number of cross-validations to be run (if validation = 'kfold').
 #' @param one_value_per_cv A logical value indicating if the k values are averaged for each k-fold steps.
 #' @export
-#' @return \item{cv}{A matrix giving the root-mean-square error (RMSE) between the predicted R/SGCCA and the observed R/SGCCA for each combination and each prediction (n_prediction = n_samples for validation = 'loo'; n_prediction = 'k' * 'n_cv' for validation = 'kfold').}
+#' @return \item{cv}{A matrix giving the root-mean-square error (RMSE) between the predicted R/SGCCA and the observed R/SGCCA for each combination and each prediction (n_prediction = n_samples for validation = 'loo'; n_prediction = 'k' * 'n_run' for validation = 'kfold').}
 #' @return \item{bestpenalties}{Penalties giving the best RMSE for each blocks}
 #' @return \item{penalties}{A matrix giving, for each blocks, the penalty combinations (tau or sparsity)}
 #' @examples
@@ -32,7 +32,7 @@
 #'     industry = Russett[, 4:5],
 #'     politic = Russett[, 6:11])
 #' res = rgcca_cv(blocks, response = 3, type="rgcca", 
-#' par_type = "sparsity", par_value = c(0.6, 0.75, 0.5), n_cv = 2, n_cores = 1)
+#' par_type = "sparsity", par_value = c(0.6, 0.75, 0.5), n_run = 2, n_cores = 1)
 #' plot(res)
 #' rgcca_cv(blocks, response = 3, par_type = "tau", par_value = c(0.6, 0.75, 0.5)
 #' , n_run = 2, n_cores = 1)$bestpenalties

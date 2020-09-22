@@ -68,7 +68,7 @@ upca_varexpl=round(unscaledvarExplPrComp-unscaledvarExplRgcca,digits=4)==0
 upca_ind=abs(cor(unscaledPCAprcomp$x[,1],unscaledPCA$Y[[1]][,1]))==1
 upca_var=abs(cor(unscaledPCAprcomp$rotation[,1],unscaledPCA$astar[[1]][,1]))==1
 upca_ind2=abs(cor(unscaledPCAprcomp$x[,2],unscaledPCA$Y[[1]][,2]))==1
-upca_var2=abs(cor(unscaledPCAprcomp$rotation[,2],unscaledPCA$astar[[1]][,2]))==1
+upca_var2=round(abs(cor(unscaledPCAprcomp$rotation[,2],unscaledPCA$astar[[1]][,2])),digits=12)==1
 
 test_that("upca_ind",{expect_true(upca_ind)})
 test_that("upca_var",{expect_true(upca_var)})

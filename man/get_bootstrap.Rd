@@ -2,9 +2,9 @@
 % Please edit documentation in R/get_bootstrap.R
 \name{get_bootstrap}
 \alias{get_bootstrap}
-\title{Extract a bootstrap}
+\title{Extract statistical information from a bootstrap}
 \usage{
-get_bootstrap(b, comp = 1, i_block = length(b$bootstrap[[1]]),
+get_bootstrap(b, comp = 1, block = length(b$bootstrap[[1]]),
   bars = "sd", collapse = FALSE, n_cores = parallel::detectCores() -
   1, display_order = TRUE)
 }
@@ -12,8 +12,6 @@ get_bootstrap(b, comp = 1, i_block = length(b$bootstrap[[1]]),
 \item{b}{A bootstrap object (see  \code{\link[RGCCA]{bootstrap}} )}
 
 \item{comp}{An integer giving the index of the analysis components}
-
-\item{i_block}{An integer giving the index of a list of blocks}
 
 \item{bars}{A character among "sd" for standard deviations, "stderr" for the standard error, "ci" for confidence interval of scores and "cim" for the confidence intervall of the mean.}
 
@@ -24,23 +22,37 @@ get_bootstrap(b, comp = 1, i_block = length(b$bootstrap[[1]]),
 \item{display_order}{A logical value to display the order of the variables}
 }
 \value{
-A matrix containing the means, 95\% intervals, bootstrap ratio, p-values and other statistics (see details)
-}
-\description{
-Extract statistical information from a bootstrap
-}
-\details{
+A dataframe containing:
 \itemize{
-\item 'mean' for the mean of the bootstrap weights
+\item 'mean' for the mean of the (non-null in case of SGCCA) bootstrap weights
 \item 'estimate' for RGCCA weights
-\item 'sd' for the standard error of the bootstrap weights
-\item 'lower/upper_band' for the lower and upper intervals from to the 'bar' parameter
+\item 'sd' for the standard error of the (non-null in case of SGCCA) bootstrap weights
+\item 'lower/upper_band' for the lower and upper intervals calculated according to the 'bars' parameter
 \item 'bootstrap_ratio' for the mean of the bootstrap weights / their standard error
-\item 'p.vals' for p-values. The occurrences of  are distributed in accordance with the law
+\item 'p.vals' for p-values. In the case of SGCCA, the test is presented in details
+while for RGCCA, their absolute value weighted by their standard deviation 
+follows a normal distribution.
 \item 'BH' for Benjamini-Hochberg p-value adjustments
 \item 'occurrences' for non-zero occurences (for SGCCA) 
-\item 'sign' for significant 95% bootstrap interval (for RGCCA)
+\item 'sign' for significant ('*') or not ('ns') p-values (alpha = 0.05) (see Details for the calculation of p-values)
 }
+}
+\description{
+This function extracts statistical information from a bootstrap of the RGCCA weights (\code{\link[RGCCA]{bootstrap}}). The statistical information include
+}
+\details{
+In the case of SGCCA (among "sgcca","spls" or "spca"), the frequency of a selected variable may depend on both the level of sparsity and the total number of variables in each block. 
+Consequently, a specific test taking these characteristics into account was set up. 
+ 
+ Let's consider a single bootstrap and a single variable.
+ In the case of a random selection of the variable among the block variables, the number of occurrences (0 or 1) follows a Bernouilli distribution with the parameter p = proportion of selected variables in the block. 
+ The proportion of selected variables in each block was estimated by the average number of selected variables over all bootstraps divided by the total number of variables in each block (p_j). 
+ Thus, for a larger number of bootstraps, the number of occurrences follows a binomial distribution B(n,p) with parameter n=number of bootstraps. 
+  
+ Therefore, the test is based on the following null hypothesis: "The variable was randomly selected according to B(n,p)
+It was rejected when the number of occurrences was higher than the 1-(0.05/p_j)th quantile 
+
+In the case of RGCCA, a classical Student test (df = number of bootstraps -1) is computed based on the statistic weight/standard deviations
 }
 \examples{
 library(RGCCA)

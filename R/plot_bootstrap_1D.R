@@ -57,7 +57,7 @@ plot_bootstrap_1D <- function(
     if (missing(b) && missing(df_b))
         stop_rgcca("Please select a bootstrap object.")
     if (!is.null(b)) {
-        df_b <- get_bootstrap(b, comp, i_block, collapse, n_cores, bars=bars,display_order = TRUE)
+        df_b <- get_bootstrap(b, comp, block=i_block, collapse, n_cores, bars=bars,display_order = TRUE)
     }
     if (!is.null(df_b))
         stopifnot(is(df_b, "df_bootstrap"))
