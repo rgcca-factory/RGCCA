@@ -195,8 +195,8 @@ test_that("upca_var2",{expect_true(upca_var)})
  X_polit = as.matrix(Russett[ , 6:11]);
  A = list(X_agric,X_ind,X_polit);
  names(A)=c("Agri","Ind","Polit")
- res_perm=rgcca_permutation(A)
+ res_perm=rgcca_permutation(A,n_cores=1,par_length=3)
  rgcca(res_perm)
- res_cv=rgcca_cv(A,response=1)
+ res_cv=rgcca_cv(A,response=1,n_cores=1,par_length=3)
  rgcca(res_cv)
  
