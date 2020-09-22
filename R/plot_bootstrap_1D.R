@@ -63,10 +63,14 @@ plot_bootstrap_1D <- function(
         stopifnot(is(df_b, "df_bootstrap"))
     check_integer("n_mark", n_mark)
 
+    if(is.null(title))
+    {
         title <- paste0(attributes(df_b)$indexes[[x]],
-                   "\n(",
-                   attributes(df_b)$n_boot,
-                   " bootstraps)")
+                        "\n(",
+                        attributes(df_b)$n_boot,
+                        " bootstraps)")        
+    }
+
     if (is.null(colors)) {
         if (!(y %in% c("occurrences", "sign")))
             colors <- c(color_group(seq(3))[1],  "gray", color_group(seq(3))[3])

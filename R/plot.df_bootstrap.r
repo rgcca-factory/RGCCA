@@ -38,8 +38,18 @@ plot.bootstrap=function(x,type="1D",block=length(x$rgcca$call$blocks),comp=1,n_m
     if(type=="1D")
     {
         
-        if(x$rgcca$call$type%in%c("sgcca","spls","spca")){x1="occurrences";y1="mean";title=ifelse(is.null(title),paste0("Occurrences:",names(x$rgcca$call$blocks)[block]),title)}
-           else{x1="estimate";y1="sign";title=ifelse(is.null(title),paste0("Weights:",names(x$rgcca$call$blocks)[block]),title)}
+        if(x$rgcca$call$type%in%c("sgcca","spls","spca"))
+        {
+            x1="occurrences";
+            y1="mean";
+            title=ifelse(is.null(title),
+                         paste0("Occurrences: ",names(x$rgcca$call$blocks)[block], " \n(", ncol(x$bootstrap[[1]][[1]])," bootstraps)"),title)
+        }
+         else
+         {
+            x1="estimate";
+            y1="sign";
+            title=ifelse(is.null(title),paste0("Weights: ",names(x$rgcca$call$blocks)[block],"\n (", ncol(x$bootstrap[[1]][[1]])," bootstraps)"),title)}
            
          p1=plot_bootstrap_1D(
             b = x,
