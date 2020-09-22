@@ -5,6 +5,7 @@
 #' @inheritParams bootstrap
 #' @inheritParams plot_histogram
 #' @inheritParams plot_var_2D
+#' @inheritParams plot.rgcca
 #' @inheritParams plot_var_1D
 #' @param bars A character among "sd" for standard deviations, "stderr" for the standard error, "ci" for confidence interval of scores and "cim" for the confidence intervall of the mean.
 #' @param b A bootstrap object (see  \code{\link[RGCCA]{bootstrap}} )

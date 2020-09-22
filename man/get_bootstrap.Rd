@@ -13,6 +13,8 @@ get_bootstrap(b, comp = 1, block = length(b$bootstrap[[1]]),
 
 \item{comp}{An integer giving the index of the analysis components}
 
+\item{block}{A vector of integers giving the index of a list of blocks or a block = 'all' for all of them}
+
 \item{bars}{A character among "sd" for standard deviations, "stderr" for the standard error, "ci" for confidence interval of scores and "cim" for the confidence intervall of the mean.}
 
 \item{collapse}{A boolean to combine the variables of each block as result}

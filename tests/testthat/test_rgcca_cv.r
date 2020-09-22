@@ -1,12 +1,4 @@
-set.seed(1)
-data("Russett")
-blocks <- list(
-    agriculture = Russett[, seq(3)],
-    industry = Russett[, 4:5],
-    politic = Russett[, 6:11])
-#res_rgcca=rgcca(blocks, type="rgcca",response=1)
-
-res=rgcca_cv(blocks,response=length(blocks),type="rgcca",par_type="tau",par_value=c(0,0.2,0.3),n_run=1,n_cores=1)
+..
 plot(res)
 
 res=rgcca_cv(blocks,response=length(blocks),type="rgcca",par_type="tau",par_value=c(0,0.2,0.3),n_run=1,n_cores=1,scale=FALSE,scale_block=FALSE)
