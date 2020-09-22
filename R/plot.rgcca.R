@@ -42,7 +42,7 @@
 #' @importFrom gridExtra grid.arrange
 #' @importFrom ggplot2 ggplot
 #' @export
-plot.rgcca=function(x,type="weight",block=length(x$A),comp=1:2,resp=rep(1, NROW(x$Y[[1]])),remove_var=FALSE,text_var=TRUE,text_ind=TRUE,response_name= "Response",no_overlap=FALSE,title=NULL,n_mark=100,collapse=FALSE,cex=1,cex_sub=12,cex_main=14,cex_lab=12,colors=NULL,...)
+plot.rgcca=function(x,type="weight",block=length(x$A),comp=1:2,resp=rep(1, NROW(x$Y[[1]])),remove_var=FALSE,text_var=TRUE,text_ind=TRUE,response_name= "Response",no_overlap=FALSE,title=NULL,n_mark=30,collapse=FALSE,cex=1,cex_sub=12,cex_main=14,cex_lab=12,colors=NULL,...)
 {
     match.arg(type,c("ind","var","both","ave","cor","weight","network"))
      if(length(comp)==1){comp=rep(comp,2)}
