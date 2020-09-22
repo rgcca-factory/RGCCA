@@ -5,7 +5,6 @@
 #' @param typeNA "bloc" if the structure of missing data is by block or "ponc" if it is random across variables
 #' @param pNA A logical value. If scale = TRUE, each column is transformed to have unit variance.
 #' @param nAllRespondants If the typeNA "ponc" is chosen,nAllRespondant corresponds to the number of complete individuals required
-#' @return \item{A}{a list of NA}
 #' @title Create a list with missing data (for simulation)
 #' @export
 #' @examples 

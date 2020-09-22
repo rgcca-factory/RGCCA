@@ -7,7 +7,7 @@
 # @param output "mean","random" or "weightedMean". Corresponds to the kind of output required by the user. If "random" is chosen, the imputation will be done by selecting one neighbor among the k nearests. If "mean" is chosen, the imputation will be done by averaging all k-neighbors scores. If "weightedMean" is chosen, this average is weighted by the inverse of the distance.
 # @param klim Vector of two integers with klim(1)<klim(2). if k=auto, it is optimised between klim(1) and klim(2)
 # @param superblock if TRUE the distance between two subjects is calculated on the superblock. If FALSE the distance is calculated by blocks.
-# @return \item{A}{A list of the imputed blocks}
+# @return \item{A}{A list of imputed matrices giving the \eqn{J} blocks of variables \eqn{\mathbf{X_1}, \mathbf{X_2}, ..., \mathbf{X_J}}}
 # @title imputeNN: Impute with k-Nearest Neighbors
 
 imputeNN <- function(

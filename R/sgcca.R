@@ -30,8 +30,9 @@
 #' @return \item{Y}{A list of \eqn{J} elements. Each element of \eqn{Y} is a matrix that contains the analysis components for the corresponding block.}
 #' @return \item{a}{A list of \eqn{J} elements. Each element of \eqn{a} is a matrix that contains the outer weight vectors for each block.}
 #' @return \item{astar}{A list of \eqn{J} elements. Each element of astar is a matrix defined as Y[[j]][, h] = A[[j]]\%*\%astar[[j]][, h]}
-#' @return \item{call}{Call of the function}#' @return \item{crit}{AA vector of integer that contains the values of the analysis criteria across iterations.}
-#' @return \item{AVE}{Indicators of model quality based on the Average Variance Explained (AVE): AVE(for one block), AVE(outer model), AVE(inner model).}
+#' @return \item{call}{Call of the function}
+#' @return \item{crit}{A vector of integer that contains for each component the values of the analysis criteria across iterations.}
+#' @return \item{AVE}{A list of numerical values giving the indicators of model quality based on the Average Variance Explained (AVE): AVE(for each block), AVE(outer model), AVE(inner model).}
 #' @references Tenenhaus, A., Philippe, C., Guillemot, V., Le Cao, K. A., Grill, J., and Frouin, V. , "Variable selection for generalized canonical correlation analysis.," Biostatistics, vol. 15, no. 3, pp. 569-583, 2014. 
 #' @title Variable Selection For Generalized Canonical Correlation Analysis (SGCCA)
 #' @examples

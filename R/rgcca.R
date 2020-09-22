@@ -49,10 +49,11 @@
 #' If tau = "optimal" the regularization paramaters are estimated for each block and each dimension using the Schafer and Strimmer (2005)
 #' analytical formula . If tau is a \eqn{1\times J} vector, tau[j] is identical across the dimensions of block \eqn{\mathbf{X}_j}.
 #' If tau is a matrix, tau[k, j] is associated with \eqn{\mathbf{X}_{jk}} (\eqn{k}th residual matrix for block \eqn{j}). It can be estimated by using \link{rgcca_permutation}.}
-#' @return \item{crit}{A vector of integer that contains the values of the analysis criteria across iterations.}
+#' @return \item{crit}{A vector of integer that contains for each component the values of the analysis criteria across iterations.}
 #' @return \item{mode}{A \eqn{1 \times J} vector that contains the formulation ("primal" or "dual") applied to each of the \eqn{J} blocks within the RGCCA alogrithm} 
-#' @return \item{AVE}{indicators of model quality based on the Average Variance Explained (AVE): AVE(for one block), AVE(outer model), AVE(inner model).}
-#' @return \item{A}{ blocks used in the calculations. Imputed block if imputation method were chosen}
+#' @return \item{AVE}{A list of numerical values giving the indicators of model quality based on the Average Variance Explained (AVE): AVE(for each block), AVE(outer model), AVE(inner model).}
+#' @return \item{A}{A list of matrices giving the \eqn{J} blocks of variables \eqn{\mathbf{X_1}, \mathbf{X_2}, ..., \mathbf{X_J}}
+#' These matrices, used in the calculations, are imputed if an imputation method is selected.}
 #' @return \item{call}{Call of the function}
 #' @references Tenenhaus A. and Tenenhaus M., (2011), Regularized Generalized Canonical Correlation Analysis, Psychometrika, Vol. 76, Nr 2, pp 257-284.
 #' @references Tenenhaus A. et al., (2013), Kernel Generalized Canonical Correlation Analysis, submitted.
@@ -71,6 +72,7 @@
 #' result.rgcca = rgcca(A,type="rgcca", connection=C, tau = c(1, 1, 1),superblock=FALSE,
 #'  scheme = "factorial", scale = TRUE)
 #' lab = as.vector(apply(Russett[, 9:11], 1, which.max))
+#' print(result.rgcca)
 #' plot(result.rgcca,type="ind",block=1:2,comp=rep(1,2),resp=lab)
 #' ############################################
 #' # Example 2: RGCCA and multiple components #
@@ -81,18 +83,18 @@
 #' plot(result.rgcca,resp=lab)
 #' plot(result.rgcca,type="ave")
 #' plot(result.rgcca,type="network")
-#' plot(result.rgcca,type="weight")
+#' plot(result.rgcca,type="weight",block=1)
+#' plot(result.rgcca,type="cor")
 #' ############################################
 #' # Example : SGCCA #
 #' ############################################
 #' result.sgcca = rgcca(A,type="sgcca",connection= C, superblock=FALSE,
 #' sparsity = rep(0.8, 3), ncomp = c(2, 2, 2),
 #'                      scheme = "factorial", verbose = TRUE)
-#' plot(result.sgcca,resp=lab)
+#' plot(result.sgcca,resp=lab,type="ind")
 #' plot(result.sgcca,type="ave")
 #' plot(result.sgcca,type="network")
 #' plot(result.sgcca,type="weight")
-
 #' @export
 #' @import ggplot2
 #' @importFrom grDevices dev.off rgb colorRamp pdf colorRampPalette
