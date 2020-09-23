@@ -7,7 +7,7 @@
 #' @inheritParams plot_var_2D
 #' @inheritParams plot.rgcca
 #' @inheritParams plot_var_1D
-#' @param bars A character among "sd" for standard deviations, "stderr" for the standard error, "ci" for confidence interval of scores and "cim" for the confidence intervall of the mean.
+#' @param bars A character giving the variability among "sd" (standard deviations bars) , "stderr"(bars of standard deviation divided by sqrt(n)) or "quantile" (for the 0.05-0.95 quantiles bars)
 #' @param b A bootstrap object (see  \code{\link[RGCCA]{bootstrap}} )
 #' @param display_order A logical value to display the order of the variables
 #' @return A dataframe containing:
@@ -62,7 +62,7 @@ get_bootstrap <- function(
     check_compx("comp", comp, b$rgcca$call$ncomp, block)
     check_boolean("collapse", collapse)
     check_integer("n_cores", n_cores, min = 0)
-    match.arg(bars,c("quantile", "sd", "stderr", "ci", "points", "cim"))
+    match.arg(bars,c("quantile", "sd", "stderr"))
 
     bootstrapped=b$bootstrap[[comp]][[block]]
     #n_boot=dim(bootstrapped)[2]

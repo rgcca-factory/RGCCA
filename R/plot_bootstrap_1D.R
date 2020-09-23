@@ -6,7 +6,9 @@
 #' intervals ('*' or 'ns'; see 'p.vals' in details for 
 #' \code{\link[RGCCA]{get_bootstrap}}) for RGCCA and according to the occurences
 #'  of the weights which are not equal to zero (according to an ascending 
-#'  gradient from red to blue) for SGCCA.
+#'  gradient from red to blue) for SGCCA. In SGCA, the significant variables 
+#'  are those above the three bars, respectively, with an alpha = 0.05 
+#'  (dark red), 0.01 (red) and 0.001 (light red).
 #' @inheritParams plot_histogram
 #' @inheritParams get_bootstrap
 #' @inheritParams plot_var_2D
@@ -146,7 +148,7 @@ plot_bootstrap_1D <- function(
         q2=qbinom(size=n_boot,prob=probComp,p=1-0.01/nvar)
         q3=qbinom(size=n_boot,prob=probComp,p=1-0.001/nvar)
         
-        p <-p+geom_hline(yintercept = c(q1,q2,q3),col=c("red","black","green"))
+        p <-p+geom_hline(yintercept = c(q1,q2,q3),col=c("#82191b","#d63134","#e49697"))
         p
         
     }

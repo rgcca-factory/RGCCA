@@ -1,7 +1,7 @@
-#' Tuning RGCCA parameters in 'supervised' mode with cross-validation
+#' Tune RGCCA parameters in 'supervised' mode with cross-validation
 #'
 #' This function is dedicated to supervised approaches (with a 'response' parameter in rgcca).
-#' To tune the sparsity coefficient (if the model is sparse) or tau 
+#' Tune the sparsity coefficient (if the model is sparse) or tau 
 #' (otherwise), the predictive quality of the model induced by these parameters are estimated by crossvalidation. 
 #' In this purpose, individuals can be divided into k folds where the model will be tested on each fold and trained
 #'  on the others. For small datasets (<30 samples), it is recommended to use 

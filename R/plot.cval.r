@@ -7,8 +7,6 @@
 #'permuted RMSE criterion. The best parameters are in red by default.
 #'@inheritParams plot2D
 #'@param x A rgcca_cv object (see \link{rgcca_cv})
-#'@param bars A character among "sd" for standard deviations, "stderr" for standard error (standard deviations divided by sqrt(n), "points" or "quantile" for the 0.05-0.95 quantiles
-# #'@param alpha A numeric value giving the risk for the confidence interval bars (ci or cim).
 #'@param ... Further plot options
 #'@export
 #'@examples
@@ -21,21 +19,19 @@
 #'     n_run=1,n_cores=1)
 #'    plot(res)
 #'@importFrom ggplot2 ggplot
-plot.cval=function(x, bars="sd", alpha = 0.05, cex = 1, cex_main = 14 * cex, cex_sub = 10 * cex, cex_lab = 10 * cex, colors = c("red", "grey"), ...)
+plot.cval=function(x, bars="sd", cex = 1, cex_main = 14 * cex, cex_sub = 10 * cex, cex_lab = 10 * cex, colors = c("red", "grey"), ...)
 {
 
     stopifnot(is(x, "cval"))
-    match.arg(bars,c("quantile", "sd", "stderr", "ci", "points", "cim"))
+    match.arg(bars,c("quantile","sd","stderr","points"))
     for (i in c("cex", "cex_main", "cex_sub", "cex_lab"))
         check_integer(i, get(i))
-    check_integer(alpha, min = 0, float = TRUE)
     check_colors(colors)
     if (length(colors) < 2)
         colors <- rep(colors, 2)
 
     configurations <- NULL -> y
     mat_cval=x$cv
-    match.arg(bars,c("quantile","sd","stderr","points"))
 
     mean_b=apply(mat_cval,1,mean)
     main=paste0("RMSE \n (",x$call$validation,ifelse(x$call$validation=="kfold", paste0(": with ",x$call$k," folds", ifelse(x$call$n_cv>1,paste0("and ",x$call$n_cv," run",ifelse(x$call$n_cv==1,"","s")),""),";"),";\n "))

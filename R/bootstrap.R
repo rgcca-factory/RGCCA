@@ -1,6 +1,6 @@
-#' Computes bootstrap
+#' Compute bootstrap
 #'
-#' Computing boostrap of RGCCA in order to evaluate the stability of the weights found in RGCCA (or the occurrences of the variables in SGCCA)
+#' Compute boostrap of RGCCA in order to evaluate the stability of the weights found in S/RGCCA
 #' @inheritParams plot2D
 #' @param n_boot An integer for the number of boostraps
 #' @param n_cores An integer for the number of cores used in parallelization 

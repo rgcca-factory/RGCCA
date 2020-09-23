@@ -1,6 +1,6 @@
-#' Prints a permutation object
+#' Print a permutation object
 #' 
-#' Prints the results of permutation rgcca
+#' Print a permutation object
 #' @param x A rgcca_permutation object (see  \code{\link[RGCCA]{rgcca_permutation}})
 #' @param ... Further print parameters
 #' @export

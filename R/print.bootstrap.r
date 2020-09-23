@@ -1,6 +1,6 @@
 #'Print bootstrap
 #'
-#'Prints a bootstrap object. 
+#'Print a bootstrap object
 #'@inheritParams get_bootstrap
 #'@param x A bootstrap object (see \code{\link[RGCCA]{bootstrap}})
 #'@param ... Further arguments in print

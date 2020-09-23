@@ -22,7 +22,9 @@
 #' \item If type = '1D': barplot of the best variables from a bootstrap with, on the x-axis,
 #' the number of non-zero occurrences (SGCCA) or the mean of the bootstrap weights 
 #' (RGCCA). The bars are colored according to the significant 95% bootstrap 
-#' intervals ('*' or 'ns'; see 'p.vals' in Details section for details)
+#' intervals ('*' or 'ns'; see 'p.vals' in details). In SGCA, the significant variables 
+#'  are those above the three bars, respectively, with an alpha = 0.05 
+#'  (dark red), 0.01 (red) and 0.001 (light red).
 #' \item type = '2D' : graph of the best variables from a bootstrap with, in x-axis, the number of
 #' non-zero occurences (SGCCA) or the significant 95% bootstrap 
 #' intervals (RGCCA). In in y-axis are the bootstrap-ratios (mean/sd) 
@@ -42,7 +44,7 @@ plot.bootstrap=function(x,type="1D",block=length(x$rgcca$call$blocks),comp=1,n_m
         if(x$rgcca$call$type%in%c("sgcca","spls","spca"))
         {
             x1="occurrences";
-            y1="mean";
+            y1="estimate";
             title=ifelse(is.null(title),
                          paste0("Occurrences: ",names(x$rgcca$call$blocks)[block], " \n(", ncol(x$bootstrap[[1]][[1]])," bootstraps)"),title)
         }

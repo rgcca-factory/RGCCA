@@ -12,7 +12,7 @@
 #'     res=rgcca_cv(blocks, response=3,type="rgcca",par_type="tau",par_value=c(0,0.2,0.3),
 #'     n_run=1,n_cores=1)
 #'    print(res)
-print.cval=function(x,bars="sd",alpha=0.05,...)
+print.cval=function(x,bars="sd",...)
 {
     
     cat("Call: ")
