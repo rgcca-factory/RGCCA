@@ -7,7 +7,7 @@
 #' @inheritParams plot_var_2D
 #' @inheritParams plot.rgcca
 #' @inheritParams plot_var_1D
-#' @param bars A character among "sd" for standard deviations, "stderr" for the standard error of the mean, "ci" for confidence interval of scores and "cim" for the confidence interval of the mean.
+#' @param bars A character among "sd" for standard deviations, "stderr" for the standard error of the mean, or "quantile" for the 0.05th and 0.95th quantiles.
 #' @param b A bootstrap object (see  \code{\link[RGCCA]{bootstrap}} )
 #' @param display_order A logical value to display the order of the variables
 #' @return A dataframe containing:
@@ -116,12 +116,12 @@ get_bootstrap <- function(
         lower_band=mean-length_bar
         upper_band=mean+length_bar
     }
-    if(bars=="ci")
-    {
-        length_bar=tail*sd
-        lower_band=mean-length_bar
-        upper_band=mean+length_bar
-    }
+    # if(bars=="ci")
+    # {
+    #     length_bar=tail*sd
+    #     lower_band=mean-length_bar
+    #     upper_band=mean+length_bar
+    # }
     
     # if(bars=="cim")
     # {
@@ -189,7 +189,7 @@ get_bootstrap <- function(
         list(
             estimate = "RGCCA weights",
             bootstrap_ratio = "Bootstrap-ratio",
-            sign = "Significant 95% \nbootstrap interval",
+            sign = "Significance",
             occurrences = "Non-zero occurrences",
             mean = "Mean bootstrap weights"
         )

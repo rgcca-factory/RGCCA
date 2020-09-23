@@ -127,7 +127,7 @@ In this purpose, individuals can be divided into k folds where the model will be
 If type_cv=="regression",at each round of cross-validation, for each variable, a predictive model is constructed as a linear model of the first RGCCA component of each block (calculated on the training set).
  Then the Root Mean Square of Errors of this model on the testing dataset are calculated, then averaged on the variables of the predictive block. 
  The best combination of parameters is the one where the average of RMSE on the testing datasets is the lowest.
-If type_cv=="classification", at each round of cross-validation a "lda" is run and the proportion of good predictions on the testing dataset is returned.
+If type_cv=="classification", at each round of cross-validation a "lda" is run and the proportion of wrong predictions on the testing dataset is returned.
 }
 \examples{
 data("Russett")

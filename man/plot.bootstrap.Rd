@@ -6,7 +6,7 @@
 \usage{
 \method{plot}{bootstrap}(x, type = "1D",
   block = length(x$rgcca$call$blocks), comp = 1, n_mark = 30,
-  bars = "sd", colors = NULL, title = NULL, cex = 1,
+  bars = "quantile", colors = NULL, title = NULL, cex = 1,
   n_cores = parallel::detectCores() - 1, ...)
 }
 \arguments{
@@ -20,7 +20,7 @@
 
 \item{n_mark}{An integer giving the number of top variables to select}
 
-\item{bars}{A character among "sd" for standard deviations, "stderr" for the standard error of the mean, "ci" for confidence interval of scores and "cim" for the confidence interval of the mean.}
+\item{bars}{A character among "sd" for standard deviations, "stderr" for the standard error of the mean, or "quantile" for the 0.05th and 0.95th quantiles.}
 
 \item{colors}{Either a vector of integers (each integer corresponding to a color) or of characters corresponding to names of colors (as "blue",see colors()) or RGB code ("#FFFFFF").}
 

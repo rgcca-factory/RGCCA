@@ -32,7 +32,7 @@
 #' @details
 #' The function \code{\link[RGCCA]{get_bootstrap}} allows obtaining the numeric values used to produce the graph
 
-plot.bootstrap=function(x,type="1D",block=length(x$rgcca$call$blocks),comp=1,n_mark=30,bars="sd",colors=NULL,title=NULL,cex=1,n_cores= parallel::detectCores() - 1,...)
+plot.bootstrap=function(x,type="1D",block=length(x$rgcca$call$blocks),comp=1,n_mark=30,bars="quantile",colors=NULL,title=NULL,cex=1,n_cores= parallel::detectCores() - 1,...)
 {
     
     if(type=="1D")

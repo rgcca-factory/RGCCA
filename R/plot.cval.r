@@ -2,8 +2,8 @@
 #'
 #'@inheritParams plot2D
 #'@param x A rgcca_cv object (see \link{rgcca_cv})
-#'@param bars A character among "sd" for standard deviations, "stderr" for standard error (standard deviations divided by sqrt(n), "ci" for confidence interal, "cim" for confidence interval of the mean.
-#'@param alpha A numeric value giving the risk for the confidence interval bars (ci or cim).
+#'@param bars A character among "sd" for standard deviations, "stderr" for standard error (standard deviations divided by sqrt(n), "points" or "quantile" for the 0.05-0.95 quantiles
+# #'@param alpha A numeric value giving the risk for the confidence interval bars (ci or cim).
 #'@param ... Further plot options
 #'@export
 #'@examples
@@ -16,11 +16,11 @@
 #'     n_run=1,n_cores=1)
 #'    plot(res)
 #'@importFrom ggplot2 ggplot
-plot.cval=function(x,bars="sd",alpha=0.05,cex = 1, cex_main = 14 * cex, cex_sub = 10 * cex,...)
+plot.cval=function(x,bars="sd",cex = 1, cex_main = 14 * cex, cex_sub = 10 * cex,...)
 {
     configurations <- NULL -> y
     mat_cval=x$cv
-    match.arg(bars,c("quantile","sd","stderr","ci","points"))
+    match.arg(bars,c("quantile","sd","stderr","points"))
     mean_b=apply(mat_cval,1,mean)
     main=paste0("RMSE according to the combinations \n (",x$call$validation,ifelse(x$call$validation=="kfold", paste0(": with ",x$call$k," folds", ifelse(x$call$n_run>1,paste0(" and ",x$call$n_run," run",ifelse(x$call$n_run==1,"","s")),""),")"),";,\n "))
     main=paste0(main,"\nbest value, in green : ",
@@ -44,18 +44,18 @@ plot.cval=function(x,bars="sd",alpha=0.05,cex = 1, cex_main = 14 * cex, cex_sub 
             inf_b=mean_b-apply(mat_cval,1,function(y){sd(y)/sqrt(length(y))})
             sup_b=mean_b+apply(mat_cval,1,function(y){sd(y)/sqrt(length(y))})
         }
-        if(bars=="cim")
-        {
-            stat=qt(1-alpha/2,df=dim(mat_cval)[2]-1)
-            inf_b=mean_b-apply(mat_cval,1,function(y){stat*sd(y)/sqrt(length(y))})
-            sup_b=mean_b+apply(mat_cval,1,function(y){stat*sd(y)/sqrt(length(y))})
-        }
-        if(bars=="ci")
-        {
-            stat=qt(1-alpha/2,df=dim(mat_cval)[2]-1)
-            inf_b=mean_b-apply(mat_cval,1,function(y){stat*sd(y)})
-            sup_b=mean_b+apply(mat_cval,1,function(y){stat*sd(y)})
-        }
+        # if(bars=="cim")
+        # {
+        #     stat=qt(1-alpha/2,df=dim(mat_cval)[2]-1)
+        #     inf_b=mean_b-apply(mat_cval,1,function(y){stat*sd(y)/sqrt(length(y))})
+        #     sup_b=mean_b+apply(mat_cval,1,function(y){stat*sd(y)/sqrt(length(y))})
+        # }
+        # if(bars=="ci")
+        # {
+        #     stat=qt(1-alpha/2,df=dim(mat_cval)[2]-1)
+        #     inf_b=mean_b-apply(mat_cval,1,function(y){stat*sd(y)})
+        #     sup_b=mean_b+apply(mat_cval,1,function(y){stat*sd(y)})
+        # }
         if(bars=="points")
         {
             inf_b=apply(mat_cval,1,function(y){min(y)})

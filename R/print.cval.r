@@ -38,7 +38,7 @@ print.cval=function(x,bars="sd",alpha=0.05,...)
     print(c1s, quote = FALSE,...)
     cat("\n")
     
-    df <- summary.cv(x, bars, alpha)
+    df <- summary.cv(x, bars)
 
     optimal_ind=which.min(df[,"Mean RMSE"])
     optimal_x=df[optimal_ind,"Combination"]

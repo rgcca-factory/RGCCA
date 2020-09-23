@@ -9,7 +9,7 @@
 \arguments{
 \item{x}{A bootstrap object (see \code{\link[RGCCA]{bootstrap}} )}
 
-\item{bars}{A character among "sd" for standard deviations, "stderr" for the standard error of the mean, "ci" for confidence interval of scores and "cim" for the confidence interval of the mean.}
+\item{bars}{A character among "sd" for standard deviations, "stderr" for the standard error of the mean, or "quantile" for the 0.05th and 0.95th quantiles.}
 
 \item{...}{Further arguments in print}
 }

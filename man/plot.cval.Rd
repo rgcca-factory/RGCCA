@@ -4,15 +4,13 @@
 \alias{plot.cval}
 \title{plot.cval}
 \usage{
-\method{plot}{cval}(x, bars = "sd", alpha = 0.05, cex = 1,
-  cex_main = 14 * cex, cex_sub = 10 * cex, ...)
+\method{plot}{cval}(x, bars = "sd", cex = 1, cex_main = 14 * cex,
+  cex_sub = 10 * cex, ...)
 }
 \arguments{
 \item{x}{A rgcca_cv object (see \link{rgcca_cv})}
 
-\item{bars}{A character among "sd" for standard deviations, "stderr" for standard error (standard deviations divided by sqrt(n), "ci" for confidence interal, "cim" for confidence interval of the mean.}
-
-\item{alpha}{A numeric value giving the risk for the confidence interval bars (ci or cim).}
+\item{bars}{A character among "sd" for standard deviations, "stderr" for standard error (standard deviations divided by sqrt(n), "points" or "quantile" for the 0.05-0.95 quantiles}
 
 \item{cex}{An integer for the size of the plot parameters}
 
