@@ -324,7 +324,7 @@ fit.rgcca = rgcca(blocks=A, connection=C,
                   ncomp = c(1, 1, 1),
                   scheme = "horst",
                   scale = TRUE, scale_block = TRUE,
-                  verbose = TRUE)
+                  verbose = TRUE,init="svd")
 
 fit.sgccaNa = sgccaNa(blocks=A, connection=C,
                   sparsity= c(.071,.2, 1),
@@ -344,7 +344,7 @@ fit.sgccak = sgccak(A=A2, C=C,
                   sparsity= c(.071,.2, 1),
                   scheme = "horst",
                   scale = TRUE, 
-                  verbose = TRUE,tol=1e-8,init="random")
+                  verbose = TRUE,tol=1e-8,init="svd")
 
 
 fit.rgcca$Y[[1]]==fit.sgcca$Y[[1]]
