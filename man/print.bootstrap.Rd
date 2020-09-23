@@ -2,12 +2,14 @@
 % Please edit documentation in R/print.bootstrap.r
 \name{print.bootstrap}
 \alias{print.bootstrap}
-\title{Print bootstrap}
+\title{Prints bootstrap}
 \usage{
-\method{print}{bootstrap}(x, ...)
+\method{print}{bootstrap}(x, bars = "quantile", ...)
 }
 \arguments{
 \item{x}{A bootstrap object (see \code{\link[RGCCA]{bootstrap}} )}
+
+\item{bars}{A character among "sd" for standard deviations, "stderr" for the standard error of the mean, "ci" for confidence interval of scores and "cim" for the confidence interval of the mean.}
 
 \item{...}{Further arguments in print}
 }
@@ -26,5 +28,5 @@ follows a normal distribution.
 }
 }
 \description{
-Print bootstrap
+Prints a bootstrap object.
 }

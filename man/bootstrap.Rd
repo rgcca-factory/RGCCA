@@ -2,7 +2,7 @@
 % Please edit documentation in R/bootstrap.R
 \name{bootstrap}
 \alias{bootstrap}
-\title{Compute bootstrap}
+\title{Computes bootstrap}
 \usage{
 bootstrap(rgcca_res, n_boot = 100, n_cores = parallel::detectCores() -
   1, parallelization = NULL)
@@ -17,10 +17,11 @@ bootstrap(rgcca_res, n_boot = 100, n_cores = parallel::detectCores() -
 \item{parallelization}{A logical value to run a parallelization. If parallelization = NULL (default), the parallelization is always performed except for Windows if length(nperm) < 10.}
 }
 \value{
-A list containing two objects: 'bootstrap' and 'rgcca'. 'bootstrap' is a list a list containing for each block, a matrix with in rows the variables of the blocks and in columns the weight calculated for each bootstrap; 'rgcca' is the original rgcca (see  \code{\link[RGCCA]{RGCCA}}).
+A list containing two objects: 'bootstrap' and 'rgcca'. 
+'bootstrap' is a list a list containing for each block, a matrix with in rows the variables of the blocks and in columns the weight calculated for each bootstrap; 'rgcca' is the original rgcca (see  \code{\link[RGCCA]{RGCCA}}).
 }
 \description{
-Computing boostrap of RGCCA in order to visualize the stability of the weights found in RGCCA
+Computing boostrap of RGCCA in order to evaluate the stability of the weights found in RGCCA (or the occurrences of the variables in SGCCA)
 }
 \examples{
 library(RGCCA)

@@ -5,7 +5,7 @@
 #' @inheritParams plot_var_2D
 #' @inheritParams plot2D
 #' @param perm A permutation object (see \code{\link[RGCCA]{rgcca_permutation}})
-#' @param bars A character giving representation of the variability among "points", "stderr" or "sd" 
+#' @param bars A character giving representation of the variability among "points", "stderr"(standard error of the mean), "sd" (standard deviations)  or "quantile" (0.05-0.95)
 #' @param type A character giving the type of the index to look at (among 'crit' for
 #'  the RGCCA criterion and 'zstat' for the pseudo Z-score)
 #' @importFrom ggplot2 ggplot
@@ -28,7 +28,7 @@ plot_permut_2D <- function(
 
     xend <- yend <- NULL
     match.arg(type, c("crit", "zstat"))
-    match.arg(bars,c("points","sd","stderr"))
+    match.arg(bars,c("points","sd","stderr","quantile"))
     for (i in c("cex", "cex_main", "cex_sub", "cex_point", "cex_lab"))
         check_integer(i, get(i))
     
@@ -59,9 +59,8 @@ plot_permut_2D <- function(
 
     if (is.null(title))
         title <- paste0(
-                "Permutation scores \n(best value : ",
-                paste(round(perm$penalties[best,], 2), collapse = ", "),
-                ")"
+                "Permutation scores (",perm$call$n_run, " runs) \n Best value : ",
+                paste(round(perm$penalties[best,], 2), collapse = ", ")
             )
     else
         title <- paste0(title, collapse = " ")
@@ -125,16 +124,27 @@ plot_permut_2D <- function(
                 p <- p+ geom_point(data=tab2,aes(x=tab2[,1],y=tab2[,3]))
                p <- p + geom_segment(data=dat,aes(x=x,y=y,xend=xend,yend=yend),colour="green",size=0.5)
          }
-        if (bars == "stderr") {
-            tab=aggregate(dft,by=list(dft[,1]),function(x){return(sd(x)/sqrt(n))})
+         if(bars == "stderr")
+         {
+             tab=aggregate(dft,by=list(dft[,1]),function(x){return(sd(x)/sqrt(length(x)))})
+             tab2=aggregate(dft,by=list(dft[,1]),mean)
+             dat=data.frame(x=tab[,1],y=tab2[,"y"]-tab[,"y"],xend=tab[,1],yend=tab2[,"y"]+tab[,"y"])
+             p <- p+ geom_point(data=tab2,aes(x=tab2[,1],y=tab2[,3]))
+             p <- p + geom_segment(data=dat,aes(x=x,y=y,xend=xend,yend=yend),colour="green",size=0.5)
+         }
+        if(bars=="quantile")
+        {
+            tabq1=aggregate(dft,by=list(dft[,1]),function(x){return(quantile(x,0.05))})
+            tabq2=aggregate(dft,by=list(dft[,1]),function(x){return(quantile(x,0.95))})
             tab2=aggregate(dft,by=list(dft[,1]),mean)
-            dat=data.frame(x=tab[,1],y=tab2[,"y"]-tab[,"y"],xend=tab[,1],yend=tab2[,"y"]+tab[,"y"])
+            dat=data.frame(x=tab2[,1],y=tabq1[,"y"],xend=tab2[,1],yend=tabq2[,"y"])
             p <- p+ geom_point(data=tab2,aes(x=tab2[,1],y=tab2[,3]))
             p <- p + geom_segment(data=dat,aes(x=x,y=y,xend=xend,yend=yend),colour="green",size=0.5)
         }
    
 
     }
+    
 
     p <- p + geom_line(data = df, mapping = aes(x = df[, 1], y = df[, 2]))
     p <- p + scale_x_continuous(breaks = 1:nrow(df), labels = rownames(df))

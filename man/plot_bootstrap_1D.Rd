@@ -27,7 +27,7 @@ plot_bootstrap_1D(b = NULL, df_b = NULL, x = "estimate",
 
 \item{comp}{An integer giving the index of the analysis components}
 
-\item{bars}{A character among "sd" for standard deviations, "stderr" for the standard error, "ci" for confidence interval of scores and "cim" for the confidence intervall of the mean.}
+\item{bars}{A character among "sd" for standard deviations, "stderr" for the standard error of the mean, "ci" for confidence interval of scores and "cim" for the confidence interval of the mean.}
 
 \item{i_block}{An integer giving the index of a list of blocks}
 

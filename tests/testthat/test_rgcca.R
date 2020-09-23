@@ -200,3 +200,11 @@ test_that("upca_var2",{expect_true(upca_var)})
  res_cv=rgcca_cv(A,response=1,n_cores=1,par_length=3)
  rgcca(res_cv)
  
+ # SGCCA and RGCCA
+ resRgcca = rgcca(blocks=A, ncomp=rep(2,3), scheme = "factorial", scale = TRUE,verbose=FALSE)
+ resSgcca = rgcca(A, ncomp=rep(2,3),sparsity= c(1, 1, 1),type="sgcca", scheme = "factorial", scale = TRUE,verbose=FALSE)
+ test_that("sgcca",{expect_true( mean(abs(resSgcca$Y[[2]]-resRgcca$Y[[2]]))<1e-12)})
+
+ 
+
+ 
