@@ -13,7 +13,7 @@
 # @param naxis number of component to select for the estimation of missing data
 # @param superblock Boolean, if TRUE, the missing values are estimated with the superblock
 
-# @return \item{A}{A list of blocks imputed}
+# @return \item{A}{A list of imputed matrices giving the \eqn{J} blocks of variables \eqn{\mathbf{X_1}, \mathbf{X_2}, ..., \mathbf{X_J}}}
 # @return \item{stab}{Convergence criterion : abs(1-obj_k/obj_{k-1})}
 # @return \item{obj}{Vector containing the mean square error between the predict values and the original non missing values at each iteration}
 #@return \item{crit}{RGCCA criterion}

@@ -1,6 +1,6 @@
 #' Predict RGCCA
 #' 
-#' Predicts a new block from a RGCCA
+#' Predict a new block from a RGCCA
 #' 
 #' @inheritParams plot_ind
 #' @param newA A list of either a dataframe/matrix or a vector giving the blocks to be predicted

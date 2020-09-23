@@ -1,8 +1,6 @@
 #' print.cval
 #' 
-#'@param x A rgcca_cv object (see \link{rgcca_cv})
-#'@param bars among "sd" for standard deviations, "stderr" for standard error (standard deviations divided by sqrt(n), ci for confidence interal, cim for confidence interval of the mean.
-#'@param alpha used for confidence interval bars (ci or cim), risk. Default to 0.05
+#'@inheritParams plot.cval
 #'@param ... Further print options
 #'@export 
 #'@examples
@@ -29,7 +27,7 @@ print.cval=function(x,bars="quantile",alpha=0.05,...)
         char_to_print=paste(char_to_print,name,'=',quo,value,quo,vir, collapse="",sep="")
     }
     cat(char_to_print)
-    
+    cat("\n")
     
     c1s <- round(x$penalties, 4)
     rownames(c1s) = 1:NROW(c1s)
@@ -46,8 +44,10 @@ print.cval=function(x,bars="quantile",alpha=0.05,...)
     cat(paste0(nrow(x$cv)," configurations were tested. \n"))
     
    cat(paste0("Validation: ",x$call$validation,ifelse(x$call$validation=="kfold", paste0(" with ",x$call$k," folds and ",x$call$n_run," run(s))"),")")),"\n")
-    
+
+    cat("\n")
     print(df)
+    cat("\n")
     if(x$call$type_cv=="regression")
     {
         cat(paste("The best combination was:", paste(round(x$bestpenalties,digits=3),collapse=" "),"for a mean CV criterion (RMSE) of ", round(optimal_y,digits=2)),"\n",...)

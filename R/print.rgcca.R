@@ -1,6 +1,6 @@
-#' Printing rgcca results
+#' Print rgcca
 #
-#' Prints the call of rgcca results
+#' @title Print the call of rgcca results
 #' @param x A RGCCA object (see \code{\link{rgcca}})
 #' @param ... other parameters used in print (for the displaying of matrices)
 #' @export

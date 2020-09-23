@@ -9,9 +9,9 @@
 #' It could be eiher the original matrices (\eqn{X_1, X_2, ..., X_J}) or the residual matrices (\eqn{X_{h1}, X_{h2}, ..., X_{hJ}}).
 #' @return \item{Y}{A list of \eqn{J} elements. Each element of \eqn{Y} is a matrix that contains the analysis components for the corresponding block.}
 #' @return \item{a}{A list of \eqn{J} elements. Each element of \eqn{a} is a matrix that contains the outer weight vectors for each block.}
-#' @return \item{crit}{A vector of integer that contains the values of the analysis criteria across iterations.}
+#' @return \item{crit}{A vector of integer that contains for each component the values of the analysis criteria across iterations.}
 #' @return \item{converg}{Speed of convergence of the alogrithm to reach the tolerance.}
-#' @return \item{AVE}{Indicators of model quality based on the Average Variance Explained (AVE): AVE(for one block), AVE(outer model), AVE(inner model).}
+#' @return \item{AVE}{A list of numerical values giving the indicators of model quality based on the Average Variance Explained (AVE): AVE(for each block), AVE(outer model), AVE(inner model).}
 #' @return \item{call}{Call of the function}
 #' @title Internal function for computing the SGCCA parameters (SGCCA block components, outer weight vectors etc.)
 #' @importFrom Deriv Deriv

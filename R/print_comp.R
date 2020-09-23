@@ -1,6 +1,6 @@
 #' Print the variance of a component
 #'
-#' Prints the percent of explained variance for a component of a block 
+#' Print the percent of explained variance for a component of a block
 #' (by default, the superblock or the last one) analysed by R/SGCCA
 #'
 #' @inheritParams plot_ind

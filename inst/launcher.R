@@ -106,10 +106,10 @@ getArgs <- function() {
             [default: %default]. Tau varies from 0 (maximizing the correlation)
             to 1 (maximizing the covariance). For SGCCA, tau is automatically
             set to 1 and shrinkage parameter can be defined instead for
-            automatic variable selection, varying from the inverse of the
-            square root of the number of columns (the smaller set of variables)
-            to 1 (all the variables are included). It can be a single value
-            or a comma-separated list (e.g. 0,1,0.75,1)."
+            automatic variable selection, varying from the square root of the
+            variable number (the fewest selected variables) to 1 (all the
+            variables are included). It can be a single value or a
+            comma-separated list (e.g. 0,1,0.75,1)."
         ),
         make_option(
             opt_str = "--scheme",
@@ -390,8 +390,17 @@ load_libraries <- function(librairies) {
     }
 }
 
-stop_rgcca <- function(message = "", exit_code = 1)
-    base::stop(error_cnd(.subclass = exit_code, message = message))
+stop_rgcca <- function(
+message,
+exit_code = "1",
+call = NULL) {
+
+    base::stop(
+        structure(
+            class = c(exit_code, "simpleError", "error", "condition"),
+            list(message = message, call. = NULL)
+    ))
+ }
 
 ########## Main ##########
 
@@ -528,8 +537,8 @@ tryCatch({
     design <- function() plot_network(rgcca_out)
     save_plot(opt$o5, design)
 
-    save_ind(rgcca_out, opt$o6)
-    save_var(rgcca_out, opt$o7)
+    save_ind(rgcca_out, opt$compx, opt$compy, opt$o6)
+    save_var(rgcca_out, opt$compx, opt$compy, opt$o7)
     save(rgcca_out, file = opt$o8)
 
     }, error = function(e){

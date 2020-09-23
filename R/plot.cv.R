@@ -1,7 +1,9 @@
 #' plot.cv
 #' 
-#' Plots the results of rgcca_cv (in abscissa, the configurations, in ordinates the RMSE on test dataset)
-#' @param x A rgcca_crossvalidation object (see \code{\link[RGCCA]{rgcca_crossvalidation}} )
+#' Plot the results of rgcca_cv object in the space of the samples. 
+#' The actual values of the GCCA (in red), could be contrasted with those 
+#' predicted by the validation (in green). 
+#' @param x A rgcca_crossvalidation object (see \code{\link[RGCCA]{rgcca_crossvalidation}})
 #' @inheritParams plot_ind
 #' @examples
 #' data(Russett)

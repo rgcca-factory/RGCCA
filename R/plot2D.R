@@ -1,6 +1,6 @@
 # 'Plot of components space
 #'
-#' Plots RGCCA components in a bi-dimensional space
+#' Plot RGCCA components in a bi-dimensional space
 #'
 #' @param compx An integer giving the index of the analysis component used
 #' for the x-axis
@@ -12,10 +12,9 @@
 #' @param i_block_y An integer giving the index of a list of blocks (another
 #' one, different from the one used in i_block)
 #' @param no_overlap A boolean to avoid overlap in plotted text
-#' @param rgcca_res A RGCCA object (see  \code{\link[RGCCA]{rgcca}} )
+#' @param rgcca_res A RGCCA object (see  \code{\link[RGCCA]{rgcca}})
 #' @param df A dataframe
-#' @param title A character with the name of the space (either "Variables" or
-#' "Samples")
+#' @param title A character giving the title of the plot
 #' @param group A vector of character with levels used to color the points
 #' @param name_group A character giving the type of groups (either "Blocs" or
 # "Response")

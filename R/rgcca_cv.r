@@ -1,9 +1,8 @@
-#' Tuning RGCCA parameters in 'supervised' mode with cross-validation
+#' Tune RGCCA parameters in 'supervised' mode with cross-validation
 #'
-#' This function is dedicated to supervised approaches (with a 'response' parameter in rgcca).
-#' To tune the sparsity coefficient (if the model is sparse) or tau 
-#' (otherwise), the predictive quality of the model induced by these parameters are estimated by crossvalidation. 
-#' In this purpose, individuals can be divided into k folds where the model will be tested on each fold and trained
+#' Tune the sparsity coefficient (if the model is sparse) or tau 
+#' (otherwise) in a supervised approach by estimating by crossvalidation the predictive quality of the models. 
+#' In this purpose, the samples are divided into k folds where the model will be tested on each fold and trained
 #'  on the others. For small datasets (<30 samples), it is recommended to use 
 #'  as many folds as there are individuals (leave-one-out; loo). 
 #' @inheritParams rgcca_crossvalidation
@@ -15,8 +14,8 @@
 #' giving sets of penalties (tau for RGCCA, sparsity for SGCCA) to be tested, 
 #' one row by combination. By default, it takes 10 sets between min values (0
 #'  for RGCCA and $1/sqrt(ncol)$ for SGCCA) and 1.
-#' @param par_length An integer indicating the number of sets of parameters to be tested (if perm.value = NULL). The parameters are uniformly distributed.
-#' @param type_cv  A character corresponding to the model of prediction : 'regression' or 'classification'. See Details.
+#' @param par_length An integer indicating the number of sets of parameters to be tested (if par_value = NULL). The parameters are uniformly distributed.
+#' @param type_cv  A character corresponding to the model of prediction : 'regression' or 'classification' (see details)
 #' @param n_run An integer giving the number of cross-validations to be run (if validation = 'kfold').
 #' @param one_value_per_cv A logical value indicating if the k values are averaged for each k-fold steps.
 #' @export
@@ -103,7 +102,11 @@ rgcca_cv=function( blocks,
         };n_run=1
     }
 
-    check_integer("n_cores", n_cores, 0)
+    check_boolean("one_value_per_cv", one_value_per_cv)
+    check_integer("n_cores", n_cores, min = 0)
+    check_integer("par_length", n_run)
+    check_integer("par_value", n_run, min = 0)
+    check_integer("n_run", n_run)
     match.arg(par_type, c("tau", "sparsity","ncomp"))
     min_spars <- NULL
 
