@@ -790,7 +790,7 @@ This procedure is available thought the rgcca_permutation() function.
 
 ```{r}
 set.seed(12345)
-fit.perm = rgcca_permutation(A, connection = C, par_type = "tau")
+fit.perm = rgcca_permutation(A, connection = C, par_type = "tau", n_cores = 1)
 ```
 
 Results are summarized using the generic `print()` function 
@@ -812,20 +812,20 @@ fit.rgcca = rgcca(fit.perm)
 ```
 
 ```{r}
-boot.rgcca = bootstrap(fit.rgcca, n_boot = 200) 
+boot.rgcca = bootstrap(fit.rgcca, n_boot = 200, n_cores = 1)
 ```
 
 
 The bootstrap results are displayed using the `plot()`function.
 
 ```{r}
-plot(boot.rgcca, block =1)
+plot(boot.rgcca, block =1, n_cores = 1)
 ```
 
 and detailed using the `print()` function.
 
 ```{r}
-print(boot.rgcca)
+print(boot.rgcca, n_cores = 1)
 ```
 
 
@@ -875,7 +875,7 @@ plot(fit.hpca, type="both", resp = lab, no_overlap = TRUE)
 **Description of the data.** Pretreatment frozen tumor samples were obtained from 53 children with newly diagnosed pHGG from Necker Enfants Malades (Paris, France) [@Puget2012]. The 53
 tumors are divided into 3 locations: supratentorial (HEMI), central nuclei (MIDL), and brain stem (DIPG). The final dataset is organized in 3 blocks of variables defined for the 53 tumors: the first block $\ma X_1$ provides the expression of $15702$ genes (GE). The second block $\ma X_2$ contains the imbalances of $1229$ segments (CGH) of chromosomes. $\ma X_3$ is a block of dummy variables describing the categorical variable location. One dummy variable has been left out because of redundancy with he others.
 
-```{r, eval = TRUE}
+```{r, eval = FALSE}
 # Download the dataset's package at http://biodev.cea.fr/sgcca/.
 # --> gliomaData_0.4.tar.gz
 
@@ -911,7 +911,7 @@ sapply(A, dim)
 
 This design is commonly used in many applications and is oriented toward the prediction of the location. This design does not impose any correlation between GE and CGH blocks and is encoded as follows:
   
-```{r}
+```{r, eval = FALSE}
 C <-  matrix(c(0, 0, 1, 0, 0, 1, 1, 1, 0), 3, 3)
 C
 ```
@@ -920,7 +920,7 @@ C
 
 From the dimension of each block ($n>p$ or $n\leq p$), the `rgcca()` function selects automatically the dual formulation for $\ma X_1$ and $\ma X_2$ and the primal one for $\ma X_3$.
 
-```{r, eval = TRUE}
+```{r, eval = FALSE}
 fit.rgcca = rgcca(blocks=A, connection=C, type = "rgcca",
                   tau = c(1, 1, 0), ncomp = c(1, 1, 1),
                   scale = TRUE, scale_block = TRUE,
@@ -929,13 +929,13 @@ fit.rgcca = rgcca(blocks=A, connection=C, type = "rgcca",
 
 The formulation used for each block is returned using the following command:
 
-```{r, eval = TRUE}
+```{r, eval = FALSE}
 fit.rgcca$primal_dual
 ```
 
 The dual formulation make the RGCCA algorithm highly efficient even in a high dimensional setting.
 
-```{r, eval = TRUE}
+```{r, eval = FALSE}
 system.time(rgcca(blocks=A, connection=C, 
                   tau = c(1, 1, 0), ncomp = c(1, 1, 1),
                   scale = TRUE, scale_block = TRUE,
@@ -945,7 +945,7 @@ system.time(rgcca(blocks=A, connection=C,
 
 As previously, RGCCA enables visual inspection of the spatial relationships between classes. This facilitates assessment of the quality of the classification and makes it possible to readily determine which components capture the discriminant information.
 
-```{r, eval=TRUE, fig.align='center',fig.height = 3, fig.width = 5}
+```{r, eval = FALSE, fig.align='center',fig.height = 3, fig.width = 5}
 plot(fit.rgcca, type="ind", block=1:2, 
      comp = 1, resp = Loc)
 ```
@@ -969,7 +969,7 @@ If `sparsity` is a matrix, each row $h$ of `sparsity` defines the constraints ap
 \forall h, \Vert \ma a_j^{(h)} \Vert_{\ell_1} \leq c_1[h,j] \sqrt{p_j}.
 \end{equation}
 
-```{r, eval = TRUE}
+```{r, eval = FALSE}
 # sgcca algorithm
 fit.sgcca = rgcca(blocks=A, connection=C, 
                   type="sgcca", sparsity = c(.071,.2, 1),
@@ -979,23 +979,23 @@ fit.sgcca = rgcca(blocks=A, connection=C,
                   verbose = TRUE)
 ```
 
-For GE, the number of non-zero elements of $\ma a_1$ is equal to `r sum(fit.sgcca$a[[1]] != 0)` and is given by
+For GE, the number of non-zero elements of $\ma a_1$ is equal to r sum(fit.sgcca$a[[1]] != 0) #TODO Arthur and is given by
 
-```{r, eval = TRUE}
+```{r, eval = FALSE}
 nb_zero_GE = sum(fit.sgcca$a[[1]] != 0)
 nb_zero_GE
 ```
 
-For CGH, the number of non-zero elements of $\ma a_2$ is equal to `r sum(fit.sgcca$a[[2]] != 0)` and is given by
+For CGH, the number of non-zero elements of $\ma a_2$ is equal to r sum(fit.sgcca$a[[2]] != 0) #TODO Arthur and is given by
 
-```{r, eval = TRUE}
+```{r, eval = FALSE}
 nb_zero_CGH = sum(fit.sgcca$a[[2]] != 0)
 nb_zero_CGH
 ```
 
 One component per block has been built (GE1 for $\ma X_1$ and CGH1 $\ma X_2$), and the graphical display of the tumors obtained by crossing GE1 and CGH1 and labeled according to their location is shown below.
 
-```{r, eval=TRUE, fig.align='center', fig.cap = 'graphical display of the tumors obtained by crossing GE1 and CGH1 land abeled according to their location.',fig.height = 3, fig.width = 5}
+```{r, eval = FALSE, fig.align='center', fig.cap = 'graphical display of the tumors obtained by crossing GE1 and CGH1 land abeled according to their location.',fig.height = 3, fig.width = 5}
 plot(fit.sgcca,type="ind",block=1:2,comp=1, resp = Loc)
 ```
 

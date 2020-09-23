@@ -97,7 +97,8 @@
 #' init = "svd"
 #' result.sgcca = sgcca(A, C, sparsity = matrix(c(.071,.2, 1, 0.06, 0.15, 1), nrow = 2, byrow = TRUE),
 #'                      ncomp = c(2, 2, 1), scheme = "factorial", scale = TRUE, bias = TRUE, 
-#'                      init = init, verbose = TRUE)}
+#'                      init = init, verbose = TRUE)
+#' }
 #'@export sgcca
 
 

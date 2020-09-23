@@ -14,7 +14,7 @@
 #' giving sets of penalties (tau for RGCCA, sparsity for SGCCA) to be tested, 
 #' one row by combination. By default, it takes 10 sets between min values (0
 #'  for RGCCA and $1/sqrt(ncol)$ for SGCCA) and 1.
-#' @param par_length An integer indicating the number of sets of parameters to be tested (if perm.value = NULL). The parameters are uniformly distributed.
+#' @param par_length An integer indicating the number of sets of parameters to be tested (if par_value = NULL). The parameters are uniformly distributed.
 #' @param type_cv  A character corresponding to the model of prediction : 'regression' or 'classification' (see details)
 #' @param n_run An integer giving the number of cross-validations to be run (if validation = 'kfold').
 #' @param one_value_per_cv A logical value indicating if the k values are averaged for each k-fold steps.

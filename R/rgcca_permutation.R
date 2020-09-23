@@ -10,7 +10,7 @@
 #' @inheritParams rgcca
 #' @inheritParams plot2D
 #' @param par_type A character giving the parameter to tune among "sparsity" or "tau".
-#' @param par_length An integer indicating the number of sets of parameters to be tested (if perm.value = NULL). The parameters are uniformly distributed.
+#' @param par_length An integer indicating the number of sets of parameters to be tested (if par_value = NULL). The parameters are uniformly distributed.
 #' @param par_value A matrix (n*p, with p the number of blocks and n the number 
 #' of combinations to be tested), a vector (of p length) or a numeric value 
 #' giving sets of penalties (tau for RGCCA, sparsity for SGCCA) to be tested, 
