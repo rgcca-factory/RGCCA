@@ -852,9 +852,9 @@ server <- function(input, output, session) {
         assign("analysis_type", analysis_type, .GlobalEnv)
         
         if (analysis_type != "SGCCA")
-             assign("perm.par", "tau", .GlobalEnv)
+             assign("par_type", "tau", .GlobalEnv)
         else
-            assign("perm.par", "sparsity", .GlobalEnv)
+            assign("par_type", "sparsity", .GlobalEnv)
 
         return(blocks)
     }
@@ -931,8 +931,7 @@ server <- function(input, output, session) {
                     response = response,
                     validation = input$val,
                     k = input$kfold,
-                    n_cv = input$ncv,
-                    n_cores = parallel::detectCores() - 1,
+                    n_run = input$ncv,
                     superblock = (!is.null(input$supervised) &&
                                     !is.null(input$superblock) && input$superblock),
                     scale = FALSE,
@@ -944,10 +943,10 @@ server <- function(input, output, session) {
                     ncomp = getNcomp()))
                 if (tolower(analysis_type) %in% c("sgcca", "spca", "spls")) {
                     func[["sparsity"]] <- tau
-                    func[["par"]] <- "sparsity"
+                    func[["par_type"]] <- "sparsity"
                 } else {
                     func[["tau"]] <- tau
-                    func[["par"]] <- "tau"
+                    func[["par_type"]] <- "tau"
                 }
                 showWarn(eval(as.call(func)))
             },
@@ -963,7 +962,7 @@ server <- function(input, output, session) {
     getCrossVal2 <-  function(){
         assign(
             "crossval",
-            rgcca_crossvalidation(rgcca_out, validation = input$val, k = input$kfold, n_cores = 1),
+            rgcca_crossvalidation(rgcca_out, validation = input$val, k = input$kfold),
             .GlobalEnv
         )
         showWarn(message(paste("CV score:", round(crossval$score, 4))), show = FALSE)
@@ -985,8 +984,8 @@ server <- function(input, output, session) {
             func <- quote(
                 rgcca_permutation(
                     blocks_without_superb,
-                    perm.par = perm.par,
-                    nperm = input$nperm,
+                    par_type = par_type,
+                    n_run = input$nperm,
                     connection = connection,
                     response = input$names_block_response,
                     superblock = (!is.null(input$supervised) &&
@@ -1024,6 +1023,7 @@ server <- function(input, output, session) {
         assign("selected.var", NULL, .GlobalEnv)
         show(selector = "#navbar li a[data-value=Bootstrap]")
         show(selector = "#navbar li a[data-value='Bootstrap Summary']")
+        updateTabsetPanel(session, "navbar", selected = "Bootstrap")
     }
 
     load_responseShiny = function() {
