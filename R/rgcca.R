@@ -262,7 +262,7 @@ rgcca <- function(
    {
        if(mode(blocks[[response]])=="character")
        {
-              print("The qualitative response variable is transformed as disjonctive table")
+             # print("The qualitative response variable is transformed as disjonctive table")
               if(length(unique(blocks[[response]]))==1){stop("Only one level in the variable to predict")}
               blocks[[response]]=asDisjonctive(blocks[[response]])
        }
@@ -270,7 +270,6 @@ rgcca <- function(
    }
   
     opt$blocks <- scaling(blocks, scale,scale_block = scale_block)
-
     opt$superblock <- check_superblock(response, opt$superblock, !quiet)
     opt$blocks <- set_superblock(opt$blocks, opt$superblock, type, !quiet)
 

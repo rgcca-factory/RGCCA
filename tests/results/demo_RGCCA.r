@@ -316,15 +316,44 @@ plot(resBootstrap,i_block=2)
 require(gliomaData)
 data(ge_cgh_locIGR)
 A <- ge_cgh_locIGR$multiblocks
+#A[[3]]<- as.character(apply(A$y,1,which.max))
 C <-  matrix(c(0, 0, 1, 0, 0, 1, 1, 1, 0), 3, 3)
-fit.sgcca = rgcca(blocks=A, connection=C,
-                  type="sgcca", sparsity = c(.071,.2, 1),
+
+fit.rgcca = rgcca(blocks=A, connection=C,
+                  type="sgcca", response=3,sparsity = c(.071,.2, 1),
                   ncomp = c(1, 1, 1),
                   scheme = "horst",
                   scale = TRUE, scale_block = TRUE,
                   verbose = TRUE)
 
-rgcca_permutation(A, connection=C, par_type = "sparsity", n_run = 20)
+fit.sgccaNa = sgccaNa(blocks=A, connection=C,
+                  sparsity= c(.071,.2, 1),
+                  ncomp = c(1, 1, 1),
+                  scheme = "horst",
+                  scale = TRUE, scale_block = TRUE,
+                  verbose = TRUE,method="nipals")
+
+fit.sgcca = sgcca(A=A, C=C,
+                    sparsity= c(.071,.2, 1),
+                    ncomp = c(1, 1, 1),
+                    scheme = "horst",
+                    scale = TRUE, scale_block = TRUE,
+                    verbose = TRUE,tol=1e-8)
+A2=scaling(A,scale=TRUE,scale_block=TRUE)
+fit.sgccak = sgccak(A=A2, C=C,
+                  sparsity= c(.071,.2, 1),
+                  scheme = "horst",
+                  scale = TRUE, 
+                  verbose = TRUE,tol=1e-8,init="random")
+
+
+fit.rgcca$Y[[1]]==fit.sgcca$Y[[1]]
+head(fit.rgcca$a[[3]])
+head(fit.sgcca$a[[3]])
+# to be tested
+res_cv=rgcca_cv(blocks=A, connection=C,
+                type="sgcca", response=3,par_type="sparsity",par_length=4,n_run=5,n_cores=1)
+rgcca_permutation(A, connection=C, par_type = "sparsity", n_run = 10)
 
 
 

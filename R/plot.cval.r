@@ -22,10 +22,22 @@ plot.cval=function(x,bars="sd",cex = 1, cex_main = 14 * cex, cex_sub = 10 * cex,
     mat_cval=x$cv
     match.arg(bars,c("quantile","sd","stderr","points"))
     mean_b=apply(mat_cval,1,mean)
-    main=paste0("RMSE according to the combinations \n (",x$call$validation,ifelse(x$call$validation=="kfold", paste0(": with ",x$call$k," folds", ifelse(x$call$n_run>1,paste0(" and ",x$call$n_run," run",ifelse(x$call$n_run==1,"","s")),""),")"),";,\n "))
-    main=paste0(main,"\nbest value, in green : ",
-            paste(round(x$bestpenalties,digits=2), collapse = ", "))
-            
+    
+    if(x$call$type_cv=="regression")
+    {
+        main=paste0("RMSE according to the combinations \n (",x$call$validation,ifelse(x$call$validation=="kfold", paste0(": with ",x$call$k," folds", ifelse(x$call$n_run>1,paste0(" and ",x$call$n_run," run",ifelse(x$call$n_run==1,"","s")),""),")"),";,\n "))
+        main=paste0(main,"\nbest value, in green : ",
+                    paste(round(x$bestpenalties,digits=2), collapse = ", "))
+        
+    }
+    if(x$call$type_cv=="classification")
+    {
+        main=paste0("Mean error rate according to the combinations \n (",x$call$validation,ifelse(x$call$validation=="kfold", paste0(": with ",x$call$k," folds", ifelse(x$call$n_run>1,paste0(" and ",x$call$n_run," run",ifelse(x$call$n_run==1,"","s")),""),")"),";,\n "))
+        main=paste0(main,"\nbest value, in green : ",
+                    paste(round(x$bestpenalties,digits=2), collapse = ", "))
+        
+    }
+               
     if(bars!="none"&&dim(mat_cval)[2]<3){bars=="none"; warning("Standard deviations can not be calculated with less than 3 columns in mat_cval")}
     if(bars!="none")
     {

@@ -14,20 +14,17 @@ initsvd <- function(X,dual=TRUE) {
     vecMoyenne=apply(X,2,mean,na.rm=TRUE)
     matMoyenne=matrix(rep(vecMoyenne,n),n,p)
     X[is.na(X)]=matMoyenne[is.na(X)]
-  #  if(dual==TRUE)
-  #  { print("dual=TRUE")
-
+    if(dual==TRUE)
+    { 
         ifelse(n>=p,
-               {#print("a")
+               {
                return(svd(X,nu=0,nv=1)$v)},
-               {#print("b")
+               {
                return(svd(X,nu=1,nv=0)$u)} )
   
-   # }
-   # else
-   # {
-   #     return(svd(X,nu=0,nv=1)$v)
-    #}
-
-  
+    }
+    else
+    {
+        return(svd(X,nu=0,nv=1)$v)
+   }
 }

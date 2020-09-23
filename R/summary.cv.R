@@ -1,4 +1,4 @@
-summary.cv <- function(x, bars="sd") {
+summary_cval <- function(x, bars="quantile") {
     mat_cval=x$cv
     mean_b=apply(mat_cval,1,mean)
     
@@ -10,16 +10,22 @@ summary.cv <- function(x, bars="sd") {
         {
             inf_b=apply(mat_cval,1,function(y){return(quantile(y,0.05))})
             sup_b=apply(mat_cval,1,function(y){return(quantile(y,0.95))})
+            lowlim="Quant. 0.05"
+            uplim="Quant. 0.95"
         }
         if(bars=="sd")
         {
             inf_b=mean_b-apply(mat_cval,1,sd)
             sup_b=mean_b+apply(mat_cval,1,sd)
+            lowlim="Mean - Sd"
+             uplim="Mean + Sd"
         }
         if(bars=="stderr")
         {
             inf_b=mean_b-apply(mat_cval,1,function(y){sd(y)/sqrt(length(y))})
             sup_b=mean_b+apply(mat_cval,1,function(y){sd(y)/sqrt(length(y))})
+            lowlim="Mean - Std Error"
+            uplim="Mean + Std Error"
         }
         # if(bars=="cim")
         # {
@@ -36,6 +42,13 @@ summary.cv <- function(x, bars="sd") {
         
     }
     df <- round(data.frame(config=1:nrow(mat_cval),mean=mean_b,inf=inf_b,sup=sup_b), 3)
-    colnames(df) <- c("Combination", "Mean RMSE", "Upper limit", "Lower limit")
-    return(df)
+    if(x$call$type_cv=="regression")
+    {
+        colnames(df) <- c("Combination", "Mean RMSE", lowlim, uplim)
+    }
+    if(x$call$type_cv=="classification")
+    {
+        colnames(df) <- c("Combination", "Mean Error Prediction Rate", lowlim, uplim)
+    }
+     return(df)
 }

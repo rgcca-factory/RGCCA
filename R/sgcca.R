@@ -156,7 +156,7 @@ sgcca <- function (A, C = 1-diag(length(A)), sparsity = rep(1, length(A)), ncomp
         #     }
         # }
     }
-  
+
     ####################################
     # sgcca with 1 component per block #
     ####################################

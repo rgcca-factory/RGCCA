@@ -202,9 +202,16 @@ test_that("upca_var2",{expect_true(upca_var)})
  
  # SGCCA and RGCCA
  resRgcca = rgcca(blocks=A, ncomp=rep(2,3), scheme = "factorial", scale = TRUE,verbose=FALSE)
- resSgcca = rgcca(A, ncomp=rep(2,3),sparsity= c(1, 1, 1),type="sgcca", scheme = "factorial", scale = TRUE,verbose=FALSE)
- test_that("sgcca",{expect_true( mean(abs(resSgcca$Y[[2]]-resRgcca$Y[[2]]))<1e-12)})
-
+ resRgccad=rgccad(A=A,C=matrix(1,3,3)-diag(1,3),ncomp=rep(2,3),scheme = "factorial", scale = TRUE,verbose=FALSE,scale_block=TRUE)
+ test_that("rgccaVSrgccad",{expect_true(sum(head(resRgccad$Y[[1]])==head(resRgcca$Y[[1]]))==12)})
+ test_that("sgcca",{expect_true( mean(abs(resSgcca$Y[[2]]-resRgcca$Y[[2]]))<1e-14)})
+ 
+ resSgcca = rgcca(A, type="sgcca",ncomp=rep(2,3),sparsity= c(1, 1, 1), scheme = "factorial", scale = TRUE,verbose=FALSE,init="svd")
+ resSgccad=sgcca(A=A,C=matrix(1,3,3)-diag(1,3),ncomp=rep(2,3),scheme = "factorial", scale = TRUE,scale_block=TRUE,prescaling=FALSE,verbose=T,init="svd")
+ test_that("sgccadVsSGCCA",{expect_true(mean((resSgccad$Y[[2]]-resSgcca$Y[[2]]))<1e-14)})
  
 
+ 
+# RGCCA
+ 
  

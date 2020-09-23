@@ -14,7 +14,7 @@
 #'     res=rgcca_cv(blocks, response=3,type="rgcca",par_type="tau",par_value=c(0,0.2,0.3),
 #'     n_run=1,n_cores=1)
 #'    print(res)
-print.cval=function(x,bars="sd",alpha=0.05,...)
+print.cval=function(x,bars="quantile",alpha=0.05,...)
 {
     
     cat("Call: ")
@@ -38,18 +38,24 @@ print.cval=function(x,bars="sd",alpha=0.05,...)
     print(c1s, quote = FALSE,...)
     cat("\n")
     
-    df <- summary.cv(x, bars)
-
-    optimal_ind=which.min(df[,"Mean RMSE"])
+    df <- summary_cval(x, bars)
+    colnameForOptimal=ifelse(x$call$type_cv=="regression","Mean RMSE","Mean Error Prediction Rate")
+    optimal_ind=which.min(df[,colnameForOptimal])
     optimal_x=df[optimal_ind,"Combination"]
-    optimal_y=df[optimal_ind,"Mean RMSE"]
+    optimal_y=df[optimal_ind,colnameForOptimal]
     cat(paste0(nrow(x$cv)," configurations were tested. \n"))
     
    cat(paste0("Validation: ",x$call$validation,ifelse(x$call$validation=="kfold", paste0(" with ",x$call$k," folds and ",x$call$n_run," run(s))"),")")),"\n")
     
     print(df)
-    
-    cat(paste("The best combination was:", paste(round(x$bestpenalties,digits=3),collapse=" "),"for a mean CV criterion (RMSE) of ", round(optimal_y,digits=2)),"\n",...)
+    if(x$call$type_cv=="regression")
+    {
+        cat(paste("The best combination was:", paste(round(x$bestpenalties,digits=3),collapse=" "),"for a mean CV criterion (RMSE) of ", round(optimal_y,digits=2)),"\n",...)
+    }
+    if(x$call$type_cv=="classification")
+    {
+        cat(paste("The best combination was:", paste(round(x$bestpenalties,digits=3),collapse=" "),"for a mean rate of false predictions of ", round(optimal_y,digits=2)),"\n",...)
+    }
 
 
 }
