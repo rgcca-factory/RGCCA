@@ -5,7 +5,7 @@
 # EDAM operation: analysis, correlation, visualisation
 #
 # Abstract: Performs multi-variate analysis (PCA, CCA, PLS, R/SGCCA, etc.)
-# and produces textual and graphical outputs (e.g. variables and individuals
+# and produces textual and graphical outputs (e.g. variables and samples
 # plots).
     
 server <- function(input, output, session) {
@@ -383,10 +383,10 @@ server <- function(input, output, session) {
                 icon("question") %>%
                     bs_embed_tooltip(title = "To tune the sparsity coefficient (if the model is sparse) or
                                      tau (otherwise), in supervised mode, we observe the performance (RMSE)
-                                     of a model from which individuals were randomly drawn. These individuals
+                                     of a model from which samples were randomly drawn. These samples
                                      can be divided into k folds where the model will be tested on each fold
                                      and trained on the others. For small datasets (<30 samples), it is 
-                                     recommended to use as many folds as there are individuals (leave-one-out; 
+                                     recommended to use as many folds as there are samples (leave-one-out; 
                                      loo). The best combination of parameters is the one where, on average, 
                                      the samples perform best.")
             )
@@ -1477,7 +1477,7 @@ server <- function(input, output, session) {
             else 
                 compy <- 2
             save_var(rgcca_out, file = "variables.txt")
-            save_ind(rgcca_out, file = "individuals.txt")
+            save_ind(rgcca_out, file = "samples.txt")
             save(analysis, file = "rgcca_result.RData")
             if(!is.null(boot))
                 save_plot("bootstrap.pdf", plotBoot())
@@ -1552,7 +1552,7 @@ server <- function(input, output, session) {
                 msgSave()
             })
 
-            save_ind(rgcca_out, file = "individuals.txt")
+            save_ind(rgcca_out, file = "samples.txt")
             p <- samples()
 
             if (is(p, "gg")) {

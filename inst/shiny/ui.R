@@ -5,7 +5,7 @@
 # EDAM operation: analysis, correlation, visualisation
 #
 # Abstract: Performs multi-variate analysis (PCA, CCA, PLS, R/SGCCA, etc.)
-# and produces textual and graphical outputs (e.g. variables and individuals
+# and produces textual and graphical outputs (e.g. variables and samples
 # plots).
 
 rm(list = ls())
@@ -94,7 +94,7 @@ ui <- fluidPage(
             "arthur.tenenhaus@l2s.centralesupelec.fr"),
             ")"
         ),
-        tags$i("Multi-block data analysis concerns the analysis of several sets of variables (blocks) observed on the same group of individuals. The main aims of the RGCCA package are: to study the relationships between blocks and to identify subsets of variables of each block which are active in their relationships with the other blocks."),
+        tags$i("Multi-block data analysis concerns the analysis of several sets of variables (blocks) observed on the same group of samples. The main aims of the RGCCA package are: to study the relationships between blocks and to identify subsets of variables of each block which are active in their relationships with the other blocks."),
         tags$br(), tags$br()
     ),
     tags$a(href = "https://github.com/rgcca-factory/RGCCA/blob/release/3.0.0/inst/shiny/tutorialShiny.md", "Go to the tutorial"),

@@ -17,12 +17,12 @@
 #' rgcca_out = rgcca(blocks)
 #' b=bootstrap(rgcca_out, n_boot = 2, n_cores = 1)
 #' plot(b,n_cores=1)
-#' @return  A visualization of bootstrap results
+#' @details
 #' \itemize{
-#' \item If type = '1D': barplot of the best variables from a bootstrap with, on the x-axis,
+#' \item type = '1D': barplot of the best variables from a bootstrap with, on the x-axis,
 #' the number of non-zero occurrences (SGCCA) or the mean of the bootstrap weights 
 #' (RGCCA). The bars are colored according to the significant 95% bootstrap 
-#' intervals ('*' or 'ns'; see 'p.vals' in details). In SGCA, the significant variables 
+#' intervals ('*' or 'ns'; see 'p.vals' in details of \code{\link[RGCCA]{get_bootstrap}}). In SGCA, the significant variables 
 #'  are those above the three bars, respectively, with an alpha = 0.05 
 #'  (dark red), 0.01 (red) and 0.001 (light red).
 #' \item type = '2D' : graph of the best variables from a bootstrap with, in x-axis, the number of
@@ -30,9 +30,6 @@
 #' intervals (RGCCA). In in y-axis are the bootstrap-ratios (mean/sd) 
 #' Negative weights are colored in red and the positive ones are in green.
 #' }
-#' @details
-#' The function \code{\link[RGCCA]{get_bootstrap}} allows obtaining the numeric values used to produce the graph
-
 plot.bootstrap=function(x,type="1D",block=length(x$rgcca$call$blocks),comp=1,n_mark=30,bars="quantile",colors=NULL,title=NULL,cex=1,n_cores= parallel::detectCores() - 1,...)
 {
     stopifnot(is(x, "bootstrap"))

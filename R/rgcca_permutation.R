@@ -1,7 +1,7 @@
 #' Tune RGCCA parameters with permutation
 #' 
 #' Tune the sparsity coefficient (if the model is sparse) or tau 
-#' (otherwise), we observe the deviation between the model and a set of models 
+#' (otherwise) by observing the deviation between the model and a set of models 
 #'  where the lines of each block are permuted. The model with the best 
 #' combination of parameters is the one with the highest deviation with the 
 #' RGCCA criteria.
