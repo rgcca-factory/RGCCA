@@ -1,4 +1,4 @@
-#' Tuning RGCCA parameters
+#' Tuning RGCCA parameters with permutation
 #' 
 #' To tune the sparsity coefficient (if the model is sparse) or tau 
 #' (otherwise), we observe the deviation between the model and a set of models 

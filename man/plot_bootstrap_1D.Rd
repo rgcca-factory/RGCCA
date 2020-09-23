@@ -27,7 +27,7 @@ plot_bootstrap_1D(b = NULL, df_b = NULL, x = "estimate",
 
 \item{comp}{An integer giving the index of the analysis components}
 
-\item{bars}{A character among "sd" for standard deviations, "stderr" for the standard error, "ci" for confidence interval of scores and "cim" for the confidence intervall of the mean.}
+\item{bars}{A character among "sd" for standard deviations, "stderr" for the standard error of the mean, or "quantile" for the 0.05th and 0.95th quantiles.}
 
 \item{i_block}{An integer giving the index of a list of blocks}
 
@@ -38,7 +38,7 @@ plot_bootstrap_1D(b = NULL, df_b = NULL, x = "estimate",
 \item{...}{Other parameters (see plot_histogram)}
 }
 \description{
-Histogram of the best variables from a bootstrap with, on the x-axis,
+Barplot of the best variables from a bootstrap with, on the x-axis,
 the number of non-zero occurrences (SGCCA) or the mean of the bootstrap weights 
 (RCCA). The bars are colored according to the significant 95% bootstrap 
 intervals ('*' or 'ns'; see 'p.vals' in details for 

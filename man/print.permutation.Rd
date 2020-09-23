@@ -2,7 +2,7 @@
 % Please edit documentation in R/print.sgcca.permute.R
 \name{print.permutation}
 \alias{print.permutation}
-\title{Prints the results of permutation rgcca}
+\title{Prints a permutation object}
 \usage{
 \method{print}{permutation}(x, ...)
 }

@@ -8,9 +8,10 @@ rgcca_out=rgcca(blocks)
 n_boot=100
 boot <- bootstrap(rgcca_out,n_boot=n_boot,n_cores=1)
 res=get_bootstrap(boot,n_cores=1)
-plot(boot,block=1,bars="ci",n_mark=10,n_cores=1)
-plot(boot,block=1,bars="ci",n_cores=1)
 plot(boot,block=1,bars="sd",n_mark=10,n_cores=1)
+plot(boot,block=1,bars="stderr",n_mark=10,n_cores=1)
+plot(boot,block=1,bars="quantile",n_mark=10,n_cores=1)
+
 
 
 

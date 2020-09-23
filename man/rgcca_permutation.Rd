@@ -2,7 +2,7 @@
 % Please edit documentation in R/rgcca_permutation.R
 \name{rgcca_permutation}
 \alias{rgcca_permutation}
-\title{Tuning RGCCA parameters}
+\title{Tuning RGCCA parameters with permutation}
 \usage{
 rgcca_permutation(blocks, par_type = "tau", par_value = NULL,
   par_length = 10, n_run = 20, n_cores = parallel::detectCores() - 1,

@@ -1,4 +1,6 @@
-#' Print the results of permutation rgcca
+#' Prints a permutation object
+#' 
+#' Prints the results of permutation rgcca
 #' @param x A rgcca_permutation object (see  \code{\link[RGCCA]{rgcca_permutation}})
 #' @param ... Further print parameters
 #' @export
@@ -11,7 +13,7 @@
 print.permutation <- function(x, ...) {
 
     cat("Call: ") 
-    names_call <- c("type", "perm.par", "perm.value", "nperm", "quiet", "method", "tol", "scale", "scale_block", "superblock")
+    names_call <- c("type", "par_type", "par_value", "n_run", "quiet", "method", "tol", "scale", "scale_block", "superblock")
     char_to_print <- ""
     for (name in names_call) {
 

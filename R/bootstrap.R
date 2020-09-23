@@ -1,11 +1,12 @@
-#' Compute bootstrap
+#' Computes bootstrap
 #'
-#' Computing boostrap of RGCCA in order to visualize the stability of the weights found in RGCCA
+#' Computing boostrap of RGCCA in order to evaluate the stability of the weights found in RGCCA (or the occurrences of the variables in SGCCA)
 #' @inheritParams plot2D
 #' @param n_boot An integer for the number of boostraps
 #' @param n_cores An integer for the number of cores used in parallelization 
 #' @param parallelization A logical value to run a parallelization. If parallelization = NULL (default), the parallelization is always performed except for Windows if length(nperm) < 10.
-#' @return A list containing two objects: 'bootstrap' and 'rgcca'. 'bootstrap' is a list a list containing for each block, a matrix with in rows the variables of the blocks and in columns the weight calculated for each bootstrap; 'rgcca' is the original rgcca (see  \code{\link[RGCCA]{RGCCA}}).
+#' @return A list containing two objects: 'bootstrap' and 'rgcca'. 
+#' 'bootstrap' is a list a list containing for each block, a matrix with in rows the variables of the blocks and in columns the weight calculated for each bootstrap; 'rgcca' is the original rgcca (see  \code{\link[RGCCA]{RGCCA}}).
 #' @examples
 #' data("Russett")
 #' blocks = list(agriculture = Russett[, seq(3)], industry = Russett[, 4:5],
@@ -42,9 +43,6 @@ bootstrap <- function(
 
     if (n_cores == 0)
         n_cores <- 1
-
-    # if (any(unlist(lapply(rgcca$call$blocks, NCOL) > 1000)))
-    #     verbose <- TRUE
 
     message("Bootstrap in progress...", appendLF = F)
 

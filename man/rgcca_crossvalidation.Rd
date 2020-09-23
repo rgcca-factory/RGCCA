@@ -22,7 +22,7 @@ rgcca_crossvalidation(rgcca_res, validation = "kfold",
 
 \item{new_scaled}{A boolean scaling the blocks to predict}
 
-\item{k}{If validation = 'kfold', an integer giving the number of folds.}
+\item{k}{An integer giving the number of folds (if validation = 'kfold').}
 
 \item{scale}{A logical value indicating if each block is normalised and divided by the square root of its number of variables and then divided by the square root of its number of variables.}
 

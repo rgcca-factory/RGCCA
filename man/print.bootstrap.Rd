@@ -2,28 +2,31 @@
 % Please edit documentation in R/print.bootstrap.r
 \name{print.bootstrap}
 \alias{print.bootstrap}
-\title{Print bootstrap}
+\title{Prints bootstrap}
 \usage{
-\method{print}{bootstrap}(x, ...)
+\method{print}{bootstrap}(x, bars = "quantile", ...)
 }
 \arguments{
 \item{x}{A bootstrap object (see \code{\link[RGCCA]{bootstrap}} )}
 
+\item{bars}{A character among "sd" for standard deviations, "stderr" for the standard error of the mean, or "quantile" for the 0.05th and 0.95th quantiles.}
+
 \item{...}{Further arguments in print}
 }
 \value{
-A matrix containing for each variables of each blocks, the means, 95\% intervals, bootstrap ratio, p-values and other statistics (see details)
-}
-\description{
-Print bootstrap
-}
-\details{
+A matrix containing for each variables of each blocks, the means, 95\% intervals, bootstrap ratio, p-values and other statistics
 \itemize{
 \item 'estimate' for RGCCA weights
 \item 'mean' for the mean of the bootstrap weights
 \item 'sd' for the standard error of the bootstrap weights
 \item 'lower/upper_band' for the lower and upper intervals from to the 'bar' parameter
-\item 'p.vals' for p-values. The occurrences of  are distributed in accordance with the law
+\item 'p.vals' for p-values. In the case of SGCCA, the occurrences of the 
+bootstrap weights are distributed according to the binomial distribution 
+while for RGCCA, their absolute value weighted by their standard deviation 
+follows a normal distribution.
 \item 'BH' for Benjamini-Hochberg p-value adjustments
 }
+}
+\description{
+Prints a bootstrap object.
 }

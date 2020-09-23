@@ -211,7 +211,7 @@ RussettWithNA <- Russett
      rescv1=rgcca_crossvalidation(rgcca_res=object1,n_cores=1,validation="loo",model="classification",fit="lda")
      #   res_test  = rgcca_predict(object1, A_test,new_scaled=FALSE,fit="lda",model="classification",bloc_to_pred="politic") 
      test_that("rgcca_predict_classif",{expect_true(
-         round(rescv1$score,digits=3)==0.787
+         round(rescv1$score,digits=3)==0.213
      )})
      
      
@@ -227,4 +227,4 @@ RussettWithNA <- Russett
          respred_i=rgcca_predict(rgcca_out_i, A_i,new_scaled=FALSE,bloc_to_pred="politic",model="classification",fit="lda") 
          res[i]=respred_i$score 
      }
-     mean(res) # 0.787
+     mean(res) # 0.213

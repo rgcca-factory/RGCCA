@@ -1,8 +1,10 @@
 #'Print bootstrap
+#'
+#'Prints a bootstrap object. 
+#'@inheritParams get_bootstrap
 #'@param x A bootstrap object (see \code{\link[RGCCA]{bootstrap}})
 #'@param ... Further arguments in print
-#' @return A matrix containing for each variables of each blocks, the means, 95\% intervals, bootstrap ratio, p-values and other statistics (see details)
-#' @details 
+#' @return A matrix containing for each variables of each blocks, the means, 95\% intervals, bootstrap ratio, p-values and other statistics
 #' \itemize{
 #' \item 'estimate' for RGCCA weights
 #' \item 'mean' for the mean of the bootstrap weights
@@ -15,7 +17,7 @@
 #' \item 'BH' for Benjamini-Hochberg p-value adjustments
 #' }
 #'@export
-print.bootstrap=function(x,...)
+print.bootstrap=function(x,bars="quantile",...)
 {
     print(paste(dim(x$bootstrap[[1]][[1]])[2],"bootstrap(s) were run"),...)
     ncompmax=min(x$rgcca$call$ncomp)
@@ -25,9 +27,9 @@ print.bootstrap=function(x,...)
         print(Reduce(rbind,lapply(1:length(x$rgcca$call$blocks),
                                   function(block)
                                   { b=get_bootstrap(b=x,
-                                                      i_block=block,
+                                                      block=block,
                                                     comp=comp,
-                                                    bars="ci",
+                                                    bars=bars,
                                                     display_order =FALSE)
                                     othercols=colnames(b)[-which(colnames(b)=="estimate")]
                                   ;return(b[,c("estimate",othercols)])}

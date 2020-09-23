@@ -2,7 +2,7 @@
 % Please edit documentation in R/rgcca_cv.r
 \name{rgcca_cv}
 \alias{rgcca_cv}
-\title{Tuning RGCCA parameters in 'supervised' mode}
+\title{Tuning RGCCA parameters in 'supervised' mode with cross-validation}
 \usage{
 rgcca_cv(blocks, type = "rgcca", response = NULL, par_type = "tau",
   par_value = NULL, par_length = 10, validation = "kfold",
@@ -39,11 +39,11 @@ one row by combination. By default, it takes 10 sets between min values (0
 
 \item{validation}{A character for the type of validation among "loo", "kfold", "test".}
 
-\item{type_cv}{A character corresponding to the model of prediction : 'regression' or 'classification'.}
+\item{type_cv}{A character corresponding to the model of prediction : 'regression' or 'classification'. See Details.}
 
 \item{fit}{A character giving the function used to compare the trained and the tested models}
 
-\item{k}{If validation = 'kfold', an integer giving the number of folds.}
+\item{k}{An integer giving the number of folds (if validation = 'kfold').}
 
 \item{n_run}{An integer giving the number of cross-validations to be run (if validation = 'kfold').}
 
@@ -107,21 +107,27 @@ If sparsity is a matrix, each row \eqn{h} defines the constraints applied to the
 \item{...}{Further graphical parameters (see plot2D functions)}
 }
 \value{
-\item{cv}{A matrix giving the root-mean-square error (RMSE) between the predicted R/SGCCA and the observed R/SGCCA for each combination and each prediction (n_prediction = n_samples for validation = 'loo'; n_prediction = 'k' * 'n_cv' for validation = 'kfold').}
+\item{cv}{A matrix giving the root-mean-square error (RMSE) between the predicted R/SGCCA and the observed R/SGCCA for each combination and each prediction (n_prediction = n_samples for validation = 'loo'; n_prediction = 'k' * 'n_run' for validation = 'kfold').}
 
-\item{bestpenalties}{Penalties giving the best RMSE for each blocks}
+\item{call}{A list of the input parameters}
+
+\item{bestpenalties}{Penalties giving the best RMSE for each blocks (for regression) or the best proportion of wrong predictions (for classification)}
 
 \item{penalties}{A matrix giving, for each blocks, the penalty combinations (tau or sparsity)}
 }
 \description{
 This function is dedicated to supervised approaches (with a 'response' parameter in rgcca).
 To tune the sparsity coefficient (if the model is sparse) or tau 
-(otherwise), in supervised mode, we observe the performance (RMSE) of a 
-model from which individuals were randomly drawn. These individuals can be 
-divided into k folds where the model will be tested on each fold and trained
+(otherwise), the predictive quality of the model induced by these parameters are estimated by crossvalidation. 
+In this purpose, individuals can be divided into k folds where the model will be tested on each fold and trained
  on the others. For small datasets (<30 samples), it is recommended to use 
- as many folds as there are individuals (leave-one-out; loo). The best 
- combination of parameters is the one where, on average, the samples perform best.
+ as many folds as there are individuals (leave-one-out; loo).
+}
+\details{
+If type_cv=="regression",at each round of cross-validation, for each variable, a predictive model is constructed as a linear model of the first RGCCA component of each block (calculated on the training set).
+ Then the Root Mean Square of Errors of this model on the testing dataset are calculated, then averaged on the variables of the predictive block. 
+ The best combination of parameters is the one where the average of RMSE on the testing datasets is the lowest.
+If type_cv=="classification", at each round of cross-validation a "lda" is run and the proportion of wrong predictions on the testing dataset is returned.
 }
 \examples{
 data("Russett")
@@ -130,7 +136,7 @@ blocks <- list(
     industry = Russett[, 4:5],
     politic = Russett[, 6:11])
 res = rgcca_cv(blocks, response = 3, type="rgcca", 
-par_type = "sparsity", par_value = c(0.6, 0.75, 0.5), n_cv = 2, n_cores = 1)
+par_type = "sparsity", par_value = c(0.6, 0.75, 0.5), n_run = 2, n_cores = 1)
 plot(res)
 rgcca_cv(blocks, response = 3, par_type = "tau", par_value = c(0.6, 0.75, 0.5)
 , n_run = 2, n_cores = 1)$bestpenalties

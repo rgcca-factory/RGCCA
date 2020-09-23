@@ -10,6 +10,7 @@
 #' @param main =NULL Title of the graph (before the block name)
 #' @param names.arg  renaming the methods
 #' @param legend If TRUE the legend is diplayed
+#' @param colors colors
 #' @param ... Further plot parameters...
 #' @examples 
 #' set.seed(42);X1=matrix(rnorm(350),70,5);X2=matrix(rnorm(280),70,4)
@@ -22,7 +23,7 @@
 #' plot(x=listResults,ylim=c(0,1),type="a")
 #' @importFrom grDevices graphics.off
 #' @export
-plot.naEvolution=function(x,type="rv",ylim=NULL,block=length(x[[1]][[1]][[1]][[1]]),bars="sd",main=NULL,names.arg=NULL,legend=FALSE,...)
+plot.naEvolution=function(x,type="rv",ylim=NULL,block=length(x[[1]][[1]][[1]][[1]]),bars="sd",main=NULL,names.arg=NULL,legend=FALSE,colors=NULL,...)
 { #type : "rv", "pct" ou "a"
   #bars="sd" or "stderr"
   #  graphics.off()
@@ -48,7 +49,14 @@ plot.naEvolution=function(x,type="rv",ylim=NULL,block=length(x[[1]][[1]][[1]][[1
   }
   namesMethod=as.character(names(x[[1]][[1]]))
   #colMethod=rainbow(5)[1:length(namesMethod)]
-  colMethod=c("cornflowerblue","chocolate1","chartreuse3","red","blueviolet","darkturquoise","darkgoldenrod1","coral","bisque4","darkorchid1","deepskyblue1")[1:length(namesMethod)]
+  if(is.null(colors))
+  {
+     colMethod=c("cornflowerblue","chocolate1","chartreuse3","red","blueviolet","darkturquoise","darkgoldenrod1","coral","bisque4","darkorchid1","deepskyblue1")[1:length(namesMethod)]
+  }
+  else
+  {
+      colMethod=colors
+  }
   nMeth=0:length(namesMethod)
   pas=1/length(namesMethod)
   names(colMethod)=names(nMeth)=namesMethod

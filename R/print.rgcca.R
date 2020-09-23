@@ -64,7 +64,7 @@ print.rgcca <- function(x,...)
         for (i in 1:NCOL(x$call$connection)) 
         {
             tau <- x$call$tau[i]
-             cat("The",param,"parameter used for block", i, "was:",  round(tau,4), fill = TRUE)
+             cat("The",param,"parameter used for", names(x$call$blocks)[i], "was:",  round(tau,4), fill = TRUE)
         }
     }
     else
@@ -82,7 +82,7 @@ print.rgcca <- function(x,...)
           for (i in 1:NCOL(x$call$connection)) {
               sparsity <- x$call$sparsity[i]
               
-              cat("The",param,"parameter used for block", i, "was:", 
+              cat("The",param,"parameter used for",names(x$call$blocks)[i], "was:", 
                   sparsity, fill = TRUE)
           }
       }

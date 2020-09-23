@@ -2,7 +2,7 @@
 % Please edit documentation in R/plot.rgcca_permutation.R
 \name{plot.permutation}
 \alias{plot.permutation}
-\title{plot.permutation
+\title{Plots a permutation object
 Plots a permutation object. The parameters tuned for maximizing RGCCA criteria is displayed in the title. 
 In x, the index of combination (number corresponding to the rownames of tuning parameters object). In ordinate, a score depending of the type parameter (RGCCA criterion for crit, and zstat for the pseudo z-scores)}
 \usage{
@@ -24,7 +24,7 @@ the RGCCA criterion and 'zstat' for the pseudo Z-score)}
 
 \item{cex_sub}{An integer for the size of the subtitle}
 
-\item{bars}{A character giving representation of the variability among "points", "stderr" or "sd"}
+\item{bars}{A character giving representation of the variability among "points", "stderr"(standard error of the mean), "sd" (standard deviations)  or "quantile" (0.05-0.95)}
 
 \item{cex_point}{An integer for the size of the points or the text in the plot}
 
@@ -33,7 +33,7 @@ the RGCCA criterion and 'zstat' for the pseudo Z-score)}
 \item{...}{Further graphical parameters}
 }
 \description{
-plot.permutation
+Plots a permutation object
 Plots a permutation object. The parameters tuned for maximizing RGCCA criteria is displayed in the title. 
 In x, the index of combination (number corresponding to the rownames of tuning parameters object). In ordinate, a score depending of the type parameter (RGCCA criterion for crit, and zstat for the pseudo z-scores)
 }

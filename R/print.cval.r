@@ -16,7 +16,7 @@ print.cval=function(x,bars="sd",alpha=0.05,...)
 {
     
     cat("Call: ")
-    names_call=c("type","nperm","method","tol","scale","scale_block")
+    names_call=c("type_cv","n_run","method","tol","scale","scale_block")
     char_to_print=""
     for(name in names_call)
     {
@@ -36,7 +36,7 @@ print.cval=function(x,bars="sd",alpha=0.05,...)
     print(c1s, quote = FALSE,...)
     cat("\n")
     
-    df <- summary.cv(x, bars, alpha)
+    df <- summary.cv(x, bars)
 
     optimal_ind=which.min(df[,"Mean RMSE"])
     optimal_x=df[optimal_ind,"Combination"]

@@ -27,7 +27,7 @@ the RGCCA criterion and 'zstat' for the pseudo Z-score)}
 
 \item{cex_lab}{An integer for the size of the axis titles}
 
-\item{bars}{A character giving representation of the variability among "points", "stderr" or "sd"}
+\item{bars}{A character giving representation of the variability among "points", "stderr"(standard error of the mean), "sd" (standard deviations)  or "quantile" (0.05-0.95)}
 }
 \description{
 Plot permutation in 2D

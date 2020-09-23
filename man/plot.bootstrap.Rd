@@ -6,7 +6,7 @@
 \usage{
 \method{plot}{bootstrap}(x, type = "1D",
   block = length(x$rgcca$call$blocks), comp = 1, n_mark = 30,
-  bars = "sd", colors = NULL, title = NULL, cex = 1,
+  bars = "quantile", colors = NULL, title = NULL, cex = 1,
   n_cores = parallel::detectCores() - 1, ...)
 }
 \arguments{
@@ -20,7 +20,7 @@
 
 \item{n_mark}{An integer giving the number of top variables to select}
 
-\item{bars}{A character among "sd" for standard deviations, "stderr" for the standard error, "ci" for confidence interval of scores and "cim" for the confidence intervall of the mean.}
+\item{bars}{A character among "sd" for standard deviations, "stderr" for the standard error of the mean, or "quantile" for the 0.05th and 0.95th quantiles.}
 
 \item{colors}{Either a vector of integers (each integer corresponding to a color) or of characters corresponding to names of colors (as "blue",see colors()) or RGB code ("#FFFFFF").}
 
@@ -33,24 +33,25 @@
 
 \item{...}{Further graphical parameters (see plot2D)}
 }
+\value{
+A visualization of bootstrap results
+\itemize{
+\item If type = '1D': barplot of the best variables from a bootstrap with, on the x-axis,
+the number of non-zero occurrences (SGCCA) or the mean of the bootstrap weights 
+(RGCCA). The bars are colored according to the significant 95% bootstrap 
+intervals ('*' or 'ns'; see 'p.vals' in Details section for details)
+\item type = '2D' : graph of the best variables from a bootstrap with, in x-axis, the number of
+non-zero occurences (SGCCA) or the significant 95% bootstrap 
+intervals (RGCCA). In in y-axis are the bootstrap-ratios (mean/sd) 
+Negative weights are colored in red and the positive ones are in green.
+}
+}
 \description{
 Plots the results of a bootstrap object. The representation can be with bars 
 (1D) or a biplot (2D) (see details).
 }
 \details{
-\itemize{
-\item type = '1D': barplot of the best variables from a bootstrap with, on the x-axis,
-the number of non-zero occurrences (SGCCA) or the mean of the bootstrap weights 
-(RGCCA). The bars are colored according to the significant 95% bootstrap 
-intervals ('*' or 'ns'; see 'p.vals' in details for 
-\code{\link[RGCCA]{get_bootstrap}}) for RGCCA and according to the occurences
- of the weights which are not equal to zero (according to an ascending 
- gradient from red to blue) for SGCCA.
-\item type = '2D' : graph of the best variables from a bootstrap with, in x-axis, the number of
-non-zero occurences (SGCCA) or the significant 95% bootstrap 
-intervals (RGCCA). In in y-axis are the bootstrap-ratios (mean/sd) .
-Negative weights are colored in red and the positive ones are in green.
-}
+The function \code{\link[RGCCA]{get_bootstrap}} allows obtaining the numeric values used to produce the graph
 }
 \examples{
 library(RGCCA)
