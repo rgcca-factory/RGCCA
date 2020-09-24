@@ -375,7 +375,7 @@ server <- function(input, output, session) {
             choices = c(#`Train-test` = "test",
                 `K-fold` = "kfold",
                 `Leave-one-out` = "loo"),
-            selected = "loo"
+            selected = "kfold"
         )
         if (BSPLUS)
             ui <- shinyInput_label_embed(

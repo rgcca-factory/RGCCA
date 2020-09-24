@@ -5,16 +5,17 @@
 #' @inheritParams plot_var_1D
 #' @inheritParams plot2D
 #' @param x A RGCCA object (see \code{\link[RGCCA]{rgcca}})
+#' @param ... Further graphical parameters
 #' @param type A character among 'ind', 'var', 'both', 'ave', 'cor', 'weight', 'network' (see details).
 #' @param text_ind A bolean to represent the individuals with their row names (TRUE)
 #' or with circles (FALSE)
 #' @param text_var A bolean to represent the variables with their row names (TRUE)
 #' or with circles (FALSE)
-#' @param ... Further graphical parameters applied to both (individual and variable) spaces
 #' @param block A vector of integers giving the index of a list of blocks or a block = 'all' for all of them
 #' @inheritParams plot_ind
 #' @inheritParams plot2D
 #' @inheritParams plot_var_2D
+#' @inheritParams plot_histogram
 #' @details 
 #' \itemize{
 #'  \item "ind" for individual graph: Y of rgcca are plotted. In abscissa Y[[i_block]][,compx], in ordinate, Y[[i_block_y]][,compy]. Each point correspond to one individual. It can be colored with the resp. options. The colors by default can be modified in colors options.
@@ -39,10 +40,12 @@
 #' plot(resRgcca,type="ind")
 #' plot(resRgcca,type="var")
 #' plot(resRgcca,type="both")
+#' plot(resRgcca,type="ave")
+#' plot(resRgcca,type="network")
 #' @importFrom gridExtra grid.arrange
 #' @importFrom ggplot2 ggplot
 #' @export
-plot.rgcca=function(x,type="weight",block=length(x$A),comp=1:2,resp=rep(1, NROW(x$Y[[1]])),remove_var=FALSE,text_var=TRUE,text_ind=TRUE,response_name= "Response",no_overlap=FALSE,title=NULL,n_mark=30,collapse=FALSE,cex=1,cex_sub=12,cex_main=14,cex_lab=12,colors=NULL,...)
+plot.rgcca=function(x,type="weight",block=length(x$A),comp=1:2,resp=rep(1, NROW(x$Y[[1]])),remove_var=FALSE,text_var=TRUE,text_ind=TRUE,response_name= "Response",no_overlap=FALSE,title=NULL,n_mark=30,collapse=FALSE,cex=1,cex_sub=12,cex_main=14,cex_lab=12,cex_axis=10,colors=NULL, ...)
 {
     stopifnot(is(x, "rgcca"))
     match.arg(type,c("ind","var","both","ave","cor","weight","network"))
@@ -77,8 +80,8 @@ plot.rgcca=function(x,type="weight",block=length(x$A),comp=1:2,resp=rep(1, NROW(
     if(type=="both")
     {
         if(is.null(i_block)){i_block=length(x$call$blocks)}
-        p1<-plot_ind(x,i_block=i_block,i_block_y=i_block_y,compx=compx,compy=compy,cex_sub=cex_sub,cex_main=cex_main,cex_lab=cex_lab,resp=resp,response_name=response_name,text=text_ind,title="Sample space",colors=colors,no_overlap=no_overlap,...)
-        p2<-plot_var_2D(x,i_block=i_block,compx=compx,compy=compy,cex_sub=cex_sub,cex_main=cex_main,cex_lab=cex_lab,remove_var=remove_var,text=text_var,no_overlap=no_overlap,title="Variable correlations",n_mark = n_mark,collapse=collapse,colors=colors,...)
+        p1<-plot_ind(x,i_block=i_block,i_block_y=i_block_y,compx=compx,compy=compy,cex_sub=cex_sub,cex_main=cex_main,cex_lab=cex_lab,resp=resp,response_name=response_name,text=text_ind,title="Sample space",colors=colors,no_overlap=no_overlap)
+        p2<-plot_var_2D(x,i_block=i_block,compx=compx,compy=compy,cex_sub=cex_sub,cex_main=cex_main,cex_lab=cex_lab,remove_var=remove_var,text=text_var,no_overlap=no_overlap,title="Variable correlations",n_mark = n_mark,collapse=collapse,colors=colors)
         if(is.null(title)){title=toupper(names(x$call$blocks)[i_block])}
         p5<-grid.arrange(p1,p2,nrow=1,ncol=2,top = title)
         plot(p5)
@@ -105,7 +108,7 @@ plot.rgcca=function(x,type="weight",block=length(x$A),comp=1:2,resp=rep(1, NROW(
             }
             
         }
-        p5<-plot_ind(x,i_block=i_block,i_block_y=i_block_y,compx=compx,compy=compy,cex_sub=cex_sub,cex_main=cex_main,cex_lab=cex_lab,resp=resp,response_name=response_name,text=text_ind,title=title,colors=colors,no_overlap=no_overlap,...)
+        p5<-plot_ind(x,i_block=i_block,i_block_y=i_block_y,compx=compx,compy=compy,cex_sub=cex_sub,cex_main=cex_main,cex_lab=cex_lab,resp=resp,response_name=response_name,text=text_ind,title=title,colors=colors,no_overlap=no_overlap)
         plot(p5)
      }
     if(type=="ave")
@@ -116,8 +119,7 @@ plot.rgcca=function(x,type="weight",block=length(x$A),comp=1:2,resp=rep(1, NROW(
             title = title,
             colors = colors,
             cex_main=cex_main,
-            cex_sub=cex_sub,
-            ...)
+            cex_sub=cex_sub)
         plot(p5)
     }
     if(type=="network")
@@ -141,8 +143,7 @@ plot.rgcca=function(x,type="weight",block=length(x$A),comp=1:2,resp=rep(1, NROW(
             colors = colors,
             i_block = i_block,
             cex_main=cex_main,
-            cex_sub=cex_sub,
-            ...)
+            cex_sub=cex_sub)
         plot(p5)
     }
     if(type=="weight")
@@ -158,8 +159,7 @@ plot.rgcca=function(x,type="weight",block=length(x$A),comp=1:2,resp=rep(1, NROW(
                     title = title,
                     colors = colors,
                     cex_main=cex_main,
-                    cex_sub=cex_sub,
-                    ...)
+                    cex_sub=cex_sub)
         plot(p5)
     }
       

@@ -7,8 +7,8 @@
 #'permuted RMSE criterion. The best parameters are in red by default.
 #'@inheritParams plot2D
 #'@inheritParams plot_permut_2D
+#' @inheritParams plot.rgcca
 #'@param x A rgcca_cv object (see \link{rgcca_cv})
-#'@param ... Further plot options
 #'@export
 #'@examples
 #'data("Russett")
