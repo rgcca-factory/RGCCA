@@ -12,7 +12,7 @@
   colors = NULL, errorbar = "ci", ...)
 }
 \arguments{
-\item{x}{A MIRGCCA object (see \code{\link[RGCCA]{MIRGCCA}} ) or a list containing
+\item{x}{A MIRGCCA object (see \code{\link[RGCCA]{MIRGCCA}}) or a list containing
 \itemize{\item{rgcca0}{ RGCCA results for the reference dataset}
 \item{data}{ list of imputed data obtained}
  \item{rgccaList}{ list of RGCCA obtained}}}
@@ -39,7 +39,7 @@ or with circles (FALSE)}
 
 \item{no_overlap}{A boolean to avoid overlap in plotted text}
 
-\item{title}{A character for the title of the plot}
+\item{title}{A character giving the title of the plot}
 
 \item{n_mark}{An integer giving the number of top variables to select}
 

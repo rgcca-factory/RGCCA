@@ -12,9 +12,9 @@
 #'  scheme penalizes structural negative correlation. The factorial scheme 
 #'  discriminates more strongly the blocks than the centroid one}
 #' @return \item{ncomp}{A vector of 1*J integers giving the number of component for each blocks}
-#' @return \item{crit}{A vector of integer that contains the values of the analysis criteria across iterations.}
+#' @return \item{crit}{A vector of integer that contains for each component the values of the analysis criteria across iterations.}
 #' @return \item{mode}{A \eqn{1 \times J} vector that contains the formulation ("primal" or "dual") applied to each of the \eqn{J} blocks within the RGCCA alogrithm} 
-#' @return \item{AVE}{indicators of model quality based on the Average Variance Explained (AVE): AVE(for one block), AVE(outer model), AVE(inner model).}
+#' @return \item{AVE}{A list of numerical values giving the indicators of model quality based on the Average Variance Explained (AVE): AVE(for each block), AVE(outer model), AVE(inner model).}
 #' @references Tenenhaus A. and Tenenhaus M., (2011), Regularized Generalized Canonical Correlation Analysis, Psychometrika, Vol. 76, Nr 2, pp 257-284.
 #' @references Tenenhaus A. et al., (2013), Kernel Generalized Canonical Correlation Analysis, submitted.
 #' @references Schafer J. and Strimmer K., (2005), A shrinkage approach to large-scale covariance matrix estimation and implications for functional genomics. Statist. Appl. Genet. Mol. Biol. 4:32.
@@ -76,7 +76,7 @@ sgccaNa=function (blocks,method, connection = 1 - diag(length(A)), sparsity = re
       }
   }
 
-  resRgcca=sgcca(A2,sparsity=sparsity,ncomp=ncomp,verbose=FALSE,scale=scale,scale_block=scale_block,scheme=scheme,tol=tol,prescaling=prescaling,quiet=quiet)
+ resRgcca=sgcca(A2,sparsity=sparsity,ncomp=ncomp,verbose=verbose,scale=scale,scale_block=scale_block,scheme=scheme,tol=tol,prescaling=prescaling,quiet=quiet)
  return(list(imputedA=A2,rgcca=resRgcca,method,indNA=indNA))
 
 }

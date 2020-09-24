@@ -1,8 +1,6 @@
 #' print.cval
 #' 
-#'@param x A rgcca_cv object (see \link{rgcca_cv})
-#'@param bars among "sd" for standard deviations, "stderr" for standard error (standard deviations divided by sqrt(n), ci for confidence interal, cim for confidence interval of the mean.
-#'@param alpha used for confidence interval bars (ci or cim), risk. Default to 0.05
+#'@inheritParams plot.cval
 #'@param ... Further print options
 #'@export 
 #'@examples
@@ -14,11 +12,11 @@
 #'     res=rgcca_cv(blocks, response=3,type="rgcca",par_type="tau",par_value=c(0,0.2,0.3),
 #'     n_run=1,n_cores=1)
 #'    print(res)
-print.cval=function(x,bars="sd",alpha=0.05,...)
+print.cval=function(x,bars="quantile",...)
 {
     
     cat("Call: ")
-    names_call=c("type","nperm","method","tol","scale","scale_block")
+    names_call=c("type_cv","n_run","method","tol","scale","scale_block")
     char_to_print=""
     for(name in names_call)
     {
@@ -29,7 +27,7 @@ print.cval=function(x,bars="sd",alpha=0.05,...)
         char_to_print=paste(char_to_print,name,'=',quo,value,quo,vir, collapse="",sep="")
     }
     cat(char_to_print)
-    
+    cat("\n")
     
     c1s <- round(x$penalties, 4)
     rownames(c1s) = 1:NROW(c1s)
@@ -38,18 +36,26 @@ print.cval=function(x,bars="sd",alpha=0.05,...)
     print(c1s, quote = FALSE,...)
     cat("\n")
     
-    df <- summary.cv(x, bars, alpha)
-
-    optimal_ind=which.min(df[,"Mean RMSE"])
+    df <- summary_cval(x, bars)
+    colnameForOptimal=ifelse(x$call$type_cv=="regression","Mean RMSE","Mean Error Prediction Rate")
+    optimal_ind=which.min(df[,colnameForOptimal])
     optimal_x=df[optimal_ind,"Combination"]
-    optimal_y=df[optimal_ind,"Mean RMSE"]
+    optimal_y=df[optimal_ind,colnameForOptimal]
     cat(paste0(nrow(x$cv)," configurations were tested. \n"))
     
    cat(paste0("Validation: ",x$call$validation,ifelse(x$call$validation=="kfold", paste0(" with ",x$call$k," folds and ",x$call$n_run," run(s))"),")")),"\n")
-    
+
+    cat("\n")
     print(df)
-    
-    cat(paste("The best combination was:", paste(round(x$bestpenalties,digits=3),collapse=" "),"for a mean CV criterion (RMSE) of ", round(optimal_y,digits=2)),"\n",...)
+    cat("\n")
+    if(x$call$type_cv=="regression")
+    {
+        cat(paste("The best combination was:", paste(round(x$bestpenalties,digits=3),collapse=" "),"for a mean CV criterion (RMSE) of ", round(optimal_y,digits=2)),"\n",...)
+    }
+    if(x$call$type_cv=="classification")
+    {
+        cat(paste("The best combination was:", paste(round(x$bestpenalties,digits=3),collapse=" "),"for a mean rate of false predictions of ", round(optimal_y,digits=2)),"\n",...)
+    }
 
 
 }

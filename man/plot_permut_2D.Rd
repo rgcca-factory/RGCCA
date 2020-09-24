@@ -6,7 +6,7 @@
 \usage{
 plot_permut_2D(perm, type = "crit", cex = 1, title = NULL,
   cex_main = 14 * cex, cex_sub = 12 * cex, cex_point = 3 * cex,
-  cex_lab = 10 * cex, bars = "points")
+  cex_lab = 10 * cex, bars = "points", colors = c("red", "grey"))
 }
 \arguments{
 \item{perm}{A permutation object (see \code{\link[RGCCA]{rgcca_permutation}})}
@@ -16,8 +16,7 @@ the RGCCA criterion and 'zstat' for the pseudo Z-score)}
 
 \item{cex}{An integer for the size of the plot parameters}
 
-\item{title}{A character with the name of the space (either "Variables" or
-"Samples")}
+\item{title}{A character giving the title of the plot}
 
 \item{cex_main}{An integer for the size of the title}
 
@@ -27,7 +26,9 @@ the RGCCA criterion and 'zstat' for the pseudo Z-score)}
 
 \item{cex_lab}{An integer for the size of the axis titles}
 
-\item{bars}{A character giving representation of the variability among "points", "stderr" or "sd"}
+\item{bars}{A character giving the variability among "points" (all the points are shown), "sd" (standard deviations bars) , "stderr"(bars of standard deviation divided by sqrt(n)) or "quantile" (for the 0.05-0.95 quantiles bars)}
+
+\item{colors}{Either a vector of integers (each integer corresponding to a color) or of characters corresponding to names of colors (as "blue",see colors()) or RGB code ("#FFFFFF").}
 }
 \description{
 Plot permutation in 2D

@@ -8,22 +8,22 @@ bootstrap(rgcca_res, n_boot = 100, n_cores = parallel::detectCores() -
   1, parallelization = NULL)
 }
 \arguments{
-\item{rgcca_res}{A RGCCA object (see  \code{\link[RGCCA]{rgcca}} )}
+\item{rgcca_res}{A RGCCA object (see  \code{\link[RGCCA]{rgcca}})}
 
 \item{n_boot}{An integer for the number of boostraps}
 
 \item{n_cores}{An integer for the number of cores used in parallelization}
 
-\item{parallelization}{A logical value to run a parallelization. If parallelization = NULL (default), the parallelization is always performed except for Windows if length(nperm) < 10.}
+\item{parallelization}{A logical value to run a parallelization. If parallelization = NULL (default), the parallelization is always performed except for Windows if length(n_boot) < 10.}
 }
 \value{
-A list containing two objects: 'bootstrap' and 'rgcca'. 'bootstrap' is a list a list containing for each block, a matrix with in rows the variables of the blocks and in columns the weight calculated for each bootstrap; 'rgcca' is the original rgcca (see  \code{\link[RGCCA]{RGCCA}}).
+A list containing two objects: 'bootstrap' and 'rgcca'. 
+'bootstrap' is a list a list containing for each block, a matrix with in rows the variables of the blocks and in columns the weight calculated for each bootstrap; 'rgcca' is the original rgcca (see  \code{\link[RGCCA]{RGCCA}}).
 }
 \description{
-Computing boostrap of RGCCA in order to visualize the stability of the weights found in RGCCA
+Compute boostrap of RGCCA in order to evaluate the stability of the weights found in S/RGCCA
 }
 \examples{
-library(RGCCA)
 data("Russett")
 blocks = list(agriculture = Russett[, seq(3)], industry = Russett[, 4:5],
     politic = Russett[, 6:11] )

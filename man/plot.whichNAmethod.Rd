@@ -30,7 +30,7 @@
 \item{...}{Further graphical parameters in plot}
 }
 \description{
-Plots the impact of increasing missing data on RGCCA
+Plot the impact of increasing missing data on RGCCA
 }
 \examples{
 set.seed(42);X1=matrix(rnorm(350),70,5);X2=matrix(rnorm(280),70,4);X1[1,1]=NA;X2[2,]=NA

@@ -88,11 +88,11 @@ covariance maximization among "horst" (the identity function), "factorial"
 
 \item{ncomp}{A vector of 1*J integers giving the number of component for each blocks}
 
-\item{crit}{A vector of integer that contains the values of the analysis criteria across iterations.}
+\item{crit}{A vector of integer that contains for each component the values of the analysis criteria across iterations.}
 
 \item{mode}{A \eqn{1 \times J} vector that contains the formulation ("primal" or "dual") applied to each of the \eqn{J} blocks within the RGCCA alogrithm}
 
-\item{AVE}{indicators of model quality based on the Average Variance Explained (AVE): AVE(for one block), AVE(outer model), AVE(inner model).}
+\item{AVE}{A list of numerical values giving the indicators of model quality based on the Average Variance Explained (AVE): AVE(for each block), AVE(outer model), AVE(inner model).}
 }
 \description{
 imputeRGCCA allows to choose the imputation method before running RGCCA

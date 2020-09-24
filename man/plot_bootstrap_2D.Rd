@@ -20,8 +20,7 @@ plot_bootstrap_2D(b = NULL, df_b = NULL, x = "bootstrap_ratio",
 
 \item{y}{A character for the index to plot in y-axis (see details).}
 
-\item{title}{A character with the name of the space (either "Variables" or
-"Samples")}
+\item{title}{A character giving the title of the plot}
 
 \item{colors}{Either a vector of integers (each integer corresponding to a color) or of characters corresponding to names of colors (as "blue",see colors()) or RGB code ("#FFFFFF").}
 
@@ -44,7 +43,7 @@ plot_bootstrap_2D(b = NULL, df_b = NULL, x = "bootstrap_ratio",
 \item{n_cores}{An integer for the number of cores used in parallelization}
 }
 \description{
-Biplot of the best variables from a bootstrap with, in x-axis, the number of
+Graph of the best variables from a bootstrap with, in x-axis, the number of
 non-zero occurences (SGCCA) or the significant 95% bootstrap 
 intervals (RGCCA; '*' or 'ns'; see 'p.vals' in details for 
 \code{\link[RGCCA]{get_bootstrap}}). In in y-axis are the bootstrap-ratios (mean/sd) .
@@ -60,7 +59,6 @@ Negative weights are colored in red and the positive ones are in green.
 }
 }
 \examples{
-library(RGCCA)
 data("Russett")
 blocks = list(agriculture = Russett[, seq(3)], industry = Russett[, 4:5],
     politic = Russett[, 6:11] )

@@ -4,14 +4,12 @@
 \alias{print.cval}
 \title{print.cval}
 \usage{
-\method{print}{cval}(x, bars = "sd", alpha = 0.05, ...)
+\method{print}{cval}(x, bars = "quantile", ...)
 }
 \arguments{
 \item{x}{A rgcca_cv object (see \link{rgcca_cv})}
 
-\item{bars}{among "sd" for standard deviations, "stderr" for standard error (standard deviations divided by sqrt(n), ci for confidence interal, cim for confidence interval of the mean.}
-
-\item{alpha}{used for confidence interval bars (ci or cim), risk. Default to 0.05}
+\item{bars}{A character giving the variability among "points" (all the points are shown), "sd" (standard deviations bars) , "stderr"(bars of standard deviation divided by sqrt(n)) or "quantile" (for the 0.05-0.95 quantiles bars)}
 
 \item{...}{Further print options}
 }

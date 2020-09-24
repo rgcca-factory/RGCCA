@@ -1,6 +1,6 @@
 #' plots a list_rgcca object 
 #' 
-#' @param x A MIRGCCA object (see \code{\link[RGCCA]{MIRGCCA}} ) or a list containing
+#' @param x A MIRGCCA object (see \code{\link[RGCCA]{MIRGCCA}}) or a list containing
 #' \itemize{\item{rgcca0}{ RGCCA results for the reference dataset}
 #' \item{data}{ list of imputed data obtained}
 #'  \item{rgccaList}{ list of RGCCA obtained}}  

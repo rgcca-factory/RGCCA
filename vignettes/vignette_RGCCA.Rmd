@@ -790,7 +790,7 @@ This procedure is available thought the rgcca_permutation() function.
 
 ```{r}
 set.seed(12345)
-fit.perm = rgcca_permutation(A, connection = C, par_type = "tau")
+fit.perm = rgcca_permutation(A, connection = C, par_type = "tau", n_cores = 1)
 ```
 
 Results are summarized using the generic `print()` function 
@@ -811,16 +811,21 @@ plot(fit.perm)
 fit.rgcca = rgcca(fit.perm)
 ```
 
+```{r}
+boot.rgcca = bootstrap(fit.rgcca, n_boot = 200, n_cores = 1)
+```
+
+
 The bootstrap results are displayed using the `plot()`function.
 
 ```{r}
-plot(boot.rgcca, block =1)
+plot(boot.rgcca, block =1, n_cores = 1)
 ```
 
 and detailed using the `print()` function.
 
 ```{r}
-print(boot.rgcca)
+print(boot.rgcca, n_cores = 1)
 ```
 
 
@@ -906,7 +911,7 @@ sapply(A, dim)
 
 This design is commonly used in many applications and is oriented toward the prediction of the location. This design does not impose any correlation between GE and CGH blocks and is encoded as follows:
   
-```{r}
+```{r, eval = FALSE}
 C <-  matrix(c(0, 0, 1, 0, 0, 1, 1, 1, 0), 3, 3)
 C
 ```
@@ -916,7 +921,7 @@ C
 From the dimension of each block ($n>p$ or $n\leq p$), the `rgcca()` function selects automatically the dual formulation for $\ma X_1$ and $\ma X_2$ and the primal one for $\ma X_3$.
 
 ```{r, eval = FALSE}
-fit.rgcca = rgcca(blocks=A, connection=C, 
+fit.rgcca = rgcca(blocks=A, connection=C, type = "rgcca",
                   tau = c(1, 1, 0), ncomp = c(1, 1, 1),
                   scale = TRUE, scale_block = TRUE,
                   scheme = "horst", verbose = FALSE)
@@ -940,11 +945,10 @@ system.time(rgcca(blocks=A, connection=C,
 
 As previously, RGCCA enables visual inspection of the spatial relationships between classes. This facilitates assessment of the quality of the classification and makes it possible to readily determine which components capture the discriminant information.
 
-```{r, eval=FALSE, fig.align='center',fig.height = 3, fig.width = 5}
-plot(fit.rgcca,type="ind",block=1:2, comp = 1, resp = Loc)
+```{r, eval = FALSE, fig.align='center',fig.height = 3, fig.width = 5}
+plot(fit.rgcca, type="ind", block=1:2, 
+     comp = 1, resp = Loc)
 ```
-
-
 
 In high-dimensional settings, the highest level of regularization ($\tau_j=1$) has proven to be necessary or even insufficient. Additional penalties that promote sparsity are often required.
 
@@ -975,14 +979,14 @@ fit.sgcca = rgcca(blocks=A, connection=C,
                   verbose = TRUE)
 ```
 
-For GE, the number of non-zero elements of $\ma a_1$ is equal to `r sum(fit.sgcca$a[[1]] != 0)` and is given by
+For GE, the number of non-zero elements of $\ma a_1$ is equal to r sum(fit.sgcca$a[[1]] != 0) #TODO Arthur and is given by
 
 ```{r, eval = FALSE}
 nb_zero_GE = sum(fit.sgcca$a[[1]] != 0)
 nb_zero_GE
 ```
 
-For CGH, the number of non-zero elements of $\ma a_2$ is equal to `r sum(fit.sgcca$a[[2]] != 0)` and is given by
+For CGH, the number of non-zero elements of $\ma a_2$ is equal to r sum(fit.sgcca$a[[2]] != 0) #TODO Arthur and is given by
 
 ```{r, eval = FALSE}
 nb_zero_CGH = sum(fit.sgcca$a[[2]] != 0)
@@ -991,7 +995,7 @@ nb_zero_CGH
 
 One component per block has been built (GE1 for $\ma X_1$ and CGH1 $\ma X_2$), and the graphical display of the tumors obtained by crossing GE1 and CGH1 and labeled according to their location is shown below.
 
-```{r, eval=FALSE, fig.align='center', fig.cap = 'graphical display of the tumors obtained by crossing GE1 and CGH1 land abeled according to their location.',fig.height = 3, fig.width = 5}
+```{r, eval = FALSE, fig.align='center', fig.cap = 'graphical display of the tumors obtained by crossing GE1 and CGH1 land abeled according to their location.',fig.height = 3, fig.width = 5}
 plot(fit.sgcca,type="ind",block=1:2,comp=1, resp = Loc)
 ```
 
@@ -1031,14 +1035,14 @@ names(A) = c("GE",  "CGH",  "Superblock", "y")
   
 and encoded in the design matrix as follows:
     
-```{r, eval = TRUE}
+```{r, eval = FALSE}
 nb_block = 4 #length(A)
 C = matrix(0, nb_block, nb_block)
 C[, nb_block-1] = 1 ; C[nb_block-1, ] = 1 ; diag(C) = 0
 ```
 
 
-```{r}
+```{r, eval = FALSE}
 fit.sgcca = rgcca(blocks=A, connection=C,type="sgcca",
                   sparsity = c(.071,.2, .5, 1),
                   ncomp = c(1, 1, 1, 1),
@@ -1068,117 +1072,12 @@ Moreover, it is possible to use a bootstrap resampling method to assess the stab
   
 ```{r, eval = FALSE}
 res.boot=bootstrap(fit.sgcca,n_boot=10)
-plot(res.boot)
+plot(res.boot, block = 2, type = "1D")
 ```
  
 The 30 top variables for GE and CGH are represented below:
  
 
-At last, the McKeon's measure quantifies the homogeneity of a set of block components and is defined by the following formula:
-    
-\begin{equation}
-\displaystyle r_I(\ma X_1 \ma a_1, \ldots, \ma X_J \ma a_J )=\frac{\frac{1}{(J(J-1)/2}\sum_{j<k} \mathrm{cov}(\ma X_j \ma a_j,\ma X_k \ma a_k)}{1/J \sum_j \mathrm{var}(\ma X_j \ma a_j)}
-  \label{mckeon}
-\end{equation}
-  
-Formula (\ref{mckeon}) allows evaluating the homogeneity of the solution of any multiblock component methods. The McKeon measure (not yet implemented within the RGCCA package but easily derived from the `rgcca()` function, see below) can be used to evaluate the proximities of the $3$ blocks. The computation of the McKeon's measure was carried out using RGCCA (full between-block connections, $\tau_j=1$ for all blocks, and $g(x) = x$ for a fair analysis).
-  
-```{r, eval = FALSE}
-rI = function(A){
-    J = length(A)
-    res = rgcca(blocks=A, scale = TRUE, verbose = FALSE)
-    Y = Reduce("cbind", res$Y)
-    rI = 1/(J-1)*(cov2(rowSums(Y))/sum(apply(Y, 2, cov2))-1)
-}
-  
-  
-X1 = B[[1]][, unique(which(sgcca.glioma$a[[1]]!=0, arr.ind = TRUE)[, 1])]
-X2 = B[[2]][, unique(which(sgcca.glioma$a[[2]]!=0, arr.ind = TRUE)[, 1])]
-X3 = B[[4]]
-A = list(GE = X1, CGH = X2, LOC = X3)
-  
-J = length(A)
-M = matrix(0, J, J)
-colnames(M) = rownames(M) = names(A)
-for (i in 1:J){
-  for (j in i:J){
-    M[i, j] = rI(A[c(i, j)])
-    M[j, i] = M[i, j]
-  }
-}
-  
-M
-```
-\begin{verbatim}
-> M
-           GE       CGH       LOC
-GE  1.0000000 0.6687260 0.7886703
-CGH 0.6687260 1.0000000 0.3741613
-LOC 0.7886703 0.3741613 1.0000000
-
-\end{verbatim}
-
-This suggests that the tumor location in the brain is more dependent on gene expression than on chromosomal imbalances and that this dependency is stronger that the dependency between gene expression and chromosomal imbalances.
-  
-
-
-# Plots
-
-## Vizualise the analysis
-
-Both the samples and the variables could be visualized by using "plot" functions with different types. 
-For ```type='ave'```, bars are used to visualized in decreasing order the variables with the higher weights and the blocks with the higher Average Variance Explained (AVE).
-For type='ind', 
-For```tŷpe=var```, the corcircle plot of variables is plotted. 
-For```tŷpe=ind```, the individual space is plotted. 
-For```tŷpe=both```, both individual and variable graphs are plotted. 
-These functions take the results of a sgcca or a rgcca (```rgcca``` parameter), the components to visualize : ```comp```, (integer or a couple of integers), and block (which is an integer or a couple of integers correspondig to the block(s) to visualize)
-For type="weight" the weights are plotted (in a decreasing order). 
-
-#### Samples plot
-```{r, fig.height = 3, fig.width = 5, fig.align = "center"}
-blocks=list(agri=Russett[,1:3],indus=Russett[,4:5],polit=Russett[,9:11])
-rgcca_out = rgcca(blocks = blocks, ncomp=2,response = 3)
-plot(rgcca_out,type="ind",block=1)
-```
-
-#### Corcircle plot
-```{r, fig.height = 3, fig.width = 5, fig.align = "center"}
-plot(rgcca_out,type="var")
-```
-
-#### Fingerprint plot
-```{r, fig.height = 3, fig.width = 5, fig.align = "center"}
-plot(rgcca_out,type="weight")
-```
-
-#### Averaged explained variance
-```{r, fig.height = 3, fig.width = 5, fig.align = "center"}
-plot(rgcca_out,type="ave")
-```
-# Tuning the parameters (crossvalidation and permutation)
-## Crossvalidation: supervised approach
-### Crosvalidation
-```{r, fig.height = 3, fig.width = 5, fig.align = "center"}
-loo <- rgcca_cv(blocks,response=3,n_cores=1)
-# Cross-validation score (leave-one-out)
-round(loo$bestpenalties, 3)
-```
-## Obtaining tau with permutation: unsupervised approach
-#### Permutation
-```{r, fig.height = 3, fig.width = 5, fig.align = "center"}
-perm <- rgcca_permutation(blocks, n_run = 5,n_cores=1)
-plot(perm)
-```
-
-#Validating the results
-## Bootstrap
-```{r, fig.height = 3, fig.width = 5, fig.align = "center"}
-boot <- bootstrap(rgcca_out, n_boot = 10, n_cores = 1)
-plot(boot)
-#plot(boot, n_cores = 2,type="2D")
-#plot(boot, n_cores = 2,type="2D")
-```
 
 
 # Dealing with missing data

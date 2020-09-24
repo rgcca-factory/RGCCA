@@ -20,9 +20,6 @@ createNA(blocks, typeNA = "block", pNA = 0.1, nAllRespondants = 4,
 
 \item{seed}{if NULL, the creation of missing data is totally random (and consequently unreproducible), if numeric value, select randomness according to a seed (and reproducible).}
 }
-\value{
-\item{A}{a list of NA}
-}
 \description{
 Create a dataset with missing values
 }

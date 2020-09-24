@@ -102,13 +102,14 @@ If tau = "optimal" the regularization paramaters are estimated for each block an
 analytical formula . If tau is a \eqn{1\times J} vector, tau[j] is identical across the dimensions of block \eqn{\mathbf{X}_j}.
 If tau is a matrix, tau[k, j] is associated with \eqn{\mathbf{X}_{jk}} (\eqn{k}th residual matrix for block \eqn{j}). It can be estimated by using \link{rgcca_permutation}.}
 
-\item{crit}{A vector of integer that contains the values of the analysis criteria across iterations.}
+\item{crit}{A vector of integer that contains for each component the values of the analysis criteria across iterations.}
 
 \item{mode}{A \eqn{1 \times J} vector that contains the formulation ("primal" or "dual") applied to each of the \eqn{J} blocks within the RGCCA alogrithm}
 
-\item{AVE}{indicators of model quality based on the Average Variance Explained (AVE): AVE(for one block), AVE(outer model), AVE(inner model).}
+\item{AVE}{A list of numerical values giving the indicators of model quality based on the Average Variance Explained (AVE): AVE(for each block), AVE(outer model), AVE(inner model).}
 
-\item{A}{ blocks used in the calculations. Imputed block if imputation method were chosen}
+\item{A}{A list of matrices giving the \eqn{J} blocks of variables \eqn{\mathbf{X_1}, \mathbf{X_2}, ..., \mathbf{X_J}}
+These matrices, used in the calculations, are imputed if an imputation method is selected.}
 
 \item{call}{Call of the function}
 }
@@ -153,40 +154,57 @@ i.e. each block is deflated with respect to its own component.
 Moreover, we stress that the numbers of components per block could differ from one block to another.
 }
 \examples{
-#############
-# Example 1 #
-#############
+############################################
+# Example 1: SGCCA #
+############################################
+# Create the dataset
 data(Russett)
-X_agric =as.matrix(Russett[,c("gini","farm","rent")])
-X_ind = as.matrix(Russett[,c("gnpr","labo")])
-X_polit = as.matrix(Russett[ , c("demostab", "dictator")])
-A = list(X_agric, X_ind, X_polit);names(A)=c("Agri","Indus","Polit")
-#Define the design matrix (output = C) 
-C = matrix(c(0, 0, 1, 0, 0, 1, 1, 1, 0), 3, 3)
-result.rgcca = rgcca(A,type="rgcca", connection=C, tau = c(1, 1, 1),superblock=FALSE,
- scheme = "factorial", scale = TRUE)
-lab = as.vector(apply(Russett[, 9:11], 1, which.max))
-plot(result.rgcca,type="ind",block=1:2,comp=rep(1,2),resp=lab)
+blocks = list(
+    agriculture = Russett[, seq(3)], 
+    industry = Russett[, 4:5],
+    politic = Russett[, 6:11]
+)
+
+# Tune the model to find the best sparsity coefficients (all the blocs are connected together)
+perm = rgcca_permutation(blocks, n_cores = 1, par_type = "sparsity", n_run = 10)
+print(perm)
+plot(perm)
+
+res_sgcca = rgcca(blocks, type = "sgcca", sparsity = perm$bestpenalties)
+plot(res_sgcca, type = "network")
+plot(res_sgcca, type = "ave")
+
+# Select the most significant variables
+b = bootstrap(res_sgcca, n_cores = 1, n_boot = 100)
+plot(b, n_cores = 1)
+
 ############################################
 # Example 2: RGCCA and multiple components #
 ############################################
-result.rgcca = rgcca(A,type="rgcca",connection= C, superblock=FALSE,
-tau = rep(1, 3), ncomp = c(2, 2, 2),
-                     scheme = "factorial", verbose = TRUE)
-plot(result.rgcca,resp=lab)
-plot(result.rgcca,type="ave")
-plot(result.rgcca,type="network")
-plot(result.rgcca,type="weight")
+res_rgcca = rgcca(blocks, type = "rgcca", connection = C, superblock = FALSE, 
+tau = rep(1, 3), ncomp = c(2, 2, 2), scheme = "factorial", verbose = TRUE)
+
+politic = as.vector(apply(Russett[, 9:11], 1, which.max)) 
+plot(res_rgcca, type = "ind", block = 1:2, comp = rep(1, 2), resp = politic)
+
+plot(res_rgcca, type = "ave")
+plot(res_rgcca, type = "network")
+plot(res_rgcca, type = "weight", block = 1)
+plot(res_rgcca, type = "cor")
+
 ############################################
-# Example : SGCCA #
+# Example 3: Supevised mode #
 ############################################
-result.sgcca = rgcca(A,type="sgcca",connection= C, superblock=FALSE,
-sparsity = rep(0.8, 3), ncomp = c(2, 2, 2),
-                     scheme = "factorial", verbose = TRUE)
-plot(result.sgcca,resp=lab)
-plot(result.sgcca,type="ave")
-plot(result.sgcca,type="network")
-plot(result.sgcca,type="weight")
+# Tune the model for explaining the politic block (politic connected to the two other blocks)
+cv = rgcca_cv(blocks, response = 3, ncomp = 2, n_cores = 1)
+print(cv)
+plot(cv)
+
+res_rgcca = rgcca(blocks, response = 3, ncomp = 2, tau = cv$bestpenalties)
+plot(res_rgcca, type = "both")
+
+b = bootstrap(res_rgcca, n_cores = 1, n_boot = 10)
+plot(b, n_cores = 1)
 }
 \references{
 Tenenhaus A. and Tenenhaus M., (2011), Regularized Generalized Canonical Correlation Analysis, Psychometrika, Vol. 76, Nr 2, pp 257-284.

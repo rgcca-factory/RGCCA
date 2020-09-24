@@ -20,14 +20,13 @@ plot_bootstrap_1D(b = NULL, df_b = NULL, x = "estimate",
 
 \item{n_mark}{An integer giving the number of top variables to select}
 
-\item{title}{A character with the name of the space (either "Variables" or
-"Samples")}
+\item{title}{A character giving the title of the plot}
 
 \item{colors}{Either a vector of integers (each integer corresponding to a color) or of characters corresponding to names of colors (as "blue",see colors()) or RGB code ("#FFFFFF").}
 
 \item{comp}{An integer giving the index of the analysis components}
 
-\item{bars}{A character among "sd" for standard deviations, "stderr" for the standard error, "ci" for confidence interval of scores and "cim" for the confidence intervall of the mean.}
+\item{bars}{A character giving the variability among "sd" (standard deviations bars) , "stderr"(bars of standard deviation divided by sqrt(n)) or "quantile" (for the 0.05-0.95 quantiles bars)}
 
 \item{i_block}{An integer giving the index of a list of blocks}
 
@@ -38,13 +37,15 @@ plot_bootstrap_1D(b = NULL, df_b = NULL, x = "estimate",
 \item{...}{Other parameters (see plot_histogram)}
 }
 \description{
-Histogram of the best variables from a bootstrap with, on the x-axis,
+Barplot of the best variables from a bootstrap with, on the x-axis,
 the number of non-zero occurrences (SGCCA) or the mean of the bootstrap weights 
 (RCCA). The bars are colored according to the significant 95% bootstrap 
 intervals ('*' or 'ns'; see 'p.vals' in details for 
 \code{\link[RGCCA]{get_bootstrap}}) for RGCCA and according to the occurences
  of the weights which are not equal to zero (according to an ascending 
- gradient from red to blue) for SGCCA.
+ gradient from red to blue) for SGCCA. In SGCA, the significant variables 
+ are those above the three bars, respectively, with an alpha = 0.05 
+ (dark red), 0.01 (red) and 0.001 (light red).
 }
 \details{
 \itemize{
@@ -56,7 +57,6 @@ intervals ('*' or 'ns'; see 'p.vals' in details for
 }
 }
 \examples{
-library(RGCCA)
 data("Russett")
 blocks = list(agriculture = Russett[, seq(3)], industry = Russett[, 4:5],
     politic = Russett[, 6:11] )

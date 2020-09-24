@@ -13,8 +13,7 @@ plot_histogram(p, df, title = "", group = NA, colors = NULL,
 
 \item{df}{A dataframe}
 
-\item{title}{A character with the name of the space (either "Variables" or
-"Samples")}
+\item{title}{A character giving the title of the plot}
 
 \item{group}{A vector of character giving the group for the rows}
 

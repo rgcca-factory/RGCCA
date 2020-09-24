@@ -13,12 +13,10 @@
 #' @return \item{Y}{A \eqn{n * J} matrix of RGCCA outer components}
 #' @return \item{Z}{A \eqn{n * J} matrix of RGCCA inner components}
 #' @return \item{a}{A list of \eqn{J} elements. Each element of \eqn{a} is a matrix that contains the outer weight vectors for each block.}
-#' @return \item{crit}{A vector of integer that contains the values of the analysis criteria across iterations.}
 # #' @return \item{converg}{Speed of convergence of the algorithm to reach the tolerance.}
-#' @return \item{AVE}{Indicators of model quality based on the Average Variance Explained (AVE): 
-#' AVE(for one block), AVE(outer model), AVE(inner model).}
+#' @return \item{AVE}{A list of numerical values giving the indicators of model quality based on the Average Variance Explained (AVE): AVE(for each block), AVE(outer model), AVE(inner model).}
 #' @return \item{call}{Call of the function}
-#' @return \item{crit}{A vector of integer that contains the values of the analysis criteria across iterations.}
+#' @return \item{crit}{A vector of integer that contains for each component the values of the analysis criteria across iterations.}
 #' @return \item{tau}{Either a 1*J vector or a \eqn{\mathrm{max}(ncomp) \times J} matrix containing the values
 #' of the regularization parameters .Tau varies from 0 (maximizing the correlation) to 1 (maximizing the covariance).
 #' If tau = "optimal" the regularization paramaters are estimated for each block and each dimension using the Schafer and Strimmer (2005)

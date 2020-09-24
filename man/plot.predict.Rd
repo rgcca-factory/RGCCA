@@ -7,7 +7,7 @@
 \method{plot}{predict}(x, ...)
 }
 \arguments{
-\item{x}{A rgcca_predict object (see \code{\link[RGCCA]{rgcca_predict}} )}
+\item{x}{A rgcca_predict object (see \code{\link[RGCCA]{rgcca_predict}})}
 
 \item{...}{Further graphical parameters (see plot2D functions)}
 }

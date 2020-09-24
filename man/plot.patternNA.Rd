@@ -8,7 +8,7 @@
   legend = FALSE, scale = TRUE, outlierVisible = FALSE, ...)
 }
 \arguments{
-\item{x}{A get_patternNA object (see \code{\link[RGCCA]{get_patternNA}} )}
+\item{x}{A get_patternNA object (see \code{\link[RGCCA]{get_patternNA}})}
 
 \item{type}{"all" if all blocks should be plotted, ifelse an integer corresponding to the position of the block to be plotted in the initial list}
 
@@ -23,7 +23,7 @@
 \item{...}{Further graphical parameters (see \code{\link[graphics]{plot}})}
 }
 \description{
-Plots an object of class patternNA
+Plot an object of class patternNA
 }
 \examples{
 X1=matrix(rnorm(150),30,5)

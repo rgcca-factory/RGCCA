@@ -1,7 +1,7 @@
-#' Tuning RGCCA parameters
+#' Tune RGCCA parameters with permutation
 #' 
-#' To tune the sparsity coefficient (if the model is sparse) or tau 
-#' (otherwise), we observe the deviation between the model and a set of models 
+#' Tune the sparsity coefficient (if the model is sparse) or tau 
+#' (otherwise) by observing the deviation between the model and a set of models 
 #'  where the lines of each block are permuted. The model with the best 
 #' combination of parameters is the one with the highest deviation with the 
 #' RGCCA criteria.
@@ -10,7 +10,7 @@
 #' @inheritParams rgcca
 #' @inheritParams plot2D
 #' @param par_type A character giving the parameter to tune among "sparsity" or "tau".
-#' @param par_length An integer indicating the number of sets of parameters to be tested (if perm.value = NULL). The parameters are uniformly distributed.
+#' @param par_length An integer indicating the number of sets of parameters to be tested (if par_value = NULL). The parameters are uniformly distributed.
 #' @param par_value A matrix (n*p, with p the number of blocks and n the number 
 #' of combinations to be tested), a vector (of p length) or a numeric value 
 #' giving sets of penalties (tau for RGCCA, sparsity for SGCCA) to be tested, 
@@ -63,7 +63,7 @@ rgcca_permutation <- function(
     sparsity = rep(1, length(blocks)),
     init = "svd",
     bias = TRUE,
-    tol = 1e-08,
+    tol = 1e-8,
     response = NULL,
     superblock = FALSE,
     method = "nipals",
@@ -93,8 +93,12 @@ rgcca_permutation <- function(
     # call <- as.list(formals(rgcca_permutation))
     call=list(type=type, par_type = par_type, par_value = par_value, n_run=n_run, quiet=quiet,connection=connection,method=method,tol=tol,scheme=scheme,scale=scale,scale_block=scale_block,blocks=blocks,superblock=superblock)
     check_integer("n_run", n_run)
-    check_integer("n_cores", n_cores, 0)
+    check_integer("par_length", n_run)
+    check_integer("par_value", n_run, min = 0)
+    check_integer("n_cores", n_cores, min = 0)
     match.arg(par_type, c("tau", "sparsity"))
+    if (!is.null(parallelization))
+        check_boolean("parallelization", parallelization)
     min_spars <- NULL
 
     if (length(blocks) < 1)

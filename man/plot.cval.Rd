@@ -2,17 +2,16 @@
 % Please edit documentation in R/plot.cval.r
 \name{plot.cval}
 \alias{plot.cval}
-\title{plot.cval}
+\title{Plot cross-validation}
 \usage{
-\method{plot}{cval}(x, bars = "sd", alpha = 0.05, cex = 1,
-  cex_main = 14 * cex, cex_sub = 10 * cex, ...)
+\method{plot}{cval}(x, bars = "sd", cex = 1, cex_main = 14 * cex,
+  cex_sub = 10 * cex, cex_lab = 10 * cex, colors = c("red", "grey"),
+  ...)
 }
 \arguments{
 \item{x}{A rgcca_cv object (see \link{rgcca_cv})}
 
-\item{bars}{A character among "sd" for standard deviations, "stderr" for standard error (standard deviations divided by sqrt(n), "ci" for confidence interal, "cim" for confidence interval of the mean.}
-
-\item{alpha}{A numeric value giving the risk for the confidence interval bars (ci or cim).}
+\item{bars}{A character giving the variability among "points" (all the points are shown), "sd" (standard deviations bars) , "stderr"(bars of standard deviation divided by sqrt(n)) or "quantile" (for the 0.05-0.95 quantiles bars)}
 
 \item{cex}{An integer for the size of the plot parameters}
 
@@ -20,10 +19,18 @@
 
 \item{cex_sub}{An integer for the size of the subtitle}
 
+\item{cex_lab}{An integer for the size of the axis titles}
+
+\item{colors}{Either a vector of integers (each integer corresponding to a color) or of characters corresponding to names of colors (as "blue",see colors()) or RGB code ("#FFFFFF").}
+
 \item{...}{Further plot options}
 }
 \description{
-plot.cval
+Plot a cross-validation object (tuning RGCA parameters in 'supervised' mode).
+The parameters tuned for maximizing RMSE is displayed in the title. In
+abscissa, the index of combination (number corresponding to the rownames of
+'penalties' in the tuning parameters object). In ordinate, the average of the
+permuted RMSE criterion. The best parameters are in red by default.
 }
 \examples{
 data("Russett")

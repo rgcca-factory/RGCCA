@@ -2,17 +2,17 @@
 % Please edit documentation in R/plot.rgcca.R
 \name{plot.rgcca}
 \alias{plot.rgcca}
-\title{Plots for RGCCA}
+\title{Plot for RGCCA}
 \usage{
 \method{plot}{rgcca}(x, type = "weight", block = length(x$A),
   comp = 1:2, resp = rep(1, NROW(x$Y[[1]])), remove_var = FALSE,
   text_var = TRUE, text_ind = TRUE, response_name = "Response",
-  no_overlap = FALSE, title = NULL, n_mark = 100, collapse = FALSE,
+  no_overlap = FALSE, title = NULL, n_mark = 30, collapse = FALSE,
   cex = 1, cex_sub = 12, cex_main = 14, cex_lab = 12,
   colors = NULL, ...)
 }
 \arguments{
-\item{x}{A RGCCA object (see \code{\link[RGCCA]{rgcca}} )}
+\item{x}{A RGCCA object (see \code{\link[RGCCA]{rgcca}})}
 
 \item{type}{A character among 'ind', 'var', 'both', 'ave', 'cor', 'weight', 'network' (see details).}
 
@@ -36,7 +36,7 @@ or with circles (FALSE)}
 
 \item{no_overlap}{A boolean to avoid overlap in plotted text}
 
-\item{title}{A character for the title of the plot}
+\item{title}{A character giving the title of the plot}
 
 \item{n_mark}{An integer giving the number of top variables to select}
 
@@ -55,7 +55,7 @@ or with circles (FALSE)}
 \item{...}{Further graphical parameters applied to both (individual and variable) spaces}
 }
 \description{
-Plots different outputs of the results obtained by a rgcca function
+Plot different outputs of the results obtained by a rgcca function
 }
 \details{
 \itemize{

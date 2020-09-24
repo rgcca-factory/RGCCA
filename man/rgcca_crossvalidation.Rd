@@ -12,7 +12,7 @@ rgcca_crossvalidation(rgcca_res, validation = "kfold",
   n_cores = parallel::detectCores() - 1, parallelization = TRUE, ...)
 }
 \arguments{
-\item{rgcca_res}{A RGCCA object (see  \code{\link[RGCCA]{rgcca}} )}
+\item{rgcca_res}{A RGCCA object (see  \code{\link[RGCCA]{rgcca}})}
 
 \item{validation}{A character for the type of validation among "loo", "kfold", "test".}
 
@@ -22,7 +22,7 @@ rgcca_crossvalidation(rgcca_res, validation = "kfold",
 
 \item{new_scaled}{A boolean scaling the blocks to predict}
 
-\item{k}{If validation = 'kfold', an integer giving the number of folds.}
+\item{k}{An integer giving the number of folds (if validation = 'kfold').}
 
 \item{scale}{A logical value indicating if each block is normalised and divided by the square root of its number of variables and then divided by the square root of its number of variables.}
 
@@ -78,7 +78,7 @@ If sparsity is a matrix, each row \eqn{h} defines the constraints applied to the
 
 \item{n_cores}{An integer for the number of cores used in parallelization}
 
-\item{parallelization}{A logical value to run a parallelization. If parallelization = NULL (default), the parallelization is always performed except for Windows if length(nperm) < 10.}
+\item{parallelization}{A logical value to run a parallelization. If parallelization = NULL (default), the parallelization is always performed except for Windows if length(n_boot) < 10.}
 
 \item{...}{Further graphical parameters (see plot2D functions)}
 }
@@ -86,7 +86,6 @@ If sparsity is a matrix, each row \eqn{h} defines the constraints applied to the
 Uses cross-validation to validate a predictive model of RGCCA
 }
 \examples{
-library(RGCCA)
 data("Russett")
 blocks = list(agriculture = Russett[, seq(3)], industry = Russett[, 4:5],
     politic = Russett[, 6:11] )

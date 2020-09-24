@@ -1,12 +1,14 @@
 #' Plot a bootstrap in 1D
 #'
-#' Histogram of the best variables from a bootstrap with, on the x-axis,
+#' Barplot of the best variables from a bootstrap with, on the x-axis,
 #' the number of non-zero occurrences (SGCCA) or the mean of the bootstrap weights 
 #' (RCCA). The bars are colored according to the significant 95% bootstrap 
 #' intervals ('*' or 'ns'; see 'p.vals' in details for 
 #' \code{\link[RGCCA]{get_bootstrap}}) for RGCCA and according to the occurences
 #'  of the weights which are not equal to zero (according to an ascending 
-#'  gradient from red to blue) for SGCCA.
+#'  gradient from red to blue) for SGCCA. In SGCA, the significant variables 
+#'  are those above the three bars, respectively, with an alpha = 0.05 
+#'  (dark red), 0.01 (red) and 0.001 (light red).
 #' @inheritParams plot_histogram
 #' @inheritParams get_bootstrap
 #' @inheritParams plot_var_2D
@@ -24,7 +26,6 @@
 #' \item 'mean' for the mean of the bootstrap weights
 #' }
 #' @examples
-#' library(RGCCA)
 #' data("Russett")
 #' blocks = list(agriculture = Russett[, seq(3)], industry = Russett[, 4:5],
 #'     politic = Russett[, 6:11] )
@@ -57,16 +58,20 @@ plot_bootstrap_1D <- function(
     if (missing(b) && missing(df_b))
         stop_rgcca("Please select a bootstrap object.")
     if (!is.null(b)) {
-        df_b <- get_bootstrap(b, comp, i_block, collapse, n_cores, bars=bars,display_order = TRUE)
+        df_b <- get_bootstrap(b, comp, block=i_block, collapse, n_cores, bars=bars,display_order = TRUE)
     }
     if (!is.null(df_b))
         stopifnot(is(df_b, "df_bootstrap"))
     check_integer("n_mark", n_mark)
 
+    if(is.null(title))
+    {
         title <- paste0(attributes(df_b)$indexes[[x]],
-                   "\n(",
-                   attributes(df_b)$n_boot,
-                   " bootstraps)")
+                        "\n(",
+                        attributes(df_b)$n_boot,
+                        " bootstraps)")        
+    }
+
     if (is.null(colors)) {
         if (!(y %in% c("occurrences", "sign")))
             colors <- c(color_group(seq(3))[1],  "gray", color_group(seq(3))[3])
@@ -143,7 +148,7 @@ plot_bootstrap_1D <- function(
         q2=qbinom(size=n_boot,prob=probComp,p=1-0.01/nvar)
         q3=qbinom(size=n_boot,prob=probComp,p=1-0.001/nvar)
         
-        p <-p+geom_hline(yintercept = c(q1,q2,q3),col=c("red","black","green"))
+        p <-p+geom_hline(yintercept = c(q1,q2,q3),col=c("#82191b","#d63134","#e49697"))
         p
         
     }

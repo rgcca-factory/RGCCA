@@ -7,12 +7,14 @@
 \method{plot}{cv}(x, ...)
 }
 \arguments{
-\item{x}{A rgcca_crossvalidation object (see \code{\link[RGCCA]{rgcca_crossvalidation}} )}
+\item{x}{A rgcca_crossvalidation object (see \code{\link[RGCCA]{rgcca_crossvalidation}})}
 
 \item{...}{Further graphical parameters (see plot2D functions)}
 }
 \description{
-Plots the results of rgcca_cv (in abscissa, the configurations, in ordinates the RMSE on test dataset)
+Plot the results of rgcca_cv object in the space of the samples. 
+The actual values of the GCCA (in red), could be contrasted with those 
+predicted by the validation (in green).
 }
 \examples{
 data(Russett)

@@ -49,50 +49,67 @@
 #' If tau = "optimal" the regularization paramaters are estimated for each block and each dimension using the Schafer and Strimmer (2005)
 #' analytical formula . If tau is a \eqn{1\times J} vector, tau[j] is identical across the dimensions of block \eqn{\mathbf{X}_j}.
 #' If tau is a matrix, tau[k, j] is associated with \eqn{\mathbf{X}_{jk}} (\eqn{k}th residual matrix for block \eqn{j}). It can be estimated by using \link{rgcca_permutation}.}
-#' @return \item{crit}{A vector of integer that contains the values of the analysis criteria across iterations.}
+#' @return \item{crit}{A vector of integer that contains for each component the values of the analysis criteria across iterations.}
 #' @return \item{mode}{A \eqn{1 \times J} vector that contains the formulation ("primal" or "dual") applied to each of the \eqn{J} blocks within the RGCCA alogrithm} 
-#' @return \item{AVE}{indicators of model quality based on the Average Variance Explained (AVE): AVE(for one block), AVE(outer model), AVE(inner model).}
-#' @return \item{A}{ blocks used in the calculations. Imputed block if imputation method were chosen}
+#' @return \item{AVE}{A list of numerical values giving the indicators of model quality based on the Average Variance Explained (AVE): AVE(for each block), AVE(outer model), AVE(inner model).}
+#' @return \item{A}{A list of matrices giving the \eqn{J} blocks of variables \eqn{\mathbf{X_1}, \mathbf{X_2}, ..., \mathbf{X_J}}
+#' These matrices, used in the calculations, are imputed if an imputation method is selected.}
 #' @return \item{call}{Call of the function}
 #' @references Tenenhaus A. and Tenenhaus M., (2011), Regularized Generalized Canonical Correlation Analysis, Psychometrika, Vol. 76, Nr 2, pp 257-284.
 #' @references Tenenhaus A. et al., (2013), Kernel Generalized Canonical Correlation Analysis, submitted.
 #' @references Schafer J. and Strimmer K., (2005), A shrinkage approach to large-scale covariance matrix estimation and implications for functional genomics. Statist. Appl. Genet. Mol. Biol. 4:32.
 #' @examples
-#' #############
-#' # Example 1 #
-#' #############
+#' ############################################
+#' # Example 1: SGCCA #
+#' ############################################
+#' # Create the dataset
 #' data(Russett)
-#' X_agric =as.matrix(Russett[,c("gini","farm","rent")])
-#' X_ind = as.matrix(Russett[,c("gnpr","labo")])
-#' X_polit = as.matrix(Russett[ , c("demostab", "dictator")])
-#' A = list(X_agric, X_ind, X_polit);names(A)=c("Agri","Indus","Polit")
-#' #Define the design matrix (output = C) 
-#' C = matrix(c(0, 0, 1, 0, 0, 1, 1, 1, 0), 3, 3)
-#' result.rgcca = rgcca(A,type="rgcca", connection=C, tau = c(1, 1, 1),superblock=FALSE,
-#'  scheme = "factorial", scale = TRUE)
-#' lab = as.vector(apply(Russett[, 9:11], 1, which.max))
-#' plot(result.rgcca,type="ind",block=1:2,comp=rep(1,2),resp=lab)
+#' blocks = list(
+#'     agriculture = Russett[, seq(3)], 
+#'     industry = Russett[, 4:5],
+#'     politic = Russett[, 6:11]
+#' )
+#' 
+#' # Tune the model to find the best sparsity coefficients (all the blocs are connected together)
+#' perm = rgcca_permutation(blocks, n_cores = 1, par_type = "sparsity", n_run = 10)
+#' print(perm)
+#' plot(perm)
+#' 
+#' res_sgcca = rgcca(blocks, type = "sgcca", sparsity = perm$bestpenalties)
+#' plot(res_sgcca, type = "network")
+#' plot(res_sgcca, type = "ave")
+#' 
+#' # Select the most significant variables
+#' b = bootstrap(res_sgcca, n_cores = 1, n_boot = 100)
+#' plot(b, n_cores = 1)
+#' 
 #' ############################################
 #' # Example 2: RGCCA and multiple components #
 #' ############################################
-#' result.rgcca = rgcca(A,type="rgcca",connection= C, superblock=FALSE,
-#' tau = rep(1, 3), ncomp = c(2, 2, 2),
-#'                      scheme = "factorial", verbose = TRUE)
-#' plot(result.rgcca,resp=lab)
-#' plot(result.rgcca,type="ave")
-#' plot(result.rgcca,type="network")
-#' plot(result.rgcca,type="weight")
+#' res_rgcca = rgcca(blocks, type = "rgcca", connection = C, superblock = FALSE, 
+#' tau = rep(1, 3), ncomp = c(2, 2, 2), scheme = "factorial", verbose = TRUE)
+#' 
+#' politic = as.vector(apply(Russett[, 9:11], 1, which.max)) 
+#' plot(res_rgcca, type = "ind", block = 1:2, comp = rep(1, 2), resp = politic)
+#' 
+#' plot(res_rgcca, type = "ave")
+#' plot(res_rgcca, type = "network")
+#' plot(res_rgcca, type = "weight", block = 1)
+#' plot(res_rgcca, type = "cor")
+#' 
 #' ############################################
-#' # Example : SGCCA #
+#' # Example 3: Supevised mode #
 #' ############################################
-#' result.sgcca = rgcca(A,type="sgcca",connection= C, superblock=FALSE,
-#' sparsity = rep(0.8, 3), ncomp = c(2, 2, 2),
-#'                      scheme = "factorial", verbose = TRUE)
-#' plot(result.sgcca,resp=lab)
-#' plot(result.sgcca,type="ave")
-#' plot(result.sgcca,type="network")
-#' plot(result.sgcca,type="weight")
-
+#' # Tune the model for explaining the politic block (politic connected to the two other blocks)
+#' cv = rgcca_cv(blocks, response = 3, ncomp = 2, n_cores = 1)
+#' print(cv)
+#' plot(cv)
+#' 
+#' res_rgcca = rgcca(blocks, response = 3, ncomp = 2, tau = cv$bestpenalties)
+#' plot(res_rgcca, type = "both")
+#' 
+#' b = bootstrap(res_rgcca, n_cores = 1, n_boot = 10)
+#' plot(b, n_cores = 1)
 #' @export
 #' @import ggplot2
 #' @importFrom grDevices dev.off rgb colorRamp pdf colorRampPalette
@@ -101,10 +118,6 @@
 #' @importFrom utils read.table write.table packageVersion installed.packages head
 #' @importFrom scales hue_pal
 #' @importFrom stats model.matrix
-# @importFrom optparse OptionParser make_option parse_args
-# @importFrom plotly layout ggplotly style plotly_build %>% plot_ly add_trace
-# @importFrom visNetwork visNetwork visNodes visEdges
-# @importFrom igraph graph_from_data_frame V<- E<-
 #' @importFrom methods is
 #' @seealso \code{\link[RGCCA]{plot.rgcca}}, \code{\link[RGCCA]{print.rgcca}},
 #' \code{\link[RGCCA]{rgcca_crossvalidation}},
@@ -142,15 +155,15 @@ rgcca <- function(
         connection=blocks$call$connection
         tol=blocks$call$tol
         method=blocks$call$method
-        if(blocks$call$perm.par=="tau")
+        if(blocks$call$par_type=="tau")
         {
             tau=blocks$bestpenalties 
         }
-        if(blocks$call$perm.par=="ncomp")
+        if(blocks$call$par_type=="ncomp")
         {
             ncomp=blocks$bestpenalties 
         }
-        if(blocks$call$perm.par=="sparsity")
+        if(blocks$call$par_type=="sparsity")
         {
             sparsity=blocks$bestpenalties 
         }
@@ -165,15 +178,15 @@ rgcca <- function(
         response=blocks$call$response
         tol=blocks$call$tol
         method=blocks$call$method
-        if(blocks$call$par[[1]]=="tau")
+        if(blocks$call$par_type[[1]]=="tau")
         {
             tau=blocks$bestpenalties 
         }
-        if(blocks$call$par[[1]]=="ncomp")
+        if(blocks$call$par_type[[1]]=="ncomp")
         {
             ncomp=blocks$bestpenalties 
         }
-        if(blocks$call$par[[1]]=="sparsity")
+        if(blocks$call$par_type[[1]]=="sparsity")
         {
             sparsity=blocks$bestpenalties 
         }
@@ -262,7 +275,7 @@ rgcca <- function(
    {
        if(mode(blocks[[response]])=="character")
        {
-              print("The qualitative response variable is transformed as disjonctive table")
+             # print("The qualitative response variable is transformed as disjonctive table")
               if(length(unique(blocks[[response]]))==1){stop("Only one level in the variable to predict")}
               blocks[[response]]=asDisjonctive(blocks[[response]])
        }
@@ -270,7 +283,6 @@ rgcca <- function(
    }
   
     opt$blocks <- scaling(blocks, scale,scale_block = scale_block)
-
     opt$superblock <- check_superblock(response, opt$superblock, !quiet)
     opt$blocks <- set_superblock(opt$blocks, opt$superblock, type, !quiet)
 

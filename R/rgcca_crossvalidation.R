@@ -5,10 +5,9 @@
 #' @inheritParams rgcca
 #' @inheritParams bootstrap
 #' @inheritParams plot_ind
-#' @param k If validation = 'kfold', an integer giving the number of folds.
+#' @param k An integer giving the number of folds (if validation = 'kfold').
 #' @param validation A character for the type of validation among "loo", "kfold", "test".
 #' @examples
-#' library(RGCCA)
 #' data("Russett")
 #' blocks = list(agriculture = Russett[, seq(3)], industry = Russett[, 4:5],
 #'     politic = Russett[, 6:11] )
@@ -55,10 +54,11 @@ rgcca_crossvalidation <- function(
     stopifnot(is(rgcca_res, "rgcca"))
     if(is.null(rgcca_res$call$response)){
        stop_rgcca("This function required an analysis in a supervised mode")}
-   
+    if (!is.null(parallelization))
+        check_boolean("parallelization", parallelization)
     match.arg(validation, c("loo", "test", "kfold"))
     check_integer("k", k, min = 2)
-    check_integer("n_cores", n_cores, 0)
+    check_integer("n_cores", n_cores, min = 0)
     response=rgcca_res$call$response
     bloc_to_pred <- names(rgcca_res$call$blocks)[response]
 

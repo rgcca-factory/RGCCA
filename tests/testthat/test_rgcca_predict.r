@@ -186,7 +186,7 @@ all.equal(respred1[[1]][[1]],rgcca_res_for_pred_unscaled$Y[[1]])
   
 #   res_test  = rgcca_predict(object1, A_test,new_scaled=FALSE,fit="lda",model="classification",bloc_to_pred="politic") 
  test_that("rgcca_predict_classif",{expect_true(
-     res_test$score==0.875
+     res_test$score==1-0.875
      )})
 #     
  

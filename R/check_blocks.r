@@ -96,8 +96,12 @@ check_blocks <- function(blocks, init = FALSE, n = 2, add_NAlines=FALSE, allow_u
         resdup=duplicated(rownames(x));
         if(sum(resdup)!=0)
             {
-                warning(paste0("Rownames are duplicated and were removed : ", rownames(x)[resdup],"\n"))
-            }
+                if(!quiet)
+                {
+                    warning(paste0("Rownames are duplicated and were removed : ", rownames(x)[resdup],"\n"))
+                    
+                }
+         }
         }
         )
     inters_rows <- Reduce(intersect, lapply(blocks, row.names))

@@ -2,7 +2,7 @@
 % Please edit documentation in R/rgcca_permutation.R
 \name{rgcca_permutation}
 \alias{rgcca_permutation}
-\title{Tuning RGCCA parameters}
+\title{Tune RGCCA parameters with permutation}
 \usage{
 rgcca_permutation(blocks, par_type = "tau", par_value = NULL,
   par_length = 10, n_run = 20, n_cores = parallel::detectCores() - 1,
@@ -25,7 +25,7 @@ giving sets of penalties (tau for RGCCA, sparsity for SGCCA) to be tested,
 one row by combination. By default, it takes 10 sets between min values (0
  for RGCCA and $1/sqrt(ncol)$ for SGCCA) and 1.}
 
-\item{par_length}{An integer indicating the number of sets of parameters to be tested (if perm.value = NULL). The parameters are uniformly distributed.}
+\item{par_length}{An integer indicating the number of sets of parameters to be tested (if par_value = NULL). The parameters are uniformly distributed.}
 
 \item{n_run}{An integer giving the number of permutation tested for each set of constraint}
 
@@ -90,9 +90,9 @@ a superblock}
 \item{\code{"sem"}}{ corresponds to impute the data with EM-type algorithms with superblock approach}
 \item{\code{"knn1"}}{ corresponds to impute the data with the 1-Nearest Neighbor. 1 can be replace by another number (such as knn3) to impute with the 3-Nearest Neighbors.}}}
 
-\item{rgcca_res}{A RGCCA object (see  \code{\link[RGCCA]{rgcca}} )}
+\item{rgcca_res}{A RGCCA object (see  \code{\link[RGCCA]{rgcca}})}
 
-\item{parallelization}{A logical value to run a parallelization. If parallelization = NULL (default), the parallelization is always performed except for Windows if length(nperm) < 10.}
+\item{parallelization}{A logical value to run a parallelization. If parallelization = NULL (default), the parallelization is always performed except for Windows if length(n_boot) < 10.}
 }
 \value{
 \item{zstat}{The Z statistic is the difference, for each combination, between the non-permuted R/SGCCA criterion and the mean of the permuted R/SGCCA criteria divided by the standard deviation of the permuted R/SGCCA criteria.}
@@ -112,8 +112,8 @@ a superblock}
 \item{penalties}{A matrix giving, for each blocks, the penalty combinations (tau or sparsity)}
 }
 \description{
-To tune the sparsity coefficient (if the model is sparse) or tau 
-(otherwise), we observe the deviation between the model and a set of models 
+Tune the sparsity coefficient (if the model is sparse) or tau 
+(otherwise) by observing the deviation between the model and a set of models 
  where the lines of each block are permuted. The model with the best 
 combination of parameters is the one with the highest deviation with the 
 RGCCA criteria.
