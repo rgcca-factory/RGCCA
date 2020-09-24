@@ -2,17 +2,17 @@
 % Please edit documentation in R/print.sgcca.permute.R
 \name{print.permutation}
 \alias{print.permutation}
-\title{Prints a permutation object}
+\title{Print a permutation object}
 \usage{
 \method{print}{permutation}(x, ...)
 }
 \arguments{
-\item{x}{A rgcca_permutation object (see  \code{\link[RGCCA]{rgcca_permutation}} )}
+\item{x}{A rgcca_permutation object (see  \code{\link[RGCCA]{rgcca_permutation}})}
 
 \item{...}{Further print parameters}
 }
 \description{
-Prints the results of permutation rgcca
+Print a permutation object
 }
 \examples{
 data('Russett')

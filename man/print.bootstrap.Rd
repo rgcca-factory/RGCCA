@@ -2,14 +2,17 @@
 % Please edit documentation in R/print.bootstrap.r
 \name{print.bootstrap}
 \alias{print.bootstrap}
-\title{Prints bootstrap}
+\title{Print bootstrap}
 \usage{
-\method{print}{bootstrap}(x, bars = "quantile", ...)
+\method{print}{bootstrap}(x, bars = "quantile",
+  n_cores = parallel::detectCores() - 1, ...)
 }
 \arguments{
-\item{x}{A bootstrap object (see \code{\link[RGCCA]{bootstrap}} )}
+\item{x}{A bootstrap object (see \code{\link[RGCCA]{bootstrap}})}
 
-\item{bars}{A character among "sd" for standard deviations, "stderr" for the standard error of the mean, or "quantile" for the 0.05th and 0.95th quantiles.}
+\item{bars}{A character giving the variability among "sd" (standard deviations bars) , "stderr"(bars of standard deviation divided by sqrt(n)) or "quantile" (for the 0.05-0.95 quantiles bars)}
+
+\item{n_cores}{An integer for the number of cores used in parallelization}
 
 \item{...}{Further arguments in print}
 }
@@ -28,5 +31,5 @@ follows a normal distribution.
 }
 }
 \description{
-Prints a bootstrap object.
+Print a bootstrap object
 }

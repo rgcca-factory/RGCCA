@@ -63,17 +63,19 @@ If tau = "optimal" the regularization paramaters are estimated for each block an
 analytical formula . If tau is a \eqn{1\times J} vector, tau[j] is identical across the dimensions of block \eqn{\mathbf{X}_j}.
 If tau is a matrix, tau[k, j] is associated with \eqn{\mathbf{X}_{jk}} (\eqn{k}th residual matrix for block \eqn{j}). It can be estimated by using \link{rgcca_permutation}.}
 
-\item{call}{Call of the function}#' @return \item{crit}{A vector of integer that contains the values of the analysis criteria across iterations.}
+\item{call}{Call of the function}
 
-\item{crit}{A vector that contains the values of the criteria across iterations.}
+\item{crit}{A vector of integer that contains for each component the values of the analysis criteria across iterations.}
 
 \item{mode}{A \eqn{1 \times J} vector that contains the formulation ("primal" or "dual") applied to each of the \eqn{J} blocks within the RGCCA alogrithm}
 
-\item{AVE}{indicators of model quality based on the Average Variance Explained (AVE): AVE(for one block), AVE(outer model), AVE(inner model).}
+\item{AVE}{A list of numerical values giving the indicators of model quality based on the Average Variance Explained (AVE): AVE(for each block), AVE(outer model), AVE(inner model).}
 }
 \description{
 Regularized Generalized Canonical Correlation Analysis (RGCCA) is a generalization
-of regularized canonical correlation analysis to three or more sets of variables. 
+of regularized canonical correlation analysis to three or more sets of variables.
+}
+\details{
 Given \eqn{J} matrices \eqn{\mathbf{X_1}, \mathbf{X_2}, ..., \mathbf{X_J}} that represent 
 \eqn{J} sets of variables observed on the same set of \eqn{n} individuals. The matrices 
 \eqn{\mathbf{X_1}, \mathbf{X_2}, ..., \mathbf{X_J}} must have the same number of rows, 

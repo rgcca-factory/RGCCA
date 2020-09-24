@@ -2,7 +2,7 @@
 % Please edit documentation in R/plot.df_bootstrap.r
 \name{plot.bootstrap}
 \alias{plot.bootstrap}
-\title{Plots a bootstrap object}
+\title{Plot a bootstrap object}
 \usage{
 \method{plot}{bootstrap}(x, type = "1D",
   block = length(x$rgcca$call$blocks), comp = 1, n_mark = 30,
@@ -10,7 +10,7 @@
   n_cores = parallel::detectCores() - 1, ...)
 }
 \arguments{
-\item{x}{A bootstrap object (see \code{\link[RGCCA]{bootstrap}} )}
+\item{x}{A bootstrap object (see \code{\link[RGCCA]{bootstrap}})}
 
 \item{type}{A character to select a type of plot among "1D" or "2D"}
 
@@ -20,12 +20,11 @@
 
 \item{n_mark}{An integer giving the number of top variables to select}
 
-\item{bars}{A character among "sd" for standard deviations, "stderr" for the standard error of the mean, or "quantile" for the 0.05th and 0.95th quantiles.}
+\item{bars}{A character giving the variability among "sd" (standard deviations bars) , "stderr"(bars of standard deviation divided by sqrt(n)) or "quantile" (for the 0.05-0.95 quantiles bars)}
 
 \item{colors}{Either a vector of integers (each integer corresponding to a color) or of characters corresponding to names of colors (as "blue",see colors()) or RGB code ("#FFFFFF").}
 
-\item{title}{A character with the name of the space (either "Variables" or
-"Samples")}
+\item{title}{A character giving the title of the plot}
 
 \item{cex}{An integer for the size of the plot parameters}
 
@@ -33,28 +32,25 @@
 
 \item{...}{Further graphical parameters (see plot2D)}
 }
-\value{
-A visualization of bootstrap results
+\description{
+Plot the results of a bootstrap object. The representation can be with bars
+(1D) or a biplot (2D) (see details).
+}
+\details{
 \itemize{
-\item If type = '1D': barplot of the best variables from a bootstrap with, on the x-axis,
+\item type = '1D': barplot of the best variables from a bootstrap with, on the x-axis,
 the number of non-zero occurrences (SGCCA) or the mean of the bootstrap weights 
 (RGCCA). The bars are colored according to the significant 95% bootstrap 
-intervals ('*' or 'ns'; see 'p.vals' in Details section for details)
+intervals ('*' or 'ns'; see 'p.vals' in details of \code{\link[RGCCA]{get_bootstrap}}). In SGCA, the significant variables 
+ are those above the three bars, respectively, with an alpha = 0.05 
+ (dark red), 0.01 (red) and 0.001 (light red).
 \item type = '2D' : graph of the best variables from a bootstrap with, in x-axis, the number of
 non-zero occurences (SGCCA) or the significant 95% bootstrap 
 intervals (RGCCA). In in y-axis are the bootstrap-ratios (mean/sd) 
 Negative weights are colored in red and the positive ones are in green.
 }
 }
-\description{
-Plots the results of a bootstrap object. The representation can be with bars 
-(1D) or a biplot (2D) (see details).
-}
-\details{
-The function \code{\link[RGCCA]{get_bootstrap}} allows obtaining the numeric values used to produce the graph
-}
 \examples{
-library(RGCCA)
 data("Russett")
 blocks = list(agriculture = Russett[, seq(3)], industry = Russett[, 4:5],
     politic = Russett[, 6:11] )

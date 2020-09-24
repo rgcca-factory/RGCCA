@@ -2,7 +2,7 @@
 % Please edit documentation in R/rgcca_cv.r
 \name{rgcca_cv}
 \alias{rgcca_cv}
-\title{Tuning RGCCA parameters in 'supervised' mode with cross-validation}
+\title{Tune RGCCA parameters in 'supervised' mode with cross-validation}
 \usage{
 rgcca_cv(blocks, type = "rgcca", response = NULL, par_type = "tau",
   par_value = NULL, par_length = 10, validation = "kfold",
@@ -35,11 +35,11 @@ giving sets of penalties (tau for RGCCA, sparsity for SGCCA) to be tested,
 one row by combination. By default, it takes 10 sets between min values (0
  for RGCCA and $1/sqrt(ncol)$ for SGCCA) and 1.}
 
-\item{par_length}{An integer indicating the number of sets of parameters to be tested (if perm.value = NULL). The parameters are uniformly distributed.}
+\item{par_length}{An integer indicating the number of sets of parameters to be tested (if par_value = NULL). The parameters are uniformly distributed.}
 
 \item{validation}{A character for the type of validation among "loo", "kfold", "test".}
 
-\item{type_cv}{A character corresponding to the model of prediction : 'regression' or 'classification'. See Details.}
+\item{type_cv}{A character corresponding to the model of prediction : 'regression' or 'classification' (see details)}
 
 \item{fit}{A character giving the function used to compare the trained and the tested models}
 
@@ -77,9 +77,9 @@ covariance maximization among "horst" (the identity function), "factorial"
 \item{\code{"sem"}}{ corresponds to impute the data with EM-type algorithms with superblock approach}
 \item{\code{"knn1"}}{ corresponds to impute the data with the 1-Nearest Neighbor. 1 can be replace by another number (such as knn3) to impute with the 3-Nearest Neighbors.}}}
 
-\item{rgcca_res}{A RGCCA object (see  \code{\link[RGCCA]{rgcca}} )}
+\item{rgcca_res}{A RGCCA object (see  \code{\link[RGCCA]{rgcca}})}
 
-\item{parallelization}{A logical value to run a parallelization. If parallelization = NULL (default), the parallelization is always performed except for Windows if length(nperm) < 10.}
+\item{parallelization}{A logical value to run a parallelization. If parallelization = NULL (default), the parallelization is always performed except for Windows if length(n_boot) < 10.}
 
 \item{tau}{Either a 1*J vector or a \eqn{\mathrm{max}(ncomp) \times J} matrix containing the values 
 of the regularization parameters (default: tau = 1, for each block and each dimension). Tau varies from 0 (maximizing the correlation) to 1 (maximizing the covariance).
@@ -116,10 +116,9 @@ If sparsity is a matrix, each row \eqn{h} defines the constraints applied to the
 \item{penalties}{A matrix giving, for each blocks, the penalty combinations (tau or sparsity)}
 }
 \description{
-This function is dedicated to supervised approaches (with a 'response' parameter in rgcca).
-To tune the sparsity coefficient (if the model is sparse) or tau 
-(otherwise), the predictive quality of the model induced by these parameters are estimated by crossvalidation. 
-In this purpose, individuals can be divided into k folds where the model will be tested on each fold and trained
+Tune the sparsity coefficient (if the model is sparse) or tau 
+(otherwise) in a supervised approach by estimating by crossvalidation the predictive quality of the models. 
+In this purpose, the samples are divided into k folds where the model will be tested on each fold and trained
  on the others. For small datasets (<30 samples), it is recommended to use 
  as many folds as there are individuals (leave-one-out; loo).
 }

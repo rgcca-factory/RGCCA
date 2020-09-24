@@ -25,12 +25,12 @@
 
 \item{legend}{If TRUE the legend is diplayed}
 
-\item{colors}{colors}
+\item{colors}{Either a vector of integers (each integer corresponding to a color) or of characters corresponding to names of colors (as "blue",see colors()) or RGB code ("#FFFFFF").}
 
 \item{...}{Further plot parameters...}
 }
 \description{
-Plots the impact of increasing missing data on RGCCA
+Plot the impact of increasing missing data on RGCCA
 }
 \examples{
 set.seed(42);X1=matrix(rnorm(350),70,5);X2=matrix(rnorm(280),70,4)

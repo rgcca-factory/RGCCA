@@ -52,14 +52,11 @@ covariance maximization among "horst" (the identity function), "factorial"
 
 \item{a}{A list of \eqn{J} elements. Each element of \eqn{a} is a matrix that contains the outer weight vectors for each block.}
 
-\item{crit}{A vector of integer that contains the values of the analysis criteria across iterations.}
-
-\item{AVE}{Indicators of model quality based on the Average Variance Explained (AVE): 
-AVE(for one block), AVE(outer model), AVE(inner model).}
+\item{AVE}{A list of numerical values giving the indicators of model quality based on the Average Variance Explained (AVE): AVE(for each block), AVE(outer model), AVE(inner model).}
 
 \item{call}{Call of the function}
 
-\item{crit}{A vector of integer that contains the values of the analysis criteria across iterations.}
+\item{crit}{A vector of integer that contains for each component the values of the analysis criteria across iterations.}
 
 \item{tau}{Either a 1*J vector or a \eqn{\mathrm{max}(ncomp) \times J} matrix containing the values
 of the regularization parameters .Tau varies from 0 (maximizing the correlation) to 1 (maximizing the covariance).

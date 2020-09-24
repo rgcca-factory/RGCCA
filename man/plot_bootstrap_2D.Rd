@@ -20,8 +20,7 @@ plot_bootstrap_2D(b = NULL, df_b = NULL, x = "bootstrap_ratio",
 
 \item{y}{A character for the index to plot in y-axis (see details).}
 
-\item{title}{A character with the name of the space (either "Variables" or
-"Samples")}
+\item{title}{A character giving the title of the plot}
 
 \item{colors}{Either a vector of integers (each integer corresponding to a color) or of characters corresponding to names of colors (as "blue",see colors()) or RGB code ("#FFFFFF").}
 
@@ -60,7 +59,6 @@ Negative weights are colored in red and the positive ones are in green.
 }
 }
 \examples{
-library(RGCCA)
 data("Russett")
 blocks = list(agriculture = Russett[, seq(3)], industry = Russett[, 4:5],
     politic = Russett[, 6:11] )

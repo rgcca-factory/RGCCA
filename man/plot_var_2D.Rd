@@ -10,7 +10,7 @@ plot_var_2D(rgcca_res, compx = 1, compy = 2,
   title = "Variable correlations", resp = NULL, colors = NULL, ...)
 }
 \arguments{
-\item{rgcca_res}{A RGCCA object (see  \code{\link[RGCCA]{rgcca}} )}
+\item{rgcca_res}{A RGCCA object (see  \code{\link[RGCCA]{rgcca}})}
 
 \item{compx}{An integer giving the index of the analysis component used
 for the x-axis}
@@ -32,8 +32,7 @@ component with the biggest correlation#'}
 
 \item{no_overlap}{A boolean to avoid overlap in plotted text}
 
-\item{title}{A character with the name of the space (either "Variables" or
-"Samples")}
+\item{title}{A character giving the title of the plot}
 
 \item{resp}{A vector of characters corresponding either to a qualitative
 variable with levels or a continuous variable}
@@ -75,7 +74,6 @@ class(rgcca_out) = "rgcca"
 plot_var_2D(rgcca_out, 1, 2)
 # Using the first block
 plot_var_2D(rgcca_out, 1, 2, 1)
-library(RGCCA)
 data("Russett")
 blocks = list(agriculture = Russett[, seq(3)], industry = Russett[, 4:5],
  politic = Russett[, 6:11] )

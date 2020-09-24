@@ -9,7 +9,7 @@ plot_var_1D(rgcca_res, comp = 1, n_mark = 100,
   title = NULL, colors = NULL, ...)
 }
 \arguments{
-\item{rgcca_res}{A RGCCA object (see  \code{\link[RGCCA]{rgcca}} )}
+\item{rgcca_res}{A RGCCA object (see  \code{\link[RGCCA]{rgcca}})}
 
 \item{comp}{An integer giving the index of the analysis components}
 
@@ -23,8 +23,7 @@ or "weight" for the weight of the RGCCA}
 
 \item{collapse}{A boolean to combine the variables of each block as result}
 
-\item{title}{A character with the name of the space (either "Variables" or
-"Samples")}
+\item{title}{A character giving the title of the plot}
 
 \item{colors}{Either a vector of integers (each integer corresponding to a color) or of characters corresponding to names of colors (as "blue",see colors()) or RGB code ("#FFFFFF").}
 

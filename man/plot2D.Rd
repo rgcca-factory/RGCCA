@@ -2,7 +2,7 @@
 % Please edit documentation in R/plot2D.R
 \name{plot2D}
 \alias{plot2D}
-\title{Plots RGCCA components in a bi-dimensional space}
+\title{Plot RGCCA components in a bi-dimensional space}
 \usage{
 plot2D(rgcca_res, df, title = "", group = 1, name_group = "Response",
   compx = 1, compy = 2, i_block = 1, p = NULL, text = TRUE,
@@ -11,12 +11,11 @@ plot2D(rgcca_res, df, title = "", group = 1, name_group = "Response",
   cex, cex_point = 3 * cex, cex_lab = 10 * cex)
 }
 \arguments{
-\item{rgcca_res}{A RGCCA object (see  \code{\link[RGCCA]{rgcca}} )}
+\item{rgcca_res}{A RGCCA object (see  \code{\link[RGCCA]{rgcca}})}
 
 \item{df}{A dataframe}
 
-\item{title}{A character with the name of the space (either "Variables" or
-"Samples")}
+\item{title}{A character giving the title of the plot}
 
 \item{group}{A vector of character with levels used to color the points}
 
@@ -55,5 +54,5 @@ one, different from the one used in i_block)}
 \item{cex_lab}{An integer for the size of the axis titles}
 }
 \description{
-Plots RGCCA components in a bi-dimensional space
+Plot RGCCA components in a bi-dimensional space
 }

@@ -39,14 +39,14 @@ plot.cval=function(x, bars="sd", cex = 1, cex_main = 14 * cex, cex_sub = 10 * ce
     if(x$call$type_cv=="regression")
     {
         main=paste0("RMSE according to the combinations \n (",x$call$validation,ifelse(x$call$validation=="kfold", paste0(": with ",x$call$k," folds", ifelse(x$call$n_run>1,paste0(" and ",x$call$n_run," run",ifelse(x$call$n_run==1,"","s")),""),")"),";,\n "))
-        main=paste0(main,"\nbest value, in green : ",
+        main=paste0(main,"\nbest parameter: ",
                     paste(round(x$bestpenalties,digits=2), collapse = ", "))
         
     }
     if(x$call$type_cv=="classification")
     {
         main=paste0("Mean error rate according to the combinations \n (",x$call$validation,ifelse(x$call$validation=="kfold", paste0(": with ",x$call$k," folds", ifelse(x$call$n_run>1,paste0(" and ",x$call$n_run," run",ifelse(x$call$n_run==1,"","s")),""),")"),";,\n "))
-        main=paste0(main,"\nbest value, in green : ",
+        main=paste0(main,"\nbest parameter: ",
                     paste(round(x$bestpenalties,digits=2), collapse = ", "))
         
     }
