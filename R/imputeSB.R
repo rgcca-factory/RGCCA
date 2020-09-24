@@ -1,22 +1,17 @@
-#'Impute with superblock method
-#'
-#'This method is used for the implementation of EM algorithm for missing data
-#'
-#' @param A A list of J blocks
-#' @param tau A vector of tau values with the same length as A
-#' @param tol The stopping value for convergence.
-#' @param graph if graph = TRUE, 
-#' @param ncomp vector containing the number of components per block in RGCCA
-#' @param naxis number of component to select in the superblock for the estimation of missing data
-#' @param  scale  If scale = TRUE, each block is standardized to zero means and unit variances (default: TRUE).
-#' @param scale_block A logical value indicating if the different blocks should have the same weight in the analysis (default, scale_block=TRUE)
-#' @param bias A logical value indicating if variance should be biased or not
-#' @param verbose If TRUE, displays the differents RGCCA steps
-#' @param ni Number of iterations
-#' @return \item{A}{A list of blocks imputed}
-#' @return \item{crit}{Convergence criterion : abs(1-obj_k/obj_{k-1})}
-#' @return \item{obj}{Vector containing the mean square error between the predict values and the original non missing values at each iteration}
-#' @title imputeSB: impute with superblock method
+#Impute with superblock method
+#
+#This method is used for the implementation of EM algorithm for missing data
+# @inheritParams select_analysis
+# @inheritParams rgccaNa
+# @inheritParams rgccad
+# @param graph if graph = TRUE,
+# @param naxis number of component to select in the superblock for the estimation of missing data
+# @param verbose If TRUE, displays the differents RGCCA steps
+# @param ni Number of iterations
+# @return \item{A}{A list of imputed matrices giving the \eqn{J} blocks of variables \eqn{\mathbf{X_1}, \mathbf{X_2}, ..., \mathbf{X_J}}}
+# @return \item{crit}{Convergence criterion : abs(1-obj_k/obj_{k-1})}
+# @return \item{obj}{Vector containing the mean square error between the predict values and the original non missing values at each iteration}
+# @title imputeSB: impute with superblock method
 
 # TODO: tau did not have a default value
 # TODO: scheme in par

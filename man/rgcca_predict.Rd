@@ -8,7 +8,7 @@ rgcca_predict(rgcca_res, newA, model = "regression", fit = "lm",
   bloc_to_pred = NULL, new_scaled = TRUE)
 }
 \arguments{
-\item{rgcca_res}{A list giving the results of a R/SGCCA}
+\item{rgcca_res}{A RGCCA object (see  \code{\link[RGCCA]{rgcca}})}
 
 \item{newA}{A list of either a dataframe/matrix or a vector giving the blocks to be predicted}
 
@@ -21,7 +21,7 @@ rgcca_predict(rgcca_res, newA, model = "regression", fit = "lm",
 \item{new_scaled}{A boolean scaling the blocks to predict}
 }
 \description{
-Predicts a new block from a RGCCA
+Predict a new block from a RGCCA
 }
 \examples{
 data("Russett")

@@ -2,39 +2,65 @@
 % Please edit documentation in R/get_bootstrap.R
 \name{get_bootstrap}
 \alias{get_bootstrap}
-\title{Extract a bootstrap}
+\title{Extract statistics from a bootstrap}
 \usage{
-get_bootstrap(b, comp = 1, i_block = length(b$bootstrap[[1]]),
-  bars = "sd", collapse = FALSE, n_cores = parallel::detectCores() -
-  1, display_order = TRUE)
+get_bootstrap(b, comp = 1, block = length(b$bootstrap[[1]]),
+  bars = "quantile", collapse = FALSE,
+  n_cores = parallel::detectCores() - 1, display_order = TRUE)
 }
 \arguments{
-\item{b}{A list of list weights (one per bootstrap per blocks)}
+\item{b}{A bootstrap object (see  \code{\link[RGCCA]{bootstrap}} )}
 
 \item{comp}{An integer giving the index of the analysis components}
 
-\item{i_block}{An integer giving the index of a list of blocks}
+\item{block}{A vector of integers giving the index of a list of blocks or a block = 'all' for all of them}
 
-\item{bars}{A character among "sd" for standard deviations, "stderr" for the standard error, "ci" for confidence interval of scores and "cim" for the confidence intervall of the mean.}
+\item{bars}{A character giving the variability among "sd" (standard deviations bars) , "stderr"(bars of standard deviation divided by sqrt(n)) or "quantile" (for the 0.05-0.95 quantiles bars)}
 
 \item{collapse}{A boolean to combine the variables of each block as result}
 
 \item{n_cores}{An integer for the number of cores used in parallelization}
 
-\item{display_order}{If TRUE the order is indicated}
+\item{display_order}{A logical value to display the order of the variables}
 }
 \value{
-A matrix containing the means, 95% intervals, bootstrap ratio and p-values
+A dataframe containing:
+\itemize{
+\item 'mean' for the mean of the bootstrap weights (non-null for SGCCA)
+\item 'estimate' for RGCCA weights
+\item 'sd' for the standard error of the (non-null in case of SGCCA) bootstrap weights
+\item 'lower/upper_band' for the lower and upper intervals calculated according to the 'bars' parameter
+\item 'bootstrap_ratio' for the mean of the bootstrap weights / their standard error
+\item 'p.vals' for p-values (see details)
+\item 'BH' for Benjamini-Hochberg p-value adjustments
+\item 'occurrences' for non-zero occurences (for SGCCA) 
+\item 'sign' for significant ('*') or not ('ns') p-values (alpha = 0.05) (see details)
+}
 }
 \description{
-Extract statistical information from a bootstrap
+Extracts statistical information from a bootstrap of the RGCCA weights (\code{\link[RGCCA]{bootstrap}})
+}
+\details{
+For RGCCA, a classical Student test (df = number of bootstraps -1) is computed based on the statistic weight/standard deviations
+
+By including sparsity (with "sgcca","spls" or "spca"), the frequency of a selected variable may depend on both the level of sparsity and the total number of variables in each block. 
+ 
+For a random selection of the variable among the block, the number of occurrences (0 or 1) follows a Bernouilli distribution with the parameter p = proportion of selected variables in the block. 
+This proportion is estimated by the average number of selected variables over all bootstraps divided by the total number of variables in each block (p_j). 
+
+On a larger number of bootstraps, the number of occurrences follows a binomial distribution B(n,p) with n=number of bootstraps. 
+  
+The test is based on the following null hypothesis: "the variable is randomly selected according to B(n,p)".
+This hypothesis is rejected when the number of occurrences is higher than the 1-(0.05/p_j)th quantile
 }
 \examples{
-library(RGCCA)
 data("Russett")
 blocks = list(agriculture = Russett[, seq(3)], industry = Russett[, 4:5],
     politic = Russett[, 6:11] )
 rgcca_out = rgcca(blocks)
 boot = bootstrap(rgcca_out, 5, n_cores = 1)
 get_bootstrap(boot, n_cores = 1)
+}
+\seealso{
+\code{\link[RGCCA]{bootstrap}}, \code{\link[RGCCA]{plot.bootstrap}} , \code{\link[RGCCA]{print.bootstrap}}
 }

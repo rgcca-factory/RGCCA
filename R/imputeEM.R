@@ -1,35 +1,27 @@
-#'Impute with superblock method
-#'
-#'This method is used for the implementation of EM algorithm for missing data
-#'
-#' @param A A matrix with J dimensions (to be changed for superblock ?)
-#' @param tau A vector of tau values with the same length as A
-#' @param C A matrix of connection
-#' @param bias FALSE by default. If TRUE, estimation of variance/covariance parameters with division by n-1 instead of n
-#' @param verbose FALSE by default. If TRUE, displays results of convergence for each iteration
-#' @param tolEM threshold to be reached to assess convergence.
-#' @param reg 'y' by default. Reconstruction is made by regression of the A rows on w ('w'),the A columns on Y ('y')  or without any regression with yw ('no')
-#' @param ni An integer for the maximal number of iterations before convergence
-#' @param tol The stopping value for convergence.
-#' @param graph if graph = TRUE, graphics are plotted/saved
-#' @param ncomp vector containing the number of components per block in RGCCA
-#' @param naxis number of component to select for the estimation of missing data
-#' @param  scale  If scale = TRUE, each block is standardized to zero means and unit variances (default: TRUE).
-#' @param scale_block A logical value indicating if the different blocks should have the same weight in the analysis (default, scale_block=TRUE)
-#' @param scheme scheme chosene for RGCCA (is not useful when superblock=TRUE)
-#'  @param bias A logical value indicating if variance should be biased or not
-#' @param superblock Boolean, if TRUE, the missing values are estimated with the superblock
-#' @param quiet If TRUE, the potential warnings are not printed
+#Impute with superblock method
+#
+#This method is used for the implementation of EM algorithm for missing data
+#
+# @inheritParams select_analysis
+# @inheritParams rgccaNa
+# @inheritParams rgccad
+# @param verbose FALSE by default. If TRUE, displays results of convergence for each iteration
+# @param tolEM threshold to be reached to assess convergence.
+# @param reg 'y' by default. Reconstruction is made by regression of the A rows on w ('w'),the A columns on Y ('y')  or without any regression with yw ('no')
+# @param ni An integer for the maximal number of iterations before convergence
+# @param graph if graph = TRUE, graphics are plotted/saved
+# @param naxis number of component to select for the estimation of missing data
+# @param superblock Boolean, if TRUE, the missing values are estimated with the superblock
 
-#' @return \item{A}{A list of blocks imputed}
-#' @return \item{stab}{Convergence criterion : abs(1-obj_k/obj_{k-1})}
-#' @return \item{obj}{Vector containing the mean square error between the predict values and the original non missing values at each iteration}
-#'@return \item{crit}{RGCCA criterion}
-#'@return \item{moy}{Estimated mean obtained for each variable  (required for the addNoise function)}
-#'@return \item{stdev}{Estimated standard deviations of each variable obtained  (required for the addNoise function)}
-#'@return \item{sigma}{Estimated standard deviations for the noise obtained  (required for the addNoise function)}
-#'@return \item{indNA}{Position of missing values}
-#' @title imputeEM: impute with superblock method
+# @return \item{A}{A list of imputed matrices giving the \eqn{J} blocks of variables \eqn{\mathbf{X_1}, \mathbf{X_2}, ..., \mathbf{X_J}}}
+# @return \item{stab}{Convergence criterion : abs(1-obj_k/obj_{k-1})}
+# @return \item{obj}{Vector containing the mean square error between the predict values and the original non missing values at each iteration}
+#@return \item{crit}{RGCCA criterion}
+#@return \item{moy}{Estimated mean obtained for each variable  (required for the addNoise function)}
+#@return \item{stdev}{Estimated standard deviations of each variable obtained  (required for the addNoise function)}
+#@return \item{sigma}{Estimated standard deviations for the noise obtained  (required for the addNoise function)}
+#@return \item{indNA}{Position of missing values}
+# @title imputeEM: impute with superblock method
 
 imputeEM <-
     function(A,

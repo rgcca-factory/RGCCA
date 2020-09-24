@@ -2,33 +2,34 @@
 % Please edit documentation in R/plot_permut_2D.R
 \name{plot_permut_2D}
 \alias{plot_permut_2D}
-\title{Plot permuation in 2D}
+\title{Plot permutation in 2D}
 \usage{
 plot_permut_2D(perm, type = "crit", cex = 1, title = NULL,
   cex_main = 14 * cex, cex_sub = 12 * cex, cex_point = 3 * cex,
-  cex_lab = 10 * cex, bars = "points")
+  cex_lab = 10 * cex, bars = "points", colors = c("red", "grey"))
 }
 \arguments{
-\item{perm}{A permutation object from a RGCCA analyse}
+\item{perm}{A permutation object (see \code{\link[RGCCA]{rgcca_permutation}})}
 
-\item{type}{An string giving the type of the index to look at (among 'crit' for
+\item{type}{A character giving the type of the index to look at (among 'crit' for
 the RGCCA criterion and 'zstat' for the pseudo Z-score)}
 
-\item{cex}{general size of the text}
+\item{cex}{An integer for the size of the plot parameters}
 
-\item{title}{A character with the name of the space (either "Variables" or
-"Samples")}
+\item{title}{A character giving the title of the plot}
 
-\item{cex_main}{= 25 * cex, size of the main text (title)}
+\item{cex_main}{An integer for the size of the title}
 
-\item{cex_sub}{= 16 * cex, size of the subtitle text}
+\item{cex_sub}{An integer for the size of the subtitle}
 
-\item{cex_point}{= 3 * cex, size of the point}
+\item{cex_point}{An integer for the size of the points or the text in the plot}
 
-\item{cex_lab}{= 19 * cex, size of the labels}
+\item{cex_lab}{An integer for the size of the axis titles}
 
-\item{bars}{Among "points", "stderr" or "sd": representation of the variability}
+\item{bars}{A character giving the variability among "points" (all the points are shown), "sd" (standard deviations bars) , "stderr"(bars of standard deviation divided by sqrt(n)) or "quantile" (for the 0.05-0.95 quantiles bars)}
+
+\item{colors}{Either a vector of integers (each integer corresponding to a color) or of characters corresponding to names of colors (as "blue",see colors()) or RGB code ("#FFFFFF").}
 }
 \description{
-Plot permuation in 2D
+Plot permutation in 2D
 }

@@ -1,7 +1,7 @@
-#' Creates the edges for a design matrix
-#' 
-#' @inheritParams plot_ind
-#' @return A dataframe with tuples of connected rgcca_res$call$blocks
+# Creates the edges for a design matrix
+# 
+# @inheritParams plot_ind
+# @return A dataframe with tuples of connected rgcca_res$call$blocks
 
 
 

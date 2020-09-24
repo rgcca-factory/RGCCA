@@ -5,11 +5,9 @@
 #' @inheritParams rgcca
 #' @inheritParams bootstrap
 #' @inheritParams plot_ind
-#' @param k when k fold is chosen, the k parameter.
-#' @param validation Among "loo", "kfold", "test".
-#' @param parallelization if TRUE parallelization is run, if FALSE, no parallelisation is run. If NULL (default) parallelization is always used except for Windows in case of length(nperm)<10
+#' @param k An integer giving the number of folds (if validation = 'kfold').
+#' @param validation A character for the type of validation among "loo", "kfold", "test".
 #' @examples
-#' library(RGCCA)
 #' data("Russett")
 #' blocks = list(agriculture = Russett[, seq(3)], industry = Russett[, 4:5],
 #'     politic = Russett[, 6:11] )
@@ -56,10 +54,11 @@ rgcca_crossvalidation <- function(
     stopifnot(is(rgcca_res, "rgcca"))
     if(is.null(rgcca_res$call$response)){
        stop_rgcca("This function required an analysis in a supervised mode")}
-   
+    if (!is.null(parallelization))
+        check_boolean("parallelization", parallelization)
     match.arg(validation, c("loo", "test", "kfold"))
     check_integer("k", k, min = 2)
-    check_integer("n_cores", n_cores, 0)
+    check_integer("n_cores", n_cores, min = 0)
     response=rgcca_res$call$response
     bloc_to_pred <- names(rgcca_res$call$blocks)[response]
 
@@ -86,14 +85,12 @@ rgcca_crossvalidation <- function(
                           type=type
                         ) #Rgcca on all individuals but inds
            # 
-         
              rgcca_k_saved=rgcca_k
              rgcca_k$a <- add_variables_submodel(rgcca_res, rgcca_k$a)
              rgcca_k$astar <- add_variables_submodel(rgcca_res, rgcca_k$astar)
              rgcca_k$call$blocks <- add_variables_data(rgcca_res, rgcca_k$call$blocks)
     
              center_att <- add_variables_attr(rgcca_res, lapply(rgcca_k_saved$call$blocks, function(i) attr(i, "scaled:center")), type = "center")
-          
              scale_attr <- add_variables_attr(rgcca_res, lapply(rgcca_k_saved$call$blocks, function(i) attr(i, "scaled:scale")))
  
              for (i in seq(length(rgcca_k$call$blocks))) {
@@ -107,7 +104,6 @@ rgcca_crossvalidation <- function(
                 model = model,
                 fit = fit,
                 bloc_to_pred = bloc_to_pred,
-                # bigA = bigA,
                 new_scaled = FALSE
             )
 

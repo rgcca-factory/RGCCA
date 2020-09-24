@@ -12,19 +12,19 @@
   colors = NULL, errorbar = "ci", ...)
 }
 \arguments{
-\item{x}{Result of MIRGCCA function (see\code{\link[RGCCA]{MIRGCCA}} ) or a list containing 
+\item{x}{A MIRGCCA object (see \code{\link[RGCCA]{MIRGCCA}}) or a list containing
 \itemize{\item{rgcca0}{ RGCCA results for the reference dataset}
 \item{data}{ list of imputed data obtained}
  \item{rgccaList}{ list of RGCCA obtained}}}
 
-\item{type}{Type among c("ind","var","both","ave","cor","weight","network").  See details.}
+\item{type}{A character among 'ind', 'var', 'both', 'ave', 'cor', 'weight', 'network' (see details).}
 
 \item{resp}{A vector of characters corresponding either to a qualitative
 variable with levels or a continuous variable}
 
-\item{block}{vector representing the components to plot}
+\item{block}{A vector of integers giving the index of a list of blocks or a block = 'all' for all of them}
 
-\item{comp}{vector representing the components to plot}
+\item{comp}{An integer giving the index of the analysis components}
 
 \item{remove_var}{A bolean to keep only the 100 variables of each
 component with the biggest correlation#'}
@@ -39,7 +39,7 @@ or with circles (FALSE)}
 
 \item{no_overlap}{A boolean to avoid overlap in plotted text}
 
-\item{title}{Character for the title of the plot}
+\item{title}{A character giving the title of the plot}
 
 \item{n_mark}{An integer giving the number of top variables to select}
 
@@ -53,7 +53,7 @@ or with circles (FALSE)}
 
 \item{cex_lab}{An integer for the size of the axis titles}
 
-\item{colors}{representing a vector of the colors used in the graph. Either a vector of integers (each integer corresponding to a color) or of characters corresponding to names of colors (as "blue",see colors()) or RGB code ("#FFFFFF").}
+\item{colors}{Either a vector of integers (each integer corresponding to a color) or of characters corresponding to names of colors (as "blue",see colors()) or RGB code ("#FFFFFF").}
 
 \item{errorbar}{("CImean","CIscores","sd")}
 

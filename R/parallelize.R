@@ -1,19 +1,18 @@
-#' Set a list of sockets for parralel package
-#' @param f a function to parralelize
-#' @param nperm a vector object for a lapply type function
-#' @param varlist character vector of names of objects to export  
-#' @param envir environment                                               
-#' @param applyFunc function to be applied
-#' @param parallelization if TRUE parallelization is run, if FALSE, no parallelisation is run. If NULL (default) parallelization is always used except for Windows in case of length(nperm)<10
-#' @inheritParams bootstrap
-#' @importFrom parallel stopCluster
-#' @importFrom parallel clusterExport
-#' @importFrom parallel clusterEvalQ
-#' @importFrom parallel makeCluster
-#' @importFrom parallel detectCores
-#' @importFrom parallel parLapply
-#' @importFrom parallel parSapply
-#' @importFrom parallel mclapply
+# Set a list of sockets for parralel package
+# @param f a function to parralelize
+# @param nperm a vector object for a lapply type function
+# @param varlist character vector of names of objects to export  
+# @param envir environment                                               
+# @param applyFunc function to be applied
+# @inheritParams bootstrap
+# @importFrom parallel stopCluster
+# @importFrom parallel clusterExport
+# @importFrom parallel clusterEvalQ
+# @importFrom parallel makeCluster
+# @importFrom parallel detectCores
+# @importFrom parallel parLapply
+# @importFrom parallel parSapply
+# @importFrom parallel mclapply
 parallelize <- function(
     varlist = c(),
     nperm,
@@ -108,7 +107,7 @@ parallelize <- function(
         res=NULL
        for(i in 1:length(nperm))
        {
-           print(i)
+           #print(i)
            res[[i]]=f(nperm[i])
        }
         if (applyFunc == "parSapply")

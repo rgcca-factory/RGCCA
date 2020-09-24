@@ -4,13 +4,15 @@
 \alias{plot.patternNA}
 \title{plot.patternNA}
 \usage{
-\method{plot}{patternNA}(x, type = "all", legend = TRUE,
-  scale = TRUE, outlierVisible = FALSE, ...)
+\method{plot}{patternNA}(x, type = "all", color = "springgreen4",
+  legend = FALSE, scale = TRUE, outlierVisible = FALSE, ...)
 }
 \arguments{
-\item{x}{an object from get_patternNA (see \code{\link[RGCCA]{get_patternNA}} )}
+\item{x}{A get_patternNA object (see \code{\link[RGCCA]{get_patternNA}})}
 
 \item{type}{"all" if all blocks should be plotted, ifelse an integer corresponding to the position of the block to be plotted in the initial list}
+
+\item{color}{color of the non-missing data. If rainbow, depends of the values of the non-missing data}
 
 \item{legend}{if TRUE the legend is plotted}
 
@@ -21,7 +23,7 @@
 \item{...}{Further graphical parameters (see \code{\link[graphics]{plot}})}
 }
 \description{
-Plots an object of class patternNA
+Plot an object of class patternNA
 }
 \examples{
 X1=matrix(rnorm(150),30,5)

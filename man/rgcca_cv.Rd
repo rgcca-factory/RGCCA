@@ -2,58 +2,71 @@
 % Please edit documentation in R/rgcca_cv.r
 \name{rgcca_cv}
 \alias{rgcca_cv}
-\title{rgcca_cv}
+\title{Tune RGCCA parameters in 'supervised' mode with cross-validation}
 \usage{
-rgcca_cv(blocks, type = "rgcca", response = NULL, par = "tau",
-  par_value = NULL, validation = "kfold", type_cv = "regression",
-  fit = "lm", k = 5, n_cv = 1, one_value_per_cv = FALSE,
-  n_cores = parallel::detectCores() - 1, quiet = TRUE,
-  superblock = FALSE, scale = TRUE, scale_block = TRUE,
-  tol = 1e-06, scheme = "factorial", method = "nipals",
-  rgcca_res = NULL, parallelization = NULL, tau = rep(1,
-  length(blocks)), ncomp = rep(1, length(blocks)), sparsity = rep(1,
-  length(blocks)), init = "svd", bias = TRUE, new_scaled = FALSE,
-  ...)
+rgcca_cv(blocks, type = "rgcca", response = NULL, par_type = "tau",
+  par_value = NULL, par_length = 10, validation = "kfold",
+  type_cv = "regression", fit = "lm", k = 5, n_run = 1,
+  one_value_per_cv = FALSE, n_cores = parallel::detectCores() - 1,
+  quiet = TRUE, superblock = FALSE, scale = TRUE,
+  scale_block = TRUE, tol = 1e-08, scheme = "factorial",
+  method = "nipals", rgcca_res = NULL, parallelization = NULL,
+  tau = rep(1, length(blocks)), ncomp = rep(1, length(blocks)),
+  sparsity = rep(1, length(blocks)), init = "svd", bias = TRUE,
+  new_scaled = FALSE, ...)
 }
 \arguments{
-\item{blocks}{A list that contains the \eqn{J} blocks of variables \eqn{\mathbf{X_1}, \mathbf{X_2}, ..., \mathbf{X_J}}.}
+\item{blocks}{A list of matrices giving the \eqn{J} blocks of variables \eqn{\mathbf{X_1}, \mathbf{X_2}, ..., \mathbf{X_J}}.}
 
-\item{type}{A character giving the type of analysis: c('rgcca', 'cpca-w', 'gcca', 'hpca', 'maxbet-b', 'maxbet', 'maxdiff-b','maxdiff', 'maxvar-a', 'maxvar-b', 'maxvar', 'niles', 'r-maxvar', 'rcon-pca',
-'ridge-gca', 'sabscor', 'ssqcor', 'ssqcor', 'ssqcov-1', 'ssqcov-2', 'ssqcov',
-'sum-pca', 'sumcor', 'sumcov-1', 'sumcov-2', 'sumcov.', 'sabscov', 'plspm','cca', 'ra', 'ifa', 'pls','pca')}
+\item{type}{A character giving the type of analysis: rgcca, sgcca, pca, 
+pls, cca, ifa, ra, cpca-w, gcca, hpca, maxbet-b, maxbet, maxdiff-b,maxdiff,
+ maxvar-a, maxvar-b, maxvar, niles, r-maxvar, rcon-pca, ridge-gca, sabscor,
+ ssqcor, ssqcor, ssqcov-1, ssqcov-2, ssqcov,  sum-pca, sumcor, sumcov-1, 
+ sumcov-2, sumcov, sabscov, plspm}
 
-\item{response}{Integer representing the number of the response block. Indeed, when a supervised analysis is chosen (plspm, pls), the response block has to be specified.}
+\item{response}{An integer giving the position of the response block within 
+the blocks (activates the supervised mode).}
 
-\item{par}{"sparsity", "tau" or "ncomp".}
+\item{par_type}{A character giving the parameter to tune among "sparsity" or "tau".}
 
-\item{par_value}{Grid of values to be tested. #TODO}
+\item{par_value}{A matrix (n*p, with p the number of blocks and n the number 
+of combinations to be tested), a vector (of p length) or a numeric value 
+giving sets of penalties (tau for RGCCA, sparsity for SGCCA) to be tested, 
+one row by combination. By default, it takes 10 sets between min values (0
+ for RGCCA and $1/sqrt(ncol)$ for SGCCA) and 1.}
 
-\item{validation}{Among "loo", "kfold", "test".}
+\item{par_length}{An integer indicating the number of sets of parameters to be tested (if par_value = NULL). The parameters are uniformly distributed.}
 
-\item{type_cv}{type of crossvalidation. Default to "regression" #TODO}
+\item{validation}{A character for the type of validation among "loo", "kfold", "test".}
+
+\item{type_cv}{A character corresponding to the model of prediction : 'regression' or 'classification' (see details)}
 
 \item{fit}{A character giving the function used to compare the trained and the tested models}
 
-\item{k}{when k fold is chosen, the k parameter.}
+\item{k}{An integer giving the number of folds (if validation = 'kfold').}
 
-\item{n_cv}{number of cross-validation. Default to 1 (with kfold option and 5)}
+\item{n_run}{An integer giving the number of cross-validations to be run (if validation = 'kfold').}
 
-\item{one_value_per_cv}{If TRUE, the k values obtained for each k-fold steps are averaged}
+\item{one_value_per_cv}{A logical value indicating if the k values are averaged for each k-fold steps.}
 
 \item{n_cores}{An integer for the number of cores used in parallelization}
 
-\item{quiet}{If TRUE, does not print warnings}
+\item{quiet}{A logical value indicating if it should not print warnings}
 
 \item{superblock}{A boolean giving the presence (TRUE) / absence (FALSE) of
 a superblock}
 
-\item{scale}{If scale = TRUE, each block is standardized to zero means and unit variances (default: TRUE).}
+\item{scale}{A logical value indicating if each block is normalised and divided by the square root of its number of variables and then divided by the square root of its number of variables.}
 
-\item{scale_block}{TRUE by default : each block have the same weight in the RGCCA analysis. If FALSE, the weight of each block depends on the number of variables of the block}
+\item{scale_block}{A logical value indicating if each block have the same weight in the RGCCA analysis. Otherwise, the weight of each block depends on the number of variables of the block}
 
-\item{tol}{The stopping value for convergence.}
+\item{tol}{An integer giving the value for stopping the algorithm convergence.}
 
-\item{scheme}{The value is "horst", "factorial", "centroid" or the g function (default: "centroid").}
+\item{scheme}{A character or a function giving the link function for 
+covariance maximization among "horst" (the identity function), "factorial"
+ (the squared values), "centroid" (the absolute values). Only, the horst 
+ scheme penalizes structural negative correlation. The factorial scheme 
+ discriminates more strongly the blocks than the centroid one.}
 
 \item{method}{Either a character corresponding to the used method ("complete","knn","em","sem") or a function taking a list of J blocks (A) as only parameter and returning the imputed list. 
 \itemize{
@@ -64,32 +77,56 @@ a superblock}
 \item{\code{"sem"}}{ corresponds to impute the data with EM-type algorithms with superblock approach}
 \item{\code{"knn1"}}{ corresponds to impute the data with the 1-Nearest Neighbor. 1 can be replace by another number (such as knn3) to impute with the 3-Nearest Neighbors.}}}
 
-\item{rgcca_res}{a result of rgcca (from whom all parameters will be imported)}
+\item{rgcca_res}{A RGCCA object (see  \code{\link[RGCCA]{rgcca}})}
 
-\item{parallelization}{if TRUE parallelization is run, if FALSE, no parallelisation is run. If NULL (default) parallelization is always used except for Windows in case of length(nperm)<10}
+\item{parallelization}{A logical value to run a parallelization. If parallelization = NULL (default), the parallelization is always performed except for Windows if length(n_boot) < 10.}
 
-\item{tau}{Used for type="rgcca" only. tau is either a \eqn{1 \times J} vector or a \eqn{\mathrm{max}(ncomp) \times J} matrix, and contains the values 
-of the regularization parameters (default: tau = 1, for each block and each dimension).
+\item{tau}{Either a 1*J vector or a \eqn{\mathrm{max}(ncomp) \times J} matrix containing the values 
+of the regularization parameters (default: tau = 1, for each block and each dimension). Tau varies from 0 (maximizing the correlation) to 1 (maximizing the covariance).
 If tau = "optimal" the regularization paramaters are estimated for each block and each dimension using the Schafer and Strimmer (2005)
-analytical formula . If tau is a \eqn{1\times J} numeric vector, tau[j] is identical across the dimensions of block \eqn{\mathbf{X}_j}. 
-If tau is a matrix, tau[k, j] is associated with \eqn{\mathbf{X}_{jk}} (\eqn{k}th residual matrix for block \eqn{j})}
+analytical formula . If tau is a \eqn{1\times J} vector, tau[j] is identical across the dimensions of block \eqn{\mathbf{X}_j}. 
+If tau is a matrix, tau[k, j] is associated with \eqn{\mathbf{X}_{jk}} (\eqn{k}th residual matrix for block \eqn{j}). It can be estimated by using \link{rgcca_permutation}.}
 
-\item{ncomp}{A \eqn{1 \times J} vector that contains the numbers of components for each block (default: rep(1, length(A)), which gives one component per block.). It can be estimated by using \link{rgcca_permutation}.}
+\item{ncomp}{A vector of 1*J integers giving the number of component for 
+each blocks}
 
-\item{sparsity}{Used for type="sgcca" or "spls" only. A vector containing the sparsity coefficients (length J, between 0 and 1). It can be estimated by using \link{rgcca_permutation}.}
+\item{sparsity}{Either a \eqn{1*J} vector or a \eqn{max(ncomp) * J} matrix encoding the L1 constraints applied to the outer weight vectors.
+Elements of sparsity vary between \eqn{1/sqrt(p_j)} and 1 (larger values of sparsity correspond to less penalization).
+If sparsity is a vector, L1-penalties are the same for all the weights corresponding to the same block but different components:
+\deqn{for all h, |a_{j,h}|_{L_1} \le c_1[j] \sqrt{p_j},}
+with \eqn{p_j} the number of variables of \eqn{X_j}.
+If sparsity is a matrix, each row \eqn{h} defines the constraints applied to the weights corresponding to components \eqn{h}:
+\deqn{for all h, |a_{j,h}|_{L_1} \le c_1[h,j] \sqrt{p_j}.} It can be estimated by using \link{rgcca_permutation}.}
 
-\item{init}{The mode of initialization to use in RGCCA algorithm. The alternatives are either by Singular Value Decompostion ("svd") or random ("random") (Default: "svd").}
+\item{init}{A character giving the mode of initialization to use in the algorithm. The alternatives are either by Singular Value Decompostion ("svd") or random ("random") (default: "svd").}
 
-\item{bias}{A logical value for biaised or unbiaised estimator of the var/cov (default: bias = TRUE).}
+\item{bias}{A logical value for biaised (\eqn{1/n}) or unbiaised (\eqn{1/(n-1)}) estimator of the var/cov (default: bias = TRUE).}
 
 \item{new_scaled}{A boolean scaling the blocks to predict}
 
 \item{...}{Further graphical parameters (see plot2D functions)}
 }
+\value{
+\item{cv}{A matrix giving the root-mean-square error (RMSE) between the predicted R/SGCCA and the observed R/SGCCA for each combination and each prediction (n_prediction = n_samples for validation = 'loo'; n_prediction = 'k' * 'n_run' for validation = 'kfold').}
+
+\item{call}{A list of the input parameters}
+
+\item{bestpenalties}{Penalties giving the best RMSE for each blocks (for regression) or the best proportion of wrong predictions (for classification)}
+
+\item{penalties}{A matrix giving, for each blocks, the penalty combinations (tau or sparsity)}
+}
 \description{
-This function is dedicated to supervised approaches (with response parameter in rgcca not NULL). By default, it is the last block in blocks.
-It allows to test a grid of parameters (sparsity, ncomp or tau) with cross-validation approaches. 
-This cross-validation is based on RMSE for quantitative response.
+Tune the sparsity coefficient (if the model is sparse) or tau 
+(otherwise) in a supervised approach by estimating by crossvalidation the predictive quality of the models. 
+In this purpose, the samples are divided into k folds where the model will be tested on each fold and trained
+ on the others. For small datasets (<30 samples), it is recommended to use 
+ as many folds as there are individuals (leave-one-out; loo).
+}
+\details{
+If type_cv=="regression",at each round of cross-validation, for each variable, a predictive model is constructed as a linear model of the first RGCCA component of each block (calculated on the training set).
+ Then the Root Mean Square of Errors of this model on the testing dataset are calculated, then averaged on the variables of the predictive block. 
+ The best combination of parameters is the one where the average of RMSE on the testing datasets is the lowest.
+If type_cv=="classification", at each round of cross-validation a "lda" is run and the proportion of wrong predictions on the testing dataset is returned.
 }
 \examples{
 data("Russett")
@@ -97,6 +134,11 @@ blocks <- list(
     agriculture = Russett[, seq(3)],
     industry = Russett[, 4:5],
     politic = Russett[, 6:11])
-    res=rgcca_cv(blocks,response=3, type="rgcca",par="tau",par_value=c(0,0.2,0.3),n_cv=1,n_cores=1)
-    
+res = rgcca_cv(blocks, response = 3, type="rgcca", 
+par_type = "sparsity", par_value = c(0.6, 0.75, 0.5), n_run = 2, n_cores = 1)
+plot(res)
+rgcca_cv(blocks, response = 3, par_type = "tau", par_value = c(0.6, 0.75, 0.5)
+, n_run = 2, n_cores = 1)$bestpenalties
+rgcca_cv(blocks, response = 3, par_type = "sparsity", par_value = 0.8, n_run = 2, n_cores = 1)
+rgcca_cv(blocks, response = 3, par_type = "tau", par_value = 0.8, n_run = 2, n_cores = 1)
 }

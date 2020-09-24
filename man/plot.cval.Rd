@@ -2,28 +2,35 @@
 % Please edit documentation in R/plot.cval.r
 \name{plot.cval}
 \alias{plot.cval}
-\title{plot.cval}
+\title{Plot cross-validation}
 \usage{
-\method{plot}{cval}(x, bars = "sd", alpha = 0.05, cex = 1,
-  cex_main = 14 * cex, cex_sub = 10 * cex, ...)
+\method{plot}{cval}(x, bars = "sd", cex = 1, cex_main = 14 * cex,
+  cex_sub = 10 * cex, cex_lab = 10 * cex, colors = c("red", "grey"),
+  ...)
 }
 \arguments{
-\item{x}{result of rgcca_cv function (see \link{rgcca_cv})}
+\item{x}{A rgcca_cv object (see \link{rgcca_cv})}
 
-\item{bars}{among "sd" for standard deviations, "stderr" for standard error (standard deviations divided by sqrt(n), ci for confidence interal, cim for confidence interval of the mean.}
+\item{bars}{A character giving the variability among "points" (all the points are shown), "sd" (standard deviations bars) , "stderr"(bars of standard deviation divided by sqrt(n)) or "quantile" (for the 0.05-0.95 quantiles bars)}
 
-\item{alpha}{used for confidence interval bars (ci or cim), risk. Default to 0.05}
+\item{cex}{An integer for the size of the plot parameters}
 
-\item{cex}{1 size of elements of the plot}
+\item{cex_main}{An integer for the size of the title}
 
-\item{cex_main}{size of the plot title}
+\item{cex_sub}{An integer for the size of the subtitle}
 
-\item{cex_sub}{size of the plot subtitle}
+\item{cex_lab}{An integer for the size of the axis titles}
+
+\item{colors}{Either a vector of integers (each integer corresponding to a color) or of characters corresponding to names of colors (as "blue",see colors()) or RGB code ("#FFFFFF").}
 
 \item{...}{Further plot options}
 }
 \description{
-plot.cval
+Plot a cross-validation object (tuning RGCA parameters in 'supervised' mode).
+The parameters tuned for maximizing RMSE is displayed in the title. In
+abscissa, the index of combination (number corresponding to the rownames of
+'penalties' in the tuning parameters object). In ordinate, the average of the
+permuted RMSE criterion. The best parameters are in red by default.
 }
 \examples{
 data("Russett")
@@ -31,6 +38,7 @@ blocks <- list(
     agriculture = Russett[, seq(3)],
     industry = Russett[, 4:5],
     politic = Russett[, 6:11])
-    res=rgcca_cv(blocks, response=3,type="rgcca",par="tau",par_value=c(0,0.2,0.3),n_cv=1,n_cores=1)
+    res=rgcca_cv(blocks, response=3,type="rgcca",par_type="tau",par_value=c(0,0.2,0.3),
+    n_run=1,n_cores=1)
    plot(res)
 }

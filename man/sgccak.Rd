@@ -9,39 +9,47 @@ sgccak(A, C, sparsity = rep(1, length(A)), scheme = "centroid",
   bias = TRUE, verbose = TRUE, quiet = FALSE)
 }
 \arguments{
-\item{A}{A list that contains the \eqn{J} blocks of variables from which block components are constructed. 
+\item{A}{A list that contains the \eqn{J} blocks of variables from which block components are constructed.
 It could be eiher the original matrices (\eqn{X_1, X_2, ..., X_J}) or the residual matrices (\eqn{X_{h1}, X_{h2}, ..., X_{hJ}}).}
 
-\item{C}{A design matrix that describes the relationships between blocks.}
+\item{C}{A symmetric matrix (J*J) that describes the relationships between blocks.}
 
-\item{sparsity}{A \eqn{1 * J} vector that contains the value of sparsity applied to each block. The L1 bound on a[[j]] is
-\deqn{ \|a_{j}\|_{\ell_1} \leq c_1[j] \sqrt{p_j}.}
-with \eqn{p_j} the number of variables of \eqn{X_j} and with sparsity[j] between 0 and 1 (larger L1 bound corresponds to less penalization).}
+\item{sparsity}{Either a \eqn{1*J} vector or a \eqn{max(ncomp) * J} matrix encoding the L1 constraints applied to the outer weight vectors.
+Elements of sparsity vary between \eqn{1/sqrt(p_j)} and 1 (larger values of sparsity correspond to less penalization).
+If sparsity is a vector, L1-penalties are the same for all the weights corresponding to the same block but different components:
+\deqn{for all h, |a_{j,h}|_{L_1} \le c_1[j] \sqrt{p_j},}
+with \eqn{p_j} the number of variables of \eqn{X_j}.
+If sparsity is a matrix, each row \eqn{h} defines the constraints applied to the weights corresponding to components \eqn{h}:
+\deqn{for all h, |a_{j,h}|_{L_1} \le c_1[h,j] \sqrt{p_j}.} It can be estimated by using \link{rgcca_permutation}.}
 
-\item{scheme}{Either "horst", "factorial" or "centroid" (default: centroid).}
+\item{scheme}{A character or a function giving the link function for 
+covariance maximization among "horst" (the identity function), "factorial"
+ (the squared values), "centroid" (the absolute values). Only, the horst 
+ scheme penalizes structural negative correlation. The factorial scheme 
+ discriminates more strongly the blocks than the centroid one.}
 
-\item{scale}{If scale = TRUE, each block is standardized to zero means and unit variances (default: TRUE).}
+\item{scale}{A logical value indicating if each block is normalised and divided by the square root of its number of variables and then divided by the square root of its number of variables.}
 
-\item{tol}{Stopping value for convergence.}
+\item{tol}{An integer giving the value for stopping the algorithm convergence.}
 
-\item{init}{Mode of initialization of the SGCCA algorithm. Either by Singular Value Decompostion ("svd") or random ("random") (default: "svd").}
+\item{init}{A character giving the mode of initialization to use in the algorithm. The alternatives are either by Singular Value Decompostion ("svd") or random ("random") (default: "svd").}
 
-\item{bias}{Logical value for biaised (\eqn{1/n}) or unbiaised (\eqn{1/(n-1)}) estimator of the var/cov.}
+\item{bias}{A logical value for biaised (\eqn{1/n}) or unbiaised (\eqn{1/(n-1)}) estimator of the var/cov (default: bias = TRUE).}
 
-\item{verbose}{Reports progress while computing, if verbose = TRUE (default: TRUE).}
+\item{verbose}{A boolean displaying the warnings}
 
-\item{quiet}{If TRUE, does not print warnings}
+\item{quiet}{A boolean hidding the warnings}
 }
 \value{
-\item{Y}{A \eqn{n * J} matrix of SGCCA block components.}
+\item{Y}{A list of \eqn{J} elements. Each element of \eqn{Y} is a matrix that contains the analysis components for the corresponding block.}
 
-\item{a}{A list of \eqn{J} elements. Each element contains the outer weight vector of each block.}
+\item{a}{A list of \eqn{J} elements. Each element of \eqn{a} is a matrix that contains the outer weight vectors for each block.}
 
-\item{crit}{The values of the objective function at each iteration of the iterative procedure.}
+\item{crit}{A vector of integer that contains for each component the values of the analysis criteria across iterations.}
 
 \item{converg}{Speed of convergence of the alogrithm to reach the tolerance.}
 
-\item{AVE}{Indicators of model quality based on the Average Variance Explained (AVE): AVE(for one block), AVE(outer model), AVE(inner model).}
+\item{AVE}{A list of numerical values giving the indicators of model quality based on the Average Variance Explained (AVE): AVE(for each block), AVE(outer model), AVE(inner model).}
 
 \item{call}{Call of the function}
 }

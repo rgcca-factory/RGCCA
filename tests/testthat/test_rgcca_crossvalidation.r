@@ -176,10 +176,10 @@ RussettWithNA <- Russett
      # avec la method complete -> ne fonctionne pas #TODO ?
   
  #    rgcca_out <- rgcca(blocksNA, response = 1, tol = 1E-03,method="nipals")
-     cv = rgcca_crossvalidation(rgcca_out, n_cores = 1)
- #    test_that("rgcca_cv_withNA2", {
- #        round(cv$scores,digits=3)==0.481
- #    })
+     cv = rgcca_crossvalidation(rgcca_out, n_cores = 1,validation="loo")
+     test_that("rgcca_cv_withNA2", {
+         round(cv$scores,digits=3)==0.443
+     })
     
 # Test avec scale=FALSE, scale_block=FALSE
      rgcca_out_1 <- rgcca(blocks, response = 1,superblock=FALSE,ncomp=1,scale=TRUE,scale_block=TRUE)
@@ -191,3 +191,40 @@ RussettWithNA <- Russett
      rescv2=rgcca_crossvalidation(rgcca_res=rgcca_out_2,n_cores=1,validation="loo",scale_block=FALSE,scale=FALSE)
      
      all.equal(rescv1,rescv2)
+     
+     
+     # rgcca_crossvalidation for classification
+     
+     blocks_for_classif = list(
+         agriculture = Russett[, 1:3],
+         industry = Russett[, 4:5],
+         politic = matrix(Russett[, 11],ncol=1)
+     )
+     blocks_for_classif[["politic"]][blocks_for_classif[["politic"]][,1]==1,]="demo"
+     blocks_for_classif[["politic"]][blocks_for_classif[["politic"]][,1]==0,]="ndemo"
+     
+     
+     
+     A=blocks_for_classif
+     object1 = rgcca(A, connection = C, tau = c(1,1,1),
+                     ncomp = 1, superblock = FALSE, response = 3)
+     rescv1=rgcca_crossvalidation(rgcca_res=object1,n_cores=1,validation="loo",model="classification",fit="lda")
+     #   res_test  = rgcca_predict(object1, A_test,new_scaled=FALSE,fit="lda",model="classification",bloc_to_pred="politic") 
+     test_that("rgcca_predict_classif",{expect_true(
+         round(rescv1$score,digits=3)==0.213
+     )})
+     
+     
+     res=rep(NA,dim( blocks_for_classif[[1]])[1])
+     for(i in 1:dim( blocks_for_classif[[1]])[1])
+     {
+         # Etape 1: on extrait la ligne i des blocs non scalés
+         A_moins_i=lapply( blocks_for_classif,function(x){return(x[-i,])})
+         A_i=lapply( blocks_for_classif,function(x){return(x[i,])})
+         names(A_moins_i)=names(A_i)=names( blocks_for_classif)
+         # on calcule la RGCCA sur le bloc A sans le i
+         rgcca_out_i <- rgcca(A_moins_i, response = 3,superblock=FALSE,ncomp=1,scale=TRUE,scale_block=TRUE)
+         respred_i=rgcca_predict(rgcca_out_i, A_i,new_scaled=FALSE,bloc_to_pred="politic",model="classification",fit="lda") 
+         res[i]=respred_i$score 
+     }
+     mean(res) # 0.213

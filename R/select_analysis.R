@@ -1,30 +1,43 @@
 #' Define the analysis parameters
 #'
 #' Define the correct parameters according to the type of the analysis
-#' @param type A character giving the type of analysis: c('rgcca', 'cpca-w', 'gcca', 'hpca', 'maxbet-b', 'maxbet', 'maxdiff-b','maxdiff', 'maxvar-a', 'maxvar-b', 'maxvar', 'niles', 'r-maxvar', 'rcon-pca',
-#' 'ridge-gca', 'sabscor', 'ssqcor', 'ssqcor', 'ssqcov-1', 'ssqcov-2', 'ssqcov',
-#' 'sum-pca', 'sumcor', 'sumcov-1', 'sumcov-2', 'sumcov.', 'sabscov', 'plspm','cca', 'ra', 'ifa', 'pls','pca')
+#' @param type A character giving the type of analysis: rgcca, sgcca, pca, 
+#' pls, cca, ifa, ra, cpca-w, gcca, hpca, maxbet-b, maxbet, maxdiff-b,maxdiff,
+#'  maxvar-a, maxvar-b, maxvar, niles, r-maxvar, rcon-pca, ridge-gca, sabscor,
+#'  ssqcor, ssqcor, ssqcov-1, ssqcov-2, ssqcov,  sum-pca, sumcor, sumcov-1, 
+#'  sumcov-2, sumcov, sabscov, plspm
 #' @inheritParams plot_var_2D
 #' @inheritParams set_connection
-#' @param response Integer representing the number of the response block. Indeed, when a supervised analysis is chosen (plspm, pls), the response block has to be specified.  
-#' @param connection  A design matrix (J*J) that describes the relationships between blocks (default: complete design).
-#' @param penalty A vector of float (or character for 'optimal' setting) giving the
-#' shrinkage parameter for covariance maximization
-#' @param ncomp A vector of integer giving the number of component for each
-#' blocks
-#' @param scheme A character giving the link function for covariance maximization
+#' @param response An integer giving the position of the response block within 
+#' the blocks (activates the supervised mode).  
+#' @param connection A symmetric matrix (J*J) that describes the relationships 
+#' between blocks. Two values are accepted : '1' for a connection between two 
+#' blocks, or '0' otherwise.
+#' @param penalty A vector of 1*J floats (or character for 'optimal' setting) 
+#' giving theshrinkage parameter for covariance maximization
+#' @param ncomp A vector of 1*J integers giving the number of component for 
+#' each blocks
+#' @param scheme A character or a function giving the link function for 
+#' covariance maximization among "horst" (the identity function), "factorial"
+#'  (the squared values), "centroid" (the absolute values). Only, the horst 
+#'  scheme penalizes structural negative correlation. The factorial scheme 
+#'  discriminates more strongly the blocks than the centroid one.
 #' @param verbose A boolean displaying the warnings
 #' @param quiet A boolean hidding the warnings
 #' @return \item{blocks}{A list of matrix}
-#' @return \item{scheme}{A character giving the link function for covariance
-#' maximization}
-#' @return \item{penalty}{A vector of float (or character for 'optimal' setting) giving
-#' the shrinkage parameter for covariance maximization}
-#' @return \item{ncomp}{A vector of integer giving the number of component for each
-#' blocks}
-#' @return \item{connection}{matrix giving the connection between the blocks}
-#' @return \item{superblock}{A boolean giving the presence (TRUE) / absence (FALSE)
-#' of a superblock}
+#' @return \item{scheme}{A character or a function giving the link function for 
+#' covariance maximization among "horst" (the identity function), "factorial"
+#'  (the squared values), "centroid" (the absolute values). Only, the horst 
+#'  scheme penalizes structural negative correlation. The factorial scheme 
+#'  discriminates more strongly the blocks than the centroid one.}
+#' @return \item{penalty}{A vector of floats (or character for 'optimal' 
+#' setting) giving the shrinkage parameter for covariance maximization}
+#' @return \item{ncomp}{A vector of 1*J integers giving the number of component 
+#' for each blocks}
+#' @return \item{connection}{A symmetric matrix (J*J) that describes the 
+#' relationships between blocks}
+#' @return \item{superblock}{A boolean giving the presence (TRUE) / absence
+#' (FALSE) of a superblock}
 
 select_analysis <- function(
     blocks = blocks,

@@ -56,7 +56,7 @@ set_rgcca <- function(
 
     if (!boot)
         blocks <- intersection_list(blocks)
-
+    
     if (tolower(type) %in% c("sgcca", "spca", "spls")) {
 
         if (!is.null(blocks) && !missing(tau) && missing(sparsity))
@@ -81,7 +81,13 @@ set_rgcca <- function(
             id_boot <- sample(NROW(blocks[[1]]), replace = TRUE)
             boot_blocks <- lapply(
                 blocks, 
-                function(x) x[id_boot, , drop = FALSE])
+                function(x)
+                    {
+                        y= x[id_boot, , drop = FALSE]
+                        rownames(y)=paste("S",1:length(id_boot))
+                        return(y)
+                }
+                    )
 # TODO : to be replaced by something else
            boot_blocks <- remove_null_sd(boot_blocks)
         }
@@ -94,6 +100,14 @@ set_rgcca <- function(
         else
         {
             boot_blocks <- lapply(blocks, function(x) x[-inds, , drop = FALSE])
+            if(class(boot_blocks[[response]])=="character")
+            {
+                if(length(unique(boot_blocks[[response]]))==1)
+                {
+                    warning("One sample has no variablity. Resulted rgcca can not be run")
+                    return(NULL)
+                }
+            }
         }
     }
        

@@ -2,66 +2,81 @@
 % Please edit documentation in R/rgcca_permutation.R
 \name{rgcca_permutation}
 \alias{rgcca_permutation}
-\title{Tuning RGCCA parameters}
+\title{Tune RGCCA parameters with permutation}
 \usage{
-rgcca_permutation(blocks, perm.par = "tau", perm.value = NULL,
-  perm.length = 10, nperm = 20, n_cores = parallel::detectCores() -
-  1, quiet = TRUE, type = "rgcca", scale = TRUE,
-  scale_block = TRUE, connection = matrix(1, length(blocks),
-  length(blocks)) - diag(length(blocks)), scheme = "factorial",
-  ncomp = rep(1, length(blocks)), tau = rep(1, length(blocks)),
-  sparsity = rep(1, length(blocks)), init = "svd", bias = TRUE,
-  tol = 1e-08, response = NULL, superblock = FALSE,
-  method = "nipals", rgcca_res = NULL, parallelization = NULL)
+rgcca_permutation(blocks, par_type = "tau", par_value = NULL,
+  par_length = 10, n_run = 20, n_cores = parallel::detectCores() - 1,
+  quiet = TRUE, type = "rgcca", scale = TRUE, scale_block = TRUE,
+  connection = matrix(1, length(blocks), length(blocks)) -
+  diag(length(blocks)), scheme = "factorial", ncomp = rep(1,
+  length(blocks)), tau = rep(1, length(blocks)), sparsity = rep(1,
+  length(blocks)), init = "svd", bias = TRUE, tol = 1e-08,
+  response = NULL, superblock = FALSE, method = "nipals",
+  rgcca_res = NULL, parallelization = NULL)
 }
 \arguments{
-\item{blocks}{A list of matrix}
+\item{blocks}{A list of matrices giving the \eqn{J} blocks of variables \eqn{\mathbf{X_1}, \mathbf{X_2}, ..., \mathbf{X_J}}.}
 
-\item{perm.par}{"sparsity","tau" or "ncomp".}
+\item{par_type}{A character giving the parameter to tune among "sparsity" or "tau".}
 
-\item{perm.value}{If perm.par="sparsity", a matrix, a vector or an integer containing sets of constraint 
-variables to be tested, one row by combination. By default, sgcca.permute takes 10 sets between 
-min values ($1/sqrt(ncol)$) and 1. If perm.par="ncomp", a matrix, a vector or an integer containing sets of number of 
-components, one row by set. By default, sgcca.permute takes as many 
-combinations as the maximum number of columns in each block. If perm.par="tau",... #TODO}
+\item{par_value}{A matrix (n*p, with p the number of blocks and n the number 
+of combinations to be tested), a vector (of p length) or a numeric value 
+giving sets of penalties (tau for RGCCA, sparsity for SGCCA) to be tested, 
+one row by combination. By default, it takes 10 sets between min values (0
+ for RGCCA and $1/sqrt(ncol)$ for SGCCA) and 1.}
 
-\item{perm.length}{Useful if perm.value is NULL. Integer indicating the number of sets of parameters to be tested. The parameters are  then uniformly distributed.}
+\item{par_length}{An integer indicating the number of sets of parameters to be tested (if par_value = NULL). The parameters are uniformly distributed.}
 
-\item{nperm}{Number of permutation tested for each set of constraint}
+\item{n_run}{An integer giving the number of permutation tested for each set of constraint}
 
 \item{n_cores}{An integer for the number of cores used in parallelization}
 
-\item{quiet}{If TRUE, does not print warnings}
+\item{quiet}{A logical value indicating if it should not print warnings}
 
-\item{type}{A character giving the type of analysis: c('rgcca', 'cpca-w', 'gcca', 'hpca', 'maxbet-b', 'maxbet', 'maxdiff-b','maxdiff', 'maxvar-a', 'maxvar-b', 'maxvar', 'niles', 'r-maxvar', 'rcon-pca',
-'ridge-gca', 'sabscor', 'ssqcor', 'ssqcor', 'ssqcov-1', 'ssqcov-2', 'ssqcov',
-'sum-pca', 'sumcor', 'sumcov-1', 'sumcov-2', 'sumcov.', 'sabscov', 'plspm','cca', 'ra', 'ifa', 'pls','pca')}
+\item{type}{A character giving the type of analysis: rgcca, sgcca, pca, 
+pls, cca, ifa, ra, cpca-w, gcca, hpca, maxbet-b, maxbet, maxdiff-b,maxdiff,
+ maxvar-a, maxvar-b, maxvar, niles, r-maxvar, rcon-pca, ridge-gca, sabscor,
+ ssqcor, ssqcor, ssqcov-1, ssqcov-2, ssqcov,  sum-pca, sumcor, sumcov-1, 
+ sumcov-2, sumcov, sabscov, plspm}
 
-\item{scale}{If scale = TRUE, each block is standardized to zero means and unit variances (default: TRUE).}
+\item{scale}{A logical value indicating if each block is normalised and divided by the square root of its number of variables and then divided by the square root of its number of variables.}
 
-\item{scale_block}{TRUE by default : each block have the same weight in the RGCCA analysis. If FALSE, the weight of each block depends on the number of variables of the block}
+\item{scale_block}{A logical value indicating if each block have the same weight in the RGCCA analysis. Otherwise, the weight of each block depends on the number of variables of the block}
 
-\item{connection}{A design matrix that describes the relationships between blocks (default: complete design).}
+\item{connection}{A symmetric matrix (J*J) that describes the relationships 
+between blocks. Two values are accepted : '1' for a connection between two 
+blocks, or '0' otherwise.}
 
-\item{scheme}{The value is "horst", "factorial", "centroid" or the g function (default: "centroid").}
+\item{scheme}{A character or a function giving the link function for 
+covariance maximization among "horst" (the identity function), "factorial"
+ (the squared values), "centroid" (the absolute values). Only, the horst 
+ scheme penalizes structural negative correlation. The factorial scheme 
+ discriminates more strongly the blocks than the centroid one.}
 
-\item{ncomp}{A \eqn{1 \times J} vector that contains the numbers of components for each block (default: rep(1, length(A)), which gives one component per block.). It can be estimated by using \link{rgcca_permutation}.}
+\item{ncomp}{A vector of 1*J integers giving the number of component for 
+each blocks}
 
-\item{tau}{Used for type="rgcca" only. tau is either a \eqn{1 \times J} vector or a \eqn{\mathrm{max}(ncomp) \times J} matrix, and contains the values 
-of the regularization parameters (default: tau = 1, for each block and each dimension).
+\item{tau}{Either a 1*J vector or a \eqn{\mathrm{max}(ncomp) \times J} matrix containing the values 
+of the regularization parameters (default: tau = 1, for each block and each dimension). Tau varies from 0 (maximizing the correlation) to 1 (maximizing the covariance).
 If tau = "optimal" the regularization paramaters are estimated for each block and each dimension using the Schafer and Strimmer (2005)
-analytical formula . If tau is a \eqn{1\times J} numeric vector, tau[j] is identical across the dimensions of block \eqn{\mathbf{X}_j}. 
-If tau is a matrix, tau[k, j] is associated with \eqn{\mathbf{X}_{jk}} (\eqn{k}th residual matrix for block \eqn{j})}
+analytical formula . If tau is a \eqn{1\times J} vector, tau[j] is identical across the dimensions of block \eqn{\mathbf{X}_j}. 
+If tau is a matrix, tau[k, j] is associated with \eqn{\mathbf{X}_{jk}} (\eqn{k}th residual matrix for block \eqn{j}). It can be estimated by using \link{rgcca_permutation}.}
 
-\item{sparsity}{Used for type="sgcca" or "spls" only. A vector containing the sparsity coefficients (length J, between 0 and 1). It can be estimated by using \link{rgcca_permutation}.}
+\item{sparsity}{Either a \eqn{1*J} vector or a \eqn{max(ncomp) * J} matrix encoding the L1 constraints applied to the outer weight vectors.
+Elements of sparsity vary between \eqn{1/sqrt(p_j)} and 1 (larger values of sparsity correspond to less penalization).
+If sparsity is a vector, L1-penalties are the same for all the weights corresponding to the same block but different components:
+\deqn{for all h, |a_{j,h}|_{L_1} \le c_1[j] \sqrt{p_j},}
+with \eqn{p_j} the number of variables of \eqn{X_j}.
+If sparsity is a matrix, each row \eqn{h} defines the constraints applied to the weights corresponding to components \eqn{h}:
+\deqn{for all h, |a_{j,h}|_{L_1} \le c_1[h,j] \sqrt{p_j}.} It can be estimated by using \link{rgcca_permutation}.}
 
-\item{init}{The mode of initialization to use in RGCCA algorithm. The alternatives are either by Singular Value Decompostion ("svd") or random ("random") (Default: "svd").}
+\item{init}{A character giving the mode of initialization to use in the algorithm. The alternatives are either by Singular Value Decompostion ("svd") or random ("random") (default: "svd").}
 
-\item{bias}{A logical value for biaised or unbiaised estimator of the var/cov (default: bias = TRUE).}
+\item{bias}{A logical value for biaised (\eqn{1/n}) or unbiaised (\eqn{1/(n-1)}) estimator of the var/cov (default: bias = TRUE).}
 
-\item{tol}{The stopping value for convergence.}
+\item{tol}{An integer giving the value for stopping the algorithm convergence.}
 
-\item{response}{if not NULL, number corresponding to the response block}
+\item{response}{if not NULL, an integer giving the position of the response block within the blocks}
 
 \item{superblock}{A boolean giving the presence (TRUE) / absence (FALSE) of
 a superblock}
@@ -75,44 +90,51 @@ a superblock}
 \item{\code{"sem"}}{ corresponds to impute the data with EM-type algorithms with superblock approach}
 \item{\code{"knn1"}}{ corresponds to impute the data with the 1-Nearest Neighbor. 1 can be replace by another number (such as knn3) to impute with the 3-Nearest Neighbors.}}}
 
-\item{rgcca_res}{a result of rgcca (from whom all parameters will be imported)}
+\item{rgcca_res}{A RGCCA object (see  \code{\link[RGCCA]{rgcca}})}
 
-\item{parallelization}{if TRUE parallelization is run, if FALSE, no parallelisation is run. If NULL (default) parallelization is always used except for Windows in case of length(nperm)<10}
+\item{parallelization}{A logical value to run a parallelization. If parallelization = NULL (default), the parallelization is always performed except for Windows if length(n_boot) < 10.}
 }
 \value{
-A object permutation, which is a list containing :
+\item{zstat}{The Z statistic is the difference, for each combination, between the non-permuted R/SGCCA criterion and the mean of the permuted R/SGCCA criteria divided by the standard deviation of the permuted R/SGCCA criteria.}
 
-\item{pval}{Pvalue}
+\item{bestpenalties}{Penalties giving the best Z-statistic for each blocks}
 
-\item{zstat}{Statistic Z}
+\item{permcrit}{A matrix of R/SGCCA criteria for each combination and each permutation}
 
-\item{bestpenalties}{Penalties corresponding to the best Z-statistic}
+\item{means}{Mean of the permutated R/SGCCA criteria for each combination}
 
-\item{permcrit}{RGCCA criteria obtained with permutation set}
+\item{sds}{Standard deviation of the permutated R/SGCCA criteria for each combination}
 
-\item{crit}{ RGCCA criterion for the original dataset}
+\item{crit}{R/SGCCA criterion for each combination}
+
+\item{pval}{The p-value is the fraction of the permuted R/SGCCA criteria, for each combination, that is greater than or equal to the non-permuted R/SGCCA criterion}
+
+\item{penalties}{A matrix giving, for each blocks, the penalty combinations (tau or sparsity)}
 }
 \description{
-Run through a set of parameters (sparsity or number of selected components) with permutation to select the one maximizing RGCCA criterion 
-The sparsity parameter is tuned with only one component per block.
+Tune the sparsity coefficient (if the model is sparse) or tau 
+(otherwise) by observing the deviation between the model and a set of models 
+ where the lines of each block are permuted. The model with the best 
+combination of parameters is the one with the highest deviation with the 
+RGCCA criteria.
 }
 \examples{
 data("Russett")
-A = list(agriculture = Russett[, seq(3)], industry = Russett[, 4:5],
+blocks = list(agriculture = Russett[, seq(3)], industry = Russett[, 4:5],
     politic = Russett[, 6:11] )
-res = rgcca_permutation(A, nperm = 5, n_cores = 1)
-rgcca_permutation(A, perm.par = "sparsity", perm.value = 0.8, nperm = 2,
+res = rgcca_permutation(blocks, n_run = 5, n_cores = 1)
+rgcca_permutation(blocks, par_type = "sparsity", par_value = 0.8, n_run = 2,
  n_cores = 1)
-rgcca_permutation(A, perm.par = "sparsity", perm.value = c(0.6, 0.75, 0.5), 
-nperm = 2, n_cores = 1)
-rgcca_permutation(A, perm.par = "sparsity", 
-perm.value = matrix(c(0.6, 0.75, 0.5), 3, 3, byrow = TRUE),
- nperm = 2, n_cores = 1)
-rgcca_permutation(A, perm.par = "tau", perm.value = 0.8, nperm = 2, 
+rgcca_permutation(blocks, par_type = "sparsity", par_value = c(0.6, 0.75, 0.5), 
+n_run = 2, n_cores = 1)
+rgcca_permutation(blocks, par_type = "sparsity", 
+par_value = matrix(c(0.6, 0.75, 0.5), 3, 3, byrow = TRUE),
+ n_run = 2, n_cores = 1)
+rgcca_permutation(blocks, par_type = "tau", par_value = 0.8, n_run= 2, 
 n_cores = 1)
-rgcca_permutation(A, perm.par = "tau", perm.value = c(0.6, 0.75, 0.5),
- nperm = 2, n_cores = 1)
-rgcca_permutation(A, perm.par = "tau", perm.value = 
-matrix(c(0.6, 0.75, 0.5), 3, 3, byrow = TRUE),  nperm = 2, n_cores = 1)
+rgcca_permutation(blocks, par_type = "tau", par_value = c(0.6, 0.75, 0.5),
+ n_run = 2, n_cores = 1)
+rgcca_permutation(blocks, par_type = "tau", par_value = 
+matrix(c(0.6, 0.75, 0.5), 3, 3, byrow = TRUE),  n_run = 2, n_cores = 1)
 print(res)
 }

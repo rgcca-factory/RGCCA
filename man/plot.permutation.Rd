@@ -2,48 +2,52 @@
 % Please edit documentation in R/plot.rgcca_permutation.R
 \name{plot.permutation}
 \alias{plot.permutation}
-\title{plot.permutation
-Plots a permutation object. The parameters tuned for maximizing RGCCA criteria is displayed in the title. 
-In x, the index of combination (number corresponding to the rownames of tuning parameters object). In ordinate, a score depending of the type parameter (RGCCA criterion for crit, and zstat for the pseudo z-scores)}
+\title{Plot permutation}
 \usage{
-\method{plot}{permutation}(x, type = "crit", cex = 1, main = NULL,
+\method{plot}{permutation}(x, type = "crit", cex = 1, title = NULL,
   cex_main = 14 * cex, cex_sub = 12 * cex, bars = "points",
   cex_point = 3 * cex, cex_lab = 19 * cex, ...)
 }
 \arguments{
-\item{x}{result of rgcca_permutation (see  \code{\link[RGCCA]{rgcca_permutation}} )}
+\item{x}{result of rgcca_permutation (see  \code{\link[RGCCA]{rgcca_permutation}})}
 
-\item{type}{An string giving the type of the index to look at (among 'crit' for
+\item{type}{A character giving the type of the index to look at (among 'crit' for
 the RGCCA criterion and 'zstat' for the pseudo Z-score)}
 
-\item{cex}{general size of the text}
+\item{cex}{An integer for the size of the plot parameters}
 
-\item{main}{title of the plot}
+\item{title}{A character giving the title of the plot}
 
-\item{cex_main}{= 25 * cex, size of the main text (title)}
+\item{cex_main}{An integer for the size of the title}
 
-\item{cex_sub}{= 16 * cex, size of the subtitle text}
+\item{cex_sub}{An integer for the size of the subtitle}
 
-\item{bars}{Among "points", "stderr" or "sd": representation of the variability}
+\item{bars}{A character giving the variability among "points" (all the points are shown), "sd" (standard deviations bars) , "stderr"(bars of standard deviation divided by sqrt(n)) or "quantile" (for the 0.05-0.95 quantiles bars)}
 
-\item{cex_point}{= 3 * cex, size of the point}
+\item{cex_point}{An integer for the size of the points or the text in the plot}
 
-\item{cex_lab}{= 19 * cex, size of the labels}
+\item{cex_lab}{An integer for the size of the axis titles}
 
 \item{...}{Further graphical parameters}
 }
 \description{
-plot.permutation
-Plots a permutation object. The parameters tuned for maximizing RGCCA criteria is displayed in the title. 
-In x, the index of combination (number corresponding to the rownames of tuning parameters object). In ordinate, a score depending of the type parameter (RGCCA criterion for crit, and zstat for the pseudo z-scores)
+Plot a permutation object (tuning RGCCA parameters). The parameters tuned 
+for maximizing RGCCA criteria is displayed in the title. In abscissa, the
+index of combination (number corresponding to the rownames of 'penalties' 
+in the tuning parameters object). In ordinate, a score depending of the
+'type' parameter. For 'type = crit', the grey dots correspond to the RGCCA 
+criteria of each permutation for each combination. For 'type = zstats', 
+the three horizontal bars in dashed lines correspond to the three 
+significance thresholds from the lowest  to the highest bar: 95%, 99% and 99.9%.
+ The best parameters are in red by default.
 }
 \examples{
 data("Russett")
-A = list(agriculture = Russett[, seq(3)], industry = Russett[, 4:5],
+A <- list(agriculture = Russett[, seq(3)], industry = Russett[, 4:5],
     politic = Russett[, 6:11] )
-perm <- rgcca_permutation(A, nperm = 2, n_cores = 1)
+perm <- rgcca_permutation(A, n_run = 2, n_cores = 1)
 plot(perm)
-perm <- rgcca_permutation(A, perm.par = "sparsity", nperm = 5, n_cores = 1)
-plot(perm,type="crit")
+perm <- rgcca_permutation(A, par_type = "sparsity", n_run = 5, n_cores = 1)
+plot(perm, type="zstat")
 plot(perm)
 }

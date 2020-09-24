@@ -1,13 +1,13 @@
-#'Uses cov3 to scale a list of matrix (taking into account the missing values)
-#'
-#'This method is used for the implementation of EM algorithm for missing data
-#'
-#' @param A A list of J blocks
-#' @param center if TRUE, all variables are centered
-#' @param scale if TRUE, all variables are scaled
-#' @param bias if TRUE, the estimator of variance is SS/sqrt(n-1), if FALSE, it is SS/sqrt(n)
-#' @return \item{A}{The resulting list of matrices}
-#' @title scale3
+#Uses cov3 to scale a list of matrix (taking into account the missing values)
+#
+#This method is used for the implementation of EM algorithm for missing data
+#
+# @inheritParams rgccaNa
+# @inheritParams rgccad
+# @param center if TRUE, all variables are centered
+# @param bias if TRUE, the estimator of variance is SS/sqrt(n-1), if FALSE, it is SS/sqrt(n)
+# @return \item{A}{A list of matrices giving the \eqn{J} blocks of variables \eqn{\mathbf{X_1}, \mathbf{X_2}, ..., \mathbf{X_J}}.}
+# @title scale3
 
 scale3=function (A, center = TRUE, scale = TRUE, bias = TRUE) 
 {

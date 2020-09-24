@@ -15,37 +15,53 @@ rgcca(blocks, type = "rgcca", scale = TRUE, scale_block = TRUE,
   knn.scale_block = TRUE)
 }
 \arguments{
-\item{blocks}{A list that contains the \eqn{J} blocks of variables \eqn{\mathbf{X_1}, \mathbf{X_2}, ..., \mathbf{X_J}}.}
+\item{blocks}{A list of matrices giving the \eqn{J} blocks of variables \eqn{\mathbf{X_1}, \mathbf{X_2}, ..., \mathbf{X_J}}.}
 
-\item{type}{A character giving the type of analysis: c('rgcca', 'cpca-w', 'gcca', 'hpca', 'maxbet-b', 'maxbet', 'maxdiff-b','maxdiff', 'maxvar-a', 'maxvar-b', 'maxvar', 'niles', 'r-maxvar', 'rcon-pca',
-'ridge-gca', 'sabscor', 'ssqcor', 'ssqcor', 'ssqcov-1', 'ssqcov-2', 'ssqcov',
-'sum-pca', 'sumcor', 'sumcov-1', 'sumcov-2', 'sumcov.', 'sabscov', 'plspm','cca', 'ra', 'ifa', 'pls','pca')}
+\item{type}{A character giving the type of analysis: rgcca, sgcca, pca, 
+pls, cca, ifa, ra, cpca-w, gcca, hpca, maxbet-b, maxbet, maxdiff-b,maxdiff,
+ maxvar-a, maxvar-b, maxvar, niles, r-maxvar, rcon-pca, ridge-gca, sabscor,
+ ssqcor, ssqcor, ssqcov-1, ssqcov-2, ssqcov,  sum-pca, sumcor, sumcov-1, 
+ sumcov-2, sumcov, sabscov, plspm}
 
-\item{scale}{If scale = TRUE, each block is standardized to zero means and unit variances (default: TRUE).}
+\item{scale}{A logical value indicating if each block is normalised and divided by the square root of its number of variables and then divided by the square root of its number of variables.}
 
-\item{scale_block}{TRUE by default : each block have the same weight in the RGCCA analysis. If FALSE, the weight of each block depends on the number of variables of the block}
+\item{scale_block}{A logical value indicating if each block have the same weight in the RGCCA analysis. Otherwise, the weight of each block depends on the number of variables of the block}
 
-\item{connection}{A design matrix that describes the relationships between blocks (default: complete design).}
+\item{connection}{A symmetric matrix (J*J) that describes the relationships 
+between blocks. Two values are accepted : '1' for a connection between two 
+blocks, or '0' otherwise.}
 
-\item{scheme}{The value is "horst", "factorial", "centroid" or the g function (default: "centroid").}
+\item{scheme}{A character or a function giving the link function for 
+covariance maximization among "horst" (the identity function), "factorial"
+ (the squared values), "centroid" (the absolute values). Only, the horst 
+ scheme penalizes structural negative correlation. The factorial scheme 
+ discriminates more strongly the blocks than the centroid one.}
 
-\item{ncomp}{A \eqn{1 \times J} vector that contains the numbers of components for each block (default: rep(1, length(A)), which gives one component per block.). It can be estimated by using \link{rgcca_permutation}.}
+\item{ncomp}{A vector of 1*J integers giving the number of component for 
+each blocks}
 
-\item{tau}{Used for type="rgcca" only. tau is either a \eqn{1 \times J} vector or a \eqn{\mathrm{max}(ncomp) \times J} matrix, and contains the values 
-of the regularization parameters (default: tau = 1, for each block and each dimension).
+\item{tau}{Either a 1*J vector or a \eqn{\mathrm{max}(ncomp) \times J} matrix containing the values 
+of the regularization parameters (default: tau = 1, for each block and each dimension). Tau varies from 0 (maximizing the correlation) to 1 (maximizing the covariance).
 If tau = "optimal" the regularization paramaters are estimated for each block and each dimension using the Schafer and Strimmer (2005)
-analytical formula . If tau is a \eqn{1\times J} numeric vector, tau[j] is identical across the dimensions of block \eqn{\mathbf{X}_j}. 
-If tau is a matrix, tau[k, j] is associated with \eqn{\mathbf{X}_{jk}} (\eqn{k}th residual matrix for block \eqn{j})}
+analytical formula . If tau is a \eqn{1\times J} vector, tau[j] is identical across the dimensions of block \eqn{\mathbf{X}_j}. 
+If tau is a matrix, tau[k, j] is associated with \eqn{\mathbf{X}_{jk}} (\eqn{k}th residual matrix for block \eqn{j}). It can be estimated by using \link{rgcca_permutation}.}
 
-\item{sparsity}{Used for type="sgcca" or "spls" only. A vector containing the sparsity coefficients (length J, between 0 and 1). It can be estimated by using \link{rgcca_permutation}.}
+\item{sparsity}{Either a \eqn{1*J} vector or a \eqn{max(ncomp) * J} matrix encoding the L1 constraints applied to the outer weight vectors.
+Elements of sparsity vary between \eqn{1/sqrt(p_j)} and 1 (larger values of sparsity correspond to less penalization).
+If sparsity is a vector, L1-penalties are the same for all the weights corresponding to the same block but different components:
+\deqn{for all h, |a_{j,h}|_{L_1} \le c_1[j] \sqrt{p_j},}
+with \eqn{p_j} the number of variables of \eqn{X_j}.
+If sparsity is a matrix, each row \eqn{h} defines the constraints applied to the weights corresponding to components \eqn{h}:
+\deqn{for all h, |a_{j,h}|_{L_1} \le c_1[h,j] \sqrt{p_j}.} It can be estimated by using \link{rgcca_permutation}.}
 
-\item{init}{The mode of initialization to use in RGCCA algorithm. The alternatives are either by Singular Value Decompostion ("svd") or random ("random") (Default: "svd").}
+\item{init}{A character giving the mode of initialization to use in the algorithm. The alternatives are either by Singular Value Decompostion ("svd") or random ("random") (default: "svd").}
 
-\item{bias}{A logical value for biaised or unbiaised estimator of the var/cov (default: bias = TRUE).}
+\item{bias}{A logical value for biaised (\eqn{1/n}) or unbiaised (\eqn{1/(n-1)}) estimator of the var/cov (default: bias = TRUE).}
 
-\item{tol}{The stopping value for convergence.}
+\item{tol}{An integer giving the value for stopping the algorithm convergence.}
 
-\item{response}{Integer representing the number of the response block. Indeed, when a supervised analysis is chosen (plspm, pls), the response block has to be specified.}
+\item{response}{An integer giving the position of the response block within 
+the blocks (activates the supervised mode).}
 
 \item{superblock}{A boolean giving the presence (TRUE) / absence (FALSE) of
 a superblock}
@@ -59,36 +75,41 @@ a superblock}
 \item{\code{"sem"}}{ corresponds to impute the data with EM-type algorithms with superblock approach}
 \item{\code{"knn1"}}{ corresponds to impute the data with the 1-Nearest Neighbor. 1 can be replace by another number (such as knn3) to impute with the 3-Nearest Neighbors.}}}
 
-\item{verbose}{If verbose = TRUE, the progress will be report while computing (default: TRUE).}
+\item{verbose}{A logical value indicating if the progress of the analysis will be reported while computing.}
 
-\item{quiet}{If TRUE, does not print warnings}
+\item{quiet}{A logical value indicating if it should not print warnings}
 
-\item{knn.k}{Used only if missing values in the blocks are estimated by k-NN methods. Number of k nearest neighbors. Can also be "auto" for automatic selection.}
+\item{knn.k}{Used only if missing values in the blocks are estimated by k-NN methods. An integer giving the number of k nearest neighbors. Can also be "auto" for automatic selection.}
 
-\item{knn.output}{"mean", "random" or "weightedMean" : Used only if missing values in the blocks are estimated by k-NN methods. Returns respectively the average of the k nearest neigbors, one selected randomly, or an average weighted by the distance of the k NN}
+\item{knn.output}{A character among "mean", "random" or "weightedMean" : Used only if missing values in the blocks are estimated by k-NN methods. Returns respectively the average of the k nearest neigbors, one selected randomly, or an average weighted by the distance of the k NN}
 
-\item{knn.klim}{Used only if missing values in the blocks are estimated by k-NN methods, and if knn.k is "auto". k limits (if k is not a number, optimal k between klim[1] and klim[2] is calculated )}
+\item{knn.klim}{Used only if missing values in the blocks are estimated by k-NN methods, and if knn.k is "auto". An integer giving the k limits (if k is not a number, optimal k between klim[1] and klim[2] is calculated )}
 
-\item{knn.scale_block}{Used only if missing values in the blocks are estimated by k-NN methods.if TRUE the distance for Nearest Neigbors takes the size of blocks into account}
+\item{knn.scale_block}{Used only if missing values in the blocks are estimated by k-NN methods. A logical value indicating if the distance for Nearest Neigbors takes the size of blocks into account}
 }
 \value{
 A RGCCA object
 
-\item{Y}{A list of \eqn{J} elements. Each element of \eqn{Y} is a matrix that contains the RGCCA components for the corresponding block.}
+\item{Y}{A list of \eqn{J} elements. Each element of \eqn{Y} is a matrix that contains the analysis components for the corresponding block.}
 
 \item{a}{A list of \eqn{J} elements. Each element of \eqn{a} is a matrix that contains the outer weight vectors for each block.}
 
 \item{astar}{A list of \eqn{J} elements. Each element of astar is a matrix defined as Y[[j]][, h] = A[[j]]\%*\%astar[[j]][, h].}
 
-\item{tau}{A vector or matrix that contains the values of the shrinkage parameters applied to each block and each dimension (user specified).}
+\item{tau}{Either a 1*J vector or a \eqn{\mathrm{max}(ncomp) \times J} matrix containing the values
+of the regularization parameters. Tau varies from 0 (maximizing the correlation) to 1 (maximizing the covariance).
+If tau = "optimal" the regularization paramaters are estimated for each block and each dimension using the Schafer and Strimmer (2005)
+analytical formula . If tau is a \eqn{1\times J} vector, tau[j] is identical across the dimensions of block \eqn{\mathbf{X}_j}.
+If tau is a matrix, tau[k, j] is associated with \eqn{\mathbf{X}_{jk}} (\eqn{k}th residual matrix for block \eqn{j}). It can be estimated by using \link{rgcca_permutation}.}
 
-\item{crit}{A vector that contains the values of the criteria across iterations.}
+\item{crit}{A vector of integer that contains for each component the values of the analysis criteria across iterations.}
 
 \item{mode}{A \eqn{1 \times J} vector that contains the formulation ("primal" or "dual") applied to each of the \eqn{J} blocks within the RGCCA alogrithm}
 
-\item{AVE}{indicators of model quality based on the Average Variance Explained (AVE): AVE(for one block), AVE(outer model), AVE(inner model).}
+\item{AVE}{A list of numerical values giving the indicators of model quality based on the Average Variance Explained (AVE): AVE(for each block), AVE(outer model), AVE(inner model).}
 
-\item{A}{ blocks used in the calculations. Imputed block if imputation method were chosen}
+\item{A}{A list of matrices giving the \eqn{J} blocks of variables \eqn{\mathbf{X_1}, \mathbf{X_2}, ..., \mathbf{X_J}}
+These matrices, used in the calculations, are imputed if an imputation method is selected.}
 
 \item{call}{Call of the function}
 }
@@ -97,7 +118,7 @@ RGCCA is a generalization
 of regularized canonical correlation analysis to three or more sets of variables. SGCCA extends RGCCA to address the issue of variable selection
 }
 \details{
-Given \eqn{J} matrices \eqn{\mathbf{X_1}, \mathbf{X_2}, ..., \mathbf{X_J}} that represent 
+Given J matrices \eqn{\mathbf{X_1}, \mathbf{X_2}, ..., \mathbf{X_J}} that represent 
 \eqn{J} sets of variables observed on the same set of \eqn{n} individuals. The matrices 
 \eqn{\mathbf{X_1}, \mathbf{X_2}, ..., \mathbf{X_J}} must have the same number of rows, 
 but may (and usually will) have different numbers of columns. The aim of RGCCA is to study 
@@ -133,40 +154,57 @@ i.e. each block is deflated with respect to its own component.
 Moreover, we stress that the numbers of components per block could differ from one block to another.
 }
 \examples{
-#############
-# Example 1 #
-#############
+############################################
+# Example 1: SGCCA #
+############################################
+# Create the dataset
 data(Russett)
-X_agric =as.matrix(Russett[,c("gini","farm","rent")])
-X_ind = as.matrix(Russett[,c("gnpr","labo")])
-X_polit = as.matrix(Russett[ , c("demostab", "dictator")])
-A = list(X_agric, X_ind, X_polit);names(A)=c("Agri","Indus","Polit")
-#Define the design matrix (output = C) 
-C = matrix(c(0, 0, 1, 0, 0, 1, 1, 1, 0), 3, 3)
-result.rgcca = rgcca(A,type="rgcca", connection=C, tau = c(1, 1, 1),superblock=FALSE,
- scheme = "factorial", scale = TRUE)
-lab = as.vector(apply(Russett[, 9:11], 1, which.max))
-plot(result.rgcca,type="ind",block=1:2,comp=rep(1,2),resp=lab)
+blocks = list(
+    agriculture = Russett[, seq(3)], 
+    industry = Russett[, 4:5],
+    politic = Russett[, 6:11]
+)
+
+# Tune the model to find the best sparsity coefficients (all the blocs are connected together)
+perm = rgcca_permutation(blocks, n_cores = 1, par_type = "sparsity", n_run = 10)
+print(perm)
+plot(perm)
+
+res_sgcca = rgcca(blocks, type = "sgcca", sparsity = perm$bestpenalties)
+plot(res_sgcca, type = "network")
+plot(res_sgcca, type = "ave")
+
+# Select the most significant variables
+b = bootstrap(res_sgcca, n_cores = 1, n_boot = 100)
+plot(b, n_cores = 1)
+
 ############################################
 # Example 2: RGCCA and multiple components #
 ############################################
-result.rgcca = rgcca(A,type="rgcca",connection= C, superblock=FALSE,
-tau = rep(1, 3), ncomp = c(2, 2, 2),
-                     scheme = "factorial", verbose = TRUE)
-plot(result.rgcca,resp=lab)
-plot(result.rgcca,type="ave")
-plot(result.rgcca,type="network")
-plot(result.rgcca,type="weight")
+res_rgcca = rgcca(blocks, type = "rgcca", connection = C, superblock = FALSE, 
+tau = rep(1, 3), ncomp = c(2, 2, 2), scheme = "factorial", verbose = TRUE)
+
+politic = as.vector(apply(Russett[, 9:11], 1, which.max)) 
+plot(res_rgcca, type = "ind", block = 1:2, comp = rep(1, 2), resp = politic)
+
+plot(res_rgcca, type = "ave")
+plot(res_rgcca, type = "network")
+plot(res_rgcca, type = "weight", block = 1)
+plot(res_rgcca, type = "cor")
+
 ############################################
-# Example : SGCCA #
+# Example 3: Supevised mode #
 ############################################
-result.sgcca = rgcca(A,type="sgcca",connection= C, superblock=FALSE,
-sparsity = rep(0.8, 3), ncomp = c(2, 2, 2),
-                     scheme = "factorial", verbose = TRUE)
-plot(result.sgcca,resp=lab)
-plot(result.sgcca,type="ave")
-plot(result.sgcca,type="network")
-plot(result.sgcca,type="weight")
+# Tune the model for explaining the politic block (politic connected to the two other blocks)
+cv = rgcca_cv(blocks, response = 3, ncomp = 2, n_cores = 1)
+print(cv)
+plot(cv)
+
+res_rgcca = rgcca(blocks, response = 3, ncomp = 2, tau = cv$bestpenalties)
+plot(res_rgcca, type = "both")
+
+b = bootstrap(res_rgcca, n_cores = 1, n_boot = 10)
+plot(b, n_cores = 1)
 }
 \references{
 Tenenhaus A. and Tenenhaus M., (2011), Regularized Generalized Canonical Correlation Analysis, Psychometrika, Vol. 76, Nr 2, pp 257-284.

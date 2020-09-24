@@ -8,7 +8,7 @@ print_comp(rgcca_res, n = 1, i = length(rgcca_res$AVE$AVE_X),
   outer = FALSE)
 }
 \arguments{
-\item{rgcca_res}{A list giving the results of a R/SGCCA}
+\item{rgcca_res}{A RGCCA object (see  \code{\link[RGCCA]{rgcca}})}
 
 \item{n}{An integer giving the index of the analysis component}
 
@@ -17,10 +17,10 @@ print_comp(rgcca_res, n = 1, i = length(rgcca_res$AVE$AVE_X),
 \item{outer}{A boolean for ave plot case}
 }
 \value{
-A string for the variance on the component
+A character for the variance on the component
 }
 \description{
-Prints the percent of explained variance for a component of a block 
+Print the percent of explained variance for a component of a block
 (by default, the superblock or the last one) analysed by R/SGCCA
 }
 \seealso{

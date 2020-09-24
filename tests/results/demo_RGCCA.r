@@ -58,8 +58,8 @@ print(resBootstrap)
 # Supervized approach
 #--------------------
 # Step one - tuning the parameters
-res_cv=rgcca_cv(blocks,response=3,par="ncomp")
-res_cv=rgcca_cv(blocks,response=3,par="tau")
+res_cv=rgcca_cv(blocks,response=3,par_type="ncomp")
+res_cv=rgcca_cv(blocks,response=3,par_type="tau")
 
 block_y=matrix(apply(Russett[,9:11],1,which.max),ncol=1)
 rownames(block_y)=rownames(Russett)
@@ -67,7 +67,7 @@ factor(block_y)
 blocks2=list(agri=Russett[,1:3],ind=Russett[,4:5],resp=block_y)
 rgcca_cv(blocks2,response=3,type_cv="classification",fit="lda")
 rgcca_cv(blocks2,response=3)
-rgcca_cv(blocks2,response=3,par="ncomp")
+rgcca_cv(blocks2,response=3,par_type="ncomp")
 
 res=rgcca(res_cv)
 print(res_cv,bars="stderr")
@@ -91,7 +91,7 @@ plot(boot,comp=2)
 
 # supervised sgcca
 #-----------------
-res=rgcca_cv(blocks,response=3,par="sparsity",type="sgcca")
+res=rgcca_cv(blocks,response=3,par_type="sparsity",type="sgcca")
 plot(res)
 
 res_sparsity=rgcca(blocks,sparsity=res$bestpenalties)
@@ -142,7 +142,7 @@ plot(resRGCCA,resp=response,type="cor")
 
 # permutation
 perm.values = matrix(c(0.6, 0.75, 0.5,0.7, 0.75, 0.5,0.8, 0.75, 0.5), 3, 3, byrow = TRUE)
-res_permut=rgcca_permutation(blocks=blocks,perm.par="tau",perm.value=perm.values,nperm=100)
+res_permut=rgcca_permutation(blocks=blocks,par_type="tau",par_value=perm.values,n_run=100)
 print(res_permut)
 summary(res_permut)
 plot(res_permut,type="crit")
@@ -167,7 +167,7 @@ summary(resBootstrap)
 #--------------------------
 
 # Step one - tuning the parameters
-res_permut=rgcca_permutation(blocks=blocks,superblock=TRUE,type="rgcca",scheme="factorial",nperm=100)
+res_permut=rgcca_permutation(blocks=blocks,superblock=TRUE,type="rgcca",scheme="factorial",n_run=100)
 print(res_permut)
 names(res_permut)
 plot(res_permut)
@@ -252,7 +252,7 @@ plot(res_permut)
 print(res_permut)
 #choice of the number of components
 par_value=matrix(c(1,1,1,2,2,1),2,3)
-resCV=rgcca_cv(blocks,response=3,type="rgcca",par="ncomp",par_value=par_value,validation="kfold",k=5)
+resCV=rgcca_cv(blocks,response=3,type="rgcca",par_type="ncomp",par_value=par_value,validation="kfold",k=5)
 plot(resCV)
 print(resCV)
 
@@ -301,10 +301,10 @@ plot_ave(resRGCCA)
 
 # choice of c1
 #res_permut=rgcca_permutation(blocks=blocks,type="sgcca",p_c1=TRUE)
-res_permut=rgcca_permutation(blocks=blocks,ncomp=c(2,2,1),perm.par="tau",perm.value=c(0.5,0.6,0.7)) # runs
+res_permut=rgcca_permutation(blocks=blocks,ncomp=c(2,2,1),par_type="tau",par_value=c(0.5,0.6,0.7)) # runs
 plot(res_permut)
 #choice of the number of components
-res_permut=rgcca_permutation(blocks=blocks,perm.par="ncomp")
+res_permut=rgcca_permutation(blocks=blocks,par_type="ncomp")
 plot(res_permut)
 
 # variable selection (post process? significant variables)
@@ -316,6 +316,58 @@ plot(resBootstrap,i_block=2)
 require(gliomaData)
 data(ge_cgh_locIGR)
 A <- ge_cgh_locIGR$multiblocks
+#A[[3]]<- as.character(apply(A$y,1,which.max))
+C <-  matrix(c(0, 0, 1, 0, 0, 1, 1, 1, 0), 3, 3)
+
+fit.rgcca = rgcca(blocks=A, connection=C,
+                  type="sgcca", response=3,sparsity = c(.071,.2, 1),
+                  ncomp = c(1, 1, 1),
+                  scheme = "horst",
+                  scale = TRUE, scale_block = TRUE,
+                  verbose = TRUE,init="svd")
+
+fit.rgcca$Y[[1]]==fit.sgcca$Y[[1]]
+head(fit.rgcca$a[[3]])
+head(fit.sgcca$a[[3]])
+# to be tested
+
+A[[3]]<- as.character(apply(A$y,1,which.max))
+rgcca_res=rgcca(blocks=A, connection=C,
+                type="sgcca", response=3)
+for(i in 1:20)
+{
+    print(i)
+    set.seed(i)
+    sample_i=sample(1:53,40)
+    sample_not_i=(1:53)[!(1:53)%in%sample_i]
+    A_train=lapply(A,function(x){ if(!is.null(dim(x))) {return(x[sample_i,])}else{return(x[sample_i])}})
+    A_test=lapply(A,function(x){ if(!is.null(dim(x))) {return(x[sample_not_i,])}else{return(x[sample_not_i])}})
+    
+    rgcca_res=rgcca(blocks=A_train, connection=C,sparsity=c(1,1,1),
+                    type="sgcca", response=3)
+    #res_test  = rgcca_predict(rgcca_res, newA=A_test,new_scaled=FALSE,fit="lda",model="classification",bloc_to_pred="y") 
+ 
+    rgcca_crossvalidation(
+        rgcca_res,
+        validation = "kfold",
+        model = "classification",
+        fit = "lda",
+        new_scaled = TRUE,
+        k = 5,
+        n_cores =1)$list_scores
+}
+
+res_cv=rgcca_cv(blocks=A, connection=C,
+                type="sgcca", response=3,par_type="sparsity",n_run=1,n_cores=1)
+
+res_cv=rgcca_cv(blocks=A, connection=C,type_cv="classification",fit="lda",
+                type="sgcca", response=3,par_type="sparsity",n_run=1,n_cores=1,par_length=3)
+
+
+rgcca_permutation(A, connection=C, par_type = "sparsity", n_run = 10)
+
+# 
+
 A[[1]]=cbind(A[[1]],A[[1]],A[[1]]);colnames(A[[1]])=paste("V",1:ncol(A[[1]]))
 Loc <- factor(ge_cgh_locIGR$y) ; levels(Loc) <- colnames(ge_cgh_locIGR$multiblocks$y)
 C <-  matrix(c(0, 0, 1, 0, 0, 1, 1, 1, 0), 3, 3)

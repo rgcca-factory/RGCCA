@@ -17,30 +17,22 @@
 #' when using this deflation strategy. The so-called symmetric deflation is considered in this implementation,
 #' i.e. each block is deflated with respect to its own component. 
 #' Moreover, we stress that the numbers of components per block could differ from one block to another. 
-#' @param A  A list that contains the \eqn{J} blocks of variables \eqn{X_1, X_2, ..., X_J}.
-#' @param C  A design matrix that describes the relationships between blocks (default: complete design).
+#' @inheritParams select_analysis
+#' @inheritParams rgccaNa
+#' @inheritParams rgccad
 #' @param sparsity Either a \eqn{1*J} vector or a \eqn{max(ncomp) * J} matrix encoding the L1 constraints applied to the outer weight vectors.
 #' Elements of sparsity vary between \eqn{1/sqrt(p_j)} and 1 (larger values of sparsity correspond to less penalization).
 #' If sparsity is a vector, L1-penalties are the same for all the weights corresponding to the same block but different components:
 #' \deqn{for all h, |a_{j,h}|_{L_1} \le c_1[j] \sqrt{p_j},}
 #' with \eqn{p_j} the number of variables of \eqn{X_j}.
 #' If sparsity is a matrix, each row \eqn{h} defines the constraints applied to the weights corresponding to components \eqn{h}:
-#' \deqn{for all h, |a_{j,h}|_{L_1} \le c_1[h,j] \sqrt{p_j}.}
-#' @param ncomp  A \eqn{1*J} vector that contains the numbers of components for each block (default: rep(1, length(A)), which means one component per block).
-#' @param scheme Either  "horst", "factorial" or "centroid" (Default: "centroid").
-#' @param scale  If scale = TRUE, each block is standardized to zero means and unit variances and then divided by the square root of its number of variables (default: TRUE).
-#' @param init Mode of initialization use in the SGCCA algorithm, either by Singular Value Decompostion ("svd") or random ("random") (default : "svd").
-#' @param bias A logical value for biaised or unbiaised estimator of the var/cov.
-#' @param verbose  Will report progress while computing if verbose = TRUE (default: TRUE).
-#' @param tol Stopping value for convergence.
-#' @param scale_block If TRUE, all blocks are weighted by their own variance: all the blocks have the same weight
-#' @param prescaling if TRUE, the saling step is not run in sgcca
-#' @param quiet if TRUE, does not print warnings
-#' @return \item{Y}{A list of \eqn{J} elements. Each element of Y is a matrix that contains the SGCCA components for each block.}
-#' @return \item{a}{A list of \eqn{J} elements. Each element of a is a matrix that contains the outer weight vectors for each block.}
+#' \deqn{for all h, |a_{j,h}|_{L_1} \le c_1[h,j] \sqrt{p_j}.} It can be estimated by using \link{rgcca_permutation}.
+#' @return \item{Y}{A list of \eqn{J} elements. Each element of \eqn{Y} is a matrix that contains the analysis components for the corresponding block.}
+#' @return \item{a}{A list of \eqn{J} elements. Each element of \eqn{a} is a matrix that contains the outer weight vectors for each block.}
 #' @return \item{astar}{A list of \eqn{J} elements. Each element of astar is a matrix defined as Y[[j]][, h] = A[[j]]\%*\%astar[[j]][, h]}
-#' @return \item{call}{Call of the function}#' @return \item{crit}{A vector that contains the values of the objective function at each iterations.}
-#' @return \item{AVE}{Indicators of model quality based on the Average Variance Explained (AVE): AVE(for one block), AVE(outer model), AVE(inner model).}
+#' @return \item{call}{Call of the function}
+#' @return \item{crit}{A vector of integer that contains for each component the values of the analysis criteria across iterations.}
+#' @return \item{AVE}{A list of numerical values giving the indicators of model quality based on the Average Variance Explained (AVE): AVE(for each block), AVE(outer model), AVE(inner model).}
 #' @references Tenenhaus, A., Philippe, C., Guillemot, V., Le Cao, K. A., Grill, J., and Frouin, V. , "Variable selection for generalized canonical correlation analysis.," Biostatistics, vol. 15, no. 3, pp. 569-583, 2014. 
 #' @title Variable Selection For Generalized Canonical Correlation Analysis (SGCCA)
 #' @examples
@@ -105,7 +97,8 @@
 #' init = "svd"
 #' result.sgcca = sgcca(A, C, sparsity = matrix(c(.071,.2, 1, 0.06, 0.15, 1), nrow = 2, byrow = TRUE),
 #'                      ncomp = c(2, 2, 1), scheme = "factorial", scale = TRUE, bias = TRUE, 
-#'                      init = init, verbose = TRUE)}
+#'                      init = init, verbose = TRUE)
+#' }
 #'@export sgcca
 
 
@@ -165,7 +158,7 @@ sgcca <- function (A, C = 1-diag(length(A)), sparsity = rep(1, length(A)), ncomp
         #     }
         # }
     }
-  
+
     ####################################
     # sgcca with 1 component per block #
     ####################################

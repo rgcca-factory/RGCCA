@@ -1,8 +1,8 @@
-#' Creates the nodes for a design matrix
-#' 
-#' @inheritParams plot_var_2D
-#' @return A dataframe with rgcca_res$call$blocks in rows and the number of variables, of rows
-#' and tau or sparsity in columns
+# Creates the nodes for a design matrix
+# 
+# @inheritParams plot_var_2D
+# @return A dataframe with rgcca_res$call$blocks in rows and the number of variables, of rows
+# and tau or sparsity in columns
 get_nodes <- function(rgcca_res) {
 
     if ( tolower(rgcca_res$call$type) %in% c("sgcca", "spls", "spca")) {

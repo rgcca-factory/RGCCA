@@ -1,11 +1,11 @@
 # Author: Etienne CAMENEN
 # Date: 2019
-# Contact: arthur.tenenhaus@l2s.centralesupelec.fr
-# Key-words: omics, RGCCA, multi-block
+# Contact: arthur.tenenhaus@centralesupelec.fr
+# Keywords: RGCCA, multi-block
 # EDAM operation: analysis, correlation, visualisation
 #
 # Abstract: Performs multi-variate analysis (PCA, CCA, PLS, R/SGCCA, etc.)
-# and produces textual and graphical outputs (e.g. variables and individuals
+# and produces textual and graphical outputs (e.g. variables and samples
 # plots).
     
 server <- function(input, output, session) {
@@ -375,7 +375,7 @@ server <- function(input, output, session) {
             choices = c(#`Train-test` = "test",
                 `K-fold` = "kfold",
                 `Leave-one-out` = "loo"),
-            selected = "loo"
+            selected = "kfold"
         )
         if (BSPLUS)
             ui <- shinyInput_label_embed(
@@ -383,10 +383,10 @@ server <- function(input, output, session) {
                 icon("question") %>%
                     bs_embed_tooltip(title = "To tune the sparsity coefficient (if the model is sparse) or
                                      tau (otherwise), in supervised mode, we observe the performance (RMSE)
-                                     of a model from which individuals were randomly drawn. These individuals
+                                     of a model from which samples were randomly drawn. These samples
                                      can be divided into k folds where the model will be tested on each fold
                                      and trained on the others. For small datasets (<30 samples), it is 
-                                     recommended to use as many folds as there are individuals (leave-one-out; 
+                                     recommended to use as many folds as there are samples (leave-one-out; 
                                      loo). The best combination of parameters is the one where, on average, 
                                      the samples perform best.")
             )
@@ -852,9 +852,9 @@ server <- function(input, output, session) {
         assign("analysis_type", analysis_type, .GlobalEnv)
         
         if (analysis_type != "SGCCA")
-             assign("perm.par", "tau", .GlobalEnv)
+             assign("par_type", "tau", .GlobalEnv)
         else
-            assign("perm.par", "sparsity", .GlobalEnv)
+            assign("par_type", "sparsity", .GlobalEnv)
 
         return(blocks)
     }
@@ -931,8 +931,7 @@ server <- function(input, output, session) {
                     response = response,
                     validation = input$val,
                     k = input$kfold,
-                    n_cv = input$ncv,
-                    n_cores = parallel::detectCores() - 1,
+                    n_run = input$ncv,
                     superblock = (!is.null(input$supervised) &&
                                     !is.null(input$superblock) && input$superblock),
                     scale = FALSE,
@@ -944,10 +943,10 @@ server <- function(input, output, session) {
                     ncomp = getNcomp()))
                 if (tolower(analysis_type) %in% c("sgcca", "spca", "spls")) {
                     func[["sparsity"]] <- tau
-                    func[["par"]] <- "sparsity"
+                    func[["par_type"]] <- "sparsity"
                 } else {
                     func[["tau"]] <- tau
-                    func[["par"]] <- "tau"
+                    func[["par_type"]] <- "tau"
                 }
                 showWarn(eval(as.call(func)))
             },
@@ -963,7 +962,7 @@ server <- function(input, output, session) {
     getCrossVal2 <-  function(){
         assign(
             "crossval",
-            rgcca_crossvalidation(rgcca_out, validation = input$val, k = input$kfold, n_cores = 1),
+            rgcca_crossvalidation(rgcca_out, validation = input$val, k = input$kfold),
             .GlobalEnv
         )
         showWarn(message(paste("CV score:", round(crossval$score, 4))), show = FALSE)
@@ -985,8 +984,8 @@ server <- function(input, output, session) {
             func <- quote(
                 rgcca_permutation(
                     blocks_without_superb,
-                    perm.par = perm.par,
-                    nperm = input$nperm,
+                    par_type = par_type,
+                    n_run = input$nperm,
                     connection = connection,
                     response = input$names_block_response,
                     superblock = (!is.null(input$supervised) &&
@@ -1024,6 +1023,7 @@ server <- function(input, output, session) {
         assign("selected.var", NULL, .GlobalEnv)
         show(selector = "#navbar li a[data-value=Bootstrap]")
         show(selector = "#navbar li a[data-value='Bootstrap Summary']")
+        updateTabsetPanel(session, "navbar", selected = "Bootstrap")
     }
 
     load_responseShiny = function() {
@@ -1477,7 +1477,7 @@ server <- function(input, output, session) {
             else 
                 compy <- 2
             save_var(rgcca_out, file = "variables.txt")
-            save_ind(rgcca_out, file = "individuals.txt")
+            save_ind(rgcca_out, file = "samples.txt")
             save(analysis, file = "rgcca_result.RData")
             if(!is.null(boot))
                 save_plot("bootstrap.pdf", plotBoot())
@@ -1552,7 +1552,7 @@ server <- function(input, output, session) {
                 msgSave()
             })
 
-            save_ind(rgcca_out, file = "individuals.txt")
+            save_ind(rgcca_out, file = "samples.txt")
             p <- samples()
 
             if (is(p, "gg")) {

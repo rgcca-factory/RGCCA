@@ -9,6 +9,8 @@ C = matrix(c(0, 0, 1, 0, 0, 1, 1, 1, 0), 3, 3);
 res = rgcca(A, ncomp=rep(1,3),tau = c(1, 1, 1), scheme = "factorial", scale = TRUE,verbose=FALSE,superblock=FALSE)
 perm=rgcca_permutation(blocks=A,n_cores=1)
 print(perm)
+plot(perm,bars="quantile")
+plot(perm,bars="sd")
 
 
 

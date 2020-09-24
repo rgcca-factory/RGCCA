@@ -1,18 +1,26 @@
 #' Plot a bootstrap in 2D
 #'
-#' Biplot of the top variables from a SGCCA bootstrap with the number of
-#' non-zero occurrences in x-axis and the boot-ratio (mean/sd) in y-axis.
+#' Graph of the best variables from a bootstrap with, in x-axis, the number of
+#' non-zero occurences (SGCCA) or the significant 95% bootstrap 
+#' intervals (RGCCA; '*' or 'ns'; see 'p.vals' in details for 
+#' \code{\link[RGCCA]{get_bootstrap}}). In in y-axis are the bootstrap-ratios (mean/sd) .
 #' Negative weights are colored in red and the positive ones are in green.
 #'
 #' @inheritParams plot2D
 #' @inheritParams get_bootstrap
-#' @param colors reoresenting a vector of colors
-#' @param b A matrix of boostrap
-#' @param x A character for the column to plot in x-axis
-#' @param y A character for the column to plot in y-axis
-#' @param df_b Result of get_bootstrap functions or dataframe #TODO
+#' @param b A boostrap object \code{\link[RGCCA]{bootstrap}}
+#' @param x A character for the index to plot in x-axis (see details).
+#' @param y A character for the index to plot in y-axis (see details).
+#' @param df_b A get_bootstrap object \code{\link[RGCCA]{get_bootstrap}}
+#' @details 
+#' \itemize{
+#' \item 'estimate' for RGCCA weights
+#' \item 'bootstrap_ratio' for the mean of the bootstrap weights / their standard error
+#' \item 'sign' for significant 95% bootstrap interval
+#' \item 'occurrences' for non-zero occurences
+#' \item 'mean' for the mean of the bootstrap weights
+#' }
 #' @examples
-#' library(RGCCA)
 #' data("Russett")
 #' blocks = list(agriculture = Russett[, seq(3)], industry = Russett[, 4:5],
 #'     politic = Russett[, 6:11] )

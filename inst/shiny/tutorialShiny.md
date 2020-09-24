@@ -264,7 +264,7 @@ For this type of analysis and the next (permutation), due to a random process, d
 *Fig. 10 : The highest average weight, crossed with the significance, allows the selection of the gross national product as a variable of interest.*
 
 ### 4.6. Permutation
-Here, penalties are selected as the choice of parameters to swap and a number of permutations of 1000 (could be more than 5 minutes to run). Be careful with large data sets: first test the time it takes 10 permutations before increasing the number of permutations. On this graphics, the abscissa shows the combinations tested during the permutations. On the ordinates are the Z-score or significance score. The three horizontal bars in dashed lines correspond to the three significance thresholds from the lowest to the highest bar: 95%, 99% and 99.9%.
+Here, penalties are selected as the choice of parameters to permute and a number of permutations of 1000 (could be more than 5 minutes to run). Be careful with large data sets: test the time it takes 10 permutations before increasing the number of permutations. On this graphics, the abscissa shows the combinations tested during the permutations. On the ordinates are the Z-score or significance score. The three horizontal bars in dashed lines correspond to the three significance thresholds from the lowest to the highest bar: 95%, 99% and 99.9%.
 
 In our example, with a risk of 99.9%, the best choice of combinations is the one with the lowest sparsity coefficients. This choice can guide our decision in setting the parameters of our model.
 

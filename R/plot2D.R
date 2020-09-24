@@ -1,22 +1,25 @@
 # 'Plot of components space
 #'
-#' Plots RGCCA components in a bi-dimensional space
+#' Plot RGCCA components in a bi-dimensional space
 #'
-#' @param compx Integer corresponding to the number of x-component
-#' @param compy Integer corresponding to the number of y-component
-#' @param i_block Integer corresponding to the first block
-#' @param text If TRUE, labels are plotted. If FALSE points are plotted.
-#' @param i_block_y Integer corresponding to the second block
-#' @param no_overlap If TRUE, the potential overlaps are reduced
-#' @param rgcca_res Result of rgcca function
+#' @param compx An integer giving the index of the analysis component used
+#' for the x-axis
+#' @param compy An integer giving the index of the analysis component used
+#' for the y-axis
+#' @param i_block An integer giving the index of a list of blocks
+#' @param text A bolean to represent the points with their row names (TRUE)
+#' or with circles (FALSE)
+#' @param i_block_y An integer giving the index of a list of blocks (another
+#' one, different from the one used in i_block)
+#' @param no_overlap A boolean to avoid overlap in plotted text
+#' @param rgcca_res A RGCCA object (see  \code{\link[RGCCA]{rgcca}})
 #' @param df A dataframe
-#' @param title A character with the name of the space (either "Variables" or
-#' "Samples")
+#' @param title A character giving the title of the plot
 #' @param group A vector of character with levels used to color the points
 #' @param name_group A character giving the type of groups (either "Blocs" or
 # "Response")
 #' @param p A ggplot object
-#' @param colors A vectof of character to color quantitative data
+#' @param colors Either a vector of integers (each integer corresponding to a color) or of characters corresponding to names of colors (as "blue",see colors()) or RGB code ("#FFFFFF").
 #' @param cex An integer for the size of the plot parameters
 #' @param cex_main An integer for the size of the title
 #' @param cex_sub An integer for the size of the subtitle
@@ -34,7 +37,6 @@
 # politic = Russett[, 6:11] )
 # rgcca_out = rgcca(blocks)
 # plot2D(rgcca_out, df)
-
 plot2D <- function(
     rgcca_res,
     df,

@@ -1,13 +1,16 @@
 #' plot.naEvolution
 #' 
-#'Plots the impact of increasing missing data on RGCCA
+#'Plot the impact of increasing missing data on RGCCA
+#' @inheritParams plot_var_1D
+#' @inheritParams plot.rgcca
+#' @inheritParams plot2D
 #' @param x A list resulting of naEvolution (\link{naEvolution})
 #' @param type ="rv": Can be also "a" for correlations between axes, "bm" for the percent of similar biomarkers, "rvComplete" if the RV is calculated only on complete dataset, or "rmse" for Root Mean Squares Error.
 #' @param ylim =c(0.8,1) y limits
-#' @param block ="all" or a number indicating the position of the chosen block in the initial list
 #' @param bars ="sd" or "stderr". Indicates which error bar to build
 #' @param main =NULL Title of the graph (before the block name)
 #' @param names.arg  renaming the methods
+#' @param legend If TRUE the legend is diplayed
 #' @param ... Further plot parameters...
 #' @examples 
 #' set.seed(42);X1=matrix(rnorm(350),70,5);X2=matrix(rnorm(280),70,4)
@@ -20,7 +23,7 @@
 #' plot(x=listResults,ylim=c(0,1),type="a")
 #' @importFrom grDevices graphics.off
 #' @export
-plot.naEvolution=function(x,type="rv",ylim=NULL,block=length(x[[1]][[1]][[1]][[1]]),bars="sd",main=NULL,names.arg=NULL,...)
+plot.naEvolution=function(x,type="rv",ylim=NULL,block=length(x[[1]][[1]][[1]][[1]]),bars="sd",main=NULL,names.arg=NULL,legend=FALSE,colors=NULL,...)
 { #type : "rv", "pct" ou "a"
   #bars="sd" or "stderr"
   #  graphics.off()
@@ -46,7 +49,14 @@ plot.naEvolution=function(x,type="rv",ylim=NULL,block=length(x[[1]][[1]][[1]][[1
   }
   namesMethod=as.character(names(x[[1]][[1]]))
   #colMethod=rainbow(5)[1:length(namesMethod)]
-  colMethod=c("cornflowerblue","chocolate1","chartreuse3","red","blueviolet","darkturquoise","darkgoldenrod1","coral","bisque4","darkorchid1","deepskyblue1")[1:length(namesMethod)]
+  if(is.null(colors))
+  {
+     colMethod=c("cornflowerblue","chocolate1","chartreuse3","red","blueviolet","darkturquoise","darkgoldenrod1","coral","bisque4","darkorchid1","deepskyblue1")[1:length(namesMethod)]
+  }
+  else
+  {
+      colMethod=colors
+  }
   nMeth=0:length(namesMethod)
   pas=1/length(namesMethod)
   names(colMethod)=names(nMeth)=namesMethod
@@ -127,22 +137,23 @@ plot.naEvolution=function(x,type="rv",ylim=NULL,block=length(x[[1]][[1]][[1]][[1
     abline(v=da+pas*max(nMeth),col="dark grey",lty=2)
   }
   # Plotting legend
-
-  if(is.null(names.arg)||length(names.arg)!=length(namesMethod)){leg=namesMethod}else{leg=names.arg}
-  if(block=="all")
+  if(legend)
   {
-    #screen(J+1)
-      plot.new()
-    par(cex=0.8)
-    
-    legend("center",legend=leg,fill=colMethod,box.lwd=0,bty="n")
+      if(is.null(names.arg)||length(names.arg)!=length(namesMethod)){leg=namesMethod}else{leg=names.arg}
+      if(block=="all")
+      {
+          #screen(J+1)
+          plot.new()
+          par(cex=0.8)
+          
+          legend("center",legend=leg,fill=colMethod,box.lwd=0,bty="n")
+      }
+      if(is.numeric(block))
+      {
+          par(cex=0.8)
+          legend("topleft",legend=leg,fill=colMethod,box.lwd=0,bty="n")
+      }
   }
-  if(is.numeric(block))
-  {
-      par(cex=0.8)
-    legend("topleft",legend=leg,fill=colMethod,box.lwd=0,bty="n")
-  }
-par(mfrow=c(1,1))
-
+  par(mfrow=c(1,1)) 
 }
 

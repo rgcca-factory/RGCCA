@@ -2,23 +2,23 @@
 % Please edit documentation in R/plot.rgcca.R
 \name{plot.rgcca}
 \alias{plot.rgcca}
-\title{Plots for RGCCA}
+\title{Plot for RGCCA}
 \usage{
 \method{plot}{rgcca}(x, type = "weight", block = length(x$A),
   comp = 1:2, resp = rep(1, NROW(x$Y[[1]])), remove_var = FALSE,
   text_var = TRUE, text_ind = TRUE, response_name = "Response",
-  no_overlap = FALSE, title = NULL, n_mark = 100, collapse = FALSE,
+  no_overlap = FALSE, title = NULL, n_mark = 30, collapse = FALSE,
   cex = 1, cex_sub = 12, cex_main = 14, cex_lab = 12,
   colors = NULL, ...)
 }
 \arguments{
-\item{x}{Result of rgcca function  (see\code{\link[RGCCA]{rgcca}} )}
+\item{x}{A RGCCA object (see \code{\link[RGCCA]{rgcca}})}
 
-\item{type}{Type among c("ind","var","both","ave","cor","weight","network").  See details.}
+\item{type}{A character among 'ind', 'var', 'both', 'ave', 'cor', 'weight', 'network' (see details).}
 
-\item{block}{vector representing the components to plot}
+\item{block}{A vector of integers giving the index of a list of blocks or a block = 'all' for all of them}
 
-\item{comp}{vector representing the components to plot}
+\item{comp}{An integer giving the index of the analysis components}
 
 \item{resp}{A vector of characters corresponding either to a qualitative
 variable with levels or a continuous variable}
@@ -36,7 +36,7 @@ or with circles (FALSE)}
 
 \item{no_overlap}{A boolean to avoid overlap in plotted text}
 
-\item{title}{Character for the title of the plot}
+\item{title}{A character giving the title of the plot}
 
 \item{n_mark}{An integer giving the number of top variables to select}
 
@@ -50,12 +50,12 @@ or with circles (FALSE)}
 
 \item{cex_lab}{An integer for the size of the axis titles}
 
-\item{colors}{representing a vector of the colors used in the graph. Either a vector of integers (each integer corresponding to a color) or of characters corresponding to names of colors (as "blue",see colors()) or RGB code ("#FFFFFF").}
+\item{colors}{Either a vector of integers (each integer corresponding to a color) or of characters corresponding to names of colors (as "blue",see colors()) or RGB code ("#FFFFFF").}
 
 \item{...}{Further graphical parameters applied to both (individual and variable) spaces}
 }
 \description{
-Plots different outputs of the results obtained by a rgcca function
+Plot different outputs of the results obtained by a rgcca function
 }
 \details{
 \itemize{

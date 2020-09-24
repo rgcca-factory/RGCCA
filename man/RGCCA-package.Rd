@@ -19,33 +19,35 @@ Maintainer: \packageMaintainer{RGCCA}
 \seealso{\link{rgcca},\link{bootstrap},\link{rgcca_predict},\link{rgcca_crossvalidation},\link{rgcca_permutation},\link{get_patternNA}, \link{whichNAmethod},\link{naEvolution}
 }
 \examples{
+# Create the dataset
 data(Russett)
-blocks = list(agriculture = Russett[, seq(3)], industry = Russett[, 4:5],
-    politic = Russett[, 6:11] )
-res_rgcca=rgcca(blocks, response=3)
+blocks = list(
+    agriculture = Russett[, seq(3)], 
+    industry = Russett[, 4:5],
+    politic = Russett[, 6:11]
+)
 
-t0=Sys.time()
-res_rgcca=rgcca(blocks, tau=0)
-print(Sys.time()-t0)
+# Tune the model to find the best sparsity coefficients (all the blocs are connected together)
+perm = rgcca_permutation(blocks, n_cores = 1, par_type = "sparsity", n_run = 10)
+print(perm)
+plot(perm)
 
-cv=rgcca_cv(blocks,response=3,n_cores=1)
+res_sgcca = rgcca(blocks, type = "sgcca", sparsity = perm$bestpenalties)
+plot(res_sgcca, type = "network")
+plot(res_sgcca, type = "ave")
+
+# Select the most significant variables
+b = bootstrap(res_sgcca, n_cores = 1, n_boot = 100)
+plot(b, n_cores = 1)
+
+# Tune the model for explaining the politic block (politic connected to the two other blocks)
+cv = rgcca_cv(blocks, response = 3, ncomp = 2, n_cores = 1)
+print(cv)
 plot(cv)
 
-b=bootstrap(res_rgcca, n_cores=1,n_boot=10)
+res_rgcca = rgcca(blocks, response = 3, ncomp = 2, tau = cv$bestpenalties)
+plot(res_rgcca, type = "both")
 
-plot(b, n_cores=1)
-
-res_rgcca=rgcca(blocks, response=3)
-
-perm=rgcca_permutation(blocks, n_cores=1,nperm=10)
-b=bootstrap(res_rgcca, n_cores=1,n_boot=10)
-
-blockNA=blocks
-blocks[[1]][1,2]=NA
-get_patternNA(blocks)
-#whichNAmethod(blocks)
-naEvolution(blocks)
-
-
+b = bootstrap(res_rgcca, n_cores = 1, n_boot = 10)
+plot(b, n_cores = 1)
 }
-

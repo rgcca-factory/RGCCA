@@ -1,13 +1,13 @@
 #' Compute bootstrap
 #'
-#' Computing boostrap of RGCCA in order to visualize the stability of the weights found in RGCCA
-#' @param rgcca_res Result of a RGCCA (see  \code{\link[RGCCA]{rgcca}} )
-#' @param n_boot A integer for the number of boostraps
+#' Compute boostrap of RGCCA in order to evaluate the stability of the weights found in S/RGCCA
+#' @inheritParams plot2D
+#' @param n_boot An integer for the number of boostraps
 #' @param n_cores An integer for the number of cores used in parallelization 
-#' @param parallelization if TRUE parallelization is run, if FALSE, no parallelisation is run. If NULL (default) parallelization is always used except for Windows in case of length(nperm)<10
-#' @return A list containing two elements: bootstrap and rgcca. bootstrap is a list of produced rgccas while rgcca is the original rgcca.
+#' @param parallelization A logical value to run a parallelization. If parallelization = NULL (default), the parallelization is always performed except for Windows if length(n_boot) < 10.
+#' @return A list containing two objects: 'bootstrap' and 'rgcca'. 
+#' 'bootstrap' is a list a list containing for each block, a matrix with in rows the variables of the blocks and in columns the weight calculated for each bootstrap; 'rgcca' is the original rgcca (see  \code{\link[RGCCA]{RGCCA}}).
 #' @examples
-#' library(RGCCA)
 #' data("Russett")
 #' blocks = list(agriculture = Russett[, seq(3)], industry = Russett[, 4:5],
 #'     politic = Russett[, 6:11] )
@@ -36,14 +36,13 @@ bootstrap <- function(
     }
 
     stopifnot(is(rgcca_res, "rgcca"))
+    if (!is.null(parallelization))
+        check_boolean("parallelization", parallelization)
     check_integer("n_boot", n_boot)
-    check_integer("n_cores", n_cores, 0)
+    check_integer("n_cores", n_cores, min = 0)
 
     if (n_cores == 0)
         n_cores <- 1
-
-    # if (any(unlist(lapply(rgcca$call$blocks, NCOL) > 1000)))
-    #     verbose <- TRUE
 
     message("Bootstrap in progress...", appendLF = F)
 

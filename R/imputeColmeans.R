@@ -1,7 +1,7 @@
-#' Impute a list of matrices by the colmeans
-#' @param A A list of matrices
-#' @return List of the matrices imputed by colmeans
-#' @title Product for Matrices with missing data (pm)
+# Impute a list of matrices by the colmeans
+# @inheritParams rgccad
+# @return List of the matrices imputed by colmeans
+# @title Product for Matrices with missing data (pm)
 
 imputeColmeans=function(A)
 {

@@ -2,7 +2,7 @@
 % Please edit documentation in R/plot2D.R
 \name{plot2D}
 \alias{plot2D}
-\title{Plots RGCCA components in a bi-dimensional space}
+\title{Plot RGCCA components in a bi-dimensional space}
 \usage{
 plot2D(rgcca_res, df, title = "", group = 1, name_group = "Response",
   compx = 1, compy = 2, i_block = 1, p = NULL, text = TRUE,
@@ -11,34 +11,37 @@ plot2D(rgcca_res, df, title = "", group = 1, name_group = "Response",
   cex, cex_point = 3 * cex, cex_lab = 10 * cex)
 }
 \arguments{
-\item{rgcca_res}{Result of rgcca function}
+\item{rgcca_res}{A RGCCA object (see  \code{\link[RGCCA]{rgcca}})}
 
 \item{df}{A dataframe}
 
-\item{title}{A character with the name of the space (either "Variables" or
-"Samples")}
+\item{title}{A character giving the title of the plot}
 
 \item{group}{A vector of character with levels used to color the points}
 
 \item{name_group}{A character giving the type of groups (either "Blocs" or}
 
-\item{compx}{Integer corresponding to the number of x-component}
+\item{compx}{An integer giving the index of the analysis component used
+for the x-axis}
 
-\item{compy}{Integer corresponding to the number of y-component}
+\item{compy}{An integer giving the index of the analysis component used
+for the y-axis}
 
-\item{i_block}{Integer corresponding to the first block}
+\item{i_block}{An integer giving the index of a list of blocks}
 
 \item{p}{A ggplot object}
 
-\item{text}{If TRUE, labels are plotted. If FALSE points are plotted.}
+\item{text}{A bolean to represent the points with their row names (TRUE)
+or with circles (FALSE)}
 
-\item{i_block_y}{Integer corresponding to the second block}
+\item{i_block_y}{An integer giving the index of a list of blocks (another
+one, different from the one used in i_block)}
 
-\item{colors}{A vectof of character to color quantitative data}
+\item{colors}{Either a vector of integers (each integer corresponding to a color) or of characters corresponding to names of colors (as "blue",see colors()) or RGB code ("#FFFFFF").}
 
 \item{collapse}{A boolean to combine the variables of each block as result}
 
-\item{no_overlap}{If TRUE, the potential overlaps are reduced}
+\item{no_overlap}{A boolean to avoid overlap in plotted text}
 
 \item{cex}{An integer for the size of the plot parameters}
 
@@ -51,5 +54,5 @@ plot2D(rgcca_res, df, title = "", group = 1, name_group = "Response",
 \item{cex_lab}{An integer for the size of the axis titles}
 }
 \description{
-Plots RGCCA components in a bi-dimensional space
+Plot RGCCA components in a bi-dimensional space
 }

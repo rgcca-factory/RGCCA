@@ -2,22 +2,22 @@
 % Please edit documentation in R/print.sgcca.permute.R
 \name{print.permutation}
 \alias{print.permutation}
-\title{Prints the results of permutation rgcca}
+\title{Print a permutation object}
 \usage{
 \method{print}{permutation}(x, ...)
 }
 \arguments{
-\item{x}{result of rgcca_permutation}
+\item{x}{A rgcca_permutation object (see  \code{\link[RGCCA]{rgcca_permutation}})}
 
 \item{...}{Further print parameters}
 }
 \description{
-Prints the results of permutation rgcca
+Print a permutation object
 }
 \examples{
 data('Russett')
 A = list(agriculture = Russett[, seq(3)], industry = Russett[, 4:5],
     politic = Russett[, 6:11] )
-res = rgcca_permutation(A, nperm = 5, n_cores = 1)
+res = rgcca_permutation(A, n_run = 5, n_cores = 1)
 print(res)
 }

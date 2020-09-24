@@ -2,19 +2,17 @@
 % Please edit documentation in R/print.rgcca.R
 \name{print.rgcca}
 \alias{print.rgcca}
-\title{Printing rgcca results
-Prints the call of rgcca results}
+\title{Print the call of rgcca results}
 \usage{
 \method{print}{rgcca}(x, ...)
 }
 \arguments{
-\item{x}{a result of rgcca function (see \code{\link{rgcca}})}
+\item{x}{A RGCCA object (see \code{\link{rgcca}})}
 
 \item{...}{other parameters used in print (for the displaying of matrices)}
 }
 \description{
-Printing rgcca results
-Prints the call of rgcca results
+Print rgcca
 }
 \examples{
 data(Russett)

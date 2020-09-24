@@ -20,7 +20,7 @@
 # A[[1]][2, 3] <- runif(1)
 # init : boolean (FALSE by default) for the first block checking
 
-check_blocks <- function(blocks, init = FALSE, n = 2, add_NAlines=FALSE, allow_unnames =  TRUE) {
+check_blocks <- function(blocks, init = FALSE, n = 2, add_NAlines=FALSE, allow_unnames =  TRUE,quiet=FALSE) {
     
   
     msg <- ""
@@ -73,8 +73,11 @@ check_blocks <- function(blocks, init = FALSE, n = 2, add_NAlines=FALSE, allow_u
     # if one of the colnames is identical in one block and another one
     if(sum(duplicated(unlist(sapply(blocks,colnames))))!=0)
     {
-        message("At least one variable name is duplicated: the block names are added for avoiding confusion \n")
-        blocks_i=lapply(1:length(blocks),function(i){x=blocks[[i]];colnames(x)=paste(names(blocks)[i],colnames(blocks[[i]]),sep="_");return(x)})
+        if(!quiet)
+        {
+            message("At least one variable name is duplicated: the block names are added for avoiding confusion \n")
+        }
+       blocks_i=lapply(1:length(blocks),function(i){x=blocks[[i]];colnames(x)=paste(names(blocks)[i],colnames(blocks[[i]]),sep="_");return(x)})
         names(blocks_i)=names(blocks)
         blocks=blocks_i
     }
@@ -93,8 +96,12 @@ check_blocks <- function(blocks, init = FALSE, n = 2, add_NAlines=FALSE, allow_u
         resdup=duplicated(rownames(x));
         if(sum(resdup)!=0)
             {
-                warning(paste0("Rownames are duplicated and were removed : ", rownames(x)[resdup],"\n"))
-            }
+                if(!quiet)
+                {
+                    warning(paste0("Rownames are duplicated and were removed : ", rownames(x)[resdup],"\n"))
+                    
+                }
+         }
         }
         )
     inters_rows <- Reduce(intersect, lapply(blocks, row.names))
@@ -134,12 +141,10 @@ check_blocks <- function(blocks, init = FALSE, n = 2, add_NAlines=FALSE, allow_u
     {
       
         union_rows <- Reduce(union, lapply(blocks,row.names))
-    
         blocks2=lapply(nameBlocks,function(name)
         {
             if(sum(!union_rows%in%rownames(blocks[[name]]))!=0) # if some subjects are missing (in the rownames)
             {
-           
                 message("Some subjects are not present in some blocks. NA lines were added to have blocks with same dimensions")
                 y=matrix(NA,length(union_rows),ncol=ifelse(is.null(dim(blocks[[name]])),1,dim(blocks[[name]])[2]));
                 if(is.null(dim(blocks[[name]]))){colnames(y)=name}else{colnames(y)=colnames(blocks[[name]])};rownames(y)=union_rows
