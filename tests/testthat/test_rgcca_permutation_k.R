@@ -5,7 +5,7 @@ blocks <- list(
     politic = Russett[, 6:11] )
 
 par = expand.grid(rep(list(seq(2)), length(blocks)))
-rgcca(
+resrgcca=rgcca(
     blocks, 
     tol = 1e-3, 
     tau = rep(1, 3), 
@@ -18,12 +18,12 @@ res=rgcca_permutation_k(blocks,tol=1e-3,tau=rep(1,3),ncomp=par[1,],perm=FALSE)
 
 test_that(
     "rgcca_permutationk_without_perm", {
-        expect_equal(round(res,digits=6),1.434355)    
+        expect_equal(round(res,digits=6),0.717216)    
     }
 )
 test_that(
     "rgcca_permutationk_default", {
-        expect_true(res_perm<1.434355)    
+        expect_true(res_perm<0.717216)    
     }
 )
 # test_that(

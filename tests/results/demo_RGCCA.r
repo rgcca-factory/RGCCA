@@ -326,46 +326,34 @@ fit.rgcca = rgcca(blocks=A, connection=C,
                   scale = TRUE, scale_block = TRUE,
                   verbose = TRUE,init="svd")
 
-fit.rgcca$Y[[1]]==fit.sgcca$Y[[1]]
-head(fit.rgcca$a[[3]])
-head(fit.sgcca$a[[3]])
-# to be tested
 
+# to be tested
+mat_values=matrix(c(.071,.2, 1,1,1, 1,.5,.2, 1),nrow=3,byrow=TRUE)
 A[[3]]<- as.character(apply(A$y,1,which.max))
+res_cv=rgcca_cv(blocks=A,type_cv="classification",fit="lda",
+                type="sgcca", response=3,par_type="sparsity",n_run=1,n_cores=1,par_value=mat_values)
+
+plot(res_cv)
+print(res_cv)
 rgcca_res=rgcca(blocks=A, connection=C,
                 type="sgcca", response=3)
-for(i in 1:20)
-{
-    print(i)
-    set.seed(i)
-    sample_i=sample(1:53,40)
-    sample_not_i=(1:53)[!(1:53)%in%sample_i]
-    A_train=lapply(A,function(x){ if(!is.null(dim(x))) {return(x[sample_i,])}else{return(x[sample_i])}})
-    A_test=lapply(A,function(x){ if(!is.null(dim(x))) {return(x[sample_not_i,])}else{return(x[sample_not_i])}})
-    
-    rgcca_res=rgcca(blocks=A_train, connection=C,sparsity=c(1,1,1),
-                    type="sgcca", response=3)
-    #res_test  = rgcca_predict(rgcca_res, newA=A_test,new_scaled=FALSE,fit="lda",model="classification",bloc_to_pred="y") 
- 
-    rgcca_crossvalidation(
-        rgcca_res,
-        validation = "kfold",
-        model = "classification",
-        fit = "lda",
-        new_scaled = TRUE,
-        k = 5,
-        n_cores =1)$list_scores
-}
 
-res_cv=rgcca_cv(blocks=A, connection=C,
-                type="sgcca", response=3,par_type="sparsity",n_run=1,n_cores=1)
 
-res_cv=rgcca_cv(blocks=A, connection=C,type_cv="classification",fit="lda",
-                type="sgcca", response=3,par_type="sparsity",n_run=1,n_cores=1,par_length=3)
+res_cv=rgcca_cv(blocks=A,type_cv="classification",fit="lda",
+                type="sgcca", response=3,par_type="sparsity",n_run=1,par_value=mat_values)
+
+res_cv=rgcca_cv(blocks=A,validation="loo",type_cv="classification",fit="lda",
+                type="sgcca", response=3,par_type="sparsity",n_run=1,par_value=mat_values)
+
+res_cv=rgcca_cv(blocks=A,validation="loo",type_cv="classification",fit="lda",
+                type="rgcca", response=3,par_type="tau",n_run=1,par_value=mat_values)
+res_cv=rgcca_cv(blocks=A,type_cv="classification",fit="lda",
+                type="sgcca", response=3,par_type="sparsity",n_run=1,n_cores=1,par_value=mat_values)
 
 
 rgcca_permutation(A, connection=C, par_type = "sparsity", n_run = 10)
 
+plot(res_cv)
 # 
 
 A[[1]]=cbind(A[[1]],A[[1]],A[[1]]);colnames(A[[1]])=paste("V",1:ncol(A[[1]]))

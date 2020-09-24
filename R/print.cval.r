@@ -43,7 +43,7 @@ print.cval=function(x,bars="quantile",...)
     optimal_y=df[optimal_ind,colnameForOptimal]
     cat(paste0(nrow(x$cv)," configurations were tested. \n"))
     
-   cat(paste0("Validation: ",x$call$validation,ifelse(x$call$validation=="kfold", paste0(" with ",x$call$k," folds and ",x$call$n_run," run(s))"),")")),"\n")
+   cat(paste0("Validation: ",x$call$validation,ifelse(x$call$validation=="kfold", paste0(" with ",x$call$k," folds and ",x$call$n_run," run(s))"))),"\n")
 
     cat("\n")
     print(df)

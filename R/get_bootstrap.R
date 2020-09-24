@@ -162,7 +162,7 @@ get_bootstrap <- function(
                 df$sign[i] <- "*"
         if(!display_order)
         {
-             index <- which(colnames(df)=="mean")
+            index <- which(colnames(df)=="mean")
             db <- data.frame(order_df(df, index, allCol = TRUE)   )
             db <- db[,c("mean","estimate","sd","lower_band","upper_band","p.vals","BH")] 
         }

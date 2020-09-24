@@ -97,7 +97,7 @@ rgcca_permutation_k <- function(
             )
         }
    
-        crit <- res$crit
-        return(sum(sapply(crit, sum)))
+        crit <- res$crit[length(res$crit)]
+        return(sum(crit))
 
 }

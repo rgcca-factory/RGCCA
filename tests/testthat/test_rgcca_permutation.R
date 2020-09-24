@@ -44,6 +44,9 @@ test_that("rgcca_sparsity", {
 # res=rgcca_permutation(blocks, n_cores = 1,superblock=FALSE,par_type="tau",par_value=c(0.8,0.72,0.43))
 # res=rgcca_permutation(blocks, n_cores = 1,superblock=FALSE,par_type="tau",par_value=M[,1:3])
 
+ res_perm=rgcca_permutation(blocks=blocks,n_cores=1,par_type="tau")
+ test_that("rgcca_crit_perm", {expect_true(round(res_perm$crit[length(res_perm$crit)],digits=2)==2.42) })
+
 
 # test_that("rgcca_permutation_optimal_tau", {
 #     expect_is(rgcca_permutation(blocks, tau = "optimal", n_cores = 1), "permutation")

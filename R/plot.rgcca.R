@@ -49,7 +49,10 @@ plot.rgcca=function(x,type="weight",block=length(x$A),comp=1:2,resp=rep(1, NROW(
      if(length(comp)==1){comp=rep(comp,2)}
     compx=comp[1]
     compy=comp[2]
-
+    if(x$call$superblock)
+    {
+        block=length(x$call$blocks)
+    }
     if(length(block)==1)
     {
          if(x$call$ncomp[block]<2)
@@ -62,8 +65,7 @@ plot.rgcca=function(x,type="weight",block=length(x$A),comp=1:2,resp=rep(1, NROW(
 
           }
         block=rep(block,2)
-
-            
+  
     }
     i_block=block[1]
     i_block_y=block[2]
