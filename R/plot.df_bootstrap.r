@@ -4,6 +4,7 @@
 #' (1D) or a biplot (2D) (see details).
 #' @inheritParams plot_var_2D
 #' @inheritParams plot_var_1D
+#' @inheritParams plot.rgcca
 #' @param type A character to select a type of plot among "1D" or "2D"
 #' @param x A bootstrap object (see \code{\link[RGCCA]{bootstrap}})
 #' @inheritParams plot_bootstrap_1D
@@ -30,7 +31,8 @@
 #' intervals (RGCCA). In in y-axis are the bootstrap-ratios (mean/sd) 
 #' Negative weights are colored in red and the positive ones are in green.
 #' }
-plot.bootstrap=function(x,type="1D",block=length(x$rgcca$call$blocks),comp=1,n_mark=30,bars="quantile",colors=NULL,title=NULL,cex=1,n_cores= parallel::detectCores() - 1,...)
+plot.bootstrap=function(x,type="1D",block=length(x$rgcca$call$blocks),comp=1,n_mark=30,bars="quantile",colors=NULL,title=NULL,cex=1,n_cores= parallel::detectCores() - 1,collapse = FALSE, cex_main = 14,
+    cex_sub = 12, cex_point = 10, cex_lab = 10, cex_axis = 10, ...)
 {
     stopifnot(is(x, "bootstrap"))
     check_blockx("block", block, x$rgcca$call$blocks)
@@ -65,10 +67,13 @@ plot.bootstrap=function(x,type="1D",block=length(x$rgcca$call$blocks),comp=1,n_m
             colors = colors,
             comp = comp,
             i_block = block,
-            collapse = FALSE,
-            n_cores =n_cores,
-            bars=bars,
-            ...)
+            collapse = collapse,
+            n_cores = n_cores,
+            bars = bars,
+            cex = 1,
+            cex_main = cex_main,
+            cex_sub = cex_sub,
+            cex_axis = cex_axis)
     }
     if(type=="2D")
     {
@@ -84,13 +89,13 @@ plot.bootstrap=function(x,type="1D",block=length(x$rgcca$call$blocks),comp=1,n_m
                           "bootstraps"),
             colors = NULL,
             cex = cex,
-            cex_main = 14 * cex,
-            cex_sub = 12 * cex,
-            cex_point = 10 * cex,
-            cex_lab = 10 * cex,
+            cex_main = cex_main,
+            cex_sub = cex_point,
+            cex_point = cex_point,
+            cex_lab = cex_lab,
             comp = comp,
             i_block = block,
-            collapse = FALSE,
+            collapse = collapse,
             n_cores = n_cores)
          #   sub="Green line indicates significance at 0.05 with Bonferroni correction")
         }
@@ -106,13 +111,13 @@ plot.bootstrap=function(x,type="1D",block=length(x$rgcca$call$blocks),comp=1,n_m
                           "bootstraps"),
             colors = NULL,
             cex = cex,
-            cex_main = 14 * cex,
-            cex_sub = 12 * cex,
-            cex_point = 10 * cex,
-            cex_lab = 10 * cex,
+            cex_main = cex_main,
+            cex_sub = cex_sub,
+            cex_point = cex_main,
+            cex_lab = cex_lab,
             comp = comp,
             i_block = block,
-            collapse = FALSE,
+            collapse = collapse,
             n_cores = n_cores)
         #   sub="Green line indicates significance at 0.05 with Bonferroni correction")
     }

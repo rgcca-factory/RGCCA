@@ -11,7 +11,7 @@
 #'  The best parameters are in red by default.
 #' @param x result of rgcca_permutation (see  \code{\link[RGCCA]{rgcca_permutation}})
 #' @inheritParams plot_permut_2D
-#' @param ... Further graphical parameters
+#' @inheritParams plot.rgcca
 #' @examples
 #' data("Russett")
 #' A <- list(agriculture = Russett[, seq(3)], industry = Russett[, 4:5],
@@ -23,18 +23,29 @@
 #' plot(perm)
 #' @export
 #' @importFrom ggplot2 ggplot
-plot.permutation=function(x,type="crit",cex = 1, title= NULL, cex_main = 14 * cex,   cex_sub = 12 * cex, bars="points" ,  cex_point = 3 * cex, cex_lab = 19 * cex,...)
-{
-        p1 <- plot_permut_2D(
-            x, 
-            type = type,
-            cex = cex,
-            cex_main=cex_main,
-            cex_sub=cex_sub,
-            bars=bars,
-            ...
-        )
-        plot(p1)
-        #invisible(p1)
-   
+plot.permutation = function(x,
+    type = "crit",
+    cex = 1,
+    title = NULL,
+    cex_main = 14 * cex,
+    cex_sub = 12 * cex,
+    bars = "points" ,
+    cex_point = 3 * cex,
+    cex_lab = 19 * cex,
+    colors = c("red", "grey"),
+    ...){
+
+    p1 <- plot_permut_2D(
+        x,
+        type = type,
+        cex = cex,
+        cex_main = cex_main,
+        cex_sub = cex_sub,
+        bars = bars,
+        cex_point = cex_point,
+        cex_lab = cex_lab,
+        colors  = colors,
+        title = title
+    )
+    plot(p1)
 }
