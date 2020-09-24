@@ -101,6 +101,11 @@ rgcca_cv=function( blocks,
             # cat("n_run value was replaced by 1 (is not relevant for loo option)")
         };n_run=1
     }
+    if(mode(blocks[response])=="character")
+    {
+        type_cv="classification";
+        fit="lda"
+    }
 
     check_boolean("one_value_per_cv", one_value_per_cv)
     check_integer("n_cores", n_cores, min = 0)
@@ -171,15 +176,17 @@ rgcca_cv=function( blocks,
     pb <- txtProgressBar(max=dim(par_type[[2]])[1])
     n_rep=ifelse(one_value_per_cv,n_run,n_run*k)
     res=matrix(NA,dim(par_type[[2]])[1],n_run*k);rownames(res)=apply(round(par_type[[2]],digits=2),1,paste,collapse="-");
-    for(i in 1:dim(par_type[[2]])[1])
+     for(i in 1:dim(par_type[[2]])[1])
         {
+
             if(par_type[[1]]=="ncomp")
             {
                 rgcca_res=rgcca(blocks=blocks, type=type,response=response,ncomp=par_type[[2]][i,],superblock=superblock,scale=scale,scale_block=scale_block,scheme=scheme,tol=tol,method=method,tau=tau, sparsity=sparsity,bias=bias,init=init)
             }
             if(par_type[[1]]=="sparsity")
-            {
+            { 
                 rgcca_res=rgcca(blocks=blocks, type="sgcca",response=response,sparsity=par_type[[2]][i,],superblock=superblock,scale=scale,scale_block=scale_block,scheme=scheme,tol=tol,method=method, ncomp=ncomp,bias=bias,init=init)
+              
             }
             if(par_type[[1]]=="tau")
             {
@@ -213,7 +220,9 @@ rgcca_cv=function( blocks,
                         k = k,
                         n_cores =n_cores,
                         parallelization=parallelization)$list_scores)
+         
                 }
+                
               
             }
   

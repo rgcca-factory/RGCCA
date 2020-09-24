@@ -326,36 +326,47 @@ fit.rgcca = rgcca(blocks=A, connection=C,
                   scale = TRUE, scale_block = TRUE,
                   verbose = TRUE,init="svd")
 
-fit.sgccaNa = sgccaNa(blocks=A, connection=C,
-                  sparsity= c(.071,.2, 1),
-                  ncomp = c(1, 1, 1),
-                  scheme = "horst",
-                  scale = TRUE, scale_block = TRUE,
-                  verbose = TRUE,method="nipals")
-
-fit.sgcca = sgcca(A=A, C=C,
-                    sparsity= c(.071,.2, 1),
-                    ncomp = c(1, 1, 1),
-                    scheme = "horst",
-                    scale = TRUE, scale_block = TRUE,
-                    verbose = TRUE,tol=1e-8)
-A2=scaling(A,scale=TRUE,scale_block=TRUE)
-fit.sgccak = sgccak(A=A2, C=C,
-                  sparsity= c(.071,.2, 1),
-                  scheme = "horst",
-                  scale = TRUE, 
-                  verbose = TRUE,tol=1e-8,init="svd")
-
-
 fit.rgcca$Y[[1]]==fit.sgcca$Y[[1]]
 head(fit.rgcca$a[[3]])
 head(fit.sgcca$a[[3]])
 # to be tested
+
+A[[3]]<- as.character(apply(A$y,1,which.max))
+rgcca_res=rgcca(blocks=A, connection=C,
+                type="sgcca", response=3)
+for(i in 1:20)
+{
+    print(i)
+    set.seed(i)
+    sample_i=sample(1:53,40)
+    sample_not_i=(1:53)[!(1:53)%in%sample_i]
+    A_train=lapply(A,function(x){ if(!is.null(dim(x))) {return(x[sample_i,])}else{return(x[sample_i])}})
+    A_test=lapply(A,function(x){ if(!is.null(dim(x))) {return(x[sample_not_i,])}else{return(x[sample_not_i])}})
+    
+    rgcca_res=rgcca(blocks=A_train, connection=C,sparsity=c(1,1,1),
+                    type="sgcca", response=3)
+    #res_test  = rgcca_predict(rgcca_res, newA=A_test,new_scaled=FALSE,fit="lda",model="classification",bloc_to_pred="y") 
+ 
+    rgcca_crossvalidation(
+        rgcca_res,
+        validation = "kfold",
+        model = "classification",
+        fit = "lda",
+        new_scaled = TRUE,
+        k = 5,
+        n_cores =1)$list_scores
+}
+
 res_cv=rgcca_cv(blocks=A, connection=C,
-                type="sgcca", response=3,par_type="sparsity",par_length=4,n_run=5,n_cores=1)
+                type="sgcca", response=3,par_type="sparsity",n_run=1,n_cores=1)
+
+res_cv=rgcca_cv(blocks=A, connection=C,type_cv="classification",fit="lda",
+                type="sgcca", response=3,par_type="sparsity",n_run=1,n_cores=1,par_length=3)
+
+
 rgcca_permutation(A, connection=C, par_type = "sparsity", n_run = 10)
 
-
+# 
 
 A[[1]]=cbind(A[[1]],A[[1]],A[[1]]);colnames(A[[1]])=paste("V",1:ncol(A[[1]]))
 Loc <- factor(ge_cgh_locIGR$y) ; levels(Loc) <- colnames(ge_cgh_locIGR$multiblocks$y)

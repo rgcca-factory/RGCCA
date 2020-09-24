@@ -41,23 +41,23 @@ plot.cval=function(x, bars="sd", cex = 1, cex_main = 14 * cex, cex_sub = 10 * ce
         main=paste0("RMSE according to the combinations \n (",x$call$validation,ifelse(x$call$validation=="kfold", paste0(": with ",x$call$k," folds", ifelse(x$call$n_run>1,paste0(" and ",x$call$n_run," run",ifelse(x$call$n_run==1,"","s")),""),")"),";,\n "))
         main=paste0(main,"\nbest parameter: ",
                     paste(round(x$bestpenalties,digits=2), collapse = ", "))
-        
+        y_lab="Mean RMSE"
     }
     if(x$call$type_cv=="classification")
     {
         main=paste0("Mean error rate according to the combinations \n (",x$call$validation,ifelse(x$call$validation=="kfold", paste0(": with ",x$call$k," folds", ifelse(x$call$n_run>1,paste0(" and ",x$call$n_run," run",ifelse(x$call$n_run==1,"","s")),""),")"),";,\n "))
         main=paste0(main,"\nbest parameter: ",
                     paste(round(x$bestpenalties,digits=2), collapse = ", "))
-        
+        y_lab="Mean error rate"
     }
                
     axis <- function(margin){
-        }
         element_text(
             size = cex_lab * 0.75,
             face = "italic",
+            margin=margin
         )
-            margin = margin
+    }    
     if(bars!="none"&&dim(mat_cval)[2]<3){bars=="none"; warning("Standard deviations can not be calculated with less than 3 columns in mat_cval")}
     if(bars!="none")
     {
@@ -97,7 +97,7 @@ plot.cval=function(x, bars="sd", cex = 1, cex_main = 14 * cex, cex_sub = 10 * ce
     }
     
     df=data.frame(configurations=1:nrow(mat_cval),mean=mean_b,inf=inf_b,sup=sup_b)
-    p<- ggplot(data=df,aes(x=configurations,y=mean))+geom_point()+theme_classic() + xlab("Combinations")+ylab("Mean RMSE")
+    p<- ggplot(data=df,aes(x=configurations,y=mean))+geom_point()+theme_classic() + xlab("Combinations")+ylab(y_lab)
     if(bars!="none"&& bars!="points")
     {
         p<-p+geom_segment(data=df,aes(x=configurations,y=inf_b,xend=configurations,yend=sup_b),colour=colors[2])
