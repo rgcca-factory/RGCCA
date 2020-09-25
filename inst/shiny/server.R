@@ -1055,9 +1055,9 @@ server <- function(input, output, session) {
             check <- showWarn(check_connection(connection, blocks))
 
             # Error due to the superblock disabling and the connection have not the same size than the number of blocks
-            if (identical(check, "130")) 
+            if (check %in% c("130", "103", "106", "107")) 
                 connection <- NULL
-
+            
         }
 
         if (is.matrix(connection)) {

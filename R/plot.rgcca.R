@@ -84,16 +84,15 @@ plot.rgcca=function(x,type="weight",block=length(x$A),comp=1:2,resp=rep(1, NROW(
         p2<-plot_var_2D(x,i_block=i_block,compx=compx,compy=compy,cex_sub=cex_sub,cex_main=cex_main,cex_lab=cex_lab,remove_var=remove_var,text=text_var,no_overlap=no_overlap,title="Variable correlations",n_mark = n_mark,collapse=collapse,colors=colors)
         if(is.null(title)){title=toupper(names(x$call$blocks)[i_block])}
         p5<-grid.arrange(p1,p2,nrow=1,ncol=2,top = title)
-        plot(p5)
     }
-    if(type=="var")
+    else if(type=="var")
     {
         if(is.null(title)){title= paste0("Variable correlations: ", names(x$call$blocks)[i_block])}
         
        p5 <- plot_var_2D(x,i_block=i_block,compx=compx,compy=compy,cex_sub=cex_sub,cex_main=cex_main,cex_lab=cex_lab,remove_var=remove_var,text=text_var,no_overlap=no_overlap,title=title,n_mark = n_mark,collapse=collapse,colors=colors)
         plot(p5)
      }
-    if(type=="ind")
+    else if(type=="ind")
     {
         
         if(is.null(title))
@@ -111,7 +110,7 @@ plot.rgcca=function(x,type="weight",block=length(x$A),comp=1:2,resp=rep(1, NROW(
         p5<-plot_ind(x,i_block=i_block,i_block_y=i_block_y,compx=compx,compy=compy,cex_sub=cex_sub,cex_main=cex_main,cex_lab=cex_lab,resp=resp,response_name=response_name,text=text_ind,title=title,colors=colors,no_overlap=no_overlap)
         plot(p5)
      }
-    if(type=="ave")
+    else if(type=="ave")
     {
         if(is.null(title)){title="Average Variance Explained"}
         p5 <- plot_ave (x,
@@ -122,7 +121,7 @@ plot.rgcca=function(x,type="weight",block=length(x$A),comp=1:2,resp=rep(1, NROW(
             cex_sub=cex_sub)
         plot(p5)
     }
-    if(type=="network")
+    else if(type=="network")
     {
         if(is.null(title)){title=paste0("Common rows between blocks : ",
                                         NROW(x$call$blocks[[1]]))}
@@ -131,7 +130,7 @@ plot.rgcca=function(x,type="weight",block=length(x$A),comp=1:2,resp=rep(1, NROW(
             title = title)
         p5<-NULL
     }
-    if(type=="cor")
+    else if(type=="cor")
     {
         if(is.null(title)){title= paste0("Variable correlations: ",names(x$call$blocks)[i_block])}
         p5=plot_var_1D(x,
@@ -146,7 +145,7 @@ plot.rgcca=function(x,type="weight",block=length(x$A),comp=1:2,resp=rep(1, NROW(
             cex_sub=cex_sub)
         plot(p5)
     }
-    if(type=="weight")
+    else if(type=="weight")
     {
         if(is.null(title)){title= paste0("Variable weights:",names(x$call$blocks)[i_block])}
         
@@ -162,7 +161,6 @@ plot.rgcca=function(x,type="weight",block=length(x$A),comp=1:2,resp=rep(1, NROW(
                     cex_sub=cex_sub)
         plot(p5)
     }
-      
 
    # p3<-plot_ave(x)
    # p4<-plot_network(x)
