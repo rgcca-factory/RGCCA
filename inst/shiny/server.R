@@ -727,7 +727,8 @@ server <- function(input, output, session) {
                 text = if_text,
                 i_block_y = id_block_y,
                 response_name = response_name,
-                predicted = crossval
+                predicted = crossval,
+                cex_lab = 15
             )
     }
 
@@ -739,7 +740,8 @@ server <- function(input, output, session) {
                 compy = compy,
                 i_block = id_block,
                 text = if_text,
-                n_mark = nb_mark
+                n_mark = nb_mark,
+                cex_lab = 13
             )
 
     fingerprint <- function(type)
@@ -748,11 +750,12 @@ server <- function(input, output, session) {
             comp = compx,
             n_mark = nb_mark,
             i_block = id_block,
-            type = type
+            type = type,
+            cex_sub = 13
         )
 
     ave <- function()
-        plot_ave(rgcca = rgcca_out)
+        plot_ave(rgcca = rgcca_out, cex_main = 20, cex_sub = 15)
 
     design <- function()
         plot_network2(rgcca_out)

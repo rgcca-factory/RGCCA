@@ -15,11 +15,14 @@ plot_network2 <- function(
     rgcca_res, 
     title = paste0("Common rows between blocks : ",
                         NROW(rgcca_res$call$blocks[[1]])),
-    colors =  "#eee685") {
+    cex_main = 20,
+    colors =  c("#eee685", "gray")) {
     
     stopifnot(is(rgcca_res, "rgcca"))
     title <- paste0(title, collapse = " ")
     check_colors(colors)
+    if (length(colors) < 2)
+        colors <- c(colors, "gray")
 
     load_libraries("visNetwork")
     `%>%` <- magrittr::`%>%`
@@ -47,7 +50,7 @@ plot_network2 <- function(
         edges,
         main = list(
             text = title,
-            style = "font-family:sans;font-weight:bold;font-size:28px;text-align:center;"
+            style = paste0("font-family:sans;font-weight:bold;font-size:", cex_main, "px;text-align:center;")
         )
     ) %>%
         visNetwork::visNodes(
@@ -55,14 +58,14 @@ plot_network2 <- function(
             shape = "square",
             shadow = TRUE,
             color = list(
-                border = "gray",
+                border = colors[2],
                 highlight = list(background = "black", border = "darkred")
             )
         ) %>% visNetwork::visEdges(
             smooth = FALSE,
             shadow = TRUE,
             dashes = TRUE,
-            color = list(color = "gray", highlight = "darkred")
+            color = list(color = colors[2], highlight = "darkred")
         )
 
 }
