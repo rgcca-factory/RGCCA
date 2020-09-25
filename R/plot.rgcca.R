@@ -52,10 +52,7 @@ plot.rgcca=function(x,type="weight",block=length(x$A),comp=1:2,resp=rep(1, NROW(
      if(length(comp)==1){comp=rep(comp,2)}
     compx=comp[1]
     compy=comp[2]
-    if(x$call$superblock)
-    {
-        block=length(x$call$blocks)
-    }
+
     if(length(block)==1)
     {
          if(x$call$ncomp[block]<2)
@@ -90,6 +87,13 @@ plot.rgcca=function(x,type="weight",block=length(x$A),comp=1:2,resp=rep(1, NROW(
     }
     if(type=="var")
     {
+        if(x$call$superblock)
+        {
+            if(block==length(x$rgcca$call$blocks))
+            {
+                block=length(x$rgcca$call$blocks)-1
+            }
+        }
         if(is.null(title)){title= paste0("Variable correlations: ", names(x$call$blocks)[i_block])}
         
        p5 <- plot_var_2D(x,i_block=i_block,compx=compx,compy=compy,cex_sub=cex_sub,cex_main=cex_main,cex_lab=cex_lab,remove_var=remove_var,text=text_var,no_overlap=no_overlap,title=title,n_mark = n_mark,collapse=collapse,colors=colors)

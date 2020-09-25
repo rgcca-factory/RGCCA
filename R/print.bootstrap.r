@@ -35,11 +35,11 @@ print.bootstrap = function(x, bars = "quantile", n_cores = parallel::detectCores
     {
         for (comp in 1:ncompmax) {
             cat(paste("Dimension:", comp, "\n"))
-            
-                b = get_bootstrap(b = x, block = length(x$rgcca$call$blocks), comp = comp, bars = bars, display_order = FALSE, n_cores = n_cores)
+            print(Reduce(rbind, lapply(1:(length(x$rgcca$call$blocks)-1), function(block) {
+                b = get_bootstrap(b = x, block = block, comp = comp, bars = bars, display_order = FALSE, n_cores = n_cores)
                 othercols = colnames(b)[-which(colnames(b) == "estimate")]
-              print(b[,c("estimate",othercols)])
-           
+                return(b[, c("estimate", othercols)])
+            })))
         }
     }
  
