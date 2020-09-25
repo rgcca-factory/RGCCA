@@ -7,7 +7,9 @@
 \method{plot}{bootstrap}(x, type = "1D",
   block = length(x$rgcca$call$blocks), comp = 1, n_mark = 30,
   bars = "quantile", colors = NULL, title = NULL, cex = 1,
-  n_cores = parallel::detectCores() - 1, ...)
+  n_cores = parallel::detectCores() - 1, collapse = FALSE,
+  cex_main = 14, cex_sub = 12, cex_point = 10, cex_lab = 10,
+  cex_axis = 10, ...)
 }
 \arguments{
 \item{x}{A bootstrap object (see \code{\link[RGCCA]{bootstrap}})}
@@ -29,6 +31,18 @@
 \item{cex}{An integer for the size of the plot parameters}
 
 \item{n_cores}{An integer for the number of cores used in parallelization}
+
+\item{collapse}{A boolean to combine the variables of each block as result}
+
+\item{cex_main}{An integer for the size of the title}
+
+\item{cex_sub}{An integer for the size of the subtitle}
+
+\item{cex_point}{An integer for the size of the points or the text in the plot}
+
+\item{cex_lab}{An integer for the size of the axis titles}
+
+\item{cex_axis}{An integer for the size of the axis text}
 
 \item{...}{Further graphical parameters (see plot2D)}
 }

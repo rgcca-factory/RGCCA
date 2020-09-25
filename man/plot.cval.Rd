@@ -23,7 +23,7 @@
 
 \item{colors}{Either a vector of integers (each integer corresponding to a color) or of characters corresponding to names of colors (as "blue",see colors()) or RGB code ("#FFFFFF").}
 
-\item{...}{Further plot options}
+\item{...}{Further graphical parameters}
 }
 \description{
 Plot a cross-validation object (tuning RGCA parameters in 'supervised' mode).

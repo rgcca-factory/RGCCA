@@ -9,7 +9,7 @@
   text_var = TRUE, text_ind = TRUE, response_name = "Response",
   no_overlap = FALSE, title = NULL, n_mark = 30, collapse = FALSE,
   cex = 1, cex_sub = 12, cex_main = 14, cex_lab = 12,
-  colors = NULL, ...)
+  cex_axis = 10, colors = NULL, ...)
 }
 \arguments{
 \item{x}{A RGCCA object (see \code{\link[RGCCA]{rgcca}})}
@@ -50,9 +50,11 @@ or with circles (FALSE)}
 
 \item{cex_lab}{An integer for the size of the axis titles}
 
+\item{cex_axis}{An integer for the size of the axis text}
+
 \item{colors}{Either a vector of integers (each integer corresponding to a color) or of characters corresponding to names of colors (as "blue",see colors()) or RGB code ("#FFFFFF").}
 
-\item{...}{Further graphical parameters applied to both (individual and variable) spaces}
+\item{...}{Further graphical parameters}
 }
 \description{
 Plot different outputs of the results obtained by a rgcca function
@@ -82,4 +84,6 @@ plot(resRgcca,type="weight")
 plot(resRgcca,type="ind")
 plot(resRgcca,type="var")
 plot(resRgcca,type="both")
+plot(resRgcca,type="ave")
+plot(resRgcca,type="network")
 }

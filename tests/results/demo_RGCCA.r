@@ -330,23 +330,65 @@ fit.rgcca = rgcca(blocks=A, connection=C,
 # to be tested
 mat_values=matrix(c(.071,.2, 1,1,1, 1,.5,.2, 1),nrow=3,byrow=TRUE)
 A[[3]]<- as.character(apply(A$y,1,which.max))
-res_cv=rgcca_cv(blocks=A,type_cv="classification",fit="lda",
+res_cv=rgcca_cv(blocks=A,
                 type="sgcca", response=3,par_type="sparsity",n_run=1,n_cores=1,par_value=mat_values)
 
 plot(res_cv)
 print(res_cv)
+t0=Sys.time()
 rgcca_res=rgcca(blocks=A, connection=C,
                 type="sgcca", response=3)
+Sys.time()-t0
+
+t0=Sys.time()
+rgcca_res=rgcca(blocks=A, connection=C,
+                type="rgcca", response=3,init="svd")
+Sys.time()-t0
+
+t0=Sys.time()
+rgcca_res=rgcca(blocks=A, connection=C,tau=c(.071,.2, 1),
+                type="rgcca", response=3,init="svd")
+Sys.time()-t0
+
+t0=Sys.time()
+rgcca_res=rgcca(blocks=A, connection=C,tau=c(.5,.5, 1),
+                type="rgcca", response=3,init="svd")
+Sys.time()-t0
+
+j=1
+mat=t(!is.na(A[[j]]))%*%(!is.na(A[[j]]))
+
+
+j=2
+mat1=t(!is.na(A[[j]]))%*%(!is.na(A[[j]]))
+mat2=(!is.na(A[[j]]))%*%t(!is.na(A[[j]]))
+j=1
+A[[j]][1,1]=NA
+pj=ncol(A[[j]])
+nak=is.na(A[[j]])
+nak=which(is.na(A[[j]]))
+
+A[[j]][1:4,1]=NA
+pj=ncol(A[[j]])
+nak=is.na(A[[j]])
+nak=which(is.na(A[[j]]),arr.ind=T)
+ncolWithNA=unique(nak[,"col"])
+
+matri=matrix(53,pj,pj)
 
 
 res_cv=rgcca_cv(blocks=A,type_cv="classification",fit="lda",
                 type="sgcca", response=3,par_type="sparsity",n_run=1,par_value=mat_values)
+
+res_cv=rgcca_cv(blocks=A,type_cv="classification",fit="lda",
+                type="rgcca", response=3,par_type="tau",n_run=1,par_value=mat_values,n_cores=1)
 
 res_cv=rgcca_cv(blocks=A,validation="loo",type_cv="classification",fit="lda",
                 type="sgcca", response=3,par_type="sparsity",n_run=1,par_value=mat_values)
 
 res_cv=rgcca_cv(blocks=A,validation="loo",type_cv="classification",fit="lda",
                 type="rgcca", response=3,par_type="tau",n_run=1,par_value=mat_values)
+
 res_cv=rgcca_cv(blocks=A,type_cv="classification",fit="lda",
                 type="sgcca", response=3,par_type="sparsity",n_run=1,n_cores=1,par_value=mat_values)
 

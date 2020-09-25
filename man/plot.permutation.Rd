@@ -6,7 +6,8 @@
 \usage{
 \method{plot}{permutation}(x, type = "crit", cex = 1, title = NULL,
   cex_main = 14 * cex, cex_sub = 12 * cex, bars = "points",
-  cex_point = 3 * cex, cex_lab = 19 * cex, ...)
+  cex_point = 3 * cex, cex_lab = 19 * cex, colors = c("red", "grey"),
+  ...)
 }
 \arguments{
 \item{x}{result of rgcca_permutation (see  \code{\link[RGCCA]{rgcca_permutation}})}
@@ -27,6 +28,8 @@ the RGCCA criterion and 'zstat' for the pseudo Z-score)}
 \item{cex_point}{An integer for the size of the points or the text in the plot}
 
 \item{cex_lab}{An integer for the size of the axis titles}
+
+\item{colors}{Either a vector of integers (each integer corresponding to a color) or of characters corresponding to names of colors (as "blue",see colors()) or RGB code ("#FFFFFF").}
 
 \item{...}{Further graphical parameters}
 }

@@ -101,7 +101,7 @@ rgcca_cv=function( blocks,
             # cat("n_run value was replaced by 1 (is not relevant for loo option)")
         };n_run=1
     }
-    if(mode(blocks[response])=="character")
+    if(mode(blocks[[response]])=="character")
     {
         type_cv="classification";
         fit="lda"

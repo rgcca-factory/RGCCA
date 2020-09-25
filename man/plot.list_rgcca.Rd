@@ -57,7 +57,7 @@ or with circles (FALSE)}
 
 \item{errorbar}{("CImean","CIscores","sd")}
 
-\item{...}{Further graphical parameters applied to both (individual and variable) spaces}
+\item{...}{Further graphical parameters}
 }
 \description{
 plots a list_rgcca object

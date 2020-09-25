@@ -112,3 +112,28 @@ test_that("test_rgcca_tauOptya3",{
 # 
 # 
 
+# Cas primal with missing values
+#----------------------------------------
+X_agric =as.matrix(Russett[,c("gini","farm","rent")]);
+X_ind = as.matrix(Russett[,c("gnpr","labo")]);
+X_polit = as.matrix(Russett[ , c("demostab", "dictator")]);
+A = list(X_agric, X_ind, X_polit);
+A[[3]][1:3,1:2]=NA
+A[[3]][5,1]=NA
+res_tau1_primal=rgccak(A,C=matrix(1,3,3)-diag(3),scheme="factorial")
+res_tau0_primal=rgccak(A,C=matrix(1,3,3)-diag(3),scheme="factorial",tau=c(0.5,0.5,0.5))
+
+# Cas dual 
+#------------
+data(Russett)
+X_agric =as.matrix(Russett[1:9,1]);
+X_ind = as.matrix(Russett[1:9,2:11]);
+A=list(ag=X_agric,ind=X_ind)
+A[[2]][1:3,1:3]=NA
+j=2
+t(!is.na(A[[j]]))%*%(!is.na(A[[j]]))
+res_tau0_dual=rgccak(A,C=matrix(1,2,2)-diag(2),tau=c(0.5,0.5))
+res_tau1_dual=rgccak(A,C=matrix(1,2,2)-diag(2),tau=c(1,1))
+
+
+
