@@ -40,14 +40,14 @@ modify_hovertext <- function(p, hovertext = TRUE, type = "regular", perm = NULL)
     for (i in seq(n)) {
         # For each lines of each group in the legend
         for (j in seq(length(p$x$data[[i]][attr][[1]]))) {
-        
+
             if (!is.null(p$x$data[[i]][attr][[1]][j])) {
                 # Distinguish each duplicate by splitting with "<br>" and separe
                 # them in key/value by splitting with ": " (like a dictionnary)
                 l_text <- lapply(
                     as.list(strsplit(p$x$data[[i]][attr][[1]][j], "<br />")[[1]]),
                     function(x) strsplit(x, ": ")[[1]])
-    
+
                 l_text = unlist(lapply(l_text, function(x) {
                     if (!is.na(x[1])) {
                         if ((type == "boot" && !is.character2(x[2]))
@@ -71,7 +71,7 @@ modify_hovertext <- function(p, hovertext = TRUE, type = "regular", perm = NULL)
                     name = ifelse(hovertext,
                                 paste0("name: ", p$x$data[[i]]$text[j], "<br />"),
                                 "")
-    
+
                     parse <- function(x) gsub(" ?</?.> ?|\n", "", x)
                     if (type == "boot") {
                         x_lab <- parse(p$x$layout$xaxis$title$text)
@@ -98,8 +98,12 @@ modify_hovertext <- function(p, hovertext = TRUE, type = "regular", perm = NULL)
                     if (type == "perm" || (type == "cv"  && i != 2)) {
                         if (type == "cv" && i == 3)
                             comb <- p$x$data[[i]]$x[1]
-                        else
-                            comb <- j
+                        else {
+                            if (i == 2)
+                                comb <- p$x$data[[i]]$x[1]
+                            else
+                                comb <- j
+                        }
                         res <- as.list(round(perm$penalties[comb, ], 3))
                         if (type == "perm")
                             label <- gsub("</?i>| ", "", p$x$layout$yaxis$title$text)
@@ -112,7 +116,7 @@ modify_hovertext <- function(p, hovertext = TRUE, type = "regular", perm = NULL)
                         for (b in seq(length(names(res))))
                             l_text <- paste0(l_text, "<br />", paste0(names(res)[b], ": ", res[b]))
                     }
-    
+
                     p$x$data[[i]][attr][[1]][j] <- l_text
                 }
             }

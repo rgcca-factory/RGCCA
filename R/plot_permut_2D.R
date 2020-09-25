@@ -150,10 +150,9 @@ plot_permut_2D <- function(
    
 
     }
-    
 
-    p <- p + geom_line(data = df, mapping = aes(x = df[, 1], y = df[, 2]))
-    p <- p + scale_x_continuous(breaks = 1:nrow(df), labels = rownames(df))
+    p <- p + scale_x_continuous(breaks = 1:nrow(df), labels = rownames(df)) + 
+        theme(plot.title = element_text(vjust=5), plot.margin = margin(5, 0, 0, 0, "mm"))
     attributes(p)$penalties <- perm$penalties
 
     return(p)
