@@ -1,5 +1,5 @@
 # Author: Etienne CAMENEN
-# Date: 2019
+# Date: 2020
 # Contact: arthur.tenenhaus@centralesupelec.fr
 # Keywords: RGCCA, multi-block
 # EDAM operation: analysis, correlation, visualisation
@@ -965,7 +965,7 @@ server <- function(input, output, session) {
     getCrossVal2 <-  function(){
         assign(
             "crossval",
-            rgcca_crossvalidation(rgcca_out, validation = input$val, k = input$kfold),
+            rgcca_crossvalidation(rgcca_out),
             .GlobalEnv
         )
         showWarn(message(paste("CV score:", round(crossval$score, 4))), show = FALSE)
@@ -1305,7 +1305,7 @@ server <- function(input, output, session) {
         for (i in c("Connection", "AVE", "Samples", "Corcircle", "Fingerprint", "Bootstrap", "'Bootstrap Summary'", "Permutation", "'Permutation Summary'", "Cross-validation"))
             hide(selector = paste0("#navbar li a[data-value=", i, "]"))
         updateTabsetPanel(session, "navbar", selected = "Connection")
-        hide(id = "run_crossval_sing")
+        hide(id = "run_crossval_single")
         assign("crossval", NULL, .GlobalEnv)
     }
 
@@ -1547,35 +1547,30 @@ server <- function(input, output, session) {
     })
 
     output$samplesPlot <- renderPlotly({
-        getDynamicVariables()
-
-        if (!is.null(analysis)) {
-            observeEvent(input$samples_save, {
-                save_plot("samples_plot.pdf", samples())
-                msgSave()
-            })
-
-            save_ind(rgcca_out, file = "samples.txt")
-            p <- samples()
-
-            if (is(p, "gg")) {
-            p <- showWarn(
-                modify_hovertext(
-                    plot_dynamic(p, NULL, "text", TRUE, format = input$format),
-                    if_text
-                ), warn = FALSE)
-
-            if (is.null(crossval) && 
-                length(unique(na.omit(response))) < 2 ||
-                (length(unique(response)) > 5 &&
-                !is.character2(na.omit(response))))
-                p <- p %>% layout(showlegend = FALSE)
-
+        tryCatch({
+            getDynamicVariables()
+    
+            if (!is.null(analysis)) {
+                observeEvent(input$samples_save, {
+                    save_plot("samples_plot.pdf", samples())
+                    msgSave()
+                })
+    
+                save_ind(rgcca_out, file = "samples.txt")
+                p <- samples()
+    
+                if (is(p, "gg")) {
+                p <- showWarn(
+                    modify_hovertext(
+                        plot_dynamic(p, NULL, "text", TRUE, format = input$format),
+                        if_text
+                    ), warn = FALSE)
+                }
+    
+                p
+    
             }
-
-            p
-
-        }
+        })
     })
 
     output$corcirclePlot <- renderPlotly({

@@ -43,7 +43,7 @@ plot_dynamic <- function(
 
     legend_qual <- p$x$layout$annotations[[1]]$text
     legend_quant <- p$x$data[[length(p$x$data)]]$marker$colorbar$title
-    if (!is.null(legend_qual))
+    if (!is.null(legend_qual) && legend_qual != "")
         legend_title <- legend_qual
     else
         legend_title <- legend_quant
@@ -64,7 +64,7 @@ plot_dynamic <- function(
             legend_title <- ""
 
         # set the font for this title
-        if (!is.null(legend_qual)) {
+        if (!is.null(legend_qual) && legend_qual != "") {
             p$x$layout$annotations[[1]]$text <- paste0("<i><b>", legend_title, "</b></i>")
             # set on the top the position of the legend title
             p$x$layout$annotations[[1]]$yanchor <- "top"
@@ -72,7 +72,7 @@ plot_dynamic <- function(
             p$x$layout$annotations[[1]]$y = 1.05
         } else
             p$x$data[[length(p$x$data)]]$marker$colorbar$title <- paste0("<i><b>", legend_title, "</b></i>")
-    }
+        }
 
     if (!is.null(f$labels$subtitle)) {
         if (packageVersion("plotly") < 4.9)
