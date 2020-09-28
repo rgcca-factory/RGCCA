@@ -100,7 +100,7 @@ rgcca_predict = function(
         stop_rgcca("Please, classification prediction only works with LDA and LOGISTIC")
     if (model == "regression" &&
         (fit == "lda" ))
-        stop_rgcca("Please, regression prediction only works with LM and COR")
+        stop_rgcca("Please, regression prediction only works with fit='lm' or fit='cor'")
     stopifnot(is(rgcca_res, "rgcca"))
     match.arg(model, c("regression", "classification"))
     match.arg(fit, c("lm", "cor", "lda"))

@@ -11,7 +11,7 @@
  resp = as.matrix(rep(LETTERS[seq(3)], each = 5))
 row.names(resp) = seq(15)
 
-p1<-plot2D ( rgcca_res=rgcca_out,   df=as.data.frame(rgcca_out$Y[[1]]))
+p1<-RGCCA:::plot2D ( rgcca_res=rgcca_out,   df=as.data.frame(rgcca_out$Y[[1]]))
 p1 <- p1+geom_point(aes(x=1,y=1,colour="blue"))
 plot_ind(rgcca_out, resp)
 # Using the first block
@@ -31,7 +31,7 @@ rownames(resp) = seq(15)
 data(Russett)
  blocks = list(agri=Russett[,1:3],ind=Russett[,4:5],polit=Russett[,8:11])
  rgcca_out = rgcca(blocks = blocks, response = 3,ncomp=2)
- loo <- rgcca_crossvalidation(rgcca_out, n_cores = 2)
+ loo <- rgcca_crossvalidation(rgcca_out, n_cores = 1)
 
  plot_ind(rgcca_out, predicted = loo)
  

@@ -39,7 +39,7 @@ parallelize <- function(
         }
     }
 
-    if(parallelization==TRUE)
+    if(parallelization==TRUE && Sys.info()["sysname"] != "Windows")
     {
         load_libraries("parallel")
         if (!("parallel" %in% installed.packages()[, "Package"]))
@@ -94,7 +94,7 @@ parallelize <- function(
       #  }
         
     }
-    if(parallelization==FALSE)
+    if(Sys.info()["sysname"] == "Windows" || parallelization==FALSE)
     {
         res=lapply(
             nperm,

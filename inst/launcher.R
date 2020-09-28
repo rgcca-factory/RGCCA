@@ -537,8 +537,8 @@ tryCatch({
     design <- function() plot_network(rgcca_out)
     save_plot(opt$o5, design)
 
-    save_ind(rgcca_out, opt$compx, opt$compy, opt$o6)
-    save_var(rgcca_out, opt$compx, opt$compy, opt$o7)
+    save_ind(rgcca_out, opt$o6)
+    save_var(rgcca_out, opt$o7)
     save(rgcca_out, file = opt$o8)
 
     }, error = function(e){

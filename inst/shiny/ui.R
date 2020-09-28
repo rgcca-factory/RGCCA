@@ -211,7 +211,7 @@ ui <- fluidPage(
                     label = "Output image format",
                     choices = c(
                         `jpeg` = "jpeg",
-                        `png` = "png"#,
+                        `png` = "png"
                         #`svg` = "svg"
                         # `tiff` = "tiff",
                         # `pdf` = "pdf"
@@ -290,7 +290,7 @@ ui <- fluidPage(
             ),
             tabPanel(
                 "Permutation",
-                plotlyOutput("permutationPlot", height = 700),
+                plotlyOutput("permutationPlot", height = 700)
                 # actionButton("permutation_save", "Save")
             ),
             tabPanel(
@@ -300,10 +300,10 @@ ui <- fluidPage(
             ),
             tabPanel(
                 "Cross-validation",
-                plotlyOutput("cvPlot", height = 700),
+                plotlyOutput("cvPlot", height = 700)
                 #actionButton("cv_save", "Save")
             )
-        )
+        )   
 
     ))
 )
