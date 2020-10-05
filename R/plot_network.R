@@ -55,14 +55,13 @@ plot_network <- function(
     E(net)$width <- E(net)$weight * 2
       plot(
         net,
-        cex.main = cex_main,
         edge.color = colors[2],
         edge.lty = 2,
         vertex.frame.color = colors[2],
         vertex.label.color = "black",
         vertex.label.dist = 6,
         vertex.label.degree = 1.5,
-        vertex.size = cex_point,
-        main = title
+        vertex.size = cex_point
     )
+     title(title, cex.main = cex_main)
 }
