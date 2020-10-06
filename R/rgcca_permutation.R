@@ -67,27 +67,28 @@ rgcca_permutation <- function(
     response = NULL,
     superblock = FALSE,
     method = "nipals",
-    rgcca_res=NULL,
-    parallelization=NULL
+    rgcca_res = NULL,
+    parallelization = NULL
     ) 
     {
-    if(!missing(blocks)&class(blocks)=="rgcca"){rgcca_res=blocks}
-    if(class(rgcca_res)=="rgcca")
-    {
+
+    if (!is.null(rgcca_res)) {
+        stopifnot(is(rgcca_res, "rgcca"))
         message("All parameters were imported from a rgcca object.")
-        scale_block=rgcca_res$call$scale_block
-        scale=rgcca_res$call$scale
-        scheme=rgcca_res$call$scheme
-        response=rgcca_res$call$response
-        tol=rgcca_res$call$tol
-        method=rgcca_res$call$method
-        bias=rgcca_res$call$bias
-        blocks<-rgcca_res$call$raw
-        superblock=rgcca_res$call$superblock
-        connection=rgcca_res$call$connection
-        tau=rgcca_res$call$tau
-        ncomp=rgcca_res$call$ncomp
-        sparsity=rgcca_res$call$sparsity
+        scale_block <- rgcca_res$call$scale_block
+        scale <- rgcca_res$call$scale
+        scheme <- rgcca_res$call$scheme
+        response <- rgcca_res$call$response
+        tol <- rgcca_res$call$tol
+        method <- rgcca_res$call$method
+        init <- rgcca_res$call$init
+        bias <- rgcca_res$call$bias
+        blocks <- rgcca_res$call$raw
+        superblock <- rgcca_res$call$superblock
+        connection <- rgcca_res$call$connection
+        tau <- rgcca_res$call$tau
+        ncomp <- rgcca_res$call$ncomp
+        sparsity <- rgcca_res$call$sparsity
     }
    
     # call <- as.list(formals(rgcca_permutation))
@@ -100,6 +101,11 @@ rgcca_permutation <- function(
     if (!is.null(parallelization))
         check_boolean("parallelization", parallelization)
     min_spars <- NULL
+    
+    if (type %in% c("sgcca", "spca", "spls")) {
+        par_type <- "sparsity"
+    } else
+        par_type <- "tau"
 
     if (length(blocks) < 1)
         stop_rgcca("Permutation required a number of blocks larger than 1.\n")
@@ -218,18 +224,22 @@ rgcca_permutation <- function(
         crits[i] <- rgcca_permutation_k(
             blocks,
             connection=connection,
-            par = par[[1]],
+            par_type = par[[1]],
             par_value=par[[2]][i,],
             perm = FALSE,
             type = type,
-            n_cores = 1,
             quiet=quiet,
             superblock=superblock,
             scale=scale,
             scale_block=scale_block,
             scheme=scheme,
             tol=tol,
-            ncomp=ncomp,
+            method=method,
+            response = response,
+            bias = bias,
+            init = init,
+            ncomp = ncomp,
+            tau = tau,
             sparsity=sparsity
         )
           
@@ -240,10 +250,9 @@ rgcca_permutation <- function(
                 function(x)
                     rgcca_permutation_k(
                         blocks = blocks,
-                        par = par[[1]],
+                        par_type = par[[1]],
                         par_value=par[[2]][i,],
                         type = type,
-                        n_cores = n_cores,
                         quiet = quiet,
                         superblock=superblock,
                         scheme=scheme,
@@ -251,7 +260,13 @@ rgcca_permutation <- function(
                         scale=scale,
                         scale_block=scale_block,
                         connection=connection,
-                        method=method
+                        method=method,
+                        response = response,
+                        bias = bias,
+                        init = init,
+                        ncomp=ncomp,
+                        tau = tau,
+                        sparsity=sparsity
                     ),
                 n_cores = n_cores,
                 envir = environment(),

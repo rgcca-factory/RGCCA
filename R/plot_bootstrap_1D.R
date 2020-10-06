@@ -139,8 +139,8 @@ plot_bootstrap_1D <- function(
             geom_errorbar(aes(ymin = lower_band, ymax = upper_band,width=0.5))
     if(x =="occurrences")
     {
-        n_boot=ifelse(!is.null(dim(b[[1]][[1]][[1]])),dim(b[[1]][[1]][[1]])[2],length(b[[1]][[1]][[1]]))
-        nvar=length(b$bootstrap[[1]][[i_block]][,1])
+        n_boot = attributes(df_b)$n_boot
+        nvar=NROW(df_b)
         avg_n_occ=sum(df_b$occurrences)/n_boot
         probComp= avg_n_occ/nvar
         
