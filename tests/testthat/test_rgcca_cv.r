@@ -18,8 +18,8 @@ plot(res)
 res3=rgcca_cv(blocks,response=length(blocks), type="rgcca",par_type="tau",par_value=c(0,0.2,0.3),n_run=5, one_value_per_cv = TRUE,n_cores=1)
 plot(res)
 
-res4=rgcca_cv(blocks,response=length(blocks), type="rgcca",par_type="ncomp",par_value=c(1,2,3),n_run=5, one_value_per_cv = FALSE,n_cores=1)
-print(res3)
+# res4=rgcca_cv(blocks,response=length(blocks), type="rgcca",par_type="ncomp",par_value=c(1,2,3),n_run=5, one_value_per_cv = FALSE,n_cores=1)
+# print(res3)
 
 # plot(res4,bars="stderr")
 
