@@ -160,6 +160,7 @@ ui <- fluidPage(
                 uiOutput("tau_opt_custom"),
                 uiOutput("each_tau_custom"),
                 uiOutput("tau_custom"),
+                uiOutput("tune_type_custom"),
                 uiOutput("val_custom"),
                 sliderInput(
                     inputId = "ncv",

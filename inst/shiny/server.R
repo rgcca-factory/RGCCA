@@ -368,6 +368,19 @@ server <- function(input, output, session) {
         return(ui)
     })
 
+    output$tune_type_custom <- renderUI({
+        tune_type <- c(Analytical = "analytical")
+        if ((!is.null(input$supervised) && input$supervised))
+            tune_type <- c(tune_type, `Cross-validation` = "cv") 
+        else
+            tune_type <- c(tune_type, Permutation = "perm")
+        ui <- radioButtons(
+            inputId = "tune_type",
+            label = "Choose your tuning",
+            choices = tune_type
+        )
+    })
+
     output$val_custom <- renderUI({
         ui <- radioButtons(
             "val",
@@ -815,7 +828,9 @@ server <- function(input, output, session) {
 
         # Tau is set to 1 by default
         if (is.null(input$tau_opt))
-             tau <- 1
+            tau <- 1
+        else if (input$tune_type == "analytical" && analysis_type != "SGCCA")
+             tau <- "optimal"
         else{
             # otherwise the tau value fixed by the user is used
             tau <- getTau()
@@ -870,7 +885,7 @@ server <- function(input, output, session) {
                 tau <- cv$bestpenalties
             else if (!is.null(perm))
                 tau <- perm$bestpenalties
-            else if (length(grep("[SR]GCCA", analysis_type)) == 1)
+            else if (length(grep("[SR]GCCA", analysis_type)) == 1 && input$tune_type != "analytical")
                 tau <- getTau()
         })
 
@@ -1223,7 +1238,7 @@ server <- function(input, output, session) {
                         names = names,
                         sep = input$sep,
                         header = TRUE
-                    )
+                    ), show = F
                 ),
                 .GlobalEnv)
 
