@@ -23,7 +23,6 @@ server <- function(input, output, session) {
     })
 
     output$nb_mark_custom <- renderUI({
-        refresh <- c(input$blocks_names_custom_x, input$blocks_names_custom_x)
         sliderInput(
             inputId = "nb_mark",
             label = "Number of top variables",
@@ -581,7 +580,7 @@ server <- function(input, output, session) {
 
     getMaxCol <- function() {
         # Get the maximum number of columns among the blocks
-
+        refresh <- c(input$names_block_x)
         if (!is.null(input$blocks)) {
             return(NCOL(blocks[[id_block]]))
         } else
