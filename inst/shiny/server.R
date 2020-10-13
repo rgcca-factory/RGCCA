@@ -829,7 +829,7 @@ server <- function(input, output, session) {
         # Tau is set to 1 by default
         if (is.null(input$tau_opt))
             tau <- 1
-        else if (input$tune_type == "analytical" && analysis_type != "SGCCA")
+        else if (input$tau_opt && input$tune_type == "analytical" && analysis_type != "SGCCA")
              tau <- "optimal"
         else{
             # otherwise the tau value fixed by the user is used
@@ -881,12 +881,12 @@ server <- function(input, output, session) {
         # Load the analysis
 
         isolate({
-            if (!is.null(cv))
+            if (grepl("[SR]GCCA", analysis_type) && !input$tau_opt)
+                tau <- getTau()
+            else if (!is.null(cv))
                 tau <- cv$bestpenalties
             else if (!is.null(perm))
                 tau <- perm$bestpenalties
-            else if (length(grep("[SR]GCCA", analysis_type)) == 1 && input$tune_type != "analytical")
-                tau <- getTau()
         })
 
         if (!is.null(input$supervised) && input$supervised)
@@ -1002,7 +1002,6 @@ server <- function(input, output, session) {
             func <- quote(
                 rgcca_permutation(
                     blocks_without_superb,
-                    par_type = par_type,
                     n_run = input$nperm,
                     connection = connection,
                     response = input$names_block_response,
@@ -1190,18 +1189,21 @@ server <- function(input, output, session) {
             hide(selector = paste0("#navbar li a[data-value=", i, "]"))
         for (i in c("run_boot", "nboot_custom", "header", "init", "navbar", "connection_save", "run_crossval_single", "kfold", "save_all", "format"))
             hide(id = i)
+        is_tau_opt <- !is.null(input$tau_opt) && input$tau_opt
+        not_analytical <- is_tau_opt && input$tune_type != "analytical"
+        toggle("tune_type", condition = is_tau_opt)
         for (i in c("nperm_custom", "run_perm"))
-            toggle(id = i, condition = !input$supervised && !is.null(input$tau_opt) && input$tau_opt) 
+            toggle(id = i, condition = !input$supervised && not_analytical) 
         for (i in c("run_crossval", "val_custom"))
-            toggle(id = i, condition = input$supervised && !is.null(input$tau_opt) && input$tau_opt) 
-        toggle(id = "ncv", condition = input$supervised && input$val == "kfold" && !is.null(input$tau_opt) && input$tau_opt)
+            toggle(id = i, condition = input$supervised && not_analytical) 
+        toggle(id = "ncv", condition = input$supervised && input$val == "kfold" && not_analytical)
         # toggle(id = "kfold", condition = input$supervised && input$val == "kfold")
         })
 
-    observeEvent(c(input$tau_opt, input$supervised), {
+    observeEvent(c(input$tau_opt, input$supervised, input$tune_type), {
         assign("perm", NULL, .GlobalEnv)
         assign("cv", NULL, .GlobalEnv)
-        toggle(id = "run_analysis", condition = !is.null(input$tau_opt) && (!input$tau_opt || (input$tau_opt && (!is.null(perm) || !is.null(cv)))))
+        toggle(id = "run_analysis", condition = !is.null(input$tau_opt) && (!input$tau_opt || input$tune_type == "analytical" || (input$tau_opt && input$tune_type != "analytical" && (!is.null(perm) || !is.null(cv)))))
     })
 
     onclick("sep", function(e) assign("clickSep", TRUE, .GlobalEnv))
@@ -1327,18 +1329,22 @@ server <- function(input, output, session) {
     observeEvent(input$run_analysis, {
         if (!is.null(getInfile())) {
             assign("analysis", setRGCCA(), .GlobalEnv)
-            show(selector = "#tabset li a[data-value=RGCCA]")
-            for (i in c("Connection", "AVE", "Samples", "Corcircle", "Fingerprint"))
-                show(selector = paste0("#navbar li a[data-value=", i, "]"))
-            for (i in c("navbar", "nboot_custom", "run_boot"))
-                show(id = i)
-            toggle(id = "run_crossval_single", condition = !is.null(rgcca_out$call$response))
-            updateTabsetPanel(session, "navbar", selected = "Connection")
-            save_connection(rgcca_out$call$connection)
-            # for (i in c('bootstrap_save', 'fingerprint_save', 'corcircle_save',
-            # 'samples_save', 'ave_save')) setToggleSaveButton(i)
-            show("connection_save")
-            save(rgcca_out, file = "rgcca_result.RData")
+            if (is(analysis, "rgcca")) {
+                show(selector = "#tabset li a[data-value=RGCCA]")
+                for (i in c("Connection", "AVE", "Samples", "Corcircle", "Fingerprint"))
+                    show(selector = paste0("#navbar li a[data-value=", i, "]"))
+                for (i in c("navbar", "nboot_custom", "run_boot"))
+                    show(id = i)
+                toggle(id = "run_crossval_single", condition = !is.null(rgcca_out$call$response))
+                updateTabsetPanel(session, "navbar", selected = "Connection")
+                save_connection(rgcca_out$call$connection)
+                # for (i in c('bootstrap_save', 'fingerprint_save', 'corcircle_save',
+                # 'samples_save', 'ave_save')) setToggleSaveButton(i)
+                show("connection_save")
+                save(rgcca_out, file = "rgcca_result.RData")
+            } else {
+                assign("analysis", NULL, .GlobalEnv)
+            }
         }
     })
 

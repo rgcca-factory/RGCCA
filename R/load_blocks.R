@@ -73,6 +73,6 @@ load_blocks <- function(
         blocks[[fo]] <- df
     }
 
-    blocks <- check_blocks(blocks, init = TRUE, allow_unnames = FALSE)
+    blocks <- check_blocks(blocks, init = TRUE, allow_unnames = FALSE, no_character = TRUE)
 
 }

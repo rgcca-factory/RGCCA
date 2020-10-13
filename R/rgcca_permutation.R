@@ -102,7 +102,7 @@ rgcca_permutation <- function(
         check_boolean("parallelization", parallelization)
     min_spars <- NULL
     
-    if (type %in% c("sgcca", "spca", "spls")) {
+    if (tolower(type) %in% c("sgcca", "spca", "spls")) {
         par_type <- "sparsity"
     } else
         par_type <- "tau"
