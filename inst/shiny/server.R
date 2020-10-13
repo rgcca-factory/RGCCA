@@ -687,6 +687,9 @@ server <- function(input, output, session) {
             input$analysis_type,
             input$connection,
             input$nb_comp,
+            input$ncomp,
+            getNcomp(),
+            getTau(),
             input$response,
             input$names_block_x,
             input$names_block_y,
@@ -795,10 +798,12 @@ server <- function(input, output, session) {
     ################################################ Analysis ################################################
 
     getTau <- function() {
-        if (is.null(input$each_tau) || input$each_tau) {
+        
+        if (blocksExists() && !is.null(input$superblock) && (is.null(input$each_tau) || input$each_tau)) {
             tau <- integer(0)
             for (i in 1:(length(blocks_without_superb) + ifelse(input$superblock, 1, 0)))
                 tau <- c(tau, input[[paste0("tau", i)]])
+            print(tau)
         } else
             tau <- input$tau
 
@@ -806,7 +811,7 @@ server <- function(input, output, session) {
     }
 
     getNcomp <- function() {
-        if (input$each_ncomp) {
+        if (blocksExists() && input$each_ncomp) {
             ncomp <- integer(0)
             cond <- input$superblock && ( toupper(analysis_type) %in% c("PCA", "RGCCA", "SGCCA") ||
                     analysis_type %in% multiple_blocks_super)
@@ -1359,7 +1364,7 @@ server <- function(input, output, session) {
         c(
             input$superblock,
             input$supervised,
-            input$nb_comp,
+            input$ncomp,
             input$scheme,
             input$init,
             input$tau_opt,
@@ -1367,7 +1372,9 @@ server <- function(input, output, session) {
             input$each_tau,
             input$each_ncomp,
             input$tau,
-            input$blocks
+            input$blocks,
+            getTau(),
+            getNcomp()
         ),
         {
             # Observe if analysis parameters are changed
