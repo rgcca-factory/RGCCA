@@ -129,12 +129,7 @@ ui <- fluidPage(
             tabPanel(
                 "RGCCA",
                 uiOutput("analysis_type_custom"),
-                checkboxInput(
-                    inputId = "each_ncomp",
-                    label = "Tune the components for each block",
-                    value = FALSE
-                ),
-                uiOutput("nb_compcustom"),
+                
                 uiOutput("scale_custom"),
                 radioButtons(
                     "init",
@@ -150,13 +145,18 @@ ui <- fluidPage(
                     label = "Supervised analysis",
                     value = FALSE
                 ),
-
                 conditionalPanel(
                     condition = "input.supervised || input.analysis_type == 'RA'",
                     uiOutput("blocks_names_response")),
-
                 uiOutput("connection_custom"),
-                uiOutput("scheme_custom"),
+                
+                checkboxInput(
+                    inputId = "each_ncomp",
+                    label = "Tune the components for each block",
+                    value = FALSE
+                ),
+                uiOutput("nb_compcustom"),
+
                 uiOutput("tau_opt_custom"),
                 uiOutput("each_tau_custom"),
                 uiOutput("tau_custom"),
@@ -192,6 +192,7 @@ ui <- fluidPage(
                 #     value = 2,
                 #     step = 1
                 # ),
+                uiOutput("scheme_custom"),
                 actionButton(
                     inputId = "run_analysis",
                     label = "Run analysis"),
