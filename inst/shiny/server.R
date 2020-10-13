@@ -195,14 +195,14 @@ server <- function(input, output, session) {
             } else
                 max <- min(getMaxComp())
 
-                sliderInput(
-                    inputId = paste0("ncomp", i),
-                    label = label,
-                    min = 1,
-                    max = max,
-                    value = 2,
-                    step = 1
-                )
+            sliderInput(
+                inputId = paste0("ncomp", i),
+                label = label,
+                min = 1,
+                max = max,
+                value = if (is.null(input[[paste0("ncomp", i)]])) 2 else input[[paste0("ncomp", i)]],
+                step = 1
+            )
         }
         
         if (!input$each_ncomp)
