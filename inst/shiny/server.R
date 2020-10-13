@@ -64,6 +64,8 @@ server <- function(input, output, session) {
     refreshAnalysis <- function()
         c(
             input$nb_comp,
+            input$ncomp,
+            getNcomp(),
             input$blocks,
             input$sep,
             input$scheme,
@@ -803,7 +805,6 @@ server <- function(input, output, session) {
             tau <- integer(0)
             for (i in 1:(length(blocks_without_superb) + ifelse(input$superblock, 1, 0)))
                 tau <- c(tau, input[[paste0("tau", i)]])
-            print(tau)
         } else
             tau <- input$tau
 
