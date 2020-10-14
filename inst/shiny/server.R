@@ -56,7 +56,7 @@ server <- function(input, output, session) {
     output$nb_compcustom <- renderUI({
         refresh <- c(input$superblock, input$each_ncomp)
         refreshAnalysis()
-        isolate (setAnalysis())
+        isolate(setAnalysis())
         setCompUI()
     })
 
@@ -76,13 +76,26 @@ server <- function(input, output, session) {
     output$compx_custom <- renderUI({
         refresh <- refreshAnalysis()
         refresh <- input$names_block_x
-        uiComp("x", 1, id_block, input$navbar != "Fingerprint")
+        uiComp(
+            "x",
+            if (is.null(isolate(input$compx)))
+                1
+            else
+                input$compx,
+            id_block, 
+            input$navbar != "Fingerprint")
     })
 
     output$compy_custom <- renderUI({
         refresh <- refreshAnalysis()
         refresh <- input$names_block_y
-        uiComp("y", min(getNcomp()), id_block_y)
+        uiComp(
+            "y",
+            if (is.null(isolate(input$compy)))
+                min(getNcomp())
+            else
+                input$compy,
+            id_block_y)
     })
 
     output$analysis_type_custom <- renderUI({
@@ -252,7 +265,7 @@ server <- function(input, output, session) {
         if (bool)
             label <- paste0("Component for the ", x, "-axis")
 
-         comp <- isolate(getNcomp())
+        comp <- isolate(getNcomp())
         if (length(comp) > 1)
             comp <- comp[id_block]
 
@@ -595,9 +608,13 @@ server <- function(input, output, session) {
         max <- getMaxCol()
 
         if (max < 50)
-            return (max)
-        else
-            return (input$nb_mark)
+            return(max)
+        else{
+            if (is.null(input$nb_mark))
+                10
+            else
+                input$nb_mark
+        }
     }
 
     showWarn <- function(f, duration = 10, show = TRUE, warn = TRUE) {
@@ -1150,11 +1167,14 @@ server <- function(input, output, session) {
         for (i in c("Corcircle", "Fingerprint"))
             toggle(condition = condition, 
                    selector = paste0("#navbar li a[data-value=", i, "]"))
+        toggle(
+            condition = (input$navbar %in% c("Corcircle", "Fingerprint", "Bootstrap") && isolate(getMaxCol() > 10)),
+               id = "nb_mark_custom")
     })
 
     observeEvent(c(input$navbar, input$tabset), {
         toggle(
-            condition = (input$navbar %in% c("Corcircle", "Fingerprint", "Bootstrap")),
+            condition = (input$navbar %in% c("Corcircle", "Fingerprint", "Bootstrap") && isolate(getMaxCol() > 10)),
                id = "nb_mark_custom")
         for (i in c("text", "compy_custom"))
             toggle(
@@ -1521,7 +1541,7 @@ server <- function(input, output, session) {
     msgSave <- function()
         showWarn(message(paste("Save in", getwd())), show = FALSE)
 
-    observeEvent(c(input$text, input$compx, input$compy, input$nb_mark), {
+    observeEvent(c(input$text, input$compx, input$compy, input$nb_mark, input$names_block_x), {
             if (!is.null(analysis)) {
                 assign("if_text", input$text, .GlobalEnv)
                 assign("compx", input$compx, .GlobalEnv)
