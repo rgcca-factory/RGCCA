@@ -28,7 +28,7 @@ server <- function(input, output, session) {
             label = "Number of top variables",
             min = 10,
             max = getMaxCol(),
-            value = getDefaultCol(),
+            value = isolate(getDefaultCol()),
             step = 1
         )
     })
@@ -76,7 +76,7 @@ server <- function(input, output, session) {
     output$compx_custom <- renderUI({
         refresh <- refreshAnalysis()
         refresh <- input$names_block_x
-        isolate(uiComp("x", 1, id_block, input$navbar != "Fingerprint"))
+        uiComp("x", 1, id_block, input$navbar != "Fingerprint")
     })
 
     output$compy_custom <- renderUI({
@@ -252,7 +252,7 @@ server <- function(input, output, session) {
         if (bool)
             label <- paste0("Component for the ", x, "-axis")
 
-         comp <- getNcomp()
+         comp <- isolate(getNcomp())
         if (length(comp) > 1)
             comp <- comp[id_block]
 
@@ -597,7 +597,7 @@ server <- function(input, output, session) {
         if (max < 50)
             return (max)
         else
-            return (50)
+            return (input$nb_mark)
     }
 
     showWarn <- function(f, duration = 10, show = TRUE, warn = TRUE) {
@@ -800,7 +800,7 @@ server <- function(input, output, session) {
 
     getTau <- function() {
         
-        if (blocksExists() && !is.null(input$superblock) && (is.null(input$each_tau) || input$each_tau)) {
+        if (!is.null(input$superblock) && (is.null(input$each_tau) || input$each_tau)) {
             tau <- integer(0)
             for (i in 1:(length(blocks_without_superb) + ifelse(input$superblock, 1, 0)))
                 tau <- c(tau, input[[paste0("tau", i)]])
@@ -811,7 +811,7 @@ server <- function(input, output, session) {
     }
 
     getNcomp <- function() {
-        if (blocksExists() && input$each_ncomp) {
+        if (input$each_ncomp) {
             ncomp <- integer(0)
             cond <- input$superblock && ( toupper(analysis_type) %in% c("PCA", "RGCCA", "SGCCA") ||
                     analysis_type %in% multiple_blocks_super)
@@ -838,7 +838,7 @@ server <- function(input, output, session) {
              tau <- "optimal"
         else{
             # otherwise the tau value fixed by the user is used
-            tau <- getTau()
+            tau <- isolate(getTau())
         }
 
         setAnalysisMenu()
@@ -1281,7 +1281,7 @@ server <- function(input, output, session) {
         assign("id_block_resp",
                 length(blocks_without_superb),
                 .GlobalEnv)
-        blocks <- setParRGCCA(FALSE)
+        blocks <- isolate(setParRGCCA(FALSE))
         assign("blocks", blocks, .GlobalEnv)
         assign("connection_file", NULL, .GlobalEnv)
         set_connectionShiny()

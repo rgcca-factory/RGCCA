@@ -45,7 +45,7 @@ multiple_blocks_super  <<- c(
 analyse_methods  <<- list(one_block, two_blocks, multiple_blocks, multiple_blocks_super)
 reac_var  <<- reactiveVal()
 id_block_y <<- id_block <<- id_block_resp <<- analysis <<- connection <<- perm <<- boot <<-
-boot <<- analysis_type <<- crossval <<- selected.var <<- crossval <<- NULL
+boot <<- analysis_type <<- crossval <<- selected.var <<- crossval <<- blocks_without_superb <<- NULL
 clickSep <<- FALSE
 if_text <<- TRUE
 compx <<- 1
