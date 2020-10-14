@@ -152,7 +152,7 @@ ui <- fluidPage(
                 
                 checkboxInput(
                     inputId = "each_ncomp",
-                    label = "Tune the components for each block",
+                    label = "Number of components for each block",
                     value = FALSE
                 ),
                 uiOutput("nb_compcustom"),

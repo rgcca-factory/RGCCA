@@ -424,16 +424,16 @@ server <- function(input, output, session) {
     output$each_tau_custom <- renderUI({
 
             if (!is.null(input$analysis_type) && input$analysis_type == "SGCCA")
-                penalty <- "sparsity"
+                penalty <- "Sparsity"
             else if (!is.null(input$analysis_type) && input$analysis_type == "RGCCA")
-                penalty <- "tau"
+                penalty <- "Tau"
             else
                 penalty <- ""
             
             conditionalPanel(condition = "input.tau_opt == false",
                 checkboxInput(
                         inputId = "each_tau",
-                        label = paste("Tune the", penalty, "for each block"),
+                        label = paste(penalty, "for each block"),
                         value = if (!is.null(isolate(input$each_tau)))
                                 input$each_tau
                             else
@@ -453,8 +453,8 @@ server <- function(input, output, session) {
             penalty <- text <- ""
 
         ui <- checkboxInput(inputId = "tau_opt",
-                            label = paste("Use an optimal", penalty),
-                            value = if(!is.null(input$tau_opt))
+                            label = paste("Calculate an optimal", penalty),
+                            value = if (!is.null(input$tau_opt))
                                 isolate(input$tau_opt)
                                 else
                                     FALSE)
@@ -1145,7 +1145,7 @@ server <- function(input, output, session) {
 
     observe({
         # Event related to input$analysis_type
-        for (i in c("tau_custom", "tau_opt", "scheme", "superblock", "connection", "supervised" ))
+        for (i in c("tau_custom", "tau_opt_custom", "each_tau_custom", "scheme", "superblock", "connection", "supervised" ))
             setToggle(i)
         setToggle2("blocks_names_response")
         hide(selector = "#tabset li a[data-value=Graphic]")
