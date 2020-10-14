@@ -434,7 +434,10 @@ server <- function(input, output, session) {
                 checkboxInput(
                         inputId = "each_tau",
                         label = paste("Tune the", penalty, "for each block"),
-                        value = FALSE
+                        value = if (!is.null(isolate(input$each_tau)))
+                                input$each_tau
+                            else
+                                FALSE
                     ))
     })
     
@@ -451,7 +454,10 @@ server <- function(input, output, session) {
 
         ui <- checkboxInput(inputId = "tau_opt",
                             label = paste("Use an optimal", penalty),
-                            value = FALSE)
+                            value = if(!is.null(input$tau_opt))
+                                isolate(input$tau_opt)
+                                else
+                                    FALSE)
 
         if (BSPLUS)
             ui <- shinyInput_label_embed(
