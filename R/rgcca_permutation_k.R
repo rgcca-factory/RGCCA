@@ -96,8 +96,6 @@ rgcca_permutation_k <- function(
                 tau=NULL
             )
         }
-   
         crit <- res$crit[length(res$crit)]
         return(sum(crit))
-
 }

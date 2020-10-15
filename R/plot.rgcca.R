@@ -89,9 +89,9 @@ plot.rgcca=function(x,type="weight",block=length(x$A),comp=1:2,resp=rep(1, NROW(
     {
         if(x$call$superblock)
         {
-            if(block==length(x$rgcca$call$blocks))
+            if(block==length(x$call$blocks))
             {
-                block=length(x$rgcca$call$blocks)-1
+                block=length(x$call$blocks)-1
             }
         }
         if(is.null(title)){title= paste0("Variable correlations: ", names(x$call$blocks)[i_block])}
