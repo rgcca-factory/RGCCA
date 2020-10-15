@@ -97,6 +97,15 @@ rgcca_permutation_k <- function(
             )
         }
      
-        criterion <- lapply(res$crit,function(x){x[length(x)]})
-        return(sum(criterion))
+        if(max(ncomp)>1)
+        {
+            criterion <- sapply(res$crit,function(x){x[length(x)]})
+            crit_permut=sum(criterion)
+        }
+        else
+        {
+            crit_permut=res$crit[length(res$crit)]
+        }
+      
+        return(crit_permut)
 }

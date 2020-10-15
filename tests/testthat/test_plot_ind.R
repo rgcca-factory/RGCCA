@@ -31,7 +31,7 @@ rownames(resp) = seq(15)
 data(Russett)
  blocks = list(agri=Russett[,1:3],ind=Russett[,4:5],polit=Russett[,8:11])
  rgcca_out = rgcca(blocks = blocks, response = 3,ncomp=2)
- loo <- rgcca_crossvalidation(rgcca_out, n_cores = 2)
+ loo <- rgcca_crossvalidation(rgcca_out, n_cores = 1)
 
  plot_ind(rgcca_out, predicted = loo)
  
