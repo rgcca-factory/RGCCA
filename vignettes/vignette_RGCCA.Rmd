@@ -666,7 +666,7 @@ RGCCA using the pre-defined design matrix $\ma C$, the factorial scheme ($g(x) =
 
 ```{r, fig.height = 3, fig.width = 5}
 rgcca_B_factorial = rgcca(blocks=A, connection=C, 
-                          tau = rep(1, 3), 
+                          tau = rep(0, 3), 
                           scheme = "factorial", 
                           scale = TRUE,
                           scale_block = FALSE,
@@ -748,7 +748,6 @@ lab = factor(apply(Russett[, 9:11], 1, which.max),
 plot(rgcca_B_factorial, type = "ind", 
      block = 1:2, comp = 1, 
      resp = lab, no_overlap = TRUE)
-
 ```
 
 Countries aggregate together when they share similarities. It may be noted that the lower left quadrant concentrates on dictatorships. It is difficult for a country to escape dictatorship when its industrial development is below-average and its agricultural inequality is above average. It is worth pointing out that some unstable democracies located in this quadrant (or close to it) became dictatorships for a period of time after 1960: Greece (1967-1974), Brazil (1964-1985), Chili (1973-1990), and Argentina (1966-1973).
@@ -769,7 +768,7 @@ This automatic estimation of the shrinkage parameters allows one to come closer 
 
 A permutation based strategy very similar to the one proposed in [@Witten2009] has been also integrated within the RGCCA package through the `rgcca_permutation()` function. This function is used to select automatically the shrinkage parameters for R/SGCCA. 
 
-For each set of shrinkage parameters (generally this will be a $J$-dimensional vector), repeat the following n_perm times, for (n_perm large) : 
+For each set of shrinkage parameters (generally this will be a $J$-dimensional vector), repeat the following `n_perm` times, for (`n_perm` large) : 
 
 (a) The samples in $\mathbf X_1, \ldots, \mathbf X_J$ are randomly permuted to obtained data sets $\mathbf X_1^*, \ldots, \mathbf X_J^*$.
 
@@ -805,16 +804,18 @@ plot(fit.perm)
 ```
 
 
-**Assessment of the reliability of parameter estimates.** It is possible to use a bootstrap resampling method to assess the reliability of parameter estimates obtained using RGCCA. B bootstrap samples of the same size as the original data is repeatedly sampled with replacement from the original data. RGCCA is then applied to each bootstrap sample to obtain the RGCCA estimates. We calculate the mean and variance of the estimates across the bootstrap samples, from which we derived, bootstrap confidence intervals, t-ratio and p-value (under the assumption that the parameter estimates exhibited asymptotic normality) to indicate how reliably parameters were estimated. Since several p-values are constructed simultaneously, FDR correction can be applied for controlling the False Discovery Rate. This function is available using the `bootstrap()` function of the RGCCA package.
+**Assessment of the reliability of parameter estimates.** It is possible to use a bootstrap resampling method to assess the reliability of parameter estimates obtained using RGCCA. $B$ bootstrap samples of the same size as the original data is repeatedly sampled with replacement from the original data. RGCCA is then applied to each bootstrap sample to obtain the RGCCA estimates. We calculate the mean and variance of the estimates across the bootstrap samples, from which we derived, bootstrap confidence intervals, t-ratio and p-value (under the assumption that the parameter estimates exhibited asymptotic normality) to indicate how reliably parameters were estimated. Since several p-values are constructed simultaneously, FDR correction can be applied for controlling the False Discovery Rate. This function is available using the `bootstrap()` function of the RGCCA package.
 
 ```{r}
 fit.rgcca = rgcca(fit.perm)
 ```
 
 ```{r}
-boot.rgcca = bootstrap(fit.rgcca, n_boot = 200, n_cores = 1)
-```
 
+rgcca_optimal_factorial = rgcca(blocks=A, connection=C, tau = c(1, 1, 0), scheme = "factorial", scale = TRUE, verbose = FALSE, ncomp = 2)
+
+boot.rgcca = bootstrap(rgcca_optimal_factorial, n_boot = 200, n_cores = 15)
+```
 
 The bootstrap results are displayed using the `plot()`function.
 
@@ -828,28 +829,35 @@ and detailed using the `print()` function.
 print(boot.rgcca, n_cores = 1)
 ```
 
+**RGCCA with superblock** In the framework of consensus/hierarchical methods, a superblock defined as the concatenation of all the blocks is also used and global components can be derived. The space spanned by the global components is viewed as a consensus space that integrated all the modalities and facilitates the visualization of the results and their interpretation.
 
-Moreover, in the framework of consensus PCA and Hierarchical PCA, a superblock defined as the concatenation of all the blocks is also used and global components can be derived. The space spanned by the global components is viewed as a consensus space that integrated all the modalities and facilitates the visualization of the results and their interpretation.
-
-Here, $2$ components per block are specified using the `ncomp = rep(2, 4)` argument (default value `ncomp = rep(1, length(A))`, which gives one component per block).
+In this section, we consider Multiple Co-Inertia Analysis with $2$ components per block are specified using the `ncomp = rep(2, 4)` argument (default value `ncomp = rep(1, length(A))`, which gives one component per block).
 
 ```{r}
-
 X_agric =as.matrix(Russett[,c("gini","farm","rent")])
 X_ind = as.matrix(Russett[,c("gnpr","labo")])
 X_polit = as.matrix(Russett[ , c("inst", "ecks",  "death")])
 A = list(Agric = X_agric, Ind = X_ind, Polit = X_polit)
-fit.hpca = rgcca(blocks=A, tau = c(1, 1, 1, 0),
-                   verbose = FALSE, ncomp = rep(2, 4),
-                   #flexible design of the scheme function
-                   scheme = function(x) x^4,
-                   scale = TRUE, superblock = TRUE)
+
+fit.mcoa = rgcca(blocks=A, tau = c(1, 1, 1, 0),
+                verbose = FALSE, ncomp = rep(2, 4),
+                #flexible design of the scheme function
+                scheme = function(x) x^2,
+                scale = TRUE, superblock = TRUE)
+
+
+fit.mcoa = rgcca(blocks=A, tau = c(1, 1, 1),
+                verbose = FALSE, ncomp = rep(2, 3),
+                #flexible design of the scheme function
+                scheme = function(x) x^2,
+                scale = TRUE)
+
 ```
 
-For HPCA, the countries can be represented in the space spanned by the two first global components. Despite some overlap, the first global component exhibits a separation/continuum among regimes. 
+Multiple Co-Inertiea Analysis(MCOA) enables the countries to be represented in the space spanned by the two first global components. Despite some overlap, the first global component exhibits a separation/continuum among regimes. 
 
 ```{r, fig.align='center', fig.cap = 'graphical display of the countries obtained by crossing the two first components of the superblock and labeled according to their political regime',fig.height = 6, fig.width = 8} 
-plot(fit.hpca, resp=lab, type="ind", no_overlap = TRUE)
+plot(fit.mcoa, resp=lab, type="ind", no_overlap = TRUE)
 ```
 
 Moreover, the correlation circle plot highlights the contribution of each variable to the contruction of the global components. This figure shows the original variables projected on the compromise space.
@@ -860,13 +868,11 @@ plot(fit.hpca, type="var")
 
 A variable that is highly expressed for a category of individuals is projected with a high weight (far from the origin) in the direction of that category.
 
-It is often useful to vizualize jointly the sample space and the correlatin circle. This is make possible by using the `type = "both"` argument of the plot function.
+It is often useful to vizualize jointly the sample space and the correlation circle. This is make possible by using the `type = "both"` argument of the plot function.
 
 ```{r, fig.align='center', fig.cap = 'sample space and correlation cirle',fig.height = 6, fig.width = 8}
 plot(fit.hpca, type="both", resp = lab, no_overlap = TRUE)
 ```
-
-
 
 ## RGCCA (dual formulation) for the Glioma dataset 
 
@@ -1000,6 +1006,11 @@ plot(fit.sgcca,type="ind",block=1:2,comp=1, resp = Loc)
 ```
 
 It possible to determine the optimal sparsity parameters by permutation. This is made possible using the rgcca_permutation() function.
+
+```{r}
+fit.permute = rgcca_permutation(A, C, par_type = "sparsity", par_length = 10, n_run = 10)
+```
+
 
 We observe that the GE block contains much more discriminative information than the CGH block.
   

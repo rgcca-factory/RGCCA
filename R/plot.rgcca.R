@@ -90,6 +90,7 @@ plot.rgcca=function(x,type="weight",block=length(x$A),comp=1:2,resp=rep(1, NROW(
         if(x$call$superblock)
         {
             if(block[1]==length(x$call$blocks))
+            if(block==length(x$call$blocks))
             {
                 block=length(x$call$blocks)-1
             }
