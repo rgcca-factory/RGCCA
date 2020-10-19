@@ -85,7 +85,17 @@ rgcca_permutation_k <- function(
     func$sparsity <- sparsity
     func[[par_type]] <- par_value
 
-    crit <- eval(as.call(func))$crit
-    return(sum(sapply(crit, sum)))
+    res <- eval(as.call(func))
+
+    if (max(ncomp) > 1) {
+        criterion <- sapply(res$crit, function(x) {
+            x[length(x)]
+        })
+        crit_permut <- sum(criterion)
+    } else {
+        crit_permut <- res$crit[length(res$crit)]
+    }
+
+    return(crit_permut) 
 
 }

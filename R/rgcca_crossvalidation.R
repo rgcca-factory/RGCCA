@@ -14,7 +14,7 @@
 #' rgcca_out = rgcca(blocks, response = 3,superblock=FALSE)
 #' res=rgcca_crossvalidation(rgcca_out, validation = "kfold", k = 5, n_cores = 1)
 #' rgcca_crossvalidation(rgcca_out, n_cores = 1)
-#' rgcca_crossvalidation(rgcca_out, validation = "loo", k = 5, fit = "r2", n_cores = 1)$scores 
+#' # rgcca_crossvalidation(rgcca_out, validation = "loo", k = 5, fit = "r2", n_cores = 1)$scores 
 #' # 0.6282727
 #' @export
 #' @seealso \link{rgcca}, \link{rgcca_predict}, \link{plot.predict}

@@ -18,7 +18,7 @@ res=rgcca_permutation_k(blocks,tol=1e-3,tau=rep(1,3),ncomp=par[1,],perm=FALSE)
 
 test_that(
     "rgcca_permutationk_without_perm", {
-        expect_equal(round(res,digits=6),1.434355)    
+        expect_equal(round(res,digits=6),0.717216)    
     }
 )
 test_that(
