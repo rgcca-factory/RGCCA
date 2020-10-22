@@ -68,7 +68,7 @@ plot_histogram <- function(
                 size = cex_sub,
                 face = "italic"
             ),
-            plot.margin = margin(0, 0, mar, 0, "mm")
+            plot.margin = margin(5, 0, mar, 0, "mm")
     )
 
     if  (!is(df, "d_ave")) {

@@ -37,7 +37,11 @@ blocks2=blocks
 blocks2[[1]][,1]=0
 blocks2[[1]][1,1]=1
 rgcca_out2= rgcca(blocks2, response = 1,superblock=FALSE,ncomp=1,scale=TRUE,scale_block=TRUE)
-rescv= rgcca_crossvalidation(rgcca_res=rgcca_out2,n_cores=1,validation="loo")
+v_inds <- sample(nrow(rgcca_out2$call$raw[[1]]))
+v_inds <- split(v_inds, sort(v_inds %% 5))
+newA = lapply(rgcca_out2$call$raw, function(x) x[v_inds[[1]], , drop = FALSE])
+# res_predict = rgcca_predict(rgcca_out2, newA = newA, model = "classification", fit = "lda", bloc_to_pred = names(rgcca_out2$call$blocks)[rgcca_out2$call$response])
+# rescv= rgcca_crossvalidation(rgcca_res=rgcca_out2,n_cores=1,validation="loo")
  #new_scaled = FALSE si les blocs en entrée de newA ne sont pas scalés, TRUE si les blocks sont scalés
  # Finding back 0.495311
  res=rep(NA,dim(blocks[[1]])[1])

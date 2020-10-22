@@ -16,6 +16,7 @@
 #' @param b A boostrap object \code{\link[RGCCA]{bootstrap}}
 #' @param x A character for the index used in the plot (see details).
 #' @param y A character for the index to color the bars (see details).
+#' @param display_bar A boolean to display the bar for significative variables.
 #' @param ... Other parameters (see plot_histogram)
 #' @details 
 #' \itemize{
@@ -50,6 +51,7 @@ plot_bootstrap_1D <- function(
     colors = NULL,
     comp = 1,
     bars = "sd",
+    display_bar = TRUE,
     i_block = length(b$bootstrap[[1]]),
     collapse = FALSE,
     n_cores = parallel::detectCores() - 1,
@@ -58,23 +60,31 @@ plot_bootstrap_1D <- function(
     if (missing(b) && missing(df_b))
         stop_rgcca("Please select a bootstrap object.")
     if (!is.null(b)) {
-        df_b <- get_bootstrap(b, comp, block=i_block, collapse, n_cores, bars=bars,display_order = TRUE)
+        df_b <- get_bootstrap(
+            b,
+            comp,
+            block = i_block,
+            collapse,
+            n_cores,
+            bars = bars,
+            display_order = TRUE
+        )
     }
     if (!is.null(df_b))
         stopifnot(is(df_b, "df_bootstrap"))
     check_integer("n_mark", n_mark)
 
-    if(is.null(title))
-    {
-        title <- paste0(attributes(df_b)$indexes[[x]],
-                        "\n(",
-                        attributes(df_b)$n_boot,
-                        " bootstraps)")        
+    if (is.null(title)) {
+        title <- paste0(
+            attributes(df_b)$indexes[[x]],
+            "\n(",
+            attributes(df_b)$n_boot,
+            " bootstraps)")
     }
 
     if (is.null(colors)) {
         if (!(y %in% c("occurrences", "sign")))
-            colors <- c(color_group(seq(3))[1],  "gray", color_group(seq(3))[3])
+            colors <- c(color_group(seq(3))[1], "gray", color_group(seq(3))[3])
         else
             colors <- c(color_group(seq(3))[1], color_group(seq(3))[3])
     }
@@ -93,32 +103,25 @@ plot_bootstrap_1D <- function(
     y <- set_occ(y)
 
     if (y == "sign") 
-        group = c("NS","*")
+        group <- c("NS","*")
     else
-        group = NA
-
+        group <- NA
 
     if (n_mark > NROW(df_b))
         n_mark <- NROW(df_b)
-    
-    if (!is.null(df_b$sign)) {
-        df_b$sign[df_b$sign == "*"] <- 1
-        df_b$sign[df_b$sign == "NS"] <- 0
-        df_b$sign <- as.numeric(df_b$sign)
-    }
 
     df_b_head <- head(
         data.frame(
             order_df(df_b[, -NCOL(df_b)], x, allCol = TRUE),
             order = NROW(df_b):1),  n_mark)
-    df_b_head<-df_b_head[df_b_head[,"sd"]!=0,]
+    df_b_head <- df_b_head[df_b_head[, "sd"] != 0, ]
     class(df_b_head) <- c(class(df_b), "d_boot1D")
-    
+
     if (!is.null(df_b_head$sign)) {
         df_b_head$sign[df_b_head$sign == 1] <- "*"
         df_b_head$sign[df_b_head$sign == 0] <- "NS"
     }
-    
+
     p <- ggplot(
         df_b_head,
         aes(x = order,
@@ -136,21 +139,25 @@ plot_bootstrap_1D <- function(
 
     if (x == "estimate" && nrow(df_b_head) <= 50)
         p <- p +
-            geom_errorbar(aes(ymin = lower_band, ymax = upper_band,width=0.5))
-    if(x =="occurrences")
-    {
-        n_boot=ifelse(!is.null(dim(b[[1]][[1]][[1]])),dim(b[[1]][[1]][[1]])[2],length(b[[1]][[1]][[1]]))
-        nvar=length(b$bootstrap[[1]][[i_block]][,1])
-        avg_n_occ=sum(df_b$occurrences)/n_boot
-        probComp= avg_n_occ/nvar
-        
-        q1=qbinom(size=n_boot,prob=probComp,p=1-0.05/nvar)
-        q2=qbinom(size=n_boot,prob=probComp,p=1-0.01/nvar)
-        q3=qbinom(size=n_boot,prob=probComp,p=1-0.001/nvar)
-        
-        p <-p+geom_hline(yintercept = c(q1,q2,q3),col=c("#82191b","#d63134","#e49697"))
-        p
-        
+            geom_errorbar(
+                aes(
+                    ymin = lower_band, 
+                    ymax = upper_band, 
+                    width = 0.5))
+
+    if (x == "occurrences" && display_bar) {
+        n_boot <- attributes(df_b)$n_boot
+        nvar <- NROW(df_b)
+        avg_n_occ <- sum(df_b$occurrences) / n_boot
+        probComp <- avg_n_occ / nvar
+
+        q <- qbinom(
+            size = n_boot,
+            prob = probComp,
+            p = 1 - 0.05 / nvar)
+
+        p <- p + geom_hline(yintercept = q, col = "black")
     }
+
     return(p)
 }

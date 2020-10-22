@@ -51,7 +51,7 @@ plot_var_2D <- function(
     i_block = length(rgcca_res$a),
     text = TRUE,
     remove_var = TRUE,
-    n_mark = 100,
+    n_mark = 30,
     collapse = FALSE,
     no_overlap = FALSE,
     title = "Variable correlations",

@@ -35,7 +35,7 @@
 plot_var_1D <- function(
     rgcca_res,
     comp = 1,
-    n_mark = 100,
+    n_mark = 30,
     i_block = length(rgcca_res$a),
     type = "cor",
     collapse = FALSE,

@@ -115,6 +115,11 @@ rgcca_cv=function( blocks,
     match.arg(par_type, c("tau", "sparsity","ncomp"))
     min_spars <- NULL
 
+    if (type %in% c("sgcca", "spca", "spls")) {
+        par_type <- "sparsity"
+    } else
+        par_type <- "tau"
+
     if (length(blocks) < 1)
         stop_rgcca("Crossvalidation required a number of blocks larger than 1.")
     

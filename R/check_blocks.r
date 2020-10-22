@@ -20,7 +20,7 @@
 # A[[1]][2, 3] <- runif(1)
 # init : boolean (FALSE by default) for the first block checking
 
-check_blocks <- function(blocks, init = FALSE, n = 2, add_NAlines=FALSE, allow_unnames =  TRUE,quiet=FALSE) {
+check_blocks <- function(blocks, init = FALSE, n = 2, add_NAlines=FALSE, allow_unnames =  TRUE,quiet=FALSE, no_character = FALSE) {
     
   
     msg <- ""
@@ -128,13 +128,14 @@ check_blocks <- function(blocks, init = FALSE, n = 2, add_NAlines=FALSE, allow_u
     }
    
 
-  
- #   if (any(sapply(blocks, is.character2)))
- #       message(paste(msg, "an element contains non-numeric data.They will be replaced by NAs\n "))
-
-#    for (i in seq(length(blocks)))
-#        if (is.character(blocks[[i]]))
-#            blocks[[i]] <- to_numeric(blocks[[i]])
+    if (no_character) {
+        if (any(sapply(blocks, is.character2)))
+            stop(paste(msg, "an element contains non-numeric data."))
+        
+        for (i in seq(length(blocks)))
+           if (is.character(blocks[[i]]))
+               blocks[[i]] <- to_numeric(blocks[[i]])
+    }
    # Add lines if subjects are missing
 
     if(add_NAlines)

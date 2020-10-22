@@ -20,7 +20,7 @@
 #'     n_run=1,n_cores=1)
 #'    plot(res)
 #'@importFrom ggplot2 ggplot
-plot.cval=function(x, bars="sd", cex = 1, cex_main = 14 * cex, cex_sub = 10 * cex, cex_lab = 10 * cex, colors = c("red", "grey"), ...)
+plot.cval=function(x, bars="sd", cex = 1, cex_main = 14 * cex, cex_sub = 10 * cex, cex_lab = 10 * cex, colors = c("red", "black"), ...)
 {
 
     stopifnot(is(x, "cval"))
@@ -105,7 +105,7 @@ plot.cval=function(x, bars="sd", cex = 1, cex_main = 14 * cex, cex_sub = 10 * ce
     }
     
     df=data.frame(configurations=1:nrow(mat_cval),mean=mean_b,inf=inf_b,sup=sup_b)
-    p<- ggplot(data=df,aes(x=configurations,y=mean))+geom_point()+theme_classic() + xlab("Combinations")+ylab(y_lab)
+    p<- ggplot(data=df,aes(x=configurations,y=mean))+geom_point(colour=colors[2])+theme_classic() + xlab("Combinations")+ylab(y_lab)
     if(bars!="none"&& bars!="points")
     {
         p<-p+geom_segment(data=df,aes(x=configurations,y=inf_b,xend=configurations,yend=sup_b),colour=colors[2])

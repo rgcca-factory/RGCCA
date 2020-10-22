@@ -171,5 +171,5 @@ plot2D <- function(
         p <- p + scale_color_gradientn(colours = colors, na.value = "black")
     }
 
-    return(p)
+    p + theme(plot.margin = margin(5, 0, 0, 0, "mm"))
 }

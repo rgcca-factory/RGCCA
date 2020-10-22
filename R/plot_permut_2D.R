@@ -88,20 +88,6 @@ plot_permut_2D <- function(
             axis.ticks  = element_line(size = 0.5),
             axis.ticks.length = unit(2, "mm"),
             legend.position = "none"
-        ) + 
-        geom_point(
-            mapping = aes(
-                x = best,
-                y = y_best,
-                color = I(colors[1]),
-                shape = I(3)
-            ),
-            size = 5
-        ) +
-        geom_vline(
-            size =  0.5,
-            color = colors[1],
-            xintercept = best
         )
 
     if (type == "zstat")
@@ -150,10 +136,24 @@ plot_permut_2D <- function(
    
 
     }
-    
 
-    p <- p + geom_line(data = df, mapping = aes(x = df[, 1], y = df[, 2]))
-    p <- p + scale_x_continuous(breaks = 1:nrow(df), labels = rownames(df))
+    p <- p + geom_line(data = df, mapping = aes(x = df[, 1], y = df[, 2])) +
+        scale_x_continuous(breaks = 1:nrow(df), labels = rownames(df)) + 
+        theme(plot.title = element_text(vjust=5), plot.margin = margin(5, 0, 0, 0, "mm")) + 
+        geom_point(
+            mapping = aes(
+                x = best,
+                y = y_best,
+                color = I(colors[1]),
+                shape = I(3)
+            ),
+            size = 5
+        ) +
+        geom_vline(
+            size =  0.5,
+            color = colors[1],
+            xintercept = best
+        )
     attributes(p)$penalties <- perm$penalties
 
     return(p)
