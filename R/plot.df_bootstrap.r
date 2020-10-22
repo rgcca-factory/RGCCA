@@ -37,6 +37,14 @@ plot.bootstrap=function(x,type="1D",block=length(x$rgcca$call$blocks),comp=1,n_m
     stopifnot(is(x, "bootstrap"))
     check_blockx("block", block, x$rgcca$call$blocks)
     match.arg(type,c("1D","2D"))
+    if(x$rgcca$call$superblock)
+    {
+        if(block==length(x$rgcca$call$blocks))
+        {
+            block=length(x$rgcca$call$blocks)-1
+        }
+
+    }
     if(type=="1D")
     {
         

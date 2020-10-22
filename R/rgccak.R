@@ -100,7 +100,6 @@ rgccak=function (A, C, tau = "optimal", scheme = "centroid",verbose = FALSE, ini
         Binit=A
         if (scale == TRUE) 
         {
-            
             A1 = lapply(A, function(x) scale2(x,scale=TRUE, bias = bias)) # le biais indique si on recherche la variance biaisee ou non
             if(scale_block)
             {
@@ -170,11 +169,25 @@ rgccak=function (A, C, tau = "optimal", scheme = "centroid",verbose = FALSE, ini
         {
            # M[[j]] <- ginv(tau[j] * diag(pjs[j]) + ((1 - tau[j])/(N)) * (pm(t(A[[j]]) , A[[j]],na.rm=na.rm))) #calcul de la fonction a minimiser ?
             #-taking NA into account in the N
-            nmat=ifelse(bias,t(!is.na(A[[j]]))%*%(!is.na(A[[j]])),t(!is.na(A[[j]]))%*%(!is.na(A[[j]]))-1)
+            nmat=matrix(N,pjs[j],pjs[j])
+            nacol=unique(which(is.na(A[[j]]),arr.ind=T)[,"col"])
+            if(length(nacol)!=0)
+            {
+                sujToRemove=is.na(t(A[[j]][,nacol]))%*%is.na(A[[j]][,nacol])
+                nmat[nacol,nacol]=nmat[nacol,nacol]-sujToRemove
+            }
+             # 
+            # if(bias)
+            # {
+            #     nmat= t(!is.na(A[[j]]))%*%(!is.na(A[[j]]))
+            # }
+            # else
+            # {
+            #     nmat= t(!is.na(A[[j]]))%*%(!is.na(A[[j]]))-1
+            # }
+            
             nmat[nmat==0]=NA
             M[[j]] <- ginv(tau[j] * diag(pjs[j]) + ((1 - tau[j])) *nmat^(-1)* (pm(t(A[[j]]) , A[[j]],na.rm=na.rm))) #calcul de la fonction a minimiser ?
-            #-----------------------
-           
             a[[j]] <- drop(1/sqrt(t(a[[j]])%*% M[[j]]%*%a[[j]]) )* ( M[[j]] %*% a[[j]]) # calcul premiere composante (a creuser)
             if(a[[j]][1]<0){a[[j]]=-a[[j]]}
             Y[, j] <-pm( A[[j]] ,a[[j]],na.rm=na.rm) # projection du bloc sur la premiere composante
@@ -192,10 +205,27 @@ rgccak=function (A, C, tau = "optimal", scheme = "centroid",verbose = FALSE, ini
            # M[[j]] = tau[j] * diag(n) + (1 - tau[j])/(N) * K[[j]]  # contraire de la matrice de covariace
            
            #----taking NA into account in the N
-            nmat=ifelse(bias,t(!is.na(A[[j]]))%*%(!is.na(A[[j]])),t(!is.na(A[[j]]))%*%(!is.na(A[[j]]))-1)
-            nmat[nmat==0]=NA
-            M[[j]] <- tau[j] * diag(n) + ((1 - tau[j])) *nmat^(-1)* K[[j]] #calcul de la fonction a minimiser ?
-             Minv[[j]] = ginv(M[[j]])
+             
+             # if(bias)
+             # {
+             #    nmat=matrix()
+             #    nmat= t(!is.na(A[[j]]))%*%(!is.na(A[[j]]))
+             # }
+             # else
+             # {
+             #    nmat= t(!is.na(A[[j]]))%*%(!is.na(A[[j]]))-1
+             # }
+             #            
+                        
+         
+             #nmat[nmat==0]=NA
+             
+             # nmat=matrix(N,n,n)
+             # which()
+          
+            # M[[j]] <- tau[j] * diag(n) + ((1 - tau[j])) *nmat^(-1)* K[[j]] #calcul de la fonction a minimiser ?
+            M[[j]] <- tau[j] * diag(n) + ((1 - tau[j])) *1/N* K[[j]] #calcul de la fonction a minimiser ?
+            Minv[[j]] = ginv(M[[j]])
             alpha[[j]] = drop(1/sqrt(t(alpha[[j]])%*% M[[j]]%*% K[[j]]%*% alpha[[j]])) * alpha[[j]]
             a[[j]] =pm( t(A[[j]]), alpha[[j]],na.rm=na.rm) 
             if(a[[j]][1]<0){a[[j]]=-a[[j]]}

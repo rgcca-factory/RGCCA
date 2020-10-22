@@ -20,12 +20,27 @@
 print.bootstrap = function(x, bars = "quantile", n_cores = parallel::detectCores() - 1, ...) {
     print(paste(dim(x$bootstrap[[1]][[1]])[2], "bootstrap(s) were run"), ...)
     ncompmax = min(x$rgcca$call$ncomp)
-    for (comp in 1:ncompmax) {
-        cat(paste("Dimension:", comp, "\n"))
-        print(Reduce(rbind, lapply(1:length(x$rgcca$call$blocks), function(block) {
-            b = get_bootstrap(b = x, block = block, comp = comp, bars = bars, display_order = FALSE, n_cores = n_cores)
-            othercols = colnames(b)[-which(colnames(b) == "estimate")]
-            return(b[, c("estimate", othercols)])
-        })))
+    if(x$rgcca$call$superblock==FALSE)
+    {
+        for (comp in 1:ncompmax) {
+            cat(paste("Dimension:", comp, "\n"))
+            print(Reduce(rbind, lapply(1:length(x$rgcca$call$blocks), function(block) {
+                b = get_bootstrap(b = x, block = block, comp = comp, bars = bars, display_order = FALSE, n_cores = n_cores)
+                othercols = colnames(b)[-which(colnames(b) == "estimate")]
+                return(b[, c("estimate", othercols)])
+            })))
+        }
     }
+    else
+    {
+        for (comp in 1:ncompmax) {
+            cat(paste("Dimension:", comp, "\n"))
+            print(Reduce(rbind, lapply(1:(length(x$rgcca$call$blocks)-1), function(block) {
+                b = get_bootstrap(b = x, block = block, comp = comp, bars = bars, display_order = FALSE, n_cores = n_cores)
+                othercols = colnames(b)[-which(colnames(b) == "estimate")]
+                return(b[, c("estimate", othercols)])
+            })))
+        }
+    }
+ 
 }

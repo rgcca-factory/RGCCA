@@ -74,3 +74,16 @@ test_that("test_bootstrap_na_values", {
     )
     expect_true(select_var["demostab", "estimate"] == resRGCCA$a[[3]]["demostab", 1])
 })
+
+# bootstrap superblock
+data("Russett")
+blocks <- list(
+    agriculture = Russett[, seq(3)],
+    industry = Russett[, 4:5],
+    politic = Russett[, 6:11] )
+ncomp=1
+rgcca_out <- rgcca(blocks,ncomp=2,superblock=TRUE)
+boot <- bootstrap(rgcca_out, n_boot = 100, n_cores = 1)
+plot(boot)
+print(boot)
+plot(rgcca_out,type="var")

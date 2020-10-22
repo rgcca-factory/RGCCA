@@ -101,7 +101,7 @@ rgcca_cv=function( blocks,
             # cat("n_run value was replaced by 1 (is not relevant for loo option)")
         };n_run=1
     }
-    if(mode(blocks[response])=="character")
+    if(mode(blocks[[response]])=="character")
     {
         type_cv="classification";
         fit="lda"
@@ -132,7 +132,9 @@ rgcca_cv=function( blocks,
             f <- quote(max[x])
         sapply(seq(min_spars), function(x) seq(eval(f), min_spars[x], len = par_length))
     }
-    set_penalty <- function () {
+    set_penalty <- function () 
+    {
+     
         if(par_type == "sparsity"){
             if(type!="sgcca"){cat("As par_type=='sparsity', the type parameter was replaced by 'sgcca'")}
             type <- "sgcca"
@@ -143,17 +145,21 @@ rgcca_cv=function( blocks,
             min_spars <<- sapply(ncols, function(x) 0)
         }
         
-        if (is.null(par_value))
-            par_value <- set_spars()
-        else if (class(par_value) %in% c("data.frame", "matrix"))
-            par_value <- t(sapply(seq(NROW(par_value)), function(x) check_tau(par_value[x, ], blocks, type = type)))
+        if (is.null(par_value)){ par_value <- set_spars()}
         else{
-            if (any(par_value < min_spars))
-                stop_rgcca(paste0("par_value should be upper than : ", paste0(round(min_spars, 2), collapse = ",")))
-            par_value <- check_tau(par_value, blocks, type = type)
-            par_value <- set_spars(max = par_value)
+            if (class(par_value) %in% c("data.frame", "matrix"))
+            { 
+                par_value <- t(sapply(seq(NROW(par_value)), function(x) check_tau(par_value[x, ], blocks, type = type)))
+                
+            }
+            else
+            { 
+                if (any(par_value < min_spars))
+                    stop_rgcca(paste0("par_value should be upper than : ", paste0(round(min_spars, 2), collapse = ",")))
+                par_value <- check_tau(par_value, blocks, type = type)
+                par_value <- set_spars(max = par_value)
+            }
         }
-  
         colnames(par_value) <- names(blocks)
         return(list(par_type, par_value))
     }
@@ -176,7 +182,7 @@ rgcca_cv=function( blocks,
         "sparsity" = par_type <- set_penalty(),
         "tau" = par_type <- set_penalty()
     )
- 
+
     message(paste("Cross-validation for", par_type[[1]], "in progress...\n"), appendLF = FALSE)
     pb <- txtProgressBar(max=dim(par_type[[2]])[1])
     n_rep=ifelse(one_value_per_cv,n_run,n_run*k)

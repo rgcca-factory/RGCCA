@@ -7,11 +7,12 @@
 
 pm=function(M1,M2,na.rm=TRUE)
 {
-  M1b=as.matrix(M1); M2b=as.matrix(M2)
-  if(dim(M1b)[2]!=dim(M2b)[1]){stop_rgcca("matrices should have a number of rows/columns compatible with matricial product")}
+ 
+#  if(dim(M1b)[2]!=dim(M2b)[1]){stop_rgcca("matrices should have a number of rows/columns compatible with matricial product")}
   
   if(na.rm)
   {
+    M1b=as.matrix(M1); M2b=as.matrix(M2)
     ind1=which(is.na(M1),arr.ind=TRUE)
     ind2=which(is.na(M2),arr.ind=TRUE)
     M1b[ind1]=0
