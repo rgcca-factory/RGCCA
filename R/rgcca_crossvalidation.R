@@ -97,7 +97,7 @@ rgcca_crossvalidation <- function(
                  attr(rgcca_k$call$blocks[[i]], "scaled:center") <- center_att[[i]]
                  attr(rgcca_k$call$blocks[[i]], "scaled:scale") <- scale_attr[[i]]
              }
-            # Necessite les scale et les center en sortie
+          # Necessite les scale et les center en sortie
            respred= rgcca_predict(
                 rgcca_k,
                 newA = lapply(bigA, function(x) x[inds, , drop = FALSE]),
@@ -117,8 +117,7 @@ rgcca_crossvalidation <- function(
     {
         bigA <- intersection_list(rgcca_res$call$raw)
     }
-    
-  
+   
     if (validation == "loo")
         v_inds <- seq(nrow(bigA[[1]]))
     if (validation == "kfold") {

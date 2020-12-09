@@ -4,12 +4,29 @@
 \alias{rgcca_crossvalidation}
 \title{Cross-validation}
 \usage{
-rgcca_crossvalidation(rgcca_res, validation = "kfold",
-  model = "regression", fit = "lm", new_scaled = TRUE, k = 5,
-  scale = NULL, scale_block = NULL, tol = 1e-08, scheme = NULL,
-  method = NULL, type = NULL, init = NULL, bias = NULL,
-  connection = NULL, ncomp = NULL, tau = NULL, sparsity = NULL,
-  n_cores = parallel::detectCores() - 1, parallelization = TRUE, ...)
+rgcca_crossvalidation(
+  rgcca_res,
+  validation = "kfold",
+  model = "regression",
+  fit = "lm",
+  new_scaled = TRUE,
+  k = 5,
+  scale = NULL,
+  scale_block = NULL,
+  tol = 1e-08,
+  scheme = NULL,
+  method = NULL,
+  type = NULL,
+  init = NULL,
+  bias = NULL,
+  connection = NULL,
+  ncomp = NULL,
+  tau = NULL,
+  sparsity = NULL,
+  n_cores = parallel::detectCores() - 1,
+  parallelization = TRUE,
+  ...
+)
 }
 \arguments{
 \item{rgcca_res}{A RGCCA object (see  \code{\link[RGCCA]{rgcca}})}

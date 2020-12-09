@@ -4,8 +4,7 @@
 \alias{print.bootstrap}
 \title{Print bootstrap}
 \usage{
-\method{print}{bootstrap}(x, bars = "quantile",
-  n_cores = parallel::detectCores() - 1, ...)
+\method{print}{bootstrap}(x, bars = "quantile", n_cores = parallel::detectCores() - 1, ...)
 }
 \arguments{
 \item{x}{A bootstrap object (see \code{\link[RGCCA]{bootstrap}})}

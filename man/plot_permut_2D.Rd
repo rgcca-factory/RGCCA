@@ -4,9 +4,18 @@
 \alias{plot_permut_2D}
 \title{Plot permutation in 2D}
 \usage{
-plot_permut_2D(perm, type = "crit", cex = 1, title = NULL,
-  cex_main = 14 * cex, cex_sub = 12 * cex, cex_point = 3 * cex,
-  cex_lab = 10 * cex, bars = "points", colors = c("red", "grey"))
+plot_permut_2D(
+  perm,
+  type = "crit",
+  cex = 1,
+  title = NULL,
+  cex_main = 14 * cex,
+  cex_sub = 12 * cex,
+  cex_point = 3 * cex,
+  cex_lab = 10 * cex,
+  bars = "points",
+  colors = c("red", "grey")
+)
 }
 \arguments{
 \item{perm}{A permutation object (see \code{\link[RGCCA]{rgcca_permutation}})}

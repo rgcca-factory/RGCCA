@@ -4,10 +4,19 @@
 \alias{plot.permutation}
 \title{Plot permutation}
 \usage{
-\method{plot}{permutation}(x, type = "crit", cex = 1, title = NULL,
-  cex_main = 14 * cex, cex_sub = 12 * cex, bars = "points",
-  cex_point = 3 * cex, cex_lab = 19 * cex, colors = c("red", "grey"),
-  ...)
+\method{plot}{permutation}(
+  x,
+  type = "crit",
+  cex = 1,
+  title = NULL,
+  cex_main = 14 * cex,
+  cex_sub = 12 * cex,
+  bars = "points",
+  cex_point = 3 * cex,
+  cex_lab = 19 * cex,
+  colors = c("red", "grey"),
+  ...
+)
 }
 \arguments{
 \item{x}{result of rgcca_permutation (see  \code{\link[RGCCA]{rgcca_permutation}})}

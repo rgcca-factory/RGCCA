@@ -4,11 +4,21 @@
 \alias{sgcca}
 \title{Variable Selection For Generalized Canonical Correlation Analysis (SGCCA)}
 \usage{
-sgcca(A, C = 1 - diag(length(A)), sparsity = rep(1, length(A)),
-  ncomp = rep(1, length(A)), scheme = "centroid", scale = TRUE,
-  init = "svd", bias = TRUE, tol = .Machine$double.eps,
-  verbose = FALSE, scale_block = TRUE, prescaling = FALSE,
-  quiet = FALSE)
+sgcca(
+  A,
+  C = 1 - diag(length(A)),
+  sparsity = rep(1, length(A)),
+  ncomp = rep(1, length(A)),
+  scheme = "centroid",
+  scale = TRUE,
+  init = "svd",
+  bias = TRUE,
+  tol = .Machine$double.eps,
+  verbose = FALSE,
+  scale_block = TRUE,
+  prescaling = FALSE,
+  quiet = FALSE
+)
 }
 \arguments{
 \item{A}{A list of matrices giving the \eqn{J} blocks of variables \eqn{\mathbf{X_1}, \mathbf{X_2}, ..., \mathbf{X_J}}.}

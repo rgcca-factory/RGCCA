@@ -4,8 +4,15 @@
 \alias{plot.patternNA}
 \title{plot.patternNA}
 \usage{
-\method{plot}{patternNA}(x, type = "all", color = "springgreen4",
-  legend = FALSE, scale = TRUE, outlierVisible = FALSE, ...)
+\method{plot}{patternNA}(
+  x,
+  type = "all",
+  color = "springgreen4",
+  legend = FALSE,
+  scale = TRUE,
+  outlierVisible = FALSE,
+  ...
+)
 }
 \arguments{
 \item{x}{A get_patternNA object (see \code{\link[RGCCA]{get_patternNA}})}

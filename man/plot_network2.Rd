@@ -4,13 +4,19 @@
 \alias{plot_network2}
 \title{Plot the connection between blocks (dynamic plot)}
 \usage{
-plot_network2(rgcca_res, title = paste0("Common rows between blocks : ",
-  NROW(rgcca_res$call$blocks[[1]])), colors = "#eee685")
+plot_network2(
+  rgcca_res,
+  title = paste0("Common rows between blocks : ", NROW(rgcca_res$call$blocks[[1]])),
+  cex_main = 20,
+  colors = c("#eee685", "gray")
+)
 }
 \arguments{
 \item{rgcca_res}{A RGCCA object (see  \code{\link[RGCCA]{rgcca}})}
 
 \item{title}{A character giving the title of the plot}
+
+\item{cex_main}{An integer for the size of the title}
 
 \item{colors}{Either a vector of integers (each integer corresponding to a color) or of characters corresponding to names of colors (as "blue",see colors()) or RGB code ("#FFFFFF").}
 }

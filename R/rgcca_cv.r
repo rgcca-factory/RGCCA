@@ -101,7 +101,7 @@ rgcca_cv=function( blocks,
             # cat("n_run value was replaced by 1 (is not relevant for loo option)")
         };n_run=1
     }
-    if(mode(blocks[[response]])=="character")
+    if("character"%in%mode(blocks[[response]]))
     {
         type_cv="classification";
         fit="lda"
@@ -147,7 +147,7 @@ rgcca_cv=function( blocks,
         
         if (is.null(par_value)){ par_value <- set_spars()}
         else{
-            if (class(par_value) %in% c("data.frame", "matrix"))
+            if ("data.frame"%in%class(par_value) ||  "matrix"%in% class(par_value))
             { 
                 par_value <- t(sapply(seq(NROW(par_value)), function(x) check_tau(par_value[x, ], blocks, type = type)))
                 
@@ -187,7 +187,8 @@ rgcca_cv=function( blocks,
     pb <- txtProgressBar(max=dim(par_type[[2]])[1])
     n_rep=ifelse(one_value_per_cv,n_run,n_run*k)
     res=matrix(NA,dim(par_type[[2]])[1],n_run*k);rownames(res)=apply(round(par_type[[2]],digits=2),1,paste,collapse="-");
-     for(i in 1:dim(par_type[[2]])[1])
+
+    for(i in 1:dim(par_type[[2]])[1])
         {
 
             if(par_type[[1]]=="ncomp")
@@ -200,9 +201,10 @@ rgcca_cv=function( blocks,
               
             }
             if(par_type[[1]]=="tau")
-            {
+            { 
                 rgcca_res=rgcca(blocks=blocks, type=type,response=response,tau=par_type[[2]][i,],superblock=superblock,scale=scale,scale_block=scale_block,scheme=scheme,tol=tol,method=method, ncomp=ncomp,bias=bias,init=init)
-            }
+       
+              }
  
             res_i=c()
             for(n in 1:n_run)
@@ -242,7 +244,9 @@ rgcca_cv=function( blocks,
             #Sys.sleep(0.5); 
             setTxtProgressBar(pb, i)
             mat_cval=res
+          
             rownames(mat_cval)=1:NROW(mat_cval)
+
     }
 
     cat("\n")
@@ -265,7 +269,9 @@ rgcca_cv=function( blocks,
               blocks=blocks
     )
     par2=par_type[[2]]
+
     rownames(par2) = 1:NROW(par2)
+  
     colnames(par2)=names(blocks)
     
     res2=list(cv=mat_cval,call=call,bestpenalties=par_type[[2]][which.min(apply(mat_cval,1,mean)),],penalties=par2)

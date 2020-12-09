@@ -74,10 +74,11 @@ set_rgcca <- function(
         penalty <- tau
     }
 
-    if (boot) {
+    if (boot) 
+    {
         boot_blocks <- list(NULL)
-        while (any(sapply(boot_blocks, function(x) length(x)) == 0)) {
-
+        while (any(sapply(boot_blocks, function(x) length(x)) == 0))
+        {
             id_boot <- sample(NROW(blocks[[1]]), replace = TRUE)
             boot_blocks <- lapply(
                 blocks, 
@@ -91,7 +92,8 @@ set_rgcca <- function(
 # TODO : to be replaced by something else
            boot_blocks <- remove_null_sd(boot_blocks)
         }
-    }else
+    }
+    else
     {
         if(length(inds)==0)
         {
@@ -100,7 +102,7 @@ set_rgcca <- function(
         else
         {
             boot_blocks <- lapply(blocks, function(x) x[-inds, , drop = FALSE])
-            if(class(boot_blocks[[response]])=="character")
+            if("character"%in% class(boot_blocks[[response]]))
             {
                 if(length(unique(boot_blocks[[response]]))==1)
                 {

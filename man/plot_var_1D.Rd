@@ -4,9 +4,17 @@
 \alias{plot_var_1D}
 \title{Barplot of a fingerprint}
 \usage{
-plot_var_1D(rgcca_res, comp = 1, n_mark = 100,
-  i_block = length(rgcca_res$a), type = "cor", collapse = FALSE,
-  title = NULL, colors = NULL, ...)
+plot_var_1D(
+  rgcca_res,
+  comp = 1,
+  n_mark = 30,
+  i_block = length(rgcca_res$a),
+  type = "cor",
+  collapse = FALSE,
+  title = NULL,
+  colors = NULL,
+  ...
+)
 }
 \arguments{
 \item{rgcca_res}{A RGCCA object (see  \code{\link[RGCCA]{rgcca}})}

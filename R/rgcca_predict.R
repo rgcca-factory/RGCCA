@@ -360,8 +360,20 @@ rgcca_predict = function(
 #             #     }
 #             # }
              )
-         res=class.fit ==to_pred_test
-         score <- 1-(sum(res) / length(to_pred_test))
+      
+       
+          if(length(class.fit)==1)
+          {
+            res=class.fit==as.vector(to_pred_test)
+            score=1-res
+          }
+         else
+         {
+           res=class.fit ==to_pred_test
+           score <- 1-(sum(res) / length(to_pred_test))
+         }
+
+        
      }
  
      result=list(

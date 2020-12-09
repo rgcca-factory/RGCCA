@@ -4,10 +4,22 @@
 \alias{plot_bootstrap_1D}
 \title{Plot a bootstrap in 1D}
 \usage{
-plot_bootstrap_1D(b = NULL, df_b = NULL, x = "estimate",
-  y = "occurrences", n_mark = 50, title = NULL, colors = NULL,
-  comp = 1, bars = "sd", i_block = length(b$bootstrap[[1]]),
-  collapse = FALSE, n_cores = parallel::detectCores() - 1, ...)
+plot_bootstrap_1D(
+  b = NULL,
+  df_b = NULL,
+  x = "estimate",
+  y = "occurrences",
+  n_mark = 50,
+  title = NULL,
+  colors = NULL,
+  comp = 1,
+  bars = "sd",
+  display_bar = TRUE,
+  i_block = length(b$bootstrap[[1]]),
+  collapse = FALSE,
+  n_cores = parallel::detectCores() - 1,
+  ...
+)
 }
 \arguments{
 \item{b}{A boostrap object \code{\link[RGCCA]{bootstrap}}}
@@ -27,6 +39,8 @@ plot_bootstrap_1D(b = NULL, df_b = NULL, x = "estimate",
 \item{comp}{An integer giving the index of the analysis components}
 
 \item{bars}{A character giving the variability among "sd" (standard deviations bars) , "stderr"(bars of standard deviation divided by sqrt(n)) or "quantile" (for the 0.05-0.95 quantiles bars)}
+
+\item{display_bar}{A boolean to display the bar for significative variables.}
 
 \item{i_block}{An integer giving the index of a list of blocks}
 

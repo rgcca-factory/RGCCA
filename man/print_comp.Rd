@@ -4,8 +4,7 @@
 \alias{print_comp}
 \title{Print the variance of a component}
 \usage{
-print_comp(rgcca_res, n = 1, i = length(rgcca_res$AVE$AVE_X),
-  outer = FALSE)
+print_comp(rgcca_res, n = 1, i = length(rgcca_res$AVE$AVE_X), outer = FALSE)
 }
 \arguments{
 \item{rgcca_res}{A RGCCA object (see  \code{\link[RGCCA]{rgcca}})}

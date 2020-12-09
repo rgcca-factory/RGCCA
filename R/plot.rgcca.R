@@ -133,7 +133,7 @@ plot.rgcca=function(x,type="weight",block=length(x$A),comp=1:2,resp=rep(1, NROW(
                                         NROW(x$call$blocks[[1]]))}
         plot_network (
             x, 
-            title = title)
+            title = title,cex_main=cex_main)
         p5<-NULL
     }
     else if(type=="cor")

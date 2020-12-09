@@ -4,16 +4,37 @@
 \alias{rgcca_cv}
 \title{Tune RGCCA parameters in 'supervised' mode with cross-validation}
 \usage{
-rgcca_cv(blocks, type = "rgcca", response = NULL, par_type = "tau",
-  par_value = NULL, par_length = 10, validation = "kfold",
-  type_cv = "regression", fit = "lm", k = 5, n_run = 1,
-  one_value_per_cv = FALSE, n_cores = parallel::detectCores() - 1,
-  quiet = TRUE, superblock = FALSE, scale = TRUE,
-  scale_block = TRUE, tol = 1e-08, scheme = "factorial",
-  method = "nipals", rgcca_res = NULL, parallelization = NULL,
-  tau = rep(1, length(blocks)), ncomp = rep(1, length(blocks)),
-  sparsity = rep(1, length(blocks)), init = "svd", bias = TRUE,
-  new_scaled = FALSE, ...)
+rgcca_cv(
+  blocks,
+  type = "rgcca",
+  response = NULL,
+  par_type = "tau",
+  par_value = NULL,
+  par_length = 10,
+  validation = "kfold",
+  type_cv = "regression",
+  fit = "lm",
+  k = 5,
+  n_run = 1,
+  one_value_per_cv = FALSE,
+  n_cores = parallel::detectCores() - 1,
+  quiet = TRUE,
+  superblock = FALSE,
+  scale = TRUE,
+  scale_block = TRUE,
+  tol = 1e-08,
+  scheme = "factorial",
+  method = "nipals",
+  rgcca_res = NULL,
+  parallelization = NULL,
+  tau = rep(1, length(blocks)),
+  ncomp = rep(1, length(blocks)),
+  sparsity = rep(1, length(blocks)),
+  init = "svd",
+  bias = TRUE,
+  new_scaled = FALSE,
+  ...
+)
 }
 \arguments{
 \item{blocks}{A list of matrices giving the \eqn{J} blocks of variables \eqn{\mathbf{X_1}, \mathbf{X_2}, ..., \mathbf{X_J}}.}

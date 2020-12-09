@@ -15,6 +15,9 @@ resRgcca$call$raw[[1]][1,]
 resRgcca$call$blocks[[1]][1,]
 resRgcca$A[[1]][1,]
 
+rgcca_permutation(rgcca_res=resRgcca)
+
+
 blocks_with_na=blocks
 blocks_with_na[[1]][1,]=NA
 blocks_with_na[[1]][2,2]=NA
@@ -24,13 +27,12 @@ resRgcca$call$blocks[[1]][1,]
 resRgcca$A[[1]][1,]
 
 
-rgcca_permutation(resRgcca)
 # RGCCA
 #=======
 # unsupervised rgcca - exploratory approach with rgcca
 #-------------------
 # Step one - tuning the parameters
-res_permut=rgcca_permutation(blocks=blocks,type="rgcca",scheme="factorial",nperm=100)
+res_permut=rgcca_permutation(blocks=blocks,type="rgcca",scheme="factorial",n_run=100)
 print(res_permut)
 names(res_permut)
 plot(res_permut,type="zstat")
@@ -72,7 +74,7 @@ rgcca_cv(blocks2,response=3,par_type="ncomp")
 res=rgcca(res_cv)
 print(res_cv,bars="stderr")
 plot(res_cv,bars="quantile")
-plot(res_cv,bars="ci")
+
 names(res_cv)
 res_cv$cv
 res_cv$bestpenalties
@@ -101,7 +103,7 @@ res_sparsity=rgcca(blocks,sparsity=c(0.6,0.8,0.5))
 plot(res_sparsity)
 
 res=bootstrap(res_sparsity,n_boot=100)
-get_bootstrap(b=res,i_block=1)
+get_bootstrap(b=res,block=1)
 plot(res,block=2)
 # With two dimensions
 
@@ -265,14 +267,12 @@ plot(resBootstrapNA3,type="2D")
 
 
 # Crossvalidation # see with etienne
-
-
 resRGCCANA1=rgcca(blocksNA,method="complete",response=2)
 resRGCCANA2=rgcca(blocksNA,method="nipals",response=2)
 resRGCCANA3=rgcca(blocksNA,method="knn4",response=2)
 
 resCV=rgcca_crossvalidation(resRGCCANA1,validation="kfold") #
-resCV=rgcca_crossvalidation(resRGCCANA2)
+resCV=rgcca_cv(resRGCCANA2,par_type="tau")
 resCV=rgcca_crossvalidation(resRGCCANA3)
 resCV$scores # mean absolute difference between observed and predicted
 
@@ -291,13 +291,8 @@ resRGCCA=rgcca(blocks,ncomp=c(2,2,1),superblock=FALSE)
 summary(resRGCCA)
 print(resRGCCA)
 names(resRGCCA)
-plot(resRGCCA,i_block=1)
-#plot_ind(resRGCCA,compy=1)
-plot_var_2D(resRGCCA,i_block=3) # mettre un message d'erreur plus approprié ! !
-plot_var_2D(resRGCCA,i_block=2)
-plot_var_1D(resRGCCA,i_block=2) #TODO
-plot_var_1D(resRGCCA,i_block=3)
-plot_ave(resRGCCA)
+plot(resRGCCA,block=1)
+
 
 # choice of c1
 #res_permut=rgcca_permutation(blocks=blocks,type="sgcca",p_c1=TRUE)

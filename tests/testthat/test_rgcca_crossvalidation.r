@@ -198,7 +198,7 @@ RussettWithNA <- Russett
      
      
      # rgcca_crossvalidation for classification
-     
+     #=====================================
      blocks_for_classif = list(
          agriculture = Russett[, 1:3],
          industry = Russett[, 4:5],

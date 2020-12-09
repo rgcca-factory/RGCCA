@@ -148,7 +148,7 @@ rgcca_permutation <- function(
         
         if (is.null(par_value))
             par_value <- set_spars()
-        else if (class(par_value) %in% c("data.frame", "matrix")) #when a matrix is entered
+        else if ("data.frame"%in% class(par_value)||  "matrix"%in% class(par_value)) #when a matrix is entered
         {
             if(par_type=="tau")
             {

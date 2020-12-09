@@ -4,13 +4,22 @@
 \alias{plot_network}
 \title{Plot the connection between blocks}
 \usage{
-plot_network(rgcca_res, title = paste0("Common rows between blocks : ",
-  NROW(rgcca_res$call$blocks[[1]])), colors = "#eee685")
+plot_network(
+  rgcca_res,
+  title = paste0("Common rows between blocks : ", NROW(rgcca_res$call$blocks[[1]])),
+  cex_main = 2,
+  cex_point = 23,
+  colors = c("#eee685", "gray60")
+)
 }
 \arguments{
 \item{rgcca_res}{A RGCCA object (see  \code{\link[RGCCA]{rgcca}})}
 
 \item{title}{A character giving the title of the plot}
+
+\item{cex_main}{An integer for the size of the title}
+
+\item{cex_point}{An integer for the size of the points or the text in the plot}
 
 \item{colors}{Either a vector of integers (each integer corresponding to a color) or of characters corresponding to names of colors (as "blue",see colors()) or RGB code ("#FFFFFF").}
 }

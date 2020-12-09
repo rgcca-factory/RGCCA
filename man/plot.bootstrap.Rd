@@ -4,12 +4,25 @@
 \alias{plot.bootstrap}
 \title{Plot a bootstrap object}
 \usage{
-\method{plot}{bootstrap}(x, type = "1D",
-  block = length(x$rgcca$call$blocks), comp = 1, n_mark = 30,
-  bars = "quantile", colors = NULL, title = NULL, cex = 1,
-  n_cores = parallel::detectCores() - 1, collapse = FALSE,
-  cex_main = 14, cex_sub = 12, cex_point = 10, cex_lab = 10,
-  cex_axis = 10, ...)
+\method{plot}{bootstrap}(
+  x,
+  type = "1D",
+  block = length(x$rgcca$call$blocks),
+  comp = 1,
+  n_mark = 30,
+  bars = "quantile",
+  colors = NULL,
+  title = NULL,
+  cex = 1,
+  n_cores = parallel::detectCores() - 1,
+  collapse = FALSE,
+  cex_main = 14,
+  cex_sub = 12,
+  cex_point = 10,
+  cex_lab = 10,
+  cex_axis = 10,
+  ...
+)
 }
 \arguments{
 \item{x}{A bootstrap object (see \code{\link[RGCCA]{bootstrap}})}

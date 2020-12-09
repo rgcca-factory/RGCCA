@@ -4,9 +4,15 @@
 \alias{get_bootstrap}
 \title{Extract statistics from a bootstrap}
 \usage{
-get_bootstrap(b, comp = 1, block = length(b$bootstrap[[1]]),
-  bars = "quantile", collapse = FALSE,
-  n_cores = parallel::detectCores() - 1, display_order = TRUE)
+get_bootstrap(
+  b,
+  comp = 1,
+  block = length(b$bootstrap[[1]]),
+  bars = "quantile",
+  collapse = FALSE,
+  n_cores = parallel::detectCores() - 1,
+  display_order = TRUE
+)
 }
 \arguments{
 \item{b}{A bootstrap object (see  \code{\link[RGCCA]{bootstrap}} )}

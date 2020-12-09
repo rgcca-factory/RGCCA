@@ -4,8 +4,13 @@
 \alias{plot_ave}
 \title{Histogram of Average Variance Explained}
 \usage{
-plot_ave(rgcca_res, cex = 1, title = "Average Variance Explained",
-  colors = NULL, ...)
+plot_ave(
+  rgcca_res,
+  cex = 1,
+  title = "Average Variance Explained",
+  colors = NULL,
+  ...
+)
 }
 \arguments{
 \item{rgcca_res}{A RGCCA object (see  \code{\link[RGCCA]{rgcca}})}

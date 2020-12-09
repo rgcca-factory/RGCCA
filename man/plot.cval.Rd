@@ -4,9 +4,16 @@
 \alias{plot.cval}
 \title{Plot cross-validation}
 \usage{
-\method{plot}{cval}(x, bars = "sd", cex = 1, cex_main = 14 * cex,
-  cex_sub = 10 * cex, cex_lab = 10 * cex, colors = c("red", "grey"),
-  ...)
+\method{plot}{cval}(
+  x,
+  bars = "sd",
+  cex = 1,
+  cex_main = 14 * cex,
+  cex_sub = 10 * cex,
+  cex_lab = 10 * cex,
+  colors = c("red", "black"),
+  ...
+)
 }
 \arguments{
 \item{x}{A rgcca_cv object (see \link{rgcca_cv})}

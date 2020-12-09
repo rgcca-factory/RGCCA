@@ -4,10 +4,21 @@
 \alias{rgccak}
 \title{Internal function for computing the RGCCA parameters (RGCCA block components, outer weight vectors, etc.).}
 \usage{
-rgccak(A, C, tau = "optimal", scheme = "centroid", verbose = FALSE,
-  init = "svd", bias = TRUE, tol = 1e-08, na.rm = TRUE,
-  estimateNA = "no", scale = TRUE, scale_block = TRUE,
-  initImpute = "rand")
+rgccak(
+  A,
+  C,
+  tau = "optimal",
+  scheme = "centroid",
+  verbose = FALSE,
+  init = "svd",
+  bias = TRUE,
+  tol = 1e-08,
+  na.rm = TRUE,
+  estimateNA = "no",
+  scale = TRUE,
+  scale_block = TRUE,
+  initImpute = "rand"
+)
 }
 \arguments{
 \item{A}{A list that contains the \eqn{J} blocks of variables from which block components are constructed.

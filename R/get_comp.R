@@ -78,9 +78,9 @@ get_comp <- function(
     } else
         resp <- resp[seq(NROW(df)), ]
 
-    if ((!is.character2(resp) &&
-        length(unique(resp)) > 5) || 
-            unique(resp) == 1 ) {
+    if ((!is.numeric(resp) &
+        length(unique(resp)) > 10) || 
+         length(unique(resp)) == 1 ) {
         resp[resp == "NA"] <- NA
         df$resp <- as.numeric(resp)
     }else

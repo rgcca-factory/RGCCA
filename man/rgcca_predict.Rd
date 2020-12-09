@@ -4,8 +4,14 @@
 \alias{rgcca_predict}
 \title{Predict RGCCA}
 \usage{
-rgcca_predict(rgcca_res, newA, model = "regression", fit = "lm",
-  bloc_to_pred = NULL, new_scaled = TRUE)
+rgcca_predict(
+  rgcca_res,
+  newA,
+  model = "regression",
+  fit = "lm",
+  bloc_to_pred = NULL,
+  new_scaled = TRUE
+)
 }
 \arguments{
 \item{rgcca_res}{A RGCCA object (see  \code{\link[RGCCA]{rgcca}})}
