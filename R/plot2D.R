@@ -70,8 +70,8 @@ plot2D <- function(
 
      if (!isTRUE(text)) {
         func <- quote(geom_point(size = cex_point))
-        if (!is.numeric(na.omit(group)))
-            func$mapping <- aes(shape = as.factor(group))
+      #  if (!is.numeric(na.omit(group)))
+      #      func$mapping <- aes(shape = as.factor(group))
     } else {
 
         f <- "geom_text"
@@ -141,8 +141,8 @@ plot2D <- function(
                 title = title,
                 x = xlab,
                 y = ylab,
-            color = name_group,
-            shape = name_group
+            color = name_group#,
+            #shape = name_group
         ) + 
         scale_y_continuous(breaks = NULL) +
         scale_x_continuous(breaks = NULL) +
