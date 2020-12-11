@@ -63,8 +63,7 @@ comparison=function(rgcca1,rgcca2,naxis=1,selec=10,selectPatient=NULL,indNA=NULL
     }
    if(dim(rgcca1[["Y"]][[i]])[2]==1)
    {
-      # print("only 1 component: the criteria of RV is replaced by a norm difference")
-     rvComplete[i]=diffNorm2(as.vector(rgcca1[["Y"]][[i]][selectPatient,]),as.vector(rgcca2[["Y"]][[i]][selectPatient,]))
+      rvComplete[i]=diffNorm2(as.vector(rgcca1[["Y"]][[i]][selectPatient,]),as.vector(rgcca2[["Y"]][[i]][selectPatient,]))
       rv[i]=diffNorm2(as.vector(rgcca1[["Y"]][[i]][selectAllPatient,]),as.vector(rgcca2[["Y"]][[i]][selectAllPatient,]))
     }
     

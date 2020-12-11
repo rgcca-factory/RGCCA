@@ -128,9 +128,8 @@ plot.list_rgcca=function(x,type="ind",resp=rep(1, NROW(x$Y[[1]])),block=1,comp=1
       list_rgcca2=list_rgcca
       list_rgcca2[[length(list_rgcca2)+1]]=rgcca_res
       list_rgcca_sup_a=list()
-     # print(attributes)
       for(i in 1:length(list_rgcca))
-      { #print(colnames(list_rgcca[[i]]$call$blocks[[i_block]]))
+      {
           if(cor(list_rgcca[[i]]$Y[[i_block]][,compx], rgcca_res$Y[[i_block]][,compx])<0)
           {
                 list_rgcca[[i]]$a[[i_block]][,compx]=-list_rgcca[[i]]$a[[i_block]][,compx];

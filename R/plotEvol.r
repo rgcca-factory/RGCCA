@@ -108,7 +108,6 @@ plot.naEvolution=function(x,type="rv",ylim=NULL,block=length(x[[1]][[1]][[1]][[1
          if(is.null(ylim)){Ylim=c(ymin,ymax)}else{Ylim=ylim}
      }
  
-    #if(block=="all"){print(j);screen(j)}
 
     par(las=1)
     par(mar=c(5, 4, 4, 2) + 0.1)

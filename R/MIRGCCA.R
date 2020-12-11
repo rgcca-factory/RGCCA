@@ -74,7 +74,7 @@ MIRGCCA=function(blocks,option="knn",type="rgcca",superblock=TRUE,k=5,ni=5,scale
       
       for(i in 1:ni)
       {
-      #  print(i)
+
          dataTest[[i]]=addNoise(resImpute)
         resRgcca2[[i]]=rgcca(dataTest[[i]],type=type,connection=connection,ncomp=rep(2,length(dataTest[[i]])),scale=scale,scale_block=scale_block,tau=tau,verbose=FALSE,scheme=scheme,tol=tol)
       }

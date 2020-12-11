@@ -53,13 +53,13 @@ plot.bootstrap=function(x,type="1D",block=length(x$rgcca$call$blocks),comp=1,n_m
             x1="occurrences";
             y1="estimate";
             title=ifelse(is.null(title),
-                         paste0("Occurrences: ",names(x$rgcca$call$blocks)[block], " \n(", ncol(x$bootstrap[[1]][[1]])," bootstraps)"),title)
+                         paste0("Occurrences: ",names(x$rgcca$call$blocks)[block], " \n(", ncol(x$bootstrap[[1]][[1]])," bootstraps, comp ",comp,")"),title)
         }
          else
          {
             x1="estimate";
             y1="sign";
-            title=ifelse(is.null(title),paste0("Weights: ",names(x$rgcca$call$blocks)[block],"\n (", ncol(x$bootstrap[[1]][[1]])," bootstraps)"),title)}
+            title=ifelse(is.null(title),paste0("Weights: ",names(x$rgcca$call$blocks)[block],"\n (", ncol(x$bootstrap[[1]][[1]])," bootstraps,comp ",comp,")"),title)}
            
          p1=plot_bootstrap_1D(
             b = x,

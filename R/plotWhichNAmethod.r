@@ -49,7 +49,6 @@ plot.whichNAmethod=function(x,type="rv",ylim=NULL,block=length(x[[1]][[1]][[1]])
   {
       toPlot=block:block
   }
-  # print(toPlot)
 
   namesMethod=names(x[[1]]) 
   if(is.null(namesForLegend))

@@ -413,14 +413,12 @@ imputeEM <-
                 }
              
             }
-            # print(objective[[i]]) print(criterion[[i]])
-            
+
             # When the algorithm stops, some noise can be added to the model
             #----------------------------------------------------------------
             
            
-    # print(paste0("iteration in EM algo:", i))
-            # Reaffecting Alist
+               # Reaffecting Alist
             #----------------------
             Alist <- list()
             for (j in 1:length(nvar)) {

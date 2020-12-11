@@ -248,7 +248,7 @@ rgccak=function (A, C, tau = "optimal", scheme = "centroid",verbose = FALSE, ini
 
        for (j in which.primal)
       { # on parcourt les blocs pour estimer wj = a[[j]] : c'est le rouage de la pres
-        # print(j)
+
           dgx = dg(cov2(Y[, j], Y, bias = bias))# covariance entre les differents blocs: dgx indique + - 1
           if(tau[j] == 1)
           { # si tau = 1
@@ -356,21 +356,8 @@ rgccak=function (A, C, tau = "optimal", scheme = "centroid",verbose = FALSE, ini
 			        # 
 			        #       Ainter= A0[[j]][,k]
 			        #       Ainter[missing]=a[[j]][k]*Z[missing,j]
-			        #       if(j==1 && k==2) 
-			        #       {
-			        #      #  print("avant scaling observed")
-			        #       # print(A[[j]][!missing,k][1])
-			        #        print("avt scaling missing")
-			        #        print(Ainter[missing])
-			        #       }
-			        #       A[[j]][,k]=scale(Ainter)
-			        #       if(j==1&& k==2)
-			        #       {
-			        #        # print("apres scaling observed")
-			        #        # print(A[[j]][!missing,k][1])
-			        #         print("apres scaling missing")
-			        #         print(A[[j]][missing,k][1])
-			        #       }
+			        			        #       A[[j]][,k]=scale(Ainter)
+
 			        #     }
 			        #     if(estimateNA=="new")
 			        #     {
@@ -389,9 +376,7 @@ rgccak=function (A, C, tau = "optimal", scheme = "centroid",verbose = FALSE, ini
 			        #      A[[j]][missing,k]=scale(a[[j]][k]*Z[missing,j])
 			        #    }
 			        #    
-			        #    # print("apres boucle")
-			        #    # print(A[[j]][!missing,k][1])
-			        #   }
+			       #   }
 			        #  
 			        # #A[[j]][,k]=scale(A[[j]][,k])
 			        # #	 print( A[[j]][,k])
@@ -430,7 +415,6 @@ rgccak=function (A, C, tau = "optimal", scheme = "centroid",verbose = FALSE, ini
             Y[, j] =pm( A[[j]], a[[j]],na.rm=na.rm)
           })
       }
-    # print(lapply(A,head))
 
       crit[iter] <- sum(C * g(cov2(Y, bias = bias)),na.rm=na.rm)
       if (verbose & (iter%%1) == 0) 

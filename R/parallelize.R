@@ -64,7 +64,7 @@ parallelize <- function(
              # 
              # # library(parallel)
              # parallel::clusterEvalQ(cl, library(parallel))
-             # # print("all okay")
+             #
          #      res <- tryCatch({
          #         get(applyFunc)(
          #             cl,
@@ -107,7 +107,6 @@ parallelize <- function(
         res=NULL
        for(i in 1:length(nperm))
        {
-           #print(i)
            res[[i]]=f(nperm[i])
        }
         if (applyFunc == "parSapply")
