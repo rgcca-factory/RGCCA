@@ -59,7 +59,7 @@ plot3D <- function(
                     )
             )
 
-   if(!is.character2(df$resp)){
+   if(!is.character(df$resp)){
       if (is.null(colors)){
         colors <- "#A50026"
         colors[2] <- NA
@@ -69,14 +69,21 @@ plot3D <- function(
 
     color <- function(x){
         n <- length(x)
-        if (!is.character2(df$resp))
-            cut(
-                x,
-                breaks = n,
-                labels = colorRampPalette(c(colors[1], colors[2], colors[3]))(n),
-                include.lowest = TRUE)
+        if (!is.character(df$resp))
+        { print(x)
+          y=cut(
+            x,
+            breaks = n,
+            labels = colorRampPalette(c(colors[1], colors[2], colors[3]))(n),
+            include.lowest = TRUE)
+          print(y)
+          return(y)
+        } 
         else
-            color_group(seq(length(unique(df$resp))), colors = colors)
+        {
+          y=color_group(seq(length(unique(df$resp))), colors = colors)
+          return(y)
+        }
     }
 
     subdf <- function(x) 
@@ -118,7 +125,7 @@ plot3D <- function(
         eval(func)
     }
 
-    if (!is.character2(df$resp)) {
+    if (!is.character(df$resp)) {
 
         if (text)
             visible <- "legendonly"
@@ -140,6 +147,7 @@ plot3D <- function(
         )
 
         if (text) {
+          print("in")
             p <- p %>%
               plotly::add_trace(
                     name = "samples",

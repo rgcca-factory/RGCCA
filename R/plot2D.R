@@ -159,16 +159,17 @@ plot2D <- function(
     if (length(unique(group)) != 1 && is(df, "d_var2D")) {
         p <- order_color(rgcca_res$a, p, collapse = collapse, colors = colors)
         # For qualitative response OR no response
-    } else if ( is.character2(group[!is.na(group)]) ||
+    } else if ( is.character(group[!is.na(group)]) ||is.factor(group[!is.na(group)])||
                 length(unique(group)) <= 5 || 
             all( levels(as.factor(group)) %in% c("obs", "pred") )
         ) {
+         
         p <- p + scale_color_manual(values = color_group(group, colors))
         # quantitative response
     } else{
         if (is.null(colors))
             colors <- c("blue", "gray", "#cd5b45")
-        p <- p + scale_color_gradientn(colours = colors, na.value = "black")
+         p <- p + scale_color_gradientn(colours = colors, na.value = "black")
     }
 
     p + theme(plot.margin = margin(5, 0, 0, 0, "mm"))

@@ -1,7 +1,7 @@
 check_response <- function(response = NULL, df = NULL) {
 
     if (!is.null(response)) {
-        qualitative <- is.character2(response)
+        qualitative <- is.character(response)
 
         # if (length(qualitative) > 1)
         #     stop_rgcca(

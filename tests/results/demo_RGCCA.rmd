@@ -1,0 +1,81 @@
+---
+title: "Short vignette for using the RGCCA package for Regularized/Sparse Generalized Canonical Correlation Analysis"
+date: '`r Sys.Date()`'
+output: 
+  pdf_document:
+   number_sections: yes
+   toc: yes
+   fig_height: 5
+   fig_width: 5
+vignette: >
+  %\VignetteIndexEntry{The RGCCA package for Regularized/Sparse Generalized Canonical Correlation Analysis} 
+  %\VignetteEngine{knitr::rmarkdown}
+  \usepackage[utf8]{inputenc}
+---
+# Introduction
+All the examples are based on Russett dataset. 
+
+```{r eval=TRUE}
+library(RGCCA)
+data(Russett)
+blocks = list(agriculture = Russett[, seq(3)], industry = Russett[, 4:5],  politic = Russett[, 6:8] )
+```
+
+# Running RGCCA with default options. 
+The parameters type and scheme allows to change the type of rgcca - such as sgcca, pls, ...  (enter ?rgcca for more details).
+
+The results is an rgcca object, a list containing usual outputs. 
+```{r eval=TRUE}
+resRgcca=rgcca(blocks)
+names(resRgcca)
+```
+
+This object can be plotted or printed.
+
+```{r eval=TRUE,fig.height=4, fig.width=4}
+resRgcca
+plot(resRgcca)
+```
+
+Several plots are available. Some of them are available only for a number of components strictly higher than 1.
+
+```{r eval=TRUE, fig.height=4, fig.width=10}
+resRgcca=rgcca(blocks,ncomp=2)
+plot(resRgcca,type="both",block=1)
+```
+
+```{r eval=TRUE, fig.height=4, fig.width=4}
+response=matrix( Russett[, 11],ncol=1);rownames(response)=rownames(Russett)
+plot(resRgcca,type="ind",resp=response,block=2)
+```
+
+Permutation techniques can be used to estimate the optimal tau. 
+
+```{r eval=TRUE,fig.height=4, fig.width=4}
+res_permut=rgcca_permutation(blocks=blocks,type="rgcca",scheme="factorial",n_run=100)
+print(res_permut)
+names(res_permut)
+plot(res_permut,type="zstat")
+plot(res_permut, type="crit")
+tau_res=res_permut$bestpenalties
+tau_res
+```
+Then, the rgcca should be run with this value of tau. 
+
+When the analysis is supervised, crossvalidation can be used
+```{r eval=T,fig.height=4, fig.width=4}
+res_cv=rgcca_cv(blocks,response=3,par_type="tau")
+plot(res_cv)
+print(res_cv)
+```
+
+
+The stability of the obtained coefficients can be estimated with bootstrap. 
+
+
+# Step three -boostrapping the results
+```{r eval=TRUE, message=FALSE,warning=FALSE,fig.height=4, fig.width=4}
+resBootstrap=bootstrap(resRgcca,n_boot = 1000)
+plot(resBootstrap,block=1)
+print(resBootstrap)
+```

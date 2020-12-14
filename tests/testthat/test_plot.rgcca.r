@@ -23,3 +23,29 @@ plot(res,type="var")
 plot(res,type="ave",colors=c("blue","red"))
 plot(res,type="network")
 
+
+# Response
+#------------
+res=rgcca(A,type="rgcca",ncomp=2)
+library(ggplot2)
+library(gridExtra)
+library(grid)
+plot(res)
+plot(res)
+plot(res,type="both")
+plot(res,type="var")
+plot(res,type="ind",colors=c("blue","green"),resp=A[[3]][,1])
+plot(res,type="ave",colors=c("blue","red"))
+plot(res,type="network")
+
+
+
+
+vec_colors=c(rep(letters[1:9],5),"a","b")
+names(vec_colors)=rownames(A[[1]])
+plot(res,type="ind",resp=vec_colors)
+
+
+vec_colors=c(rep(letters[1:11],4),"a","b","c")
+names(vec_colors)=rownames(A[[1]])
+plot(res,type="ind",resp=vec_colors,colors=rainbow(11))

@@ -7,7 +7,7 @@
 \method{plot}{list_rgcca}(
   x,
   type = "ind",
-  resp = rep(1, NROW(x$Y[[1]])),
+  resp = factor(rep(1, NROW(x$Y[[1]]))),
   block = 1,
   comp = 1:2,
   remove_var = FALSE,

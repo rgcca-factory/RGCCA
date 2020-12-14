@@ -78,7 +78,7 @@ get_comp <- function(
     } else
         resp <- resp[seq(NROW(df)), ]
 
-    if ((!is.numeric(resp) &
+    if ((is.numeric(resp) &
         length(unique(resp)) > 10) || 
          length(unique(resp)) == 1 ) {
         resp[resp == "NA"] <- NA

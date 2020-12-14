@@ -34,7 +34,7 @@ plot_histogram <- function(
         width <- 1
 
    if (NROW(df) < 3)
-       mar <- 50
+       mar <- 0
    else if (NROW(df) <= 15)
        mar <- round(3 / NROW(df) * 50)
    else

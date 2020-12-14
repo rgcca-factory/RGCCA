@@ -66,15 +66,12 @@ plot_ind <- function(
         predicted = predicted
     )
     class(df) <- c(class(df), "d_ind")
-
     if (!is.null(predicted))
-            p <- ggplot(df, aes(df[, 1], df[, 2], color = resp))
+            p <- ggplot(df, aes(df[, 1], df[, 2], group = resp, color =resp))
 
     else if (length(unique(as.matrix(df$resp))) > 5 && 
-            !is.character2(as.vector(df$resp)) ) {
-
-        p <- ggplot(df, aes(df[, 1], df[, 2], color = resp))
-
+            !is.character(as.vector(df$resp)) ) {
+        p <- ggplot(df, aes(df[, 1], df[, 2], group = resp,color=resp))
     }else
         p <- NULL
 

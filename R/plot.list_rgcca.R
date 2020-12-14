@@ -24,7 +24,7 @@
 #' @param errorbar ("CImean","CIscores","sd")
 #' @importFrom gridExtra grid.arrange
 #' @export
-plot.list_rgcca=function(x,type="ind",resp=rep(1, NROW(x$Y[[1]])),block=1,comp=1:2,remove_var=FALSE,text_var=TRUE,text_ind=TRUE,response_name= "Response",no_overlap=FALSE,title=NULL,n_mark=100,collapse=FALSE,cex=1,cex_sub=10,cex_main=14,cex_lab=12,colors=NULL,errorbar="ci",...)
+plot.list_rgcca=function(x,type="ind",resp=factor(rep(1, NROW(x$Y[[1]]))),block=1,comp=1:2,remove_var=FALSE,text_var=TRUE,text_ind=TRUE,response_name= "Response",no_overlap=FALSE,title=NULL,n_mark=100,collapse=FALSE,cex=1,cex_sub=10,cex_main=14,cex_lab=12,colors=NULL,errorbar="ci",...)
 {
 
     if(length(comp)==1){comp=rep(comp,2)}
@@ -46,11 +46,14 @@ plot.list_rgcca=function(x,type="ind",resp=rep(1, NROW(x$Y[[1]])),block=1,comp=1
   {
       if(is.null(title)){title=paste0(names(rgcca_res$call$blocks)[i_block],": Sample space")}
       
-      resp=1:n
+      resp=as.character(1:n)
       p1<-plot_ind(rgcca_res,resp=resp, i_block=i_block,i_block_y = i_block_y,compx=compx,compy=compy,legend=FALSE,colors=colors[1:n],cex=cex,cex_sub=cex_sub,cex_main=cex_main,cex_lab=cex_lab) 
+      print("ok")
+      plot(p1)
       colt=c()
       for(i in 1:(length(list_rgcca)))
       { 
+        print(i)
           df1 <- get_comp(
               rgcca_res = list_rgcca[[i]],
               compx = compx,
