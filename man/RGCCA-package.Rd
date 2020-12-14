@@ -16,7 +16,7 @@ Maintainer: \packageMaintainer{RGCCA}
 }
 
 \keyword{ package }
-\seealso{\link{rgcca},\link{bootstrap},\link{rgcca_predict},\link{rgcca_crossvalidation},\link{rgcca_permutation},\link{get_patternNA}, \link{whichNAmethod},\link{naEvolution}
+\seealso{\link{rgcca},\link{bootstrap},\link{rgcca_cv},\link{rgcca_permutation}
 }
 \examples{
 # Create the dataset

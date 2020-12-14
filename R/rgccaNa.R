@@ -56,98 +56,26 @@
 #' X_polit[5,1]=NA
 #' A = list(agri=X_agric, ind=X_ind, polit=X_polit)
 #' rgccaNa(A,method="nipals")
-#' rgccaNa(A,method="knn2")
 
 rgccaNa=function (blocks,method, connection = 1 - diag(length(A)), tau = rep(1, length(A)),    ncomp = rep(1, length(A)), scheme = "centroid", scale = TRUE,   init = "svd", bias = TRUE, tol = 1e-08, verbose = TRUE,
                   scale_block=TRUE,knn.k="all",knn.output="weightedMean",knn.klim=NULL,knn.scale_block=TRUE,pca.ncp=1,ni=20,prescaling=FALSE,quiet=FALSE)
 { 
-  #  call=match.call() 
     A=blocks
     C=connection
     call=list(A=A,method=method, C =C, tau = tau,    ncomp = ncomp, scheme = scheme, scale = scale,   init = init, bias = bias, tol =tol, verbose = verbose,scale_block=scale_block,knn.k=knn.k,knn.output=knn.output,knn.klim=knn.klim,knn.scale_block=scale_block,pca.ncp=pca.ncp)
 
   nvar = sapply(A, NCOL)
-  superblockAsList=function(superblock,A)
-  {
-    Alist=list()
-    nvar = sapply(A, NCOL)
-    for(j in 1:length(nvar))
-    {
-      if(j==1){sel=1:nvar[1]}else{debut=sum(nvar[1:(j-1)])+1;fin=debut+(nvar[j]-1);sel=debut:fin}
-      Alist[[j]]=as.matrix(superblock[,sel])
-      colnames( Alist[[j]])=colnames(A[[j]])
-    }
-    names(Alist)=names(A)
-    return(Alist)
-  }
+
   shave.matlist <- function(mat_list, nb_cols) mapply(function(m,nbcomp) m[, 1:nbcomp, drop = FALSE], mat_list, nb_cols, SIMPLIFY = FALSE)
     shave.veclist <- function(vec_list, nb_elts) mapply(function(m, nbcomp) m[1:nbcomp], vec_list, nb_elts, SIMPLIFY = FALSE)
 	A0=A
 	indNA=lapply(A,function(x){return(which(is.na(x),arr.ind=TRUE))})
   na.rm=FALSE
   if(method=="complete"){A2=intersection_list(A)}
-  if(method=="mean"){		 A2=imputeColmeans(A) }
-  if(is.function(method))
-  {
-      A2=method(A)
-  }
-# 	if(method=="pca")	
-# 	{  
-# 	  imputedSuperblock= imputePCA(X=do.call(cbind,A), ncp = pca.ncp, scale = TRUE, method ="em")$completeObs 
-# 	  A2=superblockAsList(imputedSuperblock, A)
-# 	}
-# 
-#   if(method=="rpca")
-#   {
-#     imputedSuperblock= missMDA::imputePCA(do.call(cbind,A), ncp = pca.ncp, scale = TRUE, method ="regularized")$completeObs 
-#      A2=superblockAsList(imputedSuperblock, A)
-#   }   
-# #
-# #	if(method=="rgccaPca"){	  A2= imputeSuperblock(A,method="em",opt="rgcca",ncp=ncp,scaleBlock=scaleBlock)}
-# 	if(method=="mfa")	
-# 	{	 
-# 	  imputedSuperblock=imputeMFA(X=do.call(cbind,A), group=nvar, ncp = 1, type=rep("s",length(nvar)), method = "em")$completeObs
-# 	  A2=superblockAsList(imputedSuperblock, A)
-# 	}
 
- 	if(method=="iterativeSB")	{	  A2=imputeSB(A=A,ncomp=ncomp,scale=scale,scale_block=scale_block,tau=tau,tol=tol,ni=ni)$A	}
-    if(method=="em")	{	  A2=imputeEM(A=A,ncomp=ncomp,scale=scale,scale_block=scale_block,tau=tau,naxis=1,ni=ni,C=C,tol=tol,verbose=verbose,reg="y",quiet=quiet)$A	}
-   if(substr(method,1,3)=="sem")
-   {
-     if(substr(method,4,4)=="")
-     {
-       A2=imputeEM(A=A,superblock=TRUE,ncomp=ncomp,scale=scale,scale_block=scale_block,tau=tau,naxis=1,ni=ni,C=C,tol=tol,verbose=FALSE,reg="y",quiet=quiet)$A
-     }
-     else
-     {
-       A2=imputeEM(A=A,superblock=TRUE,ncomp=ncomp,scale=scale,scale_block=scale_block,tau=tau,naxis=as.numeric(substr(method,4,4)),ni=ni,C=C,tol=tol,verbose=FALSE,reg="y",quiet=quiet)$A
-     }
-   }
- # if(method=="old"){}
-  if(method=="emo")	{	  A2=imputeEM(A=A,ncomp=ncomp,scale=scale,scale_block=scale_block,tau=tau,naxis=1,ni=ni,C=C,tol=tol,verbose=FALSE,reg="no")$A	}
-  if(method=="emw")	{	  A2=imputeEM(A=A,ncomp=ncomp,scale=scale,scale_block=scale_block,tau=tau,naxis=1,ni=ni,C=C,tol=tol,verbose=FALSE,reg="w")$A	}
-#  if(method=="semy")	{	  A2=imputeEM(A=A,ncomp=ncomp,superblock=TRUE,scale=scale,scale_block=scale_block,tau=tau,naxis=1,ni=50,C=C,tol=tol,verbose=verbose,reg="y")$A[1:length(A)]	}
-#  if(method=="semw")	{	  A2=imputeEM(A=A,ncomp=ncomp,superblock=TRUE,scale=scale,scale_block=scale_block,tau=tau,naxis=1,ni=50,C=C,tol=tol,verbose=verbose,reg="w")$A[1:length(A)]	}
-  
-  
   if(method=="nipals"){na.rm=TRUE;A2=A}
-  
-  if(substr(method,1,3)=="knn")
-  {
-      if(substr(method,4,4)=="A")
-      {
-        A2=imputeNN(A ,output=knn.output,k="all",klim=knn.klim,scale_block=knn.scale_block);method=paste(method,":",knn.k,sep="")
-      }
-      else
-      {
-        A2=imputeNN(A ,output=knn.output,k=as.numeric(substr(method,4,4)),klim=knn.klim,scale_block=knn.scale_block);method=paste(method,":",knn.k,sep="")
-      }
-  }
-  if(method!="imputeInRgcca1"&&method!="imputeInRgcca2"&&method!="imputeInRgccaSB"&&method!="imputeInRgccaLL"){resRgcca=rgccad(A2,C=C,ncomp=ncomp,verbose=verbose,scale=scale,init=init,scale_block=scale_block,tau=tau,scheme=scheme,tol=tol,estimateNA="no",prescaling=prescaling,quiet=quiet)}
-  if(method=="imputeInRgcca1"){resRgcca=rgccad(A,C=C,ncomp=ncomp,init=init,verbose=FALSE,scale=scale,scale_block=scale_block,tau=tau,scheme=scheme,tol=tol,estimateNA="iterative",prescaling=prescaling,quiet=quiet);A2=resRgcca$imputedA;}
-  if(method=="imputeInRgcca2"){resRgcca=rgccad(A,C=C,ncomp=ncomp,init=init,verbose=FALSE,scale=scale,scale_block=scale_block,tau=tau,scheme=scheme,tol=tol,estimateNA="first",prescaling=prescaling,quiet=quiet);A2=resRgcca$imputedA;}
-  if(method=="imputeInRgccaSB"){resRgcca=rgccad(A,C=C,ncomp=ncomp,init=init,verbose=FALSE,scale=scale,scale_block=scale_block,tau=tau,scheme=scheme,tol=tol,estimateNA="superblock",prescaling=prescaling,quiet=quiet);A2=resRgcca$imputedA[1:length(A)];}
-  if(method=="imputeInRgccaLL"){resRgcca=rgccad(A,C=C,ncomp=ncomp,init=init,verbose=TRUE,scale=scale,scale_block=scale_block,tau=tau,scheme=scheme,tol=tol,estimateNA="lebrusquet",prescaling=prescaling,quiet=quiet);A2=resRgcca$imputedA[1:length(A)];}
+
+   resRgcca=rgccad(A2,C=C,ncomp=ncomp,verbose=verbose,scale=scale,init=init,scale_block=scale_block,tau=tau,scheme=scheme,tol=tol,estimateNA="no",prescaling=prescaling,quiet=quiet)
   out=list(imputedA=A2,rgcca=resRgcca,method,indNA=indNA)
 	return(out)
 

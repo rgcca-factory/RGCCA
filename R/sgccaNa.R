@@ -30,26 +30,12 @@
 #' X_polit[5,1]=NA
 #' A = list(agri=X_agric, ind=X_ind, polit=X_polit)
 #' rgccaNa(A,method="nipals")
-#' rgccaNa(A,method="knn2")
 
 sgccaNa=function (blocks,method, connection = 1 - diag(length(A)), sparsity = rep(1, length(A)),    ncomp = rep(1, length(A)), scheme = "centroid", scale = TRUE,   init = "svd", bias = TRUE, tol = 1e-08, verbose = TRUE,scale_block=TRUE,knn.k="all",knn.output="weightedMean",knn.klim=NULL,knn.scale_block=TRUE,pca.ncp=1,prescaling=FALSE,quiet=FALSE)
 { 
   A=blocks
   C=connection
   nvar = sapply(A, NCOL)
-  superblockAsList=function(superblock,A)
-  {
-    Alist=list()
-    nvar = sapply(A, NCOL)
-    for(j in 1:length(nvar))
-    {
-      if(j==1){sel=1:nvar[1]}else{debut=sum(nvar[1:(j-1)])+1;fin=debut+(nvar[j]-1);sel=debut:fin}
-      Alist[[j]]=as.matrix(superblock[,sel])
-      colnames( Alist[[j]])=colnames(A[[j]])
-    }
-    names(Alist)=names(A)
-    return(Alist)
-  }
   shave.matlist <- function(mat_list, nb_cols) mapply(function(m,nbcomp) m[, 1:nbcomp, drop = FALSE], mat_list, nb_cols, SIMPLIFY = FALSE)
 	shave.veclist <- function(vec_list, nb_elts) mapply(function(m, nbcomp) m[1:nbcomp], vec_list, nb_elts, SIMPLIFY = FALSE)
 	A0=A
@@ -57,26 +43,13 @@ sgccaNa=function (blocks,method, connection = 1 - diag(length(A)), sparsity = re
   na.rm=FALSE
  
   if(method=="complete"){A2=intersection_list(A)}
-  if(method=="mean"){		 A2=imputeColmeans(A) }
   if(is.function(method))
   {
     A2=method(A)
   }
   if(method=="nipals"){na.rm=TRUE;A2=A}
   
-  if(substr(method,1,3)=="knn")
-  {
-      if(substr(method,4,4)=="A")
-      {
-        A2=imputeNN(A ,output=knn.output,k="all",klim=knn.klim,scale_block=knn.scale_block);method=paste(method,":",knn.k,sep="")
-      }
-      else
-      {
-        A2=imputeNN(A ,output=knn.output,k=as.numeric(substr(method,4,4)),klim=knn.klim,scale_block=knn.scale_block);method=paste(method,":",knn.k,sep="")
-      }
-  }
-
- resRgcca=sgcca(A2,sparsity=sparsity,ncomp=ncomp,verbose=verbose,scale=scale,scale_block=scale_block,scheme=scheme,tol=tol,prescaling=prescaling,quiet=quiet)
+  resRgcca=sgcca(A2,sparsity=sparsity,ncomp=ncomp,verbose=verbose,scale=scale,scale_block=scale_block,scheme=scheme,tol=tol,prescaling=prescaling,quiet=quiet)
  return(list(imputedA=A2,rgcca=resRgcca,method,indNA=indNA))
 
 }

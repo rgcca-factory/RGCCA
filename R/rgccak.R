@@ -56,80 +56,7 @@ rgccak=function (A, C, tau = "optimal", scheme = "centroid",verbose = FALSE, ini
     A0 <-A
     A <- lapply(A, as.matrix)
     # Initialisation of missing values
-     if(estimateNA=="lebrusquet")
-     {
-       #  A =imputeColmeans(A) 
-         
-         
-         
-         A = lapply(A,function(x)
-                {
-                    res=apply(x,2,function(t)
-                            {
-                                m=mean(t,na.rm=TRUE)
-                                s=sd(t,na.rm=TRUE)
-                                t[is.na(t)]=rnorm(sum(is.na(t),mean=m,sd=s))
-                                return(t)
-                            });
-                            return(res)
-                 })
-       #  A=lapply(A,scale2,bias=TRUE)
-       #  if(scale_block){A=lapply(A,function(x){return(x/sqrt(NCOL(x)))})}
-        # liste de blocs
-     }
-    if(estimateNA=="superblock")
-    { # unscaled A ! ! ! 
-        if(initImpute=="rand")
-        {
-            A = lapply(A,function(x)
-            {
-                res=apply(x,2,function(t)
-                {
-                    m=mean(t,na.rm=TRUE)
-                    s=sd(t,na.rm=TRUE)
-                    t[is.na(t)]=rnorm(sum(is.na(t)),mean=m,sd=s)
-                    return(t)
-                });
-                return(res)
-            })    
-        }
-        if(initImpute=="colMeans")
-        {
-            A =imputeColmeans(A) 
-        }
-        Binit=A
-        if (scale == TRUE) 
-        {
-            A1 = lapply(A, function(x) scale2(x,scale=TRUE, bias = bias)) # le biais indique si on recherche la variance biaisee ou non
-            if(scale_block)
-            {
-                A = lapply(A1, function(x) {y=x/sqrt(NCOL(x));return(y)} )
-            }
-            else
-            {
-                A=A1
-            }
-            # on divise chaque bloc par la racine du nombre de variables pour avoir chaque poids pour le meme bloc
-        }
-        if (scale == FALSE)
-        { 
-            
-            A1 = lapply(A, function(x) scale2(x, scale=FALSE, bias = bias)) 
-            if(scale_block)
-            {
-                A = lapply(A1, function(x) {covarMat=cov2(x,bias=bias);varianceBloc=sum(diag(covarMat)); return(x/sqrt(varianceBloc))})
-            }
-            else
-            {
-                A=A1
-            }
-            
-        }
-        means=lapply(A1,function(x){M=matrix(rep(attributes(x)$'scaled:center' ,dim(x)[1]),dim(x)[1],dim(x)[2],byrow=TRUE);return(M)})
-        stdev=lapply(A1,function(x){M=matrix(rep(attributes(x)$'scaled:scale' ,dim(x)[1]),dim(x)[1],dim(x)[2],byrow=TRUE);return(M)})
-        if(scale_block){stdev=lapply(stdev,function(x){return(x/sqrt(NCOL(x)))})}
-        
-    }
+  
        a <- alpha <- M <- Minv <- K <- list() # initialisation variables internes
     which.primal <- which((n >= pjs) == 1) # on raisonne differement suivant la taille du bloc
     which.dual <- which((n < pjs) == 1)
@@ -308,79 +235,79 @@ rgccak=function (A, C, tau = "optimal", scheme = "centroid",verbose = FALSE, ini
 			            
 			        }
 			       # Ainter=A
-    			     if(estimateNA=="lebrusquet")
-    			     {
-        		        for(k in 1:NCOL(A[[j]]))
-        		        {
-			           
-			                
-			                 missing=is.na(A0[[j]][,k])
-			                if(sum(missing)!=0)
-			                { 
-			                    
-			                    #if(k==1)
-			                    #{
-			                        title=paste("bloc",j,",var",k,"iter",iter)
-			                        png(filename=paste(title,".png",sep=""))
-			                        newx_k=leb(x_k=A[[j]][,k],missing,z=Z[,j],scale_block=TRUE,weight=sqrt(pjs[j]),argmax=ifelse(a[[j]][k]>0,TRUE,FALSE),graph=FALSE,main=title,abscissa=A0[[j]][,k])
-			                        dev.off()
-			                    #}
-    			                 #else
-    			                 #{
-    			                 #    newx_k=leb(x_k=A[[j]][,k],missing,z=Z[,j],scale_block=TRUE,weight=sqrt(pjs[j]),argmax=ifelse(a[[j]][k]>0,TRUE,FALSE),graph=FALSE,main=title)
-    			                     
-    			                 #}
-			                    # on affecte le nouveau k
-			                    A[[j]][,k]=newx_k
-			                   # Ainter[[j]][,k]=newx_k
-			        
-			                }
-			                
-			            } 
-			            
-			        # 
-			        #  # if(estimateNA=="first"){missing=is.na(A[[j]][,k])} # n'est valable qu'au premier
-			        #   if(estimateNA=="first"){missing=is.na(A0[[j]][,k])} # n'est valable qu'au premier
-			        #   #if(estimateNA=="iterative"){missing=is.na(A[[j]][,k])} 
-			        #   if(estimateNA=="iterative"){  missing=is.na(A0[[j]][,k])}
-			        #   if(sum(missing)>0)
-			        #   {
-			        #      #if(estimateNA=="first")
-			        #     #{
-			        #     #  A[[j]][missing,k]=a[[j]][k]*Z[missing,j];
-			        #     #  A[[j]][,k]=scale(A[[j]][,k])
-			        #     #}
-			        #     if(estimateNA=="first")
-			        #     {
-			        #       #A[[j]][missing,k]=a[[j]][k]*Z[missing,j];
-			        # 
-			        #       Ainter= A0[[j]][,k]
-			        #       Ainter[missing]=a[[j]][k]*Z[missing,j]
-			        			        #       A[[j]][,k]=scale(Ainter)
-
-			        #     }
-			        #     if(estimateNA=="new")
-			        #     {
-			        #       ones=c(1,length(missing))
-			        #       K=diag(!missing)
-			        #       resol=solveLagrangien(K,w,x_obs,n)
-			        #       alpha=resol[1]
-			        #       mu=resol[2]
-			        #       lambda=resol[3]
-			        #       nu=resol[4]
-			        #       x_miss=(a[[j]][k]*Z[missing,j]+nu%*%ones)/lambda
-			        #     }
-			        #    
-			        #    if(estimateNA=="iterative")
-			        #    {
-			        #      A[[j]][missing,k]=scale(a[[j]][k]*Z[missing,j])
-			        #    }
-			        #    
-			       #   }
-			        #  
-			        # #A[[j]][,k]=scale(A[[j]][,k])
-			        # #	 print( A[[j]][,k])
-			        }
+#     			     if(estimateNA=="lebrusquet")
+#     			     {
+#         		        for(k in 1:NCOL(A[[j]]))
+#         		        {
+# 			           
+# 			                
+# 			                 missing=is.na(A0[[j]][,k])
+# 			                if(sum(missing)!=0)
+# 			                { 
+# 			                    
+# 			                    #if(k==1)
+# 			                    #{
+# 			                        title=paste("bloc",j,",var",k,"iter",iter)
+# 			                        png(filename=paste(title,".png",sep=""))
+# 			                        newx_k=leb(x_k=A[[j]][,k],missing,z=Z[,j],scale_block=TRUE,weight=sqrt(pjs[j]),argmax=ifelse(a[[j]][k]>0,TRUE,FALSE),graph=FALSE,main=title,abscissa=A0[[j]][,k])
+# 			                        dev.off()
+# 			                    #}
+#     			                 #else
+#     			                 #{
+#     			                 #    newx_k=leb(x_k=A[[j]][,k],missing,z=Z[,j],scale_block=TRUE,weight=sqrt(pjs[j]),argmax=ifelse(a[[j]][k]>0,TRUE,FALSE),graph=FALSE,main=title)
+#     			                     
+#     			                 #}
+# 			                    # on affecte le nouveau k
+# 			                    A[[j]][,k]=newx_k
+# 			                   # Ainter[[j]][,k]=newx_k
+# 			        
+# 			                }
+# 			                
+# 			            } 
+# 			            
+# 			        # 
+# 			        #  # if(estimateNA=="first"){missing=is.na(A[[j]][,k])} # n'est valable qu'au premier
+# 			        #   if(estimateNA=="first"){missing=is.na(A0[[j]][,k])} # n'est valable qu'au premier
+# 			        #   #if(estimateNA=="iterative"){missing=is.na(A[[j]][,k])} 
+# 			        #   if(estimateNA=="iterative"){  missing=is.na(A0[[j]][,k])}
+# 			        #   if(sum(missing)>0)
+# 			        #   {
+# 			        #      #if(estimateNA=="first")
+# 			        #     #{
+# 			        #     #  A[[j]][missing,k]=a[[j]][k]*Z[missing,j];
+# 			        #     #  A[[j]][,k]=scale(A[[j]][,k])
+# 			        #     #}
+# 			        #     if(estimateNA=="first")
+# 			        #     {
+# 			        #       #A[[j]][missing,k]=a[[j]][k]*Z[missing,j];
+# 			        # 
+# 			        #       Ainter= A0[[j]][,k]
+# 			        #       Ainter[missing]=a[[j]][k]*Z[missing,j]
+# 			        			        #       A[[j]][,k]=scale(Ainter)
+# 
+# 			        #     }
+# 			        #     if(estimateNA=="new")
+# 			        #     {
+# 			        #       ones=c(1,length(missing))
+# 			        #       K=diag(!missing)
+# 			        #       resol=solveLagrangien(K,w,x_obs,n)
+# 			        #       alpha=resol[1]
+# 			        #       mu=resol[2]
+# 			        #       lambda=resol[3]
+# 			        #       nu=resol[4]
+# 			        #       x_miss=(a[[j]][k]*Z[missing,j]+nu%*%ones)/lambda
+# 			        #     }
+# 			        #    
+# 			        #    if(estimateNA=="iterative")
+# 			        #    {
+# 			        #      A[[j]][missing,k]=scale(a[[j]][k]*Z[missing,j])
+# 			        #    }
+# 			        #    
+# 			       #   }
+# 			        #  
+# 			        # #A[[j]][,k]=scale(A[[j]][,k])
+# 			        # #	 print( A[[j]][,k])
+# 			        }
 			        
 			      }
 		     Y[, j] =pm( A[[j]], a[[j]],na.rm=na.rm)
@@ -440,10 +367,12 @@ rgccak=function (A, C, tau = "optimal", scheme = "centroid",verbose = FALSE, ini
     AVEinner <- sum(C * cor(Y)^2/2)/(sum(C)/2)
     call$tau=tau
     
-    if(estimateNA!="no")
-    {
-        result <- list(Y = Y, a = a, crit = crit, AVE_inner = AVEinner, A=A,call=call,tau=tau)
-    }
-    else{result <- list(Y = Y, a = a, crit = crit, AVE_inner = AVEinner,call=call,tau=tau)}
+   # if(estimateNA!="no")
+   # {
+   #     result <- list(Y = Y, a = a, crit = crit, AVE_inner = AVEinner, A=A,call=call,tau=tau)
+   # }
+    #else{
+    result <- list(Y = Y, a = a, crit = crit, AVE_inner = AVEinner,call=call,tau=tau)
+    #}
     return(result)
 }

@@ -8,6 +8,7 @@
 #'  sumcov-2, sumcov, sabscov, plspm
 #' @inheritParams plot_var_2D
 #' @inheritParams set_connection
+#' @param blocks A list of blocks
 #' @param response An integer giving the position of the response block within 
 #' the blocks (activates the supervised mode).  
 #' @param connection A symmetric matrix (J*J) that describes the relationships 
@@ -40,7 +41,7 @@
 #' (FALSE) of a superblock}
 
 select_analysis <- function(
-    blocks = blocks,
+    blocks,
     connection = 1 - diag(length(blocks)),
     penalty = rep(1, length(blocks)),
     ncomp = rep(1, length(blocks)),

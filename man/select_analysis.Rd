@@ -5,7 +5,7 @@
 \title{Define the analysis parameters}
 \usage{
 select_analysis(
-  blocks = blocks,
+  blocks,
   connection = 1 - diag(length(blocks)),
   penalty = rep(1, length(blocks)),
   ncomp = rep(1, length(blocks)),
@@ -18,7 +18,7 @@ select_analysis(
 )
 }
 \arguments{
-\item{blocks}{A list of matrices giving the \eqn{J} blocks of variables \eqn{\mathbf{X_1}, \mathbf{X_2}, ..., \mathbf{X_J}}.}
+\item{blocks}{A list of blocks}
 
 \item{connection}{A symmetric matrix (J*J) that describes the relationships 
 between blocks. Two values are accepted : '1' for a connection between two 

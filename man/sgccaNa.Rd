@@ -27,7 +27,7 @@ sgccaNa(
 )
 }
 \arguments{
-\item{blocks}{A list of matrices giving the \eqn{J} blocks of variables \eqn{\mathbf{X_1}, \mathbf{X_2}, ..., \mathbf{X_J}}.}
+\item{blocks}{A list of blocks}
 
 \item{method}{Either a character corresponding to the used method ("complete","knn","em","sem") or a function taking a list of J blocks (A) as only parameter and returning the imputed list. 
 \itemize{
@@ -121,7 +121,6 @@ X_ind[1,]=NA
 X_polit[5,1]=NA
 A = list(agri=X_agric, ind=X_ind, polit=X_polit)
 rgccaNa(A,method="nipals")
-rgccaNa(A,method="knn2")
 }
 \references{
 Tenenhaus A. and Tenenhaus M., (2011), Regularized Generalized Canonical Correlation Analysis, Psychometrika, Vol. 76, Nr 2, pp 257-284.

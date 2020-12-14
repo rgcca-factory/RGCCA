@@ -21,6 +21,8 @@ data(Russett)
 blocks = list(agriculture = Russett[, seq(3)], industry = Russett[, 4:5],  politic = Russett[, 6:8] )
 ```
 
+General help is available by typing ?rgcca.
+
 # Running RGCCA with default options. 
 The parameters type and scheme allows to change the type of rgcca - such as sgcca, pls, ...  (enter ?rgcca for more details).
 

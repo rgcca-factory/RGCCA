@@ -172,8 +172,8 @@ RussettWithNA <- Russett
      rgcca_out <-rgcca(blocksNA, response=1,ncomp=1,method="nipals")
      cv = rgcca_crossvalidation(rgcca_res=rgcca_out, n_cores = 1)
      
-     rgcca_out <-rgcca(blocksNA, response=1,ncomp=1,method="mean")
-     cv = rgcca_crossvalidation(rgcca_res=rgcca_out, n_cores = 1)
+   #  rgcca_out <-rgcca(blocksNA, response=1,ncomp=1,method="mean")
+   #  cv = rgcca_crossvalidation(rgcca_res=rgcca_out, n_cores = 1)
      
      rgcca_out <-rgcca(blocksNA, response=1,ncomp=1,method="complete")
      cv = rgcca_crossvalidation(rgcca_res=rgcca_out, n_cores = 1)
