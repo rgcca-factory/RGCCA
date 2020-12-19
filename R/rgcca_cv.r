@@ -5,7 +5,7 @@
 #' In this purpose, the samples are divided into k folds where the model will be tested on each fold and trained
 #'  on the others. For small datasets (<30 samples), it is recommended to use 
 #'  as many folds as there are individuals (leave-one-out; loo). 
-#' @inheritParams rgcca_crossvalidation
+#' @inheritParams rgcca_cv_k
 #' @inheritParams rgcca
 #' @inheritParams bootstrap
 #' @param par_type A character giving the parameter to tune among "sparsity" or "tau".
@@ -211,7 +211,7 @@ rgcca_cv=function( blocks,
             {
                 if(one_value_per_cv)
                 {
-                    res_i=c(res_i,rgcca_crossvalidation(
+                    res_i=c(res_i,rgcca_cv_k(
                         rgcca_res,
                         validation = validation,
                         model = type_cv,
@@ -224,7 +224,7 @@ rgcca_cv=function( blocks,
                 }
                 else
                 {
-                    res_i= c(res_i,rgcca_crossvalidation(
+                    res_i= c(res_i,rgcca_cv_k(
                         rgcca_res,
                         validation = validation,
                         model = type_cv,

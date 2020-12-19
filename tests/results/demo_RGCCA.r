@@ -271,9 +271,9 @@ resRGCCANA1=rgcca(blocksNA,method="complete",response=2)
 resRGCCANA2=rgcca(blocksNA,method="nipals",response=2)
 resRGCCANA3=rgcca(blocksNA,method="knn4",response=2)
 
-resCV=rgcca_crossvalidation(resRGCCANA1,validation="kfold") #
+resCV=rgcca_cv_k(resRGCCANA1,validation="kfold") #
 resCV=rgcca_cv(resRGCCANA2,par_type="tau")
-resCV=rgcca_crossvalidation(resRGCCANA3)
+resCV=rgcca_cv_k(resRGCCANA3)
 resCV$scores # mean absolute difference between observed and predicted
 
 plot_ind(resRGCCANA1,predicted=resCV)

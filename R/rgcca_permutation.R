@@ -209,8 +209,8 @@ rgcca_permutation <- function(
     #         assign(args_names[i], args_values[[i]])
     #         # send them to the clusters to parallelize
     #         varlist <- c(varlist, args_names[i])
-    #         # without this procedure rgcca_crossvalidation(rgcca_res, blocks = blocks2)
-    #         # or rgcca_crossvalidation(rgcca_res, blocks = lapply(blocks, scale)
+    #         # without this procedure rgcca_cv_k(rgcca_res, blocks = blocks2)
+    #         # or rgcca_cv_k(rgcca_res, blocks = lapply(blocks, scale)
     #         # does not work.
     #     }
     # }

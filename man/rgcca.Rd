@@ -229,7 +229,7 @@ Schafer J. and Strimmer K., (2005), A shrinkage approach to large-scale covarian
 }
 \seealso{
 \code{\link[RGCCA]{plot.rgcca}}, \code{\link[RGCCA]{print.rgcca}},
-\code{\link[RGCCA]{rgcca_crossvalidation}},
+\code{\link[RGCCA]{rgcca_cv_k}},
 \code{\link[RGCCA]{rgcca_permutation}}
 \code{\link[RGCCA]{rgcca_predict}}
 }

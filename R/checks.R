@@ -75,7 +75,7 @@ check_compx <- function(x, y, ncomp, blockx) {
 # @inheritParams set_connection
 check_connection <- function(C, blocks) {
     
-    msg <- "The connection file should"
+    msg <- "The design matrix C should"
     
     if (!isSymmetric.matrix(unname(C)))
         stop_rgcca(paste(msg, "be a symmetric matrix."), exit_code = 103)
@@ -85,9 +85,9 @@ check_connection <- function(C, blocks) {
     #     stop_rgcca("The diagonal of the connection matrix file should be 0.",
     #         exit_code = 105)
     
-    x <- unique(C %in% c(0, 1))
-    if (length(x) != 1 || x != TRUE)
-        stop_rgcca(paste(msg, "contain only 0 or 1."), exit_code = 106)
+    x <- C >=0 & C<=1
+    if (sum(!x)!=0)
+        stop_rgcca(paste(msg, "contain numbers between 0 or 1."), exit_code = 106)
     
     if (all(C == 0))
         stop_rgcca(paste(msg, "not contain only 0."), exit_code = 107)

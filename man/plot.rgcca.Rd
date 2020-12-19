@@ -14,7 +14,7 @@
   text_var = TRUE,
   text_ind = TRUE,
   response_name = "Response",
-  no_overlap = FALSE,
+  overlap = TRUE,
   title = NULL,
   n_mark = 30,
   collapse = FALSE,
@@ -50,7 +50,7 @@ or with circles (FALSE)}
 
 \item{response_name}{A character giving the legend title}
 
-\item{no_overlap}{A boolean to avoid overlap in plotted text}
+\item{overlap}{If FALSE, an algorithm avoiding overlapping between labels is computed}
 
 \item{title}{A character giving the title of the plot}
 

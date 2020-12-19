@@ -12,11 +12,11 @@
 #' blocks = list(agriculture = Russett[, seq(3)], industry = Russett[, 4:5],
 #'     politic = Russett[, 6:11] )
 #' rgcca_out = rgcca(blocks, response = 3,superblock=FALSE)
-#' res=rgcca_crossvalidation(rgcca_out, validation = "kfold", k = 5, n_cores = 1)
-#' rgcca_crossvalidation(rgcca_out, n_cores = 1)
+#' res=rgcca_cv_k(rgcca_out, validation = "kfold", k = 5, n_cores = 1)
+#' rgcca_cv_k(rgcca_out, n_cores = 1)
 #' @export
 #' @seealso \link{rgcca}, \link{rgcca_predict}, \link{plot.predict}
-rgcca_crossvalidation <- function(
+rgcca_cv_k <- function(
     rgcca_res,
     validation = "kfold",
     model = "regression",
@@ -146,8 +146,8 @@ rgcca_crossvalidation <- function(
                 assign(args_names[i], args_values[[i]])
                 # send them to the clusters to parallelize
                 varlist <- c(varlist, args_names[i])
-                # without this procedure rgcca_crossvalidation(rgcca_res, blocks = blocks2)
-                # or rgcca_crossvalidation(rgcca_res, blocks = lapply(blocks, scale)
+                # without this procedure rgcca_cv_k(rgcca_res, blocks = blocks2)
+                # or rgcca_cv_k(rgcca_res, blocks = lapply(blocks, scale)
                 # does not work.
             }
         }

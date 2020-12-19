@@ -1008,7 +1008,7 @@ server <- function(input, output, session) {
     getCrossVal2 <-  function(){
         assign(
             "crossval",
-            rgcca_crossvalidation(rgcca_out),
+            rgcca_cv_k(rgcca_out),
             .GlobalEnv
         )
         showWarn(message(paste("CV score:", round(crossval$score, 4))), show = FALSE)
