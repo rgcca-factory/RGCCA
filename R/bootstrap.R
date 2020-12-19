@@ -14,7 +14,6 @@
 #' rgcca_out = rgcca(blocks)
 #' b=bootstrap(rgcca_out, n_boot = 2, n_cores = 1)
 #' plot(b,n_cores=1)
-#' plot(b,type="2D",n_cores=1)
 #' @export
 #' @seealso \code{\link[RGCCA]{plot.bootstrap}} , \code{\link[RGCCA]{print.bootstrap}} 
 bootstrap <- function(

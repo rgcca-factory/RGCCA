@@ -6,7 +6,6 @@
 \usage{
 \method{plot}{bootstrap}(
   x,
-  type = "1D",
   block = length(x$rgcca$call$blocks),
   comp = 1,
   n_mark = 30,
@@ -26,8 +25,6 @@
 }
 \arguments{
 \item{x}{A bootstrap object (see \code{\link[RGCCA]{bootstrap}})}
-
-\item{type}{A character to select a type of plot among "1D" or "2D"}
 
 \item{block}{A vector of integers giving the index of a list of blocks or a block = 'all' for all of them}
 
@@ -62,20 +59,6 @@
 \description{
 Plot the results of a bootstrap object. The representation can be with bars
 (1D) or a biplot (2D) (see details).
-}
-\details{
-\itemize{
-\item type = '1D': barplot of the best variables from a bootstrap with, on the x-axis,
-the number of non-zero occurrences (SGCCA) or the mean of the bootstrap weights 
-(RGCCA). The bars are colored according to the significant 95% bootstrap 
-intervals ('*' or 'ns'; see 'p.vals' in details of \code{\link[RGCCA]{get_bootstrap}}). In SGCA, the significant variables 
- are those above the three bars, respectively, with an alpha = 0.05 
- (dark red), 0.01 (red) and 0.001 (light red).
-\item type = '2D' : graph of the best variables from a bootstrap with, in x-axis, the number of
-non-zero occurences (SGCCA) or the significant 95% bootstrap 
-intervals (RGCCA). In in y-axis are the bootstrap-ratios (mean/sd) 
-Negative weights are colored in red and the positive ones are in green.
-}
 }
 \examples{
 data("Russett")
