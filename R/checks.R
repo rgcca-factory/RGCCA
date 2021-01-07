@@ -78,7 +78,7 @@ check_connection <- function(C, blocks) {
     msg <- "The design matrix C should"
     
     if (!isSymmetric.matrix(unname(C)))
-        stop_rgcca(paste(msg, "be a symmetric matrix."), exit_code = 103)
+        stop_rgcca(paste(msg, "be symmetric."), exit_code = 103)
     
     # d <- unique(diag(C))
     # if (length(d) != 1 || d != 0)

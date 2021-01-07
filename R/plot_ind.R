@@ -51,6 +51,11 @@ plot_ind <- function(
     predicted = NULL,
     title = paste0(names(rgcca_res$call$blocks)[i_block],": Sample space"),
     legend=TRUE,
+    cex = 1,
+    cex_main = 14 * cex,
+    cex_sub = 12 * cex,
+    cex_point = 3 * cex,
+    cex_lab = 10 * cex,
     ...){
 
     if (is.null(i_block_y))
@@ -89,6 +94,11 @@ plot_ind <- function(
             text,
             i_block_y,
             no_overlap = no_overlap,
+            cex = cex,
+            cex_main = cex_main,
+            cex_sub = cex_sub,
+            cex_point = cex_point,
+            cex_lab=cex_lab,
             ...
         )
 
