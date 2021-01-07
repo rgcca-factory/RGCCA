@@ -18,7 +18,7 @@
 #' criteria to be maximized increases at each step of the iterative procedure) that is very 
 #' similar to the PLS algorithm proposed by Herman Wold. Moreover, depending on the 
 #' dimensionality of each block \eqn{\mathbf{X}_j}, \eqn{j = 1, \ldots, J}, the primal (when \eqn{n > p_j}) algorithm or 
-#' the dual (when \eqn{n < p_j}) algorithm is used (see Tenenhaus et al. 2013). 
+#' the dual (when \eqn{n < p_j}) algorithm is used (see Tenenhaus et al. 2015). 
 #' Moreover, by deflation strategy, rgccad() allow to compute several RGCCA block
 #' components (specified by ncomp) for each block. Block components of each block are guaranteed to 
 #' be orthogonal with the use of the deflation. The so-called symmetric deflation is considered in
@@ -182,14 +182,17 @@ rgccad=function (A, C = 1 - diag(length(A)), tau = rep(1, length(A)),  ncomp = r
   N <- max(ndefl)
   nb_ind <- NROW(A[[1]])
   J <- length(A)
-  # si le nombre d'individu est inferieur au nombre de variables: primal, sinon dual
+  
+  # Wheter primal or dual
   primal_dual = rep("primal", J)
   primal_dual[which(nb_row < pjs)] = "dual"
-  # cas ou le nombre de composantes
-  if (N == 0) 
-  { # cas ou on n'a qu'un axe a calculer par bloc
   
-    result <- rgccak(A, C, tau = tau, scheme = scheme, init = init, bias = bias, tol = tol, verbose = verbose,na.rm=na.rm,estimateNA=estimateNA,scale_block=scale_block,scale=scale)
+  # One component per block
+  if(N == 0){ 
+    result <- rgccak(A, C, tau = tau, scheme = scheme, init = init, 
+                     bias = bias, tol = tol, verbose = verbose,
+                     na.rm=na.rm, estimateNA=estimateNA, 
+                     scale_block=scale_block, scale=scale)
  
     if(estimateNA%in%c("iterative","first","lebrusquet","superblock"))
     {

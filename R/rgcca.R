@@ -1,7 +1,8 @@
 #' Regularized (or Sparse) Generalized Canonical Correlation Analysis (R/SGCCA) 
 #' 
 #' RGCCA is a generalization
-#' of regularized canonical correlation analysis to three or more sets of variables. SGCCA extends RGCCA to address the issue of variable selection
+#' of regularized canonical correlation analysis to three or more sets of variables. 
+#' SGCCA extends RGCCA to address the issue of variable selection
 #' @details
 #' Given J matrices \eqn{\mathbf{X_1}, \mathbf{X_2}, ..., \mathbf{X_J}} that represent 
 #' \eqn{J} sets of variables observed on the same set of \eqn{n} individuals. The matrices 
@@ -20,7 +21,7 @@
 #' criteria to be maximized increases at each step of the iterative procedure) that is very 
 #' similar to the PLS algorithm proposed by Herman Wold. Moreover, depending on the 
 #' dimensionality of each block \eqn{\mathbf{X}_j}, \eqn{j = 1, \ldots, J}, the primal (when \eqn{n > p_j}) algorithm or 
-#' the dual (when \eqn{n < p_j}) algorithm is used (see Tenenhaus et al. 2013). 
+#' the dual (when \eqn{n < p_j}) algorithm is used (see Tenenhaus et al. 2015). 
 #' Moreover, by deflation strategy, rgcca() allow to compute several RGCCA block
 #' components (specified by ncomp) for each block. Block components of each block are guaranteed to 
 #' be orthogonal with the use of the deflation. The so-called symmetric deflation is considered in
@@ -41,8 +42,8 @@
 #' @inheritParams sgccaNa
 #' @inheritParams select_analysis
 #' @return A RGCCA object
-#' @return \item{Y}{A list of \eqn{J} elements. Each element of \eqn{Y} is a matrix that contains the analysis components for the corresponding block.}
-#' @return \item{a}{A list of \eqn{J} elements. Each element of \eqn{a} is a matrix that contains the outer weight vectors for each block.}
+#' @return \item{Y}{A list of \eqn{J} elements. Each element of the list \eqn{Y} is a matrix of block components for the corresponding block.}
+#' @return \item{a}{A list of \eqn{J} elements. Each element of the list \eqn{a} is a matrix of block weight vectors for the corresponding block.}
 #' @return \item{astar}{A list of \eqn{J} elements. Each element of astar is a matrix defined as Y[[j]][, h] = A[[j]]\%*\%astar[[j]][, h].}
 #' @return \item{tau}{Either a 1*J vector or a \eqn{\mathrm{max}(ncomp) \times J} matrix containing the values
 #' of the regularization parameters. Tau varies from 0 (maximizing the correlation) to 1 (maximizing the covariance).
@@ -55,9 +56,11 @@
 #' @return \item{A}{A list of matrices giving the \eqn{J} blocks of variables \eqn{\mathbf{X_1}, \mathbf{X_2}, ..., \mathbf{X_J}}
 #' These matrices, used in the calculations, are imputed if an imputation method is selected.}
 #' @return \item{call}{Call of the function}
-#' @references Tenenhaus A. and Tenenhaus M., (2011), Regularized Generalized Canonical Correlation Analysis, Psychometrika, Vol. 76, Nr 2, pp 257-284.
-#' @references Tenenhaus A. et al., (2013), Kernel Generalized Canonical Correlation Analysis, submitted.
-#' @references Schafer J. and Strimmer K., (2005), A shrinkage approach to large-scale covariance matrix estimation and implications for functional genomics. Statist. Appl. Genet. Mol. Biol. 4:32.
+#' @references Tenenhaus M., Tenenhaus A. and Groenen P. J. (2017). Regularized generalized canonical correlation analysis: a framework for sequential multiblock component methods. Psychometrika, 82(3), 737-777.
+#' @references Tenenhaus A. and Tenenhaus M., (2011). Regularized Generalized Canonical Correlation Analysis, Psychometrika, Vol. 76, Nr 2, pp 257-284.
+#' @references Tenenhaus A., Philippe, C. and Frouin, V. (2015). Kernel generalized canonical correlation analysis. Computational Statistics & Data Analysis, 90, 114-131.
+#' @references Schafer J. and Strimmer K. (2005). A shrinkage approach to large-scale covariance matrix estimation and implications for functional genomics. Statist. Appl. Genet. Mol. Biol. 4:32.
+#' @references Tenenhaus A., Philippe C., Guillemot V., Le Cao K. A., Grill J. and Frouin, V., Variable selection for generalized canonical correlation analysis, Biostatistics, vol. 15, no. 3, pp. 569-583, 2014.
 #' @examples
 #' ############################################
 #' # Example 1: SGCCA #
@@ -97,9 +100,9 @@
 #' plot(res_rgcca, type = "weight", block = 1)
 #' plot(res_rgcca, type = "cor")
 #' 
-#' ############################################
-#' # Example 3: Supevised mode #
-#' ############################################
+#' ##############################
+#' # Example 3: Supervised mode #
+#' ##############################
 #' # Tune the model for explaining the politic block (politic connected to the two other blocks)
 #' cv = rgcca_cv(blocks, response = 3, ncomp = 2, n_cores = 1)
 #' print(cv)
@@ -110,6 +113,12 @@
 #' 
 #' b = bootstrap(res_rgcca, n_cores = 1, n_boot = 10)
 #' plot(b, n_cores = 1)
+#' 
+#' ##########################
+#' # Example 4: Sparse GCCA #
+#' ##########################
+#' 
+#' 
 #' @export
 #' @import ggplot2
 #' @importFrom grDevices dev.off rgb colorRamp pdf colorRampPalette
@@ -148,7 +157,7 @@ rgcca <- function(
 
     if(class(blocks)=="permutation")
     {
-        message("All parameters were imported by permutation object provided in the blocks parameter")
+        message("All the parameters were imported from the permutation object")
         scale_block=blocks$call$scale_block
         scale=blocks$call$scale
         scheme=blocks$call$scheme
@@ -171,7 +180,7 @@ rgcca <- function(
     }
     if(class(blocks)=="cval")
     {
-        message("All parameters were imported by a cval object provided in the blocks parameter")
+        message("All the parameters were imported from the cval object")
         scale_block=blocks$call$scale_block
         scale=blocks$call$scale
         scheme=blocks$call$scheme
@@ -197,7 +206,7 @@ rgcca <- function(
         if(type!="pca")
         {
             type="pca";
-            message("type='rgcca' is not available for one block only. type was transformed as 'pca'.")
+            message("type='rgcca' is not available for one block only. type was converted to 'pca'.")
         }
         
     }

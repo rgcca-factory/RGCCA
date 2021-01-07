@@ -140,7 +140,7 @@ rgcca_permutation <- function(
         }else
         {
             if (tolower(type) %in% c("spls", "spca", "sgcca"))
-                warning("The tau is chosen but the analyse is sparse. By default, a RGCCA will be performed.")
+                warning("tau is selected but sparsity is required.RGCCA will be performed by default.")
             type <<- "rgcca"
             min_spars <<- sapply(ncols, function(x) 0)
         }

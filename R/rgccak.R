@@ -31,52 +31,55 @@
 #' @importFrom stats cor rnorm
 #' @importFrom graphics plot
 #' @importFrom Deriv Deriv
-rgccak=function (A, C, tau = "optimal", scheme = "centroid",verbose = FALSE, init = "svd", bias = TRUE, tol = 1e-08,na.rm=TRUE,estimateNA="no",scale=TRUE,scale_block=TRUE,initImpute="rand")
+
+rgccak=function (A, C, tau = "optimal", scheme = "centroid",verbose = FALSE, init = "svd", bias = TRUE, tol = 1e-08, na.rm=TRUE, estimateNA="no",
+                 scale=TRUE,scale_block=TRUE,initImpute="rand")
 {  
     call=list(A=A, C=C, scheme = scheme,verbose = verbose, init = init, bias = bias, tol = tol,na.rm=na.rm,estimateNA=estimateNA,scale=scale,scale_block=scale_block,initImpute=initImpute)
         
-     if(mode(scheme) != "function") 
-    {
-    if(!scheme %in% c("horst","factorial","centroid")){stop_rgcca("Please choose scheme as 'horst','factorial','centroid' or as a convex function")}
-    if(scheme=="horst"){ g <- function(x) x}
-    if(scheme=="factorial"){ g <- function(x)  x^2}  
-    if(scheme=="centroid"){g <- function(x) abs(x)}
-   
-     }else {g<-scheme}
+if(mode(scheme) != "function") 
+  {
+    if(!scheme %in% c("horst", "factorial", "centroid"))
+      {stop_rgcca("Please choose scheme as 'horst', 'factorial', 'centroid'")}
+    if(scheme == "horst"){ g <- function(x) x}
+    if(scheme == "factorial"){ g <- function(x)  x^2}  
+    if(scheme == "centroid"){g <- function(x) abs(x)}
+} 
+else g <- scheme
     
     
-    J <- length(A) # nombre de blocs
-    n <- NROW(A[[1]]) # nombre d'individus
-    pjs <- sapply(A, NCOL) # nombre de variables par bloc
+    J <- length(A) # number of blocks
+    n <- NROW(A[[1]]) # number of individuals
+    pjs <- sapply(A, NCOL) # number of variables per block
     Y <- matrix(0, n, J)
-    if (!is.numeric(tau)) # cas ou on estime le tau de maniere intelligente (a creuser)
-        tau = sapply(A, tau.estimate) # d apres Schafer and Strimmer
+    if (!is.numeric(tau)) 
+        tau = sapply(A, tau.estimate) # From Schafer and Strimmer, 2005
     
-
     A0 <-A
     A <- lapply(A, as.matrix)
-    # Initialisation of missing values
-  
-       a <- alpha <- M <- Minv <- K <- list() # initialisation variables internes
-    which.primal <- which((n >= pjs) == 1) # on raisonne differement suivant la taille du bloc
+    a <- alpha <- M <- Minv <- K <- list() # Initialisation 
+    
+    # Whether primal or dual for each block
+    which.primal <- which((n >= pjs) == 1) 
     which.dual <- which((n < pjs) == 1)
 
-    if (init == "svd") { #initialisation intelligente dans les differents cas (a creuser)
+    # Smart initialisation with SVD
+    if (init == "svd") { 
         for (j in which.primal) {
-            a[[j]] <- initsvd(A[[j]]) # pas la
+            a[[j]] <- initsvd(A[[j]]) 
         }
         for (j in which.dual) { 
             alpha[[j]] <- initsvd(A[[j]])
-            K[[j]] <-pm( A[[j]] , t(A[[j]]),na.rm=na.rm) #A*t(A) plutot que t(A)*A
+            K[[j]] <- pm( A[[j]] , t(A[[j]]), na.rm = na.rm)
         }
     }
     else if (init == "random") {
         for (j in which.primal) {
-            a[[j]] <- rnorm(pjs[j]) # on initialise suivant la loi normale
+            a[[j]] <- rnorm(pjs[j]) # random initialisation
         }
         for (j in which.dual) {
             alpha[[j]] <- rnorm(n)
-            K[[j]] <- pm(A[[j]] , t(A[[j]]),na.rm=na.rm) #A*t(A) plutot que t(A)*A
+            K[[j]] <- pm(A[[j]] , t(A[[j]]), na.rm = na.rm)
         }
     }
     else {
@@ -84,14 +87,14 @@ rgccak=function (A, C, tau = "optimal", scheme = "centroid",verbose = FALSE, ini
     }
    
     N = ifelse(bias, n, n - 1)
-	# premiers reglages avant la boucle : initialisation du premier Y (correspondant a la fonction a maximiser)
+	
     for (j in which.primal) 
     {
         ifelse(tau[j] == 1,
         {
-            a[[j]] <- drop(1/sqrt(t(a[[j]]) %*% a[[j]])) * a[[j]] # calcul de la premiere composante (les aj sont les wj) : on les norme dans ce cas : c'eest la condition |w|=1
+            a[[j]] <- drop(1/sqrt(t(a[[j]]) %*% a[[j]])) * a[[j]] 
             if(a[[j]][1]<0){a[[j]]=-a[[j]]}
-            Y[, j] <- pm(A[[j]] , a[[j]],na.rm=na.rm) # projection du bloc sur la premiere composante
+            Y[, j] <- pm(A[[j]] , a[[j]], na.rm = na.rm)
         }, 
         {
            # M[[j]] <- ginv(tau[j] * diag(pjs[j]) + ((1 - tau[j])/(N)) * (pm(t(A[[j]]) , A[[j]],na.rm=na.rm))) #calcul de la fonction a minimiser ?

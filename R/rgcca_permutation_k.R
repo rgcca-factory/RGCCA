@@ -55,7 +55,7 @@ rgcca_permutation_k <- function(
         blocks_to_use <- lapply(
             seq(length(blocks)), 
             function(k) {
-                blocks_to_use_k <- as.matrix(blocks[[k]][sample(seq(NROW(blocks[[k]]))),])
+                blocks_to_use_k <- as.matrix(blocks[[k]][sample(seq(NROW(blocks[[k]]))), ])
                 rownames(blocks_to_use_k) = rownames(blocks[[k]])
                 return(blocks_to_use_k)
         })
