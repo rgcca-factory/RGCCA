@@ -816,7 +816,7 @@ fit.perm = rgcca_permutation(A, connection = C,
                                                seq(0, 1, l=3), 
                                                rep(0, 3), 
                                                sapply(A, RGCCA:::tau.estimate)),
-                             n_cores = 10, n_run = 5)
+                             n_cores = 1, n_run = 5)
 ```
 
 Alternatively a numeric vector of length $J$ giving the range of values to be tested: from the minimum values (0 for RGCCA and $1/sqrt(ncol)$ for SGCCA) to the maximum values specified by the user with `par_value`. 
@@ -834,7 +834,7 @@ If `par_type = sparsity`, the `rgcca_permutation()` function switches to `sgcca(
 set.seed(1234567)
 fit.perm = rgcca_permutation(A, connection = C, 
                              par_type = "sparsity", 
-                             n_cores = 10, n_run = 5)
+                             n_cores = 1, n_run = 5, type = "sgcca")
 ```
 
 
@@ -858,14 +858,14 @@ is computed by assuming that the ratio of the parameter estimate to its standard
 
 ```{r}
 fit.rgcca = rgcca(fit.perm)
-boot.rgcca = bootstrap(fit.rgcca, n_boot = 200, n_cores = 15)
+boot.rgcca = bootstrap(fit.rgcca, n_boot = 200, n_cores = 1)
 ```
 
 ```{r}
 
 rgcca_optimal_factorial = rgcca(blocks=A, connection=C, tau = c(1, 1, 0), scheme = "factorial", scale = TRUE, verbose = FALSE, ncomp = 2)
 
-boot.rgcca = bootstrap(rgcca_optimal_factorial, n_boot = 200, n_cores = 15)
+boot.rgcca = bootstrap(rgcca_optimal_factorial, n_boot = 200, n_cores = 1)
 ```
 
 The bootstrap results are displayed using the `plot()`function.
@@ -1060,7 +1060,7 @@ plot(fit.sgcca,type="ind",block=1:2,comp=1, resp = Loc)
 It possible to determine the optimal sparsity parameters by permutation. This is made possible using the rgcca_permutation() function.
 
 ```{r}
-fit.permute = rgcca_permutation(A, C, par_type = "sparsity", par_length = 10, n_run = 10)
+fit.permute = rgcca_permutation(A, C, par_type = "sparsity", par_length = 10, n_run = 10, n_cores = 1)
 ```
 
 
