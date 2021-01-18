@@ -191,7 +191,7 @@ rgccad=function (A, C = 1 - diag(length(A)), tau = rep(1, length(A)),  ncomp = r
   if(N == 0){ 
     result <- rgccak(A, C, tau = tau, scheme = scheme, init = init, 
                      bias = bias, tol = tol, verbose = verbose,
-                     na.rm=na.rm, estimateNA=estimateNA, 
+                     na.rm=na.rm, 
                      scale_block=scale_block, scale=scale)
  
     if(estimateNA%in%c("iterative","first","lebrusquet","superblock"))
@@ -206,14 +206,6 @@ rgccad=function (A, C = 1 - diag(length(A)), tau = rep(1, length(A)),  ncomp = r
         {
             
             AVE_X[[j]] = mean(cor(A[[j]], Y[[j]],use="pairwise.complete.obs")^2,na.rm=TRUE)
-           #  if( dim(A[[j]])[1]>dim(A[[j]])[2])
-           #  {
-           #      AVE_X[[j]]=diag(cov(Y[[j]]))/sum(diag(cov(A[[j]] )))
-           #  }
-           #  else
-           #  {
-           #      AVE_X[[j]]=diag(cov(Y[[j]]))/sum(diag(t(cov(A[[j]]) )))
-           #  }
              
         } 
         AVE_outer <- sum(pjs * unlist(AVE_X))/sum(pjs) 
@@ -228,7 +220,6 @@ rgccad=function (A, C = 1 - diag(length(A)), tau = rep(1, length(A)),  ncomp = r
     tau=result$tau
     if(is.vector(tau)){names(tau)=names(A)}
     out <- list(Y = Y, a = a, astar = a, C = C,  scheme = scheme, ncomp = ncomp, crit = result$crit, primal_dual = primal_dual, AVE = AVE,A=A0,tau=tau,call=call)
-    if(estimateNA %in% c("iterative","first","superblock","lebrusquet")){out[["imputedA"]]=A}
     
     class(out) <- "rgccad"
     
@@ -294,10 +285,7 @@ rgccad=function (A, C = 1 - diag(length(A)), tau = rep(1, length(A)),  ncomp = r
   for (b in 1:J) {
     Y[[b]][, N + 1] <- rgcca.result$Y[, b]
     a[[b]][, N + 1] <- rgcca.result$a[[b]]
-    # ajout
     astar[[b]][, N + 1] <- rgcca.result$a[[b]] - astar[[b]][, (1:N), drop = F] %*% drop(t(a[[b]][, (N + 1)]) %*%P[[b]][, 1:(N), drop = F])
-    #astar[[b]][,N+1] <- rgcca.result$a[[b]] - astar[[b]][,(1:N),drop=F] %*% drop( t(a[[b]][,(N+1)]) %*% P[[b]][,1:(N),drop=F] ) 
-  
     rownames(a[[b]]) = rownames(astar[[b]]) = colnames(A[[b]])
     rownames(Y[[b]]) = rownames(A[[b]])
     colnames(Y[[b]]) = paste0("comp", 1:max(ncomp))
@@ -306,18 +294,7 @@ rgccad=function (A, C = 1 - diag(length(A)), tau = rep(1, length(A)),  ncomp = r
   for (j in 1:J)
   {
         AVE_X[[j]] = apply(cor(A[[j]], Y[[j]],use="pairwise.complete.obs")^2, 	2, mean,na.rm=TRUE)
-        # AVEinner2=diag(cov(Y[[j]]))/sum(diag(cov(A[[j]] )))
 
-       # if(dim(A[[j]])[1]>dim(A[[j]])[2])
-       # {
-       #     
-       #     AVE_X[[j]]=diag(cov2(Y[[j]]))/sum(diag(cov2(A[[j]] )),na.rm=TRUE)
-       # }
-      #else
-      #{
-      #    AVE_X[[j]]=diag(cov2(Y[[j]]))/sum(diag(cov2(t(A[[j]]) )),na.rm=TRUE)
-      #}
-       
   }
   outer = matrix(unlist(AVE_X), nrow = max(ncomp))
   

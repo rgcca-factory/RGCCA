@@ -10,6 +10,7 @@
 # return a plotly object
 #'@importFrom graphics layout
 #'@importFrom plotly ggplotly config
+#'@importFrom utils packageVersion
 plot_dynamic <- function(
     f,
     ax = NULL,

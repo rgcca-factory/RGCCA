@@ -17,11 +17,6 @@ sgccaNa(
   tol = 1e-08,
   verbose = TRUE,
   scale_block = TRUE,
-  knn.k = "all",
-  knn.output = "weightedMean",
-  knn.klim = NULL,
-  knn.scale_block = TRUE,
-  pca.ncp = 1,
   prescaling = FALSE,
   quiet = FALSE
 )
@@ -70,16 +65,6 @@ covariance maximization among "horst" (the identity function), "factorial"
 \item{verbose}{A boolean displaying the warnings}
 
 \item{scale_block}{A logical value indicating if each block have the same weight in the RGCCA analysis. Otherwise, the weight of each block depends on the number of variables of the block}
-
-\item{knn.k}{Used only if missing values in the blocks are estimated by k-NN methods. An integer giving the number of k nearest neighbors. Can also be "auto" for automatic selection.}
-
-\item{knn.output}{A character among "mean", "random" or "weightedMean" : Used only if missing values in the blocks are estimated by k-NN methods. Returns respectively the average of the k nearest neigbors, one selected randomly, or an average weighted by the distance of the k NN}
-
-\item{knn.klim}{Used only if missing values in the blocks are estimated by k-NN methods, and if knn.k is "auto". An integer giving the k limits (if k is not a number, optimal k between klim[1] and klim[2] is calculated )}
-
-\item{knn.scale_block}{Used only if missing values in the blocks are estimated by k-NN methods. A logical value indicating if the distance for Nearest Neigbors takes the size of blocks into account}
-
-\item{pca.ncp}{An integer giving the number of components chosen in PCA}
 
 \item{prescaling}{A logical value indicating if the scaling should be done outside of the function.}
 

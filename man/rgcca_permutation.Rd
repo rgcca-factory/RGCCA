@@ -6,15 +6,15 @@
 \usage{
 rgcca_permutation(
   blocks,
-  par_type = "tau",
+  par_type,
   par_value = NULL,
   par_length = 10,
   n_run = 20,
   n_cores = parallel::detectCores() - 1,
   quiet = TRUE,
-  type = "rgcca",
   scale = TRUE,
   scale_block = TRUE,
+  type = NULL,
   connection = matrix(1, length(blocks), length(blocks)) - diag(length(blocks)),
   scheme = "factorial",
   ncomp = rep(1, length(blocks)),
@@ -49,15 +49,15 @@ one row by combination. By default, it takes 10 sets between min values (0
 
 \item{quiet}{A logical value indicating if it should not print warnings}
 
+\item{scale}{A logical value indicating if each block is normalised and divided by the square root of its number of variables and then divided by the square root of its number of variables.}
+
+\item{scale_block}{A logical value indicating if each block have the same weight in the RGCCA analysis. Otherwise, the weight of each block depends on the number of variables of the block}
+
 \item{type}{A character giving the type of analysis: rgcca, sgcca, pca, 
 pls, cca, ifa, ra, cpca-w, gcca, hpca, maxbet-b, maxbet, maxdiff-b,maxdiff,
  maxvar-a, maxvar-b, maxvar, niles, r-maxvar, rcon-pca, ridge-gca, sabscor,
  ssqcor, ssqcor, ssqcov-1, ssqcov-2, ssqcov,  sum-pca, sumcor, sumcov-1, 
  sumcov-2, sumcov, sabscov, plspm}
-
-\item{scale}{A logical value indicating if each block is normalised and divided by the square root of its number of variables and then divided by the square root of its number of variables.}
-
-\item{scale_block}{A logical value indicating if each block have the same weight in the RGCCA analysis. Otherwise, the weight of each block depends on the number of variables of the block}
 
 \item{connection}{A symmetric matrix (J*J) that describes the relationships 
 between blocks. Two values are accepted : '1' for a connection between two 
@@ -108,7 +108,9 @@ a superblock}
 
 \item{rgcca_res}{A RGCCA object (see  \code{\link[RGCCA]{rgcca}})}
 
-\item{parallelization}{A logical value to run a parallelization. If parallelization = NULL (default), the parallelization is always performed except for Windows if length(n_boot) < 10.}
+\item{parallelization}{A logical value to run a parallelization. 
+If parallelization = NULL (default), the parallelization is always 
+performed except for Windows if length(n_boot) < 10.}
 }
 \value{
 \item{zstat}{The Z statistic is the difference, for each combination, between the non-permuted R/SGCCA criterion and the mean of the permuted R/SGCCA criteria divided by the standard deviation of the permuted R/SGCCA criteria.}
@@ -138,7 +140,7 @@ RGCCA criteria.
 data("Russett")
 blocks = list(agriculture = Russett[, seq(3)], industry = Russett[, 4:5],
     politic = Russett[, 6:11] )
-res = rgcca_permutation(blocks, n_run = 5, n_cores = 1)
+res = rgcca_permutation(blocks,par_type="tau", n_run = 5, n_cores = 1)
 rgcca_permutation(blocks, par_type = "sparsity", par_value = 0.8, n_run = 2,
  n_cores = 1)
 rgcca_permutation(blocks, par_type = "sparsity", par_value = c(0.6, 0.75, 0.5), 

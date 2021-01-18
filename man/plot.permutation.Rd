@@ -40,7 +40,7 @@ the RGCCA criterion and 'zstat' for the pseudo Z-score)}
 
 \item{colors}{Either a vector of integers (each integer corresponding to a color) or of characters corresponding to names of colors (as "blue",see colors()) or RGB code ("#FFFFFF").}
 
-\item{...}{Further graphical parameters}
+\item{...}{additional graphical parameters}
 }
 \description{
 Plot a permutation object (tuning RGCCA parameters). The parameters tuned 
@@ -57,7 +57,7 @@ significance thresholds from the lowest  to the highest bar: 95%, 99% and 99.9%.
 data("Russett")
 A <- list(agriculture = Russett[, seq(3)], industry = Russett[, 4:5],
     politic = Russett[, 6:11] )
-perm <- rgcca_permutation(A, n_run = 2, n_cores = 1)
+perm <- rgcca_permutation(A,par_type="tau", n_run = 2, n_cores = 1)
 plot(perm)
 perm <- rgcca_permutation(A, par_type = "sparsity", n_run = 5, n_cores = 1)
 plot(perm, type="zstat")

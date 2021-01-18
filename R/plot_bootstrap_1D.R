@@ -41,6 +41,7 @@
 #' @export
 #' @importFrom ggplot2 ggplot
 #' @importFrom stats qbinom
+#' @importFrom utils head
 plot_bootstrap_1D <- function(
     b = NULL,
     df_b = NULL,

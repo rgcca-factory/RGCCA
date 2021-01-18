@@ -105,8 +105,8 @@
 #'     politic = Russett[, 6:11])
 #' 
 #' # Blocks are fully connected, factorial scheme and tau =1 for all blocks is 
-#' used by default
-#' fit.rgcca = rgcca(blocks, type = "rgcca", connection = 1-diag(3), 
+#' # used by default
+#' fit.rgcca = rgcca(blocks=blocks, type = "rgcca", connection = 1-diag(3), 
 #'                   scheme = "factorial", tau = rep(1, 3))
 #' print(fit.rgcca)
 #' plot(fit.rgcca, type = "weight", block = 3)
@@ -133,13 +133,13 @@
 #' ##################################
 #' 
 #' # Tune the model to find the best sparsity coefficients (all the blocs are 
-#' connected together)
+#' # connected together)
 #' perm = rgcca_permutation(blocks, n_cores = 1, par_type = "sparsity", 
-#' type = "sparsity", n_run = 10)
+#'  n_run = 10)
 #' print(perm)
 #' plot(perm)
 #' 
-#' res_sgcca = rgcca(blocks, type = "sgcca", sparsity = perm$bestpenalties)
+#' res_sgcca = rgcca(blocks, sparsity = perm$bestpenalties)
 #' plot(res_sgcca, type = "network")
 #' plot(res_sgcca, type = "ave")
 #' 
@@ -151,7 +151,7 @@
 #' # Example 3: Supervised mode #
 #' ##############################
 #' # Tune the model for explaining the politic block (politic connected to the 
-#' two other blocks)
+#' # two other blocks)
 #' cv = rgcca_cv(blocks, response = 3, ncomp = 2, n_cores = 1)
 #' print(cv)
 #' plot(cv)
@@ -172,7 +172,7 @@
 #' @importFrom grDevices dev.off rgb colorRamp pdf colorRampPalette
 #' @importFrom graphics plot
 #' @importFrom stats cor quantile runif sd na.omit p.adjust pnorm qnorm weights
-#' @importFrom utils read.table write.table package Version installed.packages head
+#' @importFrom utils read.table write.table
 #' @importFrom scales hue_pal
 #' @importFrom stats model.matrix
 #' @importFrom methods is
@@ -197,11 +197,8 @@ rgcca <- function(
     superblock = FALSE,
     method = "nipals",
     verbose = FALSE,
-    quiet = TRUE,
-    knn.k = "all",
-    knn.output = "weightedMean",
-    knn.klim = NULL,
-    knn.scale_block = TRUE) {
+    quiet = TRUE) 
+{
 
     if(class(blocks)=="permutation")
     {
@@ -291,7 +288,6 @@ rgcca <- function(
   
     
     match.arg(init, c("svd", "random"))
-    match.arg(knn.output, c("mean", "random", "weightedMean" ))
     check_method(type)
   
     
@@ -302,15 +298,8 @@ rgcca <- function(
         check_blockx("response", response, blocks)
     check_integer("tol", tol, float = TRUE, min = 0)
 
-    for (i in c("knn.klim")) {
-        if (!(i == "knn.klim" && is.null(get(i))))
-            check_integer(i, get(i))
-    }
-
-    if (!knn.k %in% c("all", "auto"))
-        check_integer("knn.k", knn.k)
-
-    for (i in c("superblock","verbose", "scale", "bias", "quiet", "knn.scale_block"))
+   
+    for (i in c("superblock","verbose", "scale", "bias", "quiet"))
         check_boolean(i, get(i))
 
     penalty <- elongate_arg(penalty, blocks)
@@ -343,12 +332,8 @@ rgcca <- function(
     opt$blocks <- set_superblock(opt$blocks, opt$superblock, type, !quiet)
 
     if (!is.null(response)) {
-        # || tolower(type) == "ra"
         response <- check_blockx("response", response, opt$blocks)
-        #pars <- c("blocks", "ncomp", "penalty")
-        #for (i in seq(length(pars)))
-        #    opt[[pars[i]]] <- c(opt[[pars[i]]][-response], opt[[pars[i]]][response])
-    }
+        }
 
     
     if (!is.matrix(opt$connection) || !is.null(response)) {
@@ -389,11 +374,6 @@ rgcca <- function(
             tol = tol,
             scale_block = scale_block,
             method = method,
-            knn.k = knn.k,
-            knn.output = knn.output,
-            knn.klim = knn.klim,
-            knn.scale_block = knn.scale_block,
-            pca.ncp =1,
             prescaling = TRUE,
             quiet=quiet
         )
@@ -441,9 +421,6 @@ rgcca <- function(
         "response",
         "scale_block",
         "method",
-        "knn.k",
-        "knn.output",
-        "knn.klim",
         "type"
     ))
         func_out$call[[i]] <- as.list(environment())[[i]]

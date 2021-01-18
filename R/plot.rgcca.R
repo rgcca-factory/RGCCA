@@ -73,7 +73,7 @@
 #' # Correlation circle #
 #' ######################
 #' # with superblock
-#' fit.mcia = rgcca(blocks, scheme = "factorial", ncomp = rep(2, 4), 
+#' fit.mcia = rgcca(blocks=A, scheme = "factorial", ncomp = rep(2, 4), 
 #'                  tau = c(1, 1, 1, 0), superblock = TRUE)
 #' plot(fit.mcia, type="both", resp = status, overlap = FALSE)
 #'                                                      

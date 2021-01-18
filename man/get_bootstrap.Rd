@@ -19,7 +19,7 @@ get_bootstrap(
 
 \item{comp}{An integer giving the index of the analysis components}
 
-\item{block}{A vector of integers giving the index of a list of blocks or a block = 'all' for all of them}
+\item{block}{A vector indicating the blocks to consider.}
 
 \item{bars}{A character giving the variability among "sd" (standard deviations bars) , "stderr"(bars of standard deviation divided by sqrt(n)) or "quantile" (for the 0.05-0.95 quantiles bars)}
 

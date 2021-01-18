@@ -27,6 +27,7 @@
 #' @param cex_lab An integer for the size of the axis titles
 #' @param collapse A boolean to combine the variables of each block as result
 #' @importFrom ggplot2 ggplot
+#' @importFrom utils installed.packages
 # @examples
 # df = as.data.frame(matrix(runif(20*2, min = -1), 20, 2))
 # AVE = lapply(seq(4), function(x) runif(2))

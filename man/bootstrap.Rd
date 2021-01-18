@@ -18,14 +18,20 @@ bootstrap(
 
 \item{n_cores}{An integer for the number of cores used in parallelization}
 
-\item{parallelization}{A logical value to run a parallelization. If parallelization = NULL (default), the parallelization is always performed except for Windows if length(n_boot) < 10.}
+\item{parallelization}{A logical value to run a parallelization. 
+If parallelization = NULL (default), the parallelization is always 
+performed except for Windows if length(n_boot) < 10.}
 }
 \value{
 A list containing two objects: 'bootstrap' and 'rgcca'. 
-'bootstrap' is a list a list containing for each block, a matrix with in rows the variables of the blocks and in columns the weight calculated for each bootstrap; 'rgcca' is the original rgcca (see  \code{\link[RGCCA]{rgcca}}).
+'bootstrap' is a list containing for each block, a matrix 
+with the variables of the block in row and the block weight vector
+calculated for each bootstrap sample in column. 'rgcca' is the original 
+rgcca object. (see  \code{\link[RGCCA]{rgcca}})
 }
 \description{
-Compute boostrap of RGCCA in order to evaluate the stability of the weights found in S/RGCCA
+Compute boostrap of RGCCA in order to evaluate the stability of the weights 
+found in S/RGCCA
 }
 \examples{
 data("Russett")
@@ -36,5 +42,6 @@ b=bootstrap(rgcca_out, n_boot = 2, n_cores = 1)
 plot(b,n_cores=1)
 }
 \seealso{
-\code{\link[RGCCA]{plot.bootstrap}} , \code{\link[RGCCA]{print.bootstrap}}
+\code{\link[RGCCA]{plot.bootstrap}} , 
+\code{\link[RGCCA]{print.bootstrap}}
 }

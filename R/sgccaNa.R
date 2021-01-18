@@ -31,7 +31,7 @@
 #' A = list(agri=X_agric, ind=X_ind, polit=X_polit)
 #' rgccaNa(A,method="nipals")
 
-sgccaNa=function (blocks,method, connection = 1 - diag(length(A)), sparsity = rep(1, length(A)),    ncomp = rep(1, length(A)), scheme = "centroid", scale = TRUE,   init = "svd", bias = TRUE, tol = 1e-08, verbose = TRUE,scale_block=TRUE,knn.k="all",knn.output="weightedMean",knn.klim=NULL,knn.scale_block=TRUE,pca.ncp=1,prescaling=FALSE,quiet=FALSE)
+sgccaNa=function (blocks,method, connection = 1 - diag(length(A)), sparsity = rep(1, length(A)),    ncomp = rep(1, length(A)), scheme = "centroid", scale = TRUE,   init = "svd", bias = TRUE, tol = 1e-08, verbose = TRUE,scale_block=TRUE,prescaling=FALSE,quiet=FALSE)
 { 
   A=blocks
   C=connection

@@ -29,7 +29,7 @@
 #' data("Russett")
 #' blocks = list(agriculture = Russett[, seq(3)], industry = Russett[, 4:5],
 #'     politic = Russett[, 6:11] )
-#' res = rgcca_permutation(blocks, n_run = 5, n_cores = 1)
+#' res = rgcca_permutation(blocks,par_type="tau", n_run = 5, n_cores = 1)
 #' rgcca_permutation(blocks, par_type = "sparsity", par_value = 0.8, n_run = 2,
 #'  n_cores = 1)
 #' rgcca_permutation(blocks, par_type = "sparsity", par_value = c(0.6, 0.75, 0.5), 
@@ -47,15 +47,15 @@
 #' @export
 rgcca_permutation <- function(
     blocks,
-    par_type = "tau",
+    par_type,
     par_value = NULL,
     par_length=10,
     n_run = 20,
     n_cores = parallel::detectCores() - 1,
     quiet = TRUE,
-    type = "rgcca",
     scale = TRUE,
     scale_block = TRUE,
+    type=NULL,
     connection = matrix(1,length(blocks),length(blocks)) - diag(length(blocks)),
     scheme = "factorial",
     ncomp = rep(1, length(blocks)),
@@ -89,10 +89,10 @@ rgcca_permutation <- function(
         tau <- rgcca_res$call$tau
         ncomp <- rgcca_res$call$ncomp
         sparsity <- rgcca_res$call$sparsity
+        type <- rgcca_res$call$type
     }
    
     # call <- as.list(formals(rgcca_permutation))
-    call=list(type=type, par_type = par_type, par_value = par_value, n_run=n_run, quiet=quiet,connection=connection,method=method,tol=tol,scheme=scheme,scale=scale,scale_block=scale_block,blocks=blocks,superblock=superblock)
     check_integer("n_run", n_run)
     check_integer("par_length", n_run)
     check_integer("par_value", n_run, min = 0)
@@ -102,10 +102,17 @@ rgcca_permutation <- function(
         check_boolean("parallelization", parallelization)
     min_spars <- NULL
     
-    if (tolower(type) %in% c("sgcca", "spca", "spls")) {
-        par_type <- "sparsity"
-    } else
-        par_type <- "tau"
+    if (par_type == "sparsity") {
+        type2 <- "sgcca"
+    } 
+    if(par_type == "tau")
+    {
+      type2 <- "rgcca"
+    }
+    if(is.null(type)){type="type2"}
+    
+    call=list(type=type, par_type = par_type, par_value = par_value, n_run=n_run, quiet=quiet,connection=connection,method=method,tol=tol,scheme=scheme,scale=scale,scale_block=scale_block,blocks=blocks,superblock=superblock)
+    
 
     if (length(blocks) < 1)
         stop_rgcca("Permutation required a number of blocks larger than 1.\n")

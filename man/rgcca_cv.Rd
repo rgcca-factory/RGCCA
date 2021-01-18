@@ -100,7 +100,9 @@ covariance maximization among "horst" (the identity function), "factorial"
 
 \item{rgcca_res}{A RGCCA object (see  \code{\link[RGCCA]{rgcca}})}
 
-\item{parallelization}{A logical value to run a parallelization. If parallelization = NULL (default), the parallelization is always performed except for Windows if length(n_boot) < 10.}
+\item{parallelization}{A logical value to run a parallelization. 
+If parallelization = NULL (default), the parallelization is always 
+performed except for Windows if length(n_boot) < 10.}
 
 \item{tau}{Either a 1*J vector or a \eqn{\mathrm{max}(ncomp) \times J} matrix containing the values 
 of the regularization parameters (default: tau = 1, for each block and each dimension). Tau varies from 0 (maximizing the correlation) to 1 (maximizing the covariance).

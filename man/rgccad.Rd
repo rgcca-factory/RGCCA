@@ -105,7 +105,7 @@ problem. The function rgccad() implements a monotonically convergent algorithm (
 criteria to be maximized increases at each step of the iterative procedure) that is very 
 similar to the PLS algorithm proposed by Herman Wold. Moreover, depending on the 
 dimensionality of each block \eqn{\mathbf{X}_j}, \eqn{j = 1, \ldots, J}, the primal (when \eqn{n > p_j}) algorithm or 
-the dual (when \eqn{n < p_j}) algorithm is used (see Tenenhaus et al. 2013). 
+the dual (when \eqn{n < p_j}) algorithm is used (see Tenenhaus et al. 2015). 
 Moreover, by deflation strategy, rgccad() allow to compute several RGCCA block
 components (specified by ncomp) for each block. Block components of each block are guaranteed to 
 be orthogonal with the use of the deflation. The so-called symmetric deflation is considered in

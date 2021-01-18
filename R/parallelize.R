@@ -13,6 +13,8 @@
 # @importFrom parallel parLapply
 # @importFrom parallel parSapply
 # @importFrom parallel mclapply
+#' @importFrom utils installed.packages
+
 parallelize <- function(
     varlist = c(),
     nperm,

@@ -95,7 +95,9 @@ If sparsity is a matrix, each row \eqn{h} defines the constraints applied to the
 
 \item{n_cores}{An integer for the number of cores used in parallelization}
 
-\item{parallelization}{A logical value to run a parallelization. If parallelization = NULL (default), the parallelization is always performed except for Windows if length(n_boot) < 10.}
+\item{parallelization}{A logical value to run a parallelization. 
+If parallelization = NULL (default), the parallelization is always 
+performed except for Windows if length(n_boot) < 10.}
 
 \item{...}{Further graphical parameters (see plot2D functions)}
 }

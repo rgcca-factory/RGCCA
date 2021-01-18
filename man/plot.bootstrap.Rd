@@ -26,7 +26,7 @@
 \arguments{
 \item{x}{A bootstrap object (see \code{\link[RGCCA]{bootstrap}})}
 
-\item{block}{A vector of integers giving the index of a list of blocks or a block = 'all' for all of them}
+\item{block}{A vector indicating the blocks to consider.}
 
 \item{comp}{An integer giving the index of the analysis components}
 

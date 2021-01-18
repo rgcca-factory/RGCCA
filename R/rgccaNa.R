@@ -21,13 +21,7 @@
 #' @param init A character giving the mode of initialization to use in the algorithm. The alternatives are either by Singular Value Decompostion ("svd") or random ("random") (default: "svd").
 #' @param bias A logical value for biaised (\eqn{1/n}) or unbiaised (\eqn{1/(n-1)}) estimator of the var/cov (default: bias = TRUE).
 #' @param tol An integer giving the value for stopping the algorithm convergence.
-#' @param knn.k  Used only if missing values in the blocks are estimated by k-NN methods. An integer giving the number of k nearest neighbors. Can also be "auto" for automatic selection.
-#' @param knn.output A character among "mean", "random" or "weightedMean" : Used only if missing values in the blocks are estimated by k-NN methods. Returns respectively the average of the k nearest neigbors, one selected randomly, or an average weighted by the distance of the k NN
-#' @param knn.klim Used only if missing values in the blocks are estimated by k-NN methods, and if knn.k is "auto". An integer giving the k limits (if k is not a number, optimal k between klim[1] and klim[2] is calculated )
-#' @param knn.scale_block Used only if missing values in the blocks are estimated by k-NN methods. A logical value indicating if the distance for Nearest Neigbors takes the size of blocks into account
-#' @param pca.ncp An integer giving the number of components chosen in PCA 
 #' @param prescaling A logical value indicating if the scaling should be done outside of the function.
-#' @param ni An integer giving the number of iterations for em or sem methods
 #' @return \item{Y}{A list of \eqn{J} elements. Each element of \eqn{Y} is a matrix that contains the analysis components for the corresponding block.}
 #' @return \item{a}{A list of \eqn{J} elements. Each element of \eqn{a} is a matrix that contains the outer weight vectors for each block.}
 #' @return \item{astar}{A list of \eqn{J} elements. Each element of astar is a matrix defined as Y[[j]][, h] = A[[j]]\%*\%astar[[j]][, h].}
@@ -58,11 +52,11 @@
 #' rgccaNa(A,method="nipals")
 
 rgccaNa=function (blocks,method, connection = 1 - diag(length(A)), tau = rep(1, length(A)),    ncomp = rep(1, length(A)), scheme = "centroid", scale = TRUE,   init = "svd", bias = TRUE, tol = 1e-08, verbose = TRUE,
-                  scale_block=TRUE,knn.k="all",knn.output="weightedMean",knn.klim=NULL,knn.scale_block=TRUE,pca.ncp=1,ni=20,prescaling=FALSE,quiet=FALSE)
+                  scale_block=TRUE,prescaling=FALSE,quiet=FALSE)
 { 
     A=blocks
     C=connection
-    call=list(A=A,method=method, C =C, tau = tau,    ncomp = ncomp, scheme = scheme, scale = scale,   init = init, bias = bias, tol =tol, verbose = verbose,scale_block=scale_block,knn.k=knn.k,knn.output=knn.output,knn.klim=knn.klim,knn.scale_block=scale_block,pca.ncp=pca.ncp)
+    call=list(A=A,method=method, C =C, tau = tau,    ncomp = ncomp, scheme = scheme, scale = scale,   init = init, bias = bias, tol =tol, verbose = verbose,scale_block=scale_block)
 
   nvar = sapply(A, NCOL)
 
@@ -75,7 +69,7 @@ rgccaNa=function (blocks,method, connection = 1 - diag(length(A)), tau = rep(1, 
 
   if(method=="nipals"){na.rm=TRUE;A2=A}
 
-   resRgcca=rgccad(A2,C=C,ncomp=ncomp,verbose=verbose,scale=scale,init=init,scale_block=scale_block,tau=tau,scheme=scheme,tol=tol,estimateNA="no",prescaling=prescaling,quiet=quiet)
+   resRgcca=rgccad(A2,C=C,ncomp=ncomp,verbose=verbose,scale=scale,init=init,scale_block=scale_block,tau=tau,scheme=scheme,tol=tol,prescaling=prescaling,quiet=quiet)
   out=list(imputedA=A2,rgcca=resRgcca,method,indNA=indNA)
 	return(out)
 
