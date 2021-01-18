@@ -61,7 +61,9 @@ rgccak=function (A, C, tau = "optimal", scheme = "centroid", verbose = FALSE,
                  estimateNA = "no", scale = TRUE, scale_block = TRUE, 
                  initImpute = "rand")
 {  
-    call=list(A=A, C=C, scheme = scheme,verbose = verbose, init = init, bias = bias, tol = tol,na.rm=na.rm,estimateNA=estimateNA,scale=scale,scale_block=scale_block,initImpute=initImpute)
+  call = list(A = A, C = C, scheme = scheme, verbose = verbose, init = init, 
+              bias = bias, tol = tol, na.rm = na.rm, estimateNA = estimateNA,
+              scale = scale, scale_block = scale_block, initImpute = initImpute)
         
   if(mode(scheme) != "function") 
   {
@@ -89,7 +91,7 @@ rgccak=function (A, C, tau = "optimal", scheme = "centroid", verbose = FALSE,
     which.primal <- which((n >= pjs) == 1) 
     which.dual <- which((n < pjs) == 1)
 
-    # Smart initialisation with SVD
+    # Initialisation by SVD
     if (init == "svd") { 
         for (j in which.primal) {
             a[[j]] <- initsvd(A[[j]]) 
@@ -125,7 +127,7 @@ rgccak=function (A, C, tau = "optimal", scheme = "centroid", verbose = FALSE,
         {
            # M[[j]] <- ginv(tau[j] * diag(pjs[j]) + ((1 - tau[j])/(N)) * (pm(t(A[[j]]) , A[[j]],na.rm=na.rm))) #calcul de la fonction a minimiser ?
             #-taking NA into account in the N
-            nmat = matrix(N,pjs[j], pjs[j])
+            nmat = matrix(N, pjs[j], pjs[j])
             nacol = unique(which(is.na(A[[j]]), arr.ind=T)[, "col"])
             if(length(nacol)!=0)
             {
@@ -222,7 +224,7 @@ rgccak=function (A, C, tau = "optimal", scheme = "centroid", verbose = FALSE,
 #------------------ si on estime les donnees manquantes dans le cas ou tau=1
 			      if(estimateNA %in% c("first","iterative","superblock","new","lebrusquet"))
 			      { 
-	    	        if(estimateNA=="superblock")
+	    	        if(estimateNA == "superblock")
 			        {
 			             for(k in 1:dim(A[[j]])[2])
 		                {
@@ -238,7 +240,7 @@ rgccak=function (A, C, tau = "optimal", scheme = "centroid", verbose = FALSE,
 	    	   
 			            if (scale == TRUE) 
 			            {
-			                A1[[j]]= scale2(Binit[[j]],scale=TRUE, bias = bias)# le biais indique si on recherche la variance biaisee ou non
+			                A1[[j]]= scale2(Binit[[j]], scale=TRUE, bias = bias)
 			                if(scale_block)
 			                {
 			                    A[[j]]= A1[[j]] /sqrt(NCOL(A[[j]]))
@@ -382,20 +384,26 @@ rgccak=function (A, C, tau = "optimal", scheme = "centroid", verbose = FALSE,
           	alpha[[j]] = drop(1/sqrt(t(Z[, j])%*%K[[j]]%*%Minv[[j]]%*%Z[, j]))*
           	             (Minv[[j]]%*%Z[,  j])
                    
-		   a[[j]] =pm( t(A[[j]]) , alpha[[j]],na.rm=na.rm)
-		   if(a[[j]][1]<0){a[[j]]=-a[[j]]}
-            Y[, j] =pm( A[[j]], a[[j]],na.rm=na.rm)
+		   a[[j]] = pm(t(A[[j]]), alpha[[j]], na.rm = na.rm)
+		   if(a[[j]][1]<0){a[[j]] = -a[[j]]}
+            Y[, j] = pm( A[[j]], a[[j]], na.rm = na.rm)
           })
       }
 
-      crit[iter] <- sum(C * g(cov2(Y, bias = bias)),na.rm=na.rm)
+      crit[iter] <- sum(C * g(cov2(Y, bias = bias)), na.rm = na.rm)
       if (verbose & (iter%%1) == 0) 
       {
-          cat(" Iter: ", formatC(iter, width = 3, format = "d"), " Fit:", formatC(crit[iter], digits = 8, width = 10, format = "f"), " Dif: ", formatC(crit[iter] - crit_old, digits = 8, width = 10, format = "f"),   "\n")
+          cat(" Iter: ", formatC(iter, width = 3, format = "d"), 
+              " Fit:", formatC(crit[iter], digits = 8, 
+                               width = 10, format = "f"), 
+              " Dif: ", formatC(crit[iter] - crit_old, digits = 8, 
+                                width = 10, format = "f"), "\n")
       }
-       stopping_criteria = c(drop(crossprod(Reduce("c", mapply("-", a, a_old)))), crit[iter] - crit_old)
+       stopping_criteria = c(drop(crossprod(Reduce("c", 
+                                                   mapply("-", a, a_old)))), 
+                             crit[iter] - crit_old)
      
-       if (any(stopping_criteria < tol) | (iter > 1000)) # critere d'arret de la boucle
+       if (any(stopping_criteria < tol) | (iter > 1000))
         {break}  
       crit_old = crit[iter]
       a_old <- a
@@ -404,7 +412,8 @@ rgccak=function (A, C, tau = "optimal", scheme = "centroid", verbose = FALSE,
     if (iter > 1000) 
         warning("The RGCCA algorithm did not converge after 1000 iterations.")
     if (iter < 1000 & verbose) 
-        cat("The RGCCA algorithm converged to a stationary point after",  iter - 1, "iterations \n")
+        cat("The RGCCA algorithm converged to a stationary point after",  
+            iter - 1, "iterations \n")
     if (verbose) 
     {
         plot(crit[1:iter], xlab = "iteration", ylab = "criteria")
