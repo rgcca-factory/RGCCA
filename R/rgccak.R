@@ -1,43 +1,69 @@
-#' The function rgccak() is called by rgccad() and does not have to be used by the user.
-#' The function rgccak() computes the RGCCA block components, outer weight vectors, etc., 
-#' for each block and each dimension. Depending on the dimensionality of each block \eqn{X_j , j = 1, ..., J}, 
-#' the primal (when \eqn{n > p_j}) or the dual (when \eqn{n < p_j}) algorithm is used (see Tenenhaus et al. 2015) 
+#' The function rgccak() is called by rgccad() and does not have to be used by 
+#' the user. The function rgccak() computes the RGCCA block components, block 
+#' weight vectors, etc., for each block and each dimension. Depending on the 
+#' dimensionality of each block \eqn{X_j , j = 1, ..., J}, the primal 
+#' (when \eqn{n > p_j}) or the dual (when \eqn{n < p_j}) algorithm is used 
+#' (see Tenenhaus et al. 2015) 
 #' @inheritParams select_analysis
 #' @inheritParams rgccaNa
 #' @inheritParams rgccad
-#' @param A  A list that contains the \eqn{J} blocks of variables from which block components are constructed.
-#' It could be eiher the original matrices (\eqn{X_1, X_2, ..., X_J}) or the residual matrices (\eqn{X_{h1}, X_{h2}, ..., X_{hJ}}).
-#' @param na.rm If TRUE, NIPALS algorithm taking missing values into account is run. RGCCA is run only on available data.
-#' @param estimateNA to choose between "no","first","iterative","superblock","new","lebrusquet") TO BE DEVELOPPED
-#' @param initImpute 'rand' or 'mean': initialization for optimization method
-#' @return \item{Y}{A \eqn{n * J} matrix of RGCCA blockcomponents}
+#' @param A  A list that contains the \eqn{J} blocks of variables from which 
+#' block components are constructed. It could be either the original matrices 
+#' (\eqn{X_1, X_2, ..., X_J}) or the residual matrices 
+#' (\eqn{X_{h1}, X_{h2}, ..., X_{hJ}}).
+#' @param na.rm If TRUE, RGCCA is run only on available data (default value) 
+#' otherwise the NIPALS algorithm is used.
+#' @param estimateNA to choose between "no", "first", "iterative", "superblock",
+#' "new","lebrusquet") TO BE DEVELOPPED
+#' @param initImpute 'rand' or 'mean': initialization of the missing values
+#' @return \item{Y}{A \eqn{n * J} matrix of block components}
 #' @return \item{Z}{A \eqn{n * J} matrix of inner components}
-#' @return \item{a}{A list of \eqn{J} elements. Each element of \eqn{a} is a matrix that contains the outer weight vectors for each block.}
-# #' @return \item{converg}{Speed of convergence of the algorithm to reach the tolerance.}
-#' @return \item{AVE}{A list of numerical values giving the indicators of model quality based on the Average Variance Explained (AVE): AVE(for each block), AVE(outer model), AVE(inner model).}
+#' @return \item{a}{A list of \eqn{J} elements. Each element of \eqn{a} is a 
+#' matrix that contains the block weight vectors for each block.}
+#' @return \item{converg}{Convergence of the algorithm to reach the tolerance.}
+#' @return \item{AVE}{A list of numerical values giving the indicators of model 
+#' quality based on the Average Variance Explained (AVE): AVE(for each block), 
+#' AVE(outer model), AVE(inner model).}
 #' @return \item{call}{Call of the function}
-#' @return \item{crit}{A vector of integer that contains for each component the values of the analysis criteria across iterations.}
-#' @return \item{tau}{Either a 1*J vector or a \eqn{\mathrm{max}(ncomp) \times J} matrix containing the values
-#' of the regularization parameters .Tau varies from 0 (maximizing the correlation) to 1 (maximizing the covariance).
-#' If tau = "optimal" the regularization paramaters are estimated for each block and each dimension using the Schafer and Strimmer (2005)
-#' analytical formula . If tau is a \eqn{1\times J} vector, tau[j] is identical across the dimensions of block \eqn{\mathbf{X}_j}.
-#' If tau is a matrix, tau[k, j] is associated with \eqn{\mathbf{X}_{jk}} (\eqn{k}th residual matrix for block \eqn{j}). It can be estimated by using \link{rgcca_permutation}.}
-#' @references Tenenhaus M., Tenenhaus A. and Groenen PJF (2017), Regularized generalized canonical correlation analysis: A framework for sequential multiblock component methods, Psychometrika, in press
-#' @references Tenenhaus A., Philippe C., and Frouin V. (2015). Kernel Generalized Canonical Correlation Analysis. Computational Statistics and Data Analysis, 90, 114-131.
-#' @references Tenenhaus A. and Tenenhaus M., (2011), Regularized Generalized Canonical Correlation Analysis, Psychometrika, Vol. 76, Nr 2, pp 257-284.
-#' @references Schafer J. and Strimmer K., (2005), A shrinkage approach to large-scale covariance matrix estimation and implications for functional genomics. Statist. Appl. Genet. Mol. Biol. 4:32.
-#' @title Internal function for computing the RGCCA parameters (RGCCA block components, outer weight vectors, etc.).
+#' @return \item{crit}{A list of max(ncomp) elements. Each element 
+#' (one per deflation stage) is a vector that contains the value of the RGCCA 
+#' objective function across iterations.}
+#' @return \item{tau}{Either a 1*J vector or a \eqn{\mathrm{max}(ncomp)\times J} 
+#' matrix containing the values of the regularization parameters . The shrinkage 
+#' parameter tau varies from 0 (maximizing the correlation) to 1 (maximizing the 
+#' covariance). If tau = "optimal" the regularization paramaters are estimated 
+#' for each block and each dimension using the Schafer and Strimmer (2005)
+#' analytical formula . If tau is a \eqn{1\times J} vector, tau[j] is identical 
+#' across the dimensions of block \eqn{\mathbf{X}_j}. If tau is a matrix, 
+#' tau[k, j] is associated with \eqn{\mathbf{X}_{jk}} (\eqn{k}th residual matrix 
+#' for block \eqn{j}). It can also be estimated by using 
+#' \link{rgcca_permutation}.}
+#' @references Tenenhaus M., Tenenhaus A. and Groenen PJF (2017), Regularized 
+#' generalized canonical correlation analysis: A framework for sequential 
+#' multiblock component methods, Psychometrika, 82, 737–777
+#' @references Tenenhaus A., Philippe C., and Frouin V. (2015). Kernel 
+#' Generalized Canonical Correlation Analysis. Computational Statistics and 
+#' Data Analysis, 90, 114-131.
+#' @references Tenenhaus A. and Tenenhaus M., (2011), Regularized Generalized 
+#' Canonical Correlation Analysis, Psychometrika, Vol. 76, Nr 2, pp 257-284.
+#' @references Schafer J. and Strimmer K., (2005), A shrinkage approach to 
+#' large-scale covariance matrix estimation and implications for functional 
+#' genomics. Statist. Appl. Genet. Mol. Biol. 4:32.
+#' @title Internal function for computing the RGCCA parameters (RGCCA block 
+#' components, outer weight vectors, etc.).
 #' @importFrom MASS ginv
 #' @importFrom stats cor rnorm
 #' @importFrom graphics plot
 #' @importFrom Deriv Deriv
 
-rgccak=function (A, C, tau = "optimal", scheme = "centroid",verbose = FALSE, init = "svd", bias = TRUE, tol = 1e-08, na.rm=TRUE, estimateNA="no",
-                 scale=TRUE,scale_block=TRUE,initImpute="rand")
+rgccak=function (A, C, tau = "optimal", scheme = "centroid", verbose = FALSE, 
+                 init = "svd", bias = TRUE, tol = 1e-08, na.rm = TRUE, 
+                 estimateNA = "no", scale = TRUE, scale_block = TRUE, 
+                 initImpute = "rand")
 {  
     call=list(A=A, C=C, scheme = scheme,verbose = verbose, init = init, bias = bias, tol = tol,na.rm=na.rm,estimateNA=estimateNA,scale=scale,scale_block=scale_block,initImpute=initImpute)
         
-if(mode(scheme) != "function") 
+  if(mode(scheme) != "function") 
   {
     if(!scheme %in% c("horst", "factorial", "centroid"))
       {stop_rgcca("Please choose scheme as 'horst', 'factorial', 'centroid'")}
@@ -45,7 +71,7 @@ if(mode(scheme) != "function")
     if(scheme == "factorial"){ g <- function(x)  x^2}  
     if(scheme == "centroid"){g <- function(x) abs(x)}
 } 
-else g <- scheme
+  else g <- scheme
     
     
     J <- length(A) # number of blocks
@@ -104,7 +130,7 @@ else g <- scheme
             if(length(nacol)!=0)
             {
                 sujToRemove = is.na(t(A[[j]][, nacol]))%*%is.na(A[[j]][, nacol])
-                nmat[nacol,nacol] = nmat[nacol, nacol] - sujToRemove
+                nmat[nacol, nacol] = nmat[nacol, nacol] - sujToRemove
             }
              # 
             # if(bias)
