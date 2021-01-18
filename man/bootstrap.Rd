@@ -22,7 +22,7 @@ bootstrap(
 }
 \value{
 A list containing two objects: 'bootstrap' and 'rgcca'. 
-'bootstrap' is a list a list containing for each block, a matrix with in rows the variables of the blocks and in columns the weight calculated for each bootstrap; 'rgcca' is the original rgcca (see  \code{\link[RGCCA]{RGCCA}}).
+'bootstrap' is a list a list containing for each block, a matrix with in rows the variables of the blocks and in columns the weight calculated for each bootstrap; 'rgcca' is the original rgcca (see  \code{\link[RGCCA]{rgcca}}).
 }
 \description{
 Compute boostrap of RGCCA in order to evaluate the stability of the weights found in S/RGCCA

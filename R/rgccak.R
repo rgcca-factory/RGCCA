@@ -10,8 +10,8 @@
 #' @param na.rm If TRUE, NIPALS algorithm taking missing values into account is run. RGCCA is run only on available data.
 #' @param estimateNA to choose between "no","first","iterative","superblock","new","lebrusquet") TO BE DEVELOPPED
 #' @param initImpute 'rand' or 'mean': initialization for optimization method
-#' @return \item{Y}{A \eqn{n * J} matrix of RGCCA outer components}
-#' @return \item{Z}{A \eqn{n * J} matrix of RGCCA inner components}
+#' @return \item{Y}{A \eqn{n * J} matrix of RGCCA blockcomponents}
+#' @return \item{Z}{A \eqn{n * J} matrix of inner components}
 #' @return \item{a}{A list of \eqn{J} elements. Each element of \eqn{a} is a matrix that contains the outer weight vectors for each block.}
 # #' @return \item{converg}{Speed of convergence of the algorithm to reach the tolerance.}
 #' @return \item{AVE}{A list of numerical values giving the indicators of model quality based on the Average Variance Explained (AVE): AVE(for each block), AVE(outer model), AVE(inner model).}
@@ -23,7 +23,7 @@
 #' analytical formula . If tau is a \eqn{1\times J} vector, tau[j] is identical across the dimensions of block \eqn{\mathbf{X}_j}.
 #' If tau is a matrix, tau[k, j] is associated with \eqn{\mathbf{X}_{jk}} (\eqn{k}th residual matrix for block \eqn{j}). It can be estimated by using \link{rgcca_permutation}.}
 #' @references Tenenhaus M., Tenenhaus A. and Groenen PJF (2017), Regularized generalized canonical correlation analysis: A framework for sequential multiblock component methods, Psychometrika, in press
-#' @references Tenenhaus A., Philippe C., & Frouin V. (2015). Kernel Generalized Canonical Correlation Analysis. Computational Statistics and Data Analysis, 90, 114-131.
+#' @references Tenenhaus A., Philippe C., and Frouin V. (2015). Kernel Generalized Canonical Correlation Analysis. Computational Statistics and Data Analysis, 90, 114-131.
 #' @references Tenenhaus A. and Tenenhaus M., (2011), Regularized Generalized Canonical Correlation Analysis, Psychometrika, Vol. 76, Nr 2, pp 257-284.
 #' @references Schafer J. and Strimmer K., (2005), A shrinkage approach to large-scale covariance matrix estimation and implications for functional genomics. Statist. Appl. Genet. Mol. Biol. 4:32.
 #' @title Internal function for computing the RGCCA parameters (RGCCA block components, outer weight vectors, etc.).
@@ -99,12 +99,12 @@ else g <- scheme
         {
            # M[[j]] <- ginv(tau[j] * diag(pjs[j]) + ((1 - tau[j])/(N)) * (pm(t(A[[j]]) , A[[j]],na.rm=na.rm))) #calcul de la fonction a minimiser ?
             #-taking NA into account in the N
-            nmat=matrix(N,pjs[j],pjs[j])
-            nacol=unique(which(is.na(A[[j]]),arr.ind=T)[,"col"])
+            nmat = matrix(N,pjs[j], pjs[j])
+            nacol = unique(which(is.na(A[[j]]), arr.ind=T)[, "col"])
             if(length(nacol)!=0)
             {
-                sujToRemove=is.na(t(A[[j]][,nacol]))%*%is.na(A[[j]][,nacol])
-                nmat[nacol,nacol]=nmat[nacol,nacol]-sujToRemove
+                sujToRemove = is.na(t(A[[j]][, nacol]))%*%is.na(A[[j]][, nacol])
+                nmat[nacol,nacol] = nmat[nacol, nacol] - sujToRemove
             }
              # 
             # if(bias)
@@ -117,19 +117,22 @@ else g <- scheme
             # }
             
             nmat[nmat==0]=NA
-            M[[j]] <- ginv(tau[j] * diag(pjs[j]) + ((1 - tau[j])) *nmat^(-1)* (pm(t(A[[j]]) , A[[j]],na.rm=na.rm))) #calcul de la fonction a minimiser ?
-            a[[j]] <- drop(1/sqrt(t(a[[j]])%*% M[[j]]%*%a[[j]]) )* ( M[[j]] %*% a[[j]]) # calcul premiere composante (a creuser)
-            if(a[[j]][1]<0){a[[j]]=-a[[j]]}
-            Y[, j] <-pm( A[[j]] ,a[[j]],na.rm=na.rm) # projection du bloc sur la premiere composante
+            M[[j]] <- ginv(tau[j] * diag(pjs[j]) + ((1 - tau[j]))*nmat^(-1)*
+                             (pm(t(A[[j]]), A[[j]], na.rm = na.rm))) 
+            a[[j]] <- drop(1/sqrt(t(a[[j]])%*% M[[j]]%*%a[[j]]))*
+                             (M[[j]]%*%a[[j]]) 
+            if(a[[j]][1]<0){a[[j]] = -a[[j]]}
+            Y[, j] <-pm(A[[j]], a[[j]], na.rm = na.rm)
         })
     }
     for (j in which.dual)
     {
         ifelse(tau[j] == 1, {
-            alpha[[j]] = drop(1/sqrt(t(alpha[[j]]) %*% K[[j]] %*%  alpha[[j]])) * alpha[[j]]
-            a[[j]] =pm( t(A[[j]]), alpha[[j]],na.rm=na.rm)
-            if(a[[j]][1]<0){a[[j]]=-a[[j]]}
-            Y[, j] =pm( A[[j]], a[[j]],na.rm=na.rm)
+            alpha[[j]] = drop(1/sqrt(t(alpha[[j]])%*%K[[j]]%*%
+                                       alpha[[j]]))*alpha[[j]]
+            a[[j]] = pm(t(A[[j]]), alpha[[j]], na.rm = na.rm)
+            if(a[[j]][1]<0){a[[j]] = -a[[j]]}
+            Y[, j] = pm(A[[j]], a[[j]], na.rm = na.rm)
         }, {
           
            # M[[j]] = tau[j] * diag(n) + (1 - tau[j])/(N) * K[[j]]  # contraire de la matrice de covariace
@@ -153,40 +156,43 @@ else g <- scheme
              # nmat=matrix(N,n,n)
              # which()
           
-            # M[[j]] <- tau[j] * diag(n) + ((1 - tau[j])) *nmat^(-1)* K[[j]] #calcul de la fonction a minimiser ?
-            M[[j]] <- tau[j] * diag(n) + ((1 - tau[j])) *1/N* K[[j]] #calcul de la fonction a minimiser ?
+            M[[j]] <- tau[j] * diag(n) + ((1 - tau[j])) *1/N* K[[j]] 
             Minv[[j]] = ginv(M[[j]])
-            alpha[[j]] = drop(1/sqrt(t(alpha[[j]])%*% M[[j]]%*% K[[j]]%*% alpha[[j]])) * alpha[[j]]
-            a[[j]] =pm( t(A[[j]]), alpha[[j]],na.rm=na.rm) 
-            if(a[[j]][1]<0){a[[j]]=-a[[j]]}
-            Y[, j] = pm(A[[j]] ,a[[j]],na.rm=na.rm) 
+            alpha[[j]] = drop(1/sqrt(t(alpha[[j]])%*% 
+                              M[[j]]%*% K[[j]]%*% alpha[[j]])) * alpha[[j]]
+            a[[j]] = pm( t(A[[j]]), alpha[[j]],na.rm=na.rm) 
+            if(a[[j]][1]<0){a[[j]] = -a[[j]]}
+            Y[, j] = pm(A[[j]], a[[j]], na.rm=na.rm) 
         })
     }
 
 			# ajout de na.rm=TRUE
-    crit_old <- sum(C * g(cov2(Y, bias = bias)),na.rm=na.rm)# critere d'arret: h(cov(Y))
+    crit_old <- sum(C * g(cov2(Y, bias = bias)), na.rm = na.rm)
     iter = 1
     crit = numeric()
     Z = matrix(0, NROW(A[[1]]), J)
     a_old = a
     
-    dg = Deriv::Deriv(g, env = parent.frame())# on derive la fonction g
+    dg = Deriv::Deriv(g, env = parent.frame())
    
     repeat 
-    { # on rentre dans la boucle a proprement parler
-      Yold <- Y #valeur de f
+    { 
+      Yold <- Y 
 
        for (j in which.primal)
-      { # on parcourt les blocs pour estimer wj = a[[j]] : c'est le rouage de la pres
-
-          dgx = dg(cov2(Y[, j], Y, bias = bias))# covariance entre les differents blocs: dgx indique + - 1
-          if(tau[j] == 1)
-          { # si tau = 1
-             Z[, j] = rowSums(matrix(rep(C[j, ], n), n, J, byrow = TRUE) * matrix(rep(dgx, n), n, J, byrow = TRUE) * Y,na.rm=na.rm)
-		     a[[j]] = drop(1/sqrt(pm(pm(t(Z[, j]) ,A[[j]],na.rm=na.rm) ,  pm( t(A[[j]]) ,Z[, j],na.rm=na.rm),na.rm=na.rm))) *pm (t(A[[j]]), Z[,  j],na.rm=na.rm)  
+      { 
+         dgx = dg(cov2(Y[, j], Y, bias = bias))
+         if(tau[j] == 1)
+          { 
+           Z[, j] = rowSums(matrix(rep(C[j, ], n), n, J, byrow = TRUE)*
+                              matrix(rep(dgx, n), n, J, byrow = TRUE)*Y, 
+                            na.rm = na.rm)
+		       a[[j]] = drop(1/sqrt(pm(pm(t(Z[, j]), A[[j]], na.rm = na.rm),  
+		                               pm(t(A[[j]]), Z[, j], na.rm = na.rm),
+		                               na.rm = na.rm)))*
+		                        pm(t(A[[j]]), Z[,  j], na.rm = na.rm)  
 		     if(a[[j]][1]<0){a[[j]]=-a[[j]]}
-		     # Y[, j] =pm( A[[j]], a[[j]],na.rm=na.rm) #Nouvelle estimation de j
-		
+		    
 #------------------ si on estime les donnees manquantes dans le cas ou tau=1
 			      if(estimateNA %in% c("first","iterative","superblock","new","lebrusquet"))
 			      { 
@@ -222,7 +228,8 @@ else g <- scheme
 			                
 			                A1[[j]] = scale2(Binit[[j]], scale=FALSE, bias = bias)
 			                if(scale_block)
-			                {   covarMat=cov2(A1[[j]],bias=bias);varianceBloc=sum(diag(covarMat))
+			                {   covarMat = cov2(A1[[j]], bias = bias)
+			                    varianceBloc = sum(diag(covarMat))
 			                    A[[j]] = A1[[j]]/sqrt(varianceBloc)
 			                }
 			                else
@@ -313,14 +320,19 @@ else g <- scheme
 # 			        }
 			        
 			      }
-		     Y[, j] =pm( A[[j]], a[[j]],na.rm=na.rm)
+		     Y[, j] = pm(A[[j]], a[[j]], na.rm = na.rm)
 			       
            }else
 			      { # si tau different de 1
-              Z[, j] = rowSums(matrix(rep(C[j, ], n), n,  J, byrow = TRUE) * matrix(rep(dgx, n), n,  J, byrow = TRUE) * Y,na.rm=na.rm)
-             a[[j]] = drop(1/sqrt(pm(pm(t(Z[, j]) ,A[[j]],na.rm=na.rm) , pm( pm( M[[j]] , t(A[[j]]),na.rm=na.rm) , Z[, j],na.rm=na.rm),na.rm=na.rm))) * pm(M[[j]],pm( t(A[[j]]) ,Z[, j]))
-             if(a[[j]][1]<0){a[[j]]=-a[[j]]}
-             Y[, j] = pm(A[[j]] ,a[[j]],na.rm=na.rm)
+             Z[, j] = rowSums(matrix(rep(C[j, ], n), n,  J, byrow = TRUE)*
+                                matrix(rep(dgx, n), n,  J, byrow = TRUE)* 
+                                Y, na.rm = na.rm)
+             a[[j]] = drop(1/sqrt(pm(pm(t(Z[, j]), A[[j]], na.rm = na.rm), 
+                                     pm(pm(M[[j]], t(A[[j]]), na.rm = na.rm), 
+                                        Z[, j], na.rm = na.rm), na.rm = na.rm)))*
+                      pm(M[[j]], pm(t(A[[j]]), Z[, j]))
+             if(a[[j]][1]<0){a[[j]] = -a[[j]]}
+             Y[, j] = pm(A[[j]], a[[j]], na.rm = na.rm)
           }
        }
 
@@ -329,16 +341,20 @@ else g <- scheme
           dgx = dg(cov2(Y[, j], Y, bias = bias))
           ifelse(tau[j] == 1, 
             {
-              Z[, j] = rowSums(matrix(rep(C[j, ], n), n, J, byrow = TRUE) * matrix(rep(dgx, n), n, J, byrow = TRUE) * Y,na.rm=na.rm)
-              alpha[[j]] = drop(1/sqrt(t(Z[, j]) %*% K[[j]] %*% Z[, j])) * Z[, j]
-              a[[j]] =pm( t(A[[j]]) , alpha[[j]],na.rm=na.rm)
-              if(a[[j]][1]<0){a[[j]]=-a[[j]]}
-              Y[, j] =pm( A[[j]], a[[j]],na.rm=na.rm)
+              Z[, j] = rowSums(matrix(rep(C[j, ], n), n, J, byrow = TRUE)*
+                                 matrix(rep(dgx, n), n, J, byrow = TRUE)*Y,
+                               na.rm = na.rm)
+              alpha[[j]] = drop(1/sqrt(t(Z[, j])%*%K[[j]]%*%Z[, j]))*Z[, j]
+              a[[j]] = pm(t(A[[j]]), alpha[[j]], na.rm = na.rm)
+              if(a[[j]][1]<0){a[[j]] = -a[[j]]}
+              Y[, j] = pm(A[[j]], a[[j]], na.rm = na.rm)
            }, 
            {
-            Z[, j] = rowSums(matrix(rep(C[j, ], n), n, J, byrow = TRUE) * matrix(rep(dgx, n), n, J, byrow = TRUE) * Y,na.rm=na.rm)
-          #  alpha[[j]] = drop(1/sqrt(pm(pm(pm(t(Z[, j]), K[[j]] ),  Minv[[j]]) , Z[, j]))) * pm(Minv[[j]] , Z[,  j])
-			alpha[[j]] = drop(1/sqrt(t(Z[, j])%*% K[[j]] %*% Minv[[j]]%*% Z[, j])) * (Minv[[j]] %*% Z[,  j])
+            Z[, j] = rowSums(matrix(rep(C[j, ], n), n, J, byrow = TRUE)*
+                               matrix(rep(dgx, n), n, J, byrow = TRUE)*
+                               Y, na.rm = na.rm)
+          	alpha[[j]] = drop(1/sqrt(t(Z[, j])%*%K[[j]]%*%Minv[[j]]%*%Z[, j]))*
+          	             (Minv[[j]]%*%Z[,  j])
                    
 		   a[[j]] =pm( t(A[[j]]) , alpha[[j]],na.rm=na.rm)
 		   if(a[[j]][1]<0){a[[j]]=-a[[j]]}

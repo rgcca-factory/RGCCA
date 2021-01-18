@@ -9,7 +9,8 @@ scaling <- function(blocks, scale = TRUE, bias = TRUE, scale_block = TRUE) {
         if(scale_block){
            blocks <- lapply(blocks, 
                             function(x) {y <- x / sqrt(NCOL(x))
-                             attr(y, "scaled:scale") <- attr(x, "scaled:scale")* sqrt(NCOL(x))
+                             attr(y, "scaled:scale") <- 
+                                 attr(x, "scaled:scale")* sqrt(NCOL(x))
             return(y)
             })
    
@@ -33,7 +34,8 @@ scaling <- function(blocks, scale = TRUE, bias = TRUE, scale_block = TRUE) {
                 }
                 variance_block <- sum(diag(covarMat))
                 out <- x / sqrt(variance_block)
-                attr(out, "scaled:scale") <- rep(sqrt(sum(diag(covarMat))), NCOL(x))
+                attr(out, "scaled:scale") <- 
+                    rep(sqrt(sum(diag(covarMat))), NCOL(x))
                 return(out)
             })
         }

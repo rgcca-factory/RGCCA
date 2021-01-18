@@ -167,8 +167,8 @@ rgcca_cv_k <- function(
             ) 
         }
 
-    list_rgcca=lapply(scores,function(x) return(x$rgcca_res))
-    list_pred=lapply(scores,function(x) return(x$pred))
+    list_rgcca = lapply(scores, function(x) return(x$rgcca_res))
+    list_pred = lapply(scores, function(x) return(x$pred))
     list_scores=sapply(scores, function(x) x$score)
     list_res=lapply(scores, function(x) return(x$res))
     list_class.fit=lapply(scores, function(x) return(x$class.fit))
@@ -194,6 +194,9 @@ rgcca_cv_k <- function(
      scores <- mean(unlist(lapply(scores, function(x) x$score)),na.rm=T)
 
     structure(
-        list(scores = scores, preds = preds, rgcca_res = rgcca_res,list_scores=list_scores,list_pred=list_pred,list_rgcca=list_rgcca,list_class=list_class.fit,list_res=list_res),
+        list(scores = scores, preds = preds, 
+             rgcca_res = rgcca_res,
+             list_scores = list_scores,
+             list_pred=list_pred,list_rgcca=list_rgcca,list_class=list_class.fit,list_res=list_res),
         class = "cv")
 }

@@ -5,21 +5,22 @@
 #' @inheritParams plot_var_1D
 #' @inheritParams plot2D
 #' @param x A RGCCA object (see \code{\link[RGCCA]{rgcca}})
-#' @param ... Further graphical parameters
+#' @param ... additional graphical parameters
 #' @param type A character among 'ind', 'var', 'both', 'ave', 'cor', 'weight', 'network' (see details).
-#' @param text_ind A bolean to represent the individuals with their row names (TRUE)
-#' or with circles (FALSE)
-#' @param text_var A bolean to represent the variables with their row names (TRUE)
-#' or with circles (FALSE)
-#' @param overlap If FALSE, an algorithm avoiding overlapping between labels is computed
-#' @param block A vector of integers giving the index of a list of blocks or a block = 'all' for all of them
+#' @param text_ind boolean value indicating if rownames are plotted 
+#' (default = TRUE). 
+#' @param text_var Boolean value indicating if variable names are plotted 
+#' (default = TRUE) 
+#' @param overlap Boolean value enables avoiding overlapping between labels 
+#' (default = FALSE)
+#' @param block A vector indicating the blocks to consider.
 #' @inheritParams plot_ind
 #' @inheritParams plot2D
 #' @inheritParams plot_var_2D
 #' @inheritParams plot_histogram
 #' @details 
 #' \itemize{
-#'  \item "ind" for individual graph: Y of rgcca are plotted. In abscissa Y[[i_block]][,compx], in ordinate, Y[[i_block_y]][,compy]. Each point correspond to one individual. It can be colored with the resp. options. The colors by default can be modified in colors options.
+#' \item "ind" for individual graph: Y of rgcca are plotted. In abscissa Y[[i_block]][,compx], in ordinate, Y[[i_block_y]][,compy]. Each point correspond to one individual. It can be colored with the resp. options. The colors by default can be modified in colors options.
 #' \item  "var" for variable graph: in abscissa, the correlations with the first axis, in ordinate, the correlation with the second axis. 
 #' \item "both": displays both ind and var graph (this requires only one block (i_block=i_block_y) and at least two components in the rgcca calculation (ncomp>1 for this block)
 #' \item "ave": displays the variance average in each block
@@ -46,7 +47,12 @@
 #' @importFrom gridExtra grid.arrange
 #' @importFrom ggplot2 ggplot
 #' @export
-plot.rgcca=function(x,type="weight",block=length(x$A),comp=1:2,resp=rep(1, NROW(x$Y[[1]])),remove_var=FALSE,text_var=TRUE,text_ind=TRUE,response_name= "Response",overlap=TRUE,title=NULL,n_mark=30,collapse=FALSE,cex=1,cex_sub=12,cex_main=14,cex_lab=12,cex_axis=10,colors=NULL, ...)
+plot.rgcca=function(x, type = "weight", block = length(x$A), comp = 1:2,
+                    resp = rep(1, NROW(x$Y[[1]])), remove_var = FALSE, 
+                    text_var=TRUE,text_ind=TRUE, response_name = "Response",
+                    overlap = TRUE, title = NULL, n_mark = 30, 
+                    collapse = FALSE, cex = 1, cex_sub = 12, cex_main = 14, 
+                    cex_lab = 12, cex_axis = 10, colors = NULL, ...)
 {
     stopifnot(is(x, "rgcca"))
     match.arg(type,c("ind","var","both","ave","cor","weight","network"))
@@ -60,7 +66,8 @@ plot.rgcca=function(x,type="weight",block=length(x$A),comp=1:2,resp=rep(1, NROW(
           {
                 if(type%in%c("ind","var","both"))
                 {
-                    message("type='ind','var' or 'both' is not available for ncomp<2. type was replaced by 'weight'")
+                    message("type='ind','var' or 'both' is not available for 
+                            ncomp < 2. type was replaced by 'weight'")
                     type="weight"                    
                 }
 
@@ -80,99 +87,99 @@ plot.rgcca=function(x,type="weight",block=length(x$A),comp=1:2,resp=rep(1, NROW(
     if(type=="both")
     {
         if(is.null(i_block)){i_block=length(x$call$blocks)}
-        p1<-plot_ind(x,i_block=i_block,i_block_y=i_block_y,compx=compx,compy=compy,cex_sub=cex_sub,cex_main=cex_main,cex_lab=cex_lab,resp=resp,response_name=response_name,text=text_ind,title="Sample space",colors=colors,no_overlap=!overlap)
-        p2<-plot_var_2D(x,i_block=i_block,compx=compx,compy=compy,cex_sub=cex_sub,cex_main=cex_main,cex_lab=cex_lab,remove_var=remove_var,text=text_var,no_overlap=!overlap,title="Variable correlations",n_mark = n_mark,collapse=collapse,colors=colors)
-        if(is.null(title)){title=toupper(names(x$call$blocks)[i_block])}
-        p5<-grid.arrange(p1,p2,nrow=1,ncol=2,top = title)
+        p1 <- plot_ind(x, i_block = i_block, i_block_y =i_block_y,
+                       compx = compx, compy = compy, cex_sub = cex_sub, 
+                       cex_main = cex_main, cex_lab = cex_lab, resp = resp, 
+                       response_name = response_name, text = text_ind,
+                       title = "Sample space", colors = colors, 
+                       no_overlap =!overlap)
+        
+        p2 <- plot_var_2D(x, i_block = i_block, compx = compx, compy = compy,
+                          cex_sub = cex_sub, cex_main = cex_main,
+                          cex_lab = cex_lab, remove_var = remove_var,
+                          text = text_var, no_overlap = !overlap,
+                          title = "Variable correlations", n_mark = n_mark,
+                          collapse = collapse, colors = colors)
+        
+        if(is.null(title)){title = toupper(names(x$call$blocks)[i_block])}
+        p5 <- grid.arrange(p1, p2, nrow=1, ncol=2, top = title)
     }
-    else if(type=="var")
+    else if(type == "var")
     {
         if(x$call$superblock)
         {
-            if(block[1]==length(x$call$blocks))
+            if(block[1] == length(x$call$blocks))
             {
-                block=length(x$call$blocks)-1
+                block = length(x$call$blocks)-1
             }
         }
-        if(is.null(title)){title= paste0("Variable correlations: ", names(x$call$blocks)[i_block])}
+        if(is.null(title)){title = paste0("Variable correlations: ", 
+                                          names(x$call$blocks)[i_block])}
         
-       p5 <- plot_var_2D(x,i_block=i_block,compx=compx,compy=compy,cex_sub=cex_sub,cex_main=cex_main,cex_lab=cex_lab,remove_var=remove_var,text=text_var,no_overlap=!overlap,title=title,n_mark = n_mark,collapse=collapse,colors=colors)
+       p5 <- plot_var_2D(x, i_block = i_block, compx = compx, compy = compy,
+                         cex_sub = cex_sub, cex_main = cex_main, 
+                         cex_lab = cex_lab, remove_var = remove_var,
+                         text = text_var, no_overlap =! overlap,
+                         title = title, n_mark = n_mark, collapse = collapse,
+                         colors = colors)
         plot(p5)
-     }
-    else if(type=="ind")
+    }
+    
+    else if(type == "ind")
     {
-        
-        if(is.null(title))
+      if(is.null(title))
         {
-            if(i_block==i_block_y)
+            if(i_block == i_block_y)
             {
                 title= paste0("Sample space: ",names(x$call$blocks)[i_block])   
             }
             else
             {
-                title="Sample space"
+                title = "Sample space"
             }
             
         }
-        p5<-plot_ind(x,i_block=i_block,i_block_y=i_block_y,compx=compx,compy=compy,cex_sub=cex_sub,cex_main=cex_main,cex_lab=cex_lab,resp=resp,response_name=response_name,text=text_ind,title=title,colors=colors,no_overlap=!overlap)
+        p5<-plot_ind(x, i_block = i_block, i_block_y = i_block_y,
+                     compx = compx, compy = compy, cex_sub = cex_sub,
+                     cex_main = cex_main, cex_lab = cex_lab, resp = resp,
+                     response_name = response_name, text = text_ind,
+                     title = title, colors = colors, no_overlap=!overlap)
         plot(p5)
      }
-    else if(type=="ave")
+    else if(type == "ave")
     {
-        if(is.null(title)){title="Average Variance Explained"}
-        p5 <- plot_ave (x,
-            cex = cex,
-            title = title,
-            colors = colors,
-            cex_main=cex_main,
-            cex_sub=cex_sub)
+        if(is.null(title)){title = "Average Variance Explained"}
+        p5 <- plot_ave (x, cex = cex, title = title, colors = colors, 
+                        cex_main = cex_main, cex_sub = cex_sub)
         plot(p5)
     }
-    else if(type=="network")
+    else if(type == "network")
     {
         if(is.null(title)){title=paste0("Common rows between blocks : ",
                                         NROW(x$call$blocks[[1]]))}
-        plot_network (
-            x, 
-            title = title,cex_main=cex_main)
+        plot_network ( x, title = title, cex_main = cex_main)
         p5<-NULL
     }
-    else if(type=="cor")
+    else if(type == "cor")
     {
-        if(is.null(title)){title= paste0("Variable correlations: ",names(x$call$blocks)[i_block])}
-        p5=plot_var_1D(x,
-            comp = compx,
-            n_mark = n_mark,
-            type = "cor",
-            collapse = collapse,
-            title = title,
-            colors = colors,
-            i_block = i_block,
-            cex_main=cex_main,
-            cex_sub=cex_sub)
+        if(is.null(title)){title = paste0("Variable correlations: ", 
+                                          names(x$call$blocks)[i_block])}
+        p5=plot_var_1D(x, comp = compx, n_mark = n_mark, type = "cor", 
+                       collapse = collapse, title = title, colors = colors, 
+                       i_block = i_block, cex_main = cex_main, 
+                       cex_sub = cex_sub)
         plot(p5)
     }
-    else if(type=="weight")
+    else if(type == "weight")
     {
-        if(is.null(title)){title= paste0("Variable weights: ",names(x$call$blocks)[i_block])}
+        if(is.null(title)){title= paste0("Variable weights: ",
+                                         names(x$call$blocks)[i_block])}
         
-        p5=plot_var_1D(x,
-                    comp = compx,
-                    n_mark = n_mark,
-                    i_block = i_block,
-                    type = "weight",
-                    collapse = collapse,
-                    title = title,
-                    colors = colors,
-                    cex_main=cex_main,
-                    cex_sub=cex_sub)
+        p5=plot_var_1D(x, comp = compx, n_mark = n_mark, i_block = i_block, 
+                       type = "weight", collapse = collapse, title = title, 
+                       colors = colors, cex_main = cex_main, cex_sub=cex_sub)
         plot(p5)
     }
 
-   # p3<-plot_ave(x)
-   # p4<-plot_network(x)
-   #p5<-grid.arrange(p1,p2,p3,p4,nrow=2,ncol=2)
-   
-   
     invisible(p5)
 }

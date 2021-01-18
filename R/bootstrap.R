@@ -1,12 +1,18 @@
 #' Compute bootstrap
 #'
-#' Compute boostrap of RGCCA in order to evaluate the stability of the weights found in S/RGCCA
+#' Compute boostrap of RGCCA in order to evaluate the stability of the weights 
+#' found in S/RGCCA
 #' @inheritParams plot2D
 #' @param n_boot An integer for the number of boostraps
 #' @param n_cores An integer for the number of cores used in parallelization 
-#' @param parallelization A logical value to run a parallelization. If parallelization = NULL (default), the parallelization is always performed except for Windows if length(n_boot) < 10.
+#' @param parallelization A logical value to run a parallelization. 
+#' If parallelization = NULL (default), the parallelization is always 
+#' performed except for Windows if length(n_boot) < 10.
 #' @return A list containing two objects: 'bootstrap' and 'rgcca'. 
-#' 'bootstrap' is a list a list containing for each block, a matrix with in rows the variables of the blocks and in columns the weight calculated for each bootstrap; 'rgcca' is the original rgcca (see  \code{\link[RGCCA]{RGCCA}}).
+#' 'bootstrap' is a list containing for each block, a matrix 
+#' with the variables of the block in row and the block weight vector
+#' calculated for each bootstrap sample in column. 'rgcca' is the original 
+#' rgcca object. (see  \code{\link[RGCCA]{rgcca}})
 #' @examples
 #' data("Russett")
 #' blocks = list(agriculture = Russett[, seq(3)], industry = Russett[, 4:5],
@@ -15,22 +21,25 @@
 #' b=bootstrap(rgcca_out, n_boot = 2, n_cores = 1)
 #' plot(b,n_cores=1)
 #' @export
-#' @seealso \code{\link[RGCCA]{plot.bootstrap}} , \code{\link[RGCCA]{print.bootstrap}} 
+#' @seealso \code{\link[RGCCA]{plot.bootstrap}} , 
+#' \code{\link[RGCCA]{print.bootstrap}} 
 bootstrap <- function(
     rgcca_res,
     n_boot = 100,
     n_cores = parallel::detectCores() - 1,
-    parallelization=NULL) {
+    parallelization = NULL) {
     
-    ndefl_max=max(rgcca_res$call$ncomp)
-    list_res=list()
+    ndefl_max = max(rgcca_res$call$ncomp)
+    list_res = list()
     for(i in 1:ndefl_max)
     { 
-        list_res[[i]]=list()
+        list_res[[i]] = list()
         for(block in names(rgcca_res$call$blocks))
         {
-            list_res[[i]][[block]]=matrix(NA,dim(rgcca_res$call$blocks[[block]])[2],n_boot)
-            rownames( list_res[[i]][[block]])=colnames(rgcca_res$call$blocks[[block]])
+            list_res[[i]][[block]] = 
+              matrix(NA, dim(rgcca_res$call$blocks[[block]])[2], n_boot) 
+            rownames( list_res[[i]][[block]]) = 
+              colnames(rgcca_res$call$blocks[[block]])
         }
     }
 
@@ -70,13 +79,13 @@ bootstrap <- function(
         varlist,
         seq(n_boot), 
         function(x) {
-            resBoot=bootstrap_k(rgcca_res,type="weight")
+            resBoot = bootstrap_k(rgcca_res, type = "weight")
         }
         , 
         n_cores = n_cores,
         envir = environment(),
         applyFunc = "parLapply",
-        parallelization=parallelization
+        parallelization = parallelization
         )
 
        for(k in seq(n_boot))
@@ -91,14 +100,14 @@ bootstrap <- function(
                        {
                            if(i<=dim(W[[k]][[block]])[2])
                           {
-                               list_res[[i]][[block]][,k]=W[[k]][[block]][,i]
+                             list_res[[i]][[block]][, k] = W[[k]][[block]][, i]
                 
-                            } 
+                          } 
                        }
                        else
                        {
-                           
-                           list_res[[i]][[block]][,k]=rep(NA,length(list_res[[i]][[block]][,k]))
+                           list_res[[i]][[block]][, k] = 
+                             rep(NA, length(list_res[[i]][[block]][, k]))
                        }
                    }
                 }
@@ -107,5 +116,8 @@ bootstrap <- function(
        
       message("OK.")
       
-      return(structure(list(bootstrap =list_res, rgcca = rgcca_res), class = "bootstrap"))
+      return(structure(list(bootstrap = list_res, 
+                            rgcca = rgcca_res), 
+                       class = "bootstrap")
+             )
 }

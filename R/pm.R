@@ -8,13 +8,6 @@
 pm <- function(M1,M2,na.rm=TRUE){
   if(na.rm)
   {
-    #Pourquoi ne pas simplifier comme suit
-    #M1b=as.matrix(M1); M2b=as.matrix(M2)
-    #ind1=which(is.na(M1),arr.ind=TRUE)
-    #ind2=which(is.na(M2),arr.ind=TRUE)
-    #M1[ind1]=0
-    #M1[ind2]=0
-    
     M1[is.na(M1)]=0
     M2[is.na(M2)]=0
     return(M1%*%M2)
