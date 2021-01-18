@@ -20,30 +20,70 @@
 #' @inheritParams plot_histogram
 #' @details 
 #' \itemize{
-#' \item "ind" for individual graph: Y of rgcca are plotted. In abscissa Y[[i_block]][,compx], in ordinate, Y[[i_block_y]][,compy]. Each point correspond to one individual. It can be colored with the resp. options. The colors by default can be modified in colors options.
-#' \item  "var" for variable graph: in abscissa, the correlations with the first axis, in ordinate, the correlation with the second axis. 
-#' \item "both": displays both ind and var graph (this requires only one block (i_block=i_block_y) and at least two components in the rgcca calculation (ncomp>1 for this block)
-#' \item "ave": displays the variance average in each block
-#' \item "net": displays the graphical network corresponding to the connection matrix used in the rgcca
-#' \item "cor": barplot corresponding to the correlation of each variable with a chosen axis (specified by i_block and compx). Variables are sorted from the highest to the lowest and only the highest are displayed (to modify the number, use the parameter n_marks)
-#' \item "weight":barplot corresponding to the correlation of each variable with a chosen axis (specified by i_block and compx). Variables are sorted from the highest to the lowest and only the highest are displayed (to modify the number, use the parameter n_marks)
+#' \item "ind" for sample plot. The blocks (block argument) and components 
+#' (comp) that will be used on the horizontal and the vertical axis to plot the 
+#' individuals: (Y[[block[1]]][, comp[1]], Y[[block[2]]][,comp[2]]). Points can 
+#' be colored according to the resp argument. The colors of the points can be 
+#' modified with the colors argument.
+#' \item  "var" for correlation circle.  
+#' first axis, in ordinate, the correlation with the second axis. 
+#' \item "both": displays both sample plot and correlation circle (implemented
+#' only for one block and at least when two components are asked (ncomp >= 2)
+#' \item "ave": displays the average variance explained for each block
+#' \item "net": displays the network of connection between blocks (defined by 
+#' the connection argument) used in the rgcca() function.
+#' \item "cor": barplot of the correlation between variables of 
+#' one block (specified by block) and one of its block components (comp). 
+#' Variables are sorted in decreasing correlations and only the highest 
+#' correlations are displayed. The number of displayed correlations can be set 
+#' with n_marks (defaut value = 30).
+#' \item "weight": barplot of the block weight vector for one 
+#' specific block/component. The weights are sorted from the highest to 
+#' the lowest and only the highest are displayed. The number of displayed 
+#' weights can be set with n_marks
 #' }
 #' @examples
 #' data(Russett)
+#' status = colnames(Russett)[9:11][apply(Russett[, 9:11], 1, which.max)]
 #' X_agric =as.matrix(Russett[,c("gini","farm","rent")]);
 #' X_ind = as.matrix(Russett[,c("gnpr","labo")]);
 #' X_polit = as.matrix(Russett[ , c("demostab", "dictator")]);
-#' A = list(X_agric, X_ind, X_polit);
+#' A = list(X_agric = X_agric, X_ind = X_ind, X_polit = X_polit);
 #' C = matrix(c(0, 0, 1, 0, 0, 1, 1, 1, 0), 3, 3);
-#' resRgcca=rgcca(blocks=A,connection=C,
-#' tau=rep(1,3),ncomp=rep(2,3),superblock=FALSE)
-#' plot(resRgcca,type="cor")
-#' plot(resRgcca,type="weight")
-#' plot(resRgcca,type="ind")
-#' plot(resRgcca,type="var")
-#' plot(resRgcca,type="both")
-#' plot(resRgcca,type="ave")
-#' plot(resRgcca,type="network")
+#' fit.rgcca=rgcca(blocks = A, connection = C, 
+#'                 tau = rep(1, 3), ncomp = rep(2, 3))
+#'                 
+#' ###############               
+#' # sample plot #
+#' ###############
+#' 
+#' # Defaut call: First component of the last block vs second component of the 
+#' # last block
+#' plot(fit.rgcca, type="ind", resp = status)
+#' 
+#' # horizontal axis: First component of the first block
+#' # vertical axis: First component of the second block
+#' plot(fit.rgcca, type="ind", block = 1:2, comp = 1, resp = status)
+#' 
+#' # horizontal axis: First component of the first block
+#' # vertical axis: Second component of the first block
+#' plot(fit.rgcca, type="ind", block = 1, comp = 1:2, resp = status)
+#'
+#' ######################
+#' # Correlation circle #
+#' ######################
+#' # with superblock
+#' fit.mcia = rgcca(blocks, scheme = "factorial", ncomp = rep(2, 4), 
+#'                  tau = c(1, 1, 1, 0), superblock = TRUE)
+#' plot(fit.mcia, type="both", resp = status, overlap = FALSE)
+#'                                                      
+#' plot(fit.rgcca, type="cor")
+#' plot(fit.rgcca, type="weight")
+#' plot(fit.rgcca, type="ind")
+#' plot(fit.rgcca, type="var")
+#' plot(fit.rgcca, type="both")
+#' plot(fit.rgcca, type="ave")
+#' plot(fit.rgcca, type="network")
 #' @importFrom gridExtra grid.arrange
 #' @importFrom ggplot2 ggplot
 #' @export
@@ -55,16 +95,16 @@ plot.rgcca=function(x, type = "weight", block = length(x$A), comp = 1:2,
                     cex_lab = 12, cex_axis = 10, colors = NULL, ...)
 {
     stopifnot(is(x, "rgcca"))
-    match.arg(type,c("ind","var","both","ave","cor","weight","network"))
-     if(length(comp)==1){comp=rep(comp,2)}
-    compx=comp[1]
-    compy=comp[2]
+    match.arg(type, c("ind", "var", "both", "ave", "cor", "weight", "network"))
+     if(length(comp) == 1){comp = rep(comp,2)}
+    compx = comp[1]
+    compy = comp[2]
 
-    if(length(block)==1)
+    if(length(block) == 1)
     {
          if(x$call$ncomp[block]<2)
           {
-                if(type%in%c("ind","var","both"))
+                if(type%in%c("ind", "var", "both"))
                 {
                     message("type='ind','var' or 'both' is not available for 
                             ncomp < 2. type was replaced by 'weight'")
@@ -81,8 +121,8 @@ plot.rgcca=function(x, type = "weight", block = length(x$A), comp = 1:2,
     for (i in seq(2))
         check_blockx("block", block[1], x$call$blocks)
       
-    if(i_block!=i_block_y & is.null(type)){ type="weight"}
-    if(i_block==i_block_y & is.null(type)){ type="both"}
+    if(i_block != i_block_y & is.null(type)){type="weight"}
+    if(i_block == i_block_y & is.null(type)){type="both"}
      
     if(type=="both")
     {
