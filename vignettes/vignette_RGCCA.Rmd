@@ -963,7 +963,7 @@ Multiple Co-Inertiea Analysis(MCIA) enables the countries to be represented in t
 plot(fit.mcia, resp=lab, type="ind", overlap = FALSE)
 ```
 
-Moreover, the correlation circle plot highlights the contribution of each variable to the construction of the global components. This figure shows the original variables projected on the compromise space.
+Moreover, the correlation circle highlights the contribution of each variable to the construction of the global components. This figure shows the original variables projected on the compromise space.
 
 ```{r, fig.align='center', fig.cap = 'graphical display of the correlation cicle associated with the two first components of the superblock. Each variable are colored according to their block membership',fig.height = 6, fig.width = 8}
 plot(fit.mcia, type="var")
@@ -971,7 +971,7 @@ plot(fit.mcia, type="var")
 
 A variable that is highly expressed for a category of individuals is projected with a high weight (far from the origin) in the direction of that category.
 
-It is often useful to vizualize jointly the sample space and the correlation circle. This is make possible by using the `type = "both"` argument of the plot function.
+It is often useful to visualize jointly the sample space and the correlation circle. This is make possible by using the `type = "both"` argument of the plot function.
 
 ```{r, fig.align='center', fig.cap = 'sample space and correlation cirle',fig.height = 6, fig.width = 8}
 plot(fit.mcia, type="both", resp = lab, overlap = FALSE)
@@ -999,7 +999,7 @@ A[[3]] = A[[3]][, -3]
 sapply(A, dim)
 ```
 
-**Preprocessing** To make variables comparable, standardization is applied (zero mean and unit variance). To make blocks comparable, we divide each block by the square root of its number of variables [@Westerhuis1998]. Such a preprocessing is set by default (`scale = TRUE`) when using `rgcca` or `sgcca` and is applied here.
+**Preprocessing** To make variables comparable, standardization is applied (zero mean and unit variance - `scale = TRUE`). To make blocks comparable, we divide each block by the square root of its number of variables [@Westerhuis1998]. Such a preprocessing is set by default (`scale_block = TRUE`) when using `rgcca` or `sgcca` and is applied here.
 
 **Path diagram.** We propose to use the design matrix $\ma C$ represented in Figure \ref{design_glioma}.
 
@@ -1029,7 +1029,7 @@ C
 From the dimension of each block ($n>p$ or $n\leq p$), the `rgcca()` function selects automatically the dual formulation for $\ma X_1$ and $\ma X_2$ and the primal one for $\ma X_3$.
 
 ```{r, eval = FALSE}
-fit.rgcca = rgcca(blocks=A, connection=C, type = "rgcca",
+fit.rgcca = rgcca(blocks=A, connection = C, type = "rgcca",
                   tau = c(1, 1, 0), ncomp = c(1, 1, 1),
                   scale = TRUE, scale_block = TRUE,
                   scheme = "horst", verbose = FALSE)
@@ -1103,21 +1103,49 @@ nb_zero_CGH
 
 One component per block has been built (GE1 for $\ma X_1$ and CGH1 $\ma X_2$), and the graphical display of the tumors obtained by crossing GE1 and CGH1 and labeled according to their location is shown below.
 
-```{r, eval = FALSE, fig.align='center', fig.cap = 'graphical display of the tumors obtained by crossing GE1 and CGH1 land abeled according to their location.',fig.height = 3, fig.width = 5}
+```{r, eval = FALSE, fig.align='center', fig.cap = 'graphical display of the tumors obtained by crossing GE1 and CGH1 and labeled according to their location.',fig.height = 3, fig.width = 5}
 plot(fit.sgcca,type="ind",block=1:2,comp=1, resp = Loc)
 ```
 
-It possible to determine the optimal sparsity parameters by permutation. This is made possible using the rgcca_permutation() function.
+It possible to determine the optimal sparsity parameters by permutation. This is made possible using the  `rgcca_permutation()` function.
 
-```{r}
+```{r, eval = FALSE}
 fit.permute = rgcca_permutation(A, connection = C, 
                                 par_type = "sparsity", 
                                 par_length = 10, 
                                 n_run = 10)
 ```
 
+and then directly used the optimal sparsity parameters as follows: 
+
+```{r, eval = FALSE}
+best.permute.sgcca = rgcca(fit.permute)
+```
+
+The resutling model is summarized using the generic print function.
+
+```{r, eval = FALSE}
+print(best.permute.sgcca)
+```
+
+Again, one component per block has been built (GE1 for $\ma X_1$ and CGH1 $\ma X_2$), and the graphical display of the tumors obtained by crossing GE1 and CGH1 and labeled according to their location is shown below.
+
+```{r, eval = FALSE, fig.align='center', fig.cap = 'graphical display of the tumors obtained by crossing GE1 and CGH1 and labeled according to their location.',fig.height = 3, fig.width = 5}
+plot(best.permute.sgcca, type="ind", block=1:2, comp=1, resp = Loc)
+```
 
 We observe that the GE block contains much more discriminative information than the CGH block.
+
+The top-twenty variables that contributes mostly to the construction of the GE block components are displayed 
+
+```{r, eval = FALSE}
+plot(best.permute.sgcca, type="weight", block=1, comp=1, n_mark = 20)
+```
+The top-twenty variables that contributes mostly to the construction of the CGH block components are displayed 
+
+```{r, eval = FALSE}
+plot(best.permute.sgcca, type="weight", block=2, comp=1, n_mark = 20)
+```
   
 ### SGCCA with a superblock
 
