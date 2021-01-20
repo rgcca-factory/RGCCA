@@ -56,13 +56,18 @@ If tau = "optimal" the regularization paramaters are estimated for each block an
 analytical formula . If tau is a \eqn{1\times J} vector, tau[j] is identical across the dimensions of block \eqn{\mathbf{X}_j}. 
 If tau is a matrix, tau[k, j] is associated with \eqn{\mathbf{X}_{jk}} (\eqn{k}th residual matrix for block \eqn{j}). It can be estimated by using \link{rgcca_permutation}.}
 
-\item{sparsity}{Either a \eqn{1*J} vector or a \eqn{max(ncomp) * J} matrix encoding the L1 constraints applied to the outer weight vectors.
-Elements of sparsity vary between \eqn{1/sqrt(p_j)} and 1 (larger values of sparsity correspond to less penalization).
-If sparsity is a vector, L1-penalties are the same for all the weights corresponding to the same block but different components:
+\item{sparsity}{Either a \eqn{1*J} vector or a \eqn{max(ncomp) * J} matrix 
+encoding the L1 constraints applied to the outer weight vectors. The amount 
+of sparsity varies between \eqn{1/sqrt(p_j)} and 1 (larger values of sparsity 
+correspond to less penalization). If sparsity is a vector, L1-penalties are 
+the same for all the weights corresponding to the same block but different 
+components: 
 \deqn{for all h, |a_{j,h}|_{L_1} \le c_1[j] \sqrt{p_j},}
 with \eqn{p_j} the number of variables of \eqn{X_j}.
-If sparsity is a matrix, each row \eqn{h} defines the constraints applied to the weights corresponding to components \eqn{h}:
-\deqn{for all h, |a_{j,h}|_{L_1} \le c_1[h,j] \sqrt{p_j}.} It can be estimated by using \link{rgcca_permutation}.}
+If sparsity is a matrix, each row \eqn{h} defines the constraints applied to 
+the weights corresponding to components \eqn{h}:
+\deqn{for all h, |a_{j,h}|_{L_1} \le c_1[h,j] \sqrt{p_j}.} It can be 
+estimated by using \link{rgcca_permutation}.}
 
 \item{init}{A character giving the mode of initialization to use in the algorithm. The alternatives are either by Singular Value Decompostion ("svd") or random ("random") (default: "svd").}
 
@@ -116,9 +121,9 @@ block \eqn{j}). tau can be also estimated using \link{rgcca_permutation}.}
 the list is related to one specific deflation stage and reports the values 
 of the criterion for this stage across iterations.}
 
-\item{mode}{A \eqn{1 \times J} vector that contains the formulation 
-("primal" or "dual") applied to each of the \eqn{J} blocks within the RGCCA 
-alogrithm.}
+\item{primal_dual}{A \eqn{1 \times J} vector that contains the 
+formulation ("primal" or "dual") applied to each of the \eqn{J} blocks 
+within the RGCCA alogrithm.}
 
 \item{AVE}{A list of numerical values giving the indicators of model 
 quality based on the Average Variance Explained (AVE): AVE(for each block), 
@@ -150,9 +155,9 @@ PLS path modeling (the researcher decides which blocks are connected and
 which are not). Hence, the use of RGCCA requires the construction (user 
 specified) of a design matrix, (\eqn{\mathbf{C}}), that characterizes the 
 connections between blocks. Elements of the (symmetric) design matrix 
-\eqn{\mathbf{C} = (c_{jk})} are strictly positive (and usually equal to 1) 
-if block \eqn{j} and block \eqn{k} are connected, and 0 otherwise. The 
-function rgcca() implements a monotone global convergent algorithm - i.e. the 
+\eqn{\mathbf{C} = (c_{jk})} are positive (and usually equal to 1 if block 
+\eqn{j} and block \eqn{k} are connected, and 0 otherwise). The function 
+rgcca() implements a monotone global convergent algorithm - i.e. the 
 bounded criteria to be maximized increases at each step of the iterative 
 procedure and hits, at convergence a stationary point of the RGCCA 
 optimization problem. Moreover, depending on the dimensionality of each 

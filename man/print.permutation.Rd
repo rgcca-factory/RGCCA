@@ -2,22 +2,22 @@
 % Please edit documentation in R/print.perm.R
 \name{print.permutation}
 \alias{print.permutation}
-\title{Print the call of rgcca_permutation results}
+\title{Print a permutation object}
 \usage{
 \method{print}{permutation}(x, ...)
 }
 \arguments{
-\item{x}{A permutation object (see \code{\link{rgcca_permutation}})}
+\item{x}{A rgcca_permutation object (see  \code{\link[RGCCA]{rgcca_permutation}})}
 
-\item{...}{other parameters used in print (for the displaying of matrices)}
+\item{...}{Further print parameters}
 }
 \description{
-Print the call of rgcca_permutation results
+Print a permutation object
 }
 \examples{
-data("Russett")
-A <- list(agriculture = Russett[, seq(3)], industry = Russett[, 4:5],
+data('Russett')
+A = list(agriculture = Russett[, seq(3)], industry = Russett[, 4:5],
     politic = Russett[, 6:11] )
-perm <- rgcca_permutation(A, par_type="tau",n_run = 2, n_cores = 1)
-print(perm)
+res = rgcca_permutation(A,par_type="tau", n_run = 5, n_cores = 1)
+print(res)
 }

@@ -21,15 +21,21 @@ sgccak(
 \item{A}{A list that contains the \eqn{J} blocks of variables from which block components are constructed.
 It could be eiher the original matrices (\eqn{X_1, X_2, ..., X_J}) or the residual matrices (\eqn{X_{h1}, X_{h2}, ..., X_{hJ}}).}
 
-\item{C}{A symmetric matrix (J*J) that describes the relationships between blocks.}
+\item{C}{A symmetric matrix (J*J) that describes the relationships between 
+blocks.}
 
-\item{sparsity}{Either a \eqn{1*J} vector or a \eqn{max(ncomp) * J} matrix encoding the L1 constraints applied to the outer weight vectors.
-Elements of sparsity vary between \eqn{1/sqrt(p_j)} and 1 (larger values of sparsity correspond to less penalization).
-If sparsity is a vector, L1-penalties are the same for all the weights corresponding to the same block but different components:
+\item{sparsity}{Either a \eqn{1*J} vector or a \eqn{max(ncomp) * J} matrix 
+encoding the L1 constraints applied to the outer weight vectors. The amount 
+of sparsity varies between \eqn{1/sqrt(p_j)} and 1 (larger values of sparsity 
+correspond to less penalization). If sparsity is a vector, L1-penalties are 
+the same for all the weights corresponding to the same block but different 
+components: 
 \deqn{for all h, |a_{j,h}|_{L_1} \le c_1[j] \sqrt{p_j},}
 with \eqn{p_j} the number of variables of \eqn{X_j}.
-If sparsity is a matrix, each row \eqn{h} defines the constraints applied to the weights corresponding to components \eqn{h}:
-\deqn{for all h, |a_{j,h}|_{L_1} \le c_1[h,j] \sqrt{p_j}.} It can be estimated by using \link{rgcca_permutation}.}
+If sparsity is a matrix, each row \eqn{h} defines the constraints applied to 
+the weights corresponding to components \eqn{h}:
+\deqn{for all h, |a_{j,h}|_{L_1} \le c_1[h,j] \sqrt{p_j}.} It can be 
+estimated by using \link{rgcca_permutation}.}
 
 \item{scheme}{A character or a function giving the link function for 
 covariance maximization among "horst" (the identity function), "factorial"

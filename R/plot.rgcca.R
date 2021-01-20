@@ -143,6 +143,7 @@ plot.rgcca=function(x, type = "weight", block = length(x$A), comp = 1:2,
         
         if(is.null(title)){title = toupper(names(x$call$blocks)[i_block])}
         p5 <- grid.arrange(p1, p2, nrow=1, ncol=2, top = title)
+        return(p5)
     }
     else if(type == "var")
     {
@@ -159,10 +160,10 @@ plot.rgcca=function(x, type = "weight", block = length(x$A), comp = 1:2,
        p5 <- plot_var_2D(x, i_block = i_block, compx = compx, compy = compy,
                          cex_sub = cex_sub, cex_main = cex_main, 
                          cex_lab = cex_lab, remove_var = remove_var,
-                         text = text_var, no_overlap =! overlap,
+                         text = text_var, no_overlap =!overlap,
                          title = title, n_mark = n_mark, collapse = collapse,
                          colors = colors)
-        plot(p5)
+        return(p5)
     }
     
     else if(type == "ind")
@@ -184,14 +185,14 @@ plot.rgcca=function(x, type = "weight", block = length(x$A), comp = 1:2,
                      cex_main = cex_main, cex_lab = cex_lab, resp = resp,
                      response_name = response_name, text = text_ind,
                      title = title, colors = colors, no_overlap=!overlap)
-        plot(p5)
+        return(p5)
      }
     else if(type == "ave")
     {
         if(is.null(title)){title = "Average Variance Explained"}
         p5 <- plot_ave (x, cex = cex, title = title, colors = colors, 
                         cex_main = cex_main, cex_sub = cex_sub)
-        plot(p5)
+        return(p5)
     }
     else if(type == "network")
     {
@@ -208,7 +209,7 @@ plot.rgcca=function(x, type = "weight", block = length(x$A), comp = 1:2,
                        collapse = collapse, title = title, colors = colors, 
                        i_block = i_block, cex_main = cex_main, 
                        cex_sub = cex_sub)
-        plot(p5)
+        return(p5)
     }
     else if(type == "weight")
     {
@@ -218,8 +219,8 @@ plot.rgcca=function(x, type = "weight", block = length(x$A), comp = 1:2,
         p5=plot_var_1D(x, comp = compx, n_mark = n_mark, i_block = i_block, 
                        type = "weight", collapse = collapse, title = title, 
                        colors = colors, cex_main = cex_main, cex_sub=cex_sub)
-        plot(p5)
+        return(p5)
     }
 
-    invisible(p5)
+    #invisible(p5)
 }

@@ -122,8 +122,7 @@ rgcca_permutation <- function(
     {
       type2 <- "rgcca"
     }
-    if(is.null(type)){type="type2"}
-    
+    if(is.null(type)){type=type2}
     call=list(type = type, par_type = par_type, par_value = par_value, 
               n_run = n_run, quiet = quiet, connection = connection, 
               method=method, tol=tol, scheme = scheme, scale = scale,

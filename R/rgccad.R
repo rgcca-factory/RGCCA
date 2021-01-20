@@ -38,8 +38,6 @@
 #' @param C  A symmetric matrix (J*J) that describes the relationships between 
 #' blocks.
 #' @param na.rm If TRUE, runs rgcca only on available data.
-#' @param estimateNA If TRUE, missing values are estimated within the RGCCA 
-#' algorithm.
 #' @return \item{Y}{A list of \eqn{J} elements. Each element of the list is a 
 #' matrix that contains the RGCCA block components for the corresponding block.}
 #' @return \item{a}{A list of \eqn{J} elements. Each element of the list \eqn{a} 
@@ -125,7 +123,7 @@
 #'                      scale_block = FALSE)
 #' for (i in 1:nrow(Russett)){
 #'  B = lapply(A, function(x) x[-i, ])
-#'  B = lapply(B, scale2)
+#'  B = lapply(B, scale)
 #'  
 #'  resB = rgccad(B, C, tau = rep(1, 3), scheme = "factorial", 
 #'  scale = TRUE, scale_block = FALSE, verbose = FALSE)
@@ -162,7 +160,7 @@
 rgccad=function (A, C = 1 - diag(length(A)), tau = rep(1, length(A)),  
                  ncomp = rep(1, length(A)), scheme = "centroid", scale = TRUE,   
                  init = "svd", bias = TRUE, tol = 1e-08, verbose = TRUE,
-                 scale_block = TRUE, na.rm = TRUE, estimateNA = "no",
+                 scale_block = TRUE, na.rm = TRUE, 
                  prescaling = FALSE, quiet = FALSE)
 {
 
@@ -176,10 +174,9 @@ rgccad=function (A, C = 1 - diag(length(A)), tau = rep(1, length(A)),
     mapply(function(m, nbcomp) m[1:nbcomp], vec_list, nb_elts, SIMPLIFY = FALSE)
 
   A0 = A
-  #  call = match.call()
   call=list(A = A, C = C,  ncomp = ncomp, scheme = scheme, scale = scale,   
             init = init, bias = bias, tol = tol, verbose = verbose,
-            scale_block = scale_block, na.rm = na.rm, estimateNA = estimateNA)
+            scale_block = scale_block, na.rm = na.rm)
   
   if (any(ncomp < 1)) {stop_rgcca("Compute at least one component per block!")}
   pjs <- sapply(A, NCOL) 
@@ -243,9 +240,6 @@ rgccad=function (A, C = 1 - diag(length(A)), tau = rep(1, length(A)),
                      na.rm=na.rm, 
                      scale_block=scale_block, scale=scale)
  
-    if(estimateNA%in%c("iterative", "first", "lebrusquet", "superblock"))
-          A<-result$call$A
-    
     Y <- NULL 
     for (b in 1:J) Y[[b]] <- result$Y[, b, drop = FALSE]
     for (j in 1:J)

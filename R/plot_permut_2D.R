@@ -37,11 +37,19 @@ plot_permut_2D <- function(
     check_colors(colors)
     if (length(colors) < 2)
         colors <- rep(colors, 2)
+    if(perm$call$type%in%c("sgcca","spls"))
+    {
+        crit_title="SGCCA criterion" 
+    }
+    else
+    {
+        crit_title="RGCCA criterion" 
+    }
 
     switch(
         type,
         "zstat" =  y_title <- "Z-score",
-        "crit" = y_title <- "RGCCA criterion"
+        "crit" = y_title <-  crit_title
     )
 
     check_ncol(list(perm$zstat), 1)

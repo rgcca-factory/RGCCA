@@ -33,7 +33,8 @@ rgcca_permutation(
 \arguments{
 \item{blocks}{A list of matrices giving the \eqn{J} blocks of variables \eqn{\mathbf{X_1}, \mathbf{X_2}, ..., \mathbf{X_J}}.}
 
-\item{par_type}{A character giving the parameter to tune among "sparsity" or "tau".}
+\item{par_type}{A character giving the parameter to tune among "sparsity" or 
+"tau".}
 
 \item{par_value}{A matrix (n*p, with p the number of blocks and n the number 
 of combinations to be tested), a vector (of p length) or a numeric value 
@@ -41,9 +42,11 @@ giving sets of penalties (tau for RGCCA, sparsity for SGCCA) to be tested,
 one row by combination. By default, it takes 10 sets between min values (0
  for RGCCA and $1/sqrt(ncol)$ for SGCCA) and 1.}
 
-\item{par_length}{An integer indicating the number of sets of parameters to be tested (if par_value = NULL). The parameters are uniformly distributed.}
+\item{par_length}{An integer indicating the number of sets of parameters to 
+be tested (if par_value = NULL). The parameters are uniformly distributed.}
 
-\item{n_run}{An integer giving the number of permutation tested for each set of constraint}
+\item{n_run}{An integer giving the number of permutation tested for each set 
+of constraint}
 
 \item{n_cores}{An integer for the number of cores used in parallelization}
 
@@ -78,13 +81,18 @@ If tau = "optimal" the regularization paramaters are estimated for each block an
 analytical formula . If tau is a \eqn{1\times J} vector, tau[j] is identical across the dimensions of block \eqn{\mathbf{X}_j}. 
 If tau is a matrix, tau[k, j] is associated with \eqn{\mathbf{X}_{jk}} (\eqn{k}th residual matrix for block \eqn{j}). It can be estimated by using \link{rgcca_permutation}.}
 
-\item{sparsity}{Either a \eqn{1*J} vector or a \eqn{max(ncomp) * J} matrix encoding the L1 constraints applied to the outer weight vectors.
-Elements of sparsity vary between \eqn{1/sqrt(p_j)} and 1 (larger values of sparsity correspond to less penalization).
-If sparsity is a vector, L1-penalties are the same for all the weights corresponding to the same block but different components:
+\item{sparsity}{Either a \eqn{1*J} vector or a \eqn{max(ncomp) * J} matrix 
+encoding the L1 constraints applied to the outer weight vectors. The amount 
+of sparsity varies between \eqn{1/sqrt(p_j)} and 1 (larger values of sparsity 
+correspond to less penalization). If sparsity is a vector, L1-penalties are 
+the same for all the weights corresponding to the same block but different 
+components: 
 \deqn{for all h, |a_{j,h}|_{L_1} \le c_1[j] \sqrt{p_j},}
 with \eqn{p_j} the number of variables of \eqn{X_j}.
-If sparsity is a matrix, each row \eqn{h} defines the constraints applied to the weights corresponding to components \eqn{h}:
-\deqn{for all h, |a_{j,h}|_{L_1} \le c_1[h,j] \sqrt{p_j}.} It can be estimated by using \link{rgcca_permutation}.}
+If sparsity is a matrix, each row \eqn{h} defines the constraints applied to 
+the weights corresponding to components \eqn{h}:
+\deqn{for all h, |a_{j,h}|_{L_1} \le c_1[h,j] \sqrt{p_j}.} It can be 
+estimated by using \link{rgcca_permutation}.}
 
 \item{init}{A character giving the mode of initialization to use in the algorithm. The alternatives are either by Singular Value Decompostion ("svd") or random ("random") (default: "svd").}
 
@@ -113,21 +121,31 @@ If parallelization = NULL (default), the parallelization is always
 performed except for Windows if length(n_boot) < 10.}
 }
 \value{
-\item{zstat}{The Z statistic is the difference, for each combination, between the non-permuted R/SGCCA criterion and the mean of the permuted R/SGCCA criteria divided by the standard deviation of the permuted R/SGCCA criteria.}
+\item{zstat}{The Z statistic is the difference, for each combination, 
+between the non-permuted R/SGCCA criterion and the mean of the permuted 
+R/SGCCA criteria divided by the standard deviation of the permuted R/SGCCA 
+criteria.}
 
-\item{bestpenalties}{Penalties giving the best Z-statistic for each blocks}
+\item{bestpenalties}{Penalties giving the best Z-statistic for each 
+blocks}
 
-\item{permcrit}{A matrix of R/SGCCA criteria for each combination and each permutation}
+\item{permcrit}{A matrix of R/SGCCA criteria for each combination 
+and each permutation}
 
-\item{means}{Mean of the permutated R/SGCCA criteria for each combination}
+\item{means}{Mean of the permutated R/SGCCA criteria for each 
+combination}
 
-\item{sds}{Standard deviation of the permutated R/SGCCA criteria for each combination}
+\item{sds}{Standard deviation of the permutated R/SGCCA criteria for 
+each combination}
 
 \item{crit}{R/SGCCA criterion for each combination}
 
-\item{pval}{The p-value is the fraction of the permuted R/SGCCA criteria, for each combination, that is greater than or equal to the non-permuted R/SGCCA criterion}
+\item{pval}{The p-value is the fraction of the permuted R/SGCCA 
+criteria, for each combination, that is greater than or equal to the 
+non-permuted R/SGCCA criterion}
 
-\item{penalties}{A matrix giving, for each blocks, the penalty combinations (tau or sparsity)}
+\item{penalties}{A matrix giving, for each blocks, the penalty 
+combinations (tau or sparsity)}
 }
 \description{
 Tune the sparsity coefficient (if the model is sparse) or tau 

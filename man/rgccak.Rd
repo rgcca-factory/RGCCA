@@ -20,12 +20,12 @@ rgccak(
 )
 }
 \arguments{
-\item{A}{A list that contains the \eqn{J} blocks of variables from which 
-block components are constructed. It could be either the original matrices 
-(\eqn{X_1, X_2, ..., X_J}) or the residual matrices 
-(\eqn{X_{h1}, X_{h2}, ..., X_{hJ}}).}
+\item{A}{A list that contains the \eqn{J} blocks of variables. It could be 
+either the original matrices (\eqn{X_1, X_2, ..., X_J}) or the residual 
+matrices (\eqn{X_{h1}, X_{h2}, ..., X_{hJ}}).}
 
-\item{C}{A symmetric matrix (J*J) that describes the relationships between blocks.}
+\item{C}{A symmetric matrix (J*J) that describes the relationships between 
+blocks.}
 
 \item{tau}{Either a 1*J vector or a \eqn{\mathrm{max}(ncomp) \times J} matrix containing the values 
 of the regularization parameters (default: tau = 1, for each block and each dimension). Tau varies from 0 (maximizing the correlation) to 1 (maximizing the covariance).
