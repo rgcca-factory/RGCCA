@@ -18,9 +18,9 @@
 #' which are not). Hence, the use of RGCCA requires the construction (user 
 #' specified) of a design matrix, (\eqn{\mathbf{C}}), that characterizes the 
 #' connections between blocks. Elements of the (symmetric) design matrix 
-#' \eqn{\mathbf{C} = (c_{jk})} are strictly positive (and usually equal to 1) 
-#' if block \eqn{j} and block \eqn{k} are connected, and 0 otherwise. The 
-#' function rgcca() implements a monotone global convergent algorithm - i.e. the 
+#' \eqn{\mathbf{C} = (c_{jk})} are positive (and usually equal to 1 if block 
+#' \eqn{j} and block \eqn{k} are connected, and 0 otherwise). The function 
+#' rgcca() implements a monotone global convergent algorithm - i.e. the 
 #' bounded criteria to be maximized increases at each step of the iterative 
 #' procedure and hits, at convergence a stationary point of the RGCCA 
 #' optimization problem. Moreover, depending on the dimensionality of each 
@@ -66,9 +66,9 @@
 #' @return \item{crit}{A list of vector of length max(ncomp). Each vector of 
 #' the list is related to one specific deflation stage and reports the values 
 #' of the criterion for this stage across iterations.}
-#' @return \item{mode}{A \eqn{1 \times J} vector that contains the formulation 
-#' ("primal" or "dual") applied to each of the \eqn{J} blocks within the RGCCA 
-#' alogrithm.} 
+#' @return \item{primal_dual}{A \eqn{1 \times J} vector that contains the 
+#' formulation ("primal" or "dual") applied to each of the \eqn{J} blocks 
+#' within the RGCCA alogrithm.} 
 #' @return \item{AVE}{A list of numerical values giving the indicators of model 
 #' quality based on the Average Variance Explained (AVE): AVE(for each block), 
 #' AVE(outer model), AVE(inner model).}
@@ -112,7 +112,6 @@
 #' plot(fit.rgcca, type = "weight", block = 3)
 #' politic = as.vector(apply(Russett[, 9:11], 1, which.max)) 
 #' plot(fit.rgcca, type = "ind", block = 1:2, comp = rep(1, 2), resp = politic)
-
 #' 
 #' ############################################
 #' # Example 2: RGCCA and multiple components #
@@ -202,56 +201,40 @@ rgcca <- function(
 
     if(class(blocks)=="permutation")
     {
-        message("All the parameters were imported from the permutation object")
-        scale_block=blocks$call$scale_block
-        scale=blocks$call$scale
-        scheme=blocks$call$scheme
-        connection=blocks$call$connection
-        tol=blocks$call$tol
-        method=blocks$call$method
-        if(blocks$call$par_type=="tau")
-        {
-            tau=blocks$bestpenalties 
-        }
-        if(blocks$call$par_type=="ncomp")
-        {
-            ncomp=blocks$bestpenalties 
-        }
-        if(blocks$call$par_type=="sparsity")
-        {
-            sparsity=blocks$bestpenalties 
-        }
-        blocks<-blocks$call$blocks
+        message("All the parameters were imported from rgcca_permutation")
+        scale_block = blocks$call$scale_block
+        scale = blocks$call$scale
+        scheme = blocks$call$scheme
+        connection = blocks$call$connection
+        tol = blocks$call$tol
+        method = blocks$call$method
+        if(blocks$call$par_type == "tau") tau = blocks$bestpenalties 
+        if(blocks$call$par_type == "ncomp") ncomp = blocks$bestpenalties 
+        if(blocks$call$par_type == "sparsity") sparsity = blocks$bestpenalties 
+        blocks <- blocks$call$blocks
     }
     if(class(blocks)=="cval")
     {
-        message("All the parameters were imported from the cval object")
-        scale_block=blocks$call$scale_block
-        scale=blocks$call$scale
-        scheme=blocks$call$scheme
-        response=blocks$call$response
-        tol=blocks$call$tol
-        method=blocks$call$method
-        if(blocks$call$par_type[[1]]=="tau")
-        {
-            tau=blocks$bestpenalties 
-        }
-        if(blocks$call$par_type[[1]]=="ncomp")
-        {
-            ncomp=blocks$bestpenalties 
-        }
-        if(blocks$call$par_type[[1]]=="sparsity")
-        {
-            sparsity=blocks$bestpenalties 
-        }
+        message("All the parameters were imported from cval")
+        scale_block = blocks$call$scale_block
+        scale = blocks$call$scale
+        scheme = blocks$call$scheme
+        response = blocks$call$response
+        tol = blocks$call$tol
+        method = blocks$call$method
+        if(blocks$call$par_type[[1]] == "tau") tau=blocks$bestpenalties 
+        if(blocks$call$par_type[[1]] == "ncomp") ncomp=blocks$bestpenalties 
+        if(blocks$call$par_type[[1]] == "sparsity") 
+          sparsity=blocks$bestpenalties 
         blocks<-blocks$call$blocks
     }
 
-    if(length(blocks)==1){
-        if(type!="pca")
+    if(length(blocks) == 1){
+        if(type != "pca")
         {
-            type="pca";
-            message("type='rgcca' is not available for one block only. type was converted to 'pca'.")
+            type = "pca"
+            message("type='rgcca' is not available for one block only and 
+                    type was converted to 'pca'.")
         }
         
     }
@@ -270,14 +253,16 @@ rgcca <- function(
 
     if (tolower(type) %in% c("sgcca", "spca", "spls")) {
         if (!missing(tau) && missing(sparsity))
-           stop_rgcca(paste0("sparsity parameter required for ", tolower(type), "(instead of tau)."))
+           stop_rgcca(paste0("sparsity parameter required for ", 
+                             tolower(type), "(instead of tau)."))
         gcca <- sgccaNa
         par <- "sparsity"
         penalty <- sparsity
        
     }else{
         if (!missing(sparsity) & missing(tau))
-           stop_rgcca(paste0("tau parameter required for ", tolower(type), "(instead of sparsity)."))
+           stop_rgcca(paste0("tau parameter required for ", 
+                             tolower(type), "(instead of sparsity)."))
         gcca <- rgccaNa
         par <- "tau"
         penalty <- tau
@@ -290,16 +275,14 @@ rgcca <- function(
     match.arg(init, c("svd", "random"))
     check_method(type)
   
-    
-    # Check blocks size, adds NA lines if some subjects are missing...
-
-    blocks=check_blocks(blocks,add_NAlines=TRUE,n=1,init=TRUE,quiet=quiet)
+  # Check blocks size, add NA for missing subjects
+    blocks = check_blocks(blocks, add_NAlines=TRUE, n=1, init=TRUE, quiet=quiet)
     if (!is.null(response))
         check_blockx("response", response, blocks)
     check_integer("tol", tol, float = TRUE, min = 0)
 
    
-    for (i in c("superblock","verbose", "scale", "bias", "quiet"))
+    for (i in c("superblock", "verbose", "scale", "bias", "quiet"))
         check_boolean(i, get(i))
 
     penalty <- elongate_arg(penalty, blocks)
@@ -316,13 +299,14 @@ rgcca <- function(
         quiet = quiet,
         response = response
     )
-    raw=blocks
+    raw = blocks
    if(!is.null(response))
    {
-       if(mode(blocks[[response]])=="character")
+       if(mode(blocks[[response]]) == "character")
        {
-              if(length(unique(blocks[[response]]))==1){stop("Only one level in the variable to predict")}
-              blocks[[response]]=asDisjonctive(blocks[[response]])
+              if(length(unique(blocks[[response]])) == 1){
+                stop("Only one level in the variable to predict")}
+              blocks[[response]] = asDisjonctive(blocks[[response]])
        }
    
    }

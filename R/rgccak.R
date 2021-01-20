@@ -7,10 +7,9 @@
 #' @inheritParams select_analysis
 #' @inheritParams rgccaNa
 #' @inheritParams rgccad
-#' @param A  A list that contains the \eqn{J} blocks of variables from which 
-#' block components are constructed. It could be either the original matrices 
-#' (\eqn{X_1, X_2, ..., X_J}) or the residual matrices 
-#' (\eqn{X_{h1}, X_{h2}, ..., X_{hJ}}).
+#' @param A  A list that contains the \eqn{J} blocks of variables. It could be 
+#' either the original matrices (\eqn{X_1, X_2, ..., X_J}) or the residual 
+#' matrices (\eqn{X_{h1}, X_{h2}, ..., X_{hJ}}).
 #' @param na.rm If TRUE, RGCCA is run only on available data (default value) 
 #' otherwise the NIPALS algorithm is used.
 #' @return \item{Y}{A \eqn{n * J} matrix of block components}
@@ -53,7 +52,7 @@
 #' @importFrom graphics plot
 #' @importFrom Deriv Deriv
 
-rgccak=function (A, C, tau = "optimal", scheme = "centroid", verbose = FALSE, 
+rgccak=function (A, C, tau = "optimal", scheme = "centroid", verbose = FALSE,   
                  init = "svd", bias = TRUE, tol = 1e-08, na.rm = TRUE, 
                  scale = TRUE, scale_block = TRUE 
                  )
@@ -250,6 +249,7 @@ rgccak=function (A, C, tau = "optimal", scheme = "centroid", verbose = FALSE,
     AVEinner <- sum(C * cor(Y)^2/2)/(sum(C)/2)
     call$tau=tau
     
-    result <- list(Y = Y, a = a, crit = crit, AVE_inner = AVEinner,call=call,tau=tau)
+    result <- list(Y = Y, a = a, crit = crit, AVE_inner = AVEinner, 
+                   call = call, tau = tau)
     return(result)
 }

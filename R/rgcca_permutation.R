@@ -9,22 +9,35 @@
 #' @inheritParams bootstrap
 #' @inheritParams rgcca
 #' @inheritParams plot2D
-#' @param par_type A character giving the parameter to tune among "sparsity" or "tau".
-#' @param par_length An integer indicating the number of sets of parameters to be tested (if par_value = NULL). The parameters are uniformly distributed.
+#' @param par_type A character giving the parameter to tune among "sparsity" or 
+#' "tau".
+#' @param par_length An integer indicating the number of sets of parameters to 
+#' be tested (if par_value = NULL). The parameters are uniformly distributed.
 #' @param par_value A matrix (n*p, with p the number of blocks and n the number 
 #' of combinations to be tested), a vector (of p length) or a numeric value 
 #' giving sets of penalties (tau for RGCCA, sparsity for SGCCA) to be tested, 
 #' one row by combination. By default, it takes 10 sets between min values (0
 #'  for RGCCA and $1/sqrt(ncol)$ for SGCCA) and 1.
-#' @param n_run An integer giving the number of permutation tested for each set of constraint
-#' @return \item{zstat}{The Z statistic is the difference, for each combination, between the non-permuted R/SGCCA criterion and the mean of the permuted R/SGCCA criteria divided by the standard deviation of the permuted R/SGCCA criteria.}
-#' @return \item{bestpenalties}{Penalties giving the best Z-statistic for each blocks}
-#' @return \item{permcrit}{A matrix of R/SGCCA criteria for each combination and each permutation}
-#' @return \item{means}{Mean of the permutated R/SGCCA criteria for each combination}
-#' @return \item{sds}{Standard deviation of the permutated R/SGCCA criteria for each combination}
+#' @param n_run An integer giving the number of permutation tested for each set 
+#' of constraint
+#' @return \item{zstat}{The Z statistic is the difference, for each combination, 
+#' between the non-permuted R/SGCCA criterion and the mean of the permuted 
+#' R/SGCCA criteria divided by the standard deviation of the permuted R/SGCCA 
+#' criteria.}
+#' @return \item{bestpenalties}{Penalties giving the best Z-statistic for each 
+#' blocks}
+#' @return \item{permcrit}{A matrix of R/SGCCA criteria for each combination 
+#' and each permutation}
+#' @return \item{means}{Mean of the permutated R/SGCCA criteria for each 
+#' combination}
+#' @return \item{sds}{Standard deviation of the permutated R/SGCCA criteria for 
+#' each combination}
 #' @return \item{crit}{R/SGCCA criterion for each combination}
-#' @return \item{pval}{The p-value is the fraction of the permuted R/SGCCA criteria, for each combination, that is greater than or equal to the non-permuted R/SGCCA criterion}
-#' @return \item{penalties}{A matrix giving, for each blocks, the penalty combinations (tau or sparsity)}
+#' @return \item{pval}{The p-value is the fraction of the permuted R/SGCCA 
+#' criteria, for each combination, that is greater than or equal to the 
+#' non-permuted R/SGCCA criterion}
+#' @return \item{penalties}{A matrix giving, for each blocks, the penalty 
+#' combinations (tau or sparsity)}
 #' @examples
 #' data("Russett")
 #' blocks = list(agriculture = Russett[, seq(3)], industry = Russett[, 4:5],
@@ -111,7 +124,11 @@ rgcca_permutation <- function(
     }
     if(is.null(type)){type="type2"}
     
-    call=list(type=type, par_type = par_type, par_value = par_value, n_run=n_run, quiet=quiet,connection=connection,method=method,tol=tol,scheme=scheme,scale=scale,scale_block=scale_block,blocks=blocks,superblock=superblock)
+    call=list(type = type, par_type = par_type, par_value = par_value, 
+              n_run = n_run, quiet = quiet, connection = connection, 
+              method=method, tol=tol, scheme = scheme, scale = scale,
+              scale_block = scale_block, blocks = blocks, 
+              superblock = superblock)
     
 
     if (length(blocks) < 1)
@@ -123,9 +140,9 @@ rgcca_permutation <- function(
     }
     else
     {
-        ncol_block=sapply(blocks, NCOL)
-        ncols <- c(ncol_block,sum(ncol_block))
-        names(ncols)=c(names(ncol_block),"superblock")
+        ncol_block = sapply(blocks, NCOL)
+        ncols <- c(ncol_block, sum(ncol_block))
+        names(ncols)=c(names(ncol_block), "superblock")
     }
  
     set_spars <- function(max = 1) {
@@ -133,7 +150,8 @@ rgcca_permutation <- function(
             f <- quote(max)
         else
             f <- quote(max[x])
-        sapply(seq(min_spars), function(x) seq(eval(f), min_spars[x], len = par_length))
+        sapply(seq(min_spars), 
+               function(x) seq(eval(f), min_spars[x], len = par_length))
     }
     set_penalty <- function () 
     {

@@ -15,11 +15,13 @@
 #' @return \item{call}{Call of the function}
 #' @title Internal function for computing the SGCCA parameters (SGCCA block components, outer weight vectors etc.)
 #' @importFrom Deriv Deriv
-sgccak <-  function(A, C, sparsity = rep(1, length(A)), scheme = "centroid", scale = FALSE,
-                    tol = .Machine$double.eps, init="svd", bias = TRUE, verbose = TRUE,quiet=FALSE){
+sgccak <-  function(A, C, sparsity = rep(1, length(A)), scheme = "centroid", 
+                    scale = FALSE, tol = .Machine$double.eps, 
+                    init = "svd", bias = TRUE, verbose = TRUE,
+                    quiet = FALSE){
 
-     call=list(A, C, sparsity = sparsity, scheme = scheme, scale = scale,
-               tol = tol, init=init, bias = bias, verbose = verbose)
+  call=list(A, C, sparsity = sparsity, scheme = scheme, scale = scale,
+            tol = tol, init = init, bias = bias, verbose = verbose)
   J <- length(A)
   pjs = sapply(A, NCOL)
   AVE_X <- rep(0, J)
@@ -28,8 +30,8 @@ sgccak <-  function(A, C, sparsity = rep(1, length(A)), scheme = "centroid", sca
   #  Choose J arbitrary vectors
   if (init=="svd") {
     #SVD Initialisation of a_j or \alpha_j
-    a<- lapply(A, function(x) return(initsvd(x,dual=FALSE))) 
-    a<- lapply(a,function(x) return(as.vector(x)))
+    a <- lapply(A, function(x) return(initsvd(x, dual=FALSE))) 
+    a <- lapply(a,function(x) return(as.vector(x)))
    } else if (init=="random") 
     {
     a <- lapply(pjs,rnorm)

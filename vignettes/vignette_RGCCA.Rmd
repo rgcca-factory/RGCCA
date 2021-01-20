@@ -864,6 +864,7 @@ If `par_type = sparsity`, the `rgcca_permutation()` function switches automatica
 set.seed(1234567)
 fit.perm = rgcca_permutation(A, connection = C, 
                              par_type = "sparsity", 
+                             type = "sgcca",
                              n_cores = 1, n_run = 5)
 ```
 It is possible to defined explicitly the values of `tau`/`sparsity`. In that 
@@ -1087,14 +1088,14 @@ fit.sgcca = rgcca(blocks=A, connection=C,
                   verbose = TRUE)
 ```
 
-For GE, the number of non-zero elements of $\ma a_1$ is equal to r sum(fit.sgcca$a[[1]] != 0) #TODO Arthur and is given by
+For GE, the number of non-zero elements of $\ma a_1$ is equal to: 
 
 ```{r, eval = FALSE}
 nb_zero_GE = sum(fit.sgcca$a[[1]] != 0)
 nb_zero_GE
 ```
 
-For CGH, the number of non-zero elements of $\ma a_2$ is equal to r sum(fit.sgcca$a[[2]] != 0) #TODO Arthur and is given by
+For CGH, the number of non-zero elements of $\ma a_2$ is equal to:
 
 ```{r, eval = FALSE}
 nb_zero_CGH = sum(fit.sgcca$a[[2]] != 0)
@@ -1111,9 +1112,15 @@ It possible to determine the optimal sparsity parameters by permutation. This is
 
 ```{r, eval = FALSE}
 fit.permute = rgcca_permutation(A, connection = C, 
+                                type = "sgcca", 
                                 par_type = "sparsity", 
                                 par_length = 10, 
                                 n_run = 10)
+
+fit.permute = rgcca_permutation(A, connection = C, 
+                                par_type = "sparsity", 
+                                par_length = 5, 
+                                n_run = 3)
 ```
 
 and then directly used the optimal sparsity parameters as follows: 
@@ -1122,7 +1129,7 @@ and then directly used the optimal sparsity parameters as follows:
 best.permute.sgcca = rgcca(fit.permute)
 ```
 
-The resutling model is summarized using the generic print function.
+The resulting model is summarized using the generic print function.
 
 ```{r, eval = FALSE}
 print(best.permute.sgcca)
@@ -1187,27 +1194,26 @@ C[, nb_block-1] = 1 ; C[nb_block-1, ] = 1 ; diag(C) = 0
 
 
 ```{r, eval = FALSE}
-fit.sgcca = rgcca(blocks=A, connection=C,type="sgcca",
+fit.sgcca = rgcca(blocks=A, connection = C, type = "sgcca",
                   sparsity = c(.071,.2, .5, 1),
-                  ncomp = c(1, 1, 1, 1),
+                  ncomp = c(2, 2, 2, 1),
                   scheme = "horst",
                   scale = TRUE,
                   scale_block = TRUE,
                   verbose = TRUE, bias = FALSE, superblock = FALSE)
-
-
 ```
   
 In that case, the call of `rgcca(,type="sgcca")` is as follows:
     
 ```{r, eval = FALSE}
-plot(fit.sgcca,type="ind",block=1:2, comp=1, resp = Loc)
+plot(fit.sgcca, type="ind", block=1:2, comp=1, resp = Loc)
 ```
   
 and allows for the graphical representations of the individuals and the variables in a common space.
 
 ```{r, eval = FALSE, fig.align = 'center', fig.cap = 'correlation circle plot - two first components of the superblock. Variables are colored according to their block membership',fig.height = 3, fig.width = 5}
 plot(fit.sgcca, type="var", block=1)
+
 ```
 
 ![SGCCA with the superblock. correlation circle plot - two first components of the superblock. Variables are colored according to their block membership.](../img/vignette_rgcca/glioma_sgcca_superblock_var.png)

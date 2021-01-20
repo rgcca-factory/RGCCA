@@ -6,13 +6,12 @@
 # @return A matrix with n lines and n columns
 # @title Initialisation by SVD decomposition of X
 
-initsvd <- function(X,dual=TRUE) {
+initsvd <- function(X, dual=TRUE){
     # verifier le scale
     n = NROW(X)
     p = NCOL(X)
-    #rowNa=apply(is.na(X),1,sum,na.rm=T)==dim(X)[2]
-    vecMoyenne=apply(X,2,mean,na.rm=TRUE)
-    matMoyenne=matrix(rep(vecMoyenne,n),n,p)
+    vecMoyenne = apply(X,2,mean,na.rm=TRUE)
+    matMoyenne = matrix(rep(vecMoyenne,n), n, p)
     X[is.na(X)]=matMoyenne[is.na(X)]
     if(dual)
     { 
