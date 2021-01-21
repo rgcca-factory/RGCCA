@@ -14,12 +14,12 @@
 #'    permuted blocks: \eqn{X_1^*},..., \eqn{X_J^*}. \cr
 #'    \verb{    }(b) S/RGCCA is run on the permuted data sets \eqn{X_1^*},..., 
 #'       \eqn{X_J^*} to get canonical variates \eqn{a_1^*},..., \eqn{a_J^*}.\cr
-#'    \verb{    }(c) Record t* = sum_(j,k) c_jk g(Cov(X_j^*a_j^*, X_k^*w_k^*). 
+#'    \verb{    }(c) Record t* = sum_(j,k) c_jk g(Cov(X_j^*a_j^*, X_k^*a_k^*). 
 #'       
 #' (2) Sparse CCA is run on the blocks \eqn{X_1},..., \eqn{X_J} to obtain 
 #'     canonical variates \eqn{a_1},..., \eqn{a_J}. 
 #' 
-#' (3) Record t = sum_(j,k) c_jk g(Cov(X_ja_j, X_kw_k). 
+#' (3) Record t = sum_(j,k) c_jk g(Cov(X_ja_j, X_ka_k). 
 #' 
 #' (4) The resulting p-value is given by $mean(t* > t)$; that is, the fraction 
 #' of permuted totals that exceed the total on the real data. 
@@ -45,7 +45,7 @@
 #'  for RGCCA and $1/sqrt(ncol)$ for SGCCA) and 1.
 #' @param n_run An integer giving the number of permutation tested for each set 
 #' of constraint
-#' @return \item{zstat}{The Z statistic is the difference, for each combination, 
+#' @return \item{zstat}{The Z-statistic is the difference, for each combination, 
 #' between the non-permuted R/SGCCA criterion and the mean of the permuted 
 #' R/SGCCA criteria divided by the standard deviation of the permuted R/SGCCA 
 #' criteria.}
@@ -67,7 +67,6 @@
 #' matrix decomposition, with applications to sparse principal components and 
 #' canonical correlation analysis. Biostatistics, 10(3), 515-534.
 #' @examples
-#' 
 #' ####################################
 #' # Permutation based strategy for   #
 #' # determining the best shrinkage   # 
@@ -79,10 +78,12 @@
 #'               industry = Russett[, 4:5], 
 #'               politic = Russett[, 6:11] )
 #'               
-#' C <-  matrix(c(0, 0, 1, 0, 0, 1, 1, 1, 0), 3, 3)
+#' C <-  matrix(c(0, 0, 1, 
+#'                0, 0, 1, 
+#'                1, 1, 0), 3, 3)
 #' 
-#' # defaut value: it takes 10 sets between 0 
-#' # and 1 for each block
+#' # default value: 10 vectors from rep(0, length(blocks))
+#' # to rep(1, length(blocks)), uniformly distributed.
 
 #' fit = rgcca_permutation(blocks, connection = C,
 #'                         par_type = "tau", 
@@ -93,17 +94,20 @@
 #' fit$bestpenalties
 #' 
 #' # It is possible to define explicitly K combinations of shrinkage
-#' # parameters to ne tested and in that case a matrix of dimension KxJ is 
-#' required. Each row of this matrix corresponds to one specific set of 
-#' shrinkage parameters. 
-#'
+#' # parameters to be tested and in that case a matrix of dimension KxJ is 
+#' # required. Each row of this matrix corresponds to one specific set of 
+#' # shrinkage parameters. 
+#' # par_value = matrix(c(0, 0, 0, 
+#' #                      1, 1, 0,
+#' #                      0.5, 0.5, 0.5,
+#' #                      sapply(A, RGCCA:::tau.estimate), 
+#' #                      1, 1, 1), 5, 3, byrow = TRUE)
+#' 
 #' par_value = matrix(c(0, 0, 0, 
 #'                      1, 1, 0,
 #'                      0.5, 0.5, 0.5,
-#'                      sapply(A, tau.estimate), 
-#'                      1, 1, 1), 5, 3, byrow = TRUE)
+#'                      1, 1, 1), 4, 3, byrow = TRUE)
 #'                                                                  
-#' 
 #' fit <- rgcca_permutation(blocks, connection = C,
 #'                          par_type = "tau", 
 #'                          par_value = par_value, 
@@ -118,8 +122,9 @@
 #' # parameters (par_type = "sparsity") #
 #' ######################################
 #' 
-#' # defaut value: it takes 10 sets between min values 
-#' # 1/sqrt(ncol) and 1, for each block.
+#' # defaut value: 10 vectors from minimum values 
+#' # (1/sqrt(ncol(X1)), ..., 1/sqrt(ncol(XJ)) 
+#' # to rep(1, J), uniformly distributed.
 #' 
 #' fit <- rgcca_permutation(blocks, par_type = "sparsity", 
 #'                          n_run = 5, n_cores = 1)
@@ -129,9 +134,9 @@
 #' fit$bestpenalties  
 #' 
 #' # when par_value is a vector of length J. Each element of the vector 
-#' # indicates the maximum value of sparsity to be considered. 
-#' # par_length indicates the number of combinations to be 
-#' # tested (default = 10)
+#' # indicates the maximum value of sparsity to be considered for each block.
+#' # par_length (default value = 10) vectors from minimum values (1/sqrt(ncol(X1)), ..., 1/sqrt(ncol(XJ)) 
+#' # to maximum values, uniformly distributed, are then considered. 
 #' 
 #' fit <- rgcca_permutation(blocks, connection = C, 
 #'                          par_type = "sparsity", 
@@ -157,32 +162,34 @@
 #' # speed up the permutation procedure #
 #' ######################################
 #' 
-#' The rgcca_permutation function can be quite time-consuming. Since an 
-#' approximate estimate of the block weight vectors is acceptable in this case,  
-#' it is possible to reduce the value of the tolerance (tol argument) of the 
-#' RGCCA algorithm to speed up this permutation procedure.
-#'  
-#' require(gliomaData)
-#' data(ge_cgh_locIGR)
-#' A <- ge_cgh_locIGR$multiblocks
-#' Loc <- factor(ge_cgh_locIGR$y)
-#' levels(Loc) <- colnames(ge_cgh_locIGR$multiblocks$y)
-#' A[[3]] = A[[3]][, -3]
-#' C <-  matrix(c(0, 0, 1, 0, 0, 1, 1, 1, 0), 3, 3)
-#'  
+#' # The rgcca_permutation function can be quite time-consuming. Since an 
+#' # approximate estimate of the block weight vectors is acceptable in this 
+#' # case, it is possible to reduce the value of the tolerance (tol argument) 
+#' # of the RGCCA algorithm to speed up this permutation procedure.
+#' # 
+#' # require(gliomaData)
+#' # data(ge_cgh_locIGR)
+#' # A <- ge_cgh_locIGR$multiblocks
+#' # Loc <- factor(ge_cgh_locIGR$y)
+#' # levels(Loc) <- colnames(ge_cgh_locIGR$multiblocks$y)
+#' # A[[3]] = A[[3]][, -3]
+#' # C <-  matrix(c(0, 0, 1, 0, 0, 1, 1, 1, 0), 3, 3)
+#' #
 #' # check dimensions of the blocks
-#' sapply(A, dim)
-#' 
-#' par_value = matrix(c(seq(0.1, 1, by = 0.1),
-#'                    seq(0.1, 1, by = 0.1),
-#'                    rep(0, 10)), 10, 3, byrow = FALSE)
-#'                       
-#' system.time(fit <- rgcca_permutation(A, connection = C, 
-#'                          par_type = "tau", 
-#'                          par_value = par_value,
-#'                          par_length = 10,
-#'                          n_run = 10, n_cores = 1, tol = 1e-2)
-#'                          )
+#' # sapply(A, dim)
+#' #
+#' # par_value = matrix(c(seq(0.1, 1, by = 0.1),
+#' #                      seq(0.1, 1, by = 0.1),
+#' #                      rep(0, 10)), 10, 3, byrow = FALSE)
+#' #                       
+#' # system.time(fit <- rgcca_permutation(A, connection = C, 
+#' #                          par_type = "tau", 
+#' #                          par_value = par_value,
+#' #                          par_length = 10,
+#' #                          n_run = 10, n_cores = 1, tol = 1e-2)
+#' #                          )
+#' # print(fit)
+#' # plot(fit)
 #' 
 #' @export
 rgcca_permutation <- function(
@@ -203,7 +210,7 @@ rgcca_permutation <- function(
     sparsity = rep(1, length(blocks)),
     init = "svd",
     bias = TRUE,
-    tol = 1e-3,
+    tol = 1e-8,
     response = NULL,
     superblock = FALSE,
     method = "nipals",

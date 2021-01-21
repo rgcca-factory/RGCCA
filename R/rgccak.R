@@ -1,7 +1,7 @@
 #' The function rgccak() is called by rgccad() and does not have to be used by 
 #' the user. The function rgccak() computes the RGCCA block components, block 
 #' weight vectors, etc., for each block and each dimension. Depending on the 
-#' dimensionality of each block \eqn{X_j , j = 1, ..., J}, the primal 
+#' dimensionality of each block \eqn{X_j, j = 1, ..., J}, the primal 
 #' (when \eqn{n > p_j}) or the dual (when \eqn{n < p_j}) algorithm is used 
 #' (see Tenenhaus et al. 2015) 
 #' @inheritParams select_analysis
