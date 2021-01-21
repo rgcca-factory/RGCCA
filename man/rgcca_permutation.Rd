@@ -2,7 +2,7 @@
 % Please edit documentation in R/rgcca_permutation.R
 \name{rgcca_permutation}
 \alias{rgcca_permutation}
-\title{Tune RGCCA parameters with permutation}
+\title{Tune the S/RGCCA hyper-parameters by permutation.}
 \usage{
 rgcca_permutation(
   blocks,
@@ -148,29 +148,119 @@ non-permuted R/SGCCA criterion}
 combinations (tau or sparsity)}
 }
 \description{
-Tune the sparsity coefficient (if the model is sparse) or tau 
-(otherwise) by observing the deviation between the model and a set of models 
- where the lines of each block are permuted. The model with the best 
-combination of parameters is the one with the highest deviation with the 
-RGCCA criteria.
+This function can be used to automatically to select the hyper-parameters 
+(amount of sparsity for sgcca and shrinkage parameters for RGCCA)
+A permutation based strategy very similar to the one proposed in 
+(Witten et al, 2009) is proposed.
+}
+\details{
+The tuning parameters are selected using a permutation scheme. For each 
+candidate tuning parameter value, the following is performed: 
+
+(1) Repeat the following n_run times (for n_run large): \cr
+   \verb{    }(a) The samples in \eqn{X_1},..., \eqn{X_J} are randomly 
+   permuted blocks: \eqn{X_1^*},..., \eqn{X_J^*}. \cr
+   \verb{    }(b) S/RGCCA is run on the permuted data sets \eqn{X_1^*},..., 
+      \eqn{X_J^*} to get canonical variates \eqn{a_1^*},..., \eqn{a_J^*}.\cr
+   \verb{    }(c) Record t* = sum_(j,k) c_jk g(Cov(X_j^*a_j^*, X_k^*w_k^*). 
+      
+(2) Sparse CCA is run on the blocks \eqn{X_1},..., \eqn{X_J} to obtain 
+    canonical variates \eqn{a_1},..., \eqn{a_J}. 
+
+(3) Record t = sum_(j,k) c_jk g(Cov(X_ja_j, X_kw_k). 
+
+(4) The resulting p-value is given by $mean(t* > t)$; that is, the fraction 
+of permuted totals that exceed the total on the real data. 
+Then, choose the tuning parameter value that gives the smallest value in 
+Step 4.
+
+This function only selects tuning parameters for the first S/RGCCA block 
+componentslevelfactors. By default, this function performs a one-dimensional 
+search in tuning parameter space.
 }
 \examples{
+
+####################################
+# Permutation based strategy for   #
+# determining the best shrinkage   # 
+# parameters (tau)                 #
+####################################
+
 data("Russett")
-blocks = list(agriculture = Russett[, seq(3)], industry = Russett[, 4:5],
-    politic = Russett[, 6:11] )
-res = rgcca_permutation(blocks,par_type="tau", n_run = 5, n_cores = 1)
-rgcca_permutation(blocks, par_type = "sparsity", par_value = 0.8, n_run = 2,
- n_cores = 1)
-rgcca_permutation(blocks, par_type = "sparsity", par_value = c(0.6, 0.75, 0.5), 
-n_run = 2, n_cores = 1)
-rgcca_permutation(blocks, par_type = "sparsity", 
-par_value = matrix(c(0.6, 0.75, 0.5), 3, 3, byrow = TRUE),
- n_run = 2, n_cores = 1)
-rgcca_permutation(blocks, par_type = "tau", par_value = 0.8, n_run= 2, 
-n_cores = 1)
-rgcca_permutation(blocks, par_type = "tau", par_value = c(0.6, 0.75, 0.5),
- n_run = 2, n_cores = 1)
-rgcca_permutation(blocks, par_type = "tau", par_value = 
-matrix(c(0.6, 0.75, 0.5), 3, 3, byrow = TRUE),  n_run = 2, n_cores = 1)
-print(res)
+blocks = list(agriculture = Russett[, seq(3)], 
+              industry = Russett[, 4:5], 
+              politic = Russett[, 6:11] )
+
+# defaut value: it takes 10 sets between 0 
+# and 1 for each block
+fit = rgcca_permutation(blocks, par_type = "tau", 
+                        n_run = 5, n_cores = 1)
+                        
+print(fit)
+plot(fit)
+fit$bestpenalties
+
+# It is possible to define explicitly K combinations of shrinkage
+# parameters to ne tested and in that case a matrix of dimension KxJ is 
+required. Each row of this matrix corresponds to one specific set of 
+shrinkage parameters. 
+
+par_value = matrix(c(0, 0, 0, 
+                     1, 1, 0,
+                     0.5, 0.5, 0.5,
+                     sapply(A, tau.estimate), 
+                     1, 1, 1), 5, 3, byrow = TRUE)
+                                                                 
+
+fit <- rgcca_permutation(blocks, par_type = "tau", 
+                         par_value = par_value, 
+                         n_run = 5, n_cores = 1)
+
+print(fit)
+plot(fit)
+
+####################################
+# Permutation based strategy for   #
+# determining the best sparsity    # 
+# parameters                       #
+####################################
+
+# defaut value: it takes 10 sets between min values 
+# 1/sqrt(ncol) and 1, for each block.
+
+fit <- rgcca_permutation(blocks, par_type = "sparsity", 
+                         n_run = 5, n_cores = 1)
+                         
+print(fit)
+plot(fit)
+fit$bestpenalties  
+
+# when par_value is a vector of length J. Each element of the vector 
+# indicates the maximum value of sparsity to be considered from 
+# minimum values. par_length indicates the number of combinations 
+# to be tested (defaut = 10)
+
+fit <- rgcca_permutation(blocks, par_type = "sparsity", 
+                         par_value = c(0.6, 0.75, 0.5), 
+                         par_length = 7, n_run = 20, 
+                         n_cores = 1)
+                         
+	print(fit)
+	plot(fit)
+	fit$bestpenalties
+	
+# when par_value is a scalar, the same maximum value is applied 
+# for each block
+
+fit <- rgcca_permutation(blocks, par_type = "sparsity", 
+                          par_value = 0.8, par_length = 5, 
+                          n_run = 10, n_cores = 1)
+   
+fit$penalties    
+
+}
+\references{
+Witten, D. M., Tibshirani, R., & Hastie, T. (2009). A penalized 
+matrix decomposition, with applications to sparse principal components and 
+canonical correlation analysis. Biostatistics, 10(3), 515-534.
 }

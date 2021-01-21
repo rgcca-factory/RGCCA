@@ -1,10 +1,35 @@
-#' Tune RGCCA parameters with permutation
+#' Tune the S/RGCCA hyper-parameters by permutation.
 #' 
-#' Tune the sparsity coefficient (if the model is sparse) or tau 
-#' (otherwise) by observing the deviation between the model and a set of models 
-#'  where the lines of each block are permuted. The model with the best 
-#' combination of parameters is the one with the highest deviation with the 
-#' RGCCA criteria.
+#' This function can be used to automatically to select the hyper-parameters 
+#' (amount of sparsity for sgcca and shrinkage parameters for RGCCA)
+#' A permutation based strategy very similar to the one proposed in 
+#' (Witten et al, 2009) is proposed.
+#' 
+#' @details 
+#' The tuning parameters are selected using a permutation scheme. For each 
+#' candidate tuning parameter value, the following is performed: 
+#' 
+#' (1) Repeat the following n_run times (for n_run large): \cr
+#'    \verb{    }(a) The samples in \eqn{X_1},..., \eqn{X_J} are randomly 
+#'    permuted blocks: \eqn{X_1^*},..., \eqn{X_J^*}. \cr
+#'    \verb{    }(b) S/RGCCA is run on the permuted data sets \eqn{X_1^*},..., 
+#'       \eqn{X_J^*} to get canonical variates \eqn{a_1^*},..., \eqn{a_J^*}.\cr
+#'    \verb{    }(c) Record t* = sum_(j,k) c_jk g(Cov(X_j^*a_j^*, X_k^*w_k^*). 
+#'       
+#' (2) Sparse CCA is run on the blocks \eqn{X_1},..., \eqn{X_J} to obtain 
+#'     canonical variates \eqn{a_1},..., \eqn{a_J}. 
+#' 
+#' (3) Record t = sum_(j,k) c_jk g(Cov(X_ja_j, X_kw_k). 
+#' 
+#' (4) The resulting p-value is given by $mean(t* > t)$; that is, the fraction 
+#' of permuted totals that exceed the total on the real data. 
+#' Then, choose the tuning parameter value that gives the smallest value in 
+#' Step 4.
+#' 
+#' This function only selects tuning parameters for the first S/RGCCA block 
+#' componentslevelfactors. By default, this function performs a one-dimensional 
+#' search in tuning parameter space.
+#' 
 #' @inheritParams set_connection
 #' @inheritParams bootstrap
 #' @inheritParams rgcca
@@ -38,25 +63,127 @@
 #' non-permuted R/SGCCA criterion}
 #' @return \item{penalties}{A matrix giving, for each blocks, the penalty 
 #' combinations (tau or sparsity)}
+#' @references Witten, D. M., Tibshirani, R., & Hastie, T. (2009). A penalized 
+#' matrix decomposition, with applications to sparse principal components and 
+#' canonical correlation analysis. Biostatistics, 10(3), 515-534.
 #' @examples
+#' 
+#' ####################################
+#' # Permutation based strategy for   #
+#' # determining the best shrinkage   # 
+#' # parameters (par_type = "tau")    #
+#' ####################################
+#' 
 #' data("Russett")
-#' blocks = list(agriculture = Russett[, seq(3)], industry = Russett[, 4:5],
-#'     politic = Russett[, 6:11] )
-#' res = rgcca_permutation(blocks,par_type="tau", n_run = 5, n_cores = 1)
-#' rgcca_permutation(blocks, par_type = "sparsity", par_value = 0.8, n_run = 2,
-#'  n_cores = 1)
-#' rgcca_permutation(blocks, par_type = "sparsity", par_value = c(0.6, 0.75, 0.5), 
-#' n_run = 2, n_cores = 1)
-#' rgcca_permutation(blocks, par_type = "sparsity", 
-#' par_value = matrix(c(0.6, 0.75, 0.5), 3, 3, byrow = TRUE),
-#'  n_run = 2, n_cores = 1)
-#' rgcca_permutation(blocks, par_type = "tau", par_value = 0.8, n_run= 2, 
-#' n_cores = 1)
-#' rgcca_permutation(blocks, par_type = "tau", par_value = c(0.6, 0.75, 0.5),
-#'  n_run = 2, n_cores = 1)
-#' rgcca_permutation(blocks, par_type = "tau", par_value = 
-#' matrix(c(0.6, 0.75, 0.5), 3, 3, byrow = TRUE),  n_run = 2, n_cores = 1)
-#' print(res)
+#' blocks = list(agriculture = Russett[, seq(3)], 
+#'               industry = Russett[, 4:5], 
+#'               politic = Russett[, 6:11] )
+#'               
+#' C <-  matrix(c(0, 0, 1, 0, 0, 1, 1, 1, 0), 3, 3)
+#' 
+#' # defaut value: it takes 10 sets between 0 
+#' # and 1 for each block
+
+#' fit = rgcca_permutation(blocks, connection = C,
+#'                         par_type = "tau", 
+#'                         n_run = 5, n_cores = 1)
+#'                         
+#' print(fit)
+#' plot(fit)
+#' fit$bestpenalties
+#' 
+#' # It is possible to define explicitly K combinations of shrinkage
+#' # parameters to ne tested and in that case a matrix of dimension KxJ is 
+#' required. Each row of this matrix corresponds to one specific set of 
+#' shrinkage parameters. 
+#'
+#' par_value = matrix(c(0, 0, 0, 
+#'                      1, 1, 0,
+#'                      0.5, 0.5, 0.5,
+#'                      sapply(A, tau.estimate), 
+#'                      1, 1, 1), 5, 3, byrow = TRUE)
+#'                                                                  
+#' 
+#' fit <- rgcca_permutation(blocks, connection = C,
+#'                          par_type = "tau", 
+#'                          par_value = par_value, 
+#'                          n_run = 5, n_cores = 1)
+#' 
+#' print(fit)
+#' plot(fit)
+#' 
+#' ######################################
+#' # Permutation based strategy for     #
+#' # determining the best sparsity      # 
+#' # parameters (par_type = "sparsity") #
+#' ######################################
+#' 
+#' # defaut value: it takes 10 sets between min values 
+#' # 1/sqrt(ncol) and 1, for each block.
+#' 
+#' fit <- rgcca_permutation(blocks, par_type = "sparsity", 
+#'                          n_run = 5, n_cores = 1)
+#'                          
+#' print(fit)
+#' plot(fit)
+#' fit$bestpenalties  
+#' 
+#' # when par_value is a vector of length J. Each element of the vector 
+#' # indicates the maximum value of sparsity to be considered. 
+#' # par_length indicates the number of combinations to be 
+#' # tested (default = 10)
+#' 
+#' fit <- rgcca_permutation(blocks, connection = C, 
+#'                          par_type = "sparsity", 
+#'                          par_value = c(0.6, 0.75, 0.5), 
+#'                          par_length = 7, n_run = 20, 
+#'                          n_cores = 1, tol = 1e-3)
+#'                          
+#' 	print(fit)
+#' 	plot(fit)
+#' 	fit$bestpenalties
+#' 	
+#' # when par_value is a scalar, the same maximum value is applied 
+#' # for each block
+#' 
+#' fit <- rgcca_permutation(blocks, connection = C, 
+#'                          par_type = "sparsity", 
+#'                          par_value = 0.8, par_length = 5, 
+#'                          n_run = 10, n_cores = 1)
+#'    
+#' fit$penalties    
+#' 
+#' ######################################
+#' # speed up the permutation procedure #
+#' ######################################
+#' 
+#' The rgcca_permutation function can be quite time-consuming. Since an 
+#' approximate estimate of the block weight vectors is acceptable in this case,  
+#' it is possible to reduce the value of the tolerance (tol argument) of the 
+#' RGCCA algorithm to speed up this permutation procedure.
+#'  
+#' require(gliomaData)
+#' data(ge_cgh_locIGR)
+#' A <- ge_cgh_locIGR$multiblocks
+#' Loc <- factor(ge_cgh_locIGR$y)
+#' levels(Loc) <- colnames(ge_cgh_locIGR$multiblocks$y)
+#' A[[3]] = A[[3]][, -3]
+#' C <-  matrix(c(0, 0, 1, 0, 0, 1, 1, 1, 0), 3, 3)
+#'  
+#' # check dimensions of the blocks
+#' sapply(A, dim)
+#' 
+#' par_value = matrix(c(seq(0.1, 1, by = 0.1),
+#'                    seq(0.1, 1, by = 0.1),
+#'                    rep(0, 10)), 10, 3, byrow = FALSE)
+#'                       
+#' system.time(fit <- rgcca_permutation(A, connection = C, 
+#'                          par_type = "tau", 
+#'                          par_value = par_value,
+#'                          par_length = 10,
+#'                          n_run = 10, n_cores = 1, tol = 1e-2)
+#'                          )
+#' 
 #' @export
 rgcca_permutation <- function(
     blocks,
@@ -76,7 +203,7 @@ rgcca_permutation <- function(
     sparsity = rep(1, length(blocks)),
     init = "svd",
     bias = TRUE,
-    tol = 1e-8,
+    tol = 1e-3,
     response = NULL,
     superblock = FALSE,
     method = "nipals",
@@ -105,7 +232,6 @@ rgcca_permutation <- function(
         type <- rgcca_res$call$type
     }
    
-    # call <- as.list(formals(rgcca_permutation))
     check_integer("n_run", n_run)
     check_integer("par_length", n_run)
     check_integer("par_value", n_run, min = 0)
@@ -115,21 +241,15 @@ rgcca_permutation <- function(
         check_boolean("parallelization", parallelization)
     min_spars <- NULL
     
-    if (par_type == "sparsity") {
-        type2 <- "sgcca"
-    } 
-    if(par_type == "tau")
-    {
-      type2 <- "rgcca"
-    }
+    if (par_type == "sparsity") type2 <- "sgcca"
+    if(par_type == "tau") type2 <- "rgcca"
     if(is.null(type)){type=type2}
     call=list(type = type, par_type = par_type, par_value = par_value, 
               n_run = n_run, quiet = quiet, connection = connection, 
-              method=method, tol=tol, scheme = scheme, scale = scale,
+              method=method, tol = tol, scheme = scheme, scale = scale,
               scale_block = scale_block, blocks = blocks, 
               superblock = superblock)
     
-
     if (length(blocks) < 1)
         stop_rgcca("Permutation required a number of blocks larger than 1.\n")
 
@@ -158,62 +278,54 @@ rgcca_permutation <- function(
         if (par_type == "sparsity") 
         {
             if (!tolower(type) %in% c("spls", "spca", "sgcca"))
-                warning("The sparsity is chosen but the analyse was not sparse. By default, a SGCCA will be performed.")
+                warning("par_type = 'sparsity' but sparsity is not required... SGCCA is performed.")
             type <<- "sgcca"
             min_spars <<- sapply(ncols, function(x) 1 / sqrt(x))
         }else
         {
             if (tolower(type) %in% c("spls", "spca", "sgcca"))
-                warning("tau is selected but sparsity is required.RGCCA will be performed by default.")
+                warning("par_type = 'tau' but sparsity is required... RGCCA is performed.")
             type <<- "rgcca"
             min_spars <<- sapply(ncols, function(x) 0)
         }
         
         
-        if (is.null(par_value))
-            par_value <- set_spars()
-        else if ("data.frame"%in% class(par_value)||  "matrix"%in% class(par_value)) #when a matrix is entered
+        if (is.null(par_value)) par_value <- set_spars()
+        else if ("data.frame"%in% class(par_value)||"matrix"%in% class(par_value)) 
         {
-            if(par_type=="tau")
-            {
-                par_value <- t(sapply(seq(NROW(par_value)), function(x) check_tau(par_value[x, ], blocks, type = type,superblock=superblock)))
-            }
+          if(par_type=="tau"){
+            par_value <- t(sapply(seq(NROW(par_value)), 
+                                  function(x) check_tau(par_value[x, ], 
+                                                        blocks, 
+                                                        type = type, 
+                                                        superblock = superblock)
+                                  )
+                          )
+          }
                      
         }
         else #when a vector is entered
         {
             if (any(par_value < min_spars))
-                stop_rgcca(paste0("par_value should be upper than : ", paste0(round(min_spars, 2), collapse = ",")))
-             if(par_type=="tau")
+                stop_rgcca(paste0("par_value should be upper than : ", 
+                                  paste0(round(min_spars, 2), collapse = ",")))
+             if(par_type == "tau")
              {
-              par_value <- check_tau(par_value, blocks, type = type,superblock=superblock)
+              par_value <- check_tau(par_value, blocks, type = type, 
+                                     superblock = superblock)
               par_value <- set_spars(max = par_value)
              }
-           if(par_type=="sparsity"){par_value <- set_spars(max = par_value)}
+           if(par_type == "sparsity"){par_value <- set_spars(max = par_value)}
         }
 
-        if(superblock){coln=c(names(blocks),"superblock")}
-        else{coln=names(blocks)}
-        if(is.null(dim(par_value))){par_value=matrix(par_value,nrow=1)}
+        if(superblock){coln = c(names(blocks), "superblock")}
+        else{coln = names(blocks)}
+        if(is.null(dim(par_value))){par_value = matrix(par_value, nrow = 1)}
         colnames(par_value) <- coln
         return(list(par_type, par_value))
     }
 
-    switch(
-        par_type,
-    #     "ncomp" = {
-    #     if (!class(par_value) %in% c("data.frame", "matrix")) {
-    #         if (is.null(par_value) || any(par_value > ncols)) {
-    #             ncols[ncols > 5] <- 5
-    #             par_value <- ncols
-    #         }else
-    #             par_value <- check_ncomp(par_value, blocks)
-    #         par_value <- lapply(par_value, function(x) seq(x))
-    #         par_value <- expand.grid(par_value)
-    #     }else
-    #         par_value <- t(sapply(seq(NROW(par_value)), function(x) check_ncomp(par_value[x, ], blocks, 1)))
-    #     par <- list(par_type, par_value)
-    # },
+    switch(par_type,
     "sparsity" = par <- set_penalty(),
     "tau" = par <- set_penalty()
     )
@@ -221,50 +333,32 @@ rgcca_permutation <- function(
     message("Permutation in progress...\n", appendLF = FALSE)
 
     varlist <- c(ls(getNamespace("RGCCA")))
-    # get the parameter dot-dot-dot
-    # args_values <- list(...)
-    # args_names <- names(args_values)
-    # n <- args_values
-    # if (!is.null(n))
-    #     n <- seq(length(args_values))
-    # for (i in n) {
-    #     if (!is.null(args_names[i])) {
-    #         # dynamically asssign these values
-    #         assign(args_names[i], args_values[[i]])
-    #         # send them to the clusters to parallelize
-    #         varlist <- c(varlist, args_names[i])
-    #         # without this procedure rgcca_cv_k(rgcca_res, blocks = blocks2)
-    #         # or rgcca_cv_k(rgcca_res, blocks = lapply(blocks, scale)
-    #         # does not work.
-    #     }
-    # }
-
-    pb <- txtProgressBar(max=dim(par[[2]])[1])
-    crits=means=sds=rep(NA,nrow(par[[2]]))
-    permcrit=matrix(NA,nrow(par[[2]]),n_run)
+    pb <- txtProgressBar(max = dim(par[[2]])[1])
+    crits = means = sds = rep(NA, nrow(par[[2]]))
+    permcrit = matrix(NA, nrow(par[[2]]), n_run)
     for(i in 1:nrow(par[[2]]))
     {
       
         crits[i] <- rgcca_permutation_k(
             blocks,
-            connection=connection,
+            connection = connection,
             par_type = par[[1]],
-            par_value=par[[2]][i,],
+            par_value = par[[2]][i,],
             perm = FALSE,
             type = type,
-            quiet=quiet,
-            superblock=superblock,
-            scale=scale,
-            scale_block=scale_block,
-            scheme=scheme,
-            tol=tol,
-            method=method,
+            quiet = quiet,
+            superblock = superblock,
+            scale = scale,
+            scale_block = scale_block,
+            scheme = scheme,
+            tol = tol,
+            method = method,
             response = response,
             bias = bias,
             init = init,
             ncomp = ncomp,
             tau = tau,
-            sparsity=sparsity
+            sparsity = sparsity
         )
           
       
@@ -278,30 +372,30 @@ rgcca_permutation <- function(
                         par_value=par[[2]][i,],
                         type = type,
                         quiet = quiet,
-                        superblock=superblock,
-                        scheme=scheme,
-                        tol=tol,
-                        scale=scale,
-                        scale_block=scale_block,
-                        connection=connection,
-                        method=method,
+                        superblock = superblock,
+                        scheme = scheme,
+                        tol = tol,
+                        scale = scale,
+                        scale_block = scale_block,
+                        connection = connection,
+                        method = method,
                         response = response,
                         bias = bias,
                         init = init,
-                        ncomp=ncomp,
+                        ncomp = ncomp,
                         tau = tau,
-                        sparsity=sparsity
+                        sparsity = sparsity
                     ),
                 n_cores = n_cores,
                 envir = environment(),
                 applyFunc = "parSapply",
-                parallelization=parallelization
+                parallelization = parallelization
             )   
        
         
-        permcrit[i,] =res
-        means[i]=mean(permcrit[i,],na.rm=T)
-        sds[i]=sd(permcrit[i,],na.rm=T)
+        permcrit[i,] = res
+        means[i] = mean(permcrit[i,],na.rm=T)
+        sds[i] = sd(permcrit[i,],na.rm=T)
         setTxtProgressBar(pb, i)
     }
     cat("\n")
@@ -321,17 +415,17 @@ rgcca_permutation <- function(
             return(z)
         })
     rownames(par) = 1:NROW(par)
-    if(superblock){coln=c(names(blocks),"superblock")}
-    else{coln=names(blocks)}
-    colnames(par)=coln
+    if(superblock){coln = c(names(blocks), "superblock")}
+    else{coln = names(blocks)}
+    colnames(par) = coln
     structure(
         list(
-            call=call,
+            call = call,
             zstat = zs,
             bestpenalties = par[which.max(zs), ],
             permcrit = permcrit,
-            means=means,
-            sds=sds,
+            means = means,
+            sds = sds,
             crit = crits,
             pvals = pvals,
             penalties = par

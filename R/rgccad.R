@@ -213,15 +213,46 @@ rgccad=function (A, C = 1 - diag(length(A)), tau = rep(1, length(A)),
   # Superblock option
   if(!is.matrix(C)&& C == "superblock")
   {
+    #Construction of the superblock
     A = c(A, list(do.call(cbind, A)))
+    #Construction of the corresponding design matrix
     C = matrix(0, length(A), length(A))
     C[length(A), 1:(length(A)-1)]=1
-    C[1:(length(A)-1), length(A)]=1
-    tau=c(tau,1)
-    pjs=c(pjs,sum(pjs))
-    ncomp=c(ncomp,ncomp[1])
-    #tau=c(tau,0)
+    C = C+t(C)
+    # Shrinkage parameters
+    
+    if(is.null(tau)){
+      message("the shrinkage parameters have been 
+              automatically set to 1 for all blocks (incl. superblock)")
+      tau = rep(1, NCOL(C))
+    }
+    if(length(tau) == NCOL(C)-1){
+      message("the shrinkage parameter for the superblock has been 
+              automatically set to 1")
+      tau=c(tau,1)
+    }
+    if(!((length(tau) == NCOL(C)-1) | (length(tau) == NCOL(C))))
+      stop_rgcca("the length of the vector of shinkage parameters is not 
+                 appropriate.")
+    
+    # number of components per block
+    if(is.null(ncomp)){
+      message("the number of components per block has been 
+              automatically set to 1 for all blocks/superblock)")
+      ncomp = rep(1, NCOL(C))
+    }
+    if(length(ncomp) == NCOL(C)-1){
+      message("the number of global components has been 
+              automatically set to max(ncomp)")
+      ncomp =c(ncomp,max(ncomp))
+    }
+    if(!((length(ncomp) == NCOL(C)-1) | (length(tau) == NCOL(C))))
+      stop_rgcca("the ncomp argument has been filled inappropriately.")
+ 
+    # number of variables per block
+    pjs = c(pjs, sum(pjs))  
   }
+  
   AVE_X = list() 
   AVE_outer <- vector()
   ndefl <- ncomp - 1
@@ -243,10 +274,12 @@ rgccad=function (A, C = 1 - diag(length(A)), tau = rep(1, length(A)),
     Y <- NULL 
     for (b in 1:J) Y[[b]] <- result$Y[, b, drop = FALSE]
     for (j in 1:J)
-      AVE_X[[j]] = mean(cor(A[[j]], Y[[j]],use="pairwise.complete.obs")^2,na.rm=TRUE)
+      AVE_X[[j]] = mean(cor(A[[j]], Y[[j]],use="pairwise.complete.obs")^2,
+                        na.rm=TRUE)
 
     AVE_outer <- sum(pjs * unlist(AVE_X))/sum(pjs) 
-    AVE <- list(AVE_X = AVE_X, AVE_outer = AVE_outer, AVE_inner = result$AVE_inner)
+    AVE <- list(AVE_X = AVE_X, AVE_outer = AVE_outer, 
+                AVE_inner = result$AVE_inner)
     a <- lapply(result$a, cbind)
    
      for (b in 1:J) {
@@ -260,8 +293,9 @@ rgccad=function (A, C = 1 - diag(length(A)), tau = rep(1, length(A)),
     if(is.vector(tau))
       names(tau) = names(A)
     
-    out <- list(Y = Y, a = a, astar = a, C = C,  scheme = scheme, ncomp = ncomp, 
-                crit = result$crit, primal_dual = primal_dual, 
+    out <- list(Y = Y, a = a, astar = a, C = C,  scheme = scheme, 
+                ncomp = ncomp, crit = result$crit, 
+                primal_dual = primal_dual, 
                 AVE = AVE, A = A0, tau = tau, call = call)
     
     class(out) <- "rgccad"
