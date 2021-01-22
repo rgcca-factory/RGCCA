@@ -46,8 +46,15 @@ test_that("rgcca_sparsity", {
 
  res_perm=rgcca_permutation(blocks=blocks,n_cores=1,par_type="tau")
  test_that("rgcca_crit_perm", {expect_true(round(res_perm$crit[length(res_perm$crit)],digits=2)==2.42) })
+ test_that("rgcca_mat_connection0", {expect_true(dim(res_perm$call$connection)[1]==3) })
+ res=rgcca(res_perm)
 
-
+ res_perm=rgcca_permutation(blocks=blocks,n_cores=1,par_type="tau",superblock=TRUE)
+ test_that("rgcca_mat_connection", {expect_true(dim(res_perm$call$connection)[1]==4) })
+ 
+ res=rgcca(res_perm)
+ 
+ 
 # test_that("rgcca_permutation_optimal_tau", {
 #     expect_is(rgcca_permutation(blocks, tau = "optimal", n_cores = 1), "permutation")
 # }

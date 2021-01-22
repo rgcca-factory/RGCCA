@@ -211,6 +211,8 @@ test_that("upca_var2",{expect_true(upca_var)})
  test_that("sgcca",{expect_true( mean(abs(resSgcca$Y[[2]]-resRgcca$Y[[2]]))<1e-14)})
  
 
+ resSgcca = rgcca(A, type="sgcca",superblock=TRUE)
+ 
  
 # RGCCA
  

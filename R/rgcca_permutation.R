@@ -237,6 +237,7 @@ rgcca_permutation <- function(
         ncomp <- rgcca_res$call$ncomp
         sparsity <- rgcca_res$call$sparsity
         type <- rgcca_res$call$type
+        superblock <- rgcca_res$call$superblock
     }
    
     check_integer("n_run", n_run)
@@ -251,24 +252,35 @@ rgcca_permutation <- function(
     if (par_type == "sparsity") type2 <- "sgcca"
     if(par_type == "tau") type2 <- "rgcca"
     if(is.null(type)){type=type2}
-    call=list(type = type, par_type = par_type, par_value = par_value, 
-              n_run = n_run, quiet = quiet, connection = connection, 
-              method=method, tol = tol, scheme = scheme, scale = scale,
-              scale_block = scale_block, blocks = blocks, 
-              superblock = superblock)
+
     
-    if (length(blocks) < 1)
+
+    if (length(blocks) == 1)
         stop_rgcca("Permutation required a number of blocks larger than 1.\n")
 
     if(!superblock)
-    {
+    { 
         ncols <- sapply(blocks, NCOL)
+        call=list(type = type, par_type = par_type, par_value = par_value, 
+                  n_run = n_run, quiet = quiet, connection = connection, 
+                  method=method, tol=tol, scheme = scheme, scale = scale,
+                  scale_block = scale_block, 
+                  superblock = superblock,blocks=blocks)
     }
     else
     {
         ncol_block = sapply(blocks, NCOL)
         ncols <- c(ncol_block, sum(ncol_block))
         names(ncols)=c(names(ncol_block), "superblock")
+        J=length(ncols)
+        matConnection=matrix(0,J,J);
+        matConnection[1:(J-1),J]=1;matConnection[J,1:(J-1)]=1
+        rownames(matConnection) = colnames(matConnection) = names(ncols)
+        call=list(type = type, par_type = par_type, par_value = par_value, 
+                  n_run = n_run, quiet = quiet, connection = matConnection, 
+                  method=method, tol=tol, scheme = scheme, scale = scale,
+                  scale_block = scale_block, 
+                  superblock = superblock,blocks=blocks)
     }
  
     set_spars <- function(max = 1) {

@@ -211,6 +211,7 @@ rgcca <- function(
         if(blocks$call$par_type == "tau") tau = blocks$bestpenalties 
         if(blocks$call$par_type == "ncomp") ncomp = blocks$bestpenalties 
         if(blocks$call$par_type == "sparsity") sparsity = blocks$bestpenalties 
+        superblock <- blocks$call$superblock
         blocks <- blocks$call$blocks
     }
     if(class(blocks)=="cval")
@@ -267,8 +268,7 @@ rgcca <- function(
         par <- "tau"
         penalty <- tau
     }
-
-    if (superblock && any(penalty == "optimal"))
+     if (superblock && any(penalty == "optimal"))
         stop_rgcca("Optimal tau is not available with superblock option.")
   
     
