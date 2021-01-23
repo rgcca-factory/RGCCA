@@ -57,11 +57,11 @@ check_compx <- function(x, y, ncomp, blockx) {
         stop_rgcca(
             paste0(
                 x,
-                " is currently equals to ",
+                " is equals to ",
                 y,
-                " and should be comprise between 1 and ",
+                " and should be less than or equal to ",
                 ncomp[blockx],
-                " (the number of component for the selected block)."
+                " (the number of block component)."
             ),
             exit_code = 128
         )
@@ -98,7 +98,8 @@ check_connection <- function(C, blocks) {
     if (!all(rownames(C) %in% names(blocks)) || 
         !all(colnames(C) %in% names(blocks)))
         stop_rgcca(paste(msg,
-                         "have the rownames and the colnames that match with the names of the blocks."),
+                         "have the rownames and the colnames that match with 
+                         the names of the blocks."),
                    exit_code = 108)
     
     invisible(check_size_blocks(blocks, "connection matrix", C))

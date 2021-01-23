@@ -208,6 +208,7 @@ rgcca <- function(
         connection = blocks$call$connection
         tol = blocks$call$tol
         method = blocks$call$method
+        superblock = blocks$call$superblock
         if(blocks$call$par_type == "tau") tau = blocks$bestpenalties 
         if(blocks$call$par_type == "ncomp") ncomp = blocks$bestpenalties 
         if(blocks$call$par_type == "sparsity") sparsity = blocks$bestpenalties 

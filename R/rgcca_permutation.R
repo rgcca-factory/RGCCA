@@ -43,8 +43,8 @@
 #' giving sets of penalties (tau for RGCCA, sparsity for SGCCA) to be tested, 
 #' one row by combination. By default, it takes 10 sets between min values (0
 #'  for RGCCA and $1/sqrt(ncol)$ for SGCCA) and 1.
-#' @param n_run An integer giving the number of permutation tested for each set 
-#' of constraint
+#' @param \item{n_run}{Number of permutations for each set of constraints 
+#' (default is 20)}
 #' @return \item{zstat}{The Z-statistic is the difference, for each combination, 
 #' between the non-permuted R/SGCCA criterion and the mean of the permuted 
 #' R/SGCCA criteria divided by the standard deviation of the permuted R/SGCCA 
@@ -97,16 +97,16 @@
 #' # parameters to be tested and in that case a matrix of dimension KxJ is 
 #' # required. Each row of this matrix corresponds to one specific set of 
 #' # shrinkage parameters. 
+#' par_value = matrix(c(0, 0, 0, 
+#'                       1, 1, 0,
+#'                       0.5, 0.5, 0.5,
+#'                       sapply(blocks, RGCCA:::tau.estimate), 
+#'                       1, 1, 1), 5, 3, byrow = TRUE)
+#' 
 #' # par_value = matrix(c(0, 0, 0, 
 #' #                      1, 1, 0,
 #' #                      0.5, 0.5, 0.5,
-#' #                      sapply(A, RGCCA:::tau.estimate), 
-#' #                      1, 1, 1), 5, 3, byrow = TRUE)
-#' 
-#' par_value = matrix(c(0, 0, 0, 
-#'                      1, 1, 0,
-#'                      0.5, 0.5, 0.5,
-#'                      1, 1, 1), 4, 3, byrow = TRUE)
+#' #                      1, 1, 1), 4, 3, byrow = TRUE)
 #'                                                                  
 #' fit <- rgcca_permutation(blocks, connection = C,
 #'                          par_type = "tau", 
@@ -135,8 +135,9 @@
 #' 
 #' # when par_value is a vector of length J. Each element of the vector 
 #' # indicates the maximum value of sparsity to be considered for each block.
-#' # par_length (default value = 10) vectors from minimum values (1/sqrt(ncol(X1)), ..., 1/sqrt(ncol(XJ)) 
-#' # to maximum values, uniformly distributed, are then considered. 
+#' # par_length (default value = 10) vectors from minimum values 
+#' # (1/sqrt(ncol(X1)), ..., 1/sqrt(ncol(XJ)) to maximum values, uniformly 
+#' # distributed, are then considered. 
 #' 
 #' fit <- rgcca_permutation(blocks, connection = C, 
 #'                          par_type = "sparsity", 
@@ -355,10 +356,8 @@ rgcca_permutation <- function(
     pb <- txtProgressBar(max = dim(par[[2]])[1])
     crits = means = sds = rep(NA, nrow(par[[2]]))
     permcrit = matrix(NA, nrow(par[[2]]), n_run)
-    for(i in 1:nrow(par[[2]]))
-    {
-      
-        crits[i] <- rgcca_permutation_k(
+    for(i in 1:nrow(par[[2]])){
+      crits[i] <- rgcca_permutation_k(
             blocks,
             connection = connection,
             par_type = par[[1]],
@@ -379,7 +378,7 @@ rgcca_permutation <- function(
             tau = tau,
             sparsity = sparsity
         )
-          
+         
       
             res<- parallelize(
                 varlist,

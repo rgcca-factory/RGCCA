@@ -208,16 +208,16 @@ fit$bestpenalties
 # parameters to be tested and in that case a matrix of dimension KxJ is 
 # required. Each row of this matrix corresponds to one specific set of 
 # shrinkage parameters. 
+par_value = matrix(c(0, 0, 0, 
+                      1, 1, 0,
+                      0.5, 0.5, 0.5,
+                      sapply(blocks, RGCCA:::tau.estimate), 
+                      1, 1, 1), 5, 3, byrow = TRUE)
+
 # par_value = matrix(c(0, 0, 0, 
 #                      1, 1, 0,
 #                      0.5, 0.5, 0.5,
-#                      sapply(A, RGCCA:::tau.estimate), 
-#                      1, 1, 1), 5, 3, byrow = TRUE)
-
-par_value = matrix(c(0, 0, 0, 
-                     1, 1, 0,
-                     0.5, 0.5, 0.5,
-                     1, 1, 1), 4, 3, byrow = TRUE)
+#                      1, 1, 1), 4, 3, byrow = TRUE)
                                                                  
 fit <- rgcca_permutation(blocks, connection = C,
                          par_type = "tau", 
@@ -246,8 +246,9 @@ fit$bestpenalties
 
 # when par_value is a vector of length J. Each element of the vector 
 # indicates the maximum value of sparsity to be considered for each block.
-# par_length (default value = 10) vectors from minimum values (1/sqrt(ncol(X1)), ..., 1/sqrt(ncol(XJ)) 
-# to maximum values, uniformly distributed, are then considered. 
+# par_length (default value = 10) vectors from minimum values 
+# (1/sqrt(ncol(X1)), ..., 1/sqrt(ncol(XJ)) to maximum values, uniformly 
+# distributed, are then considered. 
 
 fit <- rgcca_permutation(blocks, connection = C, 
                          par_type = "sparsity", 

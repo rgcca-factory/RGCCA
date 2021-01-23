@@ -2,7 +2,7 @@
 % Please edit documentation in R/bootstrap.R
 \name{bootstrap}
 \alias{bootstrap}
-\title{Compute bootstrap}
+\title{Bootstrap confidence intervals and p-values}
 \usage{
 bootstrap(
   rgcca_res,
@@ -30,8 +30,8 @@ calculated for each bootstrap sample in column. 'rgcca' is the original
 rgcca object. (see  \code{\link[RGCCA]{rgcca}})
 }
 \description{
-Compute boostrap of RGCCA in order to evaluate the stability of the weights 
-found in S/RGCCA
+Boostrap confidence intervals and p-values for evaluating the significancy/ 
+stability of the block-weight vectors  in S/RGCCA
 }
 \examples{
 data("Russett")

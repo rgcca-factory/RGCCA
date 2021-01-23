@@ -1,25 +1,29 @@
-#' Compute bootstrap
+#' Bootstrap confidence intervals and p-values
 #'
-#' Compute boostrap of RGCCA in order to evaluate the stability of the weights 
-#' found in S/RGCCA
+#' Boostrap confidence intervals and p-values for evaluating the significancy/ 
+#' stability of the block-weight vectors produce by S/RGCCA
 #' @inheritParams plot2D
-#' @param n_boot An integer for the number of boostraps
-#' @param n_cores An integer for the number of cores used in parallelization 
-#' @param parallelization A logical value to run a parallelization. 
-#' If parallelization = NULL (default), the parallelization is always 
-#' performed except for Windows if length(n_boot) < 10.
+#' @param n_boot Number of bootstrap iterations. Default is 100.
+#' @param n_cores Number of cores for parallelization 
+#' @param parallelization if TRUE, the bootstrap is processed in parallel. If 
+#' parallelization = NULL (default), parallelization is always performed except 
+#' for Windows if length(n_boot) < 10.
 #' @return A list containing two objects: 'bootstrap' and 'rgcca'. 
 #' 'bootstrap' is a list containing for each block, a matrix 
 #' with the variables of the block in row and the block weight vector
-#' calculated for each bootstrap sample in column. 'rgcca' is the original 
-#' rgcca object. (see  \code{\link[RGCCA]{rgcca}})
+#' calculated accross bootstrap sample in column. 'rgcca' is the original 
+#' fitted rgcca object. (see  \code{\link[RGCCA]{rgcca}})
 #' @examples
 #' data("Russett")
-#' blocks = list(agriculture = Russett[, seq(3)], industry = Russett[, 4:5],
-#'     politic = Russett[, 6:11] )
-#' rgcca_out = rgcca(blocks)
-#' b=bootstrap(rgcca_out, n_boot = 2, n_cores = 1)
-#' plot(b,n_cores=1)
+#' blocks = list(agriculture = Russett[, seq(3)], 
+#'               industry = Russett[, 4:5], 
+#'               politic = Russett[, c(6:9, 11)]
+#'               )
+#'               
+#' fit.rgcca = rgcca(blocks)
+#' boot_rgcca = bootstrap(fit.rgcca, n_boot = 50)
+#' plot(boot_rgcca, block = 3)
+#' 
 #' @export
 #' @seealso \code{\link[RGCCA]{plot.bootstrap}} , 
 #' \code{\link[RGCCA]{print.bootstrap}} 
@@ -28,7 +32,6 @@ bootstrap <- function(
     n_boot = 100,
     n_cores = parallel::detectCores() - 1,
     parallelization = NULL) {
-    
     ndefl_max = max(rgcca_res$call$ncomp)
     list_res = list()
     for(i in 1:ndefl_max)

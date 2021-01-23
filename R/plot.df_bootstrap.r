@@ -5,7 +5,7 @@
 #' @inheritParams plot_var_2D
 #' @inheritParams plot_var_1D
 #' @inheritParams plot.rgcca
-#' @param x A bootstrap object (see \code{\link[RGCCA]{bootstrap}})
+#' @param x A fitted bootstrap object (see \code{\link[RGCCA]{bootstrap}})
 #' @inheritParams plot_bootstrap_1D
 #' @inheritParams plot_bootstrap_2D
 #' @inheritParams plot.rgcca
@@ -18,32 +18,42 @@
 #' b=bootstrap(rgcca_out, n_boot = 2, n_cores = 1)
 #' plot(b,n_cores=1)
 
-plot.bootstrap=function(x,block=length(x$rgcca$call$blocks),comp=1,n_mark=30,bars="quantile",colors=NULL,title=NULL,cex=1,n_cores= parallel::detectCores() - 1,collapse = FALSE, cex_main = 14,
-    cex_sub = 12, cex_point = 10, cex_lab = 10, cex_axis = 10, ...)
+plot.bootstrap=function(x, block = length(x$rgcca$call$blocks), 
+                        comp = 1, n_mark = 30, bars = "quantile",
+                        colors = NULL, title = NULL, cex = 1,
+                        n_cores = parallel::detectCores() - 1,
+                        collapse = FALSE, cex_main = 14, cex_sub = 12, 
+                        cex_point = 10, cex_lab = 10, cex_axis = 10, ...)
 {
     stopifnot(is(x, "bootstrap"))
     check_blockx("block", block, x$rgcca$call$blocks)
     if(x$rgcca$call$superblock)
     {
         if(block==length(x$rgcca$call$blocks))
-        {
             block=length(x$rgcca$call$blocks)-1
-        }
-
     }
-   
-        if(x$rgcca$call$type%in%c("sgcca","spls","spca"))
+
+    if(x$rgcca$call$type%in%c("sgcca", "spls", "spca"))
         {
-            x1="occurrences";
-            y1="estimate";
+            x1="occurrences"
+            y1="estimate"
             title=ifelse(is.null(title),
-                         paste0("Occurrences: ",names(x$rgcca$call$blocks)[block], " \n(", ncol(x$bootstrap[[1]][[1]])," bootstraps, comp ",comp,")"),title)
+                         paste0("Occurrences (", 
+                                names(x$rgcca$call$blocks)[block], 
+                                ")\n(", ncol(x$bootstrap[[1]][[1]]),
+                                " bootstrap sample, comp ", comp, ")"), title)
         }
          else
          {
             x1="estimate";
             y1="sign";
-            title=ifelse(is.null(title),paste0("Weights: ",names(x$rgcca$call$blocks)[block],"\n (", ncol(x$bootstrap[[1]][[1]])," bootstraps,comp ",comp,")"),title)}
+            title=ifelse(is.null(title), 
+                         paste0("Bootstrap confidence interval (",
+                                names(x$rgcca$call$blocks)[block], ")\n (", 
+                                ncol(x$bootstrap[[1]][[1]]),
+                                " bootstrap samples, comp ", comp, ")" ), title)
+         }
+    
            
          p1=plot_bootstrap_1D(
             b = x,
