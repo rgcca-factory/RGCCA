@@ -43,13 +43,16 @@ covariance maximization among "horst" (the identity function), "factorial"
  scheme penalizes structural negative correlation. The factorial scheme 
  discriminates more strongly the blocks than the centroid one.}
 
-\item{scale}{A logical value indicating if each block is normalised and divided by the square root of its number of variables and then divided by the square root of its number of variables.}
+\item{scale}{A logical value indicating if each block is standardized}
 
-\item{tol}{An integer giving the value for stopping the algorithm convergence.}
+\item{tol}{The stopping value for the convergence of the algorithm.}
 
-\item{init}{A character giving the mode of initialization to use in the algorithm. The alternatives are either by Singular Value Decompostion ("svd") or random ("random") (default: "svd").}
+\item{init}{A character giving the mode of initialization to use in the 
+algorithm. The alternatives are either by Singular Value Decompostion ("svd") 
+or random ("random") (default: "svd").}
 
-\item{bias}{A logical value for biaised (\eqn{1/n}) or unbiaised (\eqn{1/(n-1)}) estimator of the var/cov (default: bias = TRUE).}
+\item{bias}{A logical value for biaised (\eqn{1/n}) or unbiaised 
+(\eqn{1/(n-1)}) estimator of the var/cov (default: bias = TRUE).}
 
 \item{verbose}{A boolean displaying the warnings}
 

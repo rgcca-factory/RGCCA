@@ -27,11 +27,16 @@ matrices (\eqn{X_{h1}, X_{h2}, ..., X_{hJ}}).}
 \item{C}{A symmetric matrix (J*J) that describes the relationships between 
 blocks.}
 
-\item{tau}{Either a 1*J vector or a \eqn{\mathrm{max}(ncomp) \times J} matrix containing the values 
-of the regularization parameters (default: tau = 1, for each block and each dimension). Tau varies from 0 (maximizing the correlation) to 1 (maximizing the covariance).
-If tau = "optimal" the regularization paramaters are estimated for each block and each dimension using the Schafer and Strimmer (2005)
-analytical formula . If tau is a \eqn{1\times J} vector, tau[j] is identical across the dimensions of block \eqn{\mathbf{X}_j}. 
-If tau is a matrix, tau[k, j] is associated with \eqn{\mathbf{X}_{jk}} (\eqn{k}th residual matrix for block \eqn{j}). It can be estimated by using \link{rgcca_permutation}.}
+\item{tau}{Either a 1*J vector or a \eqn{\mathrm{max}(ncomp) \times J} matrix 
+containing the values of the regularization parameters (default: tau = 1, 
+for each block and each dimension). Tau varies from 0 (maximizing the 
+correlation) to 1 (maximizing the covariance). If tau = "optimal" the 
+regularization paramaters are estimated for each block and each dimension 
+using the Schafer and Strimmer (2005) analytical formula . If tau is a 
+\eqn{1\times J} vector, tau[j] is identical across the dimensions of block 
+\eqn{\mathbf{X}_j}. If tau is a matrix, tau[k, j] is associated with 
+\eqn{\mathbf{X}_{jk}} (\eqn{k}th residual matrix for block \eqn{j}). It can 
+be estimated by using \link{rgcca_permutation}.}
 
 \item{scheme}{A character or a function giving the link function for 
 covariance maximization among "horst" (the identity function), "factorial"
@@ -41,18 +46,22 @@ covariance maximization among "horst" (the identity function), "factorial"
 
 \item{verbose}{A boolean displaying the warnings}
 
-\item{init}{A character giving the mode of initialization to use in the algorithm. The alternatives are either by Singular Value Decompostion ("svd") or random ("random") (default: "svd").}
+\item{init}{A character giving the mode of initialization to use in the 
+algorithm. The alternatives are either by Singular Value Decompostion ("svd") 
+or random ("random") (default: "svd").}
 
-\item{bias}{A logical value for biaised (\eqn{1/n}) or unbiaised (\eqn{1/(n-1)}) estimator of the var/cov (default: bias = TRUE).}
+\item{bias}{A logical value for biaised (\eqn{1/n}) or unbiaised 
+(\eqn{1/(n-1)}) estimator of the var/cov (default: bias = TRUE).}
 
-\item{tol}{An integer giving the value for stopping the algorithm convergence.}
+\item{tol}{The stopping value for the convergence of the algorithm.}
 
 \item{na.rm}{If TRUE, RGCCA is run only on available data (default value) 
 otherwise the NIPALS algorithm is used.}
 
-\item{scale}{A logical value indicating if each block is normalised and divided by the square root of its number of variables and then divided by the square root of its number of variables.}
+\item{scale}{A logical value indicating if each block is standardized}
 
-\item{scale_block}{A logical value indicating if each block have the same weight in the RGCCA analysis. Otherwise, the weight of each block depends on the number of variables of the block}
+\item{scale_block}{A logical value indicating if each block is divided by 
+the square root of its number of variables.}
 }
 \value{
 \item{Y}{A \eqn{n * J} matrix of block components}

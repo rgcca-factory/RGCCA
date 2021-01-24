@@ -41,11 +41,12 @@ rgcca_cv_k(
 
 \item{k}{An integer giving the number of folds (if validation = 'kfold').}
 
-\item{scale}{A logical value indicating if each block is normalised and divided by the square root of its number of variables and then divided by the square root of its number of variables.}
+\item{scale}{A logical value indicating if each block is standardized}
 
-\item{scale_block}{A logical value indicating if each block have the same weight in the RGCCA analysis. Otherwise, the weight of each block depends on the number of variables of the block}
+\item{scale_block}{A logical value indicating if each block is divided by 
+the square root of its number of variables.}
 
-\item{tol}{An integer giving the value for stopping the algorithm convergence.}
+\item{tol}{The stopping value for the convergence of the algorithm.}
 
 \item{scheme}{A character or a function giving the link function for 
 covariance maximization among "horst" (the identity function), "factorial"
@@ -58,21 +59,30 @@ covariance maximization among "horst" (the identity function), "factorial"
 only parameter and returning the imputed list. 
 \itemize{
 \item{\code{"mean"}}{ corresponds to an imputation by the colmeans}
-\item{\code{"complete"}}{ corresponds to run RGCCA only on the complete subjects (subjects with missing data are removed)}
-\item{\code{"nipals"}}{ corresponds to run RGCCA on all available data (NIPALS algorithm)}
+\item{\code{"complete"}}{ corresponds to run RGCCA only on the complete 
+subjects (subjects with missing data are removed)}
+\item{\code{"nipals"}}{ corresponds to run RGCCA on all available data 
+(NIPALS algorithm)}
 \item{\code{"em"}}{ corresponds to impute the data with EM-type algorithms}
-\item{\code{"sem"}}{ corresponds to impute the data with EM-type algorithms with superblock approach}
-\item{\code{"knn1"}}{ corresponds to impute the data with the 1-Nearest Neighbor. 1 can be replace by another number (such as knn3) to impute with the 3-Nearest Neighbors.}}}
+\item{\code{"sem"}}{ corresponds to impute the data with EM-type algorithms 
+with superblock approach}
+\item{\code{"knn1"}}{ corresponds to impute the data with the 1-Nearest 
+Neighbor. 1 can be replace by another number (such as knn3) to impute with 
+the 3-Nearest Neighbors.}}}
 
-\item{type}{A character giving the type of analysis: rgcca, sgcca, pca, 
-pls, cca, ifa, ra, cpca-w, gcca, hpca, maxbet-b, maxbet, maxdiff-b,maxdiff,
- maxvar-a, maxvar-b, maxvar, niles, r-maxvar, rcon-pca, ridge-gca, sabscor,
- ssqcor, ssqcor, ssqcov-1, ssqcov-2, ssqcov,  sum-pca, sumcor, sumcov-1, 
- sumcov-2, sumcov, sabscov, plspm}
+\item{type}{A character string indicating the type of multi-block component
+method to consider: rgcca, sgcca, pca, pls, cca, ifa, ra, cpca-w, gcca, 
+hpca, maxbet-b, maxbet, maxdiff-b, maxdiff, maxvar-a, maxvar-b, maxvar, 
+niles, r-maxvar, rcon-pca, ridge-gca, sabscor, ssqcor, ssqcor, ssqcov-1, 
+ssqcov-2, ssqcov,  sum-pca, sumcor, sumcov-1, sumcov-2, sumcov, sabscov, 
+plspm.}
 
-\item{init}{A character giving the mode of initialization to use in the algorithm. The alternatives are either by Singular Value Decompostion ("svd") or random ("random") (default: "svd").}
+\item{init}{A character giving the mode of initialization to use in the 
+algorithm. The alternatives are either by Singular Value Decompostion ("svd") 
+or random ("random") (default: "svd").}
 
-\item{bias}{A logical value for biaised (\eqn{1/n}) or unbiaised (\eqn{1/(n-1)}) estimator of the var/cov (default: bias = TRUE).}
+\item{bias}{A logical value for biaised (\eqn{1/n}) or unbiaised 
+(\eqn{1/(n-1)}) estimator of the var/cov (default: bias = TRUE).}
 
 \item{connection}{A symmetric matrix (J*J) that describes the relationships 
 between blocks. Two values are accepted : '1' for a connection between two 
@@ -81,11 +91,16 @@ blocks, or '0' otherwise.}
 \item{ncomp}{A vector of 1*J integers giving the number of component for 
 each blocks}
 
-\item{tau}{Either a 1*J vector or a \eqn{\mathrm{max}(ncomp) \times J} matrix containing the values 
-of the regularization parameters (default: tau = 1, for each block and each dimension). Tau varies from 0 (maximizing the correlation) to 1 (maximizing the covariance).
-If tau = "optimal" the regularization paramaters are estimated for each block and each dimension using the Schafer and Strimmer (2005)
-analytical formula . If tau is a \eqn{1\times J} vector, tau[j] is identical across the dimensions of block \eqn{\mathbf{X}_j}. 
-If tau is a matrix, tau[k, j] is associated with \eqn{\mathbf{X}_{jk}} (\eqn{k}th residual matrix for block \eqn{j}). It can be estimated by using \link{rgcca_permutation}.}
+\item{tau}{Either a 1*J vector or a \eqn{\mathrm{max}(ncomp) \times J} matrix 
+containing the values of the regularization parameters (default: tau = 1, 
+for each block and each dimension). Tau varies from 0 (maximizing the 
+correlation) to 1 (maximizing the covariance). If tau = "optimal" the 
+regularization paramaters are estimated for each block and each dimension 
+using the Schafer and Strimmer (2005) analytical formula . If tau is a 
+\eqn{1\times J} vector, tau[j] is identical across the dimensions of block 
+\eqn{\mathbf{X}_j}. If tau is a matrix, tau[k, j] is associated with 
+\eqn{\mathbf{X}_{jk}} (\eqn{k}th residual matrix for block \eqn{j}). It can 
+be estimated by using \link{rgcca_permutation}.}
 
 \item{sparsity}{Either a \eqn{1*J} vector or a \eqn{max(ncomp) * J} matrix 
 encoding the L1 constraints applied to the outer weight vectors. The amount 

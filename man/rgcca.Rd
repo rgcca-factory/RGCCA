@@ -2,7 +2,7 @@
 % Please edit documentation in R/rgcca.R
 \name{rgcca}
 \alias{rgcca}
-\title{Regularized (or Sparse) Generalized Canonical Correlation Analysis (R/SGCCA)}
+\title{Regularized (or Sparse) Generalized Canonical Correlation Analysis (S/RGCCA)}
 \usage{
 rgcca(
   blocks,
@@ -26,18 +26,20 @@ rgcca(
 }
 \arguments{
 \item{blocks}{A list that contains the J blocks of variables X1, X2, ..., XJ. 
-Block j is a matrix of dimension $n x p_j$ where $p_j$ is the number of 
+Block Xj is a matrix of dimension n x p_j where p_j is the number of 
 variables in X_j.}
 
-\item{type}{A character giving the type of analysis: rgcca, sgcca, pca, 
-pls, cca, ifa, ra, cpca-w, gcca, hpca, maxbet-b, maxbet, maxdiff-b,maxdiff,
- maxvar-a, maxvar-b, maxvar, niles, r-maxvar, rcon-pca, ridge-gca, sabscor,
- ssqcor, ssqcor, ssqcov-1, ssqcov-2, ssqcov,  sum-pca, sumcor, sumcov-1, 
- sumcov-2, sumcov, sabscov, plspm}
+\item{type}{A character string indicating the type of multi-block component
+method to consider: rgcca, sgcca, pca, pls, cca, ifa, ra, cpca-w, gcca, 
+hpca, maxbet-b, maxbet, maxdiff-b, maxdiff, maxvar-a, maxvar-b, maxvar, 
+niles, r-maxvar, rcon-pca, ridge-gca, sabscor, ssqcor, ssqcor, ssqcov-1, 
+ssqcov-2, ssqcov,  sum-pca, sumcor, sumcov-1, sumcov-2, sumcov, sabscov, 
+plspm.}
 
-\item{scale}{A logical value indicating if each block is normalised and divided by the square root of its number of variables and then divided by the square root of its number of variables.}
+\item{scale}{A logical value indicating if each block is standardized}
 
-\item{scale_block}{A logical value indicating if each block have the same weight in the RGCCA analysis. Otherwise, the weight of each block depends on the number of variables of the block}
+\item{scale_block}{A logical value indicating if each block is divided by 
+the square root of its number of variables.}
 
 \item{connection}{A symmetric matrix (J*J) that describes the relationships 
 between blocks. Two values are accepted : '1' for a connection between two 
@@ -52,11 +54,16 @@ covariance maximization among "horst" (the identity function), "factorial"
 \item{ncomp}{A vector of 1*J integers giving the number of component for 
 each blocks}
 
-\item{tau}{Either a 1*J vector or a \eqn{\mathrm{max}(ncomp) \times J} matrix containing the values 
-of the regularization parameters (default: tau = 1, for each block and each dimension). Tau varies from 0 (maximizing the correlation) to 1 (maximizing the covariance).
-If tau = "optimal" the regularization paramaters are estimated for each block and each dimension using the Schafer and Strimmer (2005)
-analytical formula . If tau is a \eqn{1\times J} vector, tau[j] is identical across the dimensions of block \eqn{\mathbf{X}_j}. 
-If tau is a matrix, tau[k, j] is associated with \eqn{\mathbf{X}_{jk}} (\eqn{k}th residual matrix for block \eqn{j}). It can be estimated by using \link{rgcca_permutation}.}
+\item{tau}{Either a 1*J vector or a \eqn{\mathrm{max}(ncomp) \times J} matrix 
+containing the values of the regularization parameters (default: tau = 1, 
+for each block and each dimension). Tau varies from 0 (maximizing the 
+correlation) to 1 (maximizing the covariance). If tau = "optimal" the 
+regularization paramaters are estimated for each block and each dimension 
+using the Schafer and Strimmer (2005) analytical formula . If tau is a 
+\eqn{1\times J} vector, tau[j] is identical across the dimensions of block 
+\eqn{\mathbf{X}_j}. If tau is a matrix, tau[k, j] is associated with 
+\eqn{\mathbf{X}_{jk}} (\eqn{k}th residual matrix for block \eqn{j}). It can 
+be estimated by using \link{rgcca_permutation}.}
 
 \item{sparsity}{Either a \eqn{1*J} vector or a \eqn{max(ncomp) * J} matrix 
 encoding the L1 constraints applied to the outer weight vectors. The amount 
@@ -71,11 +78,14 @@ the weights corresponding to components \eqn{h}:
 \deqn{for all h, |a_{j,h}|_{L_1} \le c_1[h,j] \sqrt{p_j}.} It can be 
 estimated by using \link{rgcca_permutation}.}
 
-\item{init}{A character giving the mode of initialization to use in the algorithm. The alternatives are either by Singular Value Decompostion ("svd") or random ("random") (default: "svd").}
+\item{init}{A character giving the mode of initialization to use in the 
+algorithm. The alternatives are either by Singular Value Decompostion ("svd") 
+or random ("random") (default: "svd").}
 
-\item{bias}{A logical value for biaised (\eqn{1/n}) or unbiaised (\eqn{1/(n-1)}) estimator of the var/cov (default: bias = TRUE).}
+\item{bias}{A logical value for biaised (\eqn{1/n}) or unbiaised 
+(\eqn{1/(n-1)}) estimator of the var/cov (default: bias = TRUE).}
 
-\item{tol}{An integer giving the value for stopping the algorithm convergence.}
+\item{tol}{The stopping value for the convergence of the algorithm.}
 
 \item{response}{An integer giving the position of the response block within 
 the blocks (activates the supervised mode).}
@@ -88,15 +98,21 @@ Default = TRUE}
 only parameter and returning the imputed list. 
 \itemize{
 \item{\code{"mean"}}{ corresponds to an imputation by the colmeans}
-\item{\code{"complete"}}{ corresponds to run RGCCA only on the complete subjects (subjects with missing data are removed)}
-\item{\code{"nipals"}}{ corresponds to run RGCCA on all available data (NIPALS algorithm)}
+\item{\code{"complete"}}{ corresponds to run RGCCA only on the complete 
+subjects (subjects with missing data are removed)}
+\item{\code{"nipals"}}{ corresponds to run RGCCA on all available data 
+(NIPALS algorithm)}
 \item{\code{"em"}}{ corresponds to impute the data with EM-type algorithms}
-\item{\code{"sem"}}{ corresponds to impute the data with EM-type algorithms with superblock approach}
-\item{\code{"knn1"}}{ corresponds to impute the data with the 1-Nearest Neighbor. 1 can be replace by another number (such as knn3) to impute with the 3-Nearest Neighbors.}}}
+\item{\code{"sem"}}{ corresponds to impute the data with EM-type algorithms 
+with superblock approach}
+\item{\code{"knn1"}}{ corresponds to impute the data with the 1-Nearest 
+Neighbor. 1 can be replace by another number (such as knn3) to impute with 
+the 3-Nearest Neighbors.}}}
 
-\item{verbose}{A logical value indicating if the progress of the analysis will be reported while computing.}
+\item{verbose}{A logical value indicating if the progress of the 
+algorithm is reported while computing.}
 
-\item{quiet}{A logical value indicating if it should not print warnings}
+\item{quiet}{A logical value indicating if the warning messages are reported.}
 }
 \value{
 A RGCCA object
@@ -111,15 +127,16 @@ is a matrix of block weight vectors for the corresponding block.}
 \item{astar}{A list of \eqn{J} elements. Each element of astar is a 
 matrix defined as Y[[j]][, h] = A[[j]]\%*\%astar[[j]][, h].}
 
-\item{tau}{Either a 1*J vector or a \eqn{\mathrm{max}(ncomp) \times J} 
-matrix containing the values of the regularization parameters. tau varies 
-from 0 (maximizing the correlation) to 1 (maximizing the covariance). 
-If tau = "optimal" the regularization paramaters are estimated for each 
-block and each dimension using the Schafer and Strimmer (2005) analytical 
-formula. If tau is a \eqn{1\times J} vector, tau[j] is identical across the 
-dimensions of block \eqn{\mathbf{X}_j}. If tau is a matrix, tau[k, j] is 
-associated with \eqn{\mathbf{X}_{jk}} (\eqn{k}th residual matrix for 
-block \eqn{j}). tau can be also estimated using \link{rgcca_permutation}.}
+\item{tau}{Either a vector of length J or a matrix of dimension 
+\eqn{\mathrm{max}(ncomp) \times J} containing the values of the shrinkage 
+parameters. tau varies from 0 (maximizing the correlation) to 1 (maximizing 
+the covariance). If tau = "optimal" the shrinkage paramaters are estimated 
+for each block and each dimension using the Schafer and Strimmer (2005) 
+analytical formula. If tau is a vector of length J, tau[j] is identical 
+across the dimensions of block \eqn{\mathbf{X}_j}. If tau is a matrix, 
+tau[k, j] is associated with \eqn{\mathbf{X}_{jk}} (\eqn{k}th residual 
+matrix of block \eqn{j}). tau can be also estimated using 
+\link{rgcca_permutation}.}
 
 \item{crit}{A list of vector of length max(ncomp). Each vector of 
 the list is related to one specific deflation stage and reports the values 
@@ -133,10 +150,10 @@ within the RGCCA alogrithm.}
 quality based on the Average Variance Explained (AVE): AVE(for each block), 
 AVE(outer model), AVE(inner model).}
 
-\item{A}{A list of matrices giving the \eqn{J} blocks of variables 
-\eqn{\mathbf{X_1}, \mathbf{X_2}, ..., \mathbf{X_J}.}
-These matrices, used in the calculations, are imputed if an imputation 
-method is selected.}
+\item{A}{A list that contains the J blocks of variables X1, X2, ..., 
+XJ. Block Xj is a matrix of dimension n x p_j where p_j is the number of 
+variables in X_j. These blocks are imputed when an imputation strategy is 
+selected.}
 
 \item{call}{Call of the function}
 }
@@ -183,7 +200,8 @@ sgcca() enables the computation of several SGCCA orthogonal block components
 (specified by ncomp) for each block.  
 The rgcca() function can handle missing values using a NIPALS type algorithm 
 (non-linear iterative partial least squares algorithm) described in 
-(Tenenhaus et al, 2005).
+(Tenenhaus et al, 2005). Guidelines describing how to use RGCCA in practice 
+are provided in (Garali et al., 2017).
 }
 \examples{
 ####################
@@ -259,6 +277,11 @@ plot(b, n_cores = 1)
 
 }
 \references{
+Garali I, Adanyeguh IM, Ichou F, Perlbarg V, Seyer A, Colsch B, 
+Moszer I, Guillemot V, Durr A, Mochel F, Tenenhaus A. A strategy for 
+multimodal data integration: application to biomarkers identification 
+in spinocerebellar ataxia. Brief Bioinform. 2018 Nov 27;19(6):1356-1369.
+
 Tenenhaus M., Tenenhaus A. and Groenen P. J. (2017). Regularized 
 generalized canonical correlation analysis: a framework for sequential 
 multiblock component methods. Psychometrika, 82(3), 737-777.
@@ -267,9 +290,9 @@ Tenenhaus A., Philippe C. and Frouin, V. (2015). Kernel
 generalized canonical correlation analysis. Computational Statistics and 
 Data Analysis, 90, 114-131.
 
-Tenenhaus A., Philippe C., Guillemot V., Le Cao K. A., Grill J., 
-and Frouin V. (2014). Variable selection for generalized canonical 
-correlation analysis. Biostatistics, 15(3), 569-583.
+Tenenhaus A., Philippe C., Guillemot V., Le Cao K. A., Grill J. 
+and Frouin, V., Variable selection for generalized canonical correlation 
+analysis, Biostatistics, vol. 15, no. 3, pp. 569-583, 2014.
 
 Tenenhaus A. and Tenenhaus M., (2011). Regularized Generalized 
 Canonical Correlation Analysis, Psychometrika, Vol. 76, Nr 2, pp 257-284.
@@ -277,10 +300,6 @@ Canonical Correlation Analysis, Psychometrika, Vol. 76, Nr 2, pp 257-284.
 Schafer J. and Strimmer K. (2005). A shrinkage approach to 
 large-scale covariance matrix estimation and implications for functional 
 genomics. Statist. Appl. Genet. Mol. Biol. 4:32.
-
-Tenenhaus A., Philippe C., Guillemot V., Le Cao K. A., Grill J. 
-and Frouin, V., Variable selection for generalized canonical correlation 
-analysis, Biostatistics, vol. 15, no. 3, pp. 569-583, 2014.
 }
 \seealso{
 \code{\link[RGCCA]{plot.rgcca}}, \code{\link[RGCCA]{print.rgcca}},

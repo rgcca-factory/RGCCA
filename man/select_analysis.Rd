@@ -2,7 +2,8 @@
 % Please edit documentation in R/select_analysis.R
 \name{select_analysis}
 \alias{select_analysis}
-\title{Define the analysis parameters}
+\title{Define the parameters associated with each well-known multi-block component
+method}
 \usage{
 select_analysis(
   blocks,
@@ -39,11 +40,12 @@ covariance maximization among "horst" (the identity function), "factorial"
 \item{superblock}{Boolean indicating the presence of the superblock. 
 Default = TRUE}
 
-\item{type}{A character giving the type of analysis: rgcca, sgcca, pca, 
-pls, cca, ifa, ra, cpca-w, gcca, hpca, maxbet-b, maxbet, maxdiff-b,maxdiff,
- maxvar-a, maxvar-b, maxvar, niles, r-maxvar, rcon-pca, ridge-gca, sabscor,
- ssqcor, ssqcor, ssqcov-1, ssqcov-2, ssqcov,  sum-pca, sumcor, sumcov-1, 
- sumcov-2, sumcov, sabscov, plspm}
+\item{type}{A character string indicating the type of multi-block component
+method to consider: rgcca, sgcca, pca, pls, cca, ifa, ra, cpca-w, gcca, 
+hpca, maxbet-b, maxbet, maxdiff-b, maxdiff, maxvar-a, maxvar-b, maxvar, 
+niles, r-maxvar, rcon-pca, ridge-gca, sabscor, ssqcor, ssqcor, ssqcov-1, 
+ssqcov-2, ssqcov,  sum-pca, sumcor, sumcov-1, sumcov-2, sumcov, sabscov, 
+plspm.}
 
 \item{verbose}{A boolean displaying the warnings}
 
@@ -74,5 +76,6 @@ relationships between blocks}
 (FALSE) of a superblock}
 }
 \description{
-Define the correct parameters according to the type of the analysis
+Define the parameters associated with each well-known multi-block component
+method
 }

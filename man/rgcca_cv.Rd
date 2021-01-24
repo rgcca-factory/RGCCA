@@ -38,14 +38,15 @@ rgcca_cv(
 }
 \arguments{
 \item{blocks}{A list that contains the J blocks of variables X1, X2, ..., XJ. 
-Block j is a matrix of dimension $n x p_j$ where $p_j$ is the number of 
+Block Xj is a matrix of dimension n x p_j where p_j is the number of 
 variables in X_j.}
 
-\item{type}{A character giving the type of analysis: rgcca, sgcca, pca, 
-pls, cca, ifa, ra, cpca-w, gcca, hpca, maxbet-b, maxbet, maxdiff-b,maxdiff,
- maxvar-a, maxvar-b, maxvar, niles, r-maxvar, rcon-pca, ridge-gca, sabscor,
- ssqcor, ssqcor, ssqcov-1, ssqcov-2, ssqcov,  sum-pca, sumcor, sumcov-1, 
- sumcov-2, sumcov, sabscov, plspm}
+\item{type}{A character string indicating the type of multi-block component
+method to consider: rgcca, sgcca, pca, pls, cca, ifa, ra, cpca-w, gcca, 
+hpca, maxbet-b, maxbet, maxdiff-b, maxdiff, maxvar-a, maxvar-b, maxvar, 
+niles, r-maxvar, rcon-pca, ridge-gca, sabscor, ssqcor, ssqcor, ssqcov-1, 
+ssqcov-2, ssqcov,  sum-pca, sumcor, sumcov-1, sumcov-2, sumcov, sabscov, 
+plspm.}
 
 \item{response}{An integer giving the position of the response block within 
 the blocks (activates the supervised mode).}
@@ -74,16 +75,17 @@ one row by combination. By default, it takes 10 sets between min values (0
 
 \item{n_cores}{Number of cores for parallelization}
 
-\item{quiet}{A logical value indicating if it should not print warnings}
+\item{quiet}{A logical value indicating if the warning messages are reported.}
 
 \item{superblock}{Boolean indicating the presence of the superblock. 
 Default = TRUE}
 
-\item{scale}{A logical value indicating if each block is normalised and divided by the square root of its number of variables and then divided by the square root of its number of variables.}
+\item{scale}{A logical value indicating if each block is standardized}
 
-\item{scale_block}{A logical value indicating if each block have the same weight in the RGCCA analysis. Otherwise, the weight of each block depends on the number of variables of the block}
+\item{scale_block}{A logical value indicating if each block is divided by 
+the square root of its number of variables.}
 
-\item{tol}{An integer giving the value for stopping the algorithm convergence.}
+\item{tol}{The stopping value for the convergence of the algorithm.}
 
 \item{scheme}{A character or a function giving the link function for 
 covariance maximization among "horst" (the identity function), "factorial"
@@ -96,11 +98,16 @@ covariance maximization among "horst" (the identity function), "factorial"
 only parameter and returning the imputed list. 
 \itemize{
 \item{\code{"mean"}}{ corresponds to an imputation by the colmeans}
-\item{\code{"complete"}}{ corresponds to run RGCCA only on the complete subjects (subjects with missing data are removed)}
-\item{\code{"nipals"}}{ corresponds to run RGCCA on all available data (NIPALS algorithm)}
+\item{\code{"complete"}}{ corresponds to run RGCCA only on the complete 
+subjects (subjects with missing data are removed)}
+\item{\code{"nipals"}}{ corresponds to run RGCCA on all available data 
+(NIPALS algorithm)}
 \item{\code{"em"}}{ corresponds to impute the data with EM-type algorithms}
-\item{\code{"sem"}}{ corresponds to impute the data with EM-type algorithms with superblock approach}
-\item{\code{"knn1"}}{ corresponds to impute the data with the 1-Nearest Neighbor. 1 can be replace by another number (such as knn3) to impute with the 3-Nearest Neighbors.}}}
+\item{\code{"sem"}}{ corresponds to impute the data with EM-type algorithms 
+with superblock approach}
+\item{\code{"knn1"}}{ corresponds to impute the data with the 1-Nearest 
+Neighbor. 1 can be replace by another number (such as knn3) to impute with 
+the 3-Nearest Neighbors.}}}
 
 \item{rgcca_res}{A RGCCA object (see  \code{\link[RGCCA]{rgcca}})}
 
@@ -108,11 +115,16 @@ only parameter and returning the imputed list.
 parallelization = NULL (default), parallelization is always performed except 
 for Windows if length(n_boot) < 10.}
 
-\item{tau}{Either a 1*J vector or a \eqn{\mathrm{max}(ncomp) \times J} matrix containing the values 
-of the regularization parameters (default: tau = 1, for each block and each dimension). Tau varies from 0 (maximizing the correlation) to 1 (maximizing the covariance).
-If tau = "optimal" the regularization paramaters are estimated for each block and each dimension using the Schafer and Strimmer (2005)
-analytical formula . If tau is a \eqn{1\times J} vector, tau[j] is identical across the dimensions of block \eqn{\mathbf{X}_j}. 
-If tau is a matrix, tau[k, j] is associated with \eqn{\mathbf{X}_{jk}} (\eqn{k}th residual matrix for block \eqn{j}). It can be estimated by using \link{rgcca_permutation}.}
+\item{tau}{Either a 1*J vector or a \eqn{\mathrm{max}(ncomp) \times J} matrix 
+containing the values of the regularization parameters (default: tau = 1, 
+for each block and each dimension). Tau varies from 0 (maximizing the 
+correlation) to 1 (maximizing the covariance). If tau = "optimal" the 
+regularization paramaters are estimated for each block and each dimension 
+using the Schafer and Strimmer (2005) analytical formula . If tau is a 
+\eqn{1\times J} vector, tau[j] is identical across the dimensions of block 
+\eqn{\mathbf{X}_j}. If tau is a matrix, tau[k, j] is associated with 
+\eqn{\mathbf{X}_{jk}} (\eqn{k}th residual matrix for block \eqn{j}). It can 
+be estimated by using \link{rgcca_permutation}.}
 
 \item{ncomp}{A vector of 1*J integers giving the number of component for 
 each blocks}
@@ -130,9 +142,12 @@ the weights corresponding to components \eqn{h}:
 \deqn{for all h, |a_{j,h}|_{L_1} \le c_1[h,j] \sqrt{p_j}.} It can be 
 estimated by using \link{rgcca_permutation}.}
 
-\item{init}{A character giving the mode of initialization to use in the algorithm. The alternatives are either by Singular Value Decompostion ("svd") or random ("random") (default: "svd").}
+\item{init}{A character giving the mode of initialization to use in the 
+algorithm. The alternatives are either by Singular Value Decompostion ("svd") 
+or random ("random") (default: "svd").}
 
-\item{bias}{A logical value for biaised (\eqn{1/n}) or unbiaised (\eqn{1/(n-1)}) estimator of the var/cov (default: bias = TRUE).}
+\item{bias}{A logical value for biaised (\eqn{1/n}) or unbiaised 
+(\eqn{1/(n-1)}) estimator of the var/cov (default: bias = TRUE).}
 
 \item{new_scaled}{A boolean scaling the blocks to predict}
 

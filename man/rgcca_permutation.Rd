@@ -32,17 +32,18 @@ rgcca_permutation(
 }
 \arguments{
 \item{blocks}{A list that contains the J blocks of variables X1, X2, ..., XJ. 
-Block j is a matrix of dimension $n x p_j$ where $p_j$ is the number of 
+Block Xj is a matrix of dimension n x p_j where p_j is the number of 
 variables in X_j.}
 
-\item{par_type}{character giving the parameter to tune among "sparsity" or 
-"tau".}
+\item{par_type}{A character string indicating the parameter to tune between 
+"sparsity" and "tau"}
 
-\item{par_value}{A matrix (n*p, with p the number of blocks and n the number 
-of combinations to be tested), a vector (of p length) or a numeric value 
-giving sets of penalties (tau for RGCCA, sparsity for SGCCA) to be tested, 
-one row by combination. By default, it takes 10 sets between min values (0
- for RGCCA and $1/sqrt(ncol)$ for SGCCA) and 1.}
+\item{par_value}{It could be either (i) A matrix of dimension IxJ (where 
+J the number of blocks and I the number of combinations to be tested), or 
+(ii) a vector of length J length ) or 
+a numeric value giving sets of penalties (tau for RGCCA, sparsity for SGCCA) 
+to be tested, one row by combination. By default, it takes 10 sets between 
+min values (0 for RGCCA and 1/sqrt(ncol(Xj)) for SGCCA) and 1.}
 
 \item{par_length}{An integer indicating the number of sets of parameters to 
 be tested (if par_value = NULL). The parameters are uniformly distributed.}
@@ -52,17 +53,19 @@ be tested (if par_value = NULL). The parameters are uniformly distributed.}
 
 \item{n_cores}{Number of cores for parallelization}
 
-\item{quiet}{A logical value indicating if it should not print warnings}
+\item{quiet}{A logical value indicating if the warning messages are reported.}
 
-\item{scale}{A logical value indicating if each block is normalised and divided by the square root of its number of variables and then divided by the square root of its number of variables.}
+\item{scale}{A logical value indicating if each block is standardized}
 
-\item{scale_block}{A logical value indicating if each block have the same weight in the RGCCA analysis. Otherwise, the weight of each block depends on the number of variables of the block}
+\item{scale_block}{A logical value indicating if each block is divided by 
+the square root of its number of variables.}
 
-\item{type}{A character giving the type of analysis: rgcca, sgcca, pca, 
-pls, cca, ifa, ra, cpca-w, gcca, hpca, maxbet-b, maxbet, maxdiff-b,maxdiff,
- maxvar-a, maxvar-b, maxvar, niles, r-maxvar, rcon-pca, ridge-gca, sabscor,
- ssqcor, ssqcor, ssqcov-1, ssqcov-2, ssqcov,  sum-pca, sumcor, sumcov-1, 
- sumcov-2, sumcov, sabscov, plspm}
+\item{type}{A character string indicating the type of multi-block component
+method to consider: rgcca, sgcca, pca, pls, cca, ifa, ra, cpca-w, gcca, 
+hpca, maxbet-b, maxbet, maxdiff-b, maxdiff, maxvar-a, maxvar-b, maxvar, 
+niles, r-maxvar, rcon-pca, ridge-gca, sabscor, ssqcor, ssqcor, ssqcov-1, 
+ssqcov-2, ssqcov,  sum-pca, sumcor, sumcov-1, sumcov-2, sumcov, sabscov, 
+plspm.}
 
 \item{connection}{A symmetric matrix (J*J) that describes the relationships 
 between blocks. Two values are accepted : '1' for a connection between two 
@@ -77,11 +80,16 @@ covariance maximization among "horst" (the identity function), "factorial"
 \item{ncomp}{A vector of 1*J integers giving the number of component for 
 each blocks}
 
-\item{tau}{Either a 1*J vector or a \eqn{\mathrm{max}(ncomp) \times J} matrix containing the values 
-of the regularization parameters (default: tau = 1, for each block and each dimension). Tau varies from 0 (maximizing the correlation) to 1 (maximizing the covariance).
-If tau = "optimal" the regularization paramaters are estimated for each block and each dimension using the Schafer and Strimmer (2005)
-analytical formula . If tau is a \eqn{1\times J} vector, tau[j] is identical across the dimensions of block \eqn{\mathbf{X}_j}. 
-If tau is a matrix, tau[k, j] is associated with \eqn{\mathbf{X}_{jk}} (\eqn{k}th residual matrix for block \eqn{j}). It can be estimated by using \link{rgcca_permutation}.}
+\item{tau}{Either a 1*J vector or a \eqn{\mathrm{max}(ncomp) \times J} matrix 
+containing the values of the regularization parameters (default: tau = 1, 
+for each block and each dimension). Tau varies from 0 (maximizing the 
+correlation) to 1 (maximizing the covariance). If tau = "optimal" the 
+regularization paramaters are estimated for each block and each dimension 
+using the Schafer and Strimmer (2005) analytical formula . If tau is a 
+\eqn{1\times J} vector, tau[j] is identical across the dimensions of block 
+\eqn{\mathbf{X}_j}. If tau is a matrix, tau[k, j] is associated with 
+\eqn{\mathbf{X}_{jk}} (\eqn{k}th residual matrix for block \eqn{j}). It can 
+be estimated by using \link{rgcca_permutation}.}
 
 \item{sparsity}{Either a \eqn{1*J} vector or a \eqn{max(ncomp) * J} matrix 
 encoding the L1 constraints applied to the outer weight vectors. The amount 
@@ -96,11 +104,14 @@ the weights corresponding to components \eqn{h}:
 \deqn{for all h, |a_{j,h}|_{L_1} \le c_1[h,j] \sqrt{p_j}.} It can be 
 estimated by using \link{rgcca_permutation}.}
 
-\item{init}{A character giving the mode of initialization to use in the algorithm. The alternatives are either by Singular Value Decompostion ("svd") or random ("random") (default: "svd").}
+\item{init}{A character giving the mode of initialization to use in the 
+algorithm. The alternatives are either by Singular Value Decompostion ("svd") 
+or random ("random") (default: "svd").}
 
-\item{bias}{A logical value for biaised (\eqn{1/n}) or unbiaised (\eqn{1/(n-1)}) estimator of the var/cov (default: bias = TRUE).}
+\item{bias}{A logical value for biaised (\eqn{1/n}) or unbiaised 
+(\eqn{1/(n-1)}) estimator of the var/cov (default: bias = TRUE).}
 
-\item{tol}{An integer giving the value for stopping the algorithm convergence.}
+\item{tol}{The stopping value for the convergence of the algorithm.}
 
 \item{response}{Position of the response block}
 
@@ -112,11 +123,16 @@ Default = TRUE}
 only parameter and returning the imputed list. 
 \itemize{
 \item{\code{"mean"}}{ corresponds to an imputation by the colmeans}
-\item{\code{"complete"}}{ corresponds to run RGCCA only on the complete subjects (subjects with missing data are removed)}
-\item{\code{"nipals"}}{ corresponds to run RGCCA on all available data (NIPALS algorithm)}
+\item{\code{"complete"}}{ corresponds to run RGCCA only on the complete 
+subjects (subjects with missing data are removed)}
+\item{\code{"nipals"}}{ corresponds to run RGCCA on all available data 
+(NIPALS algorithm)}
 \item{\code{"em"}}{ corresponds to impute the data with EM-type algorithms}
-\item{\code{"sem"}}{ corresponds to impute the data with EM-type algorithms with superblock approach}
-\item{\code{"knn1"}}{ corresponds to impute the data with the 1-Nearest Neighbor. 1 can be replace by another number (such as knn3) to impute with the 3-Nearest Neighbors.}}}
+\item{\code{"sem"}}{ corresponds to impute the data with EM-type algorithms 
+with superblock approach}
+\item{\code{"knn1"}}{ corresponds to impute the data with the 1-Nearest 
+Neighbor. 1 can be replace by another number (such as knn3) to impute with 
+the 3-Nearest Neighbors.}}}
 
 \item{rgcca_res}{A RGCCA object (see  \code{\link[RGCCA]{rgcca}})}
 
@@ -125,41 +141,41 @@ parallelization = NULL (default), parallelization is always performed except
 for Windows if length(n_boot) < 10.}
 }
 \value{
-\item{zstat}{The Z-statistic is the difference, for each combination, 
-between the non-permuted R/SGCCA criterion and the mean of the permuted 
-R/SGCCA criteria divided by the standard deviation of the permuted R/SGCCA 
-criteria.}
+\item{zstat}{The vector of Z-statistics, one per set of tuning 
+parameters}
 
-\item{bestpenalties}{Penalties giving the best Z-statistic for each 
+\item{bestpenalties}{The set of tuning parameters that gives the 
+highest Z-statistics}
+
+\item{permcrit}{Matrix of permuted S/RGCCA criteria. The ith row of 
+permcrit contains the n_perms values of the permuted S/RGCCA criteria 
+obtained for each set of tuning parameters.}
+
+\item{means}{A vector that contains, for each set of tuning 
+parameters, the mean of the permuted R/SGCCA criteria}
+
+\item{sds}{A vector that contains, for each set of tuning 
+parameters, the standard deviation of the permuted R/SGCCA criteria}
+
+\item{crit}{A vector that contains, for each set of tuning 
+parameters, the value of the R/SGCCA criteria obtained from the original 
 blocks}
 
-\item{permcrit}{A matrix of R/SGCCA criteria for each combination 
-and each permutation}
+\item{pval}{The vector of p-values, one per set of tuning parameters}
 
-\item{means}{Mean of the permutated R/SGCCA criteria for each 
-combination}
-
-\item{sds}{Standard deviation of the permutated R/SGCCA criteria for 
-each combination}
-
-\item{crit}{R/SGCCA criterion for each combination}
-
-\item{pval}{The p-value is the fraction of the permuted R/SGCCA 
-criteria, for each combination, that is greater than or equal to the 
-non-permuted R/SGCCA criterion}
-
-\item{penalties}{A matrix giving, for each blocks, the penalty 
-combinations (tau or sparsity)}
+\item{penalties}{A matrix giving, the set of tuning paramaters 
+considered during the permutation procedure (tau or sparsity).}
 }
 \description{
-This function can be used to automatically to select the hyper-parameters 
-(amount of sparsity for sgcca and shrinkage parameters for RGCCA)
+This function can be used to automatically select the hyper-parameters 
+(amount of sparsity for sgcca or shrinkage parameters for RGCCA)
 A permutation based strategy very similar to the one proposed in 
 (Witten et al, 2009) is proposed.
 }
 \details{
-The tuning parameters are selected using a permutation scheme. For each 
-candidate tuning parameter value, the following is performed: 
+The tuning parameters are selected using the permutation scheme proposed in 
+(Witten et al, 2009). For each candidate tuning parameter value, the 
+following is performed: 
 
 (1) Repeat the following n_perms times (for n_perms large): \cr
    \verb{    }(a) The samples in \eqn{X_1},..., \eqn{X_J} are randomly 
@@ -174,12 +190,13 @@ candidate tuning parameter value, the following is performed:
 (3) Record t = sum_(j,k) c_jk g(Cov(X_ja_j, X_ka_k). 
 
 (4) The resulting p-value is given by $mean(t* > t)$; that is, the fraction 
-of permuted totals that exceed the total on the real data. 
+of t* that exceed the value of t obtained from the real data. 
+
 Then, choose the tuning parameter value that gives the smallest value in 
 Step 4.
 
-This function only selects tuning parameters for the first S/RGCCA block 
-componentslevelfactors. By default, this function performs a one-dimensional 
+This function only selects tuning parameters for the first deflation stage 
+of S/RGCCA. By default, this function performs a one-dimensional 
 search in tuning parameter space.
 }
 \examples{

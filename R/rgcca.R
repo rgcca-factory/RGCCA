@@ -1,4 +1,4 @@
-#' Regularized (or Sparse) Generalized Canonical Correlation Analysis (R/SGCCA) 
+#' Regularized (or Sparse) Generalized Canonical Correlation Analysis (S/RGCCA) 
 #' 
 #' RGCCA is a generalization of regularized canonical correlation analysis to 
 #' three or more sets of variables. SGCCA extends RGCCA to address the issue of 
@@ -42,7 +42,8 @@
 #' (specified by ncomp) for each block.  
 #' The rgcca() function can handle missing values using a NIPALS type algorithm 
 #' (non-linear iterative partial least squares algorithm) described in 
-#' (Tenenhaus et al, 2005).
+#' (Tenenhaus et al, 2005). Guidelines describing how to use RGCCA in practice 
+#' are provided in (Garali et al., 2017). 
 #' @inheritParams rgccaNa
 #' @inheritParams sgccaNa
 #' @inheritParams select_analysis
@@ -54,15 +55,16 @@
 #' is a matrix of block weight vectors for the corresponding block.}
 #' @return \item{astar}{A list of \eqn{J} elements. Each element of astar is a 
 #' matrix defined as Y[[j]][, h] = A[[j]]\%*\%astar[[j]][, h].}
-#' @return \item{tau}{Either a 1*J vector or a \eqn{\mathrm{max}(ncomp) \times J} 
-#' matrix containing the values of the regularization parameters. tau varies 
-#' from 0 (maximizing the correlation) to 1 (maximizing the covariance). 
-#' If tau = "optimal" the regularization paramaters are estimated for each 
-#' block and each dimension using the Schafer and Strimmer (2005) analytical 
-#' formula. If tau is a \eqn{1\times J} vector, tau[j] is identical across the 
-#' dimensions of block \eqn{\mathbf{X}_j}. If tau is a matrix, tau[k, j] is 
-#' associated with \eqn{\mathbf{X}_{jk}} (\eqn{k}th residual matrix for 
-#' block \eqn{j}). tau can be also estimated using \link{rgcca_permutation}.}
+#' @return \item{tau}{Either a vector of length J or a matrix of dimension 
+#' \eqn{\mathrm{max}(ncomp) \times J} containing the values of the shrinkage 
+#' parameters. tau varies from 0 (maximizing the correlation) to 1 (maximizing 
+#' the covariance). If tau = "optimal" the shrinkage paramaters are estimated 
+#' for each block and each dimension using the Schafer and Strimmer (2005) 
+#' analytical formula. If tau is a vector of length J, tau[j] is identical 
+#' across the dimensions of block \eqn{\mathbf{X}_j}. If tau is a matrix, 
+#' tau[k, j] is associated with \eqn{\mathbf{X}_{jk}} (\eqn{k}th residual 
+#' matrix of block \eqn{j}). tau can be also estimated using 
+#' \link{rgcca_permutation}.}
 #' @return \item{crit}{A list of vector of length max(ncomp). Each vector of 
 #' the list is related to one specific deflation stage and reports the values 
 #' of the criterion for this stage across iterations.}
@@ -72,28 +74,29 @@
 #' @return \item{AVE}{A list of numerical values giving the indicators of model 
 #' quality based on the Average Variance Explained (AVE): AVE(for each block), 
 #' AVE(outer model), AVE(inner model).}
-#' @return \item{A}{A list of matrices giving the \eqn{J} blocks of variables 
-#' \eqn{\mathbf{X_1}, \mathbf{X_2}, ..., \mathbf{X_J}.}
-#' These matrices, used in the calculations, are imputed if an imputation 
-#' method is selected.}
+#' @return \item{A}{A list that contains the J blocks of variables X1, X2, ..., 
+#' XJ. Block Xj is a matrix of dimension n x p_j where p_j is the number of 
+#' variables in X_j. These blocks are imputed when an imputation strategy is 
+#' selected.}
 #' @return \item{call}{Call of the function}
+#' @references Garali I, Adanyeguh IM, Ichou F, Perlbarg V, Seyer A, Colsch B, 
+#' Moszer I, Guillemot V, Durr A, Mochel F, Tenenhaus A. A strategy for 
+#' multimodal data integration: application to biomarkers identification 
+#' in spinocerebellar ataxia. Briefings in Bioinformatics. 2018 Nov 27;19(6):1356-1369. 
 #' @references Tenenhaus M., Tenenhaus A. and Groenen P. J. (2017). Regularized 
 #' generalized canonical correlation analysis: a framework for sequential 
 #' multiblock component methods. Psychometrika, 82(3), 737-777.
 #' @references Tenenhaus A., Philippe C. and Frouin, V. (2015). Kernel 
 #' generalized canonical correlation analysis. Computational Statistics and 
 #' Data Analysis, 90, 114-131.
-#' @references Tenenhaus A., Philippe C., Guillemot V., Le Cao K. A., Grill J., 
-#' and Frouin V. (2014). Variable selection for generalized canonical 
-#' correlation analysis. Biostatistics, 15(3), 569-583.
+#' @references Tenenhaus A., Philippe C., Guillemot V., Le Cao K. A., Grill J. 
+#' and Frouin, V., Variable selection for generalized canonical correlation 
+#' analysis, Biostatistics, vol. 15, no. 3, pp. 569-583, 2014.
 #' @references Tenenhaus A. and Tenenhaus M., (2011). Regularized Generalized 
 #' Canonical Correlation Analysis, Psychometrika, Vol. 76, Nr 2, pp 257-284.
 #' @references Schafer J. and Strimmer K. (2005). A shrinkage approach to 
 #' large-scale covariance matrix estimation and implications for functional 
 #' genomics. Statist. Appl. Genet. Mol. Biol. 4:32.
-#' @references Tenenhaus A., Philippe C., Guillemot V., Le Cao K. A., Grill J. 
-#' and Frouin, V., Variable selection for generalized canonical correlation 
-#' analysis, Biostatistics, vol. 15, no. 3, pp. 569-583, 2014.
 #' @examples
 #' ####################
 #' # Example 1: RGCCA #

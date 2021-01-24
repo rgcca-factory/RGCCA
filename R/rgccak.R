@@ -10,7 +10,7 @@
 #' @param A  A list that contains the \eqn{J} blocks of variables. It could be 
 #' either the original matrices (\eqn{X_1, X_2, ..., X_J}) or the residual 
 #' matrices (\eqn{X_{h1}, X_{h2}, ..., X_{hJ}}).
-#' @param na.rm If TRUE, RGCCA is run only on available data (default value) 
+#' @param na.rm If TRUE, RGCCA is run only on the available data (default value) 
 #' otherwise the NIPALS algorithm is used.
 #' @return \item{Y}{A \eqn{n * J} matrix of block components}
 #' @return \item{Z}{A \eqn{n * J} matrix of inner components}
@@ -70,8 +70,7 @@ rgccak=function (A, C, tau = "optimal", scheme = "centroid", verbose = FALSE,
     if(scheme == "centroid"){g <- function(x) abs(x)}
 } 
   else g <- scheme
-    
-    
+  
     J <- length(A) # number of blocks
     n <- NROW(A[[1]]) # number of individuals
     pjs <- sapply(A, NCOL) # number of variables per block

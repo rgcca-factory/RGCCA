@@ -1,11 +1,12 @@
-#' Define the analysis parameters
+#' Define the parameters associated with each well-known multi-block component
+#' method
 #'
-#' Define the correct parameters according to the type of the analysis
-#' @param type A character giving the type of analysis: rgcca, sgcca, pca, 
-#' pls, cca, ifa, ra, cpca-w, gcca, hpca, maxbet-b, maxbet, maxdiff-b,maxdiff,
-#'  maxvar-a, maxvar-b, maxvar, niles, r-maxvar, rcon-pca, ridge-gca, sabscor,
-#'  ssqcor, ssqcor, ssqcov-1, ssqcov-2, ssqcov,  sum-pca, sumcor, sumcov-1, 
-#'  sumcov-2, sumcov, sabscov, plspm
+#' @param type A character string indicating the type of multi-block component
+#' method to consider: rgcca, sgcca, pca, pls, cca, ifa, ra, cpca-w, gcca, 
+#' hpca, maxbet-b, maxbet, maxdiff-b, maxdiff, maxvar-a, maxvar-b, maxvar, 
+#' niles, r-maxvar, rcon-pca, ridge-gca, sabscor, ssqcor, ssqcor, ssqcov-1, 
+#' ssqcov-2, ssqcov,  sum-pca, sumcor, sumcov-1, sumcov-2, sumcov, sabscov, 
+#' plspm.
 #' @inheritParams plot_var_2D
 #' @inheritParams set_connection
 #' @param blocks A list of blocks

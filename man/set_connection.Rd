@@ -10,7 +10,7 @@ set_connection(blocks, superblock = FALSE, response = NULL)
 }
 \arguments{
 \item{blocks}{A list that contains the J blocks of variables X1, X2, ..., XJ. 
-Block j is a matrix of dimension $n x p_j$ where $p_j$ is the number of 
+Block Xj is a matrix of dimension n x p_j where p_j is the number of 
 variables in X_j.}
 
 \item{superblock}{Boolean indicating the presence of the superblock. 
