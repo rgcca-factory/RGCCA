@@ -134,7 +134,7 @@
 #' # Tune the model to find the best sparsity coefficients (all the blocs are 
 #' # connected together)
 #' perm = rgcca_permutation(blocks, n_cores = 1, par_type = "sparsity", 
-#'  n_run = 10)
+#'  n_perms = 10)
 #' print(perm)
 #' plot(perm)
 #' 
@@ -201,7 +201,8 @@ rgcca <- function(
 
     if(class(blocks)=="permutation")
     {
-        message("All the parameters were imported from rgcca_permutation")
+        message("All the parameters were imported from the fitted 
+                rgcca_permutation")
         scale_block = blocks$call$scale_block
         scale = blocks$call$scale
         scheme = blocks$call$scheme
@@ -217,7 +218,7 @@ rgcca <- function(
     }
     if(class(blocks)=="cval")
     {
-        message("All the parameters were imported from cval")
+        message("All the parameters were imported from the fitted cval")
         scale_block = blocks$call$scale_block
         scale = blocks$call$scale
         scheme = blocks$call$scheme

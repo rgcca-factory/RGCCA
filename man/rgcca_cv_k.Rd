@@ -53,7 +53,9 @@ covariance maximization among "horst" (the identity function), "factorial"
  scheme penalizes structural negative correlation. The factorial scheme 
  discriminates more strongly the blocks than the centroid one.}
 
-\item{method}{Either a character corresponding to the used method ("complete","knn","em","sem") or a function taking a list of J blocks (A) as only parameter and returning the imputed list. 
+\item{method}{Either a character corresponding to the used method 
+("complete","knn","em","sem") or a function taking a list of J blocks (A) as 
+only parameter and returning the imputed list. 
 \itemize{
 \item{\code{"mean"}}{ corresponds to an imputation by the colmeans}
 \item{\code{"complete"}}{ corresponds to run RGCCA only on the complete subjects (subjects with missing data are removed)}
@@ -98,11 +100,11 @@ the weights corresponding to components \eqn{h}:
 \deqn{for all h, |a_{j,h}|_{L_1} \le c_1[h,j] \sqrt{p_j}.} It can be 
 estimated by using \link{rgcca_permutation}.}
 
-\item{n_cores}{An integer for the number of cores used in parallelization}
+\item{n_cores}{Number of cores for parallelization}
 
-\item{parallelization}{A logical value to run a parallelization. 
-If parallelization = NULL (default), the parallelization is always 
-performed except for Windows if length(n_boot) < 10.}
+\item{parallelization}{if TRUE, the bootstrap is processed in parallel. If 
+parallelization = NULL (default), parallelization is always performed except 
+for Windows if length(n_boot) < 10.}
 
 \item{...}{Further graphical parameters (see plot2D functions)}
 }

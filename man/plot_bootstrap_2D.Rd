@@ -51,7 +51,7 @@ plot_bootstrap_2D(
 
 \item{collapse}{A boolean to combine the variables of each block as result}
 
-\item{n_cores}{An integer for the number of cores used in parallelization}
+\item{n_cores}{Number of cores for parallelization}
 }
 \description{
 Graph of the best variables from a bootstrap with, in x-axis, the number of

@@ -9,13 +9,13 @@ rgcca_permutation(
   par_type,
   par_value = NULL,
   par_length = 10,
-  n_run = 20,
+  n_perms = 20,
   n_cores = parallel::detectCores() - 1,
   quiet = TRUE,
   scale = TRUE,
   scale_block = TRUE,
   type = NULL,
-  connection = matrix(1, length(blocks), length(blocks)) - diag(length(blocks)),
+  connection = 1 - diag(length(blocks)),
   scheme = "factorial",
   ncomp = rep(1, length(blocks)),
   tau = rep(1, length(blocks)),
@@ -31,9 +31,11 @@ rgcca_permutation(
 )
 }
 \arguments{
-\item{blocks}{A list of matrices giving the \eqn{J} blocks of variables \eqn{\mathbf{X_1}, \mathbf{X_2}, ..., \mathbf{X_J}}.}
+\item{blocks}{A list that contains the J blocks of variables X1, X2, ..., XJ. 
+Block j is a matrix of dimension $n x p_j$ where $p_j$ is the number of 
+variables in X_j.}
 
-\item{par_type}{A character giving the parameter to tune among "sparsity" or 
+\item{par_type}{character giving the parameter to tune among "sparsity" or 
 "tau".}
 
 \item{par_value}{A matrix (n*p, with p the number of blocks and n the number 
@@ -45,10 +47,10 @@ one row by combination. By default, it takes 10 sets between min values (0
 \item{par_length}{An integer indicating the number of sets of parameters to 
 be tested (if par_value = NULL). The parameters are uniformly distributed.}
 
-\item{n_run}{An integer giving the number of permutation tested for each set 
-of constraint}
+\item{n_perms}{Number of permutations for each set of constraints
+(default is 20).}
 
-\item{n_cores}{An integer for the number of cores used in parallelization}
+\item{n_cores}{Number of cores for parallelization}
 
 \item{quiet}{A logical value indicating if it should not print warnings}
 
@@ -100,12 +102,14 @@ estimated by using \link{rgcca_permutation}.}
 
 \item{tol}{An integer giving the value for stopping the algorithm convergence.}
 
-\item{response}{if not NULL, an integer giving the position of the response block within the blocks}
+\item{response}{Position of the response block}
 
-\item{superblock}{A boolean giving the presence (TRUE) / absence (FALSE) of
-a superblock}
+\item{superblock}{Boolean indicating the presence of the superblock. 
+Default = TRUE}
 
-\item{method}{Either a character corresponding to the used method ("complete","knn","em","sem") or a function taking a list of J blocks (A) as only parameter and returning the imputed list. 
+\item{method}{Either a character corresponding to the used method 
+("complete","knn","em","sem") or a function taking a list of J blocks (A) as 
+only parameter and returning the imputed list. 
 \itemize{
 \item{\code{"mean"}}{ corresponds to an imputation by the colmeans}
 \item{\code{"complete"}}{ corresponds to run RGCCA only on the complete subjects (subjects with missing data are removed)}
@@ -116,9 +120,9 @@ a superblock}
 
 \item{rgcca_res}{A RGCCA object (see  \code{\link[RGCCA]{rgcca}})}
 
-\item{parallelization}{A logical value to run a parallelization. 
-If parallelization = NULL (default), the parallelization is always 
-performed except for Windows if length(n_boot) < 10.}
+\item{parallelization}{if TRUE, the bootstrap is processed in parallel. If 
+parallelization = NULL (default), parallelization is always performed except 
+for Windows if length(n_boot) < 10.}
 }
 \value{
 \item{zstat}{The Z-statistic is the difference, for each combination, 
@@ -157,7 +161,7 @@ A permutation based strategy very similar to the one proposed in
 The tuning parameters are selected using a permutation scheme. For each 
 candidate tuning parameter value, the following is performed: 
 
-(1) Repeat the following n_run times (for n_run large): \cr
+(1) Repeat the following n_perms times (for n_perms large): \cr
    \verb{    }(a) The samples in \eqn{X_1},..., \eqn{X_J} are randomly 
    permuted blocks: \eqn{X_1^*},..., \eqn{X_J^*}. \cr
    \verb{    }(b) S/RGCCA is run on the permuted data sets \eqn{X_1^*},..., 
@@ -198,7 +202,7 @@ C <-  matrix(c(0, 0, 1,
 # to rep(1, length(blocks)), uniformly distributed.
 fit = rgcca_permutation(blocks, connection = C,
                         par_type = "tau", 
-                        n_run = 5, n_cores = 1)
+                        n_perms = 5, n_cores = 1)
                         
 print(fit)
 plot(fit)
@@ -214,18 +218,29 @@ par_value = matrix(c(0, 0, 0,
                       sapply(blocks, RGCCA:::tau.estimate), 
                       1, 1, 1), 5, 3, byrow = TRUE)
 
-# par_value = matrix(c(0, 0, 0, 
-#                      1, 1, 0,
-#                      0.5, 0.5, 0.5,
-#                      1, 1, 1), 4, 3, byrow = TRUE)
                                                                  
 fit <- rgcca_permutation(blocks, connection = C,
                          par_type = "tau", 
                          par_value = par_value, 
-                         n_run = 5, n_cores = 1)
+                         n_perms = 5, n_cores = 1)
 
 print(fit)
 plot(fit)
+
+# with superblock
+
+fit.permute <- rgcca_permutation(blocks, par_type = "tau", 
+                                 superblock = TRUE,
+                                 scale = TRUE, scale_block = FALSE,
+                                 n_perms = 5, n_cores = 1)
+
+print(fit.permute)
+plot(fit.permute)
+
+fit.rgcca <- rgcca(fit.permute)
+fit.rgcca$call$tau
+fit.rgcca$call$scale
+fit.rgcca$call$scale_block
 
 ######################################
 # Permutation based strategy for     #
@@ -238,7 +253,7 @@ plot(fit)
 # to rep(1, J), uniformly distributed.
 
 fit <- rgcca_permutation(blocks, par_type = "sparsity", 
-                         n_run = 5, n_cores = 1)
+                         n_perms = 5, n_cores = 1)
                          
 print(fit)
 plot(fit)
@@ -253,7 +268,7 @@ fit$bestpenalties
 fit <- rgcca_permutation(blocks, connection = C, 
                          par_type = "sparsity", 
                          par_value = c(0.6, 0.75, 0.5), 
-                         par_length = 7, n_run = 20, 
+                         par_length = 7, n_perms = 20, 
                          n_cores = 1, tol = 1e-3)
                          
 	print(fit)
@@ -266,7 +281,7 @@ fit <- rgcca_permutation(blocks, connection = C,
 fit <- rgcca_permutation(blocks, connection = C, 
                          par_type = "sparsity", 
                          par_value = 0.8, par_length = 5, 
-                         n_run = 10, n_cores = 1)
+                         n_perms = 10, n_cores = 1)
    
 fit$penalties    
 
@@ -298,7 +313,7 @@ fit$penalties
 #                          par_type = "tau", 
 #                          par_value = par_value,
 #                          par_length = 10,
-#                          n_run = 10, n_cores = 1, tol = 1e-2)
+#                          n_perms = 10, n_cores = 1, tol = 1e-2)
 #                          )
 # print(fit)
 # plot(fit)

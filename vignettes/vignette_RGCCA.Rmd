@@ -817,7 +817,7 @@ This procedure is available though the `rgcca_permutation()` function.
 set.seed(1234567)
 fit.perm = rgcca_permutation(A, connection = C, 
                              par_type = "tau", n_cores = 1, 
-                             n_run = 5)
+                             n_perms = 5)
 ```
 
 By default, the `rgcca_permutation()` function takes, for each block, 10 sets of tuning parameters between min values (0 for RGCCA and $1/sqrt(ncol)$ for SGCCA) and 1. 
@@ -847,7 +847,7 @@ fit.perm = rgcca_permutation(A, connection = C,
                                                seq(0, 1, l=3), 
                                                rep(0, 3), 
                                                sapply(A, RGCCA:::tau.estimate)),
-                             n_cores = 1, n_run = 5)
+                             n_cores = 1, n_perms = 5)
 ```
 Alternatively a numeric vector of length $J$ indicating the range of values to be tested: from the minimum values (0 for RGCCA and $1/sqrt(ncol)$ for SGCCA) to the maximum values specified by the user with `par_value`. 
 
@@ -855,7 +855,7 @@ Alternatively a numeric vector of length $J$ indicating the range of values to b
 fit.perm = rgcca_permutation(A, connection = C, 
                              par_type = "tau", 
                              par_value = seq(0, 1, l=3), 
-                             n_cores = 1, n_run = 5)
+                             n_cores = 1, n_perms = 5)
 ```
 
 If `par_type = sparsity`, the `rgcca_permutation()` function switches automatically to `sgcca()`. Th the same rationals are used for the other arguments of the function.
@@ -865,7 +865,7 @@ set.seed(1234567)
 fit.perm = rgcca_permutation(A, connection = C, 
                              par_type = "sparsity", 
                              type = "sgcca",
-                             n_cores = 1, n_run = 5)
+                             n_cores = 1, n_perms = 5)
 ```
 It is possible to defined explicitly the values of `tau`/`sparsity`. In that 
 case a matrix of dimension k$\times$J (with $k$ the number of combinations to be 
@@ -893,7 +893,7 @@ function of the RGCCA package.
 set.seed(1234567)
 fit.perm1 = rgcca_permutation(A, connection = C, 
                              par_type = "tau", n_cores = 1, 
-                             n_run = 5)
+                             n_perms = 5)
 
 fit.perm2 = rgcca(blocks = A, connection =C, 
                           tau = rep(1, 3), 
@@ -1115,12 +1115,12 @@ fit.permute = rgcca_permutation(A, connection = C,
                                 type = "sgcca", 
                                 par_type = "sparsity", 
                                 par_length = 10, 
-                                n_run = 10)
+                                n_perms = 10)
 
 fit.permute = rgcca_permutation(A, connection = C, 
                                 par_type = "sparsity", 
                                 par_length = 5, 
-                                n_run = 3)
+                                n_perms = 3)
 ```
 
 and then directly used the optimal sparsity parameters as follows: 

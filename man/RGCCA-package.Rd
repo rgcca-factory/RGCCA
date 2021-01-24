@@ -28,7 +28,7 @@ blocks = list(
 )
 
 # Tune the model to find the best sparsity coefficients (all the blocs are connected together)
-perm = rgcca_permutation(blocks, n_cores = 1, par_type = "sparsity", n_run = 10)
+perm = rgcca_permutation(blocks, n_cores = 1, par_type = "sparsity", n_perms = 10)
 print(perm)
 plot(perm)
 

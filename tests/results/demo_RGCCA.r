@@ -32,7 +32,7 @@ resRgcca$A[[1]][1,]
 # unsupervised rgcca - exploratory approach with rgcca
 #-------------------
 # Step one - tuning the parameters
-res_permut=rgcca_permutation(blocks=blocks,type="rgcca",scheme="factorial",n_run=100)
+res_permut=rgcca_permutation(blocks=blocks,type="rgcca",scheme="factorial",n_perms=100)
 print(res_permut)
 names(res_permut)
 plot(res_permut,type="zstat")
@@ -144,7 +144,7 @@ plot(resRGCCA,resp=response,type="cor")
 
 # permutation
 perm.values = matrix(c(0.6, 0.75, 0.5,0.7, 0.75, 0.5,0.8, 0.75, 0.5), 3, 3, byrow = TRUE)
-res_permut=rgcca_permutation(blocks=blocks,par_type="tau",par_value=perm.values,n_run=100)
+res_permut=rgcca_permutation(blocks=blocks,par_type="tau",par_value=perm.values,n_perms=100)
 print(res_permut)
 summary(res_permut)
 plot(res_permut,type="crit")
@@ -169,7 +169,7 @@ summary(resBootstrap)
 #--------------------------
 
 # Step one - tuning the parameters
-res_permut=rgcca_permutation(blocks=blocks,superblock=TRUE,type="rgcca",scheme="factorial",n_run=100)
+res_permut=rgcca_permutation(blocks=blocks,superblock=TRUE,type="rgcca",scheme="factorial",n_perms=100)
 print(res_permut)
 names(res_permut)
 plot(res_permut)
@@ -388,7 +388,7 @@ res_cv=rgcca_cv(blocks=A,type_cv="classification",fit="lda",
                 type="sgcca", response=3,par_type="sparsity",n_run=1,n_cores=1,par_value=mat_values)
 
 
-rgcca_permutation(A, connection=C, par_type = "sparsity", n_run = 10)
+rgcca_permutation(A, connection=C, par_type = "sparsity", n_perms = 10)
 
 plot(res_cv)
 # 

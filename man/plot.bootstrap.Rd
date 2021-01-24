@@ -2,7 +2,7 @@
 % Please edit documentation in R/plot.df_bootstrap.r
 \name{plot.bootstrap}
 \alias{plot.bootstrap}
-\title{Plot a bootstrap object}
+\title{Plot a fitted bootstrap object}
 \usage{
 \method{plot}{bootstrap}(
   x,
@@ -24,7 +24,7 @@
 )
 }
 \arguments{
-\item{x}{A bootstrap object (see \code{\link[RGCCA]{bootstrap}})}
+\item{x}{A fitted bootstrap object (see \code{\link[RGCCA]{bootstrap}})}
 
 \item{block}{A vector indicating the blocks to consider.}
 
@@ -32,7 +32,9 @@
 
 \item{n_mark}{An integer giving the number of top variables to select}
 
-\item{bars}{A character giving the variability among "sd" (standard deviations bars) , "stderr"(bars of standard deviation divided by sqrt(n)) or "quantile" (for the 0.05-0.95 quantiles bars)}
+\item{bars}{A character giving the variability among "sd" (standard 
+deviations bars) , "stderr"(bars of standard deviation divided by 
+sqrt(n)) or "quantile" (for the 0.05-0.95 quantiles bars)}
 
 \item{colors}{Either a vector of integers (each integer corresponding to a color) or of characters corresponding to names of colors (as "blue",see colors()) or RGB code ("#FFFFFF").}
 
@@ -40,7 +42,7 @@
 
 \item{cex}{An integer for the size of the plot parameters}
 
-\item{n_cores}{An integer for the number of cores used in parallelization}
+\item{n_cores}{Number of cores for parallelization}
 
 \item{collapse}{A boolean to combine the variables of each block as result}
 
@@ -57,14 +59,15 @@
 \item{...}{Further graphical parameters (see plot2D)}
 }
 \description{
-Plot the results of a bootstrap object. The representation can be with bars
-(1D) or a biplot (2D) (see details).
+Plot the results of a fitted bootstrap object. The representation can be 
+with bars (1D) or a biplot (2D) (see details).
 }
 \examples{
 data("Russett")
-blocks = list(agriculture = Russett[, seq(3)], industry = Russett[, 4:5],
-    politic = Russett[, 6:11] )
-rgcca_out = rgcca(blocks)
-b=bootstrap(rgcca_out, n_boot = 2, n_cores = 1)
-plot(b,n_cores=1)
+blocks = list(agriculture = Russett[, seq(3)], 
+              industry = Russett[, 4:5], 
+              politic = Russett[, 6:11])
+fit.rgcca = rgcca(blocks)
+fit.boot=bootstrap(fit.rgcca, n_boot = 2, n_cores = 1)
+plot(fit.boot, n_cores=1)
 }

@@ -14,32 +14,36 @@ bootstrap(
 \arguments{
 \item{rgcca_res}{A RGCCA object (see  \code{\link[RGCCA]{rgcca}})}
 
-\item{n_boot}{An integer for the number of boostraps}
+\item{n_boot}{Number of bootstrap iterations. Default is 100.}
 
-\item{n_cores}{An integer for the number of cores used in parallelization}
+\item{n_cores}{Number of cores for parallelization}
 
-\item{parallelization}{A logical value to run a parallelization. 
-If parallelization = NULL (default), the parallelization is always 
-performed except for Windows if length(n_boot) < 10.}
+\item{parallelization}{if TRUE, the bootstrap is processed in parallel. If 
+parallelization = NULL (default), parallelization is always performed except 
+for Windows if length(n_boot) < 10.}
 }
 \value{
 A list containing two objects: 'bootstrap' and 'rgcca'. 
 'bootstrap' is a list containing for each block, a matrix 
 with the variables of the block in row and the block weight vector
-calculated for each bootstrap sample in column. 'rgcca' is the original 
-rgcca object. (see  \code{\link[RGCCA]{rgcca}})
+calculated accross bootstrap sample in column. 'rgcca' is the original 
+fitted rgcca object. (see  \code{\link[RGCCA]{rgcca}})
 }
 \description{
 Boostrap confidence intervals and p-values for evaluating the significancy/ 
-stability of the block-weight vectors  in S/RGCCA
+stability of the block-weight vectors produce by S/RGCCA.
 }
 \examples{
 data("Russett")
-blocks = list(agriculture = Russett[, seq(3)], industry = Russett[, 4:5],
-    politic = Russett[, 6:11] )
-rgcca_out = rgcca(blocks)
-b=bootstrap(rgcca_out, n_boot = 2, n_cores = 1)
-plot(b,n_cores=1)
+blocks = list(agriculture = Russett[, seq(3)], 
+              industry = Russett[, 4:5], 
+              politic = Russett[, c(6:9, 11)]
+              )
+              
+fit.rgcca = rgcca(blocks)
+boot_rgcca = bootstrap(fit.rgcca, n_boot = 50)
+plot(boot_rgcca, block = 3)
+
 }
 \seealso{
 \code{\link[RGCCA]{plot.bootstrap}} , 

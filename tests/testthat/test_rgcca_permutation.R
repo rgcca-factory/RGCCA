@@ -4,19 +4,19 @@ blocks <- list(
     industry = Russett[, 4:5],
     politic = Russett[, 6:11] )
 
-res=rgcca_permutation(blocks,par_type="tau", n_cores = 1,n_run = 5)
+res=rgcca_permutation(blocks,par_type="tau", n_cores = 1,n_perms = 5)
 #res_rgcca=rgcca(blocks)
-#res=rgcca_permutation(rgcca_res = res_rgcca, n_cores = 1,n_run = 21)
+#res=rgcca_permutation(rgcca_res = res_rgcca, n_cores = 1,n_perms = 21)
 
-res=rgcca_permutation(blocks,par_type="tau", n_cores = 1,n_run = 10)
+res=rgcca_permutation(blocks,par_type="tau", n_cores = 1,n_perms = 10)
 
 test_that("rgcca_permutation_default", {
         expect_is(res, "permutation")
     }
 )
 
-res_tau=rgcca_permutation(blocks,par_type="tau",n_run = 5, n_cores = 1)
-res_sparsity=rgcca_permutation(blocks,par_type="sparsity",n_run = 5, n_cores = 1)
+res_tau=rgcca_permutation(blocks,par_type="tau",n_perms = 5, n_cores = 1)
+res_sparsity=rgcca_permutation(blocks,par_type="sparsity",n_perms = 5, n_cores = 1)
 
 res_tau=rgcca_permutation(blocks,par_type="tau",par_value=c(0.7,0.8,0.8), n_cores = 1)
 res_sparsity=rgcca_permutation(blocks,par_type="sparsity",par_value=c(0.8,0.8,0.8), n_cores = 1)

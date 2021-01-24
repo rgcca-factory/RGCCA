@@ -37,7 +37,9 @@ rgcca_cv(
 )
 }
 \arguments{
-\item{blocks}{A list of matrices giving the \eqn{J} blocks of variables \eqn{\mathbf{X_1}, \mathbf{X_2}, ..., \mathbf{X_J}}.}
+\item{blocks}{A list that contains the J blocks of variables X1, X2, ..., XJ. 
+Block j is a matrix of dimension $n x p_j$ where $p_j$ is the number of 
+variables in X_j.}
 
 \item{type}{A character giving the type of analysis: rgcca, sgcca, pca, 
 pls, cca, ifa, ra, cpca-w, gcca, hpca, maxbet-b, maxbet, maxdiff-b,maxdiff,
@@ -70,12 +72,12 @@ one row by combination. By default, it takes 10 sets between min values (0
 
 \item{one_value_per_cv}{A logical value indicating if the k values are averaged for each k-fold steps.}
 
-\item{n_cores}{An integer for the number of cores used in parallelization}
+\item{n_cores}{Number of cores for parallelization}
 
 \item{quiet}{A logical value indicating if it should not print warnings}
 
-\item{superblock}{A boolean giving the presence (TRUE) / absence (FALSE) of
-a superblock}
+\item{superblock}{Boolean indicating the presence of the superblock. 
+Default = TRUE}
 
 \item{scale}{A logical value indicating if each block is normalised and divided by the square root of its number of variables and then divided by the square root of its number of variables.}
 
@@ -89,7 +91,9 @@ covariance maximization among "horst" (the identity function), "factorial"
  scheme penalizes structural negative correlation. The factorial scheme 
  discriminates more strongly the blocks than the centroid one.}
 
-\item{method}{Either a character corresponding to the used method ("complete","knn","em","sem") or a function taking a list of J blocks (A) as only parameter and returning the imputed list. 
+\item{method}{Either a character corresponding to the used method 
+("complete","knn","em","sem") or a function taking a list of J blocks (A) as 
+only parameter and returning the imputed list. 
 \itemize{
 \item{\code{"mean"}}{ corresponds to an imputation by the colmeans}
 \item{\code{"complete"}}{ corresponds to run RGCCA only on the complete subjects (subjects with missing data are removed)}
@@ -100,9 +104,9 @@ covariance maximization among "horst" (the identity function), "factorial"
 
 \item{rgcca_res}{A RGCCA object (see  \code{\link[RGCCA]{rgcca}})}
 
-\item{parallelization}{A logical value to run a parallelization. 
-If parallelization = NULL (default), the parallelization is always 
-performed except for Windows if length(n_boot) < 10.}
+\item{parallelization}{if TRUE, the bootstrap is processed in parallel. If 
+parallelization = NULL (default), parallelization is always performed except 
+for Windows if length(n_boot) < 10.}
 
 \item{tau}{Either a 1*J vector or a \eqn{\mathrm{max}(ncomp) \times J} matrix containing the values 
 of the regularization parameters (default: tau = 1, for each block and each dimension). Tau varies from 0 (maximizing the correlation) to 1 (maximizing the covariance).
@@ -158,15 +162,22 @@ If type_cv=="classification", at each round of cross-validation a "lda" is run a
 }
 \examples{
 data("Russett")
-blocks <- list(
-    agriculture = Russett[, seq(3)],
-    industry = Russett[, 4:5],
-    politic = Russett[, 6:11])
+blocks <- list(agriculture = Russett[, seq(3)],
+               industry = Russett[, 4:5],
+               politic = Russett[, 6:11])
 res = rgcca_cv(blocks, response = 3, type="rgcca", 
-par_type = "sparsity", par_value = c(0.6, 0.75, 0.5), n_run = 2, n_cores = 1)
+               par_type = "sparsity", 
+               par_value = c(0.6, 0.75, 0.5), 
+               n_run = 2, n_cores = 1)
 plot(res)
-rgcca_cv(blocks, response = 3, par_type = "tau", par_value = c(0.6, 0.75, 0.5)
-, n_run = 2, n_cores = 1)$bestpenalties
-rgcca_cv(blocks, response = 3, par_type = "sparsity", par_value = 0.8, n_run = 2, n_cores = 1)
-rgcca_cv(blocks, response = 3, par_type = "tau", par_value = 0.8, n_run = 2, n_cores = 1)
+rgcca_cv(blocks, response = 3, par_type = "tau", 
+         par_value = c(0.6, 0.75, 0.5), 
+         n_run = 2, n_cores = 1)$bestpenalties
+         
+rgcca_cv(blocks, response = 3, par_type = "sparsity", 
+         par_value = 0.8,  n_run = 2, n_cores = 1)
+         
+rgcca_cv(blocks, response = 3, par_type = "tau", 
+         par_value = 0.8, n_run = 2, n_cores = 1)
+         
 }

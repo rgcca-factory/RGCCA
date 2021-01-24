@@ -9,9 +9,11 @@
 \arguments{
 \item{x}{A bootstrap object (see \code{\link[RGCCA]{bootstrap}})}
 
-\item{bars}{A character giving the variability among "sd" (standard deviations bars) , "stderr"(bars of standard deviation divided by sqrt(n)) or "quantile" (for the 0.05-0.95 quantiles bars)}
+\item{bars}{A character giving the variability among "sd" (standard 
+deviations bars) , "stderr"(bars of standard deviation divided by 
+sqrt(n)) or "quantile" (for the 0.05-0.95 quantiles bars)}
 
-\item{n_cores}{An integer for the number of cores used in parallelization}
+\item{n_cores}{Number of cores for parallelization}
 
 \item{...}{Further arguments in print}
 }

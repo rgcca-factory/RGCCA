@@ -8,12 +8,12 @@
 #' data('Russett')
 #' A = list(agriculture = Russett[, seq(3)], industry = Russett[, 4:5],
 #'     politic = Russett[, 6:11] )
-#' res = rgcca_permutation(A,par_type="tau", n_run = 5, n_cores = 1)
+#' res = rgcca_permutation(A,par_type="tau", n_perms = 5, n_cores = 1)
 #' print(res)
 print.permutation <- function(x, ...) {
   
   cat("Call: ") 
-  names_call <- c("type", "par_type", "par_value", "n_run", "quiet", "method", "tol", "scale", "scale_block", "superblock")
+  names_call <- c("type", "par_type", "par_value", "n_perms", "quiet", "method", "tol", "scale", "scale_block", "superblock")
   char_to_print <- ""
   for (name in names_call) {
     

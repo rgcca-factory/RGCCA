@@ -73,7 +73,7 @@ plot_permut_2D <- function(
 
     if (is.null(title))
         title <- paste0(
-                "Permutation scores (",perm$call$n_run, " runs) \n Best parameters : ",
+                "Permutation scores (",perm$call$n_perms, " runs) \n Best parameters : ",
                 paste(round(perm$penalties[best,], 2), collapse = ", ")
             )
     else

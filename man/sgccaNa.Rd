@@ -24,7 +24,9 @@ sgccaNa(
 \arguments{
 \item{blocks}{A list of blocks}
 
-\item{method}{Either a character corresponding to the used method ("complete","knn","em","sem") or a function taking a list of J blocks (A) as only parameter and returning the imputed list. 
+\item{method}{Either a character corresponding to the used method 
+("complete","knn","em","sem") or a function taking a list of J blocks (A) as 
+only parameter and returning the imputed list. 
 \itemize{
 \item{\code{"mean"}}{ corresponds to an imputation by the colmeans}
 \item{\code{"complete"}}{ corresponds to run RGCCA only on the complete subjects (subjects with missing data are removed)}

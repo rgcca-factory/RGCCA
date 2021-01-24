@@ -1,7 +1,11 @@
 #' imputeRGCCA allows to choose the imputation method before running RGCCA
 #' @inheritParams select_analysis
-#' @param blocks A list of matrices giving the \eqn{J} blocks of variables \eqn{\mathbf{X_1}, \mathbf{X_2}, ..., \mathbf{X_J}}.
-#' @param method  Either a character corresponding to the used method ("complete","knn","em","sem") or a function taking a list of J blocks (A) as only parameter and returning the imputed list. 
+#' @param blocks A list that contains the J blocks of variables X1, X2, ..., XJ. 
+#' Block j is a matrix of dimension $n x p_j$ where $p_j$ is the number of 
+#' variables in X_j.
+#' @param method  Either a character corresponding to the used method 
+#' ("complete","knn","em","sem") or a function taking a list of J blocks (A) as 
+#' only parameter and returning the imputed list. 
 #' \itemize{
 #' \item{\code{"mean"}}{ corresponds to an imputation by the colmeans}
 #' \item{\code{"complete"}}{ corresponds to run RGCCA only on the complete subjects (subjects with missing data are removed)}

@@ -2,7 +2,7 @@
 % Please edit documentation in R/plot_bootstrap_1D.R
 \name{plot_bootstrap_1D}
 \alias{plot_bootstrap_1D}
-\title{Plot a bootstrap in 1D}
+\title{Plot a fitted bootstrap object in 1D}
 \usage{
 plot_bootstrap_1D(
   b = NULL,
@@ -22,11 +22,11 @@ plot_bootstrap_1D(
 )
 }
 \arguments{
-\item{b}{A boostrap object \code{\link[RGCCA]{bootstrap}}}
+\item{b}{A fitted boostrap object \code{\link[RGCCA]{bootstrap}}}
 
 \item{df_b}{A get_bootstrap object \code{\link[RGCCA]{get_bootstrap}}}
 
-\item{x}{A character for the index used in the plot (see details).}
+\item{x}{indicator used in the plot (see details).}
 
 \item{y}{A character for the index to color the bars (see details).}
 
@@ -38,7 +38,9 @@ plot_bootstrap_1D(
 
 \item{comp}{An integer giving the index of the analysis components}
 
-\item{bars}{A character giving the variability among "sd" (standard deviations bars) , "stderr"(bars of standard deviation divided by sqrt(n)) or "quantile" (for the 0.05-0.95 quantiles bars)}
+\item{bars}{A character giving the variability among "sd" (standard 
+deviations bars) , "stderr"(bars of standard deviation divided by 
+sqrt(n)) or "quantile" (for the 0.05-0.95 quantiles bars)}
 
 \item{display_bar}{A boolean to display the bar for significative variables.}
 
@@ -46,18 +48,18 @@ plot_bootstrap_1D(
 
 \item{collapse}{A boolean to combine the variables of each block as result}
 
-\item{n_cores}{An integer for the number of cores used in parallelization}
+\item{n_cores}{Number of cores for parallelization}
 
 \item{...}{Other parameters (see plot_histogram)}
 }
 \description{
-Barplot of the best variables from a bootstrap with, on the x-axis,
-the number of non-zero occurrences (SGCCA) or the mean of the bootstrap weights 
-(RCCA). The bars are colored according to the significant 95% bootstrap 
+Display bootstrap confidence intervals for RGCCA or the number of non-zero 
+occurrences for SGCCA. The bars are colored according to the significancy 
+of 95% bootstrap 
 intervals ('*' or 'ns'; see 'p.vals' in details for 
 \code{\link[RGCCA]{get_bootstrap}}) for RGCCA and according to the occurences
  of the weights which are not equal to zero (according to an ascending 
- gradient from red to blue) for SGCCA. In SGCA, the significant variables 
+ gradient from red to blue) for SGCCA. In SGCCA, the significant variables 
  are those above the three bars, respectively, with an alpha = 0.05 
  (dark red), 0.01 (red) and 0.001 (light red).
 }

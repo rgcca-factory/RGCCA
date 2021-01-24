@@ -16,9 +16,9 @@
 #' data("Russett")
 #' A <- list(agriculture = Russett[, seq(3)], industry = Russett[, 4:5],
 #'     politic = Russett[, 6:11] )
-#' perm <- rgcca_permutation(A,par_type="tau", n_run = 2, n_cores = 1)
+#' perm <- rgcca_permutation(A,par_type="tau", n_perms = 2, n_cores = 1)
 #' plot(perm)
-#' perm <- rgcca_permutation(A, par_type = "sparsity", n_run = 5, n_cores = 1)
+#' perm <- rgcca_permutation(A, par_type = "sparsity", n_perms = 5, n_cores = 1)
 #' plot(perm, type="zstat")
 #' plot(perm)
 #' @export

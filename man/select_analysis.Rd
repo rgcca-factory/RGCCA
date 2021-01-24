@@ -36,8 +36,8 @@ covariance maximization among "horst" (the identity function), "factorial"
  scheme penalizes structural negative correlation. The factorial scheme 
  discriminates more strongly the blocks than the centroid one.}
 
-\item{superblock}{A boolean giving the presence (TRUE) / absence (FALSE) of
-a superblock}
+\item{superblock}{Boolean indicating the presence of the superblock. 
+Default = TRUE}
 
 \item{type}{A character giving the type of analysis: rgcca, sgcca, pca, 
 pls, cca, ifa, ra, cpca-w, gcca, hpca, maxbet-b, maxbet, maxdiff-b,maxdiff,

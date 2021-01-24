@@ -30,17 +30,24 @@
 #' If type_cv=="classification", at each round of cross-validation a "lda" is run and the proportion of wrong predictions on the testing dataset is returned.
 #' @examples
 #' data("Russett")
-#' blocks <- list(
-#'     agriculture = Russett[, seq(3)],
-#'     industry = Russett[, 4:5],
-#'     politic = Russett[, 6:11])
+#' blocks <- list(agriculture = Russett[, seq(3)],
+#'                industry = Russett[, 4:5],
+#'                politic = Russett[, 6:11])
 #' res = rgcca_cv(blocks, response = 3, type="rgcca", 
-#' par_type = "sparsity", par_value = c(0.6, 0.75, 0.5), n_run = 2, n_cores = 1)
+#'                par_type = "sparsity", 
+#'                par_value = c(0.6, 0.75, 0.5), 
+#'                n_run = 2, n_cores = 1)
 #' plot(res)
-#' rgcca_cv(blocks, response = 3, par_type = "tau", par_value = c(0.6, 0.75, 0.5)
-#' , n_run = 2, n_cores = 1)$bestpenalties
-#' rgcca_cv(blocks, response = 3, par_type = "sparsity", par_value = 0.8, n_run = 2, n_cores = 1)
-#' rgcca_cv(blocks, response = 3, par_type = "tau", par_value = 0.8, n_run = 2, n_cores = 1)
+#' rgcca_cv(blocks, response = 3, par_type = "tau", 
+#'          par_value = c(0.6, 0.75, 0.5), 
+#'          n_run = 2, n_cores = 1)$bestpenalties
+#'          
+#' rgcca_cv(blocks, response = 3, par_type = "sparsity", 
+#'          par_value = 0.8,  n_run = 2, n_cores = 1)
+#'          
+#' rgcca_cv(blocks, response = 3, par_type = "tau", 
+#'          par_value = 0.8, n_run = 2, n_cores = 1)
+#'          
 #'@importFrom utils txtProgressBar setTxtProgressBar
 rgcca_cv=function( blocks,
           type = "rgcca",

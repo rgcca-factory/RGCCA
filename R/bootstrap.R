@@ -1,7 +1,7 @@
 #' Bootstrap confidence intervals and p-values
 #'
 #' Boostrap confidence intervals and p-values for evaluating the significancy/ 
-#' stability of the block-weight vectors produce by S/RGCCA
+#' stability of the block-weight vectors produce by S/RGCCA.
 #' @inheritParams plot2D
 #' @param n_boot Number of bootstrap iterations. Default is 100.
 #' @param n_cores Number of cores for parallelization 

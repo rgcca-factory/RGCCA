@@ -62,7 +62,7 @@ plot(resRgcca,type="ind",resp=response,block=2)
 Permutation techniques can be used to estimate the optimal tau. 
 
 ```{r eval=TRUE,fig.height=4, fig.width=4}
-res_permut=rgcca_permutation(blocks=blocks,par_type="sparsity",scheme="factorial",n_run=100)
+res_permut=rgcca_permutation(blocks=blocks,par_type="sparsity",scheme="factorial",n_perms=100)
 print(res_permut)
 names(res_permut)
 plot(res_permut,type="zstat")
