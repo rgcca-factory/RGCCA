@@ -41,14 +41,15 @@ the weights corresponding to components \eqn{h}:
 \deqn{for all h, |a_{j,h}|_{L_1} \le c_1[h,j] \sqrt{p_j}.} It can be 
 estimated by using \link{rgcca_permutation}.}
 
-\item{ncomp}{A vector of 1*J integers giving the number of component for 
-each blocks}
+\item{ncomp}{A vector of length J indicating the number of block components 
+for each block.}
 
-\item{scheme}{A character or a function giving the link function for 
+\item{scheme}{A character string or a function giving the scheme function for 
 covariance maximization among "horst" (the identity function), "factorial"
- (the squared values), "centroid" (the absolute values). Only, the horst 
- scheme penalizes structural negative correlation. The factorial scheme 
- discriminates more strongly the blocks than the centroid one.}
+ (the squared values), "centroid" (the absolute values). The scheme function 
+ can be any continously differentiable convex functin and it is possible to 
+ design explicitely the sheme function (e.g. function(x) x^4) as argument of 
+ rgcca function.  See (Tenenhaus et al, 2017) for details.}
 
 \item{scale}{A logical value indicating if each block is standardized}
 
@@ -61,7 +62,7 @@ or random ("random") (default: "svd").}
 
 \item{tol}{The stopping value for the convergence of the algorithm.}
 
-\item{verbose}{A boolean displaying the warnings}
+\item{verbose}{A logical value indicating whether the warnings are displayed}
 
 \item{scale_block}{A logical value indicating if each block is divided by 
 the square root of its number of variables.}

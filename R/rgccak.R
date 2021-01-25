@@ -44,7 +44,7 @@
 #' Canonical Correlation Analysis, Psychometrika, Vol. 76, Nr 2, pp 257-284.
 #' @references Schafer J. and Strimmer K., (2005), A shrinkage approach to 
 #' large-scale covariance matrix estimation and implications for functional 
-#' genomics. Statist. Appl. Genet. Mol. Biol. 4:32.
+#' genomics. Statistical Applications in Genetics and Molecular Biology 4:32.
 #' @title Internal function for computing the RGCCA parameters (RGCCA block 
 #' components, outer weight vectors, etc.).
 #' @importFrom MASS ginv
@@ -82,7 +82,7 @@ rgccak=function (A, C, tau = "optimal", scheme = "centroid", verbose = FALSE,
     A <- lapply(A, as.matrix)
     a <- alpha <- M <- Minv <- K <- list()
     
-    # Whether primal or dual for each block
+    # Test for primal or dual for each block
     which.primal <- which((n >= pjs) == 1) 
     which.dual <- which((n < pjs) == 1)
 

@@ -2,7 +2,8 @@
 % Please edit documentation in R/sgccak.R
 \name{sgccak}
 \alias{sgccak}
-\title{Internal function for computing the SGCCA parameters (SGCCA block components, outer weight vectors etc.)}
+\title{Internal function for computing the SGCCA parameters (SGCCA block 
+components, outer weight vectors etc.)}
 \usage{
 sgccak(
   A,
@@ -18,8 +19,10 @@ sgccak(
 )
 }
 \arguments{
-\item{A}{A list that contains the \eqn{J} blocks of variables from which block components are constructed.
-It could be eiher the original matrices (\eqn{X_1, X_2, ..., X_J}) or the residual matrices (\eqn{X_{h1}, X_{h2}, ..., X_{hJ}}).}
+\item{A}{A list that contains the \eqn{J} blocks of variables from which 
+block components are constructed. It could be eiher the original matrices 
+(\eqn{X_1, X_2, ..., X_J}) or the residual matrices 
+(\eqn{X_{h1}, X_{h2}, ..., X_{hJ}}).}
 
 \item{C}{A symmetric matrix (J*J) that describes the relationships between 
 blocks.}
@@ -37,11 +40,12 @@ the weights corresponding to components \eqn{h}:
 \deqn{for all h, |a_{j,h}|_{L_1} \le c_1[h,j] \sqrt{p_j}.} It can be 
 estimated by using \link{rgcca_permutation}.}
 
-\item{scheme}{A character or a function giving the link function for 
+\item{scheme}{A character string or a function giving the scheme function for 
 covariance maximization among "horst" (the identity function), "factorial"
- (the squared values), "centroid" (the absolute values). Only, the horst 
- scheme penalizes structural negative correlation. The factorial scheme 
- discriminates more strongly the blocks than the centroid one.}
+ (the squared values), "centroid" (the absolute values). The scheme function 
+ can be any continously differentiable convex functin and it is possible to 
+ design explicitely the sheme function (e.g. function(x) x^4) as argument of 
+ rgcca function.  See (Tenenhaus et al, 2017) for details.}
 
 \item{scale}{A logical value indicating if each block is standardized}
 
@@ -54,25 +58,31 @@ or random ("random") (default: "svd").}
 \item{bias}{A logical value for biaised (\eqn{1/n}) or unbiaised 
 (\eqn{1/(n-1)}) estimator of the var/cov (default: bias = TRUE).}
 
-\item{verbose}{A boolean displaying the warnings}
+\item{verbose}{A logical value indicating whether the warnings are displayed}
 
 \item{quiet}{A boolean hidding the warnings}
 }
 \value{
-\item{Y}{A list of \eqn{J} elements. Each element of \eqn{Y} is a matrix that contains the analysis components for the corresponding block.}
+\item{Y}{A list of \eqn{J} elements. Each element of \eqn{Y} is a 
+matrix that contains the analysis components for the corresponding block.}
 
-\item{a}{A list of \eqn{J} elements. Each element of \eqn{a} is a matrix that contains the outer weight vectors for each block.}
+\item{a}{A list of \eqn{J} elements. Each element of \eqn{a} is a 
+matrix that contains the outer weight vectors for each block.}
 
-\item{crit}{A vector of integer that contains for each component the values of the analysis criteria across iterations.}
+\item{crit}{A vector of integer that contains for each component 
+the values of the analysis criteria across iterations.}
 
-\item{converg}{Speed of convergence of the alogrithm to reach the tolerance.}
+\item{converg}{Speed of convergence of the alogrithm to reach the 
+tolerance.}
 
-\item{AVE}{A list of numerical values giving the indicators of model quality based on the Average Variance Explained (AVE): AVE(for each block), AVE(outer model), AVE(inner model).}
+\item{AVE}{A list of numerical values giving the indicators of model 
+quality based on the Average Variance Explained (AVE): AVE(for each block), 
+AVE(outer model), AVE(inner model).}
 
 \item{call}{Call of the function}
 }
 \description{
-The function sgccak() is called by sgcca() and does not have to be used by the user. 
-sgccak() enables the computation of SGCCA block components, outer weight vectors, etc., 
-for each block and each dimension.
+The function sgccak() is called by sgcca() and does not have to be used by 
+the user. sgccak() enables the computation of SGCCA block components, outer 
+weight vectors, etc., for each block and each deflation stage.
 }

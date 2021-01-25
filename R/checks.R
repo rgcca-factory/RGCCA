@@ -17,10 +17,6 @@ check_blockx <- function(x, y, blocks){
     return(x)
 }
 
-# check_boolean ("x", c(T, F), "vector")
-# check_boolean ("x")
-# check_boolean ("x", c(T, F))
-# check_boolean (NA)
 check_boolean <- function(x, y = x, type = "scalar") {
     
     if (is.null(y))
@@ -179,16 +175,18 @@ check_lower_blocks <- function(x, y, blocks)
             exit_code = 133
         )
 check_method <- function(method) {
-    analysis <- c("rgcca", "cpca-w", "gcca", "hpca", "maxbet-b", "maxbet", 
-                  "maxdiff-b","maxdiff", "maxvar-a", "maxvar-b", "maxvar", "niles", 
-                  "r-maxvar", "rcon-pca", "ridge-gca", "sabscor", "ssqcor", "ssqcor", 
-                  "ssqcov-1", "ssqcov-2", "ssqcov", "sum-pca", "sumcor", "sumcov-1", 
-                  "sumcov-2", "sumcov", "sabscov", "plspm", "cca", "ra", "ifa", "pls",
-                  "pca", "sgcca", "spls", "spca")
+    analysis <- c("rgcca", "sgcca", "pca", "spca", "pls", "spls", 
+      "cca", "ifa", "ra", "gcca", "maxvar", "maxvar-b", 
+      "maxvar-a", "mcoa","cpca-1", "cpca-2", "cpca-4", 
+      "hpca", "maxbet-b", "maxbet", "maxdiff-b", "maxdiff", 
+      "maxvar-a", "sabscor", "ssqcor", "ssqcor", "ssqcov-1", 
+      "ssqcov-2", "ssqcov", "sumcor", "sumcov-1", "sumcov-2", 
+      "sumcov", "sabscov", "sabscov-1", "sabscov-2")
+      
     if (!tolower(method) %in% analysis)
         stop_rgcca(
-            paste0("Wrong type of analysis. Please select one among the following
-            list: ", paste(analysis, collapse = ", ")),
+            paste0("Please select one type among the following 
+            type: ", paste(analysis, collapse = ", ")),
             exit_code = 112
         )
 }

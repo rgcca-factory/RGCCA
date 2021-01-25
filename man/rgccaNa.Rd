@@ -7,9 +7,9 @@
 rgccaNa(
   blocks,
   method,
-  connection = 1 - diag(length(A)),
-  tau = rep(1, length(A)),
-  ncomp = rep(1, length(A)),
+  connection = 1 - diag(length(blocks)),
+  tau = rep(1, length(blocks)),
+  ncomp = rep(1, length(blocks)),
   scheme = "centroid",
   scale = TRUE,
   init = "svd",
@@ -43,8 +43,9 @@ Neighbor. 1 can be replace by another number (such as knn3) to impute with
 the 3-Nearest Neighbors.}}}
 
 \item{connection}{A symmetric matrix (J*J) that describes the relationships 
-between blocks. Two values are accepted : '1' for a connection between two 
-blocks, or '0' otherwise.}
+between blocks. Elements of the connection matrix must be positive ; but 
+usually equal to 1 if block \eqn{j} and block \eqn{k} are connected, and 0 
+otherwise.}
 
 \item{tau}{Either a 1*J vector or a \eqn{\mathrm{max}(ncomp) \times J} matrix 
 containing the values of the regularization parameters (default: tau = 1, 
@@ -57,14 +58,15 @@ using the Schafer and Strimmer (2005) analytical formula . If tau is a
 \eqn{\mathbf{X}_{jk}} (\eqn{k}th residual matrix for block \eqn{j}). It can 
 be estimated by using \link{rgcca_permutation}.}
 
-\item{ncomp}{A vector of 1*J integers giving the number of component for 
-each blocks}
+\item{ncomp}{A vector of length J indicating the number of block components 
+for each block.}
 
-\item{scheme}{A character or a function giving the link function for 
+\item{scheme}{A character string or a function giving the scheme function for 
 covariance maximization among "horst" (the identity function), "factorial"
- (the squared values), "centroid" (the absolute values). Only, the horst 
- scheme penalizes structural negative correlation. The factorial scheme 
- discriminates more strongly the blocks than the centroid one.}
+ (the squared values), "centroid" (the absolute values). The scheme function 
+ can be any continously differentiable convex functin and it is possible to 
+ design explicitely the sheme function (e.g. function(x) x^4) as argument of 
+ rgcca function.  See (Tenenhaus et al, 2017) for details.}
 
 \item{scale}{A logical value indicating if each block is standardized}
 
@@ -115,14 +117,14 @@ be estimated by using \link{rgcca_permutation}.}
 \item{ncomp}{A vector of 1*J integers giving the number of component 
 for each blocks}
 
-\item{crit}{A vector of integer that contains for each component the 
-values of the analysis criteria across iterations.}
+\item{crit}{A vector that contains for each component the 
+values of the objective function across iterations.}
 
-\item{mode}{A \eqn{1 \times J} vector that contains the formulation 
+\item{mode}{A vector of length J that contains the formulation 
 ("primal" or "dual") applied to each of the \eqn{J} blocks within the RGCCA 
 alogrithm}
 
-\item{AVE}{A list of numerical values giving the indicators of model 
+\item{AVE}{A list of numeric values that reports indicators of model 
 quality based on the Average Variance Explained (AVE): AVE(for each block), 
 AVE(outer model), AVE(inner model).}
 }
@@ -131,14 +133,14 @@ imputeRGCCA allows to choose the imputation method before running RGCCA
 }
 \examples{
 data(Russett)
-X_agric =as.matrix(Russett[,c("gini","farm","rent")])
-X_ind = as.matrix(Russett[,c("gnpr","labo")])
+X_agric = as.matrix(Russett[, c("gini", "farm", "rent")])
+X_ind = as.matrix(Russett[,c("gnpr", "labo")])
 X_polit = as.matrix(Russett[ , c("demostab", "dictator")])
-X_agric[c(2,4),]=NA
-X_ind[1,]=NA
-X_polit[5,1]=NA
-A = list(agri=X_agric, ind=X_ind, polit=X_polit)
-rgccaNa(A,method="nipals")
+X_agric[c(2,4),] = NA
+X_ind[1, ]= NA
+X_polit[5, 1]= NA
+A = list(Agric = X_agric, Ind = X_ind, Polit = X_polit)
+rgccaNa(A, method="nipals")
 }
 \references{
 Tenenhaus A. and Tenenhaus M., (2011), Regularized Generalized 
@@ -150,5 +152,5 @@ Data Analysis, 90, 114-131.
 
 Schafer J. and Strimmer K., (2005), A shrinkage approach to 
 large-scale covariance matrix estimation and implications for functional 
-genomics. Statist. Appl. Genet. Mol. Biol. 4:32.
+genomics. Statistical Applications in Genetics and Molecular Biology 4:32.
 }

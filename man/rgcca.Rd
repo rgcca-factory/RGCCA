@@ -9,7 +9,7 @@ rgcca(
   type = "rgcca",
   scale = TRUE,
   scale_block = TRUE,
-  connection = matrix(1, length(blocks), length(blocks)) - diag(length(blocks)),
+  connection = 1 - diag(length(blocks)),
   scheme = "factorial",
   ncomp = rep(1, length(blocks)),
   tau = rep(1, length(blocks)),
@@ -29,12 +29,12 @@ rgcca(
 Block Xj is a matrix of dimension n x p_j where p_j is the number of 
 variables in X_j.}
 
-\item{type}{A character string indicating the type of multi-block component
-method to consider: rgcca, sgcca, pca, pls, cca, ifa, ra, cpca-w, gcca, 
-hpca, maxbet-b, maxbet, maxdiff-b, maxdiff, maxvar-a, maxvar-b, maxvar, 
-niles, r-maxvar, rcon-pca, ridge-gca, sabscor, ssqcor, ssqcor, ssqcov-1, 
-ssqcov-2, ssqcov,  sum-pca, sumcor, sumcov-1, sumcov-2, sumcov, sabscov, 
-plspm.}
+\item{type}{A character string indicating the multi-block component
+method to consider: rgcca, sgcca, pca, spca, pls, spls, cca, 
+ifa, ra, gcca, maxvar, maxvar-b, maxvar-a, mcoa,cpca-1, cpca-2, 
+cpca-4, hpca, maxbet-b, maxbet, maxdiff-b, maxdiff, maxvar-a,  
+sabscor, ssqcor, ssqcor, ssqcov-1, ssqcov-2, ssqcov, sumcor, 
+sumcov-1, sumcov-2, sumcov, sabscov, sabscov-1, sabscov-2.}
 
 \item{scale}{A logical value indicating if each block is standardized}
 
@@ -42,17 +42,19 @@ plspm.}
 the square root of its number of variables.}
 
 \item{connection}{A symmetric matrix (J*J) that describes the relationships 
-between blocks. Two values are accepted : '1' for a connection between two 
-blocks, or '0' otherwise.}
+between blocks. Elements of the connection matrix must be positive ; but 
+usually equal to 1 if block \eqn{j} and block \eqn{k} are connected, and 0 
+otherwise.}
 
-\item{scheme}{A character or a function giving the link function for 
+\item{scheme}{A character string or a function giving the scheme function for 
 covariance maximization among "horst" (the identity function), "factorial"
- (the squared values), "centroid" (the absolute values). Only, the horst 
- scheme penalizes structural negative correlation. The factorial scheme 
- discriminates more strongly the blocks than the centroid one.}
+ (the squared values), "centroid" (the absolute values). The scheme function 
+ can be any continously differentiable convex functin and it is possible to 
+ design explicitely the sheme function (e.g. function(x) x^4) as argument of 
+ rgcca function.  See (Tenenhaus et al, 2017) for details.}
 
-\item{ncomp}{A vector of 1*J integers giving the number of component for 
-each blocks}
+\item{ncomp}{A vector of length J indicating the number of block components 
+for each block.}
 
 \item{tau}{Either a 1*J vector or a \eqn{\mathrm{max}(ncomp) \times J} matrix 
 containing the values of the regularization parameters (default: tau = 1, 
@@ -87,8 +89,9 @@ or random ("random") (default: "svd").}
 
 \item{tol}{The stopping value for the convergence of the algorithm.}
 
-\item{response}{An integer giving the position of the response block within 
-the blocks (activates the supervised mode).}
+\item{response}{An integer giving the position of the response block. When 
+the response argument is filled the supervised mode is automatically 
+activated.}
 
 \item{superblock}{Boolean indicating the presence of the superblock. 
 Default = TRUE}
@@ -225,11 +228,14 @@ plot(fit.rgcca, type = "ind", block = 1:2, comp = rep(1, 2), resp = politic)
 ############################################
 # Example 2: RGCCA and multiple components #
 ############################################
-fit.rgcca = rgcca(blocks, type = "rgcca", connection = C, superblock = FALSE, 
-tau = rep(1, 3), ncomp = c(2, 2, 2), scheme = "factorial", verbose = TRUE)
+fit.rgcca = rgcca(blocks, type = "rgcca", 
+                  connection = C, superblock = FALSE, 
+                  tau = rep(1, 3), ncomp = c(2, 2, 2), 
+                  scheme = "factorial", verbose = TRUE)
 
 politic = as.vector(apply(Russett[, 9:11], 1, which.max)) 
-plot(fit.rgcca, type = "ind", block = 1:2, comp = rep(1, 2), resp = politic)
+plot(fit.rgcca, type = "ind", block = 1:2, 
+     comp = rep(1, 2), resp = politic)
 
 plot(fit.rgcca, type = "ave")
 plot(fit.rgcca, type = "network")
@@ -242,32 +248,33 @@ plot(fit.rgcca, type = "cor")
 
 # Tune the model to find the best sparsity coefficients (all the blocs are 
 # connected together)
-perm = rgcca_permutation(blocks, n_cores = 1, par_type = "sparsity", 
- n_perms = 10)
-print(perm)
-plot(perm)
+perm.out = rgcca_permutation(blocks, n_cores = 1, 
+                             par_type = "sparsity", n_perms = 10)
+print(perm.out)
+plot(perm.out)
 
-res_sgcca = rgcca(blocks, sparsity = perm$bestpenalties)
-plot(res_sgcca, type = "network")
-plot(res_sgcca, type = "ave")
+fit.sgcca = rgcca(blocks, sparsity = perm.out$bestpenalties)
+plot(fit.sgcca, type = "network")
+plot(fit.sgcca, type = "ave")
 
 # Select the most significant variables
-b = bootstrap(res_sgcca, n_cores = 1, n_boot = 100)
+b = bootstrap(fit.sgcca, n_cores = 1, n_boot = 100)
 plot(b, n_cores = 1)
 
 ##############################
 # Example 3: Supervised mode #
 ##############################
-# Tune the model for explaining the politic block (politic connected to the 
-# two other blocks)
-cv = rgcca_cv(blocks, response = 3, ncomp = 2, n_cores = 1)
-print(cv)
-plot(cv)
+# Tune the model for explaining the politic block 
+# (politic connected to the two other blocks)
+cv.out = rgcca_cv(blocks, response = 3, ncomp = 2, n_cores = 1)
+print(cv.out)
+plot(cv.out)
 
-res_rgcca = rgcca(blocks, response = 3, ncomp = 2, tau = cv$bestpenalties)
-plot(res_rgcca, type = "both")
+fit.rgcca = rgcca(blocks, response = 3, ncomp = 2, 
+                  tau = cv.out$bestpenalties)
+plot(fit.rgcca, type = "both")
 
-b = bootstrap(res_rgcca, n_cores = 1, n_boot = 10)
+b = bootstrap(fit.rgcca, n_cores = 1, n_boot = 10)
 plot(b, n_cores = 1)
 
 ##########################
@@ -280,7 +287,7 @@ plot(b, n_cores = 1)
 Garali I, Adanyeguh IM, Ichou F, Perlbarg V, Seyer A, Colsch B, 
 Moszer I, Guillemot V, Durr A, Mochel F, Tenenhaus A. A strategy for 
 multimodal data integration: application to biomarkers identification 
-in spinocerebellar ataxia. Brief Bioinform. 2018 Nov 27;19(6):1356-1369.
+in spinocerebellar ataxia. Briefings in Bioinformatics. 2018 Nov 27;19(6):1356-1369.
 
 Tenenhaus M., Tenenhaus A. and Groenen P. J. (2017). Regularized 
 generalized canonical correlation analysis: a framework for sequential 
@@ -299,7 +306,7 @@ Canonical Correlation Analysis, Psychometrika, Vol. 76, Nr 2, pp 257-284.
 
 Schafer J. and Strimmer K. (2005). A shrinkage approach to 
 large-scale covariance matrix estimation and implications for functional 
-genomics. Statist. Appl. Genet. Mol. Biol. 4:32.
+genomics. Statistical Applications in Genetics and Molecular Biology 4:32.
 }
 \seealso{
 \code{\link[RGCCA]{plot.rgcca}}, \code{\link[RGCCA]{print.rgcca}},

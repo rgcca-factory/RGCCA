@@ -2,8 +2,8 @@
 % Please edit documentation in R/select_analysis.R
 \name{select_analysis}
 \alias{select_analysis}
-\title{Define the parameters associated with each well-known multi-block component
-method}
+\title{Define the parameters associated with each multi-block component
+method of the literature.}
 \usage{
 select_analysis(
   blocks,
@@ -22,60 +22,60 @@ select_analysis(
 \item{blocks}{A list of blocks}
 
 \item{connection}{A symmetric matrix (J*J) that describes the relationships 
-between blocks. Two values are accepted : '1' for a connection between two 
-blocks, or '0' otherwise.}
+between blocks. Elements of the connection matrix must be positive ; but 
+usually equal to 1 if block \eqn{j} and block \eqn{k} are connected, and 0 
+otherwise.}
 
-\item{penalty}{A vector of 1*J floats (or character for 'optimal' setting) 
-giving theshrinkage parameter for covariance maximization}
+\item{penalty}{A vector of length J (or character string for 'optimal' 
+setting) indicating the values of the tuning parameters.}
 
-\item{ncomp}{A vector of 1*J integers giving the number of component for 
-each blocks}
+\item{ncomp}{A vector of length J indicating the number of block components 
+for each block.}
 
-\item{scheme}{A character or a function giving the link function for 
+\item{scheme}{A character string or a function giving the scheme function for 
 covariance maximization among "horst" (the identity function), "factorial"
- (the squared values), "centroid" (the absolute values). Only, the horst 
- scheme penalizes structural negative correlation. The factorial scheme 
- discriminates more strongly the blocks than the centroid one.}
+ (the squared values), "centroid" (the absolute values). The scheme function 
+ can be any continously differentiable convex functin and it is possible to 
+ design explicitely the sheme function (e.g. function(x) x^4) as argument of 
+ rgcca function.  See (Tenenhaus et al, 2017) for details.}
 
 \item{superblock}{Boolean indicating the presence of the superblock. 
 Default = TRUE}
 
-\item{type}{A character string indicating the type of multi-block component
-method to consider: rgcca, sgcca, pca, pls, cca, ifa, ra, cpca-w, gcca, 
-hpca, maxbet-b, maxbet, maxdiff-b, maxdiff, maxvar-a, maxvar-b, maxvar, 
-niles, r-maxvar, rcon-pca, ridge-gca, sabscor, ssqcor, ssqcor, ssqcov-1, 
-ssqcov-2, ssqcov,  sum-pca, sumcor, sumcov-1, sumcov-2, sumcov, sabscov, 
-plspm.}
+\item{type}{A character string indicating the multi-block component
+method to consider: rgcca, sgcca, pca, spca, pls, spls, cca, 
+ifa, ra, gcca, maxvar, maxvar-b, maxvar-a, mcoa,cpca-1, cpca-2, 
+cpca-4, hpca, maxbet-b, maxbet, maxdiff-b, maxdiff, maxvar-a,  
+sabscor, ssqcor, ssqcor, ssqcov-1, ssqcov-2, ssqcov, sumcor, 
+sumcov-1, sumcov-2, sumcov, sabscov, sabscov-1, sabscov-2.}
 
-\item{verbose}{A boolean displaying the warnings}
+\item{verbose}{A logical value indicating whether the warnings are displayed}
 
 \item{quiet}{A boolean hidding the warnings}
 
-\item{response}{An integer giving the position of the response block within 
-the blocks (activates the supervised mode).}
+\item{response}{An integer giving the position of the response block. When 
+the response argument is filled the supervised mode is automatically 
+activated.}
 }
 \value{
-\item{blocks}{A list of matrix}
+\item{blocks}{A list of blocks.}
 
-\item{scheme}{A character or a function giving the link function for 
-covariance maximization among "horst" (the identity function), "factorial"
- (the squared values), "centroid" (the absolute values). Only, the horst 
- scheme penalizes structural negative correlation. The factorial scheme 
- discriminates more strongly the blocks than the centroid one.}
+\item{scheme}{A character string or a function giving the scheme 
+function for covariance maximization.}
 
-\item{penalty}{A vector of floats (or character for 'optimal' 
-setting) giving the shrinkage parameter for covariance maximization}
+\item{penalty}{A vector of length J (or character string for 
+'optimal' setting) indicating the values of the tuning parameters.}
 
-\item{ncomp}{A vector of 1*J integers giving the number of component 
-for each blocks}
+\item{ncomp}{A vector of length J indicating the number of block 
+components or each block.}
 
 \item{connection}{A symmetric matrix (J*J) that describes the 
 relationships between blocks}
 
-\item{superblock}{A boolean giving the presence (TRUE) / absence
-(FALSE) of a superblock}
+\item{superblock}{A logical value indicating if superblock is 
+included in the analysis}
 }
 \description{
-Define the parameters associated with each well-known multi-block component
-method
+Define the parameters associated with each multi-block component
+method of the literature.
 }

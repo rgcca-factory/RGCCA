@@ -140,9 +140,9 @@ sgcca <- function (A, C = 1-diag(length(A)), sparsity = rep(1, length(A)),
                    init = "svd", bias = TRUE, tol = .Machine$double.eps, 
                    verbose = FALSE, scale_block = TRUE, prescaling = FALSE,
                    quiet = FALSE){
-  call=list(A = A, C = C, sparsity = sparsity, ncomp = ncomp, scheme = scheme, 
-            scale = scale, init = init, bias = bias, tol = tol, 
-            verbose = verbose, scale_block = scale_block)
+  call=list(A = A, C = C, sparsity = sparsity, ncomp = ncomp, 
+            scheme = scheme, scale = scale, init = init, bias = bias, 
+            tol = tol, verbose = verbose, scale_block = scale_block)
   ndefl <- ncomp-1
   N <- max(ndefl)
   J <- length(A)
@@ -186,24 +186,7 @@ sgcca <- function (A, C = 1-diag(length(A)), sparsity = rep(1, length(A)),
   
     #-------------------------------------------------------
     if(!prescaling)
-    {
-        A=scaling(A,scale=scale,bias=bias,scale_block=scale_block)
-        # if (scale == TRUE) {
-        #     A = lapply(A, function(x) scale3(x, bias = bias)) #TO CHECK
-        #     if(scale_block)
-        #     {
-        #         A = lapply(A, function(x) x/sqrt(NCOL(x)))
-        #     }
-        # }
-        # if(scale == FALSE)
-        # {
-        #     A = lapply(A, function(x) scale3(x,scale=FALSE, bias = bias)) 
-        #     if(scale_block)
-        #     {
-        #         #TODO  A = lapply(A, function(x) x/sqrt(NCOL(x)))
-        #     }
-        # }
-    }
+        A=scaling(A, scale = scale, bias = bias, scale_block = scale_block)
 
     ####################################
     # sgcca with 1 component per block #
@@ -351,7 +334,7 @@ sgcca <- function (A, C = 1-diag(length(A)), sparsity = rep(1, length(A)),
     #AVE outer 
     outer = matrix(unlist(AVE_X), nrow = max(ncomp))
     for (j in 1:max(ncomp)) 
-      AVE_outer[j] <- sum(pjs * outer[j, ], na.rm=T)/sum(pjs) #To check for na.rm=TRUE
+      AVE_outer[j] <- sum(pjs * outer[j, ], na.rm=T)/sum(pjs)
     
     Y = shave.matlist(Y, ncomp)
     AVE_X = shave.veclist(AVE_X, ncomp)

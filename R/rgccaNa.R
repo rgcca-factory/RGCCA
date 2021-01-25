@@ -62,12 +62,12 @@
 #' be estimated by using \link{rgcca_permutation}.}
 #' @return \item{ncomp}{A vector of 1*J integers giving the number of component 
 #' for each blocks}
-#' @return \item{crit}{A vector of integer that contains for each component the 
-#' values of the analysis criteria across iterations.}
-#' @return \item{mode}{A \eqn{1 \times J} vector that contains the formulation 
+#' @return \item{crit}{A vector that contains for each component the 
+#' values of the objective function across iterations.}
+#' @return \item{mode}{A vector of length J that contains the formulation 
 #' ("primal" or "dual") applied to each of the \eqn{J} blocks within the RGCCA 
 #' alogrithm} 
-#' @return \item{AVE}{A list of numerical values giving the indicators of model 
+#' @return \item{AVE}{A list of numeric values that reports indicators of model 
 #' quality based on the Average Variance Explained (AVE): AVE(for each block), 
 #' AVE(outer model), AVE(inner model).}
 #' @references Tenenhaus A. and Tenenhaus M., (2011), Regularized Generalized 
@@ -77,33 +77,32 @@
 #' Data Analysis, 90, 114-131.
 #' @references Schafer J. and Strimmer K., (2005), A shrinkage approach to 
 #' large-scale covariance matrix estimation and implications for functional 
-#' genomics. Statist. Appl. Genet. Mol. Biol. 4:32.
+#' genomics. Statistical Applications in Genetics and Molecular Biology 4:32.
 #' @title Regularized Generalized Canonical Correlation Analysis (RGCCA) 
 #' @export
 #' @examples
 #' data(Russett)
-#' X_agric =as.matrix(Russett[,c("gini","farm","rent")])
-#' X_ind = as.matrix(Russett[,c("gnpr","labo")])
+#' X_agric = as.matrix(Russett[, c("gini", "farm", "rent")])
+#' X_ind = as.matrix(Russett[,c("gnpr", "labo")])
 #' X_polit = as.matrix(Russett[ , c("demostab", "dictator")])
-#' X_agric[c(2,4),]=NA
-#' X_ind[1,]=NA
-#' X_polit[5,1]=NA
-#' A = list(agri=X_agric, ind=X_ind, polit=X_polit)
-#' rgccaNa(A,method="nipals")
+#' X_agric[c(2,4),] = NA
+#' X_ind[1, ]= NA
+#' X_polit[5, 1]= NA
+#' A = list(Agric = X_agric, Ind = X_ind, Polit = X_polit)
+#' rgccaNa(A, method="nipals")
 
-rgccaNa=function (blocks, method, connection = 1 - diag(length(A)), 
-                  tau = rep(1, length(A)), ncomp = rep(1, length(A)), 
+rgccaNa=function (blocks, method, connection = 1 - diag(length(blocks)), 
+                  tau = rep(1, length(blocks)), 
+                  ncomp = rep(1, length(blocks)), 
                   scheme = "centroid", scale = TRUE, init = "svd", 
                   bias = TRUE, tol = 1e-08, verbose = TRUE,
                   scale_block=TRUE, prescaling = FALSE, quiet = FALSE)
 { 
-    A=blocks
-    C=connection
-    call=list(A = A, method = method, C = C, tau = tau, ncomp = ncomp, 
-              scheme = scheme, scale = scale, init = init, bias = bias, 
-              tol = tol, verbose = verbose, scale_block = scale_block)
 
-    nvar = sapply(A, NCOL)
+    call=list(A = blocks, method = method, C = connection, 
+              tau = tau, ncomp = ncomp, scheme = scheme, 
+              scale = scale, init = init, bias = bias, 
+              tol = tol, verbose = verbose, scale_block = scale_block)
 
     shave.matlist <- function(mat_list, nb_cols) 
       mapply(function(m,nbcomp) m[, 1:nbcomp, drop = FALSE], 
@@ -112,18 +111,18 @@ rgccaNa=function (blocks, method, connection = 1 - diag(length(A)),
       mapply(function(m, nbcomp) m[1:nbcomp], 
              vec_list, nb_elts, SIMPLIFY = FALSE)
 	
-    A0 = A
-    indNA = lapply(A, function(x){return(which(is.na(x),arr.ind=TRUE))})
+    indNA = lapply(blocks, function(x){return(which(is.na(x), arr.ind = TRUE))})
     na.rm = FALSE
-    if(method == "complete") A2 = intersection_list(A)
-    if(method == "nipals"){na.rm=TRUE; A2 = A}
+    if(method == "complete") A = intersection_list(blocks)
+    if(method == "nipals"){na.rm = TRUE ; A = blocks}
     
-    resRgcca = rgccad(A2, C = C, ncomp = ncomp, verbose = verbose,
-                      scale = scale, init = init, scale_block = scale_block,
-                      tau = tau, scheme = scheme, tol = tol, 
-                      prescaling = prescaling, quiet = quiet)
+    fit = rgccad(A, C = connection, ncomp = ncomp, verbose = verbose,
+                 scale = scale, init = init, 
+                 scale_block = scale_block,
+                 tau = tau, scheme = scheme, tol = tol, 
+                 prescaling = prescaling, quiet = quiet)
     
-    out = list(imputedA = A2, rgcca = resRgcca, method, indNA = indNA)
+    out = list(imputed_blocks = A, rgcca = fit, method, indNA = indNA)
 	
     return(out)
 }

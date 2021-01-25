@@ -96,7 +96,7 @@
 #' Canonical Correlation Analysis, Psychometrika, Vol. 76, Nr 2, pp 257-284.
 #' @references Schafer J. and Strimmer K. (2005). A shrinkage approach to 
 #' large-scale covariance matrix estimation and implications for functional 
-#' genomics. Statist. Appl. Genet. Mol. Biol. 4:32.
+#' genomics. Statistical Applications in Genetics and Molecular Biology 4:32.
 #' @examples
 #' ####################
 #' # Example 1: RGCCA #
@@ -119,11 +119,14 @@
 #' ############################################
 #' # Example 2: RGCCA and multiple components #
 #' ############################################
-#' fit.rgcca = rgcca(blocks, type = "rgcca", connection = C, superblock = FALSE, 
-#' tau = rep(1, 3), ncomp = c(2, 2, 2), scheme = "factorial", verbose = TRUE)
+#' fit.rgcca = rgcca(blocks, type = "rgcca", 
+#'                   connection = C, superblock = FALSE, 
+#'                   tau = rep(1, 3), ncomp = c(2, 2, 2), 
+#'                   scheme = "factorial", verbose = TRUE)
 #' 
 #' politic = as.vector(apply(Russett[, 9:11], 1, which.max)) 
-#' plot(fit.rgcca, type = "ind", block = 1:2, comp = rep(1, 2), resp = politic)
+#' plot(fit.rgcca, type = "ind", block = 1:2, 
+#'      comp = rep(1, 2), resp = politic)
 #' 
 #' plot(fit.rgcca, type = "ave")
 #' plot(fit.rgcca, type = "network")
@@ -136,32 +139,33 @@
 #' 
 #' # Tune the model to find the best sparsity coefficients (all the blocs are 
 #' # connected together)
-#' perm = rgcca_permutation(blocks, n_cores = 1, par_type = "sparsity", 
-#'  n_perms = 10)
-#' print(perm)
-#' plot(perm)
+#' perm.out = rgcca_permutation(blocks, n_cores = 1, 
+#'                              par_type = "sparsity", n_perms = 10)
+#' print(perm.out)
+#' plot(perm.out)
 #' 
-#' res_sgcca = rgcca(blocks, sparsity = perm$bestpenalties)
-#' plot(res_sgcca, type = "network")
-#' plot(res_sgcca, type = "ave")
+#' fit.sgcca = rgcca(blocks, sparsity = perm.out$bestpenalties)
+#' plot(fit.sgcca, type = "network")
+#' plot(fit.sgcca, type = "ave")
 #' 
 #' # Select the most significant variables
-#' b = bootstrap(res_sgcca, n_cores = 1, n_boot = 100)
+#' b = bootstrap(fit.sgcca, n_cores = 1, n_boot = 100)
 #' plot(b, n_cores = 1)
 #' 
 #' ##############################
 #' # Example 3: Supervised mode #
 #' ##############################
-#' # Tune the model for explaining the politic block (politic connected to the 
-#' # two other blocks)
-#' cv = rgcca_cv(blocks, response = 3, ncomp = 2, n_cores = 1)
-#' print(cv)
-#' plot(cv)
+#' # Tune the model for explaining the politic block 
+#' # (politic connected to the two other blocks)
+#' cv.out = rgcca_cv(blocks, response = 3, ncomp = 2, n_cores = 1)
+#' print(cv.out)
+#' plot(cv.out)
 #' 
-#' res_rgcca = rgcca(blocks, response = 3, ncomp = 2, tau = cv$bestpenalties)
-#' plot(res_rgcca, type = "both")
+#' fit.rgcca = rgcca(blocks, response = 3, ncomp = 2, 
+#'                   tau = cv.out$bestpenalties)
+#' plot(fit.rgcca, type = "both")
 #' 
-#' b = bootstrap(res_rgcca, n_cores = 1, n_boot = 10)
+#' b = bootstrap(fit.rgcca, n_cores = 1, n_boot = 10)
 #' plot(b, n_cores = 1)
 #' 
 #' ##########################
@@ -187,7 +191,7 @@ rgcca <- function(
     type = "rgcca",
     scale = TRUE,
     scale_block = TRUE,
-    connection = matrix(1,length(blocks),length(blocks)) - diag(length(blocks)),
+    connection = 1 - diag(length(blocks)),
     scheme = "factorial",
     ncomp = rep(1, length(blocks)),
     tau = rep(1, length(blocks)),
