@@ -17,11 +17,12 @@ plot_var_1D(
 )
 }
 \arguments{
-\item{rgcca_res}{A RGCCA object (see  \code{\link[RGCCA]{rgcca}})}
+\item{rgcca_res}{A fitted RGCCA object (see  \code{\link[RGCCA]{rgcca}})}
 
 \item{comp}{An integer giving the index of the analysis components}
 
-\item{n_mark}{An integer giving the number of top variables to select}
+\item{n_mark}{The number of top variables to display in the correlation 
+circle}
 
 \item{i_block}{An integer giving the index of a list of blocks}
 

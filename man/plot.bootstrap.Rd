@@ -30,7 +30,8 @@
 
 \item{comp}{An integer giving the index of the analysis components}
 
-\item{n_mark}{An integer giving the number of top variables to select}
+\item{n_mark}{The number of top variables to display in the correlation 
+circle}
 
 \item{bars}{A character giving the variability among "sd" (standard 
 deviations bars) , "stderr"(bars of standard deviation divided by 
@@ -59,8 +60,7 @@ sqrt(n)) or "quantile" (for the 0.05-0.95 quantiles bars)}
 \item{...}{Further graphical parameters (see plot2D)}
 }
 \description{
-Plot the results of a fitted bootstrap object. The representation can be 
-with bars (1D) or a biplot (2D) (see details).
+Plot the results of a fitted bootstrap object.
 }
 \examples{
 data("Russett")
@@ -69,5 +69,5 @@ blocks = list(agriculture = Russett[, seq(3)],
               politic = Russett[, 6:11])
 fit.rgcca = rgcca(blocks)
 fit.boot=bootstrap(fit.rgcca, n_boot = 2, n_cores = 1)
-plot(fit.boot, n_cores=1)
+plot(fit.boot)
 }

@@ -14,7 +14,7 @@ rgcca_predict(
 )
 }
 \arguments{
-\item{rgcca_res}{A RGCCA object (see  \code{\link[RGCCA]{rgcca}})}
+\item{rgcca_res}{A fitted RGCCA object (see  \code{\link[RGCCA]{rgcca}})}
 
 \item{newA}{A list of either a dataframe/matrix or a vector giving the blocks to be predicted}
 

@@ -11,7 +11,8 @@ get_bootstrap(
   bars = "quantile",
   collapse = FALSE,
   n_cores = parallel::detectCores() - 1,
-  display_order = TRUE
+  display_order = TRUE,
+  adj.method = "fdr"
 )
 }
 \arguments{
@@ -30,6 +31,9 @@ sqrt(n)) or "quantile" (for the 0.05-0.95 quantiles bars)}
 \item{n_cores}{Number of cores for parallelization}
 
 \item{display_order}{A logical value to display the order of the variables}
+
+\item{adj.method}{character string indicating the method used for p-value 
+adjustment (default: fdr - a.k.a Benjamini-Hochberg correction)}
 }
 \value{
 A dataframe containing:
@@ -38,21 +42,21 @@ A dataframe containing:
 \item 'estimate' for RGCCA weights
 \item 'sd' for the standard error of the (non-null in case of SGCCA) 
 bootstrap weights
-\item 'lower/upper_band' for the lower and upper intervals calculated 
+\item 'lower/upper_bound' for the lower and upper intervals calculated 
 according to the 'bars' parameter
 \item 'bootstrap_ratio' for the mean of the bootstrap weights / their 
 standard error
-\item 'p.vals' for p-values (see details)
-\item 'BH' for Benjamini-Hochberg p-value adjustments
+\item 'pval' for p-value (see details)
+\item 'adjust.pval' for adjusted p-value (default value: fdr (Benjamini-
+Hochberg correction))
 \item 'occurrences' for non-zero occurences (for SGCCA) 
-\item 'sign' for significant ('*') or not ('ns') p-values (alpha = 0.05) 
+\item 'sign' for significant ('*') or not ('ns') p-value (alpha = 0.05) 
 (see details)
 }
 }
 \description{
 This function extracts statistical information from a fitted bootstrap
-object.  of the RGCCA weights 
-(\code{\link[RGCCA]{bootstrap}})
+object. (\code{\link[RGCCA]{bootstrap}})
 }
 \details{
 For RGCCA, a classical Student test (df = number of bootstraps -1) is 
@@ -73,12 +77,18 @@ randomly selected according to B(n,p)". This hypothesis is rejected when
 the number of occurrences is higher than the 1-(0.05/p_j)th quantile
 }
 \examples{
+# Bootstrap confidence intervals and p-values for RGCCA 
 data("Russett")
-blocks = list(agriculture = Russett[, seq(3)], industry = Russett[, 4:5],
-    politic = Russett[, 6:11] )
+blocks = list(agriculture = Russett[, seq(3)], 
+              industry = Russett[, 4:5], 
+              politic = Russett[, 6:11])
+              
 rgcca_out = rgcca(blocks)
 boot = bootstrap(rgcca_out, 5, n_cores = 1)
-get_bootstrap(boot, n_cores = 1)
+get_bootstrap(boot)
+
+# Stability of the selected variables for SGCCA
+ 
 }
 \seealso{
 \code{\link[RGCCA]{bootstrap}}, 

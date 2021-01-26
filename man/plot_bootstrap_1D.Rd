@@ -22,15 +22,17 @@ plot_bootstrap_1D(
 )
 }
 \arguments{
-\item{b}{A fitted boostrap object \code{\link[RGCCA]{bootstrap}}}
+\item{b}{A fitted bootstrap object \code{\link[RGCCA]{bootstrap}}}
 
 \item{df_b}{A get_bootstrap object \code{\link[RGCCA]{get_bootstrap}}}
 
 \item{x}{indicator used in the plot (see details).}
 
-\item{y}{A character for the index to color the bars (see details).}
+\item{y}{A character string indicating for the index to color the bars 
+(see details).}
 
-\item{n_mark}{An integer giving the number of top variables to select}
+\item{n_mark}{The number of top variables to display in the correlation 
+circle}
 
 \item{title}{A character giving the title of the plot}
 
@@ -42,7 +44,8 @@ plot_bootstrap_1D(
 deviations bars) , "stderr"(bars of standard deviation divided by 
 sqrt(n)) or "quantile" (for the 0.05-0.95 quantiles bars)}
 
-\item{display_bar}{A boolean to display the bar for significative variables.}
+\item{display_bar}{A logical value. If TRUE colobar for significant 
+variables is displayed.}
 
 \item{i_block}{An integer giving the index of a list of blocks}
 
@@ -65,23 +68,26 @@ intervals ('*' or 'ns'; see 'p.vals' in details for
 }
 \details{
 \itemize{
-\item 'estimate' for RGCCA weights
-\item 'bootstrap_ratio' for the mean of the bootstrap weights / their standard error
+\item 'estimate' of the block weight vectors
+\item 'bootstrap_ratio' of the block weight vectors
 \item 'sign' for significant 95% bootstrap interval
-\item 'occurrences' for non-zero occurences
-\item 'mean' for the mean of the bootstrap weights
+\item 'occurrences' number of for non-zero occurrences
+\item 'mean'  mean of the bootstraped block weight vectors
 }
 }
 \examples{
 data("Russett")
-blocks = list(agriculture = Russett[, seq(3)], industry = Russett[, 4:5],
-    politic = Russett[, 6:11] )
-rgcca_out = rgcca(blocks, sparsity = 0.75, type = "sgcca")
-boot = bootstrap(rgcca_out, 2, n_cores = 1)
-plot_bootstrap_1D(boot, n_cores = 1)
+blocks = list(agriculture = Russett[, seq(3)], 
+              industry = Russett[, 4:5], 
+              politic = Russett[, 6:11])
+fit.sgcca = rgcca(blocks, sparsity = 0.75, type = "sgcca")
+
+boot = bootstrap(fit.sgcca, 30, n_cores = 1)
+plot_bootstrap_1D(boot)
 rgcca_out = rgcca(blocks)
 boot = bootstrap(rgcca_out, 2, n_cores = 1)
-selected.var = get_bootstrap(boot, n_cores = 1,display_order=TRUE)
+selected.var = get_bootstrap(boot, n_cores = 1, display_order=TRUE)
 plot_bootstrap_1D(boot, n_cores = 1)
 plot_bootstrap_1D(df_b = selected.var)
+
 }

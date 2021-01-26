@@ -13,7 +13,7 @@ plot_ave(
 )
 }
 \arguments{
-\item{rgcca_res}{A RGCCA object (see  \code{\link[RGCCA]{rgcca}})}
+\item{rgcca_res}{A fitted RGCCA object (see  \code{\link[RGCCA]{rgcca}})}
 
 \item{cex}{An integer for the size of the plot parameters}
 

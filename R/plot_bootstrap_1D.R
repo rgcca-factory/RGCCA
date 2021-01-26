@@ -13,31 +13,36 @@
 #' @inheritParams get_bootstrap
 #' @inheritParams plot_var_2D
 #' @param df_b A get_bootstrap object \code{\link[RGCCA]{get_bootstrap}}
-#' @param b A fitted boostrap object \code{\link[RGCCA]{bootstrap}}
+#' @param b A fitted bootstrap object \code{\link[RGCCA]{bootstrap}}
 #' @param x indicator used in the plot (see details).
-#' @param y A character for the index to color the bars (see details).
-#' @param display_bar A boolean to display the bar for significative variables.
+#' @param y A character string indicating for the index to color the bars 
+#' (see details).
+#' @param display_bar A logical value. If TRUE colobar for significant 
+#' variables is displayed.
 #' @param ... Other parameters (see plot_histogram)
 #' @details 
 #' \itemize{
-#' \item 'estimate' for RGCCA weights
-#' \item 'bootstrap_ratio' for the mean of the bootstrap weights / their standard error
+#' \item 'estimate' of the block weight vectors
+#' \item 'bootstrap_ratio' of the block weight vectors
 #' \item 'sign' for significant 95% bootstrap interval
-#' \item 'occurrences' for non-zero occurences
-#' \item 'mean' for the mean of the bootstrap weights
+#' \item 'occurrences' number of for non-zero occurrences
+#' \item 'mean'  mean of the bootstraped block weight vectors
 #' }
 #' @examples
 #' data("Russett")
-#' blocks = list(agriculture = Russett[, seq(3)], industry = Russett[, 4:5],
-#'     politic = Russett[, 6:11] )
-#' rgcca_out = rgcca(blocks, sparsity = 0.75, type = "sgcca")
-#' boot = bootstrap(rgcca_out, 2, n_cores = 1)
-#' plot_bootstrap_1D(boot, n_cores = 1)
+#' blocks = list(agriculture = Russett[, seq(3)], 
+#'               industry = Russett[, 4:5], 
+#'               politic = Russett[, 6:11])
+#' fit.sgcca = rgcca(blocks, sparsity = 0.75, type = "sgcca")
+#' 
+#' boot = bootstrap(fit.sgcca, 30, n_cores = 1)
+#' plot_bootstrap_1D(boot)
 #' rgcca_out = rgcca(blocks)
 #' boot = bootstrap(rgcca_out, 2, n_cores = 1)
-#' selected.var = get_bootstrap(boot, n_cores = 1,display_order=TRUE)
+#' selected.var = get_bootstrap(boot, n_cores = 1, display_order=TRUE)
 #' plot_bootstrap_1D(boot, n_cores = 1)
 #' plot_bootstrap_1D(df_b = selected.var)
+#' 
 #' @export
 #' @importFrom ggplot2 ggplot
 #' @importFrom stats qbinom
@@ -89,7 +94,7 @@ plot_bootstrap_1D <- function(
         else
             colors <- c(color_group(seq(3))[1], color_group(seq(3))[3])
     }
-    lower_band <- NULL -> upper_band
+    lower_bound <- NULL -> upper_bound
     check_ncol(list(df_b), 1)
 
     set_occ <- function(x) {
@@ -142,8 +147,8 @@ plot_bootstrap_1D <- function(
         p <- p +
             geom_errorbar(
                 aes(
-                    ymin = lower_band, 
-                    ymax = upper_band, 
+                    ymin = lower_bound, 
+                    ymax = upper_bound, 
                     width = 0.5))
 
     if (x == "occurrences" && display_bar) {

@@ -1,7 +1,6 @@
 #' Plot a fitted bootstrap object
 #' 
-#' Plot the results of a fitted bootstrap object. The representation can be 
-#' with bars (1D) or a biplot (2D) (see details).
+#' Plot the results of a fitted bootstrap object. 
 #' @inheritParams plot_var_2D
 #' @inheritParams plot_var_1D
 #' @inheritParams plot.rgcca
@@ -17,7 +16,7 @@
 #'               politic = Russett[, 6:11])
 #' fit.rgcca = rgcca(blocks)
 #' fit.boot=bootstrap(fit.rgcca, n_boot = 2, n_cores = 1)
-#' plot(fit.boot, n_cores=1)
+#' plot(fit.boot)
 
 plot.bootstrap=function(x, block = length(x$rgcca$call$blocks), 
                         comp = 1, n_mark = 30, bars = "quantile",
@@ -28,6 +27,7 @@ plot.bootstrap=function(x, block = length(x$rgcca$call$blocks),
 {
     stopifnot(is(x, "bootstrap"))
     check_blockx("block", block, x$rgcca$call$blocks)
+    
     if(x$rgcca$call$superblock)
     {
         if(block==length(x$rgcca$call$blocks))
@@ -39,20 +39,22 @@ plot.bootstrap=function(x, block = length(x$rgcca$call$blocks),
             x1="occurrences"
             y1="estimate"
             title=ifelse(is.null(title),
-                         paste0("Occurrences (", 
+                         paste0("Non-zero occurrences (", 
                                 names(x$rgcca$call$blocks)[block], 
                                 ")\n(", ncol(x$bootstrap[[1]][[1]]),
-                                " bootstrap sample, comp ", comp, ")"), title)
+                                " bootstrap samples - comp ", comp, ")"), 
+                         title)
         }
          else
          {
-            x1="estimate";
-            y1="sign";
+            x1="estimate"
+            y1="sign"
             title=ifelse(is.null(title), 
                          paste0("Bootstrap confidence interval (",
                                 names(x$rgcca$call$blocks)[block], ")\n (", 
                                 ncol(x$bootstrap[[1]][[1]]),
-                                " bootstrap samples, comp ", comp, ")" ), title)
+                                " bootstrap samples - comp ", comp, ")" ), 
+                         title)
          }
     
            

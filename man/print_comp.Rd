@@ -7,7 +7,7 @@
 print_comp(rgcca_res, n = 1, i = length(rgcca_res$AVE$AVE_X), outer = FALSE)
 }
 \arguments{
-\item{rgcca_res}{A RGCCA object (see  \code{\link[RGCCA]{rgcca}})}
+\item{rgcca_res}{A fitted RGCCA object (see  \code{\link[RGCCA]{rgcca}})}
 
 \item{n}{An integer giving the index of the analysis component}
 

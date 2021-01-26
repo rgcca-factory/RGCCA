@@ -12,7 +12,7 @@ bootstrap(
 )
 }
 \arguments{
-\item{rgcca_res}{A RGCCA object (see  \code{\link[RGCCA]{rgcca}})}
+\item{rgcca_res}{A fitted RGCCA object (see  \code{\link[RGCCA]{rgcca}})}
 
 \item{n_boot}{Number of bootstrap iterations. Default is 100.}
 
@@ -34,16 +34,50 @@ Boostrap confidence intervals and p-values for evaluating the significancy/
 stability of the block-weight vectors produce by S/RGCCA.
 }
 \examples{
+# Bootstrap confidence intervals and p-values for RGCCA 
 data("Russett")
 blocks = list(agriculture = Russett[, seq(3)], 
               industry = Russett[, 4:5], 
-              politic = Russett[, c(6:9, 11)]
-              )
+              politic = Russett[, 6:11])
               
 fit.rgcca = rgcca(blocks)
-boot_rgcca = bootstrap(fit.rgcca, n_boot = 50)
-plot(boot_rgcca, block = 3)
+boot.out = bootstrap(fit.rgcca, 50)
+plot(boot.out, block = 1, comp = 1)
 
+print(boot.out)
+get_bootstrap(boot.out)
+
+fit.rgcca = rgcca(blocks, type = "mcoa")
+boot.out = bootstrap(fit.rgcca, n_boot = 20)
+plot(boot.out, block = 1)
+
+# Stability of the selected variables for SGCCA
+# Not run: 
+# Download the dataset's package at http://biodev.cea.fr/sgcca/.
+# --> gliomaData_0.4.tar.gz#' require(gliomaData)
+# library(gliomaData)
+# data(ge_cgh_locIGR)
+# A <- ge_cgh_locIGR$multiblocks
+# A[[3]] = A[[3]][, -3]
+# Loc <- factor(ge_cgh_locIGR$y)
+# levels(Loc) <- colnames(ge_cgh_locIGR$multiblocks$y)
+
+# C <-  matrix(c(0, 0, 1, 0, 0, 1, 1, 1, 0), 3, 3)
+# rgcca algorithm using the dual formulation for X1 and X2 
+# and the dual formulation for X3
+ 
+# fit.rgcca = rgcca(A, connection = C, tau = c(1, 1, 0), 
+#                   ncomp = c(2, 2, 1), scheme = "factorial", 
+#                   verbose = TRUE)
+# boot.out = bootstrap(fit.rgcca, n_boot = 50, n_cores = 1)
+# plot(boot.out, block = 1, ncomp = 1, n_marks = 30)
+# plot(boot.out, block = 1, ncomp = 2, n_marks = 30)
+# get_bootstrap(boot.out)
+                      
+# sgcca algorithm
+# result.sgcca = sgcca(A, C, sparsity = c(.071,.2, 1), ncomp = c(2, 2, 1),
+#                      scheme = "centroid", verbose = TRUE)
+ 
 }
 \seealso{
 \code{\link[RGCCA]{plot.bootstrap}} , 

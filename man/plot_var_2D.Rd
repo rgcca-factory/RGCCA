@@ -14,14 +14,14 @@ plot_var_2D(
   n_mark = 30,
   collapse = FALSE,
   no_overlap = FALSE,
-  title = "Variable correlations",
+  title = "Correlation Circle",
   resp = NULL,
   colors = NULL,
   ...
 )
 }
 \arguments{
-\item{rgcca_res}{A RGCCA object (see  \code{\link[RGCCA]{rgcca}})}
+\item{rgcca_res}{A fitted RGCCA object (see  \code{\link[RGCCA]{rgcca}})}
 
 \item{compx}{An integer giving the index of the analysis component used
 for the x-axis}
@@ -34,10 +34,11 @@ for the y-axis}
 \item{text}{A bolean to represent the points with their row names (TRUE)
 or with circles (FALSE)}
 
-\item{remove_var}{A bolean to keep only the 100 variables of each
-component with the biggest correlation#'}
+\item{remove_var}{logical value. If TRUE, the top 100 variables with the 
+highest with the block components are displayed}
 
-\item{n_mark}{An integer giving the number of top variables to select}
+\item{n_mark}{The number of top variables to display in the correlation 
+circle}
 
 \item{collapse}{A boolean to combine the variables of each block as result}
 
@@ -75,7 +76,8 @@ coord = setMatrix(10, 2, 4)
 a = setMatrix(5, 2)
 a[[4]] = setMatrix(15, 2, 1)[[1]]
 AVE_X = lapply(seq(4), function(x) runif(2))
-rgcca_out = list(Y = coord, a = a, AVE = list(AVE_X = AVE_X), call = list(blocks = blocks))
+rgcca_out = list(Y = coord, a = a, AVE = list(AVE_X = AVE_X), 
+                 call = list(blocks = blocks))
 names(rgcca_out$a) <- LETTERS[seq(4)] -> names(rgcca_out$call$blocks)
 rgcca_out$call$type="rgcca"
 # Using a superblock
@@ -86,9 +88,13 @@ plot_var_2D(rgcca_out, 1, 2)
 # Using the first block
 plot_var_2D(rgcca_out, 1, 2, 1)
 data("Russett")
-blocks = list(agriculture = Russett[, seq(3)], industry = Russett[, 4:5],
- politic = Russett[, 6:11] )
+blocks = list(agriculture = Russett[, seq(3)], 
+              industry = Russett[, 4:5],
+              politic = Russett[, 6:11] )
+
 rgcca_out = rgcca(blocks,ncomp=2)
+
 # Without superblock but with the of all variables to the first block
 plot_var_2D(rgcca_out, collapse = TRUE)
+
 }

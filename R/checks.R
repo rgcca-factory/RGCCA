@@ -8,9 +8,7 @@ check_blockx <- function(x, y, blocks){
                 x,
                 " should be lower than ",
                 length(blocks),
-                " (the maximum number of blocks), not be equal to ",
-                y,
-                "."
+                " (that is the number of blocks)."
             ),
             exit_code = 133
         )

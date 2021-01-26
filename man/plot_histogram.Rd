@@ -19,7 +19,7 @@ plot_histogram(
 \arguments{
 \item{p}{A ggplot object}
 
-\item{df}{A dataframe}
+\item{df}{A data.frame}
 
 \item{title}{A character giving the title of the plot}
 

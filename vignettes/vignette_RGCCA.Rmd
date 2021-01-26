@@ -912,15 +912,16 @@ boot.rgcca = bootstrap(fit.rgcca, n_boot = 200, n_cores = 1)
 
 ```{r}
 
-rgcca_optimal_factorial = rgcca(blocks=A, connection=C, tau = c(1, 1, 0), scheme = "factorial", scale = TRUE, verbose = FALSE, ncomp = 2)
+rgcca_optimal_factorial = rgcca(blocks=A, connection=C, 
+                                tau = c(1, 1, 0), scheme = "factorial", 
+                                scale = TRUE, verbose = FALSE, ncomp = 2)
 
 boot.rgcca = bootstrap(rgcca_optimal_factorial, n_boot = 200, n_cores = 1)
 ```
-
 The bootstrap results are displayed using the `plot()`function.
 
 ```{r}
-plot(boot.rgcca, block =1, n_cores = 1)
+plot(boot.rgcca, block = 1)
 ```
 
 and detailed using the `print()` function.

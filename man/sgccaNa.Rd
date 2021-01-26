@@ -127,14 +127,14 @@ imputeRGCCA allows to choose the imputation method before running RGCCA
 }
 \examples{
 data(Russett)
-X_agric =as.matrix(Russett[,c("gini","farm","rent")])
-X_ind = as.matrix(Russett[,c("gnpr","labo")])
+X_agric =as.matrix(Russett[,c("gini", "farm", "rent")])
+X_ind = as.matrix(Russett[,c("gnpr", "labo")])
 X_polit = as.matrix(Russett[ , c("demostab", "dictator")])
-X_agric[c(2,4),]=NA
-X_ind[1,]=NA
-X_polit[5,1]=NA
-A = list(agri=X_agric, ind=X_ind, polit=X_polit)
-rgccaNa(A,method="nipals")
+X_agric[c(2, 4), ] = NA # blockwise missing structure
+X_ind[1, ] = NA # Ponctual NA
+X_polit[5, 1] = NA
+A = list(Agric = X_agric, Ind = X_ind, Polit = X_polit)
+rgccaNa(A, method = "nipals")
 }
 \references{
 Tenenhaus A. and Tenenhaus M., (2011), Regularized Generalized 

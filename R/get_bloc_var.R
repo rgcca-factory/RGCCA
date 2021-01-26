@@ -1,4 +1,4 @@
-# Get the blocs of each variables
+# Retunr the block of each variable
 #
 # Get a vector of block names for each corresponding variable. The last block 
 # is considered as the superblock and ignored.

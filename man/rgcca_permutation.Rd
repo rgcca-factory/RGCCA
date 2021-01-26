@@ -136,7 +136,7 @@ with superblock approach}
 Neighbor. 1 can be replace by another number (such as knn3) to impute with 
 the 3-Nearest Neighbors.}}}
 
-\item{rgcca_res}{A RGCCA object (see  \code{\link[RGCCA]{rgcca}})}
+\item{rgcca_res}{A fitted RGCCA object (see  \code{\link[RGCCA]{rgcca}})}
 
 \item{parallelization}{if TRUE, the bootstrap is processed in parallel. If 
 parallelization = NULL (default), parallelization is always performed except 
