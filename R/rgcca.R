@@ -263,29 +263,30 @@ rgcca <- function(
 
     if (tolower(type) %in% c("sgcca", "spca", "spls")) {
         if (!missing(tau) && missing(sparsity))
-           stop_rgcca(paste0("sparsity parameter required for ", 
-                             tolower(type), "(instead of tau)."))
+           stop_rgcca(paste0("sparsity parameters required for ", 
+                             tolower(type), " (instead of tau)."))
         gcca <- sgccaNa
         par <- "sparsity"
         penalty <- sparsity
        
     }else{
         if (!missing(sparsity) & missing(tau))
-           stop_rgcca(paste0("tau parameter required for ", 
-                             tolower(type), "(instead of sparsity)."))
+           stop_rgcca(paste0("tau parameters required for ", 
+                             tolower(type), " (instead of sparsity)."))
         gcca <- rgccaNa
         par <- "tau"
         penalty <- tau
     }
-     if (superblock && any(penalty == "optimal"))
-        stop_rgcca("Optimal tau is not available with superblock option.")
+    #if (superblock && any(penalty == "optimal"))
+    #    stop_rgcca("Optimal tau is not available with superblock option.")
   
     
     match.arg(init, c("svd", "random"))
     check_method(type)
   
   # Check blocks size, add NA for missing subjects
-    blocks = check_blocks(blocks, add_NAlines=TRUE, n=1, init=TRUE, quiet=quiet)
+    blocks = check_blocks(blocks, add_NAlines=TRUE, n=1, 
+                          init=TRUE, quiet=quiet)
     if (!is.null(response))
         check_blockx("response", response, blocks)
     check_integer("tol", tol, float = TRUE, min = 0)

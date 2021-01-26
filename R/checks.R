@@ -239,11 +239,7 @@ check_ncomp <- function(ncomp, blocks, min = 1) {
             if (y > NCOL(blocks[[x]])) {
                 stop_rgcca(
                     paste0(
-                        "ncomp should be comprise between ", min ," and ",
-                        NCOL(blocks[[x]]),
-                        ", the number of variables of the block (currently equals to ",
-                        y,
-                        ")."
+                        "ncomp[", x, "] should be comprise between ", min ," and ", NCOL(blocks[[x]]), " (that is the number of variables of block ", x, ")."
                     ),
                     exit_code = 126
                 )
@@ -252,12 +248,12 @@ check_ncomp <- function(ncomp, blocks, min = 1) {
                 return(y)
         }
     )
+    
     check_size_blocks(blocks, "ncomp", ncomp)
     return(ncomp)
 }
 
 # Check if a dataframe contains no qualitative variables
-#
 # @inheritParams load_blocks
 # @param df A dataframe or a matrix
 # @param fo A character giving the name of the tested file
@@ -311,7 +307,7 @@ check_response <- function(response = NULL, df = NULL) {
                         )))
                 
             } else {
-                warning("There is multiple columns in the response file. By default, only the first one is taken in account.")
+                warning("There is multiple columns in the response block. By default, only the first column will be considered.")
                 return(as.matrix(response[, 1]))
             }
         }
@@ -427,7 +423,7 @@ check_spars <- function(blocks, tau, type = "rgcca") {
 check_superblock <- function(is_supervised = NULL, is_superblock = NULL, verbose = TRUE) {
     if (!is.null(is_supervised)) {
         if (verbose)
-            warn_connection("supervized method with a response")
+            warn_connection("supersized method with a response")
         if (is_superblock) {
             if (!is.null(is_superblock) && verbose)
                 warning("In a supervised mode, the superblock corresponds to the response.")

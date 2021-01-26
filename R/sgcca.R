@@ -134,15 +134,16 @@
 #' }
 #'@export sgcca
 
-
 sgcca <- function (A, C = 1-diag(length(A)), sparsity = rep(1, length(A)), 
                    ncomp = rep(1, length(A)), scheme = "centroid", scale = TRUE, 
                    init = "svd", bias = TRUE, tol = .Machine$double.eps, 
                    verbose = FALSE, scale_block = TRUE, prescaling = FALSE,
                    quiet = FALSE){
+
   call=list(A = A, C = C, sparsity = sparsity, ncomp = ncomp, 
             scheme = scheme, scale = scale, init = init, bias = bias, 
             tol = tol, verbose = verbose, scale_block = scale_block)
+  
   ndefl <- ncomp-1
   N <- max(ndefl)
   J <- length(A)
@@ -159,8 +160,7 @@ sgcca <- function (A, C = 1-diag(length(A)), sparsity = rep(1, length(A)),
   
   if (is.vector(sparsity)){
     if (any(sparsity < 1/sqrt(pjs) | sparsity > 1 ))
-      stop_rgcca("L1 constraints (sparsity) must vary between 1/sqrt(p_j) 
-                 and 1.")
+      stop_rgcca("L1 constraints (sparsity) must vary between 1/sqrt(p_j) and 1.")
   }
   
   if (is.matrix(sparsity)){

@@ -25,7 +25,7 @@ check_blocks <- function(blocks, init = FALSE, n = 2,
                          quiet = FALSE, no_character = FALSE) {
     
     msg <- ""
-    if(is.matrix(blocks)) blocks=list(blocks)
+    if(is.matrix(blocks)) blocks = list(blocks)
     if (!is.list(blocks)) stop_rgcca(paste(msg, "is not a list."))
     if (!init && length(blocks) < n)
         stop_rgcca(paste(msg, "should at least have two elements."))
@@ -154,9 +154,7 @@ check_blocks <- function(blocks, init = FALSE, n = 2,
           # if some subjects are missing (in the rownames)  
           if(sum(!union_rows%in%rownames(blocks[[name]])) != 0) 
             {
-                message("Some subjects are not present in all blocks. 
-                        NA rows were added to have blocks with appropriate
-                        dimensions")
+                message("Some subjects are not present in all blocks. NA rows were added to get blocks with appropriate dimensions")
                 y=matrix(NA, 
                          length(union_rows), 
                          ncol = ifelse(is.null(dim(blocks[[name]])), 
