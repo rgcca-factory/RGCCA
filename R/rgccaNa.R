@@ -90,7 +90,21 @@
 #' X_polit[5, 1]= NA
 #' A = list(Agric = X_agric, Ind = X_ind, Polit = X_polit)
 #' rgccaNa(A, method="nipals")
-
+#' 
+#' blocks = list(agriculture = Russett[, seq(3)],
+#'               industry = Russett[, 4:5],
+#'               politic = Russett[, 6:11]
+#'               )
+#' blocks[[1]] = blocks[[1]][-c(3:4), ]
+#' fit.rgcca = rgcca(blocks=blocks, type = "rgcca", 
+#'                   connection = 1-diag(3), scheme = "factorial", 
+#'                   tau = "optimal", ncomp = 2, verbose = TRUE, 
+#'                   superblock = TRUE)
+#' 
+#'  # Define the label taking into account the blockwise missing structure 
+#'  lab = apply(fit.rgcca$A[[4]][, 9:11], 1, which.max)
+#'  plot(fit.rgcca, type = "ind", resp = lab)
+#'
 rgccaNa=function (blocks, method, connection = 1 - diag(length(blocks)), 
                   tau = rep(1, length(blocks)), 
                   ncomp = rep(1, length(blocks)), 
