@@ -1,5 +1,5 @@
-# Set a list of sockets for parralel package
-# @param f a function to parralelize
+# Set a list of sockets for parrallel package
+# @param f a function to parallelize
 # @param nperm a vector object for a lapply type function
 # @param varlist character vector of names of objects to export  
 # @param envir environment                                               
@@ -34,7 +34,9 @@ parallelize <- function(
         {
         #    if( Sys.info()["sysname"] == "Windows")
         #    {
-        #        message("Windows can be slow for starting parallelization. Using parallelization=FALSE can conduct to faster results for light calculations")
+        #        message("Windows can be slow for starting parallelization. 
+        #                 Using parallelization=FALSE can conduct to faster 
+        #                 results for fast computations")
         #    }
                       
             parallelization=TRUE

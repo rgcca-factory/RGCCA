@@ -290,8 +290,8 @@ rgcca_permutation <- function(
         matConnection=matrix(0,J,J);
         matConnection[1:(J-1),J]=1;matConnection[J,1:(J-1)]=1
         rownames(matConnection) = colnames(matConnection) = names(ncols)
-        call=list(type = type, par_type = par_type, par_value = par_value, 
-                  n_perms = n_perms, quiet = quiet, connection = matConnection, 
+        call=list(type = type, par_type = par_type, n_perms = n_perms, 
+                  quiet = quiet, connection = matConnection, 
                   method=method, tol=tol, scheme = scheme, scale = scale,
                   scale_block = scale_block, 
                   superblock = superblock,blocks=blocks)
@@ -369,6 +369,7 @@ rgcca_permutation <- function(
     pb <- txtProgressBar(max = dim(par[[2]])[1])
     crits = means = sds = rep(NA, nrow(par[[2]]))
     permcrit = matrix(NA, nrow(par[[2]]), n_perms)
+    
     for(i in 1:nrow(par[[2]])){
       crits[i] <- rgcca_permutation_k(
             blocks,
@@ -391,9 +392,8 @@ rgcca_permutation <- function(
             tau = tau,
             sparsity = sparsity
         )
-         
       
-            res<- parallelize(
+      res <- parallelize(
                 varlist,
                 seq(n_perms), 
                 function(x)

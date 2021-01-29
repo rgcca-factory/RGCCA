@@ -40,9 +40,9 @@ circle}
 
 \item{comp}{An integer giving the index of the analysis components}
 
-\item{bars}{A character giving the variability among "sd" (standard 
-deviations bars) , "stderr"(bars of standard deviation divided by 
-sqrt(n)) or "quantile" (for the 0.05-0.95 quantiles bars)}
+\item{bars}{Character string giving the variability among "sd" (error bar of
+standard deviation) , "stderr" (error bar of standard deviation divided by 
+sqrt(n)) or "quantile" (error bar of 0.05/0.95-quantiles)}
 
 \item{display_bar}{A logical value. If TRUE colobar for significant 
 variables is displayed.}
@@ -57,14 +57,12 @@ variables is displayed.}
 }
 \description{
 Display bootstrap confidence intervals for RGCCA or the number of non-zero 
-occurrences for SGCCA. The bars are colored according to the significancy 
-of 95% bootstrap 
-intervals ('*' or 'ns'; see 'p.vals' in details for 
-\code{\link[RGCCA]{get_bootstrap}}) for RGCCA and according to the occurences
- of the weights which are not equal to zero (according to an ascending 
- gradient from red to blue) for SGCCA. In SGCCA, the significant variables 
- are those above the three bars, respectively, with an alpha = 0.05 
- (dark red), 0.01 (red) and 0.001 (light red).
+occurrences for SGCCA. The bars are colored according to the 
+significancy  block weight vectors ('*' or 'ns'; see 'pval' in details for 
+\code{\link[RGCCA]{get_bootstrap}}) for RGCCA and according to the 
+occurrences of non-zero weights for SGCCA. In SGCCA, the significant 
+variables are those above the three bars, respectively, with an alpha = 0.05 
+(dark red), 0.01 (red) and 0.001 (light red).
 }
 \details{
 \itemize{

@@ -907,27 +907,31 @@ fit.perm2 = rgcca(blocks = A, connection =C,
 
 ```{r}
 fit.rgcca = rgcca(fit.perm1)
-boot.rgcca = bootstrap(fit.rgcca, n_boot = 200, n_cores = 1)
+boot.rgcca = bootstrap(fit.rgcca, n_boot = 20, n_cores = 1)
 ```
 
 ```{r}
+fit = rgcca(blocks=A, connection=C, 
+            tau = c(1, 1, 0), scheme = "factorial", 
+            scale = TRUE, verbose = FALSE, ncomp = 1)
 
-rgcca_optimal_factorial = rgcca(blocks=A, connection=C, 
-                                tau = c(1, 1, 0), scheme = "factorial", 
-                                scale = TRUE, verbose = FALSE, ncomp = 2)
+fit = rgcca(blocks=A, connection=C, type = "sgcca",
+            sparsity = .75, scheme = "factorial", 
+            scale = TRUE, verbose = FALSE, ncomp = 1)
 
-boot.rgcca = bootstrap(rgcca_optimal_factorial, n_boot = 200, n_cores = 1)
+boot.out = bootstrap(fit, n_boot = 50, n_cores = 1)
 ```
+
 The bootstrap results are displayed using the `plot()`function.
 
 ```{r}
-plot(boot.rgcca, block = 1)
+plot(boot.out, block = 1)
 ```
 
 and detailed using the `print()` function.
 
 ```{r}
-print(boot.rgcca, n_cores = 1)
+print(boot.rgcca)
 ```
 
 **RGCCA with superblock** In the framework of consensus/hierarchical methods, 

@@ -1,14 +1,12 @@
 #' Plot a fitted bootstrap object in 1D
 #'
 #' Display bootstrap confidence intervals for RGCCA or the number of non-zero 
-#' occurrences for SGCCA. The bars are colored according to the significancy 
-#' of 95% bootstrap 
-#' intervals ('*' or 'ns'; see 'p.vals' in details for 
-#' \code{\link[RGCCA]{get_bootstrap}}) for RGCCA and according to the occurences
-#'  of the weights which are not equal to zero (according to an ascending 
-#'  gradient from red to blue) for SGCCA. In SGCCA, the significant variables 
-#'  are those above the three bars, respectively, with an alpha = 0.05 
-#'  (dark red), 0.01 (red) and 0.001 (light red).
+#' occurrences for SGCCA. The bars are colored according to the 
+#' significancy  block weight vectors ('*' or 'ns'; see 'pval' in details for 
+#' \code{\link[RGCCA]{get_bootstrap}}) for RGCCA and according to the 
+#' occurrences of non-zero weights for SGCCA. In SGCCA, the significant 
+#' variables are those above the three bars, respectively, with an alpha = 0.05 
+#' (dark red), 0.01 (red) and 0.001 (light red).
 #' @inheritParams plot_histogram
 #' @inheritParams get_bootstrap
 #' @inheritParams plot_var_2D

@@ -33,9 +33,9 @@
 \item{n_mark}{The number of top variables to display in the correlation 
 circle}
 
-\item{bars}{A character giving the variability among "sd" (standard 
-deviations bars) , "stderr"(bars of standard deviation divided by 
-sqrt(n)) or "quantile" (for the 0.05-0.95 quantiles bars)}
+\item{bars}{Character string giving the variability among "sd" (error bar of
+standard deviation) , "stderr" (error bar of standard deviation divided by 
+sqrt(n)) or "quantile" (error bar of 0.05/0.95-quantiles)}
 
 \item{colors}{Either a vector of integers (each integer corresponding to a color) or of characters corresponding to names of colors (as "blue",see colors()) or RGB code ("#FFFFFF").}
 

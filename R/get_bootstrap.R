@@ -8,9 +8,9 @@
 #' @inheritParams plot_var_2D
 #' @inheritParams plot.rgcca
 #' @inheritParams plot_var_1D
-#' @param bars A character giving the variability among "sd" (standard 
-#' deviations bars) , "stderr"(bars of standard deviation divided by 
-#' sqrt(n)) or "quantile" (for the 0.05-0.95 quantiles bars)
+#' @param bars Character string giving the variability among "sd" (error bar of
+#' standard deviation) , "stderr" (error bar of standard deviation divided by 
+#' sqrt(n)) or "quantile" (error bar of 0.05/0.95-quantiles)
 #' @param b A fitted bootstrap object (see  \code{\link[RGCCA]{bootstrap}} )
 #' @param display_order A logical value to display the order of the variables
 #' @param adj.method character string indicating the method used for p-value 

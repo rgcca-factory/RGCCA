@@ -1,25 +1,22 @@
 #' The function rgccak() is called by rgccad() and does not have to be used by 
-#' the user. The function rgccak() computes the RGCCA block components, block 
+#' the user. The function rgccak() returns the RGCCA block components, block 
 #' weight vectors, etc., for each block and each dimension. Depending on the 
 #' dimensionality of each block \eqn{X_j, j = 1, ..., J}, the primal 
-#' (when \eqn{n > p_j}) or the dual (when \eqn{n < p_j}) algorithm is used 
-#' (see Tenenhaus et al. 2015) 
+#' (when n > p_j) or the dual (when n < p_j) algorithm is used (see 
+#' Tenenhaus et al. 2015) 
 #' @inheritParams select_analysis
 #' @inheritParams rgccaNa
 #' @inheritParams rgccad
-#' @param A  A list that contains the \eqn{J} blocks of variables. It could be 
+#' @param A  A list that contains the J blocks of variables. It could be 
 #' either the original matrices (\eqn{X_1, X_2, ..., X_J}) or the residual 
 #' matrices (\eqn{X_{h1}, X_{h2}, ..., X_{hJ}}).
 #' @param na.rm If TRUE, RGCCA is run only on the available data (default value) 
 #' otherwise the NIPALS algorithm is used.
-#' @return \item{Y}{A \eqn{n * J} matrix of block components}
-#' @return \item{Z}{A \eqn{n * J} matrix of inner components}
-#' @return \item{a}{A list of \eqn{J} elements. Each element of \eqn{a} is a 
-#' matrix that contains the block weight vectors for each block.}
-#' @return \item{converg}{Convergence of the algorithm to reach the tolerance.}
-#' @return \item{AVE}{A list of numerical values giving the indicators of model 
-#' quality based on the Average Variance Explained (AVE): AVE(for each block), 
-#' AVE(outer model), AVE(inner model).}
+#' @return \item{Y}{Matrix of block components of dimension \eqn{n * J}}
+#' @return \item{a}{A list of \eqn{J} elements. Each element of the list is a 
+#' matrix that contains a block weight vector associated with one block and 
+#' one deflation stage.}
+#' @return \item{AVE_inner}{Average Variance Explained (AVE) of the inner model.}
 #' @return \item{call}{Call of the function}
 #' @return \item{crit}{A list of max(ncomp) elements. Each element 
 #' (one per deflation stage) is a vector that contains the value of the RGCCA 

@@ -8,7 +8,7 @@ bootstrap(
   rgcca_res,
   n_boot = 100,
   n_cores = parallel::detectCores() - 1,
-  parallelization = NULL
+  parallelization = TRUE
 )
 }
 \arguments{
@@ -40,15 +40,19 @@ blocks = list(agriculture = Russett[, seq(3)],
               industry = Russett[, 4:5], 
               politic = Russett[, 6:11])
               
-fit.rgcca = rgcca(blocks)
-boot.out = bootstrap(fit.rgcca, 50)
-plot(boot.out, block = 1, comp = 1)
+fit.rgcca = rgcca(blocks, ncomp= 1)
+boot.out = bootstrap(fit.rgcca, 
+                     n_boot = 3000, n_cores = 2)
+ 
+plot(boot.out, block = 3, comp = 1)
 
 print(boot.out)
 get_bootstrap(boot.out)
 
 fit.rgcca = rgcca(blocks, type = "mcoa")
-boot.out = bootstrap(fit.rgcca, n_boot = 20)
+boot.out = bootstrap(fit.rgcca, 
+                     n_boot = 20, n_cores = 2)
+                     
 plot(boot.out, block = 1)
 
 # Stability of the selected variables for SGCCA
@@ -69,7 +73,8 @@ plot(boot.out, block = 1)
 # fit.rgcca = rgcca(A, connection = C, tau = c(1, 1, 0), 
 #                   ncomp = c(2, 2, 1), scheme = "factorial", 
 #                   verbose = TRUE)
-# boot.out = bootstrap(fit.rgcca, n_boot = 50, n_cores = 1)
+# boot.out = bootstrap(fit.rgcca, n_boot = 50, n_cores = 2)
+
 # plot(boot.out, block = 1, ncomp = 1, n_marks = 30)
 # plot(boot.out, block = 1, ncomp = 2, n_marks = 30)
 # get_bootstrap(boot.out)
@@ -80,6 +85,6 @@ plot(boot.out, block = 1)
  
 }
 \seealso{
-\code{\link[RGCCA]{plot.bootstrap}} , 
+\code{\link[RGCCA]{plot.bootstrap}}, 
 \code{\link[RGCCA]{print.bootstrap}}
 }
