@@ -48,8 +48,8 @@ min values (0 for RGCCA and 1/sqrt(ncol(Xj)) for SGCCA) and 1.}
 \item{par_length}{An integer indicating the number of sets of parameters to 
 be tested (if par_value = NULL). The parameters are uniformly distributed.}
 
-\item{n_perms}{Number of permutations for each set of constraints
-(default is 20).}
+\item{n_perms}{Number of permutations for each set of constraints (default 
+is 20).}
 
 \item{n_cores}{Number of cores for parallelization}
 
@@ -138,9 +138,8 @@ the 3-Nearest Neighbors.}}}
 
 \item{rgcca_res}{A fitted RGCCA object (see  \code{\link[RGCCA]{rgcca}})}
 
-\item{parallelization}{if TRUE, the bootstrap is processed in parallel. If 
-parallelization = NULL (default), parallelization is always performed except 
-for Windows if length(n_boot) < 10.}
+\item{parallelization}{logical value. If TRUE (default value), the 
+permutation procedure is parallelized}
 }
 \value{
 \item{zstat}{The vector of Z-statistics, one per set of tuning 
@@ -208,7 +207,7 @@ search in tuning parameter space.
 # parameters (par_type = "tau")    #
 ####################################
 
-data("Russett")
+data(Russett)
 blocks = list(agriculture = Russett[, seq(3)], 
               industry = Russett[, 4:5], 
               politic = Russett[, 6:11] )
@@ -219,9 +218,11 @@ C <-  matrix(c(0, 0, 1,
 
 # default value: 10 vectors from rep(0, length(blocks))
 # to rep(1, length(blocks)), uniformly distributed.
+
 fit = rgcca_permutation(blocks, connection = C,
                         par_type = "tau", 
-                        n_perms = 5, n_cores = 1)
+                        par_length = 10, n_perms = 20,
+                        n_cores = 1)#parallel::detectCores() - 1
                         
 print(fit)
 plot(fit)
@@ -238,25 +239,26 @@ par_value = matrix(c(0, 0, 0,
                       1, 1, 1), 5, 3, byrow = TRUE)
 
                                                                  
-fit <- rgcca_permutation(blocks, connection = C,
+perm.out <- rgcca_permutation(blocks, connection = C,
                          par_type = "tau", 
                          par_value = par_value, 
                          n_perms = 5, n_cores = 1)
 
-print(fit)
-plot(fit)
+print(perm.out)
+plot(perm.out)
 
 # with superblock
 
-fit.permute <- rgcca_permutation(blocks, par_type = "tau", 
+perm.out <- rgcca_permutation(blocks, par_type = "tau", 
                                  superblock = TRUE,
                                  scale = TRUE, scale_block = FALSE,
                                  n_perms = 5, n_cores = 1)
 
-print(fit.permute)
-plot(fit.permute)
+print(perm.out)
+plot(perm.out)
 
-fit.rgcca <- rgcca(fit.permute)
+# used a fitted rgcca_permutation object as input of the rgcca function
+fit.rgcca <- rgcca(perm.out)
 fit.rgcca$call$tau
 fit.rgcca$call$scale
 fit.rgcca$call$scale_block
@@ -271,12 +273,12 @@ fit.rgcca$call$scale_block
 # (1/sqrt(ncol(X1)), ..., 1/sqrt(ncol(XJ)) 
 # to rep(1, J), uniformly distributed.
 
-fit <- rgcca_permutation(blocks, par_type = "sparsity", 
-                         n_perms = 5, n_cores = 1)
+perm.out <- rgcca_permutation(blocks, par_type = "sparsity", 
+                         n_perms = 50, n_cores = 1)
                          
-print(fit)
-plot(fit)
-fit$bestpenalties  
+print(perm.out)
+plot(perm.out)
+perm.out$bestpenalties  
 
 # when par_value is a vector of length J. Each element of the vector 
 # indicates the maximum value of sparsity to be considered for each block.
@@ -284,58 +286,59 @@ fit$bestpenalties
 # (1/sqrt(ncol(X1)), ..., 1/sqrt(ncol(XJ)) to maximum values, uniformly 
 # distributed, are then considered. 
 
-fit <- rgcca_permutation(blocks, connection = C, 
+perm.out <- rgcca_permutation(blocks, connection = C, 
                          par_type = "sparsity", 
                          par_value = c(0.6, 0.75, 0.5), 
                          par_length = 7, n_perms = 20, 
                          n_cores = 1, tol = 1e-3)
                          
-	print(fit)
-	plot(fit)
-	fit$bestpenalties
+	print(perm.out)
+	plot(perm.out)
+	perm.out$bestpenalties
 	
 # when par_value is a scalar, the same maximum value is applied 
 # for each block
 
-fit <- rgcca_permutation(blocks, connection = C, 
+perm.outt <- rgcca_permutation(blocks, connection = C, 
                          par_type = "sparsity", 
                          par_value = 0.8, par_length = 5, 
                          n_perms = 10, n_cores = 1)
    
-fit$penalties    
-
+perm.out$penalties    
+\dontrun{
 ######################################
 # speed up the permutation procedure #
 ######################################
 
-# The rgcca_permutation function can be quite time-consuming. Since an 
-# approximate estimate of the block weight vectors is acceptable in this 
+# The rgcca_permutation function can be quite time-consuming. Since  
+# approximate estimates of the block weight vectors are acceptable in this 
 # case, it is possible to reduce the value of the tolerance (tol argument) 
-# of the RGCCA algorithm to speed up this permutation procedure.
+# of the RGCCA algorithm to speed up the permutation procedure.
 # 
-# require(gliomaData)
-# data(ge_cgh_locIGR)
-# A <- ge_cgh_locIGR$multiblocks
-# Loc <- factor(ge_cgh_locIGR$y)
-# levels(Loc) <- colnames(ge_cgh_locIGR$multiblocks$y)
-# A[[3]] = A[[3]][, -3]
-# C <-  matrix(c(0, 0, 1, 0, 0, 1, 1, 1, 0), 3, 3)
-#
+require(gliomaData)
+data(ge_cgh_locIGR)
+A <- ge_cgh_locIGR$multiblocks
+Loc <- factor(ge_cgh_locIGR$y)
+levels(Loc) <- colnames(ge_cgh_locIGR$multiblocks$y)
+A[[3]] = A[[3]][, -3]
+C <-  matrix(c(0, 0, 1, 0, 0, 1, 1, 1, 0), 3, 3)
+
 # check dimensions of the blocks
-# sapply(A, dim)
-#
-# par_value = matrix(c(seq(0.1, 1, by = 0.1),
-#                      seq(0.1, 1, by = 0.1),
-#                      rep(0, 10)), 10, 3, byrow = FALSE)
-#                       
-# system.time(fit <- rgcca_permutation(A, connection = C, 
-#                          par_type = "tau", 
-#                          par_value = par_value,
-#                          par_length = 10,
-#                          n_perms = 10, n_cores = 1, tol = 1e-2)
-#                          )
-# print(fit)
-# plot(fit)
+sapply(A, dim)
+
+par_value = matrix(c(seq(0.1, 1, by = 0.1),
+                     seq(0.1, 1, by = 0.1),
+                     rep(0, 10)), 10, 3, byrow = FALSE)
+                       
+fit <- rgcca_permutation(A, connection = C, 
+                          par_type = "tau", 
+                          par_value = par_value,
+                          par_length = 10,
+                          n_perms = 10, n_cores = 1, tol = 1e-2)
+                          )
+print(fit)
+plot(fit)
+}
 
 }
 \references{

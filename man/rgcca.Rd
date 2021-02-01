@@ -246,7 +246,7 @@ plot(fit.rgcca, type = "cor")
 # Example 3: Sparse GCCA (SGCCA) #
 ##################################
 
-# Tune the model to find the best sparsity coefficients (all the blocs are 
+# Tune the model to find the best sparsity coefficients (all the blocks are 
 # connected together)
 perm.out = rgcca_permutation(blocks, n_cores = 1, 
                              par_type = "sparsity", n_perms = 10)

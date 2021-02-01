@@ -2,22 +2,25 @@
 % Please edit documentation in R/print.perm.R
 \name{print.permutation}
 \alias{print.permutation}
-\title{Print a permutation object}
+\title{Print a fitted rgcca_permutation object}
 \usage{
 \method{print}{permutation}(x, ...)
 }
 \arguments{
-\item{x}{A rgcca_permutation object (see  \code{\link[RGCCA]{rgcca_permutation}})}
+\item{x}{A fitted rgcca_permutation object (see  \code{\link[RGCCA]{rgcca_permutation}})}
 
-\item{...}{Further print parameters}
+\item{...}{additional print parameters}
 }
 \description{
-Print a permutation object
+Print a fitted rgcca_permutation object
 }
 \examples{
-data('Russett')
-A = list(agriculture = Russett[, seq(3)], industry = Russett[, 4:5],
-    politic = Russett[, 6:11] )
-res = rgcca_permutation(A,par_type="tau", n_perms = 5, n_cores = 1)
-print(res)
+data(Russett)
+A = list(agriculture = Russett[, seq(3)], 
+         industry = Russett[, 4:5], 
+         politic = Russett[, 6:11])
+         
+perm.out = rgcca_permutation(A, par_type = "tau", 
+                             n_perms = 5, n_cores = 1)
+print(perm.out)
 }

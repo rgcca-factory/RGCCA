@@ -5,9 +5,6 @@
 #' @inheritParams plot2D
 #' @param n_boot Number of bootstrap iterations. Default is 100.
 #' @param n_cores Number of cores for parallelization 
-#' @param parallelization if TRUE, the bootstrap is processed in parallel. If 
-#' parallelization = NULL (default), parallelization is always performed except 
-#' for Windows if length(n_boot) < 10.
 #' @return A list containing two objects: 'bootstrap' and 'rgcca'. 
 #' 'bootstrap' is a list containing for each block, a matrix 
 #' with the variables of the block in row and the block weight vector
@@ -22,7 +19,7 @@
 #'               
 #' fit.rgcca = rgcca(blocks, ncomp= 1)
 #' boot.out = bootstrap(fit.rgcca, 
-#'                      n_boot = 3000, n_cores = 2)
+#'                      n_boot = 20, n_cores = 2)
 #'  
 #' plot(boot.out, block = 3, comp = 1)
 #' 
@@ -31,44 +28,46 @@
 #' 
 #' fit.rgcca = rgcca(blocks, type = "mcoa")
 #' boot.out = bootstrap(fit.rgcca, 
-#'                      n_boot = 20, n_cores = 2)
+#'                      n_boot = 50, n_cores = 2)
 #'                      
 #' plot(boot.out, block = 1)
 #' 
+#' \dontrun{
 #' # Stability of the selected variables for SGCCA
 #' # Not run: 
 #' # Download the dataset's package at http://biodev.cea.fr/sgcca/.
 #' # --> gliomaData_0.4.tar.gz#' require(gliomaData)
-#' # library(gliomaData)
-#' # data(ge_cgh_locIGR)
-#' # A <- ge_cgh_locIGR$multiblocks
-#' # A[[3]] = A[[3]][, -3]
-#' # Loc <- factor(ge_cgh_locIGR$y)
-#' # levels(Loc) <- colnames(ge_cgh_locIGR$multiblocks$y)
-#'
-#' # C <-  matrix(c(0, 0, 1, 0, 0, 1, 1, 1, 0), 3, 3)
+#' library(gliomaData)
+#' data(ge_cgh_locIGR)
+#' A <- ge_cgh_locIGR$multiblocks
+#' A[[3]] = A[[3]][, -3]
+#' Loc <- factor(ge_cgh_locIGR$y)
+#' levels(Loc) <- colnames(ge_cgh_locIGR$multiblocks$y)
+#' C <-  matrix(c(0, 0, 1, 0, 0, 1, 1, 1, 0), 3, 3)
+#' 
 #' # rgcca algorithm using the dual formulation for X1 and X2 
 #' # and the dual formulation for X3
 #'  
-#' # fit.rgcca = rgcca(A, connection = C, tau = c(1, 1, 0), 
-#' #                   ncomp = c(2, 2, 1), scheme = "factorial", 
-#' #                   verbose = TRUE)
-#' # boot.out = bootstrap(fit.rgcca, n_boot = 50, n_cores = 2)
-#'
-#' # plot(boot.out, block = 1, ncomp = 1, n_marks = 30)
-#' # plot(boot.out, block = 1, ncomp = 2, n_marks = 30)
-#' # get_bootstrap(boot.out)
+#' fit.rgcca = rgcca(A, connection = C, tau = c(1, 1, 0), 
+#'                   ncomp = c(2, 2, 1), scheme = "factorial", 
+#'                   verbose = TRUE)
+#' boot.out = bootstrap(fit.rgcca, n_boot = 50, n_cores = 2)
+#' plot(boot.out, block = 1, ncomp = 1, n_marks = 30)
+#' plot(boot.out, block = 1, ncomp = 2, n_marks = 30)
+#' get_bootstrap(boot.out)
 #'                       
 #' # sgcca algorithm
-#' # result.sgcca = sgcca(A, C, sparsity = c(.071,.2, 1), ncomp = c(2, 2, 1),
-#' #                      scheme = "centroid", verbose = TRUE)
-#'  
+#' result.sgcca = sgcca(A, C, sparsity = c(.071,.2, 1), ncomp = 1,
+#'                      scheme = "centroid", verbose = TRUE)
+#'                      
+#' boot.out = bootstrap(fit.sgcca, n_boot = 50, n_cores = 2)
+#' }
 #' @export
 #' @seealso \code{\link[RGCCA]{plot.bootstrap}}, 
 #' \code{\link[RGCCA]{print.bootstrap}} 
-bootstrap <- function(rgcca_res, n_boot = 100, 
-                      n_cores = parallel::detectCores() - 1, 
-                      parallelization = TRUE){
+bootstrap <- function(rgcca_res, 
+                      n_boot = 100, 
+                      n_cores = parallel::detectCores() - 1){
     
     ndefl_max = max(rgcca_res$call$ncomp)
     list_res = list()
@@ -84,16 +83,12 @@ bootstrap <- function(rgcca_res, n_boot = 100,
     }
 
     stopifnot(is(rgcca_res, "rgcca"))
-    if (!is.null(parallelization)) 
-        check_boolean("parallelization", parallelization)
     check_integer("n_boot", n_boot)
     check_integer("n_cores", n_cores, min = 0)
 
     if (n_cores == 0) n_cores <- 1
 
-    #message("Bootstrap in progress...", appendLF = F)
-
-    blocks <- NULL
+        blocks <- NULL
 
     # varlist <- c(ls(getNamespace("RGCCA")))
     # W <- RGCCA:::parallelize(
@@ -105,7 +100,6 @@ bootstrap <- function(rgcca_res, n_boot = 100,
     #     applyFunc = "parLapply",
     #     parallelization = parallelization
     #     )
-    
     
     if(n_cores>1){
         assign("rgcca_res", rgcca_res, envir = .GlobalEnv)
@@ -124,9 +118,9 @@ bootstrap <- function(rgcca_res, n_boot = 100,
     for(k in seq(n_boot)){
      for(i in 1:ndefl_max){
        for(j in 1:length(rgcca_res$call$blocks)){
-         block=names(rgcca_res$call$blocks)[j]
+         block = names(rgcca_res$call$blocks)[j]
          if(!is.null(names(W[[k]]))){
-           if(i<=dim(W[[k]][[block]])[2]){
+           if(i <= NCOL(W[[k]][[block]])){
              list_res[[i]][[block]][, k] = W[[k]][[block]][, i]
            }
          }

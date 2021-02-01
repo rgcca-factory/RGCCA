@@ -1,5 +1,6 @@
-# An intern function used by rgcca_permutation to perform multiple s/rgcca 
+# An internal function used by rgcca_permutation() to perform multiple s/rgcca 
 # on permuted blocks
+#
 # data("Russett")
 # blocks = list(agriculture = Russett[, seq(3)], 
 #               industry = Russett[, 4:5],
@@ -11,7 +12,7 @@ rgcca_permutation_k <- function(
     type = "rgcca",
     scale=TRUE,
     scale_block=TRUE,
-    connection = matrix(1,length(blocks),length(blocks)) - diag(length(blocks)),
+    connection = 1 - diag(length(blocks)),
     scheme = "factorial",
     ncomp = rep(1,length(blocks)),
     tau = rep(1,length(blocks)),
@@ -48,7 +49,7 @@ rgcca_permutation_k <- function(
         sparsity <- rgcca_res$call$sparsity
     }
 
-    if (type %in% c("sgcca", "spca", "spls")) {
+    if (type %in% c("sgcca", "spls")) {
         par_type <- "sparsity"
     } else
         par_type <- "tau"

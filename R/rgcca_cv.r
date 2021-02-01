@@ -18,6 +18,8 @@
 #' @param type_cv  A character corresponding to the model of prediction : 'regression' or 'classification' (see details)
 #' @param n_run An integer giving the number of cross-validations to be run (if validation = 'kfold').
 #' @param one_value_per_cv A logical value indicating if the k values are averaged for each k-fold steps.
+#' @param parallelization logical value. If TRUE (default value), the 
+#' cross-validation procedure is parallelized
 #' @export
 #' @return \item{cv}{A matrix giving the root-mean-square error (RMSE) between the predicted R/SGCCA and the observed R/SGCCA for each combination and each prediction (n_prediction = n_samples for validation = 'loo'; n_prediction = 'k' * 'n_run' for validation = 'kfold').}
 #' @return \item{call}{A list of the input parameters}

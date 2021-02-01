@@ -1,12 +1,14 @@
 #' Cross-validation
 #' 
-#' Uses cross-validation to validate a predictive model of RGCCA
+#' Uses cross-validation to evaluate predictive model of RGCCA
 #' @inheritParams rgcca_predict
 #' @inheritParams rgcca
 #' @inheritParams bootstrap
 #' @inheritParams plot_ind
 #' @param k An integer giving the number of folds (if validation = 'kfold').
 #' @param validation A character for the type of validation among "loo", "kfold", "test".
+#' @param parallelization logical value. If TRUE (default value), the 
+#' permutation procedure is parallelized
 #' @examples
 #' data("Russett")
 #' blocks = list(agriculture = Russett[, seq(3)], industry = Russett[, 4:5],

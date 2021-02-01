@@ -113,9 +113,8 @@ the 3-Nearest Neighbors.}}}
 
 \item{rgcca_res}{A fitted RGCCA object (see  \code{\link[RGCCA]{rgcca}})}
 
-\item{parallelization}{if TRUE, the bootstrap is processed in parallel. If 
-parallelization = NULL (default), parallelization is always performed except 
-for Windows if length(n_boot) < 10.}
+\item{parallelization}{logical value. If TRUE (default value), the 
+cross-validation procedure is parallelized}
 
 \item{tau}{Either a 1*J vector or a \eqn{\mathrm{max}(ncomp) \times J} matrix 
 containing the values of the regularization parameters (default: tau = 1, 

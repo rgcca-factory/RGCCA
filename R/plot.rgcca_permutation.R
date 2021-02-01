@@ -1,26 +1,28 @@
-#' Plot permutation
+#' Plot fitted rgcca permutation object
 #' 
-#' Plot a permutation object (tuning RGCCA parameters). The parameters tuned 
-#' for maximizing RGCCA criteria is displayed in the title. In abscissa, the
-#' index of combination (number corresponding to the rownames of 'penalties' 
-#' in the tuning parameters object). In ordinate, a score depending of the
-#' 'type' parameter. For 'type = crit', the grey dots correspond to the RGCCA 
-#' criteria of each permutation for each combination. For 'type = zstats', 
-#' the three horizontal bars in dashed lines correspond to the three 
-#' significance thresholds from the lowest  to the highest bar: 95%, 99% and 99.9%.
-#'  The best parameters are in red by default.
-#' @param x result of rgcca_permutation (see  \code{\link[RGCCA]{rgcca_permutation}})
+#' Plot a fitted rgcca permutation object. The various set of tuning parameters
+#' are represented in the x-axis and the the RGCCA objective function - obtained
+#' from the both the orginal and permuted blocks - in the y-axis. If type = 
+#' "zstat" the value of the zstat for the various combinations are reported in 
+#' the y-axis.
+#' @param x a fitted rgcca_permutation object 
+#' (see \code{\link[RGCCA]{rgcca_permutation}})
 #' @inheritParams plot_permut_2D
 #' @inheritParams plot.rgcca
 #' @examples
-#' data("Russett")
-#' A <- list(agriculture = Russett[, seq(3)], industry = Russett[, 4:5],
-#'     politic = Russett[, 6:11] )
-#' perm <- rgcca_permutation(A,par_type="tau", n_perms = 2, n_cores = 1)
-#' plot(perm)
-#' perm <- rgcca_permutation(A, par_type = "sparsity", n_perms = 5, n_cores = 1)
-#' plot(perm, type="zstat")
-#' plot(perm)
+#' data(Russett)
+#' A <- list(agriculture = Russett[, seq(3)], 
+#'           industry = Russett[, 4:5], 
+#'           politic = Russett[, 6:11])
+#'           
+#' perm.out <- rgcca_permutation(A, par_type= "tau", n_perms = 2, n_cores = 1)
+#' print(perm.out)
+#' plot(perm.out)
+#' 
+#' perm.out <- rgcca_permutation(A, par_type = "sparsity", 
+#'                               n_perms = 5, n_cores = 1)
+#' print(perm.out)
+#' plot(perm.out, type = "zstat")
 #' @export
 #' @importFrom ggplot2 ggplot
 plot.permutation = function(x,
