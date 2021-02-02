@@ -347,37 +347,61 @@ rgcca_permutation <- function(blocks, par_type, par_value = NULL,
     
     perm_parallel = rep(rep(c(FALSE, TRUE), c(1, n_perms)), NROW(par[[2]]))
     
-    if(n_cores>1){
-      call_perm = list(blocks, par[[1]], par_value_parallel, perm_parallel,
-                     type, quiet, superblock, scheme,
-                     tol, scale, scale_block, connection, method, 
-                     response, bias, init, ncomp, tau, sparsity)
-      assign("call_perm", call_perm, envir = .GlobalEnv)
-      cl = parallel::makeCluster(n_cores)
-      parallel::clusterExport(cl, "call_perm")
-      W = pbapply::pbsapply(seq(length(call_perm[[4]])), 
-                          function(b) rgcca_permutation_k(
-                            blocks = call_perm[[1]],
-                            par_type = call_perm[[2]],
-                            par_value = call_perm[[3]][b,],
-                            perm = call_perm[[4]][b],
-                            type = call_perm[[5]],
-                            quiet = call_perm[[6]],
-                            superblock = call_perm[[7]],
-                            scheme = call_perm[[8]],
-                            tol = call_perm[[9]], 
-                            scale = call_perm[[10]], 
-                            scale_block = call_perm[[11]], 
-                            connection = call_perm[[12]], 
-                            method = call_perm[[13]], 
-                            bias = call_perm[[15]], 
-                            init = call_perm[[16]], 
-                            ncomp = call_perm[[17]], 
-                            tau = call_perm[[18]], 
-                            sparsity = call_perm[[18]]),
-                          cl = cl)
-    parallel::stopCluster(cl)
-    rm("call_perm", envir = .GlobalEnv)
+    if( Sys.info()["sysname"] == "Windows"){
+      if(n_cores>1){
+        call_perm = list(blocks, par[[1]], par_value_parallel, perm_parallel,
+                       type, quiet, superblock, scheme,
+                       tol, scale, scale_block, connection, method, 
+                       response, bias, init, ncomp, tau, sparsity)
+        assign("call_perm", call_perm, envir = .GlobalEnv)
+        cl = parallel::makeCluster(n_cores)
+        parallel::clusterExport(cl, "call_perm")
+        W = pbapply::pbsapply(seq(length(call_perm[[4]])), 
+                            function(b) rgcca_permutation_k(
+                              blocks = call_perm[[1]],
+                              par_type = call_perm[[2]],
+                              par_value = call_perm[[3]][b,],
+                              perm = call_perm[[4]][b],
+                              type = call_perm[[5]],
+                              quiet = call_perm[[6]],
+                              superblock = call_perm[[7]],
+                              scheme = call_perm[[8]],
+                              tol = call_perm[[9]], 
+                              scale = call_perm[[10]], 
+                              scale_block = call_perm[[11]], 
+                              connection = call_perm[[12]], 
+                              method = call_perm[[13]], 
+                              bias = call_perm[[15]], 
+                              init = call_perm[[16]], 
+                              ncomp = call_perm[[17]], 
+                              tau = call_perm[[18]], 
+                              sparsity = call_perm[[18]]),
+                            cl = cl)
+      parallel::stopCluster(cl)
+      rm("call_perm", envir = .GlobalEnv)
+      }else{
+        W = pbapply::pbsapply(seq(length(perm_parallel)), 
+                              function(b) rgcca_permutation_k(
+                                blocks = blocks,
+                                par_type = par[[1]],
+                                par_value = par_value_parallel[b,],
+                                perm = perm_parallel[b],
+                                type = type,
+                                quiet = quiet,
+                                superblock = superblock,
+                                scheme = scheme,
+                                tol = tol, 
+                                scale = scale, 
+                                scale_block = scale_block, 
+                                connection = connection, 
+                                method = method, 
+                                bias = bias, 
+                                init = init, 
+                                ncomp = ncomp, 
+                                tau = tau, 
+                                sparsity = sparsity)
+                              )
+      }
     }else{
       W = pbapply::pbsapply(seq(length(perm_parallel)), 
                             function(b) rgcca_permutation_k(
@@ -398,9 +422,12 @@ rgcca_permutation <- function(blocks, par_type, par_value = NULL,
                               init = init, 
                               ncomp = ncomp, 
                               tau = tau, 
-                              sparsity = sparsity)
+                              sparsity = sparsity),
+                            cl = n_cores
                             )
+      
     }
+    
     
     crits = W[!perm_parallel]
     permcrit = matrix(W[perm_parallel], nrow = nrow(par[[2]]), 
