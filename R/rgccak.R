@@ -33,12 +33,12 @@
 #' \link{rgcca_permutation}.}
 #' @references Tenenhaus M., Tenenhaus A. and Groenen PJF (2017), Regularized 
 #' generalized canonical correlation analysis: A framework for sequential 
-#' multiblock component methods, Psychometrika, 82, 737–777
+#' multiblock component methods, Psychometrika, 82, 737-777
 #' @references Tenenhaus A., Philippe C., and Frouin V. (2015). Kernel 
 #' Generalized Canonical Correlation Analysis. Computational Statistics and 
 #' Data Analysis, 90, 114-131.
 #' @references Tenenhaus A. and Tenenhaus M., (2011), Regularized Generalized 
-#' Canonical Correlation Analysis, Psychometrika, Vol. 76, Nr 2, pp 257-284.
+#' Canonical Correlation Analysis, Psychometrika, Vol. 76(2), pp 257-284.
 #' @references Schafer J. and Strimmer K., (2005), A shrinkage approach to 
 #' large-scale covariance matrix estimation and implications for functional 
 #' genomics. Statistical Applications in Genetics and Molecular Biology 4:32.

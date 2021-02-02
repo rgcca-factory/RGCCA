@@ -1,4 +1,4 @@
-#' Tune the S/RGCCA hyper-parameters by permutation.
+#' Tune the S/RGCCA hyper-parameters by permutation
 #' 
 #' This function can be used to automatically select the hyper-parameters 
 #' (amount of sparsity for sgcca or shrinkage parameters for RGCCA)
@@ -356,7 +356,7 @@ rgcca_permutation <- function(blocks, par_type, par_value = NULL,
       cl = parallel::makeCluster(n_cores)
       parallel::clusterExport(cl, "call_perm")
       W = pbapply::pbsapply(seq(length(call_perm[[4]])), 
-                          function(b) RGCCA:::rgcca_permutation_k(
+                          function(b) rgcca_permutation_k(
                             blocks = call_perm[[1]],
                             par_type = call_perm[[2]],
                             par_value = call_perm[[3]][b,],
@@ -380,7 +380,7 @@ rgcca_permutation <- function(blocks, par_type, par_value = NULL,
     rm("call_perm", envir = .GlobalEnv)
     }else{
       W = pbapply::pbsapply(seq(length(perm_parallel)), 
-                            function(b) RGCCA:::rgcca_permutation_k(
+                            function(b) rgcca_permutation_k(
                               blocks = blocks,
                               par_type = par[[1]],
                               par_value = par_value_parallel[b,],

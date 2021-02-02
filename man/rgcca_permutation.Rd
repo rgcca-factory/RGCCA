@@ -2,7 +2,7 @@
 % Please edit documentation in R/rgcca_permutation.R
 \name{rgcca_permutation}
 \alias{rgcca_permutation}
-\title{Tune the S/RGCCA hyper-parameters by permutation.}
+\title{Tune the S/RGCCA hyper-parameters by permutation}
 \usage{
 rgcca_permutation(
   blocks,

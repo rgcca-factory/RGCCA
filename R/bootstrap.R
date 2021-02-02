@@ -101,6 +101,7 @@ bootstrap <- function(rgcca_res,
     #     parallelization = parallelization
     #     )
     
+    if( Sys.info()["sysname"] == "Windows"){
     if(n_cores>1){
         assign("rgcca_res", rgcca_res, envir = .GlobalEnv)
         cl = parallel::makeCluster(n_cores)
@@ -114,7 +115,12 @@ bootstrap <- function(rgcca_res,
     else
         W = pbapply::pblapply(seq(n_boot), 
                               function(b) bootstrap_k(rgcca_res, "weight"))
-
+    }else{
+        W = pbapply::pblapply(seq(n_boot), 
+                              function(b) bootstrap_k(rgcca_res, "weight"),
+                              cl = n_cores)
+    }
+    
     for(k in seq(n_boot)){
      for(i in 1:ndefl_max){
        for(j in 1:length(rgcca_res$call$blocks)){
