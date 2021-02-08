@@ -124,7 +124,8 @@ mgccak <- function (A, A_m = NULL, C, tau = rep(1, length(A)), scheme = "centroi
   repeat {
     for (j in 1:J){
       # Apply the derivative on the current variables
-      dgx    = update_dgx(scheme, Y, dg, n, J, j)
+      dgx    = dg(cov2(Y[, j], Y, bias = bias))
+      dgx    = matrix(rep(dgx, n), n, J, byrow = TRUE)
       Z[, j] = rowSums(matrix(rep(C[j, ], n), n, J, byrow = TRUE) * dgx * Y)
 
       if (j %in% B_3D) { # 3D Tensors

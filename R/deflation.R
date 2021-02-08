@@ -1,8 +1,14 @@
 deflation <- function(X, y){
-  # Computation of the residual matrix R
+  # Computation of the residual X array (can be a tensor)
   # Computation of the vector p.
-  # p <- t(X)%*%y/as.vector(crossprod(y))
-  p <- apply(t(X),1,miscrossprod,y)/as.vector(crossprod(y))
-  R <- X - pm(y,t(p))
+  if (length(dim(X)) > 2){    # Matrix case could be handled the same way
+    X_m = matrix(as.vector(X), nrow = dim(X)[1])
+    p   = apply(t(X_m), 1, miscrossprod, y) / drop(crossprod(y))
+    R_m = X_m - pm(y,t(p))
+    R   = array(as.vector(R_m), dim = dim(X))
+  }else{
+    p = apply(t(X),1,miscrossprod,y)/as.vector(crossprod(y))
+    R = X - pm(y,t(p))
+  }
   return(list(p=p,R=R))
 }
