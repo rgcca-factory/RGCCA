@@ -117,13 +117,6 @@ rgccaNa=function (blocks, method, connection = 1 - diag(length(blocks)),
               tau = tau, ncomp = ncomp, scheme = scheme, 
               scale = scale, init = init, bias = bias, 
               tol = tol, verbose = verbose, scale_block = scale_block)
-
-    shave.matlist <- function(mat_list, nb_cols) 
-      mapply(function(m,nbcomp) m[, 1:nbcomp, drop = FALSE], 
-             mat_list, nb_cols, SIMPLIFY = FALSE)
-    shave.veclist <- function(vec_list, nb_elts) 
-      mapply(function(m, nbcomp) m[1:nbcomp], 
-             vec_list, nb_elts, SIMPLIFY = FALSE)
 	
     indNA = lapply(blocks, function(x){return(which(is.na(x), arr.ind = TRUE))})
     na.rm = FALSE

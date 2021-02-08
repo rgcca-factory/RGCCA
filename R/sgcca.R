@@ -319,13 +319,6 @@ sgcca <- function (A, C = 1-diag(length(A)), sparsity = rep(1, length(A)),
       colnames(Y[[b]]) = paste0("comp", 1:max(ncomp))
     }
     
-    shave.matlist <- function(mat_list, nb_cols) 
-      mapply(function(m, nbcomp) m[, 1:nbcomp, drop = FALSE], 
-             mat_list, nb_cols, SIMPLIFY=FALSE)
-    shave.veclist <- function(vec_list, nb_elts) 
-      mapply(function(m, nbcomp) m[1:nbcomp], 
-             vec_list, nb_elts, SIMPLIFY=FALSE)    
-    
     #Average Variance Explained (AVE) per block
     for (j in 1:J) AVE_X[[j]] =  apply(cor(A[[j]], Y[[j]],
                                            use="pairwise.complete.obs")^2, 2, 
