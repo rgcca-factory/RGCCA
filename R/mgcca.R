@@ -108,12 +108,6 @@ mgcca <- function(A, C = 1-diag(length(A)), tau = rep(1, length(A)),
               automatically set to 1 for all blocks \n")
     tau = rep(1, NCOL(C))
   }
-  for (d in B_nD) {
-    if (!quiet & tau[d] != 1) {
-      warning(sprintf("Shrinkage parameter has been set to ", tau[d],
-                      " for block ", d, " but 1 will be used instead \n"))
-    }
-  }
 
   # Multiple starts are random
   if (nstart > 1) init = "random"
