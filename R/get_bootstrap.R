@@ -121,17 +121,17 @@ get_bootstrap <- function(
     }
     else
     {
-        tail <- qt(1 - .05 / 2, df = n_boot - 1)
-        p.vals <- 2 * pt(abs(weight)/sd, lower.tail = FALSE, df = n_boot - 1)
+        tail <- qnorm(1 - .05 / 2)
+        p.vals <- 2 * pnorm(abs(weight)/sd, lower.tail = FALSE)
     }
   
    
     if(bars=="quantile")
     {
         lower_bound=apply(bootstrapped, 1, 
-                         function(y){return(quantile(y, 0.05))})
+                         function(y){return(quantile(y, 0.025))})
         upper_bound=apply(bootstrapped, 1,
-                         function(y){return(quantile(y, 0.95))})
+                         function(y){return(quantile(y, 0.975))})
     }
     if(bars=="sd")
     {
