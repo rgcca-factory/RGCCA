@@ -1,8 +1,10 @@
-#' Regularized (or Sparse) Generalized Canonical Correlation Analysis (S/RGCCA) 
+#' Regularized (or Sparse, or Multiway) Generalized Canonical Correlation 
+#' Analysis (S/M/RGCCA) 
 #' 
 #' RGCCA is a generalization of regularized canonical correlation analysis to 
 #' three or more sets of variables. SGCCA extends RGCCA to address the issue of 
-#' variable selection
+#' variable selection. MGCCA extends RGCCA to address the issue of tensor 
+#' structured data. 
 #' 
 #' @details
 #' Given J matrices \eqn{\mathbf{X_1}, \mathbf{X_2}, ..., \mathbf{X_J}} that 
@@ -31,8 +33,9 @@
 #' components of each block are guaranteed to be orthogonal. The so-called 
 #' symmetric deflation is implemented (i.e. each block is deflated with respect 
 #' to its own component). It should be noted that the numbers of components 
-#' per block can differ from one block to another. SGCCA extends RGCCA to 
-#' address the issue of variable selection (Tenenhaus et al, 2014). 
+#' per block can differ from one block to another. 
+#' SGCCA extends RGCCA to address the issue of variable selection 
+#' (Tenenhaus et al, 2014). 
 #' Specifically, RGCCA is combined with an L1-penalty that gives rise to Sparse 
 #' GCCA (SGCCA). The SGCCA algorithm is very similar to the RGCCA algorithm and 
 #' keeps the same convergence properties (i.e. the bounded criteria to be 
@@ -40,12 +43,22 @@
 #' convergence a stationary point). Moreover, using a deflation strategy, 
 #' sgcca() enables the computation of several SGCCA orthogonal block components 
 #' (specified by ncomp) for each block.  
+#' MGCCA extends RGCCA to address the issue of tensor structured data.
+#' Specifically, RGCCA is combined with a Kronecker constraint that gives rise
+#' to Multiway GCCA (MGCCA). The MGCCA algorithm is very similar to the RGCCA 
+#' algorithm and keeps the same convergence properties (i.e. the bounded 
+#' criteria to be maximized increases at each step of the iterative procedure 
+#' and hits at convergence a stationary point). Moreover, using a deflation 
+#' strategy, mgcca() enables the computation of several MGCCA orthogonal 
+#' block components (specified by ncomp) for each block. MGCCA can handle 
+#' blocks of variables structured as higher order arrays.
 #' The rgcca() function can handle missing values using a NIPALS type algorithm 
 #' (non-linear iterative partial least squares algorithm) described in 
 #' (Tenenhaus et al, 2005). Guidelines describing how to use RGCCA in practice 
 #' are provided in (Garali et al., 2017). 
 #' @inheritParams rgccaNa
 #' @inheritParams sgccaNa
+#' @inheritParams mgcca
 #' @inheritParams select_analysis
 #' @return A RGCCA object
 #' @return \item{Y}{A list of \eqn{J} elements. Each element of the list \eqn{Y} 
@@ -186,6 +199,7 @@
 #' \code{\link[RGCCA]{rgcca_cv_k}},
 #' \code{\link[RGCCA]{rgcca_permutation}}
 #' \code{\link[RGCCA]{rgcca_predict}} 
+# TODO: ask what is object opt for
 rgcca <- function(
     blocks,
     type = "rgcca",
@@ -196,6 +210,8 @@ rgcca <- function(
     ncomp = rep(1, length(blocks)),
     tau = rep(1, length(blocks)),
     sparsity = rep(1, length(blocks)),
+    ranks = rep(1, length(blocks)),
+    regularisation_matrices = NULL,
     init = "svd",
     bias = TRUE,
     tol = 1e-08,
@@ -245,11 +261,25 @@ rgcca <- function(
             message("type='rgcca' is not available for one block only and 
                     type was converted to 'pca'.")
         }
-        
+    }
+  
+    if (any(sapply(blocks, function(x) length(dim(x))) > 2)) {
+        if(type != "mgcca")
+        {
+            type = "mgcca"
+            message(paste0("type='", type, "' is not available for tensor blocks
+                           so type was converted to 'mgcca'."))
+        }
     }
          
     if (!missing(sparsity) && missing(type))
         type <- "sgcca"
+    
+    if (!missing(ranks) && missing(type))
+        type <- "mgcca"
+    
+    if (!missing(regularisation_matrices) && missing(type))
+        type <- "mgcca"
 
     if (!missing(connection) && missing(superblock))
         superblock <- FALSE
@@ -268,7 +298,12 @@ rgcca <- function(
         par <- "sparsity"
         penalty <- sparsity
        
-    }else{
+    }else if (tolower(type) %in% c("mgcca")) {
+        gcca <- mgccaNa
+        par <- "tau"
+        penalty <- tau
+        
+    } else {
         if (!missing(sparsity) & missing(tau))
            stop_rgcca(paste0("tau parameters required for ", 
                              tolower(type), " (instead of sparsity)."))
@@ -278,6 +313,12 @@ rgcca <- function(
     }
     #if (superblock && any(penalty == "optimal"))
     #    stop_rgcca("Optimal tau is not available with superblock option.")
+    
+    if (type == "mgcca") {
+      ranks <- check_ranks(ranks, blocks)
+      regularisation_matrices <- check_reg_matrices(
+        regularisation_matrices, blocks)
+    }
   
     
     match.arg(init, c("svd", "random"))
@@ -320,7 +361,7 @@ rgcca <- function(
    
    }
   
-    opt$blocks <- scaling(blocks, scale,scale_block = scale_block)
+    opt$blocks <- scaling(blocks, scale,scale_block = scale_block) # TODO: ask why scaling is applied here
     opt$superblock <- check_superblock(response, opt$superblock, !quiet)
     opt$blocks <- set_superblock(opt$blocks, opt$superblock, type, !quiet)
 
@@ -372,6 +413,11 @@ rgcca <- function(
         )
     )
 
+    if (type == "mgcca") {
+      func$regularisation_matrices <- regularisation_matrices
+      func$ranks                   <- ranks
+    }
+    
     func[[par]] <- opt$penalty
     func_out <- eval(as.call(func))$rgcca
 
