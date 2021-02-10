@@ -73,7 +73,6 @@ get_bootstrap <- function(
     block = length(b$bootstrap[[1]]),
     bars="quantile",
     collapse = FALSE,
-    n_cores = parallel::detectCores() - 1,
     display_order=TRUE,
     adj.method = "fdr") {
 
@@ -82,7 +81,6 @@ get_bootstrap <- function(
     check_blockx("block", block, b$rgcca$call$blocks)
     check_compx("comp", comp, b$rgcca$call$ncomp, block)
     check_boolean("collapse", collapse)
-    check_integer("n_cores", n_cores, min = 0)
     match.arg(bars,c("quantile", "sd", "stderr"))
 
     bootstrapped=b$bootstrap[[comp]][[block]]

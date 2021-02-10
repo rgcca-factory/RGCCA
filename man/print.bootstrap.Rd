@@ -4,7 +4,7 @@
 \alias{print.bootstrap}
 \title{Print bootstrap}
 \usage{
-\method{print}{bootstrap}(x, bars = "quantile", n_cores = parallel::detectCores() - 1, ...)
+\method{print}{bootstrap}(x, bars = "quantile", ...)
 }
 \arguments{
 \item{x}{A bootstrap object (see \code{\link[RGCCA]{bootstrap}})}
@@ -12,8 +12,6 @@
 \item{bars}{Character string giving the variability among "sd" (error bar of
 standard deviation) , "stderr" (error bar of standard deviation divided by 
 sqrt(n)) or "quantile" (error bar of 0.05/0.95-quantiles)}
-
-\item{n_cores}{Number of cores for parallelization}
 
 \item{...}{Further arguments in print}
 }

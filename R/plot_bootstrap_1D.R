@@ -37,8 +37,8 @@
 #' plot_bootstrap_1D(boot)
 #' rgcca_out = rgcca(blocks)
 #' boot = bootstrap(rgcca_out, 2, n_cores = 1)
-#' selected.var = get_bootstrap(boot, n_cores = 1, display_order=TRUE)
-#' plot_bootstrap_1D(boot, n_cores = 1)
+#' selected.var = get_bootstrap(boot, display_order=TRUE)
+#' plot_bootstrap_1D(boot)
 #' plot_bootstrap_1D(df_b = selected.var)
 #' 
 #' @export
@@ -58,7 +58,6 @@ plot_bootstrap_1D <- function(
     display_bar = TRUE,
     i_block = length(b$bootstrap[[1]]),
     collapse = FALSE,
-    n_cores = parallel::detectCores() - 1,
     ...) {
 
     if (missing(b) && missing(df_b))
@@ -69,7 +68,6 @@ plot_bootstrap_1D <- function(
             comp,
             block = i_block,
             collapse,
-            n_cores,
             bars = bars,
             display_order = TRUE
         )

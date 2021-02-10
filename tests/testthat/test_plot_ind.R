@@ -11,7 +11,7 @@
  resp = as.matrix(rep(LETTERS[seq(3)], each = 5))
 row.names(resp) = seq(15)
 
-p1<-plot2D ( rgcca_res=rgcca_out,   df=as.data.frame(rgcca_out$Y[[1]]))
+p1<-plot2D(rgcca_res=rgcca_out, df=as.data.frame(rgcca_out$Y[[1]]))
 p1 <- p1+geom_point(aes(x=1,y=1,colour="blue"))
 plot_ind(rgcca_out, resp)
 # Using the first block
@@ -36,5 +36,6 @@ data(Russett)
  plot_ind(rgcca_out, predicted = loo)
  
  # using a color response vector
- plot_ind(rgcca_out,resp=resp)
+ plot_ind(rgcca_out,  resp=resp)
+ 
  

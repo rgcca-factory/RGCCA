@@ -17,7 +17,6 @@ plot_bootstrap_1D(
   display_bar = TRUE,
   i_block = length(b$bootstrap[[1]]),
   collapse = FALSE,
-  n_cores = parallel::detectCores() - 1,
   ...
 )
 }
@@ -51,8 +50,6 @@ variables is displayed.}
 
 \item{collapse}{A boolean to combine the variables of each block as result}
 
-\item{n_cores}{Number of cores for parallelization}
-
 \item{...}{Other parameters (see plot_histogram)}
 }
 \description{
@@ -84,8 +81,8 @@ boot = bootstrap(fit.sgcca, 30, n_cores = 1)
 plot_bootstrap_1D(boot)
 rgcca_out = rgcca(blocks)
 boot = bootstrap(rgcca_out, 2, n_cores = 1)
-selected.var = get_bootstrap(boot, n_cores = 1, display_order=TRUE)
-plot_bootstrap_1D(boot, n_cores = 1)
+selected.var = get_bootstrap(boot, display_order=TRUE)
+plot_bootstrap_1D(boot)
 plot_bootstrap_1D(df_b = selected.var)
 
 }
