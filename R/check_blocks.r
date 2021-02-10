@@ -36,7 +36,8 @@ check_blocks <- function(blocks, init = FALSE, n = 2,
         message("Blocks are unnamed and automatically labeled as block1, ..., blockJ")
     }
     # Gestion of the case of one variable only
-    blocks = lapply(blocks, as.matrix)
+    vector_idx = sapply(1:length(blocks), function(x) length(dim(blocks[[x]])) < 2)
+    blocks[vector_idx] = lapply(blocks[vector_idx], as.matrix)
     nameBlocks = names(blocks)
 
     # Dealing with rownames (if they are all missing)
@@ -70,6 +71,20 @@ check_blocks <- function(blocks, init = FALSE, n = 2,
     
     blocks=blocks1
     names(blocks)=nameBlocks
+    
+    # TODO: ask what to do with dimnames
+    if (any(sapply(blocks, function(x) c(sapply(dimnames(x), is.null))))) {
+      message("Some dimnames are missing and automatically labeled as 
+              B1_M1_V1, ..., B1_M1_VIm1, B1_M2_V1, ..., BJ_MmJ_VImJ \n")
+      for (b in 1:length(blocks)) {
+        for (mode in seq(1, length(dim(blocks[[b]])))[-1]) {
+          if (is.null(dimnames(blocks[[b]])[[mode]])) {
+            dimnames(blocks[[b]])[[mode]] = paste0("B", b, "_M", mode, "_V", 
+                                             1:(dim(blocks[[b]])[mode]))
+          }
+        }
+      }
+    }
     
     if (any(sapply(blocks, function(x) is.null(colnames(x)))))
     {
@@ -181,7 +196,9 @@ check_blocks <- function(blocks, init = FALSE, n = 2,
                 }
                 else
                 {
-                   y = blocks[[name]][union_rows, ]
+                   # y = blocks[[name]][union_rows, ]
+                   y = apply(blocks[[name]], 2:length(dim(blocks[[name]])), 
+                             function(x) x[union_rows])
                 }
                 return(y)
             }
