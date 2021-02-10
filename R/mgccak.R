@@ -1,6 +1,6 @@
 mgccak <- function (A, A_m = NULL, C, tau = rep(1, length(A)), scheme = "centroid",
                     verbose = FALSE, init="svd", bias = TRUE, tol = 1e-8,
-                    M_regularisation, ranks= rep(1, length(A))) {
+                    regularisation_matrices, ranks= rep(1, length(A))) {
   
   kron_sum <- function(factors) {
     apply(Reduce("krprod", rev(factors)), 1, sum)
@@ -52,7 +52,7 @@ mgccak <- function (A, A_m = NULL, C, tau = rep(1, length(A)), scheme = "centroi
     A_m = lapply(1:J, function(x) matrix(as.vector(A[[x]]), nrow = n))
   }
 
-  a <- factors <- M_reg <- M_inv <- P <- list()
+  a <- factors <- reg_matrices <- M_inv <- P <- list()
   for (j in 1:J) {
     factors[[j]] <- list()
   }
@@ -102,13 +102,16 @@ mgccak <- function (A, A_m = NULL, C, tau = rep(1, length(A)), scheme = "centroi
 
   # Determination of the M regularization matrix
   for (j in 1:J){
-    M_reg[[j]] = parse_M_regularisation(M_reg = M_regularisation[[j]],
-                                        tau   = tau[j],
-                                        A     = A[[j]],
-                                        DIM   = DIM[[j]])
-    P[[j]]     = M_reg[[j]]$P
-    M_inv[[j]] = M_reg[[j]]$M_inv
-    tau[j]     = M_reg[[j]]$tau
+    reg_matrices[[j]] = parse_regularisation_matrices(
+      reg_matrices = regularisation_matrices[[j]],
+      tau          = tau[j],
+      A            = A[[j]],
+      DIM          = DIM[[j]],
+      bias         = bias
+    )
+    P[[j]]     = reg_matrices[[j]]$P
+    M_inv[[j]] = reg_matrices[[j]]$M_inv
+    tau[j]     = reg_matrices[[j]]$tau
   }
 
   # Initialize other parameters

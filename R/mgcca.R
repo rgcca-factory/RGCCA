@@ -24,15 +24,12 @@
 #' @inheritParams select_analysis
 #' @inheritParams rgccaNa
 #' @inheritParams rgccad
-#' @param M_regularisation If not NULL, a list of \eqn{J} elements. Each element
-#' of \eqn{M_regularisation} is either NULL or a list of symmetric positive
-#' definite regularization matrices. There must be as many matrices as modes
-#' on the corresponding block and their dimensions must match the dimensions of
-#' the corresponding modes. A change of variable is done at the beginning and at
-#' the end of the MGCCA algorithm to apply regularization.
-#' @param nstart Number of random starts to avoid finding a local optimum.
-#' @param nstart_at_comp_2 Boolean to allow multiple random starts when 
-#' estimating the 2nd component.
+#' @param regularisation_matrices If not NULL, a list of \eqn{J} elements. Each 
+#' element of \eqn{regularisation_matrices} is either NULL or a list of 
+#' symmetric positive definite regularization matrices. There must be as many 
+#' matrices as modes on the corresponding block and their dimensions must match 
+#' the dimensions of the corresponding modes. A change of variable is done at 
+#' the beginning and at the end of the MGCCA algorithm to apply regularization.
 #' @param ranks A vector of \eqn{J} elements that gives the number of terms in 
 #' the Kronecker constraint (hence the rank of the estimated tensor) for each
 #' block.
@@ -60,14 +57,14 @@
 
 mgcca <- function(A, C = 1-diag(length(A)), tau = rep(1, length(A)), 
                   ncomp = rep(1, length(A)), scheme = "centroid", scale = TRUE,
-                  init="svd", bias = TRUE, tol = .Machine$double.eps, 
-                  verbose=FALSE, scale_block = TRUE, M_regularisation = NULL, 
-                  ranks = rep(1, length(A)), prescaling = FALSE, quiet = FALSE,
-                  nstart = 1, nstart_at_comp_2 = FALSE) {
+                  init="svd", bias = TRUE, tol = 1e-8, verbose=FALSE, 
+                  scale_block = TRUE, regularisation_matrices = NULL, 
+                  ranks = rep(1, length(A)), prescaling = FALSE, quiet = FALSE) {
 
   call=list(A = A, C = C,  ncomp = ncomp, scheme = scheme, scale = scale,
             init = init, bias = bias, tol = tol, verbose = verbose,
-            scale_block = scale_block, M_regularisation = M_regularisation,
+            scale_block = scale_block, 
+            regularisation_matrices = regularisation_matrices,
             ranks = ranks, prescaling = prescaling)
 
   # Number of blocks
@@ -90,8 +87,8 @@ mgcca <- function(A, C = 1-diag(length(A)), tau = rep(1, length(A)),
   }
 
   # Dimensions of each block
-  pjs <- sapply(DIM, function(x) prod(x[-1]))
-  nb_ind   <- DIM[[1]][1]
+  pjs    <- sapply(DIM, function(x) prod(x[-1]))
+  nb_ind <- DIM[[1]][1]
 
   # Matricization (mode-1)
   A_m = lapply(1:J, function(x) matrix(as.vector(A[[x]]), nrow = nb_ind))
@@ -108,9 +105,6 @@ mgcca <- function(A, C = 1-diag(length(A)), tau = rep(1, length(A)),
               automatically set to 1 for all blocks \n")
     tau = rep(1, NCOL(C))
   }
-
-  # Multiple starts are random
-  if (nstart > 1) init = "random"
 
   ###################################################
 
@@ -176,34 +170,19 @@ mgcca <- function(A, C = 1-diag(length(A)), tau = rep(1, length(A)),
     if (verbose) cat(paste0("Computation of the MGCCA block components #", n,
                             " is under progress...\n"))
     # n_random_starts
-    for (start in 1:nstart){
-      # MGCCA algorithm
-      tmp_mgcca.result = mgccak(
-        A          = R,
-        A_m        = R_m,
-        C          = C,
-        tau        = tau_mat[n, ],
-        scheme     = scheme,
-        init       = init,
-        bias       = bias,
-        tol        = tol,
-        verbose    = verbose,
-        M_regularisation = M_regularisation,
-        ranks            = ranks
-      )
-      tmp_crit = tmp_mgcca.result$crit[length(tmp_mgcca.result$crit)]
-      if(start == 1){
-        mgcca.result = tmp_mgcca.result
-        best_crit    = tmp_crit
-      }else{
-        if(tmp_crit > best_crit){
-          mgcca.result = tmp_mgcca.result
-          best_crit    = tmp_crit
-        }
-      }
-    }
-    if (!nstart_at_comp_2) nstart = 1
-    nstart_at_comp_2 = FALSE
+    mgcca.result = mgccak(
+      A                       = R,
+      A_m                     = R_m,
+      C                       = C,
+      tau                     = tau_mat[n, ],
+      scheme                  = scheme,
+      init                    = init,
+      bias                    = bias,
+      tol                     = tol,
+      verbose                 = verbose,
+      regularisation_matrices = regularisation_matrices,
+      ranks                   = ranks
+    )
     
     # Store tau, AVE_inner, crit
     if (!is.numeric(tau)) tau_mat[n, ] = mgcca.result$tau

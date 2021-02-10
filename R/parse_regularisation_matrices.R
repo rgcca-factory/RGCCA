@@ -1,8 +1,8 @@
 # Parse regularization matrices, invert them and take their square roots to make
 # change of variables and solve the MGCCA optimization problem under easier
 # constraints.
-# @param M_reg If not NULL, a list. Each element
-# of \eqn{M_regn} is a symmetric positive
+# @param reg_matrices If not NULL, a list. Each element
+# of \eqn{reg_matrices} is a positive
 # definite regularization matrix. There must be as many matrices as modes
 # on the corresponding block and their dimensions must match the dimensions of
 # the corresponding modes. 
@@ -20,9 +20,11 @@
 # @return \item{tau}{The value of tau used to compute the regularization 
 # matrix.}
 # @title Parsing regularization matrices and applying change of variable
-# @export parse_M_regularisation
+# @export parse_regularisation_matrices
 
-parse_M_regularisation <- function(M_reg, tau, A, DIM) {
+# TODO: Decide what to do with the checks, should they be there too, should they
+# call existing checks, should there be no checks?
+parse_regularisation_matrices <- function(reg_matrices, tau, A, DIM, bias = TRUE) {
 
   sqrtMatrice = function(M){
     eig        = eigen(M)
@@ -33,36 +35,40 @@ parse_M_regularisation <- function(M_reg, tau, A, DIM) {
   P = (DIM[1]^(-1/2)) * A
 
   if (length(DIM) > 2){
-    # We expect M_reg to be NULL or a list of matrices (one matrix per mode)
+    # We expect reg_matrices to be NULL or a list of matrices (one matrix per mode)
     tau = 1
-    if (is.null(M_reg)) {
+    if (is.null(reg_matrices)) {
       M_inv = NULL
-    } else if (is.list(M_reg)) {
+    } else if (is.list(reg_matrices)) {
       # Check dimensions and numbers of regularization matrices
-      M_reg_DIM = lapply(M_reg, dim)
-      if (any(sapply(M_reg_DIM, function(x) x[1]) != sapply(M_reg_DIM, function(x) x[2]))) {
-        stop_rgcca("M_reg matrices must be square matrices")
+      reg_DIM = lapply(reg_matrices, dim)
+      if (any(sapply(reg_DIM, function(x) x[1]) != sapply(reg_DIM, function(x) x[2]))) {
+        stop_rgcca("reg_matrices matrices must be square matrices")
       }
-      if (length(M_reg) != length(DIM) - 1) {
-        stop_rgcca("There should be as many M_reg matrices as modes")
+      if (length(reg_matrices) != length(DIM) - 1) {
+        stop_rgcca("There should be as many reg_matrices matrices as modes")
       }
-      if (any(sapply(M_reg_DIM, function(x) x[1]) != DIM[-1])) {
-        stop_rgcca("M_reg matrices should match the mode dimensions")
+      if (any(sapply(reg_DIM, function(x) x[1]) != DIM[-1])) {
+        stop_rgcca("reg_matrices matrices should match the mode dimensions")
       }
       M_inv = list()
-      for (d in 1:length(M_reg)) {
-        M_inv[[d]] = sqrtMatrice(M_reg[[d]])
+      for (d in 1:length(reg_matrices)) {
+        M_inv[[d]] = sqrtMatrice(reg_matrices[[d]])
         Minv_sqrt  = M_inv[[d]]$Minv_sqrt
         P          = mode_product(P, Minv_sqrt, mode = d + 1)
       }
     } else {
-      stop_rgcca("For a tensor block, M_reg must be NULL or a list of matrices")
+      stop_rgcca("For a tensor block, reg_matrices must be NULL or a list of matrices")
     }
     P = matrix(as.vector(P), nrow = DIM[1])
   }else{
     if(tau != 1){
       if (!is.numeric(tau)) tau = tau.estimate(A)
-      M         = tau * diag(DIM[2]) + ((1 - tau)/(DIM[1])) * (t(A) %*% A)
+      if (bias) {
+        M = tau * diag(DIM[2]) + ((1 - tau)/(DIM[1]) - 1) * (t(A) %*% A)
+      } else {
+        M = tau * diag(DIM[2]) + ((1 - tau)/(DIM[1])) * (t(A) %*% A)
+      }
       M_inv     = sqrtMatrice(M)
       Minv_sqrt = M_inv$Minv_sqrt
       P         = P %*% Minv_sqrt
