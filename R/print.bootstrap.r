@@ -20,7 +20,7 @@
 #' }
 #'@export
 print.bootstrap = function(x, bars = "quantile", 
-                           n_cores = parallel::detectCores() - 1, ...) {
+                           ...) {
     print(paste("Results based on", dim(x$bootstrap[[1]][[1]])[2], 
                 "bootstrap samples"), ...)
     ncompmax = min(x$rgcca$call$ncomp)
@@ -31,8 +31,7 @@ print.bootstrap = function(x, bars = "quantile",
             print(Reduce(rbind, lapply(1:length(x$rgcca$call$blocks), 
                                        function(block) {
                 b = get_bootstrap(b = x, block = block, comp = comp, 
-                                  bars = bars, display_order = FALSE, 
-                                  n_cores = n_cores)
+                                  bars = bars, display_order = FALSE)
                 othercols = colnames(b)[-which(colnames(b) == "estimate")]
                 return(b[, c("estimate", othercols)])
             })))
@@ -45,8 +44,7 @@ print.bootstrap = function(x, bars = "quantile",
             print(Reduce(rbind, lapply(1:(length(x$rgcca$call$blocks)-1), 
                                        function(block) {
                 b = get_bootstrap(b = x, block = block, comp = comp, 
-                                  bars = bars, display_order = FALSE, 
-                                  n_cores = n_cores)
+                                  bars = bars, display_order = FALSE)
                 othercols = colnames(b)[-which(colnames(b) == "estimate")]
                 return(b[, c("estimate", othercols)])
             })))

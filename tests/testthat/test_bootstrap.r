@@ -41,7 +41,7 @@ test_that("bootstrap_default", {
 })
 
 test_that("bootstrap_default", {
-    select_var <- get_bootstrap(boot, n_cores = 1)
+    select_var <- get_bootstrap(boot)
     expect_is(select_var, "df_bootstrap")
     expect_is(select_var, "data.frame")
     expect_identical(NROW(select_var), NCOL(rgcca_out$call$blocks[[length(rgcca_out$call$blocks)]]))
@@ -64,7 +64,7 @@ blocks[[1]][4,] <- NA
 resRGCCA <- rgcca(blocks, ncomp = c(2,2,2),superblock=FALSE)
 set.seed(seed = 18)
 resBootstrap <- bootstrap( rgcca=resRGCCA, n_boot = 2, n_cores = 1)
-select_var <- get_bootstrap(resBootstrap, n_cores = 1,display_order=TRUE)
+select_var <- get_bootstrap(resBootstrap,display_order=TRUE)
 plot_bootstrap_1D(df_b = select_var)
 #plot(resBootstrap)
 test_that("test_bootstrap_na_values", {
@@ -87,3 +87,4 @@ boot <- bootstrap(rgcca_out, n_boot = 100, n_cores = 1)
 plot(boot)
 print(boot)
 plot(rgcca_out,type="var")
+

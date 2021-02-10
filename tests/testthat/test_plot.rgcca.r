@@ -49,3 +49,4 @@ plot(res,type="ind",resp=vec_colors)
 vec_colors=c(rep(letters[1:11],4),"a","b","c")
 names(vec_colors)=rownames(A[[1]])
 plot(res,type="ind",resp=vec_colors,colors=rainbow(11))
+

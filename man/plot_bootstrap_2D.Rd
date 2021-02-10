@@ -18,8 +18,7 @@ plot_bootstrap_2D(
   cex_lab = 10 * cex,
   comp = 1,
   i_block = NULL,
-  collapse = FALSE,
-  n_cores = parallel::detectCores() - 1
+  collapse = FALSE
 )
 }
 \arguments{
@@ -50,8 +49,6 @@ plot_bootstrap_2D(
 \item{i_block}{An integer giving the index of a list of blocks}
 
 \item{collapse}{A boolean to combine the variables of each block as result}
-
-\item{n_cores}{Number of cores for parallelization}
 }
 \description{
 Graph of the best variables from a bootstrap with, in x-axis, the number of
@@ -71,16 +68,18 @@ Negative weights are colored in red and the positive ones are in green.
 }
 \examples{
 data("Russett")
-blocks = list(agriculture = Russett[, seq(3)], industry = Russett[, 4:5],
-    politic = Russett[, 6:11] )
+blocks = list(agriculture = Russett[, seq(3)], 
+              industry = Russett[, 4:5], 
+              politic = Russett[, 6:11] )
+
 rgcca_out = rgcca(blocks, sparsity = 0.75, type = "sgcca")
 boot = bootstrap(rgcca_out, 2, n_cores = 1)
-plot_bootstrap_2D(boot, n_cores = 1)
+plot_bootstrap_2D(boot)
 rgcca_out = rgcca(blocks)
 boot = bootstrap(rgcca_out, 2, n_cores = 1)
-selected.var = get_bootstrap(boot, n_cores = 1,display_order=TRUE)
-plot_bootstrap_2D(boot, n_cores = 1)
-plot_bootstrap_2D(df_b = selected.var,n_cores=1)
+selected.var = get_bootstrap(boot, display_order=TRUE)
+plot_bootstrap_2D(boot)
+plot_bootstrap_2D(df_b = selected.var)
 }
 \seealso{
 \code{\link[RGCCA]{bootstrap}}, \code{\link[RGCCA]{get_bootstrap}}

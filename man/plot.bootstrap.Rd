@@ -13,7 +13,6 @@
   colors = NULL,
   title = NULL,
   cex = 1,
-  n_cores = parallel::detectCores() - 1,
   collapse = FALSE,
   cex_main = 14,
   cex_sub = 12,
@@ -42,8 +41,6 @@ sqrt(n)) or "quantile" (error bar of 0.05/0.95-quantiles)}
 \item{title}{A character giving the title of the plot}
 
 \item{cex}{An integer for the size of the plot parameters}
-
-\item{n_cores}{Number of cores for parallelization}
 
 \item{collapse}{A boolean to combine the variables of each block as result}
 

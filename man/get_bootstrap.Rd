@@ -10,7 +10,6 @@ get_bootstrap(
   block = length(b$bootstrap[[1]]),
   bars = "quantile",
   collapse = FALSE,
-  n_cores = parallel::detectCores() - 1,
   display_order = TRUE,
   adj.method = "fdr"
 )
@@ -27,8 +26,6 @@ standard deviation) , "stderr" (error bar of standard deviation divided by
 sqrt(n)) or "quantile" (error bar of 0.05/0.95-quantiles)}
 
 \item{collapse}{A boolean to combine the variables of each block as result}
-
-\item{n_cores}{Number of cores for parallelization}
 
 \item{display_order}{A logical value to display the order of the variables}
 

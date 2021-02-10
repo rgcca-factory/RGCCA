@@ -22,16 +22,18 @@
 #' }
 #' @examples
 #' data("Russett")
-#' blocks = list(agriculture = Russett[, seq(3)], industry = Russett[, 4:5],
-#'     politic = Russett[, 6:11] )
+#' blocks = list(agriculture = Russett[, seq(3)], 
+#'               industry = Russett[, 4:5], 
+#'               politic = Russett[, 6:11] )
+#' 
 #' rgcca_out = rgcca(blocks, sparsity = 0.75, type = "sgcca")
 #' boot = bootstrap(rgcca_out, 2, n_cores = 1)
-#' plot_bootstrap_2D(boot, n_cores = 1)
+#' plot_bootstrap_2D(boot)
 #' rgcca_out = rgcca(blocks)
 #' boot = bootstrap(rgcca_out, 2, n_cores = 1)
-#' selected.var = get_bootstrap(boot, n_cores = 1,display_order=TRUE)
-#' plot_bootstrap_2D(boot, n_cores = 1)
-#' plot_bootstrap_2D(df_b = selected.var,n_cores=1)
+#' selected.var = get_bootstrap(boot, display_order=TRUE)
+#' plot_bootstrap_2D(boot)
+#' plot_bootstrap_2D(df_b = selected.var)
 #' @export
 #' @seealso \code{\link[RGCCA]{bootstrap}}, \code{\link[RGCCA]{get_bootstrap}}
 plot_bootstrap_2D <- function(
@@ -50,15 +52,16 @@ plot_bootstrap_2D <- function(
     cex_lab = 10 * cex,
     comp = 1,
     i_block = NULL,
-    collapse = FALSE,
-    n_cores = parallel::detectCores() - 1) {
+    collapse = FALSE) {
 
     if (missing(b) && missing(df_b))
         stop_rgcca("Please select a bootstrap object.")
     else if (!is.null(b)) {
         if (is.null(i_block))
             i_block <- length(b$bootstrap[[1]])
-        df_b <- get_bootstrap(b, comp, i_block, collapse = collapse, n_cores = n_cores, display_order = TRUE)
+        df_b <- get_bootstrap(b, comp, i_block, 
+                              collapse = collapse, 
+                              display_order = TRUE)
     } else if (!is.null(df_b)) {
         if (is.null(i_block))
             i_block <- attributes(df_b)$n_blocks
