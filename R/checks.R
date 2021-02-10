@@ -86,6 +86,8 @@ check_connection <- function(C, blocks) {
     if (all(C == 0))
         stop_rgcca(paste(msg, "not contain only 0."), exit_code = 107)
     
+    invisible(check_size_blocks(blocks, "connection matrix", C))
+    
     if(is.null(rownames(C)) || is.null(colnames(C)))
         rownames(C) <- names(blocks) -> colnames(C)
     
@@ -95,8 +97,6 @@ check_connection <- function(C, blocks) {
                          "have the rownames and the colnames that match with 
                          the names of the blocks."),
                    exit_code = 108)
-    
-    invisible(check_size_blocks(blocks, "connection matrix", C))
     
     return(C)
     # TODO: warning if superblock = TRUE
@@ -141,9 +141,12 @@ check_integer <- function(x, y = x, type = "scalar", float = FALSE, min = 1) {
         stop_rgcca(paste(x, "should be of length 1."))
     
     if (!float)
-        y <- as.integer(y)
+        if (any((y %% 1) != 0)) {
+            stop_rgcca(paste(x, "should be an integer."))
+        }
+        y = as.integer(y)
     
-    if (all(y < min))
+    if (all(y < min)) # TODO: Ask why it is all and not any
         stop_rgcca(paste0(x, " should be higher than or equal to ", min, "."))
     
     if (type %in% c("matrix", "data.frame"))
@@ -173,7 +176,7 @@ check_lower_blocks <- function(x, y, blocks)
             exit_code = 133
         )
 check_method <- function(method) {
-    analysis <- c("rgcca", "sgcca", "pca", "spca", "pls", "spls", 
+    analysis <- c("rgcca", "sgcca", "mgcca", "pca", "spca", "pls", "spls", 
       "cca", "ifa", "ra", "gcca", "maxvar", "maxvar-b", 
       "maxvar-a", "mcoa","cpca-1", "cpca-2", "cpca-4", 
       "hpca", "maxbet-b", "maxbet", "maxdiff-b", "maxdiff", 
@@ -249,6 +252,60 @@ check_ncomp <- function(ncomp, blocks, min = 1) {
     
     check_size_blocks(blocks, "ncomp", ncomp)
     return(ncomp)
+}
+
+check_ranks <- function(ranks, blocks, min = 1) {
+  ranks <- elongate_arg(ranks, blocks)
+  ranks <- sapply(
+    seq(length(ranks)),
+    function(x){
+      y <- check_integer("ranks", ranks[x], min = min)
+      if (any(y > dim(blocks[[x]])[-1])) {
+        stop_rgcca(
+          paste0(
+            "ranks[", x, "] should be comprise between ", min ,
+            " and ", min(dim(blocks[[x]])), " (that is the number of
+            variables of the smallest mode of block ", x, ")."
+          ),
+          exit_code = 126 # TODO: look up exit codes
+        )
+      }
+      else
+        return(y)
+    }
+  )
+  
+  check_size_blocks(blocks, "ranks", ranks)
+  return(ranks)
+}
+
+check_reg_matrices <- function(regularisation_matrices, blocks) {
+  if (is.null(regularisation_matrices)) return(regularisation_matrices)
+  for (j in 1:length(blocks)) {
+    DIM = dim(blocks[[j]])
+    if (length(DIM) < 3) {
+      message(paste0("Regularization matrices are not available for matrix 
+                     blocks so regularisation_matrices[[", j, "]] has been set
+                     to NULL."))
+      regularisation_matrices[[j]] = NULL
+    }
+    if (!is.null(regularisation_matrices[[j]])) {
+      reg_DIM = lapply(regularisation_matrices[[j]], dim)
+      if (any(sapply(reg_DIM, function(x) x[1]) != sapply(reg_DIM, function(x) x[2]))) {
+        stop_rgcca("regularisation_matrices matrices must be square matrices")
+      }
+      if (length(regularisation_matrices[[j]]) != length(DIM) - 1) {
+        stop_rgcca(paste0("There should be as many regularisation_matrices 
+                          matrices as modes in the block. Mismatch found for
+                          block ", j, "."))
+      }
+      if (any(sapply(reg_DIM, function(x) x[1]) != DIM[-1])) {
+        stop_rgcca(paste0("regularisation_matrices matrices should match the 
+                          mode dimensions. Mismatch found for block ", j, "."))
+      }
+    }
+  }
+  return(regularisation_matrices)
 }
 
 # Check if a dataframe contains no qualitative variables
