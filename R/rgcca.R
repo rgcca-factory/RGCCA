@@ -199,7 +199,6 @@
 #' \code{\link[RGCCA]{rgcca_cv_k}},
 #' \code{\link[RGCCA]{rgcca_permutation}}
 #' \code{\link[RGCCA]{rgcca_predict}} 
-# TODO: ask what is object opt for
 rgcca <- function(
     blocks,
     type = "rgcca",
@@ -361,7 +360,7 @@ rgcca <- function(
    
    }
   
-    opt$blocks <- scaling(blocks, scale,scale_block = scale_block) # TODO: ask why scaling is applied here
+    opt$blocks <- blocks
     opt$superblock <- check_superblock(response, opt$superblock, !quiet)
     opt$blocks <- set_superblock(opt$blocks, opt$superblock, type, !quiet)
 
