@@ -282,6 +282,8 @@ check_ranks <- function(ranks, blocks, min = 1) {
 
 check_reg_matrices <- function(regularisation_matrices, blocks) {
   if (is.null(regularisation_matrices)) return(regularisation_matrices)
+  if (!is.list(regularisation_matrices)) stop_rgcca(
+    "regularisation_matrices must be NULL or a list of list of matrices")
   for (j in 1:length(blocks)) {
     DIM = dim(blocks[[j]])
     if (!is.null(regularisation_matrices[[j]]) && length(DIM) < 3) {
@@ -291,6 +293,9 @@ check_reg_matrices <- function(regularisation_matrices, blocks) {
       regularisation_matrices[[j]] = NULL
     }
     if (!is.null(regularisation_matrices[[j]])) {
+      if (!is.list(regularisation_matrices[[j]])) stop_rgcca(paste0(
+        "regularisation_matrices[[", j, "]] must be NULL 
+        or a list of matrices"))
       reg_DIM = lapply(regularisation_matrices[[j]], dim)
       if (any(sapply(reg_DIM, function(x) x[1]) != sapply(reg_DIM, function(x) x[2]))) {
         stop_rgcca("regularisation_matrices matrices must be square matrices")

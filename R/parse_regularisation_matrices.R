@@ -22,10 +22,8 @@
 # @title Parsing regularization matrices and applying change of variable
 # @export parse_regularisation_matrices
 
-# TODO: Decide what to do with the checks, should they be there too, should they
-# call existing checks, should there be no checks?
 parse_regularisation_matrices <- function(reg_matrices, tau, A, DIM, bias = TRUE) {
-
+  # TODO: add message if absolute values of eigenvalues are under a given tol
   sqrtMatrice = function(M){
     eig        = eigen(M)
     M_sqrt     = eig$vectors %*% diag(sqrt(eig$values)) %*% t(eig$vectors)
@@ -35,30 +33,16 @@ parse_regularisation_matrices <- function(reg_matrices, tau, A, DIM, bias = TRUE
   P = (DIM[1]^(-1/2)) * A
 
   if (length(DIM) > 2){
-    # We expect reg_matrices to be NULL or a list of matrices (one matrix per mode)
     tau = 1
     if (is.null(reg_matrices)) {
       M_inv = NULL
     } else if (is.list(reg_matrices)) {
-      # Check dimensions and numbers of regularization matrices
-      reg_DIM = lapply(reg_matrices, dim)
-      if (any(sapply(reg_DIM, function(x) x[1]) != sapply(reg_DIM, function(x) x[2]))) {
-        stop_rgcca("reg_matrices matrices must be square matrices")
-      }
-      if (length(reg_matrices) != length(DIM) - 1) {
-        stop_rgcca("There should be as many reg_matrices matrices as modes")
-      }
-      if (any(sapply(reg_DIM, function(x) x[1]) != DIM[-1])) {
-        stop_rgcca("reg_matrices matrices should match the mode dimensions")
-      }
       M_inv = list()
       for (d in 1:length(reg_matrices)) {
         M_inv[[d]] = sqrtMatrice(reg_matrices[[d]])
         Minv_sqrt  = M_inv[[d]]$Minv_sqrt
         P          = mode_product(P, Minv_sqrt, mode = d + 1)
       }
-    } else {
-      stop_rgcca("For a tensor block, reg_matrices must be NULL or a list of matrices")
     }
     P = matrix(as.vector(P), nrow = DIM[1])
   }else{
