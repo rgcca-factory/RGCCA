@@ -265,9 +265,9 @@ rgcca <- function(
     if (any(sapply(blocks, function(x) length(dim(x))) > 2)) {
         if(type != "mgcca")
         {
-            type = "mgcca"
             message(paste0("type='", type, "' is not available for tensor blocks
                            so type was converted to 'mgcca'."))
+            type = "mgcca"
         }
     }
          
