@@ -284,7 +284,7 @@ check_reg_matrices <- function(regularisation_matrices, blocks) {
   if (is.null(regularisation_matrices)) return(regularisation_matrices)
   for (j in 1:length(blocks)) {
     DIM = dim(blocks[[j]])
-    if (length(DIM) < 3) {
+    if (!is.null(regularisation_matrices[[j]]) && length(DIM) < 3) {
       message(paste0("Regularization matrices are not available for matrix 
                      blocks so regularisation_matrices[[", j, "]] has been set
                      to NULL."))

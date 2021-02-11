@@ -72,39 +72,36 @@ check_blocks <- function(blocks, init = FALSE, n = 2,
     blocks=blocks1
     names(blocks)=nameBlocks
     
-    # TODO: ask what to do with dimnames
+    # Dealing with other dimnames
     if (any(sapply(blocks, function(x) c(sapply(dimnames(x), is.null))))) {
-      message("Some dimnames are missing and automatically labeled as 
-              B1_M1_V1, ..., B1_M1_VIm1, B1_M2_V1, ..., BJ_MmJ_VImJ \n")
-      for (b in 1:length(blocks)) {
-        for (mode in seq(1, length(dim(blocks[[b]])))[-1]) {
-          if (is.null(dimnames(blocks[[b]])[[mode]])) {
-            dimnames(blocks[[b]])[[mode]] = paste0("B", b, "_M", mode, "_V", 
-                                             1:(dim(blocks[[b]])[mode]))
+      if (allow_unnames) {
+        message("Some dimnames are missing and automatically labeled as 
+              block1_1_1, ..., block1_2_Im1, ..., blockJ_mJ_ImJ \n")
+        for (i in 1:length(blocks)) {
+          for (mode in seq(1, length(dim(blocks[[i]])))[-1]) {
+            if (is.null(dimnames(blocks[[i]])[[mode]])) {
+              dimnames(blocks[[i]])[[mode]] = paste(
+                names(blocks)[i], mode-1, 1:(dim(blocks[[i]])[mode]), sep = "_")
+            }
           }
         }
+      } else {
+        stop_rgcca(paste(msg, "Blocks should have dimnames.\n "))
       }
-    }
+    } 
     
-    if (any(sapply(blocks, function(x) is.null(colnames(x)))))
-    {
-        stop_rgcca(paste(msg, "Blocks should have colnames.\n "))
-    }
-    # if one colname is identical within or between block 
-    if(sum(duplicated(unlist(sapply(blocks,colnames))))!=0)
-    {
-      if(!quiet)
-        message("Colnames are duplicated and modified to avoid confusion \n")
-       
-      blocks_i= lapply(1:length(blocks),
-                       function(i){
-                         x = blocks[[i]]
-                         colnames(x) = paste(names(blocks)[i],
-                                             colnames(blocks[[i]]), sep = "_")
-                         return(x)}
-                       )
-      names(blocks_i) = names(blocks)
-      blocks = blocks_i
+    # Dealing with duplicated dimnames (except rownames)
+    if(any(duplicated(unlist(sapply(blocks, function(x) dimnames(x)[-1]))))) {
+        if(!quiet)
+          message("Dimnames are duplicated and modified to avoid confusion \n")
+        
+        for (i in 1:length(blocks)) {
+            for (mode in seq(1, length(dim(blocks[[i]])))[-1]) {
+                dimnames(blocks[[i]])[[mode]] = paste(
+                    names(blocks)[i], mode-1, 1:(dim(blocks[[i]])[mode]), 
+                    dimnames(blocks[[i]])[[mode]], sep = "_")
+            }
+        }
     }
  
     # If one rownames is missing but the size of blocks is correct
@@ -196,7 +193,7 @@ check_blocks <- function(blocks, init = FALSE, n = 2,
                 }
                 else
                 {
-                   # y = blocks[[name]][union_rows, ]
+                   # Select the lines of the arrays with 2 or more dimensions 
                    y = apply(blocks[[name]], 2:length(dim(blocks[[name]])), 
                              function(x) x[union_rows])
                 }
