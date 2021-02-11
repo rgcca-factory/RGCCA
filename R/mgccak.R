@@ -69,7 +69,7 @@ mgccak <- function (A, A_m = NULL, C, tau = rep(1, length(A)), scheme = "centroi
     } else if (init=="svd") {
       # SVD Initialization of a_j
       if (j %in% B_2D) {
-        a[[j]] <- initsvd(A[[j]], dual)
+        a[[j]] <- initsvd(A[[j]])
       } else {
         SVD               <- svd(apply(A[[j]], 2, c), nu=0, nv=ranks[[j]])
         factors[[j]][[1]] <- SVD$v %*%
@@ -81,7 +81,7 @@ mgccak <- function (A, A_m = NULL, C, tau = rep(1, length(A)), scheme = "centroi
       }
     } else if (init=="random") {
       # Random Initialisation of a_j
-      A_random <- array(mvrnorm(n = pjs[j], mu = 0, Sigma = 1), dim = DIM[[j]])
+      A_random <- array(rnorm(n = pjs[j], mu = 0, Sigma = 1), dim = DIM[[j]])
       if (j %in% B_2D) {
         a[[j]] <- initsvd(A_random)
       } else {
@@ -158,7 +158,8 @@ mgccak <- function (A, A_m = NULL, C, tau = rep(1, length(A)), scheme = "centroi
         Y[, j]            = P[[j]] %*% a[[j]]
 
         for (d in 2:(LEN[[j]] - 1)) {
-          dgx              = update_dgx(scheme, Y, dg, n, J, j)
+          dgx              = dg(cov2(Y[, j], Y, bias = bias))
+          dgx              = matrix(rep(dgx, n), n, J, byrow = TRUE)
           Z[, j]           = rowSums(
             matrix(rep(C[j, ], n), n, J, byrow = TRUE) * dgx * Y)
 
