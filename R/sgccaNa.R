@@ -76,7 +76,7 @@ sgccaNa=function (blocks,method, connection = 1 - diag(length(A)), sparsity = re
       }
   }
 
- resRgcca=sgcca(A2,sparsity=sparsity,ncomp=ncomp,verbose=verbose,scale=scale,scale_block=scale_block,scheme=scheme,tol=tol,prescaling=prescaling,quiet=quiet)
+ resRgcca=sgcca(A2,C=connection,sparsity=sparsity,ncomp=ncomp,verbose=verbose,scale=scale,scale_block=scale_block,scheme=scheme,tol=tol,prescaling=prescaling,quiet=quiet)
  return(list(imputedA=A2,rgcca=resRgcca,method,indNA=indNA))
 
 }
