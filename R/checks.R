@@ -140,13 +140,14 @@ check_integer <- function(x, y = x, type = "scalar", float = FALSE, min = 1) {
     if (type == "scalar" && length(y) != 1)
         stop_rgcca(paste(x, "should be of length 1."))
     
-    if (!float)
+    if (!float) {
         if (any((y %% 1) != 0)) {
             stop_rgcca(paste(x, "should be an integer."))
         }
         y = as.integer(y)
+    }
     
-    if (all(y < min)) # TODO: Ask why it is all and not any
+    if (any(y < min)) 
         stop_rgcca(paste0(x, " should be higher than or equal to ", min, "."))
     
     if (type %in% c("matrix", "data.frame"))
@@ -441,11 +442,11 @@ check_size_file <- function(filename) {
 }
 
 check_spars <- function(blocks, tau, type = "rgcca") {
-    # sparsity : A vector of integer giving the spasity parameter for SGCCA (sparsity)
+    # sparsity : A vector of integer giving the sparsity parameter for SGCCA (sparsity)
     # Stop the program if at least one sparsity parameter is not in the required interval
     
     if (tolower(type) == "sgcca") {
-        #the minimum value avalaible
+        #the minimum value available
         min_sparsity <- lapply(blocks, function(x) 1 / sqrt(NCOL(x)))
         
         # Check sparsity varying between 1/sqrt(pj) and 1
@@ -455,7 +456,7 @@ check_spars <- function(blocks, tau, type = "rgcca") {
                 if (x < y | x > 1)
                     stop_rgcca(
                         paste0(
-                            "Sparsity parameter is equals to ",
+                            "Sparsity parameter equals to ",
                             x,
                             ". For SGCCA, it must be comprise between 1/sqrt(number_column) (i.e., ",
                             toString(unlist(
