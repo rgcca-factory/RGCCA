@@ -143,7 +143,7 @@ plot.rgcca=function(x, type = "weight", block = length(x$A), comp = 1:2,
         
         if(is.null(title)){title = toupper(names(x$call$blocks)[i_block])}
         p5 <- grid.arrange(p1, p2, nrow=1, ncol=2, top = title)
-        return(p5)
+        invisible(p5)
     }
     else if(type == "var")
     {
@@ -163,7 +163,7 @@ plot.rgcca=function(x, type = "weight", block = length(x$A), comp = 1:2,
                          text = text_var, no_overlap =!overlap,
                          title = title, n_mark = n_mark, collapse = collapse,
                          colors = colors)
-        return(p5)
+        invisible(p5)
     }
     
     else if(type == "ind")
@@ -185,14 +185,14 @@ plot.rgcca=function(x, type = "weight", block = length(x$A), comp = 1:2,
                      cex_main = cex_main, cex_lab = cex_lab, resp = resp,
                      response_name = response_name, text = text_ind,
                      title = title, colors = colors, no_overlap=!overlap)
-        return(p5)
+        invisible(p5)
      }
     else if(type == "ave")
     {
         if(is.null(title)){title = "Average Variance Explained"}
         p5 <- plot_ave (x, cex = cex, title = title, colors = colors, 
                         cex_main = cex_main, cex_sub = cex_sub)
-        return(p5)
+        invisible(p5)
     }
     else if(type == "network")
     {
@@ -209,7 +209,7 @@ plot.rgcca=function(x, type = "weight", block = length(x$A), comp = 1:2,
                        collapse = collapse, title = title, colors = colors, 
                        i_block = i_block, cex_main = cex_main, 
                        cex_sub = cex_sub)
-        return(p5)
+        invisible(p5)
     }
     else if(type == "weight")
     {
