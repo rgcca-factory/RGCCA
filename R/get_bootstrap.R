@@ -33,9 +33,9 @@
 #' (see details)
 #' }
 #' @details 
-#' For RGCCA, a classical Student test (df = number of bootstraps -1) is 
-#' computed based on the following statistic : weight/bootstrap estimate of 
-#' the standard deviations.
+#' For RGCCA, the p-value is computed by assuming that the ratio of the blocks 
+#' weight values to the bootstrap estimate of the standard deviation follows 
+#' the standardized normal distribution. 
 #' By including sparsity (with "sgcca","spls" or "spca"), the frequency of a 
 #' selected variable may depend on both the level of sparsity and the total 
 #' number of variables in each block. 

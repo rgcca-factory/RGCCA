@@ -1,9 +1,9 @@
 #' Tune the S/RGCCA hyper-parameters by permutation
 #' 
 #' This function can be used to automatically select the hyper-parameters 
-#' (amount of sparsity for sgcca or shrinkage parameters for RGCCA)
+#' (amount of sparsity for sgcca or shrinkage parameters for RGCCA).
 #' A permutation based strategy very similar to the one proposed in 
-#' (Witten et al, 2009) is proposed.
+#' (Witten et al, 2009) is implemented.
 #' 
 #' @details 
 #' The tuning parameters are selected using the permutation scheme proposed in 
@@ -25,7 +25,7 @@
 #' (4) The resulting p-value is given by $mean(t* > t)$; that is, the fraction 
 #' of t* that exceed the value of t obtained from the real data. 
 #' 
-#' Then, choose the tuning parameter value that gives the smallest value in 
+#' Then, choose the tuning parameter values that gives the smallest value in 
 #' Step 4.
 #' 
 #' This function only selects tuning parameters for the first deflation stage 
@@ -36,26 +36,28 @@
 #' @inheritParams bootstrap
 #' @inheritParams rgcca
 #' @inheritParams plot2D
-#' @param par_type A character string indicating the parameter to tune between 
-#' "sparsity" and "tau"
-#' @param par_length An integer indicating the number of sets of parameters to 
-#' be tested (if par_value = NULL). The parameters are uniformly distributed.
-#' @param par_value It could be either (i) A matrix of dimension IxJ (where 
-#' J the number of blocks and I the number of combinations to be tested), or 
-#' (ii) a vector of length J length ) or 
-#' a numeric value giving sets of penalties (tau for RGCCA, sparsity for SGCCA) 
-#' to be tested, one row by combination. By default, it takes 10 sets between 
-#' min values (0 for RGCCA and 1/sqrt(ncol(Xj)) for SGCCA) and 1.
+#' @param par_type A character string indicating the parameters to tune between 
+#' "sparsity" and "tau".
+#' @param par_length A numeric value indicating the number of sets of penalties 
+#' to be tested (if par_value = NULL). 
+#' @param par_value Sets of penalties to consider during the permutation process. 
+#' If par_value =NULL, it takes 10 sets between min values (0 for RGCCA and 
+#' 1/sqrt(ncol(Xj)) for SGCCA) and 1. Otherwise, it could be either (i) A matrix 
+#' of dimension IxJ (where I the number of combinations to be tested and J the 
+#' number of blocks), or (ii) a vector of length J length specifying the maximal 
+#' values to consider for each block. In that case, par_length combinations 
+#' are tested from min values to the maximal values specified by this vector. 
+#' (iii) a numerical value giving the same maximal value to be considered for each 
+#' block. In that case par_length combinations are tested from min values to 
+#' this single maximal value. 
 #' @param n_perms Number of permutations for each set of constraints (default 
 #' is 20).
-#' @param parallelization logical value. If TRUE (default value), the 
-#' permutation procedure is parallelized
-#' @return \item{zstat}{The vector of Z-statistics, one per set of tuning 
-#' parameters}
-#' @return \item{bestpenalties}{The set of tuning parameters that gives the 
+#' @return \item{zstat}{A vector of Z-statistics, one zstat per set of tuning 
+#' parameters.}
+#' @return \item{bestpenalties}{The set of tuning parameters that yields the 
 #' highest Z-statistics}
 #' @return \item{permcrit}{Matrix of permuted S/RGCCA criteria. The ith row of 
-#' permcrit contains the n_perms values of the permuted S/RGCCA criteria 
+#' permcrit contains the n_perms values of S/RGCCA permuted criteria 
 #' obtained for each set of tuning parameters.}
 #' @return \item{means}{A vector that contains, for each set of tuning 
 #' parameters, the mean of the permuted R/SGCCA criteria}
@@ -63,10 +65,10 @@
 #' parameters, the standard deviation of the permuted R/SGCCA criteria}
 #' @return \item{crit}{A vector that contains, for each set of tuning 
 #' parameters, the value of the R/SGCCA criteria obtained from the original 
-#' blocks}
-#' @return \item{pval}{The vector of p-values, one per set of tuning parameters}
-#' @return \item{penalties}{A matrix giving, the set of tuning paramaters 
-#' considered during the permutation procedure (tau or sparsity).}
+#' data.}
+#' @return \item{pval}{Vector of p-values, one per set of tuning parameters.}
+#' @return \item{penalties}{Matrix giving, the set of tuning paramaters 
+#' considered during the permutation process (tau or sparsity).}
 #' @references Witten, D. M., Tibshirani, R., & Hastie, T. (2009). A penalized 
 #' matrix decomposition, with applications to sparse principal components and 
 #' canonical correlation analysis. Biostatistics, 10(3), 515-534.
@@ -222,8 +224,7 @@ rgcca_permutation <- function(blocks, par_type, par_value = NULL,
                               sparsity = rep(1, length(blocks)), 
                               init = "svd", bias = TRUE, tol = 1e-8, 
                               response = NULL, superblock = FALSE, 
-                              method = "nipals", rgcca_res = NULL, 
-                              parallelization = NULL){
+                              method = "nipals", rgcca_res = NULL){
 
     if (!is.null(rgcca_res)) {
         stopifnot(is(rgcca_res, "rgcca"))

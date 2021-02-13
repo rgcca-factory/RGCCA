@@ -9,37 +9,37 @@
 #' sumcov-1, sumcov-2, sumcov, sabscov, sabscov-1, sabscov-2.
 #' @inheritParams plot_var_2D
 #' @inheritParams set_connection
-#' @param blocks A list of blocks
-#' @param response An integer giving the position of the response block. When 
+#' @param blocks List of blocks.
+#' @param response Numerical value giving the position of the response block. When 
 #' the response argument is filled the supervised mode is automatically 
 #' activated.  
-#' @param connection A symmetric matrix (J*J) that describes the relationships 
+#' @param connection Symmetric matrix (J*J) that describes the relationships 
 #' between blocks. Elements of the connection matrix must be positive ; but 
 #' usually equal to 1 if block \eqn{j} and block \eqn{k} are connected, and 0 
 #' otherwise.
-#' @param penalty A vector of length J (or character string for 'optimal' 
+#' @param penalty Vector of length J (or character string for 'optimal' 
 #' setting) indicating the values of the tuning parameters.
-#' @param ncomp A vector of length J indicating the number of block components 
+#' @param ncomp Vector of length J indicating the number of block components 
 #' for each block.
-#' @param scheme A character string or a function giving the scheme function for 
+#' @param scheme Character string or a function giving the scheme function for 
 #' covariance maximization among "horst" (the identity function), "factorial"
 #'  (the squared values), "centroid" (the absolute values). The scheme function 
-#'  can be any continously differentiable convex functin and it is possible to 
+#'  can be any continously differentiable convex function and it is possible to 
 #'  design explicitely the sheme function (e.g. function(x) x^4) as argument of 
 #'  rgcca function.  See (Tenenhaus et al, 2017) for details.
-#' @param verbose A logical value indicating whether the warnings are displayed
-#' @param quiet A boolean hidding the warnings
-#' @return \item{blocks}{A list of blocks.}
-#' @return \item{scheme}{A character string or a function giving the scheme 
-#' function for covariance maximization.}
-#' @return \item{penalty}{A vector of length J (or character string for 
+#' @param verbose Logical value indicating whether the warnings are displayed.
+#' @param quiet Logical value indicating if warning messages are reported.
+#' @return \item{blocks}{List of blocks.}
+#' @return \item{scheme}{Character string or a function giving the scheme 
+#' function used for covariance maximization.}
+#' @return \item{penalty}{Vector of length J (or character string for 
 #' 'optimal' setting) indicating the values of the tuning parameters.}
-#' @return \item{ncomp}{A vector of length J indicating the number of block 
+#' @return \item{ncomp}{Vector of length J indicating the number of block 
 #' components or each block.}
-#' @return \item{connection}{A symmetric matrix (J*J) that describes the 
-#' relationships between blocks}
-#' @return \item{superblock}{A logical value indicating if superblock is 
-#' included in the analysis}
+#' @return \item{connection}{Symmetric matrix (J*J) that describes the 
+#' relationships between blocks.}
+#' @return \item{superblock}{Logical value indicating if superblock is 
+#' included in the analysis.}
 
 select_analysis <- function(
     blocks,
@@ -54,7 +54,7 @@ select_analysis <- function(
     response = NULL){
 
     J <- length(blocks)
-    msg_superblock <- "a superblock is used"
+    msg_superblock <- "A superblock is considered."
     msg_type <- paste0("By using a ", toupper(type), ", ")
     warn.type.value <- warn.type.par <- warn.msg.super <- character(0)
 

@@ -27,29 +27,29 @@ matrices (\eqn{X_{h1}, X_{h2}, ..., X_{hJ}}).}
 \item{C}{A symmetric matrix (J*J) that describes the relationships between 
 blocks.}
 
-\item{tau}{Either a 1*J vector or a \eqn{\mathrm{max}(ncomp) \times J} matrix 
-containing the values of the regularization parameters (default: tau = 1, 
-for each block and each dimension). Tau varies from 0 (maximizing the 
-correlation) to 1 (maximizing the covariance). If tau = "optimal" the 
-regularization paramaters are estimated for each block and each dimension 
-using the Schafer and Strimmer (2005) analytical formula . If tau is a 
-\eqn{1\times J} vector, tau[j] is identical across the dimensions of block 
-\eqn{\mathbf{X}_j}. If tau is a matrix, tau[k, j] is associated with 
-\eqn{\mathbf{X}_{jk}} (\eqn{k}th residual matrix for block \eqn{j}). It can 
-be estimated by using \link{rgcca_permutation}.}
+\item{tau}{Either a 1*J vector or a max(ncomp)*J matrix containing 
+the values of the regularization parameters (default: tau = 1, for each 
+block and each dimension). The regularization parameters varies from 0 
+(maximizing the correlation) to 1 (maximizing the covariance). If 
+tau = "optimal" the regularization paramaters are estimated for each block 
+and each dimension using the Schafer and Strimmer (2005) analytical formula . 
+If tau is a 1*J vector, tau[j] is identical across the dimensions 
+of block Xj. If tau is a matrix, tau[k, j] is associated with 
+X_jk (kth residual matrix for block j). The regularization parameters can 
+also be estimated using \link{rgcca_permutation} or \link{rgcca_cv}.}
 
-\item{scheme}{A character string or a function giving the scheme function for 
+\item{scheme}{Character string or a function giving the scheme function for 
 covariance maximization among "horst" (the identity function), "factorial"
  (the squared values), "centroid" (the absolute values). The scheme function 
- can be any continously differentiable convex functin and it is possible to 
+ can be any continously differentiable convex function and it is possible to 
  design explicitely the sheme function (e.g. function(x) x^4) as argument of 
  rgcca function.  See (Tenenhaus et al, 2017) for details.}
 
-\item{verbose}{A logical value indicating whether the warnings are displayed}
+\item{verbose}{Logical value indicating whether the warnings are displayed.}
 
-\item{init}{A character giving the mode of initialization to use in the 
-algorithm. The alternatives are either by Singular Value Decompostion ("svd") 
-or random ("random") (default: "svd").}
+\item{init}{Character string giving the type of initialization to use in 
+the  algorithm. It could be either by Singular Value Decompostion ("svd") 
+or by random initialisation ("random") (default: "svd").}
 
 \item{bias}{A logical value for biaised (\eqn{1/n}) or unbiaised 
 (\eqn{1/(n-1)}) estimator of the var/cov (default: bias = TRUE).}
@@ -59,9 +59,9 @@ or random ("random") (default: "svd").}
 \item{na.rm}{If TRUE, RGCCA is run only on the available data (default value) 
 otherwise the NIPALS algorithm is used.}
 
-\item{scale}{A logical value indicating if each block is standardized}
+\item{scale}{Logical value indicating if blocks are standardized.}
 
-\item{scale_block}{A logical value indicating if each block is divided by 
+\item{scale_block}{Logical value indicating if each block is divided by 
 the square root of its number of variables.}
 }
 \value{

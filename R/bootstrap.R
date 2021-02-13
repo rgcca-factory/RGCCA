@@ -3,13 +3,13 @@
 #' Boostrap confidence intervals and p-values for evaluating the significancy/ 
 #' stability of the block-weight vectors produce by S/RGCCA.
 #' @inheritParams plot2D
-#' @param n_boot Number of bootstrap iterations. Default is 100.
-#' @param n_cores Number of cores for parallelization 
+#' @param n_boot Number of bootstrap iterations. Default: 100.
+#' @param n_cores Number of cores for parallelization.
 #' @return A list containing two objects: 'bootstrap' and 'rgcca'. 
 #' 'bootstrap' is a list containing for each block, a matrix 
 #' with the variables of the block in row and the block weight vector
-#' calculated accross bootstrap sample in column. 'rgcca' is the original 
-#' fitted rgcca object. (see  \code{\link[RGCCA]{rgcca}})
+#' calculated accross bootstrap sample in column. 'rgcca' is the fitted rgcca 
+#' object obtained from the original data. (see  \code{\link[RGCCA]{rgcca}})
 #' @examples
 #' # Bootstrap confidence intervals and p-values for RGCCA 
 #' data("Russett")

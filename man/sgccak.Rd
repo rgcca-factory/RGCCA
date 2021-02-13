@@ -40,27 +40,27 @@ the weights corresponding to components \eqn{h}:
 \deqn{for all h, |a_{j,h}|_{L_1} \le c_1[h,j] \sqrt{p_j}.} It can be 
 estimated by using \link{rgcca_permutation}.}
 
-\item{scheme}{A character string or a function giving the scheme function for 
+\item{scheme}{Character string or a function giving the scheme function for 
 covariance maximization among "horst" (the identity function), "factorial"
  (the squared values), "centroid" (the absolute values). The scheme function 
- can be any continously differentiable convex functin and it is possible to 
+ can be any continously differentiable convex function and it is possible to 
  design explicitely the sheme function (e.g. function(x) x^4) as argument of 
  rgcca function.  See (Tenenhaus et al, 2017) for details.}
 
-\item{scale}{A logical value indicating if each block is standardized}
+\item{scale}{Logical value indicating if blocks are standardized.}
 
 \item{tol}{The stopping value for the convergence of the algorithm.}
 
-\item{init}{A character giving the mode of initialization to use in the 
-algorithm. The alternatives are either by Singular Value Decompostion ("svd") 
-or random ("random") (default: "svd").}
+\item{init}{Character string giving the type of initialization to use in 
+the  algorithm. It could be either by Singular Value Decompostion ("svd") 
+or by random initialisation ("random") (default: "svd").}
 
 \item{bias}{A logical value for biaised (\eqn{1/n}) or unbiaised 
 (\eqn{1/(n-1)}) estimator of the var/cov (default: bias = TRUE).}
 
-\item{verbose}{A logical value indicating whether the warnings are displayed}
+\item{verbose}{Logical value indicating whether the warnings are displayed.}
 
-\item{quiet}{A boolean hidding the warnings}
+\item{quiet}{Logical value indicating if warning messages are reported.}
 }
 \value{
 \item{Y}{A list of \eqn{J} elements. Each element of \eqn{Y} is a 

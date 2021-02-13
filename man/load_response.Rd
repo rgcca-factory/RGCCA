@@ -14,9 +14,9 @@ load_response(
 )
 }
 \arguments{
-\item{blocks}{A list that contains the J blocks of variables X1, X2, ..., XJ. 
-Block Xj is a matrix of dimension n x p_j where p_j is the number of 
-variables in X_j.}
+\item{blocks}{List that contains the J blocks of variables X1, X2, ..., XJ. 
+Block Xj is a matrix of dimension n x p_j where n is the number of 
+observations and p_j the number of variables.}
 
 \item{file}{A character giving the path of a file}
 

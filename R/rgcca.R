@@ -5,84 +5,72 @@
 #' variable selection
 #' 
 #' @details
-#' Given J matrices \eqn{\mathbf{X_1}, \mathbf{X_2}, ..., \mathbf{X_J}} that 
-#' represent \eqn{J} sets of variables observed on the same set of \eqn{n} 
-#' individuals. The matrices \eqn{\mathbf{X_1}, \mathbf{X_2}, ..., \mathbf{X_J}} 
-#' must have the same number of rows, but may (and usually will) have different 
+#' Given J matrices X1, X2, ..., XJ that represent J sets of variables observed 
+#' on the same set of n individuals. The matrices X1, X2, ..., XJ must have the 
+#' same number of rows, but may (and usually will) have different 
 #' numbers of columns. The aim of RGCCA is to study the relationships between 
-#' these \eqn{J} blocks of variables. It constitutes a general framework for 
+#' these J blocks of variables. It constitutes a general framework for 
 #' many multi-block data analysis methods (see Tenenhaus and Tenenhaus, 2011 ; 
 #' Tenenhaus et al. 2017). It combines the power of multi-block data analysis 
 #' methods (maximization of well identified criteria) and the flexibility of 
 #' PLS path modeling (the researcher decides which blocks are connected and 
 #' which are not). Hence, the use of RGCCA requires the construction (user 
-#' specified) of a design matrix, (\eqn{\mathbf{C}}), that characterizes the 
-#' connections between blocks. Elements of the (symmetric) design matrix 
-#' \eqn{\mathbf{C} = (c_{jk})} are positive (and usually equal to 1 if block 
-#' \eqn{j} and block \eqn{k} are connected, and 0 otherwise). The function 
-#' rgcca() implements a monotone global convergent algorithm - i.e. the 
+#' specified) of a design matrix C that characterizes the connections between 
+#' blocks. Elements of the (symmetric) design matrix C = (c_{jk}) are positive 
+#' (and usually equal to 1 if block j and block k are connected, and 0 
+#' otherwise). The rgcca() function implements a monotone global convergent 
+#' algorithm - i.e. the bounded criteria to be maximized increases at each 
+#' step of the iterative procedure and hits, at convergence a stationary point
+#' of the RGCCA optimization problem. Moreover, depending on the dimensionality 
+#' of each block Xj, j = 1, \ldots, J, the primal (when n > p_j) algorithm or 
+#' the dual (when n < p_j) algorithm is used (see Tenenhaus et al. 2015). At 
+#' last, a deflation strategy is used to compute several RGCCA block components 
+#' (specified by ncomp) for each block. Block components of each block are 
+#' guaranteed to be orthogonal. The so-called symmetric deflation is implemented 
+#' (i.e. each block is deflated with respect to its own component). It should be 
+#' noted that the numbers of components per block can differ from one block to 
+#' another. SGCCA extends RGCCA to address the issue of variable selection 
+#' (Tenenhaus et al, 2014). Specifically, RGCCA is combined with an L1-penalty 
+#' that gives rise to Sparse GCCA (SGCCA). The SGCCA algorithm is very similar 
+#' to the RGCCA algorithm and keeps the same convergence properties (i.e. the 
 #' bounded criteria to be maximized increases at each step of the iterative 
-#' procedure and hits, at convergence a stationary point of the RGCCA 
-#' optimization problem. Moreover, depending on the dimensionality of each 
-#' block \eqn{\mathbf{X}_j}, \eqn{j = 1, \ldots, J}, the primal (when 
-#' \eqn{n > p_j}) algorithm or the dual (when \eqn{n < p_j}) algorithm is used 
-#' (see Tenenhaus et al. 2015). At last, a deflation strategy is used to compute 
-#' several RGCCA block components (specified by ncomp) for each block. Block 
-#' components of each block are guaranteed to be orthogonal. The so-called 
-#' symmetric deflation is implemented (i.e. each block is deflated with respect 
-#' to its own component). It should be noted that the numbers of components 
-#' per block can differ from one block to another. SGCCA extends RGCCA to 
-#' address the issue of variable selection (Tenenhaus et al, 2014). 
-#' Specifically, RGCCA is combined with an L1-penalty that gives rise to Sparse 
-#' GCCA (SGCCA). The SGCCA algorithm is very similar to the RGCCA algorithm and 
-#' keeps the same convergence properties (i.e. the bounded criteria to be 
-#' maximized increases at each step of the iterative procedure and hits at 
-#' convergence a stationary point). Moreover, using a deflation strategy, 
-#' sgcca() enables the computation of several SGCCA orthogonal block components 
-#' (specified by ncomp) for each block.  
-#' The rgcca() function can handle missing values using a NIPALS type algorithm 
-#' (non-linear iterative partial least squares algorithm) described in 
-#' (Tenenhaus et al, 2005). Guidelines describing how to use RGCCA in practice 
-#' are provided in (Garali et al., 2017). 
+#' procedure and hits at convergence a stationary point). Moreover, using a 
+#' deflation strategy,  sgcca() enables the computation of several SGCCA 
+#' orthogonal block components (specified by ncomp) for each block. The rgcca() 
+#' function can handle missing values using a NIPALS type algorithm (non-linear 
+#' iterative partial least squares algorithm) described in (Tenenhaus et al, 
+#' 2005). Guidelines describing how to use RGCCA in practice are provided in 
+#' (Garali et al., 2017). 
 #' @inheritParams rgccaNa
 #' @inheritParams sgccaNa
 #' @inheritParams select_analysis
-#' @return A RGCCA object
-#' @return \item{Y}{A list of \eqn{J} elements. Each element of the list \eqn{Y} 
+#' @return A rgcca fitted object
+#' @return \item{Y}{List of \eqn{J} elements. Each element of the list \eqn{Y} 
 #' is a matrix that contains the RGCCA block components for the corresponding 
 #' block.}
-#' @return \item{a}{A list of \eqn{J} elements. Each element of the list \eqn{a} 
+#' @return \item{a}{List of \eqn{J} elements. Each element of the list \eqn{a} 
 #' is a matrix of block weight vectors for the corresponding block.}
-#' @return \item{astar}{A list of \eqn{J} elements. Each element of astar is a 
+#' @return \item{astar}{List of \eqn{J} elements. Each element of astar is a 
 #' matrix defined as Y[[j]][, h] = A[[j]]\%*\%astar[[j]][, h].}
-#' @return \item{tau}{Either a vector of length J or a matrix of dimension 
-#' \eqn{\mathrm{max}(ncomp) \times J} containing the values of the shrinkage 
-#' parameters. tau varies from 0 (maximizing the correlation) to 1 (maximizing 
-#' the covariance). If tau = "optimal" the shrinkage paramaters are estimated 
-#' for each block and each dimension using the Schafer and Strimmer (2005) 
-#' analytical formula. If tau is a vector of length J, tau[j] is identical 
-#' across the dimensions of block \eqn{\mathbf{X}_j}. If tau is a matrix, 
-#' tau[k, j] is associated with \eqn{\mathbf{X}_{jk}} (\eqn{k}th residual 
-#' matrix of block \eqn{j}). tau can be also estimated using 
-#' \link{rgcca_permutation}.}
-#' @return \item{crit}{A list of vector of length max(ncomp). Each vector of 
+#' @return \item{tau}{Regularization parameters used during the analysis.}
+#' @return \item{crit}{List of vector of length max(ncomp). Each vector of 
 #' the list is related to one specific deflation stage and reports the values 
 #' of the criterion for this stage across iterations.}
 #' @return \item{primal_dual}{A \eqn{1 \times J} vector that contains the 
 #' formulation ("primal" or "dual") applied to each of the \eqn{J} blocks 
 #' within the RGCCA alogrithm.} 
-#' @return \item{AVE}{A list of numerical values giving the indicators of model 
+#' @return \item{AVE}{List of numerical values giving the indicators of model 
 #' quality based on the Average Variance Explained (AVE): AVE(for each block), 
 #' AVE(outer model), AVE(inner model).}
-#' @return \item{A}{A list that contains the J blocks of variables X1, X2, ..., 
+#' @return \item{A}{List that contains the J blocks of variables X1, X2, ..., 
 #' XJ. Block Xj is a matrix of dimension n x p_j where p_j is the number of 
 #' variables in X_j. These blocks are imputed when an imputation strategy is 
 #' selected.}
-#' @return \item{call}{Call of the function}
+#' @return \item{call}{Call of the function.}
 #' @references Garali I, Adanyeguh IM, Ichou F, Perlbarg V, Seyer A, Colsch B, 
-#' Moszer I, Guillemot V, Durr A, Mochel F, Tenenhaus A. A strategy for 
+#' Moszer I, Guillemot V, Durr A, Mochel F, Tenenhaus A. (2018) A strategy for 
 #' multimodal data integration: application to biomarkers identification 
-#' in spinocerebellar ataxia. Briefings in Bioinformatics. 2018 Nov 27;19(6):1356-1369. 
+#' in spinocerebellar ataxia. Briefings in Bioinformatics. 19(6):1356-1369. 
 #' @references Tenenhaus M., Tenenhaus A. and Groenen P. J. (2017). Regularized 
 #' generalized canonical correlation analysis: a framework for sequential 
 #' multiblock component methods. Psychometrika, 82(3), 737-777.
@@ -90,10 +78,10 @@
 #' generalized canonical correlation analysis. Computational Statistics and 
 #' Data Analysis, 90, 114-131.
 #' @references Tenenhaus A., Philippe C., Guillemot V., Le Cao K. A., Grill J. 
-#' and Frouin, V., Variable selection for generalized canonical correlation 
-#' analysis, Biostatistics, vol. 15, no. 3, pp. 569-583, 2014.
+#' and Frouin, V. (2014), Variable selection for generalized canonical 
+#' correlation analysis, Biostatistics, 15(3), pp. 569-583.
 #' @references Tenenhaus A. and Tenenhaus M., (2011). Regularized Generalized 
-#' Canonical Correlation Analysis, Psychometrika, Vol. 76, Nr 2, pp 257-284.
+#' Canonical Correlation Analysis, Psychometrika, 76(2), pp 257-284.
 #' @references Schafer J. and Strimmer K. (2005). A shrinkage approach to 
 #' large-scale covariance matrix estimation and implications for functional 
 #' genomics. Statistical Applications in Genetics and Molecular Biology 4:32.
@@ -186,25 +174,16 @@
 #' \code{\link[RGCCA]{rgcca_cv_k}},
 #' \code{\link[RGCCA]{rgcca_permutation}}
 #' \code{\link[RGCCA]{rgcca_predict}} 
-rgcca <- function(
-    blocks,
-    type = "rgcca",
-    scale = TRUE,
-    scale_block = TRUE,
-    connection = 1 - diag(length(blocks)),
-    scheme = "factorial",
-    ncomp = rep(1, length(blocks)),
-    tau = rep(1, length(blocks)),
-    sparsity = rep(1, length(blocks)),
-    init = "svd",
-    bias = TRUE,
-    tol = 1e-08,
-    response = NULL,
-    superblock = FALSE,
-    method = "nipals",
-    verbose = FALSE,
-    quiet = TRUE) 
-{
+rgcca <- function(blocks, type = "rgcca", 
+                  scale = TRUE, scale_block = TRUE,
+                  connection = 1 - diag(length(blocks)), 
+                  scheme = "factorial", 
+                  ncomp = rep(1, length(blocks)), 
+                  tau = rep(1, length(blocks)), 
+                  sparsity = rep(1, length(blocks)), 
+                  init = "svd", bias = TRUE, tol = 1e-08, 
+                  response = NULL, superblock = FALSE, 
+                  method = "nipals", verbose = FALSE, quiet = TRUE){
 
     if(class(blocks)=="permutation")
     {

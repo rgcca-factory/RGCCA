@@ -1,73 +1,58 @@
 #' imputeRGCCA allows to choose the imputation method before running RGCCA
 #' @inheritParams select_analysis
-#' @param blocks A list that contains the J blocks of variables X1, X2, ..., XJ. 
-#' Block Xj is a matrix of dimension n x p_j where p_j is the number of 
-#' variables in X_j.
-#' @param method  Either a character corresponding to the used method 
-#' ("complete","knn","em","sem") or a function taking a list of J blocks (A) as 
-#' only parameter and returning the imputed list. 
+#' @param blocks List that contains the J blocks of variables X1, X2, ..., XJ. 
+#' Block Xj is a matrix of dimension n x p_j where n is the number of 
+#' observations and p_j the number of variables.
+#' @param method  Character string corresponding to the method used for 
+#' handling missing values ("nipals", "complete", "mean"). (default: "nipals").
 #' \itemize{
-#' \item{\code{"mean"}}{ corresponds to an imputation by the colmeans}
-#' \item{\code{"complete"}}{ corresponds to run RGCCA only on the complete 
-#' subjects (subjects with missing data are removed)}
-#' \item{\code{"nipals"}}{ corresponds to run RGCCA on all available data 
-#' (NIPALS algorithm)}
-#' \item{\code{"em"}}{ corresponds to impute the data with EM-type algorithms}
-#' \item{\code{"sem"}}{ corresponds to impute the data with EM-type algorithms 
-#' with superblock approach}
-#' \item{\code{"knn1"}}{ corresponds to impute the data with the 1-Nearest 
-#' Neighbor. 1 can be replace by another number (such as knn3) to impute with 
-#' the 3-Nearest Neighbors.}}
-#' @param tau Either a 1*J vector or a \eqn{\mathrm{max}(ncomp) \times J} matrix 
-#' containing the values of the regularization parameters (default: tau = 1, 
-#' for each block and each dimension). Tau varies from 0 (maximizing the 
-#' correlation) to 1 (maximizing the covariance). If tau = "optimal" the 
-#' regularization paramaters are estimated for each block and each dimension 
-#' using the Schafer and Strimmer (2005) analytical formula . If tau is a 
-#' \eqn{1\times J} vector, tau[j] is identical across the dimensions of block 
-#' \eqn{\mathbf{X}_j}. If tau is a matrix, tau[k, j] is associated with 
-#' \eqn{\mathbf{X}_{jk}} (\eqn{k}th residual matrix for block \eqn{j}). It can 
-#' be estimated by using \link{rgcca_permutation}.
-#' @param scale A logical value indicating if each block is standardized
-#' @param scale_block A logical value indicating if each block is divided by 
+#' \item{\code{"mean"}}{corresponds to imputation by the colmeans before 
+#' applying the S/RGCCA algorithm}
+#' \item{\code{"complete"}}{corresponds to perform RGCCA on the fully observed  
+#' observations (observations with missing values are removed)}
+#' \item{\code{"nipals"}}{corresponds to perform RGCCA algorithm on available 
+#' data (NIPALS-type algorithm)}}
+#' @param tau Either a 1*J vector or a max(ncomp)*J matrix containing 
+#' the values of the regularization parameters (default: tau = 1, for each 
+#' block and each dimension). The regularization parameters varies from 0 
+#' (maximizing the correlation) to 1 (maximizing the covariance). If 
+#' tau = "optimal" the regularization paramaters are estimated for each block 
+#' and each dimension using the Schafer and Strimmer (2005) analytical formula . 
+#' If tau is a 1*J vector, tau[j] is identical across the dimensions 
+#' of block Xj. If tau is a matrix, tau[k, j] is associated with 
+#' X_jk (kth residual matrix for block j). The regularization parameters can 
+#' also be estimated using \link{rgcca_permutation} or \link{rgcca_cv}. 
+#' @param scale Logical value indicating if blocks are standardized.
+#' @param scale_block Logical value indicating if each block is divided by 
 #' the square root of its number of variables. 
-#' @param verbose  A logical value indicating if the progress of the 
+#' @param verbose Logical value indicating if the progress of the 
 #' algorithm is reported while computing.
-#' @param quiet A logical value indicating if the warning messages are reported.
-#' @param init A character giving the mode of initialization to use in the 
-#' algorithm. The alternatives are either by Singular Value Decompostion ("svd") 
-#' or random ("random") (default: "svd").
+#' @param quiet Logical value indicating if warning messages are reported.
+#' @param init Character string giving the type of initialization to use in 
+#' the  algorithm. It could be either by Singular Value Decompostion ("svd") 
+#' or by random initialisation ("random") (default: "svd").
 #' @param bias A logical value for biaised (\eqn{1/n}) or unbiaised 
 #' (\eqn{1/(n-1)}) estimator of the var/cov (default: bias = TRUE).
 #' @param tol The stopping value for the convergence of the algorithm.
-#' @param prescaling A logical value indicating if the scaling has been done  
+#' @param prescaling Logical value indicating if the scaling has been done  
 #' outside of the function.
-#' @return \item{Y}{A list of \eqn{J} elements. Each element of \eqn{Y} is a 
+#' @return \item{Y}{List of \eqn{J} elements. Each element of \eqn{Y} is a 
 #' matrix that contains the analysis components for the corresponding block.}
-#' @return \item{a}{A list of \eqn{J} elements. Each element of \eqn{a} is a 
+#' @return \item{a}{List of \eqn{J} elements. Each element of \eqn{a} is a 
 #' matrix that contains the outer weight vectors for each block.}
-#' @return \item{astar}{A list of \eqn{J} elements. Each element of astar is a 
+#' @return \item{astar}{List of \eqn{J} elements. Each element of astar is a 
 #' matrix defined as Y[[j]][, h] = A[[j]]\%*\%astar[[j]][, h].}
-#' @return \item{C}{A symmetric matrix (J*J) that describes the relationships 
-#' between blocks}
-#' @return \item{tau}{Either a 1*J vector or a \eqn{\mathrm{max}(ncomp) \times J} 
-#' matrix containing the values of the regularization parameters (default: 
-#' tau = 1, for each block and each dimension). Tau varies from 0 (maximizing 
-#' the correlation) to 1 (maximizing the covariance). If tau = "optimal" the 
-#' regularization paramaters are estimated for each block and each dimension 
-#' using the Schafer and Strimmer (2005) analytical formula . If tau is a 
-#' \eqn{1\times J} vector, tau[j] is identical across the dimensions of block 
-#' \eqn{\mathbf{X}_j}. If tau is a matrix, tau[k, j] is associated with 
-#' \eqn{\mathbf{X}_{jk}} (\eqn{k}th residual matrix for block \eqn{j}). It can 
-#' be estimated by using \link{rgcca_permutation}.}
-#' @return \item{ncomp}{A vector of 1*J integers giving the number of component 
-#' for each blocks}
-#' @return \item{crit}{A vector that contains for each component the 
+#' @return \item{C}{Symmetric matrix (J*J) that describes the relationships 
+#' between blocks.}
+#' @return \item{tau}{Regularization parameters used for the analysis.}
+#' @return \item{ncomp}{Vector of 1*J integers giving the number of component 
+#' for each blocks.}
+#' @return \item{crit}{Vector that contains for each component the 
 #' values of the objective function across iterations.}
-#' @return \item{mode}{A vector of length J that contains the formulation 
+#' @return \item{mode}{Vector of length J that contains the formulation 
 #' ("primal" or "dual") applied to each of the \eqn{J} blocks within the RGCCA 
-#' alogrithm} 
-#' @return \item{AVE}{A list of numeric values that reports indicators of model 
+#' alogrithm.} 
+#' @return \item{AVE}{List of numeric values that reports indicators of model 
 #' quality based on the Average Variance Explained (AVE): AVE(for each block), 
 #' AVE(outer model), AVE(inner model).}
 #' @references Tenenhaus A. and Tenenhaus M., (2011), Regularized Generalized 

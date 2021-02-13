@@ -9,16 +9,16 @@ bootstrap(rgcca_res, n_boot = 100, n_cores = parallel::detectCores() - 1)
 \arguments{
 \item{rgcca_res}{A fitted RGCCA object (see  \code{\link[RGCCA]{rgcca}})}
 
-\item{n_boot}{Number of bootstrap iterations. Default is 100.}
+\item{n_boot}{Number of bootstrap iterations. Default: 100.}
 
-\item{n_cores}{Number of cores for parallelization}
+\item{n_cores}{Number of cores for parallelization.}
 }
 \value{
 A list containing two objects: 'bootstrap' and 'rgcca'. 
 'bootstrap' is a list containing for each block, a matrix 
 with the variables of the block in row and the block weight vector
-calculated accross bootstrap sample in column. 'rgcca' is the original 
-fitted rgcca object. (see  \code{\link[RGCCA]{rgcca}})
+calculated accross bootstrap sample in column. 'rgcca' is the fitted rgcca 
+object obtained from the original data. (see  \code{\link[RGCCA]{rgcca}})
 }
 \description{
 Boostrap confidence intervals and p-values for evaluating the significancy/ 

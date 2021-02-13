@@ -22,25 +22,19 @@ sgccaNa(
 )
 }
 \arguments{
-\item{blocks}{A list of blocks}
+\item{blocks}{List of blocks.}
 
-\item{method}{Either a character corresponding to the used method 
-("complete","knn","em","sem") or a function taking a list of J blocks (A) as 
-only parameter and returning the imputed list. 
+\item{method}{Character string corresponding to the method used for 
+handling missing values ("nipals", "complete", "mean"). (default: "nipals").
 \itemize{
-\item{\code{"mean"}}{ corresponds to an imputation by the colmeans}
-\item{\code{"complete"}}{ corresponds to run RGCCA only on the complete 
-subjects (subjects with missing data are removed)}
-\item{\code{"nipals"}}{ corresponds to run RGCCA on all available data 
-(NIPALS algorithm)}
-\item{\code{"em"}}{ corresponds to impute the data with EM-type algorithms}
-\item{\code{"sem"}}{ corresponds to impute the data with EM-type algorithms 
-with superblock approach}
-\item{\code{"knn1"}}{ corresponds to impute the data with the 1-Nearest 
-Neighbor. 1 can be replace by another number (such as knn3) to impute with 
-the 3-Nearest Neighbors.}}}
+\item{\code{"mean"}}{corresponds to imputation by the colmeans before 
+applying the S/RGCCA algorithm}
+\item{\code{"complete"}}{corresponds to perform RGCCA on the fully observed  
+observations (observations with missing values are removed)}
+\item{\code{"nipals"}}{corresponds to perform RGCCA algorithm on available 
+data (NIPALS-type algorithm)}}}
 
-\item{connection}{A symmetric matrix (J*J) that describes the relationships 
+\item{connection}{Symmetric matrix (J*J) that describes the relationships 
 between blocks. Elements of the connection matrix must be positive ; but 
 usually equal to 1 if block \eqn{j} and block \eqn{k} are connected, and 0 
 otherwise.}
@@ -58,67 +52,67 @@ the weights corresponding to components \eqn{h}:
 \deqn{for all h, |a_{j,h}|_{L_1} \le c_1[h,j] \sqrt{p_j}.} It can be 
 estimated by using \link{rgcca_permutation}.}
 
-\item{ncomp}{A vector of length J indicating the number of block components 
+\item{ncomp}{Vector of length J indicating the number of block components 
 for each block.}
 
-\item{scheme}{A character string or a function giving the scheme function for 
+\item{scheme}{Character string or a function giving the scheme function for 
 covariance maximization among "horst" (the identity function), "factorial"
  (the squared values), "centroid" (the absolute values). The scheme function 
- can be any continously differentiable convex functin and it is possible to 
+ can be any continously differentiable convex function and it is possible to 
  design explicitely the sheme function (e.g. function(x) x^4) as argument of 
  rgcca function.  See (Tenenhaus et al, 2017) for details.}
 
-\item{scale}{A logical value indicating if each block is standardized}
+\item{scale}{Logical value indicating if blocks are standardized.}
 
-\item{init}{A character giving the mode of initialization to use in the 
-algorithm. The alternatives are either by Singular Value Decompostion ("svd") 
-or random ("random") (default: "svd").}
+\item{init}{Character string giving the type of initialization to use in 
+the  algorithm. It could be either by Singular Value Decompostion ("svd") 
+or by random initialisation ("random") (default: "svd").}
 
 \item{bias}{A logical value for biaised (\eqn{1/n}) or unbiaised 
 (\eqn{1/(n-1)}) estimator of the var/cov (default: bias = TRUE).}
 
 \item{tol}{The stopping value for the convergence of the algorithm.}
 
-\item{verbose}{A logical value indicating whether the warnings are displayed}
+\item{verbose}{Logical value indicating whether the warnings are displayed.}
 
-\item{scale_block}{A logical value indicating if each block is divided by 
+\item{scale_block}{Logical value indicating if each block is divided by 
 the square root of its number of variables.}
 
-\item{prescaling}{A logical value indicating if the scaling has been done
+\item{prescaling}{Logical value indicating if the scaling has been done
 outside of the function.}
 
-\item{quiet}{A boolean hidding the warnings}
+\item{quiet}{Logical value indicating if warning messages are reported.}
 }
 \value{
-\item{Y}{A list of \eqn{J} elements. Each element of \eqn{Y} is a 
-matrix that contains the analysis components for the corresponding block.}
+\item{Y}{A list of J elements. Each element of Y is a 
+matrix that contains the RGCCA block components.}
 
-\item{a}{A list of \eqn{J} elements. Each element of \eqn{a} is a 
-matrix that contains the outer weight vectors for each block.}
+\item{a}{A list of J elements. Each element of a is a 
+matrix that contains the outer weight vectors.}
 
-\item{astar}{A list of \eqn{J} elements. Each element of astar is a 
+\item{astar}{A list of J elements. Each element of astar is a 
 matrix defined as Y[[j]][, h] = A[[j]]\%*\%astar[[j]][, h].}
 
 \item{C}{A symmetric matrix (J*J) that describes the relationships 
-between blocks}
+between blocks.}
 
-\item{scheme}{A character or a function giving the link function for 
-covariance maximization among "horst" (the identity function), "factorial"
- (the squared values), "centroid" (the absolute values). Only, the horst 
- scheme penalizes structural negative correlation. The factorial scheme 
- discriminates more strongly the blocks than the centroid one}
+\item{scheme}{A character string defining the scheme function for 
+covariance maximization among "horst" (the identity function), "factorial" 
+(the squared values), "centroid" (the absolute values). The scheme argument 
+can be a user-defined function (e.g. function(x) x^4) but  have
+to be a convex continuously differentiable function (to guaranty the 
+convergence properties of the algorithm).}
 
-\item{ncomp}{A vector of 1*J integers giving the number of component 
-for each blocks}
+\item{ncomp}{A 1*J vector giving the number of component for each 
+block.}
 
-\item{crit}{A vector of integer that contains for each component the 
-values of the analysis criteria across iterations.}
+\item{crit}{A numerical vector that contains for each component the 
+values of the RGCCA criteria across iterations.}
 
-\item{mode}{A \eqn{1 \times J} vector that contains the formulation 
-("primal" or "dual") applied to each of the \eqn{J} blocks within the RGCCA 
-alogrithm}
+\item{mode}{A 1*J vector that contains the formulation 
+("primal" or "dual") used for each block.}
 
-\item{AVE}{A list of numerical values giving the indicators of model 
+\item{AVE}{A list of numerical values giving indicators of model 
 quality based on the Average Variance Explained (AVE): AVE(for each block), 
 AVE(outer model), AVE(inner model).}
 }
@@ -127,8 +121,8 @@ imputeRGCCA allows to choose the imputation method before running RGCCA
 }
 \examples{
 data(Russett)
-X_agric =as.matrix(Russett[,c("gini", "farm", "rent")])
-X_ind = as.matrix(Russett[,c("gnpr", "labo")])
+X_agric =as.matrix(Russett[, c("gini", "farm", "rent")])
+X_ind = as.matrix(Russett[, c("gnpr", "labo")])
 X_polit = as.matrix(Russett[ , c("demostab", "dictator")])
 X_agric[c(2, 4), ] = NA # blockwise missing structure
 X_ind[1, ] = NA # Ponctual NA
