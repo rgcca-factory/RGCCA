@@ -16,7 +16,6 @@ plot_bootstrap_1D(
   bars = "sd",
   display_bar = TRUE,
   i_block = length(b$bootstrap[[1]]),
-  collapse = FALSE,
   ...
 )
 }
@@ -47,8 +46,6 @@ sqrt(n)) or "quantile" (error bar of 0.05/0.95-quantiles)}
 variables is displayed.}
 
 \item{i_block}{An integer giving the index of a list of blocks}
-
-\item{collapse}{A boolean to combine the variables of each block as result}
 
 \item{...}{Other parameters (see plot_histogram)}
 }

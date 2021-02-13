@@ -57,7 +57,6 @@ plot_bootstrap_1D <- function(
     bars = "sd",
     display_bar = TRUE,
     i_block = length(b$bootstrap[[1]]),
-    collapse = FALSE,
     ...) {
 
     if (missing(b) && missing(df_b))
@@ -67,7 +66,6 @@ plot_bootstrap_1D <- function(
             b,
             comp,
             block = i_block,
-            collapse,
             bars = bars,
             display_order = TRUE
         )

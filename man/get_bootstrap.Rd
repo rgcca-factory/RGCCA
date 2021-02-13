@@ -9,7 +9,6 @@ get_bootstrap(
   comp = 1,
   block = length(b$bootstrap[[1]]),
   bars = "quantile",
-  collapse = FALSE,
   display_order = TRUE,
   adj.method = "fdr"
 )
@@ -24,8 +23,6 @@ get_bootstrap(
 \item{bars}{Character string giving the variability among "sd" (error bar of
 standard deviation) , "stderr" (error bar of standard deviation divided by 
 sqrt(n)) or "quantile" (error bar of 0.05/0.95-quantiles)}
-
-\item{collapse}{A boolean to combine the variables of each block as result}
 
 \item{display_order}{A logical value to display the order of the variables}
 
@@ -53,12 +50,12 @@ Hochberg correction))
 }
 \description{
 This function extracts statistical information from a fitted bootstrap
-object. (\code{\link[RGCCA]{bootstrap}})
+object (see \code{\link[RGCCA]{bootstrap}}).
 }
 \details{
-For RGCCA, a classical Student test (df = number of bootstraps -1) is 
-computed based on the following statistic : weight/bootstrap estimate of 
-the standard deviations.
+For RGCCA, the p-value is computed by assuming that the ratio of the blocks 
+weight values to the bootstrap estimate of the standard deviation follows 
+the standardized normal distribution. 
 By including sparsity (with "sgcca","spls" or "spca"), the frequency of a 
 selected variable may depend on both the level of sparsity and the total 
 number of variables in each block. 

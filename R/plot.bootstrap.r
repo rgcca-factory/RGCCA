@@ -20,8 +20,8 @@
 
 plot.bootstrap=function(x, block = length(x$rgcca$call$blocks), 
                         comp = 1, n_mark = 30, bars = "quantile",
-                        colors = NULL, title = NULL, cex = 1,
-                        collapse = FALSE, cex_main = 14, cex_sub = 12, 
+                        colors = NULL, title = NULL, cex = 1, #collapse = FALSE, 
+                        cex_main = 14, cex_sub = 12, 
                         cex_point = 10, cex_lab = 10, cex_axis = 10, ...)
 {
     stopifnot(is(x, "bootstrap"))
@@ -66,8 +66,7 @@ plot.bootstrap=function(x, block = length(x$rgcca$call$blocks),
               title = title, 
               colors = colors,
               comp = comp,
-              i_block = block,
-              collapse = collapse,
+              i_block = block, #collapse = collapse,
               bars = bars,
               cex = 1,
               cex_main = cex_main,

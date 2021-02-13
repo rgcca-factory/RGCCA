@@ -8,9 +8,9 @@
 #'
 #' @inheritParams plot2D
 #' @inheritParams get_bootstrap
-#' @param b A boostrap object \code{\link[RGCCA]{bootstrap}}
-#' @param x A character for the index to plot in x-axis (see details).
-#' @param y A character for the index to plot in y-axis (see details).
+#' @param b Boostrap object \code{\link[RGCCA]{bootstrap}}
+#' @param x Character string for the index to plot in x-axis (see details).
+#' @param y Character string for the index to plot in y-axis (see details).
 #' @param df_b A get_bootstrap object \code{\link[RGCCA]{get_bootstrap}}
 #' @details 
 #' \itemize{
@@ -51,8 +51,8 @@ plot_bootstrap_2D <- function(
     cex_point = 3 * cex,
     cex_lab = 10 * cex,
     comp = 1,
-    i_block = NULL,
-    collapse = FALSE) {
+    i_block = NULL
+    ) {
 
     if (missing(b) && missing(df_b))
         stop_rgcca("Please select a bootstrap object.")
@@ -60,7 +60,6 @@ plot_bootstrap_2D <- function(
         if (is.null(i_block))
             i_block <- length(b$bootstrap[[1]])
         df_b <- get_bootstrap(b, comp, i_block, 
-                              collapse = collapse, 
                               display_order = TRUE)
     } else if (!is.null(df_b)) {
         if (is.null(i_block))

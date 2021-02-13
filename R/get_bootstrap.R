@@ -1,7 +1,7 @@
 #' Extract statistics from a fitted bootstrap object
 #'
 #' This function extracts statistical information from a fitted bootstrap
-#' object. (\code{\link[RGCCA]{bootstrap}}) 
+#' object (see \code{\link[RGCCA]{bootstrap}}).
 #'
 #' @inheritParams bootstrap
 #' @inheritParams plot_histogram
@@ -72,7 +72,6 @@ get_bootstrap <- function(
     comp = 1,
     block = length(b$bootstrap[[1]]),
     bars="quantile",
-    collapse = FALSE,
     display_order=TRUE,
     adj.method = "fdr") {
 
@@ -80,7 +79,6 @@ get_bootstrap <- function(
     check_ncol(b$rgcca$Y, block)
     check_blockx("block", block, b$rgcca$call$blocks)
     check_compx("comp", comp, b$rgcca$call$ncomp, block)
-    check_boolean("collapse", collapse)
     match.arg(bars,c("quantile", "sd", "stderr"))
 
     bootstrapped=b$bootstrap[[comp]][[block]]
@@ -187,9 +185,6 @@ get_bootstrap <- function(
       }
     }
     
-    if (collapse)
-        db$color <- as.factor(get_bloc_var(b$rgcca$a, collapse = collapse))
-
     zero_var <- which(df[, 1] == 0)
     if (NROW(df) > 1 && length(zero_var) != 0) db <- db[-zero_var, ]
    
