@@ -19,12 +19,15 @@ print.rgcca <- function(x,...)
 {
   cat("Call: ")
   names_call=c("type","superblock","scale","scale_block","init","bias","tol","method","ncomp")
+  if (x$call$type %in% c("mgcca")) {
+    names_call = c(names_call, "ranks")
+  }
   char_to_print=""
   for(name in names_call)
   {
-      if(name=="ncomp"){if(length(x$call$ncomp)>1){value=(paste(x$call$ncomp,sep="",collapse=","));value=paste0("c(",value,")")}}
-      if(name!="ncomp"){value=x$call[[name]]}
-      quo=ifelse(is.character(value)&name!="ncomp","'","")
+      if(name %in% c("ncomp", "ranks")){if(length(x$call[[name]])>1){value=(paste(x$call[[name]],sep="",collapse=","));value=paste0("c(",value,")")}}
+      if(!name %in% c("ncomp", "ranks")){value=x$call[[name]]}
+      quo=ifelse(is.character(value)& !name %in% c("ncomp", "ranks"),"'","")
       vir=ifelse(name==names_call[length(names_call)],"",", ")
       char_to_print=paste(char_to_print,name,'=',quo,value,quo,vir, collapse="",sep="")
   }
@@ -95,5 +98,16 @@ print.rgcca <- function(x,...)
          }
       }
   }
-   
+  if(x$call$type %in% c("mgcca"))
+  {
+    for (i in 1:length(x$call$blocks)) {
+      block = x$call$blocks[[i]]
+      dim = dim(block)
+      if (is.null(dim)) {
+        dim = c(length(block), 1)
+      }
+      cat("The dimensions of", names(x$call$blocks)[i], "was:", 
+          dim, fill = TRUE)
+    }
+  }
 }
