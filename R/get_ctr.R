@@ -25,22 +25,13 @@ get_ctr <- function(
     blocks <- rgcca_res$call$blocks
     y <- NULL
 
-    if (!collapse) {
-        row.names <- colnames(blocks[[i_block]])
-    } else{
-        if (rgcca_res$call$superblock)
-            blocks <- blocks[-length(blocks)]
-        row.names <- unlist(lapply(blocks, colnames))
+    if (collapse && rgcca_res$call$superblock) {
+        blocks <- blocks[-length(blocks)]
     }
 
     if (type == "cor")
-        f2 <- function(x, y){
-        cor(
-            blocks[[y]][rownames(rgcca_res$Y[[y]]), ],
-            rgcca_res$Y[[i_block]][, x],
-            use = "pairwise.complete.obs"
-        )
-    }
+        f2 <- function(x, y) cor2(blocks[[y]], rgcca_res$Y[[i_block]][, x], 
+                                  use = "pairwise.complete.obs")
     else
         f2 <- function(x, y) rgcca_res$a[[y]][, x]
 
@@ -56,7 +47,6 @@ get_ctr <- function(
                 )
             )
         }
-
     res <- data.frame(
         sapply(
             c(compx, compy, compz),
@@ -66,8 +56,7 @@ get_ctr <- function(
                 f(x)
             },
             simplify = FALSE
-        ),
-        row.names = row.names
+        )
     )
     colnames(res) <- seq(NCOL(res)) # for save_var
     return(res)

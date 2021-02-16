@@ -91,7 +91,13 @@ mgcca <- function(A, C = 1-diag(length(A)), tau = rep(1, length(A)),
   nb_ind <- DIM[[1]][1]
 
   # Matricization (mode-1)
-  A_m = lapply(1:J, function(x) matrix(as.vector(A[[x]]), nrow = nb_ind))
+  A_m = lapply(1:J, function(x) {
+    m = matrix(as.vector(A[[x]]), nrow = nb_ind)
+    rownames(m) = rownames(A[[x]])
+    grid        = do.call(expand.grid, dimnames(A[[x]])[-1])
+    colnames(m) = do.call(paste, c(grid, sep = " x "))
+    return(m)
+  })
 
   if ( any(ncomp < 1) ) stop_rgcca("One must compute at least one component per
                                    block!")
@@ -113,11 +119,11 @@ mgcca <- function(A, C = 1-diag(length(A)), tau = rep(1, length(A)),
       stop_rgcca("Choose one of the three following schemes: horst, centroid,
                  factorial or design the g function")
     }
-    if (verbose) cat("Computation of the SGCCA block components based on the",
+    if (verbose) cat("Computation of the MGCCA block components based on the",
                      scheme, "scheme \n")
   }
   if (mode(scheme) == "function" & verbose) {
-    cat("Computation of the SGCCA block components based on the g scheme \n")
+    cat("Computation of the MGCCA block components based on the g scheme \n")
   }
 
 
@@ -227,14 +233,14 @@ mgcca <- function(A, C = 1-diag(length(A)), tau = rep(1, length(A)),
     }
   }
   for (d in 1:J){
-    rownames(a[[d]]) = rownames(astar[[d]]) = colnames(A[[d]])
+    rownames(a[[d]]) = rownames(astar[[d]]) = colnames(A_m[[d]])
     rownames(Y[[d]]) = rownames(A[[d]])
     colnames(Y[[d]]) = paste0("comp", 1:max(ncomp))
   }
 
   # Average Variance Explained (AVE) per block
   for (j in 1:J)
-    AVE_X[[j]] = apply(cor(A_m[[j]], Y[[j]], use="pairwise.complete.obs")^2,
+    AVE_X[[j]] = apply(cor2(A[[j]], Y[[j]], use="pairwise.complete.obs")^2,
                        2, mean, na.rm = TRUE)
   # AVE outer
   if (N == 0) {
