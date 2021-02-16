@@ -54,7 +54,7 @@
 #' @title Multiway Generalized Canonical Correlation Analysis (MGCCA)
 #'@export mgcca
 
-
+# TODO: add rank / comp as colnames for factors
 mgcca <- function(A, C = 1-diag(length(A)), tau = rep(1, length(A)), 
                   ncomp = rep(1, length(A)), scheme = "centroid", scale = TRUE,
                   init="svd", bias = TRUE, tol = 1e-8, verbose=FALSE, 
@@ -269,7 +269,6 @@ mgcca <- function(A, C = 1-diag(length(A)), tau = rep(1, length(A)),
              astar   = shave.matlist(astar, ncomp),
              crit    = crit,
              AVE     = AVE,
-             A       = A,
              call    = call)
 
   class(out) = "mgcca"
