@@ -164,6 +164,7 @@ check_blocks <- function(blocks, init = FALSE, n = 2,
         blocks2=lapply(nameBlocks,function(name)
         {
           # if some subjects are missing (in the rownames)  
+          # TODO: Adapt this to handle missing subjects when there are tensor blocks
           if(sum(!union_rows%in%rownames(blocks[[name]])) != 0) 
             {
                 message("Some subjects are not present in all blocks. NA rows were added to get blocks with appropriate dimensions")
@@ -194,8 +195,7 @@ check_blocks <- function(blocks, init = FALSE, n = 2,
                 else
                 {
                    # Select the lines of the arrays with 2 or more dimensions 
-                   y = apply(blocks[[name]], 2:length(dim(blocks[[name]])), 
-                             function(x) x[union_rows])
+                   y = apply(blocks[[name]], -1, "[", union_rows)
                 }
                 return(y)
             }
