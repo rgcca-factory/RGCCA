@@ -97,9 +97,15 @@ check_blocks <- function(blocks, init = FALSE, n = 2,
         
         for (i in 1:length(blocks)) {
             for (mode in seq(1, length(dim(blocks[[i]])))[-1]) {
-                dimnames(blocks[[i]])[[mode]] = paste(
-                    names(blocks)[i], mode-1, 1:(dim(blocks[[i]])[mode]), 
+                if (length(dim(blocks[[i]])) > 2) {
+                  dimnames(blocks[[i]])[[mode]] = paste(
+                    names(blocks)[i], mode-1, 
                     dimnames(blocks[[i]])[[mode]], sep = "_")
+                } else {
+                  dimnames(blocks[[i]])[[mode]] = paste(
+                    names(blocks)[i], dimnames(blocks[[i]])[[mode]], sep = "_")
+                }
+                
             }
         }
     }
