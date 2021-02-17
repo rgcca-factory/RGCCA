@@ -85,9 +85,7 @@ newA = lapply(rgcca_out2$call$raw, function(x) x[v_inds[[1]], , drop = FALSE])
  rgcca_cv=rgcca_cv_k(rgcca_res=rgcca_out,n_cores=1,validation="loo",tol=1e-5)
  rgcca_cv$list_pred[[1]]
  # test for the first neighbor in rgcca
- rgcca_k <-
-     RGCCA:::set_rgcca(rgcca_out,
-               inds = 1,tol=1e-5)
+ rgcca_k <- set_rgcca(rgcca_out, inds = 1,tol=1e-5)
  
   newA=lapply(blocks,function(x){return(x[1,,drop=FALSE])})
  res_pred=rgcca_predict(rgcca_k,newA=newA,bloc_to_pred = "agriculture", new_scaled = FALSE)
