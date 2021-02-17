@@ -199,11 +199,15 @@
 #' \code{\link[RGCCA]{rgcca_cv_k}},
 #' \code{\link[RGCCA]{rgcca_permutation}}
 #' \code{\link[RGCCA]{rgcca_predict}} 
+
+#TODO: Use out$A instead of out$calls$blocks, rename out$A to out$blocks
+#TODO: Remove call in intermediate functions
 rgcca <- function(
     blocks,
     type = "rgcca",
     scale = TRUE,
     scale_block = TRUE,
+    prescaling = FALSE,
     connection = 1 - diag(length(blocks)),
     scheme = "factorial",
     ncomp = rep(1, length(blocks)),
@@ -408,7 +412,7 @@ rgcca <- function(
             tol = tol,
             scale_block = scale_block,
             method = method,
-            prescaling = TRUE,
+            prescaling = prescaling,
             quiet=quiet
         )
     )

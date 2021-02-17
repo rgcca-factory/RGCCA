@@ -184,9 +184,9 @@ test_that("upca_var2",{expect_true(upca_var)})
  rgcca_with_superblock= rgcca (
      blocks=A,
      superblock = TRUE)
- head(lapply(A,function(x){y=scale2(x,scale=TRUE);return(y/sqrt(ncol(y)))})[[1]])
+ head(A[[1]])
  head(rgcca_with_superblock$call$blocks[[1]])
- test_that("superblock",{expect_true( sum(head(rgcca_with_superblock$call$blocks[[length(A)+1]])[,1:ncol(A[[1]])]!=head(lapply(A,function(x){y=scale2(x,scale=TRUE);return(y/sqrt(ncol(y)))})[[1]]))==0
+ test_that("superblock",{expect_true( sum(head(rgcca_with_superblock$call$blocks[[length(A)+1]])[,1:ncol(A[[1]])]!=head(A[[1]]))==0
  )})
 
  # with permutation
