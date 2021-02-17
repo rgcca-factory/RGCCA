@@ -37,7 +37,7 @@ add_variables_data <- function(rgcca_res, w) {
                 0,
                 nrow(blocks_all[[x]]),
                 length(missing_var[[x]]),
-                dimnames = list(names(blocks_all[[x]]), missing_var[[x]])
+                dimnames = list(rownames(blocks_all[[x]]), missing_var[[x]])
             )
         }
       
