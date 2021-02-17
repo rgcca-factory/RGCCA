@@ -294,7 +294,7 @@ rgcca_predict = function(
                      res=to_pred_test-ychapo
         
                      if (is.null(dim(res))||dim(res)[1]==1) { 
-                         rmse=sqrt(mean(res^2,na.rm=T))
+                         rmse=sqrt(mean(as.numeric(res)^2,na.rm=T))
                          score <- rmse 
                      } else{ 
                          rmse<- apply(res,2,function(x){return(sqrt(mean(x^2,na.rm=T)))})
