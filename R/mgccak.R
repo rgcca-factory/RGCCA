@@ -81,7 +81,7 @@ mgccak <- function (A, A_m = NULL, C, tau = rep(1, length(A)), scheme = "centroi
       }
     } else if (init=="random") {
       # Random Initialisation of a_j
-      A_random <- array(rnorm(n = pjs[j], mu = 0, Sigma = 1), dim = DIM[[j]])
+      A_random <- array(rnorm(n = pjs[j], mean = 0, sd = 1), dim = DIM[[j]])
       if (j %in% B_2D) {
         a[[j]] <- initsvd(A_random)
       } else {
