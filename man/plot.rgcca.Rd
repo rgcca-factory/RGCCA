@@ -9,6 +9,8 @@
   type = "weight",
   block = length(x$blocks),
   comp = 1:2,
+  factor = 1,
+  rank = 1,
   resp = rep(1, NROW(x$Y[[1]])),
   remove_var = FALSE,
   text_var = TRUE,
@@ -30,11 +32,18 @@
 \arguments{
 \item{x}{A RGCCA object (see \code{\link[RGCCA]{rgcca}})}
 
-\item{type}{A character among 'ind', 'var', 'both', 'ave', 'cor', 'weight', 'network' (see details).}
+\item{type}{A character among 'ind', 'var', 'both', 'ave', 'cor', 'weight', 
+'network', 'factor', 'weight_matrix' (see details).}
 
 \item{block}{A vector indicating the blocks to consider.}
 
 \item{comp}{An integer giving the index of the analysis components}
+
+\item{factor}{An integer giving the index of the mode factor. Only used 
+when type is "factor"}
+
+\item{rank}{An integer giving the rank of the factor we want to look at. Only
+used when type is "factor"}
 
 \item{resp}{A vector of characters corresponding either to a qualitative
 variable with levels or a continuous variable}
@@ -100,6 +109,11 @@ with n_marks (defaut value = 30).
 specific block/component. The weights are sorted from the highest to 
 the lowest and only the highest are displayed. The number of displayed 
 weights can be set with n_marks
+\item "factor": barplot of the block weight factor for one 
+specific block/component/mode/rank. The weights are sorted from the highest 
+to the lowest and only the highest are displayed. The number of displayed 
+weights can be set with n_marks
+\item "weight_matrix": heatmap of the weight matrix for 3D tensor blocks.
 }
 }
 \examples{

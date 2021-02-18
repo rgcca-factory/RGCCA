@@ -9,6 +9,8 @@ plot_var_1D(
   comp = 1,
   n_mark = 30,
   i_block = length(rgcca_res$a),
+  factor = 1,
+  rank = 1,
   type = "cor",
   collapse = FALSE,
   title = NULL,
@@ -26,9 +28,16 @@ circle}
 
 \item{i_block}{An integer giving the index of a list of blocks}
 
+\item{factor}{An integer giving the index of the mode factor. Only used 
+when type is "factor"}
+
+\item{rank}{An integer giving the rank of the factor we want to look at. Only
+used when type is "factor"}
+
 \item{type}{A character giving the criterion to selects variables : either
-"cor" for correlation between the component and the block
-or "weight" for the weight of the RGCCA}
+"cor" for correlation between the component and the block,
+"weight" for the weight of the RGCCA or "factor" for the mode factors of 
+MGCCA}
 
 \item{collapse}{A boolean to combine the variables of each block as result}
 
@@ -40,7 +49,7 @@ or "weight" for the weight of the RGCCA}
 }
 \description{
 Barplot of the higher outer weight vectors for a component of a block 
-(by default, the superblock or the last one) analysed by R/SGCCA
+(by default, the superblock or the last one) analysed by R/S/MGCCA
 }
 \examples{
 weights = lapply(seq(3), function(x) matrix(runif(7*2), 7, 2))

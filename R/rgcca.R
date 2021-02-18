@@ -317,7 +317,7 @@ rgcca <- function(
     #    stop_rgcca("Optimal tau is not available with superblock option.")
 
     if (type == "mgcca") {
-      method <- "complete"
+      if (missing(method)) method <- "complete"
       ranks  <- check_ranks(ranks, blocks)
       regularisation_matrices <- check_reg_matrices(
         regularisation_matrices, blocks)
@@ -454,6 +454,8 @@ rgcca <- function(
 
     if(!is.null(func_out$tau))
         func_out$tau <- NULL
+    
+    if(type == "mgcca") func_out$call$ranks = ranks
 
     for (i in c(
         "scale",

@@ -6,7 +6,8 @@
 #' @inheritParams plot2D
 #' @param x A RGCCA object (see \code{\link[RGCCA]{rgcca}})
 #' @param ... additional graphical parameters
-#' @param type A character among 'ind', 'var', 'both', 'ave', 'cor', 'weight', 'network' (see details).
+#' @param type A character among 'ind', 'var', 'both', 'ave', 'cor', 'weight', 
+#' 'network', 'factor', 'weight_matrix' (see details).
 #' @param text_ind boolean value indicating if rownames are plotted 
 #' (default = TRUE). 
 #' @param text_var Boolean value indicating if variable names are plotted 
@@ -41,6 +42,11 @@
 #' specific block/component. The weights are sorted from the highest to 
 #' the lowest and only the highest are displayed. The number of displayed 
 #' weights can be set with n_marks
+#' \item "factor": barplot of the block weight factor for one 
+#' specific block/component/mode/rank. The weights are sorted from the highest 
+#' to the lowest and only the highest are displayed. The number of displayed 
+#' weights can be set with n_marks
+#' \item "weight_matrix": heatmap of the weight matrix for 3D tensor blocks.
 #' }
 #' @examples
 #' data(Russett)
@@ -88,6 +94,7 @@
 #' @importFrom ggplot2 ggplot
 #' @export
 plot.rgcca=function(x, type = "weight", block = length(x$blocks), comp = 1:2,
+                    factor = 1, rank = 1,
                     resp = rep(1, NROW(x$Y[[1]])), remove_var = FALSE, 
                     text_var=TRUE,text_ind=TRUE, response_name = "Response",
                     overlap = TRUE, title = NULL, n_mark = 30, 
@@ -95,7 +102,7 @@ plot.rgcca=function(x, type = "weight", block = length(x$blocks), comp = 1:2,
                     cex_lab = 12, cex_axis = 10, colors = NULL, ...)
 {
     stopifnot(is(x, "rgcca"))
-    match.arg(type, c("ind", "var", "both", "ave", "cor", "weight", "network"))
+    match.arg(type, c("ind", "var", "both", "ave", "cor", "weight", "network", "factor", "weight_matrix"))
      if(length(comp) == 1){comp = rep(comp,2)}
     compx = comp[1]
     compy = comp[2]
@@ -220,6 +227,42 @@ plot.rgcca=function(x, type = "weight", block = length(x$blocks), comp = 1:2,
                        type = "weight", collapse = collapse, title = title, 
                        colors = colors, cex_main = cex_main, cex_sub=cex_sub)
         return(p5)
+    }
+    else if(type == "factor")
+    {
+      if (x$call$type != "mgcca") 
+        stop_rgcca("Type \"factor\" is only available for MGCCA.")
+      nb_dim <- length(dim(x$block[[i_block]]))
+      if (factor >= nb_dim) 
+        stop_rgcca(paste0("\"factor\" must have a value strictly below ", nb_dim))
+      if (rank > x$call$ranks[i_block])
+        stop_rgcca(paste0("\"rank\" must not exceed ", x$call$ranks[i_block]))
+      if (compx > x$call$ncomp[i_block])
+        stop_rgcca(paste0("\"comp\" must not exceed ", x$call$ncomp[i_block]))
+      if (nb_dim < 3) type = "weight"
+      if(is.null(title)){title= paste0("Variable weights: ",
+                                       names(x$blocks)[i_block])}
+      
+      p5=plot_var_1D(x, comp = compx, n_mark = n_mark, i_block = i_block, 
+                     factor = factor, rank = rank,
+                     type = type, collapse = collapse, title = title, 
+                     colors = colors, cex_main = cex_main, cex_sub=cex_sub)
+      return(p5)
+    }
+    else if(type == "weight_matrix") 
+    {
+      DIM <- dim(x$block[[i_block]])
+      if (length(DIM) != 3) 
+        stop_rgcca("Type \"weight_matrix\" is only available for 3D blocks")
+      if(is.null(title)){
+        title= paste0("Variable matrix weights: ",
+                      names(x$blocks)[i_block], "\n", print_comp(x, compx)) 
+      }
+      m = matrix(x$a[[i_block]][, comp], DIM[2], DIM[3])
+      rownames(m) = dimnames(x$blocks[[i_block]])[[2]]
+      colnames(m) = dimnames(x$blocks[[i_block]])[[3]]
+      pheatmap:::pheatmap(m, cluster_cols = F, cluster_rows = F, 
+                          show_rownames = T, show_colnames = T, main = title)
     }
 
     #invisible(p5)

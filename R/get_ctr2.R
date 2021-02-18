@@ -11,6 +11,8 @@ get_ctr2 <- function(
     compy = 2,
     compz = NULL,
     i_block = length(rgcca_res$blocks),
+    factor = 1,
+    rank = 1,
     type = "cor",
     n_mark = 100,
     collapse = FALSE,
@@ -42,7 +44,8 @@ get_ctr2 <- function(
         names(blocks) <- names(blocks.all)
     }
 
-    df <- get_ctr(rgcca_res, compx, compy, compz, i_block, type, collapse)
+    df <- get_ctr(rgcca_res, compx, compy, compz, i_block, factor, rank, 
+                  type, collapse)
 
     if (tolower(rgcca_res$call$type) %in% c("spls", "spca", "sgcca")) {
 

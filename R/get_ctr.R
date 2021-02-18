@@ -15,11 +15,13 @@ get_ctr <- function(
     compy = 2,
     compz = NULL,
     i_block = length(rgcca_res$blocks),
+    factor = 1,
+    rank = 1,
     type = "cor",
     collapse = FALSE,
     i_block_2 = i_block) {
 
-    match.arg(type, c("cor", "weight"))
+    match.arg(type, c("cor", "weight", "factor"))
     stopifnot(!missing(rgcca_res))
 
     blocks <- rgcca_res$blocks
@@ -32,9 +34,12 @@ get_ctr <- function(
     if (type == "cor")
         f2 <- function(x, y) cor2(blocks[[y]], rgcca_res$Y[[i_block]][, x], 
                                   use = "pairwise.complete.obs")
-    else
-        f2 <- function(x, y) rgcca_res$a[[y]][, x]
-
+    else if (type == "factor") {
+        f2 <- function(x, y) {
+            ranks = rgcca_res$call$ranks[y]
+            rgcca_res$factors[[y]][[factor]][, (x - 1) * ranks + rank]
+        }
+    } else f2 <- function(x, y) rgcca_res$a[[y]][, x]
     if (!collapse)
         f <- function(x)
             f2(x, i_block_2)
