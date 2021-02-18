@@ -62,7 +62,6 @@
 #' @return \item{AVE}{A list of numerical values giving the goodness of fit 
 #' the model based on the Average Variance Explained (AVE): AVE(for each block), 
 #' AVE(outer model), AVE(inner model).}
-#' @return \item{call}{Call of the function}
 #' @references Tenenhaus M., Tenenhaus A. and Groenen P. J. (2017). Regularized 
 #' generalized canonical correlation analysis: a framework for sequential 
 #' multiblock component methods. Psychometrika, 82(3), 737-777.
@@ -165,9 +164,6 @@ rgccad=function (A, C = 1 - diag(length(A)), tau = rep(1, length(A)),
 {
 
   A0 = A
-  call=list(A = A, C = C,  ncomp = ncomp, scheme = scheme, scale = scale,   
-            init = init, bias = bias, tol = tol, verbose = verbose,
-            scale_block = scale_block, na.rm = na.rm)
   
   if (any(ncomp < 1)) {stop_rgcca("Compute at least one component per block!")}
   pjs <- sapply(A, NCOL) 
@@ -287,7 +283,7 @@ rgccad=function (A, C = 1 - diag(length(A)), tau = rep(1, length(A)),
     out <- list(Y = Y, a = a, astar = a, C = C,  scheme = scheme, 
                 ncomp = ncomp, crit = result$crit, 
                 primal_dual = primal_dual, 
-                AVE = AVE, A = A0, tau = tau, call = call)
+                AVE = AVE, blocks = A0, tau = tau)
     
     class(out) <- "rgccad"
     
@@ -393,7 +389,7 @@ rgccad=function (A, C = 1 - diag(length(A)), tau = rep(1, length(A)),
               astar = shave.matlist(astar, ncomp),  
               tau = tau_mat,
               crit = crit, primal_dual = primal_dual,	
-              AVE = AVE, A = A, call = call)
+              AVE = AVE, blocks = A)
 
    class(out) <- "rgccad"
 

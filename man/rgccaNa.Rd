@@ -153,7 +153,7 @@ fit.rgcca = rgcca(blocks=blocks, type = "rgcca",
                   superblock = TRUE)
 
  # Define the label taking into account the blockwise missing structure 
- lab = apply(fit.rgcca$A[[4]][, 9:11], 1, which.max)
+ lab = apply(fit.rgcca$blocks[[4]][, 9:11], 1, which.max)
  plot(fit.rgcca, type = "ind", resp = lab)
 
 }

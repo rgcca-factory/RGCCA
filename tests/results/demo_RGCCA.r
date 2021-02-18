@@ -13,7 +13,7 @@ blocks = list(agriculture = Russett[, seq(3)], industry = Russett[, 4:5],
 resRgcca=rgcca(blocks)
 resRgcca$call$raw[[1]][1,]
 resRgcca$call$blocks[[1]][1,]
-resRgcca$A[[1]][1,]
+resRgcca$blocks[[1]][1,]
 
 rgcca_permutation(rgcca_res=resRgcca)
 
@@ -24,7 +24,7 @@ blocks_with_na[[1]][2,2]=NA
 resRgcca=rgcca(blocks_with_na,method = "mean")
 resRgcca$call$raw[[1]][1,]
 resRgcca$call$blocks[[1]][1,]
-resRgcca$A[[1]][1,]
+resRgcca$blocks[[1]][1,]
 
 
 # RGCCA
@@ -228,25 +228,25 @@ plot(resMIRGCCA)
 resRGCCANA1=rgcca(blocksNA,method="complete")
 plot(resRGCCANA1,type="ave")
 plot(resRGCCANA1) 
-plot(resRGCCANA1,type="cor") # cor (rgcca$A,) 
+plot(resRGCCANA1,type="cor") # cor (rgcca$blocks,) 
 plot(resRGCCANA1,type="network")
 
 resRGCCANA1=rgcca(blocksNA,method="em")
 plot(resRGCCANA1,type="ave")
 plot(resRGCCANA1) 
-plot(resRGCCANA1,type="cor") # cor (rgcca$A,) 
+plot(resRGCCANA1,type="cor") # cor (rgcca$blocks,) 
 plot(resRGCCANA1,type="network")
 
 resRGCCANA2=rgcca(blocksNA,method="nipals")
 plot(resRGCCANA2,type="ave")
 plot(resRGCCANA2) 
-plot(resRGCCANA2,type="cor") # cor (rgcca$A,) 
+plot(resRGCCANA2,type="cor") # cor (rgcca$blocks,) 
 plot(resRGCCANA2,type="network")
 
 resRGCCANA3=rgcca(blocksNA,method="mean")
 plot(resRGCCANA2,type="ave")
 plot(resRGCCANA2,type="both") 
-plot(resRGCCANA2,type="cor") # cor (rgcca$A,) 
+plot(resRGCCANA2,type="cor") # cor (rgcca$blocks,) 
 plot(resRGCCANA2,type="network")
 
 res_permut=rgcca_permutation(blocks=blocksNA)

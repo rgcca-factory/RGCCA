@@ -7,7 +7,7 @@
 \method{plot}{rgcca}(
   x,
   type = "weight",
-  block = length(x$A),
+  block = length(x$blocks),
   comp = 1:2,
   resp = rep(1, NROW(x$Y[[1]])),
   remove_var = FALSE,

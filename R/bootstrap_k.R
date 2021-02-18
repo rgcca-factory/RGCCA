@@ -13,14 +13,14 @@ bootstrap_k <- function(rgcca_res, type = "weight") {
         add_variables_submodel(rgcca_res, rgcca_res_boot$a)
 
     } else {
-        w <- lapply(1:length(rgcca_res_boot$A), function(j) {
-            res <- sapply(1:dim(rgcca_res_boot$A[[j]])[2], function(k) {
+        w <- lapply(1:length(rgcca_res_boot$blocks), function(j) {
+            res <- sapply(1:dim(rgcca_res_boot$blocks[[j]])[2], function(k) {
                 cor(
                     rgcca_res_boot$Y[[j]][, 1], 
-                    rgcca_res_boot$A[[j]][, k], 
+                    rgcca_res_boot$blocks[[j]][, k], 
                     use = "pairwise.complete.obs")
             })
-            names(res) <- colnames(rgcca_res_boot$A[[j]])
+            names(res) <- colnames(rgcca_res_boot$blocks[[j]])
             return(res)
         })
     }

@@ -43,7 +43,6 @@
 #' tensor of order \eqn{d}, element \eqn{j} of \eqn{factors} is a list with
 #' \eqn{d} elements and each element is a matrix that contains the outer weight
 #' vectors for each block.
-#' @return \item{call}{Call of the function}
 #' @return \item{crit}{A vector of integer that contains for each component the
 #' values of the analysis criteria across iterations.}
 #' @return \item{AVE}{A list of numerical values giving the indicators of model
@@ -60,12 +59,6 @@ mgcca <- function(A, C = 1-diag(length(A)), tau = rep(1, length(A)),
                   init="svd", bias = TRUE, tol = 1e-8, verbose=FALSE, 
                   scale_block = TRUE, regularisation_matrices = NULL, 
                   ranks = rep(1, length(A)), prescaling = FALSE, quiet = FALSE) {
-
-  call=list(A = A, C = C,  ncomp = ncomp, scheme = scheme, scale = scale,
-            init = init, bias = bias, tol = tol, verbose = verbose,
-            scale_block = scale_block, 
-            regularisation_matrices = regularisation_matrices,
-            ranks = ranks, prescaling = prescaling)
 
   # Number of blocks
   J      = length(A)
@@ -259,17 +252,15 @@ mgcca <- function(A, C = 1-diag(length(A)), tau = rep(1, length(A)),
   AVE = list(AVE_X           = AVE_X,
              AVE_outer_model = AVE_outer,
              AVE_inner_model = AVE_inner)
-  
-  call$tau = tau_mat
 
   # output
-  out = list(Y       = shave.matlist(Y, ncomp),
+  out = list(blocks  = A,
+             Y       = shave.matlist(Y, ncomp),
              a       = shave.matlist(a, ncomp),
              factors = factors,
              astar   = shave.matlist(astar, ncomp),
              crit    = crit,
-             AVE     = AVE,
-             call    = call)
+             AVE     = AVE)
 
   class(out) = "mgcca"
   return(out)

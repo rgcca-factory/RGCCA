@@ -71,8 +71,8 @@ get_comp <- function(
         } else {
             # warning("No rownames have been found in the group file. The rownames of the selected block of RGCCA have been used.")
             # resp <- rep("NA", NROW(df))
-            # rownames(resp) <- rownames(rgcca_res$A[[i_block_x]])
-            if (length(resp) != NROW(rgcca_res$A[[i_block_x]]))
+            # rownames(resp) <- rownames(rgcca_res$blocks[[i_block_x]])
+            if (length(resp) != NROW(rgcca_res$blocks[[i_block_x]]))
                 stop_rgcca("resp argument should have the same size than the number of rows in the selected block.")
         }
     } else
