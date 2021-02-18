@@ -20,4 +20,9 @@ Ainter=intersection_list(A=A2)
 test_that("intersection_list_1",{expect_true(dim(Ainter[[1]])[1]==4)})
 # too many subjects with missing values
 X3[3,1:2]=NA
-Ainter2=intersection_list(A=list(X1,X2,X3))
+expect_error(
+  intersection_list(A=list(X1,X2,X3)), 
+  "Less than 3 subjects have no missing values, choose another
+               missing value handling method or work on your dataset.", 
+  fixed=TRUE
+)
