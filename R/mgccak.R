@@ -5,6 +5,12 @@ mgccak <- function (A, A_m = NULL, C, tau = rep(1, length(A)), scheme = "centroi
   kron_sum <- function(factors) {
     apply(Reduce("krprod", rev(factors)), 1, sum)
   }
+  
+  weighted_factor <- function(u, d, rank) {
+    if (rank == 1) 
+      return(u)
+    return(u %*% diag(d[1:rank])) / sqrt(sum(d[1:rank] ^ 2))
+  }
 
   call = list(A = A, A_m = A_m, C = C, scheme = scheme, verbose = verbose, init = init,
               bias = bias, tol = tol, ranks = ranks)
@@ -52,7 +58,7 @@ mgccak <- function (A, A_m = NULL, C, tau = rep(1, length(A)), scheme = "centroi
     A_m = lapply(1:J, function(x) matrix(as.vector(A[[x]]), nrow = n))
   }
 
-  a <- factors <- reg_matrices <- M_inv <- P <- list()
+  a <- factors <- M_inv <- P <- list()
   for (j in 1:J) {
     factors[[j]] <- list()
   }
@@ -72,8 +78,7 @@ mgccak <- function (A, A_m = NULL, C, tau = rep(1, length(A)), scheme = "centroi
         a[[j]] <- initsvd(A[[j]])
       } else {
         SVD               <- svd(apply(A[[j]], 2, c), nu=0, nv=ranks[[j]])
-        factors[[j]][[1]] <- SVD$v %*%
-          diag(SVD$d[1:ranks[[j]]]) / sqrt(sum(SVD$d[1:ranks[[j]]] ^ 2))
+        factors[[j]][[1]] <- weighted_factor(SVD$v, SVD$d, ranks[j])
         for (d in 2:(LEN[[j]] - 1)) {
           factors[[j]][[d]] <- svd(apply(A[[j]], d+1, c), nu=0, nv=ranks[[j]])$v
         }
@@ -86,8 +91,7 @@ mgccak <- function (A, A_m = NULL, C, tau = rep(1, length(A)), scheme = "centroi
         a[[j]] <- initsvd(A_random)
       } else {
         SVD               <- svd(apply(A_random, 2, c), nu=0, nv=ranks[[j]])
-        factors[[j]][[1]] <- SVD$v %*%
-          diag(SVD$d[1:ranks[[j]]]) / sqrt(sum(SVD$d[1:ranks[[j]]] ^ 2))
+        factors[[j]][[1]] <- weighted_factor(SVD$v, SVD$d, ranks[j])
         for (d in 2:(LEN[[j]] - 1)) {
           factors[[j]][[d]] <- svd(apply(A[[j]], d+1, c), nu=0, nv=ranks[[j]])$v
         }
@@ -102,16 +106,16 @@ mgccak <- function (A, A_m = NULL, C, tau = rep(1, length(A)), scheme = "centroi
 
   # Determination of the M regularization matrix
   for (j in 1:J){
-    reg_matrices[[j]] = parse_regularisation_matrices(
+    reg_matrices = parse_regularisation_matrices(
       reg_matrices = regularisation_matrices[[j]],
       tau          = tau[j],
       A            = A[[j]],
       DIM          = DIM[[j]],
       bias         = bias
     )
-    P[[j]]     = reg_matrices[[j]]$P
-    M_inv[[j]] = reg_matrices[[j]]$M_inv
-    tau[j]     = reg_matrices[[j]]$tau
+    P[[j]]     = reg_matrices$P
+    M_inv[[j]] = reg_matrices$M_inv
+    tau[j]     = reg_matrices$tau
   }
 
   # Initialize other parameters
@@ -135,8 +139,7 @@ mgccak <- function (A, A_m = NULL, C, tau = rep(1, length(A)), scheme = "centroi
         Q                 = matrix(t(Z[, j]) %*% P[[j]], nrow = DIM[[j]][3],
                                    ncol = DIM[[j]][2], byrow = T)
         SVD               = svd(x = Q, nu = ranks[[j]], nv = ranks[[j]])
-        factors[[j]][[1]] = SVD$v %*%
-          diag(SVD$d[1:ranks[[j]]]) / sqrt(sum(SVD$d[1:ranks[[j]]] ^ 2))
+        factors[[j]][[1]] = weighted_factor(SVD$v, SVD$d, ranks[j])
         factors[[j]][[2]] = SVD$u
         a[[j]]            = kron_sum(factors[[j]])
         Y[, j]            = P[[j]] %*% a[[j]]
@@ -146,14 +149,21 @@ mgccak <- function (A, A_m = NULL, C, tau = rep(1, length(A)), scheme = "centroi
         Q                 = array(t(P[[j]]) %*% Z[, j], dim = DIM[[j]][-1])
         Q                 = unfold(Q, mode = 1)
         other_factors     = kron_sum(factors[[j]][-1])
-        D                 = diag(sqrt(diag(crossprod(factors[[j]][[1]]))))
-        # Tandem iteration
-        SVD               = svd(x = Q %*% other_factors %*% D, nu = ranks[[j]],
-                                nv = ranks[[j]])
-        factors[[j]][[1]] = SVD$u %*% t(SVD$v)
-        weights           = diag(t(Q %*% other_factors) %*% factors[[j]][[1]])
-        D                 = diag(weights / sqrt(sum(weights ^ 2)))
-        factors[[j]][[1]] = factors[[j]][[1]] %*% D
+        if (ranks[j] == 1) { # No need for tandem
+          SVD               = svd(x = Q %*% other_factors, nu = ranks[j],
+                                  nv = ranks[j])
+          factors[[j]][[1]] = SVD$u %*% t(SVD$v)
+        } else {
+          D                 = diag(sqrt(diag(crossprod(factors[[j]][[1]]))))
+          # Tandem iteration
+          SVD               = svd(x = Q %*% other_factors %*% D, nu = ranks[j],
+                                  nv = ranks[j])
+          factors[[j]][[1]] = SVD$u %*% t(SVD$v)
+          weights           = diag(t(Q %*% other_factors) %*% factors[[j]][[1]])
+          D                 = diag(weights / sqrt(sum(weights ^ 2)))
+          factors[[j]][[1]] = factors[[j]][[1]] %*% D
+        }
+        
         a[[j]]            = kron_sum(factors[[j]])
         Y[, j]            = P[[j]] %*% a[[j]]
 
@@ -166,8 +176,8 @@ mgccak <- function (A, A_m = NULL, C, tau = rep(1, length(A)), scheme = "centroi
           Q                 = array(t(P[[j]]) %*% Z[, j], dim = DIM[[j]][-1])
           Q                 = unfold(Q, mode = d)
           other_factors     = kron_sum(factors[[j]][-d])
-          SVD               = svd(x = Q %*% other_factors, nu = ranks[[j]],
-                                  nv = ranks[[j]])
+          SVD               = svd(x = Q %*% other_factors, nu = ranks[j],
+                                  nv = ranks[j])
           factors[[j]][[d]] = SVD$u %*% t(SVD$v)
           a[[j]]            = kron_sum(factors[[j]])
           Y[, j]            = P[[j]] %*% a[[j]]
@@ -197,9 +207,9 @@ mgccak <- function (A, A_m = NULL, C, tau = rep(1, length(A)), scheme = "centroi
     )
     # Criterion must increase
     if ( crit[iter] - crit_old < -tol)
-      {stop_rgcca("Convergence error: criterion did not increase monotonously")}
-    if (any(stopping_criteria < tol) | (iter > 1000))
-      {break}
+    {stop_rgcca("Convergence error: criterion did not increase monotonously")}
+    if (any(stopping_criteria < tol) | (iter > 1000)) break
+    
     crit_old = crit[iter]
     a_old <- a
     iter <- iter + 1
