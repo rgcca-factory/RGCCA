@@ -180,13 +180,14 @@ test_that("upca_var2",{expect_true(upca_var)})
      blocks=A_quali, connection = 1 - diag(length(A)),
      response = 3)
  
-#Checking the superbloc
+#Checking the superblock
  rgcca_with_superblock= rgcca (
      blocks=A,
-     superblock = TRUE)
+     superblock = TRUE,
+     prescaling = TRUE)
  head(A[[1]])
- head(rgcca_with_superblock$call$blocks[[1]])
- test_that("superblock",{expect_true( sum(head(rgcca_with_superblock$call$blocks[[length(A)+1]])[,1:ncol(A[[1]])]!=head(A[[1]]))==0
+ head(rgcca_with_superblock$blocks[[1]])
+ test_that("superblock",{expect_true( sum(head(rgcca_with_superblock$blocks[[length(A)+1]])[,1:ncol(A[[1]])]!=head(A[[1]]))==0
  )})
 
  # with permutation
