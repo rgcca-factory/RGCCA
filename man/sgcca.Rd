@@ -82,8 +82,6 @@ matrix that contains the outer weight vectors for each block.}
 \item{astar}{A list of \eqn{J} elements. Each element of astar is a 
 matrix defined as Y[[j]][, h] = A[[j]]\%*\%astar[[j]][, h]}
 
-\item{call}{Call of the function}
-
 \item{crit}{A vector of integer that contains for each component the 
 values of the analysis criteria across iterations.}
 

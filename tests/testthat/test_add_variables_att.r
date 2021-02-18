@@ -12,14 +12,14 @@ blocks[[1]][1,1]=1
 rgcca_k_saved<-rgcca_k
 rgcca_k$a <- add_variables_submodel(rgcca_res, rgcca_k$a)
 rgcca_k$astar <- add_variables_submodel(rgcca_res, rgcca_k$astar)
-res_blocks<- add_variables_data(rgcca_res, rgcca_k$call$blocks)
+res_blocks<- add_variables_data(rgcca_res, rgcca_k$blocks)
 
-center_att <- add_variables_attr(rgcca_res, w=lapply(rgcca_k_saved$call$blocks, function(i) attr(i, "scaled:center")), type = "center")
-scale_attr <- add_variables_attr(rgcca_res, lapply(rgcca_k_saved$call$blocks, function(i) attr(i, "scaled:scale")))
-for (i in seq(length(rgcca_k$call$blocks)))
+center_att <- add_variables_attr(rgcca_res, w=lapply(rgcca_k_saved$blocks, function(i) attr(i, "scaled:center")), type = "center")
+scale_attr <- add_variables_attr(rgcca_res, lapply(rgcca_k_saved$blocks, function(i) attr(i, "scaled:scale")))
+for (i in seq(length(rgcca_k$blocks)))
 {
-    attr(rgcca_k$call$blocks[[i]], "scaled:center") <- center_att[[i]]
-    attr(rgcca_k$call$blocks[[i]], "scaled:scale") <- scale_attr[[i]]
+    attr(rgcca_k$blocks[[i]], "scaled:center") <- center_att[[i]]
+    attr(rgcca_k$blocks[[i]], "scaled:scale") <- scale_attr[[i]]
 }
 # tests quand il y a une seule variable
 data("Russett")
@@ -38,4 +38,4 @@ block_i=lapply(blocks2,function(x){
           }})
 rgcca_k <- rgcca(block_i,ncomp=1)
 rgcca_res <- rgcca(blocks2,ncomp=1)
-res_blocks2<- add_variables_data(rgcca_res, rgcca_k$call$blocks)
+res_blocks2<- add_variables_data(rgcca_res, rgcca_k$blocks)

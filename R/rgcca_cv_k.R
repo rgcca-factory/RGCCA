@@ -62,7 +62,7 @@ rgcca_cv_k <- function(
     check_integer("k", k, min = 2)
     check_integer("n_cores", n_cores, min = 0)
     response=rgcca_res$call$response
-    bloc_to_pred <- names(rgcca_res$call$blocks)[response]
+    bloc_to_pred <- names(rgcca_res$blocks)[response]
 
     if (n_cores == 0)
         n_cores <- 1
@@ -90,14 +90,14 @@ rgcca_cv_k <- function(
              rgcca_k_saved=rgcca_k
              rgcca_k$a <- add_variables_submodel(rgcca_res, rgcca_k$a)
              rgcca_k$astar <- add_variables_submodel(rgcca_res, rgcca_k$astar)
-             rgcca_k$call$blocks <- add_variables_data(rgcca_res, rgcca_k$call$blocks)
+             rgcca_k$blocks <- add_variables_data(rgcca_res, rgcca_k$blocks)
     
-             center_att <- add_variables_attr(rgcca_res, lapply(rgcca_k_saved$call$blocks, function(i) attr(i, "scaled:center")), type = "center")
-             scale_attr <- add_variables_attr(rgcca_res, lapply(rgcca_k_saved$call$blocks, function(i) attr(i, "scaled:scale")))
+             center_att <- add_variables_attr(rgcca_res, lapply(rgcca_k_saved$blocks, function(i) attr(i, "scaled:center")), type = "center")
+             scale_attr <- add_variables_attr(rgcca_res, lapply(rgcca_k_saved$blocks, function(i) attr(i, "scaled:scale")))
  
-             for (i in seq(length(rgcca_k$call$blocks))) {
-                 attr(rgcca_k$call$blocks[[i]], "scaled:center") <- center_att[[i]]
-                 attr(rgcca_k$call$blocks[[i]], "scaled:scale") <- scale_attr[[i]]
+             for (i in seq(length(rgcca_k$blocks))) {
+                 attr(rgcca_k$blocks[[i]], "scaled:center") <- center_att[[i]]
+                 attr(rgcca_k$blocks[[i]], "scaled:scale") <- scale_attr[[i]]
              }
           # Necessite les scale et les center en sortie
            respred= rgcca_predict(
@@ -178,7 +178,7 @@ rgcca_cv_k <- function(
     if (validation %in% c("loo", "kfold")) {
         # concatenation of each test set to provide predictions for each block
         preds <- lapply(
-            seq(length(rgcca_res$call$blocks)),
+            seq(length(rgcca_res$blocks)),
             function(x) Reduce(
                 rbind, 
                 lapply(
@@ -188,7 +188,7 @@ rgcca_cv_k <- function(
             )
         )
 
-        names(preds) <- names(rgcca_res$call$blocks)
+        names(preds) <- names(rgcca_res$blocks)
 
         for (x in seq(length(preds)))
             row.names(preds[[x]]) <- row.names(bigA[[1]])

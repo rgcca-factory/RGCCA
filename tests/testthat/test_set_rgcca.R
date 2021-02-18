@@ -115,5 +115,5 @@ rgcca_set_boot <- set_rgcca(rgcca_out,inds=1,tol=1e-8,boot=TRUE)
 
 test_that("for_bootstrap_same_nrows", {
     expect_identical(
-    lapply(rgcca_set_boot$call$blocks,dim)[[1]][1]==47
+    lapply(rgcca_set_boot$blocks,dim)[[1]][1]==47
     ,TRUE)})

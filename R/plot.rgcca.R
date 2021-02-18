@@ -119,14 +119,14 @@ plot.rgcca=function(x, type = "weight", block = length(x$blocks), comp = 1:2,
     i_block_y=block[2]
     
     for (i in seq(2))
-        check_blockx("block", block[1], x$call$blocks)
+        check_blockx("block", block[1], x$blocks)
       
     if(i_block != i_block_y & is.null(type)){type="weight"}
     if(i_block == i_block_y & is.null(type)){type="both"}
      
     if(type=="both")
     {
-        if(is.null(i_block)){i_block=length(x$call$blocks)}
+        if(is.null(i_block)){i_block=length(x$blocks)}
         p1 <- plot_ind(x, i_block = i_block, i_block_y =i_block_y,
                        compx = compx, compy = compy, cex_sub = cex_sub, 
                        cex_main = cex_main, cex_lab = cex_lab, resp = resp, 
@@ -141,7 +141,7 @@ plot.rgcca=function(x, type = "weight", block = length(x$blocks), comp = 1:2,
                           title = "Variable correlations", n_mark = n_mark,
                           collapse = collapse, colors = colors)
         
-        if(is.null(title)){title = toupper(names(x$call$blocks)[i_block])}
+        if(is.null(title)){title = toupper(names(x$blocks)[i_block])}
         p5 <- grid.arrange(p1, p2, nrow=1, ncol=2, top = title)
         return(p5)
     }
@@ -149,13 +149,13 @@ plot.rgcca=function(x, type = "weight", block = length(x$blocks), comp = 1:2,
     {
         if(x$call$superblock)
         {
-            if(block[1] == length(x$call$blocks))
+            if(block[1] == length(x$blocks))
             {
-                block = length(x$call$blocks)-1
+                block = length(x$blocks)-1
             }
         }
         if(is.null(title)){title = paste0("Variable correlations: ", 
-                                          names(x$call$blocks)[i_block])}
+                                          names(x$blocks)[i_block])}
         
        p5 <- plot_var_2D(x, i_block = i_block, compx = compx, compy = compy,
                          cex_sub = cex_sub, cex_main = cex_main, 
@@ -172,7 +172,7 @@ plot.rgcca=function(x, type = "weight", block = length(x$blocks), comp = 1:2,
         {
             if(i_block == i_block_y)
             {
-                title= paste0("Sample space: ",names(x$call$blocks)[i_block])   
+                title= paste0("Sample space: ",names(x$blocks)[i_block])   
             }
             else
             {
@@ -197,14 +197,14 @@ plot.rgcca=function(x, type = "weight", block = length(x$blocks), comp = 1:2,
     else if(type == "network")
     {
         if(is.null(title)){title=paste0("Common rows between blocks : ",
-                                        NROW(x$call$blocks[[1]]))}
+                                        NROW(x$blocks[[1]]))}
         plot_network ( x, title = title, cex_main = cex_main)
         p5<-NULL
     }
     else if(type == "cor")
     {
         if(is.null(title)){title = paste0("Variable correlations: ", 
-                                          names(x$call$blocks)[i_block])}
+                                          names(x$blocks)[i_block])}
         p5=plot_var_1D(x, comp = compx, n_mark = n_mark, type = "cor", 
                        collapse = collapse, title = title, colors = colors, 
                        i_block = i_block, cex_main = cex_main, 
@@ -214,7 +214,7 @@ plot.rgcca=function(x, type = "weight", block = length(x$blocks), comp = 1:2,
     else if(type == "weight")
     {
         if(is.null(title)){title= paste0("Variable weights: ",
-                                         names(x$call$blocks)[i_block])}
+                                         names(x$blocks)[i_block])}
         
         p5=plot_var_1D(x, comp = compx, n_mark = n_mark, i_block = i_block, 
                        type = "weight", collapse = collapse, title = title, 

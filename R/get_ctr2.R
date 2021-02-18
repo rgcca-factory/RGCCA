@@ -10,7 +10,7 @@ get_ctr2 <- function(
     compx = 1,
     compy = 2,
     compz = NULL,
-    i_block = length(rgcca_res$call$blocks),
+    i_block = length(rgcca_res$blocks),
     type = "cor",
     n_mark = 100,
     collapse = FALSE,
@@ -18,7 +18,7 @@ get_ctr2 <- function(
     resp=NULL) {
  
     stopifnot(is(rgcca_res, "rgcca"))
-    check_blockx("i_block", i_block, rgcca_res$call$blocks)
+    check_blockx("i_block", i_block, rgcca_res$blocks)
     check_ncol(rgcca_res$a, i_block)
     for (i in c("compx", "compy", "compz")) {
         if (!is.null(get(i)))
@@ -29,7 +29,7 @@ get_ctr2 <- function(
         check_boolean(i, get(i))
 
     x <- y <- selectedVar <- NULL
-    blocks <- rgcca_res$call$blocks
+    blocks <- rgcca_res$blocks
 
     if (collapse) {
         if (rgcca_res$call$superblock) {

@@ -9,14 +9,14 @@ save_var <- function(
     indexes <- c("cor", "weight")
 
     vars <- lapply(
-        seq(length(rgcca$call$blocks)), 
+        seq(length(rgcca$blocks)), 
         function(i) {
             df <- data.frame(
                 Reduce(cbind,
                         lapply(indexes, function(x)
                             Reduce(cbind, lapply(seq(rgcca$call$ncomp[i]), function(j) get_ctr(rgcca, j, j, i_block = i, type = x)[, 1, drop = FALSE]))
                             )),
-                names(rgcca$call$blocks)[i]
+                names(rgcca$blocks)[i]
             )
             colnames(df) <- c(unlist(lapply(
                 indexes,

@@ -103,8 +103,6 @@ the RGCCA alogrithm.}
 \item{AVE}{A list of numerical values giving the goodness of fit 
 the model based on the Average Variance Explained (AVE): AVE(for each block), 
 AVE(outer model), AVE(inner model).}
-
-\item{call}{Call of the function}
 }
 \description{
 Regularized Generalized Canonical Correlation Analysis (RGCCA) is a 

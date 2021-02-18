@@ -1,7 +1,7 @@
 # Creates the edges for a design matrix
 # 
 # @inheritParams plot_ind
-# @return A dataframe with tuples of connected rgcca_res$call$blocks
+# @return A dataframe with tuples of connected rgcca_res$blocks
 
 
 
@@ -15,7 +15,7 @@ get_edges <- function(rgcca_res) {
         for (i in seq(J)) {
             if (i > k && rgcca_res$call$connection[i, j] > 0)
                 edges[[length(edges) + 1]] <-
-                    c(names(rgcca_res$call$blocks)[j], names(rgcca_res$call$blocks)[i], rgcca_res$call$connection[i, j])
+                    c(names(rgcca_res$blocks)[j], names(rgcca_res$blocks)[i], rgcca_res$call$connection[i, j])
         }
         k <- k + 1
     }

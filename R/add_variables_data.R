@@ -3,15 +3,15 @@
 add_variables_data <- function(rgcca_res, w) {
 
     blocks_all <- list()
-    for (x in seq(length(rgcca_res$call$blocks)))
+    for (x in seq(length(rgcca_res$blocks)))
     {
-        blocks_all[[x]] <- rgcca_res$call$blocks[[x]][intersect(rownames(rgcca_res$call$blocks[[1]]), rownames(w[[1]])), ]
+        blocks_all[[x]] <- rgcca_res$blocks[[x]][intersect(rownames(rgcca_res$blocks[[1]]), rownames(w[[1]])), ]
         if(is.null(dim(blocks_all[[x]])))
         {
             b=blocks_all[[x]]
             blocks_all[[x]]=matrix(blocks_all[[x]],ncol=1)
             rownames(blocks_all[[x]])=names(b)
-            colnames(blocks_all[[x]])=names(rgcca_res$call$blocks)[x]
+            colnames(blocks_all[[x]])=names(rgcca_res$blocks)[x]
         }
     }
      
@@ -56,6 +56,6 @@ add_variables_data <- function(rgcca_res, w) {
 
     w <- lapply(seq(length(w)), function(x)
             w[[x]][, colnames(blocks_all[[x]]), drop = FALSE])
-    names(w) <- names(rgcca_res$call$blocks)
+    names(w) <- names(rgcca_res$blocks)
     return(w)
 }

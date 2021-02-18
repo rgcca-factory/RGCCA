@@ -15,7 +15,7 @@ plot_ind(
   response_name = "Response",
   no_overlap = FALSE,
   predicted = NULL,
-  title = paste0(names(rgcca_res$call$blocks)[i_block], ": Sample space"),
+  title = paste0(names(rgcca_res$blocks)[i_block], ": Sample space"),
   legend = TRUE,
   cex = 1,
   cex_main = 14 * cex,
@@ -76,8 +76,8 @@ coord = lapply(seq(3),
 AVE_X = lapply(seq(3), function(x) runif(2))
 for (i in 1:length(coord))
 row.names(coord[[i]]) = seq(15)
-rgcca_out = list(Y = coord, AVE = list(AVE_X = AVE_X), 
-call = list(blocks = coord, ncomp = rep(2,3))) # TODO
+rgcca_out = list(Y = coord, AVE = list(AVE_X = AVE_X), blocks = coord,
+call = list(ncomp = rep(2,3))) # TODO
 # Using a superblock
 resp = as.matrix(rep(LETTERS[seq(3)], each = 5))
 row.names(resp) = seq(15)

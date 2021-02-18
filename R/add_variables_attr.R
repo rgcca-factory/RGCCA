@@ -4,8 +4,8 @@ add_variables_attr <- function(rgcca_res, w, type = "scale") {
 
   
     blocks_all <- list()
-    for (x in seq(length(rgcca_res$call$blocks)))
-        blocks_all[[x]] <- rgcca_res$call$blocks[[x]][intersect(rownames(rgcca_res$call$blocks[[1]]), rownames(w[[1]])), ]
+    for (x in seq(length(rgcca_res$blocks)))
+        blocks_all[[x]] <- rgcca_res$blocks[[x]][intersect(rownames(rgcca_res$blocks[[1]]), rownames(w[[1]])), ]
       
     blocks_all2=lapply(1:length(blocks_all),
                        function(i) 
@@ -75,7 +75,7 @@ missing_tab <- lapply(
            })
            
 
-    # names(w) <- names(rgcca_res$call$blocks)
+    # names(w) <- names(rgcca_res$blocks)
     return(w)
 }
 

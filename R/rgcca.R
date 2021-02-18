@@ -200,8 +200,7 @@
 #' \code{\link[RGCCA]{rgcca_permutation}}
 #' \code{\link[RGCCA]{rgcca_predict}} 
 
-#TODO: Use out$A instead of out$calls$blocks, rename out$A to out$blocks
-#TODO: Remove call in intermediate functions
+#TODO: Use out$blcoks instead of out$calls$blocks
 rgcca <- function(
     blocks,
     type = "rgcca",
@@ -425,6 +424,7 @@ rgcca <- function(
     func[[par]] <- opt$penalty
     func_out <- eval(as.call(func))$rgcca
 
+    # TODO: check if this is necessary
     for (i in c("a", "astar", "Y")) {
         names(func_out[[i]]) <- names(opt$blocks)
         for (j in seq(length(opt$blocks))) {

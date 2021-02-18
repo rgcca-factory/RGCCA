@@ -12,7 +12,7 @@ blocks = list(agriculture = Russett[, seq(3)], industry = Russett[, 4:5],
 
 resRgcca=rgcca(blocks)
 resRgcca$call$raw[[1]][1,]
-resRgcca$call$blocks[[1]][1,]
+resRgcca$blocks[[1]][1,]
 resRgcca$blocks[[1]][1,]
 
 rgcca_permutation(rgcca_res=resRgcca)
@@ -23,7 +23,7 @@ blocks_with_na[[1]][1,]=NA
 blocks_with_na[[1]][2,2]=NA
 resRgcca=rgcca(blocks_with_na,method = "mean")
 resRgcca$call$raw[[1]][1,]
-resRgcca$call$blocks[[1]][1,]
+resRgcca$blocks[[1]][1,]
 resRgcca$blocks[[1]][1,]
 
 

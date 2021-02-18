@@ -21,7 +21,7 @@ test_that("bootstrap_default_1", {
     expect_is(boot1, "list")
     expect_is(boot1[[1]], "matrix")
     expect_true(all(sapply(boot1, NCOL) == 4))
-    expect_identical(sapply(boot1, NROW), sapply(rgcca_out$call$blocks, NCOL))
+    expect_identical(sapply(boot1, NROW), sapply(rgcca_out$blocks, NCOL))
 })
 
 # ncomp=2
@@ -37,14 +37,14 @@ test_that("bootstrap_default", {
     expect_is(boot1, "list")
     expect_is(boot1[[1]], "matrix")
     expect_true(all(sapply(boot1, NCOL) == 2))
-    expect_identical(sapply(boot1, NROW), sapply(rgcca_out$call$blocks, NCOL))
+    expect_identical(sapply(boot1, NROW), sapply(rgcca_out$blocks, NCOL))
 })
 
 test_that("bootstrap_default", {
     select_var <- get_bootstrap(boot, n_cores = 1)
     expect_is(select_var, "df_bootstrap")
     expect_is(select_var, "data.frame")
-    expect_identical(NROW(select_var), NCOL(rgcca_out$call$blocks[[length(rgcca_out$call$blocks)]]))
+    expect_identical(NROW(select_var), NCOL(rgcca_out$blocks[[length(rgcca_out$blocks)]]))
 })
 
 # test_that("bootstrap_with_args", {

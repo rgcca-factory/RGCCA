@@ -22,10 +22,10 @@
 #' 3, 3)
 #' object1 = rgcca(blocks, connection = C, tau = c(0.7,0.8,0.7),
 #'     ncomp = c(3,2,4), superblock = FALSE, response = 3)
-#' A = lapply(object1$call$blocks, function(x) x[1:32,])
+#' A = lapply(object1$blocks, function(x) x[1:32,])
 #' object = rgcca(A, connection = C, tau = c(0.7,0.8,0.7),
 #'     ncomp = c(3,2,4), scale = FALSE, scale_block = FALSE, superblock = FALSE, response = 3)
-#' newA = lapply(object1$call$blocks, function(x) x[-c(1:32),])
+#' newA = lapply(object1$blocks, function(x) x[-c(1:32),])
 #' newA = lapply( newA, function(x) x[, sample(1:NCOL(x))] )
 #' newA = sample(newA, length(newA))
 #' bloc_to_pred = "industry"
@@ -106,29 +106,29 @@ rgcca_predict = function(
     match.arg(fit, c("lm", "cor", "lda"))
     for (i in c("new_scaled"))
         check_boolean(i, get(i))
-    if (is.null(names(rgcca_res$call$blocks)) ||  is.null(names(newA)))
+    if (is.null(names(rgcca_res$blocks)) ||  is.null(names(newA)))
         stop_rgcca("Please, blocs do not have names")
     
      # Initializations
     prediction=NULL
-    if(rgcca_res$call$method=="complete"){rgcca_res$call$blocks=intersection_list(rgcca_res$call$blocks)}
+    if(rgcca_res$call$method=="complete"){rgcca_res$blocks=intersection_list(rgcca_res$blocks)}
     astar <- rgcca_res$astar
     
     # Dealing with vectors instead of matrices 
-    blocks_rgcca_res=lapply(1:length(rgcca_res$call$blocks),
+    blocks_rgcca_res=lapply(1:length(rgcca_res$blocks),
                        function(i) 
                         {
-                            if(dim(rgcca_res$call$blocks[[i]])[2]==0 )
+                            if(dim(rgcca_res$blocks[[i]])[2]==0 )
                             { 
-                                rgcca_res$call$blocks[[i]]=matrix(rgcca_res$call$blocks[[i]],ncol=1);colnames( rgcca_res$call$blocks[[i]])=names(rgcca_res$call$blocks)[i]
+                                rgcca_res$blocks[[i]]=matrix(rgcca_res$blocks[[i]],ncol=1);colnames( rgcca_res$blocks[[i]])=names(rgcca_res$blocks)[i]
                             }
-                            if(is.null(colnames(rgcca_res$call$blocks[[i]])))
+                            if(is.null(colnames(rgcca_res$blocks[[i]])))
                             {
-                                colnames(rgcca_res$call$blocks[[i]])=names(rgcca_res$call$blocks)[i]
+                                colnames(rgcca_res$blocks[[i]])=names(rgcca_res$blocks)[i]
                             }
-                            return(rgcca_res$call$blocks[[i]])
+                            return(rgcca_res$blocks[[i]])
                         })
-    names(blocks_rgcca_res)=names(rgcca_res$call$blocks)
+    names(blocks_rgcca_res)=names(rgcca_res$blocks)
     newA1=lapply(1:length(newA),
                             function(i) 
                             {
@@ -153,7 +153,7 @@ rgcca_predict = function(
     # Matching the columns in the predict function
      if(model=="regression")
      {  
-         MATCH <- match(names(newA1), names(rgcca_res$call$blocks))
+         MATCH <- match(names(newA1), names(rgcca_res$blocks))
          MATCH_col <-  mapply(
              function(x, y) match(get_dim(x)(x), get_dim(y)(y)), 
              newA2, 
@@ -175,7 +175,7 @@ rgcca_predict = function(
 
     # Checking the matchings
     p <- sapply( blocks_rgcca_res, ncol)
-    B <- length(rgcca_res$call$blocks)
+    B <- length(rgcca_res$blocks)
     # Matching newA and blocks
     if (sum(is.na(MATCH)) != 0){stop_rgcca("Please, blocs in new data did not exist in old data")}
     
@@ -190,10 +190,10 @@ rgcca_predict = function(
     
     # Scaling de newA (si besoin ie new_scaled=FALSE-cas usuel, et si la rgcca utilise des blocs scales)
     if (!new_scaled  ) { 
-        center_vector=reorderList(rgcca_res$call$blocks, t_attr = "scaled:center",MATCH=MATCH,MATCH_col=MATCH_col2)
-        scaling_vector=reorderList(rgcca_res$call$blocks, t_attr = "scaled:scale",MATCH=MATCH,MATCH_col=MATCH_col2)
-          #center_vector=lapply(rgcca_res$call$blocks,function(x)return(attr(x,"scaled:center")))
-        #scaling_vector=lapply(rgcca_res$call$blocks,function(x)return(attr(x,"scaled:scale")))
+        center_vector=reorderList(rgcca_res$blocks, t_attr = "scaled:center",MATCH=MATCH,MATCH_col=MATCH_col2)
+        scaling_vector=reorderList(rgcca_res$blocks, t_attr = "scaled:scale",MATCH=MATCH,MATCH_col=MATCH_col2)
+          #center_vector=lapply(rgcca_res$blocks,function(x)return(attr(x,"scaled:center")))
+        #scaling_vector=lapply(rgcca_res$blocks,function(x)return(attr(x,"scaled:scale")))
         # No scaling if  scaling=FALSE, we divide by a vector of ones
         new_scaling_vector=lapply(names(scaling_vector),function(i){
              if(is.null(scaling_vector[[i]]))
@@ -218,7 +218,7 @@ rgcca_predict = function(
     } else{ newA3=newA2}
    
  # Dimension Reduction
-     for (i in seq(length(rgcca_res$call$blocks)))
+     for (i in seq(length(rgcca_res$blocks)))
          colnames(rgcca_res$astar[[i]]) <- colnames(rgcca_res$Y[[i]])
      astar <- reorderList(rgcca_res$astar, g = TRUE,MATCH=MATCH,MATCH_col=MATCH_col2)
      pred <- lapply(seq(length(newA)), function(x)
@@ -234,7 +234,7 @@ rgcca_predict = function(
      if (missing(bloc_to_pred))
          return(list(pred_y = pred))
  
-     bloc_y <- match(bloc_to_pred, names(rgcca_res$call$blocks))
+     bloc_y <- match(bloc_to_pred, names(rgcca_res$blocks))
      newbloc_y <- match(bloc_to_pred, names(newA3))
  
      # to_pred definition

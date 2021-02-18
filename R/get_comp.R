@@ -22,7 +22,7 @@ get_comp <- function(
 
     for (i in c("i_block_x", "i_block_y", "i_block_z")) {
         if (!is.null(get(i)))
-            check_blockx(i, get(i), rgcca_res$call$blocks)
+            check_blockx(i, get(i), rgcca_res$blocks)
     }
     check_ncol(rgcca_res$Y, i_block_x)
     for (i in c("x", "y", "z")) {

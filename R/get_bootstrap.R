@@ -79,7 +79,7 @@ get_bootstrap <- function(
 
     stopifnot(is(b, "bootstrap"))
     check_ncol(b$rgcca$Y, block)
-    check_blockx("block", block, b$rgcca$call$blocks)
+    check_blockx("block", block, b$rgcca$blocks)
     check_compx("comp", comp, b$rgcca$call$ncomp, block)
     check_boolean("collapse", collapse)
     check_integer("n_cores", n_cores, min = 0)
@@ -204,7 +204,7 @@ get_bootstrap <- function(
     
     attributes(db)$type <- class(b$rgcca)
     attributes(db)$n_boot <- n_boot
-    attributes(db)$n_blocks <- length(b$rgcca$call$blocks)
+    attributes(db)$n_blocks <- length(b$rgcca$blocks)
     class(db) <- c(class(db), "df_bootstrap")
     return(db)
 }

@@ -2,7 +2,7 @@
 # to a list of weights and affect them to 0
 add_variables_submodel <- function(rgcca_res, w) {
 
-    blocks_all <- rgcca_res$call$blocks
+    blocks_all <- rgcca_res$blocks
     missing_var <- lapply(seq(length(w)), function(x)
             setdiff(colnames(blocks_all[[x]]),
                 rownames(w[[x]])))
@@ -26,6 +26,6 @@ add_variables_submodel <- function(rgcca_res, w) {
     w <- lapply(seq(length(w)), function(x)
             w[[x]][colnames(blocks_all[[x]]), , drop = FALSE])
 
-    names(w) <- names(rgcca_res$call$blocks)
+    names(w) <- names(rgcca_res$blocks)
     return(check_sign_comp(rgcca_res, w))
 }

@@ -162,9 +162,6 @@ rgccad=function (A, C = 1 - diag(length(A)), tau = rep(1, length(A)),
                  scale_block = TRUE, na.rm = TRUE, 
                  prescaling = FALSE, quiet = FALSE)
 {
-
-  A0 = A
-  
   if (any(ncomp < 1)) {stop_rgcca("Compute at least one component per block!")}
   pjs <- sapply(A, NCOL) 
   nb_row <- NROW(A[[1]]) 
@@ -283,7 +280,7 @@ rgccad=function (A, C = 1 - diag(length(A)), tau = rep(1, length(A)),
     out <- list(Y = Y, a = a, astar = a, C = C,  scheme = scheme, 
                 ncomp = ncomp, crit = result$crit, 
                 primal_dual = primal_dual, 
-                AVE = AVE, blocks = A0, tau = tau)
+                AVE = AVE, blocks = A, tau = tau)
     
     class(out) <- "rgccad"
     

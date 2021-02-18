@@ -67,7 +67,7 @@ print.rgcca <- function(x,...)
         for (i in 1:NCOL(x$call$connection)) 
         {
             tau <- x$call$tau[i]
-             cat("The",param,"parameter used for", names(x$call$blocks)[i], "was:",  round(tau,4), fill = TRUE)
+             cat("The",param,"parameter used for", names(x$blocks)[i], "was:",  round(tau,4), fill = TRUE)
         }
     }
     else
@@ -85,7 +85,7 @@ print.rgcca <- function(x,...)
           for (i in 1:NCOL(x$call$connection)) {
               sparsity <- x$call$sparsity[i]
               
-              cat("The",param,"parameter used for",names(x$call$blocks)[i], "was:", 
+              cat("The",param,"parameter used for",names(x$blocks)[i], "was:", 
                   sparsity, fill = TRUE)
           }
       }
@@ -100,13 +100,13 @@ print.rgcca <- function(x,...)
   }
   if(x$call$type %in% c("mgcca"))
   {
-    for (i in 1:length(x$call$blocks)) {
-      block = x$call$blocks[[i]]
+    for (i in 1:length(x$blocks)) {
+      block = x$blocks[[i]]
       dim = dim(block)
       if (is.null(dim)) {
         dim = c(length(block), 1)
       }
-      cat("The dimensions of", names(x$call$blocks)[i], "was:", 
+      cat("The dimensions of", names(x$blocks)[i], "was:", 
           dim, fill = TRUE)
     }
   }

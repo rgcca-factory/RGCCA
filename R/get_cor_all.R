@@ -9,7 +9,7 @@
 # @return A list of matrix containg the pairwise correlation of the blocks
 get_cor_all <- function(
     rgcca_res, 
-    blocks = rgcca_res$call$blocks, 
+    blocks = rgcca_res$blocks, 
     comps = get_comp_all(rgcca_res)){
 
     comp <- list()

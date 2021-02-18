@@ -18,7 +18,7 @@
 #' fit.boot=bootstrap(fit.rgcca, n_boot = 2, n_cores = 1)
 #' plot(fit.boot)
 
-plot.bootstrap=function(x, block = length(x$rgcca$call$blocks), 
+plot.bootstrap=function(x, block = length(x$rgcca$blocks), 
                         comp = 1, n_mark = 30, bars = "quantile",
                         colors = NULL, title = NULL, cex = 1,
                         n_cores = parallel::detectCores() - 1,
@@ -26,12 +26,12 @@ plot.bootstrap=function(x, block = length(x$rgcca$call$blocks),
                         cex_point = 10, cex_lab = 10, cex_axis = 10, ...)
 {
     stopifnot(is(x, "bootstrap"))
-    check_blockx("block", block, x$rgcca$call$blocks)
+    check_blockx("block", block, x$rgcca$blocks)
     
     if(x$rgcca$call$superblock)
     {
-        if(block==length(x$rgcca$call$blocks))
-            block=length(x$rgcca$call$blocks)-1
+        if(block==length(x$rgcca$blocks))
+            block=length(x$rgcca$blocks)-1
     }
 
     if(x$rgcca$call$type%in%c("sgcca", "spls", "spca"))
@@ -40,7 +40,7 @@ plot.bootstrap=function(x, block = length(x$rgcca$call$blocks),
             y1="estimate"
             title=ifelse(is.null(title),
                          paste0("Non-zero occurrences (", 
-                                names(x$rgcca$call$blocks)[block], 
+                                names(x$rgcca$blocks)[block], 
                                 ")\n(", ncol(x$bootstrap[[1]][[1]]),
                                 " bootstrap samples - comp ", comp, ")"), 
                          title)
@@ -51,7 +51,7 @@ plot.bootstrap=function(x, block = length(x$rgcca$call$blocks),
             y1="sign"
             title=ifelse(is.null(title), 
                          paste0("Bootstrap confidence interval (",
-                                names(x$rgcca$call$blocks)[block], ")\n (", 
+                                names(x$rgcca$blocks)[block], ")\n (", 
                                 ncol(x$bootstrap[[1]][[1]]),
                                 " bootstrap samples - comp ", comp, ")" ), 
                          title)

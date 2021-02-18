@@ -30,7 +30,7 @@ set_rgcca <- function(
     if(is.null(init)){     init <- rgcca_res$call$init}
     if(is.null(ncomp)){        ncomp <- rgcca_res$call$ncomp}
      if (is.null(blocks)) {
-      #  blocks <- rgcca_res$call$blocks
+      #  blocks <- rgcca_res$blocks
          blocks=rgcca_res$call$raw
          blocks = descale(blocks)
         if (superblock) {

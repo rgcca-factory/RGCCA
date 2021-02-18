@@ -73,12 +73,12 @@ bootstrap <- function(rgcca_res,
     list_res = list()
     for(i in 1:ndefl_max){ 
         list_res[[i]] = list()
-        for(block in names(rgcca_res$call$blocks))
+        for(block in names(rgcca_res$blocks))
         {
             list_res[[i]][[block]] = 
-              matrix(NA, dim(rgcca_res$call$blocks[[block]])[2], n_boot) 
+              matrix(NA, dim(rgcca_res$blocks[[block]])[2], n_boot) 
             rownames( list_res[[i]][[block]]) = 
-              colnames(rgcca_res$call$blocks[[block]])
+              colnames(rgcca_res$blocks[[block]])
         }
     }
 
@@ -117,8 +117,8 @@ bootstrap <- function(rgcca_res,
 
     for(k in seq(n_boot)){
      for(i in 1:ndefl_max){
-       for(j in 1:length(rgcca_res$call$blocks)){
-         block = names(rgcca_res$call$blocks)[j]
+       for(j in 1:length(rgcca_res$blocks)){
+         block = names(rgcca_res$blocks)[j]
          if(!is.null(names(W[[k]]))){
            if(i <= NCOL(W[[k]][[block]])){
              list_res[[i]][[block]][, k] = W[[k]][[block]][, i]

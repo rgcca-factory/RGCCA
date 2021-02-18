@@ -428,7 +428,8 @@ rgcca_permutation <- function(blocks, par_type, par_value = NULL,
     structure(list(call = call, zstat = zs, 
                    bestpenalties = par[which.max(zs), ],  
                    permcrit = permcrit, means = means, sds = sds, 
-                   crit = crits, pvals = pvals, penalties = par), 
+                   crit = crits, pvals = pvals, penalties = par, 
+                   blocks = blocks), 
               class = "permutation"
               )
 }

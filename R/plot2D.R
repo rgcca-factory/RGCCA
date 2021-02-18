@@ -111,10 +111,10 @@ plot2D <- function(
             margin = margin
         )
     }
-    names_blocks=names(rgcca_res$call$blocks)
+    names_blocks=names(rgcca_res$blocks)
     if(is.null(names_blocks))
     {
-        names_blocks=paste("Block", 1:length(rgcca_res$call$blocks))
+        names_blocks=paste("Block", 1:length(rgcca_res$blocks))
     }
     if(i_block!=i_block_y)
     {

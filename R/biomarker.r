@@ -8,20 +8,20 @@ biomarker <- function(
 
    if(class(resRGCCA)=="rgccad")
    {
-       A <- as.matrix(resRGCCA$call$blocks[[block]])
+       A <- as.matrix(resRGCCA$blocks[[block]])
    }
    if(class(resRGCCA)=="rgcca")
    {
-       A <- as.matrix(resRGCCA$call$blocks[[block]])
+       A <- as.matrix(resRGCCA$blocks[[block]])
    }
   
     if(class(resRGCCA)=="sgcca")
     {
-        A <- as.matrix(resRGCCA$call$blocks[[block]])
+        A <- as.matrix(resRGCCA$blocks[[block]])
     }
     if(class(resRGCCA)=="sgccad")
     {
-        A <- as.matrix(resRGCCA$call$blocks[[block]])   
+        A <- as.matrix(resRGCCA$blocks[[block]])   
     }
 
     x <- rep(NA, NCOL(A))

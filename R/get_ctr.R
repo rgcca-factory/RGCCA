@@ -14,7 +14,7 @@ get_ctr <- function(
     compx = 1,
     compy = 2,
     compz = NULL,
-    i_block = length(rgcca_res$call$blocks),
+    i_block = length(rgcca_res$blocks),
     type = "cor",
     collapse = FALSE,
     i_block_2 = i_block) {
@@ -22,7 +22,7 @@ get_ctr <- function(
     match.arg(type, c("cor", "weight"))
     stopifnot(!missing(rgcca_res))
 
-    blocks <- rgcca_res$call$blocks
+    blocks <- rgcca_res$blocks
     y <- NULL
 
     if (collapse && rgcca_res$call$superblock) {

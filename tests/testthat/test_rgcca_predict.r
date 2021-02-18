@@ -18,9 +18,8 @@ set.seed(1)
  # on the entire dataset
 object1 = rgcca(A, connection = C, tau = c(0.7,0.8,0.7),
      ncomp = c(3,2,4), superblock = FALSE, response = 3)
-attributes(object1$call$blocks$agriculture)
 attributes(object1$blocks$agriculture)
-apply(object1$call$block[[1]],2,sd)
+apply(object1$blocks[[1]],2,sd)
  res  = rgcca_predict(object1, A,new_scaled=FALSE) 
 test_that("rgcca_predict",{expect_true(
     sum(!abs(res$pred[[1]]- object1$Y[[1]])<1e-12)==0
@@ -74,7 +73,7 @@ object3 = rgcca(A3, connection = C, tau = c(0.7,0.8,0.7),
                 ncomp = c(1,1,1), superblock = FALSE, response = 1)
 
 res  = rgcca_predict(object3, newA3,new_scaled=FALSE,bloc_to_pred="agriculture") 
-reslm_1_res=apply(object3$call$blocks[[1]],2,function(x){lm(x~object3$Y[[2]][,1]+object3$Y[[3]][,1])$residuals})
+reslm_1_res=apply(object3$blocks[[1]],2,function(x){lm(x~object3$Y[[2]][,1]+object3$Y[[3]][,1])$residuals})
 
 test_that("rgcca_predict_rmse",{expect_true(
     sum(round(res$res,digits=5)-round(reslm_1_res,digits=5))==0
@@ -134,7 +133,7 @@ rgcca_res_for_pred = rgcca(A, connection = C, tau = c(0.7,0.8,0.7),
                            ncomp = 1, superblock = FALSE, response = 1)
 respred1=rgcca_predict(
     rgcca_res_for_pred,
-    newA = rgcca_res_for_pred$call$blocks,
+    newA = rgcca_res_for_pred$blocks,
     model = "regression",
     fit = "lm",
     new_scaled = TRUE

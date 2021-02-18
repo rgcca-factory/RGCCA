@@ -14,7 +14,7 @@
 plot_network <- function(
     rgcca_res, 
     title = paste0("Common rows between blocks : ",
-                   NROW(rgcca_res$call$blocks[[1]])),
+                   NROW(rgcca_res$blocks[[1]])),
     cex_main = 2,
     cex_point = 23, 
     colors =  c("#eee685", "gray60")) {

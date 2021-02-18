@@ -6,7 +6,7 @@
 \usage{
 plot_network2(
   rgcca_res,
-  title = paste0("Common rows between blocks : ", NROW(rgcca_res$call$blocks[[1]])),
+  title = paste0("Common rows between blocks : ", NROW(rgcca_res$blocks[[1]])),
   cex_main = 20,
   colors = c("#eee685", "gray")
 )

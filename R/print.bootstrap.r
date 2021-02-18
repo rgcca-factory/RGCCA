@@ -28,7 +28,7 @@ print.bootstrap = function(x, bars = "quantile",
     {
         for (comp in 1:ncompmax) {
             cat(paste("Dimension:", comp, "\n"))
-            print(Reduce(rbind, lapply(1:length(x$rgcca$call$blocks), 
+            print(Reduce(rbind, lapply(1:length(x$rgcca$blocks), 
                                        function(block) {
                 b = get_bootstrap(b = x, block = block, comp = comp, 
                                   bars = bars, display_order = FALSE, 
@@ -42,7 +42,7 @@ print.bootstrap = function(x, bars = "quantile",
     {
         for (comp in 1:ncompmax) {
             cat(paste("Dimension:", comp, "\n"))
-            print(Reduce(rbind, lapply(1:(length(x$rgcca$call$blocks)-1), 
+            print(Reduce(rbind, lapply(1:(length(x$rgcca$blocks)-1), 
                                        function(block) {
                 b = get_bootstrap(b = x, block = block, comp = comp, 
                                   bars = bars, display_order = FALSE, 

@@ -29,8 +29,8 @@
 #' a[[4]] = setMatrix(15, 2, 1)[[1]]
 #' AVE_X = lapply(seq(4), function(x) runif(2))
 #' rgcca_out = list(Y = coord, a = a, AVE = list(AVE_X = AVE_X), 
-#'                  call = list(blocks = blocks))
-#' names(rgcca_out$a) <- LETTERS[seq(4)] -> names(rgcca_out$call$blocks)
+#' blocks = blocks)
+#' names(rgcca_out$a) <- LETTERS[seq(4)] -> names(rgcca_out$blocks)
 #' rgcca_out$call$type="rgcca"
 #' # Using a superblock
 #' rgcca_out$call$superblock = TRUE
@@ -90,7 +90,7 @@ plot_var_2D <- function(
         rgcca_res$call$superblock <- FALSE
 
     # PCA case: remove the superblock in legend
-    if (identical(rgcca_res$call$blocks[[1]], rgcca_res$call$blocks[[2]]))
+    if (identical(rgcca_res$blocks[[1]], rgcca_res$blocks[[2]]))
         rgcca_res$call$superblock <- FALSE
 
     check_ncol(rgcca_res$a, i_block)

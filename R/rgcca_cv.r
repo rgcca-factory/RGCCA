@@ -274,8 +274,7 @@ rgcca_cv=function( blocks,
               scale_block=scale_block,
               tol=tol,
               scheme=scheme,
-              method=method,
-              blocks=blocks
+              method=method
     )
     par2=par_type[[2]]
 
@@ -283,7 +282,7 @@ rgcca_cv=function( blocks,
   
     colnames(par2)=names(blocks)
     
-    res2=list(cv=mat_cval,call=call,bestpenalties=par_type[[2]][which.min(apply(mat_cval,1,mean)),],penalties=par2)
+    res2=list(blocks=blocks,cv=mat_cval,call=call,bestpenalties=par_type[[2]][which.min(apply(mat_cval,1,mean)),],penalties=par2)
     class(res2)="cval"
     return(res2)
     

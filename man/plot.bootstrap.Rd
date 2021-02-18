@@ -6,7 +6,7 @@
 \usage{
 \method{plot}{bootstrap}(
   x,
-  block = length(x$rgcca$call$blocks),
+  block = length(x$rgcca$blocks),
   comp = 1,
   n_mark = 30,
   bars = "quantile",

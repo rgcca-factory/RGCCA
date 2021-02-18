@@ -305,8 +305,8 @@ post_check_arg <- function(opt, rgcca) {
     for (x in c("block", "block_y")) {
         if (!is.null(opt[[x]])) {
             if (opt[[x]] == 0)
-                opt[[x]] <- length(rgcca$call$blocks)
-            opt[[x]] <- RGCCA:::check_blockx(x, opt[[x]], rgcca$call$blocks)
+                opt[[x]] <- length(rgcca$blocks)
+            opt[[x]] <- RGCCA:::check_blockx(x, opt[[x]], rgcca$blocks)
         }
     }
 

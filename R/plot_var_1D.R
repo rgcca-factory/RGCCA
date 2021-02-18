@@ -18,7 +18,7 @@
 #' weights[[4]] = Reduce(rbind, weights)
 #' rgcca_out = list(a = weights, call = list(type="rgcca", ncomp = rep(2,4)))
 #' names(rgcca_out$a) = LETTERS[seq(4)]
-#' rgcca_out$call$blocks = lapply(rgcca_out$a, t)
+#' rgcca_out$blocks = lapply(rgcca_out$a, t)
 #' rgcca_out$call$superblock = TRUE
 #' class(rgcca_out) = "rgcca"
 #' # With the 1rst component of the superblock
