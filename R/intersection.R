@@ -16,56 +16,18 @@
 #X3[3,1:2]=NA
 #intersection_list(A=list(X1,X2,X3))
 # @export intersection_list
-intersection_list=function(A)
-{
-	A=lapply(A,as.matrix)
-    centering=lapply(A,function(x){attributes(x)$'scaled:center'})
-    scaling=lapply(A,function(x){attributes(x)$'scaled:scale'})
-    
-#	lapply(A,function(x){if(is.null(rownames(x))){print("one matrix has no colnames")}})
-	newList=lapply(A,
-		function(x) 
-		{
-		  if(is.null(rownames(x)))
-		  {
-		    warnings("No rownames in matrix, they were initialized as S1,...Sn \n");
-		    rownames(x)=paste0("S",1:dim(x)[1])
-		  }
-			vecNA=apply(x,1,sum);
-			if(dim(x)[1]>1)
-			{return(x[which(!is.na(vecNA)),,drop=FALSE])}
-			else
-			{
-				y=x[which(!is.na(x)),,drop=FALSE];
-				rownames(y)=rownames(x)[which(!is.na(x),)];
-		
-				return(y)
-			}
-		}
-		)
-	final = Reduce(intersect, lapply(newList, function(x) {
-	    if (!is.null(dim(x))) {
-	        return(rownames(x))
-	    } else{
-	        return(names(x))
-	    }
-	}))
-	if(length(final)>3)
-	{
-  	interlist=lapply(newList,function(x){if(!is.null(dim(x))){x[final,,drop=FALSE]}else{x[final,,drop=FALSE]}})
-	}
-	else
-	{print("less than 3 subjects in the intersection_list");interlist=NA}
-    for (i in 1:length(interlist))
-    {
-        if(!is.null(centering[[i]]))
-        {
-            attr(interlist[[i]],"scaled:center")=centering[[i]]
-        }
-        if(!is.null(scaling[[i]]))
-        {
-            attr(interlist[[i]],"scaled:scale")=scaling[[i]]
-        }
-    }
-	return(interlist)
+
+intersection_list=function(A) {
+  # Find rows without missing values in each block
+  valid_rows        = lapply(A, function(x) rowSums(is.na(x)) == 0)
+  # Take the intersection
+  common_valid_rows = apply(
+    matrix(unlist(valid_rows), length(valid_rows[[1]]), length(valid_rows))
+    , 1, prod)
+  if (sum(common_valid_rows) <= 3) {
+    stop_rgcca("Less than 3 subjects have no missing values, choose another
+               missing value handling method or work on your dataset.")
+  }
+  # Extract the rows from the different blocks
+  lapply(A, function(x) apply(x, -1, "[", as.logical(common_valid_rows)))
 }
