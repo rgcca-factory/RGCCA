@@ -42,7 +42,7 @@
 #' @return \item{factors}{A list of \eqn{J} elements. If bloc \eqn{j} is a
 #' tensor of order \eqn{d}, element \eqn{j} of \eqn{factors} is a list with
 #' \eqn{d} elements and each element is a matrix that contains the outer weight
-#' vectors for each block.
+#' vectors for each block.}
 #' @return \item{crit}{A vector of integer that contains for each component the
 #' values of the analysis criteria across iterations.}
 #' @return \item{AVE}{A list of numerical values giving the indicators of model
@@ -83,15 +83,6 @@ mgcca <- function(A, C = 1-diag(length(A)), tau = rep(1, length(A)),
   pjs    <- sapply(DIM, function(x) prod(x[-1]))
   nb_ind <- DIM[[1]][1]
 
-  # Matricization (mode-1)
-  A_m = lapply(1:J, function(x) {
-    m = matrix(as.vector(A[[x]]), nrow = nb_ind)
-    rownames(m) = rownames(A[[x]])
-    grid        = do.call(expand.grid, dimnames(A[[x]])[-1])
-    colnames(m) = do.call(paste, c(grid, sep = " x "))
-    return(m)
-  })
-
   if ( any(ncomp < 1) ) stop_rgcca("One must compute at least one component per
                                    block!")
   if (any(ncomp-pjs > 0)) stop_rgcca("For each block, choose a number of
@@ -123,6 +114,15 @@ mgcca <- function(A, C = 1-diag(length(A)), tau = rep(1, length(A)),
   #-------------------------------------------------------
   if(!prescaling)
     A=scaling(A, scale = scale, bias = bias, scale_block = scale_block)
+  
+  # Matricization (mode-1)
+  A_m = lapply(1:J, function(x) {
+    m = matrix(as.vector(A[[x]]), nrow = nb_ind)
+    rownames(m) = rownames(A[[x]])
+    grid        = do.call(expand.grid, dimnames(A[[x]])[-1])
+    colnames(m) = do.call(paste, c(grid, sep = " x "))
+    return(m)
+  })
 
   ######################
   ### Initialization ###
