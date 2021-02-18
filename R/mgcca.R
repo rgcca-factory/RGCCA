@@ -245,7 +245,7 @@ mgcca <- function(A, C = 1-diag(length(A)), tau = rep(1, length(A)),
 
   # Remove unused components
   for (d in B_nD) {
-    factors[[d]] = shave.matlist(factors[[d]], ncomp * ranks[d])
+    factors[[d]] = shave.matlist(factors[[d]], ncomp[d] * ranks[d])
   }
 
   # AVE
