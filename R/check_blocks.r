@@ -187,7 +187,7 @@ check_blocks <- function(blocks, init = FALSE, n = 2,
                   colnames(y) = colnames(blocks[[name]])
                   }
                 rownames(y) = union_rows
-                y[rownames(blocks[[name]]), ] = blocks[[name]]
+                y[rownames(blocks[[name]]), ] = unlist(blocks[[name]])
                 return(y)
             }
             else
