@@ -119,8 +119,10 @@ mgcca <- function(A, C = 1-diag(length(A)), tau = rep(1, length(A)),
   A_m = lapply(1:J, function(x) {
     m = matrix(as.vector(A[[x]]), nrow = nb_ind)
     rownames(m) = rownames(A[[x]])
-    grid        = do.call(expand.grid, dimnames(A[[x]])[-1])
-    colnames(m) = do.call(paste, c(grid, sep = " x "))
+    if (!is.null(dimnames(A[[x]]))) {
+      grid        = do.call(expand.grid, dimnames(A[[x]])[-1])
+      colnames(m) = do.call(paste, c(grid, sep = " x "))
+    }
     return(m)
   })
 

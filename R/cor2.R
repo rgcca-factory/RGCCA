@@ -13,7 +13,7 @@ cor2 = function (x, y = NULL, forward_names = TRUE, ...)
   if (length(dim(x)) > 2) {
     dimnames = dimnames(x)[-1]
     x        = matrix(as.vector(x), nrow = NROW(x))
-    if (forward_names) {
+    if (forward_names && !is.null(dimnames)) {
       grid        = do.call(expand.grid, dimnames)
       colnames(x) = do.call(paste, c(grid, sep = " x "))
     }
@@ -30,7 +30,7 @@ cor2 = function (x, y = NULL, forward_names = TRUE, ...)
   if (length(dim(y)) > 2) {
     dimnames = dimnames(y)[-1]
     y        = matrix(as.vector(y), nrow = NROW(y))
-    if (forward_names) {
+    if (forward_names && !is.null(dimnames)) {
       grid        = do.call(expand.grid, dimnames)
       colnames(y) = do.call(paste, c(grid, sep = " x "))
     }
