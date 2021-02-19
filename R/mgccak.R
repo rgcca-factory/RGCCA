@@ -2,8 +2,11 @@ mgccak <- function (A, A_m = NULL, C, tau = rep(1, length(A)), scheme = "centroi
                     verbose = FALSE, init="svd", bias = TRUE, tol = 1e-8,
                     regularisation_matrices, ranks= rep(1, length(A))) {
   
+  list_khatri_rao <- function(factors) {
+    Reduce("khatri_rao", rev(factors))
+  }
   kron_sum <- function(factors) {
-    apply(Reduce("krprod", rev(factors)), 1, sum)
+    apply(list_khatri_rao(factors), 1, sum)
   }
   
   weighted_factor <- function(u, d, rank) {
@@ -148,7 +151,7 @@ mgccak <- function (A, A_m = NULL, C, tau = rep(1, length(A)), scheme = "centroi
         col_idx           = 1:(LEN[[j]] - 1)
         Q                 = array(t(P[[j]]) %*% Z[, j], dim = DIM[[j]][-1])
         Q                 = unfold(Q, mode = 1)
-        other_factors     = kron_sum(factors[[j]][-1])
+        other_factors     = list_khatri_rao(factors[[j]][-1])
         if (ranks[j] == 1) { # No need for tandem
           SVD               = svd(x = Q %*% other_factors, nu = ranks[j],
                                   nv = ranks[j])
@@ -175,7 +178,7 @@ mgccak <- function (A, A_m = NULL, C, tau = rep(1, length(A)), scheme = "centroi
 
           Q                 = array(t(P[[j]]) %*% Z[, j], dim = DIM[[j]][-1])
           Q                 = unfold(Q, mode = d)
-          other_factors     = kron_sum(factors[[j]][-d])
+          other_factors     = list_khatri_rao(factors[[j]][-d])
           SVD               = svd(x = Q %*% other_factors, nu = ranks[j],
                                   nv = ranks[j])
           factors[[j]][[d]] = SVD$u %*% t(SVD$v)
