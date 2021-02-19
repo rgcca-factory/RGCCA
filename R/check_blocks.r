@@ -73,7 +73,7 @@ check_blocks <- function(blocks, init = FALSE, n = 2,
     names(blocks)=nameBlocks
     
     # Dealing with other dimnames
-    if (any(sapply(blocks, function(x) c(sapply(dimnames(x), is.null))))) {
+    if (any(unlist(sapply(blocks, function(x) sapply(dimnames(x), is.null))))) {
       if (allow_unnames) {
         message("Some dimnames are missing and automatically labeled as 
               block1_1_1, ..., block1_2_Im1, ..., blockJ_mJ_ImJ \n")
