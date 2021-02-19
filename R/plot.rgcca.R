@@ -255,14 +255,20 @@ plot.rgcca=function(x, type = "weight", block = length(x$blocks), comp = 1:2,
       if (length(DIM) != 3) 
         stop_rgcca("Type \"weight_matrix\" is only available for 3D blocks")
       if(is.null(title)){
-        title= paste0("Variable matrix weights: ",
-                      names(x$blocks)[i_block], "\n", print_comp(x, compx)) 
+        title= paste0("Variable matrix weights: ", names(x$blocks)[i_block]) 
       }
-      m = matrix(x$a[[i_block]][, comp], DIM[2], DIM[3])
-      rownames(m) = dimnames(x$blocks[[i_block]])[[2]]
-      colnames(m) = dimnames(x$blocks[[i_block]])[[3]]
-      pheatmap:::pheatmap(m, cluster_cols = F, cluster_rows = F, 
-                          show_rownames = T, show_colnames = T, main = title)
+      df = expand.grid(
+        dimnames(x$blocks[[i_block]])[[2]],
+        dimnames(x$blocks[[i_block]])[[3]]
+      )
+      df$weights = x$a[[i_block]][, compx]
+      ggplot(df, aes(df[, 1], df[, 2])) + 
+        geom_tile(aes(fill = weights), color = "white") +
+        labs(title = title, x = "", y= "", subtitle = print_comp(x, compx)) +
+        #Creating color range
+        scale_fill_gradientn(colors=c("skyblue", "yellow", "tomato"), guide="colorbar") +
+        #Rotating labels
+        theme(axis.text.x = element_text(angle = 270, hjust = 0,vjust=-0.05))
     }
 
     #invisible(p5)
