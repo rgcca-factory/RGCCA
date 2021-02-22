@@ -12,7 +12,7 @@ mgccak <- function (A, A_m = NULL, C, tau = rep(1, length(A)), scheme = "centroi
   weighted_factor <- function(u, d, rank) {
     if (rank == 1) 
       return(u)
-    return(u %*% diag(d[1:rank])) / sqrt(sum(d[1:rank] ^ 2))
+    return((u %*% diag(d[1:rank])) / sqrt(sum(d[1:rank] ^ 2)))
   }
 
   call = list(A = A, A_m = A_m, C = C, scheme = scheme, verbose = verbose, init = init,
@@ -89,14 +89,15 @@ mgccak <- function (A, A_m = NULL, C, tau = rep(1, length(A)), scheme = "centroi
       }
     } else if (init=="random") {
       # Random Initialisation of a_j
-      A_random <- array(rnorm(n = pjs[j], mean = 0, sd = 1), dim = DIM[[j]])
+      A_random <- array(rnorm(n = prod(DIM[[j]]), mean = 0, sd = 1), dim = DIM[[j]])
+      A_random <- scale_array(A_random)
       if (j %in% B_2D) {
         a[[j]] <- initsvd(A_random)
       } else {
         SVD               <- svd(apply(A_random, 2, c), nu=0, nv=ranks[[j]])
         factors[[j]][[1]] <- weighted_factor(SVD$v, SVD$d, ranks[j])
         for (d in 2:(LEN[[j]] - 1)) {
-          factors[[j]][[d]] <- svd(apply(A[[j]], d+1, c), nu=0, nv=ranks[[j]])$v
+          factors[[j]][[d]] <- svd(apply(A_random, d+1, c), nu=0, nv=ranks[[j]])$v
         }
         a[[j]] <- kron_sum(factors[[j]])
       }
@@ -107,10 +108,15 @@ mgccak <- function (A, A_m = NULL, C, tau = rep(1, length(A)), scheme = "centroi
   # Initialization of vector Y
   for (j in 1:J) Y[, j] <- (n^(-1/2)) * A_m[[j]] %*% a[[j]]
 
-  # Determination of the M regularization matrix
+  # Determination of the regularization matrix
   for (j in 1:J){
+    if (j > length(regularisation_matrices)) {
+      reg_matrices = NULL
+    } else {
+      reg_matrices = regularisation_matrices[[j]]
+    }
     reg_matrices = parse_regularisation_matrices(
-      reg_matrices = regularisation_matrices[[j]],
+      reg_matrices = reg_matrices,
       tau          = tau[j],
       A            = A[[j]],
       DIM          = DIM[[j]],
@@ -221,7 +227,7 @@ mgccak <- function (A, A_m = NULL, C, tau = rep(1, length(A)), scheme = "centroi
   # Inverse change of variables if needed
   if (length(M_inv_sqrt) > 0)  { # If no regularization matrix, list is empty
     for (j in 1:J) {
-      if (!is.null(M_inv_sqrt[[j]])) {
+      if (j <= length(M_inv_sqrt) && !is.null(M_inv_sqrt[[j]])) {
         if (j %in% B_2D) {
           a[[j]] = M_inv_sqrt[[j]] %*% a[[j]]
         } else {
