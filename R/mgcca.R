@@ -262,7 +262,8 @@ mgcca <- function(A, C = 1-diag(length(A)), tau = rep(1, length(A)),
              factors = factors,
              astar   = shave.matlist(astar, ncomp),
              crit    = crit,
-             AVE     = AVE)
+             AVE     = AVE,
+             tau     = tau_mat)
 
   class(out) = "mgcca"
   return(out)

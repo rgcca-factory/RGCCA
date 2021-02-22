@@ -61,7 +61,7 @@ mgccak <- function (A, A_m = NULL, C, tau = rep(1, length(A)), scheme = "centroi
     A_m = lapply(1:J, function(x) matrix(as.vector(A[[x]]), nrow = n))
   }
 
-  a <- factors <- M_inv <- P <- list()
+  a <- factors <- M_inv_sqrt <- P <- list()
   for (j in 1:J) {
     factors[[j]] <- list()
   }
@@ -116,9 +116,9 @@ mgccak <- function (A, A_m = NULL, C, tau = rep(1, length(A)), scheme = "centroi
       DIM          = DIM[[j]],
       bias         = bias
     )
-    P[[j]]     = reg_matrices$P
-    M_inv[[j]] = reg_matrices$M_inv
-    tau[j]     = reg_matrices$tau
+    P[[j]]          = reg_matrices$P
+    M_inv_sqrt[[j]] = reg_matrices$M_inv_sqrt
+    tau[j]          = reg_matrices$tau
   }
 
   # Initialize other parameters
@@ -219,14 +219,14 @@ mgccak <- function (A, A_m = NULL, C, tau = rep(1, length(A)), scheme = "centroi
   }
 
   # Inverse change of variables if needed
-  if (length(M_inv) > 0)  { # If no regularization matrix, list is empty
+  if (length(M_inv_sqrt) > 0)  { # If no regularization matrix, list is empty
     for (j in 1:J) {
-      if (!is.null(M_inv[[j]])) {
+      if (!is.null(M_inv_sqrt[[j]])) {
         if (j %in% B_2D) {
-          a[[j]] = M_inv[[j]]$Minv_sqrt %*% a[[j]]
+          a[[j]] = M_inv_sqrt[[j]] %*% a[[j]]
         } else {
           for (d in 1:(LEN[[j]] - 1)) {
-            factors[[j]][[d]] = M_inv[[j]][[d]]$Minv_sqrt %*% factors[[j]][[d]]
+            factors[[j]][[d]] = M_inv_sqrt[[j]][[d]] %*% factors[[j]][[d]]
           }
           a[[j]] = kron_sum(factors[[j]])
         }

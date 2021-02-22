@@ -53,7 +53,7 @@ mgccaNa=function(blocks, method, connection = 1 - diag(length(blocks)),
 	                  data for MGCCA") }
 
   fit = mgcca(A, C = connection, tau = tau, ncomp = ncomp,
-              verbose = verbose, scale = scale,
+              verbose = verbose, scale = scale, init = init, bias = bias,
               scale_block = scale_block, scheme = scheme,
               tol = tol, prescaling = prescaling, quiet = quiet,
               regularisation_matrices = regularisation_matrices, 
