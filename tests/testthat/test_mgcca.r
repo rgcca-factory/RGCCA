@@ -95,8 +95,9 @@ test_that("test_same_crit", {
 })
 
 # MGCCA should run without errors with random initialization
-fit.mgcca = rgcca(A, C, ncomp=rep(3, 3, 3), init = "random", tau = c(1, 1, 1),
-                  scheme = "factorial", scale = TRUE, verbose=FALSE,
+fit.mgcca = rgcca(blocks = A, connection = C, ncomp=rep(3, 3, 3), 
+                  init = "random", tau = c(1, 1, 1), scheme = "factorial", 
+                  scale = TRUE, verbose=FALSE, type = "mgcca", 
                   ranks = c(3, 1, 2))
 
 # MGCCA should run without errors with well formatted regularization matrices
@@ -105,32 +106,37 @@ regularisation_matrices = list(
     diag(20), diag(30)
   ), NULL, NULL
 )
-fit.mgcca = rgcca(A, C, ncomp=rep(3, 3, 3), init = "random", tau = c(1, 1, 1),
-                  scheme = "factorial", scale = TRUE, verbose=FALSE,
-                  ranks = c(3, 1, 2), 
+fit.mgcca = rgcca(blocks = A, connection = C, ncomp=rep(3, 3, 3), 
+                  init = "random", tau = c(1, 1, 1), scheme = "factorial", 
+                  scale = TRUE, verbose=FALSE, type = "mgcca", 
+                  ranks = c(3, 1, 2),
                   regularisation_matrices = regularisation_matrices)
 
 # MGCCA should throw errors when regularization matrices are not well formatted
 test_that("test_reg_not_list", {
-  expect_error(rgcca(A, C, regularisation_matrices = diag(20)), 
+  expect_error(rgcca(blocks = A, connection = C, 
+                     regularisation_matrices = diag(20)), 
                "regularisation_matrices must be NULL or a list of list of matrices", 
                fixed=TRUE)
 })
 test_that("test_reg_not_list_of_lists", {
-  expect_error(rgcca(A, C, regularisation_matrices = list(diag(20))), 
+  expect_error(rgcca(blocks = A, connection = C, 
+                     regularisation_matrices = list(diag(20))), 
                "regularisation_matrices[[1]] must be NULL 
         or a list of matrices", 
                fixed=TRUE)
 })
 test_that("test_reg_not_square_matrices", {
-  expect_error(rgcca(A, C, regularisation_matrices = list(list(
+  expect_error(rgcca(blocks = A, connection = C, 
+                     regularisation_matrices = list(list(
     matrix(1, 10, 20)
   ))), 
   "regularisation_matrices matrices must be square matrices", 
   fixed=TRUE)
 })
 test_that("test_reg_not_enough_matrices", {
-  expect_error(rgcca(A, C, regularisation_matrices = list(list(
+  expect_error(rgcca(blocks = A, connection = C, 
+                     regularisation_matrices = list(list(
     matrix(1, 20, 20)
   ))), 
   "There should be as many regularisation_matrices 
@@ -139,11 +145,23 @@ test_that("test_reg_not_enough_matrices", {
   fixed=TRUE)
 })
 test_that("test_reg_not_matching_dims", {
-  expect_error(rgcca(A, C, regularisation_matrices = list(list(
+  expect_error(rgcca(blocks = A, connection = C, 
+                     regularisation_matrices = list(list(
     matrix(1, 20, 20), matrix(-1, 10, 10)
   ))), 
   "regularisation_matrices matrices should match the 
                           mode dimensions. Mismatch found for block 1.", 
+  fixed=TRUE)
+})
+
+# MGCCA should throw an understandable error if a regularization matrix 
+# is singular
+test_that("test_reg_not_invertible", {
+  expect_error(rgcca(blocks = A, connection = C, 
+                     regularisation_matrices = list(list(
+    matrix(0, 20, 20), diag(30)
+  ))), 
+  "Mode 1 regularization matrix for block 1 is singular, please give an invertible matrix.", 
   fixed=TRUE)
 })
 

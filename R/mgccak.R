@@ -120,6 +120,7 @@ mgccak <- function (A, A_m = NULL, C, tau = rep(1, length(A)), scheme = "centroi
       tau          = tau[j],
       A            = A[[j]],
       DIM          = DIM[[j]],
+      j            = j,
       bias         = bias
     )
     P[[j]]          = reg_matrices$P

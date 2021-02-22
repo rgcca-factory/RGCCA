@@ -286,13 +286,17 @@ check_reg_matrices <- function(regularisation_matrices, blocks) {
     "regularisation_matrices must be NULL or a list of list of matrices")
   for (j in 1:length(blocks)) {
     DIM = dim(blocks[[j]])
-    if (!is.null(regularisation_matrices[[j]]) && length(DIM) < 3) {
+    if (j <= length(regularisation_matrices) 
+        && !is.null(regularisation_matrices[[j]]) 
+        && length(DIM) < 3
+    ) {
       message(paste0("Regularization matrices are not available for matrix 
                      blocks so regularisation_matrices[[", j, "]] has been set
                      to NULL."))
       regularisation_matrices[[j]] = NULL
     }
-    if (!is.null(regularisation_matrices[[j]])) {
+    if (j <= length(regularisation_matrices) 
+        && !is.null(regularisation_matrices[[j]])) {
       if (!is.list(regularisation_matrices[[j]])) stop_rgcca(paste0(
         "regularisation_matrices[[", j, "]] must be NULL 
         or a list of matrices"))
