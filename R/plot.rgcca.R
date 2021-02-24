@@ -264,7 +264,7 @@ plot.rgcca=function(x, type = "weight", block = length(x$blocks), comp = 1:2,
       df$weights = x$a[[i_block]][, compx]
       ggplot(df, aes(df[, 1], df[, 2])) + 
         geom_tile(aes(fill = weights), color = "white") +
-        labs(title = title, x = "", y= "", subtitle = print_comp(x, compx)) +
+        labs(title = title, x = "", y= "", subtitle = print_comp(x, compx, i_block)) +
         #Creating color range
         scale_fill_gradientn(colors=c("skyblue", "yellow", "tomato"), guide="colorbar") +
         #Rotating labels
