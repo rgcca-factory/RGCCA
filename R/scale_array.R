@@ -24,11 +24,12 @@ scale_array <- function (A, center = TRUE, scale = TRUE, bias = TRUE)
         sprintf("there were %d constant variables", sum(ms == 0))
         ms[ms == 0] = 1
       }
-      B   = B / matrix(rep(ms, NCOL(B)), NROW(B), NCOL(B), byrow = F)
+      B   = apply(B, -1, function(x) x / ms)
     }
 
     B   = scale(B, center = center, scale = FALSE)
     A   = array(as.vector(B), dim(A), dimnames = dimnames(A))
+    attr(A, "scaled:center") = attr(B, "scaled:center")
     if (scale == TRUE) {
       attr(A, "scaled:scale") = ms
     }
