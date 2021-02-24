@@ -78,7 +78,7 @@ mgccak <- function (A, A_m = NULL, C, tau = rep(1, length(A)), scheme = "centroi
     } else if (init=="svd") {
       # SVD Initialization of a_j
       if (j %in% B_2D) {
-        a[[j]] <- initsvd(A[[j]])
+        a[[j]] <- initsvd(A[[j]], dual = FALSE)
       } else {
         SVD               <- svd(apply(A[[j]], 2, c), nu=0, nv=ranks[[j]])
         factors[[j]][[1]] <- weighted_factor(SVD$v, SVD$d, ranks[j])
@@ -89,15 +89,14 @@ mgccak <- function (A, A_m = NULL, C, tau = rep(1, length(A)), scheme = "centroi
       }
     } else if (init=="random") {
       # Random Initialisation of a_j
-      A_random <- array(rnorm(n = prod(DIM[[j]]), mean = 0, sd = 1), dim = DIM[[j]])
-      A_random <- scale_array(A_random)
+      A_random <- array(rnorm(n = pjs[[j]], mean = 0, sd = 1), dim = DIM[[j]][-1])
       if (j %in% B_2D) {
-        a[[j]] <- initsvd(A_random)
+        a[[j]] <- matrix(A_random / sqrt(drop(crossprod(A_random))))
       } else {
-        SVD               <- svd(apply(A_random, 2, c), nu=0, nv=ranks[[j]])
+        SVD               <- svd(apply(A_random, 1, c), nu=0, nv=ranks[[j]])
         factors[[j]][[1]] <- weighted_factor(SVD$v, SVD$d, ranks[j])
         for (d in 2:(LEN[[j]] - 1)) {
-          factors[[j]][[d]] <- svd(apply(A_random, d+1, c), nu=0, nv=ranks[[j]])$v
+          factors[[j]][[d]] <- svd(apply(A_random, d, c), nu=0, nv=ranks[[j]])$v
         }
         a[[j]] <- kron_sum(factors[[j]])
       }
