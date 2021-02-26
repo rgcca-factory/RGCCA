@@ -104,11 +104,11 @@ rgccaNa=function (blocks,method, connection = 1 - diag(length(A)), tau = rep(1, 
 #   }   
 # #
 # #	if(method=="rgccaPca"){	  A2= imputeSuperblock(A,method="em",opt="rgcca",ncp=ncp,scaleBlock=scaleBlock)}
-# 	if(method=="mfa")	
-# 	{	 
-# 	  imputedSuperblock=imputeMFA(X=do.call(cbind,A), group=nvar, ncp = 1, type=rep("s",length(nvar)), method = "em")$completeObs
-# 	  A2=superblockAsList(imputedSuperblock, A)
-# 	}
+ 	if(method=="mfa")	
+ 	{	 
+ 	  imputedSuperblock=imputeMFA(X=do.call(cbind,A), group=nvar, ncp = 1, type=rep("s",length(nvar)), method = "em",maxiter=100,threshold=tol)$completeObs
+ 	  A2=superblockAsList(imputedSuperblock, A)
+ 	}
 
  	if(method=="iterativeSB")	{	  A2=imputeSB(A=A,ncomp=ncomp,scale=scale,scale_block=scale_block,tau=tau,tol=tol,ni=ni)$A	}
     if(method=="em")	{	  A2=imputeEM(A=A,ncomp=ncomp,scale=scale,scale_block=scale_block,tau=tau,naxis=1,ni=ni,C=C,tol=tol,verbose=verbose,reg="y",quiet=quiet)$A	}

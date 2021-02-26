@@ -40,7 +40,7 @@ naEvolution=function(blocks,prctNA=c(0.1,0.2,0.3),listMethods=c("mean"),typeNA="
     for(prct in prctNA)
     {
        if(verbose)
-            print(paste("pourcent=",prct))
+            print(paste("prct=",prct))
         
         resultComparison[[as.character(prct)]]=list()
         resultComparison[[as.character(prct)]]=whichNAmethod(blocks=blocks,connection=connection,tau=tau,listMethods=listMethods,patternNA=rep(prct,length(blocks)),typeNA=typeNA,ncomp=ncomp,scale_block=scale_block,scale=scale,nDatasets=nDatasets,tol=tol,verbose=verbose,scheme=scheme,seed=seed+i)
