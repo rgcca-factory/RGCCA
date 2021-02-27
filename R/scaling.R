@@ -1,3 +1,4 @@
+# TODO: check it works for tensors if scale = FALSE
 scaling <- function(blocks, scale = TRUE, bias = TRUE, scale_block = TRUE) {
     if(scale){
         # Standardization of the variables of each block
@@ -7,12 +8,18 @@ scaling <- function(blocks, scale = TRUE, bias = TRUE, scale_block = TRUE) {
 
         # Each block is divided by the square root of its number of variables
         if(scale_block){
-           blocks <- lapply(blocks,
-                            function(x) {y <- x / sqrt(NCOL(x))
-                             attr(y, "scaled:scale") <-
-                                 attr(x, "scaled:scale")* sqrt(NCOL(x))
-            return(y)
-            })
+            blocks <- lapply(blocks, function(x) {
+                if (length(dim(x)) > 2) {
+                    nb_var <- prod(dim(x)[-1])
+                    y <- x / sqrt(nb_var)
+                    attr(y, "scaled:scale")  <- attr(x, "scaled:scale") * sqrt(nb_var)
+                    attr(y, "scaled:center") <- attr(x, "scaled:center") / sqrt(nb_var)
+                    return(y)
+                }
+                y <- x / sqrt(NCOL(x))
+                attr(y, "scaled:scale") <- attr(x, "scaled:scale")* sqrt(NCOL(x))
+                return(y)
+        })
 
         }
     } else{
@@ -42,4 +49,21 @@ scaling <- function(blocks, scale = TRUE, bias = TRUE, scale_block = TRUE) {
 
     }
     return(blocks)
+}
+
+# Function to apply scaling/centering to new blocks knowing centering and 
+# scaling factors.
+apply_scaling <- function(blocks, centering_factors, scaling_factors) {
+    lapply(1:length(blocks), function(x) {
+        if (length(dim(blocks[[x]])) > 2) {
+            block = t(apply(blocks[[x]], 1, function(y) y - centering_factors[[x]]))
+            block = apply(block, 2, function(y) y / scaling_factors[[x]])
+            return(array(block, dim = dim(blocks[[x]])))
+        }
+        if (length(dim(blocks)) == 2) {
+            block = t(apply(blocks[[x]], 1, function(y) y / scaling_factors[[x]]))
+            return(t(apply(block, 1, function(y) y - centering_factors[[x]])))
+        }
+        return(blocks[[x]] / scaling_factors[[x]] - centering_factors[[x]])
+    })
 }
