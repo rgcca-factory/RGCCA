@@ -1,18 +1,18 @@
-#' MGCCA extends RGCCA to address the issue of tensor structured data. 
-#' Specifically, RGCCA is combined with a Kronecker constraint that gives rise 
+#' MGCCA extends RGCCA to address the issue of tensor structured data.
+#' Specifically, RGCCA is combined with a Kronecker constraint that gives rise
 #' to Multiway GCCA (MGCCA) which is implemented in the function mgcca().
 #' Given \eqn{J} arrays \eqn{X_1, X_2, ..., X_J}, that represent
 #' \eqn{J} sets of variables observed on the same set of \eqn{n} individuals.
-#' The arrays \eqn{X_1, X_2, ..., X_J} must have the same dimension on the 
-#' first dimension, but may (and usually will) have different numbers of modes 
-#' and mode dimensions. Blocks are not necessarily fully connected within the 
-#' MGCCA framework. Hence MGCCA requires the construction (user specified) of a 
-#' design matrix (\eqn{C}) that characterizes the connections between blocks. 
-#' Elements of the symmetric design matrix \eqn{C = (c_{jk})} are equal to 1 if 
-#' block \eqn{j} and block \eqn{k} are connected, and 0 otherwise. The MGCCA 
-#' algorithm is very similar to the RGCCA algorithm and keeps the same monotone 
-#' convergence properties (i.e. the bounded criteria to be maximized increases 
-#' at each step of the iterative procedure and hits at convergence a stationary 
+#' The arrays \eqn{X_1, X_2, ..., X_J} must have the same dimension on the
+#' first dimension, but may (and usually will) have different numbers of modes
+#' and mode dimensions. Blocks are not necessarily fully connected within the
+#' MGCCA framework. Hence MGCCA requires the construction (user specified) of a
+#' design matrix (\eqn{C}) that characterizes the connections between blocks.
+#' Elements of the symmetric design matrix \eqn{C = (c_{jk})} are equal to 1 if
+#' block \eqn{j} and block \eqn{k} are connected, and 0 otherwise. The MGCCA
+#' algorithm is very similar to the RGCCA algorithm and keeps the same monotone
+#' convergence properties (i.e. the bounded criteria to be maximized increases
+#' at each step of the iterative procedure and hits at convergence a stationary
 #' point).
 #' Moreover, using a deflation strategy, mgcca() enables the computation of
 #' several MGCCA block components (specified by ncomp) for each block. Block
@@ -24,13 +24,13 @@
 #' @inheritParams select_analysis
 #' @inheritParams rgccaNa
 #' @inheritParams rgccad
-#' @param regularisation_matrices If not NULL, a list of \eqn{J} elements. Each 
-#' element of \eqn{regularisation_matrices} is either NULL or a list of 
-#' symmetric positive definite regularization matrices. There must be as many 
-#' matrices as modes on the corresponding block and their dimensions must match 
-#' the dimensions of the corresponding modes. A change of variable is done at 
+#' @param regularisation_matrices If not NULL, a list of \eqn{J} elements. Each
+#' element of \eqn{regularisation_matrices} is either NULL or a list of
+#' symmetric positive definite regularization matrices. There must be as many
+#' matrices as modes on the corresponding block and their dimensions must match
+#' the dimensions of the corresponding modes. A change of variable is done at
 #' the beginning and at the end of the MGCCA algorithm to apply regularization.
-#' @param ranks A vector of \eqn{J} elements that gives the number of terms in 
+#' @param ranks A vector of \eqn{J} elements that gives the number of terms in
 #' the Kronecker constraint (hence the rank of the estimated tensor) for each
 #' block.
 #' @return \item{Y}{A list of \eqn{J} elements. Each element of \eqn{Y} is a
@@ -54,10 +54,11 @@
 #'@export mgcca
 
 # TODO: add rank / comp as colnames for factors
-mgcca <- function(A, C = 1-diag(length(A)), tau = rep(1, length(A)), 
+# TODO: set rank to 1 for matrix blocks
+mgcca <- function(A, C = 1-diag(length(A)), tau = rep(1, length(A)),
                   ncomp = rep(1, length(A)), scheme = "centroid", scale = TRUE,
-                  init="svd", bias = TRUE, tol = 1e-8, verbose=FALSE, 
-                  scale_block = TRUE, regularisation_matrices = NULL, 
+                  init="svd", bias = TRUE, tol = 1e-8, verbose=FALSE,
+                  scale_block = TRUE, regularisation_matrices = NULL,
                   ranks = rep(1, length(A)), prescaling = FALSE, quiet = FALSE) {
 
   # Number of blocks
@@ -114,7 +115,7 @@ mgcca <- function(A, C = 1-diag(length(A)), tau = rep(1, length(A)),
   #-------------------------------------------------------
   if(!prescaling)
     A=scaling(A, scale = scale, bias = bias, scale_block = scale_block)
-  
+
   # Matricization (mode-1)
   A_m = lapply(1:J, function(x) {
     m = matrix(as.vector(A[[x]]), nrow = nb_ind)
@@ -138,8 +139,10 @@ mgcca <- function(A, C = 1-diag(length(A)), tau = rep(1, length(A)),
 
   AVE_X <- crit <- factors <- list()
   Y     <- P    <- a       <- astar <- NULL
+  b <- bstar <- NULL
 
   for (d in 1:J) P[[d]]  <- a[[d]] <- astar[[d]] <- matrix(NA,pjs[[d]],N+1)
+  for (d in 1:J) b[[d]]  <- bstar[[d]] <- matrix(NA,pjs[[d]], (N+1) * ranks[d])
 
   for (d in B_nD) {
     factors[[d]] = list()
@@ -184,7 +187,7 @@ mgcca <- function(A, C = 1-diag(length(A)), tau = rep(1, length(A)),
       regularisation_matrices = regularisation_matrices,
       ranks                   = ranks
     )
-    
+
     # Store tau, AVE_inner, crit
     if (!is.numeric(tau)) tau_mat[n, ] = mgcca.result$tau
     AVE_inner[n] = mgcca.result$AVE_inner
@@ -193,6 +196,14 @@ mgcca <- function(A, C = 1-diag(length(A)), tau = rep(1, length(A)),
     # Store Y, a, and factors
     for (d in 1:J) Y[[d]][,n] = mgcca.result$Y[ , d]
     for (d in 1:J) a[[d]][,n] = mgcca.result$a[[d]]
+    for (d in 1:J) {
+      if (d %in% B_nD) {
+        idx = seq((n - 1) * ranks[d] + 1, n * ranks[d])
+        b[[d]][, idx] = Reduce("khatri_rao", rev(mgcca.result$factors[[d]]))
+      } else {
+        b[[d]][,n] = mgcca.result$a[[d]]
+      }
+    }
     for (d in B_nD) {
       for (f in 1:(LEN[[d]] - 1)) {
         idx                      = seq((n - 1) * ranks[[d]] + 1, n * ranks[[d]])
@@ -212,9 +223,22 @@ mgcca <- function(A, C = 1-diag(length(A)), tau = rep(1, length(A)),
     for (d in 1:J){
       if (n == 1){
         astar[[d]][,n] = mgcca.result$a[[d]]
+        if (d %in% B_nD) {
+          idx = seq((n - 1) * ranks[d] + 1, n * ranks[d])
+          bstar[[d]][, idx] = Reduce("khatri_rao", rev(mgcca.result$factors[[d]]))
+        } else {
+          bstar[[d]][, n] = mgcca.result$a[[d]]
+        }
       }else{
-        astar[[d]][,n] = mgcca.result$a[[d]] - astar[[d]][,(1:n-1), drop=F] %*%
+        astar[[d]][,n] = mgcca.result$a[[d]] - astar[[d]][,1:(n-1), drop=F] %*%
           drop( t(a[[d]][,n]) %*% P[[d]][,1:(n-1),drop=F] )
+        if (d %in% B_nD) {
+          idx = seq((n - 1) * ranks[d] + 1, n * ranks[d])
+          bstar[[d]][, idx] = b[[d]][, idx] - astar[[d]][, 1:(n-1), drop=F] %*%
+            drop( t(P[[d]][,1:(n-1),drop=F]) %*% b[[d]][, idx] )
+        } else {
+          bstar[[d]][,n] = astar[[d]][,n]
+        }
       }
     }
   }
@@ -229,6 +253,7 @@ mgcca <- function(A, C = 1-diag(length(A)), tau = rep(1, length(A)),
   }
   for (d in 1:J){
     rownames(a[[d]]) = rownames(astar[[d]]) = colnames(A_m[[d]])
+    rownames(b[[d]]) = rownames(bstar[[d]]) = colnames(A_m[[d]])
     rownames(Y[[d]]) = rownames(A[[d]])
     colnames(Y[[d]]) = paste0("comp", 1:max(ncomp))
   }
@@ -251,7 +276,7 @@ mgcca <- function(A, C = 1-diag(length(A)), tau = rep(1, length(A)),
   }
 
   # AVE
-  AVE = list(AVE_X           = AVE_X,
+  AVE = list(AVE_X           = shave.veclist(AVE_X, ncomp),
              AVE_outer_model = AVE_outer,
              AVE_inner_model = AVE_inner)
 
@@ -263,7 +288,9 @@ mgcca <- function(A, C = 1-diag(length(A)), tau = rep(1, length(A)),
              astar   = shave.matlist(astar, ncomp),
              crit    = crit,
              AVE     = AVE,
-             tau     = tau_mat)
+             tau     = tau_mat,
+             b       = b,
+             bstar   = bstar)
 
   class(out) = "mgcca"
   return(out)

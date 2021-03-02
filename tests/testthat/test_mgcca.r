@@ -4,13 +4,9 @@
 set.seed(0)
 
 # Generating fake data
-generate_block <- function(dim) {
-  array(rnorm(prod(dim)), dim = dim)
-}
-X1 = generate_block(c(40, 20, 30))
-X2 = generate_block(c(40, 35))
-X3 = generate_block(c(40, 18, 25, 7))
-A  = list(X1, X2, X3);
+A = helper.generate_blocks(list(
+  c(40, 20, 30), c(40, 35), c(40, 18, 25, 7)
+))
 C  = matrix(1, nrow = 3, ncol = 3) - diag(3)
 
 # Run directly mgcca or through calling rgcca. Both should run without errors.
