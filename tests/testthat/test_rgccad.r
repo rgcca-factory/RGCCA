@@ -18,7 +18,7 @@ names(A)=c("agri","ind","demo")
 res = rgccad(A, C, ncomp=rep(2,3),tau = c(1, 0, 1), scheme = "factorial", scale = TRUE,verbose=FALSE)
 
 # testing pca
-res=rgccad(list(a1=A[[1]],b1=A[[1]]),C=matrix(c(0,1,1,0),2,2),tau=rep(1,2),ncomp=c(2,2))
+res=rgccad(list(a1=A[[1]],b1=A[[1]]),connection=matrix(c(0,1,1,0),2,2),tau=rep(1,2),ncomp=c(2,2))
 test_that("test_rgcca_ave1",{
 expect_true(round(res$AVE$AVE_X[[1]][1],digits=4)==0.7433)
 })
