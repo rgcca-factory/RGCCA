@@ -42,7 +42,15 @@
 #' 2005). Guidelines describing how to use RGCCA in practice are provided in
 #' (Garali et al., 2017).
 #' @inheritParams rgccad
+#' @inheritParams sgcca
 #' @inheritParams select_analysis
+#' @param method  Character string corresponding to the method used for
+#' handling missing values ("nipals", "complete"). (default: "nipals").
+#' \itemize{
+#' \item{\code{"complete"}}{corresponds to perform RGCCA on the fully observed
+#' observations (observations with missing values are removed)}
+#' \item{\code{"nipals"}}{corresponds to perform RGCCA algorithm on available
+#' data (NIPALS-type algorithm)}}
 #' @return A rgcca fitted object
 #' @return \item{Y}{List of \eqn{J} elements. Each element of the list \eqn{Y}
 #' is a matrix that contains the RGCCA block components for the corresponding

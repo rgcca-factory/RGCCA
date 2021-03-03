@@ -32,10 +32,35 @@
 #' (non-linear iterative partial least squares algorithm) as described in
 #' (Tenenhaus et al, 2005).
 #' @inheritParams select_analysis
-#' @param blocks  A list that contains the \eqn{J} blocks of variables. It could be
-#' either the original matrices (\eqn{X_1, X_2, ..., X_J}).
+#' @param blocks A list that contains the J blocks of variables X1, X2, ..., XJ.
+#' Block Xj is a matrix of dimension n x p_j where n is the number of
+#' observations and p_j the number of variables.
 #' @param connection  A symmetric matrix (J*J) that describes the relationships between
 #' blocks.
+#' @param tau Either a 1*J vector or a max(ncomp)*J matrix containing
+#' the values of the regularization parameters (default: tau = 1, for each
+#' block and each dimension). The regularization parameters varies from 0
+#' (maximizing the correlation) to 1 (maximizing the covariance). If
+#' tau = "optimal" the regularization paramaters are estimated for each block
+#' and each dimension using the Schafer and Strimmer (2005) analytical formula.
+#' If tau is a 1*J vector, tau[j] is identical across the dimensions
+#' of block Xj. If tau is a matrix, tau[k, j] is associated with
+#' X_jk (kth residual matrix for block j). The regularization parameters can
+#' also be estimated using \link{rgcca_permutation} or \link{rgcca_cv}.
+#' @param scale Logical value indicating if blocks are standardized.
+#' @param scale_block Logical value indicating if each block is divided by
+#' the square root of its number of variables.
+#' @param verbose Logical value indicating if the progress of the
+#' algorithm is reported while computing.
+#' @param quiet Logical value indicating if warning messages are reported.
+#' @param init Character string giving the type of initialization to use in
+#' the  algorithm. It could be either by Singular Value Decompostion ("svd")
+#' or by random initialisation ("random") (default: "svd").
+#' @param bias A logical value for biaised (\eqn{1/n}) or unbiaised
+#' (\eqn{1/(n-1)}) estimator of the var/cov (default: bias = TRUE).
+#' @param tol The stopping value for the convergence of the algorithm.
+#' @param prescaling Logical value indicating if the scaling has been done
+#' outside of the function.
 #' @param na.rm If TRUE, runs rgcca only on available data.
 #' @return \item{Y}{A list of \eqn{J} elements. Each element of the list is a
 #' matrix that contains the RGCCA block components for the corresponding block.}
