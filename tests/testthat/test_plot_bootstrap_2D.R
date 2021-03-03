@@ -10,7 +10,7 @@ plot(boot,type="2D")
 plot_bootstrap_2D(boot, )
 test_that("plot_boot_default", {
     expect_is(plot_bootstrap_2D(boot), "ggplot")
-})   
+})
 
 rgcca_out <- rgcca(blocks)
 boot <- bootstrap(rgcca_out, 2, n_cores = 1)
@@ -25,7 +25,7 @@ test_that("plot_boot_with_args", {
 
 rgcca_out <- rgcca(
     blocks,ncomp = c(2,2,2),
-    scheme = function(x) x^4, 
+    scheme = function(x) x^4,
     type = "sgcca",
     sparsity = c(.6, .75, .5)
 )

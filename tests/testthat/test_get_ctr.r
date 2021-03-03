@@ -13,8 +13,8 @@
  rgcca_out = rgcca(blocks[c(1,3)], ncomp = c(3,4))
  get_ctr(rgcca_out, compz = 3, i_block = 1, type = "cor", collapse = TRUE)
  get_ctr(rgcca_out, 2, 1, 3, 1, "weight", TRUE)
-#' 
-#' 
+#'
+#'
 data("Russett")
  blocks = list(agriculture = Russett[, seq(3)], industry = Russett[, 4:5],
      politic = Russett[, 6:11] )

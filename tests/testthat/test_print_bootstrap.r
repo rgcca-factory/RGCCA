@@ -15,7 +15,3 @@ res = rgcca(A, ncomp=rep(1,3),tau = c(1, 1, 1), scheme = "factorial", scale = TR
 boot=bootstrap(res,n_cores=1)
 print(boot,block=3)
 plot(boot)
-
-
-
-

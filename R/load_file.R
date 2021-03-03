@@ -17,7 +17,7 @@ load_file <- function(
         sheet <- paste0(sheet, collapse = " ")
 
     isXls <- length(grep("xlsx?", file))
-    
+
     if (!isXls)
         file <- file_text
 

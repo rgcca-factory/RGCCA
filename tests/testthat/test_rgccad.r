@@ -1,5 +1,5 @@
 # '# Test rgcca
-# 
+#
 # '''
 #setwd("~/Bureau/RGCCA/tests/testthat")
 load(file="../results/resultRgcca_Tau1");load(file="../results/resultRgcca_Tau0");load(file="../results/resultRgcca_TauOpt")
@@ -52,11 +52,11 @@ res=rgccad(A, C, ncomp=c(2,2,2),tau = rep("optimal",3), scheme = "factorial",ver
  X_ind = as.matrix(Russett[,c("gnpr","labo")])
  X_polit = as.matrix(Russett[ , c("demostab", "dictator")])
  A = list(X_agric, X_ind, X_polit)
- #Define the design matrix (output = C) 
+ #Define the design matrix (output = C)
  C = matrix(c(0, 0, 1, 0, 0, 1, 1, 1, 0), 3, 3)
  result.rgcca = rgccad(A, C, tau = c(1, 1, 1), scheme = "factorial", scale = TRUE,verbose=FALSE)
  lab = as.vector(apply(Russett[, 9:11], 1, which.max))
- plot(result.rgcca$Y[[1]], result.rgcca$Y[[2]], col = "white", 
+ plot(result.rgcca$Y[[1]], result.rgcca$Y[[2]], col = "white",
       xlab = "Y1 (Agric. inequality)", ylab = "Y2 (Industrial Development)")
  text(result.rgcca$Y[[1]], result.rgcca$Y[[2]], Russett[, 1], col = lab, cex = .7)
 
@@ -69,11 +69,9 @@ res=rgccad(A, C, ncomp=c(2,2,2),tau = rep("optimal",3), scheme = "factorial",ver
  result.rgcca = rgccad(A, C, tau = rep(1, 3), ncomp = c(2, 2, 1),
                       scheme = "factorial", verbose = FALSE)
 layout(t(1:2))
- plot(result.rgcca$Y[[1]][, 1], result.rgcca$Y[[2]][, 1], col = "white", xlab = "Y1 (GE)", 
+ plot(result.rgcca$Y[[1]][, 1], result.rgcca$Y[[2]][, 1], col = "white", xlab = "Y1 (GE)",
  ylab = "Y2 (CGH)", main = "Factorial plan of RGCCA")
  text(result.rgcca$Y[[1]][, 1], result.rgcca$Y[[2]][, 1], Russett[, 1], col = lab, cex = .6)
- plot(result.rgcca$Y[[1]][, 1], result.rgcca$Y[[1]][, 2], col = "white", xlab = "Y1 (GE)", 
+ plot(result.rgcca$Y[[1]][, 1], result.rgcca$Y[[1]][, 2], col = "white", xlab = "Y1 (GE)",
      ylab = "Y2 (GE)", main = "Factorial plan of RGCCA")
  text(result.rgcca$Y[[1]][, 1], result.rgcca$Y[[1]][, 2], Russett[, 1], col = lab, cex = .6)
-
-

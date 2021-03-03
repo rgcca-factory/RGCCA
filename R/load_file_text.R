@@ -8,11 +8,11 @@
 # load_file_text('data/agriculture.tsv')
 # }
 load_file_text <- function(
-    file, 
-    separator = "\t", 
-    rownames = 1, 
-    header = TRUE, 
-    one_column = FALSE, 
+    file,
+    separator = "\t",
+    rownames = 1,
+    header = TRUE,
+    one_column = FALSE,
     decimal = ".") {
 
     if (!is.null(rownames) && rownames < 1)

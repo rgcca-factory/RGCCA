@@ -21,7 +21,7 @@ listOfMatrices=function(A)
             colnames(B[[i]])=names(A)[i]
         }
         else
-        { 
+        {
             if(dim(A[[i]])[2]==1)
             {
                 if(is.null(rownames(A[[i]])))
@@ -29,16 +29,16 @@ listOfMatrices=function(A)
                     warning(paste("No rownames on the ",i,"block. The same rownames as the first block with rownames were attributed"))
                 }
                 rownames(B[[i]])=rowNames
-                colnames(B[[i]])=names(A)[i]  
+                colnames(B[[i]])=names(A)[i]
             }
             else
             {
                 rownames(B[[i]])=rownames(A[[i]])
                 colnames(B[[i]])=colnames(A[[i] ])
             }
-            
+
         }
-       
+
     }
     names(B)=names(A)
     return(B)

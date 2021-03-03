@@ -1,5 +1,5 @@
 # Get the components of the analysis
-# 
+#
 # @inheritParams plot_ind
 # @inheritParams get_ctr
 # @param i_block_x An integer giving the index of a list of blocks
@@ -16,7 +16,7 @@ get_comp <- function(
     i_block_y = i_block_x,
     i_block_z = i_block_x,
     predicted = NULL){
-    
+
     stopifnot(is(rgcca_res, "rgcca"))
     resp <- as.matrix(check_response(resp, rgcca_res$Y))
 
@@ -78,7 +78,7 @@ get_comp <- function(
     } else
         resp <- resp[seq(NROW(df)), ]
 
-    if ((is.numeric(resp)) || 
+    if ((is.numeric(resp)) ||
          length(unique(resp)) == 1 ) {
         resp[resp == "NA"] <- NA
         df$resp <- as.numeric(resp)

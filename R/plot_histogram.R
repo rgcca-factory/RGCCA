@@ -17,7 +17,7 @@ plot_histogram <- function(
     cex_sub = 12 * cex,
     cex_axis = 10 * cex
 ) {
-    
+
     for (i in c("cex", "cex_main", "cex_sub", "cex_axis"))
         check_integer(i, get(i))
 
@@ -54,7 +54,7 @@ plot_histogram <- function(
     }
 
     p <- p + geom_bar(stat = "identity", width = width) +
-        coord_flip() + 
+        coord_flip() +
         labs(title = title,  x = "", y = "") +
         theme_classic() +
         theme_perso(cex, cex_main, cex_sub) +

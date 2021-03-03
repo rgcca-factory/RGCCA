@@ -17,4 +17,3 @@ test_that("cov3_3",{expect_true(sum(cov3(X2,bias=FALSE)==cov(X2),na.rm=TRUE)==9)
 X1[1,]=NA
 cov(X1)
 cov3(X1,bias=FALSE)
-

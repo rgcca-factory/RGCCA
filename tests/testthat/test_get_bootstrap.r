@@ -4,7 +4,7 @@ nv2=100
 a=matrix(rnorm(100*nv1),100,nv1);rownames(a)=paste("a",1:100);colnames(a)=paste("s",1:nv1)
 b=matrix(rnorm(100*nv2),100,nv2);rownames(b)=paste("a",1:100);colnames(b)=paste("b",1:nv2)
 blocks=list(a=a,b=b)
-rgcca_out=rgcca(blocks)    
+rgcca_out=rgcca(blocks)
 n_boot=100
 boot <- bootstrap(rgcca_out,n_boot=n_boot,n_cores=1)
 res=get_bootstrap(boot)
@@ -40,14 +40,14 @@ test_that("bootstrap_default", {
     expect_is(select_var, "data.frame")
     expect_identical(NROW(select_var), NCOL(rgcca_out$call$blocks[[length(rgcca_out$call$blocks)]]))
 })
-# 
+#
 # test_that("bootstrap_with_args", {
 #     rgcca_out <- rgcca(blocks, superblock = FALSE,ncomp=2)
 #     expect_is(
 #         bootstrap(
-#             rgcca_out, 
-#             n_boot = 2, 
-#             n_cores = 1, 
+#             rgcca_out,
+#             n_boot = 2,
+#             n_cores = 1,
 #             blocks = lapply(blocks, scale),
 #             superblock = FALSE),
 #         "bootstrap")
@@ -68,4 +68,3 @@ test_that("test_bootstrap_na_values", {
     )
     expect_true(select_var["demostab", "estimate"] == resRGCCA$a[[3]]["demostab", 1])
 })
-

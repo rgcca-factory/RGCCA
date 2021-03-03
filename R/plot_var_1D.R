@@ -1,6 +1,6 @@
 #' Barplot of a fingerprint
 #'
-#' Barplot of the higher outer weight vectors for a component of a block 
+#' Barplot of the higher outer weight vectors for a component of a block
 #' (by default, the superblock or the last one) analysed by R/SGCCA
 #'
 #' @inheritParams plot_var_2D
@@ -45,7 +45,7 @@ plot_var_1D <- function(
 
     check_colors(colors)
     if(rgcca_res$call$superblock==FALSE){collapse=FALSE}
-    
+
     df <- get_ctr2(
         rgcca_res = rgcca_res,
         compx = comp,

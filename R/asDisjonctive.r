@@ -7,4 +7,3 @@ asDisjonctive=function(vec,levs=NULL)
     rownames(y)=rownames(vec)
     return(y)
 }
-

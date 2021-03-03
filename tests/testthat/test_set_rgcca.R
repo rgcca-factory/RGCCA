@@ -39,7 +39,7 @@ round(rgcca_out$Y[[1]][,1],digits=7)==round(res$Y[[1]][,1],digits=7)
 
 test_that("set_rgcca_equal_to_rgcca_s_f_sbw_f_sb_f", {
     expect_identical(round(rgcca_out$Y[[1]][,1],digits=7),round(res$Y[[1]][,1],digits=7))
-}) 
+})
 
 rgcca_out <- rgcca(blocks, response = 2,superblock=FALSE,scale=TRUE,scale_block = FALSE)
 res <- set_rgcca(
@@ -52,7 +52,7 @@ res <- set_rgcca(
 round(rgcca_out$Y[[1]][,1],digits=7)==round(res$Y[[1]][,1],digits=7)
 test_that("set_rgcca_equal_to_rgcca_s_t_sbw_f_sb_f", {
     expect_identical(round(rgcca_out$Y[[1]][,1],digits=7),round(res$Y[[1]][,1],digits=7))
-}) 
+})
 # scale = TRUE & scale_block=TRUE & superblock=FALSE
 rgcca_out <- rgcca(blocks, response = 2,superblock=FALSE,scale=TRUE,scale_block = TRUE)
 res <- set_rgcca(
@@ -69,7 +69,7 @@ res <- set_rgcca(
 round(rgcca_out$Y[[1]][,1],digits=7)==round(res$Y[[1]][,1],digits=7)
 test_that("set_rgcca_equal_to_rgcca_s_t_sbw_t_sb_f", {
     expect_identical(round(rgcca_out$Y[[1]][,1],digits=7),round(res$Y[[1]][,1],digits=7))
-}) 
+})
 
 res <- set_rgcca(
     rgcca_out,
@@ -83,15 +83,15 @@ names(blocks)
 res$call$tau
 
 
-# Remonving one  
+# Remonving one
 
 #checking set_rgcca without default
 rgcca_out <- rgcca(blocks, response = 1,superblock=FALSE,ncomp=1,scale=TRUE,scale_block=TRUE,tol=1e-8)
 rgcca_set_1 <- set_rgcca(rgcca_out,tol=1e-8)
 test_that("set_rgcca_identical_for_ind0", {
     expect_identical(all.equal(rgcca_out,rgcca_set_1),TRUE)
-}) 
-    
+})
+
 
 blocks_2=lapply(blocks,function(x){return(x[-1,])});
 blocks_1=lapply(blocks,function(x){return(x[1,])});
@@ -101,7 +101,7 @@ rgcca_set_2 <- set_rgcca(rgcca_out,inds=1,tol=1e-8)
 
 test_that("set_rgcca_identical_for_ind1", {
     expect_identical(all.equal(rgcca_out_2,rgcca_set_2),TRUE)
-}) 
+})
 
 
 # set_rgcca for bootstrap

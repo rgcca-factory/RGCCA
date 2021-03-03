@@ -1,8 +1,8 @@
 #' print.cval
-#' 
+#'
 #'@inheritParams plot.cval
 #'@param ... Further print options
-#'@export 
+#'@export
 #'@examples
 #'data("Russett")
 #' blocks <- list(
@@ -17,7 +17,7 @@ print.cval=function(x,bars="quantile",...)
   summary_cval <- function(x, bars="quantile") {
     mat_cval=x$cv
     mean_b=apply(mat_cval,1,mean)
-    
+
     match.arg(bars,c("sd","stderr","quantile"))
     if(bars!="none"&&dim(mat_cval)[2]<3){bars=="none"; warning("Standard deviations can not be calculated with less than 3 columns in x")}
     if(bars!="none")
@@ -55,7 +55,7 @@ print.cval=function(x,bars="quantile",...)
       #     inf_b=mean_b-apply(mat_cval,1,function(y){stat*sd(y)})
       #     sup_b=mean_b+apply(mat_cval,1,function(y){stat*sd(y)})
       # }
-      
+
     }
     df <- round(data.frame(config=1:nrow(mat_cval),mean=mean_b,inf=inf_b,sup=sup_b), 3)
     if(x$call$type_cv=="regression")
@@ -68,8 +68,8 @@ print.cval=function(x,bars="quantile",...)
     }
     return(df)
   }
-  
-    
+
+
     cat("Call: ")
     names_call=c("type_cv","n_run","method","tol","scale","scale_block")
     char_to_print=""
@@ -83,21 +83,21 @@ print.cval=function(x,bars="quantile",...)
     }
     cat(char_to_print)
     cat("\n")
-    
+
     c1s <- round(x$penalties, 4)
     rownames(c1s) = 1:NROW(c1s)
     cat(fill = TRUE)
     cat("Tuning parameters used: ", fill = TRUE)
     print(c1s, quote = FALSE,...)
     cat("\n")
-    
+
     df <- summary_cval(x, bars)
     colnameForOptimal=ifelse(x$call$type_cv=="regression","Mean RMSE","Mean Error Prediction Rate")
     optimal_ind=which.min(df[,colnameForOptimal])
     optimal_x=df[optimal_ind,"Combination"]
     optimal_y=df[optimal_ind,colnameForOptimal]
     cat(paste0(nrow(x$cv)," configurations were tested. \n"))
-    
+
    cat(paste0("Validation: ",x$call$validation,ifelse(x$call$validation=="kfold", paste0(" with ",x$call$k," folds and ",x$call$n_run," run(s))"))),"\n")
 
     cat("\n")
@@ -111,6 +111,4 @@ print.cval=function(x,bars="quantile",...)
     {
         cat(paste("The best combination was:", paste(round(x$bestpenalties,digits=3),collapse=" "),"for a mean rate of false predictions of ", round(optimal_y,digits=2)),"\n",...)
     }
-
-
 }

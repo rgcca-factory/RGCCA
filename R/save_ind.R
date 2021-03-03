@@ -3,10 +3,10 @@
 save_ind <- function(
     rgcca,
     file = "individuals.tsv") {
-    
+
     stopifnot(is(rgcca, "rgcca"))
     file <- paste0(file, collapse = " ")
-    
+
     inds <- inds <- Reduce(cbind, rgcca$Y)
     colnames(inds) <- unlist(sapply(
         names(rgcca$call$blocks),

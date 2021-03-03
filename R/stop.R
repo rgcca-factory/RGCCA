@@ -8,4 +8,4 @@ call = NULL) {
             class = c(exit_code, "simpleError", "error", "condition"),
             list(message = message, call. = NULL)
     ))
- }
+}

@@ -1,5 +1,5 @@
 # Groups of color
-# 
+#
 # Returns a color vector of equal size to the input vector
 # @inheritParams plot2D
 # @param x A vector
@@ -25,7 +25,7 @@ color_group <- function(x, colors = NULL) {
 
     colors <- rep(colors, 10)
     cols=colors[seq(length(levels(as.factor(x))))]
-    
+
    # names(cols)=levels(as.factor(x))
     return(cols)
 }

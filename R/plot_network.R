@@ -1,5 +1,5 @@
 #' Plot the connection between blocks
-#' 
+#'
 #' @inheritParams plot_ind
 #' @inheritParams plot2D
 #' @return A dataframe with tuples of connected blocks
@@ -12,11 +12,11 @@
 #' plot_network(rgcca_out)
 #' @export
 plot_network <- function(
-    rgcca_res, 
+    rgcca_res,
     title = paste0("Common rows between blocks : ",
                    NROW(rgcca_res$call$blocks[[1]])),
     cex_main = 2,
-    cex_point = 23, 
+    cex_point = 23,
     colors =  c("#eee685", "gray60")) {
 
     stopifnot(is(rgcca_res, "rgcca"))
@@ -30,7 +30,7 @@ plot_network <- function(
     `V<-` <- igraph::`V<-`
     `E<-` <- igraph::`E<-`
     V <- E <- NULL
-        
+
     nodes <- get_nodes(rgcca_res)
     edges <- get_edges(rgcca_res)
 

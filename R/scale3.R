@@ -9,7 +9,7 @@
 # @return \item{A}{A list of matrices giving the \eqn{J} blocks of variables \eqn{\mathbf{X_1}, \mathbf{X_2}, ..., \mathbf{X_J}}.}
 # @title scale3
 
-scale3=function (A, center = TRUE, scale = TRUE, bias = TRUE) 
+scale3=function (A, center = TRUE, scale = TRUE, bias = TRUE)
 {
   if (center == TRUE & scale == TRUE) {
     A = scale(A, center = TRUE, scale = FALSE)

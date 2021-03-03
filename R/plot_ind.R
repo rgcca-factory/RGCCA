@@ -15,7 +15,7 @@
 #' AVE_X = lapply(seq(3), function(x) runif(2))
 #' for (i in 1:length(coord))
 #' row.names(coord[[i]]) = seq(15)
-#' rgcca_out = list(Y = coord, AVE = list(AVE_X = AVE_X), 
+#' rgcca_out = list(Y = coord, AVE = list(AVE_X = AVE_X),
 #' call = list(blocks = coord, ncomp = rep(2,3))) # TODO
 #' # Using a superblock
 #' resp = as.matrix(rep(LETTERS[seq(3)], each = 5))
@@ -74,7 +74,7 @@ plot_ind <- function(
     if (!is.null(predicted))
             p <- ggplot(df, aes(df[, 1], df[, 2], group = resp, color =resp))
 
-    else if (length(unique(as.matrix(df$resp))) > 5 && 
+    else if (length(unique(as.matrix(df$resp))) > 5 &&
             !is.character(as.vector(df$resp)) ) {
         p <- ggplot(df, aes(df[, 1], df[, 2], group = resp,color=resp))
     }else

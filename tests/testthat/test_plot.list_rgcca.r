@@ -1,28 +1,28 @@
 #'# test bootstrap
 
 #'''
-# 
+#
 #  data("Russett")
-# 
-#  
+#
+#
 #  i_block=i_block_y=compx=1
 #  compy=2; resp=NULL; predicted=NULL
-#  
+#
 #   blocks = list(agriculture = Russett[, seq(3)], industry = Russett[, 4:5],
 #                politic = Russett[, 6:11] )
 #  resRGCCA1=rgcca(blocks,ncomp=c(2,2,2))
-# 
+#
 #  data(Russett)
 #  blocks = list(agriculture = Russett[, seq(3)], industry = Russett[, 4:5],
 #                politic = Russett[, 6:11] )
 #  blocks[[1]][1:3,1]=NA
 #  blocks[[1]][4,]=NA
 #  resRGCCA2=rgcca(blocks,ncomp=c(2,2,2),method="nipals")
-#  
+#
 # res=list(rgcca0=resRGCCA1,rgccaList=list(resRGCCA2))
 #  class(res)="list_rgcca"
 #  plot(res)
-# 
+#
 #  set.seed(42);X1=matrix(rnorm(500),100,5);
 #  set.seed(22);X2=matrix(rnorm(400),100,4);
 #   set.seed(2);X3=matrix(rnorm(700),100,7);
@@ -40,6 +40,3 @@
 #  plot(res,type="var",list_rgcca=res$rgccaList)
 #  plot(res,type="weight",list_rgcca=res$rgccaList)
 #  plot(res,type="cor",list_rgcca=res$rgccaList)
- 
-
- 

@@ -1,8 +1,8 @@
 # Set a list of sockets for parrallel package
 # @param f a function to parallelize
 # @param nperm a vector object for a lapply type function
-# @param varlist character vector of names of objects to export  
-# @param envir environment                                               
+# @param varlist character vector of names of objects to export
+# @param envir environment
 # @param applyFunc function to be applied
 # @inheritParams bootstrap
 # @importFrom parallel stopCluster
@@ -21,7 +21,7 @@ parallelize <- function(
     f,
     n_cores = NULL,
     envir = environment(),
-    applyFunc = "parSapply", 
+    applyFunc = "parSapply",
     parallelization=NULL) {
 
     if(is.null(parallelization))
@@ -34,11 +34,11 @@ parallelize <- function(
         {
         #    if( Sys.info()["sysname"] == "Windows")
         #    {
-        #        message("Windows can be slow for starting parallelization. 
-        #                 Using parallelization=FALSE can conduct to faster 
+        #        message("Windows can be slow for starting parallelization.
+        #                 Using parallelization=FALSE can conduct to faster
         #                 results for fast computations")
         #    }
-                      
+
             parallelization=TRUE
         }
     }
@@ -48,24 +48,24 @@ parallelize <- function(
         load_libraries("parallel")
         if (!("parallel" %in% installed.packages()[, "Package"]))
             stop_rgcca("'parallel' package required and not available.")
-        
+
         if(is.null(n_cores))
             n_cores <- parallel::detectCores() - 1
-        
+
      #  if (Sys.info()["sysname"] == "Windows") {
-            
-             #    
+
+             #
              # cl <- parallel::makeCluster(n_cores)
-             # 
+             #
              # parallel::clusterExport(
              #     cl,
              #     varlist,
              #     envir = envir
              # )
-             # 
-             # 
+             #
+             #
              # parallel::clusterEvalQ(cl, library(RGCCA))
-             # 
+             #
              # # library(parallel)
              # parallel::clusterEvalQ(cl, library(parallel))
              #
@@ -79,24 +79,24 @@ parallelize <- function(
          #         parallel::stopCluster(cl)
          #         cl <- c()
          #     })
-         #     
-         #     
+         #
+         #
          # }else{
             res <- parallel::mclapply(
                 nperm,
                 f,
                 mc.cores = n_cores
                 )
-            
+
             if (applyFunc == "parSapply")
             {
-            
+
                 res <- simplify2array(res)
-         
+
             }
-               
+
       #  }
-        
+
     }
     if(Sys.info()["sysname"] == "Windows" || parallelization==FALSE)
     {
@@ -116,6 +116,6 @@ parallelize <- function(
         if (applyFunc == "parSapply")
             res <- simplify2array(res)
     }
-   
+
     return(res)
 }

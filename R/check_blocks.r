@@ -20,16 +20,16 @@
 # A[[1]][2, 3] <- runif(1)
 # init : boolean (FALSE by default) for the first block checking
 
-check_blocks <- function(blocks, init = FALSE, n = 2, 
+check_blocks <- function(blocks, init = FALSE, n = 2,
                          add_NAlines = FALSE, allow_unnames =  TRUE,
                          quiet = FALSE, no_character = FALSE) {
-    
+
     msg <- ""
     if(is.matrix(blocks)) blocks = list(blocks)
     if (!is.list(blocks)) stop_rgcca(paste(msg, "is not a list."))
     if (!init && length(blocks) < n)
         stop_rgcca(paste(msg, "should at least have two elements."))
-    
+
     # Completing block names
     if (is.null(names(blocks))){
         names(blocks)=paste0("block",1:length(blocks))
@@ -42,7 +42,7 @@ check_blocks <- function(blocks, init = FALSE, n = 2,
     # Dealing with rownames (if they are all missing)
     if (all(sapply(blocks, function(x) is.null(row.names(x))))){
         if(sd(sapply(blocks, function(x) NROW(x)))==0 && allow_unnames){
-            blocks = lapply(blocks, 
+            blocks = lapply(blocks,
                             function(x){
                               rownames(x) = paste0("S",1:(NROW(x)))
                               return(x)
@@ -53,10 +53,10 @@ check_blocks <- function(blocks, init = FALSE, n = 2,
         else
             stop_rgcca(paste(msg, "Blocks should have rownames.\n "))
     }
-  
-    
+
+
     # Dealing with colnames for univariate block
-     blocks1 = lapply(1:length(blocks), 
+     blocks1 = lapply(1:length(blocks),
                   function(i){
                     if(NCOL(blocks[[i]]) == 1 & is.null(colnames(blocks[[i]])))
                     {
@@ -67,20 +67,20 @@ check_blocks <- function(blocks, init = FALSE, n = 2,
                       return(blocks[[i]])
                     }
                   })
-    
+
     blocks=blocks1
     names(blocks)=nameBlocks
-    
+
     if (any(sapply(blocks, function(x) is.null(colnames(x)))))
     {
         stop_rgcca(paste(msg, "Blocks should have colnames.\n "))
     }
-    # if one colname is identical within or between block 
+    # if one colname is identical within or between block
     if(sum(duplicated(unlist(sapply(blocks,colnames))))!=0)
     {
       if(!quiet)
         message("Colnames are duplicated and modified to avoid confusion \n")
-       
+
       blocks_i= lapply(1:length(blocks),
                        function(i){
                          x = blocks[[i]]
@@ -91,15 +91,15 @@ check_blocks <- function(blocks, init = FALSE, n = 2,
       names(blocks_i) = names(blocks)
       blocks = blocks_i
     }
- 
+
     # If one rownames is missing but the size of blocks is correct
     if(any(sapply(blocks, function(x) is.null(row.names(x)))))
     {
         matrixOfRownames = Reduce(cbind, lapply(blocks, row.names))
-        if(sum(!apply(matrixOfRownames, 2, 
+        if(sum(!apply(matrixOfRownames, 2,
                       function(x) x == matrixOfRownames[, 1])) == 0)
         {
-            blocks = lapply(blocks, 
+            blocks = lapply(blocks,
                             function(x){
                               row.names(x) = matrixOfRownames[, 1]
                               return(x)
@@ -107,21 +107,21 @@ check_blocks <- function(blocks, init = FALSE, n = 2,
                           )
         }
     }
-    
+
     lapply(blocks,
            function(x){
              resdup=duplicated(rownames(x))
              if(sum(resdup)!=0){
                 if(!quiet)
-                  warning(paste0("Duplicated rownames were removed: ", 
+                  warning(paste0("Duplicated rownames were removed: ",
                                  rownames(x)[resdup],"\n"))
              }
              }
         )
     inters_rows <- Reduce(intersect, lapply(blocks, row.names))
-    
+
     if (length(inters_rows) == 0)
-        stop_rgcca(paste(msg, "elements of the list should have at least 
+        stop_rgcca(paste(msg, "elements of the list should have at least
                          one common rowname.\n "))
 
     equal_rows <- Reduce(identical, lapply(blocks, row.names))
@@ -129,17 +129,17 @@ check_blocks <- function(blocks, init = FALSE, n = 2,
     # If add_NAlines=FALSE, taking the intersection_list
     if(!add_NAlines)
         if (length(blocks) > 1 && !equal_rows) blocks <- common_rows(blocks)
-    
+
     if (init) {
         blocks <- remove_null_sd(blocks)
         for (i in seq(length(blocks)))
             attributes(blocks[[i]])$nrow <- nrow(blocks[[i]])
     }
-   
+
     if (no_character) {
         if (any(sapply(blocks, is.character2)))
             stop(paste(msg, "Blocks contain non-numeric values."))
-        
+
         for (i in seq(length(blocks)))
            if (is.character(blocks[[i]]))
                blocks[[i]] <- to_numeric(blocks[[i]])
@@ -151,14 +151,14 @@ check_blocks <- function(blocks, init = FALSE, n = 2,
         union_rows <- Reduce(union, lapply(blocks,row.names))
         blocks2=lapply(nameBlocks,function(name)
         {
-          # if some subjects are missing (in the rownames)  
-          if(sum(!union_rows%in%rownames(blocks[[name]])) != 0) 
+          # if some subjects are missing (in the rownames)
+          if(sum(!union_rows%in%rownames(blocks[[name]])) != 0)
             {
                 message("Some subjects are not present in all blocks. NA rows were added to get blocks with appropriate dimensions")
-                y=matrix(NA, 
-                         length(union_rows), 
-                         ncol = ifelse(is.null(dim(blocks[[name]])), 
-                                       1, 
+                y=matrix(NA,
+                         length(union_rows),
+                         ncol = ifelse(is.null(dim(blocks[[name]])),
+                                       1,
                                        NCOL(blocks[[name]]))
                          )
                 if(is.null(dim(blocks[[name]]))){
@@ -173,7 +173,7 @@ check_blocks <- function(blocks, init = FALSE, n = 2,
             }
             else
             {
-                if(NCOL(blocks[[name]])==1) 
+                if(NCOL(blocks[[name]])==1)
                 {
                    y = matrix(blocks[[name]][union_rows, ], ncol = 1)
                    rownames(y) = union_rows
@@ -188,7 +188,7 @@ check_blocks <- function(blocks, init = FALSE, n = 2,
         }
         )
         names(blocks2) = nameBlocks
-        blocks = blocks2 
+        blocks = blocks2
     }
     invisible(blocks)
 }
