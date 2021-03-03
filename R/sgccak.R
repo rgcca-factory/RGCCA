@@ -2,7 +2,6 @@
 #' the user. sgccak() enables the computation of SGCCA block components, outer
 #' weight vectors, etc., for each block and each deflation stage.
 #' @inheritParams select_analysis
-#' @inheritParams rgccaNa
 #' @inheritParams rgccad
 #' @inheritParams sgcca
 #' @param A  A list that contains the \eqn{J} blocks of variables from which

@@ -5,7 +5,6 @@
 #' (when n > p_j) or the dual (when n < p_j) algorithm is used (see
 #' Tenenhaus et al. 2015)
 #' @inheritParams select_analysis
-#' @inheritParams rgccaNa
 #' @inheritParams rgccad
 #' @param A  A list that contains the J blocks of variables. It could be
 #' either the original matrices (\eqn{X_1, X_2, ..., X_J}) or the residual

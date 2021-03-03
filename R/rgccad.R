@@ -32,7 +32,6 @@
 #' (non-linear iterative partial least squares algorithm) as described in
 #' (Tenenhaus et al, 2005).
 #' @inheritParams select_analysis
-#' @inheritParams rgccaNa
 #' @param A  A list that contains the \eqn{J} blocks of variables. It could be
 #' either the original matrices (\eqn{X_1, X_2, ..., X_J}).
 #' @param C  A symmetric matrix (J*J) that describes the relationships between

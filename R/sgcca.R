@@ -21,7 +21,6 @@
 #' component. Moreover, we stress that the numbers of components per block
 #' could differ from one block to another.
 #' @inheritParams select_analysis
-#' @inheritParams rgccaNa
 #' @inheritParams rgccad
 #' @param sparsity Either a \eqn{1*J} vector or a \eqn{max(ncomp) * J} matrix
 #' encoding the L1 constraints applied to the outer weight vectors. The amount

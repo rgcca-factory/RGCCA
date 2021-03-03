@@ -41,8 +41,7 @@
 #' iterative partial least squares algorithm) described in (Tenenhaus et al,
 #' 2005). Guidelines describing how to use RGCCA in practice are provided in
 #' (Garali et al., 2017).
-#' @inheritParams rgccaNa
-#' @inheritParams sgccaNa
+#' @inheritParams rgccad
 #' @inheritParams select_analysis
 #' @return A rgcca fitted object
 #' @return \item{Y}{List of \eqn{J} elements. Each element of the list \eqn{Y}
@@ -243,7 +242,7 @@ rgcca <- function(blocks, type = "rgcca",
         if (!missing(tau) && missing(sparsity))
            stop_rgcca(paste0("sparsity parameters required for ",
                              tolower(type), " (instead of tau)."))
-        gcca <- sgccaNa
+        gcca <- sgcca
         par <- "sparsity"
         penalty <- sparsity
 
@@ -251,7 +250,7 @@ rgcca <- function(blocks, type = "rgcca",
         if (!missing(sparsity) & missing(tau))
            stop_rgcca(paste0("tau parameters required for ",
                              tolower(type), " (instead of sparsity)."))
-        gcca <- rgccaNa
+        gcca <- rgccad
         par <- "tau"
         penalty <- tau
     }
