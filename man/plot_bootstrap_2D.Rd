@@ -49,8 +49,8 @@ plot_bootstrap_2D(
 }
 \description{
 Graph of the best variables from a bootstrap with, in x-axis, the number of
-non-zero occurences (SGCCA) or the significant 95% bootstrap 
-intervals (RGCCA; '*' or 'ns'; see 'p.vals' in details for 
+non-zero occurences (SGCCA) or the significant 95% bootstrap
+intervals (RGCCA; '*' or 'ns'; see 'p.vals' in details for
 \code{\link[RGCCA]{get_bootstrap}}). In in y-axis are the bootstrap-ratios (mean/sd) .
 Negative weights are colored in red and the positive ones are in green.
 }
@@ -65,8 +65,8 @@ Negative weights are colored in red and the positive ones are in green.
 }
 \examples{
 data("Russett")
-blocks = list(agriculture = Russett[, seq(3)], 
-              industry = Russett[, 4:5], 
+blocks = list(agriculture = Russett[, seq(3)],
+              industry = Russett[, 4:5],
               politic = Russett[, 6:11] )
 
 rgcca_out = rgcca(blocks, sparsity = 0.75, type = "sgcca")

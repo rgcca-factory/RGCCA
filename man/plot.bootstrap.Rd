@@ -28,11 +28,11 @@
 
 \item{comp}{An integer giving the index of the analysis components}
 
-\item{n_mark}{The number of top variables to display in the correlation 
+\item{n_mark}{The number of top variables to display in the correlation
 circle}
 
 \item{bars}{Character string giving the variability among "sd" (error bar of
-standard deviation) , "stderr" (error bar of standard deviation divided by 
+standard deviation) , "stderr" (error bar of standard deviation divided by
 sqrt(n)) or "quantile" (error bar of 0.05/0.95-quantiles)}
 
 \item{colors}{Either a vector of integers (each integer corresponding to a color) or of characters corresponding to names of colors (as "blue",see colors()) or RGB code ("#FFFFFF").}
@@ -58,8 +58,8 @@ Plot the results of a fitted bootstrap object.
 }
 \examples{
 data("Russett")
-blocks = list(agriculture = Russett[, seq(3)], 
-              industry = Russett[, 4:5], 
+blocks = list(agriculture = Russett[, seq(3)],
+              industry = Russett[, 4:5],
               politic = Russett[, 6:11])
 fit.rgcca = rgcca(blocks)
 fit.boot=bootstrap(fit.rgcca, n_boot = 2, n_cores = 1)

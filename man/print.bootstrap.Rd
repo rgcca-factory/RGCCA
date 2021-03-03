@@ -10,23 +10,23 @@
 \item{x}{A bootstrap object (see \code{\link[RGCCA]{bootstrap}})}
 
 \item{bars}{Character string giving the variability among "sd" (error bar of
-standard deviation) , "stderr" (error bar of standard deviation divided by 
+standard deviation) , "stderr" (error bar of standard deviation divided by
 sqrt(n)) or "quantile" (error bar of 0.05/0.95-quantiles)}
 
 \item{...}{Further arguments in print}
 }
 \value{
-A matrix containing for each variables of each blocks, 
+A matrix containing for each variables of each blocks,
 the means, 95\% intervals, bootstrap ratio, p-values and other statistics
 \itemize{
 \item 'estimate' for block weight vectors
 \item 'mean' for the mean of the bootstrap block weight vectors
 \item 'sd' for the boostrapped standard error of the block weight vectors
-\item 'lower/upper_bound' for the lower and upper intervals from to the 
+\item 'lower/upper_bound' for the lower and upper intervals from to the
 'bar' parameter
-\item 'pvals' for p-values. In the case of SGCCA, the occurrences of the 
-bootstrap weights are distributed according to the binomial distribution 
-while for RGCCA, their absolute value weighted by their standard deviation 
+\item 'pvals' for p-values. In the case of SGCCA, the occurrences of the
+bootstrap weights are distributed according to the binomial distribution
+while for RGCCA, their absolute value weighted by their standard deviation
 follows a normal distribution.
 \item 'adjust.pval' for ajusted p-value (fdr correction by default)
 }

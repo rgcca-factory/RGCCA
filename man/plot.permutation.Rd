@@ -19,7 +19,7 @@
 )
 }
 \arguments{
-\item{x}{a fitted rgcca_permutation object 
+\item{x}{a fitted rgcca_permutation object
 (see \code{\link[RGCCA]{rgcca_permutation}})}
 
 \item{type}{A character giving the type of the index to look at (among 'crit' for
@@ -46,21 +46,21 @@ the RGCCA criterion and 'zstat' for the pseudo Z-score)}
 \description{
 Plot a fitted rgcca permutation object. The various set of tuning parameters
 are represented in the x-axis and the the RGCCA objective function - obtained
-from the both the orginal and permuted blocks - in the y-axis. If type = 
-"zstat" the value of the zstat for the various combinations are reported in 
+from the both the orginal and permuted blocks - in the y-axis. If type =
+"zstat" the value of the zstat for the various combinations are reported in
 the y-axis.
 }
 \examples{
 data(Russett)
-A <- list(agriculture = Russett[, seq(3)], 
-          industry = Russett[, 4:5], 
+A <- list(agriculture = Russett[, seq(3)],
+          industry = Russett[, 4:5],
           politic = Russett[, 6:11])
-          
+
 perm.out <- rgcca_permutation(A, par_type= "tau", n_perms = 2, n_cores = 1)
 print(perm.out)
 plot(perm.out)
 
-perm.out <- rgcca_permutation(A, par_type = "sparsity", 
+perm.out <- rgcca_permutation(A, par_type = "sparsity",
                               n_perms = 5, n_cores = 1)
 print(perm.out)
 plot(perm.out, type = "zstat")

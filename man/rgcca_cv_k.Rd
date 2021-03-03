@@ -43,77 +43,73 @@ rgcca_cv_k(
 
 \item{scale}{Logical value indicating if blocks are standardized.}
 
-\item{scale_block}{Logical value indicating if each block is divided by 
+\item{scale_block}{Logical value indicating if each block is divided by
 the square root of its number of variables.}
 
 \item{tol}{The stopping value for the convergence of the algorithm.}
 
-\item{scheme}{Character string or a function giving the scheme function for 
+\item{scheme}{Character string or a function giving the scheme function for
 covariance maximization among "horst" (the identity function), "factorial"
- (the squared values), "centroid" (the absolute values). The scheme function 
- can be any continously differentiable convex function and it is possible to 
- design explicitely the sheme function (e.g. function(x) x^4) as argument of 
+ (the squared values), "centroid" (the absolute values). The scheme function
+ can be any continously differentiable convex function and it is possible to
+ design explicitely the sheme function (e.g. function(x) x^4) as argument of
  rgcca function.  See (Tenenhaus et al, 2017) for details.}
 
-\item{method}{Character string corresponding to the method used for 
-handling missing values ("nipals", "complete", "mean"). (default: "nipals").
+\item{method}{Character string corresponding to the method used for
+handling missing values ("nipals", "complete"). (default: "nipals").
 \itemize{
-\item{\code{"mean"}}{corresponds to imputation by the colmeans before 
-applying the S/RGCCA algorithm}
-\item{\code{"complete"}}{corresponds to perform RGCCA on the fully observed  
+\item{\code{"complete"}}{corresponds to perform RGCCA on the fully observed
 observations (observations with missing values are removed)}
-\item{\code{"nipals"}}{corresponds to perform RGCCA algorithm on available 
+\item{\code{"nipals"}}{corresponds to perform RGCCA algorithm on available
 data (NIPALS-type algorithm)}}}
 
 \item{type}{A character string indicating the multi-block component
-method to consider: rgcca, sgcca, pca, spca, pls, spls, cca, 
-ifa, ra, gcca, maxvar, maxvar-b, maxvar-a, mcoa,cpca-1, cpca-2, 
-cpca-4, hpca, maxbet-b, maxbet, maxdiff-b, maxdiff, maxvar-a,  
-sabscor, ssqcor, ssqcor, ssqcov-1, ssqcov-2, ssqcov, sumcor, 
+method to consider: rgcca, sgcca, pca, spca, pls, spls, cca,
+ifa, ra, gcca, maxvar, maxvar-b, maxvar-a, mcoa,cpca-1, cpca-2,
+cpca-4, hpca, maxbet-b, maxbet, maxdiff-b, maxdiff, maxvar-a,
+sabscor, ssqcor, ssqcor, ssqcov-1, ssqcov-2, ssqcov, sumcor,
 sumcov-1, sumcov-2, sumcov, sabscov, sabscov-1, sabscov-2.}
 
-\item{init}{Character string giving the type of initialization to use in 
-the  algorithm. It could be either by Singular Value Decompostion ("svd") 
+\item{init}{Character string giving the type of initialization to use in
+the  algorithm. It could be either by Singular Value Decompostion ("svd")
 or by random initialisation ("random") (default: "svd").}
 
-\item{bias}{A logical value for biaised (\eqn{1/n}) or unbiaised 
+\item{bias}{A logical value for biaised (\eqn{1/n}) or unbiaised
 (\eqn{1/(n-1)}) estimator of the var/cov (default: bias = TRUE).}
 
-\item{connection}{Symmetric matrix (J*J) that describes the relationships 
-between blocks. Elements of the connection matrix must be positive ; but 
-usually equal to 1 if block \eqn{j} and block \eqn{k} are connected, and 0 
-otherwise.}
+\item{connection}{A symmetric matrix (J*J) that describes the relationships between
+blocks.}
 
-\item{ncomp}{Vector of length J indicating the number of block components 
+\item{ncomp}{Vector of length J indicating the number of block components
 for each block.}
 
-\item{tau}{Either a 1*J vector or a max(ncomp)*J matrix containing 
-the values of the regularization parameters (default: tau = 1, for each 
-block and each dimension). The regularization parameters varies from 0 
-(maximizing the correlation) to 1 (maximizing the covariance). If 
-tau = "optimal" the regularization paramaters are estimated for each block 
-and each dimension using the Schafer and Strimmer (2005) analytical formula . 
-If tau is a 1*J vector, tau[j] is identical across the dimensions 
-of block Xj. If tau is a matrix, tau[k, j] is associated with 
-X_jk (kth residual matrix for block j). The regularization parameters can 
+\item{tau}{Either a 1*J vector or a max(ncomp)*J matrix containing
+the values of the regularization parameters (default: tau = 1, for each
+block and each dimension). The regularization parameters varies from 0
+(maximizing the correlation) to 1 (maximizing the covariance). If
+tau = "optimal" the regularization paramaters are estimated for each block
+and each dimension using the Schafer and Strimmer (2005) analytical formula.
+If tau is a 1*J vector, tau[j] is identical across the dimensions
+of block Xj. If tau is a matrix, tau[k, j] is associated with
+X_jk (kth residual matrix for block j). The regularization parameters can
 also be estimated using \link{rgcca_permutation} or \link{rgcca_cv}.}
 
-\item{sparsity}{Either a \eqn{1*J} vector or a \eqn{max(ncomp) * J} matrix 
-encoding the L1 constraints applied to the outer weight vectors. The amount 
-of sparsity varies between \eqn{1/sqrt(p_j)} and 1 (larger values of sparsity 
-correspond to less penalization). If sparsity is a vector, L1-penalties are 
-the same for all the weights corresponding to the same block but different 
-components: 
+\item{sparsity}{Either a \eqn{1*J} vector or a \eqn{max(ncomp) * J} matrix
+encoding the L1 constraints applied to the outer weight vectors. The amount
+of sparsity varies between \eqn{1/sqrt(p_j)} and 1 (larger values of sparsity
+correspond to less penalization). If sparsity is a vector, L1-penalties are
+the same for all the weights corresponding to the same block but different
+components:
 \deqn{for all h, |a_{j,h}|_{L_1} \le c_1[j] \sqrt{p_j},}
 with \eqn{p_j} the number of variables of \eqn{X_j}.
-If sparsity is a matrix, each row \eqn{h} defines the constraints applied to 
+If sparsity is a matrix, each row \eqn{h} defines the constraints applied to
 the weights corresponding to components \eqn{h}:
-\deqn{for all h, |a_{j,h}|_{L_1} \le c_1[h,j] \sqrt{p_j}.} It can be 
+\deqn{for all h, |a_{j,h}|_{L_1} \le c_1[h,j] \sqrt{p_j}.} It can be
 estimated by using \link{rgcca_permutation}.}
 
 \item{n_cores}{Number of cores for parallelization.}
 
-\item{parallelization}{logical value. If TRUE (default value), the 
+\item{parallelization}{logical value. If TRUE (default value), the
 permutation procedure is parallelized}
 
 \item{...}{Further graphical parameters (see plot2D functions)}

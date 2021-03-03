@@ -14,41 +14,41 @@ bootstrap(rgcca_res, n_boot = 100, n_cores = parallel::detectCores() - 1)
 \item{n_cores}{Number of cores for parallelization.}
 }
 \value{
-A list containing two objects: 'bootstrap' and 'rgcca'. 
-'bootstrap' is a list containing for each block, a matrix 
+A list containing two objects: 'bootstrap' and 'rgcca'.
+'bootstrap' is a list containing for each block, a matrix
 with the variables of the block in row and the block weight vector
-calculated accross bootstrap sample in column. 'rgcca' is the fitted rgcca 
+calculated accross bootstrap sample in column. 'rgcca' is the fitted rgcca
 object obtained from the original data. (see  \code{\link[RGCCA]{rgcca}})
 }
 \description{
-Boostrap confidence intervals and p-values for evaluating the significancy/ 
+Boostrap confidence intervals and p-values for evaluating the significancy/
 stability of the block-weight vectors produce by S/RGCCA.
 }
 \examples{
-# Bootstrap confidence intervals and p-values for RGCCA 
+# Bootstrap confidence intervals and p-values for RGCCA
 data("Russett")
-blocks = list(agriculture = Russett[, seq(3)], 
-              industry = Russett[, 4:5], 
+blocks = list(agriculture = Russett[, seq(3)],
+              industry = Russett[, 4:5],
               politic = Russett[, 6:11])
-              
+
 fit.rgcca = rgcca(blocks, ncomp= 1)
-boot.out = bootstrap(fit.rgcca, 
+boot.out = bootstrap(fit.rgcca,
                      n_boot = 20, n_cores = 2)
- 
+
 plot(boot.out, block = 3, comp = 1)
 
 print(boot.out)
 get_bootstrap(boot.out)
 
 fit.rgcca = rgcca(blocks, type = "mcoa")
-boot.out = bootstrap(fit.rgcca, 
+boot.out = bootstrap(fit.rgcca,
                      n_boot = 50, n_cores = 2)
-                     
+
 plot(boot.out, block = 1)
 
 \dontrun{
 # Stability of the selected variables for SGCCA
-# Not run: 
+# Not run:
 # Download the dataset's package at http://biodev.cea.fr/sgcca/.
 # --> gliomaData_0.4.tar.gz#' require(gliomaData)
 library(gliomaData)
@@ -59,25 +59,25 @@ Loc <- factor(ge_cgh_locIGR$y)
 levels(Loc) <- colnames(ge_cgh_locIGR$multiblocks$y)
 C <-  matrix(c(0, 0, 1, 0, 0, 1, 1, 1, 0), 3, 3)
 
-# rgcca algorithm using the dual formulation for X1 and X2 
+# rgcca algorithm using the dual formulation for X1 and X2
 # and the dual formulation for X3
- 
-fit.rgcca = rgcca(A, connection = C, tau = c(1, 1, 0), 
-                  ncomp = c(2, 2, 1), scheme = "factorial", 
+
+fit.rgcca = rgcca(A, connection = C, tau = c(1, 1, 0),
+                  ncomp = c(2, 2, 1), scheme = "factorial",
                   verbose = TRUE)
 boot.out = bootstrap(fit.rgcca, n_boot = 50, n_cores = 2)
 plot(boot.out, block = 1, ncomp = 1, n_marks = 30)
 plot(boot.out, block = 1, ncomp = 2, n_marks = 30)
 get_bootstrap(boot.out)
-                      
+
 # sgcca algorithm
 result.sgcca = sgcca(A, C, sparsity = c(.071,.2, 1), ncomp = 1,
                      scheme = "centroid", verbose = TRUE)
-                     
+
 boot.out = bootstrap(fit.sgcca, n_boot = 50, n_cores = 2)
 }
 }
 \seealso{
-\code{\link[RGCCA]{plot.bootstrap}}, 
+\code{\link[RGCCA]{plot.bootstrap}},
 \code{\link[RGCCA]{print.bootstrap}}
 }

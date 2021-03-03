@@ -34,10 +34,10 @@ for the y-axis}
 \item{text}{A bolean to represent the points with their row names (TRUE)
 or with circles (FALSE)}
 
-\item{remove_var}{logical value. If TRUE, the top 100 variables with the 
+\item{remove_var}{logical value. If TRUE, the top 100 variables with the
 highest with the block components are displayed}
 
-\item{n_mark}{The number of top variables to display in the correlation 
+\item{n_mark}{The number of top variables to display in the correlation
 circle}
 
 \item{collapse}{A boolean to combine the variables of each block as result}
@@ -58,7 +58,7 @@ Correlation circle highlighting the contribution of each variables to the
 construction of the RGCCA components
 }
 \examples{
-setMatrix = function(nrow, ncol, iter = 3) 
+setMatrix = function(nrow, ncol, iter = 3)
  lapply(
      seq(iter),
      function(x) {
@@ -76,7 +76,7 @@ coord = setMatrix(10, 2, 4)
 a = setMatrix(5, 2)
 a[[4]] = setMatrix(15, 2, 1)[[1]]
 AVE_X = lapply(seq(4), function(x) runif(2))
-rgcca_out = list(Y = coord, a = a, AVE = list(AVE_X = AVE_X), 
+rgcca_out = list(Y = coord, a = a, AVE = list(AVE_X = AVE_X),
                  call = list(blocks = blocks))
 names(rgcca_out$a) <- LETTERS[seq(4)] -> names(rgcca_out$call$blocks)
 rgcca_out$call$type="rgcca"
@@ -88,7 +88,7 @@ plot_var_2D(rgcca_out, 1, 2)
 # Using the first block
 plot_var_2D(rgcca_out, 1, 2, 1)
 data("Russett")
-blocks = list(agriculture = Russett[, seq(3)], 
+blocks = list(agriculture = Russett[, seq(3)],
               industry = Russett[, 4:5],
               politic = Russett[, 6:11] )
 

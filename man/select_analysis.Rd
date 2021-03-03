@@ -21,58 +21,58 @@ select_analysis(
 \arguments{
 \item{blocks}{List of blocks.}
 
-\item{connection}{Symmetric matrix (J*J) that describes the relationships 
-between blocks. Elements of the connection matrix must be positive ; but 
-usually equal to 1 if block \eqn{j} and block \eqn{k} are connected, and 0 
+\item{connection}{Symmetric matrix (J*J) that describes the relationships
+between blocks. Elements of the connection matrix must be positive ; but
+usually equal to 1 if block \eqn{j} and block \eqn{k} are connected, and 0
 otherwise.}
 
-\item{penalty}{Vector of length J (or character string for 'optimal' 
+\item{penalty}{Vector of length J (or character string for 'optimal'
 setting) indicating the values of the tuning parameters.}
 
-\item{ncomp}{Vector of length J indicating the number of block components 
+\item{ncomp}{Vector of length J indicating the number of block components
 for each block.}
 
-\item{scheme}{Character string or a function giving the scheme function for 
+\item{scheme}{Character string or a function giving the scheme function for
 covariance maximization among "horst" (the identity function), "factorial"
- (the squared values), "centroid" (the absolute values). The scheme function 
- can be any continously differentiable convex function and it is possible to 
- design explicitely the sheme function (e.g. function(x) x^4) as argument of 
+ (the squared values), "centroid" (the absolute values). The scheme function
+ can be any continously differentiable convex function and it is possible to
+ design explicitely the sheme function (e.g. function(x) x^4) as argument of
  rgcca function.  See (Tenenhaus et al, 2017) for details.}
 
-\item{superblock}{Boolean indicating the presence of the superblock. 
+\item{superblock}{Boolean indicating the presence of the superblock.
 Default = TRUE}
 
 \item{type}{A character string indicating the multi-block component
-method to consider: rgcca, sgcca, pca, spca, pls, spls, cca, 
-ifa, ra, gcca, maxvar, maxvar-b, maxvar-a, mcoa,cpca-1, cpca-2, 
-cpca-4, hpca, maxbet-b, maxbet, maxdiff-b, maxdiff, maxvar-a,  
-sabscor, ssqcor, ssqcor, ssqcov-1, ssqcov-2, ssqcov, sumcor, 
+method to consider: rgcca, sgcca, pca, spca, pls, spls, cca,
+ifa, ra, gcca, maxvar, maxvar-b, maxvar-a, mcoa,cpca-1, cpca-2,
+cpca-4, hpca, maxbet-b, maxbet, maxdiff-b, maxdiff, maxvar-a,
+sabscor, ssqcor, ssqcor, ssqcov-1, ssqcov-2, ssqcov, sumcor,
 sumcov-1, sumcov-2, sumcov, sabscov, sabscov-1, sabscov-2.}
 
 \item{verbose}{Logical value indicating whether the warnings are displayed.}
 
 \item{quiet}{Logical value indicating if warning messages are reported.}
 
-\item{response}{Numerical value giving the position of the response block. When 
-the response argument is filled the supervised mode is automatically 
+\item{response}{Numerical value giving the position of the response block. When
+the response argument is filled the supervised mode is automatically
 activated.}
 }
 \value{
 \item{blocks}{List of blocks.}
 
-\item{scheme}{Character string or a function giving the scheme 
+\item{scheme}{Character string or a function giving the scheme
 function used for covariance maximization.}
 
-\item{penalty}{Vector of length J (or character string for 
+\item{penalty}{Vector of length J (or character string for
 'optimal' setting) indicating the values of the tuning parameters.}
 
-\item{ncomp}{Vector of length J indicating the number of block 
+\item{ncomp}{Vector of length J indicating the number of block
 components or each block.}
 
-\item{connection}{Symmetric matrix (J*J) that describes the 
+\item{connection}{Symmetric matrix (J*J) that describes the
 relationships between blocks.}
 
-\item{superblock}{Logical value indicating if superblock is 
+\item{superblock}{Logical value indicating if superblock is
 included in the analysis.}
 }
 \description{
