@@ -1,5 +1,5 @@
 #' Plot the connection between blocks (dynamic plot)
-#' 
+#'
 #' @inheritParams plot_ind
 #' @inheritParams plot2D
 #' @return A dataframe with tuples of connected blocks
@@ -12,12 +12,12 @@
 #' plot_network2(rgcca_out)
 #' @export
 plot_network2 <- function(
-    rgcca_res, 
+    rgcca_res,
     title = paste0("Common rows between blocks : ",
                         NROW(rgcca_res$call$blocks[[1]])),
     cex_main = 20,
     colors =  c("#eee685", "gray")) {
-    
+
     stopifnot(is(rgcca_res, "rgcca"))
     title <- paste0(title, collapse = " ")
     check_colors(colors)

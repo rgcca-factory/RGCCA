@@ -35,11 +35,11 @@ plot.cval=function(x, bars="sd", cex = 1, cex_main = 14 * cex, cex_sub = 10 * ce
     mat_cval=x$cv
 
     mean_b=apply(mat_cval,1,mean)
-    
+
     if(x$call$type_cv=="regression")
     {
         main=paste0("RMSE according to the combinations \n (",
-                    x$call$validation,ifelse(x$call$validation=="kfold", 
+                    x$call$validation,ifelse(x$call$validation=="kfold",
                                              paste0(": with ",x$call$k," folds", ifelse(x$call$n_run>1,paste0(" and ",x$call$n_run," run",ifelse(x$call$n_run==1,"","s")),""),")"),
                                              ")\n "))
         main=paste0(main,"\nbest parameter: ",
@@ -50,7 +50,7 @@ plot.cval=function(x, bars="sd", cex = 1, cex_main = 14 * cex, cex_sub = 10 * ce
     {
         main=paste0("Cross-validated prediction error according to the combinations \n (",
                     x$call$validation,
-                    ifelse(x$call$validation=="kfold", 
+                    ifelse(x$call$validation=="kfold",
                            paste0(": with ",x$call$k," folds", ifelse(x$call$n_run>1,
                                                                       paste0(" and ",x$call$n_run," run",ifelse(x$call$n_run==1,"","s")),""),")"),
                                         ")\n "))
@@ -58,14 +58,14 @@ plot.cval=function(x, bars="sd", cex = 1, cex_main = 14 * cex, cex_sub = 10 * ce
                     paste(round(x$bestpenalties,digits=2), collapse = ", "))
         y_lab="Mean error rate"
     }
-               
+
     axis <- function(margin){
         element_text(
             size = cex_lab * 0.75,
             face = "italic",
             margin=margin
         )
-    }    
+    }
     if(bars!="none"&&dim(mat_cval)[2]<3){bars=="none"; warning("Standard deviations can not be calculated with less than 3 columns in mat_cval")}
     if(bars!="none")
     {
@@ -101,9 +101,9 @@ plot.cval=function(x, bars="sd", cex = 1, cex_main = 14 * cex, cex_sub = 10 * ce
             inf_b=apply(mat_cval,1,function(y){min(y)})
             sup_b=apply(mat_cval,1,function(y){max(y)})
         }
-        
+
     }
-    
+
     df=data.frame(configurations=1:nrow(mat_cval),mean=mean_b,inf=inf_b,sup=sup_b)
     p<- ggplot(data=df,aes(x=configurations,y=mean))+geom_point(colour=colors[2])+theme_classic() + xlab("Combinations")+ylab(y_lab)
     if(bars!="none"&& bars!="points")
@@ -130,7 +130,7 @@ plot.cval=function(x, bars="sd", cex = 1, cex_main = 14 * cex, cex_sub = 10 * ce
             axis.ticks  = element_line(size = 0.5),
             axis.ticks.length = unit(2, "mm"),
             legend.position = "none"
-        ) 
+        )
 #    p<- p+ scale_x_continuous(breaks=1:nrow(x),  labels=rownames(x))
 #    p<-p + theme(axis.text.x = element_text(angle=45))
     return(p)

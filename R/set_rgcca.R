@@ -1,5 +1,5 @@
 # inds : individuals removed from the blocks (for crossvalidation)
-# affects same parameters as rgcca_res (or other ones if specified) on a subset of individuals determined by inds (individuals to remove) 
+# affects same parameters as rgcca_res (or other ones if specified) on a subset of individuals determined by inds (individuals to remove)
 set_rgcca <- function(
     rgcca_res,
     blocks = NULL,
@@ -56,7 +56,7 @@ set_rgcca <- function(
 
     if (!boot)
         blocks <- intersection_list(blocks)
-    
+
     if (tolower(type) %in% c("sgcca", "spca", "spls")) {
 
         if (!is.null(blocks) && !missing(tau) && missing(sparsity))
@@ -74,14 +74,14 @@ set_rgcca <- function(
         penalty <- tau
     }
 
-    if (boot) 
+    if (boot)
     {
         boot_blocks <- list(NULL)
         while (any(sapply(boot_blocks, function(x) length(x)) == 0))
         {
             id_boot <- sample(NROW(blocks[[1]]), replace = TRUE)
             boot_blocks <- lapply(
-                blocks, 
+                blocks,
                 function(x)
                     {
                         y= x[id_boot, , drop = FALSE]
@@ -112,7 +112,7 @@ set_rgcca <- function(
             }
         }
     }
-       
+
 
     func <- quote(
         rgcca(

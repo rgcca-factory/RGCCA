@@ -1,8 +1,8 @@
 #' Plot a bootstrap in 2D
 #'
 #' Graph of the best variables from a bootstrap with, in x-axis, the number of
-#' non-zero occurences (SGCCA) or the significant 95% bootstrap 
-#' intervals (RGCCA; '*' or 'ns'; see 'p.vals' in details for 
+#' non-zero occurences (SGCCA) or the significant 95% bootstrap
+#' intervals (RGCCA; '*' or 'ns'; see 'p.vals' in details for
 #' \code{\link[RGCCA]{get_bootstrap}}). In in y-axis are the bootstrap-ratios (mean/sd) .
 #' Negative weights are colored in red and the positive ones are in green.
 #'
@@ -12,7 +12,7 @@
 #' @param x Character string for the index to plot in x-axis (see details).
 #' @param y Character string for the index to plot in y-axis (see details).
 #' @param df_b A get_bootstrap object \code{\link[RGCCA]{get_bootstrap}}
-#' @details 
+#' @details
 #' \itemize{
 #' \item 'estimate' for RGCCA weights
 #' \item 'bootstrap_ratio' for the mean of the bootstrap weights / their standard error
@@ -22,10 +22,10 @@
 #' }
 #' @examples
 #' data("Russett")
-#' blocks = list(agriculture = Russett[, seq(3)], 
-#'               industry = Russett[, 4:5], 
+#' blocks = list(agriculture = Russett[, seq(3)],
+#'               industry = Russett[, 4:5],
 #'               politic = Russett[, 6:11] )
-#' 
+#'
 #' rgcca_out = rgcca(blocks, sparsity = 0.75, type = "sgcca")
 #' boot = bootstrap(rgcca_out, 2, n_cores = 1)
 #' plot_bootstrap_2D(boot)
@@ -59,7 +59,7 @@ plot_bootstrap_2D <- function(
     else if (!is.null(b)) {
         if (is.null(i_block))
             i_block <- length(b$bootstrap[[1]])
-        df_b <- get_bootstrap(b, comp, i_block, 
+        df_b <- get_bootstrap(b, comp, i_block,
                               display_order = TRUE)
     } else if (!is.null(df_b)) {
         if (is.null(i_block))
@@ -130,7 +130,7 @@ plot_bootstrap_2D <- function(
             func <- get(paste0(axis, "lim"))
             p <- p + func(0, 1)
             if (x == "sign") {
-                p <- p + 
+                p <- p +
                     get(paste("scale", axis, "discrete", sep = "_"))(
                         labels = c("ns", "*"),
                         limits = c(0, 1)

@@ -38,7 +38,3 @@ blocks = list(rbind(X_agric,X_agric),
               rbind(X_ind,X_ind),
               rbind(X_polit,X_polit));
 blocks2=check_blocks(blocks, add_NAlines=TRUE)
-
-
-
-

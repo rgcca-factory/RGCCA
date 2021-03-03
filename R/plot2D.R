@@ -58,7 +58,7 @@ plot2D <- function(
     cex_sub = 12 * cex,
     cex_point = 3 * cex,
     cex_lab = 10 * cex) {
-    
+
     title <- paste0(title, collapse = " ")
     name_group <- paste0(name_group, collapse = " ")
     check_colors(colors)
@@ -125,9 +125,9 @@ plot2D <- function(
     {
         xlab=print_comp(rgcca_res, compx, i_block)
         ylab=print_comp(rgcca_res, compy, i_block_y)
-        
+
     }
-        
+
     p <- p + eval(as.call(func)) + theme_classic() + geom_vline(
             xintercept = 0,
             col = "grey",
@@ -144,7 +144,7 @@ plot2D <- function(
                 y = ylab,
             color = name_group#,
             #shape = name_group
-        ) + 
+        ) +
         scale_y_continuous(breaks = NULL) +
         scale_x_continuous(breaks = NULL) +
         theme_perso(cex, cex_main, cex_sub) +
@@ -156,15 +156,15 @@ plot2D <- function(
             axis.line = element_blank()
         )
 
-    
+
     if (length(unique(group)) != 1 && is(df, "d_var2D")) {
         p <- order_color(rgcca_res$a, p, collapse = collapse, colors = colors)
         # For qualitative response OR no response
     } else if ( is.character(group[!is.na(group)]) ||is.factor(group[!is.na(group)])||
-                length(unique(group)) <= 5 || 
+                length(unique(group)) <= 5 ||
             all( levels(as.factor(group)) %in% c("obs", "pred") )
         ) {
-         
+
         p <- p + scale_color_manual(values = color_group(group, colors))
         # quantitative response
     } else{

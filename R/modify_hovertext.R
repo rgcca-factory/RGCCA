@@ -1,12 +1,12 @@
 # p: a ggplot function
-# hovertext : a boolean for the use of hovertext (if TRUE) as the attribute 
+# hovertext : a boolean for the use of hovertext (if TRUE) as the attribute
 # to parse the onMouseOver text ("text" attribute, if FALSE)
 # type: class of graphic among regular, var1D, perm
 # p_perm: permutation object
 modify_hovertext <- function(p, hovertext = TRUE, type = "regular", perm = NULL) {
 
     attr <- ifelse(hovertext, "hovertext", "text")
-    # identify the order / id of the traces which corresponds to x- and y-axis 
+    # identify the order / id of the traces which corresponds to x- and y-axis
     # (should be before the splitting function)
 
     if (type == "perm")
@@ -157,7 +157,7 @@ modify_hovertext <- function(p, hovertext = TRUE, type = "regular", perm = NULL)
     # Remove the x- and y- axis onOverMouse
     if (type %in% c("regular", "cv", "perm")  && (length(traces) > 1) || type == "boot1D")
         p <- plotly::style(p, hoverinfo = "none", traces = traces)
-        
+
     if (type %in% c("perm", "cv"))
         (plotly::layout(p, margin = list(l = 30, r = 10, b = 20, t = 70)))
     else

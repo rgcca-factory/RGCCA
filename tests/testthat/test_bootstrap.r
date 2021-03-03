@@ -51,9 +51,9 @@ test_that("bootstrap_default", {
 #     rgcca_out <- rgcca(blocks, superblock = FALSE)
 #     expect_is(
 #         bootstrap(
-#             rgcca_out, 
-#             n_boot = 2, 
-#             n_cores = 1, 
+#             rgcca_out,
+#             n_boot = 2,
+#             n_cores = 1,
 #             blocks = lapply(blocks, scale),
 #             superblock = FALSE),
 #         "bootstrap")
@@ -87,4 +87,3 @@ boot <- bootstrap(rgcca_out, n_boot = 100, n_cores = 1)
 plot(boot)
 print(boot)
 plot(rgcca_out,type="var")
-

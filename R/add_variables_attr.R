@@ -2,13 +2,13 @@
 # to a list of weights and affect them to 0
 add_variables_attr <- function(rgcca_res, w, type = "scale") {
 
-  
+
     blocks_all <- list()
     for (x in seq(length(rgcca_res$call$blocks)))
         blocks_all[[x]] <- rgcca_res$call$blocks[[x]][intersect(rownames(rgcca_res$call$blocks[[1]]), rownames(w[[1]])), ]
-      
+
     blocks_all2=lapply(1:length(blocks_all),
-                       function(i) 
+                       function(i)
                        {
                            if(is.null(dim(blocks_all[[i]])) )
                            {
@@ -20,11 +20,11 @@ add_variables_attr <- function(rgcca_res, w, type = "scale") {
                            }
                            return(blocks_all[[i]])
                        });names(blocks_all2)=names(blocks_all)
-    
+
     blocks_all=blocks_all2
-    
+
     missing_var <- lapply(
-        seq(length(w)), 
+        seq(length(w)),
         function(x)
         {
             if(!is.null(dim(blocks_all[[x]])))
@@ -35,13 +35,13 @@ add_variables_attr <- function(rgcca_res, w, type = "scale") {
             }
 
         }
-    ) 
+    )
 
 missing_tab <- lapply(
-        seq(length(w)), 
+        seq(length(w)),
         function(x) {
             #setNames(
-               
+
                     for (i in seq(length(missing_var[[x]])))
                     {
                             if (type == "scale")
@@ -53,29 +53,28 @@ missing_tab <- lapply(
                                 }
                     }
                  })
-    
+
     for (i in seq(length(w))) {
         if (NROW(missing_tab[[i]]) != 0) {
             names(missing_tab[[i]]) <- missing_var[[i]]
              w[[i]] <- c(w[[i]], missing_tab[[i]])
         }
     }
-           
+
            w <- lapply(seq(length(w)), function(x)
            {
               if(!is.null(colnames(blocks_all[[x]])))
               {
-                  w[[x]][colnames(blocks_all[[x]]), drop = FALSE]   
+                  w[[x]][colnames(blocks_all[[x]]), drop = FALSE]
               }
                else
                {
                    w[[x]]
                }
-             
+
            })
-           
+
 
     # names(w) <- names(rgcca_res$call$blocks)
     return(w)
 }
-

@@ -1,5 +1,5 @@
 #' Cross-validation
-#' 
+#'
 #' Uses cross-validation to evaluate predictive model of RGCCA
 #' @inheritParams rgcca_predict
 #' @inheritParams rgcca
@@ -7,7 +7,7 @@
 #' @inheritParams plot_ind
 #' @param k An integer giving the number of folds (if validation = 'kfold').
 #' @param validation A character for the type of validation among "loo", "kfold", "test".
-#' @param parallelization logical value. If TRUE (default value), the 
+#' @param parallelization logical value. If TRUE (default value), the
 #' permutation procedure is parallelized
 #' @examples
 #' data("Russett")
@@ -52,7 +52,7 @@ rgcca_cv_k <- function(
     if(is.null(ncomp)){        ncomp <- rgcca_res$call$ncomp}
     if(is.null(tau)){        tau <- rgcca_res$call$tau}
     if(is.null(sparsity)){        sparsity<- rgcca_res$call$sparsity}
-    
+
     stopifnot(is(rgcca_res, "rgcca"))
     if(is.null(rgcca_res$call$response)){
        stop_rgcca("This function required an analysis in a supervised mode")}
@@ -86,15 +86,15 @@ rgcca_cv_k <- function(
                           sparsity=sparsity,
                           type=type
                         ) #Rgcca on all individuals but inds
-           # 
+           #
              rgcca_k_saved=rgcca_k
              rgcca_k$a <- add_variables_submodel(rgcca_res, rgcca_k$a)
              rgcca_k$astar <- add_variables_submodel(rgcca_res, rgcca_k$astar)
              rgcca_k$call$blocks <- add_variables_data(rgcca_res, rgcca_k$call$blocks)
-    
+
              center_att <- add_variables_attr(rgcca_res, lapply(rgcca_k_saved$call$blocks, function(i) attr(i, "scaled:center")), type = "center")
              scale_attr <- add_variables_attr(rgcca_res, lapply(rgcca_k_saved$call$blocks, function(i) attr(i, "scaled:scale")))
- 
+
              for (i in seq(length(rgcca_k$call$blocks))) {
                  attr(rgcca_k$call$blocks[[i]], "scaled:center") <- center_att[[i]]
                  attr(rgcca_k$call$blocks[[i]], "scaled:scale") <- scale_attr[[i]]
@@ -119,7 +119,7 @@ rgcca_cv_k <- function(
     {
         bigA <- intersection_list(rgcca_res$call$raw)
     }
-   
+
     if (validation == "loo")
         v_inds <- seq(nrow(bigA[[1]]))
     if (validation == "kfold") {
@@ -157,7 +157,7 @@ rgcca_cv_k <- function(
 
             scores <- parallelize(
                 varlist,
-                seq(length(v_inds)), 
+                seq(length(v_inds)),
                 function(i){
                     inds <- unlist(v_inds[i])
                     eval(f)()
@@ -166,7 +166,7 @@ rgcca_cv_k <- function(
                 envir = environment(),
                 applyFunc = "parLapply",
                 parallelization=parallelization
-            ) 
+            )
         }
 
     list_rgcca = lapply(scores, function(x) return(x$rgcca_res))
@@ -174,13 +174,13 @@ rgcca_cv_k <- function(
     list_scores=sapply(scores, function(x) x$score)
     list_res=lapply(scores, function(x) return(x$res))
     list_class.fit=lapply(scores, function(x) return(x$class.fit))
-    
+
     if (validation %in% c("loo", "kfold")) {
         # concatenation of each test set to provide predictions for each block
         preds <- lapply(
             seq(length(rgcca_res$call$blocks)),
             function(x) Reduce(
-                rbind, 
+                rbind,
                 lapply(
                     scores,
                     function(y) y$pred[[x]]
@@ -196,7 +196,7 @@ rgcca_cv_k <- function(
      scores <- mean(unlist(lapply(scores, function(x) x$score)),na.rm=T)
 
     structure(
-        list(scores = scores, preds = preds, 
+        list(scores = scores, preds = preds,
              rgcca_res = rgcca_res,
              list_scores = list_scores,
              list_pred=list_pred,list_rgcca=list_rgcca,list_class=list_class.fit,list_res=list_res),

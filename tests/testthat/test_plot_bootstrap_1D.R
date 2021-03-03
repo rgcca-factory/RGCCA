@@ -34,4 +34,3 @@ A=list(a=a,b=b)
 res=rgcca(A,type="sgcca",sparsity=0.7)
 b=bootstrap(res,n_boot=100,n_cores=1)
 plot_bootstrap_1D(b,x="occurrences")
-

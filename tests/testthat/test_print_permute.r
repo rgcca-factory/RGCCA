@@ -11,7 +11,3 @@ perm=rgcca_permutation(blocks=A,par_type="tau",n_cores=1)
 print(perm)
 plot(perm,bars="quantile")
 plot(perm,bars="sd")
-
-
-
-

@@ -1,8 +1,8 @@
-# An internal function used by rgcca_permutation() to perform multiple s/rgcca 
+# An internal function used by rgcca_permutation() to perform multiple s/rgcca
 # on permuted blocks
 #
 # data("Russett")
-# blocks = list(agriculture = Russett[, seq(3)], 
+# blocks = list(agriculture = Russett[, seq(3)],
 #               industry = Russett[, 4:5],
 #               politic = Russett[, 6:11])
 #
@@ -57,9 +57,9 @@ rgcca_permutation_k <- function(
     if (perm) {
         blocks_to_use <- blocks
         blocks_to_use <- lapply(
-            seq(length(blocks)), 
+            seq(length(blocks)),
             function(k) {
-                blocks_to_use_k <- 
+                blocks_to_use_k <-
                     as.matrix(blocks[[k]][sample(seq(NROW(blocks[[k]]))), ])
                 rownames(blocks_to_use_k) = rownames(blocks[[k]])
                 return(blocks_to_use_k)
@@ -101,6 +101,6 @@ rgcca_permutation_k <- function(
         crit_permut <- res$crit[length(res$crit)]
     }
 
-    return(crit_permut) 
+    return(crit_permut)
 
 }

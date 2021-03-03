@@ -6,7 +6,7 @@
 # set.seed(42);X1=matrix(rnorm(35),7,5);
 # set.seed(22);X2=matrix(rnorm(28),7,4);
 # set.seed(2);X3=matrix(rnorm(49),7,7);
-## usual test 
+## usual test
 #X1[1,]=NA
 #X2[7,1]=NA
 #X2[5,1]=NA
@@ -21,10 +21,10 @@ intersection_list=function(A)
 	A=lapply(A,as.matrix)
     centering=lapply(A,function(x){attributes(x)$'scaled:center'})
     scaling=lapply(A,function(x){attributes(x)$'scaled:scale'})
-    
+
 #	lapply(A,function(x){if(is.null(rownames(x))){print("one matrix has no colnames")}})
 	newList=lapply(A,
-		function(x) 
+		function(x)
 		{
 		  if(is.null(rownames(x)))
 		  {
@@ -38,7 +38,7 @@ intersection_list=function(A)
 			{
 				y=x[which(!is.na(x)),,drop=FALSE];
 				rownames(y)=rownames(x)[which(!is.na(x),)];
-		
+
 				return(y)
 			}
 		}

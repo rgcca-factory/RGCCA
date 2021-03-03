@@ -1,7 +1,7 @@
 # Plot permuation in 3D
-# 
+#
 # Plot permuation in 3D
-# 
+#
 # @inheritParams plot3D
 # @inheritParams plot_permut_2D
 # @param sign A boolean to color by groups of alpha = 0.05, 0.01 or 0.001
@@ -35,7 +35,7 @@ plot_permut_3D <- function(
     )
 
     zstat <- as.data.frame(
-        cbind(perm$penalties[,c(i_block, i_block_y, i_block_z)], 
+        cbind(perm$penalties[,c(i_block, i_block_y, i_block_z)],
         z = unlist(perm[type])))
     best <- which.max(zstat$z)
 
@@ -58,8 +58,8 @@ plot_permut_3D <- function(
             showscale = TRUE,
             colorbar = list(title = y_title),
             colorscale = list(
-                list(0, "rgb(165,0,38)"), 
-                list(mean(zstat$z), "rgb(254,224,144)"), 
+                list(0, "rgb(165,0,38)"),
+                list(mean(zstat$z), "rgb(254,224,144)"),
                 list(max(zstat$z), "rgb(49,54,149)")
             ),
             cauto = F,
@@ -67,7 +67,7 @@ plot_permut_3D <- function(
             cmax = max(zstat$z)
         )
     )
-    plotly::add_trace(p, type = "scatter3d", mode = "markers") %>% 
+    plotly::add_trace(p, type = "scatter3d", mode = "markers") %>%
     layout3D(
         title = paste0(
             "Permutation scores \n(best value : ",

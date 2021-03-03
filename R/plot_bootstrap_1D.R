@@ -1,11 +1,11 @@
 #' Plot a fitted bootstrap object in 1D
 #'
-#' Display bootstrap confidence intervals for RGCCA or the number of non-zero 
-#' occurrences for SGCCA. The bars are colored according to the 
-#' significancy  block weight vectors ('*' or 'ns'; see 'pval' in details for 
-#' \code{\link[RGCCA]{get_bootstrap}}) for RGCCA and according to the 
-#' occurrences of non-zero weights for SGCCA. In SGCCA, the significant 
-#' variables are those above the three bars, respectively, with an alpha = 0.05 
+#' Display bootstrap confidence intervals for RGCCA or the number of non-zero
+#' occurrences for SGCCA. The bars are colored according to the
+#' significancy  block weight vectors ('*' or 'ns'; see 'pval' in details for
+#' \code{\link[RGCCA]{get_bootstrap}}) for RGCCA and according to the
+#' occurrences of non-zero weights for SGCCA. In SGCCA, the significant
+#' variables are those above the three bars, respectively, with an alpha = 0.05
 #' (dark red), 0.01 (red) and 0.001 (light red).
 #' @inheritParams plot_histogram
 #' @inheritParams get_bootstrap
@@ -13,12 +13,12 @@
 #' @param df_b A get_bootstrap object \code{\link[RGCCA]{get_bootstrap}}
 #' @param b A fitted bootstrap object \code{\link[RGCCA]{bootstrap}}
 #' @param x indicator used in the plot (see details).
-#' @param y A character string indicating for the index to color the bars 
+#' @param y A character string indicating for the index to color the bars
 #' (see details).
-#' @param display_bar A logical value. If TRUE colobar for significant 
+#' @param display_bar A logical value. If TRUE colobar for significant
 #' variables is displayed.
 #' @param ... Other parameters (see plot_histogram)
-#' @details 
+#' @details
 #' \itemize{
 #' \item 'estimate' of the block weight vectors
 #' \item 'bootstrap_ratio' of the block weight vectors
@@ -28,11 +28,11 @@
 #' }
 #' @examples
 #' data("Russett")
-#' blocks = list(agriculture = Russett[, seq(3)], 
-#'               industry = Russett[, 4:5], 
+#' blocks = list(agriculture = Russett[, seq(3)],
+#'               industry = Russett[, 4:5],
 #'               politic = Russett[, 6:11])
 #' fit.sgcca = rgcca(blocks, sparsity = 0.75, type = "sgcca")
-#' 
+#'
 #' boot = bootstrap(fit.sgcca, 30, n_cores = 1)
 #' plot_bootstrap_1D(boot)
 #' rgcca_out = rgcca(blocks)
@@ -40,7 +40,7 @@
 #' selected.var = get_bootstrap(boot, display_order=TRUE)
 #' plot_bootstrap_1D(boot)
 #' plot_bootstrap_1D(df_b = selected.var)
-#' 
+#'
 #' @export
 #' @importFrom ggplot2 ggplot
 #' @importFrom stats qbinom
@@ -51,7 +51,7 @@ plot_bootstrap_1D <- function(
     x = "estimate",
     y = "occurrences",
     n_mark = 50,
-    title = NULL, 
+    title = NULL,
     colors = NULL,
     comp = 1,
     bars = "sd",
@@ -102,7 +102,7 @@ plot_bootstrap_1D <- function(
     x <- set_occ(x)
     y <- set_occ(y)
 
-    if (y == "sign") 
+    if (y == "sign")
         group <- c("NS","*")
     else
         group <- NA
@@ -141,8 +141,8 @@ plot_bootstrap_1D <- function(
         p <- p +
             geom_errorbar(
                 aes(
-                    ymin = lower_bound, 
-                    ymax = upper_bound, 
+                    ymin = lower_bound,
+                    ymax = upper_bound,
                     width = 0.5))
 
     if (x == "occurrences" && display_bar) {

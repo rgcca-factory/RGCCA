@@ -10,5 +10,5 @@ rgcca_tune=function(
     new_scaled = TRUE,
     scale_size_bloc = TRUE)
 {
-    
+
 }

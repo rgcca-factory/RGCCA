@@ -5,5 +5,3 @@
 #RGCCA:::to_numeric(X1)
 
 #test_that("to_numeric",{expect_true()})
-
-

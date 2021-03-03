@@ -29,14 +29,14 @@ test_that("rgcca_sparsity", {
 })
 
  M=matrix(c(0.6,0.6,0.8,0.85,0.7,0.8,0.8,0.9), 2,4)
-# 
+#
 # res=rgcca_permutation(blocks, n_cores = 1,type="sgcca",superblock=TRUE,par_type="sparsity")
 # res=rgcca_permutation(blocks, n_cores = 1,superblock=TRUE,par_type="sparsity",par_value=c(0.8,0.72,0.43,0.5))
  res=rgcca_permutation(blocks, n_cores = 1,type="sgcca",superblock=TRUE,par_type="sparsity",par_value=M)
 # res=rgcca_permutation(blocks, n_cores = 1,superblock=TRUE,par_type="tau")
 # res=rgcca_permutation(blocks, n_cores = 1,superblock=TRUE,par_type="tau",par_value=c(0.8,0.72,0.43,0.5))
 # res=rgcca_permutation(blocks, n_cores = 1,superblock=TRUE,par_type="tau",par_value=M)
-# 
+#
 # res=rgcca_permutation(blocks, n_cores = 1,type="sgcca",superblock=FALSE,par_type="sparsity")
 # res=rgcca_permutation(blocks, n_cores = 1,superblock=FALSE,par_type="sparsity",par_value=c(0.8,0.72,0.43))
 # res=rgcca_permutation(blocks, n_cores = 1,type="sgcca",superblock=FALSE,par_type="sparsity",par_value=M[,1:3])
@@ -51,10 +51,10 @@ test_that("rgcca_sparsity", {
 
  res_perm=rgcca_permutation(blocks=blocks,n_cores=1,par_type="tau",superblock=TRUE)
  test_that("rgcca_mat_connection", {expect_true(dim(res_perm$call$connection)[1]==4) })
- 
+
  res=rgcca(res_perm)
- 
- 
+
+
 # test_that("rgcca_permutation_optimal_tau", {
 #     expect_is(rgcca_permutation(blocks, tau = "optimal", n_cores = 1), "permutation")
 # }

@@ -6,7 +6,7 @@
 # @title Scaling and Centering of Matrix-like Objects
 # @export scale2
 
-scale2<-function (A, center = TRUE, scale = TRUE, bias = TRUE) 
+scale2<-function (A, center = TRUE, scale = TRUE, bias = TRUE)
 {
   if (center == TRUE & scale == TRUE) {
     A = scale(A, center = TRUE, scale = FALSE)

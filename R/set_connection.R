@@ -1,11 +1,11 @@
-#' Create either a superblock design matrix (if superblock = TRUE), or a 
-#' supervised design matrix (if response != NULL) or a fully connected design 
+#' Create either a superblock design matrix (if superblock = TRUE), or a
+#' supervised design matrix (if response != NULL) or a fully connected design
 #' matrix (if response == NULL and superblock == FALSE)
 #'
 #' @inheritParams rgccaNa
-#' @param superblock Boolean indicating the presence of the superblock. 
+#' @param superblock Boolean indicating the presence of the superblock.
 #' Default = TRUE
-#' @param response Position of the response block 
+#' @param response Position of the response block
 #' @return A binary design matrix encoding the connection between the blocks
 set_connection <- function(
     blocks,
@@ -26,14 +26,14 @@ set_connection <- function(
             Resp=response
             notResp=(1:J)[-Resp]
             connection[notResp, Resp] <- connection[Resp, notResp] <- 1
-        } 
+        }
         else
         {
             connection <- 1 - diag(J)
         }
-            
+
     }
-   
+
     row.names(connection) <- names(blocks) -> colnames(connection)
     return(connection)
 }
