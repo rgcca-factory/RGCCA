@@ -345,14 +345,13 @@ rgcca <- function(blocks, type = "rgcca",
             bias = bias,
             tol = tol,
             scale_block = scale_block,
-            method = method,
             prescaling = TRUE,
             quiet=quiet
         )
     )
 
     func[[par]] <- opt$penalty
-    func_out <- eval(as.call(func))$rgcca
+    func_out <- eval(as.call(func))
 
     for (i in c("a", "astar", "Y")) {
         names(func_out[[i]]) <- names(opt$blocks)
