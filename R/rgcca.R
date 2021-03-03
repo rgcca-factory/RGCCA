@@ -299,9 +299,10 @@ rgcca <- function(blocks, type = "rgcca",
 
    }
 
-    opt$blocks <- scaling(blocks, scale,scale_block = scale_block)
+    opt$blocks     <- handle_NA(blocks, method = method)
+    opt$blocks     <- scaling(opt$blocks, scale,scale_block = scale_block)
     opt$superblock <- check_superblock(response, opt$superblock, !quiet)
-    opt$blocks <- set_superblock(opt$blocks, opt$superblock, type, !quiet)
+    opt$blocks     <- set_superblock(opt$blocks, opt$superblock, type, !quiet)
 
     if (!is.null(response)) {
         response <- check_blockx("response", response, opt$blocks)
