@@ -140,10 +140,14 @@ check_integer <- function(x, y = x, type = "scalar", float = FALSE, min = 1) {
     if (type == "scalar" && length(y) != 1)
         stop_rgcca(paste(x, "should be of length 1."))
 
-    if (!float)
-        y <- as.integer(y)
+    if (!float) {
+      if (any((y %% 1) != 0)) {
+        stop_rgcca(paste(x, "should be an integer."))
+      }
+      y = as.integer(y)
+    }
 
-    if (all(y < min))
+    if (any(y < min))
         stop_rgcca(paste0(x, " should be higher than or equal to ", min, "."))
 
     if (type %in% c("matrix", "data.frame"))
@@ -155,7 +159,7 @@ check_integer <- function(x, y = x, type = "scalar", float = FALSE, min = 1) {
         )
 
     if (type == "data.frame")
-        as.data.frame(y)
+        y = as.data.frame(y)
 
     return(y)
 }
