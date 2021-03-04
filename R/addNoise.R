@@ -2,7 +2,7 @@ addNoise=function(resImputeEM,superblock=FALSE)
 {
   sigma=resImputeEM$sigma
   stdev=resImputeEM$stdev
-  A=resImputeEM$A
+  A=resImputeEM$call$blocks
   indNA=resImputeEM$indNA
   moy=resImputeEM$moy
   nvar=sapply(A,NCOL)

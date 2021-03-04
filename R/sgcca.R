@@ -223,7 +223,7 @@ sgcca <- function (blocks, connection = 1-diag(length(blocks)), sparsity = rep(1
         out <- list(Y=Y, a=a, astar=a,
                     connection=connection, scheme=scheme, sparsity=sparsity, ncomp=ncomp,
                     crit = result$crit[length(result$crit)],
-                    AVE = AVE,A=blocks)
+                    AVE = AVE)
         class(out) <- "sgcca"
         return(out)
     }
@@ -341,7 +341,7 @@ sgcca <- function (blocks, connection = 1-diag(length(blocks)), sparsity = rep(1
                 a = shave.matlist(a, ncomp),
                 astar = shave.matlist(astar, ncomp),
                 crit = crit,
-                AVE = AVE,A=blocks)
+                AVE = AVE)
 
     class(out) <- "sgcca"
     return(out)

@@ -316,7 +316,7 @@ rgccad=function (blocks, connection = 1 - diag(length(blocks)), tau = rep(1, len
     out <- list(Y = Y, a = a, astar = a, connection = connection,  scheme = scheme,
                 ncomp = ncomp, crit = result$crit,
                 primal_dual = primal_dual,
-                AVE = AVE, A = A0, tau = tau)
+                AVE = AVE, tau = tau)
 
     class(out) <- "rgccad"
 
@@ -422,7 +422,7 @@ rgccad=function (blocks, connection = 1 - diag(length(blocks)), tau = rep(1, len
               astar = shave.matlist(astar, ncomp),
               tau = tau_mat,
               crit = crit, primal_dual = primal_dual,
-              AVE = AVE, A = blocks)
+              AVE = AVE)
 
    class(out) <- "rgccad"
 
