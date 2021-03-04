@@ -86,6 +86,8 @@ check_connection <- function(C, blocks) {
     if (all(C == 0))
         stop_rgcca(paste(msg, "not contain only 0."), exit_code = 107)
 
+    invisible(check_size_blocks(blocks, "connection matrix", C))
+
     if(is.null(rownames(C)) || is.null(colnames(C)))
         rownames(C) <- names(blocks) -> colnames(C)
 
@@ -95,8 +97,6 @@ check_connection <- function(C, blocks) {
                          "have the rownames and the colnames that match with
                          the names of the blocks."),
                    exit_code = 108)
-
-    invisible(check_size_blocks(blocks, "connection matrix", C))
 
     return(C)
     # TODO: warning if superblock = TRUE
