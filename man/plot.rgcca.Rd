@@ -39,23 +39,23 @@
 \item{resp}{A vector of characters corresponding either to a qualitative
 variable with levels or a continuous variable}
 
-\item{remove_var}{logical value. If TRUE, the top 100 variables with the 
+\item{remove_var}{logical value. If TRUE, the top 100 variables with the
 highest with the block components are displayed}
 
-\item{text_var}{Boolean value indicating if variable names are plotted 
+\item{text_var}{Boolean value indicating if variable names are plotted
 (default = TRUE)}
 
-\item{text_ind}{boolean value indicating if rownames are plotted 
+\item{text_ind}{boolean value indicating if rownames are plotted
 (default = TRUE).}
 
 \item{response_name}{A character giving the legend title}
 
-\item{overlap}{Boolean value enables avoiding overlapping between labels 
+\item{overlap}{Boolean value enables avoiding overlapping between labels
 (default = FALSE)}
 
 \item{title}{A character giving the title of the plot}
 
-\item{n_mark}{The number of top variables to display in the correlation 
+\item{n_mark}{The number of top variables to display in the correlation
 circle}
 
 \item{collapse}{A boolean to combine the variables of each block as result}
@@ -79,26 +79,26 @@ Plot different outputs of the results obtained by a rgcca function
 }
 \details{
 \itemize{
-\item "ind" for sample plot. The blocks (block argument) and components 
-(comp) that will be used on the horizontal and the vertical axis to plot the 
-individuals: (Y[[block[1]]][, comp[1]], Y[[block[2]]][,comp[2]]). Points can 
-be colored according to the resp argument. The colors of the points can be 
+\item "ind" for sample plot. The blocks (block argument) and components
+(comp) that will be used on the horizontal and the vertical axis to plot the
+individuals: (Y[[block[1]]][, comp[1]], Y[[block[2]]][,comp[2]]). Points can
+be colored according to the resp argument. The colors of the points can be
 modified with the colors argument.
-\item  "var" for correlation circle.  
-first axis, in ordinate, the correlation with the second axis. 
+\item  "var" for correlation circle.
+first axis, in ordinate, the correlation with the second axis.
 \item "both": displays both sample plot and correlation circle (implemented
 only for one block and at least when two components are asked (ncomp >= 2)
 \item "ave": displays the average variance explained for each block
-\item "net": displays the network of connection between blocks (defined by 
+\item "net": displays the network of connection between blocks (defined by
 the connection argument) used in the rgcca() function.
-\item "cor": barplot of the correlation between variables of 
-one block (specified by block) and one of its block components (comp). 
-Variables are sorted in decreasing correlations and only the highest 
-correlations are displayed. The number of displayed correlations can be set 
+\item "cor": barplot of the correlation between variables of
+one block (specified by block) and one of its block components (comp).
+Variables are sorted in decreasing correlations and only the highest
+correlations are displayed. The number of displayed correlations can be set
 with n_marks (defaut value = 30).
-\item "weight": barplot of the block weight vector for one 
-specific block/component. The weights are sorted from the highest to 
-the lowest and only the highest are displayed. The number of displayed 
+\item "weight": barplot of the block weight vector for one
+specific block/component. The weights are sorted from the highest to
+the lowest and only the highest are displayed. The number of displayed
 weights can be set with n_marks
 }
 }
@@ -110,14 +110,14 @@ X_ind = as.matrix(Russett[,c("gnpr","labo")]);
 X_polit = as.matrix(Russett[ , c("demostab", "dictator")]);
 A = list(X_agric = X_agric, X_ind = X_ind, X_polit = X_polit);
 C = matrix(c(0, 0, 1, 0, 0, 1, 1, 1, 0), 3, 3);
-fit.rgcca=rgcca(blocks = A, connection = C, 
+fit.rgcca=rgcca(blocks = A, connection = C,
                 tau = rep(1, 3), ncomp = rep(2, 3))
-                
-###############               
+
+###############
 # sample plot #
 ###############
 
-# Defaut call: First component of the last block vs second component of the 
+# Defaut call: First component of the last block vs second component of the
 # last block
 plot(fit.rgcca, type="ind", resp = status)
 
@@ -133,10 +133,10 @@ plot(fit.rgcca, type="ind", block = 1, comp = 1:2, resp = status)
 # Correlation circle #
 ######################
 # with superblock
-fit.mcia = rgcca(blocks=A, scheme = "factorial", ncomp = rep(2, 4), 
+fit.mcia = rgcca(blocks=A, scheme = "factorial", ncomp = rep(2, 4),
                  tau = c(1, 1, 1, 0), superblock = TRUE)
 plot(fit.mcia, type="both", resp = status, overlap = FALSE)
-                                                     
+
 plot(fit.rgcca, type="cor")
 plot(fit.rgcca, type="weight")
 plot(fit.rgcca, type="ind")

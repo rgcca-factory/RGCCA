@@ -2,7 +2,7 @@
 % Please edit documentation in R/rgccak.R
 \name{rgccak}
 \alias{rgccak}
-\title{Internal function for computing the RGCCA parameters (RGCCA block 
+\title{Internal function for computing the RGCCA parameters (RGCCA block
 components, outer weight vectors, etc.).}
 \usage{
 rgccak(
@@ -20,97 +20,98 @@ rgccak(
 )
 }
 \arguments{
-\item{A}{A list that contains the J blocks of variables. It could be 
-either the original matrices (\eqn{X_1, X_2, ..., X_J}) or the residual 
-matrices (\eqn{X_{h1}, X_{h2}, ..., X_{hJ}}).}
+\item{A}{A list that contains the \eqn{J} blocks of variables from which
+block components are constructed. It could be eiher the original matrices
+(\eqn{X_1, X_2, ..., X_J}) or the residual matrices
+(\eqn{X_{h1}, X_{h2}, ..., X_{hJ}}).}
 
-\item{C}{A symmetric matrix (J*J) that describes the relationships between 
-blocks.}
+\item{C}{A symmetric matrix (J*J) that describes the
+relationships between blocks.}
 
-\item{tau}{Either a 1*J vector or a max(ncomp)*J matrix containing 
-the values of the regularization parameters (default: tau = 1, for each 
-block and each dimension). The regularization parameters varies from 0 
-(maximizing the correlation) to 1 (maximizing the covariance). If 
-tau = "optimal" the regularization paramaters are estimated for each block 
-and each dimension using the Schafer and Strimmer (2005) analytical formula . 
-If tau is a 1*J vector, tau[j] is identical across the dimensions 
-of block Xj. If tau is a matrix, tau[k, j] is associated with 
-X_jk (kth residual matrix for block j). The regularization parameters can 
+\item{tau}{Either a 1*J vector or a max(ncomp)*J matrix containing
+the values of the regularization parameters (default: tau = 1, for each
+block and each dimension). The regularization parameters varies from 0
+(maximizing the correlation) to 1 (maximizing the covariance). If
+tau = "optimal" the regularization paramaters are estimated for each block
+and each dimension using the Schafer and Strimmer (2005) analytical formula.
+If tau is a 1*J vector, tau[j] is identical across the dimensions
+of block Xj. If tau is a matrix, tau[k, j] is associated with
+X_jk (kth residual matrix for block j). The regularization parameters can
 also be estimated using \link{rgcca_permutation} or \link{rgcca_cv}.}
 
-\item{scheme}{Character string or a function giving the scheme function for 
+\item{scheme}{Character string or a function giving the scheme function for
 covariance maximization among "horst" (the identity function), "factorial"
- (the squared values), "centroid" (the absolute values). The scheme function 
- can be any continously differentiable convex function and it is possible to 
- design explicitely the sheme function (e.g. function(x) x^4) as argument of 
+ (the squared values), "centroid" (the absolute values). The scheme function
+ can be any continously differentiable convex function and it is possible to
+ design explicitely the sheme function (e.g. function(x) x^4) as argument of
  rgcca function.  See (Tenenhaus et al, 2017) for details.}
 
 \item{verbose}{Logical value indicating whether the warnings are displayed.}
 
-\item{init}{Character string giving the type of initialization to use in 
-the  algorithm. It could be either by Singular Value Decompostion ("svd") 
+\item{init}{Character string giving the type of initialization to use in
+the  algorithm. It could be either by Singular Value Decompostion ("svd")
 or by random initialisation ("random") (default: "svd").}
 
-\item{bias}{A logical value for biaised (\eqn{1/n}) or unbiaised 
+\item{bias}{A logical value for biaised (\eqn{1/n}) or unbiaised
 (\eqn{1/(n-1)}) estimator of the var/cov (default: bias = TRUE).}
 
 \item{tol}{The stopping value for the convergence of the algorithm.}
 
-\item{na.rm}{If TRUE, RGCCA is run only on the available data (default value) 
+\item{na.rm}{If TRUE, RGCCA is run only on the available data (default value)
 otherwise the NIPALS algorithm is used.}
 
 \item{scale}{Logical value indicating if blocks are standardized.}
 
-\item{scale_block}{Logical value indicating if each block is divided by 
+\item{scale_block}{Logical value indicating if each block is divided by
 the square root of its number of variables.}
 }
 \value{
 \item{Y}{Matrix of block components of dimension \eqn{n * J}}
 
-\item{a}{A list of \eqn{J} elements. Each element of the list is a 
-matrix that contains a block weight vector associated with one block and 
+\item{a}{A list of \eqn{J} elements. Each element of the list is a
+matrix that contains a block weight vector associated with one block and
 one deflation stage.}
 
 \item{AVE_inner}{Average Variance Explained (AVE) of the inner model.}
 
 \item{call}{Call of the function}
 
-\item{crit}{A list of max(ncomp) elements. Each element 
-(one per deflation stage) is a vector that contains the value of the RGCCA 
+\item{crit}{A list of max(ncomp) elements. Each element
+(one per deflation stage) is a vector that contains the value of the RGCCA
 objective function across iterations.}
 
-\item{tau}{Either a 1*J vector or a \eqn{\mathrm{max}(ncomp)\times J} 
-matrix containing the values of the regularization parameters . The shrinkage 
-parameter tau varies from 0 (maximizing the correlation) to 1 (maximizing the 
-covariance). If tau = "optimal" the regularization paramaters are estimated 
+\item{tau}{Either a 1*J vector or a \eqn{\mathrm{max}(ncomp)\times J}
+matrix containing the values of the regularization parameters . The shrinkage
+parameter tau varies from 0 (maximizing the correlation) to 1 (maximizing the
+covariance). If tau = "optimal" the regularization paramaters are estimated
 for each block and each dimension using the Schafer and Strimmer (2005)
-analytical formula . If tau is a \eqn{1\times J} vector, tau[j] is identical 
-across the dimensions of block \eqn{\mathbf{X}_j}. If tau is a matrix, 
-tau[k, j] is associated with \eqn{\mathbf{X}_{jk}} (\eqn{k}th residual matrix 
-for block \eqn{j}). It can also be estimated by using 
+analytical formula . If tau is a \eqn{1\times J} vector, tau[j] is identical
+across the dimensions of block \eqn{\mathbf{X}_j}. If tau is a matrix,
+tau[k, j] is associated with \eqn{\mathbf{X}_{jk}} (\eqn{k}th residual matrix
+for block \eqn{j}). It can also be estimated by using
 \link{rgcca_permutation}.}
 }
 \description{
-The function rgccak() is called by rgccad() and does not have to be used by 
-the user. The function rgccak() returns the RGCCA block components, block 
-weight vectors, etc., for each block and each dimension. Depending on the 
-dimensionality of each block \eqn{X_j, j = 1, ..., J}, the primal 
-(when n > p_j) or the dual (when n < p_j) algorithm is used (see 
+The function rgccak() is called by rgccad() and does not have to be used by
+the user. The function rgccak() returns the RGCCA block components, block
+weight vectors, etc., for each block and each dimension. Depending on the
+dimensionality of each block \eqn{X_j, j = 1, ..., J}, the primal
+(when n > p_j) or the dual (when n < p_j) algorithm is used (see
 Tenenhaus et al. 2015)
 }
 \references{
-Tenenhaus M., Tenenhaus A. and Groenen PJF (2017), Regularized 
-generalized canonical correlation analysis: A framework for sequential 
+Tenenhaus M., Tenenhaus A. and Groenen PJF (2017), Regularized
+generalized canonical correlation analysis: A framework for sequential
 multiblock component methods, Psychometrika, 82, 737-777
 
-Tenenhaus A., Philippe C., and Frouin V. (2015). Kernel 
-Generalized Canonical Correlation Analysis. Computational Statistics and 
+Tenenhaus A., Philippe C., and Frouin V. (2015). Kernel
+Generalized Canonical Correlation Analysis. Computational Statistics and
 Data Analysis, 90, 114-131.
 
-Tenenhaus A. and Tenenhaus M., (2011), Regularized Generalized 
+Tenenhaus A. and Tenenhaus M., (2011), Regularized Generalized
 Canonical Correlation Analysis, Psychometrika, Vol. 76(2), pp 257-284.
 
-Schafer J. and Strimmer K., (2005), A shrinkage approach to 
-large-scale covariance matrix estimation and implications for functional 
+Schafer J. and Strimmer K., (2005), A shrinkage approach to
+large-scale covariance matrix estimation and implications for functional
 genomics. Statistical Applications in Genetics and Molecular Biology 4:32.
 }

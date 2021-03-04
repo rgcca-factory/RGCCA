@@ -21,7 +21,7 @@ plot_var_1D(
 
 \item{comp}{An integer giving the index of the analysis components}
 
-\item{n_mark}{The number of top variables to display in the correlation 
+\item{n_mark}{The number of top variables to display in the correlation
 circle}
 
 \item{i_block}{An integer giving the index of a list of blocks}
@@ -39,7 +39,7 @@ or "weight" for the weight of the RGCCA}
 \item{...}{Further graphical parameters (see plot2D)}
 }
 \description{
-Barplot of the higher outer weight vectors for a component of a block 
+Barplot of the higher outer weight vectors for a component of a block
 (by default, the superblock or the last one) analysed by R/SGCCA
 }
 \examples{

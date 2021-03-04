@@ -41,9 +41,16 @@
 #' iterative partial least squares algorithm) described in (Tenenhaus et al,
 #' 2005). Guidelines describing how to use RGCCA in practice are provided in
 #' (Garali et al., 2017).
-#' @inheritParams rgccaNa
-#' @inheritParams sgccaNa
+#' @inheritParams rgccad
+#' @inheritParams sgcca
 #' @inheritParams select_analysis
+#' @param method  Character string corresponding to the method used for
+#' handling missing values ("nipals", "complete"). (default: "nipals").
+#' \itemize{
+#' \item{\code{"complete"}}{corresponds to perform RGCCA on the fully observed
+#' observations (observations with missing values are removed)}
+#' \item{\code{"nipals"}}{corresponds to perform RGCCA algorithm on available
+#' data (NIPALS-type algorithm)}}
 #' @return A rgcca fitted object
 #' @return \item{Y}{List of \eqn{J} elements. Each element of the list \eqn{Y}
 #' is a matrix that contains the RGCCA block components for the corresponding
@@ -243,7 +250,7 @@ rgcca <- function(blocks, type = "rgcca",
         if (!missing(tau) && missing(sparsity))
            stop_rgcca(paste0("sparsity parameters required for ",
                              tolower(type), " (instead of tau)."))
-        gcca <- sgccaNa
+        gcca <- sgcca
         par <- "sparsity"
         penalty <- sparsity
 
@@ -251,7 +258,7 @@ rgcca <- function(blocks, type = "rgcca",
         if (!missing(sparsity) & missing(tau))
            stop_rgcca(paste0("tau parameters required for ",
                              tolower(type), " (instead of sparsity)."))
-        gcca <- rgccaNa
+        gcca <- rgccad
         par <- "tau"
         penalty <- tau
     }
@@ -299,9 +306,10 @@ rgcca <- function(blocks, type = "rgcca",
 
    }
 
-    opt$blocks <- scaling(blocks, scale,scale_block = scale_block)
+    opt$blocks     <- handle_NA(blocks, method = method)
+    opt$blocks     <- scaling(opt$blocks, scale,scale_block = scale_block)
     opt$superblock <- check_superblock(response, opt$superblock, !quiet)
-    opt$blocks <- set_superblock(opt$blocks, opt$superblock, type, !quiet)
+    opt$blocks     <- set_superblock(opt$blocks, opt$superblock, type, !quiet)
 
     if (!is.null(response)) {
         response <- check_blockx("response", response, opt$blocks)
@@ -345,14 +353,13 @@ rgcca <- function(blocks, type = "rgcca",
             bias = bias,
             tol = tol,
             scale_block = scale_block,
-            method = method,
             prescaling = TRUE,
             quiet=quiet
         )
     )
 
     func[[par]] <- opt$penalty
-    func_out <- eval(as.call(func))$rgcca
+    func_out <- eval(as.call(func))
 
     for (i in c("a", "astar", "Y")) {
         names(func_out[[i]]) <- names(opt$blocks)

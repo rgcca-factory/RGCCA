@@ -2,7 +2,7 @@
 #' supervised design matrix (if response != NULL) or a fully connected design
 #' matrix (if response == NULL and superblock == FALSE)
 #'
-#' @inheritParams rgccaNa
+#' @inheritParams rgccad
 #' @param superblock Boolean indicating the presence of the superblock.
 #' Default = TRUE
 #' @param response Position of the response block

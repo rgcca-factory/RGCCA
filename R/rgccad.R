@@ -12,9 +12,9 @@
 #' data analysis methods (maximization of well identified criteria) and the
 #' flexibility of PLS path modeling (the researcher decides which blocks are
 #' connected and which are not). Hence, the use of RGCCA requires the
-#' construction (user specified) of a design matrix, (\eqn{\mathbf{C}}), that
+#' construction (user specified) of a design matrix, (\eqn{\mathbf{connection}}), that
 #' characterize the connections between blocks. Elements of the (symmetric)
-#' design matrix \eqn{\mathbf{C} = (c_{jk})} is positive ; but usually equal to 1
+#' design matrix \eqn{\mathbf{connection} = (c_{jk})} is positive ; but usually equal to 1
 #' if block \eqn{j} and block \eqn{k} are connected, and 0 otherwise. The
 #' objective is to find a stationnary point related to the RGCCA optimization
 #' problem. The function rgccad() implements a globally convergent algorithm
@@ -32,18 +32,42 @@
 #' (non-linear iterative partial least squares algorithm) as described in
 #' (Tenenhaus et al, 2005).
 #' @inheritParams select_analysis
-#' @inheritParams rgccaNa
-#' @param A  A list that contains the \eqn{J} blocks of variables. It could be
-#' either the original matrices (\eqn{X_1, X_2, ..., X_J}).
-#' @param C  A symmetric matrix (J*J) that describes the relationships between
+#' @param blocks A list that contains the J blocks of variables X1, X2, ..., XJ.
+#' Block Xj is a matrix of dimension n x p_j where n is the number of
+#' observations and p_j the number of variables.
+#' @param connection  A symmetric matrix (J*J) that describes the relationships between
 #' blocks.
+#' @param tau Either a 1*J vector or a max(ncomp)*J matrix containing
+#' the values of the regularization parameters (default: tau = 1, for each
+#' block and each dimension). The regularization parameters varies from 0
+#' (maximizing the correlation) to 1 (maximizing the covariance). If
+#' tau = "optimal" the regularization paramaters are estimated for each block
+#' and each dimension using the Schafer and Strimmer (2005) analytical formula.
+#' If tau is a 1*J vector, tau[j] is identical across the dimensions
+#' of block Xj. If tau is a matrix, tau[k, j] is associated with
+#' X_jk (kth residual matrix for block j). The regularization parameters can
+#' also be estimated using \link{rgcca_permutation} or \link{rgcca_cv}.
+#' @param scale Logical value indicating if blocks are standardized.
+#' @param scale_block Logical value indicating if each block is divided by
+#' the square root of its number of variables.
+#' @param verbose Logical value indicating if the progress of the
+#' algorithm is reported while computing.
+#' @param quiet Logical value indicating if warning messages are reported.
+#' @param init Character string giving the type of initialization to use in
+#' the  algorithm. It could be either by Singular Value Decompostion ("svd")
+#' or by random initialisation ("random") (default: "svd").
+#' @param bias A logical value for biaised (\eqn{1/n}) or unbiaised
+#' (\eqn{1/(n-1)}) estimator of the var/cov (default: bias = TRUE).
+#' @param tol The stopping value for the convergence of the algorithm.
+#' @param prescaling Logical value indicating if the scaling has been done
+#' outside of the function.
 #' @param na.rm If TRUE, runs rgcca only on available data.
 #' @return \item{Y}{A list of \eqn{J} elements. Each element of the list is a
 #' matrix that contains the RGCCA block components for the corresponding block.}
 #' @return \item{a}{A list of \eqn{J} elements. Each element of the list \eqn{a}
 #' is a matrix of block weight vectors for the corresponding block.}
 #' @return \item{astar}{A list of \eqn{J} elements. Each element of astar is a
-#' matrix defined as Y[[j]][, h] = A[[j]]\%*\%astar[[j]][, h].}
+#' matrix defined as Y[[j]][, h] = blocks[[j]]\%*\%astar[[j]][, h].}
 #' @return \item{tau}{Either a 1*J vector or a \eqn{\mathrm{max}(ncomp) \times J}
 #' matrix containing the values of the regularization parameters. tau varies
 #' from 0 (maximizing the correlation) to 1 (maximizing the covariance).
@@ -83,10 +107,10 @@
 #' X_agric =as.matrix(Russett[,c("gini","farm","rent")])
 #' X_ind = as.matrix(Russett[,c("gnpr","labo")])
 #' X_polit = as.matrix(Russett[ , c("demostab", "dictator")])
-#' A = list(X_agric, X_ind, X_polit)
-#' #Define the design matrix (output = C)
-#' C = matrix(c(0, 0, 1, 0, 0, 1, 1, 1, 0), 3, 3)
-#' fit.rgcca = rgccad(A, C, tau = c(1, 1, 1), scheme = "factorial",
+#' blocks = list(X_agric, X_ind, X_polit)
+#' #Define the design matrix (output = connection)
+#' connection = matrix(c(0, 0, 1, 0, 0, 1, 1, 1, 0), 3, 3)
+#' fit.rgcca = rgccad(blocks, connection, tau = c(1, 1, 1), scheme = "factorial",
 #' scale = TRUE)
 #' lab = as.vector(apply(Russett[, 9:11], 1, which.max))
 #' plot(fit.rgcca$Y[[1]], fit.rgcca$Y[[2]], col = "white",
@@ -100,7 +124,7 @@
 #' ############################
 #' # plot(y1, y2) for (RGCCA) #
 #' ############################
-#' fit.rgcca = rgccad(A, C, tau = rep(1, 3), ncomp = c(2, 2, 1),
+#' fit.rgcca = rgccad(blocks, connection, tau = rep(1, 3), ncomp = c(2, 2, 1),
 #'                      scheme = "factorial", verbose = TRUE)
 #' layout(t(1:2))
 #' plot(fit.rgcca$Y[[1]][, 1], fit.rgcca$Y[[2]][, 1], col = "white",
@@ -118,21 +142,21 @@
 #' # example 3: RGCCA and leave one out #
 #' ######################################
 #' Ytest = matrix(0, 47, 3)
-#' fit.rgcca = rgccad(A, C, tau = rep(1, 3), ncomp = rep(1, 3),
+#' fit.rgcca = rgccad(blocks, connection, tau = rep(1, 3), ncomp = rep(1, 3),
 #'                      scheme = "factorial", verbose = TRUE, scale = TRUE,
 #'                      scale_block = FALSE)
 #' for (i in 1:nrow(Russett)){
-#'  B = lapply(A, function(x) x[-i, ])
+#'  B = lapply(blocks, function(x) x[-i, ])
 #'  B = lapply(B, scale)
 #'
-#'  resB = rgccad(B, C, tau = rep(1, 3), scheme = "factorial",
+#'  resB = rgccad(B, connection, tau = rep(1, 3), scheme = "factorial",
 #'  scale = TRUE, scale_block = FALSE, verbose = FALSE)
 #'  #  look for potential conflicting sign among components within the loo loop.
 #'  for (k in 1:length(B)){
 #'    if (cor(fit.rgcca$a[[k]], resB$a[[k]]) >= 0)
 #'      resB$a[[k]] = resB$a[[k]] else resB$a[[k]] = -resB$a[[k]]
 #'  }
-#'  Btest = lapply(A, function(x) x[i, ])
+#'  Btest = lapply(blocks, function(x) x[i, ])
 #'  Btest[[1]] = (Btest[[1]]-attr(B[[1]],"scaled:center"))/
 #'                   (attr(B[[1]],"scaled:scale"))
 #'  Btest[[2]] = (Btest[[2]]-attr(B[[2]],"scaled:center"))/
@@ -157,8 +181,8 @@
 #' @importFrom stats as.formula qt
 #' @importFrom grDevices graphics.off
 
-rgccad=function (A, C = 1 - diag(length(A)), tau = rep(1, length(A)),
-                 ncomp = rep(1, length(A)), scheme = "centroid", scale = TRUE,
+rgccad=function (blocks, connection = 1 - diag(length(blocks)), tau = rep(1, length(blocks)),
+                 ncomp = rep(1, length(blocks)), scheme = "centroid", scale = TRUE,
                  init = "svd", bias = TRUE, tol = 1e-08, verbose = TRUE,
                  scale_block = TRUE, na.rm = TRUE,
                  prescaling = FALSE, quiet = FALSE)
@@ -173,14 +197,14 @@ rgccad=function (A, C = 1 - diag(length(A)), tau = rep(1, length(A)),
   shave.veclist <- function(vec_list, nb_elts)
     mapply(function(m, nbcomp) m[1:nbcomp], vec_list, nb_elts, SIMPLIFY = FALSE)
 
-  A0 = A
-  call=list(A = A, C = C,  ncomp = ncomp, scheme = scheme, scale = scale,
+  A0 = blocks
+  call=list(blocks = blocks, connection = connection,  ncomp = ncomp, scheme = scheme, scale = scale,
             init = init, bias = bias, tol = tol, verbose = verbose,
             scale_block = scale_block, na.rm = na.rm)
 
   if (any(ncomp < 1)) {stop_rgcca("Compute at least one component per block!")}
-  pjs <- sapply(A, NCOL)
-  nb_row <- NROW(A[[1]])
+  pjs <- sapply(blocks, NCOL)
+  nb_row <- NROW(blocks[[1]])
 
   if (any(ncomp - pjs > 0))
     stop_rgcca("For each block, choose a number of components smaller than the
@@ -208,30 +232,30 @@ rgccad=function (A, C = 1 - diag(length(A)), tau = rep(1, length(A)),
   }
 
   if(!prescaling)
-      A <- scaling(A, scale = scale, bias = bias, scale_block = scale_block)
+      blocks <- scaling(blocks, scale = scale, bias = bias, scale_block = scale_block)
 
   # Superblock option
-  if(!is.matrix(C)&& C == "superblock")
+  if(!is.matrix(connection)&& connection == "superblock")
   {
     #Construction of the superblock
-    A = c(A, list(do.call(cbind, A)))
+    blocks = c(blocks, list(do.call(cbind, blocks)))
     #Construction of the corresponding design matrix
-    C = matrix(0, length(A), length(A))
-    C[length(A), 1:(length(A)-1)]=1
-    C = C+t(C)
+    connection = matrix(0, length(blocks), length(blocks))
+    connection[length(blocks), 1:(length(blocks)-1)]=1
+    connection = connection+t(connection)
     # Shrinkage parameters
 
     if(is.null(tau)){
       message("the shrinkage parameters have been
               automatically set to 1 for all blocks (incl. superblock)")
-      tau = rep(1, NCOL(C))
+      tau = rep(1, NCOL(connection))
     }
-    if(length(tau) == NCOL(C)-1){
+    if(length(tau) == NCOL(connection)-1){
       message("the shrinkage parameter for the superblock has been
               automatically set to 1")
       tau=c(tau,1)
     }
-    if(!((length(tau) == NCOL(C)-1) | (length(tau) == NCOL(C))))
+    if(!((length(tau) == NCOL(connection)-1) | (length(tau) == NCOL(connection))))
       stop_rgcca("the length of the vector of shinkage parameters is not
                  appropriate.")
 
@@ -239,14 +263,14 @@ rgccad=function (A, C = 1 - diag(length(A)), tau = rep(1, length(A)),
     if(is.null(ncomp)){
       message("the number of components per block has been
               automatically set to 1 for all blocks/superblock)")
-      ncomp = rep(1, NCOL(C))
+      ncomp = rep(1, NCOL(connection))
     }
-    if(length(ncomp) == NCOL(C)-1){
+    if(length(ncomp) == NCOL(connection)-1){
       message("the number of global components has been
               automatically set to max(ncomp)")
       ncomp =c(ncomp,max(ncomp))
     }
-    if(!((length(ncomp) == NCOL(C)-1) | (length(tau) == NCOL(C))))
+    if(!((length(ncomp) == NCOL(connection)-1) | (length(tau) == NCOL(connection))))
       stop_rgcca("the ncomp argument has been filled inappropriately.")
 
     # number of variables per block
@@ -257,8 +281,8 @@ rgccad=function (A, C = 1 - diag(length(A)), tau = rep(1, length(A)),
   AVE_outer <- vector()
   ndefl <- ncomp - 1
   N <- max(ndefl)
-  nb_ind <- NROW(A[[1]])
-  J <- length(A)
+  nb_ind <- NROW(blocks[[1]])
+  J <- length(blocks)
 
   # Whether primal or dual
   primal_dual = rep("primal", J)
@@ -266,7 +290,7 @@ rgccad=function (A, C = 1 - diag(length(A)), tau = rep(1, length(A)),
 
   # One component per block
   if(N == 0){
-    result <- rgccak(A, C, tau = tau, scheme = scheme, init = init,
+    result <- rgccak(blocks, connection, tau = tau, scheme = scheme, init = init,
                      bias = bias, tol = tol, verbose = verbose,
                      na.rm=na.rm,
                      scale_block=scale_block, scale=scale)
@@ -274,7 +298,7 @@ rgccad=function (A, C = 1 - diag(length(A)), tau = rep(1, length(A)),
     Y <- NULL
     for (b in 1:J) Y[[b]] <- result$Y[, b, drop = FALSE]
     for (j in 1:J)
-      AVE_X[[j]] = mean(cor(A[[j]], Y[[j]],use="pairwise.complete.obs")^2,
+      AVE_X[[j]] = mean(cor(blocks[[j]], Y[[j]],use="pairwise.complete.obs")^2,
                         na.rm=TRUE)
 
     AVE_outer <- sum(pjs * unlist(AVE_X))/sum(pjs)
@@ -283,17 +307,17 @@ rgccad=function (A, C = 1 - diag(length(A)), tau = rep(1, length(A)),
     a <- lapply(result$a, cbind)
 
      for (b in 1:J) {
-      rownames(a[[b]]) = colnames(A[[b]])
-      rownames(Y[[b]]) = rownames(A[[b]])
+      rownames(a[[b]]) = colnames(blocks[[b]])
+      rownames(Y[[b]]) = rownames(blocks[[b]])
       colnames(Y[[b]]) = "comp1"
     }
 
     tau=result$tau
 
     if(is.vector(tau))
-      names(tau) = names(A)
+      names(tau) = names(blocks)
 
-    out <- list(Y = Y, a = a, astar = a, C = C,  scheme = scheme,
+    out <- list(Y = Y, a = a, astar = a, connection = connection,  scheme = scheme,
                 ncomp = ncomp, crit = result$crit,
                 primal_dual = primal_dual,
                 AVE = AVE, A = A0, tau = tau, call = call)
@@ -306,18 +330,18 @@ rgccad=function (A, C = 1 - diag(length(A)), tau = rep(1, length(A)),
   Y <- NULL
   crit = list()
   AVE_inner <- rep(NA, max(ncomp))
-  R <- A
+  R <- blocks
   P <- a <- astar <- NULL
   if (is.numeric(tau))
   {
       tau_mat = tau
-      if(is.vector(tau_mat)) names(tau_mat) = names(A)
-      if(is.matrix(tau_mat))colnames(tau_mat) = names(A)
+      if(is.vector(tau_mat)) names(tau_mat) = names(blocks)
+      if(is.matrix(tau_mat))colnames(tau_mat) = names(blocks)
   }
   else
   {
       tau_mat = matrix(NA, max(ncomp), J)
-      colnames(tau_mat) = names(A)
+      colnames(tau_mat) = names(blocks)
   }
 
   for (b in 1:J) P[[b]] <- a[[b]] <- astar[[b]] <- matrix(NA, pjs[[b]], N + 1)
@@ -327,10 +351,10 @@ rgccad=function (A, C = 1 - diag(length(A)), tau = rep(1, length(A)),
       cat(paste0("Computation of the RGCCA block components #", n, " is under
                  progress...\n"))
     if (is.vector(tau))
-      rgcca.result <- rgccak(R, C, tau = tau, scheme = scheme,init = init,
+      rgcca.result <- rgccak(R, connection, tau = tau, scheme = scheme,init = init,
                              bias = bias, tol = tol, verbose = verbose,
                              na.rm = na.rm)
-    else rgcca.result <- rgccak(R, C, tau = tau[n, ], scheme = scheme,
+    else rgcca.result <- rgccak(R, connection, tau = tau[n, ], scheme = scheme,
                                 init = init, bias = bias, tol = tol,
                                 verbose = verbose, na.rm = na.rm)
 
@@ -361,9 +385,9 @@ rgccad=function (A, C = 1 - diag(length(A)), tau = rep(1, length(A)),
     cat(paste0("Computation of the RGCCA block components #",
                N + 1, " is under progress ... \n"))
   if (is.vector(tau))
-    rgcca.result <- rgccak(R, C, tau = tau, scheme = scheme, init = init,
+    rgcca.result <- rgccak(R, connection, tau = tau, scheme = scheme, init = init,
                            bias = bias, tol = tol, verbose = verbose)
-  else rgcca.result <- rgccak(R, C, tau = tau[N+1, ], scheme = scheme,
+  else rgcca.result <- rgccak(R, connection, tau = tau[N+1, ], scheme = scheme,
                               init = init, bias = bias, tol = tol,
                               verbose = verbose)
 
@@ -376,13 +400,13 @@ rgccad=function (A, C = 1 - diag(length(A)), tau = rep(1, length(A)),
     a[[b]][, N+1] <- rgcca.result$a[[b]]
     astar[[b]][, N+1] <- rgcca.result$a[[b]]-astar[[b]][, (1:N), drop = F]%*%
       drop(t(a[[b]][, (N+1)]) %*%P[[b]][, 1:N, drop = F])
-    rownames(a[[b]]) = rownames(astar[[b]]) = colnames(A[[b]])
-    rownames(Y[[b]]) = rownames(A[[b]])
+    rownames(a[[b]]) = rownames(astar[[b]]) = colnames(blocks[[b]])
+    rownames(Y[[b]]) = rownames(blocks[[b]])
     colnames(Y[[b]]) = paste0("comp", 1:max(ncomp))
   }
 
   for (j in 1:J)
-      AVE_X[[j]] = apply(cor(A[[j]], Y[[j]], use="pairwise.complete.obs")^2,
+      AVE_X[[j]] = apply(cor(blocks[[j]], Y[[j]], use="pairwise.complete.obs")^2,
                          2, mean, na.rm = TRUE)
 
   outer = matrix(unlist(AVE_X), nrow = max(ncomp))
@@ -391,8 +415,8 @@ rgccad=function (A, C = 1 - diag(length(A)), tau = rep(1, length(A)),
     AVE_outer[j] <- sum(pjs * outer[j,],na.rm=na.rm)/sum(pjs)
 
   Y = shave.matlist(Y, ncomp)
-  names(Y)=names(A)
-  names(a)=names(A)
+  names(Y)=names(blocks)
+  names(a)=names(blocks)
   AVE_X = shave.veclist(AVE_X, ncomp)
 
   AVE <- list(AVE_X = AVE_X, AVE_outer_model = AVE_outer,
@@ -402,7 +426,7 @@ rgccad=function (A, C = 1 - diag(length(A)), tau = rep(1, length(A)),
               astar = shave.matlist(astar, ncomp),
               tau = tau_mat,
               crit = crit, primal_dual = primal_dual,
-              AVE = AVE, A = A, call = call)
+              AVE = AVE, A = blocks, call = call)
 
    class(out) <- "rgccad"
 

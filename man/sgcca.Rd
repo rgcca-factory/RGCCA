@@ -2,14 +2,14 @@
 % Please edit documentation in R/sgcca.R
 \name{sgcca}
 \alias{sgcca}
-\title{Variable Selection For Generalized Canonical Correlation Analysis 
+\title{Variable Selection For Generalized Canonical Correlation Analysis
 (SGCCA)}
 \usage{
 sgcca(
-  A,
-  C = 1 - diag(length(A)),
-  sparsity = rep(1, length(A)),
-  ncomp = rep(1, length(A)),
+  blocks,
+  connection = 1 - diag(length(blocks)),
+  sparsity = rep(1, length(blocks)),
+  ncomp = rep(1, length(blocks)),
   scheme = "centroid",
   scale = TRUE,
   init = "svd",
@@ -22,49 +22,50 @@ sgcca(
 )
 }
 \arguments{
-\item{A}{A list that contains the \eqn{J} blocks of variables. It could be 
-either the original matrices (\eqn{X_1, X_2, ..., X_J}).}
+\item{blocks}{List of blocks.}
 
-\item{C}{A symmetric matrix (J*J) that describes the relationships between 
-blocks.}
+\item{connection}{Symmetric matrix (J*J) that describes the relationships
+between blocks. Elements of the connection matrix must be positive ; but
+usually equal to 1 if block \eqn{j} and block \eqn{k} are connected, and 0
+otherwise.}
 
-\item{sparsity}{Either a \eqn{1*J} vector or a \eqn{max(ncomp) * J} matrix 
-encoding the L1 constraints applied to the outer weight vectors. The amount 
-of sparsity varies between \eqn{1/sqrt(p_j)} and 1 (larger values of sparsity 
-correspond to less penalization). If sparsity is a vector, L1-penalties are 
-the same for all the weights corresponding to the same block but different 
-components: 
+\item{sparsity}{Either a \eqn{1*J} vector or a \eqn{max(ncomp) * J} matrix
+encoding the L1 constraints applied to the outer weight vectors. The amount
+of sparsity varies between \eqn{1/sqrt(p_j)} and 1 (larger values of sparsity
+correspond to less penalization). If sparsity is a vector, L1-penalties are
+the same for all the weights corresponding to the same block but different
+components:
 \deqn{for all h, |a_{j,h}|_{L_1} \le c_1[j] \sqrt{p_j},}
 with \eqn{p_j} the number of variables of \eqn{X_j}.
-If sparsity is a matrix, each row \eqn{h} defines the constraints applied to 
+If sparsity is a matrix, each row \eqn{h} defines the constraints applied to
 the weights corresponding to components \eqn{h}:
-\deqn{for all h, |a_{j,h}|_{L_1} \le c_1[h,j] \sqrt{p_j}.} It can be 
+\deqn{for all h, |a_{j,h}|_{L_1} \le c_1[h,j] \sqrt{p_j}.} It can be
 estimated by using \link{rgcca_permutation}.}
 
-\item{ncomp}{Vector of length J indicating the number of block components 
+\item{ncomp}{Vector of length J indicating the number of block components
 for each block.}
 
-\item{scheme}{Character string or a function giving the scheme function for 
+\item{scheme}{Character string or a function giving the scheme function for
 covariance maximization among "horst" (the identity function), "factorial"
- (the squared values), "centroid" (the absolute values). The scheme function 
- can be any continously differentiable convex function and it is possible to 
- design explicitely the sheme function (e.g. function(x) x^4) as argument of 
+ (the squared values), "centroid" (the absolute values). The scheme function
+ can be any continously differentiable convex function and it is possible to
+ design explicitely the sheme function (e.g. function(x) x^4) as argument of
  rgcca function.  See (Tenenhaus et al, 2017) for details.}
 
 \item{scale}{Logical value indicating if blocks are standardized.}
 
-\item{init}{Character string giving the type of initialization to use in 
-the  algorithm. It could be either by Singular Value Decompostion ("svd") 
+\item{init}{Character string giving the type of initialization to use in
+the  algorithm. It could be either by Singular Value Decompostion ("svd")
 or by random initialisation ("random") (default: "svd").}
 
-\item{bias}{A logical value for biaised (\eqn{1/n}) or unbiaised 
+\item{bias}{A logical value for biaised (\eqn{1/n}) or unbiaised
 (\eqn{1/(n-1)}) estimator of the var/cov (default: bias = TRUE).}
 
 \item{tol}{The stopping value for the convergence of the algorithm.}
 
 \item{verbose}{Logical value indicating whether the warnings are displayed.}
 
-\item{scale_block}{Logical value indicating if each block is divided by 
+\item{scale_block}{Logical value indicating if each block is divided by
 the square root of its number of variables.}
 
 \item{prescaling}{Logical value indicating if the scaling has been done
@@ -73,46 +74,46 @@ outside of the function.}
 \item{quiet}{Logical value indicating if warning messages are reported.}
 }
 \value{
-\item{Y}{A list of \eqn{J} elements. Each element of \eqn{Y} is a 
+\item{Y}{A list of \eqn{J} elements. Each element of \eqn{Y} is a
 matrix that contains the analysis components for the corresponding block.}
 
-\item{a}{A list of \eqn{J} elements. Each element of \eqn{a} is a 
+\item{a}{A list of \eqn{J} elements. Each element of \eqn{a} is a
 matrix that contains the outer weight vectors for each block.}
 
-\item{astar}{A list of \eqn{J} elements. Each element of astar is a 
-matrix defined as Y[[j]][, h] = A[[j]]\%*\%astar[[j]][, h]}
+\item{astar}{A list of \eqn{J} elements. Each element of astar is a
+matrix defined as Y[[j]][, h] = blocks[[j]]\%*\%astar[[j]][, h]}
 
 \item{call}{Call of the function}
 
-\item{crit}{A vector of integer that contains for each component the 
+\item{crit}{A vector of integer that contains for each component the
 values of the analysis criteria across iterations.}
 
-\item{AVE}{A list of numerical values giving the indicators of model 
-quality based on the Average Variance Explained (AVE): AVE(for each block), 
+\item{AVE}{A list of numerical values giving the indicators of model
+quality based on the Average Variance Explained (AVE): AVE(for each block),
 AVE(outer model), AVE(inner model).}
 }
 \description{
-SGCCA extends RGCCA to address the issue of variable selection. Specifically, 
-RGCCA is combined with an L1-penalty that gives rise to Sparse GCCA (SGCCA) 
+SGCCA extends RGCCA to address the issue of variable selection. Specifically,
+RGCCA is combined with an L1-penalty that gives rise to Sparse GCCA (SGCCA)
 which is implemented in the function sgcca().
-Given \eqn{J} matrices \eqn{X_1, X_2, ..., X_J}, that represent 
-\eqn{J} sets of variables observed on the same set of \eqn{n} individuals. 
-The matrices \eqn{X_1, X_2, ..., X_J} must have the same number of rows, but 
-may (and usually will) have different numbers of columns. Blocks are not 
-necessarily fully connected within the SGCCA framework. Hence the use of 
-SGCCA requires the construction (user specified) of a design matrix (\eqn{C}) 
-that characterizes the connections between blocks. Elements of the symmetric 
-design matrix \eqn{C = (c_{jk})} are equal to 1 if block \eqn{j} and block 
-\eqn{k} are connected, and 0 otherwise. The SGCCA algorithm is very similar 
-to the RGCCA algorithm and keeps the same monotone convergence properties 
-(i.e. the bounded criteria to be maximized increases at each step of the 
+Given \eqn{J} matrices \eqn{X_1, X_2, ..., X_J}, that represent
+\eqn{J} sets of variables observed on the same set of \eqn{n} individuals.
+The matrices \eqn{X_1, X_2, ..., X_J} must have the same number of rows, but
+may (and usually will) have different numbers of columns. Blocks are not
+necessarily fully connected within the SGCCA framework. Hence the use of
+SGCCA requires the construction (user specified) of a design matrix (\eqn{connection})
+that characterizes the connections between blocks. Elements of the symmetric
+design matrix \eqn{connection = (c_{jk})} are equal to 1 if block \eqn{j} and block
+\eqn{k} are connected, and 0 otherwise. The SGCCA algorithm is very similar
+to the RGCCA algorithm and keeps the same monotone convergence properties
+(i.e. the bounded criteria to be maximized increases at each step of the
 iterative procedure and hits at convergence a stationary point).
-Moreover, using a deflation strategy, sgcca() enables the computation of 
-several SGCCA block components (specified by ncomp) for each block. Block 
-components for each block are guaranteed to be orthogonal when using this 
-deflation strategy. The so-called symmetric deflation is considered in this 
-implementation, i.e. each block is deflated with respect to its own 
-component. Moreover, we stress that the numbers of components per block 
+Moreover, using a deflation strategy, sgcca() enables the computation of
+several SGCCA block components (specified by ncomp) for each block. Block
+components for each block are guaranteed to be orthogonal when using this
+deflation strategy. The so-called symmetric deflation is considered in this
+implementation, i.e. each block is deflated with respect to its own
+component. Moreover, we stress that the numbers of components per block
 could differ from one block to another.
 }
 \examples{
@@ -127,77 +128,77 @@ could differ from one block to another.
 require(gliomaData)
 data(ge_cgh_locIGR)
 
-A <- ge_cgh_locIGR$multiblocks
+blocks <- ge_cgh_locIGR$multiblocks
 Loc <- factor(ge_cgh_locIGR$y)
 levels(Loc) <- colnames(ge_cgh_locIGR$multiblocks$y)
-C <-  matrix(c(0, 0, 1, 0, 0, 1, 1, 1, 0), 3, 3)
+connection <-  matrix(c(0, 0, 1, 0, 0, 1, 1, 1, 0), 3, 3)
 tau = c(1, 1, 0)
 
-# rgcca algorithm using the dual formulation for X1 and X2 
+# rgcca algorithm using the dual formulation for X1 and X2
 # and the dual formulation for X3
-A[[3]] = A[[3]][, -3]
-result.rgcca = rgccad(A, C, tau, ncomp = c(2, 2, 1), 
+blocks[[3]] = blocks[[3]][, -3]
+result.rgcca = rgccad(blocks, connection, tau, ncomp = c(2, 2, 1),
 scheme = "factorial", verbose = TRUE)
 # sgcca algorithm
-result.sgcca = sgcca(A, C, sparsity = c(.071,.2, 1), ncomp = c(2, 2, 1),
+result.sgcca = sgcca(blocks, connection, sparsity = c(.071,.2, 1), ncomp = c(2, 2, 1),
                      scheme = "centroid", verbose = TRUE)
 
 ############################
 # plot(y1, y2) for (RGCCA) #
 ############################
 layout(t(1:2))
-plot(result.rgcca$Y[[1]][, 1], result.rgcca$Y[[2]][, 1], 
-     col = "white", xlab = "Y1 (GE)", ylab = "Y2 (CGH)", 
+plot(result.rgcca$Y[[1]][, 1], result.rgcca$Y[[2]][, 1],
+     col = "white", xlab = "Y1 (GE)", ylab = "Y2 (CGH)",
      main = "Factorial plan of RGCCA")
-text(result.rgcca$Y[[1]][, 1], result.rgcca$Y[[2]][, 1], 
+text(result.rgcca$Y[[1]][, 1], result.rgcca$Y[[2]][, 1],
      Loc, col = as.numeric(Loc), cex = .6)
-plot(result.rgcca$Y[[1]][, 1], result.rgcca$Y[[1]][, 2], 
-     col = "white", xlab = "Y1 (GE)", 
+plot(result.rgcca$Y[[1]][, 1], result.rgcca$Y[[1]][, 2],
+     col = "white", xlab = "Y1 (GE)",
      ylab = "Y2 (GE)", main = "Factorial plan of RGCCA")
-text(result.rgcca$Y[[1]][, 1], result.rgcca$Y[[1]][, 2], 
+text(result.rgcca$Y[[1]][, 1], result.rgcca$Y[[1]][, 2],
      Loc, col = as.numeric(Loc), cex = .6)
 
 ############################
 # plot(y1, y2) for (SGCCA) #
 ############################
 layout(t(1:2))
-plot(result.sgcca$Y[[1]][, 1], result.sgcca$Y[[2]][, 1], 
-     col = "white", xlab = "Y1 (GE)", 
+plot(result.sgcca$Y[[1]][, 1], result.sgcca$Y[[2]][, 1],
+     col = "white", xlab = "Y1 (GE)",
      ylab = "Y2 (CGH)", main = "Factorial plan of SGCCA")
-text(result.sgcca$Y[[1]][, 1], result.sgcca$Y[[2]][, 1], 
+text(result.sgcca$Y[[1]][, 1], result.sgcca$Y[[2]][, 1],
      Loc, col = as.numeric(Loc), cex = .6)
 
-plot(result.sgcca$Y[[1]][, 1], result.sgcca$Y[[1]][, 2], 
-     col = "white", xlab = "Y1 (GE)", 
+plot(result.sgcca$Y[[1]][, 1], result.sgcca$Y[[1]][, 2],
+     col = "white", xlab = "Y1 (GE)",
      ylab = "Y2 (GE)", main = "Factorial plan of SGCCA")
-text(result.sgcca$Y[[1]][, 1], result.sgcca$Y[[1]][, 2], 
+text(result.sgcca$Y[[1]][, 1], result.sgcca$Y[[1]][, 2],
      Loc, col = as.numeric(Loc), cex = .6)
 
-# sgcca algorithm with multiple components and different 
-L1 penalties for each components 
+# sgcca algorithm with multiple components and different
+L1 penalties for each components
 # (-> sparsity is a matrix)
 init = "random"
-result.sgcca = sgcca(A, C, 
-                     sparsity = matrix(c(.071,.2, 1, 0.06, 0.15, 1), 
+result.sgcca = sgcca(blocks, connection,
+                     sparsity = matrix(c(.071,.2, 1, 0.06, 0.15, 1),
                      nrow = 2, byrow = TRUE),
-                     ncomp = c(2, 2, 1), scheme = "factorial", 
-                     scale = TRUE, bias = TRUE, 
+                     ncomp = c(2, 2, 1), scheme = "factorial",
+                     scale = TRUE, bias = TRUE,
                      init = init, verbose = TRUE)
 # number of non zero elements per dimension
-apply(result.sgcca$a[[1]], 2, function(x) sum(x!=0)) 
+apply(result.sgcca$a[[1]], 2, function(x) sum(x!=0))
      #(-> 145 non zero elements for a11 and 107 non zero elements for a12)
-apply(result.sgcca$a[[2]], 2, function(x) sum(x!=0)) 
+apply(result.sgcca$a[[2]], 2, function(x) sum(x!=0))
      #(-> 85 non zero elements for a21 and 52 non zero elements for a22)
 init = "svd"
-result.sgcca = sgcca(A, C, sparsity = matrix(c(.071,.2, 1, 0.06, 0.15, 1), 
+result.sgcca = sgcca(blocks, connection, sparsity = matrix(c(.071,.2, 1, 0.06, 0.15, 1),
                      nrow = 2, byrow = TRUE),
-                     ncomp = c(2, 2, 1), scheme = "factorial", scale = TRUE, 
-                     bias = TRUE, 
+                     ncomp = c(2, 2, 1), scheme = "factorial", scale = TRUE,
+                     bias = TRUE,
                      init = init, verbose = TRUE)
 }
 }
 \references{
-Tenenhaus, A., Philippe, C., Guillemot, V., Le Cao, K. A., 
-Grill, J., and Frouin, V. , "Variable selection for generalized canonical 
+Tenenhaus, A., Philippe, C., Guillemot, V., Le Cao, K. A.,
+Grill, J., and Frouin, V. , "Variable selection for generalized canonical
 correlation analysis.," Biostatistics, vol. 15, no. 3, pp. 569-583, 2014.
 }

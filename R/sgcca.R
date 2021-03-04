@@ -6,9 +6,9 @@
 #' The matrices \eqn{X_1, X_2, ..., X_J} must have the same number of rows, but
 #' may (and usually will) have different numbers of columns. Blocks are not
 #' necessarily fully connected within the SGCCA framework. Hence the use of
-#' SGCCA requires the construction (user specified) of a design matrix (\eqn{C})
+#' SGCCA requires the construction (user specified) of a design matrix (\eqn{connection})
 #' that characterizes the connections between blocks. Elements of the symmetric
-#' design matrix \eqn{C = (c_{jk})} are equal to 1 if block \eqn{j} and block
+#' design matrix \eqn{connection = (c_{jk})} are equal to 1 if block \eqn{j} and block
 #' \eqn{k} are connected, and 0 otherwise. The SGCCA algorithm is very similar
 #' to the RGCCA algorithm and keeps the same monotone convergence properties
 #' (i.e. the bounded criteria to be maximized increases at each step of the
@@ -21,7 +21,6 @@
 #' component. Moreover, we stress that the numbers of components per block
 #' could differ from one block to another.
 #' @inheritParams select_analysis
-#' @inheritParams rgccaNa
 #' @inheritParams rgccad
 #' @param sparsity Either a \eqn{1*J} vector or a \eqn{max(ncomp) * J} matrix
 #' encoding the L1 constraints applied to the outer weight vectors. The amount
@@ -40,7 +39,7 @@
 #' @return \item{a}{A list of \eqn{J} elements. Each element of \eqn{a} is a
 #' matrix that contains the outer weight vectors for each block.}
 #' @return \item{astar}{A list of \eqn{J} elements. Each element of astar is a
-#' matrix defined as Y[[j]][, h] = A[[j]]\%*\%astar[[j]][, h]}
+#' matrix defined as Y[[j]][, h] = blocks[[j]]\%*\%astar[[j]][, h]}
 #' @return \item{call}{Call of the function}
 #' @return \item{crit}{A vector of integer that contains for each component the
 #' values of the analysis criteria across iterations.}
@@ -64,19 +63,19 @@
 #' require(gliomaData)
 #' data(ge_cgh_locIGR)
 #'
-#' A <- ge_cgh_locIGR$multiblocks
+#' blocks <- ge_cgh_locIGR$multiblocks
 #' Loc <- factor(ge_cgh_locIGR$y)
 #' levels(Loc) <- colnames(ge_cgh_locIGR$multiblocks$y)
-#' C <-  matrix(c(0, 0, 1, 0, 0, 1, 1, 1, 0), 3, 3)
+#' connection <-  matrix(c(0, 0, 1, 0, 0, 1, 1, 1, 0), 3, 3)
 #' tau = c(1, 1, 0)
 #'
 #' # rgcca algorithm using the dual formulation for X1 and X2
 #' # and the dual formulation for X3
-#' A[[3]] = A[[3]][, -3]
-#' result.rgcca = rgccad(A, C, tau, ncomp = c(2, 2, 1),
+#' blocks[[3]] = blocks[[3]][, -3]
+#' result.rgcca = rgccad(blocks, connection, tau, ncomp = c(2, 2, 1),
 #' scheme = "factorial", verbose = TRUE)
 #' # sgcca algorithm
-#' result.sgcca = sgcca(A, C, sparsity = c(.071,.2, 1), ncomp = c(2, 2, 1),
+#' result.sgcca = sgcca(blocks, connection, sparsity = c(.071,.2, 1), ncomp = c(2, 2, 1),
 #'                      scheme = "centroid", verbose = TRUE)
 #'
 #' ############################
@@ -114,7 +113,7 @@
 #' L1 penalties for each components
 #' # (-> sparsity is a matrix)
 #' init = "random"
-#' result.sgcca = sgcca(A, C,
+#' result.sgcca = sgcca(blocks, connection,
 #'                      sparsity = matrix(c(.071,.2, 1, 0.06, 0.15, 1),
 #'                      nrow = 2, byrow = TRUE),
 #'                      ncomp = c(2, 2, 1), scheme = "factorial",
@@ -126,7 +125,7 @@
 #' apply(result.sgcca$a[[2]], 2, function(x) sum(x!=0))
 #'      #(-> 85 non zero elements for a21 and 52 non zero elements for a22)
 #' init = "svd"
-#' result.sgcca = sgcca(A, C, sparsity = matrix(c(.071,.2, 1, 0.06, 0.15, 1),
+#' result.sgcca = sgcca(blocks, connection, sparsity = matrix(c(.071,.2, 1, 0.06, 0.15, 1),
 #'                      nrow = 2, byrow = TRUE),
 #'                      ncomp = c(2, 2, 1), scheme = "factorial", scale = TRUE,
 #'                      bias = TRUE,
@@ -134,21 +133,21 @@
 #' }
 #'@export sgcca
 
-sgcca <- function (A, C = 1-diag(length(A)), sparsity = rep(1, length(A)),
-                   ncomp = rep(1, length(A)), scheme = "centroid", scale = TRUE,
+sgcca <- function (blocks, connection = 1-diag(length(blocks)), sparsity = rep(1, length(blocks)),
+                   ncomp = rep(1, length(blocks)), scheme = "centroid", scale = TRUE,
                    init = "svd", bias = TRUE, tol = .Machine$double.eps,
                    verbose = FALSE, scale_block = TRUE, prescaling = FALSE,
                    quiet = FALSE){
 
-  call=list(A = A, C = C, sparsity = sparsity, ncomp = ncomp,
+  call=list(blocks = blocks, connection = connection, sparsity = sparsity, ncomp = ncomp,
             scheme = scheme, scale = scale, init = init, bias = bias,
             tol = tol, verbose = verbose, scale_block = scale_block)
 
   ndefl <- ncomp-1
   N <- max(ndefl)
-  J <- length(A)
-  pjs <- sapply(A,NCOL)
-  nb_ind <- NROW(A[[1]])
+  J <- length(blocks)
+  pjs <- sapply(blocks,NCOL)
+  nb_ind <- NROW(blocks[[1]])
   AVE_X = list()
   AVE_outer <- rep(NA,max(ncomp))
 
@@ -186,7 +185,7 @@ sgcca <- function (A, C = 1-diag(length(A)), sparsity = rep(1, length(A)),
 
     #-------------------------------------------------------
     if(!prescaling)
-        A=scaling(A, scale = scale, bias = bias, scale_block = scale_block)
+        blocks=scaling(blocks, scale = scale, bias = bias, scale_block = scale_block)
 
     ####################################
     # sgcca with 1 component per block #
@@ -195,19 +194,19 @@ sgcca <- function (A, C = 1-diag(length(A)), sparsity = rep(1, length(A)),
     # ndefl number of deflation per block
     ndefl <- ncomp-1
     N <- max(ndefl)
-    J <- length(A)
-    pjs <- sapply(A,NCOL)
-    nb_ind <- NROW(A[[1]])
+    J <- length(blocks)
+    pjs <- sapply(blocks,NCOL)
+    nb_ind <- NROW(blocks[[1]])
     AVE_X = list()
     AVE_outer <- rep(NA,max(ncomp))
     if (N == 0) {
-        result <- sgccak(A, C, sparsity, scheme, init = init, bias = bias,
+        result <- sgccak(blocks, connection, sparsity, scheme, init = init, bias = bias,
                          tol = tol, verbose = verbose, quiet = quiet)
         # No deflation (No residual matrices generated).
         Y <- NULL
         for (b in 1:J) Y[[b]] <- result$Y[,b, drop = FALSE]
         #Average Variance Explained (AVE) per block
-        for (j in 1:J) AVE_X[[j]] =  mean(cor(A[[j]], Y[[j]],
+        for (j in 1:J) AVE_X[[j]] =  mean(cor(blocks[[j]], Y[[j]],
                                               use="pairwise.complete.obs")^2,
                                           na.rm=TRUE)
 
@@ -221,15 +220,15 @@ sgcca <- function (A, C = 1-diag(length(A)), sparsity = rep(1, length(A)),
         a <- lapply(result$a, cbind)
 
         for (b in 1:J) {
-          rownames(a[[b]]) = colnames(A[[b]])
-          rownames(Y[[b]]) = rownames(A[[b]])
+          rownames(a[[b]]) = colnames(blocks[[b]])
+          rownames(Y[[b]]) = rownames(blocks[[b]])
           colnames(Y[[b]]) = "comp1"
         }
 
         out <- list(Y=Y, a=a, astar=a,
-                    C=C, scheme=scheme, sparsity=sparsity, ncomp=ncomp,
+                    connection=connection, scheme=scheme, sparsity=sparsity, ncomp=ncomp,
                     crit = result$crit[length(result$crit)],
-                    AVE = AVE,A=A,call=call)
+                    AVE = AVE,A=blocks,call=call)
         class(out) <- "sgcca"
         return(out)
     }
@@ -239,7 +238,7 @@ sgcca <- function (A, C = 1-diag(length(A)), sparsity = rep(1, length(A)),
     ##################
 
     Y <- NULL
-    R <- A
+    R <- blocks
     P <- a <- astar <- NULL
     crit <- list()
     AVE_inner <- rep(NA,max(ncomp))
@@ -257,11 +256,11 @@ sgcca <- function (A, C = 1-diag(length(A)), sparsity = rep(1, length(A)),
       if (verbose) cat(paste0("Computation of the SGCCA block components #", n,
                               " is under progress... \n"))
       if(is.vector(sparsity)){
-        sgcca.result <- sgccak(R, C, sparsity = sparsity , scheme=scheme,
+        sgcca.result <- sgccak(R, connection, sparsity = sparsity , scheme=scheme,
                                init = init, bias = bias, tol = tol,
                                verbose = verbose, quiet = quiet)
       } else{
-        sgcca.result <- sgccak(R, C, sparsity = sparsity[n, ] , scheme = scheme,
+        sgcca.result <- sgccak(R, connection, sparsity = sparsity[n, ] , scheme = scheme,
                                init = init, bias = bias, tol = tol,
                                verbose = verbose, quiet = quiet)
       }
@@ -298,11 +297,11 @@ sgcca <- function (A, C = 1-diag(length(A)), sparsity = rep(1, length(A)),
     if (verbose) cat(paste0("Computation of the SGCCA block components #", N+1, "
                             is under progress...\n"))
     if(is.vector(sparsity)) {
-      sgcca.result <- sgccak(R, C, sparsity = sparsity, scheme=scheme,
+      sgcca.result <- sgccak(R, connection, sparsity = sparsity, scheme=scheme,
                              init = init, bias = bias, tol = tol,
                              verbose = verbose, quiet = quiet)
     } else{
-      sgcca.result <- sgccak(R, C, sparsity = sparsity[N+1, ], scheme=scheme,
+      sgcca.result <- sgccak(R, connection, sparsity = sparsity[N+1, ], scheme=scheme,
                              init = init, bias = bias, tol = tol,
                              verbose = verbose, quiet = quiet)
     }
@@ -314,8 +313,8 @@ sgcca <- function (A, C = 1-diag(length(A)), sparsity = rep(1, length(A)),
       a[[b]][,N+1]     <- sgcca.result$a[[b]]
       astar[[b]][,N+1] <- sgcca.result$a[[b]] -  astar[[b]][,(1:N),drop=F] %*%
                               drop(t(a[[b]][, N+1]) %*% P[[b]][,1:N,drop=F])
-      rownames(a[[b]]) = rownames(astar[[b]]) = colnames(A[[b]])
-      rownames(Y[[b]]) = rownames(A[[b]])
+      rownames(a[[b]]) = rownames(astar[[b]]) = colnames(blocks[[b]])
+      rownames(Y[[b]]) = rownames(blocks[[b]])
       colnames(Y[[b]]) = paste0("comp", 1:max(ncomp))
     }
 
@@ -327,7 +326,7 @@ sgcca <- function (A, C = 1-diag(length(A)), sparsity = rep(1, length(A)),
              vec_list, nb_elts, SIMPLIFY=FALSE)
 
     #Average Variance Explained (AVE) per block
-    for (j in 1:J) AVE_X[[j]] =  apply(cor(A[[j]], Y[[j]],
+    for (j in 1:J) AVE_X[[j]] =  apply(cor(blocks[[j]], Y[[j]],
                                            use="pairwise.complete.obs")^2, 2,
                                        function(x) {return(mean(x,is.na=TRUE))})
 
@@ -347,7 +346,7 @@ sgcca <- function (A, C = 1-diag(length(A)), sparsity = rep(1, length(A)),
                 a = shave.matlist(a, ncomp),
                 astar = shave.matlist(astar, ncomp),
                 crit = crit,
-                AVE = AVE,A=A,call=call
+                AVE = AVE,A=blocks,call=call
                 )
 
     class(out) <- "sgcca"

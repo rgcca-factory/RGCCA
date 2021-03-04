@@ -26,10 +26,10 @@ plot_bootstrap_1D(
 
 \item{x}{indicator used in the plot (see details).}
 
-\item{y}{A character string indicating for the index to color the bars 
+\item{y}{A character string indicating for the index to color the bars
 (see details).}
 
-\item{n_mark}{The number of top variables to display in the correlation 
+\item{n_mark}{The number of top variables to display in the correlation
 circle}
 
 \item{title}{A character giving the title of the plot}
@@ -39,10 +39,10 @@ circle}
 \item{comp}{An integer giving the index of the analysis components}
 
 \item{bars}{Character string giving the variability among "sd" (error bar of
-standard deviation) , "stderr" (error bar of standard deviation divided by 
+standard deviation) , "stderr" (error bar of standard deviation divided by
 sqrt(n)) or "quantile" (error bar of 0.05/0.95-quantiles)}
 
-\item{display_bar}{A logical value. If TRUE colobar for significant 
+\item{display_bar}{A logical value. If TRUE colobar for significant
 variables is displayed.}
 
 \item{i_block}{An integer giving the index of a list of blocks}
@@ -50,12 +50,12 @@ variables is displayed.}
 \item{...}{Other parameters (see plot_histogram)}
 }
 \description{
-Display bootstrap confidence intervals for RGCCA or the number of non-zero 
-occurrences for SGCCA. The bars are colored according to the 
-significancy  block weight vectors ('*' or 'ns'; see 'pval' in details for 
-\code{\link[RGCCA]{get_bootstrap}}) for RGCCA and according to the 
-occurrences of non-zero weights for SGCCA. In SGCCA, the significant 
-variables are those above the three bars, respectively, with an alpha = 0.05 
+Display bootstrap confidence intervals for RGCCA or the number of non-zero
+occurrences for SGCCA. The bars are colored according to the
+significancy  block weight vectors ('*' or 'ns'; see 'pval' in details for
+\code{\link[RGCCA]{get_bootstrap}}) for RGCCA and according to the
+occurrences of non-zero weights for SGCCA. In SGCCA, the significant
+variables are those above the three bars, respectively, with an alpha = 0.05
 (dark red), 0.01 (red) and 0.001 (light red).
 }
 \details{
@@ -69,8 +69,8 @@ variables are those above the three bars, respectively, with an alpha = 0.05
 }
 \examples{
 data("Russett")
-blocks = list(agriculture = Russett[, seq(3)], 
-              industry = Russett[, 4:5], 
+blocks = list(agriculture = Russett[, seq(3)],
+              industry = Russett[, 4:5],
               politic = Russett[, 6:11])
 fit.sgcca = rgcca(blocks, sparsity = 0.75, type = "sgcca")
 
