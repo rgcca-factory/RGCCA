@@ -19,7 +19,6 @@
 #' matrix that contains a block weight vector associated with one block and
 #' one deflation stage.}
 #' @return \item{AVE_inner}{Average Variance Explained (AVE) of the inner model.}
-#' @return \item{call}{Call of the function}
 #' @return \item{crit}{A list of max(ncomp) elements. Each element
 #' (one per deflation stage) is a vector that contains the value of the RGCCA
 #' objective function across iterations.}
@@ -56,9 +55,6 @@ rgccak=function (A, C, tau = "optimal", scheme = "centroid", verbose = FALSE,
                  scale = TRUE, scale_block = TRUE
                  )
 {
-  call = list(A = A, C = C, scheme = scheme, verbose = verbose, init = init,
-              bias = bias, tol = tol, na.rm = na.rm,
-              scale = scale, scale_block = scale_block)
 
   if(mode(scheme) != "function")
   {
@@ -245,9 +241,7 @@ rgccak=function (A, C, tau = "optimal", scheme = "centroid", verbose = FALSE,
         plot(crit[1:iter], xlab = "iteration", ylab = "criteria")
     }
     AVEinner <- sum(C * cor(Y)^2/2)/(sum(C)/2)
-    call$tau=tau
 
-    result <- list(Y = Y, a = a, crit = crit, AVE_inner = AVEinner,
-                   call = call, tau = tau)
+    result <- list(Y = Y, a = a, crit = crit, AVE_inner = AVEinner, tau = tau)
     return(result)
 }
