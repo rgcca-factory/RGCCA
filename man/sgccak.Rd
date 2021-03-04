@@ -78,8 +78,6 @@ tolerance.}
 \item{AVE}{A list of numerical values giving the indicators of model
 quality based on the Average Variance Explained (AVE): AVE(for each block),
 AVE(outer model), AVE(inner model).}
-
-\item{call}{Call of the function}
 }
 \description{
 The function sgccak() is called by sgcca() and does not have to be used by
