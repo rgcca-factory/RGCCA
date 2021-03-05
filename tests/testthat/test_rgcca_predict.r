@@ -19,7 +19,7 @@ set.seed(1)
 object1 = rgcca(A, connection = C, tau = c(0.7,0.8,0.7),
      ncomp = c(3,2,4), superblock = FALSE, response = 3)
 attributes(object1$call$blocks$agriculture)
-attributes(object1$A$agriculture)
+attributes(object1$call$blocks$agriculture)
 apply(object1$call$block[[1]],2,sd)
  res  = rgcca_predict(object1, A,new_scaled=FALSE)
 test_that("rgcca_predict",{expect_true(

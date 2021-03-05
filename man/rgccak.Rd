@@ -74,8 +74,6 @@ one deflation stage.}
 
 \item{AVE_inner}{Average Variance Explained (AVE) of the inner model.}
 
-\item{call}{Call of the function}
-
 \item{crit}{A list of max(ncomp) elements. Each element
 (one per deflation stage) is a vector that contains the value of the RGCCA
 objective function across iterations.}

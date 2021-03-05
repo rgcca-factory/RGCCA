@@ -16,7 +16,6 @@
 #' @return \item{AVE}{A list of numerical values giving the indicators of model
 #' quality based on the Average Variance Explained (AVE): AVE(for each block),
 #' AVE(outer model), AVE(inner model).}
-#' @return \item{call}{Call of the function}
 #' @title Internal function for computing the SGCCA parameters (SGCCA block
 #' components, outer weight vectors etc.)
 #' @importFrom Deriv Deriv
@@ -25,8 +24,6 @@ sgccak <-  function(A, C, sparsity = rep(1, length(A)), scheme = "centroid",
                     init = "svd", bias = TRUE, verbose = TRUE,
                     quiet = FALSE){
 
-  call=list(A, C, sparsity = sparsity, scheme = scheme, scale = scale,
-            tol = tol, init = init, bias = bias, verbose = verbose)
   J <- length(A)
   pjs = sapply(A, NCOL)
   AVE_X <- rep(0, J)
@@ -148,7 +145,7 @@ sgccak <-  function(A, C, sparsity = rep(1, length(A)), scheme = "centroid",
   AVE_inner  <- sum(C*cor(Y)^2/2)/(sum(C)/2) # AVE inner model
 
   result <- list(Y = Y, a = a, crit = crit[which(crit != 0)],
-                 AVE_inner = AVE_inner,call=call)
+                 AVE_inner = AVE_inner)
   return(result)
 }
 

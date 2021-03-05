@@ -40,7 +40,6 @@
 #' matrix that contains the outer weight vectors for each block.}
 #' @return \item{astar}{A list of \eqn{J} elements. Each element of astar is a
 #' matrix defined as Y[[j]][, h] = blocks[[j]]\%*\%astar[[j]][, h]}
-#' @return \item{call}{Call of the function}
 #' @return \item{crit}{A vector of integer that contains for each component the
 #' values of the analysis criteria across iterations.}
 #' @return \item{AVE}{A list of numerical values giving the indicators of model
@@ -139,10 +138,6 @@ sgcca <- function (blocks, connection = 1-diag(length(blocks)), sparsity = rep(1
                    verbose = FALSE, scale_block = TRUE, prescaling = FALSE,
                    quiet = FALSE){
 
-  call=list(blocks = blocks, connection = connection, sparsity = sparsity, ncomp = ncomp,
-            scheme = scheme, scale = scale, init = init, bias = bias,
-            tol = tol, verbose = verbose, scale_block = scale_block)
-
   ndefl <- ncomp-1
   N <- max(ndefl)
   J <- length(blocks)
@@ -228,7 +223,7 @@ sgcca <- function (blocks, connection = 1-diag(length(blocks)), sparsity = rep(1
         out <- list(Y=Y, a=a, astar=a,
                     connection=connection, scheme=scheme, sparsity=sparsity, ncomp=ncomp,
                     crit = result$crit[length(result$crit)],
-                    AVE = AVE,A=blocks,call=call)
+                    AVE = AVE)
         class(out) <- "sgcca"
         return(out)
     }
@@ -346,8 +341,7 @@ sgcca <- function (blocks, connection = 1-diag(length(blocks)), sparsity = rep(1
                 a = shave.matlist(a, ncomp),
                 astar = shave.matlist(astar, ncomp),
                 crit = crit,
-                AVE = AVE,A=blocks,call=call
-                )
+                AVE = AVE)
 
     class(out) <- "sgcca"
     return(out)
