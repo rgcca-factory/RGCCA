@@ -83,7 +83,7 @@ test_that("upca_var2",{expect_true(upca_var)})
 # With superblock  # TODO
 
 #------------PLS
-#  res_pls = plsr(X_polit ~ X_agric, ncomp = 1, method = "simpls")
+#  res_pls = plsr(X_polit ~ X_agric, ncomp = 1, NA_method = "simpls")
 #  A = list(X_agric,X_polit);
 #  pls_with_rgcca= rgcca (
 #      blocks=A,
@@ -140,8 +140,8 @@ test_that("upca_var2",{expect_true(upca_var)})
  C0=matrix(0,3,3);C0[2:3,1]=1;C0[1,2:3]=1
  C1=matrix(0,3,3);C1[1:2,3]=1;C1[3,1:2]=1
  A1=list(A[[2]],A[[3]],A[[1]])
- resRgccaNipals3=rgcca(blocks=A1,connection=C1,type="rgcca",method="nipals",ncomp=2)
- resRgccaNipals=rgcca(blocks=A,connection=C0,type="rgcca",method="nipals",ncomp=2)
+ resRgccaNipals3=rgcca(blocks=A1,connection=C1,type="rgcca",NA_method="nipals",ncomp=2)
+ resRgccaNipals=rgcca(blocks=A,connection=C0,type="rgcca",NA_method="nipals",ncomp=2)
  head(resRgccaNipals3$Y[[3]])
  head(resRgccaNipals$Y[[1]])
 

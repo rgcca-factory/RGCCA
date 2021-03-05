@@ -111,7 +111,7 @@ rgcca_predict = function(
 
      # Initializations
     prediction=NULL
-    if(rgcca_res$call$method=="complete"){rgcca_res$call$blocks=intersection_list(rgcca_res$call$blocks)}
+    if(rgcca_res$call$NA_method=="complete"){rgcca_res$call$blocks=intersection_list(rgcca_res$call$blocks)}
     astar <- rgcca_res$astar
 
     # Dealing with vectors instead of matrices

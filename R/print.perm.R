@@ -17,7 +17,7 @@ print.permutation <- function(x, ...){
 
   cat("Call: ")
   names_call <- c("type", "par_type", "n_perms",
-                  "quiet", "method", "tol", "scale",
+                  "quiet", "NA_method", "tol", "scale",
                   "scale_block", "superblock")
   char_to_print <- ""
   for (name in names_call) {

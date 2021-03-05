@@ -70,7 +70,7 @@ rgcca_cv=function( blocks,
           scale_block=TRUE,
           tol=1e-8,
           scheme="factorial",
-          method="nipals",
+          NA_method="nipals",
           rgcca_res=NULL,
           parallelization=NULL,
           tau=rep(1,length(blocks)),
@@ -90,7 +90,7 @@ rgcca_cv=function( blocks,
         scheme=rgcca_res$call$scheme
         response=rgcca_res$call$response
         tol=rgcca_res$call$tol
-        method=rgcca_res$call$method
+        NA_method=rgcca_res$call$NA_method
         bias=rgcca_res$call$bias
         blocks<-rgcca_res$call$raw
         superblock=rgcca_res$call$superblock
@@ -202,16 +202,16 @@ rgcca_cv=function( blocks,
 
             if(par_type[[1]]=="ncomp")
             {
-                rgcca_res=rgcca(blocks=blocks, type=type,response=response,ncomp=par_type[[2]][i,],superblock=superblock,scale=scale,scale_block=scale_block,scheme=scheme,tol=tol,method=method,tau=tau, sparsity=sparsity,bias=bias,init=init)
+                rgcca_res=rgcca(blocks=blocks, type=type,response=response,ncomp=par_type[[2]][i,],superblock=superblock,scale=scale,scale_block=scale_block,scheme=scheme,tol=tol,NA_method=NA_method,tau=tau, sparsity=sparsity,bias=bias,init=init)
             }
             if(par_type[[1]]=="sparsity")
             {
-                rgcca_res=rgcca(blocks=blocks, type="sgcca",response=response,sparsity=par_type[[2]][i,],superblock=superblock,scale=scale,scale_block=scale_block,scheme=scheme,tol=tol,method=method, ncomp=ncomp,bias=bias,init=init)
+                rgcca_res=rgcca(blocks=blocks, type="sgcca",response=response,sparsity=par_type[[2]][i,],superblock=superblock,scale=scale,scale_block=scale_block,scheme=scheme,tol=tol,NA_method=NA_method, ncomp=ncomp,bias=bias,init=init)
 
             }
             if(par_type[[1]]=="tau")
             {
-                rgcca_res=rgcca(blocks=blocks, type=type,response=response,tau=par_type[[2]][i,],superblock=superblock,scale=scale,scale_block=scale_block,scheme=scheme,tol=tol,method=method, ncomp=ncomp,bias=bias,init=init)
+                rgcca_res=rgcca(blocks=blocks, type=type,response=response,tau=par_type[[2]][i,],superblock=superblock,scale=scale,scale_block=scale_block,scheme=scheme,tol=tol,NA_method=NA_method, ncomp=ncomp,bias=bias,init=init)
 
               }
 
@@ -274,7 +274,7 @@ rgcca_cv=function( blocks,
               scale_block=scale_block,
               tol=tol,
               scheme=scheme,
-              method=method,
+              NA_method=NA_method,
               blocks=blocks
     )
     par2=par_type[[2]]

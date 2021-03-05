@@ -169,17 +169,17 @@ RussettWithNA <- Russett
          politic = RussettWithNA[, 6:11])
 
    #  rgcca_out <- rgcca(blocksNA, response = 1,ncomp=1)
-     rgcca_out <-rgcca(blocksNA, response=1,ncomp=1,method="nipals")
+     rgcca_out <-rgcca(blocksNA, response=1,ncomp=1,NA_method="nipals")
      cv = rgcca_cv_k(rgcca_res=rgcca_out, n_cores = 1)
 
-   #  rgcca_out <-rgcca(blocksNA, response=1,ncomp=1,method="mean")
+   #  rgcca_out <-rgcca(blocksNA, response=1,ncomp=1,NA_method="mean")
    #  cv = rgcca_cv_k(rgcca_res=rgcca_out, n_cores = 1)
 
-     rgcca_out <-rgcca(blocksNA, response=1,ncomp=1,method="complete")
+     rgcca_out <-rgcca(blocksNA, response=1,ncomp=1,NA_method="complete")
      cv = rgcca_cv_k(rgcca_res=rgcca_out, n_cores = 1)
-     # avec la method complete -> ne fonctionne pas #TODO ?
+     # avec la NA_method complete -> ne fonctionne pas #TODO ?
 
- #    rgcca_out <- rgcca(blocksNA, response = 1, tol = 1E-03,method="nipals")
+ #    rgcca_out <- rgcca(blocksNA, response = 1, tol = 1E-03,NA_method="nipals")
      cv = rgcca_cv_k(rgcca_out, n_cores = 1,validation="loo")
      test_that("rgcca_cv_withNA2", {
          round(cv$scores,digits=3)==0.443

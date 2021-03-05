@@ -21,7 +21,7 @@ rgcca_permutation(rgcca_res=resRgcca)
 blocks_with_na=blocks
 blocks_with_na[[1]][1,]=NA
 blocks_with_na[[1]][2,2]=NA
-resRgcca=rgcca(blocks_with_na,method = "mean")
+resRgcca=rgcca(blocks_with_na,NA_method = "mean")
 resRgcca$call$raw[[1]][1,]
 resRgcca$call$blocks[[1]][1,]
 resRgcca$call$blocks[[1]][1,]
@@ -159,8 +159,8 @@ plot(res_cv)
 
 # variable selection (post process? significant variables)
 resBootstrap=bootstrap(resRGCCA,n_boot = 100)
-plot(resBootstrap) 
-plot(resBootstrap,type="2D") 
+plot(resBootstrap)
+plot(resBootstrap,type="2D")
 print(resBootstrap)
 summary(resBootstrap)
 
@@ -210,10 +210,10 @@ blocksNA = list(agriculture = RussettWithNA[, seq(3)], industry = RussettWithNA[
 res_pattern=get_patternNA(blocksNA)
 plot(res_pattern)
 
-# choosing NA method
+# choosing NA NA_method
 resWhich=whichNAmethod(blocksNA,listMethods = c("complete","nipals","knn4","em","sem"))
 plot(resWhich,type="a",bars="stderr")
-resRgcca=rgcca(blocksNA,method="knn4")
+resRgcca=rgcca(blocksNA,NA_method="knn4")
 
 resNaEvol=naEvolution(blocksNA,listMethods = c("complete","nipals","knn4"),prctNA=c(0.1,0.2,0.3))
 plot(resNaEvol,type="a")
@@ -224,29 +224,29 @@ plot(resMIRGCCA)
 
 #====================================================================
 # Checking other functionalities  with missing data
-# complete method
-resRGCCANA1=rgcca(blocksNA,method="complete")
+# complete NA_method
+resRGCCANA1=rgcca(blocksNA,NA_method="complete")
 plot(resRGCCANA1,type="ave")
-plot(resRGCCANA1) 
-plot(resRGCCANA1,type="cor") # cor (rgcca$call$blocks,) 
+plot(resRGCCANA1)
+plot(resRGCCANA1,type="cor") # cor (rgcca$call$blocks,)
 plot(resRGCCANA1,type="network")
 
-resRGCCANA1=rgcca(blocksNA,method="em")
+resRGCCANA1=rgcca(blocksNA,NA_method="em")
 plot(resRGCCANA1,type="ave")
-plot(resRGCCANA1) 
-plot(resRGCCANA1,type="cor") # cor (rgcca$call$blocks,) 
+plot(resRGCCANA1)
+plot(resRGCCANA1,type="cor") # cor (rgcca$call$blocks,)
 plot(resRGCCANA1,type="network")
 
-resRGCCANA2=rgcca(blocksNA,method="nipals")
+resRGCCANA2=rgcca(blocksNA,NA_method="nipals")
 plot(resRGCCANA2,type="ave")
-plot(resRGCCANA2) 
-plot(resRGCCANA2,type="cor") # cor (rgcca$call$blocks,) 
+plot(resRGCCANA2)
+plot(resRGCCANA2,type="cor") # cor (rgcca$call$blocks,)
 plot(resRGCCANA2,type="network")
 
-resRGCCANA3=rgcca(blocksNA,method="mean")
+resRGCCANA3=rgcca(blocksNA,NA_method="mean")
 plot(resRGCCANA2,type="ave")
-plot(resRGCCANA2,type="both") 
-plot(resRGCCANA2,type="cor") # cor (rgcca$call$blocks,) 
+plot(resRGCCANA2,type="both")
+plot(resRGCCANA2,type="cor") # cor (rgcca$call$blocks,)
 plot(resRGCCANA2,type="network")
 
 res_permut=rgcca_permutation(blocks=blocksNA)
@@ -267,9 +267,9 @@ plot(resBootstrapNA3,type="2D")
 
 
 # Crossvalidation # see with etienne
-resRGCCANA1=rgcca(blocksNA,method="complete",response=2)
-resRGCCANA2=rgcca(blocksNA,method="nipals",response=2)
-resRGCCANA3=rgcca(blocksNA,method="knn4",response=2)
+resRGCCANA1=rgcca(blocksNA,NA_method="complete",response=2)
+resRGCCANA2=rgcca(blocksNA,NA_method="nipals",response=2)
+resRGCCANA3=rgcca(blocksNA,NA_method="knn4",response=2)
 
 resCV=rgcca_cv_k(resRGCCANA1,validation="kfold") #
 resCV=rgcca_cv(resRGCCANA2,par_type="tau")
@@ -304,7 +304,7 @@ plot(res_permut)
 
 # variable selection (post process? significant variables)
 resBootstrap=bootstrap(resRGCCA)
-plot(resBootstrap,i_block=2) 
+plot(resBootstrap,i_block=2)
 
 # Tests with Glioma
 #----------------
@@ -391,7 +391,7 @@ res_cv=rgcca_cv(blocks=A,type_cv="classification",fit="lda",
 rgcca_permutation(A, connection=C, par_type = "sparsity", n_perms = 10)
 
 plot(res_cv)
-# 
+#
 
 A[[1]]=cbind(A[[1]],A[[1]],A[[1]]);colnames(A[[1]])=paste("V",1:ncol(A[[1]]))
 Loc <- factor(ge_cgh_locIGR$y) ; levels(Loc) <- colnames(ge_cgh_locIGR$multiblocks$y)

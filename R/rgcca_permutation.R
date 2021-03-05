@@ -224,7 +224,7 @@ rgcca_permutation <- function(blocks, par_type, par_value = NULL,
                               sparsity = rep(1, length(blocks)),
                               init = "svd", bias = TRUE, tol = 1e-8,
                               response = NULL, superblock = FALSE,
-                              method = "nipals", rgcca_res = NULL){
+                              NA_method = "nipals", rgcca_res = NULL){
 
     if (!is.null(rgcca_res)) {
         stopifnot(is(rgcca_res, "rgcca"))
@@ -234,7 +234,7 @@ rgcca_permutation <- function(blocks, par_type, par_value = NULL,
         scheme <- rgcca_res$call$scheme
         response <- rgcca_res$call$response
         tol <- rgcca_res$call$tol
-        method <- rgcca_res$call$method
+        NA_method <- rgcca_res$call$NA_method
         init <- rgcca_res$call$init
         bias <- rgcca_res$call$bias
         blocks <- rgcca_res$call$raw
@@ -264,7 +264,7 @@ rgcca_permutation <- function(blocks, par_type, par_value = NULL,
       ncols <- sapply(blocks, NCOL)
       call=list(type = type, par_type = par_type, par_value = par_value,
                 n_perms = n_perms, quiet = quiet, connection = connection,
-                method=method, tol=tol, scheme = scheme,
+                NA_method=NA_method, tol=tol, scheme = scheme,
                 scale = scale, scale_block = scale_block,
                 superblock = superblock, blocks=blocks)
     }else{
@@ -277,7 +277,7 @@ rgcca_permutation <- function(blocks, par_type, par_value = NULL,
       rownames(matConnection) = colnames(matConnection) = names(ncols)
       call=list(type = type, par_type = par_type, n_perms = n_perms,
                 quiet = quiet, connection = matConnection,
-                method=method, tol=tol, scheme = scheme,
+                NA_method=NA_method, tol=tol, scheme = scheme,
                 scale = scale, scale_block = scale_block,
                 superblock = superblock, blocks=blocks)
     }
@@ -352,7 +352,7 @@ rgcca_permutation <- function(blocks, par_type, par_value = NULL,
       if(n_cores>1){
         call_perm = list(blocks, par[[1]], par_value_parallel, perm_parallel,
                        type, quiet, superblock, scheme,
-                       tol, scale, scale_block, connection, method,
+                       tol, scale, scale_block, connection, NA_method,
                        response, bias, init, ncomp, tau, sparsity)
         assign("call_perm", call_perm, envir = .GlobalEnv)
         cl = parallel::makeCluster(n_cores)
@@ -371,7 +371,7 @@ rgcca_permutation <- function(blocks, par_type, par_value = NULL,
                               scale = call_perm[[10]],
                               scale_block = call_perm[[11]],
                               connection = call_perm[[12]],
-                              method = call_perm[[13]],
+                              NA_method = call_perm[[13]],
                               bias = call_perm[[15]],
                               init = call_perm[[16]],
                               ncomp = call_perm[[17]],
@@ -395,7 +395,7 @@ rgcca_permutation <- function(blocks, par_type, par_value = NULL,
                                 scale = scale,
                                 scale_block = scale_block,
                                 connection = connection,
-                                method = method,
+                                NA_method = NA_method,
                                 bias = bias,
                                 init = init,
                                 ncomp = ncomp,
@@ -418,7 +418,7 @@ rgcca_permutation <- function(blocks, par_type, par_value = NULL,
                               scale = scale,
                               scale_block = scale_block,
                               connection = connection,
-                              method = method,
+                              NA_method = NA_method,
                               bias = bias,
                               init = init,
                               ncomp = ncomp,

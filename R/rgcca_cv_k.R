@@ -29,7 +29,7 @@ rgcca_cv_k <- function(
     scale_block=NULL,
     tol=1e-8,
     scheme=NULL,
-    method=NULL,
+    NA_method=NULL,
     type=NULL,
     init=NULL,
     bias=NULL,
@@ -44,7 +44,7 @@ rgcca_cv_k <- function(
     if(is.null(connection)){    connection <- rgcca_res$call$connection }
     if(is.null(scale)){    scale <- rgcca_res$call$scale }
     if(is.null(scale_block)){    scale_block <- rgcca_res$call$scale_block }
-    if(is.null(method)){    method <- rgcca_res$call$method }
+    if(is.null(NA_method)){    NA_method <- rgcca_res$call$NA_method }
     if(is.null(scheme)){     scheme <- rgcca_res$call$scheme}
     if(is.null(bias)){     bias <- rgcca_res$call$bias}
     if(is.null(type)){   type <- rgcca_res$call$type}
@@ -78,7 +78,7 @@ rgcca_cv_k <- function(
                           scheme=scheme,
                           superblock=FALSE,
                           inds = inds,
-                          method = method,
+                          NA_method = NA_method,
                           response=response,
                           bias = bias,
                           tau=tau,
@@ -111,11 +111,11 @@ rgcca_cv_k <- function(
 
         }
     )
-    if(method!="complete")
+    if(NA_method!="complete")
     {
         bigA <- rgcca_res$call$raw
     }
-    if(method=="complete")
+    if(NA_method=="complete")
     {
         bigA <- intersection_list(rgcca_res$call$raw)
     }

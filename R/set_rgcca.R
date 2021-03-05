@@ -16,14 +16,14 @@ set_rgcca <- function(
     scale_block = NULL,
     superblock = NULL,
     response = NULL,
-    method = NULL,
+    NA_method = NULL,
     boot = FALSE,
     inds = NULL) {
     if(is.null(connection)){    connection <- rgcca_res$call$connection }
     if(is.null(scale)){    scale <- rgcca_res$call$scale }
     if(is.null(scale_block)){    scale_block <- rgcca_res$call$scale_block }
     if(is.null(superblock)){     superblock <- rgcca_res$call$superblock }
-    if(is.null(method)){    method <- rgcca_res$call$method }
+    if(is.null(NA_method)){    NA_method <- rgcca_res$call$NA_method }
     if(is.null(scheme)){     scheme <- rgcca_res$call$scheme}
     if(is.null(bias)){     bias <- rgcca_res$call$bias}
     if(is.null(type)){   type <- rgcca_res$call$type}
@@ -128,7 +128,7 @@ set_rgcca <- function(
             verbose = FALSE,
             init = init,
             bias = bias,
-            method = method,
+            NA_method = NA_method,
             tol = tol
         ))
 

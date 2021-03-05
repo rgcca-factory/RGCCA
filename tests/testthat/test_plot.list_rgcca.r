@@ -17,7 +17,7 @@
 #                politic = Russett[, 6:11] )
 #  blocks[[1]][1:3,1]=NA
 #  blocks[[1]][4,]=NA
-#  resRGCCA2=rgcca(blocks,ncomp=c(2,2,2),method="nipals")
+#  resRGCCA2=rgcca(blocks,ncomp=c(2,2,2),NA_method="nipals")
 #
 # res=list(rgcca0=resRGCCA1,rgccaList=list(resRGCCA2))
 #  class(res)="list_rgcca"

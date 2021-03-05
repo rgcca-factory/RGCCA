@@ -18,7 +18,7 @@
 print.rgcca <- function(x,...)
 {
   cat("Call: ")
-  names_call=c("type","superblock","scale","scale_block","init","bias","tol","method","ncomp")
+  names_call=c("type","superblock","scale","scale_block","init","bias","tol","NA_method","ncomp")
   char_to_print=""
   for(name in names_call)
   {

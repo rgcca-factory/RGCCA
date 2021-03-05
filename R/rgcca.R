@@ -44,7 +44,7 @@
 #' @inheritParams rgccad
 #' @inheritParams sgcca
 #' @inheritParams select_analysis
-#' @param method  Character string corresponding to the method used for
+#' @param NA_method  Character string corresponding to the method used for
 #' handling missing values ("nipals", "complete"). (default: "nipals").
 #' \itemize{
 #' \item{\code{"complete"}}{corresponds to perform RGCCA on the fully observed
@@ -190,7 +190,7 @@ rgcca <- function(blocks, type = "rgcca",
                   sparsity = rep(1, length(blocks)),
                   init = "svd", bias = TRUE, tol = 1e-08,
                   response = NULL, superblock = FALSE,
-                  method = "nipals", verbose = FALSE, quiet = TRUE){
+                  NA_method = "nipals", verbose = FALSE, quiet = TRUE){
 
     if(class(blocks)=="permutation")
     {
@@ -200,7 +200,7 @@ rgcca <- function(blocks, type = "rgcca",
         scheme = blocks$call$scheme
         connection = blocks$call$connection
         tol = blocks$call$tol
-        method = blocks$call$method
+        NA_method = blocks$call$NA_method
         superblock = blocks$call$superblock
         if(blocks$call$par_type == "tau") tau = blocks$bestpenalties
         if(blocks$call$par_type == "ncomp") ncomp = blocks$bestpenalties
@@ -216,7 +216,7 @@ rgcca <- function(blocks, type = "rgcca",
         scheme = blocks$call$scheme
         response = blocks$call$response
         tol = blocks$call$tol
-        method = blocks$call$method
+        NA_method = blocks$call$NA_method
         if(blocks$call$par_type[[1]] == "tau") tau=blocks$bestpenalties
         if(blocks$call$par_type[[1]] == "ncomp") ncomp=blocks$bestpenalties
         if(blocks$call$par_type[[1]] == "sparsity")
@@ -306,7 +306,7 @@ rgcca <- function(blocks, type = "rgcca",
 
    }
 
-    opt$blocks     <- handle_NA(blocks, method = method)
+    opt$blocks     <- handle_NA(blocks, NA_method = NA_method)
     opt$blocks     <- scaling(opt$blocks, scale,scale_block = scale_block)
     opt$superblock <- check_superblock(response, opt$superblock, !quiet)
     opt$blocks     <- set_superblock(opt$blocks, opt$superblock, type, !quiet)
@@ -399,7 +399,7 @@ rgcca <- function(blocks, type = "rgcca",
         "verbose",
         "response",
         "scale_block",
-        "method",
+        "NA_method",
         "type"
     ))
         func_out$call[[i]] <- as.list(environment())[[i]]

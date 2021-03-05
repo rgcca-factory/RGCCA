@@ -22,7 +22,7 @@ rgcca_permutation_k <- function(
     tol = 1e-08,
     response = NULL,
     superblock = FALSE,
-    method = "nipals",
+    NA_method = "nipals",
     quiet = TRUE,
     perm = TRUE,
     rgcca_res = NULL,
@@ -38,7 +38,7 @@ rgcca_permutation_k <- function(
         scheme <- rgcca_res$call$scheme
         response <- rgcca_res$call$response
         tol <- rgcca_res$call$tol
-        method <- rgcca_res$call$method
+        NA_method <- rgcca_res$call$NA_method
         init <- rgcca_res$call$init
         bias <- rgcca_res$call$bias
         blocks <- rgcca_res$call$raw
@@ -81,7 +81,7 @@ rgcca_permutation_k <- function(
             tol = tol,
             response = response,
             superblock = superblock,
-            method = method,
+            NA_method = NA_method,
             quiet = quiet
         ))
 
