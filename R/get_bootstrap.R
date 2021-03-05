@@ -83,7 +83,7 @@ get_bootstrap <- function(
 
     bootstrapped=b$bootstrap[[comp]][[block]]
     n_boot=sum(!is.na(bootstrapped[1, ]))
-    if(tolower(b$rgcca$call$type) %in% c("spls", "spca", "sgcca"))
+    if(tolower(b$rgcca$call$method) %in% c("spls", "spca", "sgcca"))
     {
       mean = apply(bootstrapped, 1,
                    function(x)
@@ -104,7 +104,7 @@ get_bootstrap <- function(
                 sum(x!= 0, na.rm=T) )
 
      # p values if occurrences
-    if(tolower(b$rgcca$call$type) %in% c("spls", "spca", "sgcca"))
+    if(tolower(b$rgcca$call$method) %in% c("spls", "spca", "sgcca"))
     {
         n_boot=ifelse(!is.null(dim(b[[1]][[1]][[1]])),
                       dim(b[[1]][[1]][[1]])[2],
@@ -153,7 +153,7 @@ get_bootstrap <- function(
         adjust.pval = p.adjust(p.vals, method = adj.method)
     )
 
-    if (tolower(b$rgcca$call$type) %in% c("spls", "spca", "sgcca")){
+    if (tolower(b$rgcca$call$method) %in% c("spls", "spca", "sgcca")){
       df$occurrences <- occ
       index <- which(colnames(df)=="occurrences")
       db <- data.frame(order_df(df, index, allCol = TRUE), order = NROW(df):1)
@@ -195,7 +195,7 @@ get_bootstrap <- function(
             occurrences = "Non-zero occurrences",
             mean = "Mean bootstrap weights")
 
-    attributes(db)$type <- class(b$rgcca)
+    attributes(db)$method <- class(b$rgcca)
     attributes(db)$n_boot <- n_boot
     attributes(db)$n_blocks <- length(b$rgcca$call$blocks)
     class(db) <- c(class(db), "df_bootstrap")

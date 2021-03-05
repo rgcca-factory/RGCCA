@@ -1,17 +1,17 @@
-# R/SGCCA 
+# R/SGCCA
 
 ##### Version: 3.0
 
-##### Authors: 
+##### Authors:
 Arthur TENENHAUS, Etienne CAMENEN,  Anatole BOURRELIER, Caroline PELTIER & Vincent GUILLEMOT
 
-##### Key-words: 
+##### Key-words:
 omics, RGCCA, multi-block
 
-##### EDAM operation: 
+##### EDAM operation:
 analysis, correlation, visualisation
 
-##### Contact: 
+##### Contact:
 arthur.tenenhaus@l2s.centralesupelec.fr
 
 ##### Short description
@@ -38,7 +38,7 @@ Performs multi-variate analysis (PCA, CCA, PLS, R/SGCCA, etc.) and produces text
 
 ## Description
 A user-friendly multi-blocks analysis (Regularized Generalized Canonical Correlation Analysis, RGCCA) as described in [1] and [2] with all default settings predefined. The software produces figures to explore the analysis' results: individuals and variables projected on two components of the multi-block analysis, list of top variables and explained variance in the model.
- 
+
 ## Algorithm
 We consider J data matrices X1 ,..., XJ. Each n × pj data matrix Xj = [ xj1, ..., xjpj ] is called a block and represents a set of pj variables observed on n individuals. The number and the nature of the variables may differ from one block to another, but the individuals must be the same across blocks. We assume that all variables are centered. The objective of RGCCA is to find, for each block, a weighted composite of variables (called block component) yj = Xj . aj, j = 1 ,..., J (where aj is a column-vector with pj elements) summarizing the relevant information between and within the blocks. The block components are obtained such that (i) block components explain well their own block and/or (ii) block components that are assumed to be connected are highly correlated. In addition, RGCCA integrates a variable selection procedure, called SGCCA, allowing the identification of the most relevant features.
 
@@ -61,7 +61,7 @@ The quality and interpretability of the RGCCA block components yj = Xj . aj, j =
 *Fig. 1: The blocks (e.g., politic, agriculture, industry from Russet data [3]) should have some common individuals, a header and row names.*
 
 - ```connection``` (.tsv, .csv, .txt or .xls, xlsx): an optional file describing the connections between the blocks (**design matrix**). The first column and the first line should have the same names as the blocks. It should contain 1 (if two blocks are related) or 0 values otherwise (**Fig. 2**). The columns are separated by tabulations. It is a symmetric matrix with the same dimension as the number of blocks.
-    - By default, the design uses a **superblock** configuration, a block defined as the concatenation of all the other blocks. The space spanned by global components is viewed as a compromise space that integrated all the modalities and facilitates the visualization of the results and their interpretation. The design matrix has 1 values on the whole last line (and last column) except for the diagonal (i.e., all the blocks are connected to the superblock) and 0 values for the other cells (the blocks are not connected to each other). 
+    - By default, the design uses a **superblock** configuration, a block defined as the concatenation of all the other blocks. The space spanned by global components is viewed as a compromise space that integrated all the modalities and facilitates the visualization of the results and their interpretation. The design matrix has 1 values on the whole last line (and last column) except for the diagonal (i.e., all the blocks are connected to the superblock) and 0 values for the other cells (the blocks are not connected to each other).
 
 ![connection](img/connection.png)
 
@@ -73,12 +73,12 @@ The quality and interpretability of the RGCCA block components yj = Xj . aj, j =
 
 *Fig. 3: A quantitative (i), a qualitative variable (ii) or a disjunctive table (iii) could color the individual plot.*
 
-## Output files 
+## Output files
 - ```individuals``` (.pdf, .png, .tiff, .bmp or .jpeg): individuals in a space composed by two components of the analysis (with the percent of explained variance). The points could be colored according to a response (see last section).
 
 ![individuals](img/individuals.png)
 
-- ```corcircle``` (.pdf, .png, .tiff, .bmp or .jpeg): Pearson correlation of the variables of the block with two components of the analysis (with the percent of explained variance). The circle corresponds to a 1 correlation and the dotted one to a 0.5 correlation. If the superblock is selected, colors correspond to the belonging of each variable to each block. 
+- ```corcircle``` (.pdf, .png, .tiff, .bmp or .jpeg): Pearson correlation of the variables of the block with two components of the analysis (with the percent of explained variance). The circle corresponds to a 1 correlation and the dotted one to a 0.5 correlation. If the superblock is selected, colors correspond to the belonging of each variable to each block.
 
 ![corcircle](img/corcircle.png)
 
@@ -87,7 +87,7 @@ The quality and interpretability of the RGCCA block components yj = Xj . aj, j =
 ![top_variables.](img/top_variables.png)
 
 - ```ave``` (.pdf, .png, .tiff, .bmp or .jpeg): average variance explained (AVE; in X-axis) in percent for each block (in Y-axis) and each component (one color per component). The subtitle gives the AVE for the two first of the outer model (weighted average of the AVE of each block).
- 
+
 ![ave](img/ave.png)
 
 - ```connection``` (.pdf, .png, .tiff, .bmp or .jpeg): connection between each block, with:
@@ -161,7 +161,7 @@ After installing [Rstudio](https://www.rstudio.com/products/rstudio/download/#do
 A [vignette](http://r-pkgs.had.co.nz/vignettes.html) is a practical use of the software (with detailed examples). It is usually writen in [R Markdown](https://rmarkdown.rstudio.com/), a notebook interface including text or pieces of code that could be dynamically executed.
 
 On Linux:
-```	
+```
 R -e 'install.packages(c("markdown", "pander"))' && \
     sudo apt-get install -y texlive-latex-base texlive-latex-extra texlive-fonts-recommended texlive-fonts-extra texlive-science
 ```
@@ -204,7 +204,7 @@ By default, on tabulated files with a header. The names of the blocks are the fi
 #### Analyse parameters
 By default, the analysis: is a Regularised Generalised Canonical Correlation Analysis, scales the blocks, uses a superblock with a factorial scheme function, a tau equals to one and two components for each block.
 
-- ```--type``` (STRING) Type of analysis [default: rgcca] (among: rgcca, pca, cca, gcca, cpca-w, hpca, maxbet-b, maxbet, maxdiff-b, maxdiff, maxvar-a, maxvar-b, maxvar, niles, r-maxvar, rcon-pca, ridge-gca, sabscor, ssqcor, ssqcor, ssqcov-1, ssqcov-2, ssqcov, sum-pca, sumcor, sumcov-1, sumcov-2, sumcov)
+- ```--method``` (STRING) Type of analysis [default: rgcca] (among: rgcca, pca, cca, gcca, cpca-w, hpca, maxbet-b, maxbet, maxdiff-b, maxdiff, maxvar-a, maxvar-b, maxvar, niles, r-maxvar, rcon-pca, ridge-gca, sabscor, ssqcor, ssqcor, ssqcov-1, ssqcov-2, ssqcov, sum-pca, sumcor, sumcov-1, sumcov-2, sumcov)
 - ```--scale``` DO NOT scale the blocks (i.e., a data centering step is always performed). Otherwhise, each block is normalised and divided by the square root of its number of variables.
 - ```--superblock``` DO NOT use a superblock (i.e. a concatenation of all the blocks to visualize them all together in a consensus space). In this case, all blocks are assumed to be connected or a connection file could be used.
 - ```--ncomp``` (INTEGER) Number of components in the analysis for each block [default: 2]. The number should be higher than 1 and lower than the minimum number of variables among the blocks. It can be a single values or a comma-separated list (e.g 2,2,3,2).
@@ -214,7 +214,7 @@ By default, the analysis: is a Regularised Generalised Canonical Correlation Ana
 #### Graphical parameters
 By default, the x-axis and y-axis are respectively the first and the second components, the number of top variables is 100 and  superblock is used.
 - ```--text``` DO NOT display the name of the points instead of shapes when plotting.
-- ```--compx``` (INTEGER) Component used in the X-axis for biplots and the only component used for histograms [default: 1] (should not be higher than the ```--ncomp``` parameter). 
+- ```--compx``` (INTEGER) Component used in the X-axis for biplots and the only component used for histograms [default: 1] (should not be higher than the ```--ncomp``` parameter).
 - ```--compy``` (INTEGER) Component used in the Y-axis for biplots [default: 2] should not be higher than the ```--ncomp``` parameter).
 - ```--nmark``` (INTEGER) Number maximum of top variables in ad hoc plot [default: 100] (for ```top_variable``` file).
 - ```--block``` (INTEGER) Position in the path list of the plotted block (0: the superblock or, if not activated, the last one, 1: the fist one, 2: the 2nd, etc.) [default: the last one].

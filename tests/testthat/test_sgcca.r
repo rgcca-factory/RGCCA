@@ -10,7 +10,7 @@ A = list(X_agric, X_ind, X_polit);
 C = matrix(c(0, 0, 1, 0, 0, 1, 1, 1, 0), 3, 3);
 
 resSgcca = sgcca(A, C, ncomp=rep(2,3),sparsity= c(1, 1, 1), scheme = "factorial", scale = TRUE,verbose=FALSE)
-resRgcca = rgcca(A, connection=C, ncomp=rep(2,3),type="rgcca", scheme = "factorial", scale = TRUE,verbose=FALSE)
+resRgcca = rgcca(A, connection=C, ncomp=rep(2,3),method="rgcca", scheme = "factorial", scale = TRUE,verbose=FALSE)
 
 
 

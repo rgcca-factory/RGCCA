@@ -1,19 +1,19 @@
 ---
 title: "Short vignette for using the RGCCA package for Regularized/Sparse Generalized Canonical Correlation Analysis"
 date: '`r Sys.Date()`'
-output: 
+output:
   pdf_document:
    number_sections: yes
    toc: yes
    fig_height: 5
    fig_width: 5
 vignette: >
-  %\VignetteIndexEntry{The RGCCA package for Regularized/Sparse Generalized Canonical Correlation Analysis} 
+  %\VignetteIndexEntry{The RGCCA package for Regularized/Sparse Generalized Canonical Correlation Analysis}
   %\VignetteEngine{knitr::rmarkdown}
   \usepackage[utf8]{inputenc}
 ---
 # Introduction
-All the examples are based on Russett dataset. 
+All the examples are based on Russett dataset.
 
 ```{r eval=TRUE}
 library(RGCCA)
@@ -23,10 +23,10 @@ blocks = list(agriculture = Russett[, seq(3)], industry = Russett[, 4:5],  polit
 
 General help is available by typing ?rgcca.
 
-# Running RGCCA with default options. 
-The parameters type and scheme allows to change the type of rgcca - such as sgcca, pls, ...  (enter ?rgcca for more details).
+# Running RGCCA with default options.
+The parameters method and scheme allows to change the method of rgcca - such as sgcca, pls, ...  (enter ?rgcca for more details).
 
-The results is an rgcca object, a list containing usual outputs. 
+The results is an rgcca object, a list containing usual outputs.
 ```{r eval=TRUE}
 resRgcca=rgcca(blocks)
 names(resRgcca)
@@ -47,7 +47,7 @@ plot(resRgcca,type="both",block=1)
 ```
 
 ```{r eval=TRUE, fig.height=4, fig.width=10}
-resSgcca=rgcca(blocks,ncomp=2,type="sgcca",sparsity=0.8)
+resSgcca=rgcca(blocks,ncomp=2,method="sgcca",sparsity=0.8)
 plot(resSgcca,type="var",block=1)
 plot(resSgcca,type="ind",block=1)
 plot(resSgcca,type="cor",block=1)
@@ -59,7 +59,7 @@ response=matrix( Russett[, 11],ncol=1);rownames(response)=rownames(Russett)
 plot(resRgcca,type="ind",resp=response,block=2)
 ```
 
-Permutation techniques can be used to estimate the optimal tau. 
+Permutation techniques can be used to estimate the optimal tau.
 
 ```{r eval=TRUE,fig.height=4, fig.width=4}
 res_permut=rgcca_permutation(blocks=blocks,par_type="sparsity",scheme="factorial",n_perms=100)
@@ -70,7 +70,7 @@ plot(res_permut, type="crit")
 tau_res=res_permut$bestpenalties
 tau_res
 ```
-Then, the rgcca should be run with this value of tau. 
+Then, the rgcca should be run with this value of tau.
 
 When the analysis is supervised, crossvalidation can be used
 ```{r eval=T,fig.height=4, fig.width=4}
@@ -80,7 +80,7 @@ print(res_cv)
 ```
 
 
-The stability of the obtained coefficients can be estimated with bootstrap. 
+The stability of the obtained coefficients can be estimated with bootstrap.
 
 
 # Step three -boostrapping the results

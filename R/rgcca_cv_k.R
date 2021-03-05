@@ -30,7 +30,7 @@ rgcca_cv_k <- function(
     tol=1e-8,
     scheme=NULL,
     NA_method=NULL,
-    type=NULL,
+    method=NULL,
     init=NULL,
     bias=NULL,
     connection=NULL,
@@ -47,7 +47,7 @@ rgcca_cv_k <- function(
     if(is.null(NA_method)){    NA_method <- rgcca_res$call$NA_method }
     if(is.null(scheme)){     scheme <- rgcca_res$call$scheme}
     if(is.null(bias)){     bias <- rgcca_res$call$bias}
-    if(is.null(type)){   type <- rgcca_res$call$type}
+    if(is.null(method)){   method <- rgcca_res$call$method}
     if(is.null(init)){     init <- rgcca_res$call$init}
     if(is.null(ncomp)){        ncomp <- rgcca_res$call$ncomp}
     if(is.null(tau)){        tau <- rgcca_res$call$tau}
@@ -84,7 +84,7 @@ rgcca_cv_k <- function(
                           tau=tau,
                           ncomp=ncomp,
                           sparsity=sparsity,
-                          type=type
+                          method=method
                         ) #Rgcca on all individuals but inds
            #
              rgcca_k_saved=rgcca_k

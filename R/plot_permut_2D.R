@@ -37,7 +37,7 @@ plot_permut_2D <- function(
     check_colors(colors)
     if (length(colors) < 2)
         colors <- rep(colors, 2)
-    if(perm$call$type%in%c("sgcca","spls"))
+    if(perm$call$method%in%c("sgcca","spls"))
     {
         crit_title="SGCCA criterion"
     }

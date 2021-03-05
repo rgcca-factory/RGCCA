@@ -196,25 +196,25 @@ test_that("check_method passes when method is valid", {
 })
 
 # Test check_nblocks
-test_that("check_nblocks raises an error if type is pca and number of blocks
+test_that("check_nblocks raises an error if method is pca and number of blocks
           different from 1", {
-            expect_error(check_nblocks(blocks, type = "pca"),
+            expect_error(check_nblocks(blocks, method = "pca"),
                          paste0("3 blocks were provided but the number of",
                                 " blocks for pca must be 1."),
                          fixed = TRUE)
           })
-test_that("check_nblocks raises an error if type is cca and number of blocks
+test_that("check_nblocks raises an error if method is cca and number of blocks
           is different from 2", {
-            expect_error(check_nblocks(blocks, type = "cca"),
+            expect_error(check_nblocks(blocks, method = "cca"),
                          paste0("3 blocks were provided but the number of",
                                 " blocks for cca must be 2."),
                          fixed = TRUE)
           })
 test_that("check_nblocks passes and returns blocks when blocks is valid", {
   A = list(blocks[[1]])
-  expect_equal(check_nblocks(A, type = "pca"), A)
+  expect_equal(check_nblocks(A, method = "pca"), A)
   A = list(blocks[[1]], blocks[[2]])
-  expect_equal(check_nblocks(A, type = "cca"), A)
+  expect_equal(check_nblocks(A, method = "cca"), A)
 })
 
 # Test check_ncol (Is this the intended behaviour of check_ncol?)
@@ -285,7 +285,7 @@ test_that("check_size_blocks passes when x is valid", {
 # Test check_spars
 test_that("check_spars raises an error if blocks and tau have different
           lengths and length of tau is greater than 1", {
-            expect_error(check_spars(blocks, c(1, 1), type = "sgcca"),
+            expect_error(check_spars(blocks, c(1, 1), method = "sgcca"),
                          paste0("sparsity should have the same size ",
                                 "(actually 2) than the number of blocks (3)."),
                          fixed = TRUE)
@@ -298,20 +298,20 @@ test_that("check_spars raises an error if any element of tau is lower than
               lapply(min_sparsity, function(x)
                 ceiling(x * 100) / 100)
             ))
-            expect_error(check_spars(blocks, c(1, 1, 0.2), type = "sgcca"),
+            expect_error(check_spars(blocks, c(1, 1, 0.2), method = "sgcca"),
                          paste0("Sparsity parameter equals to 0.2. For SGCCA, ",
                                 "it must be greater than 1/sqrt(number_column)",
                                 " (i.e., ", msg, ")."),
                          fixed = TRUE)
           })
 test_that("check_spars raises an error for invalid tau", {
-  expect_error(check_spars(blocks, c(-1, 1, 1), type = "sgcca"))
-  expect_error(check_spars(blocks, c(1, 1, 2), type = "sgcca"))
-  expect_error(check_spars(blocks, c(NA, 1, 1), type = "sgcca"))
+  expect_error(check_spars(blocks, c(-1, 1, 1), method = "sgcca"))
+  expect_error(check_spars(blocks, c(1, 1, 2), method = "sgcca"))
+  expect_error(check_spars(blocks, c(NA, 1, 1), method = "sgcca"))
 })
 test_that("check_spars passes and returns tau when tau is valid", {
-  expect_equal(check_spars(blocks, 1, type = "sgcca"), c(1, 1, 1))
-  expect_equal(check_spars(blocks, c(0.8, 1, 0.5), type = "sgcca"), c(0.8, 1, 0.5))
+  expect_equal(check_spars(blocks, 1, method = "sgcca"), c(1, 1, 1))
+  expect_equal(check_spars(blocks, c(0.8, 1, 0.5), method = "sgcca"), c(0.8, 1, 0.5))
 })
 
 # Test check_superblock

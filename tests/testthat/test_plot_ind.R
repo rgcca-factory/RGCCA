@@ -5,7 +5,7 @@
  for (i in 1:length(coord))
  row.names(coord[[i]]) = seq(15)
  rgcca_out = list(Y = coord, AVE = list(AVE_X = AVE_X), call = list(blocks = coord, ncomp = rep(2,3)))
- rgcca_out$call$type="rgcca"
+ rgcca_out$call$method="rgcca"
  class(rgcca_out) <- "rgcca"
  # Using a superblock
  resp = as.matrix(rep(LETTERS[seq(3)], each = 5))
@@ -17,7 +17,7 @@ plot_ind(rgcca_out, resp)
 # Using the first block
  resp = as.matrix(runif(15, min=-15, max = 15))
 rownames(resp) = seq(15)
-#rgcca_out$call$type=
+#rgcca_out$call$method=
  plot_ind(rgcca_out, resp, 1, 2, 1)
 
 

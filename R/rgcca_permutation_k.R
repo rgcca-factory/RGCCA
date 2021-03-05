@@ -9,7 +9,7 @@
 # rgcca_permutation_k(blocks)
 rgcca_permutation_k <- function(
     blocks,
-    type = "rgcca",
+    method = "rgcca",
     scale=TRUE,
     scale_block=TRUE,
     connection = 1 - diag(length(blocks)),
@@ -32,7 +32,7 @@ rgcca_permutation_k <- function(
 
     if (!is.null(rgcca_res)) {
         stopifnot(is(rgcca_res, "rgcca"))
-        type <- rgcca_res$call$type
+        method <- rgcca_res$call$method
         scale_block <- rgcca_res$call$scale_block
         scale <- rgcca_res$call$scale
         scheme <- rgcca_res$call$scheme
@@ -49,7 +49,7 @@ rgcca_permutation_k <- function(
         sparsity <- rgcca_res$call$sparsity
     }
 
-    if (type %in% c("sgcca", "spls")) {
+    if (method %in% c("sgcca", "spls")) {
         par_type <- "sparsity"
     } else
         par_type <- "tau"
@@ -71,7 +71,7 @@ rgcca_permutation_k <- function(
     func <- quote(
         rgcca(
             blocks = blocks_to_use,
-            type = type,
+            method = method,
             scale = scale,
             scale_block = scale_block,
             connection = connection,

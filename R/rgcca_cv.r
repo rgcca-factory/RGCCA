@@ -35,7 +35,7 @@
 #' blocks <- list(agriculture = Russett[, seq(3)],
 #'                industry = Russett[, 4:5],
 #'                politic = Russett[, 6:11])
-#' res = rgcca_cv(blocks, response = 3, type="rgcca",
+#' res = rgcca_cv(blocks, response = 3, method="rgcca",
 #'                par_type = "sparsity",
 #'                par_value = c(0.6, 0.75, 0.5),
 #'                n_run = 2, n_cores = 1)
@@ -52,7 +52,7 @@
 #'
 #'@importFrom utils txtProgressBar setTxtProgressBar
 rgcca_cv=function( blocks,
-          type = "rgcca",
+          method = "rgcca",
           response=NULL,
           par_type = "tau",
           par_value = NULL,
@@ -124,7 +124,7 @@ rgcca_cv=function( blocks,
     match.arg(par_type, c("tau", "sparsity","ncomp"))
     min_spars <- NULL
 
-    if (type %in% c("sgcca", "spca", "spls")) {
+    if (method %in% c("sgcca", "spca", "spls")) {
         par_type <- "sparsity"
     } else
         par_type <- "tau"
@@ -145,12 +145,12 @@ rgcca_cv=function( blocks,
     {
 
         if(par_type == "sparsity"){
-            if(type!="sgcca"){cat("As par_type=='sparsity', the type parameter was replaced by 'sgcca'")}
-            type <- "sgcca"
+            if(method!="sgcca"){cat("As par_type=='sparsity', the method parameter was replaced by 'sgcca'")}
+            method <- "sgcca"
             min_spars <<- sapply(ncols, function(x) 1 / sqrt(x))
         }else{
-            if(type=="sgcca"){cat("As par_type!='sparsity', the type parameter was replaced by 'rgcca'")}
-            type <- "rgcca"
+            if(method=="sgcca"){cat("As par_type!='sparsity', the method parameter was replaced by 'rgcca'")}
+            method <- "rgcca"
             min_spars <<- sapply(ncols, function(x) 0)
         }
 
@@ -158,14 +158,14 @@ rgcca_cv=function( blocks,
         else{
             if ("data.frame"%in%class(par_value) ||  "matrix"%in% class(par_value))
             {
-                par_value <- t(sapply(seq(NROW(par_value)), function(x) check_tau(par_value[x, ], blocks, type = type)))
+                par_value <- t(sapply(seq(NROW(par_value)), function(x) check_tau(par_value[x, ], blocks, method = method)))
 
             }
             else
             {
                 if (any(par_value < min_spars))
                     stop_rgcca(paste0("par_value should be upper than : ", paste0(round(min_spars, 2), collapse = ",")))
-                par_value <- check_tau(par_value, blocks, type = type)
+                par_value <- check_tau(par_value, blocks, method = method)
                 par_value <- set_spars(max = par_value)
             }
         }
@@ -202,16 +202,16 @@ rgcca_cv=function( blocks,
 
             if(par_type[[1]]=="ncomp")
             {
-                rgcca_res=rgcca(blocks=blocks, type=type,response=response,ncomp=par_type[[2]][i,],superblock=superblock,scale=scale,scale_block=scale_block,scheme=scheme,tol=tol,NA_method=NA_method,tau=tau, sparsity=sparsity,bias=bias,init=init)
+                rgcca_res=rgcca(blocks=blocks, method=method,response=response,ncomp=par_type[[2]][i,],superblock=superblock,scale=scale,scale_block=scale_block,scheme=scheme,tol=tol,NA_method=NA_method,tau=tau, sparsity=sparsity,bias=bias,init=init)
             }
             if(par_type[[1]]=="sparsity")
             {
-                rgcca_res=rgcca(blocks=blocks, type="sgcca",response=response,sparsity=par_type[[2]][i,],superblock=superblock,scale=scale,scale_block=scale_block,scheme=scheme,tol=tol,NA_method=NA_method, ncomp=ncomp,bias=bias,init=init)
+                rgcca_res=rgcca(blocks=blocks, method="sgcca",response=response,sparsity=par_type[[2]][i,],superblock=superblock,scale=scale,scale_block=scale_block,scheme=scheme,tol=tol,NA_method=NA_method, ncomp=ncomp,bias=bias,init=init)
 
             }
             if(par_type[[1]]=="tau")
             {
-                rgcca_res=rgcca(blocks=blocks, type=type,response=response,tau=par_type[[2]][i,],superblock=superblock,scale=scale,scale_block=scale_block,scheme=scheme,tol=tol,NA_method=NA_method, ncomp=ncomp,bias=bias,init=init)
+                rgcca_res=rgcca(blocks=blocks, method=method,response=response,tau=par_type[[2]][i,],superblock=superblock,scale=scale,scale_block=scale_block,scheme=scheme,tol=tol,NA_method=NA_method, ncomp=ncomp,bias=bias,init=init)
 
               }
 

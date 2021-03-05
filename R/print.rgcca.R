@@ -18,7 +18,7 @@
 print.rgcca <- function(x,...)
 {
   cat("Call: ")
-  names_call=c("type","superblock","scale","scale_block","init","bias","tol","NA_method","ncomp")
+  names_call=c("method","superblock","scale","scale_block","init","bias","tol","NA_method","ncomp")
   char_to_print=""
   for(name in names_call)
   {
@@ -56,7 +56,7 @@ print.rgcca <- function(x,...)
           paste(round(x$crit[length(x$crit)], 4), sep = "", " "), fill = TRUE)
   }
   cat("\n")
-  if(x$call$type %in% c("rgcca"))
+  if(x$call$method %in% c("rgcca"))
   {
      param="regularization"
     if(!is.matrix(x$tau))
@@ -74,7 +74,7 @@ print.rgcca <- function(x,...)
         print(round(x$tau,4),...)
     }
   }
-  if(x$call$type %in% c("sgcca"))
+  if(x$call$method %in% c("sgcca"))
   {
       param="sparsity"
       if(!is.matrix(x$sparsity))

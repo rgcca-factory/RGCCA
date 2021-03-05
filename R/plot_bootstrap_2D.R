@@ -26,7 +26,7 @@
 #'               industry = Russett[, 4:5],
 #'               politic = Russett[, 6:11] )
 #'
-#' rgcca_out = rgcca(blocks, sparsity = 0.75, type = "sgcca")
+#' rgcca_out = rgcca(blocks, sparsity = 0.75, method = "sgcca")
 #' boot = bootstrap(rgcca_out, 2, n_cores = 1)
 #' plot_bootstrap_2D(boot)
 #' rgcca_out = rgcca(blocks)
