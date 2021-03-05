@@ -108,8 +108,7 @@ select_analysis <- function(
     }
 
     set2Block <- function(type) {
-        if (length(blocks) != 2)
-            check_nblocks(blocks, type)
+        check_nblocks(blocks, type)
 
         scheme <<- setScheme("horst")
         connection <<- set_connection(1 - diag(2))
@@ -127,8 +126,7 @@ select_analysis <- function(
         superblock <- FALSE
 
     if (length(grep("^s?pca$", tolower(type))) == 1) {
-        if (length(blocks) != 1)
-            check_nblocks(blocks, type)
+        check_nblocks(blocks, type)
 
         scheme <- setScheme("horst")
         setSuperblock()

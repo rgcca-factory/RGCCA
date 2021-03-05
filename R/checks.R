@@ -1,17 +1,12 @@
 # Other checking functions
 #-----------------------------
 check_blockx <- function(x, y, blocks){
-    x <- check_min_integer(x, y, blocks)
-    if (y > length(blocks))
-        stop_rgcca(
-            paste0(
-                x,
-                " should be lower than ",
-                length(blocks),
-                " (that is the number of blocks)."
-            ),
-            exit_code = 133
-        )
+    message = paste0(x, " should be lower than ", length(blocks),
+      " (that is the number of blocks)."
+    )
+    exit_code = 133
+    x <- check_integer(x, y, max = length(blocks), exit_code = exit_code,
+                       message = message)
     return(x)
 }
 
@@ -20,20 +15,17 @@ check_boolean <- function(x, y = x, type = "scalar") {
     if (is.null(y))
         y <- x
 
-    if (type == "scalar")
-        x = ""
-
     if (any(is.na(y)))
         stop_rgcca(paste(x, "should not be NA."))
 
     if (!is(y, "logical"))
-        stop_rgcca(paste(x, "should be TRUE or FALSE"))
+        stop_rgcca(paste(x, "should be TRUE or FALSE."))
 
     if (type == "scalar" && length(y) != 1)
         stop_rgcca(paste(x, "should be of length 1."))
 }
 
-check_colors <- function(colors, n = 3){
+check_colors <- function(colors){
 
     if (!is.null(colors)){
         colors <- as.vector(colors)
@@ -51,7 +43,7 @@ check_compx <- function(x, y, ncomp, blockx) {
         stop_rgcca(
             paste0(
                 x,
-                " is equals to ",
+                " equals to ",
                 y,
                 " and should be less than or equal to ",
                 ncomp[blockx],
@@ -79,12 +71,17 @@ check_connection <- function(C, blocks) {
     #     stop_rgcca("The diagonal of the connection matrix file should be 0.",
     #         exit_code = 105)
 
-    x <- C >=0 & C<=1
-    if (sum(!x)!=0)
-        stop_rgcca(paste(msg, "contain numbers between 0 or 1."), exit_code = 106)
+    if (any(is.na(C)))
+        stop_rgcca(paste(msg, "not contain NA values."), exit_code = 106)
+
+    x <- C >= 0 & C <= 1
+    if (sum(!x) != 0)
+        stop_rgcca(paste(msg, "contain numbers between 0 and 1."), exit_code = 106)
 
     if (all(C == 0))
         stop_rgcca(paste(msg, "not contain only 0."), exit_code = 107)
+
+    invisible(check_size_blocks(blocks, "connection matrix", C))
 
     if(is.null(rownames(C)) || is.null(colnames(C)))
         rownames(C) <- names(blocks) -> colnames(C)
@@ -92,11 +89,9 @@ check_connection <- function(C, blocks) {
     if (!all(rownames(C) %in% names(blocks)) ||
         !all(colnames(C) %in% names(blocks)))
         stop_rgcca(paste(msg,
-                         "have the rownames and the colnames that match with
-                         the names of the blocks."),
+                         "have the rownames and the colnames that match with",
+                         "the names of the blocks."),
                    exit_code = 108)
-
-    invisible(check_size_blocks(blocks, "connection matrix", C))
 
     return(C)
     # TODO: warning if superblock = TRUE
@@ -117,7 +112,8 @@ check_file <- function(f) {
 # check_integer(.1)
 # check_integer(c(1:2))
 # check_integer("x", c(0, 0), type = "vector")
-check_integer <- function(x, y = x, type = "scalar", float = FALSE, min = 1) {
+check_integer <- function(x, y = x, type = "scalar", float = FALSE, min = 1,
+                          max = Inf, message = NULL, exit_code = NULL) {
 
     if (is.null(y))
         y <- x
@@ -140,11 +136,22 @@ check_integer <- function(x, y = x, type = "scalar", float = FALSE, min = 1) {
     if (type == "scalar" && length(y) != 1)
         stop_rgcca(paste(x, "should be of length 1."))
 
-    if (!float)
-        y <- as.integer(y)
+    if (!float) {
+      if (any((y %% 1) != 0)) {
+        stop_rgcca(paste(x, "should be an integer."))
+      }
+      y = as.integer(y)
+    }
 
-    if (all(y < min))
+    if (any(y < min))
         stop_rgcca(paste0(x, " should be higher than or equal to ", min, "."))
+
+    if (any(y > max))
+      if (!is.null(message)) {
+        stop_rgcca(message, exit_code = exit_code)
+      } else {
+        stop_rgcca(paste0(x, " should be lower than or equal to ", max, "."))
+      }
 
     if (type %in% c("matrix", "data.frame"))
         y <- matrix(
@@ -155,23 +162,11 @@ check_integer <- function(x, y = x, type = "scalar", float = FALSE, min = 1) {
         )
 
     if (type == "data.frame")
-        as.data.frame(y)
+        y = as.data.frame(y)
 
     return(y)
 }
-check_lower_blocks <- function(x, y, blocks)
-    if (y > length(blocks))
-        stop_rgcca(
-            paste0(
-                x,
-                " should be lower than ",
-                length(blocks),
-                " (the maximum number of blocks), not be equal to ",
-                y,
-                "."
-            ),
-            exit_code = 133
-        )
+
 check_method <- function(method) {
     analysis <- c("rgcca", "sgcca", "pca", "spca", "pls", "spls",
       "cca", "ifa", "ra", "gcca", "maxvar", "maxvar-b",
@@ -189,28 +184,22 @@ check_method <- function(method) {
         )
 }
 
-check_min_integer <- function(x , y, blocks, min = 1) {
-    x <- check_integer(x, y, min = min)
-    check_lower_blocks(x, y, blocks)
-    return(x)
-}
 check_nblocks <- function(blocks, type) {
     if (tolower(type) == "pca") {
-        msg <- "Only one block is"
+        if (length(blocks) == 1) return(blocks)
+        nb <- 1
         exit_code <- 110
     } else{
-        msg <- "Two blocks are"
+        if (length(blocks) == 2) return(blocks)
+        nb <- 2
         exit_code <- 111
     }
 
     stop_rgcca(
         paste0(
             length(blocks),
-            " blocks used in the analysis. ",
-            msg ,
-            " required for a ",
-            type,
-            "."
+            " blocks were provided but the number of blocks for ", type,
+            " must be ", nb, "."
         ),
         exit_code = exit_code
     )
@@ -228,26 +217,20 @@ check_ncol <- function(x, i_block) {
 }
 
 check_ncomp <- function(ncomp, blocks, min = 1) {
-
     ncomp <- elongate_arg(ncomp, blocks)
+    check_size_blocks(blocks, "ncomp", ncomp)
     ncomp <- sapply(
         seq(length(ncomp)),
         function(x){
-            y <- check_integer("ncomp", ncomp[x], min = min)
-            if (y > NCOL(blocks[[x]])) {
-                stop_rgcca(
-                    paste0(
-                        "ncomp[", x, "] should be comprise between ", min ," and ", NCOL(blocks[[x]]), " (that is the number of variables of block ", x, ")."
-                    ),
-                    exit_code = 126
-                )
-            }
-            else
-                return(y)
+            msg = paste0("ncomp[", x, "] should be lower than ",
+                         NCOL(blocks[[x]]),
+                         " (that is the number of variables of block ", x, ")."
+            )
+            y <- check_integer("ncomp", ncomp[x], min = min, message = msg,
+                               max = NCOL(blocks[[x]]), exit_code = 126)
+            return(y)
         }
     )
-
-    check_size_blocks(blocks, "ncomp", ncomp)
     return(ncomp)
 }
 
@@ -384,29 +367,28 @@ check_size_file <- function(filename) {
 }
 
 check_spars <- function(blocks, tau, type = "rgcca") {
-    # sparsity : A vector of integer giving the spasity parameter for SGCCA (sparsity)
+    # sparsity : A vector of integer giving the sparsity parameter for SGCCA (sparsity)
     # Stop the program if at least one sparsity parameter is not in the required interval
-
     if (tolower(type) == "sgcca") {
+        tau <- elongate_arg(tau, blocks)
+        check_size_blocks(blocks, "sparsity", tau)
         #the minimum value avalaible
         min_sparsity <- lapply(blocks, function(x) 1 / sqrt(NCOL(x)))
 
         # Check sparsity varying between 1/sqrt(pj) and 1
         tau <- mapply(
             function(x, y) {
-                x <- check_integer("sparsity", x, float = TRUE, min = 0)
-                if (x < y | x > 1)
+                x <- check_integer("sparsity", x, float = TRUE, min = 0, max = 1)
+                if (x < y)
                     stop_rgcca(
                         paste0(
-                            "Sparsity parameter is equals to ",
+                            "Sparsity parameter equals to ",
                             x,
-                            ". For SGCCA, it must be comprise between 1/sqrt(number_column) (i.e., ",
+                            ". For SGCCA, it must be greater than 1/sqrt(number_column) (i.e., ",
                             toString(unlist(
                                 lapply(min_sparsity, function(x)
                                     ceiling(x * 100) / 100)
-                            ))
-                            ,
-                            ") and 1."
+                            )), ")."
                         ),
                         exit_code = 132
                     )
@@ -430,39 +412,33 @@ check_superblock <- function(is_supervised = NULL, is_superblock = NULL, verbose
     }else
         return(isTRUE(is_superblock))
 }
-check_tau <- function(tau, blocks, type = "rgcca",superblock=FALSE) {
+check_tau <- function(tau, blocks, type = "rgcca", superblock = FALSE) {
+    if (superblock) {
+      blocks[[length(blocks) + 1]] <- Reduce(cbind,blocks)
+      names(blocks)[length(blocks)] = "superblock"
+    }
+    tau <- elongate_arg(tau, blocks)
+    check_size_blocks(blocks, "tau", tau)
     msg <- "tau should be comprise between 0 and 1 or should be set 'optimal'
     for automatic setting"
     tau1 <- tau
-    if(superblock){blocks[[length(blocks)+1]] <- Reduce(cbind,blocks);names(blocks)[length(blocks)]="superblock" }
     tryCatch({
         # Check value of each tau
         tau <- sapply(
             seq(length(tau)),
             function(x) {
-                if (tau[x] != "optimal") {
-                    y <- check_integer("tau", tau[x], float = TRUE, min = 0)
-                    if (y > 1)
-                        stop_rgcca(paste0(msg, " (currently equals to ", tau[x], ")."),
-                                   exit_code = 129)
-                    else
-                        y
+                if (is.na(tau[x]) || tau[x] != "optimal") {
+                    y <- check_integer("tau", tau[x], float = TRUE, min = 0, max = 1)
                 }else
                     tau[x]
             })
 
         if (is(tau1, "matrix"))
             tau <- matrix(tau, NROW(tau1), NCOL(tau1))
-
-        tau <- elongate_arg(tau, blocks)
-        check_size_blocks(blocks, "tau", tau)
         tau <- check_spars(blocks, tau, type)
 
         return(tau)
 
-        # If there is only one common tau
-        # if (length(tau) == 1)
-        #     tau <- rep(tau[[1]], length(blocks))
     }, warning = function(w)
         stop_rgcca(msg, exit_code = 131)
     )
