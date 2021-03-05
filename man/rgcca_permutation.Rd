@@ -14,7 +14,7 @@ rgcca_permutation(
   quiet = TRUE,
   scale = TRUE,
   scale_block = TRUE,
-  type = NULL,
+  method = NULL,
   connection = 1 - diag(length(blocks)),
   scheme = "factorial",
   ncomp = rep(1, length(blocks)),
@@ -25,7 +25,7 @@ rgcca_permutation(
   tol = 1e-08,
   response = NULL,
   superblock = FALSE,
-  method = "nipals",
+  NA_method = "nipals",
   rgcca_res = NULL
 )
 }
@@ -63,7 +63,7 @@ is 20).}
 \item{scale_block}{Logical value indicating if each block is divided by
 the square root of its number of variables.}
 
-\item{type}{A character string indicating the multi-block component
+\item{method}{A character string indicating the multi-block component
 method to consider: rgcca, sgcca, pca, spca, pls, spls, cca,
 ifa, ra, gcca, maxvar, maxvar-b, maxvar-a, mcoa,cpca-1, cpca-2,
 cpca-4, hpca, maxbet-b, maxbet, maxdiff-b, maxdiff, maxvar-a,
@@ -121,7 +121,7 @@ or by random initialisation ("random") (default: "svd").}
 \item{superblock}{Boolean indicating the presence of the superblock.
 Default = TRUE}
 
-\item{method}{Character string corresponding to the method used for
+\item{NA_method}{Character string corresponding to the method used for
 handling missing values ("nipals", "complete"). (default: "nipals").
 \itemize{
 \item{\code{"complete"}}{corresponds to perform RGCCA on the fully observed

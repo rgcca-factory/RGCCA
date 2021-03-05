@@ -32,7 +32,7 @@ random_val = function(y=1) lapply(seq(4),
 function(x) matrix(runif(4), y, 2))
 rgcca_out = list(AVE = list(AVE_X = random_val()),
      a = random_val(2),
-     call = list(type = "rgcca", ncomp = rep(2, 4)))
+     call = list(method = "rgcca", ncomp = rep(2, 4)))
 names(rgcca_out$a) <- LETTERS[seq(4)]
 class(rgcca_out) = "rgcca"
 for(i in seq(1,4))

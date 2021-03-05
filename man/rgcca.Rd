@@ -6,7 +6,7 @@
 \usage{
 rgcca(
   blocks,
-  type = "rgcca",
+  method = "rgcca",
   scale = TRUE,
   scale_block = TRUE,
   connection = 1 - diag(length(blocks)),
@@ -19,7 +19,7 @@ rgcca(
   tol = 1e-08,
   response = NULL,
   superblock = FALSE,
-  method = "nipals",
+  NA_method = "nipals",
   verbose = FALSE,
   quiet = TRUE
 )
@@ -29,7 +29,7 @@ rgcca(
 Block Xj is a matrix of dimension n x p_j where n is the number of
 observations and p_j the number of variables.}
 
-\item{type}{A character string indicating the multi-block component
+\item{method}{A character string indicating the multi-block component
 method to consider: rgcca, sgcca, pca, spca, pls, spls, cca,
 ifa, ra, gcca, maxvar, maxvar-b, maxvar-a, mcoa,cpca-1, cpca-2,
 cpca-4, hpca, maxbet-b, maxbet, maxdiff-b, maxdiff, maxvar-a,
@@ -94,7 +94,7 @@ activated.}
 \item{superblock}{Boolean indicating the presence of the superblock.
 Default = TRUE}
 
-\item{method}{Character string corresponding to the method used for
+\item{NA_method}{Character string corresponding to the method used for
 handling missing values ("nipals", "complete"). (default: "nipals").
 \itemize{
 \item{\code{"complete"}}{corresponds to perform RGCCA on the fully observed
@@ -196,7 +196,7 @@ blocks = list(agriculture = Russett[, seq(3)],
 
 # Blocks are fully connected, factorial scheme and tau =1 for all blocks is
 # used by default
-fit.rgcca = rgcca(blocks=blocks, type = "rgcca", connection = 1-diag(3),
+fit.rgcca = rgcca(blocks=blocks, method = "rgcca", connection = 1-diag(3),
                   scheme = "factorial", tau = rep(1, 3))
 print(fit.rgcca)
 plot(fit.rgcca, type = "weight", block = 3)
@@ -206,7 +206,7 @@ plot(fit.rgcca, type = "ind", block = 1:2, comp = rep(1, 2), resp = politic)
 ############################################
 # Example 2: RGCCA and multiple components #
 ############################################
-fit.rgcca = rgcca(blocks, type = "rgcca",
+fit.rgcca = rgcca(blocks, method = "rgcca",
                   connection = C, superblock = FALSE,
                   tau = rep(1, 3), ncomp = c(2, 2, 2),
                   scheme = "factorial", verbose = TRUE)

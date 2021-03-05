@@ -15,8 +15,8 @@ rgcca_cv_k(
   scale_block = NULL,
   tol = 1e-08,
   scheme = NULL,
+  NA_method = NULL,
   method = NULL,
-  type = NULL,
   init = NULL,
   bias = NULL,
   connection = NULL,
@@ -55,7 +55,7 @@ covariance maximization among "horst" (the identity function), "factorial"
  design explicitely the sheme function (e.g. function(x) x^4) as argument of
  rgcca function.  See (Tenenhaus et al, 2017) for details.}
 
-\item{method}{Character string corresponding to the method used for
+\item{NA_method}{Character string corresponding to the method used for
 handling missing values ("nipals", "complete"). (default: "nipals").
 \itemize{
 \item{\code{"complete"}}{corresponds to perform RGCCA on the fully observed
@@ -63,7 +63,7 @@ observations (observations with missing values are removed)}
 \item{\code{"nipals"}}{corresponds to perform RGCCA algorithm on available
 data (NIPALS-type algorithm)}}}
 
-\item{type}{A character string indicating the multi-block component
+\item{method}{A character string indicating the multi-block component
 method to consider: rgcca, sgcca, pca, spca, pls, spls, cca,
 ifa, ra, gcca, maxvar, maxvar-b, maxvar-a, mcoa,cpca-1, cpca-2,
 cpca-4, hpca, maxbet-b, maxbet, maxdiff-b, maxdiff, maxvar-a,
