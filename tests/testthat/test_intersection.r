@@ -17,13 +17,13 @@ blocks[[3]][40, ]         = NA
 blocks[[4]][42]           = NA
 ind_NA                    = c(2, 4, 8, 12, 17, 23, 30, 32, 40, 42)
 
-test_that("interscetion_list selects the common rows without missing values", {
+test_that("intersection_list selects the common rows without missing values", {
   blocks_inter = intersection_list(blocks)
   for (j in 1:length(blocks)) {
     expect_equal(blocks_inter[[j]], subset_rows(blocks[[j]], -ind_NA))
   }
 })
-test_that("interscetion_list raises an error if there is less than 3 subjects
+test_that("intersection_list raises an error if there is less than 3 subjects
           left after removing missing values", {
             bad_blocks                   = blocks
             bad_blocks[[2]][-c(1, 3), 1] = NA
