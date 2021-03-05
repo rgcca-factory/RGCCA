@@ -223,7 +223,7 @@ Tenenhaus M., Tenenhaus A. and Groenen P. J. (2017). Regularized
 generalized canonical correlation analysis: a framework for sequential
 multiblock component methods. Psychometrika, 82(3), 737-777.
 
-Tenenhaus A., Philippe C and Frouin, V. (2015). Kernel
+Tenenhaus A., Philippe C. and Frouin, V. (2015). Kernel
 generalized canonical correlation analysis. Computational Statistics and
 Data Analysis, 90, 114-131.
 
