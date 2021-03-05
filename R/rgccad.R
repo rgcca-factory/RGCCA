@@ -196,8 +196,6 @@ rgccad=function (blocks, connection = 1 - diag(length(blocks)), tau = rep(1, len
   shave.veclist <- function(vec_list, nb_elts)
     mapply(function(m, nbcomp) m[1:nbcomp], vec_list, nb_elts, SIMPLIFY = FALSE)
 
-  A0 = blocks
-
   if (any(ncomp < 1)) {stop_rgcca("Compute at least one component per block!")}
   pjs <- sapply(blocks, NCOL)
   nb_row <- NROW(blocks[[1]])
