@@ -12,7 +12,7 @@ select_analysis(
   ncomp = rep(1, length(blocks)),
   scheme = "centroid",
   superblock = TRUE,
-  type = "rgcca",
+  method = "rgcca",
   verbose = TRUE,
   quiet = FALSE,
   response = NULL
@@ -42,7 +42,7 @@ covariance maximization among "horst" (the identity function), "factorial"
 \item{superblock}{Boolean indicating the presence of the superblock.
 Default = TRUE}
 
-\item{type}{A character string indicating the multi-block component
+\item{method}{A character string indicating the multi-block component
 method to consider: rgcca, sgcca, pca, spca, pls, spls, cca,
 ifa, ra, gcca, maxvar, maxvar-b, maxvar-a, mcoa,cpca-1, cpca-2,
 cpca-4, hpca, maxbet-b, maxbet, maxdiff-b, maxdiff, maxvar-a,

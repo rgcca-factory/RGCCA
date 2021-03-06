@@ -33,7 +33,7 @@ plot.bootstrap=function(x, block = length(x$rgcca$call$blocks),
             block=length(x$rgcca$call$blocks)-1
     }
 
-    if(x$rgcca$call$type%in%c("sgcca", "spls", "spca"))
+    if(x$rgcca$call$method%in%c("sgcca", "spls", "spca"))
         {
             x1="occurrences"
             y1="estimate"

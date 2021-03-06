@@ -11,22 +11,22 @@ set_rgcca <- function(
     init = NULL,
     bias = TRUE,
     tol = 1e-03,
-    type = NULL,
+    method = NULL,
     scale = NULL,
     scale_block = NULL,
     superblock = NULL,
     response = NULL,
-    method = NULL,
+    NA_method = NULL,
     boot = FALSE,
     inds = NULL) {
     if(is.null(connection)){    connection <- rgcca_res$call$connection }
     if(is.null(scale)){    scale <- rgcca_res$call$scale }
     if(is.null(scale_block)){    scale_block <- rgcca_res$call$scale_block }
     if(is.null(superblock)){     superblock <- rgcca_res$call$superblock }
-    if(is.null(method)){    method <- rgcca_res$call$method }
+    if(is.null(NA_method)){    NA_method <- rgcca_res$call$NA_method }
     if(is.null(scheme)){     scheme <- rgcca_res$call$scheme}
     if(is.null(bias)){     bias <- rgcca_res$call$bias}
-    if(is.null(type)){   type <- rgcca_res$call$type}
+    if(is.null(method)){   method <- rgcca_res$call$method}
     if(is.null(init)){     init <- rgcca_res$call$init}
     if(is.null(ncomp)){        ncomp <- rgcca_res$call$ncomp}
      if (is.null(blocks)) {
@@ -57,10 +57,10 @@ set_rgcca <- function(
     if (!boot)
         blocks <- intersection_list(blocks)
 
-    if (tolower(type) %in% c("sgcca", "spca", "spls")) {
+    if (tolower(method) %in% c("sgcca", "spca", "spls")) {
 
         if (!is.null(blocks) && !missing(tau) && missing(sparsity))
-            stop_rgcca(paste0("sparsity parameter required for ", tolower(type), "instead of tau."))
+            stop_rgcca(paste0("sparsity parameter required for ", tolower(method), "instead of tau."))
 
         par <- "sparsity"
         penalty <- sparsity
@@ -68,7 +68,7 @@ set_rgcca <- function(
     } else {
 
         if (!is.null(blocks) && !missing(sparsity) && missing(tau))
-            stop_rgcca(paste0("tau parameter required for ", tolower(type), "instead of sparsity."))
+            stop_rgcca(paste0("tau parameter required for ", tolower(method), "instead of sparsity."))
 
         par <- "tau"
         penalty <- tau
@@ -124,11 +124,11 @@ set_rgcca <- function(
             scheme = scheme,
             scale = scale,
             scale_block = scale_block,
-            type = type,
+            method = method,
             verbose = FALSE,
             init = init,
             bias = bias,
-            method = method,
+            NA_method = NA_method,
             tol = tol
         ))
 

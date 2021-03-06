@@ -48,7 +48,7 @@ for (i in seq(3))
 row.names(weights[[i]]) <- paste0(letters[i],
      letters[seq(NROW(weights[[i]]))])
 weights[[4]] = Reduce(rbind, weights)
-rgcca_out = list(a = weights, call = list(type="rgcca", ncomp = rep(2,4)))
+rgcca_out = list(a = weights, call = list(method="rgcca", ncomp = rep(2,4)))
 names(rgcca_out$a) = LETTERS[seq(4)]
 rgcca_out$call$blocks = lapply(rgcca_out$a, t)
 rgcca_out$call$superblock = TRUE

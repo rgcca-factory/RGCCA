@@ -217,14 +217,14 @@ rgcca_permutation <- function(blocks, par_type, par_value = NULL,
                               par_length = 10, n_perms = 20,
                               n_cores = parallel::detectCores() - 1,
                               quiet = TRUE, scale = TRUE, scale_block = TRUE,
-                              type=NULL, connection = 1 - diag(length(blocks)),
+                              method=NULL, connection = 1 - diag(length(blocks)),
                               scheme = "factorial",
                               ncomp = rep(1, length(blocks)),
                               tau = rep(1, length(blocks)),
                               sparsity = rep(1, length(blocks)),
                               init = "svd", bias = TRUE, tol = 1e-8,
                               response = NULL, superblock = FALSE,
-                              method = "nipals", rgcca_res = NULL){
+                              NA_method = "nipals", rgcca_res = NULL){
 
     if (!is.null(rgcca_res)) {
         stopifnot(is(rgcca_res, "rgcca"))
@@ -234,7 +234,7 @@ rgcca_permutation <- function(blocks, par_type, par_value = NULL,
         scheme <- rgcca_res$call$scheme
         response <- rgcca_res$call$response
         tol <- rgcca_res$call$tol
-        method <- rgcca_res$call$method
+        NA_method <- rgcca_res$call$NA_method
         init <- rgcca_res$call$init
         bias <- rgcca_res$call$bias
         blocks <- rgcca_res$call$raw
@@ -243,7 +243,7 @@ rgcca_permutation <- function(blocks, par_type, par_value = NULL,
         tau <- rgcca_res$call$tau
         ncomp <- rgcca_res$call$ncomp
         sparsity <- rgcca_res$call$sparsity
-        type <- rgcca_res$call$type
+        method <- rgcca_res$call$method
         superblock <- rgcca_res$call$superblock
     }
 
@@ -254,17 +254,17 @@ rgcca_permutation <- function(blocks, par_type, par_value = NULL,
     match.arg(par_type, c("tau", "sparsity"))
     min_spars <- NULL
 
-    if (par_type == "sparsity") type2 <- "sgcca"
-    if(par_type == "tau") type2 <- "rgcca"
-    if(is.null(type)){type=type2}
+    if (par_type == "sparsity") method2 <- "sgcca"
+    if(par_type == "tau") method2 <- "rgcca"
+    if(is.null(method)){method=method2}
     if (length(blocks) == 1)
       stop_rgcca("Permutation required more than one block.\n")
 
     if(!superblock){
       ncols <- sapply(blocks, NCOL)
-      call=list(type = type, par_type = par_type, par_value = par_value,
+      call=list(method = method, par_type = par_type, par_value = par_value,
                 n_perms = n_perms, quiet = quiet, connection = connection,
-                method=method, tol=tol, scheme = scheme,
+                NA_method=NA_method, tol=tol, scheme = scheme,
                 scale = scale, scale_block = scale_block,
                 superblock = superblock, blocks=blocks)
     }else{
@@ -275,9 +275,9 @@ rgcca_permutation <- function(blocks, par_type, par_value = NULL,
       matConnection=matrix(0,J,J);
       matConnection[1:(J-1),J]=1;matConnection[J,1:(J-1)]=1
       rownames(matConnection) = colnames(matConnection) = names(ncols)
-      call=list(type = type, par_type = par_type, n_perms = n_perms,
+      call=list(method = method, par_type = par_type, n_perms = n_perms,
                 quiet = quiet, connection = matConnection,
-                method=method, tol=tol, scheme = scheme,
+                NA_method=NA_method, tol=tol, scheme = scheme,
                 scale = scale, scale_block = scale_block,
                 superblock = superblock, blocks=blocks)
     }
@@ -292,15 +292,15 @@ rgcca_permutation <- function(blocks, par_type, par_value = NULL,
     set_penalty <- function(){
       # Selecting the minimal value
       if (par_type == "sparsity"){
-        if (!tolower(type) %in% c("spls", "sgcca"))
+        if (!tolower(method) %in% c("spls", "sgcca"))
           warning("par_type = 'sparsity' but sparsity is not required... SGCCA is performed.")
-          type <<- "sgcca"
+          method <<- "sgcca"
           min_spars <<- sapply(ncols, function(x) 1 / sqrt(x))
       }
       else{
-        if (tolower(type) %in% c("spls", "sgcca"))
+        if (tolower(method) %in% c("spls", "sgcca"))
           warning("par_type = 'tau' but sparsity is required... RGCCA is performed.")
-          type <<- "rgcca"
+          method <<- "rgcca"
           min_spars <<- sapply(ncols, function(x) 0)
       }
 
@@ -312,7 +312,7 @@ rgcca_permutation <- function(blocks, par_type, par_value = NULL,
             par_value <- t(sapply(seq(NROW(par_value)),
                                   function(x) check_tau(par_value[x, ],
                                                         blocks,
-                                                        type = type,
+                                                        method = method,
                                                         superblock = superblock)
                                   )
                           )
@@ -324,7 +324,7 @@ rgcca_permutation <- function(blocks, par_type, par_value = NULL,
             stop_rgcca(paste0("par_value should be upper than : ",
                                   paste0(round(min_spars, 2), collapse = ",")))
           if(par_type == "tau"){
-            par_value <- check_tau(par_value, blocks, type = type,
+            par_value <- check_tau(par_value, blocks, method = method,
                                      superblock = superblock)
             par_value <- set_spars(max = par_value)
           }
@@ -351,8 +351,8 @@ rgcca_permutation <- function(blocks, par_type, par_value = NULL,
     if( Sys.info()["sysname"] == "Windows"){
       if(n_cores>1){
         call_perm = list(blocks, par[[1]], par_value_parallel, perm_parallel,
-                       type, quiet, superblock, scheme,
-                       tol, scale, scale_block, connection, method,
+                       method, quiet, superblock, scheme,
+                       tol, scale, scale_block, connection, NA_method,
                        response, bias, init, ncomp, tau, sparsity)
         assign("call_perm", call_perm, envir = .GlobalEnv)
         cl = parallel::makeCluster(n_cores)
@@ -363,7 +363,7 @@ rgcca_permutation <- function(blocks, par_type, par_value = NULL,
                               par_type = call_perm[[2]],
                               par_value = call_perm[[3]][b,],
                               perm = call_perm[[4]][b],
-                              type = call_perm[[5]],
+                              method = call_perm[[5]],
                               quiet = call_perm[[6]],
                               superblock = call_perm[[7]],
                               scheme = call_perm[[8]],
@@ -371,7 +371,7 @@ rgcca_permutation <- function(blocks, par_type, par_value = NULL,
                               scale = call_perm[[10]],
                               scale_block = call_perm[[11]],
                               connection = call_perm[[12]],
-                              method = call_perm[[13]],
+                              NA_method = call_perm[[13]],
                               bias = call_perm[[15]],
                               init = call_perm[[16]],
                               ncomp = call_perm[[17]],
@@ -387,7 +387,7 @@ rgcca_permutation <- function(blocks, par_type, par_value = NULL,
                                 par_type = par[[1]],
                                 par_value = par_value_parallel[b,],
                                 perm = perm_parallel[b],
-                                type = type,
+                                method = method,
                                 quiet = quiet,
                                 superblock = superblock,
                                 scheme = scheme,
@@ -395,7 +395,7 @@ rgcca_permutation <- function(blocks, par_type, par_value = NULL,
                                 scale = scale,
                                 scale_block = scale_block,
                                 connection = connection,
-                                method = method,
+                                NA_method = NA_method,
                                 bias = bias,
                                 init = init,
                                 ncomp = ncomp,
@@ -410,7 +410,7 @@ rgcca_permutation <- function(blocks, par_type, par_value = NULL,
                               par_type = par[[1]],
                               par_value = par_value_parallel[b,],
                               perm = perm_parallel[b],
-                              type = type,
+                              method = method,
                               quiet = quiet,
                               superblock = superblock,
                               scheme = scheme,
@@ -418,7 +418,7 @@ rgcca_permutation <- function(blocks, par_type, par_value = NULL,
                               scale = scale,
                               scale_block = scale_block,
                               connection = connection,
-                              method = method,
+                              NA_method = NA_method,
                               bias = bias,
                               init = init,
                               ncomp = ncomp,

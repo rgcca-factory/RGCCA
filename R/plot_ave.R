@@ -10,7 +10,7 @@
 #' function(x) matrix(runif(4), y, 2))
 #' rgcca_out = list(AVE = list(AVE_X = random_val()),
 #'      a = random_val(2),
-#'      call = list(type = "rgcca", ncomp = rep(2, 4)))
+#'      call = list(method = "rgcca", ncomp = rep(2, 4)))
 #' names(rgcca_out$a) <- LETTERS[seq(4)]
 #' class(rgcca_out) = "rgcca"
 #' for(i in seq(1,4))
@@ -28,7 +28,7 @@ plot_ave <- function(
     stopifnot(is(rgcca_res, "rgcca"))
     check_integer("cex", cex)
 
-    if (tolower(rgcca_res$call$type) == "pca") {
+    if (tolower(rgcca_res$call$method) == "pca") {
         rgcca_res$AVE$AVE_X = rgcca_res$AVE$AVE_X[1]
         rgcca_res$call$ncomp = rgcca_res$call$ncomp[1]
         rgcca_res$a = rgcca_res$a[1]

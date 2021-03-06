@@ -184,8 +184,8 @@ check_method <- function(method) {
         )
 }
 
-check_nblocks <- function(blocks, type) {
-    if (tolower(type) == "pca") {
+check_nblocks <- function(blocks, method) {
+    if (tolower(method) == "pca") {
         if (length(blocks) == 1) return(blocks)
         nb <- 1
         exit_code <- 110
@@ -198,7 +198,7 @@ check_nblocks <- function(blocks, type) {
     stop_rgcca(
         paste0(
             length(blocks),
-            " blocks were provided but the number of blocks for ", type,
+            " blocks were provided but the number of blocks for ", method,
             " must be ", nb, "."
         ),
         exit_code = exit_code
@@ -366,10 +366,10 @@ check_size_file <- function(filename) {
         message("File loading in progress ...")
 }
 
-check_spars <- function(blocks, tau, type = "rgcca") {
+check_spars <- function(blocks, tau, method = "rgcca") {
     # sparsity : A vector of integer giving the sparsity parameter for SGCCA (sparsity)
     # Stop the program if at least one sparsity parameter is not in the required interval
-    if (tolower(type) == "sgcca") {
+    if (tolower(method) == "sgcca") {
         tau <- elongate_arg(tau, blocks)
         check_size_blocks(blocks, "sparsity", tau)
         #the minimum value avalaible
@@ -412,7 +412,7 @@ check_superblock <- function(is_supervised = NULL, is_superblock = NULL, verbose
     }else
         return(isTRUE(is_superblock))
 }
-check_tau <- function(tau, blocks, type = "rgcca", superblock = FALSE) {
+check_tau <- function(tau, blocks, method = "rgcca", superblock = FALSE) {
     if (superblock) {
       blocks[[length(blocks) + 1]] <- Reduce(cbind,blocks)
       names(blocks)[length(blocks)] = "superblock"
@@ -435,7 +435,7 @@ check_tau <- function(tau, blocks, type = "rgcca", superblock = FALSE) {
 
         if (is(tau1, "matrix"))
             tau <- matrix(tau, NROW(tau1), NCOL(tau1))
-        tau <- check_spars(blocks, tau, type)
+        tau <- check_spars(blocks, tau, method)
 
         return(tau)
 

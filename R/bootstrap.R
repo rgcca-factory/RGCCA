@@ -26,7 +26,7 @@
 #' print(boot.out)
 #' get_bootstrap(boot.out)
 #'
-#' fit.rgcca = rgcca(blocks, type = "mcoa")
+#' fit.rgcca = rgcca(blocks, method = "mcoa")
 #' boot.out = bootstrap(fit.rgcca,
 #'                      n_boot = 50, n_cores = 2)
 #'

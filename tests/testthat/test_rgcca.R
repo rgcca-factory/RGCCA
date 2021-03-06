@@ -17,7 +17,7 @@ resPCA= rgcca (
      superblock = FALSE,
      tau = rep(1, length(A)),
      ncomp = rep(2, length(A)),
-     type = "pca",
+     method = "pca",
      verbose = FALSE,
      scheme = "factorial",
      scale = TRUE,
@@ -55,7 +55,7 @@ unscaledPCA= rgcca (
     superblock = FALSE,
     tau = rep(1, length(A)),
     ncomp = rep(2, length(A)),
-    type = "pca",
+    method = "pca",
     verbose = FALSE,
     scheme = "factorial",
     scale_block = FALSE,
@@ -83,7 +83,7 @@ test_that("upca_var2",{expect_true(upca_var)})
 # With superblock  # TODO
 
 #------------PLS
-#  res_pls = plsr(X_polit ~ X_agric, ncomp = 1, method = "simpls")
+#  res_pls = plsr(X_polit ~ X_agric, ncomp = 1, NA_method = "simpls")
 #  A = list(X_agric,X_polit);
 #  pls_with_rgcca= rgcca (
 #      blocks=A,
@@ -114,7 +114,7 @@ test_that("upca_var2",{expect_true(upca_var)})
  X_ind = as.matrix(Russett[,c("gnpr","labo")]);
  X_polit = as.matrix(Russett[ , c("demostab")]);
  A = list(X_agric,X_ind,X_polit);
- resPCA= rgcca ( blocks=A, ncomp = c(2,2,1),type = "rgcca",     verbose = FALSE)
+ resPCA= rgcca ( blocks=A, ncomp = c(2,2,1),method = "rgcca",     verbose = FALSE)
 
  # with optimal tau
  data(Russett)
@@ -140,8 +140,8 @@ test_that("upca_var2",{expect_true(upca_var)})
  C0=matrix(0,3,3);C0[2:3,1]=1;C0[1,2:3]=1
  C1=matrix(0,3,3);C1[1:2,3]=1;C1[3,1:2]=1
  A1=list(A[[2]],A[[3]],A[[1]])
- resRgccaNipals3=rgcca(blocks=A1,connection=C1,type="rgcca",method="nipals",ncomp=2)
- resRgccaNipals=rgcca(blocks=A,connection=C0,type="rgcca",method="nipals",ncomp=2)
+ resRgccaNipals3=rgcca(blocks=A1,connection=C1,method="rgcca",NA_method="nipals",ncomp=2)
+ resRgccaNipals=rgcca(blocks=A,connection=C0,method="rgcca",NA_method="nipals",ncomp=2)
  head(resRgccaNipals3$Y[[3]])
  head(resRgccaNipals$Y[[1]])
 
@@ -155,7 +155,7 @@ test_that("upca_var2",{expect_true(upca_var)})
      superblock = FALSE,
      tau = rep(1, length(A)),
      ncomp = rep(2, length(A)),
-     type = "pca",
+     method = "pca",
      verbose = FALSE,
      scheme = "factorial",
      scale = TRUE,
@@ -205,13 +205,13 @@ test_that("upca_var2",{expect_true(upca_var)})
  resRgccad=rgccad(blocks=A,connection=matrix(1,3,3)-diag(1,3),ncomp=rep(2,3),scheme = "factorial", scale = TRUE,verbose=FALSE,scale_block=TRUE)
  test_that("rgccaVSrgccad",{expect_true(sum(head(resRgccad$Y[[1]])==head(resRgcca$Y[[1]]))==12)})
 
- resSgcca = rgcca(A, type="sgcca",ncomp=rep(2,3),sparsity= c(1, 1, 1), scheme = "factorial", scale = TRUE,verbose=FALSE,init="svd")
+ resSgcca = rgcca(A, method="sgcca",ncomp=rep(2,3),sparsity= c(1, 1, 1), scheme = "factorial", scale = TRUE,verbose=FALSE,init="svd")
  resSgccad=sgcca(blocks=A,connection=matrix(1,3,3)-diag(1,3),ncomp=rep(2,3),scheme = "factorial", scale = TRUE,scale_block=TRUE,prescaling=FALSE,verbose=T,init="svd")
  test_that("sgccadVsSGCCA",{expect_true(mean((resSgccad$Y[[2]]-resSgcca$Y[[2]]))<1e-14)})
  test_that("sgcca",{expect_true( mean(abs(resSgcca$Y[[2]]-resRgcca$Y[[2]]))<1e-14)})
 
 
- resSgcca = rgcca(A, type="sgcca",superblock=TRUE)
+ resSgcca = rgcca(A, method="sgcca",superblock=TRUE)
 
 
 # RGCCA

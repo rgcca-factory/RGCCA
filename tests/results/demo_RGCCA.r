@@ -21,7 +21,7 @@ rgcca_permutation(rgcca_res=resRgcca)
 blocks_with_na=blocks
 blocks_with_na[[1]][1,]=NA
 blocks_with_na[[1]][2,2]=NA
-resRgcca=rgcca(blocks_with_na,method = "mean")
+resRgcca=rgcca(blocks_with_na,NA_method = "mean")
 resRgcca$call$raw[[1]][1,]
 resRgcca$call$blocks[[1]][1,]
 resRgcca$call$blocks[[1]][1,]
@@ -32,7 +32,7 @@ resRgcca$call$blocks[[1]][1,]
 # unsupervised rgcca - exploratory approach with rgcca
 #-------------------
 # Step one - tuning the parameters
-res_permut=rgcca_permutation(blocks=blocks,type="rgcca",scheme="factorial",n_perms=100)
+res_permut=rgcca_permutation(blocks=blocks,method="rgcca",scheme="factorial",n_perms=100)
 print(res_permut)
 names(res_permut)
 plot(res_permut,type="zstat")
@@ -93,7 +93,7 @@ plot(boot,comp=2)
 
 # supervised sgcca
 #-----------------
-res=rgcca_cv(blocks,response=3,par_type="sparsity",type="sgcca")
+res=rgcca_cv(blocks,response=3,par_type="sparsity",method="sgcca")
 plot(res)
 
 res_sparsity=rgcca(blocks,sparsity=res$bestpenalties)
@@ -112,8 +112,8 @@ plot(res,block=2)
 
 
 #===============================================================================================
-resRGCCA=rgcca(blocks,ncomp=c(2,2,2),scheme=function(x) x^4, type="sgcca",sparsity = c(.6, .75, .5))
-resRGCCA=rgcca(blocks,ncomp=2,scheme="horst", type="rgcca",tau = c(.6, .75, .5))
+resRGCCA=rgcca(blocks,ncomp=c(2,2,2),scheme=function(x) x^4, method="sgcca",sparsity = c(.6, .75, .5))
+resRGCCA=rgcca(blocks,ncomp=2,scheme="horst", method="rgcca",tau = c(.6, .75, .5))
 response=matrix( Russett[, 11],ncol=1);rownames(response)=rownames(Russett)
 plot(res)
 
@@ -122,7 +122,7 @@ plot(res)
 response = matrix(apply(Russett[, 9:11], 1, which.max),ncol=1)
 rownames(response)=rownames(Russett)
 response=matrix( Russett[, 11],ncol=1);rownames(response)=rownames(Russett)
-resRGCCA=rgcca(blocks,ncomp=2,scheme="horst", type="rgcca",tau = c(.6, .75, .5))
+resRGCCA=rgcca(blocks,ncomp=2,scheme="horst", method="rgcca",tau = c(.6, .75, .5))
 
 
 print(resRGCCA)
@@ -159,8 +159,8 @@ plot(res_cv)
 
 # variable selection (post process? significant variables)
 resBootstrap=bootstrap(resRGCCA,n_boot = 100)
-plot(resBootstrap) 
-plot(resBootstrap,type="2D") 
+plot(resBootstrap)
+plot(resBootstrap,type="2D")
 print(resBootstrap)
 summary(resBootstrap)
 
@@ -169,7 +169,7 @@ summary(resBootstrap)
 #--------------------------
 
 # Step one - tuning the parameters
-res_permut=rgcca_permutation(blocks=blocks,superblock=TRUE,type="rgcca",scheme="factorial",n_perms=100)
+res_permut=rgcca_permutation(blocks=blocks,superblock=TRUE,method="rgcca",scheme="factorial",n_perms=100)
 print(res_permut)
 names(res_permut)
 plot(res_permut)
@@ -210,10 +210,10 @@ blocksNA = list(agriculture = RussettWithNA[, seq(3)], industry = RussettWithNA[
 res_pattern=get_patternNA(blocksNA)
 plot(res_pattern)
 
-# choosing NA method
+# choosing NA NA_method
 resWhich=whichNAmethod(blocksNA,listMethods = c("complete","nipals","knn4","em","sem"))
 plot(resWhich,type="a",bars="stderr")
-resRgcca=rgcca(blocksNA,method="knn4")
+resRgcca=rgcca(blocksNA,NA_method="knn4")
 
 resNaEvol=naEvolution(blocksNA,listMethods = c("complete","nipals","knn4"),prctNA=c(0.1,0.2,0.3))
 plot(resNaEvol,type="a")
@@ -224,29 +224,29 @@ plot(resMIRGCCA)
 
 #====================================================================
 # Checking other functionalities  with missing data
-# complete method
-resRGCCANA1=rgcca(blocksNA,method="complete")
+# complete NA_method
+resRGCCANA1=rgcca(blocksNA,NA_method="complete")
 plot(resRGCCANA1,type="ave")
-plot(resRGCCANA1) 
-plot(resRGCCANA1,type="cor") # cor (rgcca$call$blocks,) 
+plot(resRGCCANA1)
+plot(resRGCCANA1,type="cor") # cor (rgcca$call$blocks,)
 plot(resRGCCANA1,type="network")
 
-resRGCCANA1=rgcca(blocksNA,method="em")
+resRGCCANA1=rgcca(blocksNA,NA_method="em")
 plot(resRGCCANA1,type="ave")
-plot(resRGCCANA1) 
-plot(resRGCCANA1,type="cor") # cor (rgcca$call$blocks,) 
+plot(resRGCCANA1)
+plot(resRGCCANA1,type="cor") # cor (rgcca$call$blocks,)
 plot(resRGCCANA1,type="network")
 
-resRGCCANA2=rgcca(blocksNA,method="nipals")
+resRGCCANA2=rgcca(blocksNA,NA_method="nipals")
 plot(resRGCCANA2,type="ave")
-plot(resRGCCANA2) 
-plot(resRGCCANA2,type="cor") # cor (rgcca$call$blocks,) 
+plot(resRGCCANA2)
+plot(resRGCCANA2,type="cor") # cor (rgcca$call$blocks,)
 plot(resRGCCANA2,type="network")
 
-resRGCCANA3=rgcca(blocksNA,method="mean")
+resRGCCANA3=rgcca(blocksNA,NA_method="mean")
 plot(resRGCCANA2,type="ave")
-plot(resRGCCANA2,type="both") 
-plot(resRGCCANA2,type="cor") # cor (rgcca$call$blocks,) 
+plot(resRGCCANA2,type="both")
+plot(resRGCCANA2,type="cor") # cor (rgcca$call$blocks,)
 plot(resRGCCANA2,type="network")
 
 res_permut=rgcca_permutation(blocks=blocksNA)
@@ -254,7 +254,7 @@ plot(res_permut)
 print(res_permut)
 #choice of the number of components
 par_value=matrix(c(1,1,1,2,2,1),2,3)
-resCV=rgcca_cv(blocks,response=3,type="rgcca",par_type="ncomp",par_value=par_value,validation="kfold",k=5)
+resCV=rgcca_cv(blocks,response=3,method="rgcca",par_type="ncomp",par_value=par_value,validation="kfold",k=5)
 plot(resCV)
 print(resCV)
 
@@ -267,9 +267,9 @@ plot(resBootstrapNA3,type="2D")
 
 
 # Crossvalidation # see with etienne
-resRGCCANA1=rgcca(blocksNA,method="complete",response=2)
-resRGCCANA2=rgcca(blocksNA,method="nipals",response=2)
-resRGCCANA3=rgcca(blocksNA,method="knn4",response=2)
+resRGCCANA1=rgcca(blocksNA,NA_method="complete",response=2)
+resRGCCANA2=rgcca(blocksNA,NA_method="nipals",response=2)
+resRGCCANA3=rgcca(blocksNA,NA_method="knn4",response=2)
 
 resCV=rgcca_cv_k(resRGCCANA1,validation="kfold") #
 resCV=rgcca_cv(resRGCCANA2,par_type="tau")
@@ -295,7 +295,7 @@ plot(resRGCCA,block=1)
 
 
 # choice of c1
-#res_permut=rgcca_permutation(blocks=blocks,type="sgcca",p_c1=TRUE)
+#res_permut=rgcca_permutation(blocks=blocks,method="sgcca",p_c1=TRUE)
 res_permut=rgcca_permutation(blocks=blocks,ncomp=c(2,2,1),par_type="tau",par_value=c(0.5,0.6,0.7)) # runs
 plot(res_permut)
 #choice of the number of components
@@ -304,7 +304,7 @@ plot(res_permut)
 
 # variable selection (post process? significant variables)
 resBootstrap=bootstrap(resRGCCA)
-plot(resBootstrap,i_block=2) 
+plot(resBootstrap,i_block=2)
 
 # Tests with Glioma
 #----------------
@@ -315,7 +315,7 @@ A <- ge_cgh_locIGR$multiblocks
 C <-  matrix(c(0, 0, 1, 0, 0, 1, 1, 1, 0), 3, 3)
 
 fit.rgcca = rgcca(blocks=A, connection=C,
-                  type="sgcca", response=3,sparsity = c(.071,.2, 1),
+                  method="sgcca", response=3,sparsity = c(.071,.2, 1),
                   ncomp = c(1, 1, 1),
                   scheme = "horst",
                   scale = TRUE, scale_block = TRUE,
@@ -326,28 +326,28 @@ fit.rgcca = rgcca(blocks=A, connection=C,
 mat_values=matrix(c(.071,.2, 1,1,1, 1,.5,.2, 1),nrow=3,byrow=TRUE)
 A[[3]]<- as.character(apply(A$y,1,which.max))
 res_cv=rgcca_cv(blocks=A,
-                type="sgcca", response=3,par_type="sparsity",n_run=1,n_cores=1,par_value=mat_values)
+                method="sgcca", response=3,par_type="sparsity",n_run=1,n_cores=1,par_value=mat_values)
 
 plot(res_cv)
 print(res_cv)
 t0=Sys.time()
 rgcca_res=rgcca(blocks=A, connection=C,
-                type="sgcca", response=3)
+                method="sgcca", response=3)
 Sys.time()-t0
 
 t0=Sys.time()
 rgcca_res=rgcca(blocks=A, connection=C,
-                type="rgcca", response=3,init="svd")
+                method="rgcca", response=3,init="svd")
 Sys.time()-t0
 
 t0=Sys.time()
 rgcca_res=rgcca(blocks=A, connection=C,tau=c(.071,.2, 1),
-                type="rgcca", response=3,init="svd")
+                method="rgcca", response=3,init="svd")
 Sys.time()-t0
 
 t0=Sys.time()
 rgcca_res=rgcca(blocks=A, connection=C,tau=c(.5,.5, 1),
-                type="rgcca", response=3,init="svd")
+                method="rgcca", response=3,init="svd")
 Sys.time()-t0
 
 j=1
@@ -373,25 +373,25 @@ matri=matrix(53,pj,pj)
 
 
 res_cv=rgcca_cv(blocks=A,type_cv="classification",fit="lda",
-                type="sgcca", response=3,par_type="sparsity",n_run=1,par_value=mat_values)
+                method="sgcca", response=3,par_type="sparsity",n_run=1,par_value=mat_values)
 
 res_cv=rgcca_cv(blocks=A,type_cv="classification",fit="lda",
-                type="rgcca", response=3,par_type="tau",n_run=1,par_value=mat_values,n_cores=1)
+                method="rgcca", response=3,par_type="tau",n_run=1,par_value=mat_values,n_cores=1)
 
 res_cv=rgcca_cv(blocks=A,validation="loo",type_cv="classification",fit="lda",
-                type="sgcca", response=3,par_type="sparsity",n_run=1,par_value=mat_values)
+                method="sgcca", response=3,par_type="sparsity",n_run=1,par_value=mat_values)
 
 res_cv=rgcca_cv(blocks=A,validation="loo",type_cv="classification",fit="lda",
-                type="rgcca", response=3,par_type="tau",n_run=1,par_value=mat_values)
+                method="rgcca", response=3,par_type="tau",n_run=1,par_value=mat_values)
 
 res_cv=rgcca_cv(blocks=A,type_cv="classification",fit="lda",
-                type="sgcca", response=3,par_type="sparsity",n_run=1,n_cores=1,par_value=mat_values)
+                method="sgcca", response=3,par_type="sparsity",n_run=1,n_cores=1,par_value=mat_values)
 
 
 rgcca_permutation(A, connection=C, par_type = "sparsity", n_perms = 10)
 
 plot(res_cv)
-# 
+#
 
 A[[1]]=cbind(A[[1]],A[[1]],A[[1]]);colnames(A[[1]])=paste("V",1:ncol(A[[1]]))
 Loc <- factor(ge_cgh_locIGR$y) ; levels(Loc) <- colnames(ge_cgh_locIGR$multiblocks$y)

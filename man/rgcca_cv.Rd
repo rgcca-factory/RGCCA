@@ -6,7 +6,7 @@
 \usage{
 rgcca_cv(
   blocks,
-  type = "rgcca",
+  method = "rgcca",
   response = NULL,
   par_type = "tau",
   par_value = NULL,
@@ -24,7 +24,7 @@ rgcca_cv(
   scale_block = TRUE,
   tol = 1e-08,
   scheme = "factorial",
-  method = "nipals",
+  NA_method = "nipals",
   rgcca_res = NULL,
   parallelization = NULL,
   tau = rep(1, length(blocks)),
@@ -41,7 +41,7 @@ rgcca_cv(
 Block Xj is a matrix of dimension n x p_j where n is the number of
 observations and p_j the number of variables.}
 
-\item{type}{A character string indicating the multi-block component
+\item{method}{A character string indicating the multi-block component
 method to consider: rgcca, sgcca, pca, spca, pls, spls, cca,
 ifa, ra, gcca, maxvar, maxvar-b, maxvar-a, mcoa,cpca-1, cpca-2,
 cpca-4, hpca, maxbet-b, maxbet, maxdiff-b, maxdiff, maxvar-a,
@@ -95,7 +95,7 @@ covariance maximization among "horst" (the identity function), "factorial"
  design explicitely the sheme function (e.g. function(x) x^4) as argument of
  rgcca function.  See (Tenenhaus et al, 2017) for details.}
 
-\item{method}{Character string corresponding to the method used for
+\item{NA_method}{Character string corresponding to the method used for
 handling missing values ("nipals", "complete"). (default: "nipals").
 \itemize{
 \item{\code{"complete"}}{corresponds to perform RGCCA on the fully observed
@@ -173,7 +173,7 @@ data("Russett")
 blocks <- list(agriculture = Russett[, seq(3)],
                industry = Russett[, 4:5],
                politic = Russett[, 6:11])
-res = rgcca_cv(blocks, response = 3, type="rgcca",
+res = rgcca_cv(blocks, response = 3, method="rgcca",
                par_type = "sparsity",
                par_value = c(0.6, 0.75, 0.5),
                n_run = 2, n_cores = 1)

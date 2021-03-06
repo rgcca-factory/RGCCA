@@ -22,7 +22,7 @@ Maintainer: \packageMaintainer{RGCCA}
 # Create the dataset
 data(Russett)
 blocks = list(
-    agriculture = Russett[, seq(3)], 
+    agriculture = Russett[, seq(3)],
     industry = Russett[, 4:5],
     politic = Russett[, 6:11]
 )
@@ -32,7 +32,7 @@ perm = rgcca_permutation(blocks, n_cores = 1, par_type = "sparsity", n_perms = 1
 print(perm)
 plot(perm)
 
-res_sgcca = rgcca(blocks, type = "sgcca", sparsity = perm$bestpenalties)
+res_sgcca = rgcca(blocks, method = "sgcca", sparsity = perm$bestpenalties)
 plot(res_sgcca, type = "network")
 plot(res_sgcca, type = "ave")
 

@@ -9,7 +9,7 @@
 # rgcca_permutation_k(blocks)
 rgcca_permutation_k <- function(
     blocks,
-    type = "rgcca",
+    method = "rgcca",
     scale=TRUE,
     scale_block=TRUE,
     connection = 1 - diag(length(blocks)),
@@ -22,7 +22,7 @@ rgcca_permutation_k <- function(
     tol = 1e-08,
     response = NULL,
     superblock = FALSE,
-    method = "nipals",
+    NA_method = "nipals",
     quiet = TRUE,
     perm = TRUE,
     rgcca_res = NULL,
@@ -32,13 +32,13 @@ rgcca_permutation_k <- function(
 
     if (!is.null(rgcca_res)) {
         stopifnot(is(rgcca_res, "rgcca"))
-        type <- rgcca_res$call$type
+        method <- rgcca_res$call$method
         scale_block <- rgcca_res$call$scale_block
         scale <- rgcca_res$call$scale
         scheme <- rgcca_res$call$scheme
         response <- rgcca_res$call$response
         tol <- rgcca_res$call$tol
-        method <- rgcca_res$call$method
+        NA_method <- rgcca_res$call$NA_method
         init <- rgcca_res$call$init
         bias <- rgcca_res$call$bias
         blocks <- rgcca_res$call$raw
@@ -49,7 +49,7 @@ rgcca_permutation_k <- function(
         sparsity <- rgcca_res$call$sparsity
     }
 
-    if (type %in% c("sgcca", "spls")) {
+    if (method %in% c("sgcca", "spls")) {
         par_type <- "sparsity"
     } else
         par_type <- "tau"
@@ -71,7 +71,7 @@ rgcca_permutation_k <- function(
     func <- quote(
         rgcca(
             blocks = blocks_to_use,
-            type = type,
+            method = method,
             scale = scale,
             scale_block = scale_block,
             connection = connection,
@@ -81,7 +81,7 @@ rgcca_permutation_k <- function(
             tol = tol,
             response = response,
             superblock = superblock,
-            method = method,
+            NA_method = NA_method,
             quiet = quiet
         ))
 

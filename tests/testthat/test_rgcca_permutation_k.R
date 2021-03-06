@@ -47,8 +47,8 @@ test_that(
 #     }
 # )
 
-res_rgcca <- rgcca(blocks = blocks, type = "sgcca", response = 1, sparsity = c(.75, .8, .9))
-res_perm <- rgcca_permutation_k(blocks = blocks, type = "sgcca", response = 1, sparsity = c(.75, .8, .9), perm = FALSE, par_type = "sparsity")
+res_rgcca <- rgcca(blocks = blocks, method = "sgcca", response = 1, sparsity = c(.75, .8, .9))
+res_perm <- rgcca_permutation_k(blocks = blocks, method = "sgcca", response = 1, sparsity = c(.75, .8, .9), perm = FALSE, par_type = "sparsity")
 res_perm2 <- rgcca_permutation_k(rgcca_res = res_rgcca, perm = FALSE, par_type = "sparsity")
 
 test_that(

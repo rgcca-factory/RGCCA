@@ -20,7 +20,7 @@
 #' # Using a superblock
 #' resp = as.matrix(rep(LETTERS[seq(3)], each = 5))
 #' row.names(resp) = seq(15)
-#' rgcca_out$call$type="rgcca"
+#' rgcca_out$call$method="rgcca"
 #' class(rgcca_out) = "rgcca"
 #' plot_ind(rgcca_out, resp)
 #' # Using the first block

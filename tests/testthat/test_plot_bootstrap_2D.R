@@ -3,7 +3,7 @@ blocks <- list(
     agriculture = Russett[, seq(3)],
     industry = Russett[, 4:5],
     politic = Russett[, 6:11] )
-rgcca_out <- rgcca(blocks, sparsity = 0.75, type = "sgcca")
+rgcca_out <- rgcca(blocks, sparsity = 0.75, method = "sgcca")
 boot <- bootstrap(rgcca_out, 15, n_cores = 1)
 selected.var <- get_bootstrap(boot, display_order=TRUE)
 plot(boot,type="2D")
@@ -26,7 +26,7 @@ test_that("plot_boot_with_args", {
 rgcca_out <- rgcca(
     blocks,ncomp = c(2,2,2),
     scheme = function(x) x^4,
-    type = "sgcca",
+    method = "sgcca",
     sparsity = c(.6, .75, .5)
 )
 

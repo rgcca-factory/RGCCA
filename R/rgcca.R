@@ -44,7 +44,7 @@
 #' @inheritParams rgccad
 #' @inheritParams sgcca
 #' @inheritParams select_analysis
-#' @param method  Character string corresponding to the method used for
+#' @param NA_method  Character string corresponding to the method used for
 #' handling missing values ("nipals", "complete"). (default: "nipals").
 #' \itemize{
 #' \item{\code{"complete"}}{corresponds to perform RGCCA on the fully observed
@@ -104,7 +104,7 @@
 #'
 #' # Blocks are fully connected, factorial scheme and tau =1 for all blocks is
 #' # used by default
-#' fit.rgcca = rgcca(blocks=blocks, type = "rgcca", connection = 1-diag(3),
+#' fit.rgcca = rgcca(blocks=blocks, method = "rgcca", connection = 1-diag(3),
 #'                   scheme = "factorial", tau = rep(1, 3))
 #' print(fit.rgcca)
 #' plot(fit.rgcca, type = "weight", block = 3)
@@ -114,7 +114,7 @@
 #' ############################################
 #' # Example 2: RGCCA and multiple components #
 #' ############################################
-#' fit.rgcca = rgcca(blocks, type = "rgcca",
+#' fit.rgcca = rgcca(blocks, method = "rgcca",
 #'                   connection = C, superblock = FALSE,
 #'                   tau = rep(1, 3), ncomp = c(2, 2, 2),
 #'                   scheme = "factorial", verbose = TRUE)
@@ -181,7 +181,7 @@
 #' \code{\link[RGCCA]{rgcca_cv_k}},
 #' \code{\link[RGCCA]{rgcca_permutation}}
 #' \code{\link[RGCCA]{rgcca_predict}}
-rgcca <- function(blocks, type = "rgcca",
+rgcca <- function(blocks, method = "rgcca",
                   scale = TRUE, scale_block = TRUE,
                   connection = 1 - diag(length(blocks)),
                   scheme = "factorial",
@@ -190,7 +190,7 @@ rgcca <- function(blocks, type = "rgcca",
                   sparsity = rep(1, length(blocks)),
                   init = "svd", bias = TRUE, tol = 1e-08,
                   response = NULL, superblock = FALSE,
-                  method = "nipals", verbose = FALSE, quiet = TRUE){
+                  NA_method = "nipals", verbose = FALSE, quiet = TRUE){
 
     if(class(blocks)=="permutation")
     {
@@ -200,7 +200,7 @@ rgcca <- function(blocks, type = "rgcca",
         scheme = blocks$call$scheme
         connection = blocks$call$connection
         tol = blocks$call$tol
-        method = blocks$call$method
+        NA_method = blocks$call$NA_method
         superblock = blocks$call$superblock
         if(blocks$call$par_type == "tau") tau = blocks$bestpenalties
         if(blocks$call$par_type == "ncomp") ncomp = blocks$bestpenalties
@@ -216,7 +216,7 @@ rgcca <- function(blocks, type = "rgcca",
         scheme = blocks$call$scheme
         response = blocks$call$response
         tol = blocks$call$tol
-        method = blocks$call$method
+        NA_method = blocks$call$NA_method
         if(blocks$call$par_type[[1]] == "tau") tau=blocks$bestpenalties
         if(blocks$call$par_type[[1]] == "ncomp") ncomp=blocks$bestpenalties
         if(blocks$call$par_type[[1]] == "sparsity")
@@ -225,17 +225,17 @@ rgcca <- function(blocks, type = "rgcca",
     }
 
     if(length(blocks) == 1){
-        if(type != "pca")
+        if(method != "pca")
         {
-            type = "pca"
-            message("type='rgcca' is not available for one block only and
-                    type was converted to 'pca'.")
+            method = "pca"
+            message("method='rgcca' is not available for one block only and
+                    method was converted to 'pca'.")
         }
 
     }
 
-    if (!missing(sparsity) && missing(type))
-        type <- "sgcca"
+    if (!missing(sparsity) && missing(method))
+        method <- "sgcca"
 
     if (!missing(connection) && missing(superblock))
         superblock <- FALSE
@@ -246,10 +246,10 @@ rgcca <- function(blocks, type = "rgcca",
     # if (!missing(superblock) && !(missing(response) || missing(connection)))
 
 
-    if (tolower(type) %in% c("sgcca", "spca", "spls")) {
+    if (tolower(method) %in% c("sgcca", "spca", "spls")) {
         if (!missing(tau) && missing(sparsity))
            stop_rgcca(paste0("sparsity parameters required for ",
-                             tolower(type), " (instead of tau)."))
+                             tolower(method), " (instead of tau)."))
         gcca <- sgcca
         par <- "sparsity"
         penalty <- sparsity
@@ -257,7 +257,7 @@ rgcca <- function(blocks, type = "rgcca",
     }else{
         if (!missing(sparsity) & missing(tau))
            stop_rgcca(paste0("tau parameters required for ",
-                             tolower(type), " (instead of sparsity)."))
+                             tolower(method), " (instead of sparsity)."))
         gcca <- rgccad
         par <- "tau"
         penalty <- tau
@@ -267,7 +267,7 @@ rgcca <- function(blocks, type = "rgcca",
 
 
     match.arg(init, c("svd", "random"))
-    check_method(type)
+    check_method(method)
 
   # Check blocks size, add NA for missing subjects
     blocks = check_blocks(blocks, add_NAlines=TRUE, n=1,
@@ -290,7 +290,7 @@ rgcca <- function(blocks, type = "rgcca",
         ncomp = ncomp,
         scheme = scheme,
         superblock = superblock,
-        type  = type,
+        method  = method,
         quiet = quiet,
         response = response
     )
@@ -306,10 +306,10 @@ rgcca <- function(blocks, type = "rgcca",
 
    }
 
-    opt$blocks     <- handle_NA(blocks, method = method)
+    opt$blocks     <- handle_NA(blocks, NA_method = NA_method)
     opt$blocks     <- scaling(opt$blocks, scale,scale_block = scale_block)
     opt$superblock <- check_superblock(response, opt$superblock, !quiet)
-    opt$blocks     <- set_superblock(opt$blocks, opt$superblock, type, !quiet)
+    opt$blocks     <- set_superblock(opt$blocks, opt$superblock, method, !quiet)
 
     if (!is.null(response)) {
         response <- check_blockx("response", response, opt$blocks)
@@ -328,13 +328,13 @@ rgcca <- function(blocks, type = "rgcca",
     }
 
 
-    opt$penalty <- check_tau(opt$penalty, opt$blocks, type)
+    opt$penalty <- check_tau(opt$penalty, opt$blocks, method)
     opt$ncomp <- check_ncomp(opt$ncomp, opt$blocks)
 
     warn_on <- FALSE
 
     if (any(sapply(opt$blocks, NCOL) > 1000)) {
-            # if( (type <-<- "sgcca" && tau > 0.3) || type !<- "sgcca" )
+            # if( (method <-<- "sgcca" && tau > 0.3) || method !<- "sgcca" )
             warn_on <- TRUE
     }
 
@@ -370,7 +370,7 @@ rgcca <- function(blocks, type = "rgcca",
     }
     names(func_out$AVE$AVE_X) <- names(opt$blocks)
 
-    class(func_out) <- tolower(type)
+    class(func_out) <- tolower(method)
     func_out$call <- list(
         blocks = opt$blocks,
         connection = opt$connection,
@@ -399,8 +399,8 @@ rgcca <- function(blocks, type = "rgcca",
         "verbose",
         "response",
         "scale_block",
-        "method",
-        "type"
+        "NA_method",
+        "method"
     ))
         func_out$call[[i]] <- as.list(environment())[[i]]
 

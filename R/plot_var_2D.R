@@ -31,7 +31,7 @@
 #' rgcca_out = list(Y = coord, a = a, AVE = list(AVE_X = AVE_X),
 #'                  call = list(blocks = blocks))
 #' names(rgcca_out$a) <- LETTERS[seq(4)] -> names(rgcca_out$call$blocks)
-#' rgcca_out$call$type="rgcca"
+#' rgcca_out$call$method="rgcca"
 #' # Using a superblock
 #' rgcca_out$call$superblock = TRUE
 #' rgcca_out$call$ncomp = rep(3, 4)
@@ -86,7 +86,7 @@ plot_var_2D <- function(
         rgcca_res$a <- rgcca_res$a[-length(rgcca_res$a)]
     }
 
-    if (i_block < length(rgcca_res$a) || tolower(rgcca_res$call$type) == "pca")
+    if (i_block < length(rgcca_res$a) || tolower(rgcca_res$call$method) == "pca")
         rgcca_res$call$superblock <- FALSE
 
     # PCA case: remove the superblock in legend
