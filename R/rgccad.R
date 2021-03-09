@@ -59,8 +59,6 @@
 #' @param bias A logical value for biaised (\eqn{1/n}) or unbiaised
 #' (\eqn{1/(n-1)}) estimator of the var/cov (default: bias = TRUE).
 #' @param tol The stopping value for the convergence of the algorithm.
-#' @param prescaling Logical value indicating if the scaling has been done
-#' outside of the function.
 #' @param na.rm If TRUE, runs rgcca only on available data.
 #' @return \item{Y}{A list of \eqn{J} elements. Each element of the list is a
 #' matrix that contains the RGCCA block components for the corresponding block.}
@@ -183,8 +181,7 @@
 rgccad=function (blocks, connection = 1 - diag(length(blocks)), tau = rep(1, length(blocks)),
                  ncomp = rep(1, length(blocks)), scheme = "centroid", scale = TRUE,
                  init = "svd", bias = TRUE, tol = 1e-08, verbose = TRUE,
-                 scale_block = TRUE, na.rm = TRUE,
-                 prescaling = FALSE, quiet = FALSE)
+                 scale_block = TRUE, na.rm = TRUE, quiet = FALSE)
 {
 
   shave.matlist <- function(mat_list, nb_cols)
@@ -224,9 +221,6 @@ rgccad=function (blocks, connection = 1 - diag(length(blocks)), tau = rep(1, len
       cat("Shrinkage intensity paramaters are chosen manually \n")
     }
   }
-
-  if(!prescaling)
-      blocks <- scaling(blocks, scale = scale, bias = bias, scale_block = scale_block)
 
   # Superblock option
   if(!is.matrix(connection)&& connection == "superblock")

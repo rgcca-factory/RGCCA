@@ -8,6 +8,8 @@ X_agric =as.matrix(Russett[,c("gini","farm","rent")]);
 X_ind = as.matrix(Russett[,c("gnpr","labo")]);
 X_polit = as.matrix(Russett[ , c("demostab", "dictator")]);
 A = list(X_agric, X_ind, X_polit);
+A = lapply(A, scale2, scale = TRUE, bias = TRUE)
+A = lapply(A, function(x) x / sqrt(NCOL(x)))
 C = matrix(c(0, 0, 1, 0, 0, 1, 1, 1, 0), 3, 3);
 
 T1=Sys.time();resultRgcca_Tau1_test = rgccad(A, C, ncomp=rep(2,3),tau = c(1, 1, 1), scheme = "factorial", scale = TRUE,verbose=FALSE);T2=Sys.time();Tdiff_Tau1_test=T2-T1; #0.03056502

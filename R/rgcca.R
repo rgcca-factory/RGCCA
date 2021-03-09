@@ -353,7 +353,6 @@ rgcca <- function(blocks, method = "rgcca",
             bias = bias,
             tol = tol,
             scale_block = scale_block,
-            prescaling = TRUE,
             quiet=quiet
         )
     )

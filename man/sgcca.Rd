@@ -17,7 +17,6 @@ sgcca(
   tol = .Machine$double.eps,
   verbose = FALSE,
   scale_block = TRUE,
-  prescaling = FALSE,
   quiet = FALSE
 )
 }
@@ -67,9 +66,6 @@ or by random initialisation ("random") (default: "svd").}
 
 \item{scale_block}{Logical value indicating if each block is divided by
 the square root of its number of variables.}
-
-\item{prescaling}{Logical value indicating if the scaling has been done
-outside of the function.}
 
 \item{quiet}{Logical value indicating if warning messages are reported.}
 }

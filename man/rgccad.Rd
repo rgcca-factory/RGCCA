@@ -17,7 +17,6 @@ rgccad(
   verbose = TRUE,
   scale_block = TRUE,
   na.rm = TRUE,
-  prescaling = FALSE,
   quiet = FALSE
 )
 }
@@ -68,9 +67,6 @@ algorithm is reported while computing.}
 the square root of its number of variables.}
 
 \item{na.rm}{If TRUE, runs rgcca only on available data.}
-
-\item{prescaling}{Logical value indicating if the scaling has been done
-outside of the function.}
 
 \item{quiet}{Logical value indicating if warning messages are reported.}
 }
