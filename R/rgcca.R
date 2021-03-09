@@ -315,6 +315,12 @@ rgcca <- function(blocks, method = "rgcca",
     opt$superblock <- check_superblock(response, opt$superblock, !quiet)
     opt$blocks     <- set_superblock(opt$blocks, opt$superblock, method, !quiet)
 
+    if (NA_method == "nipals" && Reduce("||", lapply(opt$blocks, function(x) any(is.na(x))))) {
+      na.rm = TRUE
+    } else {
+      na.rm = FALSE
+    }
+
     if (!is.null(response)) {
         response <- check_blockx("response", response, opt$blocks)
         }
@@ -355,7 +361,8 @@ rgcca <- function(blocks, method = "rgcca",
             init = init,
             bias = bias,
             tol = tol,
-            quiet=quiet
+            quiet = quiet,
+            na.rm = na.rm
         )
     )
 

@@ -15,7 +15,8 @@ sgcca(
   bias = TRUE,
   tol = .Machine$double.eps,
   verbose = FALSE,
-  quiet = FALSE
+  quiet = FALSE,
+  na.rm = TRUE
 )
 }
 \arguments{
@@ -61,6 +62,8 @@ or by random initialisation ("random") (default: "svd").}
 \item{verbose}{Logical value indicating whether the warnings are displayed.}
 
 \item{quiet}{Logical value indicating if warning messages are reported.}
+
+\item{na.rm}{If TRUE, runs rgcca only on available data.}
 }
 \value{
 \item{Y}{A list of \eqn{J} elements. Each element of \eqn{Y} is a

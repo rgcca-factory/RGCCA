@@ -134,7 +134,7 @@
 sgcca <- function (blocks, connection = 1-diag(length(blocks)), sparsity = rep(1, length(blocks)),
                    ncomp = rep(1, length(blocks)), scheme = "centroid",
                    init = "svd", bias = TRUE, tol = .Machine$double.eps,
-                   verbose = FALSE, quiet = FALSE){
+                   verbose = FALSE,   quiet = FALSE, na.rm = TRUE){
 
   ndefl <- ncomp-1
   N <- max(ndefl)
@@ -174,8 +174,7 @@ sgcca <- function (blocks, connection = 1-diag(length(blocks)), sparsity = rep(1
         for (b in 1:J) Y[[b]] <- result$Y[,b, drop = FALSE]
         #Average Variance Explained (AVE) per block
         for (j in 1:J) AVE_X[[j]] =  mean(cor(blocks[[j]], Y[[j]],
-                                              use="pairwise.complete.obs")^2,
-                                          na.rm=TRUE)
+                                              use="pairwise.complete.obs")^2)
 
         #AVE outer
         AVE_outer <- sum(pjs * unlist(AVE_X))/sum(pjs)
