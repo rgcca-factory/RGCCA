@@ -69,7 +69,7 @@ rgccak=function (A, C, tau = "optimal", scheme = "centroid", verbose = FALSE,
     pjs <- sapply(A, NCOL) # number of variables per block
     Y <- matrix(0, n, J)
     if (!is.numeric(tau))
-        tau = sapply(A, tau.estimate) # From Schafer and Strimmer, 2005
+        tau = sapply(A, tau.estimate, na.rm = na.rm) # From Schafer and Strimmer, 2005
 
     A0 <-A
     A <- lapply(A, as.matrix)
