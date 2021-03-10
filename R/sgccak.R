@@ -20,15 +20,14 @@
 #' components, outer weight vectors etc.)
 #' @importFrom Deriv Deriv
 sgccak <-  function(A, C, sparsity = rep(1, length(A)), scheme = "centroid",
-                    scale = FALSE, tol = .Machine$double.eps,
+                    tol = .Machine$double.eps,
                     init = "svd", bias = TRUE, verbose = TRUE,
                     quiet = FALSE){
 
   J <- length(A)
   pjs = sapply(A, NCOL)
   AVE_X <- rep(0, J)
-  # Data standardization
-  #if (scale == TRUE) A <- lapply(A, function(x) scale2(x, bias = bias))
+
   #  Choose J arbitrary vectors
   if (init=="svd") {
     #SVD Initialisation for a_j

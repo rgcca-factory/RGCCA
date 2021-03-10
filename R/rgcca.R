@@ -44,6 +44,9 @@
 #' @inheritParams rgccad
 #' @inheritParams sgcca
 #' @inheritParams select_analysis
+#' @param scale Logical value indicating if blocks are standardized.
+#' @param scale_block Logical value indicating if each block is divided by
+#' the square root of its number of variables.
 #' @param NA_method  Character string corresponding to the method used for
 #' handling missing values ("nipals", "complete"). (default: "nipals").
 #' \itemize{
@@ -348,11 +351,9 @@ rgcca <- function(blocks, method = "rgcca",
             ncomp = opt$ncomp,
             verbose = verbose,
             scheme = opt$scheme,
-            scale = scale,
             init = init,
             bias = bias,
             tol = tol,
-            scale_block = scale_block,
             quiet=quiet
         )
     )

@@ -10,7 +10,6 @@ sgccak(
   C,
   sparsity = rep(1, length(A)),
   scheme = "centroid",
-  scale = FALSE,
   tol = .Machine$double.eps,
   init = "svd",
   bias = TRUE,
@@ -46,8 +45,6 @@ covariance maximization among "horst" (the identity function), "factorial"
  can be any continously differentiable convex function and it is possible to
  design explicitely the sheme function (e.g. function(x) x^4) as argument of
  rgcca function.  See (Tenenhaus et al, 2017) for details.}
-
-\item{scale}{Logical value indicating if blocks are standardized.}
 
 \item{tol}{The stopping value for the convergence of the algorithm.}
 

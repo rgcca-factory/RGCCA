@@ -115,8 +115,7 @@
 #' result.sgcca = sgcca(blocks, connection,
 #'                      sparsity = matrix(c(.071,.2, 1, 0.06, 0.15, 1),
 #'                      nrow = 2, byrow = TRUE),
-#'                      ncomp = c(2, 2, 1), scheme = "factorial",
-#'                      scale = TRUE, bias = TRUE,
+#'                      ncomp = c(2, 2, 1), scheme = "factorial", bias = TRUE,
 #'                      init = init, verbose = TRUE)
 #' # number of non zero elements per dimension
 #' apply(result.sgcca$a[[1]], 2, function(x) sum(x!=0))
@@ -126,16 +125,16 @@
 #' init = "svd"
 #' result.sgcca = sgcca(blocks, connection, sparsity = matrix(c(.071,.2, 1, 0.06, 0.15, 1),
 #'                      nrow = 2, byrow = TRUE),
-#'                      ncomp = c(2, 2, 1), scheme = "factorial", scale = TRUE,
+#'                      ncomp = c(2, 2, 1), scheme = "factorial",
 #'                      bias = TRUE,
 #'                      init = init, verbose = TRUE)
 #' }
 #'@export sgcca
 
 sgcca <- function (blocks, connection = 1-diag(length(blocks)), sparsity = rep(1, length(blocks)),
-                   ncomp = rep(1, length(blocks)), scheme = "centroid", scale = TRUE,
+                   ncomp = rep(1, length(blocks)), scheme = "centroid",
                    init = "svd", bias = TRUE, tol = .Machine$double.eps,
-                   verbose = FALSE, scale_block = TRUE, quiet = FALSE){
+                   verbose = FALSE, quiet = FALSE){
 
   ndefl <- ncomp-1
   N <- max(ndefl)

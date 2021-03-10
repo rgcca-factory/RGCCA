@@ -51,9 +51,7 @@
 #' @importFrom Deriv Deriv
 
 rgccak=function (A, C, tau = "optimal", scheme = "centroid", verbose = FALSE,
-                 init = "svd", bias = TRUE, tol = 1e-08, na.rm = TRUE,
-                 scale = TRUE, scale_block = TRUE
-                 )
+                 init = "svd", bias = TRUE, tol = 1e-08, na.rm = TRUE)
 {
 
   if(mode(scheme) != "function")

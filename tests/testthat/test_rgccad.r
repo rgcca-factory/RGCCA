@@ -12,12 +12,12 @@ A = lapply(A, scale2, scale = TRUE, bias = TRUE)
 A = lapply(A, function(x) x / sqrt(NCOL(x)))
 C = matrix(c(0, 0, 1, 0, 0, 1, 1, 1, 0), 3, 3);
 
-T1=Sys.time();resultRgcca_Tau1_test = rgccad(A, C, ncomp=rep(2,3),tau = c(1, 1, 1), scheme = "factorial", scale = TRUE,verbose=FALSE);T2=Sys.time();Tdiff_Tau1_test=T2-T1; #0.03056502
-T1=Sys.time();resultRgcca_Tau0_test= rgccad(A, C, ncomp=rep(2,3),tau = c(0, 0, 0), scheme = "factorial", scale = TRUE,verbose=FALSE);T2=Sys.time();Tdiff_Tau0_test=T2-T1;  # 0.03978729
-T1=Sys.time();resultRgcca_TauOpt_test = rgccad(A, C, ncomp=rep(2,3),tau = rep("optimal",3), scheme = "factorial", scale = TRUE,verbose=FALSE);T2=Sys.time();Tdiff_TauOpt_test=T2-T1 ;# 0.04306483   secs
+T1=Sys.time();resultRgcca_Tau1_test = rgccad(A, C, ncomp=rep(2,3),tau = c(1, 1, 1), scheme = "factorial", verbose=FALSE);T2=Sys.time();Tdiff_Tau1_test=T2-T1; #0.03056502
+T1=Sys.time();resultRgcca_Tau0_test= rgccad(A, C, ncomp=rep(2,3),tau = c(0, 0, 0), scheme = "factorial", verbose=FALSE);T2=Sys.time();Tdiff_Tau0_test=T2-T1;  # 0.03978729
+T1=Sys.time();resultRgcca_TauOpt_test = rgccad(A, C, ncomp=rep(2,3),tau = rep("optimal",3), scheme = "factorial", verbose=FALSE);T2=Sys.time();Tdiff_TauOpt_test=T2-T1 ;# 0.04306483   secs
 
 names(A)=c("agri","ind","demo")
-res = rgccad(A, C, ncomp=rep(2,3),tau = c(1, 0, 1), scheme = "factorial", scale = TRUE,verbose=FALSE)
+res = rgccad(A, C, ncomp=rep(2,3),tau = c(1, 0, 1), scheme = "factorial", verbose=FALSE)
 
 # testing pca
 res=rgccad(list(a1=A[[1]],b1=A[[1]]),connection=matrix(c(0,1,1,0),2,2),tau=rep(1,2),ncomp=c(2,2))
@@ -40,7 +40,7 @@ X_agric =as.matrix(Russett[,c("gini","farm","rent")]);
 X_ind = as.matrix(Russett[,c("gnpr","labo")]);
 X_polit = as.matrix(Russett[ , c("demostab","dictator")]);
 A = list(X_agric, X_ind, X_polit);
-res=rgccad(A, C, ncomp=c(2,2,1),tau = c(1, 1, 1), scheme = "factorial", scale = TRUE,verbose=FALSE)
+res=rgccad(A, C, ncomp=c(2,2,1),tau = c(1, 1, 1), scheme = "factorial",verbose=FALSE)
 
 
 res=rgccad(A, C, ncomp=c(2,2,2),tau = rep("optimal",3), scheme = "factorial",verbose=FALSE)
@@ -56,7 +56,7 @@ res=rgccad(A, C, ncomp=c(2,2,2),tau = rep("optimal",3), scheme = "factorial",ver
  A = list(X_agric, X_ind, X_polit)
  #Define the design matrix (output = C)
  C = matrix(c(0, 0, 1, 0, 0, 1, 1, 1, 0), 3, 3)
- result.rgcca = rgccad(A, C, tau = c(1, 1, 1), scheme = "factorial", scale = TRUE,verbose=FALSE)
+ result.rgcca = rgccad(A, C, tau = c(1, 1, 1), scheme = "factorial", verbose=FALSE)
  lab = as.vector(apply(Russett[, 9:11], 1, which.max))
  plot(result.rgcca$Y[[1]], result.rgcca$Y[[2]], col = "white",
       xlab = "Y1 (Agric. inequality)", ylab = "Y2 (Industrial Development)")

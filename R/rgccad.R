@@ -47,9 +47,6 @@
 #' of block Xj. If tau is a matrix, tau[k, j] is associated with
 #' X_jk (kth residual matrix for block j). The regularization parameters can
 #' also be estimated using \link{rgcca_permutation} or \link{rgcca_cv}.
-#' @param scale Logical value indicating if blocks are standardized.
-#' @param scale_block Logical value indicating if each block is divided by
-#' the square root of its number of variables.
 #' @param verbose Logical value indicating if the progress of the
 #' algorithm is reported while computing.
 #' @param quiet Logical value indicating if warning messages are reported.
@@ -107,8 +104,7 @@
 #' blocks = list(X_agric, X_ind, X_polit)
 #' #Define the design matrix (output = connection)
 #' connection = matrix(c(0, 0, 1, 0, 0, 1, 1, 1, 0), 3, 3)
-#' fit.rgcca = rgccad(blocks, connection, tau = c(1, 1, 1), scheme = "factorial",
-#' scale = TRUE)
+#' fit.rgcca = rgccad(blocks, connection, tau = c(1, 1, 1), scheme = "factorial")
 #' lab = as.vector(apply(Russett[, 9:11], 1, which.max))
 #' plot(fit.rgcca$Y[[1]], fit.rgcca$Y[[2]], col = "white",
 #'      xlab = "Y1 (Agric. inequality)", ylab = "Y2 (Industrial Development)")
@@ -140,14 +136,12 @@
 #' ######################################
 #' Ytest = matrix(0, 47, 3)
 #' fit.rgcca = rgccad(blocks, connection, tau = rep(1, 3), ncomp = rep(1, 3),
-#'                      scheme = "factorial", verbose = TRUE, scale = TRUE,
-#'                      scale_block = FALSE)
+#'                      scheme = "factorial", verbose = TRUE)
 #' for (i in 1:nrow(Russett)){
 #'  B = lapply(blocks, function(x) x[-i, ])
 #'  B = lapply(B, scale)
 #'
-#'  resB = rgccad(B, connection, tau = rep(1, 3), scheme = "factorial",
-#'  scale = TRUE, scale_block = FALSE, verbose = FALSE)
+#'  resB = rgccad(B, connection, tau = rep(1, 3), scheme = "factorial", verbose = FALSE)
 #'  #  look for potential conflicting sign among components within the loo loop.
 #'  for (k in 1:length(B)){
 #'    if (cor(fit.rgcca$a[[k]], resB$a[[k]]) >= 0)
@@ -179,9 +173,9 @@
 #' @importFrom grDevices graphics.off
 
 rgccad=function (blocks, connection = 1 - diag(length(blocks)), tau = rep(1, length(blocks)),
-                 ncomp = rep(1, length(blocks)), scheme = "centroid", scale = TRUE,
+                 ncomp = rep(1, length(blocks)), scheme = "centroid",
                  init = "svd", bias = TRUE, tol = 1e-08, verbose = TRUE,
-                 scale_block = TRUE, na.rm = TRUE, quiet = FALSE)
+                 na.rm = TRUE, quiet = FALSE)
 {
 
   shave.matlist <- function(mat_list, nb_cols)
@@ -280,8 +274,7 @@ rgccad=function (blocks, connection = 1 - diag(length(blocks)), tau = rep(1, len
   if(N == 0){
     result <- rgccak(blocks, connection, tau = tau, scheme = scheme, init = init,
                      bias = bias, tol = tol, verbose = verbose,
-                     na.rm=na.rm,
-                     scale_block=scale_block, scale=scale)
+                     na.rm=na.rm)
 
     Y <- NULL
     for (b in 1:J) Y[[b]] <- result$Y[, b, drop = FALSE]
