@@ -187,19 +187,10 @@ rgccad=function (blocks, connection = 1 - diag(length(blocks)), tau = rep(1, len
   shave.veclist <- function(vec_list, nb_elts)
     mapply(function(m, nbcomp) m[1:nbcomp], vec_list, nb_elts, SIMPLIFY = FALSE)
 
-  if (any(ncomp < 1)) {stop_rgcca("Compute at least one component per block!")}
   pjs <- sapply(blocks, NCOL)
   nb_row <- NROW(blocks[[1]])
 
-  if (any(ncomp - pjs > 0))
-    stop_rgcca("For each block, choose a number of components smaller than the
-               number of variables!")
-
   if (mode(scheme) != "function") {
-    if ((scheme != "horst") & (scheme != "factorial") & (scheme != "centroid")){
-      stop_rgcca("Choose one of the three following schemes: horst, centroid,
-                 factorial or design the g function")
-    }
     if (verbose)
       cat("Computation of the RGCCA block components based on the",
           scheme, "scheme \n")
@@ -237,9 +228,6 @@ rgccad=function (blocks, connection = 1 - diag(length(blocks)), tau = rep(1, len
               automatically set to 1")
       tau=c(tau,1)
     }
-    if(!((length(tau) == NCOL(connection)-1) | (length(tau) == NCOL(connection))))
-      stop_rgcca("the length of the vector of shinkage parameters is not
-                 appropriate.")
 
     # number of components per block
     if(is.null(ncomp)){
@@ -252,8 +240,6 @@ rgccad=function (blocks, connection = 1 - diag(length(blocks)), tau = rep(1, len
               automatically set to max(ncomp)")
       ncomp =c(ncomp,max(ncomp))
     }
-    if(!((length(ncomp) == NCOL(connection)-1) | (length(tau) == NCOL(connection))))
-      stop_rgcca("the ncomp argument has been filled inappropriately.")
 
     # number of variables per block
     pjs = c(pjs, sum(pjs))

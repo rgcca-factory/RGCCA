@@ -335,3 +335,18 @@ test_that("check_tau passes and returns tau when tau is valid", {
   expect_equal(check_tau(diag(3), blocks), diag(3))
   expect_equal(check_tau(c(1, 1, 1, 1), blocks, superblock = T), c(1, 1, 1, 1))
 })
+
+# Test check_scheme
+test_that("check_scheme raises an error for invalid scheme", {
+  expect_error(check_scheme("toto"),
+               paste0("Choose one of the three following schemes: horst, ",
+                      "centroid, factorial or design the g function"),
+               fixed = TRUE)
+})
+test_that("check_scheme passes when scheme is valid", {
+  expect_error(check_scheme("horst"), NA)
+  expect_error(check_scheme("centroid"), NA)
+  expect_error(check_scheme("factorial"), NA)
+  g = function(x) x ^ 2
+  expect_error(check_scheme(g), NA)
+})

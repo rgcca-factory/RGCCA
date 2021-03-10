@@ -443,3 +443,13 @@ check_tau <- function(tau, blocks, method = "rgcca", superblock = FALSE) {
         stop_rgcca(msg, exit_code = 131)
     )
 }
+
+check_scheme <- function(scheme) {
+  if (
+    (mode(scheme) != "function") &&
+    (scheme != "horst") &&
+    (scheme != "factorial") &&
+    (scheme != "centroid")
+  ) stop_rgcca(paste0("Choose one of the three following schemes: horst, ",
+                      "centroid, factorial or design the g function"))
+}

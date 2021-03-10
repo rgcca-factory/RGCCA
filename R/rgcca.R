@@ -271,6 +271,7 @@ rgcca <- function(blocks, method = "rgcca",
 
     match.arg(init, c("svd", "random"))
     check_method(method)
+    check_scheme(scheme)
 
   # Check blocks size, add NA for missing subjects
     blocks = check_blocks(blocks, add_NAlines=TRUE, n=1,

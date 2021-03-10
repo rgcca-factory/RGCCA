@@ -144,30 +144,9 @@ sgcca <- function (blocks, connection = 1-diag(length(blocks)), sparsity = rep(1
   AVE_X = list()
   AVE_outer <- rep(NA,max(ncomp))
 
-  if ( any(ncomp < 1) ) stop_rgcca("One must compute at least one component per
-                                   block!")
-  if (any(ncomp-pjs > 0)) stop_rgcca("For each block, choose a number of
-                                     components smaller than the number of
-                                     variables!")
-
-  if (is.vector(sparsity)){
-    if (any(sparsity < 1/sqrt(pjs) | sparsity > 1 ))
-      stop_rgcca("L1 constraints (sparsity) must vary between 1/sqrt(p_j) and 1.")
-  }
-
-  if (is.matrix(sparsity)){
-    if (any(apply(sparsity, 1, function(x) any(x < 1/sqrt(pjs)))))
-      stop_rgcca("L1 constraints (sparsity) must vary between 1/sqrt(p_j)
-                 and 1.")
-  }
-
 ###################################################
 
   if (mode(scheme) != "function") {
-    if ((scheme != "horst" ) & (scheme != "factorial") & (scheme != "centroid")) {
-      stop_rgcca("Choose one of the three following schemes: horst, centroid,
-                 factorial or design the g function")
-    }
     if (verbose) cat("Computation of the SGCCA block components based on the",
                      scheme, "scheme \n")
   }
