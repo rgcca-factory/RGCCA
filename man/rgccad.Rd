@@ -10,14 +10,11 @@ rgccad(
   tau = rep(1, length(blocks)),
   ncomp = rep(1, length(blocks)),
   scheme = "centroid",
-  scale = TRUE,
   init = "svd",
   bias = TRUE,
   tol = 1e-08,
   verbose = TRUE,
-  scale_block = TRUE,
   na.rm = TRUE,
-  prescaling = FALSE,
   quiet = FALSE
 )
 }
@@ -50,8 +47,6 @@ covariance maximization among "horst" (the identity function), "factorial"
  design explicitely the sheme function (e.g. function(x) x^4) as argument of
  rgcca function.  See (Tenenhaus et al, 2017) for details.}
 
-\item{scale}{Logical value indicating if blocks are standardized.}
-
 \item{init}{Character string giving the type of initialization to use in
 the  algorithm. It could be either by Singular Value Decompostion ("svd")
 or by random initialisation ("random") (default: "svd").}
@@ -64,13 +59,7 @@ or by random initialisation ("random") (default: "svd").}
 \item{verbose}{Logical value indicating if the progress of the
 algorithm is reported while computing.}
 
-\item{scale_block}{Logical value indicating if each block is divided by
-the square root of its number of variables.}
-
 \item{na.rm}{If TRUE, runs rgcca only on available data.}
-
-\item{prescaling}{Logical value indicating if the scaling has been done
-outside of the function.}
 
 \item{quiet}{Logical value indicating if warning messages are reported.}
 }
@@ -153,8 +142,7 @@ X_polit = as.matrix(Russett[ , c("demostab", "dictator")])
 blocks = list(X_agric, X_ind, X_polit)
 #Define the design matrix (output = connection)
 connection = matrix(c(0, 0, 1, 0, 0, 1, 1, 1, 0), 3, 3)
-fit.rgcca = rgccad(blocks, connection, tau = c(1, 1, 1), scheme = "factorial",
-scale = TRUE)
+fit.rgcca = rgccad(blocks, connection, tau = c(1, 1, 1), scheme = "factorial")
 lab = as.vector(apply(Russett[, 9:11], 1, which.max))
 plot(fit.rgcca$Y[[1]], fit.rgcca$Y[[2]], col = "white",
      xlab = "Y1 (Agric. inequality)", ylab = "Y2 (Industrial Development)")
@@ -186,14 +174,12 @@ col = lab, cex = .6)
 ######################################
 Ytest = matrix(0, 47, 3)
 fit.rgcca = rgccad(blocks, connection, tau = rep(1, 3), ncomp = rep(1, 3),
-                     scheme = "factorial", verbose = TRUE, scale = TRUE,
-                     scale_block = FALSE)
+                     scheme = "factorial", verbose = TRUE)
 for (i in 1:nrow(Russett)){
  B = lapply(blocks, function(x) x[-i, ])
  B = lapply(B, scale)
 
- resB = rgccad(B, connection, tau = rep(1, 3), scheme = "factorial",
- scale = TRUE, scale_block = FALSE, verbose = FALSE)
+ resB = rgccad(B, connection, tau = rep(1, 3), scheme = "factorial", verbose = FALSE)
  #  look for potential conflicting sign among components within the loo loop.
  for (k in 1:length(B)){
    if (cor(fit.rgcca$a[[k]], resB$a[[k]]) >= 0)

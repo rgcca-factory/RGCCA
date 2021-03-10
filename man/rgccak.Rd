@@ -14,9 +14,7 @@ rgccak(
   init = "svd",
   bias = TRUE,
   tol = 1e-08,
-  na.rm = TRUE,
-  scale = TRUE,
-  scale_block = TRUE
+  na.rm = TRUE
 )
 }
 \arguments{
@@ -59,11 +57,6 @@ or by random initialisation ("random") (default: "svd").}
 
 \item{na.rm}{If TRUE, RGCCA is run only on the available data (default value)
 otherwise the NIPALS algorithm is used.}
-
-\item{scale}{Logical value indicating if blocks are standardized.}
-
-\item{scale_block}{Logical value indicating if each block is divided by
-the square root of its number of variables.}
 }
 \value{
 \item{Y}{Matrix of block components of dimension \eqn{n * J}}
