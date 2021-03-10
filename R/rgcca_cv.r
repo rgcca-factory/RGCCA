@@ -158,14 +158,14 @@ rgcca_cv=function( blocks,
         else{
             if ("data.frame"%in%class(par_value) ||  "matrix"%in% class(par_value))
             {
-                par_value <- t(sapply(seq(NROW(par_value)), function(x) check_tau(par_value[x, ], blocks, method = method)))
+                par_value <- t(sapply(seq(NROW(par_value)), function(x) check_penalty(par_value[x, ], blocks, method = method)))
 
             }
             else
             {
                 if (any(par_value < min_spars))
                     stop_rgcca(paste0("par_value should be upper than : ", paste0(round(min_spars, 2), collapse = ",")))
-                par_value <- check_tau(par_value, blocks, method = method)
+                par_value <- check_penalty(par_value, blocks, method = method)
                 par_value <- set_spars(max = par_value)
             }
         }
