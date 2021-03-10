@@ -15,6 +15,7 @@ tau.estimate <- function(x, na.rm=TRUE) {
   if (is.matrix(x) == TRUE && is.numeric(x) == FALSE)
     stop_rgcca("The data matrix must be numeric!")
   p <- NCOL(x)
+  if (p == 1) return(1)
   n <- NROW(x)
   corm <- cor(x,use="pairwise.complete.obs")
   if(na.rm)
