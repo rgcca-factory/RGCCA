@@ -331,7 +331,7 @@ rgccad=function (blocks, connection = 1 - diag(length(blocks)), tau = rep(1, len
 
     # deflation
     for (b in 1:J) Y[[b]][, n] <- rgcca.result$Y[, b]
-    defla.result <- defl.select(rgcca.result$Y, R, ndefl , n, nbloc = J)
+    defla.result <- defl.select(rgcca.result$Y, R, ndefl , n, nbloc = J, na.rm = na.rm)
     R <- defla.result$resdefl
     for (b in 1:J) P[[b]][, n] <- defla.result$pdefl[[b]]
     for (b in 1:J) a[[b]][, n] <- rgcca.result$a[[b]]
