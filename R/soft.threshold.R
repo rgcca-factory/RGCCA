@@ -5,4 +5,4 @@
 # @return Returns a vector resulting from the soft thresholding of \eqn{x} given sumabs
 # @keywords manip
 #
-soft.threshold <- function(x,sumabs=1) return(soft(x, BinarySearch(x,sumabs)))
+soft.threshold <- function(x,sumabs=1) return(soft(x, proj_l1_l2(x,sumabs)$lambda))
