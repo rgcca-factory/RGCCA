@@ -6,7 +6,8 @@
 #' @inheritParams plot2D
 #' @param x A RGCCA object (see \code{\link[RGCCA]{rgcca}})
 #' @param ... additional graphical parameters
-#' @param type A character among 'ind', 'var', 'both', 'ave', 'cor', 'weight', 'network' (see details).
+#' @param type A character among 'ind', 'var', 'both', 'ave', 'cor', 'weight', 
+#' 'network' (see details).
 #' @param text_ind boolean value indicating if rownames are plotted
 #' (default = TRUE).
 #' @param text_var Boolean value indicating if variable names are plotted
@@ -185,7 +186,8 @@ plot.rgcca=function(x, type = "weight", block = length(x$call$blocks), comp = 1:
                      cex_main = cex_main, cex_lab = cex_lab, resp = resp,
                      response_name = response_name, text = text_ind,
                      title = title, colors = colors, no_overlap=!overlap)
-        invisible(p5)
+        #invisible(p5)
+        p5
      }
     else if(type == "ave")
     {

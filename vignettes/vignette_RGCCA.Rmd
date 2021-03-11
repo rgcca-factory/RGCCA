@@ -746,7 +746,7 @@ As a component-based method, RGCCA provides the users with graphical representat
 lab = factor(apply(Russett[, 9:11], 1, which.max),
              labels = c("Stable democracy", "Unstable democracy", "Dictatorship"))
 
-plot(rgcca_B_factorial, type = "ind",
+p <- plot(rgcca_B_factorial, type = "ind",
      block = 1:2, comp = 1,
      resp = lab, overlap = FALSE)
 ```
