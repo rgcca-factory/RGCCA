@@ -102,7 +102,7 @@ test_that("check_connection raises an error if the dimensions of C do not
           match the number of blocks", {
   expect_error(check_connection(diag(2), blocks),
                paste0("connection matrix should have the same number of ",
-                      "columns (actually 2) than the number of blocks (3)."),
+                      "columns (actually 2) as the number of blocks (3)."),
                fixed = TRUE)
 })
 test_that("check_connection raises an error if the dimnames of C do not match
@@ -234,7 +234,7 @@ test_that("check_ncomp raises an error if blocks and ncomp have different
           lengths and length of ncomp is greater than 1", {
             expect_error(check_ncomp(c(2, 2), blocks),
                          paste0("ncomp should have the same size (actually 2) ",
-                                "than the number of blocks (3)."),
+                                "as the number of blocks (3)."),
                          fixed = TRUE)
           })
 test_that("check_ncomp raises an error if any element of ncomp is greater than
@@ -265,14 +265,14 @@ test_that("check_size_blocks raises an error when number of columns of x does
           not match length of blocks", {
             expect_error(check_size_blocks(blocks, "x", diag(2)),
                          paste0("x should have the same number of columns",
-                                " (actually 2) than the number of blocks (3)."),
+                                " (actually 2) as the number of blocks (3)."),
                          fixed = TRUE)
           })
 test_that("check_size_blocks raises an error when size of x does
           not match length of blocks", {
             expect_error(check_size_blocks(blocks, "x", c(2, 2)),
                          paste0("x should have the same size (actually 2) ",
-                                "than the number of blocks (3)."),
+                                "as the number of blocks (3)."),
                          fixed = TRUE)
           })
 test_that("check_size_blocks passes when x is valid", {
@@ -282,58 +282,69 @@ test_that("check_size_blocks passes when x is valid", {
 
 # Test check_size_file
 
-# Test check_spars
-test_that("check_spars raises an error if blocks and tau have different
-          lengths and length of tau is greater than 1", {
-            expect_error(check_spars(blocks, c(1, 1), method = "sgcca"),
-                         paste0("sparsity should have the same size ",
-                                "(actually 2) than the number of blocks (3)."),
+# Test check_penalty
+test_that("check_penalty raises an error if blocks and penalty have different
+          lengths and length of penalty is greater than 1", {
+            expect_error(check_penalty(c(1, 1), blocks),
+                         paste0("tau should have the same size ",
+                                "(actually 2) as the number of blocks (3)."),
                          fixed = TRUE)
           })
-test_that("check_spars raises an error if any element of tau is lower than
-          the inverse of the square root of the number of variables in the
+test_that("check_penalty raises an error if any element of sparsity is lower
+          than the inverse of the square root of the number of variables in the
           corresponding block", {
-            min_sparsity <- lapply(blocks, function(x) 1 / sqrt(NCOL(x)))
-            msg = toString(unlist(
-              lapply(min_sparsity, function(x)
-                ceiling(x * 100) / 100)
-            ))
-            expect_error(check_spars(blocks, c(1, 1, 0.2), method = "sgcca"),
+            min_sparsity <- 1 / sqrt(NCOL(blocks[[3]]))
+            expect_error(check_penalty(c(1, 1, 0.2), blocks, method = "sgcca"),
                          paste0("Sparsity parameter equals to 0.2. For SGCCA, ",
                                 "it must be greater than 1/sqrt(number_column)",
-                                " (i.e., ", msg, ")."),
+                                " (i.e., ", min_sparsity, ")."),
                          fixed = TRUE)
           })
-test_that("check_spars raises an error for invalid tau", {
-  expect_error(check_spars(blocks, c(-1, 1, 1), method = "sgcca"))
-  expect_error(check_spars(blocks, c(1, 1, 2), method = "sgcca"))
-  expect_error(check_spars(blocks, c(NA, 1, 1), method = "sgcca"))
+test_that("check_penalty raises an error for invalid penalty", {
+  expect_error(check_penalty(c(-1, 1, 1), blocks, method = "rgcca"))
+  expect_error(check_penalty(c(1, 1, 2), blocks, method = "rgcca"))
+  expect_error(check_penalty(c(NA, 1, 1), blocks, method = "rgcca"))
+  expect_error(check_penalty("toto", blocks, method = "rgcca"))
+  expect_error(check_penalty(c(-1, 1, 1), blocks, method = "sgcca"))
+  expect_error(check_penalty(c(1, 1, 2), blocks, method = "sgcca"))
+  expect_error(check_penalty(c(NA, 1, 1), blocks, method = "sgcca"))
+  expect_error(check_penalty("optimal", blocks, method = "sgcca"))
 })
-test_that("check_spars passes and returns tau when tau is valid", {
-  expect_equal(check_spars(blocks, 1, method = "sgcca"), c(1, 1, 1))
-  expect_equal(check_spars(blocks, c(0.8, 1, 0.5), method = "sgcca"), c(0.8, 1, 0.5))
+test_that("check_penalty passes and returns penalty when penalty is valid", {
+  expect_equal(check_penalty(1, blocks, method = "rgcca"), c(1, 1, 1))
+  expect_equal(check_penalty(c(0.8, 1, 0.5), blocks, method = "rgcca"), c(0.8, 1, 0.5))
+  expect_equal(check_penalty("optimal", blocks, method = "rgcca"), c("optimal", "optimal", "optimal"))
+  expect_equal(check_penalty(matrix(1, 5, 3), blocks, method = "rgcca"), matrix(1, 5, 3))
+  expect_equal(check_penalty(1, blocks, method = "rgcca", superblock = T), c(1, 1, 1, 1))
+  expect_equal(check_penalty(1, blocks, method = "sgcca"), c(1, 1, 1))
+  expect_equal(check_penalty(c(0.8, 1, 0.5), blocks, method = "sgcca"), c(0.8, 1, 0.5))
+  expect_equal(check_penalty(matrix(1, 5, 3), blocks, method = "sgcca"), matrix(1, 5, 3))
+})
+
+# Test check_spars
+test_that("check_spars raises an error for invalid sparsity", {
+  expect_error(check_spars(0.2, blocks[[3]]))
+  expect_error(check_spars(2, blocks[[1]]))
+  expect_error(check_spars(NA, blocks[[2]]))
+})
+test_that("check_spars passes and returns sparsity when sparsity is valid", {
+  expect_equal(check_spars(1, blocks[[1]]), 1)
+  expect_equal(check_spars(0.5, blocks[[3]]), 0.5)
 })
 
 # Test check_superblock
 
 # Test check_tau
-test_that("check_tau raises an error if blocks and tau have different
-          lengths and length of tau is greater than 1", {
-            expect_error(check_tau(c(1, 1), blocks),
-                         paste0("tau should have the same size ",
-                                "(actually 2) than the number of blocks (3)."),
-                         fixed = TRUE)
-          })
 test_that("check_tau raises an error for invalid tau", {
-  expect_error(check_tau(c(-1, 1, 1), blocks))
-  expect_error(check_tau(c(1, 1, 2), blocks))
-  expect_error(check_tau(c(NA, 1, 1), blocks))
+  expect_error(check_tau(-1))
+  expect_error(check_tau(2))
+  expect_error(check_tau(NA))
+  expect_error(check_tau("toto"))
 })
 test_that("check_tau passes and returns tau when tau is valid", {
-  expect_equal(check_tau(1, blocks), c(1, 1, 1))
-  expect_equal(check_tau(c(0.8, 1, 0.5), blocks), c(0.8, 1, 0.5))
-  expect_equal(check_tau(diag(3), blocks), diag(3))
-  expect_equal(check_tau(c(1, 1, 1, 1), blocks, superblock = T), c(1, 1, 1, 1))
+  expect_equal(check_tau(1), 1)
+  expect_equal(check_tau(0.3), 0.3)
+  expect_equal(check_tau("optimal"), "optimal")
 })
 
 # Test check_scheme

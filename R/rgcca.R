@@ -332,7 +332,7 @@ rgcca <- function(blocks, method = "rgcca",
     }
 
 
-    opt$penalty <- check_tau(opt$penalty, opt$blocks, method)
+    opt$penalty <- check_penalty(opt$penalty, opt$blocks, method)
     opt$ncomp <- check_ncomp(opt$ncomp, opt$blocks)
 
     warn_on <- FALSE

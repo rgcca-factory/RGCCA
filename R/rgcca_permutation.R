@@ -310,7 +310,7 @@ rgcca_permutation <- function(blocks, par_type, par_value = NULL,
         {
           if(par_type=="tau"){
             par_value <- t(sapply(seq(NROW(par_value)),
-                                  function(x) check_tau(par_value[x, ],
+                                  function(x) check_penalty(par_value[x, ],
                                                         blocks,
                                                         method = method,
                                                         superblock = superblock)
@@ -324,7 +324,7 @@ rgcca_permutation <- function(blocks, par_type, par_value = NULL,
             stop_rgcca(paste0("par_value should be upper than : ",
                                   paste0(round(min_spars, 2), collapse = ",")))
           if(par_type == "tau"){
-            par_value <- check_tau(par_value, blocks, method = method,
+            par_value <- check_penalty(par_value, blocks, method = method,
                                      superblock = superblock)
             par_value <- set_spars(max = par_value)
           }
