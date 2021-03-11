@@ -26,7 +26,6 @@ sgccak <-  function(A, C, sparsity = rep(1, length(A)), scheme = "centroid",
 
   J <- length(A)
   pjs = sapply(A, NCOL)
-  AVE_X <- rep(0, J)
 
   #  Choose J arbitrary vectors
   if (init=="svd") {
@@ -47,7 +46,7 @@ sgccak <-  function(A, C, sparsity = rep(1, length(A)), scheme = "centroid",
   #	Apply the constraints of the general otpimization problem
   #	and compute the outer components
   iter <- 1
-  converg <- crit <- numeric()
+   crit <- numeric()
   Y <- Z <- matrix(0,NROW(A[[1]]),J)
   for (q in 1:J){
       Y[, q] <- pm(A[[q]], a[[q]], na.rm = na.rm)
