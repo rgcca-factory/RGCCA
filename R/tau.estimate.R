@@ -18,26 +18,12 @@ tau.estimate <- function(x, na.rm=TRUE) {
   if (p == 1) return(1)
   n <- NROW(x)
   corm <- cor(x,use="pairwise.complete.obs")
-  if(na.rm)
-  {
-    nmat=t(!is.na(x))%*%(!is.na(x))
-    nmat[nmat==0]=NA
-    xs <- scale3(x, center = TRUE, scale = TRUE, bias = FALSE)
-    v <- (nmat/((nmat - 1)^3)) * (pm(t(xs^2),xs^2) - 1/nmat * (pm(t(xs),xs))^2)
-    diag(v) <- 0
-    m <- matrix(rep(apply(pm(t(xs),xs), 2, mean), p), p, p)
-    I <- diag(NCOL(x))
-    d <- (corm - I)^2
-  }
-  else
-  {
-    xs <- scale(x, center = TRUE, scale = TRUE)
-    v <- (n/((n - 1)^3)) * (crossprod(xs^2) - 1/n * (crossprod(xs))^2)
-    diag(v) <- 0
-    m <- matrix(rep(apply(xs^2, 2, mean), p), p, p)
-    I <- diag(NCOL(x))
-    d <- (corm - I)^2
-  }
+
+  xs <- scale(x, center = TRUE, scale = TRUE)
+  v <- (n/((n - 1)^3)) * (pm(t(xs^2), xs^2, na.rm = na.rm) - 1/n * (pm(t(xs), xs, na.rm = na.rm))^2)
+  diag(v) <- 0
+  I <- diag(NCOL(x))
+  d <- (corm - I)^2
 
   tau <- (sum(v))/sum(d)
   tau <- max(min(tau, 1), 0)

@@ -134,7 +134,7 @@
 sgcca <- function (blocks, connection = 1-diag(length(blocks)), sparsity = rep(1, length(blocks)),
                    ncomp = rep(1, length(blocks)), scheme = "centroid",
                    init = "svd", bias = TRUE, tol = .Machine$double.eps,
-                   verbose = FALSE, quiet = FALSE){
+                   verbose = FALSE,   quiet = FALSE, na.rm = TRUE){
 
   ndefl <- ncomp-1
   N <- max(ndefl)
@@ -168,14 +168,13 @@ sgcca <- function (blocks, connection = 1-diag(length(blocks)), sparsity = rep(1
     AVE_outer <- rep(NA,max(ncomp))
     if (N == 0) {
         result <- sgccak(blocks, connection, sparsity, scheme, init = init, bias = bias,
-                         tol = tol, verbose = verbose, quiet = quiet)
+                         tol = tol, verbose = verbose, quiet = quiet, na.rm = na.rm)
         # No deflation (No residual matrices generated).
         Y <- NULL
         for (b in 1:J) Y[[b]] <- result$Y[,b, drop = FALSE]
         #Average Variance Explained (AVE) per block
         for (j in 1:J) AVE_X[[j]] =  mean(cor(blocks[[j]], Y[[j]],
-                                              use="pairwise.complete.obs")^2,
-                                          na.rm=TRUE)
+                                              use="pairwise.complete.obs")^2)
 
         #AVE outer
         AVE_outer <- sum(pjs * unlist(AVE_X))/sum(pjs)
@@ -225,11 +224,11 @@ sgcca <- function (blocks, connection = 1-diag(length(blocks)), sparsity = rep(1
       if(is.vector(sparsity)){
         sgcca.result <- sgccak(R, connection, sparsity = sparsity , scheme=scheme,
                                init = init, bias = bias, tol = tol,
-                               verbose = verbose, quiet = quiet)
+                               verbose = verbose, quiet = quiet, na.rm = na.rm)
       } else{
         sgcca.result <- sgccak(R, connection, sparsity = sparsity[n, ] , scheme = scheme,
                                init = init, bias = bias, tol = tol,
-                               verbose = verbose, quiet = quiet)
+                               verbose = verbose, quiet = quiet, na.rm = na.rm)
       }
       AVE_inner[n] <- sgcca.result$AVE_inner
       crit[[n]] <- sgcca.result$crit
@@ -245,7 +244,7 @@ sgcca <- function (blocks, connection = 1-diag(length(blocks)), sparsity = rep(1
 
         }
      }
-	    defla.result <- defl.select(sgcca.result$Y, R, ndefl, n, nbloc = J)
+	    defla.result <- defl.select(sgcca.result$Y, R, ndefl, n, nbloc = J, na.rm = na.rm)
       R <- defla.result$resdefl
       for (b in 1:J) {
         P[[b]][,n] <- defla.result$pdefl[[b]]
@@ -266,11 +265,11 @@ sgcca <- function (blocks, connection = 1-diag(length(blocks)), sparsity = rep(1
     if(is.vector(sparsity)) {
       sgcca.result <- sgccak(R, connection, sparsity = sparsity, scheme=scheme,
                              init = init, bias = bias, tol = tol,
-                             verbose = verbose, quiet = quiet)
+                             verbose = verbose, quiet = quiet, na.rm = na.rm)
     } else{
       sgcca.result <- sgccak(R, connection, sparsity = sparsity[N+1, ], scheme=scheme,
                              init = init, bias = bias, tol = tol,
-                             verbose = verbose, quiet = quiet)
+                             verbose = verbose, quiet = quiet, na.rm = na.rm)
     }
     AVE_inner[max(ncomp)] <- sgcca.result$AVE_inner
 

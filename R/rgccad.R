@@ -265,8 +265,7 @@ rgccad=function (blocks, connection = 1 - diag(length(blocks)), tau = rep(1, len
     Y <- NULL
     for (b in 1:J) Y[[b]] <- result$Y[, b, drop = FALSE]
     for (j in 1:J)
-      AVE_X[[j]] = mean(cor(blocks[[j]], Y[[j]],use="pairwise.complete.obs")^2,
-                        na.rm=TRUE)
+      AVE_X[[j]] = mean(cor(blocks[[j]], Y[[j]],use="pairwise.complete.obs")^2)
 
     AVE_outer <- sum(pjs * unlist(AVE_X))/sum(pjs)
     AVE <- list(AVE_X = AVE_X, AVE_outer = AVE_outer,
@@ -332,7 +331,7 @@ rgccad=function (blocks, connection = 1 - diag(length(blocks)), tau = rep(1, len
 
     # deflation
     for (b in 1:J) Y[[b]][, n] <- rgcca.result$Y[, b]
-    defla.result <- defl.select(rgcca.result$Y, R, ndefl , n, nbloc = J)
+    defla.result <- defl.select(rgcca.result$Y, R, ndefl , n, nbloc = J, na.rm = na.rm)
     R <- defla.result$resdefl
     for (b in 1:J) P[[b]][, n] <- defla.result$pdefl[[b]]
     for (b in 1:J) a[[b]][, n] <- rgcca.result$a[[b]]
@@ -374,12 +373,12 @@ rgccad=function (blocks, connection = 1 - diag(length(blocks)), tau = rep(1, len
 
   for (j in 1:J)
       AVE_X[[j]] = apply(cor(blocks[[j]], Y[[j]], use="pairwise.complete.obs")^2,
-                         2, mean, na.rm = TRUE)
+                         2, mean)
 
   outer = matrix(unlist(AVE_X), nrow = max(ncomp))
 
   for (j in 1:max(ncomp))
-    AVE_outer[j] <- sum(pjs * outer[j,],na.rm=na.rm)/sum(pjs)
+    AVE_outer[j] <- sum(pjs * outer[j,])/sum(pjs)
 
   Y = shave.matlist(Y, ncomp)
   names(Y)=names(blocks)

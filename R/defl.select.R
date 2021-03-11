@@ -9,15 +9,15 @@
 # @return \item{pdefl}{A list of \eqn{J} elements that contains \eqn{p_{1h}, \ldots, p_{Jh}}.}
 # @title deflation function
 
-defl.select=function (yy, rr, nncomp, nn, nbloc)
+defl.select=function (yy, rr, nncomp, nn, nbloc, na.rm = TRUE)
 {
   resdefl <- NULL
   pdefl <- list()
   for (q in 1:nbloc) {
     if (nn <= nncomp[q]) {
-      defltmp <- deflation(as.matrix(rr[[q]]), as.matrix(yy[, q]))
+      defltmp <- deflation(as.matrix(rr[[q]]), as.matrix(yy[, q]), na.rm = na.rm)
       resdefl[[q]] <- defltmp$R
-      pdefl[[q]]=as.matrix(defltmp$p)
+      pdefl[[q]] = as.matrix(defltmp$p)
     }
     else {
       resdefl[[q]] <- rr[[q]]
