@@ -56,7 +56,7 @@ print.rgcca <- function(x,...)
           paste(round(x$crit[length(x$crit)], 4), sep = "", " "), fill = TRUE)
   }
   cat("\n")
-  if(x$call$method %in% c("rgcca"))
+  if (!x$call$method %in% c("sgcca", "spca", "spls"))
   {
      param="regularization"
     if(!is.matrix(x$call$tau))
