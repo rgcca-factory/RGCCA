@@ -49,9 +49,9 @@ sgccak <-  function(A, C, sparsity = rep(1, length(A)), scheme = "centroid",
    crit <- numeric()
   Y <- Z <- matrix(0,NROW(A[[1]]),J)
   for (q in 1:J){
-      Y[, q] <- pm(A[[q]], a[[q]], na.rm = na.rm)
       a[[q]] <- soft.threshold(a[[q]], const[q])
       a[[q]] <- as.vector(a[[q]])/norm2(a[[q]])
+      Y[, q] <- pm(A[[q]], a[[q]], na.rm = na.rm)
   }
   a_old <- a
 
