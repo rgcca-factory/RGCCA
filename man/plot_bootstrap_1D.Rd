@@ -36,7 +36,7 @@ circle}
 
 \item{colors}{Either a vector of integers (each integer corresponding to a color) or of characters corresponding to names of colors (as "blue",see colors()) or RGB code ("#FFFFFF").}
 
-\item{comp}{An integer giving the index of the analysis components}
+\item{comp}{An integer indicating the block-weight/loading vector to plot.}
 
 \item{bars}{Character string giving the variability among "sd" (error bar of
 standard deviation) , "stderr" (error bar of standard deviation divided by

@@ -112,7 +112,8 @@
 #' print(fit.rgcca)
 #' plot(fit.rgcca, type = "weight", block = 3)
 #' politic = as.vector(apply(Russett[, 9:11], 1, which.max))
-#' plot(fit.rgcca, type = "ind", block = 1:2, comp = rep(1, 2), resp = politic)
+#' plot(fit.rgcca, type = "sample", block = 1:2, 
+#'      comp = rep(1, 2), resp = politic)
 #'
 #' ############################################
 #' # Example 2: RGCCA and multiple components #
@@ -123,13 +124,13 @@
 #'                   scheme = "factorial", verbose = TRUE)
 #'
 #' politic = as.vector(apply(Russett[, 9:11], 1, which.max))
-#' plot(fit.rgcca, type = "ind", block = 1:2,
+#' plot(fit.rgcca, type = "sample", block = 1:2,
 #'      comp = rep(1, 2), resp = politic)
 #'
 #' plot(fit.rgcca, type = "ave")
 #' plot(fit.rgcca, type = "network")
 #' plot(fit.rgcca, type = "weight", block = 1)
-#' plot(fit.rgcca, type = "cor")
+#' plot(fit.rgcca, type = "loadings")
 #'
 #' ##################################
 #' # Example 3: Sparse GCCA (SGCCA) #
@@ -165,11 +166,6 @@
 #'
 #' b = bootstrap(fit.rgcca, n_cores = 1, n_boot = 10)
 #' plot(b, n_cores = 1)
-#'
-#' ##########################
-#' # Example 4: Sparse GCCA #
-#' ##########################
-#'
 #'
 #' @export
 #' @import ggplot2

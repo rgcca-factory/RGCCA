@@ -746,7 +746,7 @@ As a component-based method, RGCCA provides the users with graphical representat
 lab = factor(apply(Russett[, 9:11], 1, which.max),
              labels = c("Stable democracy", "Unstable democracy", "Dictatorship"))
 
-p <- plot(rgcca_B_factorial, type = "ind",
+p <- plot(rgcca_B_factorial, type = "sample",
      block = 1:2, comp = 1,
      resp = lab, overlap = FALSE)
 ```
@@ -966,13 +966,13 @@ fit.mcia = rgcca(blocks=A, tau = c(1, 1, 1),
 Multiple Co-Inertiea Analysis(MCIA) enables the countries to be represented in the space spanned by the two first global components. Despite some overlap, the first global component exhibits a separation/continuum among regimes.
 
 ```{r, fig.align='center', fig.cap = 'graphical display of the countries obtained by crossing the two first components of the superblock and labeled according to their political regime',fig.height = 6, fig.width = 8}
-plot(fit.mcia, resp=lab, type="ind", overlap = FALSE)
+plot(fit.mcia, resp=lab, type = "sample", overlap = FALSE)
 ```
 
 Moreover, the correlation circle highlights the contribution of each variable to the construction of the global components. This figure shows the original variables projected on the compromise space.
 
 ```{r, fig.align='center', fig.cap = 'graphical display of the correlation cicle associated with the two first components of the superblock. Each variable are colored according to their block membership',fig.height = 6, fig.width = 8}
-plot(fit.mcia, type="var")
+plot(fit.mcia, type = "corCircle")
 ```
 
 A variable that is highly expressed for a category of individuals is projected with a high weight (far from the origin) in the direction of that category.
@@ -980,7 +980,7 @@ A variable that is highly expressed for a category of individuals is projected w
 It is often useful to visualize jointly the sample space and the correlation circle. This is make possible by using the `type = "both"` argument of the plot function.
 
 ```{r, fig.align='center', fig.cap = 'sample space and correlation cirle',fig.height = 6, fig.width = 8}
-plot(fit.mcia, type="both", resp = lab, overlap = FALSE)
+plot(fit.mcia, type = "both", resp = lab, overlap = FALSE)
 ```
 
 ## RGCCA (dual formulation) for the Glioma dataset
@@ -1060,7 +1060,7 @@ system.time(rgcca(blocks=A, connection=C,
 As previously, RGCCA enables visual inspection of the spatial relationships between classes. This facilitates assessment of the quality of the classification and makes it possible to readily determine which components capture the discriminant information.
 
 ```{r, eval = FALSE, fig.align='center',fig.height = 3, fig.width = 5}
-plot(fit.rgcca, type="ind", block=1:2,
+plot(fit.rgcca, type = "sample", block=1:2,
      comp = 1, resp = Loc)
 ```
 
@@ -1110,7 +1110,7 @@ nb_zero_CGH
 One component per block has been built (GE1 for $\ma X_1$ and CGH1 $\ma X_2$), and the graphical display of the tumors obtained by crossing GE1 and CGH1 and labeled according to their location is shown below.
 
 ```{r, eval = FALSE, fig.align='center', fig.cap = 'graphical display of the tumors obtained by crossing GE1 and CGH1 and labeled according to their location.',fig.height = 3, fig.width = 5}
-plot(fit.sgcca,type="ind",block=1:2,comp=1, resp = Loc)
+plot(fit.sgcca,type = "sample", block=1:2,comp=1, resp = Loc)
 ```
 
 It possible to determine the optimal sparsity parameters by permutation. This is made possible using the  `rgcca_permutation()` function.
@@ -1143,7 +1143,7 @@ print(best.permute.sgcca)
 Again, one component per block has been built (GE1 for $\ma X_1$ and CGH1 $\ma X_2$), and the graphical display of the tumors obtained by crossing GE1 and CGH1 and labeled according to their location is shown below.
 
 ```{r, eval = FALSE, fig.align='center', fig.cap = 'graphical display of the tumors obtained by crossing GE1 and CGH1 and labeled according to their location.',fig.height = 3, fig.width = 5}
-plot(best.permute.sgcca, type="ind", block=1:2, comp=1, resp = Loc)
+plot(best.permute.sgcca, type = "sample", block=1:2, comp=1, resp = Loc)
 ```
 
 We observe that the GE block contains much more discriminative information than the CGH block.
@@ -1211,13 +1211,13 @@ fit.sgcca = rgcca(blocks=A, connection = C, method = "sgcca",
 In that case, the call of `rgcca(,method="sgcca")` is as follows:
 
 ```{r, eval = FALSE}
-plot(fit.sgcca, type="ind", block=1:2, comp=1, resp = Loc)
+plot(fit.sgcca, type = "sample", block=1:2, comp=1, resp = Loc)
 ```
 
 and allows for the graphical representations of the individuals and the variables in a common space.
 
 ```{r, eval = FALSE, fig.align = 'center', fig.cap = 'correlation circle plot - two first components of the superblock. Variables are colored according to their block membership',fig.height = 3, fig.width = 5}
-plot(fit.sgcca, type="var", block=1)
+plot(fit.sgcca, type = "corCircle", block=1)
 
 ```
 

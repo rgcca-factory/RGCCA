@@ -24,9 +24,9 @@
 \arguments{
 \item{x}{A fitted bootstrap object (see \code{\link[RGCCA]{bootstrap}})}
 
-\item{block}{A vector indicating the blocks to consider.}
+\item{block}{A numeric vector indicating the blocks to consider.}
 
-\item{comp}{An integer giving the index of the analysis components}
+\item{comp}{An integer indicating the block-weight/loading vector to plot.}
 
 \item{n_mark}{The number of top variables to display in the correlation
 circle}

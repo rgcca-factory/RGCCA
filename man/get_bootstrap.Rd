@@ -16,9 +16,9 @@ get_bootstrap(
 \arguments{
 \item{b}{A fitted bootstrap object (see  \code{\link[RGCCA]{bootstrap}} )}
 
-\item{comp}{An integer giving the index of the analysis components}
+\item{comp}{An integer indicating the block-weight/loading vector to plot.}
 
-\item{block}{A vector indicating the blocks to consider.}
+\item{block}{A numeric vector indicating the blocks to consider.}
 
 \item{bars}{Character string giving the variability among "sd" (error bar of
 standard deviation) , "stderr" (error bar of standard deviation divided by

@@ -43,7 +43,7 @@ plot_bootstrap_2D(
 
 \item{cex_lab}{An integer for the size of the axis titles}
 
-\item{comp}{An integer giving the index of the analysis components}
+\item{comp}{An integer indicating the block-weight/loading vector to plot.}
 
 \item{i_block}{An integer giving the index of a list of blocks}
 }
