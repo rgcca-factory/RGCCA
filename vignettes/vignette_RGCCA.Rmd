@@ -531,7 +531,7 @@ fit.gcca = rgcca(blocks= list(X1, ..., XJ), method = "gcca")
 
 ### Multiple Co-Inertia Analysis
 
-For Multiple Co-Inertia Analysis (MCIA) a superblock $\ma X_{J+1} = [\ma X_1, \dots, \ma X_J$ defined as the concatenation of all the blocks is introduced. MCIA is defined as the following optimization problem
+For Multiple Co-Inertia Analysis (MCOA) a superblock $\ma X_{J+1} = [\ma X_1, \dots, \ma X_J$ defined as the concatenation of all the blocks is introduced. MCOA is defined as the following optimization problem
 
 \begin{equation}
 \underset{\ma a_1, \ma a_2, \ldots,\ma a_J} {\text{maximize}} \displaystyle \sum_{j=1}^J \text{cor}^2(\ma X_j\ma a_j, \ma X_{J+1}\ma a_{J+1})\times \text{var}(\X_j\ma a_j), \text{~~s.t~~} \Vert \ma a_j \Vert = 1, j=1, \ldots, J \text{~~and~~} \text{var}(\X_{J+1}\ma a_{J+1}) = 1
@@ -541,7 +541,7 @@ and is obtained with the `rgcca()` function as follows:
 
 
 ```{r, eval = FALSE}
-fit.mcia = rgcca(blocks= list(X1, ..., XJ),
+fit.mcoa = rgcca(blocks= list(X1, ..., XJ),
                        superblock=TRUE,
                        tau = c(rep(1, J), 0),
                        scheme = "factorial")
@@ -666,7 +666,7 @@ C
 RGCCA using the pre-defined design matrix $\ma C$, the factorial scheme ($g(x) = x^2$) and mode B for all blocks (full correlation criterion) is obtained by specifying appropriately the `connection`, `scheme` and `tau` arguments of the `rgcca()` function. The `verbose` argument (default value = `TRUE`) indicates that the progress will be reported while computing and that a plot representing the convergence of the algorithm will be returned.
 
 ```{r, fig.height = 3, fig.width = 5}
-rgcca_B_factorial = rgcca(blocks=A, connection=C,
+rgcca_B_factorial = rgcca(blocks = A, connection = C,
                           tau = rep(0, 3),
                           scheme = "factorial",
                           scale = TRUE,
@@ -946,7 +946,7 @@ X_ind = as.matrix(Russett[,c("gnpr","labo")])
 X_polit = as.matrix(Russett[ , c("inst", "ecks",  "death")])
 A = list(Agric = X_agric, Ind = X_ind, Polit = X_polit)
 
-fit.mcia = rgcca(blocks=A, tau = c(1, 1, 1, 0),
+fit.mcoa = rgcca(blocks=A, tau = c(1, 1, 1, 0),
                 verbose = FALSE, ncomp = rep(2, 4),
                 #flexible design of the scheme function
                 scheme = function(x) x^2,
@@ -956,23 +956,23 @@ fit.mcia = rgcca(blocks=A, tau = c(1, 1, 1, 0),
 or alternatively,
 
 ```{r}
-fit.mcia = rgcca(blocks=A, tau = c(1, 1, 1),
+fit.mcoa = rgcca(blocks=A, tau = c(1, 1, 1),
                 verbose = FALSE, ncomp = rep(2, 3),
                 #flexible design of the scheme function
                 scheme = function(x) x^2,
                 scale = TRUE, superblock = TRUE)
 ```
 
-Multiple Co-Inertiea Analysis(MCIA) enables the countries to be represented in the space spanned by the two first global components. Despite some overlap, the first global component exhibits a separation/continuum among regimes.
+Multiple Co-Inertiea Analysis(MCOA) enables the countries to be represented in the space spanned by the two first global components. Despite some overlap, the first global component exhibits a separation/continuum among regimes.
 
 ```{r, fig.align='center', fig.cap = 'graphical display of the countries obtained by crossing the two first components of the superblock and labeled according to their political regime',fig.height = 6, fig.width = 8}
-plot(fit.mcia, resp=lab, type = "sample", overlap = FALSE)
+plot(fit.mcoa, resp=lab, type = "sample", overlap = FALSE)
 ```
 
 Moreover, the correlation circle highlights the contribution of each variable to the construction of the global components. This figure shows the original variables projected on the compromise space.
 
 ```{r, fig.align='center', fig.cap = 'graphical display of the correlation cicle associated with the two first components of the superblock. Each variable are colored according to their block membership',fig.height = 6, fig.width = 8}
-plot(fit.mcia, type = "corCircle")
+plot(fit.mcoa, type = "corCircle")
 ```
 
 A variable that is highly expressed for a category of individuals is projected with a high weight (far from the origin) in the direction of that category.
@@ -980,7 +980,7 @@ A variable that is highly expressed for a category of individuals is projected w
 It is often useful to visualize jointly the sample space and the correlation circle. This is make possible by using the `type = "both"` argument of the plot function.
 
 ```{r, fig.align='center', fig.cap = 'sample space and correlation cirle',fig.height = 6, fig.width = 8}
-plot(fit.mcia, type = "both", resp = lab, overlap = FALSE)
+plot(fit.mcoa, type = "both", resp = lab, overlap = FALSE)
 ```
 
 ## RGCCA (dual formulation) for the Glioma dataset
@@ -1117,12 +1117,6 @@ It possible to determine the optimal sparsity parameters by permutation. This is
 
 ```{r, eval = FALSE}
 fit.permute = rgcca_permutation(A, connection = C,
-                                method = "sgcca",
-                                par_type = "sparsity",
-                                par_length = 10,
-                                n_perms = 10)
-
-fit.permute = rgcca_permutation(A, connection = C,
                                 par_type = "sparsity",
                                 par_length = 5,
                                 n_perms = 3)
@@ -1140,7 +1134,7 @@ The resulting model is summarized using the generic print function.
 print(best.permute.sgcca)
 ```
 
-Again, one component per block has been built (GE1 for $\ma X_1$ and CGH1 $\ma X_2$), and the graphical display of the tumors obtained by crossing GE1 and CGH1 and labeled according to their location is shown below.
+Again, one component per block was built (GE1 for $\ma X_1$ and CGH1 $\ma X_2$), and the graphical display of the tumors obtained by crossing GE1 and CGH1 and labeled according to their location is shown below.
 
 ```{r, eval = FALSE, fig.align='center', fig.cap = 'graphical display of the tumors obtained by crossing GE1 and CGH1 and labeled according to their location.',fig.height = 3, fig.width = 5}
 plot(best.permute.sgcca, type = "sample", block=1:2, comp=1, resp = Loc)
@@ -1226,7 +1220,7 @@ plot(fit.sgcca, type = "corCircle", block=1)
 Moreover, it is possible to use a bootstrap resampling method to assess the stability of the variable selection process of SGCCA. B (e.g. 500) bootstrap samples of the same size as the original data is repeatedly sampled with replacement from the original data. SGCCA is then applied to each bootstrap sample to obtain the SGCCA estimates. The percentage of times a specific variable had a non-null weight across bootstrap sample can be derived. Work is in progress to include this function within the RGCCA package but an R code is given below.
 
 ```{r, eval = FALSE}
-res.boot=bootstrap(fit.sgcca,n_boot=10)
+res.boot=bootstrap(fit.sgcca, n_boot=10)
 plot(res.boot, block = 2, type = "1D")
 ```
 
@@ -1245,6 +1239,6 @@ This package gathers 60 years of multiblock component methods and offers a unifi
 - Dedicated functions for graphical representations of the ouptut of RGCCA (factor plot, correlation circle).
 - multiblock data faces two types of missing data structure: (i) if an observation i has missing values on a whole block j and (ii) if an observation i has some missing values on a block j (but not all). For these two situations, it is possible to exploit the algorithmic solution proposed for PLS path modeling to deal with missing data (see [@Tenenhaus2005],  page 171). Work is in progress to implement this missing data solution within the RGCCA package.
 
-- At last, RGCCA for multigroup data [@Tenenhaus2014b] and for multiway data [@Tenenhaus2015c] has been proposed but not yet implemented in the RGGCA package. These two methods remain to be integrated into the package. Moreover, global RGCCA has been recently developped and enables extracting simultneously several components per block (no deflation procedure required). Work in progress includes the integration Global RGCCA in the nexte release of the package.
+- At last, RGCCA for multigroup data [@Tenenhaus2014b] and for multiway data [@Tenenhaus2015c] has been proposed but not yet implemented in the RGGCA package. These two methods remain to be integrated into the package. Moreover, global RGCCA has been recently developped and enables extracting simultneously several components per block (no deflation procedure required). Work in progress includes the integration Global RGCCA in the next release of the package.
 
 # References

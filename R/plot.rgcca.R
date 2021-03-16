@@ -136,7 +136,7 @@ plot.rgcca=function(x, type = "weight", block = length(x$call$blocks), comp = 1:
 
         if(is.null(title)){title = toupper(names(x$call$blocks)[i_block])}
         p <- grid.arrange(p1, p2, nrow=1, ncol=2, top = title)
-        p
+        invisible(p)
     }
     
     else if(type == "corCircle")
