@@ -1170,9 +1170,11 @@ server <- function(input, output, session) {
         condition <- !is.null(analysis) && comp > 1
         if (!condition)
             updateTabsetPanel(session, "navbar", selected = "Samples")
-        for (i in c("Corcircle", "Fingerprint"))
+        # for (i in c("Corcircle", "Fingerprint"))
             toggle(condition = condition, 
-                   selector = paste0("#navbar li a[data-value=", i, "]"))
+                   selector = paste0("#navbar li a[data-value=Corcircle"))
+            toggle(condition = isolate(getMaxCol() > 1), 
+                   selector = paste0("#navbar li a[data-value=Fingerprint"))
         toggle(
             condition = (input$navbar %in% c("Corcircle", "Fingerprint", "Bootstrap") && isolate(getMaxCol() > 10)),
                id = "nb_mark_custom")
