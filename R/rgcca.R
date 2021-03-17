@@ -193,7 +193,7 @@ rgcca <- function(blocks, method = "rgcca",
 
     if(class(blocks)=="permutation")
     {
-        message("All the parameters were imported from the fitted rgcca_permutation object")
+        message("All the parameters were imported from the fitted rgcca_permutation object.")
         scale_block = blocks$call$scale_block
         scale = blocks$call$scale
         scheme = blocks$call$scheme
@@ -209,7 +209,7 @@ rgcca <- function(blocks, method = "rgcca",
     }
     if(class(blocks)=="cval")
     {
-        message("All the parameters were imported from the fitted cval")
+        message("All the parameters were imported from the fitted cval object.")
         scale_block = blocks$call$scale_block
         scale = blocks$call$scale
         scheme = blocks$call$scheme
@@ -242,11 +242,8 @@ rgcca <- function(blocks, method = "rgcca",
     if (!missing(response) && missing(superblock))
         superblock <- FALSE
 
-    # if (!missing(superblock) && !(missing(response) || missing(connection)))
-
-
     if (tolower(method) %in% c("sgcca", "spca", "spls")) {
-        if (!missing(tau) && missing(sparsity))
+      if (!missing(tau) && missing(sparsity))
            stop_rgcca(paste0("sparsity parameters required for ",
                              tolower(method), " (instead of tau)."))
         gcca <- sgcca
@@ -261,10 +258,7 @@ rgcca <- function(blocks, method = "rgcca",
         par <- "tau"
         penalty <- tau
     }
-    #if (superblock && any(penalty == "optimal"))
-    #    stop_rgcca("Optimal tau is not available with superblock option.")
-
-
+ 
     match.arg(init, c("svd", "random"))
     check_method(method)
     check_scheme(scheme)

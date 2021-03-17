@@ -2,21 +2,17 @@
 #'
 #' Plot RGCCA components in a bi-dimensional space
 #'
-#' @param compx An integer giving the index of the analysis component used
-#' for the x-axis
-#' @param compy An integer giving the index of the analysis component used
-#' for the y-axis
-#' @param i_block An integer giving the index of a list of blocks
-#' @param text A bolean to represent the points with their row names (TRUE)
-#' or with circles (FALSE)
-#' @param i_block_y An integer giving the index of a list of blocks (another
-#' one, different from the one used in i_block)
-#' @param no_overlap A boolean to avoid overlap in plotted text
+#' @param compx An integer giving the index of the block component for the x-axis
+#' @param compy An integer giving the index of the block component for the y-axis
+#' @param i_block An integer giving the index of the block
+#' @param text A logical value indicating if rowanmes are displayed (default = TRUE)
+#' @param i_block_y An integer giving the index of the block (different from i_block)
+#' @param no_overlap A logical value indicating if text-overlappin is accepted
 #' @param rgcca_res A fitted RGCCA object (see  \code{\link[RGCCA]{rgcca}})
 #' @param df A data.frame
 #' @param title A character giving the title of the plot
-#' @param group A vector of character with levels used to color the points
-#' @param name_group A character giving the type of groups (either "Blocs" or
+#' @param group A vector of character whose levels are to color the points
+#' @param name_group A character giving the type of groups (either "Blocks" or
 # "Response")
 #' @param p A ggplot object
 #' @param colors Either a vector of integers (each integer corresponding to a color) or of characters corresponding to names of colors (as "blue",see colors()) or RGB code ("#FFFFFF").

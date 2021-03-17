@@ -1,5 +1,6 @@
 # inds : individuals removed from the blocks (for crossvalidation)
-# affects same parameters as rgcca_res (or other ones if specified) on a subset of individuals determined by inds (individuals to remove)
+# affects same parameters as rgcca_res (or other ones if specified) on a subset 
+# of individuals determined by inds (individuals to remove)
 set_rgcca <- function(
     rgcca_res,
     blocks = NULL,
@@ -31,7 +32,7 @@ set_rgcca <- function(
     if(is.null(ncomp)){        ncomp <- rgcca_res$call$ncomp}
      if (is.null(blocks)) {
       #  blocks <- rgcca_res$call$blocks
-         blocks=rgcca_res$call$raw
+         blocks = rgcca_res$call$raw
          blocks = descale(blocks)
         if (superblock) {
             for (i in c("tau", "sparsity", "ncomp")) {
@@ -95,18 +96,18 @@ set_rgcca <- function(
     }
     else
     {
-        if(length(inds)==0)
+        if(length(inds) == 0)
         {
-            boot_blocks=blocks
+            boot_blocks = blocks
         }
         else
         {
             boot_blocks <- lapply(blocks, function(x) x[-inds, , drop = FALSE])
             if("character"%in% class(boot_blocks[[response]]))
             {
-                if(length(unique(boot_blocks[[response]]))==1)
+                if(length(unique(boot_blocks[[response]])) == 1)
                 {
-                    warning("One sample has no variablity. Resulted rgcca can not be run")
+                    warning("One block has no variablity and rgcca fails to fit.")
                     return(NULL)
                 }
             }

@@ -3,7 +3,7 @@
 #' Boostrap confidence intervals and p-values for evaluating the significancy/
 #' stability of the block-weight vectors produce by S/RGCCA.
 #' @inheritParams plot2D
-#' @param n_boot Number of bootstrap iterations. Default: 100.
+#' @param n_boot Number of bootstrap samples. Default: 100.
 #' @param n_cores Number of cores for parallelization.
 #' @return A list containing two objects: 'bootstrap' and 'rgcca'.
 #' 'bootstrap' is a list containing for each block, a matrix
@@ -18,13 +18,16 @@
 #'               politic = Russett[, 6:11])
 #'
 #' fit.rgcca = rgcca(blocks, ncomp= 1)
-#' boot.out = bootstrap(fit.rgcca,
+#' boot.out = bootstrap(fit.rgcca, 
 #'                      n_boot = 20, n_cores = 2)
 #'
 #' plot(boot.out, block = 3, comp = 1)
 #'
 #' print(boot.out)
 #' get_bootstrap(boot.out)
+#' 
+#' boot.out = bootstrap(fit.rgcca, 
+#'                      n_boot = 20, n_cores = 2)
 #'
 #' fit.rgcca = rgcca(blocks, method = "mcoa")
 #' boot.out = bootstrap(fit.rgcca,
@@ -57,15 +60,15 @@
 #' get_bootstrap(boot.out)
 #'
 #' # sgcca algorithm
-#' result.sgcca = sgcca(A, C, sparsity = c(.071,.2, 1), ncomp = 1,
-#'                      scheme = "centroid", verbose = TRUE)
+#' fit.sgcca = rgcca(blocks = A, connection = C, sparsity = c(.071,.2, 1), 
+#'                   ncomp = 1, scheme = "centroid", verbose = TRUE)
 #'
-#' boot.out = bootstrap(fit.sgcca, n_boot = 50, n_cores = 2)
+#' boot.out = bootstrap(fit.sgcca, n_boot = 50, n_cores = 15)
 #' }
 #' @export
 #' @seealso \code{\link[RGCCA]{plot.bootstrap}},
 #' \code{\link[RGCCA]{print.bootstrap}}
-bootstrap <- function(rgcca_res,
+bootstrap <- function(rgcca_res, 
                       n_boot = 100,
                       n_cores = parallel::detectCores() - 1){
 
@@ -89,17 +92,6 @@ bootstrap <- function(rgcca_res,
     if (n_cores == 0) n_cores <- 1
 
         blocks <- NULL
-
-    # varlist <- c(ls(getNamespace("RGCCA")))
-    # W <- RGCCA:::parallelize(
-    #     varlist,
-    #     seq(n_boot),
-    #     function(x) resBoot = RGCCA:::bootstrap_k(rgcca_res, type = "weight"),
-    #     n_cores = n_cores,
-    #     envir = environment(),
-    #     applyFunc = "parLapply",
-    #     parallelization = parallelization
-    #     )
 
     if( Sys.info()["sysname"] == "Windows"){
     if(n_cores>1){
