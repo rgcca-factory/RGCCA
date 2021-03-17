@@ -265,9 +265,7 @@ server <- function(input, output, session) {
         if (bool)
             label <- paste0("Component for the ", x, "-axis")
 
-        comp <- isolate(getNcomp())
-        if (length(comp) > 1)
-            comp <- comp[id_block]
+        comp <- getNcompScalar()
 
         sliderInput(
             inputId = paste0("comp", x),
@@ -845,7 +843,14 @@ server <- function(input, output, session) {
 
         return(ncomp)
     }
-    
+
+    getNcompScalar <- function() {
+        comp <- isolate(getNcomp())
+        if (length(comp) > 1)
+            comp <- comp[id_block]
+        return(comp)
+    }
+
     setParRGCCA <- function(verbose = TRUE) {
         blocks <- blocks_without_superb
 
@@ -1164,30 +1169,38 @@ server <- function(input, output, session) {
     # })
 
     observeEvent(c(input$names_block_x), {
-        comp <- getNcomp()
-        if (length(comp) > 1)
-            comp <- comp[id_block]
+        comp <- getNcompScalar()
         condition <- !is.null(analysis) && comp > 1
         if (!condition)
             updateTabsetPanel(session, "navbar", selected = "Samples")
-        # for (i in c("Corcircle", "Fingerprint"))
-            toggle(condition = condition, 
-                   selector = paste0("#navbar li a[data-value=Corcircle"))
-            toggle(condition = isolate(getMaxCol() > 1), 
-                   selector = paste0("#navbar li a[data-value=Fingerprint"))
+        toggle(condition = condition, 
+            selector = paste0("#navbar li a[data-value=Corcircle"))
+        toggle(condition = isolate(getMaxCol() > 1), 
+               selector = paste0("#navbar li a[data-value=Fingerprint"))
         toggle(
             condition = (input$navbar %in% c("Corcircle", "Fingerprint", "Bootstrap") && isolate(getMaxCol() > 10)),
                id = "nb_mark_custom")
+        for (i in c("x", "y"))
+            toggle(
+                condition = getNcompScalar() > 1,
+                id = paste0("comp", i ,"_custom"))
     })
+    
+    observeEvent(
+        input$navbar, 
+        toggle(condition = is.null(input$compx) || getNcompScalar() > 1, 
+            id = "compx_custom"))
 
     observeEvent(c(input$navbar, input$tabset), {
         toggle(
             condition = (input$navbar %in% c("Corcircle", "Fingerprint", "Bootstrap") && isolate(getMaxCol() > 10)),
                id = "nb_mark_custom")
-        for (i in c("text", "compy_custom"))
-            toggle(
-                condition = ( !input$navbar %in% c("Fingerprint", "Bootstrap")),
-                   id = i)
+        condition = (!input$navbar %in% c("Fingerprint", "Bootstrap"))
+        toggle(
+            condition = condition, id = "text")
+        toggle(
+            condition = condition && getNcompScalar() > 1, id = "compy_custom")
+        # toggle(condition = getNcompScalar() > 1, id = "compx_custom")
         toggle(
             condition = (input$navbar == "Samples" && 
                     length(input$blocks$datapath) > 1),
