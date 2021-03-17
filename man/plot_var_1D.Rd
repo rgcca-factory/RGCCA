@@ -24,7 +24,7 @@ plot_var_1D(
 \item{n_mark}{The number of top variables to display in the correlation
 circle}
 
-\item{i_block}{An integer giving the index of a list of blocks}
+\item{i_block}{An integer giving the index of the block}
 
 \item{type}{A character string indicating the quantity to display between 
 block-loading vector ("loadings") or block-weight vector ("weight").}

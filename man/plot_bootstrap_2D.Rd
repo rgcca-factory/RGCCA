@@ -45,7 +45,7 @@ plot_bootstrap_2D(
 
 \item{comp}{An integer indicating the block-weight/loading vector to plot.}
 
-\item{i_block}{An integer giving the index of a list of blocks}
+\item{i_block}{An integer giving the index of the block}
 }
 \description{
 Graph of the best variables from a bootstrap with, in x-axis, the number of

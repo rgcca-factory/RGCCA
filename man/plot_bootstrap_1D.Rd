@@ -45,7 +45,7 @@ sqrt(n)) or "quantile" (error bar of 0.05/0.95-quantiles)}
 \item{display_bar}{A logical value. If TRUE colobar for significant
 variables is displayed.}
 
-\item{i_block}{An integer giving the index of a list of blocks}
+\item{i_block}{An integer giving the index of the block}
 
 \item{...}{Other parameters (see plot_histogram)}
 }

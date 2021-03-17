@@ -11,7 +11,7 @@
 #' @param rgcca_res A fitted RGCCA object (see  \code{\link[RGCCA]{rgcca}})
 #' @param df A data.frame
 #' @param title A character giving the title of the plot
-#' @param group A vector of character whose levels are to color the points
+#' @param group A vector of character whose levels are used to color the points
 #' @param name_group A character giving the type of groups (either "Blocks" or
 # "Response")
 #' @param p A ggplot object
