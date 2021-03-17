@@ -795,7 +795,7 @@ server <- function(input, output, session) {
         )
 
     ave <- function()
-        plot_ave(rgcca = rgcca_out, cex_main = 20, cex_sub = 15)
+        print(plot_ave(rgcca = rgcca_out, cex_main = 20, cex_sub = 15))
 
     design <- function()
         plot_network2(rgcca_out)
@@ -855,9 +855,9 @@ server <- function(input, output, session) {
             analysis_type <- input$analysis_type
 
         # Tau is set to 1 by default
-        if (is.null(input$tau_opt))
+        if (is.null(input$tau_opt_custom))
             tau <- 1
-        else if (input$tau_opt && input$tune_type == "analytical" && analysis_type != "SGCCA")
+        else if (analysis_type == "RGCCA" && input$tau_opt && input$tune_type == "analytical")
              tau <- "optimal"
         else{
             # otherwise the tau value fixed by the user is used
@@ -1220,9 +1220,9 @@ server <- function(input, output, session) {
             hide(selector = paste0("#navbar li a[data-value=", i, "]"))
         for (i in c("run_boot", "nboot_custom", "header", "init", "navbar", "connection_save", "run_crossval_single", "kfold", "save_all", "format"))
             hide(id = i)
-        is_tau_opt <- !is.null(input$tau_opt) && input$tau_opt
+        is_tau_opt <- tolower(input$analysis_type) %in% c("rgcca", "sgcca") && !is.null(input$tau_opt) && input$tau_opt
         not_analytical <- is_tau_opt && input$tune_type != "analytical"
-        toggle("tune_type", condition = is_tau_opt)
+        toggle("tune_type_custom", condition = is_tau_opt)
         for (i in c("nperm_custom", "run_perm"))
             toggle(id = i, condition = !input$supervised && not_analytical) 
         for (i in c("run_crossval", "val_custom"))
@@ -1234,7 +1234,7 @@ server <- function(input, output, session) {
     observeEvent(c(input$tau_opt, input$supervised, input$tune_type), {
         assign("perm", NULL, .GlobalEnv)
         assign("cv", NULL, .GlobalEnv)
-        toggle(id = "run_analysis", condition = !is.null(input$tau_opt) && (!input$tau_opt || input$tune_type == "analytical" || (input$tau_opt && input$tune_type != "analytical" && (!is.null(perm) || !is.null(cv)))))
+        toggle(id = "run_analysis", condition = is.null(input$analysis_type_custom) || !tolower(input$analysis_type_custom) %in% c("rgcca", "sgcca") || !is.null(input$tau_opt) && (!input$tau_opt || input$tune_type == "analytical" || (input$tau_opt && input$tune_type != "analytical" && (!is.null(perm) || !is.null(cv)))))
     })
 
     onclick("sep", function(e) assign("clickSep", TRUE, .GlobalEnv))
