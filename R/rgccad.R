@@ -172,6 +172,9 @@
 #' @importFrom stats as.formula qt
 #' @importFrom grDevices graphics.off
 
+# TODO: Update deflation strategy to handle regularization according to equation 2.8 from Arnaud's thesis
+# TODO: Make that tau cannot be a matrix anymore -> move to list?
+
 rgccad=function (blocks, connection = 1 - diag(length(blocks)), tau = rep(1, length(blocks)),
                  ncomp = rep(1, length(blocks)), scheme = "centroid",
                  init = "svd", bias = TRUE, tol = 1e-08, verbose = TRUE,
@@ -200,6 +203,7 @@ rgccad=function (blocks, connection = 1 - diag(length(blocks)), tau = rep(1, len
 
   if (!is.numeric(tau) & verbose) {
     cat("Optimal Shrinkage intensity paramaters are estimated \n")
+    tau = sapply(blocks, tau.estimate, na.rm = na.rm) # From Schafer and Strimmer, 2005
   }
   else {
     if (is.numeric(tau) & verbose) {
@@ -213,14 +217,60 @@ rgccad=function (blocks, connection = 1 - diag(length(blocks)), tau = rep(1, len
   N <- max(ndefl)
   nb_ind <- NROW(blocks[[1]])
   J <- length(blocks)
+  M <- sqrt_inv_M <- A <- list()
 
   # Whether primal or dual
   primal_dual = rep("primal", J)
   primal_dual[which(nb_row < pjs)] = "dual"
 
+  which.primal <- which((nb_row >= pjs) == 1)
+  which.dual <- which((nb_row < pjs) == 1)
+
+  for (j in which.primal) {
+    if (tau[j] == 1) {
+      M[[j]]          = numeric(0)
+      sqrt_inv_M[[j]] = numeric(0)
+      A[[j]]          = blocks[[j]]
+    }
+    else {
+      M[[j]] = tau[j] * diag(pjs[j]) + (1 - tau[j]) * pm(
+        t(blocks[[j]]), blocks[[j]], na.rm = na.rm
+      ) / (nb_row - 1 + bias)
+      eig    = eigen(M[[j]])
+      if (any(eig$values < 1e-10)) stop_rgcca(paste0(
+        "Regularization matrix for block ", names(blocks)[[j]], " is singular,",
+        " please select another value for tau[", j, "]."
+      ))
+      sqrt_inv_M[[j]] = eig$vectors %*% diag(eig$values ^ (-1/2)) %*% t(eig$vectors)
+      A[[j]]          = blocks[[j]] %*% sqrt_inv_M[[j]]
+    }
+  }
+  for (j in which.dual) {
+    if (tau[j] == 0) stop_rgcca(paste0(
+      "There are more variables than observations in block ", names(blocks)[[j]],
+      " but tau[", j, "] equals zero. Covariance matrix is singular and must be",
+      " regularized."
+    ))
+    K <- pm(blocks[[j]], t(blocks[[j]]), na.rm = na.rm)
+    if (tau[j] == 1) {
+      M[[j]]          = numeric(0)
+      sqrt_inv_M[[j]] = numeric(0)
+      A[[j]]          = K
+    } else {
+      M[[j]] = tau[j] * diag(nb_row) + (1 - tau[j]) * K / (nb_row - 1 + bias)
+      eig    = eigen(K %*% M[[j]])
+      if (any(eig$values < 1e-10)) stop_rgcca(paste0(
+        "Regularization matrix for block ", names(blocks)[[j]], " is singular,",
+        " please select another value for tau[", j, "]."
+      ))
+      sqrt_inv_M[[j]] = eig$vectors %*% diag(eig$values ^ (-1/2)) %*% t(eig$vectors)
+      A[[j]]          = K %*% sqrt_inv_M[[j]]
+    }
+  }
+
   # One component per block
   if(N == 0){
-    result <- rgccak(blocks, connection, tau = tau, scheme = scheme, init = init,
+    result <- rgccak(A, connection, tau = tau, scheme = scheme, init = init,
                      bias = bias, tol = tol, verbose = verbose,
                      na.rm=na.rm)
 
@@ -232,18 +282,33 @@ rgccad=function (blocks, connection = 1 - diag(length(blocks)), tau = rep(1, len
     AVE_outer <- sum(pjs * unlist(AVE_X))/sum(pjs)
     AVE <- list(AVE_X = AVE_X, AVE_outer = AVE_outer,
                 AVE_inner = result$AVE_inner)
-    a <- lapply(result$a, cbind)
 
-     for (b in 1:J) {
+    for (j in which.primal) {
+      if (tau[j] == 1) a[[j]] = result$a[[j]]
+      else             a[[j]] = sqrt_inv_M[[j]] %*% result$a[[j]]
+    }
+
+    for (j in which.dual) {
+      if (penalty[j] == 1) {
+        a[[j]] = pm(t(blocks[[j]]), result$a[[j]], na.rm = na.rm)
+      }
+      else {
+        a[[j]] = pm(t(blocks[[j]]), sqrt_in_M[[j]] %*% result$a[[j]], na.rm = na.rm)
+      }
+    }
+
+    for (j in 1:J) {
+      if (a[[j]][1] < 0) {
+        a[[j]] = -a[[j]]
+        Y[, j] = pm(blocks[[j]], a[[j]], na.rm = na.rm)
+      }
+    }
+
+    for (b in 1:J) {
       rownames(a[[b]]) = colnames(blocks[[b]])
       rownames(Y[[b]]) = rownames(blocks[[b]])
       colnames(Y[[b]]) = "comp1"
     }
-
-    tau=result$tau
-
-    if(is.vector(tau))
-      names(tau) = names(blocks)
 
     out <- list(Y = Y, a = a, astar = a, connection = connection,  scheme = scheme,
                 ncomp = ncomp, crit = result$crit,
@@ -260,17 +325,6 @@ rgccad=function (blocks, connection = 1 - diag(length(blocks)), tau = rep(1, len
   AVE_inner <- rep(NA, max(ncomp))
   R <- blocks
   P <- a <- astar <- NULL
-  if (is.numeric(tau))
-  {
-      tau_mat = tau
-      if(is.vector(tau_mat)) names(tau_mat) = names(blocks)
-      if(is.matrix(tau_mat))colnames(tau_mat) = names(blocks)
-  }
-  else
-  {
-      tau_mat = matrix(NA, max(ncomp), J)
-      colnames(tau_mat) = names(blocks)
-  }
 
   for (b in 1:J) P[[b]] <- a[[b]] <- astar[[b]] <- matrix(NA, pjs[[b]], N + 1)
   for (b in 1:J) Y[[b]] <- matrix(NA, nb_ind, N + 1)
@@ -278,15 +332,10 @@ rgccad=function (blocks, connection = 1 - diag(length(blocks)), tau = rep(1, len
      if (verbose)
       cat(paste0("Computation of the RGCCA block components #", n, " is under
                  progress...\n"))
-    if (is.vector(tau))
-      rgcca.result <- rgccak(R, connection, tau = tau, scheme = scheme,init = init,
-                             bias = bias, tol = tol, verbose = verbose,
-                             na.rm = na.rm)
-    else rgcca.result <- rgccak(R, connection, tau = tau[n, ], scheme = scheme,
-                                init = init, bias = bias, tol = tol,
-                                verbose = verbose, na.rm = na.rm)
 
-    if (!is.numeric(tau)) tau_mat[n, ] = rgcca.result$tau
+    rgcca.result <- rgccak(R, connection, tau = tau, scheme = scheme,init = init,
+                           bias = bias, tol = tol, verbose = verbose,
+                           na.rm = na.rm)
 
     AVE_inner[n] <- rgcca.result$AVE_inner
     crit[[n]] <- rgcca.result$crit
@@ -312,16 +361,11 @@ rgccad=function (blocks, connection = 1 - diag(length(blocks)), tau = rep(1, len
   if (verbose)
     cat(paste0("Computation of the RGCCA block components #",
                N + 1, " is under progress ... \n"))
-  if (is.vector(tau))
-    rgcca.result <- rgccak(R, connection, tau = tau, scheme = scheme, init = init,
-                           bias = bias, tol = tol, verbose = verbose)
-  else rgcca.result <- rgccak(R, connection, tau = tau[N+1, ], scheme = scheme,
-                              init = init, bias = bias, tol = tol,
-                              verbose = verbose)
+
+  rgcca.result <- rgccak(R, connection, tau = tau, scheme = scheme, init = init,
+                         bias = bias, tol = tol, verbose = verbose)
 
   crit[[N+1]] <- rgcca.result$crit
-  if (!is.numeric(tau))
-    tau_mat[N+1, ] = rgcca.result$tau
   AVE_inner[max(ncomp)] <- rgcca.result$AVE_inner
   for (b in 1:J) {
     Y[[b]][, N+1] <- rgcca.result$Y[, b]
@@ -352,7 +396,7 @@ rgccad=function (blocks, connection = 1 - diag(length(blocks)), tau = rep(1, len
 
   out <- list(Y = shave.matlist(Y, ncomp), a = shave.matlist(a,ncomp),
               astar = shave.matlist(astar, ncomp),
-              tau = tau_mat,
+              tau = tau,
               crit = crit, primal_dual = primal_dual,
               AVE = AVE)
 

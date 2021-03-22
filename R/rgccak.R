@@ -50,6 +50,8 @@
 #' @importFrom graphics plot
 #' @importFrom Deriv Deriv
 
+# TODO: Remove computation with M
+
 rgccak=function (A, C, tau = "optimal", scheme = "centroid", verbose = FALSE,
                  init = "svd", bias = TRUE, tol = 1e-08, na.rm = TRUE)
 {
@@ -68,9 +70,6 @@ rgccak=function (A, C, tau = "optimal", scheme = "centroid", verbose = FALSE,
     n <- NROW(A[[1]]) # number of individuals
     pjs <- sapply(A, NCOL) # number of variables per block
     Y <- matrix(0, n, J)
-    if (!is.numeric(tau))
-        tau = sapply(A, tau.estimate, na.rm = na.rm) # From Schafer and Strimmer, 2005
-
     A <- lapply(A, as.matrix)
     a <- alpha <- M <- Minv <- K <- list()
 
