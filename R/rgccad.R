@@ -182,6 +182,13 @@ rgccad = function(blocks, connection = 1 - diag(length(blocks)),
                   na.rm = TRUE, quiet = FALSE)
 {
 
+  extract_eigen <- function(X, zero_threshold = 1e-10) {
+    eig = eigen(X)
+    eig$values  = eig$values[eig$values > zero_threshold]
+    eig$vectors = eig$vectors[, seq(length(eig$values))]
+    return(eig)
+  }
+
   shave.matlist <- function(mat_list, nb_cols)
     mapply(function(m, nbcomp) m[, 1:nbcomp, drop = FALSE],
            mat_list, nb_cols,
@@ -218,7 +225,7 @@ rgccad = function(blocks, connection = 1 - diag(length(blocks)),
   N <- max(ndefl)
   nb_ind <- NROW(blocks[[1]])
   J <- length(blocks)
-  M <- sqrt_inv_M <- eigen_base <- A <- Mk <- list()
+  M <- sqrt_inv_M <- A <- Mk <- eig_val <- eig_vec <- list()
 
   # Whether primal or dual
   primal_dual = rep("primal", J)
@@ -229,19 +236,25 @@ rgccad = function(blocks, connection = 1 - diag(length(blocks)),
 
   for (j in which.primal) {
     if (tau[j] == 1) {
-      A[[j]]          = blocks[[j]]
+      A[[j]] = blocks[[j]]
     }
     else {
-      M[[j]] = tau[j] * diag(pjs[j]) + (1 - tau[j]) * pm(
-        t(blocks[[j]]), blocks[[j]], na.rm = na.rm
-      ) / (nb_row - 1 + bias)
-      eig    = eigen(M[[j]])
-      if (any(eig$values < 1e-10)) stop_rgcca(paste0(
-        "Regularization matrix for block ", names(blocks)[[j]], " is singular,",
-        " please select another value for tau[", j, "]."
-      ))
-      eigen_base[[j]] = eig$vectors
-      sqrt_inv_M[[j]] = eig$vectors %*% diag(eig$values ^ (-1/2)) %*% t(eig$vectors)
+      # Compute regularization matrix
+      K      = pm(t(blocks[[j]]), blocks[[j]], na.rm = na.rm)
+      M[[j]] = tau[j] * diag(pjs[j]) + (1 - tau[j]) * K / (nb_row - 1 + bias)
+
+      # Get eigenvectors, XtX and M share the same ones
+      eig = extract_eigen(K)
+      eig_val[[j]] = eig$values
+      eig_vec[[j]] = eig$vectors
+
+      # Get M eigenvalues from XtX eigenvalues
+      values = tau[j] + (1 - tau[j]) * eig_val[[j]] / (nb_row - 1 + bias)
+      sqrt_inv_M[[j]] = eig_vec[[j]] %*% diag(
+        values ^ (-1/2), nrow = length(eig_val[[j]])
+      ) %*% t(eig_vec[[j]])
+
+      # Make change of variable
       A[[j]]          = blocks[[j]] %*% sqrt_inv_M[[j]]
     }
   }
@@ -251,21 +264,24 @@ rgccad = function(blocks, connection = 1 - diag(length(blocks)),
       " but tau[", j, "] equals zero. Covariance matrix is singular and must be",
       " regularized."
     ))
-    K               <- pm(blocks[[j]], t(blocks[[j]]), na.rm = na.rm)
-    eig             <- eigen(K)
-    eigen_base[[j]] <- eig$vectors
-    # As we center the columns, the last eigenvalue of K is null
-    if (any(eig$values[-length(eig$values)] < 1e-10)) stop_rgcca(paste0(
-      "Block ", names(blocks)[[j]], " is not of full rank, ",
-      "please remove colinear lines before going on with the analysis."
-    ))
+
+    # Get eigenvectors, XXt, M and XXtM share the same ones
+    K            = pm(blocks[[j]], t(blocks[[j]]), na.rm = na.rm)
+    eig          = extract_eigen(K)
+    eig_val[[j]] = eig$values
+    eig_vec[[j]] = eig$vectors
+
+    # Get eigenvalues
+    values = eig_val[[j]]
     if (tau[j] != 1) {
       M[[j]] = tau[j] * diag(nb_row) + (1 - tau[j]) * K / (nb_row - 1 + bias)
-      eig$values      = (tau[j] + (1 - tau[j]) * eig$values / (nb_row - 1 + bias)) * eig$values
+      values = (tau[j] + (1 - tau[j]) * values / (nb_row - 1 + bias)) * values
     }
-    eig$vectors     = eig$vectors[, -length(eig$values)]
-    eig$values      = eig$values[-length(eig$values)]
-    sqrt_inv_M[[j]] = eig$vectors %*% diag(eig$values ^ (-1/2)) %*% t(eig$vectors)
+    sqrt_inv_M[[j]] = eig_vec[[j]] %*% diag(
+      values ^ (-1/2), nrow = length(values)
+    ) %*% t(eig_vec[[j]])
+
+    # Make change of variable
     A[[j]]          = K %*% sqrt_inv_M[[j]]
   }
 
@@ -324,12 +340,9 @@ rgccad = function(blocks, connection = 1 - diag(length(blocks)),
 
   for (j in which.primal) {
     if (tau[j] == 1) {
-      eigen_base[[j]] = eigen(pm(t(blocks[[j]]), blocks[[j]], na.rm = na.rm))$vectors
-    }
-  }
-  for (j in which.dual) {
-    if (tau[j] == 1) {
-      eigen_base[[j]] = eigen(pm(blocks[[j]], t(blocks[[j]]), na.rm = na.rm))$vectors
+      eig = extract_eigen(pm(t(blocks[[j]]), blocks[[j]], na.rm = na.rm))
+      eig_val[[j]] = eig$values
+      eig_vec[[j]] = eig$vectors
     }
   }
 
@@ -364,12 +377,9 @@ rgccad = function(blocks, connection = 1 - diag(length(blocks)),
 
     # Change of variable
     for (j in which.primal) {
-      val = diag(t(eigen_base[[j]]) %*% pm(t(blocks[[j]]), blocks[[j]], na.rm = na.rm) %*% eigen_base[[j]])
-      if (any(val < 1e-10)) stop_rgcca(paste0(
-        "Block ", names(blocks)[[j]], " is not of full rank, ",
-        "please remove colinear columns before extracting multiple components."
-      ))
-      inv_XtX = eigen_base[[j]] %*% diag(1 / val, nrow = length(val)) %*% t(eigen_base[[j]])
+      inv_XtX = eig_vec[[j]] %*% diag(
+        1 / eig_val[[j]], nrow = length(eig_val[[j]])
+      ) %*% t(eig_vec[[j]])
       XtR     = pm(t(blocks[[j]]), R[[j]], na.rm = na.rm)
       if (tau[j] == 1) {
         Mk[[j]] = t(XtR) %*% inv_XtX %*% inv_XtX %*% XtR
@@ -377,21 +387,17 @@ rgccad = function(blocks, connection = 1 - diag(length(blocks)),
         Mk[[j]] = t(XtR) %*% inv_XtX %*% M[[j]] %*% inv_XtX %*% XtR
       }
 
-      rank            = pjs[j] - min(n, ncomp[j] - 1)
+      # Rank gets lower every time we deflate
+      rank            = length(eig_val[[j]]) - min(n, ncomp[j] - 1)
       SVD             = svd(Mk[[j]], nu = rank)
       sqrt_inv_M[[j]] = SVD$u %*% diag(SVD$d[seq(rank)] ^ (-1/2), nrow = rank)
       A[[j]]          = R[[j]] %*% sqrt_inv_M[[j]]
     }
 
     for (j in which.dual) {
-      val = diag(t(eigen_base[[j]]) %*% pm(blocks[[j]], t(blocks[[j]]), na.rm = na.rm) %*% eigen_base[[j]])
-      # As we center the columns, the last eigenvalue of XXt is null
-      val = val[-length(val)]
-      if (any(val < 1e-10)) stop_rgcca(paste0(
-        "Block ", names(blocks)[[j]], " is not of full rank, ",
-        "please remove colinear lines before extracting multiple components."
-      ))
-      inv_XXt = eigen_base[[j]][, 1:length(val)] %*% diag(1 / val) %*% t(eigen_base[[j]][, 1:length(val)])
+      inv_XXt = eig_vec[[j]] %*% diag(
+        1 / eig_val[[j]], nrow = length(eig_val[[j]])
+      ) %*% t(eig_vec[[j]])
       RRt     = tcrossprod(R[[j]])
       if (tau[j] == 1) {
         Mk[[j]] = RRt %*% inv_XXt %*% RRt
@@ -399,7 +405,8 @@ rgccad = function(blocks, connection = 1 - diag(length(blocks)),
         Mk[[j]] = RRt %*% M[[j]] %*% inv_XXt %*% RRt
       }
 
-      rank            = nb_row - min(n, ncomp[j] - 1)
+      # Rank gets lower every time we deflate
+      rank            = length(eig_val[[j]]) - min(n, ncomp[j] - 1)
       SVD             = svd(Mk[[j]], nu = rank)
       sqrt_inv_M[[j]] = SVD$u %*% diag(SVD$d[seq(rank)] ^ (-1/2), nrow = rank)
       A[[j]]          = RRt %*% sqrt_inv_M[[j]]
