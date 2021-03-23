@@ -57,7 +57,7 @@ proj_l1_l2 <- function(argu, a=1){
     }
     #Choose next a_k
     if (N%%2 == 0){
-      p_reduced = p[-which.min(p)]
+      p_reduced = p[-which.max(p)] # remove max instead of min -> psi not defined for max(abs(argu))
       a_k     = ccaPP::fastMedian(p_reduced)
     }else{
       a_k     = ccaPP::fastMedian(p)
