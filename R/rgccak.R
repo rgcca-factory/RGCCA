@@ -50,8 +50,6 @@
 #' @importFrom graphics plot
 #' @importFrom Deriv Deriv
 
-# TODO: Remove computation with M
-
 rgccak=function (A, C, tau = "optimal", scheme = "centroid", verbose = FALSE,
                  init = "svd", bias = TRUE, tol = 1e-08, na.rm = TRUE)
 {
@@ -71,73 +69,26 @@ rgccak=function (A, C, tau = "optimal", scheme = "centroid", verbose = FALSE,
     pjs <- sapply(A, NCOL) # number of variables per block
     Y <- matrix(0, n, J)
     A <- lapply(A, as.matrix)
-    a <- alpha <- M <- Minv <- K <- list()
-
-    # Test for primal or dual for each block
-    which.primal <- which((n >= pjs) == 1)
-    which.dual <- which((n < pjs) == 1)
+    a <- list()
 
     # Initialisation by SVD
     if (init == "svd") {
-        for (j in which.primal) {
-            a[[j]] <- initsvd(A[[j]])
-        }
-        for (j in which.dual) {
-            alpha[[j]] <- initsvd(A[[j]])
-            K[[j]] <- pm( A[[j]] , t(A[[j]]), na.rm = na.rm)
+        for (j in 1:J) {
+            a[[j]] <- initsvd(A[[j]], dual = FALSE)
         }
     }
     else if (init == "random") {
-        for (j in which.primal) {
+        for (j in 1:J) {
             a[[j]] <- rnorm(pjs[j]) # random initialisation
-        }
-        for (j in which.dual) {
-            alpha[[j]] <- rnorm(n)
-            K[[j]] <- pm(A[[j]] , t(A[[j]]), na.rm = na.rm)
+            a[[j]] <- a[[j]] / norm(a[[j]], type = "2")
         }
     }
     else {
         stop_rgcca("init should be either random or by SVD.")
     }
 
-    N = ifelse(bias, n, n - 1)
-
-    for (j in which.primal)
-    {
-        ifelse(tau[j] == 1,
-        {
-            a[[j]] <- drop(1/sqrt(t(a[[j]]) %*% a[[j]])) * a[[j]]
-            if(a[[j]][1]<0){a[[j]]=-a[[j]]}
-            Y[, j] <- pm(A[[j]] , a[[j]], na.rm = na.rm)
-        },
-        {
-
-            M[[j]] <- ginv(tau[j] * diag(pjs[j]) + ((1 - tau[j]))*1/N*
-                             (pm(t(A[[j]]), A[[j]], na.rm = na.rm)))
-            a[[j]] <- drop(1/sqrt(t(a[[j]])%*% M[[j]]%*%a[[j]]))*
-                             (M[[j]]%*%a[[j]])
-            if(a[[j]][1]<0){a[[j]] = -a[[j]]}
-            Y[, j] <-pm(A[[j]], a[[j]], na.rm = na.rm)
-        })
-    }
-    for (j in which.dual)
-    {
-        ifelse(tau[j] == 1, {
-            alpha[[j]] = drop(1/sqrt(t(alpha[[j]])%*%K[[j]]%*%
-                                       alpha[[j]]))*alpha[[j]]
-            a[[j]] = pm(t(A[[j]]), alpha[[j]], na.rm = na.rm)
-            if(a[[j]][1]<0){a[[j]] = -a[[j]]}
-            Y[, j] = pm(A[[j]], a[[j]], na.rm = na.rm)
-        }, {
-
-            M[[j]] <- tau[j] * diag(n) + ((1 - tau[j])) *1/N* K[[j]]
-            Minv[[j]] = ginv(M[[j]])
-            alpha[[j]] = drop(1/sqrt(t(alpha[[j]])%*%
-                              M[[j]]%*% K[[j]]%*% alpha[[j]])) * alpha[[j]]
-            a[[j]] = pm( t(A[[j]]), alpha[[j]],na.rm=na.rm)
-            if(a[[j]][1]<0){a[[j]] = -a[[j]]}
-            Y[, j] = pm(A[[j]], a[[j]], na.rm=na.rm)
-        })
+    for (j in 1:J) {
+      Y[, j] <- pm(A[[j]] , a[[j]], na.rm = na.rm)
     }
 
     crit_old <- sum(C * g(cov2(Y, bias = bias)))
@@ -150,56 +101,19 @@ rgccak=function (A, C, tau = "optimal", scheme = "centroid", verbose = FALSE,
 
     repeat
     {
-       for (j in which.primal)
+       for (j in 1:J)
       {
          dgx = dg(cov2(Y[, j], Y, bias = bias))
-         if(tau[j] == 1)
-          {
-           Z[, j] = rowSums(matrix(rep(C[j, ], n), n, J, byrow = TRUE)*
-                              matrix(rep(dgx, n), n, J, byrow = TRUE)*Y)
-           Az     = pm(t(A[[j]]), Z[, j], na.rm = TRUE)
-		       a[[j]] = drop(1/sqrt(crossprod(Az))) * Az
-		     if(a[[j]][1]<0){a[[j]]=-a[[j]]}
+         Z[, j] = rowSums(matrix(rep(C[j, ], n), n, J, byrow = TRUE) *
+                            matrix(rep(dgx, n), n, J, byrow = TRUE) * Y)
+         Az     = pm(t(A[[j]]), Z[, j], na.rm = TRUE)
+	       a[[j]] = drop(1/sqrt(crossprod(Az))) * Az
 
 		     Y[, j] = pm(A[[j]], a[[j]], na.rm = na.rm)
-
-           }else
-			      {
-             Z[, j] = rowSums(matrix(rep(C[j, ], n), n,  J, byrow = TRUE)*
-                                matrix(rep(dgx, n), n,  J, byrow = TRUE)*Y)
-             Az     = pm(t(A[[j]]), Z[, j], na.rm = TRUE)
-             a[[j]] = drop(1/sqrt(t(Az) %*% M[[j]] %*% Az)) * (M[[j]] %*% Az)
-             if(a[[j]][1]<0){a[[j]] = -a[[j]]}
-             Y[, j] = pm(A[[j]], a[[j]], na.rm = na.rm)
-          }
        }
 
-      for (j in which.dual)
-      {
-          dgx = dg(cov2(Y[, j], Y, bias = bias))
-          ifelse(tau[j] == 1,
-            {
-              Z[, j] = rowSums(matrix(rep(C[j, ], n), n, J, byrow = TRUE)*
-                                 matrix(rep(dgx, n), n, J, byrow = TRUE)*Y)
-              alpha[[j]] = drop(1/sqrt(t(Z[, j])%*%K[[j]]%*%Z[, j]))*Z[, j]
-              a[[j]] = pm(t(A[[j]]), alpha[[j]], na.rm = na.rm)
-              if(a[[j]][1]<0){a[[j]] = -a[[j]]}
-              Y[, j] = pm(A[[j]], a[[j]], na.rm = na.rm)
-           },
-           {
-            Z[, j] = rowSums(matrix(rep(C[j, ], n), n, J, byrow = TRUE)*
-                               matrix(rep(dgx, n), n, J, byrow = TRUE)*Y)
-          	alpha[[j]] = drop(1/sqrt(t(Z[, j])%*%K[[j]]%*%Minv[[j]]%*%Z[, j]))*
-          	             (Minv[[j]]%*%Z[,  j])
-
-		   a[[j]] = pm(t(A[[j]]), alpha[[j]], na.rm = na.rm)
-		   if(a[[j]][1]<0){a[[j]] = -a[[j]]}
-            Y[, j] = pm( A[[j]], a[[j]], na.rm = na.rm)
-          })
-      }
-
       crit[iter] <- sum(C * g(cov2(Y, bias = bias)))
-      if (verbose & (iter%%1) == 0)
+      if (verbose & (iter %% 1) == 0)
       {
           cat(" Iter: ", formatC(iter, width = 3, format = "d"),
               " Fit:", formatC(crit[iter], digits = 8,
