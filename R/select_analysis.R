@@ -45,6 +45,7 @@ select_analysis <- function(
     blocks,
     connection = 1 - diag(length(blocks)),
     penalty = rep(1, length(blocks)),
+    group_penalty = group_penalty,
     ncomp = rep(1, length(blocks)),
     scheme = "centroid",
     superblock = TRUE,
@@ -294,9 +295,12 @@ select_analysis <- function(
         } else
             grammar <- "was the one"
     }
+    
+    ##TODO : add some checks for group_penalty 
 
     return(list(scheme = scheme,
                 penalty = penalty,
+                group_penalty = group_penalty,
                 ncomp = ncomp,
                 connection = connection,
                 superblock = superblock)
