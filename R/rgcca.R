@@ -188,6 +188,7 @@ rgcca <- function(blocks, method = "rgcca",
                   ncomp = rep(1, length(blocks)),
                   tau = rep(1, length(blocks)),
                   sparsity = rep(1, length(blocks)),
+                  group_sparsity = NULL,
                   init = "svd", bias = TRUE, tol = 1e-08,
                   response = NULL, superblock = FALSE,
                   NA_method = "nipals", verbose = FALSE, quiet = TRUE){
@@ -236,6 +237,9 @@ rgcca <- function(blocks, method = "rgcca",
 
     if (!missing(sparsity) && missing(method))
         method <- "sgcca"
+    
+    if (!missing(sparsity) && !missing(group_sparsity) && missing(method))
+      method <- "group_sgcca"
 
     if (!missing(connection) && missing(superblock))
         superblock <- FALSE
@@ -254,10 +258,19 @@ rgcca <- function(blocks, method = "rgcca",
         par <- "sparsity"
         penalty <- sparsity
 
-    }else{
-        if (!missing(sparsity) & missing(tau))
+    }else if (tolower(method) %in% c("group_sgcca")) {
+      if (!missing(tau) && (missing(sparsity) || missing(group_sparsity)) )
+        stop_rgcca(paste0("group sparsity and sparsity parameters required for ",
+                          tolower(method), " (instead of tau)."))
+      gcca          <- group_sgcca
+      par           <- "group_sparsity"
+      penalty       <- sparsity
+      group_penalty <- group_sparsity
+      
+    }else {
+        if (!(missing(sparsity) & missing(group_sparsity)) & missing(tau))
            stop_rgcca(paste0("tau parameters required for ",
-                             tolower(method), " (instead of sparsity)."))
+                             tolower(method), " (instead of sparsity or group_sparsity)."))
         gcca <- rgccad
         par <- "tau"
         penalty <- tau
