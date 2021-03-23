@@ -45,7 +45,7 @@ select_analysis <- function(
     blocks,
     connection = 1 - diag(length(blocks)),
     penalty = rep(1, length(blocks)),
-    group_penalty = group_penalty,
+    group_penalty = NULL,
     ncomp = rep(1, length(blocks)),
     scheme = "centroid",
     superblock = TRUE,
