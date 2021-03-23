@@ -370,6 +370,12 @@ rgccad = function(blocks, connection = 1 - diag(length(blocks)),
     for (b in which.dual) {
       a[[b]][, n]    <- t(R[[b]]) %*% sqrt_inv_M[[b]] %*% rgcca.result$a[[b]]
     }
+    for (b in 1:J) {
+      if (a[[b]][1, n] < 0) {
+        a[[b]][, n] = -a[[b]][, n]
+        Y[[b]][, n] = pm(R[[b]], a[[b]][, n], na.rm = na.rm)
+      }
+    }
 
     # Deflation
     defla.result <- defl.select(rgcca.result$Y, R, ndefl , n, nbloc = J, na.rm = na.rm)
@@ -440,6 +446,10 @@ rgccad = function(blocks, connection = 1 - diag(length(blocks)),
   for (b in which.dual)
     a[[b]][, N + 1] <- t(R[[b]]) %*% sqrt_inv_M[[b]] %*% rgcca.result$a[[b]]
   for (b in 1:J) {
+    if (a[[b]][1, N + 1] < 0) {
+      a[[b]][, N + 1] = -a[[b]][, N + 1]
+      Y[[b]][, N + 1] = pm(R[[b]], a[[b]][, N + 1], na.rm = na.rm)
+    }
     astar[[b]][, N + 1] <- a[[b]][, N + 1] - astar[[b]][, (1:N), drop = F] %*%
       drop(t(a[[b]][, (N + 1)]) %*% P[[b]][, 1:N, drop = F])
     rownames(a[[b]]) = rownames(astar[[b]]) = colnames(blocks[[b]])
