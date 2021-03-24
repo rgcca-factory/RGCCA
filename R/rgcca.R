@@ -265,8 +265,6 @@ rgcca <- function(blocks, method = "rgcca",
       gcca          <- group_sgcca
       par           <- "group_sparsity"
       penalty       <- sparsity
-      group_penalty <- group_sparsity
-      
     }else {
         if (!(missing(sparsity) & missing(group_sparsity)) & missing(tau))
            stop_rgcca(paste0("tau parameters required for ",
@@ -300,6 +298,7 @@ rgcca <- function(blocks, method = "rgcca",
         blocks = blocks,
         connection = connection,
         penalty = penalty,
+        group_sparsity = group_sparsity,
         ncomp = ncomp,
         scheme = scheme,
         superblock = superblock,
@@ -340,9 +339,10 @@ rgcca <- function(blocks, method = "rgcca",
         opt$connection <- opt$connection[names(blocks), names(blocks)]
     }
 
-
-    opt$penalty <- check_tau(opt$penalty, opt$blocks, method)
-    opt$ncomp <- check_ncomp(opt$ncomp, opt$blocks)
+    if (par == "tau"){
+      opt$penalty <- check_tau(opt$penalty, opt$blocks, method)
+    }
+    opt$ncomp   <- check_ncomp(opt$ncomp, opt$blocks)
 
     warn_on <- FALSE
 
@@ -370,8 +370,13 @@ rgcca <- function(blocks, method = "rgcca",
             quiet=quiet
         )
     )
-
-    func[[par]] <- opt$penalty
+    
+    if (par == "group_sparsity"){
+      func[["sparsity"]] <- opt$penalty
+      func[[par]]        <- opt$group_sparsity
+    }else{
+      func[[par]] <- opt$penalty
+    }
     func_out <- eval(as.call(func))
 
     for (i in c("a", "astar", "Y")) {
