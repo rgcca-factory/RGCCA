@@ -52,13 +52,13 @@ group_sgccak <-  function(A, C, sparsity = rep(1, length(A)), group_sparsity, sc
   converg <- crit <- numeric()
   Y <- Z <- matrix(0,NROW(A[[1]]),J)
   for (q in 1:J){
-    Y[,q] <- apply(A[[q]],1,miscrossprod,a[[q]])
     if (is.null(group_sparsity[[q]])){
       a[[q]] <- soft.threshold(a[[q]], const[q])
     }else{
       a[[q]] <- group_soft.threshold(a[[q]], const[q], group_sparsity = group_sparsity[[q]])
     }
     a[[q]] <- as.vector(a[[q]])/norm2(a[[q]])
+    Y[,q]  <- apply(A[[q]],1,miscrossprod,a[[q]])
   }
   a_old <- a
   
