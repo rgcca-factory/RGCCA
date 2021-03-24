@@ -44,7 +44,8 @@ group_sgccak <-  function(A, C, sparsity = rep(1, length(A)), group_sparsity, sc
   if (any( sparsity < 1/sqrt(pjs) | sparsity > 1 ))
     stop_rgcca("L1 constraints must vary between 1/sqrt(p_j) and 1.")
   
-  const <- sparsity*sqrt(pjs)
+  nb_groups = sapply(group_sparsity, length) 
+  const     = sparsity*(sqrt(pjs)*as.numeric(nb_groups == 0) + sqrt(nb_groups))
   #	Apply the constraints of the general otpimization problem
   #	and compute the outer components
   iter <- 1

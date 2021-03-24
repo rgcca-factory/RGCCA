@@ -152,14 +152,21 @@ group_sgcca <- function (blocks, connection = 1-diag(length(blocks)), sparsity =
                                      components smaller than the number of
                                      variables!")
   
+  active_group_sparsity = !sapply(group_sparsity, is.null)
+  nb_groups             = sapply(group_sparsity[active_group_sparsity], length) 
   if (is.vector(sparsity)){
-    if (any(sparsity < 1/sqrt(pjs) | sparsity > 1 ))
+    if (any(sparsity[!active_group_sparsity] < 1/sqrt(pjs[!active_group_sparsity]) | sparsity[!active_group_sparsity] > 1 ))
       stop_rgcca("L1 constraints (sparsity) must vary between 1/sqrt(p_j) and 1.")
+    if (any(sparsity[active_group_sparsity] <  1/sqrt(nb_groups) | sparsity[active_group_sparsity] > 1 ))
+      stop_rgcca("LG constraints (sparsity) must vary between 1/sqrt(numberOfGroups) and 1.")
   }
   
   if (is.matrix(sparsity)){
-    if (any(apply(sparsity, 1, function(x) any(x < 1/sqrt(pjs)))))
+    if (any(apply(as.matrix(sparsity[, !active_group_sparsity]), 1, function(x) any(x < 1/sqrt(pjs[!active_group_sparsity])))))
       stop_rgcca("L1 constraints (sparsity) must vary between 1/sqrt(p_j)
+                 and 1.")
+    if (any(apply(as.matrix(sparsity[, active_group_sparsity]), 1, function(x) any(x < 1/sqrt(nb_groups)))))
+      stop_rgcca("LG constraints (sparsity) must vary between 1/sqrt(numberOfGroups) 
                  and 1.")
   }
   
