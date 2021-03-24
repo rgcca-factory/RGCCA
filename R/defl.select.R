@@ -15,7 +15,7 @@ defl.select=function (yy, rr, nncomp, nn, nbloc, na.rm = TRUE)
   pdefl <- list()
   for (q in 1:nbloc) {
     if (nn <= nncomp[q]) {
-      defltmp <- deflation(as.matrix(rr[[q]]), as.matrix(yy[, q]), na.rm = na.rm)
+      defltmp <- deflation(as.matrix(rr[[q]]), as.matrix(yy[[q]][, nn]), na.rm = na.rm)
       resdefl[[q]] <- defltmp$R
       pdefl[[q]] = as.matrix(defltmp$p)
     }

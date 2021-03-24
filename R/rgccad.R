@@ -378,8 +378,9 @@ rgccad = function(blocks, connection = 1 - diag(length(blocks)),
     }
 
     # Deflation
-    defla.result <- defl.select(rgcca.result$Y, R, ndefl , n, nbloc = J, na.rm = na.rm)
+    defla.result <- defl.select(Y, R, ndefl , n, nbloc = J, na.rm = na.rm)
     R <- defla.result$resdefl
+    for (b in 1:J) P[[b]][, n] <- defla.result$pdefl[[b]]
 
     # Change of variable
     for (j in which.primal) {
@@ -418,7 +419,6 @@ rgccad = function(blocks, connection = 1 - diag(length(blocks)),
       A[[j]]          = RRt %*% sqrt_inv_M[[j]]
     }
 
-    for (b in 1:J) P[[b]][, n] <- defla.result$pdefl[[b]]
     if (n == 1)
     {
       for (b in 1:J) astar[[b]][, n] <- a[[b]][, n]
