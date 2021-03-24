@@ -691,8 +691,45 @@ and correspond exactly to the weight vectors reported in [@Tenenhaus2011, see Fi
 The block weight vectors can also be visualized using the generic `plot()` function.
 
 ```{r}
-plot(rgcca_B_factorial, block = 1)
+plot(rgcca_B_factorial, type = "weight", block = 1)
 ```
+The block-loading vectors defined as the correlation between the variables of one block and its own block components can be also vizualized.
+
+```{r}
+plot(rgcca_B_factorial, type = "loadings", block = 1)
+```
+
+**Assessment of the reliability of parameter estimates.** It is possible to use
+a bootstrap resampling method to assess the reliability of parameter estimates
+(block-weight/loading vectors) obtained using RGCCA. $B$ bootstrap samples of 
+the same size as the original data is repeatedly sampled with replacement from 
+the original data. RGCCA is then applied to each bootstrap sample to obtain the 
+RGCCA estimates. We calculate the standard deviation of the estimates across the 
+bootstrap samples, from which we derived, bootstrap confidence intervals, 
+t-ratio (defined as the ratio of the parameter estimate to its bootstrap-based 
+standard deviation) and p-value (the p-value is computed by assuming that the 
+ratio of the parameter estimate to its standard deviation follows the 
+standardized normal distribution) to indicate how reliably parameters were 
+estimated. Since several p-values are constructed simultaneously, FDR correction 
+can be applied for controlling the False Discovery Rate. This function is 
+available using the `bootstrap()` function of the RGCCA package.
+
+```{r}
+boot.out = bootstrap(rgcca_B_factorial, 
+                     n_boot = 20, n_cores = 1)
+```
+The bootstrap results are displayed using the `plot()`function.
+
+```{r}
+plot(boot.out, type = "loadings", block = 1)
+```
+
+and detailed using the `print()` function.
+
+```{r}
+print(boot.out)
+```
+
 
 The block components are also available as output of the `rgcca()` function. The first components of each block are given by:
 
@@ -739,7 +776,7 @@ The AVEs outer can also be visualized using the generic `plot()` function.
 plot(rgcca_B_factorial, type = "ave")
 ```
 
-As a component-based method, RGCCA provides the users with graphical representations, including factor plot, correlation circle. This graphical displays allows visualizing the sources of variability within blocks, the relationships between variables within and between blocks and the amount of correlation between blocks. The graphical display of the countries obtained by crossing $\ma X_1 \ma a_1$ = Agricultural Inequality and $\ma X_2 \ma a_2$ = Industrial Development and marked with their political regime in 1960 is shown in below.
+At last, as a component-based method, RGCCA provides the users with graphical representations, including factor plot, correlation circle. This graphical displays allows visualizing the sources of variability within blocks, the relationships between variables within and between blocks and the amount of correlation between blocks. The graphical display of the countries obtained by crossing $\ma X_1 \ma a_1$ = Agricultural Inequality and $\ma X_2 \ma a_2$ = Industrial Development and marked with their political regime in 1960 is shown in below.
 
 ```{r, eval=TRUE, fig.align='center', fig.cap = 'graphical display of the countries obtained by crossing y1 and y2 and labeled according to their political regime',fig.height = 6, fig.width = 8}
 
@@ -752,6 +789,7 @@ p <- plot(rgcca_B_factorial, type = "sample",
 ```
 
 Countries aggregate together when they share similarities. It may be noted that the lower left quadrant concentrates on dictatorships. It is difficult for a country to escape dictatorship when its industrial development is below-average and its agricultural inequality is above average. It is worth pointing out that some unstable democracies located in this quadrant (or close to it) became dictatorships for a period of time after 1960: Greece (1967-1974), Brazil (1964-1985), Chili (1973-1990), and Argentina (1966-1973).
+
 
 ## Choice of the shrinkage parameter $\tau$
 
@@ -777,6 +815,19 @@ rgcca_optimal_factorial$call$tau
 This automatic estimation of the shrinkage parameters allows one to come closer
 to the correlation criterion, even in the case of high multicollinearity or when
 the number of individuals is smaller than the number of variables.
+
+As previoulsy, this model can be bootstraped using the bootstrap function.
+
+```{r}
+boot_opt = bootstrap(rgcca_optimal_factorial, 
+                     n_boot = 20, n_cores = 1)
+```
+
+The bootstrap confidence are given below for the first block:
+
+```{r}
+plot(boot_opt, type = "loadings", block = 1)
+```
 
 **Choice of the shrinkage parameter using a permutation based strategy.**
 A permutation based strategy very similar to the one proposed in [@Witten2009a]
@@ -814,7 +865,7 @@ Then choose the set of tuning parameters that gives the smallest value in step
 This procedure is available though the `rgcca_permutation()` function.
 
 ```{r}
-set.seed(1234567)
+set.seed(123)
 fit.perm = rgcca_permutation(A, connection = C,
                              par_type = "tau", n_cores = 1,
                              n_perms = 5)
@@ -822,11 +873,7 @@ fit.perm = rgcca_permutation(A, connection = C,
 
 By default, the `rgcca_permutation()` function takes, for each block, 10 sets of tuning parameters between min values (0 for RGCCA and $1/sqrt(ncol)$ for SGCCA) and 1.
 
-```{r}
-fit.perm$penalties
-```
-
-Results are summarized using the generic `print()` function
+Results of the permutation procedure are summarized using the generic `print()` function
 
 ```{r}
 print(fit.perm)
@@ -838,7 +885,20 @@ and displayed using the `plot()` function.
 plot(fit.perm)
 ```
 
-It is possible to define explicitly the combination of regularization paramaters and in that case a matrix of dimension $K \times J$ is required. Each row of this matrix corresponds to one set of tuning parameters.
+The optimal model can be bootstrapped as follows:
+
+```{r}
+fit.opt_perm = rgcca(fit.perm)
+boot_perm = bootstrap(fit.opt_perm, n_boot = 20, n_cores = 1)
+```
+
+and displayed as usual: 
+
+```{r}
+plot(boot_perm, type = "weight")
+```
+
+Also, it is possible to define explicitly the combination of regularization paramaters and in that case a matrix of dimension $K \times J$ is required. Each row of this matrix corresponds to one set of tuning parameters.
 
 ```{r}
 fit.perm = rgcca_permutation(A, connection = C,
@@ -858,7 +918,7 @@ fit.perm = rgcca_permutation(A, connection = C,
                              n_cores = 1, n_perms = 5)
 ```
 
-If `par_type = sparsity`, the `rgcca_permutation()` function switches automatically to `sgcca()`. Th the same rationals are used for the other arguments of the function.
+If `par_type = sparsity`, the `rgcca_permutation()` function switches automatically to `sgcca()`. The same rational is used for the other arguments of the function.
 
 ```{r}
 set.seed(1234567)
@@ -867,54 +927,16 @@ fit.perm = rgcca_permutation(A, connection = C,
                              method = "sgcca",
                              n_cores = 1, n_perms = 5)
 ```
-It is possible to defined explicitly the values of `tau`/`sparsity`. In that
-case a matrix of dimension k$\times$J (with $k$ the number of combinations to be
-tested and $J$ the number of blocks) is required. Alternatively a vector (of J
-length) or a numeric value giving sets of penalties (tau for RGCCA, sparsity for
-SGCCA) to be tested, one row by combination. By default, it takes 10 sets
-between min values (0 for RGCCA and $1/sqrt(ncol)$ for SGCCA) and 1.
 
-**Assessment of the reliability of parameter estimates.** It is possible to use
-a bootstrap resampling method to assess the reliability of parameter estimates
-obtained using RGCCA. $B$ bootstrap samples of the same size as the original
-data is repeatedly sampled with replacement from the original data. RGCCA is
-then applied to each bootstrap sample to obtain the RGCCA estimates. We
-calculate the standard deviation of the estimates across the bootstrap samples,
-from which we derived, bootstrap confidence intervals, t-ratio (defined as the
-ratio of the parameter estimate to its bootstrap-based standard deviation) and
-p-value (the p-value is computed by assuming that the ratio of the parameter
-estimate to its standard deviation follows the standardized normal distribution)
-to indicate how reliably parameters were estimated. Since several p-values are
-constructed simultaneously, FDR correction can be applied for controlling the
-False Discovery Rate. This function is available using the `bootstrap()`
-function of the RGCCA package.
 
-```{r}
-set.seed(1234567)
-fit.perm1 = rgcca_permutation(A, connection = C,
-                             par_type = "tau", n_cores = 1,
-                             n_perms = 5)
-
-fit.perm2 = rgcca(blocks = A, connection =C,
-                          tau = rep(1, 3),
-                          scheme = "factorial",
-                          scale = TRUE,
-                          scale_block = FALSE,
-                          verbose = TRUE)
-
-```
 
 
 ```{r}
-fit.rgcca = rgcca(fit.perm1)
+fit.rgcca = rgcca(fit.perm)
 boot.rgcca = bootstrap(fit.rgcca, n_boot = 20, n_cores = 1)
 ```
 
 ```{r}
-fit = rgcca(blocks=A, connection=C,
-            tau = c(1, 1, 0), scheme = "factorial",
-            scale = TRUE, verbose = FALSE, ncomp = 1)
-
 fit = rgcca(blocks=A, connection=C, method = "sgcca",
             sparsity = .75, scheme = "factorial",
             scale = TRUE, verbose = FALSE, ncomp = 1)
@@ -925,7 +947,7 @@ boot.out = bootstrap(fit, n_boot = 50, n_cores = 1)
 The bootstrap results are displayed using the `plot()`function.
 
 ```{r}
-plot(boot.out, block = 1)
+plot(boot.out, type = "loadings", block = 1)
 ```
 
 and detailed using the `print()` function.

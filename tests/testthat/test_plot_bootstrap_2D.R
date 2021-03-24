@@ -1,37 +1,37 @@
-data("Russett")
-blocks <- list(
-    agriculture = Russett[, seq(3)],
-    industry = Russett[, 4:5],
-    politic = Russett[, 6:11] )
-rgcca_out <- rgcca(blocks, sparsity = 0.75, method = "sgcca")
-boot <- bootstrap(rgcca_out, 15, n_cores = 1)
-selected.var <- get_bootstrap(boot, display_order=TRUE)
-plot(boot,type="2D")
-plot_bootstrap_2D(boot, )
-test_that("plot_boot_default", {
-    expect_is(plot_bootstrap_2D(boot), "ggplot")
-})
-
-rgcca_out <- rgcca(blocks)
-boot <- bootstrap(rgcca_out, 2, n_cores = 1)
-selected.var <- get_bootstrap(boot, display_order=TRUE)
-
-test_that("plot_boot_with_args", {
-    expect_is(plot_bootstrap_2D(boot), "ggplot")
-    expect_is(plot_bootstrap_2D(df_b = selected.var), "ggplot")
-    expect_is(plot_bootstrap_1D(boot), "ggplot")
-    expect_is(plot_bootstrap_2D(df_b = selected.var), "ggplot")
-})
-
-rgcca_out <- rgcca(
-    blocks,ncomp = c(2,2,2),
-    scheme = function(x) x^4,
-    method = "sgcca",
-    sparsity = c(.6, .75, .5)
-)
-
-boot <- bootstrap(rgcca_out, 2, n_cores = 1)
-test_that("plot_boot_object", {
-    expect_is(plot(boot, block = 3), "ggplot")
-    expect_is(plot(boot, type = "2D"), "ggplot")
-})
+# data("Russett")
+# blocks <- list(
+#     agriculture = Russett[, seq(3)],
+#     industry = Russett[, 4:5],
+#     politic = Russett[, 6:11] )
+# rgcca_out <- rgcca(blocks, sparsity = 0.75, method = "sgcca")
+# boot <- bootstrap(rgcca_out, 15, n_cores = 1)
+# selected.var <- get_bootstrap(boot, display_order=TRUE)
+# #plot(boot, type="2D")
+# #plot_bootstrap_2D(boot, )
+# test_that("plot_boot_default", {
+#     expect_is(plot_bootstrap_2D(boot), "ggplot")
+# })
+# 
+# rgcca_out <- rgcca(blocks)
+# boot <- bootstrap(rgcca_out, 2, n_cores = 1)
+# selected.var <- get_bootstrap(boot, display_order=TRUE)
+# 
+# test_that("plot_boot_with_args", {
+#     expect_is(plot_bootstrap_2D(boot), "ggplot")
+#     expect_is(plot_bootstrap_2D(df_b = selected.var), "ggplot")
+#     expect_is(plot_bootstrap_1D(boot), "ggplot")
+#     expect_is(plot_bootstrap_2D(df_b = selected.var), "ggplot")
+# })
+# 
+# rgcca_out <- rgcca(
+#     blocks,ncomp = c(2,2,2),
+#     scheme = function(x) x^4,
+#     method = "sgcca",
+#     sparsity = c(.6, .75, .5)
+# )
+# 
+# boot <- bootstrap(rgcca_out, 2, n_cores = 1)
+# test_that("plot_boot_object", {
+#     expect_is(plot(boot, block = 3), "ggplot")
+#     expect_is(plot(boot, type = "2D"), "ggplot")
+# })

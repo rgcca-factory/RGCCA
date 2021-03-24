@@ -32,22 +32,17 @@ blocks = list(agriculture = Russett[, seq(3)],
               politic = Russett[, 6:11])
 
 fit.rgcca = rgcca(blocks, ncomp= 1)
-boot.out = bootstrap(fit.rgcca, 
-                     n_boot = 20, n_cores = 2)
+boot.out = bootstrap(fit.rgcca, n_boot = 20, n_cores = 2)
 
-plot(boot.out, block = 3, comp = 1)
+plot(boot.out, type = "weight", block = 3, comp = 1)
 
 print(boot.out)
-get_bootstrap(boot.out)
-
-boot.out = bootstrap(fit.rgcca, 
-                     n_boot = 20, n_cores = 2)
+ get_bootstrap(boot.out)
 
 fit.rgcca = rgcca(blocks, method = "mcoa")
-boot.out = bootstrap(fit.rgcca,
-                     n_boot = 50, n_cores = 2)
+boot.out = bootstrap(fit.rgcca, n_boot = 50, n_cores = 2)
 
-plot(boot.out, block = 1)
+plot(boot.out, type = "weight", block = 4)
 
 \dontrun{
 # Stability of the selected variables for SGCCA
@@ -69,15 +64,11 @@ fit.rgcca = rgcca(A, connection = C, tau = c(1, 1, 0),
                   ncomp = c(2, 2, 1), scheme = "factorial",
                   verbose = TRUE)
 boot.out = bootstrap(fit.rgcca, n_boot = 50, n_cores = 2)
-plot(boot.out, block = 1, ncomp = 1, n_marks = 30)
-plot(boot.out, block = 1, ncomp = 2, n_marks = 30)
+plot(boot.out, block = 1, type = "weight", ncomp = 1, n_marks = 30)
+plot(boot.out, block = 1, type = "weight", ncomp = 2, n_marks = 30)
 get_bootstrap(boot.out)
 
-# sgcca algorithm
-fit.sgcca = rgcca(blocks = A, connection = C, sparsity = c(.071,.2, 1), 
-                  ncomp = 1, scheme = "centroid", verbose = TRUE)
-
-boot.out = bootstrap(fit.sgcca, n_boot = 50, n_cores = 15)
+# stability analysis prior bootstrap for sgcca
 }
 }
 \seealso{

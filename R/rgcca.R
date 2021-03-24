@@ -40,7 +40,7 @@
 #' function can handle missing values using a NIPALS type algorithm (non-linear
 #' iterative partial least squares algorithm) described in (Tenenhaus et al,
 #' 2005). Guidelines describing how to use RGCCA in practice are provided in
-#' (Garali et al., 2017).
+#' (Garali et al., 2018).
 #' @inheritParams rgccad
 #' @inheritParams sgcca
 #' @inheritParams select_analysis
@@ -55,7 +55,7 @@
 #' \item{\code{"nipals"}}{corresponds to perform RGCCA algorithm on available
 #' data (NIPALS-type algorithm)}}
 #' @return A rgcca fitted object
-#' @return \item{Y}{List of \eqn{J} elements. Each element of the list \eqn{Y}
+#' @return \item{Y} \item{Y}{List of \eqn{J} elements. Each element of the list \eqn{Y}
 #' is a matrix that contains the RGCCA block components for the corresponding
 #' block.}
 #' @return \item{a}{List of \eqn{J} elements. Each element of the list \eqn{a}
@@ -131,7 +131,7 @@
 #' plot(fit.rgcca, type = "network")
 #' plot(fit.rgcca, type = "weight", block = 1)
 #' plot(fit.rgcca, type = "loadings")
-#'
+#' \dontrun{
 #' ##################################
 #' # Example 3: Sparse GCCA (SGCCA) #
 #' ##################################
@@ -166,6 +166,7 @@
 #'
 #' b = bootstrap(fit.rgcca, n_cores = 1, n_boot = 10)
 #' plot(b, n_cores = 1)
+#' }
 #'
 #' @export
 #' @import ggplot2
