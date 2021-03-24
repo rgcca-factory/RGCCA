@@ -244,7 +244,7 @@ sgcca <- function (blocks, connection = 1-diag(length(blocks)), sparsity = rep(1
 
         }
      }
-	    defla.result <- defl.select(Y, R, ndefl, n, nbloc = J, na.rm = na.rm)
+	    defla.result <- defl.select(Y, R, ndefl, n, na.rm = na.rm)
       R <- defla.result$resdefl
       for (b in 1:J) {
         P[[b]][,n] <- defla.result$pdefl[[b]]
