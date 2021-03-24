@@ -22,7 +22,7 @@ proj_l1_l2 <- function(argu, a=1){
   # If there are multiple maximum value and a = sqrt(number of max), 
   # solution is straightforward
   if (a == sqrt(nMAX)){
-    if (length(bMAX) == length(p)){
+    if (nMAX == length(p)){
       # Case where there is as many maximum as the number of elements of the 
       # vector to project "argu". Indeed in the case, 
       # ||argu||_1/||argu||_2 = sqrt(number of max)
