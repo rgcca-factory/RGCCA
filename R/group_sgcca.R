@@ -130,7 +130,7 @@
 #'                      bias = TRUE,
 #'                      init = init, verbose = TRUE)
 #' }
-#'@export sgcca
+#'@export group_sgcca
 
 group_sgcca <- function (blocks, connection = 1-diag(length(blocks)), sparsity = rep(1, length(blocks)), group_sparsity,
                    ncomp = rep(1, length(blocks)), scheme = "centroid", scale = TRUE,
