@@ -264,13 +264,12 @@ group_sgcca <- function (blocks, connection = 1-diag(length(blocks)), sparsity =
     
     
     for (b in 1:J) Y[[b]][,n] <- sgcca.result$Y[ ,b]
-    for (q in which(n <ndefl)) if(sum(sgcca.result$a[[q]]!=0) <= 1)
+    for (q in which(n <= ndefl)) if(sum(sgcca.result$a[[q]]!=0) <= 1)
     {
       if(!quiet)
       {
-        warning(sprintf("Deflation failed because only one variable was
-                            selected for block ",q,"! \n"))
-        
+        warning("Deflation failed because only one variable was
+                selected for block ",q,"!")
       }
     }
     defla.result <- defl.select(sgcca.result$Y, R, ndefl, n, nbloc = J)
@@ -303,6 +302,14 @@ group_sgcca <- function (blocks, connection = 1-diag(length(blocks)), sparsity =
   AVE_inner[max(ncomp)] <- sgcca.result$AVE_inner
   
   crit[[N+1]] <- sgcca.result$crit
+  for (q in which(N == ndefl)) if(sum(sgcca.result$a[[q]]!=0) <= 1)
+  {
+    if(!quiet)
+    {
+      warning("Deflation failed because only one variable was
+                selected for block ",q,"!")
+    }
+  }
   for (b in 1:J) {
     Y[[b]][,N+1]     <- sgcca.result$Y[, b]
     a[[b]][,N+1]     <- sgcca.result$a[[b]]

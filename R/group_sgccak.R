@@ -141,15 +141,6 @@ group_sgccak <-  function(A, C, sparsity = rep(1, length(A)), group_sparsity, sc
                               point after", iter-1, "iterations \n")
   if (verbose) plot(crit, xlab = "iteration", ylab = "criteria")
   
-  for (q in 1:J) if(sum(a[[q]]!=0) <= 1)
-  {
-    if(!quiet)
-    {
-      warning(sprintf("Deflation failed because only one variable was
-                            selected for block #",q))
-    }
-  }
-  
   AVE_inner  <- sum(C*cor(Y)^2/2)/(sum(C)/2) # AVE inner model
   
   result <- list(Y = Y, a = a, crit = crit[which(crit != 0)],
