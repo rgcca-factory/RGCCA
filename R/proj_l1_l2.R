@@ -1,6 +1,6 @@
 proj_l1_l2 <- function(argu, a=1){
   #Check if constraints are already satisfied
-  norm2_argu = norm2(argu)
+  norm2_argu = norm(argu, type = "2")
   if ( norm2_argu < 1e-32 ) stop("Norm2 of argu is too small :", norm2_argu)
   if ( sum(abs(argu/norm2_argu)) <= a ) return(list(k=NaN, lambda = 0))
   # The desired a_k cannot be null as the constraints are not already satisfied 
@@ -22,7 +22,7 @@ proj_l1_l2 <- function(argu, a=1){
   # If there are multiple maximum value and a = sqrt(number of max), 
   # solution is straightforward
   if (a == sqrt(nMAX)){
-    if (length(bMAX) == length(p)){
+    if (nMAX == length(p)){
       # Case where there is as many maximum as the number of elements of the 
       # vector to project "argu". Indeed in the case, 
       # ||argu||_1/||argu||_2 = sqrt(number of max)
@@ -57,7 +57,7 @@ proj_l1_l2 <- function(argu, a=1){
     }
     #Choose next a_k
     if (N%%2 == 0){
-      p_reduced = p[-which.min(p)]
+      p_reduced = p[-which.max(p)] # remove max instead of min -> psi not defined for max(abs(argu))
       a_k     = ccaPP::fastMedian(p_reduced)
     }else{
       a_k     = ccaPP::fastMedian(p)
@@ -73,7 +73,10 @@ proj_l1_l2 <- function(argu, a=1){
     #Compute value of the constraint
     aksq <- a_k^2
     s_low_1 = sum(p_low) + nb_a_k*a_k
-    s_low_2 = norm2(p_low)^2 + nb_a_k*aksq
+    # NOTE : could create  : ssq   <- function(u) sum(u**2) -> not necessary 
+    # could use norm(u, type = "2")^2 -> not working when u = as.numeric(0) (mean p_low is empty)
+    # When p_low is empty, sum(p_low**2) = 0, which is what is wanted.
+    s_low_2 = sum(p_low**2) + nb_a_k*aksq
     psi_a_k = (s_1 + s_low_1 - k*a_k)/sqrt(s_2 + s_low_2 - 2*a_k*(s_1 + s_low_1) + k*aksq)
     #Choose partition depending on the constraint
     if (psi_a_k > a){
