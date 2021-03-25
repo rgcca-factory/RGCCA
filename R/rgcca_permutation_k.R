@@ -53,52 +53,76 @@ rgcca_permutation_k <- function(
         par_type <- "sparsity"
     } else
         par_type <- "tau"
-
-    if (perm) {
-        blocks_to_use <- blocks
-        blocks_to_use <- lapply(
-            seq(length(blocks)),
-            function(k) {
-                blocks_to_use_k <-
-                    as.matrix(blocks[[k]][sample(seq(NROW(blocks[[k]]))), ])
-                rownames(blocks_to_use_k) = rownames(blocks[[k]])
-                return(blocks_to_use_k)
+    
+    res      = NA
+    nb_error = 0
+    while(!is.list(res) && (nb_error < 5)){
+        if (perm) {
+            blocks_to_use <- blocks
+            blocks_to_use <- lapply(
+                seq(length(blocks)),
+                function(k) {
+                    blocks_to_use_k <-
+                        as.matrix(blocks[[k]][sample(seq(NROW(blocks[[k]]))), ])
+                    rownames(blocks_to_use_k) = rownames(blocks[[k]])
+                    return(blocks_to_use_k)
+                })
+            names(blocks_to_use) <- names(blocks)
+        } else
+            blocks_to_use <- blocks
+        
+        func <- quote(
+            rgcca(
+                blocks = blocks_to_use,
+                method = method,
+                scale = scale,
+                scale_block = scale_block,
+                connection = connection,
+                scheme = scheme,
+                init = init,
+                bias = bias,
+                tol = tol,
+                response = response,
+                superblock = superblock,
+                NA_method = NA_method,
+                quiet = quiet
+            ))
+        
+        func$ncomp <- ncomp
+        func$tau <- tau
+        func$sparsity <- sparsity
+        func[[par_type]] <- par_value
+        
+        res <- tryCatch(eval(as.call(func)), error = function(error_message){
+            if (grepl("L1/L2 projection issue", toString(error_message), fixed = TRUE)){
+                if((perm || (init == "random")) && (nb_error == 4)){#Random cases
+                    warning(error_message)
+                }else if (!perm && !(init == "random")){#Deterministic cases
+                    warning(error_message)
+                }
+                return(NA)
+            }else{#Unknown message cases
+                stop(error_message)
+            }
         })
-        names(blocks_to_use) <- names(blocks)
-    } else
-        blocks_to_use <- blocks
-
-    func <- quote(
-        rgcca(
-            blocks = blocks_to_use,
-            method = method,
-            scale = scale,
-            scale_block = scale_block,
-            connection = connection,
-            scheme = scheme,
-            init = init,
-            bias = bias,
-            tol = tol,
-            response = response,
-            superblock = superblock,
-            NA_method = NA_method,
-            quiet = quiet
-        ))
-
-    func$ncomp <- ncomp
-    func$tau <- tau
-    func$sparsity <- sparsity
-    func[[par_type]] <- par_value
-
-    res <- eval(as.call(func))
-
-    if (max(ncomp) > 1) {
-        criterion <- sapply(res$crit, function(x) {
-            x[length(x)]
-        })
-        crit_permut <- sum(criterion)
-    } else {
-        crit_permut <- res$crit[length(res$crit)]
+        if (!is.list(res) && (perm || (init == "random")) ){#Random cases
+            nb_error = nb_error + 1
+        }else if (!is.list(res) && (!perm && !(init == "random")) ){#Deterministic cases
+            break
+        }
+    }
+    
+    if (is.list(res)){
+        if (max(ncomp) > 1) {
+            criterion <- sapply(res$crit, function(x) {
+                x[length(x)]
+            })
+            crit_permut <- sum(criterion)
+        } else {
+            crit_permut <- res$crit[length(res$crit)]
+        }
+    }else if (is.na(res)){
+        crit_permut = NA
     }
 
     return(crit_permut)

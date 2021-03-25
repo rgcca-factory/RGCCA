@@ -428,17 +428,43 @@ rgcca_permutation <- function(blocks, par_type, par_value = NULL,
                             )
 
     }
-
+    
+    if (sum(is.na(W)) != 0){
+      troublesome_par           = which(is.na(W) & !perm_parallel)
+      if (length(troublesome_par) != 0){
+        troublesome_par           = par_value_parallel[troublesome_par, ]
+        df_troublesome_par        = data.frame(t(troublesome_par))
+        W_to_tm                   = which(data.frame(t(par_value_parallel)) %in% df_troublesome_par)
+        par_to_rm                 = which(data.frame(t(par[[2]])) %in% df_troublesome_par)
+        W                         = W[-W_to_tm]
+        par[[2]]                  = par[[2]][-par_to_rm, ]
+        perm_parallel             = perm_parallel[-W_to_tm]
+        colnames(troublesome_par) = paste0(par[[1]], "_", colnames(par[[2]]))
+        message                   = apply(troublesome_par, 1, function(x) paste(names(x), x, sep = " = ", collapse = ", "))
+        message                   = paste(message, collapse = "\n")
+        message                   = paste0("\n", message)
+        warning("Due to projection issues (cf. previous warnings) on the non 
+        permuted data set, the following set of parameters were 
+        removed from the permutation procedure : ", message)
+      }
+    }
 
     crits = W[!perm_parallel]
     permcrit = matrix(W[perm_parallel], nrow = nrow(par[[2]]),
                       ncol = n_perms , byrow = TRUE)
+    sapply(1:dim(permcrit)[1], function(x){
+      if (sum(is.na(permcrit[x, ])) !=0 ){
+        warning("Due to projection issues (cf. previous warnings) on some of the
+        permuted data sets, even after multiple resamplings, the set of parameters number ", x, " was 
+        evaluated out of ", sum(!is.na(permcrit[x, ])), " permutations instead of ", n_perms, ".")
+      }
+    })
     means = apply(permcrit, 1, mean, na.rm = T)
     sds = apply(permcrit, 1, sd, na.rm = T)
     par <- par[[2]]
-    pvals <- sapply(seq(NROW(par)), function(k) mean(permcrit[k, ] >= crits[k]))
+    pvals <- sapply(seq(NROW(par)), function(k) mean(permcrit[k, ] >= crits[k], na.rm = T))
     zs <- sapply(seq(NROW(par)), function(k){
-      z <- (crits[k] - mean(permcrit[k, ])) / (sd(permcrit[k, ]))
+      z <- (crits[k] - mean(permcrit[k, ], na.rm = T)) / (sd(permcrit[k, ], na.rm = T))
       if (is.na(z) || z == "Inf")
         z <- 0
       return(z)

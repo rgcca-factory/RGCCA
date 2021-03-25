@@ -15,9 +15,13 @@ proj_l1_l2 <- function(argu, a=1){
   # If there are multiple maximum value, the sparse parameter 
   # "a" must be >= sqrt(number of max)
   if (a < sqrt(nMAX)){
-    warning("Impossible to project, minimum ratio is : sqrt(nMAX) = ", sqrt(nMAX), 
-            ". Hence the sparse parameter is changed for sqrt(nMAX).")
-    a = sqrt(nMAX)
+    stop("L1/L2 projection issue. The sparse parameter associated to the block 
+         composed of ", length(argu), " variables is too small. It's current
+         value is ", a/sqrt(length(argu)), " and has to be changed to ", 
+         sqrt(nMAX/length(argu)), " at the lowest.")
+    # stop("Impossible to project, minimum ratio is : sqrt(nMAX) = ", sqrt(nMAX), 
+    #         ". Hence the sparse parameter is changed for sqrt(nMAX).")
+    #a = sqrt(nMAX)
   } 
   # If there are multiple maximum value and a = sqrt(number of max), 
   # solution is straightforward
