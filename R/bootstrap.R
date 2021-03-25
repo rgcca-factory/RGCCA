@@ -68,7 +68,7 @@
 bootstrap <- function(rgcca_res,
                       n_boot = 100,
                       n_cores = parallel::detectCores() - 1){
-
+    
     ndefl_max = max(rgcca_res$call$ncomp)
     list_res = list()
     for(i in 1:ndefl_max){
@@ -76,20 +76,20 @@ bootstrap <- function(rgcca_res,
         for(block in names(rgcca_res$call$blocks))
         {
             list_res[[i]][[block]] =
-              matrix(NA, dim(rgcca_res$call$blocks[[block]])[2], n_boot)
+                matrix(NA, dim(rgcca_res$call$blocks[[block]])[2], n_boot)
             rownames( list_res[[i]][[block]]) =
-              colnames(rgcca_res$call$blocks[[block]])
+                colnames(rgcca_res$call$blocks[[block]])
         }
     }
-
+    
     stopifnot(is(rgcca_res, "rgcca"))
     check_integer("n_boot", n_boot)
     check_integer("n_cores", n_cores, min = 0)
-
+    
     if (n_cores == 0) n_cores <- 1
-
-        blocks <- NULL
-
+    
+    blocks <- NULL
+    
     # varlist <- c(ls(getNamespace("RGCCA")))
     # W <- RGCCA:::parallelize(
     #     varlist,
@@ -100,47 +100,58 @@ bootstrap <- function(rgcca_res,
     #     applyFunc = "parLapply",
     #     parallelization = parallelization
     #     )
-
+    
     if( Sys.info()["sysname"] == "Windows"){
-    if(n_cores>1){
-        assign("rgcca_res", rgcca_res, envir = .GlobalEnv)
-        cl = parallel::makeCluster(n_cores)
-        parallel::clusterExport(cl, "rgcca_res")
-        W = pbapply::pblapply(seq(n_boot),
-                function(b) bootstrap_k(rgcca_res, "weight"),
-                cl = cl)
-        parallel::stopCluster(cl)
-        rm("rgcca_res", envir = .GlobalEnv)
-    }
-    else
-        W = pbapply::pblapply(seq(n_boot),
-                              function(b) bootstrap_k(rgcca_res, "weight"))
+        if(n_cores>1){
+            assign("rgcca_res", rgcca_res, envir = .GlobalEnv)
+            cl = parallel::makeCluster(n_cores)
+            parallel::clusterExport(cl, "rgcca_res")
+            W = pbapply::pblapply(seq(n_boot),
+                                  function(b) bootstrap_k(rgcca_res, "weight"),
+                                  cl = cl)
+            parallel::stopCluster(cl)
+            rm("rgcca_res", envir = .GlobalEnv)
+        }
+        else
+            W = pbapply::pblapply(seq(n_boot),
+                                  function(b) bootstrap_k(rgcca_res, "weight"))
     }else{
         W = pbapply::pblapply(seq(n_boot),
                               function(b) bootstrap_k(rgcca_res, "weight"),
                               cl = n_cores)
     }
-
-    for(k in seq(n_boot)){
-     for(i in 1:ndefl_max){
-       for(j in 1:length(rgcca_res$call$blocks)){
-         block = names(rgcca_res$call$blocks)[j]
-         if(!is.null(names(W[[k]]))){
-           if(i <= NCOL(W[[k]][[block]])){
-             list_res[[i]][[block]][, k] = W[[k]][[block]][, i]
-           }
-         }
-         else{
-           list_res[[i]][[block]][, k] =
-               rep(NA, length(list_res[[i]][[block]][, k]))
-         }
-       }
-     }
+    
+    if (sum(unlist(lapply(W, is.na))) != 0){
+        boot_to_rm    = which(!unlist(lapply(W, is.list)))
+        W[boot_to_rm] = NULL
+        list_res      = lapply(list_res, function(x) lapply(x, function(y) y[, -boot_to_rm]))
+        warning("Even after multiple resampling, some bootstrap samples could
+                 not overcome the projection issue mentioned in the previous 
+                 warnings. Hence, the number of bootstrap samples is decreased 
+                 from ", n_boot, " to ", length(W), ".")
+        n_boot        = length(W)
     }
 
+    for(k in seq(n_boot)){
+        for(i in 1:ndefl_max){
+            for(j in 1:length(rgcca_res$call$blocks)){
+                block = names(rgcca_res$call$blocks)[j]
+                if(!is.null(names(W[[k]]))){
+                    if(i <= NCOL(W[[k]][[block]])){
+                        list_res[[i]][[block]][, k] = W[[k]][[block]][, i]
+                    }
+                }
+                else{
+                    list_res[[i]][[block]][, k] =
+                        rep(NA, length(list_res[[i]][[block]][, k]))
+                }
+            }
+        }
+    }
+    
     return(structure(list(bootstrap = list_res,
                           rgcca = rgcca_res),
-                          class = "bootstrap"))
-
-
+                     class = "bootstrap"))
+    
+    
 }
