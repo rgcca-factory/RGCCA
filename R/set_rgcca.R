@@ -6,6 +6,7 @@ set_rgcca <- function(
     connection = NULL,
     tau = 1,
     sparsity = 1,
+    group_sparsity = 1,
     ncomp = NULL,
     scheme = NULL,
     init = NULL,
@@ -44,8 +45,10 @@ set_rgcca <- function(
             connection <- NULL
         }
 
-        sparsity <- rgcca_res$call$sparsity
-        tau <- rgcca_res$call$tau
+        sparsity       <- rgcca_res$call$sparsity
+        group_sparsity <- rgcca_res$call$group_sparsity
+        tau            <- rgcca_res$call$tau
+        
 
 
         if (!is.null(rgcca_res$call$response))
@@ -65,6 +68,14 @@ set_rgcca <- function(
         par <- "sparsity"
         penalty <- sparsity
 
+    } else if (tolower(method) %in% c("group_sgcca")) {
+      
+      if (!is.null(blocks) && !missing(tau) && (missing(sparsity) || missing(group_sparsity)))
+        stop_rgcca(paste0("sparsity and group_sparsity parameters required for ", tolower(method), "instead of tau."))
+      
+      par     <- c("sparsity", "group_sparsity")
+      penalty <- list(sparsity, group_sparsity)
+      
     } else {
 
         if (!is.null(blocks) && !missing(sparsity) && missing(tau))
@@ -131,8 +142,12 @@ set_rgcca <- function(
             NA_method = NA_method,
             tol = tol
         ))
-
-    func[[par]] <- penalty
+    
+    if (length(par) > 1){
+      func[par] <- penalty
+    }else{
+      func[[par]] <- penalty
+    }
 
     res <- eval(as.call(func))
   #  attributes(res)$bigA_scaled <- blocks
