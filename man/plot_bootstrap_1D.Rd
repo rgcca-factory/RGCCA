@@ -7,15 +7,15 @@
 plot_bootstrap_1D(
   b = NULL,
   df_b = NULL,
+  type = "weight",
   x = "estimate",
   y = "occurrences",
   n_mark = 50,
   title = NULL,
   colors = NULL,
   comp = 1,
-  bars = "sd",
   display_bar = TRUE,
-  i_block = length(b$bootstrap[[1]]),
+  i_block = length(b$bootstrap[[1]][[1]]),
   ...
 )
 }
@@ -23,6 +23,10 @@ plot_bootstrap_1D(
 \item{b}{A fitted bootstrap object \code{\link[RGCCA]{bootstrap}}}
 
 \item{df_b}{A get_bootstrap object \code{\link[RGCCA]{get_bootstrap}}}
+
+\item{type}{Character string indicating the bootstrapped object to print: 
+block-weight vectors ("weight", default) or block-loading vectors 
+("loadings").}
 
 \item{x}{indicator used in the plot (see details).}
 
@@ -37,10 +41,6 @@ circle}
 \item{colors}{Either a vector of integers (each integer corresponding to a color) or of characters corresponding to names of colors (as "blue",see colors()) or RGB code ("#FFFFFF").}
 
 \item{comp}{An integer indicating the block-weight/loading vector to plot.}
-
-\item{bars}{Character string giving the variability among "sd" (error bar of
-standard deviation) , "stderr" (error bar of standard deviation divided by
-sqrt(n)) or "quantile" (error bar of 0.05/0.95-quantiles)}
 
 \item{display_bar}{A logical value. If TRUE colobar for significant
 variables is displayed.}
@@ -61,7 +61,7 @@ variables are those above the three bars, respectively, with an alpha = 0.05
 \details{
 \itemize{
 \item 'estimate' of the block weight vectors
-\item 'bootstrap_ratio' of the block weight vectors
+\item 'bootstrap_ratio' of the block weight/loading vectors
 \item 'sign' for significant 95% bootstrap interval
 \item 'occurrences' number of for non-zero occurrences
 \item 'mean'  mean of the bootstraped block weight vectors
@@ -74,8 +74,9 @@ blocks = list(agriculture = Russett[, seq(3)],
               politic = Russett[, 6:11])
 fit.sgcca = rgcca(blocks, sparsity = 0.75, method = "sgcca")
 
-boot = bootstrap(fit.sgcca, 30, n_cores = 1)
-plot_bootstrap_1D(boot)
+boot = bootstrap(fit.sgcca,
+                 n_boot = 30, n_cores = 1)
+plot_bootstrap_1D(boot, type = "loadings")
 rgcca_out = rgcca(blocks)
 boot = bootstrap(rgcca_out, 2, n_cores = 1)
 selected.var = get_bootstrap(boot, display_order=TRUE)

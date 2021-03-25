@@ -9,6 +9,9 @@
 #' @inheritParams plot2D
 #' @inheritParams get_bootstrap
 #' @param b Boostrap object \code{\link[RGCCA]{bootstrap}}
+#' @param type Character string indicating the bootstrapped object to print: 
+#' block-weight vectors ("weight", default) or block-loading vectors 
+#' ("loadings"). 
 #' @param x Character string for the index to plot in x-axis (see details).
 #' @param y Character string for the index to plot in y-axis (see details).
 #' @param df_b A get_bootstrap object \code{\link[RGCCA]{get_bootstrap}}
@@ -39,6 +42,7 @@
 plot_bootstrap_2D <- function(
     b = NULL,
     df_b = NULL,
+    type = "weight",
     x = "bootstrap_ratio",
     y = "occurrences",
     title = paste("Variable selection \nby",
@@ -58,8 +62,8 @@ plot_bootstrap_2D <- function(
         stop_rgcca("Please select a bootstrap object.")
     else if (!is.null(b)) {
         if (is.null(i_block))
-            i_block <- length(b$bootstrap[[1]])
-        df_b <- get_bootstrap(b, comp, i_block,
+            i_block <- length(b$bootstrap[[1]][[1]])
+        df_b <- get_bootstrap(b, type = type, comp, i_block,
                               display_order = TRUE)
     } else if (!is.null(df_b)) {
         if (is.null(i_block))

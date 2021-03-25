@@ -7,6 +7,7 @@
 plot_bootstrap_2D(
   b = NULL,
   df_b = NULL,
+  type = "weight",
   x = "bootstrap_ratio",
   y = "occurrences",
   title = paste("Variable selection \\nby", attributes(b)$n_boot, "bootstraps"),
@@ -24,6 +25,10 @@ plot_bootstrap_2D(
 \item{b}{Boostrap object \code{\link[RGCCA]{bootstrap}}}
 
 \item{df_b}{A get_bootstrap object \code{\link[RGCCA]{get_bootstrap}}}
+
+\item{type}{Character string indicating the bootstrapped object to print: 
+block-weight vectors ("weight", default) or block-loading vectors 
+("loadings").}
 
 \item{x}{Character string for the index to plot in x-axis (see details).}
 

@@ -220,7 +220,7 @@ plot(fit.rgcca, type = "ave")
 plot(fit.rgcca, type = "network")
 plot(fit.rgcca, type = "weight", block = 1)
 plot(fit.rgcca, type = "loadings")
-
+\dontrun{
 ##################################
 # Example 3: Sparse GCCA (SGCCA) #
 ##################################
@@ -255,6 +255,7 @@ plot(fit.rgcca, type = "both")
 
 b = bootstrap(fit.rgcca, n_cores = 1, n_boot = 10)
 plot(b, n_cores = 1)
+}
 
 }
 \references{

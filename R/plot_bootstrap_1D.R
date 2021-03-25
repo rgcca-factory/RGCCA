@@ -12,6 +12,9 @@
 #' @inheritParams plot_var_2D
 #' @param df_b A get_bootstrap object \code{\link[RGCCA]{get_bootstrap}}
 #' @param b A fitted bootstrap object \code{\link[RGCCA]{bootstrap}}
+#' @param type Character string indicating the bootstrapped object to print: 
+#' block-weight vectors ("weight", default) or block-loading vectors 
+#' ("loadings"). 
 #' @param x indicator used in the plot (see details).
 #' @param y A character string indicating for the index to color the bars
 #' (see details).
@@ -21,7 +24,7 @@
 #' @details
 #' \itemize{
 #' \item 'estimate' of the block weight vectors
-#' \item 'bootstrap_ratio' of the block weight vectors
+#' \item 'bootstrap_ratio' of the block weight/loading vectors
 #' \item 'sign' for significant 95% bootstrap interval
 #' \item 'occurrences' number of for non-zero occurrences
 #' \item 'mean'  mean of the bootstraped block weight vectors
@@ -33,8 +36,9 @@
 #'               politic = Russett[, 6:11])
 #' fit.sgcca = rgcca(blocks, sparsity = 0.75, method = "sgcca")
 #'
-#' boot = bootstrap(fit.sgcca, 30, n_cores = 1)
-#' plot_bootstrap_1D(boot)
+#' boot = bootstrap(fit.sgcca,
+#'                  n_boot = 30, n_cores = 1)
+#' plot_bootstrap_1D(boot, type = "loadings")
 #' rgcca_out = rgcca(blocks)
 #' boot = bootstrap(rgcca_out, 2, n_cores = 1)
 #' selected.var = get_bootstrap(boot, display_order=TRUE)
@@ -48,15 +52,15 @@
 plot_bootstrap_1D <- function(
     b = NULL,
     df_b = NULL,
+    type = "weight", 
     x = "estimate",
     y = "occurrences",
     n_mark = 50,
     title = NULL,
     colors = NULL,
     comp = 1,
-    bars = "sd",
     display_bar = TRUE,
-    i_block = length(b$bootstrap[[1]]),
+    i_block = length(b$bootstrap[[1]][[1]]),
     ...) {
 
     if (missing(b) && missing(df_b))
@@ -64,9 +68,9 @@ plot_bootstrap_1D <- function(
     if (!is.null(b)) {
         df_b <- get_bootstrap(
             b,
+            type = type,
             comp,
             block = i_block,
-            bars = bars,
             display_order = TRUE
         )
     }
@@ -79,7 +83,7 @@ plot_bootstrap_1D <- function(
             attributes(df_b)$indexes[[x]],
             "\n(",
             attributes(df_b)$n_boot,
-            " bootstraps)")
+            " bootstrap samples)")
     }
 
     if (is.null(colors)) {
@@ -137,7 +141,7 @@ plot_bootstrap_1D <- function(
         ...) +
     labs(fill = attributes(df_b)$indexes[[y]])
 
-    if (x == "estimate" && nrow(df_b_head) <= 50)
+    if (x == "estimate" && nrow(df_b_head) <= 500)
         p <- p +
             geom_errorbar(
                 aes(

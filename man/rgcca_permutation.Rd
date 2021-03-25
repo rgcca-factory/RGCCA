@@ -211,13 +211,13 @@ C <-  matrix(c(0, 0, 1,
 
 fit = rgcca_permutation(blocks, connection = C,
                         par_type = "tau",
-                        par_length = 10, n_perms = 20,
-                        n_cores = 1)#parallel::detectCores() - 1
+                        par_length = 10, n_perms = 2,
+                        n_cores = 1)
 
 print(fit)
 plot(fit)
 fit$bestpenalties
-
+\dontrun{
 # It is possible to define explicitly K combinations of shrinkage
 # parameters to be tested and in that case a matrix of dimension KxJ is
 # required. Each row of this matrix corresponds to one specific set of
@@ -295,7 +295,7 @@ perm.outt <- rgcca_permutation(blocks, connection = C,
                          n_perms = 10, n_cores = 1)
 
 perm.out$penalties
-\dontrun{
+
 ######################################
 # speed up the permutation procedure #
 ######################################

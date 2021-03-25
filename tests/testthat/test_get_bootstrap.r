@@ -8,9 +8,7 @@ rgcca_out=rgcca(blocks)
 n_boot=100
 boot <- bootstrap(rgcca_out,n_boot=n_boot,n_cores=1)
 res=get_bootstrap(boot)
-plot(boot,block=1,bars="sd", n_mark=10)
-plot(boot,block=1,bars="stderr", n_mark=10)
-plot(boot,block=1,bars="quantile", n_mark=10)
+plot(boot,block=1, n_mark=10)
 
 # Bootstrap on Russett
 data("Russett")
@@ -25,7 +23,7 @@ boot <- bootstrap(rgcca_out, n_boot = 2, n_cores = 1)
 test_that("get_bootstrap_default", {
     expect_equal(length(boot), 2)
     expect_equal(length(boot$bootstrap), 2)
-    boot1 <- boot$bootstrap[[1]]
+    boot1 <- boot$bootstrap[[1]][[1]]
     expect_is(boot, "bootstrap")
     expect_is(boot$rgcca, "rgcca")
     expect_is(boot1, "list")
@@ -40,18 +38,6 @@ test_that("bootstrap_default", {
     expect_is(select_var, "data.frame")
     expect_identical(NROW(select_var), NCOL(rgcca_out$call$blocks[[length(rgcca_out$call$blocks)]]))
 })
-#
-# test_that("bootstrap_with_args", {
-#     rgcca_out <- rgcca(blocks, superblock = FALSE,ncomp=2)
-#     expect_is(
-#         bootstrap(
-#             rgcca_out,
-#             n_boot = 2,
-#             n_cores = 1,
-#             blocks = lapply(blocks, scale),
-#             superblock = FALSE),
-#         "bootstrap")
-# })
 
 blocks[[1]][1:3, 1] <- NA
 blocks[[1]][4,] <- NA
@@ -64,7 +50,7 @@ plot_bootstrap_1D(df_b = select_var)
 test_that("test_bootstrap_na_values", {
     expect_equal(
         select_var["demostab", 1],
-        mean(c(resBootstrap$bootstrap[[1]][["politic"]]["demostab", ]))
+        mean(c(resBootstrap$bootstrap[[1]][[1]][["politic"]]["demostab", ]))
     )
     expect_true(select_var["demostab", "estimate"] == resRGCCA$a[[3]]["demostab", 1])
 })
