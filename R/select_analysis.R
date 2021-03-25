@@ -45,7 +45,6 @@ select_analysis <- function(
     blocks,
     connection = 1 - diag(length(blocks)),
     penalty = rep(1, length(blocks)),
-    group_sparsity = NULL,
     ncomp = rep(1, length(blocks)),
     scheme = "centroid",
     superblock = TRUE,
@@ -296,11 +295,10 @@ select_analysis <- function(
             grammar <- "was the one"
     }
     
-    ##TODO : add some checks for group_sparsity 
+    ##TODO : add some checks in the case when method == "group_sgcca"
 
     return(list(scheme = scheme,
                 penalty = penalty,
-                group_sparsity = group_sparsity,
                 ncomp = ncomp,
                 connection = connection,
                 superblock = superblock)
