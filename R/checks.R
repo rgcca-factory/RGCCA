@@ -376,25 +376,17 @@ check_penalty <- function(penalty, blocks, method = "rgcca", superblock = F) {
     blocks[[length(blocks) + 1]] <- Reduce(cbind,blocks)
     names(blocks)[length(blocks)] = "superblock"
   }
-  penalty <- elongate_arg(penalty, blocks)
+  penalty <- elongate_arg(c(penalty), blocks)
   name = ifelse(method == "rgcca", "tau", "sparsity")
   check_size_blocks(blocks, name, penalty)
-  penalty1 <- penalty
-
-  is_matrix = is(penalty, "matrix")
 
   # Check value of each penalty
   if (method == "rgcca") penalty <- sapply(penalty, check_tau, USE.NAMES = F)
   if (method == "sgcca") {
-    if (is_matrix) divider = NROW(penalty1)
-    else divider = 1
     penalty <- sapply(
-      seq(length(penalty)),
-      function(x) check_spars(penalty[x], blocks[[1 + (x - 1) / divider]]))
+      seq(length(penalty)), function(x) check_spars(penalty[x], blocks[[x]])
+    )
   }
-
-  if (is(penalty1, "matrix"))
-    penalty <- matrix(penalty, NROW(penalty1), NCOL(penalty1))
 
   return(penalty)
 }

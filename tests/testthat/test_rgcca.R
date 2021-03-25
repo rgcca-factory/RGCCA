@@ -215,3 +215,48 @@ test_that("upca_var2",{expect_true(upca_var)})
 
 
 # RGCCA
+data(Russett)
+blocks = list(agriculture = Russett[, seq(3)],
+              industry = Russett[, 4:5],
+              politic = Russett[, 6:11])
+
+test_that("Y equals block %*% astar", {
+    fit.rgcca = rgcca(blocks = blocks, ncomp = rep(2,3), tau = 1)
+    expect_true(all(sapply(1:length(blocks), function(x) {
+        max(abs(fit.rgcca$Y[[x]] - fit.rgcca$call$blocks[[x]] %*% fit.rgcca$astar[[x]])) < 1e-14
+    })))
+    fit.rgcca = rgcca(blocks = blocks, ncomp = rep(2, 3), tau = 0)
+    expect_true(all(sapply(1:length(blocks), function(x) {
+        max(abs(fit.rgcca$Y[[x]] - fit.rgcca$call$blocks[[x]] %*% fit.rgcca$astar[[x]])) < 1e-14
+    })))
+})
+
+test_that("Components are orthogonal", {
+    fit.rgcca = rgcca(blocks = blocks, ncomp = rep(2,3), tau = 1)
+    expect_true(all(sapply(1:length(blocks), function(x) {
+        YtY       = crossprod(fit.rgcca$Y[[x]])
+        diag(YtY) = 0
+        max(abs(YtY)) < 1e-14
+    })))
+})
+
+test_that("t(astar) %*% M %*% astar = 1", {
+    fit.rgcca = rgcca(blocks = blocks, ncomp = rep(2,3), tau = 1)
+    expect_true(all(sapply(1:length(blocks), function(x) {
+        max(abs(diag(crossprod(fit.rgcca$astar[[x]])) - 1)) < 1e-12
+    })))
+    fit.rgcca = rgcca(blocks = blocks, ncomp = rep(2,3), tau = 0)
+    M = lapply(fit.rgcca$call$blocks, function(x) crossprod(x) / (nrow(x) - 1 + fit.rgcca$call$bias))
+    expect_true(all(sapply(1:length(blocks), function(x) {
+        max(abs(diag(t(fit.rgcca$astar[[x]]) %*% M[[x]] %*% fit.rgcca$astar[[x]]) - 1)) < 1e-12
+    })))
+    fit.rgcca = rgcca(blocks = blocks, ncomp = rep(2,3), tau = "optimal")
+    M = lapply(1:length(blocks), function(j) {
+        x   = fit.rgcca$call$blocks[[j]]
+        tau = fit.rgcca$call$tau[j]
+        tau * diag(ncol(x)) + (1 - tau) * crossprod(x) / (nrow(x) - 1 + fit.rgcca$call$bias)
+    })
+    expect_true(all(sapply(1:length(blocks), function(x) {
+        max(abs(diag(t(fit.rgcca$astar[[x]]) %*% M[[x]] %*% fit.rgcca$astar[[x]]) - 1)) < 1e-12
+    })))
+})
