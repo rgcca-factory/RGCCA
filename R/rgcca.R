@@ -263,8 +263,8 @@ rgcca <- function(blocks, method = "rgcca",
         stop_rgcca(paste0("group sparsity and sparsity parameters required for ",
                           tolower(method), " (instead of tau)."))
       gcca          <- group_sgcca
-      par           <- "group_sparsity"
-      penalty       <- sparsity
+      par           <- c("sparsity", "group_sparsity")
+      penalty       <- list(sparsity, group_sparsity)
     }else {
         if (!(missing(sparsity) & missing(group_sparsity)) & missing(tau))
            stop_rgcca(paste0("tau parameters required for ",
@@ -293,12 +293,11 @@ rgcca <- function(blocks, method = "rgcca",
 
     penalty <- elongate_arg(penalty, blocks)
     ncomp <- elongate_arg(ncomp, blocks)
-
+    
     opt <- select_analysis(
         blocks = blocks,
         connection = connection,
         penalty = penalty,
-        group_sparsity = group_sparsity,
         ncomp = ncomp,
         scheme = scheme,
         superblock = superblock,
@@ -338,8 +337,8 @@ rgcca <- function(blocks, method = "rgcca",
         opt$connection <- check_connection(opt$connection, opt$blocks)
         opt$connection <- opt$connection[names(blocks), names(blocks)]
     }
-
-    if (par == "tau"){
+    
+    if (any(tolower(par) %in% "tau")){
       opt$penalty <- check_tau(opt$penalty, opt$blocks, method)
     }
     opt$ncomp   <- check_ncomp(opt$ncomp, opt$blocks)
@@ -371,12 +370,13 @@ rgcca <- function(blocks, method = "rgcca",
         )
     )
     
-    if (par == "group_sparsity"){
-      func[["sparsity"]] <- opt$penalty
-      func[[par]]        <- opt$group_sparsity
+    if (length(par) > 1){
+      func[par] <- opt$penalty
     }else{
       func[[par]] <- opt$penalty
     }
+    
+    
     func_out <- eval(as.call(func))
 
     for (i in c("a", "astar", "Y")) {
@@ -403,6 +403,8 @@ rgcca <- function(blocks, method = "rgcca",
 
     if(is_optimal){
         func_out$call[[par]] <- func_out$tau
+    }else if (length(par) > 1){
+      func_out$call[par] <- opt$penalty
     }else
         func_out$call[[par]] <- opt$penalty
 
