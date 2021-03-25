@@ -172,9 +172,6 @@
 #' @importFrom stats as.formula qt
 #' @importFrom grDevices graphics.off
 
-# TODO: Update deflation strategy to handle regularization according to equation 2.8 from Arnaud's thesis
-# TODO: Make that tau cannot be a matrix anymore -> move to list?
-
 rgccad = function(blocks, connection = 1 - diag(length(blocks)),
                   tau = rep(1, length(blocks)),
                   ncomp = rep(1, length(blocks)), scheme = "centroid",

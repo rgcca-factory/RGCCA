@@ -305,20 +305,20 @@ test_that("check_penalty raises an error for invalid penalty", {
   expect_error(check_penalty(c(1, 1, 2), blocks, method = "rgcca"))
   expect_error(check_penalty(c(NA, 1, 1), blocks, method = "rgcca"))
   expect_error(check_penalty("toto", blocks, method = "rgcca"))
+  expect_error(check_penalty(matrix(1, 5, 3), blocks, method = "rgcca"))
   expect_error(check_penalty(c(-1, 1, 1), blocks, method = "sgcca"))
   expect_error(check_penalty(c(1, 1, 2), blocks, method = "sgcca"))
   expect_error(check_penalty(c(NA, 1, 1), blocks, method = "sgcca"))
   expect_error(check_penalty("optimal", blocks, method = "sgcca"))
+  expect_error(check_penalty(matrix(1, 5, 3), blocks, method = "sgcca"))
 })
 test_that("check_penalty passes and returns penalty when penalty is valid", {
   expect_equal(check_penalty(1, blocks, method = "rgcca"), c(1, 1, 1))
   expect_equal(check_penalty(c(0.8, 1, 0.5), blocks, method = "rgcca"), c(0.8, 1, 0.5))
   expect_equal(check_penalty("optimal", blocks, method = "rgcca"), c("optimal", "optimal", "optimal"))
-  expect_equal(check_penalty(matrix(1, 5, 3), blocks, method = "rgcca"), matrix(1, 5, 3))
   expect_equal(check_penalty(1, blocks, method = "rgcca", superblock = T), c(1, 1, 1, 1))
   expect_equal(check_penalty(1, blocks, method = "sgcca"), c(1, 1, 1))
   expect_equal(check_penalty(c(0.8, 1, 0.5), blocks, method = "sgcca"), c(0.8, 1, 0.5))
-  expect_equal(check_penalty(matrix(1, 5, 3), blocks, method = "sgcca"), matrix(1, 5, 3))
 })
 
 # Test check_spars

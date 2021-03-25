@@ -221,15 +221,11 @@ sgcca <- function (blocks, connection = 1-diag(length(blocks)), sparsity = rep(1
     for (n in 1:N) {
       if (verbose) cat(paste0("Computation of the SGCCA block components #", n,
                               " is under progress... \n"))
-      if(is.vector(sparsity)){
-        sgcca.result <- sgccak(R, connection, sparsity = sparsity , scheme=scheme,
-                               init = init, bias = bias, tol = tol,
-                               verbose = verbose, quiet = quiet, na.rm = na.rm)
-      } else{
-        sgcca.result <- sgccak(R, connection, sparsity = sparsity[n, ] , scheme = scheme,
-                               init = init, bias = bias, tol = tol,
-                               verbose = verbose, quiet = quiet, na.rm = na.rm)
-      }
+
+      sgcca.result <- sgccak(R, connection, sparsity = sparsity, scheme = scheme,
+                             init = init, bias = bias, tol = tol,
+                             verbose = verbose, quiet = quiet, na.rm = na.rm)
+
       AVE_inner[n] <- sgcca.result$AVE_inner
       crit[[n]] <- sgcca.result$crit
 
@@ -262,15 +258,11 @@ sgcca <- function (blocks, connection = 1-diag(length(blocks)), sparsity = rep(1
     }
     if (verbose) cat(paste0("Computation of the SGCCA block components #", N+1, "
                             is under progress...\n"))
-    if(is.vector(sparsity)) {
-      sgcca.result <- sgccak(R, connection, sparsity = sparsity, scheme=scheme,
-                             init = init, bias = bias, tol = tol,
-                             verbose = verbose, quiet = quiet, na.rm = na.rm)
-    } else{
-      sgcca.result <- sgccak(R, connection, sparsity = sparsity[N+1, ], scheme=scheme,
-                             init = init, bias = bias, tol = tol,
-                             verbose = verbose, quiet = quiet, na.rm = na.rm)
-    }
+
+    sgcca.result <- sgccak(R, connection, sparsity = sparsity, scheme = scheme,
+                           init = init, bias = bias, tol = tol,
+                           verbose = verbose, quiet = quiet, na.rm = na.rm)
+
     AVE_inner[max(ncomp)] <- sgcca.result$AVE_inner
 
     crit[[N+1]] <- sgcca.result$crit
