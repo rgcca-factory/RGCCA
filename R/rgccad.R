@@ -218,8 +218,6 @@ rgccad = function(blocks, connection = 1 - diag(length(blocks)),
 
   AVE_X <- a <- list()
   AVE_outer <- vector()
-  ndefl <- ncomp - 1
-  N <- max(ndefl)
   nb_ind <- NROW(blocks[[1]])
   J <- length(blocks)
   M <- sqrt_inv_M <- A <- Mk <- eig_val <- eig_vec <- list()
@@ -241,7 +239,7 @@ rgccad = function(blocks, connection = 1 - diag(length(blocks)),
       M[[j]] = tau[j] * diag(pjs[j]) + (1 - tau[j]) * K / (nb_row - 1 + bias)
 
       # Get eigenvectors, XtX and M share the same ones
-      eig = extract_eigen(K)
+      eig          = extract_eigen(K)
       eig_val[[j]] = eig$values
       eig_vec[[j]] = eig$vectors
 
@@ -252,7 +250,7 @@ rgccad = function(blocks, connection = 1 - diag(length(blocks)),
       ) %*% t(eig_vec[[j]])
 
       # Make change of variable
-      A[[j]]          = blocks[[j]] %*% sqrt_inv_M[[j]]
+      A[[j]] = blocks[[j]] %*% sqrt_inv_M[[j]]
     }
   }
   for (j in which.dual) {
@@ -279,148 +277,133 @@ rgccad = function(blocks, connection = 1 - diag(length(blocks)),
     ) %*% t(eig_vec[[j]])
 
     # Make change of variable
-    A[[j]]          = K %*% sqrt_inv_M[[j]]
+    A[[j]] = K %*% sqrt_inv_M[[j]]
   }
 
-  # One component per block
-  if (N == 0) {
-    result <- rgccak(A, connection, scheme = scheme, init = init,
-                     bias = bias, tol = tol, verbose = verbose,
-                     na.rm = na.rm)
-
-    Y <- NULL
-    for (b in 1:J) Y[[b]] <- result$Y[, b, drop = FALSE]
-    for (j in 1:J)
-      AVE_X[[j]] = mean(cor(blocks[[j]], Y[[j]],use="pairwise.complete.obs")^2)
-
-    AVE_outer <- sum(pjs * unlist(AVE_X))/sum(pjs)
-    AVE <- list(AVE_X = AVE_X, AVE_outer = AVE_outer,
-                AVE_inner = result$AVE_inner)
-
-    for (j in which.primal) {
-      if (tau[j] == 1) a[[j]] = result$a[[j]]
-      else             a[[j]] = sqrt_inv_M[[j]] %*% result$a[[j]]
-    }
-
-    for (j in which.dual) {
-      a[[j]] = pm(t(blocks[[j]]), sqrt_inv_M[[j]] %*% result$a[[j]], na.rm = na.rm)
-    }
-
-    for (j in 1:J) {
-      if (a[[j]][1] < 0) {
-        a[[j]] = -a[[j]]
-        Y[[j]] = pm(blocks[[j]], a[[j]], na.rm = na.rm)
-      }
-    }
-
-    for (b in 1:J) {
-      rownames(a[[b]]) = colnames(blocks[[b]])
-      rownames(Y[[b]]) = rownames(blocks[[b]])
-      colnames(Y[[b]]) = "comp1"
-    }
-
-    out <- list(Y = Y, a = a, astar = a, connection = connection,  scheme = scheme,
-                ncomp = ncomp, crit = result$crit,
-                primal_dual = primal_dual,
-                AVE = AVE, tau = tau)
-
-    class(out) <- "rgccad"
-
-    return(out)
-  }
-
-  Y <- NULL
-  crit = list()
+  Y         <- NULL
+  crit      <- list()
+  ndefl     <- ncomp - 1
+  N         <- max(ndefl)
   AVE_inner <- rep(NA, max(ncomp))
-  R <- blocks
-  P <- a <- astar <- NULL
-
-  for (j in which.primal) {
-    if (tau[j] == 1) {
-      eig = extract_eigen(pm(t(blocks[[j]]), blocks[[j]], na.rm = na.rm))
-      eig_val[[j]] = eig$values
-      eig_vec[[j]] = eig$vectors
-    }
-  }
+  R         <- blocks
+  P         <- a <- astar <- NULL
 
   for (b in 1:J) P[[b]] <- a[[b]] <- astar[[b]] <- matrix(NA, pjs[[b]], N + 1)
   for (b in 1:J) Y[[b]] <- matrix(NA, nb_ind, N + 1)
-  for (n in 1:N) {
-     if (verbose)
-      cat(paste0("Computation of the RGCCA block components #", n, " is under
+
+  # Extract the first component per block
+  rgcca.result <- rgccak(A, connection, scheme = scheme, init = init,
+                         bias = bias, tol = tol, verbose = verbose,
+                         na.rm = na.rm)
+
+  for (b in 1:J) Y[[b]][, 1] <- rgcca.result$Y[, b, drop = FALSE]
+  AVE_inner[1]               <- rgcca.result$AVE_inner
+
+  for (j in which.primal) {
+    if (tau[j] == 1) a[[j]][, 1] = rgcca.result$a[[j]]
+    else             a[[j]][, 1] = sqrt_inv_M[[j]] %*% rgcca.result$a[[j]]
+  }
+
+  for (j in which.dual) {
+    a[[j]][, 1] = pm(t(blocks[[j]]), sqrt_inv_M[[j]] %*% rgcca.result$a[[j]], na.rm = na.rm)
+  }
+
+  for (j in 1:J) {
+    if (a[[j]][1, 1] < 0) {
+      a[[j]][, 1] = -a[[j]][, 1]
+      Y[[j]][, 1] = pm(blocks[[j]], a[[j]][, 1], na.rm = na.rm)
+    }
+    astar[[j]][, 1] = a[[j]][, 1]
+  }
+
+  crit[[1]] <- rgcca.result$crit
+
+  # Extract next components if needed
+  if (N > 0) {
+    for (j in which.primal) {
+      if (tau[j] == 1) {
+        eig = extract_eigen(pm(t(blocks[[j]]), blocks[[j]], na.rm = na.rm))
+        eig_val[[j]] = eig$values
+        eig_vec[[j]] = eig$vectors
+      }
+    }
+
+    for (n in 2:(N + 1)) {
+      if (verbose)
+        cat(paste0("Computation of the RGCCA block components #", n, " is under
                  progress...\n"))
 
-    rgcca.result <- rgccak(A, connection, scheme = scheme,init = init,
-                           bias = bias, tol = tol, verbose = verbose,
-                           na.rm = na.rm)
+      # Apply deflation
+      defla.result <- defl.select(Y, R, ndefl, n - 1, na.rm = na.rm)
+      R <- defla.result$resdefl
+      for (b in 1:J) P[[b]][, n - 1] <- defla.result$pdefl[[b]]
 
-    AVE_inner[n] <- rgcca.result$AVE_inner
-    crit[[n]] <- rgcca.result$crit
+      # Make change of variable
+      for (j in which.primal) {
+        inv_XtX = eig_vec[[j]] %*% diag(
+          1 / eig_val[[j]], nrow = length(eig_val[[j]])
+        ) %*% t(eig_vec[[j]])
+        XtR     = pm(t(blocks[[j]]), R[[j]], na.rm = na.rm)
+        if (tau[j] == 1) {
+          Mk[[j]] = t(XtR) %*% inv_XtX %*% inv_XtX %*% XtR
+        } else {
+          Mk[[j]] = t(XtR) %*% inv_XtX %*% M[[j]] %*% inv_XtX %*% XtR
+        }
 
-    # Extract a and Y
-    for (b in 1:J) Y[[b]][, n] <- rgcca.result$Y[, b]
-    for (b in which.primal) {
-      if (n == 1 && tau[b] == 1)
-        a[[b]][, n]    <- rgcca.result$a[[b]]
-      else a[[b]][, n] <- sqrt_inv_M[[b]] %*% rgcca.result$a[[b]]
-    }
-    for (b in which.dual) {
-      a[[b]][, n]    <- t(R[[b]]) %*% sqrt_inv_M[[b]] %*% rgcca.result$a[[b]]
-    }
-    for (b in 1:J) {
-      if (a[[b]][1, n] < 0) {
-        a[[b]][, n] = -a[[b]][, n]
-        Y[[b]][, n] = pm(R[[b]], a[[b]][, n], na.rm = na.rm)
-      }
-    }
-
-    # Deflation
-    defla.result <- defl.select(Y, R, ndefl , n, na.rm = na.rm)
-    R <- defla.result$resdefl
-    for (b in 1:J) P[[b]][, n] <- defla.result$pdefl[[b]]
-
-    # Change of variable
-    for (j in which.primal) {
-      inv_XtX = eig_vec[[j]] %*% diag(
-        1 / eig_val[[j]], nrow = length(eig_val[[j]])
-      ) %*% t(eig_vec[[j]])
-      XtR     = pm(t(blocks[[j]]), R[[j]], na.rm = na.rm)
-      if (tau[j] == 1) {
-        Mk[[j]] = t(XtR) %*% inv_XtX %*% inv_XtX %*% XtR
-      } else {
-        Mk[[j]] = t(XtR) %*% inv_XtX %*% M[[j]] %*% inv_XtX %*% XtR
+        # Rank gets lower every time we deflate
+        rank            = length(eig_val[[j]]) - min(n, ncomp[j]) + 1
+        SVD             = svd(Mk[[j]], nu = rank)
+        sqrt_inv_M[[j]] = SVD$u %*% diag(SVD$d[seq(rank)] ^ (-1/2), nrow = rank)
+        A[[j]]          = R[[j]] %*% sqrt_inv_M[[j]]
       }
 
-      # Rank gets lower every time we deflate
-      rank            = length(eig_val[[j]]) - min(n, ncomp[j] - 1)
-      SVD             = svd(Mk[[j]], nu = rank)
-      sqrt_inv_M[[j]] = SVD$u %*% diag(SVD$d[seq(rank)] ^ (-1/2), nrow = rank)
-      A[[j]]          = R[[j]] %*% sqrt_inv_M[[j]]
-    }
+      for (j in which.dual) {
+        inv_XXt = eig_vec[[j]] %*% diag(
+          1 / eig_val[[j]], nrow = length(eig_val[[j]])
+        ) %*% t(eig_vec[[j]])
+        RRt     = tcrossprod(R[[j]])
+        if (tau[j] == 1) {
+          Mk[[j]] = RRt %*% inv_XXt %*% RRt
+        } else {
+          Mk[[j]] = RRt %*% M[[j]] %*% inv_XXt %*% RRt
+        }
 
-    for (j in which.dual) {
-      inv_XXt = eig_vec[[j]] %*% diag(
-        1 / eig_val[[j]], nrow = length(eig_val[[j]])
-      ) %*% t(eig_vec[[j]])
-      RRt     = tcrossprod(R[[j]])
-      if (tau[j] == 1) {
-        Mk[[j]] = RRt %*% inv_XXt %*% RRt
-      } else {
-        Mk[[j]] = RRt %*% M[[j]] %*% inv_XXt %*% RRt
+        # Rank gets lower every time we deflate
+        rank            = length(eig_val[[j]]) - min(n, ncomp[j]) + 1
+        SVD             = svd(Mk[[j]], nu = rank)
+        sqrt_inv_M[[j]] = SVD$u %*% diag(SVD$d[seq(rank)] ^ (-1/2), nrow = rank)
+        A[[j]]          = RRt %*% sqrt_inv_M[[j]]
       }
 
-      # Rank gets lower every time we deflate
-      rank            = length(eig_val[[j]]) - min(n, ncomp[j] - 1)
-      SVD             = svd(Mk[[j]], nu = rank)
-      sqrt_inv_M[[j]] = SVD$u %*% diag(SVD$d[seq(rank)] ^ (-1/2), nrow = rank)
-      A[[j]]          = RRt %*% sqrt_inv_M[[j]]
-    }
+      # Run RGCCA
+      rgcca.result <- rgccak(A, connection, scheme = scheme,init = init,
+                             bias = bias, tol = tol, verbose = verbose,
+                             na.rm = na.rm)
 
-    if (n == 1)
-    {
-      for (b in 1:J) astar[[b]][, n] <- a[[b]][, n]
-    }
-    else {
+      AVE_inner[n] <- rgcca.result$AVE_inner
+      crit[[n]] <- rgcca.result$crit
+
+      # Extract Y
+      for (b in 1:J) Y[[b]][, n] <- rgcca.result$Y[, b]
+
+      # Extract a
+      for (b in which.primal) {
+        if (n == 1 && tau[b] == 1)
+          a[[b]][, n]    <- rgcca.result$a[[b]]
+        else a[[b]][, n] <- sqrt_inv_M[[b]] %*% rgcca.result$a[[b]]
+      }
+
+      for (b in which.dual) {
+        a[[b]][, n]    <- t(R[[b]]) %*% sqrt_inv_M[[b]] %*% rgcca.result$a[[b]]
+      }
+      for (b in 1:J) {
+        if (a[[b]][1, n] < 0) {
+          a[[b]][, n] = -a[[b]][, n]
+          Y[[b]][, n] = pm(R[[b]], a[[b]][, n], na.rm = na.rm)
+        }
+      }
+
+      # Extract astar
       for (b in 1:J)
       {
         astar[[b]][, n] <- a[[b]][, n] - astar[[b]][, (1:n - 1), drop = F] %*%
@@ -428,48 +411,33 @@ rgccad = function(blocks, connection = 1 - diag(length(blocks)),
       }
     }
   }
-  if (verbose)
-    cat(paste0("Computation of the RGCCA block components #",
-               N + 1, " is under progress ... \n"))
 
-  rgcca.result <- rgccak(A, connection, scheme = scheme, init = init,
-                         bias = bias, tol = tol, verbose = verbose)
-
-  crit[[N + 1]] <- rgcca.result$crit
-  AVE_inner[max(ncomp)] <- rgcca.result$AVE_inner
-  for (b in 1:J) Y[[b]][, N + 1] <- rgcca.result$Y[, b]
-  for (b in which.primal)
-    a[[b]][, N + 1] <- sqrt_inv_M[[b]] %*% rgcca.result$a[[b]]
-  for (b in which.dual)
-    a[[b]][, N + 1] <- t(R[[b]]) %*% sqrt_inv_M[[b]] %*% rgcca.result$a[[b]]
+  # Set names
   for (b in 1:J) {
-    if (a[[b]][1, N + 1] < 0) {
-      a[[b]][, N + 1] = -a[[b]][, N + 1]
-      Y[[b]][, N + 1] = pm(R[[b]], a[[b]][, N + 1], na.rm = na.rm)
-    }
-    astar[[b]][, N + 1] <- a[[b]][, N + 1] - astar[[b]][, (1:N), drop = F] %*%
-      drop(t(a[[b]][, (N + 1)]) %*% P[[b]][, 1:N, drop = F])
     rownames(a[[b]]) = rownames(astar[[b]]) = colnames(blocks[[b]])
     rownames(Y[[b]]) = rownames(blocks[[b]])
     colnames(Y[[b]]) = paste0("comp", 1:max(ncomp))
   }
+  names(Y) = names(blocks)
+  names(a) = names(blocks)
 
+  # Compute metrics
   for (j in 1:J)
-      AVE_X[[j]] = apply(cor(blocks[[j]], Y[[j]], use="pairwise.complete.obs")^2,
-                         2, mean)
+      AVE_X[[j]] = apply(
+        cor(blocks[[j]], Y[[j]], use = "pairwise.complete.obs")^2, 2, mean)
 
   outer = matrix(unlist(AVE_X), nrow = max(ncomp))
 
   for (j in 1:max(ncomp))
     AVE_outer[j] <- sum(pjs * outer[j,])/sum(pjs)
 
-  Y = shave.matlist(Y, ncomp)
-  names(Y)=names(blocks)
-  names(a)=names(blocks)
-  AVE_X = shave.veclist(AVE_X, ncomp)
+  # Remove duplicated components
+  Y        = shave.matlist(Y, ncomp)
+  AVE_X    = shave.veclist(AVE_X, ncomp)
 
-  AVE <- list(AVE_X = AVE_X, AVE_outer_model = AVE_outer,
-              AVE_inner_model = AVE_inner)
+  AVE <- list(AVE_X = AVE_X, AVE_outer = AVE_outer, AVE_inner = AVE_inner)
+
+  if (N == 0) crit = unlist(crit)
 
   out <- list(Y = shave.matlist(Y, ncomp), a = shave.matlist(a,ncomp),
               astar = shave.matlist(astar, ncomp),
