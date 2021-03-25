@@ -284,7 +284,7 @@ rgccad = function(blocks, connection = 1 - diag(length(blocks)),
 
   # One component per block
   if (N == 0) {
-    result <- rgccak(A, connection, tau = tau, scheme = scheme, init = init,
+    result <- rgccak(A, connection, scheme = scheme, init = init,
                      bias = bias, tol = tol, verbose = verbose,
                      na.rm = na.rm)
 
@@ -350,7 +350,7 @@ rgccad = function(blocks, connection = 1 - diag(length(blocks)),
       cat(paste0("Computation of the RGCCA block components #", n, " is under
                  progress...\n"))
 
-    rgcca.result <- rgccak(A, connection, tau = tau, scheme = scheme,init = init,
+    rgcca.result <- rgccak(A, connection, scheme = scheme,init = init,
                            bias = bias, tol = tol, verbose = verbose,
                            na.rm = na.rm)
 
@@ -432,7 +432,7 @@ rgccad = function(blocks, connection = 1 - diag(length(blocks)),
     cat(paste0("Computation of the RGCCA block components #",
                N + 1, " is under progress ... \n"))
 
-  rgcca.result <- rgccak(A, connection, tau = tau, scheme = scheme, init = init,
+  rgcca.result <- rgccak(A, connection, scheme = scheme, init = init,
                          bias = bias, tol = tol, verbose = verbose)
 
   crit[[N + 1]] <- rgcca.result$crit

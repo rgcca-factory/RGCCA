@@ -8,7 +8,6 @@ components, outer weight vectors, etc.).}
 rgccak(
   A,
   C,
-  tau = "optimal",
   scheme = "centroid",
   verbose = FALSE,
   init = "svd",
@@ -25,17 +24,6 @@ block components are constructed. It could be eiher the original matrices
 
 \item{C}{A symmetric matrix (J*J) that describes the
 relationships between blocks.}
-
-\item{tau}{Either a 1*J vector or a max(ncomp)*J matrix containing
-the values of the regularization parameters (default: tau = 1, for each
-block and each dimension). The regularization parameters varies from 0
-(maximizing the correlation) to 1 (maximizing the covariance). If
-tau = "optimal" the regularization paramaters are estimated for each block
-and each dimension using the Schafer and Strimmer (2005) analytical formula.
-If tau is a 1*J vector, tau[j] is identical across the dimensions
-of block Xj. If tau is a matrix, tau[k, j] is associated with
-X_jk (kth residual matrix for block j). The regularization parameters can
-also be estimated using \link{rgcca_permutation} or \link{rgcca_cv}.}
 
 \item{scheme}{Character string or a function giving the scheme function for
 covariance maximization among "horst" (the identity function), "factorial"
@@ -70,17 +58,6 @@ one deflation stage.}
 \item{crit}{A list of max(ncomp) elements. Each element
 (one per deflation stage) is a vector that contains the value of the RGCCA
 objective function across iterations.}
-
-\item{tau}{Either a 1*J vector or a \eqn{\mathrm{max}(ncomp)\times J}
-matrix containing the values of the regularization parameters . The shrinkage
-parameter tau varies from 0 (maximizing the correlation) to 1 (maximizing the
-covariance). If tau = "optimal" the regularization paramaters are estimated
-for each block and each dimension using the Schafer and Strimmer (2005)
-analytical formula . If tau is a \eqn{1\times J} vector, tau[j] is identical
-across the dimensions of block \eqn{\mathbf{X}_j}. If tau is a matrix,
-tau[k, j] is associated with \eqn{\mathbf{X}_{jk}} (\eqn{k}th residual matrix
-for block \eqn{j}). It can also be estimated by using
-\link{rgcca_permutation}.}
 }
 \description{
 The function rgccak() is called by rgccad() and does not have to be used by

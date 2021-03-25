@@ -22,16 +22,6 @@
 #' @return \item{crit}{A list of max(ncomp) elements. Each element
 #' (one per deflation stage) is a vector that contains the value of the RGCCA
 #' objective function across iterations.}
-#' @return \item{tau}{Either a 1*J vector or a \eqn{\mathrm{max}(ncomp)\times J}
-#' matrix containing the values of the regularization parameters . The shrinkage
-#' parameter tau varies from 0 (maximizing the correlation) to 1 (maximizing the
-#' covariance). If tau = "optimal" the regularization paramaters are estimated
-#' for each block and each dimension using the Schafer and Strimmer (2005)
-#' analytical formula . If tau is a \eqn{1\times J} vector, tau[j] is identical
-#' across the dimensions of block \eqn{\mathbf{X}_j}. If tau is a matrix,
-#' tau[k, j] is associated with \eqn{\mathbf{X}_{jk}} (\eqn{k}th residual matrix
-#' for block \eqn{j}). It can also be estimated by using
-#' \link{rgcca_permutation}.}
 #' @references Tenenhaus M., Tenenhaus A. and Groenen PJF (2017), Regularized
 #' generalized canonical correlation analysis: A framework for sequential
 #' multiblock component methods, Psychometrika, 82, 737-777
@@ -45,13 +35,12 @@
 #' genomics. Statistical Applications in Genetics and Molecular Biology 4:32.
 #' @title Internal function for computing the RGCCA parameters (RGCCA block
 #' components, outer weight vectors, etc.).
-#' @importFrom MASS ginv
 #' @importFrom stats cor rnorm
 #' @importFrom graphics plot
 #' @importFrom Deriv Deriv
 
-rgccak=function (A, C, tau = "optimal", scheme = "centroid", verbose = FALSE,
-                 init = "svd", bias = TRUE, tol = 1e-08, na.rm = TRUE)
+rgccak = function(A, C, scheme = "centroid", verbose = FALSE,
+                  init = "svd", bias = TRUE, tol = 1e-08, na.rm = TRUE)
 {
 
   if(mode(scheme) != "function")
@@ -142,6 +131,6 @@ rgccak=function (A, C, tau = "optimal", scheme = "centroid", verbose = FALSE,
     }
     AVEinner <- sum(C * cor(Y)^2/2)/(sum(C)/2)
 
-    result <- list(Y = Y, a = a, crit = crit, AVE_inner = AVEinner, tau = tau)
+    result <- list(Y = Y, a = a, crit = crit, AVE_inner = AVEinner)
     return(result)
 }
