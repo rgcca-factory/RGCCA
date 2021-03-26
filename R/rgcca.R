@@ -40,10 +40,13 @@
 #' function can handle missing values using a NIPALS type algorithm (non-linear
 #' iterative partial least squares algorithm) described in (Tenenhaus et al,
 #' 2005). Guidelines describing how to use RGCCA in practice are provided in
-#' (Garali et al., 2017).
+#' (Garali et al., 2018).
 #' @inheritParams rgccad
 #' @inheritParams sgcca
 #' @inheritParams select_analysis
+#' @param scale Logical value indicating if blocks are standardized.
+#' @param scale_block Logical value indicating if each block is divided by
+#' the square root of its number of variables.
 #' @param NA_method  Character string corresponding to the method used for
 #' handling missing values ("nipals", "complete"). (default: "nipals").
 #' \itemize{
@@ -109,7 +112,8 @@
 #' print(fit.rgcca)
 #' plot(fit.rgcca, type = "weight", block = 3)
 #' politic = as.vector(apply(Russett[, 9:11], 1, which.max))
-#' plot(fit.rgcca, type = "ind", block = 1:2, comp = rep(1, 2), resp = politic)
+#' plot(fit.rgcca, type = "sample", block = 1:2,
+#'      comp = rep(1, 2), resp = politic)
 #'
 #' ############################################
 #' # Example 2: RGCCA and multiple components #
@@ -120,14 +124,14 @@
 #'                   scheme = "factorial", verbose = TRUE)
 #'
 #' politic = as.vector(apply(Russett[, 9:11], 1, which.max))
-#' plot(fit.rgcca, type = "ind", block = 1:2,
+#' plot(fit.rgcca, type = "sample", block = 1:2,
 #'      comp = rep(1, 2), resp = politic)
 #'
 #' plot(fit.rgcca, type = "ave")
 #' plot(fit.rgcca, type = "network")
 #' plot(fit.rgcca, type = "weight", block = 1)
-#' plot(fit.rgcca, type = "cor")
-#'
+#' plot(fit.rgcca, type = "loadings")
+#' \dontrun{
 #' ##################################
 #' # Example 3: Sparse GCCA (SGCCA) #
 #' ##################################
@@ -162,11 +166,7 @@
 #'
 #' b = bootstrap(fit.rgcca, n_cores = 1, n_boot = 10)
 #' plot(b, n_cores = 1)
-#'
-#' ##########################
-#' # Example 4: Sparse GCCA #
-#' ##########################
-#'
+#' }
 #'
 #' @export
 #' @import ggplot2
@@ -194,7 +194,7 @@ rgcca <- function(blocks, method = "rgcca",
 
     if(class(blocks)=="permutation")
     {
-        message("All the parameters were imported from the fitted rgcca_permutation object")
+        message("All the parameters were imported from the fitted rgcca_permutation object.")
         scale_block = blocks$call$scale_block
         scale = blocks$call$scale
         scheme = blocks$call$scheme
@@ -210,7 +210,7 @@ rgcca <- function(blocks, method = "rgcca",
     }
     if(class(blocks)=="cval")
     {
-        message("All the parameters were imported from the fitted cval")
+        message("All the parameters were imported from the fitted cval object.")
         scale_block = blocks$call$scale_block
         scale = blocks$call$scale
         scheme = blocks$call$scheme
@@ -243,11 +243,8 @@ rgcca <- function(blocks, method = "rgcca",
     if (!missing(response) && missing(superblock))
         superblock <- FALSE
 
-    # if (!missing(superblock) && !(missing(response) || missing(connection)))
-
-
     if (tolower(method) %in% c("sgcca", "spca", "spls")) {
-        if (!missing(tau) && missing(sparsity))
+      if (!missing(tau) && missing(sparsity))
            stop_rgcca(paste0("sparsity parameters required for ",
                              tolower(method), " (instead of tau)."))
         gcca <- sgcca
@@ -262,12 +259,10 @@ rgcca <- function(blocks, method = "rgcca",
         par <- "tau"
         penalty <- tau
     }
-    #if (superblock && any(penalty == "optimal"))
-    #    stop_rgcca("Optimal tau is not available with superblock option.")
-
 
     match.arg(init, c("svd", "random"))
     check_method(method)
+    check_scheme(scheme)
 
   # Check blocks size, add NA for missing subjects
     blocks = check_blocks(blocks, add_NAlines=TRUE, n=1,
@@ -311,6 +306,12 @@ rgcca <- function(blocks, method = "rgcca",
     opt$superblock <- check_superblock(response, opt$superblock, !quiet)
     opt$blocks     <- set_superblock(opt$blocks, opt$superblock, method, !quiet)
 
+    if (NA_method == "nipals" && Reduce("||", lapply(opt$blocks, function(x) any(is.na(x))))) {
+      na.rm = TRUE
+    } else {
+      na.rm = FALSE
+    }
+
     if (!is.null(response)) {
         response <- check_blockx("response", response, opt$blocks)
         }
@@ -328,7 +329,7 @@ rgcca <- function(blocks, method = "rgcca",
     }
 
 
-    opt$penalty <- check_tau(opt$penalty, opt$blocks, method)
+    opt$penalty <- check_penalty(opt$penalty, opt$blocks, method)
     opt$ncomp <- check_ncomp(opt$ncomp, opt$blocks)
 
     warn_on <- FALSE
@@ -348,13 +349,11 @@ rgcca <- function(blocks, method = "rgcca",
             ncomp = opt$ncomp,
             verbose = verbose,
             scheme = opt$scheme,
-            scale = scale,
             init = init,
             bias = bias,
             tol = tol,
-            scale_block = scale_block,
-            prescaling = TRUE,
-            quiet=quiet
+            quiet = quiet,
+            na.rm = na.rm
         )
     )
 

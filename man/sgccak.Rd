@@ -10,12 +10,12 @@ sgccak(
   C,
   sparsity = rep(1, length(A)),
   scheme = "centroid",
-  scale = FALSE,
   tol = .Machine$double.eps,
   init = "svd",
   bias = TRUE,
   verbose = TRUE,
-  quiet = FALSE
+  quiet = FALSE,
+  na.rm = TRUE
 )
 }
 \arguments{
@@ -47,8 +47,6 @@ covariance maximization among "horst" (the identity function), "factorial"
  design explicitely the sheme function (e.g. function(x) x^4) as argument of
  rgcca function.  See (Tenenhaus et al, 2017) for details.}
 
-\item{scale}{Logical value indicating if blocks are standardized.}
-
 \item{tol}{The stopping value for the convergence of the algorithm.}
 
 \item{init}{Character string giving the type of initialization to use in
@@ -61,6 +59,8 @@ or by random initialisation ("random") (default: "svd").}
 \item{verbose}{Logical value indicating whether the warnings are displayed.}
 
 \item{quiet}{Logical value indicating if warning messages are reported.}
+
+\item{na.rm}{If TRUE, runs rgcca only on available data.}
 }
 \value{
 \item{Y}{A list of \eqn{J} elements. Each element of \eqn{Y} is a

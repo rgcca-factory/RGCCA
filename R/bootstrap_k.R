@@ -2,10 +2,9 @@
 #
 # Internal function for computing boostrap of RGCCA
 #
-# @inheritParams rgcca
-# @inheritParams plot_var_2D
-# @return A list of RGCCA bootstrap weights
-bootstrap_k <- function(rgcca_res, type = "weight") {
+# @param rgcca_res A fitted RGCCA object (see  \code{\link[RGCCA]{rgcca}})
+# @return A list of RGCCA bootstrap weights/loadings.
+bootstrap_k <- function(rgcca_res) {
 
     rgcca_res_boot = NA
     nb_error       = 0
@@ -17,8 +16,8 @@ bootstrap_k <- function(rgcca_res, type = "weight") {
                                               warning(error_message)
                                           }
                                           return(NA)
-                                      }else{#Unknown message cases
                                           stop(error_message)
+                                      }else{#Unknown message cases
                                       }
                                   })
         if (!(is.list(rgcca_res_boot))){
@@ -27,21 +26,23 @@ bootstrap_k <- function(rgcca_res, type = "weight") {
     }
     
     if (is.list(rgcca_res_boot)){
-        if (type == "weight") {
-            add_variables_submodel(rgcca_res, rgcca_res_boot$a)
-            
-        } else {
-            w <- lapply(1:length(rgcca_res_boot$call$blocks), function(j) {
-                res <- sapply(1:dim(rgcca_res_boot$call$blocks[[j]])[2], function(k) {
-                    cor(
-                        rgcca_res_boot$Y[[j]][, 1],
-                        rgcca_res_boot$call$blocks[[j]][, k],
+    #block-weight vector
+    W = add_variables_submodel(rgcca_res, rgcca_res_boot$a)
+
+    #block-loadings vector
+    A = check_sign_comp(rgcca_res, rgcca_res_boot$a)
+
+    Y = lapply(seq_along(W),
+               function(j) pm(rgcca_res_boot$call$blocks[[j]], A[[j]])
+               )
+    L <- lapply(seq_along(W),
+                function(j)
+                    cor(rgcca_res_boot$call$blocks[[j]], Y[[j]],
                         use = "pairwise.complete.obs")
-                })
-                names(res) <- colnames(rgcca_res_boot$call$blocks[[j]])
-                return(res)
-            })
-        }
+                )
+
+    names(L) = names(rgcca_res$a)
+    return(list(W = W, L = L))
     }else if (is.na(rgcca_res_boot)){
         return(NA)
     }

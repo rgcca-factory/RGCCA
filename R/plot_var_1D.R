@@ -1,14 +1,13 @@
 #' Barplot of a fingerprint
 #'
-#' Barplot of the higher outer weight vectors for a component of a block
-#' (by default, the superblock or the last one) analysed by R/SGCCA
+#' Barplot of the block weight vectors or the block loading vector for the 
+#' fitted R/SGCCA object.
 #'
 #' @inheritParams plot_var_2D
 #' @inheritParams plot_histogram
-#' @param comp An integer giving the index of the analysis components
-#' @param type A character giving the criterion to selects variables : either
-#' "cor" for correlation between the component and the block
-#' or "weight" for the weight of the RGCCA
+#' @param comp An integer indicating the block-weight/loading vector to plot.
+#' @param type A character string indicating the quantity to display between 
+#' block-loading vector ("loadings") or block-weight vector ("weight").
 #' @seealso \code{\link[RGCCA]{rgccad}}, \code{\link[RGCCA]{sgcca}}
 #' @examples
 #' weights = lapply(seq(3), function(x) matrix(runif(7*2), 7, 2))
@@ -37,7 +36,7 @@ plot_var_1D <- function(
     comp = 1,
     n_mark = 30,
     i_block = length(rgcca_res$a),
-    type = "cor",
+    type = "loadings",
     collapse = FALSE,
     title = NULL,
     colors = NULL,
@@ -63,9 +62,9 @@ plot_var_1D <- function(
      J <- names(rgcca_res$a)
 
     if (is.null(title))
-        title <- ifelse(type == "cor",
-            "Variable correlations",
-            "Variable weights")
+        title <- ifelse(type == "loadings",
+            "Block-loading vector",
+            "Block-weight vector")
 
     # sort in decreasing order
     df <- data.frame(order_df(df, 1, TRUE), order = NROW(df):1)

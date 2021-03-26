@@ -6,7 +6,7 @@ check_blockx <- function(x, y, blocks){
     )
     exit_code = 133
     x <- check_integer(x, y, max = length(blocks), exit_code = exit_code,
-                       message = message)
+                       max_message = message)
     return(x)
 }
 
@@ -113,7 +113,8 @@ check_file <- function(f) {
 # check_integer(c(1:2))
 # check_integer("x", c(0, 0), type = "vector")
 check_integer <- function(x, y = x, type = "scalar", float = FALSE, min = 1,
-                          max = Inf, message = NULL, exit_code = NULL) {
+                          max = Inf, max_message = NULL, exit_code = NULL,
+                          min_message = NULL) {
 
     if (is.null(y))
         y <- x
@@ -144,11 +145,15 @@ check_integer <- function(x, y = x, type = "scalar", float = FALSE, min = 1,
     }
 
     if (any(y < min))
+      if (!is.null(min_message)) {
+        stop_rgcca(min_message, exit_code = exit_code)
+      } else {
         stop_rgcca(paste0(x, " should be higher than or equal to ", min, "."))
+      }
 
     if (any(y > max))
-      if (!is.null(message)) {
-        stop_rgcca(message, exit_code = exit_code)
+      if (!is.null(max_message)) {
+        stop_rgcca(max_message, exit_code = exit_code)
       } else {
         stop_rgcca(paste0(x, " should be lower than or equal to ", max, "."))
       }
@@ -226,7 +231,7 @@ check_ncomp <- function(ncomp, blocks, min = 1) {
                          NCOL(blocks[[x]]),
                          " (that is the number of variables of block ", x, ")."
             )
-            y <- check_integer("ncomp", ncomp[x], min = min, message = msg,
+            y <- check_integer("ncomp", ncomp[x], min = min, max_message = msg,
                                max = NCOL(blocks[[x]]), exit_code = 126)
             return(y)
         }
@@ -301,25 +306,35 @@ check_response <- function(response = NULL, df = NULL) {
 }
 
 # Test on the sign of the correlation
-check_sign_comp <- function(rgcca, w){
+check_sign_comp <- function(rgcca_res, w){
 
-    w1 <- rgcca$a
+    w1 <- rgcca_res$a
+    y1  <- lapply(seq_along(w1),
+                 function(i) pm(rgcca_res$call$blocks[[i]],
+                                        rgcca_res$a[[i]]))
+    y <- lapply(seq_along(w1),
+                 function(i) pm(rgcca_res$call$blocks[[i]], w[[i]]))
+
 
     for (k in seq(length(w))) {
         if(NCOL(w[[k]])>1)
         {
             for (j in seq(NCOL(w[[k]]))) {
-
-                res <- cor(w1[[k]][, j], w[[k]][, j])
+                res = ifelse(NROW(rgcca_res$a[[k]]) < NROW(rgcca_res$Y[[k]]),
+                             cor(y1[[k]][, j], y[[k]][, j]),
+                             cor(w1[[k]][, j], w[[k]][, j]))
                 if (!is.na(res) && res  < 0)
                     w[[k]][, j] <- -1 * w[[k]][, j]
             }
         }
         else
         {
-            res <- cor(w1[[k]], w[[k]])
-            if (!is.na(res) && res  < 0)
-                w[[k]] <- -1 * w[[k]]
+          res = ifelse(NROW(rgcca_res$a[[k]]) < NROW(rgcca_res$Y[[k]]),
+                       cor(y1[[k]], y[[k]]),
+                       cor(w1[[k]], w[[k]])
+                       )
+          if (!is.na(res) && res  < 0)
+          w[[k]] <- -1 * w[[k]]
         }
     }
 
@@ -346,7 +361,7 @@ check_size_blocks <- function(blocks, x, y = x) {
                 dim_type ,
                 " (actually ",
                 dim_y,
-                ") than the number of blocks (",
+                ") as the number of blocks (",
                 length(blocks),
                 ")."
             ),
@@ -366,39 +381,44 @@ check_size_file <- function(filename) {
         message("File loading in progress ...")
 }
 
-check_spars <- function(blocks, tau, method = "rgcca") {
-    # sparsity : A vector of integer giving the sparsity parameter for SGCCA (sparsity)
-    # Stop the program if at least one sparsity parameter is not in the required interval
-    if (tolower(method) == "sgcca") {
-        tau <- elongate_arg(tau, blocks)
-        check_size_blocks(blocks, "sparsity", tau)
-        #the minimum value avalaible
-        min_sparsity <- lapply(blocks, function(x) 1 / sqrt(NCOL(x)))
+check_penalty <- function(penalty, blocks, method = "rgcca", superblock = F) {
+  if (superblock) {
+    blocks[[length(blocks) + 1]] <- Reduce(cbind,blocks)
+    names(blocks)[length(blocks)] = "superblock"
+  }
+  penalty <- elongate_arg(penalty, blocks)
+  name = ifelse(method == "rgcca", "tau", "sparsity")
+  check_size_blocks(blocks, name, penalty)
+  penalty1 <- penalty
 
-        # Check sparsity varying between 1/sqrt(pj) and 1
-        tau <- mapply(
-            function(x, y) {
-                x <- check_integer("sparsity", x, float = TRUE, min = 0, max = 1)
-                if (x < y)
-                    stop_rgcca(
-                        paste0(
-                            "Sparsity parameter equals to ",
-                            x,
-                            ". For SGCCA, it must be greater than 1/sqrt(number_column) (i.e., ",
-                            toString(unlist(
-                                lapply(min_sparsity, function(x)
-                                    ceiling(x * 100) / 100)
-                            )), ")."
-                        ),
-                        exit_code = 132
-                    )
-                else
-                    x
-            }, tau, min_sparsity)
-    }
+  is_matrix = is(penalty, "matrix")
 
-    invisible(tau)
+  # Check value of each penalty
+  if (method == "rgcca") penalty <- sapply(penalty, check_tau, USE.NAMES = F)
+  if (method == "sgcca") {
+    if (is_matrix) divider = NROW(penalty1)
+    else divider = 1
+    penalty <- sapply(
+      seq(length(penalty)),
+      function(x) check_spars(penalty[x], blocks[[1 + (x - 1) / divider]]))
+  }
+
+  if (is(penalty1, "matrix"))
+    penalty <- matrix(penalty, NROW(penalty1), NCOL(penalty1))
+
+  return(penalty)
 }
+
+check_spars <- function(sparsity, block) {
+  min_sparsity <- 1 / sqrt(NCOL(block))
+  min_message <- paste0("Sparsity parameter equals to ", sparsity,
+                        ". For SGCCA, it must be greater than ",
+                        "1/sqrt(number_column) (i.e., ", min_sparsity, ").")
+  sparsity <- check_integer("sparsity", sparsity, float = TRUE,
+                            min = min_sparsity, max = 1, min_message = min_message)
+  invisible(sparsity)
+}
+
 # #' @export
 check_superblock <- function(is_supervised = NULL, is_superblock = NULL, verbose = TRUE) {
     if (!is.null(is_supervised)) {
@@ -412,34 +432,19 @@ check_superblock <- function(is_supervised = NULL, is_superblock = NULL, verbose
     }else
         return(isTRUE(is_superblock))
 }
-check_tau <- function(tau, blocks, method = "rgcca", superblock = FALSE) {
-    if (superblock) {
-      blocks[[length(blocks) + 1]] <- Reduce(cbind,blocks)
-      names(blocks)[length(blocks)] = "superblock"
-    }
-    tau <- elongate_arg(tau, blocks)
-    check_size_blocks(blocks, "tau", tau)
-    msg <- "tau should be comprise between 0 and 1 or should be set 'optimal'
-    for automatic setting"
-    tau1 <- tau
-    tryCatch({
-        # Check value of each tau
-        tau <- sapply(
-            seq(length(tau)),
-            function(x) {
-                if (is.na(tau[x]) || tau[x] != "optimal") {
-                    y <- check_integer("tau", tau[x], float = TRUE, min = 0, max = 1)
-                }else
-                    tau[x]
-            })
+check_tau <- function(tau) {
+  if (is.na(tau) || tau != "optimal") {
+    tau <- check_integer("tau", tau, float = TRUE, min = 0, max = 1)
+  }
+  invisible(tau)
+}
 
-        if (is(tau1, "matrix"))
-            tau <- matrix(tau, NROW(tau1), NCOL(tau1))
-        tau <- check_spars(blocks, tau, method)
-
-        return(tau)
-
-    }, warning = function(w)
-        stop_rgcca(msg, exit_code = 131)
-    )
+check_scheme <- function(scheme) {
+  if (
+    (mode(scheme) != "function") &&
+    (scheme != "horst") &&
+    (scheme != "factorial") &&
+    (scheme != "centroid")
+  ) stop_rgcca(paste0("Choose one of the three following schemes: horst, ",
+                      "centroid, factorial or design the g function"))
 }

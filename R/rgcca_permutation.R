@@ -93,13 +93,13 @@
 #'
 #' fit = rgcca_permutation(blocks, connection = C,
 #'                         par_type = "tau",
-#'                         par_length = 10, n_perms = 20,
-#'                         n_cores = 1)#parallel::detectCores() - 1
+#'                         par_length = 10, n_perms = 2,
+#'                         n_cores = 1)
 #'
 #' print(fit)
 #' plot(fit)
 #' fit$bestpenalties
-#'
+#' \dontrun{
 #' # It is possible to define explicitly K combinations of shrinkage
 #' # parameters to be tested and in that case a matrix of dimension KxJ is
 #' # required. Each row of this matrix corresponds to one specific set of
@@ -177,7 +177,7 @@
 #'                          n_perms = 10, n_cores = 1)
 #'
 #' perm.out$penalties
-#' \dontrun{
+#' 
 #' ######################################
 #' # speed up the permutation procedure #
 #' ######################################
@@ -310,7 +310,7 @@ rgcca_permutation <- function(blocks, par_type, par_value = NULL,
         {
           if(par_type=="tau"){
             par_value <- t(sapply(seq(NROW(par_value)),
-                                  function(x) check_tau(par_value[x, ],
+                                  function(x) check_penalty(par_value[x, ],
                                                         blocks,
                                                         method = method,
                                                         superblock = superblock)
@@ -324,7 +324,7 @@ rgcca_permutation <- function(blocks, par_type, par_value = NULL,
             stop_rgcca(paste0("par_value should be upper than : ",
                                   paste0(round(min_spars, 2), collapse = ",")))
           if(par_type == "tau"){
-            par_value <- check_tau(par_value, blocks, method = method,
+            par_value <- check_penalty(par_value, blocks, method = method,
                                      superblock = superblock)
             par_value <- set_spars(max = par_value)
           }

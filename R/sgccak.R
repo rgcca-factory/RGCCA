@@ -20,15 +20,13 @@
 #' components, outer weight vectors etc.)
 #' @importFrom Deriv Deriv
 sgccak <-  function(A, C, sparsity = rep(1, length(A)), scheme = "centroid",
-                    scale = FALSE, tol = .Machine$double.eps,
+                    tol = .Machine$double.eps,
                     init = "svd", bias = TRUE, verbose = TRUE,
-                    quiet = FALSE){
+                    quiet = FALSE, na.rm = TRUE){
 
   J <- length(A)
   pjs = sapply(A, NCOL)
-  AVE_X <- rep(0, J)
-  # Data standardization
-  #if (scale == TRUE) A <- lapply(A, function(x) scale2(x, bias = bias))
+
   #  Choose J arbitrary vectors
   if (init=="svd") {
     #SVD Initialisation for a_j
@@ -48,12 +46,12 @@ sgccak <-  function(A, C, sparsity = rep(1, length(A)), scheme = "centroid",
   #	Apply the constraints of the general otpimization problem
   #	and compute the outer components
   iter <- 1
-  converg <- crit <- numeric()
+   crit <- numeric()
   Y <- Z <- matrix(0,NROW(A[[1]]),J)
   for (q in 1:J){
-      Y[,q] <- apply(A[[q]],1,miscrossprod,a[[q]])
       a[[q]] <- soft.threshold(a[[q]], const[q])
       a[[q]] <- as.vector(a[[q]])/norm2(a[[q]])
+      Y[, q] <- pm(A[[q]], a[[q]], na.rm = na.rm)
   }
   a_old <- a
 
@@ -89,11 +87,11 @@ sgccak <-  function(A, C, sparsity = rep(1, length(A)), scheme = "centroid",
             CbyCovq <- C[q, ]*sign(cov2(Y, Y[,q], bias = bias))
         }
 
-        Z[,q] <- rowSums(mapply("*", CbyCovq,as.data.frame(Y)))
-        a[[q]] <- apply( t(A[[q]]),1,miscrossprod, Z[,q])
+        Z[, q] <- rowSums(mapply("*", CbyCovq,as.data.frame(Y)))
+        a[[q]] <- pm(t(A[[q]]), Z[, q], na.rm = na.rm)
         a[[q]] <- soft.threshold(a[[q]], const[q])
         a[[q]] <- as.vector(a[[q]])/norm2(a[[q]])
-        Y[,q] <- apply(A[[q]], 1, miscrossprod,a[[q]])
+        Y[, q] <- pm(A[[q]], a[[q]], na.rm = na.rm)
       }
 
     # check for convergence of the SGCCA algorithm

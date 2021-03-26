@@ -11,7 +11,7 @@ get_ctr2 <- function(
     compy = 2,
     compz = NULL,
     i_block = length(rgcca_res$call$blocks),
-    type = "cor",
+    type = "loadings",
     n_mark = 100,
     collapse = FALSE,
     remove_var = TRUE,

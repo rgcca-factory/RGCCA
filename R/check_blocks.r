@@ -28,13 +28,19 @@ check_blocks <- function(blocks, init = FALSE, n = 2,
     if(is.matrix(blocks)) blocks = list(blocks)
     if (!is.list(blocks)) stop_rgcca(paste(msg, "is not a list."))
     if (!init && length(blocks) < n)
-        stop_rgcca(paste(msg, "should at least have two elements."))
+        stop_rgcca(paste(msg, "should at least have two blocks."))
 
     # Completing block names
-    if (is.null(names(blocks))){
+    if (is.null(names(blocks))| any(names(blocks)=="")){
+      if(any(names(blocks)=="")){
+        for(x in which(names(blocks)==""))
+          names(blocks)[x] = paste0("block", x)
+      }else{
         names(blocks)=paste0("block",1:length(blocks))
-        message("Blocks are unnamed and automatically labeled as block1, ..., blockJ")
+      }
+      message("Missing block names are automatically labeled.")
     }
+    
     # Gestion of the case of one variable only
     blocks = lapply(blocks, as.matrix)
     nameBlocks = names(blocks)
@@ -48,38 +54,66 @@ check_blocks <- function(blocks, init = FALSE, n = 2,
                               return(x)
                               }
                             )
-            message("Rownames are missing and automatically labeled as S1, ..., Sn \n")
+            message("Missing rownames are automatically labeled.")
         }
         else
             stop_rgcca(paste(msg, "Blocks should have rownames.\n "))
     }
 
 
-    # Dealing with colnames for univariate block
-     blocks1 = lapply(1:length(blocks),
-                  function(i){
-                    if(NCOL(blocks[[i]]) == 1 & is.null(colnames(blocks[[i]])))
-                    {
-                      colnames(blocks[[i]])=nameBlocks[i]
-                      return(blocks[[i]])
-                    }
-                    else{
-                      return(blocks[[i]])
-                    }
-                  })
-
-    blocks=blocks1
-    names(blocks)=nameBlocks
-
+    # # Dealing with colnames for univariate block
+    #  blocks1 = lapply(1:length(blocks),
+    #               function(i){
+    #                 if(NCOL(blocks[[i]]) == 1 & is.null(colnames(blocks[[i]])))
+    #                 {
+    #                   colnames(blocks[[i]])=nameBlocks[i]
+    #                   return(blocks[[i]])
+    #                 }
+    #                 else{
+    #                   return(blocks[[i]])
+    #                 }
+    #               })
+    # 
+    # blocks=blocks1
+    # names(blocks)=nameBlocks
+    
+    # check names    
+    #if (is.null(names(blocks))){
+    #  names(blocks)=paste0("block",1:length(blocks))
+    #  message("Blocks are unnamed and automatically labeled.")
+    #}
+    
     if (any(sapply(blocks, function(x) is.null(colnames(x)))))
     {
-        stop_rgcca(paste(msg, "Blocks should have colnames.\n "))
+      message("Missing colnames are automatically labeled.")
+      blocks1 = lapply(seq_along(blocks),
+                       function(x){
+                         if(is.null(colnames(blocks[[x]]))){
+                           if(NCOL(blocks[[x]]) == 1){ 
+                             colnames(blocks[[x]]) = names(blocks)[x]
+                           }else{
+                             colnames(blocks[[x]]) = 
+                               paste0("V", x, 1:NCOL(blocks[[x]]))
+                           }
+                           return(blocks[[x]])
+                         }else{
+                           blocks[[x]] = blocks[[x]]
+                           return(blocks[[x]])
+                         }
+                       }
+      ) 
+      blocks=blocks1
+      names(blocks)=nameBlocks
     }
+    
+    
+
+    
     # if one colname is identical within or between block
     if(sum(duplicated(unlist(sapply(blocks,colnames))))!=0)
     {
       if(!quiet)
-        message("Colnames are duplicated and modified to avoid confusion \n")
+        message("Duplicated colnames are modified to avoid confusion \n")
 
       blocks_i= lapply(1:length(blocks),
                        function(i){
@@ -121,7 +155,7 @@ check_blocks <- function(blocks, init = FALSE, n = 2,
     inters_rows <- Reduce(intersect, lapply(blocks, row.names))
 
     if (length(inters_rows) == 0)
-        stop_rgcca(paste(msg, "elements of the list should have at least
+        stop_rgcca(paste(msg, "Elements of the list should have at least
                          one common rowname.\n "))
 
     equal_rows <- Reduce(identical, lapply(blocks, row.names))
@@ -154,7 +188,7 @@ check_blocks <- function(blocks, init = FALSE, n = 2,
           # if some subjects are missing (in the rownames)
           if(sum(!union_rows%in%rownames(blocks[[name]])) != 0)
             {
-                message("Some subjects are not present in all blocks. NA rows were added to get blocks with appropriate dimensions")
+                message("Some subjects are blockwise missing and NA rows were added.")
                 y=matrix(NA,
                          length(union_rows),
                          ncol = ifelse(is.null(dim(blocks[[name]])),

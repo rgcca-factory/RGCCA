@@ -8,8 +8,8 @@
   x,
   block = length(x$rgcca$call$blocks),
   comp = 1,
+  type = "weight",
   n_mark = 30,
-  bars = "quantile",
   colors = NULL,
   title = NULL,
   cex = 1,
@@ -24,16 +24,16 @@
 \arguments{
 \item{x}{A fitted bootstrap object (see \code{\link[RGCCA]{bootstrap}})}
 
-\item{block}{A vector indicating the blocks to consider.}
+\item{block}{A numeric vector indicating the blocks to consider.}
 
-\item{comp}{An integer giving the index of the analysis components}
+\item{comp}{An integer indicating the block-weight/loading vector to plot.}
+
+\item{type}{Character string indicating the bootstrapped object to plot: 
+block-weight vectors ("weight", default) or block-loading vectors 
+("loadings").}
 
 \item{n_mark}{The number of top variables to display in the correlation
 circle}
-
-\item{bars}{Character string giving the variability among "sd" (error bar of
-standard deviation) , "stderr" (error bar of standard deviation divided by
-sqrt(n)) or "quantile" (error bar of 0.05/0.95-quantiles)}
 
 \item{colors}{Either a vector of integers (each integer corresponding to a color) or of characters corresponding to names of colors (as "blue",see colors()) or RGB code ("#FFFFFF").}
 
@@ -61,7 +61,7 @@ data("Russett")
 blocks = list(agriculture = Russett[, seq(3)],
               industry = Russett[, 4:5],
               politic = Russett[, 6:11])
-fit.rgcca = rgcca(blocks)
-fit.boot=bootstrap(fit.rgcca, n_boot = 2, n_cores = 1)
-plot(fit.boot)
+fit.rgcca = rgcca(blocks, ncomp = 2, method = "rgcca", tau = 1)
+fit.boot=bootstrap(fit.rgcca, n_boot = 20, n_cores = 1)
+plot(fit.boot, type = "weight", block = 1, comp=1)
 }

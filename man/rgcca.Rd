@@ -182,7 +182,7 @@ orthogonal block components (specified by ncomp) for each block. The rgcca()
 function can handle missing values using a NIPALS type algorithm (non-linear
 iterative partial least squares algorithm) described in (Tenenhaus et al,
 2005). Guidelines describing how to use RGCCA in practice are provided in
-(Garali et al., 2017).
+(Garali et al., 2018).
 }
 \examples{
 ####################
@@ -201,7 +201,8 @@ fit.rgcca = rgcca(blocks=blocks, method = "rgcca", connection = 1-diag(3),
 print(fit.rgcca)
 plot(fit.rgcca, type = "weight", block = 3)
 politic = as.vector(apply(Russett[, 9:11], 1, which.max))
-plot(fit.rgcca, type = "ind", block = 1:2, comp = rep(1, 2), resp = politic)
+plot(fit.rgcca, type = "sample", block = 1:2,
+     comp = rep(1, 2), resp = politic)
 
 ############################################
 # Example 2: RGCCA and multiple components #
@@ -212,14 +213,14 @@ fit.rgcca = rgcca(blocks, method = "rgcca",
                   scheme = "factorial", verbose = TRUE)
 
 politic = as.vector(apply(Russett[, 9:11], 1, which.max))
-plot(fit.rgcca, type = "ind", block = 1:2,
+plot(fit.rgcca, type = "sample", block = 1:2,
      comp = rep(1, 2), resp = politic)
 
 plot(fit.rgcca, type = "ave")
 plot(fit.rgcca, type = "network")
 plot(fit.rgcca, type = "weight", block = 1)
-plot(fit.rgcca, type = "cor")
-
+plot(fit.rgcca, type = "loadings")
+\dontrun{
 ##################################
 # Example 3: Sparse GCCA (SGCCA) #
 ##################################
@@ -254,11 +255,7 @@ plot(fit.rgcca, type = "both")
 
 b = bootstrap(fit.rgcca, n_cores = 1, n_boot = 10)
 plot(b, n_cores = 1)
-
-##########################
-# Example 4: Sparse GCCA #
-##########################
-
+}
 
 }
 \references{

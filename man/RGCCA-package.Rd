@@ -27,27 +27,16 @@ blocks = list(
     politic = Russett[, 6:11]
 )
 
-# Tune the model to find the best sparsity coefficients (all the blocs are connected together)
-perm = rgcca_permutation(blocks, n_cores = 1, par_type = "sparsity", n_perms = 10)
-print(perm)
-plot(perm)
+# Tune the model to find the optimal regularization parameters
+perm.out = rgcca_permutation(blocks, n_cores = 1, par_type = "tau", n_perms = 10)
 
-res_sgcca = rgcca(blocks, method = "sgcca", sparsity = perm$bestpenalties)
-plot(res_sgcca, type = "network")
-plot(res_sgcca, type = "ave")
+print(perm.out)
+plot(perm.out)
 
-# Select the most significant variables
-b = bootstrap(res_sgcca, n_cores = 1, n_boot = 100)
-plot(b, n_cores = 1)
+# fit the rgcca model based on these optimal parameters
+fit.rgcca = rgcca(perm.out)
 
-# Tune the model for explaining the politic block (politic connected to the two other blocks)
-cv = rgcca_cv(blocks, response = 3, ncomp = 2, n_cores = 1)
-print(cv)
-plot(cv)
-
-res_rgcca = rgcca(blocks, response = 3, ncomp = 2, tau = cv$bestpenalties)
-plot(res_rgcca, type = "both")
-
-b = bootstrap(res_rgcca, n_cores = 1, n_boot = 10)
+# Build bootstrap confidence intervals.
+b = bootstrap(fit.rgcca, n_cores = 1, n_boot = 10)
 plot(b, n_cores = 1)
 }

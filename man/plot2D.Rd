@@ -33,31 +33,27 @@ plot2D(
 
 \item{title}{A character giving the title of the plot}
 
-\item{group}{A vector of character with levels used to color the points}
+\item{group}{A vector of character whose levels are used to color the points}
 
-\item{name_group}{A character giving the type of groups (either "Blocs" or}
+\item{name_group}{A character giving the type of groups (either "Blocks" or}
 
-\item{compx}{An integer giving the index of the analysis component used
-for the x-axis}
+\item{compx}{An integer giving the index of the block component for the x-axis}
 
-\item{compy}{An integer giving the index of the analysis component used
-for the y-axis}
+\item{compy}{An integer giving the index of the block component for the y-axis}
 
-\item{i_block}{An integer giving the index of a list of blocks}
+\item{i_block}{An integer giving the index of the block}
 
 \item{p}{A ggplot object}
 
-\item{text}{A bolean to represent the points with their row names (TRUE)
-or with circles (FALSE)}
+\item{text}{A logical value indicating if rowanmes are displayed (default = TRUE)}
 
-\item{i_block_y}{An integer giving the index of a list of blocks (another
-one, different from the one used in i_block)}
+\item{i_block_y}{An integer giving the index of the block (different from i_block)}
 
 \item{colors}{Either a vector of integers (each integer corresponding to a color) or of characters corresponding to names of colors (as "blue",see colors()) or RGB code ("#FFFFFF").}
 
 \item{collapse}{A boolean to combine the variables of each block as result}
 
-\item{no_overlap}{A boolean to avoid overlap in plotted text}
+\item{no_overlap}{A logical value indicating if text-overlappin is accepted}
 
 \item{cex}{An integer for the size of the plot parameters}
 

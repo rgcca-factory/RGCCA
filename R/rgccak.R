@@ -51,9 +51,7 @@
 #' @importFrom Deriv Deriv
 
 rgccak=function (A, C, tau = "optimal", scheme = "centroid", verbose = FALSE,
-                 init = "svd", bias = TRUE, tol = 1e-08, na.rm = TRUE,
-                 scale = TRUE, scale_block = TRUE
-                 )
+                 init = "svd", bias = TRUE, tol = 1e-08, na.rm = TRUE)
 {
 
   if(mode(scheme) != "function")
@@ -71,9 +69,8 @@ rgccak=function (A, C, tau = "optimal", scheme = "centroid", verbose = FALSE,
     pjs <- sapply(A, NCOL) # number of variables per block
     Y <- matrix(0, n, J)
     if (!is.numeric(tau))
-        tau = sapply(A, tau.estimate) # From Schafer and Strimmer, 2005
+        tau = sapply(A, tau.estimate, na.rm = na.rm) # From Schafer and Strimmer, 2005
 
-    A0 <-A
     A <- lapply(A, as.matrix)
     a <- alpha <- M <- Minv <- K <- list()
 
@@ -144,7 +141,7 @@ rgccak=function (A, C, tau = "optimal", scheme = "centroid", verbose = FALSE,
         })
     }
 
-    crit_old <- sum(C * g(cov2(Y, bias = bias)), na.rm = na.rm)
+    crit_old <- sum(C * g(cov2(Y, bias = bias)))
     iter = 1
     crit = numeric()
     Z = matrix(0, NROW(A[[1]]), J)
@@ -154,20 +151,15 @@ rgccak=function (A, C, tau = "optimal", scheme = "centroid", verbose = FALSE,
 
     repeat
     {
-      Yold <- Y
-
        for (j in which.primal)
       {
          dgx = dg(cov2(Y[, j], Y, bias = bias))
          if(tau[j] == 1)
           {
            Z[, j] = rowSums(matrix(rep(C[j, ], n), n, J, byrow = TRUE)*
-                              matrix(rep(dgx, n), n, J, byrow = TRUE)*Y,
-                            na.rm = na.rm)
-		       a[[j]] = drop(1/sqrt(pm(pm(t(Z[, j]), A[[j]], na.rm = na.rm),
-		                               pm(t(A[[j]]), Z[, j], na.rm = na.rm),
-		                               na.rm = na.rm)))*
-		                        pm(t(A[[j]]), Z[,  j], na.rm = na.rm)
+                              matrix(rep(dgx, n), n, J, byrow = TRUE)*Y)
+           Az     = pm(t(A[[j]]), Z[, j], na.rm = TRUE)
+		       a[[j]] = drop(1/sqrt(crossprod(Az))) * Az
 		     if(a[[j]][1]<0){a[[j]]=-a[[j]]}
 
 		     Y[, j] = pm(A[[j]], a[[j]], na.rm = na.rm)
@@ -175,12 +167,9 @@ rgccak=function (A, C, tau = "optimal", scheme = "centroid", verbose = FALSE,
            }else
 			      {
              Z[, j] = rowSums(matrix(rep(C[j, ], n), n,  J, byrow = TRUE)*
-                                matrix(rep(dgx, n), n,  J, byrow = TRUE)*
-                                Y, na.rm = na.rm)
-             a[[j]] = drop(1/sqrt(pm(pm(t(Z[, j]), A[[j]], na.rm = na.rm),
-                                     pm(pm(M[[j]], t(A[[j]]), na.rm = na.rm),
-                                        Z[, j], na.rm = na.rm), na.rm = na.rm)))*
-                      pm(M[[j]], pm(t(A[[j]]), Z[, j]))
+                                matrix(rep(dgx, n), n,  J, byrow = TRUE)*Y)
+             Az     = pm(t(A[[j]]), Z[, j], na.rm = TRUE)
+             a[[j]] = drop(1/sqrt(t(Az) %*% M[[j]] %*% Az)) * (M[[j]] %*% Az)
              if(a[[j]][1]<0){a[[j]] = -a[[j]]}
              Y[, j] = pm(A[[j]], a[[j]], na.rm = na.rm)
           }
@@ -192,8 +181,7 @@ rgccak=function (A, C, tau = "optimal", scheme = "centroid", verbose = FALSE,
           ifelse(tau[j] == 1,
             {
               Z[, j] = rowSums(matrix(rep(C[j, ], n), n, J, byrow = TRUE)*
-                                 matrix(rep(dgx, n), n, J, byrow = TRUE)*Y,
-                               na.rm = na.rm)
+                                 matrix(rep(dgx, n), n, J, byrow = TRUE)*Y)
               alpha[[j]] = drop(1/sqrt(t(Z[, j])%*%K[[j]]%*%Z[, j]))*Z[, j]
               a[[j]] = pm(t(A[[j]]), alpha[[j]], na.rm = na.rm)
               if(a[[j]][1]<0){a[[j]] = -a[[j]]}
@@ -201,8 +189,7 @@ rgccak=function (A, C, tau = "optimal", scheme = "centroid", verbose = FALSE,
            },
            {
             Z[, j] = rowSums(matrix(rep(C[j, ], n), n, J, byrow = TRUE)*
-                               matrix(rep(dgx, n), n, J, byrow = TRUE)*
-                               Y, na.rm = na.rm)
+                               matrix(rep(dgx, n), n, J, byrow = TRUE)*Y)
           	alpha[[j]] = drop(1/sqrt(t(Z[, j])%*%K[[j]]%*%Minv[[j]]%*%Z[, j]))*
           	             (Minv[[j]]%*%Z[,  j])
 
@@ -212,7 +199,7 @@ rgccak=function (A, C, tau = "optimal", scheme = "centroid", verbose = FALSE,
           })
       }
 
-      crit[iter] <- sum(C * g(cov2(Y, bias = bias)), na.rm = na.rm)
+      crit[iter] <- sum(C * g(cov2(Y, bias = bias)))
       if (verbose & (iter%%1) == 0)
       {
           cat(" Iter: ", formatC(iter, width = 3, format = "d"),

@@ -10,18 +10,18 @@ res=rgcca(A,method="rgcca",ncomp=2)
 library(ggplot2)
 library(gridExtra)
 library(grid)
-plot(res,colors="blue")
-plot.rgcca(res,type="var")
-plot(res,type="ind")
+plot(res, colors = "blue")
+plot.rgcca(res,type = "corCircle")
+plot(res,type = "sample")
 plot(res,type="ave",colors=c("blue","red"))
 plot(res,type="network")
 
 
 res=rgcca(A,method="rgcca",superblock=TRUE,ncomp=2)
-plot(res,type="ind")
-plot(res,type="var")
-plot(res,type="ave",colors=c("blue","red"))
-plot(res,type="network")
+plot(res, type = "sample")
+plot(res, type = "corCircle")
+plot(res, type = "ave",colors=c("blue","red"))
+plot(res, type = "network")
 
 
 # Response
@@ -32,20 +32,20 @@ library(gridExtra)
 library(grid)
 plot(res)
 plot(res)
-plot(res,type="both")
-plot(res,type="var")
-plot(res,type="ind",colors=c("blue","green"),resp=A[[3]][,1])
-plot(res,type="ave",colors=c("blue","red"))
-plot(res,type="network")
+plot(res,type = "both")
+plot(res,type = "corCircle")
+plot(res,type = "sample", colors=c("blue","green"),resp=A[[3]][,1])
+plot(res,type = "ave",colors=c("blue","red"))
+plot(res,type = "network")
 
 
 
 
 vec_colors=c(rep(letters[1:9],5),"a","b")
 names(vec_colors)=rownames(A[[1]])
-plot(res,type="ind",resp=vec_colors)
+plot(res,type = "sample",resp=vec_colors)
 
 
 vec_colors=c(rep(letters[1:11],4),"a","b","c")
 names(vec_colors)=rownames(A[[1]])
-plot(res,type="ind",resp=vec_colors,colors=rainbow(11))
+plot(res,type="sample", resp=vec_colors,colors=rainbow(11))

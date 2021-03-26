@@ -23,16 +23,13 @@ plot_var_2D(
 \arguments{
 \item{rgcca_res}{A fitted RGCCA object (see  \code{\link[RGCCA]{rgcca}})}
 
-\item{compx}{An integer giving the index of the analysis component used
-for the x-axis}
+\item{compx}{An integer giving the index of the block component for the x-axis}
 
-\item{compy}{An integer giving the index of the analysis component used
-for the y-axis}
+\item{compy}{An integer giving the index of the block component for the y-axis}
 
-\item{i_block}{An integer giving the index of a list of blocks}
+\item{i_block}{An integer giving the index of the block}
 
-\item{text}{A bolean to represent the points with their row names (TRUE)
-or with circles (FALSE)}
+\item{text}{A logical value indicating if rowanmes are displayed (default = TRUE)}
 
 \item{remove_var}{logical value. If TRUE, the top 100 variables with the
 highest with the block components are displayed}
@@ -42,7 +39,7 @@ circle}
 
 \item{collapse}{A boolean to combine the variables of each block as result}
 
-\item{no_overlap}{A boolean to avoid overlap in plotted text}
+\item{no_overlap}{A logical value indicating if text-overlappin is accepted}
 
 \item{title}{A character giving the title of the plot}
 

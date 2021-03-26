@@ -507,7 +507,7 @@ tryCatch({
             opt$compx,
             opt$nmark,
             opt$block,
-            type = "cor",
+            type = "loadings",
             cex_main = 20
         )
     save_plot(opt$o3, top_variables)
