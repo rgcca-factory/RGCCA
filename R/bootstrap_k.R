@@ -26,23 +26,23 @@ bootstrap_k <- function(rgcca_res) {
     }
     
     if (is.list(rgcca_res_boot)){
-    #block-weight vector
-    W = add_variables_submodel(rgcca_res, rgcca_res_boot$a)
-
-    #block-loadings vector
-    A = check_sign_comp(rgcca_res, rgcca_res_boot$a)
-
-    Y = lapply(seq_along(W),
-               function(j) pm(rgcca_res_boot$call$blocks[[j]], A[[j]])
-               )
-    L <- lapply(seq_along(W),
-                function(j)
-                    cor(rgcca_res_boot$call$blocks[[j]], Y[[j]],
-                        use = "pairwise.complete.obs")
-                )
-
-    names(L) = names(rgcca_res$a)
-    return(list(W = W, L = L))
+        #block-weight vector
+        W = add_variables_submodel(rgcca_res, rgcca_res_boot$a)
+    
+        #block-loadings vector
+        A = check_sign_comp(rgcca_res, rgcca_res_boot$a)
+    
+        Y = lapply(seq_along(W),
+                   function(j) pm(rgcca_res_boot$call$blocks[[j]], A[[j]])
+                   )
+        L <- lapply(seq_along(W),
+                    function(j)
+                        cor(rgcca_res_boot$call$blocks[[j]], Y[[j]],
+                            use = "pairwise.complete.obs")
+                    )
+    
+        names(L) = names(rgcca_res$a)
+        return(list(W = W, L = L))
     }else if (is.na(rgcca_res_boot)){
         return(NA)
     }
