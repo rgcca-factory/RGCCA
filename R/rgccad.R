@@ -207,44 +207,6 @@ rgccad=function (blocks, connection = 1 - diag(length(blocks)), tau = rep(1, len
     }
   }
 
-  # Superblock option
-  if(!is.matrix(connection)&& connection == "superblock")
-  {
-    #Construction of the superblock
-    blocks = c(blocks, list(do.call(cbind, blocks)))
-    #Construction of the corresponding design matrix
-    connection = matrix(0, length(blocks), length(blocks))
-    connection[length(blocks), 1:(length(blocks)-1)]=1
-    connection = connection+t(connection)
-    # Shrinkage parameters
-
-    if(is.null(tau)){
-      message("the shrinkage parameters have been
-              automatically set to 1 for all blocks (incl. superblock)")
-      tau = rep(1, NCOL(connection))
-    }
-    if(length(tau) == NCOL(connection)-1){
-      message("the shrinkage parameter for the superblock has been
-              automatically set to 1")
-      tau=c(tau,1)
-    }
-
-    # number of components per block
-    if(is.null(ncomp)){
-      message("the number of components per block has been
-              automatically set to 1 for all blocks/superblock)")
-      ncomp = rep(1, NCOL(connection))
-    }
-    if(length(ncomp) == NCOL(connection)-1){
-      message("the number of global components has been
-              automatically set to max(ncomp)")
-      ncomp =c(ncomp,max(ncomp))
-    }
-
-    # number of variables per block
-    pjs = c(pjs, sum(pjs))
-  }
-
   AVE_X = list()
   AVE_outer <- vector()
   ndefl <- ncomp - 1
