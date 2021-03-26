@@ -74,7 +74,7 @@ get_bootstrap <- function(
     bars="quantile",
     display_order=TRUE,
     adj.method = "fdr") {
-
+    
     stopifnot(is(b, "bootstrap"))
     check_ncol(b$rgcca$Y, block)
     check_blockx("block", block, b$rgcca$call$blocks)
@@ -83,7 +83,7 @@ get_bootstrap <- function(
 
     bootstrapped=b$bootstrap[[comp]][[block]]
     n_boot=sum(!is.na(bootstrapped[1, ]))
-    if(tolower(b$rgcca$call$method) %in% c("spls", "spca", "sgcca"))
+    if(tolower(b$rgcca$call$method) %in% c("spls", "spca", "sgcca", "group_sgcca"))
     {
       mean = apply(bootstrapped, 1,
                    function(x)
@@ -104,7 +104,7 @@ get_bootstrap <- function(
                 sum(x!= 0, na.rm=T) )
 
      # p values if occurrences
-    if(tolower(b$rgcca$call$method) %in% c("spls", "spca", "sgcca"))
+    if(tolower(b$rgcca$call$method) %in% c("spls", "spca", "sgcca", "group_sgcca"))
     {
         n_boot=ifelse(!is.null(dim(b[[1]][[1]][[1]])),
                       dim(b[[1]][[1]][[1]])[2],
@@ -153,15 +153,17 @@ get_bootstrap <- function(
         adjust.pval = p.adjust(p.vals, method = adj.method)
     )
 
-    if (tolower(b$rgcca$call$method) %in% c("spls", "spca", "sgcca")){
+    if (tolower(b$rgcca$call$method) %in% c("spls", "spca", "sgcca", "group_sgcca")){
       df$occurrences <- occ
       index <- which(colnames(df)=="occurrences")
       db <- data.frame(order_df(df, index, allCol = TRUE), order = NROW(df):1)
+      # browser()
       if(!display_order){
         db <- data.frame(order_df(df, index, allCol = TRUE)   )
         db <- db[, c("occurrences", "mean", "estimate", "sd",
                      "lower_bound", "upper_bound",
                      "pval", "adjust.pval")]
+        index <- 1
       }
       if(display_order)
             db <- data.frame(order_df(df, index, allCol = TRUE),
@@ -171,21 +173,21 @@ get_bootstrap <- function(
       df$sign <- rep("NS", NROW(df))
       for (i in seq(NROW(df)))
             if(p.vals[i]<0.05) df$sign[i] <- "*"
+      index <- which(colnames(df) == "mean")
       if(!display_order){
-        index <- which(colnames(df)=="mean")
         db <- data.frame(order_df(df, index, allCol = TRUE)   )
         db <- db[, c("mean", "estimate", "sd",
                      "lower_bound", "upper_bound",
                      "pval", "adjust.pval")]
+        index <- 1
       }
       if(display_order){
-        index <- which(colnames(df) == "mean")
         db <- data.frame(order_df(df, index, allCol = TRUE),
                              order = NROW(df):1)
       }
     }
 
-    zero_var <- which(df[, 1] == 0)
+    zero_var <- which(db[, index] == 0)
     if (NROW(df) > 1 && length(zero_var) != 0) db <- db[-zero_var, ]
 
     attributes(db)$indexes <- list(

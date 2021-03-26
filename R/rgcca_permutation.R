@@ -246,12 +246,12 @@ rgcca_permutation <- function(blocks, par_type, par_value = NULL,
         method <- rgcca_res$call$method
         superblock <- rgcca_res$call$superblock
     }
-
+    browser()
     check_integer("n_perms", n_perms)
     check_integer("par_length", n_perms)
     check_integer("par_value", n_perms, min = 0)
     check_integer("n_cores", n_cores, min = 0)
-    match.arg(par_type, c("tau", "sparsity"))
+    match.arg(par_type, c("tau", "sparsity", "group_sparsity"))
     min_spars <- NULL
 
     if (par_type == "sparsity") method2 <- "sgcca"
@@ -338,9 +338,11 @@ rgcca_permutation <- function(blocks, par_type, par_value = NULL,
         return(list(par_type, par_value))
     }
 
-    switch(par_type,
-           "sparsity" = par <- set_penalty(),
-           "tau" = par <- set_penalty())
+    par <- set_penalty()
+    # switch(par_type,
+    #        "sparsity" = par <- set_penalty(),
+    #        "tau" = par <- set_penalty(),
+    #        "group_sparsity" = par <- set_penalty())
 
     par_value_parallel =
       matrix(apply(par[[2]], 1, function(x) rep(x, n_perms + 1)),

@@ -92,7 +92,7 @@ rgcca_permutation_k <- function(
         func$tau <- tau
         func$sparsity <- sparsity
         func[[par_type]] <- par_value
-        
+        browser()
         res <- tryCatch(eval(as.call(func)), error = function(error_message){
             if (grepl("L1/L2 projection issue", toString(error_message), fixed = TRUE)){
                 if((perm || (init == "random")) && (nb_error == 4)){#Random cases

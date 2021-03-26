@@ -231,7 +231,7 @@ group_sgcca <- function (blocks, connection = 1-diag(length(blocks)), sparsity =
                 connection=connection, scheme=scheme, sparsity=sparsity, ncomp=ncomp,
                 crit = result$crit[length(result$crit)],
                 AVE = AVE)
-    class(out) <- "sgcca"
+    class(out) <- "group_sgcca"
     return(out)
   }
   
@@ -357,7 +357,7 @@ group_sgcca <- function (blocks, connection = 1-diag(length(blocks)), sparsity =
               crit = crit,
               AVE = AVE)
   
-  class(out) <- "sgcca"
+  class(out) <- "group_sgcca"
   return(out)
   
 }
