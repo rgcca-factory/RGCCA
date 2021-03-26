@@ -34,32 +34,17 @@ plot.bootstrap=function(x, block = length(x$rgcca$call$blocks),
             block=length(x$rgcca$call$blocks)-1
     }
 
-    if(x$rgcca$call$method%in%c("sgcca", "spls", "spca"))
-        {
-            x1="occurrences"
-            y1="estimate"
-            title=ifelse(is.null(title),
-                         paste0("Non-zero occurrences (",
-                                names(x$rgcca$call$blocks)[block],
-                                ")\n(", ncol(x$bootstrap[[1]][[1]][[1]]),
-                                " bootstrap samples - comp ", comp, ")"),
+    x1="estimate"
+    y1="sign"
+    title=ifelse(is.null(title),
+                 paste0("Bootstrap confidence interval (",
+                         names(x$rgcca$call$blocks)[block], ")\n (",
+                         type, " - ",
+                         ncol(x$bootstrap[[1]][[1]][[1]]),
+                         " bootstrap samples - comp ", comp, ")" ),
                          title)
-        }
-         else
-         {
-            x1="estimate"
-            y1="sign"
-            title=ifelse(is.null(title),
-                         paste0("Bootstrap confidence interval (",
-                                names(x$rgcca$call$blocks)[block], ")\n (",
-                                type, " - ",
-                                ncol(x$bootstrap[[1]][[1]][[1]]),
-                                " bootstrap samples - comp ", comp, ")" ),
-                         title)
-         }
 
-
-         p1 = plot_bootstrap_1D(
+     p1 = plot_bootstrap_1D(
               b = x,
               df_b = NULL,
               type = type, 

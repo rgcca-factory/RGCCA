@@ -126,6 +126,7 @@ test_that("check_file raises an error when file does not exist", {
                "a_file_that_does_not_exist does not exist.",
                fixed = TRUE)
 })
+
 test_that("check_file passes when file is valid", {
   expect_error(check_file("./test_checks.r"), NA)
 })
@@ -136,23 +137,27 @@ test_that("check_integer raises an error if x is not numeric", {
                "x should be numeric.",
                fixed = TRUE)
 })
+
 test_that("check_integer raises an error if x contains NA", {
   expect_error(check_integer("x", c(42, NA)),
                "x should not be NA.",
                fixed = TRUE)
 })
+
 test_that("check_integer raises an error if type is scalar and x not of
           length 1", {
   expect_error(check_integer("x", c(42, 7), type = "scalar"),
                "x should be of length 1.",
                fixed = TRUE)
 })
+
 test_that("check_integer raises an error any element of x is a float but float
           is false", {
   expect_error(check_integer("x", c(1, 1.7, 2), type = "vector", float = FALSE),
                "x should be an integer.",
                fixed = TRUE)
 })
+
 test_that("check_integer raises an error if any element of x is below min", {
   expect_error(check_integer("x", c(0, 1, 2), type = "vector", min = 1),
                "x should be higher than or equal to 1.",
@@ -166,6 +171,7 @@ test_that("check_integer raises an error if any element of x is above max", {
                "error",
                fixed = TRUE)
 })
+
 test_that("check_integer passes and returns x when x is valid", {
   expect_equal(check_integer(1), 1)
   expect_equal(check_integer(c(1, 2, 3), type = "vector"), c(1, 2, 3))

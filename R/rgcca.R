@@ -55,7 +55,7 @@
 #' \item{\code{"nipals"}}{corresponds to perform RGCCA algorithm on available
 #' data (NIPALS-type algorithm)}}
 #' @return A rgcca fitted object
-#' @return \item{Y} \item{Y}{List of \eqn{J} elements. Each element of the list \eqn{Y}
+#' @return \item{Y}{List of \eqn{J} elements. Each element of the list \eqn{Y}
 #' is a matrix that contains the RGCCA block components for the corresponding
 #' block.}
 #' @return \item{a}{List of \eqn{J} elements. Each element of the list \eqn{a}
@@ -112,7 +112,7 @@
 #' print(fit.rgcca)
 #' plot(fit.rgcca, type = "weight", block = 3)
 #' politic = as.vector(apply(Russett[, 9:11], 1, which.max))
-#' plot(fit.rgcca, type = "sample", block = 1:2, 
+#' plot(fit.rgcca, type = "sample", block = 1:2,
 #'      comp = rep(1, 2), resp = politic)
 #'
 #' ############################################
@@ -259,7 +259,7 @@ rgcca <- function(blocks, method = "rgcca",
         par <- "tau"
         penalty <- tau
     }
- 
+
     match.arg(init, c("svd", "random"))
     check_method(method)
     check_scheme(scheme)

@@ -9,8 +9,8 @@
 \arguments{
 \item{x}{A fitted bootstrap object (see \code{\link[RGCCA]{bootstrap}})}
 
-\item{type}{Character string indicating the bootstrapped object to print: 
-block-weight vectors ("weight", default) or block-loading vectors 
+\item{type}{Character string indicating the bootstrapped object to print:
+block-weight vectors ("weight", default) or block-loading vectors
 ("loadings").}
 
 \item{...}{Further arguments in print}
@@ -21,7 +21,7 @@ the means, 95\% intervals, bootstrap ratio, p-values and other statistics.
 \itemize{
 \item 'estimate' for block weight/loading vectors.
 \item 'mean' for the mean of the bootstrap block weight/loading vectors.
-\item 'sd' for the boostrapped estimate of the standard deviation of the 
+\item 'sd' for the boostrapped estimate of the standard deviation of the
 block weight/loading vectors.
 \item 'lower/upper_bound' for the lower and upper intervals.
 \item 'pvals' for p-values. In the case of SGCCA, the occurrences of the

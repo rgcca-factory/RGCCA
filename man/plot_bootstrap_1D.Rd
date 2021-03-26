@@ -9,7 +9,7 @@ plot_bootstrap_1D(
   df_b = NULL,
   type = "weight",
   x = "estimate",
-  y = "occurrences",
+  y = "sign",
   n_mark = 50,
   title = NULL,
   colors = NULL,
@@ -24,8 +24,8 @@ plot_bootstrap_1D(
 
 \item{df_b}{A get_bootstrap object \code{\link[RGCCA]{get_bootstrap}}}
 
-\item{type}{Character string indicating the bootstrapped object to print: 
-block-weight vectors ("weight", default) or block-loading vectors 
+\item{type}{Character string indicating the bootstrapped object to print:
+block-weight vectors ("weight", default) or block-loading vectors
 ("loadings").}
 
 \item{x}{indicator used in the plot (see details).}
@@ -42,7 +42,7 @@ circle}
 
 \item{comp}{An integer indicating the block-weight/loading vector to plot.}
 
-\item{display_bar}{A logical value. If TRUE colobar for significant
+\item{display_bar}{A logical value. If TRUE colorbar for significant
 variables is displayed.}
 
 \item{i_block}{An integer giving the index of the block}
@@ -73,8 +73,8 @@ blocks = list(agriculture = Russett[, seq(3)],
               industry = Russett[, 4:5],
               politic = Russett[, 6:11])
 fit.sgcca = rgcca(blocks, sparsity = 0.75, method = "sgcca")
-
-boot = bootstrap(fit.sgcca,
+fit.stab = rgcca_stability(fit.sgcca, n_cores = 1)
+boot = bootstrap(fit.stab,
                  n_boot = 30, n_cores = 1)
 plot_bootstrap_1D(boot, type = "loadings")
 rgcca_out = rgcca(blocks)

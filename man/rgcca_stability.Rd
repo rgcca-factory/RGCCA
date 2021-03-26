@@ -6,7 +6,7 @@
 \usage{
 rgcca_stability(
   rgcca_res,
-  keep = 0.1,
+  keep = sapply(rgcca_res$a, function(x) mean(x != 0)),
   n_boot = 100,
   n_cores = parallel::detectCores() - 1
 )
@@ -14,7 +14,7 @@ rgcca_stability(
 \arguments{
 \item{rgcca_res}{A fitted RGCCA object (see \code{\link[RGCCA]{rgcca}})}
 
-\item{keep}{numeric vector indicating the proportion of top variables per 
+\item{keep}{numeric vector indicating the proportion of top variables per
 block.}
 
 \item{n_boot}{Number of bootstrap samples (Default: 100).}
@@ -31,7 +31,7 @@ block.}
 \item{rgcca_res}{an RGCCA object fitted on the most stable variables.}
 }
 \description{
-This function can be used to identify the most stable variables  
+This function can be used to identify the most stable variables
 identified as relevant by SGCCA.
 }
 \examples{
@@ -47,16 +47,16 @@ levels(Loc) <- colnames(ge_cgh_locIGR$multiblocks$y)
 connection <-  matrix(c(0, 0, 1, 0, 0, 1, 1, 1, 0), 3, 3)
 blocks[[3]] = blocks[[3]][, -3]
 
-fit.sgcca = rgcca(blocks, connection = connection, 
-                  sparsity = c(.071,.2, 1), 
+fit.sgcca = rgcca(blocks, connection = connection,
+                  sparsity = c(.071,.2, 1),
                   ncomp = c(1, 1, 1),
-                  scheme = "centroid", 
+                  scheme = "centroid",
                   verbose = TRUE)
-                  
-fit.stab = rgcca_stability(fit.sgcca, 
-                           keep = c(0.01, 0.1, 1), 
-                           n_cores = parallel::detectCores() - 1
-                           ) 
-boot.out = bootstrap(fit.stab, n_boot = 100)                  
+
+fit.stab = rgcca_stability(fit.sgcca,
+                           keep = c(0.01, 0.1, 1),
+                           n_cores = 1
+                           )
+boot.out = bootstrap(fit.stab, n_boot = 100, n_cores = 1)
 }
 }

@@ -182,7 +182,7 @@ orthogonal block components (specified by ncomp) for each block. The rgcca()
 function can handle missing values using a NIPALS type algorithm (non-linear
 iterative partial least squares algorithm) described in (Tenenhaus et al,
 2005). Guidelines describing how to use RGCCA in practice are provided in
-(Garali et al., 2017).
+(Garali et al., 2018).
 }
 \examples{
 ####################
@@ -201,7 +201,7 @@ fit.rgcca = rgcca(blocks=blocks, method = "rgcca", connection = 1-diag(3),
 print(fit.rgcca)
 plot(fit.rgcca, type = "weight", block = 3)
 politic = as.vector(apply(Russett[, 9:11], 1, which.max))
-plot(fit.rgcca, type = "sample", block = 1:2, 
+plot(fit.rgcca, type = "sample", block = 1:2,
      comp = rep(1, 2), resp = politic)
 
 ############################################

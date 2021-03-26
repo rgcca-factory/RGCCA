@@ -16,8 +16,8 @@ get_bootstrap(
 \arguments{
 \item{b}{A fitted bootstrap object (see  \code{\link[RGCCA]{bootstrap}})}
 
-\item{type}{Character string indicating the bootstrapped object to print: 
-block-weight vectors ("weight", default) or block-loading vectors 
+\item{type}{Character string indicating the bootstrapped object to print:
+block-weight vectors ("weight", default) or block-loading vectors
 ("loadings").}
 
 \item{comp}{An integer indicating the block-weight/loading vector to plot.}
@@ -34,9 +34,9 @@ A dataframe containing:
 \itemize{
 \item 'mean' for the mean of the bootstrap weights/loadings (non-null for SGCCA)
 \item 'estimate' for RGCCA block-weight/block-loading vectors
-\item 'sd' for the bootstrap estimate of the standard error of the 
+\item 'sd' for the bootstrap estimate of the standard error of the
 (non-null in case of SGCCA) bootstrap weights/loadings
-\item 'lower/upper_bound' for the lower and upper intervals 
+\item 'lower/upper_bound' for the lower and upper intervals
 (0.025/0.975 percentile).
 \item 'bootstrap_ratio' defined as the ratio between weight/loadings estimate
 and the bootstrap estimate of the standard deviation.

@@ -1,11 +1,11 @@
 #' Stability selection for SGCCA
 #'
-#' This function can be used to identify the most stable variables  
-#' identified as relevant by SGCCA. 
-#' 
+#' This function can be used to identify the most stable variables
+#' identified as relevant by SGCCA.
+#'
 #' @param rgcca_res A fitted RGCCA object (see \code{\link[RGCCA]{rgcca}})
-#' @param keep numeric vector indicating the proportion of top variables per 
-#' block. 
+#' @param keep numeric vector indicating the proportion of top variables per
+#' block.
 #' @param n_boot Number of bootstrap samples (Default: 100).
 #' @param n_cores Number of cores for parallelization.
 #' @return \item{top}{indicator on which variables are ranked.}
@@ -16,7 +16,7 @@
 #' \dontrun{#' ###########################
 #' # stability and bootstrap #
 #' ###########################
-#' 
+#'
 #' require(gliomaData)
 #' data(ge_cgh_locIGR)
 #' blocks <- ge_cgh_locIGR$multiblocks
@@ -24,28 +24,29 @@
 #' levels(Loc) <- colnames(ge_cgh_locIGR$multiblocks$y)
 #' connection <-  matrix(c(0, 0, 1, 0, 0, 1, 1, 1, 0), 3, 3)
 #' blocks[[3]] = blocks[[3]][, -3]
-#' 
-#' fit.sgcca = rgcca(blocks, connection = connection, 
-#'                   sparsity = c(.071,.2, 1), 
+#'
+#' fit.sgcca = rgcca(blocks, connection = connection,
+#'                   sparsity = c(.071,.2, 1),
 #'                   ncomp = c(1, 1, 1),
-#'                   scheme = "centroid", 
+#'                   scheme = "centroid",
 #'                   verbose = TRUE)
-#'                   
-#' fit.stab = rgcca_stability(fit.sgcca, 
-#'                            keep = c(0.01, 0.1, 1), 
-#'                            n_cores = parallel::detectCores() - 1
-#'                            ) 
-#' boot.out = bootstrap(fit.stab, n_boot = 100)                  
+#'
+#' fit.stab = rgcca_stability(fit.sgcca,
+#'                            keep = c(0.01, 0.1, 1),
+#'                            n_cores = 1
+#'                            )
+#' boot.out = bootstrap(fit.stab, n_boot = 100, n_cores = 1)
 #'}
 #' @export
-rgcca_stability <- function(rgcca_res, keep = 0.1, 
+rgcca_stability <- function(rgcca_res,
+                            keep = sapply(rgcca_res$a, function(x) mean(x!=0)),
                             n_boot = 100,
                             n_cores = parallel::detectCores() - 1){
 
   stopifnot(tolower(rgcca_res$call$method)%in%c("sgcca", "spls", "spca"))
   check_integer("n_boot", n_boot)
   check_integer("n_cores", n_cores, min = 0)
-  
+
   ndefl_max = max(rgcca_res$call$ncomp)
   list_res = list()
   for(i in 1:ndefl_max){
@@ -58,11 +59,11 @@ rgcca_stability <- function(rgcca_res, keep = 0.1,
         colnames(rgcca_res$call$blocks[[block]])
     }
   }
-  
+
   if (n_cores == 0) n_cores <- 1
-  
+
   blocks <- NULL
-  
+
   if( Sys.info()["sysname"] == "Windows"){
     if(n_cores>1){
       assign("rgcca_res", rgcca_res, envir = .GlobalEnv)
@@ -82,9 +83,9 @@ rgcca_stability <- function(rgcca_res, keep = 0.1,
                           function(b) bootstrap_k(rgcca_res),
                           cl = n_cores)
   }
-  
+
   W = lapply(W, `[[`, 1)
-  
+
   for(k in seq(n_boot)){
     for(i in 1:ndefl_max){
       for(j in 1:length(rgcca_res$call$blocks)){
@@ -101,31 +102,31 @@ rgcca_stability <- function(rgcca_res, keep = 0.1,
       }
     }
   }
-  
+
   J = length(list_res[[1]])
-  
+
   if(rgcca_res$call$superblock == TRUE){
    list_res = lapply(list_res, function(x) x[-length(x)])
    rgcca_res$AVE$AVE_X = rgcca_res$AVE$AVE_X[-J]
    rgcca_res$call$raw = rgcca_res$call$raw[-J]
   }
-  
+
   mylist <- lapply(seq_along(list_res),
-                   function(i) 
-                     sapply(list_res[[i]], 
-                            function(x) 
+                   function(i)
+                     sapply(list_res[[i]],
+                            function(x)
                               apply(x, 1, function(y) sum(abs(y), na.rm = TRUE))
                             )
                    )
 
 
-    intensity = mapply("*", 
-                     do.call(mapply, c(rbind, mylist)), 
+    intensity = mapply("*",
+                     do.call(mapply, c(rbind, mylist)),
                      rgcca_res$AVE$AVE_X)
-    
+
     top = lapply(intensity, function(x) colMeans(x, na.rm = TRUE))
     perc = elongate_arg(keep, top)
-  
+
   if(is.null(dim(rgcca_res$call$sparsity))){
     if(rgcca_res$call$superblock == TRUE){
       rgcca_res$call$sparsity = rgcca_res$call$sparsity[-J]
@@ -137,25 +138,25 @@ rgcca_stability <- function(rgcca_res, keep = 0.1,
     }
     perc[which(rgcca_res$call$sparsity[1, ] == 1)] = 1
   }
-  
-  keepVar = lapply(seq_along(top), 
-                function(x) 
-                  order(top[[x]], 
+
+  keepVar = lapply(seq_along(top),
+                function(x)
+                  order(top[[x]],
                         decreasing = TRUE)[1:round(perc[x]*length(top[[x]]))]
   )
-  
+
   newBlock = mapply(function(x, y) x[, y], rgcca_res$call$raw, keepVar)
-  
-  rgcca_res = rgcca(newBlock, 
-                    connection = rgcca_res$call$connection, 
+
+  rgcca_res = rgcca(newBlock,
+                    connection = rgcca_res$call$connection,
                     superblock = rgcca_res$call$superblock,
                     ncomp = rgcca_res$call$ncomp,
                     bias = rgcca_res$call$bias,
-                    tau = 1, 
+                    tau = 1,
                     scale = rgcca_res$call$scale,
                     verbose = FALSE,
                     scale_block = rgcca_res$call$scale_block)
-  
+
     return(structure(list(top = top,
                         keepVar = keepVar,
                         bootstrap = list_res,

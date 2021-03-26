@@ -306,25 +306,35 @@ check_response <- function(response = NULL, df = NULL) {
 }
 
 # Test on the sign of the correlation
-check_sign_comp <- function(rgcca, w){
+check_sign_comp <- function(rgcca_res, w){
 
-    w1 <- rgcca$a
+    w1 <- rgcca_res$a
+    y1  <- lapply(seq_along(w1),
+                 function(i) pm(rgcca_res$call$blocks[[i]],
+                                        rgcca_res$a[[i]]))
+    y <- lapply(seq_along(w1),
+                 function(i) pm(rgcca_res$call$blocks[[i]], w[[i]]))
+
 
     for (k in seq(length(w))) {
         if(NCOL(w[[k]])>1)
         {
             for (j in seq(NCOL(w[[k]]))) {
-
-                res <- cor(w1[[k]][, j], w[[k]][, j])
+                res = ifelse(NROW(rgcca_res$a[[k]]) < NROW(rgcca_res$Y[[k]]),
+                             cor(y1[[k]][, j], y[[k]][, j]),
+                             cor(w1[[k]][, j], w[[k]][, j]))
                 if (!is.na(res) && res  < 0)
                     w[[k]][, j] <- -1 * w[[k]][, j]
             }
         }
         else
         {
-            res <- cor(w1[[k]], w[[k]])
-            if (!is.na(res) && res  < 0)
-                w[[k]] <- -1 * w[[k]]
+          res = ifelse(NROW(rgcca_res$a[[k]]) < NROW(rgcca_res$Y[[k]]),
+                       cor(y1[[k]], y[[k]]),
+                       cor(w1[[k]], w[[k]])
+                       )
+          if (!is.na(res) && res  < 0)
+          w[[k]] <- -1 * w[[k]]
         }
     }
 

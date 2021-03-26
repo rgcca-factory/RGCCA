@@ -17,14 +17,14 @@
 #'               industry = Russett[, 4:5],
 #'               politic = Russett[, 6:11])
 #'
-#' fit.rgcca = rgcca(blocks, ncomp= 1)
+#' fit.rgcca = rgcca(blocks, ncomp= c(2, 1, 2))
 #' boot.out = bootstrap(fit.rgcca, n_boot = 20, n_cores = 2)
 #'
 #' plot(boot.out, type = "weight", block = 3, comp = 1)
 #'
-#' print(boot.out)
-#'  get_bootstrap(boot.out)
-#' 
+#' print(boot.out, comp =2)
+#'  get_bootstrap(boot.out, block = 1, comp = 1)
+#'
 #' fit.rgcca = rgcca(blocks, method = "mcoa")
 #' boot.out = bootstrap(fit.rgcca, n_boot = 50, n_cores = 2)
 #'
@@ -61,17 +61,19 @@
 #' \code{\link[RGCCA]{print.bootstrap}}
 bootstrap <- function(rgcca_res, n_boot = 100,
                       n_cores = parallel::detectCores() - 1){
-    
+
     if(class(rgcca_res)=="stability")
     {
         message("All the parameters were imported from the fitted rgcca_stability object.")
         rgcca_res = rgcca_res$rgcca_res
     }
-    
+
     stopifnot(is(rgcca_res, "rgcca"))
+    if(tolower(rgcca_res$call$method)%in%c("sgcca", "spls", "spca"))
+        stop_rgcca("for sparse models, rgcca_stability() applies before bootstrapping")
     check_integer("n_boot", n_boot)
     check_integer("n_cores", n_cores, min = 0)
-    
+
     if (n_cores == 0) n_cores <- 1
 
     ndefl_max = max(rgcca_res$call$ncomp)
@@ -80,10 +82,10 @@ bootstrap <- function(rgcca_res, n_boot = 100,
         list_res_W[[i]] = list_res_L[[i]] = list()
         for(block in names(rgcca_res$call$blocks))
         {
-            list_res_L[[i]][[block]] = list_res_W[[i]][[block]] =  
+            list_res_L[[i]][[block]] = list_res_W[[i]][[block]] =
                 matrix(NA, NCOL(rgcca_res$call$blocks[[block]]), n_boot)
-            rownames(list_res_L[[i]][[block]]) = 
-                rownames(list_res_W[[i]][[block]]) = 
+            rownames(list_res_L[[i]][[block]]) =
+                rownames(list_res_W[[i]][[block]]) =
                 colnames(rgcca_res$call$blocks[[block]])
         }
     }
@@ -109,8 +111,8 @@ bootstrap <- function(rgcca_res, n_boot = 100,
                               function(b) bootstrap_k(rgcca_res),
                               cl = n_cores)
     }
-    
-    L = lapply(W, `[[`, 2)    
+
+    L = lapply(W, `[[`, 2)
     W = lapply(W, `[[`, 1)
 
     for(k in seq(n_boot)){
@@ -136,6 +138,5 @@ bootstrap <- function(rgcca_res, n_boot = 100,
     return(structure(list(bootstrap = list(W = list_res_W, L = list_res_L),
                           rgcca = rgcca_res),
                           class = "bootstrap"))
-
 
 }

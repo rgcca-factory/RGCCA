@@ -6,14 +6,22 @@
 # @return A list of RGCCA bootstrap weights/loadings.
 bootstrap_k <- function(rgcca_res) {
     rgcca_res_boot <- set_rgcca(rgcca_res, NA_method = "nipals", boot = TRUE)
+
+    #block-weight vector
     W = add_variables_submodel(rgcca_res, rgcca_res_boot$a)
-    L <- lapply(seq_along(rgcca_res$a), 
-                function(x) 
-                    cor(rgcca_res_boot$call$blocks[[x]], 
-                        rgcca_res_boot$Y[[x]], 
+
+    #block-loadings vector
+    A = check_sign_comp(rgcca_res, rgcca_res_boot$a)
+
+    Y = lapply(seq_along(W),
+               function(j) pm(rgcca_res_boot$call$blocks[[j]], A[[j]])
+               )
+    L <- lapply(seq_along(W),
+                function(j)
+                    cor(rgcca_res_boot$call$blocks[[j]], Y[[j]],
                         use = "pairwise.complete.obs")
-    )
+                )
+
     names(L) = names(rgcca_res$a)
-    L = check_sign_comp(rgcca_res, L)
     return(list(W = W, L = L))
 }

@@ -31,13 +31,13 @@ blocks = list(agriculture = Russett[, seq(3)],
               industry = Russett[, 4:5],
               politic = Russett[, 6:11])
 
-fit.rgcca = rgcca(blocks, ncomp= 1)
+fit.rgcca = rgcca(blocks, ncomp= c(2, 1, 2))
 boot.out = bootstrap(fit.rgcca, n_boot = 20, n_cores = 2)
 
 plot(boot.out, type = "weight", block = 3, comp = 1)
 
-print(boot.out)
- get_bootstrap(boot.out)
+print(boot.out, comp =2)
+ get_bootstrap(boot.out, block = 1, comp = 1)
 
 fit.rgcca = rgcca(blocks, method = "mcoa")
 boot.out = bootstrap(fit.rgcca, n_boot = 50, n_cores = 2)
