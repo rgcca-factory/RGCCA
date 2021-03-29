@@ -61,7 +61,7 @@ print(perm.out)
 plot(perm.out)
 
 perm.out <- rgcca_permutation(A, par_type = "sparsity",
-                              n_perms = 5, n_cores = 1)
+                              n_perms = 5, n_cores = 1, init = "random")
 print(perm.out)
 plot(perm.out, type = "zstat")
 }
