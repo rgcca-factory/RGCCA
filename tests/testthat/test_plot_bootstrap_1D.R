@@ -15,7 +15,7 @@ p+scale_fill_manual(values=c("blue","red"))
 
 # Sparsity
 #---------------
-rgcca_out <- rgcca(blocks, sparsity = 0.71, method = "sgcca")
+rgcca_out <- rgcca(blocks, sparsity = 0.71, method = "sgcca", init = "random")
 rgcca_stab <- rgcca_stability(rgcca_out, n_cores = 1)
 boot <- bootstrap(rgcca_stab, 100, n_cores = 1)
 i_block=1

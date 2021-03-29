@@ -16,10 +16,10 @@ test_that("rgcca_permutation_default", {
 )
 
 res_tau=rgcca_permutation(blocks,par_type="tau",n_perms = 5, n_cores = 1)
-res_sparsity=rgcca_permutation(blocks,par_type="sparsity",n_perms = 5, n_cores = 1)
+res_sparsity=rgcca_permutation(blocks,par_type="sparsity",n_perms = 5, n_cores = 1, init = "random")
 
 res_tau=rgcca_permutation(blocks,par_type="tau",par_value=c(0.7,0.8,0.8), n_cores = 1)
-res_sparsity=rgcca_permutation(blocks,par_type="sparsity",par_value=c(0.8,0.8,0.8), n_cores = 1)
+res_sparsity=rgcca_permutation(blocks,par_type="sparsity",par_value=c(0.8,0.8,0.8), n_cores = 1, init = "random")
 
 test_that("rgcca_sparsity", {
     expect_true(sum(dim(res_sparsity$penalties)==c(10,3))==2)
@@ -32,7 +32,7 @@ test_that("rgcca_sparsity", {
 #
 # res=rgcca_permutation(blocks, n_cores = 1,method="sgcca",superblock=TRUE,par_type="sparsity")
 # res=rgcca_permutation(blocks, n_cores = 1,superblock=TRUE,par_type="sparsity",par_value=c(0.8,0.72,0.43,0.5))
- res=rgcca_permutation(blocks, n_cores = 1,method="sgcca",superblock=TRUE,par_type="sparsity",par_value=M)
+ res=rgcca_permutation(blocks, n_cores = 1,method="sgcca",superblock=TRUE,par_type="sparsity",par_value=M, init = "random")
 # res=rgcca_permutation(blocks, n_cores = 1,superblock=TRUE,par_type="tau")
 # res=rgcca_permutation(blocks, n_cores = 1,superblock=TRUE,par_type="tau",par_value=c(0.8,0.72,0.43,0.5))
 # res=rgcca_permutation(blocks, n_cores = 1,superblock=TRUE,par_type="tau",par_value=M)
