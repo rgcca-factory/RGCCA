@@ -925,7 +925,7 @@ set.seed(3)
 fit.perm = rgcca_permutation(A, connection = C,
                              par_type = "sparsity",
                              method = "sgcca",
-                             n_cores = 1, n_perms = 5)
+                             n_cores = 1, n_perms = 5, init = "random")
 fit.perm$bestpenalties
 ```
 
@@ -934,7 +934,7 @@ selection procedure using the `rgcca_stability()` function. The amount of sparsi
 is set using the `keep` argument.
 
 ```{r, eval = TRUE}
-fit.opt = rgcca(fit.perm)
+fit.opt = rgcca(fit.perm, init = "random")
 fit.stab = rgcca_stability(fit.opt, 
                            keep = sapply(fit.opt$a, 
                                          function(x) mean(x!=0)),
@@ -978,7 +978,7 @@ print(fit.mcoa)
 
 or alternatively,
 
-```{r, eval = FALSE}
+```{r, eval = TRUE}
 X_agric =as.matrix(Russett[,c("gini","farm","rent")])
 X_ind = as.matrix(Russett[,c("gnpr","labo")])
 X_polit = as.matrix(Russett[ , c("inst", "ecks",  "death")])
@@ -994,6 +994,7 @@ fit.mcoa = rgcca(blocks=A, tau = c(1, 1, 1, 0),
 Multiple Co-Inertiea Analysis(MCOA) enables the countries to be represented in the space spanned by the two first global components. Despite some overlap, the first global component exhibits a separation/continuum among regimes.
 
 ```{r, fig.align='center', fig.cap = 'graphical display of the countries obtained by crossing the two first components of the superblock and labeled according to their political regime',fig.height = 6, fig.width = 8}
+options(ggrepel.max.overlaps = Inf)
 plot(fit.mcoa, resp=lab, type = "sample", overlap = FALSE)
 ```
 
