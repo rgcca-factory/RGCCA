@@ -41,6 +41,7 @@ Imports:
     methods,
     scales,
     gridExtra,
-    plotly
+    plotly,
+    ccaPP
 VignetteBuilder: knitr
 biocViews: Visualization, PrincipalComponent, DimensionReduction, StructuralEquationModels
