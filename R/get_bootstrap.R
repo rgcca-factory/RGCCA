@@ -108,8 +108,8 @@ get_bootstrap <- function(b, type = "weight", comp = 1,
                       function(y){return(quantile(y, 0.975))})
 
     df <- data.frame(
-        mean = mean,
         estimate = weight,
+        mean = mean,
         sd = sd,
         lower_bound = lower_bound,
         upper_bound = upper_bound,
@@ -120,9 +120,9 @@ get_bootstrap <- function(b, type = "weight", comp = 1,
         adjust.pval = p.adjust(p.vals, method = adj.method)
     )
 
-    df$sign <- rep("ns", NROW(df))
-    for (i in seq(NROW(df)))
-            if(p.vals[i]<0.05) df$sign[i] <- "*"
+    #df$sign <- rep("ns", NROW(df))
+    #for (i in seq(NROW(df)))
+    #        if(p.vals[i]<0.05) df$sign[i] <- "*"
     if(!display_order){
         index <- which(colnames(df)=="mean")
         db <- data.frame(order_df(df, index, allCol = TRUE)   )
@@ -136,10 +136,7 @@ get_bootstrap <- function(b, type = "weight", comp = 1,
                              order = NROW(df):1)
       }
 
-    zero_var <- which(db[, 1] == 0)
-    if (NROW(df) > 1 && length(zero_var) != 0) db <- db[-zero_var, ]
-
-    attributes(db)$indexes <- list(
+      attributes(db)$indexes <- list(
             estimate = ifelse(type == "weight",
                               "block-weight",
                               "block-loadings"),

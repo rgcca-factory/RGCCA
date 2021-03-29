@@ -35,10 +35,10 @@
 #'               industry = Russett[, 4:5],
 #'               politic = Russett[, 6:11])
 #' fit.sgcca = rgcca(blocks, sparsity = 0.75, method = "sgcca")
-#' fit.stab = rgcca_stability(fit.sgcca, n_cores = 1)
+#' fit.stab = rgcca_stability(fit.sgcca, n_boot = 20, n_cores = 1)
 #' boot = bootstrap(fit.stab,
 #'                  n_boot = 30, n_cores = 1)
-#' plot_bootstrap_1D(boot, type = "loadings")
+#' plot_bootstrap_1D(boot, type = "weight")
 #' rgcca_out = rgcca(blocks)
 #' boot = bootstrap(rgcca_out, 2, n_cores = 1)
 #' selected.var = get_bootstrap(boot, display_order=TRUE)
@@ -81,64 +81,57 @@ plot_bootstrap_1D <- function(
     check_integer("n_mark", n_mark)
 
     if (is.null(title)) {
-        title <- paste0(
-            attributes(df_b)$indexes[[x]],
-            "\n(",
-            attributes(df_b)$n_boot,
+        title <- paste0("Block-", type, " vector",
+            "\n(", attributes(df_b)$n_boot,
             " bootstrap samples)")
     }
 
-    if (is.null(colors)) {
-        if (y != "sign")
-            colors <- c(color_group(seq(3))[1], "gray", color_group(seq(3))[3])
-        else
-            colors <- c(color_group(seq(3))[1], color_group(seq(3))[3])
-    }
     lower_bound <- NULL -> upper_bound
     check_ncol(list(df_b), 1)
 
-    if (y == "sign")
-        group <- c("NS","*")
-    else
-        group <- NA
-
-    if (n_mark > NROW(df_b))
-        n_mark <- NROW(df_b)
+    if (n_mark > NROW(df_b)) n_mark <- NROW(df_b)
 
     df_b_head <- head(
         data.frame(
-            order_df(df_b[, -NCOL(df_b)], x, allCol = TRUE),
-            order = NROW(df_b):1),  n_mark)
+            order_df(df_b, "estimate", allCol = TRUE),
+            order = NROW(df_b):1),
+            n_mark)
     df_b_head <- df_b_head[df_b_head[, "sd"] != 0, ]
     class(df_b_head) <- c(class(df_b), "d_boot1D")
 
-    if (!is.null(df_b_head$sign)) {
-        df_b_head$sign[df_b_head$sign == 1] <- "*"
-        df_b_head$sign[df_b_head$sign == 0] <- "ns"
-    }
+    df_b_head$sign <- ""
+    df_b_head$sign[df_b_head$pval<1e-3] <- "< 0.001"
+    df_b_head$sign[df_b_head$pval>=1e-3 & df_b_head$pval<1e-2] <- "< 0.01"
+    df_b_head$sign[df_b_head$pval>=1e-2 & df_b_head$pval<5e-2] <- "< 0.05"
+    df_b_head$sign[df_b_head$pval>=5e-2 & df_b_head$pval<1e-1] <- "< 0.1"
+    df_b_head$sign[df_b_head$pval>=1e-1] <- "> 0.1"
+
+    df_b_head$sign = factor(df_b_head$sign,
+                            levels=c(labels=c("< 0.001", "< 0.01",
+                                              "< 0.05", "< 0.1", "> 0.1")))
 
     p <- ggplot(
         df_b_head,
         aes(x = order,
-            y = df_b_head[, x],
-            fill = df_b_head[, y]))
+            y = df_b_head[, "estimate"],
+            fill = df_b_head[, "sign"])
+            )
 
-    p <- plot_histogram(
-        p,
-        df_b_head,
-        title,
-        group,
-        colors,
-        ...) +
-    labs(fill = attributes(df_b)$indexes[[y]])
+    p <- plot_histogram(p, df_b_head) +
+        scale_x_continuous(breaks = df_b_head$order,
+                           labels = rownames(df_b_head)) +
+        scale_fill_manual(values = grey.colors(6)[2:6],
+                          labels = c("< 0.001", "< 0.01", "< 0.05",
+                                     "< 0.1", "> 0.1"),
+                          drop = FALSE,
+                          name = "Signif.")
 
-    if (nrow(df_b_head) <= 50)
-        p <- p +
-            geom_errorbar(
-                aes(
-                    ymin = lower_bound,
-                    ymax = upper_bound,
-                    width = 0.5))
+
+    if (nrow(df_b_head) <= 50){
+        p <- p + geom_errorbar(aes(ymin = lower_bound,
+                                   ymax = upper_bound,
+                                   width = 0.5))
+    }
 
     return(p)
 }

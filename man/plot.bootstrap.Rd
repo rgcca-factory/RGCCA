@@ -28,8 +28,8 @@
 
 \item{comp}{An integer indicating the block-weight/loading vector to plot.}
 
-\item{type}{Character string indicating the bootstrapped object to plot: 
-block-weight vectors ("weight", default) or block-loading vectors 
+\item{type}{Character string indicating the bootstrapped object to plot:
+block-weight vectors ("weight", default) or block-loading vectors
 ("loadings").}
 
 \item{n_mark}{The number of top variables to display in the correlation
