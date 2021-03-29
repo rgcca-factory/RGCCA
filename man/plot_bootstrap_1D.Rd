@@ -76,7 +76,7 @@ fit.sgcca = rgcca(blocks, sparsity = 0.75, method = "sgcca", init = "random")
 fit.stab = rgcca_stability(fit.sgcca, n_cores = 1)
 boot = bootstrap(fit.stab,
                  n_boot = 30, n_cores = 1)
-plot_bootstrap_1D(boot, type = "loadings")
+plot_bootstrap_1D(boot, type = "weight")
 rgcca_out = rgcca(blocks)
 boot = bootstrap(rgcca_out, 2, n_cores = 1)
 selected.var = get_bootstrap(boot, display_order=TRUE)

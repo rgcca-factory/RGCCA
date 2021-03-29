@@ -81,9 +81,7 @@ get_bootstrap <- function(b, type = "weight", comp = 1,
 
     bootstrapped=b$bootstrap[[comp]][[block]]
     n_boot=sum(!is.na(bootstrapped[1, ]))
-
     mean = apply(bootstrapped, 1, function(x) mean(x, na.rm = T))
-    sd = apply(bootstrapped, 1, function(x) sd(x, na.rm = T))
 
     if(type == "weight") {weight = b$rgcca$a[[block]][, comp]}
     if(type == "loadings") {weight = drop(cor(b$rgcca$call$blocks[[block]],
@@ -93,12 +91,15 @@ get_bootstrap <- function(b, type = "weight", comp = 1,
     tail <- qnorm(1 - .05 / 2)
 
     if(type == "weight"){
-          p.vals <- 2*pnorm(abs(weight)/sd, lower.tail = FALSE)
+      sd = apply(bootstrapped, 1, function(x) sd(x, na.rm = T))
+      p.vals <- 2*pnorm(abs(weight)/sd, lower.tail = FALSE)
     }
 
     if(type == "loadings"){
-          p.vals <- 2*pnorm(abs(0.5*log((1 + weight)/(1 - weight)))/sd,
-                                                   lower.tail = FALSE)
+      ftrans = 0.5*log((1 + weight)/(1 - weight))
+      r = 0.5*log((1 + bootstrapped)/(1 - bootstrapped))
+      sd = apply(r, 1, function(x) sd(x, na.rm = T))
+      p.vals <- 2*pnorm(abs(ftrans)/sd, lower.tail = FALSE)
     }
 
     lower_bound=apply(bootstrapped, 1,
@@ -107,8 +108,8 @@ get_bootstrap <- function(b, type = "weight", comp = 1,
                       function(y){return(quantile(y, 0.975))})
 
     df <- data.frame(
-        mean = mean,
         estimate = weight,
+        mean = mean,
         sd = sd,
         lower_bound = lower_bound,
         upper_bound = upper_bound,
@@ -119,9 +120,9 @@ get_bootstrap <- function(b, type = "weight", comp = 1,
         adjust.pval = p.adjust(p.vals, method = adj.method)
     )
 
-    df$sign <- rep("ns", NROW(df))
-    for (i in seq(NROW(df)))
-            if(p.vals[i]<0.05) df$sign[i] <- "*"
+    #df$sign <- rep("ns", NROW(df))
+    #for (i in seq(NROW(df)))
+    #        if(p.vals[i]<0.05) df$sign[i] <- "*"
     if(!display_order){
         index <- which(colnames(df)=="mean")
         db <- data.frame(order_df(df, index, allCol = TRUE)   )
@@ -135,10 +136,7 @@ get_bootstrap <- function(b, type = "weight", comp = 1,
                              order = NROW(df):1)
       }
 
-    zero_var <- which(db[, 1] == 0)
-    if (NROW(df) > 1 && length(zero_var) != 0) db <- db[-zero_var, ]
-
-    attributes(db)$indexes <- list(
+      attributes(db)$indexes <- list(
             estimate = ifelse(type == "weight",
                               "block-weight",
                               "block-loadings"),

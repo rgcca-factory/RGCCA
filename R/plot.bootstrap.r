@@ -6,9 +6,9 @@
 #' @inheritParams plot.rgcca
 #' @inheritParams plot2D
 #' @param x A fitted bootstrap object (see \code{\link[RGCCA]{bootstrap}})
-#' @param type Character string indicating the bootstrapped object to plot: 
-#' block-weight vectors ("weight", default) or block-loading vectors 
-#' ("loadings"). 
+#' @param type Character string indicating the bootstrapped object to plot:
+#' block-weight vectors ("weight", default) or block-loading vectors
+#' ("loadings").
 #' @export
 #' @examples
 #' data("Russett")
@@ -20,8 +20,8 @@
 #' plot(fit.boot, type = "weight", block = 1, comp=1)
 
 plot.bootstrap=function(x, block = length(x$rgcca$call$blocks),
-                        comp = 1, type = "weight", n_mark = 30, 
-                        colors = NULL, title = NULL, cex = 1, 
+                        comp = 1, type = "weight", n_mark = 30,
+                        colors = NULL, title = NULL, cex = 1,
                         cex_main = 14, cex_sub = 12,
                         cex_point = 10, cex_lab = 10, cex_axis = 10, ...)
 {
@@ -34,8 +34,8 @@ plot.bootstrap=function(x, block = length(x$rgcca$call$blocks),
             block=length(x$rgcca$call$blocks)-1
     }
 
-    x1="estimate"
-    y1="sign"
+    # x1="estimate"
+    # y1="sign"
     title=ifelse(is.null(title),
                  paste0("Bootstrap confidence interval (",
                          names(x$rgcca$call$blocks)[block], ")\n (",
@@ -47,14 +47,14 @@ plot.bootstrap=function(x, block = length(x$rgcca$call$blocks),
      p1 = plot_bootstrap_1D(
               b = x,
               df_b = NULL,
-              type = type, 
-              x = x1,
-              y = y1,
+              type = type,
+              x = "estimate",
+              y = "sign",
               n_mark = n_mark,
               title = title,
               colors = colors,
               comp = comp,
-              i_block = block, 
+              i_block = block,
               cex = 1,
               cex_main = cex_main,
               cex_sub = cex_sub,
