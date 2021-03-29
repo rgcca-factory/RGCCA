@@ -145,7 +145,7 @@ rgcca_stability <- function(rgcca_res,
                         decreasing = TRUE)[1:round(perc[x]*length(top[[x]]))]
   )
 
-  newBlock = mapply(function(x, y) x[, y], rgcca_res$call$raw, keepVar)
+  newBlock = mapply(function(x, y) list(x[, y]), rgcca_res$call$raw, keepVar)
 
   rgcca_res = rgcca(newBlock,
                     connection = rgcca_res$call$connection,
