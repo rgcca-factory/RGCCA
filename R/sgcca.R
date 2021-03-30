@@ -189,7 +189,7 @@ sgcca <- function (blocks, connection = 1-diag(length(blocks)), sparsity = rep(1
                               " is under progress... \n"))
 
       # Apply deflation
-      defla.result <- defl.select(Y, R, ndefl, n - 1, na.rm = na.rm)
+      defla.result <- defl.select(sgcca.result$Y, R, ndefl, n - 1, J, na.rm = na.rm)
       R <- defla.result$resdefl
       for (b in 1:J) P[[b]][, n - 1] <- defla.result$pdefl[[b]]
 
@@ -202,7 +202,7 @@ sgcca <- function (blocks, connection = 1-diag(length(blocks)), sparsity = rep(1
                                init = init, bias = bias, tol = tol,
                                verbose = verbose, quiet = quiet, na.rm = na.rm)
       }
-      
+
       AVE_inner[n] <- sgcca.result$AVE_inner
       crit[[n]] <- sgcca.result$crit
 
