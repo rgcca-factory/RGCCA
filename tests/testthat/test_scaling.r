@@ -15,7 +15,7 @@ test_that("scaling_default_1", {
   expect_true(sum(abs(blocks3[[3]] - blocks2[[3]])) < tol)
 })
 test_that("reverse_scaling", {
-  center          = lapply(blocks2, function(x) -attr(x, "scaled:center"))
+  center          = lapply(blocks2, function(x) -attr(x, "scaled:center") / attr(x, "scaled:scale"))
   scale           = lapply(blocks2, function(x) 1/attr(x, "scaled:scale"))
   unscaled_blocks = apply_scaling(blocks2, center, scale)
   expect_true(max(abs(blocks[[1]] - unscaled_blocks[[1]])) < tol)

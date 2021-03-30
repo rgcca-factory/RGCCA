@@ -1,4 +1,6 @@
 # TODO: check it works for tensors if scale = FALSE
+#' @export scaling
+#' @export apply_scaling
 scaling <- function(blocks, scale = TRUE, bias = TRUE, scale_block = TRUE) {
     if(scale){
         # Standardization of the variables of each block
@@ -51,7 +53,7 @@ scaling <- function(blocks, scale = TRUE, bias = TRUE, scale_block = TRUE) {
     return(blocks)
 }
 
-# Function to apply scaling/centering to new blocks knowing centering and 
+# Function to apply scaling/centering to new blocks knowing centering and
 # scaling factors.
 apply_scaling <- function(blocks, centering_factors, scaling_factors) {
     lapply(1:length(blocks), function(x) {
@@ -60,10 +62,10 @@ apply_scaling <- function(blocks, centering_factors, scaling_factors) {
             block = apply(block, 2, function(y) y / scaling_factors[[x]])
             return(array(block, dim = dim(blocks[[x]])))
         }
-        if (length(dim(blocks)) == 2) {
-            block = t(apply(blocks[[x]], 1, function(y) y / scaling_factors[[x]]))
-            return(t(apply(block, 1, function(y) y - centering_factors[[x]])))
+        if (length(dim(blocks[[x]])) == 2) {
+            block = t(apply(blocks[[x]], 1, function(y) y - centering_factors[[x]]))
+            return(t(apply(block, 1, function(y) y / scaling_factors[[x]])))
         }
-        return(blocks[[x]] / scaling_factors[[x]] - centering_factors[[x]])
+        return((blocks[[x]] - centering_factors[[x]]) / scaling_factors[[x]])
     })
 }
