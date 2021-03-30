@@ -3,12 +3,12 @@ blocks <- list(
   agriculture = Russett[, seq(3)],
   industry = Russett[, 4:5],
   politic = Russett[, 6:11])
-tol = 1e-14
+tol = 1e-12
 
 # Test matrix blocks
-blocks3=lapply(blocks,scale)
-blocks3=lapply(blocks3,function(x) return(x/sqrt(ncol(x))))
-blocks2=scaling(blocks,scale=TRUE,scale_block=TRUE,bias=FALSE)
+blocks3 = lapply(blocks,scale)
+blocks3 = lapply(blocks3, function(x) return(x / sqrt(ncol(x))))
+blocks2 = scaling(blocks, scale = TRUE, scale_block = TRUE, bias = FALSE)
 test_that("scaling_default_1", {
   expect_true(sum(abs(blocks3[[1]] - blocks2[[1]])) < tol)
   expect_true(sum(abs(blocks3[[2]] - blocks2[[2]])) < tol)
@@ -28,7 +28,7 @@ set.seed(0)
 blocks = helper.generate_blocks(list(
   c(40, 20, 30), c(40, 18, 27, 12)
 ))
-scaled_blocks  = scaling(blocks,scale=TRUE,scale_block=TRUE,bias=FALSE)
+scaled_blocks  = scaling(blocks, scale = TRUE, scale_block = TRUE, bias = FALSE)
 scaled_blocks2 = lapply(blocks, function(x) {
   block  = matrix(x, nrow = NROW(x))
   scale  = apply(block, 1, function(x) sqrt(sum(x ^ 2))) * sqrt(NCOL(block))
