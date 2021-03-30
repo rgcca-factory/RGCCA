@@ -27,7 +27,6 @@
 
 parse_regularisation_matrices <- function(reg_matrices, tau, A, DIM,
                                           j, bias = TRUE) {
-  # TODO: add message if absolute values of eigenvalues are under a given tol
   sqrtMatrix = function(M, context = "matrix", d = NULL){
     eig        = eigen(M)
     if (any(abs(eig$values) < .Machine$double.eps)) {

@@ -35,22 +35,3 @@ estimate_kronecker_mass <- function(x) {
   r       = (1 / N) * norm(matrix(x, nrow = N) - matrix(rep(x_bar, N), nrow = N, byrow = T), type = "F") ^ 2
   return(r ^ ((D - 1) / D) )
 }
-
-generate_test_data <- function(DIM) {
-  N       = DIM[1]
-  factors = list()
-  D       = length(DIM) - 1
-  for (d in 1:D) {
-    p                   = DIM[d + 1]
-    Sigma               = diag(p)
-    values              = runif(n = p * (p - 1) / 2)
-    idx                 = matrix(1, p, p) - diag(p)
-    idx[lower.tri(idx)] = 0
-    Sigma[idx == 1]     = values / sqrt(p)
-    Sigma               = Sigma + t(Sigma) - diag(p)
-    factors[[d]]        = Sigma
-  }
-  Sigma = Reduce("%x%", rev(factors))
-  x = mvrnorm(n = N, mu = rep(0, prod(DIM[-1])), Sigma = Sigma, empirical = F)
-  return(list(x = array(x, dim = DIM), Sigma = Sigma))
-}

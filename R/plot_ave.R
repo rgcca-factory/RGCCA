@@ -1,6 +1,3 @@
-# TODO: Fix error when a different number of components are extracted
-# (ave and ncomp are of length 'number of blocks' x 'max components' while
-# blocks is of length 'sum number of components')
 #' Histogram of Average Variance Explained
 #'
 #' Histogram of the model quality (based on Average Variance Explained)

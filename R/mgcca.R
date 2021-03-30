@@ -141,6 +141,7 @@ mgcca <- function(A, C = 1-diag(length(A)), tau = rep(1, length(A)),
   Y     <- P    <- a       <- astar <- NULL
   b <- bstar <- NULL
 
+  for (d in B_2D) ranks[d] <- 1
   for (d in 1:J) P[[d]]  <- a[[d]] <- astar[[d]] <- matrix(NA,pjs[[d]],N+1)
   for (d in 1:J) b[[d]]  <- bstar[[d]] <- matrix(NA,pjs[[d]], (N+1) * ranks[d])
 

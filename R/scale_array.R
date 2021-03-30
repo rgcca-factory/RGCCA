@@ -38,31 +38,3 @@ scale_array <- function (A, center = TRUE, scale = TRUE, bias = TRUE)
     return(scale2(A, center = center, scale = scale, bias = bias))
   }
 }
-
-# scale_array <- function (A, center = TRUE, scale = TRUE, bias = TRUE)
-# {
-#   DIM = dim(A)
-#   if (length(DIM) > 2) {
-#     B   = matrix(as.vector(A), nrow = DIM[1]) # Mode 1 matricization of A
-#     B   = scale(B, center = center, scale = FALSE)
-#     C   = unfold(array(B, dim = DIM), mode = 2)
-#
-#     if (scale == TRUE) {
-#       ms  = apply(C, 1, function(x) sqrt(sum(x ^ 2)))
-#       if (any(ms == 0)) {
-#         sprintf("there were %d constant variables", sum(ms == 0))
-#         ms[ms == 0] = 1
-#       }
-#       C   = apply(C, -1, function(x) x / ms)
-#     }
-#
-#     A   = array(as.vector(C), dim(A), dimnames = dimnames(A))
-#     attr(A, "scaled:center") = attr(B, "scaled:center")
-#     if (scale == TRUE) {
-#       attr(A, "scaled:scale") = ms
-#     }
-#     return(A)
-#   } else {
-#     return(scale2(A, center = center, scale = scale, bias = bias))
-#   }
-# }
