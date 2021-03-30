@@ -131,13 +131,14 @@
 #' }
 #'@export sgcca
 
-sgcca <- function (blocks, connection = 1-diag(length(blocks)), sparsity = rep(1, length(blocks)),
-                   ncomp = rep(1, length(blocks)), scheme = "centroid",
-                   init = "svd", bias = TRUE, tol = .Machine$double.eps,
-                   verbose = FALSE,   quiet = FALSE, na.rm = TRUE){
+sgcca <- function(blocks, connection = 1 - diag(length(blocks)),
+                  sparsity = rep(1, length(blocks)),
+                  ncomp = rep(1, length(blocks)), scheme = "centroid",
+                  init = "svd", bias = TRUE, tol = .Machine$double.eps,
+                  verbose = FALSE,   quiet = FALSE, na.rm = TRUE){
 
   # ndefl number of deflation per block
-  ndefl <- ncomp-1
+  ndefl <- ncomp - 1
   N <- max(ndefl)
   J <- length(blocks)
   pjs <- sapply(blocks,NCOL)
@@ -193,14 +194,16 @@ sgcca <- function (blocks, connection = 1-diag(length(blocks)), sparsity = rep(1
       R <- defla.result$resdefl
       for (b in 1:J) P[[b]][, n - 1] <- defla.result$pdefl[[b]]
 
-      if(is.vector(sparsity)){
-        sgcca.result <- sgccak(R, connection, sparsity = sparsity , scheme=scheme,
-                               init = init, bias = bias, tol = tol,
-                               verbose = verbose, quiet = quiet, na.rm = na.rm)
+      if (is.vector(sparsity)) {
+        sgcca.result <- sgccak(R, connection, sparsity = sparsity,
+                               scheme = scheme, init = init, bias = bias,
+                               tol = tol, verbose = verbose, quiet = quiet,
+                               na.rm = na.rm)
       } else{
-        sgcca.result <- sgccak(R, connection, sparsity = sparsity[n, ] , scheme = scheme,
-                               init = init, bias = bias, tol = tol,
-                               verbose = verbose, quiet = quiet, na.rm = na.rm)
+        sgcca.result <- sgccak(R, connection, sparsity = sparsity[n, ],
+                               scheme = scheme, init = init, bias = bias,
+                               tol = tol, verbose = verbose, quiet = quiet,
+                               na.rm = na.rm)
       }
 
       AVE_inner[n] <- sgcca.result$AVE_inner
@@ -209,13 +212,13 @@ sgcca <- function (blocks, connection = 1-diag(length(blocks)), sparsity = rep(1
 
       for (b in 1:J) Y[[b]][, n] <- sgcca.result$Y[, b]
       for (b in 1:J) a[[b]][, n] <- sgcca.result$a[[b]]
-      for (b in 1:J) astar[[b]][,n] <- sgcca.result$a[[b]] -
-        astar[[b]][,(1:n-1),drop=F] %*%
-        drop( t(a[[b]][,n]) %*% P[[b]][,1:(n-1),drop=F] )
+      for (b in 1:J) astar[[b]][, n] <- sgcca.result$a[[b]] -
+        astar[[b]][, (1:(n - 1)), drop = F] %*%
+        drop( t(a[[b]][, n]) %*% P[[b]][, 1:(n - 1), drop = F] )
 
-      for (q in which(n <ndefl)) if(sum(sgcca.result$a[[q]]!=0) <= 1)
+      for (q in which(n < ndefl)) if (sum(sgcca.result$a[[q]] != 0) <= 1)
       {
-        if(!quiet)
+        if (!quiet)
         {
           warning(sprintf("Deflation failed because only one variable was
                             selected for block ",q,"! \n"))
@@ -231,22 +234,15 @@ sgcca <- function (blocks, connection = 1-diag(length(blocks)), sparsity = rep(1
     colnames(Y[[b]]) = paste0("comp", 1:max(ncomp))
   }
 
-  shave.matlist <- function(mat_list, nb_cols)
-    mapply(function(m, nbcomp) m[, 1:nbcomp, drop = FALSE],
-           mat_list, nb_cols, SIMPLIFY=FALSE)
-  shave.veclist <- function(vec_list, nb_elts)
-    mapply(function(m, nbcomp) m[1:nbcomp],
-           vec_list, nb_elts, SIMPLIFY=FALSE)
-
   #Average Variance Explained (AVE) per block
-  for (j in 1:J) AVE_X[[j]] =  apply(cor(blocks[[j]], Y[[j]],
-                                         use="pairwise.complete.obs")^2, 2,
-                                     function(x) {return(mean(x,is.na=TRUE))})
+  for (j in 1:J) AVE_X[[j]] =  apply(
+    cor(blocks[[j]], Y[[j]], use = "pairwise.complete.obs")^2, 2,
+    function(x) {return(mean(x, is.na = TRUE))})
 
   #AVE outer
   outer = matrix(unlist(AVE_X), nrow = max(ncomp))
   for (j in 1:max(ncomp))
-    AVE_outer[j] <- sum(pjs * outer[j, ], na.rm=T)/sum(pjs)
+    AVE_outer[j] <- sum(pjs * outer[j, ], na.rm = T) / sum(pjs)
 
   Y = shave.matlist(Y, ncomp)
   AVE_X = shave.veclist(AVE_X, ncomp)
