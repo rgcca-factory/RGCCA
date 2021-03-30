@@ -89,14 +89,14 @@ outside of the function.}
 
 \item{quiet}{A boolean hidding the warnings}
 
-\item{regularisation_matrices}{If not NULL, a list of \eqn{J} elements. Each 
-element of \eqn{regularisation_matrices} is either NULL or a list of 
-symmetric positive definite regularization matrices. There must be as many 
-matrices as modes on the corresponding block and their dimensions must match 
-the dimensions of the corresponding modes. A change of variable is done at 
+\item{regularisation_matrices}{If not NULL, a list of \eqn{J} elements. Each
+element of \eqn{regularisation_matrices} is either NULL or a list of
+symmetric positive definite regularization matrices. There must be as many
+matrices as modes on the corresponding block and their dimensions must match
+the dimensions of the corresponding modes. A change of variable is done at
 the beginning and at the end of the MGCCA algorithm to apply regularization.}
 
-\item{ranks}{A vector of \eqn{J} elements that gives the number of terms in 
+\item{ranks}{A vector of \eqn{J} elements that gives the number of terms in
 the Kronecker constraint (hence the rank of the estimated tensor) for each
 block.}
 }
