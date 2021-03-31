@@ -147,12 +147,11 @@ sgcca <- function(blocks, connection = 1 - diag(length(blocks)),
   AVE_outer <- rep(NA,max(ncomp))
 
   Y <- NULL
-  R <- blocks
-  P <- a <- astar <- NULL
+  a <- astar <- P <- NULL
   crit <- list()
   AVE_inner <- rep(NA,max(ncomp))
 
-  for (b in 1:J) P[[b]] <- a[[b]] <- astar[[b]] <- matrix(NA, pjs[[b]], N + 1)
+  for (b in 1:J) a[[b]] <- astar[[b]] <- matrix(NA, pjs[[b]], N + 1)
   for (b in 1:J) Y[[b]] <- matrix(NA,nb_ind, N + 1)
 
   ###################################################
@@ -168,23 +167,32 @@ sgcca <- function(blocks, connection = 1 - diag(length(blocks)),
   ####################################
   # sgcca with 1 component per block #
   ####################################
+  if (is.vector(sparsity)) {
+    sgcca.result <- sgccak(blocks, connection, sparsity = sparsity,
+                           scheme = scheme, init = init, bias = bias,
+                           tol = tol, verbose = verbose, quiet = quiet,
+                           na.rm = na.rm)
+  } else {
+    sgcca.result <- sgccak(blocks, connection, sparsity = sparsity[1, ],
+                           scheme = scheme, init = init, bias = bias,
+                           tol = tol, verbose = verbose, quiet = quiet,
+                           na.rm = na.rm)
+  }
 
-  sgcca.result <- sgccak(blocks, connection, sparsity, scheme, init = init, bias = bias,
-                   tol = tol, verbose = verbose, quiet = quiet, na.rm = na.rm)
-  # No deflation (No residual matrices generated).
   for (b in 1:J) Y[[b]][, 1] <- sgcca.result$Y[, b, drop = FALSE]
-  AVE_inner[1]               <- sgcca.result$AVE_inner
-
   for (b in 1:J) a[[b]][, 1] <- sgcca.result$a[[b]]
-  astar <- a
-
-  crit[[1]] <- sgcca.result$crit
+  astar                      <- a
+  AVE_inner[1]               <- sgcca.result$AVE_inner
+  crit[[1]]                  <- sgcca.result$crit
 
   ##############################################
   #               If any ncomp > 1             #
   #      Determination of SGCCA components     #
   ##############################################
   if (N > 0) {
+    R <- blocks
+    for (b in 1:J) P[[b]] <- matrix(NA, pjs[[b]], N)
+
     for (n in 2:(N + 1)) {
       if (verbose) cat(paste0("Computation of the SGCCA block components #", n,
                               " is under progress... \n"))
@@ -199,7 +207,7 @@ sgcca <- function(blocks, connection = 1 - diag(length(blocks)),
                                scheme = scheme, init = init, bias = bias,
                                tol = tol, verbose = verbose, quiet = quiet,
                                na.rm = na.rm)
-      } else{
+      } else {
         sgcca.result <- sgccak(R, connection, sparsity = sparsity[n, ],
                                scheme = scheme, init = init, bias = bias,
                                tol = tol, verbose = verbose, quiet = quiet,
@@ -247,9 +255,7 @@ sgcca <- function(blocks, connection = 1 - diag(length(blocks)),
   Y = shave.matlist(Y, ncomp)
   AVE_X = shave.veclist(AVE_X, ncomp)
 
-  AVE <- list(AVE_X = AVE_X,
-              AVE_outer = AVE_outer,
-              AVE_inner = AVE_inner)
+  AVE <- list(AVE_X = AVE_X, AVE_outer = AVE_outer, AVE_inner = AVE_inner)
 
   if (N == 0) crit = unlist(crit)
 
