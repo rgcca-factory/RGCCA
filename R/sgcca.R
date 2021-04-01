@@ -71,11 +71,13 @@
 #' # rgcca algorithm using the dual formulation for X1 and X2
 #' # and the dual formulation for X3
 #' blocks[[3]] = blocks[[3]][, -3]
-#' result.rgcca = rgccad(blocks, connection, tau, ncomp = c(2, 2, 1),
-#' scheme = "factorial", verbose = TRUE)
+#' result.rgcca = rgcca(blocks = blocks, connection = connection, tau = tau,
+#'                      ncomp = c(2, 2, 1), scheme = "factorial",
+#'                      verbose = TRUE, method = "rgcca")
 #' # sgcca algorithm
-#' result.sgcca = sgcca(blocks, connection, sparsity = c(.071,.2, 1), ncomp = c(2, 2, 1),
-#'                      scheme = "centroid", verbose = TRUE)
+#' result.sgcca = rgcca(blocks = blocks, connection = connection,
+#'                      sparsity = c(.071,.2, 1), ncomp = c(2, 2, 1),
+#'                      scheme = "centroid", verbose = TRUE, method = "sgcca")
 #'
 #' ############################
 #' # plot(y1, y2) for (RGCCA) #
