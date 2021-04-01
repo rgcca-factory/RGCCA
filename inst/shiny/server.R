@@ -1168,23 +1168,26 @@ server <- function(input, output, session) {
     #                selector = paste0("#navbar li a[data-value=", i, "]"))
     # })
 
-    
     setToggleCorFing <- function() {
         condition <- !is.null(analysis) && getNcompScalar() > 1
         toggle(condition = condition, 
             selector = paste0("#navbar li a[data-value=Corcircle"))
         toggle(condition = isolate(getMaxCol() > 1), 
                selector = paste0("#navbar li a[data-value=Fingerprint"))
-    }
-    
-    setToogleBoot <- function()
-        for (i in c("Bootstrap", "'Bootstrap Summary'"))
-            toggle(condition = !is.null(boot) && isolate(getMaxCol() > 1), 
-               selector = paste0("#navbar li a[data-value=", i, "]"))
-        
-    observeEvent(c(input$names_block_x), {
-        if (!(!is.null(analysis) && getNcompScalar() > 1))
+        if (!(condition || isolate(getMaxCol() > 1)))
             updateTabsetPanel(session, "navbar", selected = "Samples")
+    }
+
+    setToogleBoot <- function() {
+        condition <- !is.null(boot) && isolate(getMaxCol() > 1)
+        for (i in c("Bootstrap", "'Bootstrap Summary'"))
+            toggle(condition = condition, 
+               selector = paste0("#navbar li a[data-value=", i, "]"))
+        if (!condition)
+            updateTabsetPanel(session, "navbar", selected = "Samples")
+    }
+
+    observeEvent(c(input$names_block_x), {
         setToggleCorFing()
         setToogleBoot()
         toggle(
