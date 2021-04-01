@@ -1071,9 +1071,9 @@ server <- function(input, output, session) {
             .GlobalEnv
         )
         assign("selected.var", NULL, .GlobalEnv)
-        show(selector = "#navbar li a[data-value=Bootstrap]")
-        show(selector = "#navbar li a[data-value='Bootstrap Summary']")
-        updateTabsetPanel(session, "navbar", selected = "Bootstrap")
+        setToogleBoot()
+        if (isolate(getMaxCol() > 1))
+            updateTabsetPanel(session, "navbar", selected = "Bootstrap")
     }
 
     load_responseShiny = function() {
@@ -1168,15 +1168,25 @@ server <- function(input, output, session) {
     #                selector = paste0("#navbar li a[data-value=", i, "]"))
     # })
 
-    observeEvent(c(input$names_block_x), {
-        comp <- getNcompScalar()
-        condition <- !is.null(analysis) && comp > 1
-        if (!condition)
-            updateTabsetPanel(session, "navbar", selected = "Samples")
+    
+    setToggleCorFing <- function() {
+        condition <- !is.null(analysis) && getNcompScalar() > 1
         toggle(condition = condition, 
             selector = paste0("#navbar li a[data-value=Corcircle"))
         toggle(condition = isolate(getMaxCol() > 1), 
                selector = paste0("#navbar li a[data-value=Fingerprint"))
+    }
+    
+    setToogleBoot <- function()
+        for (i in c("Bootstrap", "'Bootstrap Summary'"))
+            toggle(condition = !is.null(boot) && isolate(getMaxCol() > 1), 
+               selector = paste0("#navbar li a[data-value=", i, "]"))
+        
+    observeEvent(c(input$names_block_x), {
+        if (!(!is.null(analysis) && getNcompScalar() > 1))
+            updateTabsetPanel(session, "navbar", selected = "Samples")
+        setToggleCorFing()
+        setToogleBoot()
         toggle(
             condition = (input$navbar %in% c("Corcircle", "Fingerprint", "Bootstrap") && isolate(getMaxCol() > 10)),
                id = "nb_mark_custom")
@@ -1195,7 +1205,7 @@ server <- function(input, output, session) {
         toggle(
             condition = (input$navbar %in% c("Corcircle", "Fingerprint", "Bootstrap") && isolate(getMaxCol() > 10)),
                id = "nb_mark_custom")
-        condition = (!input$navbar %in% c("Fingerprint", "Bootstrap"))
+        condition = (!input$navbar %in% c("Fingerprint", "Bootstrap", "Bootstrap Summary"))
         toggle(
             condition = condition, id = "text")
         toggle(
@@ -1377,8 +1387,9 @@ server <- function(input, output, session) {
             assign("analysis", setRGCCA(), .GlobalEnv)
             if (is(analysis, "rgcca")) {
                 show(selector = "#tabset li a[data-value=RGCCA]")
-                for (i in c("Connection", "AVE", "Samples", "Corcircle", "Fingerprint"))
+                for (i in c("Connection", "AVE", "Samples"))
                     show(selector = paste0("#navbar li a[data-value=", i, "]"))
+                setToggleCorFing()
                 for (i in c("navbar", "nboot_custom", "run_boot"))
                     show(id = i)
                 toggle(id = "run_crossval_single", condition = !is.null(rgcca_out$call$response))
