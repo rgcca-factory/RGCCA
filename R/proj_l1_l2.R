@@ -3,7 +3,7 @@ proj_l1_l2 <- function(argu, a=1){
   norm2_argu = norm(argu, type = "2")
   if ( norm2_argu < 1e-32 ) stop("Norm2 of argu is too small :", norm2_argu)
   if ( sum(abs(argu/norm2_argu)) <= a ) return(list(k=NaN, lambda = 0))
-  # The desired a_k cannot be null as the constraints are not already satisfied 
+  # The desired a_k cannot be null as the constraints are not already satisfied
   # (cf. previous check). So zero values are removed.
   uneq <- argu != 0
   L    <- sum(!uneq)
@@ -12,33 +12,33 @@ proj_l1_l2 <- function(argu, a=1){
   MAX  <- max(p)
   bMAX <- p == MAX
   nMAX <- sum(bMAX)
-  # If there are multiple maximum value, the sparse parameter 
+  # If there are multiple maximum value, the sparse parameter
   # "a" must be >= sqrt(number of max)
   if (a < sqrt(nMAX)){
     stop("L1/L2 projection issue. The current value of the sparsity parameter
-         is ", a/sqrt(length(argu)), " and has to be in the range [", 
+         is ", a/sqrt(length(argu)), " and has to be in the range [",
          sqrt(nMAX/length(argu)), ", 1].")
-  } 
-  # If there are multiple maximum value and a = sqrt(number of max), 
+  }
+  # If there are multiple maximum value and a = sqrt(number of max),
   # solution is straightforward
   if (a == sqrt(nMAX)){
     if (nMAX == length(p)){
-      # Case where there is as many maximum as the number of elements of the 
-      # vector to project "argu". Indeed in the case, 
+      # Case where there is as many maximum as the number of elements of the
+      # vector to project "argu". Indeed in the case,
       # ||argu||_1/||argu||_2 = sqrt(number of max)
       lambda = 0
     }else{
-      # With this choice of lambda, the soft-thresholding will set all 
+      # With this choice of lambda, the soft-thresholding will set all
       # parameters to 0 except for the elements equals to the maximum value.
       a_2    = max(p[-which(bMAX)])
       lambda = (MAX + a_2)/2
     }
     return(list(k=NaN, lambda = lambda))
   }
-  # If the vector to project "argu" is composed of 2 elements only, as the 
-  # sparse parameter a <= 1 the desired a_k is a_2 (the lowest element) as 
-  # psi(a_2) = 1 (cf. theory) and by construction a_3 = 0 and psi(0) >= a 
-  # (checked previously). Moreover, these 2 elements are necessarily different 
+  # If the vector to project "argu" is composed of 2 elements only, as the
+  # sparse parameter a <= 1 the desired a_k is a_2 (the lowest element) as
+  # psi(a_2) = 1 (cf. theory) and by construction a_3 = 0 and psi(0) >= a
+  # (checked previously). Moreover, these 2 elements are necessarily different
   # (cf. conditions above)
   if (length(p) == 2){
     a_k     = min(p)
@@ -58,9 +58,9 @@ proj_l1_l2 <- function(argu, a=1){
     #Choose next a_k
     if (N%%2 == 0){
       p_reduced = p[-which.max(p)] # remove max instead of min -> psi not defined for max(abs(argu))
-      a_k     = ccaPP::fastMedian(p_reduced)
+      a_k     = median(p_reduced) # Replace by ccaPP::fastMedian or any homemade cpp median function
     }else{
-      a_k     = ccaPP::fastMedian(p)
+      a_k     = median(p) # Replace by ccaPP::fastMedian or any homemade cpp median function
     }
     #Make a partition of list p
     p_inf_ak <- p < a_k
@@ -73,7 +73,7 @@ proj_l1_l2 <- function(argu, a=1){
     #Compute value of the constraint
     aksq <- a_k^2
     s_low_1 = sum(p_low) + nb_a_k*a_k
-    # NOTE : could create  : ssq   <- function(u) sum(u**2) -> not necessary 
+    # NOTE : could create  : ssq   <- function(u) sum(u**2) -> not necessary
     # could use norm(u, type = "2")^2 -> not working when u = as.numeric(0) (mean p_low is empty)
     # When p_low is empty, sum(p_low**2) = 0, which is what is wanted.
     s_low_2 = sum(p_low**2) + nb_a_k*aksq
