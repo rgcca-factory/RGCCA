@@ -73,7 +73,7 @@ blocks = list(agriculture = Russett[, seq(3)],
               industry = Russett[, 4:5],
               politic = Russett[, 6:11])
 fit.sgcca = rgcca(blocks, sparsity = 0.75, method = "sgcca", init = "random")
-fit.stab = rgcca_stability(fit.sgcca, n_cores = 1)
+fit.stab = rgcca_stability(fit.sgcca, n_boot = 20, n_cores = 1)
 boot = bootstrap(fit.stab,
                  n_boot = 30, n_cores = 1)
 plot_bootstrap_1D(boot, type = "weight")
