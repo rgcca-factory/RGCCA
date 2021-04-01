@@ -755,12 +755,17 @@ server <- function(input, output, session) {
         else
             response_name <- ""
 
+        if (is.null(input$compy))
+            compy <- 1
+        else
+            compy <- input$compy
+
         if (!is.null(input$compx))
             plot_ind(
                 rgcca = rgcca_out,
                 resp = response,
                 compx = input$compx,
-                compy = input$compy,
+                compy = compy,
                 i_block = id_block,
                 text = if_text,
                 i_block_y = id_block_y,
