@@ -26,19 +26,21 @@ circle}
 
 \item{i_block}{An integer giving the index of the block}
 
-\item{type}{A character string indicating the quantity to display between 
+\item{type}{A character string indicating the quantity to display between
 block-loading vector ("loadings") or block-weight vector ("weight").}
 
 \item{collapse}{A boolean to combine the variables of each block as result}
 
 \item{title}{A character giving the title of the plot}
 
-\item{colors}{Either a vector of integers (each integer corresponding to a color) or of characters corresponding to names of colors (as "blue",see colors()) or RGB code ("#FFFFFF").}
+\item{colors}{Either a vector of integers (each integer corresponding to a
+color) or of characters corresponding to names of colors (as "blue",see
+colors()) or RGB code ("#FFFFFF").}
 
 \item{...}{Further graphical parameters (see plot2D)}
 }
 \description{
-Barplot of the block weight vectors or the block loading vector for the 
+Barplot of the block weight vectors or the block loading vector for the
 fitted R/SGCCA object.
 }
 \examples{

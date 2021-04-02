@@ -9,6 +9,7 @@
 #' @param type Character string indicating the bootstrapped object to plot:
 #' block-weight vectors ("weight", default) or block-loading vectors
 #' ("loadings").
+#' @param display_order A logical value for ordering the variables
 #' @export
 #' @examples
 #' data("Russett")
@@ -16,11 +17,12 @@
 #'               industry = Russett[, 4:5],
 #'               politic = Russett[, 6:11])
 #' fit.rgcca = rgcca(blocks, ncomp = 2, method = "rgcca", tau = 1)
-#' fit.boot=bootstrap(fit.rgcca, n_boot = 20, n_cores = 1)
+#' fit.boot = bootstrap(fit.rgcca, n_boot = 20, n_cores = 1)
 #' plot(fit.boot, type = "weight", block = 1, comp=1)
 
 plot.bootstrap=function(x, block = length(x$rgcca$call$blocks),
                         comp = 1, type = "weight", n_mark = 30,
+                        display_order = TRUE,
                         colors = NULL, title = NULL, cex = 1,
                         cex_main = 14, cex_sub = 12,
                         cex_point = 10, cex_lab = 10, cex_axis = 10, ...)
@@ -34,8 +36,6 @@ plot.bootstrap=function(x, block = length(x$rgcca$call$blocks),
             block=length(x$rgcca$call$blocks)-1
     }
 
-    # x1="estimate"
-    # y1="sign"
     title=ifelse(is.null(title),
                  paste0("Bootstrap confidence interval (",
                          names(x$rgcca$call$blocks)[block], ")\n (",
@@ -51,6 +51,7 @@ plot.bootstrap=function(x, block = length(x$rgcca$call$blocks),
               x = "estimate",
               y = "sign",
               n_mark = n_mark,
+              display_order = display_order,
               title = title,
               colors = colors,
               comp = comp,

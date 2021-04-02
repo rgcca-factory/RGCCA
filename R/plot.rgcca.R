@@ -6,7 +6,7 @@
 #' @inheritParams plot2D
 #' @param x A fitted RGCCA object (see \code{\link[RGCCA]{rgcca}})
 #' @param ... additional graphical parameters
-#' @param type A character string: 'sample', 'weight', 'loadings', 'corCircle', 
+#' @param type A character string: 'sample', 'weight', 'loadings', 'corCircle',
 #' 'both', 'ave', 'network' (see details).
 #' @param text_ind logical value indicating whether sample names are displayed
 #' (default = TRUE).
@@ -30,22 +30,19 @@
 #' specific block/component. The weights are sorted from the highest to
 #' the lowest and only the highest are displayed. The number of displayed
 #' weights can be set with n_marks.
-#' \item "loadings": barplot of the block-loading vector. Variables are sorted 
+#' \item "loadings": barplot of the block-loading vector. Variables are sorted
 #' in decreasing correlations and only the highest
 #' correlations are displayed. The number of displayed correlations can be set
 #' with n_marks (defaut value = 30).
 #' \item  "CorCircle" for correlation circle.
 #' \item "both": displays both sample plot and correlation circle (implemented
 #' only for one block and at least when two components are asked (ncomp >= 2).
-#' \item "ave": displays the average variance explained for each block.
-#' \item "net": displays the network of connection between blocks (defined by
-#' the connection argument) used in the rgcca() function.
-#' }
+#' \item "ave": displays the average variance explained for each block.}
 #' @examples
 #' data(Russett)
 #' status = colnames(Russett)[9:11][apply(Russett[, 9:11], 1, which.max)]
-#' X_agric =as.matrix(Russett[,c("gini","farm","rent")])
-#' X_ind = as.matrix(Russett[,c("gnpr","labo")])
+#' X_agric =as.matrix(Russett[, c("gini","farm","rent")])
+#' X_ind = as.matrix(Russett[, c("gnpr","labo")])
 #' X_polit = as.matrix(Russett[ , c("demostab", "dictator")])
 #' A = list(X_agric = X_agric, X_ind = X_ind, X_polit = X_polit)
 #' C = matrix(c(0, 0, 1, 0, 0, 1, 1, 1, 0), 3, 3)
@@ -55,11 +52,6 @@
 #' ###############
 #' # sample plot #
 #' ###############
-#'
-#' # Defaut call: First component of the last block vs second component of the
-#' # last block
-#' plot(fit.rgcca, type = "sample", resp = status)
-#'
 #' # horizontal axis: First component of the first block
 #' # vertical axis: First component of the second block
 #' plot(fit.rgcca, type = "sample", block = 1:2, comp = 1, resp = status)
@@ -69,13 +61,10 @@
 #' # Correlation circle #
 #' ######################
 #' # with superblock
-#' fit.mcia = rgcca(blocks=A, scheme = "factorial", ncomp = rep(2, 4),
+#' fit.mcoa = rgcca(blocks=A, scheme = "factorial", ncomp = rep(2, 4),
 #'                  tau = c(1, 1, 1, 0), superblock = TRUE)
-#'                  
-#' fit.mcia = rgcca(blocks=A, scheme = "factorial", ncomp = rep(2, 3), tau = c(1, 1, 1))
-#'                  
-#'                  
-#' plot(fit.mcia, type = "both", resp = status, overlap = FALSE)
+#'
+#' plot(fit.mcoa, type = "both", resp = status, overlap = FALSE)
 #' plot(fit.rgcca, type = "loadings")
 #' plot(fit.rgcca, type = "weight")
 #' plot(fit.rgcca, type = "sample")
@@ -92,7 +81,8 @@ plot.rgcca=function(x, type = "weight", block = length(x$call$blocks), comp = 1:
                     cex_lab = 12, cex_axis = 10, colors = NULL, ...)
 {
     stopifnot(is(x, "rgcca"))
-    match.arg(type, c("sample", "corCircle", "both", "ave", "loadings", "weight", "network"))
+    match.arg(type, c("sample", "corCircle", "both",
+                      "ave", "loadings", "weight"))
     if(length(comp) == 1){comp = rep(comp, 2)}
     compx = comp[1]
     compy = comp[2]
@@ -107,7 +97,7 @@ plot.rgcca=function(x, type = "weight", block = length(x$call$blocks), comp = 1:
       }
       block = rep(block,2)
     }
-    
+
     i_block=block[1]
     i_block_y=block[2]
 
@@ -138,7 +128,7 @@ plot.rgcca=function(x, type = "weight", block = length(x$call$blocks), comp = 1:
         p <- grid.arrange(p1, p2, nrow=1, ncol=2, top = title)
         invisible(p)
     }
-    
+
     else if(type == "corCircle")
     {
         if(x$call$superblock)
@@ -188,15 +178,7 @@ plot.rgcca=function(x, type = "weight", block = length(x$call$blocks), comp = 1:
                         cex_main = cex_main, cex_sub = cex_sub)
         p
     }
-    
-    else if(type == "network")
-    {
-        if(is.null(title)){title=paste0("Common rows between blocks : ",
-                                        NROW(x$call$blocks[[1]]))}
-        plot_network( x, title = title, cex_main = cex_main)
-        p<-NULL
-    }
-    
+
     else if(type == "loadings")
     {
         if(is.null(title)){title = paste0("Block-loading vector: ",

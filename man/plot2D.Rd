@@ -49,7 +49,9 @@ plot2D(
 
 \item{i_block_y}{An integer giving the index of the block (different from i_block)}
 
-\item{colors}{Either a vector of integers (each integer corresponding to a color) or of characters corresponding to names of colors (as "blue",see colors()) or RGB code ("#FFFFFF").}
+\item{colors}{Either a vector of integers (each integer corresponding to a
+color) or of characters corresponding to names of colors (as "blue",see
+colors()) or RGB code ("#FFFFFF").}
 
 \item{collapse}{A boolean to combine the variables of each block as result}
 

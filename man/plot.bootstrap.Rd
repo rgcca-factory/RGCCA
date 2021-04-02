@@ -10,6 +10,7 @@
   comp = 1,
   type = "weight",
   n_mark = 30,
+  display_order = TRUE,
   colors = NULL,
   title = NULL,
   cex = 1,
@@ -35,7 +36,11 @@ block-weight vectors ("weight", default) or block-loading vectors
 \item{n_mark}{The number of top variables to display in the correlation
 circle}
 
-\item{colors}{Either a vector of integers (each integer corresponding to a color) or of characters corresponding to names of colors (as "blue",see colors()) or RGB code ("#FFFFFF").}
+\item{display_order}{A logical value for ordering the variables}
+
+\item{colors}{Either a vector of integers (each integer corresponding to a
+color) or of characters corresponding to names of colors (as "blue",see
+colors()) or RGB code ("#FFFFFF").}
 
 \item{title}{A character giving the title of the plot}
 
@@ -62,6 +67,6 @@ blocks = list(agriculture = Russett[, seq(3)],
               industry = Russett[, 4:5],
               politic = Russett[, 6:11])
 fit.rgcca = rgcca(blocks, ncomp = 2, method = "rgcca", tau = 1)
-fit.boot=bootstrap(fit.rgcca, n_boot = 20, n_cores = 1)
+fit.boot = bootstrap(fit.rgcca, n_boot = 20, n_cores = 1)
 plot(fit.boot, type = "weight", block = 1, comp=1)
 }

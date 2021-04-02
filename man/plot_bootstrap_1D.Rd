@@ -11,6 +11,7 @@ plot_bootstrap_1D(
   x = "estimate",
   y = "sign",
   n_mark = 50,
+  display_order = TRUE,
   title = NULL,
   colors = NULL,
   comp = 1,
@@ -36,9 +37,13 @@ block-weight vectors ("weight", default) or block-loading vectors
 \item{n_mark}{The number of top variables to display in the correlation
 circle}
 
+\item{display_order}{A logical value for ordering the variables}
+
 \item{title}{A character giving the title of the plot}
 
-\item{colors}{Either a vector of integers (each integer corresponding to a color) or of characters corresponding to names of colors (as "blue",see colors()) or RGB code ("#FFFFFF").}
+\item{colors}{Either a vector of integers (each integer corresponding to a
+color) or of characters corresponding to names of colors (as "blue",see
+colors()) or RGB code ("#FFFFFF").}
 
 \item{comp}{An integer indicating the block-weight/loading vector to plot.}
 

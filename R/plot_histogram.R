@@ -71,22 +71,20 @@ plot_histogram <- function(
             plot.margin = margin(5, 0, mar, 0, "mm")
             )
 
-    # if  (!is(df, "d_ave")) {
-    #     p <- p +
-    #      scale_x_continuous(breaks = df$order, labels = rownames(df)) +
-    #      labs(fill = "Blocks")
-    #     if (length(group) == 1){
-    #         if (is.null(colors))
-    #             colors <- c(color_group(seq(3))[3],  "gray", color_group(seq(3))[1])
-    #         p <- p +
-    #             scale_fill_gradientn(colors = colors, na.value = "black")
-    #     } else  if ((is.character2(group[!is.na(group)]) ||
-    #                         length(unique(group)) <= 5 )) {
-    #
-    #         cols=color_group(group, colors)
-    #        p <- p + scale_fill_manual(values = cols,limit=names(cols),drop=FALSE)
-    #     }
-    # }
+    if  (!is(df, "d_ave") & !is(df, "d_boot1D")) {
+        p <- p +
+         scale_x_continuous(breaks = df$order, labels = rownames(df)) +
+         labs(fill = "Blocks")
+        if (length(group) == 1){
+          if (is.null(colors))
+            colors <- c(color_group(seq(3))[3], "gray", color_group(seq(3))[1])
+            p <- p + scale_fill_gradientn(colors = colors, na.value = "black")
+        } else if ((is.character2(group[!is.na(group)]) ||
+                            length(unique(group)) <= 5 )) {
+            cols=color_group(group, colors)
+           p <- p + scale_fill_manual(values = cols,limit=names(cols),drop=FALSE)
+        }
+    }
 
     return(p)
 }

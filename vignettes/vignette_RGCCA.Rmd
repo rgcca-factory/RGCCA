@@ -783,7 +783,7 @@ At last, as a component-based method, RGCCA provides the users with graphical re
 lab = factor(apply(Russett[, 9:11], 1, which.max),
              labels = c("Stable democracy", "Unstable democracy", "Dictatorship"))
 
-p <- plot(rgcca_B_factorial, type = "sample",
+plot(rgcca_B_factorial, type = "sample",
      block = 1:2, comp = 1,
      resp = lab, overlap = FALSE)
 ```
@@ -826,7 +826,7 @@ boot_opt = bootstrap(rgcca_optimal_factorial,
 The bootstrap confidence are given below for the first block:
 
 ```{r}
-plot(boot_opt, type = "loadings", block = 1)
+plot(boot_opt, type = "loadings", block = 3)
 ```
 
 **Choice of the shrinkage parameter using a permutation based strategy.**
@@ -972,7 +972,7 @@ global components can be derived. The space spanned by the global components is 
 In this section, we consider Multiple Co-Inertia Analysis with $2$ components per block are specified using the `ncomp = rep(2, 4)` argument (default value `ncomp = rep(1, length(A))`, which gives one component per block).
 
 ```{r}
-fit.mcoa = rgcca(blocks=A, method = "mcoa")
+fit.mcoa = rgcca(blocks=A, method = "mcoa", ncomp = 2)
 print(fit.mcoa)
 ```
 
@@ -1114,6 +1114,9 @@ If `sparsity` is a matrix, each row $h$ of `sparsity` defines the constraints ap
 First, it possible to determine the optimal sparsity parameters by permutation. This is made possible using the `rgcca_permutation()` function.
 
 ```{r, eval = FALSE}
+set.seed(1234567) # -> very sparse model
+set.seed(123456) # -> very sparse model
+
 fit.permute = rgcca_permutation(A, connection = C,
                                 par_type = "sparsity",
                                 par_value = 
@@ -1124,13 +1127,17 @@ fit.permute = rgcca_permutation(A, connection = C,
                                            0.0237, 0.0714, 1, 
                                            0.0080, 0.029, 1), 6, 3, 
                                          byrow = TRUE),
-                                n_perms = 3)
+                                n_perms = 3, n_cores = 15)
+
+fit.permute = rgcca_permutation(A, connection = C,
+                                par_type = "sparsity",
+                                n_perms = 3, n_cores = 15)
 ```
 
 and then directly used the optimal sparsity parameters as follows:
 
 ```{r, eval = FALSE}
-best.permute.sgcca = rgcca(fit.permute, ncomp = )
+best.permute.sgcca = rgcca(fit.permute)
 ```
 
 The resulting model is summarized using the generic print function.
@@ -1146,7 +1153,8 @@ it is useful to stabilize the variable selection procedure using the
 ```{r, eval = FALSE}
 fit.stab = rgcca_stability(best.permute.sgcca, 
                            keep = sapply(best.permute.sgcca$a, 
-                                         function(x) mean(x!=0)))
+                                         function(x) mean(x!=0)),
+                           n_boot = 20)
 ```
 
 and then apply the bootstrap procedure for confidence intervals and other statistics on the block weight/loadings vectors.
@@ -1168,53 +1176,15 @@ plot(boot.out, block = 2)
 One component per block has been built (GE1 for $\ma X_1$ and CGH1 $\ma X_2$), and the graphical display of the tumors obtained by crossing GE1 and CGH1 and labeled according to their location is shown below.
 
 ```{r, eval = FALSE, fig.align='center', fig.cap = 'graphical display of the tumors obtained by crossing GE1 and CGH1 and labeled according to their location.',fig.height = 3, fig.width = 5}
-plot(fit.stab$rgcca_res, type = "sample", block=1:2,comp=1, resp = Loc)
-```
-
-It possible to determine the optimal sparsity parameters by permutation. This is made possible using the  `rgcca_permutation()` function.
-
-```{r, eval = FALSE}
-fit.permute = rgcca_permutation(A, connection = C,
-                                par_type = "sparsity",
-                                par_length = 5,
-                                n_perms = 3)
-```
-
-and then directly used the optimal sparsity parameters as follows:
-
-```{r, eval = FALSE}
-best.permute.sgcca = rgcca(fit.permute)
-```
-
-The resulting model is summarized using the generic print function.
-
-```{r, eval = FALSE}
-print(best.permute.sgcca)
-```
-
-Again, one component per block was built (GE1 for $\ma X_1$ and CGH1 $\ma X_2$), and the graphical display of the tumors obtained by crossing GE1 and CGH1 and labeled according to their location is shown below.
-
-```{r, eval = FALSE, fig.align='center', fig.cap = 'graphical display of the tumors obtained by crossing GE1 and CGH1 and labeled according to their location.',fig.height = 3, fig.width = 5}
-plot(best.permute.sgcca, type = "sample", block = 1:2, comp = 1, resp = Loc)
+plot(fit.stab$rgcca_res, type = "sample", block=1:2, 
+     comp=1, resp = as.character(Loc))
 ```
 
 We observe that the GE block contains much more discriminative information than the CGH block.
 
-The top-twenty variables that contributes mostly to the construction of the GE block components are displayed
-
-```{r, eval = FALSE}
-plot(best.permute.sgcca, type = "weight", block=1, comp=1, n_mark = 20)
-```
-
-The top-twenty variables that contributes mostly to the construction of the CGH block components are displayed
-
-```{r, eval = FALSE}
-plot(best.permute.sgcca, type="weight", block=2, comp=1, n_mark = 20)
-```
-
 # Conclusion
 
-This package gathers 60 years of multiblock component methods and offers a unified implementation strategy for these methods. This release of the package includes:
+This package gathers 60 years of multiblock component methods and offers a unified implementation strategy for these methods. This release of the RGCCA package includes:
 
 - a permutation strategy for optimal choice of the shrinkage parameters/level of sparsity.
 
@@ -1223,13 +1193,13 @@ estimates of RGCCA and the stability of the selected variables for SGCCA.
 
 - Dedicated functions for graphical representations of the ouptut of RGCCA (sample plot, correlation circle, etc...).
 
-- multiblock data faces two types of missing data structure: (i) if an observation i has missing values on a whole block j and (ii) if an observation i has some missing values on a block j (but not all). For these two situations, it is possible to exploit the algorithmic solution proposed for PLS path modeling to deal with missing data (see [@Tenenhaus2005],  page 171). 
+- multiblock data faces two types of missing data structure: (i) if an observation $i$ has missing values on a whole block j and (ii) if an observation i has some missing values on a block j (but not all). For these two situations, it is possible to exploit the algorithmic solution proposed for PLS path modeling to deal with missing data (see [@Tenenhaus2005],  page 171).  
 
-At last, RGCCA for multigroup data [@Tenenhaus2014b] and for multiway data 
-[@Gloaguen2020] has been proposed but not yet integrated in the RGGCA package. 
+At last, RGCCA for multigroup data [@Tenenhaus2014b] and for RGCCA for multiway 
+data [@Gloaguen2020] has been proposed but not yet integrated in the RGGCA package. 
 In addition, global RGCCA has been recently developed and enables extracting 
 simultaneously several components per block (no deflation procedure required). 
-Work in progress includes the integration Global RGCCA in the next release of 
+Work in progress includes the integration of Global RGCCA in the next release of 
 the package.
 
 # References

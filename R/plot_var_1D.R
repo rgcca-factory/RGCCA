@@ -1,12 +1,12 @@
 #' Barplot of a fingerprint
 #'
-#' Barplot of the block weight vectors or the block loading vector for the 
+#' Barplot of the block weight vectors or the block loading vector for the
 #' fitted R/SGCCA object.
 #'
 #' @inheritParams plot_var_2D
 #' @inheritParams plot_histogram
 #' @param comp An integer indicating the block-weight/loading vector to plot.
-#' @param type A character string indicating the quantity to display between 
+#' @param type A character string indicating the quantity to display between
 #' block-loading vector ("loadings") or block-weight vector ("weight").
 #' @seealso \code{\link[RGCCA]{rgccad}}, \code{\link[RGCCA]{sgcca}}
 #' @examples
@@ -85,6 +85,7 @@ plot_var_1D <- function(
         color <- "black"
         p <- ggplot(df, aes(order, df[, 1], fill = abs(df[, 1])))
     }
+
     p <- plot_histogram(
         p,
         df,
@@ -92,7 +93,8 @@ plot_var_1D <- function(
         group=as.character(color),
         colors = colors,
         ...
-    ) +
+    )
+
     labs(subtitle = print_comp(rgcca_res, comp, i_block))
 
     # If some blocks have any variables in the top hit, selects the ones

@@ -35,7 +35,8 @@ This function can be used to identify the most stable variables
 identified as relevant by SGCCA.
 }
 \examples{
-\dontrun{#' ###########################
+\dontrun{
+###########################
 # stability and bootstrap #
 ###########################
 
@@ -54,9 +55,10 @@ fit.sgcca = rgcca(blocks, connection = connection,
                   verbose = TRUE)
 
 fit.stab = rgcca_stability(fit.sgcca,
-                           keep = c(0.01, 0.1, 1),
-                           n_cores = 1
+                           keep = sapply(fit.sgcca$a, function(x) mean(x!=0)),
+                           n_cores = 15
                            )
+
 boot.out = bootstrap(fit.stab, n_boot = 100, n_cores = 1)
 }
 }

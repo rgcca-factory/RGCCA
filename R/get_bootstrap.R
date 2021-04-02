@@ -12,7 +12,7 @@
 #' @param type Character string indicating the bootstrapped object to print:
 #' block-weight vectors ("weight", default) or block-loading vectors
 #' ("loadings").
-#' @param display_order A logical value to display the order of the variables
+#' @param display_order A logical value for ordering the variables
 #' @param adj.method character string indicating the method used for p-value
 #' adjustment (default: fdr - a.k.a Benjamini-Hochberg correction)
 #' @return A dataframe containing:
@@ -69,7 +69,7 @@
 #' \code{\link[RGCCA]{print.bootstrap}}
 get_bootstrap <- function(b, type = "weight", comp = 1,
                           block = length(b$bootstrap[[1]][[1]]),
-                          display_order=TRUE, adj.method = "fdr"){
+                          display_order = TRUE, adj.method = "fdr"){
 
     stopifnot(is(b, "bootstrap"))
     check_ncol(b$rgcca$Y, block)
@@ -80,7 +80,7 @@ get_bootstrap <- function(b, type = "weight", comp = 1,
     if(type == "loadings") {b$bootstrap = b$bootstrap$L}
 
     bootstrapped=b$bootstrap[[comp]][[block]]
-    n_boot=sum(!is.na(bootstrapped[1, ]))
+    n_boot = sum(!is.na(bootstrapped[1, ]))
     mean = apply(bootstrapped, 1, function(x) mean(x, na.rm = T))
 
     if(type == "weight") {weight = b$rgcca$a[[block]][, comp]}
@@ -91,15 +91,17 @@ get_bootstrap <- function(b, type = "weight", comp = 1,
     tail <- qnorm(1 - .05 / 2)
 
     if(type == "weight"){
-      sd = apply(bootstrapped, 1, function(x) sd(x, na.rm = T))
-      p.vals <- 2*pnorm(abs(weight)/sd, lower.tail = FALSE)
+      std = apply(bootstrapped, 1, function(x) sd(x, na.rm = T))
+      bootstrap_ratio = abs(weight) / std
+      p.vals <- 2*pnorm(bootstrap_ratio, lower.tail = FALSE)
     }
 
     if(type == "loadings"){
       ftrans = 0.5*log((1 + weight)/(1 - weight))
       r = 0.5*log((1 + bootstrapped)/(1 - bootstrapped))
-      sd = apply(r, 1, function(x) sd(x, na.rm = T))
-      p.vals <- 2*pnorm(abs(ftrans)/sd, lower.tail = FALSE)
+      std = apply(r, 1, function(x) sd(x, na.rm = T))
+      bootstrap_ratio = abs(ftrans)/std
+      p.vals <- 2*pnorm(bootstrap_ratio, lower.tail = FALSE)
     }
 
     lower_bound=apply(bootstrapped, 1,
@@ -110,33 +112,20 @@ get_bootstrap <- function(b, type = "weight", comp = 1,
     df <- data.frame(
         estimate = weight,
         mean = mean,
-        sd = sd,
+        sd = std,
         lower_bound = lower_bound,
         upper_bound = upper_bound,
-        bootstrap_ratio = ifelse(type == "weight",
-                                 abs(mean) / sd,
-                                 abs(0.5*log((1 + weight)/(1 - weight)))/sd),
+        bootstrap_ratio = bootstrap_ratio,
         pval = p.vals,
         adjust.pval = p.adjust(p.vals, method = adj.method)
     )
 
-    #df$sign <- rep("ns", NROW(df))
-    #for (i in seq(NROW(df)))
-    #        if(p.vals[i]<0.05) df$sign[i] <- "*"
-    if(!display_order){
-        index <- which(colnames(df)=="mean")
-        db <- data.frame(order_df(df, index, allCol = TRUE)   )
-        db <- db[, c("mean", "estimate", "sd",
-                     "lower_bound", "upper_bound",
-                     "pval", "adjust.pval")]
-      }
-      if(display_order){
-        index <- which(colnames(df) == "mean")
-        db <- data.frame(order_df(df, index, allCol = TRUE),
-                             order = NROW(df):1)
-      }
+     if(display_order){
+       index <- which(colnames(df) == "estimate")
+       df <- data.frame(order_df(df, index, allCol = TRUE))
+     }
 
-      attributes(db)$indexes <- list(
+      attributes(df)$indexes <- list(
             estimate = ifelse(type == "weight",
                               "block-weight",
                               "block-loadings"),
@@ -144,9 +133,9 @@ get_bootstrap <- function(b, type = "weight", comp = 1,
             sign = "Significance",
             mean = "Mean bootstrap weights")
 
-    attributes(db)$method <- class(b$rgcca)
-    attributes(db)$n_boot <- n_boot
-    attributes(db)$n_blocks <- length(b$rgcca$call$blocks)
-    class(db) <- c(class(db), "df_bootstrap")
-    return(db)
+    attributes(df)$method <- class(b$rgcca)
+    attributes(df)$n_boot <- n_boot
+    attributes(df)$n_blocks <- length(b$rgcca$call$blocks)
+    class(df) <- c(class(df), "df_bootstrap")
+    return(df)
 }

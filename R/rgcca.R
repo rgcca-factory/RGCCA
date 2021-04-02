@@ -128,7 +128,6 @@
 #'      comp = rep(1, 2), resp = politic)
 #'
 #' plot(fit.rgcca, type = "ave")
-#' plot(fit.rgcca, type = "network")
 #' plot(fit.rgcca, type = "weight", block = 1)
 #' plot(fit.rgcca, type = "loadings")
 #' \dontrun{
@@ -144,7 +143,6 @@
 #' plot(perm.out)
 #'
 #' fit.sgcca = rgcca(blocks, sparsity = perm.out$bestpenalties)
-#' plot(fit.sgcca, type = "network")
 #' plot(fit.sgcca, type = "ave")
 #'
 #' # Select the most significant variables

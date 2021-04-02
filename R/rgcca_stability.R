@@ -13,7 +13,8 @@
 #' @return \item{bootstrap}{block-weight vectors for ech bootstrap sample.}
 #' @return \item{rgcca_res}{an RGCCA object fitted on the most stable variables.}
 #' @examples
-#' \dontrun{#' ###########################
+#' \dontrun{
+#' ###########################
 #' # stability and bootstrap #
 #' ###########################
 #'
@@ -32,9 +33,10 @@
 #'                   verbose = TRUE)
 #'
 #' fit.stab = rgcca_stability(fit.sgcca,
-#'                            keep = c(0.01, 0.1, 1),
-#'                            n_cores = 1
+#'                            keep = sapply(fit.sgcca$a, function(x) mean(x!=0)),
+#'                            n_cores = 15
 #'                            )
+#'
 #' boot.out = bootstrap(fit.stab, n_boot = 100, n_cores = 1)
 #'}
 #' @export
@@ -119,13 +121,12 @@ rgcca_stability <- function(rgcca_res,
                             )
                    )
 
-
-    intensity = mapply("*",
+  intensity = mapply("*",
                      do.call(mapply, c(rbind, mylist)),
                      rgcca_res$AVE$AVE_X)
 
-    top = lapply(intensity, function(x) colMeans(x, na.rm = TRUE))
-    perc = elongate_arg(keep, top)
+  top = lapply(intensity, function(x) colMeans(x, na.rm = TRUE))
+  perc = elongate_arg(keep, top)
 
   if(is.null(dim(rgcca_res$call$sparsity))){
     if(rgcca_res$call$superblock == TRUE){
@@ -145,7 +146,8 @@ rgcca_stability <- function(rgcca_res,
                         decreasing = TRUE)[1:round(perc[x]*length(top[[x]]))]
   )
 
-  newBlock = mapply(function(x, y) x[, y], rgcca_res$call$raw, keepVar)
+  newBlock = mapply(function(x, y) x[, y], rgcca_res$call$raw, keepVar,
+                    SIMPLIFY = FALSE)
 
   rgcca_res = rgcca(newBlock,
                     connection = rgcca_res$call$connection,

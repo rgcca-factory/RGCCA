@@ -25,7 +25,9 @@ plot_histogram(
 
 \item{group}{A vector of character giving the group for the rows}
 
-\item{colors}{Either a vector of integers (each integer corresponding to a color) or of characters corresponding to names of colors (as "blue",see colors()) or RGB code ("#FFFFFF").}
+\item{colors}{Either a vector of integers (each integer corresponding to a
+color) or of characters corresponding to names of colors (as "blue",see
+colors()) or RGB code ("#FFFFFF").}
 
 \item{cex}{An integer for the size of the plot parameters}
 

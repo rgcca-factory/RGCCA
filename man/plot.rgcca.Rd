@@ -30,7 +30,7 @@
 \arguments{
 \item{x}{A fitted RGCCA object (see \code{\link[RGCCA]{rgcca}})}
 
-\item{type}{A character string: 'sample', 'weight', 'loadings', 'corCircle', 
+\item{type}{A character string: 'sample', 'weight', 'loadings', 'corCircle',
 'both', 'ave', 'network' (see details).}
 
 \item{block}{A numeric vector indicating the blocks to consider.}
@@ -71,7 +71,9 @@ circle}
 
 \item{cex_axis}{An integer for the size of the axis text}
 
-\item{colors}{Either a vector of integers (each integer corresponding to a color) or of characters corresponding to names of colors (as "blue",see colors()) or RGB code ("#FFFFFF").}
+\item{colors}{Either a vector of integers (each integer corresponding to a
+color) or of characters corresponding to names of colors (as "blue",see
+colors()) or RGB code ("#FFFFFF").}
 
 \item{...}{additional graphical parameters}
 }
@@ -89,23 +91,20 @@ modified with the colors argument.
 specific block/component. The weights are sorted from the highest to
 the lowest and only the highest are displayed. The number of displayed
 weights can be set with n_marks.
-\item "loadings": barplot of the block-loading vector. Variables are sorted 
+\item "loadings": barplot of the block-loading vector. Variables are sorted
 in decreasing correlations and only the highest
 correlations are displayed. The number of displayed correlations can be set
 with n_marks (defaut value = 30).
 \item  "CorCircle" for correlation circle.
 \item "both": displays both sample plot and correlation circle (implemented
 only for one block and at least when two components are asked (ncomp >= 2).
-\item "ave": displays the average variance explained for each block.
-\item "net": displays the network of connection between blocks (defined by
-the connection argument) used in the rgcca() function.
-}
+\item "ave": displays the average variance explained for each block.}
 }
 \examples{
 data(Russett)
 status = colnames(Russett)[9:11][apply(Russett[, 9:11], 1, which.max)]
-X_agric =as.matrix(Russett[,c("gini","farm","rent")])
-X_ind = as.matrix(Russett[,c("gnpr","labo")])
+X_agric =as.matrix(Russett[, c("gini","farm","rent")])
+X_ind = as.matrix(Russett[, c("gnpr","labo")])
 X_polit = as.matrix(Russett[ , c("demostab", "dictator")])
 A = list(X_agric = X_agric, X_ind = X_ind, X_polit = X_polit)
 C = matrix(c(0, 0, 1, 0, 0, 1, 1, 1, 0), 3, 3)
@@ -115,11 +114,6 @@ fit.rgcca=rgcca(blocks = A, connection = C,
 ###############
 # sample plot #
 ###############
-
-# Defaut call: First component of the last block vs second component of the
-# last block
-plot(fit.rgcca, type = "sample", resp = status)
-
 # horizontal axis: First component of the first block
 # vertical axis: First component of the second block
 plot(fit.rgcca, type = "sample", block = 1:2, comp = 1, resp = status)
@@ -129,13 +123,10 @@ plot(fit.rgcca, type = "sample", block = 1:2, comp = 1, resp = status)
 # Correlation circle #
 ######################
 # with superblock
-fit.mcia = rgcca(blocks=A, scheme = "factorial", ncomp = rep(2, 4),
+fit.mcoa = rgcca(blocks=A, scheme = "factorial", ncomp = rep(2, 4),
                  tau = c(1, 1, 1, 0), superblock = TRUE)
-                 
-fit.mcia = rgcca(blocks=A, scheme = "factorial", ncomp = rep(2, 3), tau = c(1, 1, 1))
-                 
-                 
-plot(fit.mcia, type = "both", resp = status, overlap = FALSE)
+
+plot(fit.mcoa, type = "both", resp = status, overlap = FALSE)
 plot(fit.rgcca, type = "loadings")
 plot(fit.rgcca, type = "weight")
 plot(fit.rgcca, type = "sample")

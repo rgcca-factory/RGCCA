@@ -49,6 +49,7 @@
 #' @importFrom ggplot2 ggplot
 #' @importFrom stats qbinom
 #' @importFrom utils head
+#' @importFrom grDevices grey.colors
 plot_bootstrap_1D <- function(
     b = NULL,
     df_b = NULL,
@@ -56,6 +57,7 @@ plot_bootstrap_1D <- function(
     x = "estimate",
     y = "sign",
     n_mark = 50,
+    display_order = TRUE,
     title = NULL,
     colors = NULL,
     comp = 1,
@@ -71,7 +73,7 @@ plot_bootstrap_1D <- function(
             type = type,
             comp,
             block = i_block,
-            display_order = TRUE
+            display_order = display_order
         )
     }
 
@@ -91,11 +93,15 @@ plot_bootstrap_1D <- function(
 
     if (n_mark > NROW(df_b)) n_mark <- NROW(df_b)
 
-    df_b_head <- head(
-        data.frame(
+    if( display_order){
+        df_b_head <- head(data.frame(
             order_df(df_b, "estimate", allCol = TRUE),
             order = NROW(df_b):1),
             n_mark)
+    } else{
+        df_b_head <- head(data.frame( df_b, order = NROW(df_b):1), n_mark)
+    }
+
     df_b_head <- df_b_head[df_b_head[, "sd"] != 0, ]
     class(df_b_head) <- c(class(df_b), "d_boot1D")
 
@@ -117,7 +123,7 @@ plot_bootstrap_1D <- function(
             fill = df_b_head[, "sign"])
             )
 
-    p <- plot_histogram(p, df_b_head) +
+    p <- plot_histogram(p, df_b_head, title) +
         scale_x_continuous(breaks = df_b_head$order,
                            labels = rownames(df_b_head)) +
         scale_fill_manual(values = grey.colors(6)[2:6],

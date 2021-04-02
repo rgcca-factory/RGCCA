@@ -15,7 +15,9 @@
 #' @param name_group A character giving the type of groups (either "Blocks" or
 # "Response")
 #' @param p A ggplot object
-#' @param colors Either a vector of integers (each integer corresponding to a color) or of characters corresponding to names of colors (as "blue",see colors()) or RGB code ("#FFFFFF").
+#' @param colors Either a vector of integers (each integer corresponding to a
+#' color) or of characters corresponding to names of colors (as "blue",see
+#' colors()) or RGB code ("#FFFFFF").
 #' @param cex An integer for the size of the plot parameters
 #' @param cex_main An integer for the size of the title
 #' @param cex_sub An integer for the size of the subtitle

@@ -24,7 +24,7 @@ block-weight vectors ("weight", default) or block-loading vectors
 
 \item{block}{A numeric vector indicating the blocks to consider.}
 
-\item{display_order}{A logical value to display the order of the variables}
+\item{display_order}{A logical value for ordering the variables}
 
 \item{adj.method}{character string indicating the method used for p-value
 adjustment (default: fdr - a.k.a Benjamini-Hochberg correction)}
