@@ -62,7 +62,7 @@ apply_scaling <- function(blocks, centering_factors, scaling_factors) {
             block = apply(block, 2, function(y) y / scaling_factors[[x]])
             return(array(block, dim = dim(blocks[[x]])))
         }
-        if (length(dim(blocks[[x]])) == 2) {
+        if (length(dim(blocks[[x]])) == 2 && dim(blocks[[x]])[2] > 1) {
             block = t(apply(blocks[[x]], 1, function(y) y - centering_factors[[x]]))
             return(t(apply(block, 1, function(y) y / scaling_factors[[x]])))
         }
