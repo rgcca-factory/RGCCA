@@ -1107,7 +1107,7 @@ server <- function(input, output, session) {
             check <- showWarn(check_connection(connection, blocks))
 
             # Error due to the superblock disabling and the connection have not the same size than the number of blocks
-            if (check %in% c("130", "103", "106", "107")) 
+            if (length(check) == 1 && check %in% c("130", "103", "106", "107")) 
                 connection <- NULL
             
         }
@@ -1127,10 +1127,12 @@ server <- function(input, output, session) {
             assign("blocks", blocks, .GlobalEnv)
             set_connectionShiny()
             setIdBlock()
+            condition <- min(getMaxComp()) > 1 || input$each_ncomp
+            toggle(condition = condition, id = "nb_compcustom")
         }
 
     }
-
+    
     ################################################ Events ################################################
 
 
@@ -1251,7 +1253,7 @@ server <- function(input, output, session) {
         # Initial events
         for (i in c("Connection", "AVE", "Samples", "Corcircle", "Fingerprint", "Bootstrap", "'Bootstrap Summary'", "Permutation", "'Permutation Summary'", "Cross-validation"))
             hide(selector = paste0("#navbar li a[data-value=", i, "]"))
-        for (i in c("run_boot", "nboot_custom", "header", "init", "navbar", "connection_save", "run_crossval_single", "kfold", "save_all", "format"))
+        for (i in c("nb_compcustom", "run_boot", "nboot_custom", "header", "init", "navbar", "connection_save", "run_crossval_single", "kfold", "save_all", "format"))
             hide(id = i)
         is_tau_opt <- tolower(input$analysis_type) %in% c("rgcca", "sgcca") && !is.null(input$tau_opt) && input$tau_opt
         not_analytical <- is_tau_opt && input$tune_type != "analytical"

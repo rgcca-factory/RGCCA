@@ -5,6 +5,12 @@
 check_connection <- function(C, blocks) {
 
     msg <- "The connection file should"
+    
+    if (!all(rownames(C) %in% names(blocks)) || 
+        !all(colnames(C) %in% names(blocks)))
+        stop_rgcca(paste(msg,
+            "have the rownames and the colnames that match with the names of the blocks."),
+            exit_code = 108)
 
     if (!isSymmetric.matrix(unname(C)))
         stop_rgcca(paste(msg, "be a symmetric matrix."), exit_code = 103)
@@ -23,12 +29,6 @@ check_connection <- function(C, blocks) {
 
     if(is.null(rownames(C)) || is.null(colnames(C)))
         rownames(C) <- names(blocks) -> colnames(C)
-
-    if (!all(rownames(C) %in% names(blocks)) || 
-        !all(colnames(C) %in% names(blocks)))
-        stop_rgcca(paste(msg,
-            "have the rownames and the colnames that match with the names of the blocks."),
-            exit_code = 108)
 
     invisible(check_size_blocks(blocks, "connection matrix", C))
     
