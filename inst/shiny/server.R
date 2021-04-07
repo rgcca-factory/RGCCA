@@ -388,7 +388,7 @@ server <- function(input, output, session) {
             tune_type <- c(tune_type, Permutation = "perm")
         ui <- radioButtons(
             inputId = "tune_type",
-            label = "Choose your tuning",
+            label = "Choose your optimization",
             choices = tune_type
         )
     })
@@ -727,7 +727,8 @@ server <- function(input, output, session) {
             input$run_analysis,
             input$run_boot,
             input$nb_mark_custom,
-            input$blocks_names_custom_x
+            input$blocks_names_custom_x,
+            input$tune_type
         )
     }
 
@@ -867,11 +868,11 @@ server <- function(input, output, session) {
             analysis_type <- input$analysis_type
 
         # Tau is set to 1 by default
-        if (is.null(input$tau_opt_custom))
+        if (is.null(input$tau_opt))
             tau <- 1
-        else if (analysis_type == "RGCCA" && input$tau_opt && input$tune_type == "analytical")
-             tau <- "optimal"
-        else{
+        else if (analysis_type == "RGCCA" && input$tau_opt && identical(input$tune_type, "analytical")){
+            tau <- "optimal"
+        }else{
             # otherwise the tau value fixed by the user is used
             tau <- isolate(getTau())
         }
@@ -1432,6 +1433,7 @@ server <- function(input, output, session) {
             input$scheme,
             input$init,
             input$tau_opt,
+            input$tune_type,
             input$analysis_type,
             input$each_tau,
             input$each_ncomp,
