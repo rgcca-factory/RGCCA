@@ -1301,15 +1301,21 @@ server <- function(input, output, session) {
             names <- paste(input$blocks$name, collapse = ",")
 
         cleanup_analysis_par()
-
         assign("blocks_unscaled",
                showWarn(
+                   tryCatch({
                     load_blocks(
                         file = paths,
                         names = names,
                         sep = input$sep,
                         header = TRUE
-                    ), show = F
+                    )
+                   }, error = function(e) {
+                       if (e$message == "0.tsv has an only-column. Check the separator.")
+                            stop(sub("0.tsv", "The loaded file", e$message))
+                        else
+                           stop(e$message)
+                    }), show = F
                 ),
                 .GlobalEnv)
 
