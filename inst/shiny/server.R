@@ -843,7 +843,9 @@ server <- function(input, output, session) {
                     analysis_type %in% multiple_blocks_super)
             for (i in 1:(length(blocks_without_superb) + ifelse(cond, 1, 0)))
                 ncomp <- c(ncomp, input[[paste0("ncomp", i)]])
-        } else
+        } else if (is.null(input$ncomp) || min(getMaxComp()) == 1)
+            ncomp <- 1
+        else
             ncomp <- input$ncomp
 
         return(ncomp)
@@ -1253,7 +1255,7 @@ server <- function(input, output, session) {
         # Initial events
         for (i in c("Connection", "AVE", "Samples", "Corcircle", "Fingerprint", "Bootstrap", "'Bootstrap Summary'", "Permutation", "'Permutation Summary'", "Cross-validation"))
             hide(selector = paste0("#navbar li a[data-value=", i, "]"))
-        for (i in c("nb_compcustom", "run_boot", "nboot_custom", "header", "init", "navbar", "connection_save", "run_crossval_single", "kfold", "save_all", "format"))
+        for (i in c("run_boot", "nboot_custom", "header", "init", "navbar", "connection_save", "run_crossval_single", "kfold", "save_all", "format"))
             hide(id = i)
         is_tau_opt <- tolower(input$analysis_type) %in% c("rgcca", "sgcca") && !is.null(input$tau_opt) && input$tau_opt
         not_analytical <- is_tau_opt && input$tune_type != "analytical"
