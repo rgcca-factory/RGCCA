@@ -653,13 +653,13 @@ server <- function(input, output, session) {
                 e$message,
                 type = "error",
                 duration = duration)
-            if (show)
+            if (!msg)
                 ids <<- c(ids, id)
             res <<- class(e)[1]
         }),
         silent = TRUE)
 
-        if ((is.null(duration) || show || msg) & length(ids) != 0) {
+        if ((is.null(duration) || msg) & length(ids) != 0) {
             for (id in ids)
                 removeNotification(id)
         }
@@ -1008,7 +1008,7 @@ server <- function(input, output, session) {
                     func[["tau"]] <- tau
                     func[["par_type"]] <- "tau"
                 }
-                showWarn(eval(as.call(func)))
+                showWarn(eval(as.call(func)), msg = TRUE)
             },
             .GlobalEnv
         )
@@ -1062,7 +1062,7 @@ server <- function(input, output, session) {
                 func[["sparsity"]] <- tau
             else
                 func[["tau"]] <- tau
-            showWarn(eval(as.call(func)))
+            showWarn(eval(as.call(func)), msg = TRUE)
         },
         .GlobalEnv)
  
@@ -1076,7 +1076,7 @@ server <- function(input, output, session) {
     getBoot <-  function(){
         assign(
             "boot",
-            showWarn(bootstrap(rgcca_out, n_boot = input$nboot)),
+            showWarn(bootstrap(rgcca_out, n_boot = input$nboot), msg = TRUE),
             .GlobalEnv
         )
         assign("selected.var", NULL, .GlobalEnv)
