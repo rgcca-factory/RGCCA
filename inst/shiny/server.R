@@ -630,7 +630,7 @@ server <- function(input, output, session) {
         }, message = function(m) {
             if (show)
                 duration <<- NULL
-
+            
             id <- showNotification(
                 m$message,
                 type = "message", 
@@ -1101,7 +1101,7 @@ server <- function(input, output, session) {
 
     }
 
-    set_connectionShiny <- function() {
+    set_connectionShiny <- function(load = FALSE) {
         supervised <- (!is.null(input$supervised) && input$supervised)
 
         if (!is.null(connection_file)) {
@@ -1110,13 +1110,16 @@ server <- function(input, output, session) {
             check <- showWarn(check_connection(connection, blocks))
 
             # Error due to the superblock disabling and the connection have not the same size than the number of blocks
-            if (length(check) == 1 && check %in% c("130", "103", "106", "107")) 
+            if (length(check) == 1 && check %in% c("130", "103", "106", "107", "108"))  {
                 connection <- NULL
+            }
             
         }
 
         if (is.matrix(connection)) {
             assign("connection", connection, .GlobalEnv)
+            if (load)
+                showWarn(message("Connection file loaded."), show = FALSE)
             cleanup_analysis_par()
         }
 
@@ -1380,9 +1383,8 @@ server <- function(input, output, session) {
             assign("connection_file",
                     input$connection$datapath,
                     .GlobalEnv)
-            set_connectionShiny()
+            set_connectionShiny(TRUE)
             setUiConnection()
-            showWarn(message("Connection file loaded."), show = FALSE)
             assign("connection_file", NULL, .GlobalEnv)
             cleanup_analysis_par()
         }
