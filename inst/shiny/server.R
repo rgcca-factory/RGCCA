@@ -621,15 +621,15 @@ server <- function(input, output, session) {
         }
     }
 
-    showWarn <- function(f, duration = 10, show = TRUE, warn = TRUE) {
+    showWarn <- function(f, duration = 10, show = TRUE, msg = FALSE, warn = TRUE) {
 
         ids <- character(0)
 
         try(withCallingHandlers({
             res <- f
         }, message = function(m) {
-            if (show)
-                duration <<- NULL
+            if (show || msg)
+                duration <- NULL
             
             id <- showNotification(
                 m$message,
@@ -653,12 +653,13 @@ server <- function(input, output, session) {
                 e$message,
                 type = "error",
                 duration = duration)
-            ids <<- c(ids, id)
+            if (show)
+                ids <<- c(ids, id)
             res <<- class(e)[1]
         }),
         silent = TRUE)
 
-        if (is.null(duration) & length(ids) != 0) {
+        if ((is.null(duration) || show || msg) & length(ids) != 0) {
             for (id in ids)
                 removeNotification(id)
         }
@@ -1318,7 +1319,7 @@ server <- function(input, output, session) {
                             stop(sub("0.tsv", "The loaded file", e$message))
                         else
                            stop(e$message)
-                    }), show = F
+                    }), msg = TRUE, show = FALSE
                 ),
                 .GlobalEnv)
 
@@ -1622,30 +1623,33 @@ server <- function(input, output, session) {
     }, priority = 10)
 
     ################################################ Outputs ################################################
-    
+
+    observeEvent(input$connection_save, {
+        if (!is.null(analysis)) {
+            save_plot(paste0("connection.", input$format), design2)
+            msgSave()
+        }
+    })
+
+    observeEvent(input$ave_save, {
+        if (!is.null(analysis)) {
+            save_plot(paste0("ave.", input$format), ave()) 
+            msgSave()
+        }
+    })
+
     output$connectionPlot <- renderVisNetwork({
         getDynamicVariables()
         if (!is.null(analysis)) {
-            observeEvent(input$connection_save, {
-                save_plot(paste0("connection.", input$format), design2)
-                msgSave()
-            })
             design()
         }
     })
 
     output$AVEPlot <- renderPlot({
-        
         getDynamicVariables()
-        
         if (!is.null(analysis)) {
-            observeEvent(input$ave_save, {
-                save_plot(paste0("ave.", input$format), ave()) 
-                msgSave()
-            })
             ave()
         }
-        
     })
 
     output$samplesPlot <- renderPlotly({
