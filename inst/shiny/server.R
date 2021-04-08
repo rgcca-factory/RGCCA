@@ -1315,17 +1315,20 @@ server <- function(input, output, session) {
                         header = TRUE
                     )
                    }, error = function(e) {
-                       if (e$message == "0.tsv has an only-column. Check the separator.")
+                       if (class(e)[1] == "102") {
+                            cleanup_analysis_par()
                             stop(sub("0.tsv", "The loaded file", e$message))
+                       }
                         else
                            stop(e$message)
                     }), msg = TRUE, show = FALSE
                 ),
                 .GlobalEnv)
 
-        if (!is.list(blocks_unscaled))
+        if (!is.list(blocks_unscaled)) {
+            hide(selector = "#tabset li a[data-value=RGCCA]")
             return(NULL)
-        else {
+        } else {
             show(selector = "#tabset li a[data-value=RGCCA]")
             setToggle("connection")
         }

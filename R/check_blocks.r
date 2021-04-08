@@ -82,6 +82,12 @@ check_blocks <- function(blocks, init = FALSE, n = 2, add_NAlines=FALSE, allow_u
         blocks=blocks_i
     }
  
+    inters_rows <- Reduce(intersect, lapply(blocks, row.names))
+    #   if(length(inters_rows)<min(sapply(blocks,function(x){nrow(x)})))
+
+    if (length(inters_rows) == 0)
+        stop_rgcca(paste(msg, "elements of the list should have at least a common rowname.\n "))
+
     # Dealing with rownames (if one of them is missing but the block sizes are the sames)
     if(any(sapply(blocks, function(x) is.null(row.names(x)))))
     {
@@ -104,11 +110,6 @@ check_blocks <- function(blocks, init = FALSE, n = 2, add_NAlines=FALSE, allow_u
          }
         }
         )
-    inters_rows <- Reduce(intersect, lapply(blocks, row.names))
- #   if(length(inters_rows)<min(sapply(blocks,function(x){nrow(x)})))
-    
-    if (length(inters_rows) == 0)
-        stop_rgcca(paste(msg, "elements of the list should have at least a common rowname.\n "))
 
     equal_rows <- Reduce(identical, lapply(blocks, row.names))
 
