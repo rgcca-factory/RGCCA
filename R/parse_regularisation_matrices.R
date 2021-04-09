@@ -41,7 +41,7 @@ parse_regularisation_matrices <- function(reg_matrices, tau, A, DIM,
     M_inv_sqrt = eig$vectors %*% diag(eig$values^(-1/2)) %*% t(eig$vectors)
     return(M_inv_sqrt)
   }
-  P = (DIM[1]^(-1/2)) * A
+  P = A
 
   if (length(DIM) > 2){
     if (is.na(tau)) {

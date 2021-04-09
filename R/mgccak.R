@@ -1,16 +1,16 @@
 mgccak <- function (A, A_m = NULL, C, tau = rep(1, length(A)), scheme = "centroid",
                     verbose = FALSE, init="svd", bias = TRUE, tol = 1e-8,
                     regularisation_matrices, ranks= rep(1, length(A))) {
-  
+
   list_khatri_rao <- function(factors) {
     Reduce("khatri_rao", rev(factors))
   }
   kron_sum <- function(factors) {
     apply(list_khatri_rao(factors), 1, sum)
   }
-  
+
   weighted_factor <- function(u, d, rank) {
-    if (rank == 1) 
+    if (rank == 1)
       return(u)
     return((u %*% diag(d[1:rank])) / sqrt(sum(d[1:rank] ^ 2)))
   }
@@ -105,7 +105,7 @@ mgccak <- function (A, A_m = NULL, C, tau = rep(1, length(A)), scheme = "centroi
     }
   }
   # Initialization of vector Y
-  for (j in 1:J) Y[, j] <- (n^(-1/2)) * A_m[[j]] %*% a[[j]]
+  for (j in 1:J) Y[, j] <- A_m[[j]] %*% a[[j]]
 
   # Determination of the regularization matrix
   for (j in 1:J){
@@ -172,7 +172,7 @@ mgccak <- function (A, A_m = NULL, C, tau = rep(1, length(A)), scheme = "centroi
           D                 = diag(weights / sqrt(sum(weights ^ 2)))
           factors[[j]][[1]] = factors[[j]][[1]] %*% D
         }
-        
+
         a[[j]]            = kron_sum(factors[[j]])
         Y[, j]            = P[[j]] %*% a[[j]]
 
@@ -218,7 +218,7 @@ mgccak <- function (A, A_m = NULL, C, tau = rep(1, length(A)), scheme = "centroi
     if ( crit[iter] - crit_old < -tol)
     {stop_rgcca("Convergence error: criterion did not increase monotonously")}
     if (any(stopping_criteria < tol) | (iter > 1000)) break
-    
+
     crit_old = crit[iter]
     a_old <- a
     iter <- iter + 1
