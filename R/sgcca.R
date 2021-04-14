@@ -49,9 +49,9 @@
 #' # Example 1 #
 #' #############
 #' \dontrun{
-#' # Download the dataset's package at http://biodev.cea.fr/sgcca/.
-#' # --> gliomaData_0.4.tar.gz
-#' 
+#' # install data package required using
+#' # install.packages("remotes")
+#' # remotes::install_github("llrs/gliomaData")
 #' require(gliomaData)
 #' data(ge_cgh_locIGR)
 #' 
