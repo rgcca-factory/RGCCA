@@ -12,12 +12,14 @@
 #' plot_network2(rgcca_out)
 #' @export
 plot_network2 <- function(
-    rgcca_res, 
+    rgcca_res,
     title = paste0("Common rows between blocks : ",
                         NROW(rgcca_res$call$blocks[[1]])),
-    cex_main = 20,
+    cex = 1,
+    cex_main = 14 * cex,
+    cex_point = 3 * cex,
     colors =  c("#eee685", "gray")) {
-    
+
     stopifnot(is(rgcca_res, "rgcca"))
     title <- paste0(title, collapse = " ")
     check_colors(colors)
@@ -50,22 +52,23 @@ plot_network2 <- function(
         edges,
         main = list(
             text = title,
-            style = paste0("font-family:sans;font-weight:bold;font-size:", cex_main, "px;text-align:center;")
+            style = paste0("font-family:sans;font-weight:bold;font-size:", cex_main * 1.4, "px;text-align:center;")
         )
-    ) %>%
-        visNetwork::visNodes(
-            borderWidth = 2,
-            shape = "square",
-            shadow = TRUE,
-            color = list(
-                border = colors[2],
-                highlight = list(background = "black", border = "darkred")
-            )
-        ) %>% visNetwork::visEdges(
-            smooth = FALSE,
-            shadow = TRUE,
-            dashes = TRUE,
-            color = list(color = colors[2], highlight = "darkred")
+    ) %>% visNetwork::visNodes(
+        borderWidth = 2,
+        shape = "square",
+        shadow = TRUE,
+        size = cex_point * 7.5,
+        font = list(size = cex * 14),
+        color = list(
+            border = colors[2],
+            highlight = list(background = "black", border = "darkred")
         )
+    ) %>% visNetwork::visEdges(
+        smooth = FALSE,
+        shadow = TRUE,
+        dashes = TRUE,
+        color = list(color = colors[2], highlight = "darkred")
+    )
 
 }

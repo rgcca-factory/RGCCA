@@ -20,7 +20,7 @@
 #'     n_run=1,n_cores=1)
 #'    plot(res)
 #'@importFrom ggplot2 ggplot
-plot.cval=function(x, bars="sd", cex = 1, cex_main = 14 * cex, cex_sub = 10 * cex, cex_lab = 10 * cex, colors = c("red", "black"), ...)
+plot.cval=function(x, bars="sd", cex = 1, cex_main = 14 * cex, cex_sub = 10 * cex, cex_lab = 10 * cex, cex_point = 3 * cex, colors = c("red", "black"), ...)
 {
 
     stopifnot(is(x, "cval"))
@@ -105,7 +105,7 @@ plot.cval=function(x, bars="sd", cex = 1, cex_main = 14 * cex, cex_sub = 10 * ce
     }
     
     df=data.frame(configurations=1:nrow(mat_cval),mean=mean_b,inf=inf_b,sup=sup_b)
-    p<- ggplot(data=df,aes(x=configurations,y=mean))+geom_point(colour=colors[2])+theme_classic() + xlab("Combinations")+ylab(y_lab)
+    p<- ggplot(data=df,aes(x=configurations,y=mean))+geom_point(colour=colors[2], size = cex_point)+theme_classic() + xlab("Combinations")+ylab(y_lab)
     if(bars!="none"&& bars!="points")
     {
         p<-p+geom_segment(data=df,aes(x=configurations,y=inf_b,xend=configurations,yend=sup_b),colour=colors[2])
@@ -113,17 +113,17 @@ plot.cval=function(x, bars="sd", cex = 1, cex_main = 14 * cex, cex_sub = 10 * ce
     if(bars=="points")
     {
         df2=data.frame(configurations=rep(1:nrow(mat_cval),ncol(mat_cval)),y=as.vector(mat_cval))
-        p<-p+geom_point(data=df2,aes(x=configurations,y=y),colour=colors[2])
+        p<-p+geom_point(data=df2,aes(x=configurations,y=y),colour=colors[2], size = cex_point)
     }
     optimal_x=df[which.min(df[,"mean"]),"configurations"]
     optimal_y=df[which.min(df[,"mean"]),"mean"]
     decalage= (max(df[,"mean"])-min(df[,"mean"]))/10
-    p<- p+geom_point(x=optimal_x,y=optimal_y,colour= colors[1]) +
+    p<- p+geom_point(x=optimal_x,y=optimal_y,colour= colors[1], size = cex_point) +
         geom_segment(data=df,aes(x=optimal_x,y=inf_b[optimal_x],xend=optimal_x,yend=sup_b[optimal_x]),colour= colors[1], size = 0.4)
    # p<-p+geom_text(label=rownames(x)[which.min(mean_b)],x=optimal_x,y=optimal_y+decalage,colour="green")
     p<-p+ggtitle(main)+theme_perso(cex, cex_main, cex_sub) +
         theme(
-            axis.text = element_text(size = 10, face = "bold"),
+            axis.text = element_text(size = cex_lab, face = "bold"),
             axis.title.y = axis(margin(0, 20, 0, 0)),
             axis.title.x = axis(margin(20, 0, 0, 0)),
             axis.line = element_line(size = 0.5),

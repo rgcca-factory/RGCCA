@@ -15,6 +15,13 @@
 #' @importFrom ggplot2 geom_hline
 #' @importFrom ggplot2 geom_vline 
 #' @importFrom stats aggregate
+# data("Russett")
+# A = list(agriculture = Russett[, seq(3)], industry = Russett[, 4:5],
+#     politic = Russett[, 6:11] )
+# perm <- rgcca_permutation(A, nperm = 2, n_cores = 1)
+# plot_permut_2D(perm)
+# perm <- rgcca_permutation(A, p_spars = TRUE, nperm = 2, n_cores = 1)
+# plot_permut_2D(perm)
 plot_permut_2D <- function(
     perm, 
     type = "crit",
@@ -81,7 +88,7 @@ plot_permut_2D <- function(
         ) +
         theme_perso(cex, cex_main, cex_sub) +
         theme(
-            axis.text = element_text(size = 10, face = "bold"),
+            axis.text = element_text(size = cex * 10, face = "bold"),
             axis.title.y = axis(margin(0, 20, 0, 0)),
             axis.title.x = axis(margin(20, 0, 0, 0)),
             axis.line = element_line(size = 0.5),
@@ -108,12 +115,12 @@ plot_permut_2D <- function(
         dft <- as.data.frame(dft)
      
         if (bars == "points")
-            p <- p + geom_point(data = dft,aes(x = dft[,1], y = dft[,2]), colour = colors[2], size = 0.8)
+            p <- p + geom_point(data = dft,aes(x = dft[,1], y = dft[,2]), colour = colors[2], size = cex_point * 0.5)
          if (bars == "sd") {
              tab=aggregate(dft,by=list(dft[,1]),sd)
              tab2=aggregate(dft,by=list(dft[,1]),mean)
              dat=data.frame(x=tab[,1],y=tab2[,"y"]-tab[,"y"],xend=tab[,1],yend=tab2[,"y"]+tab[,"y"])
-                p <- p+ geom_point(data=tab2,aes(x=tab2[,1],y=tab2[,3]),colour=colors[2])
+                p <- p+ geom_point(data=tab2,aes(x=tab2[,1],y=tab2[,3]),colour=colors[2], size = cex_point)
                p <- p + geom_segment(data=dat,aes(x=x,y=y,xend=xend,yend=yend),colour=colors[2],size=0.5)
          }
          if(bars == "stderr")
@@ -121,8 +128,8 @@ plot_permut_2D <- function(
              tab=aggregate(dft,by=list(dft[,1]),function(x){return(sd(x)/sqrt(length(x)))})
              tab2=aggregate(dft,by=list(dft[,1]),mean)
              dat=data.frame(x=tab[,1],y=tab2[,"y"]-tab[,"y"],xend=tab[,1],yend=tab2[,"y"]+tab[,"y"])
-             p <- p+ geom_point(data=tab2,aes(x=tab2[,1],y=tab2[,3]),colour=colors[2])
-             p <- p + geom_segment(data=dat,aes(x=x,y=y,xend=xend,yend=yend),colour="green",size=0.5)
+             p <- p+ geom_point(data=tab2,aes(x=tab2[,1],y=tab2[,3]),colour=colors[2], size = cex_point)
+             p <- p + geom_segment(data=dat,aes(x=x,y=y,xend=xend,yend=yend),colour=colors[2],size=0.5)
          }
         if(bars=="quantile")
         {
@@ -130,7 +137,7 @@ plot_permut_2D <- function(
             tabq2=aggregate(dft,by=list(dft[,1]),function(x){return(quantile(x,0.95))})
             tab2=aggregate(dft,by=list(dft[,1]),mean)
             dat=data.frame(x=tab2[,1],y=tabq1[,"y"],xend=tab2[,1],yend=tabq2[,"y"])
-            p <- p+ geom_point(data=tab2,aes(x=tab2[,1],y=tab2[,3]),colour=colors[2])
+            p <- p+ geom_point(data=tab2,aes(x=tab2[,1],y=tab2[,3]),colour=colors[2], size = cex_point)
             p <- p + geom_segment(data=dat,aes(x=x,y=y,xend=xend,yend=yend),colour=colors[2],size=0.5)
         }
    
@@ -147,7 +154,7 @@ plot_permut_2D <- function(
                 color = I(colors[1]),
                 shape = I(3)
             ),
-            size = 5
+            size = cex_point
         ) +
         geom_vline(
             size =  0.5,

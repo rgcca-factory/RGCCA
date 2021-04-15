@@ -15,8 +15,9 @@ plot_network <- function(
     rgcca_res, 
     title = paste0("Common rows between blocks : ",
                    NROW(rgcca_res$call$blocks[[1]])),
-    cex_main = 5,
-    cex_point = 23, 
+    cex = 1,
+    cex_main = 14 * cex,
+    cex_point = 3 * cex,
     colors =  c("#eee685", "gray60")) {
 
     stopifnot(is(rgcca_res, "rgcca"))
@@ -53,15 +54,16 @@ plot_network <- function(
         sep = " ")
     V(net)$shape <- "square"
     E(net)$width <- E(net)$weight * 2
-      plot(
+    plot(
         net,
         edge.color = colors[2],
         edge.lty = 2,
         vertex.frame.color = colors[2],
+        vertex.label.cex = cex,
         vertex.label.color = "black",
         vertex.label.dist = 6,
         vertex.label.degree = 1.5,
-        vertex.size = cex_point
+        vertex.size = cex_point * 7.5
     )
-     title(title, cex.main = cex_main)
+     title(title, cex.main = cex_main * 0.1)
 }

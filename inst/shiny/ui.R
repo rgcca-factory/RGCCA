@@ -54,6 +54,12 @@ nb_mark <<- 100
 BSPLUS <<- R.Version()$minor >= 3
 ax2 <<- list(linecolor = "white",
         tickfont = list(size = 10, color = "grey"))
+CEX_LAB <<- 15
+CEX_MAIN <<- 15
+CEX_POINT <<- 3
+CEX_SUB <<- 10
+CEX_AXIS <<- 10
+CEX <<- 1
 
 # config for shinyapps.io
 appDir <- ifelse("packrat" %in% list.files(), "", "../../R/")

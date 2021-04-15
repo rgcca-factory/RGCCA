@@ -517,7 +517,7 @@ tryCatch({
     save_plot(opt$o4, ave)
 
     # Creates design scheme
-    design <- function() plot_network(rgcca_out, cex_main = 1.7)
+    design <- function() plot_network(rgcca_out, cex_main = 20)
     save_plot(opt$o5, design)
 
     save_ind(rgcca_out, opt$o6)

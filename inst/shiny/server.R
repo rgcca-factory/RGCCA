@@ -773,7 +773,10 @@ server <- function(input, output, session) {
                 i_block_y = id_block_y,
                 response_name = response_name,
                 predicted = crossval,
-                cex_lab = 15
+                cex_lab = CEX_LAB, 
+                cex_point = CEX_POINT,
+                cex_main = CEX_MAIN,
+                cex = CEX
             )
     }
 
@@ -786,7 +789,10 @@ server <- function(input, output, session) {
                 i_block = id_block,
                 text = if_text,
                 n_mark = nb_mark,
-                cex_lab = 13
+                cex_lab = CEX_LAB, 
+                cex_point = CEX_POINT,
+                cex_main = CEX_MAIN,
+                cex = CEX
             )
 
     fingerprint <- function(type)
@@ -796,25 +802,47 @@ server <- function(input, output, session) {
             n_mark = nb_mark,
             i_block = id_block,
             type = type,
-            cex_sub = 13
+            cex_sub = CEX_SUB,
+            cex_main = CEX_MAIN,
+            cex_axis = CEX_AXIS,
+            cex = CEX
         )
 
     ave <- function()
-        print(plot_ave(rgcca = rgcca_out, cex_main = 20, cex_sub = 15))
+        print(
+            plot_ave(
+                rgcca = rgcca_out,
+                cex_main = CEX_MAIN * 1.2,
+                cex_sub = CEX_SUB * 1.5,
+                cex_axis = CEX_AXIS,
+                cex = CEX
+            )
+        )
 
     design <- function()
-        plot_network2(rgcca_out)
-    
-    design2 <- function()
-        plot_network(rgcca_out)
+        plot_network2(rgcca_out,
+            cex_main = CEX_MAIN,
+            cex_point = CEX_POINT,
+            cex = CEX)
 
+    design2 <- function()
+        plot_network(
+            rgcca_out,
+            cex_main = CEX_MAIN * 1.2,
+            cex_point = CEX_POINT,
+            cex = CEX
+        )
+    
     plotBoot <- function(){
         refresh <- c(input$names_block_x, id_block, input$blocks_names_custom_x)
         plot_bootstrap_1D(
             df_b = selected.var,
             # x = input$b_x,
             # y = input$b_y,
-            n_mark = nb_mark
+            n_mark = nb_mark,
+            cex_main = CEX_MAIN,
+            cex_axis = CEX_AXIS,
+            cex = CEX
         )
     }
 
@@ -1802,7 +1830,22 @@ server <- function(input, output, session) {
         #         save("perm.pdf", plot_permut_2D(perm))
         #         msgSave()
         #     })
-            modify_hovertext(plot_dynamic(plot_permut_2D(perm), type = "perm", format = input$format), type = "perm", hovertext = F, perm = perm)
+            modify_hovertext(
+                plot_dynamic(
+                    plot_permut_2D(
+                        perm,
+                        cex_lab = CEX_LAB,
+                        cex_main = CEX_MAIN,
+                        cex_point = CEX_POINT,
+                        cex = CEX
+                    ),
+                    type = "perm",
+                    format = input$format
+                ),
+                type = "perm",
+                hovertext = F,
+                perm = perm
+            )
         }
 
     })
@@ -1834,7 +1877,22 @@ server <- function(input, output, session) {
             #     save("cv.pdf", plot(cv))
             #     msgSave()
             # })
-            modify_hovertext(plot_dynamic(plot(cv), type = "cv", format = input$format), type = "cv", hovertext = F, perm = cv)
+            modify_hovertext(
+                plot_dynamic(
+                    plot(
+                        cv,
+                        cex_lab = CEX_LAB,
+                        cex_main = CEX_MAIN,
+                        cex_point = CEX_POINT,
+                        cex = CEX
+                    ),
+                    type = "cv",
+                    format = input$format
+                ),
+                type = "cv",
+                hovertext = F,
+                perm = cv
+            )
         }
 
     })

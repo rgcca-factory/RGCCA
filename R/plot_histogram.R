@@ -29,7 +29,7 @@ plot_histogram <- function(
     if (NROW(df) <= 10 || is(df, "d_ave")) {
         width <- NULL
         if (is(df, "d_ave"))
-            cex_axis <- 12
+            cex_axis <- cex_axis * 1.2
     } else
         width <- 1
 
@@ -45,7 +45,7 @@ plot_histogram <- function(
     if (NROW(df) > 75)
         cex_axis <- 5
 
-    axis <- function(margin){
+    axis <- function(cex_axis){
         element_text(
             size = cex_axis,
             face = "italic",
@@ -59,8 +59,8 @@ plot_histogram <- function(
         theme_classic() +
         theme_perso(cex, cex_main, cex_sub) +
         theme(
-            axis.text.y = axis(),
-            axis.text.x = axis(),
+            axis.text.y = axis(cex_axis),
+            axis.text.x = axis(cex * 10),
             axis.line = element_blank(),
             axis.ticks = element_blank(),
             plot.subtitle = element_text(
