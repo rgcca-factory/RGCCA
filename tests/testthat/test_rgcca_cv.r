@@ -33,7 +33,7 @@ data("Russett")
 blocks <- list(
     agriculture = Russett[, seq(3)],
     industry = Russett[, 4:5],
-    politic = Russett[, 6])
+    politic = Russett[, 6, drop = FALSE])
 res=rgcca(blocks,type="rgcca",ncomp=1)
 blocks2=lapply(blocks,as.matrix)
 res=rgcca_cv(blocks,response=length(blocks), type="rgcca",par_type="tau",par_value=c(0,0.2,0.3),ncomp=1,n_run=1,n_cores=1)
@@ -44,7 +44,7 @@ plot(res)
 blocks_for_classif = list(
     agriculture = Russett[, 1:3],
     industry = Russett[, 4:5],
-    politic = matrix(Russett[, 11],ncol=1)
+    politic = Russett[, 11, drop = FALSE]
 )
 blocks_for_classif[["politic"]][blocks_for_classif[["politic"]][,1]==1,]="demo"
 blocks_for_classif[["politic"]][blocks_for_classif[["politic"]][,1]==0,]="ndemo"

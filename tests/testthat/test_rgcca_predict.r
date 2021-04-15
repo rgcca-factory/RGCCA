@@ -43,7 +43,7 @@ test_that("rgcca_predict_two2",{expect_true(
 A_test=lapply(blocks,function(x) x[c(33),])
 res_test_one  = rgcca_predict(object1, A_test,new_scaled=FALSE) 
 test_that("rgcca_predict_one_ind",{expect_true(
-    round(res_test_one$pred[[1]]["Panama",1],digits=4)==0.07
+    round(res_test_one$pred[[1]]["Netherlands",1],digits=4)==0.07
     )})
 
 # With a block to predict
@@ -173,13 +173,13 @@ all.equal(respred1[[1]][[1]],rgcca_res_for_pred_unscaled$Y[[1]])
  blocks_for_classif = list(
      agriculture = Russett[, 1:3],
      industry = Russett[, 4:5],
-     politic = matrix(Russett[, 11],ncol=1)
+     politic = Russett[, 11, drop = FALSE]
  )
  blocks_for_classif[["politic"]][blocks_for_classif[["politic"]][,1]==1,]="demo"
  blocks_for_classif[["politic"]][blocks_for_classif[["politic"]][,1]==0,]="ndemo"
  
- A = lapply(blocks_for_classif, function(x) x[1:32,]);
- A_test=lapply(blocks_for_classif,function(x) x[c(39:47),])
+ A = lapply(blocks_for_classif, function(x) x[1:32,, drop = FALSE]);
+ A_test=lapply(blocks_for_classif,function(x) x[c(39:47),, drop = FALSE])
  object1 = rgcca(A, connection = C, tau = c(1,1,1),
                  ncomp = c(3,2,1), superblock = FALSE, response = 3)
  res_test  = rgcca_predict(object1, newA=A,new_scaled=FALSE,fit="lda",model="classification",bloc_to_pred="politic") 

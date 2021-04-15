@@ -26,15 +26,15 @@ data("Russett")
 blocks2 <- list(
     agriculture = Russett[, seq(3)],
     industry = Russett[, 4:5],
-    politic = Russett[, 6] )
+    politic = Russett[, 6, drop = FALSE] )
 block_i=lapply(blocks2,function(x){
         if(is.null(dim(x)))
            {
-               return(x[-1])
+               return(x[-1, drop = FALSE])
            }
            else
           {
-              return(x[-1,])
+              return(x[-1, , drop = FALSE])
           }})
 rgcca_k <- rgcca(block_i,ncomp=1)
 rgcca_res <- rgcca(blocks2,ncomp=1)

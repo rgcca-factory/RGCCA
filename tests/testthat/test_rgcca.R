@@ -112,7 +112,7 @@ test_that("upca_var2",{expect_true(upca_var)})
  data(Russett)
  X_agric =as.matrix(Russett[,c("gini","farm","rent")]);
  X_ind = as.matrix(Russett[,c("gnpr","labo")]);
- X_polit = as.matrix(Russett[ , c("demostab")]);
+ X_polit = as.matrix(Russett[ , c("demostab"), drop = FALSE]);
  A = list(X_agric,X_ind,X_polit);
  resPCA= rgcca ( blocks=A, ncomp = c(2,2,1),type = "rgcca",     verbose = FALSE)
  
@@ -120,7 +120,7 @@ test_that("upca_var2",{expect_true(upca_var)})
  data(Russett)
  X_agric =as.matrix(Russett[,c("gini","farm","rent")]);
  X_ind = as.matrix(Russett[,c("gnpr","labo")]);
- X_polit = as.matrix(Russett[ , c("demostab")]);
+ X_polit = as.matrix(Russett[ , c("demostab"), drop = FALSE]);
  A = list(X_agric,X_ind,X_agric);
  resRGCCA= rgcca( blocks=A,     connection = 1 - diag(length(A)),     response = NULL,     superblock = FALSE,     tau = rep("optimal", length(A)))
  
@@ -172,7 +172,7 @@ test_that("upca_var2",{expect_true(upca_var)})
  data(Russett)
  X_agric =as.matrix(Russett[,c("gini","farm","rent")]);
  X_ind = as.matrix(Russett[,c("gnpr","labo")]);
- X_polit = as.matrix(Russett[ , c("dictator")]);
+ X_polit = as.matrix(Russett[ , c("dictator"), drop = FALSE]);
  X_polit[X_polit==1]="dictator"
  X_polit[X_polit==0]="Non-dic"
  A_quali = list(agric=X_agric,X_ind=X_ind,X_polit=X_polit);

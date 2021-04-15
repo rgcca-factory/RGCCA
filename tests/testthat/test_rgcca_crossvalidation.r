@@ -202,7 +202,7 @@ RussettWithNA <- Russett
      blocks_for_classif = list(
          agriculture = Russett[, 1:3],
          industry = Russett[, 4:5],
-         politic = matrix(Russett[, 11],ncol=1)
+         politic = Russett[, 11, drop = FALSE]
      )
      blocks_for_classif[["politic"]][blocks_for_classif[["politic"]][,1]==1,]="demo"
      blocks_for_classif[["politic"]][blocks_for_classif[["politic"]][,1]==0,]="ndemo"
@@ -223,8 +223,8 @@ RussettWithNA <- Russett
      for(i in 1:dim( blocks_for_classif[[1]])[1])
      {
          # Etape 1: on extrait la ligne i des blocs non scalés
-         A_moins_i=lapply( blocks_for_classif,function(x){return(x[-i,])})
-         A_i=lapply( blocks_for_classif,function(x){return(x[i,])})
+         A_moins_i=lapply( blocks_for_classif,function(x){return(x[-i])})
+         A_i=lapply( blocks_for_classif,function(x){return(x[i,, drop = FALSE])})
          names(A_moins_i)=names(A_i)=names( blocks_for_classif)
          # on calcule la RGCCA sur le bloc A sans le i
          rgcca_out_i <- rgcca(A_moins_i, response = 3,superblock=FALSE,ncomp=1,scale=TRUE,scale_block=TRUE)

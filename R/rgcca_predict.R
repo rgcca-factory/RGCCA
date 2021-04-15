@@ -31,7 +31,8 @@
 #' bloc_to_pred = "industry"
 #' to_pred_train = kmeans(A[[bloc_to_pred]], 3)$cluster
 #' to_pred_test = kmeans(newA[[bloc_to_pred]], 3)$cluster
-#' political_regime = factor(apply(Russett[, 9:11], 1, which.max),labels =c("demostab", "demoinst", "dictator"))
+#' political_regime = factor(apply(Russett[, 9:11], 1, which.max),
+#' labels =c("demostab", "demoinst", "dictator"))
 #' res  = rgcca_predict(object, newA, bloc_to_pred = "industry")
 #' # ( res  = rgcca_predict(object, newA, "regression", "cor", "industry") )
 #' # rgcca_predict(object, newA, bloc_to_pred = "industry", fit = "r2")$score # 0.5586036
