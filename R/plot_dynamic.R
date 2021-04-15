@@ -100,7 +100,10 @@ plot_dynamic <- function(
     else
         p$sample_names <- list(row.names(f$data))
 
-    p$x$layout$margin$t <- 50
+    if (type == "var1D")
+        p$x$layout$margin$t <- 75
+    else
+        p$x$layout$margin$t <- 50
 
     if (!grepl("1D", type) && !type %in% c("perm", "cv")) {
         p <- config(

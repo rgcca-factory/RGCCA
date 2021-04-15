@@ -1046,7 +1046,7 @@ server <- function(input, output, session) {
                     blocks_without_superb,
                     n_run = input$nperm,
                     connection = connection,
-                    response = input$names_block_response,
+                    response = response,
                     superblock = (!is.null(input$supervised) &&
                                       !is.null(input$superblock) && input$superblock),
                     scheme = input$scheme,
@@ -1273,10 +1273,25 @@ server <- function(input, output, session) {
         # toggle(id = "kfold", condition = input$supervised && input$val == "kfold")
         })
 
-    observeEvent(c(input$tau_opt, input$supervised, input$tune_type), {
+    observeEvent(c(input$tau_opt, input$supervised, input$tune_type, input$analysis_type, input$val), {
+        cleanup_analysis_par()
         assign("perm", NULL, .GlobalEnv)
         assign("cv", NULL, .GlobalEnv)
-        toggle(id = "run_analysis", condition = is.null(input$analysis_type_custom) || !tolower(input$analysis_type_custom) %in% c("rgcca", "sgcca") || !is.null(input$tau_opt) && (!input$tau_opt || input$tune_type == "analytical" || (input$tau_opt && input$tune_type != "analytical" && (!is.null(perm) || !is.null(cv)))))
+        toggle(
+            id = "run_analysis",
+            condition = is.null(input$analysis_type) ||
+                !tolower(input$analysis_type) %in% c("rgcca", "sgcca") ||
+                !is.null(input$tau_opt) &&
+                (
+                    !input$tau_opt ||
+                        input$tune_type == "analytical" ||
+                        (
+                            input$tau_opt &&
+                                input$tune_type != "analytical" &&
+                                (!is.null(perm) || !is.null(cv))
+                        )
+                )
+        )
     })
 
     onclick("sep", function(e) assign("clickSep", TRUE, .GlobalEnv))
@@ -1642,7 +1657,7 @@ server <- function(input, output, session) {
     })
 
     output$connectionPlot <- renderVisNetwork({
-        getDynamicVariables()
+        refresh <- c(getDynamicVariables(), input$val)
         if (!is.null(analysis)) {
             design()
         }
