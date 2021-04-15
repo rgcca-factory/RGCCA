@@ -20,7 +20,7 @@
 #'     n_run=1,n_cores=1)
 #'    plot(res)
 #'@importFrom ggplot2 ggplot
-plot.cval=function(x, bars="sd", cex = 1, cex_main = 14 * cex, cex_sub = 10 * cex, cex_lab = 10 * cex, cex_point = 3 * cex, colors = c("red", "black"), ...)
+plot.cval=function(x, bars="sd", cex = 1, cex_main = 14 * cex, cex_sub = 12 * cex, cex_lab = 10 * cex, cex_point = 3 * cex, colors = c("red", "black"), ...)
 {
 
     stopifnot(is(x, "cval"))
@@ -42,8 +42,6 @@ plot.cval=function(x, bars="sd", cex = 1, cex_main = 14 * cex, cex_sub = 10 * ce
                     x$call$validation,ifelse(x$call$validation=="kfold", 
                                              paste0(": with ",x$call$k," folds", ifelse(x$call$n_run>1,paste0(" and ",x$call$n_run," run",ifelse(x$call$n_run==1,"","s")),""),")"),
                                              ")\n "))
-        main=paste0(main,"\nbest parameter: ",
-                    paste(round(x$bestpenalties,digits=2), collapse = ", "))
         y_lab="Mean RMSE"
     }
     if(x$call$type_cv=="classification")
@@ -54,8 +52,6 @@ plot.cval=function(x, bars="sd", cex = 1, cex_main = 14 * cex, cex_sub = 10 * ce
                            paste0(": with ",x$call$k," folds", ifelse(x$call$n_run>1,
                                                                       paste0(" and ",x$call$n_run," run",ifelse(x$call$n_run==1,"","s")),""),")"),
                                         ")\n "))
-        main=paste0(main,"\nbest parameter: ",
-                    paste(round(x$bestpenalties,digits=2), collapse = ", "))
         y_lab="Mean error rate"
     }
                
@@ -130,7 +126,16 @@ plot.cval=function(x, bars="sd", cex = 1, cex_main = 14 * cex, cex_sub = 10 * ce
             axis.ticks  = element_line(size = 0.5),
             axis.ticks.length = unit(2, "mm"),
             legend.position = "none"
-        ) 
+        )  + 
+        labs(subtitle = paste0(
+            "\nBest parameters: ", 
+            paste(round(x$bestpenalties, digits = 2), collapse = ", "))) +
+        theme(
+            plot.subtitle = element_text(
+                hjust = 0.5,
+                size = cex_sub,
+                face = "italic"
+            ))
 #    p<- p+ scale_x_continuous(breaks=1:nrow(x),  labels=rownames(x))
 #    p<-p + theme(axis.text.x = element_text(angle=45))
     return(p)

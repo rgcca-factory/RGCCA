@@ -75,20 +75,22 @@ plot_dynamic <- function(
         }
 
     if (!is.null(f$labels$subtitle)) {
+        if (type == "var1D")
+            subtitle <- paste0("c", substring(f$labels$subtitle, 2))
+        else
+            subtitle <- sub("^\n", "", f$labels$subtitle)
         if (packageVersion("plotly") < 4.9)
             p$x$layout$title <- paste0(
-                    p$x$layout$title,
-                    "<br><i>",
-                    "c",
-                    substring(f$labels$subtitle, 2),
-                    "</i>"
-                )
+                p$x$layout$title, 
+                "<br><i>", 
+                subtitle, 
+                "</i>"
+            )
         else
             p$x$layout$title$text <- paste0(
                 p$x$layout$title$text,
-                "<br><i>",
-                "c",
-                substring(f$labels$subtitle, 2),
+                "<br><i>", 
+                subtitle,
                 "</i>"
             )
     }
@@ -100,7 +102,7 @@ plot_dynamic <- function(
     else
         p$sample_names <- list(row.names(f$data))
 
-    if (type == "var1D")
+    if (type %in% c("var1D", "cv"))
         p$x$layout$margin$t <- 75
     else
         p$x$layout$margin$t <- 50

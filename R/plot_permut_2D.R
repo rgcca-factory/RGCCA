@@ -71,10 +71,7 @@ plot_permut_2D <- function(
     }
 
     if (is.null(title))
-        title <- paste0(
-                "Permutation scores (",perm$call$n_run, " runs) \n Best parameters : ",
-                paste(round(perm$penalties[best,], 2), collapse = ", ")
-            )
+        title <- paste0("Permutation scores (", perm$call$n_run, " runs)")
     else
         title <- paste0(title, collapse = " ")
 
@@ -160,7 +157,15 @@ plot_permut_2D <- function(
             size =  0.5,
             color = colors[1],
             xintercept = best
-        )
+        ) + 
+        labs(subtitle =  paste0("Best parameters : ",
+            paste(round(perm$penalties[best,], 2), collapse = ", "))) +
+        theme(
+            plot.subtitle = element_text(
+                hjust = 0.5,
+                size = cex_sub,
+                face = "italic"
+            ))
     attributes(p)$penalties <- perm$penalties
 
     return(p)
