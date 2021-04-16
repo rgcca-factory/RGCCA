@@ -9,13 +9,6 @@ init_mgcca = function(A, A_m, ranks = rep(1, length(A)),
     apply(list_khatri_rao(factors), 1, sum)
   }
 
-  kron_sum_lq <- function(factors, q) {
-    apply(list_khatri_rao(lapply(factors, function(x) {
-      rank = ncol(x)
-      x[, -(q:rank), drop = FALSE]
-    })), 1, sum)
-  }
-
   kron_prod_q <- function(factors, mode, q) {
     D = length(factors)
     Reduce("%x%", rev(lapply(1:D, function(d) {
@@ -27,15 +20,17 @@ init_mgcca = function(A, A_m, ranks = rep(1, length(A)),
     })))
   }
 
-  project_factor_q <- function(factors, mode, q, M) {
-    projection_matrices = list()
-    res = factors[[mode]][, q]
-    for (r in 1:(q - 1)) {
-      res = res - factors[[mode]][, r] * drop(
-        t(factors[[mode]][, r]) %*% M %*% factors[[mode]][, q] / t(factors[[mode]][, r]) %*% M %*% factors[[mode]][, r]
-      )
-    }
-    return(res)
+  inv_sqrtm = function(M){
+    eig        = eigen(M)
+    M_inv_sqrt = eig$vectors %*% diag(eig$values^(-1/2)) %*% t(eig$vectors)
+    return(M_inv_sqrt)
+  }
+
+  project_factor_q <- function(factors, mode, q, Mq, Mqmq) {
+    Wmq = list_khatri_rao(lapply(factors, function(x) x[, 1:(q - 1), drop = F]))
+    tmp = Mq %*% Mqmq %*% Wmq
+    pi  = tmp %*% ginv(crossprod(tmp)) %*% t(tmp)
+    return(Mq %*% (diag(nrow(pi)) - pi) %*% Mq %*% factors[[mode]][, q])
   }
 
   weighted_factor <- function(u, d, rank) {
@@ -82,19 +77,16 @@ init_mgcca = function(A, A_m, ranks = rep(1, length(A)),
       SVD               <- svd(apply(A[[j]], 2, c), nu = 0, nv = ranks[[j]])
       factors[[j]][[1]] <- weighted_factor(SVD$v, SVD$d, ranks[j])
       for (d in 2:(LEN[[j]] - 1)) {
-        factors[[j]][[d]] <- svd(apply(A[[j]], d + 1, c), nu = 0, nv = 1)$v
-        factors[[j]][[d]] <- matrix(c(factors[[j]][[d]]), nrow = nrow(factors[[j]][[d]]), ncol = ranks[j])
+        factors[[j]][[d]] <- svd(apply(A[[j]], d + 1, c), nu = 0, nv = ranks[[j]])$v
       }
 
       # Change weight factors to respect orthogonality constraints
       if (ranks[j] > 1) {
         for (r in 2:ranks[j]) {
-          p   = kron_prod_q(factors[[j]], mode = 1, q = r)
-          M   = t(p) %*% XtX[[j]] %*% p
-          factors[[j]][[1]][, r] = project_factor_q(factors[[j]], mode = 1, q = r, M = M)
-          # wmq = kron_sum_lq(factors[[j]], r)
-          # y   = M %*% wmq
-          # factors[[j]][[1]][, r] = (diag(DIM[[j]][[2]]) - tcrossprod(y) / drop(crossprod(y))) %*% factors[[j]][[1]][, r]
+          other_factors = kron_prod_q(factors[[j]], mode = 1, q = r)
+          Mqmq          = t(other_factors) %*% XtX[[j]]
+          Mq            = inv_sqrtm(Mqmq %*% other_factors)
+          factors[[j]][[1]][, r] = project_factor_q(factors[[j]], mode = 1, q = r, Mq = Mq, Mqmq = Mqmq)
         }
       }
 
