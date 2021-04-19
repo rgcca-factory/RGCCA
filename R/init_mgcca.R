@@ -70,10 +70,15 @@ init_mgcca = function(A, A_m, ranks = rep(1, length(A)),
   for (j in 1:J) {
     factors[[j]] = list()
     if (j %in% B_2D) {
-      a[[j]] <- initsvd(A[[j]], dual = FALSE)
+      if (init == "random") {
+        a[[j]] <- matrix(rnorm(n = pjs[[j]]), ncol = 1)
+      } else a[[j]] <- initsvd(A[[j]], dual = FALSE)
       a[[j]] = a[[j]] / sqrt(drop(t(a[[j]]) %*% XtX[[j]] %*% a[[j]]))
     } else {
       # Initialize weight factors
+      if (init == "random") {
+        A[[j]] <- array(rnorm(n = pjs[[j]]), dim = c(1, DIM[[j]][-1]))
+      }
       SVD               <- svd(apply(A[[j]], 2, c), nu = 0, nv = ranks[[j]])
       factors[[j]][[1]] <- weighted_factor(SVD$v, SVD$d, ranks[j])
       for (d in 2:(LEN[[j]] - 1)) {
