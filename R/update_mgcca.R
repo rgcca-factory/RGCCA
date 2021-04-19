@@ -68,8 +68,9 @@ update_mgcca = function(A, A_m, a, factors, XtX, Y, g, dg, C,
       Y[, j] = A[[j]] %*% a[[j]]
 
     } else {
-      for (r in 1:ranks[j]) {
-        for (d in 1:(LEN[j] - 1)) {
+      for (d in 1:(LEN[j] - 1)) {
+        for (r in 1:ranks[j]) {
+          # TODO: deal with rank 1
           other_factors = kron_prod_q(factors[[j]], mode = d, q = r)
           Az   = t(A_m[[j]]) %*% Z[, j]
           Mqmq = t(other_factors) %*% XtX[[j]]

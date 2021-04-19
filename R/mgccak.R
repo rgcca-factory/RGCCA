@@ -2,19 +2,6 @@ mgccak <- function (A, A_m = NULL, C, tau = rep(1, length(A)), scheme = "centroi
                     verbose = FALSE, init="svd", bias = TRUE, tol = 1e-8,
                     regularisation_matrices, ranks= rep(1, length(A))) {
 
-  list_khatri_rao <- function(factors) {
-    Reduce("khatri_rao", rev(factors))
-  }
-  kron_sum <- function(factors) {
-    apply(list_khatri_rao(factors), 1, sum)
-  }
-
-  weighted_factor <- function(u, d, rank) {
-    if (rank == 1)
-      return(u)
-    return((u %*% diag(d[1:rank])) / sqrt(sum(d[1:rank] ^ 2)))
-  }
-
   call = list(A = A, A_m = A_m, C = C, scheme = scheme, verbose = verbose, init = init,
               bias = bias, tol = tol, ranks = ranks)
 
@@ -37,23 +24,17 @@ mgccak <- function (A, A_m = NULL, C, tau = rep(1, length(A)), scheme = "centroi
   # List of 2D matrix and higher order tensors
   DIM    <- lapply(A, dim)
   LEN    <- unlist(lapply(DIM, length))
-  B_nD   <- which(LEN >= 4)   # Store which blocks are higher order tensors
-  B_3D   <- which(LEN == 3)   # Store which blocks are 3D
-  B_2D   <- which(LEN == 2)   # Store which blocks are 2D
   B_0D   <- which(LEN == 0)   # Store which blocks are 1D (stored as 0D)
 
   # Convert vectors to one-column matrices
-  if (length(B_0D) !=0){
-    for (i in B_0D){
+  if (length(B_0D) != 0) {
+    for (i in B_0D) {
       A[[i]]   = as.matrix(A[[i]])
-      DIM[[i]] = dim(A[[i]])
     }
-    B_2D = c(B_2D, B_0D)
   }
 
   # Dimensions of each block
-  pjs <- sapply(DIM, function(x) prod(x[-1]))
-  n   <- DIM[[1]][1]
+  n   <- nrow(A[[1]])
   Y   <- matrix(0, n, J)
 
   # Matricization (mode-1)
@@ -61,145 +42,28 @@ mgccak <- function (A, A_m = NULL, C, tau = rep(1, length(A)), scheme = "centroi
     A_m = lapply(1:J, function(x) matrix(as.vector(A[[x]]), nrow = n))
   }
 
-  a <- factors <- M_inv_sqrt <- P <- list()
-  for (j in 1:J) {
-    factors[[j]] <- list()
-  }
-
   # Initialization of vector a (weight vector)
-  for (j in 1:J) {
-    if (is.list(init)) {
-      if (j %in% B_nD) {
-        factors[[j]] <- init$factors[[j]]
-        a[[j]]       <- kron_sum(factors[[j]])
-      } else {
-        a[[j]] <- init$a[[j]][[1]]
-      }
-    } else if (init=="svd") {
-      # SVD Initialization of a_j
-      if (j %in% B_2D) {
-        a[[j]] <- initsvd(A[[j]], dual = FALSE)
-      } else {
-        SVD               <- svd(apply(A[[j]], 2, c), nu=0, nv=ranks[[j]])
-        factors[[j]][[1]] <- weighted_factor(SVD$v, SVD$d, ranks[j])
-        for (d in 2:(LEN[[j]] - 1)) {
-          factors[[j]][[d]] <- svd(apply(A[[j]], d+1, c), nu=0, nv=ranks[[j]])$v
-        }
-        a[[j]] <- kron_sum(factors[[j]])
-      }
-    } else if (init=="random") {
-      # Random Initialisation of a_j
-      A_random <- array(rnorm(n = pjs[[j]], mean = 0, sd = 1), dim = DIM[[j]][-1])
-      if (j %in% B_2D) {
-        a[[j]] <- matrix(A_random / sqrt(drop(crossprod(A_random))))
-      } else {
-        SVD               <- svd(apply(A_random, 1, c), nu=0, nv=ranks[[j]])
-        factors[[j]][[1]] <- weighted_factor(SVD$v, SVD$d, ranks[j])
-        for (d in 2:(LEN[[j]] - 1)) {
-          factors[[j]][[d]] <- svd(apply(A_random, d, c), nu=0, nv=ranks[[j]])$v
-        }
-        a[[j]] <- kron_sum(factors[[j]])
-      }
-    } else {
-      stop_rgcca("init should be either random or by SVD.")
-    }
-  }
+  res_init = init_mgcca(A, A_m, tau = tau, ranks = ranks, init = init, bias = bias)
+  a = res_init$a; factors = res_init$factors; XtX = res_init$XtX
+
   # Initialization of vector Y
   for (j in 1:J) Y[, j] <- A_m[[j]] %*% a[[j]]
-
-  # Determination of the regularization matrix
-  for (j in 1:J){
-    if (j > length(regularisation_matrices)) {
-      reg_matrices = NULL
-    } else {
-      reg_matrices = regularisation_matrices[[j]]
-    }
-    reg_matrices = parse_regularisation_matrices(
-      reg_matrices = reg_matrices,
-      tau          = tau[j],
-      A            = A[[j]],
-      DIM          = DIM[[j]],
-      j            = j,
-      bias         = bias
-    )
-    P[[j]]          = reg_matrices$P
-    M_inv_sqrt[[j]] = reg_matrices$M_inv_sqrt
-    tau[j]          = reg_matrices$tau
-  }
 
   # Initialize other parameters
   crit_old = sum(C * g(cov2(Y, bias = bias)))
   iter     = 1
   crit     = numeric()
-  Z        = matrix(0, n, J)
   a_old    = a
 
   dg = Deriv::Deriv(g, env = parent.frame())
 
   # MGCCA algorithm
   repeat {
-    for (j in 1:J){
-      # Apply the derivative on the current variables
-      dgx    = dg(cov2(Y[, j], Y, bias = bias))
-      dgx    = matrix(rep(dgx, n), n, J, byrow = TRUE)
-      Z[, j] = rowSums(matrix(rep(C[j, ], n), n, J, byrow = TRUE) * dgx * Y)
+    res_update = update_mgcca(A, A_m, a, factors, XtX, Y, g, dg, C, ranks = ranks, bias = bias)
+    a = res_update$a; factors = res_update$factors; Y = res_update$Y
 
-      if (j %in% B_3D) { # 3D Tensors
-        Q                 = matrix(t(Z[, j]) %*% P[[j]], nrow = DIM[[j]][3],
-                                   ncol = DIM[[j]][2], byrow = T)
-        SVD               = svd(x = Q, nu = ranks[[j]], nv = ranks[[j]])
-        factors[[j]][[1]] = weighted_factor(SVD$v, SVD$d, ranks[j])
-        factors[[j]][[2]] = SVD$u
-        a[[j]]            = kron_sum(factors[[j]])
-        Y[, j]            = P[[j]] %*% a[[j]]
-
-      } else if (j %in% B_nD) { # higher order Tensors
-        col_idx           = 1:(LEN[[j]] - 1)
-        Q                 = array(t(P[[j]]) %*% Z[, j], dim = DIM[[j]][-1])
-        Q                 = unfold(Q, mode = 1)
-        other_factors     = list_khatri_rao(factors[[j]][-1])
-        if (ranks[j] == 1) { # No need for tandem
-          SVD               = svd(x = Q %*% other_factors, nu = ranks[j],
-                                  nv = ranks[j])
-          factors[[j]][[1]] = SVD$u %*% t(SVD$v)
-        } else {
-          D                 = diag(sqrt(diag(crossprod(factors[[j]][[1]]))))
-          # Tandem iteration
-          SVD               = svd(x = Q %*% other_factors %*% D, nu = ranks[j],
-                                  nv = ranks[j])
-          factors[[j]][[1]] = SVD$u %*% t(SVD$v)
-          weights           = diag(t(Q %*% other_factors) %*% factors[[j]][[1]])
-          D                 = diag(weights / sqrt(sum(weights ^ 2)))
-          factors[[j]][[1]] = factors[[j]][[1]] %*% D
-        }
-
-        a[[j]]            = kron_sum(factors[[j]])
-        Y[, j]            = P[[j]] %*% a[[j]]
-
-        for (d in 2:(LEN[[j]] - 1)) {
-          dgx              = dg(cov2(Y[, j], Y, bias = bias))
-          dgx              = matrix(rep(dgx, n), n, J, byrow = TRUE)
-          Z[, j]           = rowSums(
-            matrix(rep(C[j, ], n), n, J, byrow = TRUE) * dgx * Y)
-
-          Q                 = array(t(P[[j]]) %*% Z[, j], dim = DIM[[j]][-1])
-          Q                 = unfold(Q, mode = d)
-          other_factors     = list_khatri_rao(factors[[j]][-d])
-          SVD               = svd(x = Q %*% other_factors, nu = ranks[j],
-                                  nv = ranks[j])
-          factors[[j]][[d]] = SVD$u %*% t(SVD$v)
-          a[[j]]            = kron_sum(factors[[j]])
-          Y[, j]            = P[[j]] %*% a[[j]]
-        }
-
-      } else { # Matrices
-        Q      = t(P[[j]]) %*% Z[,j]
-        a[[j]] = Q / norm(Q, type = "2")
-        Y[, j] = P[[j]] %*% a[[j]]
-      }
-    }
-    # Store previous criterion
     crit[iter] <- sum(C*g(cov2(Y, bias = bias)))
+    print(paste0("Iter: ", iter, " \t Crit: ", crit[iter]))
 
     if (verbose)
     {
@@ -222,22 +86,6 @@ mgccak <- function (A, A_m = NULL, C, tau = rep(1, length(A)), scheme = "centroi
     crit_old = crit[iter]
     a_old <- a
     iter <- iter + 1
-  }
-
-  # Inverse change of variables if needed
-  if (length(M_inv_sqrt) > 0)  { # If no regularization matrix, list is empty
-    for (j in 1:J) {
-      if (j <= length(M_inv_sqrt) && !is.null(M_inv_sqrt[[j]])) {
-        if (j %in% B_2D) {
-          a[[j]] = M_inv_sqrt[[j]] %*% a[[j]]
-        } else {
-          for (d in 1:(LEN[[j]] - 1)) {
-            factors[[j]][[d]] = M_inv_sqrt[[j]][[d]] %*% factors[[j]][[d]]
-          }
-          a[[j]] = kron_sum(factors[[j]])
-        }
-      }
-    }
   }
 
   # Final messages
