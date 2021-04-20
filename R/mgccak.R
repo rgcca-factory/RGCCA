@@ -63,7 +63,6 @@ mgccak <- function (A, A_m = NULL, C, tau = rep(1, length(A)), scheme = "centroi
     a = res_update$a; factors = res_update$factors; Y = res_update$Y
 
     crit[iter] <- sum(C*g(cov2(Y, bias = bias)))
-    print(paste0("Iter: ", iter, " \t Crit: ", crit[iter]))
 
     if (verbose)
     {

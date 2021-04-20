@@ -7,9 +7,9 @@ verify_norm_constraint = function(res, XtX) {
   }
 }
 
-verify_orthogonality_constraints = function(res, XtX, blocks, tol = 1e-12) {
-  for (j in 1:length(blocks)) {
-    if (length(dim(blocks[[j]])) > 2) {
+verify_orthogonality_constraints = function(res, XtX, tol = 1e-12) {
+  for (j in 1:length(XtX)) {
+    if (length(res$factors[[j]]) > 0) {
       W = Reduce("khatri_rao", rev(res$factors[[j]]))
       P = t(W) %*% XtX[[j]] %*% W
       diag(P) = 0
@@ -29,7 +29,7 @@ verify_all = function(A, A_m, tau, ranks, init = "svd", tol = 1e-12) {
   res_update_mgcca = update_mgcca(A, A_m, a, factors, XtX, Y, g, dg, C, ranks = ranks)
   crit = sum(C * g(cov2(res_update_mgcca$Y, bias = T)))
   verify_norm_constraint(res_update_mgcca, XtX)
-  verify_orthogonality_constraints(res_update_mgcca, XtX, A, tol = tol)
+  verify_orthogonality_constraints(res_update_mgcca, XtX, tol = tol)
   expect_true(crit >= crit_old)
 }
 
@@ -54,6 +54,7 @@ test_that("Test that update_mgcca generate a vector a that satisfies the norm
           })
 
 ### Test update_mgcca for tensor blocks
+set.seed(0)
 A = helper.generate_blocks(list(
   c(40, 20, 30), c(40, 35), c(40, 18, 25, 7)
 ))
@@ -69,6 +70,6 @@ test_that("Test that update_mgcca generate a vector a that satisfies the norm
             verify_all(A, A_m, tau = c(0.5, 0.5, 0.5), ranks = c(3, 3, 3), init = "svd")
             verify_all(A, A_m, tau = c(0.5, 0.5, 0.5), ranks = c(3, 3, 3), init = "random")
 
-            verify_all(A, A_m, tau = c(0, 0, 0), ranks = c(3, 3, 3), init = "svd", tol = 1e-6)
-            verify_all(A, A_m, tau = c(0, 0, 0), ranks = c(3, 3, 3), init = "random", tol = 1e-6)
+            verify_all(A, A_m, tau = c(0.001, 0.001, 0.001), ranks = c(3, 3, 3), init = "svd", tol = 1e-6)
+            verify_all(A, A_m, tau = c(0.001, 0.001, 0.001), ranks = c(3, 3, 3), init = "random", tol = 1e-6)
           })

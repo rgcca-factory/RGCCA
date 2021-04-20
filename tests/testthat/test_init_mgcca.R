@@ -4,9 +4,9 @@ verify_norm_constraint = function(res, XtX) {
   }
 }
 
-verify_orthogonality_constraints = function(res, XtX, blocks, tol = 1e-12) {
-  for (j in 1:length(blocks)) {
-    if (length(dim(blocks[[j]])) > 2) {
+verify_orthogonality_constraints = function(res, XtX, tol = 1e-12) {
+  for (j in 1:length(XtX)) {
+    if (length(res$factors[[j]]) > 0) {
       W = Reduce("khatri_rao", rev(res$factors[[j]]))
       P = t(W) %*% XtX[[j]] %*% W
       diag(P) = 0
@@ -18,7 +18,7 @@ verify_orthogonality_constraints = function(res, XtX, blocks, tol = 1e-12) {
 verify_all = function(A, A_m, tau, ranks, init = "svd", tol = 1e-12) {
   res_init_mgcca = init_mgcca(A, A_m, tau = tau, ranks = ranks, init = init)
   verify_norm_constraint(res_init_mgcca, res_init_mgcca$XtX)
-  verify_orthogonality_constraints(res_init_mgcca, res_init_mgcca$XtX, A, tol = tol)
+  verify_orthogonality_constraints(res_init_mgcca, res_init_mgcca$XtX, tol = tol)
 }
 
 ### Test init_mgcca for matrix blocks
@@ -56,6 +56,6 @@ test_that("Test that init_mgcca generate a vector a that satisfies the norm
             verify_all(A, A_m, tau = c(0.5, 0.5, 0.5), ranks = c(3, 3, 3), init = "svd")
             verify_all(A, A_m, tau = c(0.5, 0.5, 0.5), ranks = c(3, 3, 3), init = "random")
 
-            verify_all(A, A_m, tau = c(0, 0, 0), ranks = c(3, 3, 3), init = "svd", tol = 1e-6)
-            verify_all(A, A_m, tau = c(0, 0, 0), ranks = c(3, 3, 3), init = "random", tol = 1e-6)
+            verify_all(A, A_m, tau = c(0.001, 0.001, 0.001), ranks = c(3, 3, 3), init = "svd", tol = 1e-6)
+            verify_all(A, A_m, tau = c(0.001, 0.001, 0.001), ranks = c(3, 3, 3), init = "random", tol = 1e-6)
           })

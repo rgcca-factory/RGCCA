@@ -1,61 +1,10 @@
 init_mgcca = function(A, A_m, ranks = rep(1, length(A)),
                       tau = rep(1, length(A)), init = "svd", bias = T) {
-
-  list_khatri_rao <- function(factors) {
-    Reduce("khatri_rao", rev(factors))
-  }
-
-  kron_sum <- function(factors) {
-    apply(list_khatri_rao(factors), 1, sum)
-  }
-
-  kron_prod_q <- function(factors, mode, q) {
-    D = length(factors)
-    Reduce("%x%", rev(lapply(1:D, function(d) {
-      if (mode == d) {
-        return(diag(nrow(factors[[mode]])))
-      } else {
-        return(factors[[d]][, q])
-      }
-    })))
-  }
-
-  inv_sqrtm = function(M){
-    eig        = eigen(M)
-    M_inv_sqrt = eig$vectors %*% diag(eig$values^(-1/2)) %*% t(eig$vectors)
-    return(M_inv_sqrt)
-  }
-
-  project_factor_q <- function(factors, mode, q, Mq, Mqmq) {
-    Wmq = list_khatri_rao(lapply(factors, function(x) x[, 1:(q - 1), drop = F]))
-    tmp = Mq %*% Mqmq %*% Wmq
-    pi  = tmp %*% ginv(crossprod(tmp)) %*% t(tmp)
-    return(Mq %*% (diag(nrow(pi)) - pi) %*% Mq %*% factors[[mode]][, q])
-  }
-
-  weighted_factor <- function(u, d, rank) {
-    if (rank == 1)
-      return(u)
-    return((u %*% diag(d[1:rank])) / sqrt(sum(d[1:rank] ^ 2)))
-  }
-
   ### Get useful constants
   J      <- length(A)
-
-  # List of 2D matrix and higher order tensors
   DIM    <- lapply(A, dim)
   LEN    <- unlist(lapply(DIM, length))
-  B_2D   <- which(LEN == 2)   # Store which blocks are 2D
-  B_0D   <- which(LEN == 0)   # Store which blocks are 1D (stored as 0D)
-
-  # Convert vectors to one-column matrices
-  if (length(B_0D) != 0) {
-    for (i in B_0D) {
-      A[[i]]   = as.matrix(A[[i]])
-      DIM[[i]] = dim(A[[i]])
-    }
-    B_2D = c(B_2D, B_0D)
-  }
+  B_2D   <- which(LEN <= 2)   # Store which blocks are 2D
 
   # Dimensions of each block
   pjs <- sapply(DIM, function(x) prod(x[-1]))
