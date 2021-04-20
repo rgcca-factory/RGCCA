@@ -38,7 +38,7 @@ parse_regularisation_matrices <- function(reg_matrices, tau, A, DIM,
                           " is singular, please give an invertible matrix."))
       }
     }
-    M_inv_sqrt = eig$vectors %*% diag(eig$values^(-1/2)) %*% t(eig$vectors)
+    M_inv_sqrt = eig$vectors %*% diag(eig$values^(-1/2), nrow = nrow(M)) %*% t(eig$vectors)
     return(M_inv_sqrt)
   }
   P = A
@@ -53,6 +53,17 @@ parse_regularisation_matrices <- function(reg_matrices, tau, A, DIM,
         S          = tcrossprod(A_d) / (DIM[1] - 1)
         reg_matrix = (tau.tensor[d] * diag(DIM[d + 1]) + (1 - tau.tensor[d]) * S) / mass
         M_inv_sqrt[[d]] = sqrtMatrix(reg_matrix, context = "tensor", d = d)
+        P               = mode_product(P, M_inv_sqrt[[d]], mode = d + 1)
+      }
+    } else if (tau != 1) {
+      M_inv_sqrt = list()
+      fac = estimate_kronecker_covariance(P)
+      to  = tau ^ (1 / length(fac))
+      fac = lapply(fac, function(x) {
+        (1 - to) * x + to * diag(nrow(x))
+      })
+      for (d in 1:(length(DIM) - 1)) {
+        M_inv_sqrt[[d]] = sqrtMatrix(fac[[d]], context = "tensor", d = d)
         P               = mode_product(P, M_inv_sqrt[[d]], mode = d + 1)
       }
     } else {
