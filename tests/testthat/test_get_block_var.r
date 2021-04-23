@@ -6,5 +6,3 @@ g= get_bloc_var(rgcca_out$a)
  bool=all.equal(g,LETTERS[seq(3)])
  test_that("get_block_var",
            {expect_true(bool)})
- 
-

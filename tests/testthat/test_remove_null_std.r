@@ -7,8 +7,6 @@
  df3=cbind(df,vec)
  df2=remove_null_sd(list(df))
  df4=remove_null_sd(list(df3))
- 
+
  test_that("remove_null_std",{expect_true(dim(df2[[1]])[2]==3)})
  test_that("remove_null_std_with_na",{expect_true(dim(df4[[1]])[2]==3)})
- 
- 

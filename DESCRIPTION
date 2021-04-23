@@ -7,7 +7,10 @@ Author: Arthur Tenenhaus, Vincent Guillemot, Arnaud Gloaguen, Caroline Peltier a
 Maintainer: Arthur Tenenhaus <arthur.tenenhaus@supelec.fr>
 Description: Multi-block data analysis concerns the analysis of several sets of variables (blocks) observed on the same group of individuals. The main aims of the RGCCA package are: to study the relationships between blocks and to identify subsets of variables of each block which are active in their relationships with the other blocks. This package allows to (i) run R/SGCCA (\link{rgcca}), (ii) help the user to find out the optimal parameters for R/SGCCA such as sparsity or number of components(\link{rgcca_permutation}), (iii) evaluate the stability of the RGCCA results and their significance (\link{bootstrap}) Print and plots of all these functionalities are available.
 License: GPL-3
-Depends: MASS
+LazyData: true
+Depends: 
+    MASS,
+    R (>= 2.10)
 Packaged: 2013-07-24 16:36:37 UTC; arthur
 Suggests: 
     testthat,
@@ -22,13 +25,13 @@ Suggests:
     ggrepel,
     optparse,
     igraph,
-    visNetwork,
     magrittr,
     nnet,
     openxlsx
-RoxygenNote: 7.1.0
+RoxygenNote: 7.1.1
 Imports: 
     parallel,
+    pbapply,	
     grDevices,
     Deriv,
     graphics,

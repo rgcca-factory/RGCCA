@@ -9,7 +9,7 @@ save_var <- function(
     indexes <- c("cor", "weight")
 
     vars <- lapply(
-        seq(length(rgcca$call$blocks)), 
+        seq(length(rgcca$call$blocks)),
         function(i) {
             df <- data.frame(
                 Reduce(cbind,
@@ -24,11 +24,11 @@ save_var <- function(
             df
         }
     )
-    
+
     common <- unique(unlist(lapply(vars, names)))
     vars <- Reduce(
-        rbind, 
-        lapply(vars, 
+        rbind,
+        lapply(vars,
                function(x) {
                    x[, setdiff(common, names(x))] <- NA
                    return(x)

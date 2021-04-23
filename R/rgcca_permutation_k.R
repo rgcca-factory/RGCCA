@@ -1,40 +1,44 @@
-# An intern function used by sgcca.permute to perform multiple sgcca with permuted rows
+# An internal function used by rgcca_permutation() to perform multiple s/rgcca
+# on permuted blocks
+#
 # data("Russett")
-# blocks = list(agriculture = Russett[, seq(3)], industry = Russett[, 4:5],
-#     politic = Russett[, 6:11] )
+# blocks = list(agriculture = Russett[, seq(3)],
+#               industry = Russett[, 4:5],
+#               politic = Russett[, 6:11])
+#
 # rgcca_permutation_k(blocks)
 rgcca_permutation_k <- function(
     blocks,
-    type = "rgcca",
+    method = "rgcca",
     scale=TRUE,
     scale_block=TRUE,
-    connection = matrix(1,length(blocks),length(blocks)) - diag(length(blocks)),
-    scheme="factorial",
-    ncomp=rep(1,length(blocks)),
-    tau=rep(1,length(blocks)),
+    connection = 1 - diag(length(blocks)),
+    scheme = "factorial",
+    ncomp = rep(1,length(blocks)),
+    tau = rep(1,length(blocks)),
     sparsity = rep(1, length(blocks)),
     init = "svd",
     bias = TRUE,
     tol = 1e-08,
     response = NULL,
-    superblock=FALSE,
-    method="nipals",
+    superblock = FALSE,
+    NA_method = "nipals",
     quiet = TRUE,
     perm = TRUE,
     rgcca_res = NULL,
     par_type = "tau",
-    par_value=rep(1,length(blocks))
-    ) {
+    par_value = rep(1,length(blocks))
+    ){
 
     if (!is.null(rgcca_res)) {
         stopifnot(is(rgcca_res, "rgcca"))
-        type <- rgcca_res$call$type
+        method <- rgcca_res$call$method
         scale_block <- rgcca_res$call$scale_block
         scale <- rgcca_res$call$scale
         scheme <- rgcca_res$call$scheme
         response <- rgcca_res$call$response
         tol <- rgcca_res$call$tol
-        method <- rgcca_res$call$method
+        NA_method <- rgcca_res$call$NA_method
         init <- rgcca_res$call$init
         bias <- rgcca_res$call$bias
         blocks <- rgcca_res$call$raw
@@ -45,7 +49,7 @@ rgcca_permutation_k <- function(
         sparsity <- rgcca_res$call$sparsity
     }
 
-    if (type %in% c("sgcca", "spca", "spls")) {
+    if (method %in% c("sgcca", "spls")) {
         par_type <- "sparsity"
     } else
         par_type <- "tau"
@@ -53,9 +57,10 @@ rgcca_permutation_k <- function(
     if (perm) {
         blocks_to_use <- blocks
         blocks_to_use <- lapply(
-            seq(length(blocks)), 
+            seq(length(blocks)),
             function(k) {
-                blocks_to_use_k <- as.matrix(blocks[[k]][sample(seq(NROW(blocks[[k]]))),])
+                blocks_to_use_k <-
+                    as.matrix(blocks[[k]][sample(seq(NROW(blocks[[k]]))), ])
                 rownames(blocks_to_use_k) = rownames(blocks[[k]])
                 return(blocks_to_use_k)
         })
@@ -66,7 +71,7 @@ rgcca_permutation_k <- function(
     func <- quote(
         rgcca(
             blocks = blocks_to_use,
-            type = type,
+            method = method,
             scale = scale,
             scale_block = scale_block,
             connection = connection,
@@ -76,7 +81,7 @@ rgcca_permutation_k <- function(
             tol = tol,
             response = response,
             superblock = superblock,
-            method = method,
+            NA_method = NA_method,
             quiet = quiet
         ))
 
@@ -96,6 +101,6 @@ rgcca_permutation_k <- function(
         crit_permut <- res$crit[length(res$crit)]
     }
 
-    return(crit_permut) 
+    return(crit_permut)
 
 }

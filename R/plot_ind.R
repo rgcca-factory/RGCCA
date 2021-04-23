@@ -15,12 +15,12 @@
 #' AVE_X = lapply(seq(3), function(x) runif(2))
 #' for (i in 1:length(coord))
 #' row.names(coord[[i]]) = seq(15)
-#' rgcca_out = list(Y = coord, AVE = list(AVE_X = AVE_X), 
+#' rgcca_out = list(Y = coord, AVE = list(AVE_X = AVE_X),
 #' call = list(blocks = coord, ncomp = rep(2,3))) # TODO
 #' # Using a superblock
 #' resp = as.matrix(rep(LETTERS[seq(3)], each = 5))
 #' row.names(resp) = seq(15)
-#' rgcca_out$call$type="rgcca"
+#' rgcca_out$call$method="rgcca"
 #' class(rgcca_out) = "rgcca"
 #' plot_ind(rgcca_out, resp)
 #' # Using the first block
@@ -51,6 +51,11 @@ plot_ind <- function(
     predicted = NULL,
     title = paste0(names(rgcca_res$call$blocks)[i_block],": Sample space"),
     legend=TRUE,
+    cex = 1,
+    cex_main = 14 * cex,
+    cex_sub = 12 * cex,
+    cex_point = 3 * cex,
+    cex_lab = 10 * cex,
     ...){
 
     if (is.null(i_block_y))
@@ -66,15 +71,12 @@ plot_ind <- function(
         predicted = predicted
     )
     class(df) <- c(class(df), "d_ind")
-
     if (!is.null(predicted))
-            p <- ggplot(df, aes(df[, 1], df[, 2], color = resp))
+            p <- ggplot(df, aes(df[, 1], df[, 2], group = resp, color =resp))
 
-    else if (length(unique(as.matrix(df$resp))) > 5 && 
-            !is.character2(as.vector(df$resp)) ) {
-
-        p <- ggplot(df, aes(df[, 1], df[, 2], color = resp))
-
+    else if (length(unique(as.matrix(df$resp))) > 5 &&
+            !is.character(as.vector(df$resp)) ) {
+        p <- ggplot(df, aes(df[, 1], df[, 2], group = resp,color=resp))
     }else
         p <- NULL
 
@@ -92,6 +94,11 @@ plot_ind <- function(
             text,
             i_block_y,
             no_overlap = no_overlap,
+            cex = cex,
+            cex_main = cex_main,
+            cex_sub = cex_sub,
+            cex_point = cex_point,
+            cex_lab=cex_lab,
             ...
         )
 

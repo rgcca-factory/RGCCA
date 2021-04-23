@@ -1,4 +1,4 @@
-# The function soft.threshold() soft-thresholds a vector such that the L1-norm constraint is satisfied. 
+# The function soft.threshold() soft-thresholds a vector such that the L1-norm constraint is satisfied.
 # @param x A numeric vector.
 # @param sumabs A numeric constraint on x's L1 norm.
 #

@@ -1,4 +1,4 @@
-# Internal function which does not have to be used by the users 
+# Internal function which does not have to be used by the users
 # @author Arnaud Gloaguen
 # @keywords internal
 BinarySearch <-

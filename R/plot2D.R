@@ -2,24 +2,22 @@
 #'
 #' Plot RGCCA components in a bi-dimensional space
 #'
-#' @param compx An integer giving the index of the analysis component used
-#' for the x-axis
-#' @param compy An integer giving the index of the analysis component used
-#' for the y-axis
-#' @param i_block An integer giving the index of a list of blocks
-#' @param text A bolean to represent the points with their row names (TRUE)
-#' or with circles (FALSE)
-#' @param i_block_y An integer giving the index of a list of blocks (another
-#' one, different from the one used in i_block)
-#' @param no_overlap A boolean to avoid overlap in plotted text
-#' @param rgcca_res A RGCCA object (see  \code{\link[RGCCA]{rgcca}})
-#' @param df A dataframe
+#' @param compx An integer giving the index of the block component for the x-axis
+#' @param compy An integer giving the index of the block component for the y-axis
+#' @param i_block An integer giving the index of the block
+#' @param text A logical value indicating if rowanmes are displayed (default = TRUE)
+#' @param i_block_y An integer giving the index of the block (different from i_block)
+#' @param no_overlap A logical value indicating if text-overlappin is accepted
+#' @param rgcca_res A fitted RGCCA object (see  \code{\link[RGCCA]{rgcca}})
+#' @param df A data.frame
 #' @param title A character giving the title of the plot
-#' @param group A vector of character with levels used to color the points
-#' @param name_group A character giving the type of groups (either "Blocs" or
+#' @param group A vector of character whose levels are used to color the points
+#' @param name_group A character giving the type of groups (either "Blocks" or
 # "Response")
 #' @param p A ggplot object
-#' @param colors Either a vector of integers (each integer corresponding to a color) or of characters corresponding to names of colors (as "blue",see colors()) or RGB code ("#FFFFFF").
+#' @param colors Either a vector of integers (each integer corresponding to a
+#' color) or of characters corresponding to names of colors (as "blue",see
+#' colors()) or RGB code ("#FFFFFF").
 #' @param cex An integer for the size of the plot parameters
 #' @param cex_main An integer for the size of the title
 #' @param cex_sub An integer for the size of the subtitle
@@ -27,10 +25,11 @@
 #' @param cex_lab An integer for the size of the axis titles
 #' @param collapse A boolean to combine the variables of each block as result
 #' @importFrom ggplot2 ggplot
+#' @importFrom utils installed.packages
 # @examples
 # df = as.data.frame(matrix(runif(20*2, min = -1), 20, 2))
 # AVE = lapply(seq(4), function(x) runif(2))
-# rgcca_out = list(AVE = list(AVE_X = AVE), call = list(type = "rgcca"))
+# rgcca_out = list(AVE = list(AVE_X = AVE), call = list(method = "rgcca"))
 # plot2D(rgcca_out, df, "Samples", rep(c("a","b"), each=10), "Response")
 # data(Russett)
 # blocks = list(agriculture = Russett[, seq(3)], industry = Russett[, 4:5],
@@ -57,7 +56,7 @@ plot2D <- function(
     cex_sub = 12 * cex,
     cex_point = 3 * cex,
     cex_lab = 10 * cex) {
-    
+
     title <- paste0(title, collapse = " ")
     name_group <- paste0(name_group, collapse = " ")
     check_colors(colors)
@@ -70,8 +69,8 @@ plot2D <- function(
 
      if (!isTRUE(text)) {
         func <- quote(geom_point(size = cex_point))
-        if (!is.numeric(na.omit(group)))
-            func$mapping <- aes(shape = as.factor(group))
+      #  if (!is.numeric(na.omit(group)))
+      #      func$mapping <- aes(shape = as.factor(group))
     } else {
 
         f <- "geom_text"
@@ -124,9 +123,9 @@ plot2D <- function(
     {
         xlab=print_comp(rgcca_res, compx, i_block)
         ylab=print_comp(rgcca_res, compy, i_block_y)
-        
+
     }
-        
+
     p <- p + eval(as.call(func)) + theme_classic() + geom_vline(
             xintercept = 0,
             col = "grey",
@@ -141,9 +140,9 @@ plot2D <- function(
                 title = title,
                 x = xlab,
                 y = ylab,
-            color = name_group,
-            shape = name_group
-        ) + 
+            color = name_group#,
+            #shape = name_group
+        ) +
         scale_y_continuous(breaks = NULL) +
         scale_x_continuous(breaks = NULL) +
         theme_perso(cex, cex_main, cex_sub) +
@@ -155,20 +154,21 @@ plot2D <- function(
             axis.line = element_blank()
         )
 
-    
+
     if (length(unique(group)) != 1 && is(df, "d_var2D")) {
         p <- order_color(rgcca_res$a, p, collapse = collapse, colors = colors)
         # For qualitative response OR no response
-    } else if ( is.character2(group[!is.na(group)]) ||
-                length(unique(group)) <= 5 || 
+    } else if ( is.character(group[!is.na(group)]) ||is.factor(group[!is.na(group)])||
+                length(unique(group)) <= 5 ||
             all( levels(as.factor(group)) %in% c("obs", "pred") )
         ) {
+
         p <- p + scale_color_manual(values = color_group(group, colors))
         # quantitative response
     } else{
         if (is.null(colors))
             colors <- c("blue", "gray", "#cd5b45")
-        p <- p + scale_color_gradientn(colours = colors, na.value = "black")
+         p <- p + scale_color_gradientn(colours = colors, na.value = "black")
     }
 
     p + theme(plot.margin = margin(5, 0, 0, 0, "mm"))

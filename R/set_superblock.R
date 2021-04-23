@@ -1,8 +1,8 @@
 # #' @export
-set_superblock <- function(blocks, superblock = FALSE, type = "rgcca", verbose =  TRUE) {
+set_superblock <- function(blocks, superblock = FALSE, method = "rgcca", verbose =  TRUE) {
 
-    if (superblock | tolower(type) == "pca") {
-        if (tolower(type) != 'pca' && verbose)
+    if (superblock | tolower(method) == "pca") {
+        if (tolower(method) != 'pca' && verbose)
             warn_connection('superblock')
         blocks[["superblock"]] <- Reduce(cbind, blocks)
     }

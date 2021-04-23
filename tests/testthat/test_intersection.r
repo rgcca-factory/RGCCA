@@ -1,23 +1,35 @@
 # '# Test intersection_list
-# 
+#
 # '''
-set.seed(42);X1=matrix(rnorm(35),7,5);
-set.seed(22);X2=matrix(rnorm(28),7,4);
-set.seed(2);X3=matrix(rnorm(49),7,7);
-# usual test 
-X1[1,]=NA
-X2[7,1]=NA
-X2[5,1]=NA
-A=list(X1,X2)
-Ainter=intersection_list(A=A)
+# Load data
+data(Russett)
+blocks = list(agriculture = Russett[, seq(3)],
+              industry = Russett[, 4:5],
+              politic = Russett[, 6:11],
+              target = Russett[, 11])
 
-X1[1,]=NA
-X2[7,1]=NA
-X2[5,1]=NA
-A2=lapply(A,scale)
-Ainter=intersection_list(A=A2)
+# Add missing values
+blocks[[1]][c(2, 4, 8), ] = NA
+blocks[[2]][c(12, 23), 1] = NA
+blocks[[2]][17, 2]        = NA
+blocks[[3]][c(30, 32), 3] = NA
+blocks[[3]][40, ]         = NA
+blocks[[4]][42]           = NA
+ind_NA                    = c(2, 4, 8, 12, 17, 23, 30, 32, 40, 42)
 
-test_that("intersection_list_1",{expect_true(dim(Ainter[[1]])[1]==4)})
-# too many subjects with missing values
-X3[3,1:2]=NA
-Ainter2=intersection_list(A=list(X1,X2,X3))
+test_that("intersection_list selects the common rows without missing values", {
+  blocks_inter = intersection_list(blocks)
+  for (j in 1:length(blocks)) {
+    expect_equal(blocks_inter[[j]], subset_rows(blocks[[j]], -ind_NA))
+  }
+})
+test_that("intersection_list raises an error if there is less than 3 subjects
+          left after removing missing values", {
+            bad_blocks                   = blocks
+            bad_blocks[[2]][-c(1, 3), 1] = NA
+            expect_error(intersection_list(bad_blocks),
+                         paste0("Less than 3 subjects have no missing values, ",
+                                "choose another missing value handling method ",
+                                "or work on your dataset."),
+                         fixed = TRUE)
+          })

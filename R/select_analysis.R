@@ -1,60 +1,62 @@
-#' Define the analysis parameters
+#' Define the parameters associated with each multi-block component
+#' method of the literature.
 #'
-#' Define the correct parameters according to the type of the analysis
-#' @param type A character giving the type of analysis: rgcca, sgcca, pca, 
-#' pls, cca, ifa, ra, cpca-w, gcca, hpca, maxbet-b, maxbet, maxdiff-b,maxdiff,
-#'  maxvar-a, maxvar-b, maxvar, niles, r-maxvar, rcon-pca, ridge-gca, sabscor,
-#'  ssqcor, ssqcor, ssqcov-1, ssqcov-2, ssqcov,  sum-pca, sumcor, sumcov-1, 
-#'  sumcov-2, sumcov, sabscov, plspm
+#' @param method A character string indicating the multi-block component
+#' method to consider: rgcca, sgcca, pca, spca, pls, spls, cca,
+#' ifa, ra, gcca, maxvar, maxvar-b, maxvar-a, mcoa,cpca-1, cpca-2,
+#' cpca-4, hpca, maxbet-b, maxbet, maxdiff-b, maxdiff, maxvar-a,
+#' sabscor, ssqcor, ssqcor, ssqcov-1, ssqcov-2, ssqcov, sumcor,
+#' sumcov-1, sumcov-2, sumcov, sabscov, sabscov-1, sabscov-2.
 #' @inheritParams plot_var_2D
 #' @inheritParams set_connection
-#' @param response An integer giving the position of the response block within 
-#' the blocks (activates the supervised mode).  
-#' @param connection A symmetric matrix (J*J) that describes the relationships 
-#' between blocks. Two values are accepted : '1' for a connection between two 
-#' blocks, or '0' otherwise.
-#' @param penalty A vector of 1*J floats (or character for 'optimal' setting) 
-#' giving theshrinkage parameter for covariance maximization
-#' @param ncomp A vector of 1*J integers giving the number of component for 
-#' each blocks
-#' @param scheme A character or a function giving the link function for 
+#' @param blocks List of blocks.
+#' @param response Numerical value giving the position of the response block. When
+#' the response argument is filled the supervised mode is automatically
+#' activated.
+#' @param connection Symmetric matrix (J*J) that describes the relationships
+#' between blocks. Elements of the connection matrix must be positive ; but
+#' usually equal to 1 if block \eqn{j} and block \eqn{k} are connected, and 0
+#' otherwise.
+#' @param penalty Vector of length J (or character string for 'optimal'
+#' setting) indicating the values of the tuning parameters.
+#' @param ncomp Vector of length J indicating the number of block components
+#' for each block.
+#' @param scheme Character string or a function giving the scheme function for
 #' covariance maximization among "horst" (the identity function), "factorial"
-#'  (the squared values), "centroid" (the absolute values). Only, the horst 
-#'  scheme penalizes structural negative correlation. The factorial scheme 
-#'  discriminates more strongly the blocks than the centroid one.
-#' @param verbose A boolean displaying the warnings
-#' @param quiet A boolean hidding the warnings
-#' @return \item{blocks}{A list of matrix}
-#' @return \item{scheme}{A character or a function giving the link function for 
-#' covariance maximization among "horst" (the identity function), "factorial"
-#'  (the squared values), "centroid" (the absolute values). Only, the horst 
-#'  scheme penalizes structural negative correlation. The factorial scheme 
-#'  discriminates more strongly the blocks than the centroid one.}
-#' @return \item{penalty}{A vector of floats (or character for 'optimal' 
-#' setting) giving the shrinkage parameter for covariance maximization}
-#' @return \item{ncomp}{A vector of 1*J integers giving the number of component 
-#' for each blocks}
-#' @return \item{connection}{A symmetric matrix (J*J) that describes the 
-#' relationships between blocks}
-#' @return \item{superblock}{A boolean giving the presence (TRUE) / absence
-#' (FALSE) of a superblock}
+#'  (the squared values), "centroid" (the absolute values). The scheme function
+#'  can be any continously differentiable convex function and it is possible to
+#'  design explicitely the sheme function (e.g. function(x) x^4) as argument of
+#'  rgcca function.  See (Tenenhaus et al, 2017) for details.
+#' @param verbose Logical value indicating whether the warnings are displayed.
+#' @param quiet Logical value indicating if warning messages are reported.
+#' @return \item{blocks}{List of blocks.}
+#' @return \item{scheme}{Character string or a function giving the scheme
+#' function used for covariance maximization.}
+#' @return \item{penalty}{Vector of length J (or character string for
+#' 'optimal' setting) indicating the values of the tuning parameters.}
+#' @return \item{ncomp}{Vector of length J indicating the number of block
+#' components or each block.}
+#' @return \item{connection}{Symmetric matrix (J*J) that describes the
+#' relationships between blocks.}
+#' @return \item{superblock}{Logical value indicating if superblock is
+#' included in the analysis.}
 
 select_analysis <- function(
-    blocks = blocks,
+    blocks,
     connection = 1 - diag(length(blocks)),
     penalty = rep(1, length(blocks)),
     ncomp = rep(1, length(blocks)),
     scheme = "centroid",
     superblock = TRUE,
-    type  = "rgcca",
+    method  = "rgcca",
     verbose = TRUE,
     quiet = FALSE,
-    response = NULL) {
+    response = NULL){
 
     J <- length(blocks)
-    msg_superblock <- "a superbloc is used"
-    msg_type <- paste0("By using a ", toupper(type), ", ")
-    warn.type.value <- warn.type.par <- warn.msg.super <- character(0)
+    msg_superblock <- "A superblock is considered."
+    msg_type <- paste0("By using a ", toupper(method), ", ")
+    warn.method.value <- warn.method.par <- warn.msg.super <- character(0)
 
     if (quiet)
         verbose <- FALSE
@@ -62,8 +64,8 @@ select_analysis <- function(
     ### SETTINGS ###
 
     warnParam <- function(param, x) {
-        warn.type.par <<- c(warn.type.par, paste(deparse(substitute(param))))
-        warn.type.value <<- c(warn.type.value, toString(x))
+        warn.method.par <<- c(warn.method.par, paste(deparse(substitute(param))))
+        warn.method.value <<- c(warn.method.value, toString(x))
     }
 
     setPenalty <- function(x) {
@@ -82,7 +84,9 @@ select_analysis <- function(
     }
 
     warnSuper <- function(x) {
-        if (class(x) %in% c("matrix", "data.frame") && NCOL(x) < (length(blocks)) && is.null(response)){
+        if (class(x) %in% c("matrix", "data.frame") &&
+            NCOL(x) < (length(blocks)) &&
+            is.null(response)){
             warn.msg.super <<- c(warn.msg.super, deparse(substitute(x)))
             return(cbind(x, 1))
         }else if (length(x) < (length(blocks)) && is.null(response)) {
@@ -96,16 +100,15 @@ select_analysis <- function(
         }
     }
 
-    setSuperbloc <- function(verbose = TRUE) {
+    setSuperblock <- function(verbose = TRUE) {
         blocks <<- c(blocks, superblock = list(Reduce(cbind, blocks)))
         superblock <<- TRUE
         connection <<- NULL
         ncomp <<- warnSuper(ncomp)
     }
 
-    set2Block <- function(type) {
-        if (length(blocks) != 2)
-            check_nblocks(blocks, type)
+    set2Block <- function(method) {
+        check_nblocks(blocks, method)
 
         scheme <<- setScheme("horst")
         connection <<- set_connection(1 - diag(2))
@@ -113,56 +116,56 @@ select_analysis <- function(
 
     ### CHECK TYPES ###
 
-    if (length(grep("[sr]gcca", tolower(type))) == 1) {
+    if (length(grep("[sr]gcca", tolower(method))) == 1) {
         if (superblock) {
-            setSuperbloc(FALSE)
+            setSuperblock(FALSE)
             penalty <- warnSuper(penalty)
         } else
             superblock <- FALSE
     } else
         superblock <- FALSE
 
-    if (length(grep("^s?pca$", tolower(type))) == 1) {
-        if (length(blocks) != 1)
-            check_nblocks(blocks, type)
+    if (length(grep("^s?pca$", tolower(method))) == 1) {
+        check_nblocks(blocks, method)
 
         scheme <- setScheme("horst")
-        setSuperbloc()
-        if (tolower(type) == "pca")
+        setSuperblock()
+        if (tolower(method) == "pca")
             penalty <- setPenalty(c(1, 1))
     }
 
     # 2 Blocks cases
-    else if (tolower(type) %in% c("cca", "ra", "ifa", "pls", "spls")) {
-        set2Block(type)
+    else if (tolower(method) %in% c("cca", "ra", "ifa", "pls", "spls")) {
+        set2Block(method)
 
-        if (tolower(type) == "cca")
+        if (tolower(method) == "cca")
             penalty <- setPenalty(c(0, 0))
 
-        else if (tolower(type) %in% c("ifa", "pls"))
+        else if (tolower(method) %in% c("ifa", "pls"))
             penalty <- setPenalty(c(1, 1))
 
-        else if (tolower(type) == "ra")
+        else if (tolower(method) == "ra")
             penalty <- setPenalty(c(1, 0))
 
     }
 
-    # Design with 1 values everywhere
-    else if (tolower(type) %in% c("sumcor",
+    # Design matrix of 1 values everywhere
+    else if (tolower(method) %in% c("sumcor",
                                 "ssqcor",
                                 "sabscor",
-                                "sumcov",
                                 "sumcov-1",
                                 "maxbet",
-                                "sabscov")) {
+                                "ssqcov-1",
+                                "maxbet-b",
+                                "sabscov-1")) {
         connection <- set_connection(matrix(1, J, J))
 
         # COR models
-        if (tolower(type) %in% c("sumcor", "ssqcor", "sabscor")) {
+        if (tolower(method) %in% c("sumcor", "ssqcor", "sabscor")) {
             penalty <- setPenalty(rep(0, J))
 
             switch(
-                tolower(type),
+                tolower(method),
                 "sumcor" = {
                     scheme <- setScheme("horst")
                 },
@@ -176,47 +179,45 @@ select_analysis <- function(
         }
 
         # COV models
-        else if (tolower(type) %in% c(
-            "sumcov",
+        else if (tolower(method) %in% c(
             "sumcov-1",
             "maxbet",
-            "ssqcov",
             "ssqcov-1",
             "maxbet-b",
-            "sabscov",
             "sabscov-1"
         )) {
             penalty <- setPenalty(rep(1, J))
 
-            if (tolower(type) %in% c("sumcov", "sumcov-1", "maxbet"))
+            if (tolower(method) %in% c("sumcov-1", "maxbet"))
                 scheme <- setScheme("horst")
 
-            else if (tolower(type) %in% c("ssqcov", "ssqcov-1", "maxbet-b"))
+            else if (tolower(method) %in% c("ssqcov-1", "maxbet-b"))
                 scheme <- setScheme("factorial")
 
-            else if (tolower(type) %in% c("sabscov", "sabscov-1"))
+            else if (tolower(method) %in% c("sabscov-1"))
                 scheme <- setScheme("centroid")
 
         }
 
-        # Design with 1 values everywhere and 0 on the diagonal
+        # Design matrix with 1 values everywhere except
+        # on the diagonal equals to 0
     }
 
-    else if (tolower(type) %in% c("sumcov-2",
-                                "maxdiff",
-                                "ssqcov",
-                                "ssqcov-1",
-                                "maxbet-b",
-                                "ssqcov-2",
-                                "maxdiff-b")) {
+    else if (tolower(method) %in% c("sumcov",
+                                  "sumcov-2",
+                                  "maxdiff",
+                                  "ssqcov",
+                                  "ssqcov-2",
+                                  "maxdiff-b",
+                                  "sabscov-2")) {
         connection <- set_connection(1 - diag(J))
 
-        if (tolower(type) %in% c("sumcov-2", "maxdiff")) {
+        if (tolower(method) %in% c("sumcov", "sumcov-2", "maxdiff")) {
             scheme <- setScheme("horst")
-            penalty <- setPenalty(rep(0, J))
+            penalty <- setPenalty(rep(1, J))
         }
 
-        else if (tolower(type) %in% c("ssqcov-2", "maxdiff-b")) {
+        else if (tolower(method) %in% c("ssqcov", "ssqcov-2", "maxdiff-b")) {
             scheme <- setScheme("factorial")
             penalty <- setPenalty(rep(1, J))
         }
@@ -224,73 +225,40 @@ select_analysis <- function(
     }
 
     # Models with a superblock
-    else if (tolower(type) %in% c(
-        "maxvar-b",
-        "gcca",
-        "niles",
-        "maxvar",
-        "hpca",
-        "maxvar-a",
-        "cpca",
-        "cpca-w",
-        "mfa",
-        "sum-pca",
-        "mcoa",
-        "rcon-pca",
-        "ridge-gca",
-        "r-maxvar"
-    )) {
-        setSuperbloc()
+    else if (tolower(method) %in% c("gcca", "maxvar", "maxvar-b",
+                                  "cpca-1", "cpca-2", "maxvar-a", "mcoa",
+                                  "cpca-4", "hpca")){
+        setSuperblock()
 
-        if (tolower(type) %in% c("maxvar-b", "gcca", "niles", "maxvar")) {
+        if (tolower(method) %in% c("gcca", "maxvar", "maxvar-b")) {
             scheme <- setScheme("factorial")
             penalty <- setPenalty(rep(0, J + 1))
         }
 
-        else if (tolower(type) == "hpca") {
-            scheme <- function(x)
-                x ^ 4
+        else if (tolower(method) == "cpca-1") {
+            scheme <- function(x) x
             penalty <- setPenalty(c(rep(1, J), 0))
         }
 
-        else if (tolower(type) %in% c(
-            "maxvar-a",
-            "cpca",
-            "cpca-w",
-            "mfa",
-            "sum-pca",
-            "mcoa"
-        )) {
+        else if (tolower(method) %in% c("maxvar-a", "cpca-2", "mcoa")){
             scheme <- setScheme("factorial")
             penalty <- setPenalty(c(rep(1, J), 0))
         }
 
-        #TODO: verify these three last algo parameters
-
-        else if (tolower(type) == "rcon-pca")
-            penalty <- warnSuper(penalty)
-
-        else if (tolower(type) == "ridge-gca") {
-            scheme <- setScheme("factorial")
-            penalty <- setPenalty(c(penalty[seq(J)], 0))
+        else if (tolower(method) %in% c("hpca", "cpca-4")) {
+            scheme <- function(x) x^4
+            penalty <- setPenalty(c(rep(1, J), 0))
         }
-
-        else if (tolower(type) == "r-maxvar") {
-            scheme <- setScheme("factorial")
-            penalty <- warnSuper(penalty)
         }
-
-    }
 
     ### WARNINGS ###
-
-    n = length(warn.type.par)
+    n = length(warn.method.par)
     if (verbose & n > 0) {
-        setPlural = function(x = warn.type.par,
-                            y = warn.type.value,
-                            sep = " and ") {
-            warn.type.par <<- paste0(x, collapse = sep)
-            warn.type.value <<- paste0(y, collapse = sep)
+        setPlural = function(x = warn.method.par,
+                             y = warn.method.value,
+                             sep = " and "){
+            warn.method.par <<- paste0(x, collapse = sep)
+            warn.method.value <<- paste0(y, collapse = sep)
         }
 
         if (n > 1) {
@@ -298,29 +266,25 @@ select_analysis <- function(
             if (n == 2)
                 setPlural()
             else{
-                warn.type = c(warn.type.par[n], warn.type.value[n])
-                setPlural(warn.type.par[-n], warn.type.value[-n], ", ")
-                setPlural(c(warn.type.par, warn.type[1]),
-                        c(warn.type.value, warn.type[2]))
+                warn.method = c(warn.method.par[n], warn.method.value[n])
+                setPlural(warn.method.par[-n], warn.method.value[-n], ", ")
+                setPlural(c(warn.method.par, warn.method[1]),
+                        c(warn.method.value, warn.method[2]))
             }
         } else
             grammar <- " was"
 
-        msg <- paste0(warn.type.par,
-                    " parameter",
-                    grammar,
-                    " set to ",
-                    warn.type.value)
+        msg <- paste0(warn.method.par, " parameter",
+                      grammar, " set to ", warn.method.value)
 
-        if (superblock & tolower(type) != "pca")
+        if (superblock & tolower(method) != "pca")
             msg <- paste0(msg, " and ", msg_superblock)
 
         warning(paste0(msg_type, msg , "."))
     }
 
     if (verbose & superblock) {
-        if (n < 0)
-            paste0(msg_superblock, msg_superblock)
+        if (n < 0) paste0(msg_superblock, msg_superblock)
     }
 
     if (!quiet & length(warn.msg.super) > 0) {
@@ -329,16 +293,12 @@ select_analysis <- function(
             grammar <- "were those"
         } else
             grammar <- "was the one"
-
-        # warning(paste0("By using a superblock, ", warn.msg.super,
-        #    " of the superblock ", grammar," of the first block."))
     }
 
-    return(list(
-        scheme = scheme,
-        penalty = penalty,
-        ncomp = ncomp,
-        connection = connection,
-        superblock = superblock
-    ))
+    return(list(scheme = scheme,
+                penalty = penalty,
+                ncomp = ncomp,
+                connection = connection,
+                superblock = superblock)
+           )
 }

@@ -4,41 +4,60 @@
 \alias{plot.rgcca}
 \title{Plot for RGCCA}
 \usage{
-\method{plot}{rgcca}(x, type = "weight", block = length(x$A),
-  comp = 1:2, resp = rep(1, NROW(x$Y[[1]])), remove_var = FALSE,
-  text_var = TRUE, text_ind = TRUE, response_name = "Response",
-  no_overlap = FALSE, title = NULL, n_mark = 30, collapse = FALSE,
-  cex = 1, cex_sub = 12, cex_main = 14, cex_lab = 12,
-  colors = NULL, ...)
+\method{plot}{rgcca}(
+  x,
+  type = "weight",
+  block = length(x$call$blocks),
+  comp = 1:2,
+  resp = rep(1, NROW(x$Y[[1]])),
+  remove_var = FALSE,
+  text_var = TRUE,
+  text_ind = TRUE,
+  response_name = "Response",
+  overlap = TRUE,
+  title = NULL,
+  n_mark = 30,
+  collapse = FALSE,
+  cex = 1,
+  cex_sub = 12,
+  cex_main = 14,
+  cex_lab = 12,
+  cex_axis = 10,
+  colors = NULL,
+  ...
+)
 }
 \arguments{
-\item{x}{A RGCCA object (see \code{\link[RGCCA]{rgcca}})}
+\item{x}{A fitted RGCCA object (see \code{\link[RGCCA]{rgcca}})}
 
-\item{type}{A character among 'ind', 'var', 'both', 'ave', 'cor', 'weight', 'network' (see details).}
+\item{type}{A character string: 'sample', 'weight', 'loadings', 'corCircle',
+'both', 'ave', 'network' (see details).}
 
-\item{block}{A vector of integers giving the index of a list of blocks or a block = 'all' for all of them}
+\item{block}{A numeric vector indicating the blocks to consider.}
 
-\item{comp}{An integer giving the index of the analysis components}
+\item{comp}{An integer indicating the block-weight/loading vector to plot.}
 
 \item{resp}{A vector of characters corresponding either to a qualitative
 variable with levels or a continuous variable}
 
-\item{remove_var}{A bolean to keep only the 100 variables of each
-component with the biggest correlation#'}
+\item{remove_var}{logical value. If TRUE, the top 100 variables with the
+highest with the block components are displayed}
 
-\item{text_var}{A bolean to represent the variables with their row names (TRUE)
-or with circles (FALSE)}
+\item{text_var}{logical value indicating whether variable names are displayed
+(default = TRUE)}
 
-\item{text_ind}{A bolean to represent the individuals with their row names (TRUE)
-or with circles (FALSE)}
+\item{text_ind}{logical value indicating whether sample names are displayed
+(default = TRUE).}
 
 \item{response_name}{A character giving the legend title}
 
-\item{no_overlap}{A boolean to avoid overlap in plotted text}
+\item{overlap}{logical value enables avoiding overlapping between labels
+(default = FALSE)}
 
 \item{title}{A character giving the title of the plot}
 
-\item{n_mark}{An integer giving the number of top variables to select}
+\item{n_mark}{The number of top variables to display in the correlation
+circle}
 
 \item{collapse}{A boolean to combine the variables of each block as result}
 
@@ -50,36 +69,67 @@ or with circles (FALSE)}
 
 \item{cex_lab}{An integer for the size of the axis titles}
 
-\item{colors}{Either a vector of integers (each integer corresponding to a color) or of characters corresponding to names of colors (as "blue",see colors()) or RGB code ("#FFFFFF").}
+\item{cex_axis}{An integer for the size of the axis text}
 
-\item{...}{Further graphical parameters applied to both (individual and variable) spaces}
+\item{colors}{Either a vector of integers (each integer corresponding to a
+color) or of characters corresponding to names of colors (as "blue",see
+colors()) or RGB code ("#FFFFFF").}
+
+\item{...}{additional graphical parameters}
 }
 \description{
 Plot different outputs of the results obtained by a rgcca function
 }
 \details{
 \itemize{
- \item "ind" for individual graph: Y of rgcca are plotted. In abscissa Y[[i_block]][,compx], in ordinate, Y[[i_block_y]][,compy]. Each point correspond to one individual. It can be colored with the resp. options. The colors by default can be modified in colors options.
-\item  "var" for variable graph: in abscissa, the correlations with the first axis, in ordinate, the correlation with the second axis. 
-\item "both": displays both ind and var graph (this requires only one block (i_block=i_block_y) and at least two components in the rgcca calculation (ncomp>1 for this block)
-\item "ave": displays the variance average in each block
-\item "net": displays the graphical network corresponding to the connection matrix used in the rgcca
-\item "cor": barplot corresponding to the correlation of each variable with a chosen axis (specified by i_block and compx). Variables are sorted from the highest to the lowest and only the highest are displayed (to modify the number, use the parameter n_marks)
-\item "weight":barplot corresponding to the correlation of each variable with a chosen axis (specified by i_block and compx). Variables are sorted from the highest to the lowest and only the highest are displayed (to modify the number, use the parameter n_marks)
-}
+\item "sample" for sample plot. The blocks (block argument) and components
+(comp) that will be used on the horizontal and the vertical axes to plot the
+individuals: (Y[[block[1]]][, comp[1]], Y[[block[2]]][,comp[2]]). Points can
+be colored according to the resp argument. The colors of the points can be
+modified with the colors argument.
+\item "weight": barplot of the block weight vector for one
+specific block/component. The weights are sorted from the highest to
+the lowest and only the highest are displayed. The number of displayed
+weights can be set with n_marks.
+\item "loadings": barplot of the block-loading vector. Variables are sorted
+in decreasing correlations and only the highest
+correlations are displayed. The number of displayed correlations can be set
+with n_marks (defaut value = 30).
+\item  "CorCircle" for correlation circle.
+\item "both": displays both sample plot and correlation circle (implemented
+only for one block and at least when two components are asked (ncomp >= 2).
+\item "ave": displays the average variance explained for each block.}
 }
 \examples{
 data(Russett)
-X_agric =as.matrix(Russett[,c("gini","farm","rent")]);
-X_ind = as.matrix(Russett[,c("gnpr","labo")]);
-X_polit = as.matrix(Russett[ , c("demostab", "dictator")]);
-A = list(X_agric, X_ind, X_polit);
-C = matrix(c(0, 0, 1, 0, 0, 1, 1, 1, 0), 3, 3);
-resRgcca=rgcca(blocks=A,connection=C,
-tau=rep(1,3),ncomp=rep(2,3),superblock=FALSE)
-plot(resRgcca,type="cor")
-plot(resRgcca,type="weight")
-plot(resRgcca,type="ind")
-plot(resRgcca,type="var")
-plot(resRgcca,type="both")
+status = colnames(Russett)[9:11][apply(Russett[, 9:11], 1, which.max)]
+X_agric =as.matrix(Russett[, c("gini","farm","rent")])
+X_ind = as.matrix(Russett[, c("gnpr","labo")])
+X_polit = as.matrix(Russett[ , c("demostab", "dictator")])
+A = list(X_agric = X_agric, X_ind = X_ind, X_polit = X_polit)
+C = matrix(c(0, 0, 1, 0, 0, 1, 1, 1, 0), 3, 3)
+fit.rgcca=rgcca(blocks = A, connection = C,
+                tau = rep(1, 3), ncomp = rep(2, 3))
+
+###############
+# sample plot #
+###############
+# horizontal axis: First component of the first block
+# vertical axis: First component of the second block
+plot(fit.rgcca, type = "sample", block = 1:2, comp = 1, resp = status)
+
+
+######################
+# Correlation circle #
+######################
+# with superblock
+fit.mcoa = rgcca(blocks=A, scheme = "factorial", ncomp = rep(2, 4),
+                 tau = c(1, 1, 1, 0), superblock = TRUE)
+
+plot(fit.mcoa, type = "both", resp = status, overlap = FALSE)
+plot(fit.rgcca, type = "loadings")
+plot(fit.rgcca, type = "weight")
+plot(fit.rgcca, type = "sample")
+plot(fit.rgcca, type = "corCircle")
+plot(fit.rgcca, type = "ave")
 }

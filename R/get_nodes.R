@@ -1,11 +1,11 @@
 # Creates the nodes for a design matrix
-# 
+#
 # @inheritParams plot_var_2D
 # @return A dataframe with rgcca_res$call$blocks in rows and the number of variables, of rows
 # and tau or sparsity in columns
 get_nodes <- function(rgcca_res) {
 
-    if ( tolower(rgcca_res$call$type) %in% c("sgcca", "spls", "spca")) {
+    if ( tolower(rgcca_res$call$method) %in% c("sgcca", "spls", "spca")) {
         par_rgcca <- "sparsity"
         par_name <- "sparsity"
     } else
@@ -31,5 +31,5 @@ get_nodes <- function(rgcca_res) {
     nodes <- as.data.frame(matrix(unlist(values), length(rgcca_res$call$blocks), length(values)))
     colnames(nodes) <- c("id", "P", "nrow", par_name)
 
-    return(nodes) 
+    return(nodes)
 }

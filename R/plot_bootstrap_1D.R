@@ -1,162 +1,142 @@
-#' Plot a bootstrap in 1D
+#' Plot a fitted bootstrap object in 1D
 #'
-#' Barplot of the best variables from a bootstrap with, on the x-axis,
-#' the number of non-zero occurrences (SGCCA) or the mean of the bootstrap weights 
-#' (RCCA). The bars are colored according to the significant 95% bootstrap 
-#' intervals ('*' or 'ns'; see 'p.vals' in details for 
-#' \code{\link[RGCCA]{get_bootstrap}}) for RGCCA and according to the occurences
-#'  of the weights which are not equal to zero (according to an ascending 
-#'  gradient from red to blue) for SGCCA. In SGCA, the significant variables 
-#'  are those above the three bars, respectively, with an alpha = 0.05 
-#'  (dark red), 0.01 (red) and 0.001 (light red).
+#' Display bootstrap confidence intervals for RGCCA or the number of non-zero
+#' occurrences for SGCCA. The bars are colored according to the
+#' significancy  block weight vectors ('*' or 'ns'; see 'pval' in details for
+#' \code{\link[RGCCA]{get_bootstrap}}) for RGCCA and according to the
+#' occurrences of non-zero weights for SGCCA. In SGCCA, the significant
+#' variables are those above the three bars, respectively, with an alpha = 0.05
+#' (dark red), 0.01 (red) and 0.001 (light red).
 #' @inheritParams plot_histogram
 #' @inheritParams get_bootstrap
 #' @inheritParams plot_var_2D
 #' @param df_b A get_bootstrap object \code{\link[RGCCA]{get_bootstrap}}
-#' @param b A boostrap object \code{\link[RGCCA]{bootstrap}}
-#' @param x A character for the index used in the plot (see details).
-#' @param y A character for the index to color the bars (see details).
-#' @param display_bar A boolean to display the bar for significative variables.
+#' @param b A fitted bootstrap object \code{\link[RGCCA]{bootstrap}}
+#' @param type Character string indicating the bootstrapped object to print:
+#' block-weight vectors ("weight", default) or block-loading vectors
+#' ("loadings").
+#' @param x indicator used in the plot (see details).
+#' @param y A character string indicating for the index to color the bars
+#' (see details).
+#' @param display_bar A logical value. If TRUE colorbar for significant
+#' variables is displayed.
 #' @param ... Other parameters (see plot_histogram)
-#' @details 
+#' @details
 #' \itemize{
-#' \item 'estimate' for RGCCA weights
-#' \item 'bootstrap_ratio' for the mean of the bootstrap weights / their standard error
+#' \item 'estimate' of the block weight vectors
+#' \item 'bootstrap_ratio' of the block weight/loading vectors
 #' \item 'sign' for significant 95% bootstrap interval
-#' \item 'occurrences' for non-zero occurences
-#' \item 'mean' for the mean of the bootstrap weights
+#' \item 'occurrences' number of for non-zero occurrences
+#' \item 'mean'  mean of the bootstraped block weight vectors
 #' }
 #' @examples
 #' data("Russett")
-#' blocks = list(agriculture = Russett[, seq(3)], industry = Russett[, 4:5],
-#'     politic = Russett[, 6:11] )
-#' rgcca_out = rgcca(blocks, sparsity = 0.75, type = "sgcca")
-#' boot = bootstrap(rgcca_out, 2, n_cores = 1)
-#' plot_bootstrap_1D(boot, n_cores = 1)
+#' blocks = list(agriculture = Russett[, seq(3)],
+#'               industry = Russett[, 4:5],
+#'               politic = Russett[, 6:11])
+#' fit.sgcca = rgcca(blocks, sparsity = 0.75, method = "sgcca")
+#' fit.stab = rgcca_stability(fit.sgcca, n_boot = 20, n_cores = 1)
+#' boot = bootstrap(fit.stab,
+#'                  n_boot = 30, n_cores = 1)
+#' plot_bootstrap_1D(boot, type = "weight")
 #' rgcca_out = rgcca(blocks)
 #' boot = bootstrap(rgcca_out, 2, n_cores = 1)
-#' selected.var = get_bootstrap(boot, n_cores = 1,display_order=TRUE)
-#' plot_bootstrap_1D(boot, n_cores = 1)
+#' selected.var = get_bootstrap(boot, display_order=TRUE)
+#' plot_bootstrap_1D(boot)
 #' plot_bootstrap_1D(df_b = selected.var)
+#'
 #' @export
 #' @importFrom ggplot2 ggplot
 #' @importFrom stats qbinom
+#' @importFrom utils head
+#' @importFrom grDevices grey.colors
 plot_bootstrap_1D <- function(
     b = NULL,
     df_b = NULL,
+    type = "weight",
     x = "estimate",
-    y = "occurrences",
+    y = "sign",
     n_mark = 50,
-    title = NULL, 
+    display_order = TRUE,
+    title = NULL,
     colors = NULL,
     comp = 1,
-    bars = "sd",
     display_bar = TRUE,
-    i_block = length(b$bootstrap[[1]]),
-    collapse = FALSE,
-    n_cores = parallel::detectCores() - 1,
+    i_block = length(b$bootstrap[[1]][[1]]),
     ...) {
 
     if (missing(b) && missing(df_b))
-        stop_rgcca("Please select a bootstrap object.")
+        stop_rgcca("Please select a fitted bootstrap object.")
     if (!is.null(b)) {
         df_b <- get_bootstrap(
             b,
+            type = type,
             comp,
             block = i_block,
-            collapse,
-            n_cores,
-            bars = bars,
-            display_order = TRUE
+            display_order = display_order
         )
     }
+
     if (!is.null(df_b))
         stopifnot(is(df_b, "df_bootstrap"))
+
     check_integer("n_mark", n_mark)
 
     if (is.null(title)) {
-        title <- paste0(
-            attributes(df_b)$indexes[[x]],
-            "\n(",
-            attributes(df_b)$n_boot,
-            " bootstraps)")
+        title <- paste0("Block-", type, " vector",
+            "\n(", attributes(df_b)$n_boot,
+            " bootstrap samples)")
     }
 
-    if (is.null(colors)) {
-        if (!(y %in% c("occurrences", "sign")))
-            colors <- c(color_group(seq(3))[1], "gray", color_group(seq(3))[3])
-        else
-            colors <- c(color_group(seq(3))[1], color_group(seq(3))[3])
-    }
-    lower_band <- NULL -> upper_band
+    lower_bound <- NULL -> upper_bound
     check_ncol(list(df_b), 1)
 
-    set_occ <- function(x) {
-        match.arg(x, names(attributes(df_b)$indexes))
-        if (x == "occurrences" && !x %in% colnames(df_b))
-            return("sign")
-        else
-            return(x)
+    if (n_mark > NROW(df_b)) n_mark <- NROW(df_b)
+
+    if( display_order){
+        df_b_head <- head(data.frame(
+            order_df(df_b, "estimate", allCol = TRUE),
+            order = NROW(df_b):1),
+            n_mark)
+    } else{
+        df_b_head <- head(data.frame( df_b, order = NROW(df_b):1), n_mark)
     }
 
-    x <- set_occ(x)
-    y <- set_occ(y)
-
-    if (y == "sign") 
-        group <- c("NS","*")
-    else
-        group <- NA
-
-    if (n_mark > NROW(df_b))
-        n_mark <- NROW(df_b)
-
-    df_b_head <- head(
-        data.frame(
-            order_df(df_b[, -NCOL(df_b)], x, allCol = TRUE),
-            order = NROW(df_b):1),  n_mark)
     df_b_head <- df_b_head[df_b_head[, "sd"] != 0, ]
     class(df_b_head) <- c(class(df_b), "d_boot1D")
 
-    if (!is.null(df_b_head$sign)) {
-        df_b_head$sign[df_b_head$sign == 1] <- "*"
-        df_b_head$sign[df_b_head$sign == 0] <- "NS"
-    }
+    df_b_head$sign <- ""
+    df_b_head$sign[df_b_head$pval<1e-3] <- "< 0.001"
+    df_b_head$sign[df_b_head$pval>=1e-3 & df_b_head$pval<1e-2] <- "< 0.01"
+    df_b_head$sign[df_b_head$pval>=1e-2 & df_b_head$pval<5e-2] <- "< 0.05"
+    df_b_head$sign[df_b_head$pval>=5e-2 & df_b_head$pval<1e-1] <- "< 0.1"
+    df_b_head$sign[df_b_head$pval>=1e-1] <- "> 0.1"
+
+    df_b_head$sign = factor(df_b_head$sign,
+                            levels=c(labels=c("< 0.001", "< 0.01",
+                                              "< 0.05", "< 0.1", "> 0.1")))
 
     p <- ggplot(
         df_b_head,
         aes(x = order,
-            y = df_b_head[, x],
-            fill = df_b_head[, y]))
+            y = df_b_head[, "estimate"],
+            fill = df_b_head[, "sign"])
+            )
 
-    p <- plot_histogram(
-        p,
-        df_b_head,
-        title,
-        group,
-        colors,
-        ...) +
-    labs(fill = attributes(df_b)$indexes[[y]])
+    p <- plot_histogram(p, df_b_head, title) +
+        scale_x_continuous(breaks = df_b_head$order,
+                           labels = rownames(df_b_head)) +
+        scale_fill_manual(values = grey.colors(6)[2:6],
+                          labels = c("< 0.001", "< 0.01", "< 0.05",
+                                     "< 0.1", "> 0.1"),
+                          drop = FALSE,
+                          name = "Signif.")
 
-    if (x == "estimate" && nrow(df_b_head) <= 50)
-        p <- p +
-            geom_errorbar(
-                aes(
-                    ymin = lower_band, 
-                    ymax = upper_band, 
-                    width = 0.5))
 
-    if (x == "occurrences" && display_bar) {
-        n_boot <- attributes(df_b)$n_boot
-        nvar <- NROW(df_b)
-        avg_n_occ <- sum(df_b$occurrences) / n_boot
-        probComp <- avg_n_occ / nvar
-
-        q <- qbinom(
-            size = n_boot,
-            prob = probComp,
-            p = 1 - 0.05 / nvar)
-
-        p <- p + geom_hline(yintercept = q, col = "black")
+    if (nrow(df_b_head) <= 50){
+        p <- p + geom_errorbar(aes(ymin = lower_bound,
+                                   ymax = upper_bound,
+                                   width = 0.5))
     }
 
     return(p)

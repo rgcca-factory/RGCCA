@@ -1,8 +1,8 @@
 # Get the indexes of the analysis
-# 
+#
 # @inheritParams plot_var_2D
 # @inheritParams get_ctr
-# @return A matrix containg the indexes (correlation of the blocks with a 
+# @return A matrix containg the indexes (correlation of the blocks with a
 # component or their weights) for each selected component and an associated response
 
 get_ctr2 <- function(
@@ -11,12 +11,12 @@ get_ctr2 <- function(
     compy = 2,
     compz = NULL,
     i_block = length(rgcca_res$call$blocks),
-    type = "cor",
+    type = "loadings",
     n_mark = 100,
     collapse = FALSE,
     remove_var = TRUE,
     resp=NULL) {
- 
+
     stopifnot(is(rgcca_res, "rgcca"))
     check_blockx("i_block", i_block, rgcca_res$call$blocks)
     check_ncol(rgcca_res$a, i_block)
@@ -44,7 +44,7 @@ get_ctr2 <- function(
 
     df <- get_ctr(rgcca_res, compx, compy, compz, i_block, type, collapse)
 
-    if (tolower(rgcca_res$call$type) %in% c("spls", "spca", "sgcca")) {
+    if (tolower(rgcca_res$call$method) %in% c("spls", "spca", "sgcca")) {
 
         if (collapse)
             J <- seq(length(rgcca_res$a))
@@ -82,13 +82,13 @@ get_ctr2 <- function(
         selectedVar <- row.names(df)
 
     # group by blocks
-    if (is.null(resp)) { 
+    if (is.null(resp)) {
         if ((rgcca_res$call$superblock && i_block == length(rgcca_res$a)) || collapse) {
             if (collapse) {
                 resp <- get_bloc_var(lapply(blocks.all, t), TRUE)
             } else{
                 resp <- get_bloc_var(rgcca_res$a)
-                
+
                 resp <- resp[
                     unlist(
                         lapply(
@@ -102,6 +102,6 @@ get_ctr2 <- function(
         } else
             resp <- rep(1, NROW(df))
     }
-   
+
     data.frame(df, resp)
 }

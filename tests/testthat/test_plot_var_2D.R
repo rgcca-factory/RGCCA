@@ -32,5 +32,5 @@ rgcca_out = rgcca(blocks, ncomp = 2)
  RussettWithNA[3,1]=NA
  blocksNA = list(agriculture = RussettWithNA[, seq(3)], industry = RussettWithNA[, 4:5],
                  politic = RussettWithNA[, 6:11] )
- resRGCCANA1=rgcca(blocksNA,method="complete", ncomp = 2)
+ resRGCCANA1=rgcca(blocksNA,NA_method="complete", ncomp = 2)
  plot_var_2D(resRGCCANA1, collapse = TRUE)

@@ -1,46 +1,42 @@
-scaling <- function(
-    blocks,
-    scale = TRUE,
-    bias = TRUE,
-    scale_block = TRUE) {
+scaling <- function(blocks, scale = TRUE, bias = TRUE, scale_block = TRUE) {
+    if(scale){
+        # Standardization of the variables of each block
+        blocks <- lapply(blocks,
+                         function(x) scale2(x, scale = TRUE, bias = bias)
+                         )
 
-    if (scale) {
-    
-        blocks <- lapply(
-            blocks, 
-            function(x)
-                scale2(x, scale = TRUE, bias = bias))  
-        # le biais indique si on recherche la variance biaisee ou non
-
-        if (scale_block) {
-            blocks <- lapply(blocks, function(x) {
-                y <- x / sqrt(NCOL(x))
-                attr(y, "scaled:scale") <-attr(x, "scaled:scale")* sqrt(NCOL(x))
-                return(y)
+        # Each block is divided by the square root of its number of variables
+        if(scale_block){
+           blocks <- lapply(blocks,
+                            function(x) {y <- x / sqrt(NCOL(x))
+                             attr(y, "scaled:scale") <-
+                                 attr(x, "scaled:scale")* sqrt(NCOL(x))
+            return(y)
             })
-   
+
         }
-        # on divise chaque bloc par la racine du nombre de variables pour avoir chaque
-        # poids pour le meme bloc
-    }else {
-        blocks <- lapply(
-            blocks, 
-            function(x) scale2(x, scale = FALSE, bias = bias))
+    } else{
+        blocks <- lapply(blocks,
+                         function(x)
+                             scale2(x, scale = FALSE, bias = bias)
+                         )
 
         if (scale_block) {
+            N = ifelse(bias, NROW(blocks[[1]]), NROW(blocks[[1]])-1)
             blocks <- lapply(blocks, function(x) {
-                if(dim(x)[1]>dim(x)[2])
+                if(NROW(x) > NCOL(x))
                 {
-                    covarMat <- cov2(x, bias = bias) 
+                    covarMat <- cov2(x, bias = bias)
                 }
                 else
                 {
-                    covarMat <- cov2(t(x), bias = bias) 
+                    covarMat <- 1/N*(x%*%t(x))
                 }
-                varianceBloc <- sum(diag(covarMat))
-                res <- x / sqrt(varianceBloc)
-                attr(res, "scaled:scale") <- rep(sqrt(sum(diag(covarMat))), dim(x)[2])
-                return(res)
+                variance_block <- sum(diag(covarMat))
+                out <- x / sqrt(variance_block)
+                attr(out, "scaled:scale") <-
+                    rep(sqrt(sum(diag(covarMat))), NCOL(x))
+                return(out)
             })
         }
 

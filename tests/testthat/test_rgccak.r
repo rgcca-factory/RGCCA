@@ -1,5 +1,5 @@
 # '# Test rgccak
-# 
+#
 # '''
 # setwd("./tests/testthat")
 library(MASS)
@@ -96,7 +96,7 @@ test_that("test_rgcca_tauOptya3",{
     prodYA3=resultRgccak_TauOpt$Y[,3]%*%t(resultRgccak_TauOpt$a[[3]])
     expect_true(all.equal(prodYA3,prodYA3_test))
 })
-# 
+#
 # set.seed(seed=2)
 # A1=matrix(rnorm(500),10,50);rownames(A1)=paste0("S",1:10)
 # set.seed(seed=3)
@@ -109,8 +109,8 @@ test_that("test_rgcca_tauOptya3",{
 # #save(resrgcca,file="resRgcca_k_dual")
 # load("../tests/results/resRgcca_k_dual")
 # resrgcca_k$Y==resrgcca$Y
-# 
-# 
+#
+#
 
 # Cas primal with missing values
 #----------------------------------------
@@ -123,7 +123,7 @@ A[[3]][5,1]=NA
 res_tau1_primal=rgccak(A,C=matrix(1,3,3)-diag(3),scheme="factorial")
 res_tau0_primal=rgccak(A,C=matrix(1,3,3)-diag(3),scheme="factorial",tau=c(0.5,0.5,0.5))
 
-# Cas dual 
+# Cas dual
 #------------
 data(Russett)
 X_agric =as.matrix(Russett[1:9,1]);
@@ -134,6 +134,3 @@ j=2
 t(!is.na(A[[j]]))%*%(!is.na(A[[j]]))
 res_tau0_dual=rgccak(A,C=matrix(1,2,2)-diag(2),tau=c(0.5,0.5))
 res_tau1_dual=rgccak(A,C=matrix(1,2,2)-diag(2),tau=c(1,1))
-
-
-

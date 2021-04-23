@@ -1,5 +1,5 @@
-# '# Test pm 
-# 
+# '# Test pm
+#
 # '''
 test_that("test_pm",{
     set.seed(42); A=matrix(rnorm(15),3,5)

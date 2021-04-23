@@ -30,10 +30,10 @@ Gifi, A. (1990), Nonlinear multivariate analysis, Chichester: Wiley.
 #Loading of the Russett dataset
 data(Russett)
 #Russett is partitioned into three blocks (X_agric, X_ind, X_polit)
-X_agric =as.matrix(Russett[,c("gini","farm","rent")])
-X_ind = as.matrix(Russett[,c("gnpr","labo")])
-X_polit = as.matrix(Russett[ , c("inst", "ecks", "death", "demostab", 
-                                 "demoinst", "dictator")])
+X_agric = Russett[,c("gini", "farm", "rent")]
+X_ind = Russett[,c("gnpr", "labo")]
+X_polit = Russett[ , c("inst", "ecks", "death", "demostab", 
+                                 "demoinst", "dictator")]
 A = list(X_agric, X_ind, X_polit)
 }
 \keyword{datasets}

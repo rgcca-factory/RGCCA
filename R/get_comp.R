@@ -1,5 +1,5 @@
 # Get the components of the analysis
-# 
+#
 # @inheritParams plot_ind
 # @inheritParams get_ctr
 # @param i_block_x An integer giving the index of a list of blocks
@@ -16,7 +16,7 @@ get_comp <- function(
     i_block_y = i_block_x,
     i_block_z = i_block_x,
     predicted = NULL){
-    
+
     stopifnot(is(rgcca_res, "rgcca"))
     resp <- as.matrix(check_response(resp, rgcca_res$Y))
 
@@ -46,7 +46,7 @@ get_comp <- function(
 
     } else if (length(unique(resp)) > 1) {
         names <- row.names(resp)
-        resp <- apply(as.matrix(resp), 1, as.character)
+      #  resp <- apply(as.matrix(resp), 1, as.character)
 
         if (!is.null(names)) {
 
@@ -71,16 +71,15 @@ get_comp <- function(
         } else {
             # warning("No rownames have been found in the group file. The rownames of the selected block of RGCCA have been used.")
             # resp <- rep("NA", NROW(df))
-            # rownames(resp) <- rownames(rgcca_res$A[[i_block_x]])
-            if (length(resp) != NROW(rgcca_res$A[[i_block_x]]))
+            # rownames(resp) <- rownames(rgcca_res$call$blocks[[i_block_x]])
+            if (length(resp) != NROW(rgcca_res$call$blocks[[i_block_x]]))
                 stop_rgcca("resp argument should have the same size than the number of rows in the selected block.")
         }
     } else
         resp <- resp[seq(NROW(df)), ]
 
-    if ((!is.character2(resp) &&
-        length(unique(resp)) > 5) || 
-            unique(resp) == 1 ) {
+    if ((is.numeric(resp)) ||
+         length(unique(resp)) == 1 ) {
         resp[resp == "NA"] <- NA
         df$resp <- as.numeric(resp)
     }else

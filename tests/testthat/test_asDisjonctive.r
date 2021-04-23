@@ -4,6 +4,3 @@ test_that("dim_with_level",{expect_true(sum(dim(asDisjonctive(vec,levs=c("demo",
 vec2=c("demo")
 test_that("dim_with_level_for_one",{expect_true(sum(dim(asDisjonctive(vec2, levs=c("demo","ndemo")))==c(1,2))==2
 )})
-
-
-

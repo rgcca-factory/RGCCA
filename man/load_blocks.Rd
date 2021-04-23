@@ -4,8 +4,14 @@
 \alias{load_blocks}
 \title{Create a list of matrix from loading files corresponding to blocks}
 \usage{
-load_blocks(file, names = NULL, separator = "\\t", header = TRUE,
-  rownames = 1, decimal = ".")
+load_blocks(
+  file,
+  names = NULL,
+  separator = "\\t",
+  header = TRUE,
+  rownames = 1,
+  decimal = "."
+)
 }
 \arguments{
 \item{file}{A character giving the path of a file}

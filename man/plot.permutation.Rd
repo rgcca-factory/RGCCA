@@ -2,14 +2,25 @@
 % Please edit documentation in R/plot.rgcca_permutation.R
 \name{plot.permutation}
 \alias{plot.permutation}
-\title{Plot permutation}
+\title{Plot fitted rgcca permutation object}
 \usage{
-\method{plot}{permutation}(x, type = "crit", cex = 1, title = NULL,
-  cex_main = 14 * cex, cex_sub = 12 * cex, bars = "points",
-  cex_point = 3 * cex, cex_lab = 19 * cex, ...)
+\method{plot}{permutation}(
+  x,
+  type = "crit",
+  cex = 1,
+  title = NULL,
+  cex_main = 14 * cex,
+  cex_sub = 12 * cex,
+  bars = "points",
+  cex_point = 3 * cex,
+  cex_lab = 19 * cex,
+  colors = c("red", "grey"),
+  ...
+)
 }
 \arguments{
-\item{x}{result of rgcca_permutation (see  \code{\link[RGCCA]{rgcca_permutation}})}
+\item{x}{a fitted rgcca_permutation object
+(see \code{\link[RGCCA]{rgcca_permutation}})}
 
 \item{type}{A character giving the type of the index to look at (among 'crit' for
 the RGCCA criterion and 'zstat' for the pseudo Z-score)}
@@ -28,26 +39,31 @@ the RGCCA criterion and 'zstat' for the pseudo Z-score)}
 
 \item{cex_lab}{An integer for the size of the axis titles}
 
-\item{...}{Further graphical parameters}
+\item{colors}{Either a vector of integers (each integer corresponding to a
+color) or of characters corresponding to names of colors (as "blue",see
+colors()) or RGB code ("#FFFFFF").}
+
+\item{...}{additional graphical parameters}
 }
 \description{
-Plot a permutation object (tuning RGCCA parameters). The parameters tuned 
-for maximizing RGCCA criteria is displayed in the title. In abscissa, the
-index of combination (number corresponding to the rownames of 'penalties' 
-in the tuning parameters object). In ordinate, a score depending of the
-'type' parameter. For 'type = crit', the grey dots correspond to the RGCCA 
-criteria of each permutation for each combination. For 'type = zstats', 
-the three horizontal bars in dashed lines correspond to the three 
-significance thresholds from the lowest  to the highest bar: 95%, 99% and 99.9%.
- The best parameters are in red by default.
+Plot a fitted rgcca permutation object. The various set of tuning parameters
+are represented in the x-axis and the the RGCCA objective function - obtained
+from the both the orginal and permuted blocks - in the y-axis. If type =
+"zstat" the value of the zstat for the various combinations are reported in
+the y-axis.
 }
 \examples{
-data("Russett")
-A <- list(agriculture = Russett[, seq(3)], industry = Russett[, 4:5],
-    politic = Russett[, 6:11] )
-perm <- rgcca_permutation(A, n_run = 2, n_cores = 1)
-plot(perm)
-perm <- rgcca_permutation(A, par_type = "sparsity", n_run = 5, n_cores = 1)
-plot(perm, type="zstat")
-plot(perm)
+data(Russett)
+A <- list(agriculture = Russett[, seq(3)],
+          industry = Russett[, 4:5],
+          politic = Russett[, 6:11])
+
+perm.out <- rgcca_permutation(A, par_type= "tau", n_perms = 2, n_cores = 1)
+print(perm.out)
+plot(perm.out)
+
+perm.out <- rgcca_permutation(A, par_type = "sparsity",
+                              n_perms = 5, n_cores = 1)
+print(perm.out)
+plot(perm.out, type = "zstat")
 }

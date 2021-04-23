@@ -1,5 +1,6 @@
 # inds : individuals removed from the blocks (for crossvalidation)
-# affects same parameters as rgcca_res (or other ones if specified) on a subset of individuals determined by inds (individuals to remove) 
+# affects same parameters as rgcca_res (or other ones if specified) on a subset 
+# of individuals determined by inds (individuals to remove)
 set_rgcca <- function(
     rgcca_res,
     blocks = NULL,
@@ -11,27 +12,27 @@ set_rgcca <- function(
     init = NULL,
     bias = TRUE,
     tol = 1e-03,
-    type = NULL,
+    method = NULL,
     scale = NULL,
     scale_block = NULL,
     superblock = NULL,
     response = NULL,
-    method = NULL,
+    NA_method = NULL,
     boot = FALSE,
     inds = NULL) {
     if(is.null(connection)){    connection <- rgcca_res$call$connection }
     if(is.null(scale)){    scale <- rgcca_res$call$scale }
     if(is.null(scale_block)){    scale_block <- rgcca_res$call$scale_block }
     if(is.null(superblock)){     superblock <- rgcca_res$call$superblock }
-    if(is.null(method)){    method <- rgcca_res$call$method }
+    if(is.null(NA_method)){    NA_method <- rgcca_res$call$NA_method }
     if(is.null(scheme)){     scheme <- rgcca_res$call$scheme}
     if(is.null(bias)){     bias <- rgcca_res$call$bias}
-    if(is.null(type)){   type <- rgcca_res$call$type}
+    if(is.null(method)){   method <- rgcca_res$call$method}
     if(is.null(init)){     init <- rgcca_res$call$init}
     if(is.null(ncomp)){        ncomp <- rgcca_res$call$ncomp}
      if (is.null(blocks)) {
       #  blocks <- rgcca_res$call$blocks
-         blocks=rgcca_res$call$raw
+         blocks = rgcca_res$call$raw
          blocks = descale(blocks)
         if (superblock) {
             for (i in c("tau", "sparsity", "ncomp")) {
@@ -56,11 +57,11 @@ set_rgcca <- function(
 
     if (!boot)
         blocks <- intersection_list(blocks)
-    
-    if (tolower(type) %in% c("sgcca", "spca", "spls")) {
+
+    if (tolower(method) %in% c("sgcca", "spca", "spls")) {
 
         if (!is.null(blocks) && !missing(tau) && missing(sparsity))
-            stop_rgcca(paste0("sparsity parameter required for ", tolower(type), "instead of tau."))
+            stop_rgcca(paste0("sparsity parameter required for ", tolower(method), "instead of tau."))
 
         par <- "sparsity"
         penalty <- sparsity
@@ -68,19 +69,20 @@ set_rgcca <- function(
     } else {
 
         if (!is.null(blocks) && !missing(sparsity) && missing(tau))
-            stop_rgcca(paste0("tau parameter required for ", tolower(type), "instead of sparsity."))
+            stop_rgcca(paste0("tau parameter required for ", tolower(method), "instead of sparsity."))
 
         par <- "tau"
         penalty <- tau
     }
 
-    if (boot) {
+    if (boot)
+    {
         boot_blocks <- list(NULL)
-        while (any(sapply(boot_blocks, function(x) length(x)) == 0)) {
-
+        while (any(sapply(boot_blocks, function(x) length(x)) == 0))
+        {
             id_boot <- sample(NROW(blocks[[1]]), replace = TRUE)
             boot_blocks <- lapply(
-                blocks, 
+                blocks,
                 function(x)
                     {
                         y= x[id_boot, , drop = FALSE]
@@ -91,26 +93,27 @@ set_rgcca <- function(
 # TODO : to be replaced by something else
            boot_blocks <- remove_null_sd(boot_blocks)
         }
-    }else
+    }
+    else
     {
-        if(length(inds)==0)
+        if(length(inds) == 0)
         {
-            boot_blocks=blocks
+            boot_blocks = blocks
         }
         else
         {
             boot_blocks <- lapply(blocks, function(x) x[-inds, , drop = FALSE])
-            if(class(boot_blocks[[response]])=="character")
+            if("character"%in% class(boot_blocks[[response]]))
             {
-                if(length(unique(boot_blocks[[response]]))==1)
+                if(length(unique(boot_blocks[[response]])) == 1)
                 {
-                    warning("One sample has no variablity. Resulted rgcca can not be run")
+                    warning("One block has no variablity and rgcca fails to fit.")
                     return(NULL)
                 }
             }
         }
     }
-       
+
 
     func <- quote(
         rgcca(
@@ -122,11 +125,11 @@ set_rgcca <- function(
             scheme = scheme,
             scale = scale,
             scale_block = scale_block,
-            type = type,
+            method = method,
             verbose = FALSE,
             init = init,
             bias = bias,
-            method = method,
+            NA_method = NA_method,
             tol = tol
         ))
 

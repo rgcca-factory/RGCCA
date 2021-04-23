@@ -15,4 +15,3 @@ test_that("get_comp",
           {
               expect_true(length(res)==3)
               })
-

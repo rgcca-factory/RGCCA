@@ -1,7 +1,7 @@
 #' Predict RGCCA
-#' 
+#'
 #' Predict a new block from a RGCCA
-#' 
+#'
 #' @inheritParams plot_ind
 #' @param newA A list of either a dataframe/matrix or a vector giving the blocks to be predicted
 #' @param fit A character giving the function used to compare the trained and the tested models
@@ -150,7 +150,7 @@ rgcca_predict = function(
             newA2[[bloc_to_pred]]=asDisjonctive(newA2[[bloc_to_pred]],levs=unique(rgcca_res$call$raw[[bloc_to_pred]]))
         }
     }
-  
+
     # Matching the columns in the predict function
     if (model == "regression") {
         MATCH <- match(names(newA1), names(rgcca_res$call$blocks))
@@ -188,7 +188,7 @@ rgcca_predict = function(
         stop_rgcca("Please, number of blocks is not the same")
 
     # Scaling de newA (si besoin ie new_scaled=FALSE-cas usuel, et si la rgcca utilise des blocs scales)
-    if (!new_scaled  ) { 
+    if (!new_scaled  ) {
         center_vector=reorderList(rgcca_res$call$blocks, t_attr = "scaled:center",MATCH=MATCH,MATCH_col=MATCH_col2)
         scaling_vector=reorderList(rgcca_res$call$blocks, t_attr = "scaled:scale",MATCH=MATCH,MATCH_col=MATCH_col2)
           #center_vector=lapply(rgcca_res$call$blocks,function(x)return(attr(x,"scaled:center")))
@@ -231,13 +231,13 @@ rgcca_predict = function(
     }
     )
      names(pred)=names(newA)
- 
+
      if (missing(bloc_to_pred))
          return(list(pred_y = pred))
- 
+
      bloc_y <- match(bloc_to_pred, names(rgcca_res$call$blocks))
      newbloc_y <- match(bloc_to_pred, names(newA3))
- 
+
      # to_pred definition
      if(model=="classification")
      {
@@ -247,8 +247,8 @@ rgcca_predict = function(
      if(model=="regression")
      {
         to_pred_train <- blocks_rgcca_res[[bloc_y]][, MATCH_col[[newbloc_y]], drop = FALSE]
-         to_pred_test <- newA3[[newbloc_y]] 
-       
+         to_pred_test <- newA3[[newbloc_y]]
+
          if (!is.null(dim(newA[[1]]))) {
              if (any(colnames(to_pred_train) != colnames(to_pred_test)))
                  stop_rgcca("Please, train and test sets do not have the same name")
@@ -414,8 +414,20 @@ rgcca_predict = function(
 #             #     }
 #             # }
              )
-         res=class.fit ==to_pred_test
-         score <- 1-(sum(res) / length(to_pred_test))
+
+
+          if(length(class.fit)==1)
+          {
+            res=class.fit==as.vector(to_pred_test)
+            score=1-res
+          }
+         else
+         {
+           res=class.fit ==to_pred_test
+           score <- 1-(sum(res) / length(to_pred_test))
+         }
+
+
      }
  
     result <- list(

@@ -10,6 +10,7 @@
 # return a plotly object
 #'@importFrom graphics layout
 #'@importFrom plotly ggplotly config
+#'@importFrom utils packageVersion
 plot_dynamic <- function(
     f,
     ax = NULL,
@@ -35,10 +36,10 @@ plot_dynamic <- function(
                     xaxis = ax,
                     yaxis = ax,
                     annotations = list(showarrow = FALSE, text = "")
-                ) %>% 
+                ) %>%
                 plotly::style(hoverinfo = text)
             ))
-    else 
+    else
         p <- ggplotly(f)
 
     legend_qual <- p$x$layout$annotations[[1]]$text
@@ -97,7 +98,7 @@ plot_dynamic <- function(
 
     if (NCOL(f$data) == 3)
         p$sample_names <- lapply(
-            levels(as.factor(f$data[, 3])), 
+            levels(as.factor(f$data[, 3])),
             function(x) row.names(subset(f$data, f$data[, 3] == x)))
     else
         p$sample_names <- list(row.names(f$data))
@@ -132,6 +133,6 @@ plot_dynamic <- function(
                width = 500,
                height = 500
            )
-    )  %>% 
+    )  %>%
         plotly::layout(hovermode = "closest")
 }
