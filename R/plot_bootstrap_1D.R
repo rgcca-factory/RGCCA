@@ -123,10 +123,13 @@ plot_bootstrap_1D <- function(
             fill = df_b_head[, "sign"])
             )
 
+    if (is.null(colors))
+        colors <-  c(color_group(seq(3))[1], "gray", color_group(seq(3))[3])
+
     p <- plot_histogram(p, df_b_head, title) +
         scale_x_continuous(breaks = df_b_head$order,
                            labels = rownames(df_b_head)) +
-        scale_fill_manual(values = grey.colors(6)[2:6],
+        scale_fill_manual(values = colorRampPalette(colors)(6),
                           labels = c("< 0.001", "< 0.01", "< 0.05",
                                      "< 0.1", "> 0.1"),
                           drop = FALSE,

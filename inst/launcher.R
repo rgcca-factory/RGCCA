@@ -451,7 +451,7 @@ tryCatch({
             ncomp = opt$ncomp,
             scheme = opt$scheme,
             scale = opt$scale,
-            type = opt$type
+            method = opt$type
         )
     )
     if (tolower(opt$type) %in% c("sgcca", "spca", "spls")) {

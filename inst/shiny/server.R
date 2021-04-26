@@ -985,7 +985,7 @@ server <- function(input, output, session) {
                             scale_block = FALSE,
                             init = input$init,
                             bias = TRUE,
-                            type = analysis_type
+                            method = analysis_type
                         )
                    )
                    if (tolower(analysis_type) %in% c("sgcca", "spca", "spls"))
@@ -1015,7 +1015,7 @@ server <- function(input, output, session) {
             func <- quote(
                 rgcca_cv( 
                     blocks,
-                    type = analysis_type,
+                    method = analysis_type,
                     response = response,
                     validation = input$val,
                     k = input$kfold,
@@ -1072,7 +1072,7 @@ server <- function(input, output, session) {
             func <- quote(
                 rgcca_permutation(
                     blocks_without_superb,
-                    n_run = input$nperm,
+                    n_perms = input$nperm,
                     connection = connection,
                     response = response,
                     superblock = (!is.null(input$supervised) &&
@@ -1083,19 +1083,23 @@ server <- function(input, output, session) {
                     ncomp = getNcomp(),
                     init = input$init,
                     bias = TRUE,
-                    type = analysis_type
+                    method = analysis_type,
+                    n_cores = 2
                 )
             )
-            if (tolower(analysis_type) %in% c("sgcca", "spca", "spls"))
+            if (tolower(analysis_type) %in% c("sgcca", "spca", "spls")) {
                 func[["sparsity"]] <- tau
-            else
+                func$par_type <- "sparsity"
+            } else {
                 func[["tau"]] <- tau
+                func$par_type <- "tau"
+            }
             showWarn(eval(as.call(func)), msg = TRUE)
         },
         .GlobalEnv)
  
         show(id = "navbar")
-        show(id= "run_analysis")
+        show(id = "run_analysis")
         show(selector = "#navbar li a[data-value=Permutation]")
         show(selector = "#navbar li a[data-value='Permutation Summary']")
         updateTabsetPanel(session, "navbar", selected = "Permutation")
@@ -1856,7 +1860,9 @@ server <- function(input, output, session) {
         
         if (!is.null(perm)) {
 
-            s_perm <- summary.perm(perm)
+            tab_res <- cbind(perm$crit, perm$means, perm$sds, perm$zstat, perm$pvals)
+            colnames(tab_res) <- c("RGCCA crit", "Perm. crit", "S.D.", "Z", "P-value")
+            s_perm <- round(cbind(perm$penalties, tab_res), 3)
 
             observeEvent(input$permutation_t_save, {
                 write.table(s_perm, "summary_permutation.txt", sep = "\t", row.names = FALSE)

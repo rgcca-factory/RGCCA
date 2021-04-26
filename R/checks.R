@@ -63,6 +63,13 @@ check_connection <- function(C, blocks) {
 
     msg <- "The design matrix C should"
 
+        if (!all(rownames(C) %in% names(blocks)) ||
+        !all(colnames(C) %in% names(blocks)))
+        stop_rgcca(paste(msg,
+                         "have the rownames and the colnames that match with",
+                         "the names of the blocks."),
+                   exit_code = 108)
+
     if (!isSymmetric.matrix(unname(C)))
         stop_rgcca(paste(msg, "be symmetric."), exit_code = 103)
 
@@ -85,13 +92,6 @@ check_connection <- function(C, blocks) {
 
     if(is.null(rownames(C)) || is.null(colnames(C)))
         rownames(C) <- names(blocks) -> colnames(C)
-
-    if (!all(rownames(C) %in% names(blocks)) ||
-        !all(colnames(C) %in% names(blocks)))
-        stop_rgcca(paste(msg,
-                         "have the rownames and the colnames that match with",
-                         "the names of the blocks."),
-                   exit_code = 108)
 
     return(C)
     # TODO: warning if superblock = TRUE
@@ -264,7 +264,7 @@ check_quantitative <- function(df, fo, header = FALSE, warn_separator = FALSE) {
 check_response <- function(response = NULL, df = NULL) {
 
     if (!is.null(response)) {
-        qualitative <- is.character(response)
+        qualitative <- is.character2(response, type = "all")
 
         # if (length(qualitative) > 1)
         #     stop_rgcca(

@@ -111,7 +111,7 @@ rgcca_predict = function(
 
     # Initializations
     prediction <- NULL
-    if (rgcca_res$call$method == "complete") {
+    if (rgcca_res$call$NA_method == "complete") {
         rgcca_res$call$blocks <- intersection_list(rgcca_res$call$blocks)
     }
     astar <- rgcca_res$astar
@@ -145,6 +145,9 @@ rgcca_predict = function(
     if(!is.null(bloc_to_pred))
     {
         if(mode(newA2[[bloc_to_pred]])=="character")
+            #TODO: ??? Work only if bloc_to_pred is a vector; in most of
+            #the case, it's a matrix. See what I ve done for rgcca. But do 
+            #not copy paste and create a new function to avoid code redundancy
         {
             if(length(unique(rgcca_res$call$raw[[bloc_to_pred]]))==1){stop("Only one level in the variable to predict")}
             newA2[[bloc_to_pred]]=asDisjonctive(newA2[[bloc_to_pred]],levs=unique(rgcca_res$call$raw[[bloc_to_pred]]))

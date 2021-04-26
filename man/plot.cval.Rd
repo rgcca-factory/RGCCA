@@ -9,8 +9,9 @@
   bars = "sd",
   cex = 1,
   cex_main = 14 * cex,
-  cex_sub = 10 * cex,
+  cex_sub = 12 * cex,
   cex_lab = 10 * cex,
+  cex_point = 3 * cex,
   colors = c("red", "black"),
   ...
 )
@@ -27,6 +28,8 @@
 \item{cex_sub}{An integer for the size of the subtitle}
 
 \item{cex_lab}{An integer for the size of the axis titles}
+
+\item{cex_point}{An integer for the size of the points or the text in the plot}
 
 \item{colors}{Either a vector of integers (each integer corresponding to a
 color) or of characters corresponding to names of colors (as "blue",see

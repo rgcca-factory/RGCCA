@@ -14,7 +14,7 @@ is.character2 <- function(x, type = "any", warn_separator = FALSE) {
 
     # NA tolerance :
 
-    x <- as.vector(x)
+    x <- as.vector(as.matrix(x))
     comma_msg <- FALSE
 
     res <- get(type)(

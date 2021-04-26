@@ -81,7 +81,7 @@ modify_hovertext <- function(p, hovertext = TRUE, type = "regular", perm = NULL)
                         x_lab <- parse(p$x$layout$xaxis$title$text)
                         y_lab <- parse(p$x$layout$yaxis$title$text)
                     } else if (type == "boot1D") {
-                        x_lab <-  gsub("\\(\\d* bootstraps\\)", "", parse(p$x$layout$title$text))
+                        x_lab <-  gsub("\\(\\d* bootstraps samples\\)", "", parse(p$x$layout$title$text))
                         y_lab <- parse(p$x$layout$annotations[[1]]$text)
                         if (length(y_lab) < 1)
                             y_lab <- parse(p$x$data[[length(p$x$data)]]$marker$colorbar$title)

@@ -246,7 +246,7 @@ ui <- fluidPage(
                     "indexes",
                     label = "Type of indexes",
                     choices = c(
-                        Correlation = "cor",
+                        Correlation = "loadings",
                         Weights = "weight")
                 ),
                 uiOutput("b_x_custom"),

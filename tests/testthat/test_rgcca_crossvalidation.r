@@ -223,7 +223,7 @@ RussettWithNA <- Russett
      for(i in 1:dim( blocks_for_classif[[1]])[1])
      {
          # Etape 1: on extrait la ligne i des blocs non scalés
-         A_moins_i=lapply( blocks_for_classif,function(x){return(x[-i])})
+         A_moins_i=lapply( blocks_for_classif,function(x){return(x[-i, , drop = FALSE])})
          A_i=lapply( blocks_for_classif,function(x){return(x[i,, drop = FALSE])})
          names(A_moins_i)=names(A_i)=names( blocks_for_classif)
          # on calcule la RGCCA sur le bloc A sans le i

@@ -213,7 +213,7 @@
 #' }
 #'
 #' @export
-rgcca_permutation <- function(blocks, par_type, par_value = NULL,
+rgcca_permutation <- function(blocks, par_type = "tau", par_value = NULL,
                               par_length = 10, n_perms = 20,
                               n_cores = parallel::detectCores() - 1,
                               quiet = TRUE, scale = TRUE, scale_block = TRUE,
@@ -253,17 +253,17 @@ rgcca_permutation <- function(blocks, par_type, par_value = NULL,
     check_integer("n_cores", n_cores, min = 0)
     match.arg(par_type, c("tau", "sparsity"))
     min_spars <- NULL
-    
-    if (tolower(type) %in% c("sgcca", "spca", "spls")) {
-        par_type <- "sparsity"
-    } else
-        par_type <- "tau"
 
     if (par_type == "sparsity") method2 <- "sgcca"
     if(par_type == "tau") method2 <- "rgcca"
     if(is.null(method)){method=method2}
     if (length(blocks) == 1)
       stop_rgcca("Permutation required more than one block.\n")
+
+    if (tolower(method) %in% c("sgcca", "spca", "spls")) {
+        par_type <- "sparsity"
+    } else
+        par_type <- "tau"
 
     if(!superblock){
       ncols <- sapply(blocks, NCOL)
@@ -346,6 +346,8 @@ rgcca_permutation <- function(blocks, par_type, par_value = NULL,
     switch(par_type,
            "sparsity" = par <- set_penalty(),
            "tau" = par <- set_penalty())
+
+    message("Permutation in progress...\n", appendLF = FALSE)
 
     par_value_parallel =
       matrix(apply(par[[2]], 1, function(x) rep(x, n_perms + 1)),

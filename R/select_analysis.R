@@ -54,7 +54,7 @@ select_analysis <- function(
     response = NULL){
 
     J <- length(blocks)
-    msg_superblock <- "A superblock is considered."
+    msg_superblock <- "a superblock is considered."
     msg_type <- paste0("By using a ", toupper(method), ", ")
     warn.method.value <- warn.method.par <- warn.msg.super <- character(0)
 

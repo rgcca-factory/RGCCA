@@ -288,16 +288,31 @@ rgcca <- function(blocks, method = "rgcca",
         response = response
     )
     raw = blocks
-   if(!is.null(response))
-   {
-       if(mode(blocks[[response]]) == "character")
-       {
-              if(length(unique(blocks[[response]])) == 1){
-                stop("Only one level in the variable to predict")}
-              blocks[[response]] = asDisjonctive(blocks[[response]])
-       }
 
-   }
+    for (i in seq(length(blocks))) {
+        if (is.character2(blocks[[i]])) {
+            if (is.character2(blocks[[i]], type = "all")) {
+                if (length(unique(blocks[[i]])) == 1)
+                    stop("Only one level in the variable to predict")
+                if (NCOL(blocks[[i]]) > 1) {
+                    warning("There is multiple columns in the response block. By default, only the first column will be considered.")
+                    blocks[[i]] <- blocks[[i]][, 1, drop = FALSE]
+                }
+                blocks[[i]] <- asDisjonctive(blocks[[i]])
+            }else{
+                stop_rgcca(
+                    "Select a block with either qualitative data only or quantitative data only.",
+                    108
+                )
+            }
+        }
+    }
+
+    blocks <- check_blocks(blocks, n = 1, quiet = quiet, no_character = TRUE)
+    #TODO : avoid to do twice check_blocks, but we MUST check
+    #if there is any remaining qualitative values. Moove the disjonctive 
+    #functionnality just before the very first check_block and think carefully 
+    #if there ll not be potential new bugs by doing this.
 
     opt$blocks     <- handle_NA(blocks, NA_method = NA_method)
     opt$blocks     <- scaling(opt$blocks, scale,scale_block = scale_block)

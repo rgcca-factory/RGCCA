@@ -13,8 +13,8 @@ plot_histogram <- function(
     group = NA,
     colors = NULL,
     cex = 1,
-    cex_main = 12 * cex,
-    cex_sub = 10 * cex,
+    cex_main = 14 * cex,
+    cex_sub = 12 * cex,
     cex_axis = 10 * cex
 ) {
 
@@ -34,7 +34,7 @@ plot_histogram <- function(
         width <- 1
 
    if (NROW(df) < 3)
-       mar <- 0
+       mar <- 50
    else if (NROW(df) <= 15)
        mar <- round(3 / NROW(df) * 50)
    else

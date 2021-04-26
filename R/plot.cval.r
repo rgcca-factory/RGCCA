@@ -16,7 +16,7 @@
 #'     agriculture = Russett[, seq(3)],
 #'     industry = Russett[, 4:5],
 #'     politic = Russett[, 6:11])
-#'     res=rgcca_cv(blocks, response=3,type="rgcca",par_type="tau",par_value=c(0,0.2,0.3),
+#'     res=rgcca_cv(blocks, response=3,method="rgcca",par_type="tau",par_value=c(0,0.2,0.3),
 #'     n_run=1,n_cores=1)
 #'    plot(res)
 #'@importFrom ggplot2 ggplot
@@ -35,7 +35,7 @@ plot.cval=function(x, bars="sd", cex = 1, cex_main = 14 * cex, cex_sub = 12 * ce
     mat_cval=x$cv
 
     mean_b=apply(mat_cval,1,mean)
-    
+
     if(x$call$type_cv=="regression")
     {
         main=paste0("RMSE according to the combinations \n (",
@@ -54,14 +54,14 @@ plot.cval=function(x, bars="sd", cex = 1, cex_main = 14 * cex, cex_sub = 12 * ce
                                         ")\n "))
         y_lab="Mean error rate"
     }
-               
+
     axis <- function(margin){
         element_text(
             size = cex_lab * 0.75,
             face = "italic",
             margin=margin
         )
-    }    
+    }
     if(bars!="none"&&dim(mat_cval)[2]<3){bars=="none"; warning("Standard deviations can not be calculated with less than 3 columns in mat_cval")}
     if(bars!="none")
     {
@@ -97,9 +97,9 @@ plot.cval=function(x, bars="sd", cex = 1, cex_main = 14 * cex, cex_sub = 12 * ce
             inf_b=apply(mat_cval,1,function(y){min(y)})
             sup_b=apply(mat_cval,1,function(y){max(y)})
         }
-        
+
     }
-    
+
     df=data.frame(configurations=1:nrow(mat_cval),mean=mean_b,inf=inf_b,sup=sup_b)
     p<- ggplot(data=df,aes(x=configurations,y=mean))+geom_point(colour=colors[2], size = cex_point)+theme_classic() + xlab("Combinations")+ylab(y_lab)
     if(bars!="none"&& bars!="points")
