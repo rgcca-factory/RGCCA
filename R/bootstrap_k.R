@@ -9,18 +9,21 @@ bootstrap_k <- function(rgcca_res) {
 
     #block-weight vector
     W = add_variables_submodel(rgcca_res, rgcca_res_boot$a)
+    boot_data = add_variables_data(rgcca_res, rgcca_res_boot$call$blocks)
 
-    #block-loadings vector
-    A = check_sign_comp(rgcca_res, rgcca_res_boot$a)
+    Y = lapply(seq_along(W), function(j) pm(boot_data[[j]], W[[j]]))
 
-    Y = lapply(seq_along(W),
-               function(j) pm(rgcca_res_boot$call$blocks[[j]], A[[j]])
-               )
-    L <- lapply(seq_along(W),
-                function(j)
-                    cor(rgcca_res_boot$call$blocks[[j]], Y[[j]],
-                        use = "pairwise.complete.obs")
-                )
+    options(warn = -1)
+    L <- lapply(
+        seq_along(W),
+        function(j) {
+            y <- cor(boot_data[[j]], Y[[j]],
+                use = "pairwise.complete.obs")
+            y[is.na(y)] <- 0
+            y
+        }
+    )
+    options(warn = 0)
 
     names(L) = names(rgcca_res$a)
     return(list(W = W, L = L))

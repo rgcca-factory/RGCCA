@@ -15,7 +15,7 @@ server <- function(input, output, session) {
     hide(selector = "#tabset li a[data-value=RGCCA]")
     hide(id = "b_x_custom")
     hide(id = "b_y_custom")
-    
+        
     output$tau_custom <- renderUI({
         refresh <- c(input$superblock)
         isolate (setAnalysis())
@@ -1106,9 +1106,11 @@ server <- function(input, output, session) {
     }
 
     getBoot <-  function(){
+        if (tolower(analysis_type) == "sgcca")
+            rgcca_out <- showWarn(rgcca_stability(rgcca_out), msg = TRUE)
         assign(
             "boot",
-            showWarn(bootstrap(rgcca_out, n_boot = input$nboot), msg = TRUE),
+            showWarn(bootstrap(rgcca_out, n_boot = input$nboot), msg = TRUE, warn = FALSE),
             .GlobalEnv
         )
         assign("selected.var", NULL, .GlobalEnv)
@@ -1780,7 +1782,7 @@ server <- function(input, output, session) {
 
                 assign(
                     "selected.var", 
-                    get_bootstrap(boot, compx, id_block),
+                    get_bootstrap(boot, , compx, id_block),
                     .GlobalEnv
                 )
 
@@ -1805,18 +1807,18 @@ server <- function(input, output, session) {
                 
                 assign(
                     "selected.var", 
-                    get_bootstrap(boot, compx, id_block),
+                    get_bootstrap(boot, , compx, id_block),
                     .GlobalEnv
                 )
 
-                df <- round(get_bootstrap(boot, compx, id_block, display_order = F), 3)[, -c(1, 3)]
+                df <- round(get_bootstrap(boot, , compx, id_block, display_order = F), 3)[, -c(1, 3, 6)]
                 colnames(df) <- c("RGCCA weight", "Lower limit", "Upper limit", "P-value", "B.H.")
 
                 observeEvent(input$bootstrap_t_save, {
                     write.table(df, "summary_bootstrap.txt", sep = "\t")
                     msgSave()
                 })
-
+                
                 df
             }
         }, error = function(e) {

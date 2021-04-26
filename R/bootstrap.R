@@ -64,7 +64,7 @@ bootstrap <- function(rgcca_res, n_boot = 100,
 
     if(class(rgcca_res)=="stability")
     {
-        message("All the parameters were imported from the fitted rgcca_stability object.")
+        warning("All the parameters were imported from the fitted rgcca_stability object.")
         rgcca_res = rgcca_res$rgcca_res
     }
 
@@ -75,6 +75,8 @@ bootstrap <- function(rgcca_res, n_boot = 100,
     check_integer("n_cores", n_cores, min = 0)
 
     if (n_cores == 0) n_cores <- 1
+
+    message("Bootstrap in progress...")
 
     ndefl_max = max(rgcca_res$call$ncomp)
     list_res_W = list_res_L = list()

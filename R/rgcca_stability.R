@@ -49,6 +49,8 @@ rgcca_stability <- function(rgcca_res,
   check_integer("n_boot", n_boot)
   check_integer("n_cores", n_cores, min = 0)
 
+  message("Checking variables stability...")
+
   ndefl_max = max(rgcca_res$call$ncomp)
   list_res = list()
   for(i in 1:ndefl_max){

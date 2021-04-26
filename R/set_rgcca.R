@@ -86,7 +86,7 @@ set_rgcca <- function(
                 function(x)
                     {
                         y= x[id_boot, , drop = FALSE]
-                        rownames(y)=paste("S",1:length(id_boot))
+                        # rownames(y)=paste("S",1:length(id_boot))
                         return(y)
                 }
                     )
