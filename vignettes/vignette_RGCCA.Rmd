@@ -3,10 +3,10 @@ title: "The RGCCA package for Regularized/Sparse Generalized Canonical Correlati
 date: '`r Sys.Date()`'
 output:
   pdf_document:
-   number_sections: yes
-   toc: yes
-   fig_height: 6
-   fig_width: 6
+    number_sections: yes
+    toc: yes
+    fig_height: 6
+    fig_width: 6
 vignette: >
   %\VignetteIndexEntry{The RGCCA package for Regularized/Sparse Generalized Canonical Correlation Analysis}
   %\VignetteEngine{knitr::rmarkdown}
@@ -1114,7 +1114,6 @@ If `sparsity` is a matrix, each row $h$ of `sparsity` defines the constraints ap
 First, it possible to determine the optimal sparsity parameters by permutation. This is made possible using the `rgcca_permutation()` function.
 
 ```{r, eval = FALSE}
-set.seed(1234567) # -> very sparse model
 set.seed(123456) # -> very sparse model
 
 fit.permute = rgcca_permutation(A, connection = C,
@@ -1128,11 +1127,11 @@ fit.permute = rgcca_permutation(A, connection = C,
                                            0.0080, 0.029, 1), 6, 3, 
                                          byrow = TRUE),
                                 n_perms = 3, n_cores = 15)
-
-fit.permute = rgcca_permutation(A, connection = C,
-                                par_type = "sparsity",
-                                n_perms = 3, n_cores = 15)
 ```
+```{r, eval = FALSE}
+plot(fit.permute)
+```
+![SGCCA results on the Glioma dataset - Permutation procedure](SGCCA_glioma_perm.png){#id .class width=50% height=50%}
 
 and then directly used the optimal sparsity parameters as follows:
 
@@ -1145,6 +1144,7 @@ The resulting model is summarized using the generic print function.
 ```{r, eval = FALSE}
 print(best.permute.sgcca)
 ```
+![](SGCCA_glioma_best_perm.png)
 
 it is useful to stabilize the variable selection procedure using the 
 `rgcca_stability()` function. The amount of sparsity is set using the 
@@ -1168,10 +1168,19 @@ The bootstrap results can be visualized using the generic  `plot()` function.
 ```{r, eval = FALSE}
 plot(boot.out, block = 1)
 ```
+<center>
+
+![SGCCA results on the Glioma dataset - Bootstrapping procedure - GE block](SGCCA_glioma_boot_block_1.png){#id .class width=50% height=50%}
+
+</center>
+
+\newpage
 
 ```{r, eval = FALSE}
 plot(boot.out, block = 2)
 ```
+
+![SGCCA results on the Glioma dataset - Bootstrapping procedure - CGH block](SGCCA_glioma_boot_block_2.png){#id .class width=50% height=50%}
 
 One component per block has been built (GE1 for $\ma X_1$ and CGH1 $\ma X_2$), and the graphical display of the tumors obtained by crossing GE1 and CGH1 and labeled according to their location is shown below.
 
@@ -1180,7 +1189,11 @@ plot(fit.stab$rgcca_res, type = "sample", block=1:2,
      comp=1, resp = as.character(Loc))
 ```
 
+![SGCCA results on the Glioma dataset - Individual Space](SGCCA_glioma_ind_space.png){#id .class width=50% height=50%}
+
 We observe that the GE block contains much more discriminative information than the CGH block.
+
+\newpage
 
 # Conclusion
 
