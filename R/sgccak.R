@@ -50,7 +50,6 @@ sgccak <-  function(A, C, sparsity = rep(1, length(A)), scheme = "centroid",
   Y <- Z <- matrix(0,NROW(A[[1]]),J)
   for (q in 1:J){
       a[[q]] <- soft.threshold(a[[q]], const[q])
-      a[[q]] <- as.vector(a[[q]])/norm2(a[[q]])
       Y[, q] <- pm(A[[q]], a[[q]], na.rm = na.rm)
   }
   a_old <- a
@@ -90,7 +89,6 @@ sgccak <-  function(A, C, sparsity = rep(1, length(A)), scheme = "centroid",
         Z[, q] <- rowSums(mapply("*", CbyCovq,as.data.frame(Y)))
         a[[q]] <- pm(t(A[[q]]), Z[, q], na.rm = na.rm)
         a[[q]] <- soft.threshold(a[[q]], const[q])
-        a[[q]] <- as.vector(a[[q]])/norm2(a[[q]])
         Y[, q] <- pm(A[[q]], a[[q]], na.rm = na.rm)
       }
 
@@ -140,6 +138,20 @@ sgccak <-  function(A, C, sparsity = rep(1, length(A)), scheme = "centroid",
         }
      }
 
+  l2_SAT = sapply(a, function(x) norm(x, "2"))
+  if (max(abs(l2_SAT - 1)) > tol){
+    for (i in which(abs(l2_SAT - 1) > tol)){
+      if (l2_SAT[i] < 1e-32 ){
+        warning("Norm2 of the block weight vector #",  i, " is too small :", norm2_argu)
+      }else{
+        nMAX = length(which(a[[i]] != 0))
+        warning("L2 constraint is not saturated for block #", i, ". The current
+                 value of the sparsity parameter is ", sparsity[i], " and has to
+                be in the range [", sqrt(nMAX/pjs[i]), ", 1] in order to
+                saturate the L2 constraint.")
+      }
+    }
+  }
   AVE_inner  <- sum(C*cor(Y)^2/2)/(sum(C)/2) # AVE inner model
 
   result <- list(Y = Y, a = a, crit = crit[which(crit != 0)],
