@@ -50,12 +50,7 @@ plot_ind <- function(
     no_overlap = FALSE,
     predicted = NULL,
     title = paste0(names(rgcca_res$call$blocks)[i_block],": Sample space"),
-    legend=TRUE,
-    cex = 1,
-    cex_main = 14 * cex,
-    cex_sub = 12 * cex,
-    cex_point = 3 * cex,
-    cex_lab = 10 * cex,
+    legend = TRUE,
     ...){
 
     if (is.null(i_block_y))
@@ -72,11 +67,11 @@ plot_ind <- function(
     )
     class(df) <- c(class(df), "d_ind")
     if (!is.null(predicted))
-            p <- ggplot(df, aes(df[, 1], df[, 2], group = resp, color =resp))
+            p <- ggplot(df, aes(df[, 1], df[, 2], color = resp))
 
     else if (length(unique(as.matrix(df$resp))) > 5 &&
             !is.character(as.vector(df$resp)) ) {
-        p <- ggplot(df, aes(df[, 1], df[, 2], group = resp,color=resp))
+        p <- ggplot(df, aes(df[, 1], df[, 2], color=resp))
     }else
         p <- NULL
 
@@ -94,11 +89,6 @@ plot_ind <- function(
             text,
             i_block_y,
             no_overlap = no_overlap,
-            cex = cex,
-            cex_main = cex_main,
-            cex_sub = cex_sub,
-            cex_point = cex_point,
-            cex_lab=cex_lab,
             ...
         )
 

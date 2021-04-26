@@ -46,7 +46,7 @@ get_comp <- function(
 
     } else if (length(unique(resp)) > 1) {
         names <- row.names(resp)
-      #  resp <- apply(as.matrix(resp), 1, as.character)
+        resp <- apply(as.matrix(resp), 1, as.character)
 
         if (!is.null(names)) {
 
@@ -78,8 +78,9 @@ get_comp <- function(
     } else
         resp <- resp[seq(NROW(df)), ]
 
-    if ((is.numeric(resp)) ||
-         length(unique(resp)) == 1 ) {
+    if ((!is.character2(resp) &&
+        length(unique(resp)) > 5) || 
+            unique(resp) == 1 ) {
         resp[resp == "NA"] <- NA
         df$resp <- as.numeric(resp)
     }else

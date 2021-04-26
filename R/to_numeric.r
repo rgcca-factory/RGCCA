@@ -1,4 +1,5 @@
 to_numeric <- function(df) {
+    df <- as.matrix(df) # deals with data.frame case
     matrix(
         sapply(
             seq(NROW(df) * NCOL(df)),
