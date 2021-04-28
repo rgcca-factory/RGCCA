@@ -1,7 +1,7 @@
 proj_l1_l2 <- function(argu, a=1){
   #Check if constraints are already satisfied
   norm2_argu = norm(argu, type = "2")
-  if ( norm2_argu < 1e-32 ) return(list(sol=argu, l2_SAT = F))
+  if ( norm2_argu < .Machine$double.eps ) return(list(sol=argu, l2_SAT = F))
   if ( sum(abs(argu/norm2_argu)) <= a ) return(list(k=NaN, lambda = 0, l2_SAT = T))
   # The desired a_k cannot be null as the constraints are not already satisfied
   # (cf. previous check). So zero values are removed.

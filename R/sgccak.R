@@ -141,7 +141,7 @@ sgccak <-  function(A, C, sparsity = rep(1, length(A)), scheme = "centroid",
   l2_SAT = sapply(a, function(x) norm(x, "2"))
   if (max(abs(l2_SAT - 1)) > tol){
     for (i in which(abs(l2_SAT - 1) > tol)){
-      if (l2_SAT[i] < 1e-32 ){
+      if (l2_SAT[i] < .Machine$double.eps ){
         warning("Norm2 of the block weight vector #",  i, " is too small :", norm2_argu)
       }else{
         nMAX = length(which(a[[i]] != 0))
