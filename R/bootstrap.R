@@ -98,7 +98,7 @@ bootstrap <- function(rgcca_res, n_boot = 100,
     if(n_cores>1){
         assign("rgcca_res", rgcca_res, envir = .GlobalEnv)
         cl = parallel::makeCluster(n_cores)
-        parallel::clusterExport(cl, "rgcca_res")
+        parallel::clusterExport(cl, c("rgcca_res", ls(getNamespace("RGCCA"))))
         W = pbapply::pblapply(seq(n_boot),
                 function(b) bootstrap_k(rgcca_res),
                 cl = cl)

@@ -363,7 +363,7 @@ rgcca_permutation <- function(blocks, par_type = "tau", par_value = NULL,
                        response, bias, init, ncomp, tau, sparsity)
         assign("call_perm", call_perm, envir = .GlobalEnv)
         cl = parallel::makeCluster(n_cores)
-        parallel::clusterExport(cl, "call_perm")
+        parallel::clusterExport(cl, c("call_perm", "ginv", ls(getNamespace("RGCCA"))))
         W = pbapply::pbsapply(seq(length(call_perm[[4]])),
                             function(b) rgcca_permutation_k(
                               blocks = call_perm[[1]],
