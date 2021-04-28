@@ -1128,6 +1128,7 @@ fit.permute = rgcca_permutation(A, connection = C,
                                          byrow = TRUE),
                                 n_perms = 3, n_cores = 15)
 ```
+
 ```{r, eval = FALSE}
 plot(fit.permute)
 ```
