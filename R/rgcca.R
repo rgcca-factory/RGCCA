@@ -95,6 +95,9 @@
 #' @references Schafer J. and Strimmer K. (2005). A shrinkage approach to
 #' large-scale covariance matrix estimation and implications for functional
 #' genomics. Statistical Applications in Genetics and Molecular Biology 4:32.
+#' @references Arnaud Gloaguen, Vincent Guillemot, Arthur Tenenhaus.
+#' An efficient algorithm to satisfy l1 and l2 constraints.
+#' 49emes Journees de Statistique, May 2017, Avignon, France. (hal-01630744)
 #' @examples
 #' ####################
 #' # Example 1: RGCCA #
