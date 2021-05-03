@@ -49,15 +49,19 @@ tau.tensor.estimate <- function(x) {
   tau   = rep(1, length(DIM) - 1)
   N     = DIM[1]
   for (d in 1:(length(DIM) - 1)) {
-    x_d     = unfold(x, mode = d + 1)
-    S       = tcrossprod(x_d) / (N - 1)
-    U       = diag(DIM[d + 1])
-    tmp     = lapply(1:N, function(n) tcrossprod(unfold(x[n, ,], mode = d)) ^ 2)
-    tmp     = Reduce("+", tmp)
-    Var.S   = (tmp - tcrossprod(x_d) ^ 2 / N) * N * (N - 1) ^ (-3)
-    diag(Var.S) = 0
-    tau[d]      = sum(Var.S) / sum((S - U * S) ^ 2)
-    # tau[d]      = sum(Var.S) / sum((S - U) ^ 2)
+    if (DIM[d + 1] != 1) {
+      x_d     = unfold(x, mode = d + 1)
+      S       = tcrossprod(x_d) / (N - 1)
+      U       = diag(DIM[d + 1])
+      tmp     = lapply(1:N, function(n)
+        tcrossprod(unfold(array(x[n, ,], dim = DIM[-1]), mode = d)) ^ 2
+      )
+      tmp     = Reduce("+", tmp)
+      Var.S   = (tmp - tcrossprod(x_d) ^ 2 / N) * N * (N - 1) ^ (-3)
+      diag(Var.S) = 0
+      tau[d]      = sum(Var.S) / sum((S - U * S) ^ 2)
+      # tau[d]      = sum(Var.S) / sum((S - U) ^ 2)
+    }
   }
   return(tau)
 }
