@@ -33,19 +33,17 @@ scaling <- function(blocks, scale = TRUE, bias = TRUE, scale_block = TRUE) {
         if (scale_block) {
             N = ifelse(bias, NROW(blocks[[1]]), NROW(blocks[[1]])-1)
             blocks <- lapply(blocks, function(x) {
-                if(NROW(x) > NCOL(x))
-                {
-                    covarMat <- cov2(x, bias = bias)
+                DIM = dim(x)
+                if (length(dim(x)) > 2) x = matrix(x, nrow(x))
+                s = norm(matrix(x), type = "F") / sqrt(N)
+                x = x / s
+                if (length(DIM) > 2) {
+                    x = array(x, dim = DIM)
+                    attr(x, "scaled:scale") <- rep(s, prod(DIM[-1]))
+                } else {
+                    attr(x, "scaled:scale") <- rep(s, NCOL(x))
                 }
-                else
-                {
-                    covarMat <- 1/N*(x%*%t(x))
-                }
-                variance_block <- sum(diag(covarMat))
-                out <- x / sqrt(variance_block)
-                attr(out, "scaled:scale") <-
-                    rep(sqrt(sum(diag(covarMat))), NCOL(x))
-                return(out)
+                return(x)
             })
         }
 
