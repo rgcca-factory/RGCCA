@@ -18,6 +18,7 @@ Suggests:
     bsplus,
     knitr,
     rmarkdown,
+    markdown,
     pander,
     shiny,
     shinyjs,
@@ -25,6 +26,7 @@ Suggests:
     ggrepel,
     optparse,
     igraph,
+    visNetwork,
     magrittr,
     nnet,
     openxlsx

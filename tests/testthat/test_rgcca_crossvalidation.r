@@ -218,7 +218,7 @@ RussettWithNA <- Russett
          round(rescv1$score,digits=3)==0.213
      )})
 
-
+# TODO : the test was bad, the functionality never worked properly
      res=rep(NA,dim( blocks_for_classif[[1]])[1])
      for(i in 1:dim( blocks_for_classif[[1]])[1])
      {

@@ -26,6 +26,8 @@ rgcca_predict(
 \item{bloc_to_pred}{A character giving the block to predicted (must be the same name among train and test set)}
 
 \item{new_scaled}{A boolean scaling the blocks to predict}
+
+\item{regress_on}{A boolean indicating if the regression is performed on the blocks (by default) or on the components}
 }
 \description{
 Predict a new block from a RGCCA

@@ -17,11 +17,6 @@ plot_ind(
   predicted = NULL,
   title = paste0(names(rgcca_res$call$blocks)[i_block], ": Sample space"),
   legend = TRUE,
-  cex = 1,
-  cex_main = 14 * cex,
-  cex_sub = 12 * cex,
-  cex_point = 3 * cex,
-  cex_lab = 10 * cex,
   ...
 )
 }
@@ -50,16 +45,6 @@ variable with levels or a continuous variable}
 \item{title}{A character giving the title of the plot}
 
 \item{legend}{A logical value indicatif if the legend should be plotted}
-
-\item{cex}{An integer for the size of the plot parameters}
-
-\item{cex_main}{An integer for the size of the title}
-
-\item{cex_sub}{An integer for the size of the subtitle}
-
-\item{cex_point}{An integer for the size of the points or the text in the plot}
-
-\item{cex_lab}{An integer for the size of the axis titles}
 
 \item{...}{Further graphical parameters (see plot2D functions)}
 }

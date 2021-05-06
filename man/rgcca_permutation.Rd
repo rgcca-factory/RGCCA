@@ -6,7 +6,7 @@
 \usage{
 rgcca_permutation(
   blocks,
-  par_type,
+  par_type = "tau",
   par_value = NULL,
   par_length = 10,
   n_perms = 20,

@@ -43,7 +43,7 @@ test_that("rgcca_predict_two2",{expect_true(
 A_test=lapply(blocks,function(x) x[c(33),])
 res_test_one  = rgcca_predict(object1, A_test,new_scaled=FALSE)
 test_that("rgcca_predict_one_ind",{expect_true(
-    round(res_test_one$pred[[1]]["Netherlands",1],digits=4)==0.07
+    round(res_test_one$pred[[1]][1, 1],digits=4)==0.07
     )})
 
 # With a block to predict
@@ -184,6 +184,7 @@ all.equal(respred1[[1]][[1]],rgcca_res_for_pred_unscaled$Y[[1]])
                  ncomp = c(3,2,1), superblock = FALSE, response = 3)
  res_test  = rgcca_predict(object1, newA=A,new_scaled=TRUE,fit="lda",model="classification",bloc_to_pred="politic")
 
+# TODO : the test was bad, the functionality never worked properly
 #   res_test  = rgcca_predict(object1, A_test,new_scaled=FALSE,fit="lda",model="classification",bloc_to_pred="politic")
  test_that("rgcca_predict_classif",{expect_true(
      res_test$score==1-0.875

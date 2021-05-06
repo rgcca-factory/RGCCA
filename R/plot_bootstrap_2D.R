@@ -49,16 +49,14 @@ plot_bootstrap_2D <- function(
     cex_point = 3 * cex,
     cex_lab = 10 * cex,
     comp = 1,
-    i_block = NULL,
-    collapse = FALSE,
-    n_cores = parallel::detectCores() - 1) {
+    i_block = NULL) {
 
     if (missing(b) && missing(df_b))
         stop_rgcca("Please select a bootstrap object.")
     else if (!is.null(b)) {
         if (is.null(i_block))
             i_block <- length(b$bootstrap[[1]])
-        df_b <- get_bootstrap(b, comp, i_block, collapse = collapse, n_cores = n_cores, display_order = TRUE)
+        df_b <- get_bootstrap(b, comp, i_block, display_order = TRUE)
     } else if (!is.null(df_b)) {
         if (is.null(i_block))
             i_block <- attributes(df_b)$n_blocks

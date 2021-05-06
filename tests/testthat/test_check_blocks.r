@@ -4,7 +4,7 @@ X_polit = as.matrix(Russett[ , c("demostab"), drop = FALSE]);
 blocks = list(X_agric,X_ind,X_polit);
 blocks2=check_blocks(blocks,add_NAlines=TRUE)
 test_that("test_check_unidimensional_blocks",{
-    expect_true(rownames(blocks2[[3]])[45]=="Uruguay")
+    expect_true(rownames(blocks2[[3]])[45]=="Venezuela")
 })
 
 

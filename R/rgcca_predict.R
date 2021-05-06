@@ -9,6 +9,7 @@
 #TODO: either an integer for block_to_pred
 #' @param model A character corresponding to the model of prediction among : regression or classification
 #' @param new_scaled A boolean scaling the blocks to predict
+#' @param regress_on A boolean indicating if the regression is performed on the blocks (by default) or on the components
 #' @examples
 #' data("Russett")
 #' blocks = list(
@@ -295,7 +296,7 @@ rgcca_predict = function(
                     if (is.null(dim(res)) || dim(res)[1] == 1)
                         score <- sqrt(mean(res ^ 2, na.rm = T))
                     else
-                        score <- mean(apply(res, 2, function(x) sqrt(mean(x ^ 2, na.rm = T))))
+                        score <- mean(apply(res, 2, function(x) sqrt(mean(x ^ 2, na.rm = T))), na.rm = T)
                 } else {
                     ychapo <- lapply(
                         colnames(to_pred_train),
@@ -312,7 +313,7 @@ rgcca_predict = function(
                     })
                     n <- NCOL(rgcca_res$Y[[bloc_to_pred]])
                     if (n > 1)
-                        score <- mean(sapply(seq(n), function(x) summary(ychapo)[[x]]$r.squared))
+                        score <- mean(sapply(seq(n), function(x) summary(ychapo)[[x]]$r.squared), na.rm = T)
                     else
                         score <- summary(ychapo)$r.squared
                 }
@@ -337,7 +338,7 @@ rgcca_predict = function(
                     if (is.null(dim(res)) || dim(res)[1] == 1)
                         score <- sqrt(mean(res ^ 2, na.rm = T))
                     else
-                        score <- mean(apply(res, 2, function(x) sqrt(mean(x ^ 2, na.rm = T))))
+                        score <- mean(apply(res, 2, function(x) sqrt(mean(x ^ 2, na.rm = T))), na.rm = T)
                 } else {
                     # ychapo <- lapply(
                     #     names_comp_to_pred,
@@ -357,7 +358,7 @@ rgcca_predict = function(
                     #score <- mean(sapply(seq(length(ychapo)), function(x) summary(ychapo[[x]])$r.squared))
                     n <- NCOL(rgcca_res$Y[[bloc_to_pred]])
                     if (n > 1)
-                        score <- mean(sapply(seq(length(summary(ychapo))), function(x) summary(ychapo)[[x]]$r.squared))
+                        score <- mean(sapply(seq(length(summary(ychapo))), function(x) summary(ychapo)[[x]]$r.squared), na.rm = T)
                     else
                         score <- summary(ychapo)$r.squared
                 }

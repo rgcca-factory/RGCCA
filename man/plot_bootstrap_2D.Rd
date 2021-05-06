@@ -17,9 +17,7 @@ plot_bootstrap_2D(
   cex_point = 3 * cex,
   cex_lab = 10 * cex,
   comp = 1,
-  i_block = NULL,
-  collapse = FALSE,
-  n_cores = parallel::detectCores() - 1
+  i_block = NULL
 )
 }
 \arguments{
@@ -50,8 +48,6 @@ colors()) or RGB code ("#FFFFFF").}
 \item{comp}{An integer indicating the block-weight/loading vector to plot.}
 
 \item{i_block}{An integer giving the index of the block}
-
-\item{collapse}{A boolean to combine the variables of each block as result}
 }
 \description{
 Graph of the best variables from a bootstrap with, in x-axis, the number of

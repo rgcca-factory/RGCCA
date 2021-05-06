@@ -11,8 +11,8 @@ plot_histogram(
   group = NA,
   colors = NULL,
   cex = 1,
-  cex_main = 12 * cex,
-  cex_sub = 10 * cex,
+  cex_main = 14 * cex,
+  cex_sub = 12 * cex,
   cex_axis = 10 * cex
 )
 }
