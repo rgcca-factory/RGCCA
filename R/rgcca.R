@@ -214,6 +214,7 @@ rgcca <- function(
     sparsity = rep(1, length(blocks)),
     ranks = rep(1, length(blocks)),
     regularisation_matrices = NULL,
+    kronecker_covariance = F,
     init = "svd",
     bias = TRUE,
     tol = 1e-08,
@@ -266,7 +267,7 @@ rgcca <- function(
     }
 
     if (any(sapply(blocks, function(x) length(dim(x))) > 2)) {
-        if(type != "mgcca")
+        if(!type %in% c("mgcca", "ns_mgcca"))
         {
             message(paste0("type='", type, "' is not available for tensor blocks
                            so type was converted to 'mgcca'."))
@@ -305,6 +306,11 @@ rgcca <- function(
         par <- "tau"
         penalty <- tau
 
+    }else if (tolower(type) %in% c("ns_mgcca")) {
+      gcca <- ns_mgccaNa
+      par <- "tau"
+      penalty <- tau
+
     } else {
         if (!missing(sparsity) & missing(tau))
            stop_rgcca(paste0("tau parameters required for ",
@@ -321,6 +327,12 @@ rgcca <- function(
       ranks  <- check_ranks(ranks, blocks)
       regularisation_matrices <- check_reg_matrices(
         regularisation_matrices, blocks)
+    }
+
+    if (type == "ns_mgcca") {
+      if (missing(method)) method  <- "complete"
+      ranks                <- check_ranks(ranks, blocks)
+      kronecker_covariance <- check_boolean("kronecker_covariance", kronecker_covariance)
     }
 
 
@@ -422,6 +434,11 @@ rgcca <- function(
       func$ranks                   <- ranks
     }
 
+    if (type == "ns_mgcca") {
+      func$ranks                   <- ranks
+      func$kronecker_covariance    <- kronecker_covariance
+    }
+
     func[[par]] <- opt$penalty
     func_out <- eval(as.call(func))$rgcca
 
@@ -454,8 +471,9 @@ rgcca <- function(
 
     if(!is.null(func_out$tau))
         func_out$tau <- NULL
-    
+
     if(type == "mgcca") func_out$call$ranks = ranks
+    if(type == "ns_mgcca") func_out$call$ranks = ranks
 
     for (i in c(
         "scale",

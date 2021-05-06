@@ -2,19 +2,6 @@ mgccak <- function (A, A_m = NULL, C, tau = rep(1, length(A)), scheme = "centroi
                     verbose = FALSE, init="svd", bias = TRUE, tol = 1e-8,
                     regularisation_matrices, ranks= rep(1, length(A))) {
 
-  list_khatri_rao <- function(factors) {
-    Reduce("khatri_rao", rev(factors))
-  }
-  kron_sum <- function(factors) {
-    apply(list_khatri_rao(factors), 1, sum)
-  }
-
-  weighted_factor <- function(u, d, rank) {
-    if (rank == 1)
-      return(u)
-    return((u %*% diag(d[1:rank])) / sqrt(sum(d[1:rank] ^ 2)))
-  }
-
   call = list(A = A, A_m = A_m, C = C, scheme = scheme, verbose = verbose, init = init,
               bias = bias, tol = tol, ranks = ranks)
 
