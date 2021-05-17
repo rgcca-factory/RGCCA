@@ -216,7 +216,7 @@
 rgcca_permutation <- function(blocks, par_type = "tau", par_value = NULL,
                               par_length = 10, n_perms = 20,
                               n_cores = parallel::detectCores() - 1,
-                              quiet = TRUE, scale = TRUE, scale_block = TRUE,
+                              quiet = FALSE, scale = TRUE, scale_block = TRUE,
                               method=NULL, connection = 1 - diag(length(blocks)),
                               scheme = "factorial",
                               ncomp = rep(1, length(blocks)),
@@ -411,29 +411,56 @@ rgcca_permutation <- function(blocks, par_type = "tau", par_value = NULL,
                               )
       }
     }else{
-      W = pbapply::pbsapply(seq(length(perm_parallel)),
-                            function(b) rgcca_permutation_k(
-                              blocks = blocks,
-                              par_type = par[[1]],
-                              par_value = par_value_parallel[b,],
-                              perm = perm_parallel[b],
-                              method = method,
-                              quiet = quiet,
-                              superblock = superblock,
-                              scheme = scheme,
-                              tol = tol,
-                              scale = scale,
-                              scale_block = scale_block,
-                              connection = connection,
-                              NA_method = NA_method,
-                              bias = bias,
-                              init = init,
-                              ncomp = ncomp,
-                              tau = tau,
-                              sparsity = sparsity),
-                            cl = n_cores
-                            )
-
+        if (!quiet)
+            W <- pbapply::pbsapply(seq(length(perm_parallel)),
+                function(b)
+                    rgcca_permutation_k(
+                        blocks = blocks,
+                        par_type = par[[1]],
+                        par_value = par_value_parallel[b, ],
+                        perm = perm_parallel[b],
+                        method = method,
+                        quiet = quiet,
+                        superblock = superblock,
+                        scheme = scheme,
+                        tol = tol,
+                        scale = scale,
+                        scale_block = scale_block,
+                        connection = connection,
+                        NA_method = NA_method,
+                        bias = bias,
+                        init = init,
+                        ncomp = ncomp,
+                        tau = tau,
+                        sparsity = sparsity
+                    ),
+                cl = n_cores)
+        else
+            W <- as.matrix(simplify2array(
+                parallel::mclapply(seq(length(perm_parallel)),
+                    function(b)
+                        rgcca_permutation_k(
+                            blocks = blocks,
+                            par_type = par[[1]],
+                            par_value = par_value_parallel[b, ],
+                            perm = perm_parallel[b],
+                            method = method,
+                            quiet = quiet,
+                            superblock = superblock,
+                            scheme = scheme,
+                            tol = tol,
+                            scale = scale,
+                            scale_block = scale_block,
+                            connection = connection,
+                            NA_method = NA_method,
+                            bias = bias,
+                            init = init,
+                            ncomp = ncomp,
+                            tau = tau,
+                            sparsity = sparsity
+                        ),
+                    mc.cores = n_cores)
+            ))
     }
 
 

@@ -6,8 +6,11 @@ add_variables_data <- function(rgcca_res, w, boot = FALSE) {
     for (x in seq(length(rgcca_res$call$blocks)))
     {
         blocks_all[[x]] <- rgcca_res$call$blocks[[x]][intersect(rownames(rgcca_res$call$blocks[[1]]), rownames(w[[1]])), , drop = FALSE]
-        if (boot)
-            blocks_all[[x]] <- rgcca_res$call$blocks[[x]][rownames(w[[1]]), , drop = FALSE]
+        if (boot) {
+            blocks_all[[x]] <- rgcca_res$call$blocks[[x]]
+            rownames(blocks_all[[x]]) <- rownames(w[[1]])
+        }
+
         if(is.null(dim(blocks_all[[x]])))
         {
             b=blocks_all[[x]]

@@ -6,9 +6,22 @@ blocks <- list(
     politic = Russett[, 6:11])
 #res_rgcca=rgcca(blocks, method="rgcca",response=1)
 
-res=rgcca_cv(blocks,response=length(blocks),method="rgcca",par_type="tau",par_value=c(0,0.2,0.3),n_run=1,n_cores=1)
+res=rgcca_cv(blocks,response=length(blocks),method="rgcca",par_type="tau",par_value=c(0,0.2,0.3), k = 3, ncomp = 2, n_run=2,n_cores=1)
 res
 plot(res)
+
+test_that("rgcca_cv takes into account the parameters", {
+    expect_equal(
+        as.vector(res$call$par_type[[2]][1, ]),
+        c(0, 0.2, 0.3))
+    expect_equal(
+        as.vector(res$call$par_type[[2]][10, ]),
+        rep(0, 3))
+    expect_equal(res$call$response, 3)
+    expect_equal(res$call$n_run, 2)
+    expect_equal(res$call$k, 3)
+    expect_equal(res$call$ncomp, 2)
+})
 
 res=rgcca_cv(blocks,response=length(blocks),method="rgcca",par_type="tau",par_value=c(0,0.2,0.3),n_run=1,n_cores=1,scale=FALSE,scale_block=FALSE)
 

@@ -860,8 +860,10 @@ server <- function(input, output, session) {
             tau <- integer(0)
             for (i in 1:(length(blocks_without_superb) + ifelse(input$superblock, 1, 0)))
                 tau <- c(tau, input[[paste0("tau", i)]])
-        } else
+        } else if (!is.null(input$tau))
             tau <- input$tau
+        else
+            tau <- 1
 
         return(tau)
     }
@@ -1027,7 +1029,6 @@ server <- function(input, output, session) {
                     scheme = input$scheme,
                     parallelization = TRUE,
                     init = input$init,
-                    new_scaled = TRUE,
                     ncomp = getNcomp()))
                 if (tolower(analysis_type) %in% c("sgcca", "spca", "spls")) {
                     func[["sparsity"]] <- tau
@@ -1050,7 +1051,7 @@ server <- function(input, output, session) {
     getCrossVal2 <-  function(){
         assign(
             "crossval",
-            rgcca_crossvalidation(rgcca_out),
+            rgcca_cv_k(rgcca_out),
             .GlobalEnv
         )
         showWarn(message(paste("CV score:", round(crossval$score, 4))), show = FALSE)
@@ -1068,10 +1069,23 @@ server <- function(input, output, session) {
         else
             response <- NULL
 
+        refresh2 <-  c(
+            input$nperm,
+            connection,
+            response,
+            input$supervised,
+            input$superblock,
+            input$scheme,
+            getNcomp(),
+            input$init,
+            analysis_type,
+            tau)
+
         assign("perm", {
             func <- quote(
                 rgcca_permutation(
                     blocks_without_superb,
+                    quiet = TRUE,
                     n_perms = input$nperm,
                     connection = connection,
                     response = response,
@@ -1083,10 +1097,9 @@ server <- function(input, output, session) {
                     ncomp = getNcomp(),
                     init = input$init,
                     bias = TRUE,
-                    method = analysis_type,
-                    n_cores = 2
+                    method = analysis_type
                 )
-            )
+        )
             if (tolower(analysis_type) %in% c("sgcca", "spca", "spls")) {
                 func[["sparsity"]] <- tau
                 func$par_type <- "sparsity"

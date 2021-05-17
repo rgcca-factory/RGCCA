@@ -11,7 +11,7 @@ rgcca_permutation(
   par_length = 10,
   n_perms = 20,
   n_cores = parallel::detectCores() - 1,
-  quiet = TRUE,
+  quiet = FALSE,
   scale = TRUE,
   scale_block = TRUE,
   method = NULL,

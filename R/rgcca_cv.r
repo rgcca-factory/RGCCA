@@ -54,36 +54,37 @@
 #' }
 #'  
 #'@importFrom utils txtProgressBar setTxtProgressBar
-rgcca_cv=function( blocks,
-          method = "rgcca",
-          response=NULL,
-          par_type = "tau",
-          par_value = NULL,
-          par_length=10,
-          validation = "kfold",
-          type_cv = "regression",
-          fit = "lm",
-          k=5,
-          n_run = 1,
-          one_value_per_cv=FALSE,
-          n_cores = parallel::detectCores() - 1,
-          quiet = TRUE,
-          superblock=FALSE,
-          scale=TRUE,
-          scale_block=TRUE,
-          tol=1e-8,
-          scheme="factorial",
-          NA_method="nipals",
-          rgcca_res=NULL,
-          parallelization=NULL,
-          tau=rep(1,length(blocks)),
-          ncomp=rep(1,length(blocks)),
-          sparsity=rep(1,length(blocks)),
-          init="svd",
-          bias=TRUE,
-          new_scaled = FALSE,
-          ...)
-{
+rgcca_cv <- function(
+    blocks,
+    method = "rgcca",
+    response=NULL,
+    par_type = "tau",
+    par_value = NULL,
+    par_length=10,
+    validation = "kfold",
+    type_cv = "regression",
+    fit = "lm",
+    k = 5,
+    n_run = 1,
+    one_value_per_cv = FALSE,
+    n_cores = parallel::detectCores() - 1,
+    quiet = TRUE,
+    superblock = FALSE,
+    scale = TRUE,
+    scale_block = TRUE,
+    tol = 1e-8,
+    scheme = "factorial",
+    NA_method = "nipals",
+    rgcca_res = NULL,
+    parallelization = NULL,
+    tau = rep(1, length(blocks)),
+    ncomp = rep(1, length(blocks)),
+    sparsity = rep(1, length(blocks)),
+    init = "svd",
+    bias = TRUE,
+    new_scaled = FALSE, 
+    ...) {
+
     if(!missing(blocks)&class(blocks)=="rgcca"){rgcca_res=blocks}
     if(class(rgcca_res)=="rgcca")
     {
@@ -127,7 +128,7 @@ rgcca_cv=function( blocks,
     match.arg(par_type, c("tau", "sparsity","ncomp"))
     min_spars <- NULL
 
-    if (method %in% c("sgcca", "spca", "spls")) {
+    if (tolower(method) %in% c("sgcca", "spca", "spls")) {
         par_type <- "sparsity"
     } else
         par_type <- "tau"
@@ -148,11 +149,12 @@ rgcca_cv=function( blocks,
     {
 
         if(par_type == "sparsity"){
-            if(method!="sgcca"){cat("As par_type=='sparsity', the method parameter was replaced by 'sgcca'")}
+            if(tolower(method) != "sgcca"){cat("As par_type=='sparsity', the method parameter was replaced by 'sgcca'")}
             method <- "sgcca"
             min_spars <<- sapply(ncols, function(x) 1 / sqrt(x))
+            min_spars <<- ceiling(min_spars * 100) / 100
         }else{
-            if(method=="sgcca"){cat("As par_type!='sparsity', the method parameter was replaced by 'rgcca'")}
+            if(tolower(method) == "sgcca"){cat("As par_type!='sparsity', the method parameter was replaced by 'rgcca'")}
             method <- "rgcca"
             min_spars <<- sapply(ncols, function(x) 0)
         }
@@ -197,7 +199,6 @@ rgcca_cv=function( blocks,
 
     message(paste("Cross-validation for", par_type[[1]], "in progress...\n"), appendLF = FALSE)
     pb <- txtProgressBar(max=dim(par_type[[2]])[1])
-    n_rep=ifelse(one_value_per_cv,n_run,n_run*k)
     res=matrix(NA,dim(par_type[[2]])[1],n_run*k);rownames(res)=apply(round(par_type[[2]],digits=2),1,paste,collapse="-");
 
     for(i in 1:dim(par_type[[2]])[1])
@@ -271,6 +272,9 @@ rgcca_cv=function( blocks,
               type_cv = type_cv,
               fit = fit,
               k=k,
+              ncomp = ncomp,
+              bias = bias,
+              init = init,
               one_value_per_cv=one_value_per_cv,
               superblock=FALSE,
               scale=scale,

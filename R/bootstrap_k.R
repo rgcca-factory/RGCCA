@@ -9,7 +9,7 @@ bootstrap_k <- function(rgcca_res) {
 
     #block-weight vector
     W = add_variables_submodel(rgcca_res, rgcca_res_boot$a)
-    boot_data = add_variables_data(rgcca_res, rgcca_res_boot$call$blocks)
+    boot_data = add_variables_data(rgcca_res, rgcca_res_boot$call$blocks, boot = TRUE)
 
     Y = lapply(seq_along(W), function(j) pm(boot_data[[j]], W[[j]]))
 
