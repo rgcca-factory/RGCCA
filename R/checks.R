@@ -1,6 +1,6 @@
 # Other checking functions
 #-----------------------------
-check_blockx <- function(x, y, blocks){
+check_blockx <- function(x, y, blocks) {
     message = paste0(x, " should be lower than ", length(blocks),
       " (that is the number of blocks)."
     )
@@ -45,7 +45,7 @@ check_compx <- function(x, y, ncomp, blockx) {
                 x,
                 " equals to ",
                 y,
-                " and should be less than or equal to ",
+                " and should be comprise between 1 and ",
                 ncomp[blockx],
                 " (the number of block component)."
             ),
@@ -59,9 +59,9 @@ check_compx <- function(x, y, ncomp, blockx) {
 #
 # @inheritParams rgccad
 # @inheritParams set_connection
-check_connection <- function(C, blocks) {
+check_connection <- function(C, blocks, software = FALSE) {
 
-    msg <- "The design matrix C should"
+    msg <- ifelse(software, "The connection file", "The design matrix C should")
 
         if (!all(rownames(C) %in% names(blocks)) ||
         !all(colnames(C) %in% names(blocks)))
@@ -79,7 +79,7 @@ check_connection <- function(C, blocks) {
     #         exit_code = 105)
 
     if (any(is.na(C)))
-        stop_rgcca(paste(msg, "not contain NA values."), exit_code = 106)
+        stop_rgcca(paste(msg, "not contain NA values."), exit_code = 105)
 
     x <- C >= 0 & C <= 1
     if (sum(!x) != 0)
@@ -155,7 +155,7 @@ check_integer <- function(x, y = x, type = "scalar", float = FALSE, min = 1,
       if (!is.null(max_message)) {
         stop_rgcca(max_message, exit_code = exit_code)
       } else {
-        stop_rgcca(paste0(x, " should be lower than or equal to ", max, "."))
+        stop_rgcca(paste0(x, " should be lower than or equal to ", max, "."), exit_code = 150)
       }
 
     if (type %in% c("matrix", "data.frame"))
@@ -227,7 +227,7 @@ check_ncomp <- function(ncomp, blocks, min = 1) {
     ncomp <- sapply(
         seq(length(ncomp)),
         function(x){
-            msg = paste0("ncomp[", x, "] should be lower than ",
+            msg = paste0("ncomp[", x, "] should be comprise between ", min ," and ",
                          NCOL(blocks[[x]]),
                          " (that is the number of variables of block ", x, ")."
             )
@@ -433,10 +433,18 @@ check_superblock <- function(is_supervised = NULL, is_superblock = NULL, verbose
         return(isTRUE(is_superblock))
 }
 check_tau <- function(tau) {
-  if (is.na(tau) || tau != "optimal") {
-    tau <- check_integer("tau", tau, float = TRUE, min = 0, max = 1)
-  }
-  invisible(tau)
+    msg <- "tau should be comprise between 0 and 1 or should correspond to the character 'optimal' for automatic setting"
+    if (is.na(tau) || tau != "optimal") {
+        tryCatch({
+            tau <- check_integer("tau", tau, float = TRUE, min = 0, max = 1)
+        }, error = function(e) {
+            if (class(e)[1] == 150)
+                stop_rgcca(paste0(msg, " (currently equals to ", tau, ")."), exit_code = 129)
+              else
+                stop_rgcca(e$message)
+        })
+    }
+    invisible(tau)
 }
 
 check_scheme <- function(scheme) {

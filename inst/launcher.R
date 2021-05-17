@@ -75,11 +75,12 @@ get_args <- function() {
             type = "character",
             metavar = "character",
             default = opt[2],
-            help = "Type of analysis [default: %default] (among: rgcca, pca,
-            cca, gcca, cpca-w, hpca, maxbet-b, maxbet, maxdiff-b, maxdiff,
-            maxvar-a, maxvar-b, maxvar, niles, r-maxvar, rcon-pca, ridge-gca,
-            sabscor, ssqcor, ssqcor, ssqcov-1, ssqcov-2, ssqcov, sum-pca,
-            sumcor, sumcov-1, sumcov-2, sumcov)"
+            help = "Type of analysis [default: %default] (among: rgcca, sgcca, 
+            pca, spca, pls, spls, cca, ifa, ra, gcca, maxvar, maxvar-b, 
+            maxvar-a, mcoa,cpca-1, cpca-2, cpca-4, hpca, maxbet-b, maxbet, 
+            maxdiff-b, maxdiff, maxvar-a, sabscor, ssqcor, ssqcov-1, ssqcov-2, 
+            ssqcov, sumcor, sumcov-1, sumcov-2, sumcov, sabscov, sabscov-1, 
+            sabscov-2)" 
         ),
         make_option(
             opt_str = "--ncomp",
@@ -462,7 +463,7 @@ tryCatch({
 
     rgcca_out <- eval(as.call(func))
 
-    opt <- post_check_arg(opt, rgcca_out)
+        opt <- post_check_arg(opt, rgcca_out)
 
     ########## Plot ##########
 
@@ -529,6 +530,10 @@ tryCatch({
             status <<- 1
         else
             status <<- class(e)[1]
+        msg <- "The design matrix C"
+        if (grepl(msg, e$message)) {
+            e$message <- gsub(msg, "The connection file", e$message)
+        }
         message(e$message)
 })
 quit(status = status)

@@ -8,6 +8,7 @@ load_connection <- function(
             file = file,
             separator = separator,
             rownames = rownames,
-            header = TRUE
+            header = TRUE,
+            rm_dup_rows = FALSE
         )
 }

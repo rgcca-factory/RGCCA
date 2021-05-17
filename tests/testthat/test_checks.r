@@ -60,7 +60,7 @@ test_that("check_colors passes when colors is valid", {
 test_that("check_compx raises an error if x is greater than the number
           of components", {
   expect_error(check_compx("x", 7, c(3, 3, 3), 1),
-               paste0("x equals to 7 and should be less than or equal to 3 ",
+               paste0("x equals to 7 and should be comprise between 1 and 3 ",
                "(the number of block component)."),
                fixed = TRUE)
 })
@@ -246,7 +246,7 @@ test_that("check_ncomp raises an error if blocks and ncomp have different
 test_that("check_ncomp raises an error if any element of ncomp is greater than
           the number of variables in the corresponding block", {
             expect_error(check_ncomp(c(2, 7, 2), blocks),
-                         paste0("ncomp[2] should be lower than 2 (that is ",
+                         paste0("ncomp[2] should be comprise between 1 and 2 (that is ",
                                 "the number of variables of block 2)."),
                          fixed = TRUE)
           })

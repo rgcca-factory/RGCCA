@@ -1142,7 +1142,7 @@ server <- function(input, output, session) {
         if (!is.null(connection_file)) {
             connection <- load_connection(file = connection_file, sep = input$sep)
 
-            check <- showWarn(check_connection(connection, blocks))
+            check <- showWarn(check_connection(connection, blocks, TRUE))
 
             # Error due to the superblock disabling and the connection have not the same size than the number of blocks
             if (length(check) == 1 && check %in% c("130", "103", "106", "107", "108"))  {
