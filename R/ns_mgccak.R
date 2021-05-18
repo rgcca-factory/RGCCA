@@ -46,7 +46,7 @@ ns_mgccak <- function (A, A_m = NULL, C, tau = rep(1, length(A)), scheme = "cent
   # Initialization of vector a (weight vector)
   res_init = ns_mgcca_init(A, A_m, tau = tau, ranks = ranks, init = init,
                         bias = bias, kronecker_covariance = kronecker_covariance)
-  a = res_init$a; factors = res_init$factors; XtX = res_init$XtX
+  a = res_init$a; factors = res_init$factors; weights = res_init$weights; XtX = res_init$XtX
 
   # Initialization of vector Y
   for (j in 1:J) Y[, j] <- A_m[[j]] %*% a[[j]]
@@ -61,8 +61,8 @@ ns_mgccak <- function (A, A_m = NULL, C, tau = rep(1, length(A)), scheme = "cent
 
   # MGCCA algorithm
   repeat {
-    res_update = ns_mgcca_update(A, A_m, a, factors, XtX, Y, g, dg, C, ranks = ranks, bias = bias)
-    a = res_update$a; factors = res_update$factors; Y = res_update$Y
+    res_update = ns_mgcca_update(A, A_m, a, factors, weights, XtX, Y, g, dg, C, ranks = ranks, bias = bias)
+    a = res_update$a; factors = res_update$factors; weights = res_update$weights; Y = res_update$Y
 
     crit[iter] <- sum(C*g(cov2(Y, bias = bias)))
 
@@ -106,6 +106,7 @@ ns_mgccak <- function (A, A_m = NULL, C, tau = rep(1, length(A)), scheme = "cent
   result <- list(Y         = Y,
                  a         = a,
                  factors   = factors,
+                 weights   = weights,
                  crit      = crit,
                  AVE_inner = AVEinner,
                  call      = call,

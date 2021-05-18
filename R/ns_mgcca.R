@@ -43,6 +43,10 @@
 #' tensor of order \eqn{d}, element \eqn{j} of \eqn{factors} is a list with
 #' \eqn{d} elements and each element is a matrix that contains the outer weight
 #' vectors for each block.}
+#' @return \item{weights}{A list of \eqn{J} elements. Element \eqn{j}
+#' of \eqn{weights} weights the rank-1 factors.
+#' \eqn{d} elements and each element is a matrix that contains the outer weight
+#' vectors for each block.}
 #' @return \item{crit}{A vector of integer that contains for each component the
 #' values of the analysis criteria across iterations.}
 #' @return \item{AVE}{A list of numerical values giving the indicators of model
@@ -138,19 +142,18 @@ ns_mgcca <- function(A, C = 1-diag(length(A)), tau = rep(1, length(A)),
   R                = A
   R_m              = A_m
 
-  AVE_X <- crit <- factors <- list()
+  AVE_X <- crit <- factors <- weights <- list()
   Y     <- P    <- a       <- astar <- list()
-  b <- bstar <- list()
 
   for (d in B_2D) ranks[d] <- 1
   for (d in 1:J) P[[d]]  <- a[[d]] <- astar[[d]] <- matrix(NA,pjs[[d]],N+1)
-  for (d in 1:J) b[[d]]  <- bstar[[d]] <- matrix(NA,pjs[[d]], (N+1) * ranks[d])
 
   for (d in B_nD) {
     factors[[d]] = list()
     for (f in 1:(LEN[[d]] - 1)) {
       factors[[d]][[f]] = matrix(NA, DIM[[d]][[f + 1]], (N+1) * ranks[[d]])
     }
+    weights[[d]] = rep(1 / sqrt(ranks[d]), d)
   }
 
   for (d in 1:J)  Y[[d]] = matrix(NA, nb_ind, N+1)
@@ -196,22 +199,15 @@ ns_mgcca <- function(A, C = 1-diag(length(A)), tau = rep(1, length(A)),
     AVE_inner[n] = mgcca.result$AVE_inner
     crit[[n]]    = mgcca.result$crit
 
-    # Store Y, a, and factors
+    # Store Y, a, factors and weights
     for (d in 1:J) Y[[d]][,n] = mgcca.result$Y[ , d]
     for (d in 1:J) a[[d]][,n] = mgcca.result$a[[d]]
-    for (d in 1:J) {
-      if (d %in% B_nD) {
-        idx = seq((n - 1) * ranks[d] + 1, n * ranks[d])
-        b[[d]][, idx] = Reduce("khatri_rao", rev(mgcca.result$factors[[d]]))
-      } else {
-        b[[d]][,n] = mgcca.result$a[[d]]
-      }
-    }
     for (d in B_nD) {
       for (f in 1:(LEN[[d]] - 1)) {
         idx                      = seq((n - 1) * ranks[[d]] + 1, n * ranks[[d]])
         factors[[d]][[f]][, idx] = mgcca.result$factors[[d]][[f]]
       }
+      weights[[d]] = mgcca.result$weights[[d]]
     }
 
     # Deflation procedure
@@ -226,22 +222,9 @@ ns_mgcca <- function(A, C = 1-diag(length(A)), tau = rep(1, length(A)),
     for (d in 1:J){
       if (n == 1){
         astar[[d]][,n] = mgcca.result$a[[d]]
-        if (d %in% B_nD) {
-          idx = seq((n - 1) * ranks[d] + 1, n * ranks[d])
-          bstar[[d]][, idx] = Reduce("khatri_rao", rev(mgcca.result$factors[[d]]))
-        } else {
-          bstar[[d]][, n] = mgcca.result$a[[d]]
-        }
       }else{
         astar[[d]][,n] = mgcca.result$a[[d]] - astar[[d]][,1:(n-1), drop=F] %*%
           drop( t(a[[d]][,n]) %*% P[[d]][,1:(n-1),drop=F] )
-        if (d %in% B_nD) {
-          idx = seq((n - 1) * ranks[d] + 1, n * ranks[d])
-          bstar[[d]][, idx] = b[[d]][, idx] - astar[[d]][, 1:(n-1), drop=F] %*%
-            drop( t(P[[d]][,1:(n-1),drop=F]) %*% b[[d]][, idx] )
-        } else {
-          bstar[[d]][,n] = astar[[d]][,n]
-        }
       }
     }
   }
@@ -256,7 +239,6 @@ ns_mgcca <- function(A, C = 1-diag(length(A)), tau = rep(1, length(A)),
   }
   for (d in 1:J){
     rownames(a[[d]]) = rownames(astar[[d]]) = colnames(A_m[[d]])
-    rownames(b[[d]]) = rownames(bstar[[d]]) = colnames(A_m[[d]])
     rownames(Y[[d]]) = rownames(A[[d]])
     colnames(Y[[d]]) = paste0("comp", 1:max(ncomp))
   }
@@ -288,12 +270,11 @@ ns_mgcca <- function(A, C = 1-diag(length(A)), tau = rep(1, length(A)),
              Y       = shave.matlist(Y, ncomp),
              a       = shave.matlist(a, ncomp),
              factors = factors,
+             weights = weights,
              astar   = shave.matlist(astar, ncomp),
              crit    = crit,
              AVE     = AVE,
-             tau     = tau_mat,
-             b       = b,
-             bstar   = bstar)
+             tau     = tau_mat)
 
   class(out) = "mgcca"
   return(out)

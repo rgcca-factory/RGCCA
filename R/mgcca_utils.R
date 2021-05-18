@@ -6,6 +6,10 @@ kron_sum <- function(factors) {
   apply(list_khatri_rao(factors), 1, sum)
 }
 
+weighted_kron_sum <- function(factors, weights) {
+  list_khatri_rao(factors) %*% weights
+}
+
 kron_prod_q <- function(factors, mode, q) {
   D = length(factors)
   Reduce("%x%", rev(lapply(1:D, function(d) {

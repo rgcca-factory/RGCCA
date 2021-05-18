@@ -22,11 +22,12 @@ verify_all = function(A, A_m, tau, ranks, init = "svd", tol = 1e-12) {
   J = length(A)
   C = 1 - diag(J)
   res_ns_mgcca_init = ns_mgcca_init(A, A_m, tau = tau, ranks = ranks, init = init)
-  a = res_ns_mgcca_init$a; factors = res_ns_mgcca_init$factors; XtX = res_ns_mgcca_init$XtX
+  a = res_ns_mgcca_init$a; factors = res_ns_mgcca_init$factors
+  weights = res_ns_mgcca_init$weights; XtX = res_ns_mgcca_init$XtX
   Y = matrix(0, nrow(A[[1]]), J)
   for (j in 1:J) Y[, j] <- A_m[[j]] %*% a[[j]]
   crit_old = sum(C * g(cov2(Y, bias = T)))
-  res_ns_mgcca_update = ns_mgcca_update(A, A_m, a, factors, XtX, Y, g, dg, C, ranks = ranks)
+  res_ns_mgcca_update = ns_mgcca_update(A, A_m, a, factors, weights, XtX, Y, g, dg, C, ranks = ranks)
   crit = sum(C * g(cov2(res_ns_mgcca_update$Y, bias = T)))
   verify_norm_constraint(res_ns_mgcca_update, XtX)
   verify_orthogonality_constraints(res_ns_mgcca_update, XtX, tol = tol)

@@ -1,4 +1,4 @@
-ns_mgcca_update = function(A, A_m, a, factors, XtX, Y, g, dg, C,
+ns_mgcca_update = function(A, A_m, a, factors, weights, XtX, Y, g, dg, C,
                         ranks = rep(1, length(A)), bias = T) {
   ### Get useful constants
   J      <- length(A)
@@ -26,34 +26,21 @@ ns_mgcca_update = function(A, A_m, a, factors, XtX, Y, g, dg, C,
       # Deal with tensor blocks
       for (d in 1:(LEN[j] - 1)) {
         for (r in 1:ranks[j]) {
-          Az   = t(A_m[[j]]) %*% Z[, j]
+          Az   = weights[[j]][r] * t(A_m[[j]]) %*% Z[, j]
           Mqmq = alt_prod(XtX[[j]], factors[[j]], LEN[j], d, r, side = "left")
           Mq   = inv_sqrtm(alt_prod(Mqmq, factors[[j]], LEN[j], d, r, side = "right"))
 
           if (ranks[j] == 1) {
-            x0  = 1
-            cmq = 0
             pi  = 0
           } else {
             Wmq  = list_khatri_rao(lapply(factors[[j]], function(x) x[, -r, drop = F]))
-            wmq  = apply(Wmq, 1, sum)
-            x0   = norm(wmq, type = "2")
-            wmq  = wmq / x0
-            cmq  = drop(t(wmq) %*% XtX[[j]] %*% wmq)
             pi   = construct_projector(Mq, Mqmq, Wmq)
           }
           tmp = Mq %*% alt_prod(Az, factors[[j]], LEN[j], d, r, side = "left")
-          if (cmq < 1e-6) {
-            lambda = sqrt(drop(t(tmp) %*% (diag(nrow(Mq)) - pi) %*% tmp))
-            x      = 0
-          } else {
-            lambda = sqrt(drop(t(tmp) %*% (diag(nrow(Mq)) - pi) %*% tmp + (t(Az) %*% wmq)^2 / cmq))
-            x      = drop(t(Az) %*% wmq / (lambda * cmq))
-          }
+          lambda = sqrt(drop(t(tmp) %*% (diag(nrow(Mq)) - pi) %*% tmp))
           factors[[j]][[d]][, r] = Mq %*% (diag(nrow(Mq)) - pi) %*% tmp / lambda
-          factors[[j]][[d]][, -r] = factors[[j]][[d]][, -r] * (x / x0)
 
-          a[[j]]            = kron_sum(factors[[j]])
+          a[[j]]            = weighted_kron_sum(factors[[j]], weights[[j]])
           Y[, j]            = A_m[[j]] %*% a[[j]]
 
           dgx              = dg(cov2(Y[, j], Y, bias = bias))
@@ -61,9 +48,21 @@ ns_mgcca_update = function(A, A_m, a, factors, XtX, Y, g, dg, C,
           Z[, j]           = rowSums(
             matrix(rep(C[j, ], n), n, J, byrow = TRUE) * dgx * Y)
         }
+
+        # Update weights
+        tmp          = t(Z[, j]) %*% A_m[[j]] %*% list_khatri_rao(factors[[j]])
+        weights[[j]] = drop(tmp) / norm(drop(tmp), type = "2")
+
+        a[[j]]            = weighted_kron_sum(factors[[j]], weights[[j]])
+        Y[, j]            = A_m[[j]] %*% a[[j]]
+
+        dgx              = dg(cov2(Y[, j], Y, bias = bias))
+        dgx              = matrix(rep(dgx, n), n, J, byrow = TRUE)
+        Z[, j]           = rowSums(
+          matrix(rep(C[j, ], n), n, J, byrow = TRUE) * dgx * Y)
       }
     }
   }
 
-  return(list(factors = factors, a = a, Y = Y))
+  return(list(factors = factors, weights = weights, a = a, Y = Y))
 }
