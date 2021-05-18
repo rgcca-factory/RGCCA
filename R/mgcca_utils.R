@@ -50,3 +50,26 @@ weighted_factor <- function(u, d, rank) {
     return(u)
   return((u %*% diag(d[1:rank])) / sqrt(sum(d[1:rank] ^ 2)))
 }
+
+alt_prod = function(XtX, factor, LEN, d, r, side = "left") {
+  unfolded_dim = dim(XtX)
+  folded_dim   = sapply(factor, nrow)
+  if (side == "left") {
+    XtX    = array(XtX, dim = c(folded_dim, unfolded_dim[2]))
+    offset = 0
+  }
+  else {
+    XtX    = array(XtX, dim = c(unfolded_dim[1], folded_dim))
+    offset = 1
+  }
+  for (m in 1:(LEN - 1)) {
+    if (d != m) {
+      XtX = mode_product(XtX, factor[[m]][, r], mode = m + offset)
+      folded_dim[m] = 1
+    }
+  }
+  if (side == "left")
+    return(drop(array(XtX, dim = c(folded_dim, unfolded_dim[2]))))
+  else
+    return(drop(array(XtX, dim = c(unfolded_dim[1], folded_dim))))
+}

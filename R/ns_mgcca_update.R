@@ -26,10 +26,9 @@ ns_mgcca_update = function(A, A_m, a, factors, XtX, Y, g, dg, C,
       # Deal with tensor blocks
       for (d in 1:(LEN[j] - 1)) {
         for (r in 1:ranks[j]) {
-          other_factors = kron_prod_q(factors[[j]], mode = d, q = r)
-          Az            = t(A_m[[j]]) %*% Z[, j]
-          Mqmq          = t(other_factors) %*% XtX[[j]]
-          Mq            = inv_sqrtm(Mqmq %*% other_factors)
+          Az   = t(A_m[[j]]) %*% Z[, j]
+          Mqmq = alt_prod(XtX[[j]], factors[[j]], LEN[j], d, r, side = "left")
+          Mq   = inv_sqrtm(alt_prod(Mqmq, factors[[j]], LEN[j], d, r, side = "right"))
 
           if (ranks[j] == 1) {
             x0  = 1
@@ -43,7 +42,7 @@ ns_mgcca_update = function(A, A_m, a, factors, XtX, Y, g, dg, C,
             cmq  = drop(t(wmq) %*% XtX[[j]] %*% wmq)
             pi   = construct_projector(Mq, Mqmq, Wmq)
           }
-          tmp    = Mq %*% t(other_factors) %*% Az
+          tmp = Mq %*% alt_prod(Az, factors[[j]], LEN[j], d, r, side = "left")
           if (cmq < 1e-6) {
             lambda = sqrt(drop(t(tmp) %*% (diag(nrow(Mq)) - pi) %*% tmp))
             x      = 0

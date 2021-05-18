@@ -141,7 +141,6 @@ mgccak <- function (A, A_m = NULL, C, tau = rep(1, length(A)), scheme = "centroi
         Y[, j]            = P[[j]] %*% a[[j]]
 
       } else if (j %in% B_nD) { # higher order Tensors
-        col_idx           = 1:(LEN[[j]] - 1)
         Q                 = array(t(P[[j]]) %*% Z[, j], dim = DIM[[j]][-1])
         Q                 = unfold(Q, mode = 1)
         other_factors     = list_khatri_rao(factors[[j]][-1])
