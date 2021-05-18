@@ -33,6 +33,7 @@ r_packages:
   - gridExtra
 
 install:
+  - R -e 'unlink("vignettes", recursive = TRUE)'
   - Rscript -e 'install.packages("devtools",repos = "http://cran.wustl.edu")'
   - R -e 'devtools::install_deps(dep = T)'
 
