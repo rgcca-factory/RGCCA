@@ -2,59 +2,85 @@
 % Please edit documentation in R/sgccak.R
 \name{sgccak}
 \alias{sgccak}
-\title{Internal function for computing the SGCCA parameters (SGCCA block components, outer weight vectors etc.)}
+\title{Internal function for computing the SGCCA parameters (SGCCA block
+components, outer weight vectors etc.)}
 \usage{
-sgccak(A, C, sparsity = rep(1, length(A)), scheme = "centroid",
-  scale = FALSE, tol = .Machine$double.eps, init = "svd",
-  bias = TRUE, verbose = TRUE, quiet = FALSE)
+sgccak(
+  A,
+  C,
+  sparsity = rep(1, length(A)),
+  scheme = "centroid",
+  tol = .Machine$double.eps,
+  init = "svd",
+  bias = TRUE,
+  verbose = TRUE,
+  quiet = FALSE,
+  na.rm = TRUE
+)
 }
 \arguments{
-\item{A}{A list that contains the \eqn{J} blocks of variables from which block components are constructed.
-It could be eiher the original matrices (\eqn{X_1, X_2, ..., X_J}) or the residual matrices (\eqn{X_{h1}, X_{h2}, ..., X_{hJ}}).}
+\item{A}{A list that contains the \eqn{J} blocks of variables from which
+block components are constructed. It could be eiher the original matrices
+(\eqn{X_1, X_2, ..., X_J}) or the residual matrices
+(\eqn{X_{h1}, X_{h2}, ..., X_{hJ}}).}
 
-\item{C}{A symmetric matrix (J*J) that describes the relationships between blocks.}
+\item{C}{A symmetric matrix (J*J) that describes the
+relationships between blocks.}
 
-\item{sparsity}{Either a \eqn{1*J} vector or a \eqn{max(ncomp) * J} matrix encoding the L1 constraints applied to the outer weight vectors.
-Elements of sparsity vary between \eqn{1/sqrt(p_j)} and 1 (larger values of sparsity correspond to less penalization).
-If sparsity is a vector, L1-penalties are the same for all the weights corresponding to the same block but different components:
+\item{sparsity}{Either a \eqn{1*J} vector or a \eqn{max(ncomp) * J} matrix
+encoding the L1 constraints applied to the outer weight vectors. The amount
+of sparsity varies between \eqn{1/sqrt(p_j)} and 1 (larger values of sparsity
+correspond to less penalization). If sparsity is a vector, L1-penalties are
+the same for all the weights corresponding to the same block but different
+components:
 \deqn{for all h, |a_{j,h}|_{L_1} \le c_1[j] \sqrt{p_j},}
 with \eqn{p_j} the number of variables of \eqn{X_j}.
-If sparsity is a matrix, each row \eqn{h} defines the constraints applied to the weights corresponding to components \eqn{h}:
-\deqn{for all h, |a_{j,h}|_{L_1} \le c_1[h,j] \sqrt{p_j}.} It can be estimated by using \link{rgcca_permutation}.}
+If sparsity is a matrix, each row \eqn{h} defines the constraints applied to
+the weights corresponding to components \eqn{h}:
+\deqn{for all h, |a_{j,h}|_{L_1} \le c_1[h,j] \sqrt{p_j}.} It can be
+estimated by using \link{rgcca_permutation}.}
 
-\item{scheme}{A character or a function giving the link function for 
+\item{scheme}{Character string or a function giving the scheme function for
 covariance maximization among "horst" (the identity function), "factorial"
- (the squared values), "centroid" (the absolute values). Only, the horst 
- scheme penalizes structural negative correlation. The factorial scheme 
- discriminates more strongly the blocks than the centroid one.}
+ (the squared values), "centroid" (the absolute values). The scheme function
+ can be any continously differentiable convex function and it is possible to
+ design explicitely the sheme function (e.g. function(x) x^4) as argument of
+ rgcca function.  See (Tenenhaus et al, 2017) for details.}
 
-\item{scale}{A logical value indicating if each block is normalised and divided by the square root of its number of variables and then divided by the square root of its number of variables.}
+\item{tol}{The stopping value for the convergence of the algorithm.}
 
-\item{tol}{An integer giving the value for stopping the algorithm convergence.}
+\item{init}{Character string giving the type of initialization to use in
+the  algorithm. It could be either by Singular Value Decompostion ("svd")
+or by random initialisation ("random") (default: "svd").}
 
-\item{init}{A character giving the mode of initialization to use in the algorithm. The alternatives are either by Singular Value Decompostion ("svd") or random ("random") (default: "svd").}
+\item{bias}{A logical value for biaised (\eqn{1/n}) or unbiaised
+(\eqn{1/(n-1)}) estimator of the var/cov (default: bias = TRUE).}
 
-\item{bias}{A logical value for biaised (\eqn{1/n}) or unbiaised (\eqn{1/(n-1)}) estimator of the var/cov (default: bias = TRUE).}
+\item{verbose}{Logical value indicating whether the warnings are displayed.}
 
-\item{verbose}{A boolean displaying the warnings}
+\item{quiet}{Logical value indicating if warning messages are reported.}
 
-\item{quiet}{A boolean hidding the warnings}
+\item{na.rm}{If TRUE, runs rgcca only on available data.}
 }
 \value{
-\item{Y}{A list of \eqn{J} elements. Each element of \eqn{Y} is a matrix that contains the analysis components for the corresponding block.}
+\item{Y}{A list of \eqn{J} elements. Each element of \eqn{Y} is a
+matrix that contains the analysis components for the corresponding block.}
 
-\item{a}{A list of \eqn{J} elements. Each element of \eqn{a} is a matrix that contains the outer weight vectors for each block.}
+\item{a}{A list of \eqn{J} elements. Each element of \eqn{a} is a
+matrix that contains the outer weight vectors for each block.}
 
-\item{crit}{A vector of integer that contains for each component the values of the analysis criteria across iterations.}
+\item{crit}{A vector of integer that contains for each component
+the values of the analysis criteria across iterations.}
 
-\item{converg}{Speed of convergence of the alogrithm to reach the tolerance.}
+\item{converg}{Speed of convergence of the alogrithm to reach the
+tolerance.}
 
-\item{AVE}{A list of numerical values giving the indicators of model quality based on the Average Variance Explained (AVE): AVE(for each block), AVE(outer model), AVE(inner model).}
-
-\item{call}{Call of the function}
+\item{AVE}{A list of numerical values giving the indicators of model
+quality based on the Average Variance Explained (AVE): AVE(for each block),
+AVE(outer model), AVE(inner model).}
 }
 \description{
-The function sgccak() is called by sgcca() and does not have to be used by the user. 
-sgccak() enables the computation of SGCCA block components, outer weight vectors, etc., 
-for each block and each dimension.
+The function sgccak() is called by sgcca() and does not have to be used by
+the user. sgccak() enables the computation of SGCCA block components, outer
+weight vectors, etc., for each block and each deflation stage.
 }

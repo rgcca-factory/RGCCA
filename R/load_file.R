@@ -6,7 +6,9 @@ load_file <- function(
     rownames = 1,
     header = TRUE,
     one_column = FALSE,
-    decimal = ".") {
+    decimal = ".",
+    rm_dup_rows = TRUE
+    ) {
 
     match.arg(separator, c("\t", ",", ";"))
     match.arg(decimal, c(",", "."))
@@ -17,7 +19,7 @@ load_file <- function(
         sheet <- paste0(sheet, collapse = " ")
 
     isXls <- length(grep("xlsx?", file))
-    
+
     if (!isXls)
         file <- file_text
 
@@ -27,7 +29,7 @@ load_file <- function(
     # TODO: add automatic separator setting
 
     if (!isXls)
-        load_file_text(file, separator, rownames, header, one_column, decimal)
+        load_file_text(file, separator, rownames, header, one_column, decimal, rm_dup_rows)
     else
         load_file_excel(file, sheet, rownames, header = header)
 

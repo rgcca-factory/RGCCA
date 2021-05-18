@@ -1,12 +1,12 @@
 # Variable contribution
-# 
+#
 # Extract the contibution of variables to the model by using correlation or weight
-# 
+#
 # @inheritParams plot_var_2D
 # @inheritParams plot_var_1D
 # @param compz An integer giving the index of the analysis component used
 # for the z-axis
-# @param i_block_2 An integer giving the index of a list of blocks to be 
+# @param i_block_2 An integer giving the index of a list of blocks to be
 # correlated to i_block if this option is selected
 # @return A dataframe containing the indexes for each selected components
 get_ctr <- function(
@@ -15,11 +15,11 @@ get_ctr <- function(
     compy = 2,
     compz = NULL,
     i_block = length(rgcca_res$call$blocks),
-    type = "cor",
+    type = "loadings",
     collapse = FALSE,
     i_block_2 = i_block) {
 
-    match.arg(type, c("cor", "weight"))
+    match.arg(type, c("loadings", "weight"))
     stopifnot(!missing(rgcca_res))
 
     blocks <- rgcca_res$call$blocks
@@ -33,7 +33,7 @@ get_ctr <- function(
         row.names <- unlist(lapply(blocks, colnames))
     }
 
-    if (type == "cor")
+    if (type == "loadings")
         f2 <- function(x, y){
         cor(
             blocks[[y]][rownames(rgcca_res$Y[[y]]), ],
@@ -62,7 +62,7 @@ get_ctr <- function(
             c(compx, compy, compz),
             function(x){
                 if (x > rgcca_res$call$ncomp[i_block])
-                    stop_rgcca("The index of the selected analysis component doesn't exist.")
+                    stop_rgcca("The index of the block-component does not exist.")
                 f(x)
             },
             simplify = FALSE

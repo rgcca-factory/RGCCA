@@ -4,36 +4,41 @@
 \alias{plot_ind}
 \title{Plot the two components of a RGCCA}
 \usage{
-plot_ind(rgcca_res, resp = rep(1, NROW(rgcca_res$Y[[1]])), compx = 1,
-  compy = 2, i_block = length(rgcca_res$Y), text = TRUE,
-  i_block_y = i_block, response_name = "Response",
-  no_overlap = FALSE, predicted = NULL,
-  title = paste0(names(rgcca_res$call$blocks)[i_block],
-  ": Sample space"), legend = TRUE, ...)
+plot_ind(
+  rgcca_res,
+  resp = rep(1, NROW(rgcca_res$Y[[1]])),
+  compx = 1,
+  compy = 2,
+  i_block = length(rgcca_res$Y),
+  text = TRUE,
+  i_block_y = i_block,
+  response_name = "Response",
+  no_overlap = FALSE,
+  predicted = NULL,
+  title = paste0(names(rgcca_res$call$blocks)[i_block], ": Sample space"),
+  legend = TRUE,
+  ...
+)
 }
 \arguments{
-\item{rgcca_res}{A RGCCA object (see  \code{\link[RGCCA]{rgcca}})}
+\item{rgcca_res}{A fitted RGCCA object (see  \code{\link[RGCCA]{rgcca}})}
 
 \item{resp}{A vector of characters corresponding either to a qualitative
 variable with levels or a continuous variable}
 
-\item{compx}{An integer giving the index of the analysis component used
-for the x-axis}
+\item{compx}{An integer giving the index of the block component for the x-axis}
 
-\item{compy}{An integer giving the index of the analysis component used
-for the y-axis}
+\item{compy}{An integer giving the index of the block component for the y-axis}
 
-\item{i_block}{An integer giving the index of a list of blocks}
+\item{i_block}{An integer giving the index of the block}
 
-\item{text}{A bolean to represent the points with their row names (TRUE)
-or with circles (FALSE)}
+\item{text}{A logical value indicating if rowanmes are displayed (default = TRUE)}
 
-\item{i_block_y}{An integer giving the index of a list of blocks (another
-one, different from the one used in i_block)}
+\item{i_block_y}{An integer giving the index of the block (different from i_block)}
 
 \item{response_name}{A character giving the legend title}
 
-\item{no_overlap}{A boolean to avoid overlap in plotted text}
+\item{no_overlap}{A logical value indicating if text-overlappin is accepted}
 
 \item{predicted}{A list containing as  2nd element a matrix of predicted components}
 
@@ -52,12 +57,12 @@ coord = lapply(seq(3),
 AVE_X = lapply(seq(3), function(x) runif(2))
 for (i in 1:length(coord))
 row.names(coord[[i]]) = seq(15)
-rgcca_out = list(Y = coord, AVE = list(AVE_X = AVE_X), 
+rgcca_out = list(Y = coord, AVE = list(AVE_X = AVE_X),
 call = list(blocks = coord, ncomp = rep(2,3))) # TODO
 # Using a superblock
 resp = as.matrix(rep(LETTERS[seq(3)], each = 5))
 row.names(resp) = seq(15)
-rgcca_out$call$type="rgcca"
+rgcca_out$call$method="rgcca"
 class(rgcca_out) = "rgcca"
 plot_ind(rgcca_out, resp)
 # Using the first block

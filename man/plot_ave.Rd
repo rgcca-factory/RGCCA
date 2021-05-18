@@ -4,17 +4,24 @@
 \alias{plot_ave}
 \title{Histogram of Average Variance Explained}
 \usage{
-plot_ave(rgcca_res, cex = 1, title = "Average Variance Explained",
-  colors = NULL, ...)
+plot_ave(
+  rgcca_res,
+  cex = 1,
+  title = "Average Variance Explained",
+  colors = NULL,
+  ...
+)
 }
 \arguments{
-\item{rgcca_res}{A RGCCA object (see  \code{\link[RGCCA]{rgcca}})}
+\item{rgcca_res}{A fitted RGCCA object (see  \code{\link[RGCCA]{rgcca}})}
 
 \item{cex}{An integer for the size of the plot parameters}
 
 \item{title}{A character giving the title of the plot}
 
-\item{colors}{Either a vector of integers (each integer corresponding to a color) or of characters corresponding to names of colors (as "blue",see colors()) or RGB code ("#FFFFFF").}
+\item{colors}{Either a vector of integers (each integer corresponding to a
+color) or of characters corresponding to names of colors (as "blue",see
+colors()) or RGB code ("#FFFFFF").}
 
 \item{...}{Further graphical parameters (see plot2D functions)}
 }
@@ -26,8 +33,8 @@ for each blocks and sorted in decreasing order
 random_val = function(y=1) lapply(seq(4),
 function(x) matrix(runif(4), y, 2))
 rgcca_out = list(AVE = list(AVE_X = random_val()),
-     a = random_val(2), 
-     call = list(type = "rgcca", ncomp = rep(2, 4)))
+     a = random_val(2),
+     call = list(method = "rgcca", ncomp = rep(2, 4)))
 names(rgcca_out$a) <- LETTERS[seq(4)]
 class(rgcca_out) = "rgcca"
 for(i in seq(1,4))

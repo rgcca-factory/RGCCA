@@ -2,36 +2,76 @@
 % Please edit documentation in R/bootstrap.R
 \name{bootstrap}
 \alias{bootstrap}
-\title{Compute bootstrap}
+\title{Bootstrap confidence intervals and p-values}
 \usage{
-bootstrap(rgcca_res, n_boot = 100, n_cores = parallel::detectCores() -
-  1, parallelization = NULL)
+bootstrap(rgcca_res, n_boot = 100, n_cores = parallel::detectCores() - 1)
 }
 \arguments{
-\item{rgcca_res}{A RGCCA object (see  \code{\link[RGCCA]{rgcca}})}
+\item{rgcca_res}{A fitted RGCCA object (see  \code{\link[RGCCA]{rgcca}})}
 
-\item{n_boot}{An integer for the number of boostraps}
+\item{n_boot}{Number of bootstrap samples. Default: 100.}
 
-\item{n_cores}{An integer for the number of cores used in parallelization}
-
-\item{parallelization}{A logical value to run a parallelization. If parallelization = NULL (default), the parallelization is always performed except for Windows if length(n_boot) < 10.}
+\item{n_cores}{Number of cores for parallelization.}
 }
 \value{
-A list containing two objects: 'bootstrap' and 'rgcca'. 
-'bootstrap' is a list a list containing for each block, a matrix with in rows the variables of the blocks and in columns the weight calculated for each bootstrap; 'rgcca' is the original rgcca (see  \code{\link[RGCCA]{RGCCA}}).
+A list containing two objects: 'bootstrap' and 'rgcca'.
+'bootstrap' is a list containing for each block, a matrix
+with the variables of the block in row and the block weight vector
+calculated accross bootstrap sample in column. 'rgcca' is the fitted rgcca
+object obtained from the original data. (see  \code{\link[RGCCA]{rgcca}})
 }
 \description{
-Compute boostrap of RGCCA in order to evaluate the stability of the weights found in S/RGCCA
+Boostrap confidence intervals and p-values for evaluating the significancy/
+stability of the block-weight vectors produce by S/RGCCA.
 }
 \examples{
+# Bootstrap confidence intervals and p-values for RGCCA
 data("Russett")
-blocks = list(agriculture = Russett[, seq(3)], industry = Russett[, 4:5],
-    politic = Russett[, 6:11] )
-rgcca_out = rgcca(blocks)
-b=bootstrap(rgcca_out, n_boot = 2, n_cores = 1)
-plot(b,n_cores=1)
-plot(b,type="2D",n_cores=1)
+blocks = list(agriculture = Russett[, seq(3)],
+              industry = Russett[, 4:5],
+              politic = Russett[, 6:11])
+
+fit.rgcca = rgcca(blocks, ncomp= c(2, 1, 2))
+boot.out = bootstrap(fit.rgcca, n_boot = 20, n_cores = 2)
+
+plot(boot.out, type = "weight", block = 3, comp = 1)
+
+print(boot.out, comp =2)
+ get_bootstrap(boot.out, block = 1, comp = 1)
+
+fit.rgcca = rgcca(blocks, method = "mcoa")
+boot.out = bootstrap(fit.rgcca, n_boot = 50, n_cores = 2)
+
+plot(boot.out, type = "weight", block = 4)
+
+\dontrun{
+# Stability of the selected variables for SGCCA
+# Not run:
+# Download the dataset's package at http://biodev.cea.fr/sgcca/.
+# --> gliomaData_0.4.tar.gz#' require(gliomaData)
+library(gliomaData)
+data(ge_cgh_locIGR)
+A <- ge_cgh_locIGR$multiblocks
+A[[3]] = A[[3]][, -3]
+Loc <- factor(ge_cgh_locIGR$y)
+levels(Loc) <- colnames(ge_cgh_locIGR$multiblocks$y)
+C <-  matrix(c(0, 0, 1, 0, 0, 1, 1, 1, 0), 3, 3)
+
+# rgcca algorithm using the dual formulation for X1 and X2
+# and the dual formulation for X3
+
+fit.rgcca = rgcca(A, connection = C, tau = c(1, 1, 0),
+                  ncomp = c(2, 2, 1), scheme = "factorial",
+                  verbose = TRUE)
+boot.out = bootstrap(fit.rgcca, n_boot = 50, n_cores = 2)
+plot(boot.out, block = 1, type = "weight", ncomp = 1, n_marks = 30)
+plot(boot.out, block = 1, type = "weight", ncomp = 2, n_marks = 30)
+get_bootstrap(boot.out)
+
+# stability analysis prior bootstrap for sgcca
+}
 }
 \seealso{
-\code{\link[RGCCA]{plot.bootstrap}} , \code{\link[RGCCA]{print.bootstrap}}
+\code{\link[RGCCA]{plot.bootstrap}},
+\code{\link[RGCCA]{print.bootstrap}}
 }

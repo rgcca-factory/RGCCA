@@ -1,5 +1,5 @@
 # Author: Etienne CAMENEN
-# Date: 2019
+# Date: 2020
 # Contact: arthur.tenenhaus@l2s.centralesupelec.fr
 # Key-words: omics, RGCCA, multi-block
 # EDAM operation: analysis, correlation, visualisation
@@ -45,7 +45,7 @@ multiple_blocks_super  <<- c(
 analyse_methods  <<- list(one_block, two_blocks, multiple_blocks, multiple_blocks_super)
 reac_var  <<- reactiveVal()
 id_block_y <<- id_block <<- id_block_resp <<- analysis <<- connection <<- perm <<- boot <<-
-boot <<- analysis_type <<- crossval <<- selected.var <<- crossval <<- NULL
+boot <<- analysis_type <<- crossval <<- selected.var <<- crossval <<- blocks_without_superb <<- NULL
 clickSep <<- FALSE
 if_text <<- TRUE
 compx <<- 1
@@ -54,6 +54,12 @@ nb_mark <<- 100
 BSPLUS <<- R.Version()$minor >= 3
 ax2 <<- list(linecolor = "white",
         tickfont = list(size = 10, color = "grey"))
+CEX_LAB <<- 15
+CEX_MAIN <<- 15
+CEX_POINT <<- 3
+CEX_SUB <<- 10
+CEX_AXIS <<- 10
+CEX <<- 1
 
 # config for shinyapps.io
 appDir <- ifelse("packrat" %in% list.files(), "", "../../R/")
@@ -129,12 +135,7 @@ ui <- fluidPage(
             tabPanel(
                 "RGCCA",
                 uiOutput("analysis_type_custom"),
-                checkboxInput(
-                    inputId = "each_ncomp",
-                    label = "Tune the components for each block",
-                    value = FALSE
-                ),
-                uiOutput("nb_compcustom"),
+                
                 uiOutput("scale_custom"),
                 radioButtons(
                     "init",
@@ -150,16 +151,22 @@ ui <- fluidPage(
                     label = "Supervised analysis",
                     value = FALSE
                 ),
-
                 conditionalPanel(
                     condition = "input.supervised || input.analysis_type == 'RA'",
                     uiOutput("blocks_names_response")),
-
                 uiOutput("connection_custom"),
-                uiOutput("scheme_custom"),
+                
+                checkboxInput(
+                    inputId = "each_ncomp",
+                    label = "Number of components for each block",
+                    value = FALSE
+                ),
+                uiOutput("nb_compcustom"),
+
                 uiOutput("tau_opt_custom"),
                 uiOutput("each_tau_custom"),
                 uiOutput("tau_custom"),
+                uiOutput("tune_type_custom"),
                 uiOutput("val_custom"),
                 sliderInput(
                     inputId = "ncv",
@@ -191,6 +198,7 @@ ui <- fluidPage(
                 #     value = 2,
                 #     step = 1
                 # ),
+                uiOutput("scheme_custom"),
                 actionButton(
                     inputId = "run_analysis",
                     label = "Run analysis"),
@@ -211,7 +219,7 @@ ui <- fluidPage(
                     label = "Output image format",
                     choices = c(
                         `jpeg` = "jpeg",
-                        `png` = "png"#,
+                        `png` = "png"
                         #`svg` = "svg"
                         # `tiff` = "tiff",
                         # `pdf` = "pdf"
@@ -238,7 +246,7 @@ ui <- fluidPage(
                     "indexes",
                     label = "Type of indexes",
                     choices = c(
-                        Correlation = "cor",
+                        Correlation = "loadings",
                         Weights = "weight")
                 ),
                 uiOutput("b_x_custom"),
@@ -290,7 +298,7 @@ ui <- fluidPage(
             ),
             tabPanel(
                 "Permutation",
-                plotlyOutput("permutationPlot", height = 700),
+                plotlyOutput("permutationPlot", height = 700)
                 # actionButton("permutation_save", "Save")
             ),
             tabPanel(
@@ -300,10 +308,10 @@ ui <- fluidPage(
             ),
             tabPanel(
                 "Cross-validation",
-                plotlyOutput("cvPlot", height = 700),
+                plotlyOutput("cvPlot", height = 700)
                 #actionButton("cv_save", "Save")
             )
-        )
+        )   
 
     ))
 )

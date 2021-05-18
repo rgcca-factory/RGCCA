@@ -4,10 +4,10 @@
 # @return A list of dataframe
 
 remove_null_sd <- function(list_m) {
-    
+
     names <- names(list_m)
-    
-    column_sd_null <- lapply(list_m, 
+
+    column_sd_null <- lapply(list_m,
                              function(x)
                                  which(apply(x, 2, function(y){
                                      if(mode(y)!="character")
@@ -34,7 +34,7 @@ remove_null_sd <- function(list_m) {
             else
                 list_m[[x]]
         })
-    
+
     names(list_m) <- names
     return(list_m)
 }

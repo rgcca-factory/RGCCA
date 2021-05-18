@@ -4,12 +4,21 @@
 \alias{plot_bootstrap_2D}
 \title{Plot a bootstrap in 2D}
 \usage{
-plot_bootstrap_2D(b = NULL, df_b = NULL, x = "bootstrap_ratio",
-  y = "occurrences", title = paste("Variable selection \\nby",
-  attributes(b)$n_boot, "bootstraps"), colors = NULL, cex = 1,
-  cex_main = 14 * cex, cex_sub = 12 * cex, cex_point = 3 * cex,
-  cex_lab = 10 * cex, comp = 1, i_block = NULL, collapse = FALSE,
-  n_cores = parallel::detectCores() - 1)
+plot_bootstrap_2D(
+  b = NULL,
+  df_b = NULL,
+  x = "bootstrap_ratio",
+  y = "occurrences",
+  title = paste("Variable selection \\nby", attributes(b)$n_boot, "bootstraps"),
+  colors = NULL,
+  cex = 1,
+  cex_main = 14 * cex,
+  cex_sub = 12 * cex,
+  cex_point = 3 * cex,
+  cex_lab = 10 * cex,
+  comp = 1,
+  i_block = NULL
+)
 }
 \arguments{
 \item{b}{A boostrap object \code{\link[RGCCA]{bootstrap}}}
@@ -22,7 +31,9 @@ plot_bootstrap_2D(b = NULL, df_b = NULL, x = "bootstrap_ratio",
 
 \item{title}{A character giving the title of the plot}
 
-\item{colors}{Either a vector of integers (each integer corresponding to a color) or of characters corresponding to names of colors (as "blue",see colors()) or RGB code ("#FFFFFF").}
+\item{colors}{Either a vector of integers (each integer corresponding to a
+color) or of characters corresponding to names of colors (as "blue",see
+colors()) or RGB code ("#FFFFFF").}
 
 \item{cex}{An integer for the size of the plot parameters}
 
@@ -34,13 +45,9 @@ plot_bootstrap_2D(b = NULL, df_b = NULL, x = "bootstrap_ratio",
 
 \item{cex_lab}{An integer for the size of the axis titles}
 
-\item{comp}{An integer giving the index of the analysis components}
+\item{comp}{An integer indicating the block-weight/loading vector to plot.}
 
-\item{i_block}{An integer giving the index of a list of blocks}
-
-\item{collapse}{A boolean to combine the variables of each block as result}
-
-\item{n_cores}{An integer for the number of cores used in parallelization}
+\item{i_block}{An integer giving the index of the block}
 }
 \description{
 Graph of the best variables from a bootstrap with, in x-axis, the number of
@@ -57,19 +64,6 @@ Negative weights are colored in red and the positive ones are in green.
 \item 'occurrences' for non-zero occurences
 \item 'mean' for the mean of the bootstrap weights
 }
-}
-\examples{
-data("Russett")
-blocks = list(agriculture = Russett[, seq(3)], industry = Russett[, 4:5],
-    politic = Russett[, 6:11] )
-rgcca_out = rgcca(blocks, sparsity = 0.75, type = "sgcca")
-boot = bootstrap(rgcca_out, 2, n_cores = 1)
-plot_bootstrap_2D(boot, n_cores = 1)
-rgcca_out = rgcca(blocks)
-boot = bootstrap(rgcca_out, 2, n_cores = 1)
-selected.var = get_bootstrap(boot, n_cores = 1,display_order=TRUE)
-plot_bootstrap_2D(boot, n_cores = 1)
-plot_bootstrap_2D(df_b = selected.var,n_cores=1)
 }
 \seealso{
 \code{\link[RGCCA]{bootstrap}}, \code{\link[RGCCA]{get_bootstrap}}

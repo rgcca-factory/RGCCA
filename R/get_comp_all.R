@@ -9,7 +9,7 @@ get_comp_all <- function(
 
     if (type ==  "train")
         y <- lapply(
-            seq(length(rgcca$Y)), 
+            seq(length(rgcca$Y)),
             function(x) rgcca$Y[[x]][row.names(rgcca$call$blocks[[x]]), ])
     else
         y <- pred
@@ -29,4 +29,3 @@ get_comp_all <- function(
 
     return(res)
 }
-    

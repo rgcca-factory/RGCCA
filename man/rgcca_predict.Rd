@@ -4,11 +4,18 @@
 \alias{rgcca_predict}
 \title{Predict RGCCA}
 \usage{
-rgcca_predict(rgcca_res, newA, model = "regression", fit = "lm",
-  bloc_to_pred = NULL, new_scaled = TRUE)
+rgcca_predict(
+  rgcca_res,
+  newA,
+  model = "regression",
+  fit = "lm",
+  bloc_to_pred = NULL,
+  new_scaled = TRUE,
+  regress_on = "block"
+)
 }
 \arguments{
-\item{rgcca_res}{A RGCCA object (see  \code{\link[RGCCA]{rgcca}})}
+\item{rgcca_res}{A fitted RGCCA object (see  \code{\link[RGCCA]{rgcca}})}
 
 \item{newA}{A list of either a dataframe/matrix or a vector giving the blocks to be predicted}
 
@@ -19,6 +26,8 @@ rgcca_predict(rgcca_res, newA, model = "regression", fit = "lm",
 \item{bloc_to_pred}{A character giving the block to predicted (must be the same name among train and test set)}
 
 \item{new_scaled}{A boolean scaling the blocks to predict}
+
+\item{regress_on}{A boolean indicating if the regression is performed on the blocks (by default) or on the components}
 }
 \description{
 Predict a new block from a RGCCA
@@ -45,8 +54,11 @@ newA = sample(newA, length(newA))
 bloc_to_pred = "industry"
 to_pred_train = kmeans(A[[bloc_to_pred]], 3)$cluster
 to_pred_test = kmeans(newA[[bloc_to_pred]], 3)$cluster
+political_regime = factor(apply(Russett[, 9:11], 1, which.max),
+labels =c("demostab", "demoinst", "dictator"))
 res  = rgcca_predict(object, newA, bloc_to_pred = "industry")
 # ( res  = rgcca_predict(object, newA, "regression", "cor", "industry") )
+# rgcca_predict(object, newA, bloc_to_pred = "industry", fit = "r2")$score # 0.5586036
 res  = rgcca_predict(object, newA)
 library(MASS)
 }

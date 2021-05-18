@@ -12,8 +12,8 @@
 # }
 # @export loadExcel
 load_file_excel = function(
-    file, 
-    sheet = 1, 
+    file,
+    sheet = 1,
     rownames = 1,
     header = TRUE,
     num = TRUE) {
@@ -32,13 +32,13 @@ load_file_excel = function(
         names <- df[, rownames]
         df <- df[, -rownames, drop = FALSE]
     }
-    
-    if (num) 
+
+    if (num)
         df <- as.data.frame(lapply(df, function(x) as.numeric(as.vector(x))))
-    
+
     df <- as.matrix(df)
-    
+
     if (!is.null(rownames)) row.names(df) <- names
-    
+
     return(df)
 }

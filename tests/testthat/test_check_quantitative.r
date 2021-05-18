@@ -6,4 +6,3 @@ r= check_quantitative(df, 'data')
  test_that("test_check_quantitative",{
      expect_true(is.null(r))
  })
- 

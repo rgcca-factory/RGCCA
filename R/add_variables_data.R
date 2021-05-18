@@ -1,11 +1,16 @@
 # Add removed variables in one submodel (bootstrap, cross-validation)
 # to a list of weights and affect them to 0
-add_variables_data <- function(rgcca_res, w) {
+add_variables_data <- function(rgcca_res, w, boot = FALSE) {
 
     blocks_all <- list()
     for (x in seq(length(rgcca_res$call$blocks)))
     {
-        blocks_all[[x]] <- rgcca_res$call$blocks[[x]][intersect(rownames(rgcca_res$call$blocks[[1]]), rownames(w[[1]])), ]
+        blocks_all[[x]] <- rgcca_res$call$blocks[[x]][intersect(rownames(rgcca_res$call$blocks[[1]]), rownames(w[[1]])), , drop = FALSE]
+        if (boot) {
+            blocks_all[[x]] <- rgcca_res$call$blocks[[x]]
+            rownames(blocks_all[[x]]) <- rownames(w[[1]])
+        }
+
         if(is.null(dim(blocks_all[[x]])))
         {
             b=blocks_all[[x]]
@@ -14,7 +19,7 @@ add_variables_data <- function(rgcca_res, w) {
             colnames(blocks_all[[x]])=names(rgcca_res$call$blocks)[x]
         }
     }
-     
+
     missing_var <- lapply(
         seq(length(w)), function(x)
             setdiff(
@@ -30,7 +35,7 @@ add_variables_data <- function(rgcca_res, w) {
                 nrow(blocks_all[[x]]),
                 length(missing_var[[x]]),
                 dimnames = list(rownames(blocks_all[[x]]), missing_var[[x]])
-            ) 
+            )
         }else
         {
             M=matrix(
@@ -40,8 +45,8 @@ add_variables_data <- function(rgcca_res, w) {
                 dimnames = list(names(blocks_all[[x]]), missing_var[[x]])
             )
         }
-      
-        return(M)  
+
+        return(M)
     }
     )
 

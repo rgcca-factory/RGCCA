@@ -2,26 +2,29 @@
 #
 # Internal function for computing boostrap of RGCCA
 #
-# @inheritParams rgcca
-# @inheritParams plot_var_2D
-# @return A list of RGCCA bootstrap weights
-bootstrap_k <- function(rgcca_res, type = "weight") {
+# @param rgcca_res A fitted RGCCA object (see  \code{\link[RGCCA]{rgcca}})
+# @return A list of RGCCA bootstrap weights/loadings.
+bootstrap_k <- function(rgcca_res) {
+    rgcca_res_boot <- set_rgcca(rgcca_res, NA_method = "nipals", boot = TRUE)
 
-    rgcca_res_boot <- set_rgcca(rgcca_res, method = "nipals", boot = TRUE)
+    #block-weight vector
+    W = add_variables_submodel(rgcca_res, rgcca_res_boot$a)
+    boot_data = add_variables_data(rgcca_res, rgcca_res_boot$call$blocks, boot = TRUE)
 
-    if (type == "weight") {
-        add_variables_submodel(rgcca_res, rgcca_res_boot$a)
+    Y = lapply(seq_along(W), function(j) pm(boot_data[[j]], W[[j]]))
 
-    } else {
-        w <- lapply(1:length(rgcca_res_boot$A), function(j) {
-            res <- sapply(1:dim(rgcca_res_boot$A[[j]])[2], function(k) {
-                cor(
-                    rgcca_res_boot$Y[[j]][, 1], 
-                    rgcca_res_boot$A[[j]][, k], 
-                    use = "pairwise.complete.obs")
-            })
-            names(res) <- colnames(rgcca_res_boot$A[[j]])
-            return(res)
-        })
-    }
+    options(warn = -1)
+    L <- lapply(
+        seq_along(W),
+        function(j) {
+            y <- cor(boot_data[[j]], Y[[j]],
+                use = "pairwise.complete.obs")
+            y[is.na(y)] <- 0
+            y
+        }
+    )
+    options(warn = 0)
+
+    names(L) = names(rgcca_res$a)
+    return(list(W = W, L = L))
 }

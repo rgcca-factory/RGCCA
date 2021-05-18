@@ -7,7 +7,8 @@ load_libraries <- function(librairies) {
                 l,
                 character.only = TRUE,
                 warn.conflicts = FALSE,
-                quietly = TRUE
+                quietly = TRUE,
+                verbose = FALSE
         ))
     }
 }

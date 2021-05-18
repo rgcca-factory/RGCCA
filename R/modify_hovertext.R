@@ -1,12 +1,12 @@
 # p: a ggplot function
-# hovertext : a boolean for the use of hovertext (if TRUE) as the attribute 
+# hovertext : a boolean for the use of hovertext (if TRUE) as the attribute
 # to parse the onMouseOver text ("text" attribute, if FALSE)
 # type: class of graphic among regular, var1D, perm
 # p_perm: permutation object
 modify_hovertext <- function(p, hovertext = TRUE, type = "regular", perm = NULL) {
 
     attr <- ifelse(hovertext, "hovertext", "text")
-    # identify the order / id of the traces which corresponds to x- and y-axis 
+    # identify the order / id of the traces which corresponds to x- and y-axis
     # (should be before the splitting function)
 
     if (type == "perm")
@@ -17,8 +17,7 @@ modify_hovertext <- function(p, hovertext = TRUE, type = "regular", perm = NULL)
         k <- seq(2)
 
     if (type == "perm") {
-        n <- 2
-        traces <- c(3, 4)
+        traces <- c(1, 2, 5)
     } else if (type == "cv") {
         traces <- 2
         n <- 3
@@ -37,17 +36,22 @@ modify_hovertext <- function(p, hovertext = TRUE, type = "regular", perm = NULL)
     } else
         n <- length(p$x$data)
 
-    for (i in seq(n)) {
+    if (type != "perm")
+        n <- seq(n)
+    else
+        n <- c(3,4)
+
+    for (i in n) {
         # For each lines of each group in the legend
         for (j in seq(length(p$x$data[[i]][attr][[1]]))) {
-        
+
             if (!is.null(p$x$data[[i]][attr][[1]][j])) {
                 # Distinguish each duplicate by splitting with "<br>" and separe
                 # them in key/value by splitting with ": " (like a dictionnary)
                 l_text <- lapply(
                     as.list(strsplit(p$x$data[[i]][attr][[1]][j], "<br />")[[1]]),
                     function(x) strsplit(x, ": ")[[1]])
-    
+
                 l_text = unlist(lapply(l_text, function(x) {
                     if (!is.na(x[1])) {
                         if ((type == "boot" && !is.character2(x[2]))
@@ -71,13 +75,13 @@ modify_hovertext <- function(p, hovertext = TRUE, type = "regular", perm = NULL)
                     name = ifelse(hovertext,
                                 paste0("name: ", p$x$data[[i]]$text[j], "<br />"),
                                 "")
-    
+
                     parse <- function(x) gsub(" ?</?.> ?|\n", "", x)
                     if (type == "boot") {
                         x_lab <- parse(p$x$layout$xaxis$title$text)
                         y_lab <- parse(p$x$layout$yaxis$title$text)
                     } else if (type == "boot1D") {
-                        x_lab <-  gsub("\\(\\d* bootstraps\\)", "", parse(p$x$layout$title$text))
+                        x_lab <-  gsub("\\(\\d* bootstrap samples\\)", "", parse(p$x$layout$title$text))
                         y_lab <- parse(p$x$layout$annotations[[1]]$text)
                         if (length(y_lab) < 1)
                             y_lab <- parse(p$x$data[[length(p$x$data)]]$marker$colorbar$title)
@@ -98,11 +102,15 @@ modify_hovertext <- function(p, hovertext = TRUE, type = "regular", perm = NULL)
                     if (type == "perm" || (type == "cv"  && i != 2)) {
                         if (type == "cv" && i == 3)
                             comb <- p$x$data[[i]]$x[1]
-                        else
-                            comb <- j
+                        else {
+                            if (i == 4)
+                                comb <- p$x$data[[i]]$x[1]
+                            else
+                                comb <- j
+                        }
                         res <- as.list(round(perm$penalties[comb, ], 3))
                         if (type == "perm")
-                            label <- gsub("</?i>| ", "", p$x$layout$yaxis$title$text)
+                            label <- gsub("</?i>", "", p$x$layout$yaxis$title$text)
                         else
                             label <- "RMSE"
                         l_text <- paste0(
@@ -112,12 +120,29 @@ modify_hovertext <- function(p, hovertext = TRUE, type = "regular", perm = NULL)
                         for (b in seq(length(names(res))))
                             l_text <- paste0(l_text, "<br />", paste0(names(res)[b], ": ", res[b]))
                     }
-    
-                    p$x$data[[i]][attr][[1]][j] <- l_text
+                    suppressWarnings(p$x$data[[i]][attr][[1]][j] <- l_text)
                 }
             }
-
         }
+    }
+
+    if (type %in% c("perm", "cv")) {
+        if (!is.null(p$x$layout$xaxis$title))
+            p$x$layout$xaxis$title$text <- paste0(c(rep("&nbsp;", 20),
+                rep("\n&nbsp;", 3),
+                p$x$layout$xaxis$title$text,
+                rep("&nbsp;", 20)),
+            collapse = "")
+        if (!is.null(p$x$layout$yaxis$title))
+            p$x$layout$yaxis$title$text <- paste0(c(rep("&nbsp;", 20),
+                p$x$layout$yaxis$title$text,
+                rep("&nbsp;", 20),
+                rep("\n&nbsp;", 3)),
+            collapse = "")
+        if (!is.null(p$x$layout$xaxis$tickfont))
+            p$x$layout$xaxis$tickfont$size <- 9
+        if (!is.null(p$x$layout$yaxis$tickfont))
+            p$x$layout$yaxis$tickfont$size <- 9
     }
 
     if (type == "boot1D")
@@ -131,7 +156,10 @@ modify_hovertext <- function(p, hovertext = TRUE, type = "regular", perm = NULL)
 
     # Remove the x- and y- axis onOverMouse
     if (type %in% c("regular", "cv", "perm")  && (length(traces) > 1) || type == "boot1D")
-        (plotly::style(p, hoverinfo = "none", traces = traces))
+        p <- plotly::style(p, hoverinfo = "none", traces = traces)
+
+    if (type %in% c("perm", "cv"))
+        (plotly::layout(p, margin = list(l = 30, r = 10, b = 20, t = 70)))
     else
         p
 }

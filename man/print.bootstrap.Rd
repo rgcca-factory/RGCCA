@@ -4,30 +4,31 @@
 \alias{print.bootstrap}
 \title{Print bootstrap}
 \usage{
-\method{print}{bootstrap}(x, bars = "quantile",
-  n_cores = parallel::detectCores() - 1, ...)
+\method{print}{bootstrap}(x, type = "weight", ...)
 }
 \arguments{
-\item{x}{A bootstrap object (see \code{\link[RGCCA]{bootstrap}})}
+\item{x}{A fitted bootstrap object (see \code{\link[RGCCA]{bootstrap}})}
 
-\item{bars}{A character giving the variability among "sd" (standard deviations bars) , "stderr"(bars of standard deviation divided by sqrt(n)) or "quantile" (for the 0.05-0.95 quantiles bars)}
-
-\item{n_cores}{An integer for the number of cores used in parallelization}
+\item{type}{Character string indicating the bootstrapped object to print:
+block-weight vectors ("weight", default) or block-loading vectors
+("loadings").}
 
 \item{...}{Further arguments in print}
 }
 \value{
-A matrix containing for each variables of each blocks, the means, 95\% intervals, bootstrap ratio, p-values and other statistics
+A matrix containing for each variables of each blocks,
+the means, 95\% intervals, bootstrap ratio, p-values and other statistics.
 \itemize{
-\item 'estimate' for RGCCA weights
-\item 'mean' for the mean of the bootstrap weights
-\item 'sd' for the standard error of the bootstrap weights
-\item 'lower/upper_band' for the lower and upper intervals from to the 'bar' parameter
-\item 'p.vals' for p-values. In the case of SGCCA, the occurrences of the 
-bootstrap weights are distributed according to the binomial distribution 
-while for RGCCA, their absolute value weighted by their standard deviation 
+\item 'estimate' for block weight/loading vectors.
+\item 'mean' for the mean of the bootstrap block weight/loading vectors.
+\item 'sd' for the boostrapped estimate of the standard deviation of the
+block weight/loading vectors.
+\item 'lower/upper_bound' for the lower and upper intervals.
+\item 'pvals' for p-values. In the case of SGCCA, the occurrences of the
+bootstrap weights are distributed according to the binomial distribution
+while for RGCCA, their absolute value divided by their standard deviation
 follows a normal distribution.
-\item 'BH' for Benjamini-Hochberg p-value adjustments
+\item 'adjust.pval' for ajusted p-value (fdr correction by default)
 }
 }
 \description{

@@ -1,10 +1,10 @@
 # from FactoMineR package https://cran.r-project.org/web/packages/car/index.html
 #' @importFrom grDevices col2rgb
 #' @importFrom graphics box polygon
-ellipse=function (center, shape, radius, log = "", center.pch = 19, center.cex = 1.5, 
-          segments = 51, draw = TRUE, add = draw, xlab = "", ylab = "", 
-          col = "blue", lwd = 2, fill = FALSE, fill.alpha = 0.3, 
-          grid = TRUE, ...) 
+ellipse=function (center, shape, radius, log = "", center.pch = 19, center.cex = 1.5,
+          segments = 51, draw = TRUE, add = draw, xlab = "", ylab = "",
+          col = "blue", lwd = 2, fill = FALSE, fill.alpha = 0.3,
+          grid = TRUE, ...)
 {
     trans.colors <- function(col, alpha = 0.5, names = NULL) {
         nc <- length(col)
@@ -21,11 +21,11 @@ ellipse=function (center, shape, radius, log = "", center.pch = 19, center.cex =
         axis <- match.arg(axis)
         0 != length(grep(axis, log))
     }
-    if (!(is.vector(center) && 2 == length(center))) 
+    if (!(is.vector(center) && 2 == length(center)))
         stop_rgcca("center must be a vector of length 2")
-    if (!(is.matrix(shape) && all(2 == dim(shape)))) 
+    if (!(is.matrix(shape) && all(2 == dim(shape))))
         stop_rgcca("shape must be a 2 by 2 matrix")
-    if (max(abs(shape - t(shape)))/max(abs(shape)) > 1e-10) 
+    if (max(abs(shape - t(shape)))/max(abs(shape)) > 1e-10)
         stop_rgcca("shape must be a symmetric matrix")
     angles <- (0:segments) * 2 * pi/segments
     unit.circle <- cbind(cos(angles), sin(angles))
@@ -33,30 +33,30 @@ ellipse=function (center, shape, radius, log = "", center.pch = 19, center.cex =
     order <- order(attr(Q, "pivot"))
     ellipse <- t(center + radius * t(unit.circle %*% Q[, order]))
     colnames(ellipse) <- c("x", "y")
-    if (logged("x")) 
+    if (logged("x"))
         ellipse[, "x"] <- exp(ellipse[, "x"])
-    if (logged("y")) 
+    if (logged("y"))
         ellipse[, "y"] <- exp(ellipse[, "y"])
     fill.col <- trans.colors(col, fill.alpha)
     if (draw) {
         if (add) {
             lines(ellipse, col = col, lwd = lwd, ...)
-            if (fill) 
+            if (fill)
                 polygon(ellipse, col = fill.col, border = NA)
         }
         else {
-            plot(ellipse, type = "n", xlab = xlab, ylab = ylab, 
+            plot(ellipse, type = "n", xlab = xlab, ylab = ylab,
                  ...)
             if (grid) {
                 grid(lty = 1, equilogs = FALSE)
                 box()
             }
             lines(ellipse, col = col, lwd = lwd, ...)
-            if (fill) 
+            if (fill)
                 polygon(ellipse, col = fill.col, border = NA)
         }
-        if ((center.pch != FALSE) && (!is.null(center.pch))) 
-            points(center[1], center[2], pch = center.pch, cex = center.cex, 
+        if ((center.pch != FALSE) && (!is.null(center.pch)))
+            points(center[1], center[2], pch = center.pch, cex = center.cex,
                    col = col)
     }
     invisible(ellipse)

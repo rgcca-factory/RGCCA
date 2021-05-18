@@ -4,9 +4,17 @@
 \alias{plot.cval}
 \title{Plot cross-validation}
 \usage{
-\method{plot}{cval}(x, bars = "sd", cex = 1, cex_main = 14 * cex,
-  cex_sub = 10 * cex, cex_lab = 10 * cex, colors = c("red", "grey"),
-  ...)
+\method{plot}{cval}(
+  x,
+  bars = "sd",
+  cex = 1,
+  cex_main = 14 * cex,
+  cex_sub = 12 * cex,
+  cex_lab = 10 * cex,
+  cex_point = 3 * cex,
+  colors = c("red", "black"),
+  ...
+)
 }
 \arguments{
 \item{x}{A rgcca_cv object (see \link{rgcca_cv})}
@@ -21,9 +29,13 @@
 
 \item{cex_lab}{An integer for the size of the axis titles}
 
-\item{colors}{Either a vector of integers (each integer corresponding to a color) or of characters corresponding to names of colors (as "blue",see colors()) or RGB code ("#FFFFFF").}
+\item{cex_point}{An integer for the size of the points or the text in the plot}
 
-\item{...}{Further plot options}
+\item{colors}{Either a vector of integers (each integer corresponding to a
+color) or of characters corresponding to names of colors (as "blue",see
+colors()) or RGB code ("#FFFFFF").}
+
+\item{...}{additional graphical parameters}
 }
 \description{
 Plot a cross-validation object (tuning RGCA parameters in 'supervised' mode).
@@ -38,7 +50,7 @@ blocks <- list(
     agriculture = Russett[, seq(3)],
     industry = Russett[, 4:5],
     politic = Russett[, 6:11])
-    res=rgcca_cv(blocks, response=3,type="rgcca",par_type="tau",par_value=c(0,0.2,0.3),
+    res=rgcca_cv(blocks, response=3,method="rgcca",par_type="tau",par_value=c(0,0.2,0.3),
     n_run=1,n_cores=1)
    plot(res)
 }

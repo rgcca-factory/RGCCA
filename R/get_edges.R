@@ -1,5 +1,5 @@
 # Creates the edges for a design matrix
-# 
+#
 # @inheritParams plot_ind
 # @return A dataframe with tuples of connected rgcca_res$call$blocks
 
@@ -26,4 +26,3 @@ get_edges <- function(rgcca_res) {
 
     return(edges)
 }
-

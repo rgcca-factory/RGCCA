@@ -17,7 +17,7 @@ plot_histogram <- function(
     cex_sub = 12 * cex,
     cex_axis = 10 * cex
 ) {
-    
+
     for (i in c("cex", "cex_main", "cex_sub", "cex_axis"))
         check_integer(i, get(i))
 
@@ -29,7 +29,7 @@ plot_histogram <- function(
     if (NROW(df) <= 10 || is(df, "d_ave")) {
         width <- NULL
         if (is(df, "d_ave"))
-            cex_axis <- 12
+            cex_axis <- cex_axis * 1.2
     } else
         width <- 1
 
@@ -45,7 +45,7 @@ plot_histogram <- function(
     if (NROW(df) > 75)
         cex_axis <- 5
 
-    axis <- function(margin){
+    axis <- function(cex_axis){
         element_text(
             size = cex_axis,
             face = "italic",
@@ -54,13 +54,13 @@ plot_histogram <- function(
     }
 
     p <- p + geom_bar(stat = "identity", width = width) +
-        coord_flip() + 
+        coord_flip() +
         labs(title = title,  x = "", y = "") +
         theme_classic() +
         theme_perso(cex, cex_main, cex_sub) +
         theme(
-            axis.text.y = axis(),
-            axis.text.x = axis(),
+            axis.text.y = axis(cex_axis),
+            axis.text.x = axis(cex * 10),
             axis.line = element_blank(),
             axis.ticks = element_blank(),
             plot.subtitle = element_text(
@@ -68,21 +68,19 @@ plot_histogram <- function(
                 size = cex_sub,
                 face = "italic"
             ),
-            plot.margin = margin(0, 0, mar, 0, "mm")
+            plot.margin = margin(5, 0, mar, 0, "mm")
     )
 
-    if  (!is(df, "d_ave")) {
+    if  (!is(df, "d_ave") & !is(df, "d_boot1D")) {
         p <- p +
-            scale_x_continuous(breaks = df$order, labels = rownames(df)) +
-            labs(fill = "Blocks")
+         scale_x_continuous(breaks = df$order, labels = rownames(df)) +
+         labs(fill = "Blocks")
         if (length(group) == 1){
-            if (is.null(colors))
-                colors <- c(color_group(seq(3))[3],  "gray", color_group(seq(3))[1])
-            p <- p +
-                scale_fill_gradientn(colors = colors, na.value = "black")
-        } else  if ((is.character2(group[!is.na(group)]) ||
+          if (is.null(colors))
+            colors <- c(color_group(seq(3))[3], "gray", color_group(seq(3))[1])
+            p <- p + scale_fill_gradientn(colors = colors, na.value = "black")
+        } else if ((is.character2(group[!is.na(group)]) ||
                             length(unique(group)) <= 5 )) {
-
             cols=color_group(group, colors)
            p <- p + scale_fill_manual(values = cols,limit=names(cols),drop=FALSE)
         }

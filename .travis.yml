@@ -31,7 +31,7 @@ install:
 
 script:
   - R -e 'devtools::document()'
-  - R CMD build .
+  - R CMD build --no-build-vignettes .
   - R CMD check *tar.gz
 
 after_script:

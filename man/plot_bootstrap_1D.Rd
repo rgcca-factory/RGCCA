@@ -2,70 +2,90 @@
 % Please edit documentation in R/plot_bootstrap_1D.R
 \name{plot_bootstrap_1D}
 \alias{plot_bootstrap_1D}
-\title{Plot a bootstrap in 1D}
+\title{Plot a fitted bootstrap object in 1D}
 \usage{
-plot_bootstrap_1D(b = NULL, df_b = NULL, x = "estimate",
-  y = "occurrences", n_mark = 50, title = NULL, colors = NULL,
-  comp = 1, bars = "sd", i_block = length(b$bootstrap[[1]]),
-  collapse = FALSE, n_cores = parallel::detectCores() - 1, ...)
+plot_bootstrap_1D(
+  b = NULL,
+  df_b = NULL,
+  type = "weight",
+  x = "estimate",
+  y = "sign",
+  n_mark = 50,
+  display_order = TRUE,
+  title = NULL,
+  colors = NULL,
+  comp = 1,
+  display_bar = TRUE,
+  i_block = length(b$bootstrap[[1]][[1]]),
+  ...
+)
 }
 \arguments{
-\item{b}{A boostrap object \code{\link[RGCCA]{bootstrap}}}
+\item{b}{A fitted bootstrap object \code{\link[RGCCA]{bootstrap}}}
 
 \item{df_b}{A get_bootstrap object \code{\link[RGCCA]{get_bootstrap}}}
 
-\item{x}{A character for the index used in the plot (see details).}
+\item{type}{Character string indicating the bootstrapped object to print:
+block-weight vectors ("weight", default) or block-loading vectors
+("loadings").}
 
-\item{y}{A character for the index to color the bars (see details).}
+\item{x}{indicator used in the plot (see details).}
 
-\item{n_mark}{An integer giving the number of top variables to select}
+\item{y}{A character string indicating for the index to color the bars
+(see details).}
+
+\item{n_mark}{The number of top variables to display in the correlation
+circle}
+
+\item{display_order}{A logical value for ordering the variables}
 
 \item{title}{A character giving the title of the plot}
 
-\item{colors}{Either a vector of integers (each integer corresponding to a color) or of characters corresponding to names of colors (as "blue",see colors()) or RGB code ("#FFFFFF").}
+\item{colors}{Either a vector of integers (each integer corresponding to a
+color) or of characters corresponding to names of colors (as "blue",see
+colors()) or RGB code ("#FFFFFF").}
 
-\item{comp}{An integer giving the index of the analysis components}
+\item{comp}{An integer indicating the block-weight/loading vector to plot.}
 
-\item{bars}{A character giving the variability among "sd" (standard deviations bars) , "stderr"(bars of standard deviation divided by sqrt(n)) or "quantile" (for the 0.05-0.95 quantiles bars)}
+\item{display_bar}{A logical value. If TRUE colorbar for significant
+variables is displayed.}
 
-\item{i_block}{An integer giving the index of a list of blocks}
-
-\item{collapse}{A boolean to combine the variables of each block as result}
-
-\item{n_cores}{An integer for the number of cores used in parallelization}
+\item{i_block}{An integer giving the index of the block}
 
 \item{...}{Other parameters (see plot_histogram)}
 }
 \description{
-Barplot of the best variables from a bootstrap with, on the x-axis,
-the number of non-zero occurrences (SGCCA) or the mean of the bootstrap weights 
-(RCCA). The bars are colored according to the significant 95% bootstrap 
-intervals ('*' or 'ns'; see 'p.vals' in details for 
-\code{\link[RGCCA]{get_bootstrap}}) for RGCCA and according to the occurences
- of the weights which are not equal to zero (according to an ascending 
- gradient from red to blue) for SGCCA. In SGCA, the significant variables 
- are those above the three bars, respectively, with an alpha = 0.05 
- (dark red), 0.01 (red) and 0.001 (light red).
+Display bootstrap confidence intervals for RGCCA or the number of non-zero
+occurrences for SGCCA. The bars are colored according to the
+significancy  block weight vectors ('*' or 'ns'; see 'pval' in details for
+\code{\link[RGCCA]{get_bootstrap}}) for RGCCA and according to the
+occurrences of non-zero weights for SGCCA. In SGCCA, the significant
+variables are those above the three bars, respectively, with an alpha = 0.05
+(dark red), 0.01 (red) and 0.001 (light red).
 }
 \details{
 \itemize{
-\item 'estimate' for RGCCA weights
-\item 'bootstrap_ratio' for the mean of the bootstrap weights / their standard error
+\item 'estimate' of the block weight vectors
+\item 'bootstrap_ratio' of the block weight/loading vectors
 \item 'sign' for significant 95% bootstrap interval
-\item 'occurrences' for non-zero occurences
-\item 'mean' for the mean of the bootstrap weights
+\item 'occurrences' number of for non-zero occurrences
+\item 'mean'  mean of the bootstraped block weight vectors
 }
 }
 \examples{
 data("Russett")
-blocks = list(agriculture = Russett[, seq(3)], industry = Russett[, 4:5],
-    politic = Russett[, 6:11] )
-rgcca_out = rgcca(blocks, sparsity = 0.75, type = "sgcca")
-boot = bootstrap(rgcca_out, 2, n_cores = 1)
-plot_bootstrap_1D(boot, n_cores = 1)
+blocks = list(agriculture = Russett[, seq(3)],
+              industry = Russett[, 4:5],
+              politic = Russett[, 6:11])
+fit.sgcca = rgcca(blocks, sparsity = 0.75, method = "sgcca")
+fit.stab = rgcca_stability(fit.sgcca, n_boot = 20, n_cores = 1)
+boot = bootstrap(fit.stab,
+                 n_boot = 30, n_cores = 1)
+plot_bootstrap_1D(boot, type = "weight")
 rgcca_out = rgcca(blocks)
 boot = bootstrap(rgcca_out, 2, n_cores = 1)
-selected.var = get_bootstrap(boot, n_cores = 1,display_order=TRUE)
-plot_bootstrap_1D(boot, n_cores = 1)
+selected.var = get_bootstrap(boot, display_order=TRUE)
+plot_bootstrap_1D(boot)
 plot_bootstrap_1D(df_b = selected.var)
+
 }

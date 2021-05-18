@@ -4,9 +4,18 @@
 \alias{plot_permut_2D}
 \title{Plot permutation in 2D}
 \usage{
-plot_permut_2D(perm, type = "crit", cex = 1, title = NULL,
-  cex_main = 14 * cex, cex_sub = 12 * cex, cex_point = 3 * cex,
-  cex_lab = 10 * cex, bars = "points", colors = c("red", "grey"))
+plot_permut_2D(
+  perm,
+  type = "crit",
+  cex = 1,
+  title = NULL,
+  cex_main = 14 * cex,
+  cex_sub = 12 * cex,
+  cex_point = 3 * cex,
+  cex_lab = 10 * cex,
+  bars = "points",
+  colors = c("red", "grey")
+)
 }
 \arguments{
 \item{perm}{A permutation object (see \code{\link[RGCCA]{rgcca_permutation}})}
@@ -28,7 +37,9 @@ the RGCCA criterion and 'zstat' for the pseudo Z-score)}
 
 \item{bars}{A character giving the variability among "points" (all the points are shown), "sd" (standard deviations bars) , "stderr"(bars of standard deviation divided by sqrt(n)) or "quantile" (for the 0.05-0.95 quantiles bars)}
 
-\item{colors}{Either a vector of integers (each integer corresponding to a color) or of characters corresponding to names of colors (as "blue",see colors()) or RGB code ("#FFFFFF").}
+\item{colors}{Either a vector of integers (each integer corresponding to a
+color) or of characters corresponding to names of colors (as "blue",see
+colors()) or RGB code ("#FFFFFF").}
 }
 \description{
 Plot permutation in 2D

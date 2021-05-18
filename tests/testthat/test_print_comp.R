@@ -1,7 +1,7 @@
  AVE = list(c(0.6, 0.5), c(0.7, 0.45))
  rgcca_out = list(AVE = list(AVE_X = AVE))
  # For the superblock (or the last block)
- rgcca_out$call$type="rgcca"
+ rgcca_out$call$method="rgcca"
  print_comp(rgcca_out, 1)
  # "Axis 1 (70%)"
  # For the first block
@@ -11,7 +11,7 @@
 setAVE <- function(){
     AVE <- list(c(0.6, 0.5), c(0.7, 0.45))
     rgcca_out <- list(AVE = list(AVE_X = AVE))
-    rgcca_out$call$type <- "rgcca"
+    rgcca_out$call$method <- "rgcca"
     return(rgcca_out)
 }
 

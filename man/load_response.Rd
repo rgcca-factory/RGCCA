@@ -4,11 +4,19 @@
 \alias{load_response}
 \title{Create a matrix corresponding to the response}
 \usage{
-load_response(blocks = NULL, file = NULL, separator = "\\t",
-  header = TRUE, rownames = 1, decimal = ".")
+load_response(
+  blocks = NULL,
+  file = NULL,
+  separator = "\\t",
+  header = TRUE,
+  rownames = 1,
+  decimal = "."
+)
 }
 \arguments{
-\item{blocks}{A list of matrices giving the \eqn{J} blocks of variables \eqn{\mathbf{X_1}, \mathbf{X_2}, ..., \mathbf{X_J}}.}
+\item{blocks}{A list that contains the J blocks of variables X1, X2, ..., XJ.
+Block Xj is a matrix of dimension n x p_j where n is the number of
+observations and p_j the number of variables.}
 
 \item{file}{A character giving the path of a file}
 

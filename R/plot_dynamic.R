@@ -10,6 +10,7 @@
 # return a plotly object
 #'@importFrom graphics layout
 #'@importFrom plotly ggplotly config
+#'@importFrom utils packageVersion
 plot_dynamic <- function(
     f,
     ax = NULL,
@@ -35,15 +36,15 @@ plot_dynamic <- function(
                     xaxis = ax,
                     yaxis = ax,
                     annotations = list(showarrow = FALSE, text = "")
-                ) %>% 
+                ) %>%
                 plotly::style(hoverinfo = text)
             ))
-    else 
+    else
         p <- ggplotly(f)
 
     legend_qual <- p$x$layout$annotations[[1]]$text
     legend_quant <- p$x$data[[length(p$x$data)]]$marker$colorbar$title
-    if (!is.null(legend_qual))
+    if (!is.null(legend_qual) && legend_qual != "")
         legend_title <- legend_qual
     else
         legend_title <- legend_quant
@@ -64,7 +65,7 @@ plot_dynamic <- function(
             legend_title <- ""
 
         # set the font for this title
-        if (!is.null(legend_qual)) {
+        if (!is.null(legend_qual) && legend_qual != "") {
             p$x$layout$annotations[[1]]$text <- paste0("<i><b>", legend_title, "</b></i>")
             # set on the top the position of the legend title
             p$x$layout$annotations[[1]]$yanchor <- "top"
@@ -72,35 +73,40 @@ plot_dynamic <- function(
             p$x$layout$annotations[[1]]$y = 1.05
         } else
             p$x$data[[length(p$x$data)]]$marker$colorbar$title <- paste0("<i><b>", legend_title, "</b></i>")
-    }
+        }
 
     if (!is.null(f$labels$subtitle)) {
+        if (type == "var1D")
+            subtitle <- paste0("c", substring(f$labels$subtitle, 2))
+        else
+            subtitle <- sub("^\n", "", f$labels$subtitle)
         if (packageVersion("plotly") < 4.9)
             p$x$layout$title <- paste0(
-                    p$x$layout$title,
-                    "<br><i>",
-                    "c",
-                    substring(f$labels$subtitle, 2),
-                    "</i>"
-                )
+                p$x$layout$title, 
+                "<br><i>", 
+                subtitle, 
+                "</i>"
+            )
         else
             p$x$layout$title$text <- paste0(
                 p$x$layout$title$text,
-                "<br><i>",
-                "c",
-                substring(f$labels$subtitle, 2),
+                "<br><i>", 
+                subtitle,
                 "</i>"
             )
     }
 
     if (NCOL(f$data) == 3)
         p$sample_names <- lapply(
-            levels(as.factor(f$data[, 3])), 
+            levels(as.factor(f$data[, 3])),
             function(x) row.names(subset(f$data, f$data[, 3] == x)))
     else
         p$sample_names <- list(row.names(f$data))
 
-    p$x$layout$margin$t <- 50
+    if (type %in% c("var1D", "cv"))
+        p$x$layout$margin$t <- 75
+    else
+        p$x$layout$margin$t <- 50
 
     if (!grepl("1D", type) && !type %in% c("perm", "cv")) {
         p <- config(
@@ -127,6 +133,6 @@ plot_dynamic <- function(
                width = 500,
                height = 500
            )
-    )  %>% 
+    )  %>%
         plotly::layout(hovermode = "closest")
 }

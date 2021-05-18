@@ -1,14 +1,13 @@
 #' Barplot of a fingerprint
 #'
-#' Barplot of the higher outer weight vectors for a component of a block 
-#' (by default, the superblock or the last one) analysed by R/SGCCA
+#' Barplot of the block weight vectors or the block loading vector for the
+#' fitted R/SGCCA object.
 #'
 #' @inheritParams plot_var_2D
 #' @inheritParams plot_histogram
-#' @param comp An integer giving the index of the analysis components
-#' @param type A character giving the criterion to selects variables : either
-#' "cor" for correlation between the component and the block
-#' or "weight" for the weight of the RGCCA
+#' @param comp An integer indicating the block-weight/loading vector to plot.
+#' @param type A character string indicating the quantity to display between
+#' block-loading vector ("loadings") or block-weight vector ("weight").
 #' @seealso \code{\link[RGCCA]{rgccad}}, \code{\link[RGCCA]{sgcca}}
 #' @examples
 #' weights = lapply(seq(3), function(x) matrix(runif(7*2), 7, 2))
@@ -16,7 +15,7 @@
 #' row.names(weights[[i]]) <- paste0(letters[i],
 #'      letters[seq(NROW(weights[[i]]))])
 #' weights[[4]] = Reduce(rbind, weights)
-#' rgcca_out = list(a = weights, call = list(type="rgcca", ncomp = rep(2,4)))
+#' rgcca_out = list(a = weights, call = list(method="rgcca", ncomp = rep(2,4)))
 #' names(rgcca_out$a) = LETTERS[seq(4)]
 #' rgcca_out$call$blocks = lapply(rgcca_out$a, t)
 #' rgcca_out$call$superblock = TRUE
@@ -35,9 +34,9 @@
 plot_var_1D <- function(
     rgcca_res,
     comp = 1,
-    n_mark = 100,
+    n_mark = 30,
     i_block = length(rgcca_res$a),
-    type = "cor",
+    type = "loadings",
     collapse = FALSE,
     title = NULL,
     colors = NULL,
@@ -45,7 +44,7 @@ plot_var_1D <- function(
 
     check_colors(colors)
     if(rgcca_res$call$superblock==FALSE){collapse=FALSE}
-    
+
     df <- get_ctr2(
         rgcca_res = rgcca_res,
         compx = comp,
@@ -58,14 +57,14 @@ plot_var_1D <- function(
     )
     resp <- df$resp
 
-    if (i_block < length(rgcca_res$a) || tolower(rgcca_res$call$type) == "pca")
+    if (i_block < length(rgcca_res$a) || tolower(rgcca_res$call$method) == "pca")
         rgcca_res$call$superblock <- FALSE
      J <- names(rgcca_res$a)
 
     if (is.null(title))
-        title <- ifelse(type == "cor",
-            "Variable correlations",
-            "Variable weights")
+        title <- ifelse(type == "loadings",
+            "Block-loading vector",
+            "Block-weight vector")
 
     # sort in decreasing order
     df <- data.frame(order_df(df, 1, TRUE), order = NROW(df):1)
@@ -86,6 +85,7 @@ plot_var_1D <- function(
         color <- "black"
         p <- ggplot(df, aes(order, df[, 1], fill = abs(df[, 1])))
     }
+
     p <- plot_histogram(
         p,
         df,
@@ -93,7 +93,8 @@ plot_var_1D <- function(
         group=as.character(color),
         colors = colors,
         ...
-    ) +
+    )
+
     labs(subtitle = print_comp(rgcca_res, comp, i_block))
 
     # If some blocks have any variables in the top hit, selects the ones

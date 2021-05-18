@@ -8,12 +8,14 @@
 # load_file_text('data/agriculture.tsv')
 # }
 load_file_text <- function(
-    file, 
-    separator = "\t", 
-    rownames = 1, 
-    header = TRUE, 
-    one_column = FALSE, 
-    decimal = ".") {
+    file,
+    separator = "\t",
+    rownames = 1,
+    header = TRUE,
+    one_column = FALSE,
+    decimal = ".",
+    rm_dup_rows = TRUE
+    ) {
 
     if (!is.null(rownames) && rownames < 1)
         rownames <- NULL
@@ -28,15 +30,26 @@ load_file_text <- function(
             dec = decimal
         ))
 
-    tryCatch(
-        f <- func(),
+    if (rm_dup_rows) {
+        tryCatch(
+            f <- func(),
     error = function(e) {
         msg <- "duplicate 'row.names' are not allowed"
         if (e$message == msg){
             message(paste0(msg, "; rownames have been removed from dataset."))
-            f <<- func(NULL)
-        }
-    })
+                f <<- func(NULL)
+            }
+        })
+    } else {
+        tryCatch(
+            f <- func(),
+            error = function(e) {
+                if (grepl("'row.names'", e$message))
+                    stop_rgcca("The connection file should have rownames and colnames corresponding to the names of each blocks.")
+                else
+                    stop_rgcca(e$message)
+            })
+    } 
 
     if (!one_column && NCOL(f) == 0)
         stop_rgcca(paste(basename(file), "has an only-column. Check the separator."),

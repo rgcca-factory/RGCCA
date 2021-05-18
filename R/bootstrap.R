@@ -1,112 +1,144 @@
-#' Compute bootstrap
+#' Bootstrap confidence intervals and p-values
 #'
-#' Compute boostrap of RGCCA in order to evaluate the stability of the weights found in S/RGCCA
-#' @inheritParams plot2D
-#' @param n_boot An integer for the number of boostraps
-#' @param n_cores An integer for the number of cores used in parallelization 
-#' @param parallelization A logical value to run a parallelization. If parallelization = NULL (default), the parallelization is always performed except for Windows if length(n_boot) < 10.
-#' @return A list containing two objects: 'bootstrap' and 'rgcca'. 
-#' 'bootstrap' is a list a list containing for each block, a matrix with in rows the variables of the blocks and in columns the weight calculated for each bootstrap; 'rgcca' is the original rgcca (see  \code{\link[RGCCA]{RGCCA}}).
+#' Boostrap confidence intervals and p-values for evaluating the significancy/
+#' stability of the block-weight vectors produce by S/RGCCA.
+#' @param rgcca_res A fitted RGCCA object (see  \code{\link[RGCCA]{rgcca}})
+#' @param n_boot Number of bootstrap samples. Default: 100.
+#' @param n_cores Number of cores for parallelization.
+#' @return A list containing two objects: 'bootstrap' and 'rgcca'.
+#' 'bootstrap' is a list containing for each block, a matrix
+#' with the variables of the block in row and the block weight vector
+#' calculated accross bootstrap sample in column. 'rgcca' is the fitted rgcca
+#' object obtained from the original data. (see  \code{\link[RGCCA]{rgcca}})
 #' @examples
+#' # Bootstrap confidence intervals and p-values for RGCCA
 #' data("Russett")
-#' blocks = list(agriculture = Russett[, seq(3)], industry = Russett[, 4:5],
-#'     politic = Russett[, 6:11] )
-#' rgcca_out = rgcca(blocks)
-#' b=bootstrap(rgcca_out, n_boot = 2, n_cores = 1)
-#' plot(b,n_cores=1)
-#' plot(b,type="2D",n_cores=1)
+#' blocks = list(agriculture = Russett[, seq(3)],
+#'               industry = Russett[, 4:5],
+#'               politic = Russett[, 6:11])
+#'
+#' fit.rgcca = rgcca(blocks, ncomp= c(2, 1, 2))
+#' boot.out = bootstrap(fit.rgcca, n_boot = 20, n_cores = 2)
+#'
+#' plot(boot.out, type = "weight", block = 3, comp = 1)
+#'
+#' print(boot.out, comp =2)
+#'  get_bootstrap(boot.out, block = 1, comp = 1)
+#'
+#' fit.rgcca = rgcca(blocks, method = "mcoa")
+#' boot.out = bootstrap(fit.rgcca, n_boot = 50, n_cores = 2)
+#'
+#' plot(boot.out, type = "weight", block = 4)
+#'
+#' \dontrun{
+#' # Stability of the selected variables for SGCCA
+#' # Not run:
+#' # Download the dataset's package at http://biodev.cea.fr/sgcca/.
+#' # --> gliomaData_0.4.tar.gz#' require(gliomaData)
+#' library(gliomaData)
+#' data(ge_cgh_locIGR)
+#' A <- ge_cgh_locIGR$multiblocks
+#' A[[3]] = A[[3]][, -3]
+#' Loc <- factor(ge_cgh_locIGR$y)
+#' levels(Loc) <- colnames(ge_cgh_locIGR$multiblocks$y)
+#' C <-  matrix(c(0, 0, 1, 0, 0, 1, 1, 1, 0), 3, 3)
+#'
+#' # rgcca algorithm using the dual formulation for X1 and X2
+#' # and the dual formulation for X3
+#'
+#' fit.rgcca = rgcca(A, connection = C, tau = c(1, 1, 0),
+#'                   ncomp = c(2, 2, 1), scheme = "factorial",
+#'                   verbose = TRUE)
+#' boot.out = bootstrap(fit.rgcca, n_boot = 50, n_cores = 2)
+#' plot(boot.out, block = 1, type = "weight", ncomp = 1, n_marks = 30)
+#' plot(boot.out, block = 1, type = "weight", ncomp = 2, n_marks = 30)
+#' get_bootstrap(boot.out)
+#'
+#' # stability analysis prior bootstrap for sgcca
+#' }
 #' @export
-#' @seealso \code{\link[RGCCA]{plot.bootstrap}} , \code{\link[RGCCA]{print.bootstrap}} 
-bootstrap <- function(
-    rgcca_res,
-    n_boot = 100,
-    n_cores = parallel::detectCores() - 1,
-    parallelization=NULL) {
-    
-    ndefl_max=max(rgcca_res$call$ncomp)
-    list_res=list()
-    for(i in 1:ndefl_max)
-    { 
-        list_res[[i]]=list()
-        for(block in names(rgcca_res$call$blocks))
-        {
-            list_res[[i]][[block]]=matrix(NA,dim(rgcca_res$call$blocks[[block]])[2],n_boot)
-            rownames( list_res[[i]][[block]])=colnames(rgcca_res$call$blocks[[block]])
-        }
+#' @seealso \code{\link[RGCCA]{plot.bootstrap}},
+#' \code{\link[RGCCA]{print.bootstrap}}
+bootstrap <- function(rgcca_res, n_boot = 100,
+                      n_cores = parallel::detectCores() - 1){
+
+    if(class(rgcca_res)=="stability")
+    {
+        warning("All the parameters were imported from the fitted rgcca_stability object.")
+        rgcca_res = rgcca_res$rgcca_res
     }
 
     stopifnot(is(rgcca_res, "rgcca"))
-    if (!is.null(parallelization))
-        check_boolean("parallelization", parallelization)
+    if(tolower(rgcca_res$call$method)%in%c("sgcca", "spls", "spca"))
+        stop_rgcca("for sparse models, rgcca_stability() applies before bootstrapping")
     check_integer("n_boot", n_boot)
     check_integer("n_cores", n_cores, min = 0)
 
-    if (n_cores == 0)
-        n_cores <- 1
+    if (n_cores == 0) n_cores <- 1
 
-    message("Bootstrap in progress...", appendLF = F)
+    message("Bootstrap in progress...")
+
+    ndefl_max = max(rgcca_res$call$ncomp)
+    list_res_W = list_res_L = list()
+    for(i in 1:ndefl_max){
+        list_res_W[[i]] = list_res_L[[i]] = list()
+        for(block in names(rgcca_res$call$blocks))
+        {
+            list_res_L[[i]][[block]] = list_res_W[[i]][[block]] =
+                matrix(NA, NCOL(rgcca_res$call$blocks[[block]]), n_boot)
+            rownames(list_res_L[[i]][[block]]) =
+                rownames(list_res_W[[i]][[block]]) =
+                colnames(rgcca_res$call$blocks[[block]])
+        }
+    }
 
     blocks <- NULL
 
-    varlist <- c(ls(getNamespace("RGCCA")))
-    # get the parameter dot-dot-dot
-    # args_values <- list(...)
-    # args_names <- names(args_values)
-    # n <- args_values
-    # if (!is.null(n))
-    #     n <- seq(length(args_values))
-    # for (i in n) {
-    #     if (!is.null(args_names[i])) {
-    #         # dynamically asssign these values
-    #         assign(args_names[i], args_values[[i]])
-    #         # send them to the clusters to parallelize
-    #         varlist <- c(varlist, args_names[i])
-    #         # without this procedure rgcca_crossvalidation(rgcca_res, blocks = blocks2)
-    #         # or rgcca_crossvalidation(rgcca_res, blocks = lapply(blocks, scale)
-    #         # does not work.
-    #     }
-    # }
- 
-    W <- parallelize(
-        varlist,
-        seq(n_boot), 
-        function(x) {
-            resBoot=bootstrap_k(rgcca_res,type="weight")
-        }
-        , 
-        n_cores = n_cores,
-        envir = environment(),
-        applyFunc = "parLapply",
-        parallelization=parallelization
-        )
+    if( Sys.info()["sysname"] == "Windows"){
+    if(n_cores>1){
+        assign("rgcca_res", rgcca_res, envir = .GlobalEnv)
+        cl = parallel::makeCluster(n_cores)
+        parallel::clusterExport(cl, c("rgcca_res", ls(getNamespace("RGCCA"))))
+        W = pbapply::pblapply(seq(n_boot),
+                function(b) bootstrap_k(rgcca_res),
+                cl = cl)
+        parallel::stopCluster(cl)
+        rm("rgcca_res", envir = .GlobalEnv)
+    }
+    else
+        W = pbapply::pblapply(seq(n_boot),
+                              function(b) bootstrap_k(rgcca_res))
+    }else{
+        W = pbapply::pblapply(seq(n_boot),
+                              function(b) bootstrap_k(rgcca_res),
+                              cl = n_cores)
+    }
 
-       for(k in seq(n_boot))
-       {
-               for(i in 1:ndefl_max)
-              {
-                   for(j in 1:length(rgcca_res$call$blocks))
-                   {
-                       block=names(rgcca_res$call$blocks)[j]
-                   
-                       if(!is.null(names(W[[k]])))
-                       {
-                           if(i<=dim(W[[k]][[block]])[2])
-                          {
-                               list_res[[i]][[block]][,k]=W[[k]][[block]][,i]
-                
-                            } 
-                       }
-                       else
-                       {
-                           
-                           list_res[[i]][[block]][,k]=rep(NA,length(list_res[[i]][[block]][,k]))
-                       }
-                   }
-                }
+    L = lapply(W, `[[`, 2)
+    W = lapply(W, `[[`, 1)
+
+    for(k in seq(n_boot)){
+     for(i in 1:ndefl_max){
+       for(j in 1:length(rgcca_res$call$blocks)){
+         block = names(rgcca_res$call$blocks)[j]
+         if(!is.null(names(W[[k]]))){
+           if(i <= NCOL(W[[k]][[block]])){
+             list_res_W[[i]][[block]][, k] = W[[k]][[block]][, i]
+             list_res_L[[i]][[block]][, k] = L[[k]][[block]][, i]
            }
-      
-       
-      message("OK.")
-      
-      return(structure(list(bootstrap =list_res, rgcca = rgcca_res), class = "bootstrap"))
+         }
+         else{
+           list_res_W[[i]][[block]][, k] =
+               rep(NA, length(list_res_W[[i]][[block]][, k]))
+           list_res_L[[i]][[block]][, k] =
+               rep(NA, length(list_res_L[[i]][[block]][, k]))
+         }
+       }
+     }
+    }
+
+    return(structure(list(bootstrap = list(W = list_res_W, L = list_res_L),
+                          rgcca = rgcca_res),
+                          class = "bootstrap"))
+
 }
