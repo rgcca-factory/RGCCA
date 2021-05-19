@@ -14,24 +14,32 @@ git:
 #    - master
 
 r_packages:
-  - RGCCA
   - ggplot2
+  - rmarkdown
+  - markdown
   - optparse
   - scales
   - plotly
-  - visNetwork
   - igraph
   - ggrepel
   - devtools
-  - vegan
+  - pbapply
+  - Deriv
+  - graphics
+  - stats
+  - grDevices
+  - parallel
+  - methods
+  - gridExtra
 
 install:
+  - R -e 'unlink("vignettes", recursive = TRUE)'
   - Rscript -e 'install.packages("devtools",repos = "http://cran.wustl.edu")'
   - R -e 'devtools::install_deps(dep = T)'
 
 script:
   - R -e 'devtools::document()'
-  - R CMD build --no-build-vignettes .
+  - R CMD build .
   - R CMD check *tar.gz
 
 after_script:
