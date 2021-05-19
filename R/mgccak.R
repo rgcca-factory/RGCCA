@@ -48,7 +48,7 @@ mgccak <- function (A, A_m = NULL, C, tau = rep(1, length(A)), scheme = "centroi
     A_m = lapply(1:J, function(x) matrix(as.vector(A[[x]]), nrow = n))
   }
 
-  a <- factors <- M_inv_sqrt <- P <- list()
+  a <- factors <- weights <- M_inv_sqrt <- P <- list()
   for (j in 1:J) {
     factors[[j]] <- list()
   }
@@ -58,7 +58,8 @@ mgccak <- function (A, A_m = NULL, C, tau = rep(1, length(A)), scheme = "centroi
     if (is.list(init)) {
       if (j %in% B_nD) {
         factors[[j]] <- init$factors[[j]]
-        a[[j]]       <- kron_sum(factors[[j]])
+        weights[[j]] <- init$weights[[j]]
+        a[[j]]       <- weighted_kron_sum(factors[[j]], weights[[j]])
       } else {
         a[[j]] <- init$a[[j]][[1]]
       }
@@ -67,25 +68,23 @@ mgccak <- function (A, A_m = NULL, C, tau = rep(1, length(A)), scheme = "centroi
       if (j %in% B_2D) {
         a[[j]] <- initsvd(A[[j]], dual = FALSE)
       } else {
-        SVD               <- svd(apply(A[[j]], 2, c), nu=0, nv=ranks[[j]])
-        factors[[j]][[1]] <- weighted_factor(SVD$v, SVD$d, ranks[j])
-        for (d in 2:(LEN[[j]] - 1)) {
+        for (d in 1:(LEN[[j]] - 1)) {
           factors[[j]][[d]] <- svd(apply(A[[j]], d+1, c), nu=0, nv=ranks[[j]])$v
         }
-        a[[j]] <- kron_sum(factors[[j]])
+        weights[[j]] <- rep(1 / sqrt(ranks[j]), ranks[j])
+        a[[j]]       <- weighted_kron_sum(factors[[j]], weights[[j]])
       }
-    } else if (init=="random") {
+    } else if (init == "random") {
       # Random Initialisation of a_j
       A_random <- array(rnorm(n = pjs[[j]], mean = 0, sd = 1), dim = DIM[[j]][-1])
       if (j %in% B_2D) {
         a[[j]] <- matrix(A_random / sqrt(drop(crossprod(A_random))))
       } else {
-        SVD               <- svd(apply(A_random, 1, c), nu=0, nv=ranks[[j]])
-        factors[[j]][[1]] <- weighted_factor(SVD$v, SVD$d, ranks[j])
-        for (d in 2:(LEN[[j]] - 1)) {
+        for (d in 1:(LEN[[j]] - 1)) {
           factors[[j]][[d]] <- svd(apply(A_random, d, c), nu=0, nv=ranks[[j]])$v
         }
-        a[[j]] <- kron_sum(factors[[j]])
+        weights[[j]] <- rep(1 / sqrt(ranks[j]), ranks[j])
+        a[[j]]       <- weighted_kron_sum(factors[[j]], weights[[j]])
       }
     } else {
       stop_rgcca("init should be either random or by SVD.")
@@ -135,48 +134,35 @@ mgccak <- function (A, A_m = NULL, C, tau = rep(1, length(A)), scheme = "centroi
         Q                 = matrix(t(Z[, j]) %*% P[[j]], nrow = DIM[[j]][3],
                                    ncol = DIM[[j]][2], byrow = T)
         SVD               = svd(x = Q, nu = ranks[[j]], nv = ranks[[j]])
-        factors[[j]][[1]] = weighted_factor(SVD$v, SVD$d, ranks[j])
+        factors[[j]][[1]] = SVD$v
         factors[[j]][[2]] = SVD$u
-        a[[j]]            = kron_sum(factors[[j]])
+        weights[[j]]      = SVD$d[1:ranks[j]] / sqrt(sum(SVD$d[1:ranks[j]] ^ 2))
+        a[[j]]            = weighted_kron_sum(factors[[j]], weights[[j]])
         Y[, j]            = P[[j]] %*% a[[j]]
 
       } else if (j %in% B_nD) { # higher order Tensors
-        Q                 = array(t(P[[j]]) %*% Z[, j], dim = DIM[[j]][-1])
-        Q                 = unfold(Q, mode = 1)
-        other_factors     = list_khatri_rao(factors[[j]][-1])
-        if (ranks[j] == 1) { # No need for tandem
+        for (d in 1:(LEN[[j]] - 1)) {
+          Q                 = array(t(P[[j]]) %*% Z[, j], dim = DIM[[j]][-1])
+          Q                 = unfold(Q, mode = d)
+          # other_factors     = list_khatri_rao(factors[[j]][-d])
+          other_factors     = list_khatri_rao(factors[[j]][-d]) %*% diag(weights[[j]])
           SVD               = svd(x = Q %*% other_factors, nu = ranks[j],
                                   nv = ranks[j])
-          factors[[j]][[1]] = SVD$u %*% t(SVD$v)
-        } else {
-          D                 = diag(sqrt(diag(crossprod(factors[[j]][[1]]))))
-          # Tandem iteration
-          SVD               = svd(x = Q %*% other_factors %*% D, nu = ranks[j],
-                                  nv = ranks[j])
-          factors[[j]][[1]] = SVD$u %*% t(SVD$v)
-          weights           = diag(t(Q %*% other_factors) %*% factors[[j]][[1]])
-          D                 = diag(weights / sqrt(sum(weights ^ 2)))
-          factors[[j]][[1]] = factors[[j]][[1]] %*% D
-        }
+          factors[[j]][[d]] = SVD$u %*% t(SVD$v)
+          a[[j]]            = weighted_kron_sum(factors[[j]], weights[[j]])
+          Y[, j]            = P[[j]] %*% a[[j]]
 
-        a[[j]]            = kron_sum(factors[[j]])
-        Y[, j]            = P[[j]] %*% a[[j]]
-
-        for (d in 2:(LEN[[j]] - 1)) {
           dgx              = dg(cov2(Y[, j], Y, bias = bias))
           dgx              = matrix(rep(dgx, n), n, J, byrow = TRUE)
           Z[, j]           = rowSums(
             matrix(rep(C[j, ], n), n, J, byrow = TRUE) * dgx * Y)
-
-          Q                 = array(t(P[[j]]) %*% Z[, j], dim = DIM[[j]][-1])
-          Q                 = unfold(Q, mode = d)
-          other_factors     = list_khatri_rao(factors[[j]][-d])
-          SVD               = svd(x = Q %*% other_factors, nu = ranks[j],
-                                  nv = ranks[j])
-          factors[[j]][[d]] = SVD$u %*% t(SVD$v)
-          a[[j]]            = kron_sum(factors[[j]])
-          Y[, j]            = P[[j]] %*% a[[j]]
         }
+
+        tmp          = t(Z[, j]) %*% A_m[[j]] %*% list_khatri_rao(factors[[j]])
+        weights[[j]] = drop(tmp) / norm(drop(tmp), type = "2")
+
+        a[[j]]       = weighted_kron_sum(factors[[j]], weights[[j]])
+        Y[, j]       = A_m[[j]] %*% a[[j]]
 
       } else { # Matrices
         Q      = t(P[[j]]) %*% Z[,j]
@@ -220,7 +206,7 @@ mgccak <- function (A, A_m = NULL, C, tau = rep(1, length(A)), scheme = "centroi
           for (d in 1:(LEN[[j]] - 1)) {
             factors[[j]][[d]] = M_inv_sqrt[[j]][[d]] %*% factors[[j]][[d]]
           }
-          a[[j]] = kron_sum(factors[[j]])
+          a[[j]] = weighted_kron_sum(factors[[j]], weights[[j]])
         }
       }
     }
@@ -243,6 +229,7 @@ mgccak <- function (A, A_m = NULL, C, tau = rep(1, length(A)), scheme = "centroi
   result <- list(Y         = Y,
                  a         = a,
                  factors   = factors,
+                 weights   = weights,
                  crit      = crit,
                  AVE_inner = AVEinner,
                  call      = call,
