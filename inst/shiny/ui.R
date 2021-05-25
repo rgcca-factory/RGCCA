@@ -61,15 +61,9 @@ CEX_SUB <<- 10
 CEX_AXIS <<- 10
 CEX <<- 1
 
-# config for shinyapps.io
-appDir <- ifelse("packrat" %in% list.files(), "", "../../R/")
-# Load functions
-
-for (f in list.files(appDir))
-        source(paste0(appDir, f))
-
-# maxdiff-b, maxdiff, maxvar-a, maxvar-b, maxvar, niles, r-maxvar,
-# rcon-pca, ridge-gca, , ssqcov-1, ssqcov-2, , sum-pca, sumcov-1, sumcov-2
+all_funcs <- unclass(lsf.str(envir = asNamespace("RGCCA"), all = T))
+for (i in all_funcs)
+    eval(parse(text = paste0(i, "<-RGCCA:::", i)))
 
 load_libraries(c(
     "ggplot2",
@@ -80,7 +74,6 @@ load_libraries(c(
     "shiny",
     "shinyjs",
     "MASS",
-    "rlang",
     "DT"
 ))
 

@@ -225,14 +225,12 @@ rgcca <- function(blocks, method = "rgcca",
         blocks<-blocks$call$blocks
     }
 
-    if(length(blocks) == 1){
-        if(method != "pca")
-        {
-            method = "pca"
-            message("method='rgcca' is not available for one block only and
-                    method was converted to 'pca'.")
+    if (length(blocks) == 1){
+        if(method != "pca") {
+            method <- "pca"
+            if (verbose)
+                message("method='rgcca' is not available for one block only and method was converted to 'pca'.")
         }
-
     }
 
     if (!missing(sparsity) && missing(method))
