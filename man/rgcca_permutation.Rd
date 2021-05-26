@@ -217,7 +217,7 @@ fit = rgcca_permutation(blocks, connection = C,
 print(fit)
 plot(fit)
 fit$bestpenalties
-\dontrun{
+\donttest{
 # It is possible to define explicitly K combinations of shrinkage
 # parameters to be tested and in that case a matrix of dimension KxJ is
 # required. Each row of this matrix corresponds to one specific set of
@@ -325,7 +325,7 @@ fit <- rgcca_permutation(A, connection = C,
                           par_value = par_value,
                           par_length = 10,
                           n_perms = 10, n_cores = 1, tol = 1e-2)
-                          )
+
 print(fit)
 plot(fit)
 }

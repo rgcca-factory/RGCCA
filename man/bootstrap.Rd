@@ -44,7 +44,7 @@ boot.out = bootstrap(fit.rgcca, n_boot = 50, n_cores = 2)
 
 plot(boot.out, type = "weight", block = 4)
 
-\dontrun{
+\donttest{
 # Stability of the selected variables for SGCCA
 # Not run:
 # Download the dataset's package at http://biodev.cea.fr/sgcca/.

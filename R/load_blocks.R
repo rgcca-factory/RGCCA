@@ -8,7 +8,7 @@
 #' @param rownames An integer corresponding to the column number of the rownames (NULL otherwise)
 #' @return A list matrix corresponding to the blocks
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' load_blocks (TRUE,
 #'     "inst/extdata/agriculture.tsv,inst/extdata/industry.tsv,inst/extdata/politic.tsv",
 #'     "agric,ind,polit")

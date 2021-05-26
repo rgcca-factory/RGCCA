@@ -35,7 +35,7 @@ This function can be used to identify the most stable variables
 identified as relevant by SGCCA.
 }
 \examples{
-\dontrun{
+\donttest{
 ###########################
 # stability and bootstrap #
 ###########################

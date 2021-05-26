@@ -366,7 +366,7 @@ nak=which(is.na(A[[j]]))
 A[[j]][1:4,1]=NA
 pj=ncol(A[[j]])
 nak=is.na(A[[j]])
-nak=which(is.na(A[[j]]),arr.ind=T)
+nak=which(is.na(A[[j]]),arr.ind=TRUE)
 ncolWithNA=unique(nak[,"col"])
 
 matri=matrix(53,pj,pj)

@@ -30,7 +30,7 @@
 #'
 #' plot(boot.out, type = "weight", block = 4)
 #'
-#' \dontrun{
+#' \donttest{
 #' # Stability of the selected variables for SGCCA
 #' # Not run:
 #' # Download the dataset's package at http://biodev.cea.fr/sgcca/.
@@ -62,7 +62,7 @@
 bootstrap <- function(rgcca_res, n_boot = 100,
                       n_cores = parallel::detectCores() - 1){
 
-    if(class(rgcca_res)=="stability")
+    if(is(rgcca_res, "stability"))
     {
         warning("All the parameters were imported from the fitted rgcca_stability object.")
         rgcca_res = rgcca_res$rgcca_res

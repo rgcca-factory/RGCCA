@@ -1782,7 +1782,7 @@ server <- function(input, output, session) {
                     save_plot("fingerprint.pdf", fingerprint(input$indexes))
                     msgSave()
                 })
-                modify_hovertext(plot_dynamic(fingerprint(input$indexes), type = "var1D", format = input$format), hovertext = F, type = "var1D")
+                modify_hovertext(plot_dynamic(fingerprint(input$indexes), type = "var1D", format = input$format), hovertext = FALSE, type = "var1D")
             }
         }, error = function(e) {
         })
@@ -1826,7 +1826,7 @@ server <- function(input, output, session) {
                     .GlobalEnv
                 )
 
-                df <- round(get_bootstrap(boot, , compx, id_block, display_order = F), 3)[, -c(1, 3, 6)]
+                df <- round(get_bootstrap(boot, , compx, id_block, display_order = FALSE), 3)[, -c(1, 3, 6)]
                 colnames(df) <- c("RGCCA weight", "Lower limit", "Upper limit", "P-value", "B.H.")
 
                 observeEvent(input$bootstrap_t_save, {
@@ -1864,7 +1864,7 @@ server <- function(input, output, session) {
                     format = input$format
                 ),
                 type = "perm",
-                hovertext = F,
+                hovertext = FALSE,
                 perm = perm
             )
         }
@@ -1913,7 +1913,7 @@ server <- function(input, output, session) {
                     format = input$format
                 ),
                 type = "cv",
-                hovertext = F,
+                hovertext = FALSE,
                 perm = cv
             )
         }

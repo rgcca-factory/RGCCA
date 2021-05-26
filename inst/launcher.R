@@ -345,7 +345,7 @@ opt <- list(
 )
 
 # Load functions
-all_funcs <- unclass(lsf.str(envir = asNamespace("RGCCA"), all = T))
+all_funcs <- unclass(lsf.str(envir = asNamespace("RGCCA"), all = TRUE))
 for (i in all_funcs)
     eval(parse(text = paste0(i, "<-RGCCA:::", i)))
 

@@ -1,3 +1,4 @@
+
 #' European Customer Satisfaction Index
 #'
 #' @format A data frame with 250 rows and 24 variables
@@ -21,11 +22,11 @@
 #' \verb{    }(e) caring about customer's needs.\cr
 #'
 #' - EXPE: Customer Expectations of the overall quality (eta_2)\cr
-#' \verb{    }(a)	Expectations for the overall quality of your "mobile phone
+#' \verb{    }(a)   Expectations for the overall quality of your "mobile phone
 #' provider" at the moment you became customer of this provider \cr
-#' \verb{    }(b)	Expectations for your "mobile phone provider" to provide
+#' \verb{    }(b)   Expectations for your "mobile phone provider" to provide
 #' products and services to meet your personal need \cr
-#' \verb{    }(c)	How often did you expect that things could go wrong at your
+#' \verb{    }(c)   How often did you expect that things could go wrong at your
 #' "mobile phone provider" \cr
 #'
 #' - QUAL: Perceived Quality (eta_3) \cr
@@ -38,27 +39,27 @@
 #' \verb{    }(g) Clarity and transparency of information provided \cr
 #'
 #' - VAL: Perceived Value (eta_4)\cr
-#' \verb{    }(a)	Given the quality of the products and services offered by
+#' \verb{    }(a)   Given the quality of the products and services offered by
 #' your "mobile phone provider" how would you rate the fees and prices that
 #' you pay for them?\cr
-#' \verb{    }(b)	Given the fees and prices that you pay for your mobile phone
+#' \verb{    }(b)   Given the fees and prices that you pay for your mobile phone
 #' provider how would you rate the quality of the products and services offered
 #' by your "mobile phone provider"? \cr
 #'
 #' - SAT: Customer Satisfaction (eta_5)\cr
-#' \verb{    }(a)	Overall satisfaction \cr
-#' \verb{    }(b)	Fulfillment of expectations \cr
-#' \verb{    }(c)	How well do you think your "mobile phone provider" compares
+#' \verb{    }(a)   Overall satisfaction \cr
+#' \verb{    }(b)   Fulfillment of expectations \cr
+#' \verb{    }(c)   How well do you think your "mobile phone provider" compares
 #' with your ideal "mobile phone provider"? \cr
 #'
-#' - LOY: Customer Loyalty (eta_6)	\cr
-#' \verb{    }(a)	If you would need to choose a new "mobile phone provider" how
+#' - LOY: Customer Loyalty (eta_6)   \cr
+#' \verb{    }(a)   If you would need to choose a new "mobile phone provider" how
 #' likely is it that you would choose your provider again? \cr
-#' \verb{    }(b)	Let us now suppose that other "mobile phone provider"s decide to
+#' \verb{    }(b)   Let us now suppose that other "mobile phone provider"s decide to
 #' lower their fees and prices, but your "mobile phone provider" stays at the same
 #' level as today. At which level of difference (in \%) would you choose another
 #' "mobile phone provider"? \cr
-#' \verb{    }(c)	If a friend or colleague asks you for advice, how likely is it
+#' \verb{    }(c)   If a friend or colleague asks you for advice, how likely is it
 #' that you would recommend your "mobile phone provider"? }
 #'
 #' @references Fornell C. (1992): A national customer satisfaction barometer.

@@ -4,7 +4,7 @@
 # @param one_column A boolean for a file with  an only-one column
 # @return A matrix containing the loaded file
 # @examples
-# \dontrun{
+# \donttest{
 # load_file_text('data/agriculture.tsv')
 # }
 load_file_text <- function(

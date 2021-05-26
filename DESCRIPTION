@@ -3,9 +3,8 @@ Type: Package
 Title: Regularized (or Sparse) Generalized Canonical Correlation Analysis (R/SGCCA) for multi-block data analysis
 Version: 3.0.0
 Date: 2020-10-26
-Author: Arthur Tenenhaus, Vincent Guillemot, Arnaud Gloaguen, Caroline Peltier and Etienne Camenen
-Author@R:
-    c(person("Arthur", "Tenenhaus", email = "arthur.tenenhaus@supelec.fr", role = c("aut", "cre"))),
+Authors@R:
+    c(person("Arthur", "Tenenhaus", email = "arthur.tenenhaus@supelec.fr", role = c("aut", "cre")),
       person("Vincent", "Guillemot", role = "aut"),
       person("Arnaud", "Gloaguen", role = "aut"),
       person("Caroline", "Peltier", role = "aut"),

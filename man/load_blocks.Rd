@@ -33,7 +33,7 @@ A list matrix corresponding to the blocks
 Create a list of matrix from loading files corresponding to blocks
 }
 \examples{
-\dontrun{
+\donttest{
 load_blocks (TRUE,
     "inst/extdata/agriculture.tsv,inst/extdata/industry.tsv,inst/extdata/politic.tsv",
     "agric,ind,polit")

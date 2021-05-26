@@ -193,7 +193,7 @@ rgcca_cv_k <- function(
         for (x in seq(length(preds)))
             row.names(preds[[x]]) <- row.names(bigA[[1]])
     }
-     scores <- mean(unlist(lapply(scores, function(x) x$score)),na.rm=T)
+     scores <- mean(unlist(lapply(scores, function(x) x$score)),na.rm=TRUE)
 
     structure(
         list(scores = scores, preds = preds,

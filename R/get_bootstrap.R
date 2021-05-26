@@ -81,7 +81,7 @@ get_bootstrap <- function(b, type = "weight", comp = 1,
 
     bootstrapped=b$bootstrap[[comp]][[block]]
     n_boot = sum(!is.na(bootstrapped[1, ]))
-    mean = apply(bootstrapped, 1, function(x) mean(x, na.rm = T))
+    mean = apply(bootstrapped, 1, function(x) mean(x, na.rm = TRUE))
 
     if(type == "weight") {weight = b$rgcca$a[[block]][, comp]}
     if(type == "loadings") {weight = drop(cor(b$rgcca$call$blocks[[block]],
@@ -91,7 +91,7 @@ get_bootstrap <- function(b, type = "weight", comp = 1,
     tail <- qnorm(1 - .05 / 2)
 
     if(type == "weight"){
-      std = apply(bootstrapped, 1, function(x) sd(x, na.rm = T))
+      std = apply(bootstrapped, 1, function(x) sd(x, na.rm = TRUE))
       bootstrap_ratio = abs(weight) / std
       p.vals <- 2*pnorm(bootstrap_ratio, lower.tail = FALSE)
     }
@@ -99,7 +99,7 @@ get_bootstrap <- function(b, type = "weight", comp = 1,
     if(type == "loadings"){
       ftrans = 0.5*log((1 + weight)/(1 - weight))
       r = 0.5*log((1 + bootstrapped)/(1 - bootstrapped))
-      std = apply(r, 1, function(x) sd(x, na.rm = T))
+      std = apply(r, 1, function(x) sd(x, na.rm = TRUE))
       bootstrap_ratio = abs(ftrans)/std
       p.vals <- 2*pnorm(bootstrap_ratio, lower.tail = FALSE)
     }

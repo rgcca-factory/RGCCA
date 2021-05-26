@@ -127,7 +127,7 @@ plot_dynamic <- function(
     config(p,
            editable = TRUE,
            displaylogo = FALSE,
-           edits = list(shapePosition = F),
+           edits = list(shapePosition = FALSE),
            toImageButtonOptions = list(
                format = format,
                width = 500,

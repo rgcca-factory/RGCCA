@@ -62,7 +62,7 @@ plot_permut_3D <- function(
                 list(mean(zstat$z), "rgb(254,224,144)"),
                 list(max(zstat$z), "rgb(49,54,149)")
             ),
-            cauto = F,
+            cauto = FALSE,
             cmin = 0,
             cmax = max(zstat$z)
         )

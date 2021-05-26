@@ -266,8 +266,8 @@ rgccad = function(blocks, connection = 1 - diag(length(blocks)),
       for (b in 1:J) Y[[b]][, n] <- rgcca.result$Y[, b]
       for (b in 1:J) a[[b]][, n] <- rgcca.result$a[[b]]
       for (b in 1:J) astar[[b]][, n] <- rgcca.result$a[[b]] -
-        astar[[b]][, (1:(n - 1)),drop = F] %*%
-        drop( t(a[[b]][, n]) %*% P[[b]][, 1:(n - 1), drop = F] )
+        astar[[b]][, (1:(n - 1)),drop = FALSE] %*%
+        drop( t(a[[b]][, n]) %*% P[[b]][, 1:(n - 1), drop = FALSE] )
     }
   }
 
