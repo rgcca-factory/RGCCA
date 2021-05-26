@@ -61,9 +61,9 @@ CEX_SUB <<- 10
 CEX_AXIS <<- 10
 CEX <<- 1
 
-all_funcs <- unclass(lsf.str(envir = asNamespace("RGCCA"), all = T))
+all_funcs <<- unclass(lsf.str(envir = asNamespace("RGCCA"), all = T))
 for (i in all_funcs)
-    eval(parse(text = paste0(i, "<-RGCCA:::", i)))
+    eval(parse(text = paste0(i, "<<-RGCCA:::", i)))
 
 load_libraries(c(
     "ggplot2",

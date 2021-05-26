@@ -568,6 +568,8 @@ server <- function(input, output, session) {
     }
 
     getMaxComp <- function(){
+        if (is.function(blocks))
+            return(2)
         comp <- sapply(
             blocks,
             function(x) {

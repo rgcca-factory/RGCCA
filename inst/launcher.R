@@ -247,10 +247,6 @@ get_args <- function() {
     return(optparse::OptionParser(option_list = option_list))
 }
 
-char_to_list <- function(x) {
-    strsplit(gsub(" ", "", as.character(x)), ",")[[1]]
-}
-
 check_arg <- function(opt) {
     # Check the validity of the arguments opt : an optionParser object
 
@@ -320,71 +316,6 @@ post_check_arg <- function(opt, rgcca) {
     return(opt)
 }
 
-check_integer <- function(x, y = x, type = "scalar", float = FALSE, min = 1) {
-
-    if (is.null(y))
-        y <- x
-
-    if (type %in% c("matrix", "data.frame"))
-        y_temp <- y
-
-    y <- suppressWarnings(as.double(as.matrix(y)))
-
-    if (any(is.na(y)))
-        stop_rgcca(paste(x, "should not be NA."))
-
-    if (!is(y, "numeric"))
-        stop_rgcca(paste(x, "should be numeric."))
-
-    if (type == "scalar" && length(y) != 1)
-        stop_rgcca(paste(x, "should be of length 1."))
-
-    if (!float)
-        y <- as.integer(y)
-
-    if (all(y < min))
-        stop_rgcca(paste0(x, " should be higher than or equal to ", min, "."))
-
-    if (type %in% c("matrix", "data.frame"))
-        y <- matrix(
-            y,
-            dim(y_temp)[1],
-            dim(y_temp)[2],
-            dimnames = dimnames(y_temp)
-        )
-
-    if (type == "data.frame")
-        as.data.frame(y)
-
-    return(y)
-}
-
-load_libraries <- function(librairies) {
-    for (l in librairies) {
-        if (!(l %in% installed.packages()[, "Package"]))
-            utils::install.packages(l, repos = "cran.us.r-project.org")
-        suppressPackageStartupMessages(
-            library(
-                l,
-                character.only = TRUE,
-                warn.conflicts = FALSE,
-                quietly = TRUE
-        ))
-    }
-}
-
-stop_rgcca <- function(
-    message,
-    exit_code = "1",
-    call = NULL) {
-
-    base::stop(
-        structure(
-            class = c(exit_code, "simpleError", "error", "condition"),
-            list(message = message, call. = NULL)
-    ))
- }
-
 ########## Main ##########
 
 # Get arguments : R packaging install, need an opt variable with associated
@@ -413,7 +344,12 @@ opt <- list(
         collapse = ",")
 )
 
-load_libraries(c("ggplot2", "optparse", "scales", "igraph", "MASS", "rlang", "Deriv"))
+# Load functions
+all_funcs <- unclass(lsf.str(envir = asNamespace("RGCCA"), all = T))
+for (i in all_funcs)
+    eval(parse(text = paste0(i, "<-RGCCA:::", i)))
+
+load_libraries(c("ggplot2", "optparse", "scales", "igraph", "MASS", "Deriv"))
 try(load_libraries("ggrepel"), silent = TRUE)
 
 tryCatch(
@@ -424,11 +360,6 @@ tryCatch(
     }, warning = function(w)
         stop_rgcca(w[[1]], exit_code = 141)
 )
-
-# Load functions
-all_funcs <- unclass(lsf.str(envir = asNamespace("RGCCA"), all = T))
-for (i in all_funcs)
-    eval(parse(text = paste0(i, "<-RGCCA:::", i)))
 
 # Set missing parameters by default
 opt$header <- !("header" %in% names(opt))
