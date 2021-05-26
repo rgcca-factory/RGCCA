@@ -1,3 +1,4 @@
+#' @importFrom stats median
 proj_l1_l2 <- function(argu, a=1){
   #Check if constraints are already satisfied
   norm2_argu = norm(argu, type = "2")
