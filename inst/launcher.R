@@ -1,3 +1,5 @@
+#!/usr/bin/env Rscript
+
 # Author: Etienne CAMENEN
 # Date: 2020
 # Contact: arthur.tenenhaus@centralesupelec.fr
