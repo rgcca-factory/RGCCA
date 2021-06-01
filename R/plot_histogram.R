@@ -18,8 +18,9 @@ plot_histogram <- function(
     cex_axis = 10 * cex
 ) {
 
-    for (i in c("cex", "cex_main", "cex_sub", "cex_axis"))
+    for (i in c("cex_main", "cex_sub", "cex_axis"))
         check_integer(i, get(i))
+  check_integer("cex", cex, float = TRUE)
 
     stopifnot(is(p, "ggplot"))
     check_colors(colors)

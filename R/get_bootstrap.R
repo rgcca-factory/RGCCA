@@ -136,6 +136,7 @@ get_bootstrap <- function(b, type = "weight", comp = 1,
     attributes(df)$method <- class(b$rgcca)
     attributes(df)$n_boot <- n_boot
     attributes(df)$n_blocks <- length(b$rgcca$call$blocks)
+    attributes(df)$block <- names(b$rgcca$call$blocks)[block]
     class(df) <- c(class(df), "df_bootstrap")
     return(df)
 }

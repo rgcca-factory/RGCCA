@@ -28,6 +28,6 @@ print_comp <- function(rgcca_res, n = 1, i = length(rgcca_res$AVE$AVE_X), outer 
         paste0("First outer comp. : ", paste(eval(ave), collapse = " & "))
     } else {
         AVE <- rgcca_res$AVE$AVE_X[[i]]
-        paste0("Comp. ", n, " (", varText, eval(ave), ")")
+        paste0("Component ", n, " (", varText, eval(ave), ")")
     }
 }

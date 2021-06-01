@@ -23,6 +23,9 @@ plot_network <- function(
     stopifnot(is(rgcca_res, "rgcca"))
     title <- paste0(title, collapse = " ")
     check_colors(colors)
+    for (i in c("cex_main", "cex_point"))
+        check_integer(i, get(i))
+    check_integer("cex", cex, float = TRUE)
 
     load_libraries("igraph")
 

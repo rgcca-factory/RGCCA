@@ -15,7 +15,7 @@ plot_ind(
   response_name = "Response",
   no_overlap = FALSE,
   predicted = NULL,
-  title = paste0(names(rgcca_res$call$blocks)[i_block], ": Sample space"),
+  title = NULL,
   legend = TRUE,
   ...
 )

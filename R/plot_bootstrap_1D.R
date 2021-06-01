@@ -83,7 +83,8 @@ plot_bootstrap_1D <- function(
     check_integer("n_mark", n_mark)
 
     if (is.null(title)) {
-        title <- paste0("Block-", type, " vector",
+        title <- paste0("Block-", type, " vector: ", 
+            attributes(df_b)$block,
             "\n(", attributes(df_b)$n_boot,
             " bootstrap samples)")
     }
@@ -126,7 +127,7 @@ plot_bootstrap_1D <- function(
     if (is.null(colors))
         colors <-  c(color_group(seq(3))[1], "gray", color_group(seq(3))[3])
 
-    p <- plot_histogram(p, df_b_head, title) +
+    p <- plot_histogram(p, df_b_head, title, ...) +
         scale_x_continuous(breaks = df_b_head$order,
                            labels = rownames(df_b_head)) +
         scale_fill_manual(values = colorRampPalette(colors)(6),

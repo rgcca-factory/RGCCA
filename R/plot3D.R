@@ -39,8 +39,9 @@ plot3D <- function(
         if (!is.null(get(i)))
             check_compx(i, get(i), rgcca_res$call$ncomp, i_block)
     }
-    for (i in c("cex", "cex_point", "cex_lab"))
+    for (i in c("cex_point", "cex_lab"))
         check_integer(i, get(i))
+  check_integer("cex", cex, float = TRUE)
 
     load_libraries("plotly")
     `%>%` <- plotly::`%>%`

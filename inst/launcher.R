@@ -368,6 +368,12 @@ opt$header <- !("header" %in% names(opt))
 opt$superblock <- !("superblock" %in% names(opt))
 opt$scale <- !("scale" %in% names(opt))
 opt$text <- !("text" %in% names(opt))
+CEX_LAB <- 20
+CEX_MAIN <- 25
+CEX_POINT <- 3
+CEX_SUB <- 20
+CEX_AXIS <- 10
+CEX <- 1.25
 
 status <- 0
 tryCatch({
@@ -396,7 +402,7 @@ tryCatch({
 
     rgcca_out <- eval(as.call(func))
 
-        opt <- post_check_arg(opt, rgcca_out)
+    opt <- post_check_arg(opt, rgcca_out)
 
     ########## Plot ##########
 
@@ -413,8 +419,10 @@ tryCatch({
                 opt$text,
                 opt$block_y,
                 get_filename(opt$group),
-                cex_main = 20,
-                cex_lab = 15
+                cex_lab = CEX_LAB, 
+                cex_point = CEX_POINT,
+                cex_main = CEX_MAIN,
+                cex = CEX
             )
         )
         save_plot(opt$o1, individual_plot)
@@ -429,8 +437,10 @@ tryCatch({
                 opt$block,
                 opt$text,
                 n_mark = opt$nmark,
-                cex_main = 20,
-                cex_lab = 15
+                cex_lab = CEX_LAB, 
+                cex_point = CEX_POINT,
+                cex_main = CEX_MAIN,
+                cex = CEX
             )
         )
         save_plot(opt$o2, corcircle)
@@ -442,16 +452,28 @@ tryCatch({
             opt$nmark,
             opt$block,
             type = "loadings",
-            cex_main = 20
+            cex_sub = CEX_SUB,
+            cex_main = CEX_MAIN,
+            cex_axis = CEX_AXIS,
+            cex = CEX
         )
     save_plot(opt$o3, top_variables)
 
     # Average Variance Explained
-    (ave <- plot_ave(rgcca_out, cex_main = 20))
+    (ave <- plot_ave(
+        rgcca_out, 
+        cex_main = CEX_MAIN,
+        cex_sub = CEX_SUB,
+        cex_axis = CEX_AXIS,
+        cex = CEX))
     save_plot(opt$o4, ave)
 
     # Creates design scheme
-    design <- function() plot_network(rgcca_out, cex_main = 20)
+    design <- function() plot_network(
+        rgcca_out,
+        cex_main = CEX_MAIN,
+        cex_point = CEX_POINT,
+        cex = CEX)
     save_plot(opt$o5, design)
 
     save_ind(rgcca_out, opt$o6)

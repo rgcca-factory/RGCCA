@@ -26,7 +26,7 @@ plot_ave <- function(
     ...) {
 
     stopifnot(is(rgcca_res, "rgcca"))
-    check_integer("cex", cex)
+    check_integer("cex", cex, float = TRUE)
 
     if (tolower(rgcca_res$call$method) == "pca") {
         rgcca_res$AVE$AVE_X = rgcca_res$AVE$AVE_X[1]

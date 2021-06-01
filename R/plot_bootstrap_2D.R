@@ -39,9 +39,12 @@ plot_bootstrap_2D <- function(
     df_b = NULL,
     x = "bootstrap_ratio",
     y = "occurrences",
-    title = paste("Variable selection \nby",
-           attributes(b)$n_boot,
-           "bootstraps"),
+    title = paste(
+        "Variable selection :", 
+        names(rgcca_res$call$blocks)[i_block],
+        "\nby",
+        attributes(b)$n_boot,
+        "bootstraps"),
     colors = NULL,
     cex = 1,
     cex_main = 14 * cex,
@@ -65,8 +68,9 @@ plot_bootstrap_2D <- function(
 
     title <- paste0(title, collapse = " ")
     check_ncol(list(df_b), 1)
-    for (i in c("cex", "cex_main", "cex_sub", "cex_point", "cex_lab"))
+    for (i in c("cex_main", "cex_sub", "cex_point", "cex_lab"))
         check_integer(i, get(i))
+    check_integer("cex", cex, float = TRUE)
     check_colors(colors)
 
     set_occ <- function(x) {
