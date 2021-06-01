@@ -68,7 +68,7 @@ plot_var_2D <- function(
     x <- y <- NULL
 
     if(is.null(title))
-        title <- paste0("Correlation Circle: ", names(rgcca_res$call$blocks)[i_block])
+        title <- paste0("Correlation circle: ", names(rgcca_res$call$blocks)[i_block])
 
     df <- get_ctr2(
         rgcca_res = rgcca_res,

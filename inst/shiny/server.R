@@ -797,25 +797,31 @@ server <- function(input, output, session) {
                 cex = CEX
             )
 
-    fingerprint <- function(type)
+    fingerprint <- function(type) {
+        if (type == "loadings")
+            title <- paste0("Variable correlations: ", names(rgcca_out$call$blocks)[id_block], " with")
+        else
+            title <- paste0("Variable weights: ", names(rgcca_out$call$blocks)[id_block])
         plot_var_1D(
             rgcca = rgcca_out,
             comp = compx,
             n_mark = nb_mark,
             i_block = id_block,
             type = type,
+            title = title,
             cex_sub = CEX_SUB,
             cex_main = CEX_MAIN,
             cex_axis = CEX_AXIS,
             cex = CEX
         )
+    }
 
     ave <- function()
         print(
             plot_ave(
                 rgcca = rgcca_out,
-                cex_main = CEX_MAIN * 1.2,
-                cex_sub = CEX_SUB * 1.5,
+                cex_main = round(CEX_MAIN * 1.5),
+                cex_sub = round(CEX_SUB * 1.5),
                 cex_axis = CEX_AXIS,
                 cex = CEX
             )

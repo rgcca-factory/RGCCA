@@ -452,6 +452,7 @@ tryCatch({
             opt$nmark,
             opt$block,
             type = "loadings",
+            title = paste0("Variable correlations", ": ", names(rgcca_res$call$blocks)[opt$block]) " with ",
             cex_sub = CEX_SUB,
             cex_main = CEX_MAIN,
             cex_axis = CEX_AXIS,
