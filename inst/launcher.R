@@ -24,7 +24,6 @@ get_args <- function() {
             opt_str = c("-d", "--datasets"),
             type = "character",
             metavar = "path list",
-            default = opt[18],
             help = "List of comma-separated file paths corresponding to the
             blocks to be analyzed (one per block and without spaces between
             them; e.g., path/file1.txt,path/file2.txt) [required]"
@@ -452,7 +451,7 @@ tryCatch({
             opt$nmark,
             opt$block,
             type = "loadings",
-            title = paste0("Variable correlations", ": ", names(rgcca_res$call$blocks)[opt$block]) " with ",
+            title = paste0("Variable correlations", ": ", names(rgcca_out$call$blocks)[opt$block], " with "),
             cex_sub = CEX_SUB,
             cex_main = CEX_MAIN,
             cex_axis = CEX_AXIS,

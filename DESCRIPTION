@@ -6,6 +6,8 @@ Date: 2020-10-26
 Authors@R:
     c(person("Arthur", "Tenenhaus", email = "arthur.tenenhaus@supelec.fr", role = c("aut", "cre")),
       person("Vincent", "Guillemot", role = "aut"),
+      person("Fabien", "Girka", role = "aut"),
+      person("Anatole", "Bourrelier", role = "aut"),
       person("Arnaud", "Gloaguen", role = "aut"),
       person("Caroline", "Peltier", role = "aut"),
       person("Etienne", "Camenen", role = "aut"))

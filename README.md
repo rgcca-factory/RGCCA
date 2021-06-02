@@ -1,6 +1,6 @@
 # R/SGCCA 
 
-##### Version: 3.0
+##### Version: 3.0.0
 
 ##### Authors: 
 Arthur TENENHAUS, Etienne CAMENEN,  Anatole BOURRELIER, Caroline PELTIER & Vincent GUILLEMOT
@@ -127,7 +127,7 @@ Required:
 
 ```
 sudo apt-get install -y git r-base && \
-    R -e 'install.packages(c("RGCCA", "ggplot2", "optparse", "scales", "igraph", "shiny", "Deriv", "rlang", "ggrepel", "openxlsx")' && \
+    R -e 'install.packages(c("RGCCA", "ggplot2", "optparse", "scales", "igraph", "shiny", "Deriv", "ggrepel", "openxlsx")' && \
     git clone https://github.com/rgcca-factory/RGCCA && \
 	cd RGCCA
 ```

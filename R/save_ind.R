@@ -1,6 +1,6 @@
 # Print and save indidvidual analysis attributes
 # TODO: not only two components, "" for missing values
-save_ind <- function(
+    save_ind <- function(
     rgcca,
     file = "individuals.tsv") {
 
@@ -10,7 +10,7 @@ save_ind <- function(
     inds <- inds <- Reduce(cbind, rgcca$Y)
     colnames(inds) <- unlist(sapply(
         names(rgcca$call$blocks),
-        function(x) paste0(x, ".comp", seq(NCOL(rgcca$Y[[x]])))))
+        function(x) paste0(x, ".component", seq(NCOL(rgcca$Y[[x]])))))
 
     write.table(inds, file, sep = "\t")
 
