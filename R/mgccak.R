@@ -158,11 +158,11 @@ mgccak <- function (A, A_m = NULL, C, tau = rep(1, length(A)), scheme = "centroi
             matrix(rep(C[j, ], n), n, J, byrow = TRUE) * dgx * Y)
         }
 
-        tmp          = t(Z[, j]) %*% A_m[[j]] %*% list_khatri_rao(factors[[j]])
+        tmp          = t(Z[, j]) %*% P[[j]] %*% list_khatri_rao(factors[[j]])
         weights[[j]] = drop(tmp) / norm(drop(tmp), type = "2")
 
         a[[j]]       = weighted_kron_sum(factors[[j]], weights[[j]])
-        Y[, j]       = A_m[[j]] %*% a[[j]]
+        Y[, j]       = P[[j]] %*% a[[j]]
 
       } else { # Matrices
         Q      = t(P[[j]]) %*% Z[,j]
