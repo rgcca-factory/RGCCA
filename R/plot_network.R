@@ -66,7 +66,8 @@ plot_network <- function(
         vertex.label.color = "black",
         vertex.label.dist = 6,
         vertex.label.degree = 1.5,
-        vertex.size = cex_point * 7.5
+        vertex.size = cex_point * 7.5,
+        margin = c(0.1, 0, 0, 0)
     )
      title(title, cex.main = cex_main * 0.1)
 }

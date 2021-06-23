@@ -17,13 +17,13 @@ setAVE <- function(){
 
 test_that(
     "print_comp by default",
-    expect_equal(print_comp(setAVE()), "Comp. 1 (70%)")
+    expect_equal(print_comp(setAVE()), "Component 1 (70%)")
 )
 
 
 test_that(
     "print_comp for the 2nd component and the 1rst block",
-    expect_equal(print_comp(setAVE(), 2, 1), "Comp. 2 (50%)")
+    expect_equal(print_comp(setAVE(), 2, 1), "Component 2 (50%)")
 )
 
 test_that("print_comp for the outer AVE", {

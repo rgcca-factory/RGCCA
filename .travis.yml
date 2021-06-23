@@ -5,13 +5,10 @@ r:
   - 3.6
   - 3.5
   - 3.4
+  - 3.3
 
 git:
   depth: 1
-
-#branches:
-#  only:
-#    - master
 
 r_packages:
   - ggplot2
