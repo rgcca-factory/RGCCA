@@ -8,6 +8,7 @@
 #'@param ... Further arguments in print
 #' @return A matrix containing for each variables of each blocks,
 #' the means, 95\% intervals, bootstrap ratio, p-values and other statistics.
+#' @param display_order A logical value for ordering the variables
 #' \itemize{
 #' \item 'estimate' for block weight/loading vectors.
 #' \item 'mean' for the mean of the bootstrap block weight/loading vectors.
@@ -21,7 +22,7 @@
 #' \item 'adjust.pval' for ajusted p-value (fdr correction by default)
 #' }
 #'@export
-print.bootstrap = function(x, type = "weight", ...) {
+print.bootstrap = function(x, type = "weight", display_order = FALSE, ...) {
     print(paste0("Extract statistics on the block-", type, " vectors from ",
                 NCOL(x$bootstrap[[1]][[1]][[1]]), " bootstrap samples"), ...)
 
@@ -34,7 +35,7 @@ print.bootstrap = function(x, type = "weight", ...) {
             print(Reduce(rbind, lapply(1:length(x$rgcca$call$blocks),
                                        function(block) {
                 b = get_bootstrap(b = x, type = type, block = block,
-                                  comp = comp, display_order = FALSE)
+                                  comp = comp, display_order = display_order)
                 othercols = colnames(b)[-which(colnames(b) == "estimate")]
                 return(b[, c("estimate", othercols)])
             })))
@@ -47,7 +48,7 @@ print.bootstrap = function(x, type = "weight", ...) {
             print(Reduce(rbind, lapply(1:(length(x$rgcca$call$blocks)-1),
                                        function(block) {
                 b = get_bootstrap(b = x, type = type, block = block,
-                                  comp = comp, display_order = FALSE)
+                                  comp = comp, display_order = display_order)
                 othercols = colnames(b)[-which(colnames(b) == "estimate")]
                 return(b[, c("estimate", othercols)])
             })))

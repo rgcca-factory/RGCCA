@@ -173,17 +173,17 @@ RGCCA is a rich technique that encompasses a large number of multiblock methods 
 |**Redundancy Analysis** [@Wollenberg1977] |  $x$ | $\tau_1 = 1$ and $\tau_2 = 0$ | $\ma C_1$  |
 |**SUMCOR** [@Horst1961] |  $x$ | $\tau_j = 0, j=1, \ldots, J$ | $\ma C_2 = \begin{pmatrix} 1 & 1 & \cdots &  1 \\ 1 & 1 & \ddots & \vdots \\ \vdots & \ddots& \ddots & 1\\ 1 & \cdots & 1 & 1 \end{pmatrix}$ |
 |**SSQCOR** [@Kettenring1971] |  $x^2$ | $\tau_j = 0, 1 \le j \le J$ | $\ma C_2$ |
-|**SABSCOR** [@Hanafi2007] |  $abs(x) $ | $\tau_j = 0, 1 \le j \le J$ | $\ma C_2$ |
+|**SABSCOR** [@Hanafi2007] |  $|x|$ | $\tau_j = 0, 1 \le j \le J$ | $\ma C_2$ |
 |**SUMCOV-1** [@VandeGeer1984] |  $x$ | $\tau_j = 1, 1 \le j \le J$ | $\ma C_2$ |
 |**SSQCOV-1** [@Hanafi2006] |  $x^2$ | $\tau_j = 1, 1 \le j \le J$ | $\ma C_2$ |
-|**SABSCOV-1** [@Tenenhaus2011 ; @Kramer2007] |  $abs(x)$ | $\tau_j = 1, 1 \le j \le J$ | $\ma C_2$ |
+|**SABSCOV-1** [@Tenenhaus2011 ; @Kramer2007] |  $|x|$ | $\tau_j = 1, 1 \le j \le J$ | $\ma C_2$ |
 |**SUMCOV-2** [@VandeGeer1984]  |  $x$ | $\tau_j = 1, 1 \le j \le J$ | $\ma C_3 = \begin{pmatrix} 0 & 1 & \cdots &  1 \\ 1 & 0 & \ddots & \vdots\\ \vdots & \ddots& \ddots& 1\\ 1 & \cdots & 1 & 0 \end{pmatrix}$ |
 |**SSQCOV-2** [@Hanafi2006] | $x^2$ | $\tau_j = 1, 1 \le j \le J$ | $\ma C_3$ |
 |**Generalized CCA** [@Carroll1968a] |  $x^2$ | $\tau_j = 0, 1 \le j \le J+1$ | $\ma C_4 = \begin{pmatrix} 0 & \cdots &  0 & 1 \\ \vdots & \ddots & \vdots &  \vdots\\ 0 & \cdots & 0 & 1\\ 1 & \cdots & 1 & 0 \end{pmatrix}$ |
 |**Generalized CCA** [@Carroll1968b] |  $x^2$ | $\tau_j=0, 0 \leq j \leq J_1 = 0 ~\&~\tau_{J+1} = 0$ and $\tau_j = 1, J_1+1 \leq j \leq J$ | $\ma C_4$ |
 |**Hierarchical PCA** [@Wold1996] |  $x^4$ | $\tau_j = 1, 1 \le j \le J$ and $\tau_{J+1} = 0$ | $\ma C_4$ |
 |**Multiple Co-Inertia Analysis** [@Chessel1996] |  $x^2$ | $\tau_j = 1, 1 \le j \le J$ and $\tau_{J+1} = 0$ | $\ma C_4$ |
-|**PLS path modeling - mode B** [@Wold1982] |  $abs(x)$ | $\tau_j = 0, 1 \le j \le J$ | $c_{jk}=1$ for two connected block and $c_{jk} = 0$ otherwise |
+|**PLS path modeling - mode B** [@Wold1982] |  $|x|$ | $\tau_j = 0, 1 \le j \le J$ | $c_{jk}=1$ for two connected block and $c_{jk} = 0$ otherwise |
 
 Table: Special cases of RGCCA in a situtation of $J \ge 2$ blocks. When $\tau_J+1$ is introduced, it is assumed that  $\ma X_1, \ldots, \ma X_J$ are connected to a $(J + 1)$th block defined as the concatenation of the blocks, $\ma X_{J+1} = \bigg[\ma X_1 , \ma X_2, \ldots, \ma X_J \bigg]$ and that $\tau_{J+1}$ corresponds to the shrinkage parameter associated with $\ma X_{J+1}$.
 

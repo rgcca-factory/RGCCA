@@ -18,15 +18,21 @@
 print.rgcca <- function(x,...)
 {
   cat("Call: ")
-  names_call=c("method","superblock","scale","scale_block","init","bias","tol","NA_method","ncomp")
+  names_call=c("method", "superblock", "scale", "scale_block", "init",
+               "bias", "tol", "NA_method", "ncomp")
   char_to_print=""
   for(name in names_call)
   {
-      if(name=="ncomp"){if(length(x$call$ncomp)>1){value=(paste(x$call$ncomp,sep="",collapse=","));value=paste0("c(",value,")")}}
-      if(name!="ncomp"){value=x$call[[name]]}
-      quo=ifelse(is.character(value)&name!="ncomp","'","")
-      vir=ifelse(name==names_call[length(names_call)],"",", ")
-      char_to_print=paste(char_to_print,name,'=',quo,value,quo,vir, collapse="",sep="")
+      if(name == "ncomp"){if(length(x$call$ncomp) > 1){
+        value = (paste(x$call$ncomp, sep="", collapse = ","))
+        value = paste0("c(", value,")")}
+      }
+
+      if(name != "ncomp"){value=x$call[[name]]}
+      quo = ifelse(is.character(value)&name != "ncomp", "'", "")
+      vir = ifelse(name==names_call[length(names_call)]," ",", ")
+      char_to_print = paste(char_to_print, name, '=' , quo, value,
+                            quo, vir, collapse ="", sep="")
   }
   cat(char_to_print)
 
