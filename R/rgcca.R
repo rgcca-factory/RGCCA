@@ -267,7 +267,7 @@ rgcca <- function(
     }
 
     if (any(sapply(blocks, function(x) length(dim(x))) > 2)) {
-        if(!type %in% c("mgcca", "ns_mgcca"))
+        if(!type %in% c("mgcca", "ns_mgcca", "tsgcca"))
         {
             message(paste0("type='", type, "' is not available for tensor blocks
                            so type was converted to 'mgcca'."))
@@ -311,6 +311,11 @@ rgcca <- function(
       par <- "tau"
       penalty <- tau
 
+    }else if (tolower(type) %in% c("tsgcca")) {
+      gcca <- tsgccaNa
+      par <- "sparsity"
+      penalty <- sparsity
+
     } else {
         if (!missing(sparsity) & missing(tau))
            stop_rgcca(paste0("tau parameters required for ",
@@ -335,6 +340,10 @@ rgcca <- function(
       kronecker_covariance <- check_boolean("kronecker_covariance", kronecker_covariance)
     }
 
+    if (type == "tsgcca") {
+      if (missing(method)) method  <- "complete"
+      ranks                <- check_ranks(ranks, blocks)
+    }
 
     match.arg(init, c("svd", "random"))
     check_method(type)
@@ -439,6 +448,10 @@ rgcca <- function(
       func$kronecker_covariance    <- kronecker_covariance
     }
 
+    if (type == "tsgcca") {
+      func$ranks                   <- ranks
+    }
+
     func[[par]] <- opt$penalty
     func_out <- eval(as.call(func))$rgcca
 
@@ -474,6 +487,7 @@ rgcca <- function(
 
     if(type == "mgcca") func_out$call$ranks = ranks
     if(type == "ns_mgcca") func_out$call$ranks = ranks
+    if(type == "tsgcca") func_out$call$ranks = ranks
 
     for (i in c(
         "scale",
