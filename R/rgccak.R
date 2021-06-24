@@ -118,7 +118,7 @@ rgccak=function (A, C, tau = "optimal", scheme = "centroid", verbose = FALSE,
             a[[j]] <- drop(1/sqrt(t(a[[j]])%*% M[[j]]%*%a[[j]]))*
                              (M[[j]]%*%a[[j]])
             if(a[[j]][1]<0){a[[j]] = -a[[j]]}
-            Y[, j] <-pm(A[[j]], a[[j]], na.rm = na.rm)
+            Y[, j] <- pm(A[[j]], a[[j]], na.rm = na.rm)
         })
     }
     for (j in which.dual)
@@ -154,49 +154,62 @@ rgccak=function (A, C, tau = "optimal", scheme = "centroid", verbose = FALSE,
        for (j in which.primal)
       {
          dgx = dg(cov2(Y[, j], Y, bias = bias))
-         if(tau[j] == 1)
-          {
+
+         if(tau[j] == 1){
            Z[, j] = rowSums(matrix(rep(C[j, ], n), n, J, byrow = TRUE)*
                               matrix(rep(dgx, n), n, J, byrow = TRUE)*Y)
            Az     = pm(t(A[[j]]), Z[, j], na.rm = TRUE)
 		       a[[j]] = drop(1/sqrt(crossprod(Az))) * Az
-		     if(a[[j]][1]<0){a[[j]]=-a[[j]]}
+		     if(scheme %in% c("factorial", "centroid") & a[[j]][1]<0){
+		       a[[j]]=-a[[j]]
+		     }
 
 		     Y[, j] = pm(A[[j]], a[[j]], na.rm = na.rm)
+         }
+         else{
+           Z[, j] = rowSums(matrix(rep(C[j, ], n), n,  J, byrow = TRUE)*
+                            matrix(rep(dgx, n), n,  J, byrow = TRUE) * Y)
+           Az     = pm(t(A[[j]]), Z[, j], na.rm = TRUE)
+           a[[j]] = drop(1/sqrt(t(Az) %*% M[[j]] %*% Az)) * (M[[j]] %*% Az)
+           if(scheme %in% c("factorial", "centroid") & a[[j]][1]<0){
+               a[[j]] = -a[[j]]
+           }
 
-           }else
-			      {
-             Z[, j] = rowSums(matrix(rep(C[j, ], n), n,  J, byrow = TRUE)*
-                                matrix(rep(dgx, n), n,  J, byrow = TRUE)*Y)
-             Az     = pm(t(A[[j]]), Z[, j], na.rm = TRUE)
-             a[[j]] = drop(1/sqrt(t(Az) %*% M[[j]] %*% Az)) * (M[[j]] %*% Az)
-             if(a[[j]][1]<0){a[[j]] = -a[[j]]}
-             Y[, j] = pm(A[[j]], a[[j]], na.rm = na.rm)
+           Y[, j] = pm(A[[j]], a[[j]], na.rm = na.rm)
           }
        }
 
       for (j in which.dual)
       {
-          dgx = dg(cov2(Y[, j], Y, bias = bias))
-          ifelse(tau[j] == 1,
-            {
+        dgx = dg(cov2(Y[, j], Y, bias = bias))
+        ifelse(tau[j] == 1,
+          {
               Z[, j] = rowSums(matrix(rep(C[j, ], n), n, J, byrow = TRUE)*
                                  matrix(rep(dgx, n), n, J, byrow = TRUE)*Y)
               alpha[[j]] = drop(1/sqrt(t(Z[, j])%*%K[[j]]%*%Z[, j]))*Z[, j]
               a[[j]] = pm(t(A[[j]]), alpha[[j]], na.rm = na.rm)
-              if(a[[j]][1]<0){a[[j]] = -a[[j]]}
+              if(scheme %in% c("factorial", "centroid") & a[[j]][1]<0){
+                a[[j]] = -a[[j]]
+              }
+
               Y[, j] = pm(A[[j]], a[[j]], na.rm = na.rm)
-           },
-           {
+          },
+          {
             Z[, j] = rowSums(matrix(rep(C[j, ], n), n, J, byrow = TRUE)*
                                matrix(rep(dgx, n), n, J, byrow = TRUE)*Y)
           	alpha[[j]] = drop(1/sqrt(t(Z[, j])%*%K[[j]]%*%Minv[[j]]%*%Z[, j]))*
           	             (Minv[[j]]%*%Z[,  j])
 
-		   a[[j]] = pm(t(A[[j]]), alpha[[j]], na.rm = na.rm)
-		   if(a[[j]][1]<0){a[[j]] = -a[[j]]}
+		        a[[j]] = pm(t(A[[j]]), alpha[[j]], na.rm = na.rm)
+
+		        if(scheme %in% c("factorial", "centroid") & a[[j]][1]<0){
+		          a[[j]] = -a[[j]]
+		        }
+
             Y[, j] = pm( A[[j]], a[[j]], na.rm = na.rm)
-          })
+
+          }
+        )
       }
 
       crit[iter] <- sum(C * g(cov2(Y, bias = bias)))

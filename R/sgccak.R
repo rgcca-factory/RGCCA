@@ -142,7 +142,8 @@ sgccak <-  function(A, C, sparsity = rep(1, length(A)), scheme = "centroid",
   if (max(abs(l2_SAT - 1)) > tol){
     for (i in which(abs(l2_SAT - 1) > tol)){
       if (l2_SAT[i] < .Machine$double.eps ){
-        warning("Norm2 of the block weight vector #",  i, " is too small :", norm2_argu)
+        warning("Norm2 of the block weight vector #",
+                i, " is too small :", norm2_argu)
       }else{
         nMAX = length(which(a[[i]] != 0))
         warning("L2 constraint is not saturated for block #", i, ". The current
@@ -152,6 +153,7 @@ sgccak <-  function(A, C, sparsity = rep(1, length(A)), scheme = "centroid",
       }
     }
   }
+
   AVE_inner  <- sum(C*cor(Y)^2/2)/(sum(C)/2) # AVE inner model
 
   result <- list(Y = Y, a = a, crit = crit[which(crit != 0)],

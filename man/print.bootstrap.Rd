@@ -4,7 +4,7 @@
 \alias{print.bootstrap}
 \title{Print bootstrap}
 \usage{
-\method{print}{bootstrap}(x, type = "weight", ...)
+\method{print}{bootstrap}(x, type = "weight", display_order = FALSE, ...)
 }
 \arguments{
 \item{x}{A fitted bootstrap object (see \code{\link[RGCCA]{bootstrap}})}
@@ -13,11 +13,7 @@
 block-weight vectors ("weight", default) or block-loading vectors
 ("loadings").}
 
-\item{...}{Further arguments in print}
-}
-\value{
-A matrix containing for each variables of each blocks,
-the means, 95\% intervals, bootstrap ratio, p-values and other statistics.
+\item{display_order}{A logical value for ordering the variables
 \itemize{
 \item 'estimate' for block weight/loading vectors.
 \item 'mean' for the mean of the bootstrap block weight/loading vectors.
@@ -29,7 +25,13 @@ bootstrap weights are distributed according to the binomial distribution
 while for RGCCA, their absolute value divided by their standard deviation
 follows a normal distribution.
 \item 'adjust.pval' for ajusted p-value (fdr correction by default)
+}}
+
+\item{...}{Further arguments in print}
 }
+\value{
+A matrix containing for each variables of each blocks,
+the means, 95\% intervals, bootstrap ratio, p-values and other statistics.
 }
 \description{
 Print a bootstrap object
