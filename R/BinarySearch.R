@@ -15,7 +15,7 @@ function(argu,sumabs){
     } else {
       lam1 <- (lam1+lam2)/2
     }
-    if((lam2-lam1)/lam1 < 1e-10){
+    if((lam2-lam1)/lam1 < .Machine$double.eps){
       if (lam2 != lam_max){
         return(lam2)
       }else{
@@ -48,7 +48,7 @@ BinarySearch2 <- function(argu, sumabs,coefs) {
     } else {
       lam1 <- (lam1 + lam2)/2
     }
-    if ((lam2 - lam1)/lam1 < 1e-15) {
+    if ((lam2 - lam1)/lam1 < .Machine$double.eps) {
       if (lam2 != lam_max) {
         return(lam2)
       }else{
@@ -74,7 +74,7 @@ BinarySearch3 <- function(argu, sumabs, coefs) {
     } else {
       lam1 <- (lam1 + lam2)/2
     }
-    if ((lam2 - lam1)/lam1 < 1e-10) {
+    if ((lam2 - lam1)/lam1 < .Machine$double.eps) {
       if (lam2 != lam_max) {
         return(lam2)
       }else{

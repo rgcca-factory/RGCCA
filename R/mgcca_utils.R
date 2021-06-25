@@ -21,6 +21,15 @@ kron_prod_q <- function(factors, mode, q) {
   })))
 }
 
+# TODO: try to simplify this function
+kron_prod <- function(factors, mode) {
+  R = ncol(factors[[1]])
+
+  do.call(cbind, lapply(1:R, function(r) {
+    kron_prod_q(factors, mode, r)
+  }))
+}
+
 inv_sqrtm = function(M){
   eig        = eigen(M)
   M_inv_sqrt = eig$vectors %*% diag(eig$values^(-1/2), nrow = nrow(M)) %*% t(eig$vectors)
