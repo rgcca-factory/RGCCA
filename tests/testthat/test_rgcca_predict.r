@@ -6,25 +6,29 @@ set.seed(1)
  industry = Russett[, 4:5],
  politic = Russett[, 6:11]
  )
+
  C = connection = matrix(c(0, 0, 1,
- 0, 0, 1,
- 1, 1, 0),
- 3, 3)
+                           0, 0, 1,
+                           1, 1, 0), 3, 3)
+
  A = lapply(blocks, function(x) x[1:32,]);
 
  #-------------------------------------------------------------------------
  # Checking the Y with the prediction with the response block in last position
  #-------------------------------------------------------------------------
  # on the entire dataset
-object1 = rgcca(A, connection = C, tau = c(0.7,0.8,0.7),
-     ncomp = c(3,2,4), superblock = FALSE, response = 3)
+object1 = rgcca(A, connection = C, tau = c(0.7, 0.8, 0.7),
+                ncomp = c(3, 2, 4), superblock = FALSE, response = 3)
+
 attributes(object1$call$blocks$agriculture)
-attributes(object1$call$blocks$agriculture)
-apply(object1$call$block[[1]],2,sd)
- res  = rgcca_predict(object1, A,new_scaled=FALSE)
-test_that("rgcca_predict",{expect_true(
-    sum(!abs(res$pred[[1]]- object1$Y[[1]])<1e-12)==0
-    )})
+apply(object1$call$blocks[[1]], 2, sd)
+
+res  = rgcca_predict(object1, A, new_scaled = FALSE)
+
+test_that("rgcca_predict",{
+    expect_true(sum(!abs(res$pred[[1]] - object1$Y[[1]])<1e-12) == 0)
+    }
+    )
 
 # on a subdataset
 A_restr=lapply(blocks,function(x) x[1:16,])

@@ -143,7 +143,7 @@ sgccak <-  function(A, C, sparsity = rep(1, length(A)), scheme = "centroid",
     for (i in which(abs(l2_SAT - 1) > tol)){
       if (l2_SAT[i] < .Machine$double.eps ){
         warning("Norm2 of the block weight vector #",
-                i, " is too small :", norm2_argu)
+                i, " is too small :", l2_SAT[i])
       }else{
         nMAX = length(which(a[[i]] != 0))
         warning("L2 constraint is not saturated for block #", i, ". The current
