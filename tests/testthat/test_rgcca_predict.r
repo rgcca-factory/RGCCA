@@ -31,8 +31,8 @@ test_that("rgcca_predict",{
     )
 
 # on a subdataset
-A_restr=lapply(blocks,function(x) x[1:16,])
-res_restr  = rgcca_predict(object1, A_restr,new_scaled=FALSE)
+A_restr = lapply(blocks,function(x) x[1:16,])
+res_restr = rgcca_predict(object1, A_restr,new_scaled=FALSE)
 test_that("rgcca_predict_restr",{expect_true(
     sum(!abs(res_restr$pred[[1]]["Argentina",]- object1$Y[[1]]["Argentina",])<1e-12)==0
     )})
