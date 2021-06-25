@@ -1,3 +1,12 @@
+#' Projection onto the intersection of the L1 and L2 balls
+#' @param argu numeric vector to project onto the intersection of the L1 and
+#' L2 balls
+#' @param a numeric scalar defining the sparsity constraint
+#' @return \item{k}{number of iteration.}
+#' @return \item{lambda}{threshold value for the soft-thresholding operator.}
+#' @return \item{l2_SATlambda}{Boolean value indicating whether the
+#' l2-constraint are saturated or not.}
+#' @importFrom stats median
 proj_l1_l2 <- function(argu, a = 1){
 
   #Check if constraints are already satisfied
