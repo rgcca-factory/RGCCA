@@ -81,7 +81,7 @@ bibliography: biblio.bib
 \bibliography{biblio}
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(echo = TRUE, fig.width = 10, fig.height = 10)
 ```
 
 # Introduction
@@ -740,15 +740,27 @@ lapply(Y, head)
 
 and can be cross-visualized using the generic `plot()` function (see below).
 
-Moreover, using the idea of Average Variance Explained (AVE), the following indicators of model quality are proposed:
+At last, as a component-based method, RGCCA provides the users with graphical representations, including factor plot, correlation circle. This graphical displays allows visualizing the sources of variability within blocks, the relationships between variables within and between blocks and the amount of correlation between blocks. The graphical display of the countries obtained by crossing $\ma X_1 \ma a_1$ = Agricultural Inequality and $\ma X_2 \ma a_2$ = Industrial Development and marked with their political regime in 1960 is shown in below.
 
-- The AVE of block $\ma X_j$, denoted by AVE($\ma X_j$), is defined as:
+```{r, eval=TRUE, fig.align='center', fig.cap = 'graphical display of the countries obtained by crossing y1 and y2 and labeled according to their political regime',fig.height = 6, fig.width = 8}
+
+lab = factor(apply(Russett[, 9:11], 1, which.max),
+             labels = c("Stable democracy", "Unstable democracy", "Dictatorship"))
+
+plot(rgcca_B_factorial, type = "sample",
+     block = 1:2, comp = 1,
+     resp = lab, overlap = FALSE)
+```
+
+Countries aggregate together when they share similarities. It may be noted that the lower left quadrant concentrates on dictatorships. It is difficult for a country to escape dictatorship when its industrial development is below-average and its agricultural inequality is above average. It is worth pointing out that some unstable democracies located in this quadrant (or close to it) became dictatorships for a period of time after 1960: Greece (1967-1974), Brazil (1964-1985), Chili (1973-1990), and Argentina (1966-1973). The Average Variance Explained (AVE) of block $\ma X_j$ for a specific block component $\ma y_j$ is defined as:
 
 \begin{equation}
 \mathrm{AVE}(\ma X_j)=  1/p_j \sum_{h=1}^{p_j} cor^2( \ma x_{jh},\ma y_j)
 \end{equation}
 
 AVE($\ma X_j$) varies between 0 and 1 and reflects the proportion of variance captured by $\ma y_j$.
+
+Additional indicators of model quality are proposed:
 
 - For all blocks:
 
@@ -775,21 +787,6 @@ The AVEs outer can also be visualized using the generic `plot()` function.
 ```{r, eval = FALSE, fig.align='center', fig.cap = 'Average variance explained of the various blocks', fig.height = 5, fig.width = 8}
 plot(rgcca_B_factorial, type = "ave")
 ```
-
-At last, as a component-based method, RGCCA provides the users with graphical representations, including factor plot, correlation circle. This graphical displays allows visualizing the sources of variability within blocks, the relationships between variables within and between blocks and the amount of correlation between blocks. The graphical display of the countries obtained by crossing $\ma X_1 \ma a_1$ = Agricultural Inequality and $\ma X_2 \ma a_2$ = Industrial Development and marked with their political regime in 1960 is shown in below.
-
-```{r, eval=TRUE, fig.align='center', fig.cap = 'graphical display of the countries obtained by crossing y1 and y2 and labeled according to their political regime',fig.height = 6, fig.width = 8}
-
-lab = factor(apply(Russett[, 9:11], 1, which.max),
-             labels = c("Stable democracy", "Unstable democracy", "Dictatorship"))
-
-plot(rgcca_B_factorial, type = "sample",
-     block = 1:2, comp = 1,
-     resp = lab, overlap = FALSE)
-```
-
-Countries aggregate together when they share similarities. It may be noted that the lower left quadrant concentrates on dictatorships. It is difficult for a country to escape dictatorship when its industrial development is below-average and its agricultural inequality is above average. It is worth pointing out that some unstable democracies located in this quadrant (or close to it) became dictatorships for a period of time after 1960: Greece (1967-1974), Brazil (1964-1985), Chili (1973-1990), and Argentina (1966-1973).
-
 
 ## Choice of the shrinkage parameter $\tau$
 
@@ -823,7 +820,7 @@ boot_opt = bootstrap(rgcca_optimal_factorial,
                      n_boot = 20, n_cores = 1)
 ```
 
-The bootstrap confidence are given below for the first block:
+The bootstrap confidence are given below for the third block:
 
 ```{r}
 plot(boot_opt, type = "loadings", block = 3)
@@ -898,7 +895,7 @@ and displayed as usual:
 plot(boot_perm, type = "weight")
 ```
 
-Also, it is possible to define explicitly the combination of regularization paramaters and in that case a matrix of dimension $K \times J$ is required. Each row of this matrix corresponds to one set of tuning parameters.
+It is possible to define explicitly the combination of regularization paramaters and in that case a matrix of dimension $K \times J$ is required. Each row of this matrix corresponds to one set of tuning parameters.
 
 ```{r}
 fit.perm = rgcca_permutation(A, connection = C,
@@ -921,7 +918,7 @@ fit.perm = rgcca_permutation(A, connection = C,
 If `par_type = sparsity`, the `rgcca_permutation()` function switches automatically to `sgcca()`. The same rational is used for the other arguments of the function.
 
 ```{r}
-set.seed(3)
+set.seed(12345)
 fit.perm = rgcca_permutation(A, connection = C,
                              par_type = "sparsity",
                              method = "sgcca",
@@ -943,7 +940,8 @@ fit.stab = rgcca_stability(fit.opt,
                            )
 ```
 
-and then apply the bootstrap procedure for confidence intervals and other statistics on the block weight/loadings vectors.
+and then apply the bootstrap procedure for confidence intervals and other 
+statistics on the block weight/loadings vectors.
 
 ```{r, eval = FALSE}
 boot.out = bootstrap(fit.stab)
@@ -966,8 +964,8 @@ print(boot.out)
 ```
 
 **RGCCA with superblock** In the framework of consensus/hierarchical methods,
-a superblock defined as the concatenation of all the blocks. In that framework,
-global components can be derived. The space spanned by the global components is viewed as a consensus space that integrated all the modalities and facilitates the visualization of the results and their interpretation.
+a superblock defined as the concatenation of all the blocks is introdued. 
+In that framework, global components can be derived. The space spanned by the global components is viewed as a consensus space that integrated all the modalities and facilitates the visualization of the results and their interpretation.
 
 In this section, we consider Multiple Co-Inertia Analysis with $2$ components per block are specified using the `ncomp = rep(2, 4)` argument (default value `ncomp = rep(1, length(A))`, which gives one component per block).
 
@@ -984,7 +982,7 @@ X_ind = as.matrix(Russett[,c("gnpr","labo")])
 X_polit = as.matrix(Russett[ , c("inst", "ecks",  "death")])
 A = list(Agric = X_agric, Ind = X_ind, Polit = X_polit)
 
-fit.mcoa = rgcca(blocks=A, tau = c(1, 1, 1, 0),
+fit.mcoa = rgcca(blocks = A, tau = c(1, 1, 1, 0),
                 verbose = FALSE, ncomp = rep(2, 4),
                 #flexible design of the scheme function
                 scheme = function(x) x^2,
@@ -1132,7 +1130,7 @@ fit.permute = rgcca_permutation(A, connection = C,
 ```{r, eval = FALSE}
 plot(fit.permute)
 ```
-![SGCCA results on the Glioma dataset - Permutation procedure](SGCCA_glioma_perm.png){#id .class width=50% height=50%}
+![SGCCA results on the Glioma dataset - Permutation procedure](SGCCA_glioma_perm.png){#id .class width=100% height=100%}
 
 and then directly used the optimal sparsity parameters as follows:
 
@@ -1171,7 +1169,7 @@ plot(boot.out, block = 1)
 ```
 <center>
 
-![SGCCA results on the Glioma dataset - Bootstrapping procedure - GE block](SGCCA_glioma_boot_block_1.png){#id .class width=50% height=50%}
+![SGCCA results on the Glioma dataset - Bootstrapping procedure - GE block](SGCCA_glioma_boot_block_1.png){#id .class width=100% height=100%}
 
 </center>
 
@@ -1181,7 +1179,7 @@ plot(boot.out, block = 1)
 plot(boot.out, block = 2)
 ```
 
-![SGCCA results on the Glioma dataset - Bootstrapping procedure - CGH block](SGCCA_glioma_boot_block_2.png){#id .class width=50% height=50%}
+![SGCCA results on the Glioma dataset - Bootstrapping procedure - CGH block](SGCCA_glioma_boot_block_2.png){#id .class width=100% height=100%}
 
 One component per block has been built (GE1 for $\ma X_1$ and CGH1 $\ma X_2$), and the graphical display of the tumors obtained by crossing GE1 and CGH1 and labeled according to their location is shown below.
 
@@ -1190,7 +1188,7 @@ plot(fit.stab$rgcca_res, type = "sample", block=1:2,
      comp=1, resp = as.character(Loc))
 ```
 
-![SGCCA results on the Glioma dataset - Individual Space](SGCCA_glioma_ind_space.png){#id .class width=50% height=50%}
+![SGCCA results on the Glioma dataset - Individual Space](SGCCA_glioma_ind_space.png){#id .class width=100% height=100%}
 
 We observe that the GE block contains much more discriminative information than the CGH block.
 

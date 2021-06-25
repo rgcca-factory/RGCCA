@@ -58,18 +58,19 @@ rgccak=function (A, C, tau = "optimal", scheme = "centroid", verbose = FALSE,
   {
     if(!scheme %in% c("horst", "factorial", "centroid"))
       {stop_rgcca("Please choose scheme as 'horst', 'factorial', 'centroid'")}
-    if(scheme == "horst"){ g <- function(x) x}
-    if(scheme == "factorial"){ g <- function(x)  x^2}
-    if(scheme == "centroid"){g <- function(x) abs(x)}
+    if(scheme == "horst"){ g <- function(x) x ; ctrl = FALSE}
+    if(scheme == "factorial"){ g <- function(x)  x^2 ; ctrl = TRUE}
+    if(scheme == "centroid"){g <- function(x) abs(x) ; ctrl = TRUE}
 }
-  else g <- scheme
+  else{g <- scheme ; ctrl = !any(g(-5:5)!=g(5:-5))} # check for parity
 
     J <- length(A) # number of blocks
     n <- NROW(A[[1]]) # number of individuals
     pjs <- sapply(A, NCOL) # number of variables per block
     Y <- matrix(0, n, J)
     if (!is.numeric(tau))
-        tau = sapply(A, tau.estimate, na.rm = na.rm) # From Schafer and Strimmer, 2005
+      # From Schafer and Strimmer, 2005
+        tau = sapply(A, tau.estimate, na.rm = na.rm)
 
     A <- lapply(A, as.matrix)
     a <- alpha <- M <- Minv <- K <- list()
@@ -108,7 +109,7 @@ rgccak=function (A, C, tau = "optimal", scheme = "centroid", verbose = FALSE,
         ifelse(tau[j] == 1,
         {
             a[[j]] <- drop(1/sqrt(t(a[[j]]) %*% a[[j]])) * a[[j]]
-            if(a[[j]][1]<0){a[[j]]=-a[[j]]}
+            if(ctrl & a[[j]][1]<0){a[[j]]=-a[[j]]}
             Y[, j] <- pm(A[[j]] , a[[j]], na.rm = na.rm)
         },
         {
@@ -117,7 +118,7 @@ rgccak=function (A, C, tau = "optimal", scheme = "centroid", verbose = FALSE,
                              (pm(t(A[[j]]), A[[j]], na.rm = na.rm)))
             a[[j]] <- drop(1/sqrt(t(a[[j]])%*% M[[j]]%*%a[[j]]))*
                              (M[[j]]%*%a[[j]])
-            if(a[[j]][1]<0){a[[j]] = -a[[j]]}
+            if(ctrl & a[[j]][1]<0){a[[j]] = -a[[j]]}
             Y[, j] <- pm(A[[j]], a[[j]], na.rm = na.rm)
         })
     }
@@ -127,7 +128,7 @@ rgccak=function (A, C, tau = "optimal", scheme = "centroid", verbose = FALSE,
             alpha[[j]] = drop(1/sqrt(t(alpha[[j]])%*%K[[j]]%*%
                                        alpha[[j]]))*alpha[[j]]
             a[[j]] = pm(t(A[[j]]), alpha[[j]], na.rm = na.rm)
-            if(a[[j]][1]<0){a[[j]] = -a[[j]]}
+            if(ctrl & a[[j]][1]<0){a[[j]] = -a[[j]]}
             Y[, j] = pm(A[[j]], a[[j]], na.rm = na.rm)
         }, {
 
@@ -136,7 +137,7 @@ rgccak=function (A, C, tau = "optimal", scheme = "centroid", verbose = FALSE,
             alpha[[j]] = drop(1/sqrt(t(alpha[[j]])%*%
                               M[[j]]%*% K[[j]]%*% alpha[[j]])) * alpha[[j]]
             a[[j]] = pm( t(A[[j]]), alpha[[j]],na.rm=na.rm)
-            if(a[[j]][1]<0){a[[j]] = -a[[j]]}
+            if(ctrl & a[[j]][1]<0){a[[j]] = -a[[j]]}
             Y[, j] = pm(A[[j]], a[[j]], na.rm=na.rm)
         })
     }
@@ -160,8 +161,7 @@ rgccak=function (A, C, tau = "optimal", scheme = "centroid", verbose = FALSE,
                               matrix(rep(dgx, n), n, J, byrow = TRUE)*Y)
            Az     = pm(t(A[[j]]), Z[, j], na.rm = TRUE)
 		       a[[j]] = drop(1/sqrt(crossprod(Az))) * Az
-		     if(scheme %in% c("factorial", "centroid") & a[[j]][1]<0){
-		       a[[j]]=-a[[j]]
+		     if(ctrl & a[[j]][1]<0){a[[j]]=-a[[j]]
 		     }
 
 		     Y[, j] = pm(A[[j]], a[[j]], na.rm = na.rm)
@@ -171,9 +171,7 @@ rgccak=function (A, C, tau = "optimal", scheme = "centroid", verbose = FALSE,
                             matrix(rep(dgx, n), n,  J, byrow = TRUE) * Y)
            Az     = pm(t(A[[j]]), Z[, j], na.rm = TRUE)
            a[[j]] = drop(1/sqrt(t(Az) %*% M[[j]] %*% Az)) * (M[[j]] %*% Az)
-           if(scheme %in% c("factorial", "centroid") & a[[j]][1]<0){
-               a[[j]] = -a[[j]]
-           }
+           if(ctrl & a[[j]][1]<0){a[[j]] = -a[[j]]}
 
            Y[, j] = pm(A[[j]], a[[j]], na.rm = na.rm)
           }
@@ -188,9 +186,7 @@ rgccak=function (A, C, tau = "optimal", scheme = "centroid", verbose = FALSE,
                                  matrix(rep(dgx, n), n, J, byrow = TRUE)*Y)
               alpha[[j]] = drop(1/sqrt(t(Z[, j])%*%K[[j]]%*%Z[, j]))*Z[, j]
               a[[j]] = pm(t(A[[j]]), alpha[[j]], na.rm = na.rm)
-              if(scheme %in% c("factorial", "centroid") & a[[j]][1]<0){
-                a[[j]] = -a[[j]]
-              }
+              if(ctrl & a[[j]][1]<0){a[[j]] = -a[[j]]}
 
               Y[, j] = pm(A[[j]], a[[j]], na.rm = na.rm)
           },
@@ -202,9 +198,7 @@ rgccak=function (A, C, tau = "optimal", scheme = "centroid", verbose = FALSE,
 
 		        a[[j]] = pm(t(A[[j]]), alpha[[j]], na.rm = na.rm)
 
-		        if(scheme %in% c("factorial", "centroid") & a[[j]][1]<0){
-		          a[[j]] = -a[[j]]
-		        }
+		        if(ctrl & a[[j]][1]<0){a[[j]] = -a[[j]]}
 
             Y[, j] = pm( A[[j]], a[[j]], na.rm = na.rm)
 
