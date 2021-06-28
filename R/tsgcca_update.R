@@ -27,61 +27,13 @@ tsgcca_update = function(A, A_m, a, factors, weights, Y, g, dg, C,
       Y[, j] = A[[j]] %*% a[[j]]
 
     } else {
-      # # Deal with tensor blocks
-      # for (d in 1:(LEN[j] - 1)) {
-      #   Az            = t(A_m[[j]]) %*% Z[, j]
-      #   other_factors = list_khatri_rao(factors[[j]][-d]) %x% diag(DIM[[j]][[d + 1]])
-      #   Q             = t(other_factors) %*% Az
-      #   Q             = matrix(Q, ncol = ranks[j])
-      #   R             = drop(weights[[j]] * sapply(1:ranks[j], function(r) prod(
-      #     sapply((1:(LEN[j] - 1))[-d], function(m) sum(abs(factors[[j]][[m]][, r])))
-      #   )))
-      #   # Q                 = Q %*% diag(1 / R, nrow = ranks[j])
-      #   tryCatch(
-      #     {
-      #       Q = soft.threshold2(Q, const[j], diag(R, nrow = ranks[j]))
-      #     },
-      #     error = function(cond) {
-      #       print("Something went wrong")
-      #       print(cond)
-      #     }
-      #   )
-      #   # Q                 = soft.threshold2(Q, const[j], diag(R, nrow = ranks[j]))
-      #   factors[[j]][[d]] = apply(Q, 2, function(q) {
-      #     mu = norm(q, type = "2")
-      #     if (mu == 0) return(q)
-      #     q / mu
-      #   })
-      #   a[[j]]            = weighted_kron_sum(factors[[j]], weights[[j]])
-      #   Y[, j]            = A_m[[j]] %*% a[[j]]
-      #
-      #   dgx              = dg(cov2(Y[, j], Y, bias = bias))
-      #   dgx              = matrix(rep(dgx, n), n, J, byrow = TRUE)
-      #   Z[, j]           = rowSums(
-      #     matrix(rep(C[j, ], n), n, J, byrow = TRUE) * dgx * Y)
-      # }
-      # # Update weights
-      # if (ranks[j] > 1) {
-      #   other_factors = list_khatri_rao(factors[[j]])
-      #   Q             = t(other_factors) %*% t(A_m[[j]]) %*% Z[, j]
-      #   R             = drop(sapply(1:ranks[j], function(r) sum(abs(other_factors[, r]))))
-      #   # Q             = Q / R
-      #   # Q             = soft.threshold3(Q, const[j], R)
-      #   # weights[[j]]  = (R * Q) / (ranks[j] * norm((R * Q), type = "2"))
-      #   Q             = soft.threshold3(Q, const[j], R)
-      #   weights[[j]]  = Q / (sqrt(ranks[j]) * norm(Q, type = "2"))
-      #
-      #   a[[j]]            = weighted_kron_sum(factors[[j]], weights[[j]])
-      #   Y[, j]            = A_m[[j]] %*% a[[j]]
-      # }
-
-      # Deal with rank-1 tensors
+      # Deal with tensor blocks
       for (d in 1:(LEN[j] - 1)) {
         other_factors = kron_prod(factors[[j]], d)
         R             = drop(weights[[j]] * sapply(1:ranks[j], function(r) prod(
           sapply(factors[[j]][-d], function(x) sum(abs(x[, r])))
         )))
-        factors[[j]][[d]] = t(other_factors) %*% t(A_m[[j]]) %*% Z[, j]
+        factors[[j]][[d]] = matrix(t(other_factors) %*% t(A_m[[j]]) %*% Z[, j], ncol = ranks[j])
         factors[[j]][[d]] = soft.threshold2(factors[[j]][[d]], const[j], diag(R, nrow = ranks[j]))
         factors[[j]][[d]] = apply(factors[[j]][[d]], 2, function(x) {
           mu = norm(x, type = "2")
@@ -89,18 +41,24 @@ tsgcca_update = function(A, A_m, a, factors, weights, Y, g, dg, C,
           x / mu
         })
 
-        # other_factors = kron_prod_q(factors[[j]], d, 1)
-        # R             = drop(prod(sapply(factors[[j]][-d], function(x) sum(abs(x)))))
-        # factors[[j]][[d]] = t(other_factors) %*% t(A_m[[j]]) %*% Z[, j]
-        # factors[[j]][[d]] = soft.threshold(factors[[j]][[d]], const[j] / R)
-        # factors[[j]][[d]] = factors[[j]][[d]] / norm(factors[[j]][[d]], type = "2")
+        a[[j]]            = weighted_kron_sum(factors[[j]], weights[[j]])
+        Y[, j]            = A_m[[j]] %*% a[[j]]
 
-        a[[j]] = kron_sum(factors[[j]])
-        Y[, j] = A_m[[j]] %*% a[[j]]
+        dgx              = dg(cov2(Y[, j], Y, bias = bias))
+        dgx              = matrix(rep(dgx, n), n, J, byrow = TRUE)
+        Z[, j]           = rowSums(
+          matrix(rep(C[j, ], n), n, J, byrow = TRUE) * dgx * Y)
+      }
+      # Update weights
+      if (ranks[j] > 1) {
+        other_factors = list_khatri_rao(factors[[j]])
+        Q             = t(other_factors) %*% t(A_m[[j]]) %*% Z[, j]
+        R             = drop(sapply(1:ranks[j], function(r) sum(abs(other_factors[, r]))))
+        Q             = soft.threshold3(Q, const[j], R)
+        weights[[j]]  = Q / (sqrt(ranks[j]) * norm(Q, type = "2"))
 
-        dgx    = dg(cov2(Y[, j], Y, bias = bias))
-        dgx    = matrix(rep(dgx, n), n, J, byrow = TRUE)
-        Z[, j] = rowSums(matrix(rep(C[j, ], n), n, J, byrow = TRUE) * dgx * Y)
+        a[[j]]            = weighted_kron_sum(factors[[j]], weights[[j]])
+        Y[, j]            = A_m[[j]] %*% a[[j]]
       }
     }
   }
