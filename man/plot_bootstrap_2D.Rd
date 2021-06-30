@@ -7,10 +7,10 @@
 plot_bootstrap_2D(
   b = NULL,
   df_b = NULL,
+  type = "weight",
   x = "bootstrap_ratio",
-  y = "occurrences",
-  title = paste("Variable selection :", names(rgcca_res$call$blocks)[i_block], "\\nby",
-    attributes(b)$n_boot, "bootstraps"),
+  y = "sign",
+  title = NULL,
   colors = NULL,
   cex = 1,
   cex_main = 14 * cex,
@@ -22,13 +22,18 @@ plot_bootstrap_2D(
 )
 }
 \arguments{
-\item{b}{A boostrap object \code{\link[RGCCA]{bootstrap}}}
+\item{b}{A fitted bootstrap object \code{\link[RGCCA]{bootstrap}}}
 
 \item{df_b}{A get_bootstrap object \code{\link[RGCCA]{get_bootstrap}}}
 
-\item{x}{A character for the index to plot in x-axis (see details).}
+\item{type}{Character string indicating the bootstrapped object to print:
+block-weight vectors ("weight", default) or block-loading vectors
+("loadings").}
 
-\item{y}{A character for the index to plot in y-axis (see details).}
+\item{x}{indicator used in the plot (see details).}
+
+\item{y}{A character string indicating for the index to color the bars
+(see details).}
 
 \item{title}{A character giving the title of the plot}
 
@@ -65,6 +70,19 @@ Negative weights are colored in red and the positive ones are in green.
 \item 'occurrences' for non-zero occurences
 \item 'mean' for the mean of the bootstrap weights
 }
+}
+\examples{
+data("Russett")
+blocks = list(agriculture = Russett[, seq(3)], industry = Russett[, 4:5],
+    politic = Russett[, 6:11] )
+rgcca_out = rgcca(blocks, sparsity = 0.75, method = "sgcca")
+boot = bootstrap(rgcca_stability(rgcca_out, n_cores = 1), 2, n_cores = 1)
+plot_bootstrap_2D(boot)
+rgcca_out = rgcca(blocks)
+boot = bootstrap(rgcca_out, 2, n_cores = 1)
+selected.var = get_bootstrap(boot,display_order=TRUE)
+plot_bootstrap_2D(boot)
+plot_bootstrap_2D(df_b = selected.var)
 }
 \seealso{
 \code{\link[RGCCA]{bootstrap}}, \code{\link[RGCCA]{get_bootstrap}}
