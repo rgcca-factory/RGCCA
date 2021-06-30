@@ -29,8 +29,9 @@ proj_l1_l2 <- function(argu, a = 1){
   # If there are multiple maximum, the sparse parameter
   # "a" must be >= sqrt(number of max)
   if (a < sqrt(nMAX)){
-    sol                          = argu*0
-    sol[which(abs(argu) == MAX)] = sign(argu)*a/nMAX
+    sol              = argu*0
+    idx_MAX_val      = which(abs(argu) == MAX)
+    sol[idx_MAX_val] = sign(argu[idx_MAX_val])*a/nMAX
     return(list(sol=sol, l2_SAT = F))
   }
 
