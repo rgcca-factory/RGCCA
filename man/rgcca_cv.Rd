@@ -13,7 +13,7 @@ rgcca_cv(
   par_length = 10,
   validation = "kfold",
   type_cv = "regression",
-  fit = "lm",
+  prediction_model = "lm",
   k = 5,
   n_run = 1,
   one_value_per_cv = FALSE,
@@ -32,7 +32,7 @@ rgcca_cv(
   sparsity = rep(1, length(blocks)),
   init = "svd",
   bias = TRUE,
-  new_scaled = FALSE,
+  X_scaled = FALSE,
   ...
 )
 }
@@ -64,9 +64,9 @@ one row by combination. By default, it takes 10 sets between min values (0
 
 \item{validation}{A character for the type of validation among "loo", "kfold", "test".}
 
-\item{type_cv}{A character corresponding to the model of prediction : 'regression' or 'classification' (see details)}
+\item{type_cv}{A character corresponding to the task of prediction : 'regression' or 'classification' (see details)}
 
-\item{fit}{A character giving the function used to compare the trained and the tested models}
+\item{prediction_model}{A character giving the function used to compare the trained and the tested models}
 
 \item{k}{An integer giving the number of folds (if validation = 'kfold').}
 
@@ -103,7 +103,7 @@ observations (observations with missing values are removed)}
 \item{\code{"nipals"}}{corresponds to perform RGCCA algorithm on available
 data (NIPALS-type algorithm)}}}
 
-\item{rgcca_res}{A fitted RGCCA object (see  \code{\link[RGCCA]{rgcca}})}
+\item{rgcca_res}{A fitted RGCCA object (see  \code{\link[RGCCA]{rgcca}}).}
 
 \item{parallelization}{logical value. If TRUE (default value), the
 cross-validation procedure is parallelized}
@@ -142,7 +142,8 @@ or by random initialisation ("random") (default: "svd").}
 \item{bias}{A logical value for biaised (\eqn{1/n}) or unbiaised
 (\eqn{1/(n-1)}) estimator of the var/cov (default: bias = TRUE).}
 
-\item{new_scaled}{A boolean scaling the blocks to predict}
+\item{X_scaled}{A boolean indicating if the blocks in X have already been
+scaled.}
 
 \item{...}{Further graphical parameters (see plot2D functions)}
 }
@@ -183,12 +184,12 @@ plot(res)
 rgcca_cv(blocks, response = 3, par_type = "tau",
          par_value = c(0.6, 0.75, 0.5),
          n_run = 2, n_cores = 1)$bestpenalties
- 
+
 rgcca_cv(blocks, response = 3, par_type = "sparsity",
          par_value = 0.8,  n_run = 2, n_cores = 1)
 
 rgcca_cv(blocks, response = 3, par_type = "tau",
          par_value = 0.8, n_run = 2, n_cores = 1)
 }
- 
+
 }

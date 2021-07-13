@@ -7,9 +7,9 @@
 rgcca_cv_k(
   rgcca_res,
   validation = "kfold",
-  model = "regression",
-  fit = "lm",
-  new_scaled = TRUE,
+  task = "regression",
+  prediction_model = "lm",
+  X_scaled = TRUE,
   k = 5,
   scale = NULL,
   scale_block = NULL,
@@ -29,15 +29,16 @@ rgcca_cv_k(
 )
 }
 \arguments{
-\item{rgcca_res}{A fitted RGCCA object (see  \code{\link[RGCCA]{rgcca}})}
+\item{rgcca_res}{A fitted RGCCA object (see  \code{\link[RGCCA]{rgcca}}).}
 
 \item{validation}{A character for the type of validation among "loo", "kfold", "test".}
 
-\item{model}{A character corresponding to the model of prediction among : regression or classification}
+\item{task}{A character corresponding to the prediction task among : regression or classification}
 
-\item{fit}{A character giving the function used to compare the trained and the tested models}
+\item{prediction_model}{A character giving the function used to compare the trained and the tested models}
 
-\item{new_scaled}{A boolean scaling the blocks to predict}
+\item{X_scaled}{A boolean indicating if the blocks in X have already been
+scaled.}
 
 \item{k}{An integer giving the number of folds (if validation = 'kfold').}
 

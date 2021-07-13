@@ -39,10 +39,10 @@ blocks2[[1]][1,1]=1
 rgcca_out2= rgcca(blocks2, response = 1,superblock=FALSE,ncomp=1,scale=TRUE,scale_block=TRUE)
 v_inds <- sample(nrow(rgcca_out2$call$raw[[1]]))
 v_inds <- split(v_inds, sort(v_inds %% 5))
-newA = lapply(rgcca_out2$call$raw, function(x) x[v_inds[[1]], , drop = FALSE])
-# res_predict = rgcca_predict(rgcca_out2, newA = newA, model = "classification", fit = "lda", bloc_to_pred = names(rgcca_out2$call$blocks)[rgcca_out2$call$response])
+X = lapply(rgcca_out2$call$raw, function(x) x[v_inds[[1]], , drop = FALSE])
+# res_predict = rgcca_predict(rgcca_out2, X = X, task = "classification", prediction_model = "lda", block_to_predict = names(rgcca_out2$call$blocks)[rgcca_out2$call$response])
 # rescv= rgcca_cv_k(rgcca_res=rgcca_out2,n_cores=1,validation="loo")
- #new_scaled = FALSE si les blocs en entrée de newA ne sont pas scalés, TRUE si les blocks sont scalés
+ #X_scaled = FALSE si les blocs en entrée de X ne sont pas scalés, TRUE si les blocks sont scalés
  # Finding back 0.495311
  res=rep(NA,dim(blocks[[1]])[1])
  for(i in 1:dim(blocks[[1]])[1])
@@ -56,12 +56,12 @@ newA = lapply(rgcca_out2$call$raw, function(x) x[v_inds[[1]], , drop = FALSE])
 
      # Methode 1 on predit la valeur i à l'aide du modèle rgcca, et de la ligne du bloc
      # Ici, on reprend les scale value de la rgcca calculée sur A_moins_i et on les applique à A_i
-     respred_i=rgcca_predict(rgcca_out_i, A_i,new_scaled=FALSE,bloc_to_pred="agriculture")
+     respred_i=rgcca_predict(rgcca_out_i, A_i,X_scaled=FALSE,block_to_predict="agriculture")
 
      # Methode 2: on predit la valeur i a l'aide des blocs "scalés"
     # newA_i = lapply(rgcca_out$call$blocks, function(x) x[inds, , drop = FALSE])
     # newA_i=(rgcca_out$call$blocks)*()+() -()
-   #  respred_i2=rgcca_predict(rgcca_out_i,newA_i ,new_scaled=TRUE,bloc_to_pred="agriculture")
+   #  respred_i2=rgcca_predict(rgcca_out_i,newA_i ,X_scaled=TRUE,block_to_predict="agriculture")
 
     # all.equal(respred_i,respred_i2)
     # A_i_scaled=lapply(rgcca_out$call$blocks,function(x){res=t(as.matrix(x[i,]));rownames(res)=rownames(rgcca_out$call$blocks)[1];return(res)})
@@ -89,8 +89,8 @@ newA = lapply(rgcca_out2$call$raw, function(x) x[v_inds[[1]], , drop = FALSE])
      RGCCA:::set_rgcca(rgcca_out,
                inds = 1,tol=1e-5)
 
-  newA=lapply(blocks,function(x){return(x[1,,drop=FALSE])})
- res_pred=rgcca_predict(rgcca_k,newA=newA,bloc_to_pred = "agriculture", new_scaled = FALSE)
+  X=lapply(blocks,function(x){return(x[1,,drop=FALSE])})
+ res_pred=rgcca_predict(rgcca_k,X=X,block_to_predict = "agriculture", X_scaled = FALSE)
  res_pred$prediction
  res_pred_score=res_pred$score
  test_that("rgcca_cv_k_rmse",{expect_true(
@@ -212,8 +212,8 @@ RussettWithNA <- Russett
      A=blocks_for_classif
      object1 = rgcca(A, connection = C, tau = c(1,1,1),
                      ncomp = 1, superblock = FALSE, response = 3)
-     rescv1=rgcca_cv_k(rgcca_res=object1,n_cores=1,validation="loo",model="classification",fit="lda")
-     #   res_test  = rgcca_predict(object1, A_test,new_scaled=FALSE,fit="lda",model="classification",bloc_to_pred="politic")
+     rescv1=rgcca_cv_k(rgcca_res=object1,n_cores=1,validation="loo",task="classification",prediction_model="lda")
+     #   res_test  = rgcca_predict(object1, A_test,X_scaled=FALSE,prediction_model="lda",task="classification",block_to_predict="politic")
      test_that("rgcca_predict_classif",{expect_true(
          round(rescv1$score,digits=3)==0.213
      )})
@@ -228,7 +228,7 @@ RussettWithNA <- Russett
          names(A_moins_i)=names(A_i)=names( blocks_for_classif)
          # on calcule la RGCCA sur le bloc A sans le i
          rgcca_out_i <- rgcca(A_moins_i, response = 3,superblock=FALSE,ncomp=1,scale=TRUE,scale_block=TRUE)
-         respred_i=rgcca_predict(rgcca_out_i, A_i,new_scaled=FALSE,bloc_to_pred="politic",model="classification",fit="lda")
+         respred_i=rgcca_predict(rgcca_out_i, A_i,X_scaled=FALSE,block_to_predict="politic",task="classification",prediction_model="lda")
          res[i]=respred_i$score
      }
      mean(res) # 0.213

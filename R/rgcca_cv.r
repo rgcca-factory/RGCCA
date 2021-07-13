@@ -15,7 +15,7 @@
 #' one row by combination. By default, it takes 10 sets between min values (0
 #'  for RGCCA and $1/sqrt(ncol)$ for SGCCA) and 1.
 #' @param par_length An integer indicating the number of sets of parameters to be tested (if par_value = NULL). The parameters are uniformly distributed.
-#' @param type_cv  A character corresponding to the model of prediction : 'regression' or 'classification' (see details)
+#' @param type_cv  A character corresponding to the task of prediction : 'regression' or 'classification' (see details)
 #' @param n_run An integer giving the number of cross-validations to be run (if validation = 'kfold').
 #' @param one_value_per_cv A logical value indicating if the k values are averaged for each k-fold steps.
 #' @param parallelization logical value. If TRUE (default value), the
@@ -40,19 +40,19 @@
 #'                par_value = c(0.6, 0.75, 0.5),
 #'                n_run = 2, n_cores = 1)
 #' plot(res)
-#' 
+#'
 #' \dontrun{
 #' rgcca_cv(blocks, response = 3, par_type = "tau",
 #'          par_value = c(0.6, 0.75, 0.5),
 #'          n_run = 2, n_cores = 1)$bestpenalties
-#'  
+#'
 #' rgcca_cv(blocks, response = 3, par_type = "sparsity",
 #'          par_value = 0.8,  n_run = 2, n_cores = 1)
 #'
 #' rgcca_cv(blocks, response = 3, par_type = "tau",
 #'          par_value = 0.8, n_run = 2, n_cores = 1)
 #' }
-#'  
+#'
 #'@importFrom utils txtProgressBar setTxtProgressBar
 rgcca_cv=function( blocks,
           method = "rgcca",
@@ -62,7 +62,7 @@ rgcca_cv=function( blocks,
           par_length=10,
           validation = "kfold",
           type_cv = "regression",
-          fit = "lm",
+          prediction_model = "lm",
           k=5,
           n_run = 1,
           one_value_per_cv=FALSE,
@@ -81,7 +81,7 @@ rgcca_cv=function( blocks,
           sparsity=rep(1,length(blocks)),
           init="svd",
           bias=TRUE,
-          new_scaled = FALSE,
+          X_scaled = FALSE,
           ...)
 {
     if(!missing(blocks)&class(blocks)=="rgcca"){rgcca_res=blocks}
@@ -116,7 +116,7 @@ rgcca_cv=function( blocks,
     if("character"%in%mode(blocks[[response]]))
     {
         type_cv="classification";
-        fit="lda"
+        prediction_model="lda"
     }
 
     check_boolean("one_value_per_cv", one_value_per_cv)
@@ -226,9 +226,9 @@ rgcca_cv=function( blocks,
                     res_i=c(res_i,rgcca_cv_k(
                         rgcca_res,
                         validation = validation,
-                        model = type_cv,
-                        fit = fit,
-                        new_scaled = TRUE,
+                        task = type_cv,
+                        prediction_model = prediction_model,
+                        X_scaled = TRUE,
                         k = k,
                       n_cores =n_cores,
                       parallelization=parallelization
@@ -239,9 +239,9 @@ rgcca_cv=function( blocks,
                     res_i= c(res_i,rgcca_cv_k(
                         rgcca_res,
                         validation = validation,
-                        model = type_cv,
-                        fit = fit,
-                        new_scaled = TRUE,
+                        task = type_cv,
+                        prediction_model = prediction_model,
+                        X_scaled = TRUE,
                         k = k,
                         n_cores =n_cores,
                         parallelization=parallelization)$list_scores)
@@ -269,7 +269,7 @@ rgcca_cv=function( blocks,
               par_value = par_value,
               validation = validation,
               type_cv = type_cv,
-              fit = fit,
+              prediction_model = prediction_model,
               k=k,
               one_value_per_cv=one_value_per_cv,
               superblock=FALSE,

@@ -21,9 +21,9 @@
 rgcca_cv_k <- function(
     rgcca_res,
     validation = "kfold",
-    model = "regression",
-    fit = "lm",
-    new_scaled = TRUE,
+    task = "regression",
+    prediction_model = "lm",
+    X_scaled = TRUE,
     k = 5,
     scale=NULL,
     scale_block=NULL,
@@ -62,7 +62,7 @@ rgcca_cv_k <- function(
     check_integer("k", k, min = 2)
     check_integer("n_cores", n_cores, min = 0)
     response=rgcca_res$call$response
-    bloc_to_pred <- names(rgcca_res$call$blocks)[response]
+    block_to_predict <- names(rgcca_res$call$blocks)[response]
 
     if (n_cores == 0)
         n_cores <- 1
@@ -102,11 +102,11 @@ rgcca_cv_k <- function(
           # Necessite les scale et les center en sortie
            respred= rgcca_predict(
                 rgcca_k,
-                newA = lapply(bigA, function(x) x[inds, , drop = FALSE]),
-                model = model,
-                fit = fit,
-                bloc_to_pred = bloc_to_pred,
-                new_scaled = FALSE
+                X = lapply(bigA, function(x) x[inds, , drop = FALSE]),
+                task = task,
+                prediction_model = prediction_model,
+                block_to_predict = block_to_predict,
+                X_scaled = FALSE
             )
 
         }

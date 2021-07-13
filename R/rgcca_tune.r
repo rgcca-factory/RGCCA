@@ -1,13 +1,13 @@
 rgcca_tune=function(
     rgcca_res,
-    newA,
+    X,
     type = "regression",
-    fit = "lm",
-    bloc_to_pred = NULL,
+    prediction_model = "lm",
+    block_to_predict = NULL,
     y.train = NULL,
     y.test = NULL,
     bigA = NULL,
-    new_scaled = TRUE,
+    X_scaled = TRUE,
     scale_size_bloc = TRUE)
 {
 

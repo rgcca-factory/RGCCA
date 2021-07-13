@@ -6,25 +6,26 @@
 \usage{
 rgcca_predict(
   rgcca_res,
-  newA,
-  model = "regression",
-  fit = "lm",
-  bloc_to_pred = NULL,
-  new_scaled = TRUE
+  X,
+  block_to_predict,
+  X_scaled = TRUE,
+  task = "regression",
+  prediction_model = "lm"
 )
 }
 \arguments{
-\item{rgcca_res}{A fitted RGCCA object (see  \code{\link[RGCCA]{rgcca}})}
+\item{rgcca_res}{A fitted RGCCA object (see  \code{\link[RGCCA]{rgcca}}).}
 
-\item{newA}{A list of either a dataframe/matrix or a vector giving the blocks to be predicted}
+\item{X}{A list of either dataframes or matrices to be projected.}
 
-\item{model}{A character corresponding to the model of prediction among : regression or classification}
+\item{block_to_predict}{A character or integer giving the block to predict (must be the same name among train and test set)}
 
-\item{fit}{A character giving the function used to compare the trained and the tested models}
+\item{X_scaled}{A boolean indicating if the blocks in X have already been
+scaled.}
 
-\item{bloc_to_pred}{A character giving the block to predicted (must be the same name among train and test set)}
+\item{task}{A character corresponding to the prediction task among : regression or classification}
 
-\item{new_scaled}{A boolean scaling the blocks to predict}
+\item{prediction_model}{A character giving the function used to compare the trained and the tested models}
 }
 \description{
 Predict a new block from a RGCCA
@@ -45,14 +46,12 @@ object1 = rgcca(blocks, connection = C, tau = c(0.7,0.8,0.7),
 A = lapply(object1$call$blocks, function(x) x[1:32,])
 object = rgcca(A, connection = C, tau = c(0.7,0.8,0.7),
     ncomp = c(3,2,4), scale = FALSE, scale_block = FALSE, superblock = FALSE, response = 3)
-newA = lapply(object1$call$blocks, function(x) x[-c(1:32),])
-newA = lapply( newA, function(x) x[, sample(1:NCOL(x))] )
-newA = sample(newA, length(newA))
-bloc_to_pred = "industry"
-to_pred_train = kmeans(A[[bloc_to_pred]], 3)$cluster
-to_pred_test = kmeans(newA[[bloc_to_pred]], 3)$cluster
-res  = rgcca_predict(object, newA, bloc_to_pred = "industry")
-# ( res  = rgcca_predict(object, newA, "regression", "cor", "industry") )
-res  = rgcca_predict(object, newA)
+X = lapply(object1$call$blocks, function(x) x[-c(1:32),])
+X = lapply( X, function(x) x[, sample(1:NCOL(x))] )
+X = sample(X, length(X))
+block_to_predict = "industry"
+y_train = kmeans(A[[block_to_predict]], 3)$cluster
+y_test = kmeans(X[[block_to_predict]], 3)$cluster
+res  = rgcca_predict(object, X, block_to_predict = "industry")
 library(MASS)
 }

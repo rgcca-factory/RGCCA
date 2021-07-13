@@ -7,15 +7,15 @@
 # Abstract: Performs multi-variate analysis (PCA, CCA, PLS, R/SGCCA, etc.)
 # and produces textual and graphical outputs (e.g. variables and samples
 # plots).
-    
+
 server <- function(input, output, session) {
     ################################################ Render UI ################################################
 
-    
+
     hide(selector = "#tabset li a[data-value=RGCCA]")
     hide(id = "b_x_custom")
     hide(id = "b_y_custom")
-    
+
     output$tau_custom <- renderUI({
         refresh <- c(input$superblock)
         isolate (setAnalysis())
@@ -82,7 +82,7 @@ server <- function(input, output, session) {
                 1
             else
                 input$compx,
-            id_block, 
+            id_block,
             input$navbar != "Fingerprint")
     })
 
@@ -112,10 +112,10 @@ server <- function(input, output, session) {
             )
         )
     })
-    
+
     output$b_x_custom <- renderUI(b_index("x", "estimate"))
     output$b_y_custom <- renderUI({
-            b_index("y", 
+            b_index("y",
                 if (tolower(input$analysis_type) == "sgcca")
                     "occurrences"
                 else
@@ -123,13 +123,13 @@ server <- function(input, output, session) {
         })
 
     b_index <- function(x, y) {
-        
+
         l_choices <- list(
             `RGCCA weights` = "estimate",
             `Bootstrap-ratio` = "bootstrap_ratio",
             `Mean bootstrap weights` = "mean"
         )
-        
+
         if (tolower(input$analysis_type) == "sgcca")
             l_choices[["Non-zero occurrences"]] <- "occurrences"
         else
@@ -141,7 +141,7 @@ server <- function(input, output, session) {
             choices = l_choices,
             selected = y
         )
-            
+
     }
 
     ################################################ UI function ################################################
@@ -150,7 +150,7 @@ server <- function(input, output, session) {
 
         label <- par_name
         min <- sapply(
-            blocks, 
+            blocks,
             function (x)
             ifelse(
                 par_name == "Tau",
@@ -171,12 +171,12 @@ server <- function(input, output, session) {
             max = 1,
             value = ifelse(
                 is.null(input[[paste0("tau", i)]]),
-                1, 
+                1,
                 input[[paste0("tau", i)]]),
             step = .01
         )
     }
-    
+
     setTauUI <- function(superblock = NULL) {
         refresh <- c(input$superblock, input$supervised, input$tau_opt)
         refreshAnalysis()
@@ -218,7 +218,7 @@ server <- function(input, output, session) {
                 step = 1
             )
         }
-        
+
         if (!input$each_ncomp)
             setComp()
         else
@@ -338,7 +338,7 @@ server <- function(input, output, session) {
         return(ui)
     })
 
-    
+
     output$nperm_custom <- renderUI({
         ui <- sliderInput(
             inputId = "nperm",
@@ -354,10 +354,10 @@ server <- function(input, output, session) {
                 icon("question") %>%
                     bs_embed_tooltip(title = "To tune the sparsity coefficient (if the model is sparse) or tau
                                      (otherwise), we observe the deviation between the model and a set of models
-                                     where the lines of each block are permuted. The model with the best 
+                                     where the lines of each block are permuted. The model with the best
                                      combination of parameters is the one with the highest deviation.")
             )
-        
+
         return(ui)
     })
 
@@ -375,17 +375,17 @@ server <- function(input, output, session) {
                 ui,
                 icon("question") %>%
                     bs_embed_tooltip(title = "By taking several random samples from the dataset (bootstrap),
-                                     the importance of the variables may vary. The variables that are most 
+                                     the importance of the variables may vary. The variables that are most
                                      often selected are those that are retained.")
             )
-        
+
         return(ui)
     })
 
     output$tune_type_custom <- renderUI({
         tune_type <- c(Analytical = "analytical")
         if ((!is.null(input$supervised) && input$supervised))
-            tune_type <- c(tune_type, `Cross-validation` = "cv") 
+            tune_type <- c(tune_type, `Cross-validation` = "cv")
         else
             tune_type <- c(tune_type, Permutation = "perm")
         ui <- radioButtons(
@@ -412,12 +412,12 @@ server <- function(input, output, session) {
                                      tau (otherwise), in supervised mode, we observe the performance (RMSE)
                                      of a model from which samples were randomly drawn. These samples
                                      can be divided into k folds where the model will be tested on each fold
-                                     and trained on the others. For small datasets (<30 samples), it is 
-                                     recommended to use as many folds as there are samples (leave-one-out; 
-                                     loo). The best combination of parameters is the one where, on average, 
+                                     and trained on the others. For small datasets (<30 samples), it is
+                                     recommended to use as many folds as there are samples (leave-one-out;
+                                     loo). The best combination of parameters is the one where, on average,
                                      the samples perform best.")
             )
-        
+
         return(ui)
     })
 
@@ -429,7 +429,7 @@ server <- function(input, output, session) {
                 penalty <- "Tau"
             else
                 penalty <- ""
-            
+
             conditionalPanel(condition = "input.tau_opt == false",
                 checkboxInput(
                         inputId = "each_tau",
@@ -440,7 +440,7 @@ server <- function(input, output, session) {
                                 FALSE
                     ))
     })
-    
+
     output$tau_opt_custom <- renderUI({
 
         if (!is.null(input$analysis_type) && input$analysis_type == "SGCCA") {
@@ -542,7 +542,7 @@ server <- function(input, output, session) {
                     bs_embed_tooltip(title = "The design matrix is a symmetric
                     matrix of the length of the number of blocks describing
                     the connections between them. Two values are accepted :
-                    '1' for a connection between two blocks, or '0' otherwise. 
+                    '1' for a connection between two blocks, or '0' otherwise.
                     By default, all the blocks are connected together.")
             )
 
@@ -581,7 +581,7 @@ server <- function(input, output, session) {
             }
         )
     }
-   
+
     getNames <- function() {
         # Get the names of the blocks
 
@@ -635,7 +635,7 @@ server <- function(input, output, session) {
 
             id <- showNotification(
                 m$message,
-                type = "message", 
+                type = "message",
                 duration = duration)
             ids <<- c(ids, id)
 
@@ -799,7 +799,7 @@ server <- function(input, output, session) {
 
     design <- function()
         plot_network2(rgcca_out)
-    
+
     design2 <- function()
         plot_network(rgcca_out)
 
@@ -815,14 +815,14 @@ server <- function(input, output, session) {
 
     viewPerm <- function(){
         head(
-            order_df(cbind(perm$penalties, `Z-score` = perm$zstat), ncol(perm$penalties) + 1), 
+            order_df(cbind(perm$penalties, `Z-score` = perm$zstat), ncol(perm$penalties) + 1),
             n = nb_mark)
     }
 
     ################################################ Analysis ################################################
 
     getTau <- function() {
-        
+
         if (!is.null(input$superblock) && (is.null(input$each_tau) || input$each_tau)) {
             tau <- integer(0)
             for (i in 1:(length(blocks_without_superb) + ifelse(input$superblock, 1, 0)))
@@ -845,7 +845,7 @@ server <- function(input, output, session) {
 
         return(ncomp)
     }
-    
+
     setParRGCCA <- function(verbose = TRUE) {
         blocks <- blocks_without_superb
 
@@ -868,7 +868,7 @@ server <- function(input, output, session) {
 
         if (length(blocks) == 1) {
             # if(verbose)
-            # showWarn(warning("Only one block is selected. By default, a 
+            # showWarn(warning("Only one block is selected. By default, a
             # PCA is performed."))
             analysis_type <- "PCA"
             assign("two_blocks", NULL, .GlobalEnv)
@@ -879,7 +879,7 @@ server <- function(input, output, session) {
             assign("multiple_blocks", NULL, .GlobalEnv)
             assign("multiple_blocks_super", NULL, .GlobalEnv)
             if (!tolower(analysis_type) %in% c("cca", "ra", "ifa", "pls")) {
-                # showWarn(warning("Only two blocks are selected. By default, 
+                # showWarn(warning("Only two blocks are selected. By default,
                 # a PLS is performed."))
                 analysis_type <- "PLS"
             }
@@ -888,7 +888,7 @@ server <- function(input, output, session) {
             assign("two_blocks", NULL, .GlobalEnv)
         }
 
-        if ( (!is.null(input$superblock) && input$superblock) && 
+        if ( (!is.null(input$superblock) && input$superblock) &&
                 ( toupper(analysis_type) %in% c("PCA", "RGCCA", "SGCCA")) ||
                 analysis_type %in% multiple_blocks_super ) {
             blocks <- c(blocks, superblock = list(Reduce(cbind, blocks)))
@@ -896,7 +896,7 @@ server <- function(input, output, session) {
 
         assign("tau", tau, .GlobalEnv)
         assign("analysis_type", analysis_type, .GlobalEnv)
-        
+
         if (analysis_type != "SGCCA")
              assign("par_type", "tau", .GlobalEnv)
         else
@@ -971,7 +971,7 @@ server <- function(input, output, session) {
         assign(
             "cv", {
             func <- quote(
-                rgcca_cv( 
+                rgcca_cv(
                     blocks,
                     type = analysis_type,
                     response = response,
@@ -985,7 +985,7 @@ server <- function(input, output, session) {
                     scheme = input$scheme,
                     parallelization = TRUE,
                     init = input$init,
-                    new_scaled = TRUE,
+                    X_scaled = TRUE,
                     ncomp = getNcomp()))
                 if (tolower(analysis_type) %in% c("sgcca", "spca", "spls")) {
                     func[["sparsity"]] <- tau
@@ -1051,7 +1051,7 @@ server <- function(input, output, session) {
             showWarn(eval(as.call(func)))
         },
         .GlobalEnv)
- 
+
         show(id = "navbar")
         show(id= "run_analysis")
         show(selector = "#navbar li a[data-value=Permutation]")
@@ -1097,9 +1097,9 @@ server <- function(input, output, session) {
             check <- showWarn(check_connection(connection, blocks))
 
             # Error due to the superblock disabling and the connection have not the same size than the number of blocks
-            if (check %in% c("130", "103", "106", "107")) 
+            if (check %in% c("130", "103", "106", "107"))
                 connection <- NULL
-            
+
         }
 
         if (is.matrix(connection)) {
@@ -1127,7 +1127,7 @@ server <- function(input, output, session) {
     setToggle <- function(id)
             toggle(
                 condition = (
-                    input$analysis_type %in% c("RGCCA", "SGCCA") 
+                    input$analysis_type %in% c("RGCCA", "SGCCA")
                     && length(blocks) > 2
             ),
             id = id)
@@ -1150,10 +1150,10 @@ server <- function(input, output, session) {
         setToggle2("blocks_names_response")
         hide(selector = "#tabset li a[data-value=Graphic]")
         toggle(
-            condition = (length(input$blocks$datapath) > 1), 
+            condition = (length(input$blocks$datapath) > 1),
             id = "blocks_names_custom_x")
         toggle(
-            condition = (length(input$blocks$datapath) > 1), 
+            condition = (length(input$blocks$datapath) > 1),
             id = "blocks_names_custom_y")
     })
 
@@ -1171,7 +1171,7 @@ server <- function(input, output, session) {
         if (!condition)
             updateTabsetPanel(session, "navbar", selected = "Samples")
         for (i in c("Corcircle", "Fingerprint"))
-            toggle(condition = condition, 
+            toggle(condition = condition,
                    selector = paste0("#navbar li a[data-value=", i, "]"))
         toggle(
             condition = (input$navbar %in% c("Corcircle", "Fingerprint", "Bootstrap") && isolate(getMaxCol() > 10)),
@@ -1187,7 +1187,7 @@ server <- function(input, output, session) {
                 condition = ( !input$navbar %in% c("Fingerprint", "Bootstrap")),
                    id = i)
         toggle(
-            condition = (input$navbar == "Samples" && 
+            condition = (input$navbar == "Samples" &&
                     length(input$blocks$datapath) > 1),
                id = "blocks_names_custom_y")
         toggle(condition = input$navbar == "Samples", id = "response_custom")
@@ -1224,9 +1224,9 @@ server <- function(input, output, session) {
         not_analytical <- is_tau_opt && input$tune_type != "analytical"
         toggle("tune_type", condition = is_tau_opt)
         for (i in c("nperm_custom", "run_perm"))
-            toggle(id = i, condition = !input$supervised && not_analytical) 
+            toggle(id = i, condition = !input$supervised && not_analytical)
         for (i in c("run_crossval", "val_custom"))
-            toggle(id = i, condition = input$supervised && not_analytical) 
+            toggle(id = i, condition = input$supervised && not_analytical)
         toggle(id = "ncv", condition = input$supervised && input$val == "kfold" && not_analytical)
         # toggle(id = "kfold", condition = input$supervised && input$val == "kfold")
         })
@@ -1343,7 +1343,7 @@ server <- function(input, output, session) {
             cleanup_analysis_par()
         }
     })
-    
+
     cleanup_analysis_par <- function(){
         assign("analysis", NULL, .GlobalEnv)
         assign("boot", NULL, .GlobalEnv)
@@ -1456,7 +1456,7 @@ server <- function(input, output, session) {
         if (blocksExists())
             getBoot()
     })
-    
+
     observeEvent(input$run_perm, {
         if (blocksExists()) {
             getPerm()
@@ -1531,7 +1531,7 @@ server <- function(input, output, session) {
             save_plot("AVE.pdf", ave())
             if(any(NCOL(blocks) == 1))
                 compy <- 1
-            else 
+            else
                 compy <- 2
             save_var(rgcca_out, file = "variables.txt")
             save_ind(rgcca_out, file = "samples.txt")
@@ -1574,7 +1574,7 @@ server <- function(input, output, session) {
     }, priority = 10)
 
     ################################################ Outputs ################################################
-    
+
     output$connectionPlot <- renderVisNetwork({
         getDynamicVariables()
         if (!is.null(analysis)) {
@@ -1587,32 +1587,32 @@ server <- function(input, output, session) {
     })
 
     output$AVEPlot <- renderPlot({
-        
+
         getDynamicVariables()
-        
+
         if (!is.null(analysis)) {
             observeEvent(input$ave_save, {
-                save_plot(paste0("ave.", input$format), ave()) 
+                save_plot(paste0("ave.", input$format), ave())
                 msgSave()
             })
             ave()
         }
-        
+
     })
 
     output$samplesPlot <- renderPlotly({
         tryCatch({
             getDynamicVariables()
-    
+
             if (!is.null(analysis)) {
                 observeEvent(input$samples_save, {
                     save_plot("samples_plot.pdf", samples())
                     msgSave()
                 })
-    
+
                 save_ind(rgcca_out, file = "samples.txt")
                 p <- samples()
-    
+
                 if (is(p, "gg")) {
                 p <- showWarn(
                     modify_hovertext(
@@ -1620,9 +1620,9 @@ server <- function(input, output, session) {
                         if_text
                     ), warn = FALSE)
                 }
-    
+
                 p
-    
+
             }
         })
     })
@@ -1630,13 +1630,13 @@ server <- function(input, output, session) {
     output$corcirclePlot <- renderPlotly({
         tryCatch({
             getDynamicVariables()
-    
+
             if (!is.null(analysis)) {
                 observeEvent(input$corcircle_save, {
                     save_plot("corcircle.pdf", corcircle())
                     msgSave()
                 })
-                
+
                 save_var(rgcca_out, file = "variables.txt")
                 p <- corcircle()
 
@@ -1657,7 +1657,7 @@ server <- function(input, output, session) {
     output$fingerprintPlot <- renderPlotly({
         tryCatch({
             getDynamicVariables()
-    
+
             if (!is.null(analysis)) {
                 observeEvent(input$fingerprint_save, {
                     save_plot("fingerprint.pdf", fingerprint(input$indexes))
@@ -1673,11 +1673,11 @@ server <- function(input, output, session) {
         tryCatch({
             getDynamicVariables()
             refresh <- c(input$names_block_x, id_block, input$blocks_names_custom_x)
-    
+
             if (!is.null(analysis) & !is.null(boot)) {
 
                 assign(
-                    "selected.var", 
+                    "selected.var",
                     get_bootstrap(boot, compx, id_block),
                     .GlobalEnv
                 )
@@ -1698,11 +1698,11 @@ server <- function(input, output, session) {
         tryCatch({
             getDynamicVariables()
             refresh <- c(input$names_block_x, id_block, input$blocks_names_custom_x)
-            
+
             if (!is.null(analysis) & !is.null(boot)) {
-                
+
                 assign(
-                    "selected.var", 
+                    "selected.var",
                     get_bootstrap(boot, compx, id_block),
                     .GlobalEnv
                 )
@@ -1719,7 +1719,7 @@ server <- function(input, output, session) {
             }
         }, error = function(e) {
         })
-        
+
     }, options = list(pageLength = 10))
 
 
@@ -1736,11 +1736,11 @@ server <- function(input, output, session) {
         }
 
     })
-    
+
     output$permutationTable <- renderDataTable({
-        
+
         getDynamicVariables()
-        
+
         if (!is.null(perm)) {
 
             s_perm <- summary.perm(perm)
@@ -1752,7 +1752,7 @@ server <- function(input, output, session) {
 
             s_perm
         }
-        
+
     }, options = list(pageLength = 10))
 
     output$cvPlot <- renderPlotly({
