@@ -43,6 +43,7 @@
 #' (Garali et al., 2017).
 #' @inheritParams rgccad
 #' @inheritParams sgcca
+#' @inheritParams group_sgcca
 #' @inheritParams select_analysis
 #' @param NA_method  Character string corresponding to the method used for
 #' handling missing values ("nipals", "complete"). (default: "nipals").
@@ -237,7 +238,7 @@ rgcca <- function(blocks, method = "rgcca",
 
     if (!missing(sparsity) && missing(method))
         method <- "sgcca"
-    
+
     if (!missing(sparsity) && !missing(group_sparsity) && missing(method))
       method <- "group_sgcca"
 
@@ -293,7 +294,7 @@ rgcca <- function(blocks, method = "rgcca",
 
     penalty <- elongate_arg(penalty, blocks)
     ncomp <- elongate_arg(ncomp, blocks)
-    
+
     opt <- select_analysis(
         blocks = blocks,
         connection = connection,
@@ -337,7 +338,7 @@ rgcca <- function(blocks, method = "rgcca",
         opt$connection <- check_connection(opt$connection, opt$blocks)
         opt$connection <- opt$connection[names(blocks), names(blocks)]
     }
-    
+
     if (any(tolower(par) %in% "tau")){
       opt$penalty <- check_tau(opt$penalty, opt$blocks, method)
     }
@@ -369,14 +370,14 @@ rgcca <- function(blocks, method = "rgcca",
             quiet=quiet
         )
     )
-    
+
     if (length(par) > 1){
       func[par] <- opt$penalty
     }else{
       func[[par]] <- opt$penalty
     }
-    
-    
+
+
     func_out <- eval(as.call(func))
 
     for (i in c("a", "astar", "Y")) {
