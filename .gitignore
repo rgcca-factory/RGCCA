@@ -6,6 +6,7 @@
 *.html
 *.RData
 *.Rproj
+*.Rd
 
 \.idea/
 \.Rhistory
@@ -13,3 +14,4 @@
 \.RData
 vignettes/data/
 vignettes/images/
+man/
