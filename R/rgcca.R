@@ -342,7 +342,7 @@ rgcca <- function(blocks, method = "rgcca",
     }
 
     if (any(tolower(par) %in% "tau")){
-      opt$penalty <- check_tau(opt$penalty, opt$blocks, method)
+      opt$penalty <- check_tau(opt$penalty)
     }
     opt$ncomp   <- check_ncomp(opt$ncomp, opt$blocks)
 
