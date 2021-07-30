@@ -246,7 +246,6 @@ rgcca_permutation <- function(blocks, par_type, par_value = NULL,
         method <- rgcca_res$call$method
         superblock <- rgcca_res$call$superblock
     }
-    browser()
     check_integer("n_perms", n_perms)
     check_integer("par_length", n_perms)
     check_integer("par_value", n_perms, min = 0)
@@ -430,7 +429,7 @@ rgcca_permutation <- function(blocks, par_type, par_value = NULL,
                             )
 
     }
-    
+
     if (sum(is.na(W)) != 0){
       troublesome_par           = which(is.na(W) & !perm_parallel)
       if (length(troublesome_par) != 0){
@@ -445,8 +444,8 @@ rgcca_permutation <- function(blocks, par_type, par_value = NULL,
         message                   = apply(troublesome_par, 1, function(x) paste(names(x), x, sep = " = ", collapse = ", "))
         message                   = paste(message, collapse = "\n")
         message                   = paste0("\n", message)
-        warning("Due to projection issues (cf. previous warnings) on the non 
-        permuted data set, the following set of parameters were 
+        warning("Due to projection issues (cf. previous warnings) on the non
+        permuted data set, the following set of parameters were
         removed from the permutation procedure : ", message)
       }
     }
@@ -457,7 +456,7 @@ rgcca_permutation <- function(blocks, par_type, par_value = NULL,
     sapply(1:dim(permcrit)[1], function(x){
       if (sum(is.na(permcrit[x, ])) !=0 ){
         warning("Due to projection issues (cf. previous warnings) on some of the
-        permuted data sets, even after multiple resamplings, the set of parameters number ", x, " was 
+        permuted data sets, even after multiple resamplings, the set of parameters number ", x, " was
         evaluated out of ", sum(!is.na(permcrit[x, ])), " permutations instead of ", n_perms, ".")
       }
     })

@@ -53,7 +53,7 @@ rgcca_permutation_k <- function(
         par_type <- "sparsity"
     } else
         par_type <- "tau"
-    
+
     res      = NA
     nb_error = 0
     while(!is.list(res) && (nb_error < 5)){
@@ -70,7 +70,7 @@ rgcca_permutation_k <- function(
             names(blocks_to_use) <- names(blocks)
         } else
             blocks_to_use <- blocks
-        
+
         func <- quote(
             rgcca(
                 blocks = blocks_to_use,
@@ -87,12 +87,11 @@ rgcca_permutation_k <- function(
                 NA_method = NA_method,
                 quiet = quiet
             ))
-        
+
         func$ncomp <- ncomp
         func$tau <- tau
         func$sparsity <- sparsity
         func[[par_type]] <- par_value
-        browser()
         res <- tryCatch(eval(as.call(func)), error = function(error_message){
             if (grepl("L1/L2 projection issue", toString(error_message), fixed = TRUE)){
                 if((perm || (init == "random")) && (nb_error == 4)){#Random cases
@@ -111,7 +110,7 @@ rgcca_permutation_k <- function(
             break
         }
     }
-    
+
     if (is.list(res)){
         if (max(ncomp) > 1) {
             criterion <- sapply(res$crit, function(x) {
