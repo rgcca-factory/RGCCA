@@ -2,7 +2,7 @@
 #' method of the literature.
 #'
 #' @param method A character string indicating the multi-block component
-#' method to consider: rgcca, sgcca, pca, spca, pls, spls, cca,
+#' method to consider: rgcca, sgcca, group sgcca, pca, spca, pls, spls, cca,
 #' ifa, ra, gcca, maxvar, maxvar-b, maxvar-a, mcoa,cpca-1, cpca-2,
 #' cpca-4, hpca, maxbet-b, maxbet, maxdiff-b, maxdiff, maxvar-a,
 #' sabscor, ssqcor, ssqcor, ssqcov-1, ssqcov-2, ssqcov, sumcor,
@@ -294,7 +294,7 @@ select_analysis <- function(
         } else
             grammar <- "was the one"
     }
-    
+
     ##TODO : add some checks in the case when method == "group_sgcca"
 
     return(list(scheme = scheme,
