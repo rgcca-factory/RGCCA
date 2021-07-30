@@ -29,7 +29,10 @@
 #' @references Tenenhaus, A., Philippe, C., Guillemot, V., Le Cao, K. A.,
 #' Grill, J., and Frouin, V. , "Variable selection for generalized canonical
 #' correlation analysis.," Biostatistics, vol. 15, no. 3, pp. 569-583, 2014.
-#' @title Variable Selection For Generalized Canonical Correlation Analysis
+#' @references Guillemot, V., Gloaguen, A., Tenenhaus, A., Philippe, C. and
+#' Abdi, H.,"Introducing group-sparsity and orthogonality constraints in RGCCA",
+#' 52emes Journees de Statistique, June 2021, Nice, France. (hal-03264640)
+#' @title Group Variable Selection For Generalized Canonical Correlation Analysis
 #' (SGCCA)
 #' @examples
 #'
