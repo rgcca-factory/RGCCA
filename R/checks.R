@@ -382,6 +382,7 @@ check_size_file <- function(filename) {
 }
 
 check_penalty <- function(penalty, blocks, method = "rgcca", superblock = F) {
+  if (method == "group_sgcca") return(penalty)
   if (superblock) {
     blocks[[length(blocks) + 1]] <- Reduce(cbind,blocks)
     names(blocks)[length(blocks)] = "superblock"
