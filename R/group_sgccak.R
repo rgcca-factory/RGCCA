@@ -21,26 +21,24 @@
 #' components, outer weight vectors etc.)
 #' @importFrom Deriv Deriv
 group_sgccak <-  function(A, C, sparsity = rep(1, length(A)), group_sparsity, scheme = "centroid",
-                    scale = FALSE, tol = .Machine$double.eps,
+                    tol = .Machine$double.eps,
                     init = "svd", bias = TRUE, verbose = TRUE,
-                    quiet = FALSE){
+                    quiet = FALSE, na.rm = TRUE){
 
   J <- length(A)
   pjs = sapply(A, NCOL)
-  AVE_X <- rep(0, J)
-  # Data standardization
-  #if (scale == TRUE) A <- lapply(A, function(x) scale2(x, bias = bias))
+
   #  Choose J arbitrary vectors
   if (init=="svd") {
     #SVD Initialisation for a_j
     a <- lapply(A, function(x) return(initsvd(x, dual = FALSE)))
     a <- lapply(a,function(x) return(as.vector(x)))
-  } else if (init=="random")
-  {
+   } else if (init=="random")
+    {
     a <- lapply(pjs,rnorm)
-  } else {
+    } else {
     stop_rgcca("init should be either random or svd.")
-  }
+    }
 
   if (any( sparsity < 1/sqrt(pjs) | sparsity > 1 ))
     stop_rgcca("L1 constraints must vary between 1/sqrt(p_j) and 1.")
@@ -53,7 +51,7 @@ group_sgccak <-  function(A, C, sparsity = rep(1, length(A)), group_sparsity, sc
   #	Apply the constraints of the general otpimization problem
   #	and compute the outer components
   iter <- 1
-  converg <- crit <- numeric()
+   crit <- numeric()
   Y <- Z <- matrix(0,NROW(A[[1]]),J)
   for (q in 1:J){
     if (is.null(group_sparsity[[q]])){
@@ -63,7 +61,7 @@ group_sgccak <-  function(A, C, sparsity = rep(1, length(A)), group_sparsity, sc
                                      group_sparsity = group_sparsity[[q]],
                                      var_order      = var_order[[q]])
     }
-    Y[,q]  <- apply(A[[q]],1,miscrossprod,a[[q]])
+    Y[, q] <- pm(A[[q]], a[[q]], na.rm = na.rm)
   }
   a_old <- a
 
@@ -73,8 +71,8 @@ group_sgccak <-  function(A, C, sparsity = rep(1, length(A)), group_sparsity, sc
                                   horst = x,
                                   factorial = x**2,
                                   centroid = abs(x))
-         crit_old <- sum(C*g(cov2(Y, bias = bias)))
-         },
+          crit_old <- sum(C*g(cov2(Y, bias = bias)))
+          },
          crit_old <- sum(C*scheme(cov2(Y, bias = bias)))
   )
 
@@ -83,24 +81,24 @@ group_sgccak <-  function(A, C, sparsity = rep(1, length(A)), group_sparsity, sc
 
   repeat{
 
-    for (q in 1:J){
+      for (q in 1:J){
 
-      if (mode(scheme) == "function") {
-        dgx = dg(cov2(Y[, q], Y, bias = bias))
-        CbyCovq = C[q, ]*dgx
-      }
+        if (mode(scheme) == "function") {
+          dgx = dg(cov2(Y[, q], Y, bias = bias))
+          CbyCovq = C[q, ]*dgx
+        }
 
-      else{
-        if (scheme == "horst")
-          CbyCovq <- C[q, ]
-        if (scheme == "factorial")
-          CbyCovq <- C[q, ]*2*cov2(Y, Y[, q], bias = bias)
-        if (scheme == "centroid")
-          CbyCovq <- C[q, ]*sign(cov2(Y, Y[,q], bias = bias))
-      }
+        else{
+          if (scheme == "horst")
+            CbyCovq <- C[q, ]
+          if (scheme == "factorial")
+            CbyCovq <- C[q, ]*2*cov2(Y, Y[, q], bias = bias)
+          if (scheme == "centroid")
+            CbyCovq <- C[q, ]*sign(cov2(Y, Y[,q], bias = bias))
+        }
 
-      Z[,q] <- rowSums(mapply("*", CbyCovq,as.data.frame(Y)))
-      a[[q]] <- apply( t(A[[q]]),1,miscrossprod, Z[,q])
+      Z[, q] <- rowSums(mapply("*", CbyCovq,as.data.frame(Y)))
+      a[[q]] <- pm(t(A[[q]]), Z[, q], na.rm = na.rm)
       if (is.null(group_sparsity[[q]])){
         a[[q]] <- soft.threshold(a[[q]], const[q])
       }else{
@@ -108,7 +106,7 @@ group_sgccak <-  function(A, C, sparsity = rep(1, length(A)), group_sparsity, sc
                                        group_sparsity = group_sparsity[[q]],
                                        var_order      = var_order[[q]])
       }
-      Y[,q] <- apply(A[[q]], 1, miscrossprod,a[[q]])
+      Y[, q] <- pm(A[[q]], a[[q]], na.rm = na.rm)
     }
 
     # check for convergence of the SGCCA algorithm
@@ -117,18 +115,18 @@ group_sgccak <-  function(A, C, sparsity = rep(1, length(A)), group_sparsity, sc
                                     horst = x,
                                     factorial = x**2,
                                     centroid = abs(x))
-           crit[iter] <- sum(C*g(cov2(Y, bias = bias)))
-           },
+            crit[iter] <- sum(C*g(cov2(Y, bias = bias)))
+            },
            crit[iter] <- sum(C*scheme(cov2(Y, bias = bias)))
     )
 
     # Print out intermediate fit
 
     if (verbose & (iter %% 1)==0)
-      cat(" Iter: ", formatC(iter,width=3, format="d"),
-          " Fit: ", formatC(crit[iter], digits=8, width=10, format="f"),
-          " Dif: ", formatC(crit[iter]-crit_old, digits=8, width=10, format="f"),
-          "\n")
+     cat(" Iter: ", formatC(iter,width=3, format="d"),
+         " Fit: ", formatC(crit[iter], digits=8, width=10, format="f"),
+         " Dif: ", formatC(crit[iter]-crit_old, digits=8, width=10, format="f"),
+         "\n")
 
     stopping_criteria = c(drop(crossprod(Reduce("c", mapply("-", a, a_old))))
                           , abs(crit[iter]-crit_old))
@@ -147,6 +145,15 @@ group_sgccak <-  function(A, C, sparsity = rep(1, length(A)), group_sparsity, sc
   if(iter<1000 & verbose) cat("The group SGCCA algorithm converged to a stationary
                               point after", iter-1, "iterations \n")
   if (verbose) plot(crit, xlab = "iteration", ylab = "criteria")
+
+  for (q in 1:J) if(sum(a[[q]]!=0) <= 1)
+      {
+        if(!quiet)
+        {
+            warning(sprintf("Deflation failed because only one variable was
+                            selected for block #",q))
+        }
+     }
 
   l2_SAT = sapply(a, function(x) norm(x, "2"))
   if (max(abs(l2_SAT - 1)) > tol){
