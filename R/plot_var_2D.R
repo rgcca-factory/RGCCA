@@ -72,7 +72,7 @@ plot_var_2D <- function(
         compx = compx,
         compy = compy,
         i_block = i_block,
-        type = "cor",
+        type = "loadings",
         n_mark = n_mark,
         collapse = collapse,
         remove_var = remove_var,

@@ -18,15 +18,21 @@
 print.rgcca <- function(x,...)
 {
   cat("Call: ")
-  names_call=c("method","superblock","scale","scale_block","init","bias","tol","NA_method","ncomp")
+  names_call=c("method", "superblock", "scale", "scale_block", "init",
+               "bias", "tol", "NA_method", "ncomp")
   char_to_print=""
   for(name in names_call)
   {
-      if(name=="ncomp"){if(length(x$call$ncomp)>1){value=(paste(x$call$ncomp,sep="",collapse=","));value=paste0("c(",value,")")}}
-      if(name!="ncomp"){value=x$call[[name]]}
-      quo=ifelse(is.character(value)&name!="ncomp","'","")
-      vir=ifelse(name==names_call[length(names_call)],"",", ")
-      char_to_print=paste(char_to_print,name,'=',quo,value,quo,vir, collapse="",sep="")
+      if(name == "ncomp"){if(length(x$call$ncomp) > 1){
+        value = (paste(x$call$ncomp, sep="", collapse = ","))
+        value = paste0("c(", value,")")}
+      }
+
+      if(name != "ncomp"){value=x$call[[name]]}
+      quo = ifelse(is.character(value)&name != "ncomp", "'", "")
+      vir = ifelse(name==names_call[length(names_call)]," ",", ")
+      char_to_print = paste(char_to_print, name, '=' , quo, value,
+                            quo, vir, collapse ="", sep="")
   }
   cat(char_to_print)
 
@@ -56,10 +62,10 @@ print.rgcca <- function(x,...)
           paste(round(x$crit[length(x$crit)], 4), sep = "", " "), fill = TRUE)
   }
   cat("\n")
-  if(x$call$method %in% c("rgcca"))
+  if (!tolower(x$call$method) %in% c("sgcca", "spca", "spls"))
   {
      param="regularization"
-    if(!is.matrix(x$tau))
+    if(!is.matrix(x$call$tau))
     {
         for (i in 1:NCOL(x$call$connection))
         {
@@ -71,28 +77,29 @@ print.rgcca <- function(x,...)
     {
 
         cat("The",param,"parameters used were: \n")
-        print(round(x$tau,4),...)
+        print(round(x$call$tau,4),...)
     }
   }
   if(x$call$method %in% c("sgcca"))
   {
+      nb_selected_var = lapply(x$a, function(a) apply(a, 2, function(l) sum(l != 0)))
       param="sparsity"
-      if(!is.matrix(x$sparsity))
+      if(!is.matrix(x$call$sparsity))
       {
           for (i in 1:NCOL(x$call$connection)) {
               sparsity <- x$call$sparsity[i]
 
               cat("The",param,"parameter used for",names(x$call$blocks)[i], "was:",
-                  sparsity, fill = TRUE)
+                  sparsity, "(with", paste(nb_selected_var[[i]], collapse = ", "),
+                  "variables selected)", fill = TRUE)
           }
       }
       else
       {
-          for (i in 1:NCOL(x$call$connection))
-        {
           cat("The",param,"parameters used were: \n")
-          print(round(x$sparsity,4),...)
-         }
+          print(round(x$call$sparsity,4),...)
+          cat("The number of selected variables were: \n")
+          print(do.call(cbind, nb_selected_var))
       }
   }
 }

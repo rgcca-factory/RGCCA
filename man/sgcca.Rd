@@ -11,14 +11,12 @@ sgcca(
   sparsity = rep(1, length(blocks)),
   ncomp = rep(1, length(blocks)),
   scheme = "centroid",
-  scale = TRUE,
   init = "svd",
   bias = TRUE,
   tol = .Machine$double.eps,
   verbose = FALSE,
-  scale_block = TRUE,
-  prescaling = FALSE,
-  quiet = FALSE
+  quiet = FALSE,
+  na.rm = TRUE
 )
 }
 \arguments{
@@ -52,8 +50,6 @@ covariance maximization among "horst" (the identity function), "factorial"
  design explicitely the sheme function (e.g. function(x) x^4) as argument of
  rgcca function.  See (Tenenhaus et al, 2017) for details.}
 
-\item{scale}{Logical value indicating if blocks are standardized.}
-
 \item{init}{Character string giving the type of initialization to use in
 the  algorithm. It could be either by Singular Value Decompostion ("svd")
 or by random initialisation ("random") (default: "svd").}
@@ -65,13 +61,9 @@ or by random initialisation ("random") (default: "svd").}
 
 \item{verbose}{Logical value indicating whether the warnings are displayed.}
 
-\item{scale_block}{Logical value indicating if each block is divided by
-the square root of its number of variables.}
-
-\item{prescaling}{Logical value indicating if the scaling has been done
-outside of the function.}
-
 \item{quiet}{Logical value indicating if warning messages are reported.}
+
+\item{na.rm}{If TRUE, runs rgcca only on available data.}
 }
 \value{
 \item{Y}{A list of \eqn{J} elements. Each element of \eqn{Y} is a
@@ -135,11 +127,13 @@ tau = c(1, 1, 0)
 # rgcca algorithm using the dual formulation for X1 and X2
 # and the dual formulation for X3
 blocks[[3]] = blocks[[3]][, -3]
-result.rgcca = rgccad(blocks, connection, tau, ncomp = c(2, 2, 1),
-scheme = "factorial", verbose = TRUE)
+result.rgcca = rgcca(blocks = blocks, connection = connection, tau = tau,
+                     ncomp = c(2, 2, 1), scheme = "factorial",
+                     verbose = TRUE, method = "rgcca")
 # sgcca algorithm
-result.sgcca = sgcca(blocks, connection, sparsity = c(.071,.2, 1), ncomp = c(2, 2, 1),
-                     scheme = "centroid", verbose = TRUE)
+result.sgcca = rgcca(blocks = blocks, connection = connection,
+                     sparsity = c(.071,.2, 1), ncomp = c(2, 2, 1),
+                     scheme = "centroid", verbose = TRUE, method = "sgcca")
 
 ############################
 # plot(y1, y2) for (RGCCA) #
@@ -179,8 +173,7 @@ init = "random"
 result.sgcca = sgcca(blocks, connection,
                      sparsity = matrix(c(.071,.2, 1, 0.06, 0.15, 1),
                      nrow = 2, byrow = TRUE),
-                     ncomp = c(2, 2, 1), scheme = "factorial",
-                     scale = TRUE, bias = TRUE,
+                     ncomp = c(2, 2, 1), scheme = "factorial", bias = TRUE,
                      init = init, verbose = TRUE)
 # number of non zero elements per dimension
 apply(result.sgcca$a[[1]], 2, function(x) sum(x!=0))
@@ -190,7 +183,7 @@ apply(result.sgcca$a[[2]], 2, function(x) sum(x!=0))
 init = "svd"
 result.sgcca = sgcca(blocks, connection, sparsity = matrix(c(.071,.2, 1, 0.06, 0.15, 1),
                      nrow = 2, byrow = TRUE),
-                     ncomp = c(2, 2, 1), scheme = "factorial", scale = TRUE,
+                     ncomp = c(2, 2, 1), scheme = "factorial",
                      bias = TRUE,
                      init = init, verbose = TRUE)
 }

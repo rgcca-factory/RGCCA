@@ -19,7 +19,9 @@ plot_ave(
 
 \item{title}{A character giving the title of the plot}
 
-\item{colors}{Either a vector of integers (each integer corresponding to a color) or of characters corresponding to names of colors (as "blue",see colors()) or RGB code ("#FFFFFF").}
+\item{colors}{Either a vector of integers (each integer corresponding to a
+color) or of characters corresponding to names of colors (as "blue",see
+colors()) or RGB code ("#FFFFFF").}
 
 \item{...}{Further graphical parameters (see plot2D functions)}
 }

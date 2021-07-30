@@ -20,15 +20,13 @@
 #' components, outer weight vectors etc.)
 #' @importFrom Deriv Deriv
 sgccak <-  function(A, C, sparsity = rep(1, length(A)), scheme = "centroid",
-                    scale = FALSE, tol = .Machine$double.eps,
+                    tol = .Machine$double.eps,
                     init = "svd", bias = TRUE, verbose = TRUE,
-                    quiet = FALSE){
+                    quiet = FALSE, na.rm = TRUE){
 
   J <- length(A)
   pjs = sapply(A, NCOL)
-  AVE_X <- rep(0, J)
-  # Data standardization
-  #if (scale == TRUE) A <- lapply(A, function(x) scale2(x, bias = bias))
+
   #  Choose J arbitrary vectors
   if (init=="svd") {
     #SVD Initialisation for a_j
@@ -48,12 +46,11 @@ sgccak <-  function(A, C, sparsity = rep(1, length(A)), scheme = "centroid",
   #	Apply the constraints of the general otpimization problem
   #	and compute the outer components
   iter <- 1
-  converg <- crit <- numeric()
+   crit <- numeric()
   Y <- Z <- matrix(0,NROW(A[[1]]),J)
   for (q in 1:J){
-      Y[,q] <- apply(A[[q]],1,miscrossprod,a[[q]])
       a[[q]] <- soft.threshold(a[[q]], const[q])
-      a[[q]] <- as.vector(a[[q]])/norm2(a[[q]])
+      Y[, q] <- pm(A[[q]], a[[q]], na.rm = na.rm)
   }
   a_old <- a
 
@@ -89,11 +86,10 @@ sgccak <-  function(A, C, sparsity = rep(1, length(A)), scheme = "centroid",
             CbyCovq <- C[q, ]*sign(cov2(Y, Y[,q], bias = bias))
         }
 
-        Z[,q] <- rowSums(mapply("*", CbyCovq,as.data.frame(Y)))
-        a[[q]] <- apply( t(A[[q]]),1,miscrossprod, Z[,q])
+        Z[, q] <- rowSums(mapply("*", CbyCovq,as.data.frame(Y)))
+        a[[q]] <- pm(t(A[[q]]), Z[, q], na.rm = na.rm)
         a[[q]] <- soft.threshold(a[[q]], const[q])
-        a[[q]] <- as.vector(a[[q]])/norm2(a[[q]])
-        Y[,q] <- apply(A[[q]], 1, miscrossprod,a[[q]])
+        Y[, q] <- pm(A[[q]], a[[q]], na.rm = na.rm)
       }
 
     # check for convergence of the SGCCA algorithm
@@ -141,6 +137,22 @@ sgccak <-  function(A, C, sparsity = rep(1, length(A)), scheme = "centroid",
                             selected for block #",q))
         }
      }
+
+  l2_SAT = sapply(a, function(x) norm(x, "2"))
+  if (max(abs(l2_SAT - 1)) > tol){
+    for (i in which(abs(l2_SAT - 1) > tol)){
+      if (l2_SAT[i] < .Machine$double.eps ){
+        warning("Norm2 of the block weight vector #",
+                i, " is too small :", l2_SAT[i])
+      }else{
+        nMAX = length(which(a[[i]] != 0))
+        warning("L2 constraint is not saturated for block #", i, ". The current
+                 value of the sparsity parameter is ", sparsity[i], " and has to
+                be in the range [", sqrt(nMAX/pjs[i]), ", 1] in order to
+                saturate the L2 constraint.")
+      }
+    }
+  }
 
   AVE_inner  <- sum(C*cor(Y)^2/2)/(sum(C)/2) # AVE inner model
 

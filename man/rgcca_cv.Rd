@@ -178,14 +178,17 @@ res = rgcca_cv(blocks, response = 3, method="rgcca",
                par_value = c(0.6, 0.75, 0.5),
                n_run = 2, n_cores = 1)
 plot(res)
+
+\dontrun{
 rgcca_cv(blocks, response = 3, par_type = "tau",
          par_value = c(0.6, 0.75, 0.5),
          n_run = 2, n_cores = 1)$bestpenalties
-
+ 
 rgcca_cv(blocks, response = 3, par_type = "sparsity",
          par_value = 0.8,  n_run = 2, n_cores = 1)
 
 rgcca_cv(blocks, response = 3, par_type = "tau",
          par_value = 0.8, n_run = 2, n_cores = 1)
-
+}
+ 
 }

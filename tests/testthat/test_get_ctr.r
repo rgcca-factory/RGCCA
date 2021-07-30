@@ -11,7 +11,7 @@
  get_ctr(rgcca_out, 2, 1, i_block = 1, type = "weight")
  # With 3 components and on the variables of two blocks
  rgcca_out = rgcca(blocks[c(1,3)], ncomp = c(3,4))
- get_ctr(rgcca_out, compz = 3, i_block = 1, type = "cor", collapse = TRUE)
+ get_ctr(rgcca_out, compz = 3, i_block = 1, type = "loadings", collapse = TRUE)
  get_ctr(rgcca_out, 2, 1, 3, 1, "weight", TRUE)
 #'
 #'
@@ -27,6 +27,6 @@ data("Russett")
  names(superblocks) <- names(blocks)[c(1, 3)]
  rgcca_out = rgcca(blocks[c(1,3)], ncomp = c(3,4))
 
-# get_ctr(rgcca_out, compz = 3, i_block = 1, type = "cor", collapse = TRUE)
+# get_ctr(rgcca_out, compz = 3, i_block = 1, type = "loadings", collapse = TRUE)
 # rgcca_out$blocks = superblocks
 # get_ctr(rgcca_out, compx=2, compy=1, compz=3, i_block=1, "weight", collapse=TRUE)

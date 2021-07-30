@@ -31,23 +31,19 @@ plot_ind(
 \item{resp}{A vector of characters corresponding either to a qualitative
 variable with levels or a continuous variable}
 
-\item{compx}{An integer giving the index of the analysis component used
-for the x-axis}
+\item{compx}{An integer giving the index of the block component for the x-axis}
 
-\item{compy}{An integer giving the index of the analysis component used
-for the y-axis}
+\item{compy}{An integer giving the index of the block component for the y-axis}
 
-\item{i_block}{An integer giving the index of a list of blocks}
+\item{i_block}{An integer giving the index of the block}
 
-\item{text}{A bolean to represent the points with their row names (TRUE)
-or with circles (FALSE)}
+\item{text}{A logical value indicating if rowanmes are displayed (default = TRUE)}
 
-\item{i_block_y}{An integer giving the index of a list of blocks (another
-one, different from the one used in i_block)}
+\item{i_block_y}{An integer giving the index of the block (different from i_block)}
 
 \item{response_name}{A character giving the legend title}
 
-\item{no_overlap}{A boolean to avoid overlap in plotted text}
+\item{no_overlap}{A logical value indicating if text-overlappin is accepted}
 
 \item{predicted}{A list containing as  2nd element a matrix of predicted components}
 

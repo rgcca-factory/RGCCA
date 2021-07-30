@@ -6,25 +6,25 @@
 \usage{
 get_bootstrap(
   b,
+  type = "weight",
   comp = 1,
-  block = length(b$bootstrap[[1]]),
-  bars = "quantile",
+  block = length(b$bootstrap[[1]][[1]]),
   display_order = TRUE,
   adj.method = "fdr"
 )
 }
 \arguments{
-\item{b}{A fitted bootstrap object (see  \code{\link[RGCCA]{bootstrap}} )}
+\item{b}{A fitted bootstrap object (see  \code{\link[RGCCA]{bootstrap}})}
 
-\item{comp}{An integer giving the index of the analysis components}
+\item{type}{Character string indicating the bootstrapped object to print:
+block-weight vectors ("weight", default) or block-loading vectors
+("loadings").}
 
-\item{block}{A vector indicating the blocks to consider.}
+\item{comp}{An integer indicating the block-weight/loading vector to plot.}
 
-\item{bars}{Character string giving the variability among "sd" (error bar of
-standard deviation) , "stderr" (error bar of standard deviation divided by
-sqrt(n)) or "quantile" (error bar of 0.05/0.95-quantiles)}
+\item{block}{A numeric vector indicating the blocks to consider.}
 
-\item{display_order}{A logical value to display the order of the variables}
+\item{display_order}{A logical value for ordering the variables}
 
 \item{adj.method}{character string indicating the method used for p-value
 adjustment (default: fdr - a.k.a Benjamini-Hochberg correction)}
@@ -32,14 +32,14 @@ adjustment (default: fdr - a.k.a Benjamini-Hochberg correction)}
 \value{
 A dataframe containing:
 \itemize{
-\item 'mean' for the mean of the bootstrap weights (non-null for SGCCA)
-\item 'estimate' for RGCCA weights
-\item 'sd' for the standard error of the (non-null in case of SGCCA)
-bootstrap weights
-\item 'lower/upper_bound' for the lower and upper intervals calculated
-according to the 'bars' parameter
-\item 'bootstrap_ratio' for the mean of the bootstrap weights / their
-standard error
+\item 'mean' for the mean of the bootstrap weights/loadings (non-null for SGCCA)
+\item 'estimate' for RGCCA block-weight/block-loading vectors
+\item 'sd' for the bootstrap estimate of the standard error of the
+(non-null in case of SGCCA) bootstrap weights/loadings
+\item 'lower/upper_bound' for the lower and upper intervals
+(0.025/0.975 percentile).
+\item 'bootstrap_ratio' defined as the ratio between weight/loadings estimate
+and the bootstrap estimate of the standard deviation.
 \item 'pval' for p-value (see details)
 \item 'adjust.pval' for adjusted p-value (default value: fdr (Benjamini-
 Hochberg correction))
@@ -78,8 +78,8 @@ blocks = list(agriculture = Russett[, seq(3)],
               politic = Russett[, 6:11])
 
 rgcca_out = rgcca(blocks)
-boot = bootstrap(rgcca_out, 5, n_cores = 1)
-get_bootstrap(boot)
+boot = bootstrap(rgcca_out, n_boot = 5, n_cores = 1)
+get_bootstrap(boot, type = "loadings")
 
 # Stability of the selected variables for SGCCA
 

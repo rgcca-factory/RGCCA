@@ -11,8 +11,8 @@ plot_histogram(
   group = NA,
   colors = NULL,
   cex = 1,
-  cex_main = 14 * cex,
-  cex_sub = 12 * cex,
+  cex_main = 12 * cex,
+  cex_sub = 10 * cex,
   cex_axis = 10 * cex
 )
 }
@@ -25,7 +25,9 @@ plot_histogram(
 
 \item{group}{A vector of character giving the group for the rows}
 
-\item{colors}{Either a vector of integers (each integer corresponding to a color) or of characters corresponding to names of colors (as "blue",see colors()) or RGB code ("#FFFFFF").}
+\item{colors}{Either a vector of integers (each integer corresponding to a
+color) or of characters corresponding to names of colors (as "blue",see
+colors()) or RGB code ("#FFFFFF").}
 
 \item{cex}{An integer for the size of the plot parameters}
 

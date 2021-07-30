@@ -40,16 +40,19 @@
 #'                par_value = c(0.6, 0.75, 0.5),
 #'                n_run = 2, n_cores = 1)
 #' plot(res)
+#' 
+#' \dontrun{
 #' rgcca_cv(blocks, response = 3, par_type = "tau",
 #'          par_value = c(0.6, 0.75, 0.5),
 #'          n_run = 2, n_cores = 1)$bestpenalties
-#'
+#'  
 #' rgcca_cv(blocks, response = 3, par_type = "sparsity",
 #'          par_value = 0.8,  n_run = 2, n_cores = 1)
 #'
 #' rgcca_cv(blocks, response = 3, par_type = "tau",
 #'          par_value = 0.8, n_run = 2, n_cores = 1)
-#'
+#' }
+#'  
 #'@importFrom utils txtProgressBar setTxtProgressBar
 rgcca_cv=function( blocks,
           method = "rgcca",
@@ -158,14 +161,14 @@ rgcca_cv=function( blocks,
         else{
             if ("data.frame"%in%class(par_value) ||  "matrix"%in% class(par_value))
             {
-                par_value <- t(sapply(seq(NROW(par_value)), function(x) check_tau(par_value[x, ], blocks, method = method)))
+                par_value <- t(sapply(seq(NROW(par_value)), function(x) check_penalty(par_value[x, ], blocks, method = method)))
 
             }
             else
             {
                 if (any(par_value < min_spars))
                     stop_rgcca(paste0("par_value should be upper than : ", paste0(round(min_spars, 2), collapse = ",")))
-                par_value <- check_tau(par_value, blocks, method = method)
+                par_value <- check_penalty(par_value, blocks, method = method)
                 par_value <- set_spars(max = par_value)
             }
         }

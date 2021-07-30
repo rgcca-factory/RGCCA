@@ -71,11 +71,13 @@
 #' # rgcca algorithm using the dual formulation for X1 and X2
 #' # and the dual formulation for X3
 #' blocks[[3]] = blocks[[3]][, -3]
-#' result.rgcca = rgccad(blocks, connection, tau, ncomp = c(2, 2, 1),
-#' scheme = "factorial", verbose = TRUE)
+#' result.rgcca = rgcca(blocks = blocks, connection = connection, tau = tau,
+#'                      ncomp = c(2, 2, 1), scheme = "factorial",
+#'                      verbose = TRUE, method = "rgcca")
 #' # sgcca algorithm
-#' result.sgcca = sgcca(blocks, connection, sparsity = c(.071,.2, 1), ncomp = c(2, 2, 1),
-#'                      scheme = "centroid", verbose = TRUE)
+#' result.sgcca = rgcca(blocks = blocks, connection = connection,
+#'                      sparsity = c(.071,.2, 1), ncomp = c(2, 2, 1),
+#'                      scheme = "centroid", verbose = TRUE, method = "sgcca")
 #'
 #' ############################
 #' # plot(y1, y2) for (RGCCA) #
@@ -115,8 +117,7 @@
 #' result.sgcca = sgcca(blocks, connection,
 #'                      sparsity = matrix(c(.071,.2, 1, 0.06, 0.15, 1),
 #'                      nrow = 2, byrow = TRUE),
-#'                      ncomp = c(2, 2, 1), scheme = "factorial",
-#'                      scale = TRUE, bias = TRUE,
+#'                      ncomp = c(2, 2, 1), scheme = "factorial", bias = TRUE,
 #'                      init = init, verbose = TRUE)
 #' # number of non zero elements per dimension
 #' apply(result.sgcca$a[[1]], 2, function(x) sum(x!=0))
@@ -126,19 +127,20 @@
 #' init = "svd"
 #' result.sgcca = sgcca(blocks, connection, sparsity = matrix(c(.071,.2, 1, 0.06, 0.15, 1),
 #'                      nrow = 2, byrow = TRUE),
-#'                      ncomp = c(2, 2, 1), scheme = "factorial", scale = TRUE,
+#'                      ncomp = c(2, 2, 1), scheme = "factorial",
 #'                      bias = TRUE,
 #'                      init = init, verbose = TRUE)
 #' }
 #'@export sgcca
 
-sgcca <- function (blocks, connection = 1-diag(length(blocks)), sparsity = rep(1, length(blocks)),
-                   ncomp = rep(1, length(blocks)), scheme = "centroid", scale = TRUE,
-                   init = "svd", bias = TRUE, tol = .Machine$double.eps,
-                   verbose = FALSE, scale_block = TRUE, prescaling = FALSE,
-                   quiet = FALSE){
+sgcca <- function(blocks, connection = 1 - diag(length(blocks)),
+                  sparsity = rep(1, length(blocks)),
+                  ncomp = rep(1, length(blocks)), scheme = "centroid",
+                  init = "svd", bias = TRUE, tol = .Machine$double.eps,
+                  verbose = FALSE,   quiet = FALSE, na.rm = TRUE){
 
-  ndefl <- ncomp-1
+  # ndefl number of deflation per block
+  ndefl <- ncomp - 1
   N <- max(ndefl)
   J <- length(blocks)
   pjs <- sapply(blocks,NCOL)
@@ -146,30 +148,17 @@ sgcca <- function (blocks, connection = 1-diag(length(blocks)), sparsity = rep(1
   AVE_X = list()
   AVE_outer <- rep(NA,max(ncomp))
 
-  if ( any(ncomp < 1) ) stop_rgcca("One must compute at least one component per
-                                   block!")
-  if (any(ncomp-pjs > 0)) stop_rgcca("For each block, choose a number of
-                                     components smaller than the number of
-                                     variables!")
+  Y <- NULL
+  a <- astar <- P <- NULL
+  crit <- list()
+  AVE_inner <- rep(NA,max(ncomp))
 
-  if (is.vector(sparsity)){
-    if (any(sparsity < 1/sqrt(pjs) | sparsity > 1 ))
-      stop_rgcca("L1 constraints (sparsity) must vary between 1/sqrt(p_j) and 1.")
-  }
+  for (b in 1:J) a[[b]] <- astar[[b]] <- matrix(NA, pjs[[b]], N + 1)
+  for (b in 1:J) Y[[b]] <- matrix(NA,nb_ind, N + 1)
 
-  if (is.matrix(sparsity)){
-    if (any(apply(sparsity, 1, function(x) any(x < 1/sqrt(pjs)))))
-      stop_rgcca("L1 constraints (sparsity) must vary between 1/sqrt(p_j)
-                 and 1.")
-  }
-
-###################################################
+  ###################################################
 
   if (mode(scheme) != "function") {
-    if ((scheme != "horst" ) & (scheme != "factorial") & (scheme != "centroid")) {
-      stop_rgcca("Choose one of the three following schemes: horst, centroid,
-                 factorial or design the g function")
-    }
     if (verbose) cat("Computation of the SGCCA block components based on the",
                      scheme, "scheme \n")
   }
@@ -177,173 +166,108 @@ sgcca <- function (blocks, connection = 1-diag(length(blocks)), sparsity = rep(1
     cat("Computation of the SGCCA block components based on the g scheme \n")
   }
 
+  ####################################
+  # sgcca with 1 component per block #
+  ####################################
+  if (is.vector(sparsity)) {
+    sgcca.result <- sgccak(blocks, connection, sparsity = sparsity,
+                           scheme = scheme, init = init, bias = bias,
+                           tol = tol, verbose = verbose, quiet = quiet,
+                           na.rm = na.rm)
+  } else {
+    sgcca.result <- sgccak(blocks, connection, sparsity = sparsity[1, ],
+                           scheme = scheme, init = init, bias = bias,
+                           tol = tol, verbose = verbose, quiet = quiet,
+                           na.rm = na.rm)
+  }
 
-    #-------------------------------------------------------
-    if(!prescaling)
-        blocks=scaling(blocks, scale = scale, bias = bias, scale_block = scale_block)
+  for (b in 1:J) Y[[b]][, 1] <- sgcca.result$Y[, b, drop = FALSE]
+  for (b in 1:J) a[[b]][, 1] <- sgcca.result$a[[b]]
+  astar                      <- a
+  AVE_inner[1]               <- sgcca.result$AVE_inner
+  crit[[1]]                  <- sgcca.result$crit
 
-    ####################################
-    # sgcca with 1 component per block #
-    ####################################
-
-    # ndefl number of deflation per block
-    ndefl <- ncomp-1
-    N <- max(ndefl)
-    J <- length(blocks)
-    pjs <- sapply(blocks,NCOL)
-    nb_ind <- NROW(blocks[[1]])
-    AVE_X = list()
-    AVE_outer <- rep(NA,max(ncomp))
-    if (N == 0) {
-        result <- sgccak(blocks, connection, sparsity, scheme, init = init, bias = bias,
-                         tol = tol, verbose = verbose, quiet = quiet)
-        # No deflation (No residual matrices generated).
-        Y <- NULL
-        for (b in 1:J) Y[[b]] <- result$Y[,b, drop = FALSE]
-        #Average Variance Explained (AVE) per block
-        for (j in 1:J) AVE_X[[j]] =  mean(cor(blocks[[j]], Y[[j]],
-                                              use="pairwise.complete.obs")^2,
-                                          na.rm=TRUE)
-
-        #AVE outer
-        AVE_outer <- sum(pjs * unlist(AVE_X))/sum(pjs)
-
-        AVE <- list(AVE_X = AVE_X,
-                    AVE_outer = AVE_outer,
-                    AVE_inner = result$AVE_inner)
-
-        a <- lapply(result$a, cbind)
-
-        for (b in 1:J) {
-          rownames(a[[b]]) = colnames(blocks[[b]])
-          rownames(Y[[b]]) = rownames(blocks[[b]])
-          colnames(Y[[b]]) = "comp1"
-        }
-
-        out <- list(Y=Y, a=a, astar=a,
-                    connection=connection, scheme=scheme, sparsity=sparsity, ncomp=ncomp,
-                    crit = result$crit[length(result$crit)],
-                    AVE = AVE)
-        class(out) <- "sgcca"
-        return(out)
-    }
-
-    ##################
-    # Initialization #
-    ##################
-
-    Y <- NULL
+  ##############################################
+  #               If any ncomp > 1             #
+  #      Determination of SGCCA components     #
+  ##############################################
+  if (N > 0) {
     R <- blocks
-    P <- a <- astar <- NULL
-    crit <- list()
-    AVE_inner <- rep(NA,max(ncomp))
+    for (b in 1:J) P[[b]] <- matrix(NA, pjs[[b]], N)
 
-    for (b in 1:J) P[[b]] <- a[[b]] <- astar[[b]] <- matrix(NA,pjs[[b]],N+1)
-    for (b in 1:J) Y[[b]] <- matrix(NA,nb_ind,N+1)
-
-    ##############################################
-    #               If any ncomp > 1             #
-    #      Determination of SGCCA components     #
-    ##############################################
-
-
-    for (n in 1:N) {
+    for (n in 2:(N + 1)) {
       if (verbose) cat(paste0("Computation of the SGCCA block components #", n,
                               " is under progress... \n"))
-      if(is.vector(sparsity)){
-        sgcca.result <- sgccak(R, connection, sparsity = sparsity , scheme=scheme,
-                               init = init, bias = bias, tol = tol,
-                               verbose = verbose, quiet = quiet)
-      } else{
-        sgcca.result <- sgccak(R, connection, sparsity = sparsity[n, ] , scheme = scheme,
-                               init = init, bias = bias, tol = tol,
-                               verbose = verbose, quiet = quiet)
+
+      # Apply deflation
+      defla.result <- defl.select(sgcca.result$Y, R, ndefl, n - 1, J, na.rm = na.rm)
+      R <- defla.result$resdefl
+      for (b in 1:J) P[[b]][, n - 1] <- defla.result$pdefl[[b]]
+
+      if (is.vector(sparsity)) {
+        sgcca.result <- sgccak(R, connection, sparsity = sparsity,
+                               scheme = scheme, init = init, bias = bias,
+                               tol = tol, verbose = verbose, quiet = quiet,
+                               na.rm = na.rm)
+      } else {
+        sgcca.result <- sgccak(R, connection, sparsity = sparsity[n, ],
+                               scheme = scheme, init = init, bias = bias,
+                               tol = tol, verbose = verbose, quiet = quiet,
+                               na.rm = na.rm)
       }
+
       AVE_inner[n] <- sgcca.result$AVE_inner
       crit[[n]] <- sgcca.result$crit
 
 
-      for (b in 1:J) Y[[b]][,n] <- sgcca.result$Y[ ,b]
-      for (q in which(n <ndefl)) if(sum(sgcca.result$a[[q]]!=0) <= 1)
-     {
-        if(!quiet)
+      for (b in 1:J) Y[[b]][, n] <- sgcca.result$Y[, b]
+      for (b in 1:J) a[[b]][, n] <- sgcca.result$a[[b]]
+      for (b in 1:J) astar[[b]][, n] <- sgcca.result$a[[b]] -
+        astar[[b]][, (1:(n - 1)), drop = F] %*%
+        drop( t(a[[b]][, n]) %*% P[[b]][, 1:(n - 1), drop = F] )
+
+      for (q in which(n < ndefl)) if (sum(sgcca.result$a[[q]] != 0) <= 1)
+      {
+        if (!quiet)
         {
-            warning(sprintf("Deflation failed because only one variable was
+          warning(sprintf("Deflation failed because only one variable was
                             selected for block ",q,"! \n"))
 
         }
-     }
-	    defla.result <- defl.select(sgcca.result$Y, R, ndefl, n, nbloc = J)
-      R <- defla.result$resdefl
-      for (b in 1:J) {
-        P[[b]][,n] <- defla.result$pdefl[[b]]
-        a[[b]][,n] <- sgcca.result$a[[b]]
-      }
-
-      if (n==1) {
-        for (b in 1:J) astar[[b]][,n] <- sgcca.result$a[[b]]
-      }
-      else {
-        for (b in 1:J) astar[[b]][,n] <- sgcca.result$a[[b]] -
-            astar[[b]][,(1:n-1),drop=F] %*%
-            drop( t(a[[b]][,n]) %*% P[[b]][,1:(n-1),drop=F] )
       }
     }
-    if (verbose) cat(paste0("Computation of the SGCCA block components #", N+1, "
-                            is under progress...\n"))
-    if(is.vector(sparsity)) {
-      sgcca.result <- sgccak(R, connection, sparsity = sparsity, scheme=scheme,
-                             init = init, bias = bias, tol = tol,
-                             verbose = verbose, quiet = quiet)
-    } else{
-      sgcca.result <- sgccak(R, connection, sparsity = sparsity[N+1, ], scheme=scheme,
-                             init = init, bias = bias, tol = tol,
-                             verbose = verbose, quiet = quiet)
-    }
-    AVE_inner[max(ncomp)] <- sgcca.result$AVE_inner
+  }
 
-    crit[[N+1]] <- sgcca.result$crit
-    for (b in 1:J) {
-      Y[[b]][,N+1]     <- sgcca.result$Y[, b]
-      a[[b]][,N+1]     <- sgcca.result$a[[b]]
-      astar[[b]][,N+1] <- sgcca.result$a[[b]] -  astar[[b]][,(1:N),drop=F] %*%
-                              drop(t(a[[b]][, N+1]) %*% P[[b]][,1:N,drop=F])
-      rownames(a[[b]]) = rownames(astar[[b]]) = colnames(blocks[[b]])
-      rownames(Y[[b]]) = rownames(blocks[[b]])
-      colnames(Y[[b]]) = paste0("comp", 1:max(ncomp))
-    }
+  for (b in 1:J) {
+    rownames(a[[b]]) = rownames(astar[[b]]) = colnames(blocks[[b]])
+    rownames(Y[[b]]) = rownames(blocks[[b]])
+    colnames(Y[[b]]) = paste0("comp", 1:max(ncomp))
+  }
 
-    shave.matlist <- function(mat_list, nb_cols)
-      mapply(function(m, nbcomp) m[, 1:nbcomp, drop = FALSE],
-             mat_list, nb_cols, SIMPLIFY=FALSE)
-    shave.veclist <- function(vec_list, nb_elts)
-      mapply(function(m, nbcomp) m[1:nbcomp],
-             vec_list, nb_elts, SIMPLIFY=FALSE)
+  #Average Variance Explained (AVE) per block
+  for (j in 1:J) AVE_X[[j]] =  apply(
+    cor(blocks[[j]], Y[[j]], use = "pairwise.complete.obs")^2, 2,
+    function(x) {return(mean(x, is.na = TRUE))})
 
-    #Average Variance Explained (AVE) per block
-    for (j in 1:J) AVE_X[[j]] =  apply(cor(blocks[[j]], Y[[j]],
-                                           use="pairwise.complete.obs")^2, 2,
-                                       function(x) {return(mean(x,is.na=TRUE))})
+  #AVE outer
+  outer = matrix(unlist(AVE_X), nrow = max(ncomp))
+  for (j in 1:max(ncomp))
+    AVE_outer[j] <- sum(pjs * outer[j, ], na.rm = T) / sum(pjs)
 
-    #AVE outer
-    outer = matrix(unlist(AVE_X), nrow = max(ncomp))
-    for (j in 1:max(ncomp))
-      AVE_outer[j] <- sum(pjs * outer[j, ], na.rm=T)/sum(pjs)
+  Y = shave.matlist(Y, ncomp)
+  AVE_X = shave.veclist(AVE_X, ncomp)
 
-    Y = shave.matlist(Y, ncomp)
-    AVE_X = shave.veclist(AVE_X, ncomp)
+  AVE <- list(AVE_X = AVE_X, AVE_outer = AVE_outer, AVE_inner = AVE_inner)
 
-    AVE <- list(AVE_X = AVE_X,
-                AVE_outer = AVE_outer,
-                AVE_inner = AVE_inner)
+  if (N == 0) crit = unlist(crit)
 
   out <- list(Y = shave.matlist(Y, ncomp),
-                a = shave.matlist(a, ncomp),
-                astar = shave.matlist(astar, ncomp),
-                crit = crit,
-                AVE = AVE)
+              a = shave.matlist(a, ncomp),
+              astar = shave.matlist(astar, ncomp),
+              crit = crit,
+              AVE = AVE)
 
-    class(out) <- "sgcca"
-    return(out)
+  class(out) <- "sgcca"
+  return(out)
 
 }

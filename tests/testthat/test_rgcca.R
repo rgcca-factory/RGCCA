@@ -67,7 +67,7 @@ unscaledPCAprcomp=prcomp(A[[1]],scale=FALSE)
 unscaledvarExplPrComp=as.vector((unscaledPCAprcomp$sdev)^2/sum((unscaledPCAprcomp$sdev)^2))[1]
 unscaledvarExplRgcca=unscaledPCA$AVE$AVE_X[[1]][1]
 upca_varexpl=round(unscaledvarExplPrComp-unscaledvarExplRgcca,digits=4)==0
-upca_ind=abs(cor(unscaledPCAprcomp$x[,1],unscaledPCA$Y[[1]][,1]))==1
+upca_ind=abs(abs(cor(unscaledPCAprcomp$x[,1],unscaledPCA$Y[[1]][,1])) - 1) < .Machine$double.eps
 upca_var=abs(cor(unscaledPCAprcomp$rotation[,1],unscaledPCA$astar[[1]][,1]))==1
 upca_ind2=abs(cor(unscaledPCAprcomp$x[,2],unscaledPCA$Y[[1]][,2]))==1
 upca_var2=round(abs(cor(unscaledPCAprcomp$rotation[,2],unscaledPCA$astar[[1]][,2])),digits=12)==1
@@ -202,11 +202,11 @@ test_that("upca_var2",{expect_true(upca_var)})
 
  # SGCCA and RGCCA
  resRgcca = rgcca(blocks=A, ncomp=rep(2,3), scheme = "factorial", scale = TRUE,verbose=FALSE)
- resRgccad=rgccad(blocks=A,connection=matrix(1,3,3)-diag(1,3),ncomp=rep(2,3),scheme = "factorial", scale = TRUE,verbose=FALSE,scale_block=TRUE)
+ resRgccad=rgccad(blocks=resRgcca$call$blocks,connection=matrix(1,3,3)-diag(1,3),ncomp=rep(2,3),scheme = "factorial", verbose=FALSE)
  test_that("rgccaVSrgccad",{expect_true(sum(head(resRgccad$Y[[1]])==head(resRgcca$Y[[1]]))==12)})
 
  resSgcca = rgcca(A, method="sgcca",ncomp=rep(2,3),sparsity= c(1, 1, 1), scheme = "factorial", scale = TRUE,verbose=FALSE,init="svd")
- resSgccad=sgcca(blocks=A,connection=matrix(1,3,3)-diag(1,3),ncomp=rep(2,3),scheme = "factorial", scale = TRUE,scale_block=TRUE,prescaling=FALSE,verbose=T,init="svd")
+ resSgccad=sgcca(blocks=resSgcca$call$blocks,connection=matrix(1,3,3)-diag(1,3),ncomp=rep(2,3),scheme = "factorial",verbose=T,init="svd")
  test_that("sgccadVsSGCCA",{expect_true(mean((resSgccad$Y[[2]]-resSgcca$Y[[2]]))<1e-14)})
  test_that("sgcca",{expect_true( mean(abs(resSgcca$Y[[2]]-resRgcca$Y[[2]]))<1e-14)})
 

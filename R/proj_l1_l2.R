@@ -64,7 +64,7 @@ proj_l1_l2 <- function(argu, a = 1){
     psi_a_k = 1
     k       = 2
     lambda  = a_k - (a*sqrt((k - psi_a_k^2)/(k - a^2))-psi_a_k)*
-      (sum(p) - k*a_k)/(psi_a_k*(k))
+                    (sum(p) - k*a_k)/(psi_a_k*(k))
     return( list(k=NaN, lambda = lambda, l2_SAT = T) )
   }
 
@@ -111,7 +111,7 @@ proj_l1_l2 <- function(argu, a = 1){
     # When p_low is empty, sum(p_low**2) = 0, which is what is wanted.
     s_low_2 = sum(p_low**2) + nb_a_k*aksq
     psi_a_k = (s_1 + s_low_1 - k*a_k)/
-      sqrt(s_2 + s_low_2 - 2*a_k*(s_1 + s_low_1) + k*aksq)
+              sqrt(s_2 + s_low_2 - 2*a_k*(s_1 + s_low_1) + k*aksq)
 
     #Choose partition depending on the constraint
     if (psi_a_k > a){
@@ -123,7 +123,7 @@ proj_l1_l2 <- function(argu, a = 1){
       }else{
         a_k_1     = max(p_high)
         psi_a_k_1 = (s_1 + s_low_1 - k*a_k_1)/
-          sqrt(s_2 + s_low_2 - 2*a_k_1*(s_1 + s_low_1) + k*a_k_1^2)
+                    sqrt(s_2 + s_low_2 - 2*a_k_1*(s_1 + s_low_1) + k*a_k_1^2)
         if (psi_a_k_1 > a){
           break
         }
@@ -137,6 +137,6 @@ proj_l1_l2 <- function(argu, a = 1){
 
   #Compute lambda
   lambda <- a_k - (a*sqrt((k - psi_a_k^2)/(k - a^2))-psi_a_k)*
-    (s_1 + s_low_1 - k*a_k)/(psi_a_k*(k))
+                  (s_1 + s_low_1 - k*a_k)/(psi_a_k*(k))
   return( list(k=k, lambda = lambda, l2_SAT = T) )
 }

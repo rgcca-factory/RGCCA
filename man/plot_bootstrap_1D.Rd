@@ -7,15 +7,16 @@
 plot_bootstrap_1D(
   b = NULL,
   df_b = NULL,
+  type = "weight",
   x = "estimate",
-  y = "occurrences",
+  y = "sign",
   n_mark = 50,
+  display_order = TRUE,
   title = NULL,
   colors = NULL,
   comp = 1,
-  bars = "sd",
   display_bar = TRUE,
-  i_block = length(b$bootstrap[[1]]),
+  i_block = length(b$bootstrap[[1]][[1]]),
   ...
 )
 }
@@ -23,6 +24,10 @@ plot_bootstrap_1D(
 \item{b}{A fitted bootstrap object \code{\link[RGCCA]{bootstrap}}}
 
 \item{df_b}{A get_bootstrap object \code{\link[RGCCA]{get_bootstrap}}}
+
+\item{type}{Character string indicating the bootstrapped object to print:
+block-weight vectors ("weight", default) or block-loading vectors
+("loadings").}
 
 \item{x}{indicator used in the plot (see details).}
 
@@ -32,20 +37,20 @@ plot_bootstrap_1D(
 \item{n_mark}{The number of top variables to display in the correlation
 circle}
 
+\item{display_order}{A logical value for ordering the variables}
+
 \item{title}{A character giving the title of the plot}
 
-\item{colors}{Either a vector of integers (each integer corresponding to a color) or of characters corresponding to names of colors (as "blue",see colors()) or RGB code ("#FFFFFF").}
+\item{colors}{Either a vector of integers (each integer corresponding to a
+color) or of characters corresponding to names of colors (as "blue",see
+colors()) or RGB code ("#FFFFFF").}
 
-\item{comp}{An integer giving the index of the analysis components}
+\item{comp}{An integer indicating the block-weight/loading vector to plot.}
 
-\item{bars}{Character string giving the variability among "sd" (error bar of
-standard deviation) , "stderr" (error bar of standard deviation divided by
-sqrt(n)) or "quantile" (error bar of 0.05/0.95-quantiles)}
-
-\item{display_bar}{A logical value. If TRUE colobar for significant
+\item{display_bar}{A logical value. If TRUE colorbar for significant
 variables is displayed.}
 
-\item{i_block}{An integer giving the index of a list of blocks}
+\item{i_block}{An integer giving the index of the block}
 
 \item{...}{Other parameters (see plot_histogram)}
 }
@@ -61,7 +66,7 @@ variables are those above the three bars, respectively, with an alpha = 0.05
 \details{
 \itemize{
 \item 'estimate' of the block weight vectors
-\item 'bootstrap_ratio' of the block weight vectors
+\item 'bootstrap_ratio' of the block weight/loading vectors
 \item 'sign' for significant 95% bootstrap interval
 \item 'occurrences' number of for non-zero occurrences
 \item 'mean'  mean of the bootstraped block weight vectors
@@ -73,9 +78,10 @@ blocks = list(agriculture = Russett[, seq(3)],
               industry = Russett[, 4:5],
               politic = Russett[, 6:11])
 fit.sgcca = rgcca(blocks, sparsity = 0.75, method = "sgcca")
-
-boot = bootstrap(fit.sgcca, 30, n_cores = 1)
-plot_bootstrap_1D(boot)
+fit.stab = rgcca_stability(fit.sgcca, n_boot = 20, n_cores = 1)
+boot = bootstrap(fit.stab,
+                 n_boot = 30, n_cores = 1)
+plot_bootstrap_1D(boot, type = "weight")
 rgcca_out = rgcca(blocks)
 boot = bootstrap(rgcca_out, 2, n_cores = 1)
 selected.var = get_bootstrap(boot, display_order=TRUE)

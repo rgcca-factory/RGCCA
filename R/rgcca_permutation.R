@@ -93,13 +93,13 @@
 #'
 #' fit = rgcca_permutation(blocks, connection = C,
 #'                         par_type = "tau",
-#'                         par_length = 10, n_perms = 20,
-#'                         n_cores = 1)#parallel::detectCores() - 1
+#'                         par_length = 10, n_perms = 2,
+#'                         n_cores = 1)
 #'
 #' print(fit)
 #' plot(fit)
 #' fit$bestpenalties
-#'
+#' \dontrun{
 #' # It is possible to define explicitly K combinations of shrinkage
 #' # parameters to be tested and in that case a matrix of dimension KxJ is
 #' # required. Each row of this matrix corresponds to one specific set of
@@ -177,7 +177,7 @@
 #'                          n_perms = 10, n_cores = 1)
 #'
 #' perm.out$penalties
-#' \dontrun{
+#' 
 #' ######################################
 #' # speed up the permutation procedure #
 #' ######################################
@@ -309,7 +309,7 @@ rgcca_permutation <- function(blocks, par_type, par_value = NULL,
         {
           if(par_type=="tau"){
             par_value <- t(sapply(seq(NROW(par_value)),
-                                  function(x) check_tau(par_value[x, ],
+                                  function(x) check_penalty(par_value[x, ],
                                                         blocks,
                                                         method = method,
                                                         superblock = superblock)
@@ -323,7 +323,7 @@ rgcca_permutation <- function(blocks, par_type, par_value = NULL,
             stop_rgcca(paste0("par_value should be upper than : ",
                                   paste0(round(min_spars, 2), collapse = ",")))
           if(par_type == "tau"){
-            par_value <- check_tau(par_value, blocks, method = method,
+            par_value <- check_penalty(par_value, blocks, method = method,
                                      superblock = superblock)
             par_value <- set_spars(max = par_value)
           }
@@ -430,42 +430,16 @@ rgcca_permutation <- function(blocks, par_type, par_value = NULL,
 
     }
 
-    if (sum(is.na(W)) != 0){
-      troublesome_par           = which(is.na(W) & !perm_parallel)
-      if (length(troublesome_par) != 0){
-        troublesome_par           = par_value_parallel[troublesome_par, ]
-        df_troublesome_par        = data.frame(t(troublesome_par))
-        W_to_tm                   = which(data.frame(t(par_value_parallel)) %in% df_troublesome_par)
-        par_to_rm                 = which(data.frame(t(par[[2]])) %in% df_troublesome_par)
-        W                         = W[-W_to_tm]
-        par[[2]]                  = par[[2]][-par_to_rm, ]
-        perm_parallel             = perm_parallel[-W_to_tm]
-        colnames(troublesome_par) = paste0(par[[1]], "_", colnames(par[[2]]))
-        message                   = apply(troublesome_par, 1, function(x) paste(names(x), x, sep = " = ", collapse = ", "))
-        message                   = paste(message, collapse = "\n")
-        message                   = paste0("\n", message)
-        warning("Due to projection issues (cf. previous warnings) on the non
-        permuted data set, the following set of parameters were
-        removed from the permutation procedure : ", message)
-      }
-    }
 
     crits = W[!perm_parallel]
     permcrit = matrix(W[perm_parallel], nrow = nrow(par[[2]]),
                       ncol = n_perms , byrow = TRUE)
-    sapply(1:dim(permcrit)[1], function(x){
-      if (sum(is.na(permcrit[x, ])) !=0 ){
-        warning("Due to projection issues (cf. previous warnings) on some of the
-        permuted data sets, even after multiple resamplings, the set of parameters number ", x, " was
-        evaluated out of ", sum(!is.na(permcrit[x, ])), " permutations instead of ", n_perms, ".")
-      }
-    })
     means = apply(permcrit, 1, mean, na.rm = T)
     sds = apply(permcrit, 1, sd, na.rm = T)
     par <- par[[2]]
-    pvals <- sapply(seq(NROW(par)), function(k) mean(permcrit[k, ] >= crits[k], na.rm = T))
+    pvals <- sapply(seq(NROW(par)), function(k) mean(permcrit[k, ] >= crits[k]))
     zs <- sapply(seq(NROW(par)), function(k){
-      z <- (crits[k] - mean(permcrit[k, ], na.rm = T)) / (sd(permcrit[k, ], na.rm = T))
+      z <- (crits[k] - mean(permcrit[k, ])) / (sd(permcrit[k, ]))
       if (is.na(z) || z == "Inf")
         z <- 0
       return(z)

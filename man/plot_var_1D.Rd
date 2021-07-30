@@ -9,7 +9,7 @@ plot_var_1D(
   comp = 1,
   n_mark = 30,
   i_block = length(rgcca_res$a),
-  type = "cor",
+  type = "loadings",
   collapse = FALSE,
   title = NULL,
   colors = NULL,
@@ -19,28 +19,29 @@ plot_var_1D(
 \arguments{
 \item{rgcca_res}{A fitted RGCCA object (see  \code{\link[RGCCA]{rgcca}})}
 
-\item{comp}{An integer giving the index of the analysis components}
+\item{comp}{An integer indicating the block-weight/loading vector to plot.}
 
 \item{n_mark}{The number of top variables to display in the correlation
 circle}
 
-\item{i_block}{An integer giving the index of a list of blocks}
+\item{i_block}{An integer giving the index of the block}
 
-\item{type}{A character giving the criterion to selects variables : either
-"cor" for correlation between the component and the block
-or "weight" for the weight of the RGCCA}
+\item{type}{A character string indicating the quantity to display between
+block-loading vector ("loadings") or block-weight vector ("weight").}
 
 \item{collapse}{A boolean to combine the variables of each block as result}
 
 \item{title}{A character giving the title of the plot}
 
-\item{colors}{Either a vector of integers (each integer corresponding to a color) or of characters corresponding to names of colors (as "blue",see colors()) or RGB code ("#FFFFFF").}
+\item{colors}{Either a vector of integers (each integer corresponding to a
+color) or of characters corresponding to names of colors (as "blue",see
+colors()) or RGB code ("#FFFFFF").}
 
 \item{...}{Further graphical parameters (see plot2D)}
 }
 \description{
-Barplot of the higher outer weight vectors for a component of a block
-(by default, the superblock or the last one) analysed by R/SGCCA
+Barplot of the block weight vectors or the block loading vector for the
+fitted R/SGCCA object.
 }
 \examples{
 weights = lapply(seq(3), function(x) matrix(runif(7*2), 7, 2))

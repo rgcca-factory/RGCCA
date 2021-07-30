@@ -14,8 +14,8 @@ boot <- bootstrap(rgcca_out, n_boot = 4, n_cores = 1)
 
 test_that("bootstrap_default_1", {
     expect_equal(length(boot), 2)
-    expect_equal(length(boot$bootstrap), 1)
-    boot1 <- boot$bootstrap[[1]]
+    expect_equal(length(boot$bootstrap), 2)
+    boot1 <- boot$bootstrap[[1]][[1]]
     expect_is(boot, "bootstrap")
     expect_is(boot$rgcca, "rgcca")
     expect_is(boot1, "list")
@@ -31,7 +31,7 @@ boot <- bootstrap(rgcca_out, n_boot = 2, n_cores = 1)
 test_that("bootstrap_default", {
     expect_equal(length(boot), 2)
     expect_equal(length(boot$bootstrap), 2)
-    boot1 <- boot$bootstrap[[1]]
+    boot1 <- boot$bootstrap[[1]][[1]]
     expect_is(boot, "bootstrap")
     expect_is(boot$rgcca, "rgcca")
     expect_is(boot1, "list")
@@ -47,18 +47,6 @@ test_that("bootstrap_default", {
     expect_identical(NROW(select_var), NCOL(rgcca_out$call$blocks[[length(rgcca_out$call$blocks)]]))
 })
 
-# test_that("bootstrap_with_args", {
-#     rgcca_out <- rgcca(blocks, superblock = FALSE)
-#     expect_is(
-#         bootstrap(
-#             rgcca_out,
-#             n_boot = 2,
-#             n_cores = 1,
-#             blocks = lapply(blocks, scale),
-#             superblock = FALSE),
-#         "bootstrap")
-# })
-
 blocks[[1]][1:3, 1] <- NA
 blocks[[1]][4,] <- NA
 resRGCCA <- rgcca(blocks, ncomp = c(2,2,2),superblock=FALSE)
@@ -70,7 +58,7 @@ plot_bootstrap_1D(df_b = select_var)
 test_that("test_bootstrap_na_values", {
     expect_equal(
         select_var["demostab", "mean"],
-        mean(c(resBootstrap$bootstrap[[1]][["politic"]]["demostab", ]))
+        mean(c(resBootstrap$bootstrap[[1]][[1]][["politic"]]["demostab", ]))
     )
     expect_true(select_var["demostab", "estimate"] == resRGCCA$a[[3]]["demostab", 1])
 })
@@ -86,4 +74,4 @@ rgcca_out <- rgcca(blocks,ncomp=2,superblock=TRUE)
 boot <- bootstrap(rgcca_out, n_boot = 100, n_cores = 1)
 plot(boot)
 print(boot)
-plot(rgcca_out,type="var")
+plot(rgcca_out, type = "corCircle")
