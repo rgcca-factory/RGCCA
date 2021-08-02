@@ -24,14 +24,6 @@ blocks <- list(
 
 # Crossvalidation with leave-one-out
 #----------------------------------------
- # Cross-validation to find out the prediction error when agri is response and with 1 comp
- rgcca_out <- rgcca(blocks, response = 1,superblock=FALSE,ncomp=1,scale=TRUE,scale_block=TRUE)
- test_that("rgcca_cv_default_1", {
-     test_structure_cv(
-        rgcca_cv_k(rgcca_res=rgcca_out,n_cores=1,validation="loo"),
-         0.495311)
- }
- )
 
 blocks2=blocks
 blocks2[[1]][,1]=0
@@ -76,7 +68,14 @@ X = lapply(rgcca_out2$call$raw, function(x) x[v_inds[[1]], , drop = FALSE])
     }
  mean(res)
 
-
+ # Cross-validation to find out the prediction error when agri is response and with 1 comp
+ rgcca_out <- rgcca(blocks, response = 1,superblock=FALSE,ncomp=1,scale=TRUE,scale_block=TRUE)
+ test_that("rgcca_cv_default_1", {
+   test_structure_cv(
+     rgcca_cv_k(rgcca_res=rgcca_out,n_cores=1,validation="loo"),
+     mean(res))
+ }
+ )
 
 
 # Test du predict du premier individu en leave-one-out
@@ -100,16 +99,34 @@ X = lapply(rgcca_out2$call$raw, function(x) x[v_inds[[1]], , drop = FALSE])
 
  # Cross-validation to find out the prediction error when agri is response and with 2 comp
 set.seed(1)
+
+for(i in 1:dim(blocks[[1]])[1])
+{
+  # Etape 1: on extrait la ligne i des blocs non scalés
+  A_moins_i=lapply(blocks,function(x){return(x[-i,])})
+  A_i=lapply(blocks,function(x){return(x[i,])})
+  names(A_moins_i)=names(A_i)=names(blocks)
+  # on calcule la RGCCA sur le bloc A sans le i
+  rgcca_out_i <- rgcca(A_moins_i, response = 1,superblock=FALSE,ncomp=2,scale=TRUE,scale_block=TRUE)
+
+  # Methode 1 on predit la valeur i à l'aide du modèle rgcca, et de la ligne du bloc
+  # Ici, on reprend les scale value de la rgcca calculée sur A_moins_i et on les applique à A_i
+  respred_i=rgcca_predict(rgcca_out_i, A_i,X_scaled=FALSE,block_to_predict="agriculture")
+
+  res[i]=respred_i$score
+}
+mean(res)
+
  rgcca_out <- rgcca(blocks, response = 1,superblock=FALSE,ncomp=2,scale=TRUE,scale_block=TRUE)
  test_that("rgcca_cv_default_2", {
           test_structure_cv(
              rgcca_cv_k(rgcca_res=rgcca_out,n_cores=1,validation="loo"),
-             0.4851892)
+             mean(res))
  }
 
  )
 
- # k-fold
+  # k-fold
  #----------
  rgcca_out <- rgcca(blocks, response = 1,ncomp=1)
 
@@ -232,3 +249,4 @@ RussettWithNA <- Russett
          res[i]=respred_i$score
      }
      mean(res) # 0.213
+
