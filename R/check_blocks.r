@@ -24,11 +24,10 @@ check_blocks <- function(blocks, init = FALSE, n = 2,
                          add_NAlines = FALSE, allow_unnames =  TRUE,
                          quiet = FALSE, no_character = FALSE) {
 
-    msg <- ""
     if(is.matrix(blocks)) blocks = list(blocks)
-    if (!is.list(blocks)) stop_rgcca(paste(msg, "is not a list."))
+    if (!is.list(blocks)) stop_rgcca("Blocks are not a list.")
     if (!init && length(blocks) < n)
-        stop_rgcca(paste(msg, "should at least have two blocks."))
+        stop_rgcca("The list should at least have two blocks.")
 
     # Completing block names
     if (is.null(names(blocks))| any(names(blocks)=="")){
@@ -57,7 +56,7 @@ check_blocks <- function(blocks, init = FALSE, n = 2,
             message("Missing rownames are automatically labeled.")
         }
         else
-            stop_rgcca(paste(msg, "Blocks should have rownames.\n "))
+            stop_rgcca("Blocks should have rownames.")
     }
 
 
@@ -113,7 +112,7 @@ check_blocks <- function(blocks, init = FALSE, n = 2,
     if(sum(duplicated(unlist(sapply(blocks,colnames))))!=0)
     {
       if(!quiet)
-        message("Duplicated colnames are modified to avoid confusion \n")
+        message("Duplicated colnames are modified to avoid confusion.")
 
       blocks_i= lapply(1:length(blocks),
                        function(i){
@@ -129,7 +128,7 @@ check_blocks <- function(blocks, init = FALSE, n = 2,
     inters_rows <- Reduce(intersect, lapply(blocks, row.names))
 
     if (length(inters_rows) == 0)
-        stop_rgcca(paste(msg, "elements of the list should have at least a common rowname.\n "))
+        stop_rgcca("Elements of the list should have at least a common rowname.")
 
     # If one rownames is missing but the size of blocks is correct
     if(any(sapply(blocks, function(x) is.null(row.names(x)))))
@@ -152,7 +151,7 @@ check_blocks <- function(blocks, init = FALSE, n = 2,
              resdup=duplicated(rownames(x))
              if(sum(resdup)!=0){
                 if(!quiet)
-                  warning(paste0("Duplicated rownames were removed: ",
+                  message(paste0("Duplicated rownames were removed: ",
                                  rownames(x)[resdup],"\n"))
              }
              }
@@ -172,7 +171,7 @@ check_blocks <- function(blocks, init = FALSE, n = 2,
 
     if (no_character) {
         if (any(sapply(blocks, is.character2)))
-            stop(paste(msg, "Blocks contain non-numeric values."))
+            stop( "Blocks contain non-numeric values.")
 
         for (i in seq(length(blocks)))
            if (is.character(blocks[[i]]))
