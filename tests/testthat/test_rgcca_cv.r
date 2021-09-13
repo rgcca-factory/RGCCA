@@ -36,7 +36,7 @@ plot(res)
 
 # plot(res4,bars="stderr")
 
-res5=rgcca_cv(blocks,response=length(blocks), method="rgcca",par_type="sparsity",par_value=matrix(c(0.8,0.9,1,0.9,1,1),nrow=2,byrow = T),n_run=1, one_value_per_cv = FALSE,n_cores=1)
+res5=rgcca_cv(blocks,response=length(blocks), method="rgcca",par_type="sparsity",par_value=matrix(c(0.8,0.9,1,0.9,1,1),nrow=2,byrow = TRUE),n_run=1, one_value_per_cv = FALSE,n_cores=1)
 plot(res5,bars="points")
 print(res5)
 

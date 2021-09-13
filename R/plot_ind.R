@@ -49,9 +49,12 @@ plot_ind <- function(
     response_name = "Response",
     no_overlap = FALSE,
     predicted = NULL,
-    title = paste0(names(rgcca_res$call$blocks)[i_block],": Sample space"),
+    title = NULL,
     legend = TRUE,
     ...){
+
+    if(is.null(title))
+    title <- paste0("Sample space: ", names(rgcca_res$call$blocks)[i_block])
 
     if (is.null(i_block_y))
         i_block_y <- i_block

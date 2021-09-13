@@ -206,7 +206,7 @@ test_that("upca_var2",{expect_true(upca_var)})
  test_that("rgccaVSrgccad",{expect_true(sum(head(resRgccad$Y[[1]])==head(resRgcca$Y[[1]]))==12)})
 
  resSgcca = rgcca(A, method="sgcca",ncomp=rep(2,3),sparsity= c(1, 1, 1), scheme = "factorial", scale = TRUE,verbose=FALSE,init="svd")
- resSgccad=sgcca(blocks=resSgcca$call$blocks,connection=matrix(1,3,3)-diag(1,3),ncomp=rep(2,3),scheme = "factorial",verbose=T,init="svd")
+ resSgccad=sgcca(blocks=resSgcca$call$blocks,connection=matrix(1,3,3)-diag(1,3),ncomp=rep(2,3),scheme = "factorial",verbose=TRUE,init="svd")
  test_that("sgccadVsSGCCA",{expect_true(mean((resSgccad$Y[[2]]-resSgcca$Y[[2]]))<1e-14)})
  test_that("sgcca",{expect_true( mean(abs(resSgcca$Y[[2]]-resRgcca$Y[[2]]))<1e-14)})
 

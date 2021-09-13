@@ -18,8 +18,9 @@ plot_histogram <- function(
     cex_axis = 10 * cex
 ) {
 
-    for (i in c("cex", "cex_main", "cex_sub", "cex_axis"))
+    for (i in c("cex_main", "cex_sub", "cex_axis"))
         check_integer(i, get(i))
+  check_integer("cex", cex, float = TRUE)
 
     stopifnot(is(p, "ggplot"))
     check_colors(colors)
@@ -82,7 +83,7 @@ plot_histogram <- function(
         } else if ((is.character2(group[!is.na(group)]) ||
                             length(unique(group)) <= 5 )) {
             cols=color_group(group, colors)
-           p <- p + scale_fill_manual(values = cols,limit=names(cols),drop=FALSE)
+           p <- p + scale_fill_manual(values = cols,limits=names(cols),drop=FALSE)
         }
     }
 

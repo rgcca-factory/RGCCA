@@ -60,8 +60,9 @@ plot2D <- function(
     title <- paste0(title, collapse = " ")
     name_group <- paste0(name_group, collapse = " ")
     check_colors(colors)
-    for (i in c("cex", "cex_main", "cex_sub", "cex_point", "cex_lab"))
+    for (i in c("cex_main", "cex_sub", "cex_point", "cex_lab"))
         check_integer(i, get(i))
+    check_integer("cex", cex, float = TRUE)
     for (i in c("text", "no_overlap"))
         check_boolean(i, get(i))
     if (NROW(df) > 100)
@@ -149,8 +150,8 @@ plot2D <- function(
         theme(
             legend.key.width = unit(nchar(name_group), "mm"),
             axis.text = element_blank(),
-            axis.title.y = axis(margin(0, 20, 0, 0)),
-            axis.title.x = axis(margin(20, 0, 0, 0)),
+            axis.title.y = axis(margin(0.5, 20, 0.5, 0.5)),
+            axis.title.x = axis(margin(20, 0.5, 0.5, 0.5)),
             axis.line = element_blank()
         )
 
@@ -171,5 +172,5 @@ plot2D <- function(
          p <- p + scale_color_gradientn(colours = colors, na.value = "black")
     }
 
-    p + theme(plot.margin = margin(5, 0, 0, 0, "mm"))
+    p
 }

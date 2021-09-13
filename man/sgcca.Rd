@@ -111,7 +111,7 @@ could differ from one block to another.
 #############
 # Example 1 #
 #############
-\dontrun{
+\donttest{
 # Download the dataset's package at http://biodev.cea.fr/sgcca/.
 # --> gliomaData_0.4.tar.gz
 
@@ -167,7 +167,7 @@ text(result.sgcca$Y[[1]][, 1], result.sgcca$Y[[1]][, 2],
      Loc, col = as.numeric(Loc), cex = .6)
 
 # sgcca algorithm with multiple components and different
-L1 penalties for each components
+# L1 penalties for each components
 # (-> sparsity is a matrix)
 init = "random"
 result.sgcca = sgcca(blocks, connection,

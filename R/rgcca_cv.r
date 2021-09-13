@@ -41,7 +41,7 @@
 #'                n_run = 2, n_cores = 1)
 #' plot(res)
 #' 
-#' \dontrun{
+#' \donttest{
 #' rgcca_cv(blocks, response = 3, par_type = "tau",
 #'          par_value = c(0.6, 0.75, 0.5),
 #'          n_run = 2, n_cores = 1)$bestpenalties
@@ -85,8 +85,8 @@ rgcca_cv <- function(
     new_scaled = FALSE, 
     ...) {
 
-    if(!missing(blocks)&class(blocks)=="rgcca"){rgcca_res=blocks}
-    if(class(rgcca_res)=="rgcca")
+    if(!missing(blocks) & is(blocks, "rgcca")){rgcca_res=blocks}
+    if(is(rgcca_res, "rgcca"))
     {
         message("All parameters were imported from a rgcca object.")
         scale_block=rgcca_res$call$scale_block

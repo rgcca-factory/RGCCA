@@ -133,7 +133,7 @@
 #' plot(fit.rgcca, type = "ave")
 #' plot(fit.rgcca, type = "weight", block = 1)
 #' plot(fit.rgcca, type = "loadings")
-#' \dontrun{
+#' \donttest{
 #' ##################################
 #' # Example 3: Sparse GCCA (SGCCA) #
 #' ##################################
@@ -193,8 +193,7 @@ rgcca <- function(blocks, method = "rgcca",
                   response = NULL, superblock = FALSE,
                   NA_method = "nipals", verbose = FALSE, quiet = TRUE){
 
-    if(class(blocks)=="permutation")
-    {
+    if(is(blocks, "permutation")) {
         message("All the parameters were imported from the fitted rgcca_permutation object.")
         scale_block = blocks$call$scale_block
         scale = blocks$call$scale
@@ -209,8 +208,7 @@ rgcca <- function(blocks, method = "rgcca",
         superblock <- blocks$call$superblock
         blocks <- blocks$call$blocks
     }
-    if(class(blocks)=="cval")
-    {
+    if(is(blocks, "cval")) {
         message("All the parameters were imported from the fitted cval object.")
         scale_block = blocks$call$scale_block
         scale = blocks$call$scale
@@ -225,14 +223,12 @@ rgcca <- function(blocks, method = "rgcca",
         blocks<-blocks$call$blocks
     }
 
-    if(length(blocks) == 1){
-        if(method != "pca")
-        {
-            method = "pca"
-            message("method='rgcca' is not available for one block only and
-                    method was converted to 'pca'.")
+    if (length(blocks) == 1){
+        if(method != "pca") {
+            method <- "pca"
+            if (verbose)
+                message("method='rgcca' is not available for one block only and method was converted to 'pca'.")
         }
-
     }
 
     if (!missing(sparsity) && missing(method))

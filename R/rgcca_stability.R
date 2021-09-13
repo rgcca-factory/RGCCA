@@ -13,7 +13,7 @@
 #' @return \item{bootstrap}{block-weight vectors for ech bootstrap sample.}
 #' @return \item{rgcca_res}{an RGCCA object fitted on the most stable variables.}
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' ###########################
 #' # stability and bootstrap #
 #' ###########################

@@ -381,7 +381,7 @@ check_size_file <- function(filename) {
         message("File loading in progress ...")
 }
 
-check_penalty <- function(penalty, blocks, method = "rgcca", superblock = F) {
+check_penalty <- function(penalty, blocks, method = "rgcca", superblock = FALSE) {
   if (superblock) {
     blocks[[length(blocks) + 1]] <- Reduce(cbind,blocks)
     names(blocks)[length(blocks)] = "superblock"
@@ -394,7 +394,7 @@ check_penalty <- function(penalty, blocks, method = "rgcca", superblock = F) {
   is_matrix = is(penalty, "matrix")
 
   # Check value of each penalty
-  if (method == "rgcca") penalty <- sapply(penalty, check_tau, USE.NAMES = F)
+  if (method == "rgcca") penalty <- sapply(penalty, check_tau, USE.NAMES = FALSE)
   if (method == "sgcca") {
     if (is_matrix) divider = NROW(penalty1)
     else divider = 1

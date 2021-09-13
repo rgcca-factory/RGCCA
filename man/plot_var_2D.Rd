@@ -14,7 +14,7 @@ plot_var_2D(
   n_mark = 30,
   collapse = FALSE,
   no_overlap = FALSE,
-  title = "Correlation Circle",
+  title = NULL,
   resp = NULL,
   colors = NULL,
   ...

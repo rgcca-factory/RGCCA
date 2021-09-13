@@ -219,7 +219,7 @@ plot(fit.rgcca, type = "sample", block = 1:2,
 plot(fit.rgcca, type = "ave")
 plot(fit.rgcca, type = "weight", block = 1)
 plot(fit.rgcca, type = "loadings")
-\dontrun{
+\donttest{
 ##################################
 # Example 3: Sparse GCCA (SGCCA) #
 ##################################

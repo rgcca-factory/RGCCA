@@ -23,6 +23,9 @@ plot_network <- function(
     stopifnot(is(rgcca_res, "rgcca"))
     title <- paste0(title, collapse = " ")
     check_colors(colors)
+    for (i in c("cex_main", "cex_point"))
+        check_integer(i, get(i))
+    check_integer("cex", cex, float = TRUE)
 
     load_libraries("igraph")
 
@@ -63,7 +66,8 @@ plot_network <- function(
         vertex.label.color = "black",
         vertex.label.dist = 6,
         vertex.label.degree = 1.5,
-        vertex.size = cex_point * 7.5
+        vertex.size = cex_point * 7.5,
+        margin = c(0.1, 0, 0, 0)
     )
      title(title, cex.main = cex_main * 0.1)
 }

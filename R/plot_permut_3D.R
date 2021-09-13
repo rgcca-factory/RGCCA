@@ -20,8 +20,9 @@ plot_permut_3D <- function(
     stopifnot(is(perm, "permutation"))
     match.arg(type, c("crit", "zstat"))
     check_boolean("sign", sign)
-    for (i in c("cex","cex_point", "cex_lab"))
+    for (i in c("cex_point", "cex_lab"))
         check_integer(i, get(i))
+    check_integer("cex", cex, float = TRUE)
     for (i in c("i_block", "i_block_y", "i_block_z"))
         check_blockx(i, get(i), perm$penalties[1,])
 
@@ -62,7 +63,7 @@ plot_permut_3D <- function(
                 list(mean(zstat$z), "rgb(254,224,144)"),
                 list(max(zstat$z), "rgb(49,54,149)")
             ),
-            cauto = F,
+            cauto = FALSE,
             cmin = 0,
             cmax = max(zstat$z)
         )

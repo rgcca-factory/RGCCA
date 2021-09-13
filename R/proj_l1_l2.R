@@ -1,8 +1,9 @@
+#' @importFrom stats median
 proj_l1_l2 <- function(argu, a=1){
   #Check if constraints are already satisfied
   norm2_argu = norm(argu, type = "2")
-  if ( norm2_argu < .Machine$double.eps ) return(list(sol=argu, l2_SAT = F))
-  if ( sum(abs(argu/norm2_argu)) <= a ) return(list(k=NaN, lambda = 0, l2_SAT = T))
+  if ( norm2_argu < .Machine$double.eps ) return(list(sol=argu, l2_SAT = FALSE))
+  if ( sum(abs(argu/norm2_argu)) <= a ) return(list(k=NaN, lambda = 0, l2_SAT = TRUE))
   # The desired a_k cannot be null as the constraints are not already satisfied
   # (cf. previous check). So zero values are removed.
   uneq <- argu != 0
@@ -17,7 +18,7 @@ proj_l1_l2 <- function(argu, a=1){
   if (a < sqrt(nMAX)){
     sol                          = argu*0
     sol[which(abs(argu) == MAX)] = sign(argu)*a/nMAX
-    return(list(sol=sol, l2_SAT = F))
+    return(list(sol=sol, l2_SAT = FALSE))
   }
   # If there are multiple maximum value and a = sqrt(number of max),
   # solution is straightforward
@@ -33,7 +34,7 @@ proj_l1_l2 <- function(argu, a=1){
       a_2    = max(p[-which(bMAX)])
       lambda = (MAX + a_2)/2
     }
-    return(list(k=NaN, lambda = lambda, l2_SAT = T))
+    return(list(k=NaN, lambda = lambda, l2_SAT = TRUE))
   }
   # If the vector to project "argu" is composed of 2 elements only, as the
   # sparse parameter a <= 1 the desired a_k is a_2 (the lowest element) as
@@ -45,11 +46,11 @@ proj_l1_l2 <- function(argu, a=1){
     psi_a_k = 1
     k       = 2
     lambda  = a_k - (a*sqrt((k - psi_a_k^2)/(k - a^2))-psi_a_k)*(sum(p) - k*a_k)/(psi_a_k*(k))
-    return( list(k=NaN, lambda = lambda, l2_SAT = T) )
+    return( list(k=NaN, lambda = lambda, l2_SAT = TRUE) )
   }
   #Initialize parameters
   s_1 <- s_2 <- nb <- 0
-  while (T) {
+  while (TRUE) {
     N       <- length(p)
     if (N==0) {
       warning("length(p) = 0")
@@ -100,5 +101,5 @@ proj_l1_l2 <- function(argu, a=1){
   }
   #Compute lambda
   lambda <- a_k - (a*sqrt((k - psi_a_k^2)/(k - a^2))-psi_a_k)*(s_1 + s_low_1 - k*a_k)/(psi_a_k*(k))
-  return( list(k=k, lambda = lambda, l2_SAT = T) )
+  return( list(k=k, lambda = lambda, l2_SAT = TRUE) )
 }

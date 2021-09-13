@@ -20,7 +20,12 @@ save_var <- function(
             )
             colnames(df) <- c(unlist(lapply(
                 indexes,
-                function(x) sapply(seq(rgcca$call$ncomp[[i]]), function(y) paste0(x, ".", y)))), "blocks")
+                function(x) sapply(seq(rgcca$call$ncomp[[i]]), function(y) {
+                    if (x == "loadings")
+                        x <- "correlation"
+                    paste0(x, ".component", y)
+                    })
+                )), "blocks")
             df
         }
     )

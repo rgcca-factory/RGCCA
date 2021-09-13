@@ -61,10 +61,12 @@ plot_var_1D <- function(
         rgcca_res$call$superblock <- FALSE
      J <- names(rgcca_res$a)
 
-    if (is.null(title))
+    if (is.null(title)) {
         title <- ifelse(type == "loadings",
             "Block-loading vector",
             "Block-weight vector")
+        title <- paste0(title, ": ", names(rgcca_res$call$blocks)[i_block])
+    }
 
     # sort in decreasing order
     df <- data.frame(order_df(df, 1, TRUE), order = NROW(df):1)
@@ -93,7 +95,8 @@ plot_var_1D <- function(
         group=as.character(color),
         colors = colors,
         ...
-    )
+    ) +
+        labs(subtitle = print_comp(rgcca_res, comp, i_block))
 
     labs(subtitle = print_comp(rgcca_res, comp, i_block))
 

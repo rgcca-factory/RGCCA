@@ -80,7 +80,7 @@ test_that("rgcca_predict_rmse",{expect_true(
     sum(round(res$res,digits=5)-round(reslm_1_res,digits=5))==0
 )})
 
-rmse_test=apply(reslm_1_res,2,function(x){return(sqrt(mean(x^2,na.rm=T)))})
+rmse_test=apply(reslm_1_res,2,function(x){return(sqrt(mean(x^2,na.rm=TRUE)))})
 test_that("rgcca_predict_rmse2",{expect_true(
     round(res$score,digits=5)==round(mean(rmse_test),digits=5)
 )})

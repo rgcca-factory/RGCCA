@@ -60,12 +60,15 @@ plot_var_2D <- function(
     n_mark = 30,
     collapse = FALSE,
     no_overlap = FALSE,
-    title = "Correlation Circle",
+    title = NULL,
     resp=NULL,
     colors=NULL,
     ...) {
 
     x <- y <- NULL
+
+    if(is.null(title))
+        title <- paste0("Correlation circle: ", names(rgcca_res$call$blocks)[i_block])
 
     df <- get_ctr2(
         rgcca_res = rgcca_res,

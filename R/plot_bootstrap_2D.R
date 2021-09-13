@@ -7,11 +7,7 @@
 #' Negative weights are colored in red and the positive ones are in green.
 #'
 #' @inheritParams plot2D
-#' @inheritParams get_bootstrap
-#' @param b A boostrap object \code{\link[RGCCA]{bootstrap}}
-#' @param x A character for the index to plot in x-axis (see details).
-#' @param y A character for the index to plot in y-axis (see details).
-#' @param df_b A get_bootstrap object \code{\link[RGCCA]{get_bootstrap}}
+#' @inheritParams plot_bootstrap_1D
 #' @details 
 #' \itemize{
 #' \item 'estimate' for RGCCA weights
@@ -20,28 +16,27 @@
 #' \item 'occurrences' for non-zero occurences
 #' \item 'mean' for the mean of the bootstrap weights
 #' }
-# @examples
-# data("Russett")
-# blocks = list(agriculture = Russett[, seq(3)], industry = Russett[, 4:5],
-#     politic = Russett[, 6:11] )
-# rgcca_out = rgcca(blocks, sparsity = 0.75, method = "sgcca")
-# boot = bootstrap(rgcca_out, 2, n_cores = 1)
-# plot_bootstrap_2D(boot, n_cores = 1)
-# rgcca_out = rgcca(blocks)
-# boot = bootstrap(rgcca_out, 2, n_cores = 1)
-# selected.var = get_bootstrap(boot, n_cores = 1,display_order=TRUE)
-# plot_bootstrap_2D(boot, n_cores = 1)
-# plot_bootstrap_2D(df_b = selected.var,n_cores=1)
+#' @examples
+#' data("Russett")
+#' blocks = list(agriculture = Russett[, seq(3)], industry = Russett[, 4:5],
+#'     politic = Russett[, 6:11] )
+#' rgcca_out = rgcca(blocks, sparsity = 0.75, method = "sgcca")
+#' boot = bootstrap(rgcca_stability(rgcca_out, n_cores = 1), 2, n_cores = 1)
+#' plot_bootstrap_2D(boot)
+#' rgcca_out = rgcca(blocks)
+#' boot = bootstrap(rgcca_out, 2, n_cores = 1)
+#' selected.var = get_bootstrap(boot,display_order=TRUE)
+#' plot_bootstrap_2D(boot)
+#' plot_bootstrap_2D(df_b = selected.var)
 #' @export
 #' @seealso \code{\link[RGCCA]{bootstrap}}, \code{\link[RGCCA]{get_bootstrap}}
 plot_bootstrap_2D <- function(
     b = NULL,
     df_b = NULL,
+    type = "weight",
     x = "bootstrap_ratio",
-    y = "occurrences",
-    title = paste("Variable selection \nby",
-           attributes(b)$n_boot,
-           "bootstraps"),
+    y = "sign",
+    title = NULL,
     colors = NULL,
     cex = 1,
     cex_main = 14 * cex,
@@ -52,21 +47,31 @@ plot_bootstrap_2D <- function(
     i_block = NULL) {
 
     if (missing(b) && missing(df_b))
-        stop_rgcca("Please select a bootstrap object.")
+        stop_rgcca("Please select a fitted bootstrap object.")
     else if (!is.null(b)) {
         if (is.null(i_block))
-            i_block <- length(b$bootstrap[[1]])
-        df_b <- get_bootstrap(b, comp, i_block, display_order = TRUE)
+            i_block <- length(b$bootstrap$W[[1]])
+        df_b <- get_bootstrap(
+            b,
+            type = type,
+            comp,
+            block = i_block,
+            display_order = TRUE)
     } else if (!is.null(df_b)) {
-        if (is.null(i_block))
-            i_block <- attributes(df_b)$n_blocks
         stopifnot(is(df_b, "df_bootstrap"))
     }
 
+    if (is.null(title)) {
+        title <- paste0("Block-", type, " vector: ", 
+            attributes(df_b)$block,
+            "\n(", attributes(df_b)$n_boot,
+            " bootstrap samples)")
+    }
     title <- paste0(title, collapse = " ")
     check_ncol(list(df_b), 1)
-    for (i in c("cex", "cex_main", "cex_sub", "cex_point", "cex_lab"))
+    for (i in c("cex_main", "cex_sub", "cex_point", "cex_lab"))
         check_integer(i, get(i))
+    check_integer("cex", cex, float = TRUE)
     check_colors(colors)
 
     set_occ <- function(x) {
@@ -88,11 +93,12 @@ plot_bootstrap_2D <- function(
         )
     }
 
+    df_b <- df_b[df_b[, "sd"] != 0, ]
+    df_b$sign <- df_b$pval
+    df_b$sign[df_b$sign > 0.05] <- 1
+    df_b$sign[df_b$sign <= 0.05] <- 0
+
     transform_x <- function(x){
-        if ("*" %in% x) {
-            x[x == "NS"] <- 0
-            x[x == "*"] <- 1
-        }
         return(abs(as.double(x)))
     }
 
@@ -102,7 +108,7 @@ plot_bootstrap_2D <- function(
             x = transform_x(df_b[, x]),
             y = transform_x(df_b[, y]),
             label = row.names(df_b),
-            color = as.factor(!is.na(df_b[,"mean"]) & df_b[,"mean"] > 0  )
+            color = as.factor(df_b[, "sign"])
     )) +
     geom_text(size = cex_point * 0.75) +
     labs(
@@ -128,7 +134,7 @@ plot_bootstrap_2D <- function(
             if (x == "sign") {
                 p <- p + 
                     get(paste("scale", axis, "discrete", sep = "_"))(
-                        labels = c("ns", "*"),
+                        labels = c("*", "NS"),
                         limits = c(0, 1)
                     )
             }
@@ -136,8 +142,8 @@ plot_bootstrap_2D <- function(
         return(p)
     }
 
-    p <- suppressMessages(limites(p, x))
-    p <- suppressMessages(limites(p, y))
+    p <- suppressWarnings(suppressMessages(limites(p, x)))
+    p <- suppressWarnings(suppressMessages(limites(p, y)))
 
     return(p)
 }

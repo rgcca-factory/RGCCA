@@ -19,7 +19,7 @@ resRgcca$call$raw[[1]][1,]
 resRgcca$call$blocks[[1]][1,]
 resRgcca$call$blocks[[1]][1,]
 
-resRgcca=rgcca(blocks,superblock = T)
+resRgcca=rgcca(blocks,superblock = TRUE)
 resRgcca$call$raw[[1]][1,]
 resRgcca$call$blocks[[1]][1,]
 resRgcca$call$blocks[[1]][1,]
@@ -31,7 +31,7 @@ lapply(resRgcca$call$blocks,dim)
 blocks_with_na=blocks
 blocks_with_na[[1]][1,]=NA
 blocks_with_na[[1]][2,2]=NA
-resRgcca=rgcca(blocks_with_na,NA_method = "mean",superblock=T)
+resRgcca=rgcca(blocks_with_na,NA_method = "mean",superblock=TRUE)
 resRgcca$call$raw[[1]][1,]
 resRgcca$call$blocks[[1]][1,]
 resRgcca$call$blocks[[1]][1,]

@@ -35,7 +35,7 @@ A matrix corresponding to the response
 Create a matrix corresponding to the response
 }
 \examples{
-\dontrun{
+\donttest{
 blocks = lapply(seq(3), function(x) matrix(runif(47 * 5), 47, 5))
 load_response (blocks, 'inst/extdata/response3.tsv')
 }

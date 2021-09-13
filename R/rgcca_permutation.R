@@ -99,7 +99,7 @@
 #' print(fit)
 #' plot(fit)
 #' fit$bestpenalties
-#' \dontrun{
+#' \donttest{
 #' # It is possible to define explicitly K combinations of shrinkage
 #' # parameters to be tested and in that case a matrix of dimension KxJ is
 #' # required. Each row of this matrix corresponds to one specific set of
@@ -207,7 +207,7 @@
 #'                           par_value = par_value,
 #'                           par_length = 10,
 #'                           n_perms = 10, n_cores = 1, tol = 1e-2)
-#'                           )
+#'
 #' print(fit)
 #' plot(fit)
 #' }
@@ -467,8 +467,8 @@ rgcca_permutation <- function(blocks, par_type = "tau", par_value = NULL,
     crits = W[!perm_parallel]
     permcrit = matrix(W[perm_parallel], nrow = nrow(par[[2]]),
                       ncol = n_perms , byrow = TRUE)
-    means = apply(permcrit, 1, mean, na.rm = T)
-    sds = apply(permcrit, 1, sd, na.rm = T)
+    means = apply(permcrit, 1, mean, na.rm = TRUE)
+    sds = apply(permcrit, 1, sd, na.rm = TRUE)
     par <- par[[2]]
     pvals <- sapply(seq(NROW(par)), function(k) mean(permcrit[k, ] >= crits[k]))
     zs <- sapply(seq(NROW(par)), function(k){

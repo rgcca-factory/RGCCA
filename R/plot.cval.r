@@ -25,8 +25,9 @@ plot.cval=function(x, bars="sd", cex = 1, cex_main = 14 * cex, cex_sub = 12 * ce
 
     stopifnot(is(x, "cval"))
     match.arg(bars,c("quantile","sd","stderr","points"))
-    for (i in c("cex", "cex_main", "cex_sub", "cex_lab"))
+    for (i in c("cex_main", "cex_sub", "cex_lab"))
         check_integer(i, get(i))
+    check_integer("cex", cex, float = TRUE)
     check_colors(colors)
     if (length(colors) < 2)
         colors <- rep(colors, 2)

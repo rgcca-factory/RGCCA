@@ -55,7 +55,7 @@
 #' #############
 #' # Example 1 #
 #' #############
-#' \dontrun{
+#' \donttest{
 #' # Download the dataset's package at http://biodev.cea.fr/sgcca/.
 #' # --> gliomaData_0.4.tar.gz
 #'
@@ -111,7 +111,7 @@
 #'      Loc, col = as.numeric(Loc), cex = .6)
 #'
 #' # sgcca algorithm with multiple components and different
-#' L1 penalties for each components
+#' # L1 penalties for each components
 #' # (-> sparsity is a matrix)
 #' init = "random"
 #' result.sgcca = sgcca(blocks, connection,
@@ -223,8 +223,8 @@ sgcca <- function(blocks, connection = 1 - diag(length(blocks)),
       for (b in 1:J) Y[[b]][, n] <- sgcca.result$Y[, b]
       for (b in 1:J) a[[b]][, n] <- sgcca.result$a[[b]]
       for (b in 1:J) astar[[b]][, n] <- sgcca.result$a[[b]] -
-        astar[[b]][, (1:(n - 1)), drop = F] %*%
-        drop( t(a[[b]][, n]) %*% P[[b]][, 1:(n - 1), drop = F] )
+        astar[[b]][, (1:(n - 1)), drop = FALSE] %*%
+        drop( t(a[[b]][, n]) %*% P[[b]][, 1:(n - 1), drop = FALSE] )
 
       for (q in which(n < ndefl)) if (sum(sgcca.result$a[[q]] != 0) <= 1)
       {
@@ -252,7 +252,7 @@ sgcca <- function(blocks, connection = 1 - diag(length(blocks)),
   #AVE outer
   outer = matrix(unlist(AVE_X), nrow = max(ncomp))
   for (j in 1:max(ncomp))
-    AVE_outer[j] <- sum(pjs * outer[j, ], na.rm = T) / sum(pjs)
+    AVE_outer[j] <- sum(pjs * outer[j, ], na.rm = TRUE) / sum(pjs)
 
   Y = shave.matlist(Y, ncomp)
   AVE_X = shave.veclist(AVE_X, ncomp)
