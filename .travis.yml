@@ -1,0 +1,45 @@
+language: r
+
+r:
+  - 4.0
+  - 3.6
+  - 3.5
+  - 3.4
+  - 3.3
+
+git:
+  depth: 1
+
+r_packages:
+  - ggplot2
+  - rmarkdown
+  - markdown
+  - optparse
+  - scales
+  - plotly
+  - igraph
+  - ggrepel
+  - devtools
+  - pbapply
+  - Deriv
+  - graphics
+  - stats
+  - grDevices
+  - parallel
+  - methods
+  - gridExtra
+
+install:
+  - R -e 'unlink("vignettes", recursive = TRUE)'
+  - Rscript -e 'install.packages("devtools",repos = "http://cran.wustl.edu")'
+  - R -e 'devtools::install_deps(dep = T)'
+
+script:
+  - R -e 'devtools::document()'
+  - R CMD build .
+  - R CMD check *tar.gz
+
+after_script:
+  - Rscript inst/launcher.R -h
+  - Rscript inst/launcher.R -d inst/extdata/agriculture.tsv
+  - ls -larth
