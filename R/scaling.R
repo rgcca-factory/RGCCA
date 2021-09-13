@@ -15,7 +15,7 @@ scaling <- function(blocks, scale = TRUE, bias = TRUE, scale_block = TRUE) {
                     nb_var <- prod(dim(x)[-1])
                     y <- x / sqrt(nb_var)
                     attr(y, "scaled:scale")  <- attr(x, "scaled:scale") * sqrt(nb_var)
-                    attr(y, "scaled:center") <- attr(x, "scaled:center") / sqrt(nb_var)
+                    attr(y, "scaled:center") <- attr(x, "scaled:center")
                     return(y)
                 }
                 y <- x / sqrt(NCOL(x))
@@ -34,6 +34,7 @@ scaling <- function(blocks, scale = TRUE, bias = TRUE, scale_block = TRUE) {
             N = ifelse(bias, NROW(blocks[[1]]), NROW(blocks[[1]])-1)
             blocks <- lapply(blocks, function(x) {
                 DIM = dim(x)
+                dn  = dimnames(x)
                 if (length(dim(x)) > 2) x = matrix(x, nrow(x))
                 s = norm(matrix(x), type = "F") / sqrt(N)
                 x = x / s
@@ -43,6 +44,7 @@ scaling <- function(blocks, scale = TRUE, bias = TRUE, scale_block = TRUE) {
                 } else {
                     attr(x, "scaled:scale") <- rep(s, NCOL(x))
                 }
+                dimnames(x) = dn
                 return(x)
             })
         }
