@@ -30,15 +30,19 @@ parse_regularisation_matrices <- function(reg_matrices, tau, A, DIM,
   sqrtMatrix = function(M, context = "matrix", d = NULL){
     eig        = eigen(M)
     if (any(abs(eig$values) < .Machine$double.eps)) {
-      if (context == "matrix") {
-        stop_rgcca(paste0("Regularized covariance matrix for block ", j, " is
-                          singular, try another value for tau[", j, "]."))
-      } else {
-        stop_rgcca(paste0("Mode ", d, " regularization matrix for block ", j,
-                          " is singular, please give an invertible matrix."))
-      }
+      # if (context == "matrix") {
+      #   stop_rgcca(paste0("Regularized covariance matrix for block ", j, " is
+      #                     singular, try another value for tau[", j, "]."))
+      # } else {
+      #   stop_rgcca(paste0("Mode ", d, " regularization matrix for block ", j,
+      #                     " is singular, please give an invertible matrix."))
+      # }
+      eig$values[-which(eig$values < .Machine$double.eps)] = 1 / eig$values[-which(eig$values < .Machine$double.eps)]
+      eig$values[which(eig$values < .Machine$double.eps)]  = 0
+      M_inv_sqrt = eig$vectors %*% diag(eig$values^(1/2), nrow = nrow(M)) %*% t(eig$vectors)
+    } else {
+      M_inv_sqrt = eig$vectors %*% diag(eig$values^(-1/2), nrow = nrow(M)) %*% t(eig$vectors)
     }
-    M_inv_sqrt = eig$vectors %*% diag(eig$values^(-1/2), nrow = nrow(M)) %*% t(eig$vectors)
     return(M_inv_sqrt)
   }
   P = A

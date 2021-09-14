@@ -53,16 +53,34 @@ scaling <- function(blocks, scale = TRUE, bias = TRUE, scale_block = TRUE) {
     return(blocks)
 }
 
-# Function to apply scaling/centering to new blocks knowing centering and
-# scaling factors.
+# # Function to apply scaling/centering to new blocks knowing centering and
+# # scaling factors.
+# apply_scaling <- function(blocks, centering_factors, scaling_factors) {
+#     lapply(1:length(blocks), function(x) {
+#         if (length(dim(blocks[[x]])) > 2) {
+#             block = t(apply(blocks[[x]], 1, function(y) y - centering_factors[[x]]))
+#             block = apply(block, 2, function(y) y / scaling_factors[[x]])
+#             return(array(block, dim = dim(blocks[[x]])))
+#         }
+#         if (length(dim(blocks[[x]])) == 2 && dim(blocks[[x]])[2] > 1) {
+#             block = t(apply(blocks[[x]], 1, function(y) y - centering_factors[[x]]))
+#             return(t(apply(block, 1, function(y) y / scaling_factors[[x]])))
+#         }
+#         return((blocks[[x]] - centering_factors[[x]]) / scaling_factors[[x]])
+#     })
+# }
+
 apply_scaling <- function(blocks, centering_factors, scaling_factors) {
     lapply(1:length(blocks), function(x) {
-        if (length(dim(blocks[[x]])) > 2) {
+        DIM = dim(blocks[[x]])
+        if (length(DIM) > 2) {
             block = t(apply(blocks[[x]], 1, function(y) y - centering_factors[[x]]))
-            block = apply(block, 2, function(y) y / scaling_factors[[x]])
-            return(array(block, dim = dim(blocks[[x]])))
+            block = array(block, dim = DIM)
+            block = apply(block, -2, function(y) y / scaling_factors[[x]])
+            block = aperm(block, c(2, 1, 3:length(DIM)))
+            return(block)
         }
-        if (length(dim(blocks[[x]])) == 2 && dim(blocks[[x]])[2] > 1) {
+        if (length(DIM) == 2 && DIM[2] > 1) {
             block = t(apply(blocks[[x]], 1, function(y) y - centering_factors[[x]]))
             return(t(apply(block, 1, function(y) y / scaling_factors[[x]])))
         }

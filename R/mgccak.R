@@ -130,39 +130,61 @@ mgccak <- function (A, A_m = NULL, C, tau = rep(1, length(A)), scheme = "centroi
       dgx    = matrix(rep(dgx, n), n, J, byrow = TRUE)
       Z[, j] = rowSums(matrix(rep(C[j, ], n), n, J, byrow = TRUE) * dgx * Y)
 
+      # if (FALSE) { # 3D Tensors
       if (j %in% B_3D) { # 3D Tensors
-        Q                 = matrix(t(Z[, j]) %*% P[[j]], nrow = DIM[[j]][3],
-                                   ncol = DIM[[j]][2], byrow = T)
-        SVD               = svd(x = Q, nu = ranks[[j]], nv = ranks[[j]])
-        factors[[j]][[1]] = SVD$v
-        factors[[j]][[2]] = SVD$u
-        weights[[j]]      = SVD$d[1:ranks[j]] / sqrt(sum(SVD$d[1:ranks[j]] ^ 2))
-        a[[j]]            = weighted_kron_sum(factors[[j]], weights[[j]])
-        Y[, j]            = P[[j]] %*% a[[j]]
-
-      } else if (j %in% B_nD) { # higher order Tensors
-        for (d in 1:(LEN[[j]] - 1)) {
-          Q                 = array(t(P[[j]]) %*% Z[, j], dim = DIM[[j]][-1])
-          Q                 = unfold(Q, mode = d)
-          # other_factors     = list_khatri_rao(factors[[j]][-d])
-          other_factors     = list_khatri_rao(factors[[j]][-d]) %*% diag(weights[[j]])
-          SVD               = svd(x = Q %*% other_factors, nu = ranks[j],
-                                  nv = ranks[j])
-          factors[[j]][[d]] = SVD$u %*% t(SVD$v)
+        crit_inter_old = sum(C*g(cov2(Y, bias = bias)))
+        for (i in 1:100) {
+          Q                 = matrix(t(Z[, j]) %*% P[[j]], nrow = DIM[[j]][3],
+                                     ncol = DIM[[j]][2], byrow = T)
+          SVD               = svd(x = Q, nu = ranks[[j]], nv = ranks[[j]])
+          factors[[j]][[1]] = SVD$v
+          factors[[j]][[2]] = SVD$u
+          weights[[j]]      = SVD$d[1:ranks[j]] / sqrt(sum(SVD$d[1:ranks[j]] ^ 2))
           a[[j]]            = weighted_kron_sum(factors[[j]], weights[[j]])
           Y[, j]            = P[[j]] %*% a[[j]]
 
-          dgx              = dg(cov2(Y[, j], Y, bias = bias))
-          dgx              = matrix(rep(dgx, n), n, J, byrow = TRUE)
-          Z[, j]           = rowSums(
-            matrix(rep(C[j, ], n), n, J, byrow = TRUE) * dgx * Y)
+          crit_inter = sum(C*g(cov2(Y, bias = bias)))
+          if (crit_inter - crit_inter_old < tol) break
+          crit_inter_old = crit_inter
         }
 
-        tmp          = t(Z[, j]) %*% P[[j]] %*% list_khatri_rao(factors[[j]])
-        weights[[j]] = drop(tmp) / norm(drop(tmp), type = "2")
+      # } else if (j %in% B_nD || j %in% B_3D) { # higher order Tensors
+      } else if (j %in% B_nD) { # higher order Tensors
+        # crit_inter_old = sum(C*g(cov2(Y, bias = bias)))
+        # for (i in 1:100) {
+          for (d in rev(1:(LEN[[j]] - 1))) {
+            Q                 = array(t(P[[j]]) %*% Z[, j], dim = DIM[[j]][-1])
+            Q                 = unfold(Q, mode = d)
+            # other_factors     = list_khatri_rao(factors[[j]][-d])
+            other_factors     = list_khatri_rao(factors[[j]][-d]) %*% diag(weights[[j]])
+            # if (d == 1) {
+            SVD               = svd(x = Q %*% other_factors, nu = ranks[j],
+                                    nv = ranks[j])
+            factors[[j]][[d]] = SVD$u %*% t(SVD$v)
+            # } else {
+            #   factors[[j]][[d]] = Q %*% other_factors
+            #   factors[[j]][[d]] = apply(factors[[j]][[d]], 2, function(x) x / norm(x, type = "2"))
+            # }
 
-        a[[j]]       = weighted_kron_sum(factors[[j]], weights[[j]])
-        Y[, j]       = P[[j]] %*% a[[j]]
+            a[[j]]            = weighted_kron_sum(factors[[j]], weights[[j]])
+            Y[, j]            = P[[j]] %*% a[[j]]
+
+            dgx              = dg(cov2(Y[, j], Y, bias = bias))
+            dgx              = matrix(rep(dgx, n), n, J, byrow = TRUE)
+            Z[, j]           = rowSums(
+              matrix(rep(C[j, ], n), n, J, byrow = TRUE) * dgx * Y)
+          }
+
+          tmp          = t(Z[, j]) %*% P[[j]] %*% list_khatri_rao(factors[[j]])
+          weights[[j]] = drop(tmp) / norm(drop(tmp), type = "2")
+
+          a[[j]]       = weighted_kron_sum(factors[[j]], weights[[j]])
+          Y[, j]       = P[[j]] %*% a[[j]]
+
+        #   crit_inter = sum(C*g(cov2(Y, bias = bias)))
+        #   if (crit_inter - crit_inter_old < tol) break
+        #   crit_inter_old = crit_inter
+        # }
 
       } else { # Matrices
         Q      = t(P[[j]]) %*% Z[,j]
