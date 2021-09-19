@@ -1,5 +1,5 @@
 # inds : individuals removed from the blocks (for crossvalidation)
-# affects same parameters as rgcca_res (or other ones if specified) on a subset 
+# affects same parameters as rgcca_res (or other ones if specified) on a subset
 # of individuals determined by inds (individuals to remove)
 set_rgcca <- function(
     rgcca_res,
@@ -52,67 +52,44 @@ set_rgcca <- function(
         if (!is.null(rgcca_res$call$response))
             response <- rgcca_res$call$response
 
-  }else
-#        blocks <- scaling(blocks, scale, scale_block = scale_block)
+  }
 
-    if (!boot)
-        blocks <- intersection_list(blocks)
+  if (tolower(method) %in% c("sgcca", "spca", "spls")) {
 
-    if (tolower(method) %in% c("sgcca", "spca", "spls")) {
+      if (!is.null(blocks) && !missing(tau) && missing(sparsity))
+          stop_rgcca(paste0("sparsity parameter required for ", tolower(method), "instead of tau."))
 
-        if (!is.null(blocks) && !missing(tau) && missing(sparsity))
-            stop_rgcca(paste0("sparsity parameter required for ", tolower(method), "instead of tau."))
+      par <- "sparsity"
+      penalty <- sparsity
 
-        par <- "sparsity"
-        penalty <- sparsity
+  } else {
 
-    } else {
+      if (!is.null(blocks) && !missing(sparsity) && missing(tau))
+          stop_rgcca(paste0("tau parameter required for ", tolower(method), "instead of sparsity."))
 
-        if (!is.null(blocks) && !missing(sparsity) && missing(tau))
-            stop_rgcca(paste0("tau parameter required for ", tolower(method), "instead of sparsity."))
+      par <- "tau"
+      penalty <- tau
+  }
 
-        par <- "tau"
-        penalty <- tau
-    }
-
-    if (boot)
-    {
-        boot_blocks <- list(NULL)
-        while (any(sapply(boot_blocks, function(x) length(x)) == 0))
-        {
-            id_boot <- sample(NROW(blocks[[1]]), replace = TRUE)
-            boot_blocks <- lapply(
-                blocks,
-                function(x)
-                    {
-                        y= x[id_boot, , drop = FALSE]
-                        rownames(y)=paste("S",1:length(id_boot))
-                        return(y)
-                }
-                    )
-# TODO : to be replaced by something else
-           boot_blocks <- remove_null_sd(boot_blocks)
-        }
-    }
-    else
-    {
-        if(length(inds) == 0)
-        {
-            boot_blocks = blocks
-        }
-        else
-        {
-            boot_blocks <- lapply(blocks, function(x) x[-inds, , drop = FALSE])
-            if("character"%in% class(boot_blocks[[response]]))
-            {
-                if(length(unique(boot_blocks[[response]])) == 1)
-                {
-                    warning("One block has no variablity and rgcca fails to fit.")
-                    return(NULL)
-                }
-            }
-        }
-    }
+  if (!boot)
+  {
+      if(length(inds) == 0)
+      {
+          boot_blocks = blocks
+      }
+      else
+      {
+          boot_blocks <- lapply(blocks, function(x) x[-inds, , drop = FALSE])
+          if("character"%in% class(boot_blocks[[response]]))
+          {
+              if(length(unique(boot_blocks[[response]])) == 1)
+              {
+                  warning("One block has no variablity and rgcca fails to fit.")
+                  return(NULL)
+              }
+          }
+      }
+  }
 
 
     func <- quote(
