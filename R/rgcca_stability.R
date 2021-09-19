@@ -49,6 +49,15 @@ rgcca_stability <- function(rgcca_res,
   check_integer("n_boot", n_boot)
   check_integer("n_cores", n_cores, min = 0)
 
+  boot_sampling            = generate_resampling(rgcca_res = rgcca_res,
+                                                 n_boot    = n_boot)
+  summarize_column_sd_null = boot_sampling$summarize_column_sd_null
+  if (!is.null(summarize_column_sd_null)){
+    rgcca_res$call$raw = remove_null_sd(list_m         = rgcca_res$call$raw,
+                                        column_sd_null = summarize_column_sd_null)$list_m
+    rgcca_res          = set_rgcca(rgcca_res)
+  }
+
   ndefl_max = max(rgcca_res$call$ncomp)
   list_res = list()
   for(i in 1:ndefl_max){
@@ -71,18 +80,24 @@ rgcca_stability <- function(rgcca_res,
       assign("rgcca_res", rgcca_res, envir = .GlobalEnv)
       cl = parallel::makeCluster(n_cores)
       parallel::clusterExport(cl, "rgcca_res")
-      W = pbapply::pblapply(seq(n_boot),
-                            function(b) bootstrap_k(rgcca_res),
+      W = pbapply::pblapply(boot_sampling$boot_blocks,
+                            function(b) bootstrap_k(rgcca_res      = rgcca_res,
+                                                    boot_blocks    = b,
+                                                    column_sd_null = summarize_column_sd_null),
                             cl = cl)
       parallel::stopCluster(cl)
       rm("rgcca_res", envir = .GlobalEnv)
     }
     else
-    W = pbapply::pblapply(seq(n_boot),
-                            function(b) bootstrap_k(rgcca_res))
+    W = pbapply::pblapply(boot_sampling$boot_blocks,
+                            function(b) bootstrap_k(rgcca_res      = rgcca_res,
+                                                    boot_blocks    = b,
+                                                    column_sd_null = summarize_column_sd_null))
   }else{
-    W = pbapply::pblapply(seq(n_boot),
-                          function(b) bootstrap_k(rgcca_res),
+    W = pbapply::pblapply(boot_sampling$boot_blocks,
+                          function(b) bootstrap_k(rgcca_res      = rgcca_res,
+                                                  boot_blocks    = b,
+                                                  column_sd_null = summarize_column_sd_null),
                           cl = n_cores)
   }
 
