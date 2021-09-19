@@ -10,7 +10,7 @@
 get_cor_all <- function(
     rgcca_res,
     blocks = rgcca_res$call$blocks,
-    comps = get_comp_all(rgcca_res)){
+    comps){
 
     comp <- list()
 
@@ -24,7 +24,7 @@ get_cor_all <- function(
 
         for (n in names(blocks)) {
             pos <- grep(
-                paste0(n, "_comp", i),
+                paste0(n, "_", i),
                 colnames(comps))
             if (length(pos) > 0)
                 comp[[i]][, n] <- comps[, pos]
