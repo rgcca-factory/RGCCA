@@ -7,8 +7,7 @@
 bootstrap_k <- function(rgcca_res, boot_blocks = NULL, column_sd_null = NULL) {
     rgcca_res_boot <- set_rgcca(rgcca_res,
                                 blocks    = boot_blocks,
-                                NA_method = "nipals",
-                                boot      =  is.null(boot_blocks))
+                                NA_method = "nipals")
     #block-weight vector
     W = add_variables_submodel(rgcca_res, rgcca_res_boot$a)
 
