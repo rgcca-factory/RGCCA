@@ -23,7 +23,7 @@ proj_l1_l2 <- function(argu, a = 1){
 
   # Check for multiple maximum
   MAX  <- max(p)
-  bMAX <- p == MAX
+  bMAX <- (abs(p - MAX) <= 1e-13)
   nMAX <- sum(bMAX)
 
   # If there are multiple maximum, the sparse parameter
