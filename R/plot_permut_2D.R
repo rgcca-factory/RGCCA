@@ -78,10 +78,13 @@ plot_permut_2D <- function(
             )
     else
         title <- paste0(title, collapse = " ")
-
-    p <- ggplot(data = df, mapping = aes(x = df[, 1], y = df[, 2], ymin = 0)) +
+    df$label = apply(perm$penalties, 1, function(x) paste0(round(x, 3), collapse = "/"))
+    col                 = c()
+    col[df$label]       = "plain"
+    col[df$label[best]] = "bold"
+    p <- ggplot(data = df, mapping = aes(x = df[, 3], y = df[, 2], ymin = 0)) +
         theme_classic() +
-        geom_line(size = 0.5) +
+        geom_point(size = 2, shape = 17) +
         labs(
             title = title,
             x = "Combinations",
@@ -92,11 +95,12 @@ plot_permut_2D <- function(
             axis.text = element_text(size = 10, face = "bold"),
             axis.title.y = axis(margin(0, 20, 0, 0)),
             axis.title.x = axis(margin(20, 0, 0, 0)),
+            axis.text.y = element_text(face = unname(col)),
             axis.line = element_line(size = 0.5),
             axis.ticks  = element_line(size = 0.5),
             axis.ticks.length = unit(2, "mm"),
             legend.position = "none"
-        )
+        )  + coord_flip() +  scale_x_discrete(guide = guide_axis(check.overlap = TRUE))
 
     if (type == "zstat")
         p <- p + geom_hline(
@@ -106,17 +110,9 @@ plot_permut_2D <- function(
             yintercept = c(1.96, 2.58, 3.29)
         )
     else {
-        dft <- NULL
-        for (i in seq(NCOL(perm$permcrit))) {
-            x <- df[, 1]
-            y <- perm$permcrit[, i]
-            dfi <- cbind(x,y)
-            dft <- rbind(dft,dfi)
-        }
-        dft <- as.data.frame(dft)
-
+        dft = data.frame(combinations = rep(df[, 3], NCOL(perm$permcrit)), permcrit = c(perm$permcrit))
         if (bars == "points")
-            p <- p + geom_point(data = dft,aes(x = dft[,1], y = dft[,2]), colour = colors[2], size = 0.8)
+            p <- p + geom_boxplot(data = dft,aes(x = combinations, y = permcrit), colour = colors[2], size = 0.8)
          if (bars == "sd") {
              tab=aggregate(dft,by=list(dft[,1]),sd)
              tab2=aggregate(dft,by=list(dft[,1]),mean)
@@ -145,23 +141,25 @@ plot_permut_2D <- function(
 
     }
 
-    p <- p + geom_line(data = df, mapping = aes(x = df[, 1], y = df[, 2])) +
-        scale_x_continuous(breaks = 1:nrow(df), labels = rownames(df)) +
+    p <- p + #geom_line(data = df, mapping = aes(x = df[, 3], y = df[, 2])) +
+        #scale_x_continuous(breaks = 1:nrow(df), labels = rownames(df)) +
         theme(plot.title = element_text(vjust=5), plot.margin = margin(5, 0, 0, 0, "mm")) +
-        geom_point(
-            mapping = aes(
-                x = best,
-                y = y_best,
-                color = I(colors[1]),
-                shape = I(3)
-            ),
-            size = 5
-        ) +
-        geom_vline(
-            size =  0.5,
-            color = colors[1],
-            xintercept = best
-        )
+        geom_boxplot(data=dft[dft$combinations == df$label[best],  ], aes(x = combinations, y = permcrit),fill="red") +
+        geom_point(data=df[best, ], aes(x = label, y = crit), color="red", size = 3, shape = 17)
+        # geom_point(
+        #     mapping = aes(
+        #         x = best,
+        #         y = y_best,
+        #         color = I(colors[1]),
+        #         shape = I(3)
+        #     ),
+        #     size = 5
+        # ) +
+        # geom_vline(
+        #     size =  0.5,
+        #     color = colors[1],
+        #     xintercept = best
+        # )
     attributes(p)$penalties <- perm$penalties
 
     return(p)
