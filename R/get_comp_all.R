@@ -23,7 +23,7 @@ get_comp_all <- function(
             mapply(
                 function(name, times)  rep(name, times),
                 names(X)[-newbloc_y],
-                rgcca$call$ncomp
+                rgcca$call$ncomp[-newbloc_y]
         )), names,
         sep = "_")
 
