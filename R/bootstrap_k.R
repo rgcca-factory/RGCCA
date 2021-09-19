@@ -4,9 +4,11 @@
 #
 # @param rgcca_res A fitted RGCCA object (see  \code{\link[RGCCA]{rgcca}})
 # @return A list of RGCCA bootstrap weights/loadings.
-bootstrap_k <- function(rgcca_res) {
-    rgcca_res_boot <- set_rgcca(rgcca_res, NA_method = "nipals", boot = TRUE)
-
+bootstrap_k <- function(rgcca_res, boot_blocks = NULL, column_sd_null = NULL) {
+    rgcca_res_boot <- set_rgcca(rgcca_res,
+                                blocks    = boot_blocks,
+                                NA_method = "nipals",
+                                boot      =  is.null(boot_blocks))
     #block-weight vector
     W = add_variables_submodel(rgcca_res, rgcca_res_boot$a)
 
