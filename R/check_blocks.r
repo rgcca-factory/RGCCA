@@ -40,7 +40,7 @@ check_blocks <- function(blocks, init = FALSE, n = 2,
       }
       message("Missing block names are automatically labeled.")
     }
-    
+
     # Gestion of the case of one variable only
     blocks = lapply(blocks, as.matrix)
     nameBlocks = names(blocks)
@@ -73,26 +73,26 @@ check_blocks <- function(blocks, init = FALSE, n = 2,
     #                   return(blocks[[i]])
     #                 }
     #               })
-    # 
+    #
     # blocks=blocks1
     # names(blocks)=nameBlocks
-    
-    # check names    
+
+    # check names
     #if (is.null(names(blocks))){
     #  names(blocks)=paste0("block",1:length(blocks))
     #  message("Blocks are unnamed and automatically labeled.")
     #}
-    
+
     if (any(sapply(blocks, function(x) is.null(colnames(x)))))
     {
       message("Missing colnames are automatically labeled.")
       blocks1 = lapply(seq_along(blocks),
                        function(x){
                          if(is.null(colnames(blocks[[x]]))){
-                           if(NCOL(blocks[[x]]) == 1){ 
+                           if(NCOL(blocks[[x]]) == 1){
                              colnames(blocks[[x]]) = names(blocks)[x]
                            }else{
-                             colnames(blocks[[x]]) = 
+                             colnames(blocks[[x]]) =
                                paste0("V", x, 1:NCOL(blocks[[x]]))
                            }
                            return(blocks[[x]])
@@ -101,14 +101,14 @@ check_blocks <- function(blocks, init = FALSE, n = 2,
                            return(blocks[[x]])
                          }
                        }
-      ) 
+      )
       blocks=blocks1
       names(blocks)=nameBlocks
     }
-    
-    
 
-    
+
+
+
     # if one colname is identical within or between block
     if(sum(duplicated(unlist(sapply(blocks,colnames))))!=0)
     {
@@ -165,7 +165,7 @@ check_blocks <- function(blocks, init = FALSE, n = 2,
         if (length(blocks) > 1 && !equal_rows) blocks <- common_rows(blocks)
 
     if (init) {
-        blocks <- remove_null_sd(blocks)
+        blocks <- remove_null_sd(blocks)$list_m
         for (i in seq(length(blocks)))
             attributes(blocks[[i]])$nrow <- nrow(blocks[[i]])
     }
