@@ -3,24 +3,22 @@
 # @param list_m A list of dataframe
 # @return A list of dataframe
 
-remove_null_sd <- function(list_m) {
+remove_null_sd <- function(list_m, column_sd_null = NULL) {
 
     names <- names(list_m)
 
-    column_sd_null <- lapply(list_m,
-                             function(x)
-                                 which(apply(x, 2, function(y){
-                                     if(mode(y)!="character")
-                                     {
-                                        res= sd(y[!is.na(y)]) == 0
-                                     }
-                                     else
-                                     {
-                                         res=FALSE
-                                    }
-                                     return(res)
-                                     } ))
-    )
+    if (is.null(column_sd_null)){
+        column_sd_null <- lapply(list_m,
+                                 function(x)
+                                     which(apply(x, 2, function(y){
+                                         if(mode(y)!="character"){
+                                             res= sd(y[!is.na(y)]) == 0
+                                         }else{
+                                             res=FALSE
+                                         }
+                                         return(res)})))
+    }
+
     blocks_index <- seq(1, length(list_m))[
         unlist(
             lapply(
@@ -36,5 +34,5 @@ remove_null_sd <- function(list_m) {
         })
 
     names(list_m) <- names
-    return(list_m)
+    return(list(list_m = list_m, column_sd_null = column_sd_null))
 }
