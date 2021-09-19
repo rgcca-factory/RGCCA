@@ -198,7 +198,7 @@ rgcca_cv=function( blocks,
     message(paste("Cross-validation for", par_type[[1]], "in progress...\n"), appendLF = FALSE)
     pb <- txtProgressBar(max=dim(par_type[[2]])[1])
     n_rep=ifelse(one_value_per_cv,n_run,n_run*k)
-    res=matrix(NA,dim(par_type[[2]])[1],n_run*k);rownames(res)=apply(round(par_type[[2]],digits=2),1,paste,collapse="-");
+    res  = list()
 
     for(i in 1:dim(par_type[[2]])[1])
         {
@@ -218,48 +218,32 @@ rgcca_cv=function( blocks,
 
               }
 
-            res_i=c()
-            for(n in 1:n_run)
-            {
-                if(one_value_per_cv)
-                {
-                    res_i=c(res_i,rgcca_cv_k(
-                        rgcca_res,
-                        validation = validation,
-                        task = type_cv,
-                        prediction_model = prediction_model,
-                        X_scaled = TRUE,
-                        k = k,
-                      n_cores =n_cores,
-                      parallelization=parallelization
-                      )$scores)
-                }
-                else
-                {
-                    res_i= c(res_i,rgcca_cv_k(
-                        rgcca_res,
-                        validation = validation,
-                        task = type_cv,
-                        prediction_model = prediction_model,
-                        X_scaled = TRUE,
-                        k = k,
-                        n_cores =n_cores,
-                        parallelization=parallelization)$list_scores)
-
-                }
-
-
+            res_i = list()
+            for(n in 1:n_run){
+                res_tmp = rgcca_cv_k(rgcca_res,
+                                     validation       = validation,
+                                     prediction_model = prediction_model,
+                                     k                = k,
+                                     n_cores          = n_cores,
+                                     parallelization  = parallelization)
+                # if(one_value_per_cv){
+                #     res_i = c(res_i, res_tmp$scores)
+                # }else{
+                #     res_i = c(res_i, res_tmp$list_scores)
+                # }
+                res_i[[n]] = res_tmp$list_scores
             }
-
-            res[i,]=as.numeric(res_i)
+            res[[i]] = sapply(res_i, function(x) x, simplify = "array")
+            # res=matrix(NA,dim(par_type[[2]])[1],n_run*k);rownames(res)=apply(round(par_type[[2]],digits=2),1,paste,collapse="-")
 
             #Sys.sleep(0.5);
             setTxtProgressBar(pb, i)
-            mat_cval=res
-
-            rownames(mat_cval)=1:NROW(mat_cval)
-
     }
+    browser()
+    mat_cval = sapply(res, function(x) x, simplify = "array")
+    dimnames(mat_cval)[3:5] = list(paste(validation, 1:k, sep = "-"),
+                                   paste("n_run", 1:n_run, sep = "-"),
+                                   apply(round(par_type[[2]], digits=2), 1, paste, collapse = "-"))
 
     cat("\n")
     Sys.sleep(1)

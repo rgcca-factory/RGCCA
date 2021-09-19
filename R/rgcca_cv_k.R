@@ -21,9 +21,7 @@
 rgcca_cv_k <- function(
     rgcca_res,
     validation = "kfold",
-    task = "regression",
     prediction_model = "lm",
-    X_scaled = TRUE,
     k = 5,
     scale=NULL,
     scale_block=NULL,
@@ -62,11 +60,10 @@ rgcca_cv_k <- function(
     check_integer("k", k, min = 2)
     check_integer("n_cores", n_cores, min = 0)
     response=rgcca_res$call$response
-    block_to_predict <- names(rgcca_res$call$blocks)[response]
+    response <- names(rgcca_res$call$blocks)[response]
 
     if (n_cores == 0)
         n_cores <- 1
-
     f <- quote(
         function(){
 
@@ -100,13 +97,10 @@ rgcca_cv_k <- function(
                  attr(rgcca_k$call$blocks[[i]], "scaled:scale") <- scale_attr[[i]]
              }
           # Necessite les scale et les center en sortie
-           respred= rgcca_predict(
-                rgcca_k,
-                X = lapply(bigA, function(x) x[inds, , drop = FALSE]),
-                task = task,
-                prediction_model = prediction_model,
-                block_to_predict = block_to_predict,
-                X_scaled = FALSE
+           respred = rgcca_predict(rgcca_res        = rgcca_k,
+                                   blocks_test      = lapply(bigA, function(x) x[inds, , drop = FALSE]),
+                                   method           = prediction_model,
+                                   response         = response,
             )
 
         }
@@ -169,12 +163,14 @@ rgcca_cv_k <- function(
             )
         }
 
-    list_rgcca = lapply(scores, function(x) return(x$rgcca_res))
-    list_pred = lapply(scores, function(x) return(x$pred))
-    list_scores=sapply(scores, function(x) x$score)
-    list_res=lapply(scores, function(x) return(x$res))
-    list_class.fit=lapply(scores, function(x) return(x$class.fit))
-
+    list_rgcca     = lapply(scores, function(x) return(x$rgcca_res))
+    list_pred      = lapply(scores, function(x) return(x$projection))
+    list_scores    = sapply(scores, function(x) sapply(x$results["metric", ],
+                                                  function(y) y$test, simplify = "array"),
+                            simplify = "array")
+    list_class.fit = lapply(scores, function(x) sapply(x$results["prediction", ],
+                                                       function(y) y$test[, "pred"],
+                                                       simplify = "array"))
     if (validation %in% c("loo", "kfold")) {
         # concatenation of each test set to provide predictions for each block
         preds <- lapply(
@@ -183,22 +179,21 @@ rgcca_cv_k <- function(
                 rbind,
                 lapply(
                     scores,
-                    function(y) y$pred[[x]]
+                    function(y) y$projection[[x]]
                 )
             )
         )
-
         names(preds) <- names(rgcca_res$call$blocks)
 
         for (x in seq(length(preds)))
-            row.names(preds[[x]]) <- row.names(bigA[[1]])
+            preds[[x]] <- as.matrix(preds[[x]][match(row.names(bigA[[1]]), row.names(preds[[x]])), ])
     }
-     scores <- mean(unlist(lapply(scores, function(x) x$score)),na.rm=T)
+     scores <- apply(list_scores, c(1, 2), function(x) mean(x, na.rm=T))
 
     structure(
         list(scores = scores, preds = preds,
              rgcca_res = rgcca_res,
              list_scores = list_scores,
-             list_pred=list_pred,list_rgcca=list_rgcca,list_class=list_class.fit,list_res=list_res),
+             list_pred=list_pred,list_rgcca=list_rgcca,list_class=list_class.fit),
         class = "cv")
 }
