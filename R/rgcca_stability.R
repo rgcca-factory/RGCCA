@@ -8,6 +8,11 @@
 #' block.
 #' @param n_boot Number of bootstrap samples (Default: 100).
 #' @param n_cores Number of cores for parallelization.
+#' @param balanced A boolean indicating if a balanced bootstrap procedure is
+#' performed or not (default is TRUE).
+#' @param keep_all_variables A boolean indicating if all variables have to be
+#' kept even when some of them have null variance for at least one bootstrap
+#' sample (default is FALSE).
 #' @return \item{top}{indicator on which variables are ranked.}
 #' @return \item{keepVar}{indices of the top variables.}
 #' @return \item{bootstrap}{block-weight vectors for ech bootstrap sample.}
@@ -43,14 +48,17 @@
 rgcca_stability <- function(rgcca_res,
                             keep = sapply(rgcca_res$a, function(x) mean(x!=0)),
                             n_boot = 100,
-                            n_cores = parallel::detectCores() - 1){
+                            n_cores = parallel::detectCores() - 1,
+                            balanced = TRUE, keep_all_variables = FALSE){
 
   stopifnot(tolower(rgcca_res$call$method)%in%c("sgcca", "spls", "spca"))
   check_integer("n_boot", n_boot)
   check_integer("n_cores", n_cores, min = 0)
 
-  boot_sampling            = generate_resampling(rgcca_res = rgcca_res,
-                                                 n_boot    = n_boot)
+  boot_sampling            = generate_resampling(rgcca_res          = rgcca_res,
+                                                 n_boot             = n_boot,
+                                                 balanced           = balanced,
+                                                 keep_all_variables = keep_all_variables)
   summarize_column_sd_null = boot_sampling$summarize_column_sd_null
   if (!is.null(summarize_column_sd_null)){
     rgcca_res$call$raw = remove_null_sd(list_m         = rgcca_res$call$raw,
