@@ -1,14 +1,19 @@
-# Product for Matrix (pm) is a generalization of the matricial product %*% for matrices with missing data. Missing data are replaced by 0.
-# @param M1  A matrix with n1 lines and p columns
-# @param M2  A matrix with p lines and n2 columns
-# @param na.rm if TRUE calculates the matricial product only on available data. Else returns NA.
-# @return \item{X}{The resulting matrix with n1 lines and n2 columns}
-# @title Product for Matrices with missing data (pm)
+# Generate n_boot block-wise bootstrapped samples. Every sampled
+# @inheritParams bootstrap
+# @return \item{boot_blocks}{A list of size n_boot containing all the
+# bootstrapped blocks.}
+# @return \item{full_idx}{A list of size n_boot containing the observations
+# kept for each bootstrap sample.}
+# @return \item{summarize_column_sd_null}{A list of size the number of block
+# containing the variables that were removed from each block for all the
+# bootstrap samples. Variables are removed if they appear to be of null variance
+# in at least one bootstrap sample. If no variable is removed, return NULL.}
+# @title Generate sampled blocks for bootstrap.
 
 generate_resampling <- function(rgcca_res, n_boot){
   N                   = NROW(rgcca_res$call$raw[[1]])
   full_idx            = rep(x = seq(N), each = n_boot)
-  full_idx            = sample(x = full_idx, size = N*n_boot)
+  full_idx            = sample(x = full_idx, size = N*n_boot, replace = FALSE)
   full_idx            = split(full_idx, ceiling(seq_along(full_idx)/N))
   boot_blocks         = lapply(full_idx, function(idx) lapply(rgcca_res$call$raw,
                                                               function(x){
@@ -21,12 +26,8 @@ generate_resampling <- function(rgcca_res, n_boot){
     summarize_column_sd_null = NULL
   }else{
     summarize_column_sd_null = Reduce("rbind", boot_column_sd_null)
-    summarize_column_sd_null = apply(summarize_column_sd_null, 2,
-                                     function(x){
-                                       vec_x = unlist(x)
-                                       dup_x = duplicated(vec_x)
-                                       return(vec_x[which(!dup_x)])
-                                     })
+    summarize_column_sd_null = apply(as.data.frame(summarize_column_sd_null), 2,
+                                     function(x) unique(x)[1:2][[2]])
     boot_blocks              = lapply(boot_blocks,
                                       function(blocks)
                                         remove_null_sd(blocks, summarize_column_sd_null)$list_m)
