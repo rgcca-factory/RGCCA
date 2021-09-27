@@ -37,29 +37,24 @@ plot_permut_2D <- function(
     check_colors(colors)
     if (length(colors) < 2)
         colors <- rep(colors, 2)
-    if(perm$call$method%in%c("sgcca","spls"))
-    {
-        crit_title="SGCCA criterion"
-    }
-    else
-    {
-        crit_title="RGCCA criterion"
-    }
+    crit_title = ifelse(fit$call$method %in% c("sgcca","spls"),
+                        "SGCCA criterion",
+                        "RGCCA criterion")
 
-    switch(
-        type,
+    switch(type,
         "zstat" =  y_title <- "Z-score",
         "crit" = y_title <-  crit_title
     )
 
     check_ncol(list(perm$zstat), 1)
 
-    y <- unlist(perm[type])
-    best <- which.max(unlist(perm["zstat"]))
-    y_best <- y[best]
-    n <- seq(nrow(perm$penalties))
+    y      = unlist(perm[type])
+    best   = which.max(unlist(perm["zstat"]))
+    y_best = y[best]
+    N      = nrow(perm$penalties)
+    n      = seq(N)
 
-    df <- as.data.frame(cbind(seq(NROW(perm$penalties)), y))
+    df <- as.data.frame(cbind(n, y))
     rownames(df) <- n
     colnames(df) <- c("iter", type)
 
@@ -78,41 +73,46 @@ plot_permut_2D <- function(
         )
     else
         title <- paste0(title, collapse = " ")
-    df$label = apply(perm$penalties, 1, function(x) paste0(round(x, 3), collapse = "/"))
-    col                 = c()
-    col[df$label]       = "plain"
-    col[df$label[best]] = "bold"
-    p <- ggplot(data = df, mapping = aes(x = df[, 3], y = df[, 2], ymin = 0)) +
+
+    df$label       = apply(perm$penalties, 1, function(x) paste0(round(x, 3), collapse = "/"))
+    df$label       = factor(df$label, levels = rev(df$label), ordered = T)
+    breaks         = rev(levels(df$label))
+    labels         = as.expression(breaks)
+    jitter         = floor(N/50)
+    breaks[max(best-jitter, 1):min(best+jitter, N)] = ""
+    breaks[best]   = labels[[best]]
+    labels[[best]] = bquote(underline(bold(.(labels[[best]]))))
+
+    p <- ggplot(data = df, mapping = aes(x = crit, y = label, xmin = 0)) +
         theme_classic() +
         geom_point(size = 2, shape = 17) +
         labs(
             title = title,
-            x = "Combinations",
-            y = y_title
+            y     = "Combinations",
+            x     = y_title
         ) +
         theme_perso(cex, cex_main, cex_sub) +
         theme(
-            axis.text = element_text(size = 10, face = "bold"),
-            axis.title.y = axis(margin(0, 20, 0, 0)),
-            axis.title.x = axis(margin(20, 0, 0, 0)),
-            axis.text.y = element_text(face = unname(col)),
-            axis.line = element_line(size = 0.5),
-            axis.ticks  = element_line(size = 0.5),
+            axis.text         = element_text(size = 10, face = "bold"),
+            axis.title.x      = axis(margin(0, 20, 0, 0)),
+            axis.title.y      = axis(margin(20, 0, 0, 0)),
+            axis.line         = element_line(size = 0.5),
+            axis.ticks        = element_line(size = 0.5),
             axis.ticks.length = unit(2, "mm"),
-            legend.position = "none"
-        )  + coord_flip() +  scale_x_discrete(guide = guide_axis(check.overlap = TRUE))
-
+            legend.position   = "right"
+        )   +  scale_y_discrete(labels = labels, breaks = breaks, guide = guide_axis(check.overlap = T))
+    browser()
     if (type == "zstat")
         p <- p + geom_hline(
             size = 0.5,
             color = colors[2],
             linetype = "dashed",
-            yintercept = c(1.96, 2.58, 3.29)
+            xintercept = c(1.96, 2.58, 3.29)
         )
     else {
-        dft = data.frame(combinations = rep(df[, 3], NCOL(perm$permcrit)), permcrit = c(perm$permcrit))
+        dft = data.frame(combinations = rep(df$label, NCOL(perm$permcrit)), permcrit = c(perm$permcrit))
         if (bars == "points")
-            p <- p + geom_boxplot(data = dft,aes(x = combinations, y = permcrit), colour = colors[2], size = 0.8)
+            p <- p + geom_boxplot(data = dft, aes(x = permcrit, y = combinations), colour = colors[2], size = 0.8)
         if (bars == "sd") {
             tab=aggregate(dft,by=list(dft[,1]),sd)
             tab2=aggregate(dft,by=list(dft[,1]),mean)
@@ -125,7 +125,7 @@ plot_permut_2D <- function(
             tab=aggregate(dft,by=list(dft[,1]),function(x){return(sd(x)/sqrt(length(x)))})
             tab2=aggregate(dft,by=list(dft[,1]),mean)
             dat=data.frame(x=tab[,1],y=tab2[,"y"]-tab[,"y"],xend=tab[,1],yend=tab2[,"y"]+tab[,"y"])
-            p <- p+ geom_point(data=tab2,aes(x=tab2[,1],y=tab2[,3]),colour=colors[2])
+            p <- p + geom_point(data=tab2,aes(x=tab2[,1],y=tab2[,3]),colour=colors[2])
             p <- p + geom_segment(data=dat,aes(x=x,y=y,xend=xend,yend=yend),colour="green",size=0.5)
         }
         if(bars=="quantile")
@@ -137,29 +137,21 @@ plot_permut_2D <- function(
             p <- p+ geom_point(data=tab2,aes(x=tab2[,1],y=tab2[,3]),colour=colors[2])
             p <- p + geom_segment(data=dat,aes(x=x,y=y,xend=xend,yend=yend),colour=colors[2],size=0.5)
         }
-
-
     }
 
-    p <- p + #geom_line(data = df, mapping = aes(x = df[, 3], y = df[, 2])) +
-        #scale_x_continuous(breaks = 1:nrow(df), labels = rownames(df)) +
-        theme(plot.title = element_text(vjust=5), plot.margin = margin(5, 0, 0, 0, "mm")) +
-        geom_boxplot(data=dft[dft$combinations == df$label[best],  ], aes(x = combinations, y = permcrit),fill="red") +
-        geom_point(data=df[best, ], aes(x = label, y = crit), color="red", size = 3, shape = 17)
-    # geom_point(
-    #     mapping = aes(
-    #         x = best,
-    #         y = y_best,
-    #         color = I(colors[1]),
-    #         shape = I(3)
-    #     ),
-    #     size = 5
-    # ) +
-    # geom_vline(
-    #     size =  0.5,
-    #     color = colors[1],
-    #     xintercept = best
-    # )
+    p <- p +
+        theme(plot.title  = element_text(vjust=5, hjust = 0.5),
+              plot.margin = margin(5, 0, 0, 0, "mm")) +
+        geom_boxplot(data = dft[dft$combinations == df$label[best],  ],
+                     aes(x = permcrit, y = combinations),
+                     fill = "red") +
+        geom_point(data  = df[best, ],
+                   aes(x = crit, y = label, colour = "Best"),
+                   color = "red",
+                   size  = 3,
+                   shape = 17) +
+        scale_colour_manual(breaks = c("Best"), values = c("red"))
+
     attributes(p)$penalties <- perm$penalties
 
     return(p)
