@@ -14,7 +14,10 @@ plot_permut_2D(
   cex_point = 3 * cex,
   cex_lab = 10 * cex,
   bars = "points",
-  colors = c("red", "grey")
+  colors = c("red", "grey"),
+  correction = "none",
+  display_all = FALSE,
+  show_legend = TRUE
 )
 }
 \arguments{
@@ -35,11 +38,23 @@ the RGCCA criterion and 'zstat' for the pseudo Z-score)}
 
 \item{cex_lab}{An integer for the size of the axis titles}
 
-\item{bars}{A character giving the variability among "points" (all the points are shown), "sd" (standard deviations bars) , "stderr"(bars of standard deviation divided by sqrt(n)) or "quantile" (for the 0.05-0.95 quantiles bars)}
+\item{bars}{A character giving the variability among "points" (all the points
+are shown), "sd" (standard deviations bars) , "stderr"(bars of standard
+deviation divided by sqrt(n)) or "quantile" (for the 0.05-0.95 quantiles bars)}
 
 \item{colors}{Either a vector of integers (each integer corresponding to a
 color) or of characters corresponding to names of colors (as "blue",see
 colors()) or RGB code ("#FFFFFF").}
+
+\item{correction}{A Character (either 'none' or 'bonferroni') indicating which
+method is applied for multiple testing correction. Only useful
+when "type" is set to "zstat" (default is "none").}
+
+\item{display_all}{A boolean indicating is all parameter combinations have to
+be displayed (default is FALSE).}
+
+\item{show_legend}{A boolean indicating if the legend is displayed (default is
+TRUE).}
 }
 \description{
 Plot permutation in 2D

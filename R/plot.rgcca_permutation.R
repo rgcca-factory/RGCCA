@@ -35,6 +35,9 @@ plot.permutation = function(x,
     cex_point = 3 * cex,
     cex_lab = 19 * cex,
     colors = c("red", "grey"),
+    correction = "none",
+    display_all = FALSE,
+    show_legend = TRUE,
     ...){
 
     p1 <- plot_permut_2D(
@@ -47,7 +50,10 @@ plot.permutation = function(x,
         cex_point = cex_point,
         cex_lab = cex_lab,
         colors  = colors,
-        title = title
+        title = title,
+        correction = correction,
+        display_all = display_all,
+        show_legend = show_legend
     )
     plot(p1)
 }
