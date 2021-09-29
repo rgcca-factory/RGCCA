@@ -5,11 +5,7 @@
 #' @param rgcca_res A fitted RGCCA object (see  \code{\link[RGCCA]{rgcca}})
 #' @param n_boot Number of bootstrap samples. Default: 100.
 #' @param n_cores Number of cores for parallelization.
-#' @param balanced A boolean indicating if a balanced bootstrap procedure is
-#' performed or not (default is TRUE).
-#' @param keep_all_variables A boolean indicating if all variables have to be
-#' kept even when some of them have null variance for at least one bootstrap
-#' sample (default is FALSE).
+#' @inheritParams generate_resampling
 #' @return A list containing two objects: 'bootstrap' and 'rgcca'.
 #' 'bootstrap' is a list containing for each block, a matrix
 #' with the variables of the block in row and the block weight vector
@@ -116,8 +112,7 @@ bootstrap <- function(rgcca_res, n_boot = 100,
         parallel::clusterExport(cl, "rgcca_res")
         W = pbapply::pblapply(boot_sampling$boot_blocks,
                 function(b) bootstrap_k(rgcca_res      = rgcca_res,
-                                        boot_blocks    = b,
-                                        column_sd_null = summarize_column_sd_null),
+                                        boot_blocks    = b),
                 cl = cl)
         parallel::stopCluster(cl)
         rm("rgcca_res", envir = .GlobalEnv)
@@ -125,13 +120,11 @@ bootstrap <- function(rgcca_res, n_boot = 100,
     else
         W = pbapply::pblapply(boot_sampling$boot_blocks,
                               function(b) bootstrap_k(rgcca_res      = rgcca_res,
-                                                      boot_blocks    = b,
-                                                      column_sd_null = summarize_column_sd_null))
+                                                      boot_blocks    = b))
     }else{
         W = pbapply::pblapply(boot_sampling$boot_blocks,
                               function(b) bootstrap_k(rgcca_res      = rgcca_res,
-                                                      boot_blocks    = b,
-                                                      column_sd_null = summarize_column_sd_null),
+                                                      boot_blocks    = b),
                               cl = n_cores)
     }
 
