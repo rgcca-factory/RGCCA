@@ -46,7 +46,8 @@ sgccak <-  function(A, C, sparsity = rep(1, length(A)), scheme = "centroid",
   #	Apply the constraints of the general otpimization problem
   #	and compute the outer components
   iter <- 1
-   crit <- numeric()
+  n_iter_max <- 1000L
+  crit <- numeric(n_iter_max)
   Y <- Z <- matrix(0,NROW(A[[1]]),J)
   for (q in 1:J){
       a[[q]] <- soft.threshold(a[[q]], const[q])
@@ -55,22 +56,20 @@ sgccak <-  function(A, C, sparsity = rep(1, length(A)), scheme = "centroid",
   a_old <- a
 
   # Compute the value of the objective function
-  ifelse((mode(scheme) != "function"),
-         {g <- function(x) switch(scheme,
-                                  horst = x,
-                                  factorial = x**2,
-                                  centroid = abs(x))
-          crit_old <- sum(C*g(cov2(Y, bias = bias)))
-          },
-         crit_old <- sum(C*scheme(cov2(Y, bias = bias)))
-  )
-
-  if (mode(scheme) == "function")
-    dg = Deriv::Deriv(scheme, env = parent.frame())
+  if (mode(scheme) != "function") {
+    g <- function(x) switch(scheme,
+                            horst = x,
+                            factorial = x**2,
+                            centroid = abs(x))
+    crit_old <- sum(C*g(cov2(Y, bias = bias)))
+  } else  {
+    crit_old <- sum(C*scheme(cov2(Y, bias = bias)))
+    dg <- Deriv::Deriv(scheme, env = parent.frame())
+    )
 
   repeat{
 
-      for (q in 1:J){
+      for (q in seq_len(J)){
 
         if (mode(scheme) == "function") {
           dgx = dg(cov2(Y[, q], Y, bias = bias))
@@ -86,7 +85,7 @@ sgccak <-  function(A, C, sparsity = rep(1, length(A)), scheme = "centroid",
             CbyCovq <- C[q, ]*sign(cov2(Y, Y[,q], bias = bias))
         }
 
-        Z[, q] <- rowSums(mapply("*", CbyCovq,as.data.frame(Y)))
+        Z[, q] <- Y %*% CbyCovq
         a[[q]] <- pm(t(A[[q]]), Z[, q], na.rm = na.rm)
         a[[q]] <- soft.threshold(a[[q]], const[q])
         Y[, q] <- pm(A[[q]], a[[q]], na.rm = na.rm)
