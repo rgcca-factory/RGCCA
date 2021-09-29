@@ -6,14 +6,9 @@
 # @title Product for Matrices with missing data (pm)
 
 pm <- function(M1,M2,na.rm=TRUE){
-  if(na.rm)
-  {
-    M1[is.na(M1)]=0
-    M2[is.na(M2)]=0
-    return(M1%*%M2)
+  if (na.rm) {
+    M1[is.na(M1)] <- 0
+    M2[is.na(M2)] <- 0
   }
-  else
-  {
-    return(M1%*%M2)
-  }
+  return(crossprod(M1, M2))
 }
