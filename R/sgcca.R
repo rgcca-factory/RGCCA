@@ -154,8 +154,11 @@ sgcca <- function(blocks, connection = 1 - diag(length(blocks)),
   crit <- list()
   AVE_inner <- rep(NA,max(ncomp))
 
-  for (b in 1:J) a[[b]] <- astar[[b]] <- matrix(NA, pjs[[b]], N + 1)
-  for (b in 1:J) Y[[b]] <- matrix(NA,nb_ind, N + 1)
+  for (b in 1:J)  {
+    a[[b]] <- astar[[b]] <- matrix(NA, pjs[[b]], N + 1)
+    Y[[b]] <- matrix(NA, nb_ind, N + 1)
+    P[[b]] <- matrix(NA, pjs[[b]], N)
+  }
 
   ###################################################
 
@@ -182,8 +185,10 @@ sgcca <- function(blocks, connection = 1 - diag(length(blocks)),
                            na.rm = na.rm)
   }
 
-  for (b in seq_len(J)) Y[[b]][, 1] <- sgcca.result$Y[, b, drop = FALSE]
-  for (b in seq_len(J)) a[[b]][, 1] <- sgcca.result$a[[b]]
+  for (b in seq_len(J)) {
+    Y[[b]][, 1] <- sgcca.result$Y[, b, drop = FALSE]
+    a[[b]][, 1] <- sgcca.result$a[[b]]
+  }
   astar                      <- a
   AVE_inner[1]               <- sgcca.result$AVE_inner
   crit[[1]]                  <- sgcca.result$crit
@@ -194,11 +199,10 @@ sgcca <- function(blocks, connection = 1 - diag(length(blocks)),
   ##############################################
   if (N > 0) {
     R <- blocks
-    for (b in seq_len(J)) P[[b]] <- matrix(NA, pjs[[b]], N)
 
     for (n in 2:(N + 1)) {
-      if (verbose) cat(paste0("Computation of the SGCCA block components #", n,
-                              " is under progress... \n"))
+      if (verbose) message("Computation of the SGCCA block components #", n,
+                              " is under progress... \n")
 
       # Apply deflation
       defla.result <- defl.select(sgcca.result$Y, R, ndefl, n - 1, J, na.rm = na.rm)
@@ -244,17 +248,15 @@ sgcca <- function(blocks, connection = 1 - diag(length(blocks)),
     rownames(a[[b]]) = rownames(astar[[b]]) = colnames(blocks[[b]])
     rownames(Y[[b]]) = rownames(blocks[[b]])
     colnames(Y[[b]]) = paste0("comp", 1:max(ncomp))
-  }
 
-  #Average Variance Explained (AVE) per block
-  for (j in 1:J) AVE_X[[j]] =  apply(
-    cor(blocks[[j]], Y[[j]], use = "pairwise.complete.obs")^2, 2,
-    function(x) {return(mean(x, is.na = TRUE))})
+    #Average Variance Explained (AVE) per block
+    AVE_X[[b]] =  apply(cor(blocks[[b]], Y[[b]], use = "pairwise.complete.obs")^2, 2,
+                      mean, na.rm = TRUE)
+  }
 
   #AVE outer
   outer = matrix(unlist(AVE_X), nrow = max(ncomp))
-  for (j in 1:max(ncomp))
-    AVE_outer[j] <- sum(pjs * outer[j, ], na.rm = T) / sum(pjs)
+  AVE_outer <- as.numeric((outer %*% pjs)/sum(pjs))
 
   Y = shave.matlist(Y, ncomp)
   AVE_X = shave.veclist(AVE_X, ncomp)
