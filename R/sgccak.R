@@ -65,7 +65,7 @@ sgccak <-  function(A, C, sparsity = rep(1, length(A)), scheme = "centroid",
   } else  {
     crit_old <- sum(C*scheme(cov2(Y, bias = bias)))
     dg <- Deriv::Deriv(scheme, env = parent.frame())
-    )
+  )
 
   repeat{
 
@@ -91,16 +91,6 @@ sgccak <-  function(A, C, sparsity = rep(1, length(A)), scheme = "centroid",
         Y[, q] <- pm(A[[q]], a[[q]], na.rm = na.rm)
       }
 
-    # check for convergence of the SGCCA algorithm
-    ifelse((mode(scheme) != "function"),
-           {g <- function(x) switch(scheme,
-                                    horst = x,
-                                    factorial = x**2,
-                                    centroid = abs(x))
-            crit[iter] <- sum(C*g(cov2(Y, bias = bias)))
-            },
-           crit[iter] <- sum(C*scheme(cov2(Y, bias = bias)))
-    )
 
     # Print out intermediate fit
 
@@ -113,7 +103,7 @@ sgccak <-  function(A, C, sparsity = rep(1, length(A)), scheme = "centroid",
     stopping_criteria = c(drop(crossprod(Reduce("c", mapply("-", a, a_old))))
                           , abs(crit[iter]-crit_old))
 
-    if ( any(stopping_criteria < tol) | (iter > 1000))
+    if ( any(stopping_criteria < tol) | (iter > n_iter_max))
       break
 
     crit_old = crit[iter]
@@ -122,20 +112,23 @@ sgccak <-  function(A, C, sparsity = rep(1, length(A)), scheme = "centroid",
   }
 
 
-  if (iter > 1000) warning("The SGCCA algorithm did not converge after 1000
-                           iterations.")
-  if(iter<1000 & verbose) cat("The SGCCA algorithm converged to a stationary
+  if (iter > n_iter_max) {
+    stop_rgcca("The SGCCA algorithm did not converge after ", n_iter_max,
+               " iterations.")}
+  if (iter < n_iter_max & verbose) {
+    message("The SGCCA algorithm converged to a stationary
                               point after", iter-1, "iterations \n")
+    }
   if (verbose) plot(crit, xlab = "iteration", ylab = "criteria")
 
-  for (q in 1:J) if(sum(a[[q]]!=0) <= 1)
-      {
-        if(!quiet)
-        {
+  if (!quiet) {
+    for (q in seq_len(J)) {
+        if(sum(a[[q]]!=0) <= 1) {
             warning(sprintf("Deflation failed because only one variable was
-                            selected for block #",q))
+                            selected for block #", q))
         }
-     }
+    }
+  }
 
   l2_SAT = sapply(a, function(x) norm(x, "2"))
   if (max(abs(l2_SAT - 1)) > tol){

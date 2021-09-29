@@ -143,7 +143,8 @@ sgcca <- function(blocks, connection = 1 - diag(length(blocks)),
   ndefl <- ncomp - 1
   N <- max(ndefl)
   J <- length(blocks)
-  pjs <- sapply(blocks,NCOL)
+  js <- vapply(blocks, NROW, numeric(1L))
+  pjs <- vapply(A, NCOL, numeric(1L))
   nb_ind <- NROW(blocks[[1]])
   AVE_X = list()
   AVE_outer <- rep(NA,max(ncomp))
@@ -181,8 +182,8 @@ sgcca <- function(blocks, connection = 1 - diag(length(blocks)),
                            na.rm = na.rm)
   }
 
-  for (b in 1:J) Y[[b]][, 1] <- sgcca.result$Y[, b, drop = FALSE]
-  for (b in 1:J) a[[b]][, 1] <- sgcca.result$a[[b]]
+  for (b in seq_len(J)) Y[[b]][, 1] <- sgcca.result$Y[, b, drop = FALSE]
+  for (b in seq_len(J)) a[[b]][, 1] <- sgcca.result$a[[b]]
   astar                      <- a
   AVE_inner[1]               <- sgcca.result$AVE_inner
   crit[[1]]                  <- sgcca.result$crit
@@ -193,7 +194,7 @@ sgcca <- function(blocks, connection = 1 - diag(length(blocks)),
   ##############################################
   if (N > 0) {
     R <- blocks
-    for (b in 1:J) P[[b]] <- matrix(NA, pjs[[b]], N)
+    for (b in seq_len(J)) P[[b]] <- matrix(NA, pjs[[b]], N)
 
     for (n in 2:(N + 1)) {
       if (verbose) cat(paste0("Computation of the SGCCA block components #", n,
@@ -220,19 +221,20 @@ sgcca <- function(blocks, connection = 1 - diag(length(blocks)),
       crit[[n]] <- sgcca.result$crit
 
 
-      for (b in 1:J) Y[[b]][, n] <- sgcca.result$Y[, b]
-      for (b in 1:J) a[[b]][, n] <- sgcca.result$a[[b]]
-      for (b in 1:J) astar[[b]][, n] <- sgcca.result$a[[b]] -
-        astar[[b]][, (1:(n - 1)), drop = F] %*%
-        drop( t(a[[b]][, n]) %*% P[[b]][, 1:(n - 1), drop = F] )
+      for (b in 1:J)  {
+        Y[[b]][, n] <- sgcca.result$Y[, b]
+        a[[b]][, n] <- sgcca.result$a[[b]]
+        P[[b]][, n] <- defla.result$pdefl[[b]]
+        astar[[b]][, n] <- sgcca.result$a[[b]] - astar[[b]][, (1:(n - 1)), drop = F] %*% drop(crossprod(a[[b]][, n], P[[b]][, 1:(n - 1), drop = FALSE]))
+      }
 
-      for (q in which(n < ndefl)) if (sum(sgcca.result$a[[q]] != 0) <= 1)
-      {
-        if (!quiet)
-        {
-          warning(sprintf("Deflation failed because only one variable was
+      if (!quiet){
+        for (q in which(n < ndefl)) {
+          if (sum(sgcca.result$a[[q]] != 0) <= 1) {
+            warning(sprintf("Deflation failed because only one variable was
                             selected for block ",q,"! \n"))
 
+          }
         }
       }
     }
