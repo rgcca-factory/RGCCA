@@ -90,8 +90,7 @@ rgcca_stability <- function(rgcca_res,
       parallel::clusterExport(cl, "rgcca_res")
       W = pbapply::pblapply(boot_sampling$boot_blocks,
                             function(b) bootstrap_k(rgcca_res      = rgcca_res,
-                                                    boot_blocks    = b,
-                                                    column_sd_null = summarize_column_sd_null),
+                                                    boot_blocks    = b),
                             cl = cl)
       parallel::stopCluster(cl)
       rm("rgcca_res", envir = .GlobalEnv)
@@ -99,13 +98,11 @@ rgcca_stability <- function(rgcca_res,
     else
     W = pbapply::pblapply(boot_sampling$boot_blocks,
                             function(b) bootstrap_k(rgcca_res      = rgcca_res,
-                                                    boot_blocks    = b,
-                                                    column_sd_null = summarize_column_sd_null))
+                                                    boot_blocks    = b))
   }else{
     W = pbapply::pblapply(boot_sampling$boot_blocks,
                           function(b) bootstrap_k(rgcca_res      = rgcca_res,
-                                                  boot_blocks    = b,
-                                                  column_sd_null = summarize_column_sd_null),
+                                                  boot_blocks    = b),
                           cl = n_cores)
   }
 
