@@ -1,45 +1,62 @@
-Package: RGCCA
 Type: Package
-Title: Regularized (or Sparse) Generalized Canonical Correlation Analysis (R/SGCCA) for multi-block data analysis
+Package: RGCCA
+Title: Regularized (or Sparse) Generalized Canonical Correlation Analysis
+    (R/SGCCA) for multi-block data analysis
 Version: 3.0
 Date: 2020-09-26
-Author: Arthur Tenenhaus, Caroline Peltier, Fabien Girka, Etienne Camenen, Arnaud Gloaguen and Vincent Guillemot
+Author: Arthur Tenenhaus, Caroline Peltier, Fabien Girka, Etienne Camenen,
+    Arnaud Gloaguen and Vincent Guillemot
 Maintainer: Arthur Tenenhaus <arthur.tenenhaus@centralesupelec.fr>
-Description: Multi-block data analysis concerns the analysis of several sets of variables (blocks) observed on the same group of individuals. The main aims of the RGCCA package are: to study the relationships between blocks and to identify subsets of variables of each block which are active in their relationships with the other blocks. This package allows to (i) run R/SGCCA and related methods (\link{rgcca}), (ii) help the user to find out the optimal parameters for R/SGCCA such as regularization parameters (tau or sparsity) (\link{rgcca_permutation}, \link{rgcca_cv}), (iii) evaluate the stability of the RGCCA results and their significance (\link{bootstrap} and \link{rgcca_stability}), (iv) build predictive models from the R/SGCCA (\link{rgcca_predict}), (v) Generic print() and plot() functions apply to all these functionalities.
+Description: Multi-block data analysis concerns the analysis of several
+    sets of variables (blocks) observed on the same group of individuals.
+    The main aims of the RGCCA package are: to study the relationships
+    between blocks and to identify subsets of variables of each block
+    which are active in their relationships with the other blocks. This
+    package allows to (i) run R/SGCCA and related methods (\link{rgcca}),
+    (ii) help the user to find out the optimal parameters for R/SGCCA such
+    as regularization parameters (tau or sparsity)
+    (\link{rgcca_permutation}, \link{rgcca_cv}), (iii) evaluate the
+    stability of the RGCCA results and their significance
+    (\link{bootstrap} and \link{rgcca_stability}), (iv) build predictive
+    models from the R/SGCCA (\link{rgcca_predict}), (v) Generic print()
+    and plot() functions apply to all these functionalities.
 License: GPL-3
-LazyData: true
 Depends: 
     MASS,
     R (>= 2.10)
-Packaged: 2013-07-24 16:36:37 UTC; arthur
+Imports: 
+    Deriv,
+    ggplot2,
+    graphics,
+    grDevices,
+    gridExtra,
+    methods,
+    parallel,
+    pbapply,
+    plotly,
+    scales,
+    stats
 Suggests: 
-    testthat,
-    devtools,
     bsplus,
-    knitr,
-    rmarkdown,
-    pander,
-    shiny,
-    shinyjs,
+    devtools,
     DT,
     ggrepel,
-    optparse,
     igraph,
+    knitr,
     magrittr,
     nnet,
-    openxlsx
-RoxygenNote: 7.1.1
-Imports: 
-    parallel,
-    pbapply,	
-    grDevices,
-    Deriv,
-    graphics,
-    stats,
-    ggplot2,
-    methods,
-    scales,
-    gridExtra,
-    plotly
-VignetteBuilder: knitr
-biocViews: Visualization, PrincipalComponent, DimensionReduction, StructuralEquationModels
+    openxlsx,
+    optparse,
+    pander,
+    rmarkdown,
+    shiny,
+    shinyjs,
+    testthat
+VignetteBuilder: 
+    knitr
+biocViews: Visualization, PrincipalComponent, DimensionReduction,
+    StructuralEquationModels
+Encoding: UTF-8
+LazyData: true
+Packaged: 2013-07-24 16:36:37 UTC; arthur
+RoxygenNote: 7.1.2
