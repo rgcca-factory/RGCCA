@@ -10,4 +10,4 @@ res_permut = rgcca_permutation(blocks = blocks,
                                n_perms=5,
                                n_cores=1)
 plot.permutation(res_permut)
-plot(res_permut, bars="sd")
+plot(res_permut)
