@@ -17,6 +17,8 @@
 #' correct(connections_wrong)
 #' connections_well
 #' correct(connections_well)
+#' connections_wrong[3, 3] <- 1 # Connecting block 3 with itself
+#' correct(connections_wrong) # Still wrong!
 correct <- function(x) {
     if (!isSymmetric(x)) {
         return(FALSE)
