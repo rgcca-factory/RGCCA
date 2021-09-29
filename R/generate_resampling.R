@@ -1,19 +1,20 @@
-# Generate n_boot block-wise bootstrapped samples. Every sampled
-# @inheritParams bootstrap
-# @param balanced A boolean indicating if a balanced bootstrap procedure is
-# performed or not (default is TRUE).
-# @param keep_all_variables A boolean indicating if all variables have to be
-# kept even when some of them have null variance for at least one bootstrap
-# sample (default is FALSE).
-# @return \item{boot_blocks}{A list of size n_boot containing all the
-# bootstrapped blocks.}
-# @return \item{full_idx}{A list of size n_boot containing the observations
-# kept for each bootstrap sample.}
-# @return \item{summarize_column_sd_null}{A list of size the number of block
-# containing the variables that were removed from each block for all the
-# bootstrap samples. Variables are removed if they appear to be of null variance
-# in at least one bootstrap sample. If no variable is removed, return NULL.}
-# @title Generate sampled blocks for bootstrap.
+#' Generate n_boot block-wise bootstrapped samples.
+#' @inheritParams bootstrap
+#' @param balanced A boolean indicating if a balanced bootstrap procedure is
+#' performed or not (default is TRUE).
+#' @param keep_all_variables A boolean indicating if all variables have to be
+#' kept even when some of them have null variance for at least one bootstrap
+#' sample (default is FALSE).
+#' @return \boot_blocks}{A list of size n_boot containing all the
+#' bootstrapped blocks.}
+#' @return \item{full_idx}{A list of size n_boot containing the observations
+#' kept for each bootstrap sample.}
+#' @return \item{summarize_column_sd_null}{A list of size the number of block
+#' containing the variables that were removed from each block for all the
+#' bootstrap samples. Variables are removed if they appear to be of null variance
+#' in at least one bootstrap sample. If no variable is removed, return NULL.}
+#' @title Generate sampled blocks for bootstrap.
+#' @keywords internal
 
 generate_resampling <- function(rgcca_res, n_boot, balanced = TRUE, keep_all_variables = FALSE){
   NO_null_sd_var = FALSE
@@ -50,22 +51,22 @@ generate_resampling <- function(rgcca_res, n_boot, balanced = TRUE, keep_all_var
                                             remove_null_sd(blocks, summarize_column_sd_null)$list_m)
         warning(paste("Variables : ",
                       paste(names(Reduce("c", summarize_column_sd_null)), collapse = " - "),
-                      "appear to be of null variance in some bootstrap sample.\n",
-                      "==> Consequently, they were removed from their corresponding blocks.\n",
-                      "==> RGCCA is going to be run again without these variables."))
+                      "appear to be of null variance in some bootstrap samples",
+                      "and thus were removed from all samples. \n",
+                      "==> RGCCA is run again without these variables."))
       }else{
         if (iter > 5){
           summarize_column_sd_null = Reduce("rbind", boot_column_sd_null)
           summarize_column_sd_null = apply(as.data.frame(summarize_column_sd_null), 2,
                                            function(x) unique(x)[1:2][[2]])
-          error_message = paste("Impossible to define all bootstrap samples without",
-                                "variables with null standard deviation. Please",
-                                "take care of these variables : ",
+          error_message = paste("Impossible to define all bootstrap samples",
+                                "without variables with null variance. Please",
+                                "consider removing these variables: ",
                                 paste(names(Reduce("c", summarize_column_sd_null)), collapse = " - "))
           if (balanced){
             error_message = paste0(error_message,
-                                   ". Please, consider also the possibility to do ",
-                                   "unbalanced bootstrap by setting 'balanced' to FALSE.")
+                                   ". Please, consider unbalanced bootstrap by",
+                                   " setting 'balanced' to FALSE.")
           }
           stop_rgcca(error_message)
         }
