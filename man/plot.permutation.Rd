@@ -5,25 +5,22 @@
 \title{Plot fitted rgcca permutation object}
 \usage{
 \method{plot}{permutation}(
-  x,
+  perm,
   type = "crit",
   cex = 1,
   title = NULL,
   cex_main = 14 * cex,
   cex_sub = 12 * cex,
-  bars = "points",
   cex_point = 3 * cex,
   cex_lab = 19 * cex,
   colors = c("red", "grey"),
   correction = "none",
   display_all = FALSE,
-  show_legend = TRUE,
-  ...
+  show_legend = TRUE
 )
 }
 \arguments{
-\item{x}{a fitted rgcca_permutation object
-(see \code{\link[RGCCA]{rgcca_permutation}})}
+\item{perm}{A permutation object (see \code{\link[RGCCA]{rgcca_permutation}})}
 
 \item{type}{A character giving the type of the index to look at (among 'crit' for
 the RGCCA criterion and 'zstat' for the pseudo Z-score)}
@@ -36,10 +33,6 @@ the RGCCA criterion and 'zstat' for the pseudo Z-score)}
 
 \item{cex_sub}{An integer for the size of the subtitle}
 
-\item{bars}{A character giving the variability among "points" (all the points
-are shown), "sd" (standard deviations bars) , "stderr"(bars of standard
-deviation divided by sqrt(n)) or "quantile" (for the 0.05-0.95 quantiles bars)}
-
 \item{cex_point}{An integer for the size of the points or the text in the plot}
 
 \item{cex_lab}{An integer for the size of the axis titles}
@@ -48,17 +41,14 @@ deviation divided by sqrt(n)) or "quantile" (for the 0.05-0.95 quantiles bars)}
 color) or of characters corresponding to names of colors (as "blue",see
 colors()) or RGB code ("#FFFFFF").}
 
-\item{correction}{A Character (either 'none' or 'bonferroni') indicating which
-method is applied for multiple testing correction. Only useful
-when "type" is set to "zstat" (default is "none").}
-
 \item{display_all}{A boolean indicating is all parameter combinations have to
 be displayed (default is FALSE).}
 
 \item{show_legend}{A boolean indicating if the legend is displayed (default is
 TRUE).}
 
-\item{...}{additional graphical parameters}
+\item{x}{a fitted rgcca_permutation object
+(see \code{\link[RGCCA]{rgcca_permutation}})}
 }
 \description{
 Plot a fitted rgcca permutation object. The various set of tuning parameters
