@@ -10,5 +10,5 @@ pm <- function(M1,M2,na.rm=TRUE){
     M1[is.na(M1)] <- 0
     M2[is.na(M2)] <- 0
   }
-  return(crossprod(M1, M2))
+  return(M1 %*% M2)
 }
