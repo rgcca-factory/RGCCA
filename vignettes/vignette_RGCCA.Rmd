@@ -1,16 +1,18 @@
 ---
-title: "The RGCCA package for Regularized/Sparse Generalized Canonical Correlation Analysis"
-date: '`r Sys.Date()`'
+title: The RGCCA package for Regularized/Sparse Generalized Canonical Correlation
+  Analysis
+date: "`r Sys.Date()`"
 output:
+  html_document:
+    toc: yes
+    df_print: paged
   pdf_document:
     number_sections: yes
     toc: yes
     fig_height: 6
     fig_width: 6
-vignette: >
-  %\VignetteIndexEntry{The RGCCA package for Regularized/Sparse Generalized Canonical Correlation Analysis}
-  %\VignetteEngine{knitr::rmarkdown}
-  \usepackage[utf8]{inputenc}
+vignette: |
+  %\VignetteIndexEntry{The RGCCA package for Regularized/Sparse Generalized Canonical Correlation Analysis} %\VignetteEngine{knitr::rmarkdown} \usepackage[utf8]{inputenc}
 header-includes:
 - \usepackage{amsfonts}
 - \usepackage{algorithm2e}
@@ -1124,7 +1126,7 @@ fit.permute = rgcca_permutation(A, connection = C,
                                            0.0237, 0.0714, 1, 
                                            0.0080, 0.029, 1), 6, 3, 
                                          byrow = TRUE),
-                                n_perms = 3, n_cores = 15)
+                                n_perms = 300, n_cores = 15)
 ```
 
 ```{r, eval = FALSE}
@@ -1153,13 +1155,13 @@ it is useful to stabilize the variable selection procedure using the
 fit.stab = rgcca_stability(best.permute.sgcca, 
                            keep = sapply(best.permute.sgcca$a, 
                                          function(x) mean(x!=0)),
-                           n_boot = 20)
+                           n_boot = 500)
 ```
 
 and then apply the bootstrap procedure for confidence intervals and other statistics on the block weight/loadings vectors.
 
 ```{r, eval = FALSE}
-boot.out = bootstrap(fit.stab)
+boot.out = bootstrap(fit.stab, n_boot = 500)
 ```
 
 The bootstrap results can be visualized using the generic  `plot()` function.
