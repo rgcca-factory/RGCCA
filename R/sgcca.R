@@ -144,7 +144,7 @@ sgcca <- function(blocks, connection = 1 - diag(length(blocks)),
   N <- max(ndefl)
   J <- length(blocks)
   js <- vapply(blocks, NROW, numeric(1L))
-  pjs <- vapply(A, NCOL, numeric(1L))
+  pjs <- vapply(blocks, NCOL, numeric(1L))
   nb_ind <- NROW(blocks[[1]])
   AVE_X = list()
   AVE_outer <- rep(NA,max(ncomp))

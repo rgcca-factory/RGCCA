@@ -65,7 +65,7 @@ sgccak <-  function(A, C, sparsity = rep(1, length(A)), scheme = "centroid",
   } else  {
     crit_old <- sum(C*scheme(cov2(Y, bias = bias)))
     dg <- Deriv::Deriv(scheme, env = parent.frame())
-  )
+  }
 
   repeat{
 
@@ -115,9 +115,10 @@ sgccak <-  function(A, C, sparsity = rep(1, length(A)), scheme = "centroid",
   if (iter > n_iter_max) {
     stop_rgcca("The SGCCA algorithm did not converge after ", n_iter_max,
                " iterations.")}
+
   if (iter < n_iter_max & verbose) {
     message("The SGCCA algorithm converged to a stationary
-                              point after", iter-1, "iterations \n")
+                              point after ", iter-1, " iterations \n")
     }
   if (verbose) plot(crit, xlab = "iteration", ylab = "criteria")
 
