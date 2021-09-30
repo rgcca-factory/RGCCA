@@ -199,6 +199,9 @@ sgcca <- function(blocks, connection = 1 - diag(length(blocks)),
   ##############################################
   if (N > 0) {
     R <- blocks
+    for (b in seq_len(J)) {
+      P[[b]] <- matrix(NA, pjs[[b]], N)
+    }
 
     for (n in 2:(N + 1)) {
       if (verbose) message("Computation of the SGCCA block components #", n,
@@ -207,7 +210,6 @@ sgcca <- function(blocks, connection = 1 - diag(length(blocks)),
       # Apply deflation
       defla.result <- defl.select(sgcca.result$Y, R, ndefl, n - 1, J, na.rm = na.rm)
       R <- defla.result$resdefl
-      for (b in 1:J) P[[b]][, n - 1] <- defla.result$pdefl[[b]]
 
       if (is.vector(sparsity)) {
         sgcca.result <- sgccak(R, connection, sparsity = sparsity,
@@ -228,7 +230,7 @@ sgcca <- function(blocks, connection = 1 - diag(length(blocks)),
       for (b in 1:J)  {
         Y[[b]][, n] <- sgcca.result$Y[, b]
         a[[b]][, n] <- sgcca.result$a[[b]]
-        P[[b]][, n] <- defla.result$pdefl[[b]]
+        P[[b]][, n - 1] <- defla.result$pdefl[[b]]
         astar[[b]][, n] <- sgcca.result$a[[b]] - astar[[b]][, (1:(n - 1)), drop = F] %*% drop(crossprod(a[[b]][, n], P[[b]][, 1:(n - 1), drop = FALSE]))
       }
 
