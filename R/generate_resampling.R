@@ -19,7 +19,8 @@
 generate_resampling <- function(rgcca_res, n_boot, balanced = TRUE, keep_all_variables = FALSE){
   NO_null_sd_var = FALSE
   iter           = 0
-  N              = NROW(rgcca_res$call$raw[[1]])
+  raw_blocks     = rgcca_res$call$raw
+  N              = NROW(raw_blocks[[1]])
   prob           = rep(1/N, N)
   while (!NO_null_sd_var){
     if (balanced){
@@ -30,7 +31,7 @@ generate_resampling <- function(rgcca_res, n_boot, balanced = TRUE, keep_all_var
       full_idx = lapply(seq(n_boot), function(x) sample(x = seq(N), replace = TRUE, prob = prob))
     }
 
-    boot_blocks         = lapply(full_idx, function(idx) lapply(rgcca_res$call$raw,
+    boot_blocks         = lapply(full_idx, function(idx) lapply(raw_blocks,
                                                                 function(x){
                                                                   y           = x[idx, , drop = FALSE]
                                                                   rownames(y) = paste("S",1:length(idx))
@@ -42,18 +43,38 @@ generate_resampling <- function(rgcca_res, n_boot, balanced = TRUE, keep_all_var
       summarize_column_sd_null = NULL
     }else{
       if (!keep_all_variables){
-        NO_null_sd_var           = TRUE
         summarize_column_sd_null = Reduce("rbind", boot_column_sd_null)
-        summarize_column_sd_null = apply(as.data.frame(summarize_column_sd_null), 2,
-                                         function(x) unique(x)[1:2][[2]])
-        boot_blocks              = lapply(boot_blocks,
-                                          function(blocks)
-                                            remove_null_sd(blocks, summarize_column_sd_null)$list_m)
-        warning(paste("Variables : ",
-                      paste(names(Reduce("c", summarize_column_sd_null)), collapse = " - "),
-                      "appear to be of null variance in some bootstrap samples",
-                      "and thus were removed from all samples. \n",
-                      "==> RGCCA is run again without these variables."))
+        rownames(summarize_column_sd_null) = NULL
+        summarize_column_sd_null = apply(summarize_column_sd_null, 2,
+                                         function(x){
+                                           vec_x = unlist(x)
+                                           dup_x = duplicated(vec_x)
+                                           return(vec_x[which(!dup_x)])
+                                         })
+        is_full_block_removed = mapply(function(x, y) dim(x)[2] == length(y),
+                                       raw_blocks,
+                                       summarize_column_sd_null,
+                                       SIMPLIFY = "array")
+        if (sum(is_full_block_removed) == 0){
+          NO_null_sd_var = TRUE
+          boot_blocks    = lapply(boot_blocks,
+                                  function(blocks)
+                                    remove_null_sd(blocks, summarize_column_sd_null)$list_m)
+          warning(paste("Variables : ",
+                        paste(names(Reduce("c", summarize_column_sd_null)), collapse = " - "),
+                        "appear to be of null variance in some bootstrap samples",
+                        "and thus were removed from all samples. \n",
+                        "==> RGCCA is run again without these variables."))
+        }else{
+          if (iter > 5){
+            stop_rgcca(paste("The variance of all the variables from blocks : ",
+                          paste(names(raw_blocks)[is_full_block_removed], collapse = " - "),
+                          "appear to be null in some bootstrap samples.",
+                          "Please consider removing them."))
+          }else{
+            iter = iter + 1
+          }
+        }
       }else{
         if (iter > 5){
           summarize_column_sd_null = Reduce("rbind", boot_column_sd_null)
@@ -72,7 +93,7 @@ generate_resampling <- function(rgcca_res, n_boot, balanced = TRUE, keep_all_var
         }
         if (!balanced){
           if (iter == 0){
-            prob = sapply(rgcca_res$call$raw,
+            prob = sapply(raw_blocks,
                            function(block) apply(block, 2, function(var) {
                              occurences = table(var, useNA = "ifany")/length(var)
                              new_idx    = match(as.character(var), names(occurences))
