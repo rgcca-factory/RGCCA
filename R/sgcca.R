@@ -143,21 +143,19 @@ sgcca <- function(blocks, connection = 1 - diag(length(blocks)),
   ndefl <- ncomp - 1
   N <- max(ndefl)
   J <- length(blocks)
-  js <- vapply(blocks, NROW, numeric(1L))
   pjs <- vapply(blocks, NCOL, numeric(1L))
   nb_ind <- NROW(blocks[[1]])
   AVE_X = list()
   AVE_outer <- rep(NA,max(ncomp))
 
-  Y <- NULL
-  a <- astar <- P <- NULL
+  Y <- vector(mode = "list", length = J)
+  a <- astar <- P <- vector(mode = "list", length = J)
   crit <- list()
   AVE_inner <- rep(NA,max(ncomp))
 
-  for (b in 1:J)  {
+  for (b in seq_len(J))  {
     a[[b]] <- astar[[b]] <- matrix(NA, pjs[[b]], N + 1)
     Y[[b]] <- matrix(NA, nb_ind, N + 1)
-    P[[b]] <- matrix(NA, pjs[[b]], N)
   }
 
   ###################################################
@@ -227,7 +225,7 @@ sgcca <- function(blocks, connection = 1 - diag(length(blocks)),
       crit[[n]] <- sgcca.result$crit
 
 
-      for (b in 1:J)  {
+      for (b in seq_len(J))  {
         Y[[b]][, n] <- sgcca.result$Y[, b]
         a[[b]][, n] <- sgcca.result$a[[b]]
         P[[b]][, n - 1] <- defla.result$pdefl[[b]]
@@ -246,7 +244,7 @@ sgcca <- function(blocks, connection = 1 - diag(length(blocks)),
     }
   }
 
-  for (b in 1:J) {
+  for (b in seq_len(J)) {
     rownames(a[[b]]) = rownames(astar[[b]]) = colnames(blocks[[b]])
     rownames(Y[[b]]) = rownames(blocks[[b]])
     colnames(Y[[b]]) = paste0("comp", 1:max(ncomp))
