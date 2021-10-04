@@ -3,19 +3,19 @@
 ##### Version: 3.0
 
 ##### Authors:
-Arthur TENENHAUS, Etienne CAMENEN,  Anatole BOURRELIER, Caroline PELTIER & Vincent GUILLEMOT
+Arthur TENENHAUS, Caroline PELTIER, Etienne CAMENEN,  Fabien GIRKA, Arnaud GLOAGUEN & Vincent GUILLEMOT
 
 ##### Key-words:
-omics, RGCCA, multi-block
+Regularized Generalized Canonical Correlation Analysis, multi-block data analysis
 
 ##### EDAM operation:
-analysis, correlation, visualisation
+multi-block data analysis, data visualisation
 
 ##### Contact:
 arthur.tenenhaus@l2s.centralesupelec.fr
 
 ##### Short description
-Performs multi-variate analysis (PCA, CCA, PLS, R/SGCCA, etc.) and produces textual and graphical outputs (e.g. variables and individuals plots).
+Performs multi-variate analysis (PCA, CCA, PLS, MCOA, MAXVAR, R/SGCCA, etc.) and produces graphical outputs (e.g. variables and individuals plots) and statistics to assess the robustness/significance of the analysis.
 
 ---
 
