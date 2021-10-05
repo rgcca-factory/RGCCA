@@ -61,13 +61,15 @@ sgccak <-  function(A, C, sparsity = rep(1, length(A)), scheme = "centroid",
                             horst = x,
                             factorial = x**2,
                             centroid = abs(x))
-    crit_old <- sum(C*g(cov2(Y, bias = bias)))
   } else  {
-    crit_old <- sum(C*scheme(cov2(Y, bias = bias)))
+    g <- scheme
     dg <- Deriv::Deriv(scheme, env = parent.frame())
   }
+  crit_old <- sum(C*g(cov2(Y, bias = bias)))
+
 
   repeat{
+
 
       for (q in seq_len(J)){
 
@@ -100,6 +102,7 @@ sgccak <-  function(A, C, sparsity = rep(1, length(A)), scheme = "centroid",
          " Dif: ", formatC(crit[iter]-crit_old, digits=8, width=10, format="f"),
          "\n")
 
+    crit[iter] <- sum(C*g(cov2(Y, bias = bias)))
     stopping_criteria = c(drop(crossprod(Reduce("c", mapply("-", a, a_old))))
                           , abs(crit[iter]-crit_old))
 
@@ -110,6 +113,8 @@ sgccak <-  function(A, C, sparsity = rep(1, length(A)), scheme = "centroid",
     a_old <- a
     iter <- iter + 1
   }
+
+  crit <- crit[which(crit != 0)]
 
 
   if (iter > n_iter_max) {
@@ -149,7 +154,7 @@ sgccak <-  function(A, C, sparsity = rep(1, length(A)), scheme = "centroid",
 
   AVE_inner  <- sum(C*cor(Y)^2/2)/(sum(C)/2) # AVE inner model
 
-  result <- list(Y = Y, a = a, crit = crit[which(crit != 0)],
+  result <- list(Y = Y, a = a, crit = crit,
                  AVE_inner = AVE_inner)
   return(result)
 }
