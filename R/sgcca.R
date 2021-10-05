@@ -143,6 +143,7 @@ sgcca <- function(blocks, connection = 1 - diag(length(blocks)),
   ndefl <- ncomp - 1
   N <- max(ndefl)
   J <- length(blocks)
+  js <- vapply(blocks, NROW, numeric(1L))
   pjs <- sapply(blocks,NCOL)
   nb_ind <- NROW(blocks[[1]])
   AVE_X = list()
@@ -157,6 +158,52 @@ sgcca <- function(blocks, connection = 1 - diag(length(blocks)),
   for (b in 1:J) Y[[b]] <- matrix(NA,nb_ind, N + 1)
 
   ###################################################
+  if (!correct(connection)) {
+    stop("Design matrix should be symmetric and connected")
+  }
+
+  if (length(unique(js)) != 1) {
+    stop("The data don't have the same number of samples.")
+  }
+
+  if (ncol(C) != J) {
+    stop("Design matrix should match the number of blocks provided")
+  }
+
+  if (J < 2) {
+    stop("Provide a list of several sets of variables")
+  }
+
+  if (is.vector(c1) && length(c1) != length(blocks) | any(is.na(c1)) | !is.numeric(c1)) {
+    stop("The shrinkage parameters should be a numeric vector of the same length as the input data")
+  }
+
+  if (length(ncomp) != length(blocks) && all(ncomp >= 1)) {
+    stop("The ncomp parameter should be of the same length as the input data")
+  }
+
+  if (!any(vapply(blocks, is.matrix, logical(1L)))) {
+    stop("All input must be a matrix.")
+  }
+  if (any(ncomp < 1)) {
+    stop("One must compute at least one component per block!")
+  }
+  if (any(ncomp - pjs > 0)) {
+    stop("For each block, choose a number of components smaller than the number of variables!")
+  }
+  if (is.vector(c1)) {
+    if (any(c1 < 1 / sqrt(pjs) | c1 > 1)) {
+      stop("L1 constraints (c1) must vary between 1/sqrt(p_j) and 1.")
+    }
+  } else if (is.matrix(c1)) {
+    if (any(apply(c1, 1, function(x) any(x < 1 / sqrt(pjs))))) {
+      stop("L1 constraints (c1) must vary between 1/sqrt(p_j) and 1.")
+    }
+  }
+
+  if (!init %in% c("svd", "random")) {
+    stop("init should be either random or by SVD.")
+  }
 
   if (mode(scheme) != "function") {
     if (verbose) cat("Computation of the SGCCA block components based on the",

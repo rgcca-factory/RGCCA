@@ -27,6 +27,21 @@ sgccak <-  function(A, C, sparsity = rep(1, length(A)), scheme = "centroid",
   J <- length(A)
   pjs = sapply(A, NCOL)
 
+  if (ncol(C) != J) {
+    stop("Design matrix should match the number of blocks provided.")
+  }
+
+  if (length(unique(js)) != 1) {
+    stop("The data don't have the same number of samples.")
+  }
+  remove <- rowSums(C) == 0
+  if (!correct(C) & !any(remove)) {
+    stop("Design matrix should be symmetric and connected")
+  }
+
+  if (is.vector(sparsity) && length(sparsity) != length(A) || any(is.na(sparsity)) || !is.numeric(sparsity)) {
+    stop("The shrinkage parameters should be a numeric vector of the same length as the input data")
+  }
   #  Choose J arbitrary vectors
   if (init=="svd") {
     #SVD Initialisation for a_j
