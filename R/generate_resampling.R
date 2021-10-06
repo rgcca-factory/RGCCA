@@ -20,7 +20,7 @@
 #' @keywords internal
 
 generate_resampling <- function(rgcca_res, n_boot, balanced = TRUE,
-                                    keep_all_variables = FALSE, pval = 1e-15){
+                                keep_all_variables = FALSE, pval = 1e-15){
   # Initialization
   NO_null_sd_var      = FALSE
   iter                = 0
@@ -72,11 +72,12 @@ generate_resampling <- function(rgcca_res, n_boot, balanced = TRUE,
         summarize_column_sd_null = Reduce("rbind", boot_column_sd_null)
         rownames(summarize_column_sd_null) = NULL
         summarize_column_sd_null = apply(summarize_column_sd_null, 2,
-                                         function(x){
-                                           vec_x = unlist(x)
-                                           dup_x = duplicated(vec_x)
-                                           return(vec_x[which(!dup_x)])
-                                         })
+                                         function(x) unique(names(Reduce("c", x))))
+        summarize_column_sd_null = mapply(function(x, y){
+          z        = match(x, y)
+          names(z) = x
+          return(z)
+        }, summarize_column_sd_null, lapply(raw_blocks, colnames))
         # Check if a whole block is troublesome
         is_full_block_removed = mapply(function(x, y) dim(x)[2] == length(y),
                                        raw_blocks,
