@@ -110,21 +110,21 @@ bootstrap <- function(rgcca_res, n_boot = 100,
         assign("rgcca_res", rgcca_res, envir = .GlobalEnv)
         cl = parallel::makeCluster(n_cores)
         parallel::clusterExport(cl, "rgcca_res")
-        W = pbapply::pblapply(boot_sampling$boot_blocks,
-                function(b) bootstrap_k(rgcca_res      = rgcca_res,
-                                        boot_blocks    = b),
+        W = pbapply::pblapply(boot_sampling$full_idx,
+                function(b) bootstrap_k(rgcca_res = rgcca_res,
+                                        inds      = b),
                 cl = cl)
         parallel::stopCluster(cl)
         rm("rgcca_res", envir = .GlobalEnv)
     }
     else
-        W = pbapply::pblapply(boot_sampling$boot_blocks,
-                              function(b) bootstrap_k(rgcca_res      = rgcca_res,
-                                                      boot_blocks    = b))
+        W = pbapply::pblapply(boot_sampling$full_idx,
+                              function(b) bootstrap_k(rgcca_res = rgcca_res,
+                                                      inds      = b))
     }else{
-        W = pbapply::pblapply(boot_sampling$boot_blocks,
-                              function(b) bootstrap_k(rgcca_res      = rgcca_res,
-                                                      boot_blocks    = b),
+        W = pbapply::pblapply(boot_sampling$full_idx,
+                              function(b) bootstrap_k(rgcca_res = rgcca_res,
+                                                      inds      = b),
                               cl = n_cores)
     }
 
@@ -146,6 +146,12 @@ bootstrap <- function(rgcca_res, n_boot = 100,
                rep(NA, length(list_res_W[[i]][[block]][, k]))
            list_res_L[[i]][[block]][, k] =
                rep(NA, length(list_res_L[[i]][[block]][, k]))
+           if (is.character(W[[k]])){
+               warning(paste0("This bootstrap sample was discarded as variables: ",
+                              paste(W[[k]], collapse = " - "), ", were removed",
+                              " from it because of their null variance in this",
+                              " sample."))
+           }
          }
        }
      }

@@ -18,7 +18,8 @@ set_rgcca <- function(
   superblock = NULL,
   response = NULL,
   NA_method = NULL,
-  inds = NULL) {
+  inds = NULL,
+  keep_inds = FALSE) {
   if(is.null(connection)){ connection   <- rgcca_res$call$connection }
   if(is.null(scale)){             scale <- rgcca_res$call$scale }
   if(is.null(scale_block)){ scale_block <- rgcca_res$call$scale_block }
@@ -45,11 +46,18 @@ set_rgcca <- function(
   if(length(inds) == 0){
     boot_blocks = blocks
   }else{
-    boot_blocks <- lapply(blocks, function(x) x[-inds, , drop = FALSE])
-    if("character"%in% class(boot_blocks[[response]])){
-      if(length(unique(boot_blocks[[response]])) == 1){
-        warning("One block has no variablity and rgcca fails to fit.")
-        return(NULL)
+    if (keep_inds){
+      boot_blocks <- lapply(blocks, function(x){
+        y           = x[inds, , drop = FALSE]
+        rownames(y) = paste("S",1:length(inds))
+        return(y)})
+    }else{
+      boot_blocks <- lapply(blocks, function(x) x[-inds, , drop = FALSE])
+      if("character"%in% class(boot_blocks[[response]])){
+        if(length(unique(boot_blocks[[response]])) == 1){
+          warning("One block has no variablity and rgcca fails to fit.")
+          return(NULL)
+        }
       }
     }
   }

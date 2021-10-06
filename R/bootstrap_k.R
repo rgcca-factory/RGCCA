@@ -1,28 +1,41 @@
-# Compute bootstrap (internal)
-#
-# Internal function for computing boostrap of RGCCA
-#
-# @param rgcca_res A fitted RGCCA object (see  \code{\link[RGCCA]{rgcca}})
-# @return A list of RGCCA bootstrap weights/loadings.
-bootstrap_k <- function(rgcca_res, boot_blocks = NULL) {
+#' Internal function for computing bootstrap of RGCCA.
+#' @inheritParams bootstrap
+#' @param inds A vector of integers defining the index of the observations
+#' taken into account for this bootstrap sample.
+#' @return \item{W}{A list of RGCCA bootstrap weights. Returned only if there
+#' are no missing variables, otherwise the name of the missing variables are
+#' returned.}
+#' @return \item{L}{A list of RGCCA bootstrap loadings.  Returned only if there
+#' are no missing variables, otherwise the name of the missing variables are
+#' returned.}
+#' @title Compute bootstrap (internal).
+#' @keywords internal
+bootstrap_k <- function(rgcca_res, inds = NULL) {
     rgcca_res_boot <- set_rgcca(rgcca_res,
-                                blocks    = boot_blocks,
+                                inds      = inds,
+                                keep_inds = TRUE,
                                 NA_method = "nipals")
     #block-weight vector
-    W = add_variables_submodel(rgcca_res, rgcca_res_boot$a)
+    missing_var <- unlist(lapply(seq(length(rgcca_res_boot$a)),
+                                 function(x)
+                                     setdiff(colnames(rgcca_res$call$blocks[[x]]),
+                                             rownames(rgcca_res_boot$a[[x]]))))
+    if (length(missing_var) == 0){
+        #block-loadings vector
+        A = check_sign_comp(rgcca_res, rgcca_res_boot$a)
 
-    #block-loadings vector
-    A = check_sign_comp(rgcca_res, rgcca_res_boot$a)
+        Y = lapply(seq_along(A),
+                   function(j) pm(rgcca_res_boot$call$blocks[[j]], A[[j]])
+        )
+        L <- lapply(seq_along(A),
+                    function(j)
+                        cor(rgcca_res_boot$call$blocks[[j]], Y[[j]],
+                            use = "pairwise.complete.obs")
+        )
 
-    Y = lapply(seq_along(W),
-               function(j) pm(rgcca_res_boot$call$blocks[[j]], A[[j]])
-               )
-    L <- lapply(seq_along(W),
-                function(j)
-                    cor(rgcca_res_boot$call$blocks[[j]], Y[[j]],
-                        use = "pairwise.complete.obs")
-                )
-
-    names(L) = names(rgcca_res$a)
-    return(list(W = W, L = L))
+        names(L) = names(rgcca_res$a)
+        return(list(W = A, L = L))
+    }else{
+        return(list(W = missing_var, L = missing_var))
+    }
 }
