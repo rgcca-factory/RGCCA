@@ -146,7 +146,7 @@ Please, find the software on [Github](https://github.com/BrainAndSpineInstitute/
 Required:
 - Softwares : R (≥ 3.2.0)
 - R libraries : see the [DESCRIPTION](https://github.com/BrainAndSpineInstitute/rgcca_Rpackage/blob/master/DESCRIPTION) file.
-- R package devtools.
+- The R library `devtools`.
 
 This procedure was tested on `Windows 10` and `Linux 18.04.6 LTS (Bionic Beaver)`. Below is an example in order to install the branch called `CRAN` from the git repository `rgcca-factory`.
 ```
