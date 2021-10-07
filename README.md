@@ -27,6 +27,7 @@ Performs multiblock component methods (PCA, CCA, PLS, MCOA, MAXVAR, R/SGCCA, etc
   - [Installation](#installation)
     - [Linux](#linux)
     - [Windows & Mac](#windows--mac)
+  - [Installation of a development branch from the git repository](#installation-of-a-development-branch-from-the-git-repository)
   - [Execution](#execution)
     - [Shiny interface](#shiny-interface)
     - [Vignette](#vignette)
@@ -142,6 +143,17 @@ sudo apt-get install -y libxml2-dev libcurl4-openssl-dev libssl-dev liblapack-de
 ### Windows & Mac
 Please, find the software on [Github](https://github.com/BrainAndSpineInstitute/rgcca_Rpackage). Click on the green button in the upper right corner ```Clone and Download``` and then ```Download the ZIP```. Extract the file.
 
+## Installation of a development branch from the git repository
+Required:
+- Softwares : R (≥ 3.2.0)
+- R libraries : see the [DESCRIPTION](https://github.com/BrainAndSpineInstitute/rgcca_Rpackage/blob/master/DESCRIPTION) file.
+- The R library `devtools`.
+
+This procedure was tested on `Windows 10` and `Linux 18.04.6 LTS (Bionic Beaver)`. Below is an example in order to install the branch called `CRAN` from the git repository `rgcca-factory`.
+```
+remove.packages("RGCCA")
+devtools::install_github(repo="https://github.com/rgcca-factory/RGCCA.git", ref = "CRAN")
+```
 
 ## Execution
 If the Linux dependencies installation step was not executed previously (e.g., for Windows users), their automatic installation could take several minutes during the first execution. If dependencies compatibility errors appear, the required (and suggested) librairies to import are listed in the [DESCRIPTION](https://github.com/BrainAndSpineInstitute/rgcca_Rpackage/blob/master/DESCRIPTION) file.
