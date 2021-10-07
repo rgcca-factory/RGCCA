@@ -27,7 +27,7 @@ Performs multi-variate analysis (PCA, CCA, PLS, R/SGCCA, etc.) and produces text
   - [Installation](#installation)
     - [Linux](#linux)
     - [Windows & Mac](#windows--mac)
-  - [Installation of a specific branch from the git repository](#installationDEV)
+  - [Installation of a development branch from the git repository](#installation-of-a-development-branch-from-the-git-repository)
   - [Execution](#execution)
     - [Shiny interface](#shiny-interface)
     - [Vignette](#vignette)
