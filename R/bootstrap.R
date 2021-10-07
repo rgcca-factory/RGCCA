@@ -62,7 +62,7 @@
 #' \code{\link[RGCCA]{print.bootstrap}}
 bootstrap <- function(rgcca_res, n_boot = 100,
                       n_cores = parallel::detectCores() - 1,
-                      balanced = TRUE, keep_all_variables = FALSE){
+                      balanced = TRUE, keep_all_variables = FALSE, pval = NULL){
 
     if(class(rgcca_res)=="stability")
     {
@@ -81,7 +81,8 @@ bootstrap <- function(rgcca_res, n_boot = 100,
     boot_sampling            = generate_resampling(rgcca_res          = rgcca_res,
                                                    n_boot             = n_boot,
                                                    balanced           = balanced,
-                                                   keep_all_variables = keep_all_variables)
+                                                   keep_all_variables = keep_all_variables,
+                                                   pval               = pval)
     summarize_column_sd_null = boot_sampling$summarize_column_sd_null
     if (!is.null(summarize_column_sd_null)){
         rgcca_res$call$raw = remove_null_sd(list_m         = rgcca_res$call$raw,

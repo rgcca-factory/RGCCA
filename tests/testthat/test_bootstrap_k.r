@@ -30,3 +30,21 @@ test_that("test_bootstrapk", {
         expect_true(all(sapply(resb_2[[1]], NCOL) == 2))
         expect_identical(sapply(resb_2[[1]], NROW), sapply(blocks, NCOL))
 })
+
+# If one bootstrap sample present at least a single variable with null variance,
+# bootstrap_k should return the name of the null variance variables in both the
+# two lists it returns.
+blocks_3                     = blocks
+blocks_3$agriculture$rent    = 0
+blocks_3$agriculture$rent[1] = 1
+rgcca_out_3                  = rgcca(blocks_3, superblock = FALSE, ncomp = 2)
+inds                         = c(2, 2:NROW(blocks_3$agriculture))
+resb_3                       = bootstrap_k(rgcca_res = rgcca_out_3, inds = inds)
+
+test_that("test_bootstrapk_missing_var_identification", {
+    expect_is(resb_3, "list")
+    expect_is(resb_3[[1]], "character")
+    expect_is(resb_3[[2]], "character")
+    expect_equal(resb_3[[1]], "rent")
+    expect_equal(resb_3[[2]], "rent")
+})

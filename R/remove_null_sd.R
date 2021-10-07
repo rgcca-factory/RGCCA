@@ -39,7 +39,7 @@ remove_null_sd <- function(list_m, column_sd_null = NULL) {
         seq(length(list_m)),
         function(x) {
             if (x %in% blocks_index)
-                list_m[[x]][, -column_sd_null[[x]]]
+                list_m[[x]][, -column_sd_null[[x]], drop = FALSE]
             else
                 list_m[[x]]
         })
