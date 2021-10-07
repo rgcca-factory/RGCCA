@@ -105,9 +105,16 @@ generate_resampling <- function(rgcca_res, n_boot, balanced = TRUE,
         # Generate at most five different re-sampling until not a single variable
         # has a null variance.
         if (iter > 5){# Otherwise STOP.
+          # Extract the troublesome variables.
           summarize_column_sd_null = Reduce("rbind", boot_column_sd_null)
-          summarize_column_sd_null = apply(as.data.frame(summarize_column_sd_null), 2,
-                                           function(x) unique(x)[1:2][[2]])
+          rownames(summarize_column_sd_null) = NULL
+          summarize_column_sd_null = apply(summarize_column_sd_null, 2,
+                                           function(x) unique(names(Reduce("c", x))))
+          summarize_column_sd_null = mapply(function(x, y){
+            z        = match(x, y)
+            names(z) = x
+            return(z)
+          }, summarize_column_sd_null, lapply(raw_blocks, colnames))
           error_message = paste("Impossible to define all bootstrap samples",
                                 "without variables with null variance. Please",
                                 "consider removing these variables: ",

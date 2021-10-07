@@ -147,7 +147,7 @@ bootstrap <- function(rgcca_res, n_boot = 100,
                rep(NA, length(list_res_W[[i]][[block]][, k]))
            list_res_L[[i]][[block]][, k] =
                rep(NA, length(list_res_L[[i]][[block]][, k]))
-           if (is.character(W[[k]])){
+           if (is.character(W[[k]]) && ((j == 1) && (i == 1))){
                warning(paste0("This bootstrap sample was discarded as variables: ",
                               paste(W[[k]], collapse = " - "), ", were removed",
                               " from it because of their null variance in this",
