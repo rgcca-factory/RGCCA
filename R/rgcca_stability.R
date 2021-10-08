@@ -8,11 +8,7 @@
 #' block.
 #' @param n_boot Number of bootstrap samples (Default: 100).
 #' @param n_cores Number of cores for parallelization.
-#' @param balanced A boolean indicating if a balanced bootstrap procedure is
-#' performed or not (default is TRUE).
-#' @param keep_all_variables A boolean indicating if all variables have to be
-#' kept even when some of them have null variance for at least one bootstrap
-#' sample (default is FALSE).
+#' @inheritParams generate_resampling
 #' @return \item{top}{indicator on which variables are ranked.}
 #' @return \item{keepVar}{indices of the top variables.}
 #' @return \item{bootstrap}{block-weight vectors for ech bootstrap sample.}

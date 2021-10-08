@@ -12,7 +12,6 @@ set_rgcca <- function(
   init = NULL,
   bias = TRUE,
   tol = 1e-03,
-  method = NULL,
   scale = NULL,
   scale_block = NULL,
   superblock = NULL,

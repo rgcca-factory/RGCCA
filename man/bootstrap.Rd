@@ -9,8 +9,7 @@ bootstrap(
   n_boot = 100,
   n_cores = parallel::detectCores() - 1,
   balanced = TRUE,
-  keep_all_variables = FALSE,
-  pval = NULL
+  keep_all_variables = FALSE
 )
 }
 \arguments{
@@ -26,12 +25,6 @@ performed or not (default is TRUE).}
 \item{keep_all_variables}{A boolean indicating if all variables have to be
 kept even when some of them have null variance for at least one bootstrap
 sample (default is FALSE).}
-
-\item{pval}{For all the variables, a threshold for the proportion of the most
-frequent value of this variable is computed. This threshold is evaluated so
-that the probability to sample only this value is below `pval`. This
-probability is corrected by the number of bootstrap samples and the number
-of variables (default is `1e-15`).}
 }
 \value{
 A list containing two objects: 'bootstrap' and 'rgcca'.

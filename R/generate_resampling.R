@@ -90,16 +90,11 @@ generate_resampling <- function(rgcca_res, n_boot, balanced = TRUE,
                         "appear to be of null variance in some bootstrap samples",
                         "and thus were removed from all samples. \n",
                         "==> RGCCA is run again without these variables."))
-        }else{# A whole block IS troublesome
-          # Generate at most five different re-sampling until is not the case anymore.
-          if (iter > 5){# Otherwise STOP.
-            stop_rgcca(paste("The variance of all the variables from blocks: ",
-                             paste(names(raw_blocks)[is_full_block_removed], collapse = " - "),
-                             "appear to be null in some bootstrap samples.",
-                             "Please consider removing them."))
-          }else{
-            iter = iter + 1
-          }
+        }else{# If whole block IS troublesome then STOP
+          stop_rgcca(paste("The variance of all the variables from blocks: ",
+                           paste(names(raw_blocks)[is_full_block_removed], collapse = " - "),
+                           "appear to be null in some bootstrap samples.",
+                           "Please consider removing them."))
         }
       }else{# It is NOT allowed to remove variables.
         # Generate at most five different re-sampling until not a single variable

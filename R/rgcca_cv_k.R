@@ -84,7 +84,6 @@ rgcca_cv_k <- function(
                           tau=tau,
                           ncomp=ncomp,
                           sparsity=sparsity,
-                          method=method
                         ) #Rgcca on all individuals but inds
            #
              rgcca_k_saved=rgcca_k

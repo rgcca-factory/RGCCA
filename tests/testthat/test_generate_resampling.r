@@ -217,10 +217,10 @@ test_that("generate_resampling_ALL_Block_2",
                               "  industry appear to be null in some bootstrap ",
                               "samples. Please consider removing them.")))
 
-set.seed(53)
+set.seed(1047)
 sample_out_balanced   = generate_resampling(rgcca_res = rgcca_out, n_boot = 4,
                                             balanced = T)
-set.seed(53)
+set.seed(6576)
 sample_out_unbalanced = generate_resampling(rgcca_res = rgcca_out, n_boot = 4,
                                             balanced = F)
 test_that("generate_resampling_ALL_Block_3", {
