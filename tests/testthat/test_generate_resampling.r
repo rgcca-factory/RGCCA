@@ -1,8 +1,8 @@
 data("Russett")
-#############################################
-# Test on the risk of having null variance  #
-# variables in at least on bootstrap sample #
-#############################################
+##############################################
+# Test on the risk of having null variance   #
+# variables in at least one bootstrap sample #
+##############################################
 blocks <- list(
   agriculture = Russett[, seq(3)],
   industry    = Russett[, 4:5],
@@ -60,7 +60,7 @@ test_that("generate_resampling_keepAllVAriables", {
 #   Test with 2 null variances variables    #
 #############################################
 # Now `rent` and `death` are trapped to be of null variance.
-# Four tests are perfromed :
+# Four tests are performed :
 #   - "generate_resampling_NUL_variance_1" : when `balanced = T`
 #      and `keep_all_variables = F`, a warning to inform that `rent` and `death`
 #      are removed is raised.
@@ -121,7 +121,7 @@ test_that("generate_resampling_NUL_variance_4", {
 #########################################
 # Now `rent` and `death` are trapped to be very risky variables (only 1 observation
 # differs from the others).
-# Four tests are perfromed :
+# Four tests are performed :
 #   - "generate_resampling_veryRisky_1" : when `balanced = T`
 #      and `keep_all_variables = F`, a warning to inform that `rent` and `death`
 #      are removed is raised.
@@ -129,8 +129,8 @@ test_that("generate_resampling_NUL_variance_4", {
 #      and `keep_all_variables = F`, a warning to inform that `rent` and `death`
 #      are removed is raised.
 #   - "generate_resampling_veryRisky_3" : when `balanced = T`
-#      and `keep_all_variables = T`, an error is raised as it is impossible
-#      to keep all variables here because some have null variances.
+#      and `keep_all_variables = T`, an error is raised as it is highly unlikely
+#      to keep all variables here because some have almost null variances.
 #   - "generate_resampling_veryRisky_4" : when `balanced = T or F`
 #      and `keep_all_variables = F`, check that `death` and `rent` are indeed
 #      removed.
@@ -190,7 +190,7 @@ test_that("generate_resampling_veryRisky_5", {
 ##################################################################
 # Now `rent` and `death` are trapped to be very risky variables (only 1 observation
 # differs from the others).
-# Four tests are perfromed :
+# Four tests are performed :
 #   - "generate_resampling_ALL_Block_1" : when `balanced = T`
 #      and `keep_all_variables = F`, an error is raised as it want to remove
 #      all the variables from block `industry`.

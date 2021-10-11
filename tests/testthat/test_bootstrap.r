@@ -77,10 +77,10 @@ plot(boot)
 print(boot)
 plot(rgcca_out, type = "corCircle")
 
-#############################################
-# Test on the risk of having null variance  #
-# variables in at least on bootstrap sample #
-#############################################
+##############################################
+# Test on the risk of having null variance   #
+# variables in at least one bootstrap sample #
+##############################################
 # Here, the variable `rent` is trapped and should be detected in
 # `generate_resampling` which is going to raise a warning. Then it
 # should be removed by `bootstrap`.
