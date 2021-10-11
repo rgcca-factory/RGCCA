@@ -32,7 +32,6 @@ set_rgcca <- function(
   if(is.null(tau)){                 tau <- rgcca_res$call$tau }
   if (is.null(blocks)) {
     blocks = rgcca_res$call$raw
-    blocks = descale(blocks)
 
     if (!is.null(rgcca_res$call$response))
       response <- rgcca_res$call$response
