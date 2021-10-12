@@ -7,7 +7,7 @@
 #' The simplest procedure to avoid such situation would be to compute the
 #' variance of each variable in each bootstrap sample. However, in
 #' high-dimensional cases, this is time consuming. Thus, the function starts
-#' by identifying variables that present a risk of being of NULL variance in
+#' by identifying variables that present a risk of being of null variance in
 #' at least one bootstrap sample. A variable is detected as such if the
 #' probability of sampling `N` times (where `N` is the number of observations)
 #' its most frequent observed value is higher than a specific threshold
@@ -24,7 +24,7 @@
 #'
 #' Once risky variables have been identified, the function computes the
 #' variance of each risky variable in each bootstrap sample. If there isn't any
-#' 0 variance risky variable, the bootstrap samples are returned as it.
+#' 0 variance risky variable, the bootstrap samples are returned as is.
 #' Otherwise, three cases are possible:
 #' \itemize{
 #' \item `keep_all_variables = F`, then the risky variables that are of 0
