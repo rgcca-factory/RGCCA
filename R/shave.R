@@ -1,8 +1,27 @@
-shave.matlist <- function(mat_list, nb_cols)
-  mapply(function(m, nbcomp) m[, 1:nbcomp, drop = FALSE],
-         mat_list, nb_cols,
-         SIMPLIFY = FALSE
-  )
+shave <- function(m, nbcomp) {
+    UseMethod("shave")
+}
 
-shave.veclist <- function(vec_list, nb_elts)
-  mapply(function(m, nbcomp) m[1:nbcomp], vec_list, nb_elts, SIMPLIFY = FALSE)
+shaving <- function(m, nbcomp) {
+    UseMethod("shaving")
+}
+
+#' @export
+shave.list <- function(m, nbcomp) {
+    mapply(shaving, m, nbcomp, SIMPLIFY = FALSE)
+}
+
+#' @export
+shaving.matrix <- function(m, nbcomp) {
+    m[, seq_len(nbcomp), drop = FALSE]
+}
+
+#' @export
+shaving.double <- function(m, nbcomp) {
+    m[seq_len(nbcomp)]
+}
+
+#' @export
+shaving.default <- function(m, nbcomp) {
+    m[seq_len(nbcomp)]
+}

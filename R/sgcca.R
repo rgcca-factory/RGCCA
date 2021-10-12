@@ -143,18 +143,20 @@ sgcca <- function(blocks, connection = 1 - diag(length(blocks)),
   ndefl <- ncomp - 1
   N <- max(ndefl)
   J <- length(blocks)
-  pjs <- sapply(blocks,NCOL)
+  pjs <- vapply(blocks, NCOL, numeric(1L))
   nb_ind <- NROW(blocks[[1]])
   AVE_X = list()
   AVE_outer <- rep(NA,max(ncomp))
 
-  Y <- NULL
-  a <- astar <- P <- NULL
+  Y <- vector(mode = "list", length = J)
+  a <- astar <- P <- vector(mode = "list", length = J)
   crit <- list()
   AVE_inner <- rep(NA,max(ncomp))
 
-  for (b in 1:J) a[[b]] <- astar[[b]] <- matrix(NA, pjs[[b]], N + 1)
-  for (b in 1:J) Y[[b]] <- matrix(NA,nb_ind, N + 1)
+  for (b in seq_len(J))  {
+    a[[b]] <- astar[[b]] <- matrix(NA, pjs[[b]], N + 1)
+    Y[[b]] <- matrix(NA, nb_ind, N + 1)
+  }
 
   ###################################################
 
@@ -181,8 +183,10 @@ sgcca <- function(blocks, connection = 1 - diag(length(blocks)),
                            na.rm = na.rm)
   }
 
-  for (b in 1:J) Y[[b]][, 1] <- sgcca.result$Y[, b, drop = FALSE]
-  for (b in 1:J) a[[b]][, 1] <- sgcca.result$a[[b]]
+  for (b in seq_len(J)) {
+    Y[[b]][, 1] <- sgcca.result$Y[, b, drop = FALSE]
+    a[[b]][, 1] <- sgcca.result$a[[b]]
+  }
   astar                      <- a
   AVE_inner[1]               <- sgcca.result$AVE_inner
   crit[[1]]                  <- sgcca.result$crit
@@ -193,16 +197,17 @@ sgcca <- function(blocks, connection = 1 - diag(length(blocks)),
   ##############################################
   if (N > 0) {
     R <- blocks
-    for (b in 1:J) P[[b]] <- matrix(NA, pjs[[b]], N)
+    for (b in seq_len(J)) {
+      P[[b]] <- matrix(NA, pjs[[b]], N)
+    }
 
     for (n in 2:(N + 1)) {
-      if (verbose) cat(paste0("Computation of the SGCCA block components #", n,
-                              " is under progress... \n"))
+      if (verbose) message("Computation of the SGCCA block components #", n,
+                              " is under progress... \n")
 
       # Apply deflation
       defla.result <- defl.select(sgcca.result$Y, R, ndefl, n - 1, J, na.rm = na.rm)
       R <- defla.result$resdefl
-      for (b in 1:J) P[[b]][, n - 1] <- defla.result$pdefl[[b]]
 
       if (is.vector(sparsity)) {
         sgcca.result <- sgccak(R, connection, sparsity = sparsity,
@@ -220,50 +225,49 @@ sgcca <- function(blocks, connection = 1 - diag(length(blocks)),
       crit[[n]] <- sgcca.result$crit
 
 
-      for (b in 1:J) Y[[b]][, n] <- sgcca.result$Y[, b]
-      for (b in 1:J) a[[b]][, n] <- sgcca.result$a[[b]]
-      for (b in 1:J) astar[[b]][, n] <- sgcca.result$a[[b]] -
-        astar[[b]][, (1:(n - 1)), drop = F] %*%
-        drop( t(a[[b]][, n]) %*% P[[b]][, 1:(n - 1), drop = F] )
+      for (b in seq_len(J))  {
+        Y[[b]][, n] <- sgcca.result$Y[, b]
+        a[[b]][, n] <- sgcca.result$a[[b]]
+        P[[b]][, n - 1] <- defla.result$pdefl[[b]]
+        astar[[b]][, n] <- sgcca.result$a[[b]] - astar[[b]][, (1:(n - 1)), drop = F] %*% drop(crossprod(a[[b]][, n], P[[b]][, 1:(n - 1), drop = FALSE]))
+      }
 
-      for (q in which(n < ndefl)) if (sum(sgcca.result$a[[q]] != 0) <= 1)
-      {
-        if (!quiet)
-        {
-          warning(sprintf("Deflation failed because only one variable was
+      if (!quiet){
+        for (q in which(n < ndefl)) {
+          if (sum(sgcca.result$a[[q]] != 0) <= 1) {
+            warning(sprintf("Deflation failed because only one variable was
                             selected for block ",q,"! \n"))
 
+          }
         }
       }
     }
   }
 
-  for (b in 1:J) {
+  for (b in seq_len(J)) {
     rownames(a[[b]]) = rownames(astar[[b]]) = colnames(blocks[[b]])
     rownames(Y[[b]]) = rownames(blocks[[b]])
     colnames(Y[[b]]) = paste0("comp", 1:max(ncomp))
-  }
 
-  #Average Variance Explained (AVE) per block
-  for (j in 1:J) AVE_X[[j]] =  apply(
-    cor(blocks[[j]], Y[[j]], use = "pairwise.complete.obs")^2, 2,
-    function(x) {return(mean(x, is.na = TRUE))})
+    #Average Variance Explained (AVE) per block
+    AVE_X[[b]] =  apply(cor(blocks[[b]], Y[[b]], use = "pairwise.complete.obs")^2, 2,
+                      mean, na.rm = TRUE)
+  }
 
   #AVE outer
   outer = matrix(unlist(AVE_X), nrow = max(ncomp))
-  for (j in 1:max(ncomp))
-    AVE_outer[j] <- sum(pjs * outer[j, ], na.rm = T) / sum(pjs)
+  AVE_outer <- as.numeric((outer %*% pjs)/sum(pjs))
 
-  Y = shave.matlist(Y, ncomp)
-  AVE_X = shave.veclist(AVE_X, ncomp)
+  Y = shave(Y, ncomp)
+  AVE_X = shave(AVE_X, ncomp)
 
   AVE <- list(AVE_X = AVE_X, AVE_outer = AVE_outer, AVE_inner = AVE_inner)
 
   if (N == 0) crit = unlist(crit)
 
-  out <- list(Y = shave.matlist(Y, ncomp),
-              a = shave.matlist(a, ncomp),
-              astar = shave.matlist(astar, ncomp),
+  out <- list(Y = shave(Y, ncomp),
+              a = shave(a, ncomp),
+              astar = shave(astar, ncomp),
               crit = crit,
               AVE = AVE)
 
