@@ -38,8 +38,13 @@ set_rgcca <- function(
   }
 
   method  = rgcca_res$call$method
-  par     = ifelse(tolower(method) %in% c("sgcca", "spca", "spls"), "sparsity", "tau")
-  penalty = ifelse(tolower(method) %in% c("sgcca", "spca", "spls"), sparsity, tau)
+  if (tolower(method) %in% c("sgcca", "spca", "spls")){
+    par     = "sparsity"
+    penalty = sparsity
+  }else{
+    par     = "tau"
+    penalty = tau
+  }
 
   if(length(inds) == 0){
     boot_blocks = blocks
