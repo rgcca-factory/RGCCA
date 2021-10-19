@@ -82,7 +82,8 @@ parse_regularisation_matrices <- function(reg_matrices, tau, A, DIM,
         }
       }
     }
-    P = matrix(as.vector(P), nrow = DIM[1])
+    P_t = P
+    P   = matrix(as.vector(P), nrow = DIM[1])
   }else{
     if (is.na(tau)) tau = tau.estimate(A)
     if(tau != 1){
@@ -96,6 +97,7 @@ parse_regularisation_matrices <- function(reg_matrices, tau, A, DIM,
     }else{
       M_inv_sqrt = NULL
     }
+    P_t = P
   }
-  return(list(P = P, M_inv_sqrt = M_inv_sqrt, tau = tau))
+  return(list(P = P, M_inv_sqrt = M_inv_sqrt, tau = tau, P_t = P_t))
 }
