@@ -205,7 +205,7 @@ mgccak <- function (A, A_m = NULL, C, tau = rep(1, length(A)), scheme = "centroi
     }
 
     stopping_criteria = c(
-      drop(crossprod(Reduce("c", mapply("-", a, a_old)))),
+      drop(crossprod(unlist(a, F, F) - unlist(a_old, F, F))),
       crit[iter] - crit_old
     )
     # Criterion must increase
