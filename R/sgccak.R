@@ -46,7 +46,8 @@ sgccak <-  function(A, C, sparsity = rep(1, length(A)), scheme = "centroid",
   #	Apply the constraints of the general otpimization problem
   #	and compute the outer components
   iter <- 1
-   crit <- numeric()
+  n_iter_max <- 1000L
+  crit <- numeric(n_iter_max)
   Y <- Z <- matrix(0,NROW(A[[1]]),J)
   for (q in 1:J){
       a[[q]] <- soft.threshold(a[[q]], const[q])
@@ -55,22 +56,22 @@ sgccak <-  function(A, C, sparsity = rep(1, length(A)), scheme = "centroid",
   a_old <- a
 
   # Compute the value of the objective function
-  ifelse((mode(scheme) != "function"),
-         {g <- function(x) switch(scheme,
-                                  horst = x,
-                                  factorial = x**2,
-                                  centroid = abs(x))
-          crit_old <- sum(C*g(cov2(Y, bias = bias)))
-          },
-         crit_old <- sum(C*scheme(cov2(Y, bias = bias)))
-  )
+  if (mode(scheme) != "function") {
+    g <- function(x) switch(scheme,
+                            horst = x,
+                            factorial = x**2,
+                            centroid = abs(x))
+  } else  {
+    g <- scheme
+    dg <- Deriv::Deriv(scheme, env = parent.frame())
+  }
+  crit_old <- sum(C*g(cov2(Y, bias = bias)))
 
-  if (mode(scheme) == "function")
-    dg = Deriv::Deriv(scheme, env = parent.frame())
 
   repeat{
 
-      for (q in 1:J){
+
+      for (q in seq_len(J)){
 
         if (mode(scheme) == "function") {
           dgx = dg(cov2(Y[, q], Y, bias = bias))
@@ -86,35 +87,25 @@ sgccak <-  function(A, C, sparsity = rep(1, length(A)), scheme = "centroid",
             CbyCovq <- C[q, ]*sign(cov2(Y, Y[,q], bias = bias))
         }
 
-        Z[, q] <- rowSums(mapply("*", CbyCovq,as.data.frame(Y)))
+        Z[, q] <- Y %*% CbyCovq
         a[[q]] <- pm(t(A[[q]]), Z[, q], na.rm = na.rm)
         a[[q]] <- soft.threshold(a[[q]], const[q])
         Y[, q] <- pm(A[[q]], a[[q]], na.rm = na.rm)
       }
 
-    # check for convergence of the SGCCA algorithm
-    ifelse((mode(scheme) != "function"),
-           {g <- function(x) switch(scheme,
-                                    horst = x,
-                                    factorial = x**2,
-                                    centroid = abs(x))
-            crit[iter] <- sum(C*g(cov2(Y, bias = bias)))
-            },
-           crit[iter] <- sum(C*scheme(cov2(Y, bias = bias)))
-    )
 
     # Print out intermediate fit
+    crit[iter] <- sum(C*g(cov2(Y, bias = bias)))
 
     if (verbose & (iter %% 1)==0)
      cat(" Iter: ", formatC(iter,width=3, format="d"),
          " Fit: ", formatC(crit[iter], digits=8, width=10, format="f"),
          " Dif: ", formatC(crit[iter]-crit_old, digits=8, width=10, format="f"),
          "\n")
-
     stopping_criteria = c(drop(crossprod(Reduce("c", mapply("-", a, a_old))))
                           , abs(crit[iter]-crit_old))
 
-    if ( any(stopping_criteria < tol) | (iter > 1000))
+    if ( any(stopping_criteria < tol) | (iter > n_iter_max))
       break
 
     crit_old = crit[iter]
@@ -122,21 +113,27 @@ sgccak <-  function(A, C, sparsity = rep(1, length(A)), scheme = "centroid",
     iter <- iter + 1
   }
 
+  crit <- crit[which(crit != 0)]
 
-  if (iter > 1000) warning("The SGCCA algorithm did not converge after 1000
-                           iterations.")
-  if(iter<1000 & verbose) cat("The SGCCA algorithm converged to a stationary
-                              point after", iter-1, "iterations \n")
+
+  if (iter > n_iter_max) {
+    stop_rgcca("The SGCCA algorithm did not converge after ", n_iter_max,
+               " iterations.")}
+
+  if (iter < n_iter_max & verbose) {
+    message("The SGCCA algorithm converged to a stationary
+                              point after ", iter-1, " iterations \n")
+    }
   if (verbose) plot(crit, xlab = "iteration", ylab = "criteria")
 
-  for (q in 1:J) if(sum(a[[q]]!=0) <= 1)
-      {
-        if(!quiet)
-        {
+  if (!quiet) {
+    for (q in seq_len(J)) {
+        if(sum(a[[q]]!=0) <= 1) {
             warning(sprintf("Deflation failed because only one variable was
-                            selected for block #",q))
+                            selected for block #", q))
         }
-     }
+    }
+  }
 
   l2_SAT = sapply(a, function(x) norm(x, "2"))
   if (max(abs(l2_SAT - 1)) > tol){
@@ -156,7 +153,7 @@ sgccak <-  function(A, C, sparsity = rep(1, length(A)), scheme = "centroid",
 
   AVE_inner  <- sum(C*cor(Y)^2/2)/(sum(C)/2) # AVE inner model
 
-  result <- list(Y = Y, a = a, crit = crit[which(crit != 0)],
+  result <- list(Y = Y, a = a, crit = crit,
                  AVE_inner = AVE_inner)
   return(result)
 }
