@@ -73,7 +73,7 @@
 generate_resampling <- function(rgcca_res, n_boot, balanced = TRUE,
                                 keep_all_variables = FALSE, pval = 1e-15,
                                 verbose = TRUE){
-  if (verbose) message("Bootstrap samples sanity check...")
+  if (verbose) packageStartupMessage("Bootstrap samples sanity check...", appendLF = F)
   # Initialization
   pval                = min(pval, 1)
   NO_null_sd_var      = FALSE
@@ -205,6 +205,6 @@ generate_resampling <- function(rgcca_res, n_boot, balanced = TRUE,
       }
     }
   }
-  if (verbose) message("OK")
+  if (verbose) packageStartupMessage("OK")
   return(list(full_idx = full_idx, summarize_column_sd_null = summarize_column_sd_null))
 }
