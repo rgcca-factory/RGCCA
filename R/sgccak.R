@@ -102,8 +102,8 @@ sgccak <-  function(A, C, sparsity = rep(1, length(A)), scheme = "centroid",
          " Fit: ", formatC(crit[iter], digits=8, width=10, format="f"),
          " Dif: ", formatC(crit[iter]-crit_old, digits=8, width=10, format="f"),
          "\n")
-    stopping_criteria = c(drop(crossprod(Reduce("c", mapply("-", a, a_old))))
-                          , abs(crit[iter]-crit_old))
+    stopping_criteria = c(drop(crossprod(unlist(a, F, F) - unlist(a_old, F, F))),
+                          abs(crit[iter] - crit_old))
 
     if ( any(stopping_criteria < tol) | (iter > n_iter_max))
       break
