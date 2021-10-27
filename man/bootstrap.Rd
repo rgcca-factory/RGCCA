@@ -9,7 +9,8 @@ bootstrap(
   n_boot = 100,
   n_cores = parallel::detectCores() - 1,
   balanced = TRUE,
-  keep_all_variables = FALSE
+  keep_all_variables = FALSE,
+  verbose = TRUE
 )
 }
 \arguments{
@@ -25,6 +26,9 @@ performed or not (default is TRUE).}
 \item{keep_all_variables}{A boolean indicating if all variables have to be
 kept even when some of them have null variance for at least one bootstrap
 sample (default is FALSE).}
+
+\item{verbose}{Logical value indicating if the progress of the
+bootstrap procedure is reported.}
 }
 \value{
 A list containing two objects: 'bootstrap' and 'rgcca'.

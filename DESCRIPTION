@@ -28,7 +28,7 @@ Suggests:
     magrittr,
     nnet,
     openxlsx
-RoxygenNote: 7.1.1
+RoxygenNote: 7.1.2
 Imports: 
     parallel,
     pbapply,	
