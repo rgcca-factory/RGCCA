@@ -52,6 +52,8 @@
 #' this single maximal value.
 #' @param n_perms Number of permutations for each set of constraints (default
 #' is 20).
+#' @param verbose Logical value indicating if the progress of the
+#' permutation procedure is reported.
 #' @return \item{zstat}{A vector of Z-statistics, one zstat per set of tuning
 #' parameters.}
 #' @return \item{bestpenalties}{The set of tuning parameters that yields the
@@ -177,7 +179,7 @@
 #'                          n_perms = 10, n_cores = 1)
 #'
 #' perm.out$penalties
-#' 
+#'
 #' ######################################
 #' # speed up the permutation procedure #
 #' ######################################
@@ -224,7 +226,8 @@ rgcca_permutation <- function(blocks, par_type, par_value = NULL,
                               sparsity = rep(1, length(blocks)),
                               init = "svd", bias = TRUE, tol = 1e-8,
                               response = NULL, superblock = FALSE,
-                              NA_method = "nipals", rgcca_res = NULL){
+                              NA_method = "nipals", rgcca_res = NULL,
+                              verbose = TRUE){
 
     if (!is.null(rgcca_res)) {
         stopifnot(is(rgcca_res, "rgcca"))
@@ -347,6 +350,12 @@ rgcca_permutation <- function(blocks, par_type, par_value = NULL,
              ncol = NCOL(par[[2]]), byrow = TRUE)
 
     perm_parallel = rep(rep(c(FALSE, TRUE), c(1, n_perms)), NROW(par[[2]]))
+
+    if (!verbose){
+      pbapply::pboptions(type = "none")
+    }else{
+      pbapply::pboptions(type = "timer")
+    }
 
     if( Sys.info()["sysname"] == "Windows"){
       if(n_cores>1){
