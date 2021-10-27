@@ -49,6 +49,6 @@ blocks_for_classif = list(
 blocks_for_classif[["politic"]][blocks_for_classif[["politic"]][,1]==1,]="demo"
 blocks_for_classif[["politic"]][blocks_for_classif[["politic"]][,1]==0,]="ndemo"
 
-res=rgcca_cv(blocks_for_classif,response=3, method="rgcca",par_type="tau",par_value=c(0,0.2,0.3),ncomp=1,n_run=1,n_cores=1,type_cv="classification",fit="lda")
+res=rgcca_cv(blocks_for_classif,response=3, method="rgcca",par_type="tau",par_value=c(0,0.2,0.3),ncomp=1,n_run=1,n_cores=1,type_cv="classification",prediction_model="lda")
 res
 plot(res)

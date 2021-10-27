@@ -67,7 +67,7 @@ block_y=matrix(apply(Russett[,9:11],1,which.max),ncol=1)
 rownames(block_y)=rownames(Russett)
 factor(block_y)
 blocks2=list(agri=Russett[,1:3],ind=Russett[,4:5],resp=block_y)
-rgcca_cv(blocks2,response=3,type_cv="classification",fit="lda")
+rgcca_cv(blocks2,response=3,type_cv="classification",prediction_model="lda")
 rgcca_cv(blocks2,response=3)
 rgcca_cv(blocks2,response=3,par_type="ncomp")
 
@@ -372,19 +372,19 @@ ncolWithNA=unique(nak[,"col"])
 matri=matrix(53,pj,pj)
 
 
-res_cv=rgcca_cv(blocks=A,type_cv="classification",fit="lda",
+res_cv=rgcca_cv(blocks=A,type_cv="classification",prediction_model="lda",
                 method="sgcca", response=3,par_type="sparsity",n_run=1,par_value=mat_values)
 
-res_cv=rgcca_cv(blocks=A,type_cv="classification",fit="lda",
+res_cv=rgcca_cv(blocks=A,type_cv="classification",prediction_model="lda",
                 method="rgcca", response=3,par_type="tau",n_run=1,par_value=mat_values,n_cores=1)
 
-res_cv=rgcca_cv(blocks=A,validation="loo",type_cv="classification",fit="lda",
+res_cv=rgcca_cv(blocks=A,validation="loo",type_cv="classification",prediction_model="lda",
                 method="sgcca", response=3,par_type="sparsity",n_run=1,par_value=mat_values)
 
-res_cv=rgcca_cv(blocks=A,validation="loo",type_cv="classification",fit="lda",
+res_cv=rgcca_cv(blocks=A,validation="loo",type_cv="classification",prediction_model="lda",
                 method="rgcca", response=3,par_type="tau",n_run=1,par_value=mat_values)
 
-res_cv=rgcca_cv(blocks=A,type_cv="classification",fit="lda",
+res_cv=rgcca_cv(blocks=A,type_cv="classification",prediction_model="lda",
                 method="sgcca", response=3,par_type="sparsity",n_run=1,n_cores=1,par_value=mat_values)
 
 

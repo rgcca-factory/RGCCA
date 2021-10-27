@@ -8,7 +8,9 @@ rgcca_stability(
   rgcca_res,
   keep = sapply(rgcca_res$a, function(x) mean(x != 0)),
   n_boot = 100,
-  n_cores = parallel::detectCores() - 1
+  n_cores = parallel::detectCores() - 1,
+  balanced = TRUE,
+  keep_all_variables = FALSE
 )
 }
 \arguments{
@@ -20,6 +22,13 @@ block.}
 \item{n_boot}{Number of bootstrap samples (Default: 100).}
 
 \item{n_cores}{Number of cores for parallelization.}
+
+\item{balanced}{A boolean indicating if a balanced bootstrap procedure is
+performed or not (default is TRUE).}
+
+\item{keep_all_variables}{A boolean indicating if all variables have to be
+kept even when some of them have null variance for at least one bootstrap
+sample (default is FALSE).}
 }
 \value{
 \item{top}{indicator on which variables are ranked.}

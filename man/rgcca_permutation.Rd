@@ -26,7 +26,8 @@ rgcca_permutation(
   response = NULL,
   superblock = FALSE,
   NA_method = "nipals",
-  rgcca_res = NULL
+  rgcca_res = NULL,
+  verbose = TRUE
 )
 }
 \arguments{
@@ -130,6 +131,9 @@ observations (observations with missing values are removed)}
 data (NIPALS-type algorithm)}}}
 
 \item{rgcca_res}{A fitted RGCCA object (see  \code{\link[RGCCA]{rgcca}})}
+
+\item{verbose}{Logical value indicating if the progress of the
+permutation procedure is reported.}
 }
 \value{
 \item{zstat}{A vector of Z-statistics, one zstat per set of tuning

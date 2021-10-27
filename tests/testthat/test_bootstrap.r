@@ -67,11 +67,60 @@ test_that("test_bootstrap_na_values", {
 data("Russett")
 blocks <- list(
     agriculture = Russett[, seq(3)],
-    industry = Russett[, 4:5],
-    politic = Russett[, 6:11] )
-ncomp=1
-rgcca_out <- rgcca(blocks,ncomp=2,superblock=TRUE)
-boot <- bootstrap(rgcca_out, n_boot = 100, n_cores = 1)
+    industry    = Russett[, 4:5],
+    politic     = Russett[, 6:11] )
+
+ncomp     = 1
+rgcca_out = rgcca(blocks,ncomp=2,superblock=TRUE)
+boot      = bootstrap(rgcca_out, n_boot = 100, n_cores = 1)
 plot(boot)
 print(boot)
 plot(rgcca_out, type = "corCircle")
+
+##############################################
+# Test on the risk of having null variance   #
+# variables in at least one bootstrap sample #
+##############################################
+# Here, the variable `rent` is trapped and should be detected in
+# `generate_resampling` which is going to raise a warning. Then it
+# should be removed by `bootstrap`.
+blocks <- list(
+    agriculture = Russett[, seq(3)],
+    industry    = Russett[, 4:5],
+    politic     = Russett[, 6:11])
+
+ncomp                        = 1
+# Rent is trapped.
+blocks$agriculture$rent      = 0
+blocks$agriculture$rent[1:4] = 1
+rgcca_out                    = rgcca(blocks, ncomp = ncomp)
+
+set.seed(8882)
+test_that("bootstrap_removed_variable_1",
+          expect_warning(bootstrap(rgcca_out, n_boot = 4, n_cores = 1, balanced = T),
+                         paste0("Variables:  rent appear to be of null ",
+                                "variance in some bootstrap samples and thus ",
+                                "were removed from all samples. \n",
+                                " ==> RGCCA is run again without these variables.")))
+# Exact same situation where we check in the output that `rent` was removed.
+set.seed(8882)
+boot_out = bootstrap(rgcca_out, n_boot = 4, n_cores = 1, balanced = T)
+
+test_that("bootstrap_removed_variable_2",{
+    expect_false("rent" %in% rownames(boot_out$bootstrap$W[[1]]$agriculture))
+    expect_false("rent" %in% rownames(boot_out$bootstrap$L[[1]]$agriculture))
+    expect_false("rent" %in% colnames(boot_out$rgcca$call$blocks$agriculture))
+    expect_false("rent" %in% colnames(boot_out$rgcca$call$raw$agriculture))
+})
+
+# Same situation, but this time, it is specifically ask that all variables are
+# kept. It is thus checked that `rent` is still there.
+set.seed(8882)
+boot_out = bootstrap(rgcca_out, n_boot = 4, n_cores = 1, keep_all_variables = T, balanced = T)
+
+test_that("bootstrap_keep_all_variables",{
+    expect_true("rent" %in% rownames(boot_out$bootstrap$W[[1]]$agriculture))
+    expect_true("rent" %in% rownames(boot_out$bootstrap$L[[1]]$agriculture))
+    expect_true("rent" %in% colnames(boot_out$rgcca$call$blocks$agriculture))
+    expect_true("rent" %in% colnames(boot_out$rgcca$call$raw$agriculture))
+})
