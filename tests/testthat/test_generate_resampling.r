@@ -28,22 +28,18 @@ test_that("pVAL_high_noRiskyVAR", {
 
 # Now, if `pval` is set to default, when `balanced = T` and
 # `keep_all_variables = F`, a warning is generated to inform that variable `rent`
-# is removed ...
+# is removed and `rent` is indeed removed.
 set.seed(8882)
-test_that("generate_resampling_missing_val_identification_1",
-          expect_warning(generate_resampling(rgcca_res = rgcca_out,
-                                             n_boot = 4, balanced = T),
-          paste0("Variables:  rent appear to be of null ",
-                 "variance in some bootstrap samples and thus ",
-                 "were removed from all samples. \n",
-                 " ==> RGCCA is run again without these variables.")))
-# ... and `rent` is indeed removed.
-set.seed(8882)
-sample_out = generate_resampling(rgcca_res = rgcca_out, n_boot = 4,
-                                 balanced = T, keep_all_variables = F)
-test_that("generate_resampling_missing_val_identification_2",
-          expect_equal(names(sample_out$summarize_column_sd_null$agriculture),
-                       "rent"))
+test_that("generate_resampling_missing_val_identification", {
+  sample_out = expect_warning(
+    generate_resampling(rgcca_res = rgcca_out, n_boot = 4, balanced = T),
+    paste0("Variables:  rent appear to be of null ",
+           "variance in some bootstrap samples and thus ",
+           "were removed from all samples. \n",
+           " ==> RGCCA is run again without these variables."))
+  expect_equal(names(sample_out$summarize_column_sd_null$agriculture),
+               "rent")
+})
 
 # Same situation, but this time, `pval` is set to its default value and it is
 # specifically ask that all variables are kept. It is thus checked that `rent`
@@ -77,23 +73,28 @@ N                                        = NROW(Russett)
 rgcca_out$call$raw$agriculture[, "rent"] = rep(0, N)
 rgcca_out$call$raw$politic[, "death"]    = rep(2, N)
 
-test_that("generate_resampling_NUL_variance_1",
-          expect_warning(generate_resampling(rgcca_res = rgcca_out, n_boot = 4,
-                                             balanced = T),
-                         paste0("Variables:  rent - death appear to be of null ",
-                                "variance in some bootstrap samples and thus ",
-                                "were removed from all samples. \n",
-                                " ==> RGCCA is run again without these variables.")))
+test_that("generate_resampling_NUL_variance_1", {
+  sample_out_balanced_1 = expect_warning(
+    generate_resampling(rgcca_res = rgcca_out, n_boot = 4, balanced = T),
+    paste0("Variables:  rent - death appear to be of null ",
+           "variance in some bootstrap samples and thus ",
+           "were removed from all samples. \n",
+           " ==> RGCCA is run again without these variables."))
+
+  sample_out_balanced_2 = expect_warning(
+    generate_resampling(rgcca_res = rgcca_out, n_boot = 4, balanced = F),
+    paste0("Variables:  rent - death appear to be of null ",
+           "variance in some bootstrap samples and thus ",
+           "were removed from all samples. \n",
+           " ==> RGCCA is run again without these variables."))
+
+  expect_equal(unname(unlist(sapply(sample_out_balanced_1$summarize_column_sd_null,
+                                    function(x) names(x)))), c("rent", "death"))
+  expect_equal(unname(unlist(sapply(sample_out_balanced_2$summarize_column_sd_null,
+                                    function(x) names(x)))), c("rent", "death"))
+})
 
 test_that("generate_resampling_NUL_variance_2",
-          expect_warning(generate_resampling(rgcca_res = rgcca_out, n_boot = 4,
-                                             balanced = F),
-                         paste0("Variables:  rent - death appear to be of null ",
-                                "variance in some bootstrap samples and thus ",
-                                "were removed from all samples. \n",
-                                " ==> RGCCA is run again without these variables.")))
-
-test_that("generate_resampling_NUL_variance_3",
           expect_error(generate_resampling(rgcca_res = rgcca_out, n_boot = 4,
                                            balanced = T, keep_all_variables = T),
                        paste0("Impossible to define all bootstrap samples ",
@@ -101,20 +102,6 @@ test_that("generate_resampling_NUL_variance_3",
                               "consider removing these variables:  rent - death.",
                               " Please, consider unbalanced bootstrap by ",
                               "setting 'balanced' to FALSE.")))
-
-sample_out_balanced_1 = generate_resampling(rgcca_res = rgcca_out, n_boot = 4,
-                                            balanced = T)
-sample_out_balanced_2 = generate_resampling(rgcca_res = rgcca_out, n_boot = 4,
-                                            balanced = F)
-
-test_that("generate_resampling_NUL_variance_4", {
-  expect_equal(unname(unlist(sapply(sample_out_balanced_1$summarize_column_sd_null,
-                                    function(x) names(x)))), c("rent", "death"))
-  expect_equal(unname(unlist(sapply(sample_out_balanced_2$summarize_column_sd_null,
-                                    function(x) names(x)))), c("rent", "death"))
-})
-
-
 
 #########################################
 #   Test with 2 very risky variables    #
@@ -140,23 +127,29 @@ N                                        = NROW(Russett)
 rgcca_out$call$raw$agriculture[, "rent"] = c(1, rep(0, N-1))
 rgcca_out$call$raw$politic[, "death"]    = c(1, rep(2, N-1))
 set.seed(553)
-test_that("generate_resampling_veryRisky_1",
-          expect_warning(generate_resampling(rgcca_res = rgcca_out, n_boot = 4,
-                                             balanced = T),
-                         paste0("Variables:  rent - death appear to be of null ",
-                                "variance in some bootstrap samples and thus ",
-                                "were removed from all samples. \n",
-                                " ==> RGCCA is run again without these variables.")))
-set.seed(553)
-test_that("generate_resampling_veryRisky_2",
-          expect_warning(generate_resampling(rgcca_res = rgcca_out, n_boot = 4,
-                                             balanced = F),
-                         paste0("Variables:  rent - death appear to be of null ",
-                                "variance in some bootstrap samples and thus ",
-                                "were removed from all samples. \n",
-                                " ==> RGCCA is run again without these variables.")))
+test_that("generate_resampling_veryRisky_1", {
+  sample_out_balanced_1 = expect_warning(
+    generate_resampling(rgcca_res = rgcca_out, n_boot = 4, balanced = T),
+    paste0("Variables:  rent - death appear to be of null ",
+           "variance in some bootstrap samples and thus ",
+           "were removed from all samples. \n",
+           " ==> RGCCA is run again without these variables."))
+
+  sample_out_balanced_2 = expect_warning(
+    generate_resampling(rgcca_res = rgcca_out, n_boot = 4, balanced = F),
+    paste0("Variables:  rent - death appear to be of null ",
+           "variance in some bootstrap samples and thus ",
+           "were removed from all samples. \n",
+           " ==> RGCCA is run again without these variables."))
+
+  expect_equal(unname(unlist(sapply(sample_out_balanced_1$summarize_column_sd_null,
+                                    function(x) names(x)))), c("rent", "death"))
+  expect_equal(unname(unlist(sapply(sample_out_balanced_2$summarize_column_sd_null,
+                                    function(x) names(x)))), c("rent", "death"))
+})
+
 set.seed(5553)
-test_that("generate_resampling_veryRisky_3",
+test_that("generate_resampling_veryRisky_2",
           expect_error(generate_resampling(rgcca_res = rgcca_out, n_boot = 4,
                                            balanced = T, keep_all_variables = T),
                        paste0("Impossible to define all bootstrap samples ",
@@ -164,18 +157,6 @@ test_that("generate_resampling_veryRisky_3",
                               "consider removing these variables:  rent - death.",
                               " Please, consider unbalanced bootstrap by ",
                               "setting 'balanced' to FALSE.")))
-
-sample_out_balanced_1 = generate_resampling(rgcca_res = rgcca_out, n_boot = 4,
-                                            balanced = T)
-sample_out_balanced_2 = generate_resampling(rgcca_res = rgcca_out, n_boot = 4,
-                                            balanced = F)
-
-test_that("generate_resampling_veryRisky_4", {
-  expect_equal(unname(unlist(sapply(sample_out_balanced_1$summarize_column_sd_null,
-                                    function(x) names(x)))), c("rent", "death"))
-  expect_equal(unname(unlist(sapply(sample_out_balanced_2$summarize_column_sd_null,
-                                    function(x) names(x)))), c("rent", "death"))
-})
 
 set.seed(53)
 sample_out_balanced   = generate_resampling(rgcca_res = rgcca_out, n_boot = 4,
