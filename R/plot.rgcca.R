@@ -90,7 +90,7 @@ plot.rgcca=function(x, type = "weight", block = length(x$call$blocks), comp = 1:
     if(length(block) == 1){
       if(x$call$ncomp[block] < 2){
         if(type%in%c("sample", "corCircle", "both")){
-          message("type = 'ind', 'var' or 'both' is not available for
+          message("type = 'sample', 'corCircle' or 'both' is not available for
                    ncomp < 2. type was replaced by 'weight'")
           type="weight"
         }
