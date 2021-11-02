@@ -252,6 +252,10 @@ rgcca <- function(blocks, method = "rgcca",
         par <- "sparsity"
         penalty <- sparsity
 
+    }else if (tolower(method) %in% c("ngcca")) {
+      gcca <- ngcca
+      par <- "tau"
+      penalty <- tau
     }else{
         if (!missing(sparsity) & missing(tau))
            stop_rgcca(paste0("tau parameters required for ",
