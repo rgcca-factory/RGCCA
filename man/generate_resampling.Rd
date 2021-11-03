@@ -38,7 +38,7 @@ bootstrap procedure is reported.}
 \item{full_idx}{A list of size n_boot containing the observations
 kept for each bootstrap sample.}
 
-\item{summarize_column_sd_null}{A list of size the number of block
+\item{sd_null}{A list of size the number of block
 containing the variables that were removed from each block for all the
 bootstrap samples. Variables are removed if they appear to be of null variance
 in at least one bootstrap sample. If no variable is removed, return NULL.}

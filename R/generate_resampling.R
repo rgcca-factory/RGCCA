@@ -63,7 +63,7 @@
 #' of variables (default is `1e-15`).
 #' @return \item{full_idx}{A list of size n_boot containing the observations
 #' kept for each bootstrap sample.}
-#' @return \item{summarize_column_sd_null}{A list of size the number of block
+#' @return \item{sd_null}{A list of size the number of block
 #' containing the variables that were removed from each block for all the
 #' bootstrap samples. Variables are removed if they appear to be of null variance
 #' in at least one bootstrap sample. If no variable is removed, return NULL.}
@@ -73,7 +73,9 @@
 generate_resampling <- function(rgcca_res, n_boot, balanced = TRUE,
                                 keep_all_variables = FALSE, pval = 1e-15,
                                 verbose = TRUE){
-  if (verbose) packageStartupMessage("Bootstrap samples sanity check...", appendLF = F)
+  if (verbose) packageStartupMessage("Bootstrap samples sanity check...",
+                                     appendLF = F)
+
   # Initialization
   pval                = min(pval, 1)
   NO_null_sd_var      = FALSE
@@ -81,17 +83,23 @@ generate_resampling <- function(rgcca_res, n_boot, balanced = TRUE,
   raw_blocks          = rgcca_res$call$raw
   N                   = NROW(raw_blocks[[1]])
   prob                = rep(1/N, N)
+
   # For any variable, threshold for the proportion of the most frequent value
   # of a variable. This threshold is computed so that the probability to sample
   # only this value is below `pval`. This probability is corrected by the number
   # of bootstrap samples and the number of variables.
   risky_threshold = max(1/N, (pval/(n_boot*sum(sapply(raw_blocks, NCOL))))^(1/N))
+
   # Identify variables with value having an observed proportion higher than
   # risky_threshold.
   risky_var = lapply(raw_blocks,
                      function(block)
                        which(apply(block, 2,
-                                   function(x) max(table(x)/N) > risky_threshold)))
+                                   function(x)
+                                     max(table(x)/N) > risky_threshold)
+                             )
+                     )
+
   # Keep only risky variables for each block.
   raw_blocks_filtered = mapply(function(x, y) x[, y, drop = FALSE],
                                raw_blocks, risky_var)
@@ -102,49 +110,68 @@ generate_resampling <- function(rgcca_res, n_boot, balanced = TRUE,
       full_idx = sample(x = full_idx, size = N*n_boot, replace = FALSE)
       full_idx = split(full_idx, ceiling(seq_along(full_idx)/N))
     }else{# Unbalanced bootstrap sampling.
-      full_idx = lapply(seq(n_boot), function(x) sample(x = seq(N), replace = TRUE, prob = prob))
+      full_idx = lapply(seq(n_boot),
+                        function(x)
+                          sample(x = seq(N), replace = TRUE, prob = prob))
     }
     # Compute blocks for each bootstrap sample (only with risky variables).
-    boot_blocks_filtered = lapply(full_idx, function(idx) lapply(raw_blocks_filtered,
-                                                                 function(x){
-                                                                   y           = x[idx, , drop = FALSE]
-                                                                   rownames(y) = paste("S",1:length(idx))
-                                                                   return(y)}))
+    boot_blocks_filtered =
+      lapply(full_idx,
+             function(idx)
+               lapply(raw_blocks_filtered,
+                      function(x){
+                        y = x[idx, , drop = FALSE]
+                        rownames(y) = paste("S",1:length(idx))
+                        return(y)
+                      }
+                      )
+             )
+
     # For each sample, identify variables with a single unique value.
-    boot_column_sd_null  = lapply(boot_blocks_filtered,
-                                  function(boot)
-                                    lapply(boot, function(boot_bl)
-                                      which(apply(boot_bl, 2, function(x) length(unique(x)) == 1))))
+
+    boot_column_sd_null =
+      lapply(boot_blocks_filtered,
+             function(boot)
+               lapply(boot, function(boot_bl)
+                 which(apply(boot_bl, 2, function(x) length(unique(x)) == 1))))
+
     # Summarize through all the samples.
-    eval_boot_sample    = sapply(boot_column_sd_null, function(x) sum(sapply(x, length)))
-    NO_null_sd_var      = (sum(eval_boot_sample) == 0)
-    if (NO_null_sd_var){ # If through all samples, all variables have non null variances.
-      summarize_column_sd_null = NULL
-    }else{# If at least one sample have been identified with a null variance variable.
-      if (!keep_all_variables){# It IS allowed to remove variables.
+    eval_boot_sample = sapply(boot_column_sd_null,
+                              function(x) sum(sapply(x, length)))
+    NO_null_sd_var = (sum(eval_boot_sample) == 0)
+
+    if (NO_null_sd_var){
+      # through all samples, all variables have non null variances.
+      sd_null = NULL
+    }else{
+      # If at least one sample have been identified with a null variance variable.
+      if (!keep_all_variables){
+        # It is allowed to remove variables.
         # Extract the troublesome variables.
-        summarize_column_sd_null = Reduce("rbind", boot_column_sd_null)
-        rownames(summarize_column_sd_null) = NULL
-        summarize_column_sd_null = apply(summarize_column_sd_null, 2,
-                                         function(x) unique(names(Reduce("c", x))))
-        summarize_column_sd_null = mapply(function(x, y){
-          z        = match(x, y)
+        sd_null = Reduce("rbind", boot_column_sd_null)
+        rownames(sd_null) = NULL
+        sd_null = apply(sd_null, 2, function(x) unique(names(Reduce("c", x))))
+        sd_null = mapply(function(x, y){
+          z = match(x, y)
           names(z) = x
           return(z)
-        }, summarize_column_sd_null, lapply(raw_blocks, colnames))
+        }, sd_null, lapply(raw_blocks, colnames))
+
         # Check if a whole block is troublesome
         is_full_block_removed = mapply(function(x, y) dim(x)[2] == length(y),
                                        raw_blocks,
-                                       summarize_column_sd_null,
+                                       sd_null,
                                        SIMPLIFY = "array")
-        if (sum(is_full_block_removed) == 0){# A whole block is NOT troublesome
+        if (sum(is_full_block_removed) == 0){
+          # A whole block is NOT troublesome
           NO_null_sd_var = TRUE
           warning(paste("Variables: ",
-                        paste(names(Reduce("c", summarize_column_sd_null)), collapse = " - "),
+                        paste(names(Reduce("c", sd_null)), collapse = " - "),
                         "appear to be of null variance in some bootstrap samples",
                         "and thus were removed from all samples. \n",
                         "==> RGCCA is run again without these variables."))
-        }else{# If whole block IS troublesome then STOP
+        }else{
+          # If whole block IS troublesome then STOP
           stop_rgcca(paste("The variance of all the variables from blocks: ",
                            paste(names(raw_blocks)[is_full_block_removed], collapse = " - "),
                            "appear to be null in some bootstrap samples.",
@@ -155,19 +182,19 @@ generate_resampling <- function(rgcca_res, n_boot, balanced = TRUE,
         # has a null variance.
         if (iter > 5){# Otherwise STOP.
           # Extract the troublesome variables.
-          summarize_column_sd_null = Reduce("rbind", boot_column_sd_null)
-          rownames(summarize_column_sd_null) = NULL
-          summarize_column_sd_null = apply(summarize_column_sd_null, 2,
-                                           function(x) unique(names(Reduce("c", x))))
-          summarize_column_sd_null = mapply(function(x, y){
-            z        = match(x, y)
+          sd_null = Reduce("rbind", boot_column_sd_null)
+          rownames(sd_null) = NULL
+          sd_null = apply(sd_null, 2, function(x) unique(names(Reduce("c", x))))
+          sd_null = mapply(function(x, y){
+            z = match(x, y)
             names(z) = x
             return(z)
-          }, summarize_column_sd_null, lapply(raw_blocks, colnames))
+          }, sd_null, lapply(raw_blocks, colnames))
+
           error_message = paste("Impossible to define all bootstrap samples",
                                 "without variables with null variance. Please",
                                 "consider removing these variables: ",
-                                paste(names(Reduce("c", summarize_column_sd_null)), collapse = " - "))
+                                paste(names(Reduce("c", sd_null)), collapse = " - "))
           # In the balanced case, you CANNOT play with the sampling probability
           # of the different observations as it is unbalanced.
           if (balanced){
@@ -206,5 +233,5 @@ generate_resampling <- function(rgcca_res, n_boot, balanced = TRUE,
     }
   }
   if (verbose) packageStartupMessage("OK")
-  return(list(full_idx = full_idx, summarize_column_sd_null = summarize_column_sd_null))
+  return(list(full_idx = full_idx, sd_null = sd_null))
 }
