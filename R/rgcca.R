@@ -303,11 +303,16 @@ rgcca <- function(blocks, method = "rgcca",
    }
 
     opt$blocks     <- handle_NA(blocks, NA_method = NA_method)
-    opt$blocks     <- scaling(opt$blocks, scale,scale_block = scale_block)
+    opt$blocks     <- scaling(opt$blocks,
+                              scale = scale,
+                              bias = bias,
+                              scale_block = scale_block)
     opt$superblock <- check_superblock(response, opt$superblock, !quiet)
-    opt$blocks     <- set_superblock(opt$blocks, opt$superblock, method, !quiet)
+    opt$blocks     <- set_superblock(opt$blocks, opt$superblock,
+                                     method, !quiet)
 
-    if (NA_method == "nipals" && Reduce("||", lapply(opt$blocks, function(x) any(is.na(x))))) {
+    if (NA_method == "nipals" &&
+        Reduce("||", lapply(opt$blocks, function(x) any(is.na(x))))) {
       na.rm = TRUE
     } else {
       na.rm = FALSE
