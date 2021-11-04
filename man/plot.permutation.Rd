@@ -22,7 +22,7 @@
 \item{perm}{A fitted rgcca_permutation object (see
 \code{\link[RGCCA]{rgcca_permutation}})}
 
-\item{type}{A character string indicating the which criterion to plot
+\item{type}{A character string indicating which criterion to plot
 (default is 'crit' for the RGCCA criterion or 'zstat' for the pseudo Z-score)}
 
 \item{cex}{An integer for the size of the plot parameters}

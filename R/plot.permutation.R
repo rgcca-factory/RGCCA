@@ -7,7 +7,7 @@
 #' the y-axis.
 #' @param perm A fitted rgcca_permutation object (see
 #' \code{\link[RGCCA]{rgcca_permutation}})
-#' @param type A character string indicating the which criterion to plot
+#' @param type A character string indicating which criterion to plot
 #' (default is 'crit' for the RGCCA criterion or 'zstat' for the pseudo Z-score)
 #' @param display_all A boolean indicating is all combinations have to
 #' be displayed (default is FALSE).
