@@ -5,12 +5,11 @@
 #' from the both the orginal and permuted blocks - in the y-axis. If type =
 #' "zstat" the value of the zstat for the various combinations are reported in
 #' the y-axis.
-#' @param x a fitted rgcca_permutation object
-#' (see \code{\link[RGCCA]{rgcca_permutation}})
-#' @param perm A permutation object (see \code{\link[RGCCA]{rgcca_permutation}})
-#' @param type A character giving the type of the index to look at (among 'crit' for
-#'  the RGCCA criterion and 'zstat' for the pseudo Z-score)
-#' @param display_all A boolean indicating is all parameter combinations have to
+#' @param perm A fitted rgcca_permutation object (see
+#' \code{\link[RGCCA]{rgcca_permutation}})
+#' @param type A character string indicating the which criterion to plot
+#' (default is 'crit' for the RGCCA criterion or 'zstat' for the pseudo Z-score)
+#' @param display_all A boolean indicating is all combinations have to
 #' be displayed (default is FALSE).
 #' @param show_legend A boolean indicating if the legend is displayed (default is
 #' TRUE).
@@ -22,6 +21,7 @@
 #' @importFrom ggplot2 ggplot
 #' @importFrom ggplot2 ggplot
 #' @importFrom ggplot2 geom_point
+#' @importFrom stats setNames
 #' @examples
 #' data(Russett)
 #' A <- list(agriculture = Russett[, seq(3)],
@@ -46,7 +46,6 @@ plot.permutation <- function(
     cex_point = 3 * cex,
     cex_lab = 19 * cex,
     colors = c("red", "grey"),
-    correction = "none",
     display_all = FALSE,
     show_legend = TRUE
 ) {

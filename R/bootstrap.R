@@ -73,11 +73,9 @@ bootstrap <- function(rgcca_res, n_boot = 100,
         rgcca_res = rgcca_res$rgcca_res
     }
 
-    stopifnot(is(rgcca_res, "rgcca"))
-
     if(tolower(rgcca_res$call$method)%in%c("sgcca", "spls", "spca")){
         if(verbose)
-            message("For sparse models, only the selected variables were used for bootstrapping. see rgcca_stability().")
+            message("Only selected variables were used for bootstrapping. see rgcca_stability().")
 
         keepVar = lapply(rgcca_res$a,
                          function(x) unique(which(x!=0, arr.ind = TRUE)[, 1]))

@@ -9,6 +9,8 @@
 \arguments{
 \item{x}{A rgcca_cv object (see \link{rgcca_cv})}
 
+\item{bars}{standard deviation (sd) of the cross-validated MSE}
+
 \item{...}{Further print options}
 }
 \description{
