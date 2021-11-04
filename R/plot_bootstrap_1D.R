@@ -54,6 +54,7 @@ plot_bootstrap_1D <- function(
     b = NULL,
     df_b = NULL,
     type = "weight",
+    empirical = TRUE,
     x = "estimate",
     y = "sign",
     n_mark = 50,
@@ -73,8 +74,8 @@ plot_bootstrap_1D <- function(
             type = type,
             comp,
             block = i_block,
-            display_order = display_order
-        )
+            empirical = empirical,
+            display_order = display_order)
     }
 
     if (!is.null(df_b))

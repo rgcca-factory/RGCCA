@@ -5,10 +5,13 @@
 #' @param type Character string indicating the bootstrapped object to print:
 #' block-weight vectors ("weight", default) or block-loading vectors
 #' ("loadings").
-#'@param ... Further arguments in print
-#' @return A matrix containing for each variables of each blocks,
-#' the means, 95\% intervals, bootstrap ratio, p-values and other statistics.
+#' @param empirical A logical value indicating if the bootstrap confidence
+#' intervals and p-values are derived from the empirical distribution.
+#' (defaut: TRUE)
 #' @param display_order A logical value for ordering the variables
+#'@param ... Further arguments in print
+#' the means, 95\% intervals, bootstrap ratio, p-values and other statistics.
+#' @return A matrix containing for each variable:
 #' \itemize{
 #' \item 'estimate' for block weight/loading vectors.
 #' \item 'mean' for the mean of the bootstrap block weight/loading vectors.
@@ -22,7 +25,8 @@
 #' \item 'adjust.pval' for ajusted p-value (fdr correction by default)
 #' }
 #'@export
-print.bootstrap = function(x, type = "weight", display_order = FALSE, ...) {
+print.bootstrap = function(x, type = "weight", empirical = TRUE,
+                           display_order = FALSE, ...) {
     print(paste0("Extract statistics on the block-", type, " vectors from ",
                 NCOL(x$bootstrap[[1]][[1]][[1]]), " bootstrap samples"), ...)
 
@@ -35,7 +39,8 @@ print.bootstrap = function(x, type = "weight", display_order = FALSE, ...) {
             print(Reduce(rbind, lapply(1:length(x$rgcca$call$blocks),
                                        function(block) {
                 b = get_bootstrap(b = x, type = type, block = block,
-                                  comp = comp, display_order = display_order)
+                                  comp = comp, empirical = empirical,
+                                  display_order = display_order)
                 othercols = colnames(b)[-which(colnames(b) == "estimate")]
                 return(b[, c("estimate", othercols)])
             })))
@@ -48,7 +53,8 @@ print.bootstrap = function(x, type = "weight", display_order = FALSE, ...) {
             print(Reduce(rbind, lapply(1:(length(x$rgcca$call$blocks)-1),
                                        function(block) {
                 b = get_bootstrap(b = x, type = type, block = block,
-                                  comp = comp, display_order = display_order)
+                                  comp = comp, empirical = empirical,
+                                  display_order = display_order)
                 othercols = colnames(b)[-which(colnames(b) == "estimate")]
                 return(b[, c("estimate", othercols)])
             })))

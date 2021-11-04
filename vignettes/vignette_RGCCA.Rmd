@@ -718,12 +718,12 @@ available using the `bootstrap()` function of the RGCCA package.
 
 ```{r}
 boot.out = bootstrap(rgcca_B_factorial, 
-                     n_boot = 20, n_cores = 1)
+                     n_boot = 200, n_cores = 1)
 ```
 The bootstrap results are displayed using the `plot()`function.
 
 ```{r}
-plot(boot.out, type = "loadings", block = 1)
+plot(boot.out, type = "loadings", empirical = TRUE, block = 1)
 ```
 
 and detailed using the `print()` function.

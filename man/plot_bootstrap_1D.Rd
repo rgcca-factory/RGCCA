@@ -8,6 +8,7 @@ plot_bootstrap_1D(
   b = NULL,
   df_b = NULL,
   type = "weight",
+  empirical = TRUE,
   x = "estimate",
   y = "sign",
   n_mark = 50,
@@ -28,6 +29,10 @@ plot_bootstrap_1D(
 \item{type}{Character string indicating the bootstrapped object to print:
 block-weight vectors ("weight", default) or block-loading vectors
 ("loadings").}
+
+\item{empirical}{A logical value indicating if the bootstrap confidence
+intervals and p-values are derived from the empirical distribution.
+(defaut: TRUE)}
 
 \item{x}{indicator used in the plot (see details).}
 
