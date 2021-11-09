@@ -9,11 +9,11 @@
 #' intervals and p-values are derived from the empirical distribution.
 #' (defaut: TRUE)
 #' @param display_order A logical value for ordering the variables
-#'@param ... Further arguments in print
+#' @param ... Further arguments in print
 #' the means, 95\% intervals, bootstrap ratio, p-values and other statistics.
 #' @return A matrix containing for each variable:
 #' \itemize{
-#' \item 'estimate' for block weight/loading vectors.
+#' \item 'estimate' for block weight or loading vectors.
 #' \item 'mean' for the mean of the bootstrap block weight/loading vectors.
 #' \item 'sd' for the boostrapped estimate of the standard deviation of the
 #' block weight/loading vectors.
@@ -27,37 +27,48 @@
 #'@export
 print.bootstrap = function(x, type = "weight", empirical = TRUE,
                            display_order = FALSE, ...) {
+
     print(paste0("Extract statistics on the block-", type, " vectors from ",
                 NCOL(x$bootstrap[[1]][[1]][[1]]), " bootstrap samples"), ...)
 
-    ncompmax = min(x$rgcca$call$ncomp)
+    ncompmax = max(x$rgcca$call$ncomp)
+    mycomp = which_block(x$rgcca$call$ncomp)
 
-    if(x$rgcca$call$superblock==FALSE)
-    {
-        for (comp in 1:ncompmax) {
+    if(!x$rgcca$call$superblock){
+        for(comp in 1:ncompmax) {
             cat(paste("Dimension:", comp, "\n"))
-            print(Reduce(rbind, lapply(1:length(x$rgcca$call$blocks),
-                                       function(block) {
-                b = get_bootstrap(b = x, type = type, block = block,
-                                  comp = comp, empirical = empirical,
-                                  display_order = display_order)
+            print(Reduce(rbind,
+                    lapply(mycomp[[comp]],
+                           function(block){
+                               b = get_bootstrap(b = x, type = type,
+                                                 block = block,
+                                                 comp = comp,
+                                                 empirical = empirical,
+                                                 display_order = display_order)
                 othercols = colnames(b)[-which(colnames(b) == "estimate")]
                 return(b[, c("estimate", othercols)])
             })))
         }
-    }
-    else
-    {
-        for (comp in 1:ncompmax) {
+    }else{
+        J = length(x$rgcca$call$ncomp)
+        ncompmax = max(x$rgcca$call$ncomp[-J])
+        mycomp = which_block(x$rgcca$call$ncomp[-J])
+
+        for (comp in 1:ncompmax){
             cat(paste("Dimension:", comp, "\n"))
-            print(Reduce(rbind, lapply(1:(length(x$rgcca$call$blocks)-1),
-                                       function(block) {
-                b = get_bootstrap(b = x, type = type, block = block,
-                                  comp = comp, empirical = empirical,
-                                  display_order = display_order)
-                othercols = colnames(b)[-which(colnames(b) == "estimate")]
-                return(b[, c("estimate", othercols)])
-            })))
+            print(Reduce(rbind,
+                         lapply(mycomp[[comp]],
+                         function(block){
+                             b = get_bootstrap(
+                                 b = x, type = type,
+                                 block = block,
+                                 comp = comp,
+                                 empirical = empirical,
+                                 display_order = display_order)
+            othercols = colnames(b)[-which(colnames(b) == "estimate")]
+            return(b[, c("estimate", othercols)])
+                         }
+            )))
         }
     }
 }

@@ -25,7 +25,7 @@ the means, 95\% intervals, bootstrap ratio, p-values and other statistics.}
 \value{
 A matrix containing for each variable:
 \itemize{
-\item 'estimate' for block weight/loading vectors.
+\item 'estimate' for block weight or loading vectors.
 \item 'mean' for the mean of the bootstrap block weight/loading vectors.
 \item 'sd' for the boostrapped estimate of the standard deviation of the
 block weight/loading vectors.
