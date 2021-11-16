@@ -9,6 +9,9 @@
 #' @param type Character string indicating the bootstrapped object to plot:
 #' block-weight vectors ("weight", default) or block-loading vectors
 #' ("loadings").
+#' @param empirical A logical value indicating if the bootstrap confidence
+#' intervals and p-values are derived from the empirical distribution.
+#' (defaut: TRUE)
 #' @param display_order A logical value for ordering the variables
 #' @export
 #' @examples
@@ -21,7 +24,8 @@
 #' plot(fit.boot, type = "weight", block = 1, comp=1)
 
 plot.bootstrap=function(x, block = length(x$rgcca$call$blocks),
-                        comp = 1, type = "weight", n_mark = 30,
+                        comp = 1, type = "weight",
+                        empirical = TRUE, n_mark = 30,
                         display_order = TRUE,
                         colors = NULL, title = NULL, cex = 1,
                         cex_main = 14, cex_sub = 12,
@@ -48,6 +52,7 @@ plot.bootstrap=function(x, block = length(x$rgcca$call$blocks),
               b = x,
               df_b = NULL,
               type = type,
+              empirical = empirical,
               x = "estimate",
               y = "sign",
               n_mark = n_mark,

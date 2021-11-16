@@ -9,6 +9,7 @@ get_bootstrap(
   type = "weight",
   comp = 1,
   block = length(b$bootstrap[[1]][[1]]),
+  empirical = TRUE,
   display_order = TRUE,
   adj.method = "fdr"
 )
@@ -24,6 +25,10 @@ block-weight vectors ("weight", default) or block-loading vectors
 
 \item{block}{A numeric vector indicating the blocks to consider.}
 
+\item{empirical}{A logical value indicating if the bootstrap confidence
+intervals and p-values are derived from the empirical distribution.
+(defaut: TRUE)}
+
 \item{display_order}{A logical value for ordering the variables}
 
 \item{adj.method}{character string indicating the method used for p-value
@@ -38,7 +43,7 @@ A dataframe containing:
 (non-null in case of SGCCA) bootstrap weights/loadings
 \item 'lower/upper_bound' for the lower and upper intervals
 (0.025/0.975 percentile).
-\item 'bootstrap_ratio' defined as the ratio between weight/loadings estimate
+\item 'bootstrap_ratio' defined as the ratio between weight (or loadings)
 and the bootstrap estimate of the standard deviation.
 \item 'pval' for p-value (see details)
 \item 'adjust.pval' for adjusted p-value (default value: fdr (Benjamini-

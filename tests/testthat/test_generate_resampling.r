@@ -22,8 +22,8 @@ sample_out_balanced   = generate_resampling(rgcca_res = rgcca_out, n_boot = 4,
 sample_out_unbalanced = generate_resampling(rgcca_res = rgcca_out, n_boot = 4,
                                             balanced = F, pval = 1)
 test_that("pVAL_high_noRiskyVAR", {
-  expect_null(sample_out_balanced$summarize_column_sd_null)
-  expect_null(sample_out_unbalanced$summarize_column_sd_null)
+  expect_null(sample_out_balanced$sd_null)
+  expect_null(sample_out_unbalanced$sd_null)
 })
 
 # Now, if `pval` is set to default, when `balanced = T` and
@@ -37,7 +37,7 @@ test_that("generate_resampling_missing_val_identification", {
            "variance in some bootstrap samples and thus ",
            "were removed from all samples. \n",
            " ==> RGCCA is run again without these variables."))
-  expect_equal(names(sample_out$summarize_column_sd_null$agriculture),
+  expect_equal(names(sample_out$sd_null$agriculture),
                "rent")
 })
 
@@ -48,7 +48,7 @@ set.seed(8882)
 sample_out = generate_resampling(rgcca_res = rgcca_out, n_boot = 4,
                                  balanced = T, keep_all_variables = T)
 test_that("generate_resampling_keepAllVAriables", {
-  expect_null(sample_out$summarize_column_sd_null)
+  expect_null(sample_out$sd_null)
 })
 
 
@@ -88,9 +88,9 @@ test_that("generate_resampling_NUL_variance_1", {
            "were removed from all samples. \n",
            " ==> RGCCA is run again without these variables."))
 
-  expect_equal(unname(unlist(sapply(sample_out_balanced_1$summarize_column_sd_null,
+  expect_equal(unname(unlist(sapply(sample_out_balanced_1$sd_null,
                                     function(x) names(x)))), c("rent", "death"))
-  expect_equal(unname(unlist(sapply(sample_out_balanced_2$summarize_column_sd_null,
+  expect_equal(unname(unlist(sapply(sample_out_balanced_2$sd_null,
                                     function(x) names(x)))), c("rent", "death"))
 })
 
@@ -142,9 +142,9 @@ test_that("generate_resampling_veryRisky_1", {
            "were removed from all samples. \n",
            " ==> RGCCA is run again without these variables."))
 
-  expect_equal(unname(unlist(sapply(sample_out_balanced_1$summarize_column_sd_null,
+  expect_equal(unname(unlist(sapply(sample_out_balanced_1$sd_null,
                                     function(x) names(x)))), c("rent", "death"))
-  expect_equal(unname(unlist(sapply(sample_out_balanced_2$summarize_column_sd_null,
+  expect_equal(unname(unlist(sapply(sample_out_balanced_2$sd_null,
                                     function(x) names(x)))), c("rent", "death"))
 })
 
@@ -162,7 +162,7 @@ set.seed(53)
 sample_out_balanced   = generate_resampling(rgcca_res = rgcca_out, n_boot = 4,
                                             balanced = F, keep_all_variables = T)
 test_that("generate_resampling_veryRisky_5", {
-  expect_null(sample_out_balanced$summarize_column_sd_null)
+  expect_null(sample_out_balanced$sd_null)
 })
 
 
@@ -205,6 +205,6 @@ set.seed(6576)
 sample_out_unbalanced = generate_resampling(rgcca_res = rgcca_out, n_boot = 4,
                                             balanced = F)
 test_that("generate_resampling_ALL_Block_3", {
-  expect_null(sample_out_balanced$summarize_column_sd_null)
-  expect_null(sample_out_unbalanced$summarize_column_sd_null)
+  expect_null(sample_out_balanced$sd_null)
+  expect_null(sample_out_unbalanced$sd_null)
 })

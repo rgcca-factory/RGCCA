@@ -73,23 +73,44 @@ bootstrap <- function(rgcca_res, n_boot = 100,
         rgcca_res = rgcca_res$rgcca_res
     }
 
-    stopifnot(is(rgcca_res, "rgcca"))
-    if(tolower(rgcca_res$call$method)%in%c("sgcca", "spls", "spca"))
-        stop_rgcca("for sparse models, rgcca_stability() applies before bootstrapping")
+    if(tolower(rgcca_res$call$method)%in%c("sgcca", "spls", "spca")){
+        if(verbose)
+            message("Only selected variables were used for bootstrapping. see rgcca_stability().")
+
+        keepVar = lapply(rgcca_res$a,
+                         function(x) unique(which(x!=0, arr.ind = TRUE)[, 1]))
+
+        newBlock = mapply(function(x, y) x[, y, drop = FALSE],
+                          rgcca_res$call$raw, keepVar,
+                          SIMPLIFY = FALSE)
+
+        rgcca_res = rgcca(newBlock,
+                          connection = rgcca_res$call$connection,
+                          superblock = rgcca_res$call$superblock,
+                          ncomp = rgcca_res$call$ncomp,
+                          bias = rgcca_res$call$bias,
+                          tau = 1,
+                          scale = rgcca_res$call$scale,
+                          verbose = FALSE,
+                          scale_block = rgcca_res$call$scale_block)
+    }
+
     check_integer("n_boot", n_boot)
     check_integer("n_cores", n_cores, min = 0)
 
     if (n_cores == 0) n_cores <- 1
 
-    boot_sampling            = generate_resampling(rgcca_res          = rgcca_res,
-                                                   n_boot             = n_boot,
-                                                   balanced           = balanced,
-                                                   keep_all_variables = keep_all_variables,
-                                                   verbose            = verbose)
-    summarize_column_sd_null = boot_sampling$summarize_column_sd_null
-    if (!is.null(summarize_column_sd_null)){
-        rgcca_res$call$raw = remove_null_sd(list_m         = rgcca_res$call$raw,
-                                            column_sd_null = summarize_column_sd_null)$list_m
+    boot_sampling = generate_resampling(rgcca_res = rgcca_res,
+                                        n_boot = n_boot,
+                                        balanced = balanced,
+                                        keep_all_variables = keep_all_variables,
+                                        verbose = verbose)
+
+    sd_null = boot_sampling$sd_null
+
+    if (!is.null(sd_null)){
+        rgcca_res$call$raw = remove_null_sd(list_m = rgcca_res$call$raw,
+                                            column_sd_null = sd_null)$list_m
         rgcca_res          = set_rgcca(rgcca_res)
     }
 
@@ -157,10 +178,9 @@ bootstrap <- function(rgcca_res, n_boot = 100,
            list_res_L[[i]][[block]][, k] =
                rep(NA, length(list_res_L[[i]][[block]][, k]))
            if (is.character(W[[k]]) && ((j == 1) && (i == 1))){
-               warning(paste0("This bootstrap sample was discarded as variables: ",
-                              paste(W[[k]], collapse = " - "), ", were removed",
-                              " from it because of their null variance in this",
-                              " sample."))
+               warning(paste0("This bootstrap sample was removed due to zero variance variable(s): ",
+                              paste(W[[k]], collapse = " - ")))
+
            }
          }
        }

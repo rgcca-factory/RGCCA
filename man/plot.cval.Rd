@@ -18,6 +18,8 @@
 \arguments{
 \item{x}{A rgcca_cv object (see \link{rgcca_cv})}
 
+\item{bars}{standard deviation (sd) of the cross-validated MSE}
+
 \item{cex}{An integer for the size of the plot parameters}
 
 \item{cex_main}{An integer for the size of the title}

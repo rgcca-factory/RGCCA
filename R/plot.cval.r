@@ -6,9 +6,9 @@
 #''penalties' in the tuning parameters object). In ordinate, the average of the
 #'permuted RMSE criterion. The best parameters are in red by default.
 #'@inheritParams plot2D
-#'@inheritParams plot_permut_2D
 #' @inheritParams plot.rgcca
 #'@param x A rgcca_cv object (see \link{rgcca_cv})
+#'@param bars standard deviation (sd) of the cross-validated MSE
 #'@export
 #'@examples
 #'data("Russett")
@@ -20,7 +20,10 @@
 #'     n_run=1,n_cores=1)
 #'    plot(res)
 #'@importFrom ggplot2 ggplot
-plot.cval=function(x, bars="sd", cex = 1, cex_main = 14 * cex, cex_sub = 10 * cex, cex_lab = 10 * cex, colors = c("red", "black"), ...)
+plot.cval=function(x, bars ="sd",
+                   cex = 1, cex_main = 14 * cex,
+                   cex_sub = 10 * cex, cex_lab = 10 * cex,
+                   colors = c("red", "black"), ...)
 {
 
     stopifnot(is(x, "cval"))

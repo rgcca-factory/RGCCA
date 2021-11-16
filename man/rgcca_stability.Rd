@@ -9,6 +9,7 @@ rgcca_stability(
   keep = sapply(rgcca_res$a, function(x) mean(x != 0)),
   n_boot = 100,
   n_cores = parallel::detectCores() - 1,
+  verbose = FALSE,
   balanced = TRUE,
   keep_all_variables = FALSE
 )
@@ -22,6 +23,9 @@ block.}
 \item{n_boot}{Number of bootstrap samples (Default: 100).}
 
 \item{n_cores}{Number of cores for parallelization.}
+
+\item{verbose}{Logical value indicating if the progress of the procedure
+is reported.}
 
 \item{balanced}{A boolean indicating if a balanced bootstrap procedure is
 performed or not (default is TRUE).}
@@ -41,7 +45,8 @@ sample (default is FALSE).}
 }
 \description{
 This function can be used to identify the most stable variables
-identified as relevant by SGCCA.
+identified as relevant by SGCCA. The Variable Importance in the Projection
+(VIP) criterion is used to identify the most stable variables.
 }
 \examples{
 \dontrun{
@@ -63,11 +68,14 @@ fit.sgcca = rgcca(blocks, connection = connection,
                   scheme = "centroid",
                   verbose = TRUE)
 
+boot.out = bootstrap(fit.sgcca, n_boot = 100, n_cores = 1, verbose = TRUE)
+
 fit.stab = rgcca_stability(fit.sgcca,
                            keep = sapply(fit.sgcca$a, function(x) mean(x!=0)),
-                           n_cores = 15
+                           n_cores = 15,
+                           verbose = TRUE
                            )
 
-boot.out = bootstrap(fit.stab, n_boot = 100, n_cores = 1)
+boot.out = bootstrap(fit.stab, n_boot = 500, n_cores = 1, verbose = FALSE)
 }
 }

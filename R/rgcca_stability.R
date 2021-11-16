@@ -1,13 +1,16 @@
 #' Stability selection for SGCCA
 #'
 #' This function can be used to identify the most stable variables
-#' identified as relevant by SGCCA.
+#' identified as relevant by SGCCA. The Variable Importance in the Projection
+#' (VIP) criterion is used to identify the most stable variables.
 #'
 #' @param rgcca_res A fitted RGCCA object (see \code{\link[RGCCA]{rgcca}})
 #' @param keep numeric vector indicating the proportion of top variables per
 #' block.
 #' @param n_boot Number of bootstrap samples (Default: 100).
 #' @param n_cores Number of cores for parallelization.
+#' @param verbose Logical value indicating if the progress of the procedure
+#' is reported.
 #' @inheritParams generate_resampling
 #' @return \item{top}{indicator on which variables are ranked.}
 #' @return \item{keepVar}{indices of the top variables.}
@@ -33,33 +36,41 @@
 #'                   scheme = "centroid",
 #'                   verbose = TRUE)
 #'
+#' boot.out = bootstrap(fit.sgcca, n_boot = 100, n_cores = 1, verbose = TRUE)
+#'
 #' fit.stab = rgcca_stability(fit.sgcca,
 #'                            keep = sapply(fit.sgcca$a, function(x) mean(x!=0)),
-#'                            n_cores = 15
+#'                            n_cores = 15,
+#'                            verbose = TRUE
 #'                            )
 #'
-#' boot.out = bootstrap(fit.stab, n_boot = 100, n_cores = 1)
+#' boot.out = bootstrap(fit.stab, n_boot = 500, n_cores = 1, verbose = FALSE)
 #'}
 #' @export
 rgcca_stability <- function(rgcca_res,
                             keep = sapply(rgcca_res$a, function(x) mean(x!=0)),
                             n_boot = 100,
                             n_cores = parallel::detectCores() - 1,
-                            balanced = TRUE, keep_all_variables = FALSE){
+                            verbose = FALSE,
+                            balanced = TRUE,
+                            keep_all_variables = FALSE){
 
   stopifnot(tolower(rgcca_res$call$method)%in%c("sgcca", "spls", "spca"))
   check_integer("n_boot", n_boot)
   check_integer("n_cores", n_cores, min = 0)
 
-  boot_sampling            = generate_resampling(rgcca_res          = rgcca_res,
-                                                 n_boot             = n_boot,
-                                                 balanced           = balanced,
-                                                 keep_all_variables = keep_all_variables)
-  summarize_column_sd_null = boot_sampling$summarize_column_sd_null
-  if (!is.null(summarize_column_sd_null)){
-    rgcca_res$call$raw = remove_null_sd(list_m         = rgcca_res$call$raw,
-                                        column_sd_null = summarize_column_sd_null)$list_m
-    rgcca_res          = set_rgcca(rgcca_res)
+  boot_sampling = generate_resampling(rgcca_res = rgcca_res,
+                                      n_boot = n_boot,
+                                      balanced = balanced,
+                                      verbose = verbose,
+                                      keep_all_variables = keep_all_variables)
+
+  sd_null = boot_sampling$sd_null
+
+  if (!is.null(sd_null)){
+    rgcca_res$call$raw = remove_null_sd(list_m = rgcca_res$call$raw,
+                                        column_sd_null = sd_null)$list_m
+    rgcca_res = set_rgcca(rgcca_res)
   }
 
   ndefl_max = max(rgcca_res$call$ncomp)
@@ -79,26 +90,33 @@ rgcca_stability <- function(rgcca_res,
 
   blocks <- NULL
 
+  if (!verbose){
+    pbapply::pboptions(type = "none")
+  }else{
+    pbapply::pboptions(type = "timer")
+  }
+
   if( Sys.info()["sysname"] == "Windows"){
     if(n_cores>1){
       assign("rgcca_res", rgcca_res, envir = .GlobalEnv)
       cl = parallel::makeCluster(n_cores)
       parallel::clusterExport(cl, "rgcca_res")
       W = pbapply::pblapply(boot_sampling$full_idx,
-                            function(b) bootstrap_k(rgcca_res = rgcca_res,
-                                                    inds      = b),
+                            function(b)
+                              bootstrap_k(rgcca_res = rgcca_res,
+                                          inds = b),
                             cl = cl)
       parallel::stopCluster(cl)
       rm("rgcca_res", envir = .GlobalEnv)
     }
     else
       W = pbapply::pblapply(boot_sampling$full_idx,
-                            function(b) bootstrap_k(rgcca_res = rgcca_res,
-                                                    inds      = b))
+                            function(b)
+                              bootstrap_k(rgcca_res = rgcca_res, inds = b))
   }else{
     W = pbapply::pblapply(boot_sampling$full_idx,
-                          function(b) bootstrap_k(rgcca_res = rgcca_res,
-                                                  inds      = b),
+                          function(b)
+                            bootstrap_k(rgcca_res = rgcca_res, inds = b),
                           cl = n_cores)
   }
 
@@ -117,10 +135,8 @@ rgcca_stability <- function(rgcca_res,
           list_res[[i]][[block]][, k] =
             rep(NA, length(list_res[[i]][[block]][, k]))
           if (is.character(W[[k]])){
-            warning(paste0("This bootstrap sample was discarded as variables: ",
-                           paste(W[[k]], collapse = " - "), ", were removed",
-                           " from it because of their null variance in this",
-                           " sample."))
+            warning(paste0("This bootstrap sample was removed due to zero variance variable(s): ",
+                           paste(W[[k]], collapse = " - ")))
           }
         }
       }

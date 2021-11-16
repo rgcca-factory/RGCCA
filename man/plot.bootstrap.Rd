@@ -9,6 +9,7 @@
   block = length(x$rgcca$call$blocks),
   comp = 1,
   type = "weight",
+  empirical = TRUE,
   n_mark = 30,
   display_order = TRUE,
   colors = NULL,
@@ -32,6 +33,10 @@
 \item{type}{Character string indicating the bootstrapped object to plot:
 block-weight vectors ("weight", default) or block-loading vectors
 ("loadings").}
+
+\item{empirical}{A logical value indicating if the bootstrap confidence
+intervals and p-values are derived from the empirical distribution.
+(defaut: TRUE)}
 
 \item{n_mark}{The number of top variables to display in the correlation
 circle}
