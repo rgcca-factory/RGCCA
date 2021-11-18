@@ -19,10 +19,22 @@
 #' @title Internal function for computing the SGCCA parameters (SGCCA block
 #' components, outer weight vectors etc.)
 #' @importFrom Deriv Deriv
-sgccak <-  function(A, C, sparsity = rep(1, length(A)), scheme = "centroid",
-                    tol = .Machine$double.eps,
-                    init = "svd", bias = TRUE, verbose = TRUE,
+sgccak <-  function(A, C, sparsity = rep(1, length(A)),
+                    scheme = "centroid", tol = 1e-08,
+                    init = "svd", bias = TRUE, verbose = FALSE,
                     quiet = FALSE, na.rm = TRUE){
+
+
+  if(mode(scheme) != "function"){
+    if(scheme == "horst"){g <- function(x) x ; ctrl = FALSE}
+    if(scheme == "factorial"){g <- function(x)  x^2 ; ctrl = TRUE}
+    if(scheme == "centroid"){g <- function(x) abs(x) ; ctrl = TRUE}
+  } else{
+    # check for parity of g
+    g <- scheme ; ctrl = !any(g(-5:5)!=g(5:-5))
+  }
+
+  dg = Deriv::Deriv(g, env = parent.frame())
 
   J <- length(A)
   pjs = sapply(A, NCOL)
@@ -31,7 +43,7 @@ sgccak <-  function(A, C, sparsity = rep(1, length(A)), scheme = "centroid",
   if (init=="svd") {
     #SVD Initialisation for a_j
     a <- lapply(A, function(x) return(initsvd(x, dual = FALSE)))
-    a <- lapply(a,function(x) return(as.vector(x)))
+    a <- lapply(a, function(x) return(as.vector(x)))
    } else if (init=="random")
     {
     a <- lapply(pjs,rnorm)
@@ -43,65 +55,40 @@ sgccak <-  function(A, C, sparsity = rep(1, length(A)), scheme = "centroid",
     stop_rgcca("L1 constraints must vary between 1/sqrt(p_j) and 1.")
 
   const <- sparsity*sqrt(pjs)
-  #	Apply the constraints of the general otpimization problem
+  #	Apply the constraints of the general optimization problem
   #	and compute the outer components
   iter <- 1
   n_iter_max <- 1000L
   crit <- numeric(n_iter_max)
   Y <- Z <- matrix(0,NROW(A[[1]]),J)
-  for (q in 1:J){
+
+  for (q in seq_len(J)){
       a[[q]] <- soft.threshold(a[[q]], const[q])
       Y[, q] <- pm(A[[q]], a[[q]], na.rm = na.rm)
   }
-  a_old <- a
 
-  # Compute the value of the objective function
-  if (mode(scheme) != "function") {
-    g <- function(x) switch(scheme,
-                            horst = x,
-                            factorial = x**2,
-                            centroid = abs(x))
-  } else  {
-    g <- scheme
-    dg <- Deriv::Deriv(scheme, env = parent.frame())
-  }
+  a_old <- a
   crit_old <- sum(C*g(cov2(Y, bias = bias)))
 
 
   repeat{
-
-
-      for (q in seq_len(J)){
-
-        if (mode(scheme) == "function") {
-          dgx = dg(cov2(Y[, q], Y, bias = bias))
-          CbyCovq = C[q, ]*dgx
-        }
-
-        else{
-          if (scheme == "horst")
-            CbyCovq <- C[q, ]
-          if (scheme == "factorial")
-            CbyCovq <- C[q, ]*2*cov2(Y, Y[, q], bias = bias)
-          if (scheme == "centroid")
-            CbyCovq <- C[q, ]*sign(cov2(Y, Y[,q], bias = bias))
-        }
-
-        Z[, q] <- Y %*% CbyCovq
-        a[[q]] <- pm(t(A[[q]]), Z[, q], na.rm = na.rm)
-        a[[q]] <- soft.threshold(a[[q]], const[q])
-        Y[, q] <- pm(A[[q]], a[[q]], na.rm = na.rm)
-      }
-
+    for (q in seq_len(J)){
+      dgx = dg(cov2(Y[, q], Y, bias = bias))
+      CbyCovq = C[q, ]*dgx
+      Z[, q] <- Y %*% CbyCovq
+      a[[q]] <- pm(t(A[[q]]), Z[, q], na.rm = na.rm)
+      a[[q]] <- soft.threshold(a[[q]], const[q])
+      Y[, q] <- pm(A[[q]], a[[q]], na.rm = na.rm)
+    }
 
     # Print out intermediate fit
     crit[iter] <- sum(C*g(cov2(Y, bias = bias)))
 
     if (verbose & (iter %% 1)==0)
-     cat(" Iter: ", formatC(iter,width=3, format="d"),
-         " Fit: ", formatC(crit[iter], digits=8, width=10, format="f"),
-         " Dif: ", formatC(crit[iter]-crit_old, digits=8, width=10, format="f"),
-         "\n")
+      cat(" Iter: ", formatC(iter,width=3, format="d"),
+          " Fit: ", formatC(crit[iter], digits=8, width=10, format="f"),
+          " Dif: ", formatC(crit[iter]-crit_old, digits=8, width=10, format="f"),
+          "\n")
     stopping_criteria = c(drop(crossprod(unlist(a, F, F) - unlist(a_old, F, F))),
                           abs(crit[iter] - crit_old))
 
@@ -113,8 +100,14 @@ sgccak <-  function(A, C, sparsity = rep(1, length(A)), scheme = "centroid",
     iter <- iter + 1
   }
 
-  crit <- crit[which(crit != 0)]
+  for (q in seq_len(J)){
+    if(ctrl & a[[q]][1]<0){
+      a[[q]]=-a[[q]]
+      Y[, q] <- pm(A[[q]] , a[[q]], na.rm = na.rm)
+    }
+  }
 
+  crit <- crit[which(crit != 0)]
 
   if (iter > n_iter_max) {
     stop_rgcca("The SGCCA algorithm did not converge after ", n_iter_max,
@@ -143,10 +136,9 @@ sgccak <-  function(A, C, sparsity = rep(1, length(A)), scheme = "centroid",
                 i, " is too small :", l2_SAT[i])
       }else{
         nMAX = length(which(a[[i]] != 0))
-        warning("L2 constraint is not saturated for block #", i, ". The current
-                 value of the sparsity parameter is ", sparsity[i], " and has to
-                be in the range [", sqrt(nMAX/pjs[i]), ", 1] in order to
-                saturate the L2 constraint.")
+        warning("The l2 constraint is not saturated for block #", i,
+                ". The sparsity parameter has to be in the range [", sqrt(nMAX/pjs[i]),
+                ", 1] and is equal to ", sparsity[i], ".")
       }
     }
   }

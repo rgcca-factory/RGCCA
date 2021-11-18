@@ -8,7 +8,7 @@ components, outer weight vectors, etc.).}
 rgccak(
   A,
   C,
-  tau = "optimal",
+  tau = rep(1, length(A)),
   scheme = "centroid",
   verbose = FALSE,
   init = "svd",
