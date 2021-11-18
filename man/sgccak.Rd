@@ -10,10 +10,10 @@ sgccak(
   C,
   sparsity = rep(1, length(A)),
   scheme = "centroid",
-  tol = .Machine$double.eps,
+  tol = 1e-08,
   init = "svd",
   bias = TRUE,
-  verbose = TRUE,
+  verbose = FALSE,
   quiet = FALSE,
   na.rm = TRUE
 )

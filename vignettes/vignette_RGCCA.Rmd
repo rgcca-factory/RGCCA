@@ -625,10 +625,10 @@ The first step of the analysis is to define the blocks. Three blocks of variable
 The different blocks of variables $\ma X_1, \ldots, \ma X_J$ are arranged in the list format.
 
 ```{r}
-X_agric = as.matrix(Russett[,c("gini","farm","rent")])
-X_ind = as.matrix(Russett[,c("gnpr","labo")])
-X_polit = as.matrix(Russett[ , c("inst", "ecks",  "death",
-                                 "demostab", "dictator")])
+X_agric = Russett[,c("gini","farm","rent")]
+X_ind = Russett[,c("gnpr","labo")]
+X_polit = Russett[ , c("inst", "ecks",  "death",
+                       "demostab", "dictator")]
 A = list(Agric = X_agric, Ind = X_ind, Polit = X_polit)
 
 sapply(A, head)
@@ -1207,7 +1207,7 @@ fit.permute = rgcca_permutation(A, connection = C,
                                            0.0237, 0.0714, 1, 
                                            0.0080, 0.029, 1), 6, 3, 
                                          byrow = TRUE),
-                                n_perms = 300, n_cores = 15)
+                                n_perms = 5, n_cores = 1)
 ```
 
 ```{r, eval = FALSE}
