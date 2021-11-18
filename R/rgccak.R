@@ -149,7 +149,7 @@ rgccak = function(A, C, tau = rep(1, length(A)), scheme = "centroid",
   repeat{
     for (j in which.primal){
       dgx = dg(cov2(Y[, j], Y, bias = bias))
-      CbyCovj = C[j, ]*dgx
+      CbyCovj = drop(C[j, ]*dgx)
       if(tau[j] == 1){
         Z[, j] = Y%*%CbyCovj
         Az = pm(t(A[[j]]), Z[, j], na.rm = TRUE)
@@ -165,7 +165,7 @@ rgccak = function(A, C, tau = rep(1, length(A)), scheme = "centroid",
 
     for (j in which.dual){
       dgx = dg(cov2(Y[, j], Y, bias = bias))
-      CbyCovj = C[j, ]*dgx
+      CbyCovj = drop(C[j, ]*dgx)
       ifelse(tau[j] == 1,
              {
                Z[, j] = Y%*%CbyCovj

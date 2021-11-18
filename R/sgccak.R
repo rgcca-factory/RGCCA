@@ -74,7 +74,7 @@ sgccak <-  function(A, C, sparsity = rep(1, length(A)),
   repeat{
     for (q in seq_len(J)){
       dgx = dg(cov2(Y[, q], Y, bias = bias))
-      CbyCovq = C[q, ]*dgx
+      CbyCovq = drop(C[q, ]*dgx)
       Z[, q] <- Y %*% CbyCovq
       a[[q]] <- pm(t(A[[q]]), Z[, q], na.rm = na.rm)
       a[[q]] <- soft.threshold(a[[q]], const[q])
