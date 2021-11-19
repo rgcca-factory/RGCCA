@@ -72,6 +72,14 @@ mgccak <- function (A, A_m = NULL, C, tau = rep(1, length(A)), scheme = "centroi
           factors[[j]][[d]] <- svd(apply(A[[j]], d+1, c), nu=0, nv=ranks[[j]])$v
         }
         weights[[j]] <- rep(1 / sqrt(ranks[j]), ranks[j])
+
+        sign = ifelse(sum(factors[[j]][[1]]) > 0, 1, -1)
+        factors[[j]][[1]] = pmax(sign * factors[[j]][[1]], 0)
+        factors[[j]][[1]] = factors[[j]][[1]] / norm(factors[[j]][[1]], type = "2")
+        sign = ifelse(sum(factors[[j]][[2]]) > 0, 1, -1)
+        factors[[j]][[2]] = pmax(sign * factors[[j]][[2]], 0)
+        factors[[j]][[2]] = factors[[j]][[2]] / norm(factors[[j]][[2]], type = "2")
+
         a[[j]]       <- weighted_kron_sum(factors[[j]], weights[[j]])
       }
     } else if (init == "random") {
@@ -84,6 +92,14 @@ mgccak <- function (A, A_m = NULL, C, tau = rep(1, length(A)), scheme = "centroi
           factors[[j]][[d]] <- svd(apply(A_random, d, c), nu=0, nv=ranks[[j]])$v
         }
         weights[[j]] <- rep(1 / sqrt(ranks[j]), ranks[j])
+
+        sign = ifelse(sum(factors[[j]][[1]]) > 0, 1, -1)
+        factors[[j]][[1]] = pmax(sign * factors[[j]][[1]], 0)
+        factors[[j]][[1]] = factors[[j]][[1]] / norm(factors[[j]][[1]], type = "2")
+        sign = ifelse(sum(factors[[j]][[2]]) > 0, 1, -1)
+        factors[[j]][[2]] = pmax(sign * factors[[j]][[2]], 0)
+        factors[[j]][[2]] = factors[[j]][[2]] / norm(factors[[j]][[2]], type = "2")
+
         a[[j]]       <- weighted_kron_sum(factors[[j]], weights[[j]])
       }
     } else {
@@ -139,6 +155,14 @@ mgccak <- function (A, A_m = NULL, C, tau = rep(1, length(A)), scheme = "centroi
           SVD               = svd(x = Q, nu = ranks[[j]], nv = ranks[[j]])
           factors[[j]][[1]] = SVD$v
           factors[[j]][[2]] = SVD$u
+
+          ### Works only for rank 1: add non negativity
+          sign = ifelse(sum(factors[[j]][[1]]) > 0, 1, -1)
+          factors[[j]][[1]] = pmax(sign * factors[[j]][[1]], 0)
+          factors[[j]][[1]] = factors[[j]][[1]] / norm(factors[[j]][[1]], type = "2")
+          factors[[j]][[2]] = pmax(sign * factors[[j]][[2]], 0)
+          factors[[j]][[2]] = factors[[j]][[2]] / norm(factors[[j]][[2]], type = "2")
+
           weights[[j]]      = SVD$d[1:ranks[j]] / sqrt(sum(SVD$d[1:ranks[j]] ^ 2))
           a[[j]]            = weighted_kron_sum(factors[[j]], weights[[j]])
           Y[, j]            = P[[j]] %*% a[[j]]
