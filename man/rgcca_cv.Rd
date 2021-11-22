@@ -78,8 +78,7 @@ one row by combination. By default, it takes 10 sets between min values (0
 
 \item{quiet}{Logical value indicating if warning messages are reported.}
 
-\item{superblock}{Boolean indicating the presence of the superblock.
-Default = TRUE}
+\item{superblock}{TRUE if a superblock is added, FALSE ifelse (useful for deflation strategy when a superblock is used)}
 
 \item{scale}{Logical value indicating if blocks are standardized.}
 

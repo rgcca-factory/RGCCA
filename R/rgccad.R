@@ -164,6 +164,7 @@
 #' text(fit.rgcca$Y[[1]], fit.rgcca$Y[[2]], rownames(Russett), col = lab)
 #' text(Ytest[, 1], Ytest[, 2], substr(rownames(Russett), 1, 1), col = lab)
 #' @export rgccad
+#' @param superblock TRUE if a superblock is added, FALSE ifelse (useful for deflation strategy when a superblock is used)
 #' @importFrom grDevices dev.off png rainbow
 #' @importFrom graphics abline axis close.screen grid legend lines par points
 #' rect screen segments split.screen text
@@ -176,7 +177,7 @@ rgccad = function(blocks, connection = 1 - diag(length(blocks)),
                   tau = rep(1, length(blocks)),
                   ncomp = rep(1, length(blocks)), scheme = "centroid",
                   init = "svd", bias = TRUE, tol = 1e-08, verbose = TRUE,
-                  na.rm = TRUE, quiet = FALSE)
+                  na.rm = TRUE, quiet = FALSE,superblock=FALSE)
 {
 
   if (mode(scheme) != "function") {
@@ -245,10 +246,19 @@ rgccad = function(blocks, connection = 1 - diag(length(blocks)),
       if (verbose)
         cat(paste0("Computation of the RGCCA block components #", n, " is under
                  progress...\n"))
-
-      defla.result <- defl.select(rgcca.result$Y, R, ndefl, n - 1, J, na.rm = na.rm)
+#----------------------
+      J_defl=ifelse(superblock,J,J)
+#----------------------
+      defla.result <- defl.select(rgcca.result$Y, R, ndefl, n - 1, J_defl, na.rm = na.rm)
       R <- defla.result$resdefl
-      for (b in 1:J) P[[b]][, n - 1] <- defla.result$pdefl[[b]]
+ 
+#----------------------      
+      if(superblock){
+        R[[J]]=Reduce(cbind,R[1:(J-1)])
+       P[[J]][,n-1]=deflation(as.matrix(R[[J]]), as.matrix(rgcca.result$Y[, J],nrow=nrow(R)), na.rm = na.rm)$p
+      }
+#----------------------
+      for (b in 1:J_defl) P[[b]][, n - 1] <- defla.result$pdefl[[b]]
 
       if (is.vector(tau))
         rgcca.result <- rgccak(R, connection, tau = tau, scheme = scheme,
@@ -265,9 +275,13 @@ rgccad = function(blocks, connection = 1 - diag(length(blocks)),
 
       for (b in 1:J) Y[[b]][, n] <- rgcca.result$Y[, b]
       for (b in 1:J) a[[b]][, n] <- rgcca.result$a[[b]]
-      for (b in 1:J) astar[[b]][, n] <- rgcca.result$a[[b]] -
+      
+      
+      for (b in 1:J_defl) astar[[b]][, n] <- rgcca.result$a[[b]] -
         astar[[b]][, (1:(n - 1)),drop = F] %*%
         drop( t(a[[b]][, n]) %*% P[[b]][, 1:(n - 1), drop = F] )
+      
+    
     }
   }
 

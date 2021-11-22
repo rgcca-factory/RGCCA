@@ -91,8 +91,7 @@ or by random initialisation ("random") (default: "svd").}
 the response argument is filled the supervised mode is automatically
 activated.}
 
-\item{superblock}{Boolean indicating the presence of the superblock.
-Default = TRUE}
+\item{superblock}{TRUE if a superblock is added, FALSE ifelse (useful for deflation strategy when a superblock is used)}
 
 \item{NA_method}{Character string corresponding to the method used for
 handling missing values ("nipals", "complete"). (default: "nipals").

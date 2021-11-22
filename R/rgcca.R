@@ -359,7 +359,8 @@ rgcca <- function(blocks, method = "rgcca",
             bias = bias,
             tol = tol,
             quiet = quiet,
-            na.rm = na.rm
+            na.rm = na.rm,
+            superblock=superblock
         )
     )
 

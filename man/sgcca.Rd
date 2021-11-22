@@ -16,7 +16,8 @@ sgcca(
   tol = .Machine$double.eps,
   verbose = FALSE,
   quiet = FALSE,
-  na.rm = TRUE
+  na.rm = TRUE,
+  superblock = FALSE
 )
 }
 \arguments{
@@ -64,50 +65,8 @@ or by random initialisation ("random") (default: "svd").}
 \item{quiet}{Logical value indicating if warning messages are reported.}
 
 \item{na.rm}{If TRUE, runs rgcca only on available data.}
-}
-\value{
-\item{Y}{A list of \eqn{J} elements. Each element of \eqn{Y} is a
-matrix that contains the analysis components for the corresponding block.}
 
-\item{a}{A list of \eqn{J} elements. Each element of \eqn{a} is a
-matrix that contains the outer weight vectors for each block.}
-
-\item{astar}{A list of \eqn{J} elements. Each element of astar is a
-matrix defined as Y[[j]][, h] = blocks[[j]]\%*\%astar[[j]][, h]}
-
-\item{crit}{A vector of integer that contains for each component the
-values of the analysis criteria across iterations.}
-
-\item{AVE}{A list of numerical values giving the indicators of model
-quality based on the Average Variance Explained (AVE): AVE(for each block),
-AVE(outer model), AVE(inner model).}
-}
-\description{
-SGCCA extends RGCCA to address the issue of variable selection. Specifically,
-RGCCA is combined with an L1-penalty that gives rise to Sparse GCCA (SGCCA)
-which is implemented in the function sgcca().
-Given \eqn{J} matrices \eqn{X_1, X_2, ..., X_J}, that represent
-\eqn{J} sets of variables observed on the same set of \eqn{n} individuals.
-The matrices \eqn{X_1, X_2, ..., X_J} must have the same number of rows, but
-may (and usually will) have different numbers of columns. Blocks are not
-necessarily fully connected within the SGCCA framework. Hence the use of
-SGCCA requires the construction (user specified) of a design matrix (\eqn{connection})
-that characterizes the connections between blocks. Elements of the symmetric
-design matrix \eqn{connection = (c_{jk})} are equal to 1 if block \eqn{j} and block
-\eqn{k} are connected, and 0 otherwise. The SGCCA algorithm is very similar
-to the RGCCA algorithm and keeps the same monotone convergence properties
-(i.e. the bounded criteria to be maximized increases at each step of the
-iterative procedure and hits at convergence a stationary point).
-Moreover, using a deflation strategy, sgcca() enables the computation of
-several SGCCA block components (specified by ncomp) for each block. Block
-components for each block are guaranteed to be orthogonal when using this
-deflation strategy. The so-called symmetric deflation is considered in this
-implementation, i.e. each block is deflated with respect to its own
-component. Moreover, we stress that the numbers of components per block
-could differ from one block to another.
-}
-\examples{
-
+\item{superblock}{TRUE if a superblock is added, FALSE ifelse (useful for deflation strategy when a superblock is used)
 #############
 # Example 1 #
 #############
@@ -186,7 +145,48 @@ result.sgcca = sgcca(blocks, connection, sparsity = matrix(c(.071,.2, 1, 0.06, 0
                      ncomp = c(2, 2, 1), scheme = "factorial",
                      bias = TRUE,
                      init = init, verbose = TRUE)
+}}
 }
+\value{
+\item{Y}{A list of \eqn{J} elements. Each element of \eqn{Y} is a
+matrix that contains the analysis components for the corresponding block.}
+
+\item{a}{A list of \eqn{J} elements. Each element of \eqn{a} is a
+matrix that contains the outer weight vectors for each block.}
+
+\item{astar}{A list of \eqn{J} elements. Each element of astar is a
+matrix defined as Y[[j]][, h] = blocks[[j]]\%*\%astar[[j]][, h]}
+
+\item{crit}{A vector of integer that contains for each component the
+values of the analysis criteria across iterations.}
+
+\item{AVE}{A list of numerical values giving the indicators of model
+quality based on the Average Variance Explained (AVE): AVE(for each block),
+AVE(outer model), AVE(inner model).}
+}
+\description{
+SGCCA extends RGCCA to address the issue of variable selection. Specifically,
+RGCCA is combined with an L1-penalty that gives rise to Sparse GCCA (SGCCA)
+which is implemented in the function sgcca().
+Given \eqn{J} matrices \eqn{X_1, X_2, ..., X_J}, that represent
+\eqn{J} sets of variables observed on the same set of \eqn{n} individuals.
+The matrices \eqn{X_1, X_2, ..., X_J} must have the same number of rows, but
+may (and usually will) have different numbers of columns. Blocks are not
+necessarily fully connected within the SGCCA framework. Hence the use of
+SGCCA requires the construction (user specified) of a design matrix (\eqn{connection})
+that characterizes the connections between blocks. Elements of the symmetric
+design matrix \eqn{connection = (c_{jk})} are equal to 1 if block \eqn{j} and block
+\eqn{k} are connected, and 0 otherwise. The SGCCA algorithm is very similar
+to the RGCCA algorithm and keeps the same monotone convergence properties
+(i.e. the bounded criteria to be maximized increases at each step of the
+iterative procedure and hits at convergence a stationary point).
+Moreover, using a deflation strategy, sgcca() enables the computation of
+several SGCCA block components (specified by ncomp) for each block. Block
+components for each block are guaranteed to be orthogonal when using this
+deflation strategy. The so-called symmetric deflation is considered in this
+implementation, i.e. each block is deflated with respect to its own
+component. Moreover, we stress that the numbers of components per block
+could differ from one block to another.
 }
 \references{
 Tenenhaus, A., Philippe, C., Guillemot, V., Le Cao, K. A.,

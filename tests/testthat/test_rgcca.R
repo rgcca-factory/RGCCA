@@ -80,7 +80,7 @@ test_that("upca_var2",{expect_true(upca_var)})
 
 #testthat("upca_eig",{expect_true(abs(unscaledvarExplPrComp-unscaledvarExplRgcca<1e-8))}) #TODO
 
-# With superblock  # TODO
+
 
 #------------PLS
 #  res_pls = plsr(X_polit ~ X_agric, ncomp = 1, NA_method = "simpls")
@@ -213,5 +213,133 @@ test_that("upca_var2",{expect_true(upca_var)})
 
  resSgcca = rgcca(A, method="sgcca",superblock=TRUE)
 
+ 
+# Recovering MFA
+ require(FactoMineR)
+ df = Russett[, c("gini", "farm", "rent", "gnpr", "labo",
+                  "inst", "ecks", "death", "demostab",
+                  "dictator")]
+ 
+ fit.mfa = MFA(df, , group = c(3, 2, 5), ncp = 2,
+               type = rep("s", 3),
+               graph = FALSE)
+ 
+ X_agric = as.matrix(Russett[,c("gini","farm","rent")])
+ X_ind = as.matrix(Russett[,c("gnpr","labo")])
+ X_polit = as.matrix(Russett[ , c("inst", "ecks", "death",
+                                  "demostab", "dictator")])
+ 
+ A = list(Agric = X_agric, Ind = X_ind, Polit = X_polit)
+ A = lapply(A, scale)
+ n = sqrt(sapply(A, function(x) eigen(RGCCA:::cov2(x, bias = TRUE))$values[1]))
+ for (j in 1:3){A[[j]] = A[[j]]/n[j]}
+ 
+ 
+ A_withSB = c(A, list(Reduce("cbind", A)))
+ 
+ # Recovering MFA with weighted pca on "superblock" : Tout OK
+ fit.mfaViaPca= rgcca(list(A_withSB[[4]]),method="pca",scale=FALSE,scale_block=FALSE,ncomp=2)
+ cor(fit.mfaViaPca$Y[[1]][, 1], fit.mfa$global.pca$ind$coord[, 1]) #-1 OK
+ cor(fit.mfaViaPca$Y[[1]][, 2], fit.mfa$global.pca$ind$coord[, 2]) #-1 OK
+ head(cbind(fit.mfaViaPca$Y[[1]][, 1], fit.mfa$global.pca$ind$coord[, 1]))
+ head(cbind(fit.mfaViaPca$Y[[1]][, 2], fit.mfa$global.pca$ind$coord[, 2]))
+ 
+ 
+ # Recovering MFA with rgcca with "manual superblock"
+ C = matrix(c(0, 0, 0, 1,
+              0, 0, 0, 1,
+              0, 0, 0, 1,
+              1, 1, 1, 0), 4, 4)
+ 
+ fit.rgcca = rgcca(blocks = A_withSB, connection = C,
+                  tau = c(rep(1, 3), 0),
+                  scheme = "factorial",
+                  scale = FALSE,
+                  scale_block = FALSE,
+                  verbose = FALSE,
+                  bias = FALSE, ncomp = 2)
+ 
+ # Recovering MFA with rgcca and "automatic" superblock (with tau = 1)
+ fit.sbTau1  = rgcca(blocks = A,
+                  tau = rep(1, 4),
+                  scheme = "factorial",
+                  scale = FALSE,
+                  scale_block = FALSE,
+                  verbose = FALSE,
+                  bias = FALSE, ncomp = 2,
+                  superblock = TRUE)
+ 
+ # Recovering MFA  with rgcca and "automatic" superblock (with tau = 0)
+ fit.sbTau0 = rgcca(blocks = A,
+                   tau = c(1,1,1,0),
+                   scheme = "factorial",
+                   scale = FALSE,
+                   scale_block = FALSE,
+                   verbose = FALSE,
+                   bias = FALSE, ncomp = 2,
+                   superblock = TRUE)
+ 
+ # Recovering MFA with 'mcoa'
+ 
+ fit.mcoa = rgcca(blocks = A, method = "mcoa",
+                   scale = FALSE,
+                   scale_block = FALSE,
+                   verbose = FALSE,
+                   bias = TRUE, ncomp = 2)
+ 
+ # Recovering MFA with 'mcoa' + superblock (pas de sens, mais renvoie exatement le meme Y ??)
+ fit.mcoasb = rgcca(blocks = A_withSB, method = "mcoa",
+                   scale = FALSE,
+                   scale_block = FALSE,
+                   verbose = FALSE,
+                   bias = TRUE, ncomp = 2)
+ 
 
-# RGCCA
+ # 1 pour tout le monde avec la même valeur uniquement pour 
+ round(cor(fit.mcoa$Y[[4]][, 1], fit.mfa$global.pca$ind$coord[, 1]),digits=8)
+ cor(fit.rgcca$Y[[4]][, 1], fit.mfa$global.pca$ind$coord[, 1])
+ cor(fit.sbTau0$Y[[4]][, 1], fit.mfa$global.pca$ind$coord[, 1])
+ cor(fit.sbTau1$Y[[4]][, 1], fit.mfa$global.pca$ind$coord[, 1])
+ cor(fit.mcoa$Y[[4]][, 1], fit.mfa$global.pca$ind$coord[, 1])
+ cor(fit.mcoasb$Y[[4]][, 1], fit.mfa$global.pca$ind$coord[, 1])
+ 
+ cbind(rgcca=fit.rgcca$Y[[4]][,1],sbtau0=fit.sbTau0$Y[[4]][,1],sbtau1=fit.sbTau1$Y[[4]][,1],mcoa=fit.mcoa$Y[[4]][,1],mcoasb=fit.mcoasb$Y[[4]][,1], mfa=fit.mfa$global.pca$ind$coord[, 1])
+ 
+ # et la deuxieme composante ? Très mauvaises corrélations...
+ round(cor(fit.mcoa$Y[[4]][, 2], fit.mfa$global.pca$ind$coord[, 2]),digits=8) # -0.47
+ round(cor(fit.rgcca$Y[[4]][, 2], fit.mfa$global.pca$ind$coord[, 2]),digits=8)#-
+ round(cor(fit.sbTau0$Y[[4]][, 2], fit.mfa$global.pca$ind$coord[, 2]),digits=8)# 0.4931367
+ round(cor(fit.sbTau1$Y[[4]][, 2], fit.mfa$global.pca$ind$coord[, 2]),digits=8)# 0.4931367
+ round(cor(fit.mcoasb$Y[[4]][, 2], fit.mfa$global.pca$ind$coord[, 2]),digits=8) # 0.9842505
+ 
+ cbind(rgcca=fit.rgcca$Y[[4]][,2],sbtau0=fit.sbTau0$Y[[4]][,2],sbtau1=fit.sbTau1$Y[[4]][,2],mcoa=fit.mcoa$Y[[4]][,2],mcoasb=fit.mcoasb$Y[[4]][,2], mfa=fit.mfa$global.pca$ind$coord[, 2])
+ 
+ 
+ 
+ # Recovering PCA with superblock0.4732043
+ resPCA_sb= rgcca (
+     blocks=list(gini=X_agric[,"gini"],farm=X_agric[,"farm"],rent=X_agric[,"rent"]),
+     superblock = TRUE,
+     tau =c(1,1,1,0),
+     ncomp = c(1,1,1,2),
+     method = "rgcca",
+     verbose = FALSE,
+     scheme = "factorial",
+     scale = TRUE,
+     init = "svd",
+     bias = TRUE,
+     tol = 1e-08)
+
+ resPCA=rgcca(list(X_agric),method="pca",ncomp=2)
+ # Comment déflate t'on si on a deux composantes que dans le superbloc ?
+ cbind(resPCA$Y[[1]],resPCA_sb$Y[[4]])
+ cor(resPCA$Y[[1]][,1],resPCA_sb$Y[[4]][,1])
+ cor(resPCA$Y[[1]][,2],resPCA_sb$Y[[4]][,2])
+ plot(resPCA$Y[[1]][,2],resPCA_sb$Y[[4]][,2])
+
+ sum(resPCA$Y[[1]][,1]^2)
+ 
+ test_that("rgccaVsMFA",{expect_true( round(cor(fit.mcoa$Y[[4]][, 1], fit.mfa$global.pca$ind$coord[, 1]),digits=8)==1)})
+ 
+ 
+

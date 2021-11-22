@@ -51,7 +51,7 @@
 #' @title Variable Selection For Generalized Canonical Correlation Analysis
 #' (SGCCA)
 #' @examples
-#'
+#' @param superblock TRUE if a superblock is added, FALSE ifelse (useful for deflation strategy when a superblock is used)
 #' #############
 #' # Example 1 #
 #' #############
@@ -137,7 +137,7 @@ sgcca <- function(blocks, connection = 1 - diag(length(blocks)),
                   sparsity = rep(1, length(blocks)),
                   ncomp = rep(1, length(blocks)), scheme = "centroid",
                   init = "svd", bias = TRUE, tol = .Machine$double.eps,
-                  verbose = FALSE,   quiet = FALSE, na.rm = TRUE){
+                  verbose = FALSE,   quiet = FALSE, na.rm = TRUE,superblock=FALSE){
 
   # ndefl number of deflation per block
   ndefl <- ncomp - 1
