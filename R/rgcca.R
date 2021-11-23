@@ -307,6 +307,7 @@ rgcca <- function(blocks, method = "rgcca",
                               scale = scale,
                               bias = bias,
                               scale_block = scale_block)
+    
     opt$superblock <- check_superblock(response, opt$superblock, !quiet)
     opt$blocks     <- set_superblock(opt$blocks, opt$superblock,
                                      method, !quiet)
@@ -347,7 +348,6 @@ rgcca <- function(blocks, method = "rgcca",
 
     if (warn_on && !quiet)
         message("Analysis in progress ...")
-
     func <- quote(
         gcca(
             blocks = opt$blocks,
@@ -360,7 +360,7 @@ rgcca <- function(blocks, method = "rgcca",
             tol = tol,
             quiet = quiet,
             na.rm = na.rm,
-            superblock=superblock
+            superblock=opt$superblock
         )
     )
 
