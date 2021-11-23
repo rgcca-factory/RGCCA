@@ -206,9 +206,28 @@ sgcca <- function(blocks, connection = 1 - diag(length(blocks)),
                               " is under progress... \n")
 
       # Apply deflation
-      defla.result <- defl.select(sgcca.result$Y, R, ndefl, n - 1, J, na.rm = na.rm)
-      R <- defla.result$resdefl
-
+      if(!superblock)
+      {
+        defla.result <- defl.select(sgcca.result$Y, R, ndefl, n - 1, J, na.rm = na.rm)
+        R <- defla.result$resdefl
+        for (b in seq_len(J))  {P[[b]][, n - 1] <- defla.result$pdefl[[b]]}
+      }
+      if(superblock)
+      {
+        deflation.result.J=deflation(R[[J]], sgcca.result$Y[,J])
+        R[[J]]=deflation.result.J$R
+        P[[J]][, n - 1] <-deflation.result.J$p
+        cumsum_pjs=cumsum(pjs)[1:(J-1)]
+        inf_pjs=c(0,cumsum_pjs[1:(J-2)])+1          
+        for(j in 1:(J-1))
+        {
+          R[[j]]=R[[J]][,c(inf_pjs[j]:cumsum_pjs[j]),drop=FALSE]
+          rownames(R[[j]])=rownames(R[[j]])
+          colnames(R[[j]])=colnames(R[[J]])[c(inf_pjs[j]:cumsum_pjs[j])]
+          P[[j]][, n - 1] <- P[[J]][c(inf_pjs[j]:cumsum_pjs[j]), n - 1]
+        }
+      }
+      
       if (is.vector(sparsity)) {
         sgcca.result <- sgccak(R, connection, sparsity = sparsity,
                                scheme = scheme, init = init, bias = bias,
@@ -228,7 +247,6 @@ sgcca <- function(blocks, connection = 1 - diag(length(blocks)),
       for (b in seq_len(J))  {
         Y[[b]][, n] <- sgcca.result$Y[, b]
         a[[b]][, n] <- sgcca.result$a[[b]]
-        P[[b]][, n - 1] <- defla.result$pdefl[[b]]
         astar[[b]][, n] <- sgcca.result$a[[b]] - astar[[b]][, (1:(n - 1)), drop = F] %*% drop(crossprod(a[[b]][, n], P[[b]][, 1:(n - 1), drop = FALSE]))
       }
 

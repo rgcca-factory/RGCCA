@@ -346,6 +346,15 @@ test_that("upca_var2",{expect_true(upca_var)})
  test_that("PCA_superblockVsPCA_comp2",{expect_true( round(abs(cor_pca1),digits=8)==1)})
  
  
- 
- 
+ # sgcca with superblock and 2 components
+ A = list(Agric = X_agric, Ind = X_ind, Polit = X_polit)
+
+ fit.sgcca = rgcca(blocks = A,
+                    sparsity = c(0.7,0.8,0.8,0.5),
+                    scheme = "factorial",
+                    scale = FALSE,
+                    scale_block = FALSE,
+                    verbose = FALSE,
+                    bias = FALSE, ncomp = 2,
+                    superblock = TRUE)
 
