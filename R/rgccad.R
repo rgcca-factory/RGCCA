@@ -289,11 +289,19 @@ rgccad = function(blocks, connection = 1 - diag(length(blocks)),
       for (b in 1:J) Y[[b]][, n] <- rgcca.result$Y[, b]
       for (b in 1:J) a[[b]][, n] <- rgcca.result$a[[b]]
       
-      
-      for (b in 1:J) astar[[b]][, n] <- rgcca.result$a[[b]] -
+      if(!superblock)
+      {
+        for (b in 1:J) astar[[b]][, n] <- rgcca.result$a[[b]] -
         astar[[b]][, (1:(n - 1)),drop = F] %*%
         drop( t(a[[b]][, n]) %*% P[[b]][, 1:(n - 1), drop = F] )
-      
+      }
+      if(superblock)
+      {
+        for (b in 1:(J-1)){ astar[[b]][, n] <- matrix(NA,nrow(rgcca.result$a[[b]]),ncol(rgcca.result$a[[b]]))}
+        astar[[J]][, n] <- rgcca.result$a[[J]] -
+            astar[[J]][, (1:(n - 1)),drop = F] %*%
+            drop( t(a[[J]][, n]) %*% P[[J]][, 1:(n - 1), drop = F] )
+      }
     
     }
   }

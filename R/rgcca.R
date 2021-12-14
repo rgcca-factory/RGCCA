@@ -186,11 +186,12 @@ rgcca <- function(blocks, method = "rgcca",
                   scale = TRUE, scale_block = TRUE,
                   connection = 1 - diag(length(blocks)),
                   scheme = "factorial",
-                  ncomp = rep(1, length(blocks)),
+                  ncomp = rep(1,length(blocks)),
                   tau = rep(1, length(blocks)),
                   sparsity = rep(1, length(blocks)),
                   init = "svd", bias = TRUE, tol = 1e-08,
-                  response = NULL, superblock = FALSE,
+                  response = NULL, 
+                  superblock = FALSE,
                   NA_method = "nipals", verbose = FALSE, quiet = TRUE){
 
     if(class(blocks)=="permutation")
@@ -224,6 +225,7 @@ rgcca <- function(blocks, method = "rgcca",
           sparsity=blocks$bestpenalties
         blocks<-blocks$call$blocks
     }
+
 
     if(length(blocks) == 1){
         if(method != "pca")
@@ -277,8 +279,18 @@ rgcca <- function(blocks, method = "rgcca",
         check_boolean(i, get(i))
 
     penalty <- elongate_arg(penalty, blocks)
-    ncomp <- elongate_arg(ncomp, blocks)
+    
 
+    
+    # if(superblock||method%in%c( "maxvar", "maxvar-b",
+    # "cpca-1", "cpca-2", "maxvar-a", "mcoa",
+    # "cpca-4", "hpca"))
+    # {
+    #   if(length(ncomp)!=1){stop("Please enter in ncomp an integer corresponding to the number of components required in the superblock.")}
+    #   ncomp=c(lapply(blocks,ncol),ncomp)
+    # }
+    ncomp <- elongate_arg(ncomp, blocks)
+    
     opt <- select_analysis(
         blocks = blocks,
         connection = connection,
@@ -290,6 +302,9 @@ rgcca <- function(blocks, method = "rgcca",
         quiet = quiet,
         response = response
     )
+  
+    
+   
     raw = blocks
    if(!is.null(response))
    {
@@ -340,7 +355,9 @@ rgcca <- function(blocks, method = "rgcca",
     opt$ncomp <- check_ncomp(opt$ncomp, opt$blocks)
 
     warn_on <- FALSE
+    if(method=="pca"){opt$superblock=FALSE}
 
+    
     if (any(sapply(opt$blocks, NCOL) > 1000)) {
             # if( (method <-<- "sgcca" && tau > 0.3) || method !<- "sgcca" )
             warn_on <- TRUE

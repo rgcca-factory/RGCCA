@@ -291,7 +291,6 @@ test_that("upca_var2",{expect_true(upca_var)})
                    verbose = FALSE,
                    bias = TRUE, ncomp = 2)
  
- fit.mcoa$call$superblock
  # 1 pour tout le monde
  cor1=cor(fit.rgcca$Y[[4]][, 1], fit.mfa$global.pca$ind$coord[, 1])
  cor2=cor(fit.sbTau0$Y[[4]][, 1], fit.mfa$global.pca$ind$coord[, 1])
@@ -357,4 +356,13 @@ test_that("upca_var2",{expect_true(upca_var)})
                     verbose = FALSE,
                     bias = FALSE, ncomp = 2,
                     superblock = TRUE)
+
+ # test superblock
+ A = list(Agric = X_agric, Ind = X_ind, Polit = X_polit)
+A[[1]][1:5,]=NA 
+resrgcca=rgcca(A,method="cpca-2",ncomp=2)
+t(resrgcca$Y[[4]])%*%resrgcca$Y[[4]]
+
+A = list(Agric = X_agric, Ind = X_ind, Polit = X_polit)
+#resrgcca5dim=rgcca(A,method="cpca-2",ncomp=5)
 
