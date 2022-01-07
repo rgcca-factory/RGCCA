@@ -10,6 +10,15 @@ weighted_kron_sum <- function(factors, weights) {
   list_khatri_rao(factors) %*% weights
 }
 
+mix_weighted_kron_sum <- function(factors, weights, ncomp, ranks) {
+  sapply(1:ncomp, function(k) {
+    weighted_kron_sum(
+      lapply(factors, "[", seq((k - 1) * ranks + 1, k * ranks)),
+      weights[k, ]
+    )
+  })
+}
+
 kron_prod_q <- function(factors, mode, q) {
   D = length(factors)
   Reduce("%x%", rev(lapply(1:D, function(d) {

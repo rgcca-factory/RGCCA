@@ -213,6 +213,7 @@ rgcca <- function(
     tau = rep(1, length(blocks)),
     sparsity = rep(1, length(blocks)),
     ranks = rep(1, length(blocks)),
+    penalty_coef = 0,
     regularisation_matrices = NULL,
     kronecker_covariance = F,
     init = "svd",
@@ -343,6 +344,7 @@ rgcca <- function(
     if (type == "gmgcca") {
       if (missing(method)) method  <- "complete"
       ranks                <- check_ranks(ranks, blocks)
+      penalty_coef         <- penalty_coef
     }
 
 
@@ -452,6 +454,7 @@ rgcca <- function(
     if (type == "gmgcca") {
       func$regularisation_matrices <- regularisation_matrices
       func$ranks                   <- ranks
+      func$penalty_coef            <- penalty_coef
     }
 
     func[[par]] <- opt$penalty

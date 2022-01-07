@@ -2,7 +2,8 @@ gmgcca <- function(A, C = 1-diag(length(A)), tau = rep(1, length(A)),
                   ncomp = rep(1, length(A)), scheme = "centroid", scale = TRUE,
                   init="svd", bias = TRUE, tol = 1e-8, verbose=FALSE,
                   scale_block = TRUE, regularisation_matrices = NULL,
-                  ranks = rep(1, length(A)), prescaling = FALSE, quiet = FALSE) {
+                  ranks = rep(1, length(A)), prescaling = FALSE, quiet = FALSE,
+                  penalty_coef = 0) {
 
   # Number of blocks
   J      = length(A)
@@ -110,7 +111,8 @@ gmgcca <- function(A, C = 1-diag(length(A)), tau = rep(1, length(A)),
     verbose                 = verbose,
     regularisation_matrices = regularisation_matrices,
     ranks                   = ranks,
-    ncomp                   = ncomp
+    ncomp                   = ncomp,
+    penalty_coef            = penalty_coef
   )
 
   # Store tau, AVE_inner, crit
