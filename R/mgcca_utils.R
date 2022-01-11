@@ -13,7 +13,7 @@ weighted_kron_sum <- function(factors, weights) {
 mix_weighted_kron_sum <- function(factors, weights, ncomp, ranks) {
   sapply(1:ncomp, function(k) {
     weighted_kron_sum(
-      lapply(factors, "[", seq((k - 1) * ranks + 1, k * ranks)),
+      lapply(factors, function(x) x[, seq((k - 1) * ranks + 1, k * ranks)]),
       weights[k, ]
     )
   })

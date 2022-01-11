@@ -1,7 +1,7 @@
 gmgccak <- function (A, A_m = NULL, C, tau = rep(1, length(A)), scheme = "centroid",
-                    verbose = FALSE, init="svd", bias = TRUE, tol = 1e-8,
-                    regularisation_matrices, ranks= rep(1, length(A)),
-                    ncomp = rep(1, length(A)), penalty_coef = 0) {
+                     verbose = FALSE, init="svd", bias = TRUE, tol = 1e-8,
+                     regularisation_matrices, ranks= rep(1, length(A)),
+                     ncomp = rep(1, length(A)), penalty_coef = 0) {
 
   call = list(A = A, A_m = A_m, C = C, scheme = scheme, verbose = verbose, init = init,
               bias = bias, tol = tol, ranks = ranks, ncomp = ncomp)
@@ -29,7 +29,7 @@ gmgccak <- function (A, A_m = NULL, C, tau = rep(1, length(A)), scheme = "centro
   }
 
   factors_comp = function(i, k) {
-    lapply(factors[[i]], "[", seq((k - 1) * ranks[i] + 1, k * ranks[i]))
+    lapply(factors[[i]], function(x) x[, seq((k - 1) * ranks[i] + 1, k * ranks[i])])
   }
 
   # Returns a N x J matrix
@@ -59,7 +59,6 @@ gmgccak <- function (A, A_m = NULL, C, tau = rep(1, length(A)), scheme = "centro
   DIM    <- lapply(A, dim)
   LEN    <- unlist(lapply(DIM, length))
   B_nD   <- which(LEN >= 4)   # Store which blocks are higher order tensors
-  B_3D   <- which(LEN == 3)   # Store which blocks are 3D
   B_2D   <- which(LEN == 2)   # Store which blocks are 2D
   B_0D   <- which(LEN == 0)   # Store which blocks are 1D (stored as 0D)
 
@@ -174,10 +173,12 @@ gmgccak <- function (A, A_m = NULL, C, tau = rep(1, length(A)), scheme = "centro
 
         if (j %in% B_2D) { # Matrices
           Q       = t(P[[j]]) %*% Z[, j]
-          M       = penalty_coef * M_i_k(j, k)
-          alpha   = svd(M, nu = 0, nv = 0)$d[1]
+          # M       = penalty_coef * M_i_k(j, k)
+          # alpha   = svd(M, nu = 0, nv = 0)$d[1]
+          alpha = ncomp[j] - 1
 
-          a[[j]][, k]  = Q - 2 * crossprod(M - alpha * diag(nrow(M)), a[[j]][, k])
+          # a[[j]][, k]  = Q - 2 * crossprod(M - alpha * diag(nrow(M)), a[[j]][, k])
+          a[[j]][, k]  = Q - 2 * penalty_coef * (a[[j]][, -k] %*% crossprod(a[[j]][, -k], a[[j]][, k]) - alpha * a[[j]][, k])
           a[[j]][, k]  = a[[j]][, k] / norm(a[[j]][, k], type = "2")
           Y[[j]][, k]  = P[[j]] %*% a[[j]][, k]
         } else {
@@ -185,19 +186,34 @@ gmgccak <- function (A, A_m = NULL, C, tau = rep(1, length(A)), scheme = "centro
             fac   = factors_comp(j, k)
             W     = list_khatri_rao(fac[-d]) %*% diag(weights[[j]][k, ])
 
-            Q     = array(t(P[[j]]) %*% Z[, j], dim = DIM[[j]][-1])
+            Q     = array(t(P_m[[j]]) %*% Z[, j], dim = DIM[[j]][-1])
             Q     = unfold(Q, mode = d)
-            Q     = crossprod(W, Q)
+            Q     = Q %*% W
 
-            M     = t(W) %*% (penalty_coef * M_i_k(j, k)) %*% W
-            alpha = svd(M, nu = 0, nv = 0)$d[1]
+            MW   = 0
+            Wk   = array(a[[j]][, -k, drop = F], dim = c(DIM[[j]][-1], ncomp[j] - 1))
+            idx  = (1:LEN[j])[-d]
+            idx[LEN[j]] = d
+            Wk   = aperm(Wk, idx)
+            Wk   = matrix(as.vector(Wk), ncol = DIM[[j]][d + 1] * (ncomp[j] - 1)) # Matrix of dimension p/p_m x p_m (K -1)
 
-            SVD = svd(Q - 2 * (M + alpha * diag(nrow(M))) %*% fac[[d]])
+            for (r in 1:ranks[j]) {
+              WWk = t(matrix(t(W[, r]) %*% Wk, ncol = DIM[[j]][d + 1], nrow = ncomp[j] - 1))
+              fac_r = lapply(fac, function(x) x[, r])
+              fac_r[[d]] = fac[[d]]
+
+              MW = MW + WWk %*% (t(a[[j]][, -k]) %*% Reduce("%x%", rev(fac_r)))
+            }
+            MW    = ranks[j] * MW * penalty_coef
+            alpha = ncomp[j] * ranks[j]^2 * penalty_coef
+
+            # SVD = svd(Q - 2 * (M - alpha * diag(nrow(M))) %*% fac[[d]])
+            SVD = svd(Q - 2 * (MW - alpha * fac[[d]]))
 
             fac[[d]]    = SVD$u %*% t(SVD$v)
-            factors[[j]][[d]][seq((k - 1) * ranks[j] + 1, k * ranks[j])] = fac[[d]]
+            factors[[j]][[d]][, seq((k - 1) * ranks[j] + 1, k * ranks[j])] = fac[[d]]
             a[[j]][, k] = weighted_kron_sum(fac, weights[[j]][k, ])
-            Y[, j][, k] = P[[j]] %*% a[[j]][, k]
+            Y[[j]][, k] = P_m[[j]] %*% a[[j]][, k]
 
             dgx      = compute_dgx(dg, j, k)
             Z[, j]   = apply(dgx, 1, sum)
@@ -205,14 +221,16 @@ gmgccak <- function (A, A_m = NULL, C, tau = rep(1, length(A)), scheme = "centro
           fac   = factors_comp(j, k)
           W     = list_khatri_rao(fac)
 
-          Q       = t(W) %*% t(P[[j]]) %*% Z[, j]
-          M       = t(W) %*% (penalty_coef * M_i_k(j, k)) %*% W
+          Q       = t(W) %*% t(P_m[[j]]) %*% Z[, j]
+          # M       = t(W) %*% (penalty_coef * M_i_k(j, k)) %*% W
+          M       = penalty_coef * crossprod(crossprod(a[[j]][, -k], list_khatri_rao(fac)))
           alpha   = svd(M, nu = 0, nv = 0)$d[1]
+          # alpha   = ncomp[j] * ranks[j] * penalty_coef
 
           weights[[j]][k, ]  = Q - 2 * crossprod(M - alpha * diag(nrow(M)), weights[[j]][k, ])
           weights[[j]][k, ]  = weights[[j]][k, ] / norm(weights[[j]][k, ], type = "2")
           a[[j]][, k]        = weighted_kron_sum(fac, weights[[j]][k, ])
-          Y[[j]][, k]        = P[[j]] %*% a[[j]][, k]
+          Y[[j]][, k]        = P_m[[j]] %*% a[[j]][, k]
         }
       }
     }
