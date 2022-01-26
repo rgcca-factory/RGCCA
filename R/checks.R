@@ -257,16 +257,20 @@ check_ncomp <- function(ncomp, blocks, min = 1) {
 
 check_ranks <- function(ranks, blocks, min = 1) {
   ranks <- elongate_arg(ranks, blocks)
+  if (!is.vector(ranks)) p = nrow(ranks)
+  else p = 1
+  J = length(blocks)
   ranks <- sapply(
     seq(length(ranks)),
     function(x){
       y <- check_integer("ranks", ranks[x], min = min)
-      if (any(y > dim(blocks[[x]])[-1])) {
+      j = (x - 1) %% J + 1
+      if (length(dim(blocks[[j]])) > 2 && any(y > dim(blocks[[j]])[-1])) {
         stop_rgcca(
           paste0(
             "ranks[", x, "] should be comprise between ", min ,
-            " and ", min(dim(blocks[[x]])), " (that is the number of
-            variables of the smallest mode of block ", x, ")."
+            " and ", min(dim(blocks[[j]])), " (that is the number of
+            variables of the smallest mode of block ", j, ")."
           ),
           exit_code = 126 # TODO: look up exit codes
         )
@@ -276,6 +280,7 @@ check_ranks <- function(ranks, blocks, min = 1) {
     }
   )
 
+  ranks = matrix(ranks, nrow = p)
   check_size_blocks(blocks, "ranks", ranks)
   return(ranks)
 }

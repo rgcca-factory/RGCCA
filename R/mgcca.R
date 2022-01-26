@@ -143,13 +143,16 @@ mgcca <- function(A, C = 1-diag(length(A)), tau = rep(1, length(A)),
   AVE_X <- crit <- factors <- weights <- list()
   Y     <- P    <- a       <- astar   <- list()
 
-  for (d in B_2D) ranks[d] <- 1
+
+  ranks = matrix(ranks, nrow = max(ncomp), ncol = J, byrow = T)
+  colnames(ranks) = names(A)
+  for (d in B_2D) ranks[, d] <- 1
   for (d in 1:J) P[[d]]  <- a[[d]] <- astar[[d]] <- matrix(NA,pjs[[d]],N+1)
 
   for (d in B_nD) {
     factors[[d]] = list()
     for (f in 1:(LEN[[d]] - 1)) {
-      factors[[d]][[f]] = matrix(NA, DIM[[d]][[f + 1]], (N+1) * ranks[[d]])
+      factors[[d]][[f]] = matrix(NA, DIM[[d]][[f + 1]], sum(ranks[, d]))
     }
   }
 
@@ -187,7 +190,7 @@ mgcca <- function(A, C = 1-diag(length(A)), tau = rep(1, length(A)),
       tol                     = tol,
       verbose                 = verbose,
       regularisation_matrices = regularisation_matrices,
-      ranks                   = ranks
+      ranks                   = ranks[n, ]
     )
 
     # Store tau, AVE_inner, crit
@@ -199,8 +202,8 @@ mgcca <- function(A, C = 1-diag(length(A)), tau = rep(1, length(A)),
     for (d in 1:J) Y[[d]][,n] = mgcca.result$Y[ , d]
     for (d in 1:J) a[[d]][,n] = mgcca.result$a[[d]]
     for (d in B_nD) {
+      idx = seq(c(0, cumsum(ranks[, d]))[n] + 1, c(0, cumsum(ranks[, d]))[n + 1])
       for (f in 1:(LEN[[d]] - 1)) {
-        idx                      = seq((n - 1) * ranks[[d]] + 1, n * ranks[[d]])
         factors[[d]][[f]][, idx] = mgcca.result$factors[[d]][[f]]
       }
       weights[[d]] = mgcca.result$weights[[d]]
@@ -253,7 +256,7 @@ mgcca <- function(A, C = 1-diag(length(A)), tau = rep(1, length(A)),
 
   # Remove unused components
   for (d in B_nD) {
-    factors[[d]] = shave.matlist(factors[[d]], ncomp[d] * ranks[d])
+    factors[[d]] = shave.matlist(factors[[d]], sum(ranks[, d]))
   }
 
   # AVE
