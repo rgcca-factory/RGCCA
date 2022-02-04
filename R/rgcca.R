@@ -191,7 +191,8 @@ rgcca <- function(blocks, method = "rgcca",
                   sparsity = rep(1, length(blocks)),
                   init = "svd", bias = TRUE, tol = 1e-08,
                   response = NULL, superblock = FALSE,
-                  NA_method = "nipals", verbose = FALSE, quiet = TRUE){
+                  NA_method = "nipals", verbose = FALSE, quiet = TRUE,
+                  penalty_coef = 0){
 
     if(class(blocks)=="permutation")
     {
@@ -244,7 +245,15 @@ rgcca <- function(blocks, method = "rgcca",
     if (!missing(response) && missing(superblock))
         superblock <- FALSE
 
-    if (tolower(method) %in% c("sgcca", "spca", "spls")) {
+    if (tolower(method) %in% c("grgcca")) {
+      gcca <- grgcca
+      par <- "tau"
+      penalty <- tau
+    } else if (tolower(method) %in% c("grgcca_penalized")) {
+      gcca <- grgcca_penalized
+      par <- "tau"
+      penalty <- tau
+    } else if (tolower(method) %in% c("sgcca", "spca", "spls")) {
       if (!missing(tau) && missing(sparsity))
            stop_rgcca(paste0("sparsity parameters required for ",
                              tolower(method), " (instead of tau)."))
@@ -362,6 +371,10 @@ rgcca <- function(blocks, method = "rgcca",
             na.rm = na.rm
         )
     )
+
+    if (tolower(method) %in% c("grgcca_penalized")) {
+      func[["penalty_coef"]] = penalty_coef
+    }
 
     func[[par]] <- opt$penalty
     func_out <- eval(as.call(func))
