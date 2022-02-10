@@ -33,6 +33,7 @@ scaling <- function(blocks, scale = TRUE, bias = TRUE, scale_block = TRUE) {
         if (scale_block) {
             N = ifelse(bias, NROW(blocks[[1]]), NROW(blocks[[1]])-1)
             blocks <- lapply(blocks, function(x) {
+                center_att = attr(x, "scaled:center")
                 DIM = dim(x)
                 dn  = dimnames(x)
                 if (length(dim(x)) > 2) x = matrix(x, nrow(x))
@@ -45,6 +46,7 @@ scaling <- function(blocks, scale = TRUE, bias = TRUE, scale_block = TRUE) {
                     attr(x, "scaled:scale") <- rep(s, NCOL(x))
                 }
                 dimnames(x) = dn
+                attr(x, "scaled:center") = center_att
                 return(x)
             })
         }
@@ -74,10 +76,14 @@ apply_scaling <- function(blocks, centering_factors, scaling_factors) {
     lapply(1:length(blocks), function(x) {
         DIM = dim(blocks[[x]])
         if (length(DIM) > 2) {
-            block = t(apply(blocks[[x]], 1, function(y) y - centering_factors[[x]]))
+            block = t(apply(blocks[[x]], 1, function(y) as.vector(y) - centering_factors[[x]]))
             block = array(block, dim = DIM)
-            block = apply(block, -2, function(y) y / scaling_factors[[x]])
-            block = aperm(block, c(2, 1, 3:length(DIM)))
+            if (length(unique(scaling_factors[[x]])) == 1) {
+                block = block / scaling_factors[[x]][1]
+            } else {
+                block = apply(block, -2, function(y) y / scaling_factors[[x]])
+                block = aperm(block, c(2, 1, 3:length(DIM)))
+            }
             return(block)
         }
         if (length(DIM) == 2 && DIM[2] > 1) {
