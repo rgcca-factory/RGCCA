@@ -221,18 +221,31 @@ check_ncol <- function(x, i_block) {
     }
 }
 
-check_ncomp <- function(ncomp, blocks, min = 1) {
+check_ncomp <- function(ncomp, blocks, min = 1, superblock = FALSE) {
     ncomp <- elongate_arg(ncomp, blocks)
     check_size_blocks(blocks, "ncomp", ncomp)
     ncomp <- sapply(
         seq(length(ncomp)),
         function(x){
-            msg = paste0("ncomp[", x, "] should be lower than ",
-                         NCOL(blocks[[x]]),
-                         " (that is the number of variables of block ", x, ")."
-            )
-            y <- check_integer("ncomp", ncomp[x], min = min, max_message = msg,
+            if(!superblock){
+              msg = paste0("ncomp[", x, "] should be lower than ",
+                            NCOL(blocks[[x]]),
+                            " (i.e. the number of variables for block ", x, ")."
+              )
+              y <- check_integer("ncomp", ncomp[x], min = min, max_message = msg,
                                max = NCOL(blocks[[x]]), exit_code = 126)
+            }else{
+              msg = paste0("The number of global components should be lower than",
+                           NCOL(blocks[[length(blocks)]]),
+                           " (i.e. the number of variables in the superblock.")
+
+              y <- check_integer("ncomp", ncomp[length(blocks)],
+                                 min = min, max_message = msg,
+                                 max = NCOL(blocks[[length(blocks)]]),
+                                 exit_code = 126)
+
+            }
+
             return(y)
         }
     )

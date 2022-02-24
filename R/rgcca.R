@@ -190,7 +190,7 @@ rgcca <- function(blocks, method = "rgcca",
                   tau = rep(1, length(blocks)),
                   sparsity = rep(1, length(blocks)),
                   init = "svd", bias = TRUE, tol = 1e-08,
-                  response = NULL, 
+                  response = NULL,
                   superblock = FALSE,
                   NA_method = "nipals", verbose = FALSE, quiet = TRUE){
 
@@ -227,15 +227,7 @@ rgcca <- function(blocks, method = "rgcca",
     }
 
 
-    if(length(blocks) == 1){
-        if(method != "pca")
-        {
-            method = "pca"
-            message("method='rgcca' is not available for one block only and
-                    method was converted to 'pca'.")
-        }
-
-    }
+    if(length(blocks) == 1 && method != "pca") method = "pca"
 
     if (!missing(sparsity) && missing(method))
         method <- "sgcca"
@@ -245,6 +237,12 @@ rgcca <- function(blocks, method = "rgcca",
 
     if (!missing(response) && missing(superblock))
         superblock <- FALSE
+
+    if ((superblock ||
+         tolower(method)%in%c("gcca", "maxvar", "maxvar-b", "cpca-1",
+                     "cpca-2", "maxvar-a", "mcoa","cpca-4", "hpca"))&&
+        length(unique(ncomp)) != 1)
+      stop_rgcca("Specify the number of components only for the superblock or identical for all blocks.")
 
     if (tolower(method) %in% c("sgcca", "spca", "spls")) {
       if (!missing(tau) && missing(sparsity))
@@ -268,29 +266,18 @@ rgcca <- function(blocks, method = "rgcca",
     check_scheme(scheme)
 
   # Check blocks size, add NA for missing subjects
-    blocks = check_blocks(blocks, add_NAlines=TRUE, n=1,
-                          init=TRUE, quiet=quiet)
+    blocks = check_blocks(blocks, add_NAlines = TRUE,
+                          n = 1, init = TRUE, quiet = quiet)
     if (!is.null(response))
         check_blockx("response", response, blocks)
     check_integer("tol", tol, float = TRUE, min = 0)
-
 
     for (i in c("superblock", "verbose", "scale", "bias", "quiet"))
         check_boolean(i, get(i))
 
     penalty <- elongate_arg(penalty, blocks)
-    
-
-    
-    # if(superblock||method%in%c( "maxvar", "maxvar-b",
-    # "cpca-1", "cpca-2", "maxvar-a", "mcoa",
-    # "cpca-4", "hpca"))
-    # {
-    #   if(length(ncomp)!=1){stop("Please enter in ncomp an integer corresponding to the number of components required in the superblock.")}
-    #   ncomp=c(lapply(blocks,ncol),ncomp)
-    # }
     ncomp <- elongate_arg(ncomp, blocks)
-    
+
     opt <- select_analysis(
         blocks = blocks,
         connection = connection,
@@ -302,9 +289,9 @@ rgcca <- function(blocks, method = "rgcca",
         quiet = quiet,
         response = response
     )
-  
-    
-   
+
+
+
     raw = blocks
    if(!is.null(response))
    {
@@ -322,7 +309,7 @@ rgcca <- function(blocks, method = "rgcca",
                               scale = scale,
                               bias = bias,
                               scale_block = scale_block)
-    
+
     opt$superblock <- check_superblock(response, opt$superblock, !quiet)
     opt$blocks     <- set_superblock(opt$blocks, opt$superblock,
                                      method, !quiet)
@@ -338,7 +325,6 @@ rgcca <- function(blocks, method = "rgcca",
         response <- check_blockx("response", response, opt$blocks)
         }
 
-
     if (!is.matrix(opt$connection) || !is.null(response)) {
         opt$connection <- set_connection(
             opt$blocks,
@@ -352,19 +338,13 @@ rgcca <- function(blocks, method = "rgcca",
 
 
     opt$penalty <- check_penalty(opt$penalty, opt$blocks, method)
-    opt$ncomp <- check_ncomp(opt$ncomp, opt$blocks)
+    opt$ncomp <- check_ncomp(opt$ncomp, opt$blocks, opt$superblock)
 
     warn_on <- FALSE
-    if(method=="pca"){opt$superblock=FALSE}
+    if(method=="pca") opt$superblock=FALSE
+    if (any(sapply(opt$blocks, NCOL) > 1000)) warn_on <- TRUE
+    if (warn_on && !quiet)  message("Analysis in progress ...")
 
-    
-    if (any(sapply(opt$blocks, NCOL) > 1000)) {
-            # if( (method <-<- "sgcca" && tau > 0.3) || method !<- "sgcca" )
-            warn_on <- TRUE
-    }
-
-    if (warn_on && !quiet)
-        message("Analysis in progress ...")
     func <- quote(
         gcca(
             blocks = opt$blocks,
@@ -384,13 +364,26 @@ rgcca <- function(blocks, method = "rgcca",
     func[[par]] <- opt$penalty
     func_out <- eval(as.call(func))
 
-    for (i in c("a", "astar", "Y")) {
-        names(func_out[[i]]) <- names(opt$blocks)
+    for (i in c("a", "Y")) {
+       names(func_out[[i]]) <- names(opt$blocks)
         for (j in seq(length(opt$blocks))) {
-            if (i %in%  c("a", "astar") && NCOL(opt$blocks[[j]]) == 1)
-                row.names(func_out[[i]][[j]]) <- colnames(opt$blocks[[j]])
+            if (NCOL(opt$blocks[[j]]) == 1)
+                row.names(func_out[["a"]][[j]]) <- colnames(opt$blocks[[j]])
         }
     }
+
+    if(!opt$superblock){
+      names(func_out[["astar"]]) <- names(opt$blocks)
+      for (j in seq(length(opt$blocks))){
+        if (NCOL(opt$blocks[[j]]) == 1)
+          row.names(func_out[["astar"]][[j]]) <- colnames(opt$blocks[[j]])
+      }
+    }else{
+      if (NCOL(opt$blocks[[length(opt$blocks)]]) == 1)
+        row.names(func_out[["astar"]][[length(opt$blocks)]]) <-
+          colnames(opt$blocks[[length(opt$blocks)]])
+    }
+
     names(func_out$AVE$AVE_X) <- names(opt$blocks)
 
     class(func_out) <- tolower(method)
