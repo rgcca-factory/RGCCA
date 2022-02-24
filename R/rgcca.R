@@ -253,6 +253,10 @@ rgcca <- function(blocks, method = "rgcca",
       gcca <- grgcca_penalized
       par <- "tau"
       penalty <- tau
+    } else if (tolower(method) %in% c("gsgcca_penalized")) {
+      gcca <- gsgcca_penalized
+      par <- "sparsity"
+      penalty <- sparsity
     } else if (tolower(method) %in% c("sgcca", "spca", "spls")) {
       if (!missing(tau) && missing(sparsity))
            stop_rgcca(paste0("sparsity parameters required for ",
@@ -372,7 +376,7 @@ rgcca <- function(blocks, method = "rgcca",
         )
     )
 
-    if (tolower(method) %in% c("grgcca_penalized")) {
+    if (tolower(method) %in% c("grgcca_penalized", "gsgcca_penalized")) {
       func[["penalty_coef"]] = penalty_coef
     }
 

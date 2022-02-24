@@ -173,7 +173,7 @@ check_integer <- function(x, y = x, type = "scalar", float = FALSE, min = 1,
 }
 
 check_method <- function(method) {
-    analysis <- c("rgcca", "grgcca", "grgcca_penalized",
+    analysis <- c("rgcca", "grgcca", "grgcca_penalized", "gsgcca_penalized",
                   "sgcca", "pca", "spca", "pls", "spls",
       "cca", "ifa", "ra", "gcca", "maxvar", "maxvar-b",
       "maxvar-a", "mcoa","cpca-1", "cpca-2", "cpca-4",
