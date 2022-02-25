@@ -238,12 +238,6 @@ rgcca <- function(blocks, method = "rgcca",
     if (!missing(response) && missing(superblock))
         superblock <- FALSE
 
-    if ((superblock ||
-         tolower(method)%in%c("gcca", "maxvar", "maxvar-b", "cpca-1",
-                     "cpca-2", "maxvar-a", "mcoa","cpca-4", "hpca"))&&
-        length(unique(ncomp)) != 1)
-      stop_rgcca("Specify the number of components only for the superblock or identical for all blocks.")
-
     if (tolower(method) %in% c("sgcca", "spca", "spls")) {
       if (!missing(tau) && missing(sparsity))
            stop_rgcca(paste0("sparsity parameters required for ",
@@ -338,7 +332,7 @@ rgcca <- function(blocks, method = "rgcca",
 
 
     opt$penalty <- check_penalty(opt$penalty, opt$blocks, method)
-    opt$ncomp <- check_ncomp(opt$ncomp, opt$blocks, opt$superblock)
+    opt$ncomp <- check_ncomp(opt$ncomp, opt$blocks, superblock = opt$superblock)
 
     warn_on <- FALSE
     if(method=="pca") opt$superblock=FALSE

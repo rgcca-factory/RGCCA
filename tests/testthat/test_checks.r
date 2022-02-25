@@ -246,8 +246,8 @@ test_that("check_ncomp raises an error if blocks and ncomp have different
 test_that("check_ncomp raises an error if any element of ncomp is greater than
           the number of variables in the corresponding block", {
             expect_error(check_ncomp(c(2, 7, 2), blocks),
-                         paste0("ncomp[2] should be lower than 2 (that is ",
-                                "the number of variables of block 2)."),
+                         paste0("ncomp[2] should be lower than 2 (i.e. ",
+                                "the number of variables for block 2)."),
                          fixed = TRUE)
           })
 test_that("check_ncomp raises an error for invalid ncomp", {

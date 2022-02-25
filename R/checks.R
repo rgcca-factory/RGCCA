@@ -222,6 +222,8 @@ check_ncol <- function(x, i_block) {
 }
 
 check_ncomp <- function(ncomp, blocks, min = 1, superblock = FALSE) {
+    if (superblock && length(unique(ncomp)) != 1)
+        stop_rgcca("Specify the number of components only for the superblock or identical for all blocks.")
     ncomp <- elongate_arg(ncomp, blocks)
     check_size_blocks(blocks, "ncomp", ncomp)
     ncomp <- sapply(

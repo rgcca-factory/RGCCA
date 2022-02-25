@@ -216,46 +216,46 @@ test_that("upca_var2",{expect_true(upca_var)})
 
  resSgcca = rgcca(A, method="sgcca",superblock=TRUE)
 
- 
+
 # Recovering MFA
 
 
- 
+
  df = Russett[, c("gini", "farm", "rent", "gnpr", "labo",
                   "inst", "ecks", "death", "demostab",
                   "dictator")]
- 
+
  fit.mfa = FactoMineR::MFA(df, , group = c(3, 2, 5), ncp = 2,
                type = rep("s", 3),
                graph = FALSE)
- 
+
  X_agric = as.matrix(Russett[,c("gini","farm","rent")])
  X_ind = as.matrix(Russett[,c("gnpr","labo")])
  X_polit = as.matrix(Russett[ , c("inst", "ecks", "death",
                                   "demostab", "dictator")])
- 
+
  A = list(Agric = X_agric, Ind = X_ind, Polit = X_polit)
  A = lapply(A, scale)
  n = sqrt(sapply(A, function(x) eigen(RGCCA:::cov2(x, bias = TRUE))$values[1]))
  for (j in 1:3){A[[j]] = A[[j]]/n[j]}
- 
- 
+
+
  A_withSB = c(A, list(Reduce("cbind", A)))
- 
+
  # Recovering MFA with weighted pca on "superblock" : Tout OK
  fit.mfaViaPca= rgcca(list(A_withSB[[4]]),method="pca",scale=FALSE,scale_block=FALSE,ncomp=2)
  cor(fit.mfaViaPca$Y[[1]][, 1], fit.mfa$global.pca$ind$coord[, 1]) #-1 OK
  cor(fit.mfaViaPca$Y[[1]][, 2], fit.mfa$global.pca$ind$coord[, 2]) #-1 OK
  head(cbind(fit.mfaViaPca$Y[[1]][, 1], fit.mfa$global.pca$ind$coord[, 1]))
  head(cbind(fit.mfaViaPca$Y[[1]][, 2], fit.mfa$global.pca$ind$coord[, 2]))
- 
- 
+
+
  # Recovering MFA with rgcca with "manual superblock"
  C = matrix(c(0, 0, 0, 1,
               0, 0, 0, 1,
               0, 0, 0, 1,
               1, 1, 1, 0), 4, 4)
- 
+
  fit.rgcca = rgcca(blocks = A_withSB, connection = C,
                   tau = c(rep(1, 3), 0),
                   scheme = "factorial",
@@ -263,7 +263,7 @@ test_that("upca_var2",{expect_true(upca_var)})
                   scale_block = FALSE,
                   verbose = FALSE,
                   bias = FALSE, ncomp = 2)
- 
+
  # Recovering MFA with rgcca and "automatic" superblock (with tau = 1)
  fit.sbTau1  = rgcca(blocks = A,
                   tau = rep(1, 4),
@@ -273,7 +273,7 @@ test_that("upca_var2",{expect_true(upca_var)})
                   verbose = FALSE,
                   bias = FALSE, ncomp = 2,
                   superblock = TRUE)
- 
+
  # Recovering MFA  with rgcca and "automatic" superblock (with tau = 0)
  fit.sbTau0 = rgcca(blocks = A,
                    tau = c(1,1,1,0),
@@ -283,51 +283,51 @@ test_that("upca_var2",{expect_true(upca_var)})
                    verbose = FALSE,
                    bias = FALSE, ncomp = 2,
                    superblock = TRUE)
- 
+
  # Recovering MFA with 'mcoa'
  fit.mcoa = rgcca(blocks = A, method = "mcoa",
                    scale = FALSE,
                    scale_block = FALSE,
                    verbose = FALSE,
                    bias = TRUE, ncomp = 2)
- 
+
  # 1 pour tout le monde
  cor1=cor(fit.rgcca$Y[[4]][, 1], fit.mfa$global.pca$ind$coord[, 1])
  cor2=cor(fit.sbTau0$Y[[4]][, 1], fit.mfa$global.pca$ind$coord[, 1])
  cor3=cor(fit.sbTau1$Y[[4]][, 1], fit.mfa$global.pca$ind$coord[, 1])
  cor4=cor(fit.mcoa$Y[[4]][, 1], fit.mfa$global.pca$ind$coord[, 1])
 
- 
+
  test_that("rgccaVsMFA",{expect_true( round(cor1,digits=8)==1)})
  test_that("superblockTau0VsMFA",{expect_true( round(cor2,digits=8)==1)})
  test_that("superblockTau1vsMFA",{expect_true( round(cor3,digits=8)==1)})
  test_that("mcoaVsMFA",{expect_true( round(cor4,digits=8)==1)})
- 
+
  matY=cbind(rgcca=fit.rgcca$Y[[4]][,1],sbtau0=fit.sbTau0$Y[[4]][,1],sbtau1=fit.sbTau1$Y[[4]][,1],mcoa=fit.mcoa$Y[[4]][,1], mfa=fit.mfa$global.pca$ind$coord[, 1])
- 
+
  test_that("superblockTau1vsMFA_egalite",{expect_true(  sum(round(abs(matY[,"sbtau1"]-matY[,"mfa"]),digits=8))==0)})
- 
+
  cor1_2=cor(fit.rgcca$Y[[4]][, 2], fit.mfa$global.pca$ind$coord[, 2]) # pas 1 dans ce cas
  cor2_2=cor(fit.sbTau0$Y[[4]][, 2], fit.mfa$global.pca$ind$coord[, 2])
  cor3_2=cor(fit.sbTau1$Y[[4]][, 2], fit.mfa$global.pca$ind$coord[, 2])
  cor4_2=cor(fit.mcoa$Y[[4]][, 2], fit.mfa$global.pca$ind$coord[, 2])
- 
+
 
  test_that("superblockTau0VsMFA_comp2",{expect_true( round(cor2_2,digits=8)==1)})
  test_that("superblockTau1vsMFA_comp2",{expect_true( round(cor3_2,digits=8)==1)})
  test_that("mcoaVsMFA_comp2",{expect_true( round(cor4_2,digits=8)==1)})
- 
+
  matY_2=cbind(rgcca=fit.rgcca$Y[[4]][,2],sbtau0=fit.sbTau0$Y[[4]][,2],sbtau1=fit.sbTau1$Y[[4]][,2],mcoa=fit.mcoa$Y[[4]][,2], mfa=fit.mfa$global.pca$ind$coord[, 2])
  test_that("superblockTau1vsMFA_egalite_comp2",{expect_true(  sum(round(abs(matY_2[,"sbtau1"]-matY_2[,"mfa"]),digits=8))==0)})
- 
 
- 
+
+
  # Recovering PCA with superblock
  resPCA_sb= rgcca (
      blocks=list(gini=X_agric[,"gini"],farm=X_agric[,"farm"],rent=X_agric[,"rent"]),
      superblock = TRUE,
      tau =c(1,1,1,0),
-     ncomp = c(1,1,1,2),
+     ncomp = 2,
      method = "rgcca",
      verbose = FALSE,
      scheme = "factorial",
@@ -343,8 +343,8 @@ test_that("upca_var2",{expect_true(upca_var)})
  cor_pca2=cor(resPCA$Y[[1]][,2],resPCA_sb$Y[[4]][,2])
  test_that("PCA_superblockVsPCA_comp1",{expect_true( round(abs(cor_pca1),digits=8)==1)})
  test_that("PCA_superblockVsPCA_comp2",{expect_true( round(abs(cor_pca1),digits=8)==1)})
- 
- 
+
+
  # sgcca with superblock and 2 components
  A = list(Agric = X_agric, Ind = X_ind, Polit = X_polit)
 
@@ -359,7 +359,7 @@ test_that("upca_var2",{expect_true(upca_var)})
 
  # test superblock
  A = list(Agric = X_agric, Ind = X_ind, Polit = X_polit)
-A[[1]][1:5,]=NA 
+A[[1]][1:5,]=NA
 resrgcca=rgcca(A,method="cpca-2",ncomp=2)
 t(resrgcca$Y[[4]])%*%resrgcca$Y[[4]]
 

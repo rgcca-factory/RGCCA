@@ -207,7 +207,7 @@ rgccad = function(blocks, connection = 1 - diag(length(blocks)),
   AVE_outer <- rep(NA, max(ncomp))
 
   Y <- NULL
-  P <- a <- astar <- NULL
+  P <- a <- astar <- list()
   crit <- list()
   AVE_inner <- rep(NA,max(ncomp))
 
