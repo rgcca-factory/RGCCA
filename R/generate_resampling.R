@@ -61,6 +61,11 @@
 #' that the probability to sample only this value is below `pval`. This
 #' probability is corrected by the number of bootstrap samples and the number
 #' of variables (default is `1e-15`).
+#' @param stratified Logical. Should stratified sampling be performed, i.e. 
+#' the proportion of observations from each class in the learning sets be the 
+#' same as in the whole data set ?
+#' @param groups A vector of class labels, either numeric or a factor. 
+#' Must be given if stratified = TRUE.
 #' @return \item{full_idx}{A list of size n_boot containing the observations
 #' kept for each bootstrap sample.}
 #' @return \item{sd_null}{A list of size the number of block
@@ -72,7 +77,8 @@
 
 generate_resampling <- function(rgcca_res, n_boot, balanced = TRUE,
                                 keep_all_variables = FALSE, pval = 1e-15,
-                                verbose = TRUE){
+                                verbose = TRUE, stratified = F,
+                                groups = NULL){
   if (verbose) packageStartupMessage("Bootstrap samples sanity check...",
                                      appendLF = F)
 
@@ -83,6 +89,16 @@ generate_resampling <- function(rgcca_res, n_boot, balanced = TRUE,
   raw_blocks          = rgcca_res$call$raw
   N                   = NROW(raw_blocks[[1]])
   prob                = rep(1/N, N)
+  
+  if(stratified){
+    if (is.null(groups)) stop_rgcca("The vector of class labels is missing, impossible to stratify")
+    if (length(groups) != N) stop_rgcca("The length of the vector of class labels 
+                                        is different from the number of samples per block")
+    if (!is.factor(groups)){
+      groups = as.factor(groups)
+      warning("The vector of class labels was converted to a factor")
+    }
+  }
 
   # For any variable, threshold for the proportion of the most frequent value
   # of a variable. This threshold is computed so that the probability to sample
@@ -103,17 +119,34 @@ generate_resampling <- function(rgcca_res, n_boot, balanced = TRUE,
   # Keep only risky variables for each block.
   raw_blocks_filtered = mapply(function(x, y) x[, y, drop = FALSE],
                                raw_blocks, risky_var)
-  # While there are variables with null variance among the risky variables.
-  while (!NO_null_sd_var){
+  
+  sampling_function <- function(rows_idx, balanced, n_boot){
+    nb_rows = length(rows_idx)
     if (balanced){# Balanced bootstrap sampling.
-      full_idx = rep(x = seq(N), each = n_boot)
-      full_idx = sample(x = full_idx, size = N*n_boot, replace = FALSE)
-      full_idx = split(full_idx, ceiling(seq_along(full_idx)/N))
+      full_idx = rep(x = rows_idx, each = n_boot)
+      full_idx = sample(x = full_idx, size = nb_rows*n_boot, replace = FALSE)
+      full_idx = split(full_idx, ceiling(seq_along(full_idx)/nb_rows))
     }else{# Unbalanced bootstrap sampling.
       full_idx = lapply(seq(n_boot),
                         function(x)
-                          sample(x = seq(N), replace = TRUE, prob = prob))
+                          sample(x = rows_idx, replace = TRUE, prob = prob[rows_idx]))
     }
+    return(full_idx)
+  }
+  
+  # While there are variables with null variance among the risky variables.
+  while (!NO_null_sd_var){
+    if (stratified){
+      full_idx_by_groups = tapply(seq(N), INDEX = groups, function(x) sampling_function(rows_idx = x, 
+                                                                                      balanced = balanced, 
+                                                                                      n_boot   = n_boot))
+      full_idx = lapply(1:n_boot, function(x) unname(unlist(sapply(full_idx_by_groups, function(y) y[[x]]))))
+    }else{
+      full_idx = sampling_function(rows_idx = seq(N), 
+                                   balanced = balanced, 
+                                   n_boot   = n_boot)
+    }
+    
     # Compute blocks for each bootstrap sample (only with risky variables).
     boot_blocks_filtered =
       lapply(full_idx,

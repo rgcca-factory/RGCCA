@@ -65,7 +65,7 @@
 bootstrap <- function(rgcca_res, n_boot = 100,
                       n_cores = parallel::detectCores() - 1,
                       balanced = TRUE, keep_all_variables = FALSE,
-                      verbose = TRUE){
+                      verbose = TRUE, stratified = F, groups = NULL){
 
     if(class(rgcca_res)=="stability")
     {
@@ -104,7 +104,9 @@ bootstrap <- function(rgcca_res, n_boot = 100,
                                         n_boot = n_boot,
                                         balanced = balanced,
                                         keep_all_variables = keep_all_variables,
-                                        verbose = verbose)
+                                        verbose = verbose,
+                                        stratified = stratified,
+                                        groups = groups)
 
     sd_null = boot_sampling$sd_null
 
@@ -187,7 +189,8 @@ bootstrap <- function(rgcca_res, n_boot = 100,
      }
     }
 
-    return(structure(list(bootstrap = list(W = list_res_W, L = list_res_L),
+    return(structure(list(bootstrap = list(W = list_res_W, L = list_res_L, 
+                                           samples = boot_sampling$full_idx),
                           rgcca = rgcca_res),
                           class = "bootstrap"))
 

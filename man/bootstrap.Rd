@@ -10,7 +10,9 @@ bootstrap(
   n_cores = parallel::detectCores() - 1,
   balanced = TRUE,
   keep_all_variables = FALSE,
-  verbose = TRUE
+  verbose = TRUE,
+  stratified = F,
+  groups = NULL
 )
 }
 \arguments{
@@ -29,6 +31,13 @@ sample (default is FALSE).}
 
 \item{verbose}{Logical value indicating if the progress of the
 bootstrap procedure is reported.}
+
+\item{stratified}{Logical. Should stratified sampling be performed, i.e. 
+the proportion of observations from each class in the learning sets be the 
+same as in the whole data set ?}
+
+\item{groups}{A vector of class labels, either numeric or a factor. 
+Must be given if stratified = TRUE.}
 }
 \value{
 A list containing two objects: 'bootstrap' and 'rgcca'.

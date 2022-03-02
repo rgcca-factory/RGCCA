@@ -10,7 +10,9 @@ generate_resampling(
   balanced = TRUE,
   keep_all_variables = FALSE,
   pval = 1e-15,
-  verbose = TRUE
+  verbose = TRUE,
+  stratified = F,
+  groups = NULL
 )
 }
 \arguments{
@@ -33,6 +35,13 @@ of variables (default is `1e-15`).}
 
 \item{verbose}{Logical value indicating if the progress of the
 bootstrap procedure is reported.}
+
+\item{stratified}{Logical. Should stratified sampling be performed, i.e. 
+the proportion of observations from each class in the learning sets be the 
+same as in the whole data set ?}
+
+\item{groups}{A vector of class labels, either numeric or a factor. 
+Must be given if stratified = TRUE.}
 }
 \value{
 \item{full_idx}{A list of size n_boot containing the observations
