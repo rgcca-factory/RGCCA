@@ -14,7 +14,7 @@ boot <- bootstrap(rgcca_out, n_boot = 4, n_cores = 1)
 
 test_that("bootstrap_default_1", {
     expect_equal(length(boot), 2)
-    expect_equal(length(boot$bootstrap), 2)
+    expect_equal(length(boot$bootstrap), 3)
     boot1 <- boot$bootstrap[[1]][[1]]
     expect_is(boot, "bootstrap")
     expect_is(boot$rgcca, "rgcca")
@@ -30,7 +30,7 @@ boot <- bootstrap(rgcca_out, n_boot = 2, n_cores = 1)
 
 test_that("bootstrap_default", {
     expect_equal(length(boot), 2)
-    expect_equal(length(boot$bootstrap), 2)
+    expect_equal(length(boot$bootstrap), 3)
     boot1 <- boot$bootstrap[[1]][[1]]
     expect_is(boot, "bootstrap")
     expect_is(boot$rgcca, "rgcca")
