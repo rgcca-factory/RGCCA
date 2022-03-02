@@ -51,7 +51,6 @@
 #' @title Variable Selection For Generalized Canonical Correlation Analysis
 #' (SGCCA)
 #' @examples
-#' @param superblock TRUE if a superblock is added, FALSE ifelse (useful for deflation strategy when a superblock is used)
 #' #############
 #' # Example 1 #
 #' #############

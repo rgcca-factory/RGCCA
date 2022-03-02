@@ -57,6 +57,8 @@
 #' (\eqn{1/(n-1)}) estimator of the var/cov (default: bias = TRUE).
 #' @param tol The stopping value for the convergence of the algorithm.
 #' @param na.rm If TRUE, runs rgcca only on available data.
+#' @param superblock TRUE if a superblock is added, FALSE otherwise (deflation
+#' strategy must be adapted when a superblock is used).
 #' @return \item{Y}{A list of \eqn{J} elements. Each element of the list is a
 #' matrix that contains the RGCCA block components for the corresponding block.}
 #' @return \item{a}{A list of \eqn{J} elements. Each element of the list \eqn{a}
@@ -164,7 +166,6 @@
 #' text(fit.rgcca$Y[[1]], fit.rgcca$Y[[2]], rownames(Russett), col = lab)
 #' text(Ytest[, 1], Ytest[, 2], substr(rownames(Russett), 1, 1), col = lab)
 #' @export rgccad
-#' @param superblock TRUE if a superblock is added, FALSE ifelse (useful for deflation strategy when a superblock is used)
 #' @importFrom grDevices dev.off png rainbow
 #' @importFrom graphics abline axis close.screen grid legend lines par points
 #' rect screen segments split.screen text
