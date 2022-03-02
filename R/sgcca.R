@@ -274,10 +274,6 @@ sgcca <- function(blocks, connection = 1 - diag(length(blocks)),
   }
 
   for (b in seq_len(J)) {
-    rownames(a[[b]]) = rownames(astar[[b]]) = colnames(blocks[[b]])
-    rownames(Y[[b]]) = rownames(blocks[[b]])
-    colnames(Y[[b]]) = paste0("comp", 1:max(ncomp))
-
     #Average Variance Explained (AVE) per block
     AVE_X[[b]] =  apply(cor(blocks[[b]], Y[[b]], use = "pairwise.complete.obs")^2, 2,
                       mean, na.rm = TRUE)
@@ -287,16 +283,15 @@ sgcca <- function(blocks, connection = 1 - diag(length(blocks)),
   outer = matrix(unlist(AVE_X), nrow = max(ncomp))
   AVE_outer <- as.numeric((outer %*% pjs)/sum(pjs))
 
-  Y = shave(Y, ncomp)
   AVE_X = shave(AVE_X, ncomp)
 
   AVE <- list(AVE_X = AVE_X, AVE_outer = AVE_outer, AVE_inner = AVE_inner)
 
   if (N == 0) crit = unlist(crit)
 
-  out <- list(Y = shave(Y, ncomp),
-              a = shave(a, ncomp),
-              astar = shave(astar, ncomp),
+  out <- list(Y = Y,
+              a = a,
+              astar = astar,
               crit = crit,
               AVE = AVE)
 

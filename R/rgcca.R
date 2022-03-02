@@ -358,25 +358,26 @@ rgcca <- function(blocks, method = "rgcca",
     func[[par]] <- opt$penalty
     func_out <- eval(as.call(func))
 
-    for (i in c("a", "Y")) {
-       names(func_out[[i]]) <- names(opt$blocks)
-        for (j in seq(length(opt$blocks))) {
-            if (NCOL(opt$blocks[[j]]) == 1)
-                row.names(func_out[["a"]][[j]]) <- colnames(opt$blocks[[j]])
-        }
+    for (j in seq(length(opt$blocks))) {
+      rownames(func_out$a[[j]]) = colnames(opt$blocks[[j]])
+      rownames(func_out$Y[[j]]) = rownames(opt$blocks[[j]])
+      colnames(func_out$Y[[j]]) = paste0("comp", seq_len(max(opt$ncomp)))
     }
 
-    if(!opt$superblock){
-      names(func_out[["astar"]]) <- names(opt$blocks)
-      for (j in seq(length(opt$blocks))){
-        if (NCOL(opt$blocks[[j]]) == 1)
-          row.names(func_out[["astar"]][[j]]) <- colnames(opt$blocks[[j]])
-      }
+    func_out$a <- shave(func_out$a, opt$ncomp)
+    func_out$Y <- shave(func_out$Y, opt$ncomp)
+
+    if (!opt$superblock) {
+      for (j in seq(length(opt$blocks)))
+        rownames(func_out$astar[[j]]) = colnames(opt$blocks[[j]])
+      func_out$astar <- shave(func_out$astar, opt$ncomp)
     }else{
-      if (NCOL(opt$blocks[[length(opt$blocks)]]) == 1)
-        row.names(func_out[["astar"]][[length(opt$blocks)]]) <-
-          colnames(opt$blocks[[length(opt$blocks)]])
+      rownames(func_out$astar) <- colnames(opt$blocks[[length(opt$blocks)]])
     }
+
+    names(func_out$a) <- names(opt$blocks)
+    names(func_out$Y) <- names(opt$blocks)
+    if (!opt$superblock) names(func_out$astar) <- names(opt$blocks)
 
     names(func_out$AVE$AVE_X) <- names(opt$blocks)
 

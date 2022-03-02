@@ -314,20 +314,6 @@ rgccad = function(blocks, connection = 1 - diag(length(blocks)),
     }
   }
 
-  for (b in seq_len(J)) {
-    rownames(a[[b]]) = colnames(blocks[[b]])
-    rownames(Y[[b]]) = rownames(blocks[[b]])
-    colnames(Y[[b]]) = paste0("comp", seq_len(max(ncomp)))
-  }
-
-  if(!superblock){
-    for (b in seq_len(J)) rownames(astar[[b]]) = colnames(blocks[[b]])
-    astar <- shave(astar, ncomp)
-   }else{
-    rownames(astar) <- colnames(blocks[[J]])
-    astar <- astar
-  }
-
   for (j in seq_len(J)) AVE_X[[j]] = apply(
     cor(blocks[[j]], Y[[j]], use = "pairwise.complete.obs")^2, 2, mean)
 
@@ -336,7 +322,6 @@ rgccad = function(blocks, connection = 1 - diag(length(blocks)),
   for (j in seq_len(max(ncomp)))
     AVE_outer[j] <- sum(pjs * outer[j,])/sum(pjs)
 
-  Y = shave(Y, ncomp)
   AVE_X = shave(AVE_X, ncomp)
 
   AVE <- list(AVE_X = AVE_X, AVE_outer = AVE_outer, AVE_inner = AVE_inner)
@@ -346,8 +331,8 @@ rgccad = function(blocks, connection = 1 - diag(length(blocks)),
     computed_tau = as.vector(computed_tau)
   }
 
-  out <- list(Y = shave(Y, ncomp),
-              a = shave(a, ncomp),
+  out <- list(Y = Y,
+              a = a,
               astar = astar,
               tau = computed_tau,
               crit = crit, primal_dual = primal_dual,
