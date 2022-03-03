@@ -52,8 +52,7 @@ Suggests:
     shiny,
     shinyjs,
     testthat,
-    FactoMineR,
-    cluster
+    FactoMineR
 VignetteBuilder: 
     knitr
 biocViews: Visualization, PrincipalComponent, DimensionReduction,

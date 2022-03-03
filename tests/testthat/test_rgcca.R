@@ -1,4 +1,3 @@
-library(cluster)
 library(FactoMineR)
 
 tol = 1e-14
