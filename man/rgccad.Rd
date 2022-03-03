@@ -15,7 +15,8 @@ rgccad(
   tol = 1e-08,
   verbose = TRUE,
   na.rm = TRUE,
-  quiet = FALSE
+  quiet = FALSE,
+  superblock = FALSE
 )
 }
 \arguments{
@@ -62,6 +63,9 @@ algorithm is reported while computing.}
 \item{na.rm}{If TRUE, runs rgcca only on available data.}
 
 \item{quiet}{Logical value indicating if warning messages are reported.}
+
+\item{superblock}{TRUE if a superblock is added, FALSE otherwise (deflation
+strategy must be adapted when a superblock is used).}
 }
 \value{
 \item{Y}{A list of \eqn{J} elements. Each element of the list is a

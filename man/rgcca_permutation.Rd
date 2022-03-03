@@ -61,8 +61,14 @@ is 20).}
 
 \item{scale}{Logical value indicating if blocks are standardized.}
 
-\item{scale_block}{Logical value indicating if each block is divided by
-the square root of its number of variables.}
+\item{scale_block}{Value indicating if each block is divided by
+a constant value. If TRUE or "inertia", each block is divided by the
+sum of eigenvalues of its empirical covariance matrix.
+If "lambda1", each block is divided by the square root of the highest
+eigenvalue of its empirical covariance matrix.
+Otherwise the blocks are not scaled. If standardization is
+applied (scale = TRUE), the block scaling is applied on the result of the
+standardization.}
 
 \item{method}{A character string indicating the multi-block component
 method to consider: rgcca, sgcca, pca, spca, pls, spls, cca,

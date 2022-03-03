@@ -19,7 +19,7 @@ boot = bootstrap(res, n_cores = 1)
 print(boot)
 plot(boot)
 
-res = rgcca(A, ncomp = c(2, 1, 2), tau = c(1, 1, 1),
+res = rgcca(A, ncomp = c(2, 2, 2), tau = c(1, 1, 1),
             scheme = "factorial", scale = TRUE,
             verbose = FALSE, superblock = TRUE)
 boot = bootstrap(res, n_cores = 1)

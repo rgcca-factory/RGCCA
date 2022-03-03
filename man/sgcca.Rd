@@ -16,7 +16,8 @@ sgcca(
   tol = .Machine$double.eps,
   verbose = FALSE,
   quiet = FALSE,
-  na.rm = TRUE
+  na.rm = TRUE,
+  superblock = FALSE
 )
 }
 \arguments{
@@ -64,6 +65,9 @@ or by random initialisation ("random") (default: "svd").}
 \item{quiet}{Logical value indicating if warning messages are reported.}
 
 \item{na.rm}{If TRUE, runs rgcca only on available data.}
+
+\item{superblock}{Boolean indicating the presence of the superblock.
+Default = TRUE}
 }
 \value{
 \item{Y}{A list of \eqn{J} elements. Each element of \eqn{Y} is a
@@ -107,7 +111,6 @@ component. Moreover, we stress that the numbers of components per block
 could differ from one block to another.
 }
 \examples{
-
 #############
 # Example 1 #
 #############

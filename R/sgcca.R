@@ -51,7 +51,6 @@
 #' @title Variable Selection For Generalized Canonical Correlation Analysis
 #' (SGCCA)
 #' @examples
-#'
 #' #############
 #' # Example 1 #
 #' #############
@@ -137,7 +136,7 @@ sgcca <- function(blocks, connection = 1 - diag(length(blocks)),
                   sparsity = rep(1, length(blocks)),
                   ncomp = rep(1, length(blocks)), scheme = "centroid",
                   init = "svd", bias = TRUE, tol = .Machine$double.eps,
-                  verbose = FALSE,   quiet = FALSE, na.rm = TRUE){
+                  verbose = FALSE,   quiet = FALSE, na.rm = TRUE,superblock=FALSE){
 
   # ndefl number of deflation per block
   ndefl <- ncomp - 1
@@ -157,6 +156,7 @@ sgcca <- function(blocks, connection = 1 - diag(length(blocks)),
     a[[b]] <- astar[[b]] <- matrix(NA, pjs[[b]], N + 1)
     Y[[b]] <- matrix(NA, nb_ind, N + 1)
   }
+  if (superblock) astar <- matrix(NA, pjs[J], N + 1)
 
   ###################################################
 
@@ -187,7 +187,9 @@ sgcca <- function(blocks, connection = 1 - diag(length(blocks)),
     Y[[b]][, 1] <- sgcca.result$Y[, b, drop = FALSE]
     a[[b]][, 1] <- sgcca.result$a[[b]]
   }
-  astar                      <- a
+  ifelse(!superblock,
+         astar <- a,
+         astar[, 1] <- a[[J]][, 1, drop = FALSE])
   AVE_inner[1]               <- sgcca.result$AVE_inner
   crit[[1]]                  <- sgcca.result$crit
 
@@ -197,8 +199,10 @@ sgcca <- function(blocks, connection = 1 - diag(length(blocks)),
   ##############################################
   if (N > 0) {
     R <- blocks
-    for (b in seq_len(J)) {
-      P[[b]] <- matrix(NA, pjs[[b]], N)
+    if(!superblock){
+      for (b in seq_len(J)) P[[b]] <- matrix(NA, pjs[b], N)
+    }else{
+      P <- matrix(NA, pjs[J], N)
     }
 
     for (n in 2:(N + 1)) {
@@ -206,8 +210,26 @@ sgcca <- function(blocks, connection = 1 - diag(length(blocks)),
                               " is under progress... \n")
 
       # Apply deflation
-      defla.result <- defl.select(sgcca.result$Y, R, ndefl, n - 1, J, na.rm = na.rm)
-      R <- defla.result$resdefl
+      if (!superblock)
+      {
+        defl.result <- defl.select(sgcca.result$Y, R, ndefl, n - 1, J, na.rm = na.rm)
+        R <- defl.result$resdefl
+        for (b in seq_len(J))  {P[[b]][, n - 1] <- defl.result$pdefl[[b]]}
+      }
+      if (superblock)
+      {
+        defl.result = deflation(R[[J]], sgcca.result$Y[,J])
+        R[[J]] = defl.result$R
+        P[, n - 1] <- defl.result$p
+        cumsum_pjs = cumsum(pjs)[1:(J - 1)]
+        inf_pjs = c(0,cumsum_pjs[1:(J - 2)]) + 1
+        for (b in seq_len(J - 1))
+        {
+          R[[b]] = R[[J]][, c(inf_pjs[b]:cumsum_pjs[b]), drop = FALSE]
+          rownames(R[[b]]) = rownames(R[[b]])
+          colnames(R[[b]]) = colnames(R[[J]])[c(inf_pjs[b]:cumsum_pjs[b])]
+        }
+      }
 
       if (is.vector(sparsity)) {
         sgcca.result <- sgccak(R, connection, sparsity = sparsity,
@@ -228,8 +250,14 @@ sgcca <- function(blocks, connection = 1 - diag(length(blocks)),
       for (b in seq_len(J))  {
         Y[[b]][, n] <- sgcca.result$Y[, b]
         a[[b]][, n] <- sgcca.result$a[[b]]
-        P[[b]][, n - 1] <- defla.result$pdefl[[b]]
-        astar[[b]][, n] <- sgcca.result$a[[b]] - astar[[b]][, (1:(n - 1)), drop = F] %*% drop(crossprod(a[[b]][, n], P[[b]][, 1:(n - 1), drop = FALSE]))
+        if (!superblock)
+          astar[[b]][, n] <- sgcca.result$a[[b]] -
+          astar[[b]][, (1:(n - 1)), drop = F] %*%
+          drop(crossprod(a[[b]][, n], P[[b]][, 1:(n - 1), drop = FALSE]))
+        else
+          astar[, n] <- sgcca.result$a[[J]] -
+          astar[, (1:(n - 1)), drop = F] %*%
+          drop(t(a[[J]][, n]) %*% P[, 1:(n - 1), drop = F])
       }
 
       if (!quiet){
@@ -245,10 +273,6 @@ sgcca <- function(blocks, connection = 1 - diag(length(blocks)),
   }
 
   for (b in seq_len(J)) {
-    rownames(a[[b]]) = rownames(astar[[b]]) = colnames(blocks[[b]])
-    rownames(Y[[b]]) = rownames(blocks[[b]])
-    colnames(Y[[b]]) = paste0("comp", 1:max(ncomp))
-
     #Average Variance Explained (AVE) per block
     AVE_X[[b]] =  apply(cor(blocks[[b]], Y[[b]], use = "pairwise.complete.obs")^2, 2,
                       mean, na.rm = TRUE)
@@ -258,16 +282,15 @@ sgcca <- function(blocks, connection = 1 - diag(length(blocks)),
   outer = matrix(unlist(AVE_X), nrow = max(ncomp))
   AVE_outer <- as.numeric((outer %*% pjs)/sum(pjs))
 
-  Y = shave(Y, ncomp)
   AVE_X = shave(AVE_X, ncomp)
 
   AVE <- list(AVE_X = AVE_X, AVE_outer = AVE_outer, AVE_inner = AVE_inner)
 
   if (N == 0) crit = unlist(crit)
 
-  out <- list(Y = shave(Y, ncomp),
-              a = shave(a, ncomp),
-              astar = shave(astar, ncomp),
+  out <- list(Y = Y,
+              a = a,
+              astar = astar,
               crit = crit,
               AVE = AVE)
 

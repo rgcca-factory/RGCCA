@@ -57,6 +57,8 @@
 #' (\eqn{1/(n-1)}) estimator of the var/cov (default: bias = TRUE).
 #' @param tol The stopping value for the convergence of the algorithm.
 #' @param na.rm If TRUE, runs rgcca only on available data.
+#' @param superblock TRUE if a superblock is added, FALSE otherwise (deflation
+#' strategy must be adapted when a superblock is used).
 #' @return \item{Y}{A list of \eqn{J} elements. Each element of the list is a
 #' matrix that contains the RGCCA block components for the corresponding block.}
 #' @return \item{a}{A list of \eqn{J} elements. Each element of the list \eqn{a}
@@ -176,7 +178,7 @@ rgccad = function(blocks, connection = 1 - diag(length(blocks)),
                   tau = rep(1, length(blocks)),
                   ncomp = rep(1, length(blocks)), scheme = "centroid",
                   init = "svd", bias = TRUE, tol = 1e-08, verbose = TRUE,
-                  na.rm = TRUE, quiet = FALSE)
+                  na.rm = TRUE, quiet = FALSE, superblock = FALSE)
 {
 
   if (mode(scheme) != "function") {
@@ -202,16 +204,24 @@ rgccad = function(blocks, connection = 1 - diag(length(blocks)),
   J <- length(blocks)
   pjs <- sapply(blocks,NCOL)
   nb_ind <- NROW(blocks[[1]])
-  AVE_X = list()
-  AVE_outer <- rep(NA,max(ncomp))
+  AVE_X <- list()
+  AVE_outer <- rep(NA, max(ncomp))
 
   Y <- NULL
-  P <- a <- astar <- NULL
+  P <- a <- astar <- list()
   crit <- list()
   AVE_inner <- rep(NA,max(ncomp))
 
-  for (b in 1:J) a[[b]] <- astar[[b]] <- matrix(NA, pjs[[b]], N + 1)
-  for (b in 1:J) Y[[b]] <- matrix(NA, nb_ind, N + 1)
+  for (b in seq_len(J)){
+    a[[b]] <- matrix(NA, pjs[[b]], N + 1)
+    Y[[b]] <- matrix(NA, nb_ind, N + 1)
+  }
+
+  if(!superblock){
+    for (b in seq_len(J)) astar[[b]] <- matrix(NA, pjs[b], N + 1)
+  }else{
+    astar <- matrix(NA, pjs[J], N + 1)
+  }
 
   # Whether primal or dual
   primal_dual = rep("primal", J)
@@ -232,23 +242,48 @@ rgccad = function(blocks, connection = 1 - diag(length(blocks)),
                            verbose = verbose, na.rm = na.rm)
   computed_tau[1, ] = rgcca.result$tau
 
-  for (b in 1:J) Y[[b]][, 1] <- rgcca.result$Y[, b, drop = FALSE]
-  for (b in 1:J) a[[b]][, 1] <- rgcca.result$a[[b]]
-  astar                      <- a
-  AVE_inner[1]               <- rgcca.result$AVE_inner
-  crit[[1]]                  <- rgcca.result$crit
+  for (b in seq_len(J)) Y[[b]][, 1] <- rgcca.result$Y[, b, drop = FALSE]
+  for (b in seq_len(J)) a[[b]][, 1] <- rgcca.result$a[[b]]
+
+  ifelse(!superblock,
+         astar <- a,
+         astar[, 1] <- a[[J]][, 1, drop = FALSE])
+
+  AVE_inner[1] <- rgcca.result$AVE_inner
+  crit[[1]] <- rgcca.result$crit
 
   if (N > 0) {
     R <- blocks
-    for (b in 1:J) P[[b]] <- matrix(NA, pjs[[b]], N)
+
+    if(!superblock){
+      for (b in seq_len(J)) P[[b]] <- matrix(NA, pjs[b], N)
+    }else{
+      P <- matrix(NA, pjs[J], N)
+    }
+
     for (n in 2:(N + 1)) {
       if (verbose)
         cat(paste0("Computation of the RGCCA block components #", n, " is under
                  progress...\n"))
 
-      defla.result <- defl.select(rgcca.result$Y, R, ndefl, n - 1, J, na.rm = na.rm)
-      R <- defla.result$resdefl
-      for (b in 1:J) P[[b]][, n - 1] <- defla.result$pdefl[[b]]
+      if(!superblock){
+        defl.result <- defl.select(rgcca.result$Y, R,
+                                   ndefl, n - 1, J,
+                                   na.rm = na.rm)
+        R <- defl.result$resdefl
+        for (b in seq_len(J)) P[[b]][, n - 1] <- defl.result$pdefl[[b]]
+      }else{
+        defl.result <- deflation(R[[J]], rgcca.result$Y[, J])
+        R[[J]] <- defl.result$R
+        P[, n - 1] <- defl.result$p
+        cumsum_pjs <- cumsum(pjs)[seq_len(J-1)]
+        inf_pjs <- c(0, cumsum_pjs[seq_len(J-2)])+1
+        for(j in seq_len(J-1)){
+          R[[j]] = R[[J]][ , inf_pjs[j]:cumsum_pjs[j], drop=FALSE]
+          rownames(R[[j]]) <- rownames(R[[j]])
+          colnames(R[[j]]) <- colnames(R[[J]])[inf_pjs[j]:cumsum_pjs[j]]
+        }
+      }
 
       if (is.vector(tau))
         rgcca.result <- rgccak(R, connection, tau = tau, scheme = scheme,
@@ -258,34 +293,36 @@ rgccad = function(blocks, connection = 1 - diag(length(blocks)),
         rgcca.result <- rgccak(R, connection, tau = tau[n, ], scheme = scheme,
                                init = init, bias = bias, tol = tol,
                                verbose = verbose, na.rm = na.rm)
-      computed_tau[n, ] = rgcca.result$tau
+
+      computed_tau[n, ] <- rgcca.result$tau
 
       AVE_inner[n] <- rgcca.result$AVE_inner
       crit[[n]] <- rgcca.result$crit
 
-      for (b in 1:J) Y[[b]][, n] <- rgcca.result$Y[, b]
-      for (b in 1:J) a[[b]][, n] <- rgcca.result$a[[b]]
-      for (b in 1:J) astar[[b]][, n] <- rgcca.result$a[[b]] -
-        astar[[b]][, (1:(n - 1)),drop = F] %*%
-        drop( t(a[[b]][, n]) %*% P[[b]][, 1:(n - 1), drop = F] )
+      for (b in seq_len(J)) Y[[b]][, n] <- rgcca.result$Y[, b]
+      for (b in seq_len(J)) a[[b]][, n] <- rgcca.result$a[[b]]
+
+      if(!superblock){
+        for (b in seq_len(J))
+          astar[[b]][, n] <- rgcca.result$a[[b]] -
+            astar[[b]][, (1:(n - 1)), drop = F] %*%
+        drop( t(a[[b]][, n]) %*% P[[b]][, 1:(n - 1), drop = F])
+      }else{
+        astar[, n] <- rgcca.result$a[[J]] -
+          astar[, (1:(n - 1)), drop = F] %*%
+            drop(t(a[[J]][, n]) %*% P[, 1:(n - 1), drop = F])
+      }
     }
   }
 
-  for (b in 1:J) {
-    rownames(a[[b]]) = rownames(astar[[b]]) = colnames(blocks[[b]])
-    rownames(Y[[b]]) = rownames(blocks[[b]])
-    colnames(Y[[b]]) = paste0("comp", 1:max(ncomp))
-  }
-
-  for (j in 1:J) AVE_X[[j]] = apply(
+  for (j in seq_len(J)) AVE_X[[j]] = apply(
     cor(blocks[[j]], Y[[j]], use = "pairwise.complete.obs")^2, 2, mean)
 
   outer = matrix(unlist(AVE_X), nrow = max(ncomp))
 
-  for (j in 1:max(ncomp))
+  for (j in seq_len(max(ncomp)))
     AVE_outer[j] <- sum(pjs * outer[j,])/sum(pjs)
 
-  Y = shave(Y, ncomp)
   AVE_X = shave(AVE_X, ncomp)
 
   AVE <- list(AVE_X = AVE_X, AVE_outer = AVE_outer, AVE_inner = AVE_inner)
@@ -295,8 +332,9 @@ rgccad = function(blocks, connection = 1 - diag(length(blocks)),
     computed_tau = as.vector(computed_tau)
   }
 
-  out <- list(Y = shave(Y, ncomp), a = shave(a,ncomp),
-              astar = shave(astar, ncomp),
+  out <- list(Y = Y,
+              a = a,
+              astar = astar,
               tau = computed_tau,
               crit = crit, primal_dual = primal_dual,
               AVE = AVE)

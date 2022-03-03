@@ -8,7 +8,7 @@ rgcca(
   blocks,
   method = "rgcca",
   scale = TRUE,
-  scale_block = TRUE,
+  scale_block = "inertia",
   connection = 1 - diag(length(blocks)),
   scheme = "factorial",
   ncomp = rep(1, length(blocks)),
@@ -38,8 +38,14 @@ sumcov-1, sumcov-2, sumcov, sabscov, sabscov-1, sabscov-2.}
 
 \item{scale}{Logical value indicating if blocks are standardized.}
 
-\item{scale_block}{Logical value indicating if each block is divided by
-the square root of its number of variables.}
+\item{scale_block}{Value indicating if each block is divided by
+a constant value. If TRUE or "inertia", each block is divided by the
+sum of eigenvalues of its empirical covariance matrix.
+If "lambda1", each block is divided by the square root of the highest
+eigenvalue of its empirical covariance matrix.
+Otherwise the blocks are not scaled. If standardization is
+applied (scale = TRUE), the block scaling is applied on the result of the
+standardization.}
 
 \item{connection}{A symmetric matrix (J*J) that describes the relationships between
 blocks.}
@@ -91,8 +97,8 @@ or by random initialisation ("random") (default: "svd").}
 the response argument is filled the supervised mode is automatically
 activated.}
 
-\item{superblock}{Boolean indicating the presence of the superblock.
-Default = TRUE}
+\item{superblock}{TRUE if a superblock is added, FALSE otherwise (deflation
+strategy must be adapted when a superblock is used).}
 
 \item{NA_method}{Character string corresponding to the method used for
 handling missing values ("nipals", "complete"). (default: "nipals").
