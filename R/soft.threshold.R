@@ -10,7 +10,7 @@ soft.threshold <- function(x, sumabs=1){
   proj = proj_l1_l2(x, sumabs)
   if (proj$l2_SAT){
     x_proj = soft(x, proj$lambda)
-    return(x_proj/norm2(x_proj))
+    return(x_proj/norm(x_proj, type = "2"))
   }else{
     return(proj$sol)
   }

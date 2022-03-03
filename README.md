@@ -38,7 +38,7 @@ Performs multiblock component methods (PCA, CCA, PLS, MCOA, MAXVAR, R/SGCCA, etc
   - [References](#references)
 
 ## Description
-An "almost user-friendly" package for multiblock data analysis (RGCCA - Regularized Generalized Canonical Correlation Analysis) as described in [1-4]. The software produces graphical ouptuts and statistics to assess the robustness/significance of the analysis. 
+An "almost user-friendly" package for multiblock data analysis (RGCCA - Regularized Generalized Canonical Correlation Analysis) as described in [1-4]. The software produces graphical ouptuts and statistics to assess the robustness/significance of the analysis.
 
 ## Algorithm
 We consider J data matrices X1 ,..., XJ. Each n × pj data matrix Xj = [ xj1, ..., xjpj ] is called a block and represents a set of pj variables observed on n individuals. The number and the nature of the variables may differ from one block to another, but the individuals must be the same across blocks. We assume that all variables are centered. The objective of RGCCA is to find, for each block, a weighted composite of variables (called block component) yj = Xj . aj, j = 1 ,..., J (where aj is a column-vector with pj elements) summarizing the relevant information between and within the blocks. The block components are obtained such that (i) block components explain well their own block and/or (ii) block components that are assumed to be connected are highly correlated. In addition, RGCCA integrates a variable selection procedure, called SGCCA, allowing the identification of the most relevant features.
@@ -63,7 +63,7 @@ The quality and interpretability of the RGCCA block components yj = Xj . aj, j =
 *Fig. 1: The blocks (e.g., politic, agriculture, industry from Russet data [3]) should have some common individuals, a header and row names.*
 
 - ```connection``` (.tsv, .csv, .txt or .xls, xlsx): an optional file describing the connections between the blocks (**design matrix**). The first column and the first line should have the same names as the blocks. It should contain 1 (if two blocks are related) or 0 values otherwise (**Fig. 2**). The columns are separated by tabulations. It is a symmetric matrix with the same dimension as the number of blocks.
-    - By default, RGCCA uses a full-connected configuration, where all blocks are connected.  The **superblock** configuration is possible and in that case each block is connected to a superblock defined as the concatenation of all the other blocks. The space spanned by the global components is viewed as a compromise space that integrated all the modalities and facilitates the visualization of the results and their interpretation. 
+    - By default, RGCCA uses a full-connected configuration, where all blocks are connected.  The **superblock** configuration is possible and in that case each block is connected to a superblock defined as the concatenation of all the other blocks. The space spanned by the global components is viewed as a compromise space that integrated all the modalities and facilitates the visualization of the results and their interpretation.
 
 ![connection](img/connection.png)
 
@@ -123,18 +123,18 @@ The quality and interpretability of the RGCCA block components yj = Xj . aj, j =
 ## Installation
 Required:
 - Softwares : R (≥ 3.2.0)
-- R libraries : see the [DESCRIPTION](https://github.com/BrainAndSpineInstitute/rgcca_Rpackage/blob/master/DESCRIPTION) file.
+- R libraries : see the [DESCRIPTION](https://github.com/rgcca-factory/RGCCA/blob/master/DESCRIPTION) file.
 
 ### Linux
 
 ```
 sudo apt-get install -y git r-base && \
-    R -e 'install.packages(c("RGCCA", "ggplot2", "optparse", "scales", "igraph", "shiny", "Deriv", "rlang", "ggrepel", "openxlsx")' && \
+    R -e 'install.packages(c("RGCCA", "ggplot2", "optparse", "shiny", "Deriv", "rlang", "ggrepel", "openxlsx")' && \
     git clone https://github.com/rgcca-factory/RGCCA && \
 	cd RGCCA
 ```
 
-On Ubuntu, if dependencies errors appear for igraph and plotly, try :
+On Ubuntu, if dependencies errors appear for plotly, try :
 ```
 sudo apt-get install -y libxml2-dev libcurl4-openssl-dev libssl-dev liblapack-dev && \
     apt-get update

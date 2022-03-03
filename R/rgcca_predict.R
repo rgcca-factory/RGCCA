@@ -31,7 +31,6 @@
 #' res  = rgcca_predict(object, X, block_to_predict = "industry")
 #' library(MASS)
 #' @importFrom MASS lda
-# @importFrom nnet multinom
 #' @export
 rgcca_predict = function(
   rgcca_res,
