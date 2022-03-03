@@ -64,7 +64,8 @@ algorithm is reported while computing.}
 
 \item{quiet}{Logical value indicating if warning messages are reported.}
 
-\item{superblock}{TRUE if a superblock is added, FALSE ifelse (useful for deflation strategy when a superblock is used)}
+\item{superblock}{TRUE if a superblock is added, FALSE otherwise (deflation
+strategy must be adapted when a superblock is used).}
 }
 \value{
 \item{Y}{A list of \eqn{J} elements. Each element of the list is a
