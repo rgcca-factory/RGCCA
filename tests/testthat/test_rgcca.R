@@ -1,368 +1,179 @@
 library(cluster)
 library(FactoMineR)
 
-# setwd("/home/caroline.peltier/Bureau/RGCCA")
-# lapply(list.files("./R"),function(x){source(paste0("./R/",x))})
+tol = 1e-14
+
 data(Russett)
-X_agric =as.matrix(Russett[,c("gini","farm","rent")]);
-X_ind = as.matrix(Russett[,c("gnpr","labo")]);
-X_polit = as.matrix(Russett[ , c("demostab", "dictator")]);
-A = list(X_agric);
-
-
-#C = matrix(c(0, 0, 1, 0, 0, 1, 1, 1, 0), 3, 3);
-
-# scaled PCA
-resPCA= rgcca (
-     blocks=A,
-     connection = 1 - diag(length(A)),
-     response = NULL,
-     superblock = FALSE,
-     tau = rep(1, length(A)),
-     ncomp = rep(2, length(A)),
-     method = "pca",
-     verbose = FALSE,
-     scheme = "factorial",
-     scale = TRUE,
-     init = "svd",
-     bias = TRUE,
-     tol = 1e-08)
-
-names(resPCA)
-(resPCA$astar)
-resPCAprcomp=prcomp(A[[1]],scale=TRUE)
-
-varExplPrComp=as.vector((resPCAprcomp$sdev)^2/sum((resPCAprcomp$sdev)^2))[1]
-varExplRgcca=resPCA$AVE$AVE_X[[1]][1]
-pca_varexpl=round(varExplPrComp-varExplRgcca,digits=4)==0
-pca_ind=abs(cor(resPCAprcomp$x[,1],resPCA$Y[[1]][,1]))==1
-pca_ind2=abs(cor(resPCAprcomp$x[,2],resPCA$Y[[1]][,2]))==1
-pca_var=abs(cor(resPCAprcomp$rotation[,1],resPCA$astar[[1]][,1]))==1
-pca_var2=round(abs(cor(resPCAprcomp$rotation[,2],resPCA$astar[[1]][,2])), 12)==1
-
-test_that("pca_varexpl",{expect_true(pca_varexpl)})
-pca_eig=abs(varExplPrComp-varExplRgcca)<1e-8
-test_that("pca_ind",{expect_true(pca_ind)})
-test_that("pca_var",{expect_true(pca_var)})
-test_that("pca_eig",{expect_true(pca_eig)})
-test_that("pca_ind2",{expect_true(pca_ind2)})
-test_that("pca_var2",{expect_true(pca_var2)})
-
-
-
-# unscaled PCA
-unscaledPCA= rgcca (
-    blocks=A,
-    connection = 1 - diag(length(A)),
-    response = NULL,
-    superblock = FALSE,
-    tau = rep(1, length(A)),
-    ncomp = rep(2, length(A)),
-    method = "pca",
-    verbose = FALSE,
-    scheme = "factorial",
-    scale_block = FALSE,
-    scale = FALSE,
-    init = "svd",
-    bias = TRUE,
-    tol = 1e-08)
-unscaledPCAprcomp=prcomp(A[[1]],scale=FALSE)
-unscaledvarExplPrComp=as.vector((unscaledPCAprcomp$sdev)^2/sum((unscaledPCAprcomp$sdev)^2))[1]
-unscaledvarExplRgcca=unscaledPCA$AVE$AVE_X[[1]][1]
-upca_varexpl=round(unscaledvarExplPrComp-unscaledvarExplRgcca,digits=4)==0
-upca_ind=abs(abs(cor(unscaledPCAprcomp$x[,1],unscaledPCA$Y[[1]][,1])) - 1) < .Machine$double.eps
-upca_var=abs(cor(unscaledPCAprcomp$rotation[,1],unscaledPCA$astar[[1]][,1]))==1
-upca_ind2=abs(cor(unscaledPCAprcomp$x[,2],unscaledPCA$Y[[1]][,2]))==1
-upca_var2=round(abs(cor(unscaledPCAprcomp$rotation[,2],unscaledPCA$astar[[1]][,2])),digits=12)==1
-
-test_that("upca_ind",{expect_true(upca_ind)})
-test_that("upca_var",{expect_true(upca_var)})
-test_that("upca_ind2",{expect_true(upca_ind)})
-test_that("upca_var2",{expect_true(upca_var)})
-#test_that("upca_varexpl",{expect_true(upca_varexpl)})
-
-#testthat("upca_eig",{expect_true(abs(unscaledvarExplPrComp-unscaledvarExplRgcca<1e-8))}) #TODO
-
-
-
-#------------PLS
-#  res_pls = plsr(X_polit ~ X_agric, ncomp = 1, NA_method = "simpls")
-#  A = list(X_agric,X_polit);
-#  pls_with_rgcca= rgcca (
-#      blocks=A,
-#      connection=matrix(c(0,1,1,0),2,2),
-#      tau=rep(1,2),
-#      ncomp = rep(1, length(A)),
-#     scale_block=FALSE)
-#
-# #
-#  cor_X = abs(cor(res_pls$fitted.values[,,1][,1], pls_with_rgcca$Y[[1]]))
-#  cor_Y = abs(drop(cor(res_pls$Yloadings, pls_with_rgcca$a[[2]])))
-#  cor_X
-#  cor_Y
-#
-# cor_X
-# cor_Y
-# library(spls)
-# #Loadings are indeed the same (just difference of normalization)
-# plot(cor_X*pls_with_rgcca$a[[1]], col = "red", pch = 16, main = "X_loadings", ylab = "loadings")
-# points(res_pls$projection/norm2(res_pls$projection))
-#
-# plot(cor_X*res_rgcca$a[[2]], col = "red", pch = 16, main = "Y_loadings", ylab = "loadings")
-# points(res_pls$Yloadings/norm2(res_pls$Yloadings))
-
-# Test with block with 1 variable only
- data(Russett)
- X_agric =as.matrix(Russett[,c("gini","farm","rent")]);
- X_ind = as.matrix(Russett[,c("gnpr","labo")]);
- X_polit = as.matrix(Russett[ , c("demostab")]);
- A = list(X_agric,X_ind,X_polit);
- resPCA= rgcca ( blocks=A, ncomp = c(2,2,1),method = "rgcca",     verbose = FALSE)
-
- # with optimal tau
- data(Russett)
- X_agric =as.matrix(Russett[,c("gini","farm","rent")]);
- X_ind = as.matrix(Russett[,c("gnpr","labo")]);
- X_polit = as.matrix(Russett[ , c("demostab")]);
- A = list(X_agric,X_ind,X_agric);
- resRGCCA= rgcca( blocks=A,     connection = 1 - diag(length(A)),     response = NULL,     superblock = FALSE,     tau = rep("optimal", length(A)))
-
- # Testing quiet=TRUE/quiet=FALSE with tau optimal
- A = list(X_agric,X_ind,X_agric);
- names(A)=c("Agri","Ind","Polit")
- resRGCCA= rgcca ( blocks=A, tau = rep("optimal", length(A)),   quiet=FALSE)
-
-
- data(Russett)
- X_agric =as.matrix(Russett[,c("gini","farm","rent")]);
- X_ind = as.matrix(Russett[,c("gnpr","labo")]);
- X_polit = as.matrix(Russett[ , 6:11]);
- A = list(X_agric,X_ind,X_polit);
- names(A)=c("Agri","Ind","Polit")
-
- C0=matrix(0,3,3);C0[2:3,1]=1;C0[1,2:3]=1
- C1=matrix(0,3,3);C1[1:2,3]=1;C1[3,1:2]=1
- A1=list(A[[2]],A[[3]],A[[1]])
- resRgccaNipals3=rgcca(blocks=A1,connection=C1,method="rgcca",NA_method="nipals",ncomp=2)
- resRgccaNipals=rgcca(blocks=A,connection=C0,method="rgcca",NA_method="nipals",ncomp=2)
- head(resRgccaNipals3$Y[[3]])
- head(resRgccaNipals$Y[[1]])
-
-
- mat=matrix(rnorm(500),nrow=10,ncol=50);rownames(mat)=paste0("S",1:10);colnames(mat)=paste0("R",1:50)
- A=list(mat)
- resPCA= rgcca (
-     blocks=A,
-     connection = 1 - diag(length(A)),
-     response = NULL,
-     superblock = FALSE,
-     tau = rep(1, length(A)),
-     ncomp = rep(2, length(A)),
-     method = "pca",
-     verbose = FALSE,
-     scheme = "factorial",
-     scale = TRUE,
-     init = "svd",
-     bias = TRUE,
-     tol = 1e-08)
-
- names(resPCA)
- (resPCA$astar)
- resPCAprcomp=prcomp(A[[1]],scale=TRUE)
- pca_ind=abs(cor(resPCAprcomp$x[,1],resPCA$Y[[1]][,1]))==1
-
- # With a response and a qualitative variable to predict
- data(Russett)
- X_agric =as.matrix(Russett[,c("gini","farm","rent")]);
- X_ind = as.matrix(Russett[,c("gnpr","labo")]);
- X_polit = as.matrix(Russett[ , c("dictator")]);
- X_polit[X_polit==1]="dictator"
- X_polit[X_polit==0]="Non-dic"
- A_quali = list(agric=X_agric,X_ind=X_ind,X_polit=X_polit);
- res_rgcca_quali= rgcca (
-     blocks=A_quali, connection = 1 - diag(length(A)),
-     response = 3)
-
-#Checking the superbloc
- rgcca_with_superblock= rgcca (
-     blocks=A,
-     superblock = TRUE)
- head(lapply(A,function(x){y=scale2(x,scale=TRUE);return(y/sqrt(ncol(y)))})[[1]])
- head(rgcca_with_superblock$call$blocks[[1]])
- test_that("superblock",{expect_true( sum(head(rgcca_with_superblock$call$blocks[[length(A)+1]])[,1:ncol(A[[1]])]!=head(lapply(A,function(x){y=scale2(x,scale=TRUE);return(y/sqrt(ncol(y)))})[[1]]))==0
- )})
-
- # with permutation
- X_agric =as.matrix(Russett[,c("gini","farm","rent")]);
- X_ind = as.matrix(Russett[,c("gnpr","labo")]);
- X_polit = as.matrix(Russett[ , 6:11]);
- A = list(X_agric,X_ind,X_polit);
- names(A)=c("Agri","Ind","Polit")
- res_perm=rgcca_permutation(A,par_type="tau",n_cores=1,par_length=3)
- rgcca(res_perm)
- res_cv=rgcca_cv(A,response=1,n_cores=1,par_length=3)
- rgcca(res_cv)
-
- # SGCCA and RGCCA
- resRgcca = rgcca(blocks=A, ncomp=rep(2,3), scheme = "factorial", scale = TRUE,verbose=FALSE)
- resRgccad=rgccad(blocks=resRgcca$call$blocks,connection=matrix(1,3,3)-diag(1,3),ncomp=rep(2,3),scheme = "factorial", verbose=FALSE)
- test_that("rgccaVSrgccad",{expect_true(sum(head(resRgccad$Y[[1]])==head(resRgcca$Y[[1]]))==12)})
-
- resSgcca = rgcca(A, method="sgcca",ncomp=rep(2,3),sparsity= c(1, 1, 1), scheme = "factorial", scale = TRUE,verbose=FALSE,init="svd")
- resSgccad=sgcca(blocks=resSgcca$call$blocks,connection=matrix(1,3,3)-diag(1,3),ncomp=rep(2,3),scheme = "factorial",verbose=T,init="svd")
- test_that("sgccadVsSGCCA",{expect_true(mean((resSgccad$Y[[2]]-resSgcca$Y[[2]]))<1e-14)})
- test_that("sgcca",{expect_true( mean(abs(resSgcca$Y[[2]]-resRgcca$Y[[2]]))<1e-14)})
-
-
- resSgcca = rgcca(A, method="sgcca",superblock=TRUE)
-
-
-# Recovering MFA
-
-
-
- df = Russett[, c("gini", "farm", "rent", "gnpr", "labo",
-                  "inst", "ecks", "death", "demostab",
-                  "dictator")]
-
- fit.mfa = FactoMineR::MFA(df, , group = c(3, 2, 5), ncp = 2,
-               type = rep("s", 3),
-               graph = FALSE)
-
- X_agric = as.matrix(Russett[,c("gini","farm","rent")])
- X_ind = as.matrix(Russett[,c("gnpr","labo")])
- X_polit = as.matrix(Russett[ , c("inst", "ecks", "death",
-                                  "demostab", "dictator")])
-
- A = list(Agric = X_agric, Ind = X_ind, Polit = X_polit)
- A = lapply(A, scale)
- n = sqrt(sapply(A, function(x) eigen(RGCCA:::cov2(x, bias = TRUE))$values[1]))
- for (j in 1:3){A[[j]] = A[[j]]/n[j]}
-
-
- A_withSB = c(A, list(Reduce("cbind", A)))
-
- # Recovering MFA with weighted pca on "superblock" : Tout OK
- fit.mfaViaPca= rgcca(list(A_withSB[[4]]),method="pca",scale=FALSE,scale_block=FALSE,ncomp=2)
- cor(fit.mfaViaPca$Y[[1]][, 1], fit.mfa$global.pca$ind$coord[, 1]) #-1 OK
- cor(fit.mfaViaPca$Y[[1]][, 2], fit.mfa$global.pca$ind$coord[, 2]) #-1 OK
- head(cbind(fit.mfaViaPca$Y[[1]][, 1], fit.mfa$global.pca$ind$coord[, 1]))
- head(cbind(fit.mfaViaPca$Y[[1]][, 2], fit.mfa$global.pca$ind$coord[, 2]))
-
-
- # Recovering MFA with rgcca with "manual superblock"
- C = matrix(c(0, 0, 0, 1,
-              0, 0, 0, 1,
-              0, 0, 0, 1,
-              1, 1, 1, 0), 4, 4)
-
- fit.rgcca = rgcca(blocks = A_withSB, connection = C,
-                  tau = c(rep(1, 3), 0),
-                  scheme = "factorial",
-                  scale = FALSE,
-                  scale_block = FALSE,
-                  verbose = FALSE,
-                  bias = FALSE, ncomp = 2)
-
- # Recovering MFA with rgcca and "automatic" superblock (with tau = 1)
- fit.sbTau1  = rgcca(blocks = A,
-                  tau = rep(1, 4),
-                  scheme = "factorial",
-                  scale = FALSE,
-                  scale_block = FALSE,
-                  verbose = FALSE,
-                  bias = FALSE, ncomp = 2,
-                  superblock = TRUE)
-
- # Recovering MFA  with rgcca and "automatic" superblock (with tau = 0)
- fit.sbTau0 = rgcca(blocks = A,
-                   tau = c(1,1,1,0),
-                   scheme = "factorial",
-                   scale = FALSE,
-                   scale_block = FALSE,
-                   verbose = FALSE,
-                   bias = FALSE, ncomp = 2,
-                   superblock = TRUE)
-
- # Recovering MFA with 'mcoa'
- fit.mcoa = rgcca(blocks = A, method = "mcoa",
-                   scale = FALSE,
-                   scale_block = FALSE,
-                   verbose = FALSE,
-                   bias = TRUE, ncomp = 2)
-
- # 1 pour tout le monde
- cor1=cor(fit.rgcca$Y[[4]][, 1], fit.mfa$global.pca$ind$coord[, 1])
- cor2=cor(fit.sbTau0$Y[[4]][, 1], fit.mfa$global.pca$ind$coord[, 1])
- cor3=cor(fit.sbTau1$Y[[4]][, 1], fit.mfa$global.pca$ind$coord[, 1])
- cor4=cor(fit.mcoa$Y[[4]][, 1], fit.mfa$global.pca$ind$coord[, 1])
-
-
- test_that("rgccaVsMFA",{expect_true( round(cor1,digits=8)==1)})
- test_that("superblockTau0VsMFA",{expect_true( round(cor2,digits=8)==1)})
- test_that("superblockTau1vsMFA",{expect_true( round(cor3,digits=8)==1)})
- test_that("mcoaVsMFA",{expect_true( round(cor4,digits=8)==1)})
-
- matY=cbind(rgcca=fit.rgcca$Y[[4]][,1],sbtau0=fit.sbTau0$Y[[4]][,1],sbtau1=fit.sbTau1$Y[[4]][,1],mcoa=fit.mcoa$Y[[4]][,1], mfa=fit.mfa$global.pca$ind$coord[, 1])
-
- test_that("superblockTau1vsMFA_egalite",{expect_true(  sum(round(abs(matY[,"sbtau1"]-matY[,"mfa"]),digits=8))==0)})
-
- cor1_2=cor(fit.rgcca$Y[[4]][, 2], fit.mfa$global.pca$ind$coord[, 2]) # pas 1 dans ce cas
- cor2_2=cor(fit.sbTau0$Y[[4]][, 2], fit.mfa$global.pca$ind$coord[, 2])
- cor3_2=cor(fit.sbTau1$Y[[4]][, 2], fit.mfa$global.pca$ind$coord[, 2])
- cor4_2=cor(fit.mcoa$Y[[4]][, 2], fit.mfa$global.pca$ind$coord[, 2])
-
-
- test_that("superblockTau0VsMFA_comp2",{expect_true( round(cor2_2,digits=8)==1)})
- test_that("superblockTau1vsMFA_comp2",{expect_true( round(cor3_2,digits=8)==1)})
- test_that("mcoaVsMFA_comp2",{expect_true( round(cor4_2,digits=8)==1)})
-
- matY_2=cbind(rgcca=fit.rgcca$Y[[4]][,2],sbtau0=fit.sbTau0$Y[[4]][,2],sbtau1=fit.sbTau1$Y[[4]][,2],mcoa=fit.mcoa$Y[[4]][,2], mfa=fit.mfa$global.pca$ind$coord[, 2])
- test_that("superblockTau1vsMFA_egalite_comp2",{expect_true(  sum(round(abs(matY_2[,"sbtau1"]-matY_2[,"mfa"]),digits=8))==0)})
-
-
-
- # Recovering PCA with superblock
- resPCA_sb= rgcca (
-     blocks=list(gini=X_agric[,"gini"],farm=X_agric[,"farm"],rent=X_agric[,"rent"]),
-     superblock = TRUE,
-     tau =c(1,1,1,0),
-     ncomp = 2,
-     method = "rgcca",
-     verbose = FALSE,
-     scheme = "factorial",
-     scale = TRUE,
-     init = "svd",
-     bias = TRUE,
-     tol = 1e-08)
-
- resPCA=rgcca(list(X_agric),method="pca",ncomp=2)
- # Comment déflate t'on si on a deux composantes que dans le superbloc ?
- cbind(resPCA$Y[[1]],resPCA_sb$Y[[4]])
- cor_pca1=cor(resPCA$Y[[1]][,1],resPCA_sb$Y[[4]][,1])
- cor_pca2=cor(resPCA$Y[[1]][,2],resPCA_sb$Y[[4]][,2])
- test_that("PCA_superblockVsPCA_comp1",{expect_true( round(abs(cor_pca1),digits=8)==1)})
- test_that("PCA_superblockVsPCA_comp2",{expect_true( round(abs(cor_pca1),digits=8)==1)})
-
-
- # sgcca with superblock and 2 components
- A = list(Agric = X_agric, Ind = X_ind, Polit = X_polit)
-
- fit.sgcca = rgcca(blocks = A,
-                    sparsity = c(0.7,0.8,0.8,0.5),
-                    scheme = "factorial",
-                    scale = FALSE,
-                    scale_block = FALSE,
-                    verbose = FALSE,
-                    bias = FALSE, ncomp = 2,
-                    superblock = TRUE)
-
- # test superblock
- A = list(Agric = X_agric, Ind = X_ind, Polit = X_polit)
-A[[1]][1:5,]=NA
-resrgcca=rgcca(A,method="cpca-2",ncomp=2)
-t(resrgcca$Y[[4]])%*%resrgcca$Y[[4]]
-
+X_agric = as.matrix(Russett[, c("gini","farm","rent")]);
+X_ind = as.matrix(Russett[, c("gnpr","labo")]);
+X_polit = as.matrix(Russett[, c("demostab", "dictator")]);
+
+##### Retrieve scaled PCA with RGCCA #####
+X = Russett[, seq(5)]
+fit.pca = prcomp(X, scale = TRUE)
+
+test_that("RGCCA is equivalent to scaled PCA with duplicated X and default
+          parameters", {
+              fit.rgcca = rgcca(list(X, X))
+              if (sign(fit.rgcca$a[[1]][1]) != sign(fit.pca$rotation[1]))
+                  fit.rgcca$a[[1]] = -fit.rgcca$a[[1]]
+              expect_true(sum(abs(fit.pca$rotation[, 1] - fit.rgcca$a[[1]])) < tol)
+          })
+
+test_that("RGCCA is equivalent to scaled PCA with columns split into blocks
+          and connected to a superblock", {
+              A = list(X[, 1], X[, 2], X[, 3], X[, 4], X[, 5])
+              fit.rgcca = rgcca(blocks = A, superblock = TRUE, tau = 0,
+                                scheme = "factorial")
+              if (sign(fit.rgcca$Y[[6]][1]) != sign(fit.pca$x[1]))
+                  fit.rgcca$Y[[6]] = -fit.rgcca$Y[[6]]
+              expect_equal(cor(fit.rgcca$Y[[6]], fit.pca$x[, 1])[1], 1,
+                           tolerance = tol)
+          })
+
+test_that("RGCCA is equivalent to scaled PCA when method = 'pca'", {
+    fit.rgcca = rgcca(list(X), method = "pca", ncomp = 2)
+    if (sign(fit.rgcca$a[[1]][1, 1]) != sign(fit.pca$rotation[1, 1]))
+        fit.rgcca$a[[1]][, 1] = -fit.rgcca$a[[1]][, 1]
+    expect_true(sum(abs(fit.pca$rotation[, 1] - fit.rgcca$a[[1]][, 1])) < tol)
+    if (sign(fit.rgcca$a[[1]][1, 2]) != sign(fit.pca$rotation[1, 2]))
+        fit.rgcca$a[[1]][, 2] = -fit.rgcca$a[[1]][, 2]
+    expect_true(sum(abs(fit.pca$rotation[, 2] - fit.rgcca$a[[1]][, 2])) < tol)
+})
+
+##### Retrieve unscaled PCA with RGCCA #####
+X = Russett[, seq(5)]
+fit.pca = prcomp(X, scale = FALSE)
+
+test_that("RGCCA is equivalent to unscaled PCA with duplicated X and default
+          parameters", {
+              fit.rgcca = rgcca(list(X, X), scale = FALSE, scale_block = FALSE)
+              if (sign(fit.rgcca$a[[1]][1]) != sign(fit.pca$rotation[1]))
+                  fit.rgcca$a[[1]] = -fit.rgcca$a[[1]]
+              expect_true(sum(abs(fit.pca$rotation[, 1] - fit.rgcca$a[[1]])) < tol)
+          })
+
+test_that("RGCCA is equivalent to unscaled PCA with columns split into blocks
+          and connected to a superblock", {
+              A = list(X[, 1], X[, 2], X[, 3], X[, 4], X[, 5])
+              fit.rgcca = rgcca(blocks = A, superblock = TRUE, tau = 0,
+                                scheme = "factorial", scale = FALSE,
+                                scale_block = FALSE)
+              if (sign(fit.rgcca$Y[[6]][1]) != sign(fit.pca$x[1]))
+                  fit.rgcca$Y[[6]] = -fit.rgcca$Y[[6]]
+              expect_equal(cor(fit.rgcca$Y[[6]], fit.pca$x[, 1])[1], 1,
+                           tolerance = 1e-5)
+          })
+
+test_that("RGCCA is equivalent to unscaled PCA when method = 'pca'", {
+    fit.rgcca = rgcca(list(X), method = "pca", ncomp = 2, scale = FALSE,
+                      scale_block = FALSE)
+    if (sign(fit.rgcca$a[[1]][1, 1]) != sign(fit.pca$rotation[1, 1]))
+        fit.rgcca$a[[1]][, 1] = -fit.rgcca$a[[1]][, 1]
+    expect_true(sum(abs(fit.pca$rotation[, 1] - fit.rgcca$a[[1]][, 1])) < tol)
+    if (sign(fit.rgcca$a[[1]][1, 2]) != sign(fit.pca$rotation[1, 2]))
+        fit.rgcca$a[[1]][, 2] = -fit.rgcca$a[[1]][, 2]
+    expect_true(sum(abs(fit.pca$rotation[, 2] - fit.rgcca$a[[1]][, 2])) < tol)
+})
+
+##### Retrieve PLS with RGCCA #####
+A = list(agriculture = X_agric, industry = X_ind)
+fit.svd = svd(t(scale(X_agric)) %*% scale(X_ind))
+
+test_that("RGCCA is equivalent to PLS when there are two blocks and tau = 1", {
+    fit.rgcca = rgcca(blocks = A, scale = TRUE, scale_block = FALSE,
+                      bias = FALSE, scheme = "horst", tol = 1e-16)
+    expect_true(sum(abs(fit.svd$u[, 1] - fit.rgcca$a[[1]])) < 1e-9)
+    expect_true(sum(abs(fit.svd$v[, 1] - fit.rgcca$a[[2]])) < 1e-9)
+})
+
+test_that("RGCCA is equivalent to PLS when method = 'pls'", {
+    fit.rgcca = rgcca(blocks = A, method = "pls", scale = TRUE,
+                      scale_block = FALSE, tol = 1e-16, bias = FALSE)
+    expect_true(sum(abs(fit.svd$u[, 1] - fit.rgcca$a[[1]][, 1])) < 1e-9)
+    expect_true(sum(abs(fit.svd$v[, 1] - fit.rgcca$a[[2]][, 1])) < 1e-9)
+})
+
+##### Retrieve CCA with RGCCA #####
+Sigma_11 = cov(X_agric)
+Sigma_12 = cov(X_agric, X_ind)
+Sigma_22 = cov(X_ind)
+
+sqrt_matrix = function(M){
+    eig        = eigen(M)
+    M_sqrt     = eig$vectors %*% diag(sqrt(eig$values)) %*% t(eig$vectors)
+    Minv_sqrt  = eig$vectors %*% diag(eig$values^(-1/2)) %*% t(eig$vectors)
+    return(list(M_sqrt = M_sqrt, Minv_sqrt = Minv_sqrt))
+}
+
+fit.svd = svd(sqrt_matrix(Sigma_11)[[2]] %*% Sigma_12 %*% sqrt_matrix(Sigma_22)[[2]])
+
+test_that("RGCCA is equivalent to CCA when there are two blocks and tau = 0", {
+    fit.rgcca = rgcca(blocks = A, scale = FALSE, tau = 0, scheme = "horst",
+                      scale_block = FALSE, tol = 1e-16, bias = FALSE)
+    expect_true(sum(abs(fit.svd$u[, 1] - sqrt_matrix(Sigma_11)[[1]] %*% fit.rgcca$a[[1]])) < 1e-8)
+    expect_true(sum(abs(fit.svd$v[, 1] - sqrt_matrix(Sigma_22)[[1]] %*% fit.rgcca$a[[2]])) < 1e-8)
+})
+
+test_that("RGCCA is equivalent to CCA when method = 'cca'", {
+    fit.rgcca = rgcca(blocks = A, method = "cca", scale = FALSE,
+                      scale_block = FALSE, tol = 1e-16, bias = FALSE)
+    expect_true(sum(abs(fit.svd$u[, 1] - sqrt_matrix(Sigma_11)[[1]] %*% fit.rgcca$a[[1]])) < 1e-8)
+    expect_true(sum(abs(fit.svd$v[, 1] - sqrt_matrix(Sigma_22)[[1]] %*% fit.rgcca$a[[2]])) < 1e-8)
+})
+
+##### Perform OLS with RGCCA #####
+y = Russett[, 4]
+fit.lm = lm(y~as.matrix(X_agric))
+r2_ols = summary(fit.lm)$r.squared
+
+test_that("The criterion of RGCCA is the R-squared for the OLS problem", {
+    fit.rgcca = rgcca(blocks = list(y, X_agric), scheme = "factorial",
+                      tau = 0, tol = 1e-16, bias = FALSE)
+    crit_rgcca = fit.rgcca$crit[length(fit.rgcca$crit)] / 2
+    expect_equal(r2_ols, crit_rgcca, tolerance = tol)
+})
+
+##### Verify theoretical relations between superblock and block components #####
 A = list(Agric = X_agric, Ind = X_ind, Polit = X_polit)
-#resrgcca5dim=rgcca(A,method="cpca-2",ncomp=5)
+J = length(A)
+fit = rgcca(blocks = A, tau = 1, scheme = "factorial", scale = FALSE,
+            scale_block = FALSE, bias = FALSE, ncomp = 1, superblock = TRUE)
 
+test_that("Block weights can be retrieved using the superblock component", {
+    for (j in seq_len(J)) {
+        a = t(A[[j]]) %*% fit$Y[[J + 1]]
+        if (sign(a[1]) != sign(fit$a[[j]][1])) a = -a
+        expect_true(max(abs(fit$a[[j]] - a / norm(a, type = "2"))) < tol)
+    }
+})
+
+test_that("Block weights can be retrieved using the superblock weights", {
+    idx = c(0, cumsum(sapply(A, ncol)))
+    for (j in seq_len(J)) {
+        a = fit$a[[J + 1]][seq(1 + idx[j], idx[j + 1])]
+        if (sign(a[1]) != sign(fit$a[[j]][1])) a = -a
+        expect_true(max(abs(fit$a[[j]] - a / norm(a, type = "2"))) < tol)
+    }
+})
+
+##### Retrieve MFA with RGCCA #####
+df = Russett[, c("gini", "farm", "rent", "gnpr", "labo",
+                 "inst", "ecks",  "death", "demostab", "dictator")]
+fit.mfa = MFA(df, group = c(3, 2, 5), ncp = 2, type = rep("s", 3),
+              graph = FALSE)
+
+X_agric = Russett[,c("gini","farm","rent")]
+X_ind = Russett[,c("gnpr","labo")]
+X_polit = Russett[ , c("inst", "ecks",  "death",
+                       "demostab", "dictator")]
+A = list(Agric = X_agric, Ind = X_ind, Polit = X_polit)
+
+test_that("RGCCA is equivalent to MFA with right parameters", {
+    fit.mcoa = rgcca(blocks = A, tau = 1, scheme = "factorial", scale = TRUE,
+                     scale_block = "lambda1", bias = TRUE, ncomp = 2,
+                     superblock = TRUE, tol = 1e-16)
+
+    expect_true(max(abs(fit.mcoa$Y[[4]][, 1] - fit.mfa$ind$coord[, 1])) < tol)
+    expect_true(max(abs(fit.mcoa$Y[[4]][, 2] - fit.mfa$ind$coord[, 2])) < tol)
+})
