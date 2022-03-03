@@ -13,8 +13,8 @@ scaling <- function(blocks, scale = TRUE, bias = TRUE,
         if (scale_block == "lambda1") {
             blocks <- lapply(blocks, function(x) {
                 lambda = sqrt(ifelse(ncol(x) < nrow(x),
-                                eigen(crossprod(x))$values[1],
-                                eigen(tcrossprod(x))$values[1]))
+                                eigen(crossprod(x / sqrt_N))$values[1],
+                                eigen(tcrossprod(x / sqrt_N))$values[1]))
                 y = x / lambda
                 attr(y, "scaled:scale") = attr(x, "scaled:scale") * lambda
                 return(y)
@@ -33,8 +33,8 @@ scaling <- function(blocks, scale = TRUE, bias = TRUE,
         if (scale_block == "lambda1") {
             blocks <- lapply(blocks, function(x) {
                 lambda = sqrt(ifelse(ncol(x) < nrow(x),
-                                eigen(crossprod(x))$values[1],
-                                eigen(tcrossprod(x))$values[1])) / sqrt_N
+                                eigen(crossprod(x / sqrt_N))$values[1],
+                                eigen(tcrossprod(x / sqrt_N))$values[1]))
                 y = x / lambda
                 attr(y, "scaled:scale") = attr(x, "scaled:scale") * lambda
                 return(y)

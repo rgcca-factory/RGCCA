@@ -47,9 +47,10 @@
 #' @param scale Logical value indicating if blocks are standardized.
 #' @param scale_block Value indicating if each block is divided by
 #' a constant value. If TRUE or "inertia", each block is divided by the
-#' Frobenius norm of its empirical covariance matrix. If "lambda1", each block
-#' is divided by the square root of the highest eigenvalue of its empirical
-#' covariance matrix. Otherwise the blocks are not scaled. If standardization is
+#' sum of eigenvalues of its empirical covariance matrix.
+#' If "lambda1", each block is divided by the square root of the highest
+#' eigenvalue of its empirical covariance matrix.
+#' Otherwise the blocks are not scaled. If standardization is
 #' applied (scale = TRUE), the block scaling is applied on the result of the
 #' standardization.
 #' @param NA_method  Character string corresponding to the method used for
