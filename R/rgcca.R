@@ -177,11 +177,9 @@
 #'
 #' @export
 #' @import ggplot2
-#' @importFrom grDevices dev.off rgb colorRamp pdf colorRampPalette
 #' @importFrom graphics plot
 #' @importFrom stats cor quantile runif sd na.omit p.adjust pnorm qnorm weights
 #' @importFrom utils read.table write.table
-#' @importFrom scales hue_pal
 #' @importFrom stats model.matrix
 #' @importFrom methods is
 #' @seealso \code{\link[RGCCA]{plot.rgcca}}, \code{\link[RGCCA]{print.rgcca}},

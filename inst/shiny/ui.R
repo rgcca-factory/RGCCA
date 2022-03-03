@@ -67,8 +67,6 @@ for (f in list.files(appDir))
 
 load_libraries(c(
     "ggplot2",
-    "scales",
-    "igraph",
     "plotly",
     "visNetwork",
     "shiny",
@@ -129,7 +127,7 @@ ui <- fluidPage(
             tabPanel(
                 "RGCCA",
                 uiOutput("analysis_type_custom"),
-                
+
                 uiOutput("scale_custom"),
                 radioButtons(
                     "init",
@@ -149,7 +147,7 @@ ui <- fluidPage(
                     condition = "input.supervised || input.analysis_type == 'RA'",
                     uiOutput("blocks_names_response")),
                 uiOutput("connection_custom"),
-                
+
                 checkboxInput(
                     inputId = "each_ncomp",
                     label = "Number of components for each block",
@@ -305,7 +303,7 @@ ui <- fluidPage(
                 plotlyOutput("cvPlot", height = 700)
                 #actionButton("cv_save", "Save")
             )
-        )   
+        )
 
     ))
 )

@@ -9,6 +9,7 @@
 #' #p = ggplot(df, aes(df[, 1], df[, 2]))
 #' #save_plot('Rplot.png', p)
 #' @export
+#' @importFrom grDevices dev.off pdf
 save_plot <- function(f, p) {
 
     stopifnot(is(p, "ggplot") || is.function(p))

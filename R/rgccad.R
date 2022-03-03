@@ -166,13 +166,11 @@
 #' text(fit.rgcca$Y[[1]], fit.rgcca$Y[[2]], rownames(Russett), col = lab)
 #' text(Ytest[, 1], Ytest[, 2], substr(rownames(Russett), 1, 1), col = lab)
 #' @export rgccad
-#' @importFrom grDevices dev.off png rainbow
 #' @importFrom graphics abline axis close.screen grid legend lines par points
 #' rect screen segments split.screen text
 #' @importFrom stats binomial glm lm predict sd var weighted.mean
 #' @importFrom utils read.table write.table
 #' @importFrom stats as.formula qt
-#' @importFrom grDevices graphics.off
 
 rgccad = function(blocks, connection = 1 - diag(length(blocks)),
                   tau = rep(1, length(blocks)),

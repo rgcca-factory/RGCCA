@@ -21,10 +21,10 @@ Description: Multi-block data analysis concerns the analysis of several
     models from the R/SGCCA (\link{rgcca_predict}), (v) Generic print()
     and plot() functions apply to all these functionalities.
 License: GPL-3
-Depends: 
+Depends:
     MASS,
     R (>= 2.10)
-Imports: 
+Imports:
     Deriv,
     ggplot2,
     graphics,
@@ -34,17 +34,13 @@ Imports:
     parallel,
     pbapply,
     plotly,
-    scales,
     stats
-Suggests: 
+Suggests:
     bsplus,
     devtools,
     DT,
     ggrepel,
-    igraph,
     knitr,
-    magrittr,
-    nnet,
     openxlsx,
     optparse,
     pander,
@@ -53,7 +49,7 @@ Suggests:
     shinyjs,
     testthat,
     FactoMineR
-VignetteBuilder: 
+VignetteBuilder:
     knitr
 biocViews: Visualization, PrincipalComponent, DimensionReduction,
     StructuralEquationModels
