@@ -1,5 +1,5 @@
-#'# cov3 test
+#' # cov3 test
 
 #'''
- x <- rnorm(10)
- soft.threshold(x,1.5)
+x <- rnorm(10)
+soft.threshold(x, 1.5)
