@@ -11,23 +11,24 @@
 #' @seealso \code{\link[RGCCA]{rgccad}}, \code{\link[RGCCA]{sgcca}}
 
 print_comp <- function(rgcca_res, n = 1, i = length(rgcca_res$AVE$AVE_X), outer = FALSE) {
+  nvar <- sum(rgcca_res$a[[i]][, n] != 0)
+  if (!tolower(rgcca_res$call$method) %in% c("spls", "spca", "sgcca") | nvar == length(rgcca_res$a[[i]][, n])) {
+    varText <- ""
+  } else {
+    varText <- paste0(nvar, " variables, ")
+  }
 
-    nvar <- sum(rgcca_res$a[[i]][, n] != 0)
-    if (!tolower(rgcca_res$call$method) %in% c("spls", "spca", "sgcca") | nvar == length(rgcca_res$a[[i]][, n]))
-        varText <- ""
-    else
-        varText <- paste0(nvar, " variables, ")
-
-    ave <- quote(paste0(round(AVE[n] * 100, 1), "%"))
-    if (isTRUE(outer)) {
-        AVE <- rgcca_res$AVE$AVE_outer
-        if (length(rgcca_res$AVE$AVE_outer) > 1)
-            n <- seq(2)
-        else
-            n <- 1
-        paste0("First outer comp. : ", paste(eval(ave), collapse = " & "))
+  ave <- quote(paste0(round(AVE[n] * 100, 1), "%"))
+  if (isTRUE(outer)) {
+    AVE <- rgcca_res$AVE$AVE_outer
+    if (length(rgcca_res$AVE$AVE_outer) > 1) {
+      n <- seq(2)
     } else {
-        AVE <- rgcca_res$AVE$AVE_X[[i]]
-        paste0("Comp. ", n, " (", varText, eval(ave), ")")
+      n <- 1
     }
+    paste0("First outer comp. : ", paste(eval(ave), collapse = " & "))
+  } else {
+    AVE <- rgcca_res$AVE$AVE_X[[i]]
+    paste0("Comp. ", n, " (", varText, eval(ave), ")")
+  }
 }

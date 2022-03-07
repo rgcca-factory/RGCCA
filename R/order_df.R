@@ -6,14 +6,14 @@
 # @return A data.frame with ordered values
 
 order_df <- function(df, comp = 1, allCol = TRUE) {
+  ordered <- order(abs(df[, comp]), decreasing = TRUE)
 
-    ordered <- order(abs(df[, comp]), decreasing = TRUE)
+  if (allCol) comp <- seq(NCOL(df))
+  res <- df[ordered, comp]
 
-    if (allCol) comp <- seq(NCOL(df))
-    res <- df[ordered, comp]
+  if (!allCol) {
+    names(res) <- row.names(df)[ordered]
+  }
 
-    if (!allCol)
-        names(res) <- row.names(df)[ordered]
-
-    return(res)
+  return(res)
 }

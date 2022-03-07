@@ -11,21 +11,24 @@
 # Boulesteix A.-L., 2010. Over-optimism in bioinformatics: an illustration.
 # Bioinformatics 26:1990-1998.
 
-tau.estimate <- function(x, na.rm=TRUE) {
-  if (is.matrix(x) == TRUE && is.numeric(x) == FALSE)
+tau.estimate <- function(x, na.rm = TRUE) {
+  if (is.matrix(x) == TRUE && is.numeric(x) == FALSE) {
     stop_rgcca("The data matrix must be numeric!")
+  }
   p <- NCOL(x)
-  if (p == 1) return(1)
+  if (p == 1) {
+    return(1)
+  }
   n <- NROW(x)
-  corm <- cor(x,use="pairwise.complete.obs")
+  corm <- cor(x, use = "pairwise.complete.obs")
 
   xs <- scale(x, center = TRUE, scale = TRUE)
-  v <- (n/((n - 1)^3)) * (pm(t(xs^2), xs^2, na.rm = na.rm) - 1/n * (pm(t(xs), xs, na.rm = na.rm))^2)
+  v <- (n / ((n - 1)^3)) * (pm(t(xs^2), xs^2, na.rm = na.rm) - 1 / n * (pm(t(xs), xs, na.rm = na.rm))^2)
   diag(v) <- 0
   I <- diag(NCOL(x))
   d <- (corm - I)^2
 
-  tau <- (sum(v))/sum(d)
+  tau <- (sum(v)) / sum(d)
   tau <- max(min(tau, 1), 0)
   return(tau)
- }
+}

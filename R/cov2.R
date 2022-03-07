@@ -12,27 +12,22 @@
 # @title Variance and Covariance (Matrices)
 # @importFrom stats cov
 
-cov2 = function (x, y = NULL, bias = TRUE)
-{
-  n = NROW(x)
+cov2 <- function(x, y = NULL, bias = TRUE) {
+  n <- NROW(x)
 
   if (is.null(y)) {
-    x = as.matrix(x)
-    if(bias){
-      C = ((n - 1)/n) * stats::cov(x, use = "pairwise.complete.obs")
+    x <- as.matrix(x)
+    if (bias) {
+      C <- ((n - 1) / n) * stats::cov(x, use = "pairwise.complete.obs")
+    } else {
+      C <- stats::cov(x, use = "pairwise.complete.obs")
     }
-    else{
-      C = stats::cov(x, use = "pairwise.complete.obs")
-    }
-  }
-
-  else{
-    if(bias){
-      C = ((n - 1)/n) * stats::cov(x, y, use = "pairwise.complete.obs")
-    }
-    else{
-      C = stats::cov(x, y, use = "pairwise.complete.obs")
+  } else {
+    if (bias) {
+      C <- ((n - 1) / n) * stats::cov(x, y, use = "pairwise.complete.obs")
+    } else {
+      C <- stats::cov(x, y, use = "pairwise.complete.obs")
     }
   }
-return(C)
+  return(C)
 }

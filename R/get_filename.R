@@ -6,9 +6,9 @@
 # @return A character for the name of the file
 
 get_filename <- function(fi) {
-    if (!is.null(fi)) {
-        fo <- unlist(strsplit(fi, "/"))
-        fo <- fo[length(fo)]
-        unlist(strsplit(fo, "[.]"))[1]
-    }
+  if (!is.null(fi)) {
+    fo <- unlist(strsplit(fi, "/"))
+    fo <- fo[length(fo)]
+    unlist(strsplit(fo, "[.]"))[1]
+  }
 }

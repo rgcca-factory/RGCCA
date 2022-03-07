@@ -4,10 +4,7 @@
 #' @examples
 #' data(Russett)
 #' @export
-plot.predict=function(x,...)
-{
-
-   p<- plot_ind(x$rgcca_res,predicted=x,...)
-   plot(p)
-
+plot.predict <- function(x, ...) {
+  p <- plot_ind(x$rgcca_res, predicted = x, ...)
+  plot(p)
 }

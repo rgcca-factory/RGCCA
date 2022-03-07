@@ -7,51 +7,54 @@
 #' @return \item{l2_SATlambda}{Boolean value indicating whether the
 #' l2-constraint are saturated or not.}
 #' @importFrom stats median
-proj_l1_l2 <- function(argu, a = 1){
+proj_l1_l2 <- function(argu, a = 1) {
 
-  #Check if constraints are already satisfied
-  norm2_argu = norm(argu, type = "2")
-  if ( norm2_argu < .Machine$double.eps ) return(list(sol=argu, l2_SAT = F))
-  if ( sum(abs(argu/norm2_argu)) <= a )
-    return(list(k=NaN, lambda = 0, l2_SAT = T))
+  # Check if constraints are already satisfied
+  norm2_argu <- norm(argu, type = "2")
+  if (norm2_argu < .Machine$double.eps) {
+    return(list(sol = argu, l2_SAT = F))
+  }
+  if (sum(abs(argu / norm2_argu)) <= a) {
+    return(list(k = NaN, lambda = 0, l2_SAT = T))
+  }
 
   # The desired a_k cannot be null as the constraints are not already satisfied
   # (cf. previous check). So zero values are removed.
   uneq <- argu != 0
-  L    <- sum(!uneq)
-  p    <- abs(argu[uneq])
+  L <- sum(!uneq)
+  p <- abs(argu[uneq])
 
   # Check for multiple maximum
-  MAX  <- max(p)
+  MAX <- max(p)
   bMAX <- (abs(p - MAX) <= 1e-13)
   nMAX <- sum(bMAX)
 
   # If there are multiple maximum, the sparse parameter
   # "a" must be >= sqrt(number of max)
-  if (a < sqrt(nMAX)){
-    sol              = argu*0
-    idx_MAX_val      = which(abs(argu) == MAX)
-    sol[idx_MAX_val] = sign(argu[idx_MAX_val])*a/nMAX
-    return(list(sol=sol, l2_SAT = F))
+  if (a < sqrt(nMAX)) {
+    sol <- argu * 0
+    idx_MAX_val <- which(abs(argu) == MAX)
+    sol[idx_MAX_val] <- sign(argu[idx_MAX_val]) * a / nMAX
+    return(list(sol = sol, l2_SAT = F))
   }
 
   # If there are multiple maximum and a = sqrt(number of max),
   # solution is straightforward
-  if (a == sqrt(nMAX)){
-    if (nMAX == length(p)){
+  if (a == sqrt(nMAX)) {
+    if (nMAX == length(p)) {
 
       # Case where there is as many maximum as the number of elements of the
       # vector to project "argu". Indeed in the case,
       # ||argu||_1/||argu||_2 = sqrt(number of max)
-      lambda = 0
-    }else{
+      lambda <- 0
+    } else {
 
       # With this choice of lambda, the soft-thresholding will set all
       # parameters to 0 except for the elements equals to the maximum value.
-      a_2    = max(p[-which(bMAX)])
-      lambda = (MAX + a_2)/2
+      a_2 <- max(p[-which(bMAX)])
+      lambda <- (MAX + a_2) / 2
     }
-    return(list(k=NaN, lambda = lambda, l2_SAT = T))
+    return(list(k = NaN, lambda = lambda, l2_SAT = T))
   }
 
   # If the vector to project "argu" is composed of 2 elements only, as the
@@ -59,84 +62,84 @@ proj_l1_l2 <- function(argu, a = 1){
   # psi(a_2) = 1 (cf. theory) and by construction a_3 = 0 and psi(0) >= a
   # (checked previously). Moreover, these 2 elements are necessarily different
   # (cf. conditions above)
-  if (length(p) == 2){
-    a_k     = min(p)
-    psi_a_k = 1
-    k       = 2
-    lambda  = a_k - (a*sqrt((k - psi_a_k^2)/(k - a^2))-psi_a_k)*
-                    (sum(p) - k*a_k)/(psi_a_k*(k))
-    return( list(k=NaN, lambda = lambda, l2_SAT = T) )
+  if (length(p) == 2) {
+    a_k <- min(p)
+    psi_a_k <- 1
+    k <- 2
+    lambda <- a_k - (a * sqrt((k - psi_a_k^2) / (k - a^2)) - psi_a_k) *
+      (sum(p) - k * a_k) / (psi_a_k * (k))
+    return(list(k = NaN, lambda = lambda, l2_SAT = T))
   }
 
-  #Initialize parameters
+  # Initialize parameters
   s_1 <- s_2 <- nb <- 0
   while (T) {
-    N       <- length(p)
-    if (N==0) {
+    N <- length(p)
+    if (N == 0) {
       warning("length(p) = 0")
       break
     }
 
-    #Choose next a_k
-    if (N%%2 == 0){
+    # Choose next a_k
+    if (N %% 2 == 0) {
 
       # remove max instead of min -> psi not defined for max(abs(argu))
-      p_reduced = p[-which.max(p)]
+      p_reduced <- p[-which.max(p)]
 
       # Replace by ccaPP::fastMedian or any homemade cpp median function
-      a_k     = median(p_reduced)
-    }else{
+      a_k <- median(p_reduced)
+    } else {
 
       # Replace by ccaPP::fastMedian or any homemade cpp median function
-      a_k     = median(p)
+      a_k <- median(p)
     }
 
-    #Make a partition of list p
+    # Make a partition of list p
     p_inf_ak <- p < a_k
     p_sup_ak <- p > a_k
-    p_high  = p[p_inf_ak]
-    p_low   = p[p_sup_ak]
+    p_high <- p[p_inf_ak]
+    p_low <- p[p_sup_ak]
 
-    #Evaluation decreasing rank of a_k
-    nb_a_k  = sum(p == a_k)
-    k       = nb + sum(p_sup_ak) + nb_a_k
+    # Evaluation decreasing rank of a_k
+    nb_a_k <- sum(p == a_k)
+    k <- nb + sum(p_sup_ak) + nb_a_k
 
-    #Compute value of the constraint
+    # Compute value of the constraint
     aksq <- a_k^2
-    s_low_1 = sum(p_low) + nb_a_k*a_k
+    s_low_1 <- sum(p_low) + nb_a_k * a_k
 
     # NOTE : could create  : ssq   <- function(u) sum(u**2) -> not necessary
     # could use norm(u, type = "2")^2 -> not working when u = as.numeric(0)
     # (mean p_low is empty)
     # When p_low is empty, sum(p_low**2) = 0, which is what is wanted.
-    s_low_2 = sum(p_low**2) + nb_a_k*aksq
-    psi_a_k = (s_1 + s_low_1 - k*a_k)/
-              sqrt(s_2 + s_low_2 - 2*a_k*(s_1 + s_low_1) + k*aksq)
+    s_low_2 <- sum(p_low**2) + nb_a_k * aksq
+    psi_a_k <- (s_1 + s_low_1 - k * a_k) /
+      sqrt(s_2 + s_low_2 - 2 * a_k * (s_1 + s_low_1) + k * aksq)
 
-    #Choose partition depending on the constraint
-    if (psi_a_k > a){
-      if ( length(p_low) == 0 ) break
-      p         = p_low
-    }else{
-      if (length(p_high) == 0){
+    # Choose partition depending on the constraint
+    if (psi_a_k > a) {
+      if (length(p_low) == 0) break
+      p <- p_low
+    } else {
+      if (length(p_high) == 0) {
         break
-      }else{
-        a_k_1     = max(p_high)
-        psi_a_k_1 = (s_1 + s_low_1 - k*a_k_1)/
-                    sqrt(s_2 + s_low_2 - 2*a_k_1*(s_1 + s_low_1) + k*a_k_1^2)
-        if (psi_a_k_1 > a){
+      } else {
+        a_k_1 <- max(p_high)
+        psi_a_k_1 <- (s_1 + s_low_1 - k * a_k_1) /
+          sqrt(s_2 + s_low_2 - 2 * a_k_1 * (s_1 + s_low_1) + k * a_k_1^2)
+        if (psi_a_k_1 > a) {
           break
         }
-        p   = p_high
-        nb  = k
-        s_1 = s_1 + s_low_1
-        s_2 = s_2 + s_low_2
+        p <- p_high
+        nb <- k
+        s_1 <- s_1 + s_low_1
+        s_2 <- s_2 + s_low_2
       }
     }
   }
 
-  #Compute lambda
-  lambda <- a_k - (a*sqrt((k - psi_a_k^2)/(k - a^2))-psi_a_k)*
-                  (s_1 + s_low_1 - k*a_k)/(psi_a_k*(k))
-  return( list(k=k, lambda = lambda, l2_SAT = T) )
+  # Compute lambda
+  lambda <- a_k - (a * sqrt((k - psi_a_k^2) / (k - a^2)) - psi_a_k) *
+    (s_1 + s_low_1 - k * a_k) / (psi_a_k * (k))
+  return(list(k = k, lambda = lambda, l2_SAT = T))
 }

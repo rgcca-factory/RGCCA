@@ -1,6 +1,6 @@
-#'Print bootstrap
+#' Print bootstrap
 #'
-#'Print a bootstrap object
+#' Print a bootstrap object
 #' @param x A fitted bootstrap object (see \code{\link[RGCCA]{bootstrap}})
 #' @param type Character string indicating the bootstrapped object to print:
 #' block-weight vectors ("weight", default) or block-loading vectors
@@ -24,51 +24,62 @@
 #' follows a normal distribution.
 #' \item 'adjust.pval' for ajusted p-value (fdr correction by default)
 #' }
-#'@export
-print.bootstrap = function(x, type = "weight", empirical = TRUE,
-                           display_order = FALSE, ...) {
+#' @export
+print.bootstrap <- function(x, type = "weight", empirical = TRUE,
+                            display_order = FALSE, ...) {
+  print(paste0(
+    "Extract statistics on the block-", type, " vectors from ",
+    NCOL(x$bootstrap[[1]][[1]][[1]]), " bootstrap samples"
+  ), ...)
 
-    print(paste0("Extract statistics on the block-", type, " vectors from ",
-                NCOL(x$bootstrap[[1]][[1]][[1]]), " bootstrap samples"), ...)
+  ncompmax <- max(x$rgcca$call$ncomp)
+  mycomp <- which_block(x$rgcca$call$ncomp)
 
-    ncompmax = max(x$rgcca$call$ncomp)
-    mycomp = which_block(x$rgcca$call$ncomp)
-
-    if(!x$rgcca$call$superblock){
-        for(comp in 1:ncompmax) {
-            cat(paste("Dimension:", comp, "\n"))
-            print(Reduce(rbind,
-                    lapply(mycomp[[comp]],
-                           function(block){
-                               b = get_bootstrap(b = x, type = type,
-                                                 block = block,
-                                                 comp = comp,
-                                                 empirical = empirical,
-                                                 display_order = display_order)
-                othercols = colnames(b)[-which(colnames(b) == "estimate")]
-                return(b[, c("estimate", othercols)])
-            })))
-        }
-    }else{
-        J = length(x$rgcca$call$ncomp)
-        ncompmax = max(x$rgcca$call$ncomp[-J])
-        mycomp = which_block(x$rgcca$call$ncomp[-J])
-
-        for (comp in 1:ncompmax){
-            cat(paste("Dimension:", comp, "\n"))
-            print(Reduce(rbind,
-                         lapply(mycomp[[comp]],
-                         function(block){
-                             b = get_bootstrap(
-                                 b = x, type = type,
-                                 block = block,
-                                 comp = comp,
-                                 empirical = empirical,
-                                 display_order = display_order)
-            othercols = colnames(b)[-which(colnames(b) == "estimate")]
+  if (!x$rgcca$call$superblock) {
+    for (comp in 1:ncompmax) {
+      cat(paste("Dimension:", comp, "\n"))
+      print(Reduce(
+        rbind,
+        lapply(
+          mycomp[[comp]],
+          function(block) {
+            b <- get_bootstrap(
+              b = x, type = type,
+              block = block,
+              comp = comp,
+              empirical = empirical,
+              display_order = display_order
+            )
+            othercols <- colnames(b)[-which(colnames(b) == "estimate")]
             return(b[, c("estimate", othercols)])
-                         }
-            )))
-        }
+          }
+        )
+      ))
     }
+  } else {
+    J <- length(x$rgcca$call$ncomp)
+    ncompmax <- max(x$rgcca$call$ncomp[-J])
+    mycomp <- which_block(x$rgcca$call$ncomp[-J])
+
+    for (comp in 1:ncompmax) {
+      cat(paste("Dimension:", comp, "\n"))
+      print(Reduce(
+        rbind,
+        lapply(
+          mycomp[[comp]],
+          function(block) {
+            b <- get_bootstrap(
+              b = x, type = type,
+              block = block,
+              comp = comp,
+              empirical = empirical,
+              display_order = display_order
+            )
+            othercols <- colnames(b)[-which(colnames(b) == "estimate")]
+            return(b[, c("estimate", othercols)])
+          }
+        )
+      ))
+    }
+  }
 }

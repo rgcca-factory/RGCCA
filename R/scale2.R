@@ -6,21 +6,20 @@
 # @title Scaling and Centering of Matrix-like Objects
 # @export scale2
 
-scale2<-function (A, center = TRUE, scale = TRUE, bias = TRUE)
-{
+scale2 <- function(A, center = TRUE, scale = TRUE, bias = TRUE) {
   if (center == TRUE & scale == TRUE) {
-    A = scale(A, center = TRUE, scale = FALSE)
-    std = sqrt(apply(A, 2, function(x) cov2(x, bias = bias)))
+    A <- scale(A, center = TRUE, scale = FALSE)
+    std <- sqrt(apply(A, 2, function(x) cov2(x, bias = bias)))
     if (any(std == 0)) {
       sprintf("there were %d constant variables", sum(std == 0))
     }
-    A = sweep(A, 2, std, FUN = "/")
-    attr(A, "scaled:scale") = std
+    A <- sweep(A, 2, std, FUN = "/")
+    attr(A, "scaled:scale") <- std
     return(A)
   }
 
   if (center == TRUE & scale == FALSE) {
-    A = scale(A, center = TRUE, scale = FALSE)
+    A <- scale(A, center = TRUE, scale = FALSE)
     return(A)
   }
 
@@ -29,9 +28,9 @@ scale2<-function (A, center = TRUE, scale = TRUE, bias = TRUE)
   }
 
   if (center == FALSE & scale == TRUE) {
-    std = apply(A, 2, function(x) cov2(x, bias = bias))
-    A = sweep(A, 2, std, FUN = "/")
-    attr(A, "scaled:scale") = std
+    std <- apply(A, 2, function(x) cov2(x, bias = bias))
+    A <- sweep(A, 2, std, FUN = "/")
+    attr(A, "scaled:scale") <- std
     return(A)
   }
 }
