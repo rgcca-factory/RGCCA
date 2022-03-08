@@ -3,7 +3,8 @@
 # to parse the onMouseOver text ("text" attribute, if FALSE)
 # type: class of graphic among regular, var1D, perm
 # p_perm: permutation object
-modify_hovertext <- function(p, hovertext = TRUE, type = "regular", perm = NULL) {
+modify_hovertext <- function(p, hovertext = TRUE, type = "regular",
+                             perm = NULL) {
   attr <- ifelse(hovertext, "hovertext", "text")
   # identify the order / id of the traces which corresponds to x- and y-axis
   # (should be before the splitting function)
@@ -87,7 +88,10 @@ modify_hovertext <- function(p, hovertext = TRUE, type = "regular", perm = NULL)
             x_lab <- parse(p$x$layout$xaxis$title$text)
             y_lab <- parse(p$x$layout$yaxis$title$text)
           } else if (type == "boot1D") {
-            x_lab <- gsub("\\(\\d* bootstraps\\)", "", parse(p$x$layout$title$text))
+            x_lab <- gsub(
+              "\\(\\d* bootstraps\\)", "",
+              parse(p$x$layout$title$text)
+            )
             y_lab <- parse(p$x$layout$annotations[[1]]$text)
             if (length(y_lab) < 1) {
               y_lab <- parse(p$x$data[[length(p$x$data)]]$marker$colorbar$title)
@@ -130,7 +134,10 @@ modify_hovertext <- function(p, hovertext = TRUE, type = "regular", perm = NULL)
               l_text
             )
             for (b in seq(length(names(res)))) {
-              l_text <- paste0(l_text, "<br />", paste0(names(res)[b], ": ", res[b]))
+              l_text <- paste0(
+                l_text, "<br />",
+                paste0(names(res)[b], ": ", res[b])
+              )
             }
           }
           suppressWarnings(p$x$data[[i]][attr][[1]][j] <- l_text)
@@ -176,11 +183,17 @@ modify_hovertext <- function(p, hovertext = TRUE, type = "regular", perm = NULL)
 
   if (type %in% c("boot1D", "cv", "perm", "var1D")) {
     p <- plotly::config(p, scrollZoom = FALSE)
-    p <- plotly::layout(p, xaxis = list(fixedrange = TRUE), yaxis = list(fixedrange = TRUE))
+    p <- plotly::layout(p,
+      xaxis = list(fixedrange = TRUE),
+      yaxis = list(fixedrange = TRUE)
+    )
   }
 
   # Remove the x- and y- axis onOverMouse
-  if (type %in% c("regular", "cv", "perm") && (length(traces) > 1) || type == "boot1D") {
+  if (
+    type %in% c("regular", "cv", "perm") && (length(traces) > 1) ||
+      type == "boot1D"
+  ) {
     p <- plotly::style(p, hoverinfo = "none", traces = traces)
   }
 

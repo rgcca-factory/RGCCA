@@ -8,7 +8,8 @@
 # one quantitative variable
 # @param warn_separator A bolean to print warning for bad separator use
 is.character2 <- function(x, type = "any", warn_separator = FALSE) {
-  # is. character() consider a string with '1.2' as a character, not this function.
+  # is. character() consider a string with '1.2' as a character, not this
+  # function.
   # NA are produced by converting a character into an integer as.vector, avoid
   # factors of character in integer without NA
 
@@ -26,7 +27,7 @@ is.character2 <- function(x, type = "any", warn_separator = FALSE) {
             as.integer(i),
             warning = function(w) {
               tryCatch(
-                {
+                expr = {
                   res <- as.integer(char_to_list(i))
                   comma_msg <<- TRUE
                 },

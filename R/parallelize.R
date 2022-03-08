@@ -26,13 +26,6 @@ parallelize <- function(varlist = c(),
     if (Sys.info()["sysname"] == "Windows") {
       parallelization <- FALSE
     } else {
-      #    if( Sys.info()["sysname"] == "Windows")
-      #    {
-      #        message("Windows can be slow for starting parallelization.
-      #                 Using parallelization=FALSE can conduct to faster
-      #                 results for fast computations")
-      #    }
-
       parallelization <- TRUE
     }
   }
@@ -47,36 +40,6 @@ parallelize <- function(varlist = c(),
       n_cores <- parallel::detectCores() - 1
     }
 
-    #  if (Sys.info()["sysname"] == "Windows") {
-
-    #
-    # cl <- parallel::makeCluster(n_cores)
-    #
-    # parallel::clusterExport(
-    #     cl,
-    #     varlist,
-    #     envir = envir
-    # )
-    #
-    #
-    # parallel::clusterEvalQ(cl, library(RGCCA))
-    #
-    # # library(parallel)
-    # parallel::clusterEvalQ(cl, library(parallel))
-    #
-    #      res <- tryCatch({
-    #         get(applyFunc)(
-    #             cl,
-    #             nperm,
-    #             f)
-    #     }, error = function(err) stop_rgcca(err$message),
-    #     finally = {
-    #         parallel::stopCluster(cl)
-    #         cl <- c()
-    #     })
-    #
-    #
-    # }else{
     res <- parallel::mclapply(
       nperm,
       f,
@@ -100,8 +63,7 @@ parallelize <- function(varlist = c(),
   }
   if (parallelization == "for") {
     res <- NULL
-    for (i in 1:length(nperm))
-    {
+    for (i in seq_along(nperm)) {
       res[[i]] <- f(nperm[i])
     }
     if (applyFunc == "parSapply") {

@@ -12,9 +12,10 @@
 #' data analysis methods (maximization of well identified criteria) and the
 #' flexibility of PLS path modeling (the researcher decides which blocks are
 #' connected and which are not). Hence, the use of RGCCA requires the
-#' construction (user specified) of a design matrix, (\eqn{\mathbf{connection}}), that
-#' characterize the connections between blocks. Elements of the (symmetric)
-#' design matrix \eqn{\mathbf{connection} = (c_{jk})} is positive ; but usually equal to 1
+#' construction (user specified) of a design matrix,
+#' (\eqn{\mathbf{connection}}), that characterize the connections
+#' between blocks. Elements of the (symmetric) design matrix
+#' \eqn{\mathbf{connection} = (c_{jk})} is positive ; but usually equal to 1
 #' if block \eqn{j} and block \eqn{k} are connected, and 0 otherwise. The
 #' objective is to find a stationnary point related to the RGCCA optimization
 #' problem. The function rgccad() implements a globally convergent algorithm
@@ -35,8 +36,8 @@
 #' @param blocks A list that contains the J blocks of variables X1, X2, ..., XJ.
 #' Block Xj is a matrix of dimension n x p_j where n is the number of
 #' observations and p_j the number of variables.
-#' @param connection  A symmetric matrix (J*J) that describes the relationships between
-#' blocks.
+#' @param connection  A symmetric matrix (J*J) that describes the relationships
+#' between blocks.
 #' @param tau Either a 1*J vector or a max(ncomp)*J matrix containing
 #' the values of the regularization parameters (default: tau = 1, for each
 #' block and each dimension). The regularization parameters varies from 0
@@ -65,9 +66,10 @@
 #' is a matrix of block weight vectors for the corresponding block.}
 #' @return \item{astar}{A list of \eqn{J} elements. Each element of astar is a
 #' matrix defined as Y[[j]][, h] = blocks[[j]]\%*\%astar[[j]][, h].}
-#' @return \item{tau}{Either a 1*J vector or a \eqn{\mathrm{max}(ncomp) \times J}
-#' matrix containing the values of the regularization parameters. tau varies
-#' from 0 (maximizing the correlation) to 1 (maximizing the covariance).
+#' @return \item{tau}{Either a 1*J vector or a
+#' \eqn{\mathrm{max}(ncomp) \times J} matrix containing the values of the
+#' regularization parameters. tau varies from 0 (maximizing the correlation)
+#' to 1 (maximizing the covariance).
 #' If tau = "optimal" the regularization paramaters are estimated for each
 #' block and each dimension using the Schafer and Strimmer (2005) analytical
 #' formula. If tau is a \eqn{1\times J} vector, tau[j] is identical across the
@@ -106,7 +108,10 @@
 #' blocks <- list(X_agric, X_ind, X_polit)
 #' # Define the design matrix (output = connection)
 #' connection <- matrix(c(0, 0, 1, 0, 0, 1, 1, 1, 0), 3, 3)
-#' fit.rgcca <- rgccad(blocks, connection, tau = c(1, 1, 1), scheme = "factorial")
+#' fit.rgcca <- rgccad(blocks, connection,
+#'   tau = c(1, 1, 1),
+#'   scheme = "factorial"
+#' )
 #' lab <- as.vector(apply(Russett[, 9:11], 1, which.max))
 #' plot(fit.rgcca$Y[[1]], fit.rgcca$Y[[2]],
 #'   col = "white",
@@ -156,8 +161,12 @@
 #'   B <- lapply(blocks, function(x) x[-i, ])
 #'   B <- lapply(B, scale)
 #'
-#'   resB <- rgccad(B, connection, tau = rep(1, 3), scheme = "factorial", verbose = FALSE)
-#'   #  look for potential conflicting sign among components within the loo loop.
+#'   resB <- rgccad(B, connection,
+#'     tau = rep(1, 3), scheme = "factorial",
+#'     verbose = FALSE
+#'   )
+#'   # look for potential conflicting sign among components within
+#'   # the loo loop.
 #'   for (k in 1:length(B)) {
 #'     if (cor(fit.rgcca$a[[k]], resB$a[[k]]) >= 0) {
 #'       resB$a[[k]] <- resB$a[[k]]
@@ -250,30 +259,30 @@ rgccad <- function(blocks, connection = 1 - diag(length(blocks)),
 
   # First component block
   if (is.vector(tau)) {
-    rgcca.result <- rgccak(blocks, connection,
+    rgcca_result <- rgccak(blocks, connection,
       tau = tau, scheme = scheme,
       init = init, bias = bias, tol = tol,
       verbose = verbose, na.rm = na.rm
     )
   } else {
-    rgcca.result <- rgccak(blocks, connection,
+    rgcca_result <- rgccak(blocks, connection,
       tau = tau[1, ], scheme = scheme,
       init = init, bias = bias, tol = tol,
       verbose = verbose, na.rm = na.rm
     )
   }
-  computed_tau[1, ] <- rgcca.result$tau
+  computed_tau[1, ] <- rgcca_result$tau
 
-  for (b in seq_len(J)) Y[[b]][, 1] <- rgcca.result$Y[, b, drop = FALSE]
-  for (b in seq_len(J)) a[[b]][, 1] <- rgcca.result$a[[b]]
+  for (b in seq_len(J)) Y[[b]][, 1] <- rgcca_result$Y[, b, drop = FALSE]
+  for (b in seq_len(J)) a[[b]][, 1] <- rgcca_result$a[[b]]
 
   ifelse(!superblock,
     astar <- a,
     astar[, 1] <- a[[J]][, 1, drop = FALSE]
   )
 
-  AVE_inner[1] <- rgcca.result$AVE_inner
-  crit[[1]] <- rgcca.result$crit
+  AVE_inner[1] <- rgcca_result$AVE_inner
+  crit[[1]] <- rgcca_result$crit
 
   if (N > 0) {
     R <- blocks
@@ -291,16 +300,16 @@ rgccad <- function(blocks, connection = 1 - diag(length(blocks)),
       }
 
       if (!superblock) {
-        defl.result <- defl.select(rgcca.result$Y, R,
+        defl_result <- defl_select(rgcca_result$Y, R,
           ndefl, n - 1, J,
           na.rm = na.rm
         )
-        R <- defl.result$resdefl
-        for (b in seq_len(J)) P[[b]][, n - 1] <- defl.result$pdefl[[b]]
+        R <- defl_result$resdefl
+        for (b in seq_len(J)) P[[b]][, n - 1] <- defl_result$pdefl[[b]]
       } else {
-        defl.result <- deflation(R[[J]], rgcca.result$Y[, J])
-        R[[J]] <- defl.result$R
-        P[, n - 1] <- defl.result$p
+        defl_result <- deflation(R[[J]], rgcca_result$Y[, J])
+        R[[J]] <- defl_result$R
+        P[, n - 1] <- defl_result$p
         cumsum_pjs <- cumsum(pjs)[seq_len(J - 1)]
         inf_pjs <- c(0, cumsum_pjs[seq_len(J - 2)]) + 1
         for (j in seq_len(J - 1)) {
@@ -311,35 +320,35 @@ rgccad <- function(blocks, connection = 1 - diag(length(blocks)),
       }
 
       if (is.vector(tau)) {
-        rgcca.result <- rgccak(R, connection,
+        rgcca_result <- rgccak(R, connection,
           tau = tau, scheme = scheme,
           init = init, bias = bias, tol = tol,
           verbose = verbose, na.rm = na.rm
         )
       } else {
-        rgcca.result <- rgccak(R, connection,
+        rgcca_result <- rgccak(R, connection,
           tau = tau[n, ], scheme = scheme,
           init = init, bias = bias, tol = tol,
           verbose = verbose, na.rm = na.rm
         )
       }
 
-      computed_tau[n, ] <- rgcca.result$tau
+      computed_tau[n, ] <- rgcca_result$tau
 
-      AVE_inner[n] <- rgcca.result$AVE_inner
-      crit[[n]] <- rgcca.result$crit
+      AVE_inner[n] <- rgcca_result$AVE_inner
+      crit[[n]] <- rgcca_result$crit
 
-      for (b in seq_len(J)) Y[[b]][, n] <- rgcca.result$Y[, b]
-      for (b in seq_len(J)) a[[b]][, n] <- rgcca.result$a[[b]]
+      for (b in seq_len(J)) Y[[b]][, n] <- rgcca_result$Y[, b]
+      for (b in seq_len(J)) a[[b]][, n] <- rgcca_result$a[[b]]
 
       if (!superblock) {
         for (b in seq_len(J)) {
-          astar[[b]][, n] <- rgcca.result$a[[b]] -
+          astar[[b]][, n] <- rgcca_result$a[[b]] -
             astar[[b]][, (1:(n - 1)), drop = F] %*%
             drop(t(a[[b]][, n]) %*% P[[b]][, 1:(n - 1), drop = F])
         }
       } else {
-        astar[, n] <- rgcca.result$a[[J]] -
+        astar[, n] <- rgcca_result$a[[J]] -
           astar[, (1:(n - 1)), drop = F] %*%
           drop(t(a[[J]][, n]) %*% P[, 1:(n - 1), drop = F])
       }

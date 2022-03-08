@@ -61,7 +61,7 @@ print.bootstrap <- function(x, type = "weight", empirical = TRUE,
     ncompmax <- max(x$rgcca$call$ncomp[-J])
     mycomp <- which_block(x$rgcca$call$ncomp[-J])
 
-    for (comp in 1:ncompmax) {
+    for (comp in seq(ncompmax)) {
       cat(paste("Dimension:", comp, "\n"))
       print(Reduce(
         rbind,

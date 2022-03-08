@@ -15,7 +15,8 @@
 #' @return \item{top}{indicator on which variables are ranked.}
 #' @return \item{keepVar}{indices of the top variables.}
 #' @return \item{bootstrap}{block-weight vectors for ech bootstrap sample.}
-#' @return \item{rgcca_res}{an RGCCA object fitted on the most stable variables.}
+#' @return \item{rgcca_res}{an RGCCA object fitted on the most stable
+#' variables.}
 #' @examples
 #' \dontrun{
 #' ###########################
@@ -50,7 +51,9 @@
 #' }
 #' @export
 rgcca_stability <- function(rgcca_res,
-                            keep = sapply(rgcca_res$a, function(x) mean(x != 0)),
+                            keep = sapply(
+                              rgcca_res$a, function(x) mean(x != 0)
+                            ),
                             n_boot = 100,
                             n_cores = parallel::detectCores() - 1,
                             verbose = FALSE,
@@ -82,8 +85,7 @@ rgcca_stability <- function(rgcca_res,
   list_res <- list()
   for (i in 1:ndefl_max) {
     list_res[[i]] <- list()
-    for (block in names(rgcca_res$call$blocks))
-    {
+    for (block in names(rgcca_res$call$blocks)) {
       list_res[[i]][[block]] <-
         matrix(NA, dim(rgcca_res$call$blocks[[block]])[2], n_boot)
       rownames(list_res[[i]][[block]]) <-
@@ -92,8 +94,6 @@ rgcca_stability <- function(rgcca_res,
   }
 
   if (n_cores == 0) n_cores <- 1
-
-  blocks <- NULL
 
   if (!verbose) {
     pbapply::pboptions(type = "none")
@@ -137,8 +137,8 @@ rgcca_stability <- function(rgcca_res,
   W <- lapply(W, `[[`, 1)
 
   for (k in seq(n_boot)) {
-    for (i in 1:ndefl_max) {
-      for (j in 1:length(rgcca_res$call$blocks)) {
+    for (i in seq(ndefl_max)) {
+      for (j in seq_along(rgcca_res$call$blocks)) {
         block <- names(rgcca_res$call$blocks)[j]
         if (!is.null(names(W[[k]]))) {
           if (i <= NCOL(W[[k]][[block]])) {
@@ -149,7 +149,8 @@ rgcca_stability <- function(rgcca_res,
             rep(NA, length(list_res[[i]][[block]][, k]))
           if (is.character(W[[k]])) {
             warning(paste0(
-              "This bootstrap sample was removed due to zero variance variable(s): ",
+              "This bootstrap sample was removed due to zero variance ",
+              "variable(s): ",
               paste(W[[k]], collapse = " - ")
             ))
           }
@@ -208,11 +209,11 @@ rgcca_stability <- function(rgcca_res,
     }
   )
 
-  newBlock <- mapply(function(x, y) x[, y], rgcca_res$call$raw, keepVar,
+  new_block <- mapply(function(x, y) x[, y], rgcca_res$call$raw, keepVar,
     SIMPLIFY = FALSE
   )
 
-  rgcca_res <- rgcca(newBlock,
+  rgcca_res <- rgcca(new_block,
     connection = rgcca_res$call$connection,
     superblock = rgcca_res$call$superblock,
     ncomp = rgcca_res$call$ncomp,

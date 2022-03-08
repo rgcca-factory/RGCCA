@@ -20,7 +20,8 @@
 #' adjustment (default: fdr - a.k.a Benjamini-Hochberg correction)
 #' @return A dataframe containing:
 #' \itemize{
-#' \item 'mean' for the mean of the bootstrap weights/loadings (non-null for SGCCA)
+#' \item 'mean' for the mean of the bootstrap weights/loadings
+#' (non-null for SGCCA)
 #' \item 'estimate' for RGCCA block-weight/block-loading vectors
 #' \item 'sd' for the bootstrap estimate of the standard error of the
 #' (non-null in case of SGCCA) bootstrap weights/loadings

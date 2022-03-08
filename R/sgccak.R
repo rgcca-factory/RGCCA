@@ -83,7 +83,7 @@ sgccak <- function(A, C, sparsity = rep(1, length(A)),
   crit_old <- sum(C * g(cov2(Y, bias = bias)))
 
 
-  repeat{
+  repeat {
     for (q in seq_len(J)) {
       dgx <- dg(cov2(Y[, q], Y, bias = bias))
       CbyCovq <- drop(C[q, ] * dgx)
@@ -100,7 +100,10 @@ sgccak <- function(A, C, sparsity = rep(1, length(A)),
       cat(
         " Iter: ", formatC(iter, width = 3, format = "d"),
         " Fit: ", formatC(crit[iter], digits = 8, width = 10, format = "f"),
-        " Dif: ", formatC(crit[iter] - crit_old, digits = 8, width = 10, format = "f"),
+        " Dif: ", formatC(crit[iter] - crit_old,
+          digits = 8, width = 10,
+          format = "f"
+        ),
         "\n"
       )
     }
@@ -149,19 +152,20 @@ sgccak <- function(A, C, sparsity = rep(1, length(A)),
     }
   }
 
-  l2_SAT <- sapply(a, function(x) norm(x, "2"))
-  if (max(abs(l2_SAT - 1)) > tol) {
-    for (i in which(abs(l2_SAT - 1) > tol)) {
-      if (l2_SAT[i] < .Machine$double.eps) {
+  l2_sat <- sapply(a, function(x) norm(x, "2"))
+  if (max(abs(l2_sat - 1)) > tol) {
+    for (i in which(abs(l2_sat - 1) > tol)) {
+      if (l2_sat[i] < .Machine$double.eps) {
         warning(
           "Norm2 of the block weight vector #",
-          i, " is too small :", l2_SAT[i]
+          i, " is too small :", l2_sat[i]
         )
       } else {
         nMAX <- length(which(a[[i]] != 0))
         warning(
           "The l2 constraint is not saturated for block #", i,
-          ". The sparsity parameter has to be in the range [", sqrt(nMAX / pjs[i]),
+          ". The sparsity parameter has to be in the range [",
+          sqrt(nMAX / pjs[i]),
           ", 1] and is equal to ", sparsity[i], "."
         )
       }

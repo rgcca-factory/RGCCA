@@ -72,11 +72,6 @@ check_connection <- function(C, blocks) {
     stop_rgcca(paste(msg, "be symmetric."), exit_code = 103)
   }
 
-  # d <- unique(diag(C))
-  # if (length(d) != 1 || d != 0)
-  #     stop_rgcca("The diagonal of the connection matrix file should be 0.",
-  #         exit_code = 105)
-
   if (any(is.na(C))) {
     stop_rgcca(paste(msg, "not contain NA values."), exit_code = 106)
   }
@@ -117,15 +112,7 @@ check_file <- function(f) {
     stop_rgcca(paste(f, "does not exist."), exit_code = 101)
   }
 }
-# y <- runif(6)
-# check_integer("y", y, "vector", T, min = 0)
-# y <- matrix(runif(6, 1, 10), 2, 3)
-# check_integer("y", y, "matrix", T)
-# check_integer("y", y, "matrix")
-# check_integer(NA)
-# check_integer(.1)
-# check_integer(c(1:2))
-# check_integer("x", c(0, 0), type = "vector")
+
 check_integer <- function(x, y = x, type = "scalar", float = FALSE, min = 1,
                           max = Inf, max_message = NULL, exit_code = NULL,
                           min_message = NULL) {
@@ -253,7 +240,10 @@ check_ncol <- function(x, i_block) {
 
 check_ncomp <- function(ncomp, blocks, min = 1, superblock = FALSE) {
   if (superblock && length(unique(ncomp)) != 1) {
-    stop_rgcca("Specify the number of components only for the superblock or identical for all blocks.")
+    stop_rgcca(
+      "Specify the number of components only for the superblock or ",
+      "identical for all blocks."
+    )
   }
   ncomp <- elongate_arg(ncomp, blocks)
   check_size_blocks(blocks, "ncomp", ncomp)
@@ -301,11 +291,14 @@ check_quantitative <- function(df, fo, header = FALSE, warn_separator = FALSE) {
   if (qualitative) {
     msg <- paste(
       fo,
-      "contains qualitative data. Please, transform them in a disjunctive table."
+      "contains qualitative data. Transform them in a disjunctive table."
     )
 
     if (!header) {
-      msg <- paste0(msg, "Possible mistake: header parameter is disabled, check if the file doesn't have one.")
+      msg <- paste0(
+        msg, "Possible mistake: header parameter is disabled, ",
+        "check if the file doesn't have one."
+      )
     }
 
     stop_rgcca(paste(msg, "\n"), exit_code = 100)
@@ -315,12 +308,6 @@ check_quantitative <- function(df, fo, header = FALSE, warn_separator = FALSE) {
 check_response <- function(response = NULL, df = NULL) {
   if (!is.null(response)) {
     qualitative <- is.character(response)
-
-    # if (length(qualitative) > 1)
-    #     stop_rgcca(
-    #     "Please, select a response file with either qualitative data only or quantitative data only.",
-    #     108
-    #     )
 
     if (!qualitative) {
       response <- to_numeric(response)
@@ -345,7 +332,10 @@ check_response <- function(response = NULL, df = NULL) {
           )
         )
       } else {
-        warning("There is multiple columns in the response block. By default, only the first column will be considered.")
+        warning(
+          "There is multiple columns in the response block. By default, ",
+          "only the first column will be considered."
+        )
         return(as.matrix(response[, 1]))
       }
     }
@@ -489,14 +479,18 @@ check_spars <- function(sparsity, block) {
 }
 
 # #' @export
-check_superblock <- function(is_supervised = NULL, is_superblock = NULL, verbose = TRUE) {
+check_superblock <- function(is_supervised = NULL, is_superblock = NULL,
+                             verbose = TRUE) {
   if (!is.null(is_supervised)) {
     if (verbose) {
       warn_connection("supersized method with a response")
     }
     if (is_superblock) {
       if (!is.null(is_superblock) && verbose) {
-        warning("In a supervised mode, the superblock corresponds to the response.")
+        warning(
+          "In a supervised mode, the superblock corresponds ",
+          "to the response."
+        )
       }
     }
     return(FALSE)

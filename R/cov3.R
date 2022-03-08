@@ -4,9 +4,9 @@
 #
 # @param x a matrix x
 # @param y a matrix with same size as x
-# @param bias if TRUE, the estimator of variance is SS/sqrt(n-1), if FALSE, it is SS/sqrt(n)
+# @param bias if TRUE, the estimator of variance is SS/sqrt(n-1), if FALSE,
+# it is SS/sqrt(n)
 cov3 <- function(x, y = NULL, bias = TRUE) {
-  n <- NROW(x)
   if (is.null(y)) {
     x <- as.matrix(x)
     if (bias) {

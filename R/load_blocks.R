@@ -5,16 +5,9 @@
 #' @param separator A character giving the column separator
 #' @param decimal A character giving the decimal separator
 #' @param header A bolean giving the presence or the absence of the header
-#' @param rownames An integer corresponding to the column number of the rownames (NULL otherwise)
+#' @param rownames An integer corresponding to the column number of the
+#' rownames (NULL otherwise)
 #' @return A list matrix corresponding to the blocks
-#' @examples
-#' \dontrun{
-#' load_blocks(
-#'   TRUE,
-#'   "inst/extdata/agriculture.tsv,inst/extdata/industry.tsv,inst/extdata/politic.tsv",
-#'   "agric,ind,polit"
-#' )
-#' }
 #' @export
 load_blocks <- function(file,
                         names = NULL,
@@ -24,9 +17,9 @@ load_blocks <- function(file,
                         decimal = ".") {
 
   # Parse args containing files path
-  isXls <- (length(grep("xlsx?", file)) == 1)
+  is_xls <- (length(grep("xlsx?", file)) == 1)
   # test if extension filename is xls
-  if (!isXls) {
+  if (!is_xls) {
     # if it is not, parse the name of file from the arg list
     block_filenames <- char_to_list(file)
   } else {
@@ -52,7 +45,7 @@ load_blocks <- function(file,
   # Load each dataset
   blocks <- list()
   for (i in seq(length(block_filenames))) {
-    if (!isXls) {
+    if (!is_xls) {
       fi <- block_filenames[i]
     }
 
@@ -61,7 +54,7 @@ load_blocks <- function(file,
       # names of blocks are those parsed from args
       fo <- get_filename(block_names[i])
     } else {
-      if (!isXls) {
+      if (!is_xls) {
         # if not xls, the name is the files without the extension .tsv
         fo <- get_filename(fi)
       } else {
@@ -70,11 +63,16 @@ load_blocks <- function(file,
       }
     }
 
-    df <- load_file(file, fi, separator, block_filenames[i], rownames, header, decimal = decimal)
+    df <- load_file(file, fi, separator, block_filenames[i], rownames, header,
+      decimal = decimal
+    )
 
     check_quantitative(df[, -rownames], fo, header, warn_separator = TRUE)
     blocks[[fo]] <- df
   }
 
-  blocks <- check_blocks(blocks, init = TRUE, allow_unnames = FALSE, no_character = TRUE)
+  blocks <- check_blocks(blocks,
+    init = TRUE, allow_unnames = FALSE,
+    no_character = TRUE
+  )
 }

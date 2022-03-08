@@ -16,9 +16,9 @@ load_file <- function(file,
     sheet <- paste0(sheet, collapse = " ")
   }
 
-  isXls <- length(grep("xlsx?", file))
+  is_xls <- length(grep("xlsx?", file))
 
-  if (!isXls) {
+  if (!is_xls) {
     file <- file_text
   }
 
@@ -27,7 +27,7 @@ load_file <- function(file,
 
   # TODO: add automatic separator setting
 
-  if (!isXls) {
+  if (!is_xls) {
     load_file_text(file, separator, rownames, header, one_column, decimal)
   } else {
     load_file_excel(file, sheet, rownames, header = header)

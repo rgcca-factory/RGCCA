@@ -3,10 +3,6 @@
 # @inheritParams load_blocks
 # @param one_column A boolean for a file with  an only-one column
 # @return A matrix containing the loaded file
-# @examples
-# \dontrun{
-# load_file_text('data/agriculture.tsv')
-# }
 load_file_text <- function(file,
                            separator = "\t",
                            rownames = 1,
@@ -40,8 +36,11 @@ load_file_text <- function(file,
   )
 
   if (!one_column && NCOL(f) == 0) {
-    stop_rgcca(paste(basename(file), "has an only-column. Check the separator."),
-      exit_code = 102
+    stop_rgcca(paste(
+      basename(file),
+      "has an only-column. Check the separator."
+    ),
+    exit_code = 102
     )
   }
 

@@ -26,6 +26,5 @@ color_group <- function(x, colors = NULL) {
   colors <- rep(colors, 10)
   cols <- colors[seq(length(levels(as.factor(x))))]
 
-  # names(cols)=levels(as.factor(x))
   return(cols)
 }

@@ -3,7 +3,8 @@
 # @inheritParams plot_var_2D
 # @inheritParams get_ctr
 # @return A matrix containg the indexes (correlation of the blocks with a
-# component or their weights) for each selected component and an associated response
+# component or their weights) for each selected component and an associated
+# response
 
 get_ctr2 <- function(rgcca_res,
                      compx = 1,
@@ -28,7 +29,7 @@ get_ctr2 <- function(rgcca_res,
     check_boolean(i, get(i))
   }
 
-  x <- y <- selectedVar <- NULL
+  selected_var <- NULL
   blocks <- rgcca_res$call$blocks
 
   if (collapse) {
@@ -38,9 +39,9 @@ get_ctr2 <- function(rgcca_res,
         i_block <- length(blocks)
       }
     }
-    blocks.all <- blocks
+    blocks_all <- blocks
     blocks <- rep(list(Reduce(cbind, blocks)), length(blocks))
-    names(blocks) <- names(blocks.all)
+    names(blocks) <- names(blocks_all)
   }
 
   df <- get_ctr(rgcca_res, compx, compy, compz, i_block, type, collapse)
@@ -52,7 +53,7 @@ get_ctr2 <- function(rgcca_res,
       J <- i_block
     }
 
-    selectedVar <- unlist(
+    selected_var <- unlist(
       lapply(
         J,
         function(x) {
@@ -67,7 +68,7 @@ get_ctr2 <- function(rgcca_res,
         }
       )
     )
-    df <- df[names(which(selectedVar)), ]
+    df <- df[names(which(selected_var)), ]
   }
 
   if (n_mark > NROW(df)) {
@@ -76,29 +77,38 @@ get_ctr2 <- function(rgcca_res,
 
   # TODO: function in other place
   if (remove_var) {
-    selectedVar <- unique(as.vector(
+    selected_var <- unique(as.vector(
       sapply(seq(length(c(compx, compy, compz))), function(x) {
-        row.names(data.frame(df[order(abs(df[, x]), decreasing = TRUE), ])[seq(n_mark), ])
+        row.names(data.frame(
+          df[order(abs(df[, x]), decreasing = TRUE), ]
+        )[seq(n_mark), ])
       })
     ))
-    df <- df[selectedVar, ]
+    df <- df[selected_var, ]
   } else {
-    selectedVar <- row.names(df)
+    selected_var <- row.names(df)
   }
 
   # group by blocks
   if (is.null(resp)) {
-    if ((rgcca_res$call$superblock && i_block == length(rgcca_res$a)) || collapse) {
+    if (
+      (rgcca_res$call$superblock && i_block == length(rgcca_res$a)) ||
+        collapse
+    ) {
       if (collapse) {
-        resp <- get_bloc_var(lapply(blocks.all, t), TRUE)
+        resp <- get_bloc_var(lapply(blocks_all, t), TRUE)
       } else {
         resp <- get_bloc_var(rgcca_res$a)
 
         resp <- resp[
           unlist(
             lapply(
-              seq(length(selectedVar)),
-              function(x) which(colnames(blocks[[length(blocks)]]) == selectedVar[x])
+              seq(length(selected_var)),
+              function(x) {
+                which(
+                  colnames(blocks[[length(blocks)]]) == selected_var[x]
+                )
+              }
             )
           )
         ]

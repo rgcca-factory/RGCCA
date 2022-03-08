@@ -1,6 +1,7 @@
 # Variable contribution
 #
-# Extract the contibution of variables to the model by using correlation or weight
+# Extract the contibution of variables to the model by using correlation or
+# weight
 #
 # @inheritParams plot_var_2D
 # @inheritParams plot_var_1D
@@ -21,7 +22,6 @@ get_ctr <- function(rgcca_res,
   stopifnot(!missing(rgcca_res))
 
   blocks <- rgcca_res$call$blocks
-  y <- NULL
 
   if (!collapse) {
     row.names <- colnames(blocks[[i_block]])

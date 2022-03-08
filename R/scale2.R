@@ -2,7 +2,9 @@
 # @inheritParams rgccad
 # @param A A numeric matrix.
 # @param center A logical value. If center = TRUE, each column has zero mean.
-# @return \item{A}{The centered and/or scaled matrix. The centering and scaling values (if any) are returned as attributes "scaled:center" and "scaled:scale".}
+# @return \item{A}{The centered and/or scaled matrix. The centering and scaling
+# values (if any) are returned as attributes "scaled:center" and
+# "scaled:scale".}
 # @title Scaling and Centering of Matrix-like Objects
 # @export scale2
 

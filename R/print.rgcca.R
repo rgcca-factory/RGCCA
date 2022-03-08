@@ -23,8 +23,7 @@ print.rgcca <- function(x, ...) {
     "bias", "tol", "NA_method", "ncomp"
   )
   char_to_print <- ""
-  for (name in names_call)
-  {
+  for (name in names_call) {
     if (name == "ncomp") {
       if (length(x$call$ncomp) > 1) {
         value <- (paste(x$call$ncomp, sep = "", collapse = ","))
@@ -56,12 +55,12 @@ print.rgcca <- function(x, ...) {
     cat("The", x$call$scheme, "scheme was used.", fill = TRUE)
   }
   if (is.list(x$crit)) {
-    critByNcomp <- sapply(x$crit, function(t) {
+    crit_by_ncomp <- sapply(x$crit, function(t) {
       return(t[length(t)])
     })
     cat("Sum_{j,k} c_jk g(cov(X_ja_j, X_ka_k) = ",
       sep = "",
-      paste(round(sum(critByNcomp), 4), sep = "", " "), fill = TRUE
+      paste(round(sum(crit_by_ncomp), 4), sep = "", " "), fill = TRUE
     )
   } else {
     cat("Sum_{j,k} c_jk g(cov(X_ja_j, X_ka_k) = ",
@@ -73,10 +72,12 @@ print.rgcca <- function(x, ...) {
   if (!tolower(x$call$method) %in% c("sgcca", "spca", "spls")) {
     param <- "regularization"
     if (!is.matrix(x$call$tau)) {
-      for (i in 1:NCOL(x$call$connection))
-      {
+      for (i in seq(NCOL(x$call$connection))) {
         tau <- x$call$tau[i]
-        cat("The", param, "parameter used for", names(x$call$blocks)[i], "was:", round(tau, 4), fill = TRUE)
+        cat("The", param, "parameter used for", names(x$call$blocks)[i],
+          "was:", round(tau, 4),
+          fill = TRUE
+        )
       }
     } else {
       cat("The", param, "parameters used were: \n")
@@ -84,10 +85,13 @@ print.rgcca <- function(x, ...) {
     }
   }
   if (x$call$method %in% c("sgcca")) {
-    nb_selected_var <- lapply(x$a, function(a) apply(a, 2, function(l) sum(l != 0)))
+    nb_selected_var <- lapply(
+      x$a,
+      function(a) apply(a, 2, function(l) sum(l != 0))
+    )
     param <- "sparsity"
     if (!is.matrix(x$call$sparsity)) {
-      for (i in 1:NCOL(x$call$connection)) {
+      for (i in seq(NCOL(x$call$connection))) {
         sparsity <- x$call$sparsity[i]
 
         cat("The", param, "parameter used for", names(x$call$blocks)[i], "was:",

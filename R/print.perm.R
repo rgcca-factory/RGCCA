@@ -1,7 +1,8 @@
 #' Print a fitted rgcca_permutation object
 #'
 #' Print a fitted rgcca_permutation object
-#' @param x A fitted rgcca_permutation object (see  \code{\link[RGCCA]{rgcca_permutation}})
+#' @param x A fitted rgcca_permutation object (see
+#' \code{\link[RGCCA]{rgcca_permutation}})
 #' @param ... additional print parameters
 #' @export
 #' @examples
@@ -57,7 +58,7 @@ print.permutation <- function(x, ...) {
   }
 
   c1s <- round(x$penalties, 4)
-  rownames(c1s) <- 1:NROW(c1s)
+  rownames(c1s) <- seq(NROW(c1s))
   cat(fill = TRUE)
   cat("Tuning parameters used: ", fill = TRUE)
   print(c1s, quote = FALSE, ...)
@@ -67,7 +68,7 @@ print.permutation <- function(x, ...) {
   dimnames(tab) <- list(
     paste("Tuning parameter set ",
       sep = "",
-      1:length(x$pvals)
+      seq_along(x$pvals)
     ),
     c("crit", "crit perm", "sd", "zstat", "p-value")
   )

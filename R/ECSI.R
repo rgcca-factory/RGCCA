@@ -8,9 +8,9 @@
 #' measures customer satisfaction. ECSI is an adaptation of the Swedish Customer
 #' Satisfaction Barometer (Fornell, 1992) and is compatible with the American
 #' Customer Satisfaction Index.  The indicators describing the latent variables
-#' are given for the Mobile Phone Industry. The original items scaled from 1 to 10
-#' have been transformed into new normalized variables. The minimum possible value
-#' of each variable is 0 and its maximum possible value is equal to 10.
+#' are given for the Mobile Phone Industry. The original items scaled from 1 to
+#' 10 have been transformed into new normalized variables. The minimum possible
+#' value of each variable is 0 and its maximum possible value is equal to 10.
 #'
 #' \describe{
 #' - IMAG: Image of the phone provider (eta_1) \cr
@@ -34,7 +34,8 @@
 #' \verb{    }(c) Customer service and personal advice offered \cr
 #' \verb{    }(d) Quality of the services you use \cr
 #' \verb{    }(e) Range of services and products offered \cr
-#' \verb{    }(f) Reliability and accuracy of the products and services provided \cr
+#' \verb{    }(f) Reliability and accuracy of the products and services
+#' provided \cr
 #' \verb{    }(g) Clarity and transparency of information provided \cr
 #'
 #' - VAL: Perceived Value (eta_4)\cr
@@ -54,10 +55,10 @@
 #' - LOY: Customer Loyalty (eta_6)	\cr
 #' \verb{    }(a)	If you would need to choose a new "mobile phone provider" how
 #' likely is it that you would choose your provider again? \cr
-#' \verb{    }(b)	Let us now suppose that other "mobile phone provider"s decide to
-#' lower their fees and prices, but your "mobile phone provider" stays at the same
-#' level as today. At which level of difference (in \%) would you choose another
-#' "mobile phone provider"? \cr
+#' \verb{    }(b)	Let us now suppose that other "mobile phone provider"s decide
+#' to lower their fees and prices, but your "mobile phone provider" stays at
+#' the same level as today. At which level of difference (in \%) would you
+#' choose another "mobile phone provider"? \cr
 #' \verb{    }(c)	If a friend or colleague asks you for advice, how likely is it
 #' that you would recommend your "mobile phone provider"? }
 #'

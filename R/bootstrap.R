@@ -70,13 +70,19 @@ bootstrap <- function(rgcca_res, n_boot = 100,
                       balanced = TRUE, keep_all_variables = FALSE,
                       verbose = TRUE) {
   if (class(rgcca_res) == "stability") {
-    message("All the parameters were imported from the fitted rgcca_stability object.")
+    message(
+      "All the parameters were imported from the fitted rgcca_stability",
+      " object."
+    )
     rgcca_res <- rgcca_res$rgcca_res
   }
 
   if (tolower(rgcca_res$call$method) %in% c("sgcca", "spls", "spca")) {
     if (verbose) {
-      message("Only selected variables were used for bootstrapping. see rgcca_stability().")
+      message(
+        "Only selected variables were used for bootstrapping. see ",
+        "rgcca_stability()."
+      )
     }
 
     keepVar <- lapply(
@@ -84,12 +90,12 @@ bootstrap <- function(rgcca_res, n_boot = 100,
       function(x) unique(which(x != 0, arr.ind = TRUE)[, 1])
     )
 
-    newBlock <- mapply(function(x, y) x[, y, drop = FALSE],
+    new_block <- mapply(function(x, y) x[, y, drop = FALSE],
       rgcca_res$call$raw, keepVar,
       SIMPLIFY = FALSE
     )
 
-    rgcca_res <- rgcca(newBlock,
+    rgcca_res <- rgcca(new_block,
       connection = rgcca_res$call$connection,
       superblock = rgcca_res$call$superblock,
       ncomp = rgcca_res$call$ncomp,
@@ -128,8 +134,7 @@ bootstrap <- function(rgcca_res, n_boot = 100,
   list_res_W <- list_res_L <- list()
   for (i in 1:ndefl_max) {
     list_res_W[[i]] <- list_res_L[[i]] <- list()
-    for (block in names(rgcca_res$call$blocks))
-    {
+    for (block in names(rgcca_res$call$blocks)) {
       list_res_L[[i]][[block]] <- list_res_W[[i]][[block]] <-
         matrix(NA, NCOL(rgcca_res$call$blocks[[block]]), n_boot)
       rownames(list_res_L[[i]][[block]]) <-
@@ -137,8 +142,6 @@ bootstrap <- function(rgcca_res, n_boot = 100,
         colnames(rgcca_res$call$blocks[[block]])
     }
   }
-
-  blocks <- NULL
 
   if (!verbose) {
     pbapply::pboptions(type = "none")
@@ -189,8 +192,8 @@ bootstrap <- function(rgcca_res, n_boot = 100,
   W <- lapply(W, `[[`, 1)
 
   for (k in seq(n_boot)) {
-    for (i in 1:ndefl_max) {
-      for (j in 1:length(rgcca_res$call$blocks)) {
+    for (i in seq(ndefl_max)) {
+      for (j in seq_along(rgcca_res$call$blocks)) {
         block <- names(rgcca_res$call$blocks)[j]
         if (!is.null(names(W[[k]]))) {
           if (i <= NCOL(W[[k]][[block]])) {
@@ -204,7 +207,8 @@ bootstrap <- function(rgcca_res, n_boot = 100,
             rep(NA, length(list_res_L[[i]][[block]][, k]))
           if (is.character(W[[k]]) && ((j == 1) && (i == 1))) {
             warning(paste0(
-              "This bootstrap sample was removed due to zero variance variable(s): ",
+              "This bootstrap sample was removed due to zero variance ",
+              "variable(s): ",
               paste(W[[k]], collapse = " - ")
             ))
           }

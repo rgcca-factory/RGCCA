@@ -103,12 +103,12 @@ plot_bootstrap_1D <- function(b = NULL,
     df_b_head <- head(
       data.frame(
         order_df(df_b, "estimate", allCol = TRUE),
-        order = NROW(df_b):1
+        order = seq(NROW(df_b), 1)
       ),
       n_mark
     )
   } else {
-    df_b_head <- head(data.frame(df_b, order = NROW(df_b):1), n_mark)
+    df_b_head <- head(data.frame(df_b, order = seq(NROW(df_b), 1)), n_mark)
   }
 
   df_b_head <- df_b_head[df_b_head[, "sd"] != 0, ]

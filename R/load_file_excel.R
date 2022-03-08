@@ -6,10 +6,6 @@
 # @param header A bolean giving the presence or the absence of the header
 # @param num A bolean giving the presence or the absence of numerical values
 # @return A matrix containing the loaded file
-# @examples
-# \dontrun{
-# load_file_excel("data/blocks.xlsx", "industry")
-# }
 # @export loadExcel
 load_file_excel <- function(file,
                             sheet = 1,

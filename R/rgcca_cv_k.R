@@ -6,7 +6,8 @@
 #' @inheritParams bootstrap
 #' @inheritParams plot_ind
 #' @param k An integer giving the number of folds (if validation = 'kfold').
-#' @param validation A character for the type of validation among "loo", "kfold", "test".
+#' @param validation A character for the type of validation among "loo",
+#' "kfold", "test".
 #' @param parallelization logical value. If TRUE (default value), the
 #' permutation procedure is parallelized
 #' @examples
@@ -115,8 +116,21 @@ rgcca_cv_k <- function(rgcca_res,
       rgcca_k$astar <- add_variables_submodel(rgcca_res, rgcca_k$astar)
       rgcca_k$call$blocks <- add_variables_data(rgcca_res, rgcca_k$call$blocks)
 
-      center_att <- add_variables_attr(rgcca_res, lapply(rgcca_k_saved$call$blocks, function(i) attr(i, "scaled:center")), type = "center")
-      scale_attr <- add_variables_attr(rgcca_res, lapply(rgcca_k_saved$call$blocks, function(i) attr(i, "scaled:scale")))
+      center_att <- add_variables_attr(
+        rgcca_res,
+        lapply(
+          rgcca_k_saved$call$blocks,
+          function(i) attr(i, "scaled:center")
+        ),
+        type = "center"
+      )
+      scale_attr <- add_variables_attr(
+        rgcca_res,
+        lapply(
+          rgcca_k_saved$call$blocks,
+          function(i) attr(i, "scaled:scale")
+        )
+      )
 
       for (i in seq(length(rgcca_k$call$blocks))) {
         attr(rgcca_k$call$blocks[[i]], "scaled:center") <- center_att[[i]]
@@ -149,11 +163,6 @@ rgcca_cv_k <- function(rgcca_res,
   }
   if (validation == "test") {
     stop("to be implemented")
-    # inds <- sample(
-    #     nrow(bigA[[1]]),
-    #     size = nrow(bigA[[1]]) * 0.3)
-    # scores <- list(eval(f)())
-    # preds <- scores$res
   } else {
     varlist <- c(ls(getNamespace("RGCCA")))
     # get the parameter dot-dot-dot
@@ -200,7 +209,7 @@ rgcca_cv_k <- function(rgcca_res,
   list_res <- lapply(scores, function(x) {
     return(x$res)
   })
-  list_class.fit <- lapply(scores, function(x) {
+  list_class_fit <- lapply(scores, function(x) {
     return(x$class.fit)
   })
 
@@ -232,7 +241,8 @@ rgcca_cv_k <- function(rgcca_res,
       scores = scores, preds = preds,
       rgcca_res = rgcca_res,
       list_scores = list_scores,
-      list_pred = list_pred, list_rgcca = list_rgcca, list_class = list_class.fit, list_res = list_res
+      list_pred = list_pred, list_rgcca = list_rgcca,
+      list_class = list_class_fit, list_res = list_res
     ),
     class = "cv"
   )

@@ -212,7 +212,10 @@ rgcca <- function(blocks, method = "rgcca",
                   superblock = FALSE,
                   NA_method = "nipals", verbose = FALSE, quiet = TRUE) {
   if (class(blocks) == "permutation") {
-    message("All the parameters were imported from the fitted rgcca_permutation object.")
+    message(paste0(
+      "All the parameters were imported from the fitted ",
+      "rgcca_permutation object."
+    ))
     scale_block <- blocks$call$scale_block
     scale <- blocks$call$scale
     scheme <- blocks$call$scheme
@@ -320,7 +323,7 @@ rgcca <- function(blocks, method = "rgcca",
       if (length(unique(blocks[[response]])) == 1) {
         stop("Only one level in the variable to predict")
       }
-      blocks[[response]] <- asDisjonctive(blocks[[response]])
+      blocks[[response]] <- as_disjonctive(blocks[[response]])
     }
   }
 

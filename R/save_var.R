@@ -13,14 +13,26 @@ save_var <- function(rgcca,
         Reduce(
           cbind,
           lapply(indexes, function(x) {
-            Reduce(cbind, lapply(seq(rgcca$call$ncomp[i]), function(j) get_ctr(rgcca, j, j, i_block = i, type = x)[, 1, drop = FALSE]))
+            Reduce(cbind, lapply(
+              seq(rgcca$call$ncomp[i]),
+              function(j) {
+                get_ctr(
+                  rgcca, j, j,
+                  i_block = i, type = x
+                )[, 1, drop = FALSE]
+              }
+            ))
           })
         ),
         names(rgcca$call$blocks)[i]
       )
       colnames(df) <- c(unlist(lapply(
         indexes,
-        function(x) sapply(seq(rgcca$call$ncomp[[i]]), function(y) paste0(x, ".", y))
+        function(x) {
+          sapply(
+            seq(rgcca$call$ncomp[[i]]), function(y) paste0(x, ".", y)
+          )
+        }
       )), "blocks")
       df
     }
