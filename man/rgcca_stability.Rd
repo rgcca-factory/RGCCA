@@ -41,7 +41,8 @@ sample (default is FALSE).}
 
 \item{bootstrap}{block-weight vectors for ech bootstrap sample.}
 
-\item{rgcca_res}{an RGCCA object fitted on the most stable variables.}
+\item{rgcca_res}{an RGCCA object fitted on the most stable
+variables.}
 }
 \description{
 This function can be used to identify the most stable variables
@@ -59,23 +60,25 @@ data(ge_cgh_locIGR)
 blocks <- ge_cgh_locIGR$multiblocks
 Loc <- factor(ge_cgh_locIGR$y)
 levels(Loc) <- colnames(ge_cgh_locIGR$multiblocks$y)
-connection <-  matrix(c(0, 0, 1, 0, 0, 1, 1, 1, 0), 3, 3)
-blocks[[3]] = blocks[[3]][, -3]
+connection <- matrix(c(0, 0, 1, 0, 0, 1, 1, 1, 0), 3, 3)
+blocks[[3]] <- blocks[[3]][, -3]
 
-fit.sgcca = rgcca(blocks, connection = connection,
-                  sparsity = c(.071,.2, 1),
-                  ncomp = c(1, 1, 1),
-                  scheme = "centroid",
-                  verbose = TRUE)
+fit.sgcca <- rgcca(blocks,
+  connection = connection,
+  sparsity = c(.071, .2, 1),
+  ncomp = c(1, 1, 1),
+  scheme = "centroid",
+  verbose = TRUE
+)
 
-boot.out = bootstrap(fit.sgcca, n_boot = 100, n_cores = 1, verbose = TRUE)
+boot.out <- bootstrap(fit.sgcca, n_boot = 100, n_cores = 1, verbose = TRUE)
 
-fit.stab = rgcca_stability(fit.sgcca,
-                           keep = sapply(fit.sgcca$a, function(x) mean(x!=0)),
-                           n_cores = 15,
-                           verbose = TRUE
-                           )
+fit.stab <- rgcca_stability(fit.sgcca,
+  keep = sapply(fit.sgcca$a, function(x) mean(x != 0)),
+  n_cores = 15,
+  verbose = TRUE
+)
 
-boot.out = bootstrap(fit.stab, n_boot = 500, n_cores = 1, verbose = FALSE)
+boot.out <- bootstrap(fit.stab, n_boot = 500, n_cores = 1, verbose = FALSE)
 }
 }

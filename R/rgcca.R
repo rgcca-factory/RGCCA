@@ -66,8 +66,8 @@
 #' block.}
 #' @return \item{a}{List of \eqn{J} elements. Each element of the list \eqn{a}
 #' is a matrix of block weight vectors for the corresponding block.}
-#' @return \item{astar}{List of \eqn{J} elements. Each element of astar is a
-#' matrix defined as Y[[j]][, h] = A[[j]]\%*\%astar[[j]][, h].}
+#' @return \item{astar}{List of \eqn{J} elements. Each column of astar[[j]] is a
+#' vector such that Y[[j]][, h] = blocks[[j]] \%*\% astar[[j]][, h].}
 #' @return \item{tau}{Regularization parameters used during the analysis.}
 #' @return \item{crit}{List of vector of length max(ncomp). Each vector of
 #' the list is related to one specific deflation stage and reports the values

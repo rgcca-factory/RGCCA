@@ -23,13 +23,16 @@ plot_var_2D(
 \arguments{
 \item{rgcca_res}{A fitted RGCCA object (see  \code{\link[RGCCA]{rgcca}})}
 
-\item{compx}{An integer giving the index of the block component for the x-axis}
+\item{compx}{An integer giving the index of the block component for
+the x-axis}
 
-\item{compy}{An integer giving the index of the block component for the y-axis}
+\item{compy}{An integer giving the index of the block component for
+the y-axis}
 
 \item{i_block}{An integer giving the index of the block}
 
-\item{text}{A logical value indicating if rowanmes are displayed (default = TRUE)}
+\item{text}{A logical value indicating if rowanmes are displayed
+(default = TRUE)}
 
 \item{remove_var}{logical value. If TRUE, the top 100 variables with the
 highest with the block components are displayed}
@@ -57,43 +60,50 @@ Correlation circle highlighting the contribution of each variables to the
 construction of the RGCCA components
 }
 \examples{
-setMatrix = function(nrow, ncol, iter = 3)
- lapply(
-     seq(iter),
-     function(x) {
-         y <- matrix(runif(nrow * ncol), nrow, ncol)
-         rownames(y) <- paste0("S",1:nrow)
-         return(y)
-     })
-blocks = setMatrix(10, 5)
-blocks[[4]] = Reduce(cbind, blocks)
-for (i in seq(4)) {
- colnames(blocks[[i]]) = paste0( LETTERS[i],
- as.character(seq(NCOL(blocks[[i]]))))
+setMatrix <- function(nrow, ncol, iter = 3) {
+  lapply(
+    seq(iter),
+    function(x) {
+      y <- matrix(runif(nrow * ncol), nrow, ncol)
+      rownames(y) <- paste0("S", 1:nrow)
+      return(y)
+    }
+  )
 }
-coord = setMatrix(10, 2, 4)
-a = setMatrix(5, 2)
-a[[4]] = setMatrix(15, 2, 1)[[1]]
-AVE_X = lapply(seq(4), function(x) runif(2))
-rgcca_out = list(Y = coord, a = a, AVE = list(AVE_X = AVE_X),
-                 call = list(blocks = blocks))
+blocks <- setMatrix(10, 5)
+blocks[[4]] <- Reduce(cbind, blocks)
+for (i in seq(4)) {
+  colnames(blocks[[i]]) <- paste0(
+    LETTERS[i],
+    as.character(seq(NCOL(blocks[[i]])))
+  )
+}
+coord <- setMatrix(10, 2, 4)
+a <- setMatrix(5, 2)
+a[[4]] <- setMatrix(15, 2, 1)[[1]]
+AVE_X <- lapply(seq(4), function(x) runif(2))
+rgcca_out <- list(
+  Y = coord, a = a, AVE = list(AVE_X = AVE_X),
+  call = list(blocks = blocks)
+)
 names(rgcca_out$a) <- LETTERS[seq(4)] -> names(rgcca_out$call$blocks)
-rgcca_out$call$method="rgcca"
+rgcca_out$call$method <- "rgcca"
 # Using a superblock
-rgcca_out$call$superblock = TRUE
-rgcca_out$call$ncomp = rep(3, 4)
-class(rgcca_out) = "rgcca"
+rgcca_out$call$superblock <- TRUE
+rgcca_out$call$ncomp <- rep(3, 4)
+class(rgcca_out) <- "rgcca"
 plot_var_2D(rgcca_out, 1, 2)
 # Using the first block
 plot_var_2D(rgcca_out, 1, 2, 1)
 data("Russett")
-blocks = list(agriculture = Russett[, seq(3)],
-              industry = Russett[, 4:5],
-              politic = Russett[, 6:11] )
+blocks <- list(
+  agriculture = Russett[, seq(3)],
+  industry = Russett[, 4:5],
+  politic = Russett[, 6:11]
+)
 
-rgcca_out = rgcca(blocks,ncomp=2)
+rgcca_out <- rgcca(blocks, ncomp = 2)
 
 # Without superblock but with the of all variables to the first block
 plot_var_2D(rgcca_out, collapse = TRUE)
-
 }

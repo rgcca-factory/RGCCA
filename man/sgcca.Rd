@@ -24,7 +24,7 @@ sgcca(
 \item{blocks}{List of blocks.}
 
 \item{connection}{Symmetric matrix (J*J) that describes the relationships
-between blocks. Elements of the connection matrix must be positive ; but
+between blocks. Elements of the connection matrix must be positive; but
 usually equal to 1 if block \eqn{j} and block \eqn{k} are connected, and 0
 otherwise.}
 
@@ -76,8 +76,8 @@ matrix that contains the analysis components for the corresponding block.}
 \item{a}{A list of \eqn{J} elements. Each element of \eqn{a} is a
 matrix that contains the outer weight vectors for each block.}
 
-\item{astar}{A list of \eqn{J} elements. Each element of astar is a
-matrix defined as Y[[j]][, h] = blocks[[j]]\%*\%astar[[j]][, h]}
+\item{astar}{A list of \eqn{J} elements. Each column of astar[[j]] is
+a vector such that Y[[j]][, h] = blocks[[j]] \%*\% astar[[j]][, h].}
 
 \item{crit}{A vector of integer that contains for each component the
 values of the analysis criteria across iterations.}
@@ -95,13 +95,14 @@ Given \eqn{J} matrices \eqn{X_1, X_2, ..., X_J}, that represent
 The matrices \eqn{X_1, X_2, ..., X_J} must have the same number of rows, but
 may (and usually will) have different numbers of columns. Blocks are not
 necessarily fully connected within the SGCCA framework. Hence the use of
-SGCCA requires the construction (user specified) of a design matrix (\eqn{connection})
-that characterizes the connections between blocks. Elements of the symmetric
-design matrix \eqn{connection = (c_{jk})} are equal to 1 if block \eqn{j} and block
-\eqn{k} are connected, and 0 otherwise. The SGCCA algorithm is very similar
-to the RGCCA algorithm and keeps the same monotone convergence properties
-(i.e. the bounded criteria to be maximized increases at each step of the
-iterative procedure and hits at convergence a stationary point).
+SGCCA requires the construction (user specified) of a design matrix
+(\eqn{connection}) that characterizes the connections between blocks.
+Elements of the symmetric design matrix \eqn{connection = (c_{jk})} are
+equal to 1 if block \eqn{j} and block \eqn{k} are connected, and 0 otherwise.
+The SGCCA algorithm is very similar to the RGCCA algorithm and keeps the same
+monotone convergence properties (i.e. the bounded criteria to be maximized
+increases at each step of the iterative procedure and hits at convergence
+a stationary point).
 Moreover, using a deflation strategy, sgcca() enables the computation of
 several SGCCA block components (specified by ncomp) for each block. Block
 components for each block are guaranteed to be orthogonal when using this
@@ -124,71 +125,92 @@ data(ge_cgh_locIGR)
 blocks <- ge_cgh_locIGR$multiblocks
 Loc <- factor(ge_cgh_locIGR$y)
 levels(Loc) <- colnames(ge_cgh_locIGR$multiblocks$y)
-connection <-  matrix(c(0, 0, 1, 0, 0, 1, 1, 1, 0), 3, 3)
-tau = c(1, 1, 0)
+connection <- matrix(c(0, 0, 1, 0, 0, 1, 1, 1, 0), 3, 3)
+tau <- c(1, 1, 0)
 
 # rgcca algorithm using the dual formulation for X1 and X2
 # and the dual formulation for X3
-blocks[[3]] = blocks[[3]][, -3]
-result.rgcca = rgcca(blocks = blocks, connection = connection, tau = tau,
-                     ncomp = c(2, 2, 1), scheme = "factorial",
-                     verbose = TRUE, method = "rgcca")
+blocks[[3]] <- blocks[[3]][, -3]
+result.rgcca <- rgcca(
+  blocks = blocks, connection = connection, tau = tau,
+  ncomp = c(2, 2, 1), scheme = "factorial",
+  verbose = TRUE, method = "rgcca"
+)
 # sgcca algorithm
-result.sgcca = rgcca(blocks = blocks, connection = connection,
-                     sparsity = c(.071,.2, 1), ncomp = c(2, 2, 1),
-                     scheme = "centroid", verbose = TRUE, method = "sgcca")
+result.sgcca <- rgcca(
+  blocks = blocks, connection = connection,
+  sparsity = c(.071, .2, 1), ncomp = c(2, 2, 1),
+  scheme = "centroid", verbose = TRUE, method = "sgcca"
+)
 
 ############################
 # plot(y1, y2) for (RGCCA) #
 ############################
 layout(t(1:2))
 plot(result.rgcca$Y[[1]][, 1], result.rgcca$Y[[2]][, 1],
-     col = "white", xlab = "Y1 (GE)", ylab = "Y2 (CGH)",
-     main = "Factorial plan of RGCCA")
+  col = "white", xlab = "Y1 (GE)", ylab = "Y2 (CGH)",
+  main = "Factorial plan of RGCCA"
+)
 text(result.rgcca$Y[[1]][, 1], result.rgcca$Y[[2]][, 1],
-     Loc, col = as.numeric(Loc), cex = .6)
+  Loc,
+  col = as.numeric(Loc), cex = .6
+)
 plot(result.rgcca$Y[[1]][, 1], result.rgcca$Y[[1]][, 2],
-     col = "white", xlab = "Y1 (GE)",
-     ylab = "Y2 (GE)", main = "Factorial plan of RGCCA")
+  col = "white", xlab = "Y1 (GE)",
+  ylab = "Y2 (GE)", main = "Factorial plan of RGCCA"
+)
 text(result.rgcca$Y[[1]][, 1], result.rgcca$Y[[1]][, 2],
-     Loc, col = as.numeric(Loc), cex = .6)
+  Loc,
+  col = as.numeric(Loc), cex = .6
+)
 
 ############################
 # plot(y1, y2) for (SGCCA) #
 ############################
 layout(t(1:2))
 plot(result.sgcca$Y[[1]][, 1], result.sgcca$Y[[2]][, 1],
-     col = "white", xlab = "Y1 (GE)",
-     ylab = "Y2 (CGH)", main = "Factorial plan of SGCCA")
+  col = "white", xlab = "Y1 (GE)",
+  ylab = "Y2 (CGH)", main = "Factorial plan of SGCCA"
+)
 text(result.sgcca$Y[[1]][, 1], result.sgcca$Y[[2]][, 1],
-     Loc, col = as.numeric(Loc), cex = .6)
+  Loc,
+  col = as.numeric(Loc), cex = .6
+)
 
 plot(result.sgcca$Y[[1]][, 1], result.sgcca$Y[[1]][, 2],
-     col = "white", xlab = "Y1 (GE)",
-     ylab = "Y2 (GE)", main = "Factorial plan of SGCCA")
+  col = "white", xlab = "Y1 (GE)",
+  ylab = "Y2 (GE)", main = "Factorial plan of SGCCA"
+)
 text(result.sgcca$Y[[1]][, 1], result.sgcca$Y[[1]][, 2],
-     Loc, col = as.numeric(Loc), cex = .6)
+  Loc,
+  col = as.numeric(Loc), cex = .6
+)
 
 # sgcca algorithm with multiple components and different
-L1 penalties for each components
+# L1 penalties for each components
 # (-> sparsity is a matrix)
-init = "random"
-result.sgcca = sgcca(blocks, connection,
-                     sparsity = matrix(c(.071,.2, 1, 0.06, 0.15, 1),
-                     nrow = 2, byrow = TRUE),
-                     ncomp = c(2, 2, 1), scheme = "factorial", bias = TRUE,
-                     init = init, verbose = TRUE)
+init <- "random"
+result.sgcca <- sgcca(blocks, connection,
+  sparsity = matrix(c(.071, .2, 1, 0.06, 0.15, 1),
+    nrow = 2, byrow = TRUE
+  ),
+  ncomp = c(2, 2, 1), scheme = "factorial", bias = TRUE,
+  init = init, verbose = TRUE
+)
 # number of non zero elements per dimension
-apply(result.sgcca$a[[1]], 2, function(x) sum(x!=0))
-     #(-> 145 non zero elements for a11 and 107 non zero elements for a12)
-apply(result.sgcca$a[[2]], 2, function(x) sum(x!=0))
-     #(-> 85 non zero elements for a21 and 52 non zero elements for a22)
-init = "svd"
-result.sgcca = sgcca(blocks, connection, sparsity = matrix(c(.071,.2, 1, 0.06, 0.15, 1),
-                     nrow = 2, byrow = TRUE),
-                     ncomp = c(2, 2, 1), scheme = "factorial",
-                     bias = TRUE,
-                     init = init, verbose = TRUE)
+apply(result.sgcca$a[[1]], 2, function(x) sum(x != 0))
+# (-> 145 non zero elements for a11 and 107 non zero elements for a12)
+apply(result.sgcca$a[[2]], 2, function(x) sum(x != 0))
+# (-> 85 non zero elements for a21 and 52 non zero elements for a22)
+init <- "svd"
+result.sgcca <- sgcca(blocks, connection,
+  sparsity = matrix(c(.071, .2, 1, 0.06, 0.15, 1),
+    nrow = 2, byrow = TRUE
+  ),
+  ncomp = c(2, 2, 1), scheme = "factorial",
+  bias = TRUE,
+  init = init, verbose = TRUE
+)
 }
 }
 \references{

@@ -14,9 +14,11 @@ load_response(
 )
 }
 \arguments{
-\item{blocks}{A list that contains the J blocks of variables X1, X2, ..., XJ.
-Block Xj is a matrix of dimension n x p_j where n is the number of
-observations and p_j the number of variables.}
+\item{blocks}{A list that contains the J blocks of variables
+\eqn{\mathbf{X_1}, \mathbf{X_2}, ..., \mathbf{X_J}}{X1, X2, ..., XJ}.
+Block \eqn{\mathbf{X}_j}{Xj} is a matrix of dimension
+\eqn{n \times p_j}{n x p_j} where n is the number of
+observations and \eqn{p_j} the number of variables.}
 
 \item{file}{A character giving the path of a file}
 
@@ -24,7 +26,8 @@ observations and p_j the number of variables.}
 
 \item{header}{A bolean giving the presence or the absence of the header}
 
-\item{rownames}{An integer corresponding to the column number of the rownames (NULL otherwise)}
+\item{rownames}{An integer corresponding to the column number of the
+rownames (NULL otherwise)}
 
 \item{decimal}{A character giving the decimal separator}
 }
@@ -36,7 +39,7 @@ Create a matrix corresponding to the response
 }
 \examples{
 \dontrun{
-blocks = lapply(seq(3), function(x) matrix(runif(47 * 5), 47, 5))
-load_response (blocks, 'inst/extdata/response3.tsv')
+blocks <- lapply(seq(3), function(x) matrix(runif(47 * 5), 47, 5))
+load_response(blocks, "inst/extdata/response3.tsv")
 }
 }

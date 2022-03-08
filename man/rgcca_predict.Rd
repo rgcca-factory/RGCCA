@@ -18,40 +18,53 @@ rgcca_predict(
 
 \item{X}{A list of either dataframes or matrices to be projected.}
 
-\item{block_to_predict}{A character or integer giving the block to predict (must be the same name among train and test set)}
+\item{block_to_predict}{A character or integer giving the block to predict
+(must be the same name among train and test set)}
 
 \item{X_scaled}{A boolean indicating if the blocks in X have already been
 scaled.}
 
-\item{task}{A character corresponding to the prediction task among : regression or classification}
+\item{task}{A character corresponding to the prediction task among:
+regression or classification}
 
-\item{prediction_model}{A character giving the function used to compare the trained and the tested models}
+\item{prediction_model}{A character giving the function used to compare the
+trained and the tested models}
 }
 \description{
 Predict a new block from a RGCCA
 }
 \examples{
 data("Russett")
-blocks = list(
-agriculture = Russett[, 1:3],
-industry = Russett[, 4:5],
-politic = Russett[, 6:11]
+blocks <- list(
+  agriculture = Russett[, 1:3],
+  industry = Russett[, 4:5],
+  politic = Russett[, 6:11]
 )
-C = connection = matrix(c(0, 0, 1,
-0, 0, 1,
-1, 1, 0),
-3, 3)
-object1 = rgcca(blocks, connection = C, tau = c(0.7,0.8,0.7),
-    ncomp = c(3,2,4), superblock = FALSE, response = 3)
-A = lapply(object1$call$blocks, function(x) x[1:32,])
-object = rgcca(A, connection = C, tau = c(0.7,0.8,0.7),
-    ncomp = c(3,2,4), scale = FALSE, scale_block = FALSE, superblock = FALSE, response = 3)
-X = lapply(object1$call$blocks, function(x) x[-c(1:32),])
-X = lapply( X, function(x) x[, sample(1:NCOL(x))] )
-X = sample(X, length(X))
-block_to_predict = "industry"
-y_train = kmeans(A[[block_to_predict]], 3)$cluster
-y_test = kmeans(X[[block_to_predict]], 3)$cluster
-res  = rgcca_predict(object, X, block_to_predict = "industry")
+C <- connection <- matrix(
+  c(
+    0, 0, 1,
+    0, 0, 1,
+    1, 1, 0
+  ),
+  3, 3
+)
+object1 <- rgcca(blocks,
+  connection = C, tau = c(0.7, 0.8, 0.7),
+  ncomp = c(3, 2, 4), superblock = FALSE, response = 3
+)
+A <- lapply(object1$call$blocks, function(x) x[1:32, ])
+object <- rgcca(A,
+  connection = C, tau = c(0.7, 0.8, 0.7),
+  ncomp = c(3, 2, 4),
+  scale = FALSE, scale_block = FALSE,
+  superblock = FALSE, response = 3
+)
+X <- lapply(object1$call$blocks, function(x) x[-c(1:32), ])
+X <- lapply(X, function(x) x[, sample(1:NCOL(x))])
+X <- sample(X, length(X))
+block_to_predict <- "industry"
+y_train <- kmeans(A[[block_to_predict]], 3)$cluster
+y_test <- kmeans(X[[block_to_predict]], 3)$cluster
+res <- rgcca_predict(object, X, block_to_predict = "industry")
 library(MASS)
 }

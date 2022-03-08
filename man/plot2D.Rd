@@ -37,17 +37,21 @@ plot2D(
 
 \item{name_group}{A character giving the type of groups (either "Blocks" or}
 
-\item{compx}{An integer giving the index of the block component for the x-axis}
+\item{compx}{An integer giving the index of the block component for
+the x-axis}
 
-\item{compy}{An integer giving the index of the block component for the y-axis}
+\item{compy}{An integer giving the index of the block component for
+the y-axis}
 
 \item{i_block}{An integer giving the index of the block}
 
 \item{p}{A ggplot object}
 
-\item{text}{A logical value indicating if rowanmes are displayed (default = TRUE)}
+\item{text}{A logical value indicating if rowanmes are displayed
+(default = TRUE)}
 
-\item{i_block_y}{An integer giving the index of the block (different from i_block)}
+\item{i_block_y}{An integer giving the index of the block
+(different from i_block)}
 
 \item{colors}{Either a vector of integers (each integer corresponding to a
 color) or of characters corresponding to names of colors (as "blue",see
@@ -63,7 +67,8 @@ colors()) or RGB code ("#FFFFFF").}
 
 \item{cex_sub}{An integer for the size of the subtitle}
 
-\item{cex_point}{An integer for the size of the points or the text in the plot}
+\item{cex_point}{An integer for the size of the points or the text in
+the plot}
 
 \item{cex_lab}{An integer for the size of the axis titles}
 }

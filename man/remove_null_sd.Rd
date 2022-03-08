@@ -18,11 +18,11 @@ of this list). In both cases, these variables are removed.}
 \value{
 \item{list_m}{A list of dataframe.}
 
-\item{column_sd_null}{Either NULL, if not a single variable was removed,
-or a list of the same size as the number of blocks. In the last situation, each
-element of this list is again NULL if not a single variable was removed from
-the current block, or a named vector indicating the former index of the removed
-variables along with their name.}
+\item{column_sd_null}{Either NULL, if not a single variable was
+removed, or a list of the same size as the number of blocks. In the last
+situation, each element of this list is again NULL if not a single variable
+was removed from the current block, or a named vector indicating the former
+index of the removed variables along with their name.}
 }
 \description{
 Remove columns having a 0 standard deviation

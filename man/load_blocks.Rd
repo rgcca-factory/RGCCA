@@ -22,7 +22,8 @@ load_blocks(
 
 \item{header}{A bolean giving the presence or the absence of the header}
 
-\item{rownames}{An integer corresponding to the column number of the rownames (NULL otherwise)}
+\item{rownames}{An integer corresponding to the column number of the
+rownames (NULL otherwise)}
 
 \item{decimal}{A character giving the decimal separator}
 }
@@ -31,11 +32,4 @@ A list matrix corresponding to the blocks
 }
 \description{
 Create a list of matrix from loading files corresponding to blocks
-}
-\examples{
-\dontrun{
-load_blocks (TRUE,
-    "inst/extdata/agriculture.tsv,inst/extdata/industry.tsv,inst/extdata/politic.tsv",
-    "agric,ind,polit")
-}
 }

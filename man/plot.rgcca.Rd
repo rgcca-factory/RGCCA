@@ -8,7 +8,7 @@
   x,
   type = "weight",
   block = length(x$call$blocks),
-  comp = 1:2,
+  comp = seq(2),
   resp = rep(1, NROW(x$Y[[1]])),
   remove_var = FALSE,
   text_var = TRUE,
@@ -102,14 +102,16 @@ only for one block and at least when two components are asked (ncomp >= 2).
 }
 \examples{
 data(Russett)
-status = colnames(Russett)[9:11][apply(Russett[, 9:11], 1, which.max)]
-X_agric =as.matrix(Russett[, c("gini","farm","rent")])
-X_ind = as.matrix(Russett[, c("gnpr","labo")])
-X_polit = as.matrix(Russett[ , c("demostab", "dictator")])
-A = list(X_agric = X_agric, X_ind = X_ind, X_polit = X_polit)
-C = matrix(c(0, 0, 1, 0, 0, 1, 1, 1, 0), 3, 3)
-fit.rgcca=rgcca(blocks = A, connection = C,
-                tau = rep(1, 3), ncomp = rep(2, 3))
+status <- colnames(Russett)[9:11][apply(Russett[, 9:11], 1, which.max)]
+X_agric <- as.matrix(Russett[, c("gini", "farm", "rent")])
+X_ind <- as.matrix(Russett[, c("gnpr", "labo")])
+X_polit <- as.matrix(Russett[, c("demostab", "dictator")])
+A <- list(X_agric = X_agric, X_ind = X_ind, X_polit = X_polit)
+C <- matrix(c(0, 0, 1, 0, 0, 1, 1, 1, 0), 3, 3)
+fit.rgcca <- rgcca(
+  blocks = A, connection = C,
+  tau = rep(1, 3), ncomp = rep(2, 3)
+)
 
 ###############
 # sample plot #
@@ -123,8 +125,10 @@ plot(fit.rgcca, type = "sample", block = 1:2, comp = 1, resp = status)
 # Correlation circle #
 ######################
 # with superblock
-fit.mcoa = rgcca(blocks=A, scheme = "factorial", ncomp = rep(2, 4),
-                 tau = c(1, 1, 1, 0), superblock = TRUE)
+fit.mcoa <- rgcca(
+  blocks = A, scheme = "factorial", ncomp = rep(2, 4),
+  tau = c(1, 1, 1, 0), superblock = TRUE
+)
 
 plot(fit.mcoa, type = "both", resp = status, overlap = FALSE)
 plot(fit.rgcca, type = "loadings")

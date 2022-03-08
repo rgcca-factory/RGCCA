@@ -33,7 +33,8 @@
 
 \item{cex_sub}{An integer for the size of the subtitle}
 
-\item{cex_point}{An integer for the size of the points or the text in the plot}
+\item{cex_point}{An integer for the size of the points or the text in
+the plot}
 
 \item{cex_lab}{An integer for the size of the axis titles}
 
@@ -44,8 +45,8 @@ colors()) or RGB code ("#FFFFFF").}
 \item{display_all}{A boolean indicating is all combinations have to
 be displayed (default is FALSE).}
 
-\item{show_legend}{A boolean indicating if the legend is displayed (default is
-TRUE).}
+\item{show_legend}{A boolean indicating if the legend is displayed
+(default is TRUE).}
 }
 \description{
 Plot a fitted rgcca permutation object. The various set of tuning parameters
@@ -56,16 +57,20 @@ the y-axis.
 }
 \examples{
 data(Russett)
-A <- list(agriculture = Russett[, seq(3)],
-          industry = Russett[, 4:5],
-          politic = Russett[, 6:11])
+A <- list(
+  agriculture = Russett[, seq(3)],
+  industry = Russett[, 4:5],
+  politic = Russett[, 6:11]
+)
 
-perm.out <- rgcca_permutation(A, par_type= "tau", n_perms = 2, n_cores = 1)
+perm.out <- rgcca_permutation(A, par_type = "tau", n_perms = 2, n_cores = 1)
 print(perm.out)
 plot(perm.out)
 
-perm.out <- rgcca_permutation(A, par_type = "sparsity",
-                              n_perms = 5, n_cores = 1)
+perm.out <- rgcca_permutation(A,
+  par_type = "sparsity",
+  n_perms = 5, n_cores = 1
+)
 print(perm.out)
 plot(perm.out, type = "zstat")
 }

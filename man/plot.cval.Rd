@@ -38,16 +38,19 @@ colors()) or RGB code ("#FFFFFF").}
 Plot a cross-validation object (tuning RGCA parameters in 'supervised' mode).
 The parameters tuned for maximizing RMSE is displayed in the title. In
 abscissa, the index of combination (number corresponding to the rownames of
-'penalties' in the tuning parameters object). In ordinate, the average of the
+' penalties' in the tuning parameters object). In ordinate, the average of the
 permuted RMSE criterion. The best parameters are in red by default.
 }
 \examples{
 data("Russett")
 blocks <- list(
-    agriculture = Russett[, seq(3)],
-    industry = Russett[, 4:5],
-    politic = Russett[, 6:11])
-    res=rgcca_cv(blocks, response=3,method="rgcca",par_type="tau",par_value=c(0,0.2,0.3),
-    n_run=1,n_cores=1)
-   plot(res)
+  agriculture = Russett[, seq(3)],
+  industry = Russett[, 4:5],
+  politic = Russett[, 6:11]
+)
+res <- rgcca_cv(blocks,
+  response = 3, method = "rgcca", par_type = "tau",
+  par_value = c(0, 0.2, 0.3), n_run = 1, n_cores = 1
+)
+plot(res)
 }

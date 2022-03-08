@@ -15,7 +15,7 @@ save_plot(f, p)
 Save a ggplot in various output formats
 }
 \examples{
-df = as.data.frame(matrix(runif(20), 10, 2))
-#p = ggplot(df, aes(df[, 1], df[, 2]))
-#save_plot('Rplot.png', p)
+df <- as.data.frame(matrix(runif(20), 10, 2))
+# p = ggplot(df, aes(df[, 1], df[, 2]))
+# save_plot('Rplot.png', p)
 }

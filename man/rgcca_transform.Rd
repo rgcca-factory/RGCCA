@@ -19,15 +19,17 @@ Project blocks of data on canonical components extracted with a RGCCA model.
 }
 \examples{
 data("Russett")
-blocks = list(
-agriculture = Russett[, 1:3],
-industry = Russett[, 4:5],
-politic = Russett[, 6:11]
+blocks <- list(
+  agriculture = Russett[, 1:3],
+  industry = Russett[, 4:5],
+  politic = Russett[, 6:11]
 )
-C = connection = 1 - diag(3)
-A = lapply(blocks, function(x) x[1:32,])
-fit.rgcca = rgcca(A, connection = C, tau = c(0.7,0.8,0.7),
-    ncomp = c(3,2,4), scale_block = FALSE, superblock = FALSE)
-X = lapply(blocks, function(x) x[39:47,])
-projection = rgcca_transform(fit.rgcca, X, X_scaled = FALSE)
+C <- connection <- 1 - diag(3)
+A <- lapply(blocks, function(x) x[1:32, ])
+fit.rgcca <- rgcca(A,
+  connection = C, tau = c(0.7, 0.8, 0.7),
+  ncomp = c(3, 2, 4), scale_block = FALSE, superblock = FALSE
+)
+X <- lapply(blocks, function(x) x[39:47, ])
+projection <- rgcca_transform(fit.rgcca, X, X_scaled = FALSE)
 }

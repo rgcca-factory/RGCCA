@@ -37,7 +37,8 @@ adjustment (default: fdr - a.k.a Benjamini-Hochberg correction)}
 \value{
 A dataframe containing:
 \itemize{
-\item 'mean' for the mean of the bootstrap weights/loadings (non-null for SGCCA)
+\item 'mean' for the mean of the bootstrap weights/loadings
+(non-null for SGCCA)
 \item 'estimate' for RGCCA block-weight/block-loading vectors
 \item 'sd' for the bootstrap estimate of the standard error of the
 (non-null in case of SGCCA) bootstrap weights/loadings
@@ -78,16 +79,17 @@ the number of occurrences is higher than the 1-(0.05/p_j)th quantile
 \examples{
 # Bootstrap confidence intervals and p-values for RGCCA
 data("Russett")
-blocks = list(agriculture = Russett[, seq(3)],
-              industry = Russett[, 4:5],
-              politic = Russett[, 6:11])
+blocks <- list(
+  agriculture = Russett[, seq(3)],
+  industry = Russett[, 4:5],
+  politic = Russett[, 6:11]
+)
 
-rgcca_out = rgcca(blocks)
-boot = bootstrap(rgcca_out, n_boot = 5, n_cores = 1)
+rgcca_out <- rgcca(blocks)
+boot <- bootstrap(rgcca_out, n_boot = 5, n_cores = 1)
 get_bootstrap(boot, type = "loadings")
 
 # Stability of the selected variables for SGCCA
-
 }
 \seealso{
 \code{\link[RGCCA]{bootstrap}},

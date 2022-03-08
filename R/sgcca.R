@@ -39,8 +39,8 @@
 #' matrix that contains the analysis components for the corresponding block.}
 #' @return \item{a}{A list of \eqn{J} elements. Each element of \eqn{a} is a
 #' matrix that contains the outer weight vectors for each block.}
-#' @return \item{astar}{A list of \eqn{J} elements. Each element of astar is a
-#' matrix defined as Y[[j]][, h] = blocks[[j]]\%*\%astar[[j]][, h]}
+#' @return \item{astar}{A list of \eqn{J} elements. Each column of astar[[j]] is
+#' a vector such that Y[[j]][, h] = blocks[[j]] \%*\% astar[[j]][, h].}
 #' @return \item{crit}{A vector of integer that contains for each component the
 #' values of the analysis criteria across iterations.}
 #' @return \item{AVE}{A list of numerical values giving the indicators of model
