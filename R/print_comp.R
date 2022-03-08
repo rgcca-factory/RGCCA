@@ -22,7 +22,7 @@ print_comp <- function(rgcca_res, n = 1, i = length(rgcca_res$AVE$AVE_X),
     var_text <- paste0(nvar, " variables, ")
   }
 
-  ave <- quote(paste0(round(AVE[n] * 100, 1), "%"))
+  ave <- function(AVE) paste0(round(AVE[n] * 100, 1), "%")
   if (isTRUE(outer)) {
     AVE <- rgcca_res$AVE$AVE_outer
     if (length(rgcca_res$AVE$AVE_outer) > 1) {
@@ -30,9 +30,9 @@ print_comp <- function(rgcca_res, n = 1, i = length(rgcca_res$AVE$AVE_X),
     } else {
       n <- 1
     }
-    paste0("First outer comp. : ", paste(eval(ave), collapse = " & "))
+    paste0("First outer comp. : ", paste(ave(AVE), collapse = " & "))
   } else {
     AVE <- rgcca_res$AVE$AVE_X[[i]]
-    paste0("Comp. ", n, " (", var_text, eval(ave), ")")
+    paste0("Comp. ", n, " (", var_text, ave(AVE), ")")
   }
 }

@@ -371,24 +371,22 @@ rgcca <- function(blocks, method = "rgcca",
   if (any(sapply(opt$blocks, NCOL) > 1000)) warn_on <- TRUE
   if (warn_on && !quiet) message("Analysis in progress ...")
 
-  func <- quote(
-    gcca(
-      blocks = opt$blocks,
-      connection = opt$connection,
-      ncomp = opt$ncomp,
-      verbose = verbose,
-      scheme = opt$scheme,
-      init = init,
-      bias = bias,
-      tol = tol,
-      quiet = quiet,
-      na.rm = na.rm,
-      superblock = opt$superblock
-    )
+  gcca_args <- list(
+    blocks = opt$blocks,
+    connection = opt$connection,
+    ncomp = opt$ncomp,
+    verbose = verbose,
+    scheme = opt$scheme,
+    init = init,
+    bias = bias,
+    tol = tol,
+    quiet = quiet,
+    na.rm = na.rm,
+    superblock = opt$superblock
   )
+  gcca_args[[par]] <- opt$penalty
 
-  func[[par]] <- opt$penalty
-  func_out <- eval(as.call(func))
+  func_out <- do.call(gcca, gcca_args)
 
   for (j in seq(length(opt$blocks))) {
     rownames(func_out$a[[j]]) <- colnames(opt$blocks[[j]])

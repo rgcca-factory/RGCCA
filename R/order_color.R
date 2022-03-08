@@ -9,14 +9,12 @@ order_color <- function(df, p, matched = NULL, collapse = FALSE,
     n <- J[-length(J)]
   }
 
-  f <- ifelse(is.null(matched), "color", "fill")
+  f <- ifelse(is.null(matched), scale_color_manual, scale_fill_manual)
   if (is.null(matched)) matched <- seq(n)
 
-  func <- quote(get(paste("scale", f, "manual", sep = "_"))(
+  return(p + f(
     values = color_group(J, colors)[matched],
     limits = n[matched],
     labels = n[matched]
   ))
-
-  return(p + eval(as.call(func)))
 }
