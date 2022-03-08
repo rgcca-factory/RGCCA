@@ -4,17 +4,17 @@
 # @param rows A set of rows
 #' @importFrom stats complete.cases
 subset_rows <- function(x, rows) {
-  is.x.data.frame = is.data.frame(x)
+  is.x.data.frame <- is.data.frame(x)
   if (is.x.data.frame) {
-    row.names = attr(x, "row.names")[rows]
+    row.names <- attr(x, "row.names")[rows]
   }
   if (is.vector(x)) {
-    x = x[rows]
+    x <- x[rows]
   } else {
-    x = apply(x, -1, "[", rows)
+    x <- apply(x, -1, "[", rows)
   }
   if (is.x.data.frame) {
-    x = data.frame(x, row.names = row.names)
+    x <- data.frame(x, row.names = row.names)
   }
   return(x)
 }

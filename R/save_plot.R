@@ -5,42 +5,44 @@
 #' @param f A character giving the name of a file
 #' @param p A ggplot object
 #' @examples
-#' df = as.data.frame(matrix(runif(20), 10, 2))
-#' #p = ggplot(df, aes(df[, 1], df[, 2]))
-#' #save_plot('Rplot.png', p)
+#' df <- as.data.frame(matrix(runif(20), 10, 2))
+#' # p = ggplot(df, aes(df[, 1], df[, 2]))
+#' # save_plot('Rplot.png', p)
 #' @export
 #' @importFrom grDevices dev.off pdf
 save_plot <- function(f, p) {
+  stopifnot(is(p, "ggplot") || is.function(p))
+  f <- paste0(f, collapse = " ")
 
-    stopifnot(is(p, "ggplot") || is.function(p))
-    f <- paste0(f, collapse = " ")
+  # get suffixe of filename
+  format <- unlist(strsplit(f, ".", fixed = "TRUE"))
+  format <- format[length(format)]
 
-    # get suffixe of filename
-    format <- unlist(strsplit(f, ".", fixed = "TRUE"))
-    format <- format[length(format)]
+  # dynamic loading of formattion depending of the extension
+  if (format == "dat") {
+    formatFunc <- pdf
+  } else {
+    formatFunc <- get(format)
+  }
 
-    # dynamic loading of formattion depending of the extension
-    if (format == "dat")
-        formatFunc <- pdf
-    else
-        formatFunc <- get(format)
+  # save
+  if (format %in% c("pdf", "dat")) {
+    formatFunc(f, width = 10, height = 8)
+  } else {
+    formatFunc(
+      f,
+      width = 10,
+      height = 8,
+      units = "in",
+      res = 200
+    )
+  }
 
-    # save
-    if (format %in% c("pdf", "dat"))
-        formatFunc(f, width = 10, height = 8)
-    else
-        formatFunc(
-            f,
-            width = 10,
-            height = 8,
-            units = "in",
-            res = 200
-        )
+  if (is.function(p)) {
+    p()
+  } else {
+    plot(p)
+  }
 
-    if (is.function(p))
-        p()
-    else
-        plot(p)
-
-    invisible(dev.off())
+  invisible(dev.off())
 }

@@ -50,29 +50,39 @@
 #' @importFrom graphics plot
 #' @importFrom Deriv Deriv
 
-rgccak = function(A, C, tau = rep(1, length(A)), scheme = "centroid",
-                  verbose = FALSE, init = "svd", bias = TRUE,
-                  tol = 1e-08, na.rm = TRUE){
-
-  if(mode(scheme) != "function"){
-    if(scheme == "horst"){g <- function(x) x ; ctrl = FALSE}
-    if(scheme == "factorial"){g <- function(x)  x^2 ; ctrl = TRUE}
-    if(scheme == "centroid"){g <- function(x) abs(x) ; ctrl = TRUE}
-  } else{
+rgccak <- function(A, C, tau = rep(1, length(A)), scheme = "centroid",
+                   verbose = FALSE, init = "svd", bias = TRUE,
+                   tol = 1e-08, na.rm = TRUE) {
+  if (mode(scheme) != "function") {
+    if (scheme == "horst") {
+      g <- function(x) x
+      ctrl <- FALSE
+    }
+    if (scheme == "factorial") {
+      g <- function(x) x^2
+      ctrl <- TRUE
+    }
+    if (scheme == "centroid") {
+      g <- function(x) abs(x)
+      ctrl <- TRUE
+    }
+  } else {
     # check for parity of g
-    g <- scheme ; ctrl = !any(g(-5:5)!=g(5:-5))
+    g <- scheme
+    ctrl <- !any(g(-5:5) != g(5:-5))
   }
 
-  dg = Deriv::Deriv(g, env = parent.frame())
+  dg <- Deriv::Deriv(g, env = parent.frame())
 
   J <- length(A) # number of blocks
   n <- NROW(A[[1]]) # number of individuals
   pjs <- sapply(A, NCOL) # number of variables per block
   Y <- Z <- matrix(0, n, J)
 
-  if (!is.numeric(tau))
+  if (!is.numeric(tau)) {
     # From Schafer and Strimmer, 2005
-    tau = sapply(A, tau.estimate, na.rm = na.rm)
+    tau <- sapply(A, tau.estimate, na.rm = na.rm)
+  }
 
   A <- lapply(A, as.matrix)
   a <- alpha <- M <- Minv <- K <- list()
@@ -88,141 +98,157 @@ rgccak = function(A, C, tau = rep(1, length(A)), scheme = "centroid",
     }
     for (j in which.dual) {
       alpha[[j]] <- initsvd(A[[j]])
-      K[[j]] <- pm( A[[j]] , t(A[[j]]), na.rm = na.rm)
+      K[[j]] <- pm(A[[j]], t(A[[j]]), na.rm = na.rm)
     }
-  }
-
-  else if (init == "random") {
+  } else if (init == "random") {
     for (j in which.primal) {
       a[[j]] <- rnorm(pjs[j]) # random initialisation
     }
 
     for (j in which.dual) {
       alpha[[j]] <- rnorm(n)
-      K[[j]] <- pm(A[[j]] , t(A[[j]]), na.rm = na.rm)
+      K[[j]] <- pm(A[[j]], t(A[[j]]), na.rm = na.rm)
     }
-  }
-
-  else {
+  } else {
     stop_rgcca("init should be either random or by SVD.")
   }
 
-  N = ifelse(bias, n, n - 1)
-  for (j in which.primal){
+  N <- ifelse(bias, n, n - 1)
+  for (j in which.primal) {
     ifelse(tau[j] == 1,
-        {
-          a[[j]] <- drop(1/sqrt(t(a[[j]]) %*% a[[j]])) * a[[j]]
-          Y[, j] <- pm(A[[j]] , a[[j]], na.rm = na.rm)
-        },
-        {
-          M[[j]] <- ginv(tau[j] * diag(pjs[j]) + ((1 - tau[j]))*1/N*
-                        (pm(t(A[[j]]), A[[j]], na.rm = na.rm)))
-          a[[j]] <- drop(1/sqrt(t(a[[j]])%*% M[[j]]%*%a[[j]]))*
-                           (M[[j]]%*%a[[j]])
-          Y[, j] <- pm(A[[j]], a[[j]], na.rm = na.rm)
-        })
-    }
-  for (j in which.dual){
+      {
+        a[[j]] <- drop(1 / sqrt(t(a[[j]]) %*% a[[j]])) * a[[j]]
+        Y[, j] <- pm(A[[j]], a[[j]], na.rm = na.rm)
+      },
+      {
+        M[[j]] <- ginv(tau[j] * diag(pjs[j]) + ((1 - tau[j])) * 1 / N *
+          (pm(t(A[[j]]), A[[j]], na.rm = na.rm)))
+        a[[j]] <- drop(1 / sqrt(t(a[[j]]) %*% M[[j]] %*% a[[j]])) *
+          (M[[j]] %*% a[[j]])
+        Y[, j] <- pm(A[[j]], a[[j]], na.rm = na.rm)
+      }
+    )
+  }
+  for (j in which.dual) {
     ifelse(tau[j] == 1,
-           {
-             alpha[[j]] = drop(1/sqrt(t(alpha[[j]])%*%K[[j]]%*%
-                                    alpha[[j]]))*alpha[[j]]
-             a[[j]] = pm(t(A[[j]]), alpha[[j]], na.rm = na.rm)
-             Y[, j] = pm(A[[j]], a[[j]], na.rm = na.rm)
-           },
-           {
-             M[[j]] <- tau[j] * diag(n) + ((1 - tau[j])) *1/N* K[[j]]
-             Minv[[j]] = ginv(M[[j]])
-             alpha[[j]] = drop(1/sqrt(t(alpha[[j]])%*%
-                              M[[j]]%*% K[[j]]%*% alpha[[j]])) * alpha[[j]]
-             a[[j]] = pm( t(A[[j]]), alpha[[j]],na.rm=na.rm)
-             Y[, j] = pm(A[[j]], a[[j]], na.rm=na.rm)
-           })
+      {
+        alpha[[j]] <- drop(1 / sqrt(t(alpha[[j]]) %*% K[[j]] %*%
+          alpha[[j]])) * alpha[[j]]
+        a[[j]] <- pm(t(A[[j]]), alpha[[j]], na.rm = na.rm)
+        Y[, j] <- pm(A[[j]], a[[j]], na.rm = na.rm)
+      },
+      {
+        M[[j]] <- tau[j] * diag(n) + ((1 - tau[j])) * 1 / N * K[[j]]
+        Minv[[j]] <- ginv(M[[j]])
+        alpha[[j]] <- drop(1 / sqrt(t(alpha[[j]]) %*%
+          M[[j]] %*% K[[j]] %*% alpha[[j]])) * alpha[[j]]
+        a[[j]] <- pm(t(A[[j]]), alpha[[j]], na.rm = na.rm)
+        Y[, j] <- pm(A[[j]], a[[j]], na.rm = na.rm)
+      }
+    )
   }
 
   iter <- 1
   n_iter_max <- 1000L
   crit <- numeric(n_iter_max)
   crit_old <- sum(C * g(cov2(Y, bias = bias)))
-  a_old = a
+  a_old <- a
 
   repeat{
-    for (j in which.primal){
-      dgx = dg(cov2(Y[, j], Y, bias = bias))
-      CbyCovj = drop(C[j, ]*dgx)
-      if(tau[j] == 1){
-        Z[, j] = Y%*%CbyCovj
-        Az = pm(t(A[[j]]), Z[, j], na.rm = TRUE)
-		    a[[j]] = drop(1/sqrt(crossprod(Az))) * Az
-  		  Y[, j] = pm(A[[j]], a[[j]], na.rm = na.rm)
-      }else{
-        Z[, j] = Y%*%CbyCovj
-        Az  = pm(t(A[[j]]), Z[, j], na.rm = TRUE)
-        a[[j]] = drop(1/sqrt(t(Az) %*% M[[j]] %*% Az)) * (M[[j]] %*% Az)
-        Y[, j] = pm(A[[j]], a[[j]], na.rm = na.rm)
+    for (j in which.primal) {
+      dgx <- dg(cov2(Y[, j], Y, bias = bias))
+      CbyCovj <- drop(C[j, ] * dgx)
+      if (tau[j] == 1) {
+        Z[, j] <- Y %*% CbyCovj
+        Az <- pm(t(A[[j]]), Z[, j], na.rm = TRUE)
+        a[[j]] <- drop(1 / sqrt(crossprod(Az))) * Az
+        Y[, j] <- pm(A[[j]], a[[j]], na.rm = na.rm)
+      } else {
+        Z[, j] <- Y %*% CbyCovj
+        Az <- pm(t(A[[j]]), Z[, j], na.rm = TRUE)
+        a[[j]] <- drop(1 / sqrt(t(Az) %*% M[[j]] %*% Az)) * (M[[j]] %*% Az)
+        Y[, j] <- pm(A[[j]], a[[j]], na.rm = na.rm)
       }
     }
 
-    for (j in which.dual){
-      dgx = dg(cov2(Y[, j], Y, bias = bias))
-      CbyCovj = drop(C[j, ]*dgx)
+    for (j in which.dual) {
+      dgx <- dg(cov2(Y[, j], Y, bias = bias))
+      CbyCovj <- drop(C[j, ] * dgx)
       ifelse(tau[j] == 1,
-             {
-               Z[, j] = Y%*%CbyCovj
-               alpha[[j]] = drop(1/sqrt(t(Z[, j])%*%K[[j]]%*%Z[, j]))*Z[, j]
-               a[[j]] = pm(t(A[[j]]), alpha[[j]], na.rm = na.rm)
-               Y[, j] = pm(A[[j]], a[[j]], na.rm = na.rm)
-             },
-             {
-               Z[, j] = Y%*%CbyCovj
-          	   alpha[[j]] = drop(1/sqrt(t(Z[, j])%*%K[[j]]%*%Minv[[j]]%*%Z[, j]))*
-          	             (Minv[[j]]%*%Z[,  j])
+        {
+          Z[, j] <- Y %*% CbyCovj
+          alpha[[j]] <- drop(1 / sqrt(t(Z[, j]) %*% K[[j]] %*% Z[, j])) * Z[, j]
+          a[[j]] <- pm(t(A[[j]]), alpha[[j]], na.rm = na.rm)
+          Y[, j] <- pm(A[[j]], a[[j]], na.rm = na.rm)
+        },
+        {
+          Z[, j] <- Y %*% CbyCovj
+          alpha[[j]] <- drop(1 / sqrt(t(Z[, j]) %*% K[[j]] %*% Minv[[j]] %*% Z[, j])) *
+            (Minv[[j]] %*% Z[, j])
 
-		           a[[j]] = pm(t(A[[j]]), alpha[[j]], na.rm = na.rm)
-               Y[, j] = pm(A[[j]], a[[j]], na.rm = na.rm)
-             }
-             )
+          a[[j]] <- pm(t(A[[j]]), alpha[[j]], na.rm = na.rm)
+          Y[, j] <- pm(A[[j]], a[[j]], na.rm = na.rm)
+        }
+      )
     }
 
-  crit[iter] <- sum(C * g(cov2(Y, bias = bias)))
-  if (verbose & (iter%%1) == 0){
-    cat(" Iter: ", formatC(iter, width = 3, format = "d"),
-        " Fit:", formatC(crit[iter], digits = 8,
-                         width = 10, format = "f"),
-        " Dif: ", formatC(crit[iter] - crit_old, digits = 8,
-                          width = 10, format = "f"), "\n")
+    crit[iter] <- sum(C * g(cov2(Y, bias = bias)))
+    if (verbose & (iter %% 1) == 0) {
+      cat(
+        " Iter: ", formatC(iter, width = 3, format = "d"),
+        " Fit:", formatC(crit[iter],
+          digits = 8,
+          width = 10, format = "f"
+        ),
+        " Dif: ", formatC(crit[iter] - crit_old,
+          digits = 8,
+          width = 10, format = "f"
+        ), "\n"
+      )
+    }
+
+    stopping_criteria <- c(
+      drop(crossprod(unlist(a, F, F) - unlist(a_old, F, F))),
+      abs(crit[iter] - crit_old)
+    )
+
+    if (any(stopping_criteria < tol) | (iter > 1000)) {
+      break
+    }
+    crit_old <- crit[iter]
+    a_old <- a
+    iter <- iter + 1
   }
 
-  stopping_criteria = c(drop(crossprod(unlist(a, F, F) - unlist(a_old, F, F))),
-                        abs(crit[iter] - crit_old))
-
-  if (any(stopping_criteria < tol) | (iter > 1000)) {break}
-  crit_old = crit[iter]
-  a_old <- a
-  iter <- iter + 1
-  }
-
-  for (j in seq_len(J)){
-    if(ctrl & a[[j]][1]<0){
-      a[[j]]=-a[[j]]
-      Y[, j] <- pm(A[[j]] , a[[j]], na.rm = na.rm)
+  for (j in seq_len(J)) {
+    if (ctrl & a[[j]][1] < 0) {
+      a[[j]] <- -a[[j]]
+      Y[, j] <- pm(A[[j]], a[[j]], na.rm = na.rm)
     }
   }
 
   crit <- crit[which(crit != 0)]
 
-  if (iter > n_iter_max)
-    warning("The RGCCA algorithm did not converge after", n_iter_max,
-            " iterations.")
-  if (iter < n_iter_max & verbose)
-    cat("The RGCCA algorithm converged to a stationary point after",
-            iter - 1, "iterations \n")
-  if (verbose){
+  if (iter > n_iter_max) {
+    warning(
+      "The RGCCA algorithm did not converge after", n_iter_max,
+      " iterations."
+    )
+  }
+  if (iter < n_iter_max & verbose) {
+    cat(
+      "The RGCCA algorithm converged to a stationary point after",
+      iter - 1, "iterations \n"
+    )
+  }
+  if (verbose) {
     plot(crit, xlab = "iteration", ylab = "criteria")
   }
 
-  AVEinner <- sum(C * cor(Y)^2/2)/(sum(C)/2)
-  result <- list(Y = Y, a = a, crit = crit,
-                 AVE_inner = AVEinner, tau = tau)
+  AVEinner <- sum(C * cor(Y)^2 / 2) / (sum(C) / 2)
+  result <- list(
+    Y = Y, a = a, crit = crit,
+    AVE_inner = AVEinner, tau = tau
+  )
   return(result)
 }

@@ -11,34 +11,35 @@
 # load_file_excel("data/blocks.xlsx", "industry")
 # }
 # @export loadExcel
-load_file_excel = function(
+load_file_excel <- function(file,
+                            sheet = 1,
+                            rownames = 1,
+                            header = TRUE,
+                            num = TRUE) {
+  load_libraries("openxlsx")
+  if (!is.null(rownames) && rownames < 1) {
+    rownames <- NULL
+  }
+
+  df <- openxlsx::read.xlsx(
     file,
-    sheet = 1,
-    rownames = 1,
-    header = TRUE,
-    num = TRUE) {
+    sheet,
+    colNames = header,
+    na.strings = "NA"
+  )
 
-    load_libraries("openxlsx")
-    if (!is.null(rownames) && rownames < 1)
-        rownames <- NULL
+  if (!is.null(rownames)) {
+    names <- df[, rownames]
+    df <- df[, -rownames, drop = FALSE]
+  }
 
-    df <- openxlsx::read.xlsx(
-            file,
-            sheet,
-            colNames = header,
-            na.strings = "NA")
+  if (num) {
+    df <- as.data.frame(lapply(df, function(x) as.numeric(as.vector(x))))
+  }
 
-    if (!is.null(rownames)) {
-        names <- df[, rownames]
-        df <- df[, -rownames, drop = FALSE]
-    }
+  df <- as.matrix(df)
 
-    if (num)
-        df <- as.data.frame(lapply(df, function(x) as.numeric(as.vector(x))))
+  if (!is.null(rownames)) row.names(df) <- names
 
-    df <- as.matrix(df)
-
-    if (!is.null(rownames)) row.names(df) <- names
-
-    return(df)
+  return(df)
 }

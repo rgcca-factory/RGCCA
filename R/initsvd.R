@@ -8,21 +8,22 @@
 # @return A vector of initialization
 # @title Initialisation of the S/RGCCA algorithm by Singular Value Decomposition
 
-initsvd <- function(X, dual = TRUE){
-
-  if(any(is.na(X))){
-    indNA = which(is.na(X), arr.ind = TRUE)
-    vecMeans = colMeans(X, na.rm=TRUE)
-    X[indNA]=vecMeans[indNA[, 2]]
+initsvd <- function(X, dual = TRUE) {
+  if (any(is.na(X))) {
+    indNA <- which(is.na(X), arr.ind = TRUE)
+    vecMeans <- colMeans(X, na.rm = TRUE)
+    X[indNA] <- vecMeans[indNA[, 2]]
   }
 
-  n = NROW(X)
-  p = NCOL(X)
+  n <- NROW(X)
+  p <- NCOL(X)
 
-  if(dual){
+  if (dual) {
     ifelse(n >= p,
-           return(svd(X, nu=0, nv=1)$v),
-           return(svd(X,nu=1,nv=0)$u))
+      return(svd(X, nu = 0, nv = 1)$v),
+      return(svd(X, nu = 1, nv = 0)$u)
+    )
+  } else {
+    return(svd(X, nu = 0, nv = 1)$v)
   }
-  else return(svd(X, nu=0, nv=1)$v)
 }

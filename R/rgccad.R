@@ -100,18 +100,21 @@
 #' # Example 1 #
 #' #############
 #' data(Russett)
-#' X_agric =as.matrix(Russett[,c("gini","farm","rent")])
-#' X_ind = as.matrix(Russett[,c("gnpr","labo")])
-#' X_polit = as.matrix(Russett[ , c("demostab", "dictator")])
-#' blocks = list(X_agric, X_ind, X_polit)
-#' #Define the design matrix (output = connection)
-#' connection = matrix(c(0, 0, 1, 0, 0, 1, 1, 1, 0), 3, 3)
-#' fit.rgcca = rgccad(blocks, connection, tau = c(1, 1, 1), scheme = "factorial")
-#' lab = as.vector(apply(Russett[, 9:11], 1, which.max))
-#' plot(fit.rgcca$Y[[1]], fit.rgcca$Y[[2]], col = "white",
-#'      xlab = "Y1 (Agric. inequality)", ylab = "Y2 (Industrial Development)")
+#' X_agric <- as.matrix(Russett[, c("gini", "farm", "rent")])
+#' X_ind <- as.matrix(Russett[, c("gnpr", "labo")])
+#' X_polit <- as.matrix(Russett[, c("demostab", "dictator")])
+#' blocks <- list(X_agric, X_ind, X_polit)
+#' # Define the design matrix (output = connection)
+#' connection <- matrix(c(0, 0, 1, 0, 0, 1, 1, 1, 0), 3, 3)
+#' fit.rgcca <- rgccad(blocks, connection, tau = c(1, 1, 1), scheme = "factorial")
+#' lab <- as.vector(apply(Russett[, 9:11], 1, which.max))
+#' plot(fit.rgcca$Y[[1]], fit.rgcca$Y[[2]],
+#'   col = "white",
+#'   xlab = "Y1 (Agric. inequality)", ylab = "Y2 (Industrial Development)"
+#' )
 #' text(fit.rgcca$Y[[1]], fit.rgcca$Y[[2]], rownames(Russett),
-#'      col = lab, cex = .7)
+#'   col = lab, cex = .7
+#' )
 #'
 #' ############################################
 #' # Example 2: RGCCA and mutliple components #
@@ -119,50 +122,65 @@
 #' ############################
 #' # plot(y1, y2) for (RGCCA) #
 #' ############################
-#' fit.rgcca = rgccad(blocks, connection, tau = rep(1, 3), ncomp = c(2, 2, 1),
-#'                      scheme = "factorial", verbose = TRUE)
+#' fit.rgcca <- rgccad(blocks, connection,
+#'   tau = rep(1, 3), ncomp = c(2, 2, 1),
+#'   scheme = "factorial", verbose = TRUE
+#' )
 #' layout(t(1:2))
-#' plot(fit.rgcca$Y[[1]][, 1], fit.rgcca$Y[[2]][, 1], col = "white",
-#' xlab = "Y1 (Agric. inequality)", ylab = "Y2 (Industrial Development)",
-#' main = "Factorial plan of RGCCA")
+#' plot(fit.rgcca$Y[[1]][, 1], fit.rgcca$Y[[2]][, 1],
+#'   col = "white",
+#'   xlab = "Y1 (Agric. inequality)", ylab = "Y2 (Industrial Development)",
+#'   main = "Factorial plan of RGCCA"
+#' )
 #' text(fit.rgcca$Y[[1]][, 1], fit.rgcca$Y[[2]][, 1], rownames(Russett),
-#' col = lab, cex = .6)
-#' plot(fit.rgcca$Y[[1]][, 1], fit.rgcca$Y[[1]][, 2], col = "white",
-#' xlab = "Y1 (Agric. inequality)", ylab = "Y2 (Agric. inequality)",
-#' main = "Factorial plan of RGCCA")
+#'   col = lab, cex = .6
+#' )
+#' plot(fit.rgcca$Y[[1]][, 1], fit.rgcca$Y[[1]][, 2],
+#'   col = "white",
+#'   xlab = "Y1 (Agric. inequality)", ylab = "Y2 (Agric. inequality)",
+#'   main = "Factorial plan of RGCCA"
+#' )
 #' text(fit.rgcca$Y[[1]][, 1], fit.rgcca$Y[[1]][, 2], rownames(Russett),
-#' col = lab, cex = .6)
+#'   col = lab, cex = .6
+#' )
 #'
 #' ######################################
 #' # example 3: RGCCA and leave one out #
 #' ######################################
-#' Ytest = matrix(0, 47, 3)
-#' fit.rgcca = rgccad(blocks, connection, tau = rep(1, 3), ncomp = rep(1, 3),
-#'                      scheme = "factorial", verbose = TRUE)
-#' for (i in 1:nrow(Russett)){
-#'  B = lapply(blocks, function(x) x[-i, ])
-#'  B = lapply(B, scale)
+#' Ytest <- matrix(0, 47, 3)
+#' fit.rgcca <- rgccad(blocks, connection,
+#'   tau = rep(1, 3), ncomp = rep(1, 3),
+#'   scheme = "factorial", verbose = TRUE
+#' )
+#' for (i in 1:nrow(Russett)) {
+#'   B <- lapply(blocks, function(x) x[-i, ])
+#'   B <- lapply(B, scale)
 #'
-#'  resB = rgccad(B, connection, tau = rep(1, 3), scheme = "factorial", verbose = FALSE)
-#'  #  look for potential conflicting sign among components within the loo loop.
-#'  for (k in 1:length(B)){
-#'    if (cor(fit.rgcca$a[[k]], resB$a[[k]]) >= 0)
-#'      resB$a[[k]] = resB$a[[k]] else resB$a[[k]] = -resB$a[[k]]
-#'  }
-#'  Btest = lapply(blocks, function(x) x[i, ])
-#'  Btest[[1]] = (Btest[[1]]-attr(B[[1]],"scaled:center"))/
-#'                   (attr(B[[1]],"scaled:scale"))
-#'  Btest[[2]] = (Btest[[2]]-attr(B[[2]],"scaled:center"))/
-#'                   (attr(B[[2]],"scaled:scale"))
-#'  Btest[[3]] = (Btest[[3]]-attr(B[[3]],"scaled:center"))/
-#'                   (attr(B[[3]],"scaled:scale"))
-#'  Ytest[i, 1] = Btest[[1]]%*%resB$a[[1]]
-#'  Ytest[i, 2] = Btest[[2]]%*%resB$a[[2]]
-#'  Ytest[i, 3] = Btest[[3]]%*%resB$a[[3]]
+#'   resB <- rgccad(B, connection, tau = rep(1, 3), scheme = "factorial", verbose = FALSE)
+#'   #  look for potential conflicting sign among components within the loo loop.
+#'   for (k in 1:length(B)) {
+#'     if (cor(fit.rgcca$a[[k]], resB$a[[k]]) >= 0) {
+#'       resB$a[[k]] <- resB$a[[k]]
+#'     } else {
+#'       resB$a[[k]] <- -resB$a[[k]]
+#'     }
+#'   }
+#'   Btest <- lapply(blocks, function(x) x[i, ])
+#'   Btest[[1]] <- (Btest[[1]] - attr(B[[1]], "scaled:center")) /
+#'     (attr(B[[1]], "scaled:scale"))
+#'   Btest[[2]] <- (Btest[[2]] - attr(B[[2]], "scaled:center")) /
+#'     (attr(B[[2]], "scaled:scale"))
+#'   Btest[[3]] <- (Btest[[3]] - attr(B[[3]], "scaled:center")) /
+#'     (attr(B[[3]], "scaled:scale"))
+#'   Ytest[i, 1] <- Btest[[1]] %*% resB$a[[1]]
+#'   Ytest[i, 2] <- Btest[[2]] %*% resB$a[[2]]
+#'   Ytest[i, 3] <- Btest[[3]] %*% resB$a[[3]]
 #' }
-#' lab = apply(Russett[, 9:11], 1, which.max)
-#' plot(fit.rgcca$Y[[1]], fit.rgcca$Y[[2]], col = "white",
-#'      xlab = "Y1 (Agric. inequality)", ylab = "Y2 (Ind. Development)")
+#' lab <- apply(Russett[, 9:11], 1, which.max)
+#' plot(fit.rgcca$Y[[1]], fit.rgcca$Y[[2]],
+#'   col = "white",
+#'   xlab = "Y1 (Agric. inequality)", ylab = "Y2 (Ind. Development)"
+#' )
 #' text(fit.rgcca$Y[[1]], fit.rgcca$Y[[2]], rownames(Russett), col = lab)
 #' text(Ytest[, 1], Ytest[, 2], substr(rownames(Russett), 1, 1), col = lab)
 #' @export rgccad
@@ -172,25 +190,26 @@
 #' @importFrom utils read.table write.table
 #' @importFrom stats as.formula qt
 
-rgccad = function(blocks, connection = 1 - diag(length(blocks)),
-                  tau = rep(1, length(blocks)),
-                  ncomp = rep(1, length(blocks)), scheme = "centroid",
-                  init = "svd", bias = TRUE, tol = 1e-08, verbose = TRUE,
-                  na.rm = TRUE, quiet = FALSE, superblock = FALSE)
-{
-
+rgccad <- function(blocks, connection = 1 - diag(length(blocks)),
+                   tau = rep(1, length(blocks)),
+                   ncomp = rep(1, length(blocks)), scheme = "centroid",
+                   init = "svd", bias = TRUE, tol = 1e-08, verbose = TRUE,
+                   na.rm = TRUE, quiet = FALSE, superblock = FALSE) {
   if (mode(scheme) != "function") {
-    if (verbose)
-      cat("Computation of the RGCCA block components based on the",
-          scheme, "scheme \n")
+    if (verbose) {
+      cat(
+        "Computation of the RGCCA block components based on the",
+        scheme, "scheme \n"
+      )
+    }
   }
-  if (mode(scheme) == "function" & verbose)
+  if (mode(scheme) == "function" & verbose) {
     cat("Computation of the RGCCA block components based on the g scheme \n")
+  }
 
   if (!is.numeric(tau) & verbose) {
     cat("Optimal Shrinkage intensity paramaters are estimated \n")
-  }
-  else {
+  } else {
     if (is.numeric(tau) & verbose) {
       cat("Shrinkage intensity paramaters are chosen manually \n")
     }
@@ -200,7 +219,7 @@ rgccad = function(blocks, connection = 1 - diag(length(blocks)),
   ndefl <- ncomp - 1
   N <- max(ndefl)
   J <- length(blocks)
-  pjs <- sapply(blocks,NCOL)
+  pjs <- sapply(blocks, NCOL)
   nb_ind <- NROW(blocks[[1]])
   AVE_X <- list()
   AVE_outer <- rep(NA, max(ncomp))
@@ -208,44 +227,50 @@ rgccad = function(blocks, connection = 1 - diag(length(blocks)),
   Y <- NULL
   P <- a <- astar <- list()
   crit <- list()
-  AVE_inner <- rep(NA,max(ncomp))
+  AVE_inner <- rep(NA, max(ncomp))
 
-  for (b in seq_len(J)){
+  for (b in seq_len(J)) {
     a[[b]] <- matrix(NA, pjs[[b]], N + 1)
     Y[[b]] <- matrix(NA, nb_ind, N + 1)
   }
 
-  if(!superblock){
+  if (!superblock) {
     for (b in seq_len(J)) astar[[b]] <- matrix(NA, pjs[b], N + 1)
-  }else{
+  } else {
     astar <- matrix(NA, pjs[J], N + 1)
   }
 
   # Whether primal or dual
-  primal_dual = rep("primal", J)
-  primal_dual[which(nb_ind < pjs)] = "dual"
+  primal_dual <- rep("primal", J)
+  primal_dual[which(nb_ind < pjs)] <- "dual"
 
   # Save computed shrinkage parameter in a new variable
-  computed_tau = tau
-  if (is.vector(tau)) computed_tau = matrix(NA, nrow = N + 1, J)
+  computed_tau <- tau
+  if (is.vector(tau)) computed_tau <- matrix(NA, nrow = N + 1, J)
 
   # First component block
-  if (is.vector(tau))
-    rgcca.result <- rgccak(blocks, connection, tau = tau, scheme = scheme,
-                           init = init, bias = bias, tol = tol,
-                           verbose = verbose, na.rm = na.rm)
-  else
-    rgcca.result <- rgccak(blocks, connection, tau = tau[1, ], scheme = scheme,
-                           init = init, bias = bias, tol = tol,
-                           verbose = verbose, na.rm = na.rm)
-  computed_tau[1, ] = rgcca.result$tau
+  if (is.vector(tau)) {
+    rgcca.result <- rgccak(blocks, connection,
+      tau = tau, scheme = scheme,
+      init = init, bias = bias, tol = tol,
+      verbose = verbose, na.rm = na.rm
+    )
+  } else {
+    rgcca.result <- rgccak(blocks, connection,
+      tau = tau[1, ], scheme = scheme,
+      init = init, bias = bias, tol = tol,
+      verbose = verbose, na.rm = na.rm
+    )
+  }
+  computed_tau[1, ] <- rgcca.result$tau
 
   for (b in seq_len(J)) Y[[b]][, 1] <- rgcca.result$Y[, b, drop = FALSE]
   for (b in seq_len(J)) a[[b]][, 1] <- rgcca.result$a[[b]]
 
   ifelse(!superblock,
-         astar <- a,
-         astar[, 1] <- a[[J]][, 1, drop = FALSE])
+    astar <- a,
+    astar[, 1] <- a[[J]][, 1, drop = FALSE]
+  )
 
   AVE_inner[1] <- rgcca.result$AVE_inner
   crit[[1]] <- rgcca.result$crit
@@ -253,44 +278,51 @@ rgccad = function(blocks, connection = 1 - diag(length(blocks)),
   if (N > 0) {
     R <- blocks
 
-    if(!superblock){
+    if (!superblock) {
       for (b in seq_len(J)) P[[b]] <- matrix(NA, pjs[b], N)
-    }else{
+    } else {
       P <- matrix(NA, pjs[J], N)
     }
 
     for (n in 2:(N + 1)) {
-      if (verbose)
+      if (verbose) {
         cat(paste0("Computation of the RGCCA block components #", n, " is under
                  progress...\n"))
+      }
 
-      if(!superblock){
+      if (!superblock) {
         defl.result <- defl.select(rgcca.result$Y, R,
-                                   ndefl, n - 1, J,
-                                   na.rm = na.rm)
+          ndefl, n - 1, J,
+          na.rm = na.rm
+        )
         R <- defl.result$resdefl
         for (b in seq_len(J)) P[[b]][, n - 1] <- defl.result$pdefl[[b]]
-      }else{
+      } else {
         defl.result <- deflation(R[[J]], rgcca.result$Y[, J])
         R[[J]] <- defl.result$R
         P[, n - 1] <- defl.result$p
-        cumsum_pjs <- cumsum(pjs)[seq_len(J-1)]
-        inf_pjs <- c(0, cumsum_pjs[seq_len(J-2)])+1
-        for(j in seq_len(J-1)){
-          R[[j]] = R[[J]][ , inf_pjs[j]:cumsum_pjs[j], drop=FALSE]
+        cumsum_pjs <- cumsum(pjs)[seq_len(J - 1)]
+        inf_pjs <- c(0, cumsum_pjs[seq_len(J - 2)]) + 1
+        for (j in seq_len(J - 1)) {
+          R[[j]] <- R[[J]][, inf_pjs[j]:cumsum_pjs[j], drop = FALSE]
           rownames(R[[j]]) <- rownames(R[[j]])
           colnames(R[[j]]) <- colnames(R[[J]])[inf_pjs[j]:cumsum_pjs[j]]
         }
       }
 
-      if (is.vector(tau))
-        rgcca.result <- rgccak(R, connection, tau = tau, scheme = scheme,
-                               init = init, bias = bias, tol = tol,
-                               verbose = verbose, na.rm = na.rm)
-      else
-        rgcca.result <- rgccak(R, connection, tau = tau[n, ], scheme = scheme,
-                               init = init, bias = bias, tol = tol,
-                               verbose = verbose, na.rm = na.rm)
+      if (is.vector(tau)) {
+        rgcca.result <- rgccak(R, connection,
+          tau = tau, scheme = scheme,
+          init = init, bias = bias, tol = tol,
+          verbose = verbose, na.rm = na.rm
+        )
+      } else {
+        rgcca.result <- rgccak(R, connection,
+          tau = tau[n, ], scheme = scheme,
+          init = init, bias = bias, tol = tol,
+          verbose = verbose, na.rm = na.rm
+        )
+      }
 
       computed_tau[n, ] <- rgcca.result$tau
 
@@ -300,44 +332,51 @@ rgccad = function(blocks, connection = 1 - diag(length(blocks)),
       for (b in seq_len(J)) Y[[b]][, n] <- rgcca.result$Y[, b]
       for (b in seq_len(J)) a[[b]][, n] <- rgcca.result$a[[b]]
 
-      if(!superblock){
-        for (b in seq_len(J))
+      if (!superblock) {
+        for (b in seq_len(J)) {
           astar[[b]][, n] <- rgcca.result$a[[b]] -
             astar[[b]][, (1:(n - 1)), drop = F] %*%
-        drop( t(a[[b]][, n]) %*% P[[b]][, 1:(n - 1), drop = F])
-      }else{
+            drop(t(a[[b]][, n]) %*% P[[b]][, 1:(n - 1), drop = F])
+        }
+      } else {
         astar[, n] <- rgcca.result$a[[J]] -
           astar[, (1:(n - 1)), drop = F] %*%
-            drop(t(a[[J]][, n]) %*% P[, 1:(n - 1), drop = F])
+          drop(t(a[[J]][, n]) %*% P[, 1:(n - 1), drop = F])
       }
     }
   }
 
-  for (j in seq_len(J)) AVE_X[[j]] = apply(
-    cor(blocks[[j]], Y[[j]], use = "pairwise.complete.obs")^2, 2, mean)
+  for (j in seq_len(J)) {
+    AVE_X[[j]] <- apply(
+      cor(blocks[[j]], Y[[j]], use = "pairwise.complete.obs")^2, 2, mean
+    )
+  }
 
-  outer = matrix(unlist(AVE_X), nrow = max(ncomp))
+  outer <- matrix(unlist(AVE_X), nrow = max(ncomp))
 
-  for (j in seq_len(max(ncomp)))
-    AVE_outer[j] <- sum(pjs * outer[j,])/sum(pjs)
+  for (j in seq_len(max(ncomp))) {
+    AVE_outer[j] <- sum(pjs * outer[j, ]) / sum(pjs)
+  }
 
-  AVE_X = shave(AVE_X, ncomp)
+  AVE_X <- shave(AVE_X, ncomp)
 
   AVE <- list(AVE_X = AVE_X, AVE_outer = AVE_outer, AVE_inner = AVE_inner)
 
   if (N == 0) {
-    crit = unlist(crit)
-    computed_tau = as.vector(computed_tau)
+    crit <- unlist(crit)
+    computed_tau <- as.vector(computed_tau)
   }
 
-  out <- list(Y = Y,
-              a = a,
-              astar = astar,
-              tau = computed_tau,
-              crit = crit, primal_dual = primal_dual,
-              AVE = AVE)
+  out <- list(
+    Y = Y,
+    a = a,
+    astar = astar,
+    tau = computed_tau,
+    crit = crit, primal_dual = primal_dual,
+    AVE = AVE
+  )
 
-   class(out) <- "rgccad"
+  class(out) <- "rgccad"
 
   return(out)
 }

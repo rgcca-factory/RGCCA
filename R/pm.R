@@ -5,7 +5,7 @@
 # @return \item{X}{The resulting matrix with n1 lines and n2 columns}
 # @title Product for Matrices with missing data (pm)
 
-pm <- function(M1,M2,na.rm=TRUE){
+pm <- function(M1, M2, na.rm = TRUE) {
   if (na.rm) {
     M1[is.na(M1)] <- 0
     M2[is.na(M2)] <- 0

@@ -6,19 +6,24 @@
 #' @export
 #' @examples
 #' data(Russett)
-#' A = list(agriculture = Russett[, seq(3)],
-#'          industry = Russett[, 4:5],
-#'          politic = Russett[, 6:11])
+#' A <- list(
+#'   agriculture = Russett[, seq(3)],
+#'   industry = Russett[, 4:5],
+#'   politic = Russett[, 6:11]
+#' )
 #'
-#' perm.out = rgcca_permutation(A, par_type = "tau",
-#'                              n_perms = 5, n_cores = 1)
+#' perm.out <- rgcca_permutation(A,
+#'   par_type = "tau",
+#'   n_perms = 5, n_cores = 1
+#' )
 #' print(perm.out)
-print.permutation <- function(x, ...){
-
+print.permutation <- function(x, ...) {
   cat("Call: ")
-  names_call <- c("method", "par_type", "n_perms",
-                  "quiet", "NA_method", "tol", "scale",
-                  "scale_block", "superblock")
+  names_call <- c(
+    "method", "par_type", "n_perms",
+    "quiet", "NA_method", "tol", "scale",
+    "scale_block", "superblock"
+  )
   char_to_print <- ""
   for (name in names_call) {
     if (name == "ncomp") {
@@ -34,7 +39,9 @@ print.permutation <- function(x, ...){
     quo <- ifelse(is.character(value) & name != "ncomp", "'", "")
     vir <- ifelse(name == names_call[length(names_call)], "", ", ")
     char_to_print <- paste(char_to_print, name, "=", quo, value,
-                           quo, vir, collapse = "", sep = "")
+      quo, vir,
+      collapse = "", sep = ""
+    )
   }
   cat(char_to_print, "\n")
 
@@ -57,14 +64,20 @@ print.permutation <- function(x, ...){
   cat("\n")
 
   tab <- round(cbind(x$crit, x$means, x$sds, x$zstat, x$pvals), 3)
-  dimnames(tab) <- list(paste("Tuning parameter set ", sep = "",
-                              1:length(x$pvals)),
-                              c("crit", "crit perm", "sd", "zstat", "p-value"))
+  dimnames(tab) <- list(
+    paste("Tuning parameter set ",
+      sep = "",
+      1:length(x$pvals)
+    ),
+    c("crit", "crit perm", "sd", "zstat", "p-value")
+  )
   print(tab, quote = FALSE, ...)
 
-  cat(paste0("\nThe best combination was: ",
-             paste(round(x$bestpenalties, 3), collapse = ", "),
-             " for a z score of ", round(max(x$zstat), 3),
-             " and a p-value of ", round(x$pvals[which.max(x$zstat)], 3),
-             ".\n"))
+  cat(paste0(
+    "\nThe best combination was: ",
+    paste(round(x$bestpenalties, 3), collapse = ", "),
+    " for a z score of ", round(max(x$zstat), 3),
+    " and a p-value of ", round(x$pvals[which.max(x$zstat)], 3),
+    ".\n"
+  ))
 }
