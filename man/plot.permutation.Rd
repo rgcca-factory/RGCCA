@@ -5,7 +5,7 @@
 \title{Plot fitted rgcca permutation object}
 \usage{
 \method{plot}{permutation}(
-  perm,
+  x,
   type = "crit",
   cex = 1,
   title = NULL,
@@ -15,11 +15,12 @@
   cex_lab = 19 * cex,
   colors = c("red", "grey"),
   display_all = FALSE,
-  show_legend = TRUE
+  show_legend = TRUE,
+  ...
 )
 }
 \arguments{
-\item{perm}{A fitted rgcca_permutation object (see
+\item{x}{A fitted rgcca_permutation object (see
 \code{\link[RGCCA]{rgcca_permutation}})}
 
 \item{type}{A character string indicating which criterion to plot
@@ -47,6 +48,8 @@ be displayed (default is FALSE).}
 
 \item{show_legend}{A boolean indicating if the legend is displayed
 (default is TRUE).}
+
+\item{...}{additional graphical parameters}
 }
 \description{
 Plot a fitted rgcca permutation object. The various set of tuning parameters
