@@ -251,6 +251,8 @@ rgcca_permutation <- function(blocks, par_type, par_value = NULL,
                               response = NULL, superblock = FALSE,
                               NA_method = "nipals", rgcca_res = NULL,
                               verbose = TRUE) {
+  local_env <- new.env()
+
   if (!is.null(rgcca_res)) {
     stopifnot(is(rgcca_res, "rgcca"))
     message("All parameters were imported from a fitted rgcca object.")
@@ -421,9 +423,9 @@ rgcca_permutation <- function(blocks, par_type, par_value = NULL,
         tol, scale, scale_block, connection, NA_method,
         response, bias, init, ncomp, tau, sparsity
       )
-      assign("call_perm", call_perm, envir = .GlobalEnv)
+      assign("call_perm", call_perm, envir = local_env)
       cl <- parallel::makeCluster(n_cores)
-      parallel::clusterExport(cl, "call_perm")
+      parallel::clusterExport(cl, "call_perm", envir = local_env)
       W <- pbapply::pbsapply(seq(length(call_perm[[4]])),
         function(b) {
           rgcca_permutation_k(
@@ -450,7 +452,6 @@ rgcca_permutation <- function(blocks, par_type, par_value = NULL,
         cl = cl
       )
       parallel::stopCluster(cl)
-      rm("call_perm", envir = .GlobalEnv)
     } else {
       W <- pbapply::pbsapply(
         seq(length(perm_parallel)),
