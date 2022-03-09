@@ -277,7 +277,6 @@ rgcca_permutation <- function(blocks, par_type, par_value = NULL,
   check_integer("par_value", n_perms, min = 0)
   check_integer("n_cores", n_cores, min = 0)
   match.arg(par_type, c("tau", "sparsity"))
-  min_spars <- NULL
 
   if (par_type == "sparsity") method2 <- "sgcca"
   if (par_type == "tau") method2 <- "rgcca"
@@ -315,7 +314,7 @@ rgcca_permutation <- function(blocks, par_type, par_value = NULL,
     )
   }
 
-  set_spars <- function(max = 1) {
+  set_spars <- function(min_spars, max = 1) {
     if (length(max) == 1) {
       f <- quote(max)
     } else {
@@ -336,8 +335,8 @@ rgcca_permutation <- function(blocks, par_type, par_value = NULL,
           "SGCCA is performed."
         ))
       }
-      method <<- "sgcca"
-      min_spars <<- sapply(ncols, function(x) 1 / sqrt(x))
+      method <- "sgcca"
+      min_spars <- sapply(ncols, function(x) 1 / sqrt(x))
     } else {
       if (tolower(method) %in% c("spls", "sgcca")) {
         warning(paste0(
@@ -345,13 +344,13 @@ rgcca_permutation <- function(blocks, par_type, par_value = NULL,
           "RGCCA is performed."
         ))
       }
-      method <<- "rgcca"
-      min_spars <<- sapply(ncols, function(x) 0)
+      method <- "rgcca"
+      min_spars <- sapply(ncols, function(x) 0)
     }
 
 
     if (is.null(par_value)) {
-      par_value <- set_spars()
+      par_value <- set_spars(min_spars)
     } else if (
       "data.frame" %in% class(par_value) || "matrix" %in% class(par_value)
     ) {
@@ -379,10 +378,10 @@ rgcca_permutation <- function(blocks, par_type, par_value = NULL,
           method = method,
           superblock = superblock
         )
-        par_value <- set_spars(max = par_value)
+        par_value <- set_spars(min_spars, max = par_value)
       }
       if (par_type == "sparsity") {
-        par_value <- set_spars(max = par_value)
+        par_value <- set_spars(min_spars, max = par_value)
       }
     }
 
@@ -395,14 +394,12 @@ rgcca_permutation <- function(blocks, par_type, par_value = NULL,
       par_value <- matrix(par_value, nrow = 1)
     }
     colnames(par_value) <- coln
-    return(list(par_type, par_value))
+    return(list(par = list(par_type, par_value), method = method))
   }
 
-  switch(par_type,
-    "sparsity" = par <- set_penalty(),
-    "tau" = par <- set_penalty()
-  )
-
+  tmp <- set_penalty()
+  par <- tmp$par
+  method <- tmp$method
   par_value_parallel <-
     matrix(apply(par[[2]], 1, function(x) rep(x, n_perms + 1)),
       ncol = NCOL(par[[2]]), byrow = TRUE

@@ -51,10 +51,23 @@ select_analysis <- function(blocks,
                             verbose = TRUE,
                             quiet = FALSE,
                             response = NULL) {
-  J <- length(blocks)
+  substitute <- function(x, env = environment()) {
+    x <- strsplit(deparse(base::substitute(x, env)), "\\$")[[1]]
+    return(x[length(x)])
+  }
+  local_env <- new.env()
+  local_env$ncomp <- ncomp
+  local_env$blocks <- blocks
+  local_env$scheme <- scheme
+  local_env$penalty <- penalty
+  local_env$superblock <- superblock
+  local_env$connection <- connection
+  local_env$warn_method_value <-
+    local_env$warn_method_par <-
+    local_env$warn_message_super <- character(0)
+  J <- length(local_env$blocks)
   msg_superblock <- "A superblock is considered."
   msg_type <- paste0("By using a ", toupper(method), ", ")
-  warn_method_value <- warn_method_par <- warn_msg_super <- character(0)
 
   if (quiet) {
     verbose <- FALSE
@@ -62,35 +75,43 @@ select_analysis <- function(blocks,
 
   ### SETTINGS ###
 
-  warn_param <- function(param, x) {
-    warn_method_par <<- c(warn_method_par, paste(deparse(substitute(param))))
-    warn_method_value <<- c(warn_method_value, toString(x))
+  warn_param <- function(x, param) {
+    local_env$warn_method_par <- c(
+      local_env$warn_method_par, paste(substitute(x, environment()))
+    )
+    local_env$warn_method_value <- c(
+      local_env$warn_method_value, toString(param)
+    )
   }
 
   set_penalty <- function(x) {
-    warn_param(penalty, x)
+    warn_param(local_env$penalty, x)
     return(x)
   }
 
   set_scheme <- function(x) {
-    warn_param(scheme, x)
+    warn_param(local_env$scheme, x)
     return(x)
   }
 
   set_connection <- function(x) {
-    warn_param(connection, paste(deparse(substitute(x))))
+    warn_param(local_env$connection, paste(substitute(x, environment())))
     return(x)
   }
 
   warn_super <- function(x) {
     if (class(x) %in% c("matrix", "data.frame") &&
-      NCOL(x) < (length(blocks)) &&
+      NCOL(x) < (length(local_env$blocks)) &&
       is.null(response)) {
-      warn_msg_super <<- c(warn_msg_super, deparse(substitute(x)))
+      local_env$warn_msg_super <- c(
+        local_env$warn_msg_super, substitute(x, environment())
+      )
       return(cbind(x, 1))
-    } else if (length(x) < (length(blocks)) && is.null(response)) {
-      warn_msg_super <<- c(warn_msg_super, deparse(substitute(x)))
-      if (deparse(substitute(x)) == "ncomp") {
+    } else if (length(x) < (length(local_env$blocks)) && is.null(response)) {
+      local_env$warn_msg_super <- c(
+        local_env$warn_msg_super, substitute(x, environment())
+      )
+      if (substitute(x, environment()) == "ncomp") {
         return(c(x, max(x)))
       } else {
         return(c(x, 1))
@@ -101,39 +122,42 @@ select_analysis <- function(blocks,
   }
 
   set_superblock <- function(verbose = TRUE) {
-    blocks <<- c(blocks, superblock = list(Reduce(cbind, blocks)))
-    superblock <<- TRUE
-    connection <<- NULL
-    ncomp <<- warn_super(ncomp)
+    local_env$blocks <- c(
+      local_env$blocks,
+      superblock = list(Reduce(cbind, local_env$blocks))
+    )
+    local_env$superblock <- TRUE
+    local_env$connection <- NULL
+    local_env$ncomp <- warn_super(local_env$ncomp)
   }
 
   set_2block <- function(method) {
-    check_nblocks(blocks, method)
+    check_nblocks(local_env$blocks, method)
 
-    scheme <<- set_scheme("horst")
-    connection <<- set_connection(1 - diag(2))
+    local_env$scheme <- set_scheme("horst")
+    local_env$connection <- set_connection(1 - diag(2))
   }
 
   ### CHECK TYPES ###
 
   if (length(grep("[sr]gcca", tolower(method))) == 1) {
-    if (superblock) {
+    if (local_env$superblock) {
       set_superblock(FALSE)
-      penalty <- warn_super(penalty)
+      local_env$penalty <- warn_super(local_env$penalty)
     } else {
-      superblock <- FALSE
+      local_env$superblock <- FALSE
     }
   } else {
-    superblock <- FALSE
+    local_env$superblock <- FALSE
   }
 
   if (length(grep("^s?pca$", tolower(method))) == 1) {
-    check_nblocks(blocks, method)
+    check_nblocks(local_env$blocks, method)
 
-    scheme <- set_scheme("horst")
+    local_env$scheme <- set_scheme("horst")
     set_superblock()
     if (tolower(method) == "pca") {
-      penalty <- set_penalty(c(1, 1))
+      local_env$penalty <- set_penalty(c(1, 1))
     }
   }
 
@@ -142,11 +166,11 @@ select_analysis <- function(blocks,
     set_2block(method)
 
     if (tolower(method) == "cca") {
-      penalty <- set_penalty(c(0, 0))
+      local_env$penalty <- set_penalty(c(0, 0))
     } else if (tolower(method) %in% c("ifa", "pls")) {
-      penalty <- set_penalty(c(1, 1))
+      local_env$penalty <- set_penalty(c(1, 1))
     } else if (tolower(method) == "ra") {
-      penalty <- set_penalty(c(1, 0))
+      local_env$penalty <- set_penalty(c(1, 0))
     }
   }
 
@@ -161,21 +185,21 @@ select_analysis <- function(blocks,
     "maxbet-b",
     "sabscov-1"
   )) {
-    connection <- set_connection(matrix(1, J, J))
+    local_env$connection <- set_connection(matrix(1, J, J))
 
     # COR models
     if (tolower(method) %in% c("sumcor", "ssqcor", "sabscor")) {
-      penalty <- set_penalty(rep(0, J))
+      local_env$penalty <- set_penalty(rep(0, J))
 
       switch(tolower(method),
         "sumcor" = {
-          scheme <- set_scheme("horst")
+          local_env$scheme <- set_scheme("horst")
         },
         "ssqcor" = {
-          scheme <- set_scheme("factorial")
+          local_env$scheme <- set_scheme("factorial")
         },
         "sabscor" = {
-          scheme <- set_scheme("centroid")
+          local_env$scheme <- set_scheme("centroid")
         }
       )
     }
@@ -188,14 +212,14 @@ select_analysis <- function(blocks,
       "maxbet-b",
       "sabscov-1"
     )) {
-      penalty <- set_penalty(rep(1, J))
+      local_env$penalty <- set_penalty(rep(1, J))
 
       if (tolower(method) %in% c("sumcov-1", "maxbet")) {
-        scheme <- set_scheme("horst")
+        local_env$scheme <- set_scheme("horst")
       } else if (tolower(method) %in% c("ssqcov-1", "maxbet-b")) {
-        scheme <- set_scheme("factorial")
+        local_env$scheme <- set_scheme("factorial")
       } else if (tolower(method) %in% c("sabscov-1")) {
-        scheme <- set_scheme("centroid")
+        local_env$scheme <- set_scheme("centroid")
       }
     }
 
@@ -210,14 +234,14 @@ select_analysis <- function(blocks,
     "maxdiff-b",
     "sabscov-2"
   )) {
-    connection <- set_connection(1 - diag(J))
+    local_env$connection <- set_connection(1 - diag(J))
 
     if (tolower(method) %in% c("sumcov", "sumcov-2", "maxdiff")) {
-      scheme <- set_scheme("horst")
-      penalty <- set_penalty(rep(1, J))
+      local_env$scheme <- set_scheme("horst")
+      local_env$penalty <- set_penalty(rep(1, J))
     } else if (tolower(method) %in% c("ssqcov", "ssqcov-2", "maxdiff-b")) {
-      scheme <- set_scheme("factorial")
-      penalty <- set_penalty(rep(1, J))
+      local_env$scheme <- set_scheme("factorial")
+      local_env$penalty <- set_penalty(rep(1, J))
     }
   }
 
@@ -230,28 +254,28 @@ select_analysis <- function(blocks,
     set_superblock()
 
     if (tolower(method) %in% c("gcca", "maxvar", "maxvar-b")) {
-      scheme <- set_scheme("factorial")
-      penalty <- set_penalty(rep(0, J + 1))
+      local_env$scheme <- set_scheme("factorial")
+      local_env$penalty <- set_penalty(rep(0, J + 1))
     } else if (tolower(method) == "cpca-1") {
-      scheme <- function(x) x
-      penalty <- set_penalty(c(rep(1, J), 0))
+      local_env$scheme <- function(x) x
+      local_env$penalty <- set_penalty(c(rep(1, J), 0))
     } else if (tolower(method) %in% c("maxvar-a", "cpca-2", "mcoa")) {
-      scheme <- set_scheme("factorial")
-      penalty <- set_penalty(c(rep(1, J), 0))
+      local_env$scheme <- set_scheme("factorial")
+      local_env$penalty <- set_penalty(c(rep(1, J), 0))
     } else if (tolower(method) %in% c("hpca", "cpca-4")) {
-      scheme <- function(x) x^4
-      penalty <- set_penalty(c(rep(1, J), 0))
+      local_env$scheme <- function(x) x^4
+      local_env$penalty <- set_penalty(c(rep(1, J), 0))
     }
   }
 
   ### WARNINGS ###
-  n <- length(warn_method_par)
+  n <- length(local_env$warn_method_par)
   if (verbose & n > 0) {
-    set_plural <- function(x = warn_method_par,
-                           y = warn_method_value,
+    set_plural <- function(x = local_env$warn_method_par,
+                           y = local_env$warn_method_value,
                            sep = " and ") {
-      warn_method_par <<- paste0(x, collapse = sep)
-      warn_method_value <<- paste0(y, collapse = sep)
+      local_env$warn_method_par <- paste0(x, collapse = sep)
+      local_env$warn_method_value <- paste0(y, collapse = sep)
     }
 
     if (n > 1) {
@@ -259,11 +283,15 @@ select_analysis <- function(blocks,
       if (n == 2) {
         set_plural()
       } else {
-        warn.method <- c(warn_method_par[n], warn_method_value[n])
-        set_plural(warn_method_par[-n], warn_method_value[-n], ", ")
+        warn.method <- c(
+          local_env$warn_method_par[n], local_env$warn_method_value[n]
+        )
         set_plural(
-          c(warn_method_par, warn.method[1]),
-          c(warn_method_value, warn.method[2])
+          local_env$warn_method_par[-n], local_env$warn_method_value[-n], ", "
+        )
+        set_plural(
+          c(local_env$warn_method_par, warn.method[1]),
+          c(local_env$warn_method_value, warn.method[2])
         )
       }
     } else {
@@ -271,24 +299,27 @@ select_analysis <- function(blocks,
     }
 
     msg <- paste0(
-      warn_method_par, " parameter",
-      grammar, " set to ", warn_method_value
+      local_env$warn_method_par, " parameter",
+      grammar, " set to ", local_env$warn_method_value
     )
 
-    if (superblock & tolower(method) != "pca") {
+    if (local_env$superblock & tolower(method) != "pca") {
       msg <- paste0(msg, " and ", msg_superblock)
     }
 
     warning(paste0(msg_type, msg, "."))
   }
 
-  if (verbose & superblock) {
+  if (verbose & local_env$superblock) {
     if (n < 0) paste0(msg_superblock, msg_superblock)
   }
 
-  if (!quiet & length(warn_msg_super) > 0) {
-    if (length(warn_msg_super) > 1) {
-      warn_msg_super <- paste(warn_msg_super, collapse = " and ")
+  if (!quiet & length(local_env$warn_message_super) > 0) {
+    if (length(local_env$warn_message_super) > 1) {
+      local_env$warn_message_super <- paste(
+        local_env$warn_message_super,
+        collapse = " and "
+      )
       grammar <- "were those"
     } else {
       grammar <- "was the one"
@@ -296,10 +327,10 @@ select_analysis <- function(blocks,
   }
 
   return(list(
-    scheme = scheme,
-    penalty = penalty,
-    ncomp = ncomp,
-    connection = connection,
-    superblock = superblock
+    scheme = local_env$scheme,
+    penalty = local_env$penalty,
+    ncomp = local_env$ncomp,
+    connection = local_env$connection,
+    superblock = local_env$superblock
   ))
 }
