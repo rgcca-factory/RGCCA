@@ -7,11 +7,11 @@
 #' of null variance (see the 'Value' section for more details about the content
 #' of this list). In both cases, these variables are removed.
 #' @return \item{list_m}{A list of dataframe.}
-#' @return \item{column_sd_null}{Either NULL, if not a single variable was removed,
-#' or a list of the same size as the number of blocks. In the last situation, each
-#' element of this list is again NULL if not a single variable was removed from
-#' the current block, or a named vector indicating the former index of the removed
-#' variables along with their name.}
+#' @return \item{column_sd_null}{Either NULL, if not a single variable was
+#' removed, or a list of the same size as the number of blocks. In the last
+#' situation, each element of this list is again NULL if not a single variable
+#' was removed from the current block, or a named vector indicating the former
+#' index of the removed variables along with their name.}
 #' @keywords internal
 
 remove_null_sd <- function(list_m, column_sd_null = NULL) {

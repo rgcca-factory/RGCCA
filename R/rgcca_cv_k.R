@@ -6,7 +6,8 @@
 #' @inheritParams bootstrap
 #' @inheritParams plot_ind
 #' @param k An integer giving the number of folds (if validation = 'kfold').
-#' @param validation A character for the type of validation among "loo", "kfold", "test".
+#' @param validation A character for the type of validation among "loo",
+#' "kfold", "test".
 #' @param parallelization logical value. If TRUE (default value), the
 #' permutation procedure is parallelized
 #' @examples
@@ -92,47 +93,58 @@ rgcca_cv_k <- function(rgcca_res,
     n_cores <- 1
   }
 
-  f <- quote(
-    function() {
-      rgcca_k <-
-        set_rgcca(rgcca_res,
-          scale = scale,
-          scale_block = scale_block,
-          tol = tol,
-          scheme = scheme,
-          superblock = FALSE,
-          inds = inds,
-          NA_method = NA_method,
-          response = response,
-          bias = bias,
-          tau = tau,
-          ncomp = ncomp,
-          sparsity = sparsity,
-        ) # Rgcca on all individuals but inds
-      #
-      rgcca_k_saved <- rgcca_k
-      rgcca_k$a <- add_variables_submodel(rgcca_res, rgcca_k$a)
-      rgcca_k$astar <- add_variables_submodel(rgcca_res, rgcca_k$astar)
-      rgcca_k$call$blocks <- add_variables_data(rgcca_res, rgcca_k$call$blocks)
+  f <- function(block_to_predict, inds) {
+    rgcca_k <-
+      set_rgcca(rgcca_res,
+        scale = scale,
+        scale_block = scale_block,
+        tol = tol,
+        scheme = scheme,
+        superblock = FALSE,
+        inds = inds,
+        NA_method = NA_method,
+        response = response,
+        bias = bias,
+        tau = tau,
+        ncomp = ncomp,
+        sparsity = sparsity,
+      ) # Rgcca on all individuals but inds
+    #
+    rgcca_k_saved <- rgcca_k
+    rgcca_k$a <- add_variables_submodel(rgcca_res, rgcca_k$a)
+    rgcca_k$astar <- add_variables_submodel(rgcca_res, rgcca_k$astar)
+    rgcca_k$call$blocks <- add_variables_data(rgcca_res, rgcca_k$call$blocks)
 
-      center_att <- add_variables_attr(rgcca_res, lapply(rgcca_k_saved$call$blocks, function(i) attr(i, "scaled:center")), type = "center")
-      scale_attr <- add_variables_attr(rgcca_res, lapply(rgcca_k_saved$call$blocks, function(i) attr(i, "scaled:scale")))
-
-      for (i in seq(length(rgcca_k$call$blocks))) {
-        attr(rgcca_k$call$blocks[[i]], "scaled:center") <- center_att[[i]]
-        attr(rgcca_k$call$blocks[[i]], "scaled:scale") <- scale_attr[[i]]
-      }
-      # Necessite les scale et les center en sortie
-      respred <- rgcca_predict(
-        rgcca_k,
-        X = lapply(bigA, function(x) x[inds, , drop = FALSE]),
-        task = task,
-        prediction_model = prediction_model,
-        block_to_predict = block_to_predict,
-        X_scaled = FALSE
+    center_att <- add_variables_attr(
+      rgcca_res,
+      lapply(
+        rgcca_k_saved$call$blocks,
+        function(i) attr(i, "scaled:center")
+      ),
+      type = "center"
+    )
+    scale_attr <- add_variables_attr(
+      rgcca_res,
+      lapply(
+        rgcca_k_saved$call$blocks,
+        function(i) attr(i, "scaled:scale")
       )
+    )
+
+    for (i in seq(length(rgcca_k$call$blocks))) {
+      attr(rgcca_k$call$blocks[[i]], "scaled:center") <- center_att[[i]]
+      attr(rgcca_k$call$blocks[[i]], "scaled:scale") <- scale_attr[[i]]
     }
-  )
+    # Necessite les scale et les center en sortie
+    respred <- rgcca_predict(
+      rgcca_k,
+      X = lapply(bigA, function(x) x[inds, , drop = FALSE]),
+      task = task,
+      prediction_model = prediction_model,
+      block_to_predict = block_to_predict,
+      X_scaled = FALSE
+    )
+  }
   if (NA_method != "complete") {
     bigA <- rgcca_res$call$raw
   }
@@ -149,11 +161,6 @@ rgcca_cv_k <- function(rgcca_res,
   }
   if (validation == "test") {
     stop("to be implemented")
-    # inds <- sample(
-    #     nrow(bigA[[1]]),
-    #     size = nrow(bigA[[1]]) * 0.3)
-    # scores <- list(eval(f)())
-    # preds <- scores$res
   } else {
     varlist <- c(ls(getNamespace("RGCCA")))
     # get the parameter dot-dot-dot
@@ -181,7 +188,7 @@ rgcca_cv_k <- function(rgcca_res,
       seq(length(v_inds)),
       function(i) {
         inds <- unlist(v_inds[i])
-        eval(f)()
+        f(block_to_predict, inds)
       },
       n_cores = n_cores,
       envir = environment(),
@@ -200,7 +207,7 @@ rgcca_cv_k <- function(rgcca_res,
   list_res <- lapply(scores, function(x) {
     return(x$res)
   })
-  list_class.fit <- lapply(scores, function(x) {
+  list_class_fit <- lapply(scores, function(x) {
     return(x$class.fit)
   })
 
@@ -232,7 +239,8 @@ rgcca_cv_k <- function(rgcca_res,
       scores = scores, preds = preds,
       rgcca_res = rgcca_res,
       list_scores = list_scores,
-      list_pred = list_pred, list_rgcca = list_rgcca, list_class = list_class.fit, list_res = list_res
+      list_pred = list_pred, list_rgcca = list_rgcca,
+      list_class = list_class_fit, list_res = list_res
     ),
     class = "cv"
   )

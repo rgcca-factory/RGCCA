@@ -31,11 +31,14 @@ rgcca_cv_k(
 \arguments{
 \item{rgcca_res}{A fitted RGCCA object (see  \code{\link[RGCCA]{rgcca}}).}
 
-\item{validation}{A character for the type of validation among "loo", "kfold", "test".}
+\item{validation}{A character for the type of validation among "loo",
+"kfold", "test".}
 
-\item{task}{A character corresponding to the prediction task among : regression or classification}
+\item{task}{A character corresponding to the prediction task among:
+regression or classification}
 
-\item{prediction_model}{A character giving the function used to compare the trained and the tested models}
+\item{prediction_model}{A character giving the function used to compare the
+trained and the tested models}
 
 \item{X_scaled}{A boolean indicating if the blocks in X have already been
 scaled.}
@@ -84,22 +87,24 @@ or by random initialisation ("random") (default: "svd").}
 \item{bias}{A logical value for biaised (\eqn{1/n}) or unbiaised
 (\eqn{1/(n-1)}) estimator of the var/cov (default: bias = TRUE).}
 
-\item{connection}{A symmetric matrix (J*J) that describes the relationships between
-blocks.}
+\item{connection}{A symmetric matrix (\eqn{J \times J}{J x J}) that
+describes the relationships between blocks.}
 
 \item{ncomp}{Vector of length J indicating the number of block components
 for each block.}
 
-\item{tau}{Either a 1*J vector or a max(ncomp)*J matrix containing
+\item{tau}{Either a \eqn{1 \times J}{1 x J} vector or a
+\eqn{\mathrm{max}(ncomp) \times J}{max(ncomp) x J} matrix containing
 the values of the regularization parameters (default: tau = 1, for each
 block and each dimension). The regularization parameters varies from 0
 (maximizing the correlation) to 1 (maximizing the covariance). If
-tau = "optimal" the regularization paramaters are estimated for each block
+tau = "optimal" the regularization parameters are estimated for each block
 and each dimension using the Schafer and Strimmer (2005) analytical formula.
-If tau is a 1*J vector, tau[j] is identical across the dimensions
-of block Xj. If tau is a matrix, tau[k, j] is associated with
-X_jk (kth residual matrix for block j). The regularization parameters can
-also be estimated using \link{rgcca_permutation} or \link{rgcca_cv}.}
+If tau is a \eqn{1 \times J}{1 x J} vector, tau[j] is identical across the
+dimensions of block \eqn{\mathbf{X}_j}{Xj}. If tau is a matrix, tau[k, j]
+is associated with \eqn{\mathbf{X}_{jk}}{Xjk} (kth residual matrix for
+block j). The regularization parameters can also be estimated using
+\link{rgcca_permutation} or \link{rgcca_cv}.}
 
 \item{sparsity}{Either a \eqn{1*J} vector or a \eqn{max(ncomp) * J} matrix
 encoding the L1 constraints applied to the outer weight vectors. The amount
@@ -126,10 +131,12 @@ Uses cross-validation to evaluate predictive model of RGCCA
 }
 \examples{
 data("Russett")
-blocks = list(agriculture = Russett[, seq(3)], industry = Russett[, 4:5],
-    politic = Russett[, 6:11] )
-rgcca_out = rgcca(blocks, response = 3,superblock=FALSE)
-res=rgcca_cv_k(rgcca_out, validation = "kfold", k = 5, n_cores = 1)
+blocks <- list(
+  agriculture = Russett[, seq(3)], industry = Russett[, 4:5],
+  politic = Russett[, 6:11]
+)
+rgcca_out <- rgcca(blocks, response = 3, superblock = FALSE)
+res <- rgcca_cv_k(rgcca_out, validation = "kfold", k = 5, n_cores = 1)
 rgcca_cv_k(rgcca_out, n_cores = 1)
 }
 \seealso{

@@ -6,13 +6,14 @@
 #' The matrices \eqn{X_1, X_2, ..., X_J} must have the same number of rows, but
 #' may (and usually will) have different numbers of columns. Blocks are not
 #' necessarily fully connected within the SGCCA framework. Hence the use of
-#' SGCCA requires the construction (user specified) of a design matrix (\eqn{connection})
-#' that characterizes the connections between blocks. Elements of the symmetric
-#' design matrix \eqn{connection = (c_{jk})} are equal to 1 if block \eqn{j} and block
-#' \eqn{k} are connected, and 0 otherwise. The SGCCA algorithm is very similar
-#' to the RGCCA algorithm and keeps the same monotone convergence properties
-#' (i.e. the bounded criteria to be maximized increases at each step of the
-#' iterative procedure and hits at convergence a stationary point).
+#' SGCCA requires the construction (user specified) of a design matrix
+#' (\eqn{connection}) that characterizes the connections between blocks.
+#' Elements of the symmetric design matrix \eqn{connection = (c_{jk})} are
+#' equal to 1 if block \eqn{j} and block \eqn{k} are connected, and 0 otherwise.
+#' The SGCCA algorithm is very similar to the RGCCA algorithm and keeps the same
+#' monotone convergence properties (i.e. the bounded criteria to be maximized
+#' increases at each step of the iterative procedure and hits at convergence
+#' a stationary point).
 #' Moreover, using a deflation strategy, sgcca() enables the computation of
 #' several SGCCA block components (specified by ncomp) for each block. Block
 #' components for each block are guaranteed to be orthogonal when using this
@@ -38,8 +39,8 @@
 #' matrix that contains the analysis components for the corresponding block.}
 #' @return \item{a}{A list of \eqn{J} elements. Each element of \eqn{a} is a
 #' matrix that contains the outer weight vectors for each block.}
-#' @return \item{astar}{A list of \eqn{J} elements. Each element of astar is a
-#' matrix defined as Y[[j]][, h] = blocks[[j]]\%*\%astar[[j]][, h]}
+#' @return \item{astar}{A list of \eqn{J} elements. Each column of astar[[j]] is
+#' a vector such that Y[[j]][, h] = blocks[[j]] \%*\% astar[[j]][, h].}
 #' @return \item{crit}{A vector of integer that contains for each component the
 #' values of the analysis criteria across iterations.}
 #' @return \item{AVE}{A list of numerical values giving the indicators of model
@@ -157,7 +158,8 @@ sgcca <- function(blocks, connection = 1 - diag(length(blocks)),
                   sparsity = rep(1, length(blocks)),
                   ncomp = rep(1, length(blocks)), scheme = "centroid",
                   init = "svd", bias = TRUE, tol = .Machine$double.eps,
-                  verbose = FALSE, quiet = FALSE, na.rm = TRUE, superblock = FALSE) {
+                  verbose = FALSE, quiet = FALSE, na.rm = TRUE,
+                  superblock = FALSE) {
 
   # ndefl number of deflation per block
   ndefl <- ncomp - 1
@@ -197,14 +199,14 @@ sgcca <- function(blocks, connection = 1 - diag(length(blocks)),
   # sgcca with 1 component per block #
   ####################################
   if (is.vector(sparsity)) {
-    sgcca.result <- sgccak(blocks, connection,
+    sgcca_result <- sgccak(blocks, connection,
       sparsity = sparsity,
       scheme = scheme, init = init, bias = bias,
       tol = tol, verbose = verbose, quiet = quiet,
       na.rm = na.rm
     )
   } else {
-    sgcca.result <- sgccak(blocks, connection,
+    sgcca_result <- sgccak(blocks, connection,
       sparsity = sparsity[1, ],
       scheme = scheme, init = init, bias = bias,
       tol = tol, verbose = verbose, quiet = quiet,
@@ -213,15 +215,15 @@ sgcca <- function(blocks, connection = 1 - diag(length(blocks)),
   }
 
   for (b in seq_len(J)) {
-    Y[[b]][, 1] <- sgcca.result$Y[, b, drop = FALSE]
-    a[[b]][, 1] <- sgcca.result$a[[b]]
+    Y[[b]][, 1] <- sgcca_result$Y[, b, drop = FALSE]
+    a[[b]][, 1] <- sgcca_result$a[[b]]
   }
   ifelse(!superblock,
     astar <- a,
     astar[, 1] <- a[[J]][, 1, drop = FALSE]
   )
-  AVE_inner[1] <- sgcca.result$AVE_inner
-  crit[[1]] <- sgcca.result$crit
+  AVE_inner[1] <- sgcca_result$AVE_inner
+  crit[[1]] <- sgcca_result$crit
 
   ##############################################
   #               If any ncomp > 1             #
@@ -245,35 +247,36 @@ sgcca <- function(blocks, connection = 1 - diag(length(blocks)),
 
       # Apply deflation
       if (!superblock) {
-        defl.result <- defl.select(sgcca.result$Y, R, ndefl, n - 1, J, na.rm = na.rm)
-        R <- defl.result$resdefl
+        defl_result <- defl_select(sgcca_result$Y, R, ndefl, n - 1, J,
+          na.rm = na.rm
+        )
+        R <- defl_result$resdefl
         for (b in seq_len(J)) {
-          P[[b]][, n - 1] <- defl.result$pdefl[[b]]
+          P[[b]][, n - 1] <- defl_result$pdefl[[b]]
         }
       }
       if (superblock) {
-        defl.result <- deflation(R[[J]], sgcca.result$Y[, J])
-        R[[J]] <- defl.result$R
-        P[, n - 1] <- defl.result$p
-        cumsum_pjs <- cumsum(pjs)[1:(J - 1)]
-        inf_pjs <- c(0, cumsum_pjs[1:(J - 2)]) + 1
-        for (b in seq_len(J - 1))
-        {
-          R[[b]] <- R[[J]][, c(inf_pjs[b]:cumsum_pjs[b]), drop = FALSE]
+        defl_result <- deflation(R[[J]], sgcca_result$Y[, J])
+        R[[J]] <- defl_result$R
+        P[, n - 1] <- defl_result$p
+        cumsum_pjs <- cumsum(pjs)[seq(J - 1)]
+        inf_pjs <- c(0, cumsum_pjs[seq(J - 2)]) + 1
+        for (b in seq_len(J - 1)) {
+          R[[b]] <- R[[J]][, seq(inf_pjs[b], cumsum_pjs[b]), drop = FALSE]
           rownames(R[[b]]) <- rownames(R[[b]])
-          colnames(R[[b]]) <- colnames(R[[J]])[c(inf_pjs[b]:cumsum_pjs[b])]
+          colnames(R[[b]]) <- colnames(R[[J]])[seq(inf_pjs[b], cumsum_pjs[b])]
         }
       }
 
       if (is.vector(sparsity)) {
-        sgcca.result <- sgccak(R, connection,
+        sgcca_result <- sgccak(R, connection,
           sparsity = sparsity,
           scheme = scheme, init = init, bias = bias,
           tol = tol, verbose = verbose, quiet = quiet,
           na.rm = na.rm
         )
       } else {
-        sgcca.result <- sgccak(R, connection,
+        sgcca_result <- sgccak(R, connection,
           sparsity = sparsity[n, ],
           scheme = scheme, init = init, bias = bias,
           tol = tol, verbose = verbose, quiet = quiet,
@@ -281,19 +284,19 @@ sgcca <- function(blocks, connection = 1 - diag(length(blocks)),
         )
       }
 
-      AVE_inner[n] <- sgcca.result$AVE_inner
-      crit[[n]] <- sgcca.result$crit
+      AVE_inner[n] <- sgcca_result$AVE_inner
+      crit[[n]] <- sgcca_result$crit
 
 
       for (b in seq_len(J)) {
-        Y[[b]][, n] <- sgcca.result$Y[, b]
-        a[[b]][, n] <- sgcca.result$a[[b]]
+        Y[[b]][, n] <- sgcca_result$Y[, b]
+        a[[b]][, n] <- sgcca_result$a[[b]]
         if (!superblock) {
-          astar[[b]][, n] <- sgcca.result$a[[b]] -
+          astar[[b]][, n] <- sgcca_result$a[[b]] -
             astar[[b]][, (1:(n - 1)), drop = F] %*%
             drop(crossprod(a[[b]][, n], P[[b]][, 1:(n - 1), drop = FALSE]))
         } else {
-          astar[, n] <- sgcca.result$a[[J]] -
+          astar[, n] <- sgcca_result$a[[J]] -
             astar[, (1:(n - 1)), drop = F] %*%
             drop(t(a[[J]][, n]) %*% P[, 1:(n - 1), drop = F])
         }
@@ -301,7 +304,7 @@ sgcca <- function(blocks, connection = 1 - diag(length(blocks)),
 
       if (!quiet) {
         for (q in which(n < ndefl)) {
-          if (sum(sgcca.result$a[[q]] != 0) <= 1) {
+          if (sum(sgcca_result$a[[q]] != 0) <= 1) {
             warning(sprintf("Deflation failed because only one variable was
                             selected for block ", q, "! \n"))
           }
@@ -312,7 +315,8 @@ sgcca <- function(blocks, connection = 1 - diag(length(blocks)),
 
   for (b in seq_len(J)) {
     # Average Variance Explained (AVE) per block
-    AVE_X[[b]] <- apply(cor(blocks[[b]], Y[[b]], use = "pairwise.complete.obs")^2, 2,
+    AVE_X[[b]] <- apply(
+      cor(blocks[[b]], Y[[b]], use = "pairwise.complete.obs")^2, 2,
       mean,
       na.rm = TRUE
     )

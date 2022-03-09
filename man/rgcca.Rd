@@ -25,9 +25,11 @@ rgcca(
 )
 }
 \arguments{
-\item{blocks}{A list that contains the J blocks of variables X1, X2, ..., XJ.
-Block Xj is a matrix of dimension n x p_j where n is the number of
-observations and p_j the number of variables.}
+\item{blocks}{A list that contains the J blocks of variables
+\eqn{\mathbf{X_1}, \mathbf{X_2}, ..., \mathbf{X_J}}{X1, X2, ..., XJ}.
+Block \eqn{\mathbf{X}_j}{Xj} is a matrix of dimension
+\eqn{n \times p_j}{n x p_j} where n is the number of
+observations and \eqn{p_j} the number of variables.}
 
 \item{method}{A character string indicating the multi-block component
 method to consider: rgcca, sgcca, pca, spca, pls, spls, cca,
@@ -47,8 +49,8 @@ Otherwise the blocks are not scaled. If standardization is
 applied (scale = TRUE), the block scaling is applied on the result of the
 standardization.}
 
-\item{connection}{A symmetric matrix (J*J) that describes the relationships between
-blocks.}
+\item{connection}{A symmetric matrix (\eqn{J \times J}{J x J}) that
+describes the relationships between blocks.}
 
 \item{scheme}{Character string or a function giving the scheme function for
 covariance maximization among "horst" (the identity function), "factorial"
@@ -60,16 +62,18 @@ covariance maximization among "horst" (the identity function), "factorial"
 \item{ncomp}{Vector of length J indicating the number of block components
 for each block.}
 
-\item{tau}{Either a 1*J vector or a max(ncomp)*J matrix containing
+\item{tau}{Either a \eqn{1 \times J}{1 x J} vector or a
+\eqn{\mathrm{max}(ncomp) \times J}{max(ncomp) x J} matrix containing
 the values of the regularization parameters (default: tau = 1, for each
 block and each dimension). The regularization parameters varies from 0
 (maximizing the correlation) to 1 (maximizing the covariance). If
-tau = "optimal" the regularization paramaters are estimated for each block
+tau = "optimal" the regularization parameters are estimated for each block
 and each dimension using the Schafer and Strimmer (2005) analytical formula.
-If tau is a 1*J vector, tau[j] is identical across the dimensions
-of block Xj. If tau is a matrix, tau[k, j] is associated with
-X_jk (kth residual matrix for block j). The regularization parameters can
-also be estimated using \link{rgcca_permutation} or \link{rgcca_cv}.}
+If tau is a \eqn{1 \times J}{1 x J} vector, tau[j] is identical across the
+dimensions of block \eqn{\mathbf{X}_j}{Xj}. If tau is a matrix, tau[k, j]
+is associated with \eqn{\mathbf{X}_{jk}}{Xjk} (kth residual matrix for
+block j). The regularization parameters can also be estimated using
+\link{rgcca_permutation} or \link{rgcca_cv}.}
 
 \item{sparsity}{Either a \eqn{1*J} vector or a \eqn{max(ncomp) * J} matrix
 encoding the L1 constraints applied to the outer weight vectors. The amount
@@ -93,8 +97,8 @@ or by random initialisation ("random") (default: "svd").}
 
 \item{tol}{The stopping value for the convergence of the algorithm.}
 
-\item{response}{Numerical value giving the position of the response block. When
-the response argument is filled the supervised mode is automatically
+\item{response}{Numerical value giving the position of the response block.
+When the response argument is filled the supervised mode is automatically
 activated.}
 
 \item{superblock}{TRUE if a superblock is added, FALSE otherwise (deflation
@@ -123,8 +127,8 @@ block.}
 \item{a}{List of \eqn{J} elements. Each element of the list \eqn{a}
 is a matrix of block weight vectors for the corresponding block.}
 
-\item{astar}{List of \eqn{J} elements. Each element of astar is a
-matrix defined as Y[[j]][, h] = A[[j]]\%*\%astar[[j]][, h].}
+\item{astar}{List of \eqn{J} elements. Each column of astar[[j]] is a
+vector such that Y[[j]][, h] = blocks[[j]] \%*\% astar[[j]][, h].}
 
 \item{tau}{Regularization parameters used during the analysis.}
 
@@ -196,31 +200,41 @@ iterative partial least squares algorithm) described in (Tenenhaus et al,
 ####################
 # Create the dataset
 data(Russett)
-blocks = list(agriculture = Russett[, seq(3)],
-    industry = Russett[, 4:5],
-    politic = Russett[, 6:11])
+blocks <- list(
+  agriculture = Russett[, seq(3)],
+  industry = Russett[, 4:5],
+  politic = Russett[, 6:11]
+)
 
 # Blocks are fully connected, factorial scheme and tau =1 for all blocks is
 # used by default
-fit.rgcca = rgcca(blocks=blocks, method = "rgcca", connection = 1-diag(3),
-                  scheme = "factorial", tau = rep(1, 3))
+fit.rgcca <- rgcca(
+  blocks = blocks, method = "rgcca", connection = 1 - diag(3),
+  scheme = "factorial", tau = rep(1, 3)
+)
 print(fit.rgcca)
 plot(fit.rgcca, type = "weight", block = 3)
-politic = as.vector(apply(Russett[, 9:11], 1, which.max))
-plot(fit.rgcca, type = "sample", block = 1:2,
-     comp = rep(1, 2), resp = politic)
+politic <- as.vector(apply(Russett[, 9:11], 1, which.max))
+plot(fit.rgcca,
+  type = "sample", block = 1:2,
+  comp = rep(1, 2), resp = politic
+)
 
 ############################################
 # Example 2: RGCCA and multiple components #
 ############################################
-fit.rgcca = rgcca(blocks, method = "rgcca",
-                  connection = C, superblock = FALSE,
-                  tau = rep(1, 3), ncomp = c(2, 2, 2),
-                  scheme = "factorial", verbose = TRUE)
+fit.rgcca <- rgcca(blocks,
+  method = "rgcca",
+  connection = C, superblock = FALSE,
+  tau = rep(1, 3), ncomp = c(2, 2, 2),
+  scheme = "factorial", verbose = TRUE
+)
 
-politic = as.vector(apply(Russett[, 9:11], 1, which.max))
-plot(fit.rgcca, type = "sample", block = 1:2,
-     comp = rep(1, 2), resp = politic)
+politic <- as.vector(apply(Russett[, 9:11], 1, which.max))
+plot(fit.rgcca,
+  type = "sample", block = 1:2,
+  comp = rep(1, 2), resp = politic
+)
 
 plot(fit.rgcca, type = "ave")
 plot(fit.rgcca, type = "weight", block = 1)
@@ -232,16 +246,18 @@ plot(fit.rgcca, type = "loadings")
 
 # Tune the model to find the best sparsity coefficients (all the blocks are
 # connected together)
-perm.out = rgcca_permutation(blocks, n_cores = 1,
-                             par_type = "sparsity", n_perms = 10)
+perm.out <- rgcca_permutation(blocks,
+  n_cores = 1,
+  par_type = "sparsity", n_perms = 10
+)
 print(perm.out)
 plot(perm.out)
 
-fit.sgcca = rgcca(blocks, sparsity = perm.out$bestpenalties)
+fit.sgcca <- rgcca(blocks, sparsity = perm.out$bestpenalties)
 plot(fit.sgcca, type = "ave")
 
 # Select the most significant variables
-b = bootstrap(fit.sgcca, n_cores = 1, n_boot = 100)
+b <- bootstrap(fit.sgcca, n_cores = 1, n_boot = 100)
 plot(b, n_cores = 1)
 
 ##############################
@@ -249,15 +265,17 @@ plot(b, n_cores = 1)
 ##############################
 # Tune the model for explaining the politic block
 # (politic connected to the two other blocks)
-cv.out = rgcca_cv(blocks, response = 3, ncomp = 2, n_cores = 1)
+cv.out <- rgcca_cv(blocks, response = 3, ncomp = 2, n_cores = 1)
 print(cv.out)
 plot(cv.out)
 
-fit.rgcca = rgcca(blocks, response = 3, ncomp = 2,
-                  tau = cv.out$bestpenalties)
+fit.rgcca <- rgcca(blocks,
+  response = 3, ncomp = 2,
+  tau = cv.out$bestpenalties
+)
 plot(fit.rgcca, type = "both")
 
-b = bootstrap(fit.rgcca, n_cores = 1, n_boot = 10)
+b <- bootstrap(fit.rgcca, n_cores = 1, n_boot = 10)
 plot(b, n_cores = 1)
 }
 

@@ -55,7 +55,8 @@ colors()) or RGB code ("#FFFFFF").}
 
 \item{cex_sub}{An integer for the size of the subtitle}
 
-\item{cex_point}{An integer for the size of the points or the text in the plot}
+\item{cex_point}{An integer for the size of the points or the text in
+the plot}
 
 \item{cex_lab}{An integer for the size of the axis titles}
 
@@ -68,10 +69,12 @@ Plot the results of a fitted bootstrap object.
 }
 \examples{
 data("Russett")
-blocks = list(agriculture = Russett[, seq(3)],
-              industry = Russett[, 4:5],
-              politic = Russett[, 6:11])
-fit.rgcca = rgcca(blocks, ncomp = 2, method = "rgcca", tau = 1)
-fit.boot = bootstrap(fit.rgcca, n_boot = 20, n_cores = 1)
-plot(fit.boot, type = "weight", block = 1, comp=1)
+blocks <- list(
+  agriculture = Russett[, seq(3)],
+  industry = Russett[, 4:5],
+  politic = Russett[, 6:11]
+)
+fit.rgcca <- rgcca(blocks, ncomp = 2, method = "rgcca", tau = 1)
+fit.boot <- bootstrap(fit.rgcca, n_boot = 20, n_cores = 1)
+plot(fit.boot, type = "weight", block = 1, comp = 1)
 }

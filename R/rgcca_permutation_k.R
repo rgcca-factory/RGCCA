@@ -1,12 +1,5 @@
 # An internal function used by rgcca_permutation() to perform multiple s/rgcca
 # on permuted blocks
-#
-# data("Russett")
-# blocks = list(agriculture = Russett[, seq(3)],
-#               industry = Russett[, 4:5],
-#               politic = Russett[, 6:11])
-#
-# rgcca_permutation_k(blocks)
 rgcca_permutation_k <- function(blocks,
                                 method = "rgcca",
                                 scale = TRUE,

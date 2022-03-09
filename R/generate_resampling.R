@@ -65,8 +65,9 @@
 #' kept for each bootstrap sample.}
 #' @return \item{sd_null}{A list of size the number of block
 #' containing the variables that were removed from each block for all the
-#' bootstrap samples. Variables are removed if they appear to be of null variance
-#' in at least one bootstrap sample. If no variable is removed, return NULL.}
+#' bootstrap samples. Variables are removed if they appear to be of null
+#' variance in at least one bootstrap sample. If no variable is removed,
+#' return NULL.}
 #' @title Generate bootstrap samples.
 #' @keywords internal
 
@@ -91,7 +92,10 @@ generate_resampling <- function(rgcca_res, n_boot, balanced = TRUE,
   # of a variable. This threshold is computed so that the probability to sample
   # only this value is below `pval`. This probability is corrected by the number
   # of bootstrap samples and the number of variables.
-  risky_threshold <- max(1 / N, (pval / (n_boot * sum(sapply(raw_blocks, NCOL))))^(1 / N))
+  risky_threshold <- max(
+    1 / N,
+    (pval / (n_boot * sum(sapply(raw_blocks, NCOL))))^(1 / N)
+  )
 
   # Identify variables with value having an observed proportion higher than
   # risky_threshold.
@@ -135,7 +139,7 @@ generate_resampling <- function(rgcca_res, n_boot, balanced = TRUE,
             raw_blocks_filtered,
             function(x) {
               y <- x[idx, , drop = FALSE]
-              rownames(y) <- paste("S", 1:length(idx))
+              rownames(y) <- paste("S", seq_along(idx))
               return(y)
             }
           )
@@ -165,7 +169,8 @@ generate_resampling <- function(rgcca_res, n_boot, balanced = TRUE,
       # through all samples, all variables have non null variances.
       sd_null <- NULL
     } else {
-      # If at least one sample have been identified with a null variance variable.
+      # If at least one sample have been identified with a null
+      # variance variable.
       if (!keep_all_variables) {
         # It is allowed to remove variables.
         # Extract the troublesome variables.
@@ -204,13 +209,16 @@ generate_resampling <- function(rgcca_res, n_boot, balanced = TRUE,
           ))
         }
       } else { # It is NOT allowed to remove variables.
-        # Generate at most five different re-sampling until not a single variable
-        # has a null variance.
+        # Generate at most five different re-sampling until not a single
+        # variable has a null variance.
         if (iter > 5) { # Otherwise STOP.
           # Extract the troublesome variables.
           sd_null <- Reduce("rbind", boot_column_sd_null)
           rownames(sd_null) <- NULL
-          sd_null <- apply(sd_null, 2, function(x) unique(names(Reduce("c", x))))
+          sd_null <- apply(
+            sd_null, 2,
+            function(x) unique(names(Reduce("c", x)))
+          )
           sd_null <- mapply(function(x, y) {
             z <- match(x, y)
             names(z) <- x
@@ -240,7 +248,8 @@ generate_resampling <- function(rgcca_res, n_boot, balanced = TRUE,
           if (iter == 0) { # The first time, you define your unbalancedness.
             # Each observed value of the risky variables is replaced by
             # `1 - the proportion of this observed value`, normalized so that
-            # the sum through all the observations (for each variable) equals `1`.
+            # the sum through all the observations (for each variable)
+            # equals `1`.
             prob <- sapply(
               raw_blocks_filtered,
               function(block) {
@@ -256,10 +265,13 @@ generate_resampling <- function(rgcca_res, n_boot, balanced = TRUE,
             # The sampling probability for each observation is associated with
             # the maximum value of the previous matrix through all risky
             # variables (again normalize so that `sum(prob) = 1`). Thus
-            # the sampling probability of an observation is more of less associated
-            # with `1 - its proportion in the variable where this observation is in
-            # the lowest frequent group (through all risky variables)`.
-            prob <- apply(Reduce("cbind", prob), 1, max) / sum(apply(Reduce("cbind", prob), 1, max))
+            # the sampling probability of an observation is more of less
+            # associated with `1 - its proportion in the variable where this
+            # observation is in the lowest frequent group (through all
+            # risky variables)`.
+            prob <- apply(Reduce("cbind", prob), 1, max) / sum(
+              apply(Reduce("cbind", prob), 1, max)
+            )
           }
         }
         iter <- iter + 1

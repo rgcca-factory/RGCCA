@@ -22,7 +22,7 @@ select_analysis(
 \item{blocks}{List of blocks.}
 
 \item{connection}{Symmetric matrix (J*J) that describes the relationships
-between blocks. Elements of the connection matrix must be positive ; but
+between blocks. Elements of the connection matrix must be positive; but
 usually equal to 1 if block \eqn{j} and block \eqn{k} are connected, and 0
 otherwise.}
 
@@ -53,8 +53,8 @@ sumcov-1, sumcov-2, sumcov, sabscov, sabscov-1, sabscov-2.}
 
 \item{quiet}{Logical value indicating if warning messages are reported.}
 
-\item{response}{Numerical value giving the position of the response block. When
-the response argument is filled the supervised mode is automatically
+\item{response}{Numerical value giving the position of the response block.
+When the response argument is filled the supervised mode is automatically
 activated.}
 }
 \value{

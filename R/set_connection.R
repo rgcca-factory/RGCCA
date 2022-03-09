@@ -18,9 +18,9 @@ set_connection <- function(blocks,
   } else {
     if (!is.null(response)) {
       connection <- matrix(0, J, J)
-      Resp <- response
-      notResp <- (1:J)[-Resp]
-      connection[notResp, Resp] <- connection[Resp, notResp] <- 1
+      resp <- response
+      not_resp <- (1:J)[-resp]
+      connection[not_resp, resp] <- connection[resp, not_resp] <- 1
     } else {
       connection <- 1 - diag(J)
     }

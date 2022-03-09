@@ -40,16 +40,17 @@
 #' "sparsity" and "tau".
 #' @param par_length A numeric value indicating the number of sets of penalties
 #' to be tested (if par_value = NULL).
-#' @param par_value Sets of penalties to consider during the permutation process.
-#' If par_value =NULL, it takes 10 sets between min values (0 for RGCCA and
+#' @param par_value Sets of penalties to consider during the permutation
+#' process.
+#' If par_value = NULL, it takes 10 sets between min values (0 for RGCCA and
 #' 1/sqrt(ncol(Xj)) for SGCCA) and 1. Otherwise, it could be either (i) A matrix
 #' of dimension IxJ (where I the number of combinations to be tested and J the
 #' number of blocks), or (ii) a vector of length J length specifying the maximal
 #' values to consider for each block. In that case, par_length combinations
 #' are tested from min values to the maximal values specified by this vector.
-#' (iii) a numerical value giving the same maximal value to be considered for each
-#' block. In that case par_length combinations are tested from min values to
-#' this single maximal value.
+#' (iii) a numerical value giving the same maximal value to be considered for
+#' each block. In that case par_length combinations are tested from min values
+#' to this single maximal value.
 #' @param n_perms Number of permutations for each set of constraints (default
 #' is 20).
 #' @param verbose Logical value indicating if the progress of the
@@ -240,7 +241,8 @@ rgcca_permutation <- function(blocks, par_type, par_value = NULL,
                               par_length = 10, n_perms = 20,
                               n_cores = parallel::detectCores() - 1,
                               quiet = TRUE, scale = TRUE, scale_block = TRUE,
-                              method = NULL, connection = 1 - diag(length(blocks)),
+                              method = NULL,
+                              connection = 1 - diag(length(blocks)),
                               scheme = "factorial",
                               ncomp = rep(1, length(blocks)),
                               tau = rep(1, length(blocks)),
@@ -300,13 +302,13 @@ rgcca_permutation <- function(blocks, par_type, par_value = NULL,
     ncols <- c(ncol_block, sum(ncol_block))
     names(ncols) <- c(names(ncol_block), "superblock")
     J <- length(ncols)
-    matConnection <- matrix(0, J, J)
-    matConnection[1:(J - 1), J] <- 1
-    matConnection[J, 1:(J - 1)] <- 1
-    rownames(matConnection) <- colnames(matConnection) <- names(ncols)
+    mat_connection <- matrix(0, J, J)
+    mat_connection[1:(J - 1), J] <- 1
+    mat_connection[J, 1:(J - 1)] <- 1
+    rownames(mat_connection) <- colnames(mat_connection) <- names(ncols)
     call <- list(
       method = method, par_type = par_type, n_perms = n_perms,
-      quiet = quiet, connection = matConnection,
+      quiet = quiet, connection = mat_connection,
       NA_method = NA_method, tol = tol, scheme = scheme,
       scale = scale, scale_block = scale_block,
       superblock = superblock, blocks = blocks
@@ -329,13 +331,19 @@ rgcca_permutation <- function(blocks, par_type, par_value = NULL,
     # Selecting the minimal value
     if (par_type == "sparsity") {
       if (!tolower(method) %in% c("spls", "sgcca")) {
-        warning("par_type = 'sparsity' but sparsity is not required... SGCCA is performed.")
+        warning(paste0(
+          "par_type = 'sparsity' but sparsity is not required... ",
+          "SGCCA is performed."
+        ))
       }
       method <<- "sgcca"
       min_spars <<- sapply(ncols, function(x) 1 / sqrt(x))
     } else {
       if (tolower(method) %in% c("spls", "sgcca")) {
-        warning("par_type = 'tau' but sparsity is required... RGCCA is performed.")
+        warning(paste0(
+          "par_type = 'tau' but sparsity is required... ",
+          "RGCCA is performed."
+        ))
       }
       method <<- "rgcca"
       min_spars <<- sapply(ncols, function(x) 0)
@@ -344,7 +352,9 @@ rgcca_permutation <- function(blocks, par_type, par_value = NULL,
 
     if (is.null(par_value)) {
       par_value <- set_spars()
-    } else if ("data.frame" %in% class(par_value) || "matrix" %in% class(par_value)) {
+    } else if (
+      "data.frame" %in% class(par_value) || "matrix" %in% class(par_value)
+    ) {
       if (par_type == "tau") {
         par_value <- t(sapply(
           seq(NROW(par_value)),
@@ -517,7 +527,7 @@ rgcca_permutation <- function(blocks, par_type, par_value = NULL,
     return(z)
   })
 
-  rownames(par) <- 1:NROW(par)
+  rownames(par) <- seq(NROW(par))
   if (superblock) {
     coln <- c(names(blocks), "superblock")
   } else {

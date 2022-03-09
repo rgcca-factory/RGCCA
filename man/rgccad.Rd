@@ -20,23 +20,27 @@ rgccad(
 )
 }
 \arguments{
-\item{blocks}{A list that contains the J blocks of variables X1, X2, ..., XJ.
-Block Xj is a matrix of dimension n x p_j where n is the number of
-observations and p_j the number of variables.}
+\item{blocks}{A list that contains the J blocks of variables
+\eqn{\mathbf{X_1}, \mathbf{X_2}, ..., \mathbf{X_J}}{X1, X2, ..., XJ}.
+Block \eqn{\mathbf{X}_j}{Xj} is a matrix of dimension
+\eqn{n \times p_j}{n x p_j} where n is the number of
+observations and \eqn{p_j} the number of variables.}
 
-\item{connection}{A symmetric matrix (J*J) that describes the relationships between
-blocks.}
+\item{connection}{A symmetric matrix (\eqn{J \times J}{J x J}) that
+describes the relationships between blocks.}
 
-\item{tau}{Either a 1*J vector or a max(ncomp)*J matrix containing
+\item{tau}{Either a \eqn{1 \times J}{1 x J} vector or a
+\eqn{\mathrm{max}(ncomp) \times J}{max(ncomp) x J} matrix containing
 the values of the regularization parameters (default: tau = 1, for each
 block and each dimension). The regularization parameters varies from 0
 (maximizing the correlation) to 1 (maximizing the covariance). If
-tau = "optimal" the regularization paramaters are estimated for each block
+tau = "optimal" the regularization parameters are estimated for each block
 and each dimension using the Schafer and Strimmer (2005) analytical formula.
-If tau is a 1*J vector, tau[j] is identical across the dimensions
-of block Xj. If tau is a matrix, tau[k, j] is associated with
-X_jk (kth residual matrix for block j). The regularization parameters can
-also be estimated using \link{rgcca_permutation} or \link{rgcca_cv}.}
+If tau is a \eqn{1 \times J}{1 x J} vector, tau[j] is identical across the
+dimensions of block \eqn{\mathbf{X}_j}{Xj}. If tau is a matrix, tau[k, j]
+is associated with \eqn{\mathbf{X}_{jk}}{Xjk} (kth residual matrix for
+block j). The regularization parameters can also be estimated using
+\link{rgcca_permutation} or \link{rgcca_cv}.}
 
 \item{ncomp}{Vector of length J indicating the number of block components
 for each block.}
@@ -74,24 +78,26 @@ matrix that contains the RGCCA block components for the corresponding block.}
 \item{a}{A list of \eqn{J} elements. Each element of the list \eqn{a}
 is a matrix of block weight vectors for the corresponding block.}
 
-\item{astar}{A list of \eqn{J} elements. Each element of astar is a
-matrix defined as Y[[j]][, h] = blocks[[j]]\%*\%astar[[j]][, h].}
+\item{astar}{A list of \eqn{J} elements. Each column of astar[[j]] is
+a vector such that Y[[j]][, h] = blocks[[j]] \%*\% astar[[j]][, h].}
 
-\item{tau}{Either a 1*J vector or a \eqn{\mathrm{max}(ncomp) \times J}
-matrix containing the values of the regularization parameters. tau varies
-from 0 (maximizing the correlation) to 1 (maximizing the covariance).
-If tau = "optimal" the regularization paramaters are estimated for each
+\item{tau}{Either a \eqn{1 \times J}{1 x J} vector or a
+\eqn{\mathrm{max}(ncomp) \times J}{max(ncomp) x J} matrix containing the
+values of the regularization parameters. tau varies from 0
+(maximizing the correlation) to 1 (maximizing the covariance).
+If tau = "optimal" the regularization parameters are estimated for each
 block and each dimension using the Schafer and Strimmer (2005) analytical
-formula. If tau is a \eqn{1\times J} vector, tau[j] is identical across the
-dimensions of block \eqn{\mathbf{X}_j}. If tau is a matrix, tau[k, j] is
-associated with \eqn{\mathbf{X}_{jk}} (\eqn{k}th residual matrix for
-block \eqn{j}). tau can be also estimated using \link{rgcca_permutation}.}
+formula. If tau is a \eqn{1 \times J}{1 x J} vector, tau[j] is identical
+across the dimensions of block \eqn{\mathbf{X}_j}{Xj}. If tau is a matrix,
+tau[k, j] is associated with \eqn{\mathbf{X}_{jk}}{Xjk} (\eqn{k}th residual
+matrix for block \eqn{j}). tau can be also estimated using
+\link{rgcca_permutation}.}
 
 \item{crit}{A list of vector of length max(ncomp). Each vector of
 the list is related to one specific deflation stage and reports the values
 of the criterion for this stage across iterations.}
 
-\item{primal_dual}{A \eqn{1 \times J} vector that contains the
+\item{primal_dual}{A \eqn{1 \times J}{1 x J} vector that contains the
 formulation ("primal" or "dual") applied to each of the \eqn{J} blocks within
 the RGCCA alogrithm.}
 
@@ -105,9 +111,11 @@ generalization of regularized canonical correlation analysis to three or more
 sets of variables.
 }
 \details{
-Given \eqn{J} matrices \eqn{\mathbf{X_1}, \mathbf{X_2}, ..., \mathbf{X_J}}
-that represent \eqn{J} sets of variables observed on the same set of \eqn{n}
-individuals. The matrices \eqn{\mathbf{X_1}, \mathbf{X_2}, ..., \mathbf{X_J}}
+Given \eqn{J} matrices
+\eqn{\mathbf{X_1}, \mathbf{X_2}, ..., \mathbf{X_J}}{X1, X2, ..., XJ} that
+represent \eqn{J} sets of variables observed on the
+same set of \eqn{n} individuals. The matrices
+\eqn{\mathbf{X_1}, \mathbf{X_2}, ..., \mathbf{X_J}}{X1, X2, ..., XJ}
 must have the same number of rows, but may (and usually will) have different
 numbers of columns. The aim of RGCCA is to study  the relationships between
 these \eqn{J} blocks of variables. It constitutes a general framework for
@@ -115,17 +123,21 @@ many multi-block data analysis methods. It combines the power of multi-block
 data analysis methods (maximization of well identified criteria) and the
 flexibility of PLS path modeling (the researcher decides which blocks are
 connected and which are not). Hence, the use of RGCCA requires the
-construction (user specified) of a design matrix, (\eqn{\mathbf{connection}}), that
-characterize the connections between blocks. Elements of the (symmetric)
-design matrix \eqn{\mathbf{connection} = (c_{jk})} is positive ; but usually equal to 1
+construction (user specified) of a design matrix,
+(\eqn{\mathbf{connection}}{connection}), that characterize the connections
+between blocks. Elements of the (symmetric) design matrix
+\eqn{\mathbf{connection} = (c_{jk})}{connection = (c_jk)} is positive;
+but usually equal to 1
 if block \eqn{j} and block \eqn{k} are connected, and 0 otherwise. The
 objective is to find a stationnary point related to the RGCCA optimization
 problem. The function rgccad() implements a globally convergent algorithm
 (i.e. monotone convergence that hits at convergence a stationary point).
-Moreover, depending on the dimensionality of each block \eqn{\mathbf{X}_j},
-\eqn{j = 1, \ldots, J}, the primal (when \eqn{n > p_j}) algorithm or
+Moreover, depending on the dimensionality of each block
+\eqn{\mathbf{X}_j}{Xj},
+\eqn{j = 1, \ldots, J}{j = 1, ..., J}, the primal (when \eqn{n > p_j})
+algorithm or
 the dual (when \eqn{n < p_j}) algorithm is used (see Tenenhaus et al. 2015).
-Moreover, by deflation strategy, rgccad() allow to compute several RGCCA
+Moreover, by deflation strategy, rgccad() allows to compute several RGCCA
 block components (specified by ncomp) for each block. Using deflation, within
 each block, block components are guaranteed to be orthogonal. The so-called
 symmetric deflation is considered in this implementation, i.e. each block is
@@ -140,18 +152,24 @@ The rgcca() function can handle missing values using a NIPALS type algorithm
 # Example 1 #
 #############
 data(Russett)
-X_agric =as.matrix(Russett[,c("gini","farm","rent")])
-X_ind = as.matrix(Russett[,c("gnpr","labo")])
-X_polit = as.matrix(Russett[ , c("demostab", "dictator")])
-blocks = list(X_agric, X_ind, X_polit)
-#Define the design matrix (output = connection)
-connection = matrix(c(0, 0, 1, 0, 0, 1, 1, 1, 0), 3, 3)
-fit.rgcca = rgccad(blocks, connection, tau = c(1, 1, 1), scheme = "factorial")
-lab = as.vector(apply(Russett[, 9:11], 1, which.max))
-plot(fit.rgcca$Y[[1]], fit.rgcca$Y[[2]], col = "white",
-     xlab = "Y1 (Agric. inequality)", ylab = "Y2 (Industrial Development)")
+X_agric <- as.matrix(Russett[, c("gini", "farm", "rent")])
+X_ind <- as.matrix(Russett[, c("gnpr", "labo")])
+X_polit <- as.matrix(Russett[, c("demostab", "dictator")])
+blocks <- list(X_agric, X_ind, X_polit)
+# Define the design matrix (output = connection)
+connection <- matrix(c(0, 0, 1, 0, 0, 1, 1, 1, 0), 3, 3)
+fit.rgcca <- rgccad(blocks, connection,
+  tau = c(1, 1, 1),
+  scheme = "factorial"
+)
+lab <- as.vector(apply(Russett[, 9:11], 1, which.max))
+plot(fit.rgcca$Y[[1]], fit.rgcca$Y[[2]],
+  col = "white",
+  xlab = "Y1 (Agric. inequality)", ylab = "Y2 (Industrial Development)"
+)
 text(fit.rgcca$Y[[1]], fit.rgcca$Y[[2]], rownames(Russett),
-     col = lab, cex = .7)
+  col = lab, cex = .7
+)
 
 ############################################
 # Example 2: RGCCA and mutliple components #
@@ -159,50 +177,69 @@ text(fit.rgcca$Y[[1]], fit.rgcca$Y[[2]], rownames(Russett),
 ############################
 # plot(y1, y2) for (RGCCA) #
 ############################
-fit.rgcca = rgccad(blocks, connection, tau = rep(1, 3), ncomp = c(2, 2, 1),
-                     scheme = "factorial", verbose = TRUE)
+fit.rgcca <- rgccad(blocks, connection,
+  tau = rep(1, 3), ncomp = c(2, 2, 1),
+  scheme = "factorial", verbose = TRUE
+)
 layout(t(1:2))
-plot(fit.rgcca$Y[[1]][, 1], fit.rgcca$Y[[2]][, 1], col = "white",
-xlab = "Y1 (Agric. inequality)", ylab = "Y2 (Industrial Development)",
-main = "Factorial plan of RGCCA")
+plot(fit.rgcca$Y[[1]][, 1], fit.rgcca$Y[[2]][, 1],
+  col = "white",
+  xlab = "Y1 (Agric. inequality)", ylab = "Y2 (Industrial Development)",
+  main = "Factorial plan of RGCCA"
+)
 text(fit.rgcca$Y[[1]][, 1], fit.rgcca$Y[[2]][, 1], rownames(Russett),
-col = lab, cex = .6)
-plot(fit.rgcca$Y[[1]][, 1], fit.rgcca$Y[[1]][, 2], col = "white",
-xlab = "Y1 (Agric. inequality)", ylab = "Y2 (Agric. inequality)",
-main = "Factorial plan of RGCCA")
+  col = lab, cex = .6
+)
+plot(fit.rgcca$Y[[1]][, 1], fit.rgcca$Y[[1]][, 2],
+  col = "white",
+  xlab = "Y1 (Agric. inequality)", ylab = "Y2 (Agric. inequality)",
+  main = "Factorial plan of RGCCA"
+)
 text(fit.rgcca$Y[[1]][, 1], fit.rgcca$Y[[1]][, 2], rownames(Russett),
-col = lab, cex = .6)
+  col = lab, cex = .6
+)
 
 ######################################
 # example 3: RGCCA and leave one out #
 ######################################
-Ytest = matrix(0, 47, 3)
-fit.rgcca = rgccad(blocks, connection, tau = rep(1, 3), ncomp = rep(1, 3),
-                     scheme = "factorial", verbose = TRUE)
-for (i in 1:nrow(Russett)){
- B = lapply(blocks, function(x) x[-i, ])
- B = lapply(B, scale)
+Ytest <- matrix(0, 47, 3)
+fit.rgcca <- rgccad(blocks, connection,
+  tau = rep(1, 3), ncomp = rep(1, 3),
+  scheme = "factorial", verbose = TRUE
+)
+for (i in 1:nrow(Russett)) {
+  B <- lapply(blocks, function(x) x[-i, ])
+  B <- lapply(B, scale)
 
- resB = rgccad(B, connection, tau = rep(1, 3), scheme = "factorial", verbose = FALSE)
- #  look for potential conflicting sign among components within the loo loop.
- for (k in 1:length(B)){
-   if (cor(fit.rgcca$a[[k]], resB$a[[k]]) >= 0)
-     resB$a[[k]] = resB$a[[k]] else resB$a[[k]] = -resB$a[[k]]
- }
- Btest = lapply(blocks, function(x) x[i, ])
- Btest[[1]] = (Btest[[1]]-attr(B[[1]],"scaled:center"))/
-                  (attr(B[[1]],"scaled:scale"))
- Btest[[2]] = (Btest[[2]]-attr(B[[2]],"scaled:center"))/
-                  (attr(B[[2]],"scaled:scale"))
- Btest[[3]] = (Btest[[3]]-attr(B[[3]],"scaled:center"))/
-                  (attr(B[[3]],"scaled:scale"))
- Ytest[i, 1] = Btest[[1]]\%*\%resB$a[[1]]
- Ytest[i, 2] = Btest[[2]]\%*\%resB$a[[2]]
- Ytest[i, 3] = Btest[[3]]\%*\%resB$a[[3]]
+  resB <- rgccad(B, connection,
+    tau = rep(1, 3), scheme = "factorial",
+    verbose = FALSE
+  )
+  # look for potential conflicting sign among components within
+  # the loo loop.
+  for (k in 1:length(B)) {
+    if (cor(fit.rgcca$a[[k]], resB$a[[k]]) >= 0) {
+      resB$a[[k]] <- resB$a[[k]]
+    } else {
+      resB$a[[k]] <- -resB$a[[k]]
+    }
+  }
+  Btest <- lapply(blocks, function(x) x[i, ])
+  Btest[[1]] <- (Btest[[1]] - attr(B[[1]], "scaled:center")) /
+    (attr(B[[1]], "scaled:scale"))
+  Btest[[2]] <- (Btest[[2]] - attr(B[[2]], "scaled:center")) /
+    (attr(B[[2]], "scaled:scale"))
+  Btest[[3]] <- (Btest[[3]] - attr(B[[3]], "scaled:center")) /
+    (attr(B[[3]], "scaled:scale"))
+  Ytest[i, 1] <- Btest[[1]] \%*\% resB$a[[1]]
+  Ytest[i, 2] <- Btest[[2]] \%*\% resB$a[[2]]
+  Ytest[i, 3] <- Btest[[3]] \%*\% resB$a[[3]]
 }
-lab = apply(Russett[, 9:11], 1, which.max)
-plot(fit.rgcca$Y[[1]], fit.rgcca$Y[[2]], col = "white",
-     xlab = "Y1 (Agric. inequality)", ylab = "Y2 (Ind. Development)")
+lab <- apply(Russett[, 9:11], 1, which.max)
+plot(fit.rgcca$Y[[1]], fit.rgcca$Y[[2]],
+  col = "white",
+  xlab = "Y1 (Agric. inequality)", ylab = "Y2 (Ind. Development)"
+)
 text(fit.rgcca$Y[[1]], fit.rgcca$Y[[2]], rownames(Russett), col = lab)
 text(Ytest[, 1], Ytest[, 2], substr(rownames(Russett), 1, 1), col = lab)
 }

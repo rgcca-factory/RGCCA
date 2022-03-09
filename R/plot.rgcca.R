@@ -77,12 +77,13 @@
 #' @importFrom gridExtra grid.arrange
 #' @importFrom ggplot2 ggplot
 #' @export
-plot.rgcca <- function(x, type = "weight", block = length(x$call$blocks), comp = 1:2,
-                       resp = rep(1, NROW(x$Y[[1]])), remove_var = FALSE,
-                       text_var = TRUE, text_ind = TRUE, response_name = "Response",
-                       overlap = TRUE, title = NULL, n_mark = 30,
-                       collapse = FALSE, cex = 1, cex_sub = 12, cex_main = 14,
-                       cex_lab = 12, cex_axis = 10, colors = NULL, ...) {
+plot.rgcca <- function(x, type = "weight", block = length(x$call$blocks),
+                       comp = seq(2), resp = rep(1, NROW(x$Y[[1]])),
+                       remove_var = FALSE, text_var = TRUE, text_ind = TRUE,
+                       response_name = "Response", overlap = TRUE, title = NULL,
+                       n_mark = 30, collapse = FALSE, cex = 1, cex_sub = 12,
+                       cex_main = 14, cex_lab = 12, cex_axis = 10,
+                       colors = NULL, ...) {
   stopifnot(is(x, "rgcca"))
   match.arg(type, c(
     "sample", "corCircle", "both",

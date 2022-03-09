@@ -92,7 +92,9 @@ plot_var_2D <- function(rgcca_res,
     rgcca_res$a <- rgcca_res$a[-length(rgcca_res$a)]
   }
 
-  if (i_block < length(rgcca_res$a) || tolower(rgcca_res$call$method) == "pca") {
+  if (
+    i_block < length(rgcca_res$a) || tolower(rgcca_res$call$method) == "pca"
+  ) {
     rgcca_res$call$superblock <- FALSE
   }
 

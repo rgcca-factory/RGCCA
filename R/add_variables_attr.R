@@ -3,11 +3,13 @@
 add_variables_attr <- function(rgcca_res, w, type = "scale") {
   blocks_all <- list()
   for (x in seq_along(rgcca_res$call$blocks)) {
-    blocks_all[[x]] <- rgcca_res$call$blocks[[x]][intersect(rownames(rgcca_res$call$blocks[[1]]), rownames(w[[1]])), ]
+    blocks_all[[x]] <- rgcca_res$call$blocks[[x]][
+      intersect(rownames(rgcca_res$call$blocks[[1]]), rownames(w[[1]])),
+    ]
   }
 
   blocks_all2 <- lapply(
-    1:length(blocks_all),
+    seq_along(blocks_all),
     function(i) {
       if (is.null(dim(blocks_all[[i]]))) {
         blocks_all[[i]] <- matrix(blocks_all[[i]], ncol = 1)
@@ -40,8 +42,7 @@ add_variables_attr <- function(rgcca_res, w, type = "scale") {
     function(x) {
       # setNames(
 
-      for (i in seq_along(missing_var[[x]]))
-      {
+      for (i in seq_along(missing_var[[x]])) {
         if (type == "scale") {
           0
         } else
@@ -67,7 +68,5 @@ add_variables_attr <- function(rgcca_res, w, type = "scale") {
     }
   })
 
-
-  # names(w) <- names(rgcca_res$call$blocks)
   return(w)
 }

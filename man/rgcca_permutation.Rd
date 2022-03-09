@@ -31,23 +31,26 @@ rgcca_permutation(
 )
 }
 \arguments{
-\item{blocks}{A list that contains the J blocks of variables X1, X2, ..., XJ.
-Block Xj is a matrix of dimension n x p_j where n is the number of
-observations and p_j the number of variables.}
+\item{blocks}{A list that contains the J blocks of variables
+\eqn{\mathbf{X_1}, \mathbf{X_2}, ..., \mathbf{X_J}}{X1, X2, ..., XJ}.
+Block \eqn{\mathbf{X}_j}{Xj} is a matrix of dimension
+\eqn{n \times p_j}{n x p_j} where n is the number of
+observations and \eqn{p_j} the number of variables.}
 
 \item{par_type}{A character string indicating the parameters to tune between
 "sparsity" and "tau".}
 
-\item{par_value}{Sets of penalties to consider during the permutation process.
-If par_value =NULL, it takes 10 sets between min values (0 for RGCCA and
+\item{par_value}{Sets of penalties to consider during the permutation
+process.
+If par_value = NULL, it takes 10 sets between min values (0 for RGCCA and
 1/sqrt(ncol(Xj)) for SGCCA) and 1. Otherwise, it could be either (i) A matrix
 of dimension IxJ (where I the number of combinations to be tested and J the
 number of blocks), or (ii) a vector of length J length specifying the maximal
 values to consider for each block. In that case, par_length combinations
 are tested from min values to the maximal values specified by this vector.
-(iii) a numerical value giving the same maximal value to be considered for each
-block. In that case par_length combinations are tested from min values to
-this single maximal value.}
+(iii) a numerical value giving the same maximal value to be considered for
+each block. In that case par_length combinations are tested from min values
+to this single maximal value.}
 
 \item{par_length}{A numeric value indicating the number of sets of penalties
 to be tested (if par_value = NULL).}
@@ -77,8 +80,8 @@ cpca-4, hpca, maxbet-b, maxbet, maxdiff-b, maxdiff, maxvar-a,
 sabscor, ssqcor, ssqcor, ssqcov-1, ssqcov-2, ssqcov, sumcor,
 sumcov-1, sumcov-2, sumcov, sabscov, sabscov-1, sabscov-2.}
 
-\item{connection}{A symmetric matrix (J*J) that describes the relationships between
-blocks.}
+\item{connection}{A symmetric matrix (\eqn{J \times J}{J x J}) that
+describes the relationships between blocks.}
 
 \item{scheme}{Character string or a function giving the scheme function for
 covariance maximization among "horst" (the identity function), "factorial"
@@ -90,16 +93,18 @@ covariance maximization among "horst" (the identity function), "factorial"
 \item{ncomp}{Vector of length J indicating the number of block components
 for each block.}
 
-\item{tau}{Either a 1*J vector or a max(ncomp)*J matrix containing
+\item{tau}{Either a \eqn{1 \times J}{1 x J} vector or a
+\eqn{\mathrm{max}(ncomp) \times J}{max(ncomp) x J} matrix containing
 the values of the regularization parameters (default: tau = 1, for each
 block and each dimension). The regularization parameters varies from 0
 (maximizing the correlation) to 1 (maximizing the covariance). If
-tau = "optimal" the regularization paramaters are estimated for each block
+tau = "optimal" the regularization parameters are estimated for each block
 and each dimension using the Schafer and Strimmer (2005) analytical formula.
-If tau is a 1*J vector, tau[j] is identical across the dimensions
-of block Xj. If tau is a matrix, tau[k, j] is associated with
-X_jk (kth residual matrix for block j). The regularization parameters can
-also be estimated using \link{rgcca_permutation} or \link{rgcca_cv}.}
+If tau is a \eqn{1 \times J}{1 x J} vector, tau[j] is identical across the
+dimensions of block \eqn{\mathbf{X}_j}{Xj}. If tau is a matrix, tau[k, j]
+is associated with \eqn{\mathbf{X}_{jk}}{Xjk} (kth residual matrix for
+block j). The regularization parameters can also be estimated using
+\link{rgcca_permutation} or \link{rgcca_cv}.}
 
 \item{sparsity}{Either a \eqn{1*J} vector or a \eqn{max(ncomp) * J} matrix
 encoding the L1 constraints applied to the outer weight vectors. The amount
@@ -208,21 +213,27 @@ search in tuning parameter space.
 ####################################
 
 data(Russett)
-blocks = list(agriculture = Russett[, seq(3)],
-              industry = Russett[, 4:5],
-              politic = Russett[, 6:11] )
+blocks <- list(
+  agriculture = Russett[, seq(3)],
+  industry = Russett[, 4:5],
+  politic = Russett[, 6:11]
+)
 
-C <-  matrix(c(0, 0, 1,
-               0, 0, 1,
-               1, 1, 0), 3, 3)
+C <- matrix(c(
+  0, 0, 1,
+  0, 0, 1,
+  1, 1, 0
+), 3, 3)
 
 # default value: 10 vectors from rep(0, length(blocks))
 # to rep(1, length(blocks)), uniformly distributed.
 
-fit = rgcca_permutation(blocks, connection = C,
-                        par_type = "tau",
-                        par_length = 10, n_perms = 2,
-                        n_cores = 1)
+fit <- rgcca_permutation(blocks,
+  connection = C,
+  par_type = "tau",
+  par_length = 10, n_perms = 2,
+  n_cores = 1
+)
 
 print(fit)
 plot(fit)
@@ -232,27 +243,33 @@ fit$bestpenalties
 # parameters to be tested and in that case a matrix of dimension KxJ is
 # required. Each row of this matrix corresponds to one specific set of
 # shrinkage parameters.
-par_value = matrix(c(0, 0, 0,
-                      1, 1, 0,
-                      0.5, 0.5, 0.5,
-                      sapply(blocks, RGCCA:::tau.estimate),
-                      1, 1, 1), 5, 3, byrow = TRUE)
+par_value <- matrix(c(
+  0, 0, 0,
+  1, 1, 0,
+  0.5, 0.5, 0.5,
+  sapply(blocks, RGCCA:::tau.estimate),
+  1, 1, 1
+), 5, 3, byrow = TRUE)
 
 
-perm.out <- rgcca_permutation(blocks, connection = C,
-                         par_type = "tau",
-                         par_value = par_value,
-                         n_perms = 5, n_cores = 1)
+perm.out <- rgcca_permutation(blocks,
+  connection = C,
+  par_type = "tau",
+  par_value = par_value,
+  n_perms = 5, n_cores = 1
+)
 
 print(perm.out)
 plot(perm.out)
 
 # with superblock
 
-perm.out <- rgcca_permutation(blocks, par_type = "tau",
-                                 superblock = TRUE,
-                                 scale = TRUE, scale_block = FALSE,
-                                 n_perms = 5, n_cores = 1)
+perm.out <- rgcca_permutation(blocks,
+  par_type = "tau",
+  superblock = TRUE,
+  scale = TRUE, scale_block = FALSE,
+  n_perms = 5, n_cores = 1
+)
 
 print(perm.out)
 plot(perm.out)
@@ -273,8 +290,10 @@ fit.rgcca$call$scale_block
 # (1/sqrt(ncol(X1)), ..., 1/sqrt(ncol(XJ))
 # to rep(1, J), uniformly distributed.
 
-perm.out <- rgcca_permutation(blocks, par_type = "sparsity",
-                         n_perms = 50, n_cores = 1)
+perm.out <- rgcca_permutation(blocks,
+  par_type = "sparsity",
+  n_perms = 50, n_cores = 1
+)
 
 print(perm.out)
 plot(perm.out)
@@ -286,23 +305,27 @@ perm.out$bestpenalties
 # (1/sqrt(ncol(X1)), ..., 1/sqrt(ncol(XJ)) to maximum values, uniformly
 # distributed, are then considered.
 
-perm.out <- rgcca_permutation(blocks, connection = C,
-                         par_type = "sparsity",
-                         par_value = c(0.6, 0.75, 0.5),
-                         par_length = 7, n_perms = 20,
-                         n_cores = 1, tol = 1e-3)
+perm.out <- rgcca_permutation(blocks,
+  connection = C,
+  par_type = "sparsity",
+  par_value = c(0.6, 0.75, 0.5),
+  par_length = 7, n_perms = 20,
+  n_cores = 1, tol = 1e-3
+)
 
-	print(perm.out)
-	plot(perm.out)
-	perm.out$bestpenalties
+print(perm.out)
+plot(perm.out)
+perm.out$bestpenalties
 
 # when par_value is a scalar, the same maximum value is applied
 # for each block
 
-perm.outt <- rgcca_permutation(blocks, connection = C,
-                         par_type = "sparsity",
-                         par_value = 0.8, par_length = 5,
-                         n_perms = 10, n_cores = 1)
+perm.outt <- rgcca_permutation(blocks,
+  connection = C,
+  par_type = "sparsity",
+  par_value = 0.8, par_length = 5,
+  n_perms = 10, n_cores = 1
+)
 
 perm.out$penalties
 
@@ -320,22 +343,25 @@ data(ge_cgh_locIGR)
 A <- ge_cgh_locIGR$multiblocks
 Loc <- factor(ge_cgh_locIGR$y)
 levels(Loc) <- colnames(ge_cgh_locIGR$multiblocks$y)
-A[[3]] = A[[3]][, -3]
-C <-  matrix(c(0, 0, 1, 0, 0, 1, 1, 1, 0), 3, 3)
+A[[3]] <- A[[3]][, -3]
+C <- matrix(c(0, 0, 1, 0, 0, 1, 1, 1, 0), 3, 3)
 
 # check dimensions of the blocks
 sapply(A, dim)
 
-par_value = matrix(c(seq(0.1, 1, by = 0.1),
-                     seq(0.1, 1, by = 0.1),
-                     rep(0, 10)), 10, 3, byrow = FALSE)
+par_value <- matrix(c(
+  seq(0.1, 1, by = 0.1),
+  seq(0.1, 1, by = 0.1),
+  rep(0, 10)
+), 10, 3, byrow = FALSE)
 
-fit <- rgcca_permutation(A, connection = C,
-                          par_type = "tau",
-                          par_value = par_value,
-                          par_length = 10,
-                          n_perms = 10, n_cores = 1, tol = 1e-2)
-                          )
+fit <- rgcca_permutation(A,
+  connection = C,
+  par_type = "tau",
+  par_value = par_value,
+  par_length = 10,
+  n_perms = 10, n_cores = 1, tol = 1e-2
+)
 print(fit)
 plot(fit)
 }

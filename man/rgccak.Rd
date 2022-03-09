@@ -26,16 +26,18 @@ block components are constructed. It could be eiher the original matrices
 \item{C}{A symmetric matrix (J*J) that describes the
 relationships between blocks.}
 
-\item{tau}{Either a 1*J vector or a max(ncomp)*J matrix containing
+\item{tau}{Either a \eqn{1 \times J}{1 x J} vector or a
+\eqn{\mathrm{max}(ncomp) \times J}{max(ncomp) x J} matrix containing
 the values of the regularization parameters (default: tau = 1, for each
 block and each dimension). The regularization parameters varies from 0
 (maximizing the correlation) to 1 (maximizing the covariance). If
-tau = "optimal" the regularization paramaters are estimated for each block
+tau = "optimal" the regularization parameters are estimated for each block
 and each dimension using the Schafer and Strimmer (2005) analytical formula.
-If tau is a 1*J vector, tau[j] is identical across the dimensions
-of block Xj. If tau is a matrix, tau[k, j] is associated with
-X_jk (kth residual matrix for block j). The regularization parameters can
-also be estimated using \link{rgcca_permutation} or \link{rgcca_cv}.}
+If tau is a \eqn{1 \times J}{1 x J} vector, tau[j] is identical across the
+dimensions of block \eqn{\mathbf{X}_j}{Xj}. If tau is a matrix, tau[k, j]
+is associated with \eqn{\mathbf{X}_{jk}}{Xjk} (kth residual matrix for
+block j). The regularization parameters can also be estimated using
+\link{rgcca_permutation} or \link{rgcca_cv}.}
 
 \item{scheme}{Character string or a function giving the scheme function for
 covariance maximization among "horst" (the identity function), "factorial"
@@ -65,7 +67,8 @@ otherwise the NIPALS algorithm is used.}
 matrix that contains a block weight vector associated with one block and
 one deflation stage.}
 
-\item{AVE_inner}{Average Variance Explained (AVE) of the inner model.}
+\item{AVE_inner}{Average Variance Explained (AVE) of the
+inner model.}
 
 \item{crit}{A list of max(ncomp) elements. Each element
 (one per deflation stage) is a vector that contains the value of the RGCCA

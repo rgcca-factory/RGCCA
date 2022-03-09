@@ -18,7 +18,8 @@
 #' @return \item{a}{A list of \eqn{J} elements. Each element of the list is a
 #' matrix that contains a block weight vector associated with one block and
 #' one deflation stage.}
-#' @return \item{AVE_inner}{Average Variance Explained (AVE) of the inner model.}
+#' @return \item{AVE_inner}{Average Variance Explained (AVE) of the
+#' inner model.}
 #' @return \item{crit}{A list of max(ncomp) elements. Each element
 #' (one per deflation stage) is a vector that contains the value of the RGCCA
 #' objective function across iterations.}
@@ -116,11 +117,11 @@ rgccak <- function(A, C, tau = rep(1, length(A)), scheme = "centroid",
   N <- ifelse(bias, n, n - 1)
   for (j in which.primal) {
     ifelse(tau[j] == 1,
-      {
+      yes = {
         a[[j]] <- drop(1 / sqrt(t(a[[j]]) %*% a[[j]])) * a[[j]]
         Y[, j] <- pm(A[[j]], a[[j]], na.rm = na.rm)
       },
-      {
+      no = {
         M[[j]] <- ginv(tau[j] * diag(pjs[j]) + ((1 - tau[j])) * 1 / N *
           (pm(t(A[[j]]), A[[j]], na.rm = na.rm)))
         a[[j]] <- drop(1 / sqrt(t(a[[j]]) %*% M[[j]] %*% a[[j]])) *
@@ -131,13 +132,13 @@ rgccak <- function(A, C, tau = rep(1, length(A)), scheme = "centroid",
   }
   for (j in which.dual) {
     ifelse(tau[j] == 1,
-      {
+      yes = {
         alpha[[j]] <- drop(1 / sqrt(t(alpha[[j]]) %*% K[[j]] %*%
           alpha[[j]])) * alpha[[j]]
         a[[j]] <- pm(t(A[[j]]), alpha[[j]], na.rm = na.rm)
         Y[, j] <- pm(A[[j]], a[[j]], na.rm = na.rm)
       },
-      {
+      no = {
         M[[j]] <- tau[j] * diag(n) + ((1 - tau[j])) * 1 / N * K[[j]]
         Minv[[j]] <- ginv(M[[j]])
         alpha[[j]] <- drop(1 / sqrt(t(alpha[[j]]) %*%
@@ -154,7 +155,7 @@ rgccak <- function(A, C, tau = rep(1, length(A)), scheme = "centroid",
   crit_old <- sum(C * g(cov2(Y, bias = bias)))
   a_old <- a
 
-  repeat{
+  repeat {
     for (j in which.primal) {
       dgx <- dg(cov2(Y[, j], Y, bias = bias))
       CbyCovj <- drop(C[j, ] * dgx)
@@ -175,16 +176,17 @@ rgccak <- function(A, C, tau = rep(1, length(A)), scheme = "centroid",
       dgx <- dg(cov2(Y[, j], Y, bias = bias))
       CbyCovj <- drop(C[j, ] * dgx)
       ifelse(tau[j] == 1,
-        {
+        yes = {
           Z[, j] <- Y %*% CbyCovj
           alpha[[j]] <- drop(1 / sqrt(t(Z[, j]) %*% K[[j]] %*% Z[, j])) * Z[, j]
           a[[j]] <- pm(t(A[[j]]), alpha[[j]], na.rm = na.rm)
           Y[, j] <- pm(A[[j]], a[[j]], na.rm = na.rm)
         },
-        {
+        no = {
           Z[, j] <- Y %*% CbyCovj
-          alpha[[j]] <- drop(1 / sqrt(t(Z[, j]) %*% K[[j]] %*% Minv[[j]] %*% Z[, j])) *
-            (Minv[[j]] %*% Z[, j])
+          alpha[[j]] <- drop(
+            1 / sqrt(t(Z[, j]) %*% K[[j]] %*% Minv[[j]] %*% Z[, j])
+          ) * (Minv[[j]] %*% Z[, j])
 
           a[[j]] <- pm(t(A[[j]]), alpha[[j]], na.rm = na.rm)
           Y[, j] <- pm(A[[j]], a[[j]], na.rm = na.rm)

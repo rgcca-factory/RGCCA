@@ -1,5 +1,6 @@
 # Reorder the color of a ggplot (in case of a missing modality)
-order_color <- function(df, p, matched = NULL, collapse = FALSE, colors = NULL) {
+order_color <- function(df, p, matched = NULL, collapse = FALSE,
+                        colors = NULL) {
   J <- names(df)
 
   if (collapse) {
@@ -8,18 +9,12 @@ order_color <- function(df, p, matched = NULL, collapse = FALSE, colors = NULL) 
     n <- J[-length(J)]
   }
 
-  if (is.null(matched)) {
-    matched <- seq(n)
-    f <- "color"
-  } else {
-    f <- "fill"
-  }
+  f <- ifelse(is.null(matched), scale_color_manual, scale_fill_manual)
+  if (is.null(matched)) matched <- seq(n)
 
-  func <- quote(get(paste("scale", f, "manual", sep = "_"))(
+  return(p + f(
     values = color_group(J, colors)[matched],
     limits = n[matched],
     labels = n[matched]
   ))
-
-  return(p + eval(as.call(func)))
 }

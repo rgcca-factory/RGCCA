@@ -3,9 +3,12 @@
 #' Predict a new block from a RGCCA
 #'
 #' @inheritParams rgcca_transform
-#' @param prediction_model A character giving the function used to compare the trained and the tested models
-#' @param block_to_predict A character or integer giving the block to predict (must be the same name among train and test set)
-#' @param task A character corresponding to the prediction task among : regression or classification
+#' @param prediction_model A character giving the function used to compare the
+#' trained and the tested models
+#' @param block_to_predict A character or integer giving the block to predict
+#' (must be the same name among train and test set)
+#' @param task A character corresponding to the prediction task among:
+#' regression or classification
 #' @examples
 #' data("Russett")
 #' blocks <- list(
@@ -28,7 +31,9 @@
 #' A <- lapply(object1$call$blocks, function(x) x[1:32, ])
 #' object <- rgcca(A,
 #'   connection = C, tau = c(0.7, 0.8, 0.7),
-#'   ncomp = c(3, 2, 4), scale = FALSE, scale_block = FALSE, superblock = FALSE, response = 3
+#'   ncomp = c(3, 2, 4),
+#'   scale = FALSE, scale_block = FALSE,
+#'   superblock = FALSE, response = 3
 #' )
 #' X <- lapply(object1$call$blocks, function(x) x[-c(1:32), ])
 #' X <- lapply(X, function(x) x[, sample(1:NCOL(x))])
@@ -45,11 +50,10 @@ rgcca_predict <- function(rgcca_res,
                           block_to_predict,
                           X_scaled = TRUE,
                           task = "regression",
-                          prediction_model = "lm"
-                          #   regress_on="block" #TODO
-) {
+                          prediction_model = "lm") {
   # TODO: Enable to not have the block to predict among the test blocks
-  # TODO: Put back asDisjonctive to enable to project block_to_predict without problems
+  # TODO: Put back as_disjonctive to enable to project block_to_predict without
+  # problems
   ### Auxiliary function
   # Stack projected blocks as a matrix and set colnames as "block_ncomp"
   reformat_projection <- function(projection) {
@@ -70,7 +74,10 @@ rgcca_predict <- function(rgcca_res,
   if (task == "classification" && prediction_model != "lda") {
     stop_rgcca("Only \"lda\" model is available for classification task.")
   }
-  if (task == "regression" && (prediction_model != "lm" && prediction_model != "cor")) {
+  if (
+    task == "regression" &&
+      (prediction_model != "lm" && prediction_model != "cor")
+  ) {
     stop_rgcca("Only \"cor\" and \"lm\" are available for regression tasks.")
   }
   if (is.null(names(X))) stop_rgcca("Please provide names for the blocks X.")
@@ -80,8 +87,8 @@ rgcca_predict <- function(rgcca_res,
     train_idx <- match(block_to_predict, names(rgcca_res$call$blocks))
     test_idx <- match(block_to_predict, names(X))
   } else {
-    train_idx <- match(block_to_predict, 1:length(rgcca_res$call$blocks))
-    test_idx <- match(block_to_predict, 1:length(X))
+    train_idx <- match(block_to_predict, seq_along(rgcca_res$call$blocks))
+    test_idx <- match(block_to_predict, seq_along(X))
   }
   if (is.na(train_idx) || is.na(test_idx)) {
     stop_rgcca(paste0(
@@ -118,7 +125,10 @@ rgcca_predict <- function(rgcca_res,
       if (length(unique(rgcca_res$call$raw[[response]])) == 1) {
         stop("Only one level in the variable to predict")
       }
-      X[[test_idx]] <- asDisjonctive(X[[test_idx]], levs = unique(rgcca_res$call$raw[[response]]))
+      X[[test_idx]] <- as_disjonctive(
+        X[[test_idx]],
+        levs = unique(rgcca_res$call$raw[[response]])
+      )
     }
   }
 
@@ -137,15 +147,15 @@ rgcca_predict <- function(rgcca_res,
   res <- NULL
   if (task == "regression") {
     if (prediction_model == "lm") {
-
-      #  if(regress_on=="block")
-      #  {
       ychapo <- sapply(
         colnames(y_train),
         function(x) {
           predict(
             lm(
-              as.formula(paste(x, " ~ ", paste(colnames(X_train), collapse = "+"))),
+              as.formula(paste(x, " ~ ", paste(
+                colnames(X_train),
+                collapse = "+"
+              ))),
               data = cbind(X_train, y_train),
               na.action = "na.exclude"
             ),
@@ -177,17 +187,9 @@ rgcca_predict <- function(rgcca_res,
           return(sqrt(mean(x^2, na.rm = T)))
         })
         score <- mean(rmse)
-        # score <- mean(apply(res, 2, mean))
       }
-
-      #   }
-      #   if(regress_on=="comp")
-      #   {
-      # TODO
-      #   }
     }
     if (prediction_model == "cor") {
-      # X_test.cor <- get_comp_all(rgcca_res, X=newA, type = "test", pred = pred)
       X_test.cor <- get_comp_all(rgcca_res, X = X, type = "test", pred = pred)
 
       if (is.null(X[[1]])) {
@@ -195,8 +197,6 @@ rgcca_predict <- function(rgcca_res,
         X_test
       } else {
         connection <- rgcca_res$call$connection[names(pred), names(pred)]
-        # cor <- get_cor_all(rgcca_res, newA, X_test)
-        # cor <- get_cor_all(rgcca_res, newA3, X_test.cor)
         cor <- get_cor_all(rgcca_res, X, X_test.cor)
 
         for (i in seq(length(cor))) {
@@ -212,31 +212,13 @@ rgcca_predict <- function(rgcca_res,
     class.fit <- NULL
   }
   if (task == "classification") {
-    # ngroups defined but never used
-    ngroups <- nlevels(as.factor(y_train))
     class.fit <- switch(prediction_model,
       "lda" = {
         data_for_lda <- cbind(X_train, y_train)
         colnames(data_for_lda)[ncol(data_for_lda)] <- "quali"
         reslda <- lda(quali ~ ., data = data_for_lda, na.action = "na.exclude")
         class.fit <- predict(reslda, X_test)$class
-      } # ,
-      #             # "logistic" = {
-      #             #     if (ngroups > 2) {
-      #             #         reslog      <- nnet::multinom(y ~ ., data = cbind(X_train, y = y_train), trace = FALSE, na.action = "na.exclude")
-      #             #         class.fit   <- predict(reslog, newdata = cbind(X_test, y = y_test))
-      #             #     } else if (ngroups == 2) {
-      #             #         levs=levels(factor(y_train))
-      #             #         y_train=factor(y_train,levels=levs)
-      #             #         y_test=factor(y_test,levels=levs)
-      #             #         data_for_lda=cbind(X_train,y_train)
-      #             #         colnames(data_for_lda)[ncol(data_for_lda)]="quali"
-      #             #         reslog      <- glm(y ~ ., data = cbind(X_train, y = y_train), family = binomial,na.action="na.exclude")
-      #             #         class.fit   <- predict(reslog, type = "response", newdata = cbind(X_test, y = y_test))
-      #             #         class.fit.class <- class.fit > 0.5 # TODO: cutoff parameter
-      #             #         class.fit       <- factor(class.fit.class)
-      #             #     }
-      #             # }
+      }
     )
 
 
@@ -251,7 +233,6 @@ rgcca_predict <- function(rgcca_res,
 
   result <- list(
     pred = pred,
-    #    pred_A=pred_A,
     prediction = prediction,
     class.fit = class.fit,
     score = score,

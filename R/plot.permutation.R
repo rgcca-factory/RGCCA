@@ -11,8 +11,8 @@
 #' (default is 'crit' for the RGCCA criterion or 'zstat' for the pseudo Z-score)
 #' @param display_all A boolean indicating is all combinations have to
 #' be displayed (default is FALSE).
-#' @param show_legend A boolean indicating if the legend is displayed (default is
-#' TRUE).
+#' @param show_legend A boolean indicating if the legend is displayed
+#' (default is TRUE).
 #' @inheritParams plot.rgcca
 #' @inheritParams plot_var_2D
 #' @inheritParams plot2D
@@ -51,7 +51,6 @@ plot.permutation <- function(perm,
                              colors = c("red", "grey"),
                              display_all = FALSE,
                              show_legend = TRUE) {
-  xend <- yend <- NULL
   stopifnot(is(perm, "permutation"))
   match.arg(type, c("crit", "zstat"))
   for (i in c("cex", "cex_main", "cex_sub", "cex_point", "cex_lab")) {
@@ -135,9 +134,22 @@ plot.permutation <- function(perm,
       axis.ticks = element_line(size = 0.5),
       axis.ticks.length = unit(2, "mm")
     ) +
-    scale_shape_manual("Non Permuted", values = c("Best parameter set" = 17, "Other parameter set" = 2)) +
-    scale_size_manual("Non Permuted", values = c("Best parameter set" = 4, "Other parameter set" = 1)) +
-    scale_y_discrete(labels = labels, breaks = breaks, guide = guide_axis(check.overlap = T))
+    scale_shape_manual("Non Permuted",
+      values = c(
+        "Best parameter set" = 17,
+        "Other parameter set" = 2
+      )
+    ) +
+    scale_size_manual("Non Permuted",
+      values = c(
+        "Best parameter set" = 4,
+        "Other parameter set" = 1
+      )
+    ) +
+    scale_y_discrete(
+      labels = labels, breaks = breaks,
+      guide = guide_axis(check.overlap = T)
+    )
   if (type == "crit") {
     dft <- data.frame(
       combinations = rep(df$label, NCOL(perm$permcrit)),

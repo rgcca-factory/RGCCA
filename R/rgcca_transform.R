@@ -52,7 +52,7 @@ rgcca_transform <- function(rgcca_res, X, X_scaled = TRUE) {
     ))
   }
   X_train <- rgcca_res$call$blocks[names(X)]
-  X <- lapply(1:length(X), function(j) {
+  X <- lapply(seq_along(X), function(j) {
     x <- X[[j]]
     if ((is.null(dim(x)) && !is.null(dim(X_train[[j]]))) ||
       (!is.null(dim(x)) && is.null(dim(X_train[[j]]))) ||
@@ -69,14 +69,18 @@ rgcca_transform <- function(rgcca_res, X, X_scaled = TRUE) {
 
   ### Scale X if needed
   if (!X_scaled) {
-    X <- lapply(1:length(X), function(j) {
-      scl_fun(X[[j]], attr(X_train[[j]], "scaled:center"), attr(X_train[[j]], "scaled:scale"))
+    X <- lapply(seq_along(X), function(j) {
+      scl_fun(
+        X[[j]],
+        attr(X_train[[j]], "scaled:center"),
+        attr(X_train[[j]], "scaled:scale")
+      )
     })
   }
 
   ### Project X on the space computed using RGCCA
   astar <- rgcca_res$astar[names(X_train)]
-  projection <- lapply(1:length(X), function(j) {
+  projection <- lapply(seq_along(X), function(j) {
     x <- pm(as.matrix(X[[j]]), astar[[j]])
     rownames(x) <- rownames(X[[j]])
     colnames(x) <- colnames(astar[[j]])

@@ -20,16 +20,16 @@ save_plot <- function(f, p) {
 
   # dynamic loading of formattion depending of the extension
   if (format == "dat") {
-    formatFunc <- pdf
+    format_func <- pdf
   } else {
-    formatFunc <- get(format)
+    format_func <- get(format)
   }
 
   # save
   if (format %in% c("pdf", "dat")) {
-    formatFunc(f, width = 10, height = 8)
+    format_func(f, width = 10, height = 8)
   } else {
-    formatFunc(
+    format_func(
       f,
       width = 10,
       height = 8,

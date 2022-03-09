@@ -1,4 +1,4 @@
-asDisjonctive <- function(vec, levs = NULL) {
+as_disjonctive <- function(vec, levs = NULL) {
   if (!is.null(levs)) {
     G <- factor(vec, levels = levs)
   } else {

@@ -72,14 +72,21 @@ plot_dynamic <- function(f,
 
     # set the font for this title
     if (!is.null(legend_qual) && legend_qual != "") {
-      p$x$layout$annotations[[1]]$text <- paste0("<i><b>", legend_title, "</b></i>")
+      p$x$layout$annotations[[1]]$text <- paste0(
+        "<i><b>",
+        legend_title, "</b></i>"
+      )
       # set on the top the position of the legend title
       p$x$layout$annotations[[1]]$yanchor <- "top"
       if (length(legend_title) > 1) {
         p$x$layout$annotations[[1]]$y <- 1.05
       }
     } else {
-      p$x$data[[length(p$x$data)]]$marker$colorbar$title <- paste0("<i><b>", legend_title, "</b></i>")
+      p$x$data[[length(p$x$data)]]$marker$colorbar$title <- paste0(
+        "<i><b>",
+        legend_title,
+        "</b></i>"
+      )
     }
   }
 

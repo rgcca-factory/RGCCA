@@ -1,25 +1,3 @@
-# rand_mat <- function(x) matrix(runif(9), 3, 3)
-# A = lapply(1:3, rand_mat)
-# check_blocks(A)
-# names(A) <- LETTERS[1:3]
-# check_blocks(A[1])
-# check_blocks(A)
-# row.names(A[[1]]) <- letters[1:3]
-# check_blocks(A)
-# for(i in 1:3)
-#   row.names(A[[i]]) <- letters[(0+i*3):(2+i*3)]
-# check_blocks(A)
-# for(i in 1:3)
-#   row.names(A[[i]]) <- letters[1:3]
-# A[[1]][2, 3] <- NA
-# for(i in 1:3)
-#   colnames(A[[i]]) <- letters[(0+i*3):(2+i*3)]
-# check_blocks(A,add_NAlines=TRUE)
-# A[[1]][2, 3] <- "character"
-# check_blocks(A)
-# A[[1]][2, 3] <- runif(1)
-# init : boolean (FALSE by default) for the first block checking
-
 check_blocks <- function(blocks, init = FALSE, n = 2,
                          add_NAlines = FALSE, allow_unnames = TRUE,
                          quiet = FALSE, no_character = FALSE) {
@@ -37,14 +15,14 @@ check_blocks <- function(blocks, init = FALSE, n = 2,
         names(blocks)[x] <- paste0("block", x)
       }
     } else {
-      names(blocks) <- paste0("block", 1:length(blocks))
+      names(blocks) <- paste0("block", seq_along(blocks))
     }
     message("Missing block names are automatically labeled.")
   }
 
   # Gestion of the case of one variable only
   blocks <- lapply(blocks, as.matrix)
-  nameBlocks <- names(blocks)
+  name_blocks <- names(blocks)
 
   # Dealing with rownames (if they are all missing)
   if (all(sapply(blocks, function(x) is.null(row.names(x))))) {
@@ -62,29 +40,6 @@ check_blocks <- function(blocks, init = FALSE, n = 2,
     }
   }
 
-
-  # # Dealing with colnames for univariate block
-  #  blocks1 = lapply(1:length(blocks),
-  #               function(i){
-  #                 if(NCOL(blocks[[i]]) == 1 & is.null(colnames(blocks[[i]])))
-  #                 {
-  #                   colnames(blocks[[i]])=nameBlocks[i]
-  #                   return(blocks[[i]])
-  #                 }
-  #                 else{
-  #                   return(blocks[[i]])
-  #                 }
-  #               })
-  #
-  # blocks=blocks1
-  # names(blocks)=nameBlocks
-
-  # check names
-  # if (is.null(names(blocks))){
-  #  names(blocks)=paste0("block",1:length(blocks))
-  #  message("Blocks are unnamed and automatically labeled.")
-  # }
-
   if (any(sapply(blocks, function(x) is.null(colnames(x))))) {
     message("Missing colnames are automatically labeled.")
     blocks1 <- lapply(
@@ -95,7 +50,7 @@ check_blocks <- function(blocks, init = FALSE, n = 2,
             colnames(blocks[[x]]) <- names(blocks)[x]
           } else {
             colnames(blocks[[x]]) <-
-              paste0("V", x, 1:NCOL(blocks[[x]]))
+              paste0("V", x, seq(NCOL(blocks[[x]])))
           }
           return(blocks[[x]])
         } else {
@@ -105,7 +60,7 @@ check_blocks <- function(blocks, init = FALSE, n = 2,
       }
     )
     blocks <- blocks1
-    names(blocks) <- nameBlocks
+    names(blocks) <- name_blocks
   }
 
 
@@ -118,7 +73,7 @@ check_blocks <- function(blocks, init = FALSE, n = 2,
     }
 
     blocks_i <- lapply(
-      1:length(blocks),
+      seq_along(blocks),
       function(i) {
         x <- blocks[[i]]
         colnames(x) <- paste(names(blocks)[i],
@@ -134,15 +89,15 @@ check_blocks <- function(blocks, init = FALSE, n = 2,
 
   # If one rownames is missing but the size of blocks is correct
   if (any(sapply(blocks, function(x) is.null(row.names(x))))) {
-    matrixOfRownames <- Reduce(cbind, lapply(blocks, row.names))
+    matrix_of_rownames <- Reduce(cbind, lapply(blocks, row.names))
     if (sum(!apply(
-      matrixOfRownames, 2,
-      function(x) x == matrixOfRownames[, 1]
+      matrix_of_rownames, 2,
+      function(x) x == matrix_of_rownames[, 1]
     )) == 0) {
       blocks <- lapply(
         blocks,
         function(x) {
-          row.names(x) <- matrixOfRownames[, 1]
+          row.names(x) <- matrix_of_rownames[, 1]
           return(x)
         }
       )
@@ -199,7 +154,7 @@ check_blocks <- function(blocks, init = FALSE, n = 2,
   # Add lines if subjects are missing
   if (add_NAlines) {
     union_rows <- Reduce(union, lapply(blocks, row.names))
-    blocks2 <- lapply(nameBlocks, function(name) {
+    blocks2 <- lapply(name_blocks, function(name) {
       # if some subjects are missing (in the rownames)
       if (sum(!union_rows %in% rownames(blocks[[name]])) != 0) {
         message("Some subjects are blockwise missing and NA rows were added.")
@@ -229,7 +184,7 @@ check_blocks <- function(blocks, init = FALSE, n = 2,
         return(y)
       }
     })
-    names(blocks2) <- nameBlocks
+    names(blocks2) <- name_blocks
     blocks <- blocks2
   }
   invisible(blocks)

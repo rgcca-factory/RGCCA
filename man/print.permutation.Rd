@@ -7,7 +7,8 @@
 \method{print}{permutation}(x, ...)
 }
 \arguments{
-\item{x}{A fitted rgcca_permutation object (see  \code{\link[RGCCA]{rgcca_permutation}})}
+\item{x}{A fitted rgcca_permutation object (see
+\code{\link[RGCCA]{rgcca_permutation}})}
 
 \item{...}{additional print parameters}
 }
@@ -16,11 +17,15 @@ Print a fitted rgcca_permutation object
 }
 \examples{
 data(Russett)
-A = list(agriculture = Russett[, seq(3)],
-         industry = Russett[, 4:5],
-         politic = Russett[, 6:11])
+A <- list(
+  agriculture = Russett[, seq(3)],
+  industry = Russett[, 4:5],
+  politic = Russett[, 6:11]
+)
 
-perm.out = rgcca_permutation(A, par_type = "tau",
-                             n_perms = 5, n_cores = 1)
+perm.out <- rgcca_permutation(A,
+  par_type = "tau",
+  n_perms = 5, n_cores = 1
+)
 print(perm.out)
 }

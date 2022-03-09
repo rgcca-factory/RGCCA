@@ -12,16 +12,15 @@ proj_l1_l2 <- function(argu, a = 1) {
   # Check if constraints are already satisfied
   norm2_argu <- norm(argu, type = "2")
   if (norm2_argu < .Machine$double.eps) {
-    return(list(sol = argu, l2_SAT = F))
+    return(list(sol = argu, l2_sat = F))
   }
   if (sum(abs(argu / norm2_argu)) <= a) {
-    return(list(k = NaN, lambda = 0, l2_SAT = T))
+    return(list(k = NaN, lambda = 0, l2_sat = T))
   }
 
   # The desired a_k cannot be null as the constraints are not already satisfied
   # (cf. previous check). So zero values are removed.
   uneq <- argu != 0
-  L <- sum(!uneq)
   p <- abs(argu[uneq])
 
   # Check for multiple maximum
@@ -35,7 +34,7 @@ proj_l1_l2 <- function(argu, a = 1) {
     sol <- argu * 0
     idx_MAX_val <- which(abs(argu) == MAX)
     sol[idx_MAX_val] <- sign(argu[idx_MAX_val]) * a / nMAX
-    return(list(sol = sol, l2_SAT = F))
+    return(list(sol = sol, l2_sat = F))
   }
 
   # If there are multiple maximum and a = sqrt(number of max),
@@ -54,7 +53,7 @@ proj_l1_l2 <- function(argu, a = 1) {
       a_2 <- max(p[-which(bMAX)])
       lambda <- (MAX + a_2) / 2
     }
-    return(list(k = NaN, lambda = lambda, l2_SAT = T))
+    return(list(k = NaN, lambda = lambda, l2_sat = T))
   }
 
   # If the vector to project "argu" is composed of 2 elements only, as the
@@ -68,7 +67,7 @@ proj_l1_l2 <- function(argu, a = 1) {
     k <- 2
     lambda <- a_k - (a * sqrt((k - psi_a_k^2) / (k - a^2)) - psi_a_k) *
       (sum(p) - k * a_k) / (psi_a_k * (k))
-    return(list(k = NaN, lambda = lambda, l2_SAT = T))
+    return(list(k = NaN, lambda = lambda, l2_sat = T))
   }
 
   # Initialize parameters
@@ -141,5 +140,5 @@ proj_l1_l2 <- function(argu, a = 1) {
   # Compute lambda
   lambda <- a_k - (a * sqrt((k - psi_a_k^2) / (k - a^2)) - psi_a_k) *
     (s_1 + s_low_1 - k * a_k) / (psi_a_k * (k))
-  return(list(k = k, lambda = lambda, l2_SAT = T))
+  return(list(k = k, lambda = lambda, l2_sat = T))
 }

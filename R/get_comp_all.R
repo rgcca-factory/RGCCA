@@ -17,7 +17,8 @@ get_comp_all <- function(rgcca,
   # matrix of Y for all selected blocks and all components
   res <- as.data.frame(Reduce("cbind", y[-newbloc_y]))
 
-  # vector of character giving the name of the block and the number of the component
+  # vector of character giving the name of the block and the number of
+  # the component
   colnames(res) <- paste(
     unlist(
       mapply(

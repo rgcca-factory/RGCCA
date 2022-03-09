@@ -66,8 +66,8 @@
 #' block.}
 #' @return \item{a}{List of \eqn{J} elements. Each element of the list \eqn{a}
 #' is a matrix of block weight vectors for the corresponding block.}
-#' @return \item{astar}{List of \eqn{J} elements. Each element of astar is a
-#' matrix defined as Y[[j]][, h] = A[[j]]\%*\%astar[[j]][, h].}
+#' @return \item{astar}{List of \eqn{J} elements. Each column of astar[[j]] is a
+#' vector such that Y[[j]][, h] = blocks[[j]] \%*\% astar[[j]][, h].}
 #' @return \item{tau}{Regularization parameters used during the analysis.}
 #' @return \item{crit}{List of vector of length max(ncomp). Each vector of
 #' the list is related to one specific deflation stage and reports the values
@@ -212,7 +212,10 @@ rgcca <- function(blocks, method = "rgcca",
                   superblock = FALSE,
                   NA_method = "nipals", verbose = FALSE, quiet = TRUE) {
   if (class(blocks) == "permutation") {
-    message("All the parameters were imported from the fitted rgcca_permutation object.")
+    message(paste0(
+      "All the parameters were imported from the fitted ",
+      "rgcca_permutation object."
+    ))
     scale_block <- blocks$call$scale_block
     scale <- blocks$call$scale
     scheme <- blocks$call$scheme
@@ -320,7 +323,7 @@ rgcca <- function(blocks, method = "rgcca",
       if (length(unique(blocks[[response]])) == 1) {
         stop("Only one level in the variable to predict")
       }
-      blocks[[response]] <- asDisjonctive(blocks[[response]])
+      blocks[[response]] <- as_disjonctive(blocks[[response]])
     }
   }
 
@@ -368,24 +371,22 @@ rgcca <- function(blocks, method = "rgcca",
   if (any(sapply(opt$blocks, NCOL) > 1000)) warn_on <- TRUE
   if (warn_on && !quiet) message("Analysis in progress ...")
 
-  func <- quote(
-    gcca(
-      blocks = opt$blocks,
-      connection = opt$connection,
-      ncomp = opt$ncomp,
-      verbose = verbose,
-      scheme = opt$scheme,
-      init = init,
-      bias = bias,
-      tol = tol,
-      quiet = quiet,
-      na.rm = na.rm,
-      superblock = opt$superblock
-    )
+  gcca_args <- list(
+    blocks = opt$blocks,
+    connection = opt$connection,
+    ncomp = opt$ncomp,
+    verbose = verbose,
+    scheme = opt$scheme,
+    init = init,
+    bias = bias,
+    tol = tol,
+    quiet = quiet,
+    na.rm = na.rm,
+    superblock = opt$superblock
   )
+  gcca_args[[par]] <- opt$penalty
 
-  func[[par]] <- opt$penalty
-  func_out <- eval(as.call(func))
+  func_out <- do.call(gcca, gcca_args)
 
   for (j in seq(length(opt$blocks))) {
     rownames(func_out$a[[j]]) <- colnames(opt$blocks[[j]])

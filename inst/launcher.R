@@ -252,6 +252,7 @@ char_to_list <- function(x) {
 
 check_arg <- function(opt) {
   # Check the validity of the arguments opt : an optionParser object
+  scheme <- NULL
 
   if (is.null(opt$datasets)) {
     stop_rgcca(paste0("datasets is required."), exit_code = 121)
@@ -262,25 +263,26 @@ check_arg <- function(opt) {
   } else if (!opt$scheme %in% seq(4)) {
     stop_rgcca(
       paste0(
-        "scheme should be comprise between 1 and 4 [by default: 2], not be equal to ",
+        "scheme should be comprise between 1 and 4 [by default: 2],",
+        " not be equal to ",
         opt$scheme,
         "."
       ),
       exit_code = 122
     )
   } else {
-    schemes <- c("horst", "factorial", "centroid")
     if (opt$scheme == 4) {
       opt$scheme <- function(x) x^4
     } else {
-      opt$scheme <- schemes[opt$scheme]
+      opt$scheme <- c("horst", "factorial", "centroid")[opt$scheme]
     }
   }
 
   if (!opt$separator %in% seq(3)) {
     stop_rgcca(
       paste0(
-        "separator should be comprise between 1 and 3 (1: Tabulation, 2: Semicolon, 3: Comma) [by default: 2], not be equal to ",
+        "separator should be comprise between 1 and 3 (1: Tabulation, ",
+        "2: Semicolon, 3: Comma) [by default: 2], not be equal to ",
         opt$separator,
         "."
       ),
@@ -304,7 +306,7 @@ check_arg <- function(opt) {
 post_check_arg <- function(opt, rgcca) {
   # Check the validity of the arguments after loading the blocks opt : an
   # optionParser object blocks : a list of matrix
-  blocks <- NULL
+  ncomp <- block <- blocks <- NULL
   for (x in c("block", "block_y")) {
     if (!is.null(opt[[x]])) {
       if (opt[[x]] == 0) {
@@ -456,10 +458,13 @@ opt$text <- !("text" %in% names(opt))
 
 status <- 0
 tryCatch(
-  {
+  expr = {
     blocks <- load_blocks(opt$datasets, opt$names, opt$separator)
     group <- load_response(blocks, opt$group, opt$separator, opt$header)
-    connection <- load_connection(file = opt$connection, separator = opt$separator)
+    connection <- load_connection(
+      file = opt$connection,
+      separator = opt$separator
+    )
 
     func <- quote(
       rgcca(
@@ -486,7 +491,10 @@ tryCatch(
     ########## Plot ##########
 
     if (rgcca_out$call$ncomp[opt$block] == 1 && is.null(opt$block_y)) {
-      warning("With a number of component of 1, a second block should be chosen to perform an individual plot")
+      warning(
+        "With a number of component of 1, a second block should be ",
+        "chosen to perform an individual plot"
+      )
     } else {
       (
         individual_plot <- plot_ind(

@@ -18,14 +18,18 @@
 #'   )
 #' }
 #' weights[[4]] <- Reduce(rbind, weights)
-#' rgcca_out <- list(a = weights, call = list(method = "rgcca", ncomp = rep(2, 4)))
+#' rgcca_out <- list(a = weights, call = list(
+#'   method = "rgcca",
+#'   ncomp = rep(2, 4)
+#' ))
 #' names(rgcca_out$a) <- LETTERS[seq(4)]
 #' rgcca_out$call$blocks <- lapply(rgcca_out$a, t)
 #' rgcca_out$call$superblock <- TRUE
 #' class(rgcca_out) <- "rgcca"
 #' # With the 1rst component of the superblock
 #' plot_var_1D(rgcca_out, 1, type = "weight")
-#' # With the 2nd component of the 1rst block by selecting the ten higher weights
+#' # With the 2nd component of the 1rst block by selecting the ten higher
+#' # weights
 #' plot_var_1D(rgcca_out, 2, 10, 1, type = "weight")
 #' data("Russett")
 #' blocks <- list(
@@ -62,7 +66,9 @@ plot_var_1D <- function(rgcca_res,
   )
   resp <- df$resp
 
-  if (i_block < length(rgcca_res$a) || tolower(rgcca_res$call$method) == "pca") {
+  if (
+    i_block < length(rgcca_res$a) || tolower(rgcca_res$call$method) == "pca"
+  ) {
     rgcca_res$call$superblock <- FALSE
   }
   J <- names(rgcca_res$a)
@@ -75,7 +81,7 @@ plot_var_1D <- function(rgcca_res,
   }
 
   # sort in decreasing order
-  df <- data.frame(order_df(df, 1, TRUE), order = NROW(df):1)
+  df <- data.frame(order_df(df, 1, TRUE), order = seq(NROW(df), 1))
   class(df) <- c(class(df), "d_var1D")
 
   # max threshold for n
@@ -86,7 +92,9 @@ plot_var_1D <- function(rgcca_res,
   # if the superblock is selected, color the text of the y-axis according
   # to their belonging to each blocks
 
-  if ((rgcca_res$call$superblock && i_block == length(rgcca_res$a)) || collapse) {
+  if (
+    (rgcca_res$call$superblock && i_block == length(rgcca_res$a)) || collapse
+  ) {
     color <- factor(resp)
     levels(color) <- color_group(color, colors = colors)
     p <- ggplot(df, aes(order, df[, 1], fill = resp))
@@ -118,10 +126,14 @@ plot_var_1D <- function(rgcca_res,
 
   # Force all the block names to appear on the legend
   if (length(color) != 1) {
-    p <- suppressMessages(order_color(rgcca_res$a, p, matched, collapse, colors))
+    p <- suppressMessages(order_color(
+      rgcca_res$a, p, matched, collapse, colors
+    ))
   }
 
-  if ((!rgcca_res$call$superblock || i_block != length(rgcca_res$a)) && !collapse) {
+  if (
+    (!rgcca_res$call$superblock || i_block != length(rgcca_res$a)) && !collapse
+  ) {
     p <- p + theme(legend.position = "none")
   }
 

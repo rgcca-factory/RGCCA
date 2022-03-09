@@ -30,6 +30,7 @@ rgcca_cv(
   tau = rep(1, length(blocks)),
   ncomp = rep(1, length(blocks)),
   sparsity = rep(1, length(blocks)),
+  connection = 1 - diag(length(blocks)),
   init = "svd",
   bias = TRUE,
   X_scaled = FALSE,
@@ -37,9 +38,11 @@ rgcca_cv(
 )
 }
 \arguments{
-\item{blocks}{A list that contains the J blocks of variables X1, X2, ..., XJ.
-Block Xj is a matrix of dimension n x p_j where n is the number of
-observations and p_j the number of variables.}
+\item{blocks}{A list that contains the J blocks of variables
+\eqn{\mathbf{X_1}, \mathbf{X_2}, ..., \mathbf{X_J}}{X1, X2, ..., XJ}.
+Block \eqn{\mathbf{X}_j}{Xj} is a matrix of dimension
+\eqn{n \times p_j}{n x p_j} where n is the number of
+observations and \eqn{p_j} the number of variables.}
 
 \item{method}{A character string indicating the multi-block component
 method to consider: rgcca, sgcca, pca, spca, pls, spls, cca,
@@ -48,11 +51,12 @@ cpca-4, hpca, maxbet-b, maxbet, maxdiff-b, maxdiff, maxvar-a,
 sabscor, ssqcor, ssqcor, ssqcov-1, ssqcov-2, ssqcov, sumcor,
 sumcov-1, sumcov-2, sumcov, sabscov, sabscov-1, sabscov-2.}
 
-\item{response}{Numerical value giving the position of the response block. When
-the response argument is filled the supervised mode is automatically
+\item{response}{Numerical value giving the position of the response block.
+When the response argument is filled the supervised mode is automatically
 activated.}
 
-\item{par_type}{A character giving the parameter to tune among "sparsity" or "tau".}
+\item{par_type}{A character giving the parameter to tune among "sparsity"
+or "tau".}
 
 \item{par_value}{A matrix (n*p, with p the number of blocks and n the number
 of combinations to be tested), a vector (of p length) or a numeric value
@@ -60,19 +64,25 @@ giving sets of penalties (tau for RGCCA, sparsity for SGCCA) to be tested,
 one row by combination. By default, it takes 10 sets between min values (0
  for RGCCA and $1/sqrt(ncol)$ for SGCCA) and 1.}
 
-\item{par_length}{An integer indicating the number of sets of parameters to be tested (if par_value = NULL). The parameters are uniformly distributed.}
+\item{par_length}{An integer indicating the number of sets of parameters to
+be tested (if par_value = NULL). The parameters are uniformly distributed.}
 
-\item{validation}{A character for the type of validation among "loo", "kfold", "test".}
+\item{validation}{A character for the type of validation among "loo",
+"kfold", "test".}
 
-\item{type_cv}{A character corresponding to the task of prediction : 'regression' or 'classification' (see details)}
+\item{type_cv}{A character corresponding to the task of prediction:
+'regression' or 'classification' (see details)}
 
-\item{prediction_model}{A character giving the function used to compare the trained and the tested models}
+\item{prediction_model}{A character giving the function used to compare the
+trained and the tested models}
 
 \item{k}{An integer giving the number of folds (if validation = 'kfold').}
 
-\item{n_run}{An integer giving the number of cross-validations to be run (if validation = 'kfold').}
+\item{n_run}{An integer giving the number of cross-validations to be run
+(if validation = 'kfold').}
 
-\item{one_value_per_cv}{A logical value indicating if the k values are averaged for each k-fold steps.}
+\item{one_value_per_cv}{A logical value indicating if the k values are
+averaged for each k-fold steps.}
 
 \item{n_cores}{Number of cores for parallelization.}
 
@@ -114,16 +124,18 @@ data (NIPALS-type algorithm)}}}
 \item{parallelization}{logical value. If TRUE (default value), the
 cross-validation procedure is parallelized}
 
-\item{tau}{Either a 1*J vector or a max(ncomp)*J matrix containing
+\item{tau}{Either a \eqn{1 \times J}{1 x J} vector or a
+\eqn{\mathrm{max}(ncomp) \times J}{max(ncomp) x J} matrix containing
 the values of the regularization parameters (default: tau = 1, for each
 block and each dimension). The regularization parameters varies from 0
 (maximizing the correlation) to 1 (maximizing the covariance). If
-tau = "optimal" the regularization paramaters are estimated for each block
+tau = "optimal" the regularization parameters are estimated for each block
 and each dimension using the Schafer and Strimmer (2005) analytical formula.
-If tau is a 1*J vector, tau[j] is identical across the dimensions
-of block Xj. If tau is a matrix, tau[k, j] is associated with
-X_jk (kth residual matrix for block j). The regularization parameters can
-also be estimated using \link{rgcca_permutation} or \link{rgcca_cv}.}
+If tau is a \eqn{1 \times J}{1 x J} vector, tau[j] is identical across the
+dimensions of block \eqn{\mathbf{X}_j}{Xj}. If tau is a matrix, tau[k, j]
+is associated with \eqn{\mathbf{X}_{jk}}{Xjk} (kth residual matrix for
+block j). The regularization parameters can also be estimated using
+\link{rgcca_permutation} or \link{rgcca_cv}.}
 
 \item{ncomp}{Vector of length J indicating the number of block components
 for each block.}
@@ -141,6 +153,9 @@ the weights corresponding to components \eqn{h}:
 \deqn{for all h, |a_{j,h}|_{L_1} \le c_1[h,j] \sqrt{p_j}.} It can be
 estimated by using \link{rgcca_permutation}.}
 
+\item{connection}{A symmetric matrix (\eqn{J \times J}{J x J}) that
+describes the relationships between blocks.}
+
 \item{init}{Character string giving the type of initialization to use in
 the  algorithm. It could be either by Singular Value Decompostion ("svd")
 or by random initialisation ("random") (default: "svd").}
@@ -154,48 +169,71 @@ scaled.}
 \item{...}{Further graphical parameters (see plot2D functions)}
 }
 \value{
-\item{cv}{A matrix giving the root-mean-square error (RMSE) between the predicted R/SGCCA and the observed R/SGCCA for each combination and each prediction (n_prediction = n_samples for validation = 'loo'; n_prediction = 'k' * 'n_run' for validation = 'kfold').}
+\item{cv}{A matrix giving the root-mean-square error (RMSE) between
+the predicted R/SGCCA and the observed R/SGCCA for each combination and each
+prediction (n_prediction = n_samples for validation = 'loo';
+n_prediction = 'k' * 'n_run' for validation = 'kfold').}
 
 \item{call}{A list of the input parameters}
 
-\item{bestpenalties}{Penalties giving the best RMSE for each blocks (for regression) or the best proportion of wrong predictions (for classification)}
+\item{bestpenalties}{Penalties giving the best RMSE for each blocks
+(for regression) or the best proportion of wrong predictions
+(for classification)}
 
-\item{penalties}{A matrix giving, for each blocks, the penalty combinations (tau or sparsity)}
+\item{penalties}{A matrix giving, for each blocks, the penalty
+combinations (tau or sparsity)}
 }
 \description{
 Tune the sparsity coefficient (if the model is sparse) or tau
-(otherwise) in a supervised approach by estimating by crossvalidation the predictive quality of the models.
-In this purpose, the samples are divided into k folds where the model will be tested on each fold and trained
- on the others. For small datasets (<30 samples), it is recommended to use
- as many folds as there are individuals (leave-one-out; loo).
+(otherwise) in a supervised approach by estimating by crossvalidation the
+predictive quality of the models.
+In this purpose, the samples are divided into k folds where the model will
+be tested on each fold and trained on the others. For small datasets
+(<30 samples), it is recommended to use as many folds as there are
+individuals (leave-one-out; loo).
 }
 \details{
-If type_cv=="regression",at each round of cross-validation, for each variable, a predictive model is constructed as a linear model of the first RGCCA component of each block (calculated on the training set).
- Then the Root Mean Square of Errors of this model on the testing dataset are calculated, then averaged on the variables of the predictive block.
- The best combination of parameters is the one where the average of RMSE on the testing datasets is the lowest.
-If type_cv=="classification", at each round of cross-validation a "lda" is run and the proportion of wrong predictions on the testing dataset is returned.
+If type_cv=="regression",at each round of cross-validation, for each
+variable, a predictive model is constructed as a linear model of the first
+RGCCA component of each block (calculated on the training set).
+Then the Root Mean Square of Errors of this model on the testing dataset
+are calculated, then averaged on the variables of the predictive block.
+The best combination of parameters is the one where the average of RMSE on
+the testing datasets is the lowest.
+If type_cv=="classification", at each round of cross-validation a "lda" is
+run and the proportion of wrong predictions on the testing dataset is
+returned.
 }
 \examples{
 data("Russett")
-blocks <- list(agriculture = Russett[, seq(3)],
-               industry = Russett[, 4:5],
-               politic = Russett[, 6:11])
-res = rgcca_cv(blocks, response = 3, method="rgcca",
-               par_type = "sparsity",
-               par_value = c(0.6, 0.75, 0.5),
-               n_run = 2, n_cores = 1)
+blocks <- list(
+  agriculture = Russett[, seq(3)],
+  industry = Russett[, 4:5],
+  politic = Russett[, 6:11]
+)
+res <- rgcca_cv(blocks,
+  response = 3, method = "rgcca",
+  par_type = "sparsity",
+  par_value = c(0.6, 0.75, 0.5),
+  n_run = 2, n_cores = 1
+)
 plot(res)
-
 \dontrun{
-rgcca_cv(blocks, response = 3, par_type = "tau",
-         par_value = c(0.6, 0.75, 0.5),
-         n_run = 2, n_cores = 1)$bestpenalties
+rgcca_cv(blocks,
+  response = 3, par_type = "tau",
+  par_value = c(0.6, 0.75, 0.5),
+  n_run = 2, n_cores = 1
+)$bestpenalties
 
-rgcca_cv(blocks, response = 3, par_type = "sparsity",
-         par_value = 0.8,  n_run = 2, n_cores = 1)
+rgcca_cv(blocks,
+  response = 3, par_type = "sparsity",
+  par_value = 0.8, n_run = 2, n_cores = 1
+)
 
-rgcca_cv(blocks, response = 3, par_type = "tau",
-         par_value = 0.8, n_run = 2, n_cores = 1)
+rgcca_cv(blocks,
+  response = 3, par_type = "tau",
+  par_value = 0.8, n_run = 2, n_cores = 1
+)
 }
 
 }

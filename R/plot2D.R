@@ -2,11 +2,15 @@
 #'
 #' Plot RGCCA components in a bi-dimensional space
 #'
-#' @param compx An integer giving the index of the block component for the x-axis
-#' @param compy An integer giving the index of the block component for the y-axis
+#' @param compx An integer giving the index of the block component for
+#' the x-axis
+#' @param compy An integer giving the index of the block component for
+#' the y-axis
 #' @param i_block An integer giving the index of the block
-#' @param text A logical value indicating if rowanmes are displayed (default = TRUE)
-#' @param i_block_y An integer giving the index of the block (different from i_block)
+#' @param text A logical value indicating if rowanmes are displayed
+#' (default = TRUE)
+#' @param i_block_y An integer giving the index of the block
+#' (different from i_block)
 #' @param no_overlap A logical value indicating if text-overlappin is accepted
 #' @param rgcca_res A fitted RGCCA object (see  \code{\link[RGCCA]{rgcca}})
 #' @param df A data.frame
@@ -21,21 +25,12 @@
 #' @param cex An integer for the size of the plot parameters
 #' @param cex_main An integer for the size of the title
 #' @param cex_sub An integer for the size of the subtitle
-#' @param cex_point An integer for the size of the points or the text in the plot
+#' @param cex_point An integer for the size of the points or the text in
+#' the plot
 #' @param cex_lab An integer for the size of the axis titles
 #' @param collapse A boolean to combine the variables of each block as result
 #' @importFrom ggplot2 ggplot
 #' @importFrom utils installed.packages
-# @examples
-# df = as.data.frame(matrix(runif(20*2, min = -1), 20, 2))
-# AVE = lapply(seq(4), function(x) runif(2))
-# rgcca_out = list(AVE = list(AVE_X = AVE), call = list(method = "rgcca"))
-# plot2D(rgcca_out, df, "Samples", rep(c("a","b"), each=10), "Response")
-# data(Russett)
-# blocks = list(agriculture = Russett[, seq(3)], industry = Russett[, 4:5],
-# politic = Russett[, 6:11] )
-# rgcca_out = rgcca(blocks)
-# plot2D(rgcca_out, df)
 plot2D <- function(rgcca_res,
                    df,
                    title = "",
@@ -70,8 +65,6 @@ plot2D <- function(rgcca_res,
 
   if (!isTRUE(text)) {
     func <- quote(geom_point(size = cex_point))
-    #  if (!is.numeric(na.omit(group)))
-    #      func$mapping <- aes(shape = as.factor(group))
   } else {
     f <- "geom_text"
     func <- quote(
@@ -112,11 +105,17 @@ plot2D <- function(rgcca_res,
   }
   names_blocks <- names(rgcca_res$call$blocks)
   if (is.null(names_blocks)) {
-    names_blocks <- paste("Block", 1:length(rgcca_res$call$blocks))
+    names_blocks <- paste("Block", seq_along(rgcca_res$call$blocks))
   }
   if (i_block != i_block_y) {
-    xlab <- paste0(print_comp(rgcca_res, compx, i_block), " - ", names_blocks[i_block])
-    ylab <- paste0(print_comp(rgcca_res, compy, i_block_y), " - ", names_blocks[i_block_y])
+    xlab <- paste0(
+      print_comp(rgcca_res, compx, i_block), " - ",
+      names_blocks[i_block]
+    )
+    ylab <- paste0(
+      print_comp(rgcca_res, compy, i_block_y), " - ",
+      names_blocks[i_block_y]
+    )
   } else {
     xlab <- print_comp(rgcca_res, compx, i_block)
     ylab <- print_comp(rgcca_res, compy, i_block_y)
@@ -136,8 +135,7 @@ plot2D <- function(rgcca_res,
     title = title,
     x = xlab,
     y = ylab,
-    color = name_group # ,
-    # shape = name_group
+    color = name_group
   ) +
     scale_y_continuous(breaks = NULL) +
     scale_x_continuous(breaks = NULL) +
@@ -154,9 +152,10 @@ plot2D <- function(rgcca_res,
   if (length(unique(group)) != 1 && is(df, "d_var2D")) {
     p <- order_color(rgcca_res$a, p, collapse = collapse, colors = colors)
     # For qualitative response OR no response
-  } else if (is.character(group[!is.na(group)]) || is.factor(group[!is.na(group)]) ||
-    length(unique(group)) <= 5 ||
-    all(levels(as.factor(group)) %in% c("obs", "pred"))
+  } else if (
+    is.character(group[!is.na(group)]) || is.factor(group[!is.na(group)]) ||
+      length(unique(group)) <= 5 ||
+      all(levels(as.factor(group)) %in% c("obs", "pred"))
   ) {
     p <- p + scale_color_manual(values = color_group(group, colors))
     # quantitative response

@@ -2,9 +2,10 @@
 # to a list of weights and affect them to 0
 add_variables_data <- function(rgcca_res, w) {
   blocks_all <- list()
-  for (x in seq_along(rgcca_res$call$blocks))
-  {
-    blocks_all[[x]] <- rgcca_res$call$blocks[[x]][intersect(rownames(rgcca_res$call$blocks[[1]]), rownames(w[[1]])), ]
+  for (x in seq_along(rgcca_res$call$blocks)) {
+    blocks_all[[x]] <- rgcca_res$call$blocks[[x]][
+      intersect(rownames(rgcca_res$call$blocks[[1]]), rownames(w[[1]])),
+    ]
     if (is.null(dim(blocks_all[[x]]))) {
       b <- blocks_all[[x]]
       blocks_all[[x]] <- matrix(blocks_all[[x]], ncol = 1)

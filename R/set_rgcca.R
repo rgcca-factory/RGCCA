@@ -74,7 +74,7 @@ set_rgcca <- function(rgcca_res,
     if (keep_inds) {
       boot_blocks <- lapply(blocks, function(x) {
         y <- x[inds, , drop = FALSE]
-        rownames(y) <- paste("S", 1:length(inds))
+        rownames(y) <- paste("S", seq_along(inds))
         return(y)
       })
     } else {

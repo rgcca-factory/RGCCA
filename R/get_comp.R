@@ -45,7 +45,6 @@ get_comp <- function(rgcca_res,
     resp <- c(rep("obs", NROW(df2)), rep("pred", NROW(df2)))
   } else if (length(unique(resp)) > 1) {
     names <- row.names(resp)
-    #  resp <- apply(as.matrix(resp), 1, as.character)
 
     if (!is.null(names)) {
       resp <- as.matrix(resp, row.names = names)
@@ -65,11 +64,11 @@ get_comp <- function(rgcca_res,
         resp <- resp[row.names(rgcca_res$Y[[i_block_x]])]
       }
     } else {
-      # warning("No rownames have been found in the group file. The rownames of the selected block of RGCCA have been used.")
-      # resp <- rep("NA", NROW(df))
-      # rownames(resp) <- rownames(rgcca_res$call$blocks[[i_block_x]])
       if (length(resp) != NROW(rgcca_res$call$blocks[[i_block_x]])) {
-        stop_rgcca("resp argument should have the same size than the number of rows in the selected block.")
+        stop_rgcca(paste0(
+          "resp argument should have the same size than the ",
+          "number of rows in the selected block."
+        ))
       }
     }
   } else {

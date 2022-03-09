@@ -6,7 +6,8 @@
 #' @param resp A vector of characters corresponding either to a qualitative
 #' variable with levels or a continuous variable
 #' @param response_name A character giving the legend title
-#' @param predicted A list containing as  2nd element a matrix of predicted components
+#' @param predicted A list containing as  2nd element a matrix of predicted
+#' components
 #' @param legend A logical value indicatif if the legend should be plotted
 #' @param ... Further graphical parameters (see plot2D functions)
 #' @examples
@@ -55,7 +56,10 @@ plot_ind <- function(rgcca_res,
                      response_name = "Response",
                      no_overlap = FALSE,
                      predicted = NULL,
-                     title = paste0(names(rgcca_res$call$blocks)[i_block], ": Sample space"),
+                     title = paste0(
+                       names(rgcca_res$call$blocks)[i_block],
+                       ": Sample space"
+                     ),
                      legend = TRUE,
                      cex = 1,
                      cex_main = 14 * cex,
