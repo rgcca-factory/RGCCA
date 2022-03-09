@@ -30,7 +30,6 @@ rgcca_cv(
   tau = rep(1, length(blocks)),
   ncomp = rep(1, length(blocks)),
   sparsity = rep(1, length(blocks)),
-  connection = 1 - diag(length(blocks)),
   init = "svd",
   bias = TRUE,
   X_scaled = FALSE,
@@ -152,9 +151,6 @@ If sparsity is a matrix, each row \eqn{h} defines the constraints applied to
 the weights corresponding to components \eqn{h}:
 \deqn{for all h, |a_{j,h}|_{L_1} \le c_1[h,j] \sqrt{p_j}.} It can be
 estimated by using \link{rgcca_permutation}.}
-
-\item{connection}{A symmetric matrix (\eqn{J \times J}{J x J}) that
-describes the relationships between blocks.}
 
 \item{init}{Character string giving the type of initialization to use in
 the  algorithm. It could be either by Singular Value Decompostion ("svd")

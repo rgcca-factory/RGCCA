@@ -107,7 +107,6 @@ rgcca_cv <- function(blocks,
                      tau = rep(1, length(blocks)),
                      ncomp = rep(1, length(blocks)),
                      sparsity = rep(1, length(blocks)),
-                     connection = 1 - diag(length(blocks)),
                      init = "svd",
                      bias = TRUE,
                      X_scaled = FALSE,
@@ -126,7 +125,6 @@ rgcca_cv <- function(blocks,
     bias <- rgcca_res$call$bias
     blocks <- rgcca_res$call$raw
     superblock <- rgcca_res$call$superblock
-    connection <- rgcca_res$call$connection
     tau <- rgcca_res$call$tau
     ncomp <- rgcca_res$call$ncomp
     sparsity <- rgcca_res$call$sparsity
