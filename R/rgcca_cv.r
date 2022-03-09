@@ -255,7 +255,7 @@ rgcca_cv <- function(blocks,
     collapse = "-"
   )
 
-  for (i in 1:dim(par_type[[2]])[1]) {
+  for (i in seq(dim(par_type[[2]])[1])) {
     if (par_type[[1]] == "ncomp") {
       rgcca_res <- rgcca(
         blocks = blocks, method = method, response = response,
@@ -286,7 +286,7 @@ rgcca_cv <- function(blocks,
     }
 
     res_i <- c()
-    for (n in 1:n_run) {
+    for (n in seq(n_run)) {
       if (one_value_per_cv) {
         res_i <- c(res_i, rgcca_cv_k(
           rgcca_res,
