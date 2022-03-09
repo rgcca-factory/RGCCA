@@ -256,7 +256,7 @@ rgcca <- function(blocks, method = "rgcca",
     superblock <- FALSE
   }
 
-  if (!missing(response) && missing(superblock)) {
+  if (!is.null(response)) {
     superblock <- FALSE
   }
 
@@ -359,7 +359,7 @@ rgcca <- function(blocks, method = "rgcca",
     opt$connection <- check_connection(opt$connection, opt$blocks)
   } else if (is.matrix(opt$connection)) {
     opt$connection <- check_connection(opt$connection, opt$blocks)
-    opt$connection <- opt$connection[names(blocks), names(blocks)]
+    opt$connection <- opt$connection[names(opt$blocks), names(opt$blocks)]
   }
 
 

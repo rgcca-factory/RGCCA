@@ -13,7 +13,6 @@ select_analysis(
   scheme = "centroid",
   superblock = TRUE,
   method = "rgcca",
-  verbose = TRUE,
   quiet = FALSE,
   response = NULL
 )
@@ -36,7 +35,7 @@ for each block.}
 covariance maximization among "horst" (the identity function), "factorial"
  (the squared values), "centroid" (the absolute values). The scheme function
  can be any continously differentiable convex function and it is possible to
- design explicitely the sheme function (e.g. function(x) x^4) as argument of
+ design explicitely the scheme function (e.g. function(x) x^4) as argument of
  rgcca function.  See (Tenenhaus et al, 2017) for details.}
 
 \item{superblock}{Boolean indicating the presence of the superblock.
@@ -45,11 +44,9 @@ Default = TRUE}
 \item{method}{A character string indicating the multi-block component
 method to consider: rgcca, sgcca, pca, spca, pls, spls, cca,
 ifa, ra, gcca, maxvar, maxvar-b, maxvar-a, mcoa,cpca-1, cpca-2,
-cpca-4, hpca, maxbet-b, maxbet, maxdiff-b, maxdiff, maxvar-a,
-sabscor, ssqcor, ssqcor, ssqcov-1, ssqcov-2, ssqcov, sumcor,
-sumcov-1, sumcov-2, sumcov, sabscov, sabscov-1, sabscov-2.}
-
-\item{verbose}{Logical value indicating whether the warnings are displayed.}
+cpca-4, hpca, maxbet-b, maxbet, maxdiff-b, maxdiff,
+sabscor, ssqcor, ssqcov-1, ssqcov-2, ssqcov, sumcor,
+sumcov-1, sumcov-2, sumcov, sabscov-1, sabscov-2.}
 
 \item{quiet}{Logical value indicating if warning messages are reported.}
 

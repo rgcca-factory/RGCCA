@@ -203,7 +203,7 @@ check_method <- function(method) {
 }
 
 check_nblocks <- function(blocks, method) {
-  if (tolower(method) == "pca") {
+  if (tolower(method) %in% c("pca", "spca")) {
     if (length(blocks) == 1) {
       return(blocks)
     }

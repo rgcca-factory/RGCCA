@@ -4,9 +4,9 @@
 #' @param method A character string indicating the multi-block component
 #' method to consider: rgcca, sgcca, pca, spca, pls, spls, cca,
 #' ifa, ra, gcca, maxvar, maxvar-b, maxvar-a, mcoa,cpca-1, cpca-2,
-#' cpca-4, hpca, maxbet-b, maxbet, maxdiff-b, maxdiff, maxvar-a,
-#' sabscor, ssqcor, ssqcor, ssqcov-1, ssqcov-2, ssqcov, sumcor,
-#' sumcov-1, sumcov-2, sumcov, sabscov, sabscov-1, sabscov-2.
+#' cpca-4, hpca, maxbet-b, maxbet, maxdiff-b, maxdiff,
+#' sabscor, ssqcor, ssqcov-1, ssqcov-2, ssqcov, sumcor,
+#' sumcov-1, sumcov-2, sumcov, sabscov-1, sabscov-2.
 #' @inheritParams plot_var_2D
 #' @inheritParams set_connection
 #' @param blocks List of blocks.
@@ -25,9 +25,8 @@
 #' covariance maximization among "horst" (the identity function), "factorial"
 #'  (the squared values), "centroid" (the absolute values). The scheme function
 #'  can be any continously differentiable convex function and it is possible to
-#'  design explicitely the sheme function (e.g. function(x) x^4) as argument of
+#'  design explicitely the scheme function (e.g. function(x) x^4) as argument of
 #'  rgcca function.  See (Tenenhaus et al, 2017) for details.
-#' @param verbose Logical value indicating whether the warnings are displayed.
 #' @param quiet Logical value indicating if warning messages are reported.
 #' @return \item{blocks}{List of blocks.}
 #' @return \item{scheme}{Character string or a function giving the scheme
@@ -48,289 +47,270 @@ select_analysis <- function(blocks,
                             scheme = "centroid",
                             superblock = TRUE,
                             method = "rgcca",
-                            verbose = TRUE,
                             quiet = FALSE,
                             response = NULL) {
-  substitute <- function(x, env = environment()) {
-    x <- strsplit(deparse(base::substitute(x, env)), "\\$")[[1]]
-    return(x[length(x)])
+  call <- list(
+    ncomp = ncomp, scheme = scheme, penalty = penalty,
+    superblock = superblock, connection = connection
+  )
+  J <- length(blocks)
+  c_all <- function(J) {
+    return(matrix(1, J, J))
   }
-  local_env <- new.env()
-  local_env$ncomp <- ncomp
-  local_env$blocks <- blocks
-  local_env$scheme <- scheme
-  local_env$penalty <- penalty
-  local_env$superblock <- superblock
-  local_env$connection <- connection
-  local_env$warn_method_value <-
-    local_env$warn_method_par <-
-    local_env$warn_message_super <- character(0)
-  J <- length(local_env$blocks)
-  msg_superblock <- "A superblock is considered."
-  msg_type <- paste0("By using a ", toupper(method), ", ")
-
-  if (quiet) {
-    verbose <- FALSE
-  }
-
-  ### SETTINGS ###
-
-  warn_param <- function(x, param) {
-    local_env$warn_method_par <- c(
-      local_env$warn_method_par, paste(substitute(x, environment()))
-    )
-    local_env$warn_method_value <- c(
-      local_env$warn_method_value, toString(param)
-    )
-  }
-
-  set_penalty <- function(x) {
-    warn_param(local_env$penalty, x)
+  c_response <- function(J) {
+    x <- matrix(0, J, J)
+    x[, J] <- x[J, ] <- 1
+    x[J, J] <- 0
     return(x)
   }
-
-  set_scheme <- function(x) {
-    warn_param(local_env$scheme, x)
-    return(x)
+  c_pair <- function(J) {
+    return(1 - diag(J))
   }
 
-  set_connection <- function(x) {
-    warn_param(local_env$connection, paste(substitute(x, environment())))
-    return(x)
-  }
+  switch(method,
+    "rgcca" = {
+    },
+    "sgcca" = {
+    },
+    "pca" = {
+      check_nblocks(blocks, "pca")
+      ncomp <- max(ncomp)
+      scheme <- "horst"
+      penalty <- c(1, 1)
+      superblock <- TRUE
+      connection <- c_pair(2)
+    },
+    "spca" = {
+      check_nblocks(blocks, "spca")
+      ncomp <- max(ncomp)
+      scheme <- "horst"
+      penalty <- c(penalty[1], 1)
+      superblock <- TRUE
+      connection <- c_pair(2)
+    },
+    "pls" = {
+      check_nblocks(blocks, "pls")
+      scheme <- "horst"
+      penalty <- c(1, 1)
+      superblock <- FALSE
+      connection <- c_pair(2)
+    },
+    "spls" = {
+      check_nblocks(blocks, "spls")
+      scheme <- "horst"
+      superblock <- FALSE
+      connection <- c_pair(2)
+    },
+    "cca" = {
+      check_nblocks(blocks, "cca")
+      scheme <- "horst"
+      penalty <- c(0, 0)
+      superblock <- FALSE
+      connection <- c_pair(2)
+    },
+    "ifa" = {
+      check_nblocks(blocks, "ifa")
+      scheme <- "horst"
+      penalty <- c(1, 1)
+      superblock <- FALSE
+      connection <- c_pair(2)
+    },
+    "ra" = {
+      check_nblocks(blocks, "ra")
+      scheme <- "horst"
+      penalty <- c(1, 0)
+      superblock <- FALSE
+      connection <- c_pair(2)
+    },
+    "gcca" = {
+      ncomp <- max(ncomp)
+      scheme <- "factorial"
+      penalty <- rep(0, J + 1)
+      superblock <- TRUE
+      connection <- c_response(J + 1)
+    },
+    "maxvar" = {
+      ncomp <- max(ncomp)
+      scheme <- "factorial"
+      penalty <- rep(0, J + 1)
+      superblock <- TRUE
+      connection <- c_response(J + 1)
+    },
+    "maxvar-b" = {
+      ncomp <- max(ncomp)
+      scheme <- "factorial"
+      penalty <- rep(0, J + 1)
+      superblock <- TRUE
+      connection <- c_response(J + 1)
+    },
+    "maxvar-a" = {
+      ncomp <- max(ncomp)
+      scheme <- "factorial"
+      penalty <- c(rep(1, J), 0)
+      superblock <- TRUE
+      connection <- c_response(J + 1)
+    },
+    "mcoa" = {
+      ncomp <- max(ncomp)
+      scheme <- "factorial"
+      penalty <- c(rep(1, J), 0)
+      superblock <- TRUE
+      connection <- c_response(J + 1)
+    },
+    "cpca-1" = {
+      ncomp <- max(ncomp)
+      scheme <- "horst"
+      penalty <- c(rep(1, J), 0)
+      superblock <- TRUE
+      connection <- c_response(J + 1)
+    },
+    "cpca-2" = {
+      ncomp <- max(ncomp)
+      scheme <- "factorial"
+      penalty <- c(rep(1, J), 0)
+      superblock <- TRUE
+      connection <- c_response(J + 1)
+    },
+    "cpca-4" = {
+      ncomp <- max(ncomp)
+      scheme <- function(x) x^4
+      penalty <- c(rep(1, J), 0)
+      superblock <- TRUE
+      connection <- c_response(J + 1)
+    },
+    "hpca" = {
+      ncomp <- max(ncomp)
+      scheme <- function(x) x^4
+      penalty <- c(rep(1, J), 0)
+      superblock <- TRUE
+      connection <- c_response(J + 1)
+    },
+    "maxbet-b" = {
+      scheme <- "factorial"
+      penalty <- rep(1, J)
+      superblock <- FALSE
+      connection <- c_all(J)
+    },
+    "maxbet" = {
+      scheme <- "horst"
+      penalty <- rep(1, J)
+      superblock <- FALSE
+      connection <- c_all(J)
+    },
+    "maxdiff-b" = {
+      scheme <- "factorial"
+      penalty <- rep(1, J)
+      superblock <- FALSE
+      connection <- c_pair(J)
+    },
+    "maxdiff" = {
+      scheme <- "horst"
+      penalty <- rep(1, J)
+      superblock <- FALSE
+      connection <- c_pair(J)
+    },
+    "sabscor" = {
+      scheme <- "centroid"
+      penalty <- rep(0, J)
+      superblock <- FALSE
+      connection <- c_all(J)
+    },
+    "ssqcor" = {
+      scheme <- "factorial"
+      penalty <- rep(0, J)
+      superblock <- FALSE
+      connection <- c_all(J)
+    },
+    "ssqcov-1" = {
+      scheme <- "factorial"
+      penalty <- rep(1, J)
+      superblock <- FALSE
+      connection <- c_all(J)
+    },
+    "ssqcov-2" = {
+      scheme <- "factorial"
+      penalty <- rep(1, J)
+      superblock <- FALSE
+      connection <- c_pair(J)
+    },
+    "ssqcov" = {
+      scheme <- "factorial"
+      penalty <- rep(1, J)
+      superblock <- FALSE
+      connection <- c_pair(J)
+    },
+    "sumcor" = {
+      scheme <- "horst"
+      penalty <- rep(0, J)
+      superblock <- FALSE
+      connection <- c_all(J)
+    },
+    "sumcov-1" = {
+      scheme <- "horst"
+      penalty <- rep(1, J)
+      superblock <- FALSE
+      connection <- c_all(J)
+    },
+    "sumcov-2" = {
+      scheme <- "horst"
+      penalty <- rep(1, J)
+      superblock <- FALSE
+      connection <- c_pair(J)
+    },
+    "sumcov" = {
+      scheme <- "horst"
+      penalty <- rep(1, J)
+      superblock <- FALSE
+      connection <- c_pair(J)
+    },
+    "sabscov-1" = {
+      scheme <- "centroid"
+      penalty <- rep(1, J)
+      superblock <- FALSE
+      connection <- c_all(J)
+    },
+    "sabscov-2" = {
+      scheme <- "centroid"
+      penalty <- rep(1, J)
+      superblock <- FALSE
+      connection <- c_pair(J)
+    }
+  )
 
-  warn_super <- function(x) {
-    if (class(x) %in% c("matrix", "data.frame") &&
-      NCOL(x) < (length(local_env$blocks)) &&
-      is.null(response)) {
-      local_env$warn_msg_super <- c(
-        local_env$warn_msg_super, substitute(x, environment())
-      )
-      return(cbind(x, 1))
-    } else if (length(x) < (length(local_env$blocks)) && is.null(response)) {
-      local_env$warn_msg_super <- c(
-        local_env$warn_msg_super, substitute(x, environment())
-      )
-      if (substitute(x, environment()) == "ncomp") {
-        return(c(x, max(x)))
-      } else {
-        return(c(x, 1))
+  # Generate warnings if some parameters have been modified
+  if (!quiet) {
+    modified_parameters <- vapply(names(call), function(n) {
+      if (!identical(call[[n]], get(n))) {
+        return(n)
       }
-    } else {
-      return(x)
-    }
-  }
-
-  set_superblock <- function(verbose = TRUE) {
-    local_env$blocks <- c(
-      local_env$blocks,
-      superblock = list(Reduce(cbind, local_env$blocks))
-    )
-    local_env$superblock <- TRUE
-    local_env$connection <- NULL
-    local_env$ncomp <- warn_super(local_env$ncomp)
-  }
-
-  set_2block <- function(method) {
-    check_nblocks(local_env$blocks, method)
-
-    local_env$scheme <- set_scheme("horst")
-    local_env$connection <- set_connection(1 - diag(2))
-  }
-
-  ### CHECK TYPES ###
-
-  if (length(grep("[sr]gcca", tolower(method))) == 1) {
-    if (local_env$superblock) {
-      set_superblock(FALSE)
-      local_env$penalty <- warn_super(local_env$penalty)
-    } else {
-      local_env$superblock <- FALSE
-    }
-  } else {
-    local_env$superblock <- FALSE
-  }
-
-  if (length(grep("^s?pca$", tolower(method))) == 1) {
-    check_nblocks(local_env$blocks, method)
-
-    local_env$scheme <- set_scheme("horst")
-    set_superblock()
-    if (tolower(method) == "pca") {
-      local_env$penalty <- set_penalty(c(1, 1))
-    }
-  }
-
-  # 2 Blocks cases
-  else if (tolower(method) %in% c("cca", "ra", "ifa", "pls", "spls")) {
-    set_2block(method)
-
-    if (tolower(method) == "cca") {
-      local_env$penalty <- set_penalty(c(0, 0))
-    } else if (tolower(method) %in% c("ifa", "pls")) {
-      local_env$penalty <- set_penalty(c(1, 1))
-    } else if (tolower(method) == "ra") {
-      local_env$penalty <- set_penalty(c(1, 0))
-    }
-  }
-
-  # Design matrix of 1 values everywhere
-  else if (tolower(method) %in% c(
-    "sumcor",
-    "ssqcor",
-    "sabscor",
-    "sumcov-1",
-    "maxbet",
-    "ssqcov-1",
-    "maxbet-b",
-    "sabscov-1"
-  )) {
-    local_env$connection <- set_connection(matrix(1, J, J))
-
-    # COR models
-    if (tolower(method) %in% c("sumcor", "ssqcor", "sabscor")) {
-      local_env$penalty <- set_penalty(rep(0, J))
-
-      switch(tolower(method),
-        "sumcor" = {
-          local_env$scheme <- set_scheme("horst")
-        },
-        "ssqcor" = {
-          local_env$scheme <- set_scheme("factorial")
-        },
-        "sabscor" = {
-          local_env$scheme <- set_scheme("centroid")
-        }
+      return("0")
+    }, "0")
+    modified_parameters <- modified_parameters[modified_parameters != "0"]
+    n <- length(modified_parameters)
+    if (n == 1) {
+      warning(
+        "Choice of method '", method, "' overwrote parameter '",
+        modified_parameters, "'."
+      )
+    } else if (n > 1) {
+      warning(
+        "Choice of method '", method, "' overwrote parameters '",
+        paste(modified_parameters, collapse = "', '"), "'."
       )
     }
-
-    # COV models
-    else if (tolower(method) %in% c(
-      "sumcov-1",
-      "maxbet",
-      "ssqcov-1",
-      "maxbet-b",
-      "sabscov-1"
-    )) {
-      local_env$penalty <- set_penalty(rep(1, J))
-
-      if (tolower(method) %in% c("sumcov-1", "maxbet")) {
-        local_env$scheme <- set_scheme("horst")
-      } else if (tolower(method) %in% c("ssqcov-1", "maxbet-b")) {
-        local_env$scheme <- set_scheme("factorial")
-      } else if (tolower(method) %in% c("sabscov-1")) {
-        local_env$scheme <- set_scheme("centroid")
-      }
-    }
-
-    # Design matrix with 1 values everywhere except
-    # on the diagonal equals to 0
-  } else if (tolower(method) %in% c(
-    "sumcov",
-    "sumcov-2",
-    "maxdiff",
-    "ssqcov",
-    "ssqcov-2",
-    "maxdiff-b",
-    "sabscov-2"
-  )) {
-    local_env$connection <- set_connection(1 - diag(J))
-
-    if (tolower(method) %in% c("sumcov", "sumcov-2", "maxdiff")) {
-      local_env$scheme <- set_scheme("horst")
-      local_env$penalty <- set_penalty(rep(1, J))
-    } else if (tolower(method) %in% c("ssqcov", "ssqcov-2", "maxdiff-b")) {
-      local_env$scheme <- set_scheme("factorial")
-      local_env$penalty <- set_penalty(rep(1, J))
-    }
   }
 
-  # Models with a superblock
-  else if (tolower(method) %in% c(
-    "gcca", "maxvar", "maxvar-b",
-    "cpca-1", "cpca-2", "maxvar-a", "mcoa",
-    "cpca-4", "hpca"
-  )) {
-    set_superblock()
-
-    if (tolower(method) %in% c("gcca", "maxvar", "maxvar-b")) {
-      local_env$scheme <- set_scheme("factorial")
-      local_env$penalty <- set_penalty(rep(0, J + 1))
-    } else if (tolower(method) == "cpca-1") {
-      local_env$scheme <- function(x) x
-      local_env$penalty <- set_penalty(c(rep(1, J), 0))
-    } else if (tolower(method) %in% c("maxvar-a", "cpca-2", "mcoa")) {
-      local_env$scheme <- set_scheme("factorial")
-      local_env$penalty <- set_penalty(c(rep(1, J), 0))
-    } else if (tolower(method) %in% c("hpca", "cpca-4")) {
-      local_env$scheme <- function(x) x^4
-      local_env$penalty <- set_penalty(c(rep(1, J), 0))
-    }
-  }
-
-  ### WARNINGS ###
-  n <- length(local_env$warn_method_par)
-  if (verbose & n > 0) {
-    set_plural <- function(x = local_env$warn_method_par,
-                           y = local_env$warn_method_value,
-                           sep = " and ") {
-      local_env$warn_method_par <- paste0(x, collapse = sep)
-      local_env$warn_method_value <- paste0(y, collapse = sep)
-    }
-
-    if (n > 1) {
-      grammar <- "s were respectively"
-      if (n == 2) {
-        set_plural()
-      } else {
-        warn.method <- c(
-          local_env$warn_method_par[n], local_env$warn_method_value[n]
-        )
-        set_plural(
-          local_env$warn_method_par[-n], local_env$warn_method_value[-n], ", "
-        )
-        set_plural(
-          c(local_env$warn_method_par, warn.method[1]),
-          c(local_env$warn_method_value, warn.method[2])
-        )
-      }
-    } else {
-      grammar <- " was"
-    }
-
-    msg <- paste0(
-      local_env$warn_method_par, " parameter",
-      grammar, " set to ", local_env$warn_method_value
-    )
-
-    if (local_env$superblock & tolower(method) != "pca") {
-      msg <- paste0(msg, " and ", msg_superblock)
-    }
-
-    warning(paste0(msg_type, msg, "."))
-  }
-
-  if (verbose & local_env$superblock) {
-    if (n < 0) paste0(msg_superblock, msg_superblock)
-  }
-
-  if (!quiet & length(local_env$warn_message_super) > 0) {
-    if (length(local_env$warn_message_super) > 1) {
-      local_env$warn_message_super <- paste(
-        local_env$warn_message_super,
-        collapse = " and "
-      )
-      grammar <- "were those"
-    } else {
-      grammar <- "was the one"
-    }
+  if (method %in% c("rgcca", "sgcca") && superblock) {
+    ncomp <- max(ncomp)
+    penalty <- c(penalty, 1)[seq(J + 1)]
+    connection <- c_response(J + 1)
   }
 
   return(list(
-    scheme = local_env$scheme,
-    penalty = local_env$penalty,
-    ncomp = local_env$ncomp,
-    connection = local_env$connection,
-    superblock = local_env$superblock
+    scheme = scheme,
+    penalty = penalty,
+    ncomp = ncomp,
+    connection = connection,
+    superblock = superblock
   ))
 }
