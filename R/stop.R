@@ -1,10 +1,10 @@
-stop_rgcca <- function(message,
+stop_rgcca <- function(...,
                        exit_code = "1",
                        call = NULL) {
   base::stop(
     structure(
       class = c(exit_code, "simpleError", "error", "condition"),
-      list(message = message, call. = NULL)
+      list(message = paste0(...), call. = NULL)
     )
   )
 }
