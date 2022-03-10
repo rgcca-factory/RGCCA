@@ -296,45 +296,35 @@ check_quantitative <- function(df, fo, header = FALSE, warn_separator = FALSE) {
   }
 }
 
-check_response <- function(response = NULL, df = NULL) {
-  if (!is.null(response)) {
-    qualitative <- is.character(response)
-
-    if (!qualitative) {
-      response <- to_numeric(response)
-    }
-    if (NCOL(response) > 1) {
-      disjunctive <- unique(apply(response, 1, sum))
-
-      if (length(disjunctive) &&
-        unique(disjunctive %in% c(0, 1)) && disjunctive) {
-        response2 <- factor(apply(response, 1, which.max))
-
-        if (!is.null(colnames(response))) {
-          levels(response2) <- colnames(response)
-        }
-
-        return(
-          as.matrix(
-            data.frame(
-              as.character(response2),
-              row.names = rownames(response)
-            )
-          )
-        )
-      } else {
-        warning(
-          "There is multiple columns in the response block. By default, ",
-          "only the first column will be considered."
-        )
-        return(as.matrix(response[, 1]))
-      }
-    }
-
-    return(response)
-  } else {
-    return(rep(1, NROW(df[[1]])))
+check_response <- function(response = NULL) {
+  if (is.null(response)) {
+    return(NA)
   }
+  response <- as.data.frame(response)
+  qualitative <- is.character2(response)
+  if (qualitative || (NCOL(response) == 1)) {
+    return(response)
+  }
+
+  # If response is numeric, contains only one nonzero value per row that equals
+  # 1, we convert response to a column factor.
+  response <- to_numeric(response)
+  col_sum <- unique(apply(response, 1, sum))
+  values <- unique(unlist(response))
+  values <- union(col_sum, values)
+  if (identical(sort(union(values, c(0, 1))), c(0, 1))) {
+    response <- factor(
+      apply(response, 1, which.max),
+      levels = colnames(response)
+    )
+    return(
+      data.frame(
+        as.character(response),
+        row.names = rownames(response)
+      )
+    )
+  }
+  return(response)
 }
 
 # Test on the sign of the correlation
