@@ -32,11 +32,9 @@ rgcca_transform <- function(rgcca_res, X, X_scaled = TRUE) {
         data <- as.matrix(data)
       }
       if (is.null(scale)) scale <- FALSE
-      res <- scale(data, center, scale)
-    } else {
-      res <- data
+      data <- scale(data, center, scale)
     }
-    return(res)
+    return(data)
   }
 
   ### Check input parameters
@@ -53,17 +51,15 @@ rgcca_transform <- function(rgcca_res, X, X_scaled = TRUE) {
   }
   X_train <- rgcca_res$call$blocks[names(X)]
   X <- lapply(seq_along(X), function(j) {
-    x <- X[[j]]
-    if ((is.null(dim(x)) && !is.null(dim(X_train[[j]]))) ||
-      (!is.null(dim(x)) && is.null(dim(X_train[[j]]))) ||
-      any(dim(x)[-1] != dim(X_train[[j]])[-1])
-    ) {
-      stop_rgcca(paste0(
-        "Dimensions of blocks do not match for block",
+    x <- as.matrix(X[[j]])
+    y <- as.matrix(X_train[[j]])
+    if (any(dim(x)[-1] != dim(y)[-1])) {
+      stop_rgcca(
+        "Dimensions of blocks do not match for block ",
         names(X)[[j]]
-      ))
+      )
     }
-    if (!is.null(dim(x))) x <- x[, colnames(X_train[[j]]), drop = FALSE]
+    x <- x[, colnames(y), drop = FALSE]
     return(x)
   })
 
