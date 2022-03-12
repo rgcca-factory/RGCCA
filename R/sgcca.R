@@ -23,18 +23,6 @@
 #' could differ from one block to another.
 #' @inheritParams select_analysis
 #' @inheritParams rgccad
-#' @param sparsity Either a \eqn{1*J} vector or a \eqn{max(ncomp) * J} matrix
-#' encoding the L1 constraints applied to the outer weight vectors. The amount
-#' of sparsity varies between \eqn{1/sqrt(p_j)} and 1 (larger values of sparsity
-#' correspond to less penalization). If sparsity is a vector, L1-penalties are
-#' the same for all the weights corresponding to the same block but different
-#' components:
-#' \deqn{for all h, |a_{j,h}|_{L_1} \le c_1[j] \sqrt{p_j},}
-#' with \eqn{p_j} the number of variables of \eqn{X_j}.
-#' If sparsity is a matrix, each row \eqn{h} defines the constraints applied to
-#' the weights corresponding to components \eqn{h}:
-#' \deqn{for all h, |a_{j,h}|_{L_1} \le c_1[h,j] \sqrt{p_j}.} It can be
-#' estimated by using \link{rgcca_permutation}.
 #' @return \item{Y}{A list of \eqn{J} elements. Each element of \eqn{Y} is a
 #' matrix that contains the analysis components for the corresponding block.}
 #' @return \item{a}{A list of \eqn{J} elements. Each element of \eqn{a} is a

@@ -46,13 +46,14 @@ x4_methods <- c("cpca-4", "hpca")
 
 run_selection <- function(method, quiet = TRUE, ...) {
   if (method %in% one_block_methods) {
-    res <- select_analysis(list(blocks[[1]]),
+    res <- select_analysis(list(agriculture = blocks[[1]]),
       method = method,
       quiet = quiet, ...
     )
     J <- 1
   } else if (method %in% two_block_methods) {
-    res <- select_analysis(list(blocks[[1]], blocks[[2]]),
+    res <- select_analysis(
+      list(agriculture = blocks[[1]], industry = blocks[[2]]),
       method = method,
       quiet = quiet, ...
     )
@@ -64,17 +65,24 @@ run_selection <- function(method, quiet = TRUE, ...) {
   return(list(J = J, res = res))
 }
 
-c_all <- function(J) {
-  return(matrix(1, J, J))
+### Utility functions to create the connection matrices
+name_c <- function(C, names_blocks) {
+  rownames(C) <- colnames(C) <- names_blocks
+  return(C)
 }
-c_response <- function(J) {
+c_all <- function(J, blocks) {
+  return(name_c(matrix(1, J, J), names(blocks)))
+}
+c_response <- function(J, blocks, resp = J) {
+  names_blocks <- names(blocks)
+  if (J > length(blocks)) names_blocks <- c(names_blocks, "superblock")
   x <- matrix(0, J, J)
-  x[, J] <- x[J, ] <- 1
-  x[J, J] <- 0
-  return(x)
+  x[, resp] <- x[resp, ] <- 1
+  x[resp, resp] <- 0
+  return(name_c(x, names_blocks))
 }
-c_pair <- function(J) {
-  return(1 - diag(J))
+c_pair <- function(J, blocks) {
+  return(name_c(1 - diag(J), names(blocks)))
 }
 
 test_that("superblock methods sets all attributes of a superblock", {
@@ -85,8 +93,9 @@ test_that("superblock methods sets all attributes of a superblock", {
 
     if (method %in% c(superblock_methods, "rgcca", "sgcca")) {
       expect_true(res$superblock)
-      expect_equal(res$connection, c_response(J + 1))
-      expect_equal(length(res$ncomp), 1)
+      expect_equal(res$connection, c_response(J + 1, blocks[seq(J)]))
+      expect_equal(length(res$ncomp), J + 1)
+      expect_equal(length(unique(res$ncomp)), 1)
       expect_equal(length(res$penalty), J + 1)
     } else {
       expect_false(res$superblock)
@@ -153,7 +162,7 @@ test_that("warnings are produced if quiet is FALSE and params have been
   expect_warning(run_selection(method, quiet = FALSE),
     regexp = paste0(
       "Choice of method 'gcca' overwrote ",
-      "parameters 'ncomp', 'scheme', 'penalty', ",
+      "parameters 'ncomp', 'scheme', 'tau', ",
       "'connection'."
     )
   )

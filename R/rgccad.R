@@ -38,28 +38,8 @@
 #' (non-linear iterative partial least squares algorithm) as described in
 #' (Tenenhaus et al, 2005).
 #' @inheritParams select_analysis
-#' @param blocks A list that contains the J blocks of variables
-#' \eqn{\mathbf{X_1}, \mathbf{X_2}, ..., \mathbf{X_J}}{X1, X2, ..., XJ}.
-#' Block \eqn{\mathbf{X}_j}{Xj} is a matrix of dimension
-#' \eqn{n \times p_j}{n x p_j} where n is the number of
-#' observations and \eqn{p_j} the number of variables.
-#' @param connection  A symmetric matrix (\eqn{J \times J}{J x J}) that
-#' describes the relationships between blocks.
-#' @param tau Either a \eqn{1 \times J}{1 x J} vector or a
-#' \eqn{\mathrm{max}(ncomp) \times J}{max(ncomp) x J} matrix containing
-#' the values of the regularization parameters (default: tau = 1, for each
-#' block and each dimension). The regularization parameters varies from 0
-#' (maximizing the correlation) to 1 (maximizing the covariance). If
-#' tau = "optimal" the regularization parameters are estimated for each block
-#' and each dimension using the Schafer and Strimmer (2005) analytical formula.
-#' If tau is a \eqn{1 \times J}{1 x J} vector, tau[j] is identical across the
-#' dimensions of block \eqn{\mathbf{X}_j}{Xj}. If tau is a matrix, tau[k, j]
-#' is associated with \eqn{\mathbf{X}_{jk}}{Xjk} (kth residual matrix for
-#' block j). The regularization parameters can also be estimated using
-#' \link{rgcca_permutation} or \link{rgcca_cv}.
 #' @param verbose Logical value indicating if the progress of the
 #' algorithm is reported while computing.
-#' @param quiet Logical value indicating if warning messages are reported.
 #' @param init Character string giving the type of initialization to use in
 #' the  algorithm. It could be either by Singular Value Decompostion ("svd")
 #' or by random initialisation ("random") (default: "svd").

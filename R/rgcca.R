@@ -135,7 +135,7 @@
 #' ############################################
 #' fit.rgcca <- rgcca(blocks,
 #'   method = "rgcca",
-#'   connection = C, superblock = FALSE,
+#'   connection = 1 - diag(3), superblock = FALSE,
 #'   tau = rep(1, 3), ncomp = c(2, 2, 2),
 #'   scheme = "factorial", verbose = TRUE
 #' )
@@ -245,68 +245,28 @@ rgcca <- function(blocks, method = "rgcca",
     blocks <- blocks$call$blocks
   }
 
-
-  if (length(blocks) == 1 && method != "pca") method <- "pca"
-
-  if (!missing(sparsity) && missing(method)) {
-    method <- "sgcca"
-  }
-
-  if (!missing(connection) && missing(superblock)) {
-    superblock <- FALSE
-  }
-
-  if (!is.null(response)) {
-    superblock <- FALSE
-  }
-
-  if (tolower(method) %in% c("sgcca", "spca", "spls")) {
-    if (!missing(tau) && missing(sparsity)) {
-      stop_rgcca(paste0(
-        "sparsity parameters required for ",
-        tolower(method), " (instead of tau)."
-      ))
-    }
-    gcca <- sgcca
-    par <- "sparsity"
-    penalty <- sparsity
-  } else {
-    if (!missing(sparsity) & missing(tau)) {
-      stop_rgcca(paste0(
-        "tau parameters required for ",
-        tolower(method), " (instead of sparsity)."
-      ))
-    }
-    gcca <- rgccad
-    par <- "tau"
-    penalty <- tau
-  }
-
   match.arg(init, c("svd", "random"))
-  check_method(method)
-  check_scheme(scheme)
 
   # Check blocks size, add NA for missing subjects
   blocks <- check_blocks(blocks,
     add_NAlines = TRUE,
     n = 1, init = TRUE, quiet = quiet
   )
-  if (!is.null(response)) {
-    check_blockx("response", response, blocks)
-  }
   check_integer("tol", tol, float = TRUE, min = 0)
 
   for (i in c("superblock", "verbose", "scale", "bias", "quiet")) {
     check_boolean(i, get(i))
   }
 
-  penalty <- elongate_arg(penalty, blocks)
+  tau <- elongate_arg(tau, blocks)
   ncomp <- elongate_arg(ncomp, blocks)
+  sparsity <- elongate_arg(sparsity, blocks)
 
   opt <- select_analysis(
     blocks = blocks,
     connection = connection,
-    penalty = penalty,
+    tau = tau,
+    sparsity = sparsity,
     ncomp = ncomp,
     scheme = scheme,
     superblock = superblock,
@@ -315,15 +275,14 @@ rgcca <- function(blocks, method = "rgcca",
     response = response
   )
 
-
-
+  # TODO: See if check_response could not be called here
   raw <- blocks
-  if (!is.null(response)) {
-    if (mode(blocks[[response]]) == "character") {
-      if (length(unique(blocks[[response]])) == 1) {
+  if (!is.null(opt$response)) {
+    if (mode(blocks[[opt$response]]) == "character") {
+      if (length(unique(blocks[[opt$response]])) == 1) {
         stop("Only one level in the variable to predict")
       }
-      blocks[[response]] <- as_disjonctive(blocks[[response]])
+      blocks[[opt$response]] <- as_disjonctive(blocks[[opt$response]])
     }
   }
 
@@ -334,11 +293,7 @@ rgcca <- function(blocks, method = "rgcca",
     scale_block = scale_block
   )
 
-  opt$superblock <- check_superblock(response, opt$superblock, !quiet)
-  opt$blocks <- set_superblock(
-    opt$blocks, opt$superblock,
-    method, !quiet
-  )
+  if (opt$superblock) opt$blocks[["superblock"]] <- Reduce(cbind, opt$blocks)
 
   if (NA_method == "nipals" &&
     Reduce("||", lapply(opt$blocks, function(x) any(is.na(x))))) {
@@ -347,27 +302,7 @@ rgcca <- function(blocks, method = "rgcca",
     na.rm <- FALSE
   }
 
-  if (!is.null(response)) {
-    response <- check_blockx("response", response, opt$blocks)
-  }
-
-  if (!is.matrix(opt$connection) || !is.null(response)) {
-    opt$connection <- set_connection(
-      opt$blocks,
-      superblock = opt$superblock, response = response
-    )
-    opt$connection <- check_connection(opt$connection, opt$blocks)
-  } else if (is.matrix(opt$connection)) {
-    opt$connection <- check_connection(opt$connection, opt$blocks)
-    opt$connection <- opt$connection[names(opt$blocks), names(opt$blocks)]
-  }
-
-
-  opt$penalty <- check_penalty(opt$penalty, opt$blocks, method)
-  opt$ncomp <- check_ncomp(opt$ncomp, opt$blocks, superblock = opt$superblock)
-
   warn_on <- FALSE
-  if (method == "pca") opt$superblock <- FALSE
   if (any(sapply(opt$blocks, NCOL) > 1000)) warn_on <- TRUE
   if (warn_on && !quiet) message("Analysis in progress ...")
 
@@ -384,70 +319,14 @@ rgcca <- function(blocks, method = "rgcca",
     na.rm = na.rm,
     superblock = opt$superblock
   )
-  gcca_args[[par]] <- opt$penalty
+  gcca_args[[opt$par]] <- opt$penalty
 
-  func_out <- do.call(gcca, gcca_args)
-
-  for (j in seq(length(opt$blocks))) {
-    rownames(func_out$a[[j]]) <- colnames(opt$blocks[[j]])
-    rownames(func_out$Y[[j]]) <- rownames(opt$blocks[[j]])
-    colnames(func_out$Y[[j]]) <- paste0("comp", seq_len(max(opt$ncomp)))
-  }
-
-  func_out$a <- shave(func_out$a, opt$ncomp)
-  func_out$Y <- shave(func_out$Y, opt$ncomp)
-
-  if (!opt$superblock) {
-    for (j in seq(length(opt$blocks))) {
-      rownames(func_out$astar[[j]]) <- colnames(opt$blocks[[j]])
-    }
-    func_out$astar <- shave(func_out$astar, opt$ncomp)
-  } else {
-    rownames(func_out$astar) <- colnames(opt$blocks[[length(opt$blocks)]])
-  }
-
-  names(func_out$a) <- names(opt$blocks)
-  names(func_out$Y) <- names(opt$blocks)
-  if (!opt$superblock) names(func_out$astar) <- names(opt$blocks)
-
-  names(func_out$AVE$AVE_X) <- names(opt$blocks)
-
-  class(func_out) <- tolower(method)
-  func_out$call <- list(
-    blocks = opt$blocks,
-    connection = opt$connection,
-    superblock = opt$superblock,
-    ncomp = opt$ncomp,
-    scheme = opt$scheme,
-    raw = raw
-  )
-
-  is_optimal <- any(opt$penalty == "optimal")
-  func_out$call[["optimal"]] <- is_optimal
-
-  if (is_optimal) {
-    func_out$call[[par]] <- func_out$tau
-  } else {
-    func_out$call[[par]] <- opt$penalty
-  }
-
-  if (!is.null(func_out$tau)) {
-    func_out$tau <- NULL
-  }
-
-  for (i in c(
-    "scale",
-    "init",
-    "bias",
-    "tol",
-    "verbose",
-    "response",
-    "scale_block",
-    "NA_method",
-    "method"
-  )) {
-    func_out$call[[i]] <- as.list(environment())[[i]]
-  }
+  func_out <- do.call(opt$gcca, gcca_args)
+  func_out <- format_output(func_out, opt, raw, func_call = list(
+    scale = scale, init = init, bias = bias, tol = tol, verbose = verbose,
+    response = response, scale_block = scale_block, NA_method = NA_method,
+    method = method
+  ))
 
   class(func_out) <- "rgcca"
   invisible(func_out)

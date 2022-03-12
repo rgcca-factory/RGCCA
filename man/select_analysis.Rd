@@ -8,7 +8,8 @@ method of the literature.}
 select_analysis(
   blocks,
   connection = 1 - diag(length(blocks)),
-  penalty = rep(1, length(blocks)),
+  tau = rep(1, length(blocks)),
+  sparsity = rep(1, length(blocks)),
   ncomp = rep(1, length(blocks)),
   scheme = "centroid",
   superblock = TRUE,
@@ -18,15 +19,40 @@ select_analysis(
 )
 }
 \arguments{
-\item{blocks}{List of blocks.}
+\item{blocks}{A list that contains the J blocks of variables
+\eqn{\mathbf{X_1}, \mathbf{X_2}, ..., \mathbf{X_J}}{X1, X2, ..., XJ}.
+Block \eqn{\mathbf{X}_j}{Xj} is a matrix of dimension
+\eqn{n \times p_j}{n x p_j} where n is the number of
+observations and \eqn{p_j} the number of variables.}
 
-\item{connection}{Symmetric matrix (J*J) that describes the relationships
-between blocks. Elements of the connection matrix must be positive; but
-usually equal to 1 if block \eqn{j} and block \eqn{k} are connected, and 0
-otherwise.}
+\item{connection}{A symmetric matrix (\eqn{J \times J}{J x J}) that
+describes the relationships between blocks.}
 
-\item{penalty}{Vector of length J (or character string for 'optimal'
-setting) indicating the values of the tuning parameters.}
+\item{tau}{Either a \eqn{1 \times J}{1 x J} vector or a
+\eqn{\mathrm{max}(ncomp) \times J}{max(ncomp) x J} matrix containing
+the values of the regularization parameters (default: tau = 1, for each
+block and each dimension). The regularization parameters varies from 0
+(maximizing the correlation) to 1 (maximizing the covariance). If
+tau = "optimal" the regularization parameters are estimated for each block
+and each dimension using the Schafer and Strimmer (2005) analytical formula.
+If tau is a \eqn{1 \times J}{1 x J} vector, tau[j] is identical across the
+dimensions of block \eqn{\mathbf{X}_j}{Xj}. If tau is a matrix, tau[k, j]
+is associated with \eqn{\mathbf{X}_{jk}}{Xjk} (kth residual matrix for
+block j). The regularization parameters can also be estimated using
+\link{rgcca_permutation} or \link{rgcca_cv}.}
+
+\item{sparsity}{Either a \eqn{1*J} vector or a \eqn{max(ncomp) * J} matrix
+encoding the L1 constraints applied to the outer weight vectors. The amount
+of sparsity varies between \eqn{1/sqrt(p_j)} and 1 (larger values of sparsity
+correspond to less penalization). If sparsity is a vector, L1-penalties are
+the same for all the weights corresponding to the same block but different
+components:
+\deqn{for all h, |a_{j,h}|_{L_1} \le c_1[j] \sqrt{p_j},}
+with \eqn{p_j} the number of variables of \eqn{X_j}.
+If sparsity is a matrix, each row \eqn{h} defines the constraints applied to
+the weights corresponding to components \eqn{h}:
+\deqn{for all h, |a_{j,h}|_{L_1} \le c_1[h,j] \sqrt{p_j}.} It can be
+estimated by using \link{rgcca_permutation}.}
 
 \item{ncomp}{Vector of length J indicating the number of block components
 for each block.}
@@ -71,6 +97,15 @@ relationships between blocks.}
 
 \item{superblock}{Logical value indicating if superblock is
 included in the analysis.}
+
+\item{response}{Integer giving the value of the response block if
+any. NULL otherwise.}
+
+\item{par}{String that indicates if penalty refers to tau or
+sparsity.}
+
+\item{gcca}{Function used to compute the analysis. Either rgccad
+or sgcca.}
 }
 \description{
 Define the parameters associated with each multi-block component

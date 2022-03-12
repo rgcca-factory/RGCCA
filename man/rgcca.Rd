@@ -225,7 +225,7 @@ plot(fit.rgcca,
 ############################################
 fit.rgcca <- rgcca(blocks,
   method = "rgcca",
-  connection = C, superblock = FALSE,
+  connection = 1 - diag(3), superblock = FALSE,
   tau = rep(1, 3), ncomp = c(2, 2, 2),
   scheme = "factorial", verbose = TRUE
 )
