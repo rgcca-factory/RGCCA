@@ -65,6 +65,8 @@ check_compx <- function(x, y, ncomp, blockx) {
 check_connection <- function(C, blocks) {
   msg <- "Error: connection matrix C must"
 
+  if (!is.matrix(C)) stop_rgcca(msg, " be a matrix.", exit_code = 103)
+
   if (!isSymmetric.matrix(unname(C))) {
     stop_rgcca(paste(msg, "be symmetric."), exit_code = 103)
   }
@@ -196,6 +198,7 @@ check_method <- function(method) {
       exit_code = 112
     )
   }
+  return(tolower(method))
 }
 
 check_nblocks <- function(blocks, method) {
@@ -370,13 +373,16 @@ check_sign_comp <- function(rgcca_res, w) {
   return(w)
 }
 
-check_size_blocks <- function(blocks, x, y = x) {
+check_size_blocks <- function(blocks, x, y = x, n_row = NULL) {
   if (identical(x, y)) {
     x <- ""
   }
   if (any(class(y) %in% c("matrix", "data.frame"))) {
     dim_y <- NCOL(y)
     dim_type <- "number of columns"
+    if (!is.null(n_row) && (NROW(y) != n_row) && (NROW(y) != 1)) {
+      stop_rgcca("Error: ", x, " must have ", n_row, " rows.")
+    }
   } else {
     dim_y <- length(y)
     dim_type <- "size"
@@ -384,16 +390,14 @@ check_size_blocks <- function(blocks, x, y = x) {
 
   if (dim_y != length(blocks)) {
     stop_rgcca(
-      paste0(
-        "Error: ", x,
-        " must have the same ",
-        dim_type,
-        " (actually ",
-        dim_y,
-        ") as the number of blocks (",
-        length(blocks),
-        ")."
-      ),
+      "Error: ", x,
+      " must have the same ",
+      dim_type,
+      " (actually ",
+      dim_y,
+      ") as the number of blocks (",
+      length(blocks),
+      ").",
       exit_code = 130
     )
   } else {
@@ -412,35 +416,30 @@ check_size_file <- function(filename) {
   }
 }
 
-check_penalty <- function(penalty, blocks, method = "rgcca", superblock = F) {
+check_penalty <- function(penalty, blocks, method = "rgcca", superblock = F,
+                          ncomp = NULL) {
   if (superblock) {
     blocks[[length(blocks) + 1]] <- Reduce(cbind, blocks)
     names(blocks)[length(blocks)] <- "superblock"
   }
   penalty <- elongate_arg(penalty, blocks)
   name <- ifelse(method == "rgcca", "tau", "sparsity")
-  check_size_blocks(blocks, name, penalty)
-  penalty1 <- penalty
+  check_size_blocks(blocks, name, penalty, n_row = ncomp)
 
-  is_matrix <- is(penalty, "matrix")
+  is_matrix <- is.matrix(penalty)
+  DIM <- dim(penalty)
 
   # Check value of each penalty
   if (method == "rgcca") penalty <- sapply(penalty, check_tau, USE.NAMES = F)
   if (method == "sgcca") {
-    if (is_matrix) {
-      divider <- NROW(penalty1)
-    } else {
-      divider <- 1
-    }
+    divider <- ifelse(is_matrix, DIM[1], 1)
     penalty <- sapply(
       seq(length(penalty)),
       function(x) check_spars(penalty[x], blocks[[1 + (x - 1) / divider]])
     )
   }
 
-  if (is(penalty1, "matrix")) {
-    penalty <- matrix(penalty, NROW(penalty1), NCOL(penalty1))
-  }
+  if (is_matrix) penalty <- matrix(penalty, DIM[1], DIM[2])
 
   return(penalty)
 }

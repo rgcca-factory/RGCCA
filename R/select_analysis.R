@@ -158,7 +158,7 @@ select_analysis <- function(blocks,
       par <- "sparsity"
       gcca <- sgcca
       scheme <- "horst"
-      penalty <- sparsity
+      penalty <- check_penalty(sparsity, blocks, "sgcca")
       response <- NULL
       superblock <- FALSE
       connection <- c_pair(2, blocks)
@@ -453,17 +453,21 @@ select_analysis <- function(blocks,
     }
     if (superblock) {
       ncomp <- rep(max(ncomp), J + 1)
-      penalty <- c(penalty, 1)[seq(J + 1)]
       connection <- c_response(J + 1, blocks)
+      if (is.matrix(penalty)) {
+        penalty <- cbind(penalty[, seq(J)], 1)
+      } else {
+        penalty <- c(penalty[seq(J)], 1)
+      }
     } else {
       connection <- check_connection(connection, blocks)
-      penalty <- check_penalty(penalty, blocks, method)
       ncomp <- check_ncomp(ncomp, blocks)
     }
+    penalty <- check_penalty(penalty, blocks, method,
+      superblock = superblock,
+      ncomp = max(ncomp)
+    )
   }
-
-  # TODO: deal with par
-  # TODO: use par to say if penalty or tau has been used
 
   return(list(
     scheme = scheme,

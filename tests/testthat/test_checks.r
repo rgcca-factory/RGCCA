@@ -349,6 +349,13 @@ test_that("check_size_blocks raises an error when number of columns of x does
     fixed = TRUE
   )
 })
+test_that("check_size_blocks raises an error when number of rows of x does
+          not match specified n_row", {
+  expect_error(check_size_blocks(blocks, "x", diag(3), n_row = 2),
+    paste0("Error: x must have 2 rows."),
+    fixed = TRUE
+  )
+})
 test_that("check_size_blocks raises an error when size of x does
           not match length of blocks", {
   expect_error(check_size_blocks(blocks, "x", c(2, 2)),
@@ -374,6 +381,13 @@ test_that("check_penalty raises an error if blocks and penalty have different
       "Error: tau must have the same size ",
       "(actually 2) as the number of blocks (3)."
     ),
+    fixed = TRUE
+  )
+})
+test_that("check_penalty raises an error if penalty has two rows but
+          ncomp is 1", {
+  expect_error(check_penalty(matrix(1, 2, 3), blocks, ncomp = 1),
+    paste0("Error: tau must have 1 rows."),
     fixed = TRUE
   )
 })
