@@ -211,6 +211,8 @@ rgcca <- function(blocks, method = "rgcca",
                   response = NULL,
                   superblock = FALSE,
                   NA_method = "nipals", verbose = FALSE, quiet = TRUE) {
+  ### If specific objects are given for blocks, parameters are imported from
+  #   these objects.
   if (class(blocks) == "permutation") {
     message(paste0(
       "All the parameters were imported from the fitted ",
@@ -245,15 +247,13 @@ rgcca <- function(blocks, method = "rgcca",
     blocks <- blocks$call$blocks
   }
 
+  ### Check parameters
   match.arg(init, c("svd", "random"))
-
-  # Check blocks size, add NA for missing subjects
   blocks <- check_blocks(blocks,
     add_NAlines = TRUE,
     n = 1, init = TRUE, quiet = quiet
   )
   check_integer("tol", tol, float = TRUE, min = 0)
-
   for (i in c("superblock", "verbose", "scale", "bias", "quiet")) {
     check_boolean(i, get(i))
   }
@@ -262,6 +262,7 @@ rgcca <- function(blocks, method = "rgcca",
   ncomp <- elongate_arg(ncomp, blocks)
   sparsity <- elongate_arg(sparsity, blocks)
 
+  ### Get last parameters based on the method
   opt <- select_analysis(
     blocks = blocks,
     connection = connection,
@@ -275,37 +276,26 @@ rgcca <- function(blocks, method = "rgcca",
     response = response
   )
 
-  # TODO: See if check_response could not be called here
   raw <- blocks
+
+  ### One hot encode the response block if needed
+  disjonction <- NULL
   if (!is.null(opt$response)) {
-    if (mode(blocks[[opt$response]]) == "character") {
-      if (length(unique(blocks[[opt$response]])) == 1) {
-        stop("Only one level in the variable to predict")
-      }
-      blocks[[opt$response]] <- as_disjonctive(blocks[[opt$response]])
-    }
+    blocks[[opt$response]] <- as_disjonctive(blocks[[opt$response]])
+    disjonction <- attributes(blocks[[opt$response]])$disjonction
   }
 
-  opt$blocks <- handle_NA(blocks, NA_method = NA_method)
-  opt$blocks <- scaling(opt$blocks,
+  ### Apply strategy to deal with NA, scale and prepare superblock
+  tmp <- handle_NA(blocks, NA_method = NA_method)
+  na.rm <- tmp$na.rm
+  opt$blocks <- scaling(tmp$blocks,
     scale = scale,
     bias = bias,
     scale_block = scale_block
   )
-
   if (opt$superblock) opt$blocks[["superblock"]] <- Reduce(cbind, opt$blocks)
 
-  if (NA_method == "nipals" &&
-    Reduce("||", lapply(opt$blocks, function(x) any(is.na(x))))) {
-    na.rm <- TRUE
-  } else {
-    na.rm <- FALSE
-  }
-
-  warn_on <- FALSE
-  if (any(sapply(opt$blocks, NCOL) > 1000)) warn_on <- TRUE
-  if (warn_on && !quiet) message("Analysis in progress ...")
-
+  ### Call the gcca function
   gcca_args <- list(
     blocks = opt$blocks,
     connection = opt$connection,
@@ -320,12 +310,13 @@ rgcca <- function(blocks, method = "rgcca",
     superblock = opt$superblock
   )
   gcca_args[[opt$par]] <- opt$penalty
-
   func_out <- do.call(opt$gcca, gcca_args)
+
+  ### Format the output
   func_out <- format_output(func_out, opt, raw, func_call = list(
     scale = scale, init = init, bias = bias, tol = tol, verbose = verbose,
     response = response, scale_block = scale_block, NA_method = NA_method,
-    method = method
+    method = method, disjonction = disjonction
   ))
 
   class(func_out) <- "rgcca"

@@ -120,16 +120,11 @@ rgcca_predict <- function(rgcca_res,
 
   ### One hot encode block to predict if needed
   response <- rgcca_res$call$response
-  if (!is.null(response)) {
-    if (mode(rgcca_res$call$raw[[response]]) == "character") {
-      if (length(unique(rgcca_res$call$raw[[response]])) == 1) {
-        stop("Only one level in the variable to predict")
-      }
-      X[[test_idx]] <- as_disjonctive(
-        X[[test_idx]],
-        levs = unique(rgcca_res$call$raw[[response]])
-      )
-    }
+  if (!is.null(response) && !is.null(rgcca_res$call$disjonction)) {
+    X[[test_idx]] <- as_disjonctive(
+      X[[test_idx]],
+      levs = unique(rgcca_res$call$raw[[response]])
+    )
   }
 
   ### Get projected train and test data
