@@ -203,9 +203,9 @@ sgcca <- function(blocks, connection = 1 - diag(length(blocks)),
       ))
     }
     gcca_result <- sgccak(R, connection,
-                          sparsity = sparsity[n, ], scheme = scheme,
-                          init = init, bias = bias, tol = tol,
-                          verbose = verbose, na.rm = na.rm
+      sparsity = sparsity[n, ], scheme = scheme,
+      init = init, bias = bias, tol = tol,
+      verbose = verbose, na.rm = na.rm
     )
 
     # Store AVE_inner, crit
@@ -255,8 +255,8 @@ sgcca <- function(blocks, connection = 1 - diag(length(blocks)),
       R[[J]] <- defl_result$R
     } else {
       defl_result <- defl_select(gcca_result$Y, R,
-                                 ndefl, n - 1, J,
-                                 na.rm = na.rm
+        ndefl, n - 1, J,
+        na.rm = na.rm
       )
       R <- defl_result$resdefl
       P <- lapply(seq(J), function(b) {

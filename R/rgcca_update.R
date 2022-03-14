@@ -22,21 +22,21 @@ rgcca_update <- function(A, a, alpha, Y, M, K, Minv, bias, na.rm, tau,
     dgx <- dg(cov2(Y[, j], Y, bias = bias))
     CbyCovj <- drop(C[j, ] * dgx)
     ifelse(tau[j] == 1,
-           yes = {
-             Z[, j] <- Y %*% CbyCovj
-             alpha[[j]] <- drop(1 / sqrt(t(Z[, j]) %*% K[[j]] %*% Z[, j])) * Z[, j]
-             a[[j]] <- pm(t(A[[j]]), alpha[[j]], na.rm = na.rm)
-             Y[, j] <- pm(A[[j]], a[[j]], na.rm = na.rm)
-           },
-           no = {
-             Z[, j] <- Y %*% CbyCovj
-             alpha[[j]] <- drop(
-               1 / sqrt(t(Z[, j]) %*% K[[j]] %*% Minv[[j]] %*% Z[, j])
-             ) * (Minv[[j]] %*% Z[, j])
+      yes = {
+        Z[, j] <- Y %*% CbyCovj
+        alpha[[j]] <- drop(1 / sqrt(t(Z[, j]) %*% K[[j]] %*% Z[, j])) * Z[, j]
+        a[[j]] <- pm(t(A[[j]]), alpha[[j]], na.rm = na.rm)
+        Y[, j] <- pm(A[[j]], a[[j]], na.rm = na.rm)
+      },
+      no = {
+        Z[, j] <- Y %*% CbyCovj
+        alpha[[j]] <- drop(
+          1 / sqrt(t(Z[, j]) %*% K[[j]] %*% Minv[[j]] %*% Z[, j])
+        ) * (Minv[[j]] %*% Z[, j])
 
-             a[[j]] <- pm(t(A[[j]]), alpha[[j]], na.rm = na.rm)
-             Y[, j] <- pm(A[[j]], a[[j]], na.rm = na.rm)
-           }
+        a[[j]] <- pm(t(A[[j]]), alpha[[j]], na.rm = na.rm)
+        Y[, j] <- pm(A[[j]], a[[j]], na.rm = na.rm)
+      }
     )
   }
 

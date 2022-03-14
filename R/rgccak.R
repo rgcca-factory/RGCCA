@@ -94,8 +94,10 @@ rgccak <- function(A, C, tau = rep(1, length(A)), scheme = "centroid",
   which.dual <- which((n < pjs) == 1)
 
   ### Initialization
-  tmp <- rgcca_init(A, init, bias, na.rm, tau, pjs, which.primal,
-                     which.dual, J, n)
+  tmp <- rgcca_init(
+    A, init, bias, na.rm, tau, pjs, which.primal,
+    which.dual, J, n
+  )
   a <- tmp$a
   alpha <- tmp$alpha
   Y <- tmp$Y
@@ -110,8 +112,10 @@ rgccak <- function(A, C, tau = rep(1, length(A)), scheme = "centroid",
   a_old <- a
 
   repeat {
-    tmp <- rgcca_update(A, a, alpha, Y, M, K, Minv, bias, na.rm, tau,
-                        which.primal, which.dual, J, n, dg, C)
+    tmp <- rgcca_update(
+      A, a, alpha, Y, M, K, Minv, bias, na.rm, tau,
+      which.primal, which.dual, J, n, dg, C
+    )
     a <- tmp$a
     alpha <- tmp$alpha
     Y <- tmp$Y

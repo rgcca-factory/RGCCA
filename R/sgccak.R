@@ -29,18 +29,18 @@ sgccak <- function(A, C, sparsity = rep(1, length(A)),
     ctrl <- !any(g(-5:5) != g(5:-5))
   } else {
     switch(scheme,
-           "horst" = {
-             g <- function(x) x
-             ctrl <- FALSE
-           },
-           "factorial" = {
-             g <- function(x) x^2
-             ctrl <- TRUE
-           },
-           "centroid" = {
-             g <- function(x) abs(x)
-             ctrl <- TRUE
-           }
+      "horst" = {
+        g <- function(x) x
+        ctrl <- FALSE
+      },
+      "factorial" = {
+        g <- function(x) x^2
+        ctrl <- TRUE
+      },
+      "centroid" = {
+        g <- function(x) abs(x)
+        ctrl <- TRUE
+      }
     )
   }
 
