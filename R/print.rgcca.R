@@ -17,57 +17,58 @@
 #' )
 #' print(res)
 print.rgcca <- function(x, ...) {
+  ### Print parameters of the function
   cat("Call: ")
   names_call <- c(
     "method", "superblock", "scale", "scale_block", "init",
     "bias", "tol", "NA_method", "ncomp"
   )
-  char_to_print <- ""
-  for (name in names_call) {
+
+  char_to_print <- vapply(names_call, function(name) {
     if (name == "ncomp") {
       if (length(x$call$ncomp) > 1) {
         value <- (paste(x$call$ncomp, sep = "", collapse = ","))
         value <- paste0("c(", value, ")")
       }
-    }
-
-    if (name != "ncomp") {
+    } else {
       value <- x$call[[name]]
     }
     quo <- ifelse(is.character(value) & name != "ncomp", "'", "")
-    vir <- ifelse(name == names_call[length(names_call)], " ", ", ")
-    char_to_print <- paste(char_to_print, name, "=", quo, value,
-      quo, vir,
-      collapse = "", sep = ""
-    )
-  }
-  cat(char_to_print)
+    paste0(name, "=", quo, value, quo)
+  }, FUN.VALUE = character(1))
+  cat(paste(char_to_print, collapse = ", "))
 
+  ### Print number of blocks
   cat("\n")
   cat("There are J =", NCOL(x$call$connection), "blocks.", fill = TRUE)
+
+  ### Print design matrix
   cat("The design matrix is:\n")
   colnames(x$call$connection) <- rownames(x$call$connection) <- names(x$a)
   print(x$call$connection)
+
+  ### Print scheme
   cat("\n")
   if (is.function(x$call$scheme)) {
     cat("The", deparse(x$call$scheme), "scheme was used.", fill = TRUE)
   } else {
     cat("The", x$call$scheme, "scheme was used.", fill = TRUE)
   }
+
+  ### Print criterion
   if (is.list(x$crit)) {
-    crit_by_ncomp <- sapply(x$crit, function(t) {
+    crit <- Reduce("+", lapply(x$crit, function(t) {
       return(t[length(t)])
-    })
-    cat("Sum_{j,k} c_jk g(cov(X_ja_j, X_ka_k) = ",
-      sep = "",
-      paste(round(sum(crit_by_ncomp), 4), sep = "", " "), fill = TRUE
-    )
+    }))
   } else {
-    cat("Sum_{j,k} c_jk g(cov(X_ja_j, X_ka_k) = ",
-      sep = "",
-      paste(round(x$crit[length(x$crit)], 4), sep = "", " "), fill = TRUE
-    )
+    crit <- x$crit[length(x$crit)]
   }
+  cat("Sum_{j,k} c_jk g(cov(X_ja_j, X_ka_k) = ",
+    sep = "",
+    paste(round(crit, 4), sep = "", " "), fill = TRUE
+  )
+
+  ### Print regularization parameter or the number of selected variables
   cat("\n")
   if (!tolower(x$call$method) %in% c("sgcca", "spca", "spls")) {
     param <- "regularization"
@@ -83,8 +84,7 @@ print.rgcca <- function(x, ...) {
       cat("The", param, "parameters used were: \n")
       print(round(x$call$tau, 4), ...)
     }
-  }
-  if (x$call$method %in% c("sgcca")) {
+  } else {
     nb_selected_var <- lapply(
       x$a,
       function(a) apply(a, 2, function(l) sum(l != 0))

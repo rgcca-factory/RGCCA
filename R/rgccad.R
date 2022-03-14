@@ -340,7 +340,9 @@ rgccad <- function(blocks, connection = 1 - diag(length(blocks)),
 
   if (N == 0) {
     crit <- unlist(crit)
-    computed_tau <- as.vector(computed_tau)
+    computed_tau <- as.numeric(computed_tau)
+  } else {
+    computed_tau <- apply(computed_tau, 2, as.numeric)
   }
 
   out <- list(
