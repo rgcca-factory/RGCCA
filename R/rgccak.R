@@ -54,23 +54,25 @@
 rgccak <- function(A, C, tau = rep(1, length(A)), scheme = "centroid",
                    verbose = FALSE, init = "svd", bias = TRUE,
                    tol = 1e-08, na.rm = TRUE) {
-  if (mode(scheme) != "function") {
-    if (scheme == "horst") {
-      g <- function(x) x
-      ctrl <- FALSE
-    }
-    if (scheme == "factorial") {
-      g <- function(x) x^2
-      ctrl <- TRUE
-    }
-    if (scheme == "centroid") {
-      g <- function(x) abs(x)
-      ctrl <- TRUE
-    }
-  } else {
-    # check for parity of g
+  if (is.function(scheme)) {
     g <- scheme
+    # check for parity of g
     ctrl <- !any(g(-5:5) != g(5:-5))
+  } else {
+    switch(scheme,
+      "horst" = {
+        g <- function(x) x
+        ctrl <- FALSE
+      },
+      "factorial" = {
+        g <- function(x) x^2
+        ctrl <- TRUE
+      },
+      "centroid" = {
+        g <- function(x) abs(x)
+        ctrl <- TRUE
+      }
+    )
   }
 
   dg <- Deriv::Deriv(g, env = parent.frame())
@@ -78,7 +80,6 @@ rgccak <- function(A, C, tau = rep(1, length(A)), scheme = "centroid",
   J <- length(A) # number of blocks
   n <- NROW(A[[1]]) # number of individuals
   pjs <- sapply(A, NCOL) # number of variables per block
-  Y <- Z <- matrix(0, n, J)
 
   if (!is.numeric(tau)) {
     # From Schafer and Strimmer, 2005
@@ -92,62 +93,15 @@ rgccak <- function(A, C, tau = rep(1, length(A)), scheme = "centroid",
   which.primal <- which((n >= pjs) == 1)
   which.dual <- which((n < pjs) == 1)
 
-  # Initialisation by SVD
-  if (init == "svd") {
-    for (j in which.primal) {
-      a[[j]] <- initsvd(A[[j]])
-    }
-    for (j in which.dual) {
-      alpha[[j]] <- initsvd(A[[j]])
-      K[[j]] <- pm(A[[j]], t(A[[j]]), na.rm = na.rm)
-    }
-  } else if (init == "random") {
-    for (j in which.primal) {
-      a[[j]] <- rnorm(pjs[j]) # random initialisation
-    }
-
-    for (j in which.dual) {
-      alpha[[j]] <- rnorm(n)
-      K[[j]] <- pm(A[[j]], t(A[[j]]), na.rm = na.rm)
-    }
-  } else {
-    stop_rgcca("init should be either random or by SVD.")
-  }
-
-  N <- ifelse(bias, n, n - 1)
-  for (j in which.primal) {
-    ifelse(tau[j] == 1,
-      yes = {
-        a[[j]] <- drop(1 / sqrt(t(a[[j]]) %*% a[[j]])) * a[[j]]
-        Y[, j] <- pm(A[[j]], a[[j]], na.rm = na.rm)
-      },
-      no = {
-        M[[j]] <- ginv(tau[j] * diag(pjs[j]) + ((1 - tau[j])) * 1 / N *
-          (pm(t(A[[j]]), A[[j]], na.rm = na.rm)))
-        a[[j]] <- drop(1 / sqrt(t(a[[j]]) %*% M[[j]] %*% a[[j]])) *
-          (M[[j]] %*% a[[j]])
-        Y[, j] <- pm(A[[j]], a[[j]], na.rm = na.rm)
-      }
-    )
-  }
-  for (j in which.dual) {
-    ifelse(tau[j] == 1,
-      yes = {
-        alpha[[j]] <- drop(1 / sqrt(t(alpha[[j]]) %*% K[[j]] %*%
-          alpha[[j]])) * alpha[[j]]
-        a[[j]] <- pm(t(A[[j]]), alpha[[j]], na.rm = na.rm)
-        Y[, j] <- pm(A[[j]], a[[j]], na.rm = na.rm)
-      },
-      no = {
-        M[[j]] <- tau[j] * diag(n) + ((1 - tau[j])) * 1 / N * K[[j]]
-        Minv[[j]] <- ginv(M[[j]])
-        alpha[[j]] <- drop(1 / sqrt(t(alpha[[j]]) %*%
-          M[[j]] %*% K[[j]] %*% alpha[[j]])) * alpha[[j]]
-        a[[j]] <- pm(t(A[[j]]), alpha[[j]], na.rm = na.rm)
-        Y[, j] <- pm(A[[j]], a[[j]], na.rm = na.rm)
-      }
-    )
-  }
+  ### Initialization
+  tmp <- rgcca_init(A, init, bias, na.rm, tau, pjs, which.primal,
+                     which.dual, J, n)
+  a <- tmp$a
+  alpha <- tmp$alpha
+  Y <- tmp$Y
+  K <- tmp$K
+  M <- tmp$M
+  Minv <- tmp$Minv
 
   iter <- 1
   n_iter_max <- 1000L
@@ -156,43 +110,11 @@ rgccak <- function(A, C, tau = rep(1, length(A)), scheme = "centroid",
   a_old <- a
 
   repeat {
-    for (j in which.primal) {
-      dgx <- dg(cov2(Y[, j], Y, bias = bias))
-      CbyCovj <- drop(C[j, ] * dgx)
-      if (tau[j] == 1) {
-        Z[, j] <- Y %*% CbyCovj
-        Az <- pm(t(A[[j]]), Z[, j], na.rm = TRUE)
-        a[[j]] <- drop(1 / sqrt(crossprod(Az))) * Az
-        Y[, j] <- pm(A[[j]], a[[j]], na.rm = na.rm)
-      } else {
-        Z[, j] <- Y %*% CbyCovj
-        Az <- pm(t(A[[j]]), Z[, j], na.rm = TRUE)
-        a[[j]] <- drop(1 / sqrt(t(Az) %*% M[[j]] %*% Az)) * (M[[j]] %*% Az)
-        Y[, j] <- pm(A[[j]], a[[j]], na.rm = na.rm)
-      }
-    }
-
-    for (j in which.dual) {
-      dgx <- dg(cov2(Y[, j], Y, bias = bias))
-      CbyCovj <- drop(C[j, ] * dgx)
-      ifelse(tau[j] == 1,
-        yes = {
-          Z[, j] <- Y %*% CbyCovj
-          alpha[[j]] <- drop(1 / sqrt(t(Z[, j]) %*% K[[j]] %*% Z[, j])) * Z[, j]
-          a[[j]] <- pm(t(A[[j]]), alpha[[j]], na.rm = na.rm)
-          Y[, j] <- pm(A[[j]], a[[j]], na.rm = na.rm)
-        },
-        no = {
-          Z[, j] <- Y %*% CbyCovj
-          alpha[[j]] <- drop(
-            1 / sqrt(t(Z[, j]) %*% K[[j]] %*% Minv[[j]] %*% Z[, j])
-          ) * (Minv[[j]] %*% Z[, j])
-
-          a[[j]] <- pm(t(A[[j]]), alpha[[j]], na.rm = na.rm)
-          Y[, j] <- pm(A[[j]], a[[j]], na.rm = na.rm)
-        }
-      )
-    }
+    tmp <- rgcca_update(A, a, alpha, Y, M, K, Minv, bias, na.rm, tau,
+                        which.primal, which.dual, J, n, dg, C)
+    a <- tmp$a
+    alpha <- tmp$alpha
+    Y <- tmp$Y
 
     crit[iter] <- sum(C * g(cov2(Y, bias = bias)))
     if (verbose & (iter %% 1) == 0) {
