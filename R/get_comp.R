@@ -16,7 +16,7 @@ get_comp <- function(rgcca_res,
   resp <- as.matrix(check_response(resp))
   if (length(comps) != length(i_blocks)) {
     stop_rgcca(
-      "Error: comps and i_blocks must have the same length."
+      "comps and i_blocks must have the same length."
     )
   }
 
@@ -54,7 +54,7 @@ get_comp <- function(rgcca_res,
   if (is.null(rownames(resp))) {
     if (nrow(resp) != nrow(rgcca_res$Y[[i_blocks[1]]])) {
       stop_rgcca(
-        "Error: response must have ", nrow(rgcca_res$Y[[i_blocks[1]]]), " rows."
+        "response must have ", nrow(rgcca_res$Y[[i_blocks[1]]]), " rows."
       )
     }
     df$resp <- resp

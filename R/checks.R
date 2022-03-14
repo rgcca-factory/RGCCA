@@ -38,7 +38,7 @@ check_colors <- function(colors) {
       if (!is.na(i) && !(i %in% colors()) && is.character2(i) &&
         regexpr("^#{1}[a-zA-Z0-9]{6,8}$", i) < 1) {
         stop_rgcca(
-          "Error: Unrecognized colors. Colors must be in colors() ",
+          "Unrecognized colors. Colors must be in colors() ",
           "or a rgb character."
         )
       }
@@ -49,7 +49,7 @@ check_colors <- function(colors) {
 check_compx <- function(x, y, ncomp, blockx) {
   res <- check_integer(x, y, min = 1)
   if (y > ncomp[blockx]) {
-    stop_rgcca("Error: not existing component. Trying to extract component ", y,
+    stop_rgcca("not existing component. Trying to extract component ", y,
       " for block ", blockx, " , but only ", ncomp[blockx],
       " components are available for this block.",
       exit_code = 128
@@ -63,7 +63,7 @@ check_compx <- function(x, y, ncomp, blockx) {
 # @inheritParams rgccad
 # @inheritParams set_connection
 check_connection <- function(C, blocks) {
-  msg <- "Error: connection matrix C must"
+  msg <- "connection matrix C must"
 
   if (!is.matrix(C)) stop_rgcca(msg, " be a matrix.", exit_code = 103)
 
@@ -107,7 +107,7 @@ check_connection <- function(C, blocks) {
 check_file <- function(f) {
   # Check the existence of a path f: A character giving the path of a file
   if (!file.exists(f)) {
-    stop_rgcca(paste("Error: file", f, "does not exist."), exit_code = 101)
+    stop_rgcca(paste("file", f, "does not exist."), exit_code = 101)
   }
 }
 
@@ -193,7 +193,7 @@ check_method <- function(method) {
 
   if (!tolower(method) %in% analysis) {
     stop_rgcca(
-      "Error: method '", method, "' is not among the available methods: ",
+      "method '", method, "' is not among the available methods: ",
       paste(analysis, collapse = "', '"), "'.",
       exit_code = 112
     )
@@ -237,7 +237,7 @@ check_ncol <- function(x, i_block) {
 check_ncomp <- function(ncomp, blocks, min = 1, superblock = FALSE) {
   if (superblock && length(unique(ncomp)) != 1) {
     stop_rgcca(
-      "Error: only one number of components must be specified (superblock)."
+      "only one number of components must be specified (superblock)."
     )
   }
   ncomp <- elongate_arg(ncomp, blocks)
@@ -247,7 +247,7 @@ check_ncomp <- function(ncomp, blocks, min = 1, superblock = FALSE) {
     function(x) {
       if (!superblock) {
         msg <- paste0(
-          "Error: ncomp[", x, "] must be lower than the number of variables ",
+          "ncomp[", x, "] must be lower than the number of variables ",
           "for block ", x, ", i.e. ", NCOL(blocks[[x]]), "."
         )
         y <- check_integer("ncomp", ncomp[x],
@@ -256,7 +256,7 @@ check_ncomp <- function(ncomp, blocks, min = 1, superblock = FALSE) {
         )
       } else {
         msg <- paste0(
-          "Error: the number of components must be lower than the number of ",
+          "the number of components must be lower than the number of ",
           "variables in the superblock, i.e. ", NCOL(blocks[[length(blocks)]]),
           "."
         )
@@ -447,7 +447,7 @@ check_penalty <- function(penalty, blocks, method = "rgcca", superblock = F,
 check_spars <- function(sparsity, block) {
   min_sparsity <- 1 / sqrt(NCOL(block))
   min_message <- paste0(
-    "Error: sparsity parameter equals to ", sparsity,
+    "sparsity parameter equals to ", sparsity,
     ". For SGCCA, it must be greater than ",
     "1/sqrt(number_column) (i.e., ", min_sparsity, ")."
   )
@@ -493,7 +493,7 @@ check_scheme <- function(scheme) {
       (scheme != "centroid")
   ) {
     stop_rgcca(paste0(
-      "Error: scheme must be one of the following schemes: horst, ",
+      "scheme must be one of the following schemes: horst, ",
       "centroid, factorial or a function."
     ))
   }

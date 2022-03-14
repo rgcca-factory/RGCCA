@@ -10,7 +10,7 @@ blocks <- list(
 test_that("check_blockx raises an error if x is greater than the number of
           blocks", {
   expect_error(check_blockx("x", 7, blocks),
-    "Error: x must be lower than the number of blocks, i.e. 3.",
+    "x must be lower than the number of blocks, i.e. 3.",
     fixed = TRUE
   )
 })
@@ -27,20 +27,20 @@ test_that("check_blockx passes and returns x when x is valid", {
 # Test check_boolean
 test_that("check_boolean raises an error if x contains NA", {
   expect_error(check_boolean("x", c(FALSE, NA)),
-    "Error: x must not be NA.",
+    "x must not be NA.",
     fixed = TRUE
   )
 })
 test_that("check_boolean raises an error if x is not logical", {
   expect_error(check_boolean("x", 0),
-    "Error: x must be TRUE or FALSE.",
+    "x must be TRUE or FALSE.",
     fixed = TRUE
   )
 })
 test_that("check_boolean raises an error if type is scalar and x not of
           length 1", {
   expect_error(check_boolean("x", c(TRUE, FALSE), type = "scalar"),
-    "Error: x must be of length 1.",
+    "x must be of length 1.",
     fixed = TRUE
   )
 })
@@ -53,14 +53,14 @@ test_that("check_boolean passes when x is valid", {
 test_that("check_colors raises an error if colors contains unknown colors", {
   expect_error(check_colors(c("white", "blueen")),
     paste0(
-      "Error: Unrecognized colors. Colors must be in colors() ",
+      "Unrecognized colors. Colors must be in colors() ",
       "or a rgb character."
     ),
     fixed = TRUE
   )
   expect_error(check_colors(c("white", "#79eff16342")),
     paste0(
-      "Error: Unrecognized colors. Colors must be in colors() ",
+      "Unrecognized colors. Colors must be in colors() ",
       "or a rgb character."
     ),
     fixed = TRUE
@@ -74,7 +74,7 @@ test_that("check_colors passes when colors is valid", {
 test_that("check_compx raises an error if x is greater than the number
           of components", {
   expect_error(check_compx("x", 7, c(3, 3, 3), 1), paste0(
-    "Error: not existing component. Trying to extract component 7",
+    "not existing component. Trying to extract component 7",
     " for block 1 , but only 3 components are available for ",
     "this block."
   ),
@@ -94,7 +94,7 @@ test_that("check_compx passes and returns x when x is valid", {
 # Test check_connection
 test_that("check_connection raises an error if C is not symmetric", {
   expect_error(check_connection(matrix(1:4, 2, 2), blocks),
-    "Error: connection matrix C must be symmetric.",
+    "connection matrix C must be symmetric.",
     fixed = TRUE
   )
 })
@@ -102,20 +102,20 @@ test_that("check_connection raises an error if C contains NA values", {
   C <- diag(2)
   C[1, 1] <- NA
   expect_error(check_connection(C, blocks),
-    "Error: connection matrix C must not contain NA values.",
+    "connection matrix C must not contain NA values.",
     fixed = TRUE
   )
 })
 test_that("check_connection raises an error if C contains values outside
           [0, 1]", {
   expect_error(check_connection(diag(2) * 2, blocks),
-    "Error: connection matrix C must contain numbers between 0 and 1.",
+    "connection matrix C must contain numbers between 0 and 1.",
     fixed = TRUE
   )
 })
 test_that("check_connection raises an error if C is the null matrix", {
   expect_error(check_connection(matrix(0, 2, 2), blocks),
-    "Error: connection matrix C must not contain only 0.",
+    "connection matrix C must not contain only 0.",
     fixed = TRUE
   )
 })
@@ -123,7 +123,7 @@ test_that("check_connection raises an error if the dimensions of C do not
           match the number of blocks", {
   expect_error(check_connection(diag(2), blocks),
     paste0(
-      "Error: connection matrix must have the same number of ",
+      "connection matrix must have the same number of ",
       "columns (actually 2) as the number of blocks (3)."
     ),
     fixed = TRUE
@@ -135,7 +135,7 @@ test_that("check_connection raises an error if the dimnames of C do not match
   rownames(C) <- colnames(C) <- paste0("V", 1:3)
   expect_error(check_connection(C, blocks),
     paste0(
-      "Error: connection matrix C must have the rownames and the ",
+      "connection matrix C must have the rownames and the ",
       "colnames that match with the names of the blocks."
     ),
     fixed = TRUE
@@ -162,14 +162,14 @@ test_that("check_file passes when file is valid", {
 # Test check_integer
 test_that("check_integer raises an error if x is not numeric", {
   expect_error(check_integer("x", "toto"),
-    "Error: x must be numeric.",
+    "x must be numeric.",
     fixed = TRUE
   )
 })
 
 test_that("check_integer raises an error if x contains NA", {
   expect_error(check_integer("x", c(42, NA)),
-    "Error: x must not be NA.",
+    "x must not be NA.",
     fixed = TRUE
   )
 })
@@ -177,7 +177,7 @@ test_that("check_integer raises an error if x contains NA", {
 test_that("check_integer raises an error if type is scalar and x not of
           length 1", {
   expect_error(check_integer("x", c(42, 7), type = "scalar"),
-    "Error: x must be of length 1.",
+    "x must be of length 1.",
     fixed = TRUE
   )
 })
@@ -185,20 +185,20 @@ test_that("check_integer raises an error if type is scalar and x not of
 test_that("check_integer raises an error any element of x is a float but float
           is false", {
   expect_error(check_integer("x", c(1, 1.7, 2), type = "vector", float = FALSE),
-    "Error: x must be an integer.",
+    "x must be an integer.",
     fixed = TRUE
   )
 })
 
 test_that("check_integer raises an error if any element of x is below min", {
   expect_error(check_integer("x", c(0, 1, 2), type = "vector", min = 1),
-    "Error: x must be higher than or equal to 1.",
+    "x must be higher than or equal to 1.",
     fixed = TRUE
   )
 })
 test_that("check_integer raises an error if any element of x is above max", {
   expect_error(check_integer("x", c(1, 3), type = "vector", max = 2),
-    "Error: x must be lower than or equal to 2.",
+    "x must be lower than or equal to 2.",
     fixed = TRUE
   )
   expect_error(
@@ -244,7 +244,7 @@ test_that("check_nblocks raises an error if method is pca and number of blocks
           different from 1", {
   expect_error(check_nblocks(blocks, method = "pca"),
     paste0(
-      "Error: 3 blocks were provided but the number of",
+      "3 blocks were provided but the number of",
       " blocks for pca must be 1."
     ),
     fixed = TRUE
@@ -254,7 +254,7 @@ test_that("check_nblocks raises an error if method is cca and number of blocks
           is different from 2", {
   expect_error(check_nblocks(blocks, method = "cca"),
     paste0(
-      "Error: 3 blocks were provided but the number of",
+      "3 blocks were provided but the number of",
       " blocks for cca must be 2."
     ),
     fixed = TRUE
@@ -285,7 +285,7 @@ test_that("check_ncomp raises an error if there is a superblock and ncomp
           contains at least two distinct values", {
   expect_error(check_ncomp(c(1, 2, 1), blocks, superblock = TRUE),
     paste0(
-      "Error: only one number of components must be ",
+      "only one number of components must be ",
       "specified (superblock)."
     ),
     fixed = TRUE
@@ -295,7 +295,7 @@ test_that("check_ncomp raises an error if blocks and ncomp have different
           lengths and length of ncomp is greater than 1", {
   expect_error(check_ncomp(c(2, 2), blocks),
     paste0(
-      "Error: ncomp must have the same size (actually 2) ",
+      "ncomp must have the same size (actually 2) ",
       "as the number of blocks (3)."
     ),
     fixed = TRUE
@@ -305,7 +305,7 @@ test_that("check_ncomp raises an error if any element of ncomp is greater than
           the number of variables in the corresponding block", {
   expect_error(check_ncomp(c(2, 7, 2), blocks),
     paste0(
-      "Error: ncomp[2] must be lower than the number of variables for block 2,",
+      "ncomp[2] must be lower than the number of variables for block 2,",
       " i.e. 2."
     ),
     fixed = TRUE
@@ -315,7 +315,7 @@ test_that("check_ncomp raises an error if ncomp is greater than the number of
           columns in the superblock", {
   expect_error(check_ncomp(7, blocks, superblock = TRUE),
     paste0(
-      "Error: the number of components must be lower ",
+      "the number of components must be lower ",
       "than the number of variables in the superblock,",
       " i.e. 6."
     ),
@@ -343,7 +343,7 @@ test_that("check_size_blocks raises an error when number of columns of x does
           not match length of blocks", {
   expect_error(check_size_blocks(blocks, "x", diag(2)),
     paste0(
-      "Error: x must have the same number of columns",
+      "x must have the same number of columns",
       " (actually 2) as the number of blocks (3)."
     ),
     fixed = TRUE
@@ -352,7 +352,7 @@ test_that("check_size_blocks raises an error when number of columns of x does
 test_that("check_size_blocks raises an error when number of rows of x does
           not match specified n_row", {
   expect_error(check_size_blocks(blocks, "x", diag(3), n_row = 2),
-    paste0("Error: x must have 2 rows."),
+    paste0("x must have 2 rows."),
     fixed = TRUE
   )
 })
@@ -360,7 +360,7 @@ test_that("check_size_blocks raises an error when size of x does
           not match length of blocks", {
   expect_error(check_size_blocks(blocks, "x", c(2, 2)),
     paste0(
-      "Error: x must have the same size (actually 2) ",
+      "x must have the same size (actually 2) ",
       "as the number of blocks (3)."
     ),
     fixed = TRUE
@@ -378,7 +378,7 @@ test_that("check_penalty raises an error if blocks and penalty have different
           lengths and length of penalty is greater than 1", {
   expect_error(check_penalty(c(1, 1), blocks),
     paste0(
-      "Error: tau must have the same size ",
+      "tau must have the same size ",
       "(actually 2) as the number of blocks (3)."
     ),
     fixed = TRUE
@@ -387,7 +387,7 @@ test_that("check_penalty raises an error if blocks and penalty have different
 test_that("check_penalty raises an error if penalty has two rows but
           ncomp is 1", {
   expect_error(check_penalty(matrix(1, 2, 3), blocks, ncomp = 1),
-    paste0("Error: tau must have 1 rows."),
+    paste0("tau must have 1 rows."),
     fixed = TRUE
   )
 })
@@ -397,7 +397,7 @@ test_that("check_penalty raises an error if any element of sparsity is lower
   min_sparsity <- 1 / sqrt(NCOL(blocks[[3]]))
   expect_error(check_penalty(c(1, 1, 0.2), blocks, method = "sgcca"),
     paste0(
-      "Error: sparsity parameter equals to 0.2. For SGCCA, ",
+      "sparsity parameter equals to 0.2. For SGCCA, ",
       "it must be greater than 1/sqrt(number_column)",
       " (i.e., ", min_sparsity, ")."
     ),
@@ -455,7 +455,7 @@ test_that("check_tau passes and returns tau when tau is valid", {
 test_that("check_scheme raises an error for invalid scheme", {
   expect_error(check_scheme("toto"),
     paste0(
-      "Error: scheme must be one of the following schemes: horst, ",
+      "scheme must be one of the following schemes: horst, ",
       "centroid, factorial or a function."
     ),
     fixed = TRUE
