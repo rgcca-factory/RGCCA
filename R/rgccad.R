@@ -225,7 +225,6 @@ rgccad <- function(blocks, connection = 1 - diag(length(blocks)),
   nb_ind <- NROW(blocks[[1]])
   AVE_inner <- rep(NA, max(ncomp))
 
-  P <- astar <- list()
   crit <- list()
   R <- blocks
 
@@ -335,10 +334,7 @@ rgccad <- function(blocks, connection = 1 - diag(length(blocks)),
   })
 
   outer <- matrix(unlist(AVE_X), nrow = max(ncomp))
-  AVE_outer <- vapply(
-    outer, function(x) sum(pjs * x) / sum(pjs),
-    FUN.VALUE = double(1)
-  )
+  AVE_outer <- as.vector((outer %*% pjs) / sum(pjs))
   AVE_X <- shave(AVE_X, ncomp)
   AVE <- list(AVE_X = AVE_X, AVE_outer = AVE_outer, AVE_inner = AVE_inner)
 
@@ -357,6 +353,5 @@ rgccad <- function(blocks, connection = 1 - diag(length(blocks)),
   )
 
   class(out) <- "rgccad"
-
   return(out)
 }

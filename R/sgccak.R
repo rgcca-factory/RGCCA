@@ -23,80 +23,57 @@ sgccak <- function(A, C, sparsity = rep(1, length(A)),
                    scheme = "centroid", tol = 1e-08,
                    init = "svd", bias = TRUE, verbose = FALSE,
                    quiet = FALSE, na.rm = TRUE) {
-  if (mode(scheme) != "function") {
-    if (scheme == "horst") {
-      g <- function(x) x
-      ctrl <- FALSE
-    }
-    if (scheme == "factorial") {
-      g <- function(x) x^2
-      ctrl <- TRUE
-    }
-    if (scheme == "centroid") {
-      g <- function(x) abs(x)
-      ctrl <- TRUE
-    }
-  } else {
-    # check for parity of g
+  if (is.function(scheme)) {
     g <- scheme
+    # check for parity of g
     ctrl <- !any(g(-5:5) != g(5:-5))
+  } else {
+    switch(scheme,
+           "horst" = {
+             g <- function(x) x
+             ctrl <- FALSE
+           },
+           "factorial" = {
+             g <- function(x) x^2
+             ctrl <- TRUE
+           },
+           "centroid" = {
+             g <- function(x) abs(x)
+             ctrl <- TRUE
+           }
+    )
   }
 
   dg <- Deriv::Deriv(g, env = parent.frame())
 
   J <- length(A)
+  n <- NROW(A[[1]])
   pjs <- sapply(A, NCOL)
-
-  #  Choose J arbitrary vectors
-  if (init == "svd") {
-    # SVD Initialisation for a_j
-    a <- lapply(A, function(x) {
-      return(initsvd(x, dual = FALSE))
-    })
-    a <- lapply(a, function(x) {
-      return(as.vector(x))
-    })
-  } else if (init == "random") {
-    a <- lapply(pjs, rnorm)
-  } else {
-    stop_rgcca("init should be either random or svd.")
-  }
-
-  if (any(sparsity < 1 / sqrt(pjs) | sparsity > 1)) {
-    stop_rgcca("L1 constraints must vary between 1/sqrt(p_j) and 1.")
-  }
-
   const <- sparsity * sqrt(pjs)
+
+  tmp <- sgcca_init(A, init, bias, na.rm, sparsity, pjs, J, n)
+  a <- tmp$a
+  Y <- tmp$Y
+
   # 	Apply the constraints of the general optimization problem
   # 	and compute the outer components
   iter <- 1
   n_iter_max <- 1000L
   crit <- numeric(n_iter_max)
-  Y <- Z <- matrix(0, NROW(A[[1]]), J)
-
-  for (q in seq_len(J)) {
-    a[[q]] <- soft.threshold(a[[q]], const[q])
-    Y[, q] <- pm(A[[q]], a[[q]], na.rm = na.rm)
-  }
 
   a_old <- a
   crit_old <- sum(C * g(cov2(Y, bias = bias)))
 
 
   repeat {
-    for (q in seq_len(J)) {
-      dgx <- dg(cov2(Y[, q], Y, bias = bias))
-      CbyCovq <- drop(C[q, ] * dgx)
-      Z[, q] <- Y %*% CbyCovq
-      a[[q]] <- pm(t(A[[q]]), Z[, q], na.rm = na.rm)
-      a[[q]] <- soft.threshold(a[[q]], const[q])
-      Y[, q] <- pm(A[[q]], a[[q]], na.rm = na.rm)
-    }
+    tmp <- sgcca_update(A, a, Y, bias, na.rm, const, J, n, dg, C)
+    a <- tmp$a
+    Y <- tmp$Y
 
     # Print out intermediate fit
     crit[iter] <- sum(C * g(cov2(Y, bias = bias)))
 
-    if (verbose & (iter %% 1) == 0) {
+    if (verbose && (iter %% 1) == 0) {
       cat(
         " Iter: ", formatC(iter, width = 3, format = "d"),
         " Fit: ", formatC(crit[iter], digits = 8, width = 10, format = "f"),
@@ -137,7 +114,7 @@ sgccak <- function(A, C, sparsity = rep(1, length(A)),
     )
   }
 
-  if (iter < n_iter_max & verbose) {
+  if ((iter < n_iter_max) && verbose) {
     message("The SGCCA algorithm converged to a stationary
                               point after ", iter - 1, " iterations \n")
   }

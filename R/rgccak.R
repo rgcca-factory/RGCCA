@@ -117,7 +117,7 @@ rgccak <- function(A, C, tau = rep(1, length(A)), scheme = "centroid",
     Y <- tmp$Y
 
     crit[iter] <- sum(C * g(cov2(Y, bias = bias)))
-    if (verbose & (iter %% 1) == 0) {
+    if (verbose && (iter %% 1) == 0) {
       cat(
         " Iter: ", formatC(iter, width = 3, format = "d"),
         " Fit:", formatC(crit[iter],
@@ -159,7 +159,7 @@ rgccak <- function(A, C, tau = rep(1, length(A)), scheme = "centroid",
       " iterations."
     )
   }
-  if (iter < n_iter_max & verbose) {
+  if ((iter < n_iter_max) && verbose) {
     cat(
       "The RGCCA algorithm converged to a stationary point after",
       iter - 1, "iterations \n"
