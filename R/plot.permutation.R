@@ -188,5 +188,5 @@ plot.permutation <- function(x,
 
   attributes(p)$penalties <- x$penalties[idx_order, ]
 
-  plot(p)
+  plot(p, ...)
 }

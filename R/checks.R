@@ -2,7 +2,7 @@
 #-----------------------------
 check_blockx <- function(x, y, blocks) {
   message <- paste0(
-    "Error: ", x, " must be lower than the number of blocks, i.e. ",
+    x, " must be lower than the number of blocks, i.e. ",
     length(blocks), "."
   )
   exit_code <- 133
@@ -19,15 +19,15 @@ check_boolean <- function(x, y = x, type = "scalar") {
   }
 
   if (any(is.na(y))) {
-    stop_rgcca("Error: ", x, " must not be NA.")
+    stop_rgcca(x, " must not be NA.")
   }
 
   if (!is(y, "logical")) {
-    stop_rgcca("Error: ", x, " must be TRUE or FALSE.")
+    stop_rgcca(x, " must be TRUE or FALSE.")
   }
 
   if (type == "scalar" && length(y) != 1) {
-    stop_rgcca("Error: ", x, " must be of length 1.")
+    stop_rgcca(x, " must be of length 1.")
   }
 }
 
@@ -148,7 +148,7 @@ check_integer <- function(x, y = x, type = "scalar", float = FALSE, min = 1,
     if (!is.null(min_message)) {
       stop_rgcca(min_message, exit_code = exit_code)
     } else {
-      stop_rgcca("Error: ", x, " must be higher than or equal to ", min, ".",
+      stop_rgcca(x, " must be higher than or equal to ", min, ".",
         exit_code = exit_code
       )
     }
@@ -158,7 +158,7 @@ check_integer <- function(x, y = x, type = "scalar", float = FALSE, min = 1,
     if (!is.null(max_message)) {
       stop_rgcca(max_message, exit_code = exit_code)
     } else {
-      stop_rgcca("Error: ", x, " must be lower than or equal to ", max, ".",
+      stop_rgcca(x, " must be lower than or equal to ", max, ".",
         exit_code = exit_code
       )
     }
@@ -216,7 +216,7 @@ check_nblocks <- function(blocks, method) {
     exit_code <- 111
   }
   stop_rgcca(
-    "Error: ", length(blocks),
+    length(blocks),
     " blocks were provided but the number of blocks for ", method,
     " must be ", nb, ".",
     exit_code = exit_code
@@ -381,7 +381,7 @@ check_size_blocks <- function(blocks, x, y = x, n_row = NULL) {
     dim_y <- NCOL(y)
     dim_type <- "number of columns"
     if (!is.null(n_row) && (NROW(y) != n_row) && (NROW(y) != 1)) {
-      stop_rgcca("Error: ", x, " must have ", n_row, " rows.")
+      stop_rgcca(x, " must have ", n_row, " rows.")
     }
   } else {
     dim_y <- length(y)
@@ -390,7 +390,7 @@ check_size_blocks <- function(blocks, x, y = x, n_row = NULL) {
 
   if (dim_y != length(blocks)) {
     stop_rgcca(
-      "Error: ", x,
+      x,
       " must have the same ",
       dim_type,
       " (actually ",
