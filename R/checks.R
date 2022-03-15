@@ -435,7 +435,10 @@ check_penalty <- function(penalty, blocks, method = "rgcca", superblock = F,
     divider <- ifelse(is_matrix, DIM[1], 1)
     penalty <- sapply(
       seq(length(penalty)),
-      function(x) check_spars(penalty[x], blocks[[1 + (x - 1) / divider]])
+      function(x) {
+        n <- 1 + (x - 1) / divider
+        check_spars(penalty[x], blocks[[n]], n)
+      }
     )
   }
 
@@ -444,17 +447,18 @@ check_penalty <- function(penalty, blocks, method = "rgcca", superblock = F,
   return(penalty)
 }
 
-check_spars <- function(sparsity, block) {
+check_spars <- function(sparsity, block, n) {
   min_sparsity <- 1 / sqrt(NCOL(block))
   min_message <- paste0(
-    "sparsity parameter equals to ", sparsity,
-    ". For SGCCA, it must be greater than ",
-    "1/sqrt(number_column) (i.e., ", min_sparsity, ")."
-  )
+      "too high sparsity. Sparsity parameter equals ", sparsity,
+      ". For SGCCA, it must be greater than ",
+      "1/sqrt(number_column) (i.e., ", round(min_sparsity, 4),
+      " for block ", n, ")."
+    )
   sparsity <- check_integer("sparsity", sparsity,
-    float = TRUE,
-    min = min_sparsity, max = 1, min_message = min_message
-  )
+      float = TRUE,
+      min = min_sparsity, max = 1, min_message = min_message
+    )
   invisible(sparsity)
 }
 

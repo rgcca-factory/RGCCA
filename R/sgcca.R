@@ -205,7 +205,7 @@ sgcca <- function(blocks, connection = 1 - diag(length(blocks)),
     gcca_result <- sgccak(R, connection,
       sparsity = sparsity[n, ], scheme = scheme,
       init = init, bias = bias, tol = tol,
-      verbose = verbose, na.rm = na.rm
+      verbose = verbose, na.rm = na.rm, quiet = quiet
     )
 
     # Store AVE_inner, crit
@@ -267,10 +267,12 @@ sgcca <- function(blocks, connection = 1 - diag(length(blocks)),
     }
 
     if (!quiet) {
-      for (b in which(n < ndefl)) {
-        if (sum(gcca_result$a[[b]] != 0) <= 1) {
-          warning(sprintf("Deflation failed because only one variable was
-                            selected for block ", b, "! \n"))
+      for (b in seq(J)) {
+        if (sum(gcca_result$a[[b]][, n] != 0) <= 1) {
+          warning(
+            "Deflation failed because only one variable was ",
+            "selected for block ", b, ". \n"
+          )
         }
       }
     }

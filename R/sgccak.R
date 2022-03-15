@@ -120,15 +120,6 @@ sgccak <- function(A, C, sparsity = rep(1, length(A)),
   }
   if (verbose) plot(crit, xlab = "iteration", ylab = "criteria")
 
-  if (!quiet) {
-    for (q in seq_len(J)) {
-      if (sum(a[[q]] != 0) <= 1) {
-        warning(sprintf("Deflation failed because only one variable was
-                            selected for block #", q))
-      }
-    }
-  }
-
   l2_sat <- sapply(a, function(x) norm(x, "2"))
   if (max(abs(l2_sat - 1)) > tol) {
     for (i in which(abs(l2_sat - 1) > tol)) {

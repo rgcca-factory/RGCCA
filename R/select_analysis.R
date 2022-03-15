@@ -80,7 +80,13 @@ select_analysis <- function(blocks,
                             method = "rgcca",
                             quiet = FALSE,
                             response = NULL) {
-  if (length(blocks) == 1) method <- "pca"
+  if (length(blocks) == 1) {
+    if (sparsity == 1) {
+      method <- "pca"
+    } else {
+      method <- "spca"
+    }
+  }
 
   method <- check_method(method)
 
@@ -141,7 +147,7 @@ select_analysis <- function(blocks,
       penalty <- c(penalty[1], 1)
       response <- NULL
       superblock <- TRUE
-      connection <- c_pair(2, blocks)
+      connection <- c_response(2, blocks)
     },
     "pls" = {
       check_nblocks(blocks, "pls")
@@ -149,9 +155,9 @@ select_analysis <- function(blocks,
       gcca <- rgccad
       scheme <- "horst"
       penalty <- c(1, 1)
-      response <- NULL
+      response <- 2
       superblock <- FALSE
-      connection <- c_pair(2, blocks)
+      connection <- c_response(2, blocks)
     },
     "spls" = {
       check_nblocks(blocks, "spls")
@@ -159,9 +165,9 @@ select_analysis <- function(blocks,
       gcca <- sgcca
       scheme <- "horst"
       penalty <- check_penalty(sparsity, blocks, "sgcca")
-      response <- NULL
+      response <- 2
       superblock <- FALSE
-      connection <- c_pair(2, blocks)
+      connection <- c_response(2, blocks)
     },
     "cca" = {
       check_nblocks(blocks, "cca")
@@ -189,9 +195,9 @@ select_analysis <- function(blocks,
       gcca <- rgccad
       scheme <- "horst"
       penalty <- c(1, 0)
-      response <- NULL
+      response <- 2
       superblock <- FALSE
-      connection <- c_pair(2, blocks)
+      connection <- c_response(2, blocks)
     },
     "gcca" = {
       par <- "tau"
@@ -326,7 +332,7 @@ select_analysis <- function(blocks,
       penalty <- rep(0, J)
       response <- NULL
       superblock <- FALSE
-      connection <- c_all(J, blocks)
+      connection <- c_pair(J, blocks)
     },
     "ssqcor" = {
       par <- "tau"
@@ -335,7 +341,7 @@ select_analysis <- function(blocks,
       penalty <- rep(0, J)
       response <- NULL
       superblock <- FALSE
-      connection <- c_all(J, blocks)
+      connection <- c_pair(J, blocks)
     },
     "ssqcov-1" = {
       par <- "tau"
@@ -371,7 +377,7 @@ select_analysis <- function(blocks,
       penalty <- rep(0, J)
       response <- NULL
       superblock <- FALSE
-      connection <- c_all(J, blocks)
+      connection <- c_pair(J, blocks)
     },
     "sumcov-1" = {
       par <- "tau"
@@ -430,22 +436,20 @@ select_analysis <- function(blocks,
       return("0")
     }, character(1))
     modified_parameters <- modified_parameters[modified_parameters != "0"]
-    n <- length(modified_parameters)
-    if (n == 1) {
-      warning(
-        "Choice of method '", method, "' overwrote parameter '",
-        modified_parameters, "'."
-      )
-    } else if (n > 1) {
-      warning(
-        "Choice of method '", method, "' overwrote parameters '",
-        paste(modified_parameters, collapse = "', '"), "'."
-      )
-    }
+    warning(
+      "Choice of method '", method, "' overwrote parameters '",
+      paste(modified_parameters, collapse = "', '"), "'."
+    )
   }
 
   if (method %in% c("rgcca", "sgcca")) {
     check_scheme(scheme)
+    if (any(sparsity != 1)) {
+      par <- "sparsity"
+      gcca <- sgcca
+      method <- "sgcca"
+      penalty <- sparsity
+    }
     if (!is.null(response)) {
       check_blockx("response", response, blocks)
       superblock <- FALSE
@@ -455,9 +459,11 @@ select_analysis <- function(blocks,
       ncomp <- rep(max(ncomp), J + 1)
       connection <- c_response(J + 1, blocks)
       if (is.matrix(penalty)) {
-        penalty <- cbind(penalty[, seq(J)], 1)
+        pen <- ifelse(ncol(penalty) < J + 1, 1, penalty[, J + 1])
+        penalty <- cbind(penalty[, seq(J)], pen)
       } else {
-        penalty <- c(penalty[seq(J)], 1)
+        pen <- ifelse(length(penalty) < J + 1, 1, penalty[J + 1])
+        penalty <- c(penalty[seq(J)], pen)
       }
     } else {
       connection <- check_connection(connection, blocks)
@@ -468,6 +474,8 @@ select_analysis <- function(blocks,
       ncomp = max(ncomp)
     )
   }
+
+  if (!is.null(response)) ncomp[response] <- 1
 
   return(list(
     scheme = scheme,

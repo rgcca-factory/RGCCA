@@ -36,7 +36,7 @@ blocks <- list(agri = Russett[, 1:3], ind = Russett[, 4:5], polit = Russett[, 8:
 rgcca_out <- rgcca(blocks = blocks, response = 3, ncomp = 2)
 loo <- rgcca_cv_k(rgcca_out, n_cores = 1)
 
-plot_ind(rgcca_out, predicted = loo)
+plot_ind(rgcca_out, predicted = loo, i_block = 2)
 
 # using a color response vector
-plot_ind(rgcca_out, resp = resp)
+plot_ind(rgcca_out, resp = resp, i_block = 2)
