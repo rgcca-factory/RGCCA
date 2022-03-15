@@ -125,21 +125,21 @@ check_integer <- function(x, y = x, type = "scalar", float = FALSE, min = 1,
   y <- tryCatch(
     as.double(as.matrix(y)),
     warning = function(w) {
-      stop_rgcca(paste("Error:", x, "must be numeric."))
+      stop_rgcca(paste(x, "must be numeric."))
     }
   )
 
   if (any(is.na(y))) {
-    stop_rgcca(paste("Error:", x, "must not be NA."))
+    stop_rgcca(paste(x, "must not be NA."))
   }
 
   if (type == "scalar" && length(y) != 1) {
-    stop_rgcca(paste("Error:", x, "must be of length 1."))
+    stop_rgcca(paste(x, "must be of length 1."))
   }
 
   if (!float) {
     if (any((y %% 1) != 0)) {
-      stop_rgcca(paste("Error:", x, "must be an integer."))
+      stop_rgcca(paste(x, "must be an integer."))
     }
     y <- as.integer(y)
   }
