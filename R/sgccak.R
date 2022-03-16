@@ -73,7 +73,7 @@ sgccak <- function(A, C, sparsity = rep(1, length(A)),
     # Print out intermediate fit
     crit[iter] <- sum(C * g(cov2(Y, bias = bias)))
 
-    if (verbose && (iter %% 1) == 0) {
+    if (verbose) {
       cat(
         " Iter: ", formatC(iter, width = 3, format = "d"),
         " Fit: ", formatC(crit[iter], digits = 8, width = 10, format = "f"),
@@ -113,12 +113,15 @@ sgccak <- function(A, C, sparsity = rep(1, length(A)),
       " iterations."
     )
   }
-
-  if ((iter < n_iter_max) && verbose) {
-    message("The SGCCA algorithm converged to a stationary
-                              point after ", iter - 1, " iterations \n")
+  if (verbose) {
+    if (iter <= n_iter_max) {
+      message(
+        "The SGCCA algorithm converged to a stationary point after ",
+        iter - 1, " iterations \n"
+      )
+    }
+    plot(crit, xlab = "iteration", ylab = "criteria")
   }
-  if (verbose) plot(crit, xlab = "iteration", ylab = "criteria")
 
   l2_sat <- sapply(a, function(x) norm(x, "2"))
   if (max(abs(l2_sat - 1)) > tol) {
