@@ -16,7 +16,8 @@ rgccad(
   verbose = TRUE,
   na.rm = TRUE,
   quiet = FALSE,
-  superblock = FALSE
+  superblock = FALSE,
+  response = NULL
 )
 }
 \arguments{
@@ -70,6 +71,10 @@ algorithm is reported while computing.}
 
 \item{superblock}{TRUE if a superblock is added, FALSE otherwise (deflation
 strategy must be adapted when a superblock is used).}
+
+\item{response}{Numerical value giving the position of the response block.
+When the response argument is filled the supervised mode is automatically
+activated.}
 }
 \value{
 \item{Y}{A list of \eqn{J} elements. Each element of the list is a

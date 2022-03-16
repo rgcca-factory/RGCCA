@@ -193,7 +193,8 @@ rgccad <- function(blocks, connection = 1 - diag(length(blocks)),
                    tau = rep(1, length(blocks)),
                    ncomp = rep(1, length(blocks)), scheme = "centroid",
                    init = "svd", bias = TRUE, tol = 1e-08, verbose = TRUE,
-                   na.rm = TRUE, quiet = FALSE, superblock = FALSE) {
+                   na.rm = TRUE, quiet = FALSE, superblock = FALSE,
+                   response = NULL) {
   update_col_n <- function(x, y, n) {
     x[, n] <- y
     return(x)
@@ -315,7 +316,8 @@ rgccad <- function(blocks, connection = 1 - diag(length(blocks)),
     } else {
       defl_result <- defl_select(gcca_result$Y, R,
         ndefl, n - 1, J,
-        na.rm = na.rm
+        na.rm = na.rm,
+        response = response
       )
       R <- defl_result$resdefl
       P <- lapply(seq(J), function(b) {

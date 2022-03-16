@@ -475,8 +475,6 @@ select_analysis <- function(blocks,
     )
   }
 
-  if (!is.null(response)) ncomp[response] <- 1
-
   return(list(
     scheme = scheme,
     penalty = penalty,

@@ -17,7 +17,8 @@ sgcca(
   verbose = FALSE,
   quiet = FALSE,
   na.rm = TRUE,
-  superblock = FALSE
+  superblock = FALSE,
+  response = NULL
 )
 }
 \arguments{
@@ -71,6 +72,10 @@ algorithm is reported while computing.}
 
 \item{superblock}{Boolean indicating the presence of the superblock.
 Default = TRUE}
+
+\item{response}{Numerical value giving the position of the response block.
+When the response argument is filled the supervised mode is automatically
+activated.}
 }
 \value{
 \item{Y}{A list of \eqn{J} elements. Each element of \eqn{Y} is a

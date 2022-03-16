@@ -307,7 +307,8 @@ rgcca <- function(blocks, method = "rgcca",
     tol = tol,
     quiet = quiet,
     na.rm = na.rm,
-    superblock = opt$superblock
+    superblock = opt$superblock,
+    response = opt$response
   )
   gcca_args[[opt$par]] <- opt$penalty
   func_out <- do.call(opt$gcca, gcca_args)

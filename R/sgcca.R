@@ -147,7 +147,7 @@ sgcca <- function(blocks, connection = 1 - diag(length(blocks)),
                   ncomp = rep(1, length(blocks)), scheme = "centroid",
                   init = "svd", bias = TRUE, tol = .Machine$double.eps,
                   verbose = FALSE, quiet = FALSE, na.rm = TRUE,
-                  superblock = FALSE) {
+                  superblock = FALSE, response = NULL) {
   update_col_n <- function(x, y, n) {
     x[, n] <- y
     return(x)
@@ -256,7 +256,8 @@ sgcca <- function(blocks, connection = 1 - diag(length(blocks)),
     } else {
       defl_result <- defl_select(gcca_result$Y, R,
         ndefl, n - 1, J,
-        na.rm = na.rm
+        na.rm = na.rm,
+        response = response
       )
       R <- defl_result$resdefl
       P <- lapply(seq(J), function(b) {
