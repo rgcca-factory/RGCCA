@@ -29,6 +29,7 @@ format_output <- function(func_out, opt, raw, func_call = NULL) {
     superblock = opt$superblock,
     ncomp = opt$ncomp,
     scheme = opt$scheme,
+    response = opt$response,
     raw = raw
   )
 

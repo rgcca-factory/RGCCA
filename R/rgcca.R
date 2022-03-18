@@ -316,7 +316,7 @@ rgcca <- function(blocks, method = "rgcca",
   ### Format the output
   func_out <- format_output(func_out, opt, raw, func_call = list(
     scale = scale, init = init, bias = bias, tol = tol, verbose = verbose,
-    response = response, scale_block = scale_block, NA_method = NA_method,
+    scale_block = scale_block, NA_method = NA_method,
     method = method, disjonction = disjonction
   ))
 
