@@ -16,7 +16,8 @@ rgccad(
   verbose = TRUE,
   na.rm = TRUE,
   quiet = FALSE,
-  superblock = FALSE
+  superblock = FALSE,
+  response = NULL
 )
 }
 \arguments{
@@ -49,7 +50,7 @@ for each block.}
 covariance maximization among "horst" (the identity function), "factorial"
  (the squared values), "centroid" (the absolute values). The scheme function
  can be any continously differentiable convex function and it is possible to
- design explicitely the sheme function (e.g. function(x) x^4) as argument of
+ design explicitely the scheme function (e.g. function(x) x^4) as argument of
  rgcca function.  See (Tenenhaus et al, 2017) for details.}
 
 \item{init}{Character string giving the type of initialization to use in
@@ -70,6 +71,10 @@ algorithm is reported while computing.}
 
 \item{superblock}{TRUE if a superblock is added, FALSE otherwise (deflation
 strategy must be adapted when a superblock is used).}
+
+\item{response}{Numerical value giving the position of the response block.
+When the response argument is filled the supervised mode is automatically
+activated.}
 }
 \value{
 \item{Y}{A list of \eqn{J} elements. Each element of the list is a

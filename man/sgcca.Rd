@@ -17,16 +17,19 @@ sgcca(
   verbose = FALSE,
   quiet = FALSE,
   na.rm = TRUE,
-  superblock = FALSE
+  superblock = FALSE,
+  response = NULL
 )
 }
 \arguments{
-\item{blocks}{List of blocks.}
+\item{blocks}{A list that contains the J blocks of variables
+\eqn{\mathbf{X_1}, \mathbf{X_2}, ..., \mathbf{X_J}}{X1, X2, ..., XJ}.
+Block \eqn{\mathbf{X}_j}{Xj} is a matrix of dimension
+\eqn{n \times p_j}{n x p_j} where n is the number of
+observations and \eqn{p_j} the number of variables.}
 
-\item{connection}{Symmetric matrix (J*J) that describes the relationships
-between blocks. Elements of the connection matrix must be positive; but
-usually equal to 1 if block \eqn{j} and block \eqn{k} are connected, and 0
-otherwise.}
+\item{connection}{A symmetric matrix (\eqn{J \times J}{J x J}) that
+describes the relationships between blocks.}
 
 \item{sparsity}{Either a \eqn{1*J} vector or a \eqn{max(ncomp) * J} matrix
 encoding the L1 constraints applied to the outer weight vectors. The amount
@@ -48,7 +51,7 @@ for each block.}
 covariance maximization among "horst" (the identity function), "factorial"
  (the squared values), "centroid" (the absolute values). The scheme function
  can be any continously differentiable convex function and it is possible to
- design explicitely the sheme function (e.g. function(x) x^4) as argument of
+ design explicitely the scheme function (e.g. function(x) x^4) as argument of
  rgcca function.  See (Tenenhaus et al, 2017) for details.}
 
 \item{init}{Character string giving the type of initialization to use in
@@ -60,7 +63,8 @@ or by random initialisation ("random") (default: "svd").}
 
 \item{tol}{The stopping value for the convergence of the algorithm.}
 
-\item{verbose}{Logical value indicating whether the warnings are displayed.}
+\item{verbose}{Logical value indicating if the progress of the
+algorithm is reported while computing.}
 
 \item{quiet}{Logical value indicating if warning messages are reported.}
 
@@ -68,6 +72,10 @@ or by random initialisation ("random") (default: "svd").}
 
 \item{superblock}{Boolean indicating the presence of the superblock.
 Default = TRUE}
+
+\item{response}{Numerical value giving the position of the response block.
+When the response argument is filled the supervised mode is automatically
+activated.}
 }
 \value{
 \item{Y}{A list of \eqn{J} elements. Each element of \eqn{Y} is a

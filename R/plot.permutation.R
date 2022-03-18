@@ -5,7 +5,7 @@
 #' from the both the orginal and permuted blocks - in the y-axis. If type =
 #' "zstat" the value of the zstat for the various combinations are reported in
 #' the y-axis.
-#' @param perm A fitted rgcca_permutation object (see
+#' @param x A fitted rgcca_permutation object (see
 #' \code{\link[RGCCA]{rgcca_permutation}})
 #' @param type A character string indicating which criterion to plot
 #' (default is 'crit' for the RGCCA criterion or 'zstat' for the pseudo Z-score)
@@ -40,7 +40,7 @@
 #' )
 #' print(perm.out)
 #' plot(perm.out, type = "zstat")
-plot.permutation <- function(perm,
+plot.permutation <- function(x,
                              type = "crit",
                              cex = 1,
                              title = NULL,
@@ -50,8 +50,8 @@ plot.permutation <- function(perm,
                              cex_lab = 19 * cex,
                              colors = c("red", "grey"),
                              display_all = FALSE,
-                             show_legend = TRUE) {
-  stopifnot(is(perm, "permutation"))
+                             show_legend = TRUE, ...) {
+  stopifnot(is(x, "permutation"))
   match.arg(type, c("crit", "zstat"))
   for (i in c("cex", "cex_main", "cex_sub", "cex_point", "cex_lab")) {
     check_integer(i, get(i))
@@ -60,7 +60,7 @@ plot.permutation <- function(perm,
   if (length(colors) < 2) {
     colors <- rep(colors, 2)
   }
-  crit_title <- ifelse(perm$call$method %in% c("sgcca", "spls"),
+  crit_title <- ifelse(x$call$method %in% c("sgcca", "spls"),
     "SGCCA criterion",
     "RGCCA criterion"
   )
@@ -70,16 +70,16 @@ plot.permutation <- function(perm,
     "crit"  = y_title <- crit_title
   )
 
-  check_ncol(list(perm$zstat), 1)
+  check_ncol(list(x$zstat), 1)
 
-  y <- unlist(perm[type])
-  N <- nrow(perm$penalties)
+  y <- unlist(x[type])
+  N <- nrow(x$penalties)
 
   df <- setNames(
     data.frame(
       y,
       rep("Other parameter set", N),
-      apply(perm$penalties, 1, function(x) {
+      apply(x$penalties, 1, function(x) {
         paste0(round(x, 3), collapse = "/")
       })
     ),
@@ -87,7 +87,7 @@ plot.permutation <- function(perm,
   )
   idx_order <- sort(df[[type]], decreasing = F, index.return = T)$ix
   df <- df[idx_order, ]
-  best <- which.max(unlist(perm["zstat"])[idx_order])
+  best <- which.max(unlist(x["zstat"])[idx_order])
 
   axis <- function(margin) {
     element_text(
@@ -99,7 +99,7 @@ plot.permutation <- function(perm,
 
   if (is.null(title)) {
     title <- paste0(
-      "Permutation scores (", perm$call$n_perms, " runs) \n Best parameters : ",
+      "Permutation scores (", x$call$n_perms, " runs) \n Best parameters : ",
       df$label[best]
     )
   } else {
@@ -152,9 +152,9 @@ plot.permutation <- function(perm,
     )
   if (type == "crit") {
     dft <- data.frame(
-      combinations = rep(df$label, NCOL(perm$permcrit)),
-      permcrit = c(perm$permcrit[idx_order, ]),
-      Permuted = rep(df$Non_permuted, NCOL(perm$permcrit))
+      combinations = rep(df$label, NCOL(x$permcrit)),
+      permcrit = c(x$permcrit[idx_order, ]),
+      Permuted = rep(df$Non_permuted, NCOL(x$permcrit))
     )
     p$layers <- c(
       geom_boxplot(
@@ -186,7 +186,7 @@ plot.permutation <- function(perm,
     p <- p + expand_limits(x = 0)
   }
 
-  attributes(p)$penalties <- perm$penalties[idx_order, ]
+  attributes(p)$penalties <- x$penalties[idx_order, ]
 
-  plot(p)
+  plot(p, ...)
 }

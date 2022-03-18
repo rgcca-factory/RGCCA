@@ -74,10 +74,8 @@ plot_ind <- function(rgcca_res,
   df <- get_comp(
     rgcca_res = rgcca_res,
     resp = resp,
-    compx = compx,
-    compy = compy,
-    i_block_x = i_block,
-    i_block_y = i_block_y,
+    comps = c(compx, compy),
+    i_blocks = c(i_block, i_block_y),
     predicted = predicted
   )
   class(df) <- c(class(df), "d_ind")

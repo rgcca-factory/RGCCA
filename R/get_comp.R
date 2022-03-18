@@ -2,86 +2,66 @@
 #
 # @inheritParams plot_ind
 # @inheritParams get_ctr
-# @param i_block_x An integer giving the index of a list of blocks
-# @param i_block_z An integer giving the index of a list of blocks (another
-# one, different from the one used in i_block_x)
-# @return A matrix containg each selected components and an associated response
+# @param i_blocks A vector of integers giving the index of the blocks
+# @param comps A vector of integers giving the index of the components
+# @return A matrix containing each selected components and an associated
+# response
 get_comp <- function(rgcca_res,
                      resp = rep(1, NROW(rgcca_res$Y[[1]])),
-                     compx = 1,
-                     compy = 2,
-                     compz = NULL,
-                     i_block_x = length(rgcca_res$Y),
-                     i_block_y = i_block_x,
-                     i_block_z = i_block_x,
+                     comps = c(1, 2),
+                     i_blocks = rep(length(rgcca_res$Y), 2),
                      predicted = NULL) {
+  ### Apply checks
   stopifnot(is(rgcca_res, "rgcca"))
-  resp <- as.matrix(check_response(resp, rgcca_res$Y))
-
-  for (i in c("i_block_x", "i_block_y", "i_block_z")) {
-    if (!is.null(get(i))) {
-      check_blockx(i, get(i), rgcca_res$call$blocks)
-    }
-  }
-  check_ncol(rgcca_res$Y, i_block_x)
-  for (i in c("x", "y", "z")) {
-    j <- paste0("comp", i)
-    if (!is.null(get(j))) {
-      check_compx(j, get(j), rgcca_res$call$ncomp, get(paste0("i_block_", i)))
-    }
+  resp <- as.matrix(check_response(resp))
+  if (length(comps) != length(i_blocks)) {
+    stop_rgcca(
+      "comps and i_blocks must have the same length."
+    )
   }
 
-  df <- data.frame(
-    rgcca_res$Y[[i_block_x]][, compx],
-    rgcca_res$Y[[i_block_y]][, compy],
-    rgcca_res$Y[[i_block_z]][, compz]
+  # Check that i_blocks correspond to existing number of blocks
+  lapply(i_blocks, function(i) {
+    check_blockx("block index", i, rgcca_res$call$blocks)
+    check_ncol(rgcca_res$Y, i)
+  })
+
+  # Check that comps and i_blocks correspond to existing components
+  mapply(
+    function(x, y) check_compx(x, x, rgcca_res$call$ncomp, y), comps, i_blocks
   )
 
+  ### Extract interesting components
+  df <- data.frame(
+    rgcca_res$Y[[i_blocks[1]]][, comps[1]],
+    rgcca_res$Y[[i_blocks[2]]][, comps[2]]
+  )
+
+  # If predicted is not null, we overwrite resp
   if (!is.null(predicted)) {
-    df2 <- predicted[[2]][[i_block_x]][, c(compx, compy, compz)]
+    df2 <- data.frame(
+      predicted[[2]][[i_blocks[1]]][, comps[1]],
+      predicted[[2]][[i_blocks[2]]][, comps[2]]
+    )
     colnames(df2) <- colnames(df)
     df1 <- df[rownames(df2), ]
     df <- rbind(df1, df2)
-    resp <- c(rep("obs", NROW(df2)), rep("pred", NROW(df2)))
-  } else if (length(unique(resp)) > 1) {
-    names <- row.names(resp)
+    df$resp <- as.factor(c(rep("obs", NROW(df2)), rep("pred", NROW(df2))))
+    return(df)
+  }
 
-    if (!is.null(names)) {
-      resp <- as.matrix(resp, row.names = names)
-      name_blocks <- row.names(rgcca_res$Y[[i_block_x]])
-      diff_column <- setdiff(name_blocks, names)
-
-      if (identical(diff_column, name_blocks)) {
-        warning("No match has been found with the row names of the group file.")
-        resp <- rep("NA", NROW(df))
-      } else {
-        if (length(diff_column) > 0) {
-          resp[diff_column] <- "NA"
-          names(resp)[names(resp) == ""] <- names
-        } else {
-          names(resp) <- names
-        }
-        resp <- resp[row.names(rgcca_res$Y[[i_block_x]])]
-      }
-    } else {
-      if (length(resp) != NROW(rgcca_res$call$blocks[[i_block_x]])) {
-        stop_rgcca(paste0(
-          "resp argument should have the same size than the ",
-          "number of rows in the selected block."
-        ))
-      }
+  # Otherwise we align resp on Y
+  if (is.null(rownames(resp))) {
+    if (nrow(resp) != nrow(rgcca_res$Y[[i_blocks[1]]])) {
+      stop_rgcca(
+        "response must have ", nrow(rgcca_res$Y[[i_blocks[1]]]), " rows."
+      )
     }
+    df$resp <- resp
   } else {
-    resp <- resp[seq(NROW(df)), ]
+    df$resp <- apply(
+      resp, 2, function(x) x[rownames(rgcca_res$Y[[i_blocks[1]]])]
+    )
   }
-
-  if ((is.numeric(resp)) ||
-    length(unique(resp)) == 1) {
-    resp[resp == "NA"] <- NA
-    df$resp <- as.numeric(resp)
-  } else {
-    df$resp <- as.factor(resp)
-  }
-
   return(df)
 }

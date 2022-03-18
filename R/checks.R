@@ -2,8 +2,8 @@
 #-----------------------------
 check_blockx <- function(x, y, blocks) {
   message <- paste0(
-    x, " should be lower than ", length(blocks),
-    " (that is the number of blocks)."
+    x, " must be lower than the number of blocks, i.e. ",
+    length(blocks), "."
   )
   exit_code <- 133
   x <- check_integer(x, y,
@@ -19,42 +19,39 @@ check_boolean <- function(x, y = x, type = "scalar") {
   }
 
   if (any(is.na(y))) {
-    stop_rgcca(paste(x, "should not be NA."))
+    stop_rgcca(x, " must not be NA.")
   }
 
   if (!is(y, "logical")) {
-    stop_rgcca(paste(x, "should be TRUE or FALSE."))
+    stop_rgcca(x, " must be TRUE or FALSE.")
   }
 
   if (type == "scalar" && length(y) != 1) {
-    stop_rgcca(paste(x, "should be of length 1."))
+    stop_rgcca(x, " must be of length 1.")
   }
 }
 
 check_colors <- function(colors) {
   if (!is.null(colors)) {
     colors <- as.vector(colors)
-    for (i in colors) {
+    lapply(colors, function(i) {
       if (!is.na(i) && !(i %in% colors()) && is.character2(i) &&
         regexpr("^#{1}[a-zA-Z0-9]{6,8}$", i) < 1) {
-        stop_rgcca("colors must be in colors() or a rgb character.")
+        stop_rgcca(
+          "Unrecognized colors. Colors must be in colors() ",
+          "or a rgb character."
+        )
       }
-    }
+    })
   }
 }
 
 check_compx <- function(x, y, ncomp, blockx) {
   res <- check_integer(x, y, min = 1)
   if (y > ncomp[blockx]) {
-    stop_rgcca(
-      paste0(
-        x,
-        " equals to ",
-        y,
-        " and should be less than or equal to ",
-        ncomp[blockx],
-        " (the number of block component)."
-      ),
+    stop_rgcca("not existing component. Trying to extract component ", y,
+      " for block ", blockx, " , but only ", ncomp[blockx],
+      " components are available for this block.",
       exit_code = 128
     )
   }
@@ -66,7 +63,9 @@ check_compx <- function(x, y, ncomp, blockx) {
 # @inheritParams rgccad
 # @inheritParams set_connection
 check_connection <- function(C, blocks) {
-  msg <- "The design matrix C should"
+  msg <- "connection matrix C must"
+
+  if (!is.matrix(C)) stop_rgcca(msg, " be a matrix.", exit_code = 103)
 
   if (!isSymmetric.matrix(unname(C))) {
     stop_rgcca(paste(msg, "be symmetric."), exit_code = 103)
@@ -103,13 +102,12 @@ check_connection <- function(C, blocks) {
   }
 
   return(C)
-  # TODO: warning if superblock = TRUE
 }
+
 check_file <- function(f) {
   # Check the existence of a path f: A character giving the path of a file
-
   if (!file.exists(f)) {
-    stop_rgcca(paste(f, "does not exist."), exit_code = 101)
+    stop_rgcca(paste("file", f, "does not exist."), exit_code = 101)
   }
 }
 
@@ -127,25 +125,21 @@ check_integer <- function(x, y = x, type = "scalar", float = FALSE, min = 1,
   y <- tryCatch(
     as.double(as.matrix(y)),
     warning = function(w) {
-      stop_rgcca(paste(x, "should be numeric."))
+      stop_rgcca(paste(x, "must be numeric."))
     }
   )
 
   if (any(is.na(y))) {
-    stop_rgcca(paste(x, "should not be NA."))
-  }
-
-  if (!is(y, "numeric")) {
-    stop_rgcca(paste(x, "should be numeric."))
+    stop_rgcca(paste(x, "must not be NA."))
   }
 
   if (type == "scalar" && length(y) != 1) {
-    stop_rgcca(paste(x, "should be of length 1."))
+    stop_rgcca(paste(x, "must be of length 1."))
   }
 
   if (!float) {
     if (any((y %% 1) != 0)) {
-      stop_rgcca(paste(x, "should be an integer."))
+      stop_rgcca(paste(x, "must be an integer."))
     }
     y <- as.integer(y)
   }
@@ -154,7 +148,9 @@ check_integer <- function(x, y = x, type = "scalar", float = FALSE, min = 1,
     if (!is.null(min_message)) {
       stop_rgcca(min_message, exit_code = exit_code)
     } else {
-      stop_rgcca(paste0(x, " should be higher than or equal to ", min, "."))
+      stop_rgcca(x, " must be higher than or equal to ", min, ".",
+        exit_code = exit_code
+      )
     }
   }
 
@@ -162,7 +158,9 @@ check_integer <- function(x, y = x, type = "scalar", float = FALSE, min = 1,
     if (!is.null(max_message)) {
       stop_rgcca(max_message, exit_code = exit_code)
     } else {
-      stop_rgcca(paste0(x, " should be lower than or equal to ", max, "."))
+      stop_rgcca(x, " must be lower than or equal to ", max, ".",
+        exit_code = exit_code
+      )
     }
   }
 
@@ -188,22 +186,23 @@ check_method <- function(method) {
     "cca", "ifa", "ra", "gcca", "maxvar", "maxvar-b",
     "maxvar-a", "mcoa", "cpca-1", "cpca-2", "cpca-4",
     "hpca", "maxbet-b", "maxbet", "maxdiff-b", "maxdiff",
-    "maxvar-a", "sabscor", "ssqcor", "ssqcor", "ssqcov-1",
+    "sabscor", "ssqcor", "ssqcov-1",
     "ssqcov-2", "ssqcov", "sumcor", "sumcov-1", "sumcov-2",
-    "sumcov", "sabscov", "sabscov-1", "sabscov-2"
+    "sumcov", "sabscov-1", "sabscov-2"
   )
 
   if (!tolower(method) %in% analysis) {
     stop_rgcca(
-      paste0("Please select one type among the following
-            type: ", paste(analysis, collapse = ", ")),
+      "method '", method, "' is not among the available methods: ",
+      paste(analysis, collapse = "', '"), "'.",
       exit_code = 112
     )
   }
+  return(tolower(method))
 }
 
 check_nblocks <- function(blocks, method) {
-  if (tolower(method) == "pca") {
+  if (tolower(method) %in% c("pca", "spca")) {
     if (length(blocks) == 1) {
       return(blocks)
     }
@@ -216,13 +215,10 @@ check_nblocks <- function(blocks, method) {
     nb <- 2
     exit_code <- 111
   }
-
   stop_rgcca(
-    paste0(
-      length(blocks),
-      " blocks were provided but the number of blocks for ", method,
-      " must be ", nb, "."
-    ),
+    length(blocks),
+    " blocks were provided but the number of blocks for ", method,
+    " must be ", nb, ".",
     exit_code = exit_code
   )
 }
@@ -241,8 +237,7 @@ check_ncol <- function(x, i_block) {
 check_ncomp <- function(ncomp, blocks, min = 1, superblock = FALSE) {
   if (superblock && length(unique(ncomp)) != 1) {
     stop_rgcca(
-      "Specify the number of components only for the superblock or ",
-      "identical for all blocks."
+      "only one number of components must be specified (superblock)."
     )
   }
   ncomp <- elongate_arg(ncomp, blocks)
@@ -252,9 +247,8 @@ check_ncomp <- function(ncomp, blocks, min = 1, superblock = FALSE) {
     function(x) {
       if (!superblock) {
         msg <- paste0(
-          "ncomp[", x, "] should be lower than ",
-          NCOL(blocks[[x]]),
-          " (i.e. the number of variables for block ", x, ")."
+          "ncomp[", x, "] must be lower than the number of variables ",
+          "for block ", x, ", i.e. ", NCOL(blocks[[x]]), "."
         )
         y <- check_integer("ncomp", ncomp[x],
           min = min, max_message = msg,
@@ -262,9 +256,9 @@ check_ncomp <- function(ncomp, blocks, min = 1, superblock = FALSE) {
         )
       } else {
         msg <- paste0(
-          "The number of global components should be lower than",
-          NCOL(blocks[[length(blocks)]]),
-          " (i.e. the number of variables in the superblock."
+          "the number of components must be lower than the number of ",
+          "variables in the superblock, i.e. ", NCOL(blocks[[length(blocks)]]),
+          "."
         )
 
         y <- check_integer("ncomp", ncomp[length(blocks)],
@@ -305,45 +299,35 @@ check_quantitative <- function(df, fo, header = FALSE, warn_separator = FALSE) {
   }
 }
 
-check_response <- function(response = NULL, df = NULL) {
-  if (!is.null(response)) {
-    qualitative <- is.character(response)
-
-    if (!qualitative) {
-      response <- to_numeric(response)
-    }
-    if (NCOL(response) > 1) {
-      disjunctive <- unique(apply(response, 1, sum))
-
-      if (length(disjunctive) &&
-        unique(disjunctive %in% c(0, 1)) && disjunctive) {
-        response2 <- factor(apply(response, 1, which.max))
-
-        if (!is.null(colnames(response))) {
-          levels(response2) <- colnames(response)
-        }
-
-        return(
-          as.matrix(
-            data.frame(
-              as.character(response2),
-              row.names = rownames(response)
-            )
-          )
-        )
-      } else {
-        warning(
-          "There is multiple columns in the response block. By default, ",
-          "only the first column will be considered."
-        )
-        return(as.matrix(response[, 1]))
-      }
-    }
-
-    return(response)
-  } else {
-    return(rep(1, NROW(df[[1]])))
+check_response <- function(response = NULL) {
+  if (is.null(response)) {
+    return(NA)
   }
+  response <- as.data.frame(response)
+  qualitative <- is.character2(response)
+  if (qualitative || (NCOL(response) == 1)) {
+    return(response)
+  }
+
+  # If response is numeric, contains only one nonzero value per row that equals
+  # 1, we convert response to a column factor.
+  response <- to_numeric(response)
+  col_sum <- unique(apply(response, 1, sum))
+  values <- unique(unlist(response))
+  values <- union(col_sum, values)
+  if (identical(sort(union(values, c(0, 1))), c(0, 1))) {
+    response <- factor(
+      apply(response, 1, which.max),
+      levels = colnames(response)
+    )
+    return(
+      data.frame(
+        as.character(response),
+        row.names = rownames(response)
+      )
+    )
+  }
+  return(response)
 }
 
 # Test on the sign of the correlation
@@ -389,13 +373,16 @@ check_sign_comp <- function(rgcca_res, w) {
   return(w)
 }
 
-check_size_blocks <- function(blocks, x, y = x) {
+check_size_blocks <- function(blocks, x, y = x, n_row = NULL) {
   if (identical(x, y)) {
     x <- ""
   }
   if (any(class(y) %in% c("matrix", "data.frame"))) {
     dim_y <- NCOL(y)
     dim_type <- "number of columns"
+    if (!is.null(n_row) && (NROW(y) != n_row) && (NROW(y) != 1)) {
+      stop_rgcca(x, " must have ", n_row, " rows.")
+    }
   } else {
     dim_y <- length(y)
     dim_type <- "size"
@@ -403,16 +390,14 @@ check_size_blocks <- function(blocks, x, y = x) {
 
   if (dim_y != length(blocks)) {
     stop_rgcca(
-      paste0(
-        x,
-        " should have the same ",
-        dim_type,
-        " (actually ",
-        dim_y,
-        ") as the number of blocks (",
-        length(blocks),
-        ")."
-      ),
+      x,
+      " must have the same ",
+      dim_type,
+      " (actually ",
+      dim_y,
+      ") as the number of blocks (",
+      length(blocks),
+      ").",
       exit_code = 130
     )
   } else {
@@ -431,45 +416,44 @@ check_size_file <- function(filename) {
   }
 }
 
-check_penalty <- function(penalty, blocks, method = "rgcca", superblock = F) {
+check_penalty <- function(penalty, blocks, method = "rgcca", superblock = F,
+                          ncomp = NULL) {
   if (superblock) {
     blocks[[length(blocks) + 1]] <- Reduce(cbind, blocks)
     names(blocks)[length(blocks)] <- "superblock"
   }
   penalty <- elongate_arg(penalty, blocks)
   name <- ifelse(method == "rgcca", "tau", "sparsity")
-  check_size_blocks(blocks, name, penalty)
-  penalty1 <- penalty
+  check_size_blocks(blocks, name, penalty, n_row = ncomp)
 
-  is_matrix <- is(penalty, "matrix")
+  is_matrix <- is.matrix(penalty)
+  DIM <- dim(penalty)
 
   # Check value of each penalty
   if (method == "rgcca") penalty <- sapply(penalty, check_tau, USE.NAMES = F)
   if (method == "sgcca") {
-    if (is_matrix) {
-      divider <- NROW(penalty1)
-    } else {
-      divider <- 1
-    }
+    divider <- ifelse(is_matrix, DIM[1], 1)
     penalty <- sapply(
       seq(length(penalty)),
-      function(x) check_spars(penalty[x], blocks[[1 + (x - 1) / divider]])
+      function(x) {
+        n <- 1 + (x - 1) / divider
+        check_spars(penalty[x], blocks[[n]], n)
+      }
     )
   }
 
-  if (is(penalty1, "matrix")) {
-    penalty <- matrix(penalty, NROW(penalty1), NCOL(penalty1))
-  }
+  if (is_matrix) penalty <- matrix(penalty, DIM[1], DIM[2])
 
   return(penalty)
 }
 
-check_spars <- function(sparsity, block) {
+check_spars <- function(sparsity, block, n) {
   min_sparsity <- 1 / sqrt(NCOL(block))
   min_message <- paste0(
-    "Sparsity parameter equals to ", sparsity,
+    "too high sparsity. Sparsity parameter equals ", sparsity,
     ". For SGCCA, it must be greater than ",
-    "1/sqrt(number_column) (i.e., ", min_sparsity, ")."
+    "1/sqrt(number_column) (i.e., ", round(min_sparsity, 4),
+    " for block ", n, ")."
   )
   sparsity <- check_integer("sparsity", sparsity,
     float = TRUE,
@@ -513,8 +497,8 @@ check_scheme <- function(scheme) {
       (scheme != "centroid")
   ) {
     stop_rgcca(paste0(
-      "Choose one of the three following schemes: horst, ",
-      "centroid, factorial or design the g function"
+      "scheme must be one of the following schemes: horst, ",
+      "centroid, factorial or a function."
     ))
   }
 }

@@ -69,6 +69,8 @@ bootstrap <- function(rgcca_res, n_boot = 100,
                       n_cores = parallel::detectCores() - 1,
                       balanced = TRUE, keep_all_variables = FALSE,
                       verbose = TRUE) {
+  local_env <- new.env()
+
   if (class(rgcca_res) == "stability") {
     message(
       "All the parameters were imported from the fitted rgcca_stability",
@@ -151,9 +153,9 @@ bootstrap <- function(rgcca_res, n_boot = 100,
 
   if (Sys.info()["sysname"] == "Windows") {
     if (n_cores > 1) {
-      assign("rgcca_res", rgcca_res, envir = .GlobalEnv)
+      assign("rgcca_res", rgcca_res, envir = local_env)
       cl <- parallel::makeCluster(n_cores)
-      parallel::clusterExport(cl, "rgcca_res")
+      parallel::clusterExport(cl, "rgcca_res", envir = local_env)
       W <- pbapply::pblapply(boot_sampling$full_idx,
         function(b) {
           bootstrap_k(
@@ -164,7 +166,6 @@ bootstrap <- function(rgcca_res, n_boot = 100,
         cl = cl
       )
       parallel::stopCluster(cl)
-      rm("rgcca_res", envir = .GlobalEnv)
     } else {
       W <- pbapply::pblapply(
         boot_sampling$full_idx,

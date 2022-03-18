@@ -107,7 +107,6 @@ rgcca_cv <- function(blocks,
                      tau = rep(1, length(blocks)),
                      ncomp = rep(1, length(blocks)),
                      sparsity = rep(1, length(blocks)),
-                     connection = 1 - diag(length(blocks)),
                      init = "svd",
                      bias = TRUE,
                      X_scaled = FALSE,
@@ -126,7 +125,6 @@ rgcca_cv <- function(blocks,
     bias <- rgcca_res$call$bias
     blocks <- rgcca_res$call$raw
     superblock <- rgcca_res$call$superblock
-    connection <- rgcca_res$call$connection
     tau <- rgcca_res$call$tau
     ncomp <- rgcca_res$call$ncomp
     sparsity <- rgcca_res$call$sparsity
@@ -153,7 +151,6 @@ rgcca_cv <- function(blocks,
   check_integer("par_value", n_run, min = 0)
   check_integer("n_run", n_run)
   match.arg(par_type, c("tau", "sparsity", "ncomp"))
-  min_spars <- NULL
 
   if (method %in% c("sgcca", "spca", "spls")) {
     par_type <- "sparsity"
@@ -167,7 +164,7 @@ rgcca_cv <- function(blocks,
 
   ncols <- sapply(blocks, NCOL)
 
-  set_spars <- function(max = 1) {
+  set_spars <- function(min_spars, max = 1) {
     if (length(max) == 1) {
       f <- quote(max)
     } else {
@@ -187,7 +184,7 @@ rgcca_cv <- function(blocks,
         )
       }
       method <- "sgcca"
-      min_spars <<- sapply(ncols, function(x) 1 / sqrt(x))
+      min_spars <- sapply(ncols, function(x) 1 / sqrt(x))
     } else {
       if (method == "sgcca") {
         paste0(
@@ -196,11 +193,11 @@ rgcca_cv <- function(blocks,
         )
       }
       method <- "rgcca"
-      min_spars <<- sapply(ncols, function(x) 0)
+      min_spars <- sapply(ncols, function(x) 0)
     }
 
     if (is.null(par_value)) {
-      par_value <- set_spars()
+      par_value <- set_spars(min_spars)
     } else {
       if ("data.frame" %in% class(par_value) ||
         "matrix" %in% class(par_value)) {
@@ -216,7 +213,7 @@ rgcca_cv <- function(blocks,
           ))
         }
         par_value <- check_penalty(par_value, blocks, method = method)
-        par_value <- set_spars(max = par_value)
+        par_value <- set_spars(min_spars, max = par_value)
       }
     }
     colnames(par_value) <- names(blocks)
@@ -256,7 +253,7 @@ rgcca_cv <- function(blocks,
     collapse = "-"
   )
 
-  for (i in 1:dim(par_type[[2]])[1]) {
+  for (i in seq(dim(par_type[[2]])[1])) {
     if (par_type[[1]] == "ncomp") {
       rgcca_res <- rgcca(
         blocks = blocks, method = method, response = response,
@@ -287,7 +284,7 @@ rgcca_cv <- function(blocks,
     }
 
     res_i <- c()
-    for (n in 1:n_run) {
+    for (n in seq(n_run)) {
       if (one_value_per_cv) {
         res_i <- c(res_i, rgcca_cv_k(
           rgcca_res,

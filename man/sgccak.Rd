@@ -44,7 +44,7 @@ estimated by using \link{rgcca_permutation}.}
 covariance maximization among "horst" (the identity function), "factorial"
  (the squared values), "centroid" (the absolute values). The scheme function
  can be any continously differentiable convex function and it is possible to
- design explicitely the sheme function (e.g. function(x) x^4) as argument of
+ design explicitely the scheme function (e.g. function(x) x^4) as argument of
  rgcca function.  See (Tenenhaus et al, 2017) for details.}
 
 \item{tol}{The stopping value for the convergence of the algorithm.}
@@ -56,7 +56,8 @@ or by random initialisation ("random") (default: "svd").}
 \item{bias}{A logical value for biaised (\eqn{1/n}) or unbiaised
 (\eqn{1/(n-1)}) estimator of the var/cov (default: bias = TRUE).}
 
-\item{verbose}{Logical value indicating whether the warnings are displayed.}
+\item{verbose}{Logical value indicating if the progress of the
+algorithm is reported while computing.}
 
 \item{quiet}{Logical value indicating if warning messages are reported.}
 

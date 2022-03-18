@@ -59,6 +59,8 @@ rgcca_stability <- function(rgcca_res,
                             verbose = FALSE,
                             balanced = TRUE,
                             keep_all_variables = FALSE) {
+  local_env <- new.env()
+
   stopifnot(tolower(rgcca_res$call$method) %in% c("sgcca", "spls", "spca"))
   check_integer("n_boot", n_boot)
   check_integer("n_cores", n_cores, min = 0)
@@ -103,9 +105,9 @@ rgcca_stability <- function(rgcca_res,
 
   if (Sys.info()["sysname"] == "Windows") {
     if (n_cores > 1) {
-      assign("rgcca_res", rgcca_res, envir = .GlobalEnv)
+      assign("rgcca_res", rgcca_res, envir = local_env)
       cl <- parallel::makeCluster(n_cores)
-      parallel::clusterExport(cl, "rgcca_res")
+      parallel::clusterExport(cl, "rgcca_res", envir = local_env)
       W <- pbapply::pblapply(boot_sampling$full_idx,
         function(b) {
           bootstrap_k(
@@ -116,7 +118,6 @@ rgcca_stability <- function(rgcca_res,
         cl = cl
       )
       parallel::stopCluster(cl)
-      rm("rgcca_res", envir = .GlobalEnv)
     } else {
       W <- pbapply::pblapply(
         boot_sampling$full_idx,

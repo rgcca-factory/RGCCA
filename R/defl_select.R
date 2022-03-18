@@ -16,11 +16,13 @@
 # \eqn{p_{1h}, \ldots, p_{Jh}}.}
 # @title deflation function
 
-defl_select <- function(yy, rr, nncomp, nn, nbloc, na.rm = TRUE) {
+defl_select <- function(yy, rr, nncomp, nn, nbloc, na.rm = TRUE,
+                        response = NULL) {
   resdefl <- NULL
   pdefl <- list()
-  for (q in 1:nbloc) {
-    if (nn <= nncomp[q]) {
+  for (q in seq(nbloc)) {
+    is_response <- !is.null(response) && (q == response)
+    if ((nn <= nncomp[q]) && !is_response) {
       defltmp <- deflation(as.matrix(rr[[q]]),
         as.matrix(yy[, q]),
         na.rm = na.rm

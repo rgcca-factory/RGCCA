@@ -30,5 +30,5 @@ load_response <- function(blocks = NULL,
     check_blocks(blocks, , allow_unnames = FALSE, n = 1)
   }
 
-  check_response(response, blocks)
+  check_response(response)
 }
