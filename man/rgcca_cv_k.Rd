@@ -24,7 +24,7 @@ rgcca_cv_k(
   tau = NULL,
   sparsity = NULL,
   n_cores = parallel::detectCores() - 1,
-  parallelization = TRUE,
+  verbose = TRUE,
   ...
 )
 }
@@ -121,8 +121,8 @@ estimated by using \link{rgcca_permutation}.}
 
 \item{n_cores}{Number of cores for parallelization.}
 
-\item{parallelization}{logical value. If TRUE (default value), the
-permutation procedure is parallelized}
+\item{verbose}{Logical value indicating if the progress of the
+algorithm is reported while computing.}
 
 \item{...}{Further graphical parameters (see plot2D functions)}
 }
