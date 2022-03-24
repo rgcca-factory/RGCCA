@@ -7,7 +7,8 @@
 #' @inheritParams plot_ind
 #' @param k An integer giving the number of folds (if validation = 'kfold').
 #' @param validation A character for the type of validation among "loo",
-#' "kfold", "test".
+#' "kfold".
+#' @param complete A logical indicating if all outputs should be returned.
 #' @examples
 #' data("Russett")
 #' blocks <- list(
@@ -21,9 +22,7 @@
 #' @seealso \link{rgcca}, \link{rgcca_predict}, \link{plot.predict}
 rgcca_cv_k <- function(rgcca_res,
                        validation = "kfold",
-                       task = "regression",
                        prediction_model = "lm",
-                       X_scaled = TRUE,
                        k = 5,
                        scale = NULL,
                        scale_block = NULL,
@@ -39,6 +38,7 @@ rgcca_cv_k <- function(rgcca_res,
                        sparsity = NULL,
                        n_cores = parallel::detectCores() - 1,
                        verbose = TRUE,
+                       complete = TRUE,
                        ...) {
   ### Check parameters
   stopifnot(is(rgcca_res, "rgcca"))
@@ -48,12 +48,12 @@ rgcca_cv_k <- function(rgcca_res,
       "used to apply rgcca_cv_k."
     )
   }
-  match.arg(validation, c("loo", "test", "kfold"))
+  match.arg(validation, c("loo", "kfold"))
 
   all_args <- names(environment())
   used_args <- c(
-    names(match.call()), "validation", "task", "prediction_model",
-    "X_scaled", "k", "n_cores", "verbose"
+    names(match.call()), "validation", "prediction_model",
+    "k", "n_cores", "verbose", "complete"
   )
   for (n in setdiff(all_args, used_args)) {
     assign(n, rgcca_res$call[[n]])
@@ -72,7 +72,7 @@ rgcca_cv_k <- function(rgcca_res,
     v_inds <- split(v_inds, seq(v_inds) %% k)
   }
 
-  scores <- par_pblapply(
+  res <- par_pblapply(
     v_inds, function(inds) {
       res <- set_rgcca(rgcca_res,
         scale = scale,
@@ -92,59 +92,71 @@ rgcca_cv_k <- function(rgcca_res,
       # keep them (by passing init = FALSE to check_blocks?)
       res_pred <- rgcca_predict(
         res,
-        X = lapply(blocks, function(x) x[inds, , drop = FALSE]),
-        task = task,
+        blocks_test = lapply(blocks, function(x) x[inds, , drop = FALSE]),
         prediction_model = prediction_model,
-        block_to_predict = rgcca_res$call$response,
-        X_scaled = FALSE
+        response = rgcca_res$call$response,
+        ...
       )
     },
     n_cores = n_cores, verbose = verbose
   )
 
-  list_rgcca <- lapply(scores, function(x) {
-    return(x$rgcca_res)
-  })
-  list_pred <- lapply(scores, function(x) {
-    return(x$pred)
-  })
-  list_scores <- sapply(scores, function(x) x$score)
-  list_res <- lapply(scores, function(x) {
-    return(x$res)
-  })
-  list_class_fit <- lapply(scores, function(x) {
-    return(x$class.fit)
-  })
+  ### Structure outputs
+  vec_scores <- vapply(res, function(x) x$score, FUN.VALUE = numeric(1))
+  scores <- mean(unlist(lapply(res, function(x) x$score)), na.rm = TRUE)
 
-  # concatenation of each test set to provide predictions for each block
-  preds <- lapply(
-    seq_along(rgcca_res$call$blocks),
-    function(x) {
-      Reduce(
-        function(y, z) {
-          rbind(y, z$pred[[x]])
-        },
-        scores,
-        init = NULL
-      )
+  if (!complete) {
+    list_results <- projections <- predictions <- NULL
+  } else {
+    list_results <- lapply(res, function(x) {
+      return(x$results)
+    })
+
+    # Concatenation of projections of each fold
+    projections <- lapply(
+      seq_along(rgcca_res$call$blocks),
+      function(x) {
+        Reduce(
+          function(y, z) {
+            rbind(y, z$projection[[x]])
+          },
+          res,
+          init = NULL
+        )
+      }
+    )
+
+    names(projections) <- names(rgcca_res$call$blocks)
+    for (x in seq_along(projections)) {
+      projections[[x]] <-
+        projections[[x]][rownames(blocks[[x]]), , drop = FALSE]
     }
-  )
 
-  names(preds) <- names(rgcca_res$call$blocks)
+    # Concatenation of predictions on each fold
+    response_block <- rgcca_res$call$raw[[rgcca_res$call$response]]
+    predictions <- vapply(
+      seq(NCOL(response_block)),
+      function(x) {
+        Reduce(
+          function(y, z) {
+            rbind(y, z$prediction[, x, drop = FALSE])
+          },
+          res,
+          init = NULL
+        )
+      },
+      FUN.VALUE = numeric(NROW(response_block))
+    )
 
-  for (x in seq_along(preds)) {
-    preds[[x]] <- preds[[x]][rownames(blocks[[x]]), , drop = FALSE]
+    colnames(predictions) <- colnames(response_block)
+    rownames(predictions) <- rownames(response_block)
   }
-
-  scores <- mean(unlist(lapply(scores, function(x) x$score)), na.rm = T)
 
   structure(
     list(
-      scores = scores, preds = preds,
-      rgcca_res = rgcca_res,
-      list_scores = list_scores,
-      list_pred = list_pred, list_rgcca = list_rgcca,
-      list_class = list_class_fit, list_res = list_res
+      scores = scores, projections = projections,
+      vec_scores = vec_scores, predictions = predictions,
+      rgcca_res = rgcca_res, list_results = list_results
     ),
     class = "cv"
   )

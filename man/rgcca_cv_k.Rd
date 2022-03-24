@@ -7,9 +7,7 @@
 rgcca_cv_k(
   rgcca_res,
   validation = "kfold",
-  task = "regression",
   prediction_model = "lm",
-  X_scaled = TRUE,
   k = 5,
   scale = NULL,
   scale_block = NULL,
@@ -25,6 +23,7 @@ rgcca_cv_k(
   sparsity = NULL,
   n_cores = parallel::detectCores() - 1,
   verbose = TRUE,
+  complete = TRUE,
   ...
 )
 }
@@ -32,16 +31,10 @@ rgcca_cv_k(
 \item{rgcca_res}{A fitted RGCCA object (see  \code{\link[RGCCA]{rgcca}}).}
 
 \item{validation}{A character for the type of validation among "loo",
-"kfold", "test".}
-
-\item{task}{A character corresponding to the prediction task among:
-regression or classification}
+"kfold".}
 
 \item{prediction_model}{A character giving the function used to compare the
-trained and the tested models}
-
-\item{X_scaled}{A boolean indicating if the blocks in X have already been
-scaled.}
+trained and the tested models.}
 
 \item{k}{An integer giving the number of folds (if validation = 'kfold').}
 
@@ -124,7 +117,10 @@ estimated by using \link{rgcca_permutation}.}
 \item{verbose}{Logical value indicating if the progress of the
 algorithm is reported while computing.}
 
-\item{...}{Further graphical parameters (see plot2D functions)}
+\item{complete}{A logical indicating if all outputs should be returned.}
+
+\item{...}{Additional parameters to be passed to the model fitted on top
+of RGCCA.}
 }
 \description{
 Uses cross-validation to evaluate predictive model of RGCCA
