@@ -38,28 +38,26 @@ set_parameter_grid <- function(par_type, par_length, par_value, blocks,
 
   set_grid <- function(check_function, min_values, max_values, length_values,
                        response_value = NULL) {
-    # If par_value is null, we generate a grid with at most par_length values
-    # per block by taking values uniformly spaced between the min of possible
+    # If par_value is null, we generate a matrix with par_length rows
+    # by taking values uniformly spaced between the min of possible
     # values and the max of possible values for each block.
     if (is.null(par_value)) {
       par_value <- lapply(seq_along(blocks), function(j) {
-        seq(min_values[j], max_values[j], length.out = length_values[j])
+        seq(min_values[j], max_values, length.out = length_values)
       })
-      par_value <- expand.grid(par_value)
+      par_value <- do.call(cbind, par_value)
       par_value <- set_response_value(par_value, response_value)
       return(list(par_type = par_type, par_value = par_value))
     }
-    # If par_value is a vector, we aim to create a grid out of this
+    # If par_value is a vector, we aim to create a matrix out of this
     # vector. Hence we have to check beforehand that par_value is a vector
     # of valid numbers.
     if (is.vector(par_value)) {
-      par_value <- check_integer("par_value", par_value,
-        min = max(min_values),
-        max = min(max_values), type = "vector",
-        float = TRUE
-      )
-      par_value <- lapply(seq_along(blocks), function(j) par_value)
-      par_value <- expand.grid(par_value)
+      par_value <- check_function(par_value)
+      par_value <- lapply(seq_along(blocks), function(j) {
+        seq(min_values[j], par_value[j], length.out = length_values)
+      })
+      par_value <- do.call(cbind, par_value)
       par_value <- set_response_value(par_value, response_value)
       return(list(par_type = par_type, par_value = par_value))
     }
@@ -67,6 +65,7 @@ set_parameter_grid <- function(par_type, par_length, par_value, blocks,
     par_value <- t(vapply(seq(nrow(par_value)), function(i) {
       check_function(par_value[i, ])
     }, FUN.VALUE = double(ncol(par_value))))
+    par_value <- set_response_value(par_value, response_value)
     return(list(par_type = par_type, par_value = par_value))
   }
 
@@ -77,8 +76,8 @@ set_parameter_grid <- function(par_type, par_length, par_value, blocks,
   switch(par_type,
     "ncomp" = {
       min_values <- rep(1, length(blocks))
-      max_values <- pmin(ncols, par_length)
-      length_values <- pmin(ncols, par_length)
+      max_values <- min(min(ncols[-response]), par_length)
+      length_values <- min(min(ncols[-response], par_length))
       response_value <- function(x) {
         return(max(x[-response]))
       }
@@ -88,8 +87,8 @@ set_parameter_grid <- function(par_type, par_length, par_value, blocks,
     },
     "tau" = {
       min_values <- rep(0, length(blocks))
-      max_values <- rep(1, length(blocks))
-      length_values <- rep(par_length, length(blocks))
+      max_values <- 1
+      length_values <- par_length
       response_value <- function(x) {
         return(x[response])
       }
@@ -99,10 +98,10 @@ set_parameter_grid <- function(par_type, par_length, par_value, blocks,
     },
     "sparsity" = {
       min_values <- 1 / sqrt(ncols)
-      max_values <- rep(1, length(blocks))
-      length_values <- rep(par_length, length(blocks))
+      max_values <- 1
+      length_values <- par_length
       response_value <- function(x) {
-        return(x[response])
+        return(1)
       }
       check_function <- function(x) {
         check_penalty(x, blocks, method = "sgcca")

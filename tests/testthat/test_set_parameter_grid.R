@@ -17,6 +17,7 @@ test_that("set_parameter_grid returns a valid grid of parameters when par_value
   expect_true(all(res$par_value >= 0))
   expect_true(all(res$par_value <= 1))
   expect_equal(NCOL(res$par_value), length(blocks))
+  expect_equal(NROW(res$par_value), 3)
 
   res <- set_parameter_grid("sparsity", 3, NULL, blocks, response = 3)
   expect_equal(res$par_type, "sparsity")
@@ -25,6 +26,7 @@ test_that("set_parameter_grid returns a valid grid of parameters when par_value
   }
   expect_true(all(res$par_value <= 1))
   expect_equal(NCOL(res$par_value), length(blocks))
+  expect_lte(NROW(res$par_value), 3)
 
   res <- set_parameter_grid("ncomp", 3, NULL, blocks, response = 3)
   expect_equal(res$par_type, "ncomp")
@@ -34,25 +36,28 @@ test_that("set_parameter_grid returns a valid grid of parameters when par_value
   }
   expect_true(all((res$par_value %% 1) == 0))
   expect_equal(NCOL(res$par_value), length(blocks))
+  expect_lte(NROW(res$par_value), 3)
 })
 
 test_that("set_parameter_grid returns a valid grid of parameters when par_value
           is a valid vector", {
-  res <- set_parameter_grid("tau", 3, c(0.5, 1), blocks, response = 3)
+  res <- set_parameter_grid("tau", 3, c(0.5, 1, 0.7), blocks, response = 3)
   expect_equal(res$par_type, "tau")
   expect_true(all(res$par_value >= 0))
   expect_true(all(res$par_value <= 1))
   expect_equal(NCOL(res$par_value), length(blocks))
+  expect_equal(NROW(res$par_value), 3)
 
-  res <- set_parameter_grid("sparsity", 3, c(0.9, 1), blocks, response = 3)
+  res <- set_parameter_grid("sparsity", 3, c(0.9, 1, 0.7), blocks, response = 3)
   expect_equal(res$par_type, "sparsity")
   for (j in seq_along(blocks)) {
     expect_true(all(res$par_value[, j] >= 1 / sqrt(NCOL(blocks[[j]]))))
   }
   expect_true(all(res$par_value <= 1))
   expect_equal(NCOL(res$par_value), length(blocks))
+  expect_lte(NROW(res$par_value), 3)
 
-  res <- set_parameter_grid("ncomp", 3, c(1, 2), blocks, response = 3)
+  res <- set_parameter_grid("ncomp", 3, c(1, 2, 2), blocks, response = 3)
   expect_equal(res$par_type, "ncomp")
   expect_true(all(res$par_value >= 1))
   for (j in seq_along(blocks)) {
@@ -60,6 +65,7 @@ test_that("set_parameter_grid returns a valid grid of parameters when par_value
   }
   expect_true(all((res$par_value %% 1) == 0))
   expect_equal(NCOL(res$par_value), length(blocks))
+  expect_lte(NROW(res$par_value), 3)
 })
 
 test_that("set_parameter_grid returns a valid grid of parameters when par_value
@@ -73,8 +79,8 @@ test_that("set_parameter_grid returns a valid grid of parameters when par_value
   expect_equal(tau, res$par_value)
 
   sparsity <- matrix(c(
-    pmin(1, pmax(min_sparsity, rnorm(3))),
-    pmin(1, pmax(min_sparsity, rnorm(3)))
+    0.6, 0.8, 1,
+    0.7, 0.9, 1
   ), nrow = 2, ncol = 3, byrow = TRUE)
   res <- set_parameter_grid("sparsity", 3, sparsity, blocks, response = 3)
   expect_equal(res$par_type, "sparsity")
@@ -119,7 +125,7 @@ test_that("set_parameter_grid raises errors when par_value is not valid", {
     set_parameter_grid("ncomp", 3, "toto", blocks,
       response = 3
     ),
-    paste0("par_value must be numeric"),
+    paste0("must be numeric"),
     fixed = TRUE
   )
   expect_error(set_parameter_grid("ncomp", 3, c(5), blocks, response = 3))
