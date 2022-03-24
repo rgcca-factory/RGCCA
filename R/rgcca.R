@@ -285,10 +285,13 @@ rgcca <- function(blocks, method = "rgcca",
     disjunction <- attributes(blocks[[opt$response]])$disjunction
   }
   # Change tau to 0 if there is a univariate disjunctive block response
-  if (!is.null(disjunction)) {
-    opt$penalty[opt$response] <- ifelse(
-      opt$par == "tau", 0, opt$penalty[opt$response]
-    )
+  is_disjunctive_and_tau <- !is.null(disjunction) && opt$par == "tau"
+  if (is_disjunctive_and_tau) {
+    if (is.matrix(opt$penalty)) {
+      opt$penalty[, opt$response] <- 0
+    } else {
+      opt$penalty[opt$response] <- 0
+    }
   }
 
   ### Apply strategy to deal with NA, scale and prepare superblock

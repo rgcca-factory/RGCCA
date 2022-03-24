@@ -455,7 +455,14 @@ select_analysis <- function(blocks,
     }
     if (!is.null(response)) {
       check_blockx("response", response, blocks)
-      ncomp[J] <- max(ncomp[-J])
+      ncomp[response] <- max(ncomp[-response])
+      if (par == "sparsity") {
+        if (is.matrix(penalty)) {
+          penalty[, response] <- 1
+        } else {
+          penalty[response] <- 1
+        }
+      }
       superblock <- FALSE
       connection <- c_response(J, blocks, resp = response)
     }
@@ -463,7 +470,11 @@ select_analysis <- function(blocks,
       ncomp <- rep(max(ncomp), J + 1)
       connection <- c_response(J + 1, blocks)
       if (is.matrix(penalty)) {
-        pen <- ifelse(ncol(penalty) < J + 1, 1, penalty[, J + 1])
+        if (ncol(penalty) < J + 1) {
+          pen <- 1
+        } else {
+          pen <- penalty[, J + 1]
+        }
         penalty <- cbind(penalty[, seq(J)], pen)
       } else {
         pen <- ifelse(length(penalty) < J + 1, 1, penalty[J + 1])
