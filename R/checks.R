@@ -167,8 +167,8 @@ check_integer <- function(x, y = x, type = "scalar", float = FALSE, min = 1,
   if (type %in% c("matrix", "data.frame")) {
     y <- matrix(
       y,
-      dim(y_temp)[1],
-      dim(y_temp)[2],
+      NROW(y_temp),
+      NCOL(y_temp),
       dimnames = dimnames(y_temp)
     )
   }
@@ -234,18 +234,36 @@ check_ncol <- function(x, i_block) {
   }
 }
 
-check_ncomp <- function(ncomp, blocks, min = 1, superblock = FALSE) {
-  if (superblock && length(unique(ncomp)) != 1) {
-    stop_rgcca(
-      "only one number of components must be specified (superblock)."
+check_ncomp <- function(ncomp, blocks, min = 1, superblock = FALSE,
+                        response = NULL) {
+  if (superblock) {
+    if (length(unique(ncomp)) != 1) {
+      stop_rgcca(
+        "only one number of components must be specified (superblock)."
+      )
+    }
+    msg <- paste0(
+      "the number of components must be lower than the number of ",
+      "variables in the superblock, i.e. ", NCOL(blocks[[length(blocks)]]),
+      "."
     )
+
+    y <- check_integer("ncomp", ncomp[1],
+      min = min, max_message = msg,
+      max = NCOL(blocks[[length(blocks)]]),
+      exit_code = 126
+    )
+    return(rep(y, length(ncomp)))
   }
+
   ncomp <- elongate_arg(ncomp, blocks)
   check_size_blocks(blocks, "ncomp", ncomp)
-  ncomp <- sapply(
+  ncomp <- vapply(
     seq(length(ncomp)),
     function(x) {
-      if (!superblock) {
+      if (!is.null(response) && x == response) {
+        y <- check_integer("ncomp", ncomp[x], min = min, exit_code = 126)
+      } else {
         msg <- paste0(
           "ncomp[", x, "] must be lower than the number of variables ",
           "for block ", x, ", i.e. ", NCOL(blocks[[x]]), "."
@@ -254,22 +272,10 @@ check_ncomp <- function(ncomp, blocks, min = 1, superblock = FALSE) {
           min = min, max_message = msg,
           max = NCOL(blocks[[x]]), exit_code = 126
         )
-      } else {
-        msg <- paste0(
-          "the number of components must be lower than the number of ",
-          "variables in the superblock, i.e. ", NCOL(blocks[[length(blocks)]]),
-          "."
-        )
-
-        y <- check_integer("ncomp", ncomp[length(blocks)],
-          min = min, max_message = msg,
-          max = NCOL(blocks[[length(blocks)]]),
-          exit_code = 126
-        )
       }
-
       return(y)
-    }
+    },
+    FUN.VALUE = integer(1)
   )
   return(ncomp)
 }

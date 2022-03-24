@@ -279,10 +279,16 @@ rgcca <- function(blocks, method = "rgcca",
   raw <- blocks
 
   ### One hot encode the response block if needed
-  disjonction <- NULL
+  disjunction <- NULL
   if (!is.null(opt$response)) {
-    blocks[[opt$response]] <- as_disjonctive(blocks[[opt$response]])
-    disjonction <- attributes(blocks[[opt$response]])$disjonction
+    blocks[[opt$response]] <- as_disjunctive(blocks[[opt$response]])
+    disjunction <- attributes(blocks[[opt$response]])$disjunction
+  }
+  # Change tau to 0 if there is a univariate disjunctive block response
+  if (!is.null(disjunction)) {
+    opt$penalty[opt$response] <- ifelse(
+      opt$par == "tau", 0, opt$penalty[opt$response]
+    )
   }
 
   ### Apply strategy to deal with NA, scale and prepare superblock
@@ -317,7 +323,7 @@ rgcca <- function(blocks, method = "rgcca",
   func_out <- format_output(func_out, opt, raw, func_call = list(
     scale = scale, init = init, bias = bias, tol = tol, verbose = verbose,
     scale_block = scale_block, NA_method = NA_method,
-    method = method, disjonction = disjonction
+    method = method, disjunction = disjunction
   ))
 
   class(func_out) <- "rgcca"

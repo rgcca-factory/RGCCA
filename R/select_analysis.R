@@ -153,6 +153,7 @@ select_analysis <- function(blocks,
       check_nblocks(blocks, "pls")
       par <- "tau"
       gcca <- rgccad
+      ncomp[2] <- ncomp[1]
       scheme <- "horst"
       penalty <- c(1, 1)
       response <- 2
@@ -163,6 +164,7 @@ select_analysis <- function(blocks,
       check_nblocks(blocks, "spls")
       par <- "sparsity"
       gcca <- sgcca
+      ncomp[2] <- ncomp[1]
       scheme <- "horst"
       penalty <- check_penalty(sparsity, blocks, "sgcca")
       response <- 2
@@ -193,6 +195,7 @@ select_analysis <- function(blocks,
       check_nblocks(blocks, "ra")
       par <- "tau"
       gcca <- rgccad
+      ncomp[2] <- ncomp[1]
       scheme <- "horst"
       penalty <- c(1, 0)
       response <- 2
@@ -452,6 +455,7 @@ select_analysis <- function(blocks,
     }
     if (!is.null(response)) {
       check_blockx("response", response, blocks)
+      ncomp[J] <- max(ncomp[-J])
       superblock <- FALSE
       connection <- c_response(J, blocks, resp = response)
     }
@@ -467,13 +471,16 @@ select_analysis <- function(blocks,
       }
     } else {
       connection <- check_connection(connection, blocks)
-      ncomp <- check_ncomp(ncomp, blocks)
     }
     penalty <- check_penalty(penalty, blocks, method,
       superblock = superblock,
       ncomp = max(ncomp)
     )
   }
+  ncomp <- check_ncomp(
+    ncomp, blocks,
+    superblock = superblock, response = response
+  )
 
   return(list(
     scheme = scheme,
