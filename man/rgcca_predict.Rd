@@ -4,31 +4,21 @@
 \alias{rgcca_predict}
 \title{Predict RGCCA}
 \usage{
-rgcca_predict(
-  rgcca_res,
-  X,
-  block_to_predict,
-  X_scaled = TRUE,
-  task = "regression",
-  prediction_model = "lm"
-)
+rgcca_predict(rgcca_res, blocks_test, response, prediction_model = "lm", ...)
 }
 \arguments{
 \item{rgcca_res}{A fitted RGCCA object (see  \code{\link[RGCCA]{rgcca}}).}
 
-\item{X}{A list of either dataframes or matrices to be projected.}
+\item{blocks_test}{A list of either dataframes or matrices to be projected.}
 
-\item{block_to_predict}{A character or integer giving the block to predict
-(must be the same name among train and test set)}
-
-\item{X_scaled}{A boolean indicating if the blocks in X have already been
-scaled.}
-
-\item{task}{A character corresponding to the prediction task among:
-regression or classification}
+\item{response}{A character or integer giving the block to predict
+(must be the same name among train and test set).}
 
 \item{prediction_model}{A character giving the function used to compare the
-trained and the tested models}
+trained and the tested models.}
+
+\item{...}{Additional parameters to be passed to the model fitted on top
+of RGCCA.}
 }
 \description{
 Predict a new block from a RGCCA
@@ -62,9 +52,8 @@ object <- rgcca(A,
 X <- lapply(object1$call$blocks, function(x) x[-c(1:32), ])
 X <- lapply(X, function(x) x[, sample(1:NCOL(x))])
 X <- sample(X, length(X))
-block_to_predict <- "industry"
-y_train <- kmeans(A[[block_to_predict]], 3)$cluster
-y_test <- kmeans(X[[block_to_predict]], 3)$cluster
-res <- rgcca_predict(object, X, block_to_predict = "industry")
-library(MASS)
+response <- "industry"
+y_train <- kmeans(A[[response]], 3)$cluster
+y_test <- kmeans(X[[response]], 3)$cluster
+res <- rgcca_predict(object, X, response = "industry")
 }
