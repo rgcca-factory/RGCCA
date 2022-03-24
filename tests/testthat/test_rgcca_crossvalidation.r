@@ -4,7 +4,7 @@ data("Russett")
 blocks <- list(
   agriculture = Russett[, seq(3)],
   industry = Russett[, 4:5],
-  politic = Russett[, 6:11]
+  politic = Russett[, 6:8]
 )
 
 
@@ -196,7 +196,7 @@ RussettWithNA[3, 1] <- NA
 blocksNA <- list(
   agriculture = RussettWithNA[, seq(3)],
   industry = RussettWithNA[, 4:5],
-  politic = RussettWithNA[, 6:11]
+  politic = RussettWithNA[, 6:8]
 )
 
 #  rgcca_out <- rgcca(blocksNA, response = 1,ncomp=1)
