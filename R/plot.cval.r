@@ -42,46 +42,21 @@ plot.cval <- function(x, bars = "sd",
 
   mean_b <- apply(mat_cval, 1, mean)
 
-  if (x$call$type_cv == "regression") {
-    main <- paste0(
-      "RMSE according to the combinations \n (",
-      x$call$validation, ifelse(x$call$validation == "kfold",
+  main <- paste0(
+    "Cross-validated error according to the combinations \n (",
+    x$call$validation,
+    ifelse(x$call$validation == "kfold",
+      paste0(": with ", x$call$k, " folds", ifelse(x$call$n_run > 1,
         paste0(
-          ": with ", x$call$k, " folds",
-          ifelse(x$call$n_run > 1, paste0(
-            " and ", x$call$n_run, " run",
-            ifelse(x$call$n_run == 1, "", "s")
-          ), ""), ")"
-        ),
-        ")\n "
-      )
-    )
-    main <- paste0(
-      main, "\nbest parameter: ",
-      paste(round(x$bestpenalties, digits = 2), collapse = ", ")
-    )
-    y_lab <- "Mean RMSE"
-  }
-  if (x$call$type_cv == "classification") {
-    main <- paste0(
-      "Cross-validated prediction error according to the combinations \n (",
-      x$call$validation,
-      ifelse(x$call$validation == "kfold",
-        paste0(": with ", x$call$k, " folds", ifelse(x$call$n_run > 1,
-          paste0(
-            " and ", x$call$n_run, " run",
-            ifelse(x$call$n_run == 1, "", "s")
-          ), ""
-        ), ")"),
-        ")\n "
-      )
-    )
-    main <- paste0(
-      main, "\nbest parameter: ",
-      paste(round(x$bestpenalties, digits = 2), collapse = ", ")
-    )
-    y_lab <- "Mean error rate"
-  }
+          " and ", x$call$n_run, " run",
+          ifelse(x$call$n_run == 1, "", "s")
+        ), ""
+      ), ")"),
+      ")\n "
+    ), "\nbest parameter: ",
+    paste(round(x$bestpenalties, digits = 2), collapse = ", ")
+  )
+  y_lab <- "Mean error"
 
   axis <- function(margin) {
     element_text(

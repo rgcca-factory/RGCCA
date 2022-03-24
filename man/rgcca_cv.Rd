@@ -12,11 +12,9 @@ rgcca_cv(
   par_value = NULL,
   par_length = 10,
   validation = "kfold",
-  type_cv = "regression",
   prediction_model = "lm",
   k = 5,
   n_run = 1,
-  one_value_per_cv = FALSE,
   n_cores = parallel::detectCores() - 1,
   quiet = TRUE,
   superblock = FALSE,
@@ -26,13 +24,12 @@ rgcca_cv(
   scheme = "factorial",
   NA_method = "nipals",
   rgcca_res = NULL,
-  parallelization = NULL,
   tau = rep(1, length(blocks)),
   ncomp = rep(1, length(blocks)),
   sparsity = rep(1, length(blocks)),
   init = "svd",
   bias = TRUE,
-  X_scaled = FALSE,
+  verbose = TRUE,
   ...
 )
 }
@@ -67,21 +64,15 @@ one row by combination. By default, it takes 10 sets between min values (0
 be tested (if par_value = NULL). The parameters are uniformly distributed.}
 
 \item{validation}{A character for the type of validation among "loo",
-"kfold", "test".}
-
-\item{type_cv}{A character corresponding to the task of prediction:
-'regression' or 'classification' (see details)}
+"kfold".}
 
 \item{prediction_model}{A character giving the function used to compare the
-trained and the tested models}
+trained and the tested models.}
 
 \item{k}{An integer giving the number of folds (if validation = 'kfold').}
 
 \item{n_run}{An integer giving the number of cross-validations to be run
 (if validation = 'kfold').}
-
-\item{one_value_per_cv}{A logical value indicating if the k values are
-averaged for each k-fold steps.}
 
 \item{n_cores}{Number of cores for parallelization.}
 
@@ -120,9 +111,6 @@ data (NIPALS-type algorithm)}}}
 
 \item{rgcca_res}{A fitted RGCCA object (see  \code{\link[RGCCA]{rgcca}}).}
 
-\item{parallelization}{logical value. If TRUE (default value), the
-cross-validation procedure is parallelized}
-
 \item{tau}{Either a \eqn{1 \times J}{1 x J} vector or a
 \eqn{\mathrm{max}(ncomp) \times J}{max(ncomp) x J} matrix containing
 the values of the regularization parameters (default: tau = 1, for each
@@ -159,10 +147,11 @@ or by random initialisation ("random") (default: "svd").}
 \item{bias}{A logical value for biaised (\eqn{1/n}) or unbiaised
 (\eqn{1/(n-1)}) estimator of the var/cov (default: bias = TRUE).}
 
-\item{X_scaled}{A boolean indicating if the blocks in X have already been
-scaled.}
+\item{verbose}{Logical value indicating if the progress of the
+algorithm is reported while computing.}
 
-\item{...}{Further graphical parameters (see plot2D functions)}
+\item{...}{Additional parameters to be passed to the model fitted on top
+of RGCCA.}
 }
 \value{
 \item{cv}{A matrix giving the root-mean-square error (RMSE) between
@@ -189,16 +178,14 @@ be tested on each fold and trained on the others. For small datasets
 individuals (leave-one-out; loo).
 }
 \details{
-If type_cv=="regression",at each round of cross-validation, for each
-variable, a predictive model is constructed as a linear model of the first
-RGCCA component of each block (calculated on the training set).
-Then the Root Mean Square of Errors of this model on the testing dataset
-are calculated, then averaged on the variables of the predictive block.
+At each round of cross-validation, for each
+variable, a predictive model of the first RGCCA component of each block
+(calculated on the training set) is constructed.
+Then the Root Mean Square of Errors (RMSE) or the Accuracy of the model
+is computed on the testing dataset. Finally, the metrics are averaged on the
+different folds.
 The best combination of parameters is the one where the average of RMSE on
-the testing datasets is the lowest.
-If type_cv=="classification", at each round of cross-validation a "lda" is
-run and the proportion of wrong predictions on the testing dataset is
-returned.
+the testing datasets is the lowest or the accuracy is the highest.
 }
 \examples{
 data("Russett")

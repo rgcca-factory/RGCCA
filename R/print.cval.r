@@ -60,15 +60,7 @@ print.cval <- function(x, bars = "quantile", ...) {
       config = seq(nrow(mat_cval)), mean = mean_b,
       inf = inf_b, sup = sup_b
     ), 3)
-    if (x$call$type_cv == "regression") {
-      colnames(df) <- c("Combination", "Mean RMSE", lowlim, uplim)
-    }
-    if (x$call$type_cv == "classification") {
-      colnames(df) <- c(
-        "Combination", "Mean Error Prediction Rate",
-        lowlim, uplim
-      )
-    }
+    colnames(df) <- c("Combination", "Mean error", lowlim, uplim)
     return(df)
   }
 
@@ -106,9 +98,7 @@ print.cval <- function(x, bars = "quantile", ...) {
   cat("\n")
 
   df <- summary_cval(x, bars)
-  colname_for_optimal <- ifelse(x$call$type_cv == "regression", "Mean RMSE",
-    "Mean Error Prediction Rate"
-  )
+  colname_for_optimal <- "Mean error"
   optimal_ind <- which.min(df[, colname_for_optimal])
   optimal_y <- df[optimal_ind, colname_for_optimal]
   cat(paste0(nrow(x$cv), " configurations were tested. \n"))
@@ -126,20 +116,10 @@ print.cval <- function(x, bars = "quantile", ...) {
   cat("\n")
   print(df)
   cat("\n")
-  if (x$call$type_cv == "regression") {
-    cat(paste(
-      "The best combination was:",
-      paste(round(x$bestpenalties, digits = 3), collapse = " "),
-      "for a mean CV criterion (RMSE) of ",
-      round(optimal_y, digits = 2)
-    ), "\n", ...)
-  }
-  if (x$call$type_cv == "classification") {
-    cat(paste(
-      "The best combination was:",
-      paste(round(x$bestpenalties, digits = 3), collapse = " "),
-      "for a mean rate of false predictions of ",
-      round(optimal_y, digits = 2)
-    ), "\n", ...)
-  }
+  cat(paste(
+    "The best combination was:",
+    paste(round(x$bestpenalties, digits = 3), collapse = " "),
+    "for a mean CV error of ",
+    round(optimal_y, digits = 2)
+  ), "\n", ...)
 }
