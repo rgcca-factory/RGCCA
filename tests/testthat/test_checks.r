@@ -337,6 +337,18 @@ test_that("check_ncomp passes and returns ncomp when ncomp is valid", {
 # Test check_response
 
 # Test check_sign_comp
+test_that("check_sign_comp changes the sign of weight vector if correlation
+          with reference is negative", {
+  fit_rgcca <- rgcca(blocks, ncomp = 1)
+  a <- fit_rgcca$a
+  a[[1]] <- -a[[1]]
+  expect_identical(fit_rgcca$a, check_sign_comp(fit_rgcca, a))
+
+  fit_rgcca <- rgcca(blocks, ncomp = 2)
+  a <- fit_rgcca$a
+  a[[1]][, 1] <- -a[[1]][, 1]
+  expect_identical(fit_rgcca$a, check_sign_comp(fit_rgcca, a))
+})
 
 # Test check_size_blocks
 test_that("check_size_blocks raises an error when number of columns of x does
