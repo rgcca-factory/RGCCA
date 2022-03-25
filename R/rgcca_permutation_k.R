@@ -39,57 +39,51 @@ rgcca_permutation_k <- function(blocks,
     sparsity <- rgcca_res$call$sparsity
   }
 
-  if (method %in% c("sgcca", "spls")) {
+  if (method %in% c("sgcca", "spls", "spca")) {
     par_type <- "sparsity"
   } else {
     par_type <- "tau"
   }
 
+  blocks_to_use <- blocks
   if (perm) {
-    blocks_to_use <- blocks
     blocks_to_use <- lapply(
-      seq(length(blocks)),
-      function(k) {
+      blocks,
+      function(x) {
         blocks_to_use_k <-
-          as.matrix(blocks[[k]][sample(seq(NROW(blocks[[k]]))), ])
-        rownames(blocks_to_use_k) <- rownames(blocks[[k]])
+          as.matrix(x[sample(seq(NROW(x))), ])
+        rownames(blocks_to_use_k) <- rownames(x)
         return(blocks_to_use_k)
       }
     )
-    names(blocks_to_use) <- names(blocks)
-  } else {
-    blocks_to_use <- blocks
   }
 
-  func <- quote(
-    rgcca(
-      blocks = blocks_to_use,
-      method = method,
-      scale = scale,
-      scale_block = scale_block,
-      connection = connection,
-      scheme = scheme,
-      init = init,
-      bias = bias,
-      tol = tol,
-      response = response,
-      superblock = superblock,
-      NA_method = NA_method,
-      quiet = quiet
-    )
+  rgcca_args <- list(
+    blocks = blocks_to_use,
+    method = method,
+    scale = scale,
+    scale_block = scale_block,
+    connection = connection,
+    scheme = scheme,
+    init = init,
+    bias = bias,
+    tol = tol,
+    response = response,
+    superblock = superblock,
+    NA_method = NA_method,
+    quiet = quiet,
+    ncomp = ncomp,
+    tau = tau,
+    sparsity = sparsity
   )
+  rgcca_args[[par_type]] <- par_value
 
-  func$ncomp <- ncomp
-  func$tau <- tau
-  func$sparsity <- sparsity
-  func[[par_type]] <- par_value
-
-  res <- eval(as.call(func))
+  res <- do.call(rgcca, rgcca_args)
 
   if (max(ncomp) > 1) {
-    criterion <- sapply(res$crit, function(x) {
+    criterion <- vapply(res$crit, function(x) {
       x[length(x)]
-    })
+    }, FUN.VALUE = numeric(1))
     crit_permut <- sum(criterion)
   } else {
     crit_permut <- res$crit[length(res$crit)]

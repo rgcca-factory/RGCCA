@@ -44,7 +44,7 @@ set_parameter_grid <- function(par_type, par_length, par_value, blocks,
     # values and the max of possible values for each block.
     if (is.null(par_value)) {
       par_value <- lapply(seq_along(blocks), function(j) {
-        seq(min_values[j], max_values, length.out = length_values)
+        seq(max_values, min_values[j], length.out = length_values)
       })
       par_value <- do.call(cbind, par_value)
       par_value <- set_response_value(par_value, response_value)
@@ -56,7 +56,7 @@ set_parameter_grid <- function(par_type, par_length, par_value, blocks,
     if (is.vector(par_value)) {
       par_value <- check_function(par_value)
       par_value <- lapply(seq_along(par_value), function(j) {
-        seq(min_values[j], par_value[j], length.out = length_values)
+        seq(par_value[j], min_values[j], length.out = length_values)
       })
       par_value <- do.call(cbind, par_value)
       par_value <- set_response_value(par_value, response_value)

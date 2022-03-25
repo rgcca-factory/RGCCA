@@ -241,7 +241,7 @@ rgcca_permutation <- function(blocks, par_type, par_value = NULL,
                               par_length = 10, n_perms = 20,
                               n_cores = parallel::detectCores() - 1,
                               quiet = TRUE, scale = TRUE, scale_block = TRUE,
-                              method = NULL,
+                              method = "rgcca",
                               connection = 1 - diag(length(blocks)),
                               scheme = "factorial",
                               ncomp = rep(1, length(blocks)),
@@ -251,8 +251,7 @@ rgcca_permutation <- function(blocks, par_type, par_value = NULL,
                               response = NULL, superblock = FALSE,
                               NA_method = "nipals", rgcca_res = NULL,
                               verbose = TRUE) {
-  local_env <- new.env()
-
+  ### Try to retrieve parameters from a rgcca object
   if (!is.null(rgcca_res)) {
     stopifnot(is(rgcca_res, "rgcca"))
     message("All parameters were imported from a fitted rgcca object.")
@@ -274,271 +273,100 @@ rgcca_permutation <- function(blocks, par_type, par_value = NULL,
     superblock <- rgcca_res$call$superblock
   }
 
+  ### Check parameters
   check_integer("n_perms", n_perms)
   check_integer("par_length", n_perms)
-  check_integer("par_value", n_perms, min = 0)
-  check_integer("n_cores", n_cores, min = 0)
   match.arg(par_type, c("tau", "sparsity"))
-
-  if (par_type == "sparsity") method2 <- "sgcca"
-  if (par_type == "tau") method2 <- "rgcca"
-  if (is.null(method)) {
-    method <- method2
-  }
   if (length(blocks) == 1) {
-    stop_rgcca("Permutation required more than one block.\n")
-  }
-
-  if (!superblock) {
-    ncols <- sapply(blocks, NCOL)
-    call <- list(
-      method = method, par_type = par_type, par_value = par_value,
-      n_perms = n_perms, quiet = quiet, connection = connection,
-      NA_method = NA_method, tol = tol, scheme = scheme,
-      scale = scale, scale_block = scale_block,
-      superblock = superblock, blocks = blocks
-    )
-  } else {
-    ncol_block <- sapply(blocks, NCOL)
-    ncols <- c(ncol_block, sum(ncol_block))
-    names(ncols) <- c(names(ncol_block), "superblock")
-    J <- length(ncols)
-    mat_connection <- matrix(0, J, J)
-    mat_connection[1:(J - 1), J] <- 1
-    mat_connection[J, 1:(J - 1)] <- 1
-    rownames(mat_connection) <- colnames(mat_connection) <- names(ncols)
-    call <- list(
-      method = method, par_type = par_type, n_perms = n_perms,
-      quiet = quiet, connection = mat_connection,
-      NA_method = NA_method, tol = tol, scheme = scheme,
-      scale = scale, scale_block = scale_block,
-      superblock = superblock, blocks = blocks
+    stop_rgcca(
+      "wrong number of blocks. Permutation requires more than ",
+      "one block."
     )
   }
 
-  set_spars <- function(min_spars, max = 1) {
-    if (length(max) == 1) {
-      f <- quote(max)
-    } else {
-      f <- quote(max[x])
-    }
-    sapply(
-      seq(min_spars),
-      function(x) seq(eval(f), min_spars[x], len = par_length)
+  ### Prepare parameters for line search
+  if (method %in% c("sgcca", "spca", "spls")) {
+    par_type <- "sparsity"
+  } else if (par_type == "sparsity") method <- "sgcca"
+
+  call <- list(
+    method = method, par_type = par_type, par_value = par_value,
+    n_perms = n_perms, quiet = quiet, connection = connection,
+    NA_method = NA_method, tol = tol, scheme = scheme,
+    scale = scale, scale_block = scale_block,
+    superblock = superblock, blocks = blocks
+  )
+
+  param <- set_parameter_grid(
+    par_type, par_length, par_value, blocks, response,
+    superblock
+  )
+
+  ### Start line search
+  # For every set of parameter, RGCCA is run once on the non permuted blocks
+  # and then n_perms on permuted blocks.
+  idx <- seq(NROW(param$par_value) * (n_perms + 1))
+  W <- unlist(par_pblapply(idx, function(n) {
+    i <- (n - 1) %/% (n_perms + 1) + 1
+    perm <- (n - 1) %% (n_perms + 1) != 0
+    rgcca_permutation_k(
+      blocks = blocks,
+      par_type = param$par_type,
+      par_value = param$par_value[i, ],
+      perm = perm,
+      method = method,
+      quiet = quiet,
+      superblock = superblock,
+      scheme = scheme,
+      tol = tol,
+      scale = scale,
+      scale_block = scale_block,
+      connection = connection,
+      NA_method = NA_method,
+      bias = bias,
+      init = init,
+      ncomp = ncomp,
+      tau = tau,
+      sparsity = sparsity
     )
+  }, n_cores = n_cores, verbose = verbose))
+
+  ### Format output
+  par_colnames <- names(blocks)
+  if (ncol(param$par_value) > length(blocks)) {
+    par_colnames <- c(par_colnames, "superblock")
   }
+  rownames(param$par_value) <- seq(NROW(param$par_value))
+  colnames(param$par_value) <- par_colnames
 
-  set_penalty <- function() {
-    # Selecting the minimal value
-    if (par_type == "sparsity") {
-      if (!tolower(method) %in% c("spls", "sgcca")) {
-        warning(paste0(
-          "par_type = 'sparsity' but sparsity is not required... ",
-          "SGCCA is performed."
-        ))
-      }
-      method <- "sgcca"
-      min_spars <- sapply(ncols, function(x) 1 / sqrt(x))
-    } else {
-      if (tolower(method) %in% c("spls", "sgcca")) {
-        warning(paste0(
-          "par_type = 'tau' but sparsity is required... ",
-          "RGCCA is performed."
-        ))
-      }
-      method <- "rgcca"
-      min_spars <- sapply(ncols, function(x) 0)
-    }
-
-
-    if (is.null(par_value)) {
-      par_value <- set_spars(min_spars)
-    } else if (
-      "data.frame" %in% class(par_value) || "matrix" %in% class(par_value)
-    ) {
-      if (par_type == "tau") {
-        par_value <- t(sapply(
-          seq(NROW(par_value)),
-          function(x) {
-            check_penalty(par_value[x, ],
-              blocks,
-              method = method,
-              superblock = superblock
-            )
-          }
-        ))
-      }
-    } else { # when par_value is a vector
-      if (any(par_value < min_spars)) {
-        stop_rgcca(paste0(
-          "par_value should be upper than : ",
-          paste0(round(min_spars, 2), collapse = ",")
-        ))
-      }
-      if (par_type == "tau") {
-        par_value <- check_penalty(par_value, blocks,
-          method = method,
-          superblock = superblock
-        )
-        par_value <- set_spars(min_spars, max = par_value)
-      }
-      if (par_type == "sparsity") {
-        par_value <- set_spars(min_spars, max = par_value)
-      }
-    }
-
-    if (superblock) {
-      coln <- c(names(blocks), "superblock")
-    } else {
-      coln <- names(blocks)
-    }
-    if (is.null(dim(par_value))) {
-      par_value <- matrix(par_value, nrow = 1)
-    }
-    colnames(par_value) <- coln
-    return(list(par = list(par_type, par_value), method = method))
-  }
-
-  tmp <- set_penalty()
-  par <- tmp$par
-  method <- tmp$method
-  par_value_parallel <-
-    matrix(apply(par[[2]], 1, function(x) rep(x, n_perms + 1)),
-      ncol = NCOL(par[[2]]), byrow = TRUE
-    )
-
-  perm_parallel <- rep(rep(c(FALSE, TRUE), c(1, n_perms)), NROW(par[[2]]))
-
-  if (!verbose) {
-    pbapply::pboptions(type = "none")
-  } else {
-    pbapply::pboptions(type = "timer")
-  }
-
-  if (Sys.info()["sysname"] == "Windows") {
-    if (n_cores > 1) {
-      call_perm <- list(
-        blocks, par[[1]], par_value_parallel, perm_parallel,
-        method, quiet, superblock, scheme,
-        tol, scale, scale_block, connection, NA_method,
-        response, bias, init, ncomp, tau, sparsity
-      )
-      assign("call_perm", call_perm, envir = local_env)
-      cl <- parallel::makeCluster(n_cores)
-      parallel::clusterExport(cl, "call_perm", envir = local_env)
-      W <- pbapply::pbsapply(seq(length(call_perm[[4]])),
-        function(b) {
-          rgcca_permutation_k(
-            blocks = call_perm[[1]],
-            par_type = call_perm[[2]],
-            par_value = call_perm[[3]][b, ],
-            perm = call_perm[[4]][b],
-            method = call_perm[[5]],
-            quiet = call_perm[[6]],
-            superblock = call_perm[[7]],
-            scheme = call_perm[[8]],
-            tol = call_perm[[9]],
-            scale = call_perm[[10]],
-            scale_block = call_perm[[11]],
-            connection = call_perm[[12]],
-            NA_method = call_perm[[13]],
-            bias = call_perm[[15]],
-            init = call_perm[[16]],
-            ncomp = call_perm[[17]],
-            tau = call_perm[[18]],
-            sparsity = call_perm[[18]]
-          )
-        },
-        cl = cl
-      )
-      parallel::stopCluster(cl)
-    } else {
-      W <- pbapply::pbsapply(
-        seq(length(perm_parallel)),
-        function(b) {
-          rgcca_permutation_k(
-            blocks = blocks,
-            par_type = par[[1]],
-            par_value = par_value_parallel[b, ],
-            perm = perm_parallel[b],
-            method = method,
-            quiet = quiet,
-            superblock = superblock,
-            scheme = scheme,
-            tol = tol,
-            scale = scale,
-            scale_block = scale_block,
-            connection = connection,
-            NA_method = NA_method,
-            bias = bias,
-            init = init,
-            ncomp = ncomp,
-            tau = tau,
-            sparsity = sparsity
-          )
-        }
-      )
-    }
-  } else {
-    W <- pbapply::pbsapply(seq(length(perm_parallel)),
-      function(b) {
-        rgcca_permutation_k(
-          blocks = blocks,
-          par_type = par[[1]],
-          par_value = par_value_parallel[b, ],
-          perm = perm_parallel[b],
-          method = method,
-          quiet = quiet,
-          superblock = superblock,
-          scheme = scheme,
-          tol = tol,
-          scale = scale,
-          scale_block = scale_block,
-          connection = connection,
-          NA_method = NA_method,
-          bias = bias,
-          init = init,
-          ncomp = ncomp,
-          tau = tau,
-          sparsity = sparsity
-        )
-      },
-      cl = n_cores
-    )
-  }
-
-
-  crits <- W[!perm_parallel]
-  permcrit <- matrix(W[perm_parallel],
-    nrow = nrow(par[[2]]),
+  idx_perm <- (idx - 1) %% (n_perms + 1) != 0
+  crits <- W[!idx_perm]
+  permcrit <- matrix(W[idx_perm],
+    nrow = nrow(param$par_value),
     ncol = n_perms, byrow = TRUE
   )
   means <- apply(permcrit, 1, mean, na.rm = T)
   sds <- apply(permcrit, 1, sd, na.rm = T)
-  par <- par[[2]]
-  pvals <- sapply(seq(NROW(par)), function(k) mean(permcrit[k, ] >= crits[k]))
-  zs <- sapply(seq(NROW(par)), function(k) {
-    z <- (crits[k] - mean(permcrit[k, ])) / (sd(permcrit[k, ]))
-    if (is.na(z) || z == "Inf") {
-      z <- 0
-    }
-    return(z)
-  })
-
-  rownames(par) <- seq(NROW(par))
-  if (superblock) {
-    coln <- c(names(blocks), "superblock")
-  } else {
-    coln <- names(blocks)
-  }
-  colnames(par) <- coln
+  pvals <- vapply(
+    seq(NROW(param$par_value)),
+    function(k) mean(permcrit[k, ] >= crits[k]),
+    FUN.VALUE = double(1)
+  )
+  zs <- vapply(
+    seq(NROW(param$par_value)), function(k) {
+      z <- (crits[k] - mean(permcrit[k, ])) / (sd(permcrit[k, ]))
+      if (is.na(z) || z == "Inf") {
+        z <- 0
+      }
+      return(z)
+    },
+    FUN.VALUE = double(1)
+  )
 
   structure(list(
     call = call, zstat = zs,
-    bestpenalties = par[which.max(zs), ],
+    bestpenalties = param$par_value[which.max(zs), ],
     permcrit = permcrit, means = means, sds = sds,
-    crit = crits, pvals = pvals, penalties = par
-  ),
-  class = "permutation"
-  )
+    crit = crits, pvals = pvals, penalties = param$par_value
+  ), class = "permutation")
 }
