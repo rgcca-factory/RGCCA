@@ -210,7 +210,8 @@ rgcca <- function(blocks, method = "rgcca",
                   init = "svd", bias = TRUE, tol = 1e-08,
                   response = NULL,
                   superblock = FALSE,
-                  NA_method = "nipals", verbose = FALSE, quiet = TRUE) {
+                  NA_method = "nipals", verbose = FALSE, quiet = TRUE,
+                  n_iter_max = 1000) {
   ### If specific objects are given for blocks, parameters are imported from
   #   these objects.
   if (class(blocks) == "permutation") {
@@ -254,6 +255,7 @@ rgcca <- function(blocks, method = "rgcca",
     n = 1, init = TRUE, quiet = quiet
   )
   check_integer("tol", tol, float = TRUE, min = 0)
+  check_integer("n_iter_max", n_iter_max, min = 1)
   for (i in c("superblock", "verbose", "scale", "bias", "quiet")) {
     check_boolean(i, get(i))
   }
@@ -317,7 +319,8 @@ rgcca <- function(blocks, method = "rgcca",
     quiet = quiet,
     na.rm = na.rm,
     superblock = opt$superblock,
-    response = opt$response
+    response = opt$response,
+    n_iter_max = n_iter_max
   )
   gcca_args[[opt$par]] <- opt$penalty
   func_out <- do.call(opt$gcca, gcca_args)

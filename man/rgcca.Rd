@@ -21,7 +21,8 @@ rgcca(
   superblock = FALSE,
   NA_method = "nipals",
   verbose = FALSE,
-  quiet = TRUE
+  quiet = TRUE,
+  n_iter_max = 1000
 )
 }
 \arguments{
@@ -116,6 +117,9 @@ data (NIPALS-type algorithm)}}}
 algorithm is reported while computing.}
 
 \item{quiet}{Logical value indicating if warning messages are reported.}
+
+\item{n_iter_max}{Integer giving the algorithm's maximum number of
+iterations.}
 }
 \value{
 A rgcca fitted object

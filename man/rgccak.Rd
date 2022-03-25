@@ -14,7 +14,8 @@ rgccak(
   init = "svd",
   bias = TRUE,
   tol = 1e-08,
-  na.rm = TRUE
+  na.rm = TRUE,
+  n_iter_max = 1000
 )
 }
 \arguments{
@@ -60,6 +61,9 @@ or by random initialisation ("random") (default: "svd").}
 
 \item{na.rm}{If TRUE, RGCCA is run only on the available data (default value)
 otherwise the NIPALS algorithm is used.}
+
+\item{n_iter_max}{Integer giving the algorithm's maximum number of
+iterations.}
 }
 \value{
 \item{Y}{Matrix of block components of dimension \eqn{n * J}}
