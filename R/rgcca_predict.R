@@ -176,13 +176,24 @@ core_prediction <- function(model_info, prediction_model, X_train, X_test,
     y_test <- factor(as.matrix(y_test), levels = levels(y_train))
   }
   data <- as.data.frame(cbind(X_train, obs = unname(y_train)))
-  model <- train(obs ~ .,
-    data      = data,
-    method    = prediction_model,
-    trControl = trainControl(method = "none"),
-    na.action = "na.exclude",
-    ...
-  )
+  # model <- train(obs ~ .,
+  #   data      = data,
+  #   method    = prediction_model,
+  #   trControl = trainControl(method = "none"),
+  #   na.action = "na.exclude",
+  #   ...
+  # )
+  if (prediction_model == "lda") {
+    model <- train(obs ~ .,
+      data      = data,
+      method    = prediction_model,
+      trControl = trainControl(method = "none"),
+      na.action = "na.exclude",
+      ...
+    )
+  } else {
+    model <- lm(obs ~ ., data = data, na.action = "na.exclude")
+  }
 
   prediction_train <- data.frame(
     obs = unname(y_train),
