@@ -436,8 +436,6 @@ test_that("check_spars passes and returns sparsity when sparsity is valid", {
   expect_equal(check_spars(0.5, blocks[[3]], 0.5), 0.5)
 })
 
-# Test check_superblock
-
 # Test check_tau
 test_that("check_tau raises an error for invalid tau", {
   expect_error(check_tau(-1))

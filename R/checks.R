@@ -468,26 +468,6 @@ check_spars <- function(sparsity, block, n) {
   invisible(sparsity)
 }
 
-# #' @export
-check_superblock <- function(is_supervised = NULL, is_superblock = NULL,
-                             verbose = TRUE) {
-  if (!is.null(is_supervised)) {
-    if (verbose) {
-      warn_connection("supersized method with a response")
-    }
-    if (is_superblock) {
-      if (!is.null(is_superblock) && verbose) {
-        warning(
-          "In a supervised mode, the superblock corresponds ",
-          "to the response."
-        )
-      }
-    }
-    return(FALSE)
-  } else {
-    return(isTRUE(is_superblock))
-  }
-}
 check_tau <- function(tau) {
   if (is.na(tau) || tau != "optimal") {
     tau <- check_integer("tau", tau, float = TRUE, min = 0, max = 1)
