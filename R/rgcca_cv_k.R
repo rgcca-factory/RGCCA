@@ -8,7 +8,6 @@
 #' @param k An integer giving the number of folds (if validation = 'kfold').
 #' @param validation A character for the type of validation among "loo",
 #' "kfold".
-#' @param complete A logical indicating if all outputs should be returned.
 #' @examples
 #' data("Russett")
 #' blocks <- list(
@@ -38,7 +37,6 @@ rgcca_cv_k <- function(rgcca_res,
                        sparsity = NULL,
                        n_cores = parallel::detectCores() - 1,
                        verbose = TRUE,
-                       complete = TRUE,
                        ...) {
   ### Check parameters
   stopifnot(is(rgcca_res, "rgcca"))
@@ -53,7 +51,7 @@ rgcca_cv_k <- function(rgcca_res,
   all_args <- names(environment())
   used_args <- c(
     names(match.call()), "validation", "prediction_model",
-    "k", "n_cores", "verbose", "complete"
+    "k", "n_cores", "verbose"
   )
   for (n in setdiff(all_args, used_args)) {
     assign(n, rgcca_res$call[[n]])
@@ -74,7 +72,9 @@ rgcca_cv_k <- function(rgcca_res,
 
   res <- par_pblapply(
     v_inds, function(inds) {
+      # Fit RGCCA on the training blocks
       res <- set_rgcca(rgcca_res,
+        blocks = blocks,
         scale = scale,
         scale_block = scale_block,
         tol = tol,
@@ -88,11 +88,24 @@ rgcca_cv_k <- function(rgcca_res,
         ncomp = ncomp,
         sparsity = sparsity,
       )
-      # TODO: decide what to do with null variance variables, is it ok to just
-      # keep them (by passing init = FALSE to check_blocks?)
+
+      # Remove columns of the validation blocks that had null variance in the
+      # training blocks.
+      column_sd_null <- remove_null_sd(
+        lapply(blocks, function(x) x[-inds, , drop = FALSE])
+      )$column_sd_null
+      blocks_test <- lapply(seq_along(blocks), function(j) {
+        if (length(column_sd_null[[j]]) > 0) {
+          return(blocks[[j]][inds, -column_sd_null[[j]], drop = FALSE])
+        }
+        return(blocks[[j]][inds, , drop = FALSE])
+      })
+      names(blocks_test) <- names(blocks)
+
+      # Evaluate RGCCA on the validation blocks
       res_pred <- rgcca_predict(
         res,
-        blocks_test = lapply(blocks, function(x) x[inds, , drop = FALSE]),
+        blocks_test = blocks_test,
         prediction_model = prediction_model,
         response = rgcca_res$call$response,
         ...
@@ -105,58 +118,9 @@ rgcca_cv_k <- function(rgcca_res,
   vec_scores <- vapply(res, function(x) x$score, FUN.VALUE = numeric(1))
   scores <- mean(unlist(lapply(res, function(x) x$score)), na.rm = TRUE)
 
-  if (!complete) {
-    list_results <- projections <- predictions <- NULL
-  } else {
-    list_results <- lapply(res, function(x) {
-      return(x$results)
-    })
-
-    # Concatenation of projections of each fold
-    projections <- lapply(
-      seq_along(rgcca_res$call$blocks),
-      function(x) {
-        Reduce(
-          function(y, z) {
-            rbind(y, z$projection[[x]])
-          },
-          res,
-          init = NULL
-        )
-      }
-    )
-
-    names(projections) <- names(rgcca_res$call$blocks)
-    for (x in seq_along(projections)) {
-      projections[[x]] <-
-        projections[[x]][rownames(blocks[[x]]), , drop = FALSE]
-    }
-
-    # Concatenation of predictions on each fold
-    response_block <- rgcca_res$call$raw[[rgcca_res$call$response]]
-    predictions <- vapply(
-      seq(NCOL(response_block)),
-      function(x) {
-        Reduce(
-          function(y, z) {
-            rbind(y, z$prediction[, x, drop = FALSE])
-          },
-          res,
-          init = NULL
-        )
-      },
-      FUN.VALUE = numeric(NROW(response_block))
-    )
-
-    colnames(predictions) <- colnames(response_block)
-    rownames(predictions) <- rownames(response_block)
-  }
-
   structure(
     list(
-      scores = scores, projections = projections,
-      vec_scores = vec_scores, predictions = predictions,
-      rgcca_res = rgcca_res, list_results = list_results
+      scores = scores, vec_scores = vec_scores
     ),
     class = "cv"
   )

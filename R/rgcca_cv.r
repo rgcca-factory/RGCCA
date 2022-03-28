@@ -135,12 +135,12 @@ rgcca_cv <- function(blocks,
     model_info <- caret::modelLookup(prediction_model),
     error = function(e) {
       stop_rgcca(
-        "unknown model. Model ", prediction_model, " is not handled, please see",
-        " caret::modelLookup for a list of the available models."
+        "unknown model. Model ", prediction_model, " is not handled, please ",
+        "see caret::modelLookup() for a list of the available models."
       )
     }
   )
-  if (is.character2(blocks[[response]]) && !model_info$forClass) {
+  if (is.factor(blocks[[response]]) && !model_info$forClass) {
     stop_rgcca(
       "inadequate model. Response block contains categorical data ",
       "but model ", prediction_model, " is not made for ",

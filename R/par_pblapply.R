@@ -10,7 +10,6 @@ par_pblapply <- function(X, FUN, ..., n_cores = parallel::detectCores() - 1,
 
   is_windows <- Sys.info()["sysname"] == "Windows"
 
-  if (n_cores == 0) n_cores <- 1
   if (n_cores <= 1) {
     cl <- NULL
   } else if (is_windows) {

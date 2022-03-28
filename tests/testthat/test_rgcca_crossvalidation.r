@@ -9,15 +9,8 @@ blocks <- list(
 
 
 
-test_structure_cv <- function(res, scores, nrow = 47, val = TRUE) {
+test_structure_cv <- function(res, scores, val = TRUE) {
   expect_is(res, "cv")
-  expect_is(res$rgcca, "rgcca")
-  pred <- res$projections
-  expect_is(pred, "list")
-  expect_is(pred[[1]], "matrix")
-  # expect_true(all(sapply(pred, NCOL) == 2))
-  expect_true(all(sapply(pred, NROW) == nrow))
-  expect_identical(res$rgcca, rgcca_out)
   if (val) {
     expect_identical(round(res$scores, 4), round(scores, 4))
   }
@@ -271,3 +264,14 @@ for (i in 1:dim(blocks_for_classif[[1]])[1])
   res[i] <- respred_i$score
 }
 mean(res) # 0.213
+
+### Test that rgcca_cv_k works even if a column has null variance in the training blocks
+blocks <- list(
+  agriculture = Russett[, seq(3)],
+  industry = Russett[, 4:5],
+  politic = Russett[, 6:11]
+)
+blocks[[3]][, 6] <- c(1, rep(0, 46))
+
+rgcca_out <- rgcca(blocks, response = 1)
+rgcca_cv_k(rgcca_res = rgcca_out, n_cores = 1, validation = "loo")

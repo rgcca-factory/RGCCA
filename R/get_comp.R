@@ -40,8 +40,8 @@ get_comp <- function(rgcca_res,
   # If predicted is not null, we overwrite resp
   if (!is.null(predicted)) {
     df2 <- data.frame(
-      predicted[[2]][[i_blocks[1]]][, comps[1]],
-      predicted[[2]][[i_blocks[2]]][, comps[2]]
+      predicted[[i_blocks[1]]][, comps[1]],
+      predicted[[i_blocks[2]]][, comps[2]]
     )
     colnames(df2) <- colnames(df)
     df1 <- df[rownames(df2), ]
