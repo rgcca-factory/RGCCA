@@ -140,7 +140,9 @@ rgcca_cv <- function(blocks,
       )
     }
   )
-  if (is.factor(blocks[[response]]) && !model_info$forClass) {
+  is_inadequate <- !model_info$forClass &&
+    (is.factor(blocks[[response]]) || is.character2(blocks[[response]]))
+  if (is_inadequate) {
     stop_rgcca(
       "inadequate model. Response block contains categorical data ",
       "but model ", prediction_model, " is not made for ",
