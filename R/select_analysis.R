@@ -456,13 +456,6 @@ select_analysis <- function(blocks,
     if (!is.null(response)) {
       check_blockx("response", response, blocks)
       ncomp[response] <- max(ncomp[-response])
-      if (par == "sparsity") {
-        if (is.matrix(penalty)) {
-          penalty[, response] <- 1
-        } else {
-          penalty[response] <- 1
-        }
-      }
       superblock <- FALSE
       connection <- c_response(J, blocks, resp = response)
     }
@@ -500,6 +493,7 @@ select_analysis <- function(blocks,
     connection = connection,
     superblock = superblock,
     response = response,
+    method = method,
     gcca = gcca,
     par = par
   ))

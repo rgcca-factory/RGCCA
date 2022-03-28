@@ -220,8 +220,11 @@ rgcca <- function(blocks, method = "rgcca",
       "rgcca_permutation object."
     ))
     scale_block <- blocks$call$scale_block
+    tau <- blocks$call$tau
     scale <- blocks$call$scale
+    ncomp <- blocks$call$ncomp
     scheme <- blocks$call$scheme
+    sparsity <- blocks$call$sparsity
     connection <- blocks$call$connection
     tol <- blocks$call$tol
     NA_method <- blocks$call$NA_method
@@ -328,8 +331,7 @@ rgcca <- function(blocks, method = "rgcca",
   ### Format the output
   func_out <- format_output(func_out, opt, raw, func_call = list(
     scale = scale, init = init, bias = bias, tol = tol, verbose = verbose,
-    scale_block = scale_block, NA_method = NA_method,
-    method = method, disjunction = disjunction
+    scale_block = scale_block, NA_method = NA_method, disjunction = disjunction
   ))
 
   class(func_out) <- "rgcca"
