@@ -63,15 +63,13 @@ rgcca_transform <- function(rgcca_res, blocks_test) {
   })
 
   ### Scale blocks_test if needed
-  if (rgcca_res$call$scale || rgcca_res$call$scale_block) {
-    blocks_test <- lapply(seq_along(blocks_test), function(j) {
-      scl_fun(
-        blocks_test[[j]],
-        attr(X_train[[j]], "scaled:center"),
-        attr(X_train[[j]], "scaled:scale")
-      )
-    })
-  }
+  blocks_test <- lapply(seq_along(blocks_test), function(j) {
+    scl_fun(
+      blocks_test[[j]],
+      attr(X_train[[j]], "scaled:center"),
+      attr(X_train[[j]], "scaled:scale")
+    )
+  })
 
   ### Project blocks_test on the space computed using RGCCA
   astar <- rgcca_res$astar[names(X_train)]

@@ -39,7 +39,7 @@ scaling <- function(blocks, scale = TRUE, bias = TRUE,
           eigen(tcrossprod(x / sqrt_N))$values[1]
         ))
         y <- x / lambda
-        attr(y, "scaled:scale") <- attr(x, "scaled:scale") * lambda
+        attr(y, "scaled:scale") <- rep(lambda, NCOL(x))
         return(y)
       })
     } else if (scale_block == "inertia") {

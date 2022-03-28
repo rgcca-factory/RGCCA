@@ -64,6 +64,44 @@ test_that("rgcca_transform retrieves Y when projecting the training samples", {
   }
 })
 
+test_that("rgcca_transform retrieves Y with different scaling scenarios", {
+  fit.rgcca <- rgcca(A,
+    tau = c(0.7, 0.8, 0.7), ncomp = ncomp,
+    scale = FALSE, scale_block = FALSE
+  )
+  projection <- rgcca_transform(fit.rgcca, A)
+  for (j in 1:length(projection)) {
+    expect_true(max(abs(projection[[j]] - fit.rgcca$Y[[j]])) < 1e-14)
+  }
+
+  fit.rgcca <- rgcca(A,
+    tau = c(0.7, 0.8, 0.7), ncomp = ncomp,
+    scale = FALSE, scale_block = "inertia"
+  )
+  projection <- rgcca_transform(fit.rgcca, A)
+  for (j in 1:length(projection)) {
+    expect_true(max(abs(projection[[j]] - fit.rgcca$Y[[j]])) < 1e-14)
+  }
+
+  fit.rgcca <- rgcca(A,
+    tau = c(0.7, 0.8, 0.7), ncomp = ncomp,
+    scale = FALSE, scale_block = "lambda1"
+  )
+  projection <- rgcca_transform(fit.rgcca, A)
+  for (j in 1:length(projection)) {
+    expect_true(max(abs(projection[[j]] - fit.rgcca$Y[[j]])) < 1e-14)
+  }
+
+  fit.rgcca <- rgcca(A,
+    tau = c(0.7, 0.8, 0.7), ncomp = ncomp,
+    scale = TRUE, scale_block = "lambda1"
+  )
+  projection <- rgcca_transform(fit.rgcca, A)
+  for (j in 1:length(projection)) {
+    expect_true(max(abs(projection[[j]] - fit.rgcca$Y[[j]])) < 1e-14)
+  }
+})
+
 # With permutations
 A_perm <- list(
   agriculture = A[[1]][, c(3, 2, 1)],
