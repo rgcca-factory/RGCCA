@@ -215,7 +215,10 @@ rgcca_cv <- function(blocks,
     tol = tol,
     scheme = scheme,
     NA_method = NA_method,
-    blocks = blocks
+    blocks = blocks,
+    tau = tau,
+    sparsity = sparsity,
+    ncomp = ncomp
   )
 
   rownames(param$par_value) <- seq(NROW(param$par_value))

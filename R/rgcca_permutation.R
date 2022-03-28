@@ -295,7 +295,7 @@ rgcca_permutation <- function(blocks, par_type, par_value = NULL,
     NA_method = NA_method, tol = tol, scheme = scheme,
     scale = scale, scale_block = scale_block,
     superblock = superblock, blocks = blocks, ncomp = ncomp,
-    tau = tau, sparsity = sparsity
+    tau = tau, sparsity = sparsity, response = response
   )
 
   param <- set_parameter_grid(

@@ -214,10 +214,10 @@ rgcca <- function(blocks, method = "rgcca",
                   n_iter_max = 1000) {
   ### If specific objects are given for blocks, parameters are imported from
   #   these objects.
-  if (class(blocks) == "permutation") {
+  if (class(blocks) %in% c("permutation", "cval")) {
     message(paste0(
       "All the parameters were imported from the fitted ",
-      "rgcca_permutation object."
+      class(blocks), " object."
     ))
     scale_block <- blocks$call$scale_block
     tau <- blocks$call$tau
@@ -227,27 +227,13 @@ rgcca <- function(blocks, method = "rgcca",
     sparsity <- blocks$call$sparsity
     connection <- blocks$call$connection
     tol <- blocks$call$tol
+    response <- blocks$call$response
     NA_method <- blocks$call$NA_method
     superblock <- blocks$call$superblock
     if (blocks$call$par_type == "tau") tau <- blocks$bestpenalties
     if (blocks$call$par_type == "ncomp") ncomp <- blocks$bestpenalties
     if (blocks$call$par_type == "sparsity") sparsity <- blocks$bestpenalties
     superblock <- blocks$call$superblock
-    blocks <- blocks$call$blocks
-  }
-  if (class(blocks) == "cval") {
-    message("All the parameters were imported from the fitted cval object.")
-    scale_block <- blocks$call$scale_block
-    scale <- blocks$call$scale
-    scheme <- blocks$call$scheme
-    response <- blocks$call$response
-    tol <- blocks$call$tol
-    NA_method <- blocks$call$NA_method
-    if (blocks$call$par_type[[1]] == "tau") tau <- blocks$bestpenalties
-    if (blocks$call$par_type[[1]] == "ncomp") ncomp <- blocks$bestpenalties
-    if (blocks$call$par_type[[1]] == "sparsity") {
-      sparsity <- blocks$bestpenalties
-    }
     blocks <- blocks$call$blocks
   }
 
