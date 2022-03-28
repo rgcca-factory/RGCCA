@@ -313,11 +313,11 @@ test_that("check_ncomp raises an error if any element of ncomp is greater than
 })
 test_that("check_ncomp raises an error if ncomp is greater than the number of
           columns in the superblock", {
-  expect_error(check_ncomp(7, blocks, superblock = TRUE),
+  expect_error(check_ncomp(12, blocks, superblock = TRUE),
     paste0(
       "the number of components must be lower ",
       "than the number of variables in the superblock,",
-      " i.e. 6."
+      " i.e. 11."
     ),
     fixed = TRUE
   )

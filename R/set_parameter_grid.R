@@ -34,17 +34,16 @@ set_parameter_grid <- function(par_type, par_length, par_value, blocks,
       x[response] <- response_value(x)
       return(x)
     }))
-    return(par_value[!duplicated(par_value), ])
   }
 
-  set_grid <- function(check_function, min_values, max_values, length_values,
+  set_grid <- function(check_function, min_values, max_values,
                        response_value = NULL) {
     # If par_value is null, we generate a matrix with par_length rows
     # by taking values uniformly spaced between the min of possible
     # values and the max of possible values for each block.
     if (is.null(par_value)) {
       par_value <- lapply(seq_along(blocks), function(j) {
-        seq(max_values, min_values[j], length.out = length_values)
+        seq(max_values, min_values[j], length.out = par_length)
       })
       par_value <- do.call(cbind, par_value)
       par_value <- set_response_value(par_value, response_value)
@@ -56,7 +55,7 @@ set_parameter_grid <- function(par_type, par_length, par_value, blocks,
     if (is.vector(par_value)) {
       par_value <- check_function(par_value)
       par_value <- lapply(seq_along(par_value), function(j) {
-        seq(par_value[j], min_values[j], length.out = length_values)
+        seq(par_value[j], min_values[j], length.out = par_length)
       })
       par_value <- do.call(cbind, par_value)
       par_value <- set_response_value(par_value, response_value)
@@ -78,8 +77,9 @@ set_parameter_grid <- function(par_type, par_length, par_value, blocks,
   switch(par_type,
     "ncomp" = {
       min_values <- rep(1, J + 1)
-      max_values <- min(min(ncols[-response]), par_length)
-      length_values <- min(min(ncols[-response], par_length))
+      max_values <- min(
+        ifelse(superblock, sum(ncols), min(ncols[-response])), par_length
+      )
       response_value <- function(x) {
         return(max(x[-response]))
       }
@@ -90,10 +90,7 @@ set_parameter_grid <- function(par_type, par_length, par_value, blocks,
     "tau" = {
       min_values <- rep(0, J + 1)
       max_values <- 1
-      length_values <- par_length
-      response_value <- function(x) {
-        return(x[response])
-      }
+      response_value <- NULL
       check_function <- function(x) {
         check_penalty(x, blocks, method = "rgcca", superblock = superblock)
       }
@@ -101,17 +98,18 @@ set_parameter_grid <- function(par_type, par_length, par_value, blocks,
     "sparsity" = {
       min_values <- c(1 / sqrt(ncols), 1 / sqrt(sum(ncols)))
       max_values <- 1
-      length_values <- par_length
-      response_value <- function(x) {
-        return(1)
-      }
+      response_value <- NULL
       check_function <- function(x) {
         check_penalty(x, blocks, method = "sgcca", superblock = superblock)
       }
     }
   )
   if (is.null(response)) response_value <- NULL
-  set_grid(
-    check_function, min_values, max_values, length_values, response_value
-  )
+
+  param <- set_grid(check_function, min_values, max_values, response_value)
+
+  if (par_type == "ncomp") param$par_value <- round(param$par_value)
+  param$par_value <- param$par_value[!duplicated(param$par_value), ]
+
+  return(param)
 }

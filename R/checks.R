@@ -242,15 +242,20 @@ check_ncomp <- function(ncomp, blocks, min = 1, superblock = FALSE,
         "only one number of components must be specified (superblock)."
       )
     }
+    max_ncomp <- ifelse(
+      "superblock" %in% names(blocks),
+      NCOL(blocks[[length(blocks)]]),
+      sum(vapply(blocks, NCOL, FUN.VALUE = integer(1)))
+    )
     msg <- paste0(
       "the number of components must be lower than the number of ",
-      "variables in the superblock, i.e. ", NCOL(blocks[[length(blocks)]]),
+      "variables in the superblock, i.e. ", max_ncomp,
       "."
     )
 
     y <- check_integer("ncomp", ncomp[1],
       min = min, max_message = msg,
-      max = NCOL(blocks[[length(blocks)]]),
+      max = max_ncomp,
       exit_code = 126
     )
     return(rep(y, length(ncomp)))
