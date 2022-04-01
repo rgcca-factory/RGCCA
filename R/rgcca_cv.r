@@ -140,8 +140,9 @@ rgcca_cv <- function(blocks,
       )
     }
   )
-  is_inadequate <- !model_info$forClass &&
-    (is.factor(blocks[[response]]) || is.character2(blocks[[response]]))
+  classification <-
+    is.factor(blocks[[response]]) || is.character2(blocks[[response]])
+  is_inadequate <- !model_info$forClass && classification
   if (is_inadequate) {
     stop_rgcca(
       "inadequate model. Response block contains categorical data ",
@@ -155,11 +156,23 @@ rgcca_cv <- function(blocks,
   match.arg(par_type, c("tau", "sparsity", "ncomp"))
 
   ### Prepare parameters for line search
-  if (method %in% c("sgcca", "spca", "spls")) {
+  if (method %in% c("sgcca", "spca", "spls") && (par_type == "tau")) {
     par_type <- "sparsity"
   } else if (par_type == "sparsity") method <- "sgcca"
 
   param <- set_parameter_grid(par_type, par_length, par_value, blocks, response)
+
+  # Generate a warning if tau is null for a block that has more columns
+  # than samples
+  n <- NROW(blocks[[1]])
+  overfitting_risk <- (param$par_type == "tau") &&
+    any(vapply(seq_along(blocks), function(j) {
+      NCOL(blocks[[j]]) > n && any(param$par_value[, j] == 0)
+    }, FUN.VALUE = logical(1L)))
+  if (overfitting_risk) {
+    warning("overfitting risk. Tau is zero for a block that has more columns ",
+            "than rows, there is a high risk of overfitting for RGCCA.")
+  }
 
   ### Start line search
   if (verbose) {
@@ -191,6 +204,7 @@ rgcca_cv <- function(blocks,
         n_cores = n_cores,
         complete = FALSE,
         verbose = FALSE,
+        classification = classification,
         ...
       )$vec_scores
     }))

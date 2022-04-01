@@ -23,6 +23,7 @@ rgcca_cv_k(
   sparsity = NULL,
   n_cores = parallel::detectCores() - 1,
   verbose = TRUE,
+  classification = FALSE,
   ...
 )
 }
@@ -115,6 +116,8 @@ estimated by using \link{rgcca_permutation}.}
 
 \item{verbose}{Logical value indicating if the progress of the
 algorithm is reported while computing.}
+
+\item{classification}{A logical indicating if it is a classification task.}
 
 \item{...}{Additional parameters to be passed to the model fitted on top
 of RGCCA.}

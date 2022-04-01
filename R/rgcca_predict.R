@@ -123,11 +123,32 @@ rgcca_predict <- function(rgcca_res,
   # Keep same lines in X_train and y_train
   y_train <- subset_rows(y_train, rownames(X_train))
 
+  # Test that in classification, variables are not constant within groups
+  classification <- model_info$forClass && !model_info$forReg
+  if (classification) {
+    groups <- split(X_train, y_train[, 1])
+    is_constant <- unlist(lapply(groups, function(g) {
+      apply(g, 2, function(x) {
+        isTRUE(all.equal(
+          x, rep(x[1], length(x)),
+          check.attributes = FALSE
+        ))
+      })
+    }))
+    if (any(is_constant)) {
+      stop_rgcca(
+        "overfitting model. The RGCCA method led to projected blocks ",
+        "that are constant within groups. Try to regularize the model",
+        " by increasing tau or decreasing sparsity."
+      )
+    }
+  }
+
   ### Train prediction model and predict results on X_test
   results <- mapply(
     function(x, y) {
       core_prediction(
-        model_info, prediction_model, X_train, X_test, x, y, ...
+        model_info, prediction_model, X_train, X_test, x, y, classification, ...
       )
     },
     as.data.frame(y_train),
@@ -170,8 +191,8 @@ reformat_projection <- function(projection) {
 # Train a model from caret on (X_train, y_train) and make a prediction on
 # X_test and evaluate the prediction quality by comparing to y_test.
 core_prediction <- function(model_info, prediction_model, X_train, X_test,
-                            y_train, y_test, ...) {
-  if (model_info$forClass && !model_info$forReg) {
+                            y_train, y_test, classification = FALSE, ...) {
+  if (classification) {
     y_train <- as.factor(as.matrix(y_train))
     y_test <- factor(as.matrix(y_test), levels = levels(y_train))
   }

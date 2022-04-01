@@ -5,50 +5,75 @@ blocks <- list(
   industry = Russett[, 4:5],
   politic = Russett[, 6:11]
 )
-# res_rgcca=rgcca(blocks, method="rgcca",response=1)
 
-res <- rgcca_cv(blocks, response = length(blocks), method = "rgcca", par_type = "tau", par_value = c(0, 0.2, 0.3), n_run = 1, n_cores = 1)
-res
-plot(res)
-
-res <- rgcca_cv(blocks, response = length(blocks), method = "rgcca", par_type = "tau", par_value = c(0, 0.2, 0.3), n_run = 1, n_cores = 1, scale = FALSE, scale_block = FALSE)
-
-
-res2 <- rgcca_cv(blocks, response = length(blocks), method = "rgcca", par_type = "tau", par_value = c(0, 0.2, 0.3), n_run = 5, n_cores = 1)
-plot(res)
-
-# res4=rgcca_cv(blocks,response=length(blocks), method="rgcca",par_type="ncomp",par_value=c(1,2,3),n_run=5, one_value_per_cv = FALSE,n_cores=1)
-# print(res3)
-
-# plot(res4,bars="stderr")
-
-res5 <- rgcca_cv(blocks, response = length(blocks), method = "rgcca", par_type = "sparsity", par_value = matrix(c(0.8, 0.9, 1, 0.9, 1, 1), nrow = 2, byrow = T), n_run = 1, n_cores = 1)
-plot(res5, bars = "points")
-print(res5)
-
-
-
-data("Russett")
-blocks <- list(
-  agriculture = Russett[, seq(3)],
-  industry = Russett[, 4:5],
-  politic = Russett[, 6]
-)
-res <- rgcca(blocks, method = "rgcca", ncomp = 1)
-blocks2 <- lapply(blocks, as.matrix)
-res <- rgcca_cv(blocks, response = length(blocks), method = "rgcca", par_type = "tau", par_value = c(0, 0.2, 0.3), ncomp = 1, n_run = 1, n_cores = 1)
-plot(res)
-
-
-
-blocks_for_classif <- list(
+blocks_classif <- list(
   agriculture = Russett[, 1:3],
   industry = Russett[, 4:5],
   politic = matrix(Russett[, 11], ncol = 1)
 )
-blocks_for_classif[["politic"]][blocks_for_classif[["politic"]][, 1] == 1, ] <- "demo"
-blocks_for_classif[["politic"]][blocks_for_classif[["politic"]][, 1] == 0, ] <- "ndemo"
+blocks_classif[["politic"]][blocks_classif[["politic"]][, 1] == 1, ] <- "demo"
+blocks_classif[["politic"]][blocks_classif[["politic"]][, 1] == 0, ] <- "ndemo"
 
-res <- rgcca_cv(blocks_for_classif, response = 3, method = "rgcca", par_type = "tau", par_value = c(0, 0.2, 0.3), ncomp = 1, n_run = 1, n_cores = 1, prediction_model = "lda")
-res
-plot(res)
+test_that("rgcca_cv raises an error if no response is given", {
+  expect_error(rgcca_cv(blocks),
+    "response is required for rgcca_cv",
+    fixed = TRUE
+  )
+})
+
+test_that("rgcca_cv raises an error if an unknown prediction model is given", {
+  expect_error(rgcca_cv(blocks, response = 3, prediction_model = "toto"),
+    "unknown model.",
+    fixed = TRUE
+  )
+})
+
+test_that("rgcca_cv raises an error if a regression model is used for a
+          classification task", {
+  expect_error(rgcca_cv(blocks_classif, response = 3, prediction_model = "lm"),
+    "inadequate model.",
+    fixed = TRUE
+  )
+})
+
+test_that("rgcca_cv generates a warning if tau is null and block has more
+          columns than rows", {
+  bad_block <- matrix(rnorm(47 * 127), nrow = 47)
+  bad_blocks <- list(bad_block, blocks[[1]], blocks[[2]], blocks[[3]])
+  expect_warning(rgcca_cv(bad_blocks, response = 4, prediction_model = "lm"),
+                 "overfitting risk.", fixed = TRUE
+  )
+  expect_warning(rgcca_cv(blocks, response = 3, prediction_model = "lm"), NA)
+})
+
+test_that("rgcca_cv changes par_type to sparsity if a sparse method is given
+          with par_type = 'tau'", {
+  res <- rgcca_cv(blocks,
+    response = 3, par_type = "tau", method = "sgcca",
+    par_length = 1, n_run = 1
+  )
+  expect_equal(res$call$par_type, "sparsity")
+  res <- rgcca_cv(blocks,
+    response = 3, par_type = "ncomp", method = "sgcca",
+    par_length = 1, n_run = 1
+  )
+  expect_equal(res$call$par_type, "ncomp")
+})
+
+test_that("rgcca_cv computes k * n_run scores per parameter value", {
+  res <- rgcca_cv(blocks,
+    response = 3, par_type = "tau", par_length = 5,
+    n_run = 3, validation = "kfold", k = 4
+  )
+  expect_equal(dim(res$cv), c(5, 4 * 3))
+  res <- rgcca_cv(blocks,
+    response = 3, par_type = "sparsity", par_length = 2,
+    n_run = 5, validation = "kfold", k = 4
+  )
+  expect_equal(dim(res$cv), c(2, 4 * 5))
+  res <- rgcca_cv(blocks,
+    response = 3, par_type = "ncomp", par_length = 2,
+    n_run = 4, validation = "kfold", k = 7
+  )
+  expect_equal(dim(res$cv), c(2, 7 * 4))
+})

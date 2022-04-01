@@ -8,6 +8,7 @@
 #' @param k An integer giving the number of folds (if validation = 'kfold').
 #' @param validation A character for the type of validation among "loo",
 #' "kfold".
+#' @param classification A logical indicating if it is a classification task.
 #' @examples
 #' data("Russett")
 #' blocks <- list(
@@ -37,6 +38,7 @@ rgcca_cv_k <- function(rgcca_res,
                        sparsity = NULL,
                        n_cores = parallel::detectCores() - 1,
                        verbose = TRUE,
+                       classification = FALSE,
                        ...) {
   ### Check parameters
   stopifnot(is(rgcca_res, "rgcca"))
@@ -51,7 +53,7 @@ rgcca_cv_k <- function(rgcca_res,
   all_args <- names(environment())
   used_args <- c(
     names(match.call()), "validation", "prediction_model",
-    "k", "n_cores", "verbose"
+    "k", "n_cores", "verbose", "classification"
   )
   for (n in setdiff(all_args, used_args)) {
     assign(n, rgcca_res$call[[n]])
@@ -66,8 +68,16 @@ rgcca_cv_k <- function(rgcca_res,
   if (validation == "loo") {
     v_inds <- seq(nrow(blocks[[1]]))
   } else {
-    v_inds <- sample(nrow(blocks[[1]]))
-    v_inds <- split(v_inds, seq(v_inds) %% k)
+    if (classification) {
+      v_inds <- caret::createFolds(
+        blocks[[rgcca_res$call$response]][, 1],
+        k = k, list = TRUE,
+        returnTrain = FALSE
+      )
+    } else {
+      v_inds <- sample(nrow(blocks[[1]]))
+      v_inds <- split(v_inds, seq(v_inds) %% k)
+    }
   }
 
   res <- par_pblapply(
