@@ -56,3 +56,4 @@ test_that("handle_NA raises an error when NA_method is not implemented", {
     fixed = TRUE
   )
 })
+

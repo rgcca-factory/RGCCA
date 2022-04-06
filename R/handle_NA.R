@@ -14,5 +14,40 @@ handle_NA <- function(blocks, NA_method = "nipals") {
     blocks <- blocks
     na.rm <- Reduce("||", lapply(blocks, function(x) any(is.na(x))))
   }
+  if(NA_method == "imputeSB")
+  {
+    blocks=impute_sb(blocks,
+                     tau = rep(1, length(blocks) + 1),
+                     ni = 5,
+                     tol = 1e-08,
+                     ncomp = NULL,
+                     naxis = 1,
+                     scale = TRUE,
+                     scale_block = TRUE,
+                     scheme = "centroid",
+                     bias = TRUE,
+                     verbose = FALSE,
+                     threshold = 1e-6,
+                     reg = "y",
+                     quiet = FALSE)
+  }
+  if(NA_method == "impute")
+  {
+    blocks=impute(blocks,
+                    connection,
+                    tau = rep(1, length(blocks) + 1),
+                    ni = 5,
+                    tol = 1e-08,
+                    ncomp = NULL,
+                    naxis = 1,
+                    scale = TRUE,
+                    scale_block = TRUE,
+                    scheme = "centroid",
+                    bias = TRUE,
+                    verbose = FALSE,
+                    threshold = 1e-6,
+                    reg = "y",
+                    quiet = FALSE)
+  }
   return(list(blocks = blocks, na.rm = na.rm))
 }
