@@ -89,7 +89,7 @@ generate_resampling <- function(rgcca_res, n_boot, balanced = TRUE,
   # of bootstrap samples and the number of variables.
   risky_threshold <- max(
     1 / N,
-    (pval / (n_boot * sum(sapply(raw_blocks, NCOL))))^(1 / N)
+    (pval / (n_boot * sum(vapply(raw_blocks, NCOL, FUN.VALUE = 1L))))^(1 / N)
   )
 
   # Identify variables with value having an observed proportion higher than
@@ -154,9 +154,10 @@ generate_resampling <- function(rgcca_res, n_boot, balanced = TRUE,
       )
 
     # Summarize through all the samples.
-    eval_boot_sample <- sapply(
+    eval_boot_sample <- vapply(
       boot_column_sd_null,
-      function(x) sum(sapply(x, length))
+      function(x) sum(vapply(x, length, FUN.VALUE = 1L)),
+      FUN.VALUE = 1L
     )
     NO_null_sd_var <- (sum(eval_boot_sample) == 0)
 
@@ -245,7 +246,7 @@ generate_resampling <- function(rgcca_res, n_boot, balanced = TRUE,
             # `1 - the proportion of this observed value`, normalized so that
             # the sum through all the observations (for each variable)
             # equals `1`.
-            prob <- sapply(
+            prob <- lapply(
               raw_blocks_filtered,
               function(block) {
                 apply(block, 2, function(var) {

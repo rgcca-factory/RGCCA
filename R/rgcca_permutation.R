@@ -345,8 +345,8 @@ rgcca_permutation <- function(blocks, par_type = "tau", par_value = NULL,
     nrow = nrow(param$par_value),
     ncol = n_perms, byrow = TRUE
   )
-  means <- apply(permcrit, 1, mean, na.rm = T)
-  sds <- apply(permcrit, 1, sd, na.rm = T)
+  means <- apply(permcrit, 1, mean, na.rm = TRUE)
+  sds <- apply(permcrit, 1, sd, na.rm = TRUE)
   pvals <- vapply(
     seq(NROW(param$par_value)),
     function(k) mean(permcrit[k, ] >= crits[k]),

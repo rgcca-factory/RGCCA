@@ -78,11 +78,11 @@ rgccak <- function(A, C, tau = rep(1, length(A)), scheme = "centroid",
 
   J <- length(A) # number of blocks
   n <- NROW(A[[1]]) # number of individuals
-  pjs <- sapply(A, NCOL) # number of variables per block
+  pjs <- vapply(A, NCOL, FUN.VALUE = 1L) # number of variables per block
 
   if (!is.numeric(tau)) {
     # From Schafer and Strimmer, 2005
-    tau <- sapply(A, tau.estimate, na.rm = na.rm)
+    tau <- vapply(A, tau.estimate, na.rm = na.rm, FUN.VALUE = 1.0)
   }
 
   A <- lapply(A, as.matrix)

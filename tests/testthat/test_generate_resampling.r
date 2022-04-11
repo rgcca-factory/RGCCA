@@ -106,11 +106,11 @@ test_that("generate_resampling_NUL_variance_1", {
     )
   )
 
-  expect_equal(unname(unlist(sapply(
+  expect_equal(unname(unlist(lapply(
     sample_out_balanced_1$sd_null,
     function(x) names(x)
   ))), c("rent", "death"))
-  expect_equal(unname(unlist(sapply(
+  expect_equal(unname(unlist(lapply(
     sample_out_balanced_2$sd_null,
     function(x) names(x)
   ))), c("rent", "death"))
@@ -178,11 +178,11 @@ test_that("generate_resampling_veryRisky_1", {
     )
   )
 
-  expect_equal(unname(unlist(sapply(
+  expect_equal(unname(unlist(lapply(
     sample_out_balanced_1$sd_null,
     function(x) names(x)
   ))), c("rent", "death"))
-  expect_equal(unname(unlist(sapply(
+  expect_equal(unname(unlist(lapply(
     sample_out_balanced_2$sd_null,
     function(x) names(x)
   ))), c("rent", "death"))

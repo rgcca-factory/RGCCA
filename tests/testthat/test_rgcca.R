@@ -185,7 +185,7 @@ test_that("Block weights can be retrieved using the superblock component", {
 })
 
 test_that("Block weights can be retrieved using the superblock weights", {
-  idx <- c(0, cumsum(sapply(A, ncol)))
+  idx <- c(0, cumsum(vapply(A, ncol, FUN.VALUE = 1L)))
   for (j in seq_len(J)) {
     a <- fit$a[[J + 1]][seq(1 + idx[j], idx[j + 1])]
     if (sign(a[1]) != sign(fit$a[[j]][1])) a <- -a

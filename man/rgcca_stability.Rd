@@ -6,7 +6,7 @@
 \usage{
 rgcca_stability(
   rgcca_res,
-  keep = sapply(rgcca_res$a, function(x) mean(x != 0)),
+  keep = vapply(rgcca_res$a, function(x) mean(x != 0), FUN.VALUE = 1),
   n_boot = 100,
   n_cores = 1,
   verbose = FALSE,

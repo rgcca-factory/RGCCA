@@ -51,8 +51,9 @@
 #' }
 #' @export
 rgcca_stability <- function(rgcca_res,
-                            keep = sapply(
-                              rgcca_res$a, function(x) mean(x != 0)
+                            keep = vapply(
+                              rgcca_res$a, function(x) mean(x != 0),
+                              FUN.VALUE = 1.0
                             ),
                             n_boot = 100,
                             n_cores = 1,
@@ -104,7 +105,7 @@ rgcca_stability <- function(rgcca_res,
   mylist <- lapply(
     seq_along(list_res),
     function(i) {
-      sapply(
+      lapply(
         list_res[[i]],
         function(x) {
           apply(x, 1, function(y) sum(abs(y), na.rm = TRUE))

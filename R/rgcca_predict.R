@@ -171,8 +171,8 @@ rgcca_predict <- function(rgcca_res,
 # Stack projected blocks as a matrix and set colnames as "block_ncomp"
 reformat_projection <- function(projection) {
   names <- names(projection)
-  ncomp <- sapply(projection, ncol)
-  comp_nums <- unlist(sapply(ncomp, seq))
+  ncomp <- vapply(projection, NCOL, FUN.VALUE = 1L)
+  comp_nums <- unlist(lapply(ncomp, seq))
   projection <- as.data.frame(Reduce("cbind", projection))
   colnames(projection) <- paste(
     unlist(mapply(function(name, num) rep(name, num), names, ncomp)),

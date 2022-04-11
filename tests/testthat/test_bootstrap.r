@@ -4,6 +4,7 @@ blocks <- list(
   industry = Russett[, 4:5],
   politic = Russett[, 6:11]
 )
+p <- vapply(blocks, NCOL, FUN.VALUE = 1L)
 ncomp <- 1
 rgcca_out <- rgcca(blocks, ncomp = 1)
 boot <- bootstrap(rgcca_out, n_boot = 4, n_cores = 1)
@@ -16,8 +17,8 @@ test_that("bootstrap_default_1", {
   expect_is(boot$rgcca, "rgcca")
   expect_is(boot1, "list")
   expect_is(boot1[[1]], "matrix")
-  expect_true(all(sapply(boot1, NCOL) == 4))
-  expect_identical(sapply(boot1, NROW), sapply(rgcca_out$call$blocks, NCOL))
+  expect_true(all(vapply(boot1, NCOL, FUN.VALUE = 1L) == 4))
+  expect_identical(vapply(boot1, NROW, FUN.VALUE = 1L), p)
 })
 
 ### Case ncomp = 2
@@ -32,8 +33,8 @@ test_that("bootstrap_default", {
   expect_is(boot$rgcca, "rgcca")
   expect_is(boot1, "list")
   expect_is(boot1[[1]], "matrix")
-  expect_true(all(sapply(boot1, NCOL) == 2))
-  expect_identical(sapply(boot1, NROW), sapply(rgcca_out$call$blocks, NCOL))
+  expect_true(all(vapply(boot1, NCOL, FUN.VALUE = 1L) == 2))
+  expect_identical(vapply(boot1, NROW, FUN.VALUE = 1L), p)
 })
 
 test_that("bootstrap_default", {

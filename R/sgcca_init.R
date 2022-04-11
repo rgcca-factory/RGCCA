@@ -19,7 +19,10 @@ sgcca_init <- function(A, init, bias, na.rm, const, pjs, J, n) {
   }
 
   a <- lapply(seq(J), function(b) soft_threshold(a[[b]], const[b]))
-  Y <- sapply(seq(J), function(b) pm(A[[b]], a[[b]], na.rm = na.rm))
+  Y <- vapply(
+    seq(J), function(b) pm(A[[b]], a[[b]], na.rm = na.rm),
+    FUN.VALUE = double(n)
+  )
 
   return(list(a = a, Y = Y))
 }

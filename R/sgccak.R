@@ -44,7 +44,7 @@ sgccak <- function(A, C, sparsity = rep(1, length(A)),
 
   J <- length(A)
   n <- NROW(A[[1]])
-  pjs <- sapply(A, NCOL)
+  pjs <- vapply(A, NCOL, FUN.VALUE = 1L)
   const <- sparsity * sqrt(pjs)
 
   tmp <- sgcca_init(A, init, bias, na.rm, sparsity, pjs, J, n)
@@ -118,7 +118,7 @@ sgccak <- function(A, C, sparsity = rep(1, length(A)),
     plot(crit, xlab = "iteration", ylab = "criteria")
   }
 
-  l2_sat <- sapply(a, function(x) norm(x, "2"))
+  l2_sat <- vapply(a, function(x) norm(x, "2"), FUN.VALUE = 1.0)
   if (max(abs(l2_sat - 1)) > tol) {
     for (i in which(abs(l2_sat - 1) > tol)) {
       if (l2_sat[i] < .Machine$double.eps) {

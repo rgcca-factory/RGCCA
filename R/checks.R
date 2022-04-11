@@ -418,16 +418,16 @@ check_penalty <- function(penalty, blocks, method = "rgcca", superblock = FALSE,
 
   # Check value of each penalty
   if (method == "rgcca") {
-    penalty <- sapply(penalty, check_tau, USE.NAMES = FALSE)
+    penalty <- unlist(lapply(penalty, check_tau))
   }
   if (method == "sgcca") {
     divider <- ifelse(is_matrix, DIM[1], 1)
-    penalty <- sapply(
+    penalty <- vapply(
       seq(length(penalty)),
       function(x) {
         n <- 1 + (x - 1) / divider
         check_spars(penalty[x], blocks[[n]], n)
-      }
+      }, FUN.VALUE = double(1L)
     )
   }
 

@@ -208,7 +208,7 @@ rgccad <- function(blocks, connection = 1 - diag(length(blocks)),
   ndefl <- ncomp - 1
   N <- max(ndefl)
   J <- length(blocks)
-  pjs <- sapply(blocks, NCOL)
+  pjs <- vapply(blocks, NCOL, FUN.VALUE = 1L)
   nb_ind <- NROW(blocks[[1]])
   AVE_inner <- rep(NA, max(ncomp))
 
