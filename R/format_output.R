@@ -1,3 +1,6 @@
+#' Format output of rgcca function
+#'
+#' @noRd
 format_output <- function(func_out, opt, raw, func_call = NULL) {
   for (j in seq(length(opt$blocks))) {
     rownames(func_out$a[[j]]) <- colnames(opt$blocks[[j]])

@@ -85,7 +85,7 @@ plot.permutation <- function(x,
     ),
     c(type, "Non_permuted", "label")
   )
-  idx_order <- sort(df[[type]], decreasing = F, index.return = T)$ix
+  idx_order <- sort(df[[type]], decreasing = FALSE, index.return = TRUE)$ix
   df <- df[idx_order, ]
   best <- which.max(unlist(x["zstat"])[idx_order])
 
@@ -106,7 +106,7 @@ plot.permutation <- function(x,
     title <- paste0(title, collapse = " ")
   }
 
-  df$label <- factor(df$label, levels = rev(df$label), ordered = T)
+  df$label <- factor(df$label, levels = rev(df$label), ordered = TRUE)
   df$Non_permuted[best] <- "Best parameter set"
   breaks <- rev(levels(df$label))
   labels <- as.expression(breaks)
@@ -148,7 +148,7 @@ plot.permutation <- function(x,
     ) +
     scale_y_discrete(
       labels = labels, breaks = breaks,
-      guide = guide_axis(check.overlap = T)
+      guide = guide_axis(check.overlap = TRUE)
     )
   if (type == "crit") {
     dft <- data.frame(

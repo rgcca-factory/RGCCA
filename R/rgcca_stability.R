@@ -4,6 +4,7 @@
 #' identified as relevant by SGCCA. The Variable Importance in the Projection
 #' (VIP) criterion is used to identify the most stable variables.
 #'
+#' @inheritParams bootstrap
 #' @param rgcca_res A fitted RGCCA object (see \code{\link[RGCCA]{rgcca}})
 #' @param keep numeric vector indicating the proportion of top variables per
 #' block.
@@ -11,7 +12,6 @@
 #' @param n_cores Number of cores for parallelization.
 #' @param verbose Logical value indicating if the progress of the procedure
 #' is reported.
-#' @inheritParams generate_resampling
 #' @return \item{top}{indicator on which variables are ranked.}
 #' @return \item{keepVar}{indices of the top variables.}
 #' @return \item{bootstrap}{block-weight vectors for ech bootstrap sample.}
@@ -55,7 +55,7 @@ rgcca_stability <- function(rgcca_res,
                               rgcca_res$a, function(x) mean(x != 0)
                             ),
                             n_boot = 100,
-                            n_cores = parallel::detectCores() - 1,
+                            n_cores = 1,
                             verbose = FALSE,
                             balanced = TRUE,
                             keep_all_variables = FALSE) {

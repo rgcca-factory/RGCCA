@@ -1,7 +1,9 @@
-# Set parameter grid
-#
-# Produce a grid of parameters for rgcca (tau, sparsity or ncomp) that will
-# be evaluated either using cross validation or permutation.
+#' Set parameter grid
+#'
+#' Produce a grid of parameters for rgcca (tau, sparsity or ncomp) that will
+#' be evaluated either using cross validation or permutation.
+#' @inheritParams rgcca_cv
+#' @noRd
 set_parameter_grid <- function(par_type, par_length, par_value, blocks,
                                response = NULL, superblock = FALSE) {
   ### Auxiliary functions
@@ -76,9 +78,10 @@ set_parameter_grid <- function(par_type, par_length, par_value, blocks,
 
   switch(par_type,
     "ncomp" = {
+      if (!is.null(response)) ncols <- ncols[-response]
       min_values <- rep(1, J + 1)
       max_values <- min(
-        ifelse(superblock, sum(ncols), min(ncols[-response])), par_length
+        ifelse(superblock, sum(ncols), min(ncols)), par_length
       )
       response_value <- function(x) {
         return(max(x[-response]))
@@ -109,7 +112,8 @@ set_parameter_grid <- function(par_type, par_length, par_value, blocks,
   param <- set_grid(check_function, min_values, max_values, response_value)
 
   if (par_type == "ncomp") param$par_value <- round(param$par_value)
-  param$par_value <- param$par_value[!duplicated(param$par_value), ]
+  param$par_value <-
+    param$par_value[!duplicated(param$par_value), , drop = FALSE]
 
   return(param)
 }

@@ -59,7 +59,7 @@ test_that("rgcca_transform raises an error if block dimensions do not match", {
 projection <- rgcca_transform(fit.rgcca, A)
 
 test_that("rgcca_transform retrieves Y when projecting the training samples", {
-  for (j in 1:length(projection)) {
+  for (j in seq_along(projection)) {
     expect_true(max(abs(projection[[j]] - fit.rgcca$Y[[j]])) < 1e-14)
   }
 })
@@ -70,7 +70,7 @@ test_that("rgcca_transform retrieves Y with different scaling scenarios", {
     scale = FALSE, scale_block = FALSE
   )
   projection <- rgcca_transform(fit.rgcca, A)
-  for (j in 1:length(projection)) {
+  for (j in seq_along(projection)) {
     expect_true(max(abs(projection[[j]] - fit.rgcca$Y[[j]])) < 1e-14)
   }
 
@@ -79,7 +79,7 @@ test_that("rgcca_transform retrieves Y with different scaling scenarios", {
     scale = FALSE, scale_block = "inertia"
   )
   projection <- rgcca_transform(fit.rgcca, A)
-  for (j in 1:length(projection)) {
+  for (j in seq_along(projection)) {
     expect_true(max(abs(projection[[j]] - fit.rgcca$Y[[j]])) < 1e-14)
   }
 
@@ -88,7 +88,7 @@ test_that("rgcca_transform retrieves Y with different scaling scenarios", {
     scale = FALSE, scale_block = "lambda1"
   )
   projection <- rgcca_transform(fit.rgcca, A)
-  for (j in 1:length(projection)) {
+  for (j in seq_along(projection)) {
     expect_true(max(abs(projection[[j]] - fit.rgcca$Y[[j]])) < 1e-14)
   }
 
@@ -97,7 +97,7 @@ test_that("rgcca_transform retrieves Y with different scaling scenarios", {
     scale = TRUE, scale_block = "lambda1"
   )
   projection <- rgcca_transform(fit.rgcca, A)
-  for (j in 1:length(projection)) {
+  for (j in seq_along(projection)) {
     expect_true(max(abs(projection[[j]] - fit.rgcca$Y[[j]])) < 1e-14)
   }
 })
@@ -112,7 +112,7 @@ projection <- rgcca_transform(fit.rgcca, A_perm)
 
 test_that("rgcca_transform retrieves Y when projecting the training samples
           with permuted columns", {
-  for (j in 1:length(projection)) {
+  for (j in seq_along(projection)) {
     expect_true(max(abs(projection[[j]] - fit.rgcca$Y[[j]])) < 1e-14)
   }
 })
@@ -122,7 +122,7 @@ projection <- rgcca_transform(fit.rgcca, A[-3])
 
 test_that("rgcca_transform retrieves Y when projecting a subset of the
           training blocks", {
-  for (j in 1:length(projection)) {
+  for (j in seq_along(projection)) {
     expect_true(max(abs(projection[[j]] - fit.rgcca$Y[[j]])) < 1e-14)
   }
 })
@@ -145,7 +145,7 @@ projection <- rgcca_transform(fit.rgccaNA, blocksNA)
 
 test_that("rgcca_transform retrieves Y when projecting the training
           samples with missing values", {
-  for (j in 1:length(projection)) {
+  for (j in seq_along(projection)) {
     expect_true(max(abs(projection[[j]] - fit.rgccaNA$Y[[j]])) < 1e-14)
   }
 })
@@ -158,7 +158,7 @@ projection <- rgcca_transform(fit.rgcca, A_test)
 test_that("rgcca_transform creates projection with the right number of
           dimensions", {
   expect_equal(length(projection), length(A_test))
-  for (j in 1:length(projection)) {
+  for (j in seq_along(projection)) {
     expect_true(all(dim(projection[[j]]) == c(nrow(projection[[j]]), ncomp[j])))
   }
 })

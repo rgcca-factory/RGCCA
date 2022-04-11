@@ -41,7 +41,9 @@ Suggests:
     bsplus,
     devtools,
     DT,
+    FactoMineR,
     ggrepel,
+    gliomaData,
     knitr,
     openxlsx,
     optparse,
@@ -49,8 +51,7 @@ Suggests:
     rmarkdown,
     shiny,
     shinyjs,
-    testthat,
-    FactoMineR
+    testthat
 VignetteBuilder:
     knitr
 biocViews: Visualization, PrincipalComponent, DimensionReduction,

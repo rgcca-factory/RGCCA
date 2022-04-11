@@ -41,9 +41,17 @@
 #' iterative partial least squares algorithm) described in (Tenenhaus et al,
 #' 2005). Guidelines describing how to use RGCCA in practice are provided in
 #' (Garali et al., 2018).
-#' @inheritParams rgccad
-#' @inheritParams sgcca
-#' @inheritParams select_analysis
+#' @param blocks A list that contains the J blocks of variables
+#' \eqn{\mathbf{X_1}, \mathbf{X_2}, ..., \mathbf{X_J}}{X1, X2, ..., XJ}.
+#' Block \eqn{\mathbf{X}_j}{Xj} is a matrix of dimension
+#' \eqn{n \times p_j}{n x p_j} where n is the number of
+#' observations and \eqn{p_j} the number of variables.
+#' @param method A character string indicating the multi-block component
+#' method to consider: rgcca, sgcca, pca, spca, pls, spls, cca,
+#' ifa, ra, gcca, maxvar, maxvar-b, maxvar-a, mcoa,cpca-1, cpca-2,
+#' cpca-4, hpca, maxbet-b, maxbet, maxdiff-b, maxdiff,
+#' sabscor, ssqcor, ssqcov-1, ssqcov-2, ssqcov, sumcor,
+#' sumcov-1, sumcov-2, sumcov, sabscov-1, sabscov-2.
 #' @param scale Logical value indicating if blocks are standardized.
 #' @param scale_block Value indicating if each block is divided by
 #' a constant value. If TRUE or "inertia", each block is divided by the
@@ -53,6 +61,51 @@
 #' Otherwise the blocks are not scaled. If standardization is
 #' applied (scale = TRUE), the block scaling is applied on the result of the
 #' standardization.
+#' @param connection  A symmetric matrix (\eqn{J \times J}{J x J}) that
+#' describes the relationships between blocks.
+#' @param scheme Character string or a function giving the scheme function for
+#' covariance maximization among "horst" (the identity function), "factorial"
+#'  (the squared values), "centroid" (the absolute values). The scheme function
+#'  can be any continously differentiable convex function and it is possible to
+#'  design explicitely the scheme function (e.g. function(x) x^4) as argument of
+#'  rgcca function.  See (Tenenhaus et al, 2017) for details.
+#' @param ncomp Vector of length J indicating the number of block components
+#' for each block.
+#' @param tau Either a \eqn{1 \times J}{1 x J} vector or a
+#' \eqn{\mathrm{max}(ncomp) \times J}{max(ncomp) x J} matrix containing
+#' the values of the regularization parameters (default: tau = 1, for each
+#' block and each dimension). The regularization parameters varies from 0
+#' (maximizing the correlation) to 1 (maximizing the covariance). If
+#' tau = "optimal" the regularization parameters are estimated for each block
+#' and each dimension using the Schafer and Strimmer (2005) analytical formula.
+#' If tau is a \eqn{1 \times J}{1 x J} vector, tau[j] is identical across the
+#' dimensions of block \eqn{\mathbf{X}_j}{Xj}. If tau is a matrix, tau[k, j]
+#' is associated with \eqn{\mathbf{X}_{jk}}{Xjk} (kth residual matrix for
+#' block j). The regularization parameters can also be estimated using
+#' \link{rgcca_permutation} or \link{rgcca_cv}.
+#' @param sparsity Either a \eqn{1*J} vector or a \eqn{max(ncomp) * J} matrix
+#' encoding the L1 constraints applied to the outer weight vectors. The amount
+#' of sparsity varies between \eqn{1/sqrt(p_j)} and 1 (larger values of sparsity
+#' correspond to less penalization). If sparsity is a vector, L1-penalties are
+#' the same for all the weights corresponding to the same block but different
+#' components:
+#' \deqn{for all h, |a_{j,h}|_{L_1} \le c_1[j] \sqrt{p_j},}
+#' with \eqn{p_j} the number of variables of \eqn{X_j}.
+#' If sparsity is a matrix, each row \eqn{h} defines the constraints applied to
+#' the weights corresponding to components \eqn{h}:
+#' \deqn{for all h, |a_{j,h}|_{L_1} \le c_1[h,j] \sqrt{p_j}.} It can be
+#' estimated by using \link{rgcca_permutation}.
+#' @param init Character string giving the type of initialization to use in
+#' the  algorithm. It could be either by Singular Value Decompostion ("svd")
+#' or by random initialisation ("random") (default: "svd").
+#' @param bias A logical value for biaised (\eqn{1/n}) or unbiaised
+#' (\eqn{1/(n-1)}) estimator of the var/cov (default: bias = TRUE).
+#' @param tol The stopping value for the convergence of the algorithm.
+#' @param response Numerical value giving the position of the response block.
+#' When the response argument is filled the supervised mode is automatically
+#' activated.
+#' @param superblock Boolean indicating the presence of a superblock
+#' (deflation strategy must be adapted when a superblock is used).
 #' @param NA_method  Character string corresponding to the method used for
 #' handling missing values ("nipals", "complete"). (default: "nipals").
 #' \itemize{
@@ -60,6 +113,11 @@
 #' observations (observations with missing values are removed)}
 #' \item{\code{"nipals"}}{corresponds to perform RGCCA algorithm on available
 #' data (NIPALS-type algorithm)}}
+#' @param verbose Logical value indicating if the progress of the
+#' algorithm is reported while computing.
+#' @param quiet Logical value indicating if warning messages are reported.
+#' @param n_iter_max Integer giving the algorithm's maximum number of
+#' iterations.
 #' @return A rgcca fitted object
 #' @return \item{Y}{List of \eqn{J} elements. Each element of the list \eqn{Y}
 #' is a matrix that contains the RGCCA block components for the corresponding
@@ -197,7 +255,7 @@
 #' @importFrom stats model.matrix
 #' @importFrom methods is
 #' @seealso \code{\link[RGCCA]{plot.rgcca}}, \code{\link[RGCCA]{print.rgcca}},
-#' \code{\link[RGCCA]{rgcca_cv_k}},
+#' \code{\link[RGCCA]{rgcca_cv}},
 #' \code{\link[RGCCA]{rgcca_permutation}}
 #' \code{\link[RGCCA]{rgcca_predict}}
 rgcca <- function(blocks, method = "rgcca",
@@ -241,7 +299,7 @@ rgcca <- function(blocks, method = "rgcca",
   match.arg(init, c("svd", "random"))
   blocks <- check_blocks(blocks,
     add_NAlines = TRUE,
-    n = 1, init = TRUE, quiet = quiet
+    init = TRUE, quiet = quiet
   )
   check_integer("tol", tol, float = TRUE, min = 0)
   check_integer("n_iter_max", n_iter_max, min = 1)

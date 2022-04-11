@@ -21,7 +21,7 @@ trained and the tested models.}
 of RGCCA.}
 }
 \description{
-Predict a new block from a RGCCA
+Predict a new block from a fitted RGCCA object.
 }
 \examples{
 data("Russett")

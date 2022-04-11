@@ -5,21 +5,8 @@
 #' @inheritParams rgcca
 #' @inheritParams bootstrap
 #' @inheritParams plot_ind
-#' @param k An integer giving the number of folds (if validation = 'kfold').
-#' @param validation A character for the type of validation among "loo",
-#' "kfold".
 #' @param classification A logical indicating if it is a classification task.
-#' @examples
-#' data("Russett")
-#' blocks <- list(
-#'   agriculture = Russett[, seq(3)], industry = Russett[, 4:5],
-#'   politic = Russett[, 6:11]
-#' )
-#' rgcca_out <- rgcca(blocks, response = 3, superblock = FALSE)
-#' res <- rgcca_cv_k(rgcca_out, validation = "kfold", k = 5, n_cores = 1)
-#' rgcca_cv_k(rgcca_out, n_cores = 1)
-#' @export
-#' @seealso \link{rgcca}, \link{rgcca_predict}, \link{plot.predict}
+#' @noRd
 rgcca_cv_k <- function(rgcca_res,
                        validation = "kfold",
                        prediction_model = "lm",
@@ -36,7 +23,7 @@ rgcca_cv_k <- function(rgcca_res,
                        ncomp = NULL,
                        tau = NULL,
                        sparsity = NULL,
-                       n_cores = parallel::detectCores() - 1,
+                       n_cores = 1,
                        verbose = TRUE,
                        classification = FALSE,
                        ...) {

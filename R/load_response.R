@@ -1,7 +1,6 @@
 #' Create a matrix corresponding to the response
 #'
 #' @inheritParams load_blocks
-#' @inheritParams set_connection
 #' @return A matrix corresponding to the response
 #' @examples
 #' \dontrun{
@@ -27,7 +26,7 @@ load_response <- function(blocks = NULL,
       decimal = decimal
     )
   } else {
-    check_blocks(blocks, , allow_unnames = FALSE, n = 1)
+    check_blocks(blocks, , allow_unnames = FALSE)
   }
 
   check_response(response)

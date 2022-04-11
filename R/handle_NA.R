@@ -1,6 +1,8 @@
-available_NA_methods <- c("complete", "nipals")
-
+#' Set up strategy to handle missing values
+#'
+#' @noRd
 handle_NA <- function(blocks, NA_method = "nipals") {
+  available_NA_methods <- c("complete", "nipals")
   na.rm <- FALSE
   if (!NA_method %in% available_NA_methods) {
     stop_rgcca(paste0(

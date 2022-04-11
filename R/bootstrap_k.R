@@ -9,7 +9,7 @@
 #' are no missing variables, otherwise the name of the missing variables are
 #' returned.}
 #' @title Compute bootstrap (internal).
-#' @keywords internal
+#' @noRd
 bootstrap_k <- function(rgcca_res, inds = NULL) {
   rgcca_res_boot <- set_rgcca(rgcca_res,
     inds      = inds,

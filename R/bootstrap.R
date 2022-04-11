@@ -1,17 +1,21 @@
 #' Bootstrap confidence intervals and p-values
 #'
-#' Boostrap confidence intervals and p-values for evaluating the significancy/
+#' Bootstrap confidence intervals and p-values for evaluating the significance/
 #' stability of the block-weight vectors produce by S/RGCCA.
 #' @param rgcca_res A fitted RGCCA object (see  \code{\link[RGCCA]{rgcca}})
 #' @param n_boot Number of bootstrap samples. Default: 100.
 #' @param n_cores Number of cores for parallelization.
-#' @inheritParams generate_resampling
+#' @param balanced A boolean indicating if a balanced bootstrap procedure is
+#' performed or not (default is TRUE).
+#' @param keep_all_variables A boolean indicating if all variables have to be
+#' kept even when some of them have null variance for at least one bootstrap
+#' sample (default is FALSE).
 #' @param verbose Logical value indicating if the progress of the
 #' bootstrap procedure is reported.
 #' @return A list containing two objects: 'bootstrap' and 'rgcca'.
 #' 'bootstrap' is a list containing for each block, a matrix
 #' with the variables of the block in row and the block weight vector
-#' calculated accross bootstrap sample in column. 'rgcca' is the fitted rgcca
+#' calculated across bootstrap sample in column. 'rgcca' is the fitted rgcca
 #' object obtained from the original data. (see  \code{\link[RGCCA]{rgcca}})
 #' @examples
 #' # Bootstrap confidence intervals and p-values for RGCCA
@@ -66,7 +70,7 @@
 #' @seealso \code{\link[RGCCA]{plot.bootstrap}},
 #' \code{\link[RGCCA]{print.bootstrap}}
 bootstrap <- function(rgcca_res, n_boot = 100,
-                      n_cores = parallel::detectCores() - 1,
+                      n_cores = 1,
                       balanced = TRUE, keep_all_variables = FALSE,
                       verbose = TRUE) {
   if (class(rgcca_res) == "stability") {

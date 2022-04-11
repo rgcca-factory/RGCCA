@@ -12,7 +12,7 @@
 #' situation, each element of this list is again NULL if not a single variable
 #' was removed from the current block, or a named vector indicating the former
 #' index of the removed variables along with their name.}
-#' @keywords internal
+#' @noRd
 
 remove_null_sd <- function(list_m, column_sd_null = NULL) {
   names <- names(list_m)

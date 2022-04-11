@@ -19,10 +19,10 @@ blocks[[3]][40, ] <- NA
 blocks[[4]][42] <- NA
 ind_NA <- c(2, 4, 8, 12, 17, 23, 30, 32, 40, 42)
 
-test_that("handle_NA selects the common rows without missing values when NA_method
-          is \"complete\"", {
+test_that("handle_NA selects the common rows without missing values when
+  NA_method is \"complete\"", {
   tmp <- handle_NA(blocks, NA_method = "complete")
-  for (j in 1:length(blocks)) {
+  for (j in seq_along(blocks)) {
     expect_equal(tmp$blocks[[j]], subset_rows(blocks[[j]], -ind_NA))
     expect_false(tmp$na.rm)
   }
@@ -40,7 +40,8 @@ test_that("handle_NA raises an error if there is less than 3 subjects
     fixed = TRUE
   )
 })
-test_that("handle_NA leaves the blocks untouched when NA_method is \"nipals\"", {
+test_that("handle_NA leaves the blocks untouched when NA_method is
+          \"nipals\"", {
   tmp <- handle_NA(blocks, NA_method = "nipals")
   expect_equal(tmp$blocks, blocks)
   expect_true(tmp$na.rm)

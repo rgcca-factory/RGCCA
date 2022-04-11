@@ -1,62 +1,80 @@
+set.seed(0)
 data("Russett")
 blocks <- list(
   agriculture = Russett[, seq(3)],
-  industry = Russett[, 4:5],
-  politic = Russett[, 6:11]
+  agriculture2 = Russett[, seq(3)]
 )
 
-par <- expand.grid(rep(list(seq(2)), length(blocks)))
-resrgcca <- rgcca(
-  blocks,
-  tol = 1e-3,
-  tau = rep(1, 3),
-  ncomp = par[1, ]
-)
+test_that("rgcca_permutation_k gives the same criterion as rgcca if perm
+          is FALSE", {
+  res_perm <- rgcca_permutation_k(blocks, perm = FALSE)
+  res_rgcca <- rgcca(blocks)
+  expect_equal(res_perm, res_rgcca$crit[length(res_rgcca$crit)])
 
-res_perm <- rgcca_permutation_k(blocks, tol = 1e-3, tau = rep(1, 3), ncomp = par[1, ])
-res <- rgcca_permutation_k(blocks, tol = 1e-3, tau = rep(1, 3), ncomp = par[1, ], perm = FALSE)
+  res_perm <- rgcca_permutation_k(blocks, perm = FALSE, ncomp = 2)
+  res_rgcca <- rgcca(blocks, ncomp = 2)
+  crit <- sum(vapply(
+    res_rgcca$crit, function(x) x[length(x)],
+    FUN.VALUE = double(1)
+  ))
+  expect_equal(res_perm, crit)
+})
 
+test_that("rgcca_permutation_k gives a smaller criterion than rgcca if perm
+          is TRUE", {
+  res_perm <- rgcca_permutation_k(blocks, perm = TRUE)
+  res_rgcca <- rgcca(blocks)
+  expect_lt(res_perm, res_rgcca$crit[length(res_rgcca$crit)])
 
-test_that(
-  "rgcca_permutationk_without_perm",
-  {
-    expect_equal(round(res, digits = 6), 0.717216)
-  }
-)
-test_that(
-  "rgcca_permutationk_default",
-  {
-    expect_true(res_perm < 0.717216)
-  }
-)
-# test_that(
-#     "rgcca_permutationk_optimal_tau", {
-#         test_structure(rgcca_permutation_k(blocks, tau = "optimal", superblock = FALSE, n_cores = 1))
-#         expect_identical(
-#             sapply(
-#                 seq(NROW(par)),
-#                 function(i)
-#                     sum(
-#                         sapply(
-#                             rgcca(
-#                                 blocks,
-#                                 tol = 1e-3,
-#                                 tau = 0,
-#                                 ncomp = par[i, ]
-#                             )$crit,
-#                             sum))),
-#             rgcca_permutation_k(blocks, tau = 0, perm = FALSE, n_cores = 1)
-#         )
-#     }
-# )
+  res_perm <- rgcca_permutation_k(blocks, perm = TRUE, ncomp = 2)
+  res_rgcca <- rgcca(blocks, ncomp = 2)
+  crit <- sum(vapply(
+    res_rgcca$crit, function(x) x[length(x)],
+    FUN.VALUE = double(1)
+  ))
+  expect_lt(res_perm, crit)
+})
 
-res_rgcca <- rgcca(blocks = blocks, method = "sgcca", response = 1, sparsity = c(.75, .8, .9))
-res_perm <- rgcca_permutation_k(blocks = blocks, method = "sgcca", response = 1, sparsity = c(.75, .8, .9), perm = FALSE, par_type = "sparsity")
-res_perm2 <- rgcca_permutation_k(rgcca_res = res_rgcca, perm = FALSE, par_type = "sparsity")
+test_that("rgcca_permutation_k gives the same criterion as sgcca if perm
+          is FALSE", {
+  res_perm <- rgcca_permutation_k(blocks,
+    perm = FALSE, method = "sgcca",
+    par_value = c(.75, .8), par_type = "sparsity"
+  )
+  res_sgcca <- rgcca(blocks, method = "sgcca", sparsity = c(.75, .8))
+  expect_equal(res_perm, res_sgcca$crit[length(res_sgcca$crit)])
 
-test_that(
-  "rgcca_permutationk_with_rgcca",
-  {
-    expect_equal(res_perm, res_perm2)
-  }
-)
+  res_perm <- rgcca_permutation_k(blocks,
+    perm = FALSE, method = "sgcca",
+    par_value = c(.75, .8), par_type = "sparsity",
+    ncomp = 2
+  )
+  res_sgcca <- rgcca(blocks, ncomp = 2, method = "sgcca", sparsity = c(.75, .8))
+  crit <- sum(vapply(
+    res_sgcca$crit, function(x) x[length(x)],
+    FUN.VALUE = double(1)
+  ))
+  expect_equal(res_perm, crit)
+})
+
+test_that("rgcca_permutation_k gives a smaller criterion than sgcca if perm
+          is TRUE", {
+  res_perm <- rgcca_permutation_k(blocks,
+    perm = TRUE, method = "sgcca",
+    par_value = c(.75, .8), par_type = "sparsity"
+  )
+  res_sgcca <- rgcca(blocks, method = "sgcca", sparsity = c(.75, .8))
+  expect_lt(res_perm, res_sgcca$crit[length(res_sgcca$crit)])
+
+  res_perm <- rgcca_permutation_k(blocks,
+    perm = TRUE, method = "sgcca",
+    par_value = c(.75, .8), par_type = "sparsity",
+    ncomp = 2
+  )
+  res_sgcca <- rgcca(blocks, ncomp = 2, method = "sgcca", sparsity = c(.75, .8))
+  crit <- sum(vapply(
+    res_sgcca$crit, function(x) x[length(x)],
+    FUN.VALUE = double(1)
+  ))
+  expect_lt(res_perm, crit)
+})

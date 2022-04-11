@@ -32,7 +32,6 @@
 #' of S/RGCCA. By default, this function performs a one-dimensional
 #' search in tuning parameter space.
 #'
-#' @inheritParams set_connection
 #' @inheritParams bootstrap
 #' @inheritParams rgcca
 #' @inheritParams plot2D
@@ -237,9 +236,9 @@
 #' }
 #'
 #' @export
-rgcca_permutation <- function(blocks, par_type, par_value = NULL,
+rgcca_permutation <- function(blocks, par_type = "tau", par_value = NULL,
                               par_length = 10, n_perms = 20,
-                              n_cores = parallel::detectCores() - 1,
+                              n_cores = 1,
                               quiet = TRUE, scale = TRUE, scale_block = TRUE,
                               method = "rgcca",
                               connection = 1 - diag(length(blocks)),
@@ -276,7 +275,7 @@ rgcca_permutation <- function(blocks, par_type, par_value = NULL,
   ### Check parameters
   check_integer("n_perms", n_perms)
   check_integer("par_length", n_perms)
-  match.arg(par_type, c("tau", "sparsity"))
+  match.arg(par_type, c("tau", "sparsity", "ncomp"))
   if (length(blocks) == 1) {
     stop_rgcca(
       "wrong number of blocks. Permutation requires more than ",
@@ -285,7 +284,7 @@ rgcca_permutation <- function(blocks, par_type, par_value = NULL,
   }
 
   ### Prepare parameters for line search
-  if (method %in% c("sgcca", "spca", "spls")) {
+  if (method %in% c("sgcca", "spca", "spls") && (par_type == "tau")) {
     par_type <- "sparsity"
   } else if (par_type == "sparsity") method <- "sgcca"
 

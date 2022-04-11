@@ -5,7 +5,7 @@ blocks <- list(
   politic = Russett[, 6:11]
 )
 
-# ncomp=1
+### Case ncomp = 1
 rgcca_out <- rgcca(blocks, superblock = FALSE, ncomp = 1)
 resb <- bootstrap_k(rgcca_out)
 
@@ -19,7 +19,7 @@ test_that("test_bootstrapk_1", {
   expect_identical(sapply(resb[[2]], NROW), sapply(blocks, NCOL))
 })
 
-# ncomp=2
+### Case ncomp = 2
 rgcca_out_2 <- rgcca(blocks, superblock = FALSE, ncomp = 2)
 resb_2 <- bootstrap_k(rgcca_out_2)
 
@@ -32,9 +32,9 @@ test_that("test_bootstrapk", {
   expect_identical(sapply(resb_2[[1]], NROW), sapply(blocks, NCOL))
 })
 
-# If one bootstrap sample presents at least a single variable with null variance,
-# bootstrap_k should return the name of the null variance variables in both the
-# two lists it returns.
+# If one bootstrap sample presents at least a single variable with null
+# variance, bootstrap_k should return the name of the null variance variables
+# in both the two lists it returns.
 blocks_3 <- blocks
 blocks_3$agriculture$rent <- 0
 blocks_3$agriculture$rent[1] <- 1

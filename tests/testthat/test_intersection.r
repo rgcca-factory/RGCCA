@@ -21,7 +21,7 @@ ind_NA <- c(2, 4, 8, 12, 17, 23, 30, 32, 40, 42)
 
 test_that("intersection_list selects the common rows without missing values", {
   blocks_inter <- intersection_list(blocks)
-  for (j in 1:length(blocks)) {
+  for (j in seq_along(blocks)) {
     expect_equal(blocks_inter[[j]], subset_rows(blocks[[j]], -ind_NA))
   }
 })

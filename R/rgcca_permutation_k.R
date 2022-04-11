@@ -1,5 +1,10 @@
-# An internal function used by rgcca_permutation() to perform multiple s/rgcca
-# on permuted blocks
+#' An internal function used by rgcca_permutation() to perform multiple s/rgcca
+#' on permuted blocks
+#'
+#' If superblock is TRUE, blocks are permuted and then a superblock is created
+#' by concatenating the permuted blocks.
+#' @inheritParams rgcca_permutation
+#' @noRd
 rgcca_permutation_k <- function(blocks,
                                 method = "rgcca",
                                 scale = TRUE,
@@ -17,34 +22,8 @@ rgcca_permutation_k <- function(blocks,
                                 NA_method = "nipals",
                                 quiet = TRUE,
                                 perm = TRUE,
-                                rgcca_res = NULL,
                                 par_type = "tau",
                                 par_value = rep(1, length(blocks))) {
-  if (!is.null(rgcca_res)) {
-    stopifnot(is(rgcca_res, "rgcca"))
-    method <- rgcca_res$call$method
-    scale_block <- rgcca_res$call$scale_block
-    scale <- rgcca_res$call$scale
-    scheme <- rgcca_res$call$scheme
-    response <- rgcca_res$call$response
-    tol <- rgcca_res$call$tol
-    NA_method <- rgcca_res$call$NA_method
-    init <- rgcca_res$call$init
-    bias <- rgcca_res$call$bias
-    blocks <- rgcca_res$call$raw
-    superblock <- rgcca_res$call$superblock
-    connection <- rgcca_res$call$connection
-    tau <- rgcca_res$call$tau
-    ncomp <- rgcca_res$call$ncomp
-    sparsity <- rgcca_res$call$sparsity
-  }
-
-  if (method %in% c("sgcca", "spls", "spca")) {
-    par_type <- "sparsity"
-  } else {
-    par_type <- "tau"
-  }
-
   blocks_to_use <- blocks
   if (perm) {
     blocks_to_use <- lapply(
@@ -80,7 +59,7 @@ rgcca_permutation_k <- function(blocks,
 
   res <- do.call(rgcca, rgcca_args)
 
-  if (max(ncomp) > 1) {
+  if (max(res$call$ncomp) > 1) {
     criterion <- vapply(res$crit, function(x) {
       x[length(x)]
     }, FUN.VALUE = numeric(1))

@@ -32,8 +32,8 @@ test_that("pVAL_high_noRiskyVAR", {
 })
 
 # Now, if `pval` is set to default, when `balanced = T` and
-# `keep_all_variables = F`, a warning is generated to inform that variable `rent`
-# is removed and `rent` is indeed removed.
+# `keep_all_variables = F`, a warning is generated to inform that variable
+# `rent` is removed and `rent` is indeed removed.
 set.seed(8882)
 test_that("generate_resampling_missing_val_identification", {
   sample_out <- expect_warning(
@@ -136,8 +136,8 @@ test_that(
 #########################################
 #   Test with 2 very risky variables    #
 #########################################
-# Now `rent` and `death` are trapped to be very risky variables (only 1 observation
-# differs from the others).
+# Now `rent` and `death` are trapped to be very risky variables (only 1
+# observation differs from the others).
 # Four tests are performed :
 #   - "generate_resampling_veryRisky_1" : when `balanced = T`
 #      and `keep_all_variables = F`, a warning to inform that `rent` and `death`
@@ -219,8 +219,8 @@ test_that("generate_resampling_veryRisky_5", {
 ##################################################################
 #   Test with 2 very risky variables on a block of 2 variables   #
 ##################################################################
-# Now `rent` and `death` are trapped to be very risky variables (only 1 observation
-# differs from the others).
+# Now `rent` and `death` are trapped to be very risky variables (only 1
+# observation differs from the others).
 # Four tests are performed :
 #   - "generate_resampling_ALL_Block_1" : when `balanced = T`
 #      and `keep_all_variables = F`, an error is raised as it want to remove

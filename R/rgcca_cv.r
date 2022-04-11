@@ -7,8 +7,8 @@
 #' be tested on each fold and trained on the others. For small datasets
 #' (<30 samples), it is recommended to use as many folds as there are
 #' individuals (leave-one-out; loo).
-#' @inheritParams rgcca_cv_k
 #' @inheritParams rgcca
+#' @inheritParams rgcca_predict
 #' @inheritParams bootstrap
 #' @param par_type A character giving the parameter to tune among "sparsity"
 #' or "tau".
@@ -19,6 +19,9 @@
 #'  for RGCCA and $1/sqrt(ncol)$ for SGCCA) and 1.
 #' @param par_length An integer indicating the number of sets of parameters to
 #' be tested (if par_value = NULL). The parameters are uniformly distributed.
+#' @param k An integer giving the number of folds (if validation = 'kfold').
+#' @param validation A character for the type of validation among "loo",
+#' "kfold".
 #' @param n_run An integer giving the number of cross-validations to be run
 #' (if validation = 'kfold').
 #' @export
@@ -84,7 +87,7 @@ rgcca_cv <- function(blocks,
                      prediction_model = "lm",
                      k = 5,
                      n_run = 1,
-                     n_cores = parallel::detectCores() - 1,
+                     n_cores = 1,
                      quiet = TRUE,
                      superblock = FALSE,
                      scale = TRUE,

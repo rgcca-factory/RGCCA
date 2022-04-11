@@ -41,7 +41,10 @@ test_that("bootstrap_default", {
   select_var <- get_bootstrap(boot)
   expect_is(select_var, "df_bootstrap")
   expect_is(select_var, "data.frame")
-  expect_identical(NROW(select_var), NCOL(rgcca_out$call$blocks[[length(rgcca_out$call$blocks)]]))
+  expect_identical(
+    NROW(select_var),
+    NCOL(rgcca_out$call$blocks[[length(rgcca_out$call$blocks)]])
+  )
 })
 
 blocks[[1]][1:3, 1] <- NA
@@ -62,5 +65,7 @@ test_that("test_bootstrap_na_values", {
     select_var["demostab", 2],
     mean(resBootstrap$bootstrap[[1]][[1]][["politic"]]["demostab", ])
   )
-  expect_true(select_var["demostab", "estimate"] == resRGCCA$a[[3]]["demostab", 1])
+  expect_true(
+    select_var["demostab", "estimate"] == resRGCCA$a[[3]]["demostab", 1]
+  )
 })

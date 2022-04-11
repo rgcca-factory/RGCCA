@@ -1,3 +1,17 @@
+#' Format bootstrap results
+#'
+#' Raw bootstrap results are stored in a list of n_boot elements where each
+#' element of this list is a list of J matrices. Each of these matrices has
+#' ncomp[j] columns where ncomp[j] is the number of components for block j.
+#' The aim of this function is to reorganize this list to have a list of
+#' max(ncomp) elements, where each each element is a list of J matrices of
+#' n_boot columns.
+#' @param W raw bootstrap results
+#' @param rgcca_res a fitted rgcca object
+#' @param n_boot the number of bootstrap samples
+#' @param n integer (1 or 2) indicating which of raw bootstrap list to reorder
+#' @return Reordered list of bootstrap results.
+#' @noRd
 format_bootstrap_list <- function(W, rgcca_res, n_boot, n = 1) {
   ndefl_max <- max(rgcca_res$call$ncomp)
   X <- lapply(W, `[[`, n)

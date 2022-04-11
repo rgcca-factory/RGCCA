@@ -1,3 +1,6 @@
+#' Function to perform the update of RGCCA variables
+#'
+#' @noRd
 rgcca_update <- function(A, a, alpha, Y, M, K, Minv, bias, na.rm, tau,
                          which.primal, which.dual, J, n, dg, C) {
   Z <- matrix(0, n, J)

@@ -1,3 +1,6 @@
+#' Center and scale a list of blocks
+#' @inheritParams rgcca
+#' @noRd
 scaling <- function(blocks, scale = TRUE, bias = TRUE,
                     scale_block = "inertia") {
   if (is.logical(scale_block) && scale_block) scale_block <- "inertia"

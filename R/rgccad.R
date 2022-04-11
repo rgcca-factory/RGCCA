@@ -37,20 +37,8 @@
 #' The rgcca() function can handle missing values using a NIPALS type algorithm
 #' (non-linear iterative partial least squares algorithm) as described in
 #' (Tenenhaus et al, 2005).
-#' @inheritParams select_analysis
-#' @param verbose Logical value indicating if the progress of the
-#' algorithm is reported while computing.
-#' @param init Character string giving the type of initialization to use in
-#' the  algorithm. It could be either by Singular Value Decompostion ("svd")
-#' or by random initialisation ("random") (default: "svd").
-#' @param bias A logical value for biaised (\eqn{1/n}) or unbiaised
-#' (\eqn{1/(n-1)}) estimator of the var/cov (default: bias = TRUE).
-#' @param tol The stopping value for the convergence of the algorithm.
+#' @inheritParams rgcca
 #' @param na.rm If TRUE, runs rgcca only on available data.
-#' @param superblock TRUE if a superblock is added, FALSE otherwise (deflation
-#' strategy must be adapted when a superblock is used).
-#' @param n_iter_max Integer giving the algorithm's maximum number of
-#' iterations.
 #' @return \item{Y}{A list of \eqn{J} elements. Each element of the list is a
 #' matrix that contains the RGCCA block components for the corresponding block.}
 #' @return \item{a}{A list of \eqn{J} elements. Each element of the list \eqn{a}
@@ -185,11 +173,7 @@
 #' text(fit.rgcca$Y[[1]], fit.rgcca$Y[[2]], rownames(Russett), col = lab)
 #' text(Ytest[, 1], Ytest[, 2], substr(rownames(Russett), 1, 1), col = lab)
 #' @export rgccad
-#' @importFrom graphics abline axis close.screen grid legend lines par points
-#' rect screen segments split.screen text
-#' @importFrom stats binomial glm lm predict sd var weighted.mean
-#' @importFrom utils read.table write.table
-#' @importFrom stats as.formula qt
+#' @importFrom graphics text
 
 rgccad <- function(blocks, connection = 1 - diag(length(blocks)),
                    tau = rep(1, length(blocks)),
@@ -251,7 +235,7 @@ rgccad <- function(blocks, connection = 1 - diag(length(blocks)),
   if (is.vector(tau)) {
     computed_tau <- matrix(
       rep(tau, N + 1),
-      nrow = N + 1, J, byrow = T
+      nrow = N + 1, J, byrow = TRUE
     )
   }
 
@@ -284,8 +268,8 @@ rgccad <- function(blocks, connection = 1 - diag(length(blocks)),
         astar[, 1] <- a[[J]][, 1, drop = FALSE]
       } else {
         astar[, n] <- gcca_result$a[[J]] -
-          astar[, seq(n - 1), drop = F] %*%
-          drop(t(a[[J]][, n]) %*% P[, seq(n - 1), drop = F])
+          astar[, seq(n - 1), drop = FALSE] %*%
+          drop(t(a[[J]][, n]) %*% P[, seq(n - 1), drop = FALSE])
       }
     } else {
       if (n == 1) {
@@ -294,8 +278,8 @@ rgccad <- function(blocks, connection = 1 - diag(length(blocks)),
         astar <- lapply(seq(J), function(b) {
           update_col_n(
             astar[[b]],
-            gcca_result$a[[b]] - astar[[b]][, seq(n - 1), drop = F] %*%
-              drop(t(a[[b]][, n]) %*% P[[b]][, seq(n - 1), drop = F]),
+            gcca_result$a[[b]] - astar[[b]][, seq(n - 1), drop = FALSE] %*%
+              drop(t(a[[b]][, n]) %*% P[[b]][, seq(n - 1), drop = FALSE]),
             n
           )
         })

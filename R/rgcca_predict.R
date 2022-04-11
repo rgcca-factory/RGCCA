@@ -1,6 +1,6 @@
 #' Predict RGCCA
 #'
-#' Predict a new block from a RGCCA
+#' Predict a new block from a fitted RGCCA object.
 #'
 #' @inheritParams rgcca_transform
 #' @param prediction_model A character giving the function used to compare the
@@ -44,6 +44,7 @@
 #' res <- rgcca_predict(object, X, response = "industry")
 #' @importFrom caret train trainControl confusionMatrix
 #' @importFrom caret multiClassSummary postResample
+#' @importFrom stats lm predict
 #' @export
 rgcca_predict <- function(rgcca_res,
                           blocks_test,
@@ -105,20 +106,13 @@ rgcca_predict <- function(rgcca_res,
     y_test <- y_test[, colnames(y_train), drop = FALSE]
   }
 
-  ### One hot encode response if needed
-  rgcca_response <- rgcca_res$call$response
-  if (!is.null(rgcca_response) && !is.null(rgcca_res$call$disjunction)) {
-    blocks_test[[test_idx]] <- as_disjunctive(
-      blocks_test[[test_idx]],
-      levs = unique(rgcca_res$call$raw[[rgcca_response]])
-    )
-  }
+
 
   ### Get projected train and test data
-  projection <- rgcca_transform(rgcca_res, blocks_test)
+  projection <- rgcca_transform(rgcca_res, blocks_test[-test_idx])
   X_train <- rgcca_res$Y[names(projection)]
-  X_train <- reformat_projection(X_train[-test_idx])
-  X_test <- reformat_projection(projection[-test_idx])
+  X_train <- reformat_projection(X_train)
+  X_test <- reformat_projection(projection)
 
   # Keep same lines in X_train and y_train
   y_train <- subset_rows(y_train, rownames(X_train))

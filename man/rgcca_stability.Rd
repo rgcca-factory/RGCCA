@@ -8,7 +8,7 @@ rgcca_stability(
   rgcca_res,
   keep = sapply(rgcca_res$a, function(x) mean(x != 0)),
   n_boot = 100,
-  n_cores = parallel::detectCores() - 1,
+  n_cores = 1,
   verbose = FALSE,
   balanced = TRUE,
   keep_all_variables = FALSE

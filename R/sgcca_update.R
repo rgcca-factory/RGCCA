@@ -1,3 +1,6 @@
+#' Function to perform the update of SGCCA variables
+#'
+#' @noRd
 sgcca_update <- function(A, a, Y, bias, na.rm, const, J, n, dg, C) {
   Z <- matrix(0, n, J)
 
@@ -6,7 +9,7 @@ sgcca_update <- function(A, a, Y, bias, na.rm, const, J, n, dg, C) {
     CbyCovq <- drop(C[b, ] * dgx)
     Z[, b] <- Y %*% CbyCovq
     a[[b]] <- pm(t(A[[b]]), Z[, b], na.rm = na.rm)
-    a[[b]] <- soft.threshold(a[[b]], const[b])
+    a[[b]] <- soft_threshold(a[[b]], const[b])
     Y[, b] <- pm(A[[b]], a[[b]], na.rm = na.rm)
   }
 

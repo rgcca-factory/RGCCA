@@ -7,7 +7,7 @@
 bootstrap(
   rgcca_res,
   n_boot = 100,
-  n_cores = parallel::detectCores() - 1,
+  n_cores = 1,
   balanced = TRUE,
   keep_all_variables = FALSE,
   verbose = TRUE
@@ -34,11 +34,11 @@ bootstrap procedure is reported.}
 A list containing two objects: 'bootstrap' and 'rgcca'.
 'bootstrap' is a list containing for each block, a matrix
 with the variables of the block in row and the block weight vector
-calculated accross bootstrap sample in column. 'rgcca' is the fitted rgcca
+calculated across bootstrap sample in column. 'rgcca' is the fitted rgcca
 object obtained from the original data. (see  \code{\link[RGCCA]{rgcca}})
 }
 \description{
-Boostrap confidence intervals and p-values for evaluating the significancy/
+Bootstrap confidence intervals and p-values for evaluating the significance/
 stability of the block-weight vectors produce by S/RGCCA.
 }
 \examples{

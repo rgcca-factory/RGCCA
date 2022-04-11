@@ -21,8 +21,8 @@
 #' implementation, i.e. each block is deflated with respect to its own
 #' component. Moreover, we stress that the numbers of components per block
 #' could differ from one block to another.
-#' @inheritParams select_analysis
-#' @inheritParams rgccad
+#' @inheritParams rgcca
+#' @param na.rm If TRUE, runs sgcca only on available data.
 #' @return \item{Y}{A list of \eqn{J} elements. Each element of \eqn{Y} is a
 #' matrix that contains the analysis components for the corresponding block.}
 #' @return \item{a}{A list of \eqn{J} elements. Each element of \eqn{a} is a
@@ -190,7 +190,7 @@ sgcca <- function(blocks, connection = 1 - diag(length(blocks)),
   if (is.vector(sparsity)) {
     sparsity <- matrix(
       rep(sparsity, N + 1),
-      nrow = N + 1, J, byrow = T
+      nrow = N + 1, J, byrow = TRUE
     )
   }
 
@@ -222,8 +222,8 @@ sgcca <- function(blocks, connection = 1 - diag(length(blocks)),
         astar[, 1] <- a[[J]][, 1, drop = FALSE]
       } else {
         astar[, n] <- gcca_result$a[[J]] -
-          astar[, seq(n - 1), drop = F] %*%
-          drop(t(a[[J]][, n]) %*% P[, seq(n - 1), drop = F])
+          astar[, seq(n - 1), drop = FALSE] %*%
+          drop(t(a[[J]][, n]) %*% P[, seq(n - 1), drop = FALSE])
       }
     } else {
       if (n == 1) {
@@ -232,8 +232,8 @@ sgcca <- function(blocks, connection = 1 - diag(length(blocks)),
         astar <- lapply(seq(J), function(b) {
           update_col_n(
             astar[[b]],
-            gcca_result$a[[b]] - astar[[b]][, seq(n - 1), drop = F] %*%
-              drop(t(a[[b]][, n]) %*% P[[b]][, seq(n - 1), drop = F]),
+            gcca_result$a[[b]] - astar[[b]][, seq(n - 1), drop = FALSE] %*%
+              drop(t(a[[b]][, n]) %*% P[[b]][, seq(n - 1), drop = FALSE]),
             n
           )
         })

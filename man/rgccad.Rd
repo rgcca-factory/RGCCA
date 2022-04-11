@@ -70,8 +70,8 @@ algorithm is reported while computing.}
 
 \item{quiet}{Logical value indicating if warning messages are reported.}
 
-\item{superblock}{TRUE if a superblock is added, FALSE otherwise (deflation
-strategy must be adapted when a superblock is used).}
+\item{superblock}{Boolean indicating the presence of a superblock
+(deflation strategy must be adapted when a superblock is used).}
 
 \item{response}{Numerical value giving the position of the response block.
 When the response argument is filled the supervised mode is automatically

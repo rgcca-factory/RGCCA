@@ -59,9 +59,6 @@ check_compx <- function(x, y, ncomp, blockx) {
 }
 
 # Check the format of the connection matrix
-#
-# @inheritParams rgccad
-# @inheritParams set_connection
 check_connection <- function(C, blocks) {
   msg <- "connection matrix C must"
 
@@ -406,7 +403,7 @@ check_size_file <- function(filename) {
   }
 }
 
-check_penalty <- function(penalty, blocks, method = "rgcca", superblock = F,
+check_penalty <- function(penalty, blocks, method = "rgcca", superblock = FALSE,
                           ncomp = NULL) {
   if (superblock) {
     blocks[[length(blocks) + 1]] <- Reduce(cbind, blocks)
@@ -420,7 +417,9 @@ check_penalty <- function(penalty, blocks, method = "rgcca", superblock = F,
   DIM <- dim(penalty)
 
   # Check value of each penalty
-  if (method == "rgcca") penalty <- sapply(penalty, check_tau, USE.NAMES = F)
+  if (method == "rgcca") {
+    penalty <- sapply(penalty, check_tau, USE.NAMES = FALSE)
+  }
   if (method == "sgcca") {
     divider <- ifelse(is_matrix, DIM[1], 1)
     penalty <- sapply(

@@ -6,11 +6,11 @@
 \usage{
 rgcca_permutation(
   blocks,
-  par_type,
+  par_type = "tau",
   par_value = NULL,
   par_length = 10,
   n_perms = 20,
-  n_cores = parallel::detectCores() - 1,
+  n_cores = 1,
   quiet = TRUE,
   scale = TRUE,
   scale_block = TRUE,
@@ -128,10 +128,12 @@ or by random initialisation ("random") (default: "svd").}
 
 \item{tol}{The stopping value for the convergence of the algorithm.}
 
-\item{response}{Position of the response block}
+\item{response}{Numerical value giving the position of the response block.
+When the response argument is filled the supervised mode is automatically
+activated.}
 
-\item{superblock}{Boolean indicating the presence of the superblock.
-Default = TRUE}
+\item{superblock}{Boolean indicating the presence of a superblock
+(deflation strategy must be adapted when a superblock is used).}
 
 \item{NA_method}{Character string corresponding to the method used for
 handling missing values ("nipals", "complete"). (default: "nipals").

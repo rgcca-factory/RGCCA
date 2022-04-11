@@ -69,10 +69,10 @@ algorithm is reported while computing.}
 
 \item{quiet}{Logical value indicating if warning messages are reported.}
 
-\item{na.rm}{If TRUE, runs rgcca only on available data.}
+\item{na.rm}{If TRUE, runs sgcca only on available data.}
 
-\item{superblock}{Boolean indicating the presence of the superblock.
-Default = TRUE}
+\item{superblock}{Boolean indicating the presence of a superblock
+(deflation strategy must be adapted when a superblock is used).}
 
 \item{response}{Numerical value giving the position of the response block.
 When the response argument is filled the supervised mode is automatically

@@ -51,11 +51,6 @@
 #' variable where this observation is in the lowest frequent group
 #' (through all risky variables)`.
 #' @inheritParams bootstrap
-#' @param balanced A boolean indicating if a balanced bootstrap procedure is
-#' performed or not (default is TRUE).
-#' @param keep_all_variables A boolean indicating if all variables have to be
-#' kept even when some of them have null variance for at least one bootstrap
-#' sample (default is FALSE).
 #' @param pval For all the variables, a threshold for the proportion of the most
 #' frequent value of this variable is computed. This threshold is evaluated so
 #' that the probability to sample only this value is below `pval`. This
@@ -69,14 +64,14 @@
 #' variance in at least one bootstrap sample. If no variable is removed,
 #' return NULL.}
 #' @title Generate bootstrap samples.
-#' @keywords internal
+#' @noRd
 
 generate_resampling <- function(rgcca_res, n_boot, balanced = TRUE,
                                 keep_all_variables = FALSE, pval = 1e-15,
                                 verbose = TRUE) {
   if (verbose) {
     packageStartupMessage("Bootstrap samples sanity check...",
-      appendLF = F
+      appendLF = FALSE
     )
   }
 

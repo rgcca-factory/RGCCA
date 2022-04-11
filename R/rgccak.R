@@ -4,7 +4,6 @@
 #' dimensionality of each block \eqn{X_j, j = 1, ..., J}, the primal
 #' (when n > p_j) or the dual (when n < p_j) algorithm is used (see
 #' Tenenhaus et al. 2015)
-#' @inheritParams select_analysis
 #' @inheritParams rgccad
 #' @param A  A list that contains the \eqn{J} blocks of variables from which
 #' block components are constructed. It could be eiher the original matrices
@@ -50,7 +49,7 @@
 #' @importFrom stats cor rnorm
 #' @importFrom graphics plot
 #' @importFrom Deriv Deriv
-
+#' @noRd
 rgccak <- function(A, C, tau = rep(1, length(A)), scheme = "centroid",
                    verbose = FALSE, init = "svd", bias = TRUE,
                    tol = 1e-08, na.rm = TRUE, n_iter_max = 1000) {
@@ -135,7 +134,7 @@ rgccak <- function(A, C, tau = rep(1, length(A)), scheme = "centroid",
     }
 
     stopping_criteria <- c(
-      drop(crossprod(unlist(a, F, F) - unlist(a_old, F, F))),
+      drop(crossprod(unlist(a, FALSE, FALSE) - unlist(a_old, FALSE, FALSE))),
       abs(crit[iter] - crit_old)
     )
 

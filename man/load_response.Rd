@@ -14,12 +14,6 @@ load_response(
 )
 }
 \arguments{
-\item{blocks}{A list that contains the J blocks of variables
-\eqn{\mathbf{X_1}, \mathbf{X_2}, ..., \mathbf{X_J}}{X1, X2, ..., XJ}.
-Block \eqn{\mathbf{X}_j}{Xj} is a matrix of dimension
-\eqn{n \times p_j}{n x p_j} where n is the number of
-observations and \eqn{p_j} the number of variables.}
-
 \item{file}{A character giving the path of a file}
 
 \item{separator}{A character giving the column separator}

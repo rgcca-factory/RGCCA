@@ -15,7 +15,7 @@ rgcca_cv(
   prediction_model = "lm",
   k = 5,
   n_run = 1,
-  n_cores = parallel::detectCores() - 1,
+  n_cores = 1,
   quiet = TRUE,
   superblock = FALSE,
   scale = TRUE,
@@ -78,8 +78,8 @@ trained and the tested models.}
 
 \item{quiet}{Logical value indicating if warning messages are reported.}
 
-\item{superblock}{TRUE if a superblock is added, FALSE otherwise (deflation
-strategy must be adapted when a superblock is used).}
+\item{superblock}{Boolean indicating the presence of a superblock
+(deflation strategy must be adapted when a superblock is used).}
 
 \item{scale}{Logical value indicating if blocks are standardized.}
 

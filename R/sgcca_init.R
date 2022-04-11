@@ -1,3 +1,6 @@
+#' Function to initialize the SGCCA variables
+#'
+#' @noRd
 sgcca_init <- function(A, init, bias, na.rm, const, pjs, J, n) {
   a <- list()
   Y <- matrix(0, n, J)
@@ -15,7 +18,7 @@ sgcca_init <- function(A, init, bias, na.rm, const, pjs, J, n) {
     a <- lapply(pjs, rnorm)
   }
 
-  a <- lapply(seq(J), function(b) soft.threshold(a[[b]], const[b]))
+  a <- lapply(seq(J), function(b) soft_threshold(a[[b]], const[b]))
   Y <- sapply(seq(J), function(b) pm(A[[b]], a[[b]], na.rm = na.rm))
 
   return(list(a = a, Y = Y))

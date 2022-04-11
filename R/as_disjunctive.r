@@ -1,3 +1,12 @@
+#' One hot encoding of a vector
+#'
+#' This function tries to one hot encode a vector of characters or leave it
+#' untouched if not relevant.
+#' @param vec vector to transform
+#' @param levs factor levels associated to the possible values of \code{vec}.
+#' If NULL, levels are directly taken from the values of \code{vec}.
+#' @return One hot encoded version of \code{vec} or \code{vec} unchanged.
+#' @noRd
 as_disjunctive <- function(vec, levs = NULL) {
   if (NCOL(vec) > 1 || mode(vec) != "character") {
     return(vec)

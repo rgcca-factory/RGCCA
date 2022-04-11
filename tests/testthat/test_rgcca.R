@@ -124,15 +124,21 @@ sqrt_matrix <- function(M) {
   return(list(M_sqrt = M_sqrt, Minv_sqrt = Minv_sqrt))
 }
 
-fit.svd <- svd(sqrt_matrix(Sigma_11)[[2]] %*% Sigma_12 %*% sqrt_matrix(Sigma_22)[[2]])
+fit.svd <- svd(
+  sqrt_matrix(Sigma_11)[[2]] %*% Sigma_12 %*% sqrt_matrix(Sigma_22)[[2]]
+)
 
 test_that("RGCCA is equivalent to CCA when there are two blocks and tau = 0", {
   fit.rgcca <- rgcca(
     blocks = A, scale = FALSE, tau = 0, scheme = "horst",
     scale_block = FALSE, tol = 1e-16, bias = FALSE
   )
-  expect_true(sum(abs(fit.svd$u[, 1] - sqrt_matrix(Sigma_11)[[1]] %*% fit.rgcca$a[[1]])) < 1e-8)
-  expect_true(sum(abs(fit.svd$v[, 1] - sqrt_matrix(Sigma_22)[[1]] %*% fit.rgcca$a[[2]])) < 1e-8)
+  expect_true(sum(abs(
+    fit.svd$u[, 1] - sqrt_matrix(Sigma_11)[[1]] %*% fit.rgcca$a[[1]]
+  )) < 1e-8)
+  expect_true(sum(abs(
+    fit.svd$v[, 1] - sqrt_matrix(Sigma_22)[[1]] %*% fit.rgcca$a[[2]]
+  )) < 1e-8)
 })
 
 test_that("RGCCA is equivalent to CCA when method = 'cca'", {
@@ -140,8 +146,12 @@ test_that("RGCCA is equivalent to CCA when method = 'cca'", {
     blocks = A, method = "cca", scale = FALSE,
     scale_block = FALSE, tol = 1e-16, bias = FALSE
   )
-  expect_true(sum(abs(fit.svd$u[, 1] - sqrt_matrix(Sigma_11)[[1]] %*% fit.rgcca$a[[1]])) < 1e-8)
-  expect_true(sum(abs(fit.svd$v[, 1] - sqrt_matrix(Sigma_22)[[1]] %*% fit.rgcca$a[[2]])) < 1e-8)
+  expect_true(sum(abs(
+    fit.svd$u[, 1] - sqrt_matrix(Sigma_11)[[1]] %*% fit.rgcca$a[[1]]
+  )) < 1e-8)
+  expect_true(sum(abs(
+    fit.svd$v[, 1] - sqrt_matrix(Sigma_22)[[1]] %*% fit.rgcca$a[[2]]
+  )) < 1e-8)
 })
 
 ##### Perform OLS with RGCCA #####

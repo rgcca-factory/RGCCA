@@ -1,8 +1,6 @@
 #' The function sgccak() is called by sgcca() and does not have to be used by
 #' the user. sgccak() enables the computation of SGCCA block components, outer
 #' weight vectors, etc., for each block and each deflation stage.
-#' @inheritParams select_analysis
-#' @inheritParams rgccad
 #' @inheritParams sgcca
 #' @inheritParams rgccak
 #' @return \item{Y}{A list of \eqn{J} elements. Each element of \eqn{Y} is a
@@ -11,14 +9,12 @@
 #' matrix that contains the outer weight vectors for each block.}
 #' @return \item{crit}{A vector of integer that contains for each component
 #' the values of the analysis criteria across iterations.}
-#' @return \item{converg}{Speed of convergence of the alogrithm to reach the
-#' tolerance.}
-#' @return \item{AVE}{A list of numerical values giving the indicators of model
-#' quality based on the Average Variance Explained (AVE): AVE(for each block),
-#' AVE(outer model), AVE(inner model).}
+#' @return \item{AVE_inner}{Average Variance Explained (AVE) of the
+#' inner model.}
 #' @title Internal function for computing the SGCCA parameters (SGCCA block
 #' components, outer weight vectors etc.)
 #' @importFrom Deriv Deriv
+#' @noRd
 sgccak <- function(A, C, sparsity = rep(1, length(A)),
                    scheme = "centroid", tol = 1e-08,
                    init = "svd", bias = TRUE, verbose = FALSE,
@@ -84,7 +80,7 @@ sgccak <- function(A, C, sparsity = rep(1, length(A)),
       )
     }
     stopping_criteria <- c(
-      drop(crossprod(unlist(a, F, F) - unlist(a_old, F, F))),
+      drop(crossprod(unlist(a, FALSE, FALSE) - unlist(a_old, FALSE, FALSE))),
       abs(crit[iter] - crit_old)
     )
 

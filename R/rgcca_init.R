@@ -1,3 +1,6 @@
+#' Function to initialize the RGCCA variables
+#'
+#' @noRd
 rgcca_init <- function(A, init, bias, na.rm, tau, pjs, which.primal,
                        which.dual, J, n) {
   a <- alpha <- M <- Minv <- K <- list()

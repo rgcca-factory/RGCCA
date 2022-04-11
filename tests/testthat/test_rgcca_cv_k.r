@@ -76,8 +76,7 @@ test_that("rgcca_cv_k gives the same scores in leave-one-out as
   rgcca_out <- rgcca(blocks_classif, response = response, ncomp = 1)
   res_cv_k <- rgcca_cv_k(
     rgcca_res = rgcca_out, n_cores = 1,
-    validation = "loo", prediction_model = "lda",
-    classification = TRUE
+    validation = "loo", prediction_model = "lda"
   )
   res_custom_cv_k <- custom_rgcca_cv_k(blocks_classif, response, "lda")
   expect_equal(res_cv_k$vec_scores, res_custom_cv_k)
@@ -85,8 +84,7 @@ test_that("rgcca_cv_k gives the same scores in leave-one-out as
   rgcca_out <- rgcca(blocks_classif, response = response, ncomp = 2)
   res_cv_k <- rgcca_cv_k(
     rgcca_res = rgcca_out, n_cores = 1,
-    validation = "loo", prediction_model = "lda",
-    classification = TRUE
+    validation = "loo", prediction_model = "lda"
   )
   res_custom_cv_k <- custom_rgcca_cv_k(blocks_classif, response, "lda",
     ncomp = 2

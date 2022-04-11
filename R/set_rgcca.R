@@ -1,6 +1,11 @@
-# inds : individuals removed from the blocks (for crossvalidation)
-# affects same parameters as rgcca_res (or other ones if specified) on a subset
-# of individuals determined by inds (individuals to remove)
+#' Set and run RGCCA on a subset of individuals (used in bootstrap and
+#' cross validation procedures)
+#'
+#' set_rgcca() runs a new RGCCA model with the same parameters as a fitted RGCCA
+#' model (or other ones if specified) on a subset of individuals.
+#' @param inds vector of individuals removed from the blocks
+#' @param keep_inds logical, if TRUE, inds are kept instead of being removed
+#' @noRd
 set_rgcca <- function(rgcca_res,
                       blocks = NULL,
                       connection = NULL,
