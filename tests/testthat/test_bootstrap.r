@@ -47,6 +47,24 @@ test_that("bootstrap_default", {
   )
 })
 
+### Case sgcca
+rgcca_out <- rgcca(blocks,
+  ncomp = 2, method = "sgcca",
+  sparsity = c(0.8, 0.9, 0.7), superblock = TRUE
+)
+boot <- bootstrap(rgcca_out, n_boot = 2, n_cores = 1)
+
+test_that("bootstrap_default", {
+  expect_equal(length(boot), 2)
+  expect_equal(length(boot$bootstrap), 2)
+  boot1 <- boot$bootstrap[[1]][[1]]
+  expect_is(boot, "bootstrap")
+  expect_is(boot$rgcca, "rgcca")
+  expect_is(boot1, "list")
+  expect_is(boot1[[1]], "matrix")
+  expect_true(all(vapply(boot1, NCOL, FUN.VALUE = 1L) == 2))
+})
+
 blocks[[1]][1:3, 1] <- NA
 blocks[[1]][4, ] <- NA
 resRGCCA <- rgcca(blocks, ncomp = c(2, 2, 2), superblock = FALSE)

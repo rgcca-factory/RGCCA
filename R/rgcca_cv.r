@@ -156,7 +156,9 @@ rgcca_cv <- function(blocks,
 
   check_integer("par_length", par_length)
   check_integer("n_run", n_run)
+  check_integer("k", k, min = 2)
   match.arg(par_type, c("tau", "sparsity", "ncomp"))
+  match.arg(validation, c("loo", "kfold"))
 
   ### Prepare parameters for line search
   if (method %in% c("sgcca", "spca", "spls") && (par_type == "tau")) {
@@ -173,8 +175,10 @@ rgcca_cv <- function(blocks,
       NCOL(blocks[[j]]) > n && any(param$par_value[, j] == 0)
     }, FUN.VALUE = logical(1L)))
   if (overfitting_risk) {
-    warning("overfitting risk. Tau is zero for a block that has more columns ",
-            "than rows, there is a high risk of overfitting for RGCCA.")
+    warning(
+      "overfitting risk. Tau is zero for a block that has more columns ",
+      "than rows, there is a high risk of overfitting for RGCCA."
+    )
   }
 
   ### Start line search

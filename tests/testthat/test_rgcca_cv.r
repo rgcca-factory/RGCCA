@@ -5,6 +5,7 @@ blocks <- list(
   industry = Russett[, 4:5],
   politic = Russett[, 6:11]
 )
+fit_rgcca <- rgcca(blocks, response = 3)
 
 blocks_classif <- list(
   agriculture = Russett[, 1:3],
@@ -41,7 +42,8 @@ test_that("rgcca_cv generates a warning if tau is null and block has more
   bad_block <- matrix(rnorm(47 * 127), nrow = 47)
   bad_blocks <- list(bad_block, blocks[[1]], blocks[[2]], blocks[[3]])
   expect_warning(rgcca_cv(bad_blocks, response = 4, prediction_model = "lm"),
-                 "overfitting risk.", fixed = TRUE
+    "overfitting risk.",
+    fixed = TRUE
   )
   expect_warning(rgcca_cv(blocks, response = 3, prediction_model = "lm"), NA)
 })
@@ -76,4 +78,14 @@ test_that("rgcca_cv computes k * n_run scores per parameter value", {
     n_run = 4, validation = "kfold", k = 7
   )
   expect_equal(dim(res$cv), c(2, 7 * 4))
+  res <- rgcca_cv(blocks_classif,
+    response = 3, par_type = "ncomp", par_length = 2,
+    n_run = 5, validation = "kfold", k = 6, prediction_model = "lda"
+  )
+  expect_equal(dim(res$cv), c(2, 6 * 5))
+  res <- rgcca_cv(fit_rgcca,
+    response = 3, par_type = "ncomp", par_length = 1,
+    validation = "loo"
+  )
+  expect_equal(dim(res$cv), c(1, 47))
 })

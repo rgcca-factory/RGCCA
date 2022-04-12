@@ -48,6 +48,19 @@ test_that("rgcca_predict raises an error if response is an integer but
   )
 })
 
+test_that("rgcca_predict raises an error if response block is not present in
+          training blocks", {
+  blocks_test <- blocks
+  names(blocks_test)[[3]] <- "response"
+  expect_error(rgcca_predict(fit_rgcca, blocks_test, response = "response"),
+    paste0(
+      "The block to predict is not among both train and ",
+      "test blocks. Please provide an appropriate one."
+    ),
+    fixed = TRUE
+  )
+})
+
 test_that("rgcca_predict raises an error if response block dimensions do not
           match", {
   blocks_test <- blocks
@@ -106,7 +119,7 @@ test_that("rgcca_predict with lda predictor gives the same prediction as
   fit_rgcca <- rgcca(A, tau = 1, ncomp = c(3, 2, 1), response = response)
   res_predict <- rgcca_predict(fit_rgcca,
     blocks_test = A,
-    prediction_model = "lda", response = response
+    prediction_model = "lda", response = "politic"
   )
   Y <- data.frame(cbind(fit_rgcca$Y[[1]][, 1:3], fit_rgcca$Y[[2]][, 1:2]))
   res_lda <- MASS::lda(fit_rgcca$call$raw[[response]] ~ as.matrix(Y))

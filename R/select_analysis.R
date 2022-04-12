@@ -94,7 +94,7 @@ select_analysis <- function(blocks,
       gcca <- sgcca
       ncomp <- rep(max(ncomp), 2)
       scheme <- "horst"
-      penalty <- c(penalty[1], 1)
+      penalty <- c(sparsity[1], sparsity[1])
       response <- NULL
       superblock <- TRUE
       connection <- c_response(2, blocks)

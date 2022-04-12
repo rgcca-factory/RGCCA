@@ -4,6 +4,7 @@ blocks <- list(
   industry = Russett[, 4:5],
   politic = Russett[, 6:11]
 )
+fit_rgcca <- rgcca(blocks, superblock = TRUE)
 
 test_that("rgcca_permutation raises an error if only one block is given", {
   expect_error(rgcca_permutation(list(blocks[[1]])),
@@ -46,4 +47,19 @@ test_that("rgcca_permutation computes n_perms permuted scores and one non
   )
   expect_equal(dim(res$permcrit), c(2, 4))
   expect_equal(length(res$crit), 2)
+  res <- rgcca_permutation(fit_rgcca,
+    par_value = c(0.5, 1, 1, 1),
+    par_length = 1, n_perms = 2
+  )
+  expect_equal(dim(res$permcrit), c(1, 2))
+  expect_equal(length(res$crit), 1)
+})
+
+test_that("rgcca imports the parameters from a permutation object", {
+  res <- rgcca_permutation(blocks,
+    par_type = "sparsity", par_length = 5,
+    n_perms = 3
+  )
+  fit_rgcca <- rgcca(res)
+  expect_identical(unname(res$bestpenalties), fit_rgcca$call$sparsity)
 })

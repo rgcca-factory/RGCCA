@@ -25,10 +25,6 @@ rgcca_transform <- function(rgcca_res, blocks_test) {
   scl_fun <- function(data, center, scale) {
     # Use the scaling parameter of the training set on the new set
     if (length(center) != 0) {
-      if (is.null(dim(data))) {
-        # Case of data is a vector
-        data <- as.matrix(data)
-      }
       if (is.null(scale)) scale <- FALSE
       data <- scale(data, center, scale)
     }

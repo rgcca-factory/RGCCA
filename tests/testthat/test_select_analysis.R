@@ -103,14 +103,22 @@ test_that("superblock methods sets all attributes of a superblock", {
       expect_equal(length(res$penalty), J)
     }
   }
+
   method <- "rgcca"
-  tmp <- run_selection(method,
-    superblock = TRUE, tau = matrix(runif(6), 2, 3),
-    ncomp = 2
-  )
+  tau <- matrix(runif(6), 2, 3)
+  tmp <- run_selection(method, superblock = TRUE, tau = tau, ncomp = 2)
   res <- tmp$res
-  J <- tmp$J
-  expect_equal(dim(res$penalty), c(2, J + 1))
+  expect_equal(res$penalty, cbind(tau, 1))
+  tau <- matrix(runif(8), 2, 4)
+  tmp <- run_selection(method, superblock = TRUE, tau = tau, ncomp = 2)
+  res <- tmp$res
+  expect_equal(res$penalty, tau)
+
+  method <- "spca"
+  res <- run_selection(method, superblock = TRUE, sparsity = 0.7)$res
+  expect_equal(res$method, "spca")
+  expect_equal(res$penalty, c(0.7, 0.7))
+  expect_equal(res$par, "sparsity")
 })
 
 test_that("cov methods set penalty to 1", {

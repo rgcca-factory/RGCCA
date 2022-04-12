@@ -89,13 +89,16 @@ bootstrap <- function(rgcca_res, n_boot = 100,
       )
     }
 
-    keepVar <- lapply(
-      rgcca_res$a,
+    # Remove superblock variables from keep_var as the superblock is generated
+    # from the kept variables
+    J <- length(rgcca_res$call$raw)
+    keep_var <- lapply(
+      rgcca_res$a[-(J + 1)],
       function(x) unique(which(x != 0, arr.ind = TRUE)[, 1])
     )
 
     new_block <- mapply(function(x, y) x[, y, drop = FALSE],
-      rgcca_res$call$raw, keepVar,
+      rgcca_res$call$raw, keep_var,
       SIMPLIFY = FALSE
     )
 

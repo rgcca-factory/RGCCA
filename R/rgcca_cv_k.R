@@ -28,15 +28,6 @@ rgcca_cv_k <- function(rgcca_res,
                        classification = FALSE,
                        ...) {
   ### Check parameters
-  stopifnot(is(rgcca_res, "rgcca"))
-  if (is.null(rgcca_res$call$response)) {
-    stop_rgcca(
-      "missing response block. A model with a response block must be ",
-      "used to apply rgcca_cv_k."
-    )
-  }
-  match.arg(validation, c("loo", "kfold"))
-
   all_args <- names(environment())
   used_args <- c(
     names(match.call()), "validation", "prediction_model",
@@ -45,9 +36,6 @@ rgcca_cv_k <- function(rgcca_res,
   for (n in setdiff(all_args, used_args)) {
     assign(n, rgcca_res$call[[n]])
   }
-
-  check_integer("k", k, min = 2)
-  check_integer("n_cores", n_cores, min = 0)
 
   ### Compute cross validation
   blocks <- rgcca_res$call$raw

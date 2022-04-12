@@ -92,6 +92,12 @@ test_that("check_compx passes and returns x when x is valid", {
 })
 
 # Test check_connection
+test_that("check_connection raises an error if C is not a matrix", {
+  expect_error(check_connection(print, blocks),
+    "connection matrix C must be a matrix.",
+    fixed = TRUE
+  )
+})
 test_that("check_connection raises an error if C is not symmetric", {
   expect_error(check_connection(matrix(1:4, 2, 2), blocks),
     "connection matrix C must be symmetric.",

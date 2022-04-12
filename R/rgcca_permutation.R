@@ -251,7 +251,10 @@ rgcca_permutation <- function(blocks, par_type = "tau", par_value = NULL,
                               NA_method = "nipals", rgcca_res = NULL,
                               verbose = TRUE) {
   ### Try to retrieve parameters from a rgcca object
-  if (!is.null(rgcca_res)) {
+  if (!missing(blocks) & class(blocks) == "rgcca") {
+    rgcca_res <- blocks
+  }
+  if (class(rgcca_res) == "rgcca") {
     stopifnot(is(rgcca_res, "rgcca"))
     message("All parameters were imported from a fitted rgcca object.")
     scale_block <- rgcca_res$call$scale_block

@@ -14,10 +14,6 @@ check_blockx <- function(x, y, blocks) {
 }
 
 check_boolean <- function(x, y = x, type = "scalar") {
-  if (is.null(y)) {
-    y <- x
-  }
-
   if (any(is.na(y))) {
     stop_rgcca(x, " must not be NA.")
   }
@@ -111,10 +107,6 @@ check_file <- function(f) {
 check_integer <- function(x, y = x, type = "scalar", float = FALSE, min = 1,
                           max = Inf, max_message = NULL, exit_code = NULL,
                           min_message = NULL) {
-  if (is.null(y)) {
-    y <- x
-  }
-
   if (type %in% c("matrix", "data.frame")) {
     y_temp <- y
   }
@@ -361,9 +353,6 @@ check_sign_comp <- function(rgcca_res, w) {
 }
 
 check_size_blocks <- function(blocks, x, y = x, n_row = NULL) {
-  if (identical(x, y)) {
-    x <- ""
-  }
   if (any(class(y) %in% c("matrix", "data.frame"))) {
     dim_y <- NCOL(y)
     dim_type <- "number of columns"
@@ -427,7 +416,8 @@ check_penalty <- function(penalty, blocks, method = "rgcca", superblock = FALSE,
       function(x) {
         n <- 1 + (x - 1) / divider
         check_spars(penalty[x], blocks[[n]], n)
-      }, FUN.VALUE = double(1L)
+      },
+      FUN.VALUE = double(1L)
     )
   }
 
