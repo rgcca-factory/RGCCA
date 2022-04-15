@@ -18,42 +18,7 @@
 #' print(res)
 print.rgcca <- function(x, ...) {
   ### Print parameters of the function
-  cat("Call: ")
-  names_call <- c(
-    "method", "superblock", "scale", "scale_block", "init",
-    "bias", "tol", "NA_method", "ncomp"
-  )
-
-  char_to_print <- vapply(names_call, function(name) {
-    if (name == "ncomp") {
-      if (length(x$call$ncomp) > 1) {
-        value <- (paste(x$call$ncomp, sep = "", collapse = ","))
-        value <- paste0("c(", value, ")")
-      }
-    } else {
-      value <- x$call[[name]]
-    }
-    quo <- ifelse(is.character(value) & name != "ncomp", "'", "")
-    paste0(name, "=", quo, value, quo)
-  }, FUN.VALUE = character(1))
-  cat(paste(char_to_print, collapse = ", "))
-
-  ### Print number of blocks
-  cat("\n")
-  cat("There are J =", NCOL(x$call$connection), "blocks.", fill = TRUE)
-
-  ### Print design matrix
-  cat("The design matrix is:\n")
-  colnames(x$call$connection) <- rownames(x$call$connection) <- names(x$a)
-  print(x$call$connection)
-
-  ### Print scheme
-  cat("\n")
-  if (is.function(x$call$scheme)) {
-    cat("The", deparse(x$call$scheme), "scheme was used.", fill = TRUE)
-  } else {
-    cat("The", x$call$scheme, "scheme was used.", fill = TRUE)
-  }
+  print_call(x$call)
 
   ### Print criterion
   if (is.list(x$crit)) {

@@ -224,6 +224,11 @@ rgcca_cv <- function(blocks,
 
   ### Format output
   cat("\n")
+
+  connection <- matrix(0, nrow = length(blocks), ncol = length(blocks))
+  connection[response, ] <- connection[, response] <- 1
+  connection[response, response] <- 0
+
   call <- list(
     n_run = n_run,
     response = response,
@@ -241,7 +246,11 @@ rgcca_cv <- function(blocks,
     blocks = blocks,
     tau = tau,
     sparsity = sparsity,
-    ncomp = ncomp
+    ncomp = ncomp,
+    connection = connection,
+    init = init,
+    bias = bias,
+    method = method
   )
 
   rownames(param$par_value) <- seq(NROW(param$par_value))
