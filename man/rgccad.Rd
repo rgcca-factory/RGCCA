@@ -17,7 +17,8 @@ rgccad(
   na.rm = TRUE,
   quiet = FALSE,
   superblock = FALSE,
-  response = NULL
+  response = NULL,
+  n_iter_max = 1000
 )
 }
 \arguments{
@@ -75,6 +76,9 @@ strategy must be adapted when a superblock is used).}
 \item{response}{Numerical value giving the position of the response block.
 When the response argument is filled the supervised mode is automatically
 activated.}
+
+\item{n_iter_max}{Integer giving the algorithm's maximum number of
+iterations.}
 }
 \value{
 \item{Y}{A list of \eqn{J} elements. Each element of the list is a

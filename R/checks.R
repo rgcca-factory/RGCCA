@@ -167,8 +167,8 @@ check_integer <- function(x, y = x, type = "scalar", float = FALSE, min = 1,
   if (type %in% c("matrix", "data.frame")) {
     y <- matrix(
       y,
-      dim(y_temp)[1],
-      dim(y_temp)[2],
+      NROW(y_temp),
+      NCOL(y_temp),
       dimnames = dimnames(y_temp)
     )
   }
@@ -234,18 +234,41 @@ check_ncol <- function(x, i_block) {
   }
 }
 
-check_ncomp <- function(ncomp, blocks, min = 1, superblock = FALSE) {
-  if (superblock && length(unique(ncomp)) != 1) {
-    stop_rgcca(
-      "only one number of components must be specified (superblock)."
+check_ncomp <- function(ncomp, blocks, min = 1, superblock = FALSE,
+                        response = NULL) {
+  if (superblock) {
+    if (length(unique(ncomp)) != 1) {
+      stop_rgcca(
+        "only one number of components must be specified (superblock)."
+      )
+    }
+    max_ncomp <- ifelse(
+      "superblock" %in% names(blocks),
+      NCOL(blocks[[length(blocks)]]),
+      sum(vapply(blocks, NCOL, FUN.VALUE = integer(1)))
     )
+    msg <- paste0(
+      "the number of components must be lower than the number of ",
+      "variables in the superblock, i.e. ", max_ncomp,
+      "."
+    )
+
+    y <- check_integer("ncomp", ncomp[1],
+      min = min, max_message = msg,
+      max = max_ncomp,
+      exit_code = 126
+    )
+    return(rep(y, length(ncomp)))
   }
+
   ncomp <- elongate_arg(ncomp, blocks)
   check_size_blocks(blocks, "ncomp", ncomp)
-  ncomp <- sapply(
+  ncomp <- vapply(
     seq(length(ncomp)),
     function(x) {
-      if (!superblock) {
+      if (!is.null(response) && x == response) {
+        y <- check_integer("ncomp", ncomp[x], min = min, exit_code = 126)
+      } else {
         msg <- paste0(
           "ncomp[", x, "] must be lower than the number of variables ",
           "for block ", x, ", i.e. ", NCOL(blocks[[x]]), "."
@@ -254,22 +277,10 @@ check_ncomp <- function(ncomp, blocks, min = 1, superblock = FALSE) {
           min = min, max_message = msg,
           max = NCOL(blocks[[x]]), exit_code = 126
         )
-      } else {
-        msg <- paste0(
-          "the number of components must be lower than the number of ",
-          "variables in the superblock, i.e. ", NCOL(blocks[[length(blocks)]]),
-          "."
-        )
-
-        y <- check_integer("ncomp", ncomp[length(blocks)],
-          min = min, max_message = msg,
-          max = NCOL(blocks[[length(blocks)]]),
-          exit_code = 126
-        )
       }
-
       return(y)
-    }
+    },
+    FUN.VALUE = integer(1)
   )
   return(ncomp)
 }
@@ -332,43 +343,22 @@ check_response <- function(response = NULL) {
 
 # Test on the sign of the correlation
 check_sign_comp <- function(rgcca_res, w) {
-  w1 <- rgcca_res$a
-  y1 <- lapply(
-    seq_along(w1),
-    function(i) {
-      pm(
-        rgcca_res$call$blocks[[i]],
-        rgcca_res$a[[i]]
-      )
-    }
-  )
   y <- lapply(
-    seq_along(w1),
+    seq_along(rgcca_res$a),
     function(i) pm(rgcca_res$call$blocks[[i]], w[[i]])
   )
 
-
-  for (k in seq(length(w))) {
-    if (NCOL(w[[k]]) > 1) {
-      for (j in seq(NCOL(w[[k]]))) {
-        res <- ifelse(NROW(rgcca_res$a[[k]]) < NROW(rgcca_res$Y[[k]]),
-          cor(y1[[k]][, j], y[[k]][, j]),
-          cor(w1[[k]][, j], w[[k]][, j])
-        )
-        if (!is.na(res) && res < 0) {
-          w[[k]][, j] <- -1 * w[[k]][, j]
-        }
-      }
+  w <- lapply(setNames(seq_along(w), names(w)), function(i) {
+    if (NROW(w[[i]]) < NROW(y[[i]])) {
+      res <- as.matrix(cor(rgcca_res$Y[[i]], y[[i]]))
     } else {
-      res <- ifelse(NROW(rgcca_res$a[[k]]) < NROW(rgcca_res$Y[[k]]),
-        cor(y1[[k]], y[[k]]),
-        cor(w1[[k]], w[[k]])
-      )
-      if (!is.na(res) && res < 0) {
-        w[[k]] <- -1 * w[[k]]
-      }
+      res <- as.matrix(cor(rgcca_res$a[[i]], w[[i]]))
     }
-  }
+    vec_sign <- vapply(diag(res), function(x) {
+      return(ifelse(!is.na(x) && (x < 0), -1, 1))
+    }, double(1))
+    return(pm(w[[i]], diag(vec_sign, nrow = nrow(res))))
+  })
 
   return(w)
 }
@@ -462,26 +452,6 @@ check_spars <- function(sparsity, block, n) {
   invisible(sparsity)
 }
 
-# #' @export
-check_superblock <- function(is_supervised = NULL, is_superblock = NULL,
-                             verbose = TRUE) {
-  if (!is.null(is_supervised)) {
-    if (verbose) {
-      warn_connection("supersized method with a response")
-    }
-    if (is_superblock) {
-      if (!is.null(is_superblock) && verbose) {
-        warning(
-          "In a supervised mode, the superblock corresponds ",
-          "to the response."
-        )
-      }
-    }
-    return(FALSE)
-  } else {
-    return(isTRUE(is_superblock))
-  }
-}
 check_tau <- function(tau) {
   if (is.na(tau) || tau != "optimal") {
     tau <- check_integer("tau", tau, float = TRUE, min = 0, max = 1)

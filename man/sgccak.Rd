@@ -15,7 +15,8 @@ sgccak(
   bias = TRUE,
   verbose = FALSE,
   quiet = FALSE,
-  na.rm = TRUE
+  na.rm = TRUE,
+  n_iter_max = 1000
 )
 }
 \arguments{
@@ -62,6 +63,9 @@ algorithm is reported while computing.}
 \item{quiet}{Logical value indicating if warning messages are reported.}
 
 \item{na.rm}{If TRUE, runs rgcca only on available data.}
+
+\item{n_iter_max}{Integer giving the algorithm's maximum number of
+iterations.}
 }
 \value{
 \item{Y}{A list of \eqn{J} elements. Each element of \eqn{Y} is a

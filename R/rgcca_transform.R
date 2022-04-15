@@ -3,9 +3,7 @@
 #' Project blocks of data on canonical components extracted with a RGCCA model.
 #'
 #' @param rgcca_res A fitted RGCCA object (see  \code{\link[RGCCA]{rgcca}}).
-#' @param X A list of either dataframes or matrices to be projected.
-#' @param X_scaled A boolean indicating if the blocks in X have already been
-#' scaled.
+#' @param blocks_test A list of either dataframes or matrices to be projected.
 #' @examples
 #' data("Russett")
 #' blocks <- list(
@@ -20,9 +18,9 @@
 #'   ncomp = c(3, 2, 4), scale_block = FALSE, superblock = FALSE
 #' )
 #' X <- lapply(blocks, function(x) x[39:47, ])
-#' projection <- rgcca_transform(fit.rgcca, X, X_scaled = FALSE)
+#' projection <- rgcca_transform(fit.rgcca, X)
 #' @export
-rgcca_transform <- function(rgcca_res, X, X_scaled = TRUE) {
+rgcca_transform <- function(rgcca_res, blocks_test) {
   ### Auxiliary function
   scl_fun <- function(data, center, scale) {
     # Use the scaling parameter of the training set on the new set
@@ -39,46 +37,45 @@ rgcca_transform <- function(rgcca_res, X, X_scaled = TRUE) {
 
   ### Check input parameters
   stopifnot(is(rgcca_res, "rgcca"))
-  check_boolean("X_scaled", X_scaled)
-  if (is.null(names(X))) stop_rgcca("Please provide names for the blocks X.")
+  if (is.null(names(blocks_test))) {
+    stop_rgcca("Please provide names for blocks_test.")
+  }
 
-  ### Align training blocks and X
-  if (!all(names(X) %in% names(rgcca_res$call$blocks))) {
+  ### Align training blocks and blocks_test
+  if (!all(names(blocks_test) %in% names(rgcca_res$call$blocks))) {
     stop_rgcca(paste0(
-      "At least one block from X was not found in the training",
+      "At least one block from blocks_test was not found in the training",
       " blocks. Please check block names."
     ))
   }
-  X_train <- rgcca_res$call$blocks[names(X)]
-  X <- lapply(seq_along(X), function(j) {
-    x <- as.matrix(X[[j]])
+  X_train <- rgcca_res$call$blocks[names(blocks_test)]
+  blocks_test <- lapply(seq_along(blocks_test), function(j) {
+    x <- as.matrix(blocks_test[[j]])
     y <- as.matrix(X_train[[j]])
     if (any(dim(x)[-1] != dim(y)[-1])) {
       stop_rgcca(
         "Dimensions of blocks do not match for block ",
-        names(X)[[j]]
+        names(blocks_test)[[j]]
       )
     }
     x <- x[, colnames(y), drop = FALSE]
     return(x)
   })
 
-  ### Scale X if needed
-  if (!X_scaled) {
-    X <- lapply(seq_along(X), function(j) {
-      scl_fun(
-        X[[j]],
-        attr(X_train[[j]], "scaled:center"),
-        attr(X_train[[j]], "scaled:scale")
-      )
-    })
-  }
+  ### Scale blocks_test if needed
+  blocks_test <- lapply(seq_along(blocks_test), function(j) {
+    scl_fun(
+      blocks_test[[j]],
+      attr(X_train[[j]], "scaled:center"),
+      attr(X_train[[j]], "scaled:scale")
+    )
+  })
 
-  ### Project X on the space computed using RGCCA
+  ### Project blocks_test on the space computed using RGCCA
   astar <- rgcca_res$astar[names(X_train)]
-  projection <- lapply(seq_along(X), function(j) {
-    x <- pm(as.matrix(X[[j]]), astar[[j]])
-    rownames(x) <- rownames(X[[j]])
+  projection <- lapply(seq_along(blocks_test), function(j) {
+    x <- pm(as.matrix(blocks_test[[j]]), astar[[j]])
+    rownames(x) <- rownames(blocks_test[[j]])
     colnames(x) <- colnames(astar[[j]])
     return(x)
   })

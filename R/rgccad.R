@@ -49,6 +49,8 @@
 #' @param na.rm If TRUE, runs rgcca only on available data.
 #' @param superblock TRUE if a superblock is added, FALSE otherwise (deflation
 #' strategy must be adapted when a superblock is used).
+#' @param n_iter_max Integer giving the algorithm's maximum number of
+#' iterations.
 #' @return \item{Y}{A list of \eqn{J} elements. Each element of the list is a
 #' matrix that contains the RGCCA block components for the corresponding block.}
 #' @return \item{a}{A list of \eqn{J} elements. Each element of the list \eqn{a}
@@ -194,7 +196,7 @@ rgccad <- function(blocks, connection = 1 - diag(length(blocks)),
                    ncomp = rep(1, length(blocks)), scheme = "centroid",
                    init = "svd", bias = TRUE, tol = 1e-08, verbose = TRUE,
                    na.rm = TRUE, quiet = FALSE, superblock = FALSE,
-                   response = NULL) {
+                   response = NULL, n_iter_max = 1000) {
   update_col_n <- function(x, y, n) {
     x[, n] <- y
     return(x)
@@ -264,7 +266,7 @@ rgccad <- function(blocks, connection = 1 - diag(length(blocks)),
     gcca_result <- rgccak(R, connection,
       tau = computed_tau[n, ], scheme = scheme,
       init = init, bias = bias, tol = tol,
-      verbose = verbose, na.rm = na.rm
+      verbose = verbose, na.rm = na.rm, n_iter_max = n_iter_max
     )
 
     # Store tau, AVE_inner, crit

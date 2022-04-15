@@ -4,15 +4,12 @@
 \alias{rgcca_transform}
 \title{RGCCA Transform}
 \usage{
-rgcca_transform(rgcca_res, X, X_scaled = TRUE)
+rgcca_transform(rgcca_res, blocks_test)
 }
 \arguments{
 \item{rgcca_res}{A fitted RGCCA object (see  \code{\link[RGCCA]{rgcca}}).}
 
-\item{X}{A list of either dataframes or matrices to be projected.}
-
-\item{X_scaled}{A boolean indicating if the blocks in X have already been
-scaled.}
+\item{blocks_test}{A list of either dataframes or matrices to be projected.}
 }
 \description{
 Project blocks of data on canonical components extracted with a RGCCA model.
@@ -31,5 +28,5 @@ fit.rgcca <- rgcca(A,
   ncomp = c(3, 2, 4), scale_block = FALSE, superblock = FALSE
 )
 X <- lapply(blocks, function(x) x[39:47, ])
-projection <- rgcca_transform(fit.rgcca, X, X_scaled = FALSE)
+projection <- rgcca_transform(fit.rgcca, X)
 }

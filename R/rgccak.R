@@ -53,7 +53,7 @@
 
 rgccak <- function(A, C, tau = rep(1, length(A)), scheme = "centroid",
                    verbose = FALSE, init = "svd", bias = TRUE,
-                   tol = 1e-08, na.rm = TRUE) {
+                   tol = 1e-08, na.rm = TRUE, n_iter_max = 1000) {
   if (is.function(scheme)) {
     g <- scheme
     # check for parity of g
@@ -106,7 +106,6 @@ rgccak <- function(A, C, tau = rep(1, length(A)), scheme = "centroid",
   Minv <- tmp$Minv
 
   iter <- 1
-  n_iter_max <- 1000L
   crit <- numeric(n_iter_max)
   crit_old <- sum(C * g(cov2(Y, bias = bias)))
   a_old <- a
@@ -159,7 +158,7 @@ rgccak <- function(A, C, tau = rep(1, length(A)), scheme = "centroid",
 
   if (iter > n_iter_max) {
     warning(
-      "The RGCCA algorithm did not converge after", n_iter_max,
+      "The RGCCA algorithm did not converge after ", n_iter_max,
       " iterations."
     )
   }

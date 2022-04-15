@@ -1,4 +1,4 @@
-as_disjonctive <- function(vec, levs = NULL) {
+as_disjunctive <- function(vec, levs = NULL) {
   if (NCOL(vec) > 1 || mode(vec) != "character") {
     return(vec)
   }
@@ -14,6 +14,6 @@ as_disjonctive <- function(vec, levs = NULL) {
   new_colnames <- substr(colnames(y), 2, nchar(colnames(y)))
   colnames(y) <- new_colnames
   rownames(y) <- rownames(vec)
-  attr(y, "disjonction") <- TRUE
+  attr(y, "disjunction") <- TRUE
   return(y)
 }

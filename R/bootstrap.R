@@ -69,8 +69,6 @@ bootstrap <- function(rgcca_res, n_boot = 100,
                       n_cores = parallel::detectCores() - 1,
                       balanced = TRUE, keep_all_variables = FALSE,
                       verbose = TRUE) {
-  local_env <- new.env()
-
   if (class(rgcca_res) == "stability") {
     message(
       "All the parameters were imported from the fitted rgcca_stability",
@@ -110,9 +108,6 @@ bootstrap <- function(rgcca_res, n_boot = 100,
   }
 
   check_integer("n_boot", n_boot)
-  check_integer("n_cores", n_cores, min = 0)
-
-  if (n_cores == 0) n_cores <- 1
 
   boot_sampling <- generate_resampling(
     rgcca_res = rgcca_res,
@@ -132,91 +127,18 @@ bootstrap <- function(rgcca_res, n_boot = 100,
     rgcca_res <- set_rgcca(rgcca_res)
   }
 
-  ndefl_max <- max(rgcca_res$call$ncomp)
-  list_res_W <- list_res_L <- list()
-  for (i in 1:ndefl_max) {
-    list_res_W[[i]] <- list_res_L[[i]] <- list()
-    for (block in names(rgcca_res$call$blocks)) {
-      list_res_L[[i]][[block]] <- list_res_W[[i]][[block]] <-
-        matrix(NA, NCOL(rgcca_res$call$blocks[[block]]), n_boot)
-      rownames(list_res_L[[i]][[block]]) <-
-        rownames(list_res_W[[i]][[block]]) <-
-        colnames(rgcca_res$call$blocks[[block]])
-    }
-  }
-
-  if (!verbose) {
-    pbapply::pboptions(type = "none")
-  } else {
-    pbapply::pboptions(type = "timer")
-  }
-
-  if (Sys.info()["sysname"] == "Windows") {
-    if (n_cores > 1) {
-      assign("rgcca_res", rgcca_res, envir = local_env)
-      cl <- parallel::makeCluster(n_cores)
-      parallel::clusterExport(cl, "rgcca_res", envir = local_env)
-      W <- pbapply::pblapply(boot_sampling$full_idx,
-        function(b) {
-          bootstrap_k(
-            rgcca_res = rgcca_res,
-            inds = b
-          )
-        },
-        cl = cl
+  W <- par_pblapply(
+    boot_sampling$full_idx, function(b) {
+      bootstrap_k(
+        rgcca_res = rgcca_res,
+        inds = b
       )
-      parallel::stopCluster(cl)
-    } else {
-      W <- pbapply::pblapply(
-        boot_sampling$full_idx,
-        function(b) {
-          bootstrap_k(
-            rgcca_res = rgcca_res,
-            inds = b
-          )
-        }
-      )
-    }
-  } else {
-    W <- pbapply::pblapply(boot_sampling$full_idx,
-      function(b) {
-        bootstrap_k(
-          rgcca_res = rgcca_res,
-          inds = b
-        )
-      },
-      cl = n_cores
-    )
-  }
+    },
+    n_cores = n_cores, verbose = verbose
+  )
 
-  L <- lapply(W, `[[`, 2)
-  W <- lapply(W, `[[`, 1)
-
-  for (k in seq(n_boot)) {
-    for (i in seq(ndefl_max)) {
-      for (j in seq_along(rgcca_res$call$blocks)) {
-        block <- names(rgcca_res$call$blocks)[j]
-        if (!is.null(names(W[[k]]))) {
-          if (i <= NCOL(W[[k]][[block]])) {
-            list_res_W[[i]][[block]][, k] <- W[[k]][[block]][, i]
-            list_res_L[[i]][[block]][, k] <- L[[k]][[block]][, i]
-          }
-        } else {
-          list_res_W[[i]][[block]][, k] <-
-            rep(NA, length(list_res_W[[i]][[block]][, k]))
-          list_res_L[[i]][[block]][, k] <-
-            rep(NA, length(list_res_L[[i]][[block]][, k]))
-          if (is.character(W[[k]]) && ((j == 1) && (i == 1))) {
-            warning(paste0(
-              "This bootstrap sample was removed due to zero variance ",
-              "variable(s): ",
-              paste(W[[k]], collapse = " - ")
-            ))
-          }
-        }
-      }
-    }
-  }
+  list_res_L <- format_bootstrap_list(W, rgcca_res, n_boot, 2)
+  list_res_W <- format_bootstrap_list(W, rgcca_res, n_boot, 1)
 
   return(structure(list(
     bootstrap = list(W = list_res_W, L = list_res_L),

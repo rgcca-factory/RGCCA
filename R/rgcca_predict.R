@@ -4,11 +4,11 @@
 #'
 #' @inheritParams rgcca_transform
 #' @param prediction_model A character giving the function used to compare the
-#' trained and the tested models
-#' @param block_to_predict A character or integer giving the block to predict
-#' (must be the same name among train and test set)
-#' @param task A character corresponding to the prediction task among:
-#' regression or classification
+#' trained and the tested models.
+#' @param response A character or integer giving the block to predict
+#' (must be the same name among train and test set).
+#' @param ... Additional parameters to be passed to the model fitted on top
+#' of RGCCA.
 #' @examples
 #' data("Russett")
 #' blocks <- list(
@@ -38,57 +38,42 @@
 #' X <- lapply(object1$call$blocks, function(x) x[-c(1:32), ])
 #' X <- lapply(X, function(x) x[, sample(1:NCOL(x))])
 #' X <- sample(X, length(X))
-#' block_to_predict <- "industry"
-#' y_train <- kmeans(A[[block_to_predict]], 3)$cluster
-#' y_test <- kmeans(X[[block_to_predict]], 3)$cluster
-#' res <- rgcca_predict(object, X, block_to_predict = "industry")
-#' library(MASS)
-#' @importFrom MASS lda
+#' response <- "industry"
+#' y_train <- kmeans(A[[response]], 3)$cluster
+#' y_test <- kmeans(X[[response]], 3)$cluster
+#' res <- rgcca_predict(object, X, response = "industry")
+#' @importFrom caret train trainControl confusionMatrix
+#' @importFrom caret multiClassSummary postResample
 #' @export
 rgcca_predict <- function(rgcca_res,
-                          X,
-                          block_to_predict,
-                          X_scaled = TRUE,
-                          task = "regression",
-                          prediction_model = "lm") {
+                          blocks_test,
+                          response,
+                          prediction_model = "lm",
+                          ...) {
   # TODO: Enable to not have the block to predict among the test blocks
-  # TODO: Put back as_disjonctive to enable to project block_to_predict without
-  # problems
-  ### Auxiliary function
-  # Stack projected blocks as a matrix and set colnames as "block_ncomp"
-  reformat_projection <- function(projection) {
-    names <- names(projection)
-    ncomp <- sapply(projection, ncol)
-    comp_nums <- unlist(sapply(ncomp, seq))
-    projection <- as.data.frame(Reduce("cbind", projection))
-    colnames(projection) <- paste(
-      unlist(mapply(function(name, num) rep(name, num), names, ncomp)),
-      comp_nums,
-      sep = "_"
-    )
-    return(projection)
-  }
 
   ### Check input parameters
-  match.arg(task, c("regression", "classification"))
-  if (task == "classification" && prediction_model != "lda") {
-    stop_rgcca("Only \"lda\" model is available for classification task.")
+  tryCatch(
+    model_info <- caret::modelLookup(prediction_model),
+    error = function(e) {
+      stop_rgcca(
+        "unknown model. Model ", prediction_model,
+        " is not handled, please see",
+        " caret::modelLookup for a list of the available models."
+      )
+    }
+  )
+  if (is.null(names(blocks_test))) {
+    stop_rgcca("Please provide names for blocks_test.")
   }
-  if (
-    task == "regression" &&
-      (prediction_model != "lm" && prediction_model != "cor")
-  ) {
-    stop_rgcca("Only \"cor\" and \"lm\" are available for regression tasks.")
-  }
-  if (is.null(names(X))) stop_rgcca("Please provide names for the blocks X.")
 
-  ### Check that block_to_predict is among both training and test blocks
-  if (is.character(block_to_predict)) {
-    train_idx <- match(block_to_predict, names(rgcca_res$call$blocks))
-    test_idx <- match(block_to_predict, names(X))
+  ### Check that response is among both training and test blocks
+  if (is.character(response)) {
+    train_idx <- match(response, names(rgcca_res$call$blocks))
+    test_idx <- match(response, names(blocks_test))
   } else {
-    train_idx <- match(block_to_predict, seq_along(rgcca_res$call$blocks))
-    test_idx <- match(block_to_predict, seq_along(X))
+    train_idx <- match(response, seq_along(rgcca_res$call$blocks))
+    test_idx <- match(response, seq_along(blocks_test))
   }
   if (is.na(train_idx) || is.na(test_idx)) {
     stop_rgcca(paste0(
@@ -96,145 +81,194 @@ rgcca_predict <- function(rgcca_res,
       "test blocks. Please provide an appropriate one."
     ))
   }
-  if (names(X)[[test_idx]] != names(rgcca_res$call$blocks)[[train_idx]]) {
-    stop_rgcca(paste0(
+  if (
+    names(blocks_test)[[test_idx]] != names(rgcca_res$call$blocks)[[train_idx]]
+  ) {
+    stop_rgcca(
       "Block to predict was provided as an integer but ",
       "associated block names do not match between train and ",
       "test blocks. Reorder your blocks or use a name."
-    ))
+    )
   }
 
   ### Get train and test target
   y_train <- rgcca_res$call$raw[[train_idx]]
-  y_test <- X[[test_idx]]
+  y_test <- as.matrix(blocks_test[[test_idx]])
 
-  if ((is.null(dim(y_test)) && !all(dim(y_train)[-1] == 1)) ||
-    any(dim(y_test)[-1] != dim(y_train)[-1])
-  ) {
-    stop_rgcca(paste0(
-      "Dimensions of block to predict do not match between",
+  if (any(dim(y_test)[-1] != dim(y_train)[-1])) {
+    stop_rgcca(
+      "Dimensions of response do not match between",
       " train and test blocks."
-    ))
+    )
   }
-  if (!is.null(dim(y_test))) y_test <- y_test[, colnames(y_train), drop = FALSE]
+  if (!is.null(colnames(y_test))) {
+    y_test <- y_test[, colnames(y_train), drop = FALSE]
+  }
 
-  ### One hot encode block to predict if needed
-  response <- rgcca_res$call$response
-  if (!is.null(response) && !is.null(rgcca_res$call$disjonction)) {
-    X[[test_idx]] <- as_disjonctive(
-      X[[test_idx]],
-      levs = unique(rgcca_res$call$raw[[response]])
+  ### One hot encode response if needed
+  rgcca_response <- rgcca_res$call$response
+  if (!is.null(rgcca_response) && !is.null(rgcca_res$call$disjunction)) {
+    blocks_test[[test_idx]] <- as_disjunctive(
+      blocks_test[[test_idx]],
+      levs = unique(rgcca_res$call$raw[[rgcca_response]])
     )
   }
 
   ### Get projected train and test data
-  pred <- rgcca_transform(rgcca_res, X, X_scaled)
-  X_train <- rgcca_res$Y[names(pred)]
+  projection <- rgcca_transform(rgcca_res, blocks_test)
+  X_train <- rgcca_res$Y[names(projection)]
   X_train <- reformat_projection(X_train[-test_idx])
-  X_test <- reformat_projection(pred[-test_idx])
+  X_test <- reformat_projection(projection[-test_idx])
 
   # Keep same lines in X_train and y_train
   y_train <- subset_rows(y_train, rownames(X_train))
 
+  # Test that in classification, variables are not constant within groups
+  classification <- model_info$forClass && !model_info$forReg
+  if (classification) {
+    groups <- split(X_train, y_train[, 1])
+    is_constant <- unlist(lapply(groups, function(g) {
+      apply(g, 2, function(x) {
+        isTRUE(all.equal(
+          x, rep(x[1], length(x)),
+          check.attributes = FALSE
+        ))
+      })
+    }))
+    if (any(is_constant)) {
+      stop_rgcca(
+        "overfitting model. The RGCCA method led to projected blocks ",
+        "that are constant within groups. Try to regularize the model",
+        " by increasing tau or decreasing sparsity."
+      )
+    }
+  }
+
   ### Train prediction model and predict results on X_test
-  # TODO: Work on this part
-  prediction <- NULL
-  res <- NULL
-  if (task == "regression") {
-    if (prediction_model == "lm") {
-      ychapo <- sapply(
-        colnames(y_train),
-        function(x) {
-          predict(
-            lm(
-              as.formula(paste(x, " ~ ", paste(
-                colnames(X_train),
-                collapse = "+"
-              ))),
-              data = cbind(X_train, y_train),
-              na.action = "na.exclude"
-            ),
-            cbind(X_test, y_test)
-          )
-        }
+  results <- mapply(
+    function(x, y) {
+      core_prediction(
+        model_info, prediction_model, X_train, X_test, x, y, classification, ...
       )
-      if (any(is.na(ychapo))) {
-        warning("NA in predictions.")
-      }
+    },
+    as.data.frame(y_train),
+    as.data.frame(y_test)
+  )
 
-      # f defined but never used
-      f <- quote(
-        if (is.null(dim(y))) {
-          y[x]
-        } else {
-          y[, x]
-        }
-      )
+  prediction <- vapply(seq(NCOL(y_test)), function(x) {
+    results["prediction", x][[1]]$test[, "pred"]
+  }, FUN.VALUE = numeric(NROW(y_test)))
 
-      prediction <- ychapo
-      res <- data.matrix(y_test - ychapo)
-
-      if (is.null(dim(res)) || dim(res)[1] == 1) {
-        rmse <- sqrt(mean(res^2, na.rm = T))
-        score <- rmse
-      } else {
-        rmse <- apply(res, 2, function(x) {
-          return(sqrt(mean(x^2, na.rm = T)))
-        })
-        score <- mean(rmse)
-      }
-    }
-    if (prediction_model == "cor") {
-      X_test.cor <- get_comp_all(rgcca_res, X = X, type = "test", pred = pred)
-
-      if (is.null(X[[1]])) {
-        # TODO ??? check case for vector
-        X_test
-      } else {
-        connection <- rgcca_res$call$connection[names(pred), names(pred)]
-        cor <- get_cor_all(rgcca_res, X, X_test.cor)
-
-        for (i in seq(length(cor))) {
-          cor[[i]] <- mean(
-            abs(cor[[i]] * connection)[upper.tri(connection)],
-            na.rm = TRUE
-          )
-        }
-
-        score <- mean(unlist(cor), na.rm = TRUE)
-      }
-    }
-    class.fit <- NULL
-  }
-  if (task == "classification") {
-    class.fit <- switch(prediction_model,
-      "lda" = {
-        data_for_lda <- cbind(X_train, y_train)
-        colnames(data_for_lda)[ncol(data_for_lda)] <- "quali"
-        reslda <- lda(quali ~ ., data = data_for_lda, na.action = "na.exclude")
-        class.fit <- predict(reslda, X_test)$class
-      }
-    )
-
-
-    if (length(class.fit) == 1) {
-      res <- class.fit == as.vector(y_test)
-      score <- 1 - res
-    } else {
-      res <- class.fit == y_test
-      score <- 1 - (sum(res) / length(y_test))
-    }
-  }
+  prediction <- matrix(prediction, ncol = NCOL(y_train))
 
   result <- list(
-    pred = pred,
+    projection = projection,
     prediction = prediction,
-    class.fit = class.fit,
-    score = score,
-    res = res,
-    rgcca_res = rgcca_res
+    results = results,
+    rgcca_res = rgcca_res,
+    score = mean(unlist(results["score", ]))
   )
 
   class(result) <- "predict"
   return(result)
+}
+
+### Auxiliary functions
+# Stack projected blocks as a matrix and set colnames as "block_ncomp"
+reformat_projection <- function(projection) {
+  names <- names(projection)
+  ncomp <- sapply(projection, ncol)
+  comp_nums <- unlist(sapply(ncomp, seq))
+  projection <- as.data.frame(Reduce("cbind", projection))
+  colnames(projection) <- paste(
+    unlist(mapply(function(name, num) rep(name, num), names, ncomp)),
+    comp_nums,
+    sep = "_"
+  )
+  return(projection)
+}
+
+# Train a model from caret on (X_train, y_train) and make a prediction on
+# X_test and evaluate the prediction quality by comparing to y_test.
+core_prediction <- function(model_info, prediction_model, X_train, X_test,
+                            y_train, y_test, classification = FALSE, ...) {
+  if (classification) {
+    y_train <- as.factor(as.matrix(y_train))
+    y_test <- factor(as.matrix(y_test), levels = levels(y_train))
+  }
+  data <- as.data.frame(cbind(X_train, obs = unname(y_train)))
+  # model <- train(obs ~ .,
+  #   data      = data,
+  #   method    = prediction_model,
+  #   trControl = trainControl(method = "none"),
+  #   na.action = "na.exclude",
+  #   ...
+  # )
+  if (prediction_model == "lda") {
+    model <- train(obs ~ .,
+      data      = data,
+      method    = prediction_model,
+      trControl = trainControl(method = "none"),
+      na.action = "na.exclude",
+      ...
+    )
+  } else {
+    model <- lm(obs ~ ., data = data, na.action = "na.exclude")
+  }
+
+  prediction_train <- data.frame(
+    obs = unname(y_train),
+    pred = predict(model, X_train)
+  )
+  prediction_test <- data.frame(
+    obs = unname(y_test),
+    pred = predict(model, X_test)
+  )
+  if (model_info$forClass && !is.numeric(y_train)) {
+    confusion_train <- confusionMatrix(prediction_train$pred,
+      reference = prediction_train$obs
+    )
+    confusion_test <- confusionMatrix(prediction_test$pred,
+      reference = prediction_test$obs
+    )
+    if (model_info$probModel) {
+      prediction_train <- data.frame(cbind(
+        prediction_train,
+        predict(model, X_train, type = "prob")
+      ))
+      prediction_test <- data.frame(cbind(
+        prediction_test,
+        predict(model, X_test, type = "prob")
+      ))
+    }
+    metric_train <- multiClassSummary(
+      data = prediction_train,
+      lev = levels(prediction_train$obs)
+    )
+    metric_test <- multiClassSummary(
+      data = prediction_test,
+      lev = levels(prediction_test$obs)
+    )
+    score <- 1 - metric_test["Accuracy"]
+  }
+
+  if (model_info$forReg && is.numeric(y_train)) {
+    confusion_train <- confusion_test <- NA
+    metric_train <- postResample(
+      pred = prediction_train$pred,
+      obs = prediction_train$obs
+    )
+    metric_test <- postResample(
+      pred = prediction_test$pred,
+      obs = prediction_test$obs
+    )
+    score <- metric_test["RMSE"]
+  }
+  return(list(
+    model = model,
+    prediction = list(train = prediction_train, test = prediction_test),
+    metric = list(train = metric_train, test = metric_test),
+    confusion = list(train = confusion_train, test = confusion_test),
+    score = score
+  ))
 }

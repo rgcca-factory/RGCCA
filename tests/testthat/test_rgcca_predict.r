@@ -1,157 +1,115 @@
+library(gliomaData)
+
 set.seed(1)
 # Building the blocks
 data("Russett")
 blocks <- list(
   agriculture = Russett[, 1:3],
   industry = Russett[, 4:5],
-  politic = Russett[, 6:11]
+  politic = Russett[, 6:8]
 )
 
-C <- connection <- matrix(c(
-  0, 0, 1,
-  0, 0, 1,
-  1, 1, 0
-), 3, 3)
-
-A <- lapply(blocks, function(x) x[1:32, ])
-#-------------------------------------------------------------------------
-# Checking the Y with the prediction with the response block in last position
-#-------------------------------------------------------------------------
-# With a block to predict
-A <- lapply(blocks, function(x) x[1:32, ])
-object1 <- rgcca(A,
-  connection = C, tau = c(0.7, 0.8, 0.7),
-  ncomp = c(3, 2, 4), superblock = FALSE, response = 3
-)
-res <- rgcca_predict(rgcca_res = object1, X = A, X_scaled = FALSE, block_to_predict = "politic")
-reslm_1_res <- apply(object1$call$raw$politic, 2, function(x) {
-  lm(x ~ object1$Y[[1]][, 1:3] + object1$Y[[2]][, 1:2])$residuals
-})
-rmse_test <- apply(reslm_1_res, 2, function(x) {
-  return(sqrt(mean(x^2, na.rm = T)))
-})
-test_that("rgcca_predict_rmse2", {
-  expect_true(
-    round(res$score, digits = 5) == round(mean(rmse_test), digits = 5)
-  )
-})
-
-# Checking the RMSE criterion and the linear models
-#-----------------------------------------------------
-# for same dataset
-A3 <- lapply(blocks, function(x) x[1:32, ])
-newA3 <- A3
-object3 <- rgcca(A3,
-  connection = C, tau = c(0.7, 0.8, 0.7),
-  ncomp = c(1, 1, 1), superblock = FALSE, response = 1
-)
-
-res <- rgcca_predict(object3, newA3, X_scaled = FALSE, block_to_predict = "agriculture")
-reslm_1_res <- apply(object3$call$raw$agriculture, 2, function(x) {
-  lm(x ~ object3$Y[[2]][, 1] + object3$Y[[3]][, 1])$residuals
-})
-
-test_that("rgcca_predict_rmse", {
-  expect_true(
-    sum(round(res$res, digits = 5) - round(reslm_1_res, digits = 5)) == 0
-  )
-})
-
-rmse_test <- apply(reslm_1_res, 2, function(x) {
-  return(sqrt(mean(x^2, na.rm = T)))
-})
-test_that("rgcca_predict_rmse2", {
-  expect_true(
-    round(res$score, digits = 5) == round(mean(rmse_test), digits = 5)
-  )
-})
-
-# for one line
-A4 <- lapply(blocks, function(x) x[1:32, ])
-newA4 <- lapply(blocks, function(x) {
-  return(x[1, , drop = FALSE])
-})
-object4 <- rgcca(A4,
-  connection = C, tau = c(0.7, 0.8, 0.7),
-  ncomp = c(1, 1, 1), superblock = FALSE, response = 1
-)
-res <- rgcca_predict(object4, newA4, X_scaled = FALSE, block_to_predict = "agriculture")
-test_that("rgcca_predict_rmse3", {
-  expect_true(
-    sum(round(res$res, digits = 5) == round(reslm_1_res[1, ], digits = 5)) == 3
-  )
-})
-
-
-
-# cor
-# A = lapply(blocks, function(x) x[1:32,]);
-# A_test=lapply(blocks,function(x) x[c(39:47),])
-#                ncomp = c(3,2,4), superblock = FALSE, response = 3)
-
-# res_test  = rgcca_predict(object1, A_test,X_scaled=FALSE,prediction_model="cor",block_to_predict="politic")
-# test_that("rgcca_predict_two",{expect_true(
-#    sum(!abs(res_test$pred[[1]]["Sweden",]- object1$Y[[1]]["Sweden",])<1e-12)==0
-# )})
-
-
-
-
-
-
-#-----------------------
-# With missing values
-#-----------------------
-RussettWithNA <- Russett
-RussettWithNA[1:2, 1:3] <- NA
-RussettWithNA[3, 4:5] <- NA
-RussettWithNA[3, 1] <- NA
-blocksNA <- list(
-  agriculture = RussettWithNA[, seq(3)],
-  industry = RussettWithNA[, 4:5],
-  politic = RussettWithNA[, 6:11]
-)
-A_test <- lapply(blocksNA, function(x) x[c(39:47), ])
-object1 <- rgcca(A,
-  connection = C, tau = c(0.7, 0.8, 0.7),
-  ncomp = c(1, 1, 1), superblock = FALSE, response = 3
-)
-res_test <- rgcca_predict(object1, A_test, X_scaled = FALSE, block_to_predict = "politic")
-
-# classfication and LDA
-#---------------------------------
-# Blocks for classification
-blocks_for_classif <- list(
+blocks_classif <- list(
   agriculture = Russett[, 1:3],
   industry = Russett[, 4:5],
   politic = matrix(Russett[, 11], ncol = 1)
 )
-blocks_for_classif[["politic"]][blocks_for_classif[["politic"]][, 1] == 1, ] <- "demo"
-blocks_for_classif[["politic"]][blocks_for_classif[["politic"]][, 1] == 0, ] <- "ndemo"
+blocks_classif[["politic"]][blocks_classif[["politic"]][, 1] == 1, ] <- "demo"
+blocks_classif[["politic"]][blocks_classif[["politic"]][, 1] == 0, ] <- "ndemo"
 
-A <- lapply(blocks_for_classif, function(x) x[1:32, ])
-A_test <- lapply(blocks_for_classif, function(x) x[c(39:47), ])
-object1 <- rgcca(A,
-  connection = C, tau = c(1, 1, 1),
-  ncomp = c(3, 2, 1), superblock = FALSE, response = 3
-)
-res_test <- rgcca_predict(object1, X = A, X_scaled = FALSE, prediction_model = "lda", task = "classification", block_to_predict = "politic")
+fit_rgcca <- rgcca(blocks, response = 3)
 
-#   res_test  = rgcca_predict(object1, A_test,X_scaled=FALSE,prediction_model="lda",task="classification",block_to_predict="politic")
-test_that("rgcca_predict_classif", {
-  expect_true(
-    res_test$score == 1 - 0.875
+test_that("rgcca_predict raises an error if an unknown prediction model is
+          given", {
+  expect_error(rgcca_predict(fit_rgcca, blocks, 3, prediction_model = "toto"),
+    "unknown model.",
+    fixed = TRUE
   )
 })
-#
 
+test_that("rgcca_predict raises an error if blocks_test has no names", {
+  expect_error(
+    rgcca_predict(fit_rgcca, unname(blocks), 3),
+    "Please provide names for blocks_test."
+  )
+})
 
-# A = lapply(blocks_for_classif, function(x) x[1:40,]);
-#   object1 = rgcca(A, connection = C, tau = c(1,1,1),
-#                 ncomp = c(3,2,1), superblock = FALSE, response = 3)
-# res_test  = rgcca_predict(object1, X=A,X_scaled=FALSE,prediction_model="logistic",task="classification",block_to_predict="politic")
+test_that("rgcca_predict raises an error if response is an integer but
+          associated block names do not match between train and test", {
+  blocks_test <- blocks
+  names(blocks_test)[[3]] <- "wrong_name"
+  expect_error(rgcca_predict(fit_rgcca, blocks_test, 3),
+    paste0(
+      "Block to predict was provided as an integer but ",
+      "associated block names do not match between train and ",
+      "test blocks. Reorder your blocks or use a name."
+    ),
+    fixed = TRUE
+  )
+})
 
-#   res_test  = rgcca_predict(object1, A_test,X_scaled=FALSE,prediction_model="lda",task="classification",block_to_predict="politic")
-# test_that("rgcca_predict_classif",{expect_true(
-#    res_test$score==0.875
-# )})
+test_that("rgcca_predict raises an error if response block dimensions do not
+          match", {
+  blocks_test <- blocks
+  blocks_test[[3]] <- blocks_test[[3]][, 1]
+  expect_error(rgcca_predict(fit_rgcca, blocks_test, 3),
+    "Dimensions of response do not match",
+    fixed = TRUE
+  )
+})
+
+test_that("rgcca_predict raises an error if the projected blocks are constant
+          within classes", {
+  data(ge_cgh_locIGR)
+  blocks <- ge_cgh_locIGR$multiblocks
+  Loc <- factor(ge_cgh_locIGR$y)
+  levels(Loc) <- colnames(ge_cgh_locIGR$multiblocks$y)
+  blocks[[3]] <- Loc
+  fit_rgcca <- rgcca(blocks, tau = 0, response = 3)
+  expect_error(
+    rgcca_predict(fit_rgcca, blocks, response = 3, prediction_model = "lda"),
+    "overfitting model.",
+    fixed = TRUE
+  )
+})
+
+# Regression
+#-----------
+test_that("rgcca_predict with lm predictor gives the same prediction as
+          applying lm directly on rgcca score Y", {
+  A <- lapply(blocks, function(x) x[1:32, ])
+  response <- 3
+  fit_rgcca <- rgcca(A,
+    tau = c(0.7, 0.8, 0.7), ncomp = c(3, 2, 3),
+    response = response
+  )
+  res_predict <- rgcca_predict(
+    rgcca_res = fit_rgcca, blocks_test = A,
+    response = response
+  )
+  res_lm <- apply(fit_rgcca$call$raw[[response]], 2, function(x) {
+    lm(x ~ fit_rgcca$Y[[1]][, 1:3] + fit_rgcca$Y[[2]][, 1:2])$residuals
+  })
+  score_lm <- mean(apply(res_lm, 2, function(x) {
+    return(sqrt(mean(x^2, na.rm = T)))
+  }))
+  expect_equal(res_predict$score, score_lm)
+  expect_equal(as.matrix(A[[response]] - res_predict$prediction), res_lm)
+})
+
+# Classification
+#---------------
+test_that("rgcca_predict with lda predictor gives the same prediction as
+          applying lda directly on rgcca score Y", {
+  A <- lapply(blocks_classif, function(x) x[1:32, ])
+  response <- 3
+  fit_rgcca <- rgcca(A, tau = 1, ncomp = c(3, 2, 1), response = response)
+  res_predict <- rgcca_predict(fit_rgcca,
+    blocks_test = A,
+    prediction_model = "lda", response = response
+  )
+  Y <- data.frame(cbind(fit_rgcca$Y[[1]][, 1:3], fit_rgcca$Y[[2]][, 1:2]))
+  res_lda <- MASS::lda(fit_rgcca$call$raw[[response]] ~ as.matrix(Y))
+  prediction_lda <- predict(res_lda, Y)$class
+  expect_equal(drop(res_predict$prediction), as.numeric(prediction_lda))
+})

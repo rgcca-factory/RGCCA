@@ -19,14 +19,8 @@
 #'  for RGCCA and $1/sqrt(ncol)$ for SGCCA) and 1.
 #' @param par_length An integer indicating the number of sets of parameters to
 #' be tested (if par_value = NULL). The parameters are uniformly distributed.
-#' @param type_cv  A character corresponding to the task of prediction:
-#' 'regression' or 'classification' (see details)
 #' @param n_run An integer giving the number of cross-validations to be run
 #' (if validation = 'kfold').
-#' @param one_value_per_cv A logical value indicating if the k values are
-#' averaged for each k-fold steps.
-#' @param parallelization logical value. If TRUE (default value), the
-#' cross-validation procedure is parallelized
 #' @export
 #' @return \item{cv}{A matrix giving the root-mean-square error (RMSE) between
 #' the predicted R/SGCCA and the observed R/SGCCA for each combination and each
@@ -39,16 +33,14 @@
 #' @return \item{penalties}{A matrix giving, for each blocks, the penalty
 #' combinations (tau or sparsity)}
 #' @details
-#' If type_cv=="regression",at each round of cross-validation, for each
-#' variable, a predictive model is constructed as a linear model of the first
-#' RGCCA component of each block (calculated on the training set).
-#' Then the Root Mean Square of Errors of this model on the testing dataset
-#' are calculated, then averaged on the variables of the predictive block.
+#' At each round of cross-validation, for each
+#' variable, a predictive model of the first RGCCA component of each block
+#' (calculated on the training set) is constructed.
+#' Then the Root Mean Square of Errors (RMSE) or the Accuracy of the model
+#' is computed on the testing dataset. Finally, the metrics are averaged on the
+#' different folds.
 #' The best combination of parameters is the one where the average of RMSE on
-#' the testing datasets is the lowest.
-#' If type_cv=="classification", at each round of cross-validation a "lda" is
-#' run and the proportion of wrong predictions on the testing dataset is
-#' returned.
+#' the testing datasets is the lowest or the accuracy is the highest.
 #' @examples
 #' data("Russett")
 #' blocks <- list(
@@ -89,11 +81,9 @@ rgcca_cv <- function(blocks,
                      par_value = NULL,
                      par_length = 10,
                      validation = "kfold",
-                     type_cv = "regression",
                      prediction_model = "lm",
                      k = 5,
                      n_run = 1,
-                     one_value_per_cv = FALSE,
                      n_cores = parallel::detectCores() - 1,
                      quiet = TRUE,
                      superblock = FALSE,
@@ -103,14 +93,14 @@ rgcca_cv <- function(blocks,
                      scheme = "factorial",
                      NA_method = "nipals",
                      rgcca_res = NULL,
-                     parallelization = NULL,
                      tau = rep(1, length(blocks)),
                      ncomp = rep(1, length(blocks)),
                      sparsity = rep(1, length(blocks)),
                      init = "svd",
                      bias = TRUE,
-                     X_scaled = FALSE,
+                     verbose = TRUE,
                      ...) {
+  ### Try to retrieve parameters from a rgcca object
   if (!missing(blocks) & class(blocks) == "rgcca") {
     rgcca_res <- blocks
   }
@@ -130,6 +120,7 @@ rgcca_cv <- function(blocks,
     sparsity <- rgcca_res$call$sparsity
   }
 
+  ### Check parameters
   if (is.null(response)) {
     stop(paste0(
       "response is required for rgcca_cv (it is an integer ",
@@ -140,216 +131,124 @@ rgcca_cv <- function(blocks,
     k <- dim(blocks[[1]])[1]
     n_run <- 1
   }
-  if ("character" %in% mode(blocks[[response]])) {
-    type_cv <- "classification"
-    prediction_model <- "lda"
+  tryCatch(
+    model_info <- caret::modelLookup(prediction_model),
+    error = function(e) {
+      stop_rgcca(
+        "unknown model. Model ", prediction_model, " is not handled, please ",
+        "see caret::modelLookup() for a list of the available models."
+      )
+    }
+  )
+  classification <-
+    is.factor(blocks[[response]]) || is.character2(blocks[[response]])
+  is_inadequate <- !model_info$forClass && classification
+  if (is_inadequate) {
+    stop_rgcca(
+      "inadequate model. Response block contains categorical data ",
+      "but model ", prediction_model, " is not made for ",
+      "classification. Please choose another model."
+    )
   }
 
-  check_boolean("one_value_per_cv", one_value_per_cv)
-  check_integer("n_cores", n_cores, min = 0)
-  check_integer("par_length", n_run)
-  check_integer("par_value", n_run, min = 0)
+  check_integer("par_length", par_length)
   check_integer("n_run", n_run)
   match.arg(par_type, c("tau", "sparsity", "ncomp"))
 
-  if (method %in% c("sgcca", "spca", "spls")) {
+  ### Prepare parameters for line search
+  if (method %in% c("sgcca", "spca", "spls") && (par_type == "tau")) {
     par_type <- "sparsity"
-  } else {
-    par_type <- "tau"
+  } else if (par_type == "sparsity") method <- "sgcca"
+
+  param <- set_parameter_grid(par_type, par_length, par_value, blocks, response)
+
+  # Generate a warning if tau is null for a block that has more columns
+  # than samples
+  n <- NROW(blocks[[1]])
+  overfitting_risk <- (param$par_type == "tau") &&
+    any(vapply(seq_along(blocks), function(j) {
+      NCOL(blocks[[j]]) > n && any(param$par_value[, j] == 0)
+    }, FUN.VALUE = logical(1L)))
+  if (overfitting_risk) {
+    warning("overfitting risk. Tau is zero for a block that has more columns ",
+            "than rows, there is a high risk of overfitting for RGCCA.")
   }
 
-  if (length(blocks) < 1) {
-    stop_rgcca("Crossvalidation required a number of blocks larger than 1.")
-  }
-
-  ncols <- sapply(blocks, NCOL)
-
-  set_spars <- function(min_spars, max = 1) {
-    if (length(max) == 1) {
-      f <- quote(max)
-    } else {
-      f <- quote(max[x])
-    }
-    sapply(
-      seq(min_spars),
-      function(x) seq(eval(f), min_spars[x], len = par_length)
+  ### Start line search
+  if (verbose) {
+    message(paste("Cross-validation for", param$par_type, "in progress...\n"),
+      appendLF = FALSE
     )
-  }
-  set_penalty <- function() {
-    if (par_type == "sparsity") {
-      if (method != "sgcca") {
-        paste0(
-          "As par_type == 'sparsity', the method parameter ",
-          "was replaced by 'sgcca'"
-        )
-      }
-      method <- "sgcca"
-      min_spars <- sapply(ncols, function(x) 1 / sqrt(x))
-    } else {
-      if (method == "sgcca") {
-        paste0(
-          "As par_type != 'sparsity', the method parameter ",
-          "was replaced by 'rgcca'"
-        )
-      }
-      method <- "rgcca"
-      min_spars <- sapply(ncols, function(x) 0)
-    }
-
-    if (is.null(par_value)) {
-      par_value <- set_spars(min_spars)
-    } else {
-      if ("data.frame" %in% class(par_value) ||
-        "matrix" %in% class(par_value)) {
-        par_value <- t(sapply(
-          seq(NROW(par_value)),
-          function(x) check_penalty(par_value[x, ], blocks, method = method)
-        ))
-      } else {
-        if (any(par_value < min_spars)) {
-          stop_rgcca(paste0(
-            "par_value should be upper than : ",
-            paste0(round(min_spars, 2), collapse = ",")
-          ))
-        }
-        par_value <- check_penalty(par_value, blocks, method = method)
-        par_value <- set_spars(min_spars, max = par_value)
-      }
-    }
-    colnames(par_value) <- names(blocks)
-    return(list(par_type, par_value))
+    pb <- txtProgressBar(max = nrow(param$par_value))
   }
 
-  switch(par_type,
-    "ncomp" = {
-      if (!class(par_value) %in% c("data.frame", "matrix")) {
-        if (is.null(par_value) || any(par_value > ncols)) {
-          ncols[ncols > 5] <- 5
-          par_value <- ncols
-        } else {
-          par_value <- check_ncomp(par_value, blocks)
-        }
-        par_value <- lapply(par_value, function(x) seq(x))
-        par_value <- expand.grid(par_value)
-      } else {
-        par_value <- t(sapply(
-          seq(NROW(par_value)),
-          function(x) check_ncomp(par_value[x, ], blocks, 1)
-        ))
-      }
-      par_type <- list(par_type, par_value)
-    },
-    "sparsity" = par_type <- set_penalty(),
-    "tau" = par_type <- set_penalty()
+  rgcca_args <- list(
+    blocks = blocks, method = method, response = response,
+    ncomp = ncomp, superblock = superblock,
+    scale = scale, scale_block = scale_block,
+    scheme = scheme, tol = tol, NA_method = NA_method,
+    tau = tau, sparsity = sparsity, bias = bias,
+    init = init
   )
 
-  message(paste("Cross-validation for", par_type[[1]], "in progress...\n"),
-    appendLF = FALSE
-  )
-  pb <- txtProgressBar(max = dim(par_type[[2]])[1])
-  res <- matrix(NA, dim(par_type[[2]])[1], n_run * k)
-  rownames(res) <- apply(
-    round(par_type[[2]], digits = 2), 1, paste,
-    collapse = "-"
-  )
+  mat_cval <- lapply(seq(nrow(param$par_value)), function(i) {
+    rgcca_args[[param$par_type]] <- param$par_value[i, ]
+    rgcca_res <- do.call(rgcca, rgcca_args)
 
-  for (i in seq(dim(par_type[[2]])[1])) {
-    if (par_type[[1]] == "ncomp") {
-      rgcca_res <- rgcca(
-        blocks = blocks, method = method, response = response,
-        ncomp = par_type[[2]][i, ], superblock = superblock,
-        scale = scale, scale_block = scale_block,
-        scheme = scheme, tol = tol, NA_method = NA_method,
-        tau = tau, sparsity = sparsity, bias = bias,
-        init = init
-      )
-    }
-    if (par_type[[1]] == "sparsity") {
-      rgcca_res <- rgcca(
-        blocks = blocks, method = "sgcca", response = response,
-        sparsity = par_type[[2]][i, ], superblock = superblock,
-        scale = scale, scale_block = scale_block,
-        scheme = scheme, tol = tol, NA_method = NA_method,
-        ncomp = ncomp, bias = bias, init = init
-      )
-    }
-    if (par_type[[1]] == "tau") {
-      rgcca_res <- rgcca(
-        blocks = blocks, method = method, response = response,
-        tau = par_type[[2]][i, ], superblock = superblock,
-        scale = scale, scale_block = scale_block,
-        scheme = scheme, tol = tol, NA_method = NA_method,
-        ncomp = ncomp, bias = bias, init = init
-      )
-    }
+    res <- unlist(lapply(seq(n_run), function(n) {
+      rgcca_cv_k(
+        rgcca_res,
+        validation = validation,
+        prediction_model = prediction_model,
+        k = k,
+        n_cores = n_cores,
+        complete = FALSE,
+        verbose = FALSE,
+        classification = classification,
+        ...
+      )$vec_scores
+    }))
 
-    res_i <- c()
-    for (n in seq(n_run)) {
-      if (one_value_per_cv) {
-        res_i <- c(res_i, rgcca_cv_k(
-          rgcca_res,
-          validation = validation,
-          task = type_cv,
-          prediction_model = prediction_model,
-          X_scaled = TRUE,
-          k = k,
-          n_cores = n_cores,
-          parallelization = parallelization
-        )$scores)
-      } else {
-        res_i <- c(res_i, rgcca_cv_k(
-          rgcca_res,
-          validation = validation,
-          task = type_cv,
-          prediction_model = prediction_model,
-          X_scaled = TRUE,
-          k = k,
-          n_cores = n_cores,
-          parallelization = parallelization
-        )$list_scores)
-      }
-    }
+    if (verbose) setTxtProgressBar(pb, i)
 
-    res[i, ] <- as.numeric(res_i)
+    return(res)
+  })
+  mat_cval <- do.call(rbind, mat_cval)
 
-    setTxtProgressBar(pb, i)
-    mat_cval <- res
-
-    rownames(mat_cval) <- seq(NROW(mat_cval))
-  }
-
+  ### Format output
   cat("\n")
-  Sys.sleep(1)
   call <- list(
     n_run = n_run,
     response = response,
     par_type = par_type,
     par_value = par_value,
     validation = validation,
-    type_cv = type_cv,
     prediction_model = prediction_model,
     k = k,
-    one_value_per_cv = one_value_per_cv,
     superblock = FALSE,
     scale = scale,
     scale_block = scale_block,
     tol = tol,
     scheme = scheme,
     NA_method = NA_method,
-    blocks = blocks
+    blocks = blocks,
+    tau = tau,
+    sparsity = sparsity,
+    ncomp = ncomp
   )
-  par2 <- par_type[[2]]
 
-  rownames(par2) <- seq(NROW(par2))
+  rownames(param$par_value) <- seq(NROW(param$par_value))
+  colnames(param$par_value) <- names(blocks)
+  rownames(mat_cval) <- seq(NROW(mat_cval))
 
-  colnames(par2) <- names(blocks)
+  best_param_idx <- which.min(apply(mat_cval, 1, mean))
 
-  res2 <- list(
+  res <- list(
     cv = mat_cval,
     call = call,
-    bestpenalties = par_type[[2]][which.min(apply(mat_cval, 1, mean)), ],
-    penalties = par2
+    bestpenalties = param$par_value[best_param_idx, ],
+    penalties = param$par_value
   )
-  class(res2) <- "cval"
-  return(res2)
+  class(res) <- "cval"
+  return(res)
 }

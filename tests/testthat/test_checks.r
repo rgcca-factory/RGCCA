@@ -313,11 +313,11 @@ test_that("check_ncomp raises an error if any element of ncomp is greater than
 })
 test_that("check_ncomp raises an error if ncomp is greater than the number of
           columns in the superblock", {
-  expect_error(check_ncomp(7, blocks, superblock = TRUE),
+  expect_error(check_ncomp(12, blocks, superblock = TRUE),
     paste0(
       "the number of components must be lower ",
       "than the number of variables in the superblock,",
-      " i.e. 6."
+      " i.e. 11."
     ),
     fixed = TRUE
   )
@@ -337,6 +337,18 @@ test_that("check_ncomp passes and returns ncomp when ncomp is valid", {
 # Test check_response
 
 # Test check_sign_comp
+test_that("check_sign_comp changes the sign of weight vector if correlation
+          with reference is negative", {
+  fit_rgcca <- rgcca(blocks, ncomp = 1)
+  a <- fit_rgcca$a
+  a[[1]] <- -a[[1]]
+  expect_identical(fit_rgcca$a, check_sign_comp(fit_rgcca, a))
+
+  fit_rgcca <- rgcca(blocks, ncomp = 2)
+  a <- fit_rgcca$a
+  a[[1]][, 1] <- -a[[1]][, 1]
+  expect_identical(fit_rgcca$a, check_sign_comp(fit_rgcca, a))
+})
 
 # Test check_size_blocks
 test_that("check_size_blocks raises an error when number of columns of x does
@@ -435,8 +447,6 @@ test_that("check_spars passes and returns sparsity when sparsity is valid", {
   expect_equal(check_spars(1, blocks[[1]], 1), 1)
   expect_equal(check_spars(0.5, blocks[[3]], 0.5), 0.5)
 })
-
-# Test check_superblock
 
 # Test check_tau
 test_that("check_tau raises an error for invalid tau", {

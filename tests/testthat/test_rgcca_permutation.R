@@ -54,10 +54,6 @@ test_that("rgcca_mat_connection0", {
 res <- rgcca(res_perm)
 
 res_perm <- rgcca_permutation(blocks = blocks, n_cores = 1, par_type = "tau", superblock = TRUE)
-test_that("rgcca_mat_connection", {
-  expect_true(dim(res_perm$call$connection)[1] == 4)
-})
-
 res <- rgcca(res_perm)
 
 

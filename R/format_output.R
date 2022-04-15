@@ -30,7 +30,8 @@ format_output <- function(func_out, opt, raw, func_call = NULL) {
     ncomp = opt$ncomp,
     scheme = opt$scheme,
     response = opt$response,
-    raw = raw
+    raw = raw,
+    method = opt$method
   )
 
   is_optimal <- any(opt$penalty == "optimal")

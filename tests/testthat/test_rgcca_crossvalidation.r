@@ -4,21 +4,13 @@ data("Russett")
 blocks <- list(
   agriculture = Russett[, seq(3)],
   industry = Russett[, 4:5],
-  politic = Russett[, 6:11]
+  politic = Russett[, 6:8]
 )
 
 
 
-test_structure_cv <- function(res, scores, nrow = 47, val = TRUE) {
-  expect_equal(length(res), 8)
+test_structure_cv <- function(res, scores, val = TRUE) {
   expect_is(res, "cv")
-  expect_is(res$rgcca, "rgcca")
-  pred <- res$preds
-  expect_is(pred, "list")
-  expect_is(pred[[1]], "matrix")
-  # expect_true(all(sapply(pred, NCOL) == 2))
-  expect_true(all(sapply(pred, NROW) == nrow))
-  expect_identical(res$rgcca, rgcca_out)
   if (val) {
     expect_identical(round(res$scores, 4), round(scores, 4))
   }
@@ -34,8 +26,6 @@ rgcca_out2 <- rgcca(blocks2, response = 1, superblock = FALSE, ncomp = 1, scale 
 v_inds <- sample(nrow(rgcca_out2$call$raw[[1]]))
 v_inds <- split(v_inds, sort(v_inds %% 5))
 X <- lapply(rgcca_out2$call$raw, function(x) x[v_inds[[1]], , drop = FALSE])
-# res_predict = rgcca_predict(rgcca_out2, X = X, task = "classification", prediction_model = "lda", block_to_predict = names(rgcca_out2$call$blocks)[rgcca_out2$call$response])
-# rescv= rgcca_cv_k(rgcca_res=rgcca_out2,n_cores=1,validation="loo")
 # X_scaled = FALSE si les blocs en entrée de X ne sont pas scalés, TRUE si les blocks sont scalés
 # Finding back 0.495311
 res <- rep(NA, dim(blocks[[1]])[1])
@@ -54,12 +44,12 @@ for (i in 1:dim(blocks[[1]])[1])
 
   # Methode 1 on predit la valeur i à l'aide du modèle rgcca, et de la ligne du bloc
   # Ici, on reprend les scale value de la rgcca calculée sur A_moins_i et on les applique à A_i
-  respred_i <- rgcca_predict(rgcca_out_i, A_i, X_scaled = FALSE, block_to_predict = "agriculture")
+  respred_i <- rgcca_predict(rgcca_out_i, A_i, response = "agriculture")
 
   # Methode 2: on predit la valeur i a l'aide des blocs "scalés"
   # newA_i = lapply(rgcca_out$call$blocks, function(x) x[inds, , drop = FALSE])
   # newA_i=(rgcca_out$call$blocks)*()+() -()
-  #  respred_i2=rgcca_predict(rgcca_out_i,newA_i ,X_scaled=TRUE,block_to_predict="agriculture")
+  #  respred_i2=rgcca_predict(rgcca_out_i,newA_i,response="agriculture")
 
   # all.equal(respred_i,respred_i2)
   # A_i_scaled=lapply(rgcca_out$call$blocks,function(x){res=t(as.matrix(x[i,]));rownames(res)=rownames(rgcca_out$call$blocks)[1];return(res)})
@@ -88,7 +78,7 @@ test_that("rgcca_cv_default_1", {
 #--------------------------------------------------------
 rgcca_out <- rgcca(blocks, response = 1, superblock = FALSE, ncomp = 1, scale = TRUE, scale_block = TRUE)
 rgcca_cv <- rgcca_cv_k(rgcca_res = rgcca_out, n_cores = 1, validation = "loo", tol = 1e-5)
-rgcca_cv$list_pred[[1]]
+
 # test for the first neighbor in rgcca
 rgcca_k <-
   RGCCA:::set_rgcca(rgcca_out,
@@ -98,47 +88,46 @@ rgcca_k <-
 X <- lapply(blocks, function(x) {
   return(x[1, , drop = FALSE])
 })
-res_pred <- rgcca_predict(rgcca_k, X = X, block_to_predict = "agriculture", X_scaled = FALSE)
+res_pred <- rgcca_predict(rgcca_k, blocks_test = X, response = "agriculture")
 res_pred$prediction
 res_pred_score <- res_pred$score
 test_that("rgcca_cv_k_rmse", {
   expect_true(
-    round(res_pred_score, digits = 5) == round(rgcca_cv$list_scores[1], digits = 5)
+    round(res_pred_score, digits = 5) == round(rgcca_cv$vec_scores[1], digits = 5)
   )
 })
 
-# TODO: Reimplement similar test after work on cross validation is done
-# # Cross-validation to find out the prediction error when agri is response and with 2 comp
-# set.seed(1)
-#
-# for (i in 1:dim(blocks[[1]])[1])
-# {
-#   # Etape 1: on extrait la ligne i des blocs non scalés
-#   A_moins_i <- lapply(blocks, function(x) {
-#     return(x[-i, ])
-#   })
-#   A_i <- lapply(blocks, function(x) {
-#     return(x[i, ])
-#   })
-#   names(A_moins_i) <- names(A_i) <- names(blocks)
-#   # on calcule la RGCCA sur le bloc A sans le i
-#   rgcca_out_i <- rgcca(A_moins_i, response = 1, superblock = FALSE, ncomp = 2, scale = TRUE, scale_block = TRUE)
-#
-#   # Methode 1 on predit la valeur i à l'aide du modèle rgcca, et de la ligne du bloc
-#   # Ici, on reprend les scale value de la rgcca calculée sur A_moins_i et on les applique à A_i
-#   respred_i <- rgcca_predict(rgcca_out_i, A_i, X_scaled = FALSE, block_to_predict = "agriculture")
-#
-#   res[i] <- respred_i$score
-# }
-# mean(res)
-#
-# rgcca_out <- rgcca(blocks, response = 1, superblock = FALSE, ncomp = 2, scale = TRUE, scale_block = TRUE)
-# test_that("rgcca_cv_default_2", {
-#   test_structure_cv(
-#     rgcca_cv_k(rgcca_res = rgcca_out, n_cores = 1, validation = "loo"),
-#     mean(res)
-#   )
-# })
+# Cross-validation to find out the prediction error when agri is response and with 2 comp
+set.seed(1)
+
+for (i in 1:dim(blocks[[1]])[1])
+{
+  # Etape 1: on extrait la ligne i des blocs non scalés
+  A_moins_i <- lapply(blocks, function(x) {
+    return(x[-i, ])
+  })
+  A_i <- lapply(blocks, function(x) {
+    return(x[i, ])
+  })
+  names(A_moins_i) <- names(A_i) <- names(blocks)
+  # on calcule la RGCCA sur le bloc A sans le i
+  rgcca_out_i <- rgcca(A_moins_i, response = 1, superblock = FALSE, ncomp = 2, scale = TRUE, scale_block = TRUE)
+
+  # Methode 1 on predit la valeur i à l'aide du modèle rgcca, et de la ligne du bloc
+  # Ici, on reprend les scale value de la rgcca calculée sur A_moins_i et on les applique à A_i
+  respred_i <- rgcca_predict(rgcca_out_i, A_i, response = "agriculture")
+
+  res[i] <- respred_i$score
+}
+mean(res)
+
+rgcca_out <- rgcca(blocks, response = 1, superblock = FALSE, ncomp = 2, scale = TRUE, scale_block = TRUE)
+test_that("rgcca_cv_default_2", {
+  test_structure_cv(
+    rgcca_cv_k(rgcca_res = rgcca_out, n_cores = 1, validation = "loo"),
+    mean(res)
+  )
+})
 
 # k-fold
 #----------
@@ -200,7 +189,7 @@ RussettWithNA[3, 1] <- NA
 blocksNA <- list(
   agriculture = RussettWithNA[, seq(3)],
   industry = RussettWithNA[, 4:5],
-  politic = RussettWithNA[, 6:11]
+  politic = RussettWithNA[, 6:8]
 )
 
 #  rgcca_out <- rgcca(blocksNA, response = 1,ncomp=1)
@@ -220,16 +209,16 @@ test_that("rgcca_cv_withNA2", {
   round(cv$scores, digits = 3) == 0.443
 })
 
-# Test avec scale=FALSE, scale_block=FALSE
-rgcca_out_1 <- rgcca(blocks, response = 1, superblock = FALSE, ncomp = 1, scale = TRUE, scale_block = TRUE)
-rescv1 <- rgcca_cv_k(rgcca_res = rgcca_out_1, n_cores = 1, validation = "loo")
-
-
-blocks2 <- RGCCA:::scaling(blocks, scale = TRUE, scale_block = TRUE)
-rgcca_out_2 <- rgcca(blocks2, response = 1, superblock = FALSE, ncomp = 1, scale = TRUE, scale_block = TRUE)
-rescv2 <- rgcca_cv_k(rgcca_res = rgcca_out_2, n_cores = 1, validation = "loo", scale_block = FALSE, scale = FALSE)
-
-all.equal(rescv1, rescv2)
+# # Test avec scale=FALSE, scale_block=FALSE
+# rgcca_out_1 <- rgcca(blocks, response = 1, superblock = FALSE, ncomp = 1, scale = TRUE, scale_block = TRUE)
+# rescv1 <- rgcca_cv_k(rgcca_res = rgcca_out_1, n_cores = 1, validation = "loo")
+#
+#
+# blocks2 <- RGCCA:::scaling(blocks, scale = TRUE, scale_block = TRUE)
+# rgcca_out_2 <- rgcca(blocks2, response = 1, superblock = FALSE, ncomp = 1, scale = FALSE, scale_block = FALSE)
+# rescv2 <- rgcca_cv_k(rgcca_res = rgcca_out_2, n_cores = 1, validation = "loo", scale_block = FALSE, scale = FALSE)
+#
+# all.equal(rescv1, rescv2)
 
 
 # rgcca_cv_k for classification
@@ -249,7 +238,7 @@ object1 <- rgcca(A,
   connection = C, tau = c(1, 1, 1),
   ncomp = 1, superblock = FALSE, response = 3
 )
-rescv1 <- rgcca_cv_k(rgcca_res = object1, n_cores = 1, validation = "loo", task = "classification", prediction_model = "lda")
+rescv1 <- rgcca_cv_k(rgcca_res = object1, n_cores = 1, validation = "loo", prediction_model = "lda")
 #   res_test  = rgcca_predict(object1, A_test,X_scaled=FALSE,prediction_model="lda",task="classification",block_to_predict="politic")
 test_that("rgcca_predict_classif", {
   expect_true(
@@ -271,7 +260,18 @@ for (i in 1:dim(blocks_for_classif[[1]])[1])
   names(A_moins_i) <- names(A_i) <- names(blocks_for_classif)
   # on calcule la RGCCA sur le bloc A sans le i
   rgcca_out_i <- rgcca(A_moins_i, response = 3, superblock = FALSE, ncomp = 1, scale = TRUE, scale_block = TRUE)
-  respred_i <- rgcca_predict(rgcca_out_i, A_i, X_scaled = FALSE, block_to_predict = "politic", task = "classification", prediction_model = "lda")
+  respred_i <- rgcca_predict(rgcca_out_i, A_i, response = "politic", prediction_model = "lda")
   res[i] <- respred_i$score
 }
 mean(res) # 0.213
+
+### Test that rgcca_cv_k works even if a column has null variance in the training blocks
+blocks <- list(
+  agriculture = Russett[, seq(3)],
+  industry = Russett[, 4:5],
+  politic = Russett[, 6:11]
+)
+blocks[[3]][, 6] <- c(1, rep(0, 46))
+
+rgcca_out <- rgcca(blocks, response = 1)
+rgcca_cv_k(rgcca_res = rgcca_out, n_cores = 1, validation = "loo")

@@ -59,8 +59,6 @@ rgcca_stability <- function(rgcca_res,
                             verbose = FALSE,
                             balanced = TRUE,
                             keep_all_variables = FALSE) {
-  local_env <- new.env()
-
   stopifnot(tolower(rgcca_res$call$method) %in% c("sgcca", "spls", "spca"))
   check_integer("n_boot", n_boot)
   check_integer("n_cores", n_cores, min = 0)
@@ -83,82 +81,17 @@ rgcca_stability <- function(rgcca_res,
     rgcca_res <- set_rgcca(rgcca_res)
   }
 
-  ndefl_max <- max(rgcca_res$call$ncomp)
-  list_res <- list()
-  for (i in 1:ndefl_max) {
-    list_res[[i]] <- list()
-    for (block in names(rgcca_res$call$blocks)) {
-      list_res[[i]][[block]] <-
-        matrix(NA, dim(rgcca_res$call$blocks[[block]])[2], n_boot)
-      rownames(list_res[[i]][[block]]) <-
-        colnames(rgcca_res$call$blocks[[block]])
-    }
-  }
-
-  if (n_cores == 0) n_cores <- 1
-
-  if (!verbose) {
-    pbapply::pboptions(type = "none")
-  } else {
-    pbapply::pboptions(type = "timer")
-  }
-
-  if (Sys.info()["sysname"] == "Windows") {
-    if (n_cores > 1) {
-      assign("rgcca_res", rgcca_res, envir = local_env)
-      cl <- parallel::makeCluster(n_cores)
-      parallel::clusterExport(cl, "rgcca_res", envir = local_env)
-      W <- pbapply::pblapply(boot_sampling$full_idx,
-        function(b) {
-          bootstrap_k(
-            rgcca_res = rgcca_res,
-            inds = b
-          )
-        },
-        cl = cl
+  W <- par_pblapply(
+    boot_sampling$full_idx, function(b) {
+      bootstrap_k(
+        rgcca_res = rgcca_res,
+        inds = b
       )
-      parallel::stopCluster(cl)
-    } else {
-      W <- pbapply::pblapply(
-        boot_sampling$full_idx,
-        function(b) {
-          bootstrap_k(rgcca_res = rgcca_res, inds = b)
-        }
-      )
-    }
-  } else {
-    W <- pbapply::pblapply(boot_sampling$full_idx,
-      function(b) {
-        bootstrap_k(rgcca_res = rgcca_res, inds = b)
-      },
-      cl = n_cores
-    )
-  }
+    },
+    n_cores = n_cores, verbose = verbose
+  )
 
-  W <- lapply(W, `[[`, 1)
-
-  for (k in seq(n_boot)) {
-    for (i in seq(ndefl_max)) {
-      for (j in seq_along(rgcca_res$call$blocks)) {
-        block <- names(rgcca_res$call$blocks)[j]
-        if (!is.null(names(W[[k]]))) {
-          if (i <= NCOL(W[[k]][[block]])) {
-            list_res[[i]][[block]][, k] <- W[[k]][[block]][, i]
-          }
-        } else {
-          list_res[[i]][[block]][, k] <-
-            rep(NA, length(list_res[[i]][[block]][, k]))
-          if (is.character(W[[k]])) {
-            warning(paste0(
-              "This bootstrap sample was removed due to zero variance ",
-              "variable(s): ",
-              paste(W[[k]], collapse = " - ")
-            ))
-          }
-        }
-      }
-    }
-  }
+  list_res <- format_bootstrap_list(W, rgcca_res, n_boot, 1)
 
   J <- length(list_res[[1]])
 

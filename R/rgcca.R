@@ -210,40 +210,30 @@ rgcca <- function(blocks, method = "rgcca",
                   init = "svd", bias = TRUE, tol = 1e-08,
                   response = NULL,
                   superblock = FALSE,
-                  NA_method = "nipals", verbose = FALSE, quiet = TRUE) {
+                  NA_method = "nipals", verbose = FALSE, quiet = TRUE,
+                  n_iter_max = 1000) {
   ### If specific objects are given for blocks, parameters are imported from
   #   these objects.
-  if (class(blocks) == "permutation") {
+  if (class(blocks) %in% c("permutation", "cval")) {
     message(paste0(
       "All the parameters were imported from the fitted ",
-      "rgcca_permutation object."
+      class(blocks), " object."
     ))
     scale_block <- blocks$call$scale_block
+    tau <- blocks$call$tau
     scale <- blocks$call$scale
+    ncomp <- blocks$call$ncomp
     scheme <- blocks$call$scheme
+    sparsity <- blocks$call$sparsity
     connection <- blocks$call$connection
     tol <- blocks$call$tol
+    response <- blocks$call$response
     NA_method <- blocks$call$NA_method
     superblock <- blocks$call$superblock
     if (blocks$call$par_type == "tau") tau <- blocks$bestpenalties
     if (blocks$call$par_type == "ncomp") ncomp <- blocks$bestpenalties
     if (blocks$call$par_type == "sparsity") sparsity <- blocks$bestpenalties
     superblock <- blocks$call$superblock
-    blocks <- blocks$call$blocks
-  }
-  if (class(blocks) == "cval") {
-    message("All the parameters were imported from the fitted cval object.")
-    scale_block <- blocks$call$scale_block
-    scale <- blocks$call$scale
-    scheme <- blocks$call$scheme
-    response <- blocks$call$response
-    tol <- blocks$call$tol
-    NA_method <- blocks$call$NA_method
-    if (blocks$call$par_type[[1]] == "tau") tau <- blocks$bestpenalties
-    if (blocks$call$par_type[[1]] == "ncomp") ncomp <- blocks$bestpenalties
-    if (blocks$call$par_type[[1]] == "sparsity") {
-      sparsity <- blocks$bestpenalties
-    }
     blocks <- blocks$call$blocks
   }
 
@@ -254,6 +244,7 @@ rgcca <- function(blocks, method = "rgcca",
     n = 1, init = TRUE, quiet = quiet
   )
   check_integer("tol", tol, float = TRUE, min = 0)
+  check_integer("n_iter_max", n_iter_max, min = 1)
   for (i in c("superblock", "verbose", "scale", "bias", "quiet")) {
     check_boolean(i, get(i))
   }
@@ -279,10 +270,19 @@ rgcca <- function(blocks, method = "rgcca",
   raw <- blocks
 
   ### One hot encode the response block if needed
-  disjonction <- NULL
+  disjunction <- NULL
   if (!is.null(opt$response)) {
-    blocks[[opt$response]] <- as_disjonctive(blocks[[opt$response]])
-    disjonction <- attributes(blocks[[opt$response]])$disjonction
+    blocks[[opt$response]] <- as_disjunctive(blocks[[opt$response]])
+    disjunction <- attributes(blocks[[opt$response]])$disjunction
+  }
+  # Change tau to 0 if there is a univariate disjunctive block response
+  is_disjunctive_and_tau <- !is.null(disjunction) && opt$par == "tau"
+  if (is_disjunctive_and_tau) {
+    if (is.matrix(opt$penalty)) {
+      opt$penalty[, opt$response] <- 0
+    } else {
+      opt$penalty[opt$response] <- 0
+    }
   }
 
   ### Apply strategy to deal with NA, scale and prepare superblock
@@ -308,7 +308,8 @@ rgcca <- function(blocks, method = "rgcca",
     quiet = quiet,
     na.rm = na.rm,
     superblock = opt$superblock,
-    response = opt$response
+    response = opt$response,
+    n_iter_max = n_iter_max
   )
   gcca_args[[opt$par]] <- opt$penalty
   func_out <- do.call(opt$gcca, gcca_args)
@@ -316,8 +317,7 @@ rgcca <- function(blocks, method = "rgcca",
   ### Format the output
   func_out <- format_output(func_out, opt, raw, func_call = list(
     scale = scale, init = init, bias = bias, tol = tol, verbose = verbose,
-    scale_block = scale_block, NA_method = NA_method,
-    method = method, disjonction = disjonction
+    scale_block = scale_block, NA_method = NA_method, disjunction = disjunction
   ))
 
   class(func_out) <- "rgcca"

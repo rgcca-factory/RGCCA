@@ -7,9 +7,8 @@
 #' @inheritParams plot_ind
 #' @param k An integer giving the number of folds (if validation = 'kfold').
 #' @param validation A character for the type of validation among "loo",
-#' "kfold", "test".
-#' @param parallelization logical value. If TRUE (default value), the
-#' permutation procedure is parallelized
+#' "kfold".
+#' @param classification A logical indicating if it is a classification task.
 #' @examples
 #' data("Russett")
 #' blocks <- list(
@@ -23,9 +22,7 @@
 #' @seealso \link{rgcca}, \link{rgcca_predict}, \link{plot.predict}
 rgcca_cv_k <- function(rgcca_res,
                        validation = "kfold",
-                       task = "regression",
                        prediction_model = "lm",
-                       X_scaled = TRUE,
                        k = 5,
                        scale = NULL,
                        scale_block = NULL,
@@ -40,62 +37,54 @@ rgcca_cv_k <- function(rgcca_res,
                        tau = NULL,
                        sparsity = NULL,
                        n_cores = parallel::detectCores() - 1,
-                       parallelization = TRUE,
+                       verbose = TRUE,
+                       classification = FALSE,
                        ...) {
-  if (is.null(connection)) {
-    connection <- rgcca_res$call$connection
-  }
-  if (is.null(scale)) {
-    scale <- rgcca_res$call$scale
-  }
-  if (is.null(scale_block)) {
-    scale_block <- rgcca_res$call$scale_block
-  }
-  if (is.null(NA_method)) {
-    NA_method <- rgcca_res$call$NA_method
-  }
-  if (is.null(scheme)) {
-    scheme <- rgcca_res$call$scheme
-  }
-  if (is.null(bias)) {
-    bias <- rgcca_res$call$bias
-  }
-  if (is.null(method)) {
-    method <- rgcca_res$call$method
-  }
-  if (is.null(init)) {
-    init <- rgcca_res$call$init
-  }
-  if (is.null(ncomp)) {
-    ncomp <- rgcca_res$call$ncomp
-  }
-  if (is.null(tau)) {
-    tau <- rgcca_res$call$tau
-  }
-  if (is.null(sparsity)) {
-    sparsity <- rgcca_res$call$sparsity
-  }
-
+  ### Check parameters
   stopifnot(is(rgcca_res, "rgcca"))
   if (is.null(rgcca_res$call$response)) {
-    stop_rgcca("This function required an analysis in a supervised mode")
+    stop_rgcca(
+      "missing response block. A model with a response block must be ",
+      "used to apply rgcca_cv_k."
+    )
   }
-  if (!is.null(parallelization)) {
-    check_boolean("parallelization", parallelization)
+  match.arg(validation, c("loo", "kfold"))
+
+  all_args <- names(environment())
+  used_args <- c(
+    names(match.call()), "validation", "prediction_model",
+    "k", "n_cores", "verbose", "classification"
+  )
+  for (n in setdiff(all_args, used_args)) {
+    assign(n, rgcca_res$call[[n]])
   }
-  match.arg(validation, c("loo", "test", "kfold"))
+
   check_integer("k", k, min = 2)
   check_integer("n_cores", n_cores, min = 0)
-  response <- rgcca_res$call$response
-  block_to_predict <- names(rgcca_res$call$blocks)[response]
 
-  if (n_cores == 0) {
-    n_cores <- 1
+  ### Compute cross validation
+  blocks <- rgcca_res$call$raw
+
+  if (validation == "loo") {
+    v_inds <- seq(nrow(blocks[[1]]))
+  } else {
+    if (classification) {
+      v_inds <- caret::createFolds(
+        blocks[[rgcca_res$call$response]][, 1],
+        k = k, list = TRUE,
+        returnTrain = FALSE
+      )
+    } else {
+      v_inds <- sample(nrow(blocks[[1]]))
+      v_inds <- split(v_inds, seq(v_inds) %% k)
+    }
   }
 
-  f <- function(block_to_predict, inds) {
-    rgcca_k <-
-      set_rgcca(rgcca_res,
+  res <- par_pblapply(
+    v_inds, function(inds) {
+      # Fit RGCCA on the training blocks
+      res <- set_rgcca(rgcca_res,
+        blocks = blocks,
         scale = scale,
         scale_block = scale_block,
         tol = tol,
@@ -103,144 +92,45 @@ rgcca_cv_k <- function(rgcca_res,
         superblock = FALSE,
         inds = inds,
         NA_method = NA_method,
-        response = response,
+        response = rgcca_res$call$response,
         bias = bias,
         tau = tau,
         ncomp = ncomp,
         sparsity = sparsity,
-      ) # Rgcca on all individuals but inds
-    #
-    rgcca_k_saved <- rgcca_k
-    rgcca_k$a <- add_variables_submodel(rgcca_res, rgcca_k$a)
-    rgcca_k$astar <- add_variables_submodel(rgcca_res, rgcca_k$astar)
-    rgcca_k$call$blocks <- add_variables_data(rgcca_res, rgcca_k$call$blocks)
-
-    center_att <- add_variables_attr(
-      rgcca_res,
-      lapply(
-        rgcca_k_saved$call$blocks,
-        function(i) attr(i, "scaled:center")
-      ),
-      type = "center"
-    )
-    scale_attr <- add_variables_attr(
-      rgcca_res,
-      lapply(
-        rgcca_k_saved$call$blocks,
-        function(i) attr(i, "scaled:scale")
       )
-    )
 
-    for (i in seq(length(rgcca_k$call$blocks))) {
-      attr(rgcca_k$call$blocks[[i]], "scaled:center") <- center_att[[i]]
-      attr(rgcca_k$call$blocks[[i]], "scaled:scale") <- scale_attr[[i]]
-    }
-    # Necessite les scale et les center en sortie
-    respred <- rgcca_predict(
-      rgcca_k,
-      X = lapply(bigA, function(x) x[inds, , drop = FALSE]),
-      task = task,
-      prediction_model = prediction_model,
-      block_to_predict = block_to_predict,
-      X_scaled = FALSE
-    )
-  }
-  if (NA_method != "complete") {
-    bigA <- rgcca_res$call$raw
-  }
-  if (NA_method == "complete") {
-    bigA <- intersection_list(rgcca_res$call$raw)
-  }
+      # Remove columns of the validation blocks that had null variance in the
+      # training blocks.
+      column_sd_null <- remove_null_sd(
+        lapply(blocks, function(x) x[-inds, , drop = FALSE])
+      )$column_sd_null
+      blocks_test <- lapply(seq_along(blocks), function(j) {
+        if (length(column_sd_null[[j]]) > 0) {
+          return(blocks[[j]][inds, -column_sd_null[[j]], drop = FALSE])
+        }
+        return(blocks[[j]][inds, , drop = FALSE])
+      })
+      names(blocks_test) <- names(blocks)
 
-  if (validation == "loo") {
-    v_inds <- seq(nrow(bigA[[1]]))
-  }
-  if (validation == "kfold") {
-    v_inds <- sample(nrow(bigA[[1]]))
-    v_inds <- split(v_inds, sort(v_inds %% k))
-  }
-  if (validation == "test") {
-    stop("to be implemented")
-  } else {
-    varlist <- c(ls(getNamespace("RGCCA")))
-    # get the parameter dot-dot-dot
-    args_values <- list(...)
-    args_names <- names(args_values)
-    n <- args_values
-    if (!is.null(n)) {
-      n <- seq(length(args_values))
-    }
-    for (i in n) {
-      if (!is.null(args_names[i])) {
-        # dynamically asssign these values
-        assign(args_names[i], args_values[[i]])
-        # send them to the clusters to parallelize
-        varlist <- c(varlist, args_names[i])
-        # without this procedure rgcca_cv_k(rgcca_res, blocks = blocks2)
-        # or rgcca_cv_k(rgcca_res, blocks = lapply(blocks, scale)
-        # does not work.
-      }
-    }
+      # Evaluate RGCCA on the validation blocks
+      res_pred <- rgcca_predict(
+        res,
+        blocks_test = blocks_test,
+        prediction_model = prediction_model,
+        response = rgcca_res$call$response,
+        ...
+      )
+    },
+    n_cores = n_cores, verbose = verbose
+  )
 
-
-    scores <- parallelize(
-      varlist,
-      seq(length(v_inds)),
-      function(i) {
-        inds <- unlist(v_inds[i])
-        f(block_to_predict, inds)
-      },
-      n_cores = n_cores,
-      envir = environment(),
-      applyFunc = "parLapply",
-      parallelization = parallelization
-    )
-  }
-
-  list_rgcca <- lapply(scores, function(x) {
-    return(x$rgcca_res)
-  })
-  list_pred <- lapply(scores, function(x) {
-    return(x$pred)
-  })
-  list_scores <- sapply(scores, function(x) x$score)
-  list_res <- lapply(scores, function(x) {
-    return(x$res)
-  })
-  list_class_fit <- lapply(scores, function(x) {
-    return(x$class.fit)
-  })
-
-  if (validation %in% c("loo", "kfold")) {
-    # concatenation of each test set to provide predictions for each block
-    preds <- lapply(
-      seq(length(rgcca_res$call$blocks)),
-      function(x) {
-        Reduce(
-          rbind,
-          lapply(
-            scores,
-            function(y) y$pred[[x]]
-          )
-        )
-      }
-    )
-
-    names(preds) <- names(rgcca_res$call$blocks)
-
-    for (x in seq(length(preds))) {
-      row.names(preds[[x]]) <- row.names(bigA[[1]])
-    }
-  }
-  scores <- mean(unlist(lapply(scores, function(x) x$score)), na.rm = T)
+  ### Structure outputs
+  vec_scores <- vapply(res, function(x) x$score, FUN.VALUE = numeric(1))
+  scores <- mean(unlist(lapply(res, function(x) x$score)), na.rm = TRUE)
 
   structure(
     list(
-      scores = scores, preds = preds,
-      rgcca_res = rgcca_res,
-      list_scores = list_scores,
-      list_pred = list_pred, list_rgcca = list_rgcca,
-      list_class = list_class_fit, list_res = list_res
+      scores = scores, vec_scores = vec_scores
     ),
     class = "cv"
   )

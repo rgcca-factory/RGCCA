@@ -25,12 +25,14 @@ Depends:
     MASS,
     R (>= 2.10)
 Imports:
+    caret,
     Deriv,
     ggplot2,
     graphics,
     grDevices,
     gridExtra,
     methods,
+    MLmetrics,
     parallel,
     pbapply,
     plotly,

@@ -22,7 +22,7 @@
 sgccak <- function(A, C, sparsity = rep(1, length(A)),
                    scheme = "centroid", tol = 1e-08,
                    init = "svd", bias = TRUE, verbose = FALSE,
-                   quiet = FALSE, na.rm = TRUE) {
+                   quiet = FALSE, na.rm = TRUE, n_iter_max = 1000) {
   if (is.function(scheme)) {
     g <- scheme
     # check for parity of g
@@ -58,7 +58,6 @@ sgccak <- function(A, C, sparsity = rep(1, length(A)),
   # 	Apply the constraints of the general optimization problem
   # 	and compute the outer components
   iter <- 1
-  n_iter_max <- 1000L
   crit <- numeric(n_iter_max)
 
   a_old <- a

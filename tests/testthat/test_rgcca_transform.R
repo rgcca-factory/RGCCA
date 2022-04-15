@@ -25,13 +25,9 @@ test_that("rgcca_transform raises an error if rgcca_res is not of type rgcca", {
   expect_error(rgcca_transform(42, A))
 })
 
-test_that("rgcca_transform raises an error if scaled_X is not a boolean", {
-  expect_error(rgcca_transform(fit.rgcca, A, X_scaled = 42))
-})
-
 test_that("rgcca_transform raises an error if X has no names", {
   expect_error(rgcca_transform(fit.rgcca, list(42)),
-    "Please provide names for the blocks X.",
+    "Please provide names for blocks_test.",
     fixed = TRUE
   )
 })
@@ -39,7 +35,7 @@ test_that("rgcca_transform raises an error if X has no names", {
 test_that("rgcca_transform raises an error if block names do not match", {
   expect_error(rgcca_transform(fit.rgcca, list("wrong_name" = 42)),
     paste0(
-      "At least one block from X was not found in the training",
+      "At least one block from blocks_test was not found in the training",
       " blocks. Please check block names."
     ),
     fixed = TRUE
@@ -60,9 +56,47 @@ test_that("rgcca_transform raises an error if block dimensions do not match", {
 # Checking Y matches the projection on training samples
 #-------------------------------------------------------------------------
 # Without permutation
-projection <- rgcca_transform(fit.rgcca, A, X_scaled = FALSE)
+projection <- rgcca_transform(fit.rgcca, A)
 
 test_that("rgcca_transform retrieves Y when projecting the training samples", {
+  for (j in 1:length(projection)) {
+    expect_true(max(abs(projection[[j]] - fit.rgcca$Y[[j]])) < 1e-14)
+  }
+})
+
+test_that("rgcca_transform retrieves Y with different scaling scenarios", {
+  fit.rgcca <- rgcca(A,
+    tau = c(0.7, 0.8, 0.7), ncomp = ncomp,
+    scale = FALSE, scale_block = FALSE
+  )
+  projection <- rgcca_transform(fit.rgcca, A)
+  for (j in 1:length(projection)) {
+    expect_true(max(abs(projection[[j]] - fit.rgcca$Y[[j]])) < 1e-14)
+  }
+
+  fit.rgcca <- rgcca(A,
+    tau = c(0.7, 0.8, 0.7), ncomp = ncomp,
+    scale = FALSE, scale_block = "inertia"
+  )
+  projection <- rgcca_transform(fit.rgcca, A)
+  for (j in 1:length(projection)) {
+    expect_true(max(abs(projection[[j]] - fit.rgcca$Y[[j]])) < 1e-14)
+  }
+
+  fit.rgcca <- rgcca(A,
+    tau = c(0.7, 0.8, 0.7), ncomp = ncomp,
+    scale = FALSE, scale_block = "lambda1"
+  )
+  projection <- rgcca_transform(fit.rgcca, A)
+  for (j in 1:length(projection)) {
+    expect_true(max(abs(projection[[j]] - fit.rgcca$Y[[j]])) < 1e-14)
+  }
+
+  fit.rgcca <- rgcca(A,
+    tau = c(0.7, 0.8, 0.7), ncomp = ncomp,
+    scale = TRUE, scale_block = "lambda1"
+  )
+  projection <- rgcca_transform(fit.rgcca, A)
   for (j in 1:length(projection)) {
     expect_true(max(abs(projection[[j]] - fit.rgcca$Y[[j]])) < 1e-14)
   }
@@ -74,7 +108,7 @@ A_perm <- list(
   industry = A[[2]],
   politic = A[[3]][, c(2:6, 1)]
 )
-projection <- rgcca_transform(fit.rgcca, A_perm, X_scaled = FALSE)
+projection <- rgcca_transform(fit.rgcca, A_perm)
 
 test_that("rgcca_transform retrieves Y when projecting the training samples
           with permuted columns", {
@@ -84,20 +118,10 @@ test_that("rgcca_transform retrieves Y when projecting the training samples
 })
 
 # With less blocks
-projection <- rgcca_transform(fit.rgcca, A[-3], X_scaled = FALSE)
+projection <- rgcca_transform(fit.rgcca, A[-3])
 
 test_that("rgcca_transform retrieves Y when projecting a subset of the
           training blocks", {
-  for (j in 1:length(projection)) {
-    expect_true(max(abs(projection[[j]] - fit.rgcca$Y[[j]])) < 1e-14)
-  }
-})
-
-# With blocks already scaled
-projection <- rgcca_transform(fit.rgcca, A_scaled, X_scaled = TRUE)
-
-test_that("rgcca_transform retrieves Y when projecting the prescaled training
-          samples", {
   for (j in 1:length(projection)) {
     expect_true(max(abs(projection[[j]] - fit.rgcca$Y[[j]])) < 1e-14)
   }
@@ -117,7 +141,7 @@ fit.rgccaNA <- rgcca(blocksNA,
   connection = C, tau = c(0.7, 0.8, 0.7),
   ncomp = c(1, 1, 1), superblock = FALSE
 )
-projection <- rgcca_transform(fit.rgccaNA, blocksNA, X_scaled = FALSE)
+projection <- rgcca_transform(fit.rgccaNA, blocksNA)
 
 test_that("rgcca_transform retrieves Y when projecting the training
           samples with missing values", {
@@ -129,7 +153,7 @@ test_that("rgcca_transform retrieves Y when projecting the training
 #-------------------------------------------------------------------------
 # Checking rgcca_transform works on unseen data
 #-------------------------------------------------------------------------
-projection <- rgcca_transform(fit.rgcca, A_test, X_scaled = FALSE)
+projection <- rgcca_transform(fit.rgcca, A_test)
 
 test_that("rgcca_transform creates projection with the right number of
           dimensions", {

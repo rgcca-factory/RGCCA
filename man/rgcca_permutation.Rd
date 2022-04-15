@@ -14,7 +14,7 @@ rgcca_permutation(
   quiet = TRUE,
   scale = TRUE,
   scale_block = TRUE,
-  method = NULL,
+  method = "rgcca",
   connection = 1 - diag(length(blocks)),
   scheme = "factorial",
   ncomp = rep(1, length(blocks)),
