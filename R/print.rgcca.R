@@ -41,12 +41,12 @@ print.rgcca <- function(x, ...) {
       for (i in seq(NCOL(x$call$connection))) {
         tau <- x$call$tau[i]
         cat("The", param, "parameter used for", names(x$call$blocks)[i],
-          "was:", round(tau, 4),
+          "is:", round(tau, 4),
           fill = TRUE
         )
       }
     } else {
-      cat("The", param, "parameters used were: \n")
+      cat("The", param, "parameters used are: \n")
       print(round(x$call$tau, 4), ...)
     }
   } else {
@@ -59,16 +59,16 @@ print.rgcca <- function(x, ...) {
       for (i in seq(NCOL(x$call$connection))) {
         sparsity <- x$call$sparsity[i]
 
-        cat("The", param, "parameter used for", names(x$call$blocks)[i], "was:",
+        cat("The", param, "parameter used for", names(x$call$blocks)[i], "is:",
           sparsity, "(with", paste(nb_selected_var[[i]], collapse = ", "),
           "variables selected)",
           fill = TRUE
         )
       }
     } else {
-      cat("The", param, "parameters used were: \n")
+      cat("The", param, "parameters used are: \n")
       print(round(x$call$sparsity, 4), ...)
-      cat("The number of selected variables were: \n")
+      cat("The number of selected variables are: \n")
       print(do.call(cbind, nb_selected_var))
     }
   }

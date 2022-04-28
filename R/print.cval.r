@@ -53,8 +53,8 @@ print.cval <- function(x, bars = "quantile", ...) {
 
     if (length(x$call$blocks) > 5) {
       combinations <- paste("Tuning parameter set ",
-                            sep = "",
-                            seq_along(x$pvals)
+        sep = "",
+        seq_along(x$pvals)
       )
     } else {
       combinations <- apply(
@@ -93,6 +93,7 @@ print.cval <- function(x, bars = "quantile", ...) {
       ), ""
     )
   ), "\n")
+  cat(paste("Prediction model:", x$call$prediction_model, "\n"))
 
   cat("\n")
   print(df)
@@ -104,9 +105,9 @@ print.cval <- function(x, bars = "quantile", ...) {
   optimal_y <- df[optimal_ind, 2]
 
   cat(paste(
-    "The best combination was:",
+    "The best combination is:",
     paste(format(x$bestpenalties, digits = 3), collapse = " "),
-    "for a mean CV error of ",
+    "for a mean CV error of",
     format(optimal_y, digits = 3)
   ), "\n", ...)
 }

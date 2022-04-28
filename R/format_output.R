@@ -47,6 +47,10 @@ format_output <- function(func_out, opt, raw, func_call = NULL) {
     func_out$call[[opt$par]] <- opt$penalty
   }
 
+  if (NCOL(func_out$call[[opt$par]]) > 1) {
+    colnames(func_out$call[[opt$par]]) <- names(opt$blocks)
+  }
+
   if (!is.null(func_out$tau)) {
     func_out$tau <- NULL
   }
