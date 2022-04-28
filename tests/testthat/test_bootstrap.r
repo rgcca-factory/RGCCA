@@ -37,16 +37,6 @@ test_that("bootstrap_default", {
   expect_identical(vapply(boot1, NROW, FUN.VALUE = 1L), p)
 })
 
-test_that("bootstrap_default", {
-  select_var <- get_bootstrap(boot)
-  expect_is(select_var, "df_bootstrap")
-  expect_is(select_var, "data.frame")
-  expect_identical(
-    NROW(select_var),
-    NCOL(rgcca_out$call$blocks[[length(rgcca_out$call$blocks)]])
-  )
-})
-
 ### Case sgcca
 rgcca_out <- rgcca(blocks,
   ncomp = 2, method = "sgcca",
@@ -71,7 +61,6 @@ resRGCCA <- rgcca(blocks, ncomp = c(2, 2, 2), superblock = FALSE)
 set.seed(seed = 18)
 resBootstrap <- bootstrap(rgcca = resRGCCA, n_boot = 2, n_cores = 1)
 select_var <- get_bootstrap(resBootstrap, display_order = TRUE)
-plot_bootstrap_1D(df_b = select_var)
 test_that("test_bootstrap_na_values", {
   expect_equal(
     select_var["demostab", "mean"],

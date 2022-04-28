@@ -27,59 +27,29 @@
 #' @export
 print.bootstrap <- function(x, type = "weight", empirical = TRUE,
                             display_order = FALSE, ...) {
-  print(paste0(
-    "Extract statistics on the block-", type, " vectors from ",
+  print_call(x$rgcca$call)
+  cat("\n")
+  cat(paste0(
+    "Extracted statistics on the block-", type, " vectors from ",
     NCOL(x$bootstrap[[1]][[1]][[1]]), " bootstrap samples"
-  ), ...)
+  ), "\n")
 
   ncompmax <- max(x$rgcca$call$ncomp)
   mycomp <- which_block(x$rgcca$call$ncomp)
 
-  if (!x$rgcca$call$superblock) {
-    for (comp in 1:ncompmax) {
-      cat(paste("Dimension:", comp, "\n"))
-      print(Reduce(
-        rbind,
-        lapply(
-          mycomp[[comp]],
-          function(block) {
-            b <- get_bootstrap(
-              b = x, type = type,
-              block = block,
-              comp = comp,
-              empirical = empirical,
-              display_order = display_order
-            )
-            othercols <- colnames(b)[-which(colnames(b) == "estimate")]
-            return(b[, c("estimate", othercols)])
-          }
+  for (comp in seq(ncompmax)) {
+    cat(paste("Component:", comp, "\n"))
+    print(Reduce(rbind, lapply(
+      mycomp[[comp]],
+      function(block) {
+        get_bootstrap(
+          b = x, type = type,
+          block = block,
+          comp = comp,
+          empirical = empirical,
+          display_order = display_order
         )
-      ))
-    }
-  } else {
-    J <- length(x$rgcca$call$ncomp)
-    ncompmax <- max(x$rgcca$call$ncomp[-J])
-    mycomp <- which_block(x$rgcca$call$ncomp[-J])
-
-    for (comp in seq(ncompmax)) {
-      cat(paste("Dimension:", comp, "\n"))
-      print(Reduce(
-        rbind,
-        lapply(
-          mycomp[[comp]],
-          function(block) {
-            b <- get_bootstrap(
-              b = x, type = type,
-              block = block,
-              comp = comp,
-              empirical = empirical,
-              display_order = display_order
-            )
-            othercols <- colnames(b)[-which(colnames(b) == "estimate")]
-            return(b[, c("estimate", othercols)])
-          }
-        )
-      ))
-    }
+      }
+    )))
   }
 }
