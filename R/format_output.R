@@ -25,6 +25,7 @@ format_output <- function(func_out, opt, raw, func_call = NULL) {
   if (!opt$superblock) names(func_out$astar) <- names(opt$blocks)
 
   names(func_out$AVE$AVE_X) <- names(opt$blocks)
+  names(func_out$AVE$AVE_X_cor) <- names(opt$blocks)
 
   func_out$call <- list(
     blocks = opt$blocks,
