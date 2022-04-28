@@ -461,3 +461,28 @@ check_scheme <- function(scheme) {
     ))
   }
 }
+
+check_prediction_model <- function(prediction_model, response_block) {
+  if (is.list(prediction_model)) {
+    model_info <- prediction_model
+  } else {
+    model_info <- caret::getModelInfo(prediction_model, regex = FALSE)[[1]]
+    if (is.null(model_info)) {
+      stop_rgcca(
+        "unknown model. Model ", prediction_model, " is not handled, please ",
+        "see caret::modelLookup() for a list of the available models."
+      )
+    }
+  }
+  classification <-
+    is.factor(response_block) || is.character2(response_block)
+  is_inadequate <- !("Classification" %in% model_info$type) && classification
+  if (is_inadequate) {
+    stop_rgcca(
+      "inadequate model. Response block contains categorical data ",
+      "but model ", prediction_model, " is not made for ",
+      "classification. Please choose another model."
+    )
+  }
+  return(list(prediction_model = model_info, classification = classification))
+}

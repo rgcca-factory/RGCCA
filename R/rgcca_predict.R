@@ -54,16 +54,6 @@ rgcca_predict <- function(rgcca_res,
   # TODO: Enable to not have the block to predict among the test blocks
 
   ### Check input parameters
-  tryCatch(
-    model_info <- caret::modelLookup(prediction_model),
-    error = function(e) {
-      stop_rgcca(
-        "unknown model. Model ", prediction_model,
-        " is not handled, please see",
-        " caret::modelLookup for a list of the available models."
-      )
-    }
-  )
   if (is.null(names(blocks_test))) {
     stop_rgcca("Please provide names for blocks_test.")
   }
@@ -92,6 +82,10 @@ rgcca_predict <- function(rgcca_res,
     )
   }
 
+  tmp <- check_prediction_model(prediction_model, blocks_test[[response]])
+  prediction_model <- tmp$prediction_model
+  classification <- tmp$classification
+
   ### Get train and test target
   y_train <- rgcca_res$call$raw[[train_idx]]
   y_test <- as.matrix(blocks_test[[test_idx]])
@@ -106,8 +100,6 @@ rgcca_predict <- function(rgcca_res,
     y_test <- y_test[, colnames(y_train), drop = FALSE]
   }
 
-
-
   ### Get projected train and test data
   projection <- rgcca_transform(rgcca_res, blocks_test[-test_idx])
   X_train <- rgcca_res$Y[names(projection)]
@@ -118,7 +110,6 @@ rgcca_predict <- function(rgcca_res,
   y_train <- subset_rows(y_train, rownames(X_train))
 
   # Test that in classification, variables are not constant within groups
-  classification <- model_info$forClass && !model_info$forReg
   if (classification) {
     groups <- split(X_train, y_train[, 1])
     is_constant <- unlist(lapply(groups, function(g) {
@@ -142,7 +133,7 @@ rgcca_predict <- function(rgcca_res,
   results <- mapply(
     function(x, y) {
       core_prediction(
-        model_info, prediction_model, X_train, X_test, x, y, classification, ...
+        prediction_model, X_train, X_test, x, y, classification, ...
       )
     },
     as.data.frame(y_train),
@@ -184,21 +175,14 @@ reformat_projection <- function(projection) {
 
 # Train a model from caret on (X_train, y_train) and make a prediction on
 # X_test and evaluate the prediction quality by comparing to y_test.
-core_prediction <- function(model_info, prediction_model, X_train, X_test,
+core_prediction <- function(prediction_model, X_train, X_test,
                             y_train, y_test, classification = FALSE, ...) {
   if (classification) {
     y_train <- as.factor(as.matrix(y_train))
     y_test <- factor(as.matrix(y_test), levels = levels(y_train))
   }
   data <- as.data.frame(cbind(X_train, obs = unname(y_train)))
-  # model <- train(obs ~ .,
-  #   data      = data,
-  #   method    = prediction_model,
-  #   trControl = trainControl(method = "none"),
-  #   na.action = "na.exclude",
-  #   ...
-  # )
-  if (prediction_model == "lda") {
+  if (classification) {
     model <- train(obs ~ .,
       data      = data,
       method    = prediction_model,
@@ -218,14 +202,14 @@ core_prediction <- function(model_info, prediction_model, X_train, X_test,
     obs = unname(y_test),
     pred = predict(model, X_test)
   )
-  if (model_info$forClass && !is.numeric(y_train)) {
+  if (classification) {
     confusion_train <- confusionMatrix(prediction_train$pred,
       reference = prediction_train$obs
     )
     confusion_test <- confusionMatrix(prediction_test$pred,
       reference = prediction_test$obs
     )
-    if (model_info$probModel) {
+    if (is.null(prediction_model$prob)) {
       prediction_train <- data.frame(cbind(
         prediction_train,
         predict(model, X_train, type = "prob")
@@ -244,9 +228,7 @@ core_prediction <- function(model_info, prediction_model, X_train, X_test,
       lev = levels(prediction_test$obs)
     )
     score <- 1 - metric_test["Accuracy"]
-  }
-
-  if (model_info$forReg && is.numeric(y_train)) {
+  } else {
     confusion_train <- confusion_test <- NA
     metric_train <- postResample(
       pred = prediction_train$pred,

@@ -134,25 +134,7 @@ rgcca_cv <- function(blocks,
     k <- dim(blocks[[1]])[1]
     n_run <- 1
   }
-  tryCatch(
-    model_info <- caret::modelLookup(prediction_model),
-    error = function(e) {
-      stop_rgcca(
-        "unknown model. Model ", prediction_model, " is not handled, please ",
-        "see caret::modelLookup() for a list of the available models."
-      )
-    }
-  )
-  classification <-
-    is.factor(blocks[[response]]) || is.character2(blocks[[response]])
-  is_inadequate <- !model_info$forClass && classification
-  if (is_inadequate) {
-    stop_rgcca(
-      "inadequate model. Response block contains categorical data ",
-      "but model ", prediction_model, " is not made for ",
-      "classification. Please choose another model."
-    )
-  }
+  tmp <- check_prediction_model(prediction_model, blocks[[response]])
 
   check_integer("par_length", par_length)
   check_integer("n_run", n_run)
@@ -206,12 +188,12 @@ rgcca_cv <- function(blocks,
       rgcca_cv_k(
         rgcca_res,
         validation = validation,
-        prediction_model = prediction_model,
+        prediction_model = tmp$prediction_model,
         k = k,
         n_cores = n_cores,
         complete = FALSE,
         verbose = FALSE,
-        classification = classification,
+        classification = tmp$classification,
         ...
       )$vec_scores
     }))
