@@ -8,7 +8,7 @@
 #' @param i An integer giving the index of a list of blocks
 #' @param outer A boolean for ave plot case
 #' @return A character for the variance on the component
-#' @seealso \code{\link[RGCCA]{rgccad}}, \code{\link[RGCCA]{sgcca}}
+#' @noRd
 
 print_comp <- function(rgcca_res, n = 1, i = length(rgcca_res$AVE$AVE_X),
                        outer = FALSE) {
@@ -25,12 +25,18 @@ print_comp <- function(rgcca_res, n = 1, i = length(rgcca_res$AVE$AVE_X),
   ave <- function(AVE) paste0(round(AVE[n] * 100, 1), "%")
   if (isTRUE(outer)) {
     AVE <- rgcca_res$AVE$AVE_outer
-    if (length(rgcca_res$AVE$AVE_outer) > 1) {
+    if (length(AVE) > 1) {
       n <- seq(2)
     } else {
       n <- 1
     }
-    paste0("First outer comp. : ", paste(ave(AVE), collapse = " & "))
+    corrected <- rgcca_res$call$superblock || !is.null(rgcca_res$call$response)
+    msg <- ifelse(
+      corrected,
+      "First corrected outer AVE: ",
+      "First outer AVE:"
+    )
+    paste(msg, paste(ave(AVE), collapse = " & "))
   } else {
     AVE <- rgcca_res$AVE$AVE_X[[i]]
     paste0("Comp. ", n, " (", var_text, ave(AVE), ")")
