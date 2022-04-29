@@ -34,8 +34,10 @@ print.bootstrap <- function(x, type = "weight", empirical = TRUE,
     NCOL(x$bootstrap[[1]][[1]][[1]]), " bootstrap samples"
   ), "\n")
 
-  ncompmax <- max(x$rgcca$call$ncomp)
-  mycomp <- which_block(x$rgcca$call$ncomp)
+  # Remove superblock from the print
+  J <- length(x$rgcca$call$raw)
+  ncompmax <- max(x$rgcca$call$ncomp[-(J + 1)])
+  mycomp <- which_block(x$rgcca$call$ncomp[-(J + 1)])
 
   for (comp in seq(ncompmax)) {
     cat(paste("Component:", comp, "\n"))
