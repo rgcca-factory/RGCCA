@@ -5,22 +5,30 @@ blocks <- list(
   politic = Russett[, 6:11]
 )
 
-test_that("print_comp returns the AVE of the specified component", {
-  fit.rgcca <- rgcca(blocks)
-  res <- print_comp(fit.rgcca, n = 1, i = 1, outer = FALSE)
-  expect_equal(res, "Comp. 1 (69.9%)")
+test_that("print_comp", {
+  local_edition(3)
+  expect_snapshot({
+    fit.rgcca <- rgcca(blocks)
+    res <- print_comp(fit.rgcca, n = 1, i = 1, outer = FALSE)
+    cat(res)
+  })
 
-  fit.rgcca <- rgcca(blocks, ncomp = 2, sparsity = c(1, 1, 0.5))
-  res <- print_comp(fit.rgcca, n = 2, i = 3, outer = FALSE)
-  expect_equal(res, "Comp. 2 (3 variables, 18.2%)")
-})
+  expect_snapshot({
+    fit.rgcca <- rgcca(blocks, ncomp = 2, sparsity = c(1, 1, 0.5))
+    res <- print_comp(fit.rgcca, n = 2, i = 3, outer = FALSE)
+    cat(res)
+  })
 
-test_that("print_comp returns the outer AVE", {
-  fit.rgcca <- rgcca(blocks)
-  res <- print_comp(fit.rgcca, outer = TRUE)
-  expect_equal(res, "First outer AVE: 60.2%")
+  local_edition(3)
+  expect_snapshot({
+    fit.rgcca <- rgcca(blocks)
+    res <- print_comp(fit.rgcca, outer = TRUE)
+    cat(res)
+  })
 
-  fit.rgcca <- rgcca(blocks, ncomp = 4, superblock = TRUE)
-  res <- print_comp(fit.rgcca, outer = TRUE)
-  expect_equal(res, "First corrected outer AVE:  50.6% & 12.9%")
+  expect_snapshot({
+    fit.rgcca <- rgcca(blocks, ncomp = 4, superblock = TRUE)
+    res <- print_comp(fit.rgcca, outer = TRUE)
+    cat(res)
+  })
 })
