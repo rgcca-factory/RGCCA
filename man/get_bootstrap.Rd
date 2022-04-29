@@ -8,7 +8,7 @@ get_bootstrap(
   b,
   type = "weight",
   comp = 1,
-  block = length(b$bootstrap[[1]][[1]]),
+  block = 1,
   empirical = TRUE,
   display_order = TRUE,
   adj.method = "fdr"

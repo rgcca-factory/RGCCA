@@ -6,7 +6,6 @@
 \usage{
 plot_bootstrap_1D(
   b = NULL,
-  df_b = NULL,
   type = "weight",
   empirical = TRUE,
   x = "estimate",
@@ -23,8 +22,6 @@ plot_bootstrap_1D(
 }
 \arguments{
 \item{b}{A fitted bootstrap object \code{\link[RGCCA]{bootstrap}}}
-
-\item{df_b}{A get_bootstrap object \code{\link[RGCCA]{get_bootstrap}}}
 
 \item{type}{Character string indicating the bootstrapped object to print:
 block-weight vectors ("weight", default) or block-loading vectors
@@ -76,23 +73,4 @@ variables are those above the three bars, respectively, with an alpha = 0.05
 \item 'occurrences' number of for non-zero occurrences
 \item 'mean'  mean of the bootstraped block weight vectors
 }
-}
-\examples{
-data("Russett")
-blocks <- list(
-  agriculture = Russett[, seq(3)],
-  industry = Russett[, 4:5],
-  politic = Russett[, 6:11]
-)
-fit.sgcca <- rgcca(blocks, sparsity = 0.75, method = "sgcca")
-fit.stab <- rgcca_stability(fit.sgcca, n_boot = 20, n_cores = 1)
-boot <- bootstrap(fit.stab,
-  n_boot = 30, n_cores = 1
-)
-plot_bootstrap_1D(boot, type = "weight")
-rgcca_out <- rgcca(blocks)
-boot <- bootstrap(rgcca_out, 2, n_cores = 1)
-selected.var <- get_bootstrap(boot, display_order = TRUE)
-plot_bootstrap_1D(boot)
-plot_bootstrap_1D(df_b = selected.var)
 }

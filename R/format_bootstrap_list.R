@@ -13,6 +13,7 @@
 #' @return Reordered list of bootstrap results.
 #' @noRd
 format_bootstrap_list <- function(W, rgcca_res, n_boot, n = 1) {
+  J <- length(rgcca_res$call$raw)
   ndefl_max <- max(rgcca_res$call$ncomp)
   X <- lapply(W, `[[`, n)
   # Add columns of NA for missing components
@@ -34,13 +35,14 @@ format_bootstrap_list <- function(W, rgcca_res, n_boot, n = 1) {
   ))
   f <- unlist(mapply(function(x, y) rep(x, each = y), seq(pjs), pjs))
   list_res_X <- lapply(seq(ndefl_max), function(i) {
-    x <- split(list_res_X[, i, ], f)
+    # Split back into blocks and remove superblock
+    x <- split(list_res_X[, i, ], f)[-(J + 1)]
     x <- lapply(seq_along(x), function(j) {
       y <- matrix(x[[j]], nrow = pjs[j])
       rownames(y) <- colnames(rgcca_res$call$blocks[[j]])
       return(y)
     })
-    names(x) <- names(rgcca_res$call$blocks)
+    names(x) <- names(rgcca_res$call$raw)
     return(x)
   })
 }

@@ -72,7 +72,7 @@
 #' \code{\link[RGCCA]{plot.bootstrap}},
 #' \code{\link[RGCCA]{print.bootstrap}}
 get_bootstrap <- function(b, type = "weight", comp = 1,
-                          block = length(b$bootstrap[[1]][[1]]),
+                          block = 1,
                           empirical = TRUE,
                           display_order = TRUE,
                           adj.method = "fdr") {
@@ -113,7 +113,7 @@ get_bootstrap <- function(b, type = "weight", comp = 1,
 
   ### Perform checks
   stopifnot(is(b, "bootstrap"))
-  check_blockx("block", block, b$rgcca$call$blocks)
+  check_blockx("block", block, b$rgcca$call$raw)
   check_compx("comp", comp, b$rgcca$call$ncomp, block)
 
   ### Get bootstrap object and estimate

@@ -12,8 +12,8 @@ test_that("print.permutation", {
   local_edition(3)
   expect_snapshot({
     res <- rgcca_permutation(blocks,
-                             par_type = "tau", par_length = 2,
-                             n_perms = 5, n_cores = 1, verbose = FALSE
+      par_type = "tau", par_length = 2,
+      n_perms = 5, n_cores = 1, verbose = FALSE
     )
     print(res)
   })
@@ -22,8 +22,8 @@ test_that("print.permutation", {
     blocks2 <- c(blocks, blocks)
     names(blocks2) <- NULL
     res <- rgcca_permutation(blocks2,
-                             par_type = "ncomp", par_length = 2,
-                             n_perms = 2, n_cores = 1, verbose = FALSE
+      par_type = "ncomp", par_length = 2,
+      n_perms = 2, n_cores = 1, verbose = FALSE
     )
     print(res)
   })

@@ -10,7 +10,6 @@
 #' @inheritParams plot_histogram
 #' @inheritParams get_bootstrap
 #' @inheritParams plot_var_2D
-#' @param df_b A get_bootstrap object \code{\link[RGCCA]{get_bootstrap}}
 #' @param b A fitted bootstrap object \code{\link[RGCCA]{bootstrap}}
 #' @param type Character string indicating the bootstrapped object to print:
 #' block-weight vectors ("weight", default) or block-loading vectors
@@ -29,31 +28,12 @@
 #' \item 'occurrences' number of for non-zero occurrences
 #' \item 'mean'  mean of the bootstraped block weight vectors
 #' }
-#' @examples
-#' data("Russett")
-#' blocks <- list(
-#'   agriculture = Russett[, seq(3)],
-#'   industry = Russett[, 4:5],
-#'   politic = Russett[, 6:11]
-#' )
-#' fit.sgcca <- rgcca(blocks, sparsity = 0.75, method = "sgcca")
-#' fit.stab <- rgcca_stability(fit.sgcca, n_boot = 20, n_cores = 1)
-#' boot <- bootstrap(fit.stab,
-#'   n_boot = 30, n_cores = 1
-#' )
-#' plot_bootstrap_1D(boot, type = "weight")
-#' rgcca_out <- rgcca(blocks)
-#' boot <- bootstrap(rgcca_out, 2, n_cores = 1)
-#' selected.var <- get_bootstrap(boot, display_order = TRUE)
-#' plot_bootstrap_1D(boot)
-#' plot_bootstrap_1D(df_b = selected.var)
 #' @export
 #' @importFrom ggplot2 ggplot
 #' @importFrom stats qbinom
 #' @importFrom utils head
 #' @importFrom grDevices grey.colors
 plot_bootstrap_1D <- function(b = NULL,
-                              df_b = NULL,
                               type = "weight",
                               empirical = TRUE,
                               x = "estimate",
@@ -66,23 +46,15 @@ plot_bootstrap_1D <- function(b = NULL,
                               display_bar = TRUE,
                               i_block = length(b$bootstrap[[1]][[1]]),
                               ...) {
-  if (missing(b) && missing(df_b)) {
-    stop_rgcca("Please select a fitted bootstrap object.")
-  }
-  if (!is.null(b)) {
-    df_b <- get_bootstrap(
-      b,
-      type = type,
-      comp,
-      block = i_block,
-      empirical = empirical,
-      display_order = display_order
-    )
-  }
-
-  if (!is.null(df_b)) {
-    stopifnot(is(df_b, "df_bootstrap"))
-  }
+  stopifnot(is(b, "bootstrap"))
+  df_b <- get_bootstrap(
+    b,
+    type = type,
+    comp,
+    block = i_block,
+    empirical = empirical,
+    display_order = display_order
+  )
 
   check_integer("n_mark", n_mark)
 
@@ -95,22 +67,10 @@ plot_bootstrap_1D <- function(b = NULL,
   }
 
   lower_bound <- NULL -> upper_bound
-  check_ncol(list(df_b), 1)
 
   if (n_mark > NROW(df_b)) n_mark <- NROW(df_b)
 
-  if (display_order) {
-    df_b_head <- head(
-      data.frame(
-        order_df(df_b, "estimate", allCol = TRUE),
-        order = seq(NROW(df_b), 1)
-      ),
-      n_mark
-    )
-  } else {
-    df_b_head <- head(data.frame(df_b, order = seq(NROW(df_b), 1)), n_mark)
-  }
-
+  df_b_head <- head(data.frame(df_b, order = seq(NROW(df_b), 1)), n_mark)
   df_b_head <- df_b_head[df_b_head[, "sd"] != 0, ]
   class(df_b_head) <- c(class(df_b), "d_boot1D")
 
