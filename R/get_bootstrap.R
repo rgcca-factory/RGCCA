@@ -3,11 +3,7 @@
 #' This function extracts statistical information from a fitted bootstrap
 #' object (see \code{\link[RGCCA]{bootstrap}}).
 #'
-#' @inheritParams bootstrap
-#' @inheritParams plot_histogram
-#' @inheritParams plot_var_2D
 #' @inheritParams plot.rgcca
-#' @inheritParams plot_var_1D
 #' @param b A fitted bootstrap object (see  \code{\link[RGCCA]{bootstrap}})
 #' @param type Character string indicating the bootstrapped object to print:
 #' block-weight vectors ("weight", default) or block-loading vectors
@@ -169,8 +165,7 @@ get_bootstrap <- function(b, type = "weight", comp = 1,
   )
 
   if (display_order) {
-    index <- which(colnames(df) == "estimate")
-    df <- data.frame(order_df(df, index, allCol = TRUE))
+    df <- df[order(abs(df$estimate), decreasing = TRUE), ]
   }
 
   return(df)

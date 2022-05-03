@@ -37,7 +37,7 @@
 #' fit.rgcca <- rgcca(blocks, method = "mcoa")
 #' boot.out <- bootstrap(fit.rgcca, n_boot = 50, n_cores = 2)
 #'
-#' plot(boot.out, type = "weight", block = 4)
+#' plot(boot.out, type = "weight", block = 1)
 #' \dontrun{
 #' # Stability of the selected variables for SGCCA
 #' # Not run:

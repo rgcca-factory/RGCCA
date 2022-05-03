@@ -1,10 +1,10 @@
 #' Plot a fitted bootstrap object
 #'
-#' Plot the results of a fitted bootstrap object.
-#' @inheritParams plot_var_2D
-#' @inheritParams plot_var_1D
+#' Plot the results of a fitted bootstrap object. A bar plot is constructed
+#' where each block variable is shown along with its associated bootstrap
+#' confidence interval and a color reflecting the p-value of assigning a
+#' strictly positive or negative weight to this block variable.
 #' @inheritParams plot.rgcca
-#' @inheritParams plot2D
 #' @param x A fitted bootstrap object (see \code{\link[RGCCA]{bootstrap}})
 #' @param type Character string indicating the bootstrapped object to plot:
 #' block-weight vectors ("weight", default) or block-loading vectors
@@ -12,8 +12,9 @@
 #' @param empirical A logical value indicating if the bootstrap confidence
 #' intervals and p-values are derived from the empirical distribution.
 #' (defaut: TRUE)
-#' @param display_order A logical value for ordering the variables
-#' @export
+#' @param display_order A logical value for ordering the variables.
+#' @param n_mark An integer defining the maximum number of bars plotted.
+#' @param colors Colors used in the plots. Default is a grey scaled palette.
 #' @examples
 #' data("Russett")
 #' blocks <- list(
@@ -24,22 +25,51 @@
 #' fit.rgcca <- rgcca(blocks, ncomp = 2, method = "rgcca", tau = 1)
 #' fit.boot <- bootstrap(fit.rgcca, n_boot = 20, n_cores = 1)
 #' plot(fit.boot, type = "weight", block = 1, comp = 1)
+#' @export
 plot.bootstrap <- function(x, block = length(x$rgcca$call$blocks),
                            comp = 1, type = "weight",
                            empirical = TRUE, n_mark = 30,
                            display_order = TRUE,
-                           colors = NULL, title = NULL, cex = 1,
-                           cex_main = 14, cex_sub = 12,
-                           cex_point = 10, cex_lab = 10, cex_axis = 10, ...) {
+                           colors = grey.colors(6)[2:6], title = NULL,
+                           cex = 1, cex_sub = 12 * cex,
+                           cex_main = 14 * cex, cex_lab = 12 * cex,
+                           cex_point = 3 * cex, cex_axis = 10 * cex, ...) {
+  ### Perform checks and parse arguments
   stopifnot(is(x, "bootstrap"))
   check_blockx("block", block, x$rgcca$call$blocks)
+  check_integer("n_mark", n_mark)
+  check_colors(colors)
+  colors <- elongate_arg(colors, seq(5))[seq(5)]
 
-  if (x$rgcca$call$superblock) {
-    if (block == length(x$rgcca$call$blocks)) {
-      block <- length(x$rgcca$call$blocks) - 1
-    }
-  }
+  ### Build data frame
+  df <- get_bootstrap(
+    x,
+    type = type,
+    comp,
+    block = block,
+    empirical = empirical,
+    display_order = display_order
+  )
+  df <- df[df[, "sd"] != 0, ]
 
+  n_mark <- min(n_mark, NROW(df))
+  df <- head(data.frame(df, order = seq(NROW(df), 1)), n_mark)
+
+  significance <- rep("", n_mark)
+  significance[df$pval < 1e-3] <- "< 0.001"
+  significance[df$pval >= 1e-3 & df$pval < 1e-2] <- "< 0.01"
+  significance[df$pval >= 1e-2 & df$pval < 5e-2] <- "< 0.05"
+  significance[df$pval >= 5e-2 & df$pval < 1e-1] <- "< 0.1"
+  significance[df$pval >= 1e-1] <- "> 0.1"
+
+  df$sign <- factor(significance,
+    levels = c(labels = c(
+      "< 0.001", "< 0.01",
+      "< 0.05", "< 0.1", "> 0.1"
+    ))
+  )
+
+  ### Prepare plot
   title <- ifelse(is.null(title),
     paste0(
       "Bootstrap confidence interval (",
@@ -51,24 +81,55 @@ plot.bootstrap <- function(x, block = length(x$rgcca$call$blocks),
     title
   )
 
-  p1 <- plot_bootstrap_1D(
-    b = x,
-    df_b = NULL,
-    type = type,
-    empirical = empirical,
-    x = "estimate",
-    y = "sign",
-    n_mark = n_mark,
-    display_order = display_order,
-    title = title,
-    colors = colors,
-    comp = comp,
-    i_block = block,
-    cex = 1,
-    cex_main = cex_main,
-    cex_sub = cex_sub,
-    cex_axis = cex_axis
-  )
+  ### Construct plot
+  p <- ggplot(
+    df,
+    aes(
+      x = order,
+      y = df[, "estimate"],
+      fill = df[, "sign"]
+    )
+  ) +
+    geom_bar(stat = "identity") +
+    coord_flip() +
+    theme_perso(cex, cex_main, cex_sub, cex_lab) +
+    labs(title = title, x = "", y = "") +
+    theme(
+      axis.text.y = element_text(
+        size = cex_sub,
+        face = "italic",
+        color = "gray40"
+      ),
+      axis.text.x = element_text(
+        size = cex_sub,
+        face = "italic",
+        color = "gray40"
+      ),
+      axis.line = element_blank(),
+      axis.ticks = element_blank(),
+      plot.margin = margin(5, 0, 0, 0, "mm")
+    ) +
+    scale_x_continuous(
+      breaks = df$order,
+      labels = rownames(df)
+    ) +
+    scale_fill_manual(
+      values = colors,
+      labels = c(
+        "< 0.001", "< 0.01", "< 0.05",
+        "< 0.1", "> 0.1"
+      ),
+      drop = FALSE,
+      name = "Signif."
+    )
 
-  plot(p1)
+  if (n_mark <= 50) {
+    p <- p + geom_errorbar(aes_(
+      ymin = quote(lower_bound),
+      ymax = quote(upper_bound),
+      width = 0.5
+    ))
+  }
+
+  plot(p)
 }

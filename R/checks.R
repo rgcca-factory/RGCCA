@@ -47,7 +47,7 @@ check_compx <- function(x, y, ncomp, blockx) {
   if (y > ncomp[blockx]) {
     stop_rgcca("not existing component. Trying to extract component ", y,
       " for block ", blockx, " , but only ", ncomp[blockx],
-      " components are available for this block.",
+      " component(s) are available for this block.",
       exit_code = 128
     )
   }

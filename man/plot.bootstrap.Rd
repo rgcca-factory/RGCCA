@@ -12,14 +12,14 @@
   empirical = TRUE,
   n_mark = 30,
   display_order = TRUE,
-  colors = NULL,
+  colors = grey.colors(6)[2:6],
   title = NULL,
   cex = 1,
-  cex_main = 14,
-  cex_sub = 12,
-  cex_point = 10,
-  cex_lab = 10,
-  cex_axis = 10,
+  cex_sub = 12 * cex,
+  cex_main = 14 * cex,
+  cex_lab = 12 * cex,
+  cex_point = 3 * cex,
+  cex_axis = 10 * cex,
   ...
 )
 }
@@ -28,7 +28,7 @@
 
 \item{block}{A numeric vector indicating the blocks to consider.}
 
-\item{comp}{An integer indicating the block-weight/loading vector to plot.}
+\item{comp}{A numeric vector indicating the components to consider.}
 
 \item{type}{Character string indicating the bootstrapped object to plot:
 block-weight vectors ("weight", default) or block-loading vectors
@@ -38,34 +38,36 @@ block-weight vectors ("weight", default) or block-loading vectors
 intervals and p-values are derived from the empirical distribution.
 (defaut: TRUE)}
 
-\item{n_mark}{The number of top variables to display in the correlation
-circle}
+\item{n_mark}{An integer defining the maximum number of bars plotted.}
 
-\item{display_order}{A logical value for ordering the variables}
+\item{display_order}{A logical value for ordering the variables.}
 
-\item{colors}{Either a vector of integers (each integer corresponding to a
-color) or of characters corresponding to names of colors (as "blue",see
-colors()) or RGB code ("#FFFFFF").}
+\item{colors}{Colors used in the plots. Default is a grey scaled palette.}
 
-\item{title}{A character giving the title of the plot}
+\item{title}{A character string giving the title of the plot.}
 
-\item{cex}{An integer for the size of the plot parameters}
+\item{cex}{An integer defining the size of the objects in the plot. Default
+is one.}
 
-\item{cex_main}{An integer for the size of the title}
+\item{cex_sub}{An integer defining the font size of the subtitle. Default is
+12 * cex.}
 
-\item{cex_sub}{An integer for the size of the subtitle}
+\item{cex_main}{An integer defining the font size of the title. Default is
+14 * cex.}
 
-\item{cex_point}{An integer for the size of the points or the text in
-the plot}
+\item{cex_lab}{An integer defining the font size of the labels. Default is
+12 * cex.}
 
-\item{cex_lab}{An integer for the size of the axis titles}
+\item{cex_point}{An integer defining the font size of the points. Default is
+3 * cex.}
 
-\item{cex_axis}{An integer for the size of the axis text}
-
-\item{...}{Further graphical parameters (see plot2D)}
+\item{...}{additional graphical parameters}
 }
 \description{
-Plot the results of a fitted bootstrap object.
+Plot the results of a fitted bootstrap object. A bar plot is constructed
+where each block variable is shown along with its associated bootstrap
+confidence interval and a color reflecting the p-value of assigning a
+strictly positive or negative weight to this block variable.
 }
 \examples{
 data("Russett")

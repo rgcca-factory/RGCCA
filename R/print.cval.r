@@ -15,12 +15,12 @@
 #'   par_value = c(0, 0.2, 0.3), n_run = 1, n_cores = 1
 #' )
 #' print(res)
-print.cval <- function(x, bars = "quantile", ...) {
-  summary_cval <- function(x, bars = "quantile") {
+print.cval <- function(x, type = "quantile", ...) {
+  summary_cval <- function(x, type = "quantile") {
     ymean <- apply(x$cv, 1, mean)
     ymed <- apply(x$cv, 1, median)
 
-    switch(bars,
+    switch(type,
       "quantile" = {
         middle_name <- "Median error"
         middle <- ymed
@@ -70,7 +70,7 @@ print.cval <- function(x, bars = "quantile", ...) {
     return(df)
   }
 
-  match.arg(bars, c("sd", "stderr", "quantile"))
+  match.arg(type, c("sd", "stderr", "quantile"))
 
   ### Print parameters of the function
   print_call(x$call)
@@ -82,7 +82,7 @@ print.cval <- function(x, bars = "quantile", ...) {
   print(penalties, quote = FALSE, ...)
   cat("\n")
 
-  df <- summary_cval(x, bars)
+  df <- summary_cval(x, type)
 
   cat(paste0(
     "Validation: ", x$call$validation,

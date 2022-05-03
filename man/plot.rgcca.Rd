@@ -9,71 +9,56 @@
   type = "weight",
   block = length(x$call$blocks),
   comp = seq(2),
-  resp = rep(1, NROW(x$Y[[1]])),
-  remove_var = FALSE,
-  text_var = TRUE,
-  text_ind = TRUE,
-  response_name = "Response",
-  overlap = TRUE,
+  response = as.factor(rep(1, NROW(x$Y[[1]]))),
   title = NULL,
-  n_mark = 30,
-  collapse = FALSE,
   cex = 1,
-  cex_sub = 12,
-  cex_main = 14,
-  cex_lab = 12,
-  cex_axis = 10,
+  cex_sub = 12 * cex,
+  cex_main = 14 * cex,
+  cex_lab = 12 * cex,
+  cex_point = 3 * cex,
+  n_mark = 30,
   colors = NULL,
+  shapes = NULL,
   ...
 )
 }
 \arguments{
 \item{x}{A fitted RGCCA object (see \code{\link[RGCCA]{rgcca}})}
 
-\item{type}{A character string: 'sample', 'weight', 'loadings', 'corCircle',
-'both', 'ave', 'network' (see details).}
+\item{type}{A character string: 'sample', 'weight', 'loadings', 'cor_circle',
+'both', 'ave' (see details).}
 
 \item{block}{A numeric vector indicating the blocks to consider.}
 
-\item{comp}{An integer indicating the block-weight/loading vector to plot.}
+\item{comp}{A numeric vector indicating the components to consider.}
 
-\item{resp}{A vector of characters corresponding either to a qualitative
-variable with levels or a continuous variable}
+\item{response}{A vector coloring the points in the "sample" plot.}
 
-\item{remove_var}{logical value. If TRUE, the top 100 variables with the
-highest with the block components are displayed}
+\item{title}{A character string giving the title of the plot.}
 
-\item{text_var}{logical value indicating whether variable names are displayed
-(default = TRUE)}
+\item{cex}{An integer defining the size of the objects in the plot. Default
+is one.}
 
-\item{text_ind}{logical value indicating whether sample names are displayed
-(default = TRUE).}
+\item{cex_sub}{An integer defining the font size of the subtitle. Default is
+12 * cex.}
 
-\item{response_name}{A character giving the legend title}
+\item{cex_main}{An integer defining the font size of the title. Default is
+14 * cex.}
 
-\item{overlap}{logical value enables avoiding overlapping between labels
-(default = FALSE)}
+\item{cex_lab}{An integer defining the font size of the labels. Default is
+12 * cex.}
 
-\item{title}{A character giving the title of the plot}
+\item{cex_point}{An integer defining the font size of the points. Default is
+3 * cex.}
 
-\item{n_mark}{The number of top variables to display in the correlation
-circle}
+\item{n_mark}{An integer defining the maximum number of bars plotted in the
+"weight" and "loadings" plots.}
 
-\item{collapse}{A boolean to combine the variables of each block as result}
+\item{colors}{Colors used in the plots. Default is based on the
+colorblind-friendly palette recommended in ggplot.}
 
-\item{cex}{An integer for the size of the plot parameters}
-
-\item{cex_sub}{An integer for the size of the subtitle}
-
-\item{cex_main}{An integer for the size of the title}
-
-\item{cex_lab}{An integer for the size of the axis titles}
-
-\item{cex_axis}{An integer for the size of the axis text}
-
-\item{colors}{Either a vector of integers (each integer corresponding to a
-color) or of characters corresponding to names of colors (as "blue",see
-colors()) or RGB code ("#FFFFFF").}
+\item{shapes}{Shapes used for the points in the "sample" and "cor_circle"
+plots. Default is the first five shapes used in ggplot.}
 
 \item{...}{additional graphical parameters}
 }
@@ -85,8 +70,8 @@ Plot different outputs of the results obtained by a rgcca function
 \item "sample" for sample plot. The blocks (block argument) and components
 (comp) that will be used on the horizontal and the vertical axes to plot the
 individuals: (Y[[block[1]]][, comp[1]], Y[[block[2]]][,comp[2]]). Points can
-be colored according to the resp argument. The colors of the points can be
-modified with the colors argument.
+be colored according to the response argument. The colors of the points can
+be modified with the colors argument.
 \item "weight": barplot of the block weight vector for one
 specific block/component. The weights are sorted from the highest to
 the lowest and only the highest are displayed. The number of displayed
@@ -95,7 +80,7 @@ weights can be set with n_marks.
 in decreasing correlations and only the highest
 correlations are displayed. The number of displayed correlations can be set
 with n_marks (defaut value = 30).
-\item  "CorCircle" for correlation circle.
+\item  "cor_circle" for correlation circle.
 \item "both": displays both sample plot and correlation circle (implemented
 only for one block and at least when two components are asked (ncomp >= 2).
 \item "ave": displays the average variance explained for each block.}
@@ -122,7 +107,7 @@ plot(fit.rgcca, type = "sample", block = 1:2, comp = 1, resp = status)
 
 
 ######################
-# Correlation circle #
+# all types of plots #
 ######################
 # with superblock
 fit.mcoa <- rgcca(
@@ -134,6 +119,6 @@ plot(fit.mcoa, type = "both", resp = status, overlap = FALSE)
 plot(fit.rgcca, type = "loadings")
 plot(fit.rgcca, type = "weight")
 plot(fit.rgcca, type = "sample")
-plot(fit.rgcca, type = "corCircle")
+plot(fit.rgcca, type = "cor_circle")
 plot(fit.rgcca, type = "ave")
 }

@@ -4,12 +4,22 @@
 \alias{print.cval}
 \title{print.cval}
 \usage{
-\method{print}{cval}(x, bars = "quantile", ...)
+\method{print}{cval}(x, type = "quantile", ...)
 }
 \arguments{
 \item{x}{A rgcca_cv object (see \link{rgcca_cv})}
 
-\item{bars}{standard deviation (sd) of the cross-validated MSE}
+\item{type}{Character string indicating the statistics in the box plots:
+mean plus or minus standard deviation ("sd", default),
+\itemize{
+\item "sd" (default): the middle bar corresponds to the mean and limits of
+the boxes are given by the mean plus or minus the standard deviation.
+\item "stderr": the middle bar corresponds to the mean and limits of
+the boxes are given by the mean plus or minus the standard deviation divided
+by the square roots of the number of folds.
+\item "quantile": the middle bar corresponds to the median and limits of
+the boxes are given by the 5% and 95% quantiles.
+\item "points": box plots are removed and only the points are kept.}}
 
 \item{...}{Further print options}
 }

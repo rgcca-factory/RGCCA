@@ -51,7 +51,8 @@ Suggests:
     rmarkdown,
     shiny,
     shinyjs,
-    testthat
+    testthat,
+    vdiffr
 VignetteBuilder:
     knitr
 biocViews: Visualization, PrincipalComponent, DimensionReduction,

@@ -13,7 +13,7 @@ is.character2 <- function(x, warn_separator = FALSE) {
   # function.
   local_env <- new.env()
   assign("res", FALSE, envir = local_env)
-  x <- as.vector(x)
+  x <- unlist(x)
   x <- x[x != "NA"]
   tryCatch(
     as.numeric(x),

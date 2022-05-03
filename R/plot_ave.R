@@ -1,87 +1,44 @@
 #' Histogram of Average Variance Explained
 #'
 #' Histogram of the model quality (based on Average Variance Explained)
-#' for each blocks and sorted in decreasing order
-#' @inheritParams plot_ind
-#' @inheritParams plot_histogram
-#' @seealso \code{\link[RGCCA]{rgccad}}, \code{\link[RGCCA]{sgcca}}
-#' @export
-#' @importFrom ggplot2 ggplot
-plot_ave <- function(rgcca_res,
-                     cex = 1,
-                     title = "Average Variance Explained",
-                     colors = NULL,
-                     ...) {
-  stopifnot(is(rgcca_res, "rgcca"))
-  check_integer("cex", cex)
-
-  if (tolower(rgcca_res$call$method) == "pca") {
-    rgcca_res$AVE$AVE_X <- rgcca_res$AVE$AVE_X[1]
-    rgcca_res$call$ncomp <- rgcca_res$call$ncomp[1]
-    rgcca_res$a <- rgcca_res$a[1]
-  }
-
-  names(rgcca_res$AVE$AVE_X) <- NULL
-  ave <- 100 * unlist(rgcca_res$AVE$AVE_X)
-  blocks <- factor(unlist(lapply(
-    seq(length(names(rgcca_res$a))),
-    function(x) rep(names(rgcca_res$a)[x], rgcca_res$call$ncomp[x])
-  )),
-  levels = names(rgcca_res$a)
-  )
-
-  if (is.null(names(ave))) {
-    names(ave) <- rep(1, length(ave))
-  }
-  ncomp <- as.factor(names(ave))
-
-  y_ave_cum <- lapply(
-    lapply(
-      rgcca_res$AVE$AVE_X,
-      function(x) round(100 * cumsum(x), 1)
-    ),
-    function(x) c(0, x)
-  )
-  y_ave_cum <- unlist(lapply(y_ave_cum, function(x) {
-    unlist(lapply(
-      seq(length(x)),
-      function(i) (x[i - 1] + x[i]) / 2
-    ))
-  }))
-
-  ave_label <- unlist(lapply(rgcca_res$AVE$AVE_X, function(x) {
-    round(100 * x, 1)
-  }))
-  ave_label[ave_label < max(y_ave_cum) / 20] <- ""
-
-  df <- data.frame(ave, blocks, ncomp, stringsAsFactors = FALSE)
-  class(df) <- c(class(df), "d_ave")
-
-  p <- ggplot(
-    data = df,
-    aes(
-      x = blocks,
-      y = ave,
-      fill = ncomp,
-      label = ave_label
-    )
-  )
-
-  p <- plot_histogram(
-    p,
-    df,
-    title,
-    cex = cex,
-    ...
-  ) +
-    scale_fill_manual(
-      values = color_group(levels(df$ncomp), colors = colors),
-      labels = gsub("comp", " ", levels(df$ncomp))
+#' for each blocks and sorted in decreasing order.
+#' @inheritParams plot.rgcca
+#' @param df Data frame with the data to plot.
+#' @param theme_RGCCA Theme of the plot.
+#' @noRd
+plot_ave <- function(df, title, x, block, comp, theme_RGCCA,
+                     cex_sub, cex_point, colors, shapes, ...) {
+  # Construct plot
+  p <- ggplot(df, aes_(x = quote(AVE), y = quote(block), fill = quote(comp))) +
+    geom_bar(position = position_stack(reverse = TRUE), stat = "identity") +
+    stat_identity(
+      geom = "text", colour = "black", size = cex_point,
+      aes_(label = quote(AVE)),
+      position = position_stack(reverse = TRUE, vjust = 0.5)
     ) +
-    geom_col(position = position_stack(reverse = TRUE)) +
-    labs(subtitle = print_comp(rgcca_res, outer = TRUE)) +
-    geom_text(aes(y = y_ave_cum), cex = 3.5 * cex, color = "white") +
-    labs(fill = "Components")
-
+    scale_fill_manual(values = colors) +
+    theme_RGCCA +
+    labs(subtitle = print_comp(x, outer = TRUE)) +
+    labs(title = title, x = "", y = "", fill = "Component") +
+    theme(
+      axis.text.y = element_text(
+        size = cex_sub,
+        face = "italic",
+        color = "gray40"
+      ),
+      axis.text.x = element_text(
+        size = cex_sub,
+        face = "italic",
+        color = "gray40"
+      ),
+      axis.line = element_blank(),
+      axis.ticks = element_blank(),
+      plot.subtitle = element_text(
+        hjust = 0.5,
+        size = cex_sub,
+        face = "italic"
+      ),
+      plot.margin = margin(5, 0, 0, 0, "mm")
+    )
   return(p)
 }

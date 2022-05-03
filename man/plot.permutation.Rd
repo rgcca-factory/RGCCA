@@ -2,7 +2,7 @@
 % Please edit documentation in R/plot.permutation.R
 \name{plot.permutation}
 \alias{plot.permutation}
-\title{Plot fitted rgcca permutation object}
+\title{Plot a fitted rgcca permutation object}
 \usage{
 \method{plot}{permutation}(
   x,
@@ -13,49 +13,48 @@
   cex_sub = 12 * cex,
   cex_point = 3 * cex,
   cex_lab = 19 * cex,
-  colors = c("red", "grey"),
   display_all = FALSE,
-  show_legend = TRUE,
+  show_legend = FALSE,
   ...
 )
 }
 \arguments{
 \item{x}{A fitted rgcca_permutation object (see
-\code{\link[RGCCA]{rgcca_permutation}})}
+\code{\link[RGCCA]{rgcca_permutation}}).}
 
-\item{type}{A character string indicating which criterion to plot
-(default is 'crit' for the RGCCA criterion or 'zstat' for the pseudo Z-score)}
+\item{type}{A character string indicating which criterion to plot (default
+is 'crit' for the RGCCA criterion or 'zstat' for the pseudo Z-score).}
 
-\item{cex}{An integer for the size of the plot parameters}
+\item{cex}{An integer defining the size of the objects in the plot. Default
+is one.}
 
-\item{title}{A character giving the title of the plot}
+\item{title}{A character string giving the title of the plot.}
 
-\item{cex_main}{An integer for the size of the title}
+\item{cex_main}{An integer defining the font size of the title. Default is
+14 * cex.}
 
-\item{cex_sub}{An integer for the size of the subtitle}
+\item{cex_sub}{An integer defining the font size of the subtitle. Default is
+12 * cex.}
 
-\item{cex_point}{An integer for the size of the points or the text in
-the plot}
+\item{cex_point}{An integer defining the font size of the points. Default is
+3 * cex.}
 
-\item{cex_lab}{An integer for the size of the axis titles}
+\item{cex_lab}{An integer defining the font size of the labels. Default is
+12 * cex.}
 
-\item{colors}{Either a vector of integers (each integer corresponding to a
-color) or of characters corresponding to names of colors (as "blue",see
-colors()) or RGB code ("#FFFFFF").}
-
-\item{display_all}{A boolean indicating is all combinations have to
+\item{display_all}{A boolean indicating if all parameter sets have to
 be displayed (default is FALSE).}
 
-\item{show_legend}{A boolean indicating if the legend is displayed
-(default is TRUE).}
+\item{show_legend}{A boolean indicating if legend should
+be shown (default is TRUE).}
 
 \item{...}{additional graphical parameters}
 }
 \description{
 Plot a fitted rgcca permutation object. The various set of tuning parameters
-are represented in the x-axis and the the RGCCA objective function - obtained
+are represented in the x-axis and the RGCCA objective function - obtained
 from the both the orginal and permuted blocks - in the y-axis. If type =
-"zstat" the value of the zstat for the various combinations are reported in
+"zstat" the value of the zstat for the various parameter sets are reported in
 the y-axis.
 }
 \examples{

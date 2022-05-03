@@ -75,7 +75,7 @@ test_that("check_compx raises an error if x is greater than the number
           of components", {
   expect_error(check_compx("x", 7, c(3, 3, 3), 1), paste0(
     "not existing component. Trying to extract component 7",
-    " for block 1 , but only 3 components are available for ",
+    " for block 1 , but only 3 component(s) are available for ",
     "this block."
   ),
   fixed = TRUE

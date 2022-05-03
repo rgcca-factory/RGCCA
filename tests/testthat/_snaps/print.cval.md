@@ -40,7 +40,7 @@
     Output
       
     Code
-      print(res, bars = "sd")
+      print(res, type = "sd")
     Output
       Call: method='sgcca', superblock=FALSE, scale=TRUE, scale_block=TRUE, init='svd', bias=TRUE, tol=1e-08, NA_method='nipals', ncomp=c(1,1,1), response=3 
       There are J = 3 blocks.
@@ -76,7 +76,7 @@
     Output
       
     Code
-      print(res, bars = "stderr")
+      print(res, type = "stderr")
     Output
       Call: method='rgcca', superblock=FALSE, scale=TRUE, scale_block=TRUE, init='svd', bias=TRUE, tol=1e-08, NA_method='nipals', ncomp=c(1,1,1,1,1,1), response=3 
       There are J = 6 blocks.

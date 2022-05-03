@@ -21,7 +21,7 @@ get_bootstrap(
 block-weight vectors ("weight", default) or block-loading vectors
 ("loadings").}
 
-\item{comp}{An integer indicating the block-weight/loading vector to plot.}
+\item{comp}{A numeric vector indicating the components to consider.}
 
 \item{block}{A numeric vector indicating the blocks to consider.}
 
