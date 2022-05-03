@@ -10,6 +10,8 @@
 #'   is transformed into a list with the block as its unique element. Otherwise,
 #'   if \code{blocks} is not a list, an error is raised.
 #'   \item Coerce each element of \code{blocks} to a matrix.
+#'   \item Make sure that all the blocks apart from the response block are
+#'   quantitative.
 #'   \item Add missing names to \code{blocks}.
 #'   \item If \code{init} is TRUE, remove blocks' columns that have null
 #'   variance.
@@ -39,9 +41,10 @@
 #' @noRd
 check_blocks <- function(blocks, init = FALSE,
                          add_NAlines = FALSE, allow_unnames = TRUE,
-                         quiet = FALSE) {
+                         quiet = FALSE, response = NULL) {
   blocks <- check_blocks_is_list(blocks)
   blocks <- check_blocks_matrix(blocks)
+  blocks <- check_blocks_quantitative(blocks, response)
   blocks <- check_blocks_names(blocks, quiet)
   blocks <- check_blocks_remove_null_sd(blocks, init)
   blocks <- check_blocks_colnames(blocks, quiet)
@@ -70,6 +73,21 @@ check_blocks_matrix <- function(blocks) {
     x <- data.matrix(x)
     rownames(x) <- names_x
     return(x)
+  })
+  return(blocks)
+}
+
+check_blocks_quantitative <- function(blocks, response = NULL) {
+  response <- ifelse(is.null(response), length(blocks) + 1, response)
+  lapply(blocks[-response], function(x) {
+    qualitative <- is.character2(x) || is.factor(x)
+    if (qualitative) {
+      stop_rgcca(
+        "unsupported qualitative block. Block ", match(blocks, x),
+        " is a qualitative block but is not the response block. The method ",
+        "is not able to cope with it."
+      )
+    }
   })
   return(blocks)
 }

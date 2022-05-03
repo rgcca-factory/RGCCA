@@ -299,7 +299,8 @@ rgcca <- function(blocks, method = "rgcca",
   match.arg(init, c("svd", "random"))
   blocks <- check_blocks(blocks,
     add_NAlines = TRUE,
-    init = TRUE, quiet = quiet
+    init = TRUE, quiet = quiet,
+    response = response
   )
   check_integer("tol", tol, float = TRUE, min = 0)
   check_integer("n_iter_max", n_iter_max, min = 1)
