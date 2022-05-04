@@ -32,10 +32,6 @@ test_that("plot.rgcca", {
   )
 
   vdiffr::expect_doppelganger(
-    "RGCCA ave 2", plot.rgcca(fit.rgcca2, type = "ave")
-  )
-
-  vdiffr::expect_doppelganger(
     "RGCCA weight", plot.rgcca(fit.rgcca2, type = "weight", block = 4)
   )
 

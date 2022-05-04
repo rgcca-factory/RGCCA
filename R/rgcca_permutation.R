@@ -34,7 +34,6 @@
 #'
 #' @inheritParams bootstrap
 #' @inheritParams rgcca
-#' @inheritParams plot2D
 #' @param par_type A character string indicating the parameters to tune between
 #' "sparsity" and "tau".
 #' @param par_length A numeric value indicating the number of sets of penalties
@@ -107,6 +106,7 @@
 #' print(fit)
 #' plot(fit)
 #' fit$bestpenalties
+#'
 #' \dontrun{
 #' # It is possible to define explicitly K combinations of shrinkage
 #' # parameters to be tested and in that case a matrix of dimension KxJ is
@@ -207,8 +207,7 @@
 #' # case, it is possible to reduce the value of the tolerance (tol argument)
 #' # of the RGCCA algorithm to speed up the permutation procedure.
 #' #
-#' require(gliomaData)
-#' data(ge_cgh_locIGR)
+#' data("ge_cgh_locIGR", package = "gliomaData")
 #' A <- ge_cgh_locIGR$multiblocks
 #' Loc <- factor(ge_cgh_locIGR$y)
 #' levels(Loc) <- colnames(ge_cgh_locIGR$multiblocks$y)
@@ -254,7 +253,7 @@ rgcca_permutation <- function(blocks, par_type = "tau", par_value = NULL,
   if (!missing(blocks) & class(blocks) == "rgcca") {
     rgcca_res <- blocks
   }
-  if (class(rgcca_res) == "rgcca") {
+  if (is(rgcca_res, "rgcca")) {
     stopifnot(is(rgcca_res, "rgcca"))
     message("All parameters were imported from a fitted rgcca object.")
     scale_block <- rgcca_res$call$scale_block

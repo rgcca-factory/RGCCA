@@ -111,37 +111,36 @@ plot.permutation <- function(x,
   ### Construct plot
   # Main plot (values of the quantity of interest per set of parameters)
   p <- ggplot(
-    data = df, mapping = aes_(x = quote(x), y = quote(combinations))
+    data = df, mapping = aes(x = .data$x, y = .data$combinations)
   ) +
-    theme_classic() +
-    geom_point(aes_(shape = quote(label), size = quote(label))) +
-    labs(
+    ggplot2::geom_point(aes(shape = .data$label, size = .data$label)) +
+    ggplot2::labs(
       title = title,
       y     = ylab,
       x     = xlab
     ) +
     theme_perso(cex, cex_main, cex_sub) +
-    theme(
-      axis.text = element_text(size = 10, face = "bold"),
-      axis.line = element_line(size = 0.5),
-      axis.ticks = element_line(size = 0.5),
-      axis.ticks.length = unit(2, "mm")
+    ggplot2::theme(
+      axis.text = ggplot2::element_text(size = 10, face = "bold"),
+      axis.line = ggplot2::element_line(size = 0.5),
+      axis.ticks = ggplot2::element_line(size = 0.5),
+      axis.ticks.length = ggplot2::unit(2, "mm")
     ) +
-    scale_shape_manual("Non permuted",
+    ggplot2::scale_shape_manual("Non permuted",
       values = c(
         "Best parameter set" = 17,
         "Other parameter set" = 2
       )
     ) +
-    scale_size_manual("Non permuted",
+    ggplot2::scale_size_manual("Non permuted",
       values = c(
         "Best parameter set" = 4,
         "Other parameter set" = 1
       )
     ) +
-    scale_y_discrete(
+    ggplot2::scale_y_discrete(
       labels = labels, breaks = breaks,
-      guide = guide_axis(check.overlap = TRUE)
+      guide = ggplot2::guide_axis(check.overlap = TRUE)
     )
 
   # Second part of the plot (boxplots of the permuted criteria)
@@ -152,18 +151,14 @@ plot.permutation <- function(x,
       label = rep(df$label, NCOL(x$permcrit))
     )
     p$layers <- c(
-      geom_boxplot(
+      ggplot2::geom_boxplot(
         data = df2,
-        aes_(
-          x = quote(x),
-          y = quote(combinations),
-          colour = quote(label)
-        ),
+        aes(x = .data$x, y = .data$combinations, color = .data$label),
         size = 0.8
       ),
       p$layers
     )
-    p <- p + scale_colour_manual("Permuted", values = c(
+    p <- p + ggplot2::scale_color_manual("Permuted", values = c(
       "Best parameter set" = "black",
       "Other parameter set" = "grey"
     ))
@@ -171,10 +166,10 @@ plot.permutation <- function(x,
 
   # Move legend
   if (!show_legend) {
-    p <- p + theme(legend.position = "none")
+    p <- p + ggplot2::theme(legend.position = "none")
   } else {
     p <- p +
-      theme(
+      ggplot2::theme(
         legend.position = c(.9, 1.),
         legend.justification = c("right", "top")
       )

@@ -24,6 +24,16 @@
 #' follows a normal distribution.
 #' \item 'adjust.pval' for ajusted p-value (fdr correction by default)
 #' }
+#' @examples
+#' data("Russett")
+#' blocks <- list(
+#'   agriculture = Russett[, seq(3)],
+#'   industry = Russett[, 4:5],
+#'   politic = Russett[, 6:11]
+#' )
+#' fit.rgcca <- rgcca(blocks, ncomp = c(2, 1, 2))
+#' boot.out <- bootstrap(fit.rgcca, n_boot = 20, n_cores = 2)
+#' print(boot.out)
 #' @export
 print.bootstrap <- function(x, type = "weight", empirical = TRUE,
                             display_order = FALSE, ...) {
@@ -37,12 +47,16 @@ print.bootstrap <- function(x, type = "weight", empirical = TRUE,
   # Remove superblock from the print
   J <- length(x$rgcca$call$raw)
   ncompmax <- max(x$rgcca$call$ncomp[-(J + 1)])
-  mycomp <- which_block(x$rgcca$call$ncomp[-(J + 1)])
 
   for (comp in seq(ncompmax)) {
     cat(paste("Component:", comp, "\n"))
+    # Extract the blocks for which component comp was extracted
+    blocks <- which(vapply(
+      x$bootstrap$W[[comp]], function(y) !all(is.na(y)),
+      FUN.VALUE = logical(1L)
+    ))
     print(Reduce(rbind, lapply(
-      mycomp[[comp]],
+      blocks,
       function(block) {
         get_bootstrap(
           b = x, type = type,

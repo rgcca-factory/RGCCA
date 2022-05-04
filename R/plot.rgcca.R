@@ -81,7 +81,8 @@
 #' plot(fit.rgcca, type = "cor_circle")
 #' plot(fit.rgcca, type = "ave")
 #' @importFrom gridExtra grid.arrange
-#' @importFrom ggplot2 ggplot
+#' @importFrom ggplot2 ggplot aes
+#' @importFrom rlang .data
 #' @export
 plot.rgcca <- function(x, type = "weight", block = length(x$call$blocks),
                        comp = seq(2),
@@ -119,6 +120,7 @@ plot.rgcca <- function(x, type = "weight", block = length(x$call$blocks),
   block <- elongate_arg(block, seq(2))[seq(2)]
 
   if (type == "ave") comp <- rep(1, 2)
+  if (type %in% c("weight", "loadings")) comp <- comp[1]
 
   lapply(block, function(i) {
     check_blockx("block", i, x$call$blocks)
@@ -263,8 +265,10 @@ plot.rgcca <- function(x, type = "weight", block = length(x$call$blocks),
   shapes <- rep(shapes, NROW(df) / length(shapes) + 1)
 
   # Call plotting function
-  plot_function(
+  p <- plot_function(
     df, title, x, block, comp, theme_RGCCA,
-    cex_sub, cex_point, colors, shapes, ...
+    cex_sub, cex_point, colors, shapes
   )
+  if (!is.null(p)) plot(p, ...)
+  invisible(p)
 }

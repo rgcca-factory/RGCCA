@@ -83,7 +83,7 @@ plot.cval <- function(x, type = "sd",
     combinations <- paste("Set ", seq(NROW(x$penalties)))
   } else {
     combinations <- apply(
-      format(x$penalties, digits = 1), 1, paste0,
+      format(x$penalties, digits = 2), 1, paste0,
       collapse = "/"
     )
   }
@@ -137,42 +137,42 @@ plot.cval <- function(x, type = "sd",
   ylab <- "Mean error"
 
   ### Construct plot
-  p <- ggplot(data = df, aes_(
-    x = quote(combinations),
-    group = quote(combinations),
-    fill = quote(category)
+  p <- ggplot(data = df, aes(
+    x = .data$combinations,
+    group = .data$combinations,
+    fill = .data$category
   )) +
-    geom_point(data = df_points, aes_(
-      x = quote(combinations), y = quote(y), colour = quote(category)
+    ggplot2::geom_point(data = df_points, aes(
+      x = .data$combinations, y = .data$y, color = .data$category
     )) +
-    scale_fill_manual(
+    ggplot2::scale_fill_manual(
       values = c("param" = colors[1], "best_param" = colors[2])
     ) +
-    scale_color_manual(
+    ggplot2::scale_color_manual(
       values = c("param" = colors[1], "best_param" = colors[2])
     ) +
-    xlab(xlab) +
-    ylab(ylab)
+    ggplot2::xlab(xlab) +
+    ggplot2::ylab(ylab)
   if (type != "points") {
     p <- p +
-      geom_boxplot(
-        aes_(
-          ymin = quote(ymin), lower = quote(lower), middle = quote(middle),
-          upper = quote(upper), ymax = quote(ymax)
+      ggplot2::geom_boxplot(
+        aes(
+          ymin = .data$ymin, lower = .data$lower, middle = .data$middle,
+          upper = .data$upper, ymax = .data$ymax
         ),
         stat = "identity"
       )
   }
 
   # Set theme
-  p <- p + ggtitle(title) + theme_perso(cex, cex_main, cex_sub) +
-    theme(
-      axis.text = element_text(size = 10, face = "bold"),
-      axis.line = element_line(size = 0.5),
-      axis.ticks = element_line(size = 0.5),
-      axis.ticks.length = unit(2, "mm"),
+  p <- p + ggplot2::ggtitle(title) + theme_perso(cex, cex_main, cex_sub) +
+    ggplot2::theme(
+      axis.text = ggplot2::element_text(size = 10, face = "bold"),
+      axis.line = ggplot2::element_line(size = 0.5),
+      axis.ticks = ggplot2::element_line(size = 0.5),
+      axis.ticks.length = ggplot2::unit(2, "mm"),
       legend.position = "none",
-      axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1)
+      axis.text.x = ggplot2::element_text(angle = 90, vjust = 0.5, hjust = 1)
     )
-  return(p)
+  plot(p, ...)
 }

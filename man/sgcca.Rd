@@ -131,8 +131,7 @@ could differ from one block to another.
 # Download the dataset's package at http://biodev.cea.fr/sgcca/.
 # --> gliomaData_0.4.tar.gz
 
-require(gliomaData)
-data(ge_cgh_locIGR)
+data("ge_cgh_locIGR", package = "gliomaData")
 
 blocks <- ge_cgh_locIGR$multiblocks
 Loc <- factor(ge_cgh_locIGR$y)

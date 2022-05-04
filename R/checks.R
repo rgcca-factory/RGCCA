@@ -97,13 +97,6 @@ check_connection <- function(C, blocks) {
   return(C)
 }
 
-check_file <- function(f) {
-  # Check the existence of a path f: A character giving the path of a file
-  if (!file.exists(f)) {
-    stop_rgcca(paste("file", f, "does not exist."), exit_code = 101)
-  }
-}
-
 check_integer <- function(x, y = x, type = "scalar", float = FALSE, min = 1,
                           max = Inf, max_message = NULL, exit_code = NULL,
                           min_message = NULL) {
@@ -211,17 +204,6 @@ check_nblocks <- function(blocks, method) {
     exit_code = exit_code
   )
 }
-# If less than 2 columns, do not run
-# x, a list of matrix
-# i_block, the position of the tested matrix in the list
-# return an error or NULL
-check_ncol <- function(x, i_block) {
-  if (NROW(x[[i_block]]) < 2) {
-    stop_rgcca(
-      "This output is available only for more than one variable."
-    )
-  }
-}
 
 check_ncomp <- function(ncomp, blocks, min = 1, superblock = FALSE,
                         response = NULL) {
@@ -274,62 +256,6 @@ check_ncomp <- function(ncomp, blocks, min = 1, superblock = FALSE,
   return(ncomp)
 }
 
-# Check if a dataframe contains no qualitative variables
-# @inheritParams load_blocks
-# @param df A dataframe or a matrix
-# @param fo A character giving the name of the tested file
-# @param warn_separator A bolean to print warning for bad separator use
-check_quantitative <- function(df, fo, header = FALSE, warn_separator = FALSE) {
-  qualitative <- is.character2(df, warn_separator = TRUE)
-
-  if (qualitative) {
-    msg <- paste(
-      fo,
-      "contains qualitative data. Transform them in a disjunctive table."
-    )
-
-    if (!header) {
-      msg <- paste0(
-        msg, "Possible mistake: header parameter is disabled, ",
-        "check if the file doesn't have one."
-      )
-    }
-
-    stop_rgcca(paste(msg, "\n"), exit_code = 100)
-  }
-}
-
-check_response <- function(response = NULL) {
-  if (is.null(response)) {
-    return(NA)
-  }
-  response <- as.data.frame(response)
-  qualitative <- is.character2(response)
-  if (qualitative || (NCOL(response) == 1)) {
-    return(response)
-  }
-
-  # If response is numeric, contains only one nonzero value per row that equals
-  # 1, we convert response to a column factor.
-  response <- to_numeric(response)
-  col_sum <- unique(apply(response, 1, sum))
-  values <- unique(unlist(response))
-  values <- union(col_sum, values)
-  if (identical(sort(union(values, c(0, 1))), c(0, 1))) {
-    response <- factor(
-      apply(response, 1, which.max),
-      levels = colnames(response)
-    )
-    return(
-      data.frame(
-        as.character(response),
-        row.names = rownames(response)
-      )
-    )
-  }
-  return(response)
-}
-
 # Test on the sign of the correlation
 check_sign_comp <- function(rgcca_res, w) {
   y <- lapply(
@@ -378,17 +304,6 @@ check_size_blocks <- function(blocks, x, y = x, n_row = NULL) {
     )
   } else {
     return(TRUE)
-  }
-}
-
-
-# Print warning if file size over
-check_size_file <- function(filename) {
-  size <- file.size(filename)
-  if (size > 5e+06) {
-    # warning(paste0('The size of ', filename, ' is over 5 Mo (',
-    #  round(size / 1E6, 1), ' Mo). File loading could take some times...'),
-    message("File loading in progress ...")
   }
 }
 

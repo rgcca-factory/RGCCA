@@ -1,5 +1,3 @@
-library(FactoMineR)
-
 tol <- 1e-14
 
 data(Russett)
@@ -198,7 +196,7 @@ df <- Russett[, c(
   "gini", "farm", "rent", "gnpr", "labo",
   "inst", "ecks", "death", "demostab", "dictator"
 )]
-fit.mfa <- MFA(df,
+fit.mfa <- FactoMineR::MFA(df,
   group = c(3, 2, 5), ncp = 2, type = rep("s", 3),
   graph = FALSE
 )

@@ -23,8 +23,7 @@
 #' # stability and bootstrap #
 #' ###########################
 #'
-#' require(gliomaData)
-#' data(ge_cgh_locIGR)
+#' data("ge_cgh_locIGR", package = "gliomaData")
 #' blocks <- ge_cgh_locIGR$multiblocks
 #' Loc <- factor(ge_cgh_locIGR$y)
 #' levels(Loc) <- colnames(ge_cgh_locIGR$multiblocks$y)

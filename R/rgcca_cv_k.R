@@ -4,7 +4,6 @@
 #' @inheritParams rgcca_predict
 #' @inheritParams rgcca
 #' @inheritParams bootstrap
-#' @inheritParams plot_ind
 #' @param classification A logical indicating if it is a classification task.
 #' @noRd
 rgcca_cv_k <- function(rgcca_res,

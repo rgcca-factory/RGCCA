@@ -42,9 +42,8 @@
 #' # Stability of the selected variables for SGCCA
 #' # Not run:
 #' # Download the dataset's package at http://biodev.cea.fr/sgcca/.
-#' # --> gliomaData_0.4.tar.gz#' require(gliomaData)
-#' library(gliomaData)
-#' data(ge_cgh_locIGR)
+#' # --> gliomaData_0.4.tar.gz#'
+#' data("ge_cgh_locIGR", package = "gliomaData")
 #' A <- ge_cgh_locIGR$multiblocks
 #' A[[3]] <- A[[3]][, -3]
 #' Loc <- factor(ge_cgh_locIGR$y)
@@ -73,7 +72,7 @@ bootstrap <- function(rgcca_res, n_boot = 100,
                       n_cores = 1,
                       balanced = TRUE, keep_all_variables = FALSE,
                       verbose = TRUE) {
-  if (class(rgcca_res) == "stability") {
+  if (is(rgcca_res, "stability")) {
     message(
       "All the parameters were imported from the fitted rgcca_stability",
       " object."

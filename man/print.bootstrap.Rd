@@ -40,3 +40,14 @@ follows a normal distribution.
 \description{
 Print a bootstrap object
 }
+\examples{
+data("Russett")
+blocks <- list(
+  agriculture = Russett[, seq(3)],
+  industry = Russett[, 4:5],
+  politic = Russett[, 6:11]
+)
+fit.rgcca <- rgcca(blocks, ncomp = c(2, 1, 2))
+boot.out <- bootstrap(fit.rgcca, n_boot = 20, n_cores = 2)
+print(boot.out)
+}

@@ -1,7 +1,7 @@
 #' # remove_null_sd test
 
 #'''
-X1 <- vapply(seq(3), function(x) runif(10), FUN.VALUE = double(10))
+X1 <- vapply(seq(3), function(x) rnorm(10), FUN.VALUE = double(10))
 X2 <- rep(1, 10)
 X3 <- rep(1, 10)
 X3[1:4] <- NA

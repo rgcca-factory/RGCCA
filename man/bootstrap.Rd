@@ -61,14 +61,13 @@ get_bootstrap(boot.out, block = 1, comp = 1)
 fit.rgcca <- rgcca(blocks, method = "mcoa")
 boot.out <- bootstrap(fit.rgcca, n_boot = 50, n_cores = 2)
 
-plot(boot.out, type = "weight", block = 4)
+plot(boot.out, type = "weight", block = 1)
 \dontrun{
 # Stability of the selected variables for SGCCA
 # Not run:
 # Download the dataset's package at http://biodev.cea.fr/sgcca/.
-# --> gliomaData_0.4.tar.gz#' require(gliomaData)
-library(gliomaData)
-data(ge_cgh_locIGR)
+# --> gliomaData_0.4.tar.gz#'
+data("ge_cgh_locIGR", package = "gliomaData")
 A <- ge_cgh_locIGR$multiblocks
 A[[3]] <- A[[3]][, -3]
 Loc <- factor(ge_cgh_locIGR$y)

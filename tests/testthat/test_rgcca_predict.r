@@ -1,5 +1,3 @@
-library(gliomaData)
-
 set.seed(1)
 # Building the blocks
 data("Russett")
@@ -73,7 +71,8 @@ test_that("rgcca_predict raises an error if response block dimensions do not
 
 test_that("rgcca_predict raises an error if the projected blocks are constant
           within classes", {
-  data(ge_cgh_locIGR)
+  skip_if_not_installed("gliomaData")
+  data("ge_cgh_locIGR", package = "gliomaData")
   blocks <- ge_cgh_locIGR$multiblocks
   Loc <- factor(ge_cgh_locIGR$y)
   levels(Loc) <- colnames(ge_cgh_locIGR$multiblocks$y)

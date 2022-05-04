@@ -27,14 +27,14 @@
 </defs>
 <g clip-path='url(#cpNTIuMDZ8NzE0LjUyfDMzLjE0fDU0MS4xMQ==)'>
 <rect x='52.06' y='33.14' width='662.46' height='507.97' style='stroke-width: 1.07; stroke: none; fill: #FFFFFF;' />
-<line x1='101.72' y1='347.60' x2='101.95' y2='347.60' style='stroke-width: 1.71; stroke-linecap: butt;' />
-<line x1='101.24' y1='347.60' x2='101.01' y2='347.60' style='stroke-width: 1.71; stroke-linecap: butt;' />
-<polygon points='101.72,392.95 101.24,392.95 101.24,302.24 101.72,302.24 101.72,392.95 ' style='stroke-width: 1.71; fill: #FFFFFF;' />
-<line x1='101.48' y1='392.95' x2='101.48' y2='302.24' style='stroke-width: 3.41; stroke-linecap: butt;' />
 <line x1='120.16' y1='468.54' x2='122.91' y2='468.54' style='stroke-width: 1.71; stroke: #BEBEBE; stroke-linecap: butt;' />
 <line x1='114.64' y1='468.54' x2='111.89' y2='468.54' style='stroke-width: 1.71; stroke: #BEBEBE; stroke-linecap: butt;' />
 <polygon points='120.16,513.90 114.64,513.90 114.64,423.19 120.16,423.19 120.16,513.90 ' style='stroke-width: 1.71; stroke: #BEBEBE; fill: #FFFFFF;' />
 <line x1='117.40' y1='513.90' x2='117.40' y2='423.19' style='stroke-width: 3.41; stroke: #BEBEBE; stroke-linecap: butt;' />
+<line x1='101.72' y1='347.60' x2='101.95' y2='347.60' style='stroke-width: 1.71; stroke-linecap: butt;' />
+<line x1='101.24' y1='347.60' x2='101.01' y2='347.60' style='stroke-width: 1.71; stroke-linecap: butt;' />
+<polygon points='101.72,392.95 101.24,392.95 101.24,302.24 101.72,302.24 101.72,392.95 ' style='stroke-width: 1.71; fill: #FFFFFF;' />
+<line x1='101.48' y1='392.95' x2='101.48' y2='302.24' style='stroke-width: 3.41; stroke-linecap: butt;' />
 <line x1='101.92' y1='226.65' x2='103.04' y2='226.65' style='stroke-width: 1.71; stroke: #BEBEBE; stroke-linecap: butt;' />
 <line x1='99.68' y1='226.65' x2='98.56' y2='226.65' style='stroke-width: 1.71; stroke: #BEBEBE; stroke-linecap: butt;' />
 <polygon points='101.92,272.01 99.68,272.01 99.68,181.30 101.92,181.30 101.92,272.01 ' style='stroke-width: 1.71; stroke: #BEBEBE; fill: #FFFFFF;' />

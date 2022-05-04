@@ -240,6 +240,7 @@ fit <- rgcca_permutation(blocks,
 print(fit)
 plot(fit)
 fit$bestpenalties
+
 \dontrun{
 # It is possible to define explicitly K combinations of shrinkage
 # parameters to be tested and in that case a matrix of dimension KxJ is
@@ -340,8 +341,7 @@ perm.out$penalties
 # case, it is possible to reduce the value of the tolerance (tol argument)
 # of the RGCCA algorithm to speed up the permutation procedure.
 #
-require(gliomaData)
-data(ge_cgh_locIGR)
+data("ge_cgh_locIGR", package = "gliomaData")
 A <- ge_cgh_locIGR$multiblocks
 Loc <- factor(ge_cgh_locIGR$y)
 levels(Loc) <- colnames(ge_cgh_locIGR$multiblocks$y)

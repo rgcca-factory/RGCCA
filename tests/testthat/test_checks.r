@@ -153,18 +153,6 @@ test_that("check_connection passes and returns C when C is valid", {
   expect_equal(check_connection(diag(3), blocks), C)
 })
 
-# Test check_file
-test_that("check_file raises an error when file does not exist", {
-  expect_error(check_file("a_file_that_does_not_exist"),
-    "a_file_that_does_not_exist does not exist.",
-    fixed = TRUE
-  )
-})
-
-test_that("check_file passes when file is valid", {
-  expect_error(check_file("./test_checks.r"), NA)
-})
-
 # Test check_integer
 test_that("check_integer raises an error if x is not numeric", {
   expect_error(check_integer("x", "toto"),
@@ -273,19 +261,6 @@ test_that("check_nblocks passes and returns blocks when blocks is valid", {
   expect_equal(check_nblocks(A, method = "cca"), A)
 })
 
-# Test check_ncol (Is this the intended behaviour of check_ncol?)
-test_that("check_ncol raises an error when x[[i_block]] has less than 2 rows", {
-  x <- list(matrix(1:10, 1, 10))
-  expect_error(check_ncol(x, i_block = 1),
-    "This output is available only for more than one variable",
-    fixed = TRUE
-  )
-})
-test_that("check_ncol passes when x[[i_block]] has at least 2 rows", {
-  x <- list(matrix(1:10, 2, 10))
-  expect_error(check_ncol(x, i_block = 1), NA)
-})
-
 # Test check_ncomp
 test_that("check_ncomp raises an error if there is a superblock and ncomp
           contains at least two distinct values", {
@@ -338,10 +313,6 @@ test_that("check_ncomp passes and returns ncomp when ncomp is valid", {
   expect_equal(check_ncomp(c(2, 2, 2), blocks), c(2, 2, 2))
 })
 
-# Test check_quantitative
-
-# Test check_response
-
 # Test check_sign_comp
 test_that("check_sign_comp changes the sign of weight vector if correlation
           with reference is negative", {
@@ -388,8 +359,6 @@ test_that("check_size_blocks passes when x is valid", {
   expect_error(check_size_blocks(blocks, "x", diag(3)), NA)
   expect_error(check_size_blocks(blocks, "x", c(2, 2, 2)), NA)
 })
-
-# Test check_size_file
 
 # Test check_penalty
 test_that("check_penalty raises an error if blocks and penalty have different

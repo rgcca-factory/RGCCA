@@ -38,6 +38,7 @@
 #' with missing rows
 #' @param allow_unnames logical, if FALSE, an error is raised if blocks do not
 #' have row names
+#' @importFrom stats setNames
 #' @noRd
 check_blocks <- function(blocks, init = FALSE,
                          add_NAlines = FALSE, allow_unnames = TRUE,

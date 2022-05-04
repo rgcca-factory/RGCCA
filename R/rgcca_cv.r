@@ -107,7 +107,7 @@ rgcca_cv <- function(blocks,
   if (!missing(blocks) & class(blocks) == "rgcca") {
     rgcca_res <- blocks
   }
-  if (class(rgcca_res) == "rgcca") {
+  if (is(rgcca_res, "rgcca")) {
     message("All parameters were imported from a rgcca object.")
     scale_block <- rgcca_res$call$scale_block
     scale <- rgcca_res$call$scale

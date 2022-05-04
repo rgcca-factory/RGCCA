@@ -248,10 +248,8 @@
 #' }
 #'
 #' @export
-#' @import ggplot2
 #' @importFrom graphics plot
-#' @importFrom stats cor quantile runif sd na.omit p.adjust pnorm qnorm weights
-#' @importFrom utils read.table write.table
+#' @importFrom stats cor quantile sd p.adjust rnorm pnorm qnorm
 #' @importFrom stats model.matrix
 #' @importFrom methods is
 #' @seealso \code{\link[RGCCA]{plot.rgcca}}, \code{\link[RGCCA]{print.rgcca}},

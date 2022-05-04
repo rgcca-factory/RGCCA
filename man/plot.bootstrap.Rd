@@ -19,7 +19,6 @@
   cex_main = 14 * cex,
   cex_lab = 12 * cex,
   cex_point = 3 * cex,
-  cex_axis = 10 * cex,
   ...
 )
 }

@@ -13,7 +13,6 @@
 #' inner model.}
 #' @title Internal function for computing the SGCCA parameters (SGCCA block
 #' components, outer weight vectors etc.)
-#' @importFrom Deriv Deriv
 #' @noRd
 sgccak <- function(A, C, sparsity = rep(1, length(A)),
                    scheme = "centroid", tol = 1e-08,

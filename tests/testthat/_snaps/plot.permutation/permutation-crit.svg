@@ -27,10 +27,6 @@
 </defs>
 <g clip-path='url(#cpODkuODh8NzE0LjUyfDMzLjE0fDU0MS4xMQ==)'>
 <rect x='89.88' y='33.14' width='624.64' height='507.97' style='stroke-width: 1.07; stroke: none; fill: #FFFFFF;' />
-<line x1='129.88' y1='63.02' x2='131.15' y2='63.02' style='stroke-width: 1.71; stroke-linecap: butt;' />
-<line x1='127.36' y1='63.02' x2='126.10' y2='63.02' style='stroke-width: 1.71; stroke-linecap: butt;' />
-<polygon points='129.88,81.70 127.36,81.70 127.36,44.35 129.88,44.35 129.88,81.70 ' style='stroke-width: 1.71; fill: #FFFFFF;' />
-<line x1='128.62' y1='81.70' x2='128.62' y2='44.35' style='stroke-width: 3.41; stroke-linecap: butt;' />
 <line x1='294.80' y1='511.23' x2='332.71' y2='511.23' style='stroke-width: 1.71; stroke: #BEBEBE; stroke-linecap: butt;' />
 <line x1='218.99' y1='511.23' x2='181.08' y2='511.23' style='stroke-width: 1.71; stroke: #BEBEBE; stroke-linecap: butt;' />
 <polygon points='294.80,529.90 218.99,529.90 218.99,492.55 294.80,492.55 294.80,529.90 ' style='stroke-width: 1.71; stroke: #BEBEBE; fill: #FFFFFF;' />
@@ -67,6 +63,10 @@
 <line x1='143.71' y1='112.82' x2='136.50' y2='112.82' style='stroke-width: 1.71; stroke: #BEBEBE; stroke-linecap: butt;' />
 <polygon points='158.13,131.50 143.71,131.50 143.71,94.15 158.13,94.15 158.13,131.50 ' style='stroke-width: 1.71; stroke: #BEBEBE; fill: #FFFFFF;' />
 <line x1='150.92' y1='131.50' x2='150.92' y2='94.15' style='stroke-width: 3.41; stroke: #BEBEBE; stroke-linecap: butt;' />
+<line x1='129.88' y1='63.02' x2='131.15' y2='63.02' style='stroke-width: 1.71; stroke-linecap: butt;' />
+<line x1='127.36' y1='63.02' x2='126.10' y2='63.02' style='stroke-width: 1.71; stroke-linecap: butt;' />
+<polygon points='129.88,81.70 127.36,81.70 127.36,44.35 129.88,44.35 129.88,81.70 ' style='stroke-width: 1.71; fill: #FFFFFF;' />
+<line x1='128.62' y1='81.70' x2='128.62' y2='44.35' style='stroke-width: 3.41; stroke-linecap: butt;' />
 <polygon points='273.64,55.83 279.87,66.62 267.42,66.62 ' style='stroke-width: 0.71; stroke: none; fill: #000000;' />
 <polygon points='287.21,110.61 289.13,113.93 285.30,113.93 ' style='stroke-width: 0.71; fill: none;' />
 <polygon points='302.87,160.41 304.79,163.73 300.96,163.73 ' style='stroke-width: 0.71; fill: none;' />

@@ -46,7 +46,6 @@
 #' @title Internal function for computing the RGCCA parameters (RGCCA block
 #' components, outer weight vectors, etc.).
 #' @importFrom MASS ginv
-#' @importFrom stats cor rnorm
 #' @importFrom graphics plot
 #' @importFrom Deriv Deriv
 #' @noRd

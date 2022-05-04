@@ -15,6 +15,7 @@
 #' @param display_order A logical value for ordering the variables.
 #' @param n_mark An integer defining the maximum number of bars plotted.
 #' @param colors Colors used in the plots. Default is a grey scaled palette.
+#'
 #' @examples
 #' data("Russett")
 #' blocks <- list(
@@ -25,6 +26,7 @@
 #' fit.rgcca <- rgcca(blocks, ncomp = 2, method = "rgcca", tau = 1)
 #' fit.boot <- bootstrap(fit.rgcca, n_boot = 20, n_cores = 1)
 #' plot(fit.boot, type = "weight", block = 1, comp = 1)
+#' @importFrom grDevices grey.colors
 #' @export
 plot.bootstrap <- function(x, block = length(x$rgcca$call$blocks),
                            comp = 1, type = "weight",
@@ -33,7 +35,7 @@ plot.bootstrap <- function(x, block = length(x$rgcca$call$blocks),
                            colors = grey.colors(6)[2:6], title = NULL,
                            cex = 1, cex_sub = 12 * cex,
                            cex_main = 14 * cex, cex_lab = 12 * cex,
-                           cex_point = 3 * cex, cex_axis = 10 * cex, ...) {
+                           cex_point = 3 * cex, ...) {
   ### Perform checks and parse arguments
   stopifnot(is(x, "bootstrap"))
   check_blockx("block", block, x$rgcca$call$blocks)
@@ -53,7 +55,7 @@ plot.bootstrap <- function(x, block = length(x$rgcca$call$blocks),
   df <- df[df[, "sd"] != 0, ]
 
   n_mark <- min(n_mark, NROW(df))
-  df <- head(data.frame(df, order = seq(NROW(df), 1)), n_mark)
+  df <- data.frame(df, order = seq(NROW(df), 1))[seq(n_mark), ]
 
   significance <- rep("", n_mark)
   significance[df$pval < 1e-3] <- "< 0.001"
@@ -84,36 +86,32 @@ plot.bootstrap <- function(x, block = length(x$rgcca$call$blocks),
   ### Construct plot
   p <- ggplot(
     df,
-    aes(
-      x = order,
-      y = df[, "estimate"],
-      fill = df[, "sign"]
-    )
+    aes(x = .data$order, y = .data$estimate, fill = .data$sign)
   ) +
-    geom_bar(stat = "identity") +
-    coord_flip() +
+    ggplot2::geom_bar(stat = "identity") +
+    ggplot2::coord_flip() +
     theme_perso(cex, cex_main, cex_sub, cex_lab) +
-    labs(title = title, x = "", y = "") +
-    theme(
-      axis.text.y = element_text(
+    ggplot2::labs(title = title, x = "", y = "") +
+    ggplot2::theme(
+      axis.text.y = ggplot2::element_text(
         size = cex_sub,
         face = "italic",
         color = "gray40"
       ),
-      axis.text.x = element_text(
+      axis.text.x = ggplot2::element_text(
         size = cex_sub,
         face = "italic",
         color = "gray40"
       ),
-      axis.line = element_blank(),
-      axis.ticks = element_blank(),
-      plot.margin = margin(5, 0, 0, 0, "mm")
+      axis.line = ggplot2::element_blank(),
+      axis.ticks = ggplot2::element_blank(),
+      plot.margin = ggplot2::margin(5, 0, 0, 0, "mm")
     ) +
-    scale_x_continuous(
+    ggplot2::scale_x_continuous(
       breaks = df$order,
       labels = rownames(df)
     ) +
-    scale_fill_manual(
+    ggplot2::scale_fill_manual(
       values = colors,
       labels = c(
         "< 0.001", "< 0.01", "< 0.05",
@@ -124,12 +122,12 @@ plot.bootstrap <- function(x, block = length(x$rgcca$call$blocks),
     )
 
   if (n_mark <= 50) {
-    p <- p + geom_errorbar(aes_(
-      ymin = quote(lower_bound),
-      ymax = quote(upper_bound),
+    p <- p + ggplot2::geom_errorbar(aes(
+      ymin = .data$lower_bound,
+      ymax = .data$upper_bound,
       width = 0.5
     ))
   }
 
-  plot(p)
+  plot(p, ...)
 }
