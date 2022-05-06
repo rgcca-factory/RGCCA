@@ -11,7 +11,6 @@
   cex_main = 14 * cex,
   cex_sub = 10 * cex,
   cex_lab = 10 * cex,
-  colors = c("grey", "red"),
   display_order = TRUE,
   ...
 )
@@ -42,8 +41,6 @@ is one.}
 
 \item{cex_lab}{An integer defining the font size of the labels. Default is
 12 * cex.}
-
-\item{colors}{Colors used in the plots. Default is black and red.}
 
 \item{display_order}{A logical value for ordering the variables.}
 

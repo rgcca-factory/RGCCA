@@ -18,7 +18,6 @@
 #' \item "quantile": the middle bar corresponds to the median and limits of
 #' the boxes are given by the 5% and 95% quantiles.
 #' \item "points": box plots are removed and only the points are kept.}
-#' @param colors Colors used in the plots. Default is black and red.
 #' @examples
 #' data("Russett")
 #' blocks <- list(
@@ -35,7 +34,6 @@
 plot.cval <- function(x, type = "sd",
                       cex = 1, cex_main = 14 * cex,
                       cex_sub = 10 * cex, cex_lab = 10 * cex,
-                      colors = c("grey", "red"),
                       display_order = TRUE, ...) {
   ### Perform checks and parse params
   stopifnot(is(x, "cval"))
@@ -43,8 +41,6 @@ plot.cval <- function(x, type = "sd",
   for (i in c("cex", "cex_main", "cex_sub", "cex_lab")) {
     check_integer(i, get(i))
   }
-  check_colors(colors)
-  colors <- elongate_arg(colors, seq(2))
 
   ### Build data frame
   ymin <- apply(x$cv, 1, min)
@@ -79,14 +75,23 @@ plot.cval <- function(x, type = "sd",
     }
   )
 
-  if (length(x$call$blocks) > 3) {
+  if (length(x$call$blocks) > 5) {
     combinations <- paste("Set ", seq(NROW(x$penalties)))
   } else {
     combinations <- apply(
-      format(x$penalties, digits = 2), 1, paste0,
+      format(round(x$penalties, 2), nsmall = 2), 1, paste0,
       collapse = "/"
     )
   }
+
+  best <- which(apply(
+    x$penalties, 1, function(z) identical(z, x$bestpenalties)
+  ))
+  category <- rep("param", NROW(x$cv))
+  category[best] <- "best_param"
+
+  labels <- as.expression(combinations)
+  labels[[best]] <- bquote(underline(bold(.(labels[[best]]))))
 
   if (display_order) {
     idx_order <- sort(middle, decreasing = FALSE, index.return = TRUE)$ix
@@ -97,11 +102,6 @@ plot.cval <- function(x, type = "sd",
   } else {
     combinations <- factor(combinations, levels = combinations, ordered = TRUE)
   }
-
-  category <- rep("param", NROW(x$cv))
-  category[which(apply(
-    x$penalties, 1, function(z) identical(z, x$bestpenalties)
-  ))] <- "best_param"
 
   df <- data.frame(
     combinations = combinations,
@@ -140,20 +140,23 @@ plot.cval <- function(x, type = "sd",
   p <- ggplot(data = df, aes(
     x = .data$combinations,
     group = .data$combinations,
-    fill = .data$category
+    color = .data$category
   )) +
-    ggplot2::geom_point(data = df_points, aes(
-      x = .data$combinations, y = .data$y, color = .data$category
-    )) +
-    ggplot2::scale_fill_manual(
-      values = c("param" = colors[1], "best_param" = colors[2])
-    ) +
+    ggplot2::coord_flip() +
     ggplot2::scale_color_manual(
-      values = c("param" = colors[1], "best_param" = colors[2])
+      values = c("param" = "grey", "best_param" = "black")
     ) +
     ggplot2::xlab(xlab) +
-    ggplot2::ylab(ylab)
-  if (type != "points") {
+    ggplot2::ylab(ylab) +
+    ggplot2::scale_x_discrete(
+      labels = labels, breaks = combinations,
+      guide = ggplot2::guide_axis(check.overlap = TRUE)
+    )
+  if (type == "points") {
+    p <- p + ggplot2::geom_point(data = df_points, aes(
+      x = .data$combinations, y = .data$y, color = .data$category
+    ))
+  } else {
     p <- p +
       ggplot2::geom_boxplot(
         aes(
@@ -171,8 +174,7 @@ plot.cval <- function(x, type = "sd",
       axis.line = ggplot2::element_line(size = 0.5),
       axis.ticks = ggplot2::element_line(size = 0.5),
       axis.ticks.length = ggplot2::unit(2, "mm"),
-      legend.position = "none",
-      axis.text.x = ggplot2::element_text(angle = 90, vjust = 0.5, hjust = 1)
+      legend.position = "none"
     )
   plot(p, ...)
 }

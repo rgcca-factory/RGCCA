@@ -55,7 +55,7 @@ plot.permutation <- function(x,
     combinations <- paste("Set ", seq_along(x$pvals))
   } else {
     combinations <- apply(
-      format(x$penalties, digits = 2), 1, paste0,
+      format(round(x$penalties, 2), nsmall = 2), 1, paste0,
       collapse = "/"
     )
   }
@@ -91,12 +91,6 @@ plot.permutation <- function(x,
 
   breaks <- rev(levels(df$combinations))
   labels <- as.expression(breaks)
-  if (!display_all) {
-    N <- nrow(x$penalties)
-    jitter <- floor(N / 50)
-    breaks[max(best - jitter, 1):min(best + jitter, N)] <- ""
-    breaks[best] <- labels[[best]]
-  }
   labels[[best]] <- bquote(underline(bold(.(labels[[best]]))))
 
   title <- ifelse(
