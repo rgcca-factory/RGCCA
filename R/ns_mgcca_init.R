@@ -25,9 +25,26 @@ ns_mgcca_init = function(A, A_m, ranks = rep(1, length(A)),
     })
   } else {
     XtX = lapply(1:J, function(j) {
+      if (!(j %in% B_2D)) return(NULL)
       (1 - tau[j]) * crossprod(A_m[[j]]) / (n - 1 + bias) + tau[j] * diag(pjs[j])
     })
   }
+
+  XtX_sing <- lapply(seq(J), function(j) {
+    if (j %in% B_2D) return(NULL)
+    if (pjs[j] > n) {
+      return(
+        eigen(
+          tcrossprod(A_m[[j]]), symmetric = TRUE, only.values = TRUE
+        )$values[1] * (1 - tau[j]) / (n - 1 + bias) + tau[j]
+      )
+    }
+    return(
+      eigen(
+        crossprod(A_m[[j]]), symmetric = TRUE, only.values = TRUE
+      )$values[1] * (1 - tau[j]) / (n - 1 + bias) + tau[j]
+    )
+  })
 
   ### Compute factors
   a = factors = weights = list()
@@ -47,25 +64,18 @@ ns_mgcca_init = function(A, A_m, ranks = rep(1, length(A)),
         factors[[j]][[d]] <- svd(apply(A[[j]], d + 1, c), nu = 0, nv = ranks[[j]])$v
       }
 
-      # Change weight factors to respect orthogonality constraints
-      if (ranks[j] > 1) {
-        for (r in 1:ranks[j]) {
-          other_factors = kron_prod_q(factors[[j]], mode = 1, q = r)
-          Mqmq          = t(other_factors) %*% XtX[[j]]
-          Mq            = inv_sqrtm(Mqmq %*% other_factors)
-          if (r > 1) {
-            factors[[j]][[1]][, r] = project_factor_q(factors[[j]], mode = 1, q = r, Mq = Mq, Mqmq = Mqmq)
-          }
-
-          wq = other_factors %*% factors[[j]][[1]][, r]
-          factors[[j]][[1]][, r] = factors[[j]][[1]][, r] / drop(sqrt(t(wq) %*% XtX[[j]] %*% wq))
-        }
-      }
-
       # Initialize weights to respect norm constraint
-      weights[[j]] = rep(1 / sqrt(ranks[j]), ranks[j])
+      weights[[j]] = rep(1, ranks[j])
+      W            = list_khatri_rao(factors[[j]])
+
+      lambda = weights[[j]] / sqrt(drop(
+        t(weights[[j]]) %*% ((1 - tau[j]) / (n - 1 + bias) * crossprod(A_m[[j]] %*% W) + tau[j] * diag(ranks[j])) %*% weights[[j]]
+      ))
+
+      if (drop(crossprod(lambda)) <= 1 / XtX_sing[[j]]) weights[[j]] = lambda
+      else weights[[j]] = weights[[j]] / (sqrt(XtX_sing[[j]]) * norm(weights[[j]], type = "2"))
       a[[j]]       = weighted_kron_sum(factors[[j]], weights[[j]])
     }
   }
-  return(list(factors = factors, weights = weights, a = a, XtX = XtX))
+  return(list(factors = factors, weights = weights, a = a, XtX = XtX, XtX_sing = XtX_sing))
 }

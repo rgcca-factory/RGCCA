@@ -37,7 +37,9 @@ scaling <- function(blocks, scale = TRUE, bias = TRUE, scale_block = TRUE) {
                 DIM = dim(x)
                 dn  = dimnames(x)
                 if (length(dim(x)) > 2) x = matrix(x, nrow(x))
-                s = norm(matrix(x), type = "F") / sqrt(N)
+                # s = norm(matrix(x), type = "F")
+                # s = norm(matrix(x), type = "F") / sqrt(N)
+                s = norm(matrix(x), type = "F") / sqrt(ncol(x) / N)
                 x = x / s
                 if (length(DIM) > 2) {
                     x = array(x, dim = DIM)

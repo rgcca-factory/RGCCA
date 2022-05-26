@@ -222,7 +222,8 @@ rgcca <- function(
     superblock = FALSE,
     method = "nipals",
     verbose = FALSE,
-    quiet = TRUE)
+    quiet = TRUE,
+    penalty_coef = 0)
 {
 
     if(class(blocks)=="permutation")
@@ -267,7 +268,7 @@ rgcca <- function(
     }
 
     if (any(sapply(blocks, function(x) length(dim(x))) > 2)) {
-        if(!type %in% c("mgcca", "ns_mgcca", "gmgcca"))
+        if(!type %in% c("mgcca", "ns_mgcca", "gmgcca", "ns_mgcca_penalized"))
         {
             message(paste0("type='", type, "' is not available for tensor blocks
                            so type was converted to 'mgcca'."))
@@ -311,6 +312,11 @@ rgcca <- function(
       par <- "tau"
       penalty <- tau
 
+    }else if (tolower(type) %in% c("ns_mgcca_penalized")) {
+      gcca <- ns_mgcca_penalizedNa
+      par <- "tau"
+      penalty <- tau
+
     }else if (tolower(type) %in% c("gmgcca")) {
       gcca <- gmgccaNa
       par <- "tau"
@@ -334,7 +340,7 @@ rgcca <- function(
         regularisation_matrices, blocks)
     }
 
-    if (type == "ns_mgcca") {
+    if (type %in% c("ns_mgcca", "ns_mgcca_penalized")) {
       if (missing(method)) method  <- "complete"
       ranks                <- check_ranks(ranks, blocks)
       kronecker_covariance <- check_boolean("kronecker_covariance", kronecker_covariance)
@@ -449,6 +455,12 @@ rgcca <- function(
       func$kronecker_covariance    <- kronecker_covariance
     }
 
+    if (type == "ns_mgcca_penalized") {
+      func$ranks                   <- ranks
+      func$kronecker_covariance    <- kronecker_covariance
+      func$penalty_coef            <- penalty_coef
+    }
+
     if (type == "gmgcca") {
       func$regularisation_matrices <- regularisation_matrices
       func$ranks                   <- ranks
@@ -489,6 +501,7 @@ rgcca <- function(
 
     if(type == "mgcca") func_out$call$ranks = ranks
     if(type == "ns_mgcca") func_out$call$ranks = ranks
+    if(type == "ns_mgcca_penalized") func_out$call$ranks = ranks
     if(type == "gmgcca") func_out$call$ranks = ranks
 
     for (i in c(

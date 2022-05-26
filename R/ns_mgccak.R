@@ -46,7 +46,7 @@ ns_mgccak <- function (A, A_m = NULL, C, tau = rep(1, length(A)), scheme = "cent
   # Initialization of vector a (weight vector)
   res_init = ns_mgcca_init(A, A_m, tau = tau, ranks = ranks, init = init,
                         bias = bias, kronecker_covariance = kronecker_covariance)
-  a = res_init$a; factors = res_init$factors; weights = res_init$weights; XtX = res_init$XtX
+  a = res_init$a; factors = res_init$factors; weights = res_init$weights; XtX = res_init$XtX; XtX_sing = res_init$XtX_sing
 
   # Initialization of vector Y
   for (j in 1:J) Y[, j] <- A_m[[j]] %*% a[[j]]
@@ -57,11 +57,11 @@ ns_mgccak <- function (A, A_m = NULL, C, tau = rep(1, length(A)), scheme = "cent
   crit     = numeric()
   a_old    = a
 
-  dg = Deriv::Deriv(g, env = parent.frame())
+  dg = Deriv::Deriv(g)
 
   # MGCCA algorithm
   repeat {
-    res_update = ns_mgcca_update(A, A_m, a, factors, weights, XtX, Y, g, dg, C, ranks = ranks, bias = bias)
+    res_update = ns_mgcca_update(A, A_m, a, factors, weights, XtX, XtX_sing, Y, g, dg, C, ranks = ranks, bias = bias, tau = tau)
     a = res_update$a; factors = res_update$factors; weights = res_update$weights; Y = res_update$Y
 
     crit[iter] <- sum(C*g(cov2(Y, bias = bias)))
@@ -76,9 +76,10 @@ ns_mgccak <- function (A, A_m = NULL, C, tau = rep(1, length(A)), scheme = "cent
     }
 
     stopping_criteria = c(
-      drop(crossprod(Reduce("c", mapply("-", a, a_old)))),
+      drop(crossprod(unlist(a, F, F) - unlist(a_old, F, F))),
       crit[iter] - crit_old
     )
+
     # Criterion must increase
     if ( crit[iter] - crit_old < -tol)
     {stop_rgcca("Convergence error: criterion did not increase monotonously")}

@@ -120,7 +120,7 @@ mgccak <- function (A, A_m = NULL, C, tau = rep(1, length(A)), scheme = "centroi
   Z        = matrix(0, n, J)
   a_old    = a
 
-  dg = Deriv::Deriv(g, env = parent.frame())
+  dg = Deriv::Deriv(g)
 
   # MGCCA algorithm
   repeat {
