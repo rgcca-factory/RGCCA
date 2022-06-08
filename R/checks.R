@@ -177,7 +177,8 @@ check_lower_blocks <- function(x, y, blocks)
             exit_code = 133
         )
 check_method <- function(method) {
-    analysis <- c("rgcca", "sgcca", "mgcca", "ns_mgcca", "gmgcca", "pca", "spca", "pls", "spls",
+    analysis <- c("rgcca", "sgcca", "mgcca", "ns_mgcca", "ns_mgcca_penalized",
+                  "gmgcca", "pca", "spca", "pls", "spls",
       "cca", "ifa", "ra", "gcca", "maxvar", "maxvar-b",
       "maxvar-a", "mcoa","cpca-1", "cpca-2", "cpca-4",
       "hpca", "maxbet-b", "maxbet", "maxdiff-b", "maxdiff",
