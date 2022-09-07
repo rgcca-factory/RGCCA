@@ -141,13 +141,18 @@ mgccak <- function (A, A_m = NULL, C, tau = rep(1, length(A)), scheme = "centroi
         Y[, j]            = P[[j]] %*% a[[j]]
 
       } else if (j %in% B_nD) { # higher order Tensors
-          for (d in rev(1:(LEN[[j]] - 1))) {
+          for (d in 1:(LEN[[j]] - 1)) {
           Q                 = array(t(P[[j]]) %*% Z[, j], dim = DIM[[j]][-1])
           Q                 = unfold(Q, mode = d)
           other_factors     = list_khatri_rao(factors[[j]][-d]) %*% diag(weights[[j]])
-          SVD               = svd(x = Q %*% other_factors, nu = ranks[j],
-                                  nv = ranks[j])
-          factors[[j]][[d]] = SVD$u %*% t(SVD$v)
+
+          if (d == 1) {
+            SVD               = svd(x = Q %*% other_factors, nu = ranks[j],
+                                    nv = ranks[j])
+            factors[[j]][[d]] = SVD$u %*% t(SVD$v)
+          } else {
+            factors[[j]][[d]] = apply(Q %*% other_factors, 2, function(x) x / norm(x, type = "2"))
+          }
 
           a[[j]]            = weighted_kron_sum(factors[[j]], weights[[j]])
           Y[, j]            = P[[j]] %*% a[[j]]
@@ -184,7 +189,7 @@ mgccak <- function (A, A_m = NULL, C, tau = rep(1, length(A)), scheme = "centroi
 
     stopping_criteria = c(
       drop(crossprod(unlist(a, F, F) - unlist(a_old, F, F))),
-      crit[iter] - crit_old
+      abs(crit[iter] - crit_old) / crit[iter]
     )
     # Criterion must increase
     if ( crit[iter] - crit_old < -tol)
