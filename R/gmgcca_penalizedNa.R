@@ -1,0 +1,24 @@
+gmgcca_penalizedNa=function(blocks, method, connection = 1 - diag(length(blocks)),
+                 tau = rep(1, length(blocks)),
+                 ncomp = rep(1, length(blocks)),
+                 scheme = "centroid", scale = TRUE,
+                 init = "svd", bias = TRUE, tol = 1e-08,
+                 verbose = TRUE, scale_block = TRUE, prescaling = FALSE,
+                 quiet = FALSE, penalty_coef = 1)
+{
+  indNA=lapply(blocks, function(x){return(which(is.na(x), arr.ind = TRUE))})
+
+  if(method=="complete") { A=intersection_list(blocks) }
+  else if (is.function(method)) { A=method(blocks) }
+  else { stop_rgcca("Only \"complete\" method is implemented to handle missing
+	                  data for MGCCA") }
+
+  fit = gmgcca_penalized(A, connection = connection, tau = tau, ncomp = ncomp,
+              verbose = verbose, init = init, bias = bias,
+              scheme = scheme,
+              tol = tol, quiet = quiet,
+              penalty_coef = penalty_coef)
+
+  return(list(imputed_blocks = A, rgcca = fit, method, indNA = indNA))
+
+}

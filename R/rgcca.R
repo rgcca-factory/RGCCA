@@ -268,7 +268,7 @@ rgcca <- function(
     }
 
     if (any(sapply(blocks, function(x) length(dim(x))) > 2)) {
-        if(!type %in% c("mgcca", "ns_mgcca", "gmgcca", "ns_mgcca_penalized"))
+        if(!type %in% c("mgcca", "ns_mgcca", "gmgcca", "ns_mgcca_penalized", "gmgcca_penalized"))
         {
             message(paste0("type='", type, "' is not available for tensor blocks
                            so type was converted to 'mgcca'."))
@@ -322,6 +322,11 @@ rgcca <- function(
       par <- "tau"
       penalty <- tau
 
+    }else if (tolower(type) %in% c("gmgcca_penalized")) {
+      gcca <- gmgcca_penalizedNa
+      par <- "tau"
+      penalty <- tau
+
     } else {
         if (!missing(sparsity) & missing(tau))
            stop_rgcca(paste0("tau parameters required for ",
@@ -349,6 +354,10 @@ rgcca <- function(
     if (type == "gmgcca") {
       if (missing(method)) method  <- "complete"
       ranks                <- check_ranks(ranks, blocks)
+    }
+
+    if (type == "gmgcca_penalized") {
+      if (missing(method)) method  <- "complete"
     }
 
 
@@ -464,6 +473,10 @@ rgcca <- function(
     if (type == "gmgcca") {
       func$regularisation_matrices <- regularisation_matrices
       func$ranks                   <- ranks
+    }
+
+    if (type == "gmgcca_penalized") {
+      func$penalty_coef <- penalty_coef
     }
 
     func[[par]] <- opt$penalty

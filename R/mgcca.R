@@ -179,7 +179,7 @@ mgcca <- function(A, C = 1-diag(length(A)), tau = rep(1, length(A)),
     if (verbose) cat(paste0("Computation of the MGCCA block components #", n,
                             " is under progress...\n"))
     # n_random_starts
-    mgcca.result = mgccak(
+    mgcca.result = nn_mgccak(
       A                       = R,
       A_m                     = R_m,
       C                       = C,
