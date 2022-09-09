@@ -223,7 +223,9 @@ rgcca <- function(
     method = "nipals",
     verbose = FALSE,
     quiet = TRUE,
-    penalty_coef = 0)
+    penalty_coef = 0,
+    n_run = 1,
+    n_cores = 1)
 {
 
     if(class(blocks)=="permutation")
@@ -450,7 +452,9 @@ rgcca <- function(
             scale_block = scale_block,
             method = method,
             prescaling = prescaling,
-            quiet=quiet
+            quiet=quiet,
+            n_run = n_run,
+            n_cores = n_cores
         )
     )
 

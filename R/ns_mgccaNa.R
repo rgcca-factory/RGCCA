@@ -43,7 +43,8 @@ ns_mgccaNa=function(blocks, method, connection = 1 - diag(length(blocks)),
                  init = "svd", bias = TRUE, tol = 1e-08,
                  verbose = TRUE, scale_block = TRUE, prescaling = FALSE,
                  quiet = FALSE, regularisation_matrices = NULL,
-                 ranks = rep(1, length(blocks)), kronecker_covariance = F)
+                 ranks = rep(1, length(blocks)), kronecker_covariance = F,
+                 n_run = 1, n_cores = 1)
 {
   indNA=lapply(blocks, function(x){return(which(is.na(x), arr.ind = TRUE))})
 
@@ -57,7 +58,8 @@ ns_mgccaNa=function(blocks, method, connection = 1 - diag(length(blocks)),
               scale_block = scale_block, scheme = scheme,
               tol = tol, prescaling = prescaling, quiet = quiet,
               regularisation_matrices = regularisation_matrices,
-              ranks = ranks, kronecker_covariance = kronecker_covariance)
+              ranks = ranks, kronecker_covariance = kronecker_covariance,
+              n_run = n_run, n_cores = n_cores)
 
   return(list(imputed_blocks = A, rgcca = fit, method, indNA = indNA))
 

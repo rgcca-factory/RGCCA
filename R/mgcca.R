@@ -62,7 +62,8 @@ mgcca <- function(A, C = 1-diag(length(A)), tau = rep(1, length(A)),
                   ncomp = rep(1, length(A)), scheme = "centroid", scale = TRUE,
                   init="svd", bias = TRUE, tol = 1e-8, verbose=FALSE,
                   scale_block = TRUE, regularisation_matrices = NULL,
-                  ranks = rep(1, length(A)), prescaling = FALSE, quiet = FALSE) {
+                  ranks = rep(1, length(A)), prescaling = FALSE, quiet = FALSE,
+                  n_run = 1, n_cores = 1) {
 
   # Number of blocks
   J      = length(A)
@@ -179,7 +180,7 @@ mgcca <- function(A, C = 1-diag(length(A)), tau = rep(1, length(A)),
     if (verbose) cat(paste0("Computation of the MGCCA block components #", n,
                             " is under progress...\n"))
     # n_random_starts
-    mgcca.result = nn_mgccak(
+    mgcca.result = mgccak(
       A                       = R,
       A_m                     = R_m,
       C                       = C,
@@ -190,7 +191,9 @@ mgcca <- function(A, C = 1-diag(length(A)), tau = rep(1, length(A)),
       tol                     = tol,
       verbose                 = verbose,
       regularisation_matrices = regularisation_matrices,
-      ranks                   = ranks[n, ]
+      ranks                   = ranks[n, ],
+      n_run                   = n_run,
+      n_cores                 = n_cores
     )
 
     # Store tau, AVE_inner, crit

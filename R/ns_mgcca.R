@@ -64,7 +64,7 @@ ns_mgcca <- function(A, C = 1-diag(length(A)), tau = rep(1, length(A)),
                   init="svd", bias = TRUE, tol = 1e-8, verbose=FALSE,
                   scale_block = TRUE, regularisation_matrices = NULL,
                   ranks = rep(1, length(A)), prescaling = FALSE, quiet = FALSE,
-                  kronecker_covariance = F) {
+                  kronecker_covariance = F, n_run = 1, n_cores = 1) {
 
   # Number of blocks
   J      = length(A)
@@ -191,7 +191,9 @@ ns_mgcca <- function(A, C = 1-diag(length(A)), tau = rep(1, length(A)),
       verbose                 = verbose,
       regularisation_matrices = regularisation_matrices,
       ranks                   = ranks,
-      kronecker_covariance    = kronecker_covariance
+      kronecker_covariance    = kronecker_covariance,
+      n_run                   = n_run,
+      n_cores                 = n_cores
     )
 
     # Store tau, AVE_inner, crit

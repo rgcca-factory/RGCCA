@@ -1,6 +1,5 @@
-ns_mgcca_init = function(A, A_m, ranks = rep(1, length(A)),
-                      tau = rep(1, length(A)), init = "svd", bias = T,
-                      kronecker_covariance = F) {
+ns_mgcca_init = function(A, A_m, XtX, XtX_sing, ranks = rep(1, length(A)),
+                      tau = rep(1, length(A)), init = "svd", bias = T) {
   ### Get useful constants
   J      <- length(A)
   DIM    <- lapply(A, dim)
@@ -10,41 +9,6 @@ ns_mgcca_init = function(A, A_m, ranks = rep(1, length(A)),
   # Dimensions of each block
   pjs <- sapply(DIM, function(x) prod(x[-1]))
   n   <- DIM[[1]][1]
-
-  if (kronecker_covariance) {
-    XtX = lapply(1:J, function(j) {
-      if (j %in% B_2D) {
-        return((1 - tau[j]) * crossprod(A_m[[j]]) / (n - 1 + bias) + tau[j] * diag(pjs[j]))
-      }
-      fac = estimate_kronecker_covariance(A[[j]])
-      to  = tau[j] ^ (1 / length(fac))
-      fac = lapply(fac, function(x) {
-        (1 - to) * x + to * diag(nrow(x))
-      })
-      return(Reduce("%x%", rev(fac)))
-    })
-  } else {
-    XtX = lapply(1:J, function(j) {
-      if (!(j %in% B_2D)) return(NULL)
-      (1 - tau[j]) * crossprod(A_m[[j]]) / (n - 1 + bias) + tau[j] * diag(pjs[j])
-    })
-  }
-
-  XtX_sing <- lapply(seq(J), function(j) {
-    if (j %in% B_2D) return(NULL)
-    if (pjs[j] > n) {
-      return(
-        eigen(
-          tcrossprod(A_m[[j]]), symmetric = TRUE, only.values = TRUE
-        )$values[1] * (1 - tau[j]) / (n - 1 + bias) + tau[j]
-      )
-    }
-    return(
-      eigen(
-        crossprod(A_m[[j]]), symmetric = TRUE, only.values = TRUE
-      )$values[1] * (1 - tau[j]) / (n - 1 + bias) + tau[j]
-    )
-  })
 
   ### Compute factors
   a = factors = weights = list()
@@ -77,5 +41,5 @@ ns_mgcca_init = function(A, A_m, ranks = rep(1, length(A)),
       a[[j]]       = weighted_kron_sum(factors[[j]], weights[[j]])
     }
   }
-  return(list(factors = factors, weights = weights, a = a, XtX = XtX, XtX_sing = XtX_sing))
+  return(list(factors = factors, weights = weights, a = a))
 }
