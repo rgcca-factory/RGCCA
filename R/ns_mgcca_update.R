@@ -82,6 +82,7 @@ ns_mgcca_update = function(A, A_m, a, factors, weights, XtX, XtX_sing, Y, g, dg,
           weights[[j]] = lambda2
         }
       }
+      weights[[j]] <- drop(weights[[j]])
 
       a[[j]] = weighted_kron_sum(factors[[j]], weights[[j]])
       Y[, j] = A_m[[j]] %*% a[[j]]

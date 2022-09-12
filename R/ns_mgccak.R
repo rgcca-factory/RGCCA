@@ -81,13 +81,15 @@ ns_mgccak <- function (A, A_m = NULL, C, tau = rep(1, length(A)), scheme = "cent
     )
   })
 
-  models <- pbapply::pblapply(seq(n_run), function(run_number) {
+  myCluster <- makeCluster(n_cores, type = "PSOCK")
+  doParallel::registerDoParallel(myCluster)
+  models <- foreach(run_number = seq(n_run)) %dopar% {
     init <- ifelse(run_number == 1, "svd", "random")
 
     core_ns_mgcca(A, A_m, XtX, XtX_sing, DIM, LEN, B_2D, B_3D, B_nD, init, g,
                   verbose, C, tol, n_iter_max, bias, ranks, tau)
-
-  }, cl = n_cores)
+  }
+  stopCluster(myCluster)
 
   best_model <- which.max(lapply(models, function(m) m$crit[length(m$crit)]))
   a <- models[[best_model]]$a
