@@ -1,7 +1,7 @@
 mgccak <- function (A, A_m = NULL, C, tau = rep(1, length(A)), scheme = "centroid",
                     verbose = FALSE, init="svd", bias = TRUE, tol = 1e-8,
                     regularisation_matrices, ranks= rep(1, length(A)),
-                    n_run = 1, n_cores = 1) {
+                    n_run = 1, n_cores = 1, orth_modes = 1) {
 
   call = list(A = A, A_m = A_m, C = C, scheme = scheme, verbose = verbose, init = init,
               bias = bias, tol = tol, ranks = ranks)
@@ -73,10 +73,10 @@ mgccak <- function (A, A_m = NULL, C, tau = rep(1, length(A)), scheme = "centroi
   myCluster <- makeCluster(n_cores, type = "PSOCK")
   doParallel::registerDoParallel(myCluster)
   models <- foreach(run_number = seq(n_run)) %dopar% {
-    init <- ifelse(run_number == 1, "svd", "random")
+    init <- ifelse(run_number == 1, init, "random")
 
     core_mgcca(A, P, DIM, LEN, B_2D, B_3D, B_nD, init, g, verbose, C,
-               tol, n_iter_max, bias, ranks)
+               tol, n_iter_max, bias, ranks, orth_modes = orth_modes)
   }
   stopCluster(myCluster)
 

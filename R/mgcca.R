@@ -63,7 +63,7 @@ mgcca <- function(A, C = 1-diag(length(A)), tau = rep(1, length(A)),
                   init="svd", bias = TRUE, tol = 1e-8, verbose=FALSE,
                   scale_block = TRUE, regularisation_matrices = NULL,
                   ranks = rep(1, length(A)), prescaling = FALSE, quiet = FALSE,
-                  n_run = 1, n_cores = 1) {
+                  n_run = 1, n_cores = 1, orth_modes = 1) {
 
   # Number of blocks
   J      = length(A)
@@ -141,8 +141,9 @@ mgcca <- function(A, C = 1-diag(length(A)), tau = rep(1, length(A)),
   R                = A
   R_m              = A_m
 
-  AVE_X <- crit <- factors <- weights <- list()
+  AVE_X <- crit <- factors <- list()
   Y     <- P    <- a       <- astar   <- list()
+  weights <- replicate(J, c(), simplify = FALSE)
 
 
   ranks = matrix(ranks, nrow = max(ncomp), ncol = J, byrow = T)
@@ -193,7 +194,8 @@ mgcca <- function(A, C = 1-diag(length(A)), tau = rep(1, length(A)),
       regularisation_matrices = regularisation_matrices,
       ranks                   = ranks[n, ],
       n_run                   = n_run,
-      n_cores                 = n_cores
+      n_cores                 = n_cores,
+      orth_modes              = orth_modes
     )
 
     # Store tau, AVE_inner, crit
@@ -209,7 +211,7 @@ mgcca <- function(A, C = 1-diag(length(A)), tau = rep(1, length(A)),
       for (f in 1:(LEN[[d]] - 1)) {
         factors[[d]][[f]][, idx] = mgcca.result$factors[[d]][[f]]
       }
-      weights[[d]] = mgcca.result$weights[[d]]
+      weights[[d]] = c(weights[[d]], mgcca.result$weights[[d]])
     }
 
     # Deflation procedure

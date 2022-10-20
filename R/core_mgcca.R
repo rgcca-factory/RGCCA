@@ -1,5 +1,5 @@
 core_mgcca <- function(A, P, DIM, LEN, B_2D, B_3D, B_nD, init, g, verbose, C,
-                       tol, n_iter_max, bias, ranks) {
+                       tol, n_iter_max, bias, ranks, orth_modes) {
   J <- length(P)
   pjs <- sapply(DIM, function(x) prod(x[-1]))
   n   <- DIM[[1]][1]
@@ -32,12 +32,17 @@ core_mgcca <- function(A, P, DIM, LEN, B_2D, B_3D, B_nD, init, g, verbose, C,
       }
     } else if (init == "random") {
       # Random Initialisation of a_j
-      A_random <- array(rnorm(n = pjs[[j]], mean = 0, sd = 1), dim = DIM[[j]][-1])
       if (j %in% B_2D) {
+        A_random <- rnorm(n = pjs[[j]], mean = 0, sd = 1)
         a[[j]] <- matrix(A_random / sqrt(drop(crossprod(A_random))))
       } else {
         for (d in 1:(LEN[[j]] - 1)) {
-          factors[[j]][[d]] <- svd(apply(A_random, d, c), nu=0, nv=ranks[[j]])$v
+          A_random <- matrix(rnorm(DIM[[j]][d + 1] * ranks[j], mean = 0, sd = 1), DIM[[j]][d + 1])
+          if (d %in% orth_modes) {
+            factors[[j]][[d]] <- svd(A_random, nv=0, nu=ranks[[j]])$u
+          } else {
+            factors[[j]][[d]] <- apply(A_random, 2, function(x) x / norm(x, type = "2"))
+          }
         }
         weights[[j]] <- rep(1 / sqrt(ranks[j]), ranks[j])
         a[[j]]       <- weighted_kron_sum(factors[[j]], weights[[j]])
@@ -83,7 +88,7 @@ core_mgcca <- function(A, P, DIM, LEN, B_2D, B_3D, B_nD, init, g, verbose, C,
           Q                 = unfold(Q, mode = d)
           other_factors     = list_khatri_rao(factors[[j]][-d]) %*% diag(weights[[j]])
 
-          if (d == 1) {
+          if (d %in% orth_modes) {
             SVD               = svd(x = Q %*% other_factors, nu = ranks[j],
                                     nv = ranks[j])
             factors[[j]][[d]] = SVD$u %*% t(SVD$v)

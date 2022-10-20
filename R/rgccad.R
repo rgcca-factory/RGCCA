@@ -249,7 +249,7 @@ rgccad=function (A, C = 1 - diag(length(A)), tau = rep(1, length(A)),
   myCluster <- makeCluster(n_cores, type = "PSOCK")
   doParallel::registerDoParallel(myCluster)
   models <- foreach(run_number = seq(n_run)) %dopar% {
-    init <- ifelse(run_number == 1, "svd", "random")
+    init <- ifelse(run_number == 1, init, "random")
 
     core_rgccad(A, C, tau, scheme, init, bias, tol,
                 verbose, na.rm, n_run, ncomp, scale, scale_block)

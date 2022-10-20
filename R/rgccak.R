@@ -223,8 +223,10 @@ rgccak=function (A, C, tau = "optimal", scheme = "centroid", verbose = FALSE,
               " Dif: ", formatC(crit[iter] - crit_old, digits = 8,
                                 width = 10, format = "f"), "\n")
       }
-       stopping_criteria = c(drop(crossprod(unlist(a, F, F) - unlist(a_old, F, F))),
-                             crit[iter] - crit_old)
+      stopping_criteria = c(
+        drop(crossprod(unlist(a, F, F) - unlist(a_old, F, F))),
+        abs(crit[iter] - crit_old) / crit[iter]
+      )
 
        if (any(stopping_criteria < tol) | (iter > 1000))
         {break}
