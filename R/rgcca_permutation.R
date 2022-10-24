@@ -250,7 +250,7 @@ rgcca_permutation <- function(blocks, par_type = "tau", par_value = NULL,
                               NA_method = "nipals", rgcca_res = NULL,
                               verbose = TRUE) {
   ### Try to retrieve parameters from a rgcca object
-  if (!missing(blocks) & class(blocks) == "rgcca") {
+  if (!missing(blocks) && inherits(blocks, "rgcca")) {
     rgcca_res <- blocks
   }
   if (is(rgcca_res, "rgcca")) {
