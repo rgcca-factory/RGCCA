@@ -399,5 +399,15 @@ check_prediction_model <- function(prediction_model, response_block) {
       "classification. Please choose another model."
     )
   }
+
+  is_inadequate <- !("Regression" %in% model_info$type) && !classification
+  if (is_inadequate) {
+    stop_rgcca(
+      "inadequate model. Response block contains continuous data ",
+      "but model ", prediction_model, " is not made for ",
+      "regression Please choose another model."
+    )
+  }
+
   return(list(prediction_model = model_info, classification = classification))
 }

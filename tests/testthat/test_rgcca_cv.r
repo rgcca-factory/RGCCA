@@ -37,6 +37,14 @@ test_that("rgcca_cv raises an error if a regression model is used for a
   )
 })
 
+test_that("rgcca_cv raises an error if a classification model is used for a
+          regression task", {
+  expect_error(rgcca_cv(blocks, response = 3, prediction_model = "lda"),
+               "inadequate model.",
+               fixed = TRUE
+  )
+})
+
 test_that("rgcca_cv generates a warning if tau is null and block has more
           columns than rows", {
   bad_block <- matrix(rnorm(47 * 127), nrow = 47)
