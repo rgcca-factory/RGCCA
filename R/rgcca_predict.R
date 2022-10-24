@@ -140,9 +140,15 @@ rgcca_predict <- function(rgcca_res,
     as.data.frame(y_test)
   )
 
-  prediction <- vapply(seq(NCOL(y_test)), function(x) {
-    results["prediction", x][[1]]$test[, "pred"]
-  }, FUN.VALUE = numeric(NROW(y_test)))
+  # We cannot have matrix of factors so we keep the levels for classification
+  pred_type <- ifelse(classification, character, numeric)
+  prediction <- vapply(seq(NCOL(y_test)), function(j) {
+    x <- results["prediction", j][[1]]$test[, "pred"]
+    if (classification) {
+      x <- as.character(x)
+    }
+    return(x)
+  }, FUN.VALUE = pred_type(NROW(y_test)))
 
   prediction <- matrix(prediction, ncol = NCOL(y_train))
 
