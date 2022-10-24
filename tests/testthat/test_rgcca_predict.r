@@ -52,8 +52,8 @@ test_that("rgcca_predict raises an error if response block is not present in
   names(blocks_test)[[3]] <- "response"
   expect_error(rgcca_predict(fit_rgcca, blocks_test, response = "response"),
     paste0(
-      "The block to predict is not among both train and ",
-      "test blocks. Please provide an appropriate one."
+      "The block to predict is not among train blocks. ",
+      "Please provide an appropriate one."
     ),
     fixed = TRUE
   )
@@ -117,7 +117,7 @@ test_that("rgcca_predict with lda predictor gives the same prediction as
   response <- 3
   fit_rgcca <- rgcca(A, tau = 1, ncomp = c(3, 2, 1), response = response)
   res_predict <- rgcca_predict(fit_rgcca,
-    blocks_test = A,
+    blocks_test = A[-3],
     prediction_model = "lda", response = "politic"
   )
   Y <- data.frame(cbind(fit_rgcca$Y[[1]][, 1:3], fit_rgcca$Y[[2]][, 1:2]))

@@ -66,13 +66,14 @@ rgcca_predict <- function(rgcca_res,
     train_idx <- match(response, seq_along(rgcca_res$call$blocks))
     test_idx <- match(response, seq_along(blocks_test))
   }
-  if (is.na(train_idx) || is.na(test_idx)) {
+  if (is.na(train_idx)) {
     stop_rgcca(paste0(
-      "The block to predict is not among both train and ",
-      "test blocks. Please provide an appropriate one."
+      "The block to predict is not among train blocks. ",
+      "Please provide an appropriate one."
     ))
   }
   if (
+    !is.na(test_idx) &&
     names(blocks_test)[[test_idx]] != names(rgcca_res$call$blocks)[[train_idx]]
   ) {
     stop_rgcca(
@@ -82,26 +83,36 @@ rgcca_predict <- function(rgcca_res,
     )
   }
 
-  tmp <- check_prediction_model(prediction_model, blocks_test[[response]])
+  tmp <- check_prediction_model(
+    prediction_model, rgcca_res$call$raw[[response]]
+  )
   prediction_model <- tmp$prediction_model
   classification <- tmp$classification
 
-  ### Get train and test target
+  ### Get train and test target (if present)
   y_train <- rgcca_res$call$raw[[train_idx]]
-  y_test <- as.matrix(blocks_test[[test_idx]])
 
-  if (any(dim(y_test)[-1] != dim(y_train)[-1])) {
-    stop_rgcca(
-      "Dimensions of response do not match between",
-      " train and test blocks."
-    )
-  }
-  if (!is.null(colnames(y_test))) {
-    y_test <- y_test[, colnames(y_train), drop = FALSE]
+  if (!is.na(test_idx)) {
+    y_test <- as.matrix(blocks_test[[test_idx]])
+
+    if (any(dim(y_test)[-1] != dim(y_train)[-1])) {
+      stop_rgcca(
+        "Dimensions of response do not match between",
+        " train and test blocks."
+      )
+    }
+    if (!is.null(colnames(y_test))) {
+      y_test <- as.data.frame(y_test[, colnames(y_train), drop = FALSE])
+    }
+  } else {
+    y_test <- replicate(NCOL(y_train), NULL, simplify = FALSE)
   }
 
   ### Get projected train and test data
-  projection <- rgcca_transform(rgcca_res, blocks_test[-test_idx])
+  if (!is.na(test_idx)) {
+    blocks_test <- blocks_test[-test_idx]
+  }
+  projection <- rgcca_transform(rgcca_res, blocks_test)
   X_train <- rgcca_res$Y[names(projection)]
   X_train <- reformat_projection(X_train)
   X_test <- reformat_projection(projection)
@@ -137,18 +148,18 @@ rgcca_predict <- function(rgcca_res,
       )
     },
     as.data.frame(y_train),
-    as.data.frame(y_test)
+    y_test
   )
 
   # We cannot have matrix of factors so we keep the levels for classification
   pred_type <- ifelse(classification, character, numeric)
-  prediction <- vapply(seq(NCOL(y_test)), function(j) {
+  prediction <- vapply(seq(NCOL(y_train)), function(j) {
     x <- results["prediction", j][[1]]$test[, "pred"]
     if (classification) {
       x <- as.character(x)
     }
     return(x)
-  }, FUN.VALUE = pred_type(NROW(y_test)))
+  }, FUN.VALUE = pred_type(NROW(X_test)))
 
   prediction <- matrix(prediction, ncol = NCOL(y_train))
 
@@ -185,7 +196,9 @@ core_prediction <- function(prediction_model, X_train, X_test,
                             y_train, y_test, classification = FALSE, ...) {
   if (classification) {
     y_train <- as.factor(as.matrix(y_train))
-    y_test <- factor(as.matrix(y_test), levels = levels(y_train))
+    if (!is.null(y_test)) {
+      y_test <- factor(as.matrix(y_test), levels = levels(y_train))
+    }
   }
   data <- as.data.frame(cbind(X_train, obs = unname(y_train)))
   model <- train(obs ~ .,
@@ -200,10 +213,17 @@ core_prediction <- function(prediction_model, X_train, X_test,
     obs = unname(y_train),
     pred = predict(model, X_train)
   )
-  prediction_test <- data.frame(
-    obs = unname(y_test),
-    pred = predict(model, X_test)
-  )
+  if (is.null(y_test)) {
+    prediction_test <- data.frame(
+      obs = predict(model, X_test),
+      pred = predict(model, X_test)
+    )
+  } else {
+    prediction_test <- data.frame(
+      obs = unname(y_test),
+      pred = predict(model, X_test)
+    )
+  }
   if (classification) {
     confusion_train <- confusionMatrix(prediction_train$pred,
       reference = prediction_train$obs
@@ -242,6 +262,13 @@ core_prediction <- function(prediction_model, X_train, X_test,
     )
     score <- metric_test["RMSE"]
   }
+
+  if (is.null(y_test)) {
+    score <- confusion_test <- NA
+    metric_test <- NULL
+    prediction_test$obs <- NULL
+  }
+
   return(list(
     model = model,
     prediction = list(train = prediction_train, test = prediction_test),
