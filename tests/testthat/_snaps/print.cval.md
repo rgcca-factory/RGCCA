@@ -27,10 +27,10 @@
       Prediction model: lm 
       
         Tuning parameters Median error  2.5% 97.5%
-      1       0.0/0.2/0.3        0.772 0.709 0.874
-      2       0.0/0.0/0.0        0.722 0.661 0.872
+      1       0.0/0.2/0.3        1.067 1.007 1.328
+      2       0.0/0.0/0.0        0.984 0.946 1.590
       
-      The best combination is: 0 0 0 for a mean CV error of 0.722 
+      The best combination is: 0.0 0.2 0.3 for a mean CV error of 1.120 
 
 ---
 
@@ -55,16 +55,16 @@
       Tuning parameters (sparsity) used: 
         agriculture industry politic
       1       1.000    1.000   1.000
-      2       0.577    0.707   0.408
+      2       0.577    0.707   0.577
       
       Validation: loo 
       Prediction model: lm 
       
         Tuning parameters Mean error Mean - Sd Mean + Sd
-      1    1.00/1.00/1.00      0.606     0.359     0.853
-      2    0.58/0.71/0.41      0.621     0.377     0.866
+      1    1.00/1.00/1.00      0.880     0.406     1.354
+      2    0.58/0.71/0.58      0.932     0.438     1.426
       
-      The best combination is: 1 1 1 for a mean CV error of 0.606 
+      The best combination is: 1 1 1 for a mean CV error of 0.880 
 
 ---
 
@@ -100,8 +100,8 @@
       Prediction model: lm 
       
             Tuning parameters Mean error Mean - Std Error Mean + Std Error
-      1 Tuning parameter set       0.692            0.682            0.702
-      2 Tuning parameter set       0.808            0.687            0.929
+      1 Tuning parameter set       0.833            0.801            0.864
+      2 Tuning parameter set       0.913            0.812            1.015
       
-      The best combination is: 1 1 1 1 1 1 for a mean CV error of 0.692 
+      The best combination is: 1 1 1 1 1 1 for a mean CV error of 0.833 
 
