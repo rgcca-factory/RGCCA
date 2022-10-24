@@ -64,9 +64,9 @@ print.cval <- function(x, type = "quantile", ...) {
     }
 
     df <- data.frame(
-      config = combinations, format(cbind(middle, lower, upper), digits = 3)
+      config = combinations, format(cbind(middle, lower, upper, ymean), digits = 3)
     )
-    colnames(df) <- c("Tuning parameters", middle_name, low_lim, up_lim)
+    colnames(df) <- c("Tuning parameters", middle_name, low_lim, up_lim, mean)
     return(df)
   }
 
@@ -96,13 +96,13 @@ print.cval <- function(x, type = "quantile", ...) {
   cat(paste("Prediction model:", x$call$prediction_model, "\n"))
 
   cat("\n")
-  print(df)
+  print(df[, -5])
   cat("\n")
 
   optimal_ind <- which(apply(
     x$penalties, 1, function(z) identical(z, x$bestpenalties)
   ))
-  optimal_y <- df[optimal_ind, 2]
+  optimal_y <- df[optimal_ind, 5]
 
   cat(paste(
     "The best combination is:",
