@@ -13,8 +13,6 @@
 #'   \item Make sure that all the blocks apart from the response block are
 #'   quantitative.
 #'   \item Add missing names to \code{blocks}.
-#'   \item If \code{init} is TRUE, remove blocks' columns that have null
-#'   variance.
 #'   \item Add missing column names to each block and prefix column names with
 #'   block names if some column names are duplicated between blocks.
 #'   \item Check blocks' row names. Raises an error if a block has duplicated
@@ -33,21 +31,18 @@
 #'   block has the same row names in the same order.
 #' }
 #' @inheritParams rgcca
-#' @param init logical, if TRUE, columns with null variance are removed
 #' @param add_Nalines logical, if TRUE, lines filled with NA are added to blocks
 #' with missing rows
 #' @param allow_unnames logical, if FALSE, an error is raised if blocks do not
 #' have row names
 #' @importFrom stats setNames
 #' @noRd
-check_blocks <- function(blocks, init = FALSE,
-                         add_NAlines = FALSE, allow_unnames = TRUE,
+check_blocks <- function(blocks, add_NAlines = FALSE, allow_unnames = TRUE,
                          quiet = FALSE, response = NULL) {
   blocks <- check_blocks_is_list(blocks)
   blocks <- check_blocks_matrix(blocks)
   blocks <- check_blocks_quantitative(blocks, response)
   blocks <- check_blocks_names(blocks, quiet)
-  blocks <- check_blocks_remove_null_sd(blocks, init)
   blocks <- check_blocks_colnames(blocks, quiet)
   blocks <- check_blocks_rownames(blocks, allow_unnames, quiet)
   blocks <- check_blocks_align(blocks, add_NAlines, quiet)
@@ -103,16 +98,6 @@ check_blocks_names <- function(blocks, quiet = FALSE) {
   }
   if (!quiet && renamed) {
     message("Missing block names are automatically labeled.")
-  }
-  return(blocks)
-}
-
-check_blocks_remove_null_sd <- function(blocks, init = FALSE) {
-  if (init) {
-    blocks <- remove_null_sd(blocks)$list_m
-    for (i in seq_along(blocks)) {
-      attributes(blocks[[i]])$nrow <- nrow(blocks[[i]])
-    }
   }
   return(blocks)
 }

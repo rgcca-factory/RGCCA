@@ -153,10 +153,3 @@ test_that("check_blocks returns blocks with the same rownames in the same
   expect_equal(rownames(blocks2[[1]]), rownames(blocks2[[2]]))
   expect_equal(rownames(blocks2[[1]]), union(rownames(blocks[[1]]), "xxx"))
 })
-
-test_that("check_blocks removes null variance columns if init is TRUE", {
-  blocks <- list(agric = cbind(X_agric, 0))
-  colnames(blocks[[1]])[4] <- "null_variance_col"
-  expect_equal(check_blocks(blocks, init = TRUE)[[1]], X_agric)
-  expect_equal(check_blocks(blocks, init = FALSE), blocks)
-})

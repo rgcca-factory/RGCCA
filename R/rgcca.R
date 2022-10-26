@@ -296,10 +296,13 @@ rgcca <- function(blocks, method = "rgcca",
   ### Check parameters
   match.arg(init, c("svd", "random"))
   blocks <- check_blocks(blocks,
-    add_NAlines = TRUE,
-    init = TRUE, quiet = quiet,
+    add_NAlines = TRUE, quiet = quiet,
     response = response
   )
+
+  raw <- blocks
+  blocks <- remove_null_sd(blocks)$list_m
+
   check_integer("tol", tol, float = TRUE, min = 0)
   check_integer("n_iter_max", n_iter_max, min = 1)
   for (i in c("superblock", "verbose", "scale", "bias", "quiet")) {
@@ -323,8 +326,6 @@ rgcca <- function(blocks, method = "rgcca",
     quiet = quiet,
     response = response
   )
-
-  raw <- blocks
 
   ### One hot encode the response block if needed
   disjunction <- NULL
