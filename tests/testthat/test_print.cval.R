@@ -16,7 +16,7 @@ test_that("print_cval", {
       par_value = c(0, 0.2, 0.3), n_run = 1, n_cores = 1,
       par_length = 2, verbose = FALSE
     )
-    print(res)
+    print(res, type = "quantile")
   })
 
   expect_snapshot({

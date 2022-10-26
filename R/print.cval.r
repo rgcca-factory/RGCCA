@@ -15,8 +15,8 @@
 #'   par_value = c(0, 0.2, 0.3), n_run = 1, n_cores = 1
 #' )
 #' print(res)
-print.cval <- function(x, type = "quantile", ...) {
-  summary_cval <- function(x, type = "quantile") {
+print.cval <- function(x, type = "sd", ...) {
+  summary_cval <- function(x, type = "sd") {
     ymean <- apply(x$cv, 1, mean)
     ymed <- apply(x$cv, 1, median)
 
