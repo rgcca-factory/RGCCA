@@ -48,9 +48,9 @@ rgcca_transform <- function(rgcca_res, blocks_test) {
   blocks_test <- lapply(seq_along(blocks_test), function(j) {
     x <- as.matrix(blocks_test[[j]])
     y <- as.matrix(X_train[[j]])
-    if (any(dim(x)[-1] != dim(y)[-1])) {
+    if (!all(colnames(y) %in% colnames(x))) {
       stop_rgcca(
-        "Dimensions of blocks do not match for block ",
+        "Some columns are missing for test block ",
         names(blocks_test)[[j]]
       )
     }

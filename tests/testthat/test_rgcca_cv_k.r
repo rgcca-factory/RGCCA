@@ -117,8 +117,8 @@ test_that("rgcca_cv_k gives the same scores in leave-one-out as
   response <- 1
   rgcca_out <- rgcca(blocks_null_sd, response = response, ncomp = 1)
   res_cv_k <- rgcca_cv_k(rgcca_res = rgcca_out, n_cores = 1, validation = "loo")
-  expect_error(custom_rgcca_cv_k(blocks_null_sd, response))
-  expect_false(any(is.na(res_cv_k$vec_scores)))
+  res_custom_cv_k <- custom_rgcca_cv_k(blocks_null_sd, response)
+  expect_equal(res_cv_k$vec_scores, res_custom_cv_k)
 })
 
 # Cross validation with k-fold

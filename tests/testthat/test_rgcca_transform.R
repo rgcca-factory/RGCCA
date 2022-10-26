@@ -42,10 +42,11 @@ test_that("rgcca_transform raises an error if block names do not match", {
   )
 })
 
-test_that("rgcca_transform raises an error if block dimensions do not match", {
+test_that("rgcca_transform raises an error if some columns are missing from
+          test blocks", {
   expect_error(rgcca_transform(fit.rgcca, list("agriculture" = 42)),
     paste0(
-      "Dimensions of blocks do not match for block ",
+      "Some columns are missing for test block ",
       "agriculture"
     ),
     fixed = TRUE
