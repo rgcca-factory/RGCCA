@@ -6,7 +6,7 @@
     Output
       
     Code
-      print(res)
+      print(res, type = "quantile")
     Output
       Call: method='rgcca', superblock=FALSE, scale=TRUE, scale_block=TRUE, init='svd', bias=TRUE, tol=1e-08, NA_method='nipals', ncomp=c(1,1,1), response=3 
       There are J = 3 blocks.
@@ -28,7 +28,7 @@
       
         Tuning parameters Median error  2.5% 97.5%
       1       0.0/0.2/0.3        1.067 1.007 1.328
-      2       0.0/0.0/0.0        0.984 0.946 1.590
+      2       0.0/0.0/0.0        1.143 0.893 1.392
       
       The best combination is: 0.0 0.2 0.3 for a mean CV error of 1.120 
 
@@ -100,8 +100,8 @@
       Prediction model: lm 
       
             Tuning parameters Mean error Mean - Std Error Mean + Std Error
-      1 Tuning parameter set       0.833            0.801            0.864
-      2 Tuning parameter set       0.913            0.812            1.015
+      1 Tuning parameter set       0.700            0.649            0.751
+      2 Tuning parameter set       0.716            0.669            0.763
       
-      The best combination is: 1 1 1 1 1 1 for a mean CV error of 0.833 
+      The best combination is: 1 1 1 1 1 1 for a mean CV error of 0.700 
 

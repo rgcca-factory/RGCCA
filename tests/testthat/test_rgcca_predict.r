@@ -123,5 +123,5 @@ test_that("rgcca_predict with lda predictor gives the same prediction as
   Y <- data.frame(cbind(fit_rgcca$Y[[1]][, 1:3], fit_rgcca$Y[[2]][, 1:2]))
   res_lda <- MASS::lda(fit_rgcca$call$raw[[response]] ~ as.matrix(Y))
   prediction_lda <- predict(res_lda, Y)$class
-  expect_equal(drop(res_predict$prediction), as.character(prediction_lda))
+  expect_equal(res_predict$prediction, data.frame(politic = prediction_lda))
 })
