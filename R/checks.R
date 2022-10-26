@@ -31,7 +31,7 @@ check_colors <- function(colors) {
   if (!is.null(colors)) {
     colors <- as.vector(colors)
     lapply(colors, function(i) {
-      if (!is.na(i) && !(i %in% colors()) && is.character2(i) &&
+      if (!is.na(i) && !(i %in% colors()) && is.character(i) &&
         regexpr("^#{1}[a-zA-Z0-9]{6,8}$", i) < 1) {
         stop_rgcca(
           "Unrecognized colors. Colors must be in colors() ",
@@ -390,7 +390,7 @@ check_prediction_model <- function(prediction_model, response_block) {
     }
   }
   classification <-
-    is.factor(response_block) || is.character2(response_block)
+    is.factor(response_block) || is.character(response_block)
   is_inadequate <- !("Classification" %in% model_info$type) && classification
   if (is_inadequate) {
     stop_rgcca(

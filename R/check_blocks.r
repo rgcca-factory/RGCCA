@@ -76,7 +76,7 @@ check_blocks_matrix <- function(blocks) {
 check_blocks_quantitative <- function(blocks, response = NULL) {
   response <- ifelse(is.null(response), length(blocks) + 1, response)
   lapply(blocks[-response], function(x) {
-    qualitative <- is.character2(x) || is.factor(x)
+    qualitative <- is.character(x) || is.factor(x)
     if (qualitative) {
       stop_rgcca(
         "unsupported qualitative block. Block ", match(blocks, x),
