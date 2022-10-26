@@ -75,14 +75,25 @@ check_blocks_matrix <- function(blocks) {
 
 check_blocks_quantitative <- function(blocks, response = NULL) {
   response <- ifelse(is.null(response), length(blocks) + 1, response)
-  lapply(blocks[-response], function(x) {
+  lapply(seq_along(blocks), function(j) {
+    x <- blocks[[j]]
     qualitative <- is.character(x) || is.factor(x)
-    if (qualitative) {
-      stop_rgcca(
-        "unsupported qualitative block. Block ", match(blocks, x),
-        " is a qualitative block but is not the response block. The method ",
-        "is not able to cope with it."
-      )
+    if (j == response) {
+      if (qualitative && (NCOL(x) > 1)) {
+        stop_rgcca(
+          "unsupported multivariate qualitative block. Block ", j,
+          " is a multivariate qualitative block. The method ",
+          "is not able to cope with it."
+        )
+      }
+    } else {
+      if (qualitative) {
+        stop_rgcca(
+          "unsupported qualitative block. Block ", j,
+          " is a qualitative block but is not the response block. The method ",
+          "is not able to cope with it."
+        )
+      }
     }
   })
   return(blocks)

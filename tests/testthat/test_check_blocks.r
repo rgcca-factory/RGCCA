@@ -31,6 +31,16 @@ test_that("check_blocks returns an error if a block is qualitative and
   expect_error(check_blocks(blocks, response = 3), NA)
 })
 
+test_that("check_blocks returns an error if a block has multiple variates
+          with at least a qualitative one", {
+  blocks <- list(X_agric, X_ind, cbind(X_quali, X_ind))
+  expect_error(
+    check_blocks(blocks, response = 3),
+    "unsupported multivariate qualitative block.",
+    fixed = TRUE
+  )
+})
+
 test_that("check_blocks renames blocks if names are missing", {
   expect_equal(names(check_blocks(list(X_agric, X_ind))), c("block1", "block2"))
   expect_equal(
