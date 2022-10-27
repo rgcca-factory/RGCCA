@@ -200,9 +200,14 @@ rgcca_cv <- function(blocks,
 
     if (verbose) setTxtProgressBar(pb, i)
 
-    return(res)
+    return(list(
+      res = res, par_value = rgcca_res$call[[param$par_type]][response]
+    ))
   })
-  mat_cval <- do.call(rbind, mat_cval)
+  param$par_value[, response] <- do.call(
+    rbind, lapply(mat_cval, "[[", "par_value")
+  )
+  mat_cval <- do.call(rbind, lapply(mat_cval, "[[", "res"))
 
   ### Format output
   cat("\n")

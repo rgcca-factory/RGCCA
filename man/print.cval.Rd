@@ -4,7 +4,7 @@
 \alias{print.cval}
 \title{print.cval}
 \usage{
-\method{print}{cval}(x, type = "quantile", ...)
+\method{print}{cval}(x, type = "sd", ...)
 }
 \arguments{
 \item{x}{A rgcca_cv object (see \link{rgcca_cv})}

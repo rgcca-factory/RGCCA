@@ -7,6 +7,11 @@ blocks <- list(
   industry = Russett[, 4:5],
   politic = Russett[, 6:8]
 )
+blocks_classif <- list(
+  agriculture = Russett[, seq(3)],
+  industry = Russett[, 4:5],
+  politic = as.factor(Russett[, 9])
+)
 
 test_that("print_cval", {
   local_edition(3)
@@ -17,6 +22,15 @@ test_that("print_cval", {
       par_length = 2, verbose = FALSE
     )
     print(res, type = "quantile")
+  })
+
+  expect_snapshot({
+    res <- rgcca_cv(blocks_classif,
+                    response = 3, method = "rgcca", par_type = "tau",
+                    par_value = c(0, 0.2, 0.3), n_run = 1, n_cores = 1,
+                    par_length = 2, verbose = FALSE, prediction_model = "lda"
+    )
+    print(res, type = "sd")
   })
 
   expect_snapshot({
