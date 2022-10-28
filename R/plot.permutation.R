@@ -97,7 +97,7 @@ plot.permutation <- function(x,
     missing(title),
     paste0(
       "Permutation scores (", x$call$n_perms, " runs) \n Best parameters: ",
-      df$combinations[best]
+      combinations[best]
     ),
     title
   )

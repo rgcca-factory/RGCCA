@@ -57,7 +57,7 @@ data("Russett")
 blocks <- list(
   agriculture = Russett[, seq(3)],
   industry = Russett[, 4:5],
-  politic = Russett[, 6:11]
+  politic = Russett[, 6:8]
 )
 res <- rgcca_cv(blocks,
   response = 3, method = "rgcca", par_type = "tau",

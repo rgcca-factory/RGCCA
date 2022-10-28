@@ -30,7 +30,7 @@ rgcca_permutation_k <- function(blocks,
       blocks,
       function(x) {
         blocks_to_use_k <-
-          as.matrix(x[sample(seq(NROW(x))), ])
+          as.matrix(x)[sample(seq(NROW(x))), , drop = FALSE]
         rownames(blocks_to_use_k) <- rownames(x)
         return(blocks_to_use_k)
       }

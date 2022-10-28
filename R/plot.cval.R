@@ -23,7 +23,7 @@
 #' blocks <- list(
 #'   agriculture = Russett[, seq(3)],
 #'   industry = Russett[, 4:5],
-#'   politic = Russett[, 6:11]
+#'   politic = Russett[, 6:8]
 #' )
 #' res <- rgcca_cv(blocks,
 #'   response = 3, method = "rgcca", par_type = "tau",
@@ -131,7 +131,7 @@ plot.cval <- function(x, type = "sd",
 
   title <- paste0(
     "Cross-validated error (", validation_str, ")\nBest parameters: ",
-    paste(round(x$bestpenalties, digits = 2), collapse = "/")
+    combinations[best]
   )
   xlab <- paste0("Tuning parameter sets (", x$call$par_type, ")")
   ylab <- "Mean error"
