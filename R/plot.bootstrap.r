@@ -15,6 +15,7 @@
 #' @param display_order A logical value for ordering the variables.
 #' @param n_mark An integer defining the maximum number of bars plotted.
 #' @param colors Colors used in the plots. Default is a grey scaled palette.
+#' @param show_sign A logical for showing significance levels.
 #'
 #' @examples
 #' data("Russett")
@@ -32,7 +33,8 @@ plot.bootstrap <- function(x, block = length(x$rgcca$call$blocks),
                            comp = 1, type = "weight",
                            empirical = TRUE, n_mark = 30,
                            display_order = TRUE,
-                           colors = grey.colors(6)[2:6], title = NULL,
+                           colors = grey.colors(6)[2:6],
+                           show_sign = TRUE, title = NULL,
                            cex = 1, cex_sub = 12 * cex,
                            cex_main = 14 * cex, cex_lab = 12 * cex,
                            cex_point = 3 * cex, ...) {
@@ -58,17 +60,12 @@ plot.bootstrap <- function(x, block = length(x$rgcca$call$blocks),
   df <- data.frame(df, order = seq(NROW(df), 1))[seq(n_mark), ]
 
   significance <- rep("", n_mark)
-  significance[df$pval < 1e-3] <- "< 0.001"
-  significance[df$pval >= 1e-3 & df$pval < 1e-2] <- "< 0.01"
-  significance[df$pval >= 1e-2 & df$pval < 5e-2] <- "< 0.05"
-  significance[df$pval >= 5e-2 & df$pval < 1e-1] <- "< 0.1"
-  significance[df$pval >= 1e-1] <- "> 0.1"
+  significance[df$pval < 1e-3] <- "***"
+  significance[df$pval >= 1e-3 & df$pval < 1e-2] <- "**"
+  significance[df$pval >= 1e-2 & df$pval < 5e-2] <- "*"
 
   df$sign <- factor(significance,
-    levels = c(labels = c(
-      "< 0.001", "< 0.01",
-      "< 0.05", "< 0.1", "> 0.1"
-    ))
+    levels = c(labels = c("***", "**", "*", ""))
   )
 
   ### Prepare plot
@@ -86,9 +83,14 @@ plot.bootstrap <- function(x, block = length(x$rgcca$call$blocks),
   ### Construct plot
   p <- ggplot(
     df,
-    aes(x = .data$order, y = .data$estimate, fill = .data$sign)
+    aes(x = .data$order, y = .data$estimate)
   ) +
-    ggplot2::geom_bar(stat = "identity") +
+    ggplot2::geom_point() +
+    ggplot2::geom_errorbar(aes(
+      ymin = .data$lower_bound,
+      ymax = .data$upper_bound,
+      width = 0.1
+    )) +
     ggplot2::coord_flip() +
     theme_perso(cex, cex_main, cex_sub, cex_lab) +
     ggplot2::labs(title = title, x = "", y = "") +
@@ -111,22 +113,11 @@ plot.bootstrap <- function(x, block = length(x$rgcca$call$blocks),
       breaks = df$order,
       labels = rownames(df)
     ) +
-    ggplot2::scale_fill_manual(
-      values = colors,
-      labels = c(
-        "< 0.001", "< 0.01", "< 0.05",
-        "< 0.1", "> 0.1"
-      ),
-      drop = FALSE,
-      name = "Signif."
+    ggplot2::geom_hline(yintercept = 0, lty = "longdash")
+  if (show_sign) {
+    p <- p + ggplot2::geom_text(
+      aes(label = .data$sign), nudge_x = 0.1, size = 2 * cex_point
     )
-
-  if (n_mark <= 50) {
-    p <- p + ggplot2::geom_errorbar(aes(
-      ymin = .data$lower_bound,
-      ymax = .data$upper_bound,
-      width = 0.5
-    ))
   }
 
   plot(p, ...)

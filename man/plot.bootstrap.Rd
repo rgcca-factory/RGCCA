@@ -13,6 +13,7 @@
   n_mark = 30,
   display_order = TRUE,
   colors = grey.colors(6)[2:6],
+  show_sign = TRUE,
   title = NULL,
   cex = 1,
   cex_sub = 12 * cex,
@@ -42,6 +43,8 @@ intervals and p-values are derived from the empirical distribution.
 \item{display_order}{A logical value for ordering the variables.}
 
 \item{colors}{Colors used in the plots. Default is a grey scaled palette.}
+
+\item{show_sign}{A logical for showing significance levels.}
 
 \item{title}{A character string giving the title of the plot.}
 

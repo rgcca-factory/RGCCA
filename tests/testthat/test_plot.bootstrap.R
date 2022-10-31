@@ -16,6 +16,8 @@ test_that("plot.bootstrap", {
   )
 
   vdiffr::expect_doppelganger(
-    "Bootstrap loadings", plot.bootstrap(fit.boot, type = "loadings")
+    "Bootstrap loadings", plot.bootstrap(
+      fit.boot, type = "loadings", show_sign = FALSE
+    )
   )
 })
