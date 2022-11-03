@@ -2,10 +2,9 @@
 #' @noRd
 rsq <- function(y, X) {
   if (NCOL(X) == 1) {
-    return(suppressWarnings(summary(lm(X ~ y))[["r.squared"]]))
+    return(cor(X, y) ^ 2)
   }
-  mean(vapply(
-    suppressWarnings(summary(lm(X ~ y))), "[[", "r.squared",
-    FUN.VALUE = 1.0
-  ))
+  mean(apply(X, 2, function(x) {
+    cor(x, y) ^ 2
+  }))
 }
