@@ -4,7 +4,8 @@ rsq <- function(y, X) {
   if (NCOL(X) == 1) {
     return(cor(X, y) ^ 2)
   }
-  mean(apply(X, 2, function(x) {
-    cor(x, y) ^ 2
-  }))
+  reg <- suppressWarnings(lm(X ~ y))
+  mean(
+    1 - apply(reg$residuals, 2, function(x) sum(x^2)) / apply(X, 2, function(x) sum(x^2))
+  )
 }
