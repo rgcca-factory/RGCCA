@@ -279,28 +279,6 @@ sgcca <- function(blocks, connection = 1 - diag(length(blocks)),
   }
 
   ##### Generation of the output #####
-  AVE_X <- lapply(seq(J), function(b) apply(Y[[b]], 2, rsq, blocks[[b]]))
-  AVE_X_cum <- lapply(seq(J), function(b) {
-    vapply(
-      seq(NCOL(Y[[b]])),
-      function(p) rsq(Y[[b]][, seq(p)], blocks[[b]]),
-      FUN.VALUE = 1.0
-    )
-  })
-  AVE_X_cor <- lapply(AVE_X_cum, function(x) {
-    y <- c(0, x[-length(x)])
-    x - y
-  })
-
-  outer <- matrix(unlist(AVE_X_cor), nrow = max(ncomp))
-  AVE_outer <- as.vector((outer %*% pjs) / sum(pjs))
-  AVE_X <- shave(AVE_X, ncomp)
-  AVE_X_cor <- shave(AVE_X_cor, ncomp)
-  AVE <- list(
-    AVE_X = AVE_X, AVE_X_cor = AVE_X_cor,
-    AVE_outer = AVE_outer, AVE_inner = AVE_inner
-  )
-
   if (N == 0) crit <- unlist(crit)
 
   out <- list(
@@ -308,7 +286,7 @@ sgcca <- function(blocks, connection = 1 - diag(length(blocks)),
     a = a,
     astar = astar,
     crit = crit,
-    AVE = AVE
+    AVE_inner = AVE_inner
   )
 
   class(out) <- "sgcca"

@@ -219,3 +219,35 @@ test_that("RGCCA is equivalent to MFA with right parameters", {
   expect_true(max(abs(fit.mcoa$Y[[4]][, 1] - fit.mfa$ind$coord[, 1])) < tol)
   expect_true(max(abs(fit.mcoa$Y[[4]][, 2] - fit.mfa$ind$coord[, 2])) < tol)
 })
+
+##### Test AVE #####
+X_agric <- Russett[, c("gini", "farm", "rent")]
+X_ind <- Russett[, c("gnpr", "labo")]
+X_polit <- Russett[, c(
+  "inst", "ecks", "death",
+  "demostab", "dictator"
+)]
+A <- list(Agric = X_agric, Ind = X_ind, Polit = X_polit)
+
+test_that("rgcca produces cumulated AVE that are below 1", {
+  res <- rgcca(A, ncomp = rep(2, 3))
+  expect_true(all(unlist(lapply(res$AVE$AVE_X_cor, sum)) <= 1))
+
+  res <- rgcca(A, ncomp = rep(3, 3), response = 2)
+  expect_true(all(unlist(lapply(res$AVE$AVE_X_cor, sum)) <= 1))
+
+  res <- rgcca(A, ncomp = rep(6, 4), superblock = TRUE)
+  expect_true(all(unlist(lapply(res$AVE$AVE_X_cor, sum)) <= 1))
+})
+
+test_that("rgcca returns equal AVE and corrected AVE if components are
+          not correlated", {
+  res <- rgcca(A, ncomp = rep(2, 3))
+  expect_true(all.equal(res$AVE$AVE_X_cor, res$AVE$AVE_X))
+})
+
+test_that("rgcca does not report AVE for qualitative response block", {
+  A[[3]] <- as.factor(A[[3]][, 5])
+  res <- rgcca(A, ncomp = rep(2, 3), response = 3)
+  expect_equal(names(res$AVE$AVE_X), names(A)[-3])
+})
