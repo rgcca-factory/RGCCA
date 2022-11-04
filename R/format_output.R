@@ -20,12 +20,12 @@ format_output <- function(func_out, opt, raw, func_call = NULL) {
     )^2 / 2) / (sum(opt$connection) / 2)
   }, FUN.VALUE = double(1L))
 
-  AVE_X <- lapply(blocks_AVE, function(j) apply(
-    func_out$Y[[j]], 2, rsq, opt$blocks[[j]]
-  ))
+  AVE_X <- lapply(blocks_AVE, function(j) {
+    apply(func_out$Y[[j]], 2, rsq, opt$blocks[[j]])
+  })
   AVE_X_cum <- lapply(blocks_AVE, function(j) {
     vapply(
-      seq(NCOL(func_out$Y[[j]])),
+      seq_len(NCOL(func_out$Y[[j]])),
       function(p) rsq(func_out$Y[[j]][, seq(p)], opt$blocks[[j]]),
       FUN.VALUE = 1.0
     )
@@ -59,7 +59,7 @@ format_output <- function(func_out, opt, raw, func_call = NULL) {
   func_out$Y <- shave(func_out$Y, opt$ncomp)
 
   if (!opt$superblock) {
-    for (j in seq(length(opt$blocks))) {
+    for (j in seq_along(opt$blocks)) {
       rownames(func_out$astar[[j]]) <- colnames(opt$blocks[[j]])
     }
     func_out$astar <- shave(func_out$astar, opt$ncomp)

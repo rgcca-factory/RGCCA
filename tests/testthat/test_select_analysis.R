@@ -118,7 +118,7 @@ test_that("superblock methods sets all attributes of a superblock", {
   res <- run_selection(method, superblock = TRUE, sparsity = 0.7)$res
   expect_equal(res$method, "spca")
   expect_equal(res$penalty, c(0.7, 0.7))
-  expect_equal(res$par, "sparsity")
+  expect_equal(res$param, "sparsity")
 })
 
 test_that("cov methods set penalty to 1", {

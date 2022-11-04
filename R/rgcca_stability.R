@@ -113,9 +113,9 @@ rgcca_stability <- function(rgcca_res,
     }
   )
 
-  intensity <- mapply(
+  intensity <- Map(
     "*",
-    do.call(mapply, c(rbind, mylist)),
+    do.call(Map, c(rbind, mylist)),
     rgcca_res$AVE$AVE_X
   )
 
@@ -143,9 +143,7 @@ rgcca_stability <- function(rgcca_res,
     }
   )
 
-  new_block <- mapply(function(x, y) x[, y], rgcca_res$call$raw, keepVar,
-    SIMPLIFY = FALSE
-  )
+  new_block <- Map(function(x, y) x[, y], rgcca_res$call$raw, keepVar)
 
   rgcca_res <- rgcca(new_block,
     connection = rgcca_res$call$connection,

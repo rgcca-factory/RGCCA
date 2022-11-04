@@ -40,7 +40,7 @@ rgcca_cv_k <- function(rgcca_res,
   blocks <- rgcca_res$call$raw
 
   if (validation == "loo") {
-    v_inds <- seq(nrow(blocks[[1]]))
+    v_inds <- seq_len(NROW(blocks[[1]]))
   } else {
     if (classification) {
       v_inds <- caret::createFolds(
@@ -76,7 +76,7 @@ rgcca_cv_k <- function(rgcca_res,
       blocks_test <- lapply(blocks, function(x) x[inds, , drop = FALSE])
 
       # Evaluate RGCCA on the validation blocks
-      res_pred <- rgcca_predict(
+      rgcca_predict(
         res,
         blocks_test = blocks_test,
         prediction_model = prediction_model,

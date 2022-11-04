@@ -288,7 +288,9 @@ rgcca_permutation <- function(blocks, par_type = "tau", par_value = NULL,
   ### Prepare parameters for line search
   if (method %in% c("sgcca", "spca", "spls") && (par_type == "tau")) {
     par_type <- "sparsity"
-  } else if (par_type == "sparsity") method <- "sgcca"
+  } else if (par_type == "sparsity") {
+    method <- "sgcca"
+  }
 
   call <- list(
     method = method, par_type = par_type, par_value = par_value,
@@ -339,7 +341,7 @@ rgcca_permutation <- function(blocks, par_type = "tau", par_value = NULL,
   if (ncol(param$par_value) > length(blocks)) {
     par_colnames <- c(par_colnames, "superblock")
   }
-  rownames(param$par_value) <- seq(NROW(param$par_value))
+  rownames(param$par_value) <- seq_len(NROW(param$par_value))
   colnames(param$par_value) <- par_colnames
 
   idx_perm <- (idx - 1) %% (n_perms + 1) != 0
@@ -351,12 +353,12 @@ rgcca_permutation <- function(blocks, par_type = "tau", par_value = NULL,
   means <- apply(permcrit, 1, mean, na.rm = TRUE)
   sds <- apply(permcrit, 1, sd, na.rm = TRUE)
   pvals <- vapply(
-    seq(NROW(param$par_value)),
+    seq_len(NROW(param$par_value)),
     function(k) mean(permcrit[k, ] >= crits[k]),
     FUN.VALUE = double(1)
   )
   zs <- vapply(
-    seq(NROW(param$par_value)), function(k) {
+    seq_len(NROW(param$par_value)), function(k) {
       z <- (crits[k] - mean(permcrit[k, ])) / (sd(permcrit[k, ]))
       if (is.na(z) || z == "Inf") {
         z <- 0

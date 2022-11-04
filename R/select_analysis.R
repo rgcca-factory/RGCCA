@@ -15,7 +15,7 @@
 #' included in the analysis.}
 #' @return \item{response}{Integer giving the value of the response block if
 #' any. NULL otherwise.}
-#' @return \item{par}{String that indicates if penalty refers to tau or
+#' @return \item{param}{String that indicates if penalty refers to tau or
 #' sparsity.}
 #' @return \item{gcca}{Function used to compute the analysis. Either rgccad
 #' or sgcca.}
@@ -68,18 +68,18 @@ select_analysis <- function(blocks,
 
   switch(method,
     "rgcca" = {
-      par <- "tau"
+      param <- "tau"
       gcca <- rgccad
       penalty <- tau
     },
     "sgcca" = {
-      par <- "sparsity"
+      param <- "sparsity"
       gcca <- sgcca
       penalty <- sparsity
     },
     "pca" = {
       check_nblocks(blocks, "pca")
-      par <- "tau"
+      param <- "tau"
       gcca <- rgccad
       ncomp <- rep(max(ncomp), 2)
       scheme <- "horst"
@@ -90,7 +90,7 @@ select_analysis <- function(blocks,
     },
     "spca" = {
       check_nblocks(blocks, "spca")
-      par <- "sparsity"
+      param <- "sparsity"
       gcca <- sgcca
       ncomp <- rep(max(ncomp), 2)
       scheme <- "horst"
@@ -101,7 +101,7 @@ select_analysis <- function(blocks,
     },
     "pls" = {
       check_nblocks(blocks, "pls")
-      par <- "tau"
+      param <- "tau"
       gcca <- rgccad
       ncomp[2] <- ncomp[1]
       scheme <- "horst"
@@ -112,7 +112,7 @@ select_analysis <- function(blocks,
     },
     "spls" = {
       check_nblocks(blocks, "spls")
-      par <- "sparsity"
+      param <- "sparsity"
       gcca <- sgcca
       ncomp[2] <- ncomp[1]
       scheme <- "horst"
@@ -123,7 +123,7 @@ select_analysis <- function(blocks,
     },
     "cca" = {
       check_nblocks(blocks, "cca")
-      par <- "tau"
+      param <- "tau"
       gcca <- rgccad
       scheme <- "horst"
       penalty <- c(0, 0)
@@ -133,7 +133,7 @@ select_analysis <- function(blocks,
     },
     "ifa" = {
       check_nblocks(blocks, "ifa")
-      par <- "tau"
+      param <- "tau"
       gcca <- rgccad
       scheme <- "horst"
       penalty <- c(1, 1)
@@ -143,7 +143,7 @@ select_analysis <- function(blocks,
     },
     "ra" = {
       check_nblocks(blocks, "ra")
-      par <- "tau"
+      param <- "tau"
       gcca <- rgccad
       ncomp[2] <- ncomp[1]
       scheme <- "horst"
@@ -153,7 +153,7 @@ select_analysis <- function(blocks,
       connection <- c_response(2, blocks)
     },
     "gcca" = {
-      par <- "tau"
+      param <- "tau"
       gcca <- rgccad
       ncomp <- rep(max(ncomp), J + 1)
       scheme <- "factorial"
@@ -163,7 +163,7 @@ select_analysis <- function(blocks,
       connection <- c_response(J + 1, blocks)
     },
     "maxvar" = {
-      par <- "tau"
+      param <- "tau"
       gcca <- rgccad
       ncomp <- rep(max(ncomp), J + 1)
       scheme <- "factorial"
@@ -173,7 +173,7 @@ select_analysis <- function(blocks,
       connection <- c_response(J + 1, blocks)
     },
     "maxvar-b" = {
-      par <- "tau"
+      param <- "tau"
       gcca <- rgccad
       ncomp <- rep(max(ncomp), J + 1)
       scheme <- "factorial"
@@ -183,7 +183,7 @@ select_analysis <- function(blocks,
       connection <- c_response(J + 1, blocks)
     },
     "maxvar-a" = {
-      par <- "tau"
+      param <- "tau"
       gcca <- rgccad
       ncomp <- rep(max(ncomp), J + 1)
       scheme <- "factorial"
@@ -193,7 +193,7 @@ select_analysis <- function(blocks,
       connection <- c_response(J + 1, blocks)
     },
     "mcoa" = {
-      par <- "tau"
+      param <- "tau"
       gcca <- rgccad
       ncomp <- rep(max(ncomp), J + 1)
       scheme <- "factorial"
@@ -203,7 +203,7 @@ select_analysis <- function(blocks,
       connection <- c_response(J + 1, blocks)
     },
     "cpca-1" = {
-      par <- "tau"
+      param <- "tau"
       gcca <- rgccad
       ncomp <- rep(max(ncomp), J + 1)
       scheme <- "horst"
@@ -213,7 +213,7 @@ select_analysis <- function(blocks,
       connection <- c_response(J + 1, blocks)
     },
     "cpca-2" = {
-      par <- "tau"
+      param <- "tau"
       gcca <- rgccad
       ncomp <- rep(max(ncomp), J + 1)
       scheme <- "factorial"
@@ -223,7 +223,7 @@ select_analysis <- function(blocks,
       connection <- c_response(J + 1, blocks)
     },
     "cpca-4" = {
-      par <- "tau"
+      param <- "tau"
       gcca <- rgccad
       ncomp <- rep(max(ncomp), J + 1)
       scheme <- function(x) x^4
@@ -233,7 +233,7 @@ select_analysis <- function(blocks,
       connection <- c_response(J + 1, blocks)
     },
     "hpca" = {
-      par <- "tau"
+      param <- "tau"
       gcca <- rgccad
       ncomp <- rep(max(ncomp), J + 1)
       scheme <- function(x) x^4
@@ -243,7 +243,7 @@ select_analysis <- function(blocks,
       connection <- c_response(J + 1, blocks)
     },
     "maxbet-b" = {
-      par <- "tau"
+      param <- "tau"
       gcca <- rgccad
       scheme <- "factorial"
       penalty <- rep(1, J)
@@ -252,7 +252,7 @@ select_analysis <- function(blocks,
       connection <- c_all(J, blocks)
     },
     "maxbet" = {
-      par <- "tau"
+      param <- "tau"
       gcca <- rgccad
       scheme <- "horst"
       penalty <- rep(1, J)
@@ -261,7 +261,7 @@ select_analysis <- function(blocks,
       connection <- c_all(J, blocks)
     },
     "maxdiff-b" = {
-      par <- "tau"
+      param <- "tau"
       gcca <- rgccad
       scheme <- "factorial"
       penalty <- rep(1, J)
@@ -270,7 +270,7 @@ select_analysis <- function(blocks,
       connection <- c_pair(J, blocks)
     },
     "maxdiff" = {
-      par <- "tau"
+      param <- "tau"
       gcca <- rgccad
       scheme <- "horst"
       penalty <- rep(1, J)
@@ -279,7 +279,7 @@ select_analysis <- function(blocks,
       connection <- c_pair(J, blocks)
     },
     "sabscor" = {
-      par <- "tau"
+      param <- "tau"
       gcca <- rgccad
       scheme <- "centroid"
       penalty <- rep(0, J)
@@ -288,7 +288,7 @@ select_analysis <- function(blocks,
       connection <- c_pair(J, blocks)
     },
     "ssqcor" = {
-      par <- "tau"
+      param <- "tau"
       gcca <- rgccad
       scheme <- "factorial"
       penalty <- rep(0, J)
@@ -297,7 +297,7 @@ select_analysis <- function(blocks,
       connection <- c_pair(J, blocks)
     },
     "ssqcov-1" = {
-      par <- "tau"
+      param <- "tau"
       gcca <- rgccad
       scheme <- "factorial"
       penalty <- rep(1, J)
@@ -306,7 +306,7 @@ select_analysis <- function(blocks,
       connection <- c_all(J, blocks)
     },
     "ssqcov-2" = {
-      par <- "tau"
+      param <- "tau"
       gcca <- rgccad
       scheme <- "factorial"
       penalty <- rep(1, J)
@@ -315,7 +315,7 @@ select_analysis <- function(blocks,
       connection <- c_pair(J, blocks)
     },
     "ssqcov" = {
-      par <- "tau"
+      param <- "tau"
       gcca <- rgccad
       scheme <- "factorial"
       penalty <- rep(1, J)
@@ -324,7 +324,7 @@ select_analysis <- function(blocks,
       connection <- c_pair(J, blocks)
     },
     "sumcor" = {
-      par <- "tau"
+      param <- "tau"
       gcca <- rgccad
       scheme <- "horst"
       penalty <- rep(0, J)
@@ -333,7 +333,7 @@ select_analysis <- function(blocks,
       connection <- c_pair(J, blocks)
     },
     "sumcov-1" = {
-      par <- "tau"
+      param <- "tau"
       gcca <- rgccad
       scheme <- "horst"
       penalty <- rep(1, J)
@@ -342,7 +342,7 @@ select_analysis <- function(blocks,
       connection <- c_all(J, blocks)
     },
     "sumcov-2" = {
-      par <- "tau"
+      param <- "tau"
       gcca <- rgccad
       scheme <- "horst"
       penalty <- rep(1, J)
@@ -351,7 +351,7 @@ select_analysis <- function(blocks,
       connection <- c_pair(J, blocks)
     },
     "sumcov" = {
-      par <- "tau"
+      param <- "tau"
       gcca <- rgccad
       scheme <- "horst"
       penalty <- rep(1, J)
@@ -360,7 +360,7 @@ select_analysis <- function(blocks,
       connection <- c_pair(J, blocks)
     },
     "sabscov-1" = {
-      par <- "tau"
+      param <- "tau"
       gcca <- rgccad
       scheme <- "centroid"
       penalty <- rep(1, J)
@@ -369,7 +369,7 @@ select_analysis <- function(blocks,
       connection <- c_all(J, blocks)
     },
     "sabscov-2" = {
-      par <- "tau"
+      param <- "tau"
       gcca <- rgccad
       scheme <- "centroid"
       penalty <- rep(1, J)
@@ -382,7 +382,7 @@ select_analysis <- function(blocks,
   # Generate warnings if some parameters have been modified
   if (!quiet) {
     modified_parameters <- vapply(names(call), function(n) {
-      if (n == par) assign(n, penalty)
+      if (n == param) assign(n, penalty)
       if (!identical(call[[n]], get(n))) {
         return(n)
       }
@@ -398,7 +398,7 @@ select_analysis <- function(blocks,
   if (method %in% c("rgcca", "sgcca")) {
     check_scheme(scheme)
     if (any(sparsity != 1)) {
-      par <- "sparsity"
+      param <- "sparsity"
       gcca <- sgcca
       method <- "sgcca"
       penalty <- sparsity
@@ -445,6 +445,6 @@ select_analysis <- function(blocks,
     response = response,
     method = method,
     gcca = gcca,
-    par = par
+    param = param
   ))
 }

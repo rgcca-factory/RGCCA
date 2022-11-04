@@ -7,7 +7,7 @@ test_that("dim_with_level", {
     dim(as_disjunctive(vec, levs = c("demo", "ndemo", "nsp"))), c(3, 2)
   )
 })
-vec2 <- c("demo")
+vec2 <- "demo"
 test_that("dim_with_level_for_one", {
   expect_equal(dim(as_disjunctive(vec2, levs = c("demo", "ndemo"))), c(1, 1))
 })

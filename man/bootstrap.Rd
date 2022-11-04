@@ -64,9 +64,15 @@ boot.out <- bootstrap(fit.rgcca, n_boot = 50, n_cores = 2)
 plot(boot.out, type = "weight", block = 1)
 \dontrun{
 # Stability of the selected variables for SGCCA
-# Not run:
-# Download the dataset's package at http://biodev.cea.fr/sgcca/.
-# --> gliomaData_0.4.tar.gz#'
+# Download the dataset's package at http://biodev.cea.fr/sgcca/ and install
+# it from the package archive file.
+# You can do it with the following R commands:
+if (!("gliomaData" \%in\% rownames(installed.packages()))) {
+  destfile <- tempfile()
+  download.file("http://biodev.cea.fr/sgcca/gliomaData_0.4.tar.gz", destfile)
+  install.packages(destfile, repos = NULL, type = "source")
+}
+
 data("ge_cgh_locIGR", package = "gliomaData")
 A <- ge_cgh_locIGR$multiblocks
 A[[3]] <- A[[3]][, -3]

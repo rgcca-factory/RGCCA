@@ -33,7 +33,7 @@ format_bootstrap_list <- function(W, rgcca_res, n_boot, n = 1) {
   rownames(list_res_X) <- unlist(lapply(
     rgcca_res$call$blocks, colnames
   ))
-  f <- unlist(mapply(function(x, y) rep(x, each = y), seq(pjs), pjs))
+  f <- unlist(Map(function(x, y) rep(x, each = y), seq(pjs), pjs))
   list_res_X <- lapply(seq(ndefl_max), function(i) {
     # Split back into blocks and remove superblock
     x <- split(list_res_X[, i, ], f)[-(J + 1)]

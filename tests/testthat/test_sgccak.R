@@ -5,7 +5,7 @@ blocks <- list(
   matrix(rnorm(100 * 24), nrow = 100)
 )
 connection <- 1 - diag(3)
-blocks <- scaling(blocks, scale = F, scale_block = F)
+blocks <- scaling(blocks, scale = FALSE, scale_block = FALSE)
 fit_sgccak <- sgccak(
   blocks, connection,
   sparsity = c(0.2, 0.5, 0.3),

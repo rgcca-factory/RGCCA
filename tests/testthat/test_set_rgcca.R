@@ -16,7 +16,7 @@ test_that("set_rgcca gives the same results as rgcca", {
   res <- set_rgcca(fit_rgcca)
   expect_identical(fit_rgcca, res)
 
-  inds <- sample(seq(nrow(blocks[[1]])), 10, replace = FALSE)
+  inds <- sample(seq_len(NROW(blocks[[1]])), 10, replace = FALSE)
   fit_rgcca_minus_inds <- rgcca(
     lapply(blocks, function(x) x[-inds, ]),
     response = 2,

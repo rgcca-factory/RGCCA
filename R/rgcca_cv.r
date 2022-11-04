@@ -104,7 +104,7 @@ rgcca_cv <- function(blocks,
                      verbose = TRUE,
                      ...) {
   ### Try to retrieve parameters from a rgcca object
-  if (!missing(blocks) && inherits(blocks, "rgcca")) {
+  if (inherits(blocks, "rgcca")) {
     rgcca_res <- blocks
   }
   if (is(rgcca_res, "rgcca")) {
@@ -134,7 +134,7 @@ rgcca_cv <- function(blocks,
     k <- dim(blocks[[1]])[1]
     n_run <- 1
   }
-  tmp <- check_prediction_model(prediction_model, blocks[[response]])
+  model <- check_prediction_model(prediction_model, blocks[[response]])
 
   check_integer("par_length", par_length)
   check_integer("n_run", n_run)
@@ -145,7 +145,9 @@ rgcca_cv <- function(blocks,
   ### Prepare parameters for line search
   if (method %in% c("sgcca", "spca", "spls") && (par_type == "tau")) {
     par_type <- "sparsity"
-  } else if (par_type == "sparsity") method <- "sgcca"
+  } else if (par_type == "sparsity") {
+    method <- "sgcca"
+  }
 
   param <- set_parameter_grid(par_type, par_length, par_value, blocks, response)
 
@@ -180,30 +182,34 @@ rgcca_cv <- function(blocks,
     init = init
   )
 
-  mat_cval <- lapply(seq(nrow(param$par_value)), function(i) {
-    rgcca_args[[param$par_type]] <- param$par_value[i, ]
-    rgcca_res <- do.call(rgcca, rgcca_args)
+  mat_cval <- lapply(
+    seq_len(NROW(param$par_value)),
+    function(i, rgcca_args, model) {
+      rgcca_args[[param$par_type]] <- param$par_value[i, ]
+      rgcca_res <- do.call(rgcca, rgcca_args)
 
-    res <- unlist(lapply(seq(n_run), function(n) {
-      rgcca_cv_k(
-        rgcca_res,
-        validation = validation,
-        prediction_model = tmp$prediction_model,
-        k = k,
-        n_cores = n_cores,
-        complete = FALSE,
-        verbose = FALSE,
-        classification = tmp$classification,
-        ...
-      )$vec_scores
-    }))
+      res <- unlist(lapply(seq(n_run), function(n) {
+        rgcca_cv_k(
+          rgcca_res,
+          validation = validation,
+          prediction_model = model$prediction_model,
+          k = k,
+          n_cores = n_cores,
+          complete = FALSE,
+          verbose = FALSE,
+          classification = model$classification,
+          ...
+        )$vec_scores
+      }))
 
-    if (verbose) setTxtProgressBar(pb, i)
+      if (verbose) setTxtProgressBar(pb, i)
 
-    return(list(
-      res = res, par_value = rgcca_res$call[[param$par_type]][response]
-    ))
-  })
+      return(list(
+        res = res, par_value = rgcca_res$call[[param$par_type]][response]
+      ))
+    },
+    rgcca_args, model
+  )
   param$par_value[, response] <- do.call(
     rbind, lapply(mat_cval, "[[", "par_value")
   )
@@ -240,9 +246,9 @@ rgcca_cv <- function(blocks,
     method = method
   )
 
-  rownames(param$par_value) <- seq(NROW(param$par_value))
+  rownames(param$par_value) <- seq_len(NROW(param$par_value))
   colnames(param$par_value) <- names(blocks)
-  rownames(mat_cval) <- seq(NROW(mat_cval))
+  rownames(mat_cval) <- seq_len(NROW(mat_cval))
 
   best_param_idx <- which.min(apply(mat_cval, 1, mean))
 

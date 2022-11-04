@@ -23,7 +23,7 @@ print.permutation <- function(x, ...) {
   print_call(x$call)
 
   penalties <- round(x$penalties, 3)
-  rownames(penalties) <- seq(NROW(penalties))
+  rownames(penalties) <- seq_len(NROW(penalties))
   cat(fill = TRUE)
   cat(paste0("Tuning parameters (", x$call$par_type, ") used: "), fill = TRUE)
   print(penalties, quote = FALSE, ...)
@@ -46,7 +46,7 @@ print.permutation <- function(x, ...) {
     format(cbind(x$crit, x$means, x$sds, x$zstat, x$pvals), digits = 3)
   )
   dimnames(tab) <- list(
-    seq(NROW(x$penalties)),
+    seq_len(NROW(x$penalties)),
     c(
       "Tuning parameters", "Criterion", "Permuted criterion",
       "sd", "zstat", "p-value"

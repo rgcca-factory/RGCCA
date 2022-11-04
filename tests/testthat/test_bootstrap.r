@@ -94,7 +94,7 @@ set.seed(8882)
 test_that(
   "bootstrap_removed_variable_1",
   expect_warning(
-    bootstrap(rgcca_out, n_boot = 4, n_cores = 1, balanced = T),
+    bootstrap(rgcca_out, n_boot = 4, n_cores = 1, balanced = TRUE),
     paste0(
       "Variables:  rent appear to be of null ",
       "variance in some bootstrap samples and thus ",
@@ -108,7 +108,7 @@ set.seed(8882)
 
 test_that("bootstrap_removed_variable_2", {
   expect_warning(
-    boot_out <- bootstrap(rgcca_out, n_boot = 4, n_cores = 1, balanced = T),
+    boot_out <- bootstrap(rgcca_out, n_boot = 4, n_cores = 1, balanced = TRUE),
     paste0(
       "Variables:  rent appear to be of null variance in some bootstrap ",
       "samples and thus were removed from all samples."
@@ -126,7 +126,7 @@ test_that("bootstrap_removed_variable_2", {
 set.seed(8882)
 boot_out <- bootstrap(rgcca_out,
   n_boot = 4, n_cores = 1,
-  keep_all_variables = T, balanced = T
+  keep_all_variables = TRUE, balanced = TRUE
 )
 
 test_that("bootstrap_keep_all_variables", {

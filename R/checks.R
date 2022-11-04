@@ -80,7 +80,7 @@ check_connection <- function(C, blocks) {
   invisible(check_size_blocks(blocks, "connection matrix", C))
 
   if (is.null(rownames(C)) || is.null(colnames(C))) {
-    rownames(C) <- names(blocks) -> colnames(C)
+    rownames(C) <- colnames(C) <- names(blocks)
   }
 
   if (!all(rownames(C) %in% names(blocks)) ||
@@ -235,7 +235,7 @@ check_ncomp <- function(ncomp, blocks, min = 1, superblock = FALSE,
   ncomp <- elongate_arg(ncomp, blocks)
   check_size_blocks(blocks, "ncomp", ncomp)
   ncomp <- vapply(
-    seq(length(ncomp)),
+    seq_along(ncomp),
     function(x) {
       if (!is.null(response) && x == response) {
         y <- check_integer("ncomp", ncomp[x], min = min, exit_code = 126)
@@ -327,7 +327,7 @@ check_penalty <- function(penalty, blocks, method = "rgcca", superblock = FALSE,
   if (method == "sgcca") {
     divider <- ifelse(is_matrix, DIM[1], 1)
     penalty <- vapply(
-      seq(length(penalty)),
+      seq_along(penalty),
       function(x) {
         n <- 1 + (x - 1) / divider
         check_spars(penalty[x], blocks[[n]], n)

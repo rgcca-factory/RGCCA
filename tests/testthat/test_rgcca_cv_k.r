@@ -33,7 +33,7 @@ blocks_null_sd <- list(
 blocks_null_sd[[3]][, 6] <- c(1, rep(0, 46))
 
 custom_rgcca_cv_k <- function(blocks, response, prediction_model = "lm", ...) {
-  vapply(seq(NROW(blocks[[1]])), function(i) {
+  vapply(seq_len(NROW(blocks[[1]])), function(i) {
     # Step 1: extract line i of each block
     A_minus_i <- lapply(blocks, function(x) {
       return(x[-i, ])

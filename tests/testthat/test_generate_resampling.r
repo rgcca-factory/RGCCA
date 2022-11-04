@@ -20,24 +20,24 @@ rgcca_out <- rgcca(blocks, ncomp = ncomp)
 set.seed(8882)
 sample_out_balanced <- generate_resampling(
   rgcca_res = rgcca_out, n_boot = 4,
-  balanced = T, pval = 1
+  balanced = TRUE, pval = 1
 )
 sample_out_unbalanced <- generate_resampling(
   rgcca_res = rgcca_out, n_boot = 4,
-  balanced = F, pval = 1
+  balanced = FALSE, pval = 1
 )
 test_that("pVAL_high_noRiskyVAR", {
   expect_null(sample_out_balanced$sd_null)
   expect_null(sample_out_unbalanced$sd_null)
 })
 
-# Now, if `pval` is set to default, when `balanced = T` and
-# `keep_all_variables = F`, a warning is generated to inform that variable
+# Now, if `pval` is set to default, when `balanced = TRUE` and
+# `keep_all_variables = FALSE`, a warning is generated to inform that variable
 # `rent` is removed and `rent` is indeed removed.
 set.seed(8882)
 test_that("generate_resampling_missing_val_identification", {
   sample_out <- expect_warning(
-    generate_resampling(rgcca_res = rgcca_out, n_boot = 4, balanced = T),
+    generate_resampling(rgcca_res = rgcca_out, n_boot = 4, balanced = TRUE),
     paste0(
       "Variables:  rent appear to be of null ",
       "variance in some bootstrap samples and thus ",
@@ -57,7 +57,7 @@ test_that("generate_resampling_missing_val_identification", {
 set.seed(8882)
 sample_out <- generate_resampling(
   rgcca_res = rgcca_out, n_boot = 4,
-  balanced = T, keep_all_variables = T
+  balanced = TRUE, keep_all_variables = TRUE
 )
 test_that("generate_resampling_keepAllVAriables", {
   expect_null(sample_out$sd_null)
@@ -69,25 +69,25 @@ test_that("generate_resampling_keepAllVAriables", {
 #############################################
 # Now `rent` and `death` are trapped to be of null variance.
 # Four tests are performed :
-#   - "generate_resampling_NUL_variance_1" : when `balanced = T`
-#      and `keep_all_variables = F`, a warning to inform that `rent` and `death`
-#      are removed is raised.
-#   - "generate_resampling_NUL_variance_2" : when `balanced = F`
-#      and `keep_all_variables = F`, a warning to inform that `rent` and `death`
-#      are removed is raised.
-#   - "generate_resampling_NUL_variance_3" : when `balanced = T`
-#      and `keep_all_variables = T`, an error is raised as it is impossible
+#   - "generate_resampling_NUL_variance_1" : when `balanced = TRUE`
+#      and `keep_all_variables = FALSE`, a warning to inform that `rent`
+#      and `death` are removed is raised.
+#   - "generate_resampling_NUL_variance_2" : when `balanced = FALSE`
+#      and `keep_all_variables = FALSE`, a warning to inform that `rent`
+#      and `death` are removed is raised.
+#   - "generate_resampling_NUL_variance_3" : when `balanced = TRUE`
+#      and `keep_all_variables = TRUE`, an error is raised as it is impossible
 #      to keep all variables here because some have null variances.
-#   - "generate_resampling_NUL_variance_4" : when `balanced = T or F`
-#      and `keep_all_variables = F`, check that `death` and `rent` are indeed
-#      removed.
+#   - "generate_resampling_NUL_variance_4" : when `balanced = TRUE or FALSE`
+#      and `keep_all_variables = FALSE`, check that `death` and `rent` are
+#      indeed removed.
 N <- NROW(Russett)
 rgcca_out$call$raw$agriculture[, "rent"] <- rep(0, N)
 rgcca_out$call$raw$politic[, "death"] <- rep(2, N)
 
 test_that("generate_resampling_NUL_variance_1", {
   sample_out_balanced_1 <- expect_warning(
-    generate_resampling(rgcca_res = rgcca_out, n_boot = 4, balanced = T),
+    generate_resampling(rgcca_res = rgcca_out, n_boot = 4, balanced = TRUE),
     paste0(
       "Variables:  rent - death appear to be of null ",
       "variance in some bootstrap samples and thus ",
@@ -97,7 +97,7 @@ test_that("generate_resampling_NUL_variance_1", {
   )
 
   sample_out_balanced_2 <- expect_warning(
-    generate_resampling(rgcca_res = rgcca_out, n_boot = 4, balanced = F),
+    generate_resampling(rgcca_res = rgcca_out, n_boot = 4, balanced = FALSE),
     paste0(
       "Variables:  rent - death appear to be of null ",
       "variance in some bootstrap samples and thus ",
@@ -121,7 +121,7 @@ test_that(
   expect_error(
     generate_resampling(
       rgcca_res = rgcca_out, n_boot = 4,
-      balanced = T, keep_all_variables = T
+      balanced = TRUE, keep_all_variables = TRUE
     ),
     paste0(
       "Impossible to define all bootstrap samples ",
@@ -139,27 +139,28 @@ test_that(
 # Now `rent` and `death` are trapped to be very risky variables (only 1
 # observation differs from the others).
 # Four tests are performed :
-#   - "generate_resampling_veryRisky_1" : when `balanced = T`
-#      and `keep_all_variables = F`, a warning to inform that `rent` and `death`
-#      are removed is raised.
-#   - "generate_resampling_veryRisky_2" : when `balanced = F`
-#      and `keep_all_variables = F`, a warning to inform that `rent` and `death`
-#      are removed is raised.
-#   - "generate_resampling_veryRisky_3" : when `balanced = T`
-#      and `keep_all_variables = T`, an error is raised as it is highly unlikely
-#      to keep all variables here because some have almost null variances.
-#   - "generate_resampling_veryRisky_4" : when `balanced = T or F`
-#      and `keep_all_variables = F`, check that `death` and `rent` are indeed
-#      removed.
-#   - "generate_resampling_veryRisky_5" : when `balanced = F`
-#      and `keep_all_variables = T`, check that no variable is removed.
+#   - "generate_resampling_veryRisky_1" : when `balanced = TRUE`
+#      and `keep_all_variables = FALSE`, a warning to inform that `rent`
+#      and `death` are removed is raised.
+#   - "generate_resampling_veryRisky_2" : when `balanced = FALSE`
+#      and `keep_all_variables = FALSE`, a warning to inform that `rent`
+#      and `death` are removed is raised.
+#   - "generate_resampling_veryRisky_3" : when `balanced = TRUE`
+#      and `keep_all_variables = TRUE`, an error is raised as it is highly
+#      unlikely to keep all variables here because some have almost null
+#      variances.
+#   - "generate_resampling_veryRisky_4" : when `balanced = TRUE or FALSE`
+#      and `keep_all_variables = FALSE`, check that `death` and `rent` are
+#      indeed removed.
+#   - "generate_resampling_veryRisky_5" : when `balanced = FALSE`
+#      and `keep_all_variables = TRUE`, check that no variable is removed.
 N <- NROW(Russett)
 rgcca_out$call$raw$agriculture[, "rent"] <- c(1, rep(0, N - 1))
 rgcca_out$call$raw$politic[, "death"] <- c(1, rep(2, N - 1))
 set.seed(553)
 test_that("generate_resampling_veryRisky_1", {
   sample_out_balanced_1 <- expect_warning(
-    generate_resampling(rgcca_res = rgcca_out, n_boot = 4, balanced = T),
+    generate_resampling(rgcca_res = rgcca_out, n_boot = 4, balanced = TRUE),
     paste0(
       "Variables:  rent - death appear to be of null ",
       "variance in some bootstrap samples and thus ",
@@ -169,7 +170,7 @@ test_that("generate_resampling_veryRisky_1", {
   )
 
   sample_out_balanced_2 <- expect_warning(
-    generate_resampling(rgcca_res = rgcca_out, n_boot = 4, balanced = F),
+    generate_resampling(rgcca_res = rgcca_out, n_boot = 4, balanced = FALSE),
     paste0(
       "Variables:  rent - death appear to be of null ",
       "variance in some bootstrap samples and thus ",
@@ -194,7 +195,7 @@ test_that(
   expect_error(
     generate_resampling(
       rgcca_res = rgcca_out, n_boot = 4,
-      balanced = T, keep_all_variables = T
+      balanced = TRUE, keep_all_variables = TRUE
     ),
     paste0(
       "Impossible to define all bootstrap samples ",
@@ -209,7 +210,7 @@ test_that(
 set.seed(53)
 sample_out_balanced <- generate_resampling(
   rgcca_res = rgcca_out, n_boot = 4,
-  balanced = F, keep_all_variables = T
+  balanced = FALSE, keep_all_variables = TRUE
 )
 test_that("generate_resampling_veryRisky_5", {
   expect_null(sample_out_balanced$sd_null)
@@ -222,14 +223,14 @@ test_that("generate_resampling_veryRisky_5", {
 # Now `rent` and `death` are trapped to be very risky variables (only 1
 # observation differs from the others).
 # Four tests are performed :
-#   - "generate_resampling_ALL_Block_1" : when `balanced = T`
-#      and `keep_all_variables = F`, an error is raised as it want to remove
+#   - "generate_resampling_ALL_Block_1" : when `balanced = TRUE`
+#      and `keep_all_variables = FALSE`, an error is raised as it want to remove
 #      all the variables from block `industry`.
-#   - "generate_resampling_ALL_Block_2" : when `balanced = F`
-#      and `keep_all_variables = F`, an error is raised as it want to remove
+#   - "generate_resampling_ALL_Block_2" : when `balanced = FALSE`
+#      and `keep_all_variables = FALSE`, an error is raised as it want to remove
 #      all the variables from block `industry`.
-#   - "generate_resampling_ALL_Block_3" : when `balanced = T or F`
-#      and `keep_all_variables = T` with a different random initialization,
+#   - "generate_resampling_ALL_Block_3" : when `balanced = TRUE or FALSE`
+#      and `keep_all_variables = TRUE` with a different random initialization,
 #      no error is raised as no variable needs to be removed.
 rgcca_out$call$raw$industry[, "gnpr"] <- c(1, rep(0, N - 1))
 rgcca_out$call$raw$industry[, "labo"] <- c(1, rep(2, N - 1))
@@ -239,7 +240,7 @@ test_that(
   expect_error(
     generate_resampling(
       rgcca_res = rgcca_out, n_boot = 4,
-      balanced = T
+      balanced = TRUE
     ),
     paste0(
       "The variance of all the variables from blocks:",
@@ -254,7 +255,7 @@ test_that(
   expect_error(
     generate_resampling(
       rgcca_res = rgcca_out, n_boot = 4,
-      balanced = F
+      balanced = FALSE
     ),
     paste0(
       "The variance of all the variables from blocks:",
@@ -267,12 +268,12 @@ test_that(
 set.seed(1047)
 sample_out_balanced <- generate_resampling(
   rgcca_res = rgcca_out, n_boot = 4,
-  balanced = T
+  balanced = TRUE
 )
 set.seed(6576)
 sample_out_unbalanced <- generate_resampling(
   rgcca_res = rgcca_out, n_boot = 4,
-  balanced = F
+  balanced = FALSE
 )
 test_that("generate_resampling_ALL_Block_3", {
   expect_null(sample_out_balanced$sd_null)

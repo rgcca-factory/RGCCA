@@ -5,7 +5,7 @@ blocks <- list(
   matrix(rnorm(100 * 24), nrow = 100)
 )
 connection <- 1 - diag(3)
-blocks <- scaling(blocks, scale = F, scale_block = F)
+blocks <- scaling(blocks, scale = FALSE, scale_block = FALSE)
 fit_rgccak <- rgccak(
   blocks, connection,
   tau = c(1, 0, 0.8), scheme = "factorial", tol = 1e-8

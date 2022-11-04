@@ -19,7 +19,7 @@ X_agric <- as.matrix(Russett[, c("gini", "farm", "rent")])
 X_ind <- as.matrix(Russett[, c("gnpr", "labo")])
 X_polit <- as.matrix(Russett[, c("demostab", "dictator")])
 A <- list(X_agric, X_ind, X_polit)
-A <- scaling(A, scale = T, bias = T, scale_block = T)
+A <- scaling(A, scale = TRUE, bias = TRUE, scale_block = TRUE)
 
 test_that("sgcca_init generates vectors a that satisfy the norm constraints", {
   verify(A, sparsity = c(1, 1, 1), init = "svd")

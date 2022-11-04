@@ -1,11 +1,14 @@
+#' Function to postprocess the SGCCA variables
+#'
+#' @noRd
 sgcca_postprocess <- function(A, a, Y, g, na.rm, sparsity, tol) {
   pjs <- vapply(A, NCOL, FUN.VALUE = 1L)
 
   # check for parity of g
-  ctrl <- !any(g(-5:5) != g(5:-5))
+  ctrl <- all(g(-5:5) == g(5:-5))
 
   for (j in seq_along(a)) {
-    if (ctrl & a[[j]][1] < 0) {
+    if (ctrl && (a[[j]][1] < 0)) {
       a[[j]] <- -a[[j]]
       Y[, j] <- pm(A[[j]], a[[j]], na.rm = na.rm)
     }

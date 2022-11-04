@@ -150,14 +150,11 @@ sgcca <- function(blocks, connection = 1 - diag(length(blocks)),
   }
 
   if (verbose) {
-    if (mode(scheme) != "function") {
-      cat(
-        "Computation of the SGCCA block components based on the",
-        scheme, "scheme \n"
-      )
-    } else {
-      cat("Computation of the SGCCA block components based on the g scheme \n")
-    }
+    scheme_str <- ifelse(is(scheme, "function"), "user-defined", "scheme")
+    cat(
+      "Computation of the SGCCA block components based on the",
+      scheme_str, "scheme \n"
+    )
   }
 
   ##### Initialization #####
@@ -259,17 +256,6 @@ sgcca <- function(blocks, connection = 1 - diag(length(blocks)),
           P[[b]], defl_result$pdefl[[b]], n
         )
       })
-    }
-
-    if (!quiet) {
-      for (b in seq(J)) {
-        if (sum(gcca_result$a[[b]][, n] != 0) <= 1) {
-          warning(
-            "Deflation failed because only one variable was ",
-            "selected for block ", b, ". \n"
-          )
-        }
-      }
     }
   }
 

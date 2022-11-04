@@ -107,7 +107,7 @@ generate_resampling <- function(rgcca_res, n_boot, balanced = TRUE,
   )
 
   # Keep only risky variables for each block.
-  raw_blocks_filtered <- mapply(
+  raw_blocks_filtered <- Map(
     function(x, y) x[, y, drop = FALSE],
     raw_blocks, risky_var
   )
@@ -173,18 +173,18 @@ generate_resampling <- function(rgcca_res, n_boot, balanced = TRUE,
         sd_null <- Reduce("rbind", boot_column_sd_null)
         rownames(sd_null) <- NULL
         sd_null <- apply(sd_null, 2, function(x) unique(names(Reduce("c", x))))
-        sd_null <- mapply(function(x, y) {
+        sd_null <- Map(function(x, y) {
           z <- match(x, y)
           names(z) <- x
           return(z)
         }, sd_null, lapply(raw_blocks, colnames))
 
         # Check if a whole block is troublesome
-        is_full_block_removed <- mapply(function(x, y) dim(x)[2] == length(y),
+        is_full_block_removed <- unlist(Map(
+          function(x, y) dim(x)[2] == length(y),
           raw_blocks,
-          sd_null,
-          SIMPLIFY = "array"
-        )
+          sd_null
+        ))
         if (sum(is_full_block_removed) == 0) {
           # A whole block is NOT troublesome
           NO_null_sd_var <- TRUE
@@ -215,7 +215,7 @@ generate_resampling <- function(rgcca_res, n_boot, balanced = TRUE,
             sd_null, 2,
             function(x) unique(names(Reduce("c", x)))
           )
-          sd_null <- mapply(function(x, y) {
+          sd_null <- Map(function(x, y) {
             z <- match(x, y)
             names(z) <- x
             return(z)

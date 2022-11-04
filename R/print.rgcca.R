@@ -38,7 +38,7 @@ print.rgcca <- function(x, ...) {
   if (!tolower(x$call$method) %in% c("sgcca", "spca", "spls")) {
     param <- "regularization"
     if (!is.matrix(x$call$tau)) {
-      for (i in seq(NCOL(x$call$connection))) {
+      for (i in seq_len(NCOL(x$call$connection))) {
         tau <- x$call$tau[i]
         cat("The", param, "parameter used for", names(x$call$blocks)[i],
           "is:", round(tau, 4),
@@ -56,7 +56,7 @@ print.rgcca <- function(x, ...) {
     )
     param <- "sparsity"
     if (!is.matrix(x$call$sparsity)) {
-      for (i in seq(NCOL(x$call$connection))) {
+      for (i in seq_len(NCOL(x$call$connection))) {
         sparsity <- x$call$sparsity[i]
 
         cat("The", param, "parameter used for", names(x$call$blocks)[i], "is:",

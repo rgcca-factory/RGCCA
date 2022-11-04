@@ -98,9 +98,9 @@ plot.rgcca <- function(x, type = "weight", block = length(x$call$blocks),
     "sample", "cor_circle", "both",
     "ave", "loadings", "weight"
   ))
-  for (i in c("cex", "cex_main", "cex_sub", "cex_point", "cex_lab")) {
+  lapply(c("cex", "cex_main", "cex_sub", "cex_point", "cex_lab"), function(i) {
     check_integer(i, get(i))
-  }
+  })
   if (is.null(colors)) {
     colors <- c(
       "#999999", "#E69F00", "#56B4E9", "#009E73",
@@ -125,7 +125,7 @@ plot.rgcca <- function(x, type = "weight", block = length(x$call$blocks),
   lapply(block, function(i) {
     check_blockx("block", i, x$call$blocks)
   })
-  mapply(
+  Map(
     function(y, z) check_compx(y, y, x$call$ncomp, z), comp, block
   )
 

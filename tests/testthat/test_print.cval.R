@@ -43,7 +43,7 @@ test_that("print_cval", {
   })
 
   expect_snapshot({
-    blocks2 <- c(blocks, blocks)
+    blocks2 <- c(blocks, replicate(3, rnorm(47), simplify = FALSE))
     names(blocks2) <- NULL
     res <- rgcca_cv(blocks2,
       validation = "kfold", k = 2,

@@ -64,7 +64,8 @@ print.cval <- function(x, type = "sd", ...) {
     }
 
     df <- data.frame(
-      config = combinations, format(cbind(middle, lower, upper, ymean), digits = 3)
+      config = combinations,
+      format(cbind(middle, lower, upper, ymean), digits = 3)
     )
     colnames(df) <- c("Tuning parameters", middle_name, low_lim, up_lim, mean)
     return(df)
@@ -76,7 +77,7 @@ print.cval <- function(x, type = "sd", ...) {
   print_call(x$call)
 
   penalties <- round(x$penalties, 3)
-  rownames(penalties) <- seq(NROW(penalties))
+  rownames(penalties) <- seq_len(NROW(penalties))
   cat(fill = TRUE)
   cat(paste0("Tuning parameters (", x$call$par_type, ") used: "), fill = TRUE)
   print(penalties, quote = FALSE, ...)

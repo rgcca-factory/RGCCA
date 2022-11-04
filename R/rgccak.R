@@ -105,7 +105,7 @@ rgccak <- function(A, C, tau = rep(1, length(A)), scheme = "centroid",
       abs(crit[iter] - crit_old)
     )
 
-    if (any(stopping_criteria < tol) | (iter > 1000)) {
+    if (any(stopping_criteria < tol) || (iter > 1000)) {
       break
     }
 

@@ -103,7 +103,7 @@ test_that("rgcca_predict with lm predictor gives the same prediction as
     lm(x ~ fit_rgcca$Y[[1]][, 1:3] + fit_rgcca$Y[[2]][, 1:2])$residuals
   })
   score_lm <- mean(apply(res_lm, 2, function(x) {
-    return(sqrt(mean(x^2, na.rm = T)))
+    return(sqrt(mean(x^2, na.rm = TRUE)))
   }))
   names(score_lm) <- "RMSE"
   expect_equal(res_predict$score, score_lm)

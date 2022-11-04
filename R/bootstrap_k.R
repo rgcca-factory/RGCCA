@@ -18,7 +18,7 @@ bootstrap_k <- function(rgcca_res, inds = NULL) {
   )
   # block-weight vector
   missing_var <- unlist(lapply(
-    seq(length(rgcca_res_boot$a)),
+    seq_along(rgcca_res_boot$a),
     function(x) {
       setdiff(
         colnames(rgcca_res$call$blocks[[x]]),

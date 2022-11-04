@@ -134,18 +134,8 @@ rgcca_predict <- function(rgcca_res,
   }
 
   ### Train prediction model and predict results on X_test
-  results <- mapply(
-    function(x, y) {
-      core_prediction(
-        prediction_model, X_train, X_test, x, y, classification, ...
-      )
-    },
-    as.data.frame(y_train),
-    y_test
-  )
-
   results <- lapply(
-    seq(NCOL(y_train)), function(j) {
+    seq_len(NCOL(y_train)), function(j) {
       core_prediction(
         prediction_model, X_train, X_test,
         y_train[, j], y_test[, j], classification,
@@ -182,7 +172,7 @@ reformat_projection <- function(projection) {
   comp_nums <- unlist(lapply(ncomp, seq))
   projection <- as.data.frame(Reduce("cbind", projection))
   colnames(projection) <- paste(
-    unlist(mapply(function(name, num) rep(name, num), names, ncomp)),
+    unlist(Map(function(name, num) rep(name, num), names, ncomp)),
     comp_nums,
     sep = "_"
   )

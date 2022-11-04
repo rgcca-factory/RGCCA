@@ -64,7 +64,7 @@ set_parameter_grid <- function(par_type, par_length, par_value, blocks,
       return(list(par_type = par_type, par_value = par_value))
     }
     # If par_value is already a grid, we just check that it is valid.
-    par_value <- t(vapply(seq(nrow(par_value)), function(i) {
+    par_value <- t(vapply(seq_len(NROW(par_value)), function(i) {
       check_function(par_value[i, ])
     }, FUN.VALUE = double(ncol(par_value))))
     par_value <- set_response_value(par_value, response_value)

@@ -68,7 +68,7 @@ sgccak <- function(A, C, sparsity = rep(1, length(A)),
       abs(crit[iter] - crit_old)
     )
 
-    if (any(stopping_criteria < tol) | (iter > n_iter_max)) {
+    if (any(stopping_criteria < tol) || (iter > n_iter_max)) {
       break
     }
 

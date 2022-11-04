@@ -76,7 +76,7 @@ plot.cval <- function(x, type = "sd",
   )
 
   if (length(x$call$blocks) > 5) {
-    combinations <- paste("Set ", seq(NROW(x$penalties)))
+    combinations <- paste("Set ", seq_len(NROW(x$penalties)))
   } else {
     combinations <- apply(
       format(round(x$penalties, 2), nsmall = 2), 1, paste0,

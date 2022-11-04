@@ -116,8 +116,8 @@ test_that("set_parameter_grid raises errors when par_value is not valid", {
     paste0("must be numeric"),
     fixed = TRUE
   )
-  expect_error(set_parameter_grid("ncomp", 3, c(5), blocks, response = 3))
-  expect_error(set_parameter_grid("tau", 3, c(-1), blocks, response = 3))
+  expect_error(set_parameter_grid("ncomp", 3, 5, blocks, response = 3))
+  expect_error(set_parameter_grid("tau", 3, -1, blocks, response = 3))
   expect_error(
     set_parameter_grid("sparsity", 3, matrix(0, nrow = 2, ncol = 3),
       blocks,

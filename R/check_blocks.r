@@ -128,7 +128,7 @@ check_blocks_colnames <- function(blocks, quiet = FALSE) {
           if (NCOL(block) == 1) {
             colnames(block) <- names(blocks)[x]
           } else {
-            colnames(block) <- paste0("V", x, "_", seq(NCOL(block)))
+            colnames(block) <- paste0("V", x, "_", seq_len(NCOL(block)))
           }
         }
         return(block)
@@ -174,7 +174,7 @@ check_blocks_rownames <- function(blocks, allow_unnames = TRUE, quiet = FALSE) {
       blocks <- lapply(
         blocks,
         function(x) {
-          rownames(x) <- paste0("S", seq(NROW(x)))
+          rownames(x) <- paste0("S", seq_len(NROW(x)))
           return(x)
         }
       )

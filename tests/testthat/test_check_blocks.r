@@ -1,7 +1,7 @@
 data(Russett)
 X_agric <- as.matrix(Russett[, c("gini", "farm", "rent")])
 X_ind <- as.matrix(Russett[, c("gnpr", "labo")])
-X_polit <- as.matrix(Russett[, c("demostab")])
+X_polit <- as.matrix(Russett[, "demostab"])
 X_quali <- colnames(Russett)[9:11][apply(Russett[, 9:11], 1, which.max)]
 
 test_that("check_blocks returns a list of blocks", {
@@ -66,11 +66,11 @@ test_that("check_blocks renames blocks if names are missing", {
 
 test_that("check_blocks add colnames with blocks with no colnames", {
   blocks <- list(agri = X_agric, polit = X_polit)
-  expect_equal(colnames(check_blocks(blocks)[[2]]), c("polit"))
+  expect_equal(colnames(check_blocks(blocks)[[2]]), "polit")
   expect_equal(colnames(check_blocks(blocks)[[1]]), colnames(X_agric))
   colnames(blocks[[1]]) <- NULL
   expect_equal(
-    colnames(check_blocks(blocks)[[1]]), paste0("V1_", seq(NCOL(X_agric)))
+    colnames(check_blocks(blocks)[[1]]), paste0("V1_", seq_len(NCOL(X_agric)))
   )
   expect_message(check_blocks(blocks, quiet = FALSE),
     "Missing colnames are automatically labeled.",

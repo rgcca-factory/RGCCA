@@ -28,7 +28,7 @@
       
         Tuning parameters Median error  2.5% 97.5%
       1       0.0/0.2/0.3        1.067 1.007 1.328
-      2       0.0/0.0/0.0        1.143 0.893 1.392
+      2       0.0/0.0/0.0        0.984 0.946 1.590
       
       The best combination is: 0.0 0.2 0.3 for a mean CV error of 1.120 
 
@@ -62,10 +62,10 @@
       Prediction model: lda 
       
         Tuning parameters Mean error Mean - Sd Mean + Sd
-      1       0.0/0.2/0.0     0.1289    0.0408    0.2169
-      2       0.0/0.0/0.0     0.1067    0.0357    0.1776
+      1       0.0/0.2/0.0    0.08222  -0.00225   0.16670
+      2       0.0/0.0/0.0    0.12889   0.01088   0.24690
       
-      The best combination is: 0 0 0 for a mean CV error of 0.1067 
+      The best combination is: 0.0 0.2 0.0 for a mean CV error of  0.08222 
 
 ---
 
@@ -104,7 +104,7 @@
 ---
 
     Code
-      blocks2 <- c(blocks, blocks)
+      blocks2 <- c(blocks, replicate(3, rnorm(47), simplify = FALSE))
       names(blocks2) <- NULL
       res <- rgcca_cv(blocks2, validation = "kfold", k = 2, response = 3, method = "rgcca",
         par_type = "tau", n_run = 1, n_cores = 1, par_length = 2, verbose = FALSE)
@@ -135,8 +135,8 @@
       Prediction model: lm 
       
             Tuning parameters Mean error Mean - Std Error Mean + Std Error
-      1 Tuning parameter set       0.775            0.673            0.878
-      2 Tuning parameter set       0.657            0.494            0.821
+      1 Tuning parameter set        1.28             1.10             1.45
+      2 Tuning parameter set        1.28             1.19             1.37
       
-      The best combination is: 0 0 0 0 0 0 for a mean CV error of 0.657 
+      The best combination is: 1 1 1 1 1 1 for a mean CV error of 1.28 
 

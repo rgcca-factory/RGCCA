@@ -33,7 +33,7 @@ X_agric <- as.matrix(Russett[, c("gini", "farm", "rent")])
 X_ind <- as.matrix(Russett[, c("gnpr", "labo")])
 X_polit <- as.matrix(Russett[, c("demostab", "dictator")])
 A <- list(X_agric, X_ind, X_polit)
-A <- scaling(A, scale = T, bias = T, scale_block = T)
+A <- scaling(A, scale = TRUE, bias = TRUE, scale_block = TRUE)
 C <- 1 - diag(3)
 
 
@@ -54,7 +54,7 @@ A <- list(
   matrix(rnorm(48), nrow = 4, ncol = 12),
   matrix(rnorm(40), nrow = 4, ncol = 10)
 )
-A <- scaling(A, scale = T, bias = T, scale_block = T)
+A <- scaling(A, scale = TRUE, bias = TRUE, scale_block = TRUE)
 C <- 1 - diag(2)
 
 test_that("rgcca_update generates vectors a that satisfy the norm constraints
