@@ -1,9 +1,9 @@
 #' Plot a fitted bootstrap object
 #'
-#' Plot the results of a fitted bootstrap object. A bar plot is constructed
-#' where each block variable is shown along with its associated bootstrap
-#' confidence interval and a color reflecting the p-value of assigning a
-#' strictly positive or negative weight to this block variable.
+#' Plot the results of a fitted bootstrap object. Each block variable is shown
+#' along with its associated bootstrap confidence interval and stars reflecting
+#' the p-value of assigning a strictly positive or negative weight to this
+#' block variable.
 #' @inheritParams plot.rgcca
 #' @param x A fitted bootstrap object (see \code{\link[RGCCA]{bootstrap}})
 #' @param type Character string indicating the bootstrapped object to plot:
@@ -13,9 +13,11 @@
 #' intervals and p-values are derived from the empirical distribution.
 #' (defaut: TRUE)
 #' @param display_order A logical value for ordering the variables.
-#' @param n_mark An integer defining the maximum number of bars plotted.
-#' @param colors Colors used in the plots. Default is a grey scaled palette.
+#' @param n_mark An integer defining the maximum number of variables plotted.
 #' @param show_sign A logical for showing significance levels.
+#' @param block A character equal to "all" (default) or a numeric corresponding
+#' to the block to plot. If "all", the variables from all the blocks are
+#' displayed.
 #'
 #' @examples
 #' data("Russett")
@@ -27,33 +29,49 @@
 #' fit.rgcca <- rgcca(blocks, ncomp = 2, method = "rgcca", tau = 1)
 #' fit.boot <- bootstrap(fit.rgcca, n_boot = 20, n_cores = 1)
 #' plot(fit.boot, type = "weight", block = 1, comp = 1)
-#' @importFrom grDevices grey.colors
 #' @export
-plot.bootstrap <- function(x, block = length(x$rgcca$call$blocks),
+plot.bootstrap <- function(x, block = "all",
                            comp = 1, type = "weight",
                            empirical = TRUE, n_mark = 30,
                            display_order = TRUE,
-                           colors = grey.colors(6)[2:6],
                            show_sign = TRUE, title = NULL,
                            cex = 1, cex_sub = 12 * cex,
                            cex_main = 14 * cex, cex_lab = 12 * cex,
                            cex_point = 3 * cex, ...) {
   ### Perform checks and parse arguments
   stopifnot(is(x, "bootstrap"))
-  check_blockx("block", block, x$rgcca$call$blocks)
+  if (!block %in% c("all", seq_along(x$rgcca$call$raw))) {
+    stop_rgcca(
+      "block must be equal to \"all\" or an integer between 1 and ",
+      length(x$rgcca$call$raw), "."
+    )
+  }
   check_integer("n_mark", n_mark)
-  check_colors(colors)
-  colors <- elongate_arg(colors, seq(5))[seq(5)]
 
   ### Build data frame
-  df <- get_bootstrap(
-    x,
-    type = type,
-    comp,
-    block = block,
-    empirical = empirical,
-    display_order = display_order
-  )
+  if (block == "all") {
+    df <- Reduce(rbind, lapply(
+      seq_along(x$rgcca$call$raw),
+      function(b) {
+        get_bootstrap(
+          b = x, type = type,
+          block = b,
+          comp = comp,
+          empirical = empirical,
+          display_order = display_order
+        )
+      }
+    ))
+  } else {
+    df <- get_bootstrap(
+      x,
+      type = type,
+      comp,
+      block = block,
+      empirical = empirical,
+      display_order = display_order
+    )
+  }
   df <- df[df[, "sd"] != 0, ]
 
   n_mark <- min(n_mark, NROW(df))
@@ -69,10 +87,16 @@ plot.bootstrap <- function(x, block = length(x$rgcca$call$blocks),
   )
 
   ### Prepare plot
+  block_name <- ifelse(
+    block > length(x$rgcca$call$raw),
+    "all blocks",
+    names(x$rgcca$call$blocks)[block]
+  )
+
   title <- ifelse(is.null(title),
     paste0(
       "Bootstrap confidence interval (",
-      names(x$rgcca$call$blocks)[block], ")\n (",
+      block_name, ")\n (",
       type, " - ",
       ncol(x$bootstrap[[1]][[1]][[1]]),
       " bootstrap samples - comp ", comp, ")"

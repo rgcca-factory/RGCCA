@@ -6,13 +6,12 @@
 \usage{
 \method{plot}{bootstrap}(
   x,
-  block = length(x$rgcca$call$blocks),
+  block = "all",
   comp = 1,
   type = "weight",
   empirical = TRUE,
   n_mark = 30,
   display_order = TRUE,
-  colors = grey.colors(6)[2:6],
   show_sign = TRUE,
   title = NULL,
   cex = 1,
@@ -26,7 +25,9 @@
 \arguments{
 \item{x}{A fitted bootstrap object (see \code{\link[RGCCA]{bootstrap}})}
 
-\item{block}{A numeric vector indicating the blocks to consider.}
+\item{block}{A character equal to "all" (default) or a numeric corresponding
+to the block to plot. If "all", the variables from all the blocks are
+displayed.}
 
 \item{comp}{A numeric vector indicating the components to consider.}
 
@@ -38,11 +39,9 @@ block-weight vectors ("weight", default) or block-loading vectors
 intervals and p-values are derived from the empirical distribution.
 (defaut: TRUE)}
 
-\item{n_mark}{An integer defining the maximum number of bars plotted.}
+\item{n_mark}{An integer defining the maximum number of variables plotted.}
 
 \item{display_order}{A logical value for ordering the variables.}
-
-\item{colors}{Colors used in the plots. Default is a grey scaled palette.}
 
 \item{show_sign}{A logical for showing significance levels.}
 
@@ -66,10 +65,10 @@ is one.}
 \item{...}{additional graphical parameters}
 }
 \description{
-Plot the results of a fitted bootstrap object. A bar plot is constructed
-where each block variable is shown along with its associated bootstrap
-confidence interval and a color reflecting the p-value of assigning a
-strictly positive or negative weight to this block variable.
+Plot the results of a fitted bootstrap object. Each block variable is shown
+along with its associated bootstrap confidence interval and stars reflecting
+the p-value of assigning a strictly positive or negative weight to this
+block variable.
 }
 \examples{
 data("Russett")

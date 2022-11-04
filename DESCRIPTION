@@ -4,7 +4,7 @@ Title: Regularized (or Sparse) Generalized Canonical Correlation Analysis
     (R/SGCCA) for multi-block data analysis
 Version: 3.0
 Authors@R: c(
-  person("Arthur", "Tenenhaus", email = "arthur.tenenhaus@centralesupelec.fr", 
+  person("Arthur", "Tenenhaus", email = "arthur.tenenhaus@centralesupelec.fr",
          role = c("aut", "cre")),
   person("Caroline", "Peltier", role = "aut"),
   person("Fabien", "Girka", role = "aut"),
@@ -33,7 +33,6 @@ Imports:
     Deriv,
     ggplot2,
     graphics,
-    grDevices,
     gridExtra,
     MASS,
     methods,
