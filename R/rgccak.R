@@ -52,54 +52,31 @@ rgccak <- function(A, C, tau = rep(1, length(A)), scheme = "centroid",
                    tol = 1e-08, na.rm = TRUE, n_iter_max = 1000) {
   if (is.function(scheme)) {
     g <- scheme
-    # check for parity of g
-    ctrl <- !any(g(-5:5) != g(5:-5))
   } else {
     switch(scheme,
       "horst" = {
         g <- function(x) x
-        ctrl <- FALSE
       },
       "factorial" = {
         g <- function(x) x^2
-        ctrl <- TRUE
       },
       "centroid" = {
         g <- function(x) abs(x)
-        ctrl <- TRUE
       }
     )
   }
 
   dg <- Deriv::Deriv(g, env = parent.frame())
 
-  J <- length(A) # number of blocks
-  n <- NROW(A[[1]]) # number of individuals
-  pjs <- vapply(A, NCOL, FUN.VALUE = 1L) # number of variables per block
-
   if (!is.numeric(tau)) {
     # From Schafer and Strimmer, 2005
     tau <- vapply(A, tau.estimate, na.rm = na.rm, FUN.VALUE = 1.0)
   }
 
-  A <- lapply(A, as.matrix)
-  a <- alpha <- M <- Minv <- K <- list()
-
-  # Test for primal or dual for each block
-  which.primal <- which((n >= pjs) == 1)
-  which.dual <- which((n < pjs) == 1)
-
   ### Initialization
-  tmp <- rgcca_init(
-    A, init, bias, na.rm, tau, pjs, which.primal,
-    which.dual, J, n
-  )
-  a <- tmp$a
-  alpha <- tmp$alpha
-  Y <- tmp$Y
-  K <- tmp$K
-  M <- tmp$M
-  Minv <- tmp$Minv
+  init_object <- rgcca_init(A, init, bias, na.rm, tau)
+  a <- init_object$a
+  Y <- init_object$Y
 
   iter <- 1
   crit <- numeric(n_iter_max)
@@ -107,29 +84,22 @@ rgccak <- function(A, C, tau = rep(1, length(A)), scheme = "centroid",
   a_old <- a
 
   repeat {
-    tmp <- rgcca_update(
-      A, a, alpha, Y, M, K, Minv, bias, na.rm, tau,
-      which.primal, which.dual, J, n, dg, C
-    )
-    a <- tmp$a
-    alpha <- tmp$alpha
-    Y <- tmp$Y
+    update_object <- rgcca_update(A, bias, na.rm, tau, dg, C, a, Y, init_object)
+    a <- update_object$a
+    Y <- update_object$Y
 
+    # Print out intermediate fit
     crit[iter] <- sum(C * g(cov2(Y, bias = bias)))
+
     if (verbose) {
       cat(
         " Iter: ", formatC(iter, width = 3, format = "d"),
-        " Fit:", formatC(crit[iter],
-          digits = 8,
-          width = 10, format = "f"
-        ),
+        " Fit: ", formatC(crit[iter], digits = 8, width = 10, format = "f"),
         " Dif: ", formatC(crit[iter] - crit_old,
-          digits = 8,
-          width = 10, format = "f"
+          digits = 8, width = 10, format = "f"
         ), "\n"
       )
     }
-
     stopping_criteria <- c(
       drop(crossprod(unlist(a, FALSE, FALSE) - unlist(a_old, FALSE, FALSE))),
       abs(crit[iter] - crit_old)
@@ -138,16 +108,10 @@ rgccak <- function(A, C, tau = rep(1, length(A)), scheme = "centroid",
     if (any(stopping_criteria < tol) | (iter > 1000)) {
       break
     }
+
     crit_old <- crit[iter]
     a_old <- a
     iter <- iter + 1
-  }
-
-  for (j in seq_len(J)) {
-    if (ctrl & a[[j]][1] < 0) {
-      a[[j]] <- -a[[j]]
-      Y[, j] <- pm(A[[j]], a[[j]], na.rm = na.rm)
-    }
   }
 
   crit <- crit[which(crit != 0)]
@@ -168,6 +132,6 @@ rgccak <- function(A, C, tau = rep(1, length(A)), scheme = "centroid",
     plot(crit, xlab = "iteration", ylab = "criteria")
   }
 
-  result <- list(Y = Y, a = a, crit = crit, tau = tau)
-  return(result)
+  result <- rgcca_postprocess(A, a, Y, g, na.rm)
+  return(list(Y = result$Y, a = result$a, crit = crit, tau = tau))
 }

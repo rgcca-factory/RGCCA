@@ -18,49 +18,38 @@ sgccak <- function(A, C, sparsity = rep(1, length(A)),
                    quiet = FALSE, na.rm = TRUE, n_iter_max = 1000) {
   if (is.function(scheme)) {
     g <- scheme
-    # check for parity of g
-    ctrl <- !any(g(-5:5) != g(5:-5))
   } else {
     switch(scheme,
       "horst" = {
         g <- function(x) x
-        ctrl <- FALSE
       },
       "factorial" = {
         g <- function(x) x^2
-        ctrl <- TRUE
       },
       "centroid" = {
         g <- function(x) abs(x)
-        ctrl <- TRUE
       }
     )
   }
 
   dg <- Deriv::Deriv(g, env = parent.frame())
 
-  J <- length(A)
-  n <- NROW(A[[1]])
-  pjs <- vapply(A, NCOL, FUN.VALUE = 1L)
-  const <- sparsity * sqrt(pjs)
+  ### Initialization
+  init_object <- sgcca_init(A, init, bias, na.rm, sparsity)
+  a <- init_object$a
+  Y <- init_object$Y
 
-  tmp <- sgcca_init(A, init, bias, na.rm, sparsity, pjs, J, n)
-  a <- tmp$a
-  Y <- tmp$Y
-
-  # 	Apply the constraints of the general optimization problem
-  # 	and compute the outer components
   iter <- 1
   crit <- numeric(n_iter_max)
-
-  a_old <- a
   crit_old <- sum(C * g(cov2(Y, bias = bias)))
-
+  a_old <- a
 
   repeat {
-    tmp <- sgcca_update(A, a, Y, bias, na.rm, const, J, n, dg, C)
-    a <- tmp$a
-    Y <- tmp$Y
+    update_object <- sgcca_update(
+      A, bias, na.rm, sparsity, dg, C, a, Y, init_object
+    )
+    a <- update_object$a
+    Y <- update_object$Y
 
     # Print out intermediate fit
     crit[iter] <- sum(C * g(cov2(Y, bias = bias)))
@@ -70,10 +59,8 @@ sgccak <- function(A, C, sparsity = rep(1, length(A)),
         " Iter: ", formatC(iter, width = 3, format = "d"),
         " Fit: ", formatC(crit[iter], digits = 8, width = 10, format = "f"),
         " Dif: ", formatC(crit[iter] - crit_old,
-          digits = 8, width = 10,
-          format = "f"
-        ),
-        "\n"
+          digits = 8, width = 10, format = "f"
+        ), "\n"
       )
     }
     stopping_criteria <- c(
@@ -88,13 +75,6 @@ sgccak <- function(A, C, sparsity = rep(1, length(A)),
     crit_old <- crit[iter]
     a_old <- a
     iter <- iter + 1
-  }
-
-  for (q in seq_len(J)) {
-    if (ctrl & a[[q]][1] < 0) {
-      a[[q]] <- -a[[q]]
-      Y[, q] <- pm(A[[q]], a[[q]], na.rm = na.rm)
-    }
   }
 
   crit <- crit[which(crit != 0)]
@@ -115,26 +95,6 @@ sgccak <- function(A, C, sparsity = rep(1, length(A)),
     plot(crit, xlab = "iteration", ylab = "criteria")
   }
 
-  l2_sat <- vapply(a, function(x) norm(x, "2"), FUN.VALUE = 1.0)
-  if (max(abs(l2_sat - 1)) > tol) {
-    for (i in which(abs(l2_sat - 1) > tol)) {
-      if (l2_sat[i] < .Machine$double.eps) {
-        warning(
-          "Norm2 of the block weight vector #",
-          i, " is too small :", l2_sat[i]
-        )
-      } else {
-        nMAX <- length(which(a[[i]] != 0))
-        warning(
-          "The l2 constraint is not saturated for block #", i,
-          ". The sparsity parameter has to be in the range [",
-          sqrt(nMAX / pjs[i]),
-          ", 1] and is equal to ", sparsity[i], "."
-        )
-      }
-    }
-  }
-
-  result <- list(Y = Y, a = a, crit = crit)
-  return(result)
+  result <- sgcca_postprocess(A, a, Y, g, na.rm, sparsity, tol)
+  return(list(Y = result$Y, a = result$a, crit = crit))
 }

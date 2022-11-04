@@ -11,15 +11,19 @@ verify_norm_constraint <- function(a, const, tol) {
 }
 
 verify <- function(A, sparsity, init, C, dg, tol = 1e-14) {
-  J <- length(A)
-  n <- nrow(A[[1]])
+  # Initialize
   pjs <- vapply(A, ncol, FUN.VALUE = integer(1L))
   const <- sparsity * pjs
-  tmp <- sgcca_init(A, init, TRUE, TRUE, const, pjs, J, n)
-  crit_old <- sum(C * g(cov2(tmp$Y, bias = TRUE)))
-  tmp <- sgcca_update(A, tmp$a, tmp$Y, TRUE, TRUE, const, J, n, dg, C)
-  verify_norm_constraint(tmp$a, const, tol)
-  crit <- sum(C * g(cov2(tmp$Y, bias = TRUE)))
+  init_object <- sgcca_init(A, init, TRUE, TRUE, sparsity)
+  a <- init_object$a
+  Y <- init_object$Y
+  crit_old <- sum(C * g(cov2(Y, bias = TRUE)))
+  # Compute update
+  update_object <- sgcca_update(
+    A, TRUE, TRUE, sparsity, dg, C, a, Y, init_object
+  )
+  verify_norm_constraint(update_object$a, const, tol)
+  crit <- sum(C * g(cov2(update_object$Y, bias = TRUE)))
   expect_true(crit - crit_old > -tol)
 }
 

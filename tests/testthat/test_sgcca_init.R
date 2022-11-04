@@ -8,12 +8,10 @@ verify_norm_constraint <- function(a, const, tol) {
 }
 
 verify <- function(A, sparsity, init = "svd", tol = 1e-14) {
-  J <- length(A)
-  n <- nrow(A[[1]])
   pjs <- vapply(A, ncol, FUN.VALUE = integer(1L))
   const <- sparsity * pjs
-  tmp <- sgcca_init(A, init, TRUE, TRUE, const, pjs, J, n)
-  verify_norm_constraint(tmp$a, const, tol)
+  init_object <- sgcca_init(A, init, TRUE, TRUE, sparsity)
+  verify_norm_constraint(init_object$a, const, tol)
 }
 
 data(Russett)
