@@ -23,6 +23,7 @@ as_disjunctive <- function(vec, levs = NULL) {
   new_colnames <- substr(colnames(y), 2, nchar(colnames(y)))
   colnames(y) <- new_colnames
   rownames(y) <- rownames(vec)
+  y <- y[, -1, drop = FALSE]
   attr(y, "disjunction") <- TRUE
   return(y)
 }
