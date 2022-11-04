@@ -73,18 +73,7 @@ rgcca_cv_k <- function(rgcca_res,
         sparsity = sparsity,
       )
 
-      # Remove columns of the validation blocks that had null variance in the
-      # training blocks.
-      column_sd_null <- remove_null_sd(
-        lapply(blocks, function(x) x[-inds, , drop = FALSE])
-      )$column_sd_null
-      blocks_test <- lapply(seq_along(blocks), function(j) {
-        if (length(column_sd_null[[j]]) > 0) {
-          return(blocks[[j]][inds, -column_sd_null[[j]], drop = FALSE])
-        }
-        return(blocks[[j]][inds, , drop = FALSE])
-      })
-      names(blocks_test) <- names(blocks)
+      blocks_test <- lapply(blocks, function(x) x[inds, , drop = FALSE])
 
       # Evaluate RGCCA on the validation blocks
       res_pred <- rgcca_predict(

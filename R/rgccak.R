@@ -6,7 +6,7 @@
 #' Tenenhaus et al. 2015)
 #' @inheritParams rgccad
 #' @param A  A list that contains the \eqn{J} blocks of variables from which
-#' block components are constructed. It could be eiher the original matrices
+#' block components are constructed. It could be either the original matrices
 #' (\eqn{X_1, X_2, ..., X_J}) or the residual matrices
 #' (\eqn{X_{h1}, X_{h2}, ..., X_{hJ}}).
 #' @param C A symmetric matrix (J*J) that describes the
