@@ -105,6 +105,7 @@ test_that("rgcca_predict with lm predictor gives the same prediction as
   score_lm <- mean(apply(res_lm, 2, function(x) {
     return(sqrt(mean(x^2, na.rm = T)))
   }))
+  names(score_lm) <- "RMSE"
   expect_equal(res_predict$score, score_lm)
   expect_equal(as.matrix(A[[response]] - res_predict$prediction), res_lm)
 })

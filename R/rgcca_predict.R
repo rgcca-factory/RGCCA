@@ -159,12 +159,15 @@ rgcca_predict <- function(rgcca_res,
     res[["prediction"]]$test[, "pred"]
   }))
 
+  score <- mean(unlist(lapply(results, "[[", "score")))
+  names(score) <- names(results[[1]][["score"]])
+
   result <- list(
     projection = projection,
     prediction = prediction,
     results = results,
     rgcca_res = rgcca_res,
-    score = mean(unlist(lapply(results, "[[", "score")))
+    score = score
   )
 
   class(result) <- "predict"
@@ -239,6 +242,7 @@ core_prediction <- function(prediction_model, X_train, X_test,
       lev = levels(prediction_test$obs)
     )
     score <- 1 - metric_test["Accuracy"]
+    names(score) <- "Misclassification_Rate"
   } else {
     confusion_train <- confusion_test <- NA
     metric_train <- postResample(
