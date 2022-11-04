@@ -62,9 +62,6 @@
 #' @return \item{primal_dual}{A \eqn{1 \times J}{1 x J} vector that contains the
 #' formulation ("primal" or "dual") applied to each of the \eqn{J} blocks within
 #' the RGCCA alogrithm.}
-#' @return \item{AVE}{A list of numerical values giving the goodness of fit
-#' the model based on the Average Variance Explained (AVE): AVE(for each block),
-#' AVE(outer model), AVE(inner model).}
 #' @references Tenenhaus M., Tenenhaus A. and Groenen P. J. (2017). Regularized
 #' generalized canonical correlation analysis: a framework for sequential
 #' multiblock component methods. Psychometrika, 82(3), 737-777.
@@ -210,7 +207,6 @@ rgccad <- function(blocks, connection = 1 - diag(length(blocks)),
   J <- length(blocks)
   pjs <- vapply(blocks, NCOL, FUN.VALUE = 1L)
   nb_ind <- NROW(blocks[[1]])
-  AVE_inner <- rep(NA, max(ncomp))
 
   crit <- list()
   R <- blocks
@@ -253,9 +249,8 @@ rgccad <- function(blocks, connection = 1 - diag(length(blocks)),
       verbose = verbose, na.rm = na.rm, n_iter_max = n_iter_max
     )
 
-    # Store tau, AVE_inner, crit
+    # Store tau, crit
     computed_tau[n, ] <- gcca_result$tau
-    AVE_inner[n] <- gcca_result$AVE_inner
     crit[[n]] <- gcca_result$crit
 
     # Store Y, a, factors and weights
@@ -327,8 +322,7 @@ rgccad <- function(blocks, connection = 1 - diag(length(blocks)),
     a = a,
     astar = astar,
     tau = computed_tau,
-    crit = crit, primal_dual = primal_dual,
-    AVE_inner = AVE_inner
+    crit = crit, primal_dual = primal_dual
   )
 
   class(out) <- "rgccad"

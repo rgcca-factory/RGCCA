@@ -109,10 +109,6 @@ of the criterion for this stage across iterations.}
 \item{primal_dual}{A \eqn{1 \times J}{1 x J} vector that contains the
 formulation ("primal" or "dual") applied to each of the \eqn{J} blocks within
 the RGCCA alogrithm.}
-
-\item{AVE}{A list of numerical values giving the goodness of fit
-the model based on the Average Variance Explained (AVE): AVE(for each block),
-AVE(outer model), AVE(inner model).}
 }
 \description{
 Regularized Generalized Canonical Correlation Analysis (RGCCA) is a

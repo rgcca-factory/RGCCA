@@ -31,9 +31,6 @@
 #' a vector such that Y[[j]][, h] = blocks[[j]] \%*\% astar[[j]][, h].}
 #' @return \item{crit}{A vector of integer that contains for each component the
 #' values of the analysis criteria across iterations.}
-#' @return \item{AVE}{A list of numerical values giving the indicators of model
-#' quality based on the Average Variance Explained (AVE): AVE(for each block),
-#' AVE(outer model), AVE(inner model).}
 #' @references Tenenhaus, A., Philippe, C., Guillemot, V., Le Cao, K. A.,
 #' Grill, J., and Frouin, V. , "Variable selection for generalized canonical
 #' correlation analysis.," Biostatistics, vol. 15, no. 3, pp. 569-583, 2014.
@@ -170,7 +167,6 @@ sgcca <- function(blocks, connection = 1 - diag(length(blocks)),
   J <- length(blocks)
   pjs <- vapply(blocks, NCOL, numeric(1L))
   nb_ind <- NROW(blocks[[1]])
-  AVE_inner <- rep(NA, max(ncomp))
 
   crit <- list()
   R <- blocks
@@ -207,8 +203,7 @@ sgcca <- function(blocks, connection = 1 - diag(length(blocks)),
       verbose = verbose, na.rm = na.rm, quiet = quiet, n_iter_max = n_iter_max
     )
 
-    # Store AVE_inner, crit
-    AVE_inner[n] <- gcca_result$AVE_inner
+    # Store crit
     crit[[n]] <- gcca_result$crit
 
     # Store Y, a, factors and weights
@@ -281,13 +276,7 @@ sgcca <- function(blocks, connection = 1 - diag(length(blocks)),
   ##### Generation of the output #####
   if (N == 0) crit <- unlist(crit)
 
-  out <- list(
-    Y = Y,
-    a = a,
-    astar = astar,
-    crit = crit,
-    AVE_inner = AVE_inner
-  )
+  out <- list(Y = Y, a = a, astar = astar, crit = crit)
 
   class(out) <- "sgcca"
   return(out)

@@ -14,6 +14,12 @@ format_output <- function(func_out, opt, raw, func_call = NULL) {
     pjs <- pjs[-opt$response]
   }
 
+  AVE_inner <- vapply(seq(max(opt$ncomp)), function(n) {
+    sum(opt$connection * cor(
+      do.call(cbind, lapply(func_out$Y, function(y) y[, n]))
+    )^2 / 2) / (sum(opt$connection) / 2)
+  }, FUN.VALUE = double(1L))
+
   AVE_X <- lapply(blocks_AVE, function(j) apply(
     func_out$Y[[j]], 2, rsq, opt$blocks[[j]]
   ))
@@ -35,7 +41,7 @@ format_output <- function(func_out, opt, raw, func_call = NULL) {
   AVE_X_cor <- shave(AVE_X_cor, ncomp_AVE)
   func_out$AVE <- list(
     AVE_X = AVE_X, AVE_X_cor = AVE_X_cor,
-    AVE_outer = AVE_outer, AVE_inner = func_out$AVE_inner
+    AVE_outer = AVE_outer, AVE_inner = AVE_inner
   )
   func_out$AVE_inner <- NULL
 

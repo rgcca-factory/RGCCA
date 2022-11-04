@@ -93,10 +93,6 @@ a vector such that Y[[j]][, h] = blocks[[j]] \%*\% astar[[j]][, h].}
 
 \item{crit}{A vector of integer that contains for each component the
 values of the analysis criteria across iterations.}
-
-\item{AVE}{A list of numerical values giving the indicators of model
-quality based on the Average Variance Explained (AVE): AVE(for each block),
-AVE(outer model), AVE(inner model).}
 }
 \description{
 SGCCA extends RGCCA to address the issue of variable selection. Specifically,

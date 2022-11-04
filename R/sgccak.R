@@ -9,8 +9,6 @@
 #' matrix that contains the outer weight vectors for each block.}
 #' @return \item{crit}{A vector of integer that contains for each component
 #' the values of the analysis criteria across iterations.}
-#' @return \item{AVE_inner}{Average Variance Explained (AVE) of the
-#' inner model.}
 #' @title Internal function for computing the SGCCA parameters (SGCCA block
 #' components, outer weight vectors etc.)
 #' @noRd
@@ -137,11 +135,6 @@ sgccak <- function(A, C, sparsity = rep(1, length(A)),
     }
   }
 
-  AVE_inner <- sum(C * cor(Y)^2 / 2) / (sum(C) / 2) # AVE inner model
-
-  result <- list(
-    Y = Y, a = a, crit = crit,
-    AVE_inner = AVE_inner
-  )
+  result <- list(Y = Y, a = a, crit = crit)
   return(result)
 }

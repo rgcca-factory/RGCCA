@@ -17,8 +17,6 @@
 #' @return \item{a}{A list of \eqn{J} elements. Each element of the list is a
 #' matrix that contains a block weight vector associated with one block and
 #' one deflation stage.}
-#' @return \item{AVE_inner}{Average Variance Explained (AVE) of the
-#' inner model.}
 #' @return \item{crit}{A list of max(ncomp) elements. Each element
 #' (one per deflation stage) is a vector that contains the value of the RGCCA
 #' objective function across iterations.}
@@ -170,10 +168,6 @@ rgccak <- function(A, C, tau = rep(1, length(A)), scheme = "centroid",
     plot(crit, xlab = "iteration", ylab = "criteria")
   }
 
-  AVEinner <- sum(C * cor(Y)^2 / 2) / (sum(C) / 2)
-  result <- list(
-    Y = Y, a = a, crit = crit,
-    AVE_inner = AVEinner, tau = tau
-  )
+  result <- list(Y = Y, a = a, crit = crit, tau = tau)
   return(result)
 }
