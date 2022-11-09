@@ -62,7 +62,7 @@
 #' ###############
 #' # horizontal axis: First component of the first block
 #' # vertical axis: First component of the second block
-#' plot(fit.rgcca, type = "sample", block = 1:2, comp = 1, resp = status)
+#' plot(fit.rgcca, type = "sample", block = 1:2, comp = 1, response = status)
 #'
 #'
 #' ######################
@@ -74,7 +74,7 @@
 #'   tau = c(1, 1, 1, 0), superblock = TRUE
 #' )
 #'
-#' plot(fit.mcoa, type = "both", resp = status, overlap = FALSE)
+#' plot(fit.mcoa, type = "both", response = status)
 #' plot(fit.rgcca, type = "loadings")
 #' plot(fit.rgcca, type = "weight")
 #' plot(fit.rgcca, type = "sample")
@@ -176,6 +176,11 @@ plot.rgcca <- function(x, type = "weight", block = length(x$call$blocks),
         use = "pairwise.complete.obs"
       ), response = num_block)
 
+      idx <- apply(x$a[[block[1]]][, comp], 1, function(y) {
+        any(y != 0)
+      })
+      df <- df[idx, ]
+
       title <- ifelse(missing(title), "Correlation circle", title)
       plot_function <- plot_cor_circle
     },
@@ -190,6 +195,11 @@ plot.rgcca <- function(x, type = "weight", block = length(x$call$blocks),
           use = "pairwise.complete.obs"
         ), response = num_block)
       )
+
+      idx <- apply(x$a[[block[1]]][, comp], 1, function(y) {
+        any(y != 0)
+      })
+      df[[2]] <- df[[2]][idx, ]
 
       title <- ifelse(
         missing(title), toupper(names(x$call$blocks)[block[1]]), title
@@ -246,7 +256,7 @@ plot.rgcca <- function(x, type = "weight", block = length(x$call$blocks),
         response = num_block
       )
       df <- df[order(abs(df$x), decreasing = TRUE), ]
-      df <- df[seq(min(n_mark, NROW(df))), ]
+      df <- df[seq(min(n_mark, sum(df$x != 0))), ]
       df$y <- factor(df$y, levels = df$y, ordered = TRUE)
 
       title <- ifelse(missing(title), paste0(
