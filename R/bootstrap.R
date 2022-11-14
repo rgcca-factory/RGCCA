@@ -101,6 +101,9 @@ bootstrap <- function(rgcca_res, n_boot = 100,
       rgcca_res$a[-(J + 1)],
       function(x) unique(which(x != 0, arr.ind = TRUE)[, 1])
     )
+    if (!is.null(rgcca_res$call$disjunction)) {
+      keep_var[[rgcca_res$call$response]] <- 1
+    }
 
     new_block <- Map(function(x, y) x[, y, drop = FALSE],
       rgcca_res$call$raw, keep_var
@@ -114,7 +117,8 @@ bootstrap <- function(rgcca_res, n_boot = 100,
       tau = 1,
       scale = rgcca_res$call$scale,
       verbose = FALSE,
-      scale_block = rgcca_res$call$scale_block
+      scale_block = rgcca_res$call$scale_block,
+      response = rgcca_res$call$response
     )
   }
 

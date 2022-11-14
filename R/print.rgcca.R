@@ -54,6 +54,9 @@ print.rgcca <- function(x, ...) {
       x$a,
       function(a) apply(a, 2, function(l) sum(l != 0))
     )
+    if (!is.null(x$call$disjunction)) {
+      nb_selected_var[[x$call$response]] <- 1
+    }
     param <- "sparsity"
     if (!is.matrix(x$call$sparsity)) {
       for (i in seq_len(NCOL(x$call$connection))) {
