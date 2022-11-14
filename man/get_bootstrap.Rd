@@ -23,7 +23,9 @@ block-weight vectors ("weight", default) or block-loading vectors
 
 \item{comp}{A numeric vector indicating the components to consider.}
 
-\item{block}{A numeric vector indicating the blocks to consider.}
+\item{block}{A character equal to "all" (default) or a numeric corresponding
+to the block to plot. If "all", the variables from all the blocks are
+displayed.}
 
 \item{empirical}{A logical value indicating if the bootstrap confidence
 intervals and p-values are derived from the empirical distribution.

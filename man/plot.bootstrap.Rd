@@ -47,19 +47,19 @@ intervals and p-values are derived from the empirical distribution.
 
 \item{title}{A character string giving the title of the plot.}
 
-\item{cex}{An integer defining the size of the objects in the plot. Default
+\item{cex}{A numeric defining the size of the objects in the plot. Default
 is one.}
 
-\item{cex_sub}{An integer defining the font size of the subtitle. Default is
+\item{cex_sub}{A numeric defining the font size of the subtitle. Default is
 12 * cex.}
 
-\item{cex_main}{An integer defining the font size of the title. Default is
+\item{cex_main}{A numeric defining the font size of the title. Default is
 14 * cex.}
 
-\item{cex_lab}{An integer defining the font size of the labels. Default is
+\item{cex_lab}{A numeric defining the font size of the labels. Default is
 12 * cex.}
 
-\item{cex_point}{An integer defining the font size of the points. Default is
+\item{cex_point}{A numeric defining the font size of the points. Default is
 3 * cex.}
 
 \item{...}{additional graphical parameters}

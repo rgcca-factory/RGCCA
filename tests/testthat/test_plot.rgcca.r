@@ -38,4 +38,8 @@ test_that("plot.rgcca", {
   vdiffr::expect_doppelganger(
     "RGCCA loadings", plot.rgcca(fit.rgcca, type = "loadings", block = 1)
   )
+
+  vdiffr::expect_doppelganger(
+    "RGCCA loadings 2", plot.rgcca(fit.rgcca, type = "loadings")
+  )
 })

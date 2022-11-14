@@ -7,7 +7,7 @@
 \method{plot}{rgcca}(
   x,
   type = "weight",
-  block = length(x$call$blocks),
+  block = "all",
   comp = seq(2),
   response = as.factor(rep(1, NROW(x$Y[[1]]))),
   title = NULL,
@@ -28,7 +28,9 @@
 \item{type}{A character string: 'sample', 'weight', 'loadings', 'cor_circle',
 'both', 'ave' (see details).}
 
-\item{block}{A numeric vector indicating the blocks to consider.}
+\item{block}{A character equal to "all" (default) or a numeric corresponding
+to the block to plot. If "all", the variables from all the blocks are
+displayed.}
 
 \item{comp}{A numeric vector indicating the components to consider.}
 
@@ -36,19 +38,19 @@
 
 \item{title}{A character string giving the title of the plot.}
 
-\item{cex}{An integer defining the size of the objects in the plot. Default
+\item{cex}{A numeric defining the size of the objects in the plot. Default
 is one.}
 
-\item{cex_sub}{An integer defining the font size of the subtitle. Default is
+\item{cex_sub}{A numeric defining the font size of the subtitle. Default is
 12 * cex.}
 
-\item{cex_main}{An integer defining the font size of the title. Default is
+\item{cex_main}{A numeric defining the font size of the title. Default is
 14 * cex.}
 
-\item{cex_lab}{An integer defining the font size of the labels. Default is
+\item{cex_lab}{A numeric defining the font size of the labels. Default is
 12 * cex.}
 
-\item{cex_point}{An integer defining the font size of the points. Default is
+\item{cex_point}{A numeric defining the font size of the points. Default is
 3 * cex.}
 
 \item{n_mark}{An integer defining the maximum number of bars plotted in the
@@ -103,7 +105,7 @@ fit.rgcca <- rgcca(
 ###############
 # horizontal axis: First component of the first block
 # vertical axis: First component of the second block
-plot(fit.rgcca, type = "sample", block = 1:2, comp = 1, resp = status)
+plot(fit.rgcca, type = "sample", block = 1:2, comp = 1, response = status)
 
 
 ######################
@@ -115,7 +117,7 @@ fit.mcoa <- rgcca(
   tau = c(1, 1, 1, 0), superblock = TRUE
 )
 
-plot(fit.mcoa, type = "both", resp = status, overlap = FALSE)
+plot(fit.mcoa, type = "both", response = status)
 plot(fit.rgcca, type = "loadings")
 plot(fit.rgcca, type = "weight")
 plot(fit.rgcca, type = "sample")

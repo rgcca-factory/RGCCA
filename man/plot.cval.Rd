@@ -30,16 +30,16 @@ by the square roots of the number of folds.
 the boxes are given by the 5% and 95% quantiles.
 \item "points": box plots are removed and only the points are kept.}}
 
-\item{cex}{An integer defining the size of the objects in the plot. Default
+\item{cex}{A numeric defining the size of the objects in the plot. Default
 is one.}
 
-\item{cex_main}{An integer defining the font size of the title. Default is
+\item{cex_main}{A numeric defining the font size of the title. Default is
 14 * cex.}
 
-\item{cex_sub}{An integer defining the font size of the subtitle. Default is
+\item{cex_sub}{A numeric defining the font size of the subtitle. Default is
 12 * cex.}
 
-\item{cex_lab}{An integer defining the font size of the labels. Default is
+\item{cex_lab}{A numeric defining the font size of the labels. Default is
 12 * cex.}
 
 \item{display_order}{A logical value for ordering the variables.}

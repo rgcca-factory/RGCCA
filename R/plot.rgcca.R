@@ -4,19 +4,21 @@
 #' @param x A fitted RGCCA object (see \code{\link[RGCCA]{rgcca}})
 #' @param type A character string: 'sample', 'weight', 'loadings', 'cor_circle',
 #' 'both', 'ave' (see details).
-#' @param block A numeric vector indicating the blocks to consider.
+#' @param block A character equal to "all" (default) or a numeric corresponding
+#' to the block to plot. If "all", the variables from all the blocks are
+#' displayed.
 #' @param comp A numeric vector indicating the components to consider.
 #' @param response A vector coloring the points in the "sample" plot.
 #' @param title A character string giving the title of the plot.
-#' @param cex An integer defining the size of the objects in the plot. Default
+#' @param cex A numeric defining the size of the objects in the plot. Default
 #' is one.
-#' @param cex_sub An integer defining the font size of the subtitle. Default is
+#' @param cex_sub A numeric defining the font size of the subtitle. Default is
 #' 12 * cex.
-#' @param cex_main An integer defining the font size of the title. Default is
+#' @param cex_main A numeric defining the font size of the title. Default is
 #' 14 * cex.
-#' @param cex_lab An integer defining the font size of the labels. Default is
+#' @param cex_lab A numeric defining the font size of the labels. Default is
 #' 12 * cex.
-#' @param cex_point An integer defining the font size of the points. Default is
+#' @param cex_point A numeric defining the font size of the points. Default is
 #' 3 * cex.
 #' @param n_mark An integer defining the maximum number of bars plotted in the
 #' "weight" and "loadings" plots.
@@ -84,13 +86,69 @@
 #' @importFrom ggplot2 ggplot aes
 #' @importFrom rlang .data
 #' @export
-plot.rgcca <- function(x, type = "weight", block = length(x$call$blocks),
-                       comp = seq(2),
+plot.rgcca <- function(x, type = "weight", block = "all", comp = seq(2),
                        response = as.factor(rep(1, NROW(x$Y[[1]]))),
                        title = NULL, cex = 1, cex_sub = 12 * cex,
                        cex_main = 14 * cex, cex_lab = 12 * cex,
                        cex_point = 3 * cex, n_mark = 30,
                        colors = NULL, shapes = NULL, ...) {
+  ### Define data.frame generating functions
+  df_sample <- function(x, block, comp, response) {
+    data.frame(
+      x$Y[[block[1]]][, comp[1]],
+      x$Y[[block[2]]][, comp[2]],
+      response = response
+    )
+  }
+
+  df_cor <- function(x, block, comp, num_block, all_blocks) {
+    if (all_blocks) {
+      df <- data.frame(
+        x = do.call(rbind, lapply(seq_along(x$call$raw), function(j) cor(
+          x$call$blocks[[j]][rownames(x$Y[[j]]), ],
+          x$Y[[j]][, comp],
+          use = "pairwise.complete.obs"
+        ))),
+        response = num_block,
+        y = do.call(c, lapply(x$call$blocks[-block], colnames))
+      )
+    } else {
+      df <- data.frame(x = cor(
+        x$call$blocks[[block[1]]][rownames(x$Y[[block[1]]]), ],
+        x$Y[[block[1]]][, comp],
+        use = "pairwise.complete.obs"
+      ), response = num_block, y = colnames(x$call$blocks[[block[1]]]))
+    }
+
+    idx <- apply(x$a[[block[1]]][, comp, drop = FALSE], 1, function(y) {
+      any(y != 0)
+    })
+    return(df[idx, ])
+  }
+
+  df_weight <- function(x, block, comp, num_block) {
+    df <- data.frame(
+      x = x$a[[block[1]]][, comp[1]],
+      y = colnames(x$call$blocks[[block[1]]]),
+      response = num_block
+    )
+    df <- df[order(abs(df$x), decreasing = TRUE), ]
+    df <- df[seq(min(n_mark, sum(df$x != 0))), ]
+    df$y <- factor(df$y, levels = df$y, ordered = TRUE)
+    return(df)
+  }
+
+  df_AVE <- function(x) {
+    AVE <- x$AVE$AVE_X_cor
+    do.call(rbind, lapply(names(AVE), function(n) {
+      data.frame(
+        AVE = round(100 * AVE[[n]], digits = 1),
+        block = n,
+        comp = as.factor(seq(AVE[[n]]))
+      )
+    }))
+  }
+
   ### Perform checks and parse arguments
   stopifnot(is(x, "rgcca"))
   type <- tolower(type)
@@ -98,9 +156,6 @@ plot.rgcca <- function(x, type = "weight", block = length(x$call$blocks),
     "sample", "cor_circle", "both",
     "ave", "loadings", "weight"
   ))
-  lapply(c("cex", "cex_main", "cex_sub", "cex_point", "cex_lab"), function(i) {
-    check_integer(i, get(i))
-  })
   if (is.null(colors)) {
     colors <- c(
       "#999999", "#E69F00", "#56B4E9", "#009E73",
@@ -115,6 +170,25 @@ plot.rgcca <- function(x, type = "weight", block = length(x$call$blocks),
     check_integer("shapes", shapes, min = 0, max = 25, type = "vector")
   }
 
+  # If block is "all", leverage superblock strategy
+  if (identical(block, "all")) {
+    if (type %in% c("sample", "both", "cor_circle")) {
+      block <- c(1, 2)
+      message(paste0(
+        "block = \"all\" does not work with type = \"", type,
+        "\", so block has been replaced with c(1,2)."
+      ))
+      all_blocks <- FALSE
+    } else {
+      block <- length(x$call$raw) + 1
+      x$call$blocks[[block]] <- do.call(cbind, x$call$blocks)
+      x$a[[block]] <- do.call(rbind, x$a)
+      all_blocks <- TRUE
+    }
+  } else {
+    all_blocks <- FALSE
+  }
+
   # Duplicate comp and block if needed and make sure they take admissible values
   comp <- elongate_arg(comp, seq(2))[seq(2)]
   block <- elongate_arg(block, seq(2))[seq(2)]
@@ -125,9 +199,17 @@ plot.rgcca <- function(x, type = "weight", block = length(x$call$blocks),
   lapply(block, function(i) {
     check_blockx("block", i, x$call$blocks)
   })
-  Map(
-    function(y, z) check_compx(y, y, x$call$ncomp, z), comp, block
-  )
+  if (all_blocks) {
+    Map(
+      function(y, z) {
+        check_compx(y, y, x$call$ncomp, z)
+      }, comp, rep(seq_along(block - 1), each = length(comp))
+    )
+  } else {
+    Map(
+      function(y, z) check_compx(y, y, x$call$ncomp, z), comp, block
+    )
+  }
 
   if (missing(response)) {
     if (!is.null(x$call$response)) {
@@ -160,26 +242,13 @@ plot.rgcca <- function(x, type = "weight", block = length(x$call$blocks),
   switch(type,
     # Plot individuals in the projected space
     "sample" = {
-      df <- data.frame(
-        x$Y[[block[1]]][, comp[1]],
-        x$Y[[block[2]]][, comp[2]],
-        response = response
-      )
+      df <- df_sample(x, block, comp, response)
       title <- ifelse(missing(title), "Sample space", title)
       plot_function <- plot_sample
     },
     # Plot block columns on a correlation circle
     "cor_circle" = {
-      df <- data.frame(cor(
-        x$call$blocks[[block[1]]][rownames(x$Y[[block[1]]]), ],
-        x$Y[[block[1]]][, comp],
-        use = "pairwise.complete.obs"
-      ), response = num_block)
-
-      idx <- apply(x$a[[block[1]]][, comp], 1, function(y) {
-        any(y != 0)
-      })
-      df <- df[idx, ]
+      df <- df_cor(x, block, comp, num_block, all_blocks)
 
       title <- ifelse(missing(title), "Correlation circle", title)
       plot_function <- plot_cor_circle
@@ -188,18 +257,9 @@ plot.rgcca <- function(x, type = "weight", block = length(x$call$blocks),
     # a correlation circle
     "both" = {
       df <- list(
-        data.frame(x$Y[[block[1]]][, comp], response = response),
-        data.frame(cor(
-          x$call$blocks[[block[1]]][rownames(x$Y[[block[1]]]), ],
-          x$Y[[block[1]]][, comp],
-          use = "pairwise.complete.obs"
-        ), response = num_block)
+        df_sample(x, block, comp, response),
+        df_cor(x, block, comp, num_block, all_blocks)
       )
-
-      idx <- apply(x$a[[block[1]]][, comp], 1, function(y) {
-        any(y != 0)
-      })
-      df[[2]] <- df[[2]][idx, ]
 
       title <- ifelse(
         missing(title), toupper(names(x$call$blocks)[block[1]]), title
@@ -215,30 +275,15 @@ plot.rgcca <- function(x, type = "weight", block = length(x$call$blocks),
         "Corrected Average Variance Explained",
         "Average Variance Explained"
       )
-      AVE <- x$AVE$AVE_X_cor
-      df <- do.call(rbind, lapply(names(AVE), function(n) {
-        data.frame(
-          AVE = round(100 * AVE[[n]], digits = 1),
-          block = n,
-          comp = as.factor(seq(AVE[[n]]))
-        )
-      }))
+      df <- df_AVE(x)
 
       title <- ifelse(missing(title), default_title, title)
       plot_function <- plot_ave
     },
     # Plot the value associated with each individual in the projected space
     "loadings" = {
-      df <- data.frame(
-        x = cor(
-          x$call$blocks[[block[1]]],
-          x$Y[[block[1]]][, comp[1]],
-          use = "pairwise.complete.obs"
-        ),
-        y = colnames(x$call$blocks[[block[1]]]),
-        response = num_block
-      )
-      df <- df[order(abs(df$x), decreasing = TRUE), ]
+      df <- df_cor(x, block, comp, num_block, all_blocks)
+      df <- df[order(abs(df[, 1]), decreasing = TRUE), ]
       df <- df[seq(min(n_mark, NROW(df))), ]
       df$y <- factor(df$y, levels = df$y, ordered = TRUE)
 
@@ -250,14 +295,7 @@ plot.rgcca <- function(x, type = "weight", block = length(x$call$blocks),
     },
     # Plot the value associated with each projecting factor
     "weight" = {
-      df <- data.frame(
-        x = x$a[[block[1]]][, comp[1]],
-        y = colnames(x$call$blocks[[block[1]]]),
-        response = num_block
-      )
-      df <- df[order(abs(df$x), decreasing = TRUE), ]
-      df <- df[seq(min(n_mark, sum(df$x != 0))), ]
-      df$y <- factor(df$y, levels = df$y, ordered = TRUE)
+      df <- df_weight(x, block, comp, num_block)
 
       title <- ifelse(missing(title), paste0(
         "Block-weight vector: ",
