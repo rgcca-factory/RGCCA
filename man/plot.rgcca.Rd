@@ -8,7 +8,7 @@
   x,
   type = "weight",
   block = "all",
-  comp = seq(2),
+  comp = 1,
   response = as.factor(rep(1, NROW(x$Y[[1]]))),
   title = NULL,
   cex = 1,

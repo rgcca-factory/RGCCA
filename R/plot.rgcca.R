@@ -86,7 +86,7 @@
 #' @importFrom ggplot2 ggplot aes
 #' @importFrom rlang .data
 #' @export
-plot.rgcca <- function(x, type = "weight", block = "all", comp = seq(2),
+plot.rgcca <- function(x, type = "weight", block = "all", comp = 1,
                        response = as.factor(rep(1, NROW(x$Y[[1]]))),
                        title = NULL, cex = 1, cex_sub = 12 * cex,
                        cex_main = 14 * cex, cex_lab = 12 * cex,
@@ -181,8 +181,9 @@ plot.rgcca <- function(x, type = "weight", block = "all", comp = seq(2),
       all_blocks <- FALSE
     } else {
       block <- length(x$call$raw) + 1
-      x$call$blocks[[block]] <- do.call(cbind, x$call$blocks)
-      x$a[[block]] <- do.call(rbind, x$a)
+      x$call$blocks[[block]] <- do.call(cbind, x$call$blocks[-block])
+      x$a[[block]] <- do.call(rbind, x$a[-block])
+      names(x$call$blocks)[block] <- "All blocks"
       all_blocks <- TRUE
     }
   } else {

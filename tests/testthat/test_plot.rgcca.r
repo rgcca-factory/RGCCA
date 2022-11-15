@@ -12,19 +12,25 @@ fit.rgcca2 <- rgcca(blocks = blocks2, superblock = TRUE, tau = 1, ncomp = 4)
 
 test_that("plot.rgcca", {
   vdiffr::expect_doppelganger(
-    "RGCCA sample", plot.rgcca(fit.rgcca, type = "sample", block = 1)
+    "RGCCA sample", plot.rgcca(
+      fit.rgcca, type = "sample", block = seq(2), comp = 1
+    )
   )
 
   vdiffr::expect_doppelganger(
-    "RGCCA cor_circle", plot.rgcca(fit.rgcca, type = "cor_circle", block = 2)
+    "RGCCA cor_circle", plot.rgcca(
+      fit.rgcca, type = "cor_circle", block = 2, comp = seq(2)
+    )
   )
 
   vdiffr::expect_doppelganger(
-    "RGCCA both", plot.rgcca(fit.rgcca, type = "both", block = 1)
+    "RGCCA both", plot.rgcca(fit.rgcca, type = "both", block = 1, comp = seq(2))
   )
 
   vdiffr::expect_doppelganger(
-    "RGCCA both 2", plot.rgcca(fit.rgcca2, type = "both", block = 4)
+    "RGCCA both 2", plot.rgcca(
+      fit.rgcca2, type = "both", block = 4, comp = c(1, 4)
+    )
   )
 
   vdiffr::expect_doppelganger(
@@ -40,6 +46,6 @@ test_that("plot.rgcca", {
   )
 
   vdiffr::expect_doppelganger(
-    "RGCCA loadings 2", plot.rgcca(fit.rgcca, type = "loadings")
+    "RGCCA loadings 2", plot.rgcca(fit.rgcca2, type = "loadings")
   )
 })
