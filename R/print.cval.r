@@ -24,10 +24,10 @@ print.cval <- function(x, type = "sd", ...) {
       "quantile" = {
         middle_name <- "Median error"
         middle <- ymed
-        lower <- apply(x$cv, 1, quantile, 0.05)
-        upper <- apply(x$cv, 1, quantile, 0.95)
-        low_lim <- "2.5%"
-        up_lim <- "97.5%"
+        lower <- apply(x$cv, 1, quantile, 0.25)
+        upper <- apply(x$cv, 1, quantile, 0.75)
+        low_lim <- "Q1"
+        up_lim <- "Q3"
       },
       "sd" = {
         middle_name <- "Mean error"

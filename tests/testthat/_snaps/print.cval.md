@@ -26,9 +26,9 @@
       Validation: kfold with 5 folds and 1 run(s)) 
       Prediction model: lm 
       
-        Tuning parameters Median error  2.5% 97.5%
-      1       0.0/0.2/0.3        1.067 1.007 1.328
-      2       0.0/0.0/0.0        0.984 0.946 1.590
+        Tuning parameters Median error    Q1    Q3
+      1       0.0/0.2/0.3        1.067 1.021 1.129
+      2       0.0/0.0/0.0        0.984 0.947 1.274
       
       The best combination is: 0.0 0.2 0.3 for a mean CV error of 1.120 
 

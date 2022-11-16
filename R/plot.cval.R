@@ -16,7 +16,7 @@
 #' the boxes are given by the mean plus or minus the standard deviation divided
 #' by the square roots of the number of folds.
 #' \item "quantile": the middle bar corresponds to the median and limits of
-#' the boxes are given by the 5% and 95% quantiles.
+#' the boxes are given by the 25% and 75% quantiles.
 #' \item "points": box plots are removed and only the points are kept.}
 #' @examples
 #' data("Russett")
@@ -51,8 +51,8 @@ plot.cval <- function(x, type = "sd",
   switch(type,
     "quantile" = {
       middle <- ymed
-      lower <- apply(x$cv, 1, quantile, 0.05)
-      upper <- apply(x$cv, 1, quantile, 0.95)
+      lower <- apply(x$cv, 1, quantile, 0.25)
+      upper <- apply(x$cv, 1, quantile, 0.75)
     },
     "sd" = {
       middle <- ymean

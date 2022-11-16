@@ -27,7 +27,7 @@ the boxes are given by the mean plus or minus the standard deviation.
 the boxes are given by the mean plus or minus the standard deviation divided
 by the square roots of the number of folds.
 \item "quantile": the middle bar corresponds to the median and limits of
-the boxes are given by the 5% and 95% quantiles.
+the boxes are given by the 25% and 75% quantiles.
 \item "points": box plots are removed and only the points are kept.}}
 
 \item{cex}{A numeric defining the size of the objects in the plot. Default
