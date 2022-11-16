@@ -174,10 +174,6 @@ plot.rgcca <- function(x, type = "weight", block = "all", comp = 1,
   if (identical(block, "all")) {
     if (type %in% c("sample", "both", "cor_circle")) {
       block <- c(1, 2)
-      message(paste0(
-        "block = \"all\" does not work with type = \"", type,
-        "\", so block has been replaced with c(1,2)."
-      ))
       all_blocks <- FALSE
     } else {
       block <- length(x$call$raw) + 1

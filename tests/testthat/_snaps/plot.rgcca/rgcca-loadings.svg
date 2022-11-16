@@ -27,9 +27,13 @@
 </defs>
 <g clip-path='url(#cpNDEuNTN8NzIwLjAwfDI2LjcxfDU0Ny43Mw==)'>
 <rect x='41.53' y='26.71' width='678.47' height='521.01' style='stroke-width: 1.07; stroke: none; fill: #FFFFFF;' />
-<rect x='72.37' y='51.14' width='616.79' height='146.53' style='stroke-width: 1.07; stroke: none; stroke-linecap: square; stroke-linejoin: miter; fill: #56B4E9;' />
-<rect x='72.37' y='213.95' width='613.44' height='146.53' style='stroke-width: 1.07; stroke: none; stroke-linecap: square; stroke-linejoin: miter; fill: #59B4E7;' />
-<rect x='72.37' y='376.77' width='186.65' height='146.53' style='stroke-width: 1.07; stroke: none; stroke-linecap: square; stroke-linejoin: miter; fill: #E69F00;' />
+<circle cx='689.16' cy='124.40' r='1.95' style='stroke-width: 0.71; fill: #000000;' />
+<circle cx='685.81' cy='287.22' r='1.95' style='stroke-width: 0.71; fill: #000000;' />
+<circle cx='259.02' cy='450.04' r='1.95' style='stroke-width: 0.71; fill: #000000;' />
+<line x1='72.37' y1='124.40' x2='689.16' y2='124.40' style='stroke-width: 1.07; stroke-linecap: butt;' />
+<line x1='72.37' y1='287.22' x2='685.81' y2='287.22' style='stroke-width: 1.07; stroke-linecap: butt;' />
+<line x1='72.37' y1='450.04' x2='259.02' y2='450.04' style='stroke-width: 1.07; stroke-linecap: butt;' />
+<line x1='72.37' y1='547.73' x2='72.37' y2='26.71' style='stroke-width: 1.07; stroke-dasharray: 9.96,4.27; stroke-linecap: butt;' />
 </g>
 <g clip-path='url(#cpMC4wMHw3MjAuMDB8MC4wMHw1NzYuMDA=)'>
 <text x='36.60' y='454.17' text-anchor='end' style='font-size: 12.00px; font-style: italic; fill: #666666; font-family: sans;' textLength='20.68px' lengthAdjust='spacingAndGlyphs'>rent</text>

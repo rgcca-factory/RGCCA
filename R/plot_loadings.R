@@ -10,15 +10,20 @@ plot_loadings <- function(df, title, x, block, comp, theme_RGCCA,
   # Add colors depending on looking at superblock or regular blocks
   is_superblock <- block[1] > length(x$call$raw)
   if (is_superblock) {
-    p <- ggplot(df, aes(x = .data$x, y = .data$y, fill = .data$response)) +
-      ggplot2::scale_fill_manual(values = colors) +
-      ggplot2::labs(fill = "Block")
+    p <- ggplot(df, aes(x = .data$x, y = .data$y, color = .data$response)) +
+      ggplot2::scale_color_manual(values = colors) +
+      ggplot2::labs(color = "Block")
   } else {
-    p <- ggplot(df, aes(x = .data$x, y = .data$y, fill = .data$x)) +
-      ggplot2::scale_fill_gradient(low = colors[2], high = colors[3])
+    p <- ggplot(df, aes(x = .data$x, y = .data$y))
   }
   # Construct plot
-  p <- p + ggplot2::geom_bar(stat = "identity") +
+  p <- p +
+    ggplot2::geom_point() +
+    ggplot2::geom_linerange(aes(
+      xmin = 0,
+      xmax = .data$x
+    )) +
+    ggplot2::geom_vline(xintercept = 0, lty = "longdash") +
     theme_RGCCA +
     ggplot2::labs(title = title, x = "", y = "") +
     ggplot2::scale_y_discrete(limits = rev) +
