@@ -2,13 +2,14 @@
 #'
 #' Plot different outputs of the results obtained by a rgcca function
 #' @param x A fitted RGCCA object (see \code{\link[RGCCA]{rgcca}})
-#' @param type A character string: 'sample', 'weight', 'loadings', 'cor_circle',
+#' @param type A character string: 'samples', 'weights', 'loadings', 'cor_circle',
 #' 'both', 'ave' (see details).
 #' @param block A character equal to "all" (default) or a numeric corresponding
 #' to the block to plot. If "all", the variables from all the blocks are
 #' displayed.
 #' @param comp A numeric vector indicating the components to consider.
-#' @param response A vector coloring the points in the "sample" plot.
+#' @param response A vector coloring the points in the "samples" plot.
+#' @param display_order A logical value for ordering the variables.
 #' @param title A character string giving the title of the plot.
 #' @param cex A numeric defining the size of the objects in the plot. Default
 #' is one.
@@ -21,20 +22,20 @@
 #' @param cex_point A numeric defining the font size of the points. Default is
 #' 3 * cex.
 #' @param n_mark An integer defining the maximum number of bars plotted in the
-#' "weight" and "loadings" plots.
+#' "weights" and "loadings" plots.
 #' @param colors Colors used in the plots. Default is based on the
 #' colorblind-friendly palette recommended in ggplot.
-#' @param shapes Shapes used for the points in the "sample" and "cor_circle"
+#' @param shapes Shapes used for the points in the "samples" and "cor_circle"
 #' plots. Default is the first five shapes used in ggplot.
 #' @param ... additional graphical parameters
 #' @details
 #' \itemize{
-#' \item "sample" for sample plot. The blocks (block argument) and components
+#' \item "samples" for sample plot. The blocks (block argument) and components
 #' (comp) that will be used on the horizontal and the vertical axes to plot the
 #' individuals: (Y[[block[1]]][, comp[1]], Y[[block[2]]][,comp[2]]). Points can
 #' be colored according to the response argument. The colors of the points can
 #' be modified with the colors argument.
-#' \item "weight": barplot of the block weight vector for one
+#' \item "weights": barplot of the block weight vector for one
 #' specific block/component. The weights are sorted from the highest to
 #' the lowest and only the highest are displayed. The number of displayed
 #' weights can be set with n_marks.
@@ -64,7 +65,7 @@
 #' ###############
 #' # horizontal axis: First component of the first block
 #' # vertical axis: First component of the second block
-#' plot(fit.rgcca, type = "sample", block = 1:2, comp = 1, response = status)
+#' plot(fit.rgcca, type = "samples", block = 1:2, comp = 1, response = status)
 #'
 #'
 #' ######################
@@ -86,8 +87,9 @@
 #' @importFrom ggplot2 ggplot aes
 #' @importFrom rlang .data
 #' @export
-plot.rgcca <- function(x, type = "weight", block = "all", comp = 1,
+plot.rgcca <- function(x, type = "weights", block = "all", comp = 1,
                        response = as.factor(rep(1, NROW(x$Y[[1]]))),
+                       display_order = TRUE,
                        title = NULL, cex = 1, cex_sub = 12 * cex,
                        cex_main = 14 * cex, cex_lab = 12 * cex,
                        cex_point = 3 * cex, n_mark = 30,
@@ -126,13 +128,15 @@ plot.rgcca <- function(x, type = "weight", block = "all", comp = 1,
     return(df[idx, ])
   }
 
-  df_weight <- function(x, block, comp, num_block) {
+  df_weight <- function(x, block, comp, num_block, display_order) {
     df <- data.frame(
       x = x$a[[block[1]]][, comp[1]],
       y = colnames(x$call$blocks[[block[1]]]),
       response = num_block
     )
-    df <- df[order(abs(df$x), decreasing = TRUE), ]
+    if (display_order) {
+      df <- df[order(abs(df$x), decreasing = TRUE), ]
+    }
     df <- df[seq(min(n_mark, sum(df$x != 0))), ]
     df$y <- factor(df$y, levels = df$y, ordered = TRUE)
     return(df)
@@ -152,9 +156,9 @@ plot.rgcca <- function(x, type = "weight", block = "all", comp = 1,
   ### Perform checks and parse arguments
   stopifnot(is(x, "rgcca"))
   type <- tolower(type)
-  match.arg(type, c(
-    "sample", "cor_circle", "both",
-    "ave", "loadings", "weight"
+  type <- match.arg(type, c(
+    "samples", "cor_circle", "both",
+    "ave", "loadings", "weights"
   ))
   if (is.null(colors)) {
     colors <- c(
@@ -172,7 +176,7 @@ plot.rgcca <- function(x, type = "weight", block = "all", comp = 1,
 
   # If block is "all", leverage superblock strategy
   if (identical(block, "all")) {
-    if (type %in% c("sample", "both", "cor_circle")) {
+    if (type %in% c("samples", "both", "cor_circle")) {
       block <- c(1, 2)
       all_blocks <- FALSE
     } else {
@@ -191,7 +195,7 @@ plot.rgcca <- function(x, type = "weight", block = "all", comp = 1,
   block <- elongate_arg(block, seq(2))[seq(2)]
 
   if (type == "ave") comp <- rep(1, 2)
-  if (type %in% c("weight", "loadings")) comp <- comp[1]
+  if (type %in% c("weights", "loadings")) comp <- comp[1]
 
   lapply(block, function(i) {
     check_blockx("block", i, x$call$blocks)
@@ -238,7 +242,7 @@ plot.rgcca <- function(x, type = "weight", block = "all", comp = 1,
 
   switch(type,
     # Plot individuals in the projected space
-    "sample" = {
+    "samples" = {
       df <- df_sample(x, block, comp, response)
       title <- ifelse(missing(title), "Sample space", title)
       plot_function <- plot_sample
@@ -280,7 +284,9 @@ plot.rgcca <- function(x, type = "weight", block = "all", comp = 1,
     # Plot the value associated with each individual in the projected space
     "loadings" = {
       df <- df_cor(x, block, comp, num_block, all_blocks)
-      df <- df[order(abs(df[, 1]), decreasing = TRUE), ]
+      if (display_order) {
+        df <- df[order(abs(df[, 1]), decreasing = TRUE), ]
+      }
       df <- df[seq(min(n_mark, NROW(df))), ]
       df$y <- factor(df$y, levels = df$y, ordered = TRUE)
 
@@ -291,8 +297,8 @@ plot.rgcca <- function(x, type = "weight", block = "all", comp = 1,
       plot_function <- plot_loadings
     },
     # Plot the value associated with each projecting factor
-    "weight" = {
-      df <- df_weight(x, block, comp, num_block)
+    "weights" = {
+      df <- df_weight(x, block, comp, num_block, display_order)
 
       title <- ifelse(missing(title), paste0(
         "Block-weight vector: ",

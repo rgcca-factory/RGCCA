@@ -6,9 +6,8 @@
 #' @inheritParams plot.rgcca
 #' @param b A fitted bootstrap object (see  \code{\link[RGCCA]{bootstrap}})
 #' @param type Character string indicating the bootstrapped object to print:
-#' block-weight vectors ("weight", default) or block-loading vectors
+#' block-weight vectors ("weights", default) or block-loading vectors
 #' ("loadings").
-#' @param display_order A logical value for ordering the variables
 #' @param empirical A logical value indicating if the bootstrap confidence
 #' intervals and p-values are derived from the empirical distribution.
 #' (defaut: TRUE)
@@ -67,10 +66,9 @@
 #' @seealso \code{\link[RGCCA]{bootstrap}},
 #' \code{\link[RGCCA]{plot.bootstrap}},
 #' \code{\link[RGCCA]{print.bootstrap}}
-get_bootstrap <- function(b, type = "weight", comp = 1,
+get_bootstrap <- function(b, type = "weights", comp = 1,
                           block = 1,
                           empirical = TRUE,
-                          display_order = TRUE,
                           adj.method = "fdr") {
   ### Auxiliary functions to compute statistics
   empirical_statistics <- function(x, y, std) {
@@ -113,7 +111,7 @@ get_bootstrap <- function(b, type = "weight", comp = 1,
   check_compx("comp", comp, b$rgcca$call$ncomp, block)
 
   ### Get bootstrap object and estimate
-  if (type == "weight") {
+  if (type == "weights") {
     b$bootstrap <- b$bootstrap$W
   } else {
     b$bootstrap <- b$bootstrap$L
@@ -121,7 +119,7 @@ get_bootstrap <- function(b, type = "weight", comp = 1,
 
   bootstrapped <- b$bootstrap[[comp]][[block]]
 
-  if (type == "weight") {
+  if (type == "weights") {
     estimate <- b$rgcca$a[[block]][, comp]
   } else {
     estimate <- drop(cor(b$rgcca$call$blocks[[block]],
@@ -134,7 +132,7 @@ get_bootstrap <- function(b, type = "weight", comp = 1,
   mean <- apply(bootstrapped, 1, function(x) mean(x, na.rm = TRUE))
   tail <- qnorm(1 - .05 / 2)
 
-  if (type == "weight") {
+  if (type == "weights") {
     std <- apply(bootstrapped, 1, function(x) sd(x, na.rm = TRUE))
     if (empirical) {
       statistics <- empirical_statistics(bootstrapped, estimate, std)
@@ -163,10 +161,6 @@ get_bootstrap <- function(b, type = "weight", comp = 1,
     pval = statistics$p.vals,
     adjust.pval = p.adjust(statistics$p.vals, method = adj.method)
   )
-
-  if (display_order) {
-    df <- df[order(abs(df$estimate), decreasing = TRUE), ]
-  }
 
   return(df)
 }

@@ -7,17 +7,13 @@
 #' @inheritParams plot.rgcca
 #' @param x A fitted bootstrap object (see \code{\link[RGCCA]{bootstrap}})
 #' @param type Character string indicating the bootstrapped object to plot:
-#' block-weight vectors ("weight", default) or block-loading vectors
+#' block-weight vectors ("weights", default) or block-loading vectors
 #' ("loadings").
 #' @param empirical A logical value indicating if the bootstrap confidence
 #' intervals and p-values are derived from the empirical distribution.
 #' (defaut: TRUE)
-#' @param display_order A logical value for ordering the variables.
 #' @param n_mark An integer defining the maximum number of variables plotted.
 #' @param show_sign A logical for showing significance levels.
-#' @param block A character equal to "all" (default) or a numeric corresponding
-#' to the block to plot. If "all", the variables from all the blocks are
-#' displayed.
 #'
 #' @examples
 #' data("Russett")
@@ -31,15 +27,16 @@
 #' plot(fit.boot, type = "weight", block = 1, comp = 1)
 #' @export
 plot.bootstrap <- function(x, block = "all",
-                           comp = 1, type = "weight",
+                           comp = 1, type = "weights",
                            empirical = TRUE, n_mark = 30,
                            display_order = TRUE,
                            show_sign = TRUE, title = NULL,
                            cex = 1, cex_sub = 12 * cex,
                            cex_main = 14 * cex, cex_lab = 12 * cex,
-                           cex_point = 3 * cex, ...) {
+                           cex_point = 3 * cex, colors = NULL, ...) {
   ### Perform checks and parse arguments
   stopifnot(is(x, "bootstrap"))
+  type <- match.arg(type, c("weights", "loadings"))
   if (!block %in% c("all", seq_along(x$rgcca$call$raw))) {
     stop_rgcca(
       "block must be equal to \"all\" or an integer between 1 and ",
@@ -47,6 +44,15 @@ plot.bootstrap <- function(x, block = "all",
     )
   }
   check_integer("n_mark", n_mark)
+
+  if (is.null(colors)) {
+    colors <- c(
+      "#999999", "#E69F00", "#56B4E9", "#009E73",
+      "#F0E442", "#0072B2", "#D55E00", "#CC79A7"
+    )
+  } else {
+    check_colors(colors)
+  }
 
   ### Build data frame
   if (block == "all") {
@@ -57,10 +63,14 @@ plot.bootstrap <- function(x, block = "all",
           b = x, type = type,
           block = b,
           comp = comp,
-          empirical = empirical,
-          display_order = display_order
+          empirical = empirical
         )
       }
+    ))
+    df$response <- as.factor(unlist(
+      lapply(seq_along(x$rgcca$call$raw), function(j) {
+        rep(names(x$rgcca$call$blocks)[j], NCOL(x$rgcca$call$blocks[[j]]))
+      })
     ))
   } else {
     df <- get_bootstrap(
@@ -68,9 +78,12 @@ plot.bootstrap <- function(x, block = "all",
       type = type,
       comp,
       block = block,
-      empirical = empirical,
-      display_order = display_order
+      empirical = empirical
     )
+    df$response <- NA
+  }
+  if (display_order) {
+    df <- df[order(abs(df$estimate), decreasing = TRUE), ]
   }
   df <- df[df[, "sd"] != 0, ]
 
@@ -105,16 +118,24 @@ plot.bootstrap <- function(x, block = "all",
   )
 
   ### Construct plot
-  p <- ggplot(
-    df,
-    aes(x = .data$order, y = .data$estimate)
-  ) +
-    ggplot2::geom_point() +
+  if (block == "all") {
+    p <- ggplot(
+      df,
+      aes(x = .data$order, y = .data$estimate, color = .data$response)
+    ) +
+      ggplot2::scale_color_manual(values = colors) +
+      ggplot2::labs(color = "Block")
+  } else {
+    p <- ggplot(df, aes(x = .data$order, y = .data$estimate))
+  }
+
+  p <- p +
+    ggplot2::geom_point(size = .6 * cex_point) +
     ggplot2::geom_errorbar(aes(
       ymin = .data$lower_bound,
       ymax = .data$upper_bound,
-      width = 0.1
-    )) +
+      width = .2 * cex_point
+    ), size = .2 * cex_point) +
     ggplot2::coord_flip() +
     theme_perso(cex, cex_main, cex_sub, cex_lab) +
     ggplot2::labs(title = title, x = "", y = "") +
@@ -140,7 +161,8 @@ plot.bootstrap <- function(x, block = "all",
     ggplot2::geom_hline(yintercept = 0, lty = "longdash")
   if (show_sign) {
     p <- p + ggplot2::geom_text(
-      aes(label = .data$sign), nudge_x = 0.1, size = 2 * cex_point
+      aes(label = .data$sign),
+      nudge_x = 0.1, size = 2 * cex_point, show.legend = FALSE
     )
   }
 

@@ -6,10 +6,11 @@
 \usage{
 \method{plot}{rgcca}(
   x,
-  type = "weight",
+  type = "weights",
   block = "all",
   comp = 1,
   response = as.factor(rep(1, NROW(x$Y[[1]]))),
+  display_order = TRUE,
   title = NULL,
   cex = 1,
   cex_sub = 12 * cex,
@@ -25,7 +26,7 @@
 \arguments{
 \item{x}{A fitted RGCCA object (see \code{\link[RGCCA]{rgcca}})}
 
-\item{type}{A character string: 'sample', 'weight', 'loadings', 'cor_circle',
+\item{type}{A character string: 'samples', 'weights', 'loadings', 'cor_circle',
 'both', 'ave' (see details).}
 
 \item{block}{A character equal to "all" (default) or a numeric corresponding
@@ -34,7 +35,9 @@ displayed.}
 
 \item{comp}{A numeric vector indicating the components to consider.}
 
-\item{response}{A vector coloring the points in the "sample" plot.}
+\item{response}{A vector coloring the points in the "samples" plot.}
+
+\item{display_order}{A logical value for ordering the variables.}
 
 \item{title}{A character string giving the title of the plot.}
 
@@ -54,12 +57,12 @@ is one.}
 3 * cex.}
 
 \item{n_mark}{An integer defining the maximum number of bars plotted in the
-"weight" and "loadings" plots.}
+"weights" and "loadings" plots.}
 
 \item{colors}{Colors used in the plots. Default is based on the
 colorblind-friendly palette recommended in ggplot.}
 
-\item{shapes}{Shapes used for the points in the "sample" and "cor_circle"
+\item{shapes}{Shapes used for the points in the "samples" and "cor_circle"
 plots. Default is the first five shapes used in ggplot.}
 
 \item{...}{additional graphical parameters}
@@ -69,12 +72,12 @@ Plot different outputs of the results obtained by a rgcca function
 }
 \details{
 \itemize{
-\item "sample" for sample plot. The blocks (block argument) and components
+\item "samples" for sample plot. The blocks (block argument) and components
 (comp) that will be used on the horizontal and the vertical axes to plot the
 individuals: (Y[[block[1]]][, comp[1]], Y[[block[2]]][,comp[2]]). Points can
 be colored according to the response argument. The colors of the points can
 be modified with the colors argument.
-\item "weight": barplot of the block weight vector for one
+\item "weights": barplot of the block weight vector for one
 specific block/component. The weights are sorted from the highest to
 the lowest and only the highest are displayed. The number of displayed
 weights can be set with n_marks.
@@ -105,7 +108,7 @@ fit.rgcca <- rgcca(
 ###############
 # horizontal axis: First component of the first block
 # vertical axis: First component of the second block
-plot(fit.rgcca, type = "sample", block = 1:2, comp = 1, response = status)
+plot(fit.rgcca, type = "samples", block = 1:2, comp = 1, response = status)
 
 
 ######################

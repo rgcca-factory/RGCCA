@@ -50,7 +50,7 @@
       
       The factorial scheme is used.
       
-      Extracted statistics on the block-loadings vectors from 2 bootstrap samples 
+      Extracted statistics on the block-loading vectors from 2 bootstrap samples 
       Component: 1 
              estimate       mean         sd lower_bound upper_bound bootstrap_ratio
       gini  0.9802706  0.9751404 0.11875857   0.9712584   0.9790224       19.404415

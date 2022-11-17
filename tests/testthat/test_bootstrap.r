@@ -60,7 +60,7 @@ blocks[[1]][4, ] <- NA
 resRGCCA <- rgcca(blocks, ncomp = c(2, 2, 2), superblock = FALSE)
 set.seed(seed = 18)
 resBootstrap <- bootstrap(rgcca = resRGCCA, n_boot = 2, n_cores = 1)
-select_var <- get_bootstrap(resBootstrap, display_order = TRUE, block = 3)
+select_var <- get_bootstrap(resBootstrap, block = 3)
 test_that("test_bootstrap_na_values", {
   expect_equal(
     select_var["demostab", "mean"],

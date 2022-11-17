@@ -4,13 +4,13 @@
 \alias{print.bootstrap}
 \title{Print bootstrap}
 \usage{
-\method{print}{bootstrap}(x, type = "weight", empirical = TRUE, display_order = FALSE, ...)
+\method{print}{bootstrap}(x, type = "weights", empirical = TRUE, display_order = FALSE, ...)
 }
 \arguments{
 \item{x}{A fitted bootstrap object (see \code{\link[RGCCA]{bootstrap}})}
 
 \item{type}{Character string indicating the bootstrapped object to print:
-block-weight vectors ("weight", default) or block-loading vectors
+block-weight vectors ("weights", default) or block-loading vectors
 ("loadings").}
 
 \item{empirical}{A logical value indicating if the bootstrap confidence

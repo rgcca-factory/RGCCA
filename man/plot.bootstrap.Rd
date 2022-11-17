@@ -8,7 +8,7 @@
   x,
   block = "all",
   comp = 1,
-  type = "weight",
+  type = "weights",
   empirical = TRUE,
   n_mark = 30,
   display_order = TRUE,
@@ -19,6 +19,7 @@
   cex_main = 14 * cex,
   cex_lab = 12 * cex,
   cex_point = 3 * cex,
+  colors = NULL,
   ...
 )
 }
@@ -32,7 +33,7 @@ displayed.}
 \item{comp}{A numeric vector indicating the components to consider.}
 
 \item{type}{Character string indicating the bootstrapped object to plot:
-block-weight vectors ("weight", default) or block-loading vectors
+block-weight vectors ("weights", default) or block-loading vectors
 ("loadings").}
 
 \item{empirical}{A logical value indicating if the bootstrap confidence
@@ -61,6 +62,9 @@ is one.}
 
 \item{cex_point}{A numeric defining the font size of the points. Default is
 3 * cex.}
+
+\item{colors}{Colors used in the plots. Default is based on the
+colorblind-friendly palette recommended in ggplot.}
 
 \item{...}{additional graphical parameters}
 }

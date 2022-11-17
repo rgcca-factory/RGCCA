@@ -27,24 +27,24 @@
 </defs>
 <g clip-path='url(#cpNDEuNTN8NzIwLjAwfDQxLjgzfDU0Ny43Mw==)'>
 <rect x='41.53' y='41.83' width='678.47' height='505.89' style='stroke-width: 1.07; stroke: none; fill: #FFFFFF;' />
-<circle cx='687.03' cy='75.78' r='1.95' style='stroke-width: 0.71; fill: #000000;' />
-<circle cx='686.09' cy='294.78' r='1.95' style='stroke-width: 0.71; fill: #000000;' />
-<circle cx='463.75' cy='513.78' r='1.95' style='stroke-width: 0.71; fill: #000000;' />
-<polyline points='689.16,86.73 689.16,64.83 ' style='stroke-width: 1.07; stroke-linecap: butt;' />
-<polyline points='689.16,75.78 410.47,75.78 ' style='stroke-width: 1.07; stroke-linecap: butt;' />
-<polyline points='410.47,86.73 410.47,64.83 ' style='stroke-width: 1.07; stroke-linecap: butt;' />
-<polyline points='686.36,305.73 686.36,283.83 ' style='stroke-width: 1.07; stroke-linecap: butt;' />
-<polyline points='686.36,294.78 434.42,294.78 ' style='stroke-width: 1.07; stroke-linecap: butt;' />
-<polyline points='434.42,305.73 434.42,283.83 ' style='stroke-width: 1.07; stroke-linecap: butt;' />
-<polyline points='601.70,524.73 601.70,502.83 ' style='stroke-width: 1.07; stroke-linecap: butt;' />
-<polyline points='601.70,513.78 72.37,513.78 ' style='stroke-width: 1.07; stroke-linecap: butt;' />
-<polyline points='72.37,524.73 72.37,502.83 ' style='stroke-width: 1.07; stroke-linecap: butt;' />
+<circle cx='687.03' cy='117.89' r='2.27' style='stroke-width: 0.71; fill: #000000;' />
+<circle cx='686.09' cy='294.78' r='2.27' style='stroke-width: 0.71; fill: #000000;' />
+<circle cx='463.75' cy='471.66' r='2.27' style='stroke-width: 0.71; fill: #000000;' />
+<polyline points='689.16,170.96 689.16,64.83 ' style='stroke-width: 1.28; stroke-linecap: butt;' />
+<polyline points='689.16,117.89 410.47,117.89 ' style='stroke-width: 1.28; stroke-linecap: butt;' />
+<polyline points='410.47,170.96 410.47,64.83 ' style='stroke-width: 1.28; stroke-linecap: butt;' />
+<polyline points='686.36,347.85 686.36,241.71 ' style='stroke-width: 1.28; stroke-linecap: butt;' />
+<polyline points='686.36,294.78 434.42,294.78 ' style='stroke-width: 1.28; stroke-linecap: butt;' />
+<polyline points='434.42,347.85 434.42,241.71 ' style='stroke-width: 1.28; stroke-linecap: butt;' />
+<polyline points='601.70,524.73 601.70,418.60 ' style='stroke-width: 1.28; stroke-linecap: butt;' />
+<polyline points='601.70,471.66 72.37,471.66 ' style='stroke-width: 1.28; stroke-linecap: butt;' />
+<polyline points='72.37,524.73 72.37,418.60 ' style='stroke-width: 1.28; stroke-linecap: butt;' />
 <line x1='309.18' y1='547.73' x2='309.18' y2='41.83' style='stroke-width: 1.07; stroke-dasharray: 9.96,4.27; stroke-linecap: butt;' />
 </g>
 <g clip-path='url(#cpMC4wMHw3MjAuMDB8MC4wMHw1NzYuMDA=)'>
-<text x='36.60' y='79.91' text-anchor='end' style='font-size: 12.00px; font-style: italic; fill: #666666; font-family: sans;' textLength='24.00px' lengthAdjust='spacingAndGlyphs'>farm</text>
+<text x='36.60' y='122.02' text-anchor='end' style='font-size: 12.00px; font-style: italic; fill: #666666; font-family: sans;' textLength='24.00px' lengthAdjust='spacingAndGlyphs'>farm</text>
 <text x='36.60' y='298.91' text-anchor='end' style='font-size: 12.00px; font-style: italic; fill: #666666; font-family: sans;' textLength='18.68px' lengthAdjust='spacingAndGlyphs'>gini</text>
-<text x='36.60' y='517.91' text-anchor='end' style='font-size: 12.00px; font-style: italic; fill: #666666; font-family: sans;' textLength='20.68px' lengthAdjust='spacingAndGlyphs'>rent</text>
+<text x='36.60' y='475.79' text-anchor='end' style='font-size: 12.00px; font-style: italic; fill: #666666; font-family: sans;' textLength='20.68px' lengthAdjust='spacingAndGlyphs'>rent</text>
 <text x='117.37' y='560.92' text-anchor='middle' style='font-size: 12.00px; font-style: italic; fill: #666666; font-family: sans;' textLength='20.68px' lengthAdjust='spacingAndGlyphs'>-0.5</text>
 <text x='309.18' y='560.92' text-anchor='middle' style='font-size: 12.00px; font-style: italic; fill: #666666; font-family: sans;' textLength='16.68px' lengthAdjust='spacingAndGlyphs'>0.0</text>
 <text x='500.99' y='560.92' text-anchor='middle' style='font-size: 12.00px; font-style: italic; fill: #666666; font-family: sans;' textLength='16.68px' lengthAdjust='spacingAndGlyphs'>0.5</text>

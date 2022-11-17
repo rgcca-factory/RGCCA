@@ -37,7 +37,7 @@ plot.cval <- function(x, type = "sd",
                       display_order = TRUE, ...) {
   ### Perform checks and parse params
   stopifnot(is(x, "cval"))
-  match.arg(type, c("quantile", "sd", "stderr", "points"))
+  type <- match.arg(type, c("quantile", "sd", "stderr", "points"))
   for (i in c("cex", "cex_main", "cex_sub", "cex_lab")) {
     check_integer(i, get(i))
   }
