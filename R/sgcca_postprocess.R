@@ -1,7 +1,9 @@
 #' Function to postprocess the SGCCA variables
 #'
 #' @noRd
-sgcca_postprocess <- function(A, a, Y, g, na.rm, sparsity, tol) {
+sgcca_postprocess <- function(
+    A, a, Y, g, na.rm, sparsity, tol, response, disjunction
+  ) {
   pjs <- vapply(A, NCOL, FUN.VALUE = 1L)
 
   # check for parity of g
@@ -15,6 +17,9 @@ sgcca_postprocess <- function(A, a, Y, g, na.rm, sparsity, tol) {
   }
 
   l2_sat <- vapply(a, function(x) norm(x, "2"), FUN.VALUE = 1.0)
+  if (isTRUE(disjunction)) {
+    l2_sat <- l2_sat[-response]
+  }
   if (max(abs(l2_sat - 1)) > tol) {
     for (i in which(abs(l2_sat - 1) > tol)) {
       if (l2_sat[i] < .Machine$double.eps) {

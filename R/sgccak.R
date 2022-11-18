@@ -15,7 +15,8 @@
 sgccak <- function(A, C, sparsity = rep(1, length(A)),
                    scheme = "centroid", tol = 1e-08,
                    init = "svd", bias = TRUE, verbose = FALSE,
-                   quiet = FALSE, na.rm = TRUE, n_iter_max = 1000) {
+                   quiet = FALSE, na.rm = TRUE, response = NULL,
+                   disjunction = NULL, n_iter_max = 1000) {
   if (is.function(scheme)) {
     g <- scheme
   } else {
@@ -35,7 +36,9 @@ sgccak <- function(A, C, sparsity = rep(1, length(A)),
   dg <- Deriv::Deriv(g, env = parent.frame())
 
   ### Initialization
-  init_object <- sgcca_init(A, init, bias, na.rm, sparsity)
+  init_object <- sgcca_init(
+    A, init, bias, na.rm, sparsity, response, disjunction
+  )
   a <- init_object$a
   Y <- init_object$Y
 
@@ -46,7 +49,7 @@ sgccak <- function(A, C, sparsity = rep(1, length(A)),
 
   repeat {
     update_object <- sgcca_update(
-      A, bias, na.rm, sparsity, dg, C, a, Y, init_object
+      A, bias, na.rm, sparsity, response, disjunction, dg, C, a, Y, init_object
     )
     a <- update_object$a
     Y <- update_object$Y
@@ -95,6 +98,8 @@ sgccak <- function(A, C, sparsity = rep(1, length(A)),
     plot(crit, xlab = "iteration", ylab = "criteria")
   }
 
-  result <- sgcca_postprocess(A, a, Y, g, na.rm, sparsity, tol)
+  result <- sgcca_postprocess(
+    A, a, Y, g, na.rm, sparsity, tol, response, disjunction
+  )
   return(list(Y = result$Y, a = result$a, crit = crit))
 }

@@ -179,7 +179,7 @@ plot.rgcca <- function(x, type = "weights", block = seq_along(x$call$raw),
       block <- block[seq(2)]
     },
     "ave" = {
-      comp <- rep(1, 2)
+      comp <- 1
     },
     "loadings" = {
       block <- unique(block)

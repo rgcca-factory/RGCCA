@@ -39,6 +39,8 @@
 #' (Tenenhaus et al, 2005).
 #' @inheritParams rgcca
 #' @param na.rm If TRUE, runs rgcca only on available data.
+#' @param disjunction If TRUE, the response block is a one-hot encoded
+#' qualitative block.
 #' @return \item{Y}{A list of \eqn{J} elements. Each element of the list is a
 #' matrix that contains the RGCCA block components for the corresponding block.}
 #' @return \item{a}{A list of \eqn{J} elements. Each element of the list \eqn{a}
@@ -177,7 +179,7 @@ rgccad <- function(blocks, connection = 1 - diag(length(blocks)),
                    ncomp = rep(1, length(blocks)), scheme = "centroid",
                    init = "svd", bias = TRUE, tol = 1e-08, verbose = TRUE,
                    na.rm = TRUE, quiet = FALSE, superblock = FALSE,
-                   response = NULL, n_iter_max = 1000) {
+                   response = NULL, disjunction = NULL, n_iter_max = 1000) {
   update_col_n <- function(x, y, n) {
     x[, n] <- y
     return(x)

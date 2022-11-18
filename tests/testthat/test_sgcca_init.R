@@ -10,7 +10,9 @@ verify_norm_constraint <- function(a, const, tol) {
 verify <- function(A, sparsity, init = "svd", tol = 1e-14) {
   pjs <- vapply(A, ncol, FUN.VALUE = integer(1L))
   const <- sparsity * pjs
-  init_object <- sgcca_init(A, init, TRUE, TRUE, sparsity)
+  init_object <- sgcca_init(
+    A, init, TRUE, TRUE, sparsity, response = NULL, disjunction = NULL
+  )
   verify_norm_constraint(init_object$a, const, tol)
 }
 

@@ -372,6 +372,7 @@ rgcca <- function(blocks, method = "rgcca",
     na.rm = na.rm,
     superblock = opt$superblock,
     response = opt$response,
+    disjunction = disjunction,
     n_iter_max = n_iter_max
   )
   gcca_args[[opt$param]] <- opt$penalty

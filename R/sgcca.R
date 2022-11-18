@@ -22,6 +22,7 @@
 #' component. Moreover, we stress that the numbers of components per block
 #' could differ from one block to another.
 #' @inheritParams rgcca
+#' @inheritParams rgccad
 #' @param na.rm If TRUE, runs sgcca only on available data.
 #' @return \item{Y}{A list of \eqn{J} elements. Each element of \eqn{Y} is a
 #' matrix that contains the analysis components for the corresponding block.}
@@ -143,7 +144,8 @@ sgcca <- function(blocks, connection = 1 - diag(length(blocks)),
                   ncomp = rep(1, length(blocks)), scheme = "centroid",
                   init = "svd", bias = TRUE, tol = .Machine$double.eps,
                   verbose = FALSE, quiet = FALSE, na.rm = TRUE,
-                  superblock = FALSE, response = NULL, n_iter_max = 1000) {
+                  superblock = FALSE, response = NULL,
+                  disjunction = NULL, n_iter_max = 1000) {
   update_col_n <- function(x, y, n) {
     x[, n] <- y
     return(x)
@@ -197,7 +199,9 @@ sgcca <- function(blocks, connection = 1 - diag(length(blocks)),
     gcca_result <- sgccak(R, connection,
       sparsity = sparsity[n, ], scheme = scheme,
       init = init, bias = bias, tol = tol,
-      verbose = verbose, na.rm = na.rm, quiet = quiet, n_iter_max = n_iter_max
+      verbose = verbose, na.rm = na.rm, quiet = quiet,
+      response = response, disjunction = disjunction,
+      n_iter_max = n_iter_max
     )
 
     # Store crit

@@ -18,6 +18,7 @@ rgccad(
   quiet = FALSE,
   superblock = FALSE,
   response = NULL,
+  disjunction = NULL,
   n_iter_max = 1000
 )
 }
@@ -76,6 +77,9 @@ algorithm is reported while computing.}
 \item{response}{Numerical value giving the position of the response block.
 When the response argument is filled the supervised mode is automatically
 activated.}
+
+\item{disjunction}{If TRUE, the response block is a one-hot encoded
+qualitative block.}
 
 \item{n_iter_max}{Integer giving the algorithm's maximum number of
 iterations.}
