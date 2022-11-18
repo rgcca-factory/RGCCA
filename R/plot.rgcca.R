@@ -183,7 +183,7 @@ plot.rgcca <- function(x, type = "weights", block = seq_along(x$call$raw),
       block <- block[1]
     },
     "both" = {
-      block <- block[seq(2)]
+      block <- rep(block[1], 2)
     },
     "ave" = {
       comp <- 1
