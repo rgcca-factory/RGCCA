@@ -123,12 +123,7 @@ plot.bootstrap <- function(x, block = seq_along(x$rgcca$call$raw),
     theme_perso(cex, cex_main, cex_sub, cex_lab) +
     ggplot2::labs(title = title, x = "", y = "") +
     ggplot2::theme(
-      axis.text.y = ggplot2::element_text(
-        size = cex_sub,
-        face = "italic",
-        color = "gray40"
-      ),
-      axis.text.x = ggplot2::element_text(
+      axis.text = ggplot2::element_text(
         size = cex_sub,
         face = "italic",
         color = "gray40"
@@ -141,7 +136,9 @@ plot.bootstrap <- function(x, block = seq_along(x$rgcca$call$raw),
       breaks = df$order,
       labels = rownames(df)
     ) +
-    ggplot2::geom_hline(yintercept = 0, lty = "longdash")
+    ggplot2::geom_hline(
+      yintercept = 0, lty = "longdash", size = .12 * cex_point
+    )
   if (show_sign) {
     p <- p + ggplot2::geom_text(
       aes(label = .data$sign),

@@ -20,21 +20,19 @@ plot_loadings <- function(df, title, x, block, comp, theme_RGCCA,
   # Construct plot
   p <- p +
     ggplot2::geom_point(size = .5 * cex_point) +
-    ggplot2::geom_linerange(aes(
+    ggplot2::geom_errorbar(aes(
       xmin = 0,
-      xmax = .data$x
+      xmax = .data$x,
+      width = 0
     ), size = .2 * cex_point) +
-    ggplot2::geom_vline(xintercept = 0, lty = "longdash") +
+    ggplot2::geom_vline(
+      xintercept = 0, lty = "longdash", size = .12 * cex_point
+    ) +
     theme_RGCCA +
     ggplot2::labs(title = title, x = "", y = "") +
     ggplot2::scale_y_discrete(limits = rev) +
     ggplot2::theme(
-      axis.text.y = ggplot2::element_text(
-        size = cex_sub,
-        face = "italic",
-        color = "gray40"
-      ),
-      axis.text.x = ggplot2::element_text(
+      axis.text = ggplot2::element_text(
         size = cex_sub,
         face = "italic",
         color = "gray40"

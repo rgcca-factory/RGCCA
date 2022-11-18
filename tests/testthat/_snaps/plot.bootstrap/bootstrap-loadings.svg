@@ -39,7 +39,7 @@
 <polyline points='601.86,524.13 601.86,419.38 ' style='stroke-width: 1.28; stroke-linecap: butt;' />
 <polyline points='601.86,471.76 73.22,471.76 ' style='stroke-width: 1.28; stroke-linecap: butt;' />
 <polyline points='73.22,524.13 73.22,419.38 ' style='stroke-width: 1.28; stroke-linecap: butt;' />
-<line x1='309.72' y1='546.83' x2='309.72' y2='47.50' style='stroke-width: 1.07; stroke-dasharray: 9.96,4.27; stroke-linecap: butt;' />
+<line x1='309.72' y1='546.83' x2='309.72' y2='47.50' style='stroke-width: 0.77; stroke-dasharray: 7.17,3.07; stroke-linecap: butt;' />
 </g>
 <g clip-path='url(#cpMC4wMHw3MjAuMDB8MC4wMHw1NzYuMDA=)'>
 <text x='37.49' y='126.71' text-anchor='end' style='font-size: 12.00px; font-style: italic; fill: #666666; font-family: sans;' textLength='24.00px' lengthAdjust='spacingAndGlyphs'>farm</text>

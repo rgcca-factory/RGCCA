@@ -30,10 +30,10 @@ plot_sample <- function(df, title, x, block, comp, theme_RGCCA,
   p <- p +
     theme_RGCCA +
     ggplot2::geom_vline(
-      xintercept = 0, col = "grey", linetype = "dashed", size = 0.5
+      xintercept = 0, col = "grey", linetype = "dashed", size = .17 * cex_point
     ) +
     ggplot2::geom_hline(
-      yintercept = 0, col = "grey", linetype = "dashed", size = 0.5
+      yintercept = 0, col = "grey", linetype = "dashed", size = .17 * cex_point
     ) +
     ggplot2::labs(title = title, x = xlab, y = ylab, color = "Response") +
     ggplot2::scale_y_continuous(breaks = NULL) +

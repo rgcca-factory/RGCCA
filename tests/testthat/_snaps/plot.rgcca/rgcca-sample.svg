@@ -74,8 +74,8 @@
 <text x='550.55' y='286.34' text-anchor='middle' style='font-size: 8.54px; fill: #56B4E9; font-family: sans;' textLength='40.35px' lengthAdjust='spacingAndGlyphs'>Venezuela</text>
 <text x='358.57' y='170.64' text-anchor='middle' style='font-size: 8.54px; fill: #999999; font-family: sans;' textLength='54.56px' lengthAdjust='spacingAndGlyphs'>WestGermany</text>
 <text x='84.54' y='405.98' text-anchor='middle' style='font-size: 8.54px; fill: #56B4E9; font-family: sans;' textLength='41.77px' lengthAdjust='spacingAndGlyphs'>Yugoslavia</text>
-<line x1='355.40' y1='557.03' x2='355.40' y2='23.69' style='stroke-width: 1.07; stroke: #BEBEBE; stroke-dasharray: 5.69,5.69; stroke-linecap: butt;' />
-<line x1='18.97' y1='324.02' x2='611.24' y2='324.02' style='stroke-width: 1.07; stroke: #BEBEBE; stroke-dasharray: 5.69,5.69; stroke-linecap: butt;' />
+<line x1='355.40' y1='557.03' x2='355.40' y2='23.69' style='stroke-width: 1.09; stroke: #BEBEBE; stroke-dasharray: 5.80,5.80; stroke-linecap: butt;' />
+<line x1='18.97' y1='324.02' x2='611.24' y2='324.02' style='stroke-width: 1.09; stroke: #BEBEBE; stroke-dasharray: 5.80,5.80; stroke-linecap: butt;' />
 <rect x='493.47' y='289.57' width='3.91' height='3.91' style='stroke-width: 0.71; stroke: #999999;' />
 <circle cx='560.52' cy='142.01' r='1.95' style='stroke-width: 0.71; stroke: #E69F00;' />
 <rect x='442.73' y='288.86' width='3.91' height='3.91' style='stroke-width: 0.71; stroke: #999999;' />
