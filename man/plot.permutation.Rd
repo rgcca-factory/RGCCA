@@ -12,7 +12,7 @@
   cex_main = 14 * cex,
   cex_sub = 12 * cex,
   cex_point = 3 * cex,
-  cex_lab = 19 * cex,
+  cex_lab = 12 * cex,
   display_all = FALSE,
   show_legend = FALSE,
   ...

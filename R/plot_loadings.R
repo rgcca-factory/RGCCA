@@ -7,7 +7,7 @@
 #' @noRd
 plot_loadings <- function(df, title, x, block, comp, theme_RGCCA,
                           cex_main, cex_sub, cex_point, colors,
-                          shapes, show_labels) {
+                          shapes, show_labels, repel) {
   # Add colors depending on looking at superblock or regular blocks
   is_multiblock <- (length(block) > 1) || (block == length(x$call$raw) + 1)
   if (is_multiblock) {

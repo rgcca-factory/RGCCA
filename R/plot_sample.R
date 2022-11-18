@@ -6,7 +6,7 @@
 #' @noRd
 plot_sample <- function(df, title, x, block, comp, theme_RGCCA,
                         cex_main, cex_sub, cex_point, colors,
-                        shapes, show_labels) {
+                        shapes, show_labels, repel) {
   xlab <- print_comp(x, comp[1], block[1])
   ylab <- print_comp(x, comp[2], block[2])
 
@@ -21,11 +21,20 @@ plot_sample <- function(df, title, x, block, comp, theme_RGCCA,
   # Construct plot
   p <- ggplot(df, aes(df[, 1], df[, 2], color = .data$response))
   if (show_labels) {
-    p <- p + ggplot2::geom_text(
-      aes(label = rownames(df)),
-      size = cex_point,
-      show.legend = FALSE, hjust = 0.5, vjust = -1
-    )
+    if (repel) {
+      p <- p + geom_text_repel(
+        aes(label = rownames(df)),
+        size = cex_point,
+        show.legend = FALSE, hjust = 0.5, vjust = -1
+      )
+    } else {
+      p <- p + ggplot2::geom_text(
+        aes(label = rownames(df)),
+        size = cex_point,
+        show.legend = FALSE, hjust = 0.5, vjust = -1
+      )
+    }
+
   }
   p <- p +
     theme_RGCCA +

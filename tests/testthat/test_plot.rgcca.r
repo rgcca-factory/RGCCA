@@ -29,7 +29,7 @@ test_that("plot.rgcca", {
 
   vdiffr::expect_doppelganger(
     "RGCCA both 2", plot.rgcca(
-      fit.rgcca2, type = "both", block = 4, comp = c(1, 4)
+      fit.rgcca2, type = "both", block = 4, comp = c(1, 4), show_labels = FALSE
     )
   )
 

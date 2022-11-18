@@ -27,6 +27,7 @@
 #' plots. Default is the first five shapes used in ggplot.
 #' @param show_labels A logical value for showing the labels in plots "samples"
 #' and "cor_circle".
+#' @param repel A logical value for repelling text labels from each other.
 #' @param ... additional graphical parameters
 #' @details
 #' \itemize{
@@ -85,6 +86,7 @@
 #' plot(fit.rgcca, type = "ave")
 #' @importFrom gridExtra grid.arrange
 #' @importFrom ggplot2 ggplot aes
+#' @importFrom ggrepel geom_text_repel
 #' @importFrom rlang .data
 #' @export
 plot.rgcca <- function(x, type = "weights", block = seq_along(x$call$raw),
@@ -94,7 +96,7 @@ plot.rgcca <- function(x, type = "weights", block = seq_along(x$call$raw),
                        cex_main = 14 * cex, cex_lab = 12 * cex,
                        cex_point = 3 * cex, n_mark = 30,
                        colors = NULL, shapes = NULL,
-                       show_labels = TRUE, ...) {
+                       show_labels = TRUE, repel = FALSE, ...) {
   ### Define data.frame generating functions
   df_sample <- function(x, block, comp, response) {
     data.frame(
@@ -322,7 +324,7 @@ plot.rgcca <- function(x, type = "weights", block = seq_along(x$call$raw),
   p <- plot_function(
     df, title, x, block, comp, theme_RGCCA,
     cex_main, cex_sub, cex_point, colors, shapes,
-    show_labels
+    show_labels, repel
   )
   if (!is.null(p)) plot(p, ...)
   invisible(p)

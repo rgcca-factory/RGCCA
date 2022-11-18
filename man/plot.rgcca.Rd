@@ -21,6 +21,7 @@
   colors = NULL,
   shapes = NULL,
   show_labels = TRUE,
+  repel = FALSE,
   ...
 )
 }
@@ -66,6 +67,8 @@ plots. Default is the first five shapes used in ggplot.}
 
 \item{show_labels}{A logical value for showing the labels in plots "samples"
 and "cor_circle".}
+
+\item{repel}{A logical value for repelling text labels from each other.}
 
 \item{...}{additional graphical parameters}
 }

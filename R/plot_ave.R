@@ -8,7 +8,7 @@
 #' @noRd
 plot_ave <- function(df, title, x, block, comp, theme_RGCCA,
                      cex_main, cex_sub, cex_point, colors,
-                     shapes, show_labels) {
+                     shapes, show_labels, repel) {
   # Construct plot
   p <- ggplot(df, aes(x = .data$AVE, y = .data$block, fill = .data$comp)) +
     ggplot2::geom_bar(

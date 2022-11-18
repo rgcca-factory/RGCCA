@@ -32,6 +32,7 @@ Imports:
     caret,
     Deriv,
     ggplot2,
+    ggrepel,
     graphics,
     gridExtra,
     MASS,
