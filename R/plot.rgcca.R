@@ -101,7 +101,7 @@ plot.rgcca <- function(x, type = "weights", block = seq_along(x$call$raw),
     )
   }
 
-  df_cor <- function(x, block, comp, num_block, all_blocks) {
+  df_cor <- function(x, block, comp, num_block) {
     df <- data.frame(
       x = do.call(rbind, lapply(block, function(j) cor(
         x$call$blocks[[j]][rownames(x$Y[[j]]), ],
@@ -237,7 +237,7 @@ plot.rgcca <- function(x, type = "weights", block = seq_along(x$call$raw),
     },
     # Plot block columns on a correlation circle
     "cor_circle" = {
-      df <- df_cor(x, block[1], comp, num_block, all_blocks)
+      df <- df_cor(x, block[1], comp, num_block)
 
       title <- ifelse(missing(title), "Correlation circle", title)
       plot_function <- plot_cor_circle
@@ -247,7 +247,7 @@ plot.rgcca <- function(x, type = "weights", block = seq_along(x$call$raw),
     "both" = {
       df <- list(
         df_sample(x, block, comp, response),
-        df_cor(x, block[1], comp, num_block, all_blocks)
+        df_cor(x, block[1], comp, num_block)
       )
 
       title <- ifelse(
@@ -271,7 +271,7 @@ plot.rgcca <- function(x, type = "weights", block = seq_along(x$call$raw),
     },
     # Plot the value associated with each individual in the projected space
     "loadings" = {
-      df <- df_cor(x, block, comp, num_block, all_blocks)
+      df <- df_cor(x, block, comp, num_block)
       if (display_order) {
         df <- df[order(abs(df[, 1]), decreasing = TRUE), ]
       }

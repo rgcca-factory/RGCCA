@@ -12,6 +12,12 @@
 
 print_comp <- function(rgcca_res, n = 1, i = length(rgcca_res$AVE$AVE_X),
                        outer = FALSE) {
+  is_quali <-
+    isTRUE(rgcca_res$call$disjunction) && (i == rgcca_res$call$response)
+  if (is_quali) {
+    return(paste0("Comp. ", n))
+  }
+
   nvar <- sum(rgcca_res$a[[i]][, n] != 0)
   if (
     !tolower(rgcca_res$call$method) %in% c("spls", "spca", "sgcca") ||
