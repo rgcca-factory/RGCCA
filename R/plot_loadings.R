@@ -6,7 +6,8 @@
 #' @param theme_RGCCA Theme of the plot.
 #' @noRd
 plot_loadings <- function(df, title, x, block, comp, theme_RGCCA,
-                          cex_sub, cex_point, colors, shapes) {
+                          cex_main, cex_sub, cex_point, colors,
+                          shapes, show_labels) {
   # Add colors depending on looking at superblock or regular blocks
   is_multiblock <- (length(block) > 1) || (block == length(x$call$raw) + 1)
   if (is_multiblock) {
@@ -18,11 +19,11 @@ plot_loadings <- function(df, title, x, block, comp, theme_RGCCA,
   }
   # Construct plot
   p <- p +
-    ggplot2::geom_point() +
+    ggplot2::geom_point(size = .5 * cex_point) +
     ggplot2::geom_linerange(aes(
       xmin = 0,
       xmax = .data$x
-    )) +
+    ), size = .2 * cex_point) +
     ggplot2::geom_vline(xintercept = 0, lty = "longdash") +
     theme_RGCCA +
     ggplot2::labs(title = title, x = "", y = "") +

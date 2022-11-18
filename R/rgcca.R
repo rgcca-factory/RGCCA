@@ -354,7 +354,7 @@ rgcca <- function(blocks, method = "rgcca",
   if (opt$superblock) {
     opt$blocks[["superblock"]] <- Reduce(cbind, opt$blocks)
     colnames(opt$blocks[["superblock"]]) <- paste0(
-      "S-", colnames(opt$blocks[["superblock"]])
+      "s-", colnames(opt$blocks[["superblock"]])
     )
   }
 

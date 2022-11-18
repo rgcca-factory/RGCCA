@@ -314,7 +314,8 @@ plot.rgcca <- function(x, type = "weights", block = seq_along(x$call$raw),
   # Call plotting function
   p <- plot_function(
     df, title, x, block, comp, theme_RGCCA,
-    cex_sub, cex_point, colors, shapes
+    cex_main, cex_sub, cex_point, colors, shapes,
+    show_labels
   )
   if (!is.null(p)) plot(p, ...)
   invisible(p)

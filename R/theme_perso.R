@@ -11,7 +11,8 @@ theme_perso <- function(cex = 1, cex_main = 12 * cex, cex_sub = 10 * cex,
         size = cex_main,
         face = "bold",
         hjust = 0.5,
-        margin = ggplot2::margin(0, 0, 0, 0)
-      )
+        margin = ggplot2::margin(0, 0, 2, 0, "mm")
+      ),
+      axis.title = ggplot2::element_text(size = cex_sub)
     )
 }

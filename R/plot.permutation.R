@@ -46,9 +46,6 @@ plot.permutation <- function(x,
   ### Perform checks and parse params
   stopifnot(is(x, "permutation"))
   match.arg(type, c("crit", "zstat"))
-  for (i in c("cex", "cex_main", "cex_sub", "cex_point", "cex_lab")) {
-    check_integer(i, get(i))
-  }
 
   ### Build data frame
   if (length(x$call$blocks) > 5) {
@@ -107,15 +104,18 @@ plot.permutation <- function(x,
   p <- ggplot(
     data = df, mapping = aes(x = .data$x, y = .data$combinations)
   ) +
-    ggplot2::geom_point(aes(shape = .data$label, size = .data$label)) +
+    ggplot2::geom_point(
+      aes(shape = .data$label, size = .data$label)
+    ) +
     ggplot2::labs(
       title = title,
       y     = ylab,
       x     = xlab
     ) +
-    theme_perso(cex, cex_main, cex_sub) +
+    theme_perso(cex, cex_main, cex_sub, cex_lab) +
     ggplot2::theme(
-      axis.text = ggplot2::element_text(size = 10, face = "bold"),
+      axis.text = ggplot2::element_text(size = cex_sub, face = "bold"),
+      axis.text.y = ggplot2::element_text(size = .8 * cex_sub),
       axis.line = ggplot2::element_line(size = 0.5),
       axis.ticks = ggplot2::element_line(size = 0.5),
       axis.ticks.length = ggplot2::unit(2, "mm")
@@ -128,8 +128,8 @@ plot.permutation <- function(x,
     ) +
     ggplot2::scale_size_manual("Non permuted",
       values = c(
-        "Best parameter set" = 4,
-        "Other parameter set" = 1
+        "Best parameter set" = 1.5 * cex_point,
+        "Other parameter set" = .5 * cex_point
       )
     ) +
     ggplot2::scale_y_discrete(

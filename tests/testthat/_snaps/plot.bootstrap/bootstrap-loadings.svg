@@ -21,35 +21,35 @@
 <rect x='0.00' y='0.00' width='720.00' height='576.00' style='stroke-width: 1.07; stroke: #FFFFFF; fill: #FFFFFF;' />
 </g>
 <defs>
-  <clipPath id='cpNDEuNTN8NzIwLjAwfDQxLjgzfDU0Ny43Mw=='>
-    <rect x='41.53' y='41.83' width='678.47' height='505.89' />
+  <clipPath id='cpNDIuNDN8NzIwLjAwfDQ3LjUwfDU0Ni44Mw=='>
+    <rect x='42.43' y='47.50' width='677.57' height='499.33' />
   </clipPath>
 </defs>
-<g clip-path='url(#cpNDEuNTN8NzIwLjAwfDQxLjgzfDU0Ny43Mw==)'>
-<rect x='41.53' y='41.83' width='678.47' height='505.89' style='stroke-width: 1.07; stroke: none; fill: #FFFFFF;' />
-<circle cx='687.03' cy='117.89' r='2.27' style='stroke-width: 0.71; fill: #000000;' />
-<circle cx='686.09' cy='294.78' r='2.27' style='stroke-width: 0.71; fill: #000000;' />
-<circle cx='463.75' cy='471.66' r='2.27' style='stroke-width: 0.71; fill: #000000;' />
-<polyline points='689.16,170.96 689.16,64.83 ' style='stroke-width: 1.28; stroke-linecap: butt;' />
-<polyline points='689.16,117.89 410.47,117.89 ' style='stroke-width: 1.28; stroke-linecap: butt;' />
-<polyline points='410.47,170.96 410.47,64.83 ' style='stroke-width: 1.28; stroke-linecap: butt;' />
-<polyline points='686.36,347.85 686.36,241.71 ' style='stroke-width: 1.28; stroke-linecap: butt;' />
-<polyline points='686.36,294.78 434.42,294.78 ' style='stroke-width: 1.28; stroke-linecap: butt;' />
-<polyline points='434.42,347.85 434.42,241.71 ' style='stroke-width: 1.28; stroke-linecap: butt;' />
-<polyline points='601.70,524.73 601.70,418.60 ' style='stroke-width: 1.28; stroke-linecap: butt;' />
-<polyline points='601.70,471.66 72.37,471.66 ' style='stroke-width: 1.28; stroke-linecap: butt;' />
-<polyline points='72.37,524.73 72.37,418.60 ' style='stroke-width: 1.28; stroke-linecap: butt;' />
-<line x1='309.18' y1='547.73' x2='309.18' y2='41.83' style='stroke-width: 1.07; stroke-dasharray: 9.96,4.27; stroke-linecap: butt;' />
+<g clip-path='url(#cpNDIuNDN8NzIwLjAwfDQ3LjUwfDU0Ni44Mw==)'>
+<rect x='42.43' y='47.50' width='677.57' height='499.33' style='stroke-width: 1.07; stroke: none; fill: #FFFFFF;' />
+<circle cx='687.08' cy='122.58' r='2.27' style='stroke-width: 0.71; fill: #000000;' />
+<circle cx='686.13' cy='297.17' r='2.27' style='stroke-width: 0.71; fill: #000000;' />
+<circle cx='464.09' cy='471.76' r='2.27' style='stroke-width: 0.71; fill: #000000;' />
+<polyline points='689.20,174.95 689.20,70.20 ' style='stroke-width: 1.28; stroke-linecap: butt;' />
+<polyline points='689.20,122.58 410.88,122.58 ' style='stroke-width: 1.28; stroke-linecap: butt;' />
+<polyline points='410.88,174.95 410.88,70.20 ' style='stroke-width: 1.28; stroke-linecap: butt;' />
+<polyline points='686.41,349.54 686.41,244.79 ' style='stroke-width: 1.28; stroke-linecap: butt;' />
+<polyline points='686.41,297.17 434.80,297.17 ' style='stroke-width: 1.28; stroke-linecap: butt;' />
+<polyline points='434.80,349.54 434.80,244.79 ' style='stroke-width: 1.28; stroke-linecap: butt;' />
+<polyline points='601.86,524.13 601.86,419.38 ' style='stroke-width: 1.28; stroke-linecap: butt;' />
+<polyline points='601.86,471.76 73.22,471.76 ' style='stroke-width: 1.28; stroke-linecap: butt;' />
+<polyline points='73.22,524.13 73.22,419.38 ' style='stroke-width: 1.28; stroke-linecap: butt;' />
+<line x1='309.72' y1='546.83' x2='309.72' y2='47.50' style='stroke-width: 1.07; stroke-dasharray: 9.96,4.27; stroke-linecap: butt;' />
 </g>
 <g clip-path='url(#cpMC4wMHw3MjAuMDB8MC4wMHw1NzYuMDA=)'>
-<text x='36.60' y='122.02' text-anchor='end' style='font-size: 12.00px; font-style: italic; fill: #666666; font-family: sans;' textLength='24.00px' lengthAdjust='spacingAndGlyphs'>farm</text>
-<text x='36.60' y='298.91' text-anchor='end' style='font-size: 12.00px; font-style: italic; fill: #666666; font-family: sans;' textLength='18.68px' lengthAdjust='spacingAndGlyphs'>gini</text>
-<text x='36.60' y='475.79' text-anchor='end' style='font-size: 12.00px; font-style: italic; fill: #666666; font-family: sans;' textLength='20.68px' lengthAdjust='spacingAndGlyphs'>rent</text>
-<text x='117.37' y='560.92' text-anchor='middle' style='font-size: 12.00px; font-style: italic; fill: #666666; font-family: sans;' textLength='20.68px' lengthAdjust='spacingAndGlyphs'>-0.5</text>
-<text x='309.18' y='560.92' text-anchor='middle' style='font-size: 12.00px; font-style: italic; fill: #666666; font-family: sans;' textLength='16.68px' lengthAdjust='spacingAndGlyphs'>0.0</text>
-<text x='500.99' y='560.92' text-anchor='middle' style='font-size: 12.00px; font-style: italic; fill: #666666; font-family: sans;' textLength='16.68px' lengthAdjust='spacingAndGlyphs'>0.5</text>
-<text x='692.80' y='560.92' text-anchor='middle' style='font-size: 12.00px; font-style: italic; fill: #666666; font-family: sans;' textLength='16.68px' lengthAdjust='spacingAndGlyphs'>1.0</text>
-<text x='380.76' y='23.81' text-anchor='middle' style='font-size: 14.00px; font-weight: bold; font-family: sans;' textLength='259.16px' lengthAdjust='spacingAndGlyphs'>Bootstrap confidence interval (agriculture)</text>
-<text x='380.76' y='38.93' text-anchor='middle' style='font-size: 14.00px; font-weight: bold; font-family: sans;' textLength='270.05px' lengthAdjust='spacingAndGlyphs'> (loadings - 20 bootstrap samples - comp 1)</text>
+<text x='37.49' y='126.71' text-anchor='end' style='font-size: 12.00px; font-style: italic; fill: #666666; font-family: sans;' textLength='24.00px' lengthAdjust='spacingAndGlyphs'>farm</text>
+<text x='37.49' y='301.30' text-anchor='end' style='font-size: 12.00px; font-style: italic; fill: #666666; font-family: sans;' textLength='18.68px' lengthAdjust='spacingAndGlyphs'>gini</text>
+<text x='37.49' y='475.89' text-anchor='end' style='font-size: 12.00px; font-style: italic; fill: #666666; font-family: sans;' textLength='20.68px' lengthAdjust='spacingAndGlyphs'>rent</text>
+<text x='118.17' y='560.02' text-anchor='middle' style='font-size: 12.00px; font-style: italic; fill: #666666; font-family: sans;' textLength='20.68px' lengthAdjust='spacingAndGlyphs'>-0.5</text>
+<text x='309.72' y='560.02' text-anchor='middle' style='font-size: 12.00px; font-style: italic; fill: #666666; font-family: sans;' textLength='16.68px' lengthAdjust='spacingAndGlyphs'>0.0</text>
+<text x='501.28' y='560.02' text-anchor='middle' style='font-size: 12.00px; font-style: italic; fill: #666666; font-family: sans;' textLength='16.68px' lengthAdjust='spacingAndGlyphs'>0.5</text>
+<text x='692.83' y='560.02' text-anchor='middle' style='font-size: 12.00px; font-style: italic; fill: #666666; font-family: sans;' textLength='16.68px' lengthAdjust='spacingAndGlyphs'>1.0</text>
+<text x='381.21' y='23.81' text-anchor='middle' style='font-size: 14.00px; font-weight: bold; font-family: sans;' textLength='259.16px' lengthAdjust='spacingAndGlyphs'>Bootstrap confidence interval (agriculture)</text>
+<text x='381.21' y='38.93' text-anchor='middle' style='font-size: 14.00px; font-weight: bold; font-family: sans;' textLength='270.05px' lengthAdjust='spacingAndGlyphs'> (loadings - 20 bootstrap samples - comp 1)</text>
 </g>
 </svg>

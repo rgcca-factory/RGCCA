@@ -20,14 +20,15 @@
   n_mark = 30,
   colors = NULL,
   shapes = NULL,
+  show_labels = TRUE,
   ...
 )
 }
 \arguments{
 \item{x}{A fitted RGCCA object (see \code{\link[RGCCA]{rgcca}})}
 
-\item{type}{A character string: 'samples', 'weights', 'loadings', 'cor_circle',
-'both', 'ave' (see details).}
+\item{type}{A character string: 'samples', 'weights', 'loadings',
+'cor_circle', both', 'ave' (see details).}
 
 \item{block}{A numeric corresponding to the block(s) to plot.}
 
@@ -62,6 +63,9 @@ colorblind-friendly palette recommended in ggplot.}
 
 \item{shapes}{Shapes used for the points in the "samples" and "cor_circle"
 plots. Default is the first five shapes used in ggplot.}
+
+\item{show_labels}{A logical value for showing the labels in plots "samples"
+and "cor_circle".}
 
 \item{...}{additional graphical parameters}
 }

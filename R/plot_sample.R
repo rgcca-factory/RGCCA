@@ -5,7 +5,8 @@
 #' @param theme_RGCCA Theme of the plot.
 #' @noRd
 plot_sample <- function(df, title, x, block, comp, theme_RGCCA,
-                        cex_sub, cex_point, colors, shapes) {
+                        cex_main, cex_sub, cex_point, colors,
+                        shapes, show_labels) {
   xlab <- print_comp(x, comp[1], block[1])
   ylab <- print_comp(x, comp[2], block[2])
 
@@ -18,12 +19,15 @@ plot_sample <- function(df, title, x, block, comp, theme_RGCCA,
   }
 
   # Construct plot
-  p <- ggplot(df, aes(df[, 1], df[, 2], color = .data$response)) +
-    ggplot2::geom_text(
+  p <- ggplot(df, aes(df[, 1], df[, 2], color = .data$response))
+  if (show_labels) {
+    p <- p + ggplot2::geom_text(
       aes(label = rownames(df)),
       size = cex_point,
       show.legend = FALSE, hjust = 0.5, vjust = -1
-    ) +
+    )
+  }
+  p <- p +
     theme_RGCCA +
     ggplot2::geom_vline(
       xintercept = 0, col = "grey", linetype = "dashed", size = 0.5
@@ -43,11 +47,12 @@ plot_sample <- function(df, title, x, block, comp, theme_RGCCA,
   # Change colors and shapes based on discrete or continuous response
   discrete <- is.character(df$response) || is.factor(df$response)
   if (discrete) {
-    p <- p + ggplot2::geom_point(aes(shape = .data$response)) +
+    p <- p +
+      ggplot2::geom_point(aes(shape = .data$response), size = .5 * cex_point) +
       ggplot2::scale_color_manual(values = colors) +
       ggplot2::scale_shape_manual(name = "Response", values = shapes)
   } else {
-    p <- p + ggplot2::geom_point() +
+    p <- p + ggplot2::geom_point(size = .5 * cex_point) +
       ggplot2::scale_color_gradient(low = colors[2], high = colors[3])
   }
 

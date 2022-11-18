@@ -7,7 +7,8 @@
 #' @param theme_RGCCA Theme of the plot.
 #' @noRd
 plot_ave <- function(df, title, x, block, comp, theme_RGCCA,
-                     cex_sub, cex_point, colors, shapes) {
+                     cex_main, cex_sub, cex_point, colors,
+                     shapes, show_labels) {
   # Construct plot
   p <- ggplot(df, aes(x = .data$AVE, y = .data$block, fill = .data$comp)) +
     ggplot2::geom_bar(

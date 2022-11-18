@@ -9,8 +9,9 @@
   type = "sd",
   cex = 1,
   cex_main = 14 * cex,
-  cex_sub = 10 * cex,
-  cex_lab = 10 * cex,
+  cex_sub = 12 * cex,
+  cex_point = 3 * cex,
+  cex_lab = 19 * cex,
   display_order = TRUE,
   ...
 )
@@ -38,6 +39,9 @@ is one.}
 
 \item{cex_sub}{A numeric defining the font size of the subtitle. Default is
 12 * cex.}
+
+\item{cex_point}{A numeric defining the font size of the points. Default is
+3 * cex.}
 
 \item{cex_lab}{A numeric defining the font size of the labels. Default is
 12 * cex.}

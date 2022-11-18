@@ -21,29 +21,29 @@
 <rect x='0.00' y='0.00' width='720.00' height='576.00' style='stroke-width: 1.07; stroke: #FFFFFF; fill: #FFFFFF;' />
 </g>
 <defs>
-  <clipPath id='cpNDEuNTN8NzIwLjAwfDI2LjcxfDU0Ny43Mw=='>
-    <rect x='41.53' y='26.71' width='678.47' height='521.01' />
+  <clipPath id='cpNDIuNDN8NzIwLjAwfDMyLjM4fDU0Ni44Mw=='>
+    <rect x='42.43' y='32.38' width='677.57' height='514.45' />
   </clipPath>
 </defs>
-<g clip-path='url(#cpNDEuNTN8NzIwLjAwfDI2LjcxfDU0Ny43Mw==)'>
-<rect x='41.53' y='26.71' width='678.47' height='521.01' style='stroke-width: 1.07; stroke: none; fill: #FFFFFF;' />
-<circle cx='689.16' cy='124.40' r='1.95' style='stroke-width: 0.71; fill: #000000;' />
-<circle cx='685.81' cy='287.22' r='1.95' style='stroke-width: 0.71; fill: #000000;' />
-<circle cx='259.02' cy='450.04' r='1.95' style='stroke-width: 0.71; fill: #000000;' />
-<line x1='72.37' y1='124.40' x2='689.16' y2='124.40' style='stroke-width: 1.07; stroke-linecap: butt;' />
-<line x1='72.37' y1='287.22' x2='685.81' y2='287.22' style='stroke-width: 1.07; stroke-linecap: butt;' />
-<line x1='72.37' y1='450.04' x2='259.02' y2='450.04' style='stroke-width: 1.07; stroke-linecap: butt;' />
-<line x1='72.37' y1='547.73' x2='72.37' y2='26.71' style='stroke-width: 1.07; stroke-dasharray: 9.96,4.27; stroke-linecap: butt;' />
+<g clip-path='url(#cpNDIuNDN8NzIwLjAwfDMyLjM4fDU0Ni44Mw==)'>
+<rect x='42.43' y='32.38' width='677.57' height='514.45' style='stroke-width: 1.07; stroke: none; fill: #FFFFFF;' />
+<circle cx='689.20' cy='128.84' r='1.95' style='stroke-width: 0.71; fill: #000000;' />
+<circle cx='685.85' cy='289.61' r='1.95' style='stroke-width: 0.71; fill: #000000;' />
+<circle cx='259.63' cy='450.37' r='1.95' style='stroke-width: 0.71; fill: #000000;' />
+<line x1='73.22' y1='128.84' x2='689.20' y2='128.84' style='stroke-width: 1.28; stroke-linecap: butt;' />
+<line x1='73.22' y1='289.61' x2='685.85' y2='289.61' style='stroke-width: 1.28; stroke-linecap: butt;' />
+<line x1='73.22' y1='450.37' x2='259.63' y2='450.37' style='stroke-width: 1.28; stroke-linecap: butt;' />
+<line x1='73.22' y1='546.83' x2='73.22' y2='32.38' style='stroke-width: 1.07; stroke-dasharray: 9.96,4.27; stroke-linecap: butt;' />
 </g>
 <g clip-path='url(#cpMC4wMHw3MjAuMDB8MC4wMHw1NzYuMDA=)'>
-<text x='36.60' y='454.17' text-anchor='end' style='font-size: 12.00px; font-style: italic; fill: #666666; font-family: sans;' textLength='20.68px' lengthAdjust='spacingAndGlyphs'>rent</text>
-<text x='36.60' y='291.35' text-anchor='end' style='font-size: 12.00px; font-style: italic; fill: #666666; font-family: sans;' textLength='24.00px' lengthAdjust='spacingAndGlyphs'>farm</text>
-<text x='36.60' y='128.53' text-anchor='end' style='font-size: 12.00px; font-style: italic; fill: #666666; font-family: sans;' textLength='18.68px' lengthAdjust='spacingAndGlyphs'>gini</text>
-<text x='72.37' y='560.92' text-anchor='middle' style='font-size: 12.00px; font-style: italic; fill: #666666; font-family: sans;' textLength='23.36px' lengthAdjust='spacingAndGlyphs'>0.00</text>
-<text x='230.28' y='560.92' text-anchor='middle' style='font-size: 12.00px; font-style: italic; fill: #666666; font-family: sans;' textLength='23.36px' lengthAdjust='spacingAndGlyphs'>0.25</text>
-<text x='388.20' y='560.92' text-anchor='middle' style='font-size: 12.00px; font-style: italic; fill: #666666; font-family: sans;' textLength='23.36px' lengthAdjust='spacingAndGlyphs'>0.50</text>
-<text x='546.11' y='560.92' text-anchor='middle' style='font-size: 12.00px; font-style: italic; fill: #666666; font-family: sans;' textLength='23.36px' lengthAdjust='spacingAndGlyphs'>0.75</text>
-<text x='704.02' y='560.92' text-anchor='middle' style='font-size: 12.00px; font-style: italic; fill: #666666; font-family: sans;' textLength='23.36px' lengthAdjust='spacingAndGlyphs'>1.00</text>
-<text x='380.76' y='23.81' text-anchor='middle' style='font-size: 14.00px; font-weight: bold; font-family: sans;' textLength='235.81px' lengthAdjust='spacingAndGlyphs'>Block-loading vector: X_agric - comp1</text>
+<text x='37.49' y='454.50' text-anchor='end' style='font-size: 12.00px; font-style: italic; fill: #666666; font-family: sans;' textLength='20.68px' lengthAdjust='spacingAndGlyphs'>rent</text>
+<text x='37.49' y='293.74' text-anchor='end' style='font-size: 12.00px; font-style: italic; fill: #666666; font-family: sans;' textLength='24.00px' lengthAdjust='spacingAndGlyphs'>farm</text>
+<text x='37.49' y='132.97' text-anchor='end' style='font-size: 12.00px; font-style: italic; fill: #666666; font-family: sans;' textLength='18.68px' lengthAdjust='spacingAndGlyphs'>gini</text>
+<text x='73.22' y='560.02' text-anchor='middle' style='font-size: 12.00px; font-style: italic; fill: #666666; font-family: sans;' textLength='23.36px' lengthAdjust='spacingAndGlyphs'>0.00</text>
+<text x='230.93' y='560.02' text-anchor='middle' style='font-size: 12.00px; font-style: italic; fill: #666666; font-family: sans;' textLength='23.36px' lengthAdjust='spacingAndGlyphs'>0.25</text>
+<text x='388.63' y='560.02' text-anchor='middle' style='font-size: 12.00px; font-style: italic; fill: #666666; font-family: sans;' textLength='23.36px' lengthAdjust='spacingAndGlyphs'>0.50</text>
+<text x='546.34' y='560.02' text-anchor='middle' style='font-size: 12.00px; font-style: italic; fill: #666666; font-family: sans;' textLength='23.36px' lengthAdjust='spacingAndGlyphs'>0.75</text>
+<text x='704.05' y='560.02' text-anchor='middle' style='font-size: 12.00px; font-style: italic; fill: #666666; font-family: sans;' textLength='23.36px' lengthAdjust='spacingAndGlyphs'>1.00</text>
+<text x='381.21' y='23.81' text-anchor='middle' style='font-size: 14.00px; font-weight: bold; font-family: sans;' textLength='235.81px' lengthAdjust='spacingAndGlyphs'>Block-loading vector: X_agric - comp1</text>
 </g>
 </svg>

@@ -32,15 +32,15 @@
 #' plot(res)
 #' @export
 plot.cval <- function(x, type = "sd",
-                      cex = 1, cex_main = 14 * cex,
-                      cex_sub = 10 * cex, cex_lab = 10 * cex,
+                      cex = 1,
+                      cex_main = 14 * cex,
+                      cex_sub = 12 * cex,
+                      cex_point = 3 * cex,
+                      cex_lab = 19 * cex,
                       display_order = TRUE, ...) {
   ### Perform checks and parse params
   stopifnot(is(x, "cval"))
   type <- match.arg(type, c("quantile", "sd", "stderr", "points"))
-  for (i in c("cex", "cex_main", "cex_sub", "cex_lab")) {
-    check_integer(i, get(i))
-  }
 
   ### Build data frame
   ymin <- apply(x$cv, 1, min)
@@ -155,7 +155,7 @@ plot.cval <- function(x, type = "sd",
   if (type == "points") {
     p <- p + ggplot2::geom_point(data = df_points, aes(
       x = .data$combinations, y = .data$y, color = .data$category
-    ))
+    ), size = .5 * cex_point)
   } else {
     p <- p +
       ggplot2::geom_boxplot(
@@ -168,9 +168,11 @@ plot.cval <- function(x, type = "sd",
   }
 
   # Set theme
-  p <- p + ggplot2::ggtitle(title) + theme_perso(cex, cex_main, cex_sub) +
+  p <- p + ggplot2::ggtitle(title) +
+    theme_perso(cex, cex_main, cex_sub, cex_lab) +
     ggplot2::theme(
-      axis.text = ggplot2::element_text(size = 10, face = "bold"),
+      axis.text = ggplot2::element_text(size = cex_sub, face = "bold"),
+      axis.text.y = ggplot2::element_text(size = .8 * cex_sub),
       axis.line = ggplot2::element_line(size = 0.5),
       axis.ticks = ggplot2::element_line(size = 0.5),
       axis.ticks.length = ggplot2::unit(2, "mm"),
