@@ -7,7 +7,7 @@
 \method{plot}{rgcca}(
   x,
   type = "weights",
-  block = "all",
+  block = seq_along(x$call$raw),
   comp = 1,
   response = as.factor(rep(1, NROW(x$Y[[1]]))),
   display_order = TRUE,
@@ -29,9 +29,7 @@
 \item{type}{A character string: 'samples', 'weights', 'loadings', 'cor_circle',
 'both', 'ave' (see details).}
 
-\item{block}{A character equal to "all" (default) or a numeric corresponding
-to the block to plot. If "all", the variables from all the blocks are
-displayed.}
+\item{block}{A numeric corresponding to the block(s) to plot.}
 
 \item{comp}{A numeric vector indicating the components to consider.}
 

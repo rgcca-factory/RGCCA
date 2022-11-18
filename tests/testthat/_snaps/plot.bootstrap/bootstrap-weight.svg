@@ -107,7 +107,7 @@
 <text x='658.49' y='289.99' style='font-size: 12.00px; font-family: sans;' textLength='56.03px' lengthAdjust='spacingAndGlyphs'>agriculture</text>
 <text x='658.49' y='307.27' style='font-size: 12.00px; font-family: sans;' textLength='42.03px' lengthAdjust='spacingAndGlyphs'>industry</text>
 <text x='658.49' y='324.55' style='font-size: 12.00px; font-family: sans;' textLength='30.68px' lengthAdjust='spacingAndGlyphs'>politic</text>
-<text x='344.52' y='23.81' text-anchor='middle' style='font-size: 14.00px; font-weight: bold; font-family: sans;' textLength='251.38px' lengthAdjust='spacingAndGlyphs'>Bootstrap confidence interval (all blocks)</text>
+<text x='344.52' y='23.81' text-anchor='middle' style='font-size: 14.00px; font-weight: bold; font-family: sans;' textLength='184.46px' lengthAdjust='spacingAndGlyphs'>Bootstrap confidence interval </text>
 <text x='344.52' y='38.93' text-anchor='middle' style='font-size: 14.00px; font-weight: bold; font-family: sans;' textLength='265.37px' lengthAdjust='spacingAndGlyphs'> (weights - 20 bootstrap samples - comp 1)</text>
 </g>
 </svg>

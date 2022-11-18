@@ -21,41 +21,41 @@
 <rect x='0.00' y='0.00' width='720.00' height='576.00' style='stroke-width: 1.07; stroke: #FFFFFF; fill: #FFFFFF;' />
 </g>
 <defs>
-  <clipPath id='cpNzAuMjR8NjM0LjEzfDI2LjcxfDU0Ny43Mw=='>
-    <rect x='70.24' y='26.71' width='563.89' height='521.01' />
+  <clipPath id='cpODIuMjR8NjM0LjEzfDI2LjcxfDU0Ny43Mw=='>
+    <rect x='82.24' y='26.71' width='551.89' height='521.01' />
   </clipPath>
 </defs>
-<g clip-path='url(#cpNzAuMjR8NjM0LjEzfDI2LjcxfDU0Ny43Mw==)'>
-<rect x='70.24' y='26.71' width='563.89' height='521.01' style='stroke-width: 1.07; stroke: none; fill: #FFFFFF;' />
-<circle cx='608.50' cy='70.13' r='1.95' style='stroke-width: 0.71; stroke: #E69F00; fill: #E69F00;' />
-<circle cx='95.87' cy='142.49' r='1.95' style='stroke-width: 0.71; stroke: #E69F00; fill: #E69F00;' />
-<circle cx='103.31' cy='214.86' r='1.95' style='stroke-width: 0.71; stroke: #56B4E9; fill: #56B4E9;' />
-<circle cx='579.12' cy='287.22' r='1.95' style='stroke-width: 0.71; stroke: #56B4E9; fill: #56B4E9;' />
-<circle cx='485.16' cy='359.58' r='1.95' style='stroke-width: 0.71; stroke: #999999; fill: #999999;' />
-<circle cx='469.60' cy='431.95' r='1.95' style='stroke-width: 0.71; stroke: #999999; fill: #999999;' />
-<circle cx='352.88' cy='504.31' r='1.95' style='stroke-width: 0.71; stroke: #999999; fill: #999999;' />
-<line x1='349.58' y1='70.13' x2='608.50' y2='70.13' style='stroke-width: 1.07; stroke: #E69F00; stroke-linecap: butt;' />
-<line x1='349.58' y1='142.49' x2='95.87' y2='142.49' style='stroke-width: 1.07; stroke: #E69F00; stroke-linecap: butt;' />
-<line x1='349.58' y1='214.86' x2='103.31' y2='214.86' style='stroke-width: 1.07; stroke: #56B4E9; stroke-linecap: butt;' />
-<line x1='349.58' y1='287.22' x2='579.12' y2='287.22' style='stroke-width: 1.07; stroke: #56B4E9; stroke-linecap: butt;' />
-<line x1='349.58' y1='359.58' x2='485.16' y2='359.58' style='stroke-width: 1.07; stroke: #999999; stroke-linecap: butt;' />
-<line x1='349.58' y1='431.95' x2='469.60' y2='431.95' style='stroke-width: 1.07; stroke: #999999; stroke-linecap: butt;' />
-<line x1='349.58' y1='504.31' x2='352.88' y2='504.31' style='stroke-width: 1.07; stroke: #999999; stroke-linecap: butt;' />
-<line x1='349.58' y1='547.73' x2='349.58' y2='26.71' style='stroke-width: 1.07; stroke-dasharray: 9.96,4.27; stroke-linecap: butt;' />
+<g clip-path='url(#cpODIuMjR8NjM0LjEzfDI2LjcxfDU0Ny43Mw==)'>
+<rect x='82.24' y='26.71' width='551.89' height='521.01' style='stroke-width: 1.07; stroke: none; fill: #FFFFFF;' />
+<circle cx='609.04' cy='70.13' r='1.95' style='stroke-width: 0.71; stroke: #E69F00; fill: #E69F00;' />
+<circle cx='107.32' cy='142.49' r='1.95' style='stroke-width: 0.71; stroke: #E69F00; fill: #E69F00;' />
+<circle cx='114.61' cy='214.86' r='1.95' style='stroke-width: 0.71; stroke: #56B4E9; fill: #56B4E9;' />
+<circle cx='580.29' cy='287.22' r='1.95' style='stroke-width: 0.71; stroke: #56B4E9; fill: #56B4E9;' />
+<circle cx='488.33' cy='359.58' r='1.95' style='stroke-width: 0.71; stroke: #999999; fill: #999999;' />
+<circle cx='473.10' cy='431.95' r='1.95' style='stroke-width: 0.71; stroke: #999999; fill: #999999;' />
+<circle cx='358.87' cy='504.31' r='1.95' style='stroke-width: 0.71; stroke: #999999; fill: #999999;' />
+<line x1='355.64' y1='70.13' x2='609.04' y2='70.13' style='stroke-width: 1.07; stroke: #E69F00; stroke-linecap: butt;' />
+<line x1='355.64' y1='142.49' x2='107.32' y2='142.49' style='stroke-width: 1.07; stroke: #E69F00; stroke-linecap: butt;' />
+<line x1='355.64' y1='214.86' x2='114.61' y2='214.86' style='stroke-width: 1.07; stroke: #56B4E9; stroke-linecap: butt;' />
+<line x1='355.64' y1='287.22' x2='580.29' y2='287.22' style='stroke-width: 1.07; stroke: #56B4E9; stroke-linecap: butt;' />
+<line x1='355.64' y1='359.58' x2='488.33' y2='359.58' style='stroke-width: 1.07; stroke: #999999; stroke-linecap: butt;' />
+<line x1='355.64' y1='431.95' x2='473.10' y2='431.95' style='stroke-width: 1.07; stroke: #999999; stroke-linecap: butt;' />
+<line x1='355.64' y1='504.31' x2='358.87' y2='504.31' style='stroke-width: 1.07; stroke: #999999; stroke-linecap: butt;' />
+<line x1='355.64' y1='547.73' x2='355.64' y2='26.71' style='stroke-width: 1.07; stroke-dasharray: 9.96,4.27; stroke-linecap: butt;' />
 </g>
 <g clip-path='url(#cpMC4wMHw3MjAuMDB8MC4wMHw1NzYuMDA=)'>
-<text x='65.30' y='508.44' text-anchor='end' style='font-size: 12.00px; font-style: italic; fill: #666666; font-family: sans;' textLength='20.68px' lengthAdjust='spacingAndGlyphs'>rent</text>
-<text x='65.30' y='436.07' text-anchor='end' style='font-size: 12.00px; font-style: italic; fill: #666666; font-family: sans;' textLength='18.68px' lengthAdjust='spacingAndGlyphs'>gini</text>
-<text x='65.30' y='363.71' text-anchor='end' style='font-size: 12.00px; font-style: italic; fill: #666666; font-family: sans;' textLength='24.00px' lengthAdjust='spacingAndGlyphs'>farm</text>
-<text x='65.30' y='291.35' text-anchor='end' style='font-size: 12.00px; font-style: italic; fill: #666666; font-family: sans;' textLength='39.36px' lengthAdjust='spacingAndGlyphs'>dictator</text>
-<text x='65.30' y='218.99' text-anchor='end' style='font-size: 12.00px; font-style: italic; fill: #666666; font-family: sans;' textLength='52.71px' lengthAdjust='spacingAndGlyphs'>demostab</text>
-<text x='65.30' y='146.62' text-anchor='end' style='font-size: 12.00px; font-style: italic; fill: #666666; font-family: sans;' textLength='24.02px' lengthAdjust='spacingAndGlyphs'>gnpr</text>
-<text x='65.30' y='74.26' text-anchor='end' style='font-size: 12.00px; font-style: italic; fill: #666666; font-family: sans;' textLength='22.69px' lengthAdjust='spacingAndGlyphs'>labo</text>
-<text x='86.17' y='560.92' text-anchor='middle' style='font-size: 12.00px; font-style: italic; fill: #666666; font-family: sans;' textLength='27.35px' lengthAdjust='spacingAndGlyphs'>-0.50</text>
-<text x='217.88' y='560.92' text-anchor='middle' style='font-size: 12.00px; font-style: italic; fill: #666666; font-family: sans;' textLength='27.35px' lengthAdjust='spacingAndGlyphs'>-0.25</text>
-<text x='349.58' y='560.92' text-anchor='middle' style='font-size: 12.00px; font-style: italic; fill: #666666; font-family: sans;' textLength='23.36px' lengthAdjust='spacingAndGlyphs'>0.00</text>
-<text x='481.29' y='560.92' text-anchor='middle' style='font-size: 12.00px; font-style: italic; fill: #666666; font-family: sans;' textLength='23.36px' lengthAdjust='spacingAndGlyphs'>0.25</text>
-<text x='612.99' y='560.92' text-anchor='middle' style='font-size: 12.00px; font-style: italic; fill: #666666; font-family: sans;' textLength='23.36px' lengthAdjust='spacingAndGlyphs'>0.50</text>
+<text x='77.31' y='508.44' text-anchor='end' style='font-size: 12.00px; font-style: italic; fill: #666666; font-family: sans;' textLength='32.68px' lengthAdjust='spacingAndGlyphs'>S-rent</text>
+<text x='77.31' y='436.07' text-anchor='end' style='font-size: 12.00px; font-style: italic; fill: #666666; font-family: sans;' textLength='30.68px' lengthAdjust='spacingAndGlyphs'>S-gini</text>
+<text x='77.31' y='363.71' text-anchor='end' style='font-size: 12.00px; font-style: italic; fill: #666666; font-family: sans;' textLength='36.01px' lengthAdjust='spacingAndGlyphs'>S-farm</text>
+<text x='77.31' y='291.35' text-anchor='end' style='font-size: 12.00px; font-style: italic; fill: #666666; font-family: sans;' textLength='51.36px' lengthAdjust='spacingAndGlyphs'>S-dictator</text>
+<text x='77.31' y='218.99' text-anchor='end' style='font-size: 12.00px; font-style: italic; fill: #666666; font-family: sans;' textLength='64.71px' lengthAdjust='spacingAndGlyphs'>S-demostab</text>
+<text x='77.31' y='146.62' text-anchor='end' style='font-size: 12.00px; font-style: italic; fill: #666666; font-family: sans;' textLength='36.02px' lengthAdjust='spacingAndGlyphs'>S-gnpr</text>
+<text x='77.31' y='74.26' text-anchor='end' style='font-size: 12.00px; font-style: italic; fill: #666666; font-family: sans;' textLength='34.69px' lengthAdjust='spacingAndGlyphs'>S-labo</text>
+<text x='97.83' y='560.92' text-anchor='middle' style='font-size: 12.00px; font-style: italic; fill: #666666; font-family: sans;' textLength='27.35px' lengthAdjust='spacingAndGlyphs'>-0.50</text>
+<text x='226.74' y='560.92' text-anchor='middle' style='font-size: 12.00px; font-style: italic; fill: #666666; font-family: sans;' textLength='27.35px' lengthAdjust='spacingAndGlyphs'>-0.25</text>
+<text x='355.64' y='560.92' text-anchor='middle' style='font-size: 12.00px; font-style: italic; fill: #666666; font-family: sans;' textLength='23.36px' lengthAdjust='spacingAndGlyphs'>0.00</text>
+<text x='484.54' y='560.92' text-anchor='middle' style='font-size: 12.00px; font-style: italic; fill: #666666; font-family: sans;' textLength='23.36px' lengthAdjust='spacingAndGlyphs'>0.25</text>
+<text x='613.44' y='560.92' text-anchor='middle' style='font-size: 12.00px; font-style: italic; fill: #666666; font-family: sans;' textLength='23.36px' lengthAdjust='spacingAndGlyphs'>0.50</text>
 <rect x='645.09' y='247.46' width='74.91' height='79.53' style='stroke-width: 1.07; stroke: none; fill: #FFFFFF;' />
 <text x='650.57' y='262.44' style='font-size: 12.00px; font-weight: bold; font-style: italic; font-family: sans;' textLength='29.35px' lengthAdjust='spacingAndGlyphs'>Block</text>
 <circle cx='659.21' cy='278.30' r='1.95' style='stroke-width: 0.71; stroke: #999999; fill: #999999;' />
@@ -67,6 +67,6 @@
 <text x='673.83' y='282.43' style='font-size: 12.00px; font-family: sans;' textLength='40.69px' lengthAdjust='spacingAndGlyphs'>X_agric</text>
 <text x='673.83' y='299.71' style='font-size: 12.00px; font-family: sans;' textLength='30.69px' lengthAdjust='spacingAndGlyphs'>X_ind</text>
 <text x='673.83' y='316.99' style='font-size: 12.00px; font-family: sans;' textLength='36.69px' lengthAdjust='spacingAndGlyphs'>X_polit</text>
-<text x='352.18' y='23.81' text-anchor='middle' style='font-size: 14.00px; font-weight: bold; font-family: sans;' textLength='251.38px' lengthAdjust='spacingAndGlyphs'>Block-weight vector: superblock - comp1</text>
+<text x='358.18' y='23.81' text-anchor='middle' style='font-size: 14.00px; font-weight: bold; font-family: sans;' textLength='251.38px' lengthAdjust='spacingAndGlyphs'>Block-weight vector: superblock - comp1</text>
 </g>
 </svg>

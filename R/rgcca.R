@@ -351,7 +351,12 @@ rgcca <- function(blocks, method = "rgcca",
     bias = bias,
     scale_block = scale_block
   )
-  if (opt$superblock) opt$blocks[["superblock"]] <- Reduce(cbind, opt$blocks)
+  if (opt$superblock) {
+    opt$blocks[["superblock"]] <- Reduce(cbind, opt$blocks)
+    colnames(opt$blocks[["superblock"]]) <- paste0(
+      "S-", colnames(opt$blocks[["superblock"]])
+    )
+  }
 
   ### Call the gcca function
   gcca_args <- list(

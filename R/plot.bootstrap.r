@@ -26,7 +26,7 @@
 #' fit.boot <- bootstrap(fit.rgcca, n_boot = 20, n_cores = 1)
 #' plot(fit.boot, type = "weight", block = 1, comp = 1)
 #' @export
-plot.bootstrap <- function(x, block = "all",
+plot.bootstrap <- function(x, block = seq_along(x$rgcca$call$raw),
                            comp = 1, type = "weights",
                            empirical = TRUE, n_mark = 30,
                            display_order = TRUE,
@@ -37,12 +37,7 @@ plot.bootstrap <- function(x, block = "all",
   ### Perform checks and parse arguments
   stopifnot(is(x, "bootstrap"))
   type <- match.arg(type, c("weights", "loadings"))
-  if (!block %in% c("all", seq_along(x$rgcca$call$raw))) {
-    stop_rgcca(
-      "block must be equal to \"all\" or an integer between 1 and ",
-      length(x$rgcca$call$raw), "."
-    )
-  }
+  lapply(block, function(i) check_blockx("block", i, x$rgcca$call$raw))
   check_integer("n_mark", n_mark)
 
   if (is.null(colors)) {
@@ -55,33 +50,21 @@ plot.bootstrap <- function(x, block = "all",
   }
 
   ### Build data frame
-  if (block == "all") {
-    df <- Reduce(rbind, lapply(
-      seq_along(x$rgcca$call$raw),
-      function(b) {
-        get_bootstrap(
-          b = x, type = type,
-          block = b,
-          comp = comp,
-          empirical = empirical
-        )
-      }
-    ))
-    df$response <- as.factor(unlist(
-      lapply(seq_along(x$rgcca$call$raw), function(j) {
-        rep(names(x$rgcca$call$blocks)[j], NCOL(x$rgcca$call$blocks[[j]]))
-      })
-    ))
-  } else {
-    df <- get_bootstrap(
-      x,
-      type = type,
-      comp,
-      block = block,
-      empirical = empirical
-    )
-    df$response <- NA
-  }
+  df <- Reduce(rbind, lapply(
+    block,
+    function(b) {
+      get_bootstrap(
+        b = x, type = type,
+        block = b,
+        comp = comp,
+        empirical = empirical
+      )
+    }
+  ))
+  df$response <- as.factor(unlist(lapply(block, function(j) {
+    rep(names(x$rgcca$call$blocks)[j], NCOL(x$rgcca$call$blocks[[j]]))
+  })))
+
   if (display_order) {
     df <- df[order(abs(df$estimate), decreasing = TRUE), ]
   }
@@ -101,15 +84,15 @@ plot.bootstrap <- function(x, block = "all",
 
   ### Prepare plot
   block_name <- ifelse(
-    block > length(x$rgcca$call$raw),
-    "all blocks",
-    names(x$rgcca$call$blocks)[block]
+    length(block) > 1,
+    "",
+    paste0("(", names(x$rgcca$call$blocks)[block], ")")
   )
 
   title <- ifelse(is.null(title),
     paste0(
-      "Bootstrap confidence interval (",
-      block_name, ")\n (",
+      "Bootstrap confidence interval ",
+      block_name, "\n (",
       type, " - ",
       ncol(x$bootstrap[[1]][[1]][[1]]),
       " bootstrap samples - comp ", comp, ")"
@@ -118,7 +101,7 @@ plot.bootstrap <- function(x, block = "all",
   )
 
   ### Construct plot
-  if (block == "all") {
+  if (length(block) > 1) {
     p <- ggplot(
       df,
       aes(x = .data$order, y = .data$estimate, color = .data$response)

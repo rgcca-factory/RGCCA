@@ -4,9 +4,7 @@
 #' @param x A fitted RGCCA object (see \code{\link[RGCCA]{rgcca}})
 #' @param type A character string: 'samples', 'weights', 'loadings', 'cor_circle',
 #' 'both', 'ave' (see details).
-#' @param block A character equal to "all" (default) or a numeric corresponding
-#' to the block to plot. If "all", the variables from all the blocks are
-#' displayed.
+#' @param block A numeric corresponding to the block(s) to plot.
 #' @param comp A numeric vector indicating the components to consider.
 #' @param response A vector coloring the points in the "samples" plot.
 #' @param display_order A logical value for ordering the variables.
@@ -87,8 +85,8 @@
 #' @importFrom ggplot2 ggplot aes
 #' @importFrom rlang .data
 #' @export
-plot.rgcca <- function(x, type = "weights", block = "all", comp = 1,
-                       response = as.factor(rep(1, NROW(x$Y[[1]]))),
+plot.rgcca <- function(x, type = "weights", block = seq_along(x$call$raw),
+                       comp = 1, response = as.factor(rep(1, NROW(x$Y[[1]]))),
                        display_order = TRUE,
                        title = NULL, cex = 1, cex_sub = 12 * cex,
                        cex_main = 14 * cex, cex_lab = 12 * cex,
@@ -104,34 +102,26 @@ plot.rgcca <- function(x, type = "weights", block = "all", comp = 1,
   }
 
   df_cor <- function(x, block, comp, num_block, all_blocks) {
-    if (all_blocks) {
-      df <- data.frame(
-        x = do.call(rbind, lapply(seq_along(x$call$raw), function(j) cor(
-          x$call$blocks[[j]][rownames(x$Y[[j]]), ],
-          x$Y[[j]][, comp],
-          use = "pairwise.complete.obs"
-        ))),
-        response = num_block,
-        y = do.call(c, lapply(x$call$blocks[-block], colnames))
-      )
-    } else {
-      df <- data.frame(x = cor(
-        x$call$blocks[[block[1]]][rownames(x$Y[[block[1]]]), ],
-        x$Y[[block[1]]][, comp],
+    df <- data.frame(
+      x = do.call(rbind, lapply(block, function(j) cor(
+        x$call$blocks[[j]][rownames(x$Y[[j]]), ],
+        x$Y[[j]][, comp],
         use = "pairwise.complete.obs"
-      ), response = num_block, y = colnames(x$call$blocks[[block[1]]]))
-    }
+      ))),
+      response = num_block,
+      y = do.call(c, lapply(x$call$blocks[block], colnames))
+    )
 
-    idx <- apply(x$a[[block[1]]][, comp, drop = FALSE], 1, function(y) {
-      any(y != 0)
-    })
+    idx <- apply(do.call(
+      rbind, lapply(x$a[block], function(z) z[, comp[1], drop = FALSE])),
+      1, function(y) any(y != 0))
     return(df[idx, ])
   }
 
   df_weight <- function(x, block, comp, num_block, display_order) {
     df <- data.frame(
-      x = x$a[[block[1]]][, comp[1]],
-      y = colnames(x$call$blocks[[block[1]]]),
+      x = unlist(lapply(x$a[block], function(z) z[, comp[1]])),
+      y = do.call(c, lapply(x$call$blocks[block], colnames)),
       response = num_block
     )
     if (display_order) {
@@ -174,43 +164,37 @@ plot.rgcca <- function(x, type = "weights", block = "all", comp = 1,
     check_integer("shapes", shapes, min = 0, max = 25, type = "vector")
   }
 
-  # If block is "all", leverage superblock strategy
-  if (identical(block, "all")) {
-    if (type %in% c("samples", "both", "cor_circle")) {
-      block <- c(1, 2)
-      all_blocks <- FALSE
-    } else {
-      block <- length(x$call$raw) + 1
-      x$call$blocks[[block]] <- do.call(cbind, x$call$blocks[-block])
-      x$a[[block]] <- do.call(rbind, x$a[-block])
-      names(x$call$blocks)[block] <- "All blocks"
-      all_blocks <- TRUE
-    }
-  } else {
-    all_blocks <- FALSE
-  }
-
   # Duplicate comp and block if needed and make sure they take admissible values
   comp <- elongate_arg(comp, seq(2))[seq(2)]
-  block <- elongate_arg(block, seq(2))[seq(2)]
+  block <- elongate_arg(block, seq(2))
 
-  if (type == "ave") comp <- rep(1, 2)
-  if (type %in% c("weights", "loadings")) comp <- comp[1]
+  switch(type,
+    "samples" = {
+      block <- block[seq(2)]
+    },
+    "cor_circle" = {
+      block <- block[1]
+    },
+    "both" = {
+      block <- block[seq(2)]
+    },
+    "ave" = {
+      comp <- rep(1, 2)
+    },
+    "loadings" = {
+      block <- unique(block)
+      comp <- comp[1]
+    },
+    "weights" = {
+      block <- unique(block)
+      comp <- comp[1]
+    }
+  )
 
   lapply(block, function(i) {
     check_blockx("block", i, x$call$blocks)
   })
-  if (all_blocks) {
-    Map(
-      function(y, z) {
-        check_compx(y, y, x$call$ncomp, z)
-      }, comp, rep(seq_along(block - 1), each = length(comp))
-    )
-  } else {
-    Map(
-      function(y, z) check_compx(y, y, x$call$ncomp, z), comp, block
-    )
-  }
+  Map(function(y, z) check_compx(y, y, x$call$ncomp, z), comp, block)
 
   if (missing(response)) {
     if (!is.null(x$call$response)) {
@@ -230,14 +214,18 @@ plot.rgcca <- function(x, type = "weights", block = "all", comp = 1,
     }
   }
 
-  # Construct response vector for correlation circle
-  if (block[1] > length(x$call$raw)) {
+  # Construct response vector for correlation circle, weights and loadings
+  if (block[1] == length(x$call$raw) + 1) {
     num_block <- as.factor(unlist(lapply(
       seq_along(x$call$blocks[-block[1]]),
       function(j) rep(names(x$call$blocks)[j], NCOL(x$call$blocks[[j]]))
     )))
   } else {
-    num_block <- as.factor(rep(1, NCOL(x$call$blocks[[block[1]]])))
+    max_length <- ifelse(type == "both", 1, length(block))
+    num_block <- as.factor(unlist(lapply(
+      block[seq(max_length)],
+      function(j) rep(names(x$call$blocks)[j], NCOL(x$call$blocks[[j]]))
+    )))
   }
 
   switch(type,
@@ -249,7 +237,7 @@ plot.rgcca <- function(x, type = "weights", block = "all", comp = 1,
     },
     # Plot block columns on a correlation circle
     "cor_circle" = {
-      df <- df_cor(x, block, comp, num_block, all_blocks)
+      df <- df_cor(x, block[1], comp, num_block, all_blocks)
 
       title <- ifelse(missing(title), "Correlation circle", title)
       plot_function <- plot_cor_circle
@@ -259,7 +247,7 @@ plot.rgcca <- function(x, type = "weights", block = "all", comp = 1,
     "both" = {
       df <- list(
         df_sample(x, block, comp, response),
-        df_cor(x, block, comp, num_block, all_blocks)
+        df_cor(x, block[1], comp, num_block, all_blocks)
       )
 
       title <- ifelse(
@@ -290,9 +278,13 @@ plot.rgcca <- function(x, type = "weights", block = "all", comp = 1,
       df <- df[seq(min(n_mark, NROW(df))), ]
       df$y <- factor(df$y, levels = df$y, ordered = TRUE)
 
+      block_name <- ifelse(
+        length(unique(block)) == 1,
+        paste(":", names(x$call$blocks)[block[1]]),
+        ""
+      )
       title <- ifelse(missing(title), paste0(
-        "Block-loading vector: ",
-        names(x$call$blocks)[block[1]], " - comp", comp[1]
+        "Block-loading vector", block_name, " - comp", comp[1]
       ), title)
       plot_function <- plot_loadings
     },
@@ -300,9 +292,13 @@ plot.rgcca <- function(x, type = "weights", block = "all", comp = 1,
     "weights" = {
       df <- df_weight(x, block, comp, num_block, display_order)
 
+      block_name <- ifelse(
+        length(unique(block)) == 1,
+        paste(":", names(x$call$blocks)[block[1]]),
+        ""
+      )
       title <- ifelse(missing(title), paste0(
-        "Block-weight vector: ",
-        names(x$call$blocks)[block[1]], " - comp", comp[1]
+        "Block-weight vector", block_name, " - comp", comp[1]
       ), title)
       plot_function <- plot_loadings
     }

@@ -6,7 +6,7 @@
 \usage{
 \method{plot}{bootstrap}(
   x,
-  block = "all",
+  block = seq_along(x$rgcca$call$raw),
   comp = 1,
   type = "weights",
   empirical = TRUE,
@@ -26,9 +26,7 @@
 \arguments{
 \item{x}{A fitted bootstrap object (see \code{\link[RGCCA]{bootstrap}})}
 
-\item{block}{A character equal to "all" (default) or a numeric corresponding
-to the block to plot. If "all", the variables from all the blocks are
-displayed.}
+\item{block}{A numeric corresponding to the block(s) to plot.}
 
 \item{comp}{A numeric vector indicating the components to consider.}
 
