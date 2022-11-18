@@ -2,8 +2,8 @@
 #'
 #' Plot different outputs of the results obtained by a rgcca function
 #' @param x A fitted RGCCA object (see \code{\link[RGCCA]{rgcca}})
-#' @param type A character string: 'samples', 'weights', 'loadings', 'cor_circle',
-#' 'both', 'ave' (see details).
+#' @param type A character string: 'samples', 'weights', 'loadings',
+#' 'cor_circle', both', 'ave' (see details).
 #' @param block A numeric corresponding to the block(s) to plot.
 #' @param comp A numeric vector indicating the components to consider.
 #' @param response A vector coloring the points in the "samples" plot.
@@ -25,6 +25,8 @@
 #' colorblind-friendly palette recommended in ggplot.
 #' @param shapes Shapes used for the points in the "samples" and "cor_circle"
 #' plots. Default is the first five shapes used in ggplot.
+#' @param show_labels A logical value for showing the labels in plots "samples"
+#' and "cor_circle".
 #' @param ... additional graphical parameters
 #' @details
 #' \itemize{
@@ -91,7 +93,8 @@ plot.rgcca <- function(x, type = "weights", block = seq_along(x$call$raw),
                        title = NULL, cex = 1, cex_sub = 12 * cex,
                        cex_main = 14 * cex, cex_lab = 12 * cex,
                        cex_point = 3 * cex, n_mark = 30,
-                       colors = NULL, shapes = NULL, ...) {
+                       colors = NULL, shapes = NULL,
+                       show_labels = TRUE, ...) {
   ### Define data.frame generating functions
   df_sample <- function(x, block, comp, response) {
     data.frame(
@@ -103,11 +106,13 @@ plot.rgcca <- function(x, type = "weights", block = seq_along(x$call$raw),
 
   df_cor <- function(x, block, comp, num_block) {
     df <- data.frame(
-      x = do.call(rbind, lapply(block, function(j) cor(
-        x$call$blocks[[j]][rownames(x$Y[[j]]), ],
-        x$Y[[j]][, comp],
-        use = "pairwise.complete.obs"
-      ))),
+      x = do.call(rbind, lapply(block, function(j) {
+        cor(
+          x$call$blocks[[j]][rownames(x$Y[[j]]), ],
+          x$Y[[j]][, comp],
+          use = "pairwise.complete.obs"
+        )
+      })),
       response = num_block,
       y = do.call(c, lapply(x$call$blocks[block], colnames))
     )
@@ -145,6 +150,8 @@ plot.rgcca <- function(x, type = "weights", block = seq_along(x$call$raw),
 
   ### Perform checks and parse arguments
   stopifnot(is(x, "rgcca"))
+  check_boolean(display_order)
+  check_boolean(show_labels)
   type <- tolower(type)
   type <- match.arg(type, c(
     "samples", "cor_circle", "both",
