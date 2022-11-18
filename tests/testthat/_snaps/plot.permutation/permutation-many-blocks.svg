@@ -43,10 +43,10 @@
 <line x1='82.92' y1='110.18' x2='82.03' y2='110.18' style='stroke-width: 1.71; stroke: #BEBEBE; stroke-linecap: butt;' />
 <polygon points='84.70,154.79 82.92,154.79 82.92,65.57 84.70,65.57 84.70,154.79 ' style='stroke-width: 1.71; stroke: #BEBEBE; fill: #FFFFFF;' />
 <line x1='83.81' y1='154.79' x2='83.81' y2='65.57' style='stroke-width: 3.41; stroke: #BEBEBE; stroke-linecap: butt;' />
-<polygon points='213.35,107.14 215.98,111.70 210.71,111.70 ' style='stroke-width: 0.71; fill: none;' />
-<polygon points='358.99,226.10 361.62,230.66 356.36,230.66 ' style='stroke-width: 0.71; fill: none;' />
+<polygon points='213.35,107.14 215.98,111.70 210.71,111.70 ' style='stroke-width: 0.71; stroke: #BEBEBE; fill: none;' />
+<polygon points='358.99,226.10 361.62,230.66 356.36,230.66 ' style='stroke-width: 0.71; stroke: #BEBEBE; fill: none;' />
 <polygon points='565.64,340.07 572.58,352.10 558.69,352.10 ' style='stroke-width: 0.71; stroke: none; fill: #000000;' />
-<polygon points='684.40,464.01 687.03,468.57 681.77,468.57 ' style='stroke-width: 0.71; fill: none;' />
+<polygon points='684.40,464.01 687.03,468.57 681.77,468.57 ' style='stroke-width: 0.71; stroke: #BEBEBE; fill: none;' />
 </g>
 <g clip-path='url(#cpMC4wMHw3MjAuMDB8MC4wMHw1NzYuMDA=)'>
 <polyline points='51.91,538.42 51.91,38.81 ' style='stroke-width: 1.07; stroke-linecap: butt;' />

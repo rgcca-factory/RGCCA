@@ -27,15 +27,15 @@
 </defs>
 <g clip-path='url(#cpODguMjJ8NzE0LjUyfDM4LjgxfDUzOC40Mg==)'>
 <rect x='88.22' y='38.81' width='626.30' height='499.61' style='stroke-width: 1.07; stroke: none; fill: #FFFFFF;' />
-<polygon points='116.69,65.16 119.32,69.72 114.06,69.72 ' style='stroke-width: 0.71; fill: none;' />
-<polygon points='153.45,114.14 156.08,118.70 150.81,118.70 ' style='stroke-width: 0.71; fill: none;' />
-<polygon points='158.36,163.12 161.00,167.68 155.73,167.68 ' style='stroke-width: 0.71; fill: none;' />
-<polygon points='164.46,212.10 167.09,216.66 161.83,216.66 ' style='stroke-width: 0.71; fill: none;' />
-<polygon points='278.87,261.08 281.50,265.64 276.23,265.64 ' style='stroke-width: 0.71; fill: none;' />
-<polygon points='303.87,310.07 306.50,314.63 301.24,314.63 ' style='stroke-width: 0.71; fill: none;' />
-<polygon points='310.35,359.05 312.98,363.61 307.72,363.61 ' style='stroke-width: 0.71; fill: none;' />
-<polygon points='444.37,408.03 447.00,412.59 441.74,412.59 ' style='stroke-width: 0.71; fill: none;' />
-<polygon points='537.47,457.01 540.10,461.57 534.84,461.57 ' style='stroke-width: 0.71; fill: none;' />
+<polygon points='116.69,65.16 119.32,69.72 114.06,69.72 ' style='stroke-width: 0.71; stroke: #BEBEBE; fill: none;' />
+<polygon points='153.45,114.14 156.08,118.70 150.81,118.70 ' style='stroke-width: 0.71; stroke: #BEBEBE; fill: none;' />
+<polygon points='158.36,163.12 161.00,167.68 155.73,167.68 ' style='stroke-width: 0.71; stroke: #BEBEBE; fill: none;' />
+<polygon points='164.46,212.10 167.09,216.66 161.83,216.66 ' style='stroke-width: 0.71; stroke: #BEBEBE; fill: none;' />
+<polygon points='278.87,261.08 281.50,265.64 276.23,265.64 ' style='stroke-width: 0.71; stroke: #BEBEBE; fill: none;' />
+<polygon points='303.87,310.07 306.50,314.63 301.24,314.63 ' style='stroke-width: 0.71; stroke: #BEBEBE; fill: none;' />
+<polygon points='310.35,359.05 312.98,363.61 307.72,363.61 ' style='stroke-width: 0.71; stroke: #BEBEBE; fill: none;' />
+<polygon points='444.37,408.03 447.00,412.59 441.74,412.59 ' style='stroke-width: 0.71; stroke: #BEBEBE; fill: none;' />
+<polygon points='537.47,457.01 540.10,461.57 534.84,461.57 ' style='stroke-width: 0.71; stroke: #BEBEBE; fill: none;' />
 <polygon points='686.05,501.01 693.00,513.04 679.11,513.04 ' style='stroke-width: 0.71; stroke: none; fill: #000000;' />
 </g>
 <g clip-path='url(#cpMC4wMHw3MjAuMDB8MC4wMHw1NzYuMDA=)'>
@@ -72,12 +72,12 @@
 <text x='676.59' y='554.54' text-anchor='middle' style='font-size: 12.00px; font-weight: bold; fill: #4D4D4D; font-family: sans;' textLength='13.35px' lengthAdjust='spacingAndGlyphs'>40</text>
 <text x='401.37' y='568.03' text-anchor='middle' style='font-size: 12.00px; font-family: sans;' textLength='40.68px' lengthAdjust='spacingAndGlyphs'>Z-score</text>
 <text transform='translate(13.74,288.62) rotate(-90)' text-anchor='middle' style='font-size: 12.00px; font-family: sans;' textLength='148.08px' lengthAdjust='spacingAndGlyphs'>Tuning parameter sets (tau)</text>
-<rect x='447.63' y='38.81' width='204.26' height='62.25' style='stroke-width: 1.07; stroke: none; fill: #FFFFFF;' />
-<text x='453.11' y='53.79' style='font-size: 12.00px; font-weight: bold; font-style: italic; font-family: sans;' textLength='76.05px' lengthAdjust='spacingAndGlyphs'>Non permuted</text>
-<polygon points='461.75,61.64 468.69,73.67 454.81,73.67 ' style='stroke-width: 0.71; stroke: none; fill: #000000;' />
-<polygon points='461.75,83.90 464.38,88.46 459.12,88.46 ' style='stroke-width: 0.71; fill: none;' />
-<text x='476.37' y='76.19' style='font-size: 19.00px; font-family: sans;' textLength='160.55px' lengthAdjust='spacingAndGlyphs'>Best parameter set</text>
-<text x='476.37' y='93.47' style='font-size: 19.00px; font-family: sans;' textLength='170.04px' lengthAdjust='spacingAndGlyphs'>Other parameter set</text>
+<rect x='510.28' y='38.81' width='141.61' height='62.25' style='stroke-width: 1.07; stroke: none; fill: #FFFFFF;' />
+<text x='515.76' y='53.79' style='font-size: 12.00px; font-weight: bold; font-style: italic; font-family: sans;' textLength='76.05px' lengthAdjust='spacingAndGlyphs'>Non permuted</text>
+<polygon points='524.40,61.64 531.34,73.67 517.45,73.67 ' style='stroke-width: 0.71; stroke: none; fill: #000000;' />
+<polygon points='524.40,83.90 527.03,88.46 521.77,88.46 ' style='stroke-width: 0.71; stroke: #BEBEBE; fill: none;' />
+<text x='539.02' y='73.79' style='font-size: 12.00px; font-family: sans;' textLength='101.40px' lengthAdjust='spacingAndGlyphs'>Best parameter set</text>
+<text x='539.02' y='91.07' style='font-size: 12.00px; font-family: sans;' textLength='107.40px' lengthAdjust='spacingAndGlyphs'>Other parameter set</text>
 <text x='401.37' y='15.11' text-anchor='middle' style='font-size: 14.00px; font-weight: bold; font-family: sans;' textLength='176.65px' lengthAdjust='spacingAndGlyphs'>Permutation scores (2 runs) </text>
 <text x='401.37' y='30.23' text-anchor='middle' style='font-size: 14.00px; font-weight: bold; font-family: sans;' textLength='203.93px' lengthAdjust='spacingAndGlyphs'> Best parameters: 0.00/0.00/0.00</text>
 </g>

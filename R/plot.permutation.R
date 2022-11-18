@@ -40,7 +40,7 @@ plot.permutation <- function(x,
                              cex_main = 14 * cex,
                              cex_sub = 12 * cex,
                              cex_point = 3 * cex,
-                             cex_lab = 19 * cex,
+                             cex_lab = 12 * cex,
                              display_all = FALSE,
                              show_legend = FALSE, ...) {
   ### Perform checks and parse params
@@ -105,7 +105,7 @@ plot.permutation <- function(x,
     data = df, mapping = aes(x = .data$x, y = .data$combinations)
   ) +
     ggplot2::geom_point(
-      aes(shape = .data$label, size = .data$label)
+      aes(shape = .data$label, size = .data$label, color = .data$label)
     ) +
     ggplot2::labs(
       title = title,
@@ -124,7 +124,9 @@ plot.permutation <- function(x,
       values = c(
         "Best parameter set" = 17,
         "Other parameter set" = 2
-      )
+      ), guide = ggplot2::guide_legend(override.aes = list(
+        color = c("black", "grey")
+      ))
     ) +
     ggplot2::scale_size_manual("Non permuted",
       values = c(
@@ -153,6 +155,11 @@ plot.permutation <- function(x,
       p$layers
     )
     p <- p + ggplot2::scale_color_manual("Permuted", values = c(
+      "Best parameter set" = "black",
+      "Other parameter set" = "grey"
+    ))
+  } else {
+    p <- p + ggplot2::scale_color_manual("Non permuted", values = c(
       "Best parameter set" = "black",
       "Other parameter set" = "grey"
     ))
