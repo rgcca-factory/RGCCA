@@ -30,14 +30,6 @@ test_that("plot.cval", {
   )
 
   vdiffr::expect_doppelganger(
-    "CV stderr", plot.cval(res, type = "stderr")
-  )
-
-  vdiffr::expect_doppelganger(
-    "CV points", plot.cval(res, type = "points")
-  )
-
-  vdiffr::expect_doppelganger(
     "CV many blocks", plot.cval(res2, type = "sd")
   )
 })

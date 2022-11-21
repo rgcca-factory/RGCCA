@@ -41,15 +41,4 @@ test_that("print_cval", {
     )
     print(res, type = "sd")
   })
-
-  expect_snapshot({
-    blocks2 <- c(blocks, replicate(3, rnorm(47), simplify = FALSE))
-    names(blocks2) <- NULL
-    res <- rgcca_cv(blocks2,
-      validation = "kfold", k = 2,
-      response = 3, method = "rgcca", par_type = "tau",
-      n_run = 1, n_cores = 1, par_length = 2, verbose = FALSE
-    )
-    print(res, type = "stderr")
-  })
 })

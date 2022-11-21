@@ -12,12 +12,9 @@
 #' \itemize{
 #' \item "sd" (default): the middle bar corresponds to the mean and limits of
 #' the boxes are given by the mean plus or minus the standard deviation.
-#' \item "stderr": the middle bar corresponds to the mean and limits of
-#' the boxes are given by the mean plus or minus the standard deviation divided
-#' by the square roots of the number of folds.
 #' \item "quantile": the middle bar corresponds to the median and limits of
 #' the boxes are given by the 25% and 75% quantiles.
-#' \item "points": box plots are removed and only the points are kept.}
+#' }
 #' @examples
 #' data("Russett")
 #' blocks <- list(
@@ -40,7 +37,7 @@ plot.cval <- function(x, type = "sd",
                       display_order = TRUE, ...) {
   ### Perform checks and parse params
   stopifnot(is(x, "cval"))
-  type <- match.arg(type, c("quantile", "sd", "stderr", "points"))
+  type <- match.arg(type, c("quantile", "sd"))
 
   ### Build data frame
   ymin <- apply(x$cv, 1, min)
@@ -58,20 +55,6 @@ plot.cval <- function(x, type = "sd",
       middle <- ymean
       lower <- middle - apply(x$cv, 1, sd)
       upper <- middle + apply(x$cv, 1, sd)
-    },
-    "stderr" = {
-      middle <- ymean
-      lower <- middle - apply(x$cv, 1, function(y) {
-        sd(y) / sqrt(length(y))
-      })
-      upper <- middle + apply(x$cv, 1, function(y) {
-        sd(y) / sqrt(length(y))
-      })
-    },
-    "points" = {
-      middle <- ymean
-      lower <- apply(x$cv, 1, min)
-      upper <- apply(x$cv, 1, max)
     }
   )
 
@@ -151,24 +134,18 @@ plot.cval <- function(x, type = "sd",
     ggplot2::scale_x_discrete(
       labels = labels, breaks = combinations,
       guide = ggplot2::guide_axis(check.overlap = TRUE)
-    )
-  if (type == "points") {
-    p <- p + ggplot2::geom_point(data = df_points, aes(
+    ) +
+    ggplot2::geom_boxplot(
+      aes(
+        ymin = .data$ymin, lower = .data$lower, middle = .data$middle,
+        upper = .data$upper, ymax = .data$ymax
+      ),
+      stat = "identity"
+    ) +
+    ggplot2::geom_jitter(data = df_points, aes(
       x = .data$combinations, y = .data$y, color = .data$category
-    ), size = .5 * cex_point)
-  } else {
-    p <- p +
-      ggplot2::geom_boxplot(
-        aes(
-          ymin = .data$ymin, lower = .data$lower, middle = .data$middle,
-          upper = .data$upper, ymax = .data$ymax
-        ),
-        stat = "identity"
-      )
-  }
-
-  # Set theme
-  p <- p + ggplot2::ggtitle(title) +
+    ), size = .5 * cex_point, position = ggplot2::position_jitter(0.1)) +
+    ggplot2::ggtitle(title) +
     theme_perso(cex, cex_main, cex_sub, cex_lab) +
     ggplot2::theme(
       axis.text.y = ggplot2::element_text(size = .8 * cex_sub),

@@ -14,12 +14,9 @@ mean plus or minus standard deviation ("sd", default),
 \itemize{
 \item "sd" (default): the middle bar corresponds to the mean and limits of
 the boxes are given by the mean plus or minus the standard deviation.
-\item "stderr": the middle bar corresponds to the mean and limits of
-the boxes are given by the mean plus or minus the standard deviation divided
-by the square roots of the number of folds.
 \item "quantile": the middle bar corresponds to the median and limits of
 the boxes are given by the 25% and 75% quantiles.
-\item "points": box plots are removed and only the points are kept.}}
+}}
 
 \item{...}{Further print options}
 }

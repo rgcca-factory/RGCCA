@@ -36,18 +36,6 @@ print.cval <- function(x, type = "sd", ...) {
         upper <- middle + apply(x$cv, 1, sd)
         low_lim <- "Mean - Sd"
         up_lim <- "Mean + Sd"
-      },
-      "stderr" = {
-        middle_name <- "Mean error"
-        middle <- ymean
-        lower <- middle - apply(x$cv, 1, function(y) {
-          sd(y) / sqrt(length(y))
-        })
-        upper <- middle + apply(x$cv, 1, function(y) {
-          sd(y) / sqrt(length(y))
-        })
-        low_lim <- "Mean - Std Error"
-        up_lim <- "Mean + Std Error"
       }
     )
 
@@ -71,7 +59,7 @@ print.cval <- function(x, type = "sd", ...) {
     return(df)
   }
 
-  match.arg(type, c("sd", "stderr", "quantile"))
+  type <- match.arg(type, c("sd", "quantile"))
 
   ### Print parameters of the function
   print_call(x$call)
