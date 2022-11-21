@@ -32,14 +32,11 @@ plot_loadings <- function(df, title, x, block, comp, theme_RGCCA,
     ggplot2::labs(title = title, x = "", y = "") +
     ggplot2::scale_y_discrete(limits = rev) +
     ggplot2::theme(
-      axis.text = ggplot2::element_text(
-        size = cex_sub,
-        face = "italic",
-        color = "gray40"
-      ),
       axis.line = ggplot2::element_blank(),
       axis.ticks = ggplot2::element_blank(),
-      plot.margin = ggplot2::margin(5, 0, 0, 0, "mm")
+      plot.margin = ggplot2::margin(5, 0, 0, 0, "mm"),
+      panel.grid.major.y = ggplot2::element_blank(),
+      panel.grid.minor.y = ggplot2::element_blank()
     )
 
   # Hide legend if not superblock

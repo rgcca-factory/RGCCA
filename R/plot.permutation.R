@@ -114,11 +114,7 @@ plot.permutation <- function(x,
     ) +
     theme_perso(cex, cex_main, cex_sub, cex_lab) +
     ggplot2::theme(
-      axis.text = ggplot2::element_text(size = cex_sub, face = "bold"),
-      axis.text.y = ggplot2::element_text(size = .8 * cex_sub),
-      axis.line = ggplot2::element_line(size = 0.5),
-      axis.ticks = ggplot2::element_line(size = 0.5),
-      axis.ticks.length = ggplot2::unit(2, "mm")
+      axis.text.y = ggplot2::element_text(size = .8 * cex_sub)
     ) +
     ggplot2::scale_shape_manual("Non permuted",
       values = c(

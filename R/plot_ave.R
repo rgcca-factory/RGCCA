@@ -24,20 +24,9 @@ plot_ave <- function(df, title, x, block, comp, theme_RGCCA,
     ggplot2::labs(subtitle = print_comp(x, outer = TRUE)) +
     ggplot2::labs(title = title, x = "", y = "", fill = "Component") +
     ggplot2::theme(
-      axis.text.y = ggplot2::element_text(
-        size = cex_sub,
-        face = "italic",
-        color = "gray40"
-      ),
-      axis.text.x = ggplot2::element_text(
-        size = cex_sub,
-        face = "italic",
-        color = "gray40"
-      ),
       axis.line = ggplot2::element_blank(),
       axis.ticks = ggplot2::element_blank(),
       plot.subtitle = ggplot2::element_text(
-        hjust = 0.5,
         size = cex_sub,
         face = "italic"
       ),

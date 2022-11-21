@@ -4,7 +4,6 @@
 #' @inheritParams plot.rgcca
 #' @param df Data frame with the data to plot.
 #' @param theme_RGCCA Theme of the plot.
-#' @importFrom grid textGrob gpar
 #' @noRd
 plot_both <- function(df, title, x, block, comp, theme_RGCCA,
                       cex_main, cex_sub, cex_point, colors,
@@ -20,9 +19,7 @@ plot_both <- function(df, title, x, block, comp, theme_RGCCA,
       cex_main, cex_sub, cex_point, colors, shapes, show_labels,
       repel
     ),
-    nrow = 1, ncol = 2, top = textGrob(
-      title, gp = gpar(fontsize = cex_main, fontface = "bold")
-    )
+    nrow = 1, ncol = 2
   ) +
     theme_RGCCA
 

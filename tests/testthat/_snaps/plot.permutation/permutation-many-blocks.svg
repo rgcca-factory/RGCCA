@@ -18,59 +18,58 @@
   </clipPath>
 </defs>
 <g clip-path='url(#cpMC4wMHw3MjAuMDB8MC4wMHw1NzYuMDA=)'>
-<rect x='0.00' y='0.00' width='720.00' height='576.00' style='stroke-width: 1.07; stroke: #FFFFFF; fill: #FFFFFF;' />
 </g>
 <defs>
-  <clipPath id='cpNTEuOTF8NzE0LjUyfDM4LjgxfDUzOC40Mg=='>
-    <rect x='51.91' y='38.81' width='662.61' height='499.61' />
+  <clipPath id='cpNDguOTl8NzE0LjUyfDMzLjE0fDU0MS4zNQ=='>
+    <rect x='48.99' y='33.14' width='665.54' height='508.21' />
   </clipPath>
 </defs>
-<g clip-path='url(#cpNTEuOTF8NzE0LjUyfDM4LjgxfDUzOC40Mg==)'>
-<rect x='51.91' y='38.81' width='662.61' height='499.61' style='stroke-width: 1.07; stroke: none; fill: #FFFFFF;' />
-<line x1='120.02' y1='467.05' x2='122.78' y2='467.05' style='stroke-width: 1.71; stroke: #BEBEBE; stroke-linecap: butt;' />
-<line x1='114.51' y1='467.05' x2='111.75' y2='467.05' style='stroke-width: 1.71; stroke: #BEBEBE; stroke-linecap: butt;' />
-<polygon points='120.02,511.66 114.51,511.66 114.51,422.44 120.02,422.44 120.02,511.66 ' style='stroke-width: 1.71; stroke: #BEBEBE; fill: #FFFFFF;' />
-<line x1='117.26' y1='511.66' x2='117.26' y2='422.44' style='stroke-width: 3.41; stroke: #BEBEBE; stroke-linecap: butt;' />
-<line x1='100.72' y1='348.09' x2='100.87' y2='348.09' style='stroke-width: 1.71; stroke-linecap: butt;' />
-<line x1='100.41' y1='348.09' x2='100.26' y2='348.09' style='stroke-width: 1.71; stroke-linecap: butt;' />
-<polygon points='100.72,392.70 100.41,392.70 100.41,303.48 100.72,303.48 100.72,392.70 ' style='stroke-width: 1.71; fill: #FFFFFF;' />
-<line x1='100.56' y1='392.70' x2='100.56' y2='303.48' style='stroke-width: 3.41; stroke-linecap: butt;' />
-<line x1='102.91' y1='229.14' x2='104.42' y2='229.14' style='stroke-width: 1.71; stroke: #BEBEBE; stroke-linecap: butt;' />
-<line x1='99.90' y1='229.14' x2='98.40' y2='229.14' style='stroke-width: 1.71; stroke: #BEBEBE; stroke-linecap: butt;' />
-<polygon points='102.91,273.75 99.90,273.75 99.90,184.53 102.91,184.53 102.91,273.75 ' style='stroke-width: 1.71; stroke: #BEBEBE; fill: #FFFFFF;' />
-<line x1='101.41' y1='273.75' x2='101.41' y2='184.53' style='stroke-width: 3.41; stroke: #BEBEBE; stroke-linecap: butt;' />
-<line x1='84.70' y1='110.18' x2='85.59' y2='110.18' style='stroke-width: 1.71; stroke: #BEBEBE; stroke-linecap: butt;' />
-<line x1='82.92' y1='110.18' x2='82.03' y2='110.18' style='stroke-width: 1.71; stroke: #BEBEBE; stroke-linecap: butt;' />
-<polygon points='84.70,154.79 82.92,154.79 82.92,65.57 84.70,65.57 84.70,154.79 ' style='stroke-width: 1.71; stroke: #BEBEBE; fill: #FFFFFF;' />
-<line x1='83.81' y1='154.79' x2='83.81' y2='65.57' style='stroke-width: 3.41; stroke: #BEBEBE; stroke-linecap: butt;' />
-<polygon points='213.35,107.14 215.98,111.70 210.71,111.70 ' style='stroke-width: 0.71; stroke: #BEBEBE; fill: none;' />
-<polygon points='358.99,226.10 361.62,230.66 356.36,230.66 ' style='stroke-width: 0.71; stroke: #BEBEBE; fill: none;' />
-<polygon points='565.64,340.07 572.58,352.10 558.69,352.10 ' style='stroke-width: 0.71; stroke: none; fill: #000000;' />
-<polygon points='684.40,464.01 687.03,468.57 681.77,468.57 ' style='stroke-width: 0.71; stroke: #BEBEBE; fill: none;' />
+<g clip-path='url(#cpNDguOTl8NzE0LjUyfDMzLjE0fDU0MS4zNQ==)'>
+<polyline points='177.73,541.35 177.73,33.14 ' style='stroke-width: 0.53; stroke: #EBEBEB; stroke-linecap: butt;' />
+<polyline points='385.30,541.35 385.30,33.14 ' style='stroke-width: 0.53; stroke: #EBEBEB; stroke-linecap: butt;' />
+<polyline points='592.86,541.35 592.86,33.14 ' style='stroke-width: 0.53; stroke: #EBEBEB; stroke-linecap: butt;' />
+<polyline points='48.99,105.74 714.52,105.74 ' style='stroke-width: 1.07; stroke: #EBEBEB; stroke-linecap: butt;' />
+<polyline points='48.99,226.74 714.52,226.74 ' style='stroke-width: 1.07; stroke: #EBEBEB; stroke-linecap: butt;' />
+<polyline points='48.99,347.75 714.52,347.75 ' style='stroke-width: 1.07; stroke: #EBEBEB; stroke-linecap: butt;' />
+<polyline points='48.99,468.75 714.52,468.75 ' style='stroke-width: 1.07; stroke: #EBEBEB; stroke-linecap: butt;' />
+<polyline points='73.95,541.35 73.95,33.14 ' style='stroke-width: 1.07; stroke: #EBEBEB; stroke-linecap: butt;' />
+<polyline points='281.51,541.35 281.51,33.14 ' style='stroke-width: 1.07; stroke: #EBEBEB; stroke-linecap: butt;' />
+<polyline points='489.08,541.35 489.08,33.14 ' style='stroke-width: 1.07; stroke: #EBEBEB; stroke-linecap: butt;' />
+<polyline points='696.65,541.35 696.65,33.14 ' style='stroke-width: 1.07; stroke: #EBEBEB; stroke-linecap: butt;' />
+<line x1='117.39' y1='468.75' x2='120.16' y2='468.75' style='stroke-width: 1.71; stroke: #BEBEBE; stroke-linecap: butt;' />
+<line x1='111.85' y1='468.75' x2='109.09' y2='468.75' style='stroke-width: 1.71; stroke: #BEBEBE; stroke-linecap: butt;' />
+<polygon points='117.39,514.12 111.85,514.12 111.85,423.37 117.39,423.37 117.39,514.12 ' style='stroke-width: 1.71; stroke: #BEBEBE; fill: #FFFFFF;' />
+<line x1='114.62' y1='514.12' x2='114.62' y2='423.37' style='stroke-width: 3.41; stroke: #BEBEBE; stroke-linecap: butt;' />
+<line x1='98.00' y1='347.75' x2='98.16' y2='347.75' style='stroke-width: 1.71; stroke-linecap: butt;' />
+<line x1='97.70' y1='347.75' x2='97.54' y2='347.75' style='stroke-width: 1.71; stroke-linecap: butt;' />
+<polygon points='98.00,393.12 97.70,393.12 97.70,302.37 98.00,302.37 98.00,393.12 ' style='stroke-width: 1.71; fill: #FFFFFF;' />
+<line x1='97.85' y1='393.12' x2='97.85' y2='302.37' style='stroke-width: 3.41; stroke-linecap: butt;' />
+<line x1='100.21' y1='226.74' x2='101.72' y2='226.74' style='stroke-width: 1.71; stroke: #BEBEBE; stroke-linecap: butt;' />
+<line x1='97.18' y1='226.74' x2='95.67' y2='226.74' style='stroke-width: 1.71; stroke: #BEBEBE; stroke-linecap: butt;' />
+<polygon points='100.21,272.12 97.18,272.12 97.18,181.37 100.21,181.37 100.21,272.12 ' style='stroke-width: 1.71; stroke: #BEBEBE; fill: #FFFFFF;' />
+<line x1='98.70' y1='272.12' x2='98.70' y2='181.37' style='stroke-width: 3.41; stroke: #BEBEBE; stroke-linecap: butt;' />
+<line x1='81.92' y1='105.74' x2='82.81' y2='105.74' style='stroke-width: 1.71; stroke: #BEBEBE; stroke-linecap: butt;' />
+<line x1='80.13' y1='105.74' x2='79.24' y2='105.74' style='stroke-width: 1.71; stroke: #BEBEBE; stroke-linecap: butt;' />
+<polygon points='81.92,151.12 80.13,151.12 80.13,60.37 81.92,60.37 81.92,151.12 ' style='stroke-width: 1.71; stroke: #BEBEBE; fill: #FFFFFF;' />
+<line x1='81.02' y1='151.12' x2='81.02' y2='60.37' style='stroke-width: 3.41; stroke: #BEBEBE; stroke-linecap: butt;' />
+<polygon points='211.13,102.70 213.76,107.26 208.50,107.26 ' style='stroke-width: 0.71; stroke: #BEBEBE; fill: none;' />
+<polygon points='357.42,223.70 360.05,228.26 354.78,228.26 ' style='stroke-width: 0.71; stroke: #BEBEBE; fill: none;' />
+<polygon points='564.98,339.73 571.92,351.76 558.04,351.76 ' style='stroke-width: 0.71; stroke: none; fill: #000000;' />
+<polygon points='684.27,465.71 686.90,470.27 681.64,470.27 ' style='stroke-width: 0.71; stroke: #BEBEBE; fill: none;' />
 </g>
 <g clip-path='url(#cpMC4wMHw3MjAuMDB8MC4wMHw1NzYuMDA=)'>
-<polyline points='51.91,538.42 51.91,38.81 ' style='stroke-width: 1.07; stroke-linecap: butt;' />
-<text x='18.97' y='113.49' style='font-size: 9.60px; fill: #4D4D4D; font-family: sans;' textLength='25.08px' lengthAdjust='spacingAndGlyphs'>Set  4</text>
-<text x='18.97' y='470.35' style='font-size: 9.60px; fill: #4D4D4D; font-family: sans;' textLength='25.08px' lengthAdjust='spacingAndGlyphs'>Set  1</text>
-<text x='18.97' y='232.44' style='font-size: 9.60px; fill: #4D4D4D; font-family: sans;' textLength='25.08px' lengthAdjust='spacingAndGlyphs'>Set  3</text>
-<text x='18.97' y='351.07' style='font-size: 9.60px; font-weight: bold; fill: #4D4D4D; font-family: sans;' textLength='25.08px' lengthAdjust='spacingAndGlyphs'>Set  2</text>
-<polyline points='18.97,351.82 44.05,351.82 ' style='stroke-width: 0.75; stroke: #4D4D4D;' />
-<polyline points='46.25,110.18 51.91,110.18 ' style='stroke-width: 1.07; stroke: #333333; stroke-linecap: butt;' />
-<polyline points='46.25,229.14 51.91,229.14 ' style='stroke-width: 1.07; stroke: #333333; stroke-linecap: butt;' />
-<polyline points='46.25,348.09 51.91,348.09 ' style='stroke-width: 1.07; stroke: #333333; stroke-linecap: butt;' />
-<polyline points='46.25,467.05 51.91,467.05 ' style='stroke-width: 1.07; stroke: #333333; stroke-linecap: butt;' />
-<polyline points='51.91,538.42 714.52,538.42 ' style='stroke-width: 1.07; stroke-linecap: butt;' />
-<polyline points='76.77,544.09 76.77,538.42 ' style='stroke-width: 1.07; stroke: #333333; stroke-linecap: butt;' />
-<polyline points='283.42,544.09 283.42,538.42 ' style='stroke-width: 1.07; stroke: #333333; stroke-linecap: butt;' />
-<polyline points='490.07,544.09 490.07,538.42 ' style='stroke-width: 1.07; stroke: #333333; stroke-linecap: butt;' />
-<polyline points='696.72,544.09 696.72,538.42 ' style='stroke-width: 1.07; stroke: #333333; stroke-linecap: butt;' />
-<text x='76.77' y='554.54' text-anchor='middle' style='font-size: 12.00px; font-weight: bold; fill: #4D4D4D; font-family: sans;' textLength='6.67px' lengthAdjust='spacingAndGlyphs'>0</text>
-<text x='283.42' y='554.54' text-anchor='middle' style='font-size: 12.00px; font-weight: bold; fill: #4D4D4D; font-family: sans;' textLength='6.67px' lengthAdjust='spacingAndGlyphs'>2</text>
-<text x='490.07' y='554.54' text-anchor='middle' style='font-size: 12.00px; font-weight: bold; fill: #4D4D4D; font-family: sans;' textLength='6.67px' lengthAdjust='spacingAndGlyphs'>4</text>
-<text x='696.72' y='554.54' text-anchor='middle' style='font-size: 12.00px; font-weight: bold; fill: #4D4D4D; font-family: sans;' textLength='6.67px' lengthAdjust='spacingAndGlyphs'>6</text>
-<text x='383.22' y='568.03' text-anchor='middle' style='font-size: 12.00px; font-family: sans;' textLength='88.70px' lengthAdjust='spacingAndGlyphs'>SGCCA criterion</text>
-<text transform='translate(13.74,288.62) rotate(-90)' text-anchor='middle' style='font-size: 12.00px; font-family: sans;' textLength='172.76px' lengthAdjust='spacingAndGlyphs'>Tuning parameter sets (sparsity)</text>
-<text x='383.22' y='15.11' text-anchor='middle' style='font-size: 14.00px; font-weight: bold; font-family: sans;' textLength='176.65px' lengthAdjust='spacingAndGlyphs'>Permutation scores (2 runs) </text>
-<text x='383.22' y='30.23' text-anchor='middle' style='font-size: 14.00px; font-weight: bold; font-family: sans;' textLength='150.98px' lengthAdjust='spacingAndGlyphs'> Best parameters: Set  3</text>
+<text x='18.97' y='109.05' style='font-size: 9.60px; fill: #666666; font-family: sans;' textLength='25.08px' lengthAdjust='spacingAndGlyphs'>Set  4</text>
+<text x='18.97' y='472.06' style='font-size: 9.60px; fill: #666666; font-family: sans;' textLength='25.08px' lengthAdjust='spacingAndGlyphs'>Set  1</text>
+<text x='18.97' y='230.05' style='font-size: 9.60px; fill: #666666; font-family: sans;' textLength='25.08px' lengthAdjust='spacingAndGlyphs'>Set  3</text>
+<text x='18.97' y='350.72' style='font-size: 9.60px; font-weight: bold; fill: #666666; font-family: sans;' textLength='25.08px' lengthAdjust='spacingAndGlyphs'>Set  2</text>
+<polyline points='18.97,351.48 44.05,351.48 ' style='stroke-width: 0.75; stroke: #666666;' />
+<text x='73.95' y='554.54' text-anchor='middle' style='font-size: 12.00px; font-style: italic; fill: #666666; font-family: sans;' textLength='6.67px' lengthAdjust='spacingAndGlyphs'>0</text>
+<text x='281.51' y='554.54' text-anchor='middle' style='font-size: 12.00px; font-style: italic; fill: #666666; font-family: sans;' textLength='6.67px' lengthAdjust='spacingAndGlyphs'>2</text>
+<text x='489.08' y='554.54' text-anchor='middle' style='font-size: 12.00px; font-style: italic; fill: #666666; font-family: sans;' textLength='6.67px' lengthAdjust='spacingAndGlyphs'>4</text>
+<text x='696.65' y='554.54' text-anchor='middle' style='font-size: 12.00px; font-style: italic; fill: #666666; font-family: sans;' textLength='6.67px' lengthAdjust='spacingAndGlyphs'>6</text>
+<text x='381.75' y='568.03' text-anchor='middle' style='font-size: 12.00px; font-family: sans;' textLength='88.70px' lengthAdjust='spacingAndGlyphs'>SGCCA criterion</text>
+<text transform='translate(13.74,287.25) rotate(-90)' text-anchor='middle' style='font-size: 12.00px; font-family: sans;' textLength='172.76px' lengthAdjust='spacingAndGlyphs'>Tuning parameter sets (sparsity)</text>
+<text x='48.99' y='15.11' style='font-size: 14.00px; font-family: sans;' textLength='176.65px' lengthAdjust='spacingAndGlyphs'>Permutation scores (2 runs) </text>
+<text x='48.99' y='30.23' style='font-size: 14.00px; font-family: sans;' textLength='150.98px' lengthAdjust='spacingAndGlyphs'> Best parameters: Set  3</text>
 </g>
 </svg>

@@ -39,19 +39,19 @@ plot_sample <- function(df, title, x, block, comp, theme_RGCCA,
   p <- p +
     theme_RGCCA +
     ggplot2::geom_vline(
-      xintercept = 0, col = "grey", linetype = "dashed", size = .17 * cex_point
+      xintercept = 0, linetype = "dashed", size = .1 * cex_point
     ) +
     ggplot2::geom_hline(
-      yintercept = 0, col = "grey", linetype = "dashed", size = .17 * cex_point
+      yintercept = 0, linetype = "dashed", size = .1 * cex_point
     ) +
     ggplot2::labs(title = title, x = xlab, y = ylab, color = "Response") +
-    ggplot2::scale_y_continuous(breaks = NULL) +
-    ggplot2::scale_x_continuous(breaks = NULL) +
     ggplot2::theme(
       legend.key.width = ggplot2::unit(nchar("Response"), "mm"),
-      axis.text = ggplot2::element_blank(),
-      axis.line = ggplot2::element_blank()
-    )
+      axis.line = ggplot2::element_blank(),
+      axis.ticks = ggplot2::element_blank()
+    ) +
+    ggplot2::scale_x_continuous(expand = ggplot2::expansion(mult = .1)) +
+    ggplot2::scale_y_continuous(expand = ggplot2::expansion(mult = .1))
 
   # Change colors and shapes based on discrete or continuous response
   discrete <- is.character(df$response) || is.factor(df$response)
