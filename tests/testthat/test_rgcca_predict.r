@@ -69,18 +69,19 @@ test_that("rgcca_predict raises an error if response block dimensions do not
   )
 })
 
-test_that("rgcca_predict raises an error if the projected blocks are constant
+test_that("rgcca_predict raises a warning if the projected blocks are constant
           within classes", {
   skip_if_not_installed("gliomaData")
+  skip_if_not_installed("klaR")
   data("ge_cgh_locIGR", package = "gliomaData")
   blocks <- ge_cgh_locIGR$multiblocks
   Loc <- factor(ge_cgh_locIGR$y)
   levels(Loc) <- colnames(ge_cgh_locIGR$multiblocks$y)
   blocks[[3]] <- Loc
   fit_rgcca <- rgcca(blocks, tau = 0, response = 3)
-  expect_error(
-    rgcca_predict(fit_rgcca, blocks, response = 3, prediction_model = "lda"),
-    "overfitting model.",
+  expect_warning(
+    rgcca_predict(fit_rgcca, blocks, response = 3, prediction_model = "rda"),
+    "overfitting risk.",
     fixed = TRUE
   )
 })

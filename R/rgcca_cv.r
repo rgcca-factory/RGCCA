@@ -151,17 +151,20 @@ rgcca_cv <- function(blocks,
 
   param <- set_parameter_grid(par_type, par_length, par_value, blocks, response)
 
-  # Generate a warning if tau is null for a block that has more columns
-  # than samples
+  # Generate a warning if tau has not been fully specified for a block that
+  # has more columns than samples and remove tau = 0 configuration
   n <- NROW(blocks[[1]])
-  overfitting_risk <- (param$par_type == "tau") &&
-    any(vapply(seq_along(blocks), function(j) {
-      NCOL(blocks[[j]]) > n && any(param$par_value[, j] == 0)
-    }, FUN.VALUE = logical(1L)))
+  overfitting_risk <- (param$par_type == "tau") && is.null(dim(par_value)) &&
+    any(vapply(
+      seq_along(blocks),
+      function(j) NCOL(blocks[[j]]) > n,
+      FUN.VALUE = logical(1L)
+    ))
   if (overfitting_risk) {
+    param$par_value <- param$par_value[-nrow(param$par_value), ]
     warning(
-      "overfitting risk. Tau is zero for a block that has more columns ",
-      "than rows, there is a high risk of overfitting for RGCCA."
+      "overfitting risk. A block has more columns than rows, so the ",
+      "configuration with tau = 0 has been removed."
     )
   }
 
@@ -182,8 +185,8 @@ rgcca_cv <- function(blocks,
     init = init
   )
 
-  mat_cval <- lapply(
-    seq_len(NROW(param$par_value)),
+  mat_cval <- rev(lapply(
+    seq(NROW(param$par_value), 1),
     function(i, rgcca_args, model) {
       rgcca_args[[param$par_type]] <- param$par_value[i, ]
       rgcca_res <- do.call(rgcca, rgcca_args)
@@ -202,14 +205,14 @@ rgcca_cv <- function(blocks,
         )$vec_scores
       }))
 
-      if (verbose) setTxtProgressBar(pb, i)
+      if (verbose) setTxtProgressBar(pb, 1 + NROW(param$par_value) - i)
 
       return(list(
         res = res, par_value = rgcca_res$call[[param$par_type]][response]
       ))
     },
     rgcca_args, model
-  )
+  ))
   param$par_value[, response] <- do.call(
     rbind, lapply(mat_cval, "[[", "par_value")
   )

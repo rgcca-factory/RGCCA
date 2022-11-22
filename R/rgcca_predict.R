@@ -125,8 +125,8 @@ rgcca_predict <- function(rgcca_res,
       })
     }))
     if (any(is_constant)) {
-      stop_rgcca(
-        "overfitting model. The RGCCA method led to projected blocks ",
+      warning(
+        "overfitting risk. The RGCCA method led to projected blocks ",
         "that are constant within groups. Try to regularize the model",
         " by increasing tau or decreasing sparsity."
       )
