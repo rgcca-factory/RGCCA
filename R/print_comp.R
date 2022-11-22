@@ -44,7 +44,7 @@ print_comp <- function(rgcca_res, n = 1, i = length(rgcca_res$AVE$AVE_X),
     )
     paste(msg, paste(ave(AVE), collapse = " & "))
   } else {
-    AVE <- rgcca_res$AVE$AVE_X[[i]]
+    AVE <- rgcca_res$AVE$AVE_X_cor[[i]]
     paste0("Comp. ", n, " (", var_text, ave(AVE), ")")
   }
 }
