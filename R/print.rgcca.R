@@ -28,7 +28,7 @@ print.rgcca <- function(x, ...) {
   } else {
     crit <- x$crit[length(x$crit)]
   }
-  cat("Sum_{j,k} c_jk g(cov(X_ja_j, X_ka_k) = ",
+  cat("Sum_{j,k} c_jk g(cov(X_j a_j, X_k a_k) = ",
     sep = "",
     paste(round(crit, 4), sep = "", " "), fill = TRUE
   )
@@ -50,16 +50,16 @@ print.rgcca <- function(x, ...) {
       print(round(x$call$tau, 4), ...)
     }
   } else {
+    response <- ifelse(
+      isTRUE(x$call$disjunction), x$call$response, length(x$call$blocks) + 1
+    )
     nb_selected_var <- lapply(
-      x$a,
+      x$a[-response],
       function(a) apply(a, 2, function(l) sum(l != 0))
     )
-    if (!is.null(x$call$disjunction)) {
-      nb_selected_var[[x$call$response]] <- 1
-    }
     param <- "sparsity"
     if (!is.matrix(x$call$sparsity)) {
-      for (i in seq_len(NCOL(x$call$connection))) {
+      for (i in seq_len(NCOL(x$call$connection))[-response]) {
         sparsity <- x$call$sparsity[i]
 
         cat("The", param, "parameter used for", names(x$call$blocks)[i], "is:",
@@ -70,9 +70,15 @@ print.rgcca <- function(x, ...) {
       }
     } else {
       cat("The", param, "parameters used are: \n")
-      print(round(x$call$sparsity, 4), ...)
+      print(round(x$call$sparsity[, -response], 4), ...)
       cat("The number of selected variables are: \n")
       print(do.call(cbind, nb_selected_var))
+    }
+    if (isTRUE(x$call$disjunction)) {
+      cat("The regularization parameter used for",
+          names(x$call$blocks)[response], "is:", 0,
+          fill = TRUE
+      )
     }
   }
 }

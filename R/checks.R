@@ -342,6 +342,9 @@ check_penalty <- function(penalty, blocks, method = "rgcca", superblock = FALSE,
 }
 
 check_spars <- function(sparsity, block, n) {
+  if (mode(block) == "character") {
+    return(sparsity)
+  }
   min_sparsity <- 1 / sqrt(NCOL(block))
   min_message <- paste0(
     "too high sparsity. Sparsity parameter equals ", sparsity,

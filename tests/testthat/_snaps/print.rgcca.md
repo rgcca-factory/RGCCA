@@ -13,7 +13,7 @@
       block3      1      1      0
       
       The factorial scheme is used.
-      Sum_{j,k} c_jk g(cov(X_ja_j, X_ka_k) = 1.1932 
+      Sum_{j,k} c_jk g(cov(X_j a_j, X_k a_k) = 1.1932 
       
       The regularization parameter used for block1 is: 1
       The regularization parameter used for block2 is: 0.7
@@ -35,7 +35,7 @@
       block3      1      1      0
       
       The factorial scheme is used.
-      Sum_{j,k} c_jk g(cov(X_ja_j, X_ka_k) = 1.7093 
+      Sum_{j,k} c_jk g(cov(X_j a_j, X_k a_k) = 1.7093 
       
       The regularization parameters used are: 
            block1 block2 block3
@@ -57,7 +57,7 @@
       block3      1      1      0
       
       The factorial scheme is used.
-      Sum_{j,k} c_jk g(cov(X_ja_j, X_ka_k) = 0.9348 
+      Sum_{j,k} c_jk g(cov(X_j a_j, X_k a_k) = 0.9348 
       
       The sparsity parameter used for block1 is: 0.7 (with 2 variables selected)
       The sparsity parameter used for block2 is: 1 (with 2 variables selected)
@@ -79,7 +79,7 @@
       block3      1      1      0
       
       The factorial scheme is used.
-      Sum_{j,k} c_jk g(cov(X_ja_j, X_ka_k) = 0.9958 
+      Sum_{j,k} c_jk g(cov(X_j a_j, X_k a_k) = 0.9958 
       
       The sparsity parameters used are: 
            block1 block2 block3
@@ -89,4 +89,25 @@
            block1 block2 block3
       [1,]      2      2      2
       [2,]      3      2      2
+
+---
+
+    Code
+      res <- rgcca(blocks2, ncomp = 1, sparsity = c(0.7, 1, 0.9), response = 3)
+      print(res)
+    Output
+      Call: method='sgcca', superblock=FALSE, scale=TRUE, scale_block='inertia', init='svd', bias=TRUE, tol=1e-08, NA_method='nipals', ncomp=c(1,1,1), response=3 
+      There are J = 3 blocks.
+      The design matrix is:
+             block1 block2 block3
+      block1      0      0      1
+      block2      0      0      1
+      block3      1      1      0
+      
+      The factorial scheme is used.
+      Sum_{j,k} c_jk g(cov(X_j a_j, X_k a_k) = 1.0814 
+      
+      The sparsity parameter used for block1 is: 0.7 (with 2 variables selected)
+      The sparsity parameter used for block2 is: 1 (with 2 variables selected)
+      The regularization parameter used for block3 is: 0
 

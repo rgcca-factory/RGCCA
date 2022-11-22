@@ -333,9 +333,8 @@ rgcca <- function(blocks, method = "rgcca",
     blocks[[opt$response]] <- as_disjunctive(blocks[[opt$response]])
     disjunction <- attributes(blocks[[opt$response]])$disjunction
   }
-  # Change tau to 0 if there is a univariate disjunctive block response
-  is_disjunctive_and_tau <- !is.null(disjunction) && opt$param == "tau"
-  if (is_disjunctive_and_tau) {
+  # Change penalty to 0 if there is a univariate disjunctive block response
+  if (isTRUE(disjunction)) {
     if (is.matrix(opt$penalty)) {
       opt$penalty[, opt$response] <- 0
     } else {
