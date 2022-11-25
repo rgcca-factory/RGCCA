@@ -72,9 +72,11 @@ rgcca_predict <- function(rgcca_res,
   }
   if (is.na(test_idx)) {
     no_y_test <- TRUE
+    n_test <- NROW(blocks_test[[1]])
     test_idx <- length(blocks_test) + 1
-    blocks_test[[names(rgcca_res$call$blocks)[train_idx]]] <-
-      rgcca_res$call$raw[[train_idx]]
+    blocks_test[[names(rgcca_res$call$blocks)[train_idx]]] <- matrix(
+      rnorm(n_test), nrow = n_test, ncol = NCOL(rgcca_res$call$raw[[train_idx]])
+    )
   } else if (
     names(blocks_test)[[test_idx]] != names(rgcca_res$call$blocks)[[train_idx]]
   ) {
