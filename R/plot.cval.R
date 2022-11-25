@@ -142,9 +142,12 @@ plot.cval <- function(x, type = "sd",
       ),
       stat = "identity"
     ) +
-    ggplot2::geom_jitter(data = df_points, aes(
-      x = .data$combinations, y = .data$y, color = .data$category
-    ), size = .5 * cex_point, position = ggplot2::position_jitter(0.1)) +
+    ggplot2::geom_jitter(
+      data = df_points, aes(
+        x = .data$combinations, y = .data$y, color = .data$category
+      ), size = .5 * cex_point,
+      position = ggplot2::position_jitter(height = 0.01, width = 0.2)
+    ) +
     ggplot2::ggtitle(title) +
     theme_perso(cex, cex_main, cex_sub, cex_lab) +
     ggplot2::theme(
