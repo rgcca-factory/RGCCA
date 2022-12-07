@@ -74,11 +74,11 @@ rgcca_stability <- function(rgcca_res,
   sd_null <- boot_sampling$sd_null
 
   if (!is.null(sd_null)) {
-    rgcca_res$call$raw <- remove_null_sd(
-      list_m = rgcca_res$call$raw,
+    rgcca_res$call$blocks <- remove_null_sd(
+      list_m = rgcca_res$call$blocks,
       column_sd_null = sd_null
     )$list_m
-    rgcca_res <- set_rgcca(rgcca_res)
+    rgcca_res <- rgcca(rgcca_res)
   }
 
   W <- par_pblapply(
@@ -98,7 +98,7 @@ rgcca_stability <- function(rgcca_res,
   if (rgcca_res$call$superblock == TRUE) {
     list_res <- lapply(list_res, function(x) x[-length(x)])
     rgcca_res$AVE$AVE_X <- rgcca_res$AVE$AVE_X[-J]
-    rgcca_res$call$raw <- rgcca_res$call$raw[-J]
+    rgcca_res$call$blocks <- rgcca_res$call$blocks[-J]
   }
 
   mylist <- lapply(
@@ -143,18 +143,13 @@ rgcca_stability <- function(rgcca_res,
     }
   )
 
-  new_block <- Map(function(x, y) x[, y], rgcca_res$call$raw, keepVar)
-
-  rgcca_res <- rgcca(new_block,
-    connection = rgcca_res$call$connection,
-    superblock = rgcca_res$call$superblock,
-    ncomp = rgcca_res$call$ncomp,
-    bias = rgcca_res$call$bias,
-    tau = 1,
-    scale = rgcca_res$call$scale,
-    verbose = FALSE,
-    scale_block = rgcca_res$call$scale_block
+  rgcca_res$call$blocks <- Map(
+    function(x, y) x[, y], rgcca_res$call$blocks, keepVar
   )
+  rgcca_res$call$tau <-
+    rgcca_res$call$sparsity <- rep(1, length(rgcca_res$call$blocks))
+
+  rgcca_res <- rgcca(rgcca_res)
 
   return(structure(list(
     top = top,

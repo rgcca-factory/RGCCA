@@ -1,32 +1,32 @@
 #' Format output of rgcca function
 #'
 #' @noRd
-format_output <- function(func_out, opt, raw, func_call = NULL) {
+format_output <- function(func_out, rgcca_args, opt, blocks, disjunction) {
   ### Compute AVE
-  blocks_AVE <- seq_along(opt$blocks)
-  names_AVE <- names(opt$blocks)
-  ncomp_AVE <- opt$ncomp
-  pjs <- vapply(opt$blocks, NCOL, FUN.VALUE = 1L)
-  if (!is.null(func_call$disjunction)) {
-    blocks_AVE <- blocks_AVE[-opt$response]
-    names_AVE <- names_AVE[-opt$response]
-    ncomp_AVE <- ncomp_AVE[-opt$response]
-    pjs <- pjs[-opt$response]
+  blocks_AVE <- seq_along(blocks)
+  names_AVE <- names(blocks)
+  ncomp_AVE <- rgcca_args$ncomp
+  pjs <- vapply(blocks, NCOL, FUN.VALUE = 1L)
+  if (isTRUE(disjunction)) {
+    blocks_AVE <- blocks_AVE[-rgcca_args$response]
+    names_AVE <- names_AVE[-rgcca_args$response]
+    ncomp_AVE <- ncomp_AVE[-rgcca_args$response]
+    pjs <- pjs[-rgcca_args$response]
   }
 
-  AVE_inner <- vapply(seq(max(opt$ncomp)), function(n) {
-    sum(opt$connection * cor(
+  AVE_inner <- vapply(seq(max(rgcca_args$ncomp)), function(n) {
+    sum(rgcca_args$connection * cor(
       do.call(cbind, lapply(func_out$Y, function(y) y[, n]))
-    )^2 / 2) / (sum(opt$connection) / 2)
+    )^2 / 2) / (sum(rgcca_args$connection) / 2)
   }, FUN.VALUE = double(1L))
 
   AVE_X <- lapply(blocks_AVE, function(j) {
-    apply(func_out$Y[[j]], 2, rsq, opt$blocks[[j]])
+    apply(func_out$Y[[j]], 2, rsq, blocks[[j]])
   })
   AVE_X_cum <- lapply(blocks_AVE, function(j) {
     vapply(
       seq_len(NCOL(func_out$Y[[j]])),
-      function(p) rsq(func_out$Y[[j]][, seq(p)], opt$blocks[[j]]),
+      function(p) rsq(func_out$Y[[j]][, seq(p)], blocks[[j]]),
       FUN.VALUE = 1.0
     )
   })
@@ -49,57 +49,46 @@ format_output <- function(func_out, opt, raw, func_call = NULL) {
   names(func_out$AVE$AVE_X_cor) <- names_AVE
 
   ### Set names and shave
-  for (j in seq_along(opt$blocks)) {
-    rownames(func_out$a[[j]]) <- colnames(opt$blocks[[j]])
-    rownames(func_out$Y[[j]]) <- rownames(opt$blocks[[j]])
-    colnames(func_out$Y[[j]]) <- paste0("comp", seq_len(max(opt$ncomp)))
+  for (j in seq_along(blocks)) {
+    rownames(func_out$a[[j]]) <- colnames(blocks[[j]])
+    rownames(func_out$Y[[j]]) <- rownames(blocks[[j]])
+    colnames(func_out$Y[[j]]) <- paste0("comp", seq_len(max(rgcca_args$ncomp)))
   }
 
-  func_out$a <- shave(func_out$a, opt$ncomp)
-  func_out$Y <- shave(func_out$Y, opt$ncomp)
+  func_out$a <- shave(func_out$a, rgcca_args$ncomp)
+  func_out$Y <- shave(func_out$Y, rgcca_args$ncomp)
 
-  if (!opt$superblock) {
-    for (j in seq_along(opt$blocks)) {
-      rownames(func_out$astar[[j]]) <- colnames(opt$blocks[[j]])
+  if (!rgcca_args$superblock) {
+    for (j in seq_along(blocks)) {
+      rownames(func_out$astar[[j]]) <- colnames(blocks[[j]])
     }
-    func_out$astar <- shave(func_out$astar, opt$ncomp)
+    func_out$astar <- shave(func_out$astar, rgcca_args$ncomp)
   } else {
-    rownames(func_out$astar) <- colnames(opt$blocks[[length(opt$blocks)]])
+    rownames(func_out$astar) <- colnames(blocks[[length(blocks)]])
   }
 
-  names(func_out$a) <- names(opt$blocks)
-  names(func_out$Y) <- names(opt$blocks)
-  if (!opt$superblock) names(func_out$astar) <- names(opt$blocks)
+  names(func_out$a) <- names(blocks)
+  names(func_out$Y) <- names(blocks)
+  if (!rgcca_args$superblock) names(func_out$astar) <- names(blocks)
 
-  func_out$call <- list(
-    blocks = opt$blocks,
-    connection = opt$connection,
-    superblock = opt$superblock,
-    ncomp = opt$ncomp,
-    scheme = opt$scheme,
-    response = opt$response,
-    raw = raw,
-    method = opt$method
-  )
-
-  is_optimal <- any(opt$penalty == "optimal")
-  func_out$call[["optimal"]] <- is_optimal
+  is_optimal <- any(rgcca_args[[opt$par]] == "optimal")
+  func_out[["optimal"]] <- is_optimal
 
   if (is_optimal) {
-    func_out$call[[opt$par]] <- func_out$tau
-  } else {
-    func_out$call[[opt$par]] <- opt$penalty
+    rgcca_args[[opt$par]] <- func_out$tau
   }
 
-  if (NCOL(func_out$call[[opt$par]]) > 1) {
-    colnames(func_out$call[[opt$par]]) <- names(opt$blocks)
+  if (NCOL(rgcca_args[[opt$par]]) > 1) {
+    colnames(rgcca_args[[opt$par]]) <- names(blocks)
   }
 
   if (!is.null(func_out$tau)) {
     func_out$tau <- NULL
   }
 
-  func_out$call <- c(func_out$call, func_call)
+  func_out$call <- rgcca_args
+  func_out$blocks <- blocks
+  func_out$disjunction <- disjunction
 
   return(func_out)
 }

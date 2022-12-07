@@ -4,96 +4,38 @@
 #' @inheritParams rgcca_predict
 #' @inheritParams rgcca
 #' @inheritParams bootstrap
-#' @param classification A logical indicating if it is a classification task.
 #' @noRd
-rgcca_cv_k <- function(rgcca_res,
-                       validation = "kfold",
-                       prediction_model = "lm",
-                       k = 5,
-                       scale = NULL,
-                       scale_block = NULL,
-                       tol = 1e-8,
-                       scheme = NULL,
-                       NA_method = NULL,
-                       method = NULL,
-                       init = NULL,
-                       bias = NULL,
-                       connection = NULL,
-                       ncomp = NULL,
-                       tau = NULL,
-                       sparsity = NULL,
-                       n_cores = 1,
-                       verbose = TRUE,
-                       classification = FALSE,
-                       ...) {
-  ### Check parameters
-  all_args <- names(environment())
-  used_args <- c(
-    names(match.call()), "validation", "prediction_model",
-    "k", "n_cores", "verbose", "classification"
+rgcca_cv_k <- function(rgcca_args, inds, prediction_model,
+                       par_type, par_value, ...) {
+  rgcca_args[[par_type]] <- par_value
+
+  blocks <- rgcca_args[["blocks"]]
+
+  rgcca_args[["blocks"]] <- lapply(
+    blocks, function(x) x[-inds, , drop = FALSE]
   )
-  for (n in setdiff(all_args, used_args)) {
-    assign(n, rgcca_res$call[[n]])
-  }
+  # Fit RGCCA on the training blocks
+  res <- do.call(rgcca, rgcca_args)
 
-  ### Compute cross validation
-  blocks <- rgcca_res$call$raw
-
-  if (validation == "loo") {
-    v_inds <- seq_len(NROW(blocks[[1]]))
-  } else {
-    if (classification) {
-      v_inds <- caret::createFolds(
-        blocks[[rgcca_res$call$response]][, 1],
-        k = k, list = TRUE,
-        returnTrain = FALSE
-      )
-    } else {
-      v_inds <- sample(nrow(blocks[[1]]))
-      v_inds <- split(v_inds, seq(v_inds) %% k)
-    }
-  }
-
-  res <- par_pblapply(
-    v_inds, function(inds) {
-      # Fit RGCCA on the training blocks
-      res <- set_rgcca(rgcca_res,
-        blocks = blocks,
-        scale = scale,
-        scale_block = scale_block,
-        tol = tol,
-        scheme = scheme,
-        superblock = FALSE,
-        inds = inds,
-        NA_method = NA_method,
-        response = rgcca_res$call$response,
-        bias = bias,
-        tau = tau,
-        ncomp = ncomp,
-        sparsity = sparsity,
-      )
-
-      blocks_test <- lapply(blocks, function(x) x[inds, , drop = FALSE])
-
-      # Evaluate RGCCA on the validation blocks
-      rgcca_predict(
-        res,
-        blocks_test = blocks_test,
-        prediction_model = prediction_model,
-        response = rgcca_res$call$response,
-        ...
-      )
-    },
-    n_cores = n_cores, verbose = verbose
-  )
+  # Evaluate RGCCA on the validation blocks
+  blocks_test <- lapply(seq_along(blocks), function(j) {
+    x <- blocks[[j]][inds, , drop = FALSE]
+    colnames(x) <- colnames(res$call$blocks[[j]])
+    return(x)
+  })
+  names(blocks_test) <- names(res$blocks)
+  score <- rgcca_predict(
+    res,
+    blocks_test = blocks_test,
+    prediction_model = prediction_model,
+    response = rgcca_args$response,
+    ...
+  )$score
 
   ### Structure outputs
-  vec_scores <- vapply(res, function(x) x$score, FUN.VALUE = numeric(1))
-  scores <- mean(unlist(lapply(res, function(x) x$score)), na.rm = TRUE)
-
   structure(
     list(
-      scores = scores, vec_scores = vec_scores
+      score = score, par_value = res$call[[par_type]][res$call$response]
     ),
     class = "cv"
   )

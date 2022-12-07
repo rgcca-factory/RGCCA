@@ -82,8 +82,8 @@ test_that("generate_resampling_keepAllVAriables", {
 #      and `keep_all_variables = FALSE`, check that `death` and `rent` are
 #      indeed removed.
 N <- NROW(Russett)
-rgcca_out$call$raw$agriculture[, "rent"] <- rep(0, N)
-rgcca_out$call$raw$politic[, "death"] <- rep(2, N)
+rgcca_out$call$blocks$agriculture[, "rent"] <- rep(0, N)
+rgcca_out$call$blocks$politic[, "death"] <- rep(2, N)
 
 test_that("generate_resampling_NUL_variance_1", {
   sample_out_balanced_1 <- expect_warning(
@@ -155,8 +155,8 @@ test_that(
 #   - "generate_resampling_veryRisky_5" : when `balanced = FALSE`
 #      and `keep_all_variables = TRUE`, check that no variable is removed.
 N <- NROW(Russett)
-rgcca_out$call$raw$agriculture[, "rent"] <- c(1, rep(0, N - 1))
-rgcca_out$call$raw$politic[, "death"] <- c(1, rep(2, N - 1))
+rgcca_out$call$blocks$agriculture[, "rent"] <- c(1, rep(0, N - 1))
+rgcca_out$call$blocks$politic[, "death"] <- c(1, rep(2, N - 1))
 set.seed(553)
 test_that("generate_resampling_veryRisky_1", {
   sample_out_balanced_1 <- expect_warning(
@@ -232,8 +232,8 @@ test_that("generate_resampling_veryRisky_5", {
 #   - "generate_resampling_ALL_Block_3" : when `balanced = TRUE or FALSE`
 #      and `keep_all_variables = TRUE` with a different random initialization,
 #      no error is raised as no variable needs to be removed.
-rgcca_out$call$raw$industry[, "gnpr"] <- c(1, rep(0, N - 1))
-rgcca_out$call$raw$industry[, "labo"] <- c(1, rep(2, N - 1))
+rgcca_out$call$blocks$industry[, "gnpr"] <- c(1, rep(0, N - 1))
+rgcca_out$call$blocks$industry[, "labo"] <- c(1, rep(2, N - 1))
 set.seed(54)
 test_that(
   "generate_resampling_ALL_Block_1",

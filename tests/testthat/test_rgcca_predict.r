@@ -100,7 +100,7 @@ test_that("rgcca_predict with lm predictor gives the same prediction as
     rgcca_res = fit_rgcca, blocks_test = A,
     response = response
   )
-  res_lm <- apply(fit_rgcca$call$raw[[response]], 2, function(x) {
+  res_lm <- apply(fit_rgcca$call$blocks[[response]], 2, function(x) {
     lm(x ~ fit_rgcca$Y[[1]][, 1:3] + fit_rgcca$Y[[2]][, 1:2])$residuals
   })
   score_lm <- mean(apply(res_lm, 2, function(x) {
@@ -123,7 +123,7 @@ test_that("rgcca_predict with lda predictor gives the same prediction as
     prediction_model = "lda", response = "politic"
   )
   Y <- data.frame(cbind(fit_rgcca$Y[[1]][, 1:3], fit_rgcca$Y[[2]][, 1:2]))
-  res_lda <- MASS::lda(fit_rgcca$call$raw[[response]] ~ as.matrix(Y))
+  res_lda <- MASS::lda(fit_rgcca$call$blocks[[response]] ~ as.matrix(Y))
   prediction_lda <- predict(res_lda, Y)$class
   expect_equal(res_predict$prediction, data.frame(politic = prediction_lda))
 })

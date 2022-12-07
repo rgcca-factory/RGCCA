@@ -13,7 +13,7 @@
 #' @return Reordered list of bootstrap results.
 #' @noRd
 format_bootstrap_list <- function(W, rgcca_res, n_boot, n = 1) {
-  J <- length(rgcca_res$call$raw)
+  J <- length(rgcca_res$call$blocks)
   ndefl_max <- max(rgcca_res$call$ncomp)
   X <- lapply(W, `[[`, n)
   # Add columns of NA for missing components
@@ -26,12 +26,12 @@ format_bootstrap_list <- function(W, rgcca_res, n_boot, n = 1) {
     })
   })
   # Change order of elements
-  pjs <- vapply(rgcca_res$call$blocks, ncol, FUN.VALUE = integer(1))
+  pjs <- vapply(rgcca_res$blocks, ncol, FUN.VALUE = integer(1))
   list_res_X <- array(unlist(lapply(X, function(x) Reduce(rbind, x))),
     dim = c(sum(pjs), ndefl_max, n_boot)
   )
   rownames(list_res_X) <- unlist(lapply(
-    rgcca_res$call$blocks, colnames
+    rgcca_res$blocks, colnames
   ))
   f <- unlist(Map(function(x, y) rep(x, each = y), seq(pjs), pjs))
   list_res_X <- lapply(seq(ndefl_max), function(i) {
@@ -39,10 +39,10 @@ format_bootstrap_list <- function(W, rgcca_res, n_boot, n = 1) {
     x <- split(list_res_X[, i, ], f)[-(J + 1)]
     x <- lapply(seq_along(x), function(j) {
       y <- matrix(x[[j]], nrow = pjs[j])
-      rownames(y) <- colnames(rgcca_res$call$blocks[[j]])
+      rownames(y) <- colnames(rgcca_res$blocks[[j]])
       return(y)
     })
-    names(x) <- names(rgcca_res$call$raw)
+    names(x) <- names(rgcca_res$call$blocks)
     return(x)
   })
 }

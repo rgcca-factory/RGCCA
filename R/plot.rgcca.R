@@ -89,7 +89,7 @@
 #' @importFrom ggrepel geom_text_repel
 #' @importFrom rlang .data
 #' @export
-plot.rgcca <- function(x, type = "weights", block = seq_along(x$call$raw),
+plot.rgcca <- function(x, type = "weights", block = seq_along(x$call$blocks),
                        comp = 1, response = as.factor(rep(1, NROW(x$Y[[1]]))),
                        display_order = TRUE,
                        title = NULL, cex = 1, cex_sub = 12 * cex,
@@ -110,13 +110,13 @@ plot.rgcca <- function(x, type = "weights", block = seq_along(x$call$raw),
     df <- data.frame(
       x = do.call(rbind, lapply(block, function(j) {
         cor(
-          x$call$blocks[[j]][rownames(x$Y[[j]]), ],
+          x$blocks[[j]][rownames(x$Y[[j]]), ],
           x$Y[[j]][, comp],
           use = "pairwise.complete.obs"
         )
       })),
       response = num_block,
-      y = do.call(c, lapply(x$call$blocks[block], colnames))
+      y = do.call(c, lapply(x$blocks[block], colnames))
     )
 
     idx <- apply(do.call(
@@ -128,7 +128,7 @@ plot.rgcca <- function(x, type = "weights", block = seq_along(x$call$raw),
   df_weight <- function(x, block, comp, num_block, display_order) {
     df <- data.frame(
       x = unlist(lapply(x$a[block], function(z) z[, comp[1]])),
-      y = do.call(c, lapply(x$call$blocks[block], colnames)),
+      y = do.call(c, lapply(x$blocks[block], colnames)),
       response = num_block
     )
     if (display_order) {
@@ -201,16 +201,16 @@ plot.rgcca <- function(x, type = "weights", block = seq_along(x$call$raw),
   )
 
   lapply(block, function(i) {
-    check_blockx("block", i, x$call$blocks)
+    check_blockx("block", i, x$blocks)
   })
   Map(function(y, z) check_compx(y, y, x$call$ncomp, z), comp, block)
 
   if (missing(response)) {
     if (!is.null(x$call$response)) {
-      if (!is.null(x$call$disjunction)) {
-        response <- as.factor(x$call$raw[[x$call$response]][, 1])
+      if (isTRUE(x$disjunction)) {
+        response <- as.factor(x$call$blocks[[x$call$response]][, 1])
       } else {
-        response <- x$call$blocks[[x$call$response]][, 1]
+        response <- x$blocks[[x$call$response]][, 1]
       }
     }
   } else {
@@ -224,16 +224,16 @@ plot.rgcca <- function(x, type = "weights", block = seq_along(x$call$raw),
   }
 
   # Construct response vector for correlation circle, weights and loadings
-  if (block[1] == length(x$call$raw) + 1) {
+  if (block[1] == length(x$call$blocks) + 1) {
     num_block <- as.factor(unlist(lapply(
-      seq_along(x$call$blocks[-block[1]]),
-      function(j) rep(names(x$call$blocks)[j], NCOL(x$call$blocks[[j]]))
+      seq_along(x$blocks[-block[1]]),
+      function(j) rep(names(x$blocks)[j], NCOL(x$blocks[[j]]))
     )))
   } else {
     max_length <- ifelse(type == "both", 1, length(block))
     num_block <- as.factor(unlist(lapply(
       block[seq(max_length)],
-      function(j) rep(names(x$call$blocks)[j], NCOL(x$call$blocks[[j]]))
+      function(j) rep(names(x$blocks)[j], NCOL(x$blocks[[j]]))
     )))
   }
 
@@ -260,7 +260,7 @@ plot.rgcca <- function(x, type = "weights", block = seq_along(x$call$raw),
       )
 
       title <- ifelse(
-        missing(title), toupper(names(x$call$blocks)[block[1]]), title
+        missing(title), toupper(names(x$blocks)[block[1]]), title
       )
       plot_function <- plot_both
     },
@@ -289,7 +289,7 @@ plot.rgcca <- function(x, type = "weights", block = seq_along(x$call$raw),
 
       block_name <- ifelse(
         length(unique(block)) == 1,
-        paste(":", names(x$call$blocks)[block[1]]),
+        paste(":", names(x$blocks)[block[1]]),
         ""
       )
       title <- ifelse(missing(title), paste0(
@@ -303,7 +303,7 @@ plot.rgcca <- function(x, type = "weights", block = seq_along(x$call$raw),
 
       block_name <- ifelse(
         length(unique(block)) == 1,
-        paste(":", names(x$call$blocks)[block[1]]),
+        paste(":", names(x$blocks)[block[1]]),
         ""
       )
       title <- ifelse(missing(title), paste0(

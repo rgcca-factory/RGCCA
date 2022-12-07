@@ -3,9 +3,6 @@
     Code
       res <- rgcca_cv(blocks, response = 3, method = "rgcca", par_type = "tau",
         par_value = c(0, 0.2, 0.3), n_run = 1, n_cores = 1, par_length = 2, verbose = FALSE)
-    Output
-      
-    Code
       print(res, type = "quantile")
     Output
       Call: method='rgcca', superblock=FALSE, scale=TRUE, scale_block=TRUE, init='svd', bias=TRUE, tol=1e-08, NA_method='nipals', ncomp=c(1,1,1), response=3 
@@ -26,11 +23,11 @@
       Validation: kfold with 5 folds and 1 run(s)) 
       Prediction model: lm 
       
-        Tuning parameters Median error    Q1    Q3
-      1       0.0/0.2/0.3        0.988 0.961 1.225
-      2       0.0/0.0/0.0        1.088 1.033 1.133
+        Tuning parameters Median error   Q1   Q3
+      1       0.0/0.2/0.3         1.07 1.02 1.13
+      2       0.0/0.0/0.0         1.09 1.03 1.13
       
-      The best combination is: 0 0 0 for a mean CV error of 1.132 
+      The best combination is: 0.0 0.2 0.3 for a mean CV error of 1.12 
 
 ---
 
@@ -38,9 +35,6 @@
       res <- rgcca_cv(blocks_classif, response = 3, method = "rgcca", par_type = "tau",
         par_value = c(0, 0.2, 0.3), n_run = 1, n_cores = 1, par_length = 2, verbose = FALSE,
         prediction_model = "lda")
-    Output
-      
-    Code
       print(res, type = "sd")
     Output
       Call: method='rgcca', superblock=FALSE, scale=TRUE, scale_block=TRUE, init='svd', bias=TRUE, tol=1e-08, NA_method='nipals', ncomp=c(1,1,1), response=3 
@@ -62,19 +56,16 @@
       Prediction model: lda 
       
         Tuning parameters Mean error Mean - Sd Mean + Sd
-      1       0.0/0.2/0.0   0.084444 -0.000757  0.169646
-      2       0.0/0.0/0.0   0.102222  0.002099  0.202346
+      1       0.0/0.2/0.0    0.10667   0.00079   0.21254
+      2       0.0/0.0/0.0    0.12889   0.01088   0.24690
       
-      The best combination is: 0.0 0.2 0.0 for a mean CV error of  0.084444 
+      The best combination is: 0.0 0.2 0.0 for a mean CV error of 0.10667 
 
 ---
 
     Code
       res <- rgcca_cv(blocks, validation = "loo", response = 3, method = "sgcca",
         par_type = "sparsity", n_run = 1, n_cores = 1, par_length = 2, verbose = FALSE)
-    Output
-      
-    Code
       print(res, type = "sd")
     Output
       Call: method='sgcca', superblock=FALSE, scale=TRUE, scale_block=TRUE, init='svd', bias=TRUE, tol=1e-08, NA_method='nipals', ncomp=c(1,1,1), response=3 
@@ -106,9 +97,6 @@
     Code
       res <- rgcca_cv(blocks_classif, response = 3, method = "sgcca", par_type = "sparsity",
         n_run = 1, n_cores = 1, par_length = 2, verbose = FALSE, prediction_model = "lda")
-    Output
-      
-    Code
       print(res, type = "sd")
     Output
       Call: method='sgcca', superblock=FALSE, scale=TRUE, scale_block=TRUE, init='svd', bias=TRUE, tol=1e-08, NA_method='nipals', ncomp=c(1,1,1), response=3 
@@ -130,8 +118,8 @@
       Prediction model: lda 
       
         Tuning parameters Mean error Mean - Sd Mean + Sd
-      1    1.00/1.00/0.00     0.1289    0.0764    0.1814
-      2    0.58/0.71/0.00     0.1511    0.0860    0.2162
+      1    1.00/1.00/0.00     0.1311   -0.0143    0.2765
+      2    0.58/0.71/0.00     0.1756   -0.0273    0.3784
       
-      The best combination is: 1 1 0 for a mean CV error of 0.1289 
+      The best combination is: 1 1 0 for a mean CV error of  0.1311 
 

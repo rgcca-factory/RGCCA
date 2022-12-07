@@ -62,12 +62,12 @@ test_that("rgcca_cv changes par_type to sparsity if a sparse method is given
     response = 3, par_type = "tau", method = "sgcca",
     par_length = 1, n_run = 1
   )
-  expect_equal(res$call$par_type, "sparsity")
+  expect_equal(res$par_type, "sparsity")
   res <- rgcca_cv(blocks,
     response = 3, par_type = "ncomp", method = "sgcca",
     par_length = 1, n_run = 1
   )
-  expect_equal(res$call$par_type, "ncomp")
+  expect_equal(res$par_type, "ncomp")
 })
 
 test_that("rgcca_cv computes k * n_run scores per parameter value", {

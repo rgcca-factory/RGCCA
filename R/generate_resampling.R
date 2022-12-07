@@ -79,7 +79,7 @@ generate_resampling <- function(rgcca_res, n_boot, balanced = TRUE,
   pval <- min(pval, 1)
   NO_null_sd_var <- FALSE
   iter <- 0
-  raw_blocks <- rgcca_res$call$raw
+  raw_blocks <- rgcca_res$call$blocks
   N <- NROW(raw_blocks[[1]])
   prob <- rep(1 / N, N)
 

@@ -7,7 +7,7 @@
 \method{plot}{rgcca}(
   x,
   type = "weights",
-  block = seq_along(x$call$raw),
+  block = seq_along(x$call$blocks),
   comp = 1,
   response = as.factor(rep(1, NROW(x$Y[[1]]))),
   display_order = TRUE,

@@ -26,7 +26,7 @@
 #' fit.boot <- bootstrap(fit.rgcca, n_boot = 20, n_cores = 1)
 #' plot(fit.boot, type = "weight", block = 1, comp = 1)
 #' @export
-plot.bootstrap <- function(x, block = seq_along(x$rgcca$call$raw),
+plot.bootstrap <- function(x, block = seq_along(x$rgcca$call$blocks),
                            comp = 1, type = "weights",
                            empirical = TRUE, n_mark = 30,
                            display_order = TRUE,
@@ -37,7 +37,7 @@ plot.bootstrap <- function(x, block = seq_along(x$rgcca$call$raw),
   ### Perform checks and parse arguments
   stopifnot(is(x, "bootstrap"))
   type <- match.arg(type, c("weights", "loadings"))
-  lapply(block, function(i) check_blockx("block", i, x$rgcca$call$raw))
+  lapply(block, function(i) check_blockx("block", i, x$rgcca$call$blocks))
   check_integer("n_mark", n_mark)
 
   if (is.null(colors)) {
@@ -62,7 +62,7 @@ plot.bootstrap <- function(x, block = seq_along(x$rgcca$call$raw),
     }
   ))
   df$response <- as.factor(unlist(lapply(block, function(j) {
-    rep(names(x$rgcca$call$blocks)[j], NCOL(x$rgcca$call$blocks[[j]]))
+    rep(names(x$rgcca$blocks)[j], NCOL(x$rgcca$blocks[[j]]))
   })))
 
   if (display_order) {
@@ -86,7 +86,7 @@ plot.bootstrap <- function(x, block = seq_along(x$rgcca$call$raw),
   block_name <- ifelse(
     length(block) > 1,
     "",
-    paste0("(", names(x$rgcca$call$blocks)[block], ")")
+    paste0("(", names(x$rgcca$blocks)[block], ")")
   )
 
   title <- ifelse(is.null(title),

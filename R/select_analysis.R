@@ -19,17 +19,19 @@
 #' sparsity.}
 #' @return \item{gcca}{Function used to compute the analysis. Either rgccad
 #' or sgcca.}
+#' @importFrom utils modifyList
 #' @noRd
-select_analysis <- function(blocks,
-                            connection = 1 - diag(length(blocks)),
-                            tau = rep(1, length(blocks)),
-                            sparsity = rep(1, length(blocks)),
-                            ncomp = rep(1, length(blocks)),
-                            scheme = "centroid",
-                            superblock = TRUE,
-                            method = "rgcca",
-                            quiet = FALSE,
-                            response = NULL) {
+select_analysis <- function(rgcca_args, blocks) {
+  tau <- rgcca_args$tau
+  ncomp <- rgcca_args$ncomp
+  quiet <- rgcca_args$quiet
+  scheme <- rgcca_args$scheme
+  method <- rgcca_args$method
+  response <- rgcca_args$response
+  sparsity <- rgcca_args$sparsity
+  connection <- rgcca_args$connection
+  superblock <- rgcca_args$superblock
+
   if (length(blocks) == 1) {
     if (sparsity == 1) {
       method <- "pca"
@@ -436,15 +438,21 @@ select_analysis <- function(blocks,
     superblock = superblock, response = response
   )
 
-  return(list(
-    scheme = scheme,
-    penalty = penalty,
+  rgcca_args[[param]] <- penalty
+
+  rgcca_args <- modifyList(rgcca_args, list(
     ncomp = ncomp,
-    connection = connection,
-    superblock = superblock,
-    response = response,
+    scheme = scheme,
     method = method,
-    gcca = gcca,
-    param = param
+    response = response,
+    connection = connection,
+    superblock = superblock
+  ), keep.null = TRUE)
+  return(list(
+    rgcca_args = rgcca_args,
+    opt = list(
+      gcca = gcca,
+      param = param
+    )
   ))
 }

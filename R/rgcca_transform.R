@@ -38,13 +38,13 @@ rgcca_transform <- function(rgcca_res, blocks_test) {
   }
 
   ### Align training blocks and blocks_test
-  if (!all(names(blocks_test) %in% names(rgcca_res$call$blocks))) {
+  if (!all(names(blocks_test) %in% names(rgcca_res$blocks))) {
     stop_rgcca(paste0(
       "At least one block from blocks_test was not found in the training",
       " blocks. Please check block names."
     ))
   }
-  X_train <- rgcca_res$call$blocks[names(blocks_test)]
+  X_train <- rgcca_res$blocks[names(blocks_test)]
   blocks_test <- lapply(seq_along(blocks_test), function(j) {
     x <- as.matrix(blocks_test[[j]])
     y <- as.matrix(X_train[[j]])

@@ -29,7 +29,7 @@ test_that("get_bootstrap returns the expected statistics", {
     empirical = TRUE
   )
   df_test <- data.frame(
-    estimate = cor(rgcca_out$call$blocks[[3]], rgcca_out$Y[[3]][, 1]),
+    estimate = cor(rgcca_out$blocks[[3]], rgcca_out$Y[[3]][, 1]),
     mean = apply(boot$bootstrap$L[[1]][[3]], 1, mean, na.rm = TRUE),
     lower_bound = apply(boot$bootstrap$L[[1]][[3]], 1, quantile, 0.025),
     upper_bound = apply(boot$bootstrap$L[[1]][[3]], 1, quantile, 0.975)
@@ -58,7 +58,7 @@ test_that("get_bootstrap returns the expected statistics", {
     (1 + boot$bootstrap$L[[1]][[1]]) / (1 - boot$bootstrap$L[[1]][[1]])
   )
   std <- apply(r, 1, function(x) sd(x, na.rm = TRUE))
-  estimate <- cor(rgcca_out$call$blocks[[1]], rgcca_out$Y[[1]][, 1])
+  estimate <- cor(rgcca_out$blocks[[1]], rgcca_out$Y[[1]][, 1])
   df_test <- data.frame(
     sd = std,
     lower_bound = estimate - std * tail,

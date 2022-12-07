@@ -107,7 +107,7 @@ get_bootstrap <- function(b, type = "weights", comp = 1,
 
   ### Perform checks
   stopifnot(is(b, "bootstrap"))
-  check_blockx("block", block, b$rgcca$call$raw)
+  check_blockx("block", block, b$rgcca$call$blocks)
   check_compx("comp", comp, b$rgcca$call$ncomp, block)
 
   ### Get bootstrap object and estimate
@@ -122,7 +122,7 @@ get_bootstrap <- function(b, type = "weights", comp = 1,
   if (type == "weights") {
     estimate <- b$rgcca$a[[block]][, comp]
   } else {
-    estimate <- drop(cor(b$rgcca$call$blocks[[block]],
+    estimate <- drop(cor(b$rgcca$blocks[[block]],
       b$rgcca$Y[[block]][, comp],
       use = "pairwise.complete.obs"
     ))

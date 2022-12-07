@@ -84,7 +84,7 @@ plot.permutation <- function(x,
     "RGCCA criterion"
   )
   xlab <- ifelse(type == "zstat", "Z-score", crit_title)
-  ylab <- paste0("Tuning parameter sets (", x$call$par_type, ")")
+  ylab <- paste0("Tuning parameter sets (", x$par_type, ")")
 
   breaks <- rev(levels(df$combinations))
   labels <- as.expression(breaks)
@@ -93,7 +93,7 @@ plot.permutation <- function(x,
   title <- ifelse(
     missing(title),
     paste0(
-      "Permutation scores (", x$call$n_perms, " runs) \n Best parameters: ",
+      "Permutation scores (", x$n_perms, " runs) \n Best parameters: ",
       combinations[best]
     ),
     title

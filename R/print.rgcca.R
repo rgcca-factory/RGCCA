@@ -40,7 +40,7 @@ print.rgcca <- function(x, ...) {
     if (!is.matrix(x$call$tau)) {
       for (i in seq_len(NCOL(x$call$connection))) {
         tau <- x$call$tau[i]
-        cat("The", param, "parameter used for", names(x$call$blocks)[i],
+        cat("The", param, "parameter used for", names(x$blocks)[i],
           "is:", round(tau, 4),
           fill = TRUE
         )
@@ -51,7 +51,7 @@ print.rgcca <- function(x, ...) {
     }
   } else {
     response <- ifelse(
-      isTRUE(x$call$disjunction), x$call$response, length(x$call$blocks) + 1
+      isTRUE(x$disjunction), x$call$response, length(x$blocks) + 1
     )
     nb_selected_var <- lapply(
       x$a[-response],
@@ -62,7 +62,7 @@ print.rgcca <- function(x, ...) {
       for (i in seq_len(NCOL(x$call$connection))[-response]) {
         sparsity <- x$call$sparsity[i]
 
-        cat("The", param, "parameter used for", names(x$call$blocks)[i], "is:",
+        cat("The", param, "parameter used for", names(x$blocks)[i], "is:",
           sparsity, "(with", paste(nb_selected_var[[i]], collapse = ", "),
           "variables selected)",
           fill = TRUE
@@ -74,9 +74,9 @@ print.rgcca <- function(x, ...) {
       cat("The number of selected variables are: \n")
       print(do.call(cbind, nb_selected_var))
     }
-    if (isTRUE(x$call$disjunction)) {
+    if (isTRUE(x$disjunction)) {
       cat("The regularization parameter used for",
-          names(x$call$blocks)[response], "is:", 0,
+          names(x$blocks)[response], "is:", 0,
           fill = TRUE
       )
     }

@@ -49,19 +49,19 @@
 #' blocks <- list(
 #'   agriculture = Russett[, seq(3)],
 #'   industry = Russett[, 4:5],
-#'   politic = Russett[, 6:11]
+#'   politic = Russett[, 6:8]
 #' )
 #' res <- rgcca_cv(blocks,
 #'   response = 3, method = "rgcca",
 #'   par_type = "sparsity",
-#'   par_value = c(0.6, 0.75, 0.5),
+#'   par_value = c(0.6, 0.75, 0.8),
 #'   n_run = 2, n_cores = 1
 #' )
 #' plot(res)
 #' \dontrun{
 #' rgcca_cv(blocks,
 #'   response = 3, par_type = "tau",
-#'   par_value = c(0.6, 0.75, 0.5),
+#'   par_value = c(0.6, 0.75, 0.8),
 #'   n_run = 2, n_cores = 1
 #' )$bestpenalties
 #'
@@ -102,39 +102,35 @@ rgcca_cv <- function(blocks,
                      init = "svd",
                      bias = TRUE,
                      verbose = TRUE,
+                     n_iter_max = 1000,
                      ...) {
   ### Try to retrieve parameters from a rgcca object
-  if (inherits(blocks, "rgcca")) {
-    rgcca_res <- blocks
-  }
-  if (is(rgcca_res, "rgcca")) {
-    message("All parameters were imported from a rgcca object.")
-    scale_block <- rgcca_res$call$scale_block
-    scale <- rgcca_res$call$scale
-    scheme <- rgcca_res$call$scheme
-    response <- rgcca_res$call$response
-    tol <- rgcca_res$call$tol
-    NA_method <- rgcca_res$call$NA_method
-    bias <- rgcca_res$call$bias
-    blocks <- rgcca_res$call$raw
-    superblock <- rgcca_res$call$superblock
-    tau <- rgcca_res$call$tau
-    ncomp <- rgcca_res$call$ncomp
-    sparsity <- rgcca_res$call$sparsity
-  }
+  rgcca_args <- as.list(environment())
+  rgcca_args <- get_rgcca_args(blocks, rgcca_args)
+  rgcca_args$quiet <- TRUE
+  rgcca_args$verbose <- FALSE
+
+  rgcca_args$blocks <- check_blocks(
+    rgcca_args$blocks,
+    add_NAlines = TRUE, quiet = rgcca_args$quiet,
+    response = rgcca_args$response
+  )
 
   ### Check parameters
-  if (is.null(response)) {
+  if (is.null(rgcca_args$response)) {
     stop(paste0(
       "response is required for rgcca_cv (it is an integer ",
       "comprised between 1 and the number of blocks) "
     ))
   }
+  check_blockx("response", rgcca_args$response, rgcca_args$blocks)
   if (validation == "loo") {
-    k <- dim(blocks[[1]])[1]
+    k <- dim(rgcca_args$blocks[[1]])[1]
     n_run <- 1
   }
-  model <- check_prediction_model(prediction_model, blocks[[response]])
+  model <- check_prediction_model(
+    prediction_model, rgcca_args$blocks[[rgcca_args$response]]
+  )
 
   check_integer("par_length", par_length)
   check_integer("n_run", n_run)
@@ -142,22 +138,34 @@ rgcca_cv <- function(blocks,
   match.arg(par_type, c("tau", "sparsity", "ncomp"))
   match.arg(validation, c("loo", "kfold"))
 
+  ### Set connection matrix
+  connection <- matrix(
+    0, nrow = length(rgcca_args$blocks), ncol = length(rgcca_args$blocks)
+  )
+  connection[rgcca_args$response, ] <- connection[, rgcca_args$response] <- 1
+  connection[rgcca_args$response, rgcca_args$response] <- 0
+  rgcca_args$connection <- connection
+
   ### Prepare parameters for line search
-  if (method %in% c("sgcca", "spca", "spls") && (par_type == "tau")) {
+  if (
+    rgcca_args$method %in% c("sgcca", "spca", "spls") && (par_type == "tau")
+  ) {
     par_type <- "sparsity"
   } else if (par_type == "sparsity") {
-    method <- "sgcca"
+    rgcca_args$method <- "sgcca"
   }
 
-  param <- set_parameter_grid(par_type, par_length, par_value, blocks, response)
+  param <- set_parameter_grid(
+    par_type, par_length, par_value, rgcca_args$blocks, rgcca_args$response
+  )
 
   # Generate a warning if tau has not been fully specified for a block that
   # has more columns than samples and remove tau = 0 configuration
-  n <- NROW(blocks[[1]])
+  n <- NROW(rgcca_args$blocks[[1]])
   overfitting_risk <- (param$par_type == "tau") && is.null(dim(par_value)) &&
     any(vapply(
-      seq_along(blocks),
-      function(j) NCOL(blocks[[j]]) > n,
+      seq_along(rgcca_args$blocks),
+      function(j) NCOL(rgcca_args$blocks[[j]]) > n,
       FUN.VALUE = logical(1L)
     ))
   if (overfitting_risk) {
@@ -169,97 +177,63 @@ rgcca_cv <- function(blocks,
   }
 
   ### Start line search
-  if (verbose) {
-    message(paste("Cross-validation for", param$par_type, "in progress...\n"),
-      appendLF = FALSE
-    )
-    pb <- txtProgressBar(max = nrow(param$par_value))
+  if (validation == "loo") {
+    v_inds <- seq_len(NROW(rgcca_args$blocks[[1]]))
+  } else {
+    if (model$classification) {
+      v_inds <- Reduce("c", lapply(seq_len(n_run), function(j) {
+        caret::createFolds(
+          rgcca_args$blocks[[rgcca_args$response]][, 1],
+          k = k, list = TRUE,
+          returnTrain = FALSE
+        )
+      }))
+    } else {
+      v_inds <- Reduce("c", lapply(seq_len(n_run), function(j) {
+        x <- sample(nrow(rgcca_args$blocks[[1]]))
+        split(x, seq(x) %% k)
+      }))
+    }
   }
 
-  rgcca_args <- list(
-    blocks = blocks, method = method, response = response,
-    ncomp = ncomp, superblock = superblock,
-    scale = scale, scale_block = scale_block,
-    scheme = scheme, tol = tol, NA_method = NA_method,
-    tau = tau, sparsity = sparsity, bias = bias,
-    init = init
+  idx <- seq_len(NROW(param$par_value) * length(v_inds))
+  W <- par_pblapply(idx, function(n) {
+    i <- (n - 1) %/% length(v_inds) + 1
+    j <- (n - 1) %% length(v_inds) + 1
+    rgcca_cv_k(
+      rgcca_args,
+      inds = v_inds[[j]],
+      par_type = param$par_type,
+      par_value = param$par_value[i, ],
+      prediction_model = model$prediction_model,
+      ...
+    )
+  }, n_cores = n_cores, verbose = verbose)
+
+  param$par_value[, rgcca_args$response] <- do.call(
+    rbind,
+    lapply(W[seq(1, length(idx), by = length(v_inds))], "[[", "par_value")
   )
-
-  mat_cval <- rev(lapply(
-    seq(NROW(param$par_value), 1),
-    function(i, rgcca_args, model) {
-      rgcca_args[[param$par_type]] <- param$par_value[i, ]
-      rgcca_res <- do.call(rgcca, rgcca_args)
-
-      res <- unlist(lapply(seq(n_run), function(n) {
-        rgcca_cv_k(
-          rgcca_res,
-          validation = validation,
-          prediction_model = model$prediction_model,
-          k = k,
-          n_cores = n_cores,
-          complete = FALSE,
-          verbose = FALSE,
-          classification = model$classification,
-          ...
-        )$vec_scores
-      }))
-
-      if (verbose) setTxtProgressBar(pb, 1 + NROW(param$par_value) - i)
-
-      return(list(
-        res = res, par_value = rgcca_res$call[[param$par_type]][response]
-      ))
-    },
-    rgcca_args, model
-  ))
-  param$par_value[, response] <- do.call(
-    rbind, lapply(mat_cval, "[[", "par_value")
-  )
-  mat_cval <- do.call(rbind, lapply(mat_cval, "[[", "res"))
+  W <- unlist(lapply(W, "[[", "score"))
+  W <- matrix(W, nrow = NROW(param$par_value), byrow = TRUE)
 
   ### Format output
-  cat("\n")
-
-  connection <- matrix(0, nrow = length(blocks), ncol = length(blocks))
-  connection[response, ] <- connection[, response] <- 1
-  connection[response, response] <- 0
-
-  call <- list(
-    n_run = n_run,
-    response = response,
-    par_type = par_type,
-    par_value = par_value,
-    validation = validation,
-    prediction_model = prediction_model,
-    k = k,
-    superblock = FALSE,
-    scale = scale,
-    scale_block = scale_block,
-    tol = tol,
-    scheme = scheme,
-    NA_method = NA_method,
-    blocks = blocks,
-    tau = tau,
-    sparsity = sparsity,
-    ncomp = ncomp,
-    connection = connection,
-    init = init,
-    bias = bias,
-    method = method
-  )
-
   rownames(param$par_value) <- seq_len(NROW(param$par_value))
-  colnames(param$par_value) <- names(blocks)
-  rownames(mat_cval) <- seq_len(NROW(mat_cval))
+  colnames(param$par_value) <- names(rgcca_args$blocks)
+  rownames(W) <- seq_len(NROW(W))
 
-  best_param_idx <- which.min(apply(mat_cval, 1, mean))
+  best_param_idx <- which.min(apply(W, 1, mean))
 
   res <- list(
-    cv = mat_cval,
-    call = call,
+    k = k,
+    cv = W,
+    call = rgcca_args,
+    n_run = n_run,
+    par_type = param$par_type,
+    penalties = param$par_value,
+    validation = validation,
     bestpenalties = param$par_value[best_param_idx, ],
-    penalties = param$par_value
+    prediction_model = prediction_model
   )
   class(res) <- "cval"
   return(res)

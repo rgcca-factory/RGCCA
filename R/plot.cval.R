@@ -104,11 +104,11 @@ plot.cval <- function(x, type = "sd",
 
   ### Prepare plot
   n_run_str <- ifelse(
-    x$call$n_run > 1, paste0(" and ", x$call$n_run, " run(s)"), ""
+    x$n_run > 1, paste0(" and ", x$n_run, " run(s)"), ""
   )
   validation_str <- ifelse(
-    x$call$validation == "kfold",
-    paste0("kfold: with ", x$call$k, " folds", n_run_str, ""),
+    x$validation == "kfold",
+    paste0("kfold: with ", x$k, " folds", n_run_str, ""),
     "leave-one-out"
   )
 
@@ -116,7 +116,7 @@ plot.cval <- function(x, type = "sd",
     "Cross-validated error (", validation_str, ")\nBest parameters: ",
     combinations[best]
   )
-  xlab <- paste0("Tuning parameter sets (", x$call$par_type, ")")
+  xlab <- paste0("Tuning parameter sets (", x$par_type, ")")
   ylab <- "Mean error"
 
   ### Construct plot

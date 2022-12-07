@@ -27,7 +27,8 @@ rgcca_permutation(
   superblock = FALSE,
   NA_method = "nipals",
   rgcca_res = NULL,
-  verbose = TRUE
+  verbose = TRUE,
+  n_iter_max = 1000
 )
 }
 \arguments{
@@ -147,6 +148,9 @@ data (NIPALS-type algorithm)}}}
 
 \item{verbose}{Logical value indicating if the progress of the
 permutation procedure is reported.}
+
+\item{n_iter_max}{Integer giving the algorithm's maximum number of
+iterations.}
 }
 \value{
 \item{zstat}{A vector of Z-statistics, one zstat per set of tuning
@@ -323,7 +327,7 @@ perm.out$bestpenalties
 # when par_value is a scalar, the same maximum value is applied
 # for each block
 
-perm.outt <- rgcca_permutation(blocks,
+perm.out <- rgcca_permutation(blocks,
   connection = C,
   par_type = "sparsity",
   par_value = 0.8, par_length = 5,

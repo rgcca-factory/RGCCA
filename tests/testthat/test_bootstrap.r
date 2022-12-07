@@ -117,8 +117,8 @@ test_that("bootstrap_removed_variable_2", {
   )
   expect_false("rent" %in% rownames(boot_out$bootstrap$W[[1]]$agriculture))
   expect_false("rent" %in% rownames(boot_out$bootstrap$L[[1]]$agriculture))
+  expect_false("rent" %in% colnames(boot_out$rgcca$blocks$agriculture))
   expect_false("rent" %in% colnames(boot_out$rgcca$call$blocks$agriculture))
-  expect_false("rent" %in% colnames(boot_out$rgcca$call$raw$agriculture))
 })
 
 # Same situation, but this time, it is specifically ask that all variables are
@@ -132,6 +132,6 @@ boot_out <- bootstrap(rgcca_out,
 test_that("bootstrap_keep_all_variables", {
   expect_true("rent" %in% rownames(boot_out$bootstrap$W[[1]]$agriculture))
   expect_true("rent" %in% rownames(boot_out$bootstrap$L[[1]]$agriculture))
+  expect_true("rent" %in% colnames(boot_out$rgcca$blocks$agriculture))
   expect_true("rent" %in% colnames(boot_out$rgcca$call$blocks$agriculture))
-  expect_true("rent" %in% colnames(boot_out$rgcca$call$raw$agriculture))
 })

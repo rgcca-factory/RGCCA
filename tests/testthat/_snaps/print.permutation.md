@@ -5,7 +5,7 @@
         n_cores = 1, verbose = FALSE)
       print(res)
     Output
-      Call: method='rgcca', superblock=FALSE, scale=TRUE, scale_block=TRUE, init=NULL, bias=NULL, tol=1e-08, NA_method='nipals', ncomp=c(1,1,1), response=NULL 
+      Call: method='rgcca', superblock=FALSE, scale=TRUE, scale_block=TRUE, init='svd', bias=TRUE, tol=1e-08, NA_method='nipals', ncomp=c(1,1,1), response=NULL 
       There are J = 3 blocks.
       The design matrix is:
                   agriculture industry politic
@@ -35,23 +35,23 @@
         n_cores = 1, verbose = FALSE)
       print(res)
     Output
-      Call: method='rgcca', superblock=FALSE, scale=TRUE, scale_block=TRUE, init=NULL, bias=NULL, tol=1e-08, NA_method='nipals', ncomp=c(1,1,1,1,1,1), response=NULL 
+      Call: method='rgcca', superblock=FALSE, scale=TRUE, scale_block=TRUE, init='svd', bias=TRUE, tol=1e-08, NA_method='nipals', ncomp=c(1,1,1,1,1,1), response=NULL 
       There are J = 6 blocks.
       The design matrix is:
-           [,1] [,2] [,3] [,4] [,5] [,6]
-      [1,]    0    1    1    1    1    1
-      [2,]    1    0    1    1    1    1
-      [3,]    1    1    0    1    1    1
-      [4,]    1    1    1    0    1    1
-      [5,]    1    1    1    1    0    1
-      [6,]    1    1    1    1    1    0
+             block1 block2 block3 block4 block5 block6
+      block1      0      1      1      1      1      1
+      block2      1      0      1      1      1      1
+      block3      1      1      0      1      1      1
+      block4      1      1      1      0      1      1
+      block5      1      1      1      1      0      1
+      block6      1      1      1      1      1      0
       
       The factorial scheme is used.
       
       Tuning parameters (ncomp) used: 
-        [,1] [,2] [,3] [,4] [,5] [,6]
-      1    2    2    2    2    2    2
-      2    1    1    1    1    1    1
+        block1 block2 block3 block4 block5 block6
+      1      2      2      2      2      2      2
+      2      1      1      1      1      1      1
       
         Tuning parameters      Criterion Permuted criterion sd       zstat   
       1 Tuning parameter set 1   6.2353    0.3610             0.0365 161.0061

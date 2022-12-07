@@ -12,10 +12,10 @@ plot_sample <- function(df, title, x, block, comp, theme_RGCCA,
 
   # Change axis labels and title depending on using one are two blocks
   if (block[1] != block[2]) {
-    xlab <- paste(xlab, names(x$call$blocks)[block[1]], sep = " - ")
-    ylab <- paste(ylab, names(x$call$blocks)[block[2]], sep = " - ")
+    xlab <- paste(xlab, names(x$blocks)[block[1]], sep = " - ")
+    ylab <- paste(ylab, names(x$blocks)[block[2]], sep = " - ")
   } else {
-    title <- paste(title, names(x$call$blocks)[block[1]], sep = ": ")
+    title <- paste(title, names(x$blocks)[block[1]], sep = ": ")
   }
 
   # Construct plot

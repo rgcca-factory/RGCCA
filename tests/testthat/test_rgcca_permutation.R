@@ -19,12 +19,12 @@ test_that("rgcca_permutation changes par_type to sparsity if a sparse method is
     response = 3, par_type = "tau",
     method = "sgcca", par_length = 1, n_perms = 1
   )
-  expect_equal(res$call$par_type, "sparsity")
+  expect_equal(res$par_type, "sparsity")
   res <- rgcca_permutation(blocks,
     response = 3, par_type = "ncomp",
     method = "sgcca", par_length = 1, n_perms = 1
   )
-  expect_equal(res$call$par_type, "ncomp")
+  expect_equal(res$par_type, "ncomp")
 })
 
 test_that("rgcca_permutation computes n_perms permuted scores and one non

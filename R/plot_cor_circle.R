@@ -20,7 +20,7 @@ plot_cor_circle <- function(df, title, x, block, comp, theme_RGCCA,
   ylab <- print_comp(x, comp[2], block[1])
 
   # Change axis labels and title depending on using one are two blocks
-  title <- paste(title, names(x$call$blocks)[block[1]], sep = ": ")
+  title <- paste(title, names(x$blocks)[block[1]], sep = ": ")
 
   # Construct plot
   p <- ggplot(df, aes(df[, 1], df[, 2], color = .data$response))

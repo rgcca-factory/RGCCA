@@ -47,7 +47,7 @@ print.bootstrap <- function(x, type = "weights", empirical = TRUE,
   ), "\n")
 
   # Remove superblock from the print
-  J <- length(x$rgcca$call$raw)
+  J <- length(x$rgcca$call$blocks)
   ncompmax <- max(x$rgcca$call$ncomp[-(J + 1)])
 
   for (comp in seq(ncompmax)) {

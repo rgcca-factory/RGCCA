@@ -33,65 +33,63 @@ blocks_null_sd <- list(
 blocks_null_sd[[3]][, 6] <- c(1, rep(0, 46))
 
 custom_rgcca_cv_k <- function(blocks, response, prediction_model = "lm", ...) {
-  vapply(seq_len(NROW(blocks[[1]])), function(i) {
-    # Step 1: extract line i of each block
-    A_minus_i <- lapply(blocks, function(x) {
-      return(x[-i, ])
-    })
-    A_i <- lapply(blocks, function(x) {
-      return(x[i, ])
-    })
-    names(A_minus_i) <- names(A_i) <- names(blocks)
+  # Step 1: extract line 1 of each block
+  A_minus_1 <- lapply(blocks, function(x) {
+    return(x[-1, ])
+  })
+  A_1 <- lapply(blocks, function(x) {
+    return(x[1, ])
+  })
 
-    # Step 2: Fit RGCCA on block A_minus_i
-    rgcca_out_i <- rgcca(A_minus_i, response = response, ...)
+  # Step 2: Fit RGCCA on block A_minus_1
+  rgcca_out_1 <- rgcca(A_minus_1, response = response, ...)
 
-    # Step 3: Evaluate model on A_i
-    pred_i <- rgcca_predict(rgcca_out_i, A_i,
-      response = response,
-      prediction_model = prediction_model
-    )
-    return(pred_i$score)
-  }, FUN.VALUE = double(1))
+  # Step 3: Evaluate model on A_1
+  pred_1 <- rgcca_predict(rgcca_out_1, A_1,
+    response = response,
+    prediction_model = prediction_model
+  )
+  return(pred_1$score)
 }
 
-# Cross validation with leave-one-out
-#------------------------------------
-test_that("rgcca_cv_k gives the same scores in leave-one-out as
-          custom_rgcca_cv_k", {
+test_that("rgcca_cv_k gives the same scores as custom_rgcca_cv_k", {
   # Regression
   response <- 1
   rgcca_out <- rgcca(blocks, response = response, ncomp = 1)
-  res_cv_k <- rgcca_cv_k(rgcca_res = rgcca_out, n_cores = 1, validation = "loo")
+  res_cv_k <- rgcca_cv_k(
+    rgcca_out$call, inds = 1, prediction_model = "lm",
+    par_type = "tau", par_value = rep(1, length(blocks))
+  )
   res_custom_cv_k <- custom_rgcca_cv_k(blocks, response)
-  expect_equal(res_cv_k$vec_scores, res_custom_cv_k)
+  expect_equal(res_cv_k$score, res_custom_cv_k)
 
   rgcca_out <- rgcca(blocks, response = response, ncomp = 2)
-  res_cv_k <- rgcca_cv_k(rgcca_res = rgcca_out, n_cores = 1, validation = "loo")
+  res_cv_k <- rgcca_cv_k(
+    rgcca_out$call, inds = 1, prediction_model = "lm",
+    par_type = "tau", par_value = rep(1, length(blocks))
+  )
   res_custom_cv_k <- custom_rgcca_cv_k(blocks, response, ncomp = 2)
-  expect_equal(res_cv_k$vec_scores, res_custom_cv_k)
+  expect_equal(res_cv_k$score, res_custom_cv_k)
 
   # Classification
   response <- 3
   rgcca_out <- rgcca(blocks_classif, response = response, ncomp = 1)
   res_cv_k <- rgcca_cv_k(
-    rgcca_res = rgcca_out, n_cores = 1,
-    validation = "loo", prediction_model = "lda",
-    classification = TRUE
+    rgcca_out$call, inds = 1, prediction_model = "lda",
+    par_type = "tau", par_value = rep(1, length(blocks_classif))
   )
   res_custom_cv_k <- custom_rgcca_cv_k(blocks_classif, response, "lda")
-  expect_equal(res_cv_k$vec_scores, res_custom_cv_k)
+  expect_equal(res_cv_k$score, res_custom_cv_k)
 
   rgcca_out <- rgcca(blocks_classif, response = response, ncomp = 2)
   res_cv_k <- rgcca_cv_k(
-    rgcca_res = rgcca_out, n_cores = 1,
-    validation = "loo", prediction_model = "lda",
-    classification = TRUE
+    rgcca_out$call, inds = 1, prediction_model = "lda",
+    par_type = "tau", par_value = rep(1, length(blocks_classif))
   )
   res_custom_cv_k <- custom_rgcca_cv_k(blocks_classif, response, "lda",
     ncomp = 2
   )
-  expect_equal(res_cv_k$vec_scores, res_custom_cv_k)
+  expect_equal(res_cv_k$score, res_custom_cv_k)
 
   # With missing values
   response <- 1
@@ -99,47 +97,33 @@ test_that("rgcca_cv_k gives the same scores in leave-one-out as
     response = response, ncomp = 1,
     NA_method = "nipals"
   )
-  res_cv_k <- rgcca_cv_k(rgcca_res = rgcca_out, n_cores = 1, validation = "loo")
+  res_cv_k <- rgcca_cv_k(
+    rgcca_out$call, inds = 1, prediction_model = "lm",
+    par_type = "tau", par_value = rep(1, length(blocksNA))
+  )
   res_custom_cv_k <- custom_rgcca_cv_k(blocksNA, response, NA_method = "nipals")
-  expect_equal(res_cv_k$vec_scores, res_custom_cv_k)
+  expect_equal(res_cv_k$score, res_custom_cv_k)
 
   rgcca_out <- rgcca(blocksNA,
     response = response, ncomp = 1,
     NA_method = "complete"
   )
-  res_cv_k <- rgcca_cv_k(rgcca_res = rgcca_out, n_cores = 1, validation = "loo")
+  res_cv_k <- rgcca_cv_k(
+    rgcca_out$call, inds = 1, prediction_model = "lm",
+    par_type = "tau", par_value = rep(1, length(blocksNA))
+  )
   res_custom_cv_k <- custom_rgcca_cv_k(blocksNA, response,
     NA_method = "complete"
   )
-  expect_equal(res_cv_k$vec_scores, res_custom_cv_k)
+  expect_equal(res_cv_k$score, res_custom_cv_k)
 
   # With a column of null variance in the training set
   response <- 1
   rgcca_out <- rgcca(blocks_null_sd, response = response, ncomp = 1)
-  res_cv_k <- rgcca_cv_k(rgcca_res = rgcca_out, n_cores = 1, validation = "loo")
+  res_cv_k <- rgcca_cv_k(
+    rgcca_out$call, inds = 1, prediction_model = "lm",
+    par_type = "tau", par_value = rep(1, length(blocks_null_sd))
+  )
   res_custom_cv_k <- custom_rgcca_cv_k(blocks_null_sd, response)
-  expect_equal(res_cv_k$vec_scores, res_custom_cv_k)
-})
-
-# Cross validation with k-fold
-#-----------------------------
-test_that("rgcca_cv_k in k-fold mode gives k scores and can retrieve loo
-          results", {
-  k <- 5
-  response <- 1
-  rgcca_out <- rgcca(blocks, response = response, ncomp = 1)
-  res_cv_k <- rgcca_cv_k(
-    rgcca_res = rgcca_out, n_cores = 1,
-    validation = "kfold", k = k
-  )
-  expect_equal(length(res_cv_k$vec_scores), k)
-
-  k <- NROW(blocks[[1]])
-  res_cv_k <- rgcca_cv_k(
-    rgcca_res = rgcca_out, n_cores = 1,
-    validation = "kfold", k = k
-  )
-  expect_equal(length(res_cv_k$vec_scores), k)
-  res_custom_cv_k <- custom_rgcca_cv_k(blocks, response)
-  expect_equal(mean(res_cv_k$vec_scores), mean(res_custom_cv_k))
+  expect_equal(res_cv_k$score, res_custom_cv_k)
 })

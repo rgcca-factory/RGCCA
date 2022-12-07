@@ -86,6 +86,7 @@ bootstrap <- function(rgcca_res, n_boot = 100,
     rgcca_res <- rgcca_res$rgcca_res
   }
 
+  # If sparse model, we perform bootstrap only on the selected variables
   if (tolower(rgcca_res$call$method) %in% c("sgcca", "spls", "spca")) {
     if (verbose) {
       message(
@@ -96,30 +97,22 @@ bootstrap <- function(rgcca_res, n_boot = 100,
 
     # Remove superblock variables from keep_var as the superblock is generated
     # from the kept variables
-    J <- length(rgcca_res$call$raw)
+    J <- length(rgcca_res$call$blocks)
     keep_var <- lapply(
       rgcca_res$a[-(J + 1)],
       function(x) unique(which(x != 0, arr.ind = TRUE)[, 1])
     )
-    if (!is.null(rgcca_res$call$disjunction)) {
+    if (!is.null(rgcca_res$disjunction)) {
       keep_var[[rgcca_res$call$response]] <- 1
     }
 
-    new_block <- Map(function(x, y) x[, y, drop = FALSE],
-      rgcca_res$call$raw, keep_var
+    rgcca_res$call$blocks <- Map(
+      function(x, y) x[, y, drop = FALSE], rgcca_res$call$blocks, keep_var
     )
+    rgcca_res$call$tau <-
+      rgcca_res$call$sparsity <- rep(1, length(rgcca_res$call$blocks))
 
-    rgcca_res <- rgcca(new_block,
-      connection = rgcca_res$call$connection,
-      superblock = rgcca_res$call$superblock,
-      ncomp = rgcca_res$call$ncomp,
-      bias = rgcca_res$call$bias,
-      tau = 1,
-      scale = rgcca_res$call$scale,
-      verbose = FALSE,
-      scale_block = rgcca_res$call$scale_block,
-      response = rgcca_res$call$response
-    )
+    rgcca_res <- rgcca(rgcca_res)
   }
 
   check_integer("n_boot", n_boot)
@@ -135,11 +128,11 @@ bootstrap <- function(rgcca_res, n_boot = 100,
   sd_null <- boot_sampling$sd_null
 
   if (!is.null(sd_null)) {
-    rgcca_res$call$raw <- remove_null_sd(
-      list_m = rgcca_res$call$raw,
+    rgcca_res$call$blocks <- remove_null_sd(
+      list_m = rgcca_res$call$blocks,
       column_sd_null = sd_null
     )$list_m
-    rgcca_res <- set_rgcca(rgcca_res)
+    rgcca_res <- rgcca(rgcca_res)
   }
 
   W <- par_pblapply(

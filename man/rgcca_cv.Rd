@@ -30,6 +30,7 @@ rgcca_cv(
   init = "svd",
   bias = TRUE,
   verbose = TRUE,
+  n_iter_max = 1000,
   ...
 )
 }
@@ -150,6 +151,9 @@ or by random initialisation ("random") (default: "svd").}
 \item{verbose}{Logical value indicating if the progress of the
 algorithm is reported while computing.}
 
+\item{n_iter_max}{Integer giving the algorithm's maximum number of
+iterations.}
+
 \item{...}{Additional parameters to be passed to the model fitted on top
 of RGCCA.}
 }
@@ -192,19 +196,19 @@ data("Russett")
 blocks <- list(
   agriculture = Russett[, seq(3)],
   industry = Russett[, 4:5],
-  politic = Russett[, 6:11]
+  politic = Russett[, 6:8]
 )
 res <- rgcca_cv(blocks,
   response = 3, method = "rgcca",
   par_type = "sparsity",
-  par_value = c(0.6, 0.75, 0.5),
+  par_value = c(0.6, 0.75, 0.8),
   n_run = 2, n_cores = 1
 )
 plot(res)
 \dontrun{
 rgcca_cv(blocks,
   response = 3, par_type = "tau",
-  par_value = c(0.6, 0.75, 0.5),
+  par_value = c(0.6, 0.75, 0.8),
   n_run = 2, n_cores = 1
 )$bestpenalties
 

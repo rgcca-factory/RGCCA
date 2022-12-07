@@ -6,7 +6,7 @@
 \usage{
 \method{plot}{bootstrap}(
   x,
-  block = seq_along(x$rgcca$call$raw),
+  block = seq_along(x$rgcca$call$blocks),
   comp = 1,
   type = "weights",
   empirical = TRUE,

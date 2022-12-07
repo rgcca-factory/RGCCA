@@ -28,14 +28,14 @@
 #'   connection = C, tau = c(0.7, 0.8, 0.7),
 #'   ncomp = c(3, 2, 4), superblock = FALSE, response = 3
 #' )
-#' A <- lapply(object1$call$blocks, function(x) x[1:32, ])
+#' A <- lapply(object1$blocks, function(x) x[1:32, ])
 #' object <- rgcca(A,
 #'   connection = C, tau = c(0.7, 0.8, 0.7),
 #'   ncomp = c(3, 2, 4),
 #'   scale = FALSE, scale_block = FALSE,
 #'   superblock = FALSE, response = 3
 #' )
-#' X <- lapply(object1$call$blocks, function(x) x[-c(1:32), ])
+#' X <- lapply(object1$blocks, function(x) x[-c(1:32), ])
 #' X <- lapply(X, function(x) x[, sample(1:NCOL(x))])
 #' X <- sample(X, length(X))
 #' response <- "industry"
@@ -58,10 +58,10 @@ rgcca_predict <- function(rgcca_res,
 
   ### Check that response is among both training and test blocks
   if (is.character(response)) {
-    train_idx <- match(response, names(rgcca_res$call$blocks))
+    train_idx <- match(response, names(rgcca_res$blocks))
     test_idx <- match(response, names(blocks_test))
   } else {
-    train_idx <- match(response, seq_along(rgcca_res$call$blocks))
+    train_idx <- match(response, seq_along(rgcca_res$blocks))
     test_idx <- match(response, seq_along(blocks_test))
   }
   if (is.na(train_idx)) {
@@ -74,11 +74,13 @@ rgcca_predict <- function(rgcca_res,
     no_y_test <- TRUE
     n_test <- NROW(blocks_test[[1]])
     test_idx <- length(blocks_test) + 1
-    blocks_test[[names(rgcca_res$call$blocks)[train_idx]]] <- matrix(
-      rnorm(n_test), nrow = n_test, ncol = NCOL(rgcca_res$call$raw[[train_idx]])
+    blocks_test[[names(rgcca_res$blocks)[train_idx]]] <- matrix(
+      rnorm(n_test),
+      nrow = n_test,
+      ncol = NCOL(rgcca_res$call$blocks[[train_idx]])
     )
   } else if (
-    names(blocks_test)[[test_idx]] != names(rgcca_res$call$blocks)[[train_idx]]
+    names(blocks_test)[[test_idx]] != names(rgcca_res$blocks)[[train_idx]]
   ) {
     stop_rgcca(
       "Block to predict was provided as an integer but ",
@@ -90,13 +92,13 @@ rgcca_predict <- function(rgcca_res,
   }
 
   tmp <- check_prediction_model(
-    prediction_model, rgcca_res$call$raw[[response]]
+    prediction_model, rgcca_res$call$blocks[[response]]
   )
   prediction_model <- tmp$prediction_model
   classification <- tmp$classification
 
   ### Get train and test target (if present)
-  y_train <- rgcca_res$call$raw[[train_idx]]
+  y_train <- rgcca_res$call$blocks[[train_idx]]
   y_test <- as.data.frame(blocks_test[[test_idx]])
 
   if (any(dim(y_test)[-1] != dim(y_train)[-1])) {

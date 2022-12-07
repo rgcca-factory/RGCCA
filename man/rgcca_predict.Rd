@@ -42,14 +42,14 @@ object1 <- rgcca(blocks,
   connection = C, tau = c(0.7, 0.8, 0.7),
   ncomp = c(3, 2, 4), superblock = FALSE, response = 3
 )
-A <- lapply(object1$call$blocks, function(x) x[1:32, ])
+A <- lapply(object1$blocks, function(x) x[1:32, ])
 object <- rgcca(A,
   connection = C, tau = c(0.7, 0.8, 0.7),
   ncomp = c(3, 2, 4),
   scale = FALSE, scale_block = FALSE,
   superblock = FALSE, response = 3
 )
-X <- lapply(object1$call$blocks, function(x) x[-c(1:32), ])
+X <- lapply(object1$blocks, function(x) x[-c(1:32), ])
 X <- lapply(X, function(x) x[, sample(1:NCOL(x))])
 X <- sample(X, length(X))
 response <- "industry"

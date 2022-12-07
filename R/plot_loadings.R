@@ -9,7 +9,7 @@ plot_loadings <- function(df, title, x, block, comp, theme_RGCCA,
                           cex_main, cex_sub, cex_point, colors,
                           shapes, show_labels, repel) {
   # Add colors depending on looking at superblock or regular blocks
-  is_multiblock <- (length(block) > 1) || (block == length(x$call$raw) + 1)
+  is_multiblock <- (length(block) > 1) || (block == length(x$call$blocks) + 1)
   if (is_multiblock) {
     p <- ggplot(df, aes(x = .data$x, y = .data$y, color = .data$response)) +
       ggplot2::scale_color_manual(values = colors) +

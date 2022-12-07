@@ -39,7 +39,7 @@ print.cval <- function(x, type = "sd", ...) {
       }
     )
 
-    if (length(x$call$blocks) > 5) {
+    if (length(x$blocks) > 5) {
       combinations <- paste("Tuning parameter set ",
         sep = "",
         seq_along(x$pvals)
@@ -67,22 +67,22 @@ print.cval <- function(x, type = "sd", ...) {
   penalties <- round(x$penalties, 3)
   rownames(penalties) <- seq_len(NROW(penalties))
   cat(fill = TRUE)
-  cat(paste0("Tuning parameters (", x$call$par_type, ") used: "), fill = TRUE)
+  cat(paste0("Tuning parameters (", x$par_type, ") used: "), fill = TRUE)
   print(penalties, quote = FALSE, ...)
   cat("\n")
 
   df <- summary_cval(x, type)
 
   cat(paste0(
-    "Validation: ", x$call$validation,
-    ifelse(x$call$validation == "kfold",
+    "Validation: ", x$validation,
+    ifelse(x$validation == "kfold",
       paste0(
-        " with ", x$call$k, " folds and ",
-        x$call$n_run, " run(s))"
+        " with ", x$k, " folds and ",
+        x$n_run, " run(s))"
       ), ""
     )
   ), "\n")
-  cat(paste("Prediction model:", x$call$prediction_model, "\n"))
+  cat(paste("Prediction model:", x$prediction_model, "\n"))
 
   cat("\n")
   print(df[, -5])

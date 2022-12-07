@@ -25,7 +25,7 @@ print.permutation <- function(x, ...) {
   penalties <- round(x$penalties, 3)
   rownames(penalties) <- seq_len(NROW(penalties))
   cat(fill = TRUE)
-  cat(paste0("Tuning parameters (", x$call$par_type, ") used: "), fill = TRUE)
+  cat(paste0("Tuning parameters (", x$par_type, ") used: "), fill = TRUE)
   print(penalties, quote = FALSE, ...)
   cat("\n")
 
