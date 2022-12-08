@@ -4,7 +4,14 @@
 \alias{rgcca_predict}
 \title{Predict RGCCA}
 \usage{
-rgcca_predict(rgcca_res, blocks_test, response, prediction_model = "lm", ...)
+rgcca_predict(
+  rgcca_res,
+  blocks_test,
+  response,
+  prediction_model = "lm",
+  score = NULL,
+  ...
+)
 }
 \arguments{
 \item{rgcca_res}{A fitted RGCCA object (see  \code{\link[RGCCA]{rgcca}}).}
@@ -16,6 +23,8 @@ rgcca_predict(rgcca_res, blocks_test, response, prediction_model = "lm", ...)
 
 \item{prediction_model}{A character giving the function used to compare the
 trained and the tested models.}
+
+\item{score}{A character giving the the score to report.}
 
 \item{...}{Additional parameters to be passed to the model fitted on top
 of RGCCA.}

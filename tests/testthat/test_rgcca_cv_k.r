@@ -58,7 +58,8 @@ test_that("rgcca_cv_k gives the same scores as custom_rgcca_cv_k", {
   rgcca_out <- rgcca(blocks, response = response, ncomp = 1)
   res_cv_k <- rgcca_cv_k(
     rgcca_out$call, inds = 1, prediction_model = "lm",
-    par_type = "tau", par_value = rep(1, length(blocks))
+    par_type = "tau", par_value = rep(1, length(blocks)),
+    score = NULL
   )
   res_custom_cv_k <- custom_rgcca_cv_k(blocks, response)
   expect_equal(res_cv_k$score, res_custom_cv_k)
@@ -66,7 +67,8 @@ test_that("rgcca_cv_k gives the same scores as custom_rgcca_cv_k", {
   rgcca_out <- rgcca(blocks, response = response, ncomp = 2)
   res_cv_k <- rgcca_cv_k(
     rgcca_out$call, inds = 1, prediction_model = "lm",
-    par_type = "tau", par_value = rep(1, length(blocks))
+    par_type = "tau", par_value = rep(1, length(blocks)),
+    score = NULL
   )
   res_custom_cv_k <- custom_rgcca_cv_k(blocks, response, ncomp = 2)
   expect_equal(res_cv_k$score, res_custom_cv_k)
@@ -76,7 +78,8 @@ test_that("rgcca_cv_k gives the same scores as custom_rgcca_cv_k", {
   rgcca_out <- rgcca(blocks_classif, response = response, ncomp = 1)
   res_cv_k <- rgcca_cv_k(
     rgcca_out$call, inds = 1, prediction_model = "lda",
-    par_type = "tau", par_value = rep(1, length(blocks_classif))
+    par_type = "tau", par_value = rep(1, length(blocks_classif)),
+    score = NULL
   )
   res_custom_cv_k <- custom_rgcca_cv_k(blocks_classif, response, "lda")
   expect_equal(res_cv_k$score, res_custom_cv_k)
@@ -84,7 +87,8 @@ test_that("rgcca_cv_k gives the same scores as custom_rgcca_cv_k", {
   rgcca_out <- rgcca(blocks_classif, response = response, ncomp = 2)
   res_cv_k <- rgcca_cv_k(
     rgcca_out$call, inds = 1, prediction_model = "lda",
-    par_type = "tau", par_value = rep(1, length(blocks_classif))
+    par_type = "tau", par_value = rep(1, length(blocks_classif)),
+    score = NULL
   )
   res_custom_cv_k <- custom_rgcca_cv_k(blocks_classif, response, "lda",
     ncomp = 2
@@ -99,7 +103,8 @@ test_that("rgcca_cv_k gives the same scores as custom_rgcca_cv_k", {
   )
   res_cv_k <- rgcca_cv_k(
     rgcca_out$call, inds = 1, prediction_model = "lm",
-    par_type = "tau", par_value = rep(1, length(blocksNA))
+    par_type = "tau", par_value = rep(1, length(blocksNA)),
+    score = NULL
   )
   res_custom_cv_k <- custom_rgcca_cv_k(blocksNA, response, NA_method = "nipals")
   expect_equal(res_cv_k$score, res_custom_cv_k)
@@ -110,7 +115,8 @@ test_that("rgcca_cv_k gives the same scores as custom_rgcca_cv_k", {
   )
   res_cv_k <- rgcca_cv_k(
     rgcca_out$call, inds = 1, prediction_model = "lm",
-    par_type = "tau", par_value = rep(1, length(blocksNA))
+    par_type = "tau", par_value = rep(1, length(blocksNA)),
+    score = NULL
   )
   res_custom_cv_k <- custom_rgcca_cv_k(blocksNA, response,
     NA_method = "complete"
@@ -122,7 +128,8 @@ test_that("rgcca_cv_k gives the same scores as custom_rgcca_cv_k", {
   rgcca_out <- rgcca(blocks_null_sd, response = response, ncomp = 1)
   res_cv_k <- rgcca_cv_k(
     rgcca_out$call, inds = 1, prediction_model = "lm",
-    par_type = "tau", par_value = rep(1, length(blocks_null_sd))
+    par_type = "tau", par_value = rep(1, length(blocks_null_sd)),
+    score = NULL
   )
   res_custom_cv_k <- custom_rgcca_cv_k(blocks_null_sd, response)
   expect_equal(res_cv_k$score, res_custom_cv_k)

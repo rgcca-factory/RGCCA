@@ -31,6 +31,7 @@ rgcca_cv(
   bias = TRUE,
   verbose = TRUE,
   n_iter_max = 1000,
+  score = NULL,
   ...
 )
 }
@@ -153,6 +154,8 @@ algorithm is reported while computing.}
 
 \item{n_iter_max}{Integer giving the algorithm's maximum number of
 iterations.}
+
+\item{score}{A character giving the the score to report.}
 
 \item{...}{Additional parameters to be passed to the model fitted on top
 of RGCCA.}

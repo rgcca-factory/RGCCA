@@ -103,6 +103,7 @@ rgcca_cv <- function(blocks,
                      bias = TRUE,
                      verbose = TRUE,
                      n_iter_max = 1000,
+                     score = NULL,
                      ...) {
   ### Try to retrieve parameters from a rgcca object
   rgcca_args <- as.list(environment())
@@ -137,6 +138,11 @@ rgcca_cv <- function(blocks,
   check_integer("k", k, min = 2)
   match.arg(par_type, c("tau", "sparsity", "ncomp"))
   match.arg(validation, c("loo", "kfold"))
+
+  default_score <- ifelse(model$classification, "Accuracy", "RMSE")
+  score <- ifelse(is.null(score), default_score, score)
+  available_scores <- get_available_scores(model$classification)
+  score <- match.arg(score, available_scores)
 
   ### Set connection matrix
   connection <- matrix(
@@ -203,6 +209,7 @@ rgcca_cv <- function(blocks,
     rgcca_cv_k(
       rgcca_args,
       inds = v_inds[[j]],
+      score = score,
       par_type = param$par_type,
       par_value = param$par_value[i, ],
       prediction_model = model$prediction_model,
@@ -222,13 +229,18 @@ rgcca_cv <- function(blocks,
   colnames(param$par_value) <- names(rgcca_args$blocks)
   rownames(W) <- seq_len(NROW(W))
 
-  best_param_idx <- which.min(apply(W, 1, mean))
+  best_param_idx <- ifelse(
+    model$classification,
+    which.max(apply(W, 1, mean)),
+    which.min(apply(W, 1, mean))
+  )
 
   res <- list(
     k = k,
     cv = W,
     call = rgcca_args,
     n_run = n_run,
+    score = score,
     par_type = param$par_type,
     penalties = param$par_value,
     validation = validation,

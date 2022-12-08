@@ -7,6 +7,7 @@
 #' trained and the tested models.
 #' @param response A character or integer giving the block to predict
 #' (must be the same name among train and test set).
+#' @param score A character giving the the score to report.
 #' @param ... Additional parameters to be passed to the model fitted on top
 #' of RGCCA.
 #' @examples
@@ -50,6 +51,7 @@ rgcca_predict <- function(rgcca_res,
                           blocks_test,
                           response,
                           prediction_model = "lm",
+                          score = NULL,
                           ...) {
   ### Check input parameters
   if (is.null(names(blocks_test))) {
@@ -97,6 +99,11 @@ rgcca_predict <- function(rgcca_res,
   prediction_model <- tmp$prediction_model
   classification <- tmp$classification
 
+  default_score <- ifelse(classification, "Accuracy", "RMSE")
+  score <- ifelse(is.null(score), default_score, score)
+  available_scores <- get_available_scores(classification)
+  score <- match.arg(score, available_scores)
+
   ### Get train and test target (if present)
   y_train <- rgcca_res$call$blocks[[train_idx]]
   y_test <- as.data.frame(blocks_test[[test_idx]])
@@ -142,8 +149,8 @@ rgcca_predict <- function(rgcca_res,
     seq_len(NCOL(y_train)), function(j) {
       core_prediction(
         prediction_model, X_train, X_test,
-        y_train[, j], y_test[, j], classification,
-        no_y_test, ...
+        y_train[, j], y_test[, j], score,
+        classification, no_y_test, ...
       )
     }
   )
@@ -186,7 +193,7 @@ reformat_projection <- function(projection) {
 # Train a model from caret on (X_train, y_train) and make a prediction on
 # X_test and evaluate the prediction quality by comparing to y_test.
 core_prediction <- function(prediction_model, X_train, X_test,
-                            y_train, y_test, classification = FALSE,
+                            y_train, y_test, score, classification = FALSE,
                             no_y_test = FALSE, ...) {
   if (classification) {
     y_train <- as.factor(as.matrix(y_train))
@@ -235,8 +242,6 @@ core_prediction <- function(prediction_model, X_train, X_test,
       data = prediction_test,
       lev = levels(prediction_test$obs)
     )
-    score <- 1 - metric_test["Accuracy"]
-    names(score) <- "Misclassification_Rate"
   } else {
     confusion_train <- confusion_test <- NA
     metric_train <- postResample(
@@ -247,8 +252,8 @@ core_prediction <- function(prediction_model, X_train, X_test,
       pred = prediction_test$pred,
       obs = prediction_test$obs
     )
-    score <- metric_test["RMSE"]
   }
+  score <- metric_test[score]
 
   if (no_y_test) {
     score <- confusion_test <- NA

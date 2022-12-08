@@ -60,9 +60,9 @@
 <text x='170.91' y='554.54' text-anchor='middle' style='font-size: 12.00px; font-style: italic; fill: #666666; font-family: sans;' textLength='16.68px' lengthAdjust='spacingAndGlyphs'>0.4</text>
 <text x='371.56' y='554.54' text-anchor='middle' style='font-size: 12.00px; font-style: italic; fill: #666666; font-family: sans;' textLength='16.68px' lengthAdjust='spacingAndGlyphs'>0.6</text>
 <text x='572.21' y='554.54' text-anchor='middle' style='font-size: 12.00px; font-style: italic; fill: #666666; font-family: sans;' textLength='16.68px' lengthAdjust='spacingAndGlyphs'>0.8</text>
-<text x='381.75' y='568.03' text-anchor='middle' style='font-size: 12.00px; font-family: sans;' textLength='58.69px' lengthAdjust='spacingAndGlyphs'>Mean error</text>
+<text x='381.75' y='568.03' text-anchor='middle' style='font-size: 12.00px; font-family: sans;' textLength='68.04px' lengthAdjust='spacingAndGlyphs'>Mean RMSE</text>
 <text transform='translate(13.74,287.25) rotate(-90)' text-anchor='middle' style='font-size: 12.00px; font-family: sans;' textLength='167.43px' lengthAdjust='spacingAndGlyphs'>Tuning parameter sets (ncomp)</text>
-<text x='48.99' y='15.11' style='font-size: 14.00px; font-family: sans;' textLength='251.34px' lengthAdjust='spacingAndGlyphs'>Cross-validated error (kfold: with 5 folds)</text>
+<text x='48.99' y='15.11' style='font-size: 14.00px; font-family: sans;' textLength='262.24px' lengthAdjust='spacingAndGlyphs'>Cross-validated RMSE (kfold: with 5 folds)</text>
 <text x='48.99' y='30.23' style='font-size: 14.00px; font-family: sans;' textLength='147.09px' lengthAdjust='spacingAndGlyphs'>Best parameters: Set  1</text>
 </g>
 </svg>

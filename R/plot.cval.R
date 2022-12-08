@@ -113,11 +113,11 @@ plot.cval <- function(x, type = "sd",
   )
 
   title <- paste0(
-    "Cross-validated error (", validation_str, ")\nBest parameters: ",
+    "Cross-validated ", x$score, " (", validation_str, ")\nBest parameters: ",
     combinations[best]
   )
   xlab <- paste0("Tuning parameter sets (", x$par_type, ")")
-  ylab <- "Mean error"
+  ylab <- paste("Mean", x$score)
 
   ### Construct plot
   p <- ggplot(data = df, aes(

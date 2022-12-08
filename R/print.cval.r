@@ -8,7 +8,7 @@
 #' blocks <- list(
 #'   agriculture = Russett[, seq(3)],
 #'   industry = Russett[, 4:5],
-#'   politic = Russett[, 6:11]
+#'   politic = Russett[, 6:8]
 #' )
 #' res <- rgcca_cv(blocks,
 #'   response = 3, method = "rgcca", par_type = "tau",
@@ -22,7 +22,7 @@ print.cval <- function(x, type = "sd", ...) {
 
     switch(type,
       "quantile" = {
-        middle_name <- "Median error"
+        middle_name <- paste("Median", x$score)
         middle <- ymed
         lower <- apply(x$cv, 1, quantile, 0.25)
         upper <- apply(x$cv, 1, quantile, 0.75)
@@ -30,7 +30,7 @@ print.cval <- function(x, type = "sd", ...) {
         up_lim <- "Q3"
       },
       "sd" = {
-        middle_name <- "Mean error"
+        middle_name <- paste("Mean", x$score)
         middle <- ymean
         lower <- middle - apply(x$cv, 1, sd)
         upper <- middle + apply(x$cv, 1, sd)
@@ -96,7 +96,7 @@ print.cval <- function(x, type = "sd", ...) {
   cat(paste(
     "The best combination is:",
     paste(format(x$bestpenalties, digits = 3), collapse = " "),
-    "for a mean CV error of",
+    "for a mean", x$score, "of",
     format(optimal_y, digits = 3)
   ), "\n", ...)
 }
