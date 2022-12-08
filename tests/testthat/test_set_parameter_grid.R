@@ -78,6 +78,10 @@ test_that("set_parameter_grid returns a valid grid of parameters when par_value
   res <- set_parameter_grid("tau", 3, tau, blocks, response = 3)
   test_tau(res, 3)
 
+  tau <- matrix(c(.001, .002, 1, 1, 1, 1), nrow = 2, ncol = 3)
+  res <- set_parameter_grid("tau", 2, tau, blocks, response = 3)
+  test_tau(res, 1)
+
   sparsity <- matrix(c(
     0.6, 0.8, 1,
     0.7, 0.9, 1
