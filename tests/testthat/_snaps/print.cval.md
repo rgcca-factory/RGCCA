@@ -64,7 +64,7 @@
 ---
 
     Code
-      res <- rgcca_cv(blocks, validation = "loo", score = "MAE", response = 3,
+      res <- rgcca_cv(blocks, validation = "loo", metric = "MAE", response = 3,
         method = "sgcca", par_type = "sparsity", n_run = 1, n_cores = 1, par_length = 2,
         verbose = FALSE)
       print(res, type = "sd")
@@ -98,7 +98,7 @@
     Code
       res <- rgcca_cv(blocks_classif, response = 3, method = "sgcca", par_type = "sparsity",
         n_run = 1, n_cores = 1, par_length = 2, verbose = FALSE, prediction_model = "lda",
-        score = "Kappa")
+        metric = "Kappa")
       print(res, type = "sd")
     Output
       Call: method='sgcca', superblock=FALSE, scale=TRUE, scale_block=TRUE, init='svd', bias=TRUE, tol=1e-08, NA_method='nipals', ncomp=c(1,1,1), response=3 

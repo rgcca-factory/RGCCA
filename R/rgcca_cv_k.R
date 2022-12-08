@@ -6,7 +6,7 @@
 #' @inheritParams bootstrap
 #' @noRd
 rgcca_cv_k <- function(rgcca_args, inds, prediction_model,
-                       par_type, par_value, score, ...) {
+                       par_type, par_value, metric, ...) {
   rgcca_args[[par_type]] <- par_value
 
   blocks <- rgcca_args[["blocks"]]
@@ -26,7 +26,7 @@ rgcca_cv_k <- function(rgcca_args, inds, prediction_model,
   names(blocks_test) <- names(res$blocks)
   score <- rgcca_predict(
     res,
-    score = score,
+    metric = metric,
     response = rgcca_args$response,
     blocks_test = blocks_test,
     prediction_model = prediction_model,

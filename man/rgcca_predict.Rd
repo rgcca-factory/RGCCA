@@ -9,7 +9,7 @@ rgcca_predict(
   blocks_test,
   response,
   prediction_model = "lm",
-  score = NULL,
+  metric = NULL,
   ...
 )
 }
@@ -24,7 +24,7 @@ rgcca_predict(
 \item{prediction_model}{A character giving the function used to compare the
 trained and the tested models.}
 
-\item{score}{A character giving the the score to report.}
+\item{metric}{A character giving the the metric to report.}
 
 \item{...}{Additional parameters to be passed to the model fitted on top
 of RGCCA.}

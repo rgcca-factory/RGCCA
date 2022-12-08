@@ -35,7 +35,7 @@ test_that("print_cval", {
 
   expect_snapshot({
     res <- rgcca_cv(blocks,
-      validation = "loo", score = "MAE",
+      validation = "loo", metric = "MAE",
       response = 3, method = "sgcca", par_type = "sparsity",
       n_run = 1, n_cores = 1, par_length = 2, verbose = FALSE
     )
@@ -46,7 +46,7 @@ test_that("print_cval", {
     res <- rgcca_cv(blocks_classif,
       response = 3, method = "sgcca", par_type = "sparsity",
       n_run = 1, n_cores = 1, par_length = 2, verbose = FALSE,
-      prediction_model = "lda", score = "Kappa"
+      prediction_model = "lda", metric = "Kappa"
     )
     print(res, type = "sd")
   })

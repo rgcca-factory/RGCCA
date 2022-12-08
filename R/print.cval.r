@@ -22,7 +22,7 @@ print.cval <- function(x, type = "sd", ...) {
 
     switch(type,
       "quantile" = {
-        middle_name <- paste("Median", x$score)
+        middle_name <- paste("Median", x$metric)
         middle <- ymed
         lower <- apply(x$cv, 1, quantile, 0.25)
         upper <- apply(x$cv, 1, quantile, 0.75)
@@ -30,7 +30,7 @@ print.cval <- function(x, type = "sd", ...) {
         up_lim <- "Q3"
       },
       "sd" = {
-        middle_name <- paste("Mean", x$score)
+        middle_name <- paste("Mean", x$metric)
         middle <- ymean
         lower <- middle - apply(x$cv, 1, sd)
         upper <- middle + apply(x$cv, 1, sd)
@@ -96,7 +96,7 @@ print.cval <- function(x, type = "sd", ...) {
   cat(paste(
     "The best combination is:",
     paste(format(x$bestpenalties, digits = 3), collapse = " "),
-    "for a mean", x$score, "of",
+    "for a mean", x$metric, "of",
     format(optimal_y, digits = 3)
   ), "\n", ...)
 }
