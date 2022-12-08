@@ -46,8 +46,8 @@ variables.}
 }
 \description{
 This function can be used to identify the most stable variables
-identified as relevant by SGCCA. The Variable Importance in the Projection
-(VIP) criterion is used to identify the most stable variables.
+identified as relevant by SGCCA. A Variable Importance in the Projection
+(VIP) based criterion is used to identify the most stable variables.
 }
 \examples{
 \dontrun{

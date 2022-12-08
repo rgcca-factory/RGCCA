@@ -1,8 +1,8 @@
 #' Stability selection for SGCCA
 #'
 #' This function can be used to identify the most stable variables
-#' identified as relevant by SGCCA. The Variable Importance in the Projection
-#' (VIP) criterion is used to identify the most stable variables.
+#' identified as relevant by SGCCA. A Variable Importance in the Projection
+#' (VIP) based criterion is used to identify the most stable variables.
 #'
 #' @inheritParams bootstrap
 #' @param rgcca_res A fitted RGCCA object (see \code{\link[RGCCA]{rgcca}})
@@ -101,6 +101,12 @@ rgcca_stability <- function(rgcca_res,
     rgcca_res$call$blocks <- rgcca_res$call$blocks[-J]
   }
 
+  if (isTRUE(rgcca_res$call$disjunction)) {
+     list_res <- lapply(list_res, function(x) x[-rgcca_res$call$response])
+     rgcca_res$AVE$AVE_X <- rgcca_res$AVE$AVE_X[-rgcca_res$call$response]
+     #rgcca_res$call$raw <- rgcca_res$call$raw[-rgcca_res$call$response]
+  }
+
   mylist <- lapply(
     seq_along(list_res),
     function(i) {
@@ -142,6 +148,10 @@ rgcca_stability <- function(rgcca_res,
       )[1:round(perc[x] * length(top[[x]]))]
     }
   )
+
+  if (isTRUE(rgcca_res$call$disjunction)) {
+    keepVar[[rgcca_res$call$response]] <- 1
+  }
 
   rgcca_res$call$blocks <- Map(
     function(x, y) x[, y], rgcca_res$call$blocks, keepVar
