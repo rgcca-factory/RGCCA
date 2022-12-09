@@ -6,7 +6,7 @@ X_ind <- as.matrix(Russett[, c("gnpr", "labo")])
 X_polit <- as.matrix(Russett[, c("demostab", "dictator")])
 blocks <- list(X_agric, X_ind, X_polit)
 
-test_that("print_call", {
+test_that("print_call prints the expected text", {
   local_edition(3)
   expect_snapshot({
     res <- rgcca(blocks,
@@ -17,7 +17,10 @@ test_that("print_call", {
     )
     print_call(res$call)
   })
+})
 
+test_that("print_call prints the expected text 2", {
+  local_edition(3)
   expect_snapshot({
     res <- rgcca(blocks,
       ncomp = 2, tau = 1, scheme = "centroid", scale = TRUE,

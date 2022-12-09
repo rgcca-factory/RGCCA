@@ -19,22 +19,28 @@ perm.out2 <- rgcca_permutation(A2,
   n_cores = 1, par_length = 4, verbose = FALSE
 )
 
-test_that("plot.permutation", {
+test_that("plot.permutation produces the expected crit plot", {
   vdiffr::expect_doppelganger(
     "Permutation crit", plot.permutation(perm.out, type = "crit")
   )
+})
 
+test_that("plot.permutation produces the expected zstat plot", {
   vdiffr::expect_doppelganger(
     "Permutation zstat", plot.permutation(perm.out, type = "zstat")
   )
+})
 
+test_that("plot.permutation produces the expected zstat plot with legend", {
   vdiffr::expect_doppelganger(
     "Permutation legend", plot.permutation(
       perm.out,
       type = "zstat", show_legend = TRUE
     )
   )
+})
 
+test_that("plot.permutation produces the expected crit plot with many blocks", {
   vdiffr::expect_doppelganger(
     "Permutation many blocks", plot.permutation(perm.out2, type = "crit")
   )

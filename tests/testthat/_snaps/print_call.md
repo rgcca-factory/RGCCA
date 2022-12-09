@@ -1,4 +1,4 @@
-# print_call
+# print_call prints the expected text
 
     Code
       res <- rgcca(blocks, ncomp = 1, tau = 1, scheme = "horst", connection = 1 -
@@ -16,7 +16,7 @@
       
       The horst scheme is used.
 
----
+# print_call prints the expected text 2
 
     Code
       res <- rgcca(blocks, ncomp = 2, tau = 1, scheme = "centroid", scale = TRUE,

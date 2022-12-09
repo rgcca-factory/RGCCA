@@ -1,4 +1,4 @@
-# print.bootstrap
+# print.bootstrap prints the expected string
 
     Code
       res <- bootstrap(fit.rgcca, n_boot = 5, n_cores = 1, verbose = FALSE)
@@ -35,7 +35,7 @@
       gnpr    0           0
       labo    0           0
 
----
+# print.bootstrap prints the expected string 2
 
     Code
       res <- bootstrap(fit.rgcca, n_boot = 2, n_cores = 1, verbose = FALSE)

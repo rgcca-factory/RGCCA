@@ -20,15 +20,19 @@ res2 <- suppressWarnings(rgcca_cv(blocks2,
   par_length = 3, n_run = 1, n_cores = 1
 ))
 
-test_that("plot.cval", {
+test_that("plot.cval produces the expected quantile plot", {
   vdiffr::expect_doppelganger(
     "CV quantile", plot.cval(res, type = "quantile")
   )
+})
 
+test_that("plot.cval produces the expected sd plot", {
   vdiffr::expect_doppelganger(
     "CV sd", plot.cval(res, type = "sd", display_order = FALSE)
   )
+})
 
+test_that("plot.cval produces the expected sd plot with many blocks", {
   vdiffr::expect_doppelganger(
     "CV many blocks", plot.cval(res2, type = "sd")
   )

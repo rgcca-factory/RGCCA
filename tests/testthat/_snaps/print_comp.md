@@ -1,4 +1,4 @@
-# print_comp
+# print_comp prints the expected text
 
     Code
       fit.rgcca <- rgcca(blocks)
@@ -7,7 +7,7 @@
     Output
       Comp. 1 (69.9%)
 
----
+# print_comp prints the expected text 2
 
     Code
       fit.rgcca <- rgcca(blocks, ncomp = 2, sparsity = c(1, 1, 0.5))
@@ -16,7 +16,7 @@
     Output
       Comp. 2 (3 variables, 18.2%)
 
----
+# print_comp prints the expected text 3
 
     Code
       fit.rgcca <- rgcca(blocks)
@@ -25,7 +25,7 @@
     Output
       First outer AVE: 60.2%
 
----
+# print_comp prints the expected text 4
 
     Code
       fit.rgcca <- rgcca(blocks, ncomp = 4, superblock = TRUE)

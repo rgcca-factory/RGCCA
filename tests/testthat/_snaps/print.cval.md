@@ -1,4 +1,4 @@
-# print_cval
+# print_cval prints the expected text
 
     Code
       res <- rgcca_cv(blocks, response = 3, method = "rgcca", par_type = "tau",
@@ -29,7 +29,7 @@
       
       The best combination is: 0.0 0.2 0.3 for a mean RMSE of 1.12 
 
----
+# print_cval prints the expected text 2
 
     Code
       res <- rgcca_cv(blocks_classif, response = 3, method = "rgcca", par_type = "tau",
@@ -61,7 +61,7 @@
       
       The best combination is: 0.0 0.2 0.0 for a mean Accuracy of 0.893 
 
----
+# print_cval prints the expected text 3
 
     Code
       res <- rgcca_cv(blocks, validation = "loo", metric = "MAE", response = 3,
@@ -93,7 +93,7 @@
       
       The best combination is: 1 1 1 for a mean MAE of 0.880 
 
----
+# print_cval prints the expected text 4
 
     Code
       res <- rgcca_cv(blocks_classif, response = 3, method = "sgcca", par_type = "sparsity",

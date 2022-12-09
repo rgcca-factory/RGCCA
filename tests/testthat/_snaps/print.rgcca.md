@@ -1,4 +1,4 @@
-# print.rgcca
+# print.rgcca produces the expected text
 
     Code
       res <- rgcca(blocks, ncomp = 1, tau = c(1, 0.7, 0.9))
@@ -19,7 +19,7 @@
       The regularization parameter used for block2 is: 0.7
       The regularization parameter used for block3 is: 0.9
 
----
+# print.rgcca produces the expected text 2
 
     Code
       tau <- matrix(c(1, 1, 1, 0, 0, 0), nrow = 2, byrow = TRUE)
@@ -42,7 +42,7 @@
       [1,]      1      1      1
       [2,]      0      0      0
 
----
+# print.rgcca produces the expected text 3
 
     Code
       res <- rgcca(blocks, ncomp = 1, sparsity = c(0.7, 1, 0.9), method = "sgcca")
@@ -63,7 +63,7 @@
       The sparsity parameter used for block2 is: 1 (with 2 variables selected)
       The sparsity parameter used for block3 is: 0.9 (with 2 variables selected)
 
----
+# print.rgcca produces the expected text 4
 
     Code
       sparsity <- matrix(c(0.8, 1, 0.9, 1, 0.9, 0.8), nrow = 2, byrow = TRUE)
@@ -90,7 +90,7 @@
       [1,]      2      2      2
       [2,]      3      2      2
 
----
+# print.rgcca produces the expected text 5
 
     Code
       res <- rgcca(blocks2, ncomp = 1, sparsity = c(0.7, 1, 0.9), response = 3)

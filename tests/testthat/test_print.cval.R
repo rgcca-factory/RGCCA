@@ -13,7 +13,7 @@ blocks_classif <- list(
   politic = as.factor(Russett[, 9])
 )
 
-test_that("print_cval", {
+test_that("print_cval prints the expected text", {
   local_edition(3)
   expect_snapshot({
     res <- rgcca_cv(blocks,
@@ -23,7 +23,10 @@ test_that("print_cval", {
     )
     print(res, type = "quantile")
   })
+})
 
+test_that("print_cval prints the expected text 2", {
+  local_edition(3)
   expect_snapshot({
     res <- rgcca_cv(blocks_classif,
                     response = 3, method = "rgcca", par_type = "tau",
@@ -32,7 +35,10 @@ test_that("print_cval", {
     )
     print(res, type = "sd")
   })
+})
 
+test_that("print_cval prints the expected text 3", {
+  local_edition(3)
   expect_snapshot({
     res <- rgcca_cv(blocks,
       validation = "loo", metric = "MAE",
@@ -41,7 +47,10 @@ test_that("print_cval", {
     )
     print(res, type = "sd")
   })
+})
 
+test_that("print_cval prints the expected text 4", {
+  local_edition(3)
   expect_snapshot({
     res <- rgcca_cv(blocks_classif,
       response = 3, method = "sgcca", par_type = "sparsity",

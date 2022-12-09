@@ -1,4 +1,4 @@
-# print.permutation
+# print.permutation prints the expected text
 
     Code
       res <- rgcca_permutation(blocks, par_type = "tau", par_length = 2, n_perms = 5,
@@ -26,7 +26,7 @@
       
       The best combination is: 0, 0, 0 for a z score of 10.1 and a p-value of 0.
 
----
+# print.permutation prints the expected text 2
 
     Code
       blocks2 <- c(blocks, blocks)
