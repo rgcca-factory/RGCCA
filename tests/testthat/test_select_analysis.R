@@ -75,26 +75,6 @@ run_selection <- function(method, quiet = TRUE, ...) {
   return(list(J = J, res = res))
 }
 
-### Utility functions to create the connection matrices
-name_c <- function(C, names_blocks) {
-  rownames(C) <- colnames(C) <- names_blocks
-  return(C)
-}
-c_all <- function(J, blocks) {
-  return(name_c(matrix(1, J, J), names(blocks)))
-}
-c_response <- function(J, blocks, resp = J) {
-  names_blocks <- names(blocks)
-  if (J > length(blocks)) names_blocks <- c(names_blocks, "superblock")
-  x <- matrix(0, J, J)
-  x[, resp] <- x[resp, ] <- 1
-  x[resp, resp] <- 0
-  return(name_c(x, names_blocks))
-}
-c_pair <- function(J, blocks) {
-  return(name_c(1 - diag(J), names(blocks)))
-}
-
 test_that("superblock methods sets all attributes of a superblock", {
   for (method in available_methods) {
     tmp <- run_selection(method, superblock = TRUE)
@@ -103,7 +83,10 @@ test_that("superblock methods sets all attributes of a superblock", {
 
     if (method %in% c(superblock_methods, "rgcca", "sgcca")) {
       expect_true(res$rgcca_args$superblock)
-      expect_equal(res$rgcca_args$connection, c_response(J + 1, blocks[seq(J)]))
+      expect_equal(
+        res$rgcca_args$connection,
+        connection_matrix(blocks[seq(J)], type = "response", J = J + 1)
+      )
       expect_equal(length(res$rgcca_args$ncomp), J + 1)
       expect_equal(length(unique(res$rgcca_args$ncomp)), 1)
       expect_equal(length(res$rgcca_args[[res$opt$param]]), J + 1)

@@ -48,26 +48,6 @@ select_analysis <- function(rgcca_args, blocks) {
   )
   J <- length(blocks)
 
-  ### Utility functions to create the connection matrices
-  name_c <- function(C, names_blocks) {
-    rownames(C) <- colnames(C) <- names_blocks
-    return(C)
-  }
-  c_all <- function(J, blocks) {
-    return(name_c(matrix(1, J, J), names(blocks)))
-  }
-  c_response <- function(J, blocks, resp = J) {
-    names_blocks <- names(blocks)
-    if (J > length(blocks)) names_blocks <- c(names_blocks, "superblock")
-    x <- matrix(0, J, J)
-    x[, resp] <- x[resp, ] <- 1
-    x[resp, resp] <- 0
-    return(name_c(x, names_blocks))
-  }
-  c_pair <- function(J, blocks) {
-    return(name_c(1 - diag(J), names(blocks)))
-  }
-
   switch(method,
     "rgcca" = {
       param <- "tau"
@@ -88,7 +68,7 @@ select_analysis <- function(rgcca_args, blocks) {
       penalty <- c(1, 1)
       response <- NULL
       superblock <- TRUE
-      connection <- c_response(2, blocks)
+      connection <- connection_matrix(blocks, type = "response", J = 2)
     },
     "spca" = {
       check_nblocks(blocks, "spca")
@@ -99,7 +79,7 @@ select_analysis <- function(rgcca_args, blocks) {
       penalty <- c(sparsity[1], sparsity[1])
       response <- NULL
       superblock <- TRUE
-      connection <- c_response(2, blocks)
+      connection <- connection_matrix(blocks, type = "response", J = 2)
     },
     "pls" = {
       check_nblocks(blocks, "pls")
@@ -110,7 +90,7 @@ select_analysis <- function(rgcca_args, blocks) {
       penalty <- c(1, 1)
       response <- 2
       superblock <- FALSE
-      connection <- c_response(2, blocks)
+      connection <- connection_matrix(blocks, type = "response", J = 2)
     },
     "spls" = {
       check_nblocks(blocks, "spls")
@@ -121,7 +101,7 @@ select_analysis <- function(rgcca_args, blocks) {
       penalty <- check_penalty(sparsity, blocks, "sgcca")
       response <- 2
       superblock <- FALSE
-      connection <- c_response(2, blocks)
+      connection <- connection_matrix(blocks, type = "response", J = 2)
     },
     "cca" = {
       check_nblocks(blocks, "cca")
@@ -131,7 +111,7 @@ select_analysis <- function(rgcca_args, blocks) {
       penalty <- c(0, 0)
       response <- NULL
       superblock <- FALSE
-      connection <- c_pair(2, blocks)
+      connection <- connection_matrix(blocks, type = "pair", J = 2)
     },
     "ifa" = {
       check_nblocks(blocks, "ifa")
@@ -141,7 +121,7 @@ select_analysis <- function(rgcca_args, blocks) {
       penalty <- c(1, 1)
       response <- NULL
       superblock <- FALSE
-      connection <- c_pair(2, blocks)
+      connection <- connection_matrix(blocks, type = "pair", J = 2)
     },
     "ra" = {
       check_nblocks(blocks, "ra")
@@ -152,7 +132,7 @@ select_analysis <- function(rgcca_args, blocks) {
       penalty <- c(1, 0)
       response <- 2
       superblock <- FALSE
-      connection <- c_response(2, blocks)
+      connection <- connection_matrix(blocks, type = "response", J = 2)
     },
     "gcca" = {
       param <- "tau"
@@ -162,7 +142,7 @@ select_analysis <- function(rgcca_args, blocks) {
       penalty <- rep(0, J + 1)
       response <- NULL
       superblock <- TRUE
-      connection <- c_response(J + 1, blocks)
+      connection <- connection_matrix(blocks, type = "response", J = J + 1)
     },
     "maxvar" = {
       param <- "tau"
@@ -172,7 +152,7 @@ select_analysis <- function(rgcca_args, blocks) {
       penalty <- rep(0, J + 1)
       response <- NULL
       superblock <- TRUE
-      connection <- c_response(J + 1, blocks)
+      connection <- connection_matrix(blocks, type = "response", J = J + 1)
     },
     "maxvar-b" = {
       param <- "tau"
@@ -182,7 +162,7 @@ select_analysis <- function(rgcca_args, blocks) {
       penalty <- rep(0, J + 1)
       response <- NULL
       superblock <- TRUE
-      connection <- c_response(J + 1, blocks)
+      connection <- connection_matrix(blocks, type = "response", J = J + 1)
     },
     "maxvar-a" = {
       param <- "tau"
@@ -192,7 +172,7 @@ select_analysis <- function(rgcca_args, blocks) {
       penalty <- c(rep(1, J), 0)
       response <- NULL
       superblock <- TRUE
-      connection <- c_response(J + 1, blocks)
+      connection <- connection_matrix(blocks, type = "response", J = J + 1)
     },
     "mcoa" = {
       param <- "tau"
@@ -202,7 +182,7 @@ select_analysis <- function(rgcca_args, blocks) {
       penalty <- c(rep(1, J), 0)
       response <- NULL
       superblock <- TRUE
-      connection <- c_response(J + 1, blocks)
+      connection <- connection_matrix(blocks, type = "response", J = J + 1)
     },
     "cpca-1" = {
       param <- "tau"
@@ -212,7 +192,7 @@ select_analysis <- function(rgcca_args, blocks) {
       penalty <- c(rep(1, J), 0)
       response <- NULL
       superblock <- TRUE
-      connection <- c_response(J + 1, blocks)
+      connection <- connection_matrix(blocks, type = "response", J = J + 1)
     },
     "cpca-2" = {
       param <- "tau"
@@ -222,7 +202,7 @@ select_analysis <- function(rgcca_args, blocks) {
       penalty <- c(rep(1, J), 0)
       response <- NULL
       superblock <- TRUE
-      connection <- c_response(J + 1, blocks)
+      connection <- connection_matrix(blocks, type = "response", J = J + 1)
     },
     "cpca-4" = {
       param <- "tau"
@@ -232,7 +212,7 @@ select_analysis <- function(rgcca_args, blocks) {
       penalty <- c(rep(1, J), 0)
       response <- NULL
       superblock <- TRUE
-      connection <- c_response(J + 1, blocks)
+      connection <- connection_matrix(blocks, type = "response", J = J + 1)
     },
     "hpca" = {
       param <- "tau"
@@ -242,7 +222,7 @@ select_analysis <- function(rgcca_args, blocks) {
       penalty <- c(rep(1, J), 0)
       response <- NULL
       superblock <- TRUE
-      connection <- c_response(J + 1, blocks)
+      connection <- connection_matrix(blocks, type = "response", J = J + 1)
     },
     "maxbet-b" = {
       param <- "tau"
@@ -251,7 +231,7 @@ select_analysis <- function(rgcca_args, blocks) {
       penalty <- rep(1, J)
       response <- NULL
       superblock <- FALSE
-      connection <- c_all(J, blocks)
+      connection <- connection_matrix(blocks, type = "all")
     },
     "maxbet" = {
       param <- "tau"
@@ -260,7 +240,7 @@ select_analysis <- function(rgcca_args, blocks) {
       penalty <- rep(1, J)
       response <- NULL
       superblock <- FALSE
-      connection <- c_all(J, blocks)
+      connection <- connection_matrix(blocks, type = "all")
     },
     "maxdiff-b" = {
       param <- "tau"
@@ -269,7 +249,7 @@ select_analysis <- function(rgcca_args, blocks) {
       penalty <- rep(1, J)
       response <- NULL
       superblock <- FALSE
-      connection <- c_pair(J, blocks)
+      connection <- connection_matrix(blocks, type = "pair")
     },
     "maxdiff" = {
       param <- "tau"
@@ -278,7 +258,7 @@ select_analysis <- function(rgcca_args, blocks) {
       penalty <- rep(1, J)
       response <- NULL
       superblock <- FALSE
-      connection <- c_pair(J, blocks)
+      connection <- connection_matrix(blocks, type = "pair")
     },
     "sabscor" = {
       param <- "tau"
@@ -287,7 +267,7 @@ select_analysis <- function(rgcca_args, blocks) {
       penalty <- rep(0, J)
       response <- NULL
       superblock <- FALSE
-      connection <- c_pair(J, blocks)
+      connection <- connection_matrix(blocks, type = "pair")
     },
     "ssqcor" = {
       param <- "tau"
@@ -296,7 +276,7 @@ select_analysis <- function(rgcca_args, blocks) {
       penalty <- rep(0, J)
       response <- NULL
       superblock <- FALSE
-      connection <- c_pair(J, blocks)
+      connection <- connection_matrix(blocks, type = "pair")
     },
     "ssqcov-1" = {
       param <- "tau"
@@ -305,7 +285,7 @@ select_analysis <- function(rgcca_args, blocks) {
       penalty <- rep(1, J)
       response <- NULL
       superblock <- FALSE
-      connection <- c_all(J, blocks)
+      connection <- connection_matrix(blocks, type = "all")
     },
     "ssqcov-2" = {
       param <- "tau"
@@ -314,7 +294,7 @@ select_analysis <- function(rgcca_args, blocks) {
       penalty <- rep(1, J)
       response <- NULL
       superblock <- FALSE
-      connection <- c_pair(J, blocks)
+      connection <- connection_matrix(blocks, type = "pair")
     },
     "ssqcov" = {
       param <- "tau"
@@ -323,7 +303,7 @@ select_analysis <- function(rgcca_args, blocks) {
       penalty <- rep(1, J)
       response <- NULL
       superblock <- FALSE
-      connection <- c_pair(J, blocks)
+      connection <- connection_matrix(blocks, type = "pair")
     },
     "sumcor" = {
       param <- "tau"
@@ -332,7 +312,7 @@ select_analysis <- function(rgcca_args, blocks) {
       penalty <- rep(0, J)
       response <- NULL
       superblock <- FALSE
-      connection <- c_pair(J, blocks)
+      connection <- connection_matrix(blocks, type = "pair")
     },
     "sumcov-1" = {
       param <- "tau"
@@ -341,7 +321,7 @@ select_analysis <- function(rgcca_args, blocks) {
       penalty <- rep(1, J)
       response <- NULL
       superblock <- FALSE
-      connection <- c_all(J, blocks)
+      connection <- connection_matrix(blocks, type = "all")
     },
     "sumcov-2" = {
       param <- "tau"
@@ -350,7 +330,7 @@ select_analysis <- function(rgcca_args, blocks) {
       penalty <- rep(1, J)
       response <- NULL
       superblock <- FALSE
-      connection <- c_pair(J, blocks)
+      connection <- connection_matrix(blocks, type = "pair")
     },
     "sumcov" = {
       param <- "tau"
@@ -359,7 +339,7 @@ select_analysis <- function(rgcca_args, blocks) {
       penalty <- rep(1, J)
       response <- NULL
       superblock <- FALSE
-      connection <- c_pair(J, blocks)
+      connection <- connection_matrix(blocks, type = "pair")
     },
     "sabscov-1" = {
       param <- "tau"
@@ -368,7 +348,7 @@ select_analysis <- function(rgcca_args, blocks) {
       penalty <- rep(1, J)
       response <- NULL
       superblock <- FALSE
-      connection <- c_all(J, blocks)
+      connection <- connection_matrix(blocks, type = "all")
     },
     "sabscov-2" = {
       param <- "tau"
@@ -377,7 +357,7 @@ select_analysis <- function(rgcca_args, blocks) {
       penalty <- rep(1, J)
       response <- NULL
       superblock <- FALSE
-      connection <- c_pair(J, blocks)
+      connection <- connection_matrix(blocks, type = "pair")
     }
   )
 
@@ -409,11 +389,13 @@ select_analysis <- function(rgcca_args, blocks) {
       check_blockx("response", response, blocks)
       ncomp[response] <- max(ncomp[-response])
       superblock <- FALSE
-      connection <- c_response(J, blocks, resp = response)
+      connection <- connection_matrix(
+        blocks, type = "response", response = response
+      )
     }
     if (superblock) {
       ncomp <- rep(max(ncomp), J + 1)
-      connection <- c_response(J + 1, blocks)
+      connection <- connection_matrix(blocks, type = "response", J = J + 1)
       if (is.matrix(penalty)) {
         if (ncol(penalty) < J + 1) {
           pen <- 1

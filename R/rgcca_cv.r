@@ -145,12 +145,9 @@ rgcca_cv <- function(blocks,
   metric <- match.arg(metric, available_metrics)
 
   ### Set connection matrix
-  connection <- matrix(
-    0, nrow = length(rgcca_args$blocks), ncol = length(rgcca_args$blocks)
+  rgcca_args$connection <- connection_matrix(
+    rgcca_args$blocks, type = "response", response = rgcca_args$response
   )
-  connection[rgcca_args$response, ] <- connection[, rgcca_args$response] <- 1
-  connection[rgcca_args$response, rgcca_args$response] <- 0
-  rgcca_args$connection <- connection
 
   ### Prepare parameters for line search
   if (
