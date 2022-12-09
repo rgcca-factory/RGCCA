@@ -45,7 +45,6 @@
 #' res <- rgcca_predict(object, X, response = "industry")
 #' @importFrom caret train trainControl confusionMatrix
 #' @importFrom caret multiClassSummary postResample
-#' @importFrom stats lm predict
 #' @export
 rgcca_predict <- function(rgcca_res,
                           blocks_test,
@@ -201,11 +200,11 @@ core_prediction <- function(prediction_model, X_train, X_test,
   }
   data <- as.data.frame(cbind(X_train, obs = unname(y_train)))
   model <- train(obs ~ .,
-                 data      = data,
-                 method    = prediction_model,
-                 trControl = trainControl(method = "none"),
-                 na.action = "na.exclude",
-                 ...
+    data      = data,
+    method    = prediction_model,
+    trControl = trainControl(method = "none"),
+    na.action = "na.exclude",
+    ...
   )
 
   prediction_train <- data.frame(

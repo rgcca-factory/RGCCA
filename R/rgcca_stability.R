@@ -104,7 +104,6 @@ rgcca_stability <- function(rgcca_res,
   if (isTRUE(rgcca_res$call$disjunction)) {
      list_res <- lapply(list_res, function(x) x[-rgcca_res$call$response])
      rgcca_res$AVE$AVE_X <- rgcca_res$AVE$AVE_X[-rgcca_res$call$response]
-     #rgcca_res$call$raw <- rgcca_res$call$raw[-rgcca_res$call$response]
   }
 
   mylist <- lapply(

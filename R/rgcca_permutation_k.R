@@ -28,7 +28,7 @@ rgcca_permutation_k <- function(rgcca_args, perm, par_type, par_value) {
   }
 
   if (perm) {
-    par_value <- c()
+    par_value <- NULL
   } else {
     par_value <- res$call[[par_type]]
   }

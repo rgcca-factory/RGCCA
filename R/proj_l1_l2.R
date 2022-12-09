@@ -119,13 +119,6 @@ proj_l1_l2 <- function(x, a = 1) {
       max(sqrt(s_2 + s_low_2 - 2 * a_k * (s_1 + s_low_1) + k * aksq), 1e-16)
 
     # Choose partition depending on the constraint
-    tryCatch(
-      expr = {
-        if (psi_a_k > a) toto = "a"
-      }, error = function(e) {
-        browser()
-      }
-    )
     if (psi_a_k > a) {
       if (length(p_low) == 0) break
       p <- p_low
