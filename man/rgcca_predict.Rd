@@ -7,7 +7,6 @@
 rgcca_predict(
   rgcca_res,
   blocks_test,
-  response,
   prediction_model = "lm",
   metric = NULL,
   ...
@@ -17,9 +16,6 @@ rgcca_predict(
 \item{rgcca_res}{A fitted RGCCA object (see  \code{\link[RGCCA]{rgcca}}).}
 
 \item{blocks_test}{A list of either dataframes or matrices to be projected.}
-
-\item{response}{A character or integer giving the block to predict
-(must be the same name among train and test set).}
 
 \item{prediction_model}{A character giving the function used to compare the
 trained and the tested models.}
@@ -64,5 +60,5 @@ X <- sample(X, length(X))
 response <- "industry"
 y_train <- kmeans(A[[response]], 3)$cluster
 y_test <- kmeans(X[[response]], 3)$cluster
-res <- rgcca_predict(object, X, response = "industry")
+res <- rgcca_predict(object, X)
 }

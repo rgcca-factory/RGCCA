@@ -5,8 +5,6 @@
 #' @inheritParams rgcca_transform
 #' @param prediction_model A character giving the function used to compare the
 #' trained and the tested models.
-#' @param response A character or integer giving the block to predict
-#' (must be the same name among train and test set).
 #' @param metric A character giving the the metric to report.
 #' @param ... Additional parameters to be passed to the model fitted on top
 #' of RGCCA.
@@ -42,13 +40,13 @@
 #' response <- "industry"
 #' y_train <- kmeans(A[[response]], 3)$cluster
 #' y_test <- kmeans(X[[response]], 3)$cluster
-#' res <- rgcca_predict(object, X, response = "industry")
+#' res <- rgcca_predict(object, X)
 #' @importFrom caret train trainControl confusionMatrix
 #' @importFrom caret multiClassSummary postResample
+#' @importFrom stats predict
 #' @export
 rgcca_predict <- function(rgcca_res,
                           blocks_test,
-                          response,
                           prediction_model = "lm",
                           metric = NULL,
                           ...) {
@@ -57,36 +55,21 @@ rgcca_predict <- function(rgcca_res,
     stop_rgcca("Please provide names for blocks_test.")
   }
 
+  response <- rgcca_res$call$response
+  if (is.null(response)) {
+    stop_rgcca("RGCCA must use a response block.")
+  }
+  test_idx <- match(names(rgcca_res$blocks)[response], names(blocks_test))
+
   ### Check that response is among both training and test blocks
-  if (is.character(response)) {
-    train_idx <- match(response, names(rgcca_res$blocks))
-    test_idx <- match(response, names(blocks_test))
-  } else {
-    train_idx <- match(response, seq_along(rgcca_res$blocks))
-    test_idx <- match(response, seq_along(blocks_test))
-  }
-  if (is.na(train_idx)) {
-    stop_rgcca(paste0(
-      "The block to predict is not among train blocks. ",
-      "Please provide an appropriate one."
-    ))
-  }
   if (is.na(test_idx)) {
     no_y_test <- TRUE
     n_test <- NROW(blocks_test[[1]])
     test_idx <- length(blocks_test) + 1
-    blocks_test[[names(rgcca_res$blocks)[train_idx]]] <- matrix(
+    blocks_test[[names(rgcca_res$blocks)[response]]] <- matrix(
       rnorm(n_test),
       nrow = n_test,
-      ncol = NCOL(rgcca_res$call$blocks[[train_idx]])
-    )
-  } else if (
-    names(blocks_test)[[test_idx]] != names(rgcca_res$blocks)[[train_idx]]
-  ) {
-    stop_rgcca(
-      "Block to predict was provided as an integer but ",
-      "associated block names do not match between train and ",
-      "test blocks. Reorder your blocks or use a name."
+      ncol = NCOL(rgcca_res$call$blocks[[response]])
     )
   } else {
     no_y_test <- FALSE
@@ -104,7 +87,7 @@ rgcca_predict <- function(rgcca_res,
   metric <- match.arg(metric, available_metrics)
 
   ### Get train and test target (if present)
-  y_train <- rgcca_res$call$blocks[[train_idx]]
+  y_train <- rgcca_res$call$blocks[[response]]
   y_test <- as.data.frame(blocks_test[[test_idx]])
 
   if (any(dim(y_test)[-1] != dim(y_train)[-1])) {

@@ -27,7 +27,6 @@ rgcca_cv_k <- function(rgcca_args, inds, prediction_model,
   score <- rgcca_predict(
     res,
     metric = metric,
-    response = rgcca_args$response,
     blocks_test = blocks_test,
     prediction_model = prediction_model,
     ...

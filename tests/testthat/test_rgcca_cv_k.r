@@ -46,7 +46,6 @@ custom_rgcca_cv_k <- function(blocks, response, prediction_model = "lm", ...) {
 
   # Step 3: Evaluate model on A_1
   pred_1 <- rgcca_predict(rgcca_out_1, A_1,
-    response = response,
     prediction_model = prediction_model
   )
   return(pred_1$score)

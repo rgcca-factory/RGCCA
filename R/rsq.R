@@ -1,4 +1,5 @@
 #' Compute the R squared between a block and its extracted components.
+#' @importFrom stats lm
 #' @noRd
 rsq <- function(y, X) {
   if (NCOL(y) == 1) {
