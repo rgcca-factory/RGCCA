@@ -252,8 +252,6 @@ rgcca_permutation <- function(blocks, par_type = "tau", par_value = NULL,
   ### Try to retrieve parameters from a rgcca object
   rgcca_args <- as.list(environment())
   rgcca_args <- get_rgcca_args(blocks, rgcca_args)
-  rgcca_args$quiet <- TRUE
-  rgcca_args$verbose <- FALSE
 
   rgcca_args$blocks <- check_blocks(
     rgcca_args$blocks,

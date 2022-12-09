@@ -102,7 +102,7 @@ bootstrap <- function(rgcca_res, n_boot = 100,
       rgcca_res$a[-(J + 1)],
       function(x) unique(which(x != 0, arr.ind = TRUE)[, 1])
     )
-    if (!is.null(rgcca_res$disjunction)) {
+    if (isTRUE(rgcca_res$disjunction)) {
       keep_var[[rgcca_res$call$response]] <- 1
     }
 

@@ -272,6 +272,8 @@ rgcca <- function(blocks, method = "rgcca",
   ### If specific objects are given for blocks, parameters are imported from
   #   these objects.
   rgcca_args <- get_rgcca_args(blocks, rgcca_args)
+  rgcca_args$quiet <- quiet
+  rgcca_args$verbose <- verbose
 
   ### Check parameters
   match.arg(rgcca_args$init, c("svd", "random"))

@@ -22,7 +22,7 @@ test_that("bootstrap_default_1", {
 })
 
 ### Case ncomp = 2
-rgcca_out <- rgcca(blocks, ncomp = 2)
+rgcca_out <- rgcca(blocks, ncomp = 2, tau = "optimal")
 boot <- bootstrap(rgcca_out, n_boot = 2, n_cores = 1)
 
 test_that("bootstrap_default", {
@@ -69,6 +69,28 @@ test_that("test_bootstrap_na_values", {
   expect_true(
     select_var["demostab", "estimate"] == resRGCCA$a[[3]]["demostab", 1]
   )
+})
+
+### Case qualitative block
+blocks_classif <- list(
+  agriculture = Russett[, seq(3)],
+  industry = Russett[, 4:5],
+  politic = as.factor(apply(Russett[, 9:11], 1, which.max))
+)
+rgcca_out <- rgcca(blocks_classif, response = 3)
+boot <- bootstrap(rgcca_out, n_boot = 4, n_cores = 1)
+
+test_that("bootstrap_classif", {
+  expect_equal(length(boot), 2)
+  expect_equal(length(boot$bootstrap), 2)
+  boot1 <- boot$bootstrap[[1]][[1]]
+  p <- vapply(rgcca_out$blocks, NCOL, FUN.VALUE = 1L)
+  expect_is(boot, "bootstrap")
+  expect_is(boot$rgcca, "rgcca")
+  expect_is(boot1, "list")
+  expect_is(boot1[[1]], "matrix")
+  expect_true(all(vapply(boot1, NCOL, FUN.VALUE = 1L) == 4))
+  expect_identical(vapply(boot1, NROW, FUN.VALUE = 1L), p)
 })
 
 ##############################################

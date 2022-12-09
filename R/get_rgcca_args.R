@@ -21,13 +21,11 @@ get_rgcca_args <- function(object, default_args = list()) {
       tol = default_args$tol,
       init = default_args$init,
       bias = default_args$bias,
-      quiet = default_args$quiet,
       scale = default_args$scale,
       ncomp = default_args$ncomp,
       blocks = default_args$blocks,
       scheme = default_args$scheme,
       method = default_args$method,
-      verbose = default_args$verbose,
       sparsity = default_args$sparsity,
       response = default_args$response,
       NA_method = default_args$NA_method,
@@ -37,5 +35,7 @@ get_rgcca_args <- function(object, default_args = list()) {
       scale_block = default_args$scale_block
     )
   }
+  rgcca_args$quiet <- TRUE
+  rgcca_args$verbose <- FALSE
   return(rgcca_args)
 }
