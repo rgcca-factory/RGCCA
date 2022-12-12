@@ -66,6 +66,9 @@ colorblind-friendly palette recommended in ggplot.}
 
 \item{...}{additional graphical parameters}
 }
+\value{
+A ggplot2 plot object.
+}
 \description{
 Plot the results of a fitted bootstrap object. Each block variable is shown
 along with its associated bootstrap confidence interval and stars reflecting

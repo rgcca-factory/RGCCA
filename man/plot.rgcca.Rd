@@ -72,6 +72,9 @@ and "cor_circle".}
 
 \item{...}{additional graphical parameters}
 }
+\value{
+A ggplot2 plot object.
+}
 \description{
 Plot different outputs of the results obtained by a rgcca function
 }

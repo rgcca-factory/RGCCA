@@ -14,6 +14,7 @@
 #' be displayed (default is FALSE).
 #' @param show_legend A boolean indicating if legend should
 #' be shown (default is TRUE).
+#' @return A ggplot2 plot object.
 #' @examples
 #' data(Russett)
 #' A <- list(
@@ -173,4 +174,5 @@ plot.permutation <- function(x,
   }
 
   plot(p, ...)
+  invisible(p)
 }

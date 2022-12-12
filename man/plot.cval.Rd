@@ -47,6 +47,9 @@ is one.}
 
 \item{...}{additional graphical parameters}
 }
+\value{
+A ggplot2 plot object.
+}
 \description{
 Plot a cross-validation object (tuning RGCA parameters in 'supervised' mode).
 The parameters tuned for maximizing RMSE is displayed in the title. In

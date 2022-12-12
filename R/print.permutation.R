@@ -4,6 +4,7 @@
 #' @param x A fitted rgcca_permutation object (see
 #' \code{\link[RGCCA]{rgcca_permutation}})
 #' @param ... additional print parameters
+#' @return none
 #' @export
 #' @examples
 #' data(Russett)

@@ -20,6 +20,9 @@ the boxes are given by the 25% and 75% quantiles.
 
 \item{...}{Further print options}
 }
+\value{
+none
+}
 \description{
 print.cval
 }

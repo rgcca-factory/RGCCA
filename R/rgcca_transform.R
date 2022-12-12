@@ -4,6 +4,9 @@
 #'
 #' @param rgcca_res A fitted RGCCA object (see  \code{\link[RGCCA]{rgcca}}).
 #' @param blocks_test A list of either dataframes or matrices to be projected.
+#' @return A list of matrices containing the projections
+#' of the test blocks using the canonical components from the fitted RGCCA
+#' object.
 #' @examples
 #' data("Russett")
 #' blocks <- list(

@@ -48,6 +48,7 @@
 #' \item "both": displays both sample plot and correlation circle (implemented
 #' only for one block and at least when two components are asked (ncomp >= 2).
 #' \item "ave": displays the average variance explained for each block.}
+#' @return A ggplot2 plot object.
 #' @examples
 #' data(Russett)
 #' status <- colnames(Russett)[9:11][apply(Russett[, 9:11], 1, which.max)]

@@ -25,6 +25,26 @@ trained and the tested models.}
 \item{...}{Additional parameters to be passed to the model fitted on top
 of RGCCA.}
 }
+\value{
+A list containing the following elements:
+
+\item{score}{the score specified by the argument metric obtained
+on the test block. NA if the test block is missing.}
+
+\item{results}{a list of lists. There is a list per column in the
+response block. Each list contains the score on the corresponding columns
+of the test response block, the learned model, predictions,
+confusion matrices (if classification task, NA otherwise),
+and additional metrics on both training and test sets.
+NA are reported if the test block is missing.}
+
+\item{projection}{a list of matrices containing the projections
+of the test blocks using the canonical components from the fitted RGCCA
+object. The response block is not projected.}
+
+\item{prediction}{a data.frame with the prediction of the test
+response block.}
+}
 \description{
 Predict a new block from a fitted RGCCA object.
 }

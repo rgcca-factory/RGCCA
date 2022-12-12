@@ -14,7 +14,7 @@
 #' (defaut: TRUE)
 #' @param n_mark An integer defining the maximum number of variables plotted.
 #' @param show_sign A logical for showing significance levels.
-#'
+#' @return A ggplot2 plot object.
 #' @examples
 #' data("Russett")
 #' blocks <- list(
@@ -144,4 +144,5 @@ plot.bootstrap <- function(x, block = seq_along(x$rgcca$call$blocks),
   }
 
   plot(p, ...)
+  invisible(p)
 }

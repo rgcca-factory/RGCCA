@@ -11,19 +11,7 @@
 #' @param display_order A logical value for ordering the variables
 #' @param ... Further arguments in print
 #' the means, 95\% intervals, bootstrap ratio, p-values and other statistics.
-#' @return A matrix containing for each variable:
-#' \itemize{
-#' \item 'estimate' for block weight or loading vectors.
-#' \item 'mean' for the mean of the bootstrap block weight/loading vectors.
-#' \item 'sd' for the boostrapped estimate of the standard deviation of the
-#' block weight/loading vectors.
-#' \item 'lower/upper_bound' for the lower and upper intervals.
-#' \item 'pvals' for p-values. In the case of SGCCA, the occurrences of the
-#' bootstrap weights are distributed according to the binomial distribution
-#' while for RGCCA, their absolute value divided by their standard deviation
-#' follows a normal distribution.
-#' \item 'adjust.pval' for ajusted p-value (fdr correction by default)
-#' }
+#' @return none
 #' @examples
 #' data("Russett")
 #' blocks <- list(

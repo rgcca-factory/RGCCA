@@ -15,6 +15,7 @@
 #' \item "quantile": the middle bar corresponds to the median and limits of
 #' the boxes are given by the 25% and 75% quantiles.
 #' }
+#' @return A ggplot2 plot object.
 #' @examples
 #' data("Russett")
 #' blocks <- list(
@@ -155,4 +156,5 @@ plot.cval <- function(x, type = "sd",
       legend.position = "none"
     )
   plot(p, ...)
+  invisible(p)
 }

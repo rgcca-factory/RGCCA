@@ -50,6 +50,9 @@ be shown (default is TRUE).}
 
 \item{...}{additional graphical parameters}
 }
+\value{
+A ggplot2 plot object.
+}
 \description{
 Plot a fitted rgcca permutation object. The various set of tuning parameters
 are represented in the x-axis and the RGCCA objective function - obtained

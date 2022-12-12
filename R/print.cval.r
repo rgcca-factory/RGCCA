@@ -2,6 +2,7 @@
 #'
 #' @inheritParams plot.cval
 #' @param ... Further print options
+#' @return none
 #' @export
 #' @examples
 #' data("Russett")

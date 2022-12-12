@@ -12,6 +12,9 @@
 
 \item{...}{additional print parameters}
 }
+\value{
+none
+}
 \description{
 Print a fitted rgcca_permutation object
 }
