@@ -76,6 +76,7 @@
 #' )
 #' }
 #'
+#' @importFrom stats na.omit
 #' @importFrom utils txtProgressBar setTxtProgressBar
 rgcca_cv <- function(blocks,
                      method = "rgcca",
@@ -178,20 +179,29 @@ rgcca_cv <- function(blocks,
   }
 
   ### Start line search
+  # Remove missing lines from response block
+  na_lines <- which(apply(
+    rgcca_args$blocks[[rgcca_args$response]], 1, function(x) all(is.na(x))
+  ))
+  idx_no_na <- seq_len(NROW(rgcca_args$blocks[[1]]))
+  if (length(na_lines) > 0) {
+    idx_no_na <- idx_no_na[-na_lines]
+  }
   if (validation == "loo") {
-    v_inds <- seq_len(NROW(rgcca_args$blocks[[1]]))
+    v_inds <- idx_no_na
   } else {
     if (model$classification) {
       v_inds <- Reduce("c", lapply(seq_len(n_run), function(j) {
-        caret::createFolds(
-          rgcca_args$blocks[[rgcca_args$response]][, 1],
+        folds <- caret::createFolds(
+          na.omit(rgcca_args$blocks[[rgcca_args$response]][, 1]),
           k = k, list = TRUE,
           returnTrain = FALSE
         )
+        lapply(folds, function(f) idx_no_na[f])
       }))
     } else {
       v_inds <- Reduce("c", lapply(seq_len(n_run), function(j) {
-        x <- sample(nrow(rgcca_args$blocks[[1]]))
+        x <- sample(idx_no_na)
         split(x, seq(x) %% k)
       }))
     }
@@ -226,8 +236,8 @@ rgcca_cv <- function(blocks,
 
   best_param_idx <- ifelse(
     model$classification,
-    which.max(apply(W, 1, mean)),
-    which.min(apply(W, 1, mean))
+    which.max(apply(W, 1, mean, na.rm = TRUE)),
+    which.min(apply(W, 1, mean, na.rm = TRUE))
   )
 
   res <- list(
