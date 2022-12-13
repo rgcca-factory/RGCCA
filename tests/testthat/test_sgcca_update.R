@@ -15,14 +15,14 @@ verify <- function(A, sparsity, init, C, dg, tol = 1e-14) {
   pjs <- vapply(A, ncol, FUN.VALUE = integer(1L))
   const <- sparsity * pjs
   init_object <- sgcca_init(
-    A, init, TRUE, TRUE, sparsity, response = NULL, disjunction = NULL
+    A, init, TRUE, TRUE, sparsity, response = NULL, disjunction = FALSE
   )
   a <- init_object$a
   Y <- init_object$Y
   crit_old <- sum(C * g(cov2(Y, bias = TRUE)))
   # Compute update
   update_object <- sgcca_update(
-    A, TRUE, TRUE, sparsity, NULL, NULL, dg, C, a, Y, init_object
+    A, TRUE, TRUE, sparsity, NULL, FALSE, dg, C, a, Y, init_object
   )
   verify_norm_constraint(update_object$a, const, tol)
   crit <- sum(C * g(cov2(update_object$Y, bias = TRUE)))

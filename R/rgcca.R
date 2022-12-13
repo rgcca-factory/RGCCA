@@ -271,49 +271,18 @@ rgcca <- function(blocks, method = "rgcca",
   rgcca_args <- as.list(environment())
   ### If specific objects are given for blocks, parameters are imported from
   #   these objects.
-  rgcca_args <- get_rgcca_args(blocks, rgcca_args)
+  tmp <- get_rgcca_args(blocks, rgcca_args)
+  opt <- tmp$opt
+  rgcca_args <- tmp$rgcca_args
   rgcca_args$quiet <- quiet
   rgcca_args$verbose <- verbose
 
-  ### Check parameters
-  match.arg(rgcca_args$init, c("svd", "random"))
-  rgcca_args$blocks <- check_blocks(rgcca_args$blocks,
-    add_NAlines = TRUE, quiet = rgcca_args$quiet,
-    response = rgcca_args$response
-  )
-
   blocks <- remove_null_sd(rgcca_args$blocks)$list_m
 
-  check_integer("tol", rgcca_args$tol, float = TRUE, min = 0)
-  check_integer("n_iter_max", rgcca_args$n_iter_max, min = 1)
-  for (i in c("superblock", "verbose", "scale", "bias", "quiet")) {
-    check_boolean(rgcca_args[[i]], get(i))
-  }
-
-  rgcca_args$tau <- elongate_arg(rgcca_args$tau, blocks)
-  rgcca_args$ncomp <- elongate_arg(rgcca_args$ncomp, blocks)
-  rgcca_args$sparsity <- elongate_arg(rgcca_args$sparsity, blocks)
-
-  ### Get last parameters based on the method
-  tmp <- select_analysis(rgcca_args, blocks)
-  opt <- tmp$opt
-  rgcca_args <- tmp$rgcca_args
-
-  ### One hot encode the response block if needed
-  disjunction <- NULL
-  if (!is.null(rgcca_args$response)) {
+  if (opt$disjunction) {
     blocks[[rgcca_args$response]] <- as_disjunctive(
       blocks[[rgcca_args$response]]
     )
-    disjunction <- attributes(blocks[[rgcca_args$response]])$disjunction
-  }
-  # Change penalty to 0 if there is a univariate disjunctive block response
-  if (isTRUE(disjunction)) {
-    if (is.matrix(rgcca_args[[opt$param]])) {
-      rgcca_args[[opt$param]][, rgcca_args$response] <- 0
-    } else {
-      rgcca_args[[opt$param]][rgcca_args$response] <- 0
-    }
   }
 
   ### Apply strategy to deal with NA, scale and prepare superblock
@@ -338,12 +307,12 @@ rgcca <- function(blocks, method = "rgcca",
   )]
   gcca_args[["na.rm"]] <- na.rm
   gcca_args[["blocks"]] <- blocks
-  gcca_args[["disjunction"]] <- disjunction
+  gcca_args[["disjunction"]] <- opt$disjunction
   gcca_args[[opt$param]] <- rgcca_args[[opt$param]]
   func_out <- do.call(opt$gcca, gcca_args)
 
   ### Format the output
-  func_out <- format_output(func_out, rgcca_args, opt, blocks, disjunction)
+  func_out <- format_output(func_out, rgcca_args, opt, blocks)
 
   class(func_out) <- "rgcca"
   invisible(func_out)

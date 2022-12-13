@@ -25,7 +25,7 @@ sgcca_init <- function(A, init, bias, na.rm, sparsity, response, disjunction) {
 
   N <- ifelse(bias, n, n - 1)
   a <- lapply(seq(J), function(j) {
-    if (isTRUE(disjunction) && (j == response)) {
+    if (disjunction && (j == response)) {
       a[[j]] / drop(sqrt(
         t(a[[j]]) %*% (1 / N * pm(t(A[[j]]), A[[j]], na.rm = na.rm)) %*% a[[j]]
       ))

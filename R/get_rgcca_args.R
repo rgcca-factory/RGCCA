@@ -1,7 +1,9 @@
 #' Get the rgcca arguments from a fitted object and default arguments.
+#' Modify arguments based on the provided configuration if needed.
 #' @noRd
 get_rgcca_args <- function(object, default_args = list()) {
   if (class(object) %in% c("rgcca", "permutation", "cval")) {
+    opt <- object$opt
     rgcca_args <- object$call
 
     if (class(object) %in% c("permutation", "cval")) {
@@ -21,11 +23,13 @@ get_rgcca_args <- function(object, default_args = list()) {
       tol = default_args$tol,
       init = default_args$init,
       bias = default_args$bias,
+      quiet = default_args$quiet,
       scale = default_args$scale,
       ncomp = default_args$ncomp,
       blocks = default_args$blocks,
       scheme = default_args$scheme,
       method = default_args$method,
+      verbose = default_args$verbose,
       sparsity = default_args$sparsity,
       response = default_args$response,
       NA_method = default_args$NA_method,
@@ -34,8 +38,41 @@ get_rgcca_args <- function(object, default_args = list()) {
       superblock = default_args$superblock,
       scale_block = default_args$scale_block
     )
+
+    match.arg(rgcca_args$init, c("svd", "random"))
+    rgcca_args$blocks <- check_blocks(
+      rgcca_args$blocks, add_NAlines = TRUE,
+      quiet = rgcca_args$quiet, response = rgcca_args$response
+    )
+
+    check_integer("tol", rgcca_args$tol, float = TRUE, min = 0)
+    check_integer("n_iter_max", rgcca_args$n_iter_max, min = 1)
+    for (i in c("superblock", "verbose", "scale", "bias", "quiet")) {
+      check_boolean(i, rgcca_args[[i]])
+    }
+
+    rgcca_args$tau <- elongate_arg(rgcca_args$tau, rgcca_args$blocks)
+    rgcca_args$ncomp <- elongate_arg(rgcca_args$ncomp, rgcca_args$blocks)
+    rgcca_args$sparsity <- elongate_arg(rgcca_args$sparsity, rgcca_args$blocks)
+
+    ### Get last parameters based on the method
+    tmp <- select_analysis(rgcca_args, rgcca_args$blocks)
+    opt <- tmp$opt
+    rgcca_args <- tmp$rgcca_args
+
+    # Change penalty to 0 if there is a univariate disjunctive block response
+    opt$disjunction <- !is.null(rgcca_args$response) &&
+      is.character(rgcca_args$blocks[[rgcca_args$response]])
+
+    if (opt$disjunction) {
+      if (is.matrix(rgcca_args[[opt$param]])) {
+        rgcca_args[[opt$param]][, rgcca_args$response] <- 0
+      } else {
+        rgcca_args[[opt$param]][rgcca_args$response] <- 0
+      }
+    }
   }
   rgcca_args$quiet <- TRUE
   rgcca_args$verbose <- FALSE
-  return(rgcca_args)
+  return(list(opt = opt, rgcca_args = rgcca_args))
 }

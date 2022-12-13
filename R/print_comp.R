@@ -12,7 +12,7 @@
 
 print_comp <- function(rgcca_res, n = 1, i = length(rgcca_res$AVE$AVE_X),
                        outer = FALSE) {
-  is_quali <- isTRUE(rgcca_res$disjunction) && (i == rgcca_res$call$response)
+  is_quali <- rgcca_res$opt$disjunction && (i == rgcca_res$call$response)
   if (is_quali) {
     return(paste0("Comp. ", n))
   }

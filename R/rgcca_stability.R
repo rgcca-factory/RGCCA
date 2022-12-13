@@ -100,7 +100,7 @@ rgcca_stability <- function(rgcca_res,
     rgcca_res$call$blocks <- rgcca_res$call$blocks[-J]
   }
 
-  if (isTRUE(rgcca_res$disjunction)) {
+  if (rgcca_res$opt$disjunction) {
      list_res <- lapply(list_res, function(x) x[-rgcca_res$call$response])
      rgcca_res$AVE$AVE_X <- rgcca_res$AVE$AVE_X[-rgcca_res$call$response]
   }
@@ -147,7 +147,7 @@ rgcca_stability <- function(rgcca_res,
     }
   )
 
-  if (isTRUE(rgcca_res$disjunction)) {
+  if (rgcca_res$opt$disjunction) {
     keepVar[[rgcca_res$call$response]] <- 1
   }
 

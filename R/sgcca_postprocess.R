@@ -17,7 +17,7 @@ sgcca_postprocess <- function(
   }
 
   l2_sat <- vapply(a, function(x) norm(x, "2"), FUN.VALUE = 1.0)
-  if (isTRUE(disjunction)) {
+  if (disjunction) {
     l2_sat <- l2_sat[-response]
   }
   if (max(abs(l2_sat - 1)) > tol) {

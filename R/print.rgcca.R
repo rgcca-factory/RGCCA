@@ -52,7 +52,7 @@ print.rgcca <- function(x, ...) {
     }
   } else {
     response <- ifelse(
-      isTRUE(x$disjunction), x$call$response, length(x$blocks) + 1
+      x$opt$disjunction, x$call$response, length(x$blocks) + 1
     )
     nb_selected_var <- lapply(
       x$a[-response],
@@ -75,7 +75,7 @@ print.rgcca <- function(x, ...) {
       cat("The number of selected variables are: \n")
       print(do.call(cbind, nb_selected_var))
     }
-    if (isTRUE(x$disjunction)) {
+    if (x$opt$disjunction) {
       cat("The regularization parameter used for",
           names(x$blocks)[response], "is:", 0,
           fill = TRUE

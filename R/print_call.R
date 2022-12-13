@@ -24,7 +24,6 @@ print_call <- function(call) {
 
   ### Print design matrix
   cat("The design matrix is:\n")
-  colnames(call$connection) <- rownames(call$connection) <- names(call$blocks)
   print(call$connection)
 
   ### Print scheme

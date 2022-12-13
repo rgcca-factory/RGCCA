@@ -16,7 +16,7 @@ sgccak <- function(A, C, sparsity = rep(1, length(A)),
                    scheme = "centroid", tol = 1e-08,
                    init = "svd", bias = TRUE, verbose = FALSE,
                    quiet = FALSE, na.rm = TRUE, response = NULL,
-                   disjunction = NULL, n_iter_max = 1000) {
+                   disjunction = FALSE, n_iter_max = 1000) {
   if (is.function(scheme)) {
     g <- scheme
   } else {

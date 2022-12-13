@@ -208,7 +208,7 @@ plot.rgcca <- function(x, type = "weights", block = seq_along(x$call$blocks),
 
   if (missing(response)) {
     if (!is.null(x$call$response)) {
-      if (isTRUE(x$disjunction)) {
+      if (x$opt$disjunction) {
         response <- as.factor(x$call$blocks[[x$call$response]][, 1])
       } else {
         response <- x$blocks[[x$call$response]][, 1]

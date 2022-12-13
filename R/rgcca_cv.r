@@ -106,26 +106,22 @@ rgcca_cv <- function(blocks,
                      n_iter_max = 1000,
                      metric = NULL,
                      ...) {
-  ### Try to retrieve parameters from a rgcca object
-  rgcca_args <- as.list(environment())
-  rgcca_args <- get_rgcca_args(blocks, rgcca_args)
-
-  rgcca_args$blocks <- check_blocks(
-    rgcca_args$blocks,
-    add_NAlines = TRUE, quiet = rgcca_args$quiet,
-    response = rgcca_args$response
-  )
-
-  ### Check parameters
-  if (is.null(rgcca_args$response)) {
+  if (is.null(response)) {
     stop(paste0(
       "response is required for rgcca_cv (it is an integer ",
       "comprised between 1 and the number of blocks) "
     ))
   }
-  check_blockx("response", rgcca_args$response, rgcca_args$blocks)
+
+  ### Try to retrieve parameters from a rgcca object
+  rgcca_args <- as.list(environment())
+  tmp <- get_rgcca_args(blocks, rgcca_args)
+  opt <- tmp$opt
+  rgcca_args <- tmp$rgcca_args
+
+  ### Check parameters
   if (validation == "loo") {
-    k <- dim(rgcca_args$blocks[[1]])[1]
+    k <- NROW(rgcca_args$blocks[[1]])
     n_run <- 1
   }
   model <- check_prediction_model(
@@ -142,11 +138,6 @@ rgcca_cv <- function(blocks,
   metric <- ifelse(is.null(metric), default_metric, metric)
   available_metrics <- get_available_metrics(model$classification)
   metric <- match.arg(metric, available_metrics)
-
-  ### Set connection matrix
-  rgcca_args$connection <- connection_matrix(
-    rgcca_args$blocks, type = "response", response = rgcca_args$response
-  )
 
   ### Prepare parameters for line search
   if (
@@ -178,7 +169,7 @@ rgcca_cv <- function(blocks,
     )
   }
 
-  ### Start line search
+  ### Create folds
   # Remove missing lines from response block
   na_lines <- which(apply(
     rgcca_args$blocks[[rgcca_args$response]], 1, function(x) all(is.na(x))
@@ -207,6 +198,7 @@ rgcca_cv <- function(blocks,
     }
   }
 
+  ### Compute cross validation
   idx <- seq_len(NROW(param$par_value) * length(v_inds))
   W <- par_pblapply(idx, function(n) {
     i <- (n - 1) %/% length(v_inds) + 1
@@ -243,6 +235,7 @@ rgcca_cv <- function(blocks,
   res <- list(
     k = k,
     cv = W,
+    opt = opt,
     call = rgcca_args,
     n_run = n_run,
     metric = metric,

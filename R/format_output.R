@@ -1,13 +1,13 @@
 #' Format output of rgcca function
 #'
 #' @noRd
-format_output <- function(func_out, rgcca_args, opt, blocks, disjunction) {
+format_output <- function(func_out, rgcca_args, opt, blocks) {
   ### Compute AVE
   blocks_AVE <- seq_along(blocks)
   names_AVE <- names(blocks)
   ncomp_AVE <- rgcca_args$ncomp
   pjs <- vapply(blocks, NCOL, FUN.VALUE = 1L)
-  if (isTRUE(disjunction)) {
+  if (opt$disjunction) {
     blocks_AVE <- blocks_AVE[-rgcca_args$response]
     names_AVE <- names_AVE[-rgcca_args$response]
     ncomp_AVE <- ncomp_AVE[-rgcca_args$response]
@@ -86,9 +86,9 @@ format_output <- function(func_out, rgcca_args, opt, blocks, disjunction) {
     func_out$tau <- NULL
   }
 
+  func_out$opt <- opt
   func_out$call <- rgcca_args
   func_out$blocks <- blocks
-  func_out$disjunction <- disjunction
 
   return(func_out)
 }

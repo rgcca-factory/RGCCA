@@ -61,5 +61,5 @@ test_that("rgcca imports the parameters from a permutation object", {
     n_perms = 3
   )
   fit_rgcca <- rgcca(res)
-  expect_identical(unname(res$bestpenalties), fit_rgcca$call$sparsity)
+  expect_identical(res$bestpenalties, fit_rgcca$call$sparsity)
 })

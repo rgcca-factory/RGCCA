@@ -251,13 +251,9 @@ rgcca_permutation <- function(blocks, par_type = "tau", par_value = NULL,
                               verbose = TRUE, n_iter_max = 1000) {
   ### Try to retrieve parameters from a rgcca object
   rgcca_args <- as.list(environment())
-  rgcca_args <- get_rgcca_args(blocks, rgcca_args)
-
-  rgcca_args$blocks <- check_blocks(
-    rgcca_args$blocks,
-    add_NAlines = TRUE, quiet = rgcca_args$quiet,
-    response = rgcca_args$response
-  )
+  tmp <- get_rgcca_args(blocks, rgcca_args)
+  opt <- tmp$opt
+  rgcca_args <- tmp$rgcca_args
 
   ### Check parameters
   check_integer("n_perms", n_perms)
@@ -335,8 +331,8 @@ rgcca_permutation <- function(blocks, par_type = "tau", par_value = NULL,
   )
 
   structure(list(
-    call = rgcca_args, zstat = zs, par_type = par_type, n_perms = n_perms,
-    bestpenalties = param$par_value[which.max(zs), ],
+    opt = opt, call = rgcca_args, zstat = zs, par_type = par_type,
+    n_perms = n_perms, bestpenalties = param$par_value[which.max(zs), ],
     permcrit = permcrit, means = means, sds = sds,
     crit = crits, pvals = pvals, penalties = param$par_value
   ), class = "permutation")
