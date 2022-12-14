@@ -248,7 +248,7 @@ core_prediction <- function(prediction_model, X_train, X_test,
       obs = prediction_test$obs
     )
   }
-  score <- metric_test[match.arg(metric, names(metric_test))]
+  score <- metric_test[grep(metric, names(metric_test), fixed = TRUE)[1]]
 
   if (no_y_test) {
     score <- confusion_test <- NA
