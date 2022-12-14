@@ -24,19 +24,12 @@ rgcca_cv_k <- function(rgcca_args, inds, prediction_model,
     return(x)
   })
   names(blocks_test) <- names(res$blocks)
-  score <- rgcca_predict(
+
+  return(rgcca_predict(
     res,
     metric = metric,
     blocks_test = blocks_test,
     prediction_model = prediction_model,
     ...
-  )$score
-
-  ### Structure outputs
-  structure(
-    list(
-      score = score, par_value = res$call[[par_type]][res$call$response]
-    ),
-    class = "cv"
-  )
+  )$score)
 }

@@ -5,7 +5,8 @@
 #' @inheritParams rgcca_cv
 #' @noRd
 set_parameter_grid <- function(par_type, par_length, par_value, blocks,
-                               response = NULL, superblock = FALSE) {
+                               response = NULL, superblock = FALSE,
+                               disjunction = FALSE) {
   ### Auxiliary functions
   check_param_type <- function(par_value, blocks) {
     is_valid_type <- is.null(par_value) || is.vector(par_value) ||
@@ -93,7 +94,9 @@ set_parameter_grid <- function(par_type, par_length, par_value, blocks,
     "tau" = {
       min_values <- rep(0, J + 1)
       max_values <- 1
-      response_value <- NULL
+      response_value <- function(x) {
+        ifelse(disjunction, 0, x[response])
+      }
       check_function <- function(x) {
         check_penalty(x, blocks, method = "rgcca", superblock = superblock)
       }
@@ -101,7 +104,9 @@ set_parameter_grid <- function(par_type, par_length, par_value, blocks,
     "sparsity" = {
       min_values <- c(1 / sqrt(ncols), 1 / sqrt(sum(ncols)))
       max_values <- 1
-      response_value <- NULL
+      response_value <- function(x) {
+        ifelse(disjunction, 0, x[response])
+      }
       check_function <- function(x) {
         check_penalty(x, blocks, method = "sgcca", superblock = superblock)
       }

@@ -149,7 +149,8 @@ rgcca_cv <- function(blocks,
   }
 
   param <- set_parameter_grid(
-    par_type, par_length, par_value, rgcca_args$blocks, rgcca_args$response
+    par_type, par_length, par_value, rgcca_args$blocks,
+    rgcca_args$response, FALSE, opt$disjunction
   )
 
   # Generate a warning if tau has not been fully specified for a block that
@@ -214,12 +215,7 @@ rgcca_cv <- function(blocks,
     )
   }, n_cores = n_cores, verbose = verbose)
 
-  param$par_value[, rgcca_args$response] <- do.call(
-    rbind,
-    lapply(W[seq(1, length(idx), by = length(v_inds))], "[[", "par_value")
-  )
-  W <- unlist(lapply(W, "[[", "score"))
-  W <- matrix(W, nrow = NROW(param$par_value), byrow = TRUE)
+  W <- matrix(unlist(W), nrow = NROW(param$par_value), byrow = TRUE)
 
   ### Format output
   rownames(param$par_value) <- seq_len(NROW(param$par_value))

@@ -27,11 +27,5 @@ rgcca_permutation_k <- function(rgcca_args, perm, par_type, par_value) {
     crit_permut <- res$crit[length(res$crit)]
   }
 
-  if (perm) {
-    par_value <- NULL
-  } else {
-    par_value <- res$call[[par_type]]
-  }
-
-  return(list(crit = crit_permut, par_value = par_value))
+  return(crit_permut)
 }

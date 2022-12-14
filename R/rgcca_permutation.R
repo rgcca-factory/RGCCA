@@ -277,7 +277,7 @@ rgcca_permutation <- function(blocks, par_type = "tau", par_value = NULL,
 
   param <- set_parameter_grid(
     par_type, par_length, par_value, rgcca_args$blocks,
-    rgcca_args$response, rgcca_args$superblock
+    rgcca_args$response, rgcca_args$superblock, opt$disjunction
   )
 
   ### Start line search
@@ -295,8 +295,7 @@ rgcca_permutation <- function(blocks, par_type = "tau", par_value = NULL,
     )
   }, n_cores = n_cores, verbose = verbose)
 
-  param$par_value <- do.call(rbind, lapply(W, "[[", "par_value"))
-  W <- do.call(rbind, lapply(W, "[[", "crit"))
+  W <- do.call(rbind, W)
 
   ### Format output
   par_colnames <- names(rgcca_args$blocks)

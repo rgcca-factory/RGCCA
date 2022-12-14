@@ -61,7 +61,7 @@ test_that("rgcca_cv_k gives the same scores as custom_rgcca_cv_k", {
     metric = NULL
   )
   res_custom_cv_k <- custom_rgcca_cv_k(blocks, response)
-  expect_equal(res_cv_k$score, res_custom_cv_k)
+  expect_equal(res_cv_k, res_custom_cv_k)
 
   rgcca_out <- rgcca(blocks, response = response, ncomp = 2)
   res_cv_k <- rgcca_cv_k(
@@ -70,7 +70,7 @@ test_that("rgcca_cv_k gives the same scores as custom_rgcca_cv_k", {
     metric = NULL
   )
   res_custom_cv_k <- custom_rgcca_cv_k(blocks, response, ncomp = 2)
-  expect_equal(res_cv_k$score, res_custom_cv_k)
+  expect_equal(res_cv_k, res_custom_cv_k)
 
   # Classification
   response <- 3
@@ -81,7 +81,7 @@ test_that("rgcca_cv_k gives the same scores as custom_rgcca_cv_k", {
     metric = NULL
   )
   res_custom_cv_k <- custom_rgcca_cv_k(blocks_classif, response, "lda")
-  expect_equal(res_cv_k$score, res_custom_cv_k)
+  expect_equal(res_cv_k, res_custom_cv_k)
 
   rgcca_out <- rgcca(blocks_classif, response = response, ncomp = 2)
   res_cv_k <- rgcca_cv_k(
@@ -92,7 +92,7 @@ test_that("rgcca_cv_k gives the same scores as custom_rgcca_cv_k", {
   res_custom_cv_k <- custom_rgcca_cv_k(blocks_classif, response, "lda",
     ncomp = 2
   )
-  expect_equal(res_cv_k$score, res_custom_cv_k)
+  expect_equal(res_cv_k, res_custom_cv_k)
 
   # With missing values
   response <- 1
@@ -106,7 +106,7 @@ test_that("rgcca_cv_k gives the same scores as custom_rgcca_cv_k", {
     metric = NULL
   )
   res_custom_cv_k <- custom_rgcca_cv_k(blocksNA, response, NA_method = "nipals")
-  expect_equal(res_cv_k$score, res_custom_cv_k)
+  expect_equal(res_cv_k, res_custom_cv_k)
 
   rgcca_out <- rgcca(blocksNA,
     response = response, ncomp = 1,
@@ -120,7 +120,7 @@ test_that("rgcca_cv_k gives the same scores as custom_rgcca_cv_k", {
   res_custom_cv_k <- custom_rgcca_cv_k(blocksNA, response,
     NA_method = "complete"
   )
-  expect_equal(res_cv_k$score, res_custom_cv_k)
+  expect_equal(res_cv_k, res_custom_cv_k)
 
   # With a column of null variance in the training set
   response <- 1
@@ -131,5 +131,5 @@ test_that("rgcca_cv_k gives the same scores as custom_rgcca_cv_k", {
     metric = NULL
   )
   res_custom_cv_k <- custom_rgcca_cv_k(blocks_null_sd, response)
-  expect_equal(res_cv_k$score, res_custom_cv_k)
+  expect_equal(res_cv_k, res_custom_cv_k)
 })
