@@ -286,7 +286,7 @@ rgcca <- function(blocks, method = "rgcca",
   }
 
   ### Apply strategy to deal with NA, scale and prepare superblock
-  tmp <- handle_NA(blocks, NA_method = NA_method)
+  tmp <- handle_NA(blocks, NA_method = rgcca_args$NA_method)
   na.rm <- tmp$na.rm
   blocks <- scaling(tmp$blocks,
     scale = rgcca_args$scale,
@@ -303,7 +303,7 @@ rgcca <- function(blocks, method = "rgcca",
   ### Call the gcca function
   gcca_args <- rgcca_args[c(
     "connection", "ncomp", "scheme", "init", "bias", "tol",
-    "verbose", "quiet", "superblock", "response", "n_iter_max"
+    "verbose", "superblock", "response", "n_iter_max"
   )]
   gcca_args[["na.rm"]] <- na.rm
   gcca_args[["blocks"]] <- blocks

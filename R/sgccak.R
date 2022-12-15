@@ -15,7 +15,7 @@
 sgccak <- function(A, C, sparsity = rep(1, length(A)),
                    scheme = "centroid", tol = 1e-08,
                    init = "svd", bias = TRUE, verbose = FALSE,
-                   quiet = FALSE, na.rm = TRUE, response = NULL,
+                   na.rm = TRUE, response = NULL,
                    disjunction = FALSE, n_iter_max = 1000) {
   if (is.function(scheme)) {
     g <- scheme
@@ -43,7 +43,7 @@ sgccak <- function(A, C, sparsity = rep(1, length(A)),
   Y <- init_object$Y
 
   iter <- 1
-  crit <- numeric(n_iter_max)
+  crit <- NULL
   crit_old <- sum(C * g(cov2(Y, bias = bias)))
   a_old <- a
 
@@ -55,7 +55,7 @@ sgccak <- function(A, C, sparsity = rep(1, length(A)),
     Y <- update_object$Y
 
     # Print out intermediate fit
-    crit[iter] <- sum(C * g(cov2(Y, bias = bias)))
+    crit <- c(crit, sum(C * g(cov2(Y, bias = bias))))
 
     if (verbose) {
       cat(
@@ -79,8 +79,6 @@ sgccak <- function(A, C, sparsity = rep(1, length(A)),
     a_old <- a
     iter <- iter + 1
   }
-
-  crit <- crit[which(crit != 0)]
 
   if (iter > n_iter_max) {
     stop_rgcca(

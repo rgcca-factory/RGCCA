@@ -143,7 +143,7 @@ sgcca <- function(blocks, connection = 1 - diag(length(blocks)),
                   sparsity = rep(1, length(blocks)),
                   ncomp = rep(1, length(blocks)), scheme = "centroid",
                   init = "svd", bias = TRUE, tol = .Machine$double.eps,
-                  verbose = FALSE, quiet = FALSE, na.rm = TRUE,
+                  verbose = FALSE, na.rm = TRUE,
                   superblock = FALSE, response = NULL,
                   disjunction = NULL, n_iter_max = 1000) {
   update_col_n <- function(x, y, n) {
@@ -199,7 +199,7 @@ sgcca <- function(blocks, connection = 1 - diag(length(blocks)),
     gcca_result <- sgccak(R, connection,
       sparsity = sparsity[n, ], scheme = scheme,
       init = init, bias = bias, tol = tol,
-      verbose = verbose, na.rm = na.rm, quiet = quiet,
+      verbose = verbose, na.rm = na.rm,
       response = response, disjunction = disjunction,
       n_iter_max = n_iter_max
     )

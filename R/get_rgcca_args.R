@@ -21,25 +21,35 @@ get_rgcca_args <- function(object, default_args = list()) {
     rgcca_args <- list(
       tau = default_args$tau,
       tol = default_args$tol,
-      init = default_args$init,
+      init = tolower(default_args$init),
       bias = default_args$bias,
       quiet = default_args$quiet,
       scale = default_args$scale,
       ncomp = default_args$ncomp,
       blocks = default_args$blocks,
       scheme = default_args$scheme,
-      method = default_args$method,
+      method = tolower(default_args$method),
       verbose = default_args$verbose,
       sparsity = default_args$sparsity,
       response = default_args$response,
-      NA_method = default_args$NA_method,
+      NA_method = tolower(default_args$NA_method),
       n_iter_max = default_args$n_iter_max,
       connection = default_args$connection,
       superblock = default_args$superblock,
       scale_block = default_args$scale_block
     )
 
-    match.arg(rgcca_args$init, c("svd", "random"))
+    rgcca_args$init <- check_char(rgcca_args$init, "init", c("svd", "random"))
+    rgcca_args$NA_method <- check_char(
+      rgcca_args$NA_method, "NA_method", c("nipals", "complete")
+    )
+    if (!is.logical(rgcca_args$scale_block)) {
+      rgcca_args$scale_block <- tolower(rgcca_args$scale_block)
+      rgcca_args$scale_block <- check_char(
+        rgcca_args$scale_block, "scale_block", c("inertia", "lambda1")
+      )
+    }
+
     rgcca_args$blocks <- check_blocks(
       rgcca_args$blocks, add_NAlines = TRUE,
       quiet = rgcca_args$quiet, response = rgcca_args$response

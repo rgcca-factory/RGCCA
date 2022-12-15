@@ -371,14 +371,16 @@ select_analysis <- function(rgcca_args, blocks) {
       return("0")
     }, character(1))
     modified_parameters <- modified_parameters[modified_parameters != "0"]
-    warning(
-      "Choice of method '", method, "' overwrote parameters '",
-      paste(modified_parameters, collapse = "', '"), "'."
-    )
+    if (length(modified_parameters) > 0) {
+      message(
+        "Choice of method '", method, "' overwrote parameters '",
+        paste(modified_parameters, collapse = "', '"), "'."
+      )
+    }
   }
 
   if (method %in% c("rgcca", "sgcca")) {
-    check_scheme(scheme)
+    scheme <- check_scheme(scheme)
     if (any(sparsity != 1)) {
       param <- "sparsity"
       gcca <- sgcca

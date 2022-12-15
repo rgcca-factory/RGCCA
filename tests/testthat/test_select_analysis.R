@@ -164,11 +164,11 @@ test_that("x4 methods set scheme to x^4", {
   }
 })
 
-test_that("warnings are produced if quiet is FALSE and params have been
+test_that("messages are produced if quiet is FALSE and params have been
           modified", {
   method <- "gcca"
   expect_warning(run_selection(method, quiet = TRUE), regexp = NA)
-  expect_warning(run_selection(method, quiet = FALSE),
+  expect_message(run_selection(method, quiet = FALSE),
     regexp = paste0(
       "Choice of method 'gcca' overwrote ",
       "parameters 'ncomp', 'scheme', 'tau', ",

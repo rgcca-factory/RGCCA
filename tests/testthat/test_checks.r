@@ -453,8 +453,8 @@ test_that("check_tau passes and returns tau when tau is valid", {
 test_that("check_scheme raises an error for invalid scheme", {
   expect_error(check_scheme("toto"),
     paste0(
-      "scheme must be one of the following schemes: horst, ",
-      "centroid, factorial or a function."
+      "scheme must be one of the following schemes: 'horst', ",
+      "'centroid', 'factorial' or a function."
     ),
     fixed = TRUE
   )

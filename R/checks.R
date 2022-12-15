@@ -173,14 +173,14 @@ check_method <- function(method) {
     "sumcov", "sabscov-1", "sabscov-2"
   )
 
-  if (!tolower(method) %in% analysis) {
+  if (!method %in% analysis) {
     stop_rgcca(
       "method '", method, "' is not among the available methods: ",
       paste(analysis, collapse = "', '"), "'.",
       exit_code = 112
     )
   }
-  return(tolower(method))
+  return(method)
 }
 
 check_nblocks <- function(blocks, method) {
@@ -367,17 +367,16 @@ check_tau <- function(tau) {
 }
 
 check_scheme <- function(scheme) {
-  if (
-    (mode(scheme) != "function") &&
-      (scheme != "horst") &&
-      (scheme != "factorial") &&
-      (scheme != "centroid")
-  ) {
-    stop_rgcca(paste0(
-      "scheme must be one of the following schemes: horst, ",
-      "centroid, factorial or a function."
-    ))
+  if (mode(scheme) != "function") {
+    scheme <- tolower(scheme)
+    if (!scheme %in% c("horst", "factorial", "centroid")) {
+      stop_rgcca(paste0(
+        "scheme must be one of the following schemes: 'horst', ",
+        "'centroid', 'factorial' or a function."
+      ))
+    }
   }
+  return(scheme)
 }
 
 check_prediction_model <- function(prediction_model, response_block) {
@@ -413,4 +412,16 @@ check_prediction_model <- function(prediction_model, response_block) {
   }
 
   return(list(prediction_model = model_info, classification = classification))
+}
+
+check_char <- function(arg, name_arg, values) {
+  res <- grep(arg, values, fixed = TRUE, value = TRUE)
+  if (length(res) == 0) {
+    stop_rgcca(
+      "'", name_arg, "' should be one of \"",
+      paste(values, collapse = "\", \""), "\""
+    )
+  } else {
+    return(res[1])
+  }
 }

@@ -178,7 +178,7 @@ rgccad <- function(blocks, connection = 1 - diag(length(blocks)),
                    tau = rep(1, length(blocks)),
                    ncomp = rep(1, length(blocks)), scheme = "centroid",
                    init = "svd", bias = TRUE, tol = 1e-08, verbose = TRUE,
-                   na.rm = TRUE, quiet = FALSE, superblock = FALSE,
+                   na.rm = TRUE, superblock = FALSE,
                    response = NULL, disjunction = NULL, n_iter_max = 1000) {
   update_col_n <- function(x, y, n) {
     x[, n] <- y

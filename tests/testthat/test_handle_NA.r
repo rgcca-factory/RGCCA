@@ -46,14 +46,3 @@ test_that("handle_NA leaves the blocks untouched when NA_method is
   expect_equal(tmp$blocks, blocks)
   expect_true(tmp$na.rm)
 })
-
-test_that("handle_NA raises an error when NA_method is not implemented", {
-  expect_error(
-    handle_NA(blocks, NA_method = "toto"),
-    paste0(
-      "NA_method toto is not implemented to handle missing values.",
-      "Please select one among (complete, nipals)."
-    ),
-    fixed = TRUE
-  )
-})
