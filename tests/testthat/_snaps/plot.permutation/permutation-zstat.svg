@@ -73,6 +73,6 @@
 <text x='399.91' y='568.03' text-anchor='middle' style='font-size: 12.00px; font-family: sans;' textLength='40.68px' lengthAdjust='spacingAndGlyphs'>Z-score</text>
 <text transform='translate(13.74,287.25) rotate(-90)' text-anchor='middle' style='font-size: 12.00px; font-family: sans;' textLength='148.08px' lengthAdjust='spacingAndGlyphs'>Tuning parameter sets (tau)</text>
 <text x='85.29' y='15.11' style='font-size: 14.00px; font-family: sans;' textLength='176.65px' lengthAdjust='spacingAndGlyphs'>Permutation scores (2 runs) </text>
-<text x='85.29' y='30.23' style='font-size: 14.00px; font-family: sans;' textLength='203.93px' lengthAdjust='spacingAndGlyphs'> Best parameters: 0.00/0.00/0.00</text>
+<text x='85.29' y='30.23' style='font-size: 14.00px; font-family: sans;' textLength='203.93px' lengthAdjust='spacingAndGlyphs'> Best parameters: 1.00/1.00/1.00</text>
 </g>
 </svg>

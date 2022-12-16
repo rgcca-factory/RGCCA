@@ -49,19 +49,10 @@ plot.permutation <- function(x,
   match.arg(type, c("crit", "zstat"))
 
   ### Build data frame
-  if (length(x$call$blocks) > 5) {
-    combinations <- paste("Set ", seq_along(x$pvals))
-  } else {
-    combinations <- apply(
-      format(round(x$penalties, 2), nsmall = 2), 1, paste0,
-      collapse = "/"
-    )
-  }
-
   df <- data.frame(
-    x = x[[type]],
+    x = x$stats[, type],
     label = "Other parameter set",
-    combinations = combinations
+    combinations = x$stats$combinations
   )
 
   # Reorder dataframe according to the quantity of interest
@@ -95,7 +86,7 @@ plot.permutation <- function(x,
     missing(title),
     paste0(
       "Permutation scores (", x$n_perms, " runs) \n Best parameters: ",
-      combinations[best]
+      df$combinations[best]
     ),
     title
   )

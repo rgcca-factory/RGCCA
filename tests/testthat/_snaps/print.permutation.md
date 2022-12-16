@@ -20,9 +20,9 @@
       1           1        1       1
       2           0        0       0
       
-        Tuning parameters Criterion Permuted criterion sd     zstat  p-value
-      1 1/1/1              0.717     0.150              0.058  9.770  0.000 
-      2 0/0/0              2.422     0.783              0.162 10.121  0.000 
+        Tuning parameters Criterion Permuted criterion    sd zstat p-value
+      1             1/1/1     0.717              0.150 0.058  9.77       0
+      2             0/0/0     2.422              0.783 0.162 10.12       0
       
       The best combination is: 0, 0, 0 for a z score of 10.1 and a p-value of 0.
 
@@ -53,12 +53,9 @@
       1      2      2      2      2      2      2
       2      1      1      1      1      1      1
       
-        Tuning parameters      Criterion Permuted criterion sd       zstat   
-      1 Tuning parameter set 1   6.2353    0.3610             0.0365 161.0061
-      2 Tuning parameter set 2   5.8807    0.5198             0.0297 180.6396
-        p-value 
-      1   0.0000
-      2   0.0000
+        Tuning parameters Criterion Permuted criterion     sd zstat p-value
+      1             Set 1      6.24              0.361 0.0365   161       0
+      2             Set 2      5.88              0.520 0.0297   181       0
       
       The best combination is: 1, 1, 1, 1, 1, 1 for a z score of 181 and a p-value of 0.
 

@@ -34,25 +34,25 @@ test_that("rgcca_permutation computes n_perms permuted scores and one non
     n_perms = 3
   )
   expect_equal(dim(res$permcrit), c(5, 3))
-  expect_equal(length(res$crit), 5)
+  expect_equal(length(res$stats$crit), 5)
   res <- rgcca_permutation(blocks,
     par_type = "sparsity", par_length = 7,
     n_perms = 5
   )
   expect_equal(dim(res$permcrit), c(7, 5))
-  expect_equal(length(res$crit), 7)
+  expect_equal(length(res$stats$crit), 7)
   res <- rgcca_permutation(blocks,
     par_type = "ncomp", par_length = 2,
     n_perms = 4
   )
   expect_equal(dim(res$permcrit), c(2, 4))
-  expect_equal(length(res$crit), 2)
+  expect_equal(length(res$stats$crit), 2)
   res <- rgcca_permutation(fit_rgcca,
     par_value = c(0.5, 1, 1, 1),
     par_length = 1, n_perms = 2
   )
   expect_equal(dim(res$permcrit), c(1, 2))
-  expect_equal(length(res$crit), 1)
+  expect_equal(length(res$stats$crit), 1)
 })
 
 test_that("rgcca imports the parameters from a permutation object", {

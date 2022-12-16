@@ -30,28 +30,10 @@ print.permutation <- function(x, ...) {
   print(penalties, quote = FALSE, ...)
   cat("\n")
 
-  if (length(x$call$blocks) > 5) {
-    combinations <- paste("Tuning parameter set ",
-      sep = "",
-      seq_along(x$pvals)
-    )
-  } else {
-    combinations <- apply(
-      format(x$penalties, digits = 2), 1, paste0,
-      collapse = "/"
-    )
-  }
-
-  tab <- cbind(
-    combinations,
-    format(cbind(x$crit, x$means, x$sds, x$zstat, x$pvals), digits = 3)
-  )
-  dimnames(tab) <- list(
-    seq_len(NROW(x$penalties)),
-    c(
-      "Tuning parameters", "Criterion", "Permuted criterion",
-      "sd", "zstat", "p-value"
-    )
+  tab <- format(x$stats, digits = 3)
+  colnames(tab) <- c(
+    "Tuning parameters", "Criterion",
+    "Permuted criterion", "sd", "zstat", "p-value"
   )
   print(tab, quote = FALSE, ...)
 
@@ -61,8 +43,8 @@ print.permutation <- function(x, ...) {
   cat(paste0(
     "\nThe best combination is: ",
     paste(format(x$bestpenalties, digits = 3), collapse = ", "),
-    " for a z score of ", format(x$zstat[best], digits = 3),
-    " and a p-value of ", format(x$pvals[best], digits = 3),
+    " for a z score of ", format(x$stats$zstat[best], digits = 3),
+    " and a p-value of ", format(x$stats$pvals[best], digits = 3),
     ".\n"
   ))
 }
