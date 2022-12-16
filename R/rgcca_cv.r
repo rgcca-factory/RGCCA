@@ -9,7 +9,7 @@
 #' individuals (leave-one-out; loo).
 #' @inheritParams rgcca
 #' @inheritParams rgcca_predict
-#' @inheritParams bootstrap
+#' @inheritParams rgcca_bootstrap
 #' @param par_type A character giving the parameter to tune among "sparsity"
 #' or "tau".
 #' @param par_value A matrix (n*p, with p the number of blocks and n the number

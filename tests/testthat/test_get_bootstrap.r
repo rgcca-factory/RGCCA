@@ -6,7 +6,7 @@ blocks <- list(
 )
 
 rgcca_out <- rgcca(blocks)
-boot <- bootstrap(rgcca_out, n_boot = 5, n_cores = 1, verbose = FALSE)
+boot <- rgcca_bootstrap(rgcca_out, n_boot = 5, n_cores = 1, verbose = FALSE)
 
 test_that("get_bootstrap returns the expected statistics", {
   df <- get_bootstrap(boot,

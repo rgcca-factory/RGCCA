@@ -7,9 +7,9 @@ blocks <- list(
 p <- vapply(blocks, NCOL, FUN.VALUE = 1L)
 ncomp <- 1
 rgcca_out <- rgcca(blocks, ncomp = 1)
-boot <- bootstrap(rgcca_out, n_boot = 4, n_cores = 1)
+boot <- rgcca_bootstrap(rgcca_out, n_boot = 4, n_cores = 1)
 
-test_that("bootstrap_default_1", {
+test_that("rgcca_bootstrap_default_1", {
   expect_equal(length(boot), 2)
   expect_equal(length(boot$bootstrap), 2)
   boot1 <- boot$bootstrap[[1]][[1]]
@@ -23,9 +23,9 @@ test_that("bootstrap_default_1", {
 
 ### Case ncomp = 2
 rgcca_out <- rgcca(blocks, ncomp = 2, tau = "optimal")
-boot <- bootstrap(rgcca_out, n_boot = 2, n_cores = 1)
+boot <- rgcca_bootstrap(rgcca_out, n_boot = 2, n_cores = 1)
 
-test_that("bootstrap_default", {
+test_that("rgcca_bootstrap_default", {
   expect_equal(length(boot), 2)
   expect_equal(length(boot$bootstrap), 2)
   boot1 <- boot$bootstrap[[1]][[1]]
@@ -42,9 +42,9 @@ rgcca_out <- rgcca(blocks,
   ncomp = 2, method = "sgcca",
   sparsity = c(0.8, 0.9, 0.7), superblock = TRUE
 )
-boot <- bootstrap(rgcca_out, n_boot = 2, n_cores = 1)
+boot <- rgcca_bootstrap(rgcca_out, n_boot = 2, n_cores = 1)
 
-test_that("bootstrap_default", {
+test_that("rgcca_bootstrap_default", {
   expect_equal(length(boot), 2)
   expect_equal(length(boot$bootstrap), 2)
   boot1 <- boot$bootstrap[[1]][[1]]
@@ -59,9 +59,9 @@ blocks[[1]][1:3, 1] <- NA
 blocks[[1]][4, ] <- NA
 resRGCCA <- rgcca(blocks, ncomp = c(2, 2, 2), superblock = FALSE)
 set.seed(seed = 18)
-resBootstrap <- bootstrap(rgcca = resRGCCA, n_boot = 2, n_cores = 1)
+resBootstrap <- rgcca_bootstrap(rgcca = resRGCCA, n_boot = 2, n_cores = 1)
 select_var <- get_bootstrap(resBootstrap, block = 3)
-test_that("test_bootstrap_na_values", {
+test_that("test_rgcca_bootstrap_na_values", {
   expect_equal(
     select_var["demostab", "mean"],
     mean(c(resBootstrap$bootstrap[[1]][[1]][["politic"]]["demostab", ]))
@@ -78,9 +78,9 @@ blocks_classif <- list(
   politic = as.factor(apply(Russett[, 9:11], 1, which.max))
 )
 rgcca_out <- rgcca(blocks_classif, response = 3)
-boot <- bootstrap(rgcca_out, n_boot = 4, n_cores = 1)
+boot <- rgcca_bootstrap(rgcca_out, n_boot = 4, n_cores = 1)
 
-test_that("bootstrap_classif", {
+test_that("rgcca_bootstrap_classif", {
   expect_equal(length(boot), 2)
   expect_equal(length(boot$bootstrap), 2)
   boot1 <- boot$bootstrap[[1]][[1]]
@@ -114,9 +114,9 @@ rgcca_out <- rgcca(blocks, ncomp = ncomp)
 
 set.seed(8882)
 test_that(
-  "bootstrap_removed_variable_1",
+  "rgcca_bootstrap_removed_variable_1",
   expect_warning(
-    bootstrap(rgcca_out, n_boot = 4, n_cores = 1, balanced = TRUE),
+    rgcca_bootstrap(rgcca_out, n_boot = 4, n_cores = 1, balanced = TRUE),
     paste0(
       "Variables:  rent appear to be of null ",
       "variance in some bootstrap samples and thus ",
@@ -128,9 +128,11 @@ test_that(
 # Exact same situation where we check in the output that `rent` was removed.
 set.seed(8882)
 
-test_that("bootstrap_removed_variable_2", {
+test_that("rgcca_bootstrap_removed_variable_2", {
   expect_warning(
-    boot_out <- bootstrap(rgcca_out, n_boot = 4, n_cores = 1, balanced = TRUE),
+    boot_out <- rgcca_bootstrap(
+      rgcca_out, n_boot = 4, n_cores = 1, balanced = TRUE
+    ),
     paste0(
       "Variables:  rent appear to be of null variance in some bootstrap ",
       "samples and thus were removed from all samples."
@@ -146,12 +148,12 @@ test_that("bootstrap_removed_variable_2", {
 # Same situation, but this time, it is specifically ask that all variables are
 # kept. It is thus checked that `rent` is still there.
 set.seed(8882)
-boot_out <- bootstrap(rgcca_out,
+boot_out <- rgcca_bootstrap(rgcca_out,
   n_boot = 4, n_cores = 1,
   keep_all_variables = TRUE, balanced = TRUE
 )
 
-test_that("bootstrap_keep_all_variables", {
+test_that("rgcca_bootstrap_keep_all_variables", {
   expect_true("rent" %in% rownames(boot_out$bootstrap$W[[1]]$agriculture))
   expect_true("rent" %in% rownames(boot_out$bootstrap$L[[1]]$agriculture))
   expect_true("rent" %in% colnames(boot_out$rgcca$blocks$agriculture))

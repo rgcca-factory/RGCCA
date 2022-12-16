@@ -32,7 +32,7 @@
 #' of S/RGCCA. By default, this function performs a one-dimensional
 #' search in tuning parameter space.
 #'
-#' @inheritParams bootstrap
+#' @inheritParams rgcca_bootstrap
 #' @inheritParams rgcca
 #' @param par_type A character string indicating the parameters to tune between
 #' "sparsity" and "tau".

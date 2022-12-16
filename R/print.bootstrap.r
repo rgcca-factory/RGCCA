@@ -1,7 +1,8 @@
-#' Print bootstrap
+#' Print rgcca_bootstrap
 #'
-#' Print a bootstrap object
-#' @param x A fitted bootstrap object (see \code{\link[RGCCA]{bootstrap}})
+#' Print a rgcca_bootstrap object
+#' @param x A fitted rgcca_bootstrap object
+#' (see \code{\link[RGCCA]{rgcca_bootstrap}})
 #' @param type Character string indicating the bootstrapped object to print:
 #' block-weight vectors ("weights", default) or block-loading vectors
 #' ("loadings").
@@ -20,7 +21,7 @@
 #'   politic = Russett[, 6:11]
 #' )
 #' fit.rgcca <- rgcca(blocks, ncomp = c(2, 1, 2))
-#' boot.out <- bootstrap(fit.rgcca, n_boot = 20, n_cores = 2)
+#' boot.out <- rgcca_bootstrap(fit.rgcca, n_boot = 20, n_cores = 2)
 #' print(boot.out)
 #' @export
 print.bootstrap <- function(x, type = "weights", empirical = TRUE,

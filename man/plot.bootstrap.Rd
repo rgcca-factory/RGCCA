@@ -2,7 +2,7 @@
 % Please edit documentation in R/plot.bootstrap.r
 \name{plot.bootstrap}
 \alias{plot.bootstrap}
-\title{Plot a fitted bootstrap object}
+\title{Plot a fitted rgcca_bootstrap object}
 \usage{
 \method{plot}{bootstrap}(
   x,
@@ -24,7 +24,8 @@
 )
 }
 \arguments{
-\item{x}{A fitted bootstrap object (see \code{\link[RGCCA]{bootstrap}})}
+\item{x}{A fitted rgcca_bootstrap object
+(see \code{\link[RGCCA]{rgcca_bootstrap}})}
 
 \item{block}{A numeric corresponding to the block(s) to plot.}
 
@@ -70,10 +71,10 @@ colorblind-friendly palette recommended in ggplot.}
 A ggplot2 plot object.
 }
 \description{
-Plot the results of a fitted bootstrap object. Each block variable is shown
-along with its associated bootstrap confidence interval and stars reflecting
-the p-value of assigning a strictly positive or negative weight to this
-block variable.
+Plot the results of a fitted rgcca_bootstrap object. Each block variable
+is shown along with its associated bootstrap confidence interval and
+stars reflecting the p-value of assigning a strictly positive or
+negative weight to this block variable.
 }
 \examples{
 data("Russett")
@@ -83,6 +84,6 @@ blocks <- list(
   politic = Russett[, 6:11]
 )
 fit.rgcca <- rgcca(blocks, ncomp = 2, method = "rgcca", tau = 1)
-fit.boot <- bootstrap(fit.rgcca, n_boot = 20, n_cores = 1)
+fit.boot <- rgcca_bootstrap(fit.rgcca, n_boot = 20, n_cores = 1)
 plot(fit.boot, type = "weight", block = 1, comp = 1)
 }

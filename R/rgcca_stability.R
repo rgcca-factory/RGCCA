@@ -4,7 +4,7 @@
 #' identified as relevant by SGCCA. A Variable Importance in the Projection
 #' (VIP) based criterion is used to identify the most stable variables.
 #'
-#' @inheritParams bootstrap
+#' @inheritParams rgcca_bootstrap
 #' @param rgcca_res A fitted RGCCA object (see \code{\link[RGCCA]{rgcca}})
 #' @param keep numeric vector indicating the proportion of top variables per
 #' block.
@@ -37,7 +37,7 @@
 #'   verbose = TRUE, response = 3
 #' )
 #'
-#' boot.out <- bootstrap(fit.sgcca, n_boot = 100, n_cores = 1)
+#' boot.out <- rgcca_bootstrap(fit.sgcca, n_boot = 100, n_cores = 1)
 #'
 #' fit.stab <- rgcca_stability(fit.sgcca,
 #'   keep = sapply(fit.sgcca$a, function(x) mean(x != 0)),
@@ -45,7 +45,9 @@
 #'   verbose = TRUE
 #' )
 #'
-#' boot.out <- bootstrap(fit.stab, n_boot = 500, n_cores = 1, verbose = FALSE)
+#' boot.out <- rgcca_bootstrap(
+#'   fit.stab, n_boot = 500, n_cores = 1, verbose = FALSE
+#' )
 #' }
 #' @export
 rgcca_stability <- function(rgcca_res,
@@ -82,7 +84,7 @@ rgcca_stability <- function(rgcca_res,
 
   W <- par_pblapply(
     boot_sampling$full_idx, function(b) {
-      bootstrap_k(
+      rgcca_bootstrap_k(
         rgcca_res = rgcca_res,
         inds = b
       )

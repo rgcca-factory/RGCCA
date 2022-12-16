@@ -2,7 +2,7 @@
 % Please edit documentation in R/get_bootstrap.R
 \name{get_bootstrap}
 \alias{get_bootstrap}
-\title{Extract statistics from a fitted bootstrap object}
+\title{Extract statistics from a fitted rgcca_bootstrap object}
 \usage{
 get_bootstrap(
   b,
@@ -14,7 +14,8 @@ get_bootstrap(
 )
 }
 \arguments{
-\item{b}{A fitted bootstrap object (see  \code{\link[RGCCA]{bootstrap}})}
+\item{b}{A fitted rgcca_bootstrap object (see
+'\code{\link[RGCCA]{rgcca_bootstrap}})}
 
 \item{type}{Character string indicating the bootstrapped object to print:
 block-weight vectors ("weights", default) or block-loading vectors
@@ -52,8 +53,8 @@ Hochberg correction))
 }
 }
 \description{
-This function extracts statistical information from a fitted bootstrap
-object (see \code{\link[RGCCA]{bootstrap}}).
+This function extracts statistical information from a fitted rgcca_bootstrap
+object (see \code{\link[RGCCA]{rgcca_bootstrap}}).
 }
 \details{
 For RGCCA, the p-value is computed by assuming that the ratio of the blocks
@@ -83,13 +84,13 @@ blocks <- list(
 )
 
 rgcca_out <- rgcca(blocks)
-boot <- bootstrap(rgcca_out, n_boot = 5, n_cores = 1)
+boot <- rgcca_bootstrap(rgcca_out, n_boot = 5, n_cores = 1)
 get_bootstrap(boot, type = "loadings")
 
 # Stability of the selected variables for SGCCA
 }
 \seealso{
-\code{\link[RGCCA]{bootstrap}},
+\code{\link[RGCCA]{rgcca_bootstrap}},
 \code{\link[RGCCA]{plot.bootstrap}},
 \code{\link[RGCCA]{print.bootstrap}}
 }

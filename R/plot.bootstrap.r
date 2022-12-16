@@ -1,11 +1,12 @@
-#' Plot a fitted bootstrap object
+#' Plot a fitted rgcca_bootstrap object
 #'
-#' Plot the results of a fitted bootstrap object. Each block variable is shown
-#' along with its associated bootstrap confidence interval and stars reflecting
-#' the p-value of assigning a strictly positive or negative weight to this
-#' block variable.
+#' Plot the results of a fitted rgcca_bootstrap object. Each block variable
+#' is shown along with its associated bootstrap confidence interval and
+#' stars reflecting the p-value of assigning a strictly positive or
+#' negative weight to this block variable.
 #' @inheritParams plot.rgcca
-#' @param x A fitted bootstrap object (see \code{\link[RGCCA]{bootstrap}})
+#' @param x A fitted rgcca_bootstrap object
+#' (see \code{\link[RGCCA]{rgcca_bootstrap}})
 #' @param type Character string indicating the bootstrapped object to plot:
 #' block-weight vectors ("weights", default) or block-loading vectors
 #' ("loadings").
@@ -23,7 +24,7 @@
 #'   politic = Russett[, 6:11]
 #' )
 #' fit.rgcca <- rgcca(blocks, ncomp = 2, method = "rgcca", tau = 1)
-#' fit.boot <- bootstrap(fit.rgcca, n_boot = 20, n_cores = 1)
+#' fit.boot <- rgcca_bootstrap(fit.rgcca, n_boot = 20, n_cores = 1)
 #' plot(fit.boot, type = "weight", block = 1, comp = 1)
 #' @export
 plot.bootstrap <- function(x, block = seq_along(x$rgcca$call$blocks),

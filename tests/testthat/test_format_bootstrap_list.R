@@ -10,7 +10,7 @@ n_boot <- 20
 ncomp <- c(1, 2, 2)
 fit_rgcca <- rgcca(blocks, ncomp = ncomp)
 W <- lapply(seq(n_boot), function(i) {
-  bootstrap_k(fit_rgcca, sample(seq_len(nrow(blocks[[1]]))))
+  rgcca_bootstrap_k(fit_rgcca, sample(seq_len(nrow(blocks[[1]]))))
 })
 
 test_that("format_bootstrap_list reorders raw bootstrap results", {

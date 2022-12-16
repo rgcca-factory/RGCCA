@@ -1,7 +1,7 @@
 # print.bootstrap prints the expected string
 
     Code
-      res <- bootstrap(fit.rgcca, n_boot = 5, n_cores = 1, verbose = FALSE)
+      res <- rgcca_bootstrap(fit.rgcca, n_boot = 5, n_cores = 1, verbose = FALSE)
       print(res)
     Output
       Call: method='rgcca', superblock=FALSE, scale=TRUE, scale_block='inertia', init='svd', bias=TRUE, tol=1e-08, NA_method='nipals', ncomp=c(1,2), response=NULL 
@@ -38,7 +38,7 @@
 # print.bootstrap prints the expected string 2
 
     Code
-      res <- bootstrap(fit.rgcca, n_boot = 2, n_cores = 1, verbose = FALSE)
+      res <- rgcca_bootstrap(fit.rgcca, n_boot = 2, n_cores = 1, verbose = FALSE)
       print(res, type = "loadings")
     Output
       Call: method='rgcca', superblock=FALSE, scale=TRUE, scale_block='inertia', init='svd', bias=TRUE, tol=1e-08, NA_method='nipals', ncomp=c(1,2), response=NULL 

@@ -1,10 +1,11 @@
-#' Extract statistics from a fitted bootstrap object
+#' Extract statistics from a fitted rgcca_bootstrap object
 #'
-#' This function extracts statistical information from a fitted bootstrap
-#' object (see \code{\link[RGCCA]{bootstrap}}).
+#' This function extracts statistical information from a fitted rgcca_bootstrap
+#' object (see \code{\link[RGCCA]{rgcca_bootstrap}}).
 #'
 #' @inheritParams plot.rgcca
-#' @param b A fitted bootstrap object (see  \code{\link[RGCCA]{bootstrap}})
+#' @param b A fitted rgcca_bootstrap object (see
+#' '\code{\link[RGCCA]{rgcca_bootstrap}})
 #' @param type Character string indicating the bootstrapped object to print:
 #' block-weight vectors ("weights", default) or block-loading vectors
 #' ("loadings").
@@ -58,12 +59,12 @@
 #' )
 #'
 #' rgcca_out <- rgcca(blocks)
-#' boot <- bootstrap(rgcca_out, n_boot = 5, n_cores = 1)
+#' boot <- rgcca_bootstrap(rgcca_out, n_boot = 5, n_cores = 1)
 #' get_bootstrap(boot, type = "loadings")
 #'
 #' # Stability of the selected variables for SGCCA
 #' @export
-#' @seealso \code{\link[RGCCA]{bootstrap}},
+#' @seealso \code{\link[RGCCA]{rgcca_bootstrap}},
 #' \code{\link[RGCCA]{plot.bootstrap}},
 #' \code{\link[RGCCA]{print.bootstrap}}
 get_bootstrap <- function(b, type = "weights", comp = 1,

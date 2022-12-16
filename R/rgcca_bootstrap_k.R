@@ -1,5 +1,5 @@
 #' Internal function for computing bootstrap of RGCCA.
-#' @inheritParams bootstrap
+#' @inheritParams rgcca_bootstrap
 #' @param inds A vector of integers defining the index of the observations
 #' taken into account for this bootstrap sample.
 #' @return \item{W}{A list of RGCCA bootstrap weights. Returned only if there
@@ -10,7 +10,7 @@
 #' returned.}
 #' @title Compute bootstrap (internal).
 #' @noRd
-bootstrap_k <- function(rgcca_res, inds = NULL) {
+rgcca_bootstrap_k <- function(rgcca_res, inds = NULL) {
   if (length(inds) > 0) {
     rgcca_res$call$blocks <- lapply(rgcca_res$call$blocks, function(x) {
       y <- x[inds, , drop = FALSE]

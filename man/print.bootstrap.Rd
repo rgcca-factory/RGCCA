@@ -2,12 +2,13 @@
 % Please edit documentation in R/print.bootstrap.r
 \name{print.bootstrap}
 \alias{print.bootstrap}
-\title{Print bootstrap}
+\title{Print rgcca_bootstrap}
 \usage{
 \method{print}{bootstrap}(x, type = "weights", empirical = TRUE, display_order = FALSE, ...)
 }
 \arguments{
-\item{x}{A fitted bootstrap object (see \code{\link[RGCCA]{bootstrap}})}
+\item{x}{A fitted rgcca_bootstrap object
+(see \code{\link[RGCCA]{rgcca_bootstrap}})}
 
 \item{type}{Character string indicating the bootstrapped object to print:
 block-weight vectors ("weights", default) or block-loading vectors
@@ -26,7 +27,7 @@ the means, 95\% intervals, bootstrap ratio, p-values and other statistics.}
 none
 }
 \description{
-Print a bootstrap object
+Print a rgcca_bootstrap object
 }
 \examples{
 data("Russett")
@@ -36,6 +37,6 @@ blocks <- list(
   politic = Russett[, 6:11]
 )
 fit.rgcca <- rgcca(blocks, ncomp = c(2, 1, 2))
-boot.out <- bootstrap(fit.rgcca, n_boot = 20, n_cores = 2)
+boot.out <- rgcca_bootstrap(fit.rgcca, n_boot = 20, n_cores = 2)
 print(boot.out)
 }

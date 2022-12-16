@@ -27,7 +27,7 @@
 #' )
 #'
 #' fit.rgcca <- rgcca(blocks, ncomp = c(2, 1, 2))
-#' boot.out <- bootstrap(fit.rgcca, n_boot = 20, n_cores = 2)
+#' boot.out <- rgcca_bootstrap(fit.rgcca, n_boot = 20, n_cores = 2)
 #'
 #' plot(boot.out, type = "weight", block = 3, comp = 1)
 #'
@@ -35,7 +35,7 @@
 #' get_bootstrap(boot.out, block = 1, comp = 1)
 #'
 #' fit.rgcca <- rgcca(blocks, method = "mcoa")
-#' boot.out <- bootstrap(fit.rgcca, n_boot = 50, n_cores = 2)
+#' boot.out <- rgcca_bootstrap(fit.rgcca, n_boot = 50, n_cores = 2)
 #'
 #' plot(boot.out, type = "weight", block = 1)
 #' \dontrun{
@@ -64,7 +64,7 @@
 #'   ncomp = c(2, 2, 1), scheme = "factorial",
 #'   verbose = TRUE
 #' )
-#' boot.out <- bootstrap(fit.rgcca, n_boot = 50, n_cores = 2)
+#' boot.out <- rgcca_bootstrap(fit.rgcca, n_boot = 50, n_cores = 2)
 #' plot(boot.out, block = 1, type = "weight", ncomp = 1, n_marks = 30)
 #' plot(boot.out, block = 1, type = "weight", ncomp = 2, n_marks = 30)
 #' get_bootstrap(boot.out)
@@ -74,10 +74,10 @@
 #' @export
 #' @seealso \code{\link[RGCCA]{plot.bootstrap}},
 #' \code{\link[RGCCA]{print.bootstrap}}
-bootstrap <- function(rgcca_res, n_boot = 100,
-                      n_cores = 1,
-                      balanced = TRUE, keep_all_variables = FALSE,
-                      verbose = TRUE) {
+rgcca_bootstrap <- function(rgcca_res, n_boot = 100,
+                            n_cores = 1,
+                            balanced = TRUE, keep_all_variables = FALSE,
+                            verbose = TRUE) {
   if (is(rgcca_res, "stability")) {
     message(
       "All the parameters were imported from the fitted rgcca_stability",
@@ -137,7 +137,7 @@ bootstrap <- function(rgcca_res, n_boot = 100,
 
   W <- par_pblapply(
     boot_sampling$full_idx, function(b) {
-      bootstrap_k(
+      rgcca_bootstrap_k(
         rgcca_res = rgcca_res,
         inds = b
       )
