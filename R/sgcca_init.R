@@ -1,4 +1,12 @@
-sgcca_init <- function(A, init, bias, na.rm, const, pjs, J, n) {
+#' Function to initialize the SGCCA variables
+#'
+#' @noRd
+sgcca_init <- function(A, init, bias, na.rm, sparsity, response, disjunction) {
+  J <- length(A)
+  n <- NROW(A[[1]])
+  pjs <- vapply(A, NCOL, FUN.VALUE = 1L)
+  const <- sparsity * sqrt(pjs)
+
   a <- list()
   Y <- matrix(0, n, J)
 
@@ -15,8 +23,20 @@ sgcca_init <- function(A, init, bias, na.rm, const, pjs, J, n) {
     a <- lapply(pjs, rnorm)
   }
 
-  a <- lapply(seq(J), function(b) soft.threshold(a[[b]], const[b]))
-  Y <- sapply(seq(J), function(b) pm(A[[b]], a[[b]], na.rm = na.rm))
+  N <- ifelse(bias, n, n - 1)
+  a <- lapply(seq(J), function(j) {
+    if (disjunction && (j == response)) {
+      a[[j]] / drop(sqrt(
+        t(a[[j]]) %*% (1 / N * pm(t(A[[j]]), A[[j]], na.rm = na.rm)) %*% a[[j]]
+      ))
+    } else {
+      soft_threshold(a[[j]], const[j])
+    }
+  })
+  Y <- vapply(
+    seq(J), function(j) pm(A[[j]], a[[j]], na.rm = na.rm),
+    FUN.VALUE = double(n)
+  )
 
   return(list(a = a, Y = Y))
 }

@@ -1,3 +1,55 @@
+#' Check blocks
+#'
+#' check_blocks runs several checks on the blocks and transform them in
+#' order to ensure that the blocks can be analysed properly.
+#'
+#' check_blocks performs the following checks and apply the following
+#' transformations to the blocks:
+#' \itemize{
+#'   \item If a single block is given as a data frame or a matrix, \code{blocks}
+#'   is transformed into a list with the block as its unique element. Otherwise,
+#'   if \code{blocks} is not a list, an error is raised.
+#'   \item Coerce each element of \code{blocks} to a matrix.
+#'   \item Make sure that all the blocks apart from the response block are
+#'   quantitative.
+#'   \item Add missing names to \code{blocks}.
+#'   \item Add missing column names to each block and prefix column names with
+#'   block names if some column names are duplicated between blocks.
+#'   \item Check blocks' row names. Raises an error if a block has duplicated
+#'   row names. Several scenario are possible:
+#'   \itemize{
+#'     \item If all blocks are missing row names, row names are created if
+#'     \code{allow_unnames} is TRUE, otherwise an error is raised.
+#'     \item If a block is missing row names and all other blocks' row names
+#'     match, missing row names are copied from the other blocks.
+#'     \item If a block is missing row names but other blocks' have none
+#'     matching row names, an error is raised.
+#'   }
+#'   \item If \code{add_NAlines} is FALSE and blocks have different number of
+#'   rows, an error is raised. Otherwise, lines filled with NA values are added
+#'   to the blocks with missing rows. Blocks' rows are permuted so that every
+#'   block has the same row names in the same order.
+#' }
+#' @inheritParams rgcca
+#' @param add_Nalines logical, if TRUE, lines filled with NA are added to blocks
+#' with missing rows
+#' @param allow_unnames logical, if FALSE, an error is raised if blocks do not
+#' have row names
+#' @importFrom stats setNames
+#' @noRd
+check_blocks <- function(blocks, add_NAlines = FALSE, allow_unnames = TRUE,
+                         quiet = FALSE, response = NULL) {
+  blocks <- check_blocks_is_list(blocks)
+  blocks <- check_blocks_matrix(blocks)
+  blocks <- check_blocks_quantitative(blocks, response)
+  blocks <- check_blocks_names(blocks, quiet)
+  blocks <- check_blocks_colnames(blocks, quiet)
+  blocks <- check_blocks_rownames(blocks, allow_unnames, quiet)
+  blocks <- check_blocks_align(blocks, add_NAlines, quiet)
+
+  invisible(blocks)
+}
+
 check_blocks_is_list <- function(blocks) {
   # Check that there is either a single block or a list of blocks
   if (is.matrix(blocks) || is.data.frame(blocks)) blocks <- list(blocks)
@@ -17,6 +69,32 @@ check_blocks_matrix <- function(blocks) {
     x <- data.matrix(x)
     rownames(x) <- names_x
     return(x)
+  })
+  return(blocks)
+}
+
+check_blocks_quantitative <- function(blocks, response = NULL) {
+  response <- ifelse(is.null(response), length(blocks) + 1, response)
+  lapply(seq_along(blocks), function(j) {
+    x <- blocks[[j]]
+    qualitative <- is.character(x) || is.factor(x)
+    if (j == response) {
+      if (qualitative && (NCOL(x) > 1)) {
+        stop_rgcca(
+          "unsupported multivariate qualitative block. Block ", j,
+          " is a multivariate qualitative block. The method ",
+          "is not able to cope with it."
+        )
+      }
+    } else {
+      if (qualitative) {
+        stop_rgcca(
+          "unsupported qualitative block. Block ", j,
+          " is a qualitative block but is not the response block. The method ",
+          "is not able to cope with it."
+        )
+      }
+    }
   })
   return(blocks)
 }
@@ -50,7 +128,7 @@ check_blocks_colnames <- function(blocks, quiet = FALSE) {
           if (NCOL(block) == 1) {
             colnames(block) <- names(blocks)[x]
           } else {
-            colnames(block) <- paste0("V", x, "_", seq(NCOL(block)))
+            colnames(block) <- paste0("V", x, "_", seq_len(NCOL(block)))
           }
         }
         return(block)
@@ -96,7 +174,7 @@ check_blocks_rownames <- function(blocks, allow_unnames = TRUE, quiet = FALSE) {
       blocks <- lapply(
         blocks,
         function(x) {
-          rownames(x) <- paste0("S", seq(NROW(x)))
+          rownames(x) <- paste0("S", seq_len(NROW(x)))
           return(x)
         }
       )
@@ -162,40 +240,4 @@ check_blocks_align <- function(blocks, add_NAlines = FALSE, quiet = FALSE) {
     blocks, function(x) x[row.names(blocks[[1]]), , drop = FALSE]
   )
   return(blocks)
-}
-
-check_blocks_character <- function(blocks, no_character = FALSE) {
-  # Raise error if characters are present but not allowed
-  if (no_character) {
-    if (any(vapply(blocks, is.character2, FUN.VALUE = logical(1)))) {
-      stop("blocks contain non-numeric values.")
-    }
-
-    blocks <- lapply(blocks, as.numeric)
-  }
-  return(blocks)
-}
-
-check_blocks_remove_null_sd <- function(blocks, init = FALSE) {
-  if (init) {
-    blocks <- remove_null_sd(blocks)$list_m
-    for (i in seq_along(blocks)) {
-      attributes(blocks[[i]])$nrow <- nrow(blocks[[i]])
-    }
-  }
-  return(blocks)
-}
-
-check_blocks <- function(blocks, init = FALSE, n = 2,
-                         add_NAlines = FALSE, allow_unnames = TRUE,
-                         quiet = FALSE, no_character = FALSE) {
-  blocks <- check_blocks_is_list(blocks)
-  blocks <- check_blocks_matrix(blocks)
-  blocks <- check_blocks_names(blocks, quiet)
-  blocks <- check_blocks_colnames(blocks, quiet)
-  blocks <- check_blocks_rownames(blocks, allow_unnames, quiet)
-  blocks <- check_blocks_remove_null_sd(blocks, init)
-  blocks <- check_blocks_align(blocks, add_NAlines, quiet)
-
-  invisible(blocks)
 }

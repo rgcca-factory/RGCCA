@@ -3,16 +3,11 @@
 #' This function extracts statistical information from a fitted bootstrap
 #' object (see \code{\link[RGCCA]{bootstrap}}).
 #'
-#' @inheritParams bootstrap
-#' @inheritParams plot_histogram
-#' @inheritParams plot_var_2D
 #' @inheritParams plot.rgcca
-#' @inheritParams plot_var_1D
 #' @param b A fitted bootstrap object (see  \code{\link[RGCCA]{bootstrap}})
 #' @param type Character string indicating the bootstrapped object to print:
-#' block-weight vectors ("weight", default) or block-loading vectors
+#' block-weight vectors ("weights", default) or block-loading vectors
 #' ("loadings").
-#' @param display_order A logical value for ordering the variables
 #' @param empirical A logical value indicating if the bootstrap confidence
 #' intervals and p-values are derived from the empirical distribution.
 #' (defaut: TRUE)
@@ -68,151 +63,104 @@
 #'
 #' # Stability of the selected variables for SGCCA
 #' @export
-#' @importFrom stats pt pbinom
 #' @seealso \code{\link[RGCCA]{bootstrap}},
 #' \code{\link[RGCCA]{plot.bootstrap}},
 #' \code{\link[RGCCA]{print.bootstrap}}
-get_bootstrap <- function(b, type = "weight", comp = 1,
-                          block = length(b$bootstrap[[1]][[1]]),
+get_bootstrap <- function(b, type = "weights", comp = 1,
+                          block = 1,
                           empirical = TRUE,
-                          display_order = TRUE,
                           adj.method = "fdr") {
+  ### Auxiliary functions to compute statistics
+  empirical_statistics <- function(x, y, std) {
+    bootstrap_ratio <- y / std
+    cross_zero <- apply(x, 1, function(z) {
+      c(
+        sum(z > 0, na.rm = TRUE),
+        sum(z < 0, na.rm = TRUE)
+      )
+    })
+    p.vals <- apply(cross_zero, 2, function(z) min(z) / max(z))
+    lower_bound <- apply(x, 1, quantile, 0.025)
+    upper_bound <- apply(x, 1, quantile, 0.975)
+
+    return(list(
+      bootstrap_ratio = bootstrap_ratio,
+      p.vals = p.vals,
+      lower_bound = lower_bound,
+      upper_bound = upper_bound
+    ))
+  }
+
+  theoretical_statistics <- function(y, std, tail, z = y) {
+    bootstrap_ratio <- z / std
+    p.vals <- 2 * pnorm(abs(bootstrap_ratio), lower.tail = FALSE)
+    lower_bound <- y - std * tail
+    upper_bound <- y + std * tail
+
+    return(list(
+      bootstrap_ratio = bootstrap_ratio,
+      p.vals = p.vals,
+      lower_bound = lower_bound,
+      upper_bound = upper_bound
+    ))
+  }
+
+  ### Perform checks
   stopifnot(is(b, "bootstrap"))
-  check_ncol(b$rgcca$Y, block)
   check_blockx("block", block, b$rgcca$call$blocks)
   check_compx("comp", comp, b$rgcca$call$ncomp, block)
 
-  if (type == "weight") {
+  ### Get bootstrap object and estimate
+  if (type == "weights") {
     b$bootstrap <- b$bootstrap$W
-  }
-  if (type == "loadings") {
+  } else {
     b$bootstrap <- b$bootstrap$L
   }
 
   bootstrapped <- b$bootstrap[[comp]][[block]]
-  n_boot <- sum(!is.na(bootstrapped[1, ]))
-  mean <- apply(bootstrapped, 1, function(x) mean(x, na.rm = T))
 
-  if (type == "weight") {
-    weight <- b$rgcca$a[[block]][, comp]
-  }
-  if (type == "loadings") {
-    weight <- drop(cor(b$rgcca$call$blocks[[block]],
+  if (type == "weights") {
+    estimate <- b$rgcca$a[[block]][, comp]
+  } else {
+    estimate <- drop(cor(b$rgcca$blocks[[block]],
       b$rgcca$Y[[block]][, comp],
       use = "pairwise.complete.obs"
     ))
   }
 
-  if (empirical) {
-    if (type == "weight") {
-      std <- apply(bootstrapped, 1, function(x) sd(x, na.rm = T))
-      bootstrap_ratio <- weight / std
-      cross_zero <- apply(
-        bootstrapped, 1,
-        function(x) {
-          c(
-            sum(x > 0, na.rm = TRUE),
-            sum(x < 0, na.rm = TRUE)
-          )
-        }
-      )
-      p.vals <- apply(cross_zero, 2, function(x) min(x) / max(x))
-      lower_bound <- apply(
-        bootstrapped, 1,
-        function(y) {
-          return(quantile(y, 0.025))
-        }
-      )
+  ### Compute statistics
+  mean <- apply(bootstrapped, 1, function(x) mean(x, na.rm = TRUE))
+  tail <- qnorm(1 - .05 / 2)
 
-      upper_bound <- apply(
-        bootstrapped, 1,
-        function(y) {
-          return(quantile(y, 0.975))
-        }
-      )
-    }
-
-    if (type == "loadings") {
-      ftrans <- 0.5 * log((1 + weight) / (1 - weight))
-      r <- 0.5 * log((1 + bootstrapped) / (1 - bootstrapped))
-      std <- apply(r, 1, function(x) sd(x, na.rm = T))
-      bootstrap_ratio <- ftrans / std
-      cross_zero <- apply(
-        bootstrapped, 1,
-        function(x) {
-          c(
-            sum(x > 0, na.rm = TRUE),
-            sum(x < 0, na.rm = TRUE)
-          )
-        }
-      )
-      p.vals <- apply(cross_zero, 2, function(x) min(x) / max(x))
-
-      lower_bound <- apply(
-        bootstrapped, 1,
-        function(y) {
-          return(quantile(y, 0.025))
-        }
-      )
-
-      upper_bound <- apply(
-        bootstrapped, 1,
-        function(y) {
-          return(quantile(y, 0.975))
-        }
-      )
+  if (type == "weights") {
+    std <- apply(bootstrapped, 1, function(x) sd(x, na.rm = TRUE))
+    if (empirical) {
+      statistics <- empirical_statistics(bootstrapped, estimate, std)
+    } else {
+      statistics <- theoretical_statistics(estimate, std, tail)
     }
   } else {
-    tail <- qnorm(1 - .05 / 2)
-
-    if (type == "weight") {
-      std <- apply(bootstrapped, 1, function(x) sd(x, na.rm = T))
-      bootstrap_ratio <- weight / std
-      p.vals <- 2 * pnorm(abs(bootstrap_ratio), lower.tail = FALSE)
-      lower_bound <- weight - std * tail
-      upper_bound <- weight + std * tail
-    }
-
-    if (type == "loadings") {
-      ftrans <- 0.5 * log((1 + weight) / (1 - weight))
-      r <- 0.5 * log((1 + bootstrapped) / (1 - bootstrapped))
-      std <- apply(r, 1, function(x) sd(x, na.rm = T))
-      bootstrap_ratio <- ftrans / std
-      p.vals <- 2 * pnorm(abs(bootstrap_ratio), lower.tail = FALSE)
-      lower_bound <- weight - std * tail
-      upper_bound <- weight + std * tail
+    ftrans <- 0.5 * log((1 + estimate) / (1 - estimate))
+    r <- 0.5 * log((1 + bootstrapped) / (1 - bootstrapped))
+    std <- apply(r, 1, function(x) sd(x, na.rm = TRUE))
+    if (empirical) {
+      statistics <- empirical_statistics(bootstrapped, ftrans, std)
+    } else {
+      statistics <- theoretical_statistics(estimate, std, tail, ftrans)
     }
   }
 
+  ### Construct summary data frame
   df <- data.frame(
-    estimate = weight,
+    estimate = estimate,
     mean = mean,
     sd = std,
-    lower_bound = lower_bound,
-    upper_bound = upper_bound,
-    bootstrap_ratio = bootstrap_ratio,
-    pval = p.vals,
-    adjust.pval = p.adjust(p.vals, method = adj.method)
+    lower_bound = statistics$lower_bound,
+    upper_bound = statistics$upper_bound,
+    bootstrap_ratio = statistics$bootstrap_ratio,
+    pval = statistics$p.vals,
+    adjust.pval = p.adjust(statistics$p.vals, method = adj.method)
   )
 
-  if (display_order) {
-    index <- which(colnames(df) == "estimate")
-    df <- data.frame(order_df(df, index, allCol = TRUE))
-  }
-
-  attributes(df)$indexes <- list(
-    estimate = ifelse(type == "weight",
-      "block-weight",
-      "block-loadings"
-    ),
-    bootstrap_ratio = "Bootstrap-ratio",
-    sign = "Significance",
-    mean = "Mean bootstrap weights"
-  )
-
-  attributes(df)$method <- class(b$rgcca)
-  attributes(df)$n_boot <- n_boot
-  attributes(df)$n_blocks <- length(b$rgcca$call$blocks)
-  class(df) <- c(class(df), "df_bootstrap")
   return(df)
 }

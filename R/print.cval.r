@@ -2,124 +2,102 @@
 #'
 #' @inheritParams plot.cval
 #' @param ... Further print options
+#' @return none
 #' @export
 #' @examples
 #' data("Russett")
 #' blocks <- list(
 #'   agriculture = Russett[, seq(3)],
 #'   industry = Russett[, 4:5],
-#'   politic = Russett[, 6:11]
+#'   politic = Russett[, 6:8]
 #' )
 #' res <- rgcca_cv(blocks,
 #'   response = 3, method = "rgcca", par_type = "tau",
 #'   par_value = c(0, 0.2, 0.3), n_run = 1, n_cores = 1
 #' )
 #' print(res)
-print.cval <- function(x, bars = "quantile", ...) {
-  summary_cval <- function(x, bars = "quantile") {
-    mat_cval <- x$cv
-    mean_b <- apply(mat_cval, 1, mean)
+print.cval <- function(x, type = "sd", ...) {
+  summary_cval <- function(x, type = "sd") {
+    ymean <- apply(x$cv, 1, mean)
+    ymed <- apply(x$cv, 1, median)
 
-    match.arg(bars, c("sd", "stderr", "quantile"))
-    if (bars != "none" && dim(mat_cval)[2] < 3) {
-      bars == "none"
-      warning(paste0(
-        "Standard deviations can not be calculated with less ",
-        "than 3 columns in x"
-      ))
+    switch(type,
+      "quantile" = {
+        middle_name <- paste("Median", x$metric)
+        middle <- ymed
+        lower <- apply(x$cv, 1, quantile, 0.25)
+        upper <- apply(x$cv, 1, quantile, 0.75)
+        low_lim <- "Q1"
+        up_lim <- "Q3"
+      },
+      "sd" = {
+        middle_name <- paste("Mean", x$metric)
+        middle <- ymean
+        lower <- middle - apply(x$cv, 1, sd)
+        upper <- middle + apply(x$cv, 1, sd)
+        low_lim <- "Mean - Sd"
+        up_lim <- "Mean + Sd"
+      }
+    )
+
+    if (length(x$blocks) > 5) {
+      combinations <- paste("Tuning parameter set ",
+        sep = "",
+        seq_along(x$pvals)
+      )
+    } else {
+      combinations <- apply(
+        format(x$penalties, digits = 2), 1, paste0,
+        collapse = "/"
+      )
     }
-    if (bars != "none") {
-      if (bars == "quantile") {
-        inf_b <- apply(mat_cval, 1, function(y) {
-          return(quantile(y, 0.025))
-        })
-        sup_b <- apply(mat_cval, 1, function(y) {
-          return(quantile(y, 0.975))
-        })
-        lowlim <- "2.5%"
-        uplim <- "97.5%"
-      }
-      if (bars == "sd") {
-        inf_b <- mean_b - apply(mat_cval, 1, sd)
-        sup_b <- mean_b + apply(mat_cval, 1, sd)
-        lowlim <- "Mean - Sd"
-        uplim <- "Mean + Sd"
-      }
-      if (bars == "stderr") {
-        inf_b <- mean_b - apply(mat_cval, 1, function(y) {
-          sd(y) / sqrt(length(y))
-        })
-        sup_b <- mean_b + apply(mat_cval, 1, function(y) {
-          sd(y) / sqrt(length(y))
-        })
-        lowlim <- "Mean - Std Error"
-        uplim <- "Mean + Std Error"
-      }
-    }
-    df <- round(data.frame(
-      config = seq(nrow(mat_cval)), mean = mean_b,
-      inf = inf_b, sup = sup_b
-    ), 3)
-    colnames(df) <- c("Combination", "Mean error", lowlim, uplim)
+
+    df <- data.frame(
+      config = combinations,
+      format(cbind(middle, lower, upper, ymean), digits = 3)
+    )
+    colnames(df) <- c("Tuning parameters", middle_name, low_lim, up_lim, mean)
     return(df)
   }
 
+  type <- match.arg(type, c("sd", "quantile"))
 
-  cat("Call: ")
-  names_call <- c(
-    "type_cv", "n_run", "NA_method", "tol", "scale",
-    "scale_block"
-  )
-  char_to_print <- ""
-  for (name in names_call) {
-    if (name == "ncomp") {
-      if (length(x$call$ncomp) > 1) {
-        value <- (paste(x$call$ncomp, sep = "", collapse = ","))
-        value <- paste0("c(", value, ")")
-      }
-    }
-    if (name != "ncomp") {
-      value <- x$call[[name]]
-    }
-    quo <- ifelse(is.character(value) & name != "ncomp", "'", "")
-    vir <- ifelse(name == names_call[length(names_call)], "", ", ")
-    char_to_print <- paste(char_to_print, name, "=", quo, value, quo, vir,
-      collapse = "", sep = ""
-    )
-  }
-  cat(char_to_print)
-  cat("\n")
+  ### Print parameters of the function
+  print_call(x$call)
 
-  c1s <- round(x$penalties, 4)
-  rownames(c1s) <- seq(NROW(c1s))
+  penalties <- round(x$penalties, 3)
+  rownames(penalties) <- seq_len(NROW(penalties))
   cat(fill = TRUE)
-  cat("Tuning parameters used: ", fill = TRUE)
-  print(c1s, quote = FALSE, ...)
+  cat(paste0("Tuning parameters (", x$par_type, ") used: "), fill = TRUE)
+  print(penalties, quote = FALSE, ...)
   cat("\n")
 
-  df <- summary_cval(x, bars)
-  colname_for_optimal <- "Mean error"
-  optimal_ind <- which.min(df[, colname_for_optimal])
-  optimal_y <- df[optimal_ind, colname_for_optimal]
-  cat(paste0(nrow(x$cv), " configurations were tested. \n"))
+  df <- summary_cval(x, type)
 
   cat(paste0(
-    "Validation: ", x$call$validation,
-    ifelse(x$call$validation == "kfold",
+    "Validation: ", x$validation,
+    ifelse(x$validation == "kfold",
       paste0(
-        " with ", x$call$k, " folds and ",
-        x$call$n_run, " run(s))"
-      )
+        " with ", x$k, " folds and ",
+        x$n_run, " run(s))"
+      ), ""
     )
   ), "\n")
+  cat(paste("Prediction model:", x$prediction_model, "\n"))
 
   cat("\n")
-  print(df)
+  print(df[, -5])
   cat("\n")
+
+  optimal_ind <- which(apply(
+    x$penalties, 1, function(z) identical(z, x$bestpenalties)
+  ))
+  optimal_y <- df[optimal_ind, 5]
+
   cat(paste(
-    "The best combination was:",
-    paste(round(x$bestpenalties, digits = 3), collapse = " "),
-    "for a mean CV error of ",
-    round(optimal_y, digits = 2)
+    "The best combination is:",
+    paste(format(x$bestpenalties, digits = 3), collapse = " "),
+    "for a mean", x$metric, "of",
+    format(optimal_y, digits = 3)
   ), "\n", ...)
 }

@@ -9,19 +9,23 @@
 #' are no missing variables, otherwise the name of the missing variables are
 #' returned.}
 #' @title Compute bootstrap (internal).
-#' @keywords internal
+#' @noRd
 bootstrap_k <- function(rgcca_res, inds = NULL) {
-  rgcca_res_boot <- set_rgcca(rgcca_res,
-    inds      = inds,
-    keep_inds = TRUE,
-    NA_method = "nipals"
-  )
+  if (length(inds) > 0) {
+    rgcca_res$call$blocks <- lapply(rgcca_res$call$blocks, function(x) {
+      y <- x[inds, , drop = FALSE]
+      rownames(y) <- paste("S", seq_along(inds))
+      return(y)
+    })
+  }
+  rgcca_res_boot <- rgcca(rgcca_res)
+
   # block-weight vector
   missing_var <- unlist(lapply(
-    seq(length(rgcca_res_boot$a)),
+    seq_along(rgcca_res_boot$a),
     function(x) {
       setdiff(
-        colnames(rgcca_res$call$blocks[[x]]),
+        colnames(rgcca_res$blocks[[x]]),
         rownames(rgcca_res_boot$a[[x]])
       )
     }
@@ -32,12 +36,12 @@ bootstrap_k <- function(rgcca_res, inds = NULL) {
 
     Y <- lapply(
       seq_along(A),
-      function(j) pm(rgcca_res_boot$call$blocks[[j]], A[[j]])
+      function(j) pm(rgcca_res_boot$blocks[[j]], A[[j]])
     )
     L <- lapply(
       seq_along(A),
       function(j) {
-        cor(rgcca_res_boot$call$blocks[[j]], Y[[j]],
+        cor(rgcca_res_boot$blocks[[j]], Y[[j]],
           use = "pairwise.complete.obs"
         )
       }

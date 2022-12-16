@@ -1,27 +1,20 @@
-#' Plot fitted rgcca permutation object
+#' Plot a fitted rgcca permutation object
 #'
 #' Plot a fitted rgcca permutation object. The various set of tuning parameters
-#' are represented in the x-axis and the the RGCCA objective function - obtained
+#' are represented in the x-axis and the RGCCA objective function - obtained
 #' from the both the orginal and permuted blocks - in the y-axis. If type =
-#' "zstat" the value of the zstat for the various combinations are reported in
+#' "zstat" the value of the zstat for the various parameter sets are reported in
 #' the y-axis.
-#' @param x A fitted rgcca_permutation object (see
-#' \code{\link[RGCCA]{rgcca_permutation}})
-#' @param type A character string indicating which criterion to plot
-#' (default is 'crit' for the RGCCA criterion or 'zstat' for the pseudo Z-score)
-#' @param display_all A boolean indicating is all combinations have to
-#' be displayed (default is FALSE).
-#' @param show_legend A boolean indicating if the legend is displayed
-#' (default is TRUE).
 #' @inheritParams plot.rgcca
-#' @inheritParams plot_var_2D
-#' @inheritParams plot2D
-#' @inheritParams get_bootstrap
-#' @export
-#' @importFrom ggplot2 ggplot
-#' @importFrom ggplot2 ggplot
-#' @importFrom ggplot2 geom_point
-#' @importFrom stats setNames
+#' @param x A fitted rgcca_permutation object (see
+#' \code{\link[RGCCA]{rgcca_permutation}}).
+#' @param type A character string indicating which criterion to plot (default
+#' is 'crit' for the RGCCA criterion or 'zstat' for the pseudo Z-score).
+#' @param display_all A boolean indicating if all parameter sets have to
+#' be displayed (default is FALSE).
+#' @param show_legend A boolean indicating if legend should
+#' be shown (default is TRUE).
+#' @return A ggplot2 plot object.
 #' @examples
 #' data(Russett)
 #' A <- list(
@@ -40,6 +33,7 @@
 #' )
 #' print(perm.out)
 #' plot(perm.out, type = "zstat")
+#' @export
 plot.permutation <- function(x,
                              type = "crit",
                              cex = 1,
@@ -47,146 +41,138 @@ plot.permutation <- function(x,
                              cex_main = 14 * cex,
                              cex_sub = 12 * cex,
                              cex_point = 3 * cex,
-                             cex_lab = 19 * cex,
-                             colors = c("red", "grey"),
+                             cex_lab = 12 * cex,
                              display_all = FALSE,
-                             show_legend = TRUE, ...) {
+                             show_legend = FALSE, ...) {
+  ### Perform checks and parse params
   stopifnot(is(x, "permutation"))
   match.arg(type, c("crit", "zstat"))
-  for (i in c("cex", "cex_main", "cex_sub", "cex_point", "cex_lab")) {
-    check_integer(i, get(i))
+
+  ### Build data frame
+  if (length(x$call$blocks) > 5) {
+    combinations <- paste("Set ", seq_along(x$pvals))
+  } else {
+    combinations <- apply(
+      format(round(x$penalties, 2), nsmall = 2), 1, paste0,
+      collapse = "/"
+    )
   }
-  check_colors(colors)
-  if (length(colors) < 2) {
-    colors <- rep(colors, 2)
-  }
+
+  df <- data.frame(
+    x = x[[type]],
+    label = "Other parameter set",
+    combinations = combinations
+  )
+
+  # Reorder dataframe according to the quantity of interest
+  idx_order <- sort(df$x, decreasing = FALSE, index.return = TRUE)$ix
+  df <- df[idx_order, ]
+
+  # Mark the best parameter set
+  best <- which(apply(
+    x$penalties[idx_order, ], 1, function(z) identical(z, x$bestpenalties)
+  ))
+  df$label[best] <- "Best parameter set"
+
+  df$combinations <- factor(
+    df$combinations,
+    levels = rev(df$combinations), ordered = TRUE
+  )
+
+  ### Prepare plot
   crit_title <- ifelse(x$call$method %in% c("sgcca", "spls"),
     "SGCCA criterion",
     "RGCCA criterion"
   )
+  xlab <- ifelse(type == "zstat", "Z-score", crit_title)
+  ylab <- paste0("Tuning parameter sets (", x$par_type, ")")
 
-  switch(type,
-    "zstat" =  y_title <- "Z-score",
-    "crit"  = y_title <- crit_title
-  )
-
-  check_ncol(list(x$zstat), 1)
-
-  y <- unlist(x[type])
-  N <- nrow(x$penalties)
-
-  df <- setNames(
-    data.frame(
-      y,
-      rep("Other parameter set", N),
-      apply(x$penalties, 1, function(x) {
-        paste0(round(x, 3), collapse = "/")
-      })
-    ),
-    c(type, "Non_permuted", "label")
-  )
-  idx_order <- sort(df[[type]], decreasing = F, index.return = T)$ix
-  df <- df[idx_order, ]
-  best <- which.max(unlist(x["zstat"])[idx_order])
-
-  axis <- function(margin) {
-    element_text(
-      face = "italic",
-      size = cex_lab * 0.75,
-      margin = margin
-    )
-  }
-
-  if (is.null(title)) {
-    title <- paste0(
-      "Permutation scores (", x$call$n_perms, " runs) \n Best parameters : ",
-      df$label[best]
-    )
-  } else {
-    title <- paste0(title, collapse = " ")
-  }
-
-  df$label <- factor(df$label, levels = rev(df$label), ordered = T)
-  df$Non_permuted[best] <- "Best parameter set"
-  breaks <- rev(levels(df$label))
+  breaks <- rev(levels(df$combinations))
   labels <- as.expression(breaks)
-  if (!display_all) {
-    jitter <- floor(N / 50)
-    breaks[max(best - jitter, 1):min(best + jitter, N)] <- ""
-    breaks[best] <- labels[[best]]
-  }
   labels[[best]] <- bquote(underline(bold(.(labels[[best]]))))
 
-  p <- ggplot(data = df, mapping = aes_string(x = type, y = "label")) +
-    theme_classic() +
-    geom_point(aes(shape = Non_permuted, size = Non_permuted)) +
-    labs(
+  title <- ifelse(
+    missing(title),
+    paste0(
+      "Permutation scores (", x$n_perms, " runs) \n Best parameters: ",
+      combinations[best]
+    ),
+    title
+  )
+
+  ### Construct plot
+  # Main plot (values of the quantity of interest per set of parameters)
+  p <- ggplot(
+    data = df, mapping = aes(x = .data$x, y = .data$combinations)
+  ) +
+    ggplot2::geom_point(
+      aes(shape = .data$label, size = .data$label, color = .data$label)
+    ) +
+    ggplot2::labs(
       title = title,
-      y     = "Combinations",
-      x     = y_title
+      y     = ylab,
+      x     = xlab
     ) +
-    theme_perso(cex, cex_main, cex_sub) +
-    theme(
-      axis.text = element_text(size = 10, face = "bold"),
-      axis.title.x = axis(margin(0, 20, 0, 0)),
-      axis.title.y = axis(margin(20, 0, 0, 0)),
-      axis.line = element_line(size = 0.5),
-      axis.ticks = element_line(size = 0.5),
-      axis.ticks.length = unit(2, "mm")
+    theme_perso(cex, cex_main, cex_sub, cex_lab) +
+    ggplot2::theme(
+      axis.text.y = ggplot2::element_text(size = .8 * cex_sub)
     ) +
-    scale_shape_manual("Non Permuted",
+    ggplot2::scale_shape_manual("Non permuted",
       values = c(
         "Best parameter set" = 17,
         "Other parameter set" = 2
-      )
+      ), guide = ggplot2::guide_legend(override.aes = list(
+        color = c("black", "grey")
+      ))
     ) +
-    scale_size_manual("Non Permuted",
+    ggplot2::scale_size_manual("Non permuted",
       values = c(
-        "Best parameter set" = 4,
-        "Other parameter set" = 1
+        "Best parameter set" = 1.5 * cex_point,
+        "Other parameter set" = .5 * cex_point
       )
     ) +
-    scale_y_discrete(
+    ggplot2::scale_y_discrete(
       labels = labels, breaks = breaks,
-      guide = guide_axis(check.overlap = T)
+      guide = ggplot2::guide_axis(check.overlap = TRUE)
     )
+
+  # Second part of the plot (boxplots of the permuted criteria)
   if (type == "crit") {
-    dft <- data.frame(
-      combinations = rep(df$label, NCOL(x$permcrit)),
-      permcrit = c(x$permcrit[idx_order, ]),
-      Permuted = rep(df$Non_permuted, NCOL(x$permcrit))
+    df2 <- data.frame(
+      combinations = rep(df$combinations, NCOL(x$permcrit)),
+      x = c(x$permcrit[idx_order, ]),
+      label = rep(df$label, NCOL(x$permcrit))
     )
     p$layers <- c(
-      geom_boxplot(
-        data = dft,
-        aes(
-          x = permcrit,
-          y = combinations,
-          colour = Permuted
-        ),
+      ggplot2::geom_boxplot(
+        data = df2,
+        aes(x = .data$x, y = .data$combinations, color = .data$label),
         size = 0.8
       ),
       p$layers
     )
-    p <- p + scale_colour_manual("Permuted", values = c(
+    p <- p + ggplot2::scale_color_manual("Permuted", values = c(
+      "Best parameter set" = "black",
+      "Other parameter set" = "grey"
+    ))
+  } else {
+    p <- p + ggplot2::scale_color_manual("Non permuted", values = c(
       "Best parameter set" = "black",
       "Other parameter set" = "grey"
     ))
   }
 
-  p <- p +
-    theme(
-      plot.margin = margin(5, 0, 0, 0, "mm"),
-      legend.position = c(0.7, 0.8)
-    )
+  # Move legend
   if (!show_legend) {
-    p <- p + theme(legend.position = "none")
+    p <- p + ggplot2::theme(legend.position = "none")
+  } else {
+    p <- p +
+      ggplot2::theme(
+        legend.position = c(.9, 1.),
+        legend.justification = c("right", "top")
+      )
   }
-  if (type == "crit") {
-    p <- p + expand_limits(x = 0)
-  }
-
-  attributes(p)$penalties <- x$penalties[idx_order, ]
 
   plot(p, ...)
+  invisible(p)
 }

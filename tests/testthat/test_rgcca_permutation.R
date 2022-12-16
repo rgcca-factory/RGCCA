@@ -4,60 +4,62 @@ blocks <- list(
   industry = Russett[, 4:5],
   politic = Russett[, 6:11]
 )
+fit_rgcca <- rgcca(blocks, superblock = TRUE)
 
-res <- rgcca_permutation(blocks, par_type = "tau", n_cores = 1, n_perms = 5)
-# res_rgcca=rgcca(blocks)
-# res=rgcca_permutation(rgcca_res = res_rgcca, n_cores = 1,n_perms = 21)
-
-res <- rgcca_permutation(blocks, par_type = "tau", n_cores = 1, n_perms = 10)
-
-test_that("rgcca_permutation_default", {
-  expect_is(res, "permutation")
+test_that("rgcca_permutation raises an error if only one block is given", {
+  expect_error(rgcca_permutation(list(blocks[[1]])),
+    "wrong number of blocks.",
+    fixed = TRUE
+  )
 })
 
-res_tau <- rgcca_permutation(blocks, par_type = "tau", n_perms = 5, n_cores = 1)
-res_sparsity <- rgcca_permutation(blocks, par_type = "sparsity", n_perms = 5, n_cores = 1)
-
-res_tau <- rgcca_permutation(blocks, par_type = "tau", par_value = c(0.7, 0.8, 0.8), n_cores = 1)
-res_sparsity <- rgcca_permutation(blocks, par_type = "sparsity", par_value = c(0.8, 0.8, 0.8), n_cores = 1)
-
-test_that("rgcca_sparsity", {
-  expect_true(sum(dim(res_sparsity$penalties) == c(10, 3)) == 2)
+test_that("rgcca_permutation changes par_type to sparsity if a sparse method is
+          given with par_type = 'tau'", {
+  res <- rgcca_permutation(blocks,
+    response = 3, par_type = "tau",
+    method = "sgcca", par_length = 1, n_perms = 1
+  )
+  expect_equal(res$par_type, "sparsity")
+  res <- rgcca_permutation(blocks,
+    response = 3, par_type = "ncomp",
+    method = "sgcca", par_length = 1, n_perms = 1
+  )
+  expect_equal(res$par_type, "ncomp")
 })
-test_that("rgcca_sparsity", {
-  expect_true(sum(dim(res_tau$penalties) == c(10, 3)) == 2)
+
+test_that("rgcca_permutation computes n_perms permuted scores and one non
+          permuted score per parameter value", {
+  res <- rgcca_permutation(blocks,
+    par_type = "tau", par_length = 5,
+    n_perms = 3
+  )
+  expect_equal(dim(res$permcrit), c(5, 3))
+  expect_equal(length(res$crit), 5)
+  res <- rgcca_permutation(blocks,
+    par_type = "sparsity", par_length = 7,
+    n_perms = 5
+  )
+  expect_equal(dim(res$permcrit), c(7, 5))
+  expect_equal(length(res$crit), 7)
+  res <- rgcca_permutation(blocks,
+    par_type = "ncomp", par_length = 2,
+    n_perms = 4
+  )
+  expect_equal(dim(res$permcrit), c(2, 4))
+  expect_equal(length(res$crit), 2)
+  res <- rgcca_permutation(fit_rgcca,
+    par_value = c(0.5, 1, 1, 1),
+    par_length = 1, n_perms = 2
+  )
+  expect_equal(dim(res$permcrit), c(1, 2))
+  expect_equal(length(res$crit), 1)
 })
 
-M <- matrix(c(0.6, 0.6, 0.8, 0.85, 0.7, 0.8, 0.8, 0.9), 2, 4)
-#
-# res=rgcca_permutation(blocks, n_cores = 1,method="sgcca",superblock=TRUE,par_type="sparsity")
-# res=rgcca_permutation(blocks, n_cores = 1,superblock=TRUE,par_type="sparsity",par_value=c(0.8,0.72,0.43,0.5))
-res <- rgcca_permutation(blocks, n_cores = 1, method = "sgcca", superblock = TRUE, par_type = "sparsity", par_value = M)
-# res=rgcca_permutation(blocks, n_cores = 1,superblock=TRUE,par_type="tau")
-# res=rgcca_permutation(blocks, n_cores = 1,superblock=TRUE,par_type="tau",par_value=c(0.8,0.72,0.43,0.5))
-# res=rgcca_permutation(blocks, n_cores = 1,superblock=TRUE,par_type="tau",par_value=M)
-#
-# res=rgcca_permutation(blocks, n_cores = 1,method="sgcca",superblock=FALSE,par_type="sparsity")
-# res=rgcca_permutation(blocks, n_cores = 1,superblock=FALSE,par_type="sparsity",par_value=c(0.8,0.72,0.43))
-# res=rgcca_permutation(blocks, n_cores = 1,method="sgcca",superblock=FALSE,par_type="sparsity",par_value=M[,1:3])
-# res=rgcca_permutation(blocks, n_cores = 1,superblock=FALSE,par_type="tau")
-# res=rgcca_permutation(blocks, n_cores = 1,superblock=FALSE,par_type="tau",par_value=c(0.8,0.72,0.43))
-# res=rgcca_permutation(blocks, n_cores = 1,superblock=FALSE,par_type="tau",par_value=M[,1:3])
-
-res_perm <- rgcca_permutation(blocks = blocks, n_cores = 1, par_type = "tau")
-test_that("rgcca_crit_perm", {
-  expect_true(round(res_perm$crit[length(res_perm$crit)], digits = 2) == 2.42)
+test_that("rgcca imports the parameters from a permutation object", {
+  res <- rgcca_permutation(blocks,
+    par_type = "sparsity", par_length = 5,
+    n_perms = 3
+  )
+  fit_rgcca <- rgcca(res)
+  expect_identical(res$bestpenalties, fit_rgcca$call$sparsity)
 })
-test_that("rgcca_mat_connection0", {
-  expect_true(dim(res_perm$call$connection)[1] == 3)
-})
-res <- rgcca(res_perm)
-
-res_perm <- rgcca_permutation(blocks = blocks, n_cores = 1, par_type = "tau", superblock = TRUE)
-res <- rgcca(res_perm)
-
-
-# test_that("rgcca_permutation_optimal_tau", {
-#     expect_is(rgcca_permutation(blocks, tau = "optimal", n_cores = 1), "permutation")
-# }
-# )

@@ -1,5 +1,15 @@
-rgcca_init <- function(A, init, bias, na.rm, tau, pjs, which.primal,
-                       which.dual, J, n) {
+#' Function to initialize the RGCCA variables
+#'
+#' @noRd
+rgcca_init <- function(A, init, bias, na.rm, tau) {
+  J <- length(A) # number of blocks
+  n <- NROW(A[[1]]) # number of individuals
+  pjs <- vapply(A, NCOL, FUN.VALUE = 1L) # number of variables per block
+
+  # Test for primal or dual for each block
+  which.primal <- which((n >= pjs) == 1)
+  which.dual <- which((n < pjs) == 1)
+
   a <- alpha <- M <- Minv <- K <- list()
   Y <- matrix(0, n, J)
 
@@ -56,5 +66,8 @@ rgcca_init <- function(A, init, bias, na.rm, tau, pjs, which.primal,
       }
     )
   }
-  return(list(a = a, alpha = alpha, Y = Y, M = M, Minv = Minv, K = K))
+  return(list(
+    a = a, alpha = alpha, Y = Y, M = M, Minv = Minv, K = K,
+    which.primal = which.primal, which.dual = which.dual
+  ))
 }

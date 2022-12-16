@@ -1,35 +1,42 @@
-AVE <- list(c(0.6, 0.5), c(0.7, 0.45))
-rgcca_out <- list(AVE = list(AVE_X = AVE))
-# For the superblock (or the last block)
-rgcca_out$call$method <- "rgcca"
-print_comp(rgcca_out, 1)
-# "Axis 1 (70%)"
-# For the first block
-print_comp(rgcca_out, 2, 1)
-# "Axis 2 (50%)"
-
-setAVE <- function() {
-  AVE <- list(c(0.6, 0.5), c(0.7, 0.45))
-  rgcca_out <- list(AVE = list(AVE_X = AVE))
-  rgcca_out$call$method <- "rgcca"
-  return(rgcca_out)
-}
-
-test_that(
-  "print_comp by default",
-  expect_equal(print_comp(setAVE()), "Comp. 1 (70%)")
+data(Russett)
+blocks <- list(
+  agriculture = Russett[, seq(3)],
+  industry = Russett[, 4:5],
+  politic = Russett[, 6:11]
 )
 
+test_that("print_comp prints the expected text", {
+  local_edition(3)
+  expect_snapshot({
+    fit.rgcca <- rgcca(blocks)
+    res <- print_comp(fit.rgcca, n = 1, i = 1, outer = FALSE)
+    cat(res)
+  })
+})
 
-test_that(
-  "print_comp for the 2nd component and the 1rst block",
-  expect_equal(print_comp(setAVE(), 2, 1), "Comp. 2 (50%)")
-)
+test_that("print_comp prints the expected text 2", {
+  local_edition(3)
+  expect_snapshot({
+    fit.rgcca <- rgcca(blocks, ncomp = 2, sparsity = c(1, 1, 0.5))
+    res <- print_comp(fit.rgcca, n = 2, i = 3, outer = FALSE)
+    cat(res)
+  })
+})
 
-test_that("print_comp for the outer AVE", {
-  rgcca_out <- setAVE()
-  rgcca_out$AVE$AVE_outer <- 0.87
-  expect_equal(print_comp(rgcca_out, outer = TRUE), "First outer comp. : 87%")
-  rgcca_out$AVE$AVE_outer[2] <- 0.9
-  expect_equal(print_comp(rgcca_out, outer = TRUE), "First outer comp. : 87% & 90%")
+test_that("print_comp prints the expected text 3", {
+  local_edition(3)
+  expect_snapshot({
+    fit.rgcca <- rgcca(blocks)
+    res <- print_comp(fit.rgcca, outer = TRUE)
+    cat(res)
+  })
+})
+
+test_that("print_comp prints the expected text 4", {
+  local_edition(3)
+  expect_snapshot({
+    fit.rgcca <- rgcca(blocks, ncomp = 4, superblock = TRUE)
+    res <- print_comp(fit.rgcca, outer = TRUE)
+    cat(res)
+  })
 })

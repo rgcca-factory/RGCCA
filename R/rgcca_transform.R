@@ -4,6 +4,9 @@
 #'
 #' @param rgcca_res A fitted RGCCA object (see  \code{\link[RGCCA]{rgcca}}).
 #' @param blocks_test A list of either dataframes or matrices to be projected.
+#' @return A list of matrices containing the projections
+#' of the test blocks using the canonical components from the fitted RGCCA
+#' object.
 #' @examples
 #' data("Russett")
 #' blocks <- list(
@@ -25,10 +28,6 @@ rgcca_transform <- function(rgcca_res, blocks_test) {
   scl_fun <- function(data, center, scale) {
     # Use the scaling parameter of the training set on the new set
     if (length(center) != 0) {
-      if (is.null(dim(data))) {
-        # Case of data is a vector
-        data <- as.matrix(data)
-      }
       if (is.null(scale)) scale <- FALSE
       data <- scale(data, center, scale)
     }
@@ -42,19 +41,19 @@ rgcca_transform <- function(rgcca_res, blocks_test) {
   }
 
   ### Align training blocks and blocks_test
-  if (!all(names(blocks_test) %in% names(rgcca_res$call$blocks))) {
+  if (!all(names(blocks_test) %in% names(rgcca_res$blocks))) {
     stop_rgcca(paste0(
       "At least one block from blocks_test was not found in the training",
       " blocks. Please check block names."
     ))
   }
-  X_train <- rgcca_res$call$blocks[names(blocks_test)]
+  X_train <- rgcca_res$blocks[names(blocks_test)]
   blocks_test <- lapply(seq_along(blocks_test), function(j) {
     x <- as.matrix(blocks_test[[j]])
     y <- as.matrix(X_train[[j]])
-    if (any(dim(x)[-1] != dim(y)[-1])) {
+    if (!all(colnames(y) %in% colnames(x))) {
       stop_rgcca(
-        "Dimensions of blocks do not match for block ",
+        "Some columns are missing for test block ",
         names(blocks_test)[[j]]
       )
     }

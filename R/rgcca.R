@@ -41,9 +41,17 @@
 #' iterative partial least squares algorithm) described in (Tenenhaus et al,
 #' 2005). Guidelines describing how to use RGCCA in practice are provided in
 #' (Garali et al., 2018).
-#' @inheritParams rgccad
-#' @inheritParams sgcca
-#' @inheritParams select_analysis
+#' @param blocks A list that contains the J blocks of variables
+#' \eqn{\mathbf{X_1}, \mathbf{X_2}, ..., \mathbf{X_J}}{X1, X2, ..., XJ}.
+#' Block \eqn{\mathbf{X}_j}{Xj} is a matrix of dimension
+#' \eqn{n \times p_j}{n x p_j} where n is the number of
+#' observations and \eqn{p_j} the number of variables.
+#' @param method A character string indicating the multi-block component
+#' method to consider: rgcca, sgcca, pca, spca, pls, spls, cca,
+#' ifa, ra, gcca, maxvar, maxvar-b, maxvar-a, mcoa,cpca-1, cpca-2,
+#' cpca-4, hpca, maxbet-b, maxbet, maxdiff-b, maxdiff,
+#' sabscor, ssqcor, ssqcov-1, ssqcov-2, ssqcov, sumcor,
+#' sumcov-1, sumcov-2, sumcov, sabscov-1, sabscov-2.
 #' @param scale Logical value indicating if blocks are standardized.
 #' @param scale_block Value indicating if each block is divided by
 #' a constant value. If TRUE or "inertia", each block is divided by the
@@ -53,6 +61,51 @@
 #' Otherwise the blocks are not scaled. If standardization is
 #' applied (scale = TRUE), the block scaling is applied on the result of the
 #' standardization.
+#' @param connection  A symmetric matrix (\eqn{J \times J}{J x J}) that
+#' describes the relationships between blocks.
+#' @param scheme Character string or a function giving the scheme function for
+#' covariance maximization among "horst" (the identity function), "factorial"
+#'  (the squared values), "centroid" (the absolute values). The scheme function
+#'  can be any continously differentiable convex function and it is possible to
+#'  design explicitely the scheme function (e.g. function(x) x^4) as argument of
+#'  rgcca function.  See (Tenenhaus et al, 2017) for details.
+#' @param ncomp Vector of length J indicating the number of block components
+#' for each block.
+#' @param tau Either a \eqn{1 \times J}{1 x J} vector or a
+#' \eqn{\mathrm{max}(ncomp) \times J}{max(ncomp) x J} matrix containing
+#' the values of the regularization parameters (default: tau = 1, for each
+#' block and each dimension). The regularization parameters varies from 0
+#' (maximizing the correlation) to 1 (maximizing the covariance). If
+#' tau = "optimal" the regularization parameters are estimated for each block
+#' and each dimension using the Schafer and Strimmer (2005) analytical formula.
+#' If tau is a \eqn{1 \times J}{1 x J} vector, tau[j] is identical across the
+#' dimensions of block \eqn{\mathbf{X}_j}{Xj}. If tau is a matrix, tau[k, j]
+#' is associated with \eqn{\mathbf{X}_{jk}}{Xjk} (kth residual matrix for
+#' block j). The regularization parameters can also be estimated using
+#' \link{rgcca_permutation} or \link{rgcca_cv}.
+#' @param sparsity Either a \eqn{1*J} vector or a \eqn{max(ncomp) * J} matrix
+#' encoding the L1 constraints applied to the outer weight vectors. The amount
+#' of sparsity varies between \eqn{1/sqrt(p_j)} and 1 (larger values of sparsity
+#' correspond to less penalization). If sparsity is a vector, L1-penalties are
+#' the same for all the weights corresponding to the same block but different
+#' components:
+#' \deqn{for all h, |a_{j,h}|_{L_1} \le c_1[j] \sqrt{p_j},}
+#' with \eqn{p_j} the number of variables of \eqn{X_j}.
+#' If sparsity is a matrix, each row \eqn{h} defines the constraints applied to
+#' the weights corresponding to components \eqn{h}:
+#' \deqn{for all h, |a_{j,h}|_{L_1} \le c_1[h,j] \sqrt{p_j}.} It can be
+#' estimated by using \link{rgcca_permutation}.
+#' @param init Character string giving the type of initialization to use in
+#' the  algorithm. It could be either by Singular Value Decompostion ("svd")
+#' or by random initialisation ("random") (default: "svd").
+#' @param bias A logical value for biaised (\eqn{1/n}) or unbiaised
+#' (\eqn{1/(n-1)}) estimator of the var/cov (default: bias = TRUE).
+#' @param tol The stopping value for the convergence of the algorithm.
+#' @param response Numerical value giving the position of the response block.
+#' When the response argument is filled the supervised mode is automatically
+#' activated.
+#' @param superblock Boolean indicating the presence of a superblock
+#' (deflation strategy must be adapted when a superblock is used).
 #' @param NA_method  Character string corresponding to the method used for
 #' handling missing values ("nipals", "complete"). (default: "nipals").
 #' \itemize{
@@ -60,6 +113,11 @@
 #' observations (observations with missing values are removed)}
 #' \item{\code{"nipals"}}{corresponds to perform RGCCA algorithm on available
 #' data (NIPALS-type algorithm)}}
+#' @param verbose Logical value indicating if the progress of the
+#' algorithm is reported while computing.
+#' @param quiet Logical value indicating if warning messages are reported.
+#' @param n_iter_max Integer giving the algorithm's maximum number of
+#' iterations.
 #' @return A rgcca fitted object
 #' @return \item{Y}{List of \eqn{J} elements. Each element of the list \eqn{Y}
 #' is a matrix that contains the RGCCA block components for the corresponding
@@ -190,14 +248,12 @@
 #' }
 #'
 #' @export
-#' @import ggplot2
 #' @importFrom graphics plot
-#' @importFrom stats cor quantile runif sd na.omit p.adjust pnorm qnorm weights
-#' @importFrom utils read.table write.table
+#' @importFrom stats cor quantile sd p.adjust rnorm pnorm qnorm
 #' @importFrom stats model.matrix
 #' @importFrom methods is
 #' @seealso \code{\link[RGCCA]{plot.rgcca}}, \code{\link[RGCCA]{print.rgcca}},
-#' \code{\link[RGCCA]{rgcca_cv_k}},
+#' \code{\link[RGCCA]{rgcca_cv}},
 #' \code{\link[RGCCA]{rgcca_permutation}}
 #' \code{\link[RGCCA]{rgcca_predict}}
 rgcca <- function(blocks, method = "rgcca",
@@ -212,113 +268,51 @@ rgcca <- function(blocks, method = "rgcca",
                   superblock = FALSE,
                   NA_method = "nipals", verbose = FALSE, quiet = TRUE,
                   n_iter_max = 1000) {
+  rgcca_args <- as.list(environment())
   ### If specific objects are given for blocks, parameters are imported from
   #   these objects.
-  if (class(blocks) %in% c("permutation", "cval")) {
-    message(paste0(
-      "All the parameters were imported from the fitted ",
-      class(blocks), " object."
-    ))
-    scale_block <- blocks$call$scale_block
-    tau <- blocks$call$tau
-    scale <- blocks$call$scale
-    ncomp <- blocks$call$ncomp
-    scheme <- blocks$call$scheme
-    sparsity <- blocks$call$sparsity
-    connection <- blocks$call$connection
-    tol <- blocks$call$tol
-    response <- blocks$call$response
-    NA_method <- blocks$call$NA_method
-    superblock <- blocks$call$superblock
-    if (blocks$call$par_type == "tau") tau <- blocks$bestpenalties
-    if (blocks$call$par_type == "ncomp") ncomp <- blocks$bestpenalties
-    if (blocks$call$par_type == "sparsity") sparsity <- blocks$bestpenalties
-    superblock <- blocks$call$superblock
-    blocks <- blocks$call$blocks
-  }
+  tmp <- get_rgcca_args(blocks, rgcca_args)
+  opt <- tmp$opt
+  rgcca_args <- tmp$rgcca_args
+  rgcca_args$quiet <- quiet
+  rgcca_args$verbose <- verbose
 
-  ### Check parameters
-  match.arg(init, c("svd", "random"))
-  blocks <- check_blocks(blocks,
-    add_NAlines = TRUE,
-    n = 1, init = TRUE, quiet = quiet
-  )
-  check_integer("tol", tol, float = TRUE, min = 0)
-  check_integer("n_iter_max", n_iter_max, min = 1)
-  for (i in c("superblock", "verbose", "scale", "bias", "quiet")) {
-    check_boolean(i, get(i))
-  }
+  blocks <- remove_null_sd(rgcca_args$blocks)$list_m
 
-  tau <- elongate_arg(tau, blocks)
-  ncomp <- elongate_arg(ncomp, blocks)
-  sparsity <- elongate_arg(sparsity, blocks)
-
-  ### Get last parameters based on the method
-  opt <- select_analysis(
-    blocks = blocks,
-    connection = connection,
-    tau = tau,
-    sparsity = sparsity,
-    ncomp = ncomp,
-    scheme = scheme,
-    superblock = superblock,
-    method = method,
-    quiet = quiet,
-    response = response
-  )
-
-  raw <- blocks
-
-  ### One hot encode the response block if needed
-  disjunction <- NULL
-  if (!is.null(opt$response)) {
-    blocks[[opt$response]] <- as_disjunctive(blocks[[opt$response]])
-    disjunction <- attributes(blocks[[opt$response]])$disjunction
-  }
-  # Change tau to 0 if there is a univariate disjunctive block response
-  is_disjunctive_and_tau <- !is.null(disjunction) && opt$par == "tau"
-  if (is_disjunctive_and_tau) {
-    if (is.matrix(opt$penalty)) {
-      opt$penalty[, opt$response] <- 0
-    } else {
-      opt$penalty[opt$response] <- 0
-    }
+  if (opt$disjunction) {
+    blocks[[rgcca_args$response]] <- as_disjunctive(
+      blocks[[rgcca_args$response]]
+    )
   }
 
   ### Apply strategy to deal with NA, scale and prepare superblock
-  tmp <- handle_NA(blocks, NA_method = NA_method)
+  tmp <- handle_NA(blocks, NA_method = rgcca_args$NA_method)
   na.rm <- tmp$na.rm
-  opt$blocks <- scaling(tmp$blocks,
-    scale = scale,
-    bias = bias,
-    scale_block = scale_block
+  blocks <- scaling(tmp$blocks,
+    scale = rgcca_args$scale,
+    bias = rgcca_args$bias,
+    scale_block = rgcca_args$scale_block
   )
-  if (opt$superblock) opt$blocks[["superblock"]] <- Reduce(cbind, opt$blocks)
+  if (rgcca_args$superblock) {
+    blocks[["superblock"]] <- Reduce(cbind, blocks)
+    colnames(blocks[["superblock"]]) <- paste0(
+      "s-", colnames(blocks[["superblock"]])
+    )
+  }
 
   ### Call the gcca function
-  gcca_args <- list(
-    blocks = opt$blocks,
-    connection = opt$connection,
-    ncomp = opt$ncomp,
-    verbose = verbose,
-    scheme = opt$scheme,
-    init = init,
-    bias = bias,
-    tol = tol,
-    quiet = quiet,
-    na.rm = na.rm,
-    superblock = opt$superblock,
-    response = opt$response,
-    n_iter_max = n_iter_max
-  )
-  gcca_args[[opt$par]] <- opt$penalty
+  gcca_args <- rgcca_args[c(
+    "connection", "ncomp", "scheme", "init", "bias", "tol",
+    "verbose", "superblock", "response", "n_iter_max"
+  )]
+  gcca_args[["na.rm"]] <- na.rm
+  gcca_args[["blocks"]] <- blocks
+  gcca_args[["disjunction"]] <- opt$disjunction
+  gcca_args[[opt$param]] <- rgcca_args[[opt$param]]
   func_out <- do.call(opt$gcca, gcca_args)
 
   ### Format the output
-  func_out <- format_output(func_out, opt, raw, func_call = list(
-    scale = scale, init = init, bias = bias, tol = tol, verbose = verbose,
-    scale_block = scale_block, NA_method = NA_method, disjunction = disjunction
-  ))
+  func_out <- format_output(func_out, rgcca_args, opt, blocks)
 
   class(func_out) <- "rgcca"
   invisible(func_out)

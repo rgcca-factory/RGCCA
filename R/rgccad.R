@@ -37,20 +37,10 @@
 #' The rgcca() function can handle missing values using a NIPALS type algorithm
 #' (non-linear iterative partial least squares algorithm) as described in
 #' (Tenenhaus et al, 2005).
-#' @inheritParams select_analysis
-#' @param verbose Logical value indicating if the progress of the
-#' algorithm is reported while computing.
-#' @param init Character string giving the type of initialization to use in
-#' the  algorithm. It could be either by Singular Value Decompostion ("svd")
-#' or by random initialisation ("random") (default: "svd").
-#' @param bias A logical value for biaised (\eqn{1/n}) or unbiaised
-#' (\eqn{1/(n-1)}) estimator of the var/cov (default: bias = TRUE).
-#' @param tol The stopping value for the convergence of the algorithm.
+#' @inheritParams rgcca
 #' @param na.rm If TRUE, runs rgcca only on available data.
-#' @param superblock TRUE if a superblock is added, FALSE otherwise (deflation
-#' strategy must be adapted when a superblock is used).
-#' @param n_iter_max Integer giving the algorithm's maximum number of
-#' iterations.
+#' @param disjunction If TRUE, the response block is a one-hot encoded
+#' qualitative block.
 #' @return \item{Y}{A list of \eqn{J} elements. Each element of the list is a
 #' matrix that contains the RGCCA block components for the corresponding block.}
 #' @return \item{a}{A list of \eqn{J} elements. Each element of the list \eqn{a}
@@ -74,9 +64,6 @@
 #' @return \item{primal_dual}{A \eqn{1 \times J}{1 x J} vector that contains the
 #' formulation ("primal" or "dual") applied to each of the \eqn{J} blocks within
 #' the RGCCA alogrithm.}
-#' @return \item{AVE}{A list of numerical values giving the goodness of fit
-#' the model based on the Average Variance Explained (AVE): AVE(for each block),
-#' AVE(outer model), AVE(inner model).}
 #' @references Tenenhaus M., Tenenhaus A. and Groenen P. J. (2017). Regularized
 #' generalized canonical correlation analysis: a framework for sequential
 #' multiblock component methods. Psychometrika, 82(3), 737-777.
@@ -185,38 +172,31 @@
 #' text(fit.rgcca$Y[[1]], fit.rgcca$Y[[2]], rownames(Russett), col = lab)
 #' text(Ytest[, 1], Ytest[, 2], substr(rownames(Russett), 1, 1), col = lab)
 #' @export rgccad
-#' @importFrom graphics abline axis close.screen grid legend lines par points
-#' rect screen segments split.screen text
-#' @importFrom stats binomial glm lm predict sd var weighted.mean
-#' @importFrom utils read.table write.table
-#' @importFrom stats as.formula qt
+#' @importFrom graphics text
 
 rgccad <- function(blocks, connection = 1 - diag(length(blocks)),
                    tau = rep(1, length(blocks)),
                    ncomp = rep(1, length(blocks)), scheme = "centroid",
                    init = "svd", bias = TRUE, tol = 1e-08, verbose = TRUE,
-                   na.rm = TRUE, quiet = FALSE, superblock = FALSE,
-                   response = NULL, n_iter_max = 1000) {
+                   na.rm = TRUE, superblock = FALSE,
+                   response = NULL, disjunction = NULL, n_iter_max = 1000) {
   update_col_n <- function(x, y, n) {
     x[, n] <- y
     return(x)
   }
 
   if (verbose) {
-    if (mode(scheme) != "function") {
-      cat(
-        "Computation of the RGCCA block components based on the",
-        scheme, "scheme \n"
-      )
-    } else {
-      cat("Computation of the RGCCA block components based on the g scheme \n")
-    }
-
-    if (!is.numeric(tau)) {
-      cat("Optimal Shrinkage intensity parameters are estimated \n")
-    } else {
-      cat("Shrinkage intensity parameters are chosen manually \n")
-    }
+    scheme_str <- ifelse(is(scheme, "function"), "user-defined", "scheme")
+    cat(
+      "Computation of the RGCCA block components based on the",
+      scheme_str, "scheme \n"
+    )
+    tau_str <- ifelse(
+      is.numeric(tau),
+      "Shrinkage intensity parameters are chosen manually \n",
+      "Optimal shrinkage intensity parameters are estimated \n"
+    )
+    cat(tau_str)
   }
 
   ##### Initialization #####
@@ -224,9 +204,8 @@ rgccad <- function(blocks, connection = 1 - diag(length(blocks)),
   ndefl <- ncomp - 1
   N <- max(ndefl)
   J <- length(blocks)
-  pjs <- sapply(blocks, NCOL)
+  pjs <- vapply(blocks, NCOL, FUN.VALUE = 1L)
   nb_ind <- NROW(blocks[[1]])
-  AVE_inner <- rep(NA, max(ncomp))
 
   crit <- list()
   R <- blocks
@@ -251,7 +230,7 @@ rgccad <- function(blocks, connection = 1 - diag(length(blocks)),
   if (is.vector(tau)) {
     computed_tau <- matrix(
       rep(tau, N + 1),
-      nrow = N + 1, J, byrow = T
+      nrow = N + 1, J, byrow = TRUE
     )
   }
 
@@ -269,9 +248,8 @@ rgccad <- function(blocks, connection = 1 - diag(length(blocks)),
       verbose = verbose, na.rm = na.rm, n_iter_max = n_iter_max
     )
 
-    # Store tau, AVE_inner, crit
+    # Store tau, crit
     computed_tau[n, ] <- gcca_result$tau
-    AVE_inner[n] <- gcca_result$AVE_inner
     crit[[n]] <- gcca_result$crit
 
     # Store Y, a, factors and weights
@@ -284,8 +262,8 @@ rgccad <- function(blocks, connection = 1 - diag(length(blocks)),
         astar[, 1] <- a[[J]][, 1, drop = FALSE]
       } else {
         astar[, n] <- gcca_result$a[[J]] -
-          astar[, seq(n - 1), drop = F] %*%
-          drop(t(a[[J]][, n]) %*% P[, seq(n - 1), drop = F])
+          astar[, seq(n - 1), drop = FALSE] %*%
+          drop(t(a[[J]][, n]) %*% P[, seq(n - 1), drop = FALSE])
       }
     } else {
       if (n == 1) {
@@ -294,8 +272,8 @@ rgccad <- function(blocks, connection = 1 - diag(length(blocks)),
         astar <- lapply(seq(J), function(b) {
           update_col_n(
             astar[[b]],
-            gcca_result$a[[b]] - astar[[b]][, seq(n - 1), drop = F] %*%
-              drop(t(a[[b]][, n]) %*% P[[b]][, seq(n - 1), drop = F]),
+            gcca_result$a[[b]] - astar[[b]][, seq(n - 1), drop = FALSE] %*%
+              drop(t(a[[b]][, n]) %*% P[[b]][, seq(n - 1), drop = FALSE]),
             n
           )
         })
@@ -331,17 +309,6 @@ rgccad <- function(blocks, connection = 1 - diag(length(blocks)),
   }
 
   ##### Generation of the output #####
-  AVE_X <- lapply(seq(J), function(b) {
-    apply(
-      cor(blocks[[b]], Y[[b]], use = "pairwise.complete.obs")^2, 2, mean
-    )
-  })
-
-  outer <- matrix(unlist(AVE_X), nrow = max(ncomp))
-  AVE_outer <- as.vector((outer %*% pjs) / sum(pjs))
-  AVE_X <- shave(AVE_X, ncomp)
-  AVE <- list(AVE_X = AVE_X, AVE_outer = AVE_outer, AVE_inner = AVE_inner)
-
   if (N == 0) {
     crit <- unlist(crit)
     computed_tau <- as.numeric(computed_tau)
@@ -354,8 +321,7 @@ rgccad <- function(blocks, connection = 1 - diag(length(blocks)),
     a = a,
     astar = astar,
     tau = computed_tau,
-    crit = crit, primal_dual = primal_dual,
-    AVE = AVE
+    crit = crit, primal_dual = primal_dual
   )
 
   class(out) <- "rgccad"

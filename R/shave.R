@@ -8,7 +8,7 @@ shaving <- function(m, nbcomp) {
 
 #' @export
 shave.list <- function(m, nbcomp) {
-  mapply(shaving, m, nbcomp, SIMPLIFY = FALSE)
+  Map(shaving, m, nbcomp)
 }
 
 #' @export

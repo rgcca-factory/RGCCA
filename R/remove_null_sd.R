@@ -12,7 +12,7 @@
 #' situation, each element of this list is again NULL if not a single variable
 #' was removed from the current block, or a named vector indicating the former
 #' index of the removed variables along with their name.}
-#' @keywords internal
+#' @noRd
 
 remove_null_sd <- function(list_m, column_sd_null = NULL) {
   names <- names(list_m)
@@ -23,7 +23,7 @@ remove_null_sd <- function(list_m, column_sd_null = NULL) {
       function(x) {
         which(apply(x, 2, function(y) {
           if (mode(y) != "character") {
-            res <- sd(y[!is.na(y)]) == 0
+            res <- all(is.na(y)) || (sd(y[!is.na(y)]) == 0)
           } else {
             res <- FALSE
           }
@@ -42,7 +42,7 @@ remove_null_sd <- function(list_m, column_sd_null = NULL) {
     )
   ]
   list_m <- lapply(
-    seq(length(list_m)),
+    seq_along(list_m),
     function(x) {
       if (x %in% blocks_index) {
         list_m[[x]][, -column_sd_null[[x]], drop = FALSE]

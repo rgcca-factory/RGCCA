@@ -75,7 +75,7 @@ test_that("check_compx raises an error if x is greater than the number
           of components", {
   expect_error(check_compx("x", 7, c(3, 3, 3), 1), paste0(
     "not existing component. Trying to extract component 7",
-    " for block 1 , but only 3 components are available for ",
+    " for block 1 , but only 3 component(s) are available for ",
     "this block."
   ),
   fixed = TRUE
@@ -92,6 +92,12 @@ test_that("check_compx passes and returns x when x is valid", {
 })
 
 # Test check_connection
+test_that("check_connection raises an error if C is not a matrix", {
+  expect_error(check_connection(print, blocks),
+    "connection matrix C must be a matrix.",
+    fixed = TRUE
+  )
+})
 test_that("check_connection raises an error if C is not symmetric", {
   expect_error(check_connection(matrix(1:4, 2, 2), blocks),
     "connection matrix C must be symmetric.",
@@ -145,18 +151,6 @@ test_that("check_connection passes and returns C when C is valid", {
   C <- diag(3)
   rownames(C) <- colnames(C) <- names(blocks)
   expect_equal(check_connection(diag(3), blocks), C)
-})
-
-# Test check_file
-test_that("check_file raises an error when file does not exist", {
-  expect_error(check_file("a_file_that_does_not_exist"),
-    "a_file_that_does_not_exist does not exist.",
-    fixed = TRUE
-  )
-})
-
-test_that("check_file passes when file is valid", {
-  expect_error(check_file("./test_checks.r"), NA)
 })
 
 # Test check_integer
@@ -267,19 +261,6 @@ test_that("check_nblocks passes and returns blocks when blocks is valid", {
   expect_equal(check_nblocks(A, method = "cca"), A)
 })
 
-# Test check_ncol (Is this the intended behaviour of check_ncol?)
-test_that("check_ncol raises an error when x[[i_block]] has less than 2 rows", {
-  x <- list(matrix(1:10, 1, 10))
-  expect_error(check_ncol(x, i_block = 1),
-    "This output is available only for more than one variable",
-    fixed = TRUE
-  )
-})
-test_that("check_ncol passes when x[[i_block]] has at least 2 rows", {
-  x <- list(matrix(1:10, 2, 10))
-  expect_error(check_ncol(x, i_block = 1), NA)
-})
-
 # Test check_ncomp
 test_that("check_ncomp raises an error if there is a superblock and ncomp
           contains at least two distinct values", {
@@ -332,10 +313,6 @@ test_that("check_ncomp passes and returns ncomp when ncomp is valid", {
   expect_equal(check_ncomp(c(2, 2, 2), blocks), c(2, 2, 2))
 })
 
-# Test check_quantitative
-
-# Test check_response
-
 # Test check_sign_comp
 test_that("check_sign_comp changes the sign of weight vector if correlation
           with reference is negative", {
@@ -383,8 +360,6 @@ test_that("check_size_blocks passes when x is valid", {
   expect_error(check_size_blocks(blocks, "x", c(2, 2, 2)), NA)
 })
 
-# Test check_size_file
-
 # Test check_penalty
 test_that("check_penalty raises an error if blocks and penalty have different
           lengths and length of penalty is greater than 1", {
@@ -428,13 +403,26 @@ test_that("check_penalty raises an error for invalid penalty", {
 })
 test_that("check_penalty passes and returns penalty when penalty is valid", {
   expect_equal(check_penalty(1, blocks, method = "rgcca"), c(1, 1, 1))
-  expect_equal(check_penalty(c(0.8, 1, 0.5), blocks, method = "rgcca"), c(0.8, 1, 0.5))
-  expect_equal(check_penalty("optimal", blocks, method = "rgcca"), c("optimal", "optimal", "optimal"))
-  expect_equal(check_penalty(matrix(1, 5, 3), blocks, method = "rgcca"), matrix(1, 5, 3))
-  expect_equal(check_penalty(1, blocks, method = "rgcca", superblock = T), c(1, 1, 1, 1))
+  expect_equal(
+    check_penalty(c(0.8, 1, 0.5), blocks, method = "rgcca"), c(0.8, 1, 0.5)
+  )
+  expect_equal(
+    check_penalty("optimal", blocks, method = "rgcca"),
+    c("optimal", "optimal", "optimal")
+  )
+  expect_equal(
+    check_penalty(matrix(1, 5, 3), blocks, method = "rgcca"), matrix(1, 5, 3)
+  )
+  expect_equal(
+    check_penalty(1, blocks, method = "rgcca", superblock = TRUE), c(1, 1, 1, 1)
+  )
   expect_equal(check_penalty(1, blocks, method = "sgcca"), c(1, 1, 1))
-  expect_equal(check_penalty(c(0.8, 1, 0.5), blocks, method = "sgcca"), c(0.8, 1, 0.5))
-  expect_equal(check_penalty(matrix(1, 5, 3), blocks, method = "sgcca"), matrix(1, 5, 3))
+  expect_equal(
+    check_penalty(c(0.8, 1, 0.5), blocks, method = "sgcca"), c(0.8, 1, 0.5)
+  )
+  expect_equal(
+    check_penalty(matrix(1, 5, 3), blocks, method = "sgcca"), matrix(1, 5, 3)
+  )
 })
 
 # Test check_spars
@@ -465,8 +453,8 @@ test_that("check_tau passes and returns tau when tau is valid", {
 test_that("check_scheme raises an error for invalid scheme", {
   expect_error(check_scheme("toto"),
     paste0(
-      "scheme must be one of the following schemes: horst, ",
-      "centroid, factorial or a function."
+      "scheme must be one of the following schemes: 'horst', ",
+      "'centroid', 'factorial' or a function."
     ),
     fixed = TRUE
   )

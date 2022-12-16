@@ -32,10 +32,8 @@
 #' of S/RGCCA. By default, this function performs a one-dimensional
 #' search in tuning parameter space.
 #'
-#' @inheritParams set_connection
 #' @inheritParams bootstrap
 #' @inheritParams rgcca
-#' @inheritParams plot2D
 #' @param par_type A character string indicating the parameters to tune between
 #' "sparsity" and "tau".
 #' @param par_length A numeric value indicating the number of sets of penalties
@@ -108,6 +106,7 @@
 #' print(fit)
 #' plot(fit)
 #' fit$bestpenalties
+#'
 #' \dontrun{
 #' # It is possible to define explicitly K combinations of shrinkage
 #' # parameters to be tested and in that case a matrix of dimension KxJ is
@@ -190,7 +189,7 @@
 #' # when par_value is a scalar, the same maximum value is applied
 #' # for each block
 #'
-#' perm.outt <- rgcca_permutation(blocks,
+#' perm.out <- rgcca_permutation(blocks,
 #'   connection = C,
 #'   par_type = "sparsity",
 #'   par_value = 0.8, par_length = 5,
@@ -208,8 +207,7 @@
 #' # case, it is possible to reduce the value of the tolerance (tol argument)
 #' # of the RGCCA algorithm to speed up the permutation procedure.
 #' #
-#' require(gliomaData)
-#' data(ge_cgh_locIGR)
+#' data("ge_cgh_locIGR", package = "gliomaData")
 #' A <- ge_cgh_locIGR$multiblocks
 #' Loc <- factor(ge_cgh_locIGR$y)
 #' levels(Loc) <- colnames(ge_cgh_locIGR$multiblocks$y)
@@ -237,9 +235,9 @@
 #' }
 #'
 #' @export
-rgcca_permutation <- function(blocks, par_type, par_value = NULL,
+rgcca_permutation <- function(blocks, par_type = "tau", par_value = NULL,
                               par_length = 10, n_perms = 20,
-                              n_cores = parallel::detectCores() - 1,
+                              n_cores = 1,
                               quiet = TRUE, scale = TRUE, scale_block = TRUE,
                               method = "rgcca",
                               connection = 1 - diag(length(blocks)),
@@ -250,34 +248,18 @@ rgcca_permutation <- function(blocks, par_type, par_value = NULL,
                               init = "svd", bias = TRUE, tol = 1e-8,
                               response = NULL, superblock = FALSE,
                               NA_method = "nipals", rgcca_res = NULL,
-                              verbose = TRUE) {
+                              verbose = TRUE, n_iter_max = 1000) {
   ### Try to retrieve parameters from a rgcca object
-  if (!is.null(rgcca_res)) {
-    stopifnot(is(rgcca_res, "rgcca"))
-    message("All parameters were imported from a fitted rgcca object.")
-    scale_block <- rgcca_res$call$scale_block
-    scale <- rgcca_res$call$scale
-    scheme <- rgcca_res$call$scheme
-    response <- rgcca_res$call$response
-    tol <- rgcca_res$call$tol
-    NA_method <- rgcca_res$call$NA_method
-    init <- rgcca_res$call$init
-    bias <- rgcca_res$call$bias
-    blocks <- rgcca_res$call$raw
-    superblock <- rgcca_res$call$superblock
-    connection <- rgcca_res$call$connection
-    tau <- rgcca_res$call$tau
-    ncomp <- rgcca_res$call$ncomp
-    sparsity <- rgcca_res$call$sparsity
-    method <- rgcca_res$call$method
-    superblock <- rgcca_res$call$superblock
-  }
+  rgcca_args <- as.list(environment())
+  tmp <- get_rgcca_args(blocks, rgcca_args)
+  opt <- tmp$opt
+  rgcca_args <- tmp$rgcca_args
 
   ### Check parameters
   check_integer("n_perms", n_perms)
   check_integer("par_length", n_perms)
-  match.arg(par_type, c("tau", "sparsity"))
-  if (length(blocks) == 1) {
+  match.arg(par_type, c("tau", "sparsity", "ncomp"))
+  if (length(rgcca_args$blocks) == 1) {
     stop_rgcca(
       "wrong number of blocks. Permutation requires more than ",
       "one block."
@@ -285,59 +267,42 @@ rgcca_permutation <- function(blocks, par_type, par_value = NULL,
   }
 
   ### Prepare parameters for line search
-  if (method %in% c("sgcca", "spca", "spls")) {
+  if (
+    rgcca_args$method %in% c("sgcca", "spca", "spls") && (par_type == "tau")
+  ) {
     par_type <- "sparsity"
-  } else if (par_type == "sparsity") method <- "sgcca"
-
-  call <- list(
-    method = method, par_type = par_type, par_value = par_value,
-    n_perms = n_perms, quiet = quiet, connection = connection,
-    NA_method = NA_method, tol = tol, scheme = scheme,
-    scale = scale, scale_block = scale_block,
-    superblock = superblock, blocks = blocks, ncomp = ncomp,
-    tau = tau, sparsity = sparsity, response = response
-  )
+  } else if (par_type == "sparsity") {
+    rgcca_args$method <- "sgcca"
+  }
 
   param <- set_parameter_grid(
-    par_type, par_length, par_value, blocks, response,
-    superblock
+    par_type, par_length, par_value, rgcca_args$blocks,
+    rgcca_args$response, rgcca_args$superblock, opt$disjunction
   )
 
   ### Start line search
   # For every set of parameter, RGCCA is run once on the non permuted blocks
   # and then n_perms on permuted blocks.
   idx <- seq(NROW(param$par_value) * (n_perms + 1))
-  W <- unlist(par_pblapply(idx, function(n) {
+  W <- par_pblapply(idx, function(n) {
     i <- (n - 1) %/% (n_perms + 1) + 1
     perm <- (n - 1) %% (n_perms + 1) != 0
     rgcca_permutation_k(
-      blocks = blocks,
+      rgcca_args,
       par_type = param$par_type,
       par_value = param$par_value[i, ],
-      perm = perm,
-      method = method,
-      quiet = quiet,
-      superblock = superblock,
-      scheme = scheme,
-      tol = tol,
-      scale = scale,
-      scale_block = scale_block,
-      connection = connection,
-      NA_method = NA_method,
-      bias = bias,
-      init = init,
-      ncomp = ncomp,
-      tau = tau,
-      sparsity = sparsity
+      perm = perm
     )
-  }, n_cores = n_cores, verbose = verbose))
+  }, n_cores = n_cores, verbose = verbose)
+
+  W <- do.call(rbind, W)
 
   ### Format output
-  par_colnames <- names(blocks)
-  if (ncol(param$par_value) > length(blocks)) {
+  par_colnames <- names(rgcca_args$blocks)
+  if (ncol(param$par_value) > length(rgcca_args$blocks)) {
     par_colnames <- c(par_colnames, "superblock")
   }
-  rownames(param$par_value) <- seq(NROW(param$par_value))
+  rownames(param$par_value) <- seq_len(NROW(param$par_value))
   colnames(param$par_value) <- par_colnames
 
   idx_perm <- (idx - 1) %% (n_perms + 1) != 0
@@ -346,15 +311,15 @@ rgcca_permutation <- function(blocks, par_type, par_value = NULL,
     nrow = nrow(param$par_value),
     ncol = n_perms, byrow = TRUE
   )
-  means <- apply(permcrit, 1, mean, na.rm = T)
-  sds <- apply(permcrit, 1, sd, na.rm = T)
+  means <- apply(permcrit, 1, mean, na.rm = TRUE)
+  sds <- apply(permcrit, 1, sd, na.rm = TRUE)
   pvals <- vapply(
-    seq(NROW(param$par_value)),
+    seq_len(NROW(param$par_value)),
     function(k) mean(permcrit[k, ] >= crits[k]),
     FUN.VALUE = double(1)
   )
   zs <- vapply(
-    seq(NROW(param$par_value)), function(k) {
+    seq_len(NROW(param$par_value)), function(k) {
       z <- (crits[k] - mean(permcrit[k, ])) / (sd(permcrit[k, ]))
       if (is.na(z) || z == "Inf") {
         z <- 0
@@ -365,8 +330,8 @@ rgcca_permutation <- function(blocks, par_type, par_value = NULL,
   )
 
   structure(list(
-    call = call, zstat = zs,
-    bestpenalties = param$par_value[which.max(zs), ],
+    opt = opt, call = rgcca_args, zstat = zs, par_type = par_type,
+    n_perms = n_perms, bestpenalties = param$par_value[which.max(zs), ],
     permcrit = permcrit, means = means, sds = sds,
     crit = crits, pvals = pvals, penalties = param$par_value
   ), class = "permutation")

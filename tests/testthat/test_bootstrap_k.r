@@ -4,8 +4,9 @@ blocks <- list(
   industry = Russett[, 4:5],
   politic = Russett[, 6:11]
 )
+p <- vapply(blocks, NCOL, FUN.VALUE = 1L)
 
-# ncomp=1
+### Case ncomp = 1
 rgcca_out <- rgcca(blocks, superblock = FALSE, ncomp = 1)
 resb <- bootstrap_k(rgcca_out)
 
@@ -14,12 +15,12 @@ test_that("test_bootstrapk_1", {
   expect_is(resb[[1]][[1]], "matrix")
   expect_is(resb[[2]][[1]], "matrix")
   expect_equal(length(resb), 2)
-  expect_true(all(sapply(resb, NCOL) == 1))
-  expect_identical(sapply(resb[[1]], NROW), sapply(blocks, NCOL))
-  expect_identical(sapply(resb[[2]], NROW), sapply(blocks, NCOL))
+  expect_true(all(vapply(resb, NCOL, FUN.VALUE = 1L) == 1))
+  expect_identical(vapply(resb[[1]], NROW, FUN.VALUE = 1L), p)
+  expect_identical(vapply(resb[[2]], NROW, FUN.VALUE = 1L), p)
 })
 
-# ncomp=2
+### Case ncomp = 2
 rgcca_out_2 <- rgcca(blocks, superblock = FALSE, ncomp = 2)
 resb_2 <- bootstrap_k(rgcca_out_2)
 
@@ -28,13 +29,13 @@ test_that("test_bootstrapk", {
   expect_is(resb_2[[1]][[1]], "matrix")
   expect_is(resb_2[[2]][[1]], "matrix")
   expect_equal(length(resb_2), 2)
-  expect_true(all(sapply(resb_2[[1]], NCOL) == 2))
-  expect_identical(sapply(resb_2[[1]], NROW), sapply(blocks, NCOL))
+  expect_true(all(vapply(resb_2[[1]], NCOL, FUN.VALUE = 1L) == 2))
+  expect_identical(vapply(resb_2[[1]], NROW, FUN.VALUE = 1L), p)
 })
 
-# If one bootstrap sample presents at least a single variable with null variance,
-# bootstrap_k should return the name of the null variance variables in both the
-# two lists it returns.
+# If one bootstrap sample presents at least a single variable with null
+# variance, bootstrap_k should return the name of the null variance variables
+# in both the two lists it returns.
 blocks_3 <- blocks
 blocks_3$agriculture$rent <- 0
 blocks_3$agriculture$rent[1] <- 1

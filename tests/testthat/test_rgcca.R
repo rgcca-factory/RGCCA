@@ -1,5 +1,3 @@
-library(FactoMineR)
-
 tol <- 1e-14
 
 data(Russett)
@@ -124,15 +122,21 @@ sqrt_matrix <- function(M) {
   return(list(M_sqrt = M_sqrt, Minv_sqrt = Minv_sqrt))
 }
 
-fit.svd <- svd(sqrt_matrix(Sigma_11)[[2]] %*% Sigma_12 %*% sqrt_matrix(Sigma_22)[[2]])
+fit.svd <- svd(
+  sqrt_matrix(Sigma_11)[[2]] %*% Sigma_12 %*% sqrt_matrix(Sigma_22)[[2]]
+)
 
 test_that("RGCCA is equivalent to CCA when there are two blocks and tau = 0", {
   fit.rgcca <- rgcca(
     blocks = A, scale = FALSE, tau = 0, scheme = "horst",
     scale_block = FALSE, tol = 1e-16, bias = FALSE
   )
-  expect_true(sum(abs(fit.svd$u[, 1] - sqrt_matrix(Sigma_11)[[1]] %*% fit.rgcca$a[[1]])) < 1e-8)
-  expect_true(sum(abs(fit.svd$v[, 1] - sqrt_matrix(Sigma_22)[[1]] %*% fit.rgcca$a[[2]])) < 1e-8)
+  expect_true(sum(abs(
+    fit.svd$u[, 1] - sqrt_matrix(Sigma_11)[[1]] %*% fit.rgcca$a[[1]]
+  )) < 1e-8)
+  expect_true(sum(abs(
+    fit.svd$v[, 1] - sqrt_matrix(Sigma_22)[[1]] %*% fit.rgcca$a[[2]]
+  )) < 1e-8)
 })
 
 test_that("RGCCA is equivalent to CCA when method = 'cca'", {
@@ -140,8 +144,12 @@ test_that("RGCCA is equivalent to CCA when method = 'cca'", {
     blocks = A, method = "cca", scale = FALSE,
     scale_block = FALSE, tol = 1e-16, bias = FALSE
   )
-  expect_true(sum(abs(fit.svd$u[, 1] - sqrt_matrix(Sigma_11)[[1]] %*% fit.rgcca$a[[1]])) < 1e-8)
-  expect_true(sum(abs(fit.svd$v[, 1] - sqrt_matrix(Sigma_22)[[1]] %*% fit.rgcca$a[[2]])) < 1e-8)
+  expect_true(sum(abs(
+    fit.svd$u[, 1] - sqrt_matrix(Sigma_11)[[1]] %*% fit.rgcca$a[[1]]
+  )) < 1e-8)
+  expect_true(sum(abs(
+    fit.svd$v[, 1] - sqrt_matrix(Sigma_22)[[1]] %*% fit.rgcca$a[[2]]
+  )) < 1e-8)
 })
 
 ##### Perform OLS with RGCCA #####
@@ -175,7 +183,7 @@ test_that("Block weights can be retrieved using the superblock component", {
 })
 
 test_that("Block weights can be retrieved using the superblock weights", {
-  idx <- c(0, cumsum(sapply(A, ncol)))
+  idx <- c(0, cumsum(vapply(A, ncol, FUN.VALUE = 1L)))
   for (j in seq_len(J)) {
     a <- fit$a[[J + 1]][seq(1 + idx[j], idx[j + 1])]
     if (sign(a[1]) != sign(fit$a[[j]][1])) a <- -a
@@ -188,7 +196,7 @@ df <- Russett[, c(
   "gini", "farm", "rent", "gnpr", "labo",
   "inst", "ecks", "death", "demostab", "dictator"
 )]
-fit.mfa <- MFA(df,
+fit.mfa <- FactoMineR::MFA(df,
   group = c(3, 2, 5), ncp = 2, type = rep("s", 3),
   graph = FALSE
 )
@@ -210,4 +218,36 @@ test_that("RGCCA is equivalent to MFA with right parameters", {
 
   expect_true(max(abs(fit.mcoa$Y[[4]][, 1] - fit.mfa$ind$coord[, 1])) < tol)
   expect_true(max(abs(fit.mcoa$Y[[4]][, 2] - fit.mfa$ind$coord[, 2])) < tol)
+})
+
+##### Test AVE #####
+X_agric <- Russett[, c("gini", "farm", "rent")]
+X_ind <- Russett[, c("gnpr", "labo")]
+X_polit <- Russett[, c(
+  "inst", "ecks", "death",
+  "demostab", "dictator"
+)]
+A <- list(Agric = X_agric, Ind = X_ind, Polit = X_polit)
+
+test_that("rgcca produces cumulated AVE that are below 1", {
+  res <- rgcca(A, ncomp = rep(2, 3))
+  expect_true(all(unlist(lapply(res$AVE$AVE_X_cor, sum)) <= 1))
+
+  res <- rgcca(A, ncomp = rep(3, 3), response = 2)
+  expect_true(all(unlist(lapply(res$AVE$AVE_X_cor, sum)) <= 1))
+
+  res <- rgcca(A, ncomp = rep(6, 4), superblock = TRUE)
+  expect_true(all(unlist(lapply(res$AVE$AVE_X_cor, sum)) <= 1))
+})
+
+test_that("rgcca returns equal AVE and corrected AVE if components are
+          not correlated", {
+  res <- rgcca(A, ncomp = rep(2, 3))
+  expect_true(all.equal(res$AVE$AVE_X_cor, res$AVE$AVE_X))
+})
+
+test_that("rgcca does not report AVE for qualitative response block", {
+  A[[3]] <- as.factor(A[[3]][, 5])
+  res <- rgcca(A, ncomp = rep(2, 3), response = 3)
+  expect_equal(names(res$AVE$AVE_X), names(A)[-3])
 })

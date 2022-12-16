@@ -51,11 +51,6 @@
 #' variable where this observation is in the lowest frequent group
 #' (through all risky variables)`.
 #' @inheritParams bootstrap
-#' @param balanced A boolean indicating if a balanced bootstrap procedure is
-#' performed or not (default is TRUE).
-#' @param keep_all_variables A boolean indicating if all variables have to be
-#' kept even when some of them have null variance for at least one bootstrap
-#' sample (default is FALSE).
 #' @param pval For all the variables, a threshold for the proportion of the most
 #' frequent value of this variable is computed. This threshold is evaluated so
 #' that the probability to sample only this value is below `pval`. This
@@ -69,14 +64,14 @@
 #' variance in at least one bootstrap sample. If no variable is removed,
 #' return NULL.}
 #' @title Generate bootstrap samples.
-#' @keywords internal
+#' @noRd
 
 generate_resampling <- function(rgcca_res, n_boot, balanced = TRUE,
                                 keep_all_variables = FALSE, pval = 1e-15,
                                 verbose = TRUE) {
   if (verbose) {
     packageStartupMessage("Bootstrap samples sanity check...",
-      appendLF = F
+      appendLF = FALSE
     )
   }
 
@@ -84,7 +79,7 @@ generate_resampling <- function(rgcca_res, n_boot, balanced = TRUE,
   pval <- min(pval, 1)
   NO_null_sd_var <- FALSE
   iter <- 0
-  raw_blocks <- rgcca_res$call$raw
+  raw_blocks <- rgcca_res$call$blocks
   N <- NROW(raw_blocks[[1]])
   prob <- rep(1 / N, N)
 
@@ -94,7 +89,7 @@ generate_resampling <- function(rgcca_res, n_boot, balanced = TRUE,
   # of bootstrap samples and the number of variables.
   risky_threshold <- max(
     1 / N,
-    (pval / (n_boot * sum(sapply(raw_blocks, NCOL))))^(1 / N)
+    (pval / (n_boot * sum(vapply(raw_blocks, NCOL, FUN.VALUE = 1L))))^(1 / N)
   )
 
   # Identify variables with value having an observed proportion higher than
@@ -112,7 +107,7 @@ generate_resampling <- function(rgcca_res, n_boot, balanced = TRUE,
   )
 
   # Keep only risky variables for each block.
-  raw_blocks_filtered <- mapply(
+  raw_blocks_filtered <- Map(
     function(x, y) x[, y, drop = FALSE],
     raw_blocks, risky_var
   )
@@ -159,9 +154,10 @@ generate_resampling <- function(rgcca_res, n_boot, balanced = TRUE,
       )
 
     # Summarize through all the samples.
-    eval_boot_sample <- sapply(
+    eval_boot_sample <- vapply(
       boot_column_sd_null,
-      function(x) sum(sapply(x, length))
+      function(x) sum(vapply(x, length, FUN.VALUE = 1L)),
+      FUN.VALUE = 1L
     )
     NO_null_sd_var <- (sum(eval_boot_sample) == 0)
 
@@ -177,18 +173,18 @@ generate_resampling <- function(rgcca_res, n_boot, balanced = TRUE,
         sd_null <- Reduce("rbind", boot_column_sd_null)
         rownames(sd_null) <- NULL
         sd_null <- apply(sd_null, 2, function(x) unique(names(Reduce("c", x))))
-        sd_null <- mapply(function(x, y) {
+        sd_null <- Map(function(x, y) {
           z <- match(x, y)
           names(z) <- x
           return(z)
         }, sd_null, lapply(raw_blocks, colnames))
 
         # Check if a whole block is troublesome
-        is_full_block_removed <- mapply(function(x, y) dim(x)[2] == length(y),
+        is_full_block_removed <- unlist(Map(
+          function(x, y) dim(x)[2] == length(y),
           raw_blocks,
-          sd_null,
-          SIMPLIFY = "array"
-        )
+          sd_null
+        ))
         if (sum(is_full_block_removed) == 0) {
           # A whole block is NOT troublesome
           NO_null_sd_var <- TRUE
@@ -219,7 +215,7 @@ generate_resampling <- function(rgcca_res, n_boot, balanced = TRUE,
             sd_null, 2,
             function(x) unique(names(Reduce("c", x)))
           )
-          sd_null <- mapply(function(x, y) {
+          sd_null <- Map(function(x, y) {
             z <- match(x, y)
             names(z) <- x
             return(z)
@@ -250,7 +246,7 @@ generate_resampling <- function(rgcca_res, n_boot, balanced = TRUE,
             # `1 - the proportion of this observed value`, normalized so that
             # the sum through all the observations (for each variable)
             # equals `1`.
-            prob <- sapply(
+            prob <- lapply(
               raw_blocks_filtered,
               function(block) {
                 apply(block, 2, function(var) {

@@ -14,10 +14,6 @@ check_blockx <- function(x, y, blocks) {
 }
 
 check_boolean <- function(x, y = x, type = "scalar") {
-  if (is.null(y)) {
-    y <- x
-  }
-
   if (any(is.na(y))) {
     stop_rgcca(x, " must not be NA.")
   }
@@ -35,7 +31,7 @@ check_colors <- function(colors) {
   if (!is.null(colors)) {
     colors <- as.vector(colors)
     lapply(colors, function(i) {
-      if (!is.na(i) && !(i %in% colors()) && is.character2(i) &&
+      if (!is.na(i) && !(i %in% colors()) && is.character(i) &&
         regexpr("^#{1}[a-zA-Z0-9]{6,8}$", i) < 1) {
         stop_rgcca(
           "Unrecognized colors. Colors must be in colors() ",
@@ -51,7 +47,7 @@ check_compx <- function(x, y, ncomp, blockx) {
   if (y > ncomp[blockx]) {
     stop_rgcca("not existing component. Trying to extract component ", y,
       " for block ", blockx, " , but only ", ncomp[blockx],
-      " components are available for this block.",
+      " component(s) are available for this block.",
       exit_code = 128
     )
   }
@@ -59,9 +55,6 @@ check_compx <- function(x, y, ncomp, blockx) {
 }
 
 # Check the format of the connection matrix
-#
-# @inheritParams rgccad
-# @inheritParams set_connection
 check_connection <- function(C, blocks) {
   msg <- "connection matrix C must"
 
@@ -87,7 +80,7 @@ check_connection <- function(C, blocks) {
   invisible(check_size_blocks(blocks, "connection matrix", C))
 
   if (is.null(rownames(C)) || is.null(colnames(C))) {
-    rownames(C) <- names(blocks) -> colnames(C)
+    rownames(C) <- colnames(C) <- names(blocks)
   }
 
   if (!all(rownames(C) %in% names(blocks)) ||
@@ -104,20 +97,9 @@ check_connection <- function(C, blocks) {
   return(C)
 }
 
-check_file <- function(f) {
-  # Check the existence of a path f: A character giving the path of a file
-  if (!file.exists(f)) {
-    stop_rgcca(paste("file", f, "does not exist."), exit_code = 101)
-  }
-}
-
 check_integer <- function(x, y = x, type = "scalar", float = FALSE, min = 1,
                           max = Inf, max_message = NULL, exit_code = NULL,
                           min_message = NULL) {
-  if (is.null(y)) {
-    y <- x
-  }
-
   if (type %in% c("matrix", "data.frame")) {
     y_temp <- y
   }
@@ -191,14 +173,14 @@ check_method <- function(method) {
     "sumcov", "sabscov-1", "sabscov-2"
   )
 
-  if (!tolower(method) %in% analysis) {
+  if (!method %in% analysis) {
     stop_rgcca(
       "method '", method, "' is not among the available methods: ",
       paste(analysis, collapse = "', '"), "'.",
       exit_code = 112
     )
   }
-  return(tolower(method))
+  return(method)
 }
 
 check_nblocks <- function(blocks, method) {
@@ -221,17 +203,6 @@ check_nblocks <- function(blocks, method) {
     " must be ", nb, ".",
     exit_code = exit_code
   )
-}
-# If less than 2 columns, do not run
-# x, a list of matrix
-# i_block, the position of the tested matrix in the list
-# return an error or NULL
-check_ncol <- function(x, i_block) {
-  if (NROW(x[[i_block]]) < 2) {
-    stop_rgcca(
-      "This output is available only for more than one variable."
-    )
-  }
 }
 
 check_ncomp <- function(ncomp, blocks, min = 1, superblock = FALSE,
@@ -264,7 +235,7 @@ check_ncomp <- function(ncomp, blocks, min = 1, superblock = FALSE,
   ncomp <- elongate_arg(ncomp, blocks)
   check_size_blocks(blocks, "ncomp", ncomp)
   ncomp <- vapply(
-    seq(length(ncomp)),
+    seq_along(ncomp),
     function(x) {
       if (!is.null(response) && x == response) {
         y <- check_integer("ncomp", ncomp[x], min = min, exit_code = 126)
@@ -285,67 +256,11 @@ check_ncomp <- function(ncomp, blocks, min = 1, superblock = FALSE,
   return(ncomp)
 }
 
-# Check if a dataframe contains no qualitative variables
-# @inheritParams load_blocks
-# @param df A dataframe or a matrix
-# @param fo A character giving the name of the tested file
-# @param warn_separator A bolean to print warning for bad separator use
-check_quantitative <- function(df, fo, header = FALSE, warn_separator = FALSE) {
-  qualitative <- is.character2(df, warn_separator = TRUE)
-
-  if (qualitative) {
-    msg <- paste(
-      fo,
-      "contains qualitative data. Transform them in a disjunctive table."
-    )
-
-    if (!header) {
-      msg <- paste0(
-        msg, "Possible mistake: header parameter is disabled, ",
-        "check if the file doesn't have one."
-      )
-    }
-
-    stop_rgcca(paste(msg, "\n"), exit_code = 100)
-  }
-}
-
-check_response <- function(response = NULL) {
-  if (is.null(response)) {
-    return(NA)
-  }
-  response <- as.data.frame(response)
-  qualitative <- is.character2(response)
-  if (qualitative || (NCOL(response) == 1)) {
-    return(response)
-  }
-
-  # If response is numeric, contains only one nonzero value per row that equals
-  # 1, we convert response to a column factor.
-  response <- to_numeric(response)
-  col_sum <- unique(apply(response, 1, sum))
-  values <- unique(unlist(response))
-  values <- union(col_sum, values)
-  if (identical(sort(union(values, c(0, 1))), c(0, 1))) {
-    response <- factor(
-      apply(response, 1, which.max),
-      levels = colnames(response)
-    )
-    return(
-      data.frame(
-        as.character(response),
-        row.names = rownames(response)
-      )
-    )
-  }
-  return(response)
-}
-
 # Test on the sign of the correlation
 check_sign_comp <- function(rgcca_res, w) {
   y <- lapply(
     seq_along(rgcca_res$a),
-    function(i) pm(rgcca_res$call$blocks[[i]], w[[i]])
+    function(i) pm(rgcca_res$blocks[[i]], w[[i]])
   )
 
   w <- lapply(setNames(seq_along(w), names(w)), function(i) {
@@ -364,9 +279,6 @@ check_sign_comp <- function(rgcca_res, w) {
 }
 
 check_size_blocks <- function(blocks, x, y = x, n_row = NULL) {
-  if (identical(x, y)) {
-    x <- ""
-  }
   if (any(class(y) %in% c("matrix", "data.frame"))) {
     dim_y <- NCOL(y)
     dim_type <- "number of columns"
@@ -395,18 +307,7 @@ check_size_blocks <- function(blocks, x, y = x, n_row = NULL) {
   }
 }
 
-
-# Print warning if file size over
-check_size_file <- function(filename) {
-  size <- file.size(filename)
-  if (size > 5e+06) {
-    # warning(paste0('The size of ', filename, ' is over 5 Mo (',
-    #  round(size / 1E6, 1), ' Mo). File loading could take some times...'),
-    message("File loading in progress ...")
-  }
-}
-
-check_penalty <- function(penalty, blocks, method = "rgcca", superblock = F,
+check_penalty <- function(penalty, blocks, method = "rgcca", superblock = FALSE,
                           ncomp = NULL) {
   if (superblock) {
     blocks[[length(blocks) + 1]] <- Reduce(cbind, blocks)
@@ -420,15 +321,18 @@ check_penalty <- function(penalty, blocks, method = "rgcca", superblock = F,
   DIM <- dim(penalty)
 
   # Check value of each penalty
-  if (method == "rgcca") penalty <- sapply(penalty, check_tau, USE.NAMES = F)
+  if (method == "rgcca") {
+    penalty <- unlist(lapply(penalty, check_tau))
+  }
   if (method == "sgcca") {
     divider <- ifelse(is_matrix, DIM[1], 1)
-    penalty <- sapply(
-      seq(length(penalty)),
+    penalty <- vapply(
+      seq_along(penalty),
       function(x) {
         n <- 1 + (x - 1) / divider
         check_spars(penalty[x], blocks[[n]], n)
-      }
+      },
+      FUN.VALUE = double(1L)
     )
   }
 
@@ -438,6 +342,9 @@ check_penalty <- function(penalty, blocks, method = "rgcca", superblock = F,
 }
 
 check_spars <- function(sparsity, block, n) {
+  if (mode(block) == "character") {
+    return(sparsity)
+  }
   min_sparsity <- 1 / sqrt(NCOL(block))
   min_message <- paste0(
     "too high sparsity. Sparsity parameter equals ", sparsity,
@@ -460,15 +367,61 @@ check_tau <- function(tau) {
 }
 
 check_scheme <- function(scheme) {
-  if (
-    (mode(scheme) != "function") &&
-      (scheme != "horst") &&
-      (scheme != "factorial") &&
-      (scheme != "centroid")
-  ) {
-    stop_rgcca(paste0(
-      "scheme must be one of the following schemes: horst, ",
-      "centroid, factorial or a function."
-    ))
+  if (mode(scheme) != "function") {
+    scheme <- tolower(scheme)
+    if (!scheme %in% c("horst", "factorial", "centroid")) {
+      stop_rgcca(paste0(
+        "scheme must be one of the following schemes: 'horst', ",
+        "'centroid', 'factorial' or a function."
+      ))
+    }
+  }
+  return(scheme)
+}
+
+check_prediction_model <- function(prediction_model, response_block) {
+  if (is.list(prediction_model)) {
+    model_info <- prediction_model
+  } else {
+    model_info <- caret::getModelInfo(prediction_model, regex = FALSE)[[1]]
+    if (is.null(model_info)) {
+      stop_rgcca(
+        "unknown model. Model ", prediction_model, " is not handled, please ",
+        "see caret::modelLookup() for a list of the available models."
+      )
+    }
+  }
+  classification <-
+    is.factor(response_block) || is.character(response_block)
+  is_inadequate <- !("Classification" %in% model_info$type) && classification
+  if (is_inadequate) {
+    stop_rgcca(
+      "inadequate model. Response block contains categorical data ",
+      "but model ", prediction_model, " is not made for ",
+      "classification. Please choose another model."
+    )
+  }
+
+  is_inadequate <- !("Regression" %in% model_info$type) && !classification
+  if (is_inadequate) {
+    stop_rgcca(
+      "inadequate model. Response block contains continuous data ",
+      "but model ", prediction_model, " is not made for ",
+      "regression Please choose another model."
+    )
+  }
+
+  return(list(prediction_model = model_info, classification = classification))
+}
+
+check_char <- function(arg, name_arg, values) {
+  res <- grep(arg, values, fixed = TRUE, value = TRUE)
+  if (length(res) == 0) {
+    stop_rgcca(
+      "'", name_arg, "' should be one of \"",
+      paste(values, collapse = "\", \""), "\""
+    )
+  } else {
+    return(res[1])
   }
 }

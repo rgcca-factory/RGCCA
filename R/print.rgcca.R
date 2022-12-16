@@ -3,6 +3,7 @@
 #' @title Print the call of rgcca results
 #' @param x A RGCCA object (see \code{\link{rgcca}})
 #' @param ... other parameters used in print (for the displaying of matrices)
+#' @return none
 #' @export
 #' @examples
 #' data(Russett)
@@ -18,42 +19,7 @@
 #' print(res)
 print.rgcca <- function(x, ...) {
   ### Print parameters of the function
-  cat("Call: ")
-  names_call <- c(
-    "method", "superblock", "scale", "scale_block", "init",
-    "bias", "tol", "NA_method", "ncomp"
-  )
-
-  char_to_print <- vapply(names_call, function(name) {
-    if (name == "ncomp") {
-      if (length(x$call$ncomp) > 1) {
-        value <- (paste(x$call$ncomp, sep = "", collapse = ","))
-        value <- paste0("c(", value, ")")
-      }
-    } else {
-      value <- x$call[[name]]
-    }
-    quo <- ifelse(is.character(value) & name != "ncomp", "'", "")
-    paste0(name, "=", quo, value, quo)
-  }, FUN.VALUE = character(1))
-  cat(paste(char_to_print, collapse = ", "))
-
-  ### Print number of blocks
-  cat("\n")
-  cat("There are J =", NCOL(x$call$connection), "blocks.", fill = TRUE)
-
-  ### Print design matrix
-  cat("The design matrix is:\n")
-  colnames(x$call$connection) <- rownames(x$call$connection) <- names(x$a)
-  print(x$call$connection)
-
-  ### Print scheme
-  cat("\n")
-  if (is.function(x$call$scheme)) {
-    cat("The", deparse(x$call$scheme), "scheme was used.", fill = TRUE)
-  } else {
-    cat("The", x$call$scheme, "scheme was used.", fill = TRUE)
-  }
+  print_call(x$call)
 
   ### Print criterion
   if (is.list(x$crit)) {
@@ -63,7 +29,7 @@ print.rgcca <- function(x, ...) {
   } else {
     crit <- x$crit[length(x$crit)]
   }
-  cat("Sum_{j,k} c_jk g(cov(X_ja_j, X_ka_k) = ",
+  cat("Sum_{j,k} c_jk g(cov(X_j a_j, X_k a_k) = ",
     sep = "",
     paste(round(crit, 4), sep = "", " "), fill = TRUE
   )
@@ -73,38 +39,47 @@ print.rgcca <- function(x, ...) {
   if (!tolower(x$call$method) %in% c("sgcca", "spca", "spls")) {
     param <- "regularization"
     if (!is.matrix(x$call$tau)) {
-      for (i in seq(NCOL(x$call$connection))) {
+      for (i in seq_len(NCOL(x$call$connection))) {
         tau <- x$call$tau[i]
-        cat("The", param, "parameter used for", names(x$call$blocks)[i],
-          "was:", round(tau, 4),
+        cat("The", param, "parameter used for", names(x$blocks)[i],
+          "is:", round(tau, 4),
           fill = TRUE
         )
       }
     } else {
-      cat("The", param, "parameters used were: \n")
+      cat("The", param, "parameters used are: \n")
       print(round(x$call$tau, 4), ...)
     }
   } else {
+    response <- ifelse(
+      x$opt$disjunction, x$call$response, length(x$blocks) + 1
+    )
     nb_selected_var <- lapply(
-      x$a,
+      x$a[-response],
       function(a) apply(a, 2, function(l) sum(l != 0))
     )
     param <- "sparsity"
     if (!is.matrix(x$call$sparsity)) {
-      for (i in seq(NCOL(x$call$connection))) {
+      for (i in seq_len(NCOL(x$call$connection))[-response]) {
         sparsity <- x$call$sparsity[i]
 
-        cat("The", param, "parameter used for", names(x$call$blocks)[i], "was:",
+        cat("The", param, "parameter used for", names(x$blocks)[i], "is:",
           sparsity, "(with", paste(nb_selected_var[[i]], collapse = ", "),
           "variables selected)",
           fill = TRUE
         )
       }
     } else {
-      cat("The", param, "parameters used were: \n")
-      print(round(x$call$sparsity, 4), ...)
-      cat("The number of selected variables were: \n")
+      cat("The", param, "parameters used are: \n")
+      print(round(x$call$sparsity[, -response], 4), ...)
+      cat("The number of selected variables are: \n")
       print(do.call(cbind, nb_selected_var))
+    }
+    if (x$opt$disjunction) {
+      cat("The regularization parameter used for",
+          names(x$blocks)[response], "is:", 0,
+          fill = TRUE
+      )
     }
   }
 }

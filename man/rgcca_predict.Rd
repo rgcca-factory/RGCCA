@@ -4,24 +4,49 @@
 \alias{rgcca_predict}
 \title{Predict RGCCA}
 \usage{
-rgcca_predict(rgcca_res, blocks_test, response, prediction_model = "lm", ...)
+rgcca_predict(
+  rgcca_res,
+  blocks_test,
+  prediction_model = "lm",
+  metric = NULL,
+  ...
+)
 }
 \arguments{
 \item{rgcca_res}{A fitted RGCCA object (see  \code{\link[RGCCA]{rgcca}}).}
 
 \item{blocks_test}{A list of either dataframes or matrices to be projected.}
 
-\item{response}{A character or integer giving the block to predict
-(must be the same name among train and test set).}
-
 \item{prediction_model}{A character giving the function used to compare the
 trained and the tested models.}
+
+\item{metric}{A character giving the the metric to report.}
 
 \item{...}{Additional parameters to be passed to the model fitted on top
 of RGCCA.}
 }
+\value{
+A list containing the following elements:
+
+\item{score}{the score specified by the argument metric obtained
+on the test block. NA if the test block is missing.}
+
+\item{results}{a list of lists. There is a list per column in the
+response block. Each list contains the score on the corresponding columns
+of the test response block, the learned model, predictions,
+confusion matrices (if classification task, NA otherwise),
+and additional metrics on both training and test sets.
+NA are reported if the test block is missing.}
+
+\item{projection}{a list of matrices containing the projections
+of the test blocks using the canonical components from the fitted RGCCA
+object. The response block is not projected.}
+
+\item{prediction}{a data.frame with the prediction of the test
+response block.}
+}
 \description{
-Predict a new block from a RGCCA
+Predict a new block from a fitted RGCCA object.
 }
 \examples{
 data("Russett")
@@ -42,18 +67,18 @@ object1 <- rgcca(blocks,
   connection = C, tau = c(0.7, 0.8, 0.7),
   ncomp = c(3, 2, 4), superblock = FALSE, response = 3
 )
-A <- lapply(object1$call$blocks, function(x) x[1:32, ])
+A <- lapply(object1$blocks, function(x) x[1:32, ])
 object <- rgcca(A,
   connection = C, tau = c(0.7, 0.8, 0.7),
   ncomp = c(3, 2, 4),
   scale = FALSE, scale_block = FALSE,
   superblock = FALSE, response = 3
 )
-X <- lapply(object1$call$blocks, function(x) x[-c(1:32), ])
+X <- lapply(object1$blocks, function(x) x[-c(1:32), ])
 X <- lapply(X, function(x) x[, sample(1:NCOL(x))])
 X <- sample(X, length(X))
 response <- "industry"
 y_train <- kmeans(A[[response]], 3)$cluster
 y_test <- kmeans(X[[response]], 3)$cluster
-res <- rgcca_predict(object, X, response = "industry")
+res <- rgcca_predict(object, X)
 }

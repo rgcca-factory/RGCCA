@@ -11,6 +11,9 @@
 
 \item{...}{other parameters used in print (for the displaying of matrices)}
 }
+\value{
+none
+}
 \description{
 Print rgcca
 }

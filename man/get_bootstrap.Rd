@@ -6,11 +6,10 @@
 \usage{
 get_bootstrap(
   b,
-  type = "weight",
+  type = "weights",
   comp = 1,
-  block = length(b$bootstrap[[1]][[1]]),
+  block = 1,
   empirical = TRUE,
-  display_order = TRUE,
   adj.method = "fdr"
 )
 }
@@ -18,18 +17,16 @@ get_bootstrap(
 \item{b}{A fitted bootstrap object (see  \code{\link[RGCCA]{bootstrap}})}
 
 \item{type}{Character string indicating the bootstrapped object to print:
-block-weight vectors ("weight", default) or block-loading vectors
+block-weight vectors ("weights", default) or block-loading vectors
 ("loadings").}
 
-\item{comp}{An integer indicating the block-weight/loading vector to plot.}
+\item{comp}{A numeric vector indicating the components to consider.}
 
-\item{block}{A numeric vector indicating the blocks to consider.}
+\item{block}{A numeric corresponding to the block(s) to plot.}
 
 \item{empirical}{A logical value indicating if the bootstrap confidence
 intervals and p-values are derived from the empirical distribution.
 (defaut: TRUE)}
-
-\item{display_order}{A logical value for ordering the variables}
 
 \item{adj.method}{character string indicating the method used for p-value
 adjustment (default: fdr - a.k.a Benjamini-Hochberg correction)}

@@ -102,8 +102,8 @@ or by random initialisation ("random") (default: "svd").}
 When the response argument is filled the supervised mode is automatically
 activated.}
 
-\item{superblock}{TRUE if a superblock is added, FALSE otherwise (deflation
-strategy must be adapted when a superblock is used).}
+\item{superblock}{Boolean indicating the presence of a superblock
+(deflation strategy must be adapted when a superblock is used).}
 
 \item{NA_method}{Character string corresponding to the method used for
 handling missing values ("nipals", "complete"). (default: "nipals").
@@ -315,7 +315,7 @@ An efficient algorithm to satisfy l1 and l2 constraints.
 }
 \seealso{
 \code{\link[RGCCA]{plot.rgcca}}, \code{\link[RGCCA]{print.rgcca}},
-\code{\link[RGCCA]{rgcca_cv_k}},
+\code{\link[RGCCA]{rgcca_cv}},
 \code{\link[RGCCA]{rgcca_permutation}}
 \code{\link[RGCCA]{rgcca_predict}}
 }

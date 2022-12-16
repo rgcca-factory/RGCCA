@@ -1,13 +1,14 @@
-# The function initsvd() is called by rgccad() and does not have to be used by
-# the user. initsvd() initializes block weight vectors based on Singular Value
-# Decomposirion (SVD). Missing values are imputed by colmeans.
-# @param X  A matrix with n rows and p columns
-# @param dual A logical value. dual = TRUE enables a dual initialization (i.e.
-# the first left singular vector is used is n<p and the first right singular
-# vector is used otherwise.
-# @return A vector of initialization
-# @title Initialisation of the S/RGCCA algorithm by Singular Value Decomposition
-
+#' The function initsvd() is called by rgccad() and does not have to be used by
+#' the user. initsvd() initializes block weight vectors based on Singular Value
+#' Decomposition (SVD). Missing values are imputed by colmeans.
+#' @param X  A matrix with n rows and p columns
+#' @param dual A logical value. dual = TRUE enables a dual initialization (i.e.
+#' the first left singular vector is used if n<p and the first right singular
+#' vector is used otherwise.
+#' @return A vector of initialization
+#' @title Initialization of the S/RGCCA algorithm by Singular Value
+#' Decomposition
+#' @noRd
 initsvd <- function(X, dual = TRUE) {
   if (any(is.na(X))) {
     indNA <- which(is.na(X), arr.ind = TRUE)

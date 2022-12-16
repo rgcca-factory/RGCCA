@@ -4,14 +4,24 @@
 \alias{print.cval}
 \title{print.cval}
 \usage{
-\method{print}{cval}(x, bars = "quantile", ...)
+\method{print}{cval}(x, type = "sd", ...)
 }
 \arguments{
 \item{x}{A rgcca_cv object (see \link{rgcca_cv})}
 
-\item{bars}{standard deviation (sd) of the cross-validated MSE}
+\item{type}{Character string indicating the statistics in the box plots:
+mean plus or minus standard deviation ("sd", default),
+\itemize{
+\item "sd" (default): the middle bar corresponds to the mean and limits of
+the boxes are given by the mean plus or minus the standard deviation.
+\item "quantile": the middle bar corresponds to the median and limits of
+the boxes are given by the 25% and 75% quantiles.
+}}
 
 \item{...}{Further print options}
+}
+\value{
+none
 }
 \description{
 print.cval
@@ -21,7 +31,7 @@ data("Russett")
 blocks <- list(
   agriculture = Russett[, seq(3)],
   industry = Russett[, 4:5],
-  politic = Russett[, 6:11]
+  politic = Russett[, 6:8]
 )
 res <- rgcca_cv(blocks,
   response = 3, method = "rgcca", par_type = "tau",

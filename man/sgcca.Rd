@@ -19,6 +19,7 @@ sgcca(
   na.rm = TRUE,
   superblock = FALSE,
   response = NULL,
+  disjunction = NULL,
   n_iter_max = 1000
 )
 }
@@ -69,14 +70,17 @@ algorithm is reported while computing.}
 
 \item{quiet}{Logical value indicating if warning messages are reported.}
 
-\item{na.rm}{If TRUE, runs rgcca only on available data.}
+\item{na.rm}{If TRUE, runs sgcca only on available data.}
 
-\item{superblock}{Boolean indicating the presence of the superblock.
-Default = TRUE}
+\item{superblock}{Boolean indicating the presence of a superblock
+(deflation strategy must be adapted when a superblock is used).}
 
 \item{response}{Numerical value giving the position of the response block.
 When the response argument is filled the supervised mode is automatically
 activated.}
+
+\item{disjunction}{If TRUE, the response block is a one-hot encoded
+qualitative block.}
 
 \item{n_iter_max}{Integer giving the algorithm's maximum number of
 iterations.}
@@ -93,10 +97,6 @@ a vector such that Y[[j]][, h] = blocks[[j]] \%*\% astar[[j]][, h].}
 
 \item{crit}{A vector of integer that contains for each component the
 values of the analysis criteria across iterations.}
-
-\item{AVE}{A list of numerical values giving the indicators of model
-quality based on the Average Variance Explained (AVE): AVE(for each block),
-AVE(outer model), AVE(inner model).}
 }
 \description{
 SGCCA extends RGCCA to address the issue of variable selection. Specifically,
@@ -131,8 +131,7 @@ could differ from one block to another.
 # Download the dataset's package at http://biodev.cea.fr/sgcca/.
 # --> gliomaData_0.4.tar.gz
 
-require(gliomaData)
-data(ge_cgh_locIGR)
+data("ge_cgh_locIGR", package = "gliomaData")
 
 blocks <- ge_cgh_locIGR$multiblocks
 Loc <- factor(ge_cgh_locIGR$y)

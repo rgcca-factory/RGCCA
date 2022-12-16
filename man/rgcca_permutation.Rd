@@ -6,11 +6,11 @@
 \usage{
 rgcca_permutation(
   blocks,
-  par_type,
+  par_type = "tau",
   par_value = NULL,
   par_length = 10,
   n_perms = 20,
-  n_cores = parallel::detectCores() - 1,
+  n_cores = 1,
   quiet = TRUE,
   scale = TRUE,
   scale_block = TRUE,
@@ -27,7 +27,8 @@ rgcca_permutation(
   superblock = FALSE,
   NA_method = "nipals",
   rgcca_res = NULL,
-  verbose = TRUE
+  verbose = TRUE,
+  n_iter_max = 1000
 )
 }
 \arguments{
@@ -128,10 +129,12 @@ or by random initialisation ("random") (default: "svd").}
 
 \item{tol}{The stopping value for the convergence of the algorithm.}
 
-\item{response}{Position of the response block}
+\item{response}{Numerical value giving the position of the response block.
+When the response argument is filled the supervised mode is automatically
+activated.}
 
-\item{superblock}{Boolean indicating the presence of the superblock.
-Default = TRUE}
+\item{superblock}{Boolean indicating the presence of a superblock
+(deflation strategy must be adapted when a superblock is used).}
 
 \item{NA_method}{Character string corresponding to the method used for
 handling missing values ("nipals", "complete"). (default: "nipals").
@@ -145,6 +148,9 @@ data (NIPALS-type algorithm)}}}
 
 \item{verbose}{Logical value indicating if the progress of the
 permutation procedure is reported.}
+
+\item{n_iter_max}{Integer giving the algorithm's maximum number of
+iterations.}
 }
 \value{
 \item{zstat}{A vector of Z-statistics, one zstat per set of tuning
@@ -238,6 +244,7 @@ fit <- rgcca_permutation(blocks,
 print(fit)
 plot(fit)
 fit$bestpenalties
+
 \dontrun{
 # It is possible to define explicitly K combinations of shrinkage
 # parameters to be tested and in that case a matrix of dimension KxJ is
@@ -320,7 +327,7 @@ perm.out$bestpenalties
 # when par_value is a scalar, the same maximum value is applied
 # for each block
 
-perm.outt <- rgcca_permutation(blocks,
+perm.out <- rgcca_permutation(blocks,
   connection = C,
   par_type = "sparsity",
   par_value = 0.8, par_length = 5,
@@ -338,8 +345,7 @@ perm.out$penalties
 # case, it is possible to reduce the value of the tolerance (tol argument)
 # of the RGCCA algorithm to speed up the permutation procedure.
 #
-require(gliomaData)
-data(ge_cgh_locIGR)
+data("ge_cgh_locIGR", package = "gliomaData")
 A <- ge_cgh_locIGR$multiblocks
 Loc <- factor(ge_cgh_locIGR$y)
 levels(Loc) <- colnames(ge_cgh_locIGR$multiblocks$y)

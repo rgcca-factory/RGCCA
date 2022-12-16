@@ -7,8 +7,8 @@
 #' be tested on each fold and trained on the others. For small datasets
 #' (<30 samples), it is recommended to use as many folds as there are
 #' individuals (leave-one-out; loo).
-#' @inheritParams rgcca_cv_k
 #' @inheritParams rgcca
+#' @inheritParams rgcca_predict
 #' @inheritParams bootstrap
 #' @param par_type A character giving the parameter to tune among "sparsity"
 #' or "tau".
@@ -19,6 +19,9 @@
 #'  for RGCCA and $1/sqrt(ncol)$ for SGCCA) and 1.
 #' @param par_length An integer indicating the number of sets of parameters to
 #' be tested (if par_value = NULL). The parameters are uniformly distributed.
+#' @param k An integer giving the number of folds (if validation = 'kfold').
+#' @param validation A character for the type of validation among "loo",
+#' "kfold".
 #' @param n_run An integer giving the number of cross-validations to be run
 #' (if validation = 'kfold').
 #' @export
@@ -46,19 +49,19 @@
 #' blocks <- list(
 #'   agriculture = Russett[, seq(3)],
 #'   industry = Russett[, 4:5],
-#'   politic = Russett[, 6:11]
+#'   politic = Russett[, 6:8]
 #' )
 #' res <- rgcca_cv(blocks,
 #'   response = 3, method = "rgcca",
 #'   par_type = "sparsity",
-#'   par_value = c(0.6, 0.75, 0.5),
+#'   par_value = c(0.6, 0.75, 0.8),
 #'   n_run = 2, n_cores = 1
 #' )
 #' plot(res)
 #' \dontrun{
 #' rgcca_cv(blocks,
 #'   response = 3, par_type = "tau",
-#'   par_value = c(0.6, 0.75, 0.5),
+#'   par_value = c(0.6, 0.75, 0.8),
 #'   n_run = 2, n_cores = 1
 #' )$bestpenalties
 #'
@@ -73,6 +76,7 @@
 #' )
 #' }
 #'
+#' @importFrom stats na.omit
 #' @importFrom utils txtProgressBar setTxtProgressBar
 rgcca_cv <- function(blocks,
                      method = "rgcca",
@@ -84,7 +88,7 @@ rgcca_cv <- function(blocks,
                      prediction_model = "lm",
                      k = 5,
                      n_run = 1,
-                     n_cores = parallel::detectCores() - 1,
+                     n_cores = 1,
                      quiet = TRUE,
                      superblock = FALSE,
                      scale = TRUE,
@@ -99,155 +103,143 @@ rgcca_cv <- function(blocks,
                      init = "svd",
                      bias = TRUE,
                      verbose = TRUE,
+                     n_iter_max = 1000,
+                     metric = NULL,
                      ...) {
-  ### Try to retrieve parameters from a rgcca object
-  if (!missing(blocks) & class(blocks) == "rgcca") {
-    rgcca_res <- blocks
-  }
-  if (class(rgcca_res) == "rgcca") {
-    message("All parameters were imported from a rgcca object.")
-    scale_block <- rgcca_res$call$scale_block
-    scale <- rgcca_res$call$scale
-    scheme <- rgcca_res$call$scheme
-    response <- rgcca_res$call$response
-    tol <- rgcca_res$call$tol
-    NA_method <- rgcca_res$call$NA_method
-    bias <- rgcca_res$call$bias
-    blocks <- rgcca_res$call$raw
-    superblock <- rgcca_res$call$superblock
-    tau <- rgcca_res$call$tau
-    ncomp <- rgcca_res$call$ncomp
-    sparsity <- rgcca_res$call$sparsity
-  }
-
-  ### Check parameters
   if (is.null(response)) {
     stop(paste0(
       "response is required for rgcca_cv (it is an integer ",
       "comprised between 1 and the number of blocks) "
     ))
   }
+
+  ### Try to retrieve parameters from a rgcca object
+  rgcca_args <- as.list(environment())
+  tmp <- get_rgcca_args(blocks, rgcca_args)
+  opt <- tmp$opt
+  rgcca_args <- tmp$rgcca_args
+
+  ### Check parameters
   if (validation == "loo") {
-    k <- dim(blocks[[1]])[1]
+    k <- NROW(rgcca_args$blocks[[1]])
     n_run <- 1
   }
-  tryCatch(
-    model_info <- caret::modelLookup(prediction_model),
-    error = function(e) {
-      stop_rgcca(
-        "unknown model. Model ", prediction_model, " is not handled, please ",
-        "see caret::modelLookup() for a list of the available models."
-      )
-    }
+  model <- check_prediction_model(
+    prediction_model, rgcca_args$blocks[[rgcca_args$response]]
   )
-  classification <-
-    is.factor(blocks[[response]]) || is.character2(blocks[[response]])
-  is_inadequate <- !model_info$forClass && classification
-  if (is_inadequate) {
-    stop_rgcca(
-      "inadequate model. Response block contains categorical data ",
-      "but model ", prediction_model, " is not made for ",
-      "classification. Please choose another model."
-    )
-  }
 
   check_integer("par_length", par_length)
   check_integer("n_run", n_run)
+  check_integer("k", k, min = 2)
   match.arg(par_type, c("tau", "sparsity", "ncomp"))
+  match.arg(validation, c("loo", "kfold"))
+
+  default_metric <- ifelse(model$classification, "Accuracy", "RMSE")
+  metric <- ifelse(is.null(metric), default_metric, metric)
+  available_metrics <- get_available_metrics(model$classification)
+  metric <- match.arg(metric, available_metrics)
 
   ### Prepare parameters for line search
-  if (method %in% c("sgcca", "spca", "spls") && (par_type == "tau")) {
+  if (
+    rgcca_args$method %in% c("sgcca", "spca", "spls") && (par_type == "tau")
+  ) {
     par_type <- "sparsity"
-  } else if (par_type == "sparsity") method <- "sgcca"
-
-  param <- set_parameter_grid(par_type, par_length, par_value, blocks, response)
-
-  # Generate a warning if tau is null for a block that has more columns
-  # than samples
-  n <- NROW(blocks[[1]])
-  overfitting_risk <- (param$par_type == "tau") &&
-    any(vapply(seq_along(blocks), function(j) {
-      NCOL(blocks[[j]]) > n && any(param$par_value[, j] == 0)
-    }, FUN.VALUE = logical(1L)))
-  if (overfitting_risk) {
-    warning("overfitting risk. Tau is zero for a block that has more columns ",
-            "than rows, there is a high risk of overfitting for RGCCA.")
+  } else if (par_type == "sparsity") {
+    rgcca_args$method <- "sgcca"
   }
 
-  ### Start line search
-  if (verbose) {
-    message(paste("Cross-validation for", param$par_type, "in progress...\n"),
-      appendLF = FALSE
-    )
-    pb <- txtProgressBar(max = nrow(param$par_value))
-  }
-
-  rgcca_args <- list(
-    blocks = blocks, method = method, response = response,
-    ncomp = ncomp, superblock = superblock,
-    scale = scale, scale_block = scale_block,
-    scheme = scheme, tol = tol, NA_method = NA_method,
-    tau = tau, sparsity = sparsity, bias = bias,
-    init = init
+  param <- set_parameter_grid(
+    par_type, par_length, par_value, rgcca_args$blocks,
+    rgcca_args$response, FALSE, opt$disjunction
   )
 
-  mat_cval <- lapply(seq(nrow(param$par_value)), function(i) {
-    rgcca_args[[param$par_type]] <- param$par_value[i, ]
-    rgcca_res <- do.call(rgcca, rgcca_args)
+  # Generate a warning if tau has not been fully specified for a block that
+  # has more columns than samples and remove tau = 0 configuration
+  n <- NROW(rgcca_args$blocks[[1]])
+  overfitting_risk <- (param$par_type == "tau") && is.null(dim(par_value)) &&
+    any(vapply(
+      seq_along(rgcca_args$blocks),
+      function(j) NCOL(rgcca_args$blocks[[j]]) > n,
+      FUN.VALUE = logical(1L)
+    ))
+  if (overfitting_risk) {
+    param$par_value <- param$par_value[-nrow(param$par_value), ]
+    warning(
+      "overfitting risk. A block has more columns than rows, so the ",
+      "configuration with tau = 0 has been removed."
+    )
+  }
 
-    res <- unlist(lapply(seq(n_run), function(n) {
-      rgcca_cv_k(
-        rgcca_res,
-        validation = validation,
-        prediction_model = prediction_model,
-        k = k,
-        n_cores = n_cores,
-        complete = FALSE,
-        verbose = FALSE,
-        classification = classification,
-        ...
-      )$vec_scores
-    }))
+  ### Create folds
+  # Remove missing lines from response block
+  na_lines <- which(apply(
+    rgcca_args$blocks[[rgcca_args$response]], 1, function(x) all(is.na(x))
+  ))
+  idx_no_na <- seq_len(NROW(rgcca_args$blocks[[1]]))
+  if (length(na_lines) > 0) {
+    idx_no_na <- idx_no_na[-na_lines]
+  }
+  if (validation == "loo") {
+    v_inds <- idx_no_na
+  } else {
+    if (model$classification) {
+      v_inds <- Reduce("c", lapply(seq_len(n_run), function(j) {
+        folds <- caret::createFolds(
+          na.omit(rgcca_args$blocks[[rgcca_args$response]][, 1]),
+          k = k, list = TRUE,
+          returnTrain = FALSE
+        )
+        lapply(folds, function(f) idx_no_na[f])
+      }))
+    } else {
+      v_inds <- Reduce("c", lapply(seq_len(n_run), function(j) {
+        x <- sample(idx_no_na)
+        split(x, seq(x) %% k)
+      }))
+    }
+  }
 
-    if (verbose) setTxtProgressBar(pb, i)
+  ### Compute cross validation
+  idx <- seq_len(NROW(param$par_value) * length(v_inds))
+  W <- par_pblapply(idx, function(n) {
+    i <- (n - 1) %/% length(v_inds) + 1
+    j <- (n - 1) %% length(v_inds) + 1
+    rgcca_cv_k(
+      rgcca_args,
+      inds = v_inds[[j]],
+      metric = metric,
+      par_type = param$par_type,
+      par_value = param$par_value[i, ],
+      prediction_model = model$prediction_model,
+      ...
+    )
+  }, n_cores = n_cores, verbose = verbose)
 
-    return(res)
-  })
-  mat_cval <- do.call(rbind, mat_cval)
+  W <- matrix(unlist(W), nrow = NROW(param$par_value), byrow = TRUE)
 
   ### Format output
-  cat("\n")
-  call <- list(
-    n_run = n_run,
-    response = response,
-    par_type = par_type,
-    par_value = par_value,
-    validation = validation,
-    prediction_model = prediction_model,
-    k = k,
-    superblock = FALSE,
-    scale = scale,
-    scale_block = scale_block,
-    tol = tol,
-    scheme = scheme,
-    NA_method = NA_method,
-    blocks = blocks,
-    tau = tau,
-    sparsity = sparsity,
-    ncomp = ncomp
+  rownames(param$par_value) <- seq_len(NROW(param$par_value))
+  colnames(param$par_value) <- names(rgcca_args$blocks)
+  rownames(W) <- seq_len(NROW(W))
+
+  best_param_idx <- ifelse(
+    model$classification,
+    which.max(apply(W, 1, mean, na.rm = TRUE)),
+    which.min(apply(W, 1, mean, na.rm = TRUE))
   )
 
-  rownames(param$par_value) <- seq(NROW(param$par_value))
-  colnames(param$par_value) <- names(blocks)
-  rownames(mat_cval) <- seq(NROW(mat_cval))
-
-  best_param_idx <- which.min(apply(mat_cval, 1, mean))
-
   res <- list(
-    cv = mat_cval,
-    call = call,
+    k = k,
+    cv = W,
+    opt = opt,
+    call = rgcca_args,
+    n_run = n_run,
+    metric = metric,
+    par_type = param$par_type,
+    penalties = param$par_value,
+    validation = validation,
     bestpenalties = param$par_value[best_param_idx, ],
-    penalties = param$par_value
+    prediction_model = prediction_model
   )
   class(res) <- "cval"
   return(res)

@@ -6,88 +6,86 @@
 \usage{
 \method{plot}{rgcca}(
   x,
-  type = "weight",
-  block = length(x$call$blocks),
-  comp = seq(2),
-  resp = rep(1, NROW(x$Y[[1]])),
-  remove_var = FALSE,
-  text_var = TRUE,
-  text_ind = TRUE,
-  response_name = "Response",
-  overlap = TRUE,
+  type = "weights",
+  block = seq_along(x$call$blocks),
+  comp = 1,
+  response = as.factor(rep(1, NROW(x$Y[[1]]))),
+  display_order = TRUE,
   title = NULL,
-  n_mark = 30,
-  collapse = FALSE,
   cex = 1,
-  cex_sub = 12,
-  cex_main = 14,
-  cex_lab = 12,
-  cex_axis = 10,
+  cex_sub = 12 * cex,
+  cex_main = 14 * cex,
+  cex_lab = 12 * cex,
+  cex_point = 3 * cex,
+  n_mark = 30,
   colors = NULL,
+  shapes = NULL,
+  show_labels = TRUE,
+  repel = FALSE,
   ...
 )
 }
 \arguments{
 \item{x}{A fitted RGCCA object (see \code{\link[RGCCA]{rgcca}})}
 
-\item{type}{A character string: 'sample', 'weight', 'loadings', 'corCircle',
-'both', 'ave', 'network' (see details).}
+\item{type}{A character string: 'samples', 'weights', 'loadings',
+'cor_circle', both', 'ave' (see details).}
 
-\item{block}{A numeric vector indicating the blocks to consider.}
+\item{block}{A numeric corresponding to the block(s) to plot.}
 
-\item{comp}{An integer indicating the block-weight/loading vector to plot.}
+\item{comp}{A numeric vector indicating the components to consider.}
 
-\item{resp}{A vector of characters corresponding either to a qualitative
-variable with levels or a continuous variable}
+\item{response}{A vector coloring the points in the "samples" plot.}
 
-\item{remove_var}{logical value. If TRUE, the top 100 variables with the
-highest with the block components are displayed}
+\item{display_order}{A logical value for ordering the variables.}
 
-\item{text_var}{logical value indicating whether variable names are displayed
-(default = TRUE)}
+\item{title}{A character string giving the title of the plot.}
 
-\item{text_ind}{logical value indicating whether sample names are displayed
-(default = TRUE).}
+\item{cex}{A numeric defining the size of the objects in the plot. Default
+is one.}
 
-\item{response_name}{A character giving the legend title}
+\item{cex_sub}{A numeric defining the font size of the subtitle. Default is
+12 * cex.}
 
-\item{overlap}{logical value enables avoiding overlapping between labels
-(default = FALSE)}
+\item{cex_main}{A numeric defining the font size of the title. Default is
+14 * cex.}
 
-\item{title}{A character giving the title of the plot}
+\item{cex_lab}{A numeric defining the font size of the labels. Default is
+12 * cex.}
 
-\item{n_mark}{The number of top variables to display in the correlation
-circle}
+\item{cex_point}{A numeric defining the font size of the points. Default is
+3 * cex.}
 
-\item{collapse}{A boolean to combine the variables of each block as result}
+\item{n_mark}{An integer defining the maximum number of bars plotted in the
+"weights" and "loadings" plots.}
 
-\item{cex}{An integer for the size of the plot parameters}
+\item{colors}{Colors used in the plots. Default is based on the
+colorblind-friendly palette recommended in ggplot.}
 
-\item{cex_sub}{An integer for the size of the subtitle}
+\item{shapes}{Shapes used for the points in the "samples" and "cor_circle"
+plots. Default is the first five shapes used in ggplot.}
 
-\item{cex_main}{An integer for the size of the title}
+\item{show_labels}{A logical value for showing the labels in plots "samples"
+and "cor_circle".}
 
-\item{cex_lab}{An integer for the size of the axis titles}
-
-\item{cex_axis}{An integer for the size of the axis text}
-
-\item{colors}{Either a vector of integers (each integer corresponding to a
-color) or of characters corresponding to names of colors (as "blue",see
-colors()) or RGB code ("#FFFFFF").}
+\item{repel}{A logical value for repelling text labels from each other.}
 
 \item{...}{additional graphical parameters}
+}
+\value{
+A ggplot2 plot object.
 }
 \description{
 Plot different outputs of the results obtained by a rgcca function
 }
 \details{
 \itemize{
-\item "sample" for sample plot. The blocks (block argument) and components
+\item "samples" for sample plot. The blocks (block argument) and components
 (comp) that will be used on the horizontal and the vertical axes to plot the
 individuals: (Y[[block[1]]][, comp[1]], Y[[block[2]]][,comp[2]]). Points can
-be colored according to the resp argument. The colors of the points can be
-modified with the colors argument.
-\item "weight": barplot of the block weight vector for one
+be colored according to the response argument. The colors of the points can
+be modified with the colors argument.
+\item "weights": barplot of the block weight vector for one
 specific block/component. The weights are sorted from the highest to
 the lowest and only the highest are displayed. The number of displayed
 weights can be set with n_marks.
@@ -95,7 +93,7 @@ weights can be set with n_marks.
 in decreasing correlations and only the highest
 correlations are displayed. The number of displayed correlations can be set
 with n_marks (defaut value = 30).
-\item  "CorCircle" for correlation circle.
+\item  "cor_circle" for correlation circle.
 \item "both": displays both sample plot and correlation circle (implemented
 only for one block and at least when two components are asked (ncomp >= 2).
 \item "ave": displays the average variance explained for each block.}
@@ -118,11 +116,11 @@ fit.rgcca <- rgcca(
 ###############
 # horizontal axis: First component of the first block
 # vertical axis: First component of the second block
-plot(fit.rgcca, type = "sample", block = 1:2, comp = 1, resp = status)
+plot(fit.rgcca, type = "samples", block = 1:2, comp = 1, response = status)
 
 
 ######################
-# Correlation circle #
+# all types of plots #
 ######################
 # with superblock
 fit.mcoa <- rgcca(
@@ -130,10 +128,10 @@ fit.mcoa <- rgcca(
   tau = c(1, 1, 1, 0), superblock = TRUE
 )
 
-plot(fit.mcoa, type = "both", resp = status, overlap = FALSE)
+plot(fit.mcoa, type = "both", response = status)
 plot(fit.rgcca, type = "loadings")
 plot(fit.rgcca, type = "weight")
 plot(fit.rgcca, type = "sample")
-plot(fit.rgcca, type = "corCircle")
+plot(fit.rgcca, type = "cor_circle")
 plot(fit.rgcca, type = "ave")
 }

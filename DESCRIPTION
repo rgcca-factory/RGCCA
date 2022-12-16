@@ -3,9 +3,14 @@ Package: RGCCA
 Title: Regularized (or Sparse) Generalized Canonical Correlation Analysis
     (R/SGCCA) for multi-block data analysis
 Version: 3.0
-Date: 2020-09-26
-Author: Arthur Tenenhaus, Caroline Peltier, Fabien Girka, Etienne Camenen,
-    Arnaud Gloaguen and Vincent Guillemot
+Authors@R: c(
+  person("Arthur", "Tenenhaus", email = "arthur.tenenhaus@centralesupelec.fr",
+         role = c("aut", "cre")),
+  person("Caroline", "Peltier", role = "aut"),
+  person("Fabien", "Girka", role = "aut"),
+  person("Etienne", "Camenen", role = "aut"),
+  person("Arnaud", "Gloaguen", role = "aut"),
+  person("Vincent", "Guillemot", role = "aut"))
 Maintainer: Arthur Tenenhaus <arthur.tenenhaus@centralesupelec.fr>
 Description: Multi-block data analysis concerns the analysis of several
     sets of variables (blocks) observed on the same group of individuals.
@@ -22,40 +27,35 @@ Description: Multi-block data analysis concerns the analysis of several
     and plot() functions apply to all these functionalities.
 License: GPL-3
 Depends:
-    MASS,
     R (>= 2.10)
 Imports:
     caret,
     Deriv,
     ggplot2,
+    ggrepel,
     graphics,
-    grDevices,
     gridExtra,
+    MASS,
     methods,
-    MLmetrics,
     parallel,
     pbapply,
-    plotly,
+    rlang,
     stats
 Suggests:
-    bsplus,
     devtools,
-    DT,
-    ggrepel,
+    FactoMineR,
+    gliomaData,
     knitr,
-    openxlsx,
-    optparse,
     pander,
     rmarkdown,
-    shiny,
-    shinyjs,
     testthat,
-    FactoMineR
+    vdiffr
 VignetteBuilder:
     knitr
 biocViews: Visualization, PrincipalComponent, DimensionReduction,
     StructuralEquationModels
 LazyData: true
-Packaged: 2013-07-24 16:36:37 UTC; arthur
-RoxygenNote: 7.1.2
+RoxygenNote: 7.2.1
 Encoding: UTF-8
+URL: https://github.com/rgcca-factory/RGCCA
+BugReports: https://github.com/rgcca-factory/RGCCA/issues

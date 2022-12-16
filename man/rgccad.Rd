@@ -18,6 +18,7 @@ rgccad(
   quiet = FALSE,
   superblock = FALSE,
   response = NULL,
+  disjunction = NULL,
   n_iter_max = 1000
 )
 }
@@ -70,12 +71,15 @@ algorithm is reported while computing.}
 
 \item{quiet}{Logical value indicating if warning messages are reported.}
 
-\item{superblock}{TRUE if a superblock is added, FALSE otherwise (deflation
-strategy must be adapted when a superblock is used).}
+\item{superblock}{Boolean indicating the presence of a superblock
+(deflation strategy must be adapted when a superblock is used).}
 
 \item{response}{Numerical value giving the position of the response block.
 When the response argument is filled the supervised mode is automatically
 activated.}
+
+\item{disjunction}{If TRUE, the response block is a one-hot encoded
+qualitative block.}
 
 \item{n_iter_max}{Integer giving the algorithm's maximum number of
 iterations.}
@@ -109,10 +113,6 @@ of the criterion for this stage across iterations.}
 \item{primal_dual}{A \eqn{1 \times J}{1 x J} vector that contains the
 formulation ("primal" or "dual") applied to each of the \eqn{J} blocks within
 the RGCCA alogrithm.}
-
-\item{AVE}{A list of numerical values giving the goodness of fit
-the model based on the Average Variance Explained (AVE): AVE(for each block),
-AVE(outer model), AVE(inner model).}
 }
 \description{
 Regularized Generalized Canonical Correlation Analysis (RGCCA) is a

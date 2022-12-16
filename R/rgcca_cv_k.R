@@ -4,134 +4,32 @@
 #' @inheritParams rgcca_predict
 #' @inheritParams rgcca
 #' @inheritParams bootstrap
-#' @inheritParams plot_ind
-#' @param k An integer giving the number of folds (if validation = 'kfold').
-#' @param validation A character for the type of validation among "loo",
-#' "kfold".
-#' @param classification A logical indicating if it is a classification task.
-#' @examples
-#' data("Russett")
-#' blocks <- list(
-#'   agriculture = Russett[, seq(3)], industry = Russett[, 4:5],
-#'   politic = Russett[, 6:11]
-#' )
-#' rgcca_out <- rgcca(blocks, response = 3, superblock = FALSE)
-#' res <- rgcca_cv_k(rgcca_out, validation = "kfold", k = 5, n_cores = 1)
-#' rgcca_cv_k(rgcca_out, n_cores = 1)
-#' @export
-#' @seealso \link{rgcca}, \link{rgcca_predict}, \link{plot.predict}
-rgcca_cv_k <- function(rgcca_res,
-                       validation = "kfold",
-                       prediction_model = "lm",
-                       k = 5,
-                       scale = NULL,
-                       scale_block = NULL,
-                       tol = 1e-8,
-                       scheme = NULL,
-                       NA_method = NULL,
-                       method = NULL,
-                       init = NULL,
-                       bias = NULL,
-                       connection = NULL,
-                       ncomp = NULL,
-                       tau = NULL,
-                       sparsity = NULL,
-                       n_cores = parallel::detectCores() - 1,
-                       verbose = TRUE,
-                       classification = FALSE,
-                       ...) {
-  ### Check parameters
-  stopifnot(is(rgcca_res, "rgcca"))
-  if (is.null(rgcca_res$call$response)) {
-    stop_rgcca(
-      "missing response block. A model with a response block must be ",
-      "used to apply rgcca_cv_k."
-    )
-  }
-  match.arg(validation, c("loo", "kfold"))
+#' @noRd
+rgcca_cv_k <- function(rgcca_args, inds, prediction_model,
+                       par_type, par_value, metric, ...) {
+  rgcca_args[[par_type]] <- par_value
 
-  all_args <- names(environment())
-  used_args <- c(
-    names(match.call()), "validation", "prediction_model",
-    "k", "n_cores", "verbose", "classification"
+  blocks <- rgcca_args[["blocks"]]
+
+  rgcca_args[["blocks"]] <- lapply(
+    blocks, function(x) x[-inds, , drop = FALSE]
   )
-  for (n in setdiff(all_args, used_args)) {
-    assign(n, rgcca_res$call[[n]])
-  }
+  # Fit RGCCA on the training blocks
+  res <- do.call(rgcca, rgcca_args)
 
-  check_integer("k", k, min = 2)
-  check_integer("n_cores", n_cores, min = 0)
+  # Evaluate RGCCA on the validation blocks
+  blocks_test <- lapply(seq_along(blocks), function(j) {
+    x <- blocks[[j]][inds, , drop = FALSE]
+    colnames(x) <- colnames(res$call$blocks[[j]])
+    return(x)
+  })
+  names(blocks_test) <- names(res$blocks)
 
-  ### Compute cross validation
-  blocks <- rgcca_res$call$raw
-
-  if (validation == "loo") {
-    v_inds <- seq(nrow(blocks[[1]]))
-  } else {
-    if (classification) {
-      v_inds <- caret::createFolds(
-        blocks[[rgcca_res$call$response]][, 1],
-        k = k, list = TRUE,
-        returnTrain = FALSE
-      )
-    } else {
-      v_inds <- sample(nrow(blocks[[1]]))
-      v_inds <- split(v_inds, seq(v_inds) %% k)
-    }
-  }
-
-  res <- par_pblapply(
-    v_inds, function(inds) {
-      # Fit RGCCA on the training blocks
-      res <- set_rgcca(rgcca_res,
-        blocks = blocks,
-        scale = scale,
-        scale_block = scale_block,
-        tol = tol,
-        scheme = scheme,
-        superblock = FALSE,
-        inds = inds,
-        NA_method = NA_method,
-        response = rgcca_res$call$response,
-        bias = bias,
-        tau = tau,
-        ncomp = ncomp,
-        sparsity = sparsity,
-      )
-
-      # Remove columns of the validation blocks that had null variance in the
-      # training blocks.
-      column_sd_null <- remove_null_sd(
-        lapply(blocks, function(x) x[-inds, , drop = FALSE])
-      )$column_sd_null
-      blocks_test <- lapply(seq_along(blocks), function(j) {
-        if (length(column_sd_null[[j]]) > 0) {
-          return(blocks[[j]][inds, -column_sd_null[[j]], drop = FALSE])
-        }
-        return(blocks[[j]][inds, , drop = FALSE])
-      })
-      names(blocks_test) <- names(blocks)
-
-      # Evaluate RGCCA on the validation blocks
-      res_pred <- rgcca_predict(
-        res,
-        blocks_test = blocks_test,
-        prediction_model = prediction_model,
-        response = rgcca_res$call$response,
-        ...
-      )
-    },
-    n_cores = n_cores, verbose = verbose
-  )
-
-  ### Structure outputs
-  vec_scores <- vapply(res, function(x) x$score, FUN.VALUE = numeric(1))
-  scores <- mean(unlist(lapply(res, function(x) x$score)), na.rm = TRUE)
-
-  structure(
-    list(
-      scores = scores, vec_scores = vec_scores
-    ),
-    class = "cv"
-  )
+  return(rgcca_predict(
+    res,
+    metric = metric,
+    blocks_test = blocks_test,
+    prediction_model = prediction_model,
+    ...
+  )$score)
 }

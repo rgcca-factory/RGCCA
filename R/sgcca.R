@@ -21,8 +21,9 @@
 #' implementation, i.e. each block is deflated with respect to its own
 #' component. Moreover, we stress that the numbers of components per block
 #' could differ from one block to another.
-#' @inheritParams select_analysis
+#' @inheritParams rgcca
 #' @inheritParams rgccad
+#' @param na.rm If TRUE, runs sgcca only on available data.
 #' @return \item{Y}{A list of \eqn{J} elements. Each element of \eqn{Y} is a
 #' matrix that contains the analysis components for the corresponding block.}
 #' @return \item{a}{A list of \eqn{J} elements. Each element of \eqn{a} is a
@@ -31,9 +32,6 @@
 #' a vector such that Y[[j]][, h] = blocks[[j]] \%*\% astar[[j]][, h].}
 #' @return \item{crit}{A vector of integer that contains for each component the
 #' values of the analysis criteria across iterations.}
-#' @return \item{AVE}{A list of numerical values giving the indicators of model
-#' quality based on the Average Variance Explained (AVE): AVE(for each block),
-#' AVE(outer model), AVE(inner model).}
 #' @references Tenenhaus, A., Philippe, C., Guillemot, V., Le Cao, K. A.,
 #' Grill, J., and Frouin, V. , "Variable selection for generalized canonical
 #' correlation analysis.," Biostatistics, vol. 15, no. 3, pp. 569-583, 2014.
@@ -47,8 +45,7 @@
 #' # Download the dataset's package at http://biodev.cea.fr/sgcca/.
 #' # --> gliomaData_0.4.tar.gz
 #'
-#' require(gliomaData)
-#' data(ge_cgh_locIGR)
+#' data("ge_cgh_locIGR", package = "gliomaData")
 #'
 #' blocks <- ge_cgh_locIGR$multiblocks
 #' Loc <- factor(ge_cgh_locIGR$y)
@@ -146,22 +143,20 @@ sgcca <- function(blocks, connection = 1 - diag(length(blocks)),
                   sparsity = rep(1, length(blocks)),
                   ncomp = rep(1, length(blocks)), scheme = "centroid",
                   init = "svd", bias = TRUE, tol = .Machine$double.eps,
-                  verbose = FALSE, quiet = FALSE, na.rm = TRUE,
-                  superblock = FALSE, response = NULL, n_iter_max = 1000) {
+                  verbose = FALSE, na.rm = TRUE,
+                  superblock = FALSE, response = NULL,
+                  disjunction = NULL, n_iter_max = 1000) {
   update_col_n <- function(x, y, n) {
     x[, n] <- y
     return(x)
   }
 
   if (verbose) {
-    if (mode(scheme) != "function") {
-      cat(
-        "Computation of the SGCCA block components based on the",
-        scheme, "scheme \n"
-      )
-    } else {
-      cat("Computation of the SGCCA block components based on the g scheme \n")
-    }
+    scheme_str <- ifelse(is(scheme, "function"), "user-defined", "scheme")
+    cat(
+      "Computation of the SGCCA block components based on the",
+      scheme_str, "scheme \n"
+    )
   }
 
   ##### Initialization #####
@@ -171,7 +166,6 @@ sgcca <- function(blocks, connection = 1 - diag(length(blocks)),
   J <- length(blocks)
   pjs <- vapply(blocks, NCOL, numeric(1L))
   nb_ind <- NROW(blocks[[1]])
-  AVE_inner <- rep(NA, max(ncomp))
 
   crit <- list()
   R <- blocks
@@ -190,7 +184,7 @@ sgcca <- function(blocks, connection = 1 - diag(length(blocks)),
   if (is.vector(sparsity)) {
     sparsity <- matrix(
       rep(sparsity, N + 1),
-      nrow = N + 1, J, byrow = T
+      nrow = N + 1, J, byrow = TRUE
     )
   }
 
@@ -205,11 +199,12 @@ sgcca <- function(blocks, connection = 1 - diag(length(blocks)),
     gcca_result <- sgccak(R, connection,
       sparsity = sparsity[n, ], scheme = scheme,
       init = init, bias = bias, tol = tol,
-      verbose = verbose, na.rm = na.rm, quiet = quiet, n_iter_max = n_iter_max
+      verbose = verbose, na.rm = na.rm,
+      response = response, disjunction = disjunction,
+      n_iter_max = n_iter_max
     )
 
-    # Store AVE_inner, crit
-    AVE_inner[n] <- gcca_result$AVE_inner
+    # Store crit
     crit[[n]] <- gcca_result$crit
 
     # Store Y, a, factors and weights
@@ -222,8 +217,8 @@ sgcca <- function(blocks, connection = 1 - diag(length(blocks)),
         astar[, 1] <- a[[J]][, 1, drop = FALSE]
       } else {
         astar[, n] <- gcca_result$a[[J]] -
-          astar[, seq(n - 1), drop = F] %*%
-          drop(t(a[[J]][, n]) %*% P[, seq(n - 1), drop = F])
+          astar[, seq(n - 1), drop = FALSE] %*%
+          drop(t(a[[J]][, n]) %*% P[, seq(n - 1), drop = FALSE])
       }
     } else {
       if (n == 1) {
@@ -232,8 +227,8 @@ sgcca <- function(blocks, connection = 1 - diag(length(blocks)),
         astar <- lapply(seq(J), function(b) {
           update_col_n(
             astar[[b]],
-            gcca_result$a[[b]] - astar[[b]][, seq(n - 1), drop = F] %*%
-              drop(t(a[[b]][, n]) %*% P[[b]][, seq(n - 1), drop = F]),
+            gcca_result$a[[b]] - astar[[b]][, seq(n - 1), drop = FALSE] %*%
+              drop(t(a[[b]][, n]) %*% P[[b]][, seq(n - 1), drop = FALSE]),
             n
           )
         })
@@ -266,41 +261,12 @@ sgcca <- function(blocks, connection = 1 - diag(length(blocks)),
         )
       })
     }
-
-    if (!quiet) {
-      for (b in seq(J)) {
-        if (sum(gcca_result$a[[b]][, n] != 0) <= 1) {
-          warning(
-            "Deflation failed because only one variable was ",
-            "selected for block ", b, ". \n"
-          )
-        }
-      }
-    }
   }
 
   ##### Generation of the output #####
-  AVE_X <- lapply(seq(J), function(b) {
-    apply(
-      cor(blocks[[b]], Y[[b]], use = "pairwise.complete.obs")^2, 2, mean
-    )
-  })
-
-  # AVE outer
-  outer <- matrix(unlist(AVE_X), nrow = max(ncomp))
-  AVE_outer <- as.vector((outer %*% pjs) / sum(pjs))
-  AVE_X <- shave(AVE_X, ncomp)
-  AVE <- list(AVE_X = AVE_X, AVE_outer = AVE_outer, AVE_inner = AVE_inner)
-
   if (N == 0) crit <- unlist(crit)
 
-  out <- list(
-    Y = Y,
-    a = a,
-    astar = astar,
-    crit = crit,
-    AVE = AVE
-  )
+  out <- list(Y = Y, a = a, astar = astar, crit = crit)
 
   class(out) <- "sgcca"
   return(out)

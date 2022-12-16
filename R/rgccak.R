@@ -4,10 +4,9 @@
 #' dimensionality of each block \eqn{X_j, j = 1, ..., J}, the primal
 #' (when n > p_j) or the dual (when n < p_j) algorithm is used (see
 #' Tenenhaus et al. 2015)
-#' @inheritParams select_analysis
 #' @inheritParams rgccad
 #' @param A  A list that contains the \eqn{J} blocks of variables from which
-#' block components are constructed. It could be eiher the original matrices
+#' block components are constructed. It could be either the original matrices
 #' (\eqn{X_1, X_2, ..., X_J}) or the residual matrices
 #' (\eqn{X_{h1}, X_{h2}, ..., X_{hJ}}).
 #' @param C A symmetric matrix (J*J) that describes the
@@ -18,8 +17,6 @@
 #' @return \item{a}{A list of \eqn{J} elements. Each element of the list is a
 #' matrix that contains a block weight vector associated with one block and
 #' one deflation stage.}
-#' @return \item{AVE_inner}{Average Variance Explained (AVE) of the
-#' inner model.}
 #' @return \item{crit}{A list of max(ncomp) elements. Each element
 #' (one per deflation stage) is a vector that contains the value of the RGCCA
 #' objective function across iterations.}
@@ -47,114 +44,75 @@
 #' @title Internal function for computing the RGCCA parameters (RGCCA block
 #' components, outer weight vectors, etc.).
 #' @importFrom MASS ginv
-#' @importFrom stats cor rnorm
 #' @importFrom graphics plot
 #' @importFrom Deriv Deriv
-
+#' @noRd
 rgccak <- function(A, C, tau = rep(1, length(A)), scheme = "centroid",
                    verbose = FALSE, init = "svd", bias = TRUE,
                    tol = 1e-08, na.rm = TRUE, n_iter_max = 1000) {
   if (is.function(scheme)) {
     g <- scheme
-    # check for parity of g
-    ctrl <- !any(g(-5:5) != g(5:-5))
   } else {
     switch(scheme,
       "horst" = {
         g <- function(x) x
-        ctrl <- FALSE
       },
       "factorial" = {
         g <- function(x) x^2
-        ctrl <- TRUE
       },
       "centroid" = {
         g <- function(x) abs(x)
-        ctrl <- TRUE
       }
     )
   }
 
   dg <- Deriv::Deriv(g, env = parent.frame())
 
-  J <- length(A) # number of blocks
-  n <- NROW(A[[1]]) # number of individuals
-  pjs <- sapply(A, NCOL) # number of variables per block
-
   if (!is.numeric(tau)) {
     # From Schafer and Strimmer, 2005
-    tau <- sapply(A, tau.estimate, na.rm = na.rm)
+    tau <- vapply(A, tau.estimate, na.rm = na.rm, FUN.VALUE = 1.0)
   }
 
-  A <- lapply(A, as.matrix)
-  a <- alpha <- M <- Minv <- K <- list()
-
-  # Test for primal or dual for each block
-  which.primal <- which((n >= pjs) == 1)
-  which.dual <- which((n < pjs) == 1)
-
   ### Initialization
-  tmp <- rgcca_init(
-    A, init, bias, na.rm, tau, pjs, which.primal,
-    which.dual, J, n
-  )
-  a <- tmp$a
-  alpha <- tmp$alpha
-  Y <- tmp$Y
-  K <- tmp$K
-  M <- tmp$M
-  Minv <- tmp$Minv
+  init_object <- rgcca_init(A, init, bias, na.rm, tau)
+  a <- init_object$a
+  Y <- init_object$Y
 
   iter <- 1
-  crit <- numeric(n_iter_max)
+  crit <- NULL
   crit_old <- sum(C * g(cov2(Y, bias = bias)))
   a_old <- a
 
   repeat {
-    tmp <- rgcca_update(
-      A, a, alpha, Y, M, K, Minv, bias, na.rm, tau,
-      which.primal, which.dual, J, n, dg, C
-    )
-    a <- tmp$a
-    alpha <- tmp$alpha
-    Y <- tmp$Y
+    update_object <- rgcca_update(A, bias, na.rm, tau, dg, C, a, Y, init_object)
+    a <- update_object$a
+    Y <- update_object$Y
 
-    crit[iter] <- sum(C * g(cov2(Y, bias = bias)))
+    # Print out intermediate fit
+    crit <- c(crit, sum(C * g(cov2(Y, bias = bias))))
+
     if (verbose) {
       cat(
         " Iter: ", formatC(iter, width = 3, format = "d"),
-        " Fit:", formatC(crit[iter],
-          digits = 8,
-          width = 10, format = "f"
-        ),
+        " Fit: ", formatC(crit[iter], digits = 8, width = 10, format = "f"),
         " Dif: ", formatC(crit[iter] - crit_old,
-          digits = 8,
-          width = 10, format = "f"
+          digits = 8, width = 10, format = "f"
         ), "\n"
       )
     }
-
     stopping_criteria <- c(
-      drop(crossprod(unlist(a, F, F) - unlist(a_old, F, F))),
+      drop(crossprod(unlist(a, FALSE, FALSE) - unlist(a_old, FALSE, FALSE))),
       abs(crit[iter] - crit_old)
     )
 
-    if (any(stopping_criteria < tol) | (iter > 1000)) {
+    if (any(stopping_criteria < tol) || (iter > 1000)) {
       break
     }
+
     crit_old <- crit[iter]
     a_old <- a
     iter <- iter + 1
   }
-
-  for (j in seq_len(J)) {
-    if (ctrl & a[[j]][1] < 0) {
-      a[[j]] <- -a[[j]]
-      Y[, j] <- pm(A[[j]], a[[j]], na.rm = na.rm)
-    }
-  }
-
-  crit <- crit[which(crit != 0)]
 
   if (iter > n_iter_max) {
     warning(
@@ -172,10 +130,6 @@ rgccak <- function(A, C, tau = rep(1, length(A)), scheme = "centroid",
     plot(crit, xlab = "iteration", ylab = "criteria")
   }
 
-  AVEinner <- sum(C * cor(Y)^2 / 2) / (sum(C) / 2)
-  result <- list(
-    Y = Y, a = a, crit = crit,
-    AVE_inner = AVEinner, tau = tau
-  )
-  return(result)
+  result <- rgcca_postprocess(A, a, Y, g, na.rm)
+  return(list(Y = result$Y, a = result$a, crit = crit, tau = tau))
 }

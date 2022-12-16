@@ -8,12 +8,12 @@ verify_norm_constraint <- function(a, const, tol) {
 }
 
 verify <- function(A, sparsity, init = "svd", tol = 1e-14) {
-  J <- length(A)
-  n <- nrow(A[[1]])
   pjs <- vapply(A, ncol, FUN.VALUE = integer(1L))
   const <- sparsity * pjs
-  tmp <- sgcca_init(A, init, TRUE, TRUE, const, pjs, J, n)
-  verify_norm_constraint(tmp$a, const, tol)
+  init_object <- sgcca_init(
+    A, init, TRUE, TRUE, sparsity, response = NULL, disjunction = FALSE
+  )
+  verify_norm_constraint(init_object$a, const, tol)
 }
 
 data(Russett)
@@ -21,7 +21,7 @@ X_agric <- as.matrix(Russett[, c("gini", "farm", "rent")])
 X_ind <- as.matrix(Russett[, c("gnpr", "labo")])
 X_polit <- as.matrix(Russett[, c("demostab", "dictator")])
 A <- list(X_agric, X_ind, X_polit)
-A <- scaling(A, scale = T, bias = T, scale_block = T)
+A <- scaling(A, scale = TRUE, bias = TRUE, scale_block = TRUE)
 
 test_that("sgcca_init generates vectors a that satisfy the norm constraints", {
   verify(A, sparsity = c(1, 1, 1), init = "svd")

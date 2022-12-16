@@ -1,7 +1,8 @@
 data(Russett)
 X_agric <- as.matrix(Russett[, c("gini", "farm", "rent")])
 X_ind <- as.matrix(Russett[, c("gnpr", "labo")])
-X_polit <- as.matrix(Russett[, c("demostab")])
+X_polit <- as.matrix(Russett[, "demostab"])
+X_quali <- colnames(Russett)[9:11][apply(Russett[, 9:11], 1, which.max)]
 
 test_that("check_blocks returns a list of blocks", {
   expect_true(is.list(check_blocks(X_agric)))
@@ -17,6 +18,26 @@ test_that("check_blocks returns a list of matrices", {
   blocks <- list(as.matrix(X_agric), as.data.frame(X_ind), as.vector(X_polit))
   expect_true(
     all(vapply(check_blocks(blocks), is.matrix, FUN.VALUE = logical(1)))
+  )
+})
+
+test_that("check_blocks returns an error if a block is qualitative and
+          is not the response block", {
+  blocks <- list(X_agric, X_ind, X_quali)
+  expect_error(
+    check_blocks(blocks), "unsupported qualitative block.",
+    fixed = TRUE
+  )
+  expect_error(check_blocks(blocks, response = 3), NA)
+})
+
+test_that("check_blocks returns an error if a block has multiple variates
+          with at least a qualitative one", {
+  blocks <- list(X_agric, X_ind, cbind(X_quali, X_ind))
+  expect_error(
+    check_blocks(blocks, response = 3),
+    "unsupported multivariate qualitative block.",
+    fixed = TRUE
   )
 })
 
@@ -45,11 +66,11 @@ test_that("check_blocks renames blocks if names are missing", {
 
 test_that("check_blocks add colnames with blocks with no colnames", {
   blocks <- list(agri = X_agric, polit = X_polit)
-  expect_equal(colnames(check_blocks(blocks)[[2]]), c("polit"))
+  expect_equal(colnames(check_blocks(blocks)[[2]]), "polit")
   expect_equal(colnames(check_blocks(blocks)[[1]]), colnames(X_agric))
   colnames(blocks[[1]]) <- NULL
   expect_equal(
-    colnames(check_blocks(blocks)[[1]]), paste0("V1_", seq(NCOL(X_agric)))
+    colnames(check_blocks(blocks)[[1]]), paste0("V1_", seq_len(NCOL(X_agric)))
   )
   expect_message(check_blocks(blocks, quiet = FALSE),
     "Missing colnames are automatically labeled.",
@@ -141,11 +162,4 @@ test_that("check_blocks returns blocks with the same rownames in the same
   blocks2 <- check_blocks(blocks, add_NAlines = TRUE)
   expect_equal(rownames(blocks2[[1]]), rownames(blocks2[[2]]))
   expect_equal(rownames(blocks2[[1]]), union(rownames(blocks[[1]]), "xxx"))
-})
-
-test_that("check_blocks removes null variance columns if init is TRUE", {
-  blocks <- list(agric = cbind(X_agric, 0))
-  colnames(blocks[[1]])[4] <- "null_variance_col"
-  expect_equal(check_blocks(blocks, init = TRUE)[[1]], X_agric)
-  expect_equal(check_blocks(blocks, init = FALSE), blocks)
 })

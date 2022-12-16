@@ -11,6 +11,11 @@ rgcca_transform(rgcca_res, blocks_test)
 
 \item{blocks_test}{A list of either dataframes or matrices to be projected.}
 }
+\value{
+A list of matrices containing the projections
+of the test blocks using the canonical components from the fitted RGCCA
+object.
+}
 \description{
 Project blocks of data on canonical components extracted with a RGCCA model.
 }

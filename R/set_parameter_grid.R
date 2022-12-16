@@ -1,9 +1,12 @@
-# Set parameter grid
-#
-# Produce a grid of parameters for rgcca (tau, sparsity or ncomp) that will
-# be evaluated either using cross validation or permutation.
+#' Set parameter grid
+#'
+#' Produce a grid of parameters for rgcca (tau, sparsity or ncomp) that will
+#' be evaluated either using cross validation or permutation.
+#' @inheritParams rgcca_cv
+#' @noRd
 set_parameter_grid <- function(par_type, par_length, par_value, blocks,
-                               response = NULL, superblock = FALSE) {
+                               response = NULL, superblock = FALSE,
+                               disjunction = FALSE) {
   ### Auxiliary functions
   check_param_type <- function(par_value, blocks) {
     is_valid_type <- is.null(par_value) || is.vector(par_value) ||
@@ -62,7 +65,7 @@ set_parameter_grid <- function(par_type, par_length, par_value, blocks,
       return(list(par_type = par_type, par_value = par_value))
     }
     # If par_value is already a grid, we just check that it is valid.
-    par_value <- t(vapply(seq(nrow(par_value)), function(i) {
+    par_value <- t(vapply(seq_len(NROW(par_value)), function(i) {
       check_function(par_value[i, ])
     }, FUN.VALUE = double(ncol(par_value))))
     par_value <- set_response_value(par_value, response_value)
@@ -76,9 +79,10 @@ set_parameter_grid <- function(par_type, par_length, par_value, blocks,
 
   switch(par_type,
     "ncomp" = {
+      if (!is.null(response)) ncols <- ncols[-response]
       min_values <- rep(1, J + 1)
       max_values <- min(
-        ifelse(superblock, sum(ncols), min(ncols[-response])), par_length
+        ifelse(superblock, sum(ncols), min(ncols)), par_length
       )
       response_value <- function(x) {
         return(max(x[-response]))
@@ -90,7 +94,9 @@ set_parameter_grid <- function(par_type, par_length, par_value, blocks,
     "tau" = {
       min_values <- rep(0, J + 1)
       max_values <- 1
-      response_value <- NULL
+      response_value <- function(x) {
+        ifelse(disjunction, 0, x[response])
+      }
       check_function <- function(x) {
         check_penalty(x, blocks, method = "rgcca", superblock = superblock)
       }
@@ -98,7 +104,9 @@ set_parameter_grid <- function(par_type, par_length, par_value, blocks,
     "sparsity" = {
       min_values <- c(1 / sqrt(ncols), 1 / sqrt(sum(ncols)))
       max_values <- 1
-      response_value <- NULL
+      response_value <- function(x) {
+        ifelse(disjunction, 0, x[response])
+      }
       check_function <- function(x) {
         check_penalty(x, blocks, method = "sgcca", superblock = superblock)
       }
@@ -108,8 +116,13 @@ set_parameter_grid <- function(par_type, par_length, par_value, blocks,
 
   param <- set_grid(check_function, min_values, max_values, response_value)
 
-  if (par_type == "ncomp") param$par_value <- round(param$par_value)
-  param$par_value <- param$par_value[!duplicated(param$par_value), ]
+  if (par_type == "ncomp") {
+    param$par_value <- round(param$par_value)
+  } else {
+    param$par_value <- round(param$par_value, digits = 2)
+  }
+  param$par_value <-
+    param$par_value[!duplicated(param$par_value), , drop = FALSE]
 
   return(param)
 }

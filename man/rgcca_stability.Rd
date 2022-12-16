@@ -6,9 +6,9 @@
 \usage{
 rgcca_stability(
   rgcca_res,
-  keep = sapply(rgcca_res$a, function(x) mean(x != 0)),
+  keep = vapply(rgcca_res$a, function(x) mean(x != 0), FUN.VALUE = 1),
   n_boot = 100,
-  n_cores = parallel::detectCores() - 1,
+  n_cores = 1,
   verbose = FALSE,
   balanced = TRUE,
   keep_all_variables = FALSE
@@ -46,8 +46,8 @@ variables.}
 }
 \description{
 This function can be used to identify the most stable variables
-identified as relevant by SGCCA. The Variable Importance in the Projection
-(VIP) criterion is used to identify the most stable variables.
+identified as relevant by SGCCA. A Variable Importance in the Projection
+(VIP) based criterion is used to identify the most stable variables.
 }
 \examples{
 \dontrun{
@@ -55,27 +55,25 @@ identified as relevant by SGCCA. The Variable Importance in the Projection
 # stability and bootstrap #
 ###########################
 
-require(gliomaData)
-data(ge_cgh_locIGR)
+data("ge_cgh_locIGR", package = "gliomaData")
 blocks <- ge_cgh_locIGR$multiblocks
 Loc <- factor(ge_cgh_locIGR$y)
 levels(Loc) <- colnames(ge_cgh_locIGR$multiblocks$y)
-connection <- matrix(c(0, 0, 1, 0, 0, 1, 1, 1, 0), 3, 3)
-blocks[[3]] <- blocks[[3]][, -3]
+blocks[[3]] <- Loc
+
 
 fit.sgcca <- rgcca(blocks,
-  connection = connection,
   sparsity = c(.071, .2, 1),
   ncomp = c(1, 1, 1),
   scheme = "centroid",
-  verbose = TRUE
+  verbose = TRUE, response = 3
 )
 
-boot.out <- bootstrap(fit.sgcca, n_boot = 100, n_cores = 1, verbose = TRUE)
+boot.out <- bootstrap(fit.sgcca, n_boot = 100, n_cores = 1)
 
 fit.stab <- rgcca_stability(fit.sgcca,
   keep = sapply(fit.sgcca$a, function(x) mean(x != 0)),
-  n_cores = 15,
+  n_cores = 1, n_boot = 10,
   verbose = TRUE
 )
 

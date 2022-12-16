@@ -1,8 +1,8 @@
-# Keeps only subject without missing values
-# @inheritParams rgccad
-# @return The intersected list from matrices
-# @title intersection_list
-# @export intersection_list
+#' Keeps subjects without missing values
+#' @inheritParams rgccad
+#' @return A list of blocks without missing values and having the same row names
+#' @title intersection_list
+#' @noRd
 intersection_list <- function(A) {
   # Find rows without missing values in each block
   valid_rows <- lapply(A, complete.cases)

@@ -29,7 +29,6 @@ Performs multiblock component methods (PCA, CCA, PLS, MCOA, MAXVAR, R/SGCCA, etc
     - [Windows & Mac](#windows--mac)
   - [Installation of a development branch from the git repository](#installation-of-a-development-branch-from-the-git-repository)
   - [Execution](#execution)
-    - [Shiny interface](#shiny-interface)
     - [Vignette](#vignette)
     - [Command line](#command-line)
       - [Files parameters](#files-parameters)
@@ -129,15 +128,9 @@ Required:
 
 ```
 sudo apt-get install -y git r-base && \
-    R -e 'install.packages(c("RGCCA", "ggplot2", "optparse", "shiny", "Deriv", "rlang", "ggrepel", "openxlsx")' && \
+    R -e 'install.packages(c("RGCCA", "ggplot2", "Deriv")' && \
     git clone https://github.com/rgcca-factory/RGCCA && \
 	cd RGCCA
-```
-
-On Ubuntu, if dependencies errors appear for plotly, try :
-```
-sudo apt-get install -y libxml2-dev libcurl4-openssl-dev libssl-dev liblapack-dev && \
-    apt-get update
 ```
 
 ### Windows & Mac
@@ -157,14 +150,6 @@ devtools::install_github(repo="https://github.com/rgcca-factory/RGCCA.git", ref 
 
 ## Execution
 If the Linux dependencies installation step was not executed previously (e.g., for Windows users), their automatic installation could take several minutes during the first execution. If dependencies compatibility errors appear, the required (and suggested) librairies to import are listed in the [DESCRIPTION](https://github.com/BrainAndSpineInstitute/rgcca_Rpackage/blob/master/DESCRIPTION) file.
-
-
-### Shiny interface
-- Required: shiny, shinyjs, devtools, bsplus (R packages)
-
-[Shiny](https://shiny.rstudio.com/) is a R framework providing a "user-friendly" web interface. When a parameter of the analysis is modified (e.g. the block to visualize), its impact can be directly observed on the graphical outputs.
-
-After installing [Rstudio](https://www.rstudio.com/products/rstudio/download/#download), open ```inst/shiny/server.R``` file with it. In the RStudio upper menu, go to "Tools", "Install packages" and write "shiny" in the textual field. Then, the application could be launched by clicking on the ```Run App button``` in the upper right corner of the script menu bar. Click [here](https://github.com/rgcca-factory/RGCCA/blob/release/3.0.0/inst/shiny/tutorialShiny.md) to read the tutorial.
 
 
 ### Vignette

@@ -1,5 +1,11 @@
-par_pblapply <- function(X, FUN, ..., n_cores = parallel::detectCores() - 1,
-                         verbose = TRUE) {
+#' Parallel lapply with progress bar
+#' @inheritParams rgcca_cv
+#' @param X a vector (atomic or list) or an expression object.
+#' @param FUN the function to be applied to each element of X.
+#' @param ... optional arguments to FUN.
+#' @return The result of lapply(X, FUN, ...)
+#' @noRd
+par_pblapply <- function(X, FUN, ..., n_cores = 1, verbose = TRUE) {
   check_integer("n_cores", n_cores, min = 0)
 
   if (!verbose) {
