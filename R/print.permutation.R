@@ -44,7 +44,7 @@ print.permutation <- function(x, ...) {
     "\nThe best combination is: ",
     paste(format(x$bestpenalties, digits = 3), collapse = ", "),
     " for a z score of ", format(x$stats$zstat[best], digits = 3),
-    " and a p-value of ", format(x$stats$pvals[best], digits = 3),
+    " and a p-value of ", format(x$stats$pval[best], digits = 3),
     ".\n"
   ))
 }

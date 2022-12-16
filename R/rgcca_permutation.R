@@ -61,7 +61,7 @@
 #' @return \item{penalties}{Matrix giving, the set of tuning paramaters
 #' considered during the permutation process (tau or sparsity).}
 #' @return \item{stats}{A data.frame containing the set of parameter values,
-#' and the associated non permuted criterion, mean standard deviation of
+#' and the associated non permuted criterion, mean and standard deviation of
 #' permuted criteria, Z-statistic and p-value.}
 #' @references Witten, D. M., Tibshirani, R., & Hastie, T. (2009). A penalized
 #' matrix decomposition, with applications to sparse principal components and
@@ -306,8 +306,6 @@ rgcca_permutation <- function(blocks, par_type = "tau", par_value = NULL,
   )
 
   # Compute statistics
-  means <- apply(permcrit, 1, mean, na.rm = TRUE)
-  sds <- apply(permcrit, 1, sd, na.rm = TRUE)
   pvals <- vapply(
     seq_len(NROW(param$par_value)),
     function(k) mean(permcrit[k, ] >= crit[k]),
@@ -324,16 +322,19 @@ rgcca_permutation <- function(blocks, par_type = "tau", par_value = NULL,
     FUN.VALUE = double(1)
   )
   if (length(rgcca_args$blocks) > 5) {
-    combinations <- paste(
-      "Set ", sep = "", seq_along(pvals)
-    )
+    combinations <- paste("Set ", sep = "", seq_len(NROW(param$par_value)))
   } else {
     combinations <- apply(
       format(param$par_value, digits = 2), 1, paste0, collapse = "/"
     )
   }
   stats <- data.frame(
-    combinations, crit, means, sds, zstat, pvals
+    combinations = combinations,
+    crit = crit,
+    mean = apply(permcrit, 1, mean, na.rm = TRUE),
+    sd = apply(permcrit, 1, sd, na.rm = TRUE),
+    zstat = zstat,
+    pval = pvals
   )
 
   structure(list(

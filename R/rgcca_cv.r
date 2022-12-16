@@ -35,6 +35,9 @@
 #' (for classification)}
 #' @return \item{penalties}{A matrix giving, for each blocks, the penalty
 #' combinations (tau or sparsity)}
+#' @return \item{stats}{A data.frame containing the set of parameter values,
+#' and the mean, standard deviation, median, 1st and 3rd quartiles of
+#' the associated cross-validated scores.}
 #' @details
 #' At each round of cross-validation, for each
 #' variable, a predictive model of the first RGCCA component of each block
@@ -228,11 +231,30 @@ rgcca_cv <- function(blocks,
     which.min(apply(W, 1, mean, na.rm = TRUE))
   )
 
+  # Compute statistics
+  if (length(rgcca_args$blocks) > 5) {
+    combinations <- paste("Set ", sep = "", seq_len(NROW(param$par_value)))
+  } else {
+    combinations <- apply(
+      format(param$par_value, digits = 2), 1, paste0, collapse = "/"
+    )
+  }
+
+  stats <- data.frame(
+    combinations,
+    mean = apply(W, 1, mean),
+    sd = apply(W, 1, sd),
+    median = apply(W, 1, median),
+    Q1 = apply(W, 1, quantile, 0.25),
+    Q3 = apply(W, 1, quantile, 0.75)
+  )
+
   res <- list(
     k = k,
     cv = W,
     opt = opt,
     call = rgcca_args,
+    stats = stats,
     n_run = n_run,
     metric = metric,
     par_type = param$par_type,

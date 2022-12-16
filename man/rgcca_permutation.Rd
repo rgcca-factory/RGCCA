@@ -164,7 +164,7 @@ obtained for each set of tuning parameters.}
 considered during the permutation process (tau or sparsity).}
 
 \item{stats}{A data.frame containing the set of parameter values,
-and the associated non permuted criterion, mean standard deviation of
+and the associated non permuted criterion, mean and standard deviation of
 permuted criteria, Z-statistic and p-value.}
 }
 \description{

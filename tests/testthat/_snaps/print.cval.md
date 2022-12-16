@@ -55,9 +55,9 @@
       Validation: kfold with 5 folds and 1 run(s)) 
       Prediction model: lda 
       
-        Tuning parameters Mean Accuracy Mean - Sd Mean + Sd
-      1       0.0/0.2/0.0         0.893     0.787     0.999
-      2       0.0/0.0/0.0         0.871     0.753     0.989
+        Tuning parameters Mean Accuracy    Sd
+      1       0.0/0.2/0.0         0.893 0.106
+      2       0.0/0.0/0.0         0.871 0.118
       
       The best combination is: 0.0 0.2 0.0 for a mean Accuracy of 0.893 
 
@@ -87,11 +87,11 @@
       Validation: loo 
       Prediction model: lm 
       
-        Tuning parameters Mean MAE Mean - Sd Mean + Sd
-      1    1.00/1.00/1.00    0.880     0.406     1.354
-      2    0.58/0.71/0.58    0.930     0.437     1.422
+        Tuning parameters Mean MAE    Sd
+      1    1.00/1.00/1.00     0.88 0.474
+      2    0.58/0.71/0.58     0.93 0.492
       
-      The best combination is: 1 1 1 for a mean MAE of 0.880 
+      The best combination is: 1 1 1 for a mean MAE of 0.88 
 
 # print_cval prints the expected text 4
 
@@ -119,9 +119,9 @@
       Validation: kfold with 5 folds and 1 run(s)) 
       Prediction model: lda 
       
-        Tuning parameters Mean Kappa Mean - Sd Mean + Sd
-      1    1.00/1.00/0.00      0.693     0.341     1.045
-      2    0.58/0.71/0.00      0.618     0.172     1.064
+        Tuning parameters Mean Kappa    Sd
+      1    1.00/1.00/0.00      0.693 0.352
+      2    0.58/0.71/0.00      0.618 0.446
       
       The best combination is: 1 1 0 for a mean Kappa of 0.693 
 

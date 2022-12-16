@@ -174,6 +174,10 @@ n_prediction = 'k' * 'n_run' for validation = 'kfold').}
 
 \item{penalties}{A matrix giving, for each blocks, the penalty
 combinations (tau or sparsity)}
+
+\item{stats}{A data.frame containing the set of parameter values,
+and the mean, standard deviation, median, 1st and 3rd quartiles of
+the associated cross-validated scores.}
 }
 \description{
 Tune the sparsity coefficient (if the model is sparse) or tau
