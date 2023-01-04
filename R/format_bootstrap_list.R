@@ -7,7 +7,6 @@
 #' @param W raw bootstrap results
 #' @return A data.frame containing the results.
 #' @noRd
-
 format_bootstrap_list <- function(W, rgcca_res) {
   # Repeat values for variables, blocks and components
   grid <- do.call(rbind, lapply(seq_along(rgcca_res$a), function(j) {
@@ -20,13 +19,19 @@ format_bootstrap_list <- function(W, rgcca_res) {
   }))
 
   # Repeat values by adding the type and the number of the bootstrap sample
-  grid <- merge(grid, expand.grid(list(
-    type = c("weights", "loadings"),
-    boot = seq_along(W)
-  ), stringsAsFactors = FALSE), by = NULL)
+  df <- expand.grid(
+    var = grid[, 1], type = c("weights", "loadings"), boot = seq_along(W),
+    stringsAsFactors = FALSE
+  )
+  df <- cbind(df, do.call(cbind, lapply(grid[-1], function(x) {
+    expand.grid(
+      x, type = c("weights", "loadings"), boot = seq_along(W),
+      stringsAsFactors = FALSE
+    )[, 1]
+  })))
 
   # Unlist the values into a new column of the grid
-  grid$value <- unlist(W, use.names = FALSE)
+  df$value <- unlist(W, use.names = FALSE)
 
-  return(grid)
+  return(df)
 }
