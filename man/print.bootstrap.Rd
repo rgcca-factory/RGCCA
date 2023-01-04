@@ -4,13 +4,26 @@
 \alias{print.bootstrap}
 \title{Print rgcca_bootstrap}
 \usage{
-\method{print}{bootstrap}(x, type = "weights", empirical = TRUE, display_order = FALSE, ...)
+\method{print}{bootstrap}(
+  x,
+  block = seq_along(x$rgcca$call$blocks),
+  comp = 1,
+  type = "weights",
+  empirical = TRUE,
+  display_order = FALSE,
+  adj.method = "fdr",
+  ...
+)
 }
 \arguments{
 \item{x}{A fitted rgcca_bootstrap object
 (see \code{\link[RGCCA]{rgcca_bootstrap}})}
 
-\item{type}{Character string indicating the bootstrapped object to print:
+\item{block}{A numeric corresponding to the block(s) to plot.}
+
+\item{comp}{A numeric vector indicating the components to consider.}
+
+\item{type}{Character string indicating the bootstrapped object to plot:
 block-weight vectors ("weights", default) or block-loading vectors
 ("loadings").}
 
@@ -18,7 +31,10 @@ block-weight vectors ("weights", default) or block-loading vectors
 intervals and p-values are derived from the empirical distribution.
 (defaut: TRUE)}
 
-\item{display_order}{A logical value for ordering the variables}
+\item{display_order}{A logical value for ordering the variables.}
+
+\item{adj.method}{Character string indicating the method used to adjust for
+p-values.}
 
 \item{...}{Further arguments in print
 the means, 95\% intervals, bootstrap ratio, p-values and other statistics.}

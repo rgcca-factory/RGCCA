@@ -92,40 +92,35 @@ rgcca_stability <- function(rgcca_res,
     n_cores = n_cores, verbose = verbose
   )
 
-  list_res <- format_bootstrap_list(W, rgcca_res, n_boot, 1)
-
-  J <- length(list_res[[1]])
+  res <- format_bootstrap_list(W, rgcca_res)
+  res <- res[res$type == "weights", ]
+  J <- length(rgcca_res$blocks)
 
   if (rgcca_res$call$superblock == TRUE) {
-    list_res <- lapply(list_res, function(x) x[-length(x)])
+    res <- res[res$block != names(rgcca_res$blocks)[J], ]
     rgcca_res$AVE$AVE_X <- rgcca_res$AVE$AVE_X[-J]
     rgcca_res$call$blocks <- rgcca_res$call$blocks[-J]
   }
 
   if (rgcca_res$opt$disjunction) {
-     list_res <- lapply(list_res, function(x) x[-rgcca_res$call$response])
+     res <- res[res$block != names(rgcca_res$blocks)[rgcca_res$call$response], ]
      rgcca_res$AVE$AVE_X <- rgcca_res$AVE$AVE_X[-rgcca_res$call$response]
   }
 
-  mylist <- lapply(
-    seq_along(list_res),
-    function(i) {
-      lapply(
-        list_res[[i]],
-        function(x) {
-          apply(x, 1, function(y) sum(abs(y), na.rm = TRUE))
-        }
-      )
-    }
-  )
+  top <- res %>%
+    # Compute the l1 norm for each variable across bootstrap samples
+    group_by(.data$comp, .data$block, .data$var) %>%
+    summarize(l1 = sum(abs(.data$value))) %>%
+    # Compute the intensity by multiplying each l1 norm by the corresponding AVE
+    mutate(intensity = (function(x, block, comp) {
+      x * rgcca_res$AVE$AVE_X[[block[1]]][as.integer(comp[1])]
+    })(.data$l1, .data$block, .data$comp)) %>%
+    # Take the mean over the different components for each variable
+    group_by(.data$block, .data$var) %>%
+    summarize(top = mean(.data$intensity))
+  top <- data.frame(top, row.names = top$var)
+  top <- top[unlist(lapply(rgcca_res$call$blocks, colnames)), ]
 
-  intensity <- Map(
-    "*",
-    do.call(Map, c(rbind, mylist)),
-    rgcca_res$AVE$AVE_X
-  )
-
-  top <- lapply(intensity, function(x) colMeans(x, na.rm = TRUE))
   perc <- elongate_arg(keep, top)
 
   if (is.null(dim(rgcca_res$call$sparsity))) {
@@ -140,21 +135,18 @@ rgcca_stability <- function(rgcca_res,
     perc[which(rgcca_res$call$sparsity[1, ] == 1)] <- 1
   }
 
-  keepVar <- lapply(
-    seq_along(top),
-    function(x) {
-      order(top[[x]],
-        decreasing = TRUE
-      )[1:round(perc[x] * length(top[[x]]))]
-    }
-  )
+  # Keep a percentage of the variables with the top intensities
+  keepVar <- lapply(seq_along(rgcca_res$AVE$AVE_X), function(j) {
+    x <- top[top$block == names(rgcca_res$AVE$AVE_X)[j], "top"]
+    order(x, decreasing = TRUE)[seq(round(perc[j] * length(x)))]
+  })
 
   if (rgcca_res$opt$disjunction) {
     keepVar[[rgcca_res$call$response]] <- 1
   }
 
   rgcca_res$call$blocks <- Map(
-    function(x, y) x[, y], rgcca_res$call$blocks, keepVar
+    function(x, y) x[, y, drop = FALSE], rgcca_res$call$blocks, keepVar
   )
   rgcca_res$call$tau <-
     rgcca_res$call$sparsity <- rep(1, length(rgcca_res$call$blocks))
@@ -164,7 +156,7 @@ rgcca_stability <- function(rgcca_res,
   return(structure(list(
     top = top,
     keepVar = keepVar,
-    bootstrap = list_res,
+    bootstrap = res,
     rgcca_res = rgcca_res
   ),
   class = "stability"

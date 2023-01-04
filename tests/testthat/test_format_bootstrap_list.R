@@ -13,16 +13,16 @@ W <- lapply(seq(n_boot), function(i) {
   rgcca_bootstrap_k(fit_rgcca, sample(seq_len(nrow(blocks[[1]]))))
 })
 
-test_that("format_bootstrap_list reorders raw bootstrap results", {
-  res <- format_bootstrap_list(W, fit_rgcca, n_boot, n = 1)
-  expect_equal(length(res), max(ncomp))
-  expect_true(
-    all(vapply(res, length, FUN.VALUE = integer(1)) == length(blocks))
-  )
-  expect_true(
-    all(vapply(res, function(x) ncol(x[[1]]), FUN.VALUE = integer(1)) == n_boot)
-  )
+test_that("format_bootstrap_list creates a data.frame with bootstrap results", {
+  res <- format_bootstrap_list(W, fit_rgcca)
+  expect_true(nrow(res) == 2 * n_boot * sum(
+    vapply(fit_rgcca$a, length, FUN.VALUE = 1L)
+  ))
   n <- 1
   b <- 17
-  expect_equal(res[[n]][[1]][, b], W[[b]][[1]][[1]][, n])
+  w <- res %>%
+    dplyr::filter(
+      comp == n, boot == b, type == "weights", block == "agriculture"
+    )
+  expect_equal(w$value, unname(W[[b]][[1]][[1]][, n]))
 })

@@ -31,6 +31,7 @@ Depends:
 Imports:
     caret,
     Deriv,
+    dplyr,
     ggplot2,
     ggrepel,
     graphics,
@@ -40,7 +41,8 @@ Imports:
     parallel,
     pbapply,
     rlang,
-    stats
+    stats,
+    tidyr
 Suggests:
     devtools,
     FactoMineR,

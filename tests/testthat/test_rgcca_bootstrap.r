@@ -5,54 +5,39 @@ blocks <- list(
   politic = Russett[, 6:11]
 )
 p <- vapply(blocks, NCOL, FUN.VALUE = 1L)
-ncomp <- 1
-rgcca_out <- rgcca(blocks, ncomp = 1)
-boot <- rgcca_bootstrap(rgcca_out, n_boot = 4, n_cores = 1)
+
+test_structure <- function(res, n_boot, ncomp, p) {
+  expect_equal(length(res), 4)
+  expect_equal(dim(res$bootstrap), c(2 * n_boot * ncomp * sum(p), 6))
+  expect_is(res, "bootstrap")
+  expect_is(res$rgcca, "rgcca")
+}
 
 test_that("rgcca_bootstrap_default_1", {
-  expect_equal(length(boot), 2)
-  expect_equal(length(boot$bootstrap), 2)
-  boot1 <- boot$bootstrap[[1]][[1]]
-  expect_is(boot, "bootstrap")
-  expect_is(boot$rgcca, "rgcca")
-  expect_is(boot1, "list")
-  expect_is(boot1[[1]], "matrix")
-  expect_true(all(vapply(boot1, NCOL, FUN.VALUE = 1L) == 4))
-  expect_identical(vapply(boot1, NROW, FUN.VALUE = 1L), p)
+  rgcca_out <- rgcca(blocks, ncomp = 1)
+  boot <- rgcca_bootstrap(rgcca_out, n_boot = 4, n_cores = 1)
+  test_structure(boot, 4, 1, p)
 })
 
 ### Case ncomp = 2
-rgcca_out <- rgcca(blocks, ncomp = 2, tau = "optimal")
-boot <- rgcca_bootstrap(rgcca_out, n_boot = 2, n_cores = 1)
-
 test_that("rgcca_bootstrap_default", {
-  expect_equal(length(boot), 2)
-  expect_equal(length(boot$bootstrap), 2)
-  boot1 <- boot$bootstrap[[1]][[1]]
-  expect_is(boot, "bootstrap")
-  expect_is(boot$rgcca, "rgcca")
-  expect_is(boot1, "list")
-  expect_is(boot1[[1]], "matrix")
-  expect_true(all(vapply(boot1, NCOL, FUN.VALUE = 1L) == 2))
-  expect_identical(vapply(boot1, NROW, FUN.VALUE = 1L), p)
+  rgcca_out <- rgcca(blocks, ncomp = 2, tau = "optimal")
+  boot <- rgcca_bootstrap(rgcca_out, n_boot = 2, n_cores = 1)
+  test_structure(boot, 2, 2, p)
 })
 
 ### Case sgcca
-rgcca_out <- rgcca(blocks,
-  ncomp = 2, method = "sgcca",
-  sparsity = c(0.8, 0.9, 0.7), superblock = TRUE
-)
-boot <- rgcca_bootstrap(rgcca_out, n_boot = 2, n_cores = 1)
-
 test_that("rgcca_bootstrap_default", {
-  expect_equal(length(boot), 2)
-  expect_equal(length(boot$bootstrap), 2)
-  boot1 <- boot$bootstrap[[1]][[1]]
-  expect_is(boot, "bootstrap")
-  expect_is(boot$rgcca, "rgcca")
-  expect_is(boot1, "list")
-  expect_is(boot1[[1]], "matrix")
-  expect_true(all(vapply(boot1, NCOL, FUN.VALUE = 1L) == 2))
+  rgcca_out <- rgcca(blocks,
+                     ncomp = 2, method = "sgcca",
+                     sparsity = c(0.8, 0.9, 0.7), superblock = TRUE
+  )
+  q <- vapply(rgcca_out$a[-4], function(x) {
+    length(unique(which(x != 0, arr.ind = TRUE)[, 1]))
+  }, FUN.VALUE = 1L)
+  q <- c(q, sum(q))
+  boot <- rgcca_bootstrap(rgcca_out, n_boot = 2, n_cores = 1)
+  test_structure(boot, 2, 2, q)
 })
 
 blocks[[1]][1:3, 1] <- NA
@@ -60,37 +45,32 @@ blocks[[1]][4, ] <- NA
 resRGCCA <- rgcca(blocks, ncomp = c(2, 2, 2), superblock = FALSE)
 set.seed(seed = 18)
 resBootstrap <- rgcca_bootstrap(rgcca = resRGCCA, n_boot = 2, n_cores = 1)
-select_var <- get_bootstrap(resBootstrap, block = 3)
+select_var <- dplyr::filter(
+  resBootstrap$stats, var == "demostab", type == "weights", comp == 1
+)
 test_that("test_rgcca_bootstrap_na_values", {
   expect_equal(
-    select_var["demostab", "mean"],
-    mean(c(resBootstrap$bootstrap[[1]][[1]][["politic"]]["demostab", ]))
+    select_var$mean,
+    mean(dplyr::filter(
+      resBootstrap$bootstrap, var == "demostab", type == "weights", comp == 1
+    )$value)
   )
-  expect_true(
-    select_var["demostab", "estimate"] == resRGCCA$a[[3]]["demostab", 1]
+  expect_equal(
+    select_var$estimate, resRGCCA$a[[3]]["demostab", 1]
   )
 })
 
 ### Case qualitative block
-blocks_classif <- list(
-  agriculture = Russett[, seq(3)],
-  industry = Russett[, 4:5],
-  politic = as.factor(apply(Russett[, 9:11], 1, which.max))
-)
-rgcca_out <- rgcca(blocks_classif, response = 3)
-boot <- rgcca_bootstrap(rgcca_out, n_boot = 4, n_cores = 1)
-
 test_that("rgcca_bootstrap_classif", {
-  expect_equal(length(boot), 2)
-  expect_equal(length(boot$bootstrap), 2)
-  boot1 <- boot$bootstrap[[1]][[1]]
+  blocks_classif <- list(
+    agriculture = Russett[, seq(3)],
+    industry = Russett[, 4:5],
+    politic = as.factor(apply(Russett[, 9:11], 1, which.max))
+  )
+  rgcca_out <- rgcca(blocks_classif, response = 3)
   p <- vapply(rgcca_out$blocks, NCOL, FUN.VALUE = 1L)
-  expect_is(boot, "bootstrap")
-  expect_is(boot$rgcca, "rgcca")
-  expect_is(boot1, "list")
-  expect_is(boot1[[1]], "matrix")
-  expect_true(all(vapply(boot1, NCOL, FUN.VALUE = 1L) == 4))
-  expect_identical(vapply(boot1, NROW, FUN.VALUE = 1L), p)
+  boot <- rgcca_bootstrap(rgcca_out, n_boot = 4, n_cores = 1)
+  test_structure(boot, 4, 1, p)
 })
 
 ##############################################
@@ -139,8 +119,7 @@ test_that("rgcca_bootstrap_removed_variable_2", {
     ),
     fixed = TRUE
   )
-  expect_false("rent" %in% rownames(boot_out$bootstrap$W[[1]]$agriculture))
-  expect_false("rent" %in% rownames(boot_out$bootstrap$L[[1]]$agriculture))
+  expect_false("rent" %in% boot_out$bootstrap$var)
   expect_false("rent" %in% colnames(boot_out$rgcca$blocks$agriculture))
   expect_false("rent" %in% colnames(boot_out$rgcca$call$blocks$agriculture))
 })
@@ -154,8 +133,7 @@ boot_out <- rgcca_bootstrap(rgcca_out,
 )
 
 test_that("rgcca_bootstrap_keep_all_variables", {
-  expect_true("rent" %in% rownames(boot_out$bootstrap$W[[1]]$agriculture))
-  expect_true("rent" %in% rownames(boot_out$bootstrap$L[[1]]$agriculture))
+  expect_true("rent" %in% boot_out$bootstrap$var)
   expect_true("rent" %in% colnames(boot_out$rgcca$blocks$agriculture))
   expect_true("rent" %in% colnames(boot_out$rgcca$call$blocks$agriculture))
 })

@@ -1,15 +1,11 @@
 #' Print rgcca_bootstrap
 #'
 #' Print a rgcca_bootstrap object
+#' @inheritParams plot.bootstrap
 #' @param x A fitted rgcca_bootstrap object
 #' (see \code{\link[RGCCA]{rgcca_bootstrap}})
-#' @param type Character string indicating the bootstrapped object to print:
-#' block-weight vectors ("weights", default) or block-loading vectors
-#' ("loadings").
-#' @param empirical A logical value indicating if the bootstrap confidence
-#' intervals and p-values are derived from the empirical distribution.
-#' (defaut: TRUE)
-#' @param display_order A logical value for ordering the variables
+#' @param adj.method Character string indicating the method used to adjust for
+#' p-values.
 #' @param ... Further arguments in print
 #' the means, 95\% intervals, bootstrap ratio, p-values and other statistics.
 #' @return none
@@ -24,43 +20,57 @@
 #' boot.out <- rgcca_bootstrap(fit.rgcca, n_boot = 20, n_cores = 2)
 #' print(boot.out)
 #' @export
-print.bootstrap <- function(x, type = "weights", empirical = TRUE,
-                            display_order = FALSE, ...) {
+print.bootstrap <- function(x, block = seq_along(x$rgcca$call$blocks),
+                            comp = 1, type = "weights", empirical = TRUE,
+                            display_order = FALSE, adj.method = "fdr", ...) {
+  ### Perform checks and parse arguments
+  stopifnot(is(x, "bootstrap"))
   type <- match.arg(type, c("weights", "loadings"))
+  lapply(block, function(i) check_blockx("block", i, x$rgcca$call$blocks))
+  Map(function(y, z) check_compx(y, y, x$rgcca$call$ncomp, z), comp, block)
+
+  ### Construct data.frame
+  column_names <- columns <- c(
+    "estimate", "mean", "sd", "lower_bound",
+    "upper_bound", "bootstrap_ratio", "pval", "block"
+  )
+  if (!empirical) {
+    columns <- c(
+      "estimate", "mean", "sd", "th_lower_bound",
+      "th_upper_bound", "bootstrap_ratio", "th_pval", "block"
+    )
+  }
+  df <- x$stats[x$stats$type == type, ]
+  df <- df[df$block %in% names(x$rgcca$blocks)[block], ]
+  df <- df[df$comp == comp, ]
+  rownames(df) <- df$var
+  df <- df[, columns]
+  colnames(df) <- column_names
+  df["adjust.pval"] <- p.adjust(df$pval, method = adj.method)
+  df <- data.frame(
+    df %>%
+      group_by(.data$block) %>%
+      mutate(adjust.pval = p.adjust(.data$pval, method = adj.method)),
+    row.names = row.names(df)
+  )
+  df$block <- NULL
+
+  if (display_order) {
+    df <- df[order(abs(df$estimate), decreasing = TRUE), ]
+  } else {
+    df <- df[unlist(lapply(x$rgcca$blocks[block], colnames)), ]
+  }
+
+  df <- format(df, digits = 3)
+
+  ### Print
   print_call(x$rgcca$call)
   cat("\n")
   type_str <- ifelse(type == "weights", "weight", "loading")
   cat(paste0(
-    "Extracted statistics on the block-", type_str, " vectors from ",
-    NCOL(x$bootstrap[[1]][[1]][[1]]), " bootstrap samples"
+    "Extracted statistics on the block-", type_str, " vectors for component ",
+    comp, " from ", x$n_boot, " bootstrap samples"
   ), "\n")
 
-  # Remove superblock from the print
-  J <- length(x$rgcca$call$blocks)
-  ncompmax <- max(x$rgcca$call$ncomp[-(J + 1)])
-
-  for (comp in seq(ncompmax)) {
-    cat(paste("Component:", comp, "\n"))
-    # Extract the blocks for which component comp was extracted
-    blocks <- which(vapply(
-      x$bootstrap$W[[comp]], function(y) !all(is.na(y)),
-      FUN.VALUE = logical(1L)
-    ))
-
-    df <- Reduce(rbind, lapply(
-      blocks,
-      function(block) {
-        get_bootstrap(
-          b = x, type = type,
-          block = block,
-          comp = comp,
-          empirical = empirical
-        )
-      }
-    ))
-    if (display_order) {
-      df <- df[order(abs(df$estimate), decreasing = TRUE), ]
-    }
-    print(df)
-  }
+  print(df, quote = FALSE, ...)
 }

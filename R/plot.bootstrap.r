@@ -39,6 +39,7 @@ plot.bootstrap <- function(x, block = seq_along(x$rgcca$call$blocks),
   stopifnot(is(x, "bootstrap"))
   type <- match.arg(type, c("weights", "loadings"))
   lapply(block, function(i) check_blockx("block", i, x$rgcca$call$blocks))
+  Map(function(y, z) check_compx(y, y, x$rgcca$call$ncomp, z), comp, block)
   check_integer("n_mark", n_mark)
 
   if (is.null(colors)) {
@@ -51,17 +52,24 @@ plot.bootstrap <- function(x, block = seq_along(x$rgcca$call$blocks),
   }
 
   ### Build data frame
-  df <- Reduce(rbind, lapply(
-    block,
-    function(b) {
-      get_bootstrap(
-        b = x, type = type,
-        block = b,
-        comp = comp,
-        empirical = empirical
-      )
-    }
-  ))
+  column_names <- columns <- c(
+    "estimate", "mean", "sd", "lower_bound", "upper_bound", "pval"
+  )
+  if (!empirical) {
+    columns <- c(
+      "estimate", "mean", "sd", "th_lower_bound", "th_upper_bound", "th_pval"
+    )
+  }
+
+  df <- x$stats[x$stats$type == type, ]
+  df <- df[df$block %in% names(x$rgcca$blocks)[block], ]
+  df <- df[df$comp == comp, ]
+  rownames(df) <- df$var
+  df <- df[, columns]
+  colnames(df) <- column_names
+
+  df <- df[unlist(lapply(x$rgcca$blocks[block], colnames)), ]
+
   df$response <- as.factor(unlist(lapply(block, function(j) {
     rep(names(x$rgcca$blocks)[j], NCOL(x$rgcca$blocks[[j]]))
   })))
@@ -93,9 +101,7 @@ plot.bootstrap <- function(x, block = seq_along(x$rgcca$call$blocks),
   title <- ifelse(is.null(title),
     paste0(
       "Bootstrap confidence interval ",
-      block_name, "\n (",
-      type, " - ",
-      ncol(x$bootstrap[[1]][[1]][[1]]),
+      block_name, "\n (", type, " - ", x$n_boot,
       " bootstrap samples - comp ", comp, ")"
     ),
     title

@@ -55,8 +55,7 @@ boot.out <- rgcca_bootstrap(fit.rgcca, n_boot = 20, n_cores = 2)
 
 plot(boot.out, type = "weight", block = 3, comp = 1)
 
-print(boot.out, comp = 2)
-get_bootstrap(boot.out, block = 1, comp = 1)
+print(boot.out, comp = 2, block = 1)
 
 fit.rgcca <- rgcca(blocks, method = "mcoa")
 boot.out <- rgcca_bootstrap(fit.rgcca, n_boot = 50, n_cores = 2)
@@ -91,7 +90,6 @@ fit.rgcca <- rgcca(A,
 boot.out <- rgcca_bootstrap(fit.rgcca, n_boot = 50, n_cores = 2)
 plot(boot.out, block = 1, type = "weight", ncomp = 1, n_marks = 30)
 plot(boot.out, block = 1, type = "weight", ncomp = 2, n_marks = 30)
-get_bootstrap(boot.out)
 
 # stability analysis prior bootstrap for sgcca
 }

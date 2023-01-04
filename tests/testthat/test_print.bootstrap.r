@@ -20,6 +20,6 @@ test_that("print.bootstrap prints the expected string 2", {
   local_edition(3)
   expect_snapshot({
     res <- rgcca_bootstrap(fit.rgcca, n_boot = 2, n_cores = 1, verbose = FALSE)
-    print(res, type = "loadings")
+    print(res, type = "loadings", comp = 2, block = 2)
   })
 })
