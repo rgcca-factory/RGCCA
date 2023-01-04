@@ -107,6 +107,9 @@ plot.bootstrap <- function(x, block = seq_along(x$rgcca$call$blocks),
     title
   )
 
+  # Duplicate colors to avoid insufficient values in manual scale
+  colors <- rep(colors, NROW(df) / length(colors) + 1)
+
   ### Construct plot
   if (length(block) > 1) {
     p <- ggplot(
