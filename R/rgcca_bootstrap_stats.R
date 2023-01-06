@@ -4,9 +4,10 @@
 #' samples.
 #' @param res A data.frame of raw bootstrap results.
 #' @param rgcca_res A fiited rgcca object.
+#' @param verbose A logical indicating if progress bars should be shown.
 #' @return A data.frame containing the computed statistics.
 #' @noRd
-rgcca_bootstrap_stats <- function(res, rgcca_res) {
+rgcca_bootstrap_stats <- function(res, rgcca_res, verbose) {
   ### Compute aggregated statistics
   # Utility function to compute the statistics
   aggregated_stats <- function(x, type) {
@@ -28,6 +29,13 @@ rgcca_bootstrap_stats <- function(res, rgcca_res) {
     )
   }
 
+  # Set progress bar option
+  if (!verbose) {
+    pbapply::pboptions(type = "none")
+  } else {
+    pbapply::pboptions(type = "timer")
+  }
+
   # Compute var2block to later retrieve "block" from "var"
   var2block <- subset(
     res, res$type == "weights" & res$comp == 1 & res$boot == 1
@@ -39,12 +47,12 @@ rgcca_bootstrap_stats <- function(res, rgcca_res) {
   res_weights <- res[res$type == "weights", ]
   res_loadings <- res[res$type == "loadings", ]
 
-  stats_weights <- tapply(
+  stats_weights <- pbapply::pbtapply(
     res_weights$value,
     list(var = res_weights$var, comp = res_weights$comp),
     aggregated_stats, type = "weights"
   )
-  stats_loadings <- tapply(
+  stats_loadings <- pbapply::pbtapply(
     res_loadings$value,
     list(var = res_loadings$var, comp = res_loadings$comp),
     aggregated_stats, type = "loadings"
