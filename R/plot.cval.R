@@ -41,66 +41,42 @@ plot.cval <- function(x, type = "sd",
   type <- match.arg(type, c("quantile", "sd"))
 
   ### Build data frame
-  ymin <- apply(x$cv, 1, min)
-  ymax <- apply(x$cv, 1, max)
-  ymean <- apply(x$cv, 1, mean)
-  ymed <- apply(x$cv, 1, median)
-
-  switch(type,
-    "quantile" = {
-      middle <- ymed
-      lower <- apply(x$cv, 1, quantile, 0.25)
-      upper <- apply(x$cv, 1, quantile, 0.75)
-    },
-    "sd" = {
-      middle <- ymean
-      lower <- middle - apply(x$cv, 1, sd)
-      upper <- middle + apply(x$cv, 1, sd)
-    }
+  df <- data.frame(
+    combinations = x$stats$combinations,
+    ymin = apply(x$cv, 1, min),
+    ymax = apply(x$cv, 1, max)
   )
-
-  if (length(x$call$blocks) > 5) {
-    combinations <- paste("Set ", seq_len(NROW(x$penalties)))
+  if (type == "quantile") {
+    df$middle <- x$stats$median
+    df$lower <- x$stats$Q1
+    df$upper <- x$stats$Q3
   } else {
-    combinations <- apply(
-      format(round(x$penalties, 2), nsmall = 2), 1, paste0,
-      collapse = "/"
-    )
+    df$middle <- x$stats$mean
+    df$lower <- x$stats$mean - x$stats$sd
+    df$upper <- x$stats$mean + x$stats$sd
   }
 
   best <- which(apply(
     x$penalties, 1, function(z) identical(z, x$bestpenalties)
   ))
-  category <- rep("param", NROW(x$cv))
-  category[best] <- "best_param"
+  df$category <- rep("param", NROW(x$cv))
+  df$category[best] <- "best_param"
 
-  labels <- as.expression(combinations)
+  labels <- as.expression(df$combinations)
   labels[[best]] <- bquote(underline(bold(.(labels[[best]]))))
 
   if (display_order) {
-    idx_order <- sort(middle, decreasing = FALSE, index.return = TRUE)$ix
-    combinations <- factor(
-      combinations,
-      levels = combinations[idx_order], ordered = TRUE
-    )
-  } else {
-    combinations <- factor(combinations, levels = combinations, ordered = TRUE)
+    idx_order <- sort(df$middle, decreasing = FALSE, index.return = TRUE)$ix
+    df <- df[idx_order, ]
   }
-
-  df <- data.frame(
-    combinations = combinations,
-    ymin = ymin,
-    lower = lower,
-    middle = middle,
-    upper = upper,
-    ymax = ymax,
-    category = category
+  df$combinations <- factor(
+    df$combinations, levels = df$combinations, ordered = TRUE
   )
 
   df_points <- data.frame(
-    combinations = rep(combinations, NCOL(x$cv)),
+    combinations = rep(df$combinations, NCOL(x$cv)),
     y = c(x$cv),
-    category = rep(category, NCOL(x$cv))
+    category = rep(df$category, NCOL(x$cv))
   )
 
   ### Prepare plot
@@ -115,7 +91,7 @@ plot.cval <- function(x, type = "sd",
 
   title <- paste0(
     "Cross-validated ", x$metric, " (", validation_str, ")\nBest parameters: ",
-    combinations[best]
+    df$combinations[best]
   )
   xlab <- paste0("Tuning parameter sets (", x$par_type, ")")
   ylab <- paste("Mean", x$metric)
@@ -133,7 +109,7 @@ plot.cval <- function(x, type = "sd",
     ggplot2::xlab(xlab) +
     ggplot2::ylab(ylab) +
     ggplot2::scale_x_discrete(
-      labels = labels, breaks = combinations,
+      labels = labels, breaks = df$combinations,
       guide = ggplot2::guide_axis(check.overlap = TRUE)
     ) +
     ggplot2::geom_boxplot(

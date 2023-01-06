@@ -50,7 +50,7 @@
 #' observation is more of less associated with `1 - its proportion in the
 #' variable where this observation is in the lowest frequent group
 #' (through all risky variables)`.
-#' @inheritParams bootstrap
+#' @inheritParams rgcca_bootstrap
 #' @param pval For all the variables, a threshold for the proportion of the most
 #' frequent value of this variable is computed. This threshold is evaluated so
 #' that the probability to sample only this value is below `pval`. This

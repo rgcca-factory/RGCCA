@@ -27,15 +27,14 @@
 #' )
 #'
 #' fit.rgcca <- rgcca(blocks, ncomp = c(2, 1, 2))
-#' boot.out <- bootstrap(fit.rgcca, n_boot = 20, n_cores = 2)
+#' boot.out <- rgcca_bootstrap(fit.rgcca, n_boot = 20, n_cores = 2)
 #'
 #' plot(boot.out, type = "weight", block = 3, comp = 1)
 #'
-#' print(boot.out, comp = 2)
-#' get_bootstrap(boot.out, block = 1, comp = 1)
+#' print(boot.out, comp = 2, block = 1)
 #'
 #' fit.rgcca <- rgcca(blocks, method = "mcoa")
-#' boot.out <- bootstrap(fit.rgcca, n_boot = 50, n_cores = 2)
+#' boot.out <- rgcca_bootstrap(fit.rgcca, n_boot = 50, n_cores = 2)
 #'
 #' plot(boot.out, type = "weight", block = 1)
 #' \dontrun{
@@ -64,20 +63,19 @@
 #'   ncomp = c(2, 2, 1), scheme = "factorial",
 #'   verbose = TRUE
 #' )
-#' boot.out <- bootstrap(fit.rgcca, n_boot = 50, n_cores = 2)
+#' boot.out <- rgcca_bootstrap(fit.rgcca, n_boot = 50, n_cores = 2)
 #' plot(boot.out, block = 1, type = "weight", ncomp = 1, n_marks = 30)
 #' plot(boot.out, block = 1, type = "weight", ncomp = 2, n_marks = 30)
-#' get_bootstrap(boot.out)
 #'
 #' # stability analysis prior bootstrap for sgcca
 #' }
 #' @export
 #' @seealso \code{\link[RGCCA]{plot.bootstrap}},
 #' \code{\link[RGCCA]{print.bootstrap}}
-bootstrap <- function(rgcca_res, n_boot = 100,
-                      n_cores = 1,
-                      balanced = TRUE, keep_all_variables = FALSE,
-                      verbose = TRUE) {
+rgcca_bootstrap <- function(rgcca_res, n_boot = 100,
+                            n_cores = 1,
+                            balanced = TRUE, keep_all_variables = FALSE,
+                            verbose = TRUE) {
   if (is(rgcca_res, "stability")) {
     message(
       "All the parameters were imported from the fitted rgcca_stability",
@@ -88,7 +86,7 @@ bootstrap <- function(rgcca_res, n_boot = 100,
 
   # If sparse model, we perform bootstrap only on the selected variables
   if (tolower(rgcca_res$call$method) %in% c("sgcca", "spls", "spca")) {
-    if (verbose) {
+    if (verbose && !is(rgcca_res, "stability")) {
       message(
         "Only selected variables were used for bootstrapping. see ",
         "rgcca_stability()."
@@ -110,7 +108,7 @@ bootstrap <- function(rgcca_res, n_boot = 100,
       function(x, y) x[, y, drop = FALSE], rgcca_res$call$blocks, keep_var
     )
     rgcca_res$call$tau <-
-      rgcca_res$call$sparsity <- rep(1, length(rgcca_res$call$blocks))
+      rgcca_res$call$sparsity <- rep(1, length(rgcca_res$blocks))
 
     rgcca_res <- rgcca(rgcca_res)
   }
@@ -137,7 +135,7 @@ bootstrap <- function(rgcca_res, n_boot = 100,
 
   W <- par_pblapply(
     boot_sampling$full_idx, function(b) {
-      bootstrap_k(
+      rgcca_bootstrap_k(
         rgcca_res = rgcca_res,
         inds = b
       )
@@ -145,12 +143,16 @@ bootstrap <- function(rgcca_res, n_boot = 100,
     n_cores = n_cores, verbose = verbose
   )
 
-  list_res_L <- format_bootstrap_list(W, rgcca_res, n_boot, 2)
-  list_res_W <- format_bootstrap_list(W, rgcca_res, n_boot, 1)
+  res <- format_bootstrap_list(W, rgcca_res)
+
+  if (verbose) {
+    message("Computation of bootstrap statistics...")
+  }
+  stats <- rgcca_bootstrap_stats(res, rgcca_res, verbose = verbose)
 
   return(structure(list(
-    bootstrap = list(W = list_res_W, L = list_res_L),
-    rgcca = rgcca_res
+    n_boot = n_boot, rgcca = rgcca_res,
+    bootstrap = res, stats = data.frame(stats)
   ),
   class = "bootstrap"
   ))

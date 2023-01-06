@@ -225,7 +225,7 @@
 #' plot(fit.sgcca, type = "ave")
 #'
 #' # Select the most significant variables
-#' b <- bootstrap(fit.sgcca, n_cores = 1, n_boot = 100)
+#' b <- rgcca_bootstrap(fit.sgcca, n_cores = 1, n_boot = 100)
 #' plot(b, n_cores = 1)
 #'
 #' ##############################
@@ -243,7 +243,7 @@
 #' )
 #' plot(fit.rgcca, type = "both")
 #'
-#' b <- bootstrap(fit.rgcca, n_cores = 1, n_boot = 10)
+#' b <- rgcca_bootstrap(fit.rgcca, n_cores = 1, n_boot = 10)
 #' plot(b, n_cores = 1)
 #' }
 #'

@@ -15,7 +15,6 @@ rgccad(
   tol = 1e-08,
   verbose = TRUE,
   na.rm = TRUE,
-  quiet = FALSE,
   superblock = FALSE,
   response = NULL,
   disjunction = NULL,
@@ -68,8 +67,6 @@ or by random initialisation ("random") (default: "svd").}
 algorithm is reported while computing.}
 
 \item{na.rm}{If TRUE, runs rgcca only on available data.}
-
-\item{quiet}{Logical value indicating if warning messages are reported.}
 
 \item{superblock}{Boolean indicating the presence of a superblock
 (deflation strategy must be adapted when a superblock is used).}

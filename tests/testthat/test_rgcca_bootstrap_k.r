@@ -8,9 +8,9 @@ p <- vapply(blocks, NCOL, FUN.VALUE = 1L)
 
 ### Case ncomp = 1
 rgcca_out <- rgcca(blocks, superblock = FALSE, ncomp = 1)
-resb <- bootstrap_k(rgcca_out)
+resb <- rgcca_bootstrap_k(rgcca_out)
 
-test_that("test_bootstrapk_1", {
+test_that("test_rgcca_bootstrap_k_1", {
   expect_is(resb, "list")
   expect_is(resb[[1]][[1]], "matrix")
   expect_is(resb[[2]][[1]], "matrix")
@@ -22,9 +22,9 @@ test_that("test_bootstrapk_1", {
 
 ### Case ncomp = 2
 rgcca_out_2 <- rgcca(blocks, superblock = FALSE, ncomp = 2)
-resb_2 <- bootstrap_k(rgcca_out_2)
+resb_2 <- rgcca_bootstrap_k(rgcca_out_2)
 
-test_that("test_bootstrapk", {
+test_that("test_rgcca_bootstrap_k", {
   expect_is(resb_2, "list")
   expect_is(resb_2[[1]][[1]], "matrix")
   expect_is(resb_2[[2]][[1]], "matrix")
@@ -34,16 +34,16 @@ test_that("test_bootstrapk", {
 })
 
 # If one bootstrap sample presents at least a single variable with null
-# variance, bootstrap_k should return the name of the null variance variables
+# variance, rgcca_bootstrap_k should return the name of the null variance variables
 # in both the two lists it returns.
 blocks_3 <- blocks
 blocks_3$agriculture$rent <- 0
 blocks_3$agriculture$rent[1] <- 1
 rgcca_out_3 <- rgcca(blocks_3, superblock = FALSE, ncomp = 2)
 inds <- c(2, 2:NROW(blocks_3$agriculture))
-resb_3 <- bootstrap_k(rgcca_res = rgcca_out_3, inds = inds)
+resb_3 <- rgcca_bootstrap_k(rgcca_res = rgcca_out_3, inds = inds)
 
-test_that("test_bootstrap_k_missing_var_identification", {
+test_that("test_rgcca_bootstrap_k_missing_var_identification", {
   expect_is(resb_3, "list")
   expect_is(resb_3[[1]], "character")
   expect_is(resb_3[[2]], "character")

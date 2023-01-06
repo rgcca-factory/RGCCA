@@ -4,7 +4,7 @@
 #' identified as relevant by SGCCA. A Variable Importance in the Projection
 #' (VIP) based criterion is used to identify the most stable variables.
 #'
-#' @inheritParams bootstrap
+#' @inheritParams rgcca_bootstrap
 #' @param rgcca_res A fitted RGCCA object (see \code{\link[RGCCA]{rgcca}})
 #' @param keep numeric vector indicating the proportion of top variables per
 #' block.
@@ -37,7 +37,7 @@
 #'   verbose = TRUE, response = 3
 #' )
 #'
-#' boot.out <- bootstrap(fit.sgcca, n_boot = 100, n_cores = 1)
+#' boot.out <- rgcca_bootstrap(fit.sgcca, n_boot = 100, n_cores = 1)
 #'
 #' fit.stab <- rgcca_stability(fit.sgcca,
 #'   keep = sapply(fit.sgcca$a, function(x) mean(x != 0)),
@@ -45,7 +45,9 @@
 #'   verbose = TRUE
 #' )
 #'
-#' boot.out <- bootstrap(fit.stab, n_boot = 500, n_cores = 1, verbose = FALSE)
+#' boot.out <- rgcca_bootstrap(
+#'   fit.stab, n_boot = 500, n_cores = 1, verbose = FALSE
+#' )
 #' }
 #' @export
 rgcca_stability <- function(rgcca_res,
@@ -82,48 +84,42 @@ rgcca_stability <- function(rgcca_res,
 
   W <- par_pblapply(
     boot_sampling$full_idx, function(b) {
-      bootstrap_k(
+      rgcca_bootstrap_k(
         rgcca_res = rgcca_res,
-        inds = b
+        inds = b, type = "AVE"
       )
     },
     n_cores = n_cores, verbose = verbose
   )
 
-  list_res <- format_bootstrap_list(W, rgcca_res, n_boot, 1)
-
-  J <- length(list_res[[1]])
+  res <- format_bootstrap_list(W, rgcca_res)
+  J <- length(rgcca_res$blocks)
 
   if (rgcca_res$call$superblock == TRUE) {
-    list_res <- lapply(list_res, function(x) x[-length(x)])
+    res <- res[res$block != names(rgcca_res$blocks)[J], ]
     rgcca_res$AVE$AVE_X <- rgcca_res$AVE$AVE_X[-J]
     rgcca_res$call$blocks <- rgcca_res$call$blocks[-J]
   }
 
   if (rgcca_res$opt$disjunction) {
-     list_res <- lapply(list_res, function(x) x[-rgcca_res$call$response])
+     res <- res[res$block != names(rgcca_res$blocks)[rgcca_res$call$response], ]
      rgcca_res$AVE$AVE_X <- rgcca_res$AVE$AVE_X[-rgcca_res$call$response]
   }
 
-  mylist <- lapply(
-    seq_along(list_res),
-    function(i) {
-      lapply(
-        list_res[[i]],
-        function(x) {
-          apply(x, 1, function(y) sum(abs(y), na.rm = TRUE))
-        }
-      )
-    }
-  )
+  res_AVE <- res[res$type != "weights", ]
+  res <- res[res$type == "weights", ]
 
-  intensity <- Map(
-    "*",
-    do.call(Map, c(rbind, mylist)),
-    rgcca_res$AVE$AVE_X
-  )
+  # Compute var2block to later retrieve "block" from "var"
+  var2block <- subset(res, res$comp == 1 & res$boot == 1)[, c("var", "block")]
+  rownames(var2block) <- var2block$var
+  var2block$var <- NULL
 
-  top <- lapply(intensity, function(x) colMeans(x, na.rm = TRUE))
+  res$scores <- res$value^2 * res_AVE$value
+  top <- tapply(
+    res$scores, list(var = as.character(res$var)), mean
+  )
+  top <- cbind(top = top, block = var2block[names(top), ])
+
   perc <- elongate_arg(keep, top)
 
   if (is.null(dim(rgcca_res$call$sparsity))) {
@@ -138,21 +134,18 @@ rgcca_stability <- function(rgcca_res,
     perc[which(rgcca_res$call$sparsity[1, ] == 1)] <- 1
   }
 
-  keepVar <- lapply(
-    seq_along(top),
-    function(x) {
-      order(top[[x]],
-        decreasing = TRUE
-      )[1:round(perc[x] * length(top[[x]]))]
-    }
-  )
+  # Keep a percentage of the variables with the top intensities
+  keepVar <- lapply(seq_along(rgcca_res$AVE$AVE_X), function(j) {
+    x <- top[top[, "block"] == j, "top"]
+    order(x, decreasing = TRUE)[seq(round(perc[j] * length(x)))]
+  })
 
   if (rgcca_res$opt$disjunction) {
     keepVar[[rgcca_res$call$response]] <- 1
   }
 
   rgcca_res$call$blocks <- Map(
-    function(x, y) x[, y], rgcca_res$call$blocks, keepVar
+    function(x, y) x[, y, drop = FALSE], rgcca_res$call$blocks, keepVar
   )
   rgcca_res$call$tau <-
     rgcca_res$call$sparsity <- rep(1, length(rgcca_res$call$blocks))
@@ -162,7 +155,7 @@ rgcca_stability <- function(rgcca_res,
   return(structure(list(
     top = top,
     keepVar = keepVar,
-    bootstrap = list_res,
+    bootstrap = res,
     rgcca_res = rgcca_res
   ),
   class = "stability"

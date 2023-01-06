@@ -8,7 +8,9 @@ blocks <- list(
   politic = Russett[, 6:11]
 )
 fit.rgcca <- rgcca(blocks, ncomp = 2, method = "rgcca", tau = 1)
-fit.boot <- bootstrap(fit.rgcca, n_boot = 20, n_cores = 1, verbose = FALSE)
+fit.boot <- rgcca_bootstrap(
+  fit.rgcca, n_boot = 20, n_cores = 1, verbose = FALSE
+)
 
 test_that("plot.bootstrap raises an error if block is not an integer
           between 1 and the number of raw blocks", {

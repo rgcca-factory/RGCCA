@@ -153,9 +153,6 @@ permutation procedure is reported.}
 iterations.}
 }
 \value{
-\item{zstat}{A vector of Z-statistics, one zstat per set of tuning
-parameters.}
-
 \item{bestpenalties}{The set of tuning parameters that yields the
 highest Z-statistics}
 
@@ -163,20 +160,12 @@ highest Z-statistics}
 permcrit contains the n_perms values of S/RGCCA permuted criteria
 obtained for each set of tuning parameters.}
 
-\item{means}{A vector that contains, for each set of tuning
-parameters, the mean of the permuted R/SGCCA criteria}
-
-\item{sds}{A vector that contains, for each set of tuning
-parameters, the standard deviation of the permuted R/SGCCA criteria}
-
-\item{crit}{A vector that contains, for each set of tuning
-parameters, the value of the R/SGCCA criteria obtained from the original
-data.}
-
-\item{pval}{Vector of p-values, one per set of tuning parameters.}
-
 \item{penalties}{Matrix giving, the set of tuning paramaters
 considered during the permutation process (tau or sparsity).}
+
+\item{stats}{A data.frame containing the set of parameter values,
+and the associated non permuted criterion, mean and standard deviation of
+permuted criteria, Z-statistic and p-value.}
 }
 \description{
 This function can be used to automatically select the hyper-parameters

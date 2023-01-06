@@ -22,7 +22,7 @@ Description: Multi-block data analysis concerns the analysis of several
     as regularization parameters (tau or sparsity)
     (\link{rgcca_permutation}, \link{rgcca_cv}), (iii) evaluate the
     stability of the RGCCA results and their significance
-    (\link{bootstrap} and \link{rgcca_stability}), (iv) build predictive
+    (\link{rgcca_bootstrap} and \link{rgcca_stability}), (iv) build predictive
     models from the R/SGCCA (\link{rgcca_predict}), (v) Generic print()
     and plot() functions apply to all these functionalities.
 License: GPL-3

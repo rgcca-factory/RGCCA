@@ -69,7 +69,7 @@ fit.sgcca <- rgcca(blocks,
   verbose = TRUE, response = 3
 )
 
-boot.out <- bootstrap(fit.sgcca, n_boot = 100, n_cores = 1)
+boot.out <- rgcca_bootstrap(fit.sgcca, n_boot = 100, n_cores = 1)
 
 fit.stab <- rgcca_stability(fit.sgcca,
   keep = sapply(fit.sgcca$a, function(x) mean(x != 0)),
@@ -77,6 +77,8 @@ fit.stab <- rgcca_stability(fit.sgcca,
   verbose = TRUE
 )
 
-boot.out <- bootstrap(fit.stab, n_boot = 500, n_cores = 1, verbose = FALSE)
+boot.out <- rgcca_bootstrap(
+  fit.stab, n_boot = 500, n_cores = 1, verbose = FALSE
+)
 }
 }

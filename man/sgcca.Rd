@@ -15,7 +15,6 @@ sgcca(
   bias = TRUE,
   tol = .Machine$double.eps,
   verbose = FALSE,
-  quiet = FALSE,
   na.rm = TRUE,
   superblock = FALSE,
   response = NULL,
@@ -67,8 +66,6 @@ or by random initialisation ("random") (default: "svd").}
 
 \item{verbose}{Logical value indicating if the progress of the
 algorithm is reported while computing.}
-
-\item{quiet}{Logical value indicating if warning messages are reported.}
 
 \item{na.rm}{If TRUE, runs sgcca only on available data.}
 

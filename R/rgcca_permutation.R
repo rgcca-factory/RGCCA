@@ -32,7 +32,7 @@
 #' of S/RGCCA. By default, this function performs a one-dimensional
 #' search in tuning parameter space.
 #'
-#' @inheritParams bootstrap
+#' @inheritParams rgcca_bootstrap
 #' @inheritParams rgcca
 #' @param par_type A character string indicating the parameters to tune between
 #' "sparsity" and "tau".
@@ -53,23 +53,16 @@
 #' is 20).
 #' @param verbose Logical value indicating if the progress of the
 #' permutation procedure is reported.
-#' @return \item{zstat}{A vector of Z-statistics, one zstat per set of tuning
-#' parameters.}
 #' @return \item{bestpenalties}{The set of tuning parameters that yields the
 #' highest Z-statistics}
 #' @return \item{permcrit}{Matrix of permuted S/RGCCA criteria. The ith row of
 #' permcrit contains the n_perms values of S/RGCCA permuted criteria
 #' obtained for each set of tuning parameters.}
-#' @return \item{means}{A vector that contains, for each set of tuning
-#' parameters, the mean of the permuted R/SGCCA criteria}
-#' @return \item{sds}{A vector that contains, for each set of tuning
-#' parameters, the standard deviation of the permuted R/SGCCA criteria}
-#' @return \item{crit}{A vector that contains, for each set of tuning
-#' parameters, the value of the R/SGCCA criteria obtained from the original
-#' data.}
-#' @return \item{pval}{Vector of p-values, one per set of tuning parameters.}
 #' @return \item{penalties}{Matrix giving, the set of tuning paramaters
 #' considered during the permutation process (tau or sparsity).}
+#' @return \item{stats}{A data.frame containing the set of parameter values,
+#' and the associated non permuted criterion, mean and standard deviation of
+#' permuted criteria, Z-statistic and p-value.}
 #' @references Witten, D. M., Tibshirani, R., & Hastie, T. (2009). A penalized
 #' matrix decomposition, with applications to sparse principal components and
 #' canonical correlation analysis. Biostatistics, 10(3), 515-534.
@@ -306,21 +299,21 @@ rgcca_permutation <- function(blocks, par_type = "tau", par_value = NULL,
   colnames(param$par_value) <- par_colnames
 
   idx_perm <- (idx - 1) %% (n_perms + 1) != 0
-  crits <- W[!idx_perm]
+  crit <- W[!idx_perm]
   permcrit <- matrix(W[idx_perm],
     nrow = nrow(param$par_value),
     ncol = n_perms, byrow = TRUE
   )
-  means <- apply(permcrit, 1, mean, na.rm = TRUE)
-  sds <- apply(permcrit, 1, sd, na.rm = TRUE)
+
+  # Compute statistics
   pvals <- vapply(
     seq_len(NROW(param$par_value)),
-    function(k) mean(permcrit[k, ] >= crits[k]),
+    function(k) mean(permcrit[k, ] >= crit[k]),
     FUN.VALUE = double(1)
   )
-  zs <- vapply(
+  zstat <- vapply(
     seq_len(NROW(param$par_value)), function(k) {
-      z <- (crits[k] - mean(permcrit[k, ])) / (sd(permcrit[k, ]))
+      z <- (crit[k] - mean(permcrit[k, ])) / (sd(permcrit[k, ]))
       if (is.na(z) || z == "Inf") {
         z <- 0
       }
@@ -328,11 +321,25 @@ rgcca_permutation <- function(blocks, par_type = "tau", par_value = NULL,
     },
     FUN.VALUE = double(1)
   )
+  if (length(rgcca_args$blocks) > 5) {
+    combinations <- paste("Set ", sep = "", seq_len(NROW(param$par_value)))
+  } else {
+    combinations <- apply(
+      format(param$par_value, digits = 2), 1, paste0, collapse = "/"
+    )
+  }
+  stats <- data.frame(
+    combinations = combinations,
+    crit = crit,
+    mean = apply(permcrit, 1, mean, na.rm = TRUE),
+    sd = apply(permcrit, 1, sd, na.rm = TRUE),
+    zstat = zstat,
+    pval = pvals
+  )
 
   structure(list(
-    opt = opt, call = rgcca_args, zstat = zs, par_type = par_type,
-    n_perms = n_perms, bestpenalties = param$par_value[which.max(zs), ],
-    permcrit = permcrit, means = means, sds = sds,
-    crit = crits, pvals = pvals, penalties = param$par_value
+    opt = opt, call = rgcca_args, par_type = par_type,
+    n_perms = n_perms, bestpenalties = param$par_value[which.max(zstat), ],
+    permcrit = permcrit, penalties = param$par_value, stats = stats
   ), class = "permutation")
 }
