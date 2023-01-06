@@ -144,6 +144,10 @@ rgcca_bootstrap <- function(rgcca_res, n_boot = 100,
   )
 
   res <- format_bootstrap_list(W, rgcca_res)
+
+  if (verbose & nrow(res) / n_boot > 500) {
+    message("Computation of bootstrap statistics...")
+  }
   stats <- rgcca_bootstrap_stats(res, rgcca_res)
 
   return(structure(list(
