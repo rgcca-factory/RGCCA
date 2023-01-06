@@ -69,7 +69,6 @@
 #'
 #' # stability analysis prior bootstrap for sgcca
 #' }
-#' @importFrom dplyr group_by summarize mutate `%>%`
 #' @export
 #' @seealso \code{\link[RGCCA]{plot.bootstrap}},
 #' \code{\link[RGCCA]{print.bootstrap}}
@@ -145,57 +144,7 @@ rgcca_bootstrap <- function(rgcca_res, n_boot = 100,
   )
 
   res <- format_bootstrap_list(W, rgcca_res)
-
-  ### Compute statistics
-  tail <- qnorm(1 - .05 / 2)
-  stats <- res %>%
-    # Aggregate values on the different bootstrap samples
-    group_by(.data$var, .data$comp, .data$block, .data$type) %>%
-    summarize(
-      mean = mean(.data$value),
-      sd = (function(x, type) {
-        if (type[1] == "weights") {
-          sd(x)
-        } else {
-          sd(0.5 * log((1 + x) / (1 - x)))
-        }
-      })(.data$value, .data$type),
-      pval = (function(x) {
-        z <- c(
-          sum(x > 0, na.rm = TRUE),
-          sum(x < 0, na.rm = TRUE)
-        )
-        min(z) / max(z)
-      })(.data$value),
-      lower_bound = quantile(.data$value, 0.025),
-      upper_bound = quantile(.data$value, 0.975),
-      .groups = "keep"
-    ) %>%
-    # Compute quantities of interest for each variable
-    mutate(
-      estimate = (function(var, comp, type, block) {
-        if (type == "weights") {
-          rgcca_res$a[[block]][var, as.integer(comp)]
-        } else {
-          cor(rgcca_res$blocks[[block]][, var],
-              rgcca_res$Y[[block]][, as.integer(comp)],
-              use = "pairwise.complete.obs"
-          )
-        }
-      })(.data$var, .data$comp, .data$type, .data$block),
-      ftrans = (function(x, type) {
-        if (type == "weights") {
-          x
-        } else {
-          0.5 * log((1 + x) / (1 - x))
-        }
-      })(.data$estimate, .data$type),
-      bootstrap_ratio = (function(x, sd) x / sd)(.data$ftrans, .data$sd),
-      th_pval = 2 * pnorm(abs(.data$bootstrap_ratio), lower.tail = FALSE),
-      th_lower_bound = .data$estimate - .data$sd * tail,
-      th_upper_bound = .data$estimate + .data$sd * tail
-    )
-  stats$ftrans <- NULL
+  stats <- rgcca_bootstrap_stats(res, rgcca_res)
 
   return(structure(list(
     n_boot = n_boot, rgcca = rgcca_res,

@@ -5,6 +5,7 @@
 #' ncomp[j] columns where ncomp[j] is the number of components for block j.
 #' The aim of this function is to reorganize this list into a data.frame.
 #' @param W raw bootstrap results
+#' @param rgcca_res A fiited rgcca object.
 #' @return A data.frame containing the results.
 #' @noRd
 format_bootstrap_list <- function(W, rgcca_res) {
@@ -15,20 +16,18 @@ format_bootstrap_list <- function(W, rgcca_res) {
       var = rownames(a),
       comp = seq_len(NCOL(a)),
       block = names(rgcca_res$a)[j]
-    ), stringsAsFactors = FALSE)
+    ))
   }))
 
   # Repeat values by adding the type and the number of the bootstrap sample
   df <- expand.grid(
-    var = grid[, 1], type = c("weights", "loadings"), boot = seq_along(W),
-    stringsAsFactors = FALSE
+    var = grid[, 1], type = c("weights", "loadings"), boot = seq_along(W)
   )
-  df <- cbind(df, do.call(cbind, lapply(grid[-1], function(x) {
+  df <- cbind(df, lapply(grid[-1], function(x) {
     expand.grid(
-      x, type = c("weights", "loadings"), boot = seq_along(W),
-      stringsAsFactors = FALSE
+      x, type = c("weights", "loadings"), boot = seq_along(W)
     )[, 1]
-  })))
+  }))
 
   # Unlist the values into a new column of the grid
   df$value <- unlist(W, use.names = FALSE)

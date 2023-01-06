@@ -31,7 +31,6 @@ Depends:
 Imports:
     caret,
     Deriv,
-    dplyr,
     ggplot2,
     ggrepel,
     graphics,

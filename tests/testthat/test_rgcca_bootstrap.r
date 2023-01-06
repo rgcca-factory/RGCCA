@@ -45,18 +45,18 @@ blocks[[1]][4, ] <- NA
 resRGCCA <- rgcca(blocks, ncomp = c(2, 2, 2), superblock = FALSE)
 set.seed(seed = 18)
 resBootstrap <- rgcca_bootstrap(rgcca = resRGCCA, n_boot = 2, n_cores = 1)
-select_var <- dplyr::filter(
-  resBootstrap$stats, var == "demostab", type == "weights", comp == 1
+select_var <- subset(
+  resBootstrap$stats, var == "demostab" & type == "weights" & comp == 1
 )
 test_that("test_rgcca_bootstrap_na_values", {
   expect_equal(
     select_var$mean,
-    mean(dplyr::filter(
-      resBootstrap$bootstrap, var == "demostab", type == "weights", comp == 1
+    mean(subset(
+      resBootstrap$bootstrap, var == "demostab" & type == "weights" & comp == 1
     )$value)
   )
   expect_equal(
-    select_var$estimate, resRGCCA$a[[3]]["demostab", 1]
+    select_var$estimate, unname(resRGCCA$a[[3]]["demostab", 1])
   )
 })
 

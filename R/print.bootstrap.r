@@ -32,28 +32,21 @@ print.bootstrap <- function(x, block = seq_along(x$rgcca$call$blocks),
   ### Construct data.frame
   column_names <- columns <- c(
     "estimate", "mean", "sd", "lower_bound",
-    "upper_bound", "bootstrap_ratio", "pval", "block"
+    "upper_bound", "bootstrap_ratio", "pval", "adjust.pval"
   )
   if (!empirical) {
     columns <- c(
       "estimate", "mean", "sd", "th_lower_bound",
-      "th_upper_bound", "bootstrap_ratio", "th_pval", "block"
+      "th_upper_bound", "bootstrap_ratio", "th_pval", "adjust.pval"
     )
   }
   df <- x$stats[x$stats$type == type, ]
+  df["adjust.pval"] <- p.adjust(df$pval, method = adj.method)
   df <- df[df$block %in% names(x$rgcca$blocks)[block], ]
   df <- df[df$comp == comp, ]
   rownames(df) <- df$var
   df <- df[, columns]
   colnames(df) <- column_names
-  df["adjust.pval"] <- p.adjust(df$pval, method = adj.method)
-  df <- data.frame(
-    df %>%
-      group_by(.data$block) %>%
-      mutate(adjust.pval = p.adjust(.data$pval, method = adj.method)),
-    row.names = row.names(df)
-  )
-  df$block <- NULL
 
   if (display_order) {
     df <- df[order(abs(df$estimate), decreasing = TRUE), ]

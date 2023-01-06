@@ -20,9 +20,8 @@ test_that("format_bootstrap_list creates a data.frame with bootstrap results", {
   ))
   n <- 1
   b <- 17
-  w <- res %>%
-    dplyr::filter(
-      comp == n, boot == b, type == "weights", block == "agriculture"
-    )
+  w <- subset(
+    res, comp == n & boot == b & type == "weights" & block == "agriculture"
+  )
   expect_equal(w$value, unname(W[[b]][[1]][[1]][, n]))
 })

@@ -107,19 +107,37 @@ rgcca_stability <- function(rgcca_res,
      rgcca_res$AVE$AVE_X <- rgcca_res$AVE$AVE_X[-rgcca_res$call$response]
   }
 
-  top <- res %>%
-    # Compute the l1 norm for each variable across bootstrap samples
-    group_by(.data$comp, .data$block, .data$var) %>%
-    summarize(l1 = sum(abs(.data$value))) %>%
-    # Compute the intensity by multiplying each l1 norm by the corresponding AVE
-    mutate(intensity = (function(x, block, comp) {
-      x * rgcca_res$AVE$AVE_X[[block[1]]][as.integer(comp[1])]
-    })(.data$l1, .data$block, .data$comp)) %>%
-    # Take the mean over the different components for each variable
-    group_by(.data$block, .data$var) %>%
-    summarize(top = mean(.data$intensity))
-  top <- data.frame(top, row.names = top$var)
-  top <- top[unlist(lapply(rgcca_res$call$blocks, colnames)), ]
+  # Compute var2block to later retrieve "block" from "var"
+  var2block <- subset(res, res$comp == 1 & res$boot == 1)[, c("var", "block")]
+  rownames(var2block) <- var2block$var
+  var2block$var <- NULL
+
+  # Compute the l1 norm for each variable across bootstrap samples
+  top <- tapply(
+    res$value, list(var = res$var, comp = res$comp), function(x) sum(abs(x))
+  )
+
+  # Reformat results
+  grid <- expand.grid(dimnames(top))
+  idx <- which(!is.na(c(top)))
+  top <- as.matrix(na.omit(c(top)))
+  grid <- grid[idx, ]
+  top <- cbind(l1 = top, grid)
+  top$block <- var2block[top$var, ]
+
+  # Compute the intensity by multiplying each l1 norm by the corresponding AVE
+  top$intensity <- apply(top, 1, function(x) {
+    as.double(x["l1"]) *
+      rgcca_res$AVE$AVE_X[[x["block"]]][as.integer(x["comp"])]
+  })
+
+  # Take the mean over the different components for each variable
+  top <- tapply(top$intensity, list(var = top$var), mean)
+  top <- na.omit(c(top))
+  top <- data.frame(
+    top = top, var = names(top), block = var2block[names(top), ]
+  )
+  rownames(top) <- NULL
 
   perc <- elongate_arg(keep, top)
 
