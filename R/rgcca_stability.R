@@ -86,14 +86,13 @@ rgcca_stability <- function(rgcca_res,
     boot_sampling$full_idx, function(b) {
       rgcca_bootstrap_k(
         rgcca_res = rgcca_res,
-        inds = b
+        inds = b, type = "AVE"
       )
     },
     n_cores = n_cores, verbose = verbose
   )
 
   res <- format_bootstrap_list(W, rgcca_res)
-  res <- res[res$type == "weights", ]
   J <- length(rgcca_res$blocks)
 
   if (rgcca_res$call$superblock == TRUE) {
@@ -107,37 +106,19 @@ rgcca_stability <- function(rgcca_res,
      rgcca_res$AVE$AVE_X <- rgcca_res$AVE$AVE_X[-rgcca_res$call$response]
   }
 
+  res_AVE <- res[res$type != "weights", ]
+  res <- res[res$type == "weights", ]
+
   # Compute var2block to later retrieve "block" from "var"
   var2block <- subset(res, res$comp == 1 & res$boot == 1)[, c("var", "block")]
   rownames(var2block) <- var2block$var
   var2block$var <- NULL
 
-  # Compute the l1 norm for each variable across bootstrap samples
+  res$scores <- res$value^2 * res_AVE$value
   top <- tapply(
-    res$value, list(var = res$var, comp = res$comp), function(x) sum(abs(x))
+    res$scores, list(var = as.character(res$var)), mean
   )
-
-  # Reformat results
-  grid <- expand.grid(dimnames(top))
-  idx <- which(!is.na(c(top)))
-  top <- as.matrix(na.omit(c(top)))
-  grid <- grid[idx, ]
-  top <- cbind(l1 = top, grid)
-  top$block <- var2block[top$var, ]
-
-  # Compute the intensity by multiplying each l1 norm by the corresponding AVE
-  top$intensity <- apply(top, 1, function(x) {
-    as.double(x["l1"]) *
-      rgcca_res$AVE$AVE_X[[x["block"]]][as.integer(x["comp"])]
-  })
-
-  # Take the mean over the different components for each variable
-  top <- tapply(top$intensity, list(var = top$var), mean)
-  top <- na.omit(c(top))
-  top <- data.frame(
-    top = top, var = names(top), block = var2block[names(top), ]
-  )
-  rownames(top) <- NULL
+  top <- cbind(top = top, block = var2block[names(top), ])
 
   perc <- elongate_arg(keep, top)
 
@@ -155,7 +136,7 @@ rgcca_stability <- function(rgcca_res,
 
   # Keep a percentage of the variables with the top intensities
   keepVar <- lapply(seq_along(rgcca_res$AVE$AVE_X), function(j) {
-    x <- top[top$block == names(rgcca_res$AVE$AVE_X)[j], "top"]
+    x <- top[top[, "block"] == j, "top"]
     order(x, decreasing = TRUE)[seq(round(perc[j] * length(x)))]
   })
 
