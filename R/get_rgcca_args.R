@@ -33,6 +33,7 @@ get_rgcca_args <- function(object, default_args = list()) {
       sparsity = default_args$sparsity,
       response = default_args$response,
       NA_method = tolower(default_args$NA_method),
+      comp_orth = default_args$comp_orth,
       n_iter_max = default_args$n_iter_max,
       connection = default_args$connection,
       superblock = default_args$superblock,
@@ -57,7 +58,9 @@ get_rgcca_args <- function(object, default_args = list()) {
 
     check_integer("tol", rgcca_args$tol, float = TRUE, min = 0)
     check_integer("n_iter_max", rgcca_args$n_iter_max, min = 1)
-    for (i in c("superblock", "verbose", "scale", "bias", "quiet")) {
+    for (i in c(
+      "superblock", "verbose", "scale", "bias", "quiet", "comp_orth"
+    )) {
       check_boolean(i, rgcca_args[[i]])
     }
 

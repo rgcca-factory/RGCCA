@@ -18,15 +18,15 @@
 #' @title deflation function
 #' @noRd
 defl_select <- function(yy, rr, nncomp, nn, nbloc, na.rm = TRUE,
-                        response = NULL) {
+                        response = NULL, left = TRUE) {
   resdefl <- NULL
   pdefl <- list()
   for (q in seq(nbloc)) {
     is_response <- !is.null(response) && (q == response)
     if ((nn <= nncomp[q]) && !is_response) {
       defltmp <- deflation(as.matrix(rr[[q]]),
-        as.matrix(yy[, q]),
-        na.rm = na.rm
+        as.matrix(yy[[q]]),
+        na.rm = na.rm, left = left
       )
       resdefl[[q]] <- defltmp$R
       pdefl[[q]] <- as.matrix(defltmp$p)

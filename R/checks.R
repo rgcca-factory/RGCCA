@@ -166,7 +166,7 @@ check_method <- function(method) {
   analysis <- c(
     "rgcca", "sgcca", "pca", "spca", "pls", "spls",
     "cca", "ifa", "ra", "gcca", "maxvar", "maxvar-b",
-    "maxvar-a", "mcoa", "cpca-1", "cpca-2", "cpca-4",
+    "maxvar-a", "mfa", "mcoa", "cpca-1", "cpca-2", "cpca-4",
     "hpca", "maxbet-b", "maxbet", "maxdiff-b", "maxdiff",
     "sabscor", "ssqcor", "ssqcov-1",
     "ssqcov-2", "ssqcov", "sumcor", "sumcov-1", "sumcov-2",

@@ -179,7 +179,8 @@ rgccad <- function(blocks, connection = 1 - diag(length(blocks)),
                    ncomp = rep(1, length(blocks)), scheme = "centroid",
                    init = "svd", bias = TRUE, tol = 1e-08, verbose = TRUE,
                    na.rm = TRUE, superblock = FALSE,
-                   response = NULL, disjunction = NULL, n_iter_max = 1000) {
+                   response = NULL, disjunction = NULL,
+                   n_iter_max = 1000, comp_orth = TRUE) {
   update_col_n <- function(x, y, n) {
     x[, n] <- y
     return(x)
@@ -213,12 +214,12 @@ rgccad <- function(blocks, connection = 1 - diag(length(blocks)),
   a <- lapply(seq(J), function(b) matrix(NA, pjs[[b]], N + 1))
   Y <- lapply(seq(J), function(b) matrix(NA, nb_ind, N + 1))
 
-  if (superblock) {
+  if (superblock && comp_orth) {
     astar <- matrix(NA, pjs[J], N + 1)
-    P <- matrix(NA, pjs[J], N)
+    P <- c()
   } else {
     astar <- a
-    P <- lapply(seq(J), function(b) matrix(NA, pjs[[b]], N))
+    P <- lapply(seq(J), function(b) c())
   }
 
   # Whether primal or dual
@@ -257,7 +258,7 @@ rgccad <- function(blocks, connection = 1 - diag(length(blocks)),
     a <- lapply(seq(J), function(b) update_col_n(a[[b]], gcca_result$a[[b]], n))
 
     # Compute astar
-    if (superblock) {
+    if (superblock && comp_orth) {
       if (n == 1) {
         astar[, 1] <- a[[J]][, 1, drop = FALSE]
       } else {
@@ -266,7 +267,7 @@ rgccad <- function(blocks, connection = 1 - diag(length(blocks)),
           drop(t(a[[J]][, n]) %*% P[, seq(n - 1), drop = FALSE])
       }
     } else {
-      if (n == 1) {
+      if (n == 1 || !comp_orth) {
         astar <- a
       } else {
         astar <- lapply(seq(J), function(b) {
@@ -282,9 +283,18 @@ rgccad <- function(blocks, connection = 1 - diag(length(blocks)),
 
     # Deflation procedure
     if (n == N + 1) break
-    if (superblock) {
-      defl_result <- deflation(R[[J]], gcca_result$Y[, J])
-      P[, n] <- defl_result$p
+    if (comp_orth) {
+      var_defl <- lapply(
+        seq_len(NCOL(gcca_result$Y)), function(i) gcca_result$Y[, i]
+      )
+      left <- TRUE
+    } else {
+      var_defl <- gcca_result$a
+      left <- FALSE
+    }
+    if (superblock && comp_orth) {
+      defl_result <- deflation(R[[J]], var_defl[[J]], na.rm, left)
+      P <- cbind(P, defl_result$p)
       cumsum_pjs <- cumsum(pjs)[seq_len(J - 1)]
       inf_pjs <- c(0, cumsum_pjs[seq_len(J - 2)]) + 1
       R <- lapply(seq(J - 1), function(b) {
@@ -294,16 +304,15 @@ rgccad <- function(blocks, connection = 1 - diag(length(blocks)),
       })
       R[[J]] <- defl_result$R
     } else {
-      defl_result <- defl_select(gcca_result$Y, R,
+      defl_result <- defl_select(var_defl, R,
         ndefl, n - 1, J,
         na.rm = na.rm,
-        response = response
+        response = response,
+        left = left
       )
       R <- defl_result$resdefl
       P <- lapply(seq(J), function(b) {
-        update_col_n(
-          P[[b]], defl_result$pdefl[[b]], n
-        )
+        cbind(P[[b]], defl_result$pdefl[[b]])
       })
     }
   }

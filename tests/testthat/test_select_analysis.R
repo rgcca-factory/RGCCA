@@ -9,7 +9,7 @@ J <- length(blocks)
 available_methods <- c(
   "rgcca", "sgcca", "pca", "spca", "pls", "spls", "cca",
   "ifa", "ra", "gcca", "maxvar", "maxvar-b", "maxvar-a",
-  "mcoa", "cpca-1", "cpca-2", "cpca-4", "hpca", "maxbet-b",
+  "mfa", "mcoa", "cpca-1", "cpca-2", "cpca-4", "hpca", "maxbet-b",
   "maxbet", "maxdiff-b", "maxdiff", "sabscor",
   "ssqcor", "ssqcov-1", "ssqcov-2", "ssqcov",
   "sumcor", "sumcov-1", "sumcov-2", "sumcov", "sabscov-1",
@@ -19,10 +19,10 @@ one_block_methods <- c("pca", "spca")
 two_block_methods <- c("cca", "ra", "ifa", "pls", "spls")
 superblock_methods <- c(
   "pca", "spca", "gcca", "maxvar", "maxvar-b", "maxvar-a",
-  "mcoa", "cpca-1", "cpca-2", "cpca-4", "hpca"
+  "mfa", "mcoa", "cpca-1", "cpca-2", "cpca-4", "hpca"
 )
 cov_methods <- c(
-  "pca", "spca", "pls", "ifa", "maxvar-a", "mcoa", "cpca-1",
+  "pca", "spca", "pls", "ifa", "maxvar-a", "mfa", "mcoa", "cpca-1",
   "cpca-2", "cpca-4", "hpca", "maxbet-b", "maxbet", "maxdiff-b",
   "maxdiff", "ssqcov-1", "ssqcov-2", "ssqcov", "sumcov-1",
   "sumcov-2", "sumcov", "sabscov-1", "sabscov-2"
@@ -37,7 +37,7 @@ horst_methods <- c(
   "sumcov"
 )
 factorial_methods <- c(
-  "gcca", "maxvar", "maxvar-b", "maxvar-a", "mcoa",
+  "gcca", "maxvar", "maxvar-b", "maxvar-a", "mfa", "mcoa",
   "cpca-2", "maxbet-b", "maxdiff-b", "ssqcor", "ssqcor",
   "ssqcov-1", "ssqcov-2", "ssqcov"
 )

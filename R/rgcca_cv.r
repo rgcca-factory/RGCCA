@@ -107,6 +107,7 @@ rgcca_cv <- function(blocks,
                      bias = TRUE,
                      verbose = TRUE,
                      n_iter_max = 1000,
+                     comp_orth = TRUE,
                      metric = NULL,
                      ...) {
   if (is.null(response)) {

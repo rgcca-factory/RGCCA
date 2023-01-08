@@ -48,7 +48,7 @@
 #' observations and \eqn{p_j} the number of variables.
 #' @param method A character string indicating the multi-block component
 #' method to consider: rgcca, sgcca, pca, spca, pls, spls, cca,
-#' ifa, ra, gcca, maxvar, maxvar-b, maxvar-a, mcoa,cpca-1, cpca-2,
+#' ifa, ra, gcca, maxvar, maxvar-b, maxvar-a, mfa, mcoa, cpca-1, cpca-2,
 #' cpca-4, hpca, maxbet-b, maxbet, maxdiff-b, maxdiff,
 #' sabscor, ssqcor, ssqcov-1, ssqcov-2, ssqcov, sumcor,
 #' sumcov-1, sumcov-2, sumcov, sabscov-1, sabscov-2.
@@ -118,6 +118,8 @@
 #' @param quiet Logical value indicating if warning messages are reported.
 #' @param n_iter_max Integer giving the algorithm's maximum number of
 #' iterations.
+#' @param comp_orth Logical value indicating if the deflation should lead to
+#' orthogonal components or orthogonal weights.
 #' @return A rgcca fitted object
 #' @return \item{Y}{List of \eqn{J} elements. Each element of the list \eqn{Y}
 #' is a matrix that contains the RGCCA block components for the corresponding
@@ -267,7 +269,7 @@ rgcca <- function(blocks, method = "rgcca",
                   response = NULL,
                   superblock = FALSE,
                   NA_method = "nipals", verbose = FALSE, quiet = TRUE,
-                  n_iter_max = 1000) {
+                  n_iter_max = 1000, comp_orth = TRUE) {
   rgcca_args <- as.list(environment())
   ### If specific objects are given for blocks, parameters are imported from
   #   these objects.
@@ -303,7 +305,7 @@ rgcca <- function(blocks, method = "rgcca",
   ### Call the gcca function
   gcca_args <- rgcca_args[c(
     "connection", "ncomp", "scheme", "init", "bias", "tol",
-    "verbose", "superblock", "response", "n_iter_max"
+    "verbose", "superblock", "response", "n_iter_max", "comp_orth"
   )]
   gcca_args[["na.rm"]] <- na.rm
   gcca_args[["blocks"]] <- blocks

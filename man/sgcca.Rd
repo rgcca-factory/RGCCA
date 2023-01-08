@@ -19,7 +19,8 @@ sgcca(
   superblock = FALSE,
   response = NULL,
   disjunction = NULL,
-  n_iter_max = 1000
+  n_iter_max = 1000,
+  comp_orth = TRUE
 )
 }
 \arguments{
@@ -81,6 +82,9 @@ qualitative block.}
 
 \item{n_iter_max}{Integer giving the algorithm's maximum number of
 iterations.}
+
+\item{comp_orth}{Logical value indicating if the deflation should lead to
+orthogonal components or orthogonal weights.}
 }
 \value{
 \item{Y}{A list of \eqn{J} elements. Each element of \eqn{Y} is a

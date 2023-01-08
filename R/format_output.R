@@ -58,18 +58,18 @@ format_output <- function(func_out, rgcca_args, opt, blocks) {
   func_out$a <- shave(func_out$a, rgcca_args$ncomp)
   func_out$Y <- shave(func_out$Y, rgcca_args$ncomp)
 
-  if (!rgcca_args$superblock) {
+  if (rgcca_args$superblock && rgcca_args$comp_orth) {
+    rownames(func_out$astar) <- colnames(blocks[[length(blocks)]])
+  } else {
     for (j in seq_along(blocks)) {
       rownames(func_out$astar[[j]]) <- colnames(blocks[[j]])
     }
     func_out$astar <- shave(func_out$astar, rgcca_args$ncomp)
-  } else {
-    rownames(func_out$astar) <- colnames(blocks[[length(blocks)]])
+    names(func_out$astar) <- names(blocks)
   }
 
   names(func_out$a) <- names(blocks)
   names(func_out$Y) <- names(blocks)
-  if (!rgcca_args$superblock) names(func_out$astar) <- names(blocks)
 
   is_optimal <- any(rgcca_args[[opt$par]] == "optimal")
   func_out[["optimal"]] <- is_optimal
