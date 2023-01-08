@@ -59,16 +59,19 @@ plot.cval <- function(x, type = "sd",
   best <- which(apply(
     x$penalties, 1, function(z) identical(z, x$bestpenalties)
   ))
+
+  if (display_order) {
+    idx_order <- sort(df$middle, decreasing = FALSE, index.return = TRUE)$ix
+    df <- df[idx_order, ]
+    best <- which(idx_order == best)
+  }
+
   df$category <- rep("param", NROW(x$cv))
   df$category[best] <- "best_param"
 
   labels <- as.expression(df$combinations)
   labels[[best]] <- bquote(underline(bold(.(labels[[best]]))))
 
-  if (display_order) {
-    idx_order <- sort(df$middle, decreasing = FALSE, index.return = TRUE)$ix
-    df <- df[idx_order, ]
-  }
   df$combinations <- factor(
     df$combinations, levels = df$combinations, ordered = TRUE
   )
