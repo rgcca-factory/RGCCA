@@ -31,6 +31,7 @@ rgcca_cv(
   bias = TRUE,
   verbose = TRUE,
   n_iter_max = 1000,
+  comp_orth = TRUE,
   metric = NULL,
   ...
 )
@@ -43,11 +44,8 @@ Block \eqn{\mathbf{X}_j}{Xj} is a matrix of dimension
 observations and \eqn{p_j} the number of variables.}
 
 \item{method}{A character string indicating the multi-block component
-method to consider: rgcca, sgcca, pca, spca, pls, spls, cca,
-ifa, ra, gcca, maxvar, maxvar-b, maxvar-a, mcoa,cpca-1, cpca-2,
-cpca-4, hpca, maxbet-b, maxbet, maxdiff-b, maxdiff,
-sabscor, ssqcor, ssqcov-1, ssqcov-2, ssqcov, sumcor,
-sumcov-1, sumcov-2, sumcov, sabscov-1, sabscov-2.}
+method to consider. See \link{available_methods} for the list of the
+available methods.}
 
 \item{response}{Numerical value giving the position of the response block.
 When the response argument is filled the supervised mode is automatically
@@ -154,6 +152,9 @@ algorithm is reported while computing.}
 
 \item{n_iter_max}{Integer giving the algorithm's maximum number of
 iterations.}
+
+\item{comp_orth}{Logical value indicating if the deflation should lead to
+orthogonal components or orthogonal weights.}
 
 \item{metric}{A character giving the the metric to report.}
 

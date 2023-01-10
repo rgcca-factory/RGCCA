@@ -6,48 +6,10 @@ blocks <- list(
 )
 J <- length(blocks)
 
-available_methods <- c(
-  "rgcca", "sgcca", "pca", "spca", "pls", "spls", "cca",
-  "ifa", "ra", "gcca", "maxvar", "maxvar-b", "maxvar-a",
-  "mcoa", "cpca-1", "cpca-2", "cpca-4", "hpca", "maxbet-b",
-  "maxbet", "maxdiff-b", "maxdiff", "sabscor",
-  "ssqcor", "ssqcov-1", "ssqcov-2", "ssqcov",
-  "sumcor", "sumcov-1", "sumcov-2", "sumcov", "sabscov-1",
-  "sabscov-2"
-)
-one_block_methods <- c("pca", "spca")
-two_block_methods <- c("cca", "ra", "ifa", "pls", "spls")
-superblock_methods <- c(
-  "pca", "spca", "gcca", "maxvar", "maxvar-b", "maxvar-a",
-  "mcoa", "cpca-1", "cpca-2", "cpca-4", "hpca"
-)
-cov_methods <- c(
-  "pca", "spca", "pls", "ifa", "maxvar-a", "mcoa", "cpca-1",
-  "cpca-2", "cpca-4", "hpca", "maxbet-b", "maxbet", "maxdiff-b",
-  "maxdiff", "ssqcov-1", "ssqcov-2", "ssqcov", "sumcov-1",
-  "sumcov-2", "sumcov", "sabscov-1", "sabscov-2"
-)
-cor_methods <- c(
-  "cca", "gcca", "maxvar", "maxvar-b", "sabscor", "ssqcor",
-  "sumcor"
-)
-horst_methods <- c(
-  "pca", "spca", "pls", "spls", "cca", "ifa", "ra", "cpca-1",
-  "maxbet", "maxdiff", "sumcor", "sumcov-1", "sumcov-2",
-  "sumcov"
-)
-factorial_methods <- c(
-  "gcca", "maxvar", "maxvar-b", "maxvar-a", "mcoa",
-  "cpca-2", "maxbet-b", "maxdiff-b", "ssqcor", "ssqcor",
-  "ssqcov-1", "ssqcov-2", "ssqcov"
-)
-centroid_methods <- c("sabscor", "sabscov-1", "sabscov-2")
-x4_methods <- c("cpca-4", "hpca")
-
 run_selection <- function(method, quiet = TRUE, ...) {
   J <- length(blocks)
-  if (method %in% one_block_methods) J <- 1
-  if (method %in% two_block_methods) J <- 2
+  if (method %in% one_block_methods()) J <- 1
+  if (method %in% two_block_methods()) J <- 2
 
   rgcca_args <- list(
     tau = rep(1, J),
@@ -62,9 +24,9 @@ run_selection <- function(method, quiet = TRUE, ...) {
   )
   rgcca_args <- modifyList(rgcca_args, list(...), keep.null = TRUE)
 
-  if (method %in% one_block_methods) {
+  if (method %in% one_block_methods()) {
     res <- select_analysis(rgcca_args, list(agriculture = blocks[[1]]))
-  } else if (method %in% two_block_methods) {
+  } else if (method %in% two_block_methods()) {
     res <- select_analysis(
       rgcca_args,
       list(agriculture = blocks[[1]], industry = blocks[[2]])
@@ -76,12 +38,12 @@ run_selection <- function(method, quiet = TRUE, ...) {
 }
 
 test_that("superblock methods sets all attributes of a superblock", {
-  for (method in available_methods) {
+  for (method in available_methods()) {
     tmp <- run_selection(method, superblock = TRUE)
     res <- tmp$res
     J <- tmp$J
 
-    if (method %in% c(superblock_methods, "rgcca", "sgcca")) {
+    if (method %in% c(superblock_methods(), "rgcca", "sgcca")) {
       expect_true(res$rgcca_args$superblock)
       expect_equal(
         res$rgcca_args$connection,
@@ -115,7 +77,7 @@ test_that("superblock methods sets all attributes of a superblock", {
 })
 
 test_that("cov methods set penalty to 1", {
-  for (method in cov_methods) {
+  for (method in cov_methods()) {
     tmp <- run_selection(method)
     res <- tmp$res
     J <- tmp$J
@@ -125,7 +87,7 @@ test_that("cov methods set penalty to 1", {
 })
 
 test_that("cor methods set penalty to 0", {
-  for (method in cor_methods) {
+  for (method in cor_methods()) {
     tmp <- run_selection(method)
     res <- tmp$res
     J <- tmp$J
@@ -135,28 +97,28 @@ test_that("cor methods set penalty to 0", {
 })
 
 test_that("horst methods set scheme to 'horst'", {
-  for (method in horst_methods) {
+  for (method in horst_methods()) {
     res <- run_selection(method)$res
     expect_equal(res$rgcca_args$scheme, "horst")
   }
 })
 
 test_that("factorial methods set scheme to 'factorial'", {
-  for (method in factorial_methods) {
+  for (method in factorial_methods()) {
     res <- run_selection(method)$res
     expect_equal(res$rgcca_args$scheme, "factorial")
   }
 })
 
 test_that("centroid methods set scheme to 'centroid'", {
-  for (method in centroid_methods) {
+  for (method in centroid_methods()) {
     res <- run_selection(method)$res
     expect_equal(res$rgcca_args$scheme, "centroid")
   }
 })
 
 test_that("x4 methods set scheme to x^4", {
-  for (method in x4_methods) {
+  for (method in x4_methods()) {
     res <- run_selection(method)$res
     expect_equal(mode(res$rgcca_args$scheme), "function")
     vec <- rnorm(10)

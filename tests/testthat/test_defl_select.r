@@ -5,6 +5,7 @@ X2 <- matrix(rnorm(12), 3, 4)
 X3 <- matrix(rnorm(21), 3, 7)
 A <- list(X1, X2, X3)
 yy <- cbind(c(1, 0, 0), c(0, 0, 1), c(1 / sqrt(2), 1 / sqrt(2), 0))
+yy <- lapply(seq_len(NCOL(yy)), function(i) yy[, i])
 
 test_that("defl_select does not deflate response block", {
   res <- defl_select(
@@ -23,6 +24,6 @@ test_that("defl_select does not deflate block which reached ncomp", {
 test_that("defl_select outputs coherent residuals and projections", {
   res <- defl_select(yy = yy, rr = A, nncomp = c(1, 1, 1), nn = 1, nbloc = 3)
   for (j in seq_along(A)) {
-    expect_equal(A[[j]] - yy[, j] %*% t(res$pdefl[[j]]), res$resdefl[[j]])
+    expect_equal(A[[j]] - yy[[j]] %*% t(res$pdefl[[j]]), res$resdefl[[j]])
   }
 })

@@ -29,8 +29,10 @@ select_analysis <- function(rgcca_args, blocks) {
   method <- rgcca_args$method
   response <- rgcca_args$response
   sparsity <- rgcca_args$sparsity
+  comp_orth <- rgcca_args$comp_orth
   connection <- rgcca_args$connection
   superblock <- rgcca_args$superblock
+  scale_block <- rgcca_args$scale_block
 
   if (length(blocks) == 1) {
     if (sparsity == 1) {
@@ -44,7 +46,8 @@ select_analysis <- function(rgcca_args, blocks) {
 
   call <- list(
     ncomp = ncomp, scheme = scheme, tau = tau, sparsity = sparsity,
-    superblock = superblock, connection = connection, response = response
+    superblock = superblock, connection = connection, response = response,
+    comp_orth = comp_orth, scale_block = scale_block
   )
   J <- length(blocks)
 
@@ -67,6 +70,7 @@ select_analysis <- function(rgcca_args, blocks) {
       scheme <- "horst"
       penalty <- c(1, 1)
       response <- NULL
+      comp_orth <- TRUE
       superblock <- TRUE
       connection <- connection_matrix(blocks, type = "response", J = 2)
     },
@@ -78,6 +82,7 @@ select_analysis <- function(rgcca_args, blocks) {
       scheme <- "horst"
       penalty <- c(sparsity[1], sparsity[1])
       response <- NULL
+      comp_orth <- TRUE
       superblock <- TRUE
       connection <- connection_matrix(blocks, type = "response", J = 2)
     },
@@ -89,6 +94,7 @@ select_analysis <- function(rgcca_args, blocks) {
       scheme <- "horst"
       penalty <- c(1, 1)
       response <- 2
+      comp_orth <- TRUE
       superblock <- FALSE
       connection <- connection_matrix(blocks, type = "response", J = 2)
     },
@@ -100,6 +106,7 @@ select_analysis <- function(rgcca_args, blocks) {
       scheme <- "horst"
       penalty <- check_penalty(sparsity, blocks, "sgcca")
       response <- 2
+      comp_orth <- TRUE
       superblock <- FALSE
       connection <- connection_matrix(blocks, type = "response", J = 2)
     },
@@ -110,6 +117,7 @@ select_analysis <- function(rgcca_args, blocks) {
       scheme <- "horst"
       penalty <- c(0, 0)
       response <- NULL
+      comp_orth <- TRUE
       superblock <- FALSE
       connection <- connection_matrix(blocks, type = "pair", J = 2)
     },
@@ -120,6 +128,7 @@ select_analysis <- function(rgcca_args, blocks) {
       scheme <- "horst"
       penalty <- c(1, 1)
       response <- NULL
+      comp_orth <- TRUE
       superblock <- FALSE
       connection <- connection_matrix(blocks, type = "pair", J = 2)
     },
@@ -131,6 +140,7 @@ select_analysis <- function(rgcca_args, blocks) {
       scheme <- "horst"
       penalty <- c(1, 0)
       response <- 2
+      comp_orth <- TRUE
       superblock <- FALSE
       connection <- connection_matrix(blocks, type = "response", J = 2)
     },
@@ -141,6 +151,7 @@ select_analysis <- function(rgcca_args, blocks) {
       scheme <- "factorial"
       penalty <- rep(0, J + 1)
       response <- NULL
+      comp_orth <- TRUE
       superblock <- TRUE
       connection <- connection_matrix(blocks, type = "response", J = J + 1)
     },
@@ -151,6 +162,7 @@ select_analysis <- function(rgcca_args, blocks) {
       scheme <- "factorial"
       penalty <- rep(0, J + 1)
       response <- NULL
+      comp_orth <- TRUE
       superblock <- TRUE
       connection <- connection_matrix(blocks, type = "response", J = J + 1)
     },
@@ -161,6 +173,7 @@ select_analysis <- function(rgcca_args, blocks) {
       scheme <- "factorial"
       penalty <- rep(0, J + 1)
       response <- NULL
+      comp_orth <- TRUE
       superblock <- TRUE
       connection <- connection_matrix(blocks, type = "response", J = J + 1)
     },
@@ -171,8 +184,33 @@ select_analysis <- function(rgcca_args, blocks) {
       scheme <- "factorial"
       penalty <- c(rep(1, J), 0)
       response <- NULL
+      comp_orth <- TRUE
       superblock <- TRUE
       connection <- connection_matrix(blocks, type = "response", J = J + 1)
+    },
+    "mfa" = {
+      param <- "tau"
+      gcca <- rgccad
+      ncomp <- rep(max(ncomp), J + 1)
+      scheme <- "factorial"
+      penalty <- rep(1, J + 1)
+      response <- NULL
+      comp_orth <- TRUE
+      superblock <- TRUE
+      connection <- connection_matrix(blocks, type = "response", J = J + 1)
+      scale_block <- "lambda1"
+    },
+    "mcia" = {
+      param <- "tau"
+      gcca <- rgccad
+      ncomp <- rep(max(ncomp), J + 1)
+      scheme <- "factorial"
+      penalty <- c(rep(1, J), 0)
+      response <- NULL
+      comp_orth <- FALSE
+      superblock <- TRUE
+      connection <- connection_matrix(blocks, type = "response", J = J + 1)
+      scale_block <- "inertia"
     },
     "mcoa" = {
       param <- "tau"
@@ -181,8 +219,10 @@ select_analysis <- function(rgcca_args, blocks) {
       scheme <- "factorial"
       penalty <- c(rep(1, J), 0)
       response <- NULL
+      comp_orth <- FALSE
       superblock <- TRUE
       connection <- connection_matrix(blocks, type = "response", J = J + 1)
+      scale_block <- "inertia"
     },
     "cpca-1" = {
       param <- "tau"
@@ -191,6 +231,7 @@ select_analysis <- function(rgcca_args, blocks) {
       scheme <- "horst"
       penalty <- c(rep(1, J), 0)
       response <- NULL
+      comp_orth <- TRUE
       superblock <- TRUE
       connection <- connection_matrix(blocks, type = "response", J = J + 1)
     },
@@ -201,6 +242,7 @@ select_analysis <- function(rgcca_args, blocks) {
       scheme <- "factorial"
       penalty <- c(rep(1, J), 0)
       response <- NULL
+      comp_orth <- TRUE
       superblock <- TRUE
       connection <- connection_matrix(blocks, type = "response", J = J + 1)
     },
@@ -211,6 +253,7 @@ select_analysis <- function(rgcca_args, blocks) {
       scheme <- function(x) x^4
       penalty <- c(rep(1, J), 0)
       response <- NULL
+      comp_orth <- TRUE
       superblock <- TRUE
       connection <- connection_matrix(blocks, type = "response", J = J + 1)
     },
@@ -221,6 +264,7 @@ select_analysis <- function(rgcca_args, blocks) {
       scheme <- function(x) x^4
       penalty <- c(rep(1, J), 0)
       response <- NULL
+      comp_orth <- TRUE
       superblock <- TRUE
       connection <- connection_matrix(blocks, type = "response", J = J + 1)
     },
@@ -230,6 +274,7 @@ select_analysis <- function(rgcca_args, blocks) {
       scheme <- "factorial"
       penalty <- rep(1, J)
       response <- NULL
+      comp_orth <- TRUE
       superblock <- FALSE
       connection <- connection_matrix(blocks, type = "all")
     },
@@ -239,6 +284,7 @@ select_analysis <- function(rgcca_args, blocks) {
       scheme <- "horst"
       penalty <- rep(1, J)
       response <- NULL
+      comp_orth <- TRUE
       superblock <- FALSE
       connection <- connection_matrix(blocks, type = "all")
     },
@@ -248,6 +294,7 @@ select_analysis <- function(rgcca_args, blocks) {
       scheme <- "factorial"
       penalty <- rep(1, J)
       response <- NULL
+      comp_orth <- TRUE
       superblock <- FALSE
       connection <- connection_matrix(blocks, type = "pair")
     },
@@ -257,6 +304,7 @@ select_analysis <- function(rgcca_args, blocks) {
       scheme <- "horst"
       penalty <- rep(1, J)
       response <- NULL
+      comp_orth <- TRUE
       superblock <- FALSE
       connection <- connection_matrix(blocks, type = "pair")
     },
@@ -266,6 +314,7 @@ select_analysis <- function(rgcca_args, blocks) {
       scheme <- "centroid"
       penalty <- rep(0, J)
       response <- NULL
+      comp_orth <- TRUE
       superblock <- FALSE
       connection <- connection_matrix(blocks, type = "pair")
     },
@@ -275,6 +324,7 @@ select_analysis <- function(rgcca_args, blocks) {
       scheme <- "factorial"
       penalty <- rep(0, J)
       response <- NULL
+      comp_orth <- TRUE
       superblock <- FALSE
       connection <- connection_matrix(blocks, type = "pair")
     },
@@ -284,6 +334,7 @@ select_analysis <- function(rgcca_args, blocks) {
       scheme <- "factorial"
       penalty <- rep(1, J)
       response <- NULL
+      comp_orth <- TRUE
       superblock <- FALSE
       connection <- connection_matrix(blocks, type = "all")
     },
@@ -293,6 +344,7 @@ select_analysis <- function(rgcca_args, blocks) {
       scheme <- "factorial"
       penalty <- rep(1, J)
       response <- NULL
+      comp_orth <- TRUE
       superblock <- FALSE
       connection <- connection_matrix(blocks, type = "pair")
     },
@@ -302,6 +354,7 @@ select_analysis <- function(rgcca_args, blocks) {
       scheme <- "factorial"
       penalty <- rep(1, J)
       response <- NULL
+      comp_orth <- TRUE
       superblock <- FALSE
       connection <- connection_matrix(blocks, type = "pair")
     },
@@ -311,6 +364,7 @@ select_analysis <- function(rgcca_args, blocks) {
       scheme <- "horst"
       penalty <- rep(0, J)
       response <- NULL
+      comp_orth <- TRUE
       superblock <- FALSE
       connection <- connection_matrix(blocks, type = "pair")
     },
@@ -320,6 +374,7 @@ select_analysis <- function(rgcca_args, blocks) {
       scheme <- "horst"
       penalty <- rep(1, J)
       response <- NULL
+      comp_orth <- TRUE
       superblock <- FALSE
       connection <- connection_matrix(blocks, type = "all")
     },
@@ -329,6 +384,7 @@ select_analysis <- function(rgcca_args, blocks) {
       scheme <- "horst"
       penalty <- rep(1, J)
       response <- NULL
+      comp_orth <- TRUE
       superblock <- FALSE
       connection <- connection_matrix(blocks, type = "pair")
     },
@@ -338,6 +394,7 @@ select_analysis <- function(rgcca_args, blocks) {
       scheme <- "horst"
       penalty <- rep(1, J)
       response <- NULL
+      comp_orth <- TRUE
       superblock <- FALSE
       connection <- connection_matrix(blocks, type = "pair")
     },
@@ -347,6 +404,7 @@ select_analysis <- function(rgcca_args, blocks) {
       scheme <- "centroid"
       penalty <- rep(1, J)
       response <- NULL
+      comp_orth <- TRUE
       superblock <- FALSE
       connection <- connection_matrix(blocks, type = "all")
     },
@@ -356,6 +414,7 @@ select_analysis <- function(rgcca_args, blocks) {
       scheme <- "centroid"
       penalty <- rep(1, J)
       response <- NULL
+      comp_orth <- TRUE
       superblock <- FALSE
       connection <- connection_matrix(blocks, type = "pair")
     }
@@ -429,8 +488,10 @@ select_analysis <- function(rgcca_args, blocks) {
     scheme = scheme,
     method = method,
     response = response,
+    comp_orth = comp_orth,
     connection = connection,
-    superblock = superblock
+    superblock = superblock,
+    scale_block = scale_block
   ), keep.null = TRUE)
   return(list(
     rgcca_args = rgcca_args,

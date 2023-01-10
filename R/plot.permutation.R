@@ -71,7 +71,7 @@ plot.permutation <- function(x,
   )
 
   ### Prepare plot
-  crit_title <- ifelse(x$call$method %in% c("sgcca", "spls"),
+  crit_title <- ifelse(x$call$method %in% sparse_methods(),
     "SGCCA criterion",
     "RGCCA criterion"
   )

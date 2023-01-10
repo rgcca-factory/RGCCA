@@ -163,20 +163,10 @@ check_integer <- function(x, y = x, type = "scalar", float = FALSE, min = 1,
 }
 
 check_method <- function(method) {
-  analysis <- c(
-    "rgcca", "sgcca", "pca", "spca", "pls", "spls",
-    "cca", "ifa", "ra", "gcca", "maxvar", "maxvar-b",
-    "maxvar-a", "mcoa", "cpca-1", "cpca-2", "cpca-4",
-    "hpca", "maxbet-b", "maxbet", "maxdiff-b", "maxdiff",
-    "sabscor", "ssqcor", "ssqcov-1",
-    "ssqcov-2", "ssqcov", "sumcor", "sumcov-1", "sumcov-2",
-    "sumcov", "sabscov-1", "sabscov-2"
-  )
-
-  if (!method %in% analysis) {
+  if (!method %in% available_methods()) {
     stop_rgcca(
       "method '", method, "' is not among the available methods: ",
-      paste(analysis, collapse = "', '"), "'.",
+      paste(available_methods(), collapse = "', '"), "'.",
       exit_code = 112
     )
   }
@@ -184,7 +174,7 @@ check_method <- function(method) {
 }
 
 check_nblocks <- function(blocks, method) {
-  if (tolower(method) %in% c("pca", "spca")) {
+  if (tolower(method) %in% one_block_methods()) {
     if (length(blocks) == 1) {
       return(blocks)
     }

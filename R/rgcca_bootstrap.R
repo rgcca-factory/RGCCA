@@ -76,7 +76,8 @@ rgcca_bootstrap <- function(rgcca_res, n_boot = 100,
                             n_cores = 1,
                             balanced = TRUE, keep_all_variables = FALSE,
                             verbose = TRUE) {
-  if (is(rgcca_res, "stability")) {
+  stability <- is(rgcca_res, "stability")
+  if (stability) {
     message(
       "All the parameters were imported from the fitted rgcca_stability",
       " object."
@@ -85,8 +86,8 @@ rgcca_bootstrap <- function(rgcca_res, n_boot = 100,
   }
 
   # If sparse model, we perform bootstrap only on the selected variables
-  if (tolower(rgcca_res$call$method) %in% c("sgcca", "spls", "spca")) {
-    if (verbose && !is(rgcca_res, "stability")) {
+  if (!stability && tolower(rgcca_res$call$method) %in% sparse_methods()) {
+    if (verbose) {
       message(
         "Only selected variables were used for bootstrapping. see ",
         "rgcca_stability()."

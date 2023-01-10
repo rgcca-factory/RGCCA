@@ -241,7 +241,8 @@ rgcca_permutation <- function(blocks, par_type = "tau", par_value = NULL,
                               init = "svd", bias = TRUE, tol = 1e-8,
                               response = NULL, superblock = FALSE,
                               NA_method = "nipals", rgcca_res = NULL,
-                              verbose = TRUE, n_iter_max = 1000) {
+                              verbose = TRUE, n_iter_max = 1000,
+                              comp_orth = TRUE) {
   ### Try to retrieve parameters from a rgcca object
   rgcca_args <- as.list(environment())
   tmp <- get_rgcca_args(blocks, rgcca_args)
@@ -261,7 +262,7 @@ rgcca_permutation <- function(blocks, par_type = "tau", par_value = NULL,
 
   ### Prepare parameters for line search
   if (
-    rgcca_args$method %in% c("sgcca", "spca", "spls") && (par_type == "tau")
+    rgcca_args$method %in% sparse_methods() && (par_type == "tau")
   ) {
     par_type <- "sparsity"
   } else if (par_type == "sparsity") {
