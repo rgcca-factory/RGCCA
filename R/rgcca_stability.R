@@ -60,7 +60,7 @@ rgcca_stability <- function(rgcca_res,
                             verbose = FALSE,
                             balanced = TRUE,
                             keep_all_variables = FALSE) {
-  stopifnot(tolower(rgcca_res$call$method) %in% c("sgcca", "spls", "spca"))
+  stopifnot(tolower(rgcca_res$call$method) %in% sparse_methods())
   check_integer("n_boot", n_boot)
   check_integer("n_cores", n_cores, min = 0)
 

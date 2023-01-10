@@ -145,7 +145,7 @@ rgcca_cv <- function(blocks,
 
   ### Prepare parameters for line search
   if (
-    rgcca_args$method %in% c("sgcca", "spca", "spls") && (par_type == "tau")
+    rgcca_args$method %in% sparse_methods() && (par_type == "tau")
   ) {
     par_type <- "sparsity"
   } else if (par_type == "sparsity") {

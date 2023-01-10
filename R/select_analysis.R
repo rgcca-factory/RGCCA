@@ -200,6 +200,18 @@ select_analysis <- function(rgcca_args, blocks) {
       connection <- connection_matrix(blocks, type = "response", J = J + 1)
       scale_block <- "lambda1"
     },
+    "mcia" = {
+      param <- "tau"
+      gcca <- rgccad
+      ncomp <- rep(max(ncomp), J + 1)
+      scheme <- "factorial"
+      penalty <- c(rep(1, J), 0)
+      response <- NULL
+      comp_orth <- FALSE
+      superblock <- TRUE
+      connection <- connection_matrix(blocks, type = "response", J = J + 1)
+      scale_block <- "inertia"
+    },
     "mcoa" = {
       param <- "tau"
       gcca <- rgccad

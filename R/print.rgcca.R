@@ -36,7 +36,7 @@ print.rgcca <- function(x, ...) {
 
   ### Print regularization parameter or the number of selected variables
   cat("\n")
-  if (!tolower(x$call$method) %in% c("sgcca", "spca", "spls")) {
+  if (!tolower(x$call$method) %in% sparse_methods()) {
     param <- "regularization"
     if (!is.matrix(x$call$tau)) {
       for (i in seq_len(NCOL(x$call$connection))) {

@@ -47,11 +47,8 @@
 #' \eqn{n \times p_j}{n x p_j} where n is the number of
 #' observations and \eqn{p_j} the number of variables.
 #' @param method A character string indicating the multi-block component
-#' method to consider: rgcca, sgcca, pca, spca, pls, spls, cca,
-#' ifa, ra, gcca, maxvar, maxvar-b, maxvar-a, mfa, mcoa, cpca-1, cpca-2,
-#' cpca-4, hpca, maxbet-b, maxbet, maxdiff-b, maxdiff,
-#' sabscor, ssqcor, ssqcov-1, ssqcov-2, ssqcov, sumcor,
-#' sumcov-1, sumcov-2, sumcov, sabscov-1, sabscov-2.
+#' method to consider. See \link{available_methods} for the list of the
+#' available methods.
 #' @param scale Logical value indicating if blocks are standardized.
 #' @param scale_block Value indicating if each block is divided by
 #' a constant value. If TRUE or "inertia", each block is divided by the

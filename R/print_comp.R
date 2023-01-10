@@ -19,7 +19,7 @@ print_comp <- function(rgcca_res, n = 1, i = length(rgcca_res$AVE$AVE_X),
 
   nvar <- sum(rgcca_res$a[[i]][, n] != 0)
   if (
-    !tolower(rgcca_res$call$method) %in% c("spls", "spca", "sgcca") ||
+    !tolower(rgcca_res$call$method) %in% sparse_methods() ||
       nvar == length(rgcca_res$a[[i]][, n])
   ) {
     var_text <- ""

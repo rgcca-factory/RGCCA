@@ -85,7 +85,7 @@ rgcca_bootstrap <- function(rgcca_res, n_boot = 100,
   }
 
   # If sparse model, we perform bootstrap only on the selected variables
-  if (tolower(rgcca_res$call$method) %in% c("sgcca", "spls", "spca")) {
+  if (tolower(rgcca_res$call$method) %in% sparse_methods()) {
     if (verbose && !is(rgcca_res, "stability")) {
       message(
         "Only selected variables were used for bootstrapping. see ",
