@@ -71,14 +71,26 @@ rgcca_transform <- function(rgcca_res, blocks_test) {
   })
 
   ### Project blocks_test on the space computed using RGCCA
-  astar <- rgcca_res$astar[names(X_train)]
-  projection <- lapply(seq_along(blocks_test), function(j) {
-    x <- pm(as.matrix(blocks_test[[j]]), astar[[j]])
-    rownames(x) <- rownames(blocks_test[[j]])
-    colnames(x) <- colnames(astar[[j]])
-    return(x)
-  })
-  names(projection) <- names(X_train)
+  # If there is a superblock with orthogonal components, the superblock
+  # is constructed and projected
+  if (rgcca_res$call$superblock && rgcca_res$call$comp_orth) {
+    superblock_test <- do.call(cbind, blocks_test)
+    projection <- list(
+      superblock = pm(as.matrix(superblock_test), rgcca_res$astar)
+    )
+    rownames(projection[[1]]) <- rownames(blocks_test[[1]])
+    colnames(projection[[1]]) <- colnames(rgcca_res$astar)
+  # Otherwise we directly use astar to project the individual blocks
+  } else {
+    astar <- rgcca_res$astar[names(X_train)]
+    projection <- lapply(seq_along(blocks_test), function(j) {
+      x <- pm(as.matrix(blocks_test[[j]]), astar[[j]])
+      rownames(x) <- rownames(blocks_test[[j]])
+      colnames(x) <- colnames(astar[[j]])
+      return(x)
+    })
+    names(projection) <- names(X_train)
+  }
 
   return(projection)
 }
