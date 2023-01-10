@@ -116,7 +116,7 @@ rgcca_stability <- function(rgcca_res,
 
   res$scores <- res$value^2 * res_AVE$value
   top <- tapply(
-    res$scores, list(var = as.character(res$var)), mean
+    res$scores, list(var = res$var), mean
   )
   top <- cbind(top = top, block = var2block[names(top), ])
 
