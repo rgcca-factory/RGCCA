@@ -23,7 +23,7 @@ defl_select <- function(yy, rr, nncomp, nn, nbloc, na.rm = TRUE,
   pdefl <- list()
   for (q in seq(nbloc)) {
     is_response <- !is.null(response) && (q == response)
-    if ((nn <= nncomp[q]) && !is_response) {
+    if ((nn < nncomp[q]) && !is_response) {
       defltmp <- deflation(as.matrix(rr[[q]]),
         as.matrix(yy[[q]]),
         na.rm = na.rm, left = left
