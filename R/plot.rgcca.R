@@ -132,10 +132,11 @@ plot.rgcca <- function(x, type = "weights", block = seq_along(x$call$blocks),
       y = do.call(c, lapply(x$blocks[block], colnames)),
       response = num_block
     )
+    df <- df[df$x != 0, ]
     if (display_order) {
       df <- df[order(abs(df$x), decreasing = TRUE), ]
     }
-    df <- df[seq(min(n_mark, sum(df$x != 0))), ]
+    df <- df[seq(min(n_mark, nrow(df))), ]
     df$y <- factor(df$y, levels = df$y, ordered = TRUE)
     return(df)
   }
