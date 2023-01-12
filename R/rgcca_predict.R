@@ -211,6 +211,8 @@ core_prediction <- function(prediction_model, X_train, X_test,
     obs = unname(y_test),
     pred = predict(model, X_test)
   )
+  idx_train <- !(is.na(prediction_train$obs) | is.na(prediction_train$pred))
+  idx_test <- !(is.na(prediction_test$obs) | is.na(prediction_test$pred))
 
   if (classification) {
     confusion_train <- confusionMatrix(prediction_train$pred,
@@ -230,22 +232,22 @@ core_prediction <- function(prediction_model, X_train, X_test,
       ))
     }
     metric_train <- multiClassSummary(
-      data = prediction_train,
+      data = prediction_train[idx_train, ],
       lev = levels(prediction_train$obs)
     )
     metric_test <- multiClassSummary(
-      data = prediction_test,
+      data = prediction_test[idx_test, ],
       lev = levels(prediction_test$obs)
     )
   } else {
     confusion_train <- confusion_test <- NA
     metric_train <- postResample(
-      pred = prediction_train$pred,
-      obs = prediction_train$obs
+      pred = prediction_train$pred[idx_train],
+      obs = prediction_train$obs[idx_train]
     )
     metric_test <- postResample(
-      pred = prediction_test$pred,
-      obs = prediction_test$obs
+      pred = prediction_test$pred[idx_test],
+      obs = prediction_test$obs[idx_test]
     )
   }
   score <- metric_test[grep(metric, names(metric_test), fixed = TRUE)[1]]
