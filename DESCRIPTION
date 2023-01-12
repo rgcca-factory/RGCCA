@@ -36,6 +36,7 @@ Imports:
     graphics,
     gridExtra,
     MASS,
+    matrixStats,
     methods,
     parallel,
     pbapply,
