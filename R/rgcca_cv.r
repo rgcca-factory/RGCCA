@@ -150,6 +150,8 @@ rgcca_cv <- function(blocks,
     par_type <- "sparsity"
   } else if (par_type == "sparsity") {
     rgcca_args$method <- "sgcca"
+    opt$gcca <- sgcca
+    opt$param <- "sparsity"
   }
 
   param <- set_parameter_grid(
@@ -175,29 +177,29 @@ rgcca_cv <- function(blocks,
   }
 
   ### Create folds
-  # Remove missing lines from response block
-  na_lines <- which(apply(
-    rgcca_args$blocks[[rgcca_args$response]], 1, function(x) all(is.na(x))
-  ))
-  idx_no_na <- seq_len(NROW(rgcca_args$blocks[[1]]))
-  if (length(na_lines) > 0) {
-    idx_no_na <- idx_no_na[-na_lines]
-  }
+  idx <- seq_len(NROW(rgcca_args$blocks[[1]]))
   if (validation == "loo") {
-    v_inds <- idx_no_na
+    v_inds <- idx
   } else {
     if (model$classification) {
       v_inds <- Reduce("c", lapply(seq_len(n_run), function(j) {
         folds <- caret::createFolds(
-          na.omit(rgcca_args$blocks[[rgcca_args$response]][, 1]),
+          rgcca_args$blocks[[rgcca_args$response]][, 1],
           k = k, list = TRUE,
           returnTrain = FALSE
         )
-        lapply(folds, function(f) idx_no_na[f])
+        # If there are NA in the response block, caret creates an extra fold
+        # with all the NA elements. We split them across the other folds
+        if (length(folds) > k) {
+          extra_folds <- split(folds[[1]], seq_along(folds[[1]]) %% k)
+          folds <- folds[-1]
+          folds <- Map(append, folds, extra_folds)
+        }
+        return(folds)
       }))
     } else {
       v_inds <- Reduce("c", lapply(seq_len(n_run), function(j) {
-        x <- sample(idx_no_na)
+        x <- sample(idx)
         split(x, seq(x) %% k)
       }))
     }
@@ -220,6 +222,10 @@ rgcca_cv <- function(blocks,
   }, n_cores = n_cores, verbose = verbose)
 
   W <- matrix(unlist(W), nrow = NROW(param$par_value), byrow = TRUE)
+
+  if (model$classification) {
+    W[is.na(W)] <- 0
+  }
 
   ### Format output
   rownames(param$par_value) <- seq_len(NROW(param$par_value))
