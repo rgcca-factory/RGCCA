@@ -60,6 +60,7 @@ plot.cval <- function(x, type = "sd",
     x$penalties, 1, function(z) identical(z, x$bestpenalties)
   ))
 
+  idx_order <- seq_len(nrow(df))
   if (display_order) {
     idx_order <- sort(df$middle, decreasing = FALSE, index.return = TRUE)$ix
     df <- df[idx_order, ]
@@ -78,7 +79,7 @@ plot.cval <- function(x, type = "sd",
 
   df_points <- data.frame(
     combinations = rep(df$combinations, NCOL(x$cv)),
-    y = c(x$cv),
+    y = c(x$cv[idx_order, ]),
     category = rep(df$category, NCOL(x$cv))
   )
 
