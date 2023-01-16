@@ -116,7 +116,7 @@ proj_l1_l2 <- function(x, a = 1) {
     # When p_low is empty, sum(p_low**2) = 0, which is what is wanted.
     s_low_2 <- sum(p_low**2) + nb_a_k * aksq
     psi_a_k <- (s_1 + s_low_1 - k * a_k) /
-      max(sqrt(s_2 + s_low_2 - 2 * a_k * (s_1 + s_low_1) + k * aksq), 1e-16)
+      sqrt(max(s_2 + s_low_2 - 2 * a_k * (s_1 + s_low_1) + k * aksq, 1e-16))
 
     # Choose partition depending on the constraint
     if (psi_a_k > a) {
