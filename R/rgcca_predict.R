@@ -156,7 +156,7 @@ rgcca_predict <- function(rgcca_res,
     res[["prediction"]]$test[, "pred"]
   }))
 
-  score <- mean(unlist(lapply(results, "[[", "score")))
+  score <- mean(unlist(lapply(results, "[[", "score")), na.rm = TRUE)
   names(score) <- names(results[[1]][["score"]])
 
   result <- list(
