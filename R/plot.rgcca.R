@@ -261,9 +261,7 @@ plot.rgcca <- function(x, type = "weights", block = seq_along(x$call$blocks),
         df_cor(x, block[1], comp, num_block)
       )
 
-      title <- ifelse(
-        missing(title), toupper(names(x$blocks)[block[1]]), title
-      )
+      title <- ifelse(missing(title), "", title)
       plot_function <- plot_both
     },
     # Plot percentage of AVE per component and per block. If some blocks are not
@@ -328,6 +326,6 @@ plot.rgcca <- function(x, type = "weights", block = seq_along(x$call$blocks),
     cex_main, cex_sub, cex_point, colors, shapes,
     show_labels, repel
   )
-  if (!is.null(p)) plot(p, ...)
+  if (is(p, "ggplot")) plot(p, ...)
   invisible(p)
 }
