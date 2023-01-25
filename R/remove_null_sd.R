@@ -23,7 +23,8 @@ remove_null_sd <- function(list_m, column_sd_null = NULL) {
       function(x) {
         which(apply(x, 2, function(y) {
           if (mode(y) != "character") {
-            res <- all(is.na(y)) || (sd(y[!is.na(y)]) == 0)
+            std <- sd(y, na.rm = TRUE)
+            res <- is.na(std) || (std == 0)
           } else {
             res <- FALSE
           }

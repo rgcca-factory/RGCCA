@@ -64,6 +64,6 @@ rgcca_bootstrap_k <- function(rgcca_res, inds = NULL, type = "loadings") {
     names(L) <- names(rgcca_res$a)
     return(list(W = A, L = L))
   } else {
-    return(list(W = missing_var, L = missing_var))
+    return(NULL)
   }
 }
