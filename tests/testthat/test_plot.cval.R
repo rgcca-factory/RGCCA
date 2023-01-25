@@ -12,9 +12,7 @@ res <- rgcca_cv(blocks,
   response = 3, method = "rgcca", par_type = "tau",
   par_value = c(0, 0.2, 0.3), n_run = 1, n_cores = 1
 )
-blocks2 <- c(blocks, blocks)
-names(blocks2) <- NULL
-res2 <- suppressWarnings(rgcca_cv(blocks2,
+res2 <- suppressWarnings(rgcca_cv(blocks,
   verbose = FALSE,
   response = 3, method = "sgcca", par_type = "ncomp",
   par_length = 3, n_run = 1, n_cores = 1

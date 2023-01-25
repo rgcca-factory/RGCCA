@@ -22,7 +22,7 @@ test_that("print.permutation prints the expected text", {
 test_that("print.permutation prints the expected text 2", {
   local_edition(3)
   expect_snapshot({
-    blocks2 <- c(blocks, blocks)
+    blocks2 <- rep(blocks, 3)
     names(blocks2) <- NULL
     res <- rgcca_permutation(blocks2,
       par_type = "ncomp", par_length = 2,
