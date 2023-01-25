@@ -21,7 +21,8 @@ test_that("plot.rgcca produces the expected sample plot", {
 test_that("plot.rgcca produces the expected correlation circle", {
   vdiffr::expect_doppelganger(
     "RGCCA cor_circle", plot.rgcca(
-      fit.rgcca, type = "cor_circle", block = 2, comp = seq(2)
+      fit.rgcca, type = "cor_circle", block = 2,
+      comp = seq(2), display_blocks = 2
     )
   )
 })
