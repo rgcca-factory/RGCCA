@@ -324,13 +324,7 @@ rgcca_permutation <- function(blocks, par_type = "tau", par_value = NULL,
     },
     FUN.VALUE = double(1)
   )
-  combinations <- apply(
-    format(param$par_value, digits = 2), 1, paste0, collapse = "/"
-  )
-  # If parameters are too long, there are replaced with "Set x"
-  if (nchar(combinations[1]) > 15) {
-    combinations <- paste("Set ", sep = "", seq_len(NROW(param$par_value)))
-  }
+  combinations <- format_combinations(param$par_value)
 
   stats <- data.frame(
     combinations = combinations,
