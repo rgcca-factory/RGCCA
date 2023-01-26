@@ -20,11 +20,11 @@
       1           1        1       1
       2           0        0       0
       
-        Tuning parameters Criterion Permuted criterion    sd zstat p-value
-      1             1/1/1     0.717              0.150 0.058  9.77       0
-      2             0/0/0     2.422              0.783 0.162 10.12       0
+        Tuning parameters Criterion Permuted criterion     sd zstat p-value
+      1             1/1/1     0.717               0.15 0.0580  9.77       0
+      2             0/0/0     2.422               0.75 0.0778 21.50       0
       
-      The best combination is: 0, 0, 0 for a z score of 10.1 and a p-value of 0.
+      The best combination is: 0, 0, 0 for a z score of 21.5 and a p-value of 0.
 
 # print.permutation prints the expected text 2
 
@@ -57,8 +57,8 @@
       2      1      1      1      1      1      1      1      1      1
       
         Tuning parameters Criterion Permuted criterion    sd zstat p-value
-      1             Set 1      16.6              1.032 0.144 107.6       0
-      2             Set 2      15.6              0.953 0.258  56.6       0
+      1             Set 1      16.6              0.877 0.127   124       0
+      2             Set 2      15.6              0.792 0.111   133       0
       
-      The best combination is: 2, 2, 2, 2, 2, 2, 2, 2, 2 for a z score of 108 and a p-value of 0.
+      The best combination is: 1, 1, 1, 1, 1, 1, 1, 1, 1 for a z score of 133 and a p-value of 0.
 
