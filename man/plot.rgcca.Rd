@@ -22,6 +22,7 @@
   shapes = NULL,
   show_labels = TRUE,
   repel = FALSE,
+  display_blocks = seq_along(x$call$blocks),
   ...
 )
 }
@@ -70,6 +71,9 @@ and "cor_circle".}
 
 \item{repel}{A logical value for repelling text labels from each other.}
 
+\item{display_blocks}{A numeric corresponding to the block(s) to display in
+the correlation_circle.}
+
 \item{...}{additional graphical parameters}
 }
 \value{
@@ -93,7 +97,10 @@ weights can be set with n_marks.
 in decreasing correlations and only the highest
 correlations are displayed. The number of displayed correlations can be set
 with n_marks (defaut value = 30).
-\item  "cor_circle" for correlation circle.
+\item  "cor_circle" for correlation circle. It represents the correlation
+between the component corresponding to the first element of the block
+argument, and the variables of the block corresponding to the blocks
+specified by the argument display_blocks.
 \item "both": displays both sample plot and correlation circle (implemented
 only for one block and at least when two components are asked (ncomp >= 2).
 \item "ave": displays the average variance explained for each block.}

@@ -81,15 +81,15 @@
       
       Tuning parameters (sparsity) used: 
         agriculture industry politic
-      1        1.00     1.00    1.00
-      2        0.58     0.71    0.58
+      1       1.000    1.000   1.000
+      2       0.577    0.707   0.577
       
       Validation: loo 
       Prediction model: lm 
       
         Tuning parameters Mean MAE    Sd
-      1    1.00/1.00/1.00     0.88 0.474
-      2    0.58/0.71/0.58     0.93 0.492
+      1    1.00/1.00/1.00    0.880 0.474
+      2    0.58/0.71/0.58    0.932 0.494
       
       The best combination is: 1 1 1 for a mean MAE of 0.88 
 
@@ -113,8 +113,8 @@
       
       Tuning parameters (sparsity) used: 
         agriculture industry politic
-      1        1.00     1.00       0
-      2        0.58     0.71       0
+      1       1.000    1.000       0
+      2       0.577    0.707       0
       
       Validation: kfold with 5 folds and 1 run(s)) 
       Prediction model: lda 

@@ -28,6 +28,8 @@
 #' @param show_labels A logical value for showing the labels in plots "samples"
 #' and "cor_circle".
 #' @param repel A logical value for repelling text labels from each other.
+#' @param display_blocks A numeric corresponding to the block(s) to display in
+#' the correlation_circle.
 #' @param ... additional graphical parameters
 #' @details
 #' \itemize{
@@ -44,7 +46,10 @@
 #' in decreasing correlations and only the highest
 #' correlations are displayed. The number of displayed correlations can be set
 #' with n_marks (defaut value = 30).
-#' \item  "cor_circle" for correlation circle.
+#' \item  "cor_circle" for correlation circle. It represents the correlation
+#' between the component corresponding to the first element of the block
+#' argument, and the variables of the block corresponding to the blocks
+#' specified by the argument display_blocks.
 #' \item "both": displays both sample plot and correlation circle (implemented
 #' only for one block and at least when two components are asked (ncomp >= 2).
 #' \item "ave": displays the average variance explained for each block.}
@@ -97,7 +102,8 @@ plot.rgcca <- function(x, type = "weights", block = seq_along(x$call$blocks),
                        cex_main = 14 * cex, cex_lab = 12 * cex,
                        cex_point = 3 * cex, n_mark = 30,
                        colors = NULL, shapes = NULL,
-                       show_labels = TRUE, repel = FALSE, ...) {
+                       show_labels = TRUE, repel = FALSE,
+                       display_blocks = seq_along(x$call$blocks), ...) {
   ### Define data.frame generating functions
   df_sample <- function(x, block, comp, response) {
     data.frame(
@@ -107,22 +113,23 @@ plot.rgcca <- function(x, type = "weights", block = seq_along(x$call$blocks),
     )
   }
 
-  df_cor <- function(x, block, comp, num_block) {
+  df_cor <- function(x, block, comp, num_block, display_blocks) {
     df <- data.frame(
-      x = do.call(rbind, lapply(block, function(j) {
+      x = do.call(rbind, Map(function(i, j) {
         cor(
-          x$blocks[[j]][rownames(x$Y[[j]]), ],
+          x$blocks[[i]][rownames(x$Y[[j]]), ],
           x$Y[[j]][, comp],
           use = "pairwise.complete.obs"
         )
-      })),
+      }, display_blocks, block)),
       response = num_block,
-      y = do.call(c, lapply(x$blocks[block], colnames))
+      y = do.call(c, lapply(x$blocks[display_blocks], colnames))
     )
 
     idx <- apply(do.call(
-      rbind, lapply(x$a[block], function(z) z[, comp[1], drop = FALSE])),
-      1, function(y) any(y != 0))
+      rbind,
+      lapply(x$a[display_blocks], function(z) z[, comp, drop = FALSE])
+    ), 1, function(y) any(y != 0))
     return(df[idx, ])
   }
 
@@ -179,15 +186,27 @@ plot.rgcca <- function(x, type = "weights", block = seq_along(x$call$blocks),
   comp <- elongate_arg(comp, seq(2))[seq(2)]
   block <- elongate_arg(block, seq(2))
 
+  lapply(display_blocks, function(i) {
+    check_blockx("display_blocks", i, x$call$blocks)
+  })
+
+  response_block <- FALSE
+
   switch(type,
     "samples" = {
       block <- block[seq(2)]
+      display_blocks <- block
     },
     "cor_circle" = {
-      block <- block[1]
+      block <- ifelse(x$call$superblock, length(x$call$blocks) + 1, block[1])
+      response_block <- !is.null(x$call$response) && (block == x$call$response)
     },
     "both" = {
-      block <- rep(block[1], 2)
+      block <- rep(ifelse(
+        x$call$superblock, length(x$call$blocks) + 1, block[1]
+      ), 2)
+      response_block <- !is.null(x$call$response) &&
+        (block[1] == x$call$response)
     },
     "ave" = {
       comp <- 1
@@ -195,12 +214,21 @@ plot.rgcca <- function(x, type = "weights", block = seq_along(x$call$blocks),
     "loadings" = {
       block <- unique(block)
       comp <- comp[1]
+      display_blocks <- block
     },
     "weights" = {
       block <- unique(block)
       comp <- comp[1]
+      display_blocks <- block
     }
   )
+
+  if (response_block) {
+    stop_rgcca(
+      "Drawing a correlation circle with block = ", block ,
+      " is not allowed, because the response components are not orthogonal."
+    )
+  }
 
   lapply(block, function(i) {
     check_blockx("block", i, x$blocks)
@@ -232,9 +260,8 @@ plot.rgcca <- function(x, type = "weights", block = seq_along(x$call$blocks),
       function(j) rep(names(x$blocks)[j], NCOL(x$blocks[[j]]))
     )))
   } else {
-    max_length <- ifelse(type == "both", 1, length(block))
     num_block <- as.factor(unlist(lapply(
-      block[seq(max_length)],
+      display_blocks,
       function(j) rep(names(x$blocks)[j], NCOL(x$blocks[[j]]))
     )))
   }
@@ -248,7 +275,7 @@ plot.rgcca <- function(x, type = "weights", block = seq_along(x$call$blocks),
     },
     # Plot block columns on a correlation circle
     "cor_circle" = {
-      df <- df_cor(x, block[1], comp, num_block)
+      df <- df_cor(x, block[1], comp, num_block, display_blocks)
 
       title <- ifelse(missing(title), "Correlation circle", title)
       plot_function <- plot_cor_circle
@@ -258,12 +285,10 @@ plot.rgcca <- function(x, type = "weights", block = seq_along(x$call$blocks),
     "both" = {
       df <- list(
         df_sample(x, block, comp, response),
-        df_cor(x, block[1], comp, num_block)
+        df_cor(x, block[1], comp, num_block, display_blocks)
       )
 
-      title <- ifelse(
-        missing(title), toupper(names(x$blocks)[block[1]]), title
-      )
+      title <- ifelse(missing(title), "", title)
       plot_function <- plot_both
     },
     # Plot percentage of AVE per component and per block. If some blocks are not
@@ -282,7 +307,7 @@ plot.rgcca <- function(x, type = "weights", block = seq_along(x$call$blocks),
     },
     # Plot the value associated with each individual in the projected space
     "loadings" = {
-      df <- df_cor(x, block, comp, num_block)
+      df <- df_cor(x, block, comp, num_block, display_blocks)
       if (display_order) {
         df <- df[order(abs(df[, 1]), decreasing = TRUE), ]
       }
@@ -328,6 +353,6 @@ plot.rgcca <- function(x, type = "weights", block = seq_along(x$call$blocks),
     cex_main, cex_sub, cex_point, colors, shapes,
     show_labels, repel
   )
-  if (!is.null(p)) plot(p, ...)
+  if (is(p, "ggplot")) plot(p, ...)
   invisible(p)
 }

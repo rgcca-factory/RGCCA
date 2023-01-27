@@ -144,8 +144,10 @@ rgcca_bootstrap <- function(rgcca_res, n_boot = 100,
     n_cores = n_cores, verbose = verbose
   )
 
+  W <- W[!vapply(W, is.null, logical(1L))]
+
   res <- format_bootstrap_list(W, rgcca_res)
-  stats <- rgcca_bootstrap_stats(res, rgcca_res, n_boot)
+  stats <- rgcca_bootstrap_stats(res, rgcca_res, length(W))
 
   return(structure(list(
     n_boot = n_boot, rgcca = rgcca_res,

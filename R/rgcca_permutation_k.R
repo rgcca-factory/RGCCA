@@ -5,13 +5,16 @@
 #' by concatenating the permuted blocks.
 #' @inheritParams rgcca_permutation
 #' @noRd
-rgcca_permutation_k <- function(rgcca_args, perm, par_type, par_value) {
+rgcca_permutation_k <- function(rgcca_args, inds, perm, par_type, par_value) {
   if (perm) {
-    rgcca_args$blocks <- lapply(rgcca_args$blocks, function(x) {
-      block <- as.matrix(x)[sample(seq_len(NROW(x))), , drop = FALSE]
+    blocks <- lapply(seq_along(rgcca_args$blocks), function(i) {
+      x <- rgcca_args$blocks[[i]]
+      block <- as.matrix(x)[inds[[i]], , drop = FALSE]
       rownames(block) <- rownames(x)
       return(block)
     })
+    names(blocks) <- names(rgcca_args$blocks)
+    rgcca_args$blocks <- blocks
   }
 
   rgcca_args[[par_type]] <- par_value
