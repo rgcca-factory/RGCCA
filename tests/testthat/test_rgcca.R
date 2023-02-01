@@ -1,4 +1,5 @@
 tol <- 1e-14
+tol2 <- 1e-5
 
 data(Russett)
 X_agric <- as.matrix(Russett[, c("gini", "farm", "rent")])
@@ -21,8 +22,7 @@ test_that("RGCCA is equivalent to scaled PCA with columns split into blocks
           and connected to a superblock", {
   A <- list(X[, 1], X[, 2], X[, 3], X[, 4], X[, 5])
   fit.rgcca <- rgcca(
-    blocks = A, superblock = TRUE, tau = 0,
-    scheme = "factorial"
+    blocks = A, superblock = TRUE, tau = 0, scheme = "factorial"
   )
   if (sign(fit.rgcca$Y[[6]][1]) != sign(fit.pca$x[1])) {
     fit.rgcca$Y[[6]] <- -fit.rgcca$Y[[6]]
@@ -33,7 +33,7 @@ test_that("RGCCA is equivalent to scaled PCA with columns split into blocks
 })
 
 test_that("RGCCA is equivalent to scaled PCA when method = 'pca'", {
-  fit.rgcca <- rgcca(list(X), method = "pca", ncomp = 2)
+  fit.rgcca <- rgcca(list(X), method = "pca", ncomp = 5)
   if (sign(fit.rgcca$a[[1]][1, 1]) != sign(fit.pca$rotation[1, 1])) {
     fit.rgcca$a[[1]][, 1] <- -fit.rgcca$a[[1]][, 1]
   }
@@ -42,6 +42,10 @@ test_that("RGCCA is equivalent to scaled PCA when method = 'pca'", {
     fit.rgcca$a[[1]][, 2] <- -fit.rgcca$a[[1]][, 2]
   }
   expect_true(sum(abs(fit.pca$rotation[, 2] - fit.rgcca$a[[1]][, 2])) < tol)
+  # Check AVE
+  AVE_pca <- summary(fit.pca)$importance[2, ]
+  AVE_rgcca <- fit.rgcca$AVE$AVE_X[[1]]
+  expect_true(all(abs(AVE_pca - AVE_rgcca) < tol2))
 })
 
 ##### Retrieve unscaled PCA with RGCCA #####

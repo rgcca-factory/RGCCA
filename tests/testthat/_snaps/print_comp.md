@@ -5,7 +5,7 @@
       res <- print_comp(fit.rgcca, n = 1, i = 1, outer = FALSE)
       cat(res)
     Output
-      Comp. 1 (69.9%)
+      Comp. 1 (62.1%)
 
 # print_comp prints the expected text 2
 
@@ -14,7 +14,7 @@
       res <- print_comp(fit.rgcca, n = 2, i = 3, outer = FALSE)
       cat(res)
     Output
-      Comp. 2 (3 variables, 18.2%)
+      Comp. 2 (3 variables, 13.8%)
 
 # print_comp prints the expected text 3
 
@@ -23,7 +23,7 @@
       res <- print_comp(fit.rgcca, outer = TRUE)
       cat(res)
     Output
-      First outer AVE: 60.2%
+      First outer AVE: 57.9%
 
 # print_comp prints the expected text 4
 
@@ -32,5 +32,5 @@
       res <- print_comp(fit.rgcca, outer = TRUE)
       cat(res)
     Output
-      First corrected outer AVE:  50.6% & 12.9%
+      First corrected outer AVE:  53.1% & 14.4%
 

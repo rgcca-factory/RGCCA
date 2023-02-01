@@ -111,8 +111,8 @@
 <text x='205.11' y='554.54' text-anchor='middle' style='font-size: 12.00px; font-style: italic; fill: #666666; font-family: sans;' textLength='6.67px' lengthAdjust='spacingAndGlyphs'>0</text>
 <text x='268.29' y='554.54' text-anchor='middle' style='font-size: 12.00px; font-style: italic; fill: #666666; font-family: sans;' textLength='6.67px' lengthAdjust='spacingAndGlyphs'>1</text>
 <text x='331.48' y='554.54' text-anchor='middle' style='font-size: 12.00px; font-style: italic; fill: #666666; font-family: sans;' textLength='6.67px' lengthAdjust='spacingAndGlyphs'>2</text>
-<text x='194.55' y='568.03' text-anchor='middle' style='font-size: 12.00px; font-family: sans;' textLength='90.71px' lengthAdjust='spacingAndGlyphs'>Comp. 1 (49.7%)</text>
-<text transform='translate(13.74,287.41) rotate(-90)' text-anchor='middle' style='font-size: 12.00px; font-family: sans;' textLength='84.04px' lengthAdjust='spacingAndGlyphs'>Comp. 4 (5.8%)</text>
+<text x='194.55' y='568.03' text-anchor='middle' style='font-size: 12.00px; font-family: sans;' textLength='90.71px' lengthAdjust='spacingAndGlyphs'>Comp. 1 (54.8%)</text>
+<text transform='translate(13.74,287.41) rotate(-90)' text-anchor='middle' style='font-size: 12.00px; font-family: sans;' textLength='84.04px' lengthAdjust='spacingAndGlyphs'>Comp. 4 (6.8%)</text>
 <text x='34.57' y='30.57' style='font-size: 14.00px; font-family: sans;' textLength='164.24px' lengthAdjust='spacingAndGlyphs'>Sample space: superblock</text>
 </g>
 <defs>
@@ -171,8 +171,8 @@
 <text x='518.14' y='554.54' text-anchor='middle' style='font-size: 12.00px; font-style: italic; fill: #666666; font-family: sans;' textLength='16.68px' lengthAdjust='spacingAndGlyphs'>0.0</text>
 <text x='565.49' y='554.54' text-anchor='middle' style='font-size: 12.00px; font-style: italic; fill: #666666; font-family: sans;' textLength='16.68px' lengthAdjust='spacingAndGlyphs'>0.5</text>
 <text x='612.83' y='554.54' text-anchor='middle' style='font-size: 12.00px; font-style: italic; fill: #666666; font-family: sans;' textLength='16.68px' lengthAdjust='spacingAndGlyphs'>1.0</text>
-<text x='518.17' y='568.03' text-anchor='middle' style='font-size: 12.00px; font-family: sans;' textLength='90.71px' lengthAdjust='spacingAndGlyphs'>Comp. 1 (49.7%)</text>
-<text transform='translate(373.74,287.41) rotate(-90)' text-anchor='middle' style='font-size: 12.00px; font-family: sans;' textLength='84.04px' lengthAdjust='spacingAndGlyphs'>Comp. 4 (5.8%)</text>
+<text x='518.17' y='568.03' text-anchor='middle' style='font-size: 12.00px; font-family: sans;' textLength='90.71px' lengthAdjust='spacingAndGlyphs'>Comp. 1 (54.8%)</text>
+<text transform='translate(373.74,287.41) rotate(-90)' text-anchor='middle' style='font-size: 12.00px; font-family: sans;' textLength='84.04px' lengthAdjust='spacingAndGlyphs'>Comp. 4 (6.8%)</text>
 <text x='648.20' y='262.63' style='font-size: 12.00px; font-style: italic; font-family: sans;' textLength='29.35px' lengthAdjust='spacingAndGlyphs'>Block</text>
 <rect x='653.33' y='276.54' width='3.91' height='3.91' style='stroke-width: 0.71; stroke: #999999;' />
 <circle cx='655.28' cy='295.78' r='1.95' style='stroke-width: 0.71; stroke: #E69F00;' />
@@ -264,8 +264,8 @@
 <text x='205.11' y='554.54' text-anchor='middle' style='font-size: 12.00px; font-style: italic; fill: #666666; font-family: sans;' textLength='6.67px' lengthAdjust='spacingAndGlyphs'>0</text>
 <text x='268.29' y='554.54' text-anchor='middle' style='font-size: 12.00px; font-style: italic; fill: #666666; font-family: sans;' textLength='6.67px' lengthAdjust='spacingAndGlyphs'>1</text>
 <text x='331.48' y='554.54' text-anchor='middle' style='font-size: 12.00px; font-style: italic; fill: #666666; font-family: sans;' textLength='6.67px' lengthAdjust='spacingAndGlyphs'>2</text>
-<text x='194.55' y='568.03' text-anchor='middle' style='font-size: 12.00px; font-family: sans;' textLength='90.71px' lengthAdjust='spacingAndGlyphs'>Comp. 1 (49.7%)</text>
-<text transform='translate(13.74,287.41) rotate(-90)' text-anchor='middle' style='font-size: 12.00px; font-family: sans;' textLength='84.04px' lengthAdjust='spacingAndGlyphs'>Comp. 4 (5.8%)</text>
+<text x='194.55' y='568.03' text-anchor='middle' style='font-size: 12.00px; font-family: sans;' textLength='90.71px' lengthAdjust='spacingAndGlyphs'>Comp. 1 (54.8%)</text>
+<text transform='translate(13.74,287.41) rotate(-90)' text-anchor='middle' style='font-size: 12.00px; font-family: sans;' textLength='84.04px' lengthAdjust='spacingAndGlyphs'>Comp. 4 (6.8%)</text>
 <text x='34.57' y='30.57' style='font-size: 14.00px; font-family: sans;' textLength='164.24px' lengthAdjust='spacingAndGlyphs'>Sample space: superblock</text>
 </g>
 <g clip-path='url(#cpMzYwLjAwfDcyMC4wMHwxNS40Nnw1NzYuMDA=)'>
@@ -314,8 +314,8 @@
 <text x='518.14' y='554.54' text-anchor='middle' style='font-size: 12.00px; font-style: italic; fill: #666666; font-family: sans;' textLength='16.68px' lengthAdjust='spacingAndGlyphs'>0.0</text>
 <text x='565.49' y='554.54' text-anchor='middle' style='font-size: 12.00px; font-style: italic; fill: #666666; font-family: sans;' textLength='16.68px' lengthAdjust='spacingAndGlyphs'>0.5</text>
 <text x='612.83' y='554.54' text-anchor='middle' style='font-size: 12.00px; font-style: italic; fill: #666666; font-family: sans;' textLength='16.68px' lengthAdjust='spacingAndGlyphs'>1.0</text>
-<text x='518.17' y='568.03' text-anchor='middle' style='font-size: 12.00px; font-family: sans;' textLength='90.71px' lengthAdjust='spacingAndGlyphs'>Comp. 1 (49.7%)</text>
-<text transform='translate(373.74,287.41) rotate(-90)' text-anchor='middle' style='font-size: 12.00px; font-family: sans;' textLength='84.04px' lengthAdjust='spacingAndGlyphs'>Comp. 4 (5.8%)</text>
+<text x='518.17' y='568.03' text-anchor='middle' style='font-size: 12.00px; font-family: sans;' textLength='90.71px' lengthAdjust='spacingAndGlyphs'>Comp. 1 (54.8%)</text>
+<text transform='translate(373.74,287.41) rotate(-90)' text-anchor='middle' style='font-size: 12.00px; font-family: sans;' textLength='84.04px' lengthAdjust='spacingAndGlyphs'>Comp. 4 (6.8%)</text>
 <text x='648.20' y='262.63' style='font-size: 12.00px; font-style: italic; font-family: sans;' textLength='29.35px' lengthAdjust='spacingAndGlyphs'>Block</text>
 <rect x='653.33' y='276.54' width='3.91' height='3.91' style='stroke-width: 0.71; stroke: #999999;' />
 <circle cx='655.28' cy='295.78' r='1.95' style='stroke-width: 0.71; stroke: #E69F00;' />

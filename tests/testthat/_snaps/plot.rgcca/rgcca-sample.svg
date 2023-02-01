@@ -153,8 +153,8 @@
 <text x='358.87' y='554.54' text-anchor='middle' style='font-size: 12.00px; font-style: italic; fill: #666666; font-family: sans;' textLength='16.68px' lengthAdjust='spacingAndGlyphs'>0.0</text>
 <text x='459.10' y='554.54' text-anchor='middle' style='font-size: 12.00px; font-style: italic; fill: #666666; font-family: sans;' textLength='16.68px' lengthAdjust='spacingAndGlyphs'>0.5</text>
 <text x='559.33' y='554.54' text-anchor='middle' style='font-size: 12.00px; font-style: italic; fill: #666666; font-family: sans;' textLength='16.68px' lengthAdjust='spacingAndGlyphs'>1.0</text>
-<text x='322.90' y='568.03' text-anchor='middle' style='font-size: 12.00px; font-family: sans;' textLength='142.07px' lengthAdjust='spacingAndGlyphs'>Comp. 1 (66.1%) - X_agric</text>
-<text transform='translate(13.74,279.69) rotate(-90)' text-anchor='middle' style='font-size: 12.00px; font-family: sans;' textLength='132.07px' lengthAdjust='spacingAndGlyphs'>Comp. 1 (90.7%) - X_ind</text>
+<text x='322.90' y='568.03' text-anchor='middle' style='font-size: 12.00px; font-family: sans;' textLength='142.07px' lengthAdjust='spacingAndGlyphs'>Comp. 1 (54.4%) - X_agric</text>
+<text transform='translate(13.74,279.69) rotate(-90)' text-anchor='middle' style='font-size: 12.00px; font-family: sans;' textLength='132.07px' lengthAdjust='spacingAndGlyphs'>Comp. 1 (90.6%) - X_ind</text>
 <text x='627.68' y='254.91' style='font-size: 12.00px; font-style: italic; font-family: sans;' textLength='54.05px' lengthAdjust='spacingAndGlyphs'>Response</text>
 <rect x='637.06' y='268.81' width='3.91' height='3.91' style='stroke-width: 0.71; stroke: #999999;' />
 <circle cx='639.01' cy='288.05' r='1.95' style='stroke-width: 0.71; stroke: #E69F00;' />
