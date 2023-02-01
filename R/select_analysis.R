@@ -35,7 +35,7 @@ select_analysis <- function(rgcca_args, blocks) {
   scale_block <- rgcca_args$scale_block
 
   if (length(blocks) == 1) {
-    if (sparsity == 1) {
+    if (sparsity[1] == 1) {
       method <- "pca"
     } else {
       method <- "spca"
@@ -469,7 +469,11 @@ select_analysis <- function(rgcca_args, blocks) {
         penalty <- c(penalty[seq(J)], pen)
       }
     } else {
-      connection <- check_connection(connection, blocks)
+      if (is.null(connection)) {
+        connection <- connection_matrix(blocks, type = "pair")
+      } else {
+        connection <- check_connection(connection, blocks)
+      }
     }
     penalty <- check_penalty(penalty, blocks, method,
       superblock = superblock,
