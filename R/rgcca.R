@@ -290,7 +290,8 @@ rgcca <- function(blocks, method = "rgcca",
   blocks <- scaling(tmp$blocks,
     scale = rgcca_args$scale,
     bias = rgcca_args$bias,
-    scale_block = rgcca_args$scale_block
+    scale_block = rgcca_args$scale_block,
+    na.rm = na.rm
   )
   if (rgcca_args$superblock) {
     blocks[["superblock"]] <- Reduce(cbind, blocks)
