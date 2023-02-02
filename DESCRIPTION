@@ -31,7 +31,7 @@ Depends:
 Imports:
     caret,
     Deriv,
-    ggplot2,
+    ggplot2 (>= 3.4.0),
     ggrepel,
     graphics,
     gridExtra,

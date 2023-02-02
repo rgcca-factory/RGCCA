@@ -39,10 +39,10 @@ plot_sample <- function(df, title, x, block, comp, theme_RGCCA,
   p <- p +
     theme_RGCCA +
     ggplot2::geom_vline(
-      xintercept = 0, linetype = "dashed", size = .1 * cex_point
+      xintercept = 0, linetype = "dashed", linewidth = .1 * cex_point
     ) +
     ggplot2::geom_hline(
-      yintercept = 0, linetype = "dashed", size = .1 * cex_point
+      yintercept = 0, linetype = "dashed", linewidth = .1 * cex_point
     ) +
     ggplot2::labs(title = title, x = xlab, y = ylab, color = "Response") +
     ggplot2::theme(

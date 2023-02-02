@@ -36,12 +36,12 @@
 <polyline points='588.28,541.35 588.28,33.14 ' style='stroke-width: 1.07; stroke: #EBEBEB; stroke-linecap: butt;' />
 <line x1='498.02' y1='402.75' x2='623.53' y2='402.75' style='stroke-width: 1.07; stroke-linecap: butt;' />
 <line x1='92.09' y1='402.75' x2='75.67' y2='402.75' style='stroke-width: 1.07; stroke-linecap: butt;' />
-<polygon points='498.02,506.70 92.09,506.70 92.09,298.80 498.02,298.80 498.02,506.70 ' style='stroke-width: 1.07; fill: #FFFFFF;' />
-<line x1='295.06' y1='506.70' x2='295.06' y2='298.80' style='stroke-width: 2.13; stroke-linecap: butt;' />
+<polygon points='498.02,506.70 92.09,506.70 92.09,298.80 498.02,298.80 498.02,506.70 ' style='stroke-width: 1.07; stroke-linecap: butt; stroke-linejoin: miter; fill: #FFFFFF;' />
+<line x1='295.06' y1='506.70' x2='295.06' y2='298.80' style='stroke-width: 2.13; stroke-linecap: butt; stroke-linejoin: miter;' />
 <line x1='549.48' y1='171.74' x2='679.96' y2='171.74' style='stroke-width: 1.07; stroke: #BEBEBE; stroke-linecap: butt;' />
 <line x1='164.87' y1='171.74' x2='163.39' y2='171.74' style='stroke-width: 1.07; stroke: #BEBEBE; stroke-linecap: butt;' />
-<polygon points='549.48,275.70 164.87,275.70 164.87,67.79 549.48,67.79 549.48,275.70 ' style='stroke-width: 1.07; stroke: #BEBEBE; fill: #FFFFFF;' />
-<line x1='357.18' y1='275.70' x2='357.18' y2='67.79' style='stroke-width: 2.13; stroke: #BEBEBE; stroke-linecap: butt;' />
+<polygon points='549.48,275.70 164.87,275.70 164.87,67.79 549.48,67.79 549.48,275.70 ' style='stroke-width: 1.07; stroke: #BEBEBE; stroke-linecap: butt; stroke-linejoin: miter; fill: #FFFFFF;' />
+<line x1='357.18' y1='275.70' x2='357.18' y2='67.79' style='stroke-width: 2.13; stroke: #BEBEBE; stroke-linecap: butt; stroke-linejoin: miter;' />
 <circle cx='236.67' cy='366.42' r='1.95' style='stroke-width: 0.71; fill: #000000;' />
 <circle cx='290.33' cy='144.91' r='1.95' style='stroke-width: 0.71; stroke: #BEBEBE; fill: #BEBEBE;' />
 <circle cx='621.78' cy='382.00' r='1.95' style='stroke-width: 0.71; fill: #000000;' />

@@ -128,7 +128,7 @@ plot.bootstrap <- function(x, block = seq_along(x$rgcca$call$blocks),
       ymin = .data$lower_bound,
       ymax = .data$upper_bound,
       width = .2 * cex_point
-    ), size = .2 * cex_point) +
+    ), linewidth = .2 * cex_point) +
     ggplot2::coord_flip() +
     theme_perso(cex, cex_main, cex_sub, cex_lab) +
     ggplot2::labs(title = title, x = "", y = "") +
@@ -144,7 +144,7 @@ plot.bootstrap <- function(x, block = seq_along(x$rgcca$call$blocks),
       labels = rownames(df)
     ) +
     ggplot2::geom_hline(
-      yintercept = 0, lty = "longdash", size = .12 * cex_point
+      yintercept = 0, lty = "longdash", linewidth = .12 * cex_point
     )
   if (show_sign) {
     p <- p + ggplot2::geom_text(
