@@ -45,7 +45,6 @@ Imports:
 Suggests:
     devtools,
     FactoMineR,
-    gliomaData,
     knitr,
     pander,
     rmarkdown,
