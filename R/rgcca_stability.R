@@ -92,6 +92,8 @@ rgcca_stability <- function(rgcca_res,
     n_cores = n_cores, verbose = verbose
   )
 
+  W <- W[!vapply(W, is.null, logical(1L))]
+
   res <- format_bootstrap_list(W, rgcca_res)
   J <- length(rgcca_res$blocks)
 

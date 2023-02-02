@@ -276,15 +276,24 @@ rgcca_permutation <- function(blocks, par_type = "tau", par_value = NULL,
     rgcca_args$response, rgcca_args$superblock, opt$disjunction
   )
 
+  ### Create folds
+  v_inds <- lapply(seq_len(n_perms), function(i) {
+    lapply(rgcca_args$blocks, function(x) {
+      sample(seq_len(NROW(x)))
+    })
+  })
+
   ### Start line search
   # For every set of parameter, RGCCA is run once on the non permuted blocks
   # and then n_perms on permuted blocks.
   idx <- seq(NROW(param$par_value) * (n_perms + 1))
   W <- par_pblapply(idx, function(n) {
     i <- (n - 1) %/% (n_perms + 1) + 1
+    j <- (n - 1) %% (n_perms + 1)
     perm <- (n - 1) %% (n_perms + 1) != 0
     rgcca_permutation_k(
       rgcca_args,
+      inds = v_inds[[j]],
       par_type = param$par_type,
       par_value = param$par_value[i, ],
       perm = perm
@@ -324,13 +333,8 @@ rgcca_permutation <- function(blocks, par_type = "tau", par_value = NULL,
     },
     FUN.VALUE = double(1)
   )
-  if (length(rgcca_args$blocks) > 5) {
-    combinations <- paste("Set ", sep = "", seq_len(NROW(param$par_value)))
-  } else {
-    combinations <- apply(
-      format(param$par_value, digits = 2), 1, paste0, collapse = "/"
-    )
-  }
+  combinations <- format_combinations(param$par_value)
+
   stats <- data.frame(
     combinations = combinations,
     crit = crit,

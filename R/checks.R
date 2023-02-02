@@ -337,7 +337,7 @@ check_spars <- function(sparsity, block, n) {
   }
   min_sparsity <- 1 / sqrt(NCOL(block))
   min_message <- paste0(
-    "too high sparsity. Sparsity parameter equals ", sparsity,
+    "too low sparsity. Sparsity parameter equals ", sparsity,
     ". For SGCCA, it must be greater than ",
     "1/sqrt(number_column) (i.e., ", round(min_sparsity, 4),
     " for block ", n, ")."

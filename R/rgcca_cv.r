@@ -239,13 +239,7 @@ rgcca_cv <- function(blocks,
   )
 
   # Compute statistics
-  if (length(rgcca_args$blocks) > 5) {
-    combinations <- paste("Set ", sep = "", seq_len(NROW(param$par_value)))
-  } else {
-    combinations <- apply(
-      format(param$par_value, digits = 2), 1, paste0, collapse = "/"
-    )
-  }
+  combinations <- format_combinations(param$par_value)
 
   stats <- data.frame(
     combinations,

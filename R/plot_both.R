@@ -19,9 +19,8 @@ plot_both <- function(df, title, x, block, comp, theme_RGCCA,
       cex_main, cex_sub, cex_point, colors, shapes, show_labels,
       repel
     ),
-    nrow = 1, ncol = 2
-  ) +
-    theme_RGCCA
+    nrow = 1, ncol = 2, top = title
+  )
 
   invisible(p)
 }

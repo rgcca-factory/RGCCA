@@ -44,9 +44,5 @@ inds <- c(2, 2:NROW(blocks_3$agriculture))
 resb_3 <- rgcca_bootstrap_k(rgcca_res = rgcca_out_3, inds = inds)
 
 test_that("test_rgcca_bootstrap_k_missing_var_identification", {
-  expect_is(resb_3, "list")
-  expect_is(resb_3[[1]], "character")
-  expect_is(resb_3[[2]], "character")
-  expect_equal(resb_3[[1]], "rent")
-  expect_equal(resb_3[[2]], "rent")
+  expect_null(resb_3)
 })

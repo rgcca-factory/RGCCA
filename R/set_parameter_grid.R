@@ -118,8 +118,6 @@ set_parameter_grid <- function(par_type, par_length, par_value, blocks,
 
   if (par_type == "ncomp") {
     param$par_value <- round(param$par_value)
-  } else {
-    param$par_value <- round(param$par_value, digits = 2)
   }
   param$par_value <-
     param$par_value[!duplicated(param$par_value), , drop = FALSE]

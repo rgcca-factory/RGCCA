@@ -375,7 +375,7 @@ test_that("check_penalty raises an error if any element of sparsity is lower
   min_sparsity <- 1 / sqrt(NCOL(blocks[[3]]))
   expect_error(check_penalty(c(1, 1, 0.2), blocks, method = "sgcca"),
     paste0(
-      "too high sparsity. Sparsity parameter equals 0.2. For SGCCA, ",
+      "too low sparsity. Sparsity parameter equals 0.2. For SGCCA, ",
       "it must be greater than 1/sqrt(number_column)",
       " (i.e., ", round(min_sparsity, 4), " for block 3)."
     ),
