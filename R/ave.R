@@ -1,5 +1,19 @@
-#' Compute the AVE (Average Variance Explained) for each component for a given
-#' block.
+#' Compute the AVE (Average Variance Explained) for each component for
+#' a given block.
+#'
+#' The AVE of a component is the variance of the component over the variance
+#' of the associated block. In specific scenarios, components are not
+#' orthogonal (comp_orth = FALSE, response block, superblock). Therefore,
+#' they are sequentially orthogonalized to obtain cumulated AVEs. Individual
+#' AVEs are then obtained by computing the increase of AVE due to the
+#' additions of the components.
+#' It can also happen that components are not in the span of the original
+#' block (superblock), leading to AVE greater than 1. Such components are
+#' projected on the span of the associated blocks before computing the AVE.
+#' @param X A matrix containing a given block.
+#' @param Y A matrix containing the components associated to the given block.
+#' @param to_project A logical, if TRUE Y is projected to the span of X
+#' before computing the AVE.
 #' @noRd
 ave <- function(X, Y, to_project) {
   # Replace missing values with 0 to be able to compute Frobenius norm
