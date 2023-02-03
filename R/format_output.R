@@ -20,16 +20,8 @@ format_output <- function(func_out, rgcca_args, opt, blocks) {
     )^2 / 2) / (sum(rgcca_args$connection) / 2)
   }, FUN.VALUE = double(1L))
 
-  to_project <- rep(FALSE, length(blocks_AVE))
-  if (rgcca_args$superblock) {
-    if (rgcca_args$comp_orth) {
-      to_project[-length(to_project)] <- TRUE
-    } else {
-      to_project[length(to_project)] <- TRUE
-    }
-  }
   AVE <- lapply(blocks_AVE, function(j) {
-    ave(blocks[[j]], func_out$Y[[j]], to_project[j])
+    ave(blocks[[j]], func_out$Y[[j]])
   })
   AVE_X <- lapply(AVE, "[[", "AVE_X")
   AVE_X_cor <- lapply(AVE, "[[", "AVE_X_cor")
