@@ -42,10 +42,10 @@ plot_cor_circle <- function(df, title, x, block, comp, theme_RGCCA,
   p <- p +
     theme_RGCCA +
     ggplot2::geom_vline(
-      xintercept = 0, linetype = "dashed", size = .1 * cex_point
+      xintercept = 0, linetype = "dashed", linewidth = .1 * cex_point
     ) +
     ggplot2::geom_hline(
-      yintercept = 0, linetype = "dashed", size = .1 * cex_point
+      yintercept = 0, linetype = "dashed", linewidth = .1 * cex_point
     ) +
     ggplot2::labs(title = title, x = xlab, y = ylab, color = "Block") +
     ggplot2::theme(
@@ -78,13 +78,13 @@ plot_cor_circle <- function(df, title, x, block, comp, theme_RGCCA,
       aes(.data$x, .data$y),
       data = get_circle(),
       col = "black",
-      size = .1 * cex_point
+      linewidth = .1 * cex_point
     ) +
     ggplot2::geom_path(
       aes(.data$x, .data$y),
       data = get_circle() / 2,
       col = "black",
-      size = .1 * cex_point,
+      linewidth = .1 * cex_point,
       linetype = "dashed"
     )
 

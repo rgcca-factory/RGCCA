@@ -24,9 +24,9 @@ plot_loadings <- function(df, title, x, block, comp, theme_RGCCA,
       xmin = 0,
       xmax = .data$x,
       width = 0
-    ), size = .2 * cex_point) +
+    ), linewidth = .2 * cex_point) +
     ggplot2::geom_vline(
-      xintercept = 0, lty = "longdash", size = .12 * cex_point
+      xintercept = 0, lty = "longdash", linewidth = .12 * cex_point
     ) +
     theme_RGCCA +
     ggplot2::labs(title = title, x = "", y = "") +
