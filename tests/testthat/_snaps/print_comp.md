@@ -32,5 +32,5 @@
       res <- print_comp(fit.rgcca, outer = TRUE)
       cat(res)
     Output
-      First corrected outer AVE:  50.6% & 12.9%
+      First corrected outer AVE:  53.5% & 15.1%
 

@@ -257,11 +257,11 @@
 #' \code{\link[RGCCA]{rgcca_predict}}
 rgcca <- function(blocks, method = "rgcca",
                   scale = TRUE, scale_block = "inertia",
-                  connection = 1 - diag(length(blocks)),
+                  connection = NULL,
                   scheme = "factorial",
-                  ncomp = rep(1, length(blocks)),
-                  tau = rep(1, length(blocks)),
-                  sparsity = rep(1, length(blocks)),
+                  ncomp = 1,
+                  tau = 1,
+                  sparsity = 1,
                   init = "svd", bias = TRUE, tol = 1e-08,
                   response = NULL,
                   superblock = FALSE,
@@ -290,7 +290,8 @@ rgcca <- function(blocks, method = "rgcca",
   blocks <- scaling(tmp$blocks,
     scale = rgcca_args$scale,
     bias = rgcca_args$bias,
-    scale_block = rgcca_args$scale_block
+    scale_block = rgcca_args$scale_block,
+    na.rm = na.rm
   )
   if (rgcca_args$superblock) {
     blocks[["superblock"]] <- Reduce(cbind, blocks)

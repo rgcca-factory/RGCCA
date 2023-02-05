@@ -20,20 +20,11 @@ format_output <- function(func_out, rgcca_args, opt, blocks) {
     )^2 / 2) / (sum(rgcca_args$connection) / 2)
   }, FUN.VALUE = double(1L))
 
-  AVE_X <- lapply(blocks_AVE, function(j) {
-    apply(func_out$Y[[j]], 2, rsq, blocks[[j]])
+  AVE <- lapply(blocks_AVE, function(j) {
+    ave(blocks[[j]], func_out$Y[[j]])
   })
-  AVE_X_cum <- lapply(blocks_AVE, function(j) {
-    vapply(
-      seq_len(NCOL(func_out$Y[[j]])),
-      function(p) rsq(func_out$Y[[j]][, seq(p)], blocks[[j]]),
-      FUN.VALUE = 1.0
-    )
-  })
-  AVE_X_cor <- lapply(AVE_X_cum, function(x) {
-    y <- c(0, x[-length(x)])
-    x - y
-  })
+  AVE_X <- lapply(AVE, "[[", "AVE_X")
+  AVE_X_cor <- lapply(AVE, "[[", "AVE_X_cor")
 
   outer <- matrix(unlist(AVE_X_cor), nrow = max(ncomp_AVE))
   AVE_outer <- as.vector((outer %*% pjs) / sum(pjs))

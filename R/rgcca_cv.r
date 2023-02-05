@@ -100,9 +100,9 @@ rgcca_cv <- function(blocks,
                      scheme = "factorial",
                      NA_method = "nipals",
                      rgcca_res = NULL,
-                     tau = rep(1, length(blocks)),
-                     ncomp = rep(1, length(blocks)),
-                     sparsity = rep(1, length(blocks)),
+                     tau = 1,
+                     ncomp = 1,
+                     sparsity = 1,
                      init = "svd",
                      bias = TRUE,
                      verbose = TRUE,
@@ -110,18 +110,18 @@ rgcca_cv <- function(blocks,
                      comp_orth = TRUE,
                      metric = NULL,
                      ...) {
-  if (is.null(response)) {
-    stop(paste0(
-      "response is required for rgcca_cv (it is an integer ",
-      "comprised between 1 and the number of blocks) "
-    ))
-  }
-
   ### Try to retrieve parameters from a rgcca object
   rgcca_args <- as.list(environment())
   tmp <- get_rgcca_args(blocks, rgcca_args)
   opt <- tmp$opt
   rgcca_args <- tmp$rgcca_args
+
+  if (is.null(rgcca_args$response)) {
+    stop(paste0(
+      "response is required for rgcca_cv (it is an integer ",
+      "comprised between 1 and the number of blocks) "
+    ))
+  }
 
   ### Check parameters
   if (validation == "loo") {
