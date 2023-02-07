@@ -4,8 +4,6 @@
 #' @inheritParams plot.bootstrap
 #' @param x A fitted rgcca_bootstrap object
 #' (see \code{\link[RGCCA]{rgcca_bootstrap}})
-#' @param adj.method Character string indicating the method used to adjust for
-#' p-values.
 #' @param ... Further arguments in print
 #' the means, 95\% intervals, bootstrap ratio, p-values and other statistics.
 #' @return none
@@ -41,7 +39,8 @@ print.bootstrap <- function(x, block = seq_along(x$rgcca$call$blocks),
     )
   }
   df <- x$stats[x$stats$type == type, ]
-  df["adjust.pval"] <- p.adjust(df$pval, method = adj.method)
+  col_pval <- ifelse(empirical, "pval", "th_pval")
+  df["adjust.pval"] <- p.adjust(df[, col_pval], method = adj.method)
   df <- df[df$block %in% names(x$rgcca$blocks)[block], ]
   df <- df[df$comp == comp, ]
   rownames(df) <- df$var

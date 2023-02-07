@@ -12,7 +12,7 @@
   empirical = TRUE,
   n_mark = 30,
   display_order = TRUE,
-  show_sign = TRUE,
+  show_stars = TRUE,
   title = NULL,
   cex = 1,
   cex_sub = 12 * cex,
@@ -20,6 +20,7 @@
   cex_lab = 12 * cex,
   cex_point = 3 * cex,
   colors = NULL,
+  adj.method = "fdr",
   ...
 )
 }
@@ -43,7 +44,7 @@ intervals and p-values are derived from the empirical distribution.
 
 \item{display_order}{A logical value for ordering the variables.}
 
-\item{show_sign}{A logical for showing significance levels.}
+\item{show_stars}{A logical for showing significance levels.}
 
 \item{title}{A character string giving the title of the plot.}
 
@@ -62,8 +63,10 @@ is one.}
 \item{cex_point}{A numeric defining the font size of the points. Default is
 3 * cex.}
 
-\item{colors}{Colors used in the plots. Default is based on the
-colorblind-friendly palette recommended in ggplot.}
+\item{colors}{Colors used in the plots.}
+
+\item{adj.method}{Character string indicating the method used to adjust for
+p-values.}
 
 \item{...}{additional graphical parameters}
 }

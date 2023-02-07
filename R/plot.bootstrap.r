@@ -14,7 +14,10 @@
 #' intervals and p-values are derived from the empirical distribution.
 #' (defaut: TRUE)
 #' @param n_mark An integer defining the maximum number of variables plotted.
-#' @param show_sign A logical for showing significance levels.
+#' @param show_stars A logical for showing significance levels.
+#' @param colors Colors used in the plots.
+#' @param adj.method Character string indicating the method used to adjust for
+#' p-values.
 #' @return A ggplot2 plot object.
 #' @examples
 #' data("Russett")
@@ -31,10 +34,11 @@ plot.bootstrap <- function(x, block = seq_along(x$rgcca$call$blocks),
                            comp = 1, type = "weights",
                            empirical = TRUE, n_mark = 30,
                            display_order = TRUE,
-                           show_sign = TRUE, title = NULL,
+                           show_stars = TRUE, title = NULL,
                            cex = 1, cex_sub = 12 * cex,
                            cex_main = 14 * cex, cex_lab = 12 * cex,
-                           cex_point = 3 * cex, colors = NULL, ...) {
+                           cex_point = 3 * cex, colors = NULL,
+                           adj.method = "fdr", ...) {
   ### Perform checks and parse arguments
   stopifnot(is(x, "bootstrap"))
   type <- match.arg(type, c("weights", "loadings"))
@@ -62,6 +66,8 @@ plot.bootstrap <- function(x, block = seq_along(x$rgcca$call$blocks),
   }
 
   df <- x$stats[x$stats$type == type, ]
+  col_pval <- ifelse(empirical, "pval", "th_pval")
+  df[, col_pval] <- p.adjust(df[, col_pval], method = adj.method)
   df <- df[df$block %in% names(x$rgcca$blocks)[block], ]
   df <- df[df$comp == comp, ]
   rownames(df) <- df$var
@@ -146,7 +152,7 @@ plot.bootstrap <- function(x, block = seq_along(x$rgcca$call$blocks),
     ggplot2::geom_hline(
       yintercept = 0, lty = "longdash", linewidth = .12 * cex_point
     )
-  if (show_sign) {
+  if (show_stars) {
     p <- p + ggplot2::geom_text(
       aes(label = .data$sign),
       nudge_x = 0.1, size = 2 * cex_point, show.legend = FALSE
