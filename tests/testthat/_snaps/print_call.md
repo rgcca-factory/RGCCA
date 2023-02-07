@@ -6,7 +6,9 @@
       response = NULL, NA_method = "complete")
       print_call(res$call)
     Output
-      Call: method='rgcca', superblock=FALSE, scale=FALSE, scale_block='lambda1', init='svd', bias=TRUE, tol=1e-08, NA_method='complete', ncomp=c(1,1,1), response=NULL 
+      Call: method='rgcca', superblock=FALSE, scale=FALSE, scale_block='lambda1',
+      init='svd', bias=TRUE, tol=1e-08, NA_method='complete', ncomp=c(1,1,1),
+      response=NULL, comp_orth=TRUE 
       There are J = 3 blocks.
       The design matrix is:
              block1 block2 block3
@@ -23,7 +25,9 @@
         scale_block = TRUE, superblock = FALSE, response = 3, NA_method = "nipals")
       print_call(res$call)
     Output
-      Call: method='rgcca', superblock=FALSE, scale=TRUE, scale_block=TRUE, init='svd', bias=TRUE, tol=1e-08, NA_method='nipals', ncomp=c(2,2,2), response=3 
+      Call: method='rgcca', superblock=FALSE, scale=TRUE, scale_block=TRUE, init='svd',
+      bias=TRUE, tol=1e-08, NA_method='nipals', ncomp=c(2,2,2), response=3,
+      comp_orth=TRUE 
       There are J = 3 blocks.
       The design matrix is:
              block1 block2 block3

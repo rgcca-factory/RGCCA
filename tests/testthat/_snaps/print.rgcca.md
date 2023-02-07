@@ -4,7 +4,9 @@
       res <- rgcca(blocks, ncomp = 1, tau = c(1, 0.7, 0.9))
       print(res)
     Output
-      Call: method='rgcca', superblock=FALSE, scale=TRUE, scale_block='inertia', init='svd', bias=TRUE, tol=1e-08, NA_method='nipals', ncomp=c(1,1,1), response=NULL 
+      Call: method='rgcca', superblock=FALSE, scale=TRUE, scale_block='inertia',
+      init='svd', bias=TRUE, tol=1e-08, NA_method='nipals', ncomp=c(1,1,1),
+      response=NULL, comp_orth=TRUE 
       There are J = 3 blocks.
       The design matrix is:
              block1 block2 block3
@@ -26,7 +28,9 @@
       res <- rgcca(blocks, ncomp = 2, tau = tau)
       print(res)
     Output
-      Call: method='rgcca', superblock=FALSE, scale=TRUE, scale_block='inertia', init='svd', bias=TRUE, tol=1e-08, NA_method='nipals', ncomp=c(2,2,2), response=NULL 
+      Call: method='rgcca', superblock=FALSE, scale=TRUE, scale_block='inertia',
+      init='svd', bias=TRUE, tol=1e-08, NA_method='nipals', ncomp=c(2,2,2),
+      response=NULL, comp_orth=TRUE 
       There are J = 3 blocks.
       The design matrix is:
              block1 block2 block3
@@ -48,7 +52,9 @@
       res <- rgcca(blocks, ncomp = 1, sparsity = c(0.7, 1, 0.9), method = "sgcca")
       print(res)
     Output
-      Call: method='sgcca', superblock=FALSE, scale=TRUE, scale_block='inertia', init='svd', bias=TRUE, tol=1e-08, NA_method='nipals', ncomp=c(1,1,1), response=NULL 
+      Call: method='sgcca', superblock=FALSE, scale=TRUE, scale_block='inertia',
+      init='svd', bias=TRUE, tol=1e-08, NA_method='nipals', ncomp=c(1,1,1),
+      response=NULL, comp_orth=TRUE 
       There are J = 3 blocks.
       The design matrix is:
              block1 block2 block3
@@ -70,7 +76,9 @@
       res <- rgcca(blocks, ncomp = 2, sparsity = sparsity, method = "sgcca")
       print(res)
     Output
-      Call: method='sgcca', superblock=FALSE, scale=TRUE, scale_block='inertia', init='svd', bias=TRUE, tol=1e-08, NA_method='nipals', ncomp=c(2,2,2), response=NULL 
+      Call: method='sgcca', superblock=FALSE, scale=TRUE, scale_block='inertia',
+      init='svd', bias=TRUE, tol=1e-08, NA_method='nipals', ncomp=c(2,2,2),
+      response=NULL, comp_orth=TRUE 
       There are J = 3 blocks.
       The design matrix is:
              block1 block2 block3
@@ -96,7 +104,9 @@
       res <- rgcca(blocks2, ncomp = 1, sparsity = c(0.7, 1, 0.9), response = 3)
       print(res)
     Output
-      Call: method='sgcca', superblock=FALSE, scale=TRUE, scale_block='inertia', init='svd', bias=TRUE, tol=1e-08, NA_method='nipals', ncomp=c(1,1,1), response=3 
+      Call: method='sgcca', superblock=FALSE, scale=TRUE, scale_block='inertia',
+      init='svd', bias=TRUE, tol=1e-08, NA_method='nipals', ncomp=c(1,1,1),
+      response=3, comp_orth=TRUE 
       There are J = 3 blocks.
       The design matrix is:
              block1 block2 block3

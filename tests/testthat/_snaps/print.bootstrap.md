@@ -4,7 +4,9 @@
       res <- rgcca_bootstrap(fit.rgcca, n_boot = 5, n_cores = 1, verbose = FALSE)
       print(res)
     Output
-      Call: method='rgcca', superblock=FALSE, scale=TRUE, scale_block='inertia', init='svd', bias=TRUE, tol=1e-08, NA_method='nipals', ncomp=c(1,2), response=NULL 
+      Call: method='rgcca', superblock=FALSE, scale=TRUE, scale_block='inertia',
+      init='svd', bias=TRUE, tol=1e-08, NA_method='nipals', ncomp=c(1,2),
+      response=NULL, comp_orth=TRUE 
       There are J = 2 blocks.
       The design matrix is:
                   agriculture industry
@@ -33,7 +35,9 @@
       res <- rgcca_bootstrap(fit.rgcca, n_boot = 2, n_cores = 1, verbose = FALSE)
       print(res, type = "loadings", comp = 2, block = 2)
     Output
-      Call: method='rgcca', superblock=FALSE, scale=TRUE, scale_block='inertia', init='svd', bias=TRUE, tol=1e-08, NA_method='nipals', ncomp=c(1,2), response=NULL 
+      Call: method='rgcca', superblock=FALSE, scale=TRUE, scale_block='inertia',
+      init='svd', bias=TRUE, tol=1e-08, NA_method='nipals', ncomp=c(1,2),
+      response=NULL, comp_orth=TRUE 
       There are J = 2 blocks.
       The design matrix is:
                   agriculture industry

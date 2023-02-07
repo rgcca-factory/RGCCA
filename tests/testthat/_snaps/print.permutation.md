@@ -5,7 +5,9 @@
         n_cores = 1, verbose = FALSE)
       print(res)
     Output
-      Call: method='rgcca', superblock=FALSE, scale=TRUE, scale_block=TRUE, init='svd', bias=TRUE, tol=1e-08, NA_method='nipals', ncomp=c(1,1,1), response=NULL 
+      Call: method='rgcca', superblock=FALSE, scale=TRUE, scale_block=TRUE, init='svd',
+      bias=TRUE, tol=1e-08, NA_method='nipals', ncomp=c(1,1,1), response=NULL,
+      comp_orth=TRUE 
       There are J = 3 blocks.
       The design matrix is:
                   agriculture industry politic
@@ -35,7 +37,9 @@
         n_cores = 1, verbose = FALSE)
       print(res)
     Output
-      Call: method='rgcca', superblock=FALSE, scale=TRUE, scale_block=TRUE, init='svd', bias=TRUE, tol=1e-08, NA_method='nipals', ncomp=c(1,1,1,1,1,1,1,1,1), response=NULL 
+      Call: method='rgcca', superblock=FALSE, scale=TRUE, scale_block=TRUE, init='svd',
+      bias=TRUE, tol=1e-08, NA_method='nipals', ncomp=c(1,1,1,1,1,1,1,1,1),
+      response=NULL, comp_orth=TRUE 
       There are J = 9 blocks.
       The design matrix is:
              block1 block2 block3 block4 block5 block6 block7 block8 block9
