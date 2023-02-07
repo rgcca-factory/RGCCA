@@ -5,8 +5,8 @@
 #' @param theme_RGCCA Theme of the plot.
 #' @noRd
 plot_sample <- function(df, title, x, block, comp, theme_RGCCA,
-                        cex_main, cex_sub, cex_point, colors,
-                        shapes, show_labels, repel) {
+                        cex_point, sample_colors, sample_shapes,
+                        show_labels, repel, ...) {
   xlab <- print_comp(x, comp[1], block[1])
   ylab <- print_comp(x, comp[2], block[2])
 
@@ -34,7 +34,6 @@ plot_sample <- function(df, title, x, block, comp, theme_RGCCA,
         show.legend = FALSE, hjust = 0.5, vjust = -1
       )
     }
-
   }
   p <- p +
     theme_RGCCA +
@@ -58,11 +57,13 @@ plot_sample <- function(df, title, x, block, comp, theme_RGCCA,
   if (discrete) {
     p <- p +
       ggplot2::geom_point(aes(shape = .data$response), size = .5 * cex_point) +
-      ggplot2::scale_color_manual(values = colors) +
-      ggplot2::scale_shape_manual(name = "Response", values = shapes)
+      ggplot2::scale_color_manual(values = sample_colors) +
+      ggplot2::scale_shape_manual(name = "Response", values = sample_shapes)
   } else {
     p <- p + ggplot2::geom_point(size = .5 * cex_point) +
-      ggplot2::scale_color_gradient(low = colors[2], high = colors[3])
+      ggplot2::scale_color_gradient(
+        low = sample_colors[1], high = sample_colors[2]
+      )
   }
 
   # Remove legend if response takes a single value

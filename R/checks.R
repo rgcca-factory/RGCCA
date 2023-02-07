@@ -27,8 +27,23 @@ check_boolean <- function(x, y = x, type = "scalar") {
   }
 }
 
-check_colors <- function(colors) {
-  if (!is.null(colors)) {
+check_colors <- function(colors, type = "variables") {
+  if (is.null(colors)) {
+    switch(type,
+      "variables" = colors <- c(
+        "#332288", "#AA4499", "#DDCC77", "#117733",
+        "#882255", "#88CCEE", "#CC6677", "#44AA99"
+      ),
+      "samples" = colors <- c(
+        "#FB176C", "#FFC709", "#34C926", "#22BCBF",
+        "#F81F1F", "#066527", "#1F6EE0", "#990099"
+      ),
+      "AVE" = colors <- c(
+        "#828076", "#959685", "#A4AC96", "#AEB998",
+        "#B7C69A", "#CADF9E", "#DCF1AE", "#E7F8C4"
+      )
+    )
+  } else {
     colors <- as.vector(colors)
     lapply(colors, function(i) {
       if (!is.na(i) && !(i %in% colors()) && is.character(i) &&
@@ -40,6 +55,7 @@ check_colors <- function(colors) {
       }
     })
   }
+  return(colors)
 }
 
 check_compx <- function(x, y, ncomp, blockx) {

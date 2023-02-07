@@ -45,15 +45,7 @@ plot.bootstrap <- function(x, block = seq_along(x$rgcca$call$blocks),
   lapply(block, function(i) check_blockx("block", i, x$rgcca$call$blocks))
   Map(function(y, z) check_compx(y, y, x$rgcca$call$ncomp, z), comp, block)
   check_integer("n_mark", n_mark)
-
-  if (is.null(colors)) {
-    colors <- c(
-      "#999999", "#E69F00", "#56B4E9", "#009E73",
-      "#F0E442", "#0072B2", "#D55E00", "#CC79A7"
-    )
-  } else {
-    check_colors(colors)
-  }
+  colors <- check_colors(colors, type = "variables")
 
   ### Build data frame
   column_names <- columns <- c(

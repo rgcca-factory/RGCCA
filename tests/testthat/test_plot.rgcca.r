@@ -74,3 +74,19 @@ test_that("plot.rgcca produces the expected loading plot 2", {
     "RGCCA loadings 2", plot.rgcca(fit.rgcca2, type = "loadings")
   )
 })
+
+test_that("plot.rgcca produces the expected biplot", {
+  skip_on_cran()
+  vdiffr::expect_doppelganger(
+    "RGCCA biplot", plot.rgcca(fit.rgcca, type = "biplot")
+  )
+})
+
+test_that("plot.rgcca produces the expected biplot 2", {
+  skip_on_cran()
+  vdiffr::expect_doppelganger(
+    "RGCCA biplot 2", plot.rgcca(
+      fit.rgcca2, type = "biplot", show_arrows = FALSE
+    )
+  )
+})
