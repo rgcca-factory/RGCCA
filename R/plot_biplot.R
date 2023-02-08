@@ -44,7 +44,7 @@ plot_biplot <- function(df, title, x, block, comp, theme_RGCCA,
       ggplot2::geom_segment(
         data = df$a,
         aes(x = 0, y = 0, xend = df$a[, 1], yend = df$a[, 2]),
-        arrow = ggplot2::arrow(length = ggplot2::unit(cex_point, "mm")),
+        arrow = ggplot2::arrow(length = ggplot2::unit(.7 * cex_point, "mm")),
         color = "black"
       )
   }

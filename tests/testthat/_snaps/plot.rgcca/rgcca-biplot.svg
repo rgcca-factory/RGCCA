@@ -143,11 +143,11 @@
 <polygon points='561.23,280.95 565.14,280.95 565.14,277.04 561.23,277.04 ' style='stroke-width: 0.71; stroke: none; fill: #000000;' />
 <polygon points='207.14,63.59 211.05,63.59 211.05,59.68 207.14,59.68 ' style='stroke-width: 0.71; stroke: none; fill: #000000;' />
 <line x1='286.17' y1='297.14' x2='513.45' y2='239.39' style='stroke-width: 1.07; stroke-linecap: butt;' />
-<polyline points='507.36,245.32 513.45,239.39 505.26,237.08 ' style='stroke-width: 1.07; stroke-linecap: butt;' />
+<polyline points='509.18,243.54 513.45,239.39 507.72,237.77 ' style='stroke-width: 1.07; stroke-linecap: butt;' />
 <line x1='286.17' y1='297.14' x2='563.18' y2='279.00' style='stroke-width: 1.07; stroke-linecap: butt;' />
-<polyline points='556.11,283.72 563.18,279.00 555.55,275.23 ' style='stroke-width: 1.07; stroke-linecap: butt;' />
+<polyline points='558.23,282.30 563.18,279.00 557.84,276.36 ' style='stroke-width: 1.07; stroke-linecap: butt;' />
 <line x1='286.17' y1='297.14' x2='209.09' y2='61.63' style='stroke-width: 1.07; stroke-linecap: butt;' />
-<polyline points='215.42,67.31 209.09,61.63 207.34,69.95 ' style='stroke-width: 1.07; stroke-linecap: butt;' />
+<polyline points='213.52,65.61 209.09,61.63 207.87,67.46 ' style='stroke-width: 1.07; stroke-linecap: butt;' />
 </g>
 <g clip-path='url(#cpMC4wMHw3MjAuMDB8MC4wMHw1NzYuMDA=)'>
 <text x='29.64' y='442.56' text-anchor='end' style='font-size: 12.00px; font-style: italic; fill: #666666; font-family: sans;' textLength='10.67px' lengthAdjust='spacingAndGlyphs'>-1</text>
