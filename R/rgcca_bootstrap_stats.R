@@ -52,10 +52,9 @@ rgcca_bootstrap_stats <- function(res, rgcca_res, n_boot) {
   stats$estimate <- c(
     unlist(rgcca_res$a, use.names = FALSE),
     unlist(lapply(unique(stats$block), function(block) {
-      cor(
+      cor2(
         rgcca_res$blocks[[block]],
-        rgcca_res$Y[[block]],
-        use = "pairwise.complete.obs"
+        rgcca_res$Y[[block]]
       )
     }), use.names = FALSE)
   )

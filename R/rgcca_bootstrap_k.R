@@ -44,9 +44,7 @@ rgcca_bootstrap_k <- function(rgcca_res, inds = NULL, type = "loadings") {
       L <- lapply(
         seq_along(A),
         function(j) {
-          cor(rgcca_res_boot$blocks[[j]], Y[[j]],
-              use = "pairwise.complete.obs"
-          )
+          cor2(rgcca_res_boot$blocks[[j]], Y[[j]])
         }
       )
     } else {

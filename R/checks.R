@@ -271,9 +271,9 @@ check_sign_comp <- function(rgcca_res, w) {
 
   w <- lapply(setNames(seq_along(w), names(w)), function(i) {
     if (NROW(w[[i]]) < NROW(y[[i]])) {
-      res <- as.matrix(cor(rgcca_res$Y[[i]], y[[i]]))
+      res <- as.matrix(cor2(rgcca_res$Y[[i]], y[[i]]))
     } else {
-      res <- as.matrix(cor(rgcca_res$a[[i]], w[[i]]))
+      res <- as.matrix(cor2(rgcca_res$a[[i]], w[[i]]))
     }
     vec_sign <- vapply(diag(res), function(x) {
       return(ifelse(!is.na(x) && (x < 0), -1, 1))

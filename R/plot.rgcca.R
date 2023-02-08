@@ -130,10 +130,9 @@ plot.rgcca <- function(x, type = "weights", block = seq_along(x$call$blocks),
   df_cor <- function(x, block, comp, num_block, display_blocks) {
     df <- data.frame(
       x = do.call(rbind, Map(function(i, j) {
-        cor(
+        cor2(
           x$blocks[[i]][rownames(x$Y[[j]]), ],
-          x$Y[[j]][, comp],
-          use = "pairwise.complete.obs"
+          x$Y[[j]][, comp]
         )
       }, display_blocks, block)),
       response = num_block,

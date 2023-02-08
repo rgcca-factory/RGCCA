@@ -15,13 +15,23 @@ rgcca_update <- function(A, bias, na.rm, tau, dg, C, a, Y, init_object) {
     CbyCovj <- drop(C[j, ] * dgx)
     if (tau[j] == 1) {
       Z[, j] <- Y %*% CbyCovj
-      Az <- pm(t(A[[j]]), Z[, j], na.rm = TRUE)
-      a[[j]] <- drop(1 / sqrt(crossprod(Az))) * Az
+      grad <- pm(t(A[[j]]), Z[, j], na.rm = TRUE)
+      if (all(grad == 0)) {
+        a[[j]] <- a[[j]] * 0
+      } else {
+        a[[j]] <- drop(1 / sqrt(crossprod(grad))) * grad
+      }
       Y[, j] <- pm(A[[j]], a[[j]], na.rm = na.rm)
     } else {
       Z[, j] <- Y %*% CbyCovj
-      Az <- pm(t(A[[j]]), Z[, j], na.rm = TRUE)
-      a[[j]] <- drop(1 / sqrt(t(Az) %*% M[[j]] %*% Az)) * (M[[j]] %*% Az)
+      grad <- pm(t(A[[j]]), Z[, j], na.rm = TRUE)
+      if (all(grad == 0)) {
+        a[[j]] <- a[[j]] * 0
+      } else {
+        a[[j]] <- drop(
+          1 / sqrt(t(grad) %*% M[[j]] %*% grad)
+        ) * (M[[j]] %*% grad)
+      }
       Y[, j] <- pm(A[[j]], a[[j]], na.rm = na.rm)
     }
   }

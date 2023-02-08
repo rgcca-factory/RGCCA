@@ -14,10 +14,14 @@ format_output <- function(func_out, rgcca_args, opt, blocks) {
     pjs <- pjs[-rgcca_args$response]
   }
 
+  # Compute the proportion of variance explained between blocks
+  # If a component is null (all elements are 0), the correlation
+  # with the other blocks is set to 0
   AVE_inner <- vapply(seq(max(rgcca_args$ncomp)), function(n) {
-    sum(rgcca_args$connection * cor(
+    cor_matrix <- cor2(
       do.call(cbind, lapply(func_out$Y, function(y) y[, n]))
-    )^2 / 2) / (sum(rgcca_args$connection) / 2)
+    )
+    sum(rgcca_args$connection * cor_matrix^2) / (sum(rgcca_args$connection))
   }, FUN.VALUE = double(1L))
 
   AVE <- lapply(blocks_AVE, function(j) {
