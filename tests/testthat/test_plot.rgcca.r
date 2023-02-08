@@ -10,6 +10,19 @@ blocks2 <- list(X_agric = X_agric, X_ind = X_ind, X_polit = X_polit)
 fit.rgcca <- rgcca(blocks = blocks, response = 3, tau = 1, ncomp = 2)
 fit.rgcca2 <- rgcca(blocks = blocks2, superblock = TRUE, tau = 1, ncomp = 4)
 
+test_that("plot.rgcca produces expected errors", {
+  expect_error(
+    plot.rgcca(fit.rgcca, type = "biplot", comp = 1),
+    "please provide different values for comp",
+    fixed = TRUE
+  )
+  expect_error(
+    plot.rgcca(fit.rgcca, type = "cor_circle", block = 3),
+    "response components are not orthogonal",
+    fixed = TRUE
+  )
+})
+
 test_that("plot.rgcca produces the expected sample plot", {
   skip_on_cran()
   vdiffr::expect_doppelganger(

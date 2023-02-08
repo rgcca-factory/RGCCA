@@ -267,6 +267,13 @@ plot.rgcca <- function(x, type = "weights", block = seq_along(x$call$blocks),
     function(y, z) min(y, x$call$ncomp[z]), comp, block
   ))[seq_along(comp)]
 
+  if (length(unique(comp)) == 1 & type %in% c("both", "cor_circle", "biplot")) {
+    stop_rgcca(
+      "Drawing a correlation circle or a biplot with a single component ",
+      "is not allowed, please provide different values for comp."
+    )
+  }
+
   if (missing(response)) {
     if (!is.null(x$call$response)) {
       if (x$opt$disjunction) {
