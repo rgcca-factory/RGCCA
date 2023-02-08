@@ -29,7 +29,7 @@
       1       0.0/0.2/0.3        1.07 1.02 1.13
       2       0.0/0.0/0.0        1.09 1.03 1.13
       
-      The best combination is: 0.0 0.2 0.3 for a mean RMSE of 1.12 
+      The best combination is: 0.0/0.2/0.3 for a mean RMSE of 1.12.
 
 # print_cval prints the expected text 2
 
@@ -63,7 +63,7 @@
       1       0.0/0.2/0.0         0.893 0.106
       2       0.0/0.0/0.0         0.871 0.118
       
-      The best combination is: 0.0 0.2 0.0 for a mean Accuracy of 0.893 
+      The best combination is: 0.0/0.2/0.0 for a mean Accuracy of 0.893.
 
 # print_cval prints the expected text 3
 
@@ -97,7 +97,7 @@
       1    1.00/1.00/1.00    0.880 0.474
       2    0.58/0.71/0.58    0.932 0.494
       
-      The best combination is: 1 1 1 for a mean MAE of 0.88 
+      The best combination is: 1.00/1.00/1.00 for a mean MAE of 0.88.
 
 # print_cval prints the expected text 4
 
@@ -131,5 +131,5 @@
       1    1.00/1.00/0.00      0.693 0.352
       2    0.58/0.71/0.00      0.618 0.446
       
-      The best combination is: 1 1 0 for a mean Kappa of 0.693 
+      The best combination is: 1.00/1.00/0.00 for a mean Kappa of 0.693.
 
