@@ -14,7 +14,8 @@
 #' @noRd
 ave <- function(X, Y) {
   var_X <- apply(X, 2, var, na.rm = TRUE)
-  var_X <- var_X / sum(var_X)
+  var_tot <- sum(var_X)
+  var_X <- var_X / var_tot
   # Y may have a column full of zeros, in this case we replace NA with zero
   AVE_X <- drop(t(var_X) %*% cor2(X, Y)^2)
   AVE_X_cum <- vapply(
@@ -28,5 +29,5 @@ ave <- function(X, Y) {
 
   AVE_X_cor <- c(0, AVE_X_cum[-length(AVE_X_cum)])
   AVE_X_cor <- AVE_X_cum - AVE_X_cor
-  return(list(AVE_X = AVE_X, AVE_X_cor = AVE_X_cor))
+  return(list(AVE_X = AVE_X, AVE_X_cor = AVE_X_cor, var_tot = var_tot))
 }
