@@ -15,7 +15,8 @@
       
       The factorial scheme is used.
       
-      Extracted statistics on the block-weight vectors for component 1 from 5 bootstrap samples 
+      Extracted statistics from 5 bootstrap samples.
+      Block-weight vectors for component 1: 
            estimate   mean     sd lower_bound upper_bound bootstrap_ratio  pval
       gini    0.628  0.609 0.0777       0.504      0.6971           8.087 0.000
       farm    0.764  0.763 0.0613       0.712      0.8556          12.452 0.000
@@ -46,7 +47,8 @@
       
       The factorial scheme is used.
       
-      Extracted statistics on the block-loading vectors for component 2 from 2 bootstrap samples 
+      Extracted statistics from 2 bootstrap samples.
+      Block-loading vectors for component 2: 
            estimate  mean     sd lower_bound upper_bound bootstrap_ratio pval
       gnpr    0.290 0.113 0.0109       0.106       0.120            27.4    0
       labo    0.318 0.483 0.0077       0.479       0.487            42.8    0

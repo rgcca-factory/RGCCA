@@ -60,8 +60,8 @@ print.bootstrap <- function(x, block = seq_along(x$rgcca$call$blocks),
   cat("\n")
   type_str <- ifelse(type == "weights", "weight", "loading")
   cat(paste0(
-    "Extracted statistics on the block-", type_str, " vectors for component ",
-    comp, " from ", x$n_boot, " bootstrap samples"
+    "Extracted statistics from ", x$n_boot, " bootstrap samples.\n",
+    "Block-", type_str, " vectors for component ", comp, ":"
   ), "\n")
 
   print(df, quote = FALSE, ...)
