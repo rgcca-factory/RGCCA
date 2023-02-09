@@ -6,9 +6,19 @@
 #' @noRd
 plot_sample <- function(df, title, x, block, comp, theme_RGCCA,
                         cex_point, sample_colors, sample_shapes,
-                        show_labels, repel, ...) {
+                        show_labels, repel, var_colors,
+                        var_shapes, ...) {
   xlab <- print_comp(x, comp[1], block[1])
   ylab <- print_comp(x, comp[2], block[2])
+
+  discrete <- is.character(df$response) || is.factor(df$response)
+  if (discrete) {
+    df$response <- as.factor(df$response)
+    sample_colors <- sample_colors[seq_along(levels(df$response))]
+    sample_shapes <- sample_shapes[seq_along(levels(df$response))]
+    names(sample_colors) <- levels(df$response)
+    names(sample_shapes) <- levels(df$response)
+  }
 
   # Change axis labels and title depending on using one are two blocks
   if (block[1] != block[2]) {
@@ -19,17 +29,17 @@ plot_sample <- function(df, title, x, block, comp, theme_RGCCA,
   }
 
   # Construct plot
-  p <- ggplot(df, aes(df[, 1], df[, 2], color = .data$response))
+  p <- ggplot(df, aes(df[, 1], df[, 2]))
   if (show_labels) {
     if (repel) {
       p <- p + geom_text_repel(
-        aes(label = rownames(df)),
+        aes(label = rownames(df), color = .data$response),
         size = cex_point,
         show.legend = FALSE, hjust = 0.5, vjust = -1
       )
     } else {
       p <- p + ggplot2::geom_text(
-        aes(label = rownames(df)),
+        aes(label = rownames(df), color = .data$response),
         size = cex_point,
         show.legend = FALSE, hjust = 0.5, vjust = -1
       )
@@ -53,11 +63,7 @@ plot_sample <- function(df, title, x, block, comp, theme_RGCCA,
     ggplot2::scale_y_continuous(expand = ggplot2::expansion(mult = .1))
 
   # Change colors and shapes based on discrete or continuous response
-  discrete <- is.character(df$response) || is.factor(df$response)
   if (discrete) {
-    if (is.null(names(sample_colors))) {
-      names(sample_colors) <- names(sample_shapes) <- levels(df$response)
-    }
     # Remove legend if response takes a single value
     if (length(unique(df$response)) == 1) {
       guide <- "none"
@@ -65,19 +71,26 @@ plot_sample <- function(df, title, x, block, comp, theme_RGCCA,
       guide <- ggplot2::guide_legend(order = 1)
     }
     p <- p +
-      ggplot2::geom_point(aes(shape = .data$response), size = .5 * cex_point) +
+      ggplot2::geom_point(
+        aes(shape = .data$response, color = .data$response),
+        size = .5 * cex_point
+      ) +
       ggplot2::scale_color_manual(
-        values = sample_colors, guide = guide,
+        values = c(sample_colors, var_colors), guide = guide,
         breaks = df$response
       ) +
       ggplot2::scale_shape_manual(
-        name = "Response", values = sample_shapes,
+        name = "Response", values = c(sample_shapes, var_shapes),
         guide = guide, breaks = df$response
       )
   } else {
-    p <- p + ggplot2::geom_point(size = .5 * cex_point) +
+    p <- p + ggplot2::geom_point(
+      size = .5 * cex_point, aes(color = .data$response)
+      ) +
       ggplot2::scale_color_gradient(
-        low = sample_colors[1], high = sample_colors[2]
+        low = sample_colors[1],
+        high = sample_colors[2],
+        guide = ggplot2::guide_colourbar(order = 1)
       )
   }
 

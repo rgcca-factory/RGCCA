@@ -103,3 +103,12 @@ test_that("plot.rgcca produces the expected biplot 2", {
     )
   )
 })
+
+test_that("plot.rgcca produces the expected biplot 3", {
+  skip_on_cran()
+  vdiffr::expect_doppelganger(
+    "RGCCA biplot 3", plot.rgcca(
+      fit.rgcca2, type = "biplot", response = Russett[, 7]
+    )
+  )
+})
