@@ -55,20 +55,30 @@ plot_sample <- function(df, title, x, block, comp, theme_RGCCA,
   # Change colors and shapes based on discrete or continuous response
   discrete <- is.character(df$response) || is.factor(df$response)
   if (discrete) {
+    if (is.null(names(sample_colors))) {
+      names(sample_colors) <- names(sample_shapes) <- levels(df$response)
+    }
+    # Remove legend if response takes a single value
+    if (length(unique(df$response)) == 1) {
+      guide <- "none"
+    } else {
+      guide <- ggplot2::guide_legend(order = 1)
+    }
     p <- p +
       ggplot2::geom_point(aes(shape = .data$response), size = .5 * cex_point) +
-      ggplot2::scale_color_manual(values = sample_colors) +
-      ggplot2::scale_shape_manual(name = "Response", values = sample_shapes)
+      ggplot2::scale_color_manual(
+        values = sample_colors, guide = guide,
+        breaks = df$response
+      ) +
+      ggplot2::scale_shape_manual(
+        name = "Response", values = sample_shapes,
+        guide = guide, breaks = df$response
+      )
   } else {
     p <- p + ggplot2::geom_point(size = .5 * cex_point) +
       ggplot2::scale_color_gradient(
         low = sample_colors[1], high = sample_colors[2]
       )
-  }
-
-  # Remove legend if response takes a single value
-  if (length(unique(df$response)) == 1) {
-    p <- p + ggplot2::theme(legend.position = "none")
   }
 
   return(p)

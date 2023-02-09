@@ -161,7 +161,10 @@
 <text transform='translate(13.74,279.69) rotate(-90)' text-anchor='middle' style='font-size: 12.00px; font-family: sans;' textLength='90.71px' lengthAdjust='spacingAndGlyphs'>Comp. 2 (31.8%)</text>
 <text x='627.68' y='254.91' style='font-size: 12.00px; font-style: italic; font-family: sans;' textLength='54.05px' lengthAdjust='spacingAndGlyphs'>Response</text>
 <rect x='637.06' y='268.81' width='3.91' height='3.91' style='stroke-width: 0.71; stroke: #FB176C;' />
+<rect x='637.06' y='268.81' width='3.91' height='3.91' style='stroke-width: 0.71; stroke: #FB176C;' />
 <circle cx='639.01' cy='288.05' r='1.95' style='stroke-width: 0.71; stroke: #FFC709;' />
+<circle cx='639.01' cy='288.05' r='1.95' style='stroke-width: 0.71; stroke: #FFC709;' />
+<polygon points='639.01,302.29 641.65,306.85 636.38,306.85 ' style='stroke-width: 0.71; stroke: #34C926; fill: none;' />
 <polygon points='639.01,302.29 641.65,306.85 636.38,306.85 ' style='stroke-width: 0.71; stroke: #34C926; fill: none;' />
 <text x='656.33' y='274.90' style='font-size: 12.00px; font-family: sans;' textLength='48.70px' lengthAdjust='spacingAndGlyphs'>demoinst</text>
 <text x='656.33' y='292.18' style='font-size: 12.00px; font-family: sans;' textLength='52.71px' lengthAdjust='spacingAndGlyphs'>demostab</text>
