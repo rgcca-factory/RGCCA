@@ -31,12 +31,12 @@ check_colors <- function(colors, type = "variables") {
   if (is.null(colors)) {
     switch(type,
       "variables" = colors <- c(
-        "#332288", "#AA4499", "#DDCC77", "#117733",
-        "#882255", "#88CCEE", "#CC6677", "#44AA99"
+        "#117733", "#C79E46", "#88AEC1", "#882255",
+        "#332288", "#BB728E", "#1F9F76", "#A95700"
       ),
       "samples" = colors <- c(
-        "#FB176C", "#FFC709", "#34C926", "#22BCBF",
-        "#F81F1F", "#066527", "#1F6EE0", "#990099"
+        "#1F6EE0", "#FB176C", "#FFC709", "#34C926",
+        "#22BCBF", "#F81F1F", "#990099", "#029B38"
       ),
       "AVE" = colors <- c(
         "#828076", "#959685", "#A4AC96", "#AEB998",
