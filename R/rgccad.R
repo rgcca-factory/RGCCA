@@ -96,9 +96,6 @@
 #'   col = "white",
 #'   xlab = "Y1 (Agric. inequality)", ylab = "Y2 (Industrial Development)"
 #' )
-#' text(fit.rgcca$Y[[1]], fit.rgcca$Y[[2]], rownames(Russett),
-#'   col = lab, cex = .7
-#' )
 #'
 #' ############################################
 #' # Example 2: RGCCA and mutliple components #
@@ -116,16 +113,10 @@
 #'   xlab = "Y1 (Agric. inequality)", ylab = "Y2 (Industrial Development)",
 #'   main = "Factorial plan of RGCCA"
 #' )
-#' text(fit.rgcca$Y[[1]][, 1], fit.rgcca$Y[[2]][, 1], rownames(Russett),
-#'   col = lab, cex = .6
-#' )
 #' plot(fit.rgcca$Y[[1]][, 1], fit.rgcca$Y[[1]][, 2],
 #'   col = "white",
 #'   xlab = "Y1 (Agric. inequality)", ylab = "Y2 (Agric. inequality)",
 #'   main = "Factorial plan of RGCCA"
-#' )
-#' text(fit.rgcca$Y[[1]][, 1], fit.rgcca$Y[[1]][, 2], rownames(Russett),
-#'   col = lab, cex = .6
 #' )
 #'
 #' ######################################
@@ -169,10 +160,7 @@
 #'   col = "white",
 #'   xlab = "Y1 (Agric. inequality)", ylab = "Y2 (Ind. Development)"
 #' )
-#' text(fit.rgcca$Y[[1]], fit.rgcca$Y[[2]], rownames(Russett), col = lab)
-#' text(Ytest[, 1], Ytest[, 2], substr(rownames(Russett), 1, 1), col = lab)
-#' @export rgccad
-#' @importFrom graphics text
+#' @noRd
 
 rgccad <- function(blocks, connection = 1 - diag(length(blocks)),
                    tau = rep(1, length(blocks)),
