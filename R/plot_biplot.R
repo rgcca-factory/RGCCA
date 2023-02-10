@@ -7,8 +7,8 @@
 #' @noRd
 plot_biplot <- function(df, title, x, block, comp, theme_RGCCA,
                         cex_point, sample_colors, sample_shapes,
-                        show_labels, repel, var_colors, var_shapes,
-                        show_arrows, ...) {
+                        show_sample_names, show_var_names, repel,
+                        var_colors, var_shapes, show_arrows, ...) {
   var_colors <- var_colors[seq_along(levels(df$a$response))]
   var_shapes <- var_shapes[seq_along(levels(df$a$response))]
 
@@ -28,9 +28,9 @@ plot_biplot <- function(df, title, x, block, comp, theme_RGCCA,
   # Construct sample plot
   p <- plot_sample(df$Y, title, x, block, comp, theme_RGCCA,
                    cex_point, sample_colors, sample_shapes,
-                   show_labels, repel, var_colors, var_shapes)
+                   show_sample_names, repel, var_colors, var_shapes)
 
-  if (show_labels) {
+  if (show_var_names) {
     if (repel) {
       p <- p + geom_text_repel(
         data = df$a, aes(

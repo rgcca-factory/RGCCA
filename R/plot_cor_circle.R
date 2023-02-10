@@ -5,8 +5,8 @@
 #' @param theme_RGCCA Theme of the plot.
 #' @noRd
 plot_cor_circle <- function(df, title, x, block, comp, theme_RGCCA,
-                            cex_point, var_colors, var_shapes, show_labels,
-                            repel, ...) {
+                            cex_point, var_colors, var_shapes,
+                            show_var_names, repel, ...) {
   # Auxiliary function to construct circles
   get_circle <- function(center = c(0, 0), diameter = 2, npoints = 100) {
     r <- diameter / 2
@@ -24,7 +24,7 @@ plot_cor_circle <- function(df, title, x, block, comp, theme_RGCCA,
 
   # Construct plot
   p <- ggplot(df, aes(df[, 1], df[, 2], color = .data$response))
-  if (show_labels) {
+  if (show_var_names) {
     if (repel) {
       p <- p + geom_text_repel(
         aes(label = rownames(df)),

@@ -6,7 +6,7 @@
 #' @noRd
 plot_sample <- function(df, title, x, block, comp, theme_RGCCA,
                         cex_point, sample_colors, sample_shapes,
-                        show_labels, repel, var_colors,
+                        show_sample_names, repel, var_colors,
                         var_shapes, ...) {
   xlab <- print_comp(x, comp[1], block[1])
   ylab <- print_comp(x, comp[2], block[2])
@@ -30,7 +30,7 @@ plot_sample <- function(df, title, x, block, comp, theme_RGCCA,
 
   # Construct plot
   p <- ggplot(df, aes(df[, 1], df[, 2]))
-  if (show_labels) {
+  if (show_sample_names) {
     if (repel) {
       p <- p + geom_text_repel(
         aes(label = rownames(df), color = .data$response),

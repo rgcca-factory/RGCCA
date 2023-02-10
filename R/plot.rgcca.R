@@ -28,8 +28,10 @@
 #' @param var_shapes Shapes used for the points associated to variable weights
 #' or correlations with canonical components.
 #' @param AVE_colors Colors used in the AVE plot.
-#' @param show_labels A logical value for showing the labels in plots "samples"
-#' and "cor_circle".
+#' @param show_sample_names A logical value for showing the sample names in
+#' plots "samples" and "biplot".
+#' @param show_var_names A logical value for showing the variable names in
+#' plots "cor_circle" and "biplot".
 #' @param repel A logical value for repelling text labels from each other.
 #' @param display_blocks A numeric corresponding to the block(s) to display in
 #' the correlation_circle.
@@ -114,8 +116,8 @@ plot.rgcca <- function(x, type = "weights", block = seq_along(x$call$blocks),
                        cex_point = 3 * cex, n_mark = 30,
                        sample_colors = NULL, sample_shapes = NULL,
                        var_colors = NULL, var_shapes = NULL,
-                       AVE_colors = NULL,
-                       show_labels = TRUE, repel = FALSE,
+                       AVE_colors = NULL, show_sample_names = TRUE,
+                       show_var_names = TRUE, repel = FALSE,
                        display_blocks = seq_along(x$call$blocks),
                        expand = 1, show_arrows = TRUE, ...) {
   ### Define data.frame generating functions
@@ -178,7 +180,8 @@ plot.rgcca <- function(x, type = "weights", block = seq_along(x$call$blocks),
   ### Perform checks and parse arguments
   stopifnot(is(x, "rgcca"))
   check_boolean(display_order)
-  check_boolean(show_labels)
+  check_boolean(show_sample_names)
+  check_boolean(show_var_names)
   check_boolean(show_arrows)
   check_integer("expand", expand, float = TRUE, min = -Inf)
   check_integer("comp", comp, type = "vector")
@@ -430,9 +433,9 @@ plot.rgcca <- function(x, type = "weights", block = seq_along(x$call$blocks),
     df = df, title = title, x = x, block = block, comp = comp,
     theme_RGCCA = theme_RGCCA, cex_main = cex_main, cex_sub = cex_sub,
     cex_point = cex_point, sample_colors = sample_colors,
-    sample_shapes = sample_shapes, show_labels = show_labels,
-    repel = repel, var_colors = var_colors, var_shapes = var_shapes,
-    AVE_colors = AVE_colors, show_arrows = show_arrows
+    sample_shapes = sample_shapes, show_sample_names = show_sample_names,
+    show_var_names = show_var_names, repel = repel, var_colors = var_colors,
+    var_shapes = var_shapes, AVE_colors = AVE_colors, show_arrows = show_arrows
   )
   if (is(p, "ggplot")) plot(p, ...)
   invisible(p)

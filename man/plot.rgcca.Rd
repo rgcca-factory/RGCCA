@@ -23,7 +23,8 @@
   var_colors = NULL,
   var_shapes = NULL,
   AVE_colors = NULL,
-  show_labels = TRUE,
+  show_sample_names = TRUE,
+  show_var_names = TRUE,
   repel = FALSE,
   display_blocks = seq_along(x$call$blocks),
   expand = 1,
@@ -77,8 +78,11 @@ or correlations with canonical components.}
 
 \item{AVE_colors}{Colors used in the AVE plot.}
 
-\item{show_labels}{A logical value for showing the labels in plots "samples"
-and "cor_circle".}
+\item{show_sample_names}{A logical value for showing the sample names in
+plots "samples" and "biplot".}
+
+\item{show_var_names}{A logical value for showing the variable names in
+plots "cor_circle" and "biplot".}
 
 \item{repel}{A logical value for repelling text labels from each other.}
 

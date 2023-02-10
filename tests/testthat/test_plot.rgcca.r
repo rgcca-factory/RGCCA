@@ -55,7 +55,8 @@ test_that("plot.rgcca produces the expected combined plot with sample plot
   skip_on_cran()
   vdiffr::expect_doppelganger(
     "RGCCA both 2", plot.rgcca(
-      fit.rgcca2, type = "both", block = 4, comp = c(1, 4), show_labels = FALSE
+      fit.rgcca2, type = "both", block = 4,
+      comp = c(1, 4), show_var_names = FALSE
     )
   )
 })
@@ -108,7 +109,8 @@ test_that("plot.rgcca produces the expected biplot 3", {
   skip_on_cran()
   vdiffr::expect_doppelganger(
     "RGCCA biplot 3", plot.rgcca(
-      fit.rgcca2, type = "biplot", response = Russett[, 7]
+      fit.rgcca2, type = "biplot",
+      response = Russett[, 7], show_sample_names = FALSE
     )
   )
 })
