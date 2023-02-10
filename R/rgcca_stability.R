@@ -57,7 +57,7 @@ rgcca_stability <- function(rgcca_res,
                             ),
                             n_boot = 100,
                             n_cores = 1,
-                            verbose = FALSE,
+                            verbose = TRUE,
                             balanced = TRUE,
                             keep_all_variables = FALSE) {
   stopifnot(tolower(rgcca_res$call$method) %in% sparse_methods())

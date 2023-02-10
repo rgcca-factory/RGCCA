@@ -14,7 +14,10 @@
 #' intervals and p-values are derived from the empirical distribution.
 #' (defaut: TRUE)
 #' @param n_mark An integer defining the maximum number of variables plotted.
-#' @param show_sign A logical for showing significance levels.
+#' @param show_stars A logical for showing significance levels.
+#' @param colors Colors used in the plots.
+#' @param adj.method Character string indicating the method used to adjust for
+#' p-values.
 #' @return A ggplot2 plot object.
 #' @examples
 #' data("Russett")
@@ -31,25 +34,18 @@ plot.bootstrap <- function(x, block = seq_along(x$rgcca$call$blocks),
                            comp = 1, type = "weights",
                            empirical = TRUE, n_mark = 30,
                            display_order = TRUE,
-                           show_sign = TRUE, title = NULL,
+                           show_stars = TRUE, title = NULL,
                            cex = 1, cex_sub = 12 * cex,
                            cex_main = 14 * cex, cex_lab = 12 * cex,
-                           cex_point = 3 * cex, colors = NULL, ...) {
+                           cex_point = 3 * cex, colors = NULL,
+                           adj.method = "fdr", ...) {
   ### Perform checks and parse arguments
   stopifnot(is(x, "bootstrap"))
   type <- match.arg(type, c("weights", "loadings"))
   lapply(block, function(i) check_blockx("block", i, x$rgcca$call$blocks))
   Map(function(y, z) check_compx(y, y, x$rgcca$call$ncomp, z), comp, block)
   check_integer("n_mark", n_mark)
-
-  if (is.null(colors)) {
-    colors <- c(
-      "#999999", "#E69F00", "#56B4E9", "#009E73",
-      "#F0E442", "#0072B2", "#D55E00", "#CC79A7"
-    )
-  } else {
-    check_colors(colors)
-  }
+  colors <- check_colors(colors, type = "variables")
 
   ### Build data frame
   column_names <- columns <- c(
@@ -62,6 +58,8 @@ plot.bootstrap <- function(x, block = seq_along(x$rgcca$call$blocks),
   }
 
   df <- x$stats[x$stats$type == type, ]
+  col_pval <- ifelse(empirical, "pval", "th_pval")
+  df[, col_pval] <- p.adjust(df[, col_pval], method = adj.method)
   df <- df[df$block %in% names(x$rgcca$blocks)[block], ]
   df <- df[df$comp == comp, ]
   rownames(df) <- df$var
@@ -146,7 +144,7 @@ plot.bootstrap <- function(x, block = seq_along(x$rgcca$call$blocks),
     ggplot2::geom_hline(
       yintercept = 0, lty = "longdash", linewidth = .12 * cex_point
     )
-  if (show_sign) {
+  if (show_stars) {
     p <- p + ggplot2::geom_text(
       aes(label = .data$sign),
       nudge_x = 0.1, size = 2 * cex_point, show.legend = FALSE

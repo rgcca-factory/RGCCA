@@ -15,12 +15,16 @@ sgcca_update <- function(A, bias, na.rm, sparsity, response, disjunction,
     dgx <- dg(cov2(Y[, j], Y, bias = bias))
     CbyCovq <- drop(C[j, ] * dgx)
     Z[, j] <- Y %*% CbyCovq
-    a[[j]] <- pm(t(A[[j]]), Z[, j], na.rm = na.rm)
-    if (disjunction && (j == response)) {
-      M <- ginv(1 / N * pm(t(A[[j]]), A[[j]], na.rm = na.rm))
-      a[[j]] <- M %*% a[[j]] / drop(sqrt(t(a[[j]]) %*% M %*% a[[j]]))
+    grad <- pm(t(A[[j]]), Z[, j], na.rm = na.rm)
+    if (all(grad == 0)) {
+      a[[j]] <- a[[j]] * 0
     } else {
-      a[[j]] <- soft_threshold(a[[j]], const[j])
+      if (disjunction && (j == response)) {
+        M <- ginv(1 / N * pm(t(A[[j]]), A[[j]], na.rm = na.rm))
+        a[[j]] <- M %*% grad / drop(sqrt(t(grad) %*% M %*% grad))
+      } else {
+        a[[j]] <- soft_threshold(grad, const[j])
+      }
     }
     Y[, j] <- pm(A[[j]], a[[j]], na.rm = na.rm)
   }

@@ -137,7 +137,7 @@
 #'   init = init, verbose = TRUE
 #' )
 #' }
-#' @export sgcca
+#' @noRd
 
 sgcca <- function(blocks, connection = 1 - diag(length(blocks)),
                   sparsity = rep(1, length(blocks)),

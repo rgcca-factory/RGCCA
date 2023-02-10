@@ -5,8 +5,8 @@
 #' @param theme_RGCCA Theme of the plot.
 #' @noRd
 plot_cor_circle <- function(df, title, x, block, comp, theme_RGCCA,
-                            cex_main, cex_sub, cex_point, colors,
-                            shapes, show_labels, repel) {
+                            cex_point, var_colors, var_shapes,
+                            show_var_names, repel, ...) {
   # Auxiliary function to construct circles
   get_circle <- function(center = c(0, 0), diameter = 2, npoints = 100) {
     r <- diameter / 2
@@ -24,7 +24,7 @@ plot_cor_circle <- function(df, title, x, block, comp, theme_RGCCA,
 
   # Construct plot
   p <- ggplot(df, aes(df[, 1], df[, 2], color = .data$response))
-  if (show_labels) {
+  if (show_var_names) {
     if (repel) {
       p <- p + geom_text_repel(
         aes(label = rownames(df)),
@@ -57,16 +57,10 @@ plot_cor_circle <- function(df, title, x, block, comp, theme_RGCCA,
     ggplot2::scale_y_continuous(expand = ggplot2::expansion(mult = .1))
 
   # Change colors and shapes based on discrete or continuous response
-  discrete <- is.character(df$response) || is.factor(df$response)
-  if (discrete) {
-    p <- p +
-      ggplot2::geom_point(aes(shape = .data$response), size = .5 * cex_point) +
-      ggplot2::scale_color_manual(values = colors) +
-      ggplot2::scale_shape_manual(name = "Block", values = shapes)
-  } else {
-    p <- p + ggplot2::geom_point(size = .5 * cex_point) +
-      ggplot2::scale_color_gradient(low = colors[2], high = colors[3])
-  }
+  p <- p +
+    ggplot2::geom_point(aes(shape = .data$response), size = .5 * cex_point) +
+    ggplot2::scale_color_manual(values = var_colors) +
+    ggplot2::scale_shape_manual(name = "Block", values = var_shapes)
 
   # Remove legend if response takes a single value
   if (length(unique(df$response)) == 1) {

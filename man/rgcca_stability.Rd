@@ -9,7 +9,7 @@ rgcca_stability(
   keep = vapply(rgcca_res$a, function(x) mean(x != 0), FUN.VALUE = 1),
   n_boot = 100,
   n_cores = 1,
-  verbose = FALSE,
+  verbose = TRUE,
   balanced = TRUE,
   keep_all_variables = FALSE
 )

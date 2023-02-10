@@ -5,14 +5,13 @@
 #' @param df Data frame with the data to plot.
 #' @param theme_RGCCA Theme of the plot.
 #' @noRd
-plot_loadings <- function(df, title, x, block, comp, theme_RGCCA,
-                          cex_main, cex_sub, cex_point, colors,
-                          shapes, show_labels, repel) {
+plot_loadings <- function(df, title, x, block, theme_RGCCA,
+                          cex_point, var_colors, ...) {
   # Add colors depending on looking at superblock or regular blocks
   is_multiblock <- (length(block) > 1) || (block == length(x$call$blocks) + 1)
   if (is_multiblock) {
     p <- ggplot(df, aes(x = .data$x, y = .data$y, color = .data$response)) +
-      ggplot2::scale_color_manual(values = colors) +
+      ggplot2::scale_color_manual(values = var_colors) +
       ggplot2::labs(color = "Block")
   } else {
     p <- ggplot(df, aes(x = .data$x, y = .data$y))

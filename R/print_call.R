@@ -3,7 +3,7 @@ print_call <- function(call) {
   cat("Call: ")
   names_call <- c(
     "method", "superblock", "scale", "scale_block", "init",
-    "bias", "tol", "NA_method", "ncomp", "response"
+    "bias", "tol", "NA_method", "ncomp", "response", "comp_orth"
   )
 
   char_to_print <- vapply(names_call, function(name) {
@@ -17,7 +17,10 @@ print_call <- function(call) {
     if (is.null(value)) value <- "NULL"
     paste0(name, "=", quo, value, quo)
   }, FUN.VALUE = character(1))
-  cat(paste(char_to_print, collapse = ", "), "\n")
+  cat(paste(
+    strwrap(paste(char_to_print, collapse = ", "), getOption("width")),
+    collapse = "\n"
+  ), "\n")
 
   ### Print number of blocks
   cat("There are J =", NCOL(call$connection), "blocks.", fill = TRUE)

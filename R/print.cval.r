@@ -51,18 +51,18 @@ print.cval <- function(x, type = "sd", ...) {
     df <- df[, c(1, 2, 3)]
     colnames(df) <- c("Tuning parameters", paste("Mean", x$metric), "Sd")
   }
-  print(df)
+  print(df, ...)
   cat("\n")
 
-  optimal_ind <- which(apply(
+  best <- which(apply(
     x$penalties, 1, function(z) identical(z, x$bestpenalties)
   ))
-  optimal_y <- x$stats[optimal_ind, "mean"]
+  optimal_y <- x$stats[best, "mean"]
 
-  cat(paste(
-    "The best combination is:",
-    paste(format(x$bestpenalties, digits = 3), collapse = " "),
-    "for a mean", x$metric, "of",
-    format(optimal_y, digits = 3)
-  ), "\n", ...)
+  cat(strwrap(paste0(
+    "The best combination is: ",
+    x$stats$combinations[best],
+    " for a mean ", x$metric, " of ",
+    format(optimal_y, digits = 3), ".\n"
+  ), getOption("width")))
 }

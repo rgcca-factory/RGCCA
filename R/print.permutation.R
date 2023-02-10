@@ -40,11 +40,11 @@ print.permutation <- function(x, ...) {
   best <- which(apply(
     x$penalties, 1, function(z) identical(z, x$bestpenalties)
   ))
-  cat(paste0(
+  cat(strwrap(paste0(
     "\nThe best combination is: ",
-    paste(format(x$bestpenalties, digits = 3), collapse = ", "),
+    x$stats$combinations[best],
     " for a z score of ", format(x$stats$zstat[best], digits = 3),
     " and a p-value of ", format(x$stats$pval[best], digits = 3),
     ".\n"
-  ))
+  ), getOption("width")))
 }

@@ -8,7 +8,7 @@
   x,
   type = "weights",
   block = seq_along(x$call$blocks),
-  comp = 1,
+  comp = c(1, 2),
   response = as.factor(rep(1, NROW(x$Y[[1]]))),
   display_order = TRUE,
   title = NULL,
@@ -18,11 +18,17 @@
   cex_lab = 12 * cex,
   cex_point = 3 * cex,
   n_mark = 30,
-  colors = NULL,
-  shapes = NULL,
-  show_labels = TRUE,
+  sample_colors = NULL,
+  sample_shapes = NULL,
+  var_colors = NULL,
+  var_shapes = NULL,
+  AVE_colors = NULL,
+  show_sample_names = TRUE,
+  show_var_names = TRUE,
   repel = FALSE,
   display_blocks = seq_along(x$call$blocks),
+  expand = 1,
+  show_arrows = TRUE,
   ...
 )
 }
@@ -60,19 +66,34 @@ is one.}
 \item{n_mark}{An integer defining the maximum number of bars plotted in the
 "weights" and "loadings" plots.}
 
-\item{colors}{Colors used in the plots. Default is based on the
-colorblind-friendly palette recommended in ggplot.}
+\item{sample_colors}{Colors used to color samples.}
 
-\item{shapes}{Shapes used for the points in the "samples" and "cor_circle"
-plots. Default is the first five shapes used in ggplot.}
+\item{sample_shapes}{Shapes used for the sample points.}
 
-\item{show_labels}{A logical value for showing the labels in plots "samples"
-and "cor_circle".}
+\item{var_colors}{Colors used to color variable weights or correlations
+with canonical components.}
+
+\item{var_shapes}{Shapes used for the points associated to variable weights
+or correlations with canonical components.}
+
+\item{AVE_colors}{Colors used in the AVE plot.}
+
+\item{show_sample_names}{A logical value for showing the sample names in
+plots "samples" and "biplot".}
+
+\item{show_var_names}{A logical value for showing the variable names in
+plots "cor_circle" and "biplot".}
 
 \item{repel}{A logical value for repelling text labels from each other.}
 
 \item{display_blocks}{A numeric corresponding to the block(s) to display in
 the correlation_circle.}
+
+\item{expand}{A numeric that scales the weights associated to the block
+variables in the biplot.}
+
+\item{show_arrows}{A logical, if TRUE, arrows are shown in the biplot.
+Default is FALSE.}
 
 \item{...}{additional graphical parameters}
 }
@@ -103,6 +124,8 @@ argument, and the variables of the block corresponding to the blocks
 specified by the argument display_blocks.
 \item "both": displays both sample plot and correlation circle (implemented
 only for one block and at least when two components are asked (ncomp >= 2).
+\item "biplot": displays on the same plot the samples and the variables
+used to compute the components.
 \item "ave": displays the average variance explained for each block.}
 }
 \examples{
@@ -140,5 +163,6 @@ plot(fit.rgcca, type = "loadings")
 plot(fit.rgcca, type = "weight")
 plot(fit.rgcca, type = "sample")
 plot(fit.rgcca, type = "cor_circle")
+plot(fit.rgcca, type = "biplot")
 plot(fit.rgcca, type = "ave")
 }

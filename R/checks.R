@@ -27,8 +27,23 @@ check_boolean <- function(x, y = x, type = "scalar") {
   }
 }
 
-check_colors <- function(colors) {
-  if (!is.null(colors)) {
+check_colors <- function(colors, type = "variables") {
+  if (is.null(colors)) {
+    switch(type,
+      "variables" = colors <- c(
+        "#117733", "#C79E46", "#88AEC1", "#882255",
+        "#332288", "#BB728E", "#1F9F76", "#A95700"
+      ),
+      "samples" = colors <- c(
+        "#1F6EE0", "#FB176C", "#FFC709", "#34C926",
+        "#22BCBF", "#F81F1F", "#990099", "#029B38"
+      ),
+      "AVE" = colors <- c(
+        "#828076", "#959685", "#A4AC96", "#AEB998",
+        "#B7C69A", "#CADF9E", "#DCF1AE", "#E7F8C4"
+      )
+    )
+  } else {
     colors <- as.vector(colors)
     lapply(colors, function(i) {
       if (!is.na(i) && !(i %in% colors()) && is.character(i) &&
@@ -40,6 +55,7 @@ check_colors <- function(colors) {
       }
     })
   }
+  return(colors)
 }
 
 check_compx <- function(x, y, ncomp, blockx) {
@@ -255,9 +271,9 @@ check_sign_comp <- function(rgcca_res, w) {
 
   w <- lapply(setNames(seq_along(w), names(w)), function(i) {
     if (NROW(w[[i]]) < NROW(y[[i]])) {
-      res <- as.matrix(cor(rgcca_res$Y[[i]], y[[i]]))
+      res <- as.matrix(cor2(rgcca_res$Y[[i]], y[[i]]))
     } else {
-      res <- as.matrix(cor(rgcca_res$a[[i]], w[[i]]))
+      res <- as.matrix(cor2(rgcca_res$a[[i]], w[[i]]))
     }
     vec_sign <- vapply(diag(res), function(x) {
       return(ifelse(!is.na(x) && (x < 0), -1, 1))

@@ -10,6 +10,19 @@ blocks2 <- list(X_agric = X_agric, X_ind = X_ind, X_polit = X_polit)
 fit.rgcca <- rgcca(blocks = blocks, response = 3, tau = 1, ncomp = 2)
 fit.rgcca2 <- rgcca(blocks = blocks2, superblock = TRUE, tau = 1, ncomp = 4)
 
+test_that("plot.rgcca produces expected errors", {
+  expect_error(
+    plot.rgcca(fit.rgcca, type = "biplot", comp = 1),
+    "please provide different values for comp",
+    fixed = TRUE
+  )
+  expect_error(
+    plot.rgcca(fit.rgcca, type = "cor_circle", block = 3),
+    "response components are not orthogonal",
+    fixed = TRUE
+  )
+})
+
 test_that("plot.rgcca produces the expected sample plot", {
   skip_on_cran()
   vdiffr::expect_doppelganger(
@@ -42,7 +55,8 @@ test_that("plot.rgcca produces the expected combined plot with sample plot
   skip_on_cran()
   vdiffr::expect_doppelganger(
     "RGCCA both 2", plot.rgcca(
-      fit.rgcca2, type = "both", block = 4, comp = c(1, 4), show_labels = FALSE
+      fit.rgcca2, type = "both", block = 4,
+      comp = c(1, 4), show_var_names = FALSE
     )
   )
 })
@@ -72,5 +86,31 @@ test_that("plot.rgcca produces the expected loading plot 2", {
   skip_on_cran()
   vdiffr::expect_doppelganger(
     "RGCCA loadings 2", plot.rgcca(fit.rgcca2, type = "loadings")
+  )
+})
+
+test_that("plot.rgcca produces the expected biplot", {
+  skip_on_cran()
+  vdiffr::expect_doppelganger(
+    "RGCCA biplot", plot.rgcca(fit.rgcca, type = "biplot")
+  )
+})
+
+test_that("plot.rgcca produces the expected biplot 2", {
+  skip_on_cran()
+  vdiffr::expect_doppelganger(
+    "RGCCA biplot 2", plot.rgcca(
+      fit.rgcca2, type = "biplot", show_arrows = FALSE
+    )
+  )
+})
+
+test_that("plot.rgcca produces the expected biplot 3", {
+  skip_on_cran()
+  vdiffr::expect_doppelganger(
+    "RGCCA biplot 3", plot.rgcca(
+      fit.rgcca2, type = "biplot",
+      response = Russett[, 7], show_sample_names = FALSE
+    )
   )
 })

@@ -6,9 +6,8 @@
 #' @param df Data frame with the data to plot.
 #' @param theme_RGCCA Theme of the plot.
 #' @noRd
-plot_ave <- function(df, title, x, block, comp, theme_RGCCA,
-                     cex_main, cex_sub, cex_point, colors,
-                     shapes, show_labels, repel) {
+plot_ave <- function(df, title, x, theme_RGCCA,
+                     cex_sub, cex_point, AVE_colors, ...) {
   # Construct plot
   p <- ggplot(df, aes(x = .data$AVE, y = .data$block, fill = .data$comp)) +
     ggplot2::geom_bar(
@@ -16,10 +15,10 @@ plot_ave <- function(df, title, x, block, comp, theme_RGCCA,
     ) +
     ggplot2::stat_identity(
       geom = "text", color = "black", size = cex_point,
-      aes(label = .data$AVE),
+      aes(label = .data$label),
       position = ggplot2::position_stack(reverse = TRUE, vjust = 0.5)
     ) +
-    ggplot2::scale_fill_manual(values = colors) +
+    ggplot2::scale_fill_manual(values = AVE_colors) +
     theme_RGCCA +
     ggplot2::labs(subtitle = print_comp(x, outer = TRUE)) +
     ggplot2::labs(title = title, x = "", y = "", fill = "Component") +

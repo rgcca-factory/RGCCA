@@ -6,18 +6,20 @@ format_output <- function(func_out, rgcca_args, opt, blocks) {
   blocks_AVE <- seq_along(blocks)
   names_AVE <- names(blocks)
   ncomp_AVE <- rgcca_args$ncomp
-  pjs <- vapply(blocks, NCOL, FUN.VALUE = 1L)
   if (opt$disjunction) {
     blocks_AVE <- blocks_AVE[-rgcca_args$response]
     names_AVE <- names_AVE[-rgcca_args$response]
     ncomp_AVE <- ncomp_AVE[-rgcca_args$response]
-    pjs <- pjs[-rgcca_args$response]
   }
 
+  # Compute the proportion of variance explained between blocks
+  # If a component is null (all elements are 0), the correlation
+  # with the other blocks is set to 0
   AVE_inner <- vapply(seq(max(rgcca_args$ncomp)), function(n) {
-    sum(rgcca_args$connection * cor(
+    cor_matrix <- cor2(
       do.call(cbind, lapply(func_out$Y, function(y) y[, n]))
-    )^2 / 2) / (sum(rgcca_args$connection) / 2)
+    )
+    sum(rgcca_args$connection * cor_matrix^2) / (sum(rgcca_args$connection))
   }, FUN.VALUE = double(1L))
 
   AVE <- lapply(blocks_AVE, function(j) {
@@ -25,9 +27,10 @@ format_output <- function(func_out, rgcca_args, opt, blocks) {
   })
   AVE_X <- lapply(AVE, "[[", "AVE_X")
   AVE_X_cor <- lapply(AVE, "[[", "AVE_X_cor")
+  var_tot <- vapply(AVE, "[[", "var_tot", FUN.VALUE = 1.)
 
   outer <- matrix(unlist(AVE_X_cor), nrow = max(ncomp_AVE))
-  AVE_outer <- as.vector((outer %*% pjs) / sum(pjs))
+  AVE_outer <- as.vector((outer %*% var_tot) / sum(var_tot))
   AVE_X <- shave(AVE_X, ncomp_AVE)
   AVE_X_cor <- shave(AVE_X_cor, ncomp_AVE)
   func_out$AVE <- list(

@@ -44,20 +44,18 @@ rgcca_bootstrap_k <- function(rgcca_res, inds = NULL, type = "loadings") {
       L <- lapply(
         seq_along(A),
         function(j) {
-          cor(rgcca_res_boot$blocks[[j]], Y[[j]],
-              use = "pairwise.complete.obs"
-          )
+          cor2(rgcca_res_boot$blocks[[j]], Y[[j]])
         }
       )
     } else {
-      L <- lapply(seq_along(A), function(j) {
-        if (j > length(rgcca_res$AVE$AVE_X)) {
-          res <- NA
+      L <- lapply(names(A), function(n) {
+        if (!(n %in% names(rgcca_res$AVE$AVE_X))) {
+          res <- rep(-1, NCOL(rgcca_res$a[[n]]))
         } else {
-          res <-  rgcca_res$AVE$AVE_X[[j]]
+          res <-  rgcca_res$AVE$AVE_X[[n]]
         }
-        res <- matrix(res, nrow = nrow(A[[j]]), ncol = length(res))
-        rownames(res) <- rownames(A[[j]])
+        res <- matrix(res, nrow = nrow(A[[n]]), ncol = length(res))
+        rownames(res) <- rownames(A[[n]])
         return(res)
       })
     }
