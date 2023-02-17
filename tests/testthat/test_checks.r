@@ -405,7 +405,8 @@ test_that("check_penalty passes and returns penalty when penalty is valid", {
     check_penalty(matrix(1, 5, 3), blocks, method = "rgcca"), matrix(1, 5, 3)
   )
   expect_equal(
-    check_penalty(1, blocks, method = "rgcca", superblock = TRUE), c(1, 1, 1, 1)
+    check_penalty(rep(1, 4), blocks, method = "rgcca", superblock = TRUE),
+    rep(1, 4)
   )
   expect_equal(check_penalty(1, blocks, method = "sgcca"), c(1, 1, 1))
   expect_equal(

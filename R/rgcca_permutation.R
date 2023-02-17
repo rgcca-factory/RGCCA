@@ -273,7 +273,8 @@ rgcca_permutation <- function(blocks, par_type = "tau", par_value = NULL,
 
   param <- set_parameter_grid(
     par_type, par_length, par_value, rgcca_args$blocks,
-    rgcca_args$response, rgcca_args$superblock, opt$disjunction
+    rgcca_args[[par_type]], rgcca_args$response,
+    rgcca_args$superblock,  opt$disjunction
   )
 
   ### Create folds
