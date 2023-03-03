@@ -156,7 +156,7 @@ rgcca_cv <- function(blocks,
 
   param <- set_parameter_grid(
     par_type, par_length, par_value, rgcca_args$blocks,
-    rgcca_args$response, FALSE, opt$disjunction
+    rgcca_args[[par_type]], rgcca_args$response, FALSE, opt$disjunction
   )
 
   # Generate a warning if tau has not been fully specified for a block that

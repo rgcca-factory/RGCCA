@@ -454,6 +454,9 @@ select_analysis <- function(rgcca_args, blocks) {
         blocks, type = "response", response = response
       )
     }
+    penalty <- check_penalty(
+      penalty, blocks, method, superblock = superblock, ncomp = max(ncomp)
+    )
     if (superblock) {
       ncomp <- rep(max(ncomp), J + 1)
       connection <- connection_matrix(blocks, type = "response", J = J + 1)
@@ -475,10 +478,6 @@ select_analysis <- function(rgcca_args, blocks) {
         connection <- check_connection(connection, blocks)
       }
     }
-    penalty <- check_penalty(penalty, blocks, method,
-      superblock = superblock,
-      ncomp = max(ncomp)
-    )
   }
   ncomp <- check_ncomp(
     ncomp, blocks,

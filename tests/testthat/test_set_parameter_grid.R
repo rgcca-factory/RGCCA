@@ -41,56 +41,66 @@ test_ncomp <- function(res, par_length, superblock = FALSE) {
 ### Test set_parameter_grid
 test_that("set_parameter_grid returns a valid grid of parameters when par_value
           is NULL", {
-  res <- set_parameter_grid("tau", 3, NULL, blocks, response = 3)
+  res <- set_parameter_grid("tau", 3, NULL, blocks, rep(1, 3), response = 3)
   test_tau(res, 3)
 
-  res <- set_parameter_grid("tau", 3, NULL, blocks, response = NULL)
+  res <- set_parameter_grid("tau", 3, NULL, blocks, rep(1, 3), response = NULL)
   test_tau(res, 3)
 
-  res <- set_parameter_grid("sparsity", 3, NULL, blocks, response = 3)
+  res <- set_parameter_grid(
+    "sparsity", 3, NULL, blocks, rep(1, 3), response = 3
+  )
   test_sparsity(res, 3)
 
-  res <- set_parameter_grid("ncomp", 3, NULL, blocks, response = 3)
+  res <- set_parameter_grid("ncomp", 3, NULL, blocks, rep(1, 3), response = 3)
   test_ncomp(res, 3)
 })
 
 test_that("set_parameter_grid returns a valid grid of parameters when par_value
           is a valid vector", {
-  res <- set_parameter_grid("tau", 3, c(0.5, 1, 0.7), blocks, response = 3)
+  res <- set_parameter_grid(
+    "tau", 3, c(0.5, 1, 0.7), blocks, rep(1, 3), response = 3
+  )
   test_tau(res, 3)
 
   res <- set_parameter_grid(
     "tau", 2, c(0.5, 1, 0.7, 1), blocks,
-    superblock = TRUE
+    rep(1, 3), superblock = TRUE
   )
   test_tau(res, 2, superblock = TRUE)
 
-  res <- set_parameter_grid("sparsity", 3, c(0.9, 1, 0.7), blocks, response = 3)
+  res <- set_parameter_grid(
+    "sparsity", 3, c(0.9, 1, 0.7), blocks, rep(1, 3), response = 3
+  )
   test_sparsity(res, 3)
 
-  res <- set_parameter_grid("ncomp", 3, c(1, 2, 2), blocks, response = 3)
+  res <- set_parameter_grid(
+    "ncomp", 3, c(1, 2, 2), blocks, rep(1, 3), response = 3
+  )
   test_ncomp(res, 3)
 })
 
 test_that("set_parameter_grid returns a valid grid of parameters when par_value
           is a valid grid", {
   tau <- matrix(pmin(1, pmax(0, rnorm(6))), nrow = 2, ncol = 3)
-  res <- set_parameter_grid("tau", 3, tau, blocks, response = 3)
+  res <- set_parameter_grid("tau", 3, tau, blocks, rep(1, 3), response = 3)
   test_tau(res, 3)
 
   tau <- matrix(c(.001, .002, 1, 1, 1, 1), nrow = 2, ncol = 3)
-  res <- set_parameter_grid("tau", 2, tau, blocks, response = 3)
+  res <- set_parameter_grid("tau", 2, tau, blocks, rep(1, 3), response = 3)
   test_tau(res, 2)
 
   sparsity <- matrix(c(
     0.6, 0.8, 1,
     0.7, 0.9, 1
   ), nrow = 2, ncol = 3, byrow = TRUE)
-  res <- set_parameter_grid("sparsity", 3, sparsity, blocks, response = 3)
+  res <- set_parameter_grid(
+    "sparsity", 3, sparsity, blocks, rep(1, 3), response = 3
+  )
   test_sparsity(res, 3)
 
   ncomp <- matrix(c(1, 2, 2, 3, 1, 3), nrow = 2, ncol = 3, byrow = TRUE)
-  res <- set_parameter_grid("ncomp", 3, ncomp, blocks, response = 3)
+  res <- set_parameter_grid("ncomp", 3, ncomp, blocks, rep(1, 3), response = 3)
   test_ncomp(res, 3)
   expect_equal(ncomp, res$par_value)
 })
@@ -104,8 +114,9 @@ test_that("set_parameter_grid raises errors when par_value is not valid", {
     fixed = TRUE
   )
   expect_error(
-    set_parameter_grid("ncomp", 3, matrix(1, nrow = 2, ncol = 5), blocks,
-      response = 3
+    set_parameter_grid(
+      "ncomp", 3, matrix(1, nrow = 2, ncol = 5), blocks,
+      rep(1, 3), response = 3
     ),
     paste0(
       "wrong shape. If par_value is a matrix or a dataframe,",
@@ -114,8 +125,9 @@ test_that("set_parameter_grid raises errors when par_value is not valid", {
     fixed = TRUE
   )
   expect_error(
-    set_parameter_grid("ncomp", 3, "toto", blocks,
-      response = 3
+    set_parameter_grid(
+      "ncomp", 3, "toto", blocks,
+      rep(1, 3), response = 3
     ),
     paste0("must be numeric"),
     fixed = TRUE
@@ -123,9 +135,9 @@ test_that("set_parameter_grid raises errors when par_value is not valid", {
   expect_error(set_parameter_grid("ncomp", 3, 5, blocks, response = 3))
   expect_error(set_parameter_grid("tau", 3, -1, blocks, response = 3))
   expect_error(
-    set_parameter_grid("sparsity", 3, matrix(0, nrow = 2, ncol = 3),
-      blocks,
-      response = 3
+    set_parameter_grid(
+      "sparsity", 3, matrix(0, nrow = 2, ncol = 3),
+      blocks, rep(1, 3), response = 3
     )
   )
 })

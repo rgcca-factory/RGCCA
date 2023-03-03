@@ -5,7 +5,7 @@
 #' @inheritParams rgcca_cv
 #' @noRd
 set_parameter_grid <- function(par_type, par_length, par_value, blocks,
-                               response = NULL, superblock = FALSE,
+                               penalty, response = NULL, superblock = FALSE,
                                disjunction = FALSE) {
   ### Auxiliary functions
   check_param_type <- function(par_value, blocks) {
@@ -121,6 +121,19 @@ set_parameter_grid <- function(par_type, par_length, par_value, blocks,
   }
   param$par_value <-
     param$par_value[!duplicated(param$par_value), , drop = FALSE]
+
+  # Add value for superblock if not already set
+  if (superblock && length(blocks) == NCOL(param$par_value)) {
+    if (par_type == "ncomp") {
+      pen <- param$par_value[, 1]
+    } else {
+      # There might be no default value for penalty[J + 1] since par_type
+      # can be "sparsity" while default configuration was "tau"
+      pen <- penalty[length(blocks) + 1]
+      pen <- ifelse(is.na(pen), 1, pen)
+    }
+    param$par_value <- cbind(param$par_value, pen)
+  }
 
   return(param)
 }

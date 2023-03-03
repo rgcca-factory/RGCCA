@@ -63,11 +63,11 @@ test_that("superblock methods sets all attributes of a superblock", {
   tau <- matrix(stats::runif(6), 2, 3)
   tmp <- run_selection(method, superblock = TRUE, tau = tau, ncomp = 2)
   res <- tmp$res
-  expect_equal(res$rgcca_args[[res$opt$param]], cbind(tau, 1))
+  expect_equal(unname(res$rgcca_args[[res$opt$param]]), cbind(tau, 1))
   tau <- matrix(stats::runif(8), 2, 4)
   tmp <- run_selection(method, superblock = TRUE, tau = tau, ncomp = 2)
   res <- tmp$res
-  expect_equal(res$rgcca_args[[res$opt$param]], tau)
+  expect_equal(unname(res$rgcca_args[[res$opt$param]]), tau)
 
   method <- "spca"
   res <- run_selection(method, superblock = TRUE, sparsity = 0.7)$res

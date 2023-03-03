@@ -284,7 +284,8 @@ check_sign_comp <- function(rgcca_res, w) {
   return(w)
 }
 
-check_size_blocks <- function(blocks, x, y = x, n_row = NULL) {
+check_size_blocks <- function(blocks, x, y = x, n_row = NULL,
+                              superblock = FALSE) {
   if (any(class(y) %in% c("matrix", "data.frame"))) {
     dim_y <- NCOL(y)
     dim_type <- "number of columns"
@@ -297,7 +298,10 @@ check_size_blocks <- function(blocks, x, y = x, n_row = NULL) {
   }
 
   if (dim_y != length(blocks)) {
-    stop_rgcca(
+    superblock_msg <- ifelse(superblock, paste0(
+      " or the number of blocks + 1 (", length(blocks) + 1, ")"
+    ), "")
+    message <- paste0(
       x,
       " must have the same ",
       dim_type,
@@ -305,8 +309,9 @@ check_size_blocks <- function(blocks, x, y = x, n_row = NULL) {
       dim_y,
       ") as the number of blocks (",
       length(blocks),
-      ").",
-      exit_code = 130
+      ")", superblock_msg, "."
+    )
+    stop_rgcca(message, exit_code = 130
     )
   } else {
     return(TRUE)
@@ -315,16 +320,17 @@ check_size_blocks <- function(blocks, x, y = x, n_row = NULL) {
 
 check_penalty <- function(penalty, blocks, method = "rgcca", superblock = FALSE,
                           ncomp = NULL) {
-  if (superblock) {
+  penalty <- elongate_arg(penalty, blocks)
+  is_matrix <- is.matrix(penalty)
+  DIM <- dim(penalty)
+  size <- ifelse(is_matrix, NCOL(penalty), NROW(penalty))
+  if (superblock && (size == (length(blocks) + 1))) {
     blocks[[length(blocks) + 1]] <- Reduce(cbind, blocks)
     names(blocks)[length(blocks)] <- "superblock"
   }
-  penalty <- elongate_arg(penalty, blocks)
   name <- ifelse(method == "rgcca", "tau", "sparsity")
-  check_size_blocks(blocks, name, penalty, n_row = ncomp)
-
-  is_matrix <- is.matrix(penalty)
-  DIM <- dim(penalty)
+  check_size_blocks(blocks, name, penalty,
+                    n_row = ncomp, superblock = superblock)
 
   # Check value of each penalty
   if (method == "rgcca") {
