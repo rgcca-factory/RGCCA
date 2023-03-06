@@ -1,7 +1,10 @@
-#' print.cval
+#' Print a rgcca_cv object
 #'
+#' Print a fitted rgcca_cv object. Parameters of the
+#' analysis, tuning parameters and statistics for each set of
+#' parameters are displayed.
 #' @inheritParams plot.cval
-#' @param ... Further print options
+#' @param ... Other parameters used in print (for the displaying of matrices)
 #' @return none
 #' @export
 #' @examples

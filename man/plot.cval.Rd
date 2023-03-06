@@ -2,7 +2,7 @@
 % Please edit documentation in R/plot.cval.R
 \name{plot.cval}
 \alias{plot.cval}
-\title{Plot cross-validation}
+\title{Plot for cross-validation}
 \usage{
 \method{plot}{cval}(
   x,
@@ -20,7 +20,6 @@
 \item{x}{A rgcca_cv object (see \link{rgcca_cv})}
 
 \item{type}{Character string indicating the statistics in the box plots:
-mean plus or minus standard deviation ("sd", default),
 \itemize{
 \item "sd" (default): the middle bar corresponds to the mean and limits of
 the boxes are given by the mean plus or minus the standard deviation.
@@ -43,18 +42,20 @@ is one.}
 \item{cex_lab}{A numeric defining the font size of the labels. Default is
 12 * cex.}
 
-\item{display_order}{A logical value for ordering the variables.}
+\item{display_order}{A logical value for ordering the variables. If TRUE,
+variables are ordered from highest to lowest absolute value. If FALSE,
+the block order is used. Default is TRUE.}
 
-\item{...}{additional graphical parameters}
+\item{...}{Additional graphical parameters.}
 }
 \value{
 A ggplot2 plot object.
 }
 \description{
 Plot a cross-validation object (tuning RGCA parameters in 'supervised' mode).
-The parameters tuned for maximizing RMSE is displayed in the title. In
-the x-axis, the tuning parameter set. In the y-axis, the average of the
-cross-validation score. The best parameters are in red by default.
+The parameters tuned for maximizing the cross-validation metric is
+displayed in the title. On the y-axis, the tuning parameter set.
+On the x-axis, a boxplot of the cross-validation metric.
 }
 \examples{
 data("Russett")

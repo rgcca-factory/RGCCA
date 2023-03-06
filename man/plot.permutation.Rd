@@ -13,7 +13,7 @@
   cex_sub = 12 * cex,
   cex_point = 3 * cex,
   cex_lab = 12 * cex,
-  display_all = FALSE,
+  display_order = TRUE,
   show_legend = FALSE,
   ...
 )
@@ -22,8 +22,8 @@
 \item{x}{A fitted rgcca_permutation object (see
 \code{\link[RGCCA]{rgcca_permutation}}).}
 
-\item{type}{A character string indicating which criterion to plot (default
-is 'crit' for the RGCCA criterion or 'zstat' for the pseudo Z-score).}
+\item{type}{A character string indicating which criterion to plot. Default
+is 'crit' for the RGCCA criterion. Otherwise, the pseudo Z-score is used.}
 
 \item{cex}{A numeric defining the size of the objects in the plot. Default
 is one.}
@@ -42,23 +42,24 @@ is one.}
 \item{cex_lab}{A numeric defining the font size of the labels. Default is
 12 * cex.}
 
-\item{display_all}{A boolean indicating if all parameter sets have to
-be displayed (default is FALSE).}
+\item{display_order}{A logical value for ordering the variables. If TRUE,
+variables are ordered from highest to lowest absolute value. If FALSE,
+the block order is used. Default is TRUE.}
 
 \item{show_legend}{A boolean indicating if legend should
-be shown (default is TRUE).}
+be shown (default is FALSE).}
 
-\item{...}{additional graphical parameters}
+\item{...}{Additional graphical parameters.}
 }
 \value{
 A ggplot2 plot object.
 }
 \description{
 Plot a fitted rgcca permutation object. The various set of tuning parameters
-are represented in the x-axis and the RGCCA objective function - obtained
-from the both the orginal and permuted blocks - in the y-axis. If type =
-"zstat" the value of the zstat for the various parameter sets are reported in
-the y-axis.
+are represented on the y-axis and the RGCCA objective function - obtained
+from both the orginal and permuted blocks - on the x-axis. If type =
+"zstat" the value of the zstat for the various parameter sets are reported on
+the x-axis.
 }
 \examples{
 data(Russett)
