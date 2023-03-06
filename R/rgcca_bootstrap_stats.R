@@ -3,7 +3,7 @@
 #' This function aims to extract statistics over the different bootstrap
 #' samples.
 #' @param res A data.frame of raw bootstrap results.
-#' @param rgcca_res A fiited rgcca object.
+#' @param rgcca_res A fitted rgcca object.
 #' @param n_boot Number of bootstrap samples.
 #' @return A data.frame containing the computed statistics.
 #' @importFrom matrixStats rowSums2 rowMeans2 rowSds
