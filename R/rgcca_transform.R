@@ -23,7 +23,7 @@
 #' X <- lapply(blocks, function(x) x[39:47, ])
 #' projection <- rgcca_transform(fit.rgcca, X)
 #' @export
-rgcca_transform <- function(rgcca_res, blocks_test) {
+rgcca_transform <- function(rgcca_res, blocks_test = rgcca_res$call$blocks) {
   ### Auxiliary function
   scl_fun <- function(data, center, scale) {
     # Use the scaling parameter of the training set on the new set
@@ -51,6 +51,13 @@ rgcca_transform <- function(rgcca_res, blocks_test) {
   blocks_test <- lapply(seq_along(blocks_test), function(j) {
     x <- as.matrix(blocks_test[[j]])
     y <- as.matrix(X_train[[j]])
+    # Deal with qualitative block
+    if (rgcca_res$opt$disjunction) {
+      j_train <- which(names(rgcca_res$blocks) == names(blocks_test)[j])
+      if (j_train == rgcca_res$call$response) {
+        x <- as_disjunctive(x)
+      }
+    }
     if (!all(colnames(y) %in% colnames(x))) {
       stop_rgcca(
         "Some columns are missing for test block ",

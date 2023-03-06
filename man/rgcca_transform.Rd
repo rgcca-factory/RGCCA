@@ -4,7 +4,7 @@
 \alias{rgcca_transform}
 \title{RGCCA Transform}
 \usage{
-rgcca_transform(rgcca_res, blocks_test)
+rgcca_transform(rgcca_res, blocks_test = rgcca_res$call$blocks)
 }
 \arguments{
 \item{rgcca_res}{A fitted RGCCA object (see  \code{\link[RGCCA]{rgcca}}).}
