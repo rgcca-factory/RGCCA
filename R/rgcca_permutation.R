@@ -276,6 +276,23 @@ rgcca_permutation <- function(blocks, par_type = "tau", par_value = NULL,
     rgcca_args$response, rgcca_args$superblock, opt$disjunction
   )
 
+  # Generate a warning if tau has not been fully specified for a block that
+  # has more columns than samples and remove tau = 0 configuration
+  n <- NROW(rgcca_args$blocks[[1]])
+  overfitting_risk <- (param$par_type == "tau") && is.null(dim(par_value)) &&
+    any(vapply(
+      seq_along(rgcca_args$blocks),
+      function(j) NCOL(rgcca_args$blocks[[j]]) > n,
+      FUN.VALUE = logical(1L)
+    ))
+  if (overfitting_risk) {
+    param$par_value <- param$par_value[-nrow(param$par_value), ]
+    warning(
+      "overfitting risk. A block has more columns than rows, so the ",
+      "configuration with tau = 0 has been removed."
+    )
+  }
+
   ### Create folds
   v_inds <- lapply(seq_len(n_perms), function(i) {
     lapply(rgcca_args$blocks, function(x) {
