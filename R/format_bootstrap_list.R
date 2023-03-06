@@ -5,7 +5,7 @@
 #' ncomp[j] columns where ncomp[j] is the number of components for block j.
 #' The aim of this function is to reorganize this list into a data.frame.
 #' @param W raw bootstrap results
-#' @param rgcca_res A fiited rgcca object.
+#' @param rgcca_res A fitted rgcca object.
 #' @return A data.frame containing the results.
 #' @noRd
 format_bootstrap_list <- function(W, rgcca_res) {

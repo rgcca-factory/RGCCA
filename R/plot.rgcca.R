@@ -1,13 +1,15 @@
 #' Plot for RGCCA
 #'
-#' Plot different outputs of the results obtained by a rgcca function
+#' Create various plots from a fitted RGCCA object.
 #' @param x A fitted RGCCA object (see \code{\link[RGCCA]{rgcca}})
 #' @param type A character string: 'samples', 'weights', 'loadings',
 #' 'cor_circle', both', 'ave' (see details).
 #' @param block A numeric corresponding to the block(s) to plot.
-#' @param comp A numeric vector indicating the components to consider.
+#' @param comp A numeric vector indicating the component(s) to consider.
 #' @param response A vector coloring the points in the "samples" plot.
-#' @param display_order A logical value for ordering the variables.
+#' @param display_order A logical value for ordering the variables. If TRUE,
+#' variables are ordered from highest to lowest absolute value. If FALSE,
+#' the block order is used. Default is TRUE.
 #' @param title A character string giving the title of the plot.
 #' @param cex A numeric defining the size of the objects in the plot. Default
 #' is one.
@@ -20,41 +22,44 @@
 #' @param cex_point A numeric defining the font size of the points. Default is
 #' 3 * cex.
 #' @param n_mark An integer defining the maximum number of bars plotted in the
-#' "weights" and "loadings" plots.
-#' @param sample_colors Colors used to color samples.
-#' @param sample_shapes Shapes used for the sample points.
+#' "weights" and "loadings" plots. Default is 30.
+#' @param sample_colors Colors used to color samples (used in the "samples" and
+#' "biplot" plots).
+#' @param sample_shapes Shapes used for the sample points (used in the "samples"
+#' and "biplot" plots).
 #' @param var_colors Colors used to color variable weights or correlations
-#' with canonical components.
+#' with canonical components (used in the "weights", "loadings", "cor_circle"
+#' and "biplot" plots).
 #' @param var_shapes Shapes used for the points associated to variable weights
-#' or correlations with canonical components.
+#' or correlations with canonical components (used in the "cor_circle" and
+#' "biplot" plots).
 #' @param AVE_colors Colors used in the AVE plot.
 #' @param show_sample_names A logical value for showing the sample names in
 #' plots "samples" and "biplot".
 #' @param show_var_names A logical value for showing the variable names in
 #' plots "cor_circle" and "biplot".
 #' @param repel A logical value for repelling text labels from each other.
+#' Default is False.
 #' @param display_blocks A numeric corresponding to the block(s) to display in
-#' the correlation_circle.
+#' the correlation_circle. All blocks are displayed by default.
 #' @param expand A numeric that scales the weights associated to the block
-#' variables in the biplot.
+#' variables in the biplot. Default is 1.
 #' @param show_arrows A logical, if TRUE, arrows are shown in the biplot.
 #' Default is FALSE.
-#' @param ... additional graphical parameters
+#' @param ... Additional graphical parameters.
 #' @details
 #' \itemize{
 #' \item "samples" for sample plot. The blocks (block argument) and components
 #' (comp) that will be used on the horizontal and the vertical axes to plot the
 #' individuals: (Y[[block[1]]][, comp[1]], Y[[block[2]]][,comp[2]]). Points can
-#' be colored according to the response argument. The colors of the points can
-#' be modified with the colors argument.
-#' \item "weights": barplot of the block weight vector for one
-#' specific block/component. The weights are sorted from the highest to
-#' the lowest and only the highest are displayed. The number of displayed
-#' weights can be set with n_marks.
-#' \item "loadings": barplot of the block-loading vector. Variables are sorted
-#' in decreasing correlations and only the highest
-#' correlations are displayed. The number of displayed correlations can be set
-#' with n_marks (defaut value = 30).
+#' be colored according to the response argument.
+#' \item "weights": barplot of the block weight vectors for one
+#' specific block/component. Sorting is applied according to the
+#' display_order argument. The number of displayed weights can be set with
+#' n_marks.
+#' \item "loadings": barplot of the block-loading vectors. Sorting is applied
+#' according to the display_order argument. The number of displayed weights
+#' can be set with n_marks.
 #' \item  "cor_circle" for correlation circle. It represents the correlation
 #' between the component corresponding to the first element of the block
 #' argument, and the variables of the block corresponding to the blocks
@@ -89,6 +94,13 @@
 #' ######################
 #' # all types of plots #
 #' ######################
+#' plot(fit.rgcca, type = "loadings")
+#' plot(fit.rgcca, type = "weight")
+#' plot(fit.rgcca, type = "sample")
+#' plot(fit.rgcca, type = "cor_circle")
+#' plot(fit.rgcca, type = "biplot")
+#' plot(fit.rgcca, type = "ave")
+#'
 #' # with superblock
 #' fit.mcoa <- rgcca(
 #'   blocks = A, scheme = "factorial", ncomp = rep(2, 4),
@@ -96,12 +108,7 @@
 #' )
 #'
 #' plot(fit.mcoa, type = "both", response = status)
-#' plot(fit.rgcca, type = "loadings")
-#' plot(fit.rgcca, type = "weight")
-#' plot(fit.rgcca, type = "sample")
-#' plot(fit.rgcca, type = "cor_circle")
-#' plot(fit.rgcca, type = "biplot")
-#' plot(fit.rgcca, type = "ave")
+#' plot(fit.mcoa, type = "biplot", response = status)
 #' @importFrom gridExtra grid.arrange
 #' @importFrom ggplot2 ggplot aes
 #' @importFrom ggrepel geom_text_repel

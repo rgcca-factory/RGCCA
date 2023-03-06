@@ -1,8 +1,10 @@
-#' Print rgcca
-#
+#' Print a RGCCA object
+#'
+#' Print a fitted RGCCA object. Some information about the model are
+#' displayed like model parameters or criterion.
 #' @title Print the call of rgcca results
 #' @param x A RGCCA object (see \code{\link{rgcca}})
-#' @param ... other parameters used in print (for the displaying of matrices)
+#' @param ... Other parameters used in print (for the displaying of matrices)
 #' @return none
 #' @export
 #' @examples

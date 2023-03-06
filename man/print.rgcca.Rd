@@ -9,13 +9,17 @@
 \arguments{
 \item{x}{A RGCCA object (see \code{\link{rgcca}})}
 
-\item{...}{other parameters used in print (for the displaying of matrices)}
+\item{...}{Other parameters used in print (for the displaying of matrices)}
 }
 \value{
 none
 }
 \description{
-Print rgcca
+Print a RGCCA object
+}
+\details{
+Print a fitted RGCCA object. Some information about the model are
+displayed like model parameters or criterion.
 }
 \examples{
 data(Russett)

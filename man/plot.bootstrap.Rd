@@ -30,7 +30,7 @@
 
 \item{block}{A numeric corresponding to the block(s) to plot.}
 
-\item{comp}{A numeric vector indicating the components to consider.}
+\item{comp}{A numeric vector indicating the component(s) to consider.}
 
 \item{type}{Character string indicating the bootstrapped object to plot:
 block-weight vectors ("weights", default) or block-loading vectors
@@ -42,7 +42,9 @@ intervals and p-values are derived from the empirical distribution.
 
 \item{n_mark}{An integer defining the maximum number of variables plotted.}
 
-\item{display_order}{A logical value for ordering the variables.}
+\item{display_order}{A logical value for ordering the variables. If TRUE,
+variables are ordered from highest to lowest absolute value. If FALSE,
+the block order is used. Default is TRUE.}
 
 \item{show_stars}{A logical for showing significance levels.}
 
@@ -66,9 +68,10 @@ is one.}
 \item{colors}{Colors used in the plots.}
 
 \item{adj.method}{Character string indicating the method used to adjust for
-p-values.}
+p-values. It must be a method handled by the p.adjust function.
+Default is "fdr".}
 
-\item{...}{additional graphical parameters}
+\item{...}{Additional graphical parameters.}
 }
 \value{
 A ggplot2 plot object.

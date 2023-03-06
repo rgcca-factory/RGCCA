@@ -1,19 +1,18 @@
 #' Plot a fitted rgcca permutation object
 #'
 #' Plot a fitted rgcca permutation object. The various set of tuning parameters
-#' are represented in the x-axis and the RGCCA objective function - obtained
-#' from the both the orginal and permuted blocks - in the y-axis. If type =
-#' "zstat" the value of the zstat for the various parameter sets are reported in
-#' the y-axis.
+#' are represented on the y-axis and the RGCCA objective function - obtained
+#' from both the orginal and permuted blocks - on the x-axis. If type =
+#' "zstat" the value of the zstat for the various parameter sets are reported on
+#' the x-axis.
 #' @inheritParams plot.rgcca
+#' @inheritParams plot.bootstrap
 #' @param x A fitted rgcca_permutation object (see
 #' \code{\link[RGCCA]{rgcca_permutation}}).
-#' @param type A character string indicating which criterion to plot (default
-#' is 'crit' for the RGCCA criterion or 'zstat' for the pseudo Z-score).
-#' @param display_all A boolean indicating if all parameter sets have to
-#' be displayed (default is FALSE).
+#' @param type A character string indicating which criterion to plot. Default
+#' is 'crit' for the RGCCA criterion. Otherwise, the pseudo Z-score is used.
 #' @param show_legend A boolean indicating if legend should
-#' be shown (default is TRUE).
+#' be shown (default is FALSE).
 #' @return A ggplot2 plot object.
 #' @examples
 #' data(Russett)
@@ -42,7 +41,7 @@ plot.permutation <- function(x,
                              cex_sub = 12 * cex,
                              cex_point = 3 * cex,
                              cex_lab = 12 * cex,
-                             display_all = FALSE,
+                             display_order = TRUE,
                              show_legend = FALSE, ...) {
   ### Perform checks and parse params
   stopifnot(is(x, "permutation"))
@@ -56,8 +55,11 @@ plot.permutation <- function(x,
   )
 
   # Reorder dataframe according to the quantity of interest
-  idx_order <- sort(df$x, decreasing = FALSE, index.return = TRUE)$ix
-  df <- df[idx_order, ]
+  idx_order <- seq_len(nrow(df))
+  if (display_order) {
+    idx_order <- sort(df$x, decreasing = FALSE, index.return = TRUE)$ix
+    df <- df[idx_order, ]
+  }
 
   # Mark the best parameter set
   best <- which(apply(

@@ -1,9 +1,11 @@
-#' Print a fitted rgcca_permutation object
+#' Print a rgcca_permutation object
 #'
-#' Print a fitted rgcca_permutation object
+#' Print a fitted rgcca_permutation object. Parameters of the
+#' analysis, tuning parameters and statistics for each set of
+#' parameters are displayed.
 #' @param x A fitted rgcca_permutation object (see
 #' \code{\link[RGCCA]{rgcca_permutation}})
-#' @param ... additional print parameters
+#' @param ... Other parameters used in print (for the displaying of matrices)
 #' @return none
 #' @export
 #' @examples

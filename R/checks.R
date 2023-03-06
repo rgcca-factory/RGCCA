@@ -391,7 +391,15 @@ check_scheme <- function(scheme) {
   return(scheme)
 }
 
-check_prediction_model <- function(prediction_model, response_block) {
+check_prediction_model <- function(prediction_model, response_block,
+                                   missing_model = FALSE) {
+  classification <-
+    is.factor(response_block) || is.character(response_block)
+
+  if (missing_model && classification) {
+    prediction_model <- "lda"
+  }
+
   if (is.list(prediction_model)) {
     model_info <- prediction_model
   } else {
@@ -403,8 +411,7 @@ check_prediction_model <- function(prediction_model, response_block) {
       )
     }
   }
-  classification <-
-    is.factor(response_block) || is.character(response_block)
+
   is_inadequate <- !("Classification" %in% model_info$type) && classification
   if (is_inadequate) {
     stop_rgcca(
@@ -423,7 +430,8 @@ check_prediction_model <- function(prediction_model, response_block) {
     )
   }
 
-  return(list(prediction_model = model_info, classification = classification))
+  return(list(prediction_model = model_info, classification = classification,
+              model_name = prediction_model))
 }
 
 check_char <- function(arg, name_arg, values) {

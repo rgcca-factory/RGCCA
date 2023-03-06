@@ -17,7 +17,8 @@
 #' @param show_stars A logical for showing significance levels.
 #' @param colors Colors used in the plots.
 #' @param adj.method Character string indicating the method used to adjust for
-#' p-values.
+#' p-values. It must be a method handled by the p.adjust function.
+#' Default is "fdr".
 #' @return A ggplot2 plot object.
 #' @examples
 #' data("Russett")

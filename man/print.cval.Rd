@@ -2,7 +2,7 @@
 % Please edit documentation in R/print.cval.r
 \name{print.cval}
 \alias{print.cval}
-\title{print.cval}
+\title{Print a rgcca_cv object}
 \usage{
 \method{print}{cval}(x, type = "sd", ...)
 }
@@ -10,7 +10,6 @@
 \item{x}{A rgcca_cv object (see \link{rgcca_cv})}
 
 \item{type}{Character string indicating the statistics in the box plots:
-mean plus or minus standard deviation ("sd", default),
 \itemize{
 \item "sd" (default): the middle bar corresponds to the mean and limits of
 the boxes are given by the mean plus or minus the standard deviation.
@@ -18,13 +17,15 @@ the boxes are given by the mean plus or minus the standard deviation.
 the boxes are given by the 25% and 75% quantiles.
 }}
 
-\item{...}{Further print options}
+\item{...}{Other parameters used in print (for the displaying of matrices)}
 }
 \value{
 none
 }
 \description{
-print.cval
+Print a fitted rgcca_cv object. Parameters of the
+analysis, tuning parameters and statistics for each set of
+parameters are displayed.
 }
 \examples{
 data("Russett")

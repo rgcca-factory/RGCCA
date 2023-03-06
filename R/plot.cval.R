@@ -1,14 +1,13 @@
-#' Plot cross-validation
+#' Plot for cross-validation
 #'
 #' Plot a cross-validation object (tuning RGCA parameters in 'supervised' mode).
-#' The parameters tuned for maximizing RMSE is displayed in the title. In
-#' the x-axis, the tuning parameter set. In the y-axis, the average of the
-#' cross-validation score. The best parameters are in red by default.
+#' The parameters tuned for maximizing the cross-validation metric is
+#' displayed in the title. On the y-axis, the tuning parameter set.
+#' On the x-axis, a boxplot of the cross-validation metric.
 #' @inheritParams plot.rgcca
 #' @inheritParams plot.bootstrap
 #' @param x A rgcca_cv object (see \link{rgcca_cv})
 #' @param type Character string indicating the statistics in the box plots:
-#' mean plus or minus standard deviation ("sd", default),
 #' \itemize{
 #' \item "sd" (default): the middle bar corresponds to the mean and limits of
 #' the boxes are given by the mean plus or minus the standard deviation.

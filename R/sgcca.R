@@ -148,7 +148,7 @@ sgcca <- function(blocks, connection = 1 - diag(length(blocks)),
                   disjunction = NULL, n_iter_max = 1000,
                   comp_orth = TRUE) {
   if (verbose) {
-    scheme_str <- ifelse(is(scheme, "function"), "user-defined", "scheme")
+    scheme_str <- ifelse(is(scheme, "function"), "user-defined", scheme)
     cat(
       "Computation of the SGCCA block components based on the",
       scheme_str, "scheme \n"

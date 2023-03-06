@@ -40,11 +40,13 @@
 
 \item{block}{A numeric corresponding to the block(s) to plot.}
 
-\item{comp}{A numeric vector indicating the components to consider.}
+\item{comp}{A numeric vector indicating the component(s) to consider.}
 
 \item{response}{A vector coloring the points in the "samples" plot.}
 
-\item{display_order}{A logical value for ordering the variables.}
+\item{display_order}{A logical value for ordering the variables. If TRUE,
+variables are ordered from highest to lowest absolute value. If FALSE,
+the block order is used. Default is TRUE.}
 
 \item{title}{A character string giving the title of the plot.}
 
@@ -64,17 +66,21 @@ is one.}
 3 * cex.}
 
 \item{n_mark}{An integer defining the maximum number of bars plotted in the
-"weights" and "loadings" plots.}
+"weights" and "loadings" plots. Default is 30.}
 
-\item{sample_colors}{Colors used to color samples.}
+\item{sample_colors}{Colors used to color samples (used in the "samples" and
+"biplot" plots).}
 
-\item{sample_shapes}{Shapes used for the sample points.}
+\item{sample_shapes}{Shapes used for the sample points (used in the "samples"
+and "biplot" plots).}
 
 \item{var_colors}{Colors used to color variable weights or correlations
-with canonical components.}
+with canonical components (used in the "weights", "loadings", "cor_circle"
+and "biplot" plots).}
 
 \item{var_shapes}{Shapes used for the points associated to variable weights
-or correlations with canonical components.}
+or correlations with canonical components (used in the "cor_circle" and
+"biplot" plots).}
 
 \item{AVE_colors}{Colors used in the AVE plot.}
 
@@ -84,40 +90,39 @@ plots "samples" and "biplot".}
 \item{show_var_names}{A logical value for showing the variable names in
 plots "cor_circle" and "biplot".}
 
-\item{repel}{A logical value for repelling text labels from each other.}
+\item{repel}{A logical value for repelling text labels from each other.
+Default is False.}
 
 \item{display_blocks}{A numeric corresponding to the block(s) to display in
-the correlation_circle.}
+the correlation_circle. All blocks are displayed by default.}
 
 \item{expand}{A numeric that scales the weights associated to the block
-variables in the biplot.}
+variables in the biplot. Default is 1.}
 
 \item{show_arrows}{A logical, if TRUE, arrows are shown in the biplot.
 Default is FALSE.}
 
-\item{...}{additional graphical parameters}
+\item{...}{Additional graphical parameters.}
 }
 \value{
 A ggplot2 plot object.
 }
 \description{
-Plot different outputs of the results obtained by a rgcca function
+Create various plots from a fitted RGCCA object.
 }
 \details{
 \itemize{
 \item "samples" for sample plot. The blocks (block argument) and components
 (comp) that will be used on the horizontal and the vertical axes to plot the
 individuals: (Y[[block[1]]][, comp[1]], Y[[block[2]]][,comp[2]]). Points can
-be colored according to the response argument. The colors of the points can
-be modified with the colors argument.
-\item "weights": barplot of the block weight vector for one
-specific block/component. The weights are sorted from the highest to
-the lowest and only the highest are displayed. The number of displayed
-weights can be set with n_marks.
-\item "loadings": barplot of the block-loading vector. Variables are sorted
-in decreasing correlations and only the highest
-correlations are displayed. The number of displayed correlations can be set
-with n_marks (defaut value = 30).
+be colored according to the response argument.
+\item "weights": barplot of the block weight vectors for one
+specific block/component. Sorting is applied according to the
+display_order argument. The number of displayed weights can be set with
+n_marks.
+\item "loadings": barplot of the block-loading vectors. Sorting is applied
+according to the display_order argument. The number of displayed weights
+can be set with n_marks.
 \item  "cor_circle" for correlation circle. It represents the correlation
 between the component corresponding to the first element of the block
 argument, and the variables of the block corresponding to the blocks
@@ -152,6 +157,13 @@ plot(fit.rgcca, type = "samples", block = 1:2, comp = 1, response = status)
 ######################
 # all types of plots #
 ######################
+plot(fit.rgcca, type = "loadings")
+plot(fit.rgcca, type = "weight")
+plot(fit.rgcca, type = "sample")
+plot(fit.rgcca, type = "cor_circle")
+plot(fit.rgcca, type = "biplot")
+plot(fit.rgcca, type = "ave")
+
 # with superblock
 fit.mcoa <- rgcca(
   blocks = A, scheme = "factorial", ncomp = rep(2, 4),
@@ -159,10 +171,5 @@ fit.mcoa <- rgcca(
 )
 
 plot(fit.mcoa, type = "both", response = status)
-plot(fit.rgcca, type = "loadings")
-plot(fit.rgcca, type = "weight")
-plot(fit.rgcca, type = "sample")
-plot(fit.rgcca, type = "cor_circle")
-plot(fit.rgcca, type = "biplot")
-plot(fit.rgcca, type = "ave")
+plot(fit.mcoa, type = "biplot", response = status)
 }

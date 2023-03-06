@@ -2,7 +2,7 @@
 % Please edit documentation in R/print.bootstrap.r
 \name{print.bootstrap}
 \alias{print.bootstrap}
-\title{Print rgcca_bootstrap}
+\title{Print a rgcca_bootstrap object}
 \usage{
 \method{print}{bootstrap}(
   x,
@@ -21,7 +21,7 @@
 
 \item{block}{A numeric corresponding to the block(s) to plot.}
 
-\item{comp}{A numeric vector indicating the components to consider.}
+\item{comp}{A numeric vector indicating the component(s) to consider.}
 
 \item{type}{Character string indicating the bootstrapped object to plot:
 block-weight vectors ("weights", default) or block-loading vectors
@@ -31,19 +31,23 @@ block-weight vectors ("weights", default) or block-loading vectors
 intervals and p-values are derived from the empirical distribution.
 (defaut: TRUE)}
 
-\item{display_order}{A logical value for ordering the variables.}
+\item{display_order}{A logical value for ordering the variables. If TRUE,
+variables are ordered from highest to lowest absolute value. If FALSE,
+the block order is used. Default is TRUE.}
 
 \item{adj.method}{Character string indicating the method used to adjust for
-p-values.}
+p-values. It must be a method handled by the p.adjust function.
+Default is "fdr".}
 
-\item{...}{Further arguments in print
+\item{...}{Other parameters used in print (for the displaying of matrices)
 the means, 95\% intervals, bootstrap ratio, p-values and other statistics.}
 }
 \value{
 none
 }
 \description{
-Print a rgcca_bootstrap object
+Print a fitted rgcca_bootstrap object. Parameters of the
+analysis and bootstrap statistics are displayed.
 }
 \examples{
 data("Russett")

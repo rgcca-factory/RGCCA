@@ -6,7 +6,7 @@
 \usage{
 rgcca_predict(
   rgcca_res,
-  blocks_test,
+  blocks_test = rgcca_res$call$blocks,
   prediction_model = "lm",
   metric = NULL,
   ...
@@ -30,6 +30,15 @@ A list containing the following elements:
 
 \item{score}{the score specified by the argument metric obtained
 on the test block. NA if the test block is missing.}
+
+\item{model}{a list of the models trained using caret to make the
+predicitons and compute the metrics.}
+
+\item{metric}{a list of data.frames containing the metrics obtained
+on the train and test sets.}
+
+\item{confusion}{a list containing NA for regression tasks,
+the confusion summary produced by caret otherwise.}
 
 \item{results}{a list of lists. There is a list per column in the
 response block. Each list contains the score on the corresponding columns

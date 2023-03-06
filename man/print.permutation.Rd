@@ -2,7 +2,7 @@
 % Please edit documentation in R/print.permutation.R
 \name{print.permutation}
 \alias{print.permutation}
-\title{Print a fitted rgcca_permutation object}
+\title{Print a rgcca_permutation object}
 \usage{
 \method{print}{permutation}(x, ...)
 }
@@ -10,13 +10,15 @@
 \item{x}{A fitted rgcca_permutation object (see
 \code{\link[RGCCA]{rgcca_permutation}})}
 
-\item{...}{additional print parameters}
+\item{...}{Other parameters used in print (for the displaying of matrices)}
 }
 \value{
 none
 }
 \description{
-Print a fitted rgcca_permutation object
+Print a fitted rgcca_permutation object. Parameters of the
+analysis, tuning parameters and statistics for each set of
+parameters are displayed.
 }
 \examples{
 data(Russett)

@@ -1,10 +1,11 @@
-#' Print rgcca_bootstrap
-#'
 #' Print a rgcca_bootstrap object
+#'
+#' Print a fitted rgcca_bootstrap object. Parameters of the
+#' analysis and bootstrap statistics are displayed.
 #' @inheritParams plot.bootstrap
 #' @param x A fitted rgcca_bootstrap object
 #' (see \code{\link[RGCCA]{rgcca_bootstrap}})
-#' @param ... Further arguments in print
+#' @param ... Other parameters used in print (for the displaying of matrices)
 #' the means, 95\% intervals, bootstrap ratio, p-values and other statistics.
 #' @return none
 #' @examples
