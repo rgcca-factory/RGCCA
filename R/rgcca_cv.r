@@ -129,7 +129,8 @@ rgcca_cv <- function(blocks,
     n_run <- 1
   }
   model <- check_prediction_model(
-    prediction_model, rgcca_args$blocks[[rgcca_args$response]]
+    prediction_model, rgcca_args$blocks[[rgcca_args$response]],
+    missing(prediction_model)
   )
 
   check_integer("par_length", par_length)
@@ -262,7 +263,7 @@ rgcca_cv <- function(blocks,
     penalties = param$par_value,
     validation = validation,
     bestpenalties = param$par_value[best_param_idx, ],
-    prediction_model = prediction_model
+    prediction_model = model$model_name
   )
   class(res) <- "cval"
   return(res)

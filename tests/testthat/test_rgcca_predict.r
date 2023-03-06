@@ -87,7 +87,7 @@ test_that("rgcca_predict with lm predictor gives the same prediction as
   }))
   names(score_lm) <- "RMSE"
   expect_equal(res_predict$score, score_lm)
-  expect_equal(as.matrix(A[[response]] - res_predict$prediction), res_lm)
+  expect_equal(as.matrix(A[[response]] - res_predict$prediction$test), res_lm)
 })
 
 # Classification
@@ -104,5 +104,8 @@ test_that("rgcca_predict with lda predictor gives the same prediction as
   Y <- data.frame(cbind(fit_rgcca$Y[[1]][, 1:3], fit_rgcca$Y[[2]][, 1:2]))
   res_lda <- MASS::lda(fit_rgcca$call$blocks[[response]] ~ as.matrix(Y))
   prediction_lda <- predict(res_lda, Y)$class
-  expect_equal(res_predict$prediction, data.frame(politic = prediction_lda))
+  expect_equal(
+    res_predict$prediction$test,
+    data.frame(politic = prediction_lda)
+  )
 })

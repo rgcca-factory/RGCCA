@@ -11,6 +11,12 @@
 #' @return A list containing the following elements:
 #' @return \item{score}{the score specified by the argument metric obtained
 #' on the test block. NA if the test block is missing.}
+#' @return \item{model}{a list of the models trained using caret to make the
+#' predicitons and compute the metrics.}
+#' @return \item{metric}{a list of data.frames containing the metrics obtained
+#' on the train and test sets.}
+#' @return \item{confusion}{a list containing NA for regression tasks,
+#' the confusion summary produced by caret otherwise.}
 #' @return \item{results}{a list of lists. There is a list per column in the
 #' response block. Each list contains the score on the corresponding columns
 #' of the test response block, the learned model, predictions,
@@ -60,7 +66,7 @@
 #' @importFrom stats predict
 #' @export
 rgcca_predict <- function(rgcca_res,
-                          blocks_test,
+                          blocks_test = rgcca_res$call$blocks,
                           prediction_model = "lm",
                           metric = NULL,
                           ...) {
@@ -90,7 +96,8 @@ rgcca_predict <- function(rgcca_res,
   }
 
   tmp <- check_prediction_model(
-    prediction_model, rgcca_res$call$blocks[[response]]
+    prediction_model, rgcca_res$call$blocks[[response]],
+    missing(prediction_model)
   )
   prediction_model <- tmp$prediction_model
   classification <- tmp$classification
@@ -152,17 +159,32 @@ rgcca_predict <- function(rgcca_res,
   )
   names(results) <- colnames(y_train)
 
-  prediction <- as.data.frame(lapply(results, function(res) {
-    res[["prediction"]]$test[, "pred"]
-  }))
+  prediction <- lapply(c("train", "test"), function(mode) {
+    as.data.frame(lapply(results, function(res) {
+      res[["prediction"]][[mode]][, "pred"]
+    }))
+  })
 
+  metric <- lapply(c("train", "test"), function(mode) {
+    as.data.frame(lapply(results, function(res) {
+      res[["metric"]][[mode]]
+    }))
+  })
+
+  confusion <- results[[1]]$confusion
+
+  names(prediction) <- names(metric) <- c("train", "test")
+
+  model <- lapply(results, "[[", "model")
   score <- mean(unlist(lapply(results, "[[", "score")), na.rm = TRUE)
   names(score) <- names(results[[1]][["score"]])
 
   result <- list(
     projection = projection,
     prediction = prediction,
-    results = results,
+    confusion = confusion,
+    metric = metric,
+    model = model,
     score = score
   )
 
