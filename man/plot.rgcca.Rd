@@ -36,7 +36,7 @@
 \item{x}{A fitted RGCCA object (see \code{\link[RGCCA]{rgcca}})}
 
 \item{type}{A character string: 'samples', 'weights', 'loadings',
-'cor_circle', both', 'ave' (see details).}
+'cor_circle', both', 'biplot' , 'ave' (see details).}
 
 \item{block}{A numeric corresponding to the block(s) to plot.}
 
@@ -48,7 +48,7 @@
 variables are ordered from highest to lowest absolute value. If FALSE,
 the block order is used. Default is TRUE.}
 
-\item{title}{A character string giving the title of the plot.}
+\item{title}{A string specifying the title of the plot.}
 
 \item{cex}{A numeric defining the size of the objects in the plot. Default
 is one.}
@@ -68,8 +68,8 @@ is one.}
 \item{n_mark}{An integer defining the maximum number of bars plotted in the
 "weights" and "loadings" plots. Default is 30.}
 
-\item{sample_colors}{Colors used to color samples (used in the "samples" and
-"biplot" plots).}
+\item{sample_colors}{A string specifying the colors used to color samples
+(used in the "samples" and "biplot" plots).}
 
 \item{sample_shapes}{Shapes used for the sample points (used in the "samples"
 and "biplot" plots).}
@@ -91,7 +91,7 @@ plots "samples" and "biplot".}
 plots "cor_circle" and "biplot".}
 
 \item{repel}{A logical value for repelling text labels from each other.
-Default is False.}
+Default to FALSE.}
 
 \item{display_blocks}{A numeric corresponding to the block(s) to display in
 the correlation_circle. All blocks are displayed by default.}
@@ -141,7 +141,7 @@ X_ind <- as.matrix(Russett[, c("gnpr", "labo")])
 X_polit <- as.matrix(Russett[, c("demostab", "dictator")])
 A <- list(X_agric = X_agric, X_ind = X_ind, X_polit = X_polit)
 C <- matrix(c(0, 0, 1, 0, 0, 1, 1, 1, 0), 3, 3)
-fit.rgcca <- rgcca(
+fit_rgcca <- rgcca(
   blocks = A, connection = C,
   tau = rep(1, 3), ncomp = rep(2, 3)
 )
@@ -151,25 +151,23 @@ fit.rgcca <- rgcca(
 ###############
 # horizontal axis: First component of the first block
 # vertical axis: First component of the second block
-plot(fit.rgcca, type = "samples", block = 1:2, comp = 1, response = status)
-
+plot(fit_rgcca, type = "sample",
+     block = 1:2, comp = 1,
+     response = status)
 
 ######################
 # all types of plots #
 ######################
-plot(fit.rgcca, type = "loadings")
-plot(fit.rgcca, type = "weight")
-plot(fit.rgcca, type = "sample")
-plot(fit.rgcca, type = "cor_circle")
-plot(fit.rgcca, type = "biplot")
-plot(fit.rgcca, type = "ave")
+plot(fit_rgcca, type = "loadings")
+plot(fit_rgcca, type = "weight")
+plot(fit_rgcca, type = "sample")
+plot(fit_rgcca, type = "cor_circle")
+plot(fit_rgcca, type = "biplot")
+plot(fit_rgcca, type = "ave")
 
 # with superblock
-fit.mcoa <- rgcca(
-  blocks = A, scheme = "factorial", ncomp = rep(2, 4),
-  tau = c(1, 1, 1, 0), superblock = TRUE
-)
+fit_mcoa <- rgcca(blocks = A, method = "mcoa", ncomp = 2)
 
-plot(fit.mcoa, type = "both", response = status)
-plot(fit.mcoa, type = "biplot", response = status)
+plot(fit_mcoa, type = "both", response = status)
+plot(fit_mcoa, type = "biplot", response = status)
 }

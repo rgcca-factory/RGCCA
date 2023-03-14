@@ -19,7 +19,7 @@
 \arguments{
 \item{x}{A rgcca_cv object (see \link{rgcca_cv})}
 
-\item{type}{Character string indicating the statistics in the box plots:
+\item{type}{A string indicating the statistics depicted in the boxplot:
 \itemize{
 \item "sd" (default): the middle bar corresponds to the mean and limits of
 the boxes are given by the mean plus or minus the standard deviation.
@@ -52,21 +52,28 @@ the block order is used. Default is TRUE.}
 A ggplot2 plot object.
 }
 \description{
-Plot a cross-validation object (tuning RGCA parameters in 'supervised' mode).
-The parameters tuned for maximizing the cross-validation metric is
-displayed in the title. On the y-axis, the tuning parameter set.
-On the x-axis, a boxplot of the cross-validation metric.
+Plot a fitted cross-validation object.
+The parameters tuned for maximizing the cross-validated score is
+displayed in the title. The set of candidate tuning parameters
+are represented on the y-axis. A boxplot of the cross-validated scores are
+displayed on the x-axis, .
 }
 \examples{
 data("Russett")
 blocks <- list(
   agriculture = Russett[, seq(3)],
   industry = Russett[, 4:5],
-  politic = Russett[, 6:8]
+  politic = as.factor(apply(Russett[, 9:11], 1, which.max))
 )
-res <- rgcca_cv(blocks,
-  response = 3, method = "rgcca", par_type = "tau",
-  par_value = c(0, 0.2, 0.3), n_run = 1, n_cores = 1
+cv_out <- rgcca_cv(blocks,
+  response = 3, method = "rgcca",
+  par_type = "tau",
+  par_value = 1,
+  n_run = 1, n_cores = 1,
+  prediction_model = "lda",
+  metric = "Accuracy"
 )
-plot(res)
+
+print(cv_out)
+plot(cv_out)
 }

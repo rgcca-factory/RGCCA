@@ -49,20 +49,28 @@
 #' (iii) a numerical value giving the same maximal value to be considered for
 #' each block. In that case par_length combinations are tested from min values
 #' to this single maximal value.
-#' @param n_perms Number of permutations for each set of constraints (default
+#' @param n_perms The number of permutations for each set of constraints (default
 #' is 20).
-#' @param verbose Logical value indicating if the progress of the
+#' @param verbose A logical value indicating if the progress of the
 #' permutation procedure is reported.
+#' @return  \item{opt}{A list indicating some options of the RGCCA model used
+#' during the permutation.}
+#' @return \item{call}{A list containing the input parameters}
+#' @return \item{par_type}{A character string indicating the parameters to tune
+#' between "sparsity" and "tau".}
+#' @return \item{n_perms}{The number of permutations for each set of candidate
+#' tuning paramaters (default
+#' is 20)}
 #' @return \item{bestpenalties}{The set of tuning parameters that yields the
-#' highest Z-statistics}
-#' @return \item{permcrit}{Matrix of permuted S/RGCCA criteria. The ith row of
+#' highest Z-statistic}
+#' @return \item{permcrit}{A matrix of permuted S/RGCCA criteria. The ith row of
 #' permcrit contains the n_perms values of S/RGCCA permuted criteria
 #' obtained for each set of tuning parameters.}
-#' @return \item{penalties}{Matrix giving, the set of tuning paramaters
-#' considered during the permutation process (tau or sparsity).}
-#' @return \item{stats}{A data.frame containing the set of parameter values,
-#' and the associated non permuted criterion, mean and standard deviation of
-#' permuted criteria, Z-statistic and p-value.}
+#' @return \item{penalties}{A matrix giving, the set of candidate tuning
+#' paramaters considered during the permutation process (tau or sparsity).}
+#' @return \item{stats}{A data.frame containing in column: the set of candidate
+#' parameters, the corresponding non permuted criterion, mean and standard
+#' deviation of permuted criteria, Z-statistic and p-value.}
 #' @references Witten, D. M., Tibshirani, R., & Hastie, T. (2009). A penalized
 #' matrix decomposition, with applications to sparse principal components and
 #' canonical correlation analysis. Biostatistics, 10(3), 515-534.

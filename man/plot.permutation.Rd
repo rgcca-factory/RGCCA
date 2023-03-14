@@ -22,13 +22,13 @@
 \item{x}{A fitted rgcca_permutation object (see
 \code{\link[RGCCA]{rgcca_permutation}}).}
 
-\item{type}{A character string indicating which criterion to plot. Default
+\item{type}{A string indicating which criterion to plot. Default
 is 'crit' for the RGCCA criterion. Otherwise, the pseudo Z-score is used.}
 
 \item{cex}{A numeric defining the size of the objects in the plot. Default
 is one.}
 
-\item{title}{A character string giving the title of the plot.}
+\item{title}{A string specifying the title of the plot.}
 
 \item{cex_main}{A numeric defining the font size of the title. Default is
 14 * cex.}
@@ -46,7 +46,7 @@ is one.}
 variables are ordered from highest to lowest absolute value. If FALSE,
 the block order is used. Default is TRUE.}
 
-\item{show_legend}{A boolean indicating if legend should
+\item{show_legend}{A logical value indicating if legend should
 be shown (default is FALSE).}
 
 \item{...}{Additional graphical parameters.}
@@ -55,9 +55,9 @@ be shown (default is FALSE).}
 A ggplot2 plot object.
 }
 \description{
-Plot a fitted rgcca permutation object. The various set of tuning parameters
+Plot a fitted rgcca permutation object. The set of candidate tuning parameters
 are represented on the y-axis and the RGCCA objective function - obtained
-from both the orginal and permuted blocks - on the x-axis. If type =
+from both the original and permuted blocks - on the x-axis. If type =
 "zstat" the value of the zstat for the various parameter sets are reported on
 the x-axis.
 }
@@ -69,9 +69,9 @@ A <- list(
   politic = Russett[, 6:11]
 )
 
-perm.out <- rgcca_permutation(A, par_type = "tau", n_perms = 2, n_cores = 1)
-print(perm.out)
-plot(perm.out)
+perm_out <- rgcca_permutation(A, par_type = "tau", n_perms = 2, n_cores = 1)
+print(perm_out)
+plot(perm_out)
 
 perm.out <- rgcca_permutation(A,
   par_type = "sparsity",
