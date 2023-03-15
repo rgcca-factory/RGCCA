@@ -27,8 +27,7 @@
 #' @export
 #' @return  \item{k}{An integer giving the number of folds.}
 #' @return  \item{n_run}{An integer giving the number of MCCV}
-#' @return  \item{opt}{A list indicating some options of the cross-validated
-#' RGCCA model.}
+#' @return  \item{opt}{A list containing some options of the fitted cval object.}
 #' @return  \item{metric}{A string indicating the metric used during the process
 #' of cross-validation.}
 #' @return \item{cv}{A matrix of dimension par_length*(k*n_run). Each row of cv

@@ -175,8 +175,7 @@ of RGCCA.}
 
 \item{n_run}{An integer giving the number of MCCV}
 
-\item{opt}{A list indicating some options of the cross-validated
-RGCCA model.}
+\item{opt}{A list containing some options of the fitted cval object.}
 
 \item{metric}{A string indicating the metric used during the process
 of cross-validation.}

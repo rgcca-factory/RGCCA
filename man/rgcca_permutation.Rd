@@ -77,7 +77,7 @@ block scaling applies on the standardized blocks.}
 method to consider. Possible values are found using \link{available_methods}}
 
 \item{connection}{A symmetric matrix (\eqn{J \times J}{J x J}) describing
-the network of connections between blocks.}
+the network of connections between blocks (default value: 1-diag(J)).}
 
 \item{scheme}{A string or a function specifying the scheme function applied to
 covariance maximization among "horst" (the identity function), "factorial"

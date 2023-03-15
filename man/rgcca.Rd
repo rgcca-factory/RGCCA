@@ -46,7 +46,7 @@ blocks are not scaled. If standardization is applied (scale = TRUE), the
 block scaling applies on the standardized blocks.}
 
 \item{connection}{A symmetric matrix (\eqn{J \times J}{J x J}) describing
-the network of connections between blocks.}
+the network of connections between blocks (default value: 1-diag(J)).}
 
 \item{scheme}{A string or a function specifying the scheme function applied to
 covariance maximization among "horst" (the identity function), "factorial"
@@ -134,8 +134,6 @@ is a matrix that contains the block weight vectors for block j.}
 \item{astar}{A list of \eqn{J} elements. Each column of astar[[j]] is
 a vector such that Y[[j]][, h] = blocks[[j]] \%*\% astar[[j]][, h].}
 
-\item{tau}{Regularization parameters used during the analysis.}
-
 \item{crit}{A list of vector of length max(ncomp). Each vector of
 the list is related to one specific deflation stage and reports the values
 of the criterion for this stage across iterations.}
@@ -148,28 +146,33 @@ the RGCCA alogrithm.}
 quality based on the Average Variance Explained (AVE): AVE(for each block),
 AVE(outer model), AVE(inner model).}
 
-\item{A}{A list that contains the J blocks of variables X1, X2, ...,
-XJ. Block Xj is a matrix of dimension n x p_j where p_j is the number of
-variables in X_j. These blocks are imputed when an imputation strategy is
-selected.}
+\item{optimal}{A logical value indicating if the Schaffer and
+Strimmer formula was applied for estimating the optimal shrinkage parameters.}
+
+\item{opt}{A list containing some options of the fitted RGCCA object.}
 
 \item{call}{Call of the function.}
+
+\item{blocks}{A list that contains the J blocks of variables X1, X2, ...,
+XJ. Block Xj is a matrix of dimension n x p_j where p_j is the number of
+variables in X_j. These blocks are standardized if data preprocessinf was
+applied (scale/scale_block).}
 }
 \description{
 RGCCA is a general statistical framework for multiblock data analysis.
+The rgcca() function implements this framework and is the main entry point
+of the package.
 }
 \details{
 Given J data matrices X1, X2, ..., XJ that represent J sets of variables
 observed on the same set of n individuals. These matrices X1, X2, ..., XJ,
 called blocks must have the same number of rows, but may (and usually will)
-have different numbers of columns. The rgcca() function handle missing values
-(ponctual or blockwise missing structure) using the algorithm described in
-(Tenenhaus et al, 2005).
+have different numbers of columns.
 
 The aim of RGCCA is to study the relationships between these J blocks.
-It constitutes a general framework for many multi-block data analysis methods
+It constitutes a general framework for many multi-block component methods
 (see Tenenhaus and Tenenhaus, 2011 ; Tenenhaus et al. 2017). It combines the
-power of multi-block data analysis methods (maximization of well identified
+power of multi-block data analysis  methods (maximization of well identified
 criteria) and the flexibility of PLS path modeling (the researcher decides
 which blocks are connected and which are not). Hence, the use of RGCCA
 requires the construction (user specified) of a design matrix C that
@@ -179,19 +182,22 @@ and block k are connected, and 0 otherwise). The rgcca() function implements
 a monotone global convergent algorithm - i.e. the bounded criteria to be
 maximized increases at each step of the iterative procedure and hits, at
 convergence a stationary point of the RGCCA optimization problem. Moreover,
-depending on the dimensionality of each block Xj, j = 1, \ldots, J, the
-primal (when n > p_j) algorithm or the dual (when n < p_j) algorithm is used
-(see Tenenhaus et al. 2015). SGCCA extends RGCCA to address the issue
-of variable selection (Tenenhaus et al, 2014). Specifically, RGCCA is
-combined with an L1-penalty that gives rise to Sparse GCCA (SGCCA). The
-SGCCA algorithm is very similar to the RGCCA algorithm and keeps the same
-convergence properties (i.e. the bounded criteria to be maximized increases
-at each step of the iterative procedure and hits at convergence a stationary
-point).
+when the tau argument is used, depending on the dimensionality of each block
+Xj, j = 1, \ldots, J, the primal (when n > p_j) algorithm or the dual (when
+n < p_j) algorithm is used (see Tenenhaus et al. 2015). When sparsity is
+specified SGCCA extends RGCCA to address the issue of variable selection
+(Tenenhaus et al, 2014). Specifically, RGCCA is combined with an L1-penalty
+that gives rise to Sparse GCCA (SGCCA). The SGCCA algorithm is very similar
+to the RGCCA algorithm and keeps the same convergence properties (i.e. the
+bounded criteria to be maximized increases at each step of the iterative
+procedure and hits at convergence a stationary point).
 At last, a deflation strategy is used to compute several block components
 (specified by ncomp) per block. Within each block, components or weight
 vectors are guaranteed to be orthogonal. It should be noted that the numbers
 of components per block can differ from one block to another.
+
+The rgcca() function handle missing values (ponctual or blockwise missing
+structure) using the algorithm described in (Tenenhaus et al, 2005).
 
 Guidelines describing how to use RGCCA in practice are provided in
 (Garali et al., 2018).
@@ -211,14 +217,14 @@ blocks <- list(
 politic <- as.factor(apply(Russett[, 9:11], 1, which.max))
 
 # RGCCA with default values : Blocks are fully connected, factorial scheme
-# and tau =1, one component per block.
-fit.rgcca <- rgcca(blocks = blocks)
+# tau = 1 for all blocks, one component per block.
+fit_rgcca <- rgcca(blocks = blocks)
 
-print(fit.rgcca)
+print(fit_rgcca)
 
-plot(fit.rgcca, type = "weight", block = 1:3)
+plot(fit_rgcca, type = "weight", block = 1:3)
 
-plot(fit.rgcca,
+plot(fit_rgcca,
   type = "sample", block = 1:2,
   comp = rep(1, 2), resp = politic
 )
@@ -232,8 +238,11 @@ fit_rgcca <- rgcca(blocks,
   method = "rgcca",
   connection = 1 - diag(3),
   superblock = FALSE,
-  tau = rep(1, 3), ncomp = c(2, 2, 2),
-  scheme = "factorial", verbose = TRUE
+  tau = rep(1, 3),
+  ncomp = c(2, 2, 2),
+  scheme = "factorial",
+  comp_orth = TRUE,
+  verbose = TRUE
 )
 
 print(fit_rgcca)
@@ -260,8 +269,8 @@ plot(fit_rgcca, type = "biplot", block = 4, resp = politic)
 # Example 4: RGCCA and permutation #
 ####################################
 
-# Tune the model to find the best set of tau parameters. By default,
-blocks are fully connected.
+# Tune the model to find the best set of tau parameters.
+By default, blocks are fully connected.
 
 set.seed(27) #favorite number
 perm_out <- rgcca_permutation(blocks,
@@ -301,7 +310,7 @@ sapply(blocks, NCOL)
 # rgcca algorithm using the dual formulation for X1 and X2
 # and the dual formulation for X3. X3 is the group coding matrix associated
 # with the qualitative variable Loc. This block is considered
-# as response block and specified used the argument response.
+# as response block and specified using the argument response.
 
 fit_rgcca <- rgcca(
   blocks = blocks,
