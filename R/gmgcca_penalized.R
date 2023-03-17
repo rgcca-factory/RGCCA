@@ -48,7 +48,7 @@ gmgcca_penalized = function(blocks, connection = 1 - diag(length(blocks)),
   tau = rep(1, length(blocks))
 
   # First component block
-  gcca.result <- nn_gmgccak_penalized(blocks, A_m, connection, tau = tau, scheme = scheme,
+  gcca.result <- gmgccak_penalized(blocks, A_m, connection, tau = tau, scheme = scheme,
                                    init = init, bias = bias, tol = tol,
                                    verbose = verbose, na.rm = na.rm, ncomp = ncomp,
                                    penalty_coef = penalty_coef)

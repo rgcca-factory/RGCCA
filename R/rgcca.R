@@ -272,7 +272,7 @@ rgcca <- function(
 
     if (any(sapply(blocks, function(x) length(dim(x))) > 2)) {
         if(!type %in% c("mgcca", "ns_mgcca", "gmgcca", "ns_mgcca_penalized",
-                        "gmgcca_penalized", "gmgcca_aux_y"))
+                        "gmgcca_penalized", "gmgcca_aux_y", "gmgcca_aux_var"))
         {
             message(paste0("type='", type, "' is not available for tensor blocks
                            so type was converted to 'mgcca'."))
@@ -336,6 +336,11 @@ rgcca <- function(
       par <- "tau"
       penalty <- tau
 
+    } else if (tolower(type) %in% c("gmgcca_aux_var")) {
+      gcca <- gmgcca_aux_varNa
+      par <- "tau"
+      penalty <- tau
+
     } else {
         if (!missing(sparsity) & missing(tau))
            stop_rgcca(paste0("tau parameters required for ",
@@ -370,6 +375,11 @@ rgcca <- function(
     }
 
     if (type == "gmgcca_aux_y") {
+      if (missing(method)) method  <- "complete"
+      ranks                <- check_ranks(ranks, blocks)
+    }
+
+    if (type == "gmgcca_aux_var") {
       if (missing(method)) method  <- "complete"
       ranks                <- check_ranks(ranks, blocks)
     }
@@ -500,6 +510,10 @@ rgcca <- function(
       func$ranks                   <- ranks
     }
 
+    if (type == "gmgcca_aux_var") {
+      func$ranks                   <- ranks
+    }
+
     func[[par]] <- opt$penalty
     func_out <- eval(as.call(func))$rgcca
 
@@ -538,6 +552,7 @@ rgcca <- function(
     if(type == "ns_mgcca_penalized") func_out$call$ranks = ranks
     if(type == "gmgcca") func_out$call$ranks = ranks
     if(type == "gmgcca_aux_y") func_out$call$ranks = ranks
+    if(type == "gmgcca_aux_var") func_out$call$ranks = ranks
 
     for (i in c(
         "scale",

@@ -59,7 +59,13 @@ gmgccak_penalized <- function(A, A_m = NULL, C, tau = rep(1, length(A)), scheme 
   pjs <- sapply(A_m, NCOL) # number of variables per block
   Z <- matrix(0,NROW(A[[1]]),J)
 
-  A_sing <- lapply(A_m, function(x) svd(x)$d[1])
+  A_sing <- lapply(A_m, function(x) {
+    if (NROW(x) > NCOL(x)) {
+      sqrt(eigen(crossprod(x), symmetric = TRUE, only.values = TRUE)$values[1])
+    } else {
+      sqrt(eigen(tcrossprod(x), symmetric = TRUE, only.values = TRUE)$values[1])
+    }
+  })
 
   # List of 2D matrix and higher order tensors
   DIM    <- lapply(A, dim)

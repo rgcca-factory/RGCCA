@@ -4,7 +4,7 @@ gmgcca_penalizedNa=function(blocks, method, connection = 1 - diag(length(blocks)
                  scheme = "centroid", scale = TRUE,
                  init = "svd", bias = TRUE, tol = 1e-08,
                  verbose = TRUE, scale_block = TRUE, prescaling = FALSE,
-                 quiet = FALSE, penalty_coef = 1)
+                 quiet = FALSE, penalty_coef = 1, n_run = 1, n_cores = 1)
 {
   indNA=lapply(blocks, function(x){return(which(is.na(x), arr.ind = TRUE))})
 
