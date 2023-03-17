@@ -66,17 +66,17 @@ is 20).}
 
 \item{scale}{A logical value indicating if variables are standardized.}
 
-\item{scale_block}{A value indicating if each block is scaled. If TRUE or
-"inertia", each block is divided by the sum of eigenvalues of its empirical
-covariance matrix. If "lambda1", each block is divided by the square root of
-the highest eigenvalue of its empirical covariance matrix. Otherwise the
-blocks are not scaled. If standardization is applied (scale = TRUE), the
-block scaling applies on the standardized blocks.}
+\item{scale_block}{A logical value or a string indicating if each block is
+scaled. If TRUE or "inertia", each block is divided by the sum of eigenvalues
+of its empirical covariance matrix. If "lambda1", each block is divided by
+the square root of the highest eigenvalue of its empirical covariance matrix.
+If standardization is applied (scale = TRUE), the block scaling applies on
+the standardized blocks.}
 
 \item{method}{A string specifying which multiblock component
 method to consider. Possible values are found using \link{available_methods}}
 
-\item{connection}{A symmetric matrix (\eqn{J \times J}{J x J}) describing
+\item{connection}{A (\eqn{J \times J}{J x J}) symmetric matrix describing
 the network of connections between blocks (default value: 1-diag(J)).}
 
 \item{scheme}{A string or a function specifying the scheme function applied to
@@ -99,8 +99,8 @@ If tau is a matrix, tau[k, j] is associated with the kth dimension of block j.
 The regularization parameters varies from 0 (maximizing the correlation) to
 1 (maximizing the covariance). If tau = "optimal" the regularization
 parameters are estimated for each block and each dimension using the Schafer
-and Strimmer (2005) analytical formula. The regularization parameters can
-also be estimated using \link{rgcca_permutation} or \link{rgcca_cv}.}
+and Strimmer (2005) analytical formula. The tau parameters can also be estimated using
+\link{rgcca_permutation} or \link{rgcca_cv}.}
 
 \item{sparsity}{Either a numeric vector of size \eqn{1*J} or a numeric matrix
 of dimension \eqn{max(ncomp) * J} encoding the L1 constraints applied to the

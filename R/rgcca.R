@@ -50,13 +50,13 @@
 #' @param method A string specifying which multiblock component
 #' method to consider. Possible values are found using \link{available_methods}
 #' @param scale A logical value indicating if variables are standardized.
-#' @param scale_block A value indicating if each block is scaled. If TRUE or
-#' "inertia", each block is divided by the sum of eigenvalues of its empirical
-#' covariance matrix. If "lambda1", each block is divided by the square root of
-#' the highest eigenvalue of its empirical covariance matrix. Otherwise the
-#' blocks are not scaled. If standardization is applied (scale = TRUE), the
-#' block scaling applies on the standardized blocks.
-#' @param connection  A symmetric matrix (\eqn{J \times J}{J x J}) describing
+#' @param scale_block A logical value or a string indicating if each block is
+#' scaled. If TRUE or "inertia", each block is divided by the sum of eigenvalues
+#' of its empirical covariance matrix. If "lambda1", each block is divided by
+#' the square root of the highest eigenvalue of its empirical covariance matrix.
+#' If standardization is applied (scale = TRUE), the block scaling applies on
+#' the standardized blocks.
+#' @param connection  A (\eqn{J \times J}{J x J}) symmetric matrix describing
 #' the network of connections between blocks (default value: 1-diag(J)).
 #' @param scheme A string or a function specifying the scheme function applied to
 #' covariance maximization among "horst" (the identity function), "factorial"
@@ -76,8 +76,8 @@
 #' The regularization parameters varies from 0 (maximizing the correlation) to
 #' 1 (maximizing the covariance). If tau = "optimal" the regularization
 #' parameters are estimated for each block and each dimension using the Schafer
-#' and Strimmer (2005) analytical formula. The regularization parameters can
-#' also be estimated using \link{rgcca_permutation} or \link{rgcca_cv}.
+#' and Strimmer (2005) analytical formula. The tau parameters can also be estimated using
+#' \link{rgcca_permutation} or \link{rgcca_cv}.
 #' @param sparsity Either a numeric vector of size \eqn{1*J} or a numeric matrix
 #' of dimension \eqn{max(ncomp) * J} encoding the L1 constraints applied to the
 #' block weight vectors. For block j, the amount of sparsity varies between
@@ -128,20 +128,19 @@
 #' @return \item{crit}{A list of vector of length max(ncomp). Each vector of
 #' the list is related to one specific deflation stage and reports the values
 #' of the criterion for this stage across iterations.}
-#' @return \item{primal_dual}{A vector of dimension \eqn{1 \times J} that
-#' contains the formulation ("primal" or "dual") applied to each block within
-#' the RGCCA alogrithm.}
+#' @return \item{primal_dual}{A vector of length J that contains the formulation
+#' ("primal" or "dual") applied to each block within the RGCCA alogrithm.}
 #' @return \item{AVE}{A list of numerical values giving the indicators of model
 #' quality based on the Average Variance Explained (AVE): AVE(for each block),
 #' AVE(outer model), AVE(inner model).}
 #' @return \item{optimal}{A logical value indicating if the Schaffer and
-#' Strimmer formula was applied for estimating the optimal shrinkage parameters.}
+#' Strimmer formula was applied for estimating the optimal tau parameters.}
 #' @return \item{opt}{A list containing some options of the fitted RGCCA object.}
 #' @return \item{call}{Call of the function.}
 #' @return \item{blocks}{A list that contains the J blocks of variables X1, X2, ...,
 #' XJ. Block Xj is a matrix of dimension n x p_j where p_j is the number of
-#' variables in X_j. These blocks are standardized if data preprocessinf was
-#' applied (scale/scale_block).}
+#' variables in X_j. These blocks are preprocessed according to the values of
+#' scale/scale_block/NA_method.}
 #' @references Garali I, Adanyeguh IM, Ichou F, Perlbarg V, Seyer A, Colsch B,
 #' Moszer I, Guillemot V, Durr A, Mochel F, Tenenhaus A. (2018) A strategy for
 #' multimodal data integration: application to biomarkers identification
@@ -213,7 +212,8 @@
 #'   comp = 1:2, resp = politic
 #' )
 #'
-#' plot(fit_rgcca, type = "weight", block = 1)
+#' plot(fit_rgcca, type = "weight",
+#'      block = 1:3, display_order = FALSE)
 #'
 #' ##############################
 #' # Example 3: MCOA with RGCCA #
@@ -317,7 +317,7 @@
 #' print(fit_rgcca)
 #'
 #'
-#' # the same applies for sGCCA
+#' # the same applies for SGCCA
 #' fit_sgcca <- rgcca(blocks, response = 3,
 #'   sparsity = matrix(c(.071, 0.2,  1,
 #'                       0.06, 0.15, 1), nrow = 2, byrow = TRUE),

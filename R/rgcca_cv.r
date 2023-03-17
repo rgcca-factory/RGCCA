@@ -1,9 +1,9 @@
 #' Tune RGCCA parameters by cross-validation
 #'
-#' This function can be used to automatically select the hyper-parameters
-#' "sparsity", "tau" or "ncomp" by cross-validating the predictive quality of
-#' the models. This function is exclusively used in a supervised setting, and
-#' filling the response argument is therefore mandatory.
+#' This function is used to automatically select the hyper-parameters
+#' "sparsity", "tau" or "ncomp" by cross-validation. This function only
+#' applies in a supervised setting, and filling the response argument is
+#' therefore mandatory.
 #'
 #' @inheritParams rgcca
 #' @inheritParams rgcca_predict
@@ -13,15 +13,16 @@
 #' @param par_value A matrix (K*J, with J the number of blocks and K the number
 #' of combinations to be tested), a vector (of J length) or a numeric value
 #' giving the sets of parameters to be tested for tau, sparsity or ncomp.
-#' By default, for tau, sparsity, it takes 10 sets between min values (0 for
+#' By default, for tau and sparsity, it takes 10 sets between min values (0 for
 #' RGCCA and $1/sqrt(ncol)$ for SGCCA) and 1. for ncomp, it takes a certain
 #' number of sets between ncomp and 1.
-#' @param par_length An integer indicating the number of sets of parameters to
-#' be tested (if par_value = NULL). The parameters are uniformly distributed.
+#' @param par_length An integer indicating the number of sets of candidate
+#' parameters to be tested (if par_value = NULL). The parameters are uniformly
+#' distributed.
 #' @param k An integer giving the number of folds (if validation = 'kfold').
-#' @param validation A character for the type of validation among "loo",
-#' "kfold". For small datasets (e.g. <30 samples), it is recommended to a loo
-#' procedure.
+#' @param validation A string specifying the type of validation among "loo" and
+#' "kfold". For small datasets (e.g. <30 samples), it is recommended to use a
+#' loo procedure.
 #' @param n_run An integer giving the number of Monte-Carlo Cross-Validation
 #' (MCCV) to be run (if validation = 'kfold').
 #' @export
@@ -31,13 +32,13 @@
 #' @return  \item{metric}{A string indicating the metric used during the process
 #' of cross-validation.}
 #' @return \item{cv}{A matrix of dimension par_length*(k*n_run). Each row of cv
-#' corresponds to one set of parameters that has been tested. Each column of
-#' cv corresponds to the cross-validated score of a specific fold.}
+#' corresponds to one set of candidate parameters. Each column of cv corresponds
+#' to the cross-validated score of a specific fold.}
 #' @return \item{call}{A list of the input parameters}
 #' @return \item{bestpenalties}{The set of parameters that yields the best
 #' cross-validated scores}
-#' @return \item{penalties}{A matrix reporting the sets of parameters used during
-#' the process of cross-validation.}
+#' @return \item{penalties}{A matrix reporting the sets of candidate parameters
+#' used during the process of cross-validation.}
 #' @return \item{validation}{A string specifying the type of validation among
 #' "loo", "kfold"}
 #' @return \item{stats}{A data.frame containing various statistics (mean, sd,
@@ -47,15 +48,14 @@
 #' prediction.}
 #' @details
 #' If the response block is univariate. The RGCCA components of each block
-#' (computed from the training set) are used as input variables
-#' of the predictive model (specified by "prediction_model") to predict the
-#' response block.
+#' are used as input variables of the predictive model (specified by
+#' "prediction_model") to predict the response block. The best combination of
+#' parameters is the one with the best cross-validated score.
 #' For multivariate response block, The RGCCA components of each block
-#' (computed from the training set) are used as input variables
-#' of the predictive models (specified by "prediction_model") to predict each
-#' variable of the response block. The scores of each model are then averaged.
-#'
-#' The best combination of parameters is the one with the best cross-validated
+#' are used as input variables of the predictive models (specified by
+#' "prediction_model") to predict each column of the response block.
+#' The cross-validated scores of each model are then averaged. The best
+#' combination of parameters is the one with the best averaged cross-validated
 #' score.
 #' @examples
 #' data("Russett")

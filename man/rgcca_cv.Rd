@@ -56,16 +56,17 @@ activated.}
 \item{par_value}{A matrix (K*J, with J the number of blocks and K the number
 of combinations to be tested), a vector (of J length) or a numeric value
 giving the sets of parameters to be tested for tau, sparsity or ncomp.
-By default, for tau, sparsity, it takes 10 sets between min values (0 for
+By default, for tau and sparsity, it takes 10 sets between min values (0 for
 RGCCA and $1/sqrt(ncol)$ for SGCCA) and 1. for ncomp, it takes a certain
 number of sets between ncomp and 1.}
 
-\item{par_length}{An integer indicating the number of sets of parameters to
-be tested (if par_value = NULL). The parameters are uniformly distributed.}
+\item{par_length}{An integer indicating the number of sets of candidate
+parameters to be tested (if par_value = NULL). The parameters are uniformly
+distributed.}
 
-\item{validation}{A character for the type of validation among "loo",
-"kfold". For small datasets (e.g. <30 samples), it is recommended to a loo
-procedure.}
+\item{validation}{A string specifying the type of validation among "loo" and
+"kfold". For small datasets (e.g. <30 samples), it is recommended to use a
+loo procedure.}
 
 \item{prediction_model}{A string giving the model used for prediction.
 Please see caret::modelLookup() for a list of the available models.}
@@ -92,12 +93,12 @@ For regression: "RMSE", "MAE"}
 
 \item{scale}{A logical value indicating if variables are standardized.}
 
-\item{scale_block}{A value indicating if each block is scaled. If TRUE or
-"inertia", each block is divided by the sum of eigenvalues of its empirical
-covariance matrix. If "lambda1", each block is divided by the square root of
-the highest eigenvalue of its empirical covariance matrix. Otherwise the
-blocks are not scaled. If standardization is applied (scale = TRUE), the
-block scaling applies on the standardized blocks.}
+\item{scale_block}{A logical value or a string indicating if each block is
+scaled. If TRUE or "inertia", each block is divided by the sum of eigenvalues
+of its empirical covariance matrix. If "lambda1", each block is divided by
+the square root of the highest eigenvalue of its empirical covariance matrix.
+If standardization is applied (scale = TRUE), the block scaling applies on
+the standardized blocks.}
 
 \item{tol}{The stopping value for the convergence of the algorithm
 (default: tol = 1e-08).}
@@ -129,8 +130,8 @@ If tau is a matrix, tau[k, j] is associated with the kth dimension of block j.
 The regularization parameters varies from 0 (maximizing the correlation) to
 1 (maximizing the covariance). If tau = "optimal" the regularization
 parameters are estimated for each block and each dimension using the Schafer
-and Strimmer (2005) analytical formula. The regularization parameters can
-also be estimated using \link{rgcca_permutation} or \link{rgcca_cv}.}
+and Strimmer (2005) analytical formula. The tau parameters can also be estimated using
+\link{rgcca_permutation} or \link{rgcca_cv}.}
 
 \item{ncomp}{A vector of length J indicating the number of components
 per block.}
@@ -181,16 +182,16 @@ of RGCCA.}
 of cross-validation.}
 
 \item{cv}{A matrix of dimension par_length*(k*n_run). Each row of cv
-corresponds to one set of parameters that has been tested. Each column of
-cv corresponds to the cross-validated score of a specific fold.}
+corresponds to one set of candidate parameters. Each column of cv corresponds
+to the cross-validated score of a specific fold.}
 
 \item{call}{A list of the input parameters}
 
 \item{bestpenalties}{The set of parameters that yields the best
 cross-validated scores}
 
-\item{penalties}{A matrix reporting the sets of parameters used during
-the process of cross-validation.}
+\item{penalties}{A matrix reporting the sets of candidate parameters
+used during the process of cross-validation.}
 
 \item{validation}{A string specifying the type of validation among
 "loo", "kfold"}
@@ -203,22 +204,21 @@ each set of parameters that has been tested.}
 prediction.}
 }
 \description{
-This function can be used to automatically select the hyper-parameters
-"sparsity", "tau" or "ncomp" by cross-validating the predictive quality of
-the models. This function is exclusively used in a supervised setting, and
-filling the response argument is therefore mandatory.
+This function is used to automatically select the hyper-parameters
+"sparsity", "tau" or "ncomp" by cross-validation. This function only
+applies in a supervised setting, and filling the response argument is
+therefore mandatory.
 }
 \details{
 If the response block is univariate. The RGCCA components of each block
-(computed from the training set) are used as input variables
-of the predictive model (specified by "prediction_model") to predict the
-response block.
+are used as input variables of the predictive model (specified by
+"prediction_model") to predict the response block. The best combination of
+parameters is the one with the best cross-validated score.
 For multivariate response block, The RGCCA components of each block
-(computed from the training set) are used as input variables
-of the predictive models (specified by "prediction_model") to predict each
-variable of the response block. The scores of each model are then averaged.
-
-The best combination of parameters is the one with the best cross-validated
+are used as input variables of the predictive models (specified by
+"prediction_model") to predict each column of the response block.
+The cross-validated scores of each model are then averaged. The best
+combination of parameters is the one with the best averaged cross-validated
 score.
 }
 \examples{

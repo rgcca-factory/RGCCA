@@ -38,14 +38,14 @@ method to consider. Possible values are found using \link{available_methods}}
 
 \item{scale}{A logical value indicating if variables are standardized.}
 
-\item{scale_block}{A value indicating if each block is scaled. If TRUE or
-"inertia", each block is divided by the sum of eigenvalues of its empirical
-covariance matrix. If "lambda1", each block is divided by the square root of
-the highest eigenvalue of its empirical covariance matrix. Otherwise the
-blocks are not scaled. If standardization is applied (scale = TRUE), the
-block scaling applies on the standardized blocks.}
+\item{scale_block}{A logical value or a string indicating if each block is
+scaled. If TRUE or "inertia", each block is divided by the sum of eigenvalues
+of its empirical covariance matrix. If "lambda1", each block is divided by
+the square root of the highest eigenvalue of its empirical covariance matrix.
+If standardization is applied (scale = TRUE), the block scaling applies on
+the standardized blocks.}
 
-\item{connection}{A symmetric matrix (\eqn{J \times J}{J x J}) describing
+\item{connection}{A (\eqn{J \times J}{J x J}) symmetric matrix describing
 the network of connections between blocks (default value: 1-diag(J)).}
 
 \item{scheme}{A string or a function specifying the scheme function applied to
@@ -68,8 +68,8 @@ If tau is a matrix, tau[k, j] is associated with the kth dimension of block j.
 The regularization parameters varies from 0 (maximizing the correlation) to
 1 (maximizing the covariance). If tau = "optimal" the regularization
 parameters are estimated for each block and each dimension using the Schafer
-and Strimmer (2005) analytical formula. The regularization parameters can
-also be estimated using \link{rgcca_permutation} or \link{rgcca_cv}.}
+and Strimmer (2005) analytical formula. The tau parameters can also be estimated using
+\link{rgcca_permutation} or \link{rgcca_cv}.}
 
 \item{sparsity}{Either a numeric vector of size \eqn{1*J} or a numeric matrix
 of dimension \eqn{max(ncomp) * J} encoding the L1 constraints applied to the
@@ -138,16 +138,15 @@ a vector such that Y[[j]][, h] = blocks[[j]] \%*\% astar[[j]][, h].}
 the list is related to one specific deflation stage and reports the values
 of the criterion for this stage across iterations.}
 
-\item{primal_dual}{A vector of dimension \eqn{1 \times J} that
-contains the formulation ("primal" or "dual") applied to each block within
-the RGCCA alogrithm.}
+\item{primal_dual}{A vector of length J that contains the formulation
+("primal" or "dual") applied to each block within the RGCCA alogrithm.}
 
 \item{AVE}{A list of numerical values giving the indicators of model
 quality based on the Average Variance Explained (AVE): AVE(for each block),
 AVE(outer model), AVE(inner model).}
 
 \item{optimal}{A logical value indicating if the Schaffer and
-Strimmer formula was applied for estimating the optimal shrinkage parameters.}
+Strimmer formula was applied for estimating the optimal tau parameters.}
 
 \item{opt}{A list containing some options of the fitted RGCCA object.}
 
@@ -155,8 +154,8 @@ Strimmer formula was applied for estimating the optimal shrinkage parameters.}
 
 \item{blocks}{A list that contains the J blocks of variables X1, X2, ...,
 XJ. Block Xj is a matrix of dimension n x p_j where p_j is the number of
-variables in X_j. These blocks are standardized if data preprocessinf was
-applied (scale/scale_block).}
+variables in X_j. These blocks are preprocessed according to the values of
+scale/scale_block/NA_method.}
 }
 \description{
 RGCCA is a general statistical framework for multiblock data analysis.
@@ -252,7 +251,8 @@ plot(fit_rgcca,
   comp = 1:2, resp = politic
 )
 
-plot(fit_rgcca, type = "weight", block = 1)
+plot(fit_rgcca, type = "weight",
+     block = 1:3, display_order = FALSE)
 
 ##############################
 # Example 3: MCOA with RGCCA #
@@ -356,7 +356,7 @@ fit_rgcca <- rgcca(blocks, response = 3,
 print(fit_rgcca)
 
 
-# the same applies for sGCCA
+# the same applies for SGCCA
 fit_sgcca <- rgcca(blocks, response = 3,
   sparsity = matrix(c(.071, 0.2,  1,
                       0.06, 0.15, 1), nrow = 2, byrow = TRUE),
