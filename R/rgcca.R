@@ -272,7 +272,8 @@ rgcca <- function(
 
     if (any(sapply(blocks, function(x) length(dim(x))) > 2)) {
         if(!type %in% c("mgcca", "ns_mgcca", "gmgcca", "ns_mgcca_penalized",
-                        "gmgcca_penalized", "gmgcca_aux_y", "gmgcca_aux_var"))
+                        "gmgcca_penalized", "gmgcca_aux_y", "gmgcca_aux_var",
+                        "tgcca"))
         {
             message(paste0("type='", type, "' is not available for tensor blocks
                            so type was converted to 'mgcca'."))
@@ -310,6 +311,11 @@ rgcca <- function(
         gcca <- mgccaNa
         par <- "tau"
         penalty <- tau
+
+    }else if (tolower(type) %in% c("tgcca")) {
+      gcca <- tgccaNa
+      par <- "tau"
+      penalty <- tau
 
     }else if (tolower(type) %in% c("ns_mgcca")) {
       gcca <- ns_mgccaNa
@@ -352,7 +358,7 @@ rgcca <- function(
     #if (superblock && any(penalty == "optimal"))
     #    stop_rgcca("Optimal tau is not available with superblock option.")
 
-    if (type == "mgcca") {
+    if (type %in% c("mgcca", "tgcca")) {
       if (missing(method)) method <- "complete"
       ranks  <- check_ranks(ranks, blocks)
       regularisation_matrices <- check_reg_matrices(
@@ -480,7 +486,7 @@ rgcca <- function(
         )
     )
 
-    if (type == "mgcca") {
+    if (type %in% c("mgcca", "tgcca")) {
       func$regularisation_matrices <- regularisation_matrices
       func$ranks                   <- ranks
       func$orth_modes <- orth_modes
@@ -548,6 +554,7 @@ rgcca <- function(
         func_out$tau <- NULL
 
     if(type == "mgcca") func_out$call$ranks = ranks
+    if(type == "tgcca") func_out$call$ranks = ranks
     if(type == "ns_mgcca") func_out$call$ranks = ranks
     if(type == "ns_mgcca_penalized") func_out$call$ranks = ranks
     if(type == "gmgcca") func_out$call$ranks = ranks

@@ -179,7 +179,7 @@ check_lower_blocks <- function(x, y, blocks)
 check_method <- function(method) {
     analysis <- c("rgcca", "sgcca", "mgcca", "ns_mgcca", "ns_mgcca_penalized",
                   "gmgcca_penalized", "gmgcca_aux_y", "gmgcca_aux_var",
-                  "gmgcca", "pca", "spca", "pls", "spls",
+                  "gmgcca", "tgcca", "pca", "spca", "pls", "spls",
       "cca", "ifa", "ra", "gcca", "maxvar", "maxvar-b",
       "maxvar-a", "mcoa","cpca-1", "cpca-2", "cpca-4",
       "hpca", "maxbet-b", "maxbet", "maxdiff-b", "maxdiff",
