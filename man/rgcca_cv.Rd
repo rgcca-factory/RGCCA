@@ -204,10 +204,9 @@ each set of parameters that has been tested.}
 prediction.}
 }
 \description{
-This function is used to automatically select the hyper-parameters
-"sparsity", "tau" or "ncomp" by cross-validation. This function only
-applies in a supervised setting, and filling the response argument is
-therefore mandatory.
+This function is used to select automatically "sparsity", "tau" or "ncomp"
+by cross-validation. This function only applies in a supervised setting,
+and filling the response argument is therefore mandatory.
 }
 \details{
 If the response block is univariate. The RGCCA components of each block
@@ -222,35 +221,86 @@ combination of parameters is the one with the best averaged cross-validated
 score.
 }
 \examples{
-data("Russett")
+
+# Cross_validation for classification
+
+set.seed(27) #favorite number
+data(Russett)
 blocks <- list(
-  agriculture = Russett[, seq(3)],
+  agriculture = Russett[, 1:3],
   industry = Russett[, 4:5],
-  politic = Russett[, 6:8]
+  politic = as.factor(apply(Russett[, 9:11], 1, which.max))
 )
-res <- rgcca_cv(blocks,
-  response = 3, method = "rgcca",
-  par_type = "sparsity",
-  par_value = c(0.6, 0.75, 0.8),
-  n_run = 2, n_cores = 1
+
+cv_out <- rgcca_cv(blocks, response = 3, method = "rgcca",
+                   par_type = "tau",
+                   prediction_model = "lda", #caret::modelLookup()
+                   metric = "Accuracy",
+                   k=3, n_run = 5)
+
+
+print(cv_out)
+plot(cv_out)
+
+# A fitted cval object is given as output of the rgcca() function
+
+fit_opt = rgcca(cv_out)
+
+# Cross_validation for regression
+
+set.seed(27) #favorite number
+data(Russett)
+blocks <- list(
+  agriculture = Russett[, 1:3],
+  industry = Russett[, 4:5],
+  politic =  Russett[, 6:8]
 )
-plot(res)
+
+cv_out <- rgcca_cv(blocks, response = 3, method = "rgcca",
+                   par_type = "tau",
+                   par_value = c(0.6, 0.75, 0.8),
+                   prediction_model = "lm", #caret::modelLookup()
+                   metric = "RMSE",
+                   k=3, n_run = 5)
+
+print(cv_out)
+plot(cv_out)
+
+fit_opt = rgcca(cv_out)
+
 \dontrun{
-rgcca_cv(blocks,
-  response = 3, par_type = "tau",
-  par_value = c(0.6, 0.75, 0.8),
-  n_run = 2, n_cores = 1
-)$bestpenalties
+data("ge_cgh_locIGR", package = "gliomaData")
+blocks <- ge_cgh_locIGR$multiblocks
+Loc <- factor(ge_cgh_locIGR$y)
+levels(Loc) <- colnames(ge_cgh_locIGR$multiblocks$y)
+blocks[[3]] <- Loc
+set.seed(27) # favorite number
 
-rgcca_cv(blocks,
-  response = 3, par_type = "sparsity",
-  par_value = 0.8, n_run = 2, n_cores = 1
+cv_out = rgcca_cv(blocks, response = 3,
+                 ncomp = 1,
+                 prediction_model = "glmnet",
+                 family = "multinomial", lambda = .001,
+                 par_type = "sparsity",
+                 par_value = c(.071, .2, 1),
+                 metric = "Balanced_Accuracy",
+                 n_cores = 10,
 )
 
-rgcca_cv(blocks,
-  response = 3, par_type = "tau",
-  par_value = 0.8, n_run = 2, n_cores = 1
+print(cv_out)
+plot(cv_out, display_order = FALSE)
+
+cv_out = rgcca_cv(blocks, response = 3,
+                 ncomp = 1,
+                 prediction_model = "glmnet",
+                 family = "multinomial", lambda = .001,
+                 par_type = "ncomp",
+                 par_value = c(5, 5, 1),
+                 metric = "Balanced_Accuracy",
+                 n_cores = 10,
 )
+
+print(cv_out)
+plot(cv_out, display_order = FALSE)
 }
 
 }
