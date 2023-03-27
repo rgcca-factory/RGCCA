@@ -67,22 +67,26 @@
 #'  2017) for details.
 #' @param ncomp A vector of length J indicating the number of components
 #' per block.
-#' @param tau Either a numeric vector of size \eqn{1 \times J}{1 x J}, a
+#' @param tau Either a numerical value, a numeric vector of size \eqn{1 \times J}{1 x J}, or a
 #' numeric matrix of dimension \eqn{\mathrm{max}(ncomp) \times J}{max(ncomp) x J}
 #' containing the values of the regularization parameters (default: tau = 1, for each
-#' block and each dimension) or a string equal to "optimal". If tau is a vector,
-#' tau[j] is identical across the dimensions of block \eqn{\mathbf{X}_j}{Xj}.
+#' block and each dimension) or a string equal to "optimal". If tau is a numerical
+#' value, then tau is identical accross all blocks and all dimensions of the blocks.
+#' If tau is a vector, tau[j] is identical across the dimensions of block \eqn{\mathbf{X}_j}{Xj}.
 #' If tau is a matrix, tau[k, j] is associated with the kth dimension of block j.
 #' The regularization parameters varies from 0 (maximizing the correlation) to
 #' 1 (maximizing the covariance). If tau = "optimal" the regularization
 #' parameters are estimated for each block and each dimension using the Schafer
 #' and Strimmer (2005) analytical formula. The tau parameters can also be estimated using
 #' \link{rgcca_permutation} or \link{rgcca_cv}.
-#' @param sparsity Either a numeric vector of size \eqn{1*J} or a numeric matrix
+#' @param sparsity Either a numerical value, a numeric vector of size \eqn{1*J} or a numeric matrix
 #' of dimension \eqn{max(ncomp) * J} encoding the L1 constraints applied to the
 #' block weight vectors. For block j, the amount of sparsity varies between
 #' \eqn{1/sqrt(p_j)} and 1 (larger values of sparsity correspond to less
 #' penalization).
+#'
+#' If sparsity is a numerical value, then sparsity is identical accross all blocks
+#' and all dimensions of the blocks.
 #'
 #' If sparsity is a vector, sparsity[j] is identical across the dimensions
 #' h = 1, ..., H of block j:
@@ -100,7 +104,7 @@
 #' (\eqn{1/(n-1)}) estimator of the var/cov (default: bias = TRUE).
 #' @param tol The stopping value for the convergence of the algorithm
 #' (default: tol = 1e-08).
-#' @param response Numerical value giving the position of the response block.
+#' @param response A numerical value giving the position of the response block.
 #' When the response argument is filled the supervised mode is automatically
 #' activated.
 #' @param superblock A logical value indicating if the superblock option is used.
