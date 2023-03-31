@@ -7,18 +7,17 @@
 #' @inheritParams plot.rgcca
 #' @param x A fitted rgcca_bootstrap object
 #' (see \code{\link[RGCCA]{rgcca_bootstrap}})
-#' @param type Character string indicating the bootstrapped object to plot:
+#' @param type A string indicating the bootstrapped object to plot:
 #' block-weight vectors ("weights", default) or block-loading vectors
 #' ("loadings").
 #' @param empirical A logical value indicating if the bootstrap confidence
 #' intervals and p-values are derived from the empirical distribution.
-#' (defaut: TRUE)
-#' @param n_mark An integer defining the maximum number of variables plotted.
-#' @param show_stars A logical for showing significance levels.
+#' (default: TRUE)
+#' @param n_mark An integer defining the maximum number of variables to plot.
+#' @param show_stars A logical value indicating if the significance levels are displayed.
 #' @param colors Colors used in the plots.
-#' @param adj.method Character string indicating the method used to adjust for
-#' p-values. It must be a method handled by the p.adjust function.
-#' Default is "fdr".
+#' @param adj.method A string indicating the method used to adjust the p-values.
+#' It must be a method handled by the p.adjust function. Default is "fdr".
 #' @return A ggplot2 plot object.
 #' @examples
 #' data("Russett")

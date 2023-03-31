@@ -98,19 +98,21 @@ test_that("rgcca_cv_k gives the same scores as custom_rgcca_cv_k", {
   response <- 1
   rgcca_out <- rgcca(blocksNA,
     response = response, ncomp = 1,
-    NA_method = "nipals"
+    NA_method = "na.ignore"
   )
   res_cv_k <- rgcca_cv_k(
     rgcca_out$call, inds = 1, prediction_model = "lm",
     par_type = "tau", par_value = rep(1, length(blocksNA)),
     metric = NULL
   )
-  res_custom_cv_k <- custom_rgcca_cv_k(blocksNA, response, NA_method = "nipals")
+  res_custom_cv_k <- custom_rgcca_cv_k(
+    blocksNA, response, NA_method = "na.ignore"
+  )
   expect_equal(res_cv_k, res_custom_cv_k)
 
   rgcca_out <- rgcca(blocksNA,
     response = response, ncomp = 1,
-    NA_method = "complete"
+    NA_method = "na.omit"
   )
   res_cv_k <- rgcca_cv_k(
     rgcca_out$call, inds = 1, prediction_model = "lm",
@@ -118,7 +120,7 @@ test_that("rgcca_cv_k gives the same scores as custom_rgcca_cv_k", {
     metric = NULL
   )
   res_custom_cv_k <- custom_rgcca_cv_k(blocksNA, response,
-    NA_method = "complete"
+    NA_method = "na.omit"
   )
   expect_equal(res_cv_k, res_custom_cv_k)
 

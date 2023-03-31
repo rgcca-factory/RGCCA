@@ -11,8 +11,8 @@
 #' (\eqn{X_{h1}, X_{h2}, ..., X_{hJ}}).
 #' @param C A symmetric matrix (J*J) that describes the
 #' relationships between blocks.
-#' @param na.rm If TRUE, RGCCA is run only on the available data (default value)
-#' otherwise the NIPALS algorithm is used.
+#' @param na.rm If TRUE, RGCCA is run only on the available data
+#' (default value).
 #' @return \item{Y}{Matrix of block components of dimension \eqn{n * J}}
 #' @return \item{a}{A list of \eqn{J} elements. Each element of the list is a
 #' matrix that contains a block weight vector associated with one block and

@@ -8,13 +8,13 @@ get_rgcca_args <- function(object, default_args = list()) {
 
     if (any(class(object) %in% c("permutation", "cval"))) {
       if (object$par_type == "tau") {
-        rgcca_args$tau <- object$bestpenalties
+        rgcca_args$tau <- object$best_params
       }
       if (object$par_type == "ncomp") {
-        rgcca_args$ncomp <- object$bestpenalties
+        rgcca_args$ncomp <- object$best_params
       }
       if (object$par_type == "sparsity") {
-        rgcca_args$sparsity <- object$bestpenalties
+        rgcca_args$sparsity <- object$best_params
       }
     }
   } else {
@@ -42,7 +42,7 @@ get_rgcca_args <- function(object, default_args = list()) {
 
     rgcca_args$init <- check_char(rgcca_args$init, "init", c("svd", "random"))
     rgcca_args$NA_method <- check_char(
-      rgcca_args$NA_method, "NA_method", c("nipals", "complete")
+      rgcca_args$NA_method, "NA_method", c("na.ignore", "na.omit")
     )
     if (!is.logical(rgcca_args$scale_block)) {
       rgcca_args$scale_block <- tolower(rgcca_args$scale_block)

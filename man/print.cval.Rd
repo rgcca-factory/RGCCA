@@ -9,7 +9,7 @@
 \arguments{
 \item{x}{A rgcca_cv object (see \link{rgcca_cv})}
 
-\item{type}{Character string indicating the statistics in the box plots:
+\item{type}{A string indicating the statistics depicted in the boxplot:
 \itemize{
 \item "sd" (default): the middle bar corresponds to the mean and limits of
 the boxes are given by the mean plus or minus the standard deviation.

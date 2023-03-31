@@ -1,17 +1,17 @@
 #' Plot a fitted rgcca permutation object
 #'
-#' Plot a fitted rgcca permutation object. The various set of tuning parameters
+#' Plot a fitted rgcca permutation object. The set of candidate tuning parameters
 #' are represented on the y-axis and the RGCCA objective function - obtained
-#' from both the orginal and permuted blocks - on the x-axis. If type =
+#' from both the original and permuted blocks - on the x-axis. If type =
 #' "zstat" the value of the zstat for the various parameter sets are reported on
 #' the x-axis.
 #' @inheritParams plot.rgcca
 #' @inheritParams plot.bootstrap
 #' @param x A fitted rgcca_permutation object (see
 #' \code{\link[RGCCA]{rgcca_permutation}}).
-#' @param type A character string indicating which criterion to plot. Default
+#' @param type A string indicating which criterion to plot. Default
 #' is 'crit' for the RGCCA criterion. Otherwise, the pseudo Z-score is used.
-#' @param show_legend A boolean indicating if legend should
+#' @param show_legend A logical value indicating if legend should
 #' be shown (default is FALSE).
 #' @return A ggplot2 plot object.
 #' @examples
@@ -22,9 +22,9 @@
 #'   politic = Russett[, 6:11]
 #' )
 #'
-#' perm.out <- rgcca_permutation(A, par_type = "tau", n_perms = 2, n_cores = 1)
-#' print(perm.out)
-#' plot(perm.out)
+#' perm_out <- rgcca_permutation(A, par_type = "tau", n_perms = 2, n_cores = 1)
+#' print(perm_out)
+#' plot(perm_out)
 #'
 #' perm.out <- rgcca_permutation(A,
 #'   par_type = "sparsity",
@@ -63,7 +63,7 @@ plot.permutation <- function(x,
 
   # Mark the best parameter set
   best <- which(apply(
-    x$penalties[idx_order, ], 1, function(z) identical(z, x$bestpenalties)
+    x$params[idx_order, ], 1, function(z) identical(z, x$best_params)
   ))
   df$label[best] <- "Best parameter set"
 

@@ -3,7 +3,8 @@
 ##### Version: 3.0
 
 ##### Authors:
-Arthur TENENHAUS, Caroline PELTIER, Etienne CAMENEN,  Fabien GIRKA, Arnaud GLOAGUEN & Vincent GUILLEMOT
+Fabien GIRKA, Etienne CAMENEN,  Caroline PELTIER, Vincent GUILLEMOT, 
+Arnaud GLOAGUEN, Laurent Le Brusquet, Arthur TENENHAUS
 
 ##### Key-words:
 Regularized Generalized Canonical Correlation Analysis, multi-block data analysis
@@ -12,7 +13,7 @@ Regularized Generalized Canonical Correlation Analysis, multi-block data analysi
 arthur.tenenhaus@l2s.centralesupelec.fr
 
 ##### Short description
-Performs multiblock component methods (PCA, CCA, PLS, MCOA, MAXVAR, R/SGCCA, etc.) and produces graphical outputs (e.g. variables and individuals plots) and statistics to assess the robustness/significance of the analysis.
+Performs multiblock component methods (PCA, CCA, PLS, MCOA, GCCA, CPCA, MAXVAR, R/SGCCA, etc.) and produces graphical outputs (e.g. variables and individuals plots) and statistics to assess the robustness/significance of the analysis.
 
 ---
 

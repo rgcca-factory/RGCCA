@@ -3,15 +3,15 @@
 #' Bootstrap confidence intervals and p-values for evaluating the significance/
 #' stability of the block-weight vectors produce by S/RGCCA.
 #' @param rgcca_res A fitted RGCCA object (see  \code{\link[RGCCA]{rgcca}})
-#' @param n_boot Number of bootstrap samples. Default: 100.
-#' @param n_cores Number of cores for parallelization.
-#' @param balanced A boolean indicating if a balanced bootstrap procedure is
+#' @param n_boot The number of bootstrap samples. (Default: 100).
+#' @param n_cores The number of cores used for parallelization.
+#' @param balanced A logical value indicating if a balanced bootstrap procedure is
 #' performed or not (default is TRUE).
-#' @param keep_all_variables A boolean indicating if all variables have to be
-#' kept even when some of them have null variance for at least one bootstrap
-#' sample (default is FALSE).
-#' @param verbose Logical value indicating if the progress of the
-#' bootstrap procedure is reported.
+#' @param keep_all_variables A logical value indicating if all variables have
+#' to be kept even when some of them have null variance for at least one
+#' bootstrap sample (default is FALSE).
+#' @param verbose A logical value indicating if the progress of the bootstrap
+#' procedure is reported.
 #' @return A list containing two objects: 'bootstrap' and 'rgcca'.
 #' 'bootstrap' is a list containing for each block, a matrix
 #' with the variables of the block in row and the block weight vector
@@ -19,26 +19,24 @@
 #' object obtained from the original data. (see  \code{\link[RGCCA]{rgcca}})
 #' @examples
 #' # Bootstrap confidence intervals and p-values for RGCCA
-#' data("Russett")
+#' data(Russett)
 #' blocks <- list(
 #'   agriculture = Russett[, seq(3)],
 #'   industry = Russett[, 4:5],
-#'   politic = Russett[, 6:11]
+#'   politic = Russett[, 6:8]
 #' )
 #'
-#' fit.rgcca <- rgcca(blocks, ncomp = c(2, 1, 2))
-#' boot.out <- rgcca_bootstrap(fit.rgcca, n_boot = 20, n_cores = 2)
+#' fit_rgcca <- rgcca(blocks, ncomp = 1)
 #'
-#' plot(boot.out, type = "weight", block = 3, comp = 1)
+#' boot_out <- rgcca_bootstrap(fit_rgcca, n_boot = 20, n_cores = 1)
 #'
-#' print(boot.out, comp = 2, block = 1)
+#' print(boot_out)
+#' plot(boot_out, type = "weight", block = 1:3, comp = 1,
+#'      display_order = FALSE)
 #'
-#' fit.rgcca <- rgcca(blocks, method = "mcoa")
-#' boot.out <- rgcca_bootstrap(fit.rgcca, n_boot = 50, n_cores = 2)
 #'
-#' plot(boot.out, type = "weight", block = 1)
 #' \dontrun{
-#' # Stability of the selected variables for SGCCA
+#'
 #' # Download the dataset's package at http://biodev.cea.fr/sgcca/ and install
 #' # it from the package archive file.
 #' # You can do it with the following R commands:
@@ -49,25 +47,25 @@
 #' }
 #'
 #' data("ge_cgh_locIGR", package = "gliomaData")
-#' A <- ge_cgh_locIGR$multiblocks
-#' A[[3]] <- A[[3]][, -3]
+#' blocks <- ge_cgh_locIGR$multiblocks
 #' Loc <- factor(ge_cgh_locIGR$y)
 #' levels(Loc) <- colnames(ge_cgh_locIGR$multiblocks$y)
-#' C <- matrix(c(0, 0, 1, 0, 0, 1, 1, 1, 0), 3, 3)
+#' blocks [[3]] <- Loc
 #'
-#' # rgcca algorithm using the dual formulation for X1 and X2
-#' # and the dual formulation for X3
 #'
-#' fit.rgcca <- rgcca(A,
-#'   connection = C, tau = c(1, 1, 0),
-#'   ncomp = c(2, 2, 1), scheme = "factorial",
+#' fit_sgcca <- rgcca(blocks, response = 3,
+#'   sparsity = c(.071, .2, 1), ncomp = 1,
+#'   scheme = "factorial",
 #'   verbose = TRUE
 #' )
-#' boot.out <- rgcca_bootstrap(fit.rgcca, n_boot = 50, n_cores = 2)
-#' plot(boot.out, block = 1, type = "weight", ncomp = 1, n_marks = 30)
-#' plot(boot.out, block = 1, type = "weight", ncomp = 2, n_marks = 30)
 #'
-#' # stability analysis prior bootstrap for sgcca
+#' print(fit_sgcca)
+#'
+#' boot_out <- rgcca_bootstrap(fit_sgcca, n_boot = 50, n_cores = 2)
+
+#' plot(boot_out, block = 1:2, type = "weight",
+#'      comp = 1, n_mark = 300000,
+#'      display_order = FALSE)
 #' }
 #' @export
 #' @seealso \code{\link[RGCCA]{plot.bootstrap}},

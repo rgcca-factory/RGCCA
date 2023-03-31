@@ -5,7 +5,7 @@
       print(res)
     Output
       Call: method='rgcca', superblock=FALSE, scale=TRUE, scale_block='inertia',
-      init='svd', bias=TRUE, tol=1e-08, NA_method='nipals', ncomp=c(1,2),
+      init='svd', bias=TRUE, tol=1e-08, NA_method='na.ignore', ncomp=c(1,2),
       response=NULL, comp_orth=TRUE 
       There are J = 2 blocks.
       The design matrix is:
@@ -37,7 +37,7 @@
       print(res, type = "loadings", comp = 2, block = 2)
     Output
       Call: method='rgcca', superblock=FALSE, scale=TRUE, scale_block='inertia',
-      init='svd', bias=TRUE, tol=1e-08, NA_method='nipals', ncomp=c(1,2),
+      init='svd', bias=TRUE, tol=1e-08, NA_method='na.ignore', ncomp=c(1,2),
       response=NULL, comp_orth=TRUE 
       There are J = 2 blocks.
       The design matrix is:

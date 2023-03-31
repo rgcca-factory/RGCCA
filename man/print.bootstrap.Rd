@@ -23,21 +23,20 @@
 
 \item{comp}{A numeric vector indicating the component(s) to consider.}
 
-\item{type}{Character string indicating the bootstrapped object to plot:
+\item{type}{A string indicating the bootstrapped object to plot:
 block-weight vectors ("weights", default) or block-loading vectors
 ("loadings").}
 
 \item{empirical}{A logical value indicating if the bootstrap confidence
 intervals and p-values are derived from the empirical distribution.
-(defaut: TRUE)}
+(default: TRUE)}
 
 \item{display_order}{A logical value for ordering the variables. If TRUE,
 variables are ordered from highest to lowest absolute value. If FALSE,
 the block order is used. Default is TRUE.}
 
-\item{adj.method}{Character string indicating the method used to adjust for
-p-values. It must be a method handled by the p.adjust function.
-Default is "fdr".}
+\item{adj.method}{A string indicating the method used to adjust the p-values.
+It must be a method handled by the p.adjust function. Default is "fdr".}
 
 \item{...}{Other parameters used in print (for the displaying of matrices)
 the means, 95\% intervals, bootstrap ratio, p-values and other statistics.}

@@ -5,7 +5,7 @@
       print(res)
     Output
       Call: method='rgcca', superblock=FALSE, scale=TRUE, scale_block='inertia',
-      init='svd', bias=TRUE, tol=1e-08, NA_method='nipals', ncomp=c(1,1,1),
+      init='svd', bias=TRUE, tol=1e-08, NA_method='na.ignore', ncomp=c(1,1,1),
       response=NULL, comp_orth=TRUE 
       There are J = 3 blocks.
       The design matrix is:
@@ -29,7 +29,7 @@
       print(res)
     Output
       Call: method='rgcca', superblock=FALSE, scale=TRUE, scale_block='inertia',
-      init='svd', bias=TRUE, tol=1e-08, NA_method='nipals', ncomp=c(2,2,2),
+      init='svd', bias=TRUE, tol=1e-08, NA_method='na.ignore', ncomp=c(2,2,2),
       response=NULL, comp_orth=TRUE 
       There are J = 3 blocks.
       The design matrix is:
@@ -53,7 +53,7 @@
       print(res)
     Output
       Call: method='sgcca', superblock=FALSE, scale=TRUE, scale_block='inertia',
-      init='svd', bias=TRUE, tol=1e-08, NA_method='nipals', ncomp=c(1,1,1),
+      init='svd', bias=TRUE, tol=1e-08, NA_method='na.ignore', ncomp=c(1,1,1),
       response=NULL, comp_orth=TRUE 
       There are J = 3 blocks.
       The design matrix is:
@@ -77,7 +77,7 @@
       print(res)
     Output
       Call: method='sgcca', superblock=FALSE, scale=TRUE, scale_block='inertia',
-      init='svd', bias=TRUE, tol=1e-08, NA_method='nipals', ncomp=c(2,2,2),
+      init='svd', bias=TRUE, tol=1e-08, NA_method='na.ignore', ncomp=c(2,2,2),
       response=NULL, comp_orth=TRUE 
       There are J = 3 blocks.
       The design matrix is:
@@ -105,7 +105,7 @@
       print(res)
     Output
       Call: method='sgcca', superblock=FALSE, scale=TRUE, scale_block='inertia',
-      init='svd', bias=TRUE, tol=1e-08, NA_method='nipals', ncomp=c(1,1,1),
+      init='svd', bias=TRUE, tol=1e-08, NA_method='na.ignore', ncomp=c(1,1,1),
       response=3, comp_orth=TRUE 
       There are J = 3 blocks.
       The design matrix is:
