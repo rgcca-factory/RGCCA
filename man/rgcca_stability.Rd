@@ -17,31 +17,31 @@ rgcca_stability(
 \arguments{
 \item{rgcca_res}{A fitted RGCCA object (see \code{\link[RGCCA]{rgcca}})}
 
-\item{keep}{numeric vector indicating the proportion of top variables per
+\item{keep}{A numeric vector indicating the proportion of top variables per
 block.}
 
-\item{n_boot}{Number of bootstrap samples (Default: 100).}
+\item{n_boot}{The number of bootstrap samples (Default: 100).}
 
-\item{n_cores}{Number of cores for parallelization.}
+\item{n_cores}{The number of cores for parallelization.}
 
-\item{verbose}{Logical value indicating if the progress of the procedure
+\item{verbose}{A logical value indicating if the progress of the procedure
 is reported.}
 
-\item{balanced}{A boolean indicating if a balanced bootstrap procedure is
+\item{balanced}{A logical value indicating if a balanced bootstrap procedure is
 performed or not (default is TRUE).}
 
-\item{keep_all_variables}{A boolean indicating if all variables have to be
-kept even when some of them have null variance for at least one bootstrap
-sample (default is FALSE).}
+\item{keep_all_variables}{A logical value indicating if all variables have
+to be kept even when some of them have null variance for at least one
+bootstrap sample (default is FALSE).}
 }
 \value{
-\item{top}{indicator on which variables are ranked.}
+\item{top}{The indicator on which variables are ranked.}
 
-\item{keepVar}{indices of the top variables.}
+\item{keepVar}{The indices of the top variables.}
 
-\item{bootstrap}{block-weight vectors for ech bootstrap sample.}
+\item{bootstrap}{The block weight vectors for ech bootstrap sample.}
 
-\item{rgcca_res}{an RGCCA object fitted on the most stable
+\item{rgcca_res}{An RGCCA object fitted on the most stable
 variables.}
 }
 \description{
@@ -61,24 +61,25 @@ Loc <- factor(ge_cgh_locIGR$y)
 levels(Loc) <- colnames(ge_cgh_locIGR$multiblocks$y)
 blocks[[3]] <- Loc
 
-
-fit.sgcca <- rgcca(blocks,
+fit_sgcca <- rgcca(blocks,
   sparsity = c(.071, .2, 1),
   ncomp = c(1, 1, 1),
   scheme = "centroid",
   verbose = TRUE, response = 3
 )
 
-boot.out <- rgcca_bootstrap(fit.sgcca, n_boot = 100, n_cores = 1)
+boot_out <- rgcca_bootstrap(fit_sgcca, n_boot = 100, n_cores = 1)
 
-fit.stab <- rgcca_stability(fit.sgcca,
+fit_stab <- rgcca_stability(fit_sgcca,
   keep = sapply(fit.sgcca$a, function(x) mean(x != 0)),
   n_cores = 1, n_boot = 10,
   verbose = TRUE
 )
 
-boot.out <- rgcca_bootstrap(
-  fit.stab, n_boot = 500, n_cores = 1, verbose = FALSE
+boot_out <- rgcca_bootstrap(
+  fit_stab, n_boot = 500, n_cores = 1, verbose = TRUE
 )
+
+plot(boot_out, block = 1:2, n_mark = 2000, display_order = FALSE)
 }
 }

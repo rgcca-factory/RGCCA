@@ -3,14 +3,14 @@
 #' Create various plots from a fitted RGCCA object.
 #' @param x A fitted RGCCA object (see \code{\link[RGCCA]{rgcca}})
 #' @param type A character string: 'samples', 'weights', 'loadings',
-#' 'cor_circle', both', 'ave' (see details).
+#' 'cor_circle', both', 'biplot' , 'ave' (see details).
 #' @param block A numeric corresponding to the block(s) to plot.
 #' @param comp A numeric vector indicating the component(s) to consider.
 #' @param response A vector coloring the points in the "samples" plot.
 #' @param display_order A logical value for ordering the variables. If TRUE,
 #' variables are ordered from highest to lowest absolute value. If FALSE,
 #' the block order is used. Default is TRUE.
-#' @param title A character string giving the title of the plot.
+#' @param title A string specifying the title of the plot.
 #' @param cex A numeric defining the size of the objects in the plot. Default
 #' is one.
 #' @param cex_sub A numeric defining the font size of the subtitle. Default is
@@ -23,8 +23,8 @@
 #' 3 * cex.
 #' @param n_mark An integer defining the maximum number of bars plotted in the
 #' "weights" and "loadings" plots. Default is 30.
-#' @param sample_colors Colors used to color samples (used in the "samples" and
-#' "biplot" plots).
+#' @param sample_colors A string specifying the colors used to color samples
+#' (used in the "samples" and "biplot" plots).
 #' @param sample_shapes Shapes used for the sample points (used in the "samples"
 #' and "biplot" plots).
 #' @param var_colors Colors used to color variable weights or correlations
@@ -39,7 +39,7 @@
 #' @param show_var_names A logical value for showing the variable names in
 #' plots "cor_circle" and "biplot".
 #' @param repel A logical value for repelling text labels from each other.
-#' Default is False.
+#' Default to FALSE.
 #' @param display_blocks A numeric corresponding to the block(s) to display in
 #' the correlation_circle. All blocks are displayed by default.
 #' @param expand A numeric that scales the weights associated to the block
@@ -78,7 +78,7 @@
 #' X_polit <- as.matrix(Russett[, c("demostab", "dictator")])
 #' A <- list(X_agric = X_agric, X_ind = X_ind, X_polit = X_polit)
 #' C <- matrix(c(0, 0, 1, 0, 0, 1, 1, 1, 0), 3, 3)
-#' fit.rgcca <- rgcca(
+#' fit_rgcca <- rgcca(
 #'   blocks = A, connection = C,
 #'   tau = rep(1, 3), ncomp = rep(2, 3)
 #' )
@@ -88,27 +88,25 @@
 #' ###############
 #' # horizontal axis: First component of the first block
 #' # vertical axis: First component of the second block
-#' plot(fit.rgcca, type = "samples", block = 1:2, comp = 1, response = status)
-#'
+#' plot(fit_rgcca, type = "sample",
+#'      block = 1:2, comp = 1,
+#'      response = status)
 #'
 #' ######################
 #' # all types of plots #
 #' ######################
-#' plot(fit.rgcca, type = "loadings")
-#' plot(fit.rgcca, type = "weight")
-#' plot(fit.rgcca, type = "sample")
-#' plot(fit.rgcca, type = "cor_circle")
-#' plot(fit.rgcca, type = "biplot")
-#' plot(fit.rgcca, type = "ave")
+#' plot(fit_rgcca, type = "loadings")
+#' plot(fit_rgcca, type = "weight")
+#' plot(fit_rgcca, type = "sample")
+#' plot(fit_rgcca, type = "cor_circle")
+#' plot(fit_rgcca, type = "biplot")
+#' plot(fit_rgcca, type = "ave")
 #'
 #' # with superblock
-#' fit.mcoa <- rgcca(
-#'   blocks = A, scheme = "factorial", ncomp = rep(2, 4),
-#'   tau = c(1, 1, 1, 0), superblock = TRUE
-#' )
+#' fit_mcoa <- rgcca(blocks = A, method = "mcoa", ncomp = 2)
 #'
-#' plot(fit.mcoa, type = "both", response = status)
-#' plot(fit.mcoa, type = "biplot", response = status)
+#' plot(fit_mcoa, type = "both", response = status)
+#' plot(fit_mcoa, type = "biplot", response = status)
 #' @importFrom gridExtra grid.arrange
 #' @importFrom ggplot2 ggplot aes
 #' @importFrom ggrepel geom_text_repel
@@ -148,10 +146,9 @@ plot.rgcca <- function(x, type = "weights", block = seq_along(x$call$blocks),
       y = do.call(c, lapply(x$blocks[display_blocks], colnames))
     )
 
-    idx <- apply(do.call(
-      rbind,
-      lapply(x$a[display_blocks], function(z) z[, comp, drop = FALSE])
-    ), 1, function(y) any(y != 0))
+    idx <- unlist(
+      lapply(x$a[display_blocks], apply, 1, function(y) any(y != 0))
+    )
     return(df[idx, ])
   }
 

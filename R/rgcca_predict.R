@@ -1,32 +1,39 @@
 #' Predict RGCCA
 #'
-#' Predict a new block from a fitted RGCCA object.
+#' Predict is a function for predictions from a fitted RGCCA object.
 #'
 #' @inheritParams rgcca_transform
-#' @param prediction_model A character giving the function used to compare the
-#' trained and the tested models.
-#' @param metric A character giving the the metric to report.
+#' @param prediction_model A string giving the model used for prediction.
+#' Please see caret::modelLookup() for a list of the available models.
+#' @param metric A string indicating the metric used during the process
+#' of cross-validation. Should be one of the following scores:
+#'
+#' For classification: "Accuracy", "Kappa", "F1", "Sensitivity", "Specificity",
+#' "Pos_Pred_Value", "Neg_Pred_Value", "Precision", "Recall", "Detection_Rate",
+#' "Balanced_Accuracy"
+#'
+#' For regression: "RMSE", "MAE"
 #' @param ... Additional parameters to be passed to the model fitted on top
 #' of RGCCA.
 #' @return A list containing the following elements:
-#' @return \item{score}{the score specified by the argument metric obtained
-#' on the test block. NA if the test block is missing.}
-#' @return \item{model}{a list of the models trained using caret to make the
-#' predicitons and compute the metrics.}
-#' @return \item{metric}{a list of data.frames containing the metrics obtained
-#' on the train and test sets.}
-#' @return \item{confusion}{a list containing NA for regression tasks,
+#' @return \item{score}{the score obtained on the testing block. NA if the test
+#' block is missing.}
+#' @return \item{model}{A list of the models trained using caret to make the
+#' predictions and compute the scores.}
+#' @return \item{metric}{A list of data.frames containing the scores obtained
+#' on the training and testing sets.}
+#' @return \item{confusion}{A list containing NA for regression tasks,
 #' the confusion summary produced by caret otherwise.}
-#' @return \item{results}{a list of lists. There is a list per column in the
+#' @return \item{results}{A list of lists. There is a list per column in the
 #' response block. Each list contains the score on the corresponding columns
-#' of the test response block, the learned model, predictions,
+#' of the test response block, the learned prediction model, predictions,
 #' confusion matrices (if classification task, NA otherwise),
-#' and additional metrics on both training and test sets.
+#' and additional scores on both training and test sets.
 #' NA are reported if the test block is missing.}
-#' @return \item{projection}{a list of matrices containing the projections
+#' @return \item{projection}{A list of matrices containing the projections
 #' of the test blocks using the canonical components from the fitted RGCCA
 #' object. The response block is not projected.}
-#' @return \item{prediction}{a data.frame with the prediction of the test
+#' @return \item{prediction}{A data.frame with the prediction of the test
 #' response block.}
 #' @examples
 #' data("Russett")

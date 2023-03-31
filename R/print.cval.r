@@ -25,11 +25,11 @@ print.cval <- function(x, type = "sd", ...) {
   ### Print parameters of the function
   print_call(x$call)
 
-  penalties <- round(x$penalties, 3)
-  rownames(penalties) <- seq_len(NROW(penalties))
+  params <- round(x$params, 3)
+  rownames(params) <- seq_len(NROW(params))
   cat(fill = TRUE)
   cat(paste0("Tuning parameters (", x$par_type, ") used: "), fill = TRUE)
-  print(penalties, quote = FALSE, ...)
+  print(params, quote = FALSE, ...)
   cat("\n")
 
   cat(paste0(
@@ -58,7 +58,7 @@ print.cval <- function(x, type = "sd", ...) {
   cat("\n")
 
   best <- which(apply(
-    x$penalties, 1, function(z) identical(z, x$bestpenalties)
+    x$params, 1, function(z) identical(z, x$best_params)
   ))
   optimal_y <- x$stats[best, "mean"]
 

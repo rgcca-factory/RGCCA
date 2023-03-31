@@ -6,16 +6,16 @@
 #'
 #' @inheritParams rgcca_bootstrap
 #' @param rgcca_res A fitted RGCCA object (see \code{\link[RGCCA]{rgcca}})
-#' @param keep numeric vector indicating the proportion of top variables per
+#' @param keep A numeric vector indicating the proportion of top variables per
 #' block.
-#' @param n_boot Number of bootstrap samples (Default: 100).
-#' @param n_cores Number of cores for parallelization.
-#' @param verbose Logical value indicating if the progress of the procedure
+#' @param n_boot The number of bootstrap samples (Default: 100).
+#' @param n_cores The number of cores for parallelization.
+#' @param verbose A logical value indicating if the progress of the procedure
 #' is reported.
-#' @return \item{top}{indicator on which variables are ranked.}
-#' @return \item{keepVar}{indices of the top variables.}
-#' @return \item{bootstrap}{block-weight vectors for ech bootstrap sample.}
-#' @return \item{rgcca_res}{an RGCCA object fitted on the most stable
+#' @return \item{top}{The indicator on which variables are ranked.}
+#' @return \item{keepVar}{The indices of the top variables.}
+#' @return \item{bootstrap}{The block weight vectors for ech bootstrap sample.}
+#' @return \item{rgcca_res}{An RGCCA object fitted on the most stable
 #' variables.}
 #' @examples
 #' \dontrun{
@@ -29,25 +29,26 @@
 #' levels(Loc) <- colnames(ge_cgh_locIGR$multiblocks$y)
 #' blocks[[3]] <- Loc
 #'
-#'
-#' fit.sgcca <- rgcca(blocks,
+#' fit_sgcca <- rgcca(blocks,
 #'   sparsity = c(.071, .2, 1),
 #'   ncomp = c(1, 1, 1),
 #'   scheme = "centroid",
 #'   verbose = TRUE, response = 3
 #' )
 #'
-#' boot.out <- rgcca_bootstrap(fit.sgcca, n_boot = 100, n_cores = 1)
+#' boot_out <- rgcca_bootstrap(fit_sgcca, n_boot = 100, n_cores = 1)
 #'
-#' fit.stab <- rgcca_stability(fit.sgcca,
+#' fit_stab <- rgcca_stability(fit_sgcca,
 #'   keep = sapply(fit.sgcca$a, function(x) mean(x != 0)),
 #'   n_cores = 1, n_boot = 10,
 #'   verbose = TRUE
 #' )
 #'
-#' boot.out <- rgcca_bootstrap(
-#'   fit.stab, n_boot = 500, n_cores = 1, verbose = FALSE
+#' boot_out <- rgcca_bootstrap(
+#'   fit_stab, n_boot = 500, n_cores = 1, verbose = TRUE
 #' )
+#'
+#' plot(boot_out, block = 1:2, n_mark = 2000, display_order = FALSE)
 #' }
 #' @export
 rgcca_stability <- function(rgcca_res,

@@ -1,27 +1,23 @@
 #' RGCCA Transform
 #'
-#' Project blocks of data on canonical components extracted with a RGCCA model.
+#' Projection of a testing blocks onto the block weight vectors of a
+#' fitted RGCCA object.
 #'
 #' @param rgcca_res A fitted RGCCA object (see  \code{\link[RGCCA]{rgcca}}).
-#' @param blocks_test A list of either dataframes or matrices to be projected.
-#' @return A list of matrices containing the projections
-#' of the test blocks using the canonical components from the fitted RGCCA
-#' object.
+#' @param blocks_test A list of blocks (data.frame or matrix) to be projected.
+#' @return A list of matrices containing the projections of the test blocks
+#' onto the block weight vectors of a fitted RGCCA object.
 #' @examples
 #' data("Russett")
 #' blocks <- list(
 #'   agriculture = Russett[, 1:3],
 #'   industry = Russett[, 4:5],
-#'   politic = Russett[, 6:11]
-#' )
-#' C <- connection <- 1 - diag(3)
-#' A <- lapply(blocks, function(x) x[1:32, ])
-#' fit.rgcca <- rgcca(A,
-#'   connection = C, tau = c(0.7, 0.8, 0.7),
-#'   ncomp = c(3, 2, 4), scale_block = FALSE, superblock = FALSE
-#' )
-#' X <- lapply(blocks, function(x) x[39:47, ])
-#' projection <- rgcca_transform(fit.rgcca, X)
+#'   politic = Russett[, 6:11])
+#'
+#' Xtrain <- lapply(blocks, function(x) x[1:32, ])
+#' Xtest  <- lapply(blocks, function(x) x[33:47, ])
+#' fit_rgcca <- rgcca(Xtrain, ncomp = 2)
+#' projection <- rgcca_transform(fit_rgcca, Xtest)
 #' @export
 rgcca_transform <- function(rgcca_res, blocks_test = rgcca_res$call$blocks) {
   ### Auxiliary function
@@ -98,6 +94,5 @@ rgcca_transform <- function(rgcca_res, blocks_test = rgcca_res$call$blocks) {
     })
     names(projection) <- names(X_train)
   }
-
   return(projection)
 }
