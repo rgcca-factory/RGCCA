@@ -155,6 +155,8 @@
 #' correlation analysis, Biostatistics, 15(3), pp. 569-583.
 #' @references Tenenhaus A. and Tenenhaus M., (2011). Regularized Generalized
 #' Canonical Correlation Analysis, Psychometrika, 76(2), pp 257-284.
+#' @references Tenenhaus, M., Vinzi, V. E., Chatelin, Y. M., & Lauro, C. (2005).
+#' PLS path modeling. Computational statistics & data analysis, 48(1), 159-205.
 #' @references Schafer J. and Strimmer K. (2005). A shrinkage approach to
 #' large-scale covariance matrix estimation and implications for functional
 #' genomics. Statistical Applications in Genetics and Molecular Biology 4:32.
