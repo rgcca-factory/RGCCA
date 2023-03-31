@@ -53,101 +53,101 @@
 <polyline points='194.08,541.35 194.08,33.48 ' style='stroke-width: 1.07; stroke: #EBEBEB; stroke-linecap: butt;' />
 <polyline points='231.74,541.35 231.74,33.48 ' style='stroke-width: 1.07; stroke: #EBEBEB; stroke-linecap: butt;' />
 <text x='203.37' y='197.68' text-anchor='middle' style='font-size: 8.54px; fill: #1F6EE0; font-family: sans;' textLength='36.54px' lengthAdjust='spacingAndGlyphs'>Argentina</text>
-<text x='225.20' y='232.77' text-anchor='middle' style='font-size: 8.54px; fill: #FB176C; font-family: sans;' textLength='33.21px' lengthAdjust='spacingAndGlyphs'>Australia</text>
+<text x='225.20' y='232.77' text-anchor='middle' style='font-size: 8.54px; fill: #CC0000; font-family: sans;' textLength='33.21px' lengthAdjust='spacingAndGlyphs'>Australia</text>
 <text x='186.36' y='305.89' text-anchor='middle' style='font-size: 8.54px; fill: #1F6EE0; font-family: sans;' textLength='26.57px' lengthAdjust='spacingAndGlyphs'>Austria</text>
-<text x='83.68' y='69.93' text-anchor='middle' style='font-size: 8.54px; fill: #FB176C; font-family: sans;' textLength='30.84px' lengthAdjust='spacingAndGlyphs'>Belgium</text>
-<text x='219.71' y='250.50' text-anchor='middle' style='font-size: 8.54px; fill: #FFC709; font-family: sans;' textLength='25.15px' lengthAdjust='spacingAndGlyphs'>Bolivia</text>
+<text x='83.68' y='69.93' text-anchor='middle' style='font-size: 8.54px; fill: #CC0000; font-family: sans;' textLength='30.84px' lengthAdjust='spacingAndGlyphs'>Belgium</text>
+<text x='219.71' y='250.50' text-anchor='middle' style='font-size: 8.54px; fill: #029B38; font-family: sans;' textLength='25.15px' lengthAdjust='spacingAndGlyphs'>Bolivia</text>
 <text x='211.60' y='329.91' text-anchor='middle' style='font-size: 8.54px; fill: #1F6EE0; font-family: sans;' textLength='21.35px' lengthAdjust='spacingAndGlyphs'>Brasil</text>
-<text x='72.05' y='278.71' text-anchor='middle' style='font-size: 8.54px; fill: #FB176C; font-family: sans;' textLength='29.90px' lengthAdjust='spacingAndGlyphs'>Canada</text>
+<text x='72.05' y='278.71' text-anchor='middle' style='font-size: 8.54px; fill: #CC0000; font-family: sans;' textLength='29.90px' lengthAdjust='spacingAndGlyphs'>Canada</text>
 <text x='233.18' y='298.87' text-anchor='middle' style='font-size: 8.54px; fill: #1F6EE0; font-family: sans;' textLength='19.45px' lengthAdjust='spacingAndGlyphs'>Chile</text>
 <text x='209.38' y='300.36' text-anchor='middle' style='font-size: 8.54px; fill: #1F6EE0; font-family: sans;' textLength='36.06px' lengthAdjust='spacingAndGlyphs'>Colombia</text>
 <text x='227.23' y='382.84' text-anchor='middle' style='font-size: 8.54px; fill: #1F6EE0; font-family: sans;' textLength='39.38px' lengthAdjust='spacingAndGlyphs'>CostaRica</text>
-<text x='183.33' y='141.37' text-anchor='middle' style='font-size: 8.54px; fill: #FFC709; font-family: sans;' textLength='20.41px' lengthAdjust='spacingAndGlyphs'>Cuba</text>
-<text x='52.63' y='328.34' text-anchor='middle' style='font-size: 8.54px; fill: #FB176C; font-family: sans;' textLength='34.64px' lengthAdjust='spacingAndGlyphs'>Denmark</text>
-<text x='196.23' y='244.57' text-anchor='middle' style='font-size: 8.54px; fill: #FFC709; font-family: sans;' textLength='73.55px' lengthAdjust='spacingAndGlyphs'>DominicanRepublic</text>
-<text x='216.43' y='286.06' text-anchor='middle' style='font-size: 8.54px; fill: #FFC709; font-family: sans;' textLength='31.80px' lengthAdjust='spacingAndGlyphs'>Ecuador</text>
-<text x='189.15' y='301.07' text-anchor='middle' style='font-size: 8.54px; fill: #FFC709; font-family: sans;' textLength='21.83px' lengthAdjust='spacingAndGlyphs'>Egypt</text>
-<text x='206.85' y='279.58' text-anchor='middle' style='font-size: 8.54px; fill: #FFC709; font-family: sans;' textLength='33.69px' lengthAdjust='spacingAndGlyphs'>Salvador</text>
+<text x='183.33' y='141.37' text-anchor='middle' style='font-size: 8.54px; fill: #029B38; font-family: sans;' textLength='20.41px' lengthAdjust='spacingAndGlyphs'>Cuba</text>
+<text x='52.63' y='328.34' text-anchor='middle' style='font-size: 8.54px; fill: #CC0000; font-family: sans;' textLength='34.64px' lengthAdjust='spacingAndGlyphs'>Denmark</text>
+<text x='196.23' y='244.57' text-anchor='middle' style='font-size: 8.54px; fill: #029B38; font-family: sans;' textLength='73.55px' lengthAdjust='spacingAndGlyphs'>DominicanRepublic</text>
+<text x='216.43' y='286.06' text-anchor='middle' style='font-size: 8.54px; fill: #029B38; font-family: sans;' textLength='31.80px' lengthAdjust='spacingAndGlyphs'>Ecuador</text>
+<text x='189.15' y='301.07' text-anchor='middle' style='font-size: 8.54px; fill: #029B38; font-family: sans;' textLength='21.83px' lengthAdjust='spacingAndGlyphs'>Egypt</text>
+<text x='206.85' y='279.58' text-anchor='middle' style='font-size: 8.54px; fill: #029B38; font-family: sans;' textLength='33.69px' lengthAdjust='spacingAndGlyphs'>Salvador</text>
 <text x='116.66' y='391.72' text-anchor='middle' style='font-size: 8.54px; fill: #1F6EE0; font-family: sans;' textLength='27.99px' lengthAdjust='spacingAndGlyphs'>Finland</text>
 <text x='92.60' y='163.65' text-anchor='middle' style='font-size: 8.54px; fill: #1F6EE0; font-family: sans;' textLength='26.57px' lengthAdjust='spacingAndGlyphs'>France</text>
-<text x='216.31' y='272.28' text-anchor='middle' style='font-size: 8.54px; fill: #FFC709; font-family: sans;' textLength='41.76px' lengthAdjust='spacingAndGlyphs'>Guatemala</text>
+<text x='216.31' y='272.28' text-anchor='middle' style='font-size: 8.54px; fill: #029B38; font-family: sans;' textLength='41.76px' lengthAdjust='spacingAndGlyphs'>Guatemala</text>
 <text x='193.06' y='262.93' text-anchor='middle' style='font-size: 8.54px; fill: #1F6EE0; font-family: sans;' textLength='28.00px' lengthAdjust='spacingAndGlyphs'>Greece</text>
-<text x='185.62' y='261.76' text-anchor='middle' style='font-size: 8.54px; fill: #FFC709; font-family: sans;' textLength='37.02px' lengthAdjust='spacingAndGlyphs'>Honduras</text>
-<text x='78.37' y='89.61' text-anchor='middle' style='font-size: 8.54px; fill: #FB176C; font-family: sans;' textLength='18.51px' lengthAdjust='spacingAndGlyphs'>India</text>
-<text x='204.42' y='114.41' text-anchor='middle' style='font-size: 8.54px; fill: #FFC709; font-family: sans;' textLength='14.23px' lengthAdjust='spacingAndGlyphs'>Irak</text>
-<text x='114.21' y='386.81' text-anchor='middle' style='font-size: 8.54px; fill: #FB176C; font-family: sans;' textLength='21.35px' lengthAdjust='spacingAndGlyphs'>Irland</text>
+<text x='185.62' y='261.76' text-anchor='middle' style='font-size: 8.54px; fill: #029B38; font-family: sans;' textLength='37.02px' lengthAdjust='spacingAndGlyphs'>Honduras</text>
+<text x='78.37' y='89.61' text-anchor='middle' style='font-size: 8.54px; fill: #CC0000; font-family: sans;' textLength='18.51px' lengthAdjust='spacingAndGlyphs'>India</text>
+<text x='204.42' y='114.41' text-anchor='middle' style='font-size: 8.54px; fill: #029B38; font-family: sans;' textLength='14.23px' lengthAdjust='spacingAndGlyphs'>Irak</text>
+<text x='114.21' y='386.81' text-anchor='middle' style='font-size: 8.54px; fill: #CC0000; font-family: sans;' textLength='21.35px' lengthAdjust='spacingAndGlyphs'>Irland</text>
 <text x='194.02' y='228.66' text-anchor='middle' style='font-size: 8.54px; fill: #1F6EE0; font-family: sans;' textLength='15.66px' lengthAdjust='spacingAndGlyphs'>Italy</text>
 <text x='67.14' y='352.85' text-anchor='middle' style='font-size: 8.54px; fill: #1F6EE0; font-family: sans;' textLength='23.26px' lengthAdjust='spacingAndGlyphs'>Japan</text>
-<text x='159.02' y='309.75' text-anchor='middle' style='font-size: 8.54px; fill: #FFC709; font-family: sans;' textLength='18.03px' lengthAdjust='spacingAndGlyphs'>Libia</text>
-<text x='113.92' y='205.71' text-anchor='middle' style='font-size: 8.54px; fill: #FB176C; font-family: sans;' textLength='42.71px' lengthAdjust='spacingAndGlyphs'>Luxemburg</text>
-<text x='90.61' y='89.58' text-anchor='middle' style='font-size: 8.54px; fill: #FB176C; font-family: sans;' textLength='60.74px' lengthAdjust='spacingAndGlyphs'>TheNetherlands</text>
-<text x='176.54' y='224.14' text-anchor='middle' style='font-size: 8.54px; fill: #FB176C; font-family: sans;' textLength='47.93px' lengthAdjust='spacingAndGlyphs'>NewZealand</text>
-<text x='185.30' y='310.07' text-anchor='middle' style='font-size: 8.54px; fill: #FFC709; font-family: sans;' textLength='38.91px' lengthAdjust='spacingAndGlyphs'>Nicaragua</text>
-<text x='126.98' y='298.60' text-anchor='middle' style='font-size: 8.54px; fill: #FB176C; font-family: sans;' textLength='28.94px' lengthAdjust='spacingAndGlyphs'>Norway</text>
-<text x='172.65' y='281.97' text-anchor='middle' style='font-size: 8.54px; fill: #FFC709; font-family: sans;' textLength='31.80px' lengthAdjust='spacingAndGlyphs'>Panama</text>
-<text x='207.98' y='292.05' text-anchor='middle' style='font-size: 8.54px; fill: #FFC709; font-family: sans;' textLength='18.03px' lengthAdjust='spacingAndGlyphs'>Peru</text>
-<text x='96.03' y='133.30' text-anchor='middle' style='font-size: 8.54px; fill: #FFC709; font-family: sans;' textLength='37.01px' lengthAdjust='spacingAndGlyphs'>Philippine</text>
-<text x='57.65' y='485.15' text-anchor='middle' style='font-size: 8.54px; fill: #FFC709; font-family: sans;' textLength='26.58px' lengthAdjust='spacingAndGlyphs'>Poland</text>
-<text x='153.85' y='229.10' text-anchor='middle' style='font-size: 8.54px; fill: #FFC709; font-family: sans;' textLength='53.63px' lengthAdjust='spacingAndGlyphs'>SouthVietnam</text>
-<text x='191.41' y='169.60' text-anchor='middle' style='font-size: 8.54px; fill: #FFC709; font-family: sans;' textLength='21.83px' lengthAdjust='spacingAndGlyphs'>Spain</text>
-<text x='99.90' y='201.66' text-anchor='middle' style='font-size: 8.54px; fill: #FB176C; font-family: sans;' textLength='30.85px' lengthAdjust='spacingAndGlyphs'>Sweden</text>
-<text x='56.73' y='176.11' text-anchor='middle' style='font-size: 8.54px; fill: #FB176C; font-family: sans;' textLength='44.13px' lengthAdjust='spacingAndGlyphs'>Switzerland</text>
-<text x='141.32' y='153.42' text-anchor='middle' style='font-size: 8.54px; fill: #FFC709; font-family: sans;' textLength='27.52px' lengthAdjust='spacingAndGlyphs'>Taiwan</text>
-<text x='147.77' y='140.56' text-anchor='middle' style='font-size: 8.54px; fill: #FB176C; font-family: sans;' textLength='11.86px' lengthAdjust='spacingAndGlyphs'>UK</text>
-<text x='164.05' y='231.27' text-anchor='middle' style='font-size: 8.54px; fill: #FB176C; font-family: sans;' textLength='17.56px' lengthAdjust='spacingAndGlyphs'>USA</text>
-<text x='186.17' y='183.17' text-anchor='middle' style='font-size: 8.54px; fill: #FB176C; font-family: sans;' textLength='32.27px' lengthAdjust='spacingAndGlyphs'>Uruguay</text>
-<text x='221.86' y='252.69' text-anchor='middle' style='font-size: 8.54px; fill: #FFC709; font-family: sans;' textLength='40.35px' lengthAdjust='spacingAndGlyphs'>Venezuela</text>
+<text x='159.02' y='309.75' text-anchor='middle' style='font-size: 8.54px; fill: #029B38; font-family: sans;' textLength='18.03px' lengthAdjust='spacingAndGlyphs'>Libia</text>
+<text x='113.92' y='205.71' text-anchor='middle' style='font-size: 8.54px; fill: #CC0000; font-family: sans;' textLength='42.71px' lengthAdjust='spacingAndGlyphs'>Luxemburg</text>
+<text x='90.61' y='89.58' text-anchor='middle' style='font-size: 8.54px; fill: #CC0000; font-family: sans;' textLength='60.74px' lengthAdjust='spacingAndGlyphs'>TheNetherlands</text>
+<text x='176.54' y='224.14' text-anchor='middle' style='font-size: 8.54px; fill: #CC0000; font-family: sans;' textLength='47.93px' lengthAdjust='spacingAndGlyphs'>NewZealand</text>
+<text x='185.30' y='310.07' text-anchor='middle' style='font-size: 8.54px; fill: #029B38; font-family: sans;' textLength='38.91px' lengthAdjust='spacingAndGlyphs'>Nicaragua</text>
+<text x='126.98' y='298.60' text-anchor='middle' style='font-size: 8.54px; fill: #CC0000; font-family: sans;' textLength='28.94px' lengthAdjust='spacingAndGlyphs'>Norway</text>
+<text x='172.65' y='281.97' text-anchor='middle' style='font-size: 8.54px; fill: #029B38; font-family: sans;' textLength='31.80px' lengthAdjust='spacingAndGlyphs'>Panama</text>
+<text x='207.98' y='292.05' text-anchor='middle' style='font-size: 8.54px; fill: #029B38; font-family: sans;' textLength='18.03px' lengthAdjust='spacingAndGlyphs'>Peru</text>
+<text x='96.03' y='133.30' text-anchor='middle' style='font-size: 8.54px; fill: #029B38; font-family: sans;' textLength='37.01px' lengthAdjust='spacingAndGlyphs'>Philippine</text>
+<text x='57.65' y='485.15' text-anchor='middle' style='font-size: 8.54px; fill: #029B38; font-family: sans;' textLength='26.58px' lengthAdjust='spacingAndGlyphs'>Poland</text>
+<text x='153.85' y='229.10' text-anchor='middle' style='font-size: 8.54px; fill: #029B38; font-family: sans;' textLength='53.63px' lengthAdjust='spacingAndGlyphs'>SouthVietnam</text>
+<text x='191.41' y='169.60' text-anchor='middle' style='font-size: 8.54px; fill: #029B38; font-family: sans;' textLength='21.83px' lengthAdjust='spacingAndGlyphs'>Spain</text>
+<text x='99.90' y='201.66' text-anchor='middle' style='font-size: 8.54px; fill: #CC0000; font-family: sans;' textLength='30.85px' lengthAdjust='spacingAndGlyphs'>Sweden</text>
+<text x='56.73' y='176.11' text-anchor='middle' style='font-size: 8.54px; fill: #CC0000; font-family: sans;' textLength='44.13px' lengthAdjust='spacingAndGlyphs'>Switzerland</text>
+<text x='141.32' y='153.42' text-anchor='middle' style='font-size: 8.54px; fill: #029B38; font-family: sans;' textLength='27.52px' lengthAdjust='spacingAndGlyphs'>Taiwan</text>
+<text x='147.77' y='140.56' text-anchor='middle' style='font-size: 8.54px; fill: #CC0000; font-family: sans;' textLength='11.86px' lengthAdjust='spacingAndGlyphs'>UK</text>
+<text x='164.05' y='231.27' text-anchor='middle' style='font-size: 8.54px; fill: #CC0000; font-family: sans;' textLength='17.56px' lengthAdjust='spacingAndGlyphs'>USA</text>
+<text x='186.17' y='183.17' text-anchor='middle' style='font-size: 8.54px; fill: #CC0000; font-family: sans;' textLength='32.27px' lengthAdjust='spacingAndGlyphs'>Uruguay</text>
+<text x='221.86' y='252.69' text-anchor='middle' style='font-size: 8.54px; fill: #029B38; font-family: sans;' textLength='40.35px' lengthAdjust='spacingAndGlyphs'>Venezuela</text>
 <text x='157.48' y='347.03' text-anchor='middle' style='font-size: 8.54px; fill: #1F6EE0; font-family: sans;' textLength='54.56px' lengthAdjust='spacingAndGlyphs'>WestGermany</text>
-<text x='65.59' y='493.15' text-anchor='middle' style='font-size: 8.54px; fill: #FFC709; font-family: sans;' textLength='41.77px' lengthAdjust='spacingAndGlyphs'>Yugoslavia</text>
+<text x='65.59' y='493.15' text-anchor='middle' style='font-size: 8.54px; fill: #029B38; font-family: sans;' textLength='41.77px' lengthAdjust='spacingAndGlyphs'>Yugoslavia</text>
 <line x1='156.42' y1='541.35' x2='156.42' y2='33.48' style='stroke-width: 0.64; stroke-dasharray: 4.00,4.00; stroke-linecap: butt;' />
 <line x1='34.57' y1='260.37' x2='251.24' y2='260.37' style='stroke-width: 0.64; stroke-dasharray: 4.00,4.00; stroke-linecap: butt;' />
 <rect x='201.42' y='201.60' width='3.91' height='3.91' style='stroke-width: 0.71; stroke: #1F6EE0;' />
-<circle cx='225.20' cy='238.64' r='1.95' style='stroke-width: 0.71; stroke: #FB176C;' />
+<circle cx='225.20' cy='238.64' r='1.95' style='stroke-width: 0.71; stroke: #CC0000;' />
 <rect x='184.40' y='309.81' width='3.91' height='3.91' style='stroke-width: 0.71; stroke: #1F6EE0;' />
-<circle cx='83.68' cy='75.80' r='1.95' style='stroke-width: 0.71; stroke: #FB176C;' />
-<polygon points='219.71,253.34 222.34,257.90 217.08,257.90 ' style='stroke-width: 0.71; stroke: #FFC709; fill: none;' />
+<circle cx='83.68' cy='75.80' r='1.95' style='stroke-width: 0.71; stroke: #CC0000;' />
+<polygon points='219.71,253.34 222.34,257.90 217.08,257.90 ' style='stroke-width: 0.71; stroke: #029B38; fill: none;' />
 <rect x='209.65' y='333.83' width='3.91' height='3.91' style='stroke-width: 0.71; stroke: #1F6EE0;' />
-<circle cx='72.05' cy='284.59' r='1.95' style='stroke-width: 0.71; stroke: #FB176C;' />
+<circle cx='72.05' cy='284.59' r='1.95' style='stroke-width: 0.71; stroke: #CC0000;' />
 <rect x='231.23' y='302.79' width='3.91' height='3.91' style='stroke-width: 0.71; stroke: #1F6EE0;' />
 <rect x='207.43' y='304.28' width='3.91' height='3.91' style='stroke-width: 0.71; stroke: #1F6EE0;' />
 <rect x='225.28' y='386.76' width='3.91' height='3.91' style='stroke-width: 0.71; stroke: #1F6EE0;' />
-<polygon points='183.33,144.20 185.97,148.76 180.70,148.76 ' style='stroke-width: 0.71; stroke: #FFC709; fill: none;' />
-<circle cx='52.63' cy='334.22' r='1.95' style='stroke-width: 0.71; stroke: #FB176C;' />
-<polygon points='196.23,247.40 198.87,251.96 193.60,251.96 ' style='stroke-width: 0.71; stroke: #FFC709; fill: none;' />
-<polygon points='216.43,288.90 219.06,293.46 213.80,293.46 ' style='stroke-width: 0.71; stroke: #FFC709; fill: none;' />
-<polygon points='189.15,303.90 191.78,308.46 186.52,308.46 ' style='stroke-width: 0.71; stroke: #FFC709; fill: none;' />
-<polygon points='206.85,282.41 209.49,286.97 204.22,286.97 ' style='stroke-width: 0.71; stroke: #FFC709; fill: none;' />
+<polygon points='183.33,144.20 185.97,148.76 180.70,148.76 ' style='stroke-width: 0.71; stroke: #029B38; fill: none;' />
+<circle cx='52.63' cy='334.22' r='1.95' style='stroke-width: 0.71; stroke: #CC0000;' />
+<polygon points='196.23,247.40 198.87,251.96 193.60,251.96 ' style='stroke-width: 0.71; stroke: #029B38; fill: none;' />
+<polygon points='216.43,288.90 219.06,293.46 213.80,293.46 ' style='stroke-width: 0.71; stroke: #029B38; fill: none;' />
+<polygon points='189.15,303.90 191.78,308.46 186.52,308.46 ' style='stroke-width: 0.71; stroke: #029B38; fill: none;' />
+<polygon points='206.85,282.41 209.49,286.97 204.22,286.97 ' style='stroke-width: 0.71; stroke: #029B38; fill: none;' />
 <rect x='114.71' y='395.64' width='3.91' height='3.91' style='stroke-width: 0.71; stroke: #1F6EE0;' />
 <rect x='90.65' y='167.57' width='3.91' height='3.91' style='stroke-width: 0.71; stroke: #1F6EE0;' />
-<polygon points='216.31,275.11 218.94,279.67 213.67,279.67 ' style='stroke-width: 0.71; stroke: #FFC709; fill: none;' />
+<polygon points='216.31,275.11 218.94,279.67 213.67,279.67 ' style='stroke-width: 0.71; stroke: #029B38; fill: none;' />
 <rect x='191.10' y='266.85' width='3.91' height='3.91' style='stroke-width: 0.71; stroke: #1F6EE0;' />
-<polygon points='185.62,264.60 188.26,269.16 182.99,269.16 ' style='stroke-width: 0.71; stroke: #FFC709; fill: none;' />
-<circle cx='78.37' cy='95.49' r='1.95' style='stroke-width: 0.71; stroke: #FB176C;' />
-<polygon points='204.42,117.24 207.05,121.80 201.79,121.80 ' style='stroke-width: 0.71; stroke: #FFC709; fill: none;' />
-<circle cx='114.21' cy='392.68' r='1.95' style='stroke-width: 0.71; stroke: #FB176C;' />
+<polygon points='185.62,264.60 188.26,269.16 182.99,269.16 ' style='stroke-width: 0.71; stroke: #029B38; fill: none;' />
+<circle cx='78.37' cy='95.49' r='1.95' style='stroke-width: 0.71; stroke: #CC0000;' />
+<polygon points='204.42,117.24 207.05,121.80 201.79,121.80 ' style='stroke-width: 0.71; stroke: #029B38; fill: none;' />
+<circle cx='114.21' cy='392.68' r='1.95' style='stroke-width: 0.71; stroke: #CC0000;' />
 <rect x='192.06' y='232.57' width='3.91' height='3.91' style='stroke-width: 0.71; stroke: #1F6EE0;' />
 <rect x='65.19' y='356.77' width='3.91' height='3.91' style='stroke-width: 0.71; stroke: #1F6EE0;' />
-<polygon points='159.02,312.59 161.66,317.15 156.39,317.15 ' style='stroke-width: 0.71; stroke: #FFC709; fill: none;' />
-<circle cx='113.92' cy='211.59' r='1.95' style='stroke-width: 0.71; stroke: #FB176C;' />
-<circle cx='90.61' cy='95.45' r='1.95' style='stroke-width: 0.71; stroke: #FB176C;' />
-<circle cx='176.54' cy='230.02' r='1.95' style='stroke-width: 0.71; stroke: #FB176C;' />
-<polygon points='185.30,312.90 187.93,317.46 182.66,317.46 ' style='stroke-width: 0.71; stroke: #FFC709; fill: none;' />
-<circle cx='126.98' cy='304.48' r='1.95' style='stroke-width: 0.71; stroke: #FB176C;' />
-<polygon points='172.65,284.80 175.28,289.36 170.02,289.36 ' style='stroke-width: 0.71; stroke: #FFC709; fill: none;' />
-<polygon points='207.98,294.88 210.61,299.44 205.34,299.44 ' style='stroke-width: 0.71; stroke: #FFC709; fill: none;' />
-<polygon points='96.03,136.14 98.67,140.70 93.40,140.70 ' style='stroke-width: 0.71; stroke: #FFC709; fill: none;' />
-<polygon points='57.65,487.98 60.28,492.54 55.01,492.54 ' style='stroke-width: 0.71; stroke: #FFC709; fill: none;' />
-<polygon points='153.85,231.93 156.48,236.49 151.22,236.49 ' style='stroke-width: 0.71; stroke: #FFC709; fill: none;' />
-<polygon points='191.41,172.44 194.04,177.00 188.78,177.00 ' style='stroke-width: 0.71; stroke: #FFC709; fill: none;' />
-<circle cx='99.90' cy='207.54' r='1.95' style='stroke-width: 0.71; stroke: #FB176C;' />
-<circle cx='56.73' cy='181.98' r='1.95' style='stroke-width: 0.71; stroke: #FB176C;' />
-<polygon points='141.32,156.26 143.95,160.82 138.69,160.82 ' style='stroke-width: 0.71; stroke: #FFC709; fill: none;' />
-<circle cx='147.77' cy='146.44' r='1.95' style='stroke-width: 0.71; stroke: #FB176C;' />
-<circle cx='164.05' cy='237.15' r='1.95' style='stroke-width: 0.71; stroke: #FB176C;' />
-<circle cx='186.17' cy='189.04' r='1.95' style='stroke-width: 0.71; stroke: #FB176C;' />
-<polygon points='221.86,255.52 224.49,260.08 219.23,260.08 ' style='stroke-width: 0.71; stroke: #FFC709; fill: none;' />
+<polygon points='159.02,312.59 161.66,317.15 156.39,317.15 ' style='stroke-width: 0.71; stroke: #029B38; fill: none;' />
+<circle cx='113.92' cy='211.59' r='1.95' style='stroke-width: 0.71; stroke: #CC0000;' />
+<circle cx='90.61' cy='95.45' r='1.95' style='stroke-width: 0.71; stroke: #CC0000;' />
+<circle cx='176.54' cy='230.02' r='1.95' style='stroke-width: 0.71; stroke: #CC0000;' />
+<polygon points='185.30,312.90 187.93,317.46 182.66,317.46 ' style='stroke-width: 0.71; stroke: #029B38; fill: none;' />
+<circle cx='126.98' cy='304.48' r='1.95' style='stroke-width: 0.71; stroke: #CC0000;' />
+<polygon points='172.65,284.80 175.28,289.36 170.02,289.36 ' style='stroke-width: 0.71; stroke: #029B38; fill: none;' />
+<polygon points='207.98,294.88 210.61,299.44 205.34,299.44 ' style='stroke-width: 0.71; stroke: #029B38; fill: none;' />
+<polygon points='96.03,136.14 98.67,140.70 93.40,140.70 ' style='stroke-width: 0.71; stroke: #029B38; fill: none;' />
+<polygon points='57.65,487.98 60.28,492.54 55.01,492.54 ' style='stroke-width: 0.71; stroke: #029B38; fill: none;' />
+<polygon points='153.85,231.93 156.48,236.49 151.22,236.49 ' style='stroke-width: 0.71; stroke: #029B38; fill: none;' />
+<polygon points='191.41,172.44 194.04,177.00 188.78,177.00 ' style='stroke-width: 0.71; stroke: #029B38; fill: none;' />
+<circle cx='99.90' cy='207.54' r='1.95' style='stroke-width: 0.71; stroke: #CC0000;' />
+<circle cx='56.73' cy='181.98' r='1.95' style='stroke-width: 0.71; stroke: #CC0000;' />
+<polygon points='141.32,156.26 143.95,160.82 138.69,160.82 ' style='stroke-width: 0.71; stroke: #029B38; fill: none;' />
+<circle cx='147.77' cy='146.44' r='1.95' style='stroke-width: 0.71; stroke: #CC0000;' />
+<circle cx='164.05' cy='237.15' r='1.95' style='stroke-width: 0.71; stroke: #CC0000;' />
+<circle cx='186.17' cy='189.04' r='1.95' style='stroke-width: 0.71; stroke: #CC0000;' />
+<polygon points='221.86,255.52 224.49,260.08 219.23,260.08 ' style='stroke-width: 0.71; stroke: #029B38; fill: none;' />
 <rect x='155.52' y='350.95' width='3.91' height='3.91' style='stroke-width: 0.71; stroke: #1F6EE0;' />
-<polygon points='65.59,495.99 68.22,500.55 62.95,500.55 ' style='stroke-width: 0.71; stroke: #FFC709; fill: none;' />
+<polygon points='65.59,495.99 68.22,500.55 62.95,500.55 ' style='stroke-width: 0.71; stroke: #029B38; fill: none;' />
 </g>
 <g clip-path='url(#cpMC4wMHw3MjAuMDB8MC4wMHw1NzYuMDA=)'>
 <text x='29.64' y='432.60' text-anchor='end' style='font-size: 12.00px; font-style: italic; fill: #666666; font-family: sans;' textLength='10.67px' lengthAdjust='spacingAndGlyphs'>-1</text>
@@ -163,8 +163,8 @@
 <text transform='translate(13.74,287.41) rotate(-90)' text-anchor='middle' style='font-size: 12.00px; font-family: sans;' textLength='90.71px' lengthAdjust='spacingAndGlyphs'>Comp. 2 (31.8%)</text>
 <text x='267.68' y='262.63' style='font-size: 12.00px; font-style: italic; font-family: sans;' textLength='54.05px' lengthAdjust='spacingAndGlyphs'>Response</text>
 <rect x='277.06' y='276.54' width='3.91' height='3.91' style='stroke-width: 0.71; stroke: #1F6EE0;' />
-<circle cx='279.01' cy='295.78' r='1.95' style='stroke-width: 0.71; stroke: #FB176C;' />
-<polygon points='279.01,310.02 281.65,314.58 276.38,314.58 ' style='stroke-width: 0.71; stroke: #FFC709; fill: none;' />
+<circle cx='279.01' cy='295.78' r='1.95' style='stroke-width: 0.71; stroke: #CC0000;' />
+<polygon points='279.01,310.02 281.65,314.58 276.38,314.58 ' style='stroke-width: 0.71; stroke: #029B38; fill: none;' />
 <text x='296.33' y='282.63' style='font-size: 12.00px; font-family: sans;' textLength='48.70px' lengthAdjust='spacingAndGlyphs'>demoinst</text>
 <text x='296.33' y='299.91' style='font-size: 12.00px; font-family: sans;' textLength='52.71px' lengthAdjust='spacingAndGlyphs'>demostab</text>
 <text x='296.33' y='317.19' style='font-size: 12.00px; font-family: sans;' textLength='39.36px' lengthAdjust='spacingAndGlyphs'>dictator</text>
@@ -203,22 +203,22 @@
 <polyline points='518.14,541.35 518.14,33.48 ' style='stroke-width: 1.07; stroke: #EBEBEB; stroke-linecap: butt;' />
 <polyline points='565.49,541.35 565.49,33.48 ' style='stroke-width: 1.07; stroke: #EBEBEB; stroke-linecap: butt;' />
 <polyline points='612.83,541.35 612.83,33.48 ' style='stroke-width: 1.07; stroke: #EBEBEB; stroke-linecap: butt;' />
-<text x='610.60' y='258.27' text-anchor='middle' style='font-size: 8.54px; fill: #117733; font-family: sans;' textLength='13.29px' lengthAdjust='spacingAndGlyphs'>gini</text>
-<text x='610.10' y='244.40' text-anchor='middle' style='font-size: 8.54px; fill: #117733; font-family: sans;' textLength='17.08px' lengthAdjust='spacingAndGlyphs'>farm</text>
-<text x='546.12' y='79.47' text-anchor='middle' style='font-size: 8.54px; fill: #117733; font-family: sans;' textLength='14.71px' lengthAdjust='spacingAndGlyphs'>rent</text>
-<text x='484.39' y='270.31' text-anchor='middle' style='font-size: 8.54px; fill: #C79E46; font-family: sans;' textLength='17.09px' lengthAdjust='spacingAndGlyphs'>gnpr</text>
-<text x='550.08' y='351.03' text-anchor='middle' style='font-size: 8.54px; fill: #C79E46; font-family: sans;' textLength='16.14px' lengthAdjust='spacingAndGlyphs'>labo</text>
-<text x='474.77' y='211.28' text-anchor='middle' style='font-size: 8.54px; fill: #88AEC1; font-family: sans;' textLength='37.49px' lengthAdjust='spacingAndGlyphs'>demostab</text>
-<text x='543.26' y='298.28' text-anchor='middle' style='font-size: 8.54px; fill: #88AEC1; font-family: sans;' textLength='27.99px' lengthAdjust='spacingAndGlyphs'>dictator</text>
+<text x='610.60' y='258.27' text-anchor='middle' style='font-size: 8.54px; fill: #882255; font-family: sans;' textLength='13.29px' lengthAdjust='spacingAndGlyphs'>gini</text>
+<text x='610.10' y='244.40' text-anchor='middle' style='font-size: 8.54px; fill: #882255; font-family: sans;' textLength='17.08px' lengthAdjust='spacingAndGlyphs'>farm</text>
+<text x='546.12' y='79.47' text-anchor='middle' style='font-size: 8.54px; fill: #882255; font-family: sans;' textLength='14.71px' lengthAdjust='spacingAndGlyphs'>rent</text>
+<text x='484.39' y='270.31' text-anchor='middle' style='font-size: 8.54px; fill: #1FB0B5; font-family: sans;' textLength='17.09px' lengthAdjust='spacingAndGlyphs'>gnpr</text>
+<text x='550.08' y='351.03' text-anchor='middle' style='font-size: 8.54px; fill: #1FB0B5; font-family: sans;' textLength='16.14px' lengthAdjust='spacingAndGlyphs'>labo</text>
+<text x='474.77' y='211.28' text-anchor='middle' style='font-size: 8.54px; fill: #C79E46; font-family: sans;' textLength='37.49px' lengthAdjust='spacingAndGlyphs'>demostab</text>
+<text x='543.26' y='298.28' text-anchor='middle' style='font-size: 8.54px; fill: #C79E46; font-family: sans;' textLength='27.99px' lengthAdjust='spacingAndGlyphs'>dictator</text>
 <line x1='518.14' y1='541.35' x2='518.14' y2='33.48' style='stroke-width: 0.64; stroke-dasharray: 4.00,4.00; stroke-linecap: butt;' />
 <line x1='404.58' y1='287.41' x2='631.76' y2='287.41' style='stroke-width: 0.64; stroke-dasharray: 4.00,4.00; stroke-linecap: butt;' />
-<polygon points='608.64,266.10 612.55,266.10 612.55,262.19 608.64,262.19 ' style='stroke-width: 0.71; stroke: none; fill: #117733;' />
-<polygon points='608.14,252.23 612.05,252.23 612.05,248.32 608.14,248.32 ' style='stroke-width: 0.71; stroke: none; fill: #117733;' />
-<polygon points='544.17,87.30 548.08,87.30 548.08,83.39 544.17,83.39 ' style='stroke-width: 0.71; stroke: none; fill: #117733;' />
-<circle cx='484.39' cy='276.18' r='1.95' style='stroke-width: 0.71; stroke: none; fill: #C79E46;' />
-<circle cx='550.08' cy='356.91' r='1.95' style='stroke-width: 0.71; stroke: none; fill: #C79E46;' />
-<polygon points='474.77,214.11 477.41,218.67 472.14,218.67 ' style='stroke-width: 0.71; stroke: none; fill: #88AEC1;' />
-<polygon points='543.26,301.12 545.89,305.68 540.62,305.68 ' style='stroke-width: 0.71; stroke: none; fill: #88AEC1;' />
+<polygon points='608.64,266.10 612.55,266.10 612.55,262.19 608.64,262.19 ' style='stroke-width: 0.71; stroke: none; fill: #882255;' />
+<polygon points='608.14,252.23 612.05,252.23 612.05,248.32 608.14,248.32 ' style='stroke-width: 0.71; stroke: none; fill: #882255;' />
+<polygon points='544.17,87.30 548.08,87.30 548.08,83.39 544.17,83.39 ' style='stroke-width: 0.71; stroke: none; fill: #882255;' />
+<circle cx='484.39' cy='276.18' r='1.95' style='stroke-width: 0.71; stroke: none; fill: #1FB0B5;' />
+<circle cx='550.08' cy='356.91' r='1.95' style='stroke-width: 0.71; stroke: none; fill: #1FB0B5;' />
+<polygon points='474.77,214.11 477.41,218.67 472.14,218.67 ' style='stroke-width: 0.71; stroke: none; fill: #C79E46;' />
+<polygon points='543.26,301.12 545.89,305.68 540.62,305.68 ' style='stroke-width: 0.71; stroke: none; fill: #C79E46;' />
 <polyline points='612.83,287.41 612.64,273.99 612.06,260.62 611.11,247.36 609.79,234.26 608.10,221.38 606.04,208.76 603.63,196.45 600.88,184.52 597.80,172.99 594.39,161.93 590.67,151.38 586.67,141.37 582.39,131.95 577.85,123.15 573.07,115.02 568.06,107.58 562.86,100.86 557.48,94.90 551.93,89.71 546.26,85.32 540.47,81.74 534.59,78.99 528.64,77.08 522.65,76.01 516.64,75.80 510.64,76.44 504.67,77.93 498.75,80.26 492.91,83.43 487.18,87.42 481.56,92.21 476.10,97.79 470.80,104.13 465.70,111.21 460.80,119.00 456.14,127.47 451.73,136.58 447.58,146.30 443.72,156.59 440.16,167.40 436.91,178.70 433.99,190.44 431.41,202.56 429.17,215.03 427.30,227.79 425.79,240.79 424.65,253.98 423.89,267.30 423.51,280.70 423.51,294.13 423.89,307.53 424.65,320.85 425.79,334.04 427.30,347.04 429.17,359.80 431.41,372.27 433.99,384.39 436.91,396.13 440.16,407.43 443.72,418.24 447.58,428.53 451.73,438.25 456.14,447.36 460.80,455.83 465.70,463.62 470.80,470.70 476.10,477.04 481.56,482.62 487.18,487.41 492.91,491.40 498.75,494.57 504.67,496.90 510.64,498.39 516.64,499.03 522.65,498.81 528.64,497.75 534.59,495.84 540.47,493.09 546.26,489.51 551.93,485.12 557.48,479.93 562.86,473.97 568.06,467.25 573.07,459.81 577.85,451.68 582.39,442.88 586.67,433.46 590.67,423.45 594.39,412.90 597.80,401.84 600.88,390.31 603.63,378.38 606.04,366.07 608.10,353.45 609.79,340.57 611.11,327.47 612.06,314.21 612.64,300.84 612.83,287.41 ' style='stroke-width: 0.64; stroke-linecap: butt;' />
 <polyline points='565.49,287.41 565.39,280.70 565.10,274.02 564.63,267.39 563.97,260.84 563.12,254.40 562.09,248.09 560.89,241.93 559.51,235.97 557.97,230.20 556.27,224.67 554.41,219.39 552.41,214.39 550.27,209.68 548.00,205.28 545.60,201.22 543.10,197.50 540.50,194.14 537.81,191.16 535.04,188.56 532.20,186.37 529.31,184.58 526.36,183.20 523.39,182.25 520.40,181.71 517.39,181.61 514.39,181.93 511.41,182.67 508.45,183.84 505.53,185.42 502.66,187.41 499.85,189.81 497.12,192.60 494.47,195.77 491.92,199.31 489.47,203.21 487.14,207.44 484.94,212.00 482.86,216.86 480.93,222.00 479.15,227.41 477.53,233.06 476.07,238.93 474.77,244.99 473.66,251.22 472.72,257.60 471.97,264.10 471.40,270.69 471.02,277.36 470.83,284.06 470.83,290.77 471.02,297.47 471.40,304.13 471.97,310.73 472.72,317.23 473.66,323.61 474.77,329.84 476.07,335.90 477.53,341.77 479.15,347.42 480.93,352.83 482.86,357.97 484.94,362.83 487.14,367.39 489.47,371.62 491.92,375.52 494.47,379.06 497.12,382.23 499.85,385.02 502.66,387.41 505.53,389.41 508.45,390.99 511.41,392.16 514.39,392.90 517.39,393.22 520.40,393.11 523.39,392.58 526.36,391.63 529.31,390.25 532.20,388.46 535.04,386.27 537.81,383.67 540.50,380.69 543.10,377.33 545.60,373.61 548.00,369.55 550.27,365.15 552.41,360.44 554.41,355.43 556.27,350.16 557.97,344.63 559.51,338.86 560.89,332.90 562.09,326.74 563.12,320.43 563.97,313.99 564.63,307.44 565.10,300.81 565.39,294.13 565.49,287.41 ' style='stroke-width: 0.64; stroke-dasharray: 4.00,4.00; stroke-linecap: butt;' />
 </g>
@@ -236,9 +236,9 @@
 <text x='518.17' y='568.03' text-anchor='middle' style='font-size: 12.00px; font-family: sans;' textLength='90.71px' lengthAdjust='spacingAndGlyphs'>Comp. 1 (66.1%)</text>
 <text transform='translate(373.74,287.41) rotate(-90)' text-anchor='middle' style='font-size: 12.00px; font-family: sans;' textLength='90.71px' lengthAdjust='spacingAndGlyphs'>Comp. 2 (31.8%)</text>
 <text x='648.20' y='262.63' style='font-size: 12.00px; font-style: italic; font-family: sans;' textLength='29.35px' lengthAdjust='spacingAndGlyphs'>Block</text>
-<polygon points='653.33,280.45 657.24,280.45 657.24,276.54 653.33,276.54 ' style='stroke-width: 0.71; stroke: none; fill: #117733;' />
-<circle cx='655.28' cy='295.78' r='1.95' style='stroke-width: 0.71; stroke: none; fill: #C79E46;' />
-<polygon points='655.28,310.02 657.92,314.58 652.65,314.58 ' style='stroke-width: 0.71; stroke: none; fill: #88AEC1;' />
+<polygon points='653.33,280.45 657.24,280.45 657.24,276.54 653.33,276.54 ' style='stroke-width: 0.71; stroke: none; fill: #882255;' />
+<circle cx='655.28' cy='295.78' r='1.95' style='stroke-width: 0.71; stroke: none; fill: #1FB0B5;' />
+<polygon points='655.28,310.02 657.92,314.58 652.65,314.58 ' style='stroke-width: 0.71; stroke: none; fill: #C79E46;' />
 <text x='668.35' y='282.63' style='font-size: 12.00px; font-family: sans;' textLength='40.69px' lengthAdjust='spacingAndGlyphs'>X_agric</text>
 <text x='668.35' y='299.91' style='font-size: 12.00px; font-family: sans;' textLength='30.69px' lengthAdjust='spacingAndGlyphs'>X_ind</text>
 <text x='668.35' y='317.19' style='font-size: 12.00px; font-family: sans;' textLength='36.69px' lengthAdjust='spacingAndGlyphs'>X_polit</text>
@@ -268,101 +268,101 @@
 <polyline points='194.08,541.35 194.08,33.48 ' style='stroke-width: 1.07; stroke: #EBEBEB; stroke-linecap: butt;' />
 <polyline points='231.74,541.35 231.74,33.48 ' style='stroke-width: 1.07; stroke: #EBEBEB; stroke-linecap: butt;' />
 <text x='203.37' y='197.68' text-anchor='middle' style='font-size: 8.54px; fill: #1F6EE0; font-family: sans;' textLength='36.54px' lengthAdjust='spacingAndGlyphs'>Argentina</text>
-<text x='225.20' y='232.77' text-anchor='middle' style='font-size: 8.54px; fill: #FB176C; font-family: sans;' textLength='33.21px' lengthAdjust='spacingAndGlyphs'>Australia</text>
+<text x='225.20' y='232.77' text-anchor='middle' style='font-size: 8.54px; fill: #CC0000; font-family: sans;' textLength='33.21px' lengthAdjust='spacingAndGlyphs'>Australia</text>
 <text x='186.36' y='305.89' text-anchor='middle' style='font-size: 8.54px; fill: #1F6EE0; font-family: sans;' textLength='26.57px' lengthAdjust='spacingAndGlyphs'>Austria</text>
-<text x='83.68' y='69.93' text-anchor='middle' style='font-size: 8.54px; fill: #FB176C; font-family: sans;' textLength='30.84px' lengthAdjust='spacingAndGlyphs'>Belgium</text>
-<text x='219.71' y='250.50' text-anchor='middle' style='font-size: 8.54px; fill: #FFC709; font-family: sans;' textLength='25.15px' lengthAdjust='spacingAndGlyphs'>Bolivia</text>
+<text x='83.68' y='69.93' text-anchor='middle' style='font-size: 8.54px; fill: #CC0000; font-family: sans;' textLength='30.84px' lengthAdjust='spacingAndGlyphs'>Belgium</text>
+<text x='219.71' y='250.50' text-anchor='middle' style='font-size: 8.54px; fill: #029B38; font-family: sans;' textLength='25.15px' lengthAdjust='spacingAndGlyphs'>Bolivia</text>
 <text x='211.60' y='329.91' text-anchor='middle' style='font-size: 8.54px; fill: #1F6EE0; font-family: sans;' textLength='21.35px' lengthAdjust='spacingAndGlyphs'>Brasil</text>
-<text x='72.05' y='278.71' text-anchor='middle' style='font-size: 8.54px; fill: #FB176C; font-family: sans;' textLength='29.90px' lengthAdjust='spacingAndGlyphs'>Canada</text>
+<text x='72.05' y='278.71' text-anchor='middle' style='font-size: 8.54px; fill: #CC0000; font-family: sans;' textLength='29.90px' lengthAdjust='spacingAndGlyphs'>Canada</text>
 <text x='233.18' y='298.87' text-anchor='middle' style='font-size: 8.54px; fill: #1F6EE0; font-family: sans;' textLength='19.45px' lengthAdjust='spacingAndGlyphs'>Chile</text>
 <text x='209.38' y='300.36' text-anchor='middle' style='font-size: 8.54px; fill: #1F6EE0; font-family: sans;' textLength='36.06px' lengthAdjust='spacingAndGlyphs'>Colombia</text>
 <text x='227.23' y='382.84' text-anchor='middle' style='font-size: 8.54px; fill: #1F6EE0; font-family: sans;' textLength='39.38px' lengthAdjust='spacingAndGlyphs'>CostaRica</text>
-<text x='183.33' y='141.37' text-anchor='middle' style='font-size: 8.54px; fill: #FFC709; font-family: sans;' textLength='20.41px' lengthAdjust='spacingAndGlyphs'>Cuba</text>
-<text x='52.63' y='328.34' text-anchor='middle' style='font-size: 8.54px; fill: #FB176C; font-family: sans;' textLength='34.64px' lengthAdjust='spacingAndGlyphs'>Denmark</text>
-<text x='196.23' y='244.57' text-anchor='middle' style='font-size: 8.54px; fill: #FFC709; font-family: sans;' textLength='73.55px' lengthAdjust='spacingAndGlyphs'>DominicanRepublic</text>
-<text x='216.43' y='286.06' text-anchor='middle' style='font-size: 8.54px; fill: #FFC709; font-family: sans;' textLength='31.80px' lengthAdjust='spacingAndGlyphs'>Ecuador</text>
-<text x='189.15' y='301.07' text-anchor='middle' style='font-size: 8.54px; fill: #FFC709; font-family: sans;' textLength='21.83px' lengthAdjust='spacingAndGlyphs'>Egypt</text>
-<text x='206.85' y='279.58' text-anchor='middle' style='font-size: 8.54px; fill: #FFC709; font-family: sans;' textLength='33.69px' lengthAdjust='spacingAndGlyphs'>Salvador</text>
+<text x='183.33' y='141.37' text-anchor='middle' style='font-size: 8.54px; fill: #029B38; font-family: sans;' textLength='20.41px' lengthAdjust='spacingAndGlyphs'>Cuba</text>
+<text x='52.63' y='328.34' text-anchor='middle' style='font-size: 8.54px; fill: #CC0000; font-family: sans;' textLength='34.64px' lengthAdjust='spacingAndGlyphs'>Denmark</text>
+<text x='196.23' y='244.57' text-anchor='middle' style='font-size: 8.54px; fill: #029B38; font-family: sans;' textLength='73.55px' lengthAdjust='spacingAndGlyphs'>DominicanRepublic</text>
+<text x='216.43' y='286.06' text-anchor='middle' style='font-size: 8.54px; fill: #029B38; font-family: sans;' textLength='31.80px' lengthAdjust='spacingAndGlyphs'>Ecuador</text>
+<text x='189.15' y='301.07' text-anchor='middle' style='font-size: 8.54px; fill: #029B38; font-family: sans;' textLength='21.83px' lengthAdjust='spacingAndGlyphs'>Egypt</text>
+<text x='206.85' y='279.58' text-anchor='middle' style='font-size: 8.54px; fill: #029B38; font-family: sans;' textLength='33.69px' lengthAdjust='spacingAndGlyphs'>Salvador</text>
 <text x='116.66' y='391.72' text-anchor='middle' style='font-size: 8.54px; fill: #1F6EE0; font-family: sans;' textLength='27.99px' lengthAdjust='spacingAndGlyphs'>Finland</text>
 <text x='92.60' y='163.65' text-anchor='middle' style='font-size: 8.54px; fill: #1F6EE0; font-family: sans;' textLength='26.57px' lengthAdjust='spacingAndGlyphs'>France</text>
-<text x='216.31' y='272.28' text-anchor='middle' style='font-size: 8.54px; fill: #FFC709; font-family: sans;' textLength='41.76px' lengthAdjust='spacingAndGlyphs'>Guatemala</text>
+<text x='216.31' y='272.28' text-anchor='middle' style='font-size: 8.54px; fill: #029B38; font-family: sans;' textLength='41.76px' lengthAdjust='spacingAndGlyphs'>Guatemala</text>
 <text x='193.06' y='262.93' text-anchor='middle' style='font-size: 8.54px; fill: #1F6EE0; font-family: sans;' textLength='28.00px' lengthAdjust='spacingAndGlyphs'>Greece</text>
-<text x='185.62' y='261.76' text-anchor='middle' style='font-size: 8.54px; fill: #FFC709; font-family: sans;' textLength='37.02px' lengthAdjust='spacingAndGlyphs'>Honduras</text>
-<text x='78.37' y='89.61' text-anchor='middle' style='font-size: 8.54px; fill: #FB176C; font-family: sans;' textLength='18.51px' lengthAdjust='spacingAndGlyphs'>India</text>
-<text x='204.42' y='114.41' text-anchor='middle' style='font-size: 8.54px; fill: #FFC709; font-family: sans;' textLength='14.23px' lengthAdjust='spacingAndGlyphs'>Irak</text>
-<text x='114.21' y='386.81' text-anchor='middle' style='font-size: 8.54px; fill: #FB176C; font-family: sans;' textLength='21.35px' lengthAdjust='spacingAndGlyphs'>Irland</text>
+<text x='185.62' y='261.76' text-anchor='middle' style='font-size: 8.54px; fill: #029B38; font-family: sans;' textLength='37.02px' lengthAdjust='spacingAndGlyphs'>Honduras</text>
+<text x='78.37' y='89.61' text-anchor='middle' style='font-size: 8.54px; fill: #CC0000; font-family: sans;' textLength='18.51px' lengthAdjust='spacingAndGlyphs'>India</text>
+<text x='204.42' y='114.41' text-anchor='middle' style='font-size: 8.54px; fill: #029B38; font-family: sans;' textLength='14.23px' lengthAdjust='spacingAndGlyphs'>Irak</text>
+<text x='114.21' y='386.81' text-anchor='middle' style='font-size: 8.54px; fill: #CC0000; font-family: sans;' textLength='21.35px' lengthAdjust='spacingAndGlyphs'>Irland</text>
 <text x='194.02' y='228.66' text-anchor='middle' style='font-size: 8.54px; fill: #1F6EE0; font-family: sans;' textLength='15.66px' lengthAdjust='spacingAndGlyphs'>Italy</text>
 <text x='67.14' y='352.85' text-anchor='middle' style='font-size: 8.54px; fill: #1F6EE0; font-family: sans;' textLength='23.26px' lengthAdjust='spacingAndGlyphs'>Japan</text>
-<text x='159.02' y='309.75' text-anchor='middle' style='font-size: 8.54px; fill: #FFC709; font-family: sans;' textLength='18.03px' lengthAdjust='spacingAndGlyphs'>Libia</text>
-<text x='113.92' y='205.71' text-anchor='middle' style='font-size: 8.54px; fill: #FB176C; font-family: sans;' textLength='42.71px' lengthAdjust='spacingAndGlyphs'>Luxemburg</text>
-<text x='90.61' y='89.58' text-anchor='middle' style='font-size: 8.54px; fill: #FB176C; font-family: sans;' textLength='60.74px' lengthAdjust='spacingAndGlyphs'>TheNetherlands</text>
-<text x='176.54' y='224.14' text-anchor='middle' style='font-size: 8.54px; fill: #FB176C; font-family: sans;' textLength='47.93px' lengthAdjust='spacingAndGlyphs'>NewZealand</text>
-<text x='185.30' y='310.07' text-anchor='middle' style='font-size: 8.54px; fill: #FFC709; font-family: sans;' textLength='38.91px' lengthAdjust='spacingAndGlyphs'>Nicaragua</text>
-<text x='126.98' y='298.60' text-anchor='middle' style='font-size: 8.54px; fill: #FB176C; font-family: sans;' textLength='28.94px' lengthAdjust='spacingAndGlyphs'>Norway</text>
-<text x='172.65' y='281.97' text-anchor='middle' style='font-size: 8.54px; fill: #FFC709; font-family: sans;' textLength='31.80px' lengthAdjust='spacingAndGlyphs'>Panama</text>
-<text x='207.98' y='292.05' text-anchor='middle' style='font-size: 8.54px; fill: #FFC709; font-family: sans;' textLength='18.03px' lengthAdjust='spacingAndGlyphs'>Peru</text>
-<text x='96.03' y='133.30' text-anchor='middle' style='font-size: 8.54px; fill: #FFC709; font-family: sans;' textLength='37.01px' lengthAdjust='spacingAndGlyphs'>Philippine</text>
-<text x='57.65' y='485.15' text-anchor='middle' style='font-size: 8.54px; fill: #FFC709; font-family: sans;' textLength='26.58px' lengthAdjust='spacingAndGlyphs'>Poland</text>
-<text x='153.85' y='229.10' text-anchor='middle' style='font-size: 8.54px; fill: #FFC709; font-family: sans;' textLength='53.63px' lengthAdjust='spacingAndGlyphs'>SouthVietnam</text>
-<text x='191.41' y='169.60' text-anchor='middle' style='font-size: 8.54px; fill: #FFC709; font-family: sans;' textLength='21.83px' lengthAdjust='spacingAndGlyphs'>Spain</text>
-<text x='99.90' y='201.66' text-anchor='middle' style='font-size: 8.54px; fill: #FB176C; font-family: sans;' textLength='30.85px' lengthAdjust='spacingAndGlyphs'>Sweden</text>
-<text x='56.73' y='176.11' text-anchor='middle' style='font-size: 8.54px; fill: #FB176C; font-family: sans;' textLength='44.13px' lengthAdjust='spacingAndGlyphs'>Switzerland</text>
-<text x='141.32' y='153.42' text-anchor='middle' style='font-size: 8.54px; fill: #FFC709; font-family: sans;' textLength='27.52px' lengthAdjust='spacingAndGlyphs'>Taiwan</text>
-<text x='147.77' y='140.56' text-anchor='middle' style='font-size: 8.54px; fill: #FB176C; font-family: sans;' textLength='11.86px' lengthAdjust='spacingAndGlyphs'>UK</text>
-<text x='164.05' y='231.27' text-anchor='middle' style='font-size: 8.54px; fill: #FB176C; font-family: sans;' textLength='17.56px' lengthAdjust='spacingAndGlyphs'>USA</text>
-<text x='186.17' y='183.17' text-anchor='middle' style='font-size: 8.54px; fill: #FB176C; font-family: sans;' textLength='32.27px' lengthAdjust='spacingAndGlyphs'>Uruguay</text>
-<text x='221.86' y='252.69' text-anchor='middle' style='font-size: 8.54px; fill: #FFC709; font-family: sans;' textLength='40.35px' lengthAdjust='spacingAndGlyphs'>Venezuela</text>
+<text x='159.02' y='309.75' text-anchor='middle' style='font-size: 8.54px; fill: #029B38; font-family: sans;' textLength='18.03px' lengthAdjust='spacingAndGlyphs'>Libia</text>
+<text x='113.92' y='205.71' text-anchor='middle' style='font-size: 8.54px; fill: #CC0000; font-family: sans;' textLength='42.71px' lengthAdjust='spacingAndGlyphs'>Luxemburg</text>
+<text x='90.61' y='89.58' text-anchor='middle' style='font-size: 8.54px; fill: #CC0000; font-family: sans;' textLength='60.74px' lengthAdjust='spacingAndGlyphs'>TheNetherlands</text>
+<text x='176.54' y='224.14' text-anchor='middle' style='font-size: 8.54px; fill: #CC0000; font-family: sans;' textLength='47.93px' lengthAdjust='spacingAndGlyphs'>NewZealand</text>
+<text x='185.30' y='310.07' text-anchor='middle' style='font-size: 8.54px; fill: #029B38; font-family: sans;' textLength='38.91px' lengthAdjust='spacingAndGlyphs'>Nicaragua</text>
+<text x='126.98' y='298.60' text-anchor='middle' style='font-size: 8.54px; fill: #CC0000; font-family: sans;' textLength='28.94px' lengthAdjust='spacingAndGlyphs'>Norway</text>
+<text x='172.65' y='281.97' text-anchor='middle' style='font-size: 8.54px; fill: #029B38; font-family: sans;' textLength='31.80px' lengthAdjust='spacingAndGlyphs'>Panama</text>
+<text x='207.98' y='292.05' text-anchor='middle' style='font-size: 8.54px; fill: #029B38; font-family: sans;' textLength='18.03px' lengthAdjust='spacingAndGlyphs'>Peru</text>
+<text x='96.03' y='133.30' text-anchor='middle' style='font-size: 8.54px; fill: #029B38; font-family: sans;' textLength='37.01px' lengthAdjust='spacingAndGlyphs'>Philippine</text>
+<text x='57.65' y='485.15' text-anchor='middle' style='font-size: 8.54px; fill: #029B38; font-family: sans;' textLength='26.58px' lengthAdjust='spacingAndGlyphs'>Poland</text>
+<text x='153.85' y='229.10' text-anchor='middle' style='font-size: 8.54px; fill: #029B38; font-family: sans;' textLength='53.63px' lengthAdjust='spacingAndGlyphs'>SouthVietnam</text>
+<text x='191.41' y='169.60' text-anchor='middle' style='font-size: 8.54px; fill: #029B38; font-family: sans;' textLength='21.83px' lengthAdjust='spacingAndGlyphs'>Spain</text>
+<text x='99.90' y='201.66' text-anchor='middle' style='font-size: 8.54px; fill: #CC0000; font-family: sans;' textLength='30.85px' lengthAdjust='spacingAndGlyphs'>Sweden</text>
+<text x='56.73' y='176.11' text-anchor='middle' style='font-size: 8.54px; fill: #CC0000; font-family: sans;' textLength='44.13px' lengthAdjust='spacingAndGlyphs'>Switzerland</text>
+<text x='141.32' y='153.42' text-anchor='middle' style='font-size: 8.54px; fill: #029B38; font-family: sans;' textLength='27.52px' lengthAdjust='spacingAndGlyphs'>Taiwan</text>
+<text x='147.77' y='140.56' text-anchor='middle' style='font-size: 8.54px; fill: #CC0000; font-family: sans;' textLength='11.86px' lengthAdjust='spacingAndGlyphs'>UK</text>
+<text x='164.05' y='231.27' text-anchor='middle' style='font-size: 8.54px; fill: #CC0000; font-family: sans;' textLength='17.56px' lengthAdjust='spacingAndGlyphs'>USA</text>
+<text x='186.17' y='183.17' text-anchor='middle' style='font-size: 8.54px; fill: #CC0000; font-family: sans;' textLength='32.27px' lengthAdjust='spacingAndGlyphs'>Uruguay</text>
+<text x='221.86' y='252.69' text-anchor='middle' style='font-size: 8.54px; fill: #029B38; font-family: sans;' textLength='40.35px' lengthAdjust='spacingAndGlyphs'>Venezuela</text>
 <text x='157.48' y='347.03' text-anchor='middle' style='font-size: 8.54px; fill: #1F6EE0; font-family: sans;' textLength='54.56px' lengthAdjust='spacingAndGlyphs'>WestGermany</text>
-<text x='65.59' y='493.15' text-anchor='middle' style='font-size: 8.54px; fill: #FFC709; font-family: sans;' textLength='41.77px' lengthAdjust='spacingAndGlyphs'>Yugoslavia</text>
+<text x='65.59' y='493.15' text-anchor='middle' style='font-size: 8.54px; fill: #029B38; font-family: sans;' textLength='41.77px' lengthAdjust='spacingAndGlyphs'>Yugoslavia</text>
 <line x1='156.42' y1='541.35' x2='156.42' y2='33.48' style='stroke-width: 0.64; stroke-dasharray: 4.00,4.00; stroke-linecap: butt;' />
 <line x1='34.57' y1='260.37' x2='251.24' y2='260.37' style='stroke-width: 0.64; stroke-dasharray: 4.00,4.00; stroke-linecap: butt;' />
 <rect x='201.42' y='201.60' width='3.91' height='3.91' style='stroke-width: 0.71; stroke: #1F6EE0;' />
-<circle cx='225.20' cy='238.64' r='1.95' style='stroke-width: 0.71; stroke: #FB176C;' />
+<circle cx='225.20' cy='238.64' r='1.95' style='stroke-width: 0.71; stroke: #CC0000;' />
 <rect x='184.40' y='309.81' width='3.91' height='3.91' style='stroke-width: 0.71; stroke: #1F6EE0;' />
-<circle cx='83.68' cy='75.80' r='1.95' style='stroke-width: 0.71; stroke: #FB176C;' />
-<polygon points='219.71,253.34 222.34,257.90 217.08,257.90 ' style='stroke-width: 0.71; stroke: #FFC709; fill: none;' />
+<circle cx='83.68' cy='75.80' r='1.95' style='stroke-width: 0.71; stroke: #CC0000;' />
+<polygon points='219.71,253.34 222.34,257.90 217.08,257.90 ' style='stroke-width: 0.71; stroke: #029B38; fill: none;' />
 <rect x='209.65' y='333.83' width='3.91' height='3.91' style='stroke-width: 0.71; stroke: #1F6EE0;' />
-<circle cx='72.05' cy='284.59' r='1.95' style='stroke-width: 0.71; stroke: #FB176C;' />
+<circle cx='72.05' cy='284.59' r='1.95' style='stroke-width: 0.71; stroke: #CC0000;' />
 <rect x='231.23' y='302.79' width='3.91' height='3.91' style='stroke-width: 0.71; stroke: #1F6EE0;' />
 <rect x='207.43' y='304.28' width='3.91' height='3.91' style='stroke-width: 0.71; stroke: #1F6EE0;' />
 <rect x='225.28' y='386.76' width='3.91' height='3.91' style='stroke-width: 0.71; stroke: #1F6EE0;' />
-<polygon points='183.33,144.20 185.97,148.76 180.70,148.76 ' style='stroke-width: 0.71; stroke: #FFC709; fill: none;' />
-<circle cx='52.63' cy='334.22' r='1.95' style='stroke-width: 0.71; stroke: #FB176C;' />
-<polygon points='196.23,247.40 198.87,251.96 193.60,251.96 ' style='stroke-width: 0.71; stroke: #FFC709; fill: none;' />
-<polygon points='216.43,288.90 219.06,293.46 213.80,293.46 ' style='stroke-width: 0.71; stroke: #FFC709; fill: none;' />
-<polygon points='189.15,303.90 191.78,308.46 186.52,308.46 ' style='stroke-width: 0.71; stroke: #FFC709; fill: none;' />
-<polygon points='206.85,282.41 209.49,286.97 204.22,286.97 ' style='stroke-width: 0.71; stroke: #FFC709; fill: none;' />
+<polygon points='183.33,144.20 185.97,148.76 180.70,148.76 ' style='stroke-width: 0.71; stroke: #029B38; fill: none;' />
+<circle cx='52.63' cy='334.22' r='1.95' style='stroke-width: 0.71; stroke: #CC0000;' />
+<polygon points='196.23,247.40 198.87,251.96 193.60,251.96 ' style='stroke-width: 0.71; stroke: #029B38; fill: none;' />
+<polygon points='216.43,288.90 219.06,293.46 213.80,293.46 ' style='stroke-width: 0.71; stroke: #029B38; fill: none;' />
+<polygon points='189.15,303.90 191.78,308.46 186.52,308.46 ' style='stroke-width: 0.71; stroke: #029B38; fill: none;' />
+<polygon points='206.85,282.41 209.49,286.97 204.22,286.97 ' style='stroke-width: 0.71; stroke: #029B38; fill: none;' />
 <rect x='114.71' y='395.64' width='3.91' height='3.91' style='stroke-width: 0.71; stroke: #1F6EE0;' />
 <rect x='90.65' y='167.57' width='3.91' height='3.91' style='stroke-width: 0.71; stroke: #1F6EE0;' />
-<polygon points='216.31,275.11 218.94,279.67 213.67,279.67 ' style='stroke-width: 0.71; stroke: #FFC709; fill: none;' />
+<polygon points='216.31,275.11 218.94,279.67 213.67,279.67 ' style='stroke-width: 0.71; stroke: #029B38; fill: none;' />
 <rect x='191.10' y='266.85' width='3.91' height='3.91' style='stroke-width: 0.71; stroke: #1F6EE0;' />
-<polygon points='185.62,264.60 188.26,269.16 182.99,269.16 ' style='stroke-width: 0.71; stroke: #FFC709; fill: none;' />
-<circle cx='78.37' cy='95.49' r='1.95' style='stroke-width: 0.71; stroke: #FB176C;' />
-<polygon points='204.42,117.24 207.05,121.80 201.79,121.80 ' style='stroke-width: 0.71; stroke: #FFC709; fill: none;' />
-<circle cx='114.21' cy='392.68' r='1.95' style='stroke-width: 0.71; stroke: #FB176C;' />
+<polygon points='185.62,264.60 188.26,269.16 182.99,269.16 ' style='stroke-width: 0.71; stroke: #029B38; fill: none;' />
+<circle cx='78.37' cy='95.49' r='1.95' style='stroke-width: 0.71; stroke: #CC0000;' />
+<polygon points='204.42,117.24 207.05,121.80 201.79,121.80 ' style='stroke-width: 0.71; stroke: #029B38; fill: none;' />
+<circle cx='114.21' cy='392.68' r='1.95' style='stroke-width: 0.71; stroke: #CC0000;' />
 <rect x='192.06' y='232.57' width='3.91' height='3.91' style='stroke-width: 0.71; stroke: #1F6EE0;' />
 <rect x='65.19' y='356.77' width='3.91' height='3.91' style='stroke-width: 0.71; stroke: #1F6EE0;' />
-<polygon points='159.02,312.59 161.66,317.15 156.39,317.15 ' style='stroke-width: 0.71; stroke: #FFC709; fill: none;' />
-<circle cx='113.92' cy='211.59' r='1.95' style='stroke-width: 0.71; stroke: #FB176C;' />
-<circle cx='90.61' cy='95.45' r='1.95' style='stroke-width: 0.71; stroke: #FB176C;' />
-<circle cx='176.54' cy='230.02' r='1.95' style='stroke-width: 0.71; stroke: #FB176C;' />
-<polygon points='185.30,312.90 187.93,317.46 182.66,317.46 ' style='stroke-width: 0.71; stroke: #FFC709; fill: none;' />
-<circle cx='126.98' cy='304.48' r='1.95' style='stroke-width: 0.71; stroke: #FB176C;' />
-<polygon points='172.65,284.80 175.28,289.36 170.02,289.36 ' style='stroke-width: 0.71; stroke: #FFC709; fill: none;' />
-<polygon points='207.98,294.88 210.61,299.44 205.34,299.44 ' style='stroke-width: 0.71; stroke: #FFC709; fill: none;' />
-<polygon points='96.03,136.14 98.67,140.70 93.40,140.70 ' style='stroke-width: 0.71; stroke: #FFC709; fill: none;' />
-<polygon points='57.65,487.98 60.28,492.54 55.01,492.54 ' style='stroke-width: 0.71; stroke: #FFC709; fill: none;' />
-<polygon points='153.85,231.93 156.48,236.49 151.22,236.49 ' style='stroke-width: 0.71; stroke: #FFC709; fill: none;' />
-<polygon points='191.41,172.44 194.04,177.00 188.78,177.00 ' style='stroke-width: 0.71; stroke: #FFC709; fill: none;' />
-<circle cx='99.90' cy='207.54' r='1.95' style='stroke-width: 0.71; stroke: #FB176C;' />
-<circle cx='56.73' cy='181.98' r='1.95' style='stroke-width: 0.71; stroke: #FB176C;' />
-<polygon points='141.32,156.26 143.95,160.82 138.69,160.82 ' style='stroke-width: 0.71; stroke: #FFC709; fill: none;' />
-<circle cx='147.77' cy='146.44' r='1.95' style='stroke-width: 0.71; stroke: #FB176C;' />
-<circle cx='164.05' cy='237.15' r='1.95' style='stroke-width: 0.71; stroke: #FB176C;' />
-<circle cx='186.17' cy='189.04' r='1.95' style='stroke-width: 0.71; stroke: #FB176C;' />
-<polygon points='221.86,255.52 224.49,260.08 219.23,260.08 ' style='stroke-width: 0.71; stroke: #FFC709; fill: none;' />
+<polygon points='159.02,312.59 161.66,317.15 156.39,317.15 ' style='stroke-width: 0.71; stroke: #029B38; fill: none;' />
+<circle cx='113.92' cy='211.59' r='1.95' style='stroke-width: 0.71; stroke: #CC0000;' />
+<circle cx='90.61' cy='95.45' r='1.95' style='stroke-width: 0.71; stroke: #CC0000;' />
+<circle cx='176.54' cy='230.02' r='1.95' style='stroke-width: 0.71; stroke: #CC0000;' />
+<polygon points='185.30,312.90 187.93,317.46 182.66,317.46 ' style='stroke-width: 0.71; stroke: #029B38; fill: none;' />
+<circle cx='126.98' cy='304.48' r='1.95' style='stroke-width: 0.71; stroke: #CC0000;' />
+<polygon points='172.65,284.80 175.28,289.36 170.02,289.36 ' style='stroke-width: 0.71; stroke: #029B38; fill: none;' />
+<polygon points='207.98,294.88 210.61,299.44 205.34,299.44 ' style='stroke-width: 0.71; stroke: #029B38; fill: none;' />
+<polygon points='96.03,136.14 98.67,140.70 93.40,140.70 ' style='stroke-width: 0.71; stroke: #029B38; fill: none;' />
+<polygon points='57.65,487.98 60.28,492.54 55.01,492.54 ' style='stroke-width: 0.71; stroke: #029B38; fill: none;' />
+<polygon points='153.85,231.93 156.48,236.49 151.22,236.49 ' style='stroke-width: 0.71; stroke: #029B38; fill: none;' />
+<polygon points='191.41,172.44 194.04,177.00 188.78,177.00 ' style='stroke-width: 0.71; stroke: #029B38; fill: none;' />
+<circle cx='99.90' cy='207.54' r='1.95' style='stroke-width: 0.71; stroke: #CC0000;' />
+<circle cx='56.73' cy='181.98' r='1.95' style='stroke-width: 0.71; stroke: #CC0000;' />
+<polygon points='141.32,156.26 143.95,160.82 138.69,160.82 ' style='stroke-width: 0.71; stroke: #029B38; fill: none;' />
+<circle cx='147.77' cy='146.44' r='1.95' style='stroke-width: 0.71; stroke: #CC0000;' />
+<circle cx='164.05' cy='237.15' r='1.95' style='stroke-width: 0.71; stroke: #CC0000;' />
+<circle cx='186.17' cy='189.04' r='1.95' style='stroke-width: 0.71; stroke: #CC0000;' />
+<polygon points='221.86,255.52 224.49,260.08 219.23,260.08 ' style='stroke-width: 0.71; stroke: #029B38; fill: none;' />
 <rect x='155.52' y='350.95' width='3.91' height='3.91' style='stroke-width: 0.71; stroke: #1F6EE0;' />
-<polygon points='65.59,495.99 68.22,500.55 62.95,500.55 ' style='stroke-width: 0.71; stroke: #FFC709; fill: none;' />
+<polygon points='65.59,495.99 68.22,500.55 62.95,500.55 ' style='stroke-width: 0.71; stroke: #029B38; fill: none;' />
 </g>
 <g clip-path='url(#cpMC4wMHw3MjAuMDB8MC4wMHw1NzYuMDA=)'>
 <text x='29.64' y='432.60' text-anchor='end' style='font-size: 12.00px; font-style: italic; fill: #666666; font-family: sans;' textLength='10.67px' lengthAdjust='spacingAndGlyphs'>-1</text>
@@ -378,8 +378,8 @@
 <text transform='translate(13.74,287.41) rotate(-90)' text-anchor='middle' style='font-size: 12.00px; font-family: sans;' textLength='90.71px' lengthAdjust='spacingAndGlyphs'>Comp. 2 (31.8%)</text>
 <text x='267.68' y='262.63' style='font-size: 12.00px; font-style: italic; font-family: sans;' textLength='54.05px' lengthAdjust='spacingAndGlyphs'>Response</text>
 <rect x='277.06' y='276.54' width='3.91' height='3.91' style='stroke-width: 0.71; stroke: #1F6EE0;' />
-<circle cx='279.01' cy='295.78' r='1.95' style='stroke-width: 0.71; stroke: #FB176C;' />
-<polygon points='279.01,310.02 281.65,314.58 276.38,314.58 ' style='stroke-width: 0.71; stroke: #FFC709; fill: none;' />
+<circle cx='279.01' cy='295.78' r='1.95' style='stroke-width: 0.71; stroke: #CC0000;' />
+<polygon points='279.01,310.02 281.65,314.58 276.38,314.58 ' style='stroke-width: 0.71; stroke: #029B38; fill: none;' />
 <text x='296.33' y='282.63' style='font-size: 12.00px; font-family: sans;' textLength='48.70px' lengthAdjust='spacingAndGlyphs'>demoinst</text>
 <text x='296.33' y='299.91' style='font-size: 12.00px; font-family: sans;' textLength='52.71px' lengthAdjust='spacingAndGlyphs'>demostab</text>
 <text x='296.33' y='317.19' style='font-size: 12.00px; font-family: sans;' textLength='39.36px' lengthAdjust='spacingAndGlyphs'>dictator</text>
@@ -408,22 +408,22 @@
 <polyline points='518.14,541.35 518.14,33.48 ' style='stroke-width: 1.07; stroke: #EBEBEB; stroke-linecap: butt;' />
 <polyline points='565.49,541.35 565.49,33.48 ' style='stroke-width: 1.07; stroke: #EBEBEB; stroke-linecap: butt;' />
 <polyline points='612.83,541.35 612.83,33.48 ' style='stroke-width: 1.07; stroke: #EBEBEB; stroke-linecap: butt;' />
-<text x='610.60' y='258.27' text-anchor='middle' style='font-size: 8.54px; fill: #117733; font-family: sans;' textLength='13.29px' lengthAdjust='spacingAndGlyphs'>gini</text>
-<text x='610.10' y='244.40' text-anchor='middle' style='font-size: 8.54px; fill: #117733; font-family: sans;' textLength='17.08px' lengthAdjust='spacingAndGlyphs'>farm</text>
-<text x='546.12' y='79.47' text-anchor='middle' style='font-size: 8.54px; fill: #117733; font-family: sans;' textLength='14.71px' lengthAdjust='spacingAndGlyphs'>rent</text>
-<text x='484.39' y='270.31' text-anchor='middle' style='font-size: 8.54px; fill: #C79E46; font-family: sans;' textLength='17.09px' lengthAdjust='spacingAndGlyphs'>gnpr</text>
-<text x='550.08' y='351.03' text-anchor='middle' style='font-size: 8.54px; fill: #C79E46; font-family: sans;' textLength='16.14px' lengthAdjust='spacingAndGlyphs'>labo</text>
-<text x='474.77' y='211.28' text-anchor='middle' style='font-size: 8.54px; fill: #88AEC1; font-family: sans;' textLength='37.49px' lengthAdjust='spacingAndGlyphs'>demostab</text>
-<text x='543.26' y='298.28' text-anchor='middle' style='font-size: 8.54px; fill: #88AEC1; font-family: sans;' textLength='27.99px' lengthAdjust='spacingAndGlyphs'>dictator</text>
+<text x='610.60' y='258.27' text-anchor='middle' style='font-size: 8.54px; fill: #882255; font-family: sans;' textLength='13.29px' lengthAdjust='spacingAndGlyphs'>gini</text>
+<text x='610.10' y='244.40' text-anchor='middle' style='font-size: 8.54px; fill: #882255; font-family: sans;' textLength='17.08px' lengthAdjust='spacingAndGlyphs'>farm</text>
+<text x='546.12' y='79.47' text-anchor='middle' style='font-size: 8.54px; fill: #882255; font-family: sans;' textLength='14.71px' lengthAdjust='spacingAndGlyphs'>rent</text>
+<text x='484.39' y='270.31' text-anchor='middle' style='font-size: 8.54px; fill: #1FB0B5; font-family: sans;' textLength='17.09px' lengthAdjust='spacingAndGlyphs'>gnpr</text>
+<text x='550.08' y='351.03' text-anchor='middle' style='font-size: 8.54px; fill: #1FB0B5; font-family: sans;' textLength='16.14px' lengthAdjust='spacingAndGlyphs'>labo</text>
+<text x='474.77' y='211.28' text-anchor='middle' style='font-size: 8.54px; fill: #C79E46; font-family: sans;' textLength='37.49px' lengthAdjust='spacingAndGlyphs'>demostab</text>
+<text x='543.26' y='298.28' text-anchor='middle' style='font-size: 8.54px; fill: #C79E46; font-family: sans;' textLength='27.99px' lengthAdjust='spacingAndGlyphs'>dictator</text>
 <line x1='518.14' y1='541.35' x2='518.14' y2='33.48' style='stroke-width: 0.64; stroke-dasharray: 4.00,4.00; stroke-linecap: butt;' />
 <line x1='404.58' y1='287.41' x2='631.76' y2='287.41' style='stroke-width: 0.64; stroke-dasharray: 4.00,4.00; stroke-linecap: butt;' />
-<polygon points='608.64,266.10 612.55,266.10 612.55,262.19 608.64,262.19 ' style='stroke-width: 0.71; stroke: none; fill: #117733;' />
-<polygon points='608.14,252.23 612.05,252.23 612.05,248.32 608.14,248.32 ' style='stroke-width: 0.71; stroke: none; fill: #117733;' />
-<polygon points='544.17,87.30 548.08,87.30 548.08,83.39 544.17,83.39 ' style='stroke-width: 0.71; stroke: none; fill: #117733;' />
-<circle cx='484.39' cy='276.18' r='1.95' style='stroke-width: 0.71; stroke: none; fill: #C79E46;' />
-<circle cx='550.08' cy='356.91' r='1.95' style='stroke-width: 0.71; stroke: none; fill: #C79E46;' />
-<polygon points='474.77,214.11 477.41,218.67 472.14,218.67 ' style='stroke-width: 0.71; stroke: none; fill: #88AEC1;' />
-<polygon points='543.26,301.12 545.89,305.68 540.62,305.68 ' style='stroke-width: 0.71; stroke: none; fill: #88AEC1;' />
+<polygon points='608.64,266.10 612.55,266.10 612.55,262.19 608.64,262.19 ' style='stroke-width: 0.71; stroke: none; fill: #882255;' />
+<polygon points='608.14,252.23 612.05,252.23 612.05,248.32 608.14,248.32 ' style='stroke-width: 0.71; stroke: none; fill: #882255;' />
+<polygon points='544.17,87.30 548.08,87.30 548.08,83.39 544.17,83.39 ' style='stroke-width: 0.71; stroke: none; fill: #882255;' />
+<circle cx='484.39' cy='276.18' r='1.95' style='stroke-width: 0.71; stroke: none; fill: #1FB0B5;' />
+<circle cx='550.08' cy='356.91' r='1.95' style='stroke-width: 0.71; stroke: none; fill: #1FB0B5;' />
+<polygon points='474.77,214.11 477.41,218.67 472.14,218.67 ' style='stroke-width: 0.71; stroke: none; fill: #C79E46;' />
+<polygon points='543.26,301.12 545.89,305.68 540.62,305.68 ' style='stroke-width: 0.71; stroke: none; fill: #C79E46;' />
 <polyline points='612.83,287.41 612.64,273.99 612.06,260.62 611.11,247.36 609.79,234.26 608.10,221.38 606.04,208.76 603.63,196.45 600.88,184.52 597.80,172.99 594.39,161.93 590.67,151.38 586.67,141.37 582.39,131.95 577.85,123.15 573.07,115.02 568.06,107.58 562.86,100.86 557.48,94.90 551.93,89.71 546.26,85.32 540.47,81.74 534.59,78.99 528.64,77.08 522.65,76.01 516.64,75.80 510.64,76.44 504.67,77.93 498.75,80.26 492.91,83.43 487.18,87.42 481.56,92.21 476.10,97.79 470.80,104.13 465.70,111.21 460.80,119.00 456.14,127.47 451.73,136.58 447.58,146.30 443.72,156.59 440.16,167.40 436.91,178.70 433.99,190.44 431.41,202.56 429.17,215.03 427.30,227.79 425.79,240.79 424.65,253.98 423.89,267.30 423.51,280.70 423.51,294.13 423.89,307.53 424.65,320.85 425.79,334.04 427.30,347.04 429.17,359.80 431.41,372.27 433.99,384.39 436.91,396.13 440.16,407.43 443.72,418.24 447.58,428.53 451.73,438.25 456.14,447.36 460.80,455.83 465.70,463.62 470.80,470.70 476.10,477.04 481.56,482.62 487.18,487.41 492.91,491.40 498.75,494.57 504.67,496.90 510.64,498.39 516.64,499.03 522.65,498.81 528.64,497.75 534.59,495.84 540.47,493.09 546.26,489.51 551.93,485.12 557.48,479.93 562.86,473.97 568.06,467.25 573.07,459.81 577.85,451.68 582.39,442.88 586.67,433.46 590.67,423.45 594.39,412.90 597.80,401.84 600.88,390.31 603.63,378.38 606.04,366.07 608.10,353.45 609.79,340.57 611.11,327.47 612.06,314.21 612.64,300.84 612.83,287.41 ' style='stroke-width: 0.64; stroke-linecap: butt;' />
 <polyline points='565.49,287.41 565.39,280.70 565.10,274.02 564.63,267.39 563.97,260.84 563.12,254.40 562.09,248.09 560.89,241.93 559.51,235.97 557.97,230.20 556.27,224.67 554.41,219.39 552.41,214.39 550.27,209.68 548.00,205.28 545.60,201.22 543.10,197.50 540.50,194.14 537.81,191.16 535.04,188.56 532.20,186.37 529.31,184.58 526.36,183.20 523.39,182.25 520.40,181.71 517.39,181.61 514.39,181.93 511.41,182.67 508.45,183.84 505.53,185.42 502.66,187.41 499.85,189.81 497.12,192.60 494.47,195.77 491.92,199.31 489.47,203.21 487.14,207.44 484.94,212.00 482.86,216.86 480.93,222.00 479.15,227.41 477.53,233.06 476.07,238.93 474.77,244.99 473.66,251.22 472.72,257.60 471.97,264.10 471.40,270.69 471.02,277.36 470.83,284.06 470.83,290.77 471.02,297.47 471.40,304.13 471.97,310.73 472.72,317.23 473.66,323.61 474.77,329.84 476.07,335.90 477.53,341.77 479.15,347.42 480.93,352.83 482.86,357.97 484.94,362.83 487.14,367.39 489.47,371.62 491.92,375.52 494.47,379.06 497.12,382.23 499.85,385.02 502.66,387.41 505.53,389.41 508.45,390.99 511.41,392.16 514.39,392.90 517.39,393.22 520.40,393.11 523.39,392.58 526.36,391.63 529.31,390.25 532.20,388.46 535.04,386.27 537.81,383.67 540.50,380.69 543.10,377.33 545.60,373.61 548.00,369.55 550.27,365.15 552.41,360.44 554.41,355.43 556.27,350.16 557.97,344.63 559.51,338.86 560.89,332.90 562.09,326.74 563.12,320.43 563.97,313.99 564.63,307.44 565.10,300.81 565.39,294.13 565.49,287.41 ' style='stroke-width: 0.64; stroke-dasharray: 4.00,4.00; stroke-linecap: butt;' />
 </g>
@@ -441,9 +441,9 @@
 <text x='518.17' y='568.03' text-anchor='middle' style='font-size: 12.00px; font-family: sans;' textLength='90.71px' lengthAdjust='spacingAndGlyphs'>Comp. 1 (66.1%)</text>
 <text transform='translate(373.74,287.41) rotate(-90)' text-anchor='middle' style='font-size: 12.00px; font-family: sans;' textLength='90.71px' lengthAdjust='spacingAndGlyphs'>Comp. 2 (31.8%)</text>
 <text x='648.20' y='262.63' style='font-size: 12.00px; font-style: italic; font-family: sans;' textLength='29.35px' lengthAdjust='spacingAndGlyphs'>Block</text>
-<polygon points='653.33,280.45 657.24,280.45 657.24,276.54 653.33,276.54 ' style='stroke-width: 0.71; stroke: none; fill: #117733;' />
-<circle cx='655.28' cy='295.78' r='1.95' style='stroke-width: 0.71; stroke: none; fill: #C79E46;' />
-<polygon points='655.28,310.02 657.92,314.58 652.65,314.58 ' style='stroke-width: 0.71; stroke: none; fill: #88AEC1;' />
+<polygon points='653.33,280.45 657.24,280.45 657.24,276.54 653.33,276.54 ' style='stroke-width: 0.71; stroke: none; fill: #882255;' />
+<circle cx='655.28' cy='295.78' r='1.95' style='stroke-width: 0.71; stroke: none; fill: #1FB0B5;' />
+<polygon points='655.28,310.02 657.92,314.58 652.65,314.58 ' style='stroke-width: 0.71; stroke: none; fill: #C79E46;' />
 <text x='668.35' y='282.63' style='font-size: 12.00px; font-family: sans;' textLength='40.69px' lengthAdjust='spacingAndGlyphs'>X_agric</text>
 <text x='668.35' y='299.91' style='font-size: 12.00px; font-family: sans;' textLength='30.69px' lengthAdjust='spacingAndGlyphs'>X_ind</text>
 <text x='668.35' y='317.19' style='font-size: 12.00px; font-family: sans;' textLength='36.69px' lengthAdjust='spacingAndGlyphs'>X_polit</text>

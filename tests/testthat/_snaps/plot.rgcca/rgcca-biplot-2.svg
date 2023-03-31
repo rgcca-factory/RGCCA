@@ -141,20 +141,20 @@
 <rect x='417.08' y='151.23' width='3.91' height='3.91' style='stroke-width: 0.71; stroke: #1F6EE0;' />
 <rect x='246.22' y='230.57' width='3.91' height='3.91' style='stroke-width: 0.71; stroke: #1F6EE0;' />
 <rect x='385.09' y='495.48' width='3.91' height='3.91' style='stroke-width: 0.71; stroke: #1F6EE0;' />
-<text x='446.96' y='56.48' text-anchor='middle' style='font-size: 8.54px; fill: #117733; font-family: sans;' textLength='20.40px' lengthAdjust='spacingAndGlyphs'>s-gini</text>
-<text x='461.22' y='56.56' text-anchor='middle' style='font-size: 8.54px; fill: #117733; font-family: sans;' textLength='24.19px' lengthAdjust='spacingAndGlyphs'>s-farm</text>
-<text x='340.04' y='55.76' text-anchor='middle' style='font-size: 8.54px; fill: #117733; font-family: sans;' textLength='21.82px' lengthAdjust='spacingAndGlyphs'>s-rent</text>
-<text x='104.62' y='196.30' text-anchor='middle' style='font-size: 8.54px; fill: #C79E46; font-family: sans;' textLength='24.20px' lengthAdjust='spacingAndGlyphs'>s-gnpr</text>
-<text x='574.20' y='291.92' text-anchor='middle' style='font-size: 8.54px; fill: #C79E46; font-family: sans;' textLength='23.25px' lengthAdjust='spacingAndGlyphs'>s-labo</text>
-<text x='111.44' y='188.82' text-anchor='middle' style='font-size: 8.54px; fill: #88AEC1; font-family: sans;' textLength='44.61px' lengthAdjust='spacingAndGlyphs'>s-demostab</text>
-<text x='547.28' y='263.22' text-anchor='middle' style='font-size: 8.54px; fill: #88AEC1; font-family: sans;' textLength='35.11px' lengthAdjust='spacingAndGlyphs'>s-dictator</text>
-<polygon points='445.00,64.31 448.91,64.31 448.91,60.40 445.00,60.40 ' style='stroke-width: 0.71; stroke: none; fill: #117733;' />
-<polygon points='459.26,64.39 463.17,64.39 463.17,60.48 459.26,60.48 ' style='stroke-width: 0.71; stroke: none; fill: #117733;' />
-<polygon points='338.09,63.59 342.00,63.59 342.00,59.68 338.09,59.68 ' style='stroke-width: 0.71; stroke: none; fill: #117733;' />
-<circle cx='104.62' cy='202.18' r='1.95' style='stroke-width: 0.71; stroke: none; fill: #C79E46;' />
-<circle cx='574.20' cy='297.79' r='1.95' style='stroke-width: 0.71; stroke: none; fill: #C79E46;' />
-<polygon points='111.44,191.65 114.07,196.21 108.80,196.21 ' style='stroke-width: 0.71; stroke: none; fill: #88AEC1;' />
-<polygon points='547.28,266.05 549.92,270.61 544.65,270.61 ' style='stroke-width: 0.71; stroke: none; fill: #88AEC1;' />
+<text x='446.96' y='56.48' text-anchor='middle' style='font-size: 8.54px; fill: #882255; font-family: sans;' textLength='20.40px' lengthAdjust='spacingAndGlyphs'>s-gini</text>
+<text x='461.22' y='56.56' text-anchor='middle' style='font-size: 8.54px; fill: #882255; font-family: sans;' textLength='24.19px' lengthAdjust='spacingAndGlyphs'>s-farm</text>
+<text x='340.04' y='55.76' text-anchor='middle' style='font-size: 8.54px; fill: #882255; font-family: sans;' textLength='21.82px' lengthAdjust='spacingAndGlyphs'>s-rent</text>
+<text x='104.62' y='196.30' text-anchor='middle' style='font-size: 8.54px; fill: #1FB0B5; font-family: sans;' textLength='24.20px' lengthAdjust='spacingAndGlyphs'>s-gnpr</text>
+<text x='574.20' y='291.92' text-anchor='middle' style='font-size: 8.54px; fill: #1FB0B5; font-family: sans;' textLength='23.25px' lengthAdjust='spacingAndGlyphs'>s-labo</text>
+<text x='111.44' y='188.82' text-anchor='middle' style='font-size: 8.54px; fill: #C79E46; font-family: sans;' textLength='44.61px' lengthAdjust='spacingAndGlyphs'>s-demostab</text>
+<text x='547.28' y='263.22' text-anchor='middle' style='font-size: 8.54px; fill: #C79E46; font-family: sans;' textLength='35.11px' lengthAdjust='spacingAndGlyphs'>s-dictator</text>
+<polygon points='445.00,64.31 448.91,64.31 448.91,60.40 445.00,60.40 ' style='stroke-width: 0.71; stroke: none; fill: #882255;' />
+<polygon points='459.26,64.39 463.17,64.39 463.17,60.48 459.26,60.48 ' style='stroke-width: 0.71; stroke: none; fill: #882255;' />
+<polygon points='338.09,63.59 342.00,63.59 342.00,59.68 338.09,59.68 ' style='stroke-width: 0.71; stroke: none; fill: #882255;' />
+<circle cx='104.62' cy='202.18' r='1.95' style='stroke-width: 0.71; stroke: none; fill: #1FB0B5;' />
+<circle cx='574.20' cy='297.79' r='1.95' style='stroke-width: 0.71; stroke: none; fill: #1FB0B5;' />
+<polygon points='111.44,191.65 114.07,196.21 108.80,196.21 ' style='stroke-width: 0.71; stroke: none; fill: #C79E46;' />
+<polygon points='547.28,266.05 549.92,270.61 544.65,270.61 ' style='stroke-width: 0.71; stroke: none; fill: #C79E46;' />
 </g>
 <g clip-path='url(#cpMC4wMHw3MjAuMDB8MC4wMHw1NzYuMDA=)'>
 <text x='29.64' y='446.32' text-anchor='end' style='font-size: 12.00px; font-style: italic; fill: #666666; font-family: sans;' textLength='10.67px' lengthAdjust='spacingAndGlyphs'>-2</text>
@@ -169,9 +169,9 @@
 <text x='328.91' y='568.03' text-anchor='middle' style='font-size: 12.00px; font-family: sans;' textLength='90.71px' lengthAdjust='spacingAndGlyphs'>Comp. 1 (54.8%)</text>
 <text transform='translate(13.74,279.69) rotate(-90)' text-anchor='middle' style='font-size: 12.00px; font-family: sans;' textLength='80.70px' lengthAdjust='spacingAndGlyphs'>Comp. 2 (22%)</text>
 <text x='639.69' y='254.91' style='font-size: 12.00px; font-style: italic; font-family: sans;' textLength='29.35px' lengthAdjust='spacingAndGlyphs'>Block</text>
-<polygon points='649.08,272.72 652.99,272.72 652.99,268.81 649.08,268.81 ' style='stroke-width: 0.71; stroke: none; fill: #117733;' />
-<circle cx='651.03' cy='288.05' r='1.95' style='stroke-width: 0.71; stroke: none; fill: #C79E46;' />
-<polygon points='651.03,302.29 653.66,306.85 648.40,306.85 ' style='stroke-width: 0.71; stroke: none; fill: #88AEC1;' />
+<polygon points='649.08,272.72 652.99,272.72 652.99,268.81 649.08,268.81 ' style='stroke-width: 0.71; stroke: none; fill: #882255;' />
+<circle cx='651.03' cy='288.05' r='1.95' style='stroke-width: 0.71; stroke: none; fill: #1FB0B5;' />
+<polygon points='651.03,302.29 653.66,306.85 648.40,306.85 ' style='stroke-width: 0.71; stroke: none; fill: #C79E46;' />
 <text x='668.35' y='274.90' style='font-size: 12.00px; font-family: sans;' textLength='40.69px' lengthAdjust='spacingAndGlyphs'>X_agric</text>
 <text x='668.35' y='292.18' style='font-size: 12.00px; font-family: sans;' textLength='30.69px' lengthAdjust='spacingAndGlyphs'>X_ind</text>
 <text x='668.35' y='309.46' style='font-size: 12.00px; font-family: sans;' textLength='36.69px' lengthAdjust='spacingAndGlyphs'>X_polit</text>
