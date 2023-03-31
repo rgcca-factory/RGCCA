@@ -6,24 +6,26 @@
 \usage{
 rgcca(
   blocks,
-  method = "rgcca",
-  scale = TRUE,
-  scale_block = "inertia",
   connection = NULL,
-  scheme = "factorial",
-  ncomp = 1,
   tau = 1,
-  sparsity = 1,
+  ncomp = 1,
+  scheme = "factorial",
+  scale = TRUE,
   init = "svd",
   bias = TRUE,
   tol = 1e-08,
+  verbose = FALSE,
+  scale_block = "inertia",
+  method = "rgcca",
+  sparsity = 1,
   response = NULL,
   superblock = FALSE,
   NA_method = "na.ignore",
-  verbose = FALSE,
   quiet = TRUE,
   n_iter_max = 1000,
-  comp_orth = TRUE
+  comp_orth = TRUE,
+  A = NULL,
+  C = NULL
 )
 }
 \arguments{
@@ -33,31 +35,8 @@ Block \eqn{\mathbf{X}_j}{Xj} is a matrix of dimension
 \eqn{n \times p_j}{n x p_j} where n is the number of
 observations and \eqn{p_j} the number of variables.}
 
-\item{method}{A string specifying which multiblock component
-method to consider. Possible values are found using \link{available_methods}}
-
-\item{scale}{A logical value indicating if variables are standardized.}
-
-\item{scale_block}{A logical value or a string indicating if each block is
-scaled. If TRUE or "inertia", each block is divided by the sum of eigenvalues
-of its empirical covariance matrix. If "lambda1", each block is divided by
-the square root of the highest eigenvalue of its empirical covariance matrix.
-If standardization is applied (scale = TRUE), the block scaling applies on
-the standardized blocks.}
-
 \item{connection}{A (\eqn{J \times J}{J x J}) symmetric matrix describing
 the network of connections between blocks (default value: 1-diag(J)).}
-
-\item{scheme}{A string or a function specifying the scheme function applied to
-covariance maximization among "horst" (the identity function), "factorial"
- (the square function - default value), "centroid" (the absolute value
- function). The scheme function can be any continously differentiable convex
- function and it is possible to design explicitely the scheme function
- (e.g. function(x) x^4) as argument of the function.  See (Tenenhaus et al,
- 2017) for details.}
-
-\item{ncomp}{A vector of length J indicating the number of components
-per block.}
 
 \item{tau}{Either a numerical value, a numeric vector of size \eqn{1 \times J}{1 x J}, or a
 numeric matrix of dimension \eqn{\mathrm{max}(ncomp) \times J}{max(ncomp) x J}
@@ -71,6 +50,42 @@ The regularization parameters varies from 0 (maximizing the correlation) to
 parameters are estimated for each block and each dimension using the Schafer
 and Strimmer (2005) analytical formula. The tau parameters can also be estimated using
 \link{rgcca_permutation} or \link{rgcca_cv}.}
+
+\item{ncomp}{A vector of length J indicating the number of components
+per block.}
+
+\item{scheme}{A string or a function specifying the scheme function applied to
+covariance maximization among "horst" (the identity function), "factorial"
+ (the square function - default value), "centroid" (the absolute value
+ function). The scheme function can be any continously differentiable convex
+ function and it is possible to design explicitely the scheme function
+ (e.g. function(x) x^4) as argument of the function.  See (Tenenhaus et al,
+ 2017) for details.}
+
+\item{scale}{A logical value indicating if variables are standardized.}
+
+\item{init}{A string giving the type of initialization to use in
+the RGCCA algorithm. It could be either by Singular Value Decompostion ("svd")
+or by random initialisation ("random") (default: "svd").}
+
+\item{bias}{A logical value for biaised (\eqn{1/n}) or unbiaised
+(\eqn{1/(n-1)}) estimator of the var/cov (default: bias = TRUE).}
+
+\item{tol}{The stopping value for the convergence of the algorithm
+(default: tol = 1e-08).}
+
+\item{verbose}{A logical value indicating if the progress of the
+algorithm is reported while computing.}
+
+\item{scale_block}{A logical value or a string indicating if each block is
+scaled. If TRUE or "inertia", each block is divided by the sum of eigenvalues
+of its empirical covariance matrix. If "lambda1", each block is divided by
+the square root of the highest eigenvalue of its empirical covariance matrix.
+If standardization is applied (scale = TRUE), the block scaling applies on
+the standardized blocks.}
+
+\item{method}{A string specifying which multiblock component
+method to consider. Possible values are found using \link{available_methods}}
 
 \item{sparsity}{Either a numerical value, a numeric vector of size \eqn{1*J} or a numeric matrix
 of dimension \eqn{max(ncomp) * J} encoding the L1 constraints applied to the
@@ -91,16 +106,6 @@ of block j:
 \deqn{for all h, |a_{j,h}|_{L_1} \le sparsity[h,j] \sqrt{p_j}.}
 sparsity can be estimated by using \link{rgcca_permutation} or \link{rgcca_cv}.}
 
-\item{init}{A string giving the type of initialization to use in
-the RGCCA algorithm. It could be either by Singular Value Decompostion ("svd")
-or by random initialisation ("random") (default: "svd").}
-
-\item{bias}{A logical value for biaised (\eqn{1/n}) or unbiaised
-(\eqn{1/(n-1)}) estimator of the var/cov (default: bias = TRUE).}
-
-\item{tol}{The stopping value for the convergence of the algorithm
-(default: tol = 1e-08).}
-
 \item{response}{A numerical value giving the position of the response block.
 When the response argument is filled the supervised mode is automatically
 activated.}
@@ -115,9 +120,6 @@ observations (observations with missing values are removed)}
 \item{\code{"na.ignore"}}{corresponds to perform RGCCA algorithm on available
 data (See Tenenhaus et al, 2005)}}}
 
-\item{verbose}{A logical value indicating if the progress of the
-algorithm is reported while computing.}
-
 \item{quiet}{A logical value indicating if warning messages are reported.}
 
 \item{n_iter_max}{Integer giving the algorithm's maximum number of
@@ -125,6 +127,10 @@ iterations.}
 
 \item{comp_orth}{A logical value indicating if the deflation should lead to
 orthogonal components or orthogonal weights.}
+
+\item{A}{Deprecated argument, please use blocks instead.}
+
+\item{C}{Deprecated argument, please use connection instead.}
 }
 \value{
 A rgcca fitted object

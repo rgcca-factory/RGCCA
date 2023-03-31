@@ -122,6 +122,8 @@
 #' iterations.
 #' @param comp_orth A logical value indicating if the deflation should lead to
 #' orthogonal components or orthogonal weights.
+#' @param A Deprecated argument, please use blocks instead.
+#' @param C Deprecated argument, please use connection instead.
 #' @return A rgcca fitted object
 #' @return \item{Y}{A list of \eqn{J} elements. The jth element of the list \eqn{Y}
 #' is a matrix that contains the block components for block j.}
@@ -361,18 +363,25 @@
 #' \code{\link[RGCCA]{rgcca_cv}},
 #' \code{\link[RGCCA]{rgcca_permutation}}
 #' \code{\link[RGCCA]{rgcca_predict}}
-rgcca <- function(blocks, method = "rgcca",
-                  scale = TRUE, scale_block = "inertia",
-                  connection = NULL,
-                  scheme = "factorial",
-                  ncomp = 1,
-                  tau = 1,
-                  sparsity = 1,
-                  init = "svd", bias = TRUE, tol = 1e-08,
-                  response = NULL,
+rgcca <- function(blocks, connection = NULL, tau = 1, ncomp = 1,
+                  scheme = "factorial", scale = TRUE, init = "svd",
+                  bias = TRUE, tol = 1e-08, verbose = FALSE,
+                  scale_block = "inertia", method = "rgcca",
+                  sparsity = 1, response = NULL,
                   superblock = FALSE,
-                  NA_method = "na.ignore", verbose = FALSE, quiet = TRUE,
-                  n_iter_max = 1000, comp_orth = TRUE) {
+                  NA_method = "na.ignore", quiet = TRUE,
+                  n_iter_max = 1000, comp_orth = TRUE,
+                  A = NULL, C = NULL) {
+  # Check for deprecated arguments
+  if (!missing(A)) {
+    warning("Argument A is deprecated, use blocks instead.")
+    blocks <- A
+  }
+  if (!missing(C)) {
+    warning("Argument C is deprecated, use connection instead.")
+    connection <- C
+  }
+
   rgcca_args <- as.list(environment())
   ### If specific objects are given for blocks, parameters are imported from
   #   these objects.
