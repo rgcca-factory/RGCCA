@@ -42,7 +42,7 @@ observations and \eqn{p_j} the number of variables.}
 \item{par_type}{A character string indicating the parameters to tune between
 "sparsity" and "tau".}
 
-\item{par_value}{Sets of penalties to consider during the permutation
+\item{par_value}{Sets of parameters to consider during the permutation
 process.
 If par_value = NULL, it takes 10 sets between min values (0 for RGCCA and
 1/sqrt(ncol(Xj)) for SGCCA) and 1. Otherwise, it could be either (i) A matrix
@@ -54,11 +54,11 @@ are tested from min values to the maximal values specified by this vector.
 each block. In that case par_length combinations are tested from min values
 to this single maximal value.}
 
-\item{par_length}{A numeric value indicating the number of sets of penalties
+\item{par_length}{A numeric value indicating the number of sets of parameters
 to be tested (if par_value = NULL).}
 
-\item{n_perms}{The number of permutations for each set of constraints (default
-is 20).}
+\item{n_perms}{The number of permutations for each set of constraints
+(default is 20).}
 
 \item{n_cores}{The number of cores used for parallelization.}
 
@@ -170,14 +170,14 @@ between "sparsity" and "tau".}
 tuning paramaters (default
 is 20)}
 
-\item{bestpenalties}{The set of tuning parameters that yields the
+\item{best_params}{The set of tuning parameters that yields the
 highest Z-statistic}
 
 \item{permcrit}{A matrix of permuted S/RGCCA criteria. The ith row of
 permcrit contains the n_perms values of S/RGCCA permuted criteria
 obtained for each set of tuning parameters.}
 
-\item{penalties}{A matrix giving, the set of candidate tuning
+\item{params}{A matrix giving, the set of candidate tuning
 paramaters considered during the permutation process (tau or sparsity).}
 
 \item{stats}{A data.frame containing in column: the set of candidate
@@ -249,7 +249,7 @@ fit <- rgcca_permutation(blocks,
 
 print(fit)
 plot(fit)
-fit$bestpenalties
+fit$best_params
 
 \dontrun{
 # It is possible to define explicitly K combinations of shrinkage
@@ -310,7 +310,7 @@ perm.out <- rgcca_permutation(blocks,
 
 print(perm.out)
 plot(perm.out)
-perm.out$bestpenalties
+perm.out$best_params
 
 # when par_value is a vector of length J. Each element of the vector
 # indicates the maximum value of sparsity to be considered for each block.
@@ -328,7 +328,7 @@ perm.out <- rgcca_permutation(blocks,
 
 print(perm.out)
 plot(perm.out)
-perm.out$bestpenalties
+perm.out$best_params
 
 # when par_value is a scalar, the same maximum value is applied
 # for each block
@@ -340,7 +340,7 @@ perm.out <- rgcca_permutation(blocks,
   n_perms = 10, n_cores = 1
 )
 
-perm.out$penalties
+perm.out$params
 
 ######################################
 # speed up the permutation procedure #

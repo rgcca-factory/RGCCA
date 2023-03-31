@@ -34,9 +34,9 @@
 #' corresponds to one set of candidate parameters. Each column of cv corresponds
 #' to the cross-validated score of a specific fold.}
 #' @return \item{call}{A list of the input parameters}
-#' @return \item{bestpenalties}{The set of parameters that yields the best
+#' @return \item{best_params}{The set of parameters that yields the best
 #' cross-validated scores}
-#' @return \item{penalties}{A matrix reporting the sets of candidate parameters
+#' @return \item{params}{A matrix reporting the sets of candidate parameters
 #' used during the process of cross-validation.}
 #' @return \item{validation}{A string specifying the type of validation among
 #' "loo", "kfold"}
@@ -320,9 +320,9 @@ rgcca_cv <- function(blocks,
     n_run = n_run,
     metric = metric,
     par_type = param$par_type,
-    penalties = param$par_value,
+    params = param$par_value,
     validation = validation,
-    bestpenalties = param$par_value[best_param_idx, ],
+    best_params = param$par_value[best_param_idx, ],
     prediction_model = model$model_name
   )
   class(res) <- "cval"

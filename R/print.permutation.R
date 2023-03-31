@@ -25,11 +25,11 @@ print.permutation <- function(x, ...) {
   ### Print parameters of the function
   print_call(x$call)
 
-  penalties <- round(x$penalties, 3)
-  rownames(penalties) <- seq_len(NROW(penalties))
+  params <- round(x$params, 3)
+  rownames(params) <- seq_len(NROW(params))
   cat(fill = TRUE)
   cat(paste0("Tuning parameters (", x$par_type, ") used: "), fill = TRUE)
-  print(penalties, quote = FALSE, ...)
+  print(params, quote = FALSE, ...)
   cat("\n")
 
   tab <- format(x$stats, digits = 3)
@@ -40,7 +40,7 @@ print.permutation <- function(x, ...) {
   print(tab, quote = FALSE, ...)
 
   best <- which(apply(
-    x$penalties, 1, function(z) identical(z, x$bestpenalties)
+    x$params, 1, function(z) identical(z, x$best_params)
   ))
   cat(strwrap(paste0(
     "\nThe best combination is: ",

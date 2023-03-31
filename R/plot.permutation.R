@@ -63,7 +63,7 @@ plot.permutation <- function(x,
 
   # Mark the best parameter set
   best <- which(apply(
-    x$penalties[idx_order, ], 1, function(z) identical(z, x$bestpenalties)
+    x$params[idx_order, ], 1, function(z) identical(z, x$best_params)
   ))
   df$label[best] <- "Best parameter set"
 

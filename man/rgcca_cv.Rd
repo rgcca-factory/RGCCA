@@ -191,10 +191,10 @@ to the cross-validated score of a specific fold.}
 
 \item{call}{A list of the input parameters}
 
-\item{bestpenalties}{The set of parameters that yields the best
+\item{best_params}{The set of parameters that yields the best
 cross-validated scores}
 
-\item{penalties}{A matrix reporting the sets of candidate parameters
+\item{params}{A matrix reporting the sets of candidate parameters
 used during the process of cross-validation.}
 
 \item{validation}{A string specifying the type of validation among

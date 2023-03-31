@@ -8,13 +8,13 @@ get_rgcca_args <- function(object, default_args = list()) {
 
     if (any(class(object) %in% c("permutation", "cval"))) {
       if (object$par_type == "tau") {
-        rgcca_args$tau <- object$bestpenalties
+        rgcca_args$tau <- object$best_params
       }
       if (object$par_type == "ncomp") {
-        rgcca_args$ncomp <- object$bestpenalties
+        rgcca_args$ncomp <- object$best_params
       }
       if (object$par_type == "sparsity") {
-        rgcca_args$sparsity <- object$bestpenalties
+        rgcca_args$sparsity <- object$best_params
       }
     }
   } else {

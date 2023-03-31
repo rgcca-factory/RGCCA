@@ -63,7 +63,7 @@ plot.cval <- function(x, type = "sd",
   }
 
   best <- which(apply(
-    x$penalties, 1, function(z) identical(z, x$bestpenalties)
+    x$params, 1, function(z) identical(z, x$best_params)
   ))
 
   idx_order <- seq_len(nrow(df))
