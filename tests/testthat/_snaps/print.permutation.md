@@ -6,7 +6,7 @@
       print(res)
     Output
       Call: method='rgcca', superblock=FALSE, scale=TRUE, scale_block=TRUE, init='svd',
-      bias=TRUE, tol=1e-08, NA_method='nipals', ncomp=c(1,1,1), response=NULL,
+      bias=TRUE, tol=1e-08, NA_method='na.ignore', ncomp=c(1,1,1), response=NULL,
       comp_orth=TRUE 
       There are J = 3 blocks.
       The design matrix is:
@@ -37,7 +37,7 @@
       print(res)
     Output
       Call: method='rgcca', superblock=FALSE, scale=TRUE, scale_block=TRUE, init='svd',
-      bias=TRUE, tol=1e-08, NA_method='nipals', ncomp=c(1,1,1,1,1,1,1,1,1),
+      bias=TRUE, tol=1e-08, NA_method='na.ignore', ncomp=c(1,1,1,1,1,1,1,1,1),
       response=NULL, comp_orth=TRUE 
       There are J = 9 blocks.
       The design matrix is:

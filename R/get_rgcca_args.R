@@ -42,7 +42,7 @@ get_rgcca_args <- function(object, default_args = list()) {
 
     rgcca_args$init <- check_char(rgcca_args$init, "init", c("svd", "random"))
     rgcca_args$NA_method <- check_char(
-      rgcca_args$NA_method, "NA_method", c("nipals", "complete")
+      rgcca_args$NA_method, "NA_method", c("na.ignore", "na.omit")
     )
     if (!is.logical(rgcca_args$scale_block)) {
       rgcca_args$scale_block <- tolower(rgcca_args$scale_block)

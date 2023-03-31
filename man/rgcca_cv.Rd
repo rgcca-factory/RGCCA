@@ -23,7 +23,7 @@ rgcca_cv(
   scale_block = TRUE,
   tol = 1e-08,
   scheme = "factorial",
-  NA_method = "nipals",
+  NA_method = "na.ignore",
   rgcca_res = NULL,
   tau = 1,
   ncomp = 1,
@@ -112,12 +112,12 @@ covariance maximization among "horst" (the identity function), "factorial"
  2017) for details.}
 
 \item{NA_method}{A string indicating the method used for
-handling missing values ("nipals", "complete"). (default: "nipals").
+handling missing values ("na.ignore", "na.omit"). (default: "na.ignore").
 \itemize{
-\item{\code{"complete"}}{corresponds to perform RGCCA on the fully observed
+\item{\code{"na.omit"}}{corresponds to perform RGCCA on the fully observed
 observations (observations with missing values are removed)}
-\item{\code{"nipals"}}{corresponds to perform RGCCA algorithm on available
-data (NIPALS-type algorithm)}}}
+\item{\code{"na.ignore"}}{corresponds to perform RGCCA algorithm on available
+data (See Tenenhaus et al, 2005)}}}
 
 \item{rgcca_res}{A fitted RGCCA object (see  \code{\link[RGCCA]{rgcca}}).}
 

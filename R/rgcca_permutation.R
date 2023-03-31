@@ -248,7 +248,7 @@ rgcca_permutation <- function(blocks, par_type = "tau", par_value = NULL,
                               sparsity = 1,
                               init = "svd", bias = TRUE, tol = 1e-8,
                               response = NULL, superblock = FALSE,
-                              NA_method = "nipals", rgcca_res = NULL,
+                              NA_method = "na.ignore", rgcca_res = NULL,
                               verbose = TRUE, n_iter_max = 1000,
                               comp_orth = TRUE) {
   ### Try to retrieve parameters from a rgcca object

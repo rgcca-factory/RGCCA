@@ -19,7 +19,7 @@ rgcca(
   tol = 1e-08,
   response = NULL,
   superblock = FALSE,
-  NA_method = "nipals",
+  NA_method = "na.ignore",
   verbose = FALSE,
   quiet = TRUE,
   n_iter_max = 1000,
@@ -108,12 +108,12 @@ activated.}
 \item{superblock}{A logical value indicating if the superblock option is used.}
 
 \item{NA_method}{A string indicating the method used for
-handling missing values ("nipals", "complete"). (default: "nipals").
+handling missing values ("na.ignore", "na.omit"). (default: "na.ignore").
 \itemize{
-\item{\code{"complete"}}{corresponds to perform RGCCA on the fully observed
+\item{\code{"na.omit"}}{corresponds to perform RGCCA on the fully observed
 observations (observations with missing values are removed)}
-\item{\code{"nipals"}}{corresponds to perform RGCCA algorithm on available
-data (NIPALS-type algorithm)}}}
+\item{\code{"na.ignore"}}{corresponds to perform RGCCA algorithm on available
+data (See Tenenhaus et al, 2005)}}}
 
 \item{verbose}{A logical value indicating if the progress of the
 algorithm is reported while computing.}

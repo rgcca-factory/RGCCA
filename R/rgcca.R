@@ -109,12 +109,12 @@
 #' activated.
 #' @param superblock A logical value indicating if the superblock option is used.
 #' @param NA_method  A string indicating the method used for
-#' handling missing values ("nipals", "complete"). (default: "nipals").
+#' handling missing values ("na.ignore", "na.omit"). (default: "na.ignore").
 #' \itemize{
-#' \item{\code{"complete"}}{corresponds to perform RGCCA on the fully observed
+#' \item{\code{"na.omit"}}{corresponds to perform RGCCA on the fully observed
 #' observations (observations with missing values are removed)}
-#' \item{\code{"nipals"}}{corresponds to perform RGCCA algorithm on available
-#' data (NIPALS-type algorithm)}}
+#' \item{\code{"na.ignore"}}{corresponds to perform RGCCA algorithm on available
+#' data (See Tenenhaus et al, 2005)}}
 #' @param verbose A logical value indicating if the progress of the
 #' algorithm is reported while computing.
 #' @param quiet A logical value indicating if warning messages are reported.
@@ -371,7 +371,7 @@ rgcca <- function(blocks, method = "rgcca",
                   init = "svd", bias = TRUE, tol = 1e-08,
                   response = NULL,
                   superblock = FALSE,
-                  NA_method = "nipals", verbose = FALSE, quiet = TRUE,
+                  NA_method = "na.ignore", verbose = FALSE, quiet = TRUE,
                   n_iter_max = 1000, comp_orth = TRUE) {
   rgcca_args <- as.list(environment())
   ### If specific objects are given for blocks, parameters are imported from
