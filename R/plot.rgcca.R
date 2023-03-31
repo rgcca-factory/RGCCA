@@ -146,10 +146,9 @@ plot.rgcca <- function(x, type = "weights", block = seq_along(x$call$blocks),
       y = do.call(c, lapply(x$blocks[display_blocks], colnames))
     )
 
-    idx <- apply(do.call(
-      rbind,
-      lapply(x$a[display_blocks], function(z) z[, comp, drop = FALSE])
-    ), 1, function(y) any(y != 0))
+    idx <- unlist(
+      lapply(x$a[display_blocks], apply, 1, function(y) any(y != 0))
+    )
     return(df[idx, ])
   }
 
