@@ -11,6 +11,9 @@
 
 \item{...}{Arguments for the plot.rgcca function.}
 }
+\value{
+A ggplot2 plot object.
+}
 \description{
 The fitted RGCCA model returned by rgcca_stability is plotted.
 All arguments are forwarded to the plot.rgcca function.

@@ -4,6 +4,7 @@
 #' All arguments are forwarded to the print.rgcca function.
 #' @param x Object of type "stability" produced by rgcca_stability.
 #' @param ... Arguments for the print.rgcca function.
+#' @return none
 #' @examples
 #' data(Russett)
 #' blocks <- list(

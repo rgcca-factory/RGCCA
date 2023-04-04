@@ -11,6 +11,9 @@
 
 \item{...}{Arguments for the print.rgcca function.}
 }
+\value{
+none
+}
 \description{
 The fitted RGCCA model returned by rgcca_stability is printed
 All arguments are forwarded to the print.rgcca function.
