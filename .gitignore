@@ -13,3 +13,7 @@
 \.RData
 vignettes/data/
 vignettes/images/
+docs
+inst/doc
+/doc/
+/Meta/

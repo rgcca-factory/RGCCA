@@ -14,7 +14,8 @@
 #' intervals and p-values are derived from the empirical distribution.
 #' (default: TRUE)
 #' @param n_mark An integer defining the maximum number of variables to plot.
-#' @param show_stars A logical value indicating if the significance levels are displayed.
+#' @param show_stars A logical value indicating if the significance levels
+#' are displayed.
 #' @param colors Colors used in the plots.
 #' @param adj.method A string indicating the method used to adjust the p-values.
 #' It must be a method handled by the p.adjust function. Default is "fdr".

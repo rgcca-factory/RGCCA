@@ -27,8 +27,8 @@ block.}
 \item{verbose}{A logical value indicating if the progress of the procedure
 is reported.}
 
-\item{balanced}{A logical value indicating if a balanced bootstrap procedure is
-performed or not (default is TRUE).}
+\item{balanced}{A logical value indicating if a balanced bootstrap procedure
+is performed or not (default is TRUE).}
 
 \item{keep_all_variables}{A logical value indicating if all variables have
 to be kept even when some of them have null variance for at least one

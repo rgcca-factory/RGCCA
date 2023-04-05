@@ -38,23 +38,32 @@ observations and \eqn{p_j} the number of variables.}
 \item{connection}{A (\eqn{J \times J}{J x J}) symmetric matrix describing
 the network of connections between blocks (default value: 1-diag(J)).}
 
-\item{tau}{Either a numerical value, a numeric vector of size \eqn{1 \times J}{1 x J}, or a
-numeric matrix of dimension \eqn{\mathrm{max}(ncomp) \times J}{max(ncomp) x J}
-containing the values of the regularization parameters (default: tau = 1, for each
-block and each dimension) or a string equal to "optimal". If tau is a numerical
-value, then tau is identical accross all blocks and all dimensions of the blocks.
-If tau is a vector, tau[j] is identical across the dimensions of block \eqn{\mathbf{X}_j}{Xj}.
-If tau is a matrix, tau[k, j] is associated with the kth dimension of block j.
+\item{tau}{Either a numerical value, a numeric vector of size
+\eqn{1 \times J}{1 x J}, or a
+numeric matrix of dimension
+\eqn{\mathrm{max}(ncomp) \times J}{max(ncomp) x J}
+containing the values of the regularization parameters
+(default: tau = 1, for each
+block and each dimension) or a string equal to "optimal". If tau is a
+numerical
+value, then tau is identical accross all blocks and all dimensions of
+the blocks.
+If tau is a vector, tau[j] is identical across the dimensions of
+block \eqn{\mathbf{X}_j}{Xj}.
+If tau is a matrix, tau[k, j] is associated with the kth dimension
+of block j.
 The regularization parameters varies from 0 (maximizing the correlation) to
 1 (maximizing the covariance). If tau = "optimal" the regularization
 parameters are estimated for each block and each dimension using the Schafer
-and Strimmer (2005) analytical formula. The tau parameters can also be estimated using
+and Strimmer (2005) analytical formula. The tau parameters can also be
+estimated using
 \link{rgcca_permutation} or \link{rgcca_cv}.}
 
 \item{ncomp}{A vector of length J indicating the number of components
 per block.}
 
-\item{scheme}{A string or a function specifying the scheme function applied to
+\item{scheme}{A string or a function specifying the scheme function applied
+to
 covariance maximization among "horst" (the identity function), "factorial"
  (the square function - default value), "centroid" (the absolute value
  function). The scheme function can be any continously differentiable convex
@@ -65,7 +74,8 @@ covariance maximization among "horst" (the identity function), "factorial"
 \item{scale}{A logical value indicating if variables are standardized.}
 
 \item{init}{A string giving the type of initialization to use in
-the RGCCA algorithm. It could be either by Singular Value Decompostion ("svd")
+the RGCCA algorithm. It could be either by
+Singular Value Decompostion ("svd")
 or by random initialisation ("random") (default: "svd").}
 
 \item{bias}{A logical value for biaised (\eqn{1/n}) or unbiaised
@@ -87,13 +97,15 @@ the standardized blocks.}
 \item{method}{A string specifying which multiblock component
 method to consider. Possible values are found using \link{available_methods}}
 
-\item{sparsity}{Either a numerical value, a numeric vector of size \eqn{1*J} or a numeric matrix
+\item{sparsity}{Either a numerical value, a numeric vector of
+size \eqn{1*J} or a numeric matrix
 of dimension \eqn{max(ncomp) * J} encoding the L1 constraints applied to the
 block weight vectors. For block j, the amount of sparsity varies between
 \eqn{1/sqrt(p_j)} and 1 (larger values of sparsity correspond to less
 penalization).
 
-If sparsity is a numerical value, then sparsity is identical accross all blocks
+If sparsity is a numerical value, then sparsity is identical accross
+all blocks
 and all dimensions of the blocks.
 
 If sparsity is a vector, sparsity[j] is identical across the dimensions
@@ -104,13 +116,15 @@ with \eqn{p_j} the number of variables of \eqn{X_j}.
 If sparsity is a matrix, sparsity[h, j] is associated with the hth dimension
 of block j:
 \deqn{for all h, |a_{j,h}|_{L_1} \le sparsity[h,j] \sqrt{p_j}.}
-sparsity can be estimated by using \link{rgcca_permutation} or \link{rgcca_cv}.}
+sparsity can be estimated by using \link{rgcca_permutation} or
+\link{rgcca_cv}.}
 
 \item{response}{A numerical value giving the position of the response block.
 When the response argument is filled the supervised mode is automatically
 activated.}
 
-\item{superblock}{A logical value indicating if the superblock option is used.}
+\item{superblock}{A logical value indicating if the
+superblock option is used.}
 
 \item{NA_method}{A string indicating the method used for
 handling missing values ("na.ignore", "na.omit"). (default: "na.ignore").
@@ -135,10 +149,12 @@ orthogonal components or orthogonal weights.}
 \value{
 A rgcca fitted object
 
-\item{Y}{A list of \eqn{J} elements. The jth element of the list \eqn{Y}
+\item{Y}{A list of \eqn{J} elements. The jth element
+of the list \eqn{Y}
 is a matrix that contains the block components for block j.}
 
-\item{a}{A list of \eqn{J} elements. The jth element of the list \eqn{a}
+\item{a}{A list of \eqn{J} elements. The jth element
+of the list \eqn{a}
 is a matrix that contains the block weight vectors for block j.}
 
 \item{astar}{A list of \eqn{J} elements. Each column of astar[[j]] is
@@ -158,11 +174,13 @@ AVE(outer model), AVE(inner model).}
 \item{optimal}{A logical value indicating if the Schaffer and
 Strimmer formula was applied for estimating the optimal tau parameters.}
 
-\item{opt}{A list containing some options of the fitted RGCCA object.}
+\item{opt}{A list containing some options of
+the fitted RGCCA object.}
 
 \item{call}{Call of the function.}
 
-\item{blocks}{A list that contains the J blocks of variables X1, X2, ...,
+\item{blocks}{A list that contains the J
+blocks of variables X1, X2, ...,
 XJ. Block Xj is a matrix of dimension n x p_j where p_j is the number of
 variables in X_j. These blocks are preprocessed according to the values of
 scale/scale_block/NA_method.}

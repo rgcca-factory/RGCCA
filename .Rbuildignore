@@ -2,3 +2,9 @@
 ^\.Rproj\.user$
 ^\.idea/
 ^\.travis.yml$
+^_pkgdown\.yml$
+^docs$
+^pkgdown$
+^codemeta\.json$
+^doc$
+^Meta$

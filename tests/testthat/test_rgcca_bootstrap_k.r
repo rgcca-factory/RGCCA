@@ -34,7 +34,8 @@ test_that("test_rgcca_bootstrap_k", {
 })
 
 # If one bootstrap sample presents at least a single variable with null
-# variance, rgcca_bootstrap_k should return the name of the null variance variables
+# variance, rgcca_bootstrap_k should return the name of
+# the null variance variables
 # in both the two lists it returns.
 blocks_3 <- blocks
 blocks_3$agriculture$rent <- 0
