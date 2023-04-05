@@ -1,7 +1,7 @@
 Type: Package
 Package: RGCCA
-Title: Regularized (or Sparse) Generalized Canonical Correlation Analysis
-    (R/SGCCA) for multi-block data analysis
+Title: Regularized and Sparse Generalized Canonical Correlation
+        Analysis for Multiblock Data
 Version: 3.0
 Authors@R: c(
   person("Arthur", "Tenenhaus", email = "arthur.tenenhaus@centralesupelec.fr",
@@ -27,7 +27,7 @@ Description: Multi-block data analysis concerns the analysis of several
     and plot() functions apply to all these functionalities.
 License: GPL-3
 Depends:
-    R (>= 2.10)
+    R (>= 3.5)
 Imports:
     caret,
     Deriv,
@@ -48,6 +48,7 @@ Suggests:
     knitr,
     pander,
     rmarkdown,
+    rticles,
     testthat,
     vdiffr
 VignetteBuilder:
