@@ -1,0 +1,178 @@
+% \iffalse meta-comment
+%
+% Copyright (C) 2020 by Leo C. Stein <leo.stein@gmail.com>
+% ---------------------------------------------------------------------------
+% This work may be distributed and/or modified under the
+% conditions of the LaTeX Project Public License, either version 1.3
+% of this license or (at your option) any later version.
+% The latest version of this license is in
+%   http://www.latex-project.org/lppl.txt
+% and version 1.3 or later is part of all distributions of LaTeX
+% version 2005/12/01 or later.
+%
+% This work has the LPPL maintenance status `maintained'.
+%
+% The Current Maintainer of this work is Leo C. Stein.
+%
+% This work consists of the files orcidlink.dtx and orcidlink.ins
+% and the derived filebase orcidlink.sty.
+%
+% \fi
+%
+% \iffalse
+%<*driver>
+\ProvidesFile{orcidlink.dtx}
+%</driver>
+%
+%<*driver>
+\documentclass{ltxdoc}
+\usepackage[dvipsnames]{xcolor}
+\usepackage{orcidlink}[2021/03/15]
+\hypersetup{colorlinks,urlcolor=NavyBlue,citecolor=NavyBlue,linkcolor=NavyBlue,pdfusetitle}
+\usepackage{graphicx}
+\EnableCrossrefs
+\CodelineIndex
+\RecordChanges
+\begin{document}
+  \DocInput{orcidlink.dtx}
+  \PrintChanges
+\end{document}
+%</driver>
+% \fi
+%
+% \CheckSum{33}
+%
+% \CharacterTable
+%  {Upper-case    \A\B\C\D\E\F\G\H\I\J\K\L\M\N\O\P\Q\R\S\T\U\V\W\X\Y\Z
+%   Lower-case    \a\b\c\d\e\f\g\h\i\j\k\l\m\n\o\p\q\r\s\t\u\v\w\x\y\z
+%   Digits        \0\1\2\3\4\5\6\7\8\9
+%   Exclamation   \!     Double quote  \"     Hash (number) \#
+%   Dollar        \$     Percent       \%     Ampersand     \&
+%   Acute accent  \'     Left paren    \(     Right paren   \)
+%   Asterisk      \*     Plus          \+     Comma         \,
+%   Minus         \-     Point         \.     Solidus       \/
+%   Colon         \:     Semicolon     \;     Less than     \<
+%   Equals        \=     Greater than  \>     Question mark \?
+%   Commercial at \@     Left bracket  \[     Backslash     \\
+%   Right bracket \]     Circumflex    \^     Underscore    \_
+%   Grave accent  \`     Left brace    \{     Vertical bar  \|
+%   Right brace   \}     Tilde         \~}
+%
+%
+% \changes{v1.0.0}{2020/11/19}{Converted to DTX file}
+% \changes{v1.0.1}{2020/11/21}{Bugfix due to misunderstanding of docstrip}
+% \changes{v1.0.2}{2020/11/21}{Fix fragility of command when inside of
+% author, and combined with hyperref's option pdfusetitle}
+% \changes{v1.0.3}{2021/03/15}{Improve fragility by calculating
+% scaling ourselves, and using DeclareRobustCommand}
+% \changes{v1.0.4}{2021/06/11}{Use XeTeXLinkBox to get hyperlink
+% working correctly with XeTeX.  Thanks to Tim Henke for the bug report.}
+%
+% \DoNotIndex{\newcommand,\newenvironment}
+%
+% \GetFileInfo{orcidlink.sty}
+% \title{The \textsf{orcidlink} package}
+% \author{Leo C.\ Stein\,\orcidlink{0000-0001-7559-9597} \\ \href{mailto:leo.stein@gmail.com}{leo.stein@gmail.com}}
+% \date{\fileversion~from \filedate}
+%
+% \maketitle
+%
+% \noindent Source repo:
+% \url{https://github.com/duetosymmetry/orcidlink-LaTeX-command}.
+%
+% \section{Introduction}
+%
+% This is a LaTeX style file to add a macro for inserting a linked
+% ORCiD logo.  The package provides exactly one command, |\orcidlink|.
+%
+% \section{Usage}
+%
+% To use this package, in the preamble include
+% \begin{verbatim}
+%    \usepackage{orcidlink}
+% \end{verbatim}
+%
+% \DescribeMacro{\orcidlink\marg{orcid}}
+% Insert the ORCiD logo (\orcidlink{}), which is hyperlinked to the URL
+% of the researcher whose iD was specified.
+% Replace the mandatory argument \meta{orcid} with your
+% ORCiD --- just the digits, not your whole URL.
+% For example, the command
+% |\orcidlink{0000-0001-7559-9597}| will hyperlink to the URL
+% \url{https://orcid.org/0000-0001-7559-9597}.
+% This is most common in
+% the author list.  For example, in the preamble of a RevTeX article,
+% if you write
+% \begin{verbatim}
+%    \author{Emmy Noether\,\orcidlink{0000-0000-0000-0000}}
+% \end{verbatim}
+% then the article byline will look something like this:
+%
+% \includegraphics[width=0.5\textwidth]{preview}\newline{}
+% The macro is used in the author line of this documentation as well.
+%
+% \StopEventually{}
+%
+% \section{Implementation}
+%
+% \iffalse
+%<*package>
+% \fi
+%
+%    \begin{macrocode}
+\NeedsTeXFormat{LaTeX2e}[1994/06/01]
+\ProvidesPackage{orcidlink}
+    [2021/06/11 v1.0.4 Linked ORCiD logo macro package]
+
+%% All I did was package up Milo's code on TeX.SE,
+%% see https://tex.stackexchange.com/a/445583/34063
+\RequirePackage{hyperref}
+\RequirePackage{tikz}
+
+\ProcessOptions\relax
+
+\usetikzlibrary{svg.path}
+
+\definecolor{orcidlogocol}{HTML}{A6CE39}
+\tikzset{
+  orcidlogo/.pic={
+    \fill[orcidlogocol] svg{M256,128c0,70.7-57.3,128-128,128C57.3,256,0,198.7,0,128C0,57.3,57.3,0,128,0C198.7,0,256,57.3,256,128z};
+    \fill[white] svg{M86.3,186.2H70.9V79.1h15.4v48.4V186.2z}
+                 svg{M108.9,79.1h41.6c39.6,0,57,28.3,57,53.6c0,27.5-21.5,53.6-56.8,53.6h-41.8V79.1z M124.3,172.4h24.5c34.9,0,42.9-26.5,42.9-39.7c0-21.5-13.7-39.7-43.7-39.7h-23.7V172.4z}
+                 svg{M88.7,56.8c0,5.5-4.5,10.1-10.1,10.1c-5.6,0-10.1-4.6-10.1-10.1c0-5.6,4.5-10.1,10.1-10.1C84.2,46.7,88.7,51.3,88.7,56.8z};
+  }
+}
+
+%% Reciprocal of the height of the svg whose source is above.  The
+%% original generates a 256pt high graphic; this macro holds 1/256.
+\newcommand{\@OrigHeightRecip}{0.00390625}
+
+%% We will compute the current X height to make the logo the right height
+\newlength{\@curXheight}
+
+%    \end{macrocode}
+%
+% \begin{macro}{\orcidlink}
+%    \begin{macrocode}
+\DeclareRobustCommand\orcidlink[1]{%
+\texorpdfstring{%
+\setlength{\@curXheight}{\fontcharht\font`X}%
+\href{https://orcid.org/#1}{\XeTeXLinkBox{\mbox{%
+\begin{tikzpicture}[yscale=-\@OrigHeightRecip*\@curXheight,
+xscale=\@OrigHeightRecip*\@curXheight,transform shape]
+\pic{orcidlogo};
+\end{tikzpicture}%
+}}}}{}}
+
+\endinput
+%    \end{macrocode}
+% \end{macro}
+%
+
+%
+% \iffalse
+%</package>
+% \fi
+%
+% \Finale
+\endinput
