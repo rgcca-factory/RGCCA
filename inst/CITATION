@@ -1,0 +1,13 @@
+year <- sub("-.*", "", meta$Date)
+note <- sprintf("R package version %s", meta$Version)
+
+bibentry(bibtype = "Manual",
+         title = "{RGCCA}: Regularized and Sparse Generalized Canonical Correlation Analysis for Multiblock Data",
+         author = c(person("Arthur", "Tenenhaus"),
+                    person("Caroline", "Peltier"),
+                    person("Etienne", "Camenen"),
+                    person("Arnaud", "Gloaguen"),
+                    person("Vincent", "Guillemot")),
+         year = year,
+         note = note,
+         url = "https://CRAN.R-project.org/package=RGCCA")
