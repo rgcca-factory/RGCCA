@@ -1250,7 +1250,7 @@ levels(Loc) <- colnames(ge_cgh_locIGR$multiblocks$y)
 blocks[[3]] <- Loc
 
 # check dimensions of the blocks
-sapply(blocks, NCOL)
+vapply(blocks, NCOL, FUN.VALUE = 1L)
 ```
 
 We impose $\mathbf{X}_1$ and $\mathbf{X}_2$ to be connected to $\mathbf{X}_3$. 
@@ -1461,7 +1461,10 @@ $\small{\texttt{rgcca\_stability}}$ function.
 
 ```{r, cache = TRUE, message = FALSE}
 fit_stab <- rgcca_stability(fit,
-                            keep = sapply(fit$a, function(x) mean(x != 0)),
+                            keep = vapply(
+                              fit$a, function(x) mean(x != 0),
+                              FUN.VALUE = 1.0
+                            ),
                             n_boot = 100, verbose = TRUE, n_cores = 2)
 ```
 
