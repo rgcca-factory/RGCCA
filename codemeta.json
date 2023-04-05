@@ -297,7 +297,7 @@
     },
     "SystemRequirements": null
   },
-  "fileSize": "1192.982KB",
+  "fileSize": "992.411KB",
   "citation": [
     {
       "@type": "SoftwareSourceCode",
@@ -333,6 +333,7 @@
       "description": "R package version 3.0"
     }
   ],
+  "readme": "https://github.com/rgcca-factory/RGCCA/blob/main/README.md",
   "developmentStatus": "https://lifecycle.r-lib.org/articles/stages.html#stable",
   "relatedLink": "https://CRAN.R-project.org/package=RGCCA"
 }
