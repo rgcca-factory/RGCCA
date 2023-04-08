@@ -9,8 +9,8 @@ RGCCA is an open source project, maintained by people who care. We are not direc
 [repo]: https://github.com/rgcca-factory/RGCCA
 [issues]: https://github.com/rgcca-factory/RGCCA/issues
 [new_issue]: https://github.com/rgcca-factory/RGCCA/issues/new
-[website]: https://github.com/rgcca-factory/RGCCA/index.html
-[citation]: https://github.com/rgcca-factory/RGCCA/docs/authors.html
+[website]: https://rgcca-factory.github.io/RGCCA
+[citation]: https://rgcca-factory.github.io/RGCCA/authors.html
 [email]: mailto:arthur.tenenhaus@centralesupelec.fr
 
 ## Code of conduct
