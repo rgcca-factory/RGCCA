@@ -93,6 +93,9 @@ pkgdown:
 \newtheorem{remark}[theorem]{Remark}
 ```
 
+```{r, include=FALSE}
+options(tinytex.verbose = TRUE)
+```
 
 
 ```{r, setup, include=FALSE}
