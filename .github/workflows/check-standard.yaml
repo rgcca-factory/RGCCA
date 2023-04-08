@@ -48,4 +48,4 @@ jobs:
         with:
           upload-snapshots: true
 
-      - uses: r-lib/actions/setup-tinytex@master
+      - uses: r-lib/actions/setup-tinytex@v2
