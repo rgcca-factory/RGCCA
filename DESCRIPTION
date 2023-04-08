@@ -4,13 +4,13 @@ Title: Regularized and Sparse Generalized Canonical Correlation
         Analysis for Multiblock Data
 Version: 3.0
 Authors@R: c(
-  person("Arthur", "Tenenhaus", email = "arthur.tenenhaus@centralesupelec.fr",
-         role = c("aut", "cre")),
-  person("Caroline", "Peltier", role = "aut"),
   person("Fabien", "Girka", role = "aut"),
   person("Etienne", "Camenen", role = "aut"),
+  person("Caroline", "Peltier", role = "aut"),
   person("Arnaud", "Gloaguen", role = "aut"),
-  person("Vincent", "Guillemot", role = "aut"))
+  person("Vincent", "Guillemot", role = "aut"),
+  person("Arthur", "Tenenhaus", email = "arthur.tenenhaus@centralesupelec.fr",
+         role = c("aut", "cre")))
 Maintainer: Arthur Tenenhaus <arthur.tenenhaus@centralesupelec.fr>
 Description: Multi-block data analysis concerns the analysis of several
     sets of variables (blocks) observed on the same group of individuals.
