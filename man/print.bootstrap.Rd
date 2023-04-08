@@ -38,8 +38,7 @@ the block order is used. Default is TRUE.}
 \item{adj.method}{A string indicating the method used to adjust the p-values.
 It must be a method handled by the p.adjust function. Default is "fdr".}
 
-\item{...}{Other parameters used in print (for the displaying of matrices)
-the means, 95\% intervals, bootstrap ratio, p-values and other statistics.}
+\item{...}{Other parameters used in print (for the displaying of matrices).}
 }
 \value{
 none

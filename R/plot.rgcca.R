@@ -49,25 +49,26 @@
 #' @param ... Additional graphical parameters.
 #' @details
 #' \itemize{
-#' \item "samples" for sample plot. The blocks (block argument) and components
-#' (comp) that will be used on the horizontal and the vertical axes to plot the
-#' individuals: (Y[[block[1]]][, comp[1]], Y[[block[2]]][,comp[2]]). Points can
+#' \item "samples": scatter plot of the block components. The blocks used
+#' are defined by the block argument, and the components by the comp argument
+#' (Y[[block[1]]][, comp[1]], Y[[block[2]]][,comp[2]]). Points can
 #' be colored according to the response argument.
 #' \item "weights": barplot of the block weight vectors for one
 #' specific block/component. Sorting is applied according to the
 #' display_order argument. The number of displayed weights can be set with
 #' n_marks.
 #' \item "loadings": barplot of the block-loading vectors. Sorting is applied
-#' according to the display_order argument. The number of displayed weights
+#' according to the display_order argument. The number of displayed loadings
 #' can be set with n_marks.
 #' \item  "cor_circle" for correlation circle. It represents the correlation
-#' between the component corresponding to the first element of the block
+#' between the block component corresponding to the first element of the block
 #' argument, and the variables of the block corresponding to the blocks
 #' specified by the argument display_blocks.
 #' \item "both": displays both sample plot and correlation circle (implemented
-#' only for one block and at least when two components are asked (ncomp >= 2).
-#' \item "biplot": displays on the same plot the samples and the variables
-#' used to compute the components.
+#' only for one block and at least when two components are extracted
+#' (ncomp >= 2).
+#' \item "biplot": displays on the same plot the scatter plot of the block
+#' components and the variables used to compute these block components.
 #' \item "ave": displays the average variance explained for each block.}
 #' @return A ggplot2 plot object.
 #' @examples

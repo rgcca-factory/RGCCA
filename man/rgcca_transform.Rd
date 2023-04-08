@@ -2,7 +2,7 @@
 % Please edit documentation in R/rgcca_transform.R
 \name{rgcca_transform}
 \alias{rgcca_transform}
-\title{RGCCA Transform}
+\title{Reduce dimensionality using RGCCA}
 \usage{
 rgcca_transform(rgcca_res, blocks_test = rgcca_res$call$blocks)
 }
@@ -13,10 +13,10 @@ rgcca_transform(rgcca_res, blocks_test = rgcca_res$call$blocks)
 }
 \value{
 A list of matrices containing the projections of the test blocks
-onto the block weight vectors of a fitted RGCCA object.
+using the block weight vectors of a fitted RGCCA object.
 }
 \description{
-Projection of a testing blocks onto the block weight vectors of a
+This function projects testing blocks using the block weight vectors of a
 fitted RGCCA object.
 }
 \examples{
@@ -27,7 +27,7 @@ blocks <- list(
   politic = Russett[, 6:11])
 
 Xtrain <- lapply(blocks, function(x) x[1:32, ])
-Xtest  <- lapply(blocks, function(x) x[33:47, ])
+Xtest <- lapply(blocks, function(x) x[33:47, ])
 fit_rgcca <- rgcca(Xtrain, ncomp = 2)
 projection <- rgcca_transform(fit_rgcca, Xtest)
 }

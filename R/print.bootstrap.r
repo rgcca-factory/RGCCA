@@ -5,8 +5,7 @@
 #' @inheritParams plot.bootstrap
 #' @param x A fitted rgcca_bootstrap object
 #' (see \code{\link[RGCCA]{rgcca_bootstrap}})
-#' @param ... Other parameters used in print (for the displaying of matrices)
-#' the means, 95\% intervals, bootstrap ratio, p-values and other statistics.
+#' @param ... Other parameters used in print (for the displaying of matrices).
 #' @return none
 #' @examples
 #' data("Russett")

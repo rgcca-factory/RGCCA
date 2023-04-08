@@ -1,54 +1,56 @@
-#' Stability selection for SGCCA
+#' Identify the most stable variables with SGCCA
 #'
 #' This function can be used to identify the most stable variables
 #' identified as relevant by SGCCA. A Variable Importance in the Projection
 #' (VIP) based criterion is used to identify the most stable variables.
 #'
 #' @inheritParams rgcca_bootstrap
-#' @param rgcca_res A fitted RGCCA object (see \code{\link[RGCCA]{rgcca}})
-#' @param keep A numeric vector indicating the proportion of top variables per
-#' block.
-#' @param n_boot The number of bootstrap samples (Default: 100).
+#' @param rgcca_res A fitted RGCCA object (see \code{\link[RGCCA]{rgcca}}).
+#' @param keep A numeric vector indicating the proportion of variables per
+#' block to select.
+#' @param n_boot The number of bootstrap samples (default: 100).
 #' @param n_cores The number of cores for parallelization.
 #' @param verbose A logical value indicating if the progress of the procedure
 #' is reported.
-#' @return \item{top}{The indicator on which variables are ranked.}
-#' @return \item{keepVar}{The indices of the top variables.}
-#' @return \item{bootstrap}{The block weight vectors for ech bootstrap sample.}
+#' @return \item{top}{A data.frame giving the indicator (VIP)
+#' on which the variables are ranked.}
+#' @return \item{keepVar}{The indices of the most stable variables.}
+#' @return \item{bootstrap}{A data.frame with the block weight vectors
+#' computed on each bootstrap sample.}
 #' @return \item{rgcca_res}{An RGCCA object fitted on the most stable
 #' variables.}
 #' @examples
 #' \dontrun{
-#' ###########################
-#' # stability and bootstrap #
-#' ###########################
+#'  ###########################
+#'  # stability and bootstrap #
+#'  ###########################
 #'
-#' data("ge_cgh_locIGR", package = "gliomaData")
-#' blocks <- ge_cgh_locIGR$multiblocks
-#' Loc <- factor(ge_cgh_locIGR$y)
-#' levels(Loc) <- colnames(ge_cgh_locIGR$multiblocks$y)
-#' blocks[[3]] <- Loc
+#'  data("ge_cgh_locIGR", package = "gliomaData")
+#'  blocks <- ge_cgh_locIGR$multiblocks
+#'  Loc <- factor(ge_cgh_locIGR$y)
+#'  levels(Loc) <- colnames(ge_cgh_locIGR$multiblocks$y)
+#'  blocks[[3]] <- Loc
 #'
-#' fit_sgcca <- rgcca(blocks,
-#'   sparsity = c(.071, .2, 1),
-#'   ncomp = c(1, 1, 1),
-#'   scheme = "centroid",
-#'   verbose = TRUE, response = 3
+#'  fit_sgcca <- rgcca(blocks,
+#'     sparsity = c(.071, .2, 1),
+#'     ncomp = c(1, 1, 1),
+#'     scheme = "centroid",
+#'     verbose = TRUE, response = 3
 #' )
 #'
-#' boot_out <- rgcca_bootstrap(fit_sgcca, n_boot = 100, n_cores = 1)
+#'  boot_out <- rgcca_bootstrap(fit_sgcca, n_boot = 100, n_cores = 1)
 #'
-#' fit_stab <- rgcca_stability(fit_sgcca,
-#'   keep = sapply(fit.sgcca$a, function(x) mean(x != 0)),
-#'   n_cores = 1, n_boot = 10,
-#'   verbose = TRUE
-#' )
+#'  fit_stab <- rgcca_stability(fit_sgcca,
+#'    keep = sapply(fit_sgcca$a, function(x) mean(x != 0)),
+#'    n_cores = 1, n_boot = 10,
+#'    verbose = TRUE
+#'  )
 #'
-#' boot_out <- rgcca_bootstrap(
-#'   fit_stab, n_boot = 500, n_cores = 1, verbose = TRUE
-#' )
+#'  boot_out <- rgcca_bootstrap(
+#'    fit_stab, n_boot = 500, n_cores = 1, verbose = TRUE
+#'  )
 #'
-#' plot(boot_out, block = 1:2, n_mark = 2000, display_order = FALSE)
+#'  plot(boot_out, block = 1:2, n_mark = 2000, display_order = FALSE)
 #' }
 #' @export
 rgcca_stability <- function(rgcca_res,

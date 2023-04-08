@@ -5,7 +5,7 @@
 #' parameters are displayed.
 #' @param x A fitted rgcca_permutation object (see
 #' \code{\link[RGCCA]{rgcca_permutation}})
-#' @param ... Other parameters used in print (for the displaying of matrices)
+#' @param ... Other parameters used in print (for the displaying of matrices).
 #' @return none
 #' @export
 #' @examples

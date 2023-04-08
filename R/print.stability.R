@@ -14,6 +14,7 @@
 #' )
 #' fit.sgcca <- rgcca(blocks, sparsity = c(.8, .9, .6))
 #' res <- rgcca_stability(fit.sgcca, n_boot = 10, verbose = FALSE)
+#' print(res)
 #' @export
 print.stability <- function(x, ...) {
   stopifnot(is(x, "stability"))
