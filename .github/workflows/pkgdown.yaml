@@ -33,6 +33,8 @@ jobs:
           extra-packages: any::pkgdown, local::.
           needs: website
 
+      - uses: r-lib/actions/setup-tinytex@master
+
       - name: Build site
         run: pkgdown::build_site_github_pages(new_process = FALSE, install = FALSE)
         shell: Rscript {0}
