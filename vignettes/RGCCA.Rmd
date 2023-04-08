@@ -36,8 +36,9 @@ author:
     # use a different affiliation in adress field (differently formated here)
 title:
   formatted: "Multiblock data analysis with the RGCCA package"
-  plain:  "Multiblock data analysis with the RGCCA package"
-  short:  "Regularized Generalized Canonical Correlation Analysis"
+  plain: "Multiblock data analysis with the RGCCA package"
+  short: "Regularized Generalized Canonical Correlation Analysis"
+pagetitle: "Multiblock data analysis with the RGCCA package"
 abstract: 
     Multiblock component methods aim to study the relationships between several sets of variables. Regularized Generalized Canonical Correlation Analysis (RGCCA) is a unified and flexible framework that gathers fifty years of multiblock component methods. RGCCA offers a unified implementation strategy for all these methods. This implementation is made available within the RGCCA package. In addition, the RGCCA package produces graphical outputs and statistics to assess the robustness/significance of the analysis. The usefulness of the RGCCA package is illustrated in this paper on two real datasets. The RGCCA package is freely available on the ComprehensiveR Archive Network (CRAN) http://www.r-project.org/ and GitHub https://github.com/rgcca-factory/RGCCA.
 keywords:
@@ -78,40 +79,13 @@ vignette: >
   %\VignetteIndexEntry{RGCCA}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
+pkgdown:
+  as_is: true
+  extension: pdf
 ---
 
 
 ```{=tex}
-\newcommand{\ma}[1]{\ensuremath{\mathbf{#1}}}
-\newcommand{\sign}{\ensuremath{\mathrm{sign}}}
-\newcommand{\mat}[1]{\textbf{\text{#1}}}
-\newcommand{\cov}{\ensuremath{\text{cov}}}
-\newcommand{\var}{\ensuremath{\mathrm{var}}}
-\newcommand{\tr}{\ensuremath{\mathrm{tr}}}
-\newcommand{\argmin}{\ensuremath{\mathrm{argmin}}}
-\newcommand{\argmax}{\ensuremath{\mathrm{argmax}}}
-\newcommand{\X}{\mathbf{X}}
-\newcommand{\A}{\mathbf{A}}
-\newcommand{\Q}{\mathbf{Q}}
-\newcommand{\M}{\mathbf{M}}
-\newcommand{\C}{\mathbf{C}}
-\newcommand{\mbc}{\mathbf{c}}
-\newcommand{\I}{\mathbf{I}}
-\newcommand{\mbP}{\mathbf{P}}
-\newcommand{\mba}{\mathbf{a}}
-\newcommand{\z}{\mathbf{z}}
-\newcommand{\w}{\mathbf{w}}
-\newcommand{\y}{\mathbf{y}}
-\newcommand{\mbb}{\mathbf{b}}
-\newcommand{\Xu}{\underline{\mathbf{X}}}
-\newcommand{\Pu}{\underline{\mathbf{P}}}
-\newcommand{\x}{\mathbf{x}}
-\newcommand{\K}{\mathbf{K}}
-\newcommand{\mcH}{\mathcal{H}}
-\newcommand{\bsx}{\boldsymbol{x}}
-\newcommand{\bsxi}{\boldsymbol{\xi}}
-\newcommand{\bsa}{\boldsymbol{\alpha}}
-
 \newtheorem{theorem}{theorem}[section]%
 \newtheorem{lemma}[theorem]{Lemma}
 \newtheorem{proposition}[theorem]{Proposition}
@@ -187,23 +161,23 @@ here for a broader class of constraints.
 
 The RGCCA framework relies on a master algorithm for maximizing a continuously 
 differentiable multi-convex function 
-$f(\ma a_1, \ldots,\ma a_J):\mathbb{R}^{p_1}\times \ldots \times \mathbb{R}^{p_J} \xrightarrow{}\mathbb{R}$ (i.e. for each $j$, $f$ is a convex function of 
-$\ma a_j$ while all the other $\ma a_k$ are fixed) under the constraint that 
-each $\ma a_j$ belongs to a compact set $\Omega_j\subset \mathbb{R}^{p_j}$. 
+$f( \mathbf a_1, \ldots, \mathbf a_J):\mathbb{R}^{p_1}\times \ldots \times \mathbb{R}^{p_J} \xrightarrow{}\mathbb{R}$ (i.e. for each $j$, $f$ is a convex function of 
+$\mathbf a_j$ while all the other $\mathbf a_k$ are fixed) under the constraint that 
+each $\mathbf a_j$ belongs to a compact set $\Omega_j\subset \mathbb{R}^{p_j}$. 
 This general optimization problem can be formulated as follows:
 
 \begin{align}
-\underset{\ma a_1, \ldots,\ma a_J}{\text{max}} f(\ma a_1, \ldots,\ma a_J)
-\text{~s.t.~} \ma a_j \in \Omega_j, ~ j = 1, \ldots, J.
+\underset{ \mathbf a_1, \ldots, \mathbf a_J}{\text{max}} f( \mathbf a_1, \ldots, \mathbf a_J)
+\text{ s.t. }  \mathbf a_j \in \Omega_j, \text{ } j = 1, \ldots, J.
 \label{master_optim}
 \end{align}
 
-For such a function defined over a set of parameter vectors $(\ma a_1, \ldots,\ma a_J)$, 
-we make no difference between the notations $f(\ma a_1, \ldots,\ma a_J)$ and 
-$f(\ma a)$, where $\ma a$ is the column vector 
-$\ma a = \left( \ma a_1^\top, \ldots, \ma a_J^\top\right)^\top$ 
+For such a function defined over a set of parameter vectors $( \mathbf a_1, \ldots, \mathbf a_J)$, 
+we make no difference between the notations $f( \mathbf a_1, \ldots, \mathbf a_J)$ and 
+$f( \mathbf a)$, where $\mathbf a$ is the column vector 
+$\mathbf a = \left(  \mathbf a_1^\top, \ldots,  \mathbf a_J^\top\right)^\top$ 
 of size $p = \sum_{j=1}^{J}p_j$. Moreover, the vertical concatenation of a 
-column vector is denoted $\ma a = \left( \ma a_1; \ldots; \ma a_J \right)$ 
+column vector is denoted $\mathbf a = \left(  \mathbf a_1; \ldots;  \mathbf a_J \right)$ 
 for the sake of simplification of notation. 
 
 ## Algorithm
@@ -211,40 +185,40 @@ for the sake of simplification of notation.
 A simple, monotonically, and globally convergent algorithm is presented for 
 solving optimization problem (\ref{master_optim}). The maximization 
 of the function $f$ defined over different parameter vectors 
-($\ma a_1, \ldots,\ma a_J$) is approached by updating each of the parameter 
+($\mathbf a_1, \ldots, \mathbf a_J$) is approached by updating each of the parameter 
 vectors in turn, keeping the others fixed. This update rule was recommended 
 in \cite{DeLeeuw1994} and is called Block Relaxation or cyclic Block Coordinate 
 Ascent (BCA). 
     
-Let $\nabla_j f(\ma a)$ be the partial gradient of $f(\ma a)$ 
-with respect to $\ma a_j$. We assume $\nabla_j f(\ma a) \neq \mathbf{0}$ in 
+Let $\nabla_j f( \mathbf a)$ be the partial gradient of $f( \mathbf a)$ 
+with respect to $\mathbf a_j$. We assume $\nabla_j f( \mathbf a) \neq \mathbf{0}$ in 
 this manuscript. This assumption is not too binding as 
-$\nabla_j f(\ma a) = \mathbf{0}$ characterizes the global minimum of 
-$f(\ma a_1 , \ldots , \ma a_J )$ with respect to $\ma a_j$ when the other 
-vectors $\ma a_1 , \ldots , \ma a_{j-1} , \ma a_{j+1} , \ldots , \ma a_J$ 
+$\nabla_j f( \mathbf a) = \mathbf{0}$ characterizes the global minimum of 
+$f( \mathbf a_1 , \ldots ,  \mathbf a_J )$ with respect to $\mathbf a_j$ when the other 
+vectors $\mathbf a_1 , \ldots ,  \mathbf a_{j-1} ,  \mathbf a_{j+1} , \ldots ,  \mathbf a_J$ 
 are fixed. 
 
-We want to find an update $\hat{\ma a}_j\in \Omega_j$ such that 
-$f(\ma a)\leq f(\ma a_1, ..., \ma a_{j-1}, \hat{\ma a}_j, \ma a_{j+1}, ..., \ma a_J)$. 
+We want to find an update $\hat{ \mathbf a}_j\in \Omega_j$ such that 
+$f( \mathbf a)\leq f( \mathbf a_1, ...,  \mathbf a_{j-1}, \hat{ \mathbf a}_j,  \mathbf a_{j+1}, ...,  \mathbf a_J)$. 
 As $f$ is a continuously differentiable multi-convex function and considering 
-that a convex function lies above its linear approximation at $\ma a_j$ for any 
-$\tilde{\ma a}_j\in\Omega_j$, the following inequality holds: 
+that a convex function lies above its linear approximation at $\mathbf a_j$ for any 
+$\tilde{ \mathbf a}_j\in\Omega_j$, the following inequality holds: 
 
 \begin{equation}
 \begin{gathered}
-f(\ma a_1, ..., \ma a_{j-1}, \tilde{\ma a}_j, \ma a_{j+1}, \ldots, \ma a_J) \geq f(\ma a) + \nabla_jf(\ma a)^\top(\tilde{\ma a}_j - \ma a_j).
+f( \mathbf a_1, ...,  \mathbf a_{j-1}, \tilde{ \mathbf a}_j,  \mathbf a_{j+1}, \ldots,  \mathbf a_J) \geq f( \mathbf a) + \nabla_jf( \mathbf a)^\top(\tilde{ \mathbf a}_j -  \mathbf a_j).
 \label{minorizing_ineq}
 \end{gathered}
 \end{equation}
 
 On the right-hand side of the inequality (\ref{minorizing_ineq}), 
-only the term $\nabla_jf(\ma a)^\top\tilde{\ma a}_j$ is relevant to 
-$\tilde{\ma a}_j$ and the solution that maximizes the minorizing function 
-over $\tilde{\ma a}_j\in\Omega_j$ is obtained by considering the following 
+only the term $\nabla_jf( \mathbf a)^\top\tilde{ \mathbf a}_j$ is relevant to 
+$\tilde{ \mathbf a}_j$ and the solution that maximizes the minorizing function 
+over $\tilde{ \mathbf a}_j\in\Omega_j$ is obtained by considering the following 
 optimization problem:
 
 \begin{equation}
-\hat{\ma a}_j = \underset{\tilde{\ma a}_j\in\Omega_j}{\mathrm{argmax~}} \nabla_j f(\ma a)^\top \tilde{\ma a}_j := r_j(\ma a).
+\hat{ \mathbf a}_j = \underset{\tilde{ \mathbf a}_j\in\Omega_j}{\text{argmax }} \nabla_j f( \mathbf a)^\top \tilde{ \mathbf a}_j := r_j( \mathbf a).
 \label{core_update}
 \end{equation}
 
@@ -253,17 +227,17 @@ The entire algorithm is subsumed in Algorithm \ref{master_algo}.
 \begin{algorithm}[!ht]
 	\caption{Algorithm for the maximization of a continuously differentiable multi-convex function}
 	\begin{algorithmic}[1]
-		\STATE {\bfseries Result:} {$\ma a_1^s, \ldots, \ma a_J^s$ (approximate solution of (\ref{master_optim}))}
-		\STATE {\bfseries Initialization:} {choose random vector $\ma a_j^0\in\Omega_j, j =1, \ldots, J$, $\varepsilon$;}
+		\STATE {\bfseries Result:} {$\mathbf a_1^s, \ldots,  \mathbf a_J^s$ (approximate solution of (\ref{master_optim}))}
+		\STATE {\bfseries Initialization:} {choose random vector $\mathbf a_j^0\in\Omega_j, j =1, \ldots, J$, $\varepsilon$;}
 		\STATE$s = 0$ ;
 		\REPEAT
 		\FOR{$j=1$ {\bfseries to} $J$}
 		\STATE \hspace{-2cm}$\vcenter{\begin{equation}
-		    \ma a_j^{s+1} = r_j\left( \ma a_1^{s+1}, \ldots, \ma a_{j-1}^{s+1}, \ma a_j^{s}, \ldots, \ma a_J^{s}\right).
+		     \mathbf a_j^{s+1} = r_j\left(  \mathbf a_1^{s+1}, \ldots,  \mathbf a_{j-1}^{s+1},  \mathbf a_j^{s}, \ldots,  \mathbf a_J^{s}\right).
 		\end{equation}}$
 		\ENDFOR
 		\STATE$s = s + 1$ ;
-		\UNTIL{$ f(\ma a_1^{s+1}, \ldots, \ma a_J^{s+1})-f(\ma a_1^s, \ldots, \ma a_J^s) < \varepsilon$}
+		\UNTIL{$f( \mathbf a_1^{s+1}, \ldots,  \mathbf a_J^{s+1})-f( \mathbf a_1^s, \ldots,  \mathbf a_J^s) < \varepsilon$}
 	\end{algorithmic}
 	\label{master_algo}
 \end{algorithm}
@@ -271,37 +245,37 @@ The entire algorithm is subsumed in Algorithm \ref{master_algo}.
 We need to introduce some extra notations to present the convergence 
 properties of Algorithm  \ref{master_optim}: 
 $\Omega = \Omega_1 \times \ldots \times \Omega_J$, 
-$\ma a = \left(\ma a_1; \ldots;\ma a_J\right) \in \Omega$, 
-$c_j~:~\Omega\mapsto\Omega$ is an operator defined as 
-$c_j(\ma a) = \left(\ma a_1; \ldots; \ma a_{j-1} ; r_j(\ma a) ; \ma a_{j+1} ; \ldots; \ma a_J\right)$ 
-with $r_j(\ma a)$ introduced in equation (\ref{core_update}) and 
-$c~:~\Omega\mapsto\Omega$ is defined as 
+$\mathbf a = \left( \mathbf a_1; \ldots; \mathbf a_J\right) \in \Omega$, 
+$c_j \text{ : } \Omega\mapsto\Omega$ is an operator defined as 
+$c_j( \mathbf a) = \left( \mathbf a_1; \ldots;  \mathbf a_{j-1} ; r_j( \mathbf a) ;  \mathbf a_{j+1} ; \ldots;  \mathbf a_J\right)$ 
+with $r_j( \mathbf a)$ introduced in equation (\ref{core_update}) and 
+$c \text{ : } \Omega\mapsto\Omega$ is defined as 
 $c = c_J\circ c_{J-1}\circ ... \circ c_1$, where $\circ$ stands for the 
 composition operator. Using the operator $c$, 
 the \guillemotleft for loop\guillemotright{} inside Algorithm 
 \ref{master_optim} can be replaced by the following recurrence 
-relation: $\ma a^{s+1} = c(\ma a^s)$. The convergence properties of Algorithm 
+relation: $\mathbf a^{s+1} = c( \mathbf a^s)$. The convergence properties of Algorithm 
 \ref{master_optim} are summarized in the following proposition:
 
 \begin{proposition}
-	Let $\left\lbrace \ma a^s\right\rbrace_{s=0}^{\infty}$ be any sequence 
-	generated by the recurrence relation $\ma a^{s+1} = c(\ma a^s)$ with 
-	$\ma a^0\in\Omega$. Then, the following properties hold:
+	Let $\left\lbrace  \mathbf a^s\right\rbrace_{s=0}^{\infty}$ be any sequence 
+	generated by the recurrence relation $\mathbf a^{s+1} = c( \mathbf a^s)$ with 
+	$\mathbf a^0\in\Omega$. Then, the following properties hold:
 	\begin{enumerate}[topsep=0pt,itemsep=-0.75ex,partopsep=1ex,parsep=1ex, label = {(\alph*)}]
-		\item  \label{prop_pt1} The sequence $\left\lbrace f(\ma a^s)\right\rbrace $ is monotonically increasing and therefore convergent as $f$ is bounded on $\Omega$. This result implies the monotonic convergence of Algorithm \ref{master_algo}.
-		\item  \label{prop_pt2} If the infinite sequence $\left\lbrace f(\ma a^s)\right\rbrace $ involves a finite number of distinct terms, then the last distinct point satisfies $c(\ma a^s) = \ma a^s$ and therefore is a stationary point of problem \ref{master_algo}. 
-    \item  \label{prop_pt3} $\underset{s\xrightarrow[]{}\infty}\lim{f(\ma a^s) = f(\ma{a})}$, where $\ma a$ is a fixed point of $c$.
-		\item  \label{prop_pt4} The limit of any convergent subsequence of $\left\lbrace \ma a^s\right\rbrace $ is a fixed point of $c$.
-		\item  \label{prop_pt5} The sequence $\left\lbrace \ma a^s \right\rbrace $ is asymptotically regular: $\underset{s\xrightarrow[]{}\infty}\lim{\sum_{j=1}^{J} \Vert \ma a_j^{s+1} - \ma a_j^s \Vert} = 0$. This result implies that if the threshold $\varepsilon$ for the stopping criterion in Algorithm \ref{master_algo} is made sufficiently small, the output of Algorithm \ref{master_algo} will be as close as wanted to a stationary point of \ref{master_optim}. 
-		\item  \label{prop_pt6} If the equation $\ma a = c(\ma a)$ has a finite number of solutions, then the sequence $\left\lbrace \ma a^s\right\rbrace $ converges to one of them.
+		\item  \label{prop_pt1} The sequence $\left\lbrace f( \mathbf a^s)\right\rbrace $ is monotonically increasing and therefore convergent as $f$ is bounded on $\Omega$. This result implies the monotonic convergence of Algorithm \ref{master_algo}.
+		\item  \label{prop_pt2} If the infinite sequence $\left\lbrace f( \mathbf a^s)\right\rbrace $ involves a finite number of distinct terms, then the last distinct point satisfies $c( \mathbf a^s) =  \mathbf a^s$ and therefore is a stationary point of problem \ref{master_algo}. 
+    \item  \label{prop_pt3} $\underset{s\xrightarrow[]{}\infty}\lim{f( \mathbf a^s) = f( \mathbf a)}$, where $\mathbf a$ is a fixed point of $c$.
+		\item  \label{prop_pt4} The limit of any convergent subsequence of $\left\lbrace  \mathbf a^s\right\rbrace $ is a fixed point of $c$.
+		\item  \label{prop_pt5} The sequence $\left\lbrace  \mathbf a^s \right\rbrace $ is asymptotically regular: $\underset{s\xrightarrow[]{}\infty}\lim{\sum_{j=1}^{J} \Vert  \mathbf a_j^{s+1} -  \mathbf a_j^s \Vert} = 0$. This result implies that if the threshold $\varepsilon$ for the stopping criterion in Algorithm \ref{master_algo} is made sufficiently small, the output of Algorithm \ref{master_algo} will be as close as wanted to a stationary point of \ref{master_optim}. 
+		\item  \label{prop_pt6} If the equation $\mathbf a = c( \mathbf a)$ has a finite number of solutions, then the sequence $\left\lbrace  \mathbf a^s\right\rbrace $ converges to one of them.
 	\end{enumerate}
 	\label{cv_prop}
 \end{proposition}
 
 Proposition \ref{cv_prop} gathers all the convergence properties of Algorithm \ref{master_algo}. The three first points of Proposition \ref{cv_prop} concern 
-the behavior of the sequence values $\left\lbrace f(\ma a^s) \right\rbrace$ of 
+the behavior of the sequence values $\left\lbrace f( \mathbf a^s) \right\rbrace$ of 
 the objective function, whereas the three last points are about the behavior 
-of the sequence $\left\lbrace \ma a^s \right\rbrace$. The full proof of these 
+of the sequence $\left\lbrace  \mathbf a^s \right\rbrace$. The full proof of these 
 properties is given in \cite{Tenenhaus2017}.
 
 
@@ -315,26 +289,26 @@ summarized.
 
 A random column vector $\boldsymbol x$ of $p$ variables is assumed to exist with 
 finite moments of at least order two. The random vector $\boldsymbol x$ has zero 
-mean and a covariance matrix $\ma \Sigma$. The vector $\boldsymbol x$ is 
+mean and a covariance matrix $\mathbf \Sigma$. The vector $\boldsymbol x$ is 
 composed of $J$ subvectors $\boldsymbol x_j = (x_{j1}, \ldots, x_{jp_j})^\top$. 
-The covariance matrix matrix $\ma \Sigma$ is composed of $J^2$ submatrices 
-$\ma \Sigma_{jk} = \mathbb{E}\left[\boldsymbol x_j \boldsymbol x_k^\top\right]$. 
-Let $\ma a_j = (a_{j1}, \ldots, a_{jp_j})^\top$ be a non-random $p_j$-dimensional 
+The covariance matrix matrix $\mathbf \Sigma$ is composed of $J^2$ submatrices 
+$\mathbf \Sigma_{jk} = \mathbb{E}\left[\boldsymbol x_j \boldsymbol x_k^\top\right]$. 
+Let $\mathbf a_j = (a_{j1}, \ldots, a_{jp_j})^\top$ be a non-random $p_j$-dimensional 
 column vector. A composite variable $y_j$ is defined as the linear combination 
-of the elements of $\boldsymbol x_j$: $y_j = \ma a_j^\top \boldsymbol x_j$.
+of the elements of $\boldsymbol x_j$: $y_j =  \mathbf a_j^\top \boldsymbol x_j$.
 Therefore the covariance between two composite variables is 
-$\mathbf{a}_j^\top \ma \Sigma_{jk} \mathbf{a}_k$. The RGCCA framework aims to 
+$\mathbf{a}_j^\top  \mathbf \Sigma_{jk} \mathbf{a}_k$. The RGCCA framework aims to 
 extract the information shared by the $J$ random composite variables, 
 taking into account an undirected graph of connections between them. 
 The RGCCA framework is defined by the optimization problem (\ref{opti_theo}). 
 It consists in maximizing the sum of convex functions of the covariances between 
 "connected" composites $y_j$ and $y_k$ subject to specific constraints on 
-the weights $\ma a_j$ for $j \in \{1, \ldots, J\}$.
+the weights $\mathbf a_j$ for $j \in \{1, \ldots, J\}$.
 
 \begin{equation}
-\underset{\mathbf{a}_1, \mathbf{a}_2, \ldots,\mathbf{a}_J}{\text{max~}}  f(\ma a_1, \ldots \ma a_J) = \displaystyle  \sum_{j, k = 1}^J c_{jk} \text{
-g}\left(\mathbf{a}_j^\top \ma \Sigma_{jk} \mathbf{a}_k\right)\\
-\mathrm{~s.t.~} \mathbf{a}_j \in \Omega_j, j =1, \ldots, J,
+\underset{\mathbf{a}_1, \mathbf{a}_2, \ldots,\mathbf{a}_J}{\text{max }}  f( \mathbf a_1, \ldots  \mathbf a_J) = \displaystyle  \sum_{j, k = 1}^J c_{jk} \text{
+g}\left(\mathbf{a}_j^\top  \mathbf \Sigma_{jk} \mathbf{a}_k\right)\\
+\text{ s.t. } \mathbf{a}_j \in \Omega_j, j =1, \ldots, J,
 \label{opti_theo}
 \end{equation}
 where 
@@ -354,25 +328,25 @@ The horst scheme penalizes negative structural correlation between block
 components, while the centroid scheme and the m-scheme enable two 
 components to be negatively correlated. 
 
-\item the design matrix $\ma C = \lbrace c_{jk}\rbrace$ is a symmetric 
+\item the design matrix $\mathbf C = \lbrace c_{jk}\rbrace$ is a symmetric 
 $J \times J$ matrix of non-negative elements describing the network of 
 connections between blocks that the user wants to take into account. 
 Usually, $c_{jk} = 1$ to two connected blocks and $0$ otherwise. 
 \end{itemize}
 
-When the diagonal of $\ma{C}$ is null, the convexity and the continuous 
+When the diagonal of $\mathbf{C}$ is null, the convexity and the continuous 
 differentiability of the function g imply that the objective function $f$ 
 itself is multi-convex continuously differentiable. When at least one element 
-of the diagonal of $\ma{C}$ is different from $0$, additional conditions have 
+of the diagonal of $\mathbf{C}$ is different from $0$, additional conditions have 
 to be imposed on g to keep the desired property on $f$. For example, when g is 
 twice differentiable, a sufficient condition is that 
-$\forall x\in\mathbb{R}_+, ~~g'(x)\geq 0$. This condition guarantees that the 
+$\forall x\in\mathbb{R}_+, \text{ } g'(x)\geq 0$. This condition guarantees that the 
 second derivative of 
 $g\left(\mathbf{a}_j^\top \mathbf{\Sigma}_{jj} \mathbf{a}_j\right)$ is positive 
 definite:
 
 \begin{equation}
-\frac{\partial^2 g\left(\mathbf a_j^\top \ma \Sigma_{jj} \mathbf a_j \right)}{\partial \mathbf a_j \partial \mathbf a_j^\top} = 2 \left[ g'\left(\ma \mathbf a_j^\top \ma \Sigma_{jj} \mathbf a_j \right)\ma \Sigma_{jj} + 2 g''\left(\mathbf a_j^\top \ma \Sigma_{jj} \mathbf a_j\right) \ma \Sigma_{jj}\mathbf a_j\mathbf a_j^\top\ma \Sigma_{jj} \right]. 
+\frac{\partial^2 g\left(\mathbf a_j^\top  \mathbf \Sigma_{jj} \mathbf a_j \right)}{\partial \mathbf a_j \partial \mathbf a_j^\top} = 2 \left[ g'\left( \mathbf a_j^\top  \mathbf \Sigma_{jj} \mathbf a_j \right) \mathbf \Sigma_{jj} + 2 g''\left(\mathbf a_j^\top  \mathbf \Sigma_{jj} \mathbf a_j\right)  \mathbf \Sigma_{jj}\mathbf a_j\mathbf a_j^\top \mathbf \Sigma_{jj} \right]. 
 \end{equation}
 
 All functions g considered in this paper satisfy this condition. Consequently, 
@@ -388,7 +362,7 @@ $\mathbf{M}_j$ is a symmetric positive definite matrix of order $p_j$. The optim
 problem (\ref{opti_theo}) boils down to: 
 
 \begin{equation}
-\underset{\ma a_1, \ldots \ma a_J}{\text{maximize~}} f(\ma a_1, \ldots \ma a_J) = \sum_{j,k=1}^J c_{jk} \text{g}\left(\ma a_j^\top \ma \Sigma_{jk} \mathbf{a}_k \right) \text{~s.t.~} \ma a_j^\top \M_j \ma a_j = 1,  j=1, \ldots, J.
+\underset{ \mathbf a_1, \ldots  \mathbf a_J}{\text{maximize }} f( \mathbf a_1, \ldots  \mathbf a_J) = \sum_{j,k=1}^J c_{jk} \text{g}\left( \mathbf a_j^\top  \mathbf \Sigma_{jk} \mathbf{a}_k \right) \text{ s.t. }  \mathbf a_j^\top \mathbf M_j  \mathbf a_j = 1,  j=1, \ldots, J.
 \label{RGCCA_optim_pop}
 \end{equation}
 
@@ -400,21 +374,21 @@ such that $f(\mathbf{a})\leq f(\mathbf{a}_1, \ldots, \mathbf{a}_{j-1}, \hat{\mat
 the RGCCA update is obtained by considering the following optimization problem:
 
 \begin{equation}
-\hat{\mathbf{a}}_j = \underset{\tilde{\mathbf{a}}_j\in\Omega_j}{\mathrm{argmax~}}  \nabla_j f(\mathbf{a})^\top \tilde{\mathbf{a}}_j = \frac{\ma M_j^{-1}\ma \nabla_j f(\ma a)}{\Vert \ma M_j^{-1/2}\ma \nabla_j f(\ma a) \Vert} := r_j(\ma a) , j=1, \ldots, J,
+\hat{\mathbf{a}}_j = \underset{\tilde{\mathbf{a}}_j\in\Omega_j}{\text{argmax }}  \nabla_j f(\mathbf{a})^\top \tilde{\mathbf{a}}_j = \frac{ \mathbf M_j^{-1} \mathbf \nabla_j f( \mathbf a)}{\Vert  \mathbf M_j^{-1/2} \mathbf \nabla_j f( \mathbf a) \Vert} := r_j( \mathbf a) , j=1, \ldots, J,
 \label{RGCCA_update}
 \end{equation}
-where the partial gradient $\ma \nabla_j f(\ma a)$ of 
-$f(\ma a)$ with respect to $\ma a_j$ is a $p_j$-dimensional 
+where the partial gradient $\mathbf \nabla_j f( \mathbf a)$ of 
+$f( \mathbf a)$ with respect to $\mathbf a_j$ is a $p_j$-dimensional 
 column vector is given by:
 
 \begin{equation}
-\ma \nabla_j f(\ma a)=2\sum_{k=1}^{J}c_{jk}g'\left(\ma a_j^\top \ma \Sigma_{jk} \ma a_k \right) \ma \Sigma_{jk} \ma a_k.
+ \mathbf \nabla_j f( \mathbf a)=2\sum_{k=1}^{J}c_{jk}g'\left( \mathbf a_j^\top  \mathbf \Sigma_{jk}  \mathbf a_k \right)  \mathbf \Sigma_{jk}  \mathbf a_k.
 \label{grad_obj_function}
 \end{equation}
 
 A sample-based optimization problem related to (\ref{RGCCA_optim_pop}) is 
-derived by considering a column partition $\X = [\X_1, \ldots, \X_j, \ldots, \X_J]$. 
-In this case, each $n \times p_j$ data matrix $\X_j$ is called a block and 
+derived by considering a column partition $\mathbf X = [\mathbf X_1, \ldots, \mathbf X_j, \ldots, \mathbf X_J]$. 
+In this case, each $n \times p_j$ data matrix $\mathbf X_j$ is called a block and 
 represents a set of $p_j$ variables observed on $n$ individuals. 
 The variables' number and nature may differ from one block to another, but the 
 individuals must be the same across blocks. We assume that all variables are 
@@ -424,21 +398,21 @@ version of RGCCA \citep{Tenenhaus2011} and is defined as the following optimizat
 problem:
 
 \begin{equation}
-\underset{\ma a_1, \ldots, \ma a_J}{\text{maximize~}}
-\sum_{j, k = 1}^J c_{jk} g\left(\ma a_j^\top
-\widehat{\mathbf{\Sigma}}_{jk}\ma a_k \right)\\ \mathrm{~s.t.~}\ma a_j^\top\widehat{\mathbf{\Sigma}}_{jj}\ma a_j=1, j =1, \ldots, J,
+\underset{ \mathbf a_1, \ldots,  \mathbf a_J}{\text{maximize }}
+\sum_{j, k = 1}^J c_{jk} g\left( \mathbf a_j^\top
+\widehat{\mathbf{\Sigma}}_{jk} \mathbf a_k \right)\\ \text{ s.t. } \mathbf a_j^\top\widehat{\mathbf{\Sigma}}_{jj} \mathbf a_j=1, j =1, \ldots, J,
 \label{opti_RGCCA_emp}
 \end{equation} 
 
-where $\widehat{\mathbf{\Sigma}}_{jk} = n^{-1}\ma X_j^\top \ma X_k$ is an 
+where $\widehat{\mathbf{\Sigma}}_{jk} = n^{-1} \mathbf X_j^\top  \mathbf X_k$ is an 
 estimate of the inter-block covariance matrix 
-$\mathbf{\Sigma}_{jk}= \mathbb{E}[\bsx_j\bsx_k^\top]$ and 
+$\mathbf{\Sigma}_{jk}= \mathbb{E}[\boldsymbol x_j\boldsymbol x_k^\top]$ and 
 $\widehat{\mathbf{\Sigma}}_{jj}$ is an 
-estimate of the intra-block covariance matrix $\mathbf{\Sigma}_{jj} = \mathbb{E}[\bsx_j\bsx_j^\top]$. In cases involving multi-collinearity within 
+estimate of the intra-block covariance matrix $\mathbf{\Sigma}_{jj} = \mathbb{E}[\boldsymbol x_j\boldsymbol x_j^\top]$. In cases involving multi-collinearity within 
 blocks or in high dimensional settings, one way of obtaining an estimate for the 
 true covariance matrix $\mathbf{\Sigma}_{jj}$ is to consider the class of linear 
-convex combinations of the identity matrix $\ma I$ and the sample covariance 
-matrix $\mathbf{S}_{jj} = n^{-1}\ma X_j^\top \ma X_j$. 
+convex combinations of the identity matrix $\mathbf I$ and the sample covariance 
+matrix $\mathbf{S}_{jj} = n^{-1} \mathbf X_j^\top  \mathbf X_j$. 
 We then consider a version of optimization problem (\ref{opti_RGCCA_emp}) with 
 $\widehat{\mathbf{\Sigma}}_{jj} = \tau_j\mathbf{I} + (1-\tau_j)\mathbf{S}_{jj}$ 
 with $\tau_j \in [0,1]$ (shrinkage estimator of $\mathbf{\Sigma}_{jj}$). This 
@@ -453,11 +427,11 @@ An equivalent formulation of optimization problem (\ref{opti_RGCCA_emp}) is
 given hereafter and enables a better characterization of the objective of 
 RGCCA. 
 \begin{equation}
-\displaystyle \underset{\mathbf{a}_1,\mathbf{a}_2, \ldots,\mathbf{a}_J}{\text{maximize~}} \sum_{j, k = 1}^J c_{jk}g(\mathrm{cov}(\mathbf{X}_j\mathbf{a}_j, \mathbf{X}_k\mathbf{a}_k)) \mathrm{~~s.t.~~} (1-\tau_j)\mathrm{var}(\mathbf{X}_j\mathbf{a}_j) + \tau_j\Vert \mathbf{a}_j \Vert^2 = 1, j=1, \ldots,J.
+\displaystyle \underset{\mathbf{a}_1,\mathbf{a}_2, \ldots,\mathbf{a}_J}{\text{maximize }} \sum_{j, k = 1}^J c_{jk}g(\mathrm{cov}(\mathbf{X}_j\mathbf{a}_j, \mathbf{X}_k\mathbf{a}_k)) \text{ s.t. } (1-\tau_j)\mathrm{var}(\mathbf{X}_j\mathbf{a}_j) + \tau_j\Vert \mathbf{a}_j \Vert^2 = 1, j=1, \ldots,J.
 \label{optim_RGCCA}
 \end{equation}
 Hence, the objective of RGCCA is to find block components 
-$\ma y_j = \ma X_j \ma a_j, j = 1, \ldots, J$ (where $\ma a_j$ is a block weight 
+$\mathbf y_j =  \mathbf X_j  \mathbf a_j, j = 1, \ldots, J$ (where $\mathbf a_j$ is a block weight 
 vector of size $p_j$) summarizing the relevant information between and within 
 the blocks. The $\tau_j$s are called shrinkage parameters ranging from $0$ to 
 $1$ and interpolate smoothly between maximizing the covariance and maximizing 
@@ -538,9 +512,9 @@ situation in \cite{Tenenhaus2011, Tenenhaus2017}.
 
 In the two block case, optimization problem (\ref{optim_RGCCA}) reduces to:
 \begin{equation}
-\underset{\ma a_1, \ma a_2}{\text{maximize}} \text{
-cov}\left(\X_1\ma a_1, \X_2\ma a_2 \right) \mathrm{~s.t.~} \tau_j
-\Vert \ma a_j \Vert^2 + (1-\tau_j)\text{var}(\X_j\ma a_j) = 1, j =1,2.
+\underset{ \mathbf a_1,  \mathbf a_2}{\text{maximize}} \text{
+cov}\left(\mathbf X_1 \mathbf a_1, \mathbf X_2 \mathbf a_2 \right) \text{ s.t. } \tau_j
+\Vert  \mathbf a_j \Vert^2 + (1-\tau_j)\text{var}(\mathbf X_j \mathbf a_j) = 1, j =1,2.
 \label{rCCA} 
 \end{equation} 
 
@@ -565,7 +539,7 @@ by \cite{Borga1997} and \cite{Burnham1996} and is reported in Table
 
 Table: Two-block component methods. \label{twoblock_methods}
 
-In the multiblock data analysis literature, all blocks $\X_j ,j = 1,\ldots,J$ 
+In the multiblock data analysis literature, all blocks $\mathbf X_j ,j = 1,\ldots,J$ 
 are assumed to be connected, and many criteria were proposed to 
 find block components satisfying some 
 covariance or correlation-based optimality. Most of them are special cases of 
@@ -593,8 +567,8 @@ Table: Multiblock component methods as special cases of RGCCA.\label{multiblock_
 
 Many multiblock component methods aim to find block 
 components and a global component simultaneously. For that purpose, we consider $J$ blocks, 
-$\ma X_1, \ldots, \ma X_J$ connected to a $(J + 1)$th block defined as the 
-concatenation of the blocks, $\ma X_{J+1} = [\ma X_1 , \ma X_2, \ldots, \ma X_J ]$. 
+$\mathbf X_1, \ldots,  \mathbf X_J$ connected to a $(J + 1)$th block defined as the 
+concatenation of the blocks, $\mathbf X_{J+1} = [ \mathbf X_1 ,  \mathbf X_2, \ldots,  \mathbf X_J ]$. 
 Several criteria were introduced in the literature, and many are listed below.
 
 | **Methods**                         |  $g(x)$   | $\tau_j$                       | $\mathbf{C}$                   |
@@ -604,7 +578,7 @@ Several criteria were introduced in the literature, and many are listed below.
 | **Hierarchical PCA** \citep{Wold1996}                    | $x^4$  | $\tau_j = 1, j=1, \ldots, J$ ; $\tau_{J+1} = 0$ | $\mathbf{C}_4$ |
 | **Multiple Co-Inertia Analysis** \citep{Chessel1996, Westerhuis1998, Smilde2003}     | $x^2$  | $\tau_j = 1, j=1, \ldots, J$ ; $\tau_{J+1} = 0$ | $\mathbf{C}_4$ |
 | **Multiple Factor Analysis** \citep{Escofier1994}     | $x^2$  | $\tau_j = 1, j=1, \ldots, J+1$ | $\mathbf{C}_4$ |
-Table: Multiblock component methods in a situation of $J$ blocks: $\ma X_1, \ldots, \ma X_J$, connected to a $(J + 1)$th block defined as the concatenation of the blocks: $\ma X_{J+1} = [\ma X_1 , \ma X_2, \ldots, \ma X_J]$.\label{multiblock_hierarchical}
+Table: Multiblock component methods in a situation of $J$ blocks: $\mathbf X_1, \ldots,  \mathbf X_J$, connected to a $(J + 1)$th block defined as the concatenation of the blocks: $\mathbf X_{J+1} = [ \mathbf X_1 ,  \mathbf X_2, \ldots,  \mathbf X_J]$.\label{multiblock_hierarchical}
 
 The list of pre-specified multiblock component methods than can be used within 
 the RGCCA package are reported below: 
@@ -644,7 +618,7 @@ SGCCA extends RGCCA to address this issue of variable selection \citep{Tenenhaus
 The SGCCA optimization problem is defined as follows:
 
 \begin{equation}
-\displaystyle \underset{\mathbf{a}_1,\mathbf{a}_2, \ldots,\mathbf{a}_J}{\text{maximize~}} \sum_{j, k = 1}^J c_{jk}g(\mathrm{cov}(\mathbf{X}_j\mathbf{a}_j, \mathbf{X}_k\mathbf{a}_k)) \mathrm{~~s.t.~~} \Vert \mathbf{a}_j \Vert_2 \le 1 \text{~and~} \Vert \mathbf{a}_j \Vert_1 \le s_j, j=1,\ldots,J,
+\displaystyle \underset{\mathbf{a}_1,\mathbf{a}_2, \ldots,\mathbf{a}_J}{\text{maximize }} \sum_{j, k = 1}^J c_{jk}g(\mathrm{cov}(\mathbf{X}_j\mathbf{a}_j, \mathbf{X}_k\mathbf{a}_k)) \text{ s.t. } \Vert \mathbf{a}_j \Vert_2 \le 1 \text{ and } \Vert \mathbf{a}_j \Vert_1 \le s_j, j=1,\ldots,J,
 \label{optim_SGCCA}
 \end{equation}
 
@@ -658,34 +632,34 @@ SGCCA offers a sparse counterpart for all the covariance-based methods cited
 above.  
 
 The optimization problem (\ref{optim_SGCCA}) falls into the RGCCA framework with
-$\Omega_j = \lbrace \ma{a}_j\in\mathbb{R}^{p_j}; \Vert \ma{a}_j \Vert_2 \leq 1; \Vert \ma{a}_j \Vert_1 \leq s_l\rbrace$. 
+$\Omega_j = \lbrace  \mathbf a_j\in\mathbb{R}^{p_j}; \Vert  \mathbf a_j \Vert_2 \leq 1; \Vert  \mathbf a_j \Vert_1 \leq s_l\rbrace$. 
 $\Omega_j$ is defined as the intersection between the $\ell_2$-ball of radius 
 $1$ and the $\ell_1$-ball of radius $s_l \in \mathbb{R}_+^\star$ which are two 
 compact sets. Hence, $\Omega_j$ is a compact set. Therefore, we can consider the 
 following update for SGCCA:
 
 \begin{equation}
-	\hat{\ma a}_j = \underset{\Vert \tilde{\ma a}_j \Vert_2 \leq 1 ; \Vert \tilde{\ma a}_j \Vert_1 \leq s_j}{\mathrm{argmax~}} \nabla_j f(\ma a)^\top \tilde{\ma a}_j := r_j(\ma a).
+	\hat{ \mathbf a}_j = \underset{\Vert \tilde{ \mathbf a}_j \Vert_2 \leq 1 ; \Vert \tilde{ \mathbf a}_j \Vert_1 \leq s_j}{\text{argmax }} \nabla_j f( \mathbf a)^\top \tilde{ \mathbf a}_j := r_j( \mathbf a).
 \label{update_SGCCA}
 \end{equation}
 
 According to \cite{Witten2009a}, the solution of (\ref{update_SGCCA}) satisfies:
 
 \begin{equation}
-	r_j(\ma a) = \hat{\ma a}_j = \frac{\mathcal{S}(\nabla_j f(\ma a), \lambda_j)}{\Vert \mathcal{S}(\nabla_j f(\ma a), \lambda_j)\Vert_2}, ~\text{where}~ \lambda_j = \left\lbrace\begin{array}{ccc}
-	0 ~ \text{if}~ & \frac{\Vert \nabla_j f(\ma a) \Vert_1}{\Vert \nabla_j f(\ma a) \Vert_2} & \leq s_j\\
-	\text{find}~ \lambda_j ~\text{such that}~ & \Vert \hat{\ma a}_j \Vert_1 & = s_j	\end{array}\right.,
+	r_j( \mathbf a) = \hat{ \mathbf a}_j = \frac{\mathcal{S}(\nabla_j f( \mathbf a), \lambda_j)}{\Vert \mathcal{S}(\nabla_j f( \mathbf a), \lambda_j)\Vert_2}, \text{ where } \lambda_j = \left\lbrace\begin{array}{ccc}
+	0 \text{ if } & \frac{\Vert \nabla_j f( \mathbf a) \Vert_1}{\Vert \nabla_j f( \mathbf a) \Vert_2} & \leq s_j\\
+	\text{find } \lambda_j \text{ such that } & \Vert \hat{ \mathbf a}_j \Vert_1 & = s_j	\end{array}\right.,
 	\label{SGCCA_sol}
 \end{equation}
 
 where function $\mathcal{S}(., \lambda)$ is the soft-thresholding operator. 
-When applied on a vector $\x\in\mathbb{R}^p$, this operator is defined as:
+When applied on a vector $\mathbf x\in\mathbb{R}^p$, this operator is defined as:
 
 \begin{equation}
-	\ma{u} = \mathcal{S}(\x, \lambda) \Leftrightarrow u_j = \left\lbrace
+	 \mathbf u = \mathcal{S}(\mathbf x, \lambda) \Leftrightarrow u_j = \left\lbrace
 	\begin{array}{ccc}
-		\sign(x_j)(|x_j| -  \lambda), &~ \text{if}~ |x_j| &> \lambda\\
-		0, &~ \text{if}~ |x_j| &\leq \lambda\\ 
+		{\mathrm{sign}}(x_j)(|x_j| -  \lambda), & \text{ if } |x_j| &> \lambda\\
+		0, & \text{ if } |x_j| &\leq \lambda\\ 
 	\end{array}\right., j = 1, \ldots, p.
 \end{equation}
 
@@ -699,7 +673,7 @@ The norm equivalence between $\Vert . \Vert_1$ and $\Vert . \Vert_2$ can be
 formulated as the following inequality:
 
 \begin{equation}
-	\forall \x \in \mathbb{R}^{p_j}, ~ \Vert \x \Vert_2 \leq \Vert \x \Vert_1 \leq \sqrt{p_j}\Vert \x \Vert_2.
+	\forall \mathbf x \in \mathbb{R}^{p_j}, \text{ } \Vert \mathbf x \Vert_2 \leq \Vert \mathbf x \Vert_1 \leq \sqrt{p_j}\Vert \mathbf x \Vert_2.
 \label{existence_conditions}
 \end{equation}
 
@@ -707,7 +681,7 @@ This can be converted into a condition on $s_j$: $1 \leq s_j \leq \sqrt{p_j}$.
 When such a condition is fulfilled, the $\ell_2$-sphere of radius $1$ and the 
 $\ell_1$-sphere of radius $s_j$ necessarily intersect. Within the RGCCA package, 
 for consistency with the value of $\tau_j \in [0, 1]$, the level of sparsity for 
-$\ma a_j$ is controlled with $s_j/p_j \in [1/\sqrt{p_j}, 1]$.
+$\mathbf a_j$ is controlled with $s_j/p_j \in [1/\sqrt{p_j}, 1]$.
 
 Several strategies, such as Binary Search or the Projection On Convex Set algorithm 
 (POCS), also known as the alternating projection method \citep{Boyd2003}, can be 
@@ -718,7 +692,7 @@ the RGCCA package.
 The SGCCA algorithm is similar to the RGCCA algorithm and keeps the same 
 convergence properties. Empirically, we note that the S/RGCCA algorithm is 
 found to be not sensitive to the starting point and usually reaches convergence 
-($\small{\texttt{tol}}$ = $10^{-16}$) within a few iterations.
+($\small{\texttt{tol}}$= $10^{-16}$) within a few iterations.
 
 ## Higher level RGCCA algorithm
 
@@ -727,40 +701,40 @@ The traditional approach consists of incorporating the single-unit RGCCA
 algorithm in a deflation scheme and sequentially computing the desired number of 
 components. More precisely, the RGCCA optimization problem 
 returns a set of $J$ optimal block-weight vectors. denoted here 
-$\ma a_j^{(1)}, ~ j = 1, \ldots, J$. Let 
-$\y_j^{(1)} = \X_j\ma a_j^{(1)}, ~ j = 1, \ldots, J$ be the corresponding block 
+$\mathbf a_j^{(1)}, \text{ } j = 1, \ldots, J$. Let 
+$\mathbf y_j^{(1)} = \mathbf X_j \mathbf a_j^{(1)}, \text{ } j = 1, \ldots, J$ be the corresponding block 
 components. Two strategies to determine higher-level weight vectors are 
 presented. The first yields orthogonal block components, and the second 
 yields orthogonal weight vectors. Deflation is the most straightforward way to 
 add orthogonality constraints. This deflation procedure is sequential and 
 consists in replacing within the RGCCA optimization problem the data matrix 
-$\X_j$ by $\X_j^{(1)}$ its projection onto either: (i) the orthogonal subspace 
-of $\ma y_j^{(1)}$ if orthogonal components are desired: 
-$\X_j^{(1)} = \X_j - \ma y_j^{(1)} \left( {\ma y_j^{(1)}}^\top \ma y_j^{(1)} \right)^{-1}{\ma y_j^{(1)}}^\top \X_j$, 
-or (ii) the orthogonal subspace of $\ma a_j^{(1)}$ for orthogonal weight vectors 
-$\X_j^{(1)} = \X_j - \X_j\ma a_j^{(1)} \left( {\ma a_j^{(1)}}^\top \ma a_j^{(1)} \right)^{-1}{\ma {a}_j^{(1)}}^\top$.
+$\mathbf X_j$ by $\mathbf X_j^{(1)}$ its projection onto either: (i) the orthogonal subspace 
+of $\mathbf y_j^{(1)}$ if orthogonal components are desired: 
+$\mathbf X_j^{(1)} = \mathbf X_j -  \mathbf y_j^{(1)} \left( { \mathbf y_j^{(1)}}^\top  \mathbf y_j^{(1)} \right)^{-1}{ \mathbf y_j^{(1)}}^\top \mathbf X_j$, 
+or (ii) the orthogonal subspace of $\mathbf a_j^{(1)}$ for orthogonal weight vectors 
+$\mathbf X_j^{(1)} = \mathbf X_j - \mathbf X_j \mathbf a_j^{(1)} \left( { \mathbf a_j^{(1)}}^\top  \mathbf a_j^{(1)} \right)^{-1}{ \mathbf a_j^{(1)}}^\top$.
 
 The second level RGCCA optimization problem boils down to:
 
 \begin{equation}
-		\underset{\ma a_1, \ldots,\ma a_J}{\text{max~}} \sum_{j, k = 1}^J c_{jk} \text{ g}\left(n^{-1}\ma a_j^\top {\X_j^{(1)}}^\top \X_k^{(1)} \ma a_k \right)
-		\text{~s.t.~} \ma a_j \in \Omega_j.
+		\underset{ \mathbf a_1, \ldots, \mathbf a_J}{\text{max }} \sum_{j, k = 1}^J c_{jk} \text{ g}\left(n^{-1} \mathbf a_j^\top {\mathbf X_j^{(1)}}^\top \mathbf X_k^{(1)}  \mathbf a_k \right)
+		\text{ s.t. }  \mathbf a_j \in \Omega_j.
 	\label{optim_RGCCA_orth_comp}
 \end{equation} 
 
 The optimization problem (\ref{optim_RGCCA_orth_comp}) is solved using 
 Algorithm \ref{master_algo} and returns a set of optimal block-weight vectors
-$\ma a_j^{(2)}$ and block components $\ma y_j^{(2)} = \X_j^{(1)}\ma a_j^{(2)}$, 
+$\mathbf a_j^{(2)}$ and block components $\mathbf y_j^{(2)} = \mathbf X_j^{(1)} \mathbf a_j^{(2)}$, 
 for $j = 1\ldots, J$. 
 
 For orthogonal block weight vectors, 
-$\ma y_j^{(2)} = \X_j^{(1)}\ma a_j^{(2)} = \X_j \ma a_j^{(2)}$ 
+$\mathbf y_j^{(2)} = \mathbf X_j^{(1)} \mathbf a_j^{(2)} = \mathbf X_j  \mathbf a_j^{(2)}$ 
 naturally expresses as a linear combination of the original variables. 
-For orthogonal block component, as $\y_j^{(1)} = \X_j\ma a_j^{(1)}$, 
-the range space of $\X_j^{(1)}$ is included in the range space of $\X_j$. 
-Therefore any block component $\y_j^{(2)}$ belonging to the range space of 
-$\X_j^{(1)}$ can also be expressed in terms of the original block $\X_j$: that 
-is, it exists $\ma a_j^{(2)^\star}$ such that $\y_j^{(2)} = \X_j^{(1)}\ma a_j^{(2)} = \X_j\ma a_j^{(2)^\star}$. 
+For orthogonal block component, as $\mathbf y_j^{(1)} = \mathbf X_j \mathbf a_j^{(1)}$, 
+the range space of $\mathbf X_j^{(1)}$ is included in the range space of $\mathbf X_j$. 
+Therefore any block component $\mathbf y_j^{(2)}$ belonging to the range space of 
+$\mathbf X_j^{(1)}$ can also be expressed in terms of the original block $\mathbf X_j$: that 
+is, it exists $\mathbf a_j^{(2)^\star}$ such that $\mathbf y_j^{(2)} = \mathbf X_j^{(1)} \mathbf a_j^{(2)} = \mathbf X_j \mathbf a_j^{(2)^\star}$. 
 It implies that the block components can always 
 be expressed in terms of the original data matrix, whatever the deflation mode.
 
@@ -776,9 +750,9 @@ strategies (what to deflate and how) have been proposed in the literature.
 We propose, as the default option, to deflate only the superblock with respect 
 to its global components: 
 
-$$\X_{J+1}^{(1)} = \left(\mathbf{I} - \ma y_{J+1}^{(1)} \left( {\ma y_{J+1}^{(1)}}^\top \ma y_{J+1}^{(1)} \right)^{-1}{\ma y_{J+1}^{(1)}}^\top \right) \X_{J+1} = \left[ \X_1^{(1)}, \ldots, \X_J^{(1)} \right].$$
+$$\mathbf X_{J+1}^{(1)} = \left(\mathbf{I} -  \mathbf y_{J+1}^{(1)} \left( { \mathbf y_{J+1}^{(1)}}^\top  \mathbf y_{J+1}^{(1)} \right)^{-1}{ \mathbf y_{J+1}^{(1)}}^\top \right) \mathbf X_{J+1} = \left[ \mathbf X_1^{(1)}, \ldots, \mathbf X_J^{(1)} \right].$$
 
-The individual blocks $\X_j^{(1)}$s are then retrieved from the deflated 
+The individual blocks $\mathbf X_j^{(1)}$s are then retrieved from the deflated 
 superblock. This strategy enables recovering Multiple Factor Analysis 
 ($\small{\texttt{ade4::mfa()/FactoMineR::MFA()}}$).
 Note that, in this case, block components do not 
@@ -796,7 +770,7 @@ indicators of model quality are defined:
 following formula:
 
 \begin{equation}
-\mathrm{AVE}(\X_j)=  \frac{1}{\Vert \X_j \Vert^2} \sum_{h=1}^{p_j} \text{var}(\mathbf{x}_{jh}) \times \text{cor}^2(\mathbf{x}_{jh},\mathbf{y}_j).
+\mathrm{AVE}(\mathbf X_j)=  \frac{1}{\Vert \mathbf X_j \Vert^2} \sum_{h=1}^{p_j} \text{var}(\mathbf{x}_{jh}) \times \text{cor}^2(\mathbf{x}_{jh},\mathbf{y}_j).
 \label{AVE_X}
 \end{equation}
 
@@ -804,7 +778,7 @@ following formula:
 sum of these individual AVEs. This outer AVE is defined as:
 
 \begin{equation}
-\displaystyle \mathrm{AVE(outer model)} = \left( 1/\sum_j \Vert \X_j \Vert^2 \right) \sum_j \Vert \X_j \Vert^2 \mathrm{AVE}(\X_j).
+\displaystyle \mathrm{AVE(outer model)} = \left( 1/\sum_j \Vert \mathbf X_j \Vert^2 \right) \sum_j \Vert \mathbf X_j \Vert^2 \mathrm{AVE}(\mathbf X_j).
 \label{AVE_outer}
 \end{equation}
 
@@ -883,7 +857,7 @@ block have been defined according to the nature of the variables.
     dictatorship. Due to redundancy, the dummy variable “unstable democracy” 
     has been left out.
 
-The different blocks of variables $\X_1, \ldots, \X_J$ are arranged in the list format.
+The different blocks of variables $\mathbf X_1, \ldots, \mathbf X_J$ are arranged in the list format.
 
 ```{r}
 A <- list(
@@ -905,8 +879,8 @@ preprocessing is reached by setting the $\small{\texttt{scale}}$ argument to $\s
 value) in the $\small{\texttt{rgcca()}}$ function. To make blocks comparable, a possible 
 strategy is to standardize the variables and divide each block by 
 the square root of its number of variables \citep{Westerhuis1998}. This two-step 
-procedure leads to $\mathrm{tr}(\X_j^\top \X_j )=n$ for each block (i.e. the 
-sum of the eigenvalues of the covariance matrix of $\X_j$ is equal to $1$ 
+procedure leads to $\mathrm{tr}(\mathbf X_j^\top \mathbf X_j )=n$ for each block (i.e. the 
+sum of the eigenvalues of the covariance matrix of $\mathbf X_j$ is equal to $1$ 
 whatever the block). Such a preprocessing is reached by 
 setting the $\small \texttt{scale\_block}$ argument to 
 $\small \texttt{TRUE}$ or $\small{\texttt{"inertia"}}$ (default value) in the 
@@ -964,7 +938,7 @@ print(fit)
 The block-weight vectors solution of the optimization problem (\ref{optim_RGCCA}) 
 are available as output of the $\small{\texttt{rgcca()}}$ function in $\small{\texttt{fit\$a}}$ and correspond exactly to the weight vectors reported in Figure 5 of \cite{Tenenhaus2011}. 
 It is possible to display specific block-weight vector(s) ($\small{\texttt{type = "weight"}}$) block-loadings vector(s) ($\small{\texttt{type = "loadings"}}$) using the generic $\small{\texttt{plot()}}$ function and specifying the arguments $\small{\texttt{block}}$ and $\small{\texttt{comp}}$ accordingly. The
-${\ma a_j^{(k)}}^\star$, mentioned in Section [Higher level RGCCA algorithm], 
+${ \mathbf a_j^{(k)}}^\star$, mentioned in Section [Higher level RGCCA algorithm], 
 are available in $\small{\texttt{fit\$astar}}$.
 
 ```{r, fig.height = 12, fig.width=18, fig.cap = 'Block-weight vectors of a fitted RGCCA model.', fig.pos = "H"}
@@ -977,8 +951,8 @@ of the $\small{\texttt{rgcca()}}$ function in $\small{\texttt{fit\$Y}}$ and grap
 factor plot ($\small{\texttt{type = "sample"}}$), correlation circle ($\small{\texttt{type = "cor\_circle"}}$) or 
 biplot ($\small{\texttt{type = "biplot"}}$).  This graphical display allows visualizing the sources of variability within blocks, 
 the relationships between variables within and between blocks, and the amount of correlation between blocks. 
-The graphical display of the countries obtained by crossing $\X_1 \ma a_1$ = Agricultural Inequality 
-and $\X_2 \ma a_2$ = Industrial Development and marked with their political regime in 1960 is shown below.
+The graphical display of the countries obtained by crossing $\mathbf X_1  \mathbf a_1$ = Agricultural Inequality 
+and $\mathbf X_2  \mathbf a_2$ = Industrial Development and marked with their political regime in 1960 is shown below.
 
 ```{r, fig.align='center', fig.cap = '\\label{fig:sample}Graphical display of the countries by drawing the block component of the first block against the block component of the second block, colored according to their political regime.', fig.height = 12, fig.width=18, fig.pos = "H"}
 plot(fit, type = "sample",
@@ -1314,7 +1288,7 @@ corresponding to the same block but different components:
 \forall h, \Vert \mathbf{a}_j^{(h)} \Vert_{\ell_1} \leq \small{\texttt{sparsity}}_j \sqrt{p_j},
 \end{equation}
 ```
-with $p_j$ the number of variables of $\X_j$.
+with $p_j$ the number of variables of $\mathbf X_j$.
 
 If $\small{\texttt{sparsity}}$ is a matrix, row $h$ of $\small{\texttt{sparsity}}$ defines the constraints 
 applied to the weights corresponding to components $h$:
@@ -1417,7 +1391,7 @@ print(fit)
 Note that the sparsity parameter associated with $\mathbf{X}_3$ switches 
 automatically to $\tau_3 = 0$. This choice is 
 justified by the fact that we were not looking for a block component 
-$\y_3$ that explained its own block well (since $\mathbf{X}_3$ is a group 
+$\mathbf y_3$ that explained its own block well (since $\mathbf{X}_3$ is a group 
 coding matrix) but one that is correlated with its neighboring components. 
 
 At last, $\small{\texttt{rgcca\_predict()}}$ can be used for predicting new blocks,
@@ -1450,7 +1424,7 @@ selection procedure of SGCCA. This procedure relies on the following
 score:
 
 \begin{equation}
-\displaystyle \mathrm{VIP}(\mathbf{x}_{jh}) = \frac{1}{K} \sum_{k=1}^K \left(\mathbf{a}_{jh}^{(k)2} \mathrm{AVE}\left(\X_j^{(k)}\right)\right).
+\displaystyle \mathrm{VIP}(\mathbf{x}_{jh}) = \frac{1}{K} \sum_{k=1}^K \left(\mathbf{a}_{jh}^{(k)2} \mathrm{AVE}\left(\mathbf X_j^{(k)}\right)\right).
 \label{VIP}
 \end{equation}
 
