@@ -50,4 +50,3 @@ jobs:
         with:
           upload-snapshots: true
           build_args: '"--compact-vignettes=\"gs+qpdf\""'
-          args: '"--compact-vignettes=\"gs+qpdf\""'
