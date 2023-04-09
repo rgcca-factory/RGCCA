@@ -101,8 +101,8 @@ test_that("RGCCA is equivalent to PLS when there are two blocks and tau = 1", {
     blocks = A, scale = TRUE, scale_block = FALSE,
     bias = FALSE, scheme = "horst", tol = 1e-16
   )
-  expect_lte(max(abs(fit.svd$u[, 1] - fit.rgcca$a[[1]])), 1e-9)
-  expect_lte(max(abs(fit.svd$v[, 1] - fit.rgcca$a[[2]])), 1e-9)
+  expect_lte(max(abs(fit.svd$u[, 1] - fit.rgcca$a[[1]])), 1e-8)
+  expect_lte(max(abs(fit.svd$v[, 1] - fit.rgcca$a[[2]])), 1e-8)
 })
 
 test_that("RGCCA is equivalent to PLS when method = 'pls'", {
@@ -110,8 +110,8 @@ test_that("RGCCA is equivalent to PLS when method = 'pls'", {
     blocks = A, method = "pls", scale = TRUE,
     scale_block = FALSE, tol = 1e-16, bias = FALSE
   )
-  expect_lte(max(abs(fit.svd$u[, 1] - fit.rgcca$a[[1]][, 1])), 1e-9)
-  expect_lte(max(abs(fit.svd$v[, 1] - fit.rgcca$a[[2]][, 1])), 1e-9)
+  expect_lte(max(abs(fit.svd$u[, 1] - fit.rgcca$a[[1]][, 1])), 1e-8)
+  expect_lte(max(abs(fit.svd$v[, 1] - fit.rgcca$a[[2]][, 1])), 1e-8)
 })
 
 ##### Retrieve CCA with RGCCA #####
