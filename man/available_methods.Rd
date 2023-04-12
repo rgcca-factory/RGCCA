@@ -12,3 +12,6 @@ A vector of the methods implemented with the rgcca function.
 \description{
 List the methods that can be used with the rgcca function.
 }
+\examples{
+available_methods()
+}

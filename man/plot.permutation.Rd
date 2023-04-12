@@ -55,7 +55,8 @@ be shown (default is FALSE).}
 A ggplot2 plot object.
 }
 \description{
-Plot a fitted rgcca permutation object. The set of candidate tuning parameters
+Plot a fitted rgcca permutation object. The set of candidate tuning
+parameters
 are represented on the y-axis and the RGCCA objective function - obtained
 from both the original and permuted blocks - on the x-axis. If type =
 "zstat" the value of the zstat for the various parameter sets are reported on

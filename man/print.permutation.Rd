@@ -10,7 +10,7 @@
 \item{x}{A fitted rgcca_permutation object (see
 \code{\link[RGCCA]{rgcca_permutation}})}
 
-\item{...}{Other parameters used in print (for the displaying of matrices)}
+\item{...}{Other parameters used in print (for the displaying of matrices).}
 }
 \value{
 none

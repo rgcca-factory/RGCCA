@@ -14,10 +14,10 @@
 \item "sd" (default): the middle bar corresponds to the mean and limits of
 the boxes are given by the mean plus or minus the standard deviation.
 \item "quantile": the middle bar corresponds to the median and limits of
-the boxes are given by the 25% and 75% quantiles.
+the boxes are given by the 25\% and 75\% quantiles.
 }}
 
-\item{...}{Other parameters used in print (for the displaying of matrices)}
+\item{...}{Other parameters used in print (for the displaying of matrices).}
 }
 \value{
 none

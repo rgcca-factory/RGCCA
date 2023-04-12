@@ -9,7 +9,7 @@
 \arguments{
 \item{x}{A RGCCA object (see \code{\link{rgcca}})}
 
-\item{...}{Other parameters used in print (for the displaying of matrices)}
+\item{...}{Other parameters used in print (for the displaying of matrices).}
 }
 \value{
 none

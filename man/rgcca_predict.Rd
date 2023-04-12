@@ -2,7 +2,7 @@
 % Please edit documentation in R/rgcca_predict.R
 \name{rgcca_predict}
 \alias{rgcca_predict}
-\title{Predict RGCCA}
+\title{Make predictions using RGCCA}
 \usage{
 rgcca_predict(
   rgcca_res,
@@ -15,27 +15,29 @@ rgcca_predict(
 \arguments{
 \item{rgcca_res}{A fitted RGCCA object (see  \code{\link[RGCCA]{rgcca}}).}
 
-\item{blocks_test}{A list of blocks (data.frame or matrix) to be projected.}
+\item{blocks_test}{A list of test blocks from which we aim to predict the
+associated response block. If the test response block is present among
+blocks_test, metrics are computed by comparing the predictions and the
+true values.}
 
 \item{prediction_model}{A string giving the model used for prediction.
 Please see caret::modelLookup() for a list of the available models.}
 
-\item{metric}{A string indicating the metric used during the process
-of cross-validation. Should be one of the following scores:
+\item{metric}{A string indicating the metric of interest.
+It should be one of the following scores:
 
 For classification: "Accuracy", "Kappa", "F1", "Sensitivity", "Specificity",
 "Pos_Pred_Value", "Neg_Pred_Value", "Precision", "Recall", "Detection_Rate",
-"Balanced_Accuracy"
+"Balanced_Accuracy".
 
-For regression: "RMSE", "MAE"}
+For regression: "RMSE", "MAE".}
 
-\item{...}{Additional parameters to be passed to the model fitted on top
-of RGCCA.}
+\item{...}{Additional parameters to be passed to prediction_model.}
 }
 \value{
 A list containing the following elements:
 
-\item{score}{the score obtained on the testing block. NA if the test
+\item{score}{The score obtained on the testing block. NA if the test
 block is missing.}
 
 \item{model}{A list of the models trained using caret to make the
@@ -44,57 +46,31 @@ predictions and compute the scores.}
 \item{metric}{A list of data.frames containing the scores obtained
 on the training and testing sets.}
 
-\item{confusion}{A list containing NA for regression tasks,
-the confusion summary produced by caret otherwise.}
-
-\item{results}{A list of lists. There is a list per column in the
-response block. Each list contains the score on the corresponding columns
-of the test response block, the learned prediction model, predictions,
-confusion matrices (if classification task, NA otherwise),
-and additional scores on both training and test sets.
-NA are reported if the test block is missing.}
+\item{confusion}{A list containing NA for regression tasks.
+Otherwise, the confusion summary produced by caret for train and test.}
 
 \item{projection}{A list of matrices containing the projections
 of the test blocks using the canonical components from the fitted RGCCA
 object. The response block is not projected.}
 
-\item{prediction}{A data.frame with the prediction of the test
-response block.}
+\item{prediction}{A list of data.frames with the predictions
+of the test and train response blocks.}
 }
 \description{
-Predict is a function for predictions from a fitted RGCCA object.
+This function aims to make predictions combining a fitted RGCCA object
+and a prediction model for classification or regression.
 }
 \examples{
 data("Russett")
 blocks <- list(
   agriculture = Russett[, 1:3],
   industry = Russett[, 4:5],
-  politic = Russett[, 6:11]
+  politic = Russett[, 6:8]
 )
-C <- connection <- matrix(
-  c(
-    0, 0, 1,
-    0, 0, 1,
-    1, 1, 0
-  ),
-  3, 3
+X_train <- lapply(blocks, function(x) x[seq(1, 30), ])
+X_test <- lapply(blocks, function(x) x[seq(31, 47), ])
+fit <- rgcca(X_train,
+  tau = 1, ncomp = c(3, 2, 3), response = 3
 )
-object1 <- rgcca(blocks,
-  connection = C, tau = c(0.7, 0.8, 0.7),
-  ncomp = c(3, 2, 4), superblock = FALSE, response = 3
-)
-A <- lapply(object1$blocks, function(x) x[1:32, ])
-object <- rgcca(A,
-  connection = C, tau = c(0.7, 0.8, 0.7),
-  ncomp = c(3, 2, 4),
-  scale = FALSE, scale_block = FALSE,
-  superblock = FALSE, response = 3
-)
-X <- lapply(object1$blocks, function(x) x[-c(1:32), ])
-X <- lapply(X, function(x) x[, sample(1:NCOL(x))])
-X <- sample(X, length(X))
-response <- "industry"
-y_train <- kmeans(A[[response]], 3)$cluster
-y_test <- kmeans(X[[response]], 3)$cluster
-res <- rgcca_predict(object, X)
+res <- rgcca_predict(fit, X_test)
 }

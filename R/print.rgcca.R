@@ -4,7 +4,7 @@
 #' displayed like model parameters or criterion.
 #' @title Print the call of rgcca results
 #' @param x A RGCCA object (see \code{\link{rgcca}})
-#' @param ... Other parameters used in print (for the displaying of matrices)
+#' @param ... Other parameters used in print (for the displaying of matrices).
 #' @return none
 #' @export
 #' @examples

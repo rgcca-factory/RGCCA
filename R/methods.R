@@ -2,6 +2,8 @@
 #'
 #' List the methods that can be used with the rgcca function.
 #' @return A vector of the methods implemented with the rgcca function.
+#' @examples
+#' available_methods()
 #' @export
 available_methods <- function() {
   c(

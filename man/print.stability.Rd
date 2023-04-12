@@ -11,6 +11,9 @@
 
 \item{...}{Arguments for the print.rgcca function.}
 }
+\value{
+none
+}
 \description{
 The fitted RGCCA model returned by rgcca_stability is printed
 All arguments are forwarded to the print.rgcca function.
@@ -24,4 +27,5 @@ blocks <- list(
 )
 fit.sgcca <- rgcca(blocks, sparsity = c(.8, .9, .6))
 res <- rgcca_stability(fit.sgcca, n_boot = 10, verbose = FALSE)
+print(res)
 }

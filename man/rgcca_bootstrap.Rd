@@ -14,14 +14,14 @@ rgcca_bootstrap(
 )
 }
 \arguments{
-\item{rgcca_res}{A fitted RGCCA object (see  \code{\link[RGCCA]{rgcca}})}
+\item{rgcca_res}{A fitted RGCCA object (see  \code{\link[RGCCA]{rgcca}}).}
 
-\item{n_boot}{The number of bootstrap samples. (Default: 100).}
+\item{n_boot}{The number of bootstrap samples (default: 100).}
 
 \item{n_cores}{The number of cores used for parallelization.}
 
-\item{balanced}{A logical value indicating if a balanced bootstrap procedure is
-performed or not (default is TRUE).}
+\item{balanced}{A logical value indicating if a balanced bootstrap procedure
+is performed or not (default is TRUE).}
 
 \item{keep_all_variables}{A logical value indicating if all variables have
 to be kept even when some of them have null variance for at least one
@@ -31,15 +31,22 @@ bootstrap sample (default is FALSE).}
 procedure is reported.}
 }
 \value{
-A list containing two objects: 'bootstrap' and 'rgcca'.
-'bootstrap' is a list containing for each block, a matrix
-with the variables of the block in row and the block weight vector
-calculated across bootstrap sample in column. 'rgcca' is the fitted rgcca
-object obtained from the original data. (see  \code{\link[RGCCA]{rgcca}})
+A bootstrap object that can be printed and plotted.
+
+\item{n_boot}{The number of bootstrap samples, returned
+for further use.}
+
+\item{rgcca}{The RGCCA object fitted on the original data.}
+
+\item{bootstrap}{A data.frame with the block weight vectors and
+loadings computed on each bootstrap sample.}
+
+\item{stats}{A data.frame of statistics summarizing the bootstrap
+data.frame.}
 }
 \description{
-Bootstrap confidence intervals and p-values for evaluating the significance/
-stability of the block-weight vectors produce by S/RGCCA.
+Bootstrap confidence intervals and p-values for evaluating the
+significance/stability of the block-weight vectors produced by S/RGCCA.
 }
 \examples{
 # Bootstrap confidence intervals and p-values for RGCCA
@@ -61,34 +68,36 @@ plot(boot_out, type = "weight", block = 1:3, comp = 1,
 
 \dontrun{
 
-# Download the dataset's package at http://biodev.cea.fr/sgcca/ and install
-# it from the package archive file.
-# You can do it with the following R commands:
-if (!("gliomaData" \%in\% rownames(installed.packages()))) {
-  destfile <- tempfile()
-  download.file("http://biodev.cea.fr/sgcca/gliomaData_0.4.tar.gz", destfile)
-  install.packages(destfile, repos = NULL, type = "source")
-}
+ # Download the dataset's package at http://biodev.cea.fr/sgcca/ and install
+ # it from the package archive file.
+ # You can do it with the following R commands:
+ if (!("gliomaData" \%in\% rownames(installed.packages()))) {
+   destfile <- tempfile()
+   download.file(
+     "http://biodev.cea.fr/sgcca/gliomaData_0.4.tar.gz", destfile
+   )
+   install.packages(destfile, repos = NULL, type = "source")
+ }
 
-data("ge_cgh_locIGR", package = "gliomaData")
-blocks <- ge_cgh_locIGR$multiblocks
-Loc <- factor(ge_cgh_locIGR$y)
-levels(Loc) <- colnames(ge_cgh_locIGR$multiblocks$y)
-blocks [[3]] <- Loc
+ data("ge_cgh_locIGR", package = "gliomaData")
+ blocks <- ge_cgh_locIGR$multiblocks
+ Loc <- factor(ge_cgh_locIGR$y)
+ levels(Loc) <- colnames(ge_cgh_locIGR$multiblocks$y)
+ blocks [[3]] <- Loc
 
 
-fit_sgcca <- rgcca(blocks, response = 3,
-  sparsity = c(.071, .2, 1), ncomp = 1,
-  scheme = "factorial",
-  verbose = TRUE
-)
+ fit_sgcca <- rgcca(blocks, response = 3,
+    sparsity = c(.071, .2, 1), ncomp = 1,
+   scheme = "factorial",
+   verbose = TRUE
+ )
 
-print(fit_sgcca)
+ print(fit_sgcca)
 
-boot_out <- rgcca_bootstrap(fit_sgcca, n_boot = 50, n_cores = 2)
-plot(boot_out, block = 1:2, type = "weight",
-     comp = 1, n_mark = 300000,
-     display_order = FALSE)
+ boot_out <- rgcca_bootstrap(fit_sgcca, n_boot = 50, n_cores = 2)
+ plot(boot_out, block = 1:2, type = "weight",
+       comp = 1, n_mark = 300000,
+       display_order = FALSE)
 }
 }
 \seealso{

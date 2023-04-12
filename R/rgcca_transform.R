@@ -1,12 +1,12 @@
-#' RGCCA Transform
+#' Reduce dimensionality using RGCCA
 #'
-#' Projection of a testing blocks onto the block weight vectors of a
+#' This function projects testing blocks using the block weight vectors of a
 #' fitted RGCCA object.
 #'
 #' @param rgcca_res A fitted RGCCA object (see  \code{\link[RGCCA]{rgcca}}).
 #' @param blocks_test A list of blocks (data.frame or matrix) to be projected.
 #' @return A list of matrices containing the projections of the test blocks
-#' onto the block weight vectors of a fitted RGCCA object.
+#' using the block weight vectors of a fitted RGCCA object.
 #' @examples
 #' data("Russett")
 #' blocks <- list(
@@ -15,7 +15,7 @@
 #'   politic = Russett[, 6:11])
 #'
 #' Xtrain <- lapply(blocks, function(x) x[1:32, ])
-#' Xtest  <- lapply(blocks, function(x) x[33:47, ])
+#' Xtest <- lapply(blocks, function(x) x[33:47, ])
 #' fit_rgcca <- rgcca(Xtrain, ncomp = 2)
 #' projection <- rgcca_transform(fit_rgcca, Xtest)
 #' @export

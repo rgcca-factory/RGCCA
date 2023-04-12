@@ -4,7 +4,7 @@
 #' The parameters tuned for maximizing the cross-validated score is
 #' displayed in the title. The set of candidate tuning parameters
 #' are represented on the y-axis. A boxplot of the cross-validated scores are
-#' displayed on the x-axis, .
+#' displayed on the x-axis.
 #' @inheritParams plot.rgcca
 #' @inheritParams plot.bootstrap
 #' @param x A rgcca_cv object (see \link{rgcca_cv})
@@ -13,7 +13,7 @@
 #' \item "sd" (default): the middle bar corresponds to the mean and limits of
 #' the boxes are given by the mean plus or minus the standard deviation.
 #' \item "quantile": the middle bar corresponds to the median and limits of
-#' the boxes are given by the 25% and 75% quantiles.
+#' the boxes are given by the 25\% and 75\% quantiles.
 #' }
 #' @return A ggplot2 plot object.
 #' @examples

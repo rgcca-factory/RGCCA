@@ -37,48 +37,59 @@ rgcca_cv(
 )
 }
 \arguments{
-\item{blocks}{A list that contains the J blocks of variables
+\item{blocks}{A list that contains the \eqn{J} blocks of variables
 \eqn{\mathbf{X_1}, \mathbf{X_2}, ..., \mathbf{X_J}}{X1, X2, ..., XJ}.
 Block \eqn{\mathbf{X}_j}{Xj} is a matrix of dimension
-\eqn{n \times p_j}{n x p_j} where n is the number of
+\eqn{n \times p_j}{n x p_j} where \eqn{n} is the number of
 observations and \eqn{p_j} the number of variables.}
 
 \item{method}{A string specifying which multiblock component
-method to consider. Possible values are found using \link{available_methods}}
+method to consider. Possible values are found using
+\link{available_methods}.}
 
 \item{response}{A numerical value giving the position of the response block.
-When the response argument is filled the supervised mode is automatically
+When the response argument is filled, the supervised mode is automatically
 activated.}
 
 \item{par_type}{A character giving the parameter to tune among "sparsity",
 "tau" or "ncomp".}
 
-\item{par_value}{A matrix (K*J, with J the number of blocks and K the number
-of combinations to be tested), a vector (of J length) or a numeric value
-giving the sets of parameters to be tested for tau, sparsity or ncomp.
-By default, for tau and sparsity, it takes 10 sets between min values (0 for
-RGCCA and $1/sqrt(ncol)$ for SGCCA) and 1. for ncomp, it takes a certain
-number of sets between ncomp and 1.}
+\item{par_value}{The parameter values to be tested, either NULL,
+a numerical vector of size \eqn{J}{J}, or a matrix of size
+\eqn{\text{par_length} \times J}{par_length x J}.
+
+If par_value is NULL, up to par_length sets of parameters are generated
+uniformly from
+the minimum and maximum possible values of the parameter defined by par_type
+for each block. Minimum possible values are 0 for tau,
+\eqn{1/\text{sqrt}(p_j)}{1/sqrt(p_j)} for sparsity, and 1
+for ncomp. Maximum possible values are 1 for tau and sparsity, and
+\eqn{p_j}{p_j} for ncomp.
+
+If par_value is a vector, it overwrites the maximum values taken for the
+range of generated parameters.
+
+If par_value is a matrix, par_value directly corresponds to the set of
+tested parameters.}
 
 \item{par_length}{An integer indicating the number of sets of candidate
-parameters to be tested (if par_value = NULL). The parameters are uniformly
-distributed.}
+parameters to be tested (if par_value is not a matrix).}
 
 \item{validation}{A string specifying the type of validation among "loo" and
 "kfold". For small datasets (e.g. <30 samples), it is recommended to use a
-loo procedure.}
+loo (leave-one-out) procedure.}
 
 \item{prediction_model}{A string giving the model used for prediction.
 Please see caret::modelLookup() for a list of the available models.}
 
-\item{metric}{A string indicating the metric used during the process
-of cross-validation. Should be one of the following scores:
+\item{metric}{A string indicating the metric of interest.
+It should be one of the following scores:
 
 For classification: "Accuracy", "Kappa", "F1", "Sensitivity", "Specificity",
 "Pos_Pred_Value", "Neg_Pred_Value", "Precision", "Recall", "Detection_Rate",
-"Balanced_Accuracy"
+"Balanced_Accuracy".
 
-For regression: "RMSE", "MAE"}
+For regression: "RMSE", "MAE".}
 
 \item{k}{An integer giving the number of folds (if validation = 'kfold').}
 
@@ -87,23 +98,31 @@ For regression: "RMSE", "MAE"}
 
 \item{n_cores}{The number of cores used for parallelization.}
 
-\item{quiet}{A logical value indicating if warning messages are reported.}
+\item{quiet}{A logical value indicating if some diagnostic messages
+are reported.}
 
-\item{superblock}{A logical value indicating if the superblock option is used.}
+\item{superblock}{A logical value indicating if the
+superblock option is used.}
 
 \item{scale}{A logical value indicating if variables are standardized.}
 
 \item{scale_block}{A logical value or a string indicating if each block is
-scaled. If TRUE or "inertia", each block is divided by the sum of eigenvalues
-of its empirical covariance matrix. If "lambda1", each block is divided by
+scaled.
+
+If TRUE or "inertia", each block is divided by the sum of eigenvalues
+of its empirical covariance matrix.
+
+If "lambda1", each block is divided by
 the square root of the highest eigenvalue of its empirical covariance matrix.
+
 If standardization is applied (scale = TRUE), the block scaling applies on
 the standardized blocks.}
 
 \item{tol}{The stopping value for the convergence of the algorithm
 (default: tol = 1e-08).}
 
-\item{scheme}{A string or a function specifying the scheme function applied to
+\item{scheme}{A string or a function specifying the scheme function applied
+to
 covariance maximization among "horst" (the identity function), "factorial"
  (the square function - default value), "centroid" (the absolute value
  function). The scheme function can be any continously differentiable convex
@@ -115,53 +134,76 @@ covariance maximization among "horst" (the identity function), "factorial"
 handling missing values ("na.ignore", "na.omit"). (default: "na.ignore").
 \itemize{
 \item{\code{"na.omit"}}{corresponds to perform RGCCA on the fully observed
-observations (observations with missing values are removed)}
+observations (observations from which missing values have been removed).}
 \item{\code{"na.ignore"}}{corresponds to perform RGCCA algorithm on available
-data (See Tenenhaus et al, 2005)}}}
+data (See Tenenhaus et al, 2005).}}}
 
 \item{rgcca_res}{A fitted RGCCA object (see  \code{\link[RGCCA]{rgcca}}).}
 
-\item{tau}{Either a numerical value, a numeric vector of size \eqn{1 \times J}{1 x J}, or a
-numeric matrix of dimension \eqn{\mathrm{max}(ncomp) \times J}{max(ncomp) x J}
-containing the values of the regularization parameters (default: tau = 1, for each
-block and each dimension) or a string equal to "optimal". If tau is a numerical
-value, then tau is identical accross all blocks and all dimensions of the blocks.
-If tau is a vector, tau[j] is identical across the dimensions of block \eqn{\mathbf{X}_j}{Xj}.
-If tau is a matrix, tau[k, j] is associated with the kth dimension of block j.
+\item{tau}{Either a numerical value, a numeric vector of size
+\eqn{J}{J}, or a
+numeric matrix of dimension
+\eqn{\mathrm{max}(\text{ncomp}) \times J}{max(ncomp) x J}
+containing the values of the regularization parameters
+(default: tau = 1, for each
+block and each dimension), or a string equal to "optimal".
 The regularization parameters varies from 0 (maximizing the correlation) to
-1 (maximizing the covariance). If tau = "optimal" the regularization
+1 (maximizing the covariance).
+
+If tau is a numerical
+value, tau is identical accross all constraints applied to all
+block weight vectors.
+
+If tau is a vector, tau[j] is used for the constraints applied to
+all the block weight vectors associated to block \eqn{\mathbf X_j}{Xj}.
+
+If tau is a matrix, tau[k, j] is associated with the constraints
+applied to the kth block weight vector correpsonding to block
+\eqn{\mathbf X_j}{Xj}.
+
+If tau = "optimal" the regularization
 parameters are estimated for each block and each dimension using the Schafer
-and Strimmer (2005) analytical formula. The tau parameters can also be estimated using
+and Strimmer (2005) analytical formula. The tau parameters can also be
+estimated using
 \link{rgcca_permutation} or \link{rgcca_cv}.}
 
-\item{ncomp}{A vector of length J indicating the number of components
-per block.}
+\item{ncomp}{A numerical value or a vector of length \eqn{J} indicating
+the number of components per block. If a single value is provided,
+the same number of components is extracted for every block.}
 
-\item{sparsity}{Either a numerical value, a numeric vector of size \eqn{1*J} or a numeric matrix
-of dimension \eqn{max(ncomp) * J} encoding the L1 constraints applied to the
-block weight vectors. For block j, the amount of sparsity varies between
-\eqn{1/sqrt(p_j)} and 1 (larger values of sparsity correspond to less
+\item{sparsity}{Either a numerical value, a numeric vector of
+size \eqn{J} or a numeric matrix
+of dimension \eqn{\text{max}(\text{ncomp}) \times J} encoding the L1
+constraints applied to the
+block weight vectors. For block \eqn{j}, the amount of
+sparsity varies between
+\eqn{1/\text{sqrt}(p_j)} and 1 (larger values of sparsity correspond to less
 penalization).
 
-If sparsity is a numerical value, then sparsity is identical accross all blocks
-and all dimensions of the blocks.
+If sparsity is a numerical value, then sparsity is identical accross
+all constraints applied to all block weight vectors.
 
-If sparsity is a vector, sparsity[j] is identical across the dimensions
-h = 1, ..., H of block j:
-\deqn{for all h, |a_{j,h}|_{L_1} \le sparsity[j] \sqrt{p_j},}
-with \eqn{p_j} the number of variables of \eqn{X_j}.
+If sparsity is a vector, sparsity[j] is identical across the constraints
+applied to the block weight vectors associated to block
+\eqn{\mathbf X_j}{Xj}:
+\deqn{\forall k, \Vert a_{j,k} \Vert_{1} \le \text{sparsity}[j] \sqrt{p_j}.}
 
-If sparsity is a matrix, sparsity[h, j] is associated with the hth dimension
-of block j:
-\deqn{for all h, |a_{j,h}|_{L_1} \le sparsity[h,j] \sqrt{p_j}.}
-sparsity can be estimated by using \link{rgcca_permutation} or \link{rgcca_cv}.}
+If sparsity is a matrix, sparsity[k, j] is associated with the constraints
+applied to the kth block weight vector correpsonding to block
+\eqn{\mathbf X_j}{Xj}:
+\deqn{\Vert a_{j,k}\Vert_{1} \le \text{sparsity}[k,j] \sqrt{p_j}.}
+
+The sparsity parameter can be estimated by using \link{rgcca_permutation} or
+\link{rgcca_cv}.}
 
 \item{init}{A string giving the type of initialization to use in
-the RGCCA algorithm. It could be either by Singular Value Decompostion ("svd")
+the RGCCA algorithm. It could be either by
+Singular Value Decompostion ("svd")
 or by random initialisation ("random") (default: "svd").}
 
 \item{bias}{A logical value for biaised (\eqn{1/n}) or unbiaised
-(\eqn{1/(n-1)}) estimator of the var/cov (default: bias = TRUE).}
+(\eqn{1/(n-1)}) estimator of the variance/covariance
+(default: bias = TRUE).}
 
 \item{verbose}{A logical value indicating if the progress of the
 algorithm is reported while computing.}
@@ -170,35 +212,41 @@ algorithm is reported while computing.}
 iterations.}
 
 \item{comp_orth}{A logical value indicating if the deflation should lead to
-orthogonal components or orthogonal weights.}
+orthogonal block components or orthogonal block weight vectors.}
 
-\item{...}{Additional parameters to be passed to the model fitted on top
-of RGCCA.}
+\item{...}{Additional parameters to be passed to prediction_model.}
 }
 \value{
+A cval object that can be printed and plotted.
+
 \item{k}{An integer giving the number of folds.}
 
-\item{n_run}{An integer giving the number of MCCV}
+\item{n_run}{An integer giving the number of MCCV.}
 
-\item{opt}{A list containing some options of the fitted cval object.}
+\item{opt}{A list containing some options of the
+RGCCA model.}
 
 \item{metric}{A string indicating the metric used during the process
 of cross-validation.}
 
-\item{cv}{A matrix of dimension par_length*(k*n_run). Each row of cv
+\item{cv}{A matrix of dimension par_length x (k x n_run).
+Each row of cv
 corresponds to one set of candidate parameters. Each column of cv corresponds
-to the cross-validated score of a specific fold.}
+to the cross-validated score of a specific fold in a specific run.}
 
-\item{call}{A list of the input parameters}
+\item{call}{A list of the input parameters of the RGCCA model.}
+
+\item{par_type}{The type of parameter tuned (either "tau",
+"sparsity", or "ncomp").}
 
 \item{best_params}{The set of parameters that yields the best
-cross-validated scores}
+cross-validated scores.}
 
 \item{params}{A matrix reporting the sets of candidate parameters
-used during the process of cross-validation.}
+used during the cross-validation process.}
 
-\item{validation}{A string specifying the type of validation among
-"loo", "kfold"}
+\item{validation}{A string specifying the type of validation
+(either "loo" or "kfold").}
 
 \item{stats}{A data.frame containing various statistics (mean, sd,
 median, first quartile, third quartile) of the cross-validated score for
@@ -273,38 +321,38 @@ plot(cv_out)
 fit_opt = rgcca(cv_out)
 
 \dontrun{
-data("ge_cgh_locIGR", package = "gliomaData")
-blocks <- ge_cgh_locIGR$multiblocks
-Loc <- factor(ge_cgh_locIGR$y)
-levels(Loc) <- colnames(ge_cgh_locIGR$multiblocks$y)
-blocks[[3]] <- Loc
-set.seed(27) # favorite number
+ data("ge_cgh_locIGR", package = "gliomaData")
+ blocks <- ge_cgh_locIGR$multiblocks
+ Loc <- factor(ge_cgh_locIGR$y)
+ levels(Loc) <- colnames(ge_cgh_locIGR$multiblocks$y)
+ blocks[[3]] <- Loc
+ set.seed(27) # favorite number
 
-cv_out = rgcca_cv(blocks, response = 3,
-                 ncomp = 1,
-                 prediction_model = "glmnet",
-                 family = "multinomial", lambda = .001,
-                 par_type = "sparsity",
-                 par_value = c(.071, .2, 1),
-                 metric = "Balanced_Accuracy",
-                 n_cores = 10,
-)
+  cv_out = rgcca_cv(blocks, response = 3,
+                   ncomp = 1,
+                   prediction_model = "glmnet",
+                   family = "multinomial", lambda = .001,
+                   par_type = "sparsity",
+                   par_value = c(.071, .2, 1),
+                   metric = "Balanced_Accuracy",
+                   n_cores = 2,
+ )
 
-print(cv_out)
-plot(cv_out, display_order = FALSE)
+ print(cv_out)
+ plot(cv_out, display_order = FALSE)
 
-cv_out = rgcca_cv(blocks, response = 3,
-                 ncomp = 1,
-                 prediction_model = "glmnet",
-                 family = "multinomial", lambda = .001,
-                 par_type = "ncomp",
-                 par_value = c(5, 5, 1),
-                 metric = "Balanced_Accuracy",
-                 n_cores = 10,
-)
+  cv_out = rgcca_cv(blocks, response = 3,
+                   ncomp = 1,
+                   prediction_model = "glmnet",
+                   family = "multinomial", lambda = .001,
+                   par_type = "ncomp",
+                   par_value = c(5, 5, 1),
+                   metric = "Balanced_Accuracy",
+                   n_cores = 2,
+ )
 
-print(cv_out)
-plot(cv_out, display_order = FALSE)
+ print(cv_out)
+ plot(cv_out, display_order = FALSE)
 }
 
 }

@@ -46,7 +46,8 @@ intervals and p-values are derived from the empirical distribution.
 variables are ordered from highest to lowest absolute value. If FALSE,
 the block order is used. Default is TRUE.}
 
-\item{show_stars}{A logical value indicating if the significance levels are displayed.}
+\item{show_stars}{A logical value indicating if the significance levels
+are displayed.}
 
 \item{title}{A string specifying the title of the plot.}
 

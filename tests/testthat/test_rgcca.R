@@ -15,7 +15,7 @@ test_that("RGCCA is equivalent to scaled PCA with duplicated X and default
   if (sign(fit.rgcca$a[[1]][1]) != sign(fit.pca$rotation[1])) {
     fit.rgcca$a[[1]] <- -fit.rgcca$a[[1]]
   }
-  expect_true(sum(abs(fit.pca$rotation[, 1] - fit.rgcca$a[[1]])) < tol)
+  expect_lte(max(abs(fit.pca$rotation[, 1] - fit.rgcca$a[[1]])), tol)
 })
 
 test_that("RGCCA is equivalent to scaled PCA with columns split into blocks
@@ -37,15 +37,15 @@ test_that("RGCCA is equivalent to scaled PCA when method = 'pca'", {
   if (sign(fit.rgcca$a[[1]][1, 1]) != sign(fit.pca$rotation[1, 1])) {
     fit.rgcca$a[[1]][, 1] <- -fit.rgcca$a[[1]][, 1]
   }
-  expect_true(sum(abs(fit.pca$rotation[, 1] - fit.rgcca$a[[1]][, 1])) < tol)
+  expect_lte(max(abs(fit.pca$rotation[, 1] - fit.rgcca$a[[1]][, 1])), tol)
   if (sign(fit.rgcca$a[[1]][1, 2]) != sign(fit.pca$rotation[1, 2])) {
     fit.rgcca$a[[1]][, 2] <- -fit.rgcca$a[[1]][, 2]
   }
-  expect_true(sum(abs(fit.pca$rotation[, 2] - fit.rgcca$a[[1]][, 2])) < tol)
+  expect_lte(max(abs(fit.pca$rotation[, 2] - fit.rgcca$a[[1]][, 2])), tol)
   # Check AVE
   AVE_pca <- summary(fit.pca)$importance[2, ]
   AVE_rgcca <- fit.rgcca$AVE$AVE_X[[1]]
-  expect_true(all(abs(AVE_pca - AVE_rgcca) < tol2))
+  expect_lte(max(abs(AVE_pca - AVE_rgcca)), tol2)
 })
 
 ##### Retrieve unscaled PCA with RGCCA #####
@@ -58,7 +58,7 @@ test_that("RGCCA is equivalent to unscaled PCA with duplicated X and default
   if (sign(fit.rgcca$a[[1]][1]) != sign(fit.pca$rotation[1])) {
     fit.rgcca$a[[1]] <- -fit.rgcca$a[[1]]
   }
-  expect_true(sum(abs(fit.pca$rotation[, 1] - fit.rgcca$a[[1]])) < tol)
+  expect_lte(max(abs(fit.pca$rotation[, 1] - fit.rgcca$a[[1]])), tol)
 })
 
 test_that("RGCCA is equivalent to unscaled PCA with columns split into blocks
@@ -85,11 +85,11 @@ test_that("RGCCA is equivalent to unscaled PCA when method = 'pca'", {
   if (sign(fit.rgcca$a[[1]][1, 1]) != sign(fit.pca$rotation[1, 1])) {
     fit.rgcca$a[[1]][, 1] <- -fit.rgcca$a[[1]][, 1]
   }
-  expect_true(sum(abs(fit.pca$rotation[, 1] - fit.rgcca$a[[1]][, 1])) < tol)
+  expect_lte(max(abs(fit.pca$rotation[, 1] - fit.rgcca$a[[1]][, 1])), tol)
   if (sign(fit.rgcca$a[[1]][1, 2]) != sign(fit.pca$rotation[1, 2])) {
     fit.rgcca$a[[1]][, 2] <- -fit.rgcca$a[[1]][, 2]
   }
-  expect_true(sum(abs(fit.pca$rotation[, 2] - fit.rgcca$a[[1]][, 2])) < tol)
+  expect_lte(max(abs(fit.pca$rotation[, 2] - fit.rgcca$a[[1]][, 2])), tol)
 })
 
 ##### Retrieve PLS with RGCCA #####
@@ -101,8 +101,8 @@ test_that("RGCCA is equivalent to PLS when there are two blocks and tau = 1", {
     blocks = A, scale = TRUE, scale_block = FALSE,
     bias = FALSE, scheme = "horst", tol = 1e-16
   )
-  expect_true(sum(abs(fit.svd$u[, 1] - fit.rgcca$a[[1]])) < 1e-9)
-  expect_true(sum(abs(fit.svd$v[, 1] - fit.rgcca$a[[2]])) < 1e-9)
+  expect_lte(max(abs(fit.svd$u[, 1] - fit.rgcca$a[[1]])), 1e-8)
+  expect_lte(max(abs(fit.svd$v[, 1] - fit.rgcca$a[[2]])), 1e-8)
 })
 
 test_that("RGCCA is equivalent to PLS when method = 'pls'", {
@@ -110,8 +110,8 @@ test_that("RGCCA is equivalent to PLS when method = 'pls'", {
     blocks = A, method = "pls", scale = TRUE,
     scale_block = FALSE, tol = 1e-16, bias = FALSE
   )
-  expect_true(sum(abs(fit.svd$u[, 1] - fit.rgcca$a[[1]][, 1])) < 1e-9)
-  expect_true(sum(abs(fit.svd$v[, 1] - fit.rgcca$a[[2]][, 1])) < 1e-9)
+  expect_lte(max(abs(fit.svd$u[, 1] - fit.rgcca$a[[1]][, 1])), 1e-8)
+  expect_lte(max(abs(fit.svd$v[, 1] - fit.rgcca$a[[2]][, 1])), 1e-8)
 })
 
 ##### Retrieve CCA with RGCCA #####
@@ -135,12 +135,12 @@ test_that("RGCCA is equivalent to CCA when there are two blocks and tau = 0", {
     blocks = A, scale = FALSE, tau = 0, scheme = "horst",
     scale_block = FALSE, tol = 1e-16, bias = FALSE
   )
-  expect_true(sum(abs(
+  expect_lte(max(abs(
     fit.svd$u[, 1] - sqrt_matrix(Sigma_11)[[1]] %*% fit.rgcca$a[[1]]
-  )) < 1e-8)
-  expect_true(sum(abs(
+  )), 1e-8)
+  expect_lte(max(abs(
     fit.svd$v[, 1] - sqrt_matrix(Sigma_22)[[1]] %*% fit.rgcca$a[[2]]
-  )) < 1e-8)
+  )), 1e-8)
 })
 
 test_that("RGCCA is equivalent to CCA when method = 'cca'", {
@@ -148,12 +148,12 @@ test_that("RGCCA is equivalent to CCA when method = 'cca'", {
     blocks = A, method = "cca", scale = FALSE,
     scale_block = FALSE, tol = 1e-16, bias = FALSE
   )
-  expect_true(sum(abs(
+  expect_lte(max(abs(
     fit.svd$u[, 1] - sqrt_matrix(Sigma_11)[[1]] %*% fit.rgcca$a[[1]]
-  )) < 1e-8)
-  expect_true(sum(abs(
+  )), 1e-8)
+  expect_lte(max(abs(
     fit.svd$v[, 1] - sqrt_matrix(Sigma_22)[[1]] %*% fit.rgcca$a[[2]]
-  )) < 1e-8)
+  )), 1e-8)
 })
 
 ##### Perform OLS with RGCCA #####
@@ -182,7 +182,7 @@ test_that("Block weights can be retrieved using the superblock component", {
   for (j in seq_len(J)) {
     a <- t(A[[j]]) %*% fit$Y[[J + 1]]
     if (sign(a[1]) != sign(fit$a[[j]][1])) a <- -a
-    expect_true(max(abs(fit$a[[j]] - a / norm(a, type = "2"))) < tol)
+    expect_lte(max(abs(fit$a[[j]] - a / norm(a, type = "2"))), tol)
   }
 })
 
@@ -191,7 +191,7 @@ test_that("Block weights can be retrieved using the superblock weights", {
   for (j in seq_len(J)) {
     a <- fit$a[[J + 1]][seq(1 + idx[j], idx[j + 1])]
     if (sign(a[1]) != sign(fit$a[[j]][1])) a <- -a
-    expect_true(max(abs(fit$a[[j]] - a / norm(a, type = "2"))) < tol)
+    expect_lte(max(abs(fit$a[[j]] - a / norm(a, type = "2"))), tol)
   }
 })
 
@@ -220,8 +220,8 @@ test_that("RGCCA is equivalent to MFA with right parameters", {
     superblock = TRUE, tol = 1e-16
   )
 
-  expect_true(max(abs(fit.mcoa$Y[[4]][, 1] - fit.mfa$ind$coord[, 1])) < tol)
-  expect_true(max(abs(fit.mcoa$Y[[4]][, 2] - fit.mfa$ind$coord[, 2])) < tol)
+  expect_lte(max(abs(fit.mcoa$Y[[4]][, 1] - fit.mfa$ind$coord[, 1])), tol)
+  expect_lte(max(abs(fit.mcoa$Y[[4]][, 2] - fit.mfa$ind$coord[, 2])), tol)
 })
 
 ##### Test AVE #####

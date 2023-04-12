@@ -4,7 +4,7 @@
 #' analysis, tuning parameters and statistics for each set of
 #' parameters are displayed.
 #' @inheritParams plot.cval
-#' @param ... Other parameters used in print (for the displaying of matrices)
+#' @param ... Other parameters used in print (for the displaying of matrices).
 #' @return none
 #' @export
 #' @examples

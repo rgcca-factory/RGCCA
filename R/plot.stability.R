@@ -4,6 +4,7 @@
 #' All arguments are forwarded to the plot.rgcca function.
 #' @param x Object of type "stability" produced by rgcca_stability.
 #' @param ... Arguments for the plot.rgcca function.
+#' @return A ggplot2 plot object.
 #' @examples
 #' data(Russett)
 #' blocks <- list(

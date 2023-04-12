@@ -29,32 +29,48 @@ rgcca(
 )
 }
 \arguments{
-\item{blocks}{A list that contains the J blocks of variables
+\item{blocks}{A list that contains the \eqn{J} blocks of variables
 \eqn{\mathbf{X_1}, \mathbf{X_2}, ..., \mathbf{X_J}}{X1, X2, ..., XJ}.
 Block \eqn{\mathbf{X}_j}{Xj} is a matrix of dimension
-\eqn{n \times p_j}{n x p_j} where n is the number of
+\eqn{n \times p_j}{n x p_j} where \eqn{n} is the number of
 observations and \eqn{p_j} the number of variables.}
 
 \item{connection}{A (\eqn{J \times J}{J x J}) symmetric matrix describing
 the network of connections between blocks (default value: 1-diag(J)).}
 
-\item{tau}{Either a numerical value, a numeric vector of size \eqn{1 \times J}{1 x J}, or a
-numeric matrix of dimension \eqn{\mathrm{max}(ncomp) \times J}{max(ncomp) x J}
-containing the values of the regularization parameters (default: tau = 1, for each
-block and each dimension) or a string equal to "optimal". If tau is a numerical
-value, then tau is identical accross all blocks and all dimensions of the blocks.
-If tau is a vector, tau[j] is identical across the dimensions of block \eqn{\mathbf{X}_j}{Xj}.
-If tau is a matrix, tau[k, j] is associated with the kth dimension of block j.
+\item{tau}{Either a numerical value, a numeric vector of size
+\eqn{J}{J}, or a
+numeric matrix of dimension
+\eqn{\mathrm{max}(\text{ncomp}) \times J}{max(ncomp) x J}
+containing the values of the regularization parameters
+(default: tau = 1, for each
+block and each dimension), or a string equal to "optimal".
 The regularization parameters varies from 0 (maximizing the correlation) to
-1 (maximizing the covariance). If tau = "optimal" the regularization
+1 (maximizing the covariance).
+
+If tau is a numerical
+value, tau is identical accross all constraints applied to all
+block weight vectors.
+
+If tau is a vector, tau[j] is used for the constraints applied to
+all the block weight vectors associated to block \eqn{\mathbf X_j}{Xj}.
+
+If tau is a matrix, tau[k, j] is associated with the constraints
+applied to the kth block weight vector correpsonding to block
+\eqn{\mathbf X_j}{Xj}.
+
+If tau = "optimal" the regularization
 parameters are estimated for each block and each dimension using the Schafer
-and Strimmer (2005) analytical formula. The tau parameters can also be estimated using
+and Strimmer (2005) analytical formula. The tau parameters can also be
+estimated using
 \link{rgcca_permutation} or \link{rgcca_cv}.}
 
-\item{ncomp}{A vector of length J indicating the number of components
-per block.}
+\item{ncomp}{A numerical value or a vector of length \eqn{J} indicating
+the number of components per block. If a single value is provided,
+the same number of components is extracted for every block.}
 
-\item{scheme}{A string or a function specifying the scheme function applied to
+\item{scheme}{A string or a function specifying the scheme function applied
+to
 covariance maximization among "horst" (the identity function), "factorial"
  (the square function - default value), "centroid" (the absolute value
  function). The scheme function can be any continously differentiable convex
@@ -65,11 +81,13 @@ covariance maximization among "horst" (the identity function), "factorial"
 \item{scale}{A logical value indicating if variables are standardized.}
 
 \item{init}{A string giving the type of initialization to use in
-the RGCCA algorithm. It could be either by Singular Value Decompostion ("svd")
+the RGCCA algorithm. It could be either by
+Singular Value Decompostion ("svd")
 or by random initialisation ("random") (default: "svd").}
 
 \item{bias}{A logical value for biaised (\eqn{1/n}) or unbiaised
-(\eqn{1/(n-1)}) estimator of the var/cov (default: bias = TRUE).}
+(\eqn{1/(n-1)}) estimator of the variance/covariance
+(default: bias = TRUE).}
 
 \item{tol}{The stopping value for the convergence of the algorithm
 (default: tol = 1e-08).}
@@ -78,78 +96,95 @@ or by random initialisation ("random") (default: "svd").}
 algorithm is reported while computing.}
 
 \item{scale_block}{A logical value or a string indicating if each block is
-scaled. If TRUE or "inertia", each block is divided by the sum of eigenvalues
-of its empirical covariance matrix. If "lambda1", each block is divided by
+scaled.
+
+If TRUE or "inertia", each block is divided by the sum of eigenvalues
+of its empirical covariance matrix.
+
+If "lambda1", each block is divided by
 the square root of the highest eigenvalue of its empirical covariance matrix.
+
 If standardization is applied (scale = TRUE), the block scaling applies on
 the standardized blocks.}
 
 \item{method}{A string specifying which multiblock component
-method to consider. Possible values are found using \link{available_methods}}
+method to consider. Possible values are found using
+\link{available_methods}.}
 
-\item{sparsity}{Either a numerical value, a numeric vector of size \eqn{1*J} or a numeric matrix
-of dimension \eqn{max(ncomp) * J} encoding the L1 constraints applied to the
-block weight vectors. For block j, the amount of sparsity varies between
-\eqn{1/sqrt(p_j)} and 1 (larger values of sparsity correspond to less
+\item{sparsity}{Either a numerical value, a numeric vector of
+size \eqn{J} or a numeric matrix
+of dimension \eqn{\text{max}(\text{ncomp}) \times J} encoding the L1
+constraints applied to the
+block weight vectors. For block \eqn{j}, the amount of
+sparsity varies between
+\eqn{1/\text{sqrt}(p_j)} and 1 (larger values of sparsity correspond to less
 penalization).
 
-If sparsity is a numerical value, then sparsity is identical accross all blocks
-and all dimensions of the blocks.
+If sparsity is a numerical value, then sparsity is identical accross
+all constraints applied to all block weight vectors.
 
-If sparsity is a vector, sparsity[j] is identical across the dimensions
-h = 1, ..., H of block j:
-\deqn{for all h, |a_{j,h}|_{L_1} \le sparsity[j] \sqrt{p_j},}
-with \eqn{p_j} the number of variables of \eqn{X_j}.
+If sparsity is a vector, sparsity[j] is identical across the constraints
+applied to the block weight vectors associated to block
+\eqn{\mathbf X_j}{Xj}:
+\deqn{\forall k, \Vert a_{j,k} \Vert_{1} \le \text{sparsity}[j] \sqrt{p_j}.}
 
-If sparsity is a matrix, sparsity[h, j] is associated with the hth dimension
-of block j:
-\deqn{for all h, |a_{j,h}|_{L_1} \le sparsity[h,j] \sqrt{p_j}.}
-sparsity can be estimated by using \link{rgcca_permutation} or \link{rgcca_cv}.}
+If sparsity is a matrix, sparsity[k, j] is associated with the constraints
+applied to the kth block weight vector correpsonding to block
+\eqn{\mathbf X_j}{Xj}:
+\deqn{\Vert a_{j,k}\Vert_{1} \le \text{sparsity}[k,j] \sqrt{p_j}.}
+
+The sparsity parameter can be estimated by using \link{rgcca_permutation} or
+\link{rgcca_cv}.}
 
 \item{response}{A numerical value giving the position of the response block.
-When the response argument is filled the supervised mode is automatically
+When the response argument is filled, the supervised mode is automatically
 activated.}
 
-\item{superblock}{A logical value indicating if the superblock option is used.}
+\item{superblock}{A logical value indicating if the
+superblock option is used.}
 
 \item{NA_method}{A string indicating the method used for
 handling missing values ("na.ignore", "na.omit"). (default: "na.ignore").
 \itemize{
 \item{\code{"na.omit"}}{corresponds to perform RGCCA on the fully observed
-observations (observations with missing values are removed)}
+observations (observations from which missing values have been removed).}
 \item{\code{"na.ignore"}}{corresponds to perform RGCCA algorithm on available
-data (See Tenenhaus et al, 2005)}}}
+data (See Tenenhaus et al, 2005).}}}
 
-\item{quiet}{A logical value indicating if warning messages are reported.}
+\item{quiet}{A logical value indicating if some diagnostic messages
+are reported.}
 
 \item{n_iter_max}{Integer giving the algorithm's maximum number of
 iterations.}
 
 \item{comp_orth}{A logical value indicating if the deflation should lead to
-orthogonal components or orthogonal weights.}
+orthogonal block components or orthogonal block weight vectors.}
 
 \item{A}{Deprecated argument, please use blocks instead.}
 
 \item{C}{Deprecated argument, please use connection instead.}
 }
 \value{
-A rgcca fitted object
+A fitted rgcca object.
 
-\item{Y}{A list of \eqn{J} elements. The jth element of the list \eqn{Y}
+\item{Y}{A list of \eqn{J} elements. The jth element
+of the list \eqn{Y}
 is a matrix that contains the block components for block j.}
 
-\item{a}{A list of \eqn{J} elements. The jth element of the list \eqn{a}
+\item{a}{A list of \eqn{J} elements. The jth element
+of the list \eqn{a}
 is a matrix that contains the block weight vectors for block j.}
 
 \item{astar}{A list of \eqn{J} elements. Each column of astar[[j]] is
-a vector such that Y[[j]][, h] = blocks[[j]] \%*\% astar[[j]][, h].}
+a vector such that Y[[j]] = blocks[[j]] \%*\% astar[[j]].}
 
 \item{crit}{A list of vector of length max(ncomp). Each vector of
 the list is related to one specific deflation stage and reports the values
 of the criterion for this stage across iterations.}
 
-\item{primal_dual}{A vector of length J that contains the formulation
-("primal" or "dual") applied to each block within the RGCCA alogrithm.}
+\item{primal_dual}{A vector of length J. Element \eqn{j}{j}
+is either "primal" or "dual", depending on whether the primal or dual
+RGCCA alogrithm was used for block \eqn{j}{j}.}
 
 \item{AVE}{A list of numerical values giving the indicators of model
 quality based on the Average Variance Explained (AVE): AVE(for each block),
@@ -158,13 +193,18 @@ AVE(outer model), AVE(inner model).}
 \item{optimal}{A logical value indicating if the Schaffer and
 Strimmer formula was applied for estimating the optimal tau parameters.}
 
-\item{opt}{A list containing some options of the fitted RGCCA object.}
+\item{opt}{A list containing some options of
+the fitted RGCCA object.}
 
 \item{call}{Call of the function.}
 
-\item{blocks}{A list that contains the J blocks of variables X1, X2, ...,
-XJ. Block Xj is a matrix of dimension n x p_j where p_j is the number of
-variables in X_j. These blocks are preprocessed according to the values of
+\item{blocks}{A list that contains the \eqn{J}
+blocks of variables
+\eqn{\mathbf X_1, \mathbf X_2, \dots, \mathbf X_J}{X1, X2, ..., XJ}.
+Block \eqn{\mathbf X_j}{Xj} is a matrix of dimension
+\eqn{n \times p_j}{n x pj} where \eqn{p_j}{pj} is the number of
+variables in \eqn{\mathbf X_j}{Xj}. These blocks are preprocessed
+according to the values of
 scale/scale_block/NA_method.}
 }
 \description{
@@ -173,34 +213,47 @@ The rgcca() function implements this framework and is the main entry point
 of the package.
 }
 \details{
-Given J data matrices X1, X2, ..., XJ that represent J sets of variables
-observed on the same set of n individuals. These matrices X1, X2, ..., XJ,
+Given \eqn{J}{J} data matrices
+\eqn{\mathbf X_1, \mathbf X_2, \dots, \mathbf X_J}{X1, X2, ..., XJ}
+that represent \eqn{J}{J} sets of variables
+observed on the same set of \eqn{n}{n} individuals. These matrices
+\eqn{\mathbf X_1, \mathbf X_2, \dots, \mathbf X_J}{X1, X2, ..., XJ},
 called blocks must have the same number of rows, but may (and usually will)
 have different numbers of columns.
 
-The aim of RGCCA is to study the relationships between these J blocks.
+RGCCA aims to study the relationships between these \eqn{J}{J} blocks.
 It constitutes a general framework for many multi-block component methods
 (see Tenenhaus and Tenenhaus, 2011 ; Tenenhaus et al. 2017). It combines the
 power of multi-block data analysis  methods (maximization of well identified
 criteria) and the flexibility of PLS path modeling (the researcher decides
 which blocks are connected and which are not). Hence, the use of RGCCA
-requires the construction (user specified) of a design matrix C that
+requires the construction (user specified) of a design matrix
+\eqn{\mathbf C}{C} that
 characterizes the connections between blocks. Elements of the (symmetric)
-design matrix C = (c_{jk}) are positive (and usually equal to 1 if block j
-and block k are connected, and 0 otherwise). The rgcca() function implements
-a monotone global convergent algorithm - i.e. the bounded criteria to be
+design matrix \eqn{\mathbf C = (c_{jk})}{C = (c_{jk})}
+are positive (and usually equal to 1 if blocks \eqn{j}{j}
+and \eqn{k}{k} are connected, and 0 otherwise).
+The rgcca() function implements
+a monotone global convergent algorithm: the bounded criteria to be
 maximized increases at each step of the iterative procedure and hits, at
-convergence a stationary point of the RGCCA optimization problem. Moreover,
+convergence, a stationary point of the RGCCA optimization problem.
+
+Moreover,
 when the tau argument is used, depending on the dimensionality of each block
-Xj, j = 1, \ldots, J, the primal (when n > p_j) algorithm or the dual (when
-n < p_j) algorithm is used (see Tenenhaus et al. 2015). When sparsity is
-specified SGCCA extends RGCCA to address the issue of variable selection
+\eqn{\mathbf X_j, j = 1, \ldots, J}{Xj, j = 1, \ldots, J},
+the primal algorithm (when \eqn{n \geq p_j}{n >= p_j}) or the dual algorithm
+(when \eqn{n < p_j}{n < p_j}) is used (see Tenenhaus et al. 2015).
+
+When sparsity is
+specified SGCCA, extends RGCCA to address the issue of variable selection
 (Tenenhaus et al, 2014). Specifically, RGCCA is combined with an L1-penalty
 that gives rise to Sparse GCCA (SGCCA). The SGCCA algorithm is very similar
 to the RGCCA algorithm and keeps the same convergence properties (i.e. the
 bounded criteria to be maximized increases at each step of the iterative
 procedure and hits at convergence a stationary point).
-At last, a deflation strategy is used to compute several block components
+
+At last, a deflation strategy can be used to compute several block
+components
 (specified by ncomp) per block. Within each block, components or weight
 vectors are guaranteed to be orthogonal. It should be noted that the numbers
 of components per block can differ from one block to another.
@@ -275,126 +328,128 @@ print(fit_rgcca)
 plot(fit_rgcca, type = "biplot", block = 4, resp = politic)
 
 \dontrun{
-####################################
-# Example 4: RGCCA and permutation #
-####################################
+  ####################################
+  # Example 4: RGCCA and permutation #
+  ####################################
 
-# Tune the model to find the best set of tau parameters.
-By default, blocks are fully connected.
+  # Tune the model to find the best set of tau parameters.
+  # By default, blocks are fully connected.
 
-set.seed(27) #favorite number
-perm_out <- rgcca_permutation(blocks,
-  n_cores = 1,
-  par_type = "tau",
-  n_perms = 50
-)
+  set.seed(27) #favorite number
+  perm_out <- rgcca_permutation(blocks,
+    n_cores = 1,
+    par_type = "tau",
+    n_perms = 50
+  )
 
-print(perm_out)
-plot(perm_out)
+  print(perm_out)
+  plot(perm_out)
 
-# all the parameters were imported from a fitted permutation object
-fit_rgcca <- rgcca(perm_out)
-print(fit_rgcca)
-
-
-#######################################
-# Example 5: RGCCA and dual algorithm #
-#######################################
-# Download the dataset's package at http://biodev.cea.fr/sgcca/ and install
-# it from the package archive file.
-# You can do it with the following R commands:
-if (!("gliomaData" \%in\% rownames(installed.packages()))) {
-  destfile <- tempfile()
-  download.file("http://biodev.cea.fr/sgcca/gliomaData_0.4.tar.gz", destfile)
-  install.packages(destfile, repos = NULL, type = "source")
-}
-
-data("ge_cgh_locIGR", package = "gliomaData")
-
-blocks <- ge_cgh_locIGR$multiblocks
-Loc <- factor(ge_cgh_locIGR$y)
-levels(Loc) <- colnames(ge_cgh_locIGR$multiblocks$y)
-blocks[[3]] <- Loc
-sapply(blocks, NCOL)
-
-# rgcca algorithm using the dual formulation for X1 and X2
-# and the dual formulation for X3. X3 is the group coding matrix associated
-# with the qualitative variable Loc. This block is considered
-# as response block and specified using the argument response.
-
-fit_rgcca <- rgcca(
-  blocks = blocks,
-  response = 3,
-  method = "rgcca",
-  tau = c(1, 1, 0),
-  ncomp = 1,
-  scheme = function(x) x^2, #factorial scheme,
-  verbose = TRUE,
-)
-
-fit_rgcca$primal_dual
-print(fit_rgcca)
-
-###########################################
-# Example 6: RGCCA and variable selection #
-###########################################
-
-# Variable selection and RGCCA : the sgcca algorithm
-fit_sgcca <- rgcca(
-  blocks = blocks,
-  method = "sgcca",
-  response = 3,
-  sparsity = c(.071, .2, 1), ncomp = 1,
-  scheme = "factorial", verbose = TRUE,
-)
-
-print(fit_sgcca)
+  # all the parameters were imported from a fitted permutation object
+  fit_rgcca <- rgcca(perm_out)
+  print(fit_rgcca)
 
 
-############################################
-#  Example 7: RGCCA, multiple components   #
-#  and different penalties per component   #
-############################################
+  #######################################
+  # Example 5: RGCCA and dual algorithm #
+  #######################################
+  # Download the dataset's package at http://biodev.cea.fr/sgcca/ and install
+  # it from the package archive file.
+  # You can do it with the following R commands:
+  if (!("gliomaData" \%in\% rownames(installed.packages()))) {
+    destfile <- tempfile()
+    download.file(
+      "http://biodev.cea.fr/sgcca/gliomaData_0.4.tar.gz", destfile
+     )
+    install.packages(destfile, repos = NULL, type = "source")
+  }
 
-# S/RGCCA algorithm with multiple components and different
-# penalties for each components (-> sparsity is a matrix)
+  data("ge_cgh_locIGR", package = "gliomaData")
 
-fit_rgcca <- rgcca(blocks, response = 3,
-  tau = matrix(c(.5, .5, 0, 1, 1, 0), nrow = 2, byrow = TRUE),
-  ncomp = c(2, 2, 1), scheme = "factorial")
+  blocks <- ge_cgh_locIGR$multiblocks
+  Loc <- factor(ge_cgh_locIGR$y)
+  levels(Loc) <- colnames(ge_cgh_locIGR$multiblocks$y)
+  blocks[[3]] <- Loc
+  sapply(blocks, NCOL)
 
-print(fit_rgcca)
+  # rgcca algorithm using the dual formulation for X1 and X2
+  # and the dual formulation for X3. X3 is the group coding matrix associated
+  # with the qualitative variable Loc. This block is considered
+  # as response block and specified using the argument response.
+
+  fit_rgcca <- rgcca(
+    blocks = blocks,
+    response = 3,
+    method = "rgcca",
+    tau = c(1, 1, 0),
+    ncomp = 1,
+    scheme = function(x) x^2, #factorial scheme,
+    verbose = TRUE,
+  )
+
+  fit_rgcca$primal_dual
+  print(fit_rgcca)
+
+  ###########################################
+  # Example 6: RGCCA and variable selection #
+  ###########################################
+
+  # Variable selection and RGCCA : the sgcca algorithm
+  fit_sgcca <- rgcca(
+    blocks = blocks,
+    method = "sgcca",
+    response = 3,
+    sparsity = c(.071, .2, 1), ncomp = 1,
+    scheme = "factorial", verbose = TRUE,
+  )
+
+  print(fit_sgcca)
 
 
-# the same applies for SGCCA
-fit_sgcca <- rgcca(blocks, response = 3,
-  sparsity = matrix(c(.071, 0.2,  1,
-                      0.06, 0.15, 1), nrow = 2, byrow = TRUE),
-  ncomp = c(2, 2, 1), scheme = "factorial")
+  ############################################
+  #  Example 7: RGCCA, multiple components   #
+  #  and different penalties per component   #
+  ############################################
 
-print(fit_sgcca)
+  # S/RGCCA algorithm with multiple components and different
+  # penalties for each components (-> sparsity is a matrix)
 
-##################################################
-# Example 8: Supervised mode en cross validation #
-##################################################
-# Prediction of the location from GE and CGH
+  fit_rgcca <- rgcca(blocks, response = 3,
+    tau = matrix(c(.5, .5, 0, 1, 1, 0), nrow = 2, byrow = TRUE),
+    ncomp = c(2, 2, 1), scheme = "factorial")
 
-# Tune sparsity values based on the cross-validated accuracy.
-set.seed(27) #favorite number
-cv_out <- rgcca_cv(blocks, response = 3,
-                   par_type = "sparsity",
-                   par_length = 10,
-                   ncomp = 1,
-                   prediction_model = "lda",
-                   metric = "Accuracy",
-                   k = 3, n_run = 5,
-                   n_cores = 15)
-print(cv_out)
-plot(cv_out, display_order = TRUE)
+  print(fit_rgcca)
 
-# all the parameters were imported from the fitted cval object.
-fit_rgcca <- rgcca(cv_out)
-print(fit_rgcca)
+
+  # the same applies for SGCCA
+  fit_sgcca <- rgcca(blocks, response = 3,
+    sparsity = matrix(c(.071, 0.2,  1,
+                        0.06, 0.15, 1), nrow = 2, byrow = TRUE),
+    ncomp = c(2, 2, 1), scheme = "factorial")
+
+  print(fit_sgcca)
+
+  ##################################################
+  # Example 8: Supervised mode en cross validation #
+  ##################################################
+  # Prediction of the location from GE and CGH
+
+  # Tune sparsity values based on the cross-validated accuracy.
+  set.seed(27) #favorite number
+  cv_out <- rgcca_cv(blocks, response = 3,
+                     par_type = "sparsity",
+                     par_length = 10,
+                     ncomp = 1,
+                     prediction_model = "lda",
+                     metric = "Accuracy",
+                     k = 3, n_run = 5,
+                     n_cores = 2)
+  print(cv_out)
+  plot(cv_out, display_order = TRUE)
+
+  # all the parameters were imported from the fitted cval object.
+  fit_rgcca <- rgcca(cv_out)
+  print(fit_rgcca)
 }
 
 }

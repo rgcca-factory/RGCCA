@@ -9,37 +9,52 @@
 #' @inheritParams rgcca_bootstrap
 #' @param par_type A character giving the parameter to tune among "sparsity",
 #' "tau" or "ncomp".
-#' @param par_value A matrix (K*J, with J the number of blocks and K the number
-#' of combinations to be tested), a vector (of J length) or a numeric value
-#' giving the sets of parameters to be tested for tau, sparsity or ncomp.
-#' By default, for tau and sparsity, it takes 10 sets between min values (0 for
-#' RGCCA and $1/sqrt(ncol)$ for SGCCA) and 1. for ncomp, it takes a certain
-#' number of sets between ncomp and 1.
+#' @param par_value The parameter values to be tested, either NULL,
+#' a numerical vector of size \eqn{J}{J}, or a matrix of size
+#' \eqn{\text{par_length} \times J}{par_length x J}.
+#'
+#' If par_value is NULL, up to par_length sets of parameters are generated
+#' uniformly from
+#' the minimum and maximum possible values of the parameter defined by par_type
+#' for each block. Minimum possible values are 0 for tau,
+#' \eqn{1/\text{sqrt}(p_j)}{1/sqrt(p_j)} for sparsity, and 1
+#' for ncomp. Maximum possible values are 1 for tau and sparsity, and
+#' \eqn{p_j}{p_j} for ncomp.
+#'
+#' If par_value is a vector, it overwrites the maximum values taken for the
+#' range of generated parameters.
+#'
+#' If par_value is a matrix, par_value directly corresponds to the set of
+#' tested parameters.
 #' @param par_length An integer indicating the number of sets of candidate
-#' parameters to be tested (if par_value = NULL). The parameters are uniformly
-#' distributed.
+#' parameters to be tested (if par_value is not a matrix).
 #' @param k An integer giving the number of folds (if validation = 'kfold').
 #' @param validation A string specifying the type of validation among "loo" and
 #' "kfold". For small datasets (e.g. <30 samples), it is recommended to use a
-#' loo procedure.
+#' loo (leave-one-out) procedure.
 #' @param n_run An integer giving the number of Monte-Carlo Cross-Validation
 #' (MCCV) to be run (if validation = 'kfold').
 #' @export
+#' @return A cval object that can be printed and plotted.
 #' @return  \item{k}{An integer giving the number of folds.}
-#' @return  \item{n_run}{An integer giving the number of MCCV}
-#' @return  \item{opt}{A list containing some options of the fitted cval object.}
+#' @return  \item{n_run}{An integer giving the number of MCCV.}
+#' @return  \item{opt}{A list containing some options of the
+#' RGCCA model.}
 #' @return  \item{metric}{A string indicating the metric used during the process
 #' of cross-validation.}
-#' @return \item{cv}{A matrix of dimension par_length*(k*n_run). Each row of cv
+#' @return \item{cv}{A matrix of dimension par_length x (k x n_run).
+#' Each row of cv
 #' corresponds to one set of candidate parameters. Each column of cv corresponds
-#' to the cross-validated score of a specific fold.}
-#' @return \item{call}{A list of the input parameters}
+#' to the cross-validated score of a specific fold in a specific run.}
+#' @return \item{call}{A list of the input parameters of the RGCCA model.}
+#' @return \item{par_type}{The type of parameter tuned (either "tau",
+#' "sparsity", or "ncomp").}
 #' @return \item{best_params}{The set of parameters that yields the best
-#' cross-validated scores}
+#' cross-validated scores.}
 #' @return \item{params}{A matrix reporting the sets of candidate parameters
-#' used during the process of cross-validation.}
-#' @return \item{validation}{A string specifying the type of validation among
-#' "loo", "kfold"}
+#' used during the cross-validation process.}
+#' @return \item{validation}{A string specifying the type of validation
+#' (either "loo" or "kfold").}
 #' @return \item{stats}{A data.frame containing various statistics (mean, sd,
 #' median, first quartile, third quartile) of the cross-validated score for
 #' each set of parameters that has been tested.}
@@ -105,38 +120,38 @@
 #' fit_opt = rgcca(cv_out)
 #'
 #' \dontrun{
-#' data("ge_cgh_locIGR", package = "gliomaData")
-#' blocks <- ge_cgh_locIGR$multiblocks
-#' Loc <- factor(ge_cgh_locIGR$y)
-#' levels(Loc) <- colnames(ge_cgh_locIGR$multiblocks$y)
-#' blocks[[3]] <- Loc
-#' set.seed(27) # favorite number
+#'  data("ge_cgh_locIGR", package = "gliomaData")
+#'  blocks <- ge_cgh_locIGR$multiblocks
+#'  Loc <- factor(ge_cgh_locIGR$y)
+#'  levels(Loc) <- colnames(ge_cgh_locIGR$multiblocks$y)
+#'  blocks[[3]] <- Loc
+#'  set.seed(27) # favorite number
 #'
-#' cv_out = rgcca_cv(blocks, response = 3,
-#'                  ncomp = 1,
-#'                  prediction_model = "glmnet",
-#'                  family = "multinomial", lambda = .001,
-#'                  par_type = "sparsity",
-#'                  par_value = c(.071, .2, 1),
-#'                  metric = "Balanced_Accuracy",
-#'                  n_cores = 10,
-#' )
+#'   cv_out = rgcca_cv(blocks, response = 3,
+#'                    ncomp = 1,
+#'                    prediction_model = "glmnet",
+#'                    family = "multinomial", lambda = .001,
+#'                    par_type = "sparsity",
+#'                    par_value = c(.071, .2, 1),
+#'                    metric = "Balanced_Accuracy",
+#'                    n_cores = 2,
+#'  )
 #'
-#' print(cv_out)
-#' plot(cv_out, display_order = FALSE)
+#'  print(cv_out)
+#'  plot(cv_out, display_order = FALSE)
 #'
-#' cv_out = rgcca_cv(blocks, response = 3,
-#'                  ncomp = 1,
-#'                  prediction_model = "glmnet",
-#'                  family = "multinomial", lambda = .001,
-#'                  par_type = "ncomp",
-#'                  par_value = c(5, 5, 1),
-#'                  metric = "Balanced_Accuracy",
-#'                  n_cores = 10,
-#' )
+#'   cv_out = rgcca_cv(blocks, response = 3,
+#'                    ncomp = 1,
+#'                    prediction_model = "glmnet",
+#'                    family = "multinomial", lambda = .001,
+#'                    par_type = "ncomp",
+#'                    par_value = c(5, 5, 1),
+#'                    metric = "Balanced_Accuracy",
+#'                    n_cores = 2,
+#'  )
 #'
-#' print(cv_out)
-#' plot(cv_out, display_order = FALSE)
+#'  print(cv_out)
+#'  plot(cv_out, display_order = FALSE)
 #' }
 #'
 #' @importFrom stats na.omit

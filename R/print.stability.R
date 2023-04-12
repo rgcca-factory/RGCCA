@@ -4,6 +4,7 @@
 #' All arguments are forwarded to the print.rgcca function.
 #' @param x Object of type "stability" produced by rgcca_stability.
 #' @param ... Arguments for the print.rgcca function.
+#' @return none
 #' @examples
 #' data(Russett)
 #' blocks <- list(
@@ -13,6 +14,7 @@
 #' )
 #' fit.sgcca <- rgcca(blocks, sparsity = c(.8, .9, .6))
 #' res <- rgcca_stability(fit.sgcca, n_boot = 10, verbose = FALSE)
+#' print(res)
 #' @export
 print.stability <- function(x, ...) {
   stopifnot(is(x, "stability"))
