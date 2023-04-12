@@ -220,6 +220,7 @@ plot.rgcca <- function(x, type = "weights", block = seq_along(x$call$blocks),
 
   response_block <- FALSE
 
+  # Adapt parameters based on type
   switch(type,
     "samples" = {
       block <- block[seq(2)]
@@ -242,18 +243,29 @@ plot.rgcca <- function(x, type = "weights", block = seq_along(x$call$blocks),
     "loadings" = {
       block <- unique(block)
       comp <- comp[1]
-      display_blocks <- block
+      if (all(block == length(x$call$blocks) + 1)) {
+        display_blocks <- seq_along(x$call$blocks)
+      } else {
+        display_blocks <- block
+      }
     },
     "weights" = {
       block <- unique(block)
       comp <- comp[1]
-      display_blocks <- block
+      if (all(block == length(x$call$blocks) + 1)) {
+        display_blocks <- seq_along(x$call$blocks)
+      } else {
+        display_blocks <- block
+      }
     },
     "biplot" = {
-      block <- rep(ifelse(
-        x$call$superblock, length(x$call$blocks) + 1, block[1]
-      ), 2)
-      display_blocks <- block[1]
+      if (x$call$superblock) {
+        block <- rep(length(x$call$blocks) + 1, 2)
+        display_blocks <- seq_along(x$call$blocks)
+      } else {
+        block <- rep(block[1], 2)
+        display_blocks <- block[1]
+      }
       response_block <- !is.null(x$call$response) &&
         (block[1] == x$call$response)
     }
@@ -299,17 +311,10 @@ plot.rgcca <- function(x, type = "weights", block = seq_along(x$call$blocks),
   }
 
   # Construct response vector for correlation circle, weights and loadings
-  if (block[1] == length(x$call$blocks) + 1) {
-    num_block <- as.factor(unlist(lapply(
-      seq_along(x$blocks[-block[1]]),
-      function(j) rep(names(x$blocks)[j], NCOL(x$blocks[[j]]))
-    )))
-  } else {
-    num_block <- as.factor(unlist(lapply(
-      display_blocks,
-      function(j) rep(names(x$blocks)[j], NCOL(x$blocks[[j]]))
-    )))
-  }
+  num_block <- as.factor(unlist(lapply(
+    display_blocks,
+    function(j) rep(names(x$blocks)[j], NCOL(x$blocks[[j]]))
+  )))
 
   switch(type,
     # Plot individuals in the projected space
