@@ -37,7 +37,8 @@ rgcca_permutation(
 \eqn{\mathbf{X_1}, \mathbf{X_2}, ..., \mathbf{X_J}}{X1, X2, ..., XJ}.
 Block \eqn{\mathbf{X}_j}{Xj} is a matrix of dimension
 \eqn{n \times p_j}{n x p_j} where \eqn{n} is the number of
-observations and \eqn{p_j} the number of variables.}
+observations and \eqn{p_j} the number of variables. The blocks argument can
+be also a fitted cval, rgcca or permutation object.}
 
 \item{par_type}{A character giving the parameter to tune among "sparsity",
 "tau" or "ncomp".}

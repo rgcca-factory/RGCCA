@@ -130,7 +130,7 @@ illustrated in this paper. The package includes several utility functions for
 data preprocessing and visualization. In addition, the package includes several 
 built-in datasets and examples to help users get started quickly.
 
-Within the $\small{\texttt{RGCCA}}$ package , all implemented methods share the 
+Within the $\small{\texttt{RGCCA}}$ package, all implemented methods share the 
 same function interface and a clear class structure. In addition, 
 $\small{\texttt{RGCCA}}$ package relies on the single $\small{\texttt{rgcca()}}$ 
 function for specifying the multiblock models. It also provides several plots 
@@ -974,7 +974,7 @@ All AVEs (defined in \ref{AVE_X}-\ref{AVE_inner}) are available as output of
 the $\small{\texttt{rgcca()}}$ function in $\small{\texttt{fit\$AVE}}$. These indicators of model quality can 
 also be visualized using the generic $\small{\texttt{plot()}}$ function.
 
-```{r, fig.align='center', fig.cap = 'Average Variance Explained of the different blocks.', fig.height = 12, fig.width=18, fig.pos = "H"}
+```{r, fig.align='center', fig.cap = 'Average Variance Explained of the different blocks.', fig.height = 8, fig.width=18, fig.pos = "H"}
 plot(fit, type = "ave", cex = 2)
 ```
 
