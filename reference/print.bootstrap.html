@@ -128,7 +128,7 @@ It must be a method handled by the p.adjust function. Default is "fdr".</p></dd>
 <span class="r-in"><span><span class="va">boot.out</span> <span class="op">&lt;-</span> <span class="fu"><a href="rgcca_bootstrap.html">rgcca_bootstrap</a></span><span class="op">(</span><span class="va">fit.rgcca</span>, n_boot <span class="op">=</span> <span class="fl">20</span>, n_cores <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Bootstrap samples sanity check...</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> OK</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   |                                                  | 0 % ~calculating    |+++++                                             | 10% ~00s            |++++++++++                                        | 20% ~00s            |+++++++++++++++                                   | 30% ~00s            |++++++++++++++++++++                              | 40% ~00s            |+++++++++++++++++++++++++                         | 50% ~00s            |++++++++++++++++++++++++++++++                    | 60% ~00s            |+++++++++++++++++++++++++++++++++++               | 70% ~00s            |++++++++++++++++++++++++++++++++++++++++          | 80% ~00s            |+++++++++++++++++++++++++++++++++++++++++++++     | 90% ~00s            |++++++++++++++++++++++++++++++++++++++++++++++++++| 100% elapsed=00s  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   |                                                  | 0 % ~calculating    |+++++                                             | 10% ~00s            |++++++++++                                        | 20% ~00s            |+++++++++++++++                                   | 30% ~00s            |++++++++++++++++++++                              | 40% ~00s            |+++++++++++++++++++++++++                         | 50% ~00s            |++++++++++++++++++++++++++++++                    | 60% ~00s            |+++++++++++++++++++++++++++++++++++               | 70% ~00s            |++++++++++++++++++++++++++++++++++++++++          | 80% ~00s            |+++++++++++++++++++++++++++++++++++++++++++++     | 90% ~00s            |++++++++++++++++++++++++++++++++++++++++++++++++++| 100% elapsed=01s  </span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">boot.out</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Call: method='rgcca', superblock=FALSE, scale=TRUE, scale_block='inertia',</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> init='svd', bias=TRUE, tol=1e-08, NA_method='na.ignore', ncomp=c(2,1,2),</span>
@@ -145,28 +145,28 @@ It must be a method handled by the p.adjust function. Default is "fdr".</p></dd>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Extracted statistics from 20 bootstrap samples.</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Block-weight vectors for component 1: </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>          estimate    mean     sd lower_bound upper_bound bootstrap_ratio   pval</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> gini       0.6476  0.6329 0.0646      0.4987       0.729          10.031 0.0000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> farm       0.7603  0.7519 0.0562      0.6522       0.862          13.539 0.0000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> rent      -0.0506 -0.0438 0.1631     -0.3462       0.232          -0.310 0.8182</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> gnpr       0.7044  0.7015 0.0428      0.6457       0.793          16.463 0.0000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> labo      -0.7099 -0.7099 0.0489     -0.7636      -0.601         -14.509 0.0000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> inst       0.1646  0.1664 0.0932     -0.0191       0.295           1.767 0.0526</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> ecks       0.4387  0.4340 0.0573      0.3450       0.523           7.653 0.0000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> death      0.4581  0.4569 0.0406      0.3847       0.524          11.271 0.0000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> demostab  -0.5647 -0.5538 0.0405     -0.6157      -0.473         -13.957 0.0000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> demoinst   0.0362  0.0352 0.0941     -0.1540       0.186           0.385 0.3333</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> dictator   0.5004  0.4922 0.0473      0.4163       0.570          10.589 0.0000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> gini       0.6476  0.5921 0.1266     0.27351       0.705           5.116 0.0000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> farm       0.7603  0.7223 0.0770     0.56852       0.826           9.872 0.0000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> rent      -0.0506 -0.1021 0.3186    -0.75800       0.273          -0.159 0.8182</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> gnpr       0.7044  0.6997 0.0308     0.65392       0.753          22.837 0.0000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> labo      -0.7099 -0.7132 0.0305    -0.75656      -0.658         -23.299 0.0000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> inst       0.1646  0.1723 0.0797     0.00967       0.287           2.066 0.0526</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ecks       0.4387  0.4376 0.0678     0.32072       0.524           6.471 0.0000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> death      0.4581  0.4449 0.0703     0.33096       0.556           6.518 0.0000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> demostab  -0.5647 -0.5613 0.0496    -0.65923      -0.486         -11.376 0.0000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> demoinst   0.0362  0.0451 0.0660    -0.04101       0.181           0.549 0.4286</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> dictator   0.5004  0.4902 0.0452     0.39298       0.549          11.063 0.0000</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>          adjust.pval</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> gini          0.0000</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> farm          0.0000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> rent          0.9091</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> rent          0.8612</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> gnpr          0.0000</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> labo          0.0000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> inst          0.0957</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> inst          0.0877</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> ecks          0.0000</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> death         0.0000</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> demostab      0.0000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> demoinst      0.4167</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> demoinst      0.5357</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> dictator      0.0000</span>
 </code></pre></div>
     </div>
