@@ -10,7 +10,7 @@
 
 ##### Authors:
 Fabien GIRKA, Etienne CAMENEN,  Caroline PELTIER, Vincent GUILLEMOT, 
-Arnaud GLOAGUEN, Laurent Le Brusquet, Arthur TENENHAUS
+Arnaud GLOAGUEN, Laurent LE BRUSQUET, Arthur TENENHAUS
 
 ##### Key-words:
 Regularized Generalized Canonical Correlation Analysis, multi-block data analysis
@@ -63,7 +63,11 @@ Required:
 
 - R libraries : see the [DESCRIPTION](https://github.com/rgcca-factory/RGCCA/blob/main/DESCRIPTION) file.
 
-See the [vignette]() for an introduction to the package.
+```
+install.packages("RGCCA")
+```
+
+See the [vignette](https://rgcca-factory.github.io/RGCCA/articles/RGCCA.pdf) for an introduction to the package.
 
 
 ## Installation of a development branch from the git repository
