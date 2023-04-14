@@ -110,32 +110,37 @@ knitr::knit_hooks$set(chunk = function(x, options) {
 
 A challenging problem in multivariate statistics is to study relationships 
 between several sets of variables measured on the same set of individuals. 
-In the scientific literature, this paradigm can be stated under several names 
-such as "learning from multimodal data", "data integration", "multiview data", 
-"multisource data", "data fusion" or "multiblock data analysis". Appropriate 
-statistical methods and dedicated software able to cope with these multiple 
-highly multivariate datasets constitute critical issues for effective analysis 
-leading to valuable knowledge. For the statistical computing environment 
-R \cite{R2022}, various R packages are available for multiblock data analysis.
-Four mainstream references are $\small{\texttt{mixOmics}}$ \cite{Rohart2017}, 
+This paradigm is referred to by several names, including "learning from 
+multimodal data", "data integration", "multiview data", "multisource data", 
+"data fusion" or "multiblock data analysis". Despite the availability of various 
+statistical methods and dedicated software for multiblock data analysis, handling 
+multiple highly multivariate datasets remains a critical issue for effective 
+analysis and knowledge discovery.
+
+
+For the statistical computing environment R \cite{R2022}, various R packages are 
+available for multiblock data analysis. Four mainstream references are 
+$\small{\texttt{mixOmics}}$ \cite{Rohart2017}, 
 $\small{\texttt{multiblock}}$ \cite{Liland2022}, $\small{\texttt{ade4}}$ 
 (\cite{Dray2007}), and $\small{\texttt{FactoMineR}}$ \cite{Le2008}. Each 
 package uses its own way of specifying multiblock models and storing the results.
+
 Regularized Generalized Canonical Correlation Analysis (RGCCA) is a unified 
-statistical framework that subsumes as special cases an astonishingly large 
-number of multiblock component methods. 
-In this paper, we present an R package called RGCCA (Girka et al, 2023)
-that implements the RGCCA framework. Its usefulness and versatility are 
-illustrated in this paper. The package includes several utility functions for 
-data preprocessing and visualization. In addition, the package includes several 
-built-in datasets and examples to help users get started quickly.
+statistical framework that subsumes, as special cases, an astonishingly large 
+number of multiblock component methods. RGCCA relies on a single optimization 
+problem with immediate practical consequences for a unified statistical 
+analysis and implementation strategy. In this paper, we introduce an R package 
+called $\small{\texttt{RGCCA}}$ (Girka et al, 2023), which implements the RGCCA 
+framework.
 
 Within the $\small{\texttt{RGCCA}}$ package, all implemented methods share the 
 same function interface and a clear class structure. In addition, 
 $\small{\texttt{RGCCA}}$ package relies on the single $\small{\texttt{rgcca()}}$ 
-function for specifying the multiblock models. It also provides several plots 
-for diagnostics or visualization of the results from multiblock analysis.
-Package $\small{\texttt{RGCCA}}$  is available from the 
+function for specifying the multiblock models. It also provides  several 
+utility functions for data preprocessing and several plots 
+for diagnostics or visualization of the results from multiblock analysis.  
+In addition, the package includes several built-in datasets and examples to 
+help users get started quickly. Package $\small{\texttt{RGCCA}}$  is available from the 
 Comprehensive R Archive Network (CRAN), at https://CRAN.R-project.org/package=RGCCA 
 and can be installed from the R console with the following command:
 
@@ -143,13 +148,18 @@ and can be installed from the R console with the following command:
 install.packages("RGCCA")
 ```
 
-The rest of the paper is organized as follows. 
-Section 2 presents the optimization problem under which all the algorithms 
-proposed in the RGCCA framework were designed. The theoretical foundations of 
+In this paper, we present an overview of the RGCCA framework's theoretical 
+foundations, summarize the optimization problem under which all the algorithms 
+were designed, and provide code examples to illustrate the package's usefulness 
+and versatility. We believe that our package provides a valuable contribution 
+to the field of multiblock data analysis and will enable researchers to conduct 
+more effective analyses and gain new insights into complex datasets.
+
+The paper's remaining sections are organized as follows: Section 2 presents the 
+general optimization problem. Section 3 summarizes the theoretical foundations of 
 the RGCCA framework \cite{Tenenhaus2011, Tenenhaus2014, Tenenhaus2015, 
-Tenenhaus2017}, are briefly summarized in Section 3, while Sections 4 and 5 
-illustrates the use of package RGCCA with code examples. The final Section 6 
-concludes the paper.
+Tenenhaus2017}. Sections 4 and 5 provide code examples to illustrate the 
+package's capabilities. Finally, we conclude the paper in Section 6.
 
 # Optimization background
 
@@ -1346,7 +1356,7 @@ classifier ($\small{\texttt{prediction\_model = "lda"}}$). Also, we decide to up
 parameters for $\mathbf X_1$ and $\mathbf X_2$ to $0.2$ to achieve an 
 attractive amount of sparsity. 
 
-```{r, cache = TRUE}
+```{r glioma_cv, cache = TRUE}
 set.seed(27) #my favorite number
 inTraining <- caret::createDataPartition(
   blocks[[3]], p = .75, list = FALSE
@@ -1433,7 +1443,7 @@ the VIPs are computed, and the variables with the higher VIPs averaged over the
 different models are kept. This procedure is available  through the 
 $\small{\texttt{rgcca\_stability}}$ function.
 
-```{r, cache = TRUE, message = FALSE}
+```{r glioma_stab, cache = TRUE, message = FALSE}
 fit_stab <- rgcca_stability(fit,
                             keep = vapply(
                               fit$a, function(x) mean(x != 0),
