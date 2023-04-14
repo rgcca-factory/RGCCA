@@ -3,11 +3,13 @@ note <- sprintf("R package version %s", meta$Version)
 
 bibentry(bibtype = "Manual",
          title = "{RGCCA}: Regularized and Sparse Generalized Canonical Correlation Analysis for Multiblock Data",
-         author = c(person("Arthur", "Tenenhaus"),
-                    person("Caroline", "Peltier"),
+         author = c(person("Fabien", "Girka"),
                     person("Etienne", "Camenen"),
+                    person("Caroline", "Peltier"),
                     person("Arnaud", "Gloaguen"),
-                    person("Vincent", "Guillemot")),
+                    person("Vincent", "Guillemot"),
+                    person("Laurent", "Le Brusquet"),
+                    person("Arthur", "Tenenhaus")),
          year = year,
          note = note,
          url = "https://CRAN.R-project.org/package=RGCCA")

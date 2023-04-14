@@ -9,8 +9,9 @@ Authors@R: c(
   person("Caroline", "Peltier", role = "aut"),
   person("Arnaud", "Gloaguen", role = "aut"),
   person("Vincent", "Guillemot", role = "aut"),
+  person("Laurent", "Le Brusquet", role = c("ths")),
   person("Arthur", "Tenenhaus", email = "arthur.tenenhaus@centralesupelec.fr",
-         role = c("aut", "cre")))
+         role = c("aut", "ths", "cre")))
 Maintainer: Arthur Tenenhaus <arthur.tenenhaus@centralesupelec.fr>
 Description: Multi-block data analysis concerns the analysis of several
     sets of variables (blocks) observed on the same group of individuals.
