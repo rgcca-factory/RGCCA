@@ -156,24 +156,24 @@ data.frame.</p></dd>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Extracted statistics from 20 bootstrap samples.</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Block-weight vectors for component 1: </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>       estimate   mean     sd lower_bound upper_bound bootstrap_ratio   pval</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> gini     0.661  0.625 0.0714     0.49710       0.733           9.250 0.0000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> farm     0.742  0.714 0.0611     0.59619       0.819          12.133 0.0000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> rent     0.117  0.156 0.2650    -0.22990       0.560           0.442 0.6667</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> gnpr     0.732  0.728 0.0306     0.67375       0.771          23.880 0.0000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> labo    -0.682 -0.685 0.0321    -0.73879      -0.637         -21.237 0.0000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> inst     0.249  0.243 0.1172     0.00826       0.414           2.126 0.0526</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> ecks     0.661  0.650 0.0634     0.52613       0.739          10.423 0.0000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> death    0.708  0.706 0.0606     0.62156       0.834          11.679 0.0000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       estimate    mean     sd lower_bound upper_bound bootstrap_ratio  pval</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> gini     0.661  0.6268 0.0775       0.461       0.703           8.518 0.000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> farm     0.742  0.7103 0.0572       0.582       0.766          12.968 0.000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> rent     0.117  0.0874 0.3010      -0.404       0.627           0.389 0.538</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> gnpr     0.732  0.7222 0.0373       0.662       0.792          19.593 0.000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> labo    -0.682 -0.6896 0.0402      -0.749      -0.610         -16.938 0.000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> inst     0.249  0.2367 0.1744      -0.125       0.453           1.429 0.176</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ecks     0.661  0.6506 0.0489       0.577       0.751          13.519 0.000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> death    0.708  0.6984 0.0439       0.612       0.769          16.116 0.000</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>       adjust.pval</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> gini       0.0000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> farm       0.0000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> rent       0.6667</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> gnpr       0.0000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> labo       0.0000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> inst       0.0602</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> ecks       0.0000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> death      0.0000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> gini        0.000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> farm        0.000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> rent        0.538</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> gnpr        0.000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> labo        0.000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> inst        0.202</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ecks        0.000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> death       0.000</span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">boot_out</span>, type <span class="op">=</span> <span class="st">"weight"</span>, block <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">3</span>, comp <span class="op">=</span> <span class="fl">1</span>,</span></span>
 <span class="r-in"><span>     display_order <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></span>
 <span class="r-plt img"><img src="rgcca_bootstrap-1.png" alt="" width="700" height="433"></span>
