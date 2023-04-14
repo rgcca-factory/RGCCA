@@ -1,16 +1,15 @@
-citHeader("To cite RGCCA in publications use:")
+year <- sub("-.*", "", meta$Date)
+note <- sprintf("R package version %s", meta$Version)
 
-citEntry(
-  entry    = "Article",
-  title    = ,
-  author   = ,
-  journal  = ,
-  year     = ,
-  volume   = ,
-  number   = ,
-  pages    = ,
-  url      = ,
-  textVersion = paste(
-
-  )
-)
+bibentry(bibtype = "Manual",
+         title = "{RGCCA}: Regularized and Sparse Generalized Canonical Correlation Analysis for Multiblock Data",
+         author = c(person("Fabien", "Girka"),
+                    person("Etienne", "Camenen"),
+                    person("Caroline", "Peltier"),
+                    person("Arnaud", "Gloaguen"),
+                    person("Vincent", "Guillemot"),
+                    person("Laurent", "Le Brusquet"),
+                    person("Arthur", "Tenenhaus")),
+         year = year,
+         note = note,
+         url = "https://CRAN.R-project.org/package=RGCCA")
