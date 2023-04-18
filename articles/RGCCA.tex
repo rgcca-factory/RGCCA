@@ -8,19 +8,12 @@
 
 \author{
 Fabien Girka~\orcidlink{0000-0003-2843-1104}\\Laboratoire des Signaux et
-systèmes\\
-Université Paris-Saclay\\
-CentraleSupelec \And Etienne Camenen\\INSERM\\
-Paris Brain Institute \And Caroline Peltier\\INRAE\\
-Paris Brain Institute \AND Arnaud Gloaguen\\CEA \And Vincent
-Guillemot\\Pasteur \AND Laurent Le Brusquet\\Laboratoire des
-Signaux et systèmes\\
-Université Paris-Saclay\\
-CentraleSupelec \And Arthur
-Tenenhaus~\orcidlink{0000-0000-0000-0000}\\Laboratoire des Signaux et
-systèmes\\
-Université Paris-Saclay\\
-CentraleSupelec
+Systèmes \And Etienne Camenen\\INSERM \And Caroline Peltier\\INRAE
+\AND Arnaud Gloaguen\\CEA \And Vincent Guillemot\\Institut Pasteur
+\AND Laurent Le Brusquet\\Laboratoire des Signaux et
+Systèmes \And Arthur
+Tenenhaus~\orcidlink{0000-0003-3459-1518}\\Laboratoire des Signaux et
+Systèmes
 }
 \title{Multiblock data analysis with the RGCCA package}
 
@@ -57,7 +50,60 @@ package is freely available on the ComprehensiveR Archive Network (CRAN)
 %% \Acceptdate{2012-06-04}
 
 \Address{
-              }
+    Fabien Girka\\
+    Laboratoire des Signaux et Systèmes\\
+    Université Paris-Saclay, CNRS, CentraleSupélec,
+\newline  Gif-sur-Yvette, 91190, France \newline Institut du Cerveau de
+Paris (ICM), Sorbonne Université \newline  Assistance Publique-Hôpitaux
+de Paris (AP-HP)\\
+  E-mail: \email{fabien.girka@centralesupelec.fr}\\
+  
+      Etienne Camenen\\
+    INSERM\\
+    Inserm U1127, CNRS UMR 7225, \newline Hôpital Universitaire
+Pitié-Salpêtrière \newline  75013 Paris, France \newline Institut du
+Cerveau de Paris (ICM), Sorbonne Université \newline  Assistance
+Publique-Hôpitaux de Paris (AP-HP)\\
+  
+  
+      Caroline Peltier\\
+    INRAE\\
+    Centre des Sciences du Goût et de l'Alimentation \newline CNRS,
+INRAE, Institut Agro \newline University of Bourgogne F-21000 Dijon
+\newline CNRS, INRAE, PROBE research infrastructure \newline  ChemoSens
+facility, F-21000 Dijon, France \newline Institut du Cerveau de Paris
+(ICM), Sorbonne Université \newline  Assistance Publique-Hôpitaux de
+Paris (AP-HP)\\
+  
+  
+      Arnaud Gloaguen\\
+    CEA\\
+    Centre National de Recherche en Génomique Humaine \newline  Institut
+de Biologie François Jacob \newline  CEA, Université Paris-Saclay, Évry,
+France\\
+  
+  
+      Vincent Guillemot\\
+    Institut Pasteur\\
+    Université Paris Cité \newline Bioinformatics and Biostatistics Hub
+\newline  F-75015 Paris, France\\
+  
+  
+      Laurent Le Brusquet\\
+    Laboratoire des Signaux et Systèmes\\
+    Université Paris-Saclay, CNRS, CentraleSupélec
+\newline  Gif-sur-Yvette, 91190, France\\
+  
+  
+      Arthur Tenenhaus\\
+    Laboratoire des Signaux et Systèmes\\
+    Université Paris-Saclay, CNRS, CentraleSupélec
+\newline  Gif-sur-Yvette, 91190, France \newline Institut du Cerveau de
+Paris (ICM), Sorbonne Université \newline  Assistance Publique-Hôpitaux
+de Paris (AP-HP)\\
+  E-mail: \email{arthur.tenenhaus@centralesupelec.fr}\\
+  
+  }
 
 
 % tightlist command for lists without linebreak
@@ -1506,28 +1552,28 @@ The factorial scheme is used.
 
 Extracted statistics from 500 bootstrap samples.
 Block-weight vectors for component 1: 
-         estimate    mean     sd lower_bound upper_bound bootstrap_ratio  pval
-gini       0.6602  0.6319 0.0810      0.4558       0.727           8.152 0.000
-farm       0.7445  0.7312 0.0489      0.6357       0.836          15.220 0.000
-rent       0.0994  0.0727 0.2280     -0.4481       0.457           0.436 0.475
-gnpr       0.6891  0.6892 0.0303      0.6285       0.744          22.718 0.000
-labo      -0.7247 -0.7234 0.0283     -0.7778      -0.669         -25.600 0.000
-inst       0.1692  0.1653 0.1142     -0.0844       0.360           1.482 0.073
-ecks       0.4418  0.4353 0.0616      0.3001       0.540           7.175 0.000
-death      0.4784  0.4696 0.0502      0.3631       0.563           9.537 0.000
-demostab  -0.5574 -0.5515 0.0529     -0.6472      -0.434         -10.535 0.000
-dictator   0.4864  0.4833 0.0529      0.3752       0.585           9.187 0.000
-         adjust.pval
-gini           0.000
-farm           0.000
-rent           0.559
-gnpr           0.000
-labo           0.000
-inst           0.104
-ecks           0.000
-death          0.000
-demostab       0.000
-dictator       0.000
+         estimate    mean     sd lower_bound upper_bound bootstrap_ratio
+gini       0.6602  0.6360 0.0922       0.467       0.728           7.157
+farm       0.7445  0.7315 0.0657       0.643       0.838          11.333
+rent       0.0994  0.0831 0.2017      -0.339       0.412           0.493
+gnpr       0.6891  0.6888 0.0307       0.622       0.740          22.430
+labo      -0.7247 -0.7238 0.0286      -0.783      -0.673         -25.345
+inst       0.1692  0.1675 0.1096      -0.073       0.356           1.543
+ecks       0.4418  0.4343 0.0652       0.303       0.543           6.776
+death      0.4784  0.4720 0.0477       0.367       0.563          10.020
+demostab  -0.5574 -0.5510 0.0466      -0.630      -0.453         -11.963
+dictator   0.4864  0.4832 0.0535       0.373       0.577           9.085
+            pval adjust.pval
+gini     0.00402     0.00618
+farm     0.00200     0.00364
+rent     0.50150     0.59000
+gnpr     0.00000     0.00000
+labo     0.00000     0.00000
+inst     0.07066     0.10095
+ecks     0.00000     0.00000
+death    0.00000     0.00000
+demostab 0.00000     0.00000
+dictator 0.00000     0.00000
 \end{CodeOutput}
 \end{CodeChunk}
 
@@ -1719,10 +1765,13 @@ For each set of regularization parameters (generally this will be a
 \item
   The resulting p-value is given by the fraction of permuted \(t^*\)
   that exceeds the \(t\) obtained from the non-permuted blocks.
+\item
+  The resulting zstat is defined as
+  \(\frac{t-\text{mean}(t^*)}{\text{sd}(t^*)}\).
 \end{itemize}
 
 The best set of tuning parameters is then the set that yields the
-smallest p-value. This procedure is available through the
+highest zstat. This procedure is available through the
 \(\small{\texttt{rgcca\_permutation}}\) function.
 
 \footnotesize
@@ -1861,7 +1910,7 @@ frequently suggested.
 
 \textbf{Description of the data.} Pretreatment frozen tumor samples were
 obtained from 53 children with newly diagnosed pHGG from Necker Enfants
-Malades \citep[Paris, France, ][]{Puget2012}. The 53 tumors are divided
+Malades (Paris, France) \citep{Puget2012}. The 53 tumors are divided
 into 3 locations: supratentorial (HEMI), central nuclei (MIDL), and
 brain stem (DIPG). The final dataset is organized into 3 blocks of
 variables defined for the 53 tumors: the first block \(\mathbf{X}_1\)
@@ -2099,10 +2148,10 @@ R>
 R> cv_out <- rgcca_cv(blocks = training, response = 3,
 +                    par_type = "sparsity",
 +                    par_value = c(.2, .2, 0),
-+                    par_length = 10,
++                    par_length = 1,
 +                    prediction_model = "lda",
 +                    validation = "kfold",
-+                    k = 3, n_run = 10, metric = "Accuracy",
++                    k = 3, n_run = 1, metric = "Accuracy",
 +                    n_cores = 2)
 \end{CodeInput}
 \end{CodeChunk}
@@ -2228,7 +2277,7 @@ R> fit_stab <- rgcca_stability(fit,
 +                               fit$a, function(x) mean(x != 0),
 +                               FUN.VALUE = 1.0
 +                             ),
-+                             n_boot = 100, verbose = TRUE, n_cores = 2)
++                             n_boot = 2, verbose = TRUE, n_cores = 2)
 \end{CodeInput}
 \end{CodeChunk}
 
@@ -2311,7 +2360,7 @@ path modeling to deal with missing data \citep[see][]{Tenenhaus2005}.
 
 \item Special attention has been paid to recovering the results of other R packages 
 of the literature, including $\small{\texttt{ade4}}$ and 
-$\small{\texttt{factomineR}}$.
+$\small{\texttt{FactoMineR}}$.
 \end{itemize}
 
 We believe that the RGCCA package will be a valuable resource for
@@ -2334,12 +2383,12 @@ handling missing values are discussed in \cite{Peltier2022}. Work in
 progress includes the integration of all these novel approaches in the
 next release of the RGCCA package.
 
-\hypertarget{aknowledgements}{%
-\section*{Aknowledgements}\label{aknowledgements}}
-\addcontentsline{toc}{section}{Aknowledgements}
+\hypertarget{acknowledgments}{%
+\section*{Acknowledgments}\label{acknowledgments}}
+\addcontentsline{toc}{section}{Acknowledgments}
 
-This project has received fundings from UDOPIA - ANR-20-THIA-0013 and
-the European Union's Horizon 2020 research and innovation program under
+This project has received funding from UDOPIA - ANR-20-THIA-0013 and the
+European Union's Horizon 2020 research and innovation program under
 grant agreement No 874583.
 
 \renewcommand\refname{References}

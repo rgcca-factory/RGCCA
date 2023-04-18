@@ -16,7 +16,7 @@ A permutation-based strategy very similar to the one proposed in
     
     <a class="navbar-brand me-2" href="../index.html">RGCCA</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">3.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">3.0.0</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -172,8 +172,8 @@ the network of connections between blocks (default value: 1-diag(J)).</p></dd>
 to
 covariance maximization among "horst" (the identity function), "factorial"
  (the square function - default value), "centroid" (the absolute value
- function). The scheme function can be any continously differentiable convex
- function and it is possible to design explicitely the scheme function
+ function). The scheme function can be any continuously differentiable convex
+ function and it is possible to design explicitly the scheme function
  (e.g. function(x) x^4) as argument of the function.  See (Tenenhaus et al,
  2017) for details.</p></dd>
 
@@ -195,12 +195,12 @@ block and each dimension), or a string equal to "optimal".
 The regularization parameters varies from 0 (maximizing the correlation) to
 1 (maximizing the covariance).</p>
 <p>If tau is a numerical
-value, tau is identical accross all constraints applied to all
+value, tau is identical across all constraints applied to all
 block weight vectors.</p>
 <p>If tau is a vector, tau[j] is used for the constraints applied to
 all the block weight vectors associated to block \(\mathbf X_j\).</p>
 <p>If tau is a matrix, tau[k, j] is associated with the constraints
-applied to the kth block weight vector correpsonding to block
+applied to the kth block weight vector corresponding to block
 \(\mathbf X_j\).</p>
 <p>If tau = "optimal" the regularization
 parameters are estimated for each block and each dimension using the Schafer
@@ -218,14 +218,14 @@ block weight vectors. For block \(j\), the amount of
 sparsity varies between
 \(1/\text{sqrt}(p_j)\) and 1 (larger values of sparsity correspond to less
 penalization).</p>
-<p>If sparsity is a numerical value, then sparsity is identical accross
+<p>If sparsity is a numerical value, then sparsity is identical across
 all constraints applied to all block weight vectors.</p>
 <p>If sparsity is a vector, sparsity[j] is identical across the constraints
 applied to the block weight vectors associated to block
 \(\mathbf X_j\):
 $$\forall k, \Vert a_{j,k} \Vert_{1} \le \text{sparsity}[j] \sqrt{p_j}.$$</p>
 <p>If sparsity is a matrix, sparsity[k, j] is associated with the constraints
-applied to the kth block weight vector correpsonding to block
+applied to the kth block weight vector corresponding to block
 \(\mathbf X_j\):
 $$\Vert a_{j,k}\Vert_{1} \le \text{sparsity}[k,j] \sqrt{p_j}.$$</p>
 <p>The sparsity parameter can be estimated by using rgcca_permutation or
@@ -236,11 +236,11 @@ $$\Vert a_{j,k}\Vert_{1} \le \text{sparsity}[k,j] \sqrt{p_j}.$$</p>
 <dd><p>A string giving the type of initialization to use in
 the RGCCA algorithm. It could be either by
 Singular Value Decompostion ("svd")
-or by random initialisation ("random") (default: "svd").</p></dd>
+or by random initialization ("random") (default: "svd").</p></dd>
 
 
 <dt>bias</dt>
-<dd><p>A logical value for biaised (\(1/n\)) or unbiaised
+<dd><p>A logical value for biased (\(1/n\)) or unbiased
 (\(1/(n-1)\)) estimator of the variance/covariance
 (default: bias = TRUE).</p></dd>
 
@@ -311,7 +311,7 @@ RGCCA model.</p></dd>
 
 <dt>n_perms</dt>
 <dd><p>The number of permutations for each set of candidate
-tuning paramaters.</p></dd>
+tuning parameters.</p></dd>
 
 
 <dt>best_params</dt>
@@ -350,8 +350,10 @@ following is performed:</p>
 <p>(4) The resulting p-value is given by \(\text{mean}(t^* &gt; t)\);
 that is, the fraction of \(t^*\) that exceeds the value of \(t\)
 obtained from the real data.</p>
-<p>Then, choose the tuning parameter values that gives the smallest value in
-Step 4.</p>
+<p>(5) The resulting zstat is defined as
+\(\frac{t-\text{mean}(t^*)}{\text{sd}(t^*)}\).</p>
+<p>Then, choose the tuning parameter values that gives the highest value in
+Step 5.</p>
     </div>
     <div class="section level2">
     <h2 id="references">References<a class="anchor" aria-label="anchor" href="#references"></a></h2>
@@ -388,9 +390,8 @@ canonical correlation analysis. Biostatistics, 10(3), 515-534.</p>
 <span class="r-in"><span>  connection <span class="op">=</span> <span class="va">C</span>,</span></span>
 <span class="r-in"><span>  par_type <span class="op">=</span> <span class="st">"tau"</span>,</span></span>
 <span class="r-in"><span>  par_length <span class="op">=</span> <span class="fl">10</span>, n_perms <span class="op">=</span> <span class="fl">2</span>,</span></span>
-<span class="r-in"><span>  n_cores <span class="op">=</span> <span class="fl">1</span></span></span>
+<span class="r-in"><span>  n_cores <span class="op">=</span> <span class="fl">1</span>, verbose <span class="op">=</span> <span class="cn">FALSE</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   |                                                  | 0 % ~calculating    |++                                                | 3 % ~00s            |++++                                              | 7 % ~00s            |+++++                                             | 10% ~00s            |+++++++                                           | 13% ~00s            |+++++++++                                         | 17% ~00s            |++++++++++                                        | 20% ~00s            |++++++++++++                                      | 23% ~00s            |++++++++++++++                                    | 27% ~00s            |+++++++++++++++                                   | 30% ~00s            |+++++++++++++++++                                 | 33% ~00s            |+++++++++++++++++++                               | 37% ~00s            |++++++++++++++++++++                              | 40% ~00s            |++++++++++++++++++++++                            | 43% ~00s            |++++++++++++++++++++++++                          | 47% ~00s            |+++++++++++++++++++++++++                         | 50% ~00s            |+++++++++++++++++++++++++++                       | 53% ~00s            |+++++++++++++++++++++++++++++                     | 57% ~00s            |++++++++++++++++++++++++++++++                    | 60% ~00s            |++++++++++++++++++++++++++++++++                  | 63% ~00s            |++++++++++++++++++++++++++++++++++                | 67% ~00s            |+++++++++++++++++++++++++++++++++++               | 70% ~00s            |+++++++++++++++++++++++++++++++++++++             | 73% ~00s            |+++++++++++++++++++++++++++++++++++++++           | 77% ~00s            |++++++++++++++++++++++++++++++++++++++++          | 80% ~00s            |++++++++++++++++++++++++++++++++++++++++++        | 83% ~00s            |++++++++++++++++++++++++++++++++++++++++++++      | 87% ~00s            |+++++++++++++++++++++++++++++++++++++++++++++     | 90% ~00s            |+++++++++++++++++++++++++++++++++++++++++++++++   | 93% ~00s            |+++++++++++++++++++++++++++++++++++++++++++++++++ | 97% ~00s            |++++++++++++++++++++++++++++++++++++++++++++++++++| 100% elapsed=00s  </span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">fit</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Call: method='rgcca', superblock=FALSE, scale=TRUE, scale_block=TRUE, init='svd',</span>

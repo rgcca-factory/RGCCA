@@ -18,7 +18,7 @@ displayed on the x-axis."><!-- mathjax --><script src="https://cdnjs.cloudflare.
     
     <a class="navbar-brand me-2" href="../index.html">RGCCA</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">3.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">3.0.0</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -147,9 +147,9 @@ the block order is used. Default is TRUE.</p></dd>
 <span class="r-in"><span>  par_value <span class="op">=</span> <span class="fl">1</span>,</span></span>
 <span class="r-in"><span>  n_run <span class="op">=</span> <span class="fl">1</span>, n_cores <span class="op">=</span> <span class="fl">1</span>,</span></span>
 <span class="r-in"><span>  prediction_model <span class="op">=</span> <span class="st">"lda"</span>,</span></span>
-<span class="r-in"><span>  metric <span class="op">=</span> <span class="st">"Accuracy"</span></span></span>
+<span class="r-in"><span>  metric <span class="op">=</span> <span class="st">"Accuracy"</span>,</span></span>
+<span class="r-in"><span>  verbose <span class="op">=</span> <span class="cn">FALSE</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   |                                                  | 0 % ~calculating    |+                                                 | 2 % ~04s            |++                                                | 4 % ~03s            |+++                                               | 6 % ~02s            |++++                                              | 8 % ~02s            |+++++                                             | 10% ~02s            |++++++                                            | 12% ~02s            |+++++++                                           | 14% ~02s            |++++++++                                          | 16% ~02s            |+++++++++                                         | 18% ~02s            |++++++++++                                        | 20% ~02s            |+++++++++++                                       | 22% ~02s            |++++++++++++                                      | 24% ~02s            |+++++++++++++                                     | 26% ~02s            |++++++++++++++                                    | 28% ~02s            |+++++++++++++++                                   | 30% ~02s            |++++++++++++++++                                  | 32% ~02s            |+++++++++++++++++                                 | 34% ~01s            |++++++++++++++++++                                | 36% ~01s            |+++++++++++++++++++                               | 38% ~01s            |++++++++++++++++++++                              | 40% ~01s            |+++++++++++++++++++++                             | 42% ~01s            |++++++++++++++++++++++                            | 44% ~01s            |+++++++++++++++++++++++                           | 46% ~01s            |++++++++++++++++++++++++                          | 48% ~01s            |+++++++++++++++++++++++++                         | 50% ~01s            |++++++++++++++++++++++++++                        | 52% ~01s            |+++++++++++++++++++++++++++                       | 54% ~01s            |++++++++++++++++++++++++++++                      | 56% ~01s            |+++++++++++++++++++++++++++++                     | 58% ~01s            |++++++++++++++++++++++++++++++                    | 60% ~01s            |+++++++++++++++++++++++++++++++                   | 62% ~01s            |++++++++++++++++++++++++++++++++                  | 64% ~01s            |+++++++++++++++++++++++++++++++++                 | 66% ~01s            |++++++++++++++++++++++++++++++++++                | 68% ~01s            |+++++++++++++++++++++++++++++++++++               | 70% ~01s            |++++++++++++++++++++++++++++++++++++              | 72% ~01s            |+++++++++++++++++++++++++++++++++++++             | 74% ~01s            |++++++++++++++++++++++++++++++++++++++            | 76% ~01s            |+++++++++++++++++++++++++++++++++++++++           | 78% ~00s            |++++++++++++++++++++++++++++++++++++++++          | 80% ~00s            |+++++++++++++++++++++++++++++++++++++++++         | 82% ~00s            |++++++++++++++++++++++++++++++++++++++++++        | 84% ~00s            |+++++++++++++++++++++++++++++++++++++++++++       | 86% ~00s            |++++++++++++++++++++++++++++++++++++++++++++      | 88% ~00s            |+++++++++++++++++++++++++++++++++++++++++++++     | 90% ~00s            |++++++++++++++++++++++++++++++++++++++++++++++    | 92% ~00s            |+++++++++++++++++++++++++++++++++++++++++++++++   | 94% ~00s            |++++++++++++++++++++++++++++++++++++++++++++++++  | 96% ~00s            |+++++++++++++++++++++++++++++++++++++++++++++++++ | 98% ~00s            |++++++++++++++++++++++++++++++++++++++++++++++++++| 100% elapsed=02s  </span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">cv_out</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Call: method='rgcca', superblock=FALSE, scale=TRUE, scale_block=TRUE, init='svd',</span>
@@ -181,18 +181,18 @@ the block order is used. Default is TRUE.</p></dd>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Prediction model: lda </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    Tuning parameters Mean Accuracy    Sd</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1     1.00/1.00/0.00         0.687 0.152</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2     0.89/0.89/0.00         0.687 0.152</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3     0.78/0.78/0.00         0.687 0.152</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4     0.67/0.67/0.00         0.709 0.156</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 5     0.56/0.56/0.00         0.709 0.156</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6     0.44/0.44/0.00         0.687 0.152</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 7     0.33/0.33/0.00         0.687 0.152</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 8     0.22/0.22/0.00         0.687 0.152</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 9     0.11/0.11/0.00         0.687 0.152</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 10    0.00/0.00/0.00         0.747 0.167</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1     1.00/1.00/0.00         0.722 0.101</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2     0.89/0.89/0.00         0.722 0.101</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3     0.78/0.78/0.00         0.722 0.101</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4     0.67/0.67/0.00         0.722 0.101</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5     0.56/0.56/0.00         0.722 0.101</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6     0.44/0.44/0.00         0.722 0.101</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 7     0.33/0.33/0.00         0.722 0.101</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 8     0.22/0.22/0.00         0.722 0.101</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 9     0.11/0.11/0.00         0.722 0.101</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 10    0.00/0.00/0.00         0.700 0.148</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> The best combination is: 0.00/0.00/0.00 for a mean Accuracy of 0.747.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> The best combination is: 1.00/1.00/0.00 for a mean Accuracy of 0.722.</span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">cv_out</span><span class="op">)</span></span></span>
 <span class="r-plt img"><img src="plot.cval-1.png" alt="" width="700" height="433"></span>
 </code></pre></div>

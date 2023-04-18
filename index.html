@@ -52,7 +52,7 @@
     
     <a class="navbar-brand me-2" href="index.html">RGCCA</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">3.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">3.0.0</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -92,7 +92,7 @@
 <div class="page-header"><h1 id="rsgcca">R/SGCCA<a class="anchor" aria-label="anchor" href="#rsgcca"></a>
 </h1></div>
 <div class="section level5">
-<h5 id="version-30">Version: 3.0<a class="anchor" aria-label="anchor" href="#version-30"></a>
+<h5 id="version-300">Version: 3.0.0<a class="anchor" aria-label="anchor" href="#version-300"></a>
 </h5>
 </div>
 <div class="section level5">
@@ -128,9 +128,9 @@
 </ul>
 </div>
 <div class="section level2">
-<h2 id="description">Description<a class="anchor" aria-label="anchor" href="#description"></a>
+<h2 id="descriptiont">Descriptiont<a class="anchor" aria-label="anchor" href="#descriptiont"></a>
 </h2>
-<p>A package for multiblock data analysis (RGCCA - Regularized Generalized Canonical Correlation Analysis) as described in [1-4]. The software produces graphical ouptuts and statistics to assess the robustness/significance of the analysis.</p>
+<p>A package for multiblock data analysis (RGCCA - Regularized Generalized Canonical Correlation Analysis) as described in [1-4]. The software produces graphical outputs and statistics to assess the robustness/significance of the analysis.</p>
 </div>
 <div class="section level2">
 <h2 id="algorithm">Algorithm<a class="anchor" aria-label="anchor" href="#algorithm"></a>
@@ -141,7 +141,7 @@
 <li><p>The <strong>scheme function</strong> <span class="math inline"><em>g</em></span> is any continuous convex function and allows to consider different optimization criteria. Typical choices of <span class="math inline"><em>g</em></span> are the identity (horst scheme, leading to maximizing the sum of covariances between block components), the absolute value (centroid scheme, yielding maximization of the sum of the absolute values of the covariances), the square function (factorial scheme, thereby maximizing the sum of squared covariances), or, more generally, for any even integer <span class="math inline"><em>m</em></span>, <span class="math inline"><em>g</em>(<em>x</em>) = <em>x</em><sup><em>m</em></sup></span> (<span class="math inline"><em>m</em></span>-scheme, maximizing the power of <span class="math inline"><em>m</em></span> of the sum of covariances). The horst scheme penalizes structural negative correlation between block components while both the centroid scheme and the <span class="math inline"><em>m</em></span>-scheme enable two components to be negatively correlated. According to [5], a fair model is a model where all blocks contribute equally to the solution in opposition to a model dominated by only a few of the <span class="math inline"><em>J</em></span> sets. If fairness is a major objective, the user must choose <span class="math inline"><em>m</em> = 1</span>. <span class="math inline"><em>m</em> &gt; 1</span> is preferable if the user wants to discriminate between blocks. In practice, <span class="math inline"><em>m</em></span> is equal to 1, 2 or 4. The higher the value of <span class="math inline"><em>m</em></span> the more the method acts as block selector [5].</p></li>
 <li><p>The <strong>design matrix</strong> <span class="math inline"><strong>C</strong></span> is a symmetric <span class="math inline"><em>J</em> × <em>J</em></span> matrix of nonnegative elements describing the network of connections between blocks the user wants to take into account. Usually, <span class="math inline"><em>c</em><sub><em>j</em><em>k</em></sub> = 1</span> for two connected blocks and 0 otherwise.</p></li>
 <li>
-<p>The <span class="math inline"><em>τ</em><sub><em>j</em></sub></span> are called <strong>shrinkage parameters</strong> or <strong>regularization parameters</strong> ranging from 0 to 1. <span class="math inline"><em>τ</em><sub><em>j</em></sub></span> enables interpolate smoothly between maximizing the covariance and maximizing the correlation. Setting the <span class="math inline"><em>τ</em><sub><em>j</em></sub></span> to 0 will force the block components to unit variance (<span class="math inline">var(<strong>X</strong><sub><em>j</em></sub><strong>a</strong><sub><em>j</em></sub>) = 1</span>). In this case, the covariance criterion boils down to the correlation. The correlation criterion is better in explaining the correlated structure across datasets, thus discarding the variance within each individual dataset. Setting <span class="math inline"><em>τ</em><sub><em>j</em></sub></span> to 1 will normalize the block weight vectors (<span class="math inline">‖<strong>a</strong><sub><em>j</em></sub>‖ = 1</span>), which applies the covariance criterion. A value between 0 and 1 will lead to a compromise between the two first options and correspond to the following constraint <span class="math inline">(1−<em>τ</em><sub><em>j</em></sub>)var(<strong>X</strong><sub><em>j</em></sub><strong>a</strong><sub><em>j</em></sub>) + <em>τ</em><sub><em>j</em></sub>‖<strong>a</strong><sub><em>j</em></sub>‖<sup>2</sup> = 1</span>. In the RGCCA package, for each block, the determination of the shrinkage parameter can be made fully automatic by using the analytical formula proposed by (Schäfer and Strimmer 2005 [6]), by permutation or K fold cross-validation. Morever, we can define the choice of the shrinkage parameters by providing interpretations on the properties of the resulting block components:</p>
+<p>The <span class="math inline"><em>τ</em><sub><em>j</em></sub></span> are called <strong>shrinkage parameters</strong> or <strong>regularization parameters</strong> ranging from 0 to 1. <span class="math inline"><em>τ</em><sub><em>j</em></sub></span> enables interpolate smoothly between maximizing the covariance and maximizing the correlation. Setting the <span class="math inline"><em>τ</em><sub><em>j</em></sub></span> to 0 will force the block components to unit variance (<span class="math inline">var(<strong>X</strong><sub><em>j</em></sub><strong>a</strong><sub><em>j</em></sub>) = 1</span>). In this case, the covariance criterion boils down to the correlation. The correlation criterion is better in explaining the correlated structure across datasets, thus discarding the variance within each individual dataset. Setting <span class="math inline"><em>τ</em><sub><em>j</em></sub></span> to 1 will normalize the block weight vectors (<span class="math inline">‖<strong>a</strong><sub><em>j</em></sub>‖ = 1</span>), which applies the covariance criterion. A value between 0 and 1 will lead to a compromise between the two first options and correspond to the following constraint <span class="math inline">(1−<em>τ</em><sub><em>j</em></sub>)var(<strong>X</strong><sub><em>j</em></sub><strong>a</strong><sub><em>j</em></sub>) + <em>τ</em><sub><em>j</em></sub>‖<strong>a</strong><sub><em>j</em></sub>‖<sup>2</sup> = 1</span>. In the RGCCA package, for each block, the determination of the shrinkage parameter can be made fully automatic by using the analytical formula proposed by (Schäfer and Strimmer 2005 [6]), by permutation or K fold cross-validation. Moreover, we can define the choice of the shrinkage parameters by providing interpretations on the properties of the resulting block components:</p>
 <ul>
 <li><p><span class="math inline"><em>τ</em><sub><em>j</em></sub> = 1</span> yields the maximization of a covariance-based criterion. It is recommended when the user wants a stable component (large variance) while simultaneously taking into account the correlations between blocks. The user must, however, be aware that variance dominates over correlation.</p></li>
 <li><p><span class="math inline"><em>τ</em><sub><em>j</em></sub> = 0</span> yields the maximization of a correlation-based criterion. It is recommended when the user wants to maximize correlations between connected components. This option can yield unstable solutions in case of multi-collinearity and cannot be used when a data block is rank deficient (e.g. <span class="math inline"><em>n</em> &lt; <em>p</em><sub><em>j</em></sub></span>).</p></li>
@@ -156,8 +156,8 @@
 </h2>
 <p>Required:</p>
 <ul>
-<li><p>Softwares : R (≥ 3.2.0)</p></li>
-<li><p>R libraries : see the <a href="https://github.com/rgcca-factory/RGCCA/blob/main/DESCRIPTION" class="external-link">DESCRIPTION</a> file.</p></li>
+<li><p>Software: R (≥ 3.2.0)</p></li>
+<li><p>R libraries: see the <a href="https://github.com/rgcca-factory/RGCCA/blob/main/DESCRIPTION" class="external-link">DESCRIPTION</a> file.</p></li>
 </ul>
 <pre><code><span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"RGCCA"</span><span class="op">)</span></span></code></pre>
 <p>See the <a href="https://rgcca-factory.github.io/RGCCA/articles/RGCCA.pdf">vignette</a> for an introduction to the package.</p>
@@ -167,8 +167,8 @@
 </h2>
 <p>Required:</p>
 <ul>
-<li><p>Softwares : R (≥ 3.2.0)</p></li>
-<li><p>R libraries : see the <a href="https://github.com/rgcca-factory/RGCCA/blob/main/DESCRIPTION" class="external-link">DESCRIPTION</a> file.</p></li>
+<li><p>Software: R (≥ 3.2.0)</p></li>
+<li><p>R libraries: see the <a href="https://github.com/rgcca-factory/RGCCA/blob/main/DESCRIPTION" class="external-link">DESCRIPTION</a> file.</p></li>
 <li><p>The R library <code>devtools</code>.</p></li>
 </ul>
 <pre><code><span><span class="fu"><a href="https://rdrr.io/r/utils/remove.packages.html" class="external-link">remove.packages</a></span><span class="op">(</span><span class="st">"RGCCA"</span><span class="op">)</span></span>
@@ -182,7 +182,7 @@
 <li>Tenenhaus, A., Philippe, C., &amp; Frouin, V. (2015). Kernel generalized canonical correlation analysis. Computational Statistics &amp; Data Analysis, 90, 114-131.</li>
 <li>Tenenhaus, A., Philippe, C., Guillemot, V., Le Cao, K. A., Grill, J., &amp; Frouin, V. (2014). Variable selection for generalized canonical correlation analysis. Biostatistics, 15(3), 569-583.</li>
 <li>Tenenhaus, A., &amp; Tenenhaus, M. (2011). Regularized generalized canonical correlation analysis. Psychometrika, 76(2), 257.</li>
-<li>Van de Geer, J. P. (1984). Linear relations amongk sets of variables. Psychometrika, 49(1), 79-94.</li>
+<li>Van de Geer, J. P. (1984). Linear relations among K sets of variables. Psychometrika, 49(1), 79-94.</li>
 <li>Schäfer, J., &amp; Strimmer, K. (2005). A shrinkage approach to large-scale covariance matrix estimation and implications for functional genomics. Statistical applications in genetics and molecular biology, 4(1).</li>
 <li>Tenenhaus, A., &amp; Tenenhaus, M. (2014). Regularized generalized canonical correlation analysis for multiblock or multigroup data analysis. European Journal of operational research, 238(2), 391-403.</li>
 </ol>

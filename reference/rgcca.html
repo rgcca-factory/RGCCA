@@ -14,7 +14,7 @@ of the package."><!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/
     
     <a class="navbar-brand me-2" href="../index.html">RGCCA</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">3.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">3.0.0</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -109,12 +109,12 @@ block and each dimension), or a string equal to "optimal".
 The regularization parameters varies from 0 (maximizing the correlation) to
 1 (maximizing the covariance).</p>
 <p>If tau is a numerical
-value, tau is identical accross all constraints applied to all
+value, tau is identical across all constraints applied to all
 block weight vectors.</p>
 <p>If tau is a vector, tau[j] is used for the constraints applied to
 all the block weight vectors associated to block \(\mathbf X_j\).</p>
 <p>If tau is a matrix, tau[k, j] is associated with the constraints
-applied to the kth block weight vector correpsonding to block
+applied to the kth block weight vector corresponding to block
 \(\mathbf X_j\).</p>
 <p>If tau = "optimal" the regularization
 parameters are estimated for each block and each dimension using the Schafer
@@ -134,8 +134,8 @@ the same number of components is extracted for every block.</p></dd>
 to
 covariance maximization among "horst" (the identity function), "factorial"
  (the square function - default value), "centroid" (the absolute value
- function). The scheme function can be any continously differentiable convex
- function and it is possible to design explicitely the scheme function
+ function). The scheme function can be any continuously differentiable convex
+ function and it is possible to design explicitly the scheme function
  (e.g. function(x) x^4) as argument of the function.  See (Tenenhaus et al,
  2017) for details.</p></dd>
 
@@ -148,11 +148,11 @@ covariance maximization among "horst" (the identity function), "factorial"
 <dd><p>A string giving the type of initialization to use in
 the RGCCA algorithm. It could be either by
 Singular Value Decompostion ("svd")
-or by random initialisation ("random") (default: "svd").</p></dd>
+or by random initialization ("random") (default: "svd").</p></dd>
 
 
 <dt>bias</dt>
-<dd><p>A logical value for biaised (\(1/n\)) or unbiaised
+<dd><p>A logical value for biased (\(1/n\)) or unbiased
 (\(1/(n-1)\)) estimator of the variance/covariance
 (default: bias = TRUE).</p></dd>
 
@@ -193,14 +193,14 @@ block weight vectors. For block \(j\), the amount of
 sparsity varies between
 \(1/\text{sqrt}(p_j)\) and 1 (larger values of sparsity correspond to less
 penalization).</p>
-<p>If sparsity is a numerical value, then sparsity is identical accross
+<p>If sparsity is a numerical value, then sparsity is identical across
 all constraints applied to all block weight vectors.</p>
 <p>If sparsity is a vector, sparsity[j] is identical across the constraints
 applied to the block weight vectors associated to block
 \(\mathbf X_j\):
 $$\forall k, \Vert a_{j,k} \Vert_{1} \le \text{sparsity}[j] \sqrt{p_j}.$$</p>
 <p>If sparsity is a matrix, sparsity[k, j] is associated with the constraints
-applied to the kth block weight vector correpsonding to block
+applied to the kth block weight vector corresponding to block
 \(\mathbf X_j\):
 $$\Vert a_{j,k}\Vert_{1} \le \text{sparsity}[k,j] \sqrt{p_j}.$$</p>
 <p>The sparsity parameter can be estimated by using <a href="rgcca_permutation.html">rgcca_permutation</a> or
@@ -281,7 +281,7 @@ of the criterion for this stage across iterations.</p></dd>
 <dt>primal_dual</dt>
 <dd><p>A vector of length J. Element \(j\)
 is either "primal" or "dual", depending on whether the primal or dual
-RGCCA alogrithm was used for block \(j\).</p></dd>
+RGCCA algorithm was used for block \(j\).</p></dd>
 
 
 <dt>AVE</dt>
@@ -357,7 +357,7 @@ components
 (specified by ncomp) per block. Within each block, components or weight
 vectors are guaranteed to be orthogonal. It should be noted that the numbers
 of components per block can differ from one block to another.</p>
-<p>The rgcca() function handle missing values (ponctual or blockwise missing
+<p>The rgcca() function handle missing values (punctual or blockwise missing
 structure) using the algorithm described in (Tenenhaus et al, 2005).</p>
 <p>Guidelines describing how to use RGCCA in practice are provided in
 (Garali et al., 2018).</p>
