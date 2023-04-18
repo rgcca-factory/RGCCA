@@ -6,7 +6,7 @@
 
 # R/SGCCA
 
-##### Version: 3.0
+##### Version: 3.0.0
 
 ##### Authors:
 Fabien GIRKA, Etienne CAMENEN,  Caroline PELTIER, Vincent GUILLEMOT, 

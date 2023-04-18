@@ -4,35 +4,62 @@ author:
   - name: Fabien Girka
     orcid: 0000-0003-2843-1104
     affiliation: |
-      | Laboratoire des Signaux et systèmes
-      | Université Paris-Saclay
-      | CentraleSupelec
-    affiliation2: Paris Brain Institute  
+      | Laboratoire des Signaux et Systèmes
+    address: >
+      Université Paris-Saclay, CNRS, CentraleSupélec, \newline 
+      Gif-sur-Yvette, 91190, France \newline
+      Institut du Cerveau de Paris (ICM), Sorbonne Université \newline 
+      Assistance Publique-Hôpitaux de Paris (AP-HP)
+    email: \email{fabien.girka@centralesupelec.fr}
   - name: Etienne Camenen
     affiliation: | 
       | INSERM
-      | Paris Brain Institute  
+    address: >
+      Inserm U1127, CNRS UMR 7225, \newline
+      Hôpital Universitaire Pitié-Salpêtrière \newline 
+      75013 Paris, France \newline
+      Institut du Cerveau de Paris (ICM), Sorbonne Université \newline 
+      Assistance Publique-Hôpitaux de Paris (AP-HP)
   - name: Caroline Peltier
     affiliation: |
-      | INRAE
-      | Paris Brain Institute \AND
+      | INRAE \AND
+    address: >
+      Centre des Sciences du Goût et de l’Alimentation \newline
+      CNRS, INRAE, Institut Agro \newline
+      University of Bourgogne F-21000 Dijon \newline
+      CNRS, INRAE, PROBE research infrastructure \newline 
+      ChemoSens facility, F-21000 Dijon, France \newline
+      Institut du Cerveau de Paris (ICM), Sorbonne Université \newline 
+      Assistance Publique-Hôpitaux de Paris (AP-HP)
   - name: Arnaud Gloaguen
     affiliation: |
       | CEA 
+    address: >
+      Centre National de Recherche en Génomique Humaine \newline 
+      Institut de Biologie François Jacob \newline 
+      CEA, Université Paris-Saclay, Évry, France 
   - name: Vincent Guillemot
-    affiliation: 'Pasteur \AND'
+    affiliation: 'Institut Pasteur \AND'
+    address: >
+      Université Paris Cité \newline
+      Bioinformatics and Biostatistics Hub \newline 
+      F-75015 Paris, France
   - name: Laurent Le Brusquet
     affiliation: |
-      | Laboratoire des Signaux et systèmes
-      | Université Paris-Saclay
-      | CentraleSupelec
+      | Laboratoire des Signaux et Systèmes
+    address: >
+      Université Paris-Saclay, CNRS, CentraleSupélec \newline 
+      Gif-sur-Yvette, 91190, France 
   - name: Arthur Tenenhaus
-    orcid: 0000-0000-0000-0000
+    orcid: 0000-0003-3459-1518
     affiliation: |
-      | Laboratoire des Signaux et systèmes
-      | Université Paris-Saclay
-      | CentraleSupelec
-    email: \email{arthur.tenenhause@centralesupelec.fr}
+      | Laboratoire des Signaux et Systèmes
+    address: >
+      Université Paris-Saclay, CNRS, CentraleSupélec \newline 
+      Gif-sur-Yvette, 91190, France \newline
+      Institut du Cerveau de Paris (ICM), Sorbonne Université \newline 
+      Assistance Publique-Hôpitaux de Paris (AP-HP)
+    email: \email{arthur.tenenhaus@centralesupelec.fr}
     # use a different affiliation in adress field (differently formated here)
 title:
   formatted: "Multiblock data analysis with the RGCCA package"
