@@ -87,7 +87,8 @@
 #'                    par_type = "tau",
 #'                    prediction_model = "lda", #caret::modelLookup()
 #'                    metric = "Accuracy",
-#'                    k=3, n_run = 5)
+#'                    k=3, n_run = 5,
+#'                    verbose = FALSE)
 #'
 #'
 #' print(cv_out)
@@ -112,7 +113,8 @@
 #'                    par_value = c(0.6, 0.75, 0.8),
 #'                    prediction_model = "lm", #caret::modelLookup()
 #'                    metric = "RMSE",
-#'                    k=3, n_run = 5)
+#'                    k=3, n_run = 5,
+#'                    verbose = FALSE)
 #'
 #' print(cv_out)
 #' plot(cv_out)

@@ -21,8 +21,8 @@ author:
       Institut du Cerveau de Paris (ICM), Sorbonne Université \newline 
       Assistance Publique-Hôpitaux de Paris (AP-HP)
   - name: Caroline Peltier
-    affiliation: |
-      | INRAE \AND
+    affiliation: 'INRAE \AND'
+    affiliation2: 'INRAE'
     address: >
       Centre des Sciences du Goût et de l’Alimentation \newline
       CNRS, INRAE, Institut Agro \newline
@@ -40,6 +40,7 @@ author:
       CEA, Université Paris-Saclay, Évry, France 
   - name: Vincent Guillemot
     affiliation: 'Institut Pasteur \AND'
+    affiliation2: 'Institut Pasteur'
     address: >
       Université Paris Cité \newline
       Bioinformatics and Biostatistics Hub \newline 
@@ -1165,8 +1166,10 @@ function, denoted $t^*$.
 - The resulting p-value is given by the fraction of permuted
 $t^*$ that exceeds the $t$ obtained from the non-permuted blocks.
 
-The best set of tuning parameters is then the set that yields the smallest
-p-value. This procedure is available through the $\small{\texttt{rgcca\_permutation}}$ function.
+- The resulting zstat is defined as $\frac{t-\text{mean}(t^*)}{\text{sd}(t^*)}$.
+
+The best set of tuning parameters is then the set that yields the highest zstat.
+This procedure is available through the $\small{\texttt{rgcca\_permutation}}$ function.
 
 ```{r}
 set.seed(123)
@@ -1226,8 +1229,8 @@ the tumor may be different from one location to another, as has been
 frequently suggested.
 
 **Description of the data.** Pretreatment frozen tumor samples were obtained 
-from 53 children with newly diagnosed pHGG from Necker Enfants Malades 
-\citep[Paris, France, ][]{Puget2012}. The 53 tumors are divided into 3 locations: supratentorial 
+from 53 children with newly diagnosed pHGG from Necker Enfants Malades (Paris, France)
+\citep{Puget2012}. The 53 tumors are divided into 3 locations: supratentorial 
 (HEMI), central nuclei (MIDL), and brain stem (DIPG). The final dataset is 
 organized into 3 blocks of variables defined for the 53 tumors: the first block 
 $\mathbf{X}_1$ provides the expression of $15702$ genes (GE). The second block 
@@ -1383,7 +1386,7 @@ classifier ($\small{\texttt{prediction\_model = "lda"}}$). Also, we decide to up
 parameters for $\mathbf X_1$ and $\mathbf X_2$ to $0.2$ to achieve an 
 attractive amount of sparsity. 
 
-```{r glioma_cv, cache = TRUE}
+```{r, cache = TRUE}
 set.seed(27) #my favorite number
 inTraining <- caret::createDataPartition(
   blocks[[3]], p = .75, list = FALSE
@@ -1394,10 +1397,10 @@ testing <- lapply(blocks, function(x) as.matrix(x)[-inTraining, , drop = FALSE])
 cv_out <- rgcca_cv(blocks = training, response = 3,
                    par_type = "sparsity",
                    par_value = c(.2, .2, 0),
-                   par_length = 10,
+                   par_length = 1,
                    prediction_model = "lda",
                    validation = "kfold",
-                   k = 3, n_run = 10, metric = "Accuracy",
+                   k = 3, n_run = 1, metric = "Accuracy",
                    n_cores = 2)
 ```
 
@@ -1470,13 +1473,13 @@ the VIPs are computed, and the variables with the higher VIPs averaged over the
 different models are kept. This procedure is available  through the 
 $\small{\texttt{rgcca\_stability}}$ function.
 
-```{r glioma_stab, cache = TRUE, message = FALSE}
+```{r, cache = TRUE, message = FALSE}
 fit_stab <- rgcca_stability(fit,
                             keep = vapply(
                               fit$a, function(x) mean(x != 0),
                               FUN.VALUE = 1.0
                             ),
-                            n_boot = 100, verbose = TRUE, n_cores = 2)
+                            n_boot = 2, verbose = TRUE, n_cores = 2)
 ```
 
 Once the most stable variables have been found, a new model using these 
@@ -1535,7 +1538,7 @@ path modeling to deal with missing data \citep[see][]{Tenenhaus2005}.
 
 \item Special attention has been paid to recovering the results of other R packages 
 of the literature, including $\small{\texttt{ade4}}$ and 
-$\small{\texttt{factomineR}}$.
+$\small{\texttt{FactoMineR}}$.
 \end{itemize}
 
 We believe that the RGCCA package will be a valuable resource for researchers 
@@ -1558,9 +1561,9 @@ handling missing values are discussed in \cite{Peltier2022}. Work in
 progress includes the integration of all these novel approaches in the
 next release of the RGCCA package.
 
-# Aknowledgements {-}
+# Acknowledgments {-}
 
-This project has received fundings from UDOPIA - ANR-20-THIA-0013 and 
+This project has received funding from UDOPIA - ANR-20-THIA-0013 and 
 the European Union’s Horizon 2020 research and innovation program under grant 
 agreement No 874583.
 

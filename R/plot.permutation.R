@@ -23,14 +23,18 @@
 #'   politic = Russett[, 6:11]
 #' )
 #'
-#' perm_out <- rgcca_permutation(A, par_type = "tau", n_perms = 2, n_cores = 1)
+#' perm_out <- rgcca_permutation(A, par_type = "tau",
+#'                               n_perms = 2, n_cores = 1,
+#'                               verbose = FALSE)
 #' print(perm_out)
 #' plot(perm_out)
 #'
 #' perm.out <- rgcca_permutation(A,
 #'   par_type = "sparsity",
-#'   n_perms = 5, n_cores = 1
+#'   n_perms = 5, n_cores = 1,
+#'   verbose = FALSE
 #' )
+#'
 #' print(perm.out)
 #' plot(perm.out, type = "zstat")
 #' @export

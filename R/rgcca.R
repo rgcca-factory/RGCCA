@@ -50,7 +50,7 @@
 #' vectors are guaranteed to be orthogonal. It should be noted that the numbers
 #' of components per block can differ from one block to another.
 #'
-#' The rgcca() function handle missing values (ponctual or blockwise missing
+#' The rgcca() function handle missing values (punctual or blockwise missing
 #' structure) using the algorithm described in (Tenenhaus et al, 2005).
 #'
 #' Guidelines describing how to use RGCCA in practice are provided in
@@ -82,8 +82,8 @@
 #' to
 #' covariance maximization among "horst" (the identity function), "factorial"
 #'  (the square function - default value), "centroid" (the absolute value
-#'  function). The scheme function can be any continously differentiable convex
-#'  function and it is possible to design explicitely the scheme function
+#'  function). The scheme function can be any continuously differentiable convex
+#'  function and it is possible to design explicitly the scheme function
 #'  (e.g. function(x) x^4) as argument of the function.  See (Tenenhaus et al,
 #'  2017) for details.
 #' @param ncomp A numerical value or a vector of length \eqn{J} indicating
@@ -100,14 +100,14 @@
 #' 1 (maximizing the covariance).
 #'
 #' If tau is a numerical
-#' value, tau is identical accross all constraints applied to all
+#' value, tau is identical across all constraints applied to all
 #' block weight vectors.
 #'
 #' If tau is a vector, tau[j] is used for the constraints applied to
 #' all the block weight vectors associated to block \eqn{\mathbf X_j}{Xj}.
 #'
 #' If tau is a matrix, tau[k, j] is associated with the constraints
-#' applied to the kth block weight vector correpsonding to block
+#' applied to the kth block weight vector corresponding to block
 #' \eqn{\mathbf X_j}{Xj}.
 #'
 #' If tau = "optimal" the regularization
@@ -124,7 +124,7 @@
 #' \eqn{1/\text{sqrt}(p_j)} and 1 (larger values of sparsity correspond to less
 #' penalization).
 #'
-#' If sparsity is a numerical value, then sparsity is identical accross
+#' If sparsity is a numerical value, then sparsity is identical across
 #' all constraints applied to all block weight vectors.
 #'
 #' If sparsity is a vector, sparsity[j] is identical across the constraints
@@ -133,7 +133,7 @@
 #' \deqn{\forall k, \Vert a_{j,k} \Vert_{1} \le \text{sparsity}[j] \sqrt{p_j}.}
 #'
 #' If sparsity is a matrix, sparsity[k, j] is associated with the constraints
-#' applied to the kth block weight vector correpsonding to block
+#' applied to the kth block weight vector corresponding to block
 #' \eqn{\mathbf X_j}{Xj}:
 #' \deqn{\Vert a_{j,k}\Vert_{1} \le \text{sparsity}[k,j] \sqrt{p_j}.}
 #'
@@ -142,8 +142,8 @@
 #' @param init A string giving the type of initialization to use in
 #' the RGCCA algorithm. It could be either by
 #' Singular Value Decompostion ("svd")
-#' or by random initialisation ("random") (default: "svd").
-#' @param bias A logical value for biaised (\eqn{1/n}) or unbiaised
+#' or by random initialization ("random") (default: "svd").
+#' @param bias A logical value for biased (\eqn{1/n}) or unbiased
 #' (\eqn{1/(n-1)}) estimator of the variance/covariance
 #' (default: bias = TRUE).
 #' @param tol The stopping value for the convergence of the algorithm
@@ -184,7 +184,7 @@
 #' of the criterion for this stage across iterations.}
 #' @return \item{primal_dual}{A vector of length J. Element \eqn{j}{j}
 #' is either "primal" or "dual", depending on whether the primal or dual
-#' RGCCA alogrithm was used for block \eqn{j}{j}.}
+#' RGCCA algorithm was used for block \eqn{j}{j}.}
 #' @return \item{AVE}{A list of numerical values giving the indicators of model
 #' quality based on the Average Variance Explained (AVE): AVE(for each block),
 #' AVE(outer model), AVE(inner model).}

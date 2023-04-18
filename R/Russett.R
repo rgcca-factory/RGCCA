@@ -34,7 +34,7 @@
 #' violence (50-62),
 #'      \item DEMOSTAB: Stable democracy,
 #'      \item DEMOINST: Unstable democracy,
-#'      \item DICTATOR: Dictactorship.
+#'      \item DICTATOR: Dictatorship.
 #' }}
 #' }
 #'

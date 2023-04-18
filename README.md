@@ -30,8 +30,8 @@ Performs multiblock component methods (PCA, CCA, PLS, MCOA, GCCA, CPCA, MAXVAR, 
   - [Installation of a development branch from the git repository](#installation-of-a-development-branch-from-the-git-repository)
   - [References](#references)
 
-## Description
-A package for multiblock data analysis (RGCCA - Regularized Generalized Canonical Correlation Analysis) as described in [1-4]. The software produces graphical ouptuts and statistics to assess the robustness/significance of the analysis.
+## Descriptiont
+A package for multiblock data analysis (RGCCA - Regularized Generalized Canonical Correlation Analysis) as described in [1-4]. The software produces graphical outputs and statistics to assess the robustness/significance of the analysis.
 
 ## Algorithm
 We consider $J$ data matrices $\mathbf X_1 , \dots, \mathbf X_J$. Each $n \times p_j$ data matrix 
@@ -46,7 +46,7 @@ $$\underset{\mathbf a_1, \dots, \mathbf a_J}{\text{maximize}} \sum_{j, k = 1}^J 
 - The **design matrix** $\mathbf C$ is a symmetric $J \times J$ matrix of nonnegative elements describing the network of connections between blocks the user wants to take into account. Usually, $c_{jk} = 1$ for two connected blocks and 0 otherwise.
 
 - The $\tau_j$ are called **shrinkage parameters** or **regularization parameters** ranging from 0 to 1. $\tau_j$ enables interpolate smoothly between maximizing the covariance and maximizing the correlation. Setting the $\tau_j$ to 0 will force the block components to unit variance ($\text{var}(\mathbf X_j \mathbf a_j) = 1$). In this case, the covariance criterion boils down to the correlation. The correlation criterion is better in explaining the correlated structure across datasets, thus discarding the variance within each individual dataset. Setting $\tau_j$ to 1 will normalize the block weight vectors ($\Vert \mathbf a_j \Vert = 1$), which applies the covariance criterion. A value between 0 and 1 will lead to a compromise between the two first options and correspond to the following constraint $(1 − \tau_j)  \text{var}(\mathbf X_j \mathbf a_j) + \tau_j \Vert \mathbf a_j \Vert^2 = 1$. In the RGCCA package, for each block, the determination of the shrinkage parameter can be made fully automatic by using the analytical formula proposed by (Schäfer and Strimmer 2005 [6]), by permutation or K fold cross-validation.
-Morever, we can define the choice of the shrinkage parameters by providing interpretations on the properties of the resulting block components:
+Moreover, we can define the choice of the shrinkage parameters by providing interpretations on the properties of the resulting block components:
 
     - $\tau_j = 1$ yields the maximization of a covariance-based criterion. It is recommended when the user wants a stable component (large variance) while simultaneously taking into account the correlations between blocks. The user must, however, be aware that variance dominates over correlation.
 
@@ -59,9 +59,9 @@ The quality and interpretability of the RGCCA block components $\mathbf y_j = \m
 ## Installation
 Required:
 
-- Softwares : R (≥ 3.2.0)
+- Software: R (≥ 3.2.0)
 
-- R libraries : see the [DESCRIPTION](https://github.com/rgcca-factory/RGCCA/blob/main/DESCRIPTION) file.
+- R libraries: see the [DESCRIPTION](https://github.com/rgcca-factory/RGCCA/blob/main/DESCRIPTION) file.
 
 ```
 install.packages("RGCCA")
@@ -73,9 +73,9 @@ See the [vignette](https://rgcca-factory.github.io/RGCCA/articles/RGCCA.pdf) for
 ## Installation of a development branch from the git repository
 Required:
 
-- Softwares : R (≥ 3.2.0)
+- Software: R (≥ 3.2.0)
 
-- R libraries : see the [DESCRIPTION](https://github.com/rgcca-factory/RGCCA/blob/main/DESCRIPTION) file.
+- R libraries: see the [DESCRIPTION](https://github.com/rgcca-factory/RGCCA/blob/main/DESCRIPTION) file.
 
 - The R library `devtools`.
 
@@ -89,6 +89,6 @@ devtools::install_github(repo="https://github.com/rgcca-factory/RGCCA.git", ref 
 2. Tenenhaus, A., Philippe, C., & Frouin, V. (2015). Kernel generalized canonical correlation analysis. Computational Statistics & Data Analysis, 90, 114-131.
 3. Tenenhaus, A., Philippe, C., Guillemot, V., Le Cao, K. A., Grill, J., & Frouin, V. (2014). Variable selection for generalized canonical correlation analysis. Biostatistics, 15(3), 569-583.
 4. Tenenhaus, A., & Tenenhaus, M. (2011). Regularized generalized canonical correlation analysis. Psychometrika, 76(2), 257.
-5. Van de Geer, J. P. (1984). Linear relations amongk sets of variables. Psychometrika, 49(1), 79-94.
+5. Van de Geer, J. P. (1984). Linear relations among K sets of variables. Psychometrika, 49(1), 79-94.
 6. Schäfer, J., & Strimmer, K. (2005). A shrinkage approach to large-scale covariance matrix estimation and implications for functional genomics. Statistical applications in genetics and molecular biology, 4(1).
 7. Tenenhaus, A., & Tenenhaus, M. (2014). Regularized generalized canonical correlation analysis for multiblock or multigroup data analysis. European Journal of operational research, 238(2), 391-403.

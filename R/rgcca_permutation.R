@@ -25,8 +25,11 @@
 #' that is, the fraction of \eqn{t^*} that exceeds the value of \eqn{t}
 #' obtained from the real data.
 #'
-#' Then, choose the tuning parameter values that gives the smallest value in
-#' Step 4.
+#' (5) The resulting zstat is defined as
+#' \eqn{\frac{t-\text{mean}(t^*)}{\text{sd}(t^*)}}.
+#'
+#' Then, choose the tuning parameter values that gives the highest value in
+#' Step 5.
 #'
 #' @inheritParams rgcca_bootstrap
 #' @inheritParams rgcca
@@ -43,7 +46,7 @@
 #' @return \item{par_type}{The type of parameter tuned (either "tau",
 #' "sparsity", or "ncomp").}
 #' @return \item{n_perms}{The number of permutations for each set of candidate
-#' tuning paramaters.}
+#' tuning parameters.}
 #' @return \item{best_params}{The set of tuning parameters that yields the
 #' highest Z-statistic.}
 #' @return \item{permcrit}{A matrix of permuted S/RGCCA criteria. The ith row of
@@ -85,7 +88,7 @@
 #'   connection = C,
 #'   par_type = "tau",
 #'   par_length = 10, n_perms = 2,
-#'   n_cores = 1
+#'   n_cores = 1, verbose = FALSE
 #' )
 #'
 #' print(fit)

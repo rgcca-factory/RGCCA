@@ -29,7 +29,8 @@
 #'   par_value = 1,
 #'   n_run = 1, n_cores = 1,
 #'   prediction_model = "lda",
-#'   metric = "Accuracy"
+#'   metric = "Accuracy",
+#'   verbose = FALSE
 #' )
 #'
 #' print(cv_out)

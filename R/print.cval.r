@@ -16,7 +16,8 @@
 #' )
 #' res <- rgcca_cv(blocks,
 #'   response = 3, method = "rgcca", par_type = "tau",
-#'   par_value = c(0, 0.2, 0.3), n_run = 1, n_cores = 1
+#'   par_value = c(0, 0.2, 0.3), n_run = 1, n_cores = 1,
+#'   verbose = FALSE
 #' )
 #' print(res)
 print.cval <- function(x, type = "sd", ...) {
