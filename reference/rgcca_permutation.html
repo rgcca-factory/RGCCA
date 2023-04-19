@@ -30,6 +30,9 @@ A permutation-based strategy very similar to the one proposed in
 <li class="active nav-item">
   <a class="nav-link" href="../reference/index.html">Reference</a>
 </li>
+<li class="nav-item">
+  <a class="nav-link" href="../news/index.html">Changelog</a>
+</li>
       </ul><form class="form-inline my-2 my-lg-0" role="search">
         <input type="search" class="form-control me-sm-2" aria-label="Toggle navigation" name="search-input" data-search-index="../search.json" id="search-input" placeholder="Search for" autocomplete="off"></form>
 
@@ -108,7 +111,7 @@ be also a fitted cval, rgcca or permutation object.</p></dd>
 <dt>par_value</dt>
 <dd><p>The parameter values to be tested, either NULL,
 a numerical vector of size \(J\), or a matrix of size
-\(\text{par_length} \times J\).</p>
+par_length \(\times J\).</p>
 <p>If par_value is NULL, up to par_length sets of parameters are generated
 uniformly from
 the minimum and maximum possible values of the parameter defined by par_type
@@ -223,11 +226,15 @@ all constraints applied to all block weight vectors.</p>
 <p>If sparsity is a vector, sparsity[j] is identical across the constraints
 applied to the block weight vectors associated to block
 \(\mathbf X_j\):
-$$\forall k, \Vert a_{j,k} \Vert_{1} \le \text{sparsity}[j] \sqrt{p_j}.$$</p>
+$$
+   \forall k, \Vert a_{j,k} \Vert_{1} \le \text{sparsity}[j] \sqrt{p_j}.
+$$</p>
 <p>If sparsity is a matrix, sparsity[k, j] is associated with the constraints
 applied to the kth block weight vector corresponding to block
 \(\mathbf X_j\):
-$$\Vert a_{j,k}\Vert_{1} \le \text{sparsity}[k,j] \sqrt{p_j}.$$</p>
+$$
+   \Vert a_{j,k}\Vert_{1} \le \text{sparsity}[k,j] \sqrt{p_j}.
+$$</p>
 <p>The sparsity parameter can be estimated by using rgcca_permutation or
 <a href="rgcca_cv.html">rgcca_cv</a>.</p></dd>
 
@@ -263,9 +270,9 @@ superblock option is used.</p></dd>
 
 <dt>NA_method</dt>
 <dd><p>A string indicating the method used for
-handling missing values ("na.ignore", "na.omit"). (default: "na.ignore").</p><ul><li><p><code>"na.omit"</code>corresponds to perform RGCCA on the fully observed
+handling missing values ("na.ignore", "na.omit"). (default: "na.ignore").</p><ul><li><p>"na.omit" corresponds to perform RGCCA on the fully observed
 observations (observations from which missing values have been removed).</p></li>
-<li><p><code>"na.ignore"</code>corresponds to perform RGCCA algorithm on available
+<li><p>"na.ignore" corresponds to perform RGCCA algorithm on available
 data (See Tenenhaus et al, 2005).</p></li>
 </ul></dd>
 
