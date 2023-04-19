@@ -127,12 +127,16 @@ all constraints applied to all block weight vectors.
 If sparsity is a vector, sparsity[j] is identical across the constraints
 applied to the block weight vectors associated to block
 \eqn{\mathbf X_j}{Xj}:
-\deqn{\forall k, \Vert a_{j,k} \Vert_{1} \le \text{sparsity}[j] \sqrt{p_j}.}
+\deqn{
+   \forall k, \Vert a_{j,k} \Vert_{1} \le \text{sparsity}[j] \sqrt{p_j}.
+}{for all k, ||ajk||1 <= sparsity(j) sqrt(pj).}
 
 If sparsity is a matrix, sparsity[k, j] is associated with the constraints
 applied to the kth block weight vector corresponding to block
 \eqn{\mathbf X_j}{Xj}:
-\deqn{\Vert a_{j,k}\Vert_{1} \le \text{sparsity}[k,j] \sqrt{p_j}.}
+\deqn{
+   \Vert a_{j,k}\Vert_{1} \le \text{sparsity}[k,j] \sqrt{p_j}.
+}{||ajk||1 <= sparsity(k, j) sqrt(pj).}
 
 The sparsity parameter can be estimated by using \link{rgcca_permutation} or
 \link{rgcca_cv}.}
@@ -147,9 +151,9 @@ superblock option is used.}
 \item{NA_method}{A string indicating the method used for
 handling missing values ("na.ignore", "na.omit"). (default: "na.ignore").
 \itemize{
-\item{\code{"na.omit"}}{corresponds to perform RGCCA on the fully observed
+\item{"na.omit"}{corresponds to perform RGCCA on the fully observed
 observations (observations from which missing values have been removed).}
-\item{\code{"na.ignore"}}{corresponds to perform RGCCA algorithm on available
+\item{"na.ignore"}{corresponds to perform RGCCA algorithm on available
 data (See Tenenhaus et al, 2005).}}}
 
 \item{quiet}{A logical value indicating if some diagnostic messages
