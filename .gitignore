@@ -7,6 +7,12 @@
 *.RData
 *.Rproj
 
+**/*_cache
+
+cran-comments.md
+
+revdep
+
 \.idea/
 \.Rhistory
 .Rproj.user
