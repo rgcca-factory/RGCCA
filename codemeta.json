@@ -4,10 +4,11 @@
   "identifier": "RGCCA",
   "description": "Multi-block data analysis concerns the analysis of several sets of variables (blocks) observed on the same group of individuals. The main aims of the RGCCA package are: to study the relationships between blocks and to identify subsets of variables of each block which are active in their relationships with the other blocks. This package allows to (i) run R/SGCCA and related methods (\\linkrgcca), (ii) help the user to find out the optimal parameters for R/SGCCA such as regularization parameters (tau or sparsity) (\\linkrgcca_permutation, \\linkrgcca_cv), (iii) evaluate the stability of the RGCCA results and their significance (\\linkrgcca_bootstrap and \\linkrgcca_stability), (iv) build predictive models from the R/SGCCA (\\linkrgcca_predict), (v) Generic print() and plot() functions apply to all these functionalities.",
   "name": "RGCCA: Regularized and Sparse Generalized Canonical Correlation\n        Analysis for Multiblock Data",
+  "relatedLink": ["https://rgcca-factory.github.io/RGCCA/", "https://CRAN.R-project.org/package=RGCCA"],
   "codeRepository": "https://github.com/rgcca-factory/RGCCA",
   "issueTracker": "https://github.com/rgcca-factory/RGCCA/issues",
   "license": "https://spdx.org/licenses/GPL-3.0",
-  "version": "3.0",
+  "version": "3.0.0",
   "programmingLanguage": {
     "@type": "ComputerLanguage",
     "name": "R",
@@ -23,17 +24,6 @@
   "author": [
     {
       "@type": "Person",
-      "givenName": "Arthur",
-      "familyName": "Tenenhaus",
-      "email": "arthur.tenenhaus@centralesupelec.fr"
-    },
-    {
-      "@type": "Person",
-      "givenName": "Caroline",
-      "familyName": "Peltier"
-    },
-    {
-      "@type": "Person",
       "givenName": "Fabien",
       "familyName": "Girka"
     },
@@ -44,6 +34,11 @@
     },
     {
       "@type": "Person",
+      "givenName": "Caroline",
+      "familyName": "Peltier"
+    },
+    {
+      "@type": "Person",
       "givenName": "Arnaud",
       "familyName": "Gloaguen"
     },
@@ -51,6 +46,25 @@
       "@type": "Person",
       "givenName": "Vincent",
       "familyName": "Guillemot"
+    },
+    {
+      "@type": "Person",
+      "givenName": "Arthur",
+      "familyName": "Tenenhaus",
+      "email": "arthur.tenenhaus@centralesupelec.fr"
+    }
+  ],
+  "contributor": [
+    {
+      "@type": "Person",
+      "givenName": "Laurent",
+      "familyName": "Le Brusquet"
+    },
+    {
+      "@type": "Person",
+      "givenName": "Arthur",
+      "familyName": "Tenenhaus",
+      "email": "arthur.tenenhaus@centralesupelec.fr"
     }
   ],
   "maintainer": [
@@ -297,25 +311,25 @@
     },
     "SystemRequirements": null
   },
-  "fileSize": "992.411KB",
+  "fileSize": "999.989KB",
   "citation": [
     {
       "@type": "SoftwareSourceCode",
       "author": [
         {
           "@type": "Person",
-          "givenName": "Arthur",
-          "familyName": "Tenenhaus"
-        },
-        {
-          "@type": "Person",
-          "givenName": "Caroline",
-          "familyName": "Peltier"
+          "givenName": "Fabien",
+          "familyName": "Girka"
         },
         {
           "@type": "Person",
           "givenName": "Etienne",
           "familyName": "Camenen"
+        },
+        {
+          "@type": "Person",
+          "givenName": "Caroline",
+          "familyName": "Peltier"
         },
         {
           "@type": "Person",
@@ -326,14 +340,24 @@
           "@type": "Person",
           "givenName": "Vincent",
           "familyName": "Guillemot"
+        },
+        {
+          "@type": "Person",
+          "givenName": "Laurent",
+          "familyName": "Le Brusquet"
+        },
+        {
+          "@type": "Person",
+          "givenName": "Arthur",
+          "familyName": "Tenenhaus"
         }
       ],
       "name": "{RGCCA}: Regularized and Sparse Generalized Canonical Correlation Analysis for Multiblock Data",
       "url": "https://CRAN.R-project.org/package=RGCCA",
-      "description": "R package version 3.0"
+      "description": "R package version 3.0.0"
     }
   ],
+  "releaseNotes": "https://github.com/rgcca-factory/RGCCA/blob/master/NEWS.md",
   "readme": "https://github.com/rgcca-factory/RGCCA/blob/main/README.md",
-  "developmentStatus": "https://lifecycle.r-lib.org/articles/stages.html#stable",
-  "relatedLink": "https://CRAN.R-project.org/package=RGCCA"
+  "developmentStatus": "https://lifecycle.r-lib.org/articles/stages.html#stable"
 }
