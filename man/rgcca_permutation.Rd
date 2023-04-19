@@ -184,10 +184,10 @@ superblock option is used.}
 \item{NA_method}{A string indicating the method used for
 handling missing values ("na.ignore", "na.omit"). (default: "na.ignore").
 \itemize{
-\item{"na.omit"}{corresponds to perform RGCCA on the fully observed
-observations (observations from which missing values have been removed).}
-\item{"na.ignore"}{corresponds to perform RGCCA algorithm on available
-data (See Tenenhaus et al, 2005).}}}
+\item "na.omit" corresponds to perform RGCCA on the fully observed
+observations (observations from which missing values have been removed).
+\item "na.ignore" corresponds to perform RGCCA algorithm on available
+data (See Tenenhaus et al, 2005).}}
 
 \item{rgcca_res}{A fitted RGCCA object (see  \code{\link[RGCCA]{rgcca}}).}
 

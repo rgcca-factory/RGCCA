@@ -160,10 +160,10 @@
 #' @param NA_method  A string indicating the method used for
 #' handling missing values ("na.ignore", "na.omit"). (default: "na.ignore").
 #' \itemize{
-#' \item{"na.omit"}{corresponds to perform RGCCA on the fully observed
-#' observations (observations from which missing values have been removed).}
-#' \item{"na.ignore"}{corresponds to perform RGCCA algorithm on available
-#' data (See Tenenhaus et al, 2005).}}
+#' \item "na.omit" corresponds to perform RGCCA on the fully observed
+#' observations (observations from which missing values have been removed).
+#' \item "na.ignore" corresponds to perform RGCCA algorithm on available
+#' data (See Tenenhaus et al, 2005).}
 #' @param verbose A logical value indicating if the progress of the
 #' algorithm is reported while computing.
 #' @param quiet A logical value indicating if some diagnostic messages
