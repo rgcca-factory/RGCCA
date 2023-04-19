@@ -108,11 +108,14 @@ tgccak <- function(A, A_m = NULL, C, tau = rep(1, length(A)),
     tau[j] * diag(pjs[j]) + (1 - tau[j]) * crossprod(A_m[[j]])
   })
 
-  Minv <- lapply(M, function(X) {
-    if (is.null(X)) {
+  Minv <- lapply(seq(J), function(j) {
+    if (is.null(M[[j]])) {
       return(NULL)
     }
-    return(solve(X))
+    if (!(j %in% B_2D)) {
+      return(NULL)
+    }
+    return(solve(M[[j]]))
   })
 
   # Initialization of weights vectors a
@@ -151,9 +154,6 @@ tgccak <- function(A, A_m = NULL, C, tau = rep(1, length(A)),
   a_old <- a
   crit_old <- criterion()
 
-  print(paste0("Before starting: ", crit_old))
-  crit_prev <- crit_old
-
   # TGCCA algorithm
   repeat {
     for (j in seq(J)) {
@@ -168,82 +168,72 @@ tgccak <- function(A, A_m = NULL, C, tau = rep(1, length(A)),
         }
         Y[[j]] <- A_m[[j]] %*% a[[j]]
 
-        crit_now <- criterion()
-        print(paste0("block ", j, ": ", crit_now))
-        if (crit_now < crit_prev) {
-          print(paste0("CONVERGENCE ISSUE block ", j))
-        }
-        crit_prev <- crit_now
       } else if (j %in% B_3D) {
         # Solve for first factor
         grad <- matrix(grad_j, nrow = DIM[[j]][2], ncol = DIM[[j]][3])
 
-        if (!is.null(M[[j]])) {
-          Mx <- Minv[[j]] %*% grad_j
-          Pi_Mx <- tcrossprod(Mx) / drop(crossprod(Mx))
-          Pi_B <- factors[[j]][[2]] %*% solve(crossprod(factors[[j]][[2]])) %*% t(factors[[j]][[2]])
-          # U <- t(Pi_B) %x% diag(DIM[[j]][2]) + Pi_Mx
-          U <- (Pi_B %x% diag(DIM[[j]][2])) %*% (diag(DIM[[j]][2] * DIM[[j]][3]) - Pi_Mx)
-          y <- ginv(U) %*% (t(Pi_B) %x% diag(DIM[[j]][2])) %*% grad_j
-          y <- y * sqrt(drop((t(grad_j) %*% Minv[[j]] %*% grad_j) / (t(y) %*% Minv[[j]] %*% y)))
+        # if (!is.null(M[[j]])) {
+        #   Mx <- Minv[[j]] %*% grad_j
+        #   Pi_Mx <- tcrossprod(Mx) / drop(crossprod(Mx))
+        #   Pi_B <- factors[[j]][[2]] %*% solve(crossprod(factors[[j]][[2]])) %*% t(factors[[j]][[2]])
+        #   # U <- t(Pi_B) %x% diag(DIM[[j]][2]) + Pi_Mx
+        #   U <- (Pi_B %x% diag(DIM[[j]][2])) %*% (diag(DIM[[j]][2] * DIM[[j]][3]) - Pi_Mx)
+        #
+        #   tgcca_partial_update(M, grad_j, Pi_B, Pi_Mx, DIM, j)
+        #
+        #   y <- ginv(U) %*% (t(Pi_B) %x% diag(DIM[[j]][2])) %*% grad_j
+        #   y <- y * sqrt(drop((t(grad_j) %*% Minv[[j]] %*% grad_j) / (t(y) %*% Minv[[j]] %*% y)))
+        #
+        #   grad <- matrix(Minv[[j]] %*% (as.vector(grad) + y), nrow = DIM[[j]][2])
+        # }
+        #
+        # factors[[j]][[1]] <- t(solve(crossprod(factors[[j]][[2]]), t(grad %*% factors[[j]][[2]])))
 
-          grad <- matrix(Minv[[j]] %*% (as.vector(grad) + y), nrow = DIM[[j]][2])
-        }
-
-        factors[[j]][[1]] <- t(solve(crossprod(factors[[j]][[2]]), t(grad %*% factors[[j]][[2]])))
+        factors[[j]][[1]] <- solution(grad, factors[[j]][[2]], M[[j]])
 
         a[[j]] <- khatri_rao(factors[[j]][[2]], factors[[j]][[1]]) %*% rep(1, ranks[j])
-        if (is.null(M[[j]])) {
-          a_norm <- sqrt(drop(crossprod(a[[j]])))
-        } else {
-          a_norm <- sqrt(drop(t(a[[j]]) %*% M[[j]] %*% a[[j]]))
-        }
-        a[[j]] <- a[[j]] / a_norm
-        factors[[j]][[1]] <- factors[[j]][[1]] / a_norm
+        # if (is.null(M[[j]])) {
+        #   a_norm <- sqrt(drop(crossprod(a[[j]])))
+        # } else {
+        #   a_norm <- sqrt(drop(t(a[[j]]) %*% M[[j]] %*% a[[j]]))
+        # }
+        # a[[j]] <- a[[j]] / a_norm
+        # factors[[j]][[1]] <- factors[[j]][[1]] / a_norm
         Y[[j]] <- A_m[[j]] %*% a[[j]]
-
-        crit_now <- criterion()
-        print(paste0("block ", j, ", mode ", 1, ": ", crit_now))
-        if (crit_now < crit_prev) {
-          print(paste0("CONVERGENCE ISSUE block ", j, " mode ", 1))
-        }
-        crit_prev <- crit_now
 
         # Solve for second factor
         idx1to2 <- as.vector(matrix(seq_along(grad_j), nrow = DIM[[j]][3], byrow = TRUE))
         # idx2to1 <- as.vector(matrix(seq_along(grad_j), nrow = DIM[[j]][2], byrow = TRUE))
 
         grad <- matrix(grad_j, nrow = DIM[[j]][2], ncol = DIM[[j]][3])
-        if (!is.null(M[[j]])) {
-          # U <- svd(factors[[j]][[1]])$u
-          # grad <- tcrossprod(U) %*% grad
 
-          # grad <- matrix(
-          #   Minv[[j]][idx1to2, idx1to2] %*% as.vector(t(grad)), nrow = DIM[[j]][2]
-          # )[idx2to1, idx2to1]
-          grad <- matrix(
-            Minv[[j]][idx1to2, idx1to2] %*% as.vector(t(grad)),
-            nrow = DIM[[j]][2], byrow = TRUE
-          )
-        }
-        factors[[j]][[2]] <- t(solve(crossprod(factors[[j]][[1]]), t(t(grad) %*% factors[[j]][[1]])))
+        # if (!is.null(M[[j]])) {
+        #   # U <- svd(factors[[j]][[1]])$u
+        #   # grad <- tcrossprod(U) %*% grad
+        #
+        #   # grad <- matrix(
+        #   #   Minv[[j]][idx1to2, idx1to2] %*% as.vector(t(grad)), nrow = DIM[[j]][2]
+        #   # )[idx2to1, idx2to1]
+        #   grad <- matrix(
+        #     Minv[[j]][idx1to2, idx1to2] %*% as.vector(t(grad)),
+        #     nrow = DIM[[j]][2], byrow = TRUE
+        #   )
+        # }
+        #
+        # factors[[j]][[2]] <- t(solve(crossprod(factors[[j]][[1]]), t(t(grad) %*% factors[[j]][[1]])))
+
+        factors[[j]][[2]] <- solution(t(grad), factors[[j]][[1]], M[[j]][idx1to2, idx1to2])
 
         a[[j]] <- khatri_rao(factors[[j]][[2]], factors[[j]][[1]]) %*% rep(1, ranks[j])
-        if (is.null(M[[j]])) {
-          a_norm <- sqrt(drop(crossprod(a[[j]])))
-        } else {
-          a_norm <- sqrt(drop(t(a[[j]]) %*% M[[j]] %*% a[[j]]))
-        }
-        a[[j]] <- a[[j]] / a_norm
-        factors[[j]][[2]] <- factors[[j]][[2]] / a_norm
+        # if (is.null(M[[j]])) {
+        #   a_norm <- sqrt(drop(crossprod(a[[j]])))
+        # } else {
+        #   a_norm <- sqrt(drop(t(a[[j]]) %*% M[[j]] %*% a[[j]]))
+        # }
+        # a[[j]] <- a[[j]] / a_norm
+        # factors[[j]][[2]] <- factors[[j]][[2]] / a_norm
         Y[[j]] <- A_m[[j]] %*% a[[j]]
 
-        crit_now <- criterion()
-        print(paste0("block ", j, ", mode ", 2, ": ", crit_now))
-        if (crit_now < crit_prev) {
-          print(paste0("CONVERGENCE ISSUE block ", j, " mode ", 2))
-        }
-        crit_prev <- crit_now
       } else {
         for (d in seq(1, LEN[[j]] - 1)) {
           grad <- array(grad_j, dim = DIM[[j]][-1])
