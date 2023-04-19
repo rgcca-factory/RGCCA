@@ -132,6 +132,10 @@ knitr::knit_hooks$set(chunk = function(x, options) {
   x <- def.chunk.hook(x, options)
   paste0("\n \\", "footnotesize","\n\n", x, "\n\n \\normalsize")
 })
+
+knitr::opts_chunk$set(
+  fig.path = "figures/"
+)
 ```
 
 # Introduction

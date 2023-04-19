@@ -11,7 +11,7 @@
 #' "tau" or "ncomp".
 #' @param par_value The parameter values to be tested, either NULL,
 #' a numerical vector of size \eqn{J}{J}, or a matrix of size
-#' \eqn{\text{par_length} \times J}{par_length x J}.
+#' par_length \eqn{\times J}{x J}.
 #'
 #' If par_value is NULL, up to par_length sets of parameters are generated
 #' uniformly from
