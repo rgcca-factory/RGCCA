@@ -1525,7 +1525,7 @@ includes:
 
 \begin{itemize}
 \item Several strategies for determining the shrinkage 
-parameters/level of sparsity automatically: Schaffer \& Strimmer's analytical formulae,  
+parameters/level of sparsity automatically: Schaffer \& Strimmer's analytical formulae, 
 cross-validation, or permutation strategy.
 
 \item A bootstrap resampling procedure for assessing the reliability of the 
@@ -1534,15 +1534,19 @@ parameter estimates of S/RGCCA.
 \item Dedicated functions for graphical displays of the output of RGCCA 
 (sample plot, correlation circle, biplot, ...).
 
-\item Multiblock data faces two types of missing data structure: (i) if an 
+\item Various implementation strategies for orthogonal block-components or 
+orthogonal block-weight vectors.
+
+
+\item strategies for handling missing data. Specifically, multiblock data 
+faces two types of missing data structure: (i) if an 
 observation $i$ has missing values on a whole block j and (ii) if an 
 observation i has some missing values on a block j (but not all). For these two 
-situations, it is possible to exploit the algorithmic solution proposed for PLS 
+situations, we exploit the algorithmic solution proposed for PLS 
 path modeling to deal with missing data \citep[see][]{Tenenhaus2005}.
 
-\item Special attention has been paid to recovering the results of other R packages 
-of the literature, including $\small{\texttt{ade4}}$ and 
-$\small{\texttt{FactoMineR}}$.
+\item Special attention has been paid to providing a bunch of "mathematical" unit tests 
+which, in a sense, guarantee the implementation quality. Also, when appropriate, a particular focus was given to recovering the results of other R packages of the literature , including $\small{\texttt{ade4}}$ and $\small{\texttt{FactoMineR}}$.
 \end{itemize}
 
 We believe that the RGCCA package will be a valuable resource for researchers 
@@ -1567,8 +1571,9 @@ next release of the RGCCA package.
 
 # Acknowledgments {-}
 
-This project has received funding from UDOPIA - ANR-20-THIA-0013 and 
-the European Union’s Horizon 2020 research and innovation program under grant 
-agreement No 874583.
+This project has received funding from UDOPIA - ANR-20-THIA-0013, the European 
+Union’s Horizon 2020 research and innovation program under grant 
+agreement No 874583 and the AP-HP Foundation, within the framework of the 
+AIRACLES Chair.
 
 # References
