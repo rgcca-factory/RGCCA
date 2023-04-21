@@ -1401,10 +1401,10 @@ testing <- lapply(blocks, function(x) as.matrix(x)[-inTraining, , drop = FALSE])
 cv_out <- rgcca_cv(blocks = training, response = 3,
                    par_type = "sparsity",
                    par_value = c(.2, .2, 0),
-                   par_length = 1,
+                   par_length = 10,
                    prediction_model = "lda",
                    validation = "kfold",
-                   k = 3, n_run = 1, metric = "Accuracy",
+                   k = 3, n_run = 5, metric = "Accuracy",
                    n_cores = 2)
 ```
 
@@ -1483,7 +1483,7 @@ fit_stab <- rgcca_stability(fit,
                               fit$a, function(x) mean(x != 0),
                               FUN.VALUE = 1.0
                             ),
-                            n_boot = 2, verbose = TRUE, n_cores = 2)
+                            n_boot = 100, verbose = TRUE, n_cores = 2)
 ```
 
 Once the most stable variables have been found, a new model using these 
