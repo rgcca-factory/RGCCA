@@ -416,7 +416,7 @@ score.</p>
 <span class="r-in"><span>                   par_type <span class="op">=</span> <span class="st">"tau"</span>,</span></span>
 <span class="r-in"><span>                   prediction_model <span class="op">=</span> <span class="st">"lda"</span>, <span class="co">#caret::modelLookup()</span></span></span>
 <span class="r-in"><span>                   metric <span class="op">=</span> <span class="st">"Accuracy"</span>,</span></span>
-<span class="r-in"><span>                   k<span class="op">=</span><span class="fl">3</span>, n_run <span class="op">=</span> <span class="fl">5</span>,</span></span>
+<span class="r-in"><span>                   k<span class="op">=</span><span class="fl">3</span>, n_run <span class="op">=</span> <span class="fl">3</span>,</span></span>
 <span class="r-in"><span>                   verbose <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span></span></span>
@@ -446,29 +446,29 @@ score.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 9        0.111    0.111       0</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 10       0.000    0.000       0</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Validation: kfold with 3 folds and 5 run(s)) </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Validation: kfold with 3 folds and 3 run(s)) </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Prediction model: lda </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    Tuning parameters Mean Accuracy     Sd</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1     1.00/1.00/0.00         0.731 0.0719</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2     0.89/0.89/0.00         0.731 0.0719</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3     0.78/0.78/0.00         0.731 0.0719</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4     0.67/0.67/0.00         0.731 0.0719</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 5     0.56/0.56/0.00         0.731 0.0848</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6     0.44/0.44/0.00         0.739 0.0830</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 7     0.33/0.33/0.00         0.739 0.0830</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 8     0.22/0.22/0.00         0.744 0.0883</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 9     0.11/0.11/0.00         0.752 0.0833</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 10    0.00/0.00/0.00         0.757 0.1056</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1     1.00/1.00/0.00         0.730 0.0718</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2     0.89/0.89/0.00         0.730 0.0718</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3     0.78/0.78/0.00         0.730 0.0718</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4     0.67/0.67/0.00         0.730 0.0718</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5     0.56/0.56/0.00         0.730 0.0718</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6     0.44/0.44/0.00         0.744 0.0677</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 7     0.33/0.33/0.00         0.744 0.0677</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 8     0.22/0.22/0.00         0.751 0.0780</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 9     0.11/0.11/0.00         0.751 0.0780</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 10    0.00/0.00/0.00         0.781 0.0784</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> The best combination is: 0.00/0.00/0.00 for a mean Accuracy of 0.757.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> The best combination is: 0.00/0.00/0.00 for a mean Accuracy of 0.781.</span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">cv_out</span><span class="op">)</span></span></span>
 <span class="r-plt img"><img src="rgcca_cv-1.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># A fitted cval object is given as output of the rgcca() function</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">fit_opt</span> <span class="op">=</span> <span class="fu"><a href="rgcca.html">rgcca</a></span><span class="op">(</span><span class="va">cv_out</span><span class="op">)</span></span></span>
-<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span></span></span>
 <span class="r-in"><span><span class="co"># Cross_validation for regression</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">27</span><span class="op">)</span> <span class="co">#favorite number</span></span></span>
@@ -488,53 +488,11 @@ score.</p>
 <span class="r-in"><span>                   verbose <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">cv_out</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Call: method='rgcca', superblock=FALSE, scale=TRUE, scale_block=TRUE, init='svd',</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> bias=TRUE, tol=1e-08, NA_method='na.ignore', ncomp=c(1,1,1), response=3,</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> comp_orth=TRUE </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> There are J = 3 blocks.</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> The design matrix is:</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>             agriculture industry politic</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> agriculture           0        0       1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> industry              0        0       1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> politic               1        1       0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> The factorial scheme is used.</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Tuning parameters (tau) used: </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>    agriculture industry politic</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1        0.600    0.750   0.800</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2        0.533    0.667   0.711</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3        0.467    0.583   0.622</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4        0.400    0.500   0.533</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 5        0.333    0.417   0.444</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6        0.267    0.333   0.356</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 7        0.200    0.250   0.267</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 8        0.133    0.167   0.178</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 9        0.067    0.083   0.089</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 10       0.000    0.000   0.000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Validation: kfold with 3 folds and 5 run(s)) </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Prediction model: lm </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>    Tuning parameters Mean RMSE    Sd</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1              Set 1      1.10 0.133</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2              Set 2      1.10 0.135</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3              Set 3      1.10 0.137</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4              Set 4      1.10 0.139</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 5              Set 5      1.11 0.141</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6              Set 6      1.11 0.144</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 7              Set 7      1.11 0.148</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 8              Set 8      1.12 0.154</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 9              Set 9      1.12 0.161</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 10            Set 10      1.13 0.178</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> The best combination is: Set 1 for a mean RMSE of 1.1.</span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">cv_out</span><span class="op">)</span></span></span>
-<span class="r-plt img"><img src="rgcca_cv-2.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">fit_opt</span> <span class="op">=</span> <span class="fu"><a href="rgcca.html">rgcca</a></span><span class="op">(</span><span class="va">cv_out</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span></span></span>
+<span class="r-in"><span></span></span>
 <span class="r-in"><span> <span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="st">"ge_cgh_locIGR"</span>, package <span class="op">=</span> <span class="st">"gliomaData"</span><span class="op">)</span></span></span>
 <span class="r-in"><span> <span class="va">blocks</span> <span class="op">&lt;-</span> <span class="va">ge_cgh_locIGR</span><span class="op">$</span><span class="va">multiblocks</span></span></span>
 <span class="r-in"><span> <span class="va">Loc</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">factor</a></span><span class="op">(</span><span class="va">ge_cgh_locIGR</span><span class="op">$</span><span class="va">y</span><span class="op">)</span></span></span>
