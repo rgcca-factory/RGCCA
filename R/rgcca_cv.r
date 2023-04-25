@@ -87,7 +87,7 @@
 #'                    par_type = "tau",
 #'                    prediction_model = "lda", #caret::modelLookup()
 #'                    metric = "Accuracy",
-#'                    k=3, n_run = 5,
+#'                    k=3, n_run = 3,
 #'                    verbose = FALSE)
 #'
 #'
@@ -97,7 +97,7 @@
 #' # A fitted cval object is given as output of the rgcca() function
 #'
 #' fit_opt = rgcca(cv_out)
-#'
+#' \dontrun{
 #' # Cross_validation for regression
 #'
 #' set.seed(27) #favorite number
@@ -121,7 +121,7 @@
 #'
 #' fit_opt = rgcca(cv_out)
 #'
-#' \dontrun{
+#'
 #'  data("ge_cgh_locIGR", package = "gliomaData")
 #'  blocks <- ge_cgh_locIGR$multiblocks
 #'  Loc <- factor(ge_cgh_locIGR$y)
