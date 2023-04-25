@@ -1538,7 +1538,7 @@ parameter estimates of S/RGCCA.
 orthogonal block-weight vectors.
 
 
-\item strategies for handling missing data. Specifically, multiblock data 
+\item Strategies for handling missing data. Specifically, multiblock data 
 faces two types of missing data structure: (i) if an 
 observation $i$ has missing values on a whole block j and (ii) if an 
 observation i has some missing values on a block j (but not all). For these two 
