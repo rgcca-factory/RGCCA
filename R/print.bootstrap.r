@@ -16,7 +16,7 @@
 #' )
 #' fit.rgcca <- rgcca(blocks, ncomp = c(2, 1, 2))
 #' boot.out <- rgcca_bootstrap(fit.rgcca, n_boot = 20, n_cores = 2,
-#'                             verbose = FALSE)
+#'                             verbose = TRUE)
 #' print(boot.out)
 #' @export
 print.bootstrap <- function(x, block = seq_along(x$rgcca$call$blocks),

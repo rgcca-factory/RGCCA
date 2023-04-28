@@ -60,7 +60,7 @@ blocks <- list(
 fit_rgcca <- rgcca(blocks, ncomp = 1)
 
 boot_out <- rgcca_bootstrap(fit_rgcca, n_boot = 20, n_cores = 1,
-                            verbose = FALSE)
+                            verbose = TRUE)
 
 print(boot_out)
 plot(boot_out, type = "weight", block = 1:3, comp = 1,

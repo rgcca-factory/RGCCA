@@ -294,7 +294,7 @@ cv_out <- rgcca_cv(blocks, response = 3, method = "rgcca",
                    prediction_model = "lda", #caret::modelLookup()
                    metric = "Accuracy",
                    k=3, n_run = 3,
-                   verbose = FALSE)
+                   verbose = TRUE)
 
 
 print(cv_out)
@@ -320,7 +320,7 @@ cv_out <- rgcca_cv(blocks, response = 3, method = "rgcca",
                    prediction_model = "lm", #caret::modelLookup()
                    metric = "RMSE",
                    k=3, n_run = 5,
-                   verbose = FALSE)
+                   verbose = TRUE)
 
 print(cv_out)
 plot(cv_out)

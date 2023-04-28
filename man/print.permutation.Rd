@@ -31,7 +31,7 @@ A <- list(
 perm.out <- rgcca_permutation(A,
   par_type = "tau",
   n_perms = 5, n_cores = 1,
-  verbose = FALSE
+  verbose = TRUE
 )
 print(perm.out)
 }

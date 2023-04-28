@@ -27,7 +27,7 @@ blocks <- list(
 )
 fit.sgcca <- rgcca(blocks, sparsity = c(.8, .9, .6))
 res <- rgcca_stability(
-  fit.sgcca, n_boot = 10, verbose = FALSE, keep = rep(.1, 3)
+  fit.sgcca, n_boot = 10, verbose = TRUE, keep = rep(.1, 3)
 )
 plot(res, type = "weights")
 }

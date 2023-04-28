@@ -88,7 +88,7 @@
 #'                    prediction_model = "lda", #caret::modelLookup()
 #'                    metric = "Accuracy",
 #'                    k=3, n_run = 3,
-#'                    verbose = FALSE)
+#'                    verbose = TRUE)
 #'
 #'
 #' print(cv_out)
@@ -114,7 +114,7 @@
 #'                    prediction_model = "lm", #caret::modelLookup()
 #'                    metric = "RMSE",
 #'                    k=3, n_run = 5,
-#'                    verbose = FALSE)
+#'                    verbose = TRUE)
 #'
 #' print(cv_out)
 #' plot(cv_out)

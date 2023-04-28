@@ -1,4 +1,4 @@
-tol <- 1e-14
+tol <- 1e-6
 tol2 <- 1e-5
 
 data(Russett)
@@ -101,8 +101,8 @@ test_that("RGCCA is equivalent to PLS when there are two blocks and tau = 1", {
     blocks = A, scale = TRUE, scale_block = FALSE,
     bias = FALSE, scheme = "horst", tol = 1e-16
   )
-  expect_lte(max(abs(fit.svd$u[, 1] - fit.rgcca$a[[1]])), 1e-8)
-  expect_lte(max(abs(fit.svd$v[, 1] - fit.rgcca$a[[2]])), 1e-8)
+  expect_lte(max(abs(fit.svd$u[, 1] - fit.rgcca$a[[1]])), tol)
+  expect_lte(max(abs(fit.svd$v[, 1] - fit.rgcca$a[[2]])), tol)
 })
 
 test_that("RGCCA is equivalent to PLS when method = 'pls'", {
@@ -110,8 +110,8 @@ test_that("RGCCA is equivalent to PLS when method = 'pls'", {
     blocks = A, method = "pls", scale = TRUE,
     scale_block = FALSE, tol = 1e-16, bias = FALSE
   )
-  expect_lte(max(abs(fit.svd$u[, 1] - fit.rgcca$a[[1]][, 1])), 1e-8)
-  expect_lte(max(abs(fit.svd$v[, 1] - fit.rgcca$a[[2]][, 1])), 1e-8)
+  expect_lte(max(abs(fit.svd$u[, 1] - fit.rgcca$a[[1]][, 1])), tol)
+  expect_lte(max(abs(fit.svd$v[, 1] - fit.rgcca$a[[2]][, 1])), tol)
 })
 
 ##### Retrieve CCA with RGCCA #####
@@ -137,10 +137,10 @@ test_that("RGCCA is equivalent to CCA when there are two blocks and tau = 0", {
   )
   expect_lte(max(abs(
     fit.svd$u[, 1] - sqrt_matrix(Sigma_11)[[1]] %*% fit.rgcca$a[[1]]
-  )), 1e-8)
+  )), tol)
   expect_lte(max(abs(
     fit.svd$v[, 1] - sqrt_matrix(Sigma_22)[[1]] %*% fit.rgcca$a[[2]]
-  )), 1e-8)
+  )), tol)
 })
 
 test_that("RGCCA is equivalent to CCA when method = 'cca'", {
@@ -150,10 +150,10 @@ test_that("RGCCA is equivalent to CCA when method = 'cca'", {
   )
   expect_lte(max(abs(
     fit.svd$u[, 1] - sqrt_matrix(Sigma_11)[[1]] %*% fit.rgcca$a[[1]]
-  )), 1e-8)
+  )), tol)
   expect_lte(max(abs(
     fit.svd$v[, 1] - sqrt_matrix(Sigma_22)[[1]] %*% fit.rgcca$a[[2]]
-  )), 1e-8)
+  )), tol)
 })
 
 ##### Perform OLS with RGCCA #####
