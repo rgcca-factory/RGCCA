@@ -8,6 +8,8 @@
 par_pblapply <- function(X, FUN, ..., n_cores = 1, verbose = TRUE) {
   check_integer("n_cores", n_cores, min = 0)
 
+  verbose <- verbose & interactive()
+
   if (!verbose) {
     pbapply::pboptions(type = "none")
   } else {
