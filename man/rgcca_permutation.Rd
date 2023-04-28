@@ -289,7 +289,7 @@ fit <- rgcca_permutation(blocks,
   connection = C,
   par_type = "tau",
   par_length = 10, n_perms = 2,
-  n_cores = 1, verbose = FALSE
+  n_cores = 1, verbose = TRUE
 )
 
 print(fit)

@@ -30,7 +30,7 @@
 #'   n_run = 1, n_cores = 1,
 #'   prediction_model = "lda",
 #'   metric = "Accuracy",
-#'   verbose = FALSE
+#'   verbose = TRUE
 #' )
 #'
 #' print(cv_out)

@@ -91,6 +91,6 @@ blocks <- list(
 )
 fit.rgcca <- rgcca(blocks, ncomp = 2, method = "rgcca", tau = 1)
 fit.boot <- rgcca_bootstrap(fit.rgcca, n_boot = 20, n_cores = 1,
-                            verbose = FALSE)
+                            verbose = TRUE)
 plot(fit.boot, type = "weight", block = 1, comp = 1)
 }
