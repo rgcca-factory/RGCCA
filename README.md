@@ -6,7 +6,7 @@
 
 # R/SGCCA
 
-##### Version: 3.0.0
+##### Version: 3.0.1
 
 ##### Authors:
 Fabien GIRKA, Etienne CAMENEN,  Caroline PELTIER, Vincent GUILLEMOT, 
@@ -16,7 +16,7 @@ Arnaud GLOAGUEN, Laurent LE BRUSQUET, Arthur TENENHAUS
 Regularized Generalized Canonical Correlation Analysis, multi-block data analysis
 
 ##### Contact:
-arthur.tenenhaus@l2s.centralesupelec.fr
+arthur.tenenhaus@centralesupelec.fr
 
 ##### Short description
 Performs multiblock component methods (PCA, CCA, PLS, MCOA, GCCA, CPCA, MAXVAR, R/SGCCA, etc.) and produces graphical outputs (e.g. variables and individuals plots) and statistics to assess the robustness/significance of the analysis.
