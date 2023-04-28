@@ -94,7 +94,7 @@ parameters are displayed.</p>
 <span class="r-in"><span><span class="va">perm.out</span> <span class="op">&lt;-</span> <span class="fu"><a href="rgcca_permutation.html">rgcca_permutation</a></span><span class="op">(</span><span class="va">A</span>,</span></span>
 <span class="r-in"><span>  par_type <span class="op">=</span> <span class="st">"tau"</span>,</span></span>
 <span class="r-in"><span>  n_perms <span class="op">=</span> <span class="fl">5</span>, n_cores <span class="op">=</span> <span class="fl">1</span>,</span></span>
-<span class="r-in"><span>  verbose <span class="op">=</span> <span class="cn">FALSE</span></span></span>
+<span class="r-in"><span>  verbose <span class="op">=</span> <span class="cn">TRUE</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">perm.out</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Call: method='rgcca', superblock=FALSE, scale=TRUE, scale_block=TRUE, init='svd',</span>
@@ -123,17 +123,17 @@ parameters are displayed.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 10       0.000    0.000   0.000</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    Tuning parameters Criterion Permuted criterion     sd zstat p-value</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1     1.00/1.00/1.00     0.717              0.139 0.0721  8.02       0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2     0.89/0.89/0.89     0.773              0.150 0.0762  8.17       0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3     0.78/0.78/0.78     0.838              0.163 0.0809  8.34       0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4     0.67/0.67/0.67     0.914              0.179 0.0864  8.50       0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 5     0.56/0.56/0.56     1.003              0.199 0.0927  8.67       0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6     0.44/0.44/0.44     1.112              0.224 0.1005  8.83       0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 7     0.33/0.33/0.33     1.247              0.258 0.1106  8.95       0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 8     0.22/0.22/0.22     1.424              0.308 0.1249  8.94       0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 9     0.11/0.11/0.11     1.682              0.393 0.1513  8.52       0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 10    0.00/0.00/0.00     2.422              0.706 0.3674  4.67       0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> The best combination is: 0.33/0.33/0.33 for a z score of 8.95 and a p-value of 0.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1     1.00/1.00/1.00     0.717             0.0887 0.0625  10.0       0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2     0.89/0.89/0.89     0.773             0.0959 0.0657  10.3       0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3     0.78/0.78/0.78     0.838             0.1044 0.0692  10.6       0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4     0.67/0.67/0.67     0.914             0.1147 0.0732  10.9       0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5     0.56/0.56/0.56     1.003             0.1277 0.0777  11.3       0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6     0.44/0.44/0.44     1.112             0.1445 0.0829  11.7       0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 7     0.33/0.33/0.33     1.247             0.1677 0.0891  12.1       0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 8     0.22/0.22/0.22     1.424             0.2035 0.0966  12.6       0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 9     0.11/0.11/0.11     1.682             0.2788 0.1104  12.7       0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 10    0.00/0.00/0.00     2.422             0.6324 0.0853  21.0       0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> The best combination is: 0.00/0.00/0.00 for a z score of 21 and a p-value of 0.</span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>

@@ -87,7 +87,9 @@ All arguments are forwarded to the print.rgcca function.</p>
 <span class="r-in"><span>  politic <span class="op">=</span> <span class="va">Russett</span><span class="op">[</span>, <span class="fl">6</span><span class="op">:</span><span class="fl">11</span><span class="op">]</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">fit.sgcca</span> <span class="op">&lt;-</span> <span class="fu"><a href="rgcca.html">rgcca</a></span><span class="op">(</span><span class="va">blocks</span>, sparsity <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">.8</span>, <span class="fl">.9</span>, <span class="fl">.6</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="va">res</span> <span class="op">&lt;-</span> <span class="fu"><a href="rgcca_stability.html">rgcca_stability</a></span><span class="op">(</span><span class="va">fit.sgcca</span>, n_boot <span class="op">=</span> <span class="fl">10</span>, verbose <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">res</span> <span class="op">&lt;-</span> <span class="fu"><a href="rgcca_stability.html">rgcca_stability</a></span><span class="op">(</span><span class="va">fit.sgcca</span>, n_boot <span class="op">=</span> <span class="fl">10</span>, verbose <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Bootstrap samples sanity check...</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> OK</span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">res</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Call: method='sgcca', superblock=FALSE, scale=TRUE, scale_block='inertia',</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> init='svd', bias=TRUE, tol=1e-08, NA_method='na.ignore', ncomp=c(1,1,1),</span>
@@ -100,7 +102,7 @@ All arguments are forwarded to the print.rgcca function.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> politic               1        1       0</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> The factorial scheme is used.</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Sum_{j,k} c_jk g(cov(X_j a_j, X_k a_k) = 1.1393 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Sum_{j,k} c_jk g(cov(X_j a_j, X_k a_k) = 1.1918 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> The sparsity parameter used for agriculture is: 1 (with 2 variables selected)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> The sparsity parameter used for industry is: 1 (with 2 variables selected)</span>
