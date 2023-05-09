@@ -6,39 +6,22 @@ gmgccak <- function (A, A_m = NULL, C, tau = rep(1, length(A)), scheme = "centro
   call = list(A = A, A_m = A_m, C = C, scheme = scheme, verbose = verbose, init = init,
               bias = bias, tol = tol, ranks = ranks, ncomp = ncomp)
 
-  # criterion = function() {
-  #   cur_crit = c()
-  #   for (k in 1:J) {
-  #     for (l in 1:J) {
-  #       cur_crit = c(cur_crit, C[k, l] * sum(diag(g(crossprod(Y[[k]], Y[[l]])))))
-  #     }
-  #   }
-  #   return(sum(cur_crit))
-  # }
   criterion = function() {
     cur_crit = c()
     for (k in 1:J) {
       for (l in 1:J) {
-        cur_crit = c(cur_crit, C[k, l] * sum(g(crossprod(Y[[k]], Y[[l]]))))
+        cur_crit = c(cur_crit, C[k, l] * sum(diag(g(crossprod(Y[[k]], Y[[l]])))))
       }
     }
     return(sum(cur_crit))
   }
 
-  # # Returns a N x ncomp x J matrix
-  # compute_dgx = function(dg, j) {
-  #   sapply(1:J, function(k)
-  #     C[j, k] * Y[[k]] %*% diag(dg(diag(crossprod(Y[[j]], Y[[k]])))),
-  #     simplify = "array"
-  #   )
-  # }
-
   # Returns a N x ncomp x J matrix
   compute_dgx = function(dg, j) {
-    sapply(1:J, function(k) {
-      # For each value of y_j^{(r)}, we want sum_{s=1}^R (prods_{rs}) y_k^{(s)}
-      C[j, k] * Y[[k]] %*% dg(crossprod(Y[[k]], Y[[j]]))
-    }, simplify = "array")
+    sapply(1:J, function(k)
+      C[j, k] * Y[[k]] %*% diag(dg(diag(crossprod(Y[[j]], Y[[k]])))),
+      simplify = "array"
+    )
   }
 
   if(mode(scheme) != "function")
@@ -104,15 +87,11 @@ gmgccak <- function (A, A_m = NULL, C, tau = rep(1, length(A)), scheme = "centro
       # SVD Initialization of a_j
       if (j %in% B_2D) {
         SVD = svd(A[[j]], nu=0, nv=ncomp[j])
-        a[[j]] <- SVD$v %*% diag(SVD$d[1:ncomp[j]]) / sqrt(sum(SVD$d[1:ncomp[j]] ^ 2))
-
-        # a[[j]] <- SVD$v
+        a[[j]] <- SVD$v
       } else {
         for (d in 1:(LEN[[j]] - 1)) {
           SVD = svd(apply(A[[j]], d+1, c), nu=0, nv=ncomp[j])
           factors[[j]][[d]] <- SVD$v
-
-          if (d == 1) factors[[j]][[d]] = factors[[j]][[d]] %*% diag(SVD$d[1:ncomp[j]]) / sqrt(sum(SVD$d[1:ncomp[j]] ^ 2))
         }
         a[[j]]       <- list_khatri_rao(factors[[j]])
       }
@@ -121,15 +100,11 @@ gmgccak <- function (A, A_m = NULL, C, tau = rep(1, length(A)), scheme = "centro
       A_random <- array(rnorm(n = pjs[[j]], mean = 0, sd = 1), dim = DIM[[j]][-1])
       if (j %in% B_2D) {
         SVD = svd(A_random, nu=0, nv=ncomp[j])
-        a[[j]] <- SVD$v %*% diag(SVD$d[1:ncomp[j]]) / sqrt(sum(SVD$d[1:ncomp[j]] ^ 2))
-
-        # a[[j]] <- SVD$v
+        a[[j]] <- SVD$v
       } else {
         for (d in 1:(LEN[[j]] - 1)) {
           SVD = svd(apply(A_random, d, c), nu=0, nv=ncomp[j])
           factors[[j]][[d]] <- SVD$v
-
-          if (d == 1) factors[[j]][[d]] = factors[[j]][[d]] %*% diag(SVD$d[1:ncomp[j]]) / sqrt(sum(SVD$d[1:ncomp[j]] ^ 2))
         }
         a[[j]]       <- list_khatri_rao(factors[[j]])
       }
@@ -137,8 +112,8 @@ gmgccak <- function (A, A_m = NULL, C, tau = rep(1, length(A)), scheme = "centro
       stop_rgcca("init should be either random or by SVD.")
     }
   }
+
   # Initialization of vector Y
-  # for (j in 1:J) Y[, j] <- A_m[[j]] %*% a[[j]]
   Y = lapply(1:J, function(j) A_m[[j]] %*% a[[j]])
 
   # Determination of the regularization matrix
@@ -173,77 +148,27 @@ gmgccak <- function (A, A_m = NULL, C, tau = rep(1, length(A)), scheme = "centro
 
   # MGCCA algorithm
   repeat {
-    for (j in 1:J){
-      # Apply the derivative on the current variables
+    for (j in 1:J) {
       dgx      = compute_dgx(dg, j)
       Z[, , j] = apply(dgx, c(1, 2), sum)
 
-      crit_inter_old = criterion()
-      if (j %in% B_3D) { # 3D Tensors
-        for (i in 1:100) {
-          #######################
-          ##   Update Mode 2   ##
-          #######################
-          Q_J                  = t(apply(P[[j]], 2, c)) %*% khatri_rao(factors[[j]][[2]], Z[, 1:ncomp[j], j])
-
-          D                    = diag(sqrt(diag(crossprod(factors[[j]][[1]]))))
-          SVD_J                = svd(x = Q_J %*% D, nu = ncomp[j], nv = ncomp[j])
-          factors[[j]][[1]]    = SVD_J$u %*% t(SVD_J$v)
-          weights              = diag(t(Q_J) %*% factors[[j]][[1]])
-          D                    = weights / sqrt(sum(weights ^ 2))
-          factors[[j]][[1]]    = factors[[j]][[1]] %*% diag(D)
-
-          # SVD_J                = svd(x = Q_J, nu = ncomp[j], nv = ncomp[j])
-          # factors[[j]][[1]]    = SVD_J$u %*% t(SVD_J$v)
-
-          a[[j]]               = list_khatri_rao(factors[[j]])
-          Y[[j]][, 1:ncomp[[j]]] = P_m[[j]] %*% a[[j]]
-
-          ##################
-          ##   Update Z   ##
-          ##################
-          dgx      = compute_dgx(dg, j)
-          Z[, , j] = apply(dgx, c(1, 2), sum)
-
-          #######################
-          ##   Update Mode 3   ##
-          #######################
-          Q_K                  = t(apply(P[[j]], 3, c)) %*% khatri_rao(factors[[j]][[1]], Z[, 1:ncomp[j], j])
-          SVD_K                = svd(x = Q_K, nu = ncomp[j], nv = ncomp[j])
-          factors[[j]][[2]]    = SVD_K$u %*% t(SVD_K$v)
-          a[[j]]               = list_khatri_rao(factors[[j]])
-          Y[[j]][, 1:ncomp[[j]]] = P_m[[j]] %*% a[[j]]
-
-          crit_inter = criterion()
-          if (crit_inter - crit_inter_old < -tol) {
-            stop_rgcca("Problem during gMGCCA update")
-          }
-          if (crit_inter - crit_inter_old < tol) break
-          crit_inter_old = crit_inter
-        }
-      } else if (j %in% B_nD) { # higher order Tensors
-        stop_rgcca("Not implemented")
-      } else { # Matrices
+      if (j %in% B_2D) {
         Q       = t(P[[j]]) %*% Z[, 1:ncomp[j], j]
-
-        D       = diag(sqrt(diag(crossprod(a[[j]]))))
-        SVD     = svd(Q %*% D, nv = ncomp[j], nu = ncomp[j])
+        SVD     = svd(Q, nv = ncomp[j], nu = ncomp[j])
         a[[j]]  = SVD$u %*% t(SVD$v)
-        weights = diag(t(Q) %*% a[[j]])
-        D       = weights / sqrt(sum(weights ^ 2))
-        a[[j]]  = a[[j]] %*% diag(D)
-
-        # SVD     = svd(Q, nv = ncomp[j], nu = ncomp[j])
-        # a[[j]]  = SVD$u %*% t(SVD$v)
-
         Y[[j]]  = P[[j]] %*% a[[j]]
-
-        crit_inter = criterion()
-        if (crit_inter - crit_inter_old < -tol) {
-          stop_rgcca("Problem during gRGCCA update")
+      } else {
+        for (d in 1:(LEN[j] - 1)) {
+          fac <- Reduce(khatri_rao, rev(factors[[j]][-d]))
+          Q_J <- t(apply(P[[j]], d + 1, c)) %*% khatri_rao(fac, Z[, 1:ncomp[j], j])
+          SVD_J                = svd(x = Q_J, nu = ncomp[j], nv = ncomp[j])
+          factors[[j]][[d]]    = SVD_J$u %*% t(SVD_J$v)
+          a[[j]]               = list_khatri_rao(factors[[j]])
+          Y[[j]][, 1:ncomp[[j]]] = P_m[[j]] %*% a[[j]]
         }
       }
     }
+
     # Store previous criterion
     crit[iter] <- criterion()
 
