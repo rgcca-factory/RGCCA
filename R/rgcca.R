@@ -486,10 +486,15 @@ rgcca <- function(
         )
     )
 
-    if (type %in% c("mgcca", "tgcca")) {
+    if (type == "mgcca") {
       func$regularisation_matrices <- regularisation_matrices
       func$ranks                   <- ranks
       func$orth_modes <- orth_modes
+    }
+
+    if (type == "tgcca") {
+      func$ranks                   <- ranks
+      func$kronecker_covariance    <- kronecker_covariance
     }
 
     if (type == "ns_mgcca") {

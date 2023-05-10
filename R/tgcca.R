@@ -1,9 +1,9 @@
 tgcca <- function(A, C = 1-diag(length(A)), tau = rep(1, length(A)),
                   ncomp = rep(1, length(A)), scheme = "centroid", scale = TRUE,
                   init="svd", bias = TRUE, tol = 1e-8, verbose=FALSE,
-                  scale_block = TRUE, regularisation_matrices = NULL,
+                  scale_block = TRUE, kronecker_covariance = FALSE,
                   ranks = rep(1, length(A)), prescaling = FALSE, quiet = FALSE,
-                  n_run = 1, n_cores = 1, orth_modes = 1) {
+                  n_run = 1, n_cores = 1) {
 
   # Number of blocks
   J      = length(A)
@@ -48,11 +48,11 @@ tgcca <- function(A, C = 1-diag(length(A)), tau = rep(1, length(A)),
       stop_rgcca("Choose one of the three following schemes: horst, centroid,
                  factorial or design the g function")
     }
-    if (verbose) cat("Computation of the MGCCA block components based on the",
+    if (verbose) cat("Computation of the TGCCA block components based on the",
                      scheme, "scheme \n")
   }
   if (mode(scheme) == "function" & verbose) {
-    cat("Computation of the MGCCA block components based on the g scheme \n")
+    cat("Computation of the TGCCA block components based on the g scheme \n")
   }
 
 
@@ -115,10 +115,10 @@ tgcca <- function(A, C = 1-diag(length(A)), tau = rep(1, length(A)),
   }
 
   #########################################
-  ### Determination of MGCCA components ###
+  ### Determination of TGCCA components ###
   #########################################
   for (n in 1:(N+1)) {
-    if (verbose) cat(paste0("Computation of the MGCCA block components #", n,
+    if (verbose) cat(paste0("Computation of the TGCCA block components #", n,
                             " is under progress...\n"))
     # n_random_starts
     mgcca.result = tgccak(
@@ -131,11 +131,10 @@ tgcca <- function(A, C = 1-diag(length(A)), tau = rep(1, length(A)),
       bias                    = bias,
       tol                     = tol,
       verbose                 = verbose,
-      regularisation_matrices = regularisation_matrices,
+      kronecker_covariance    = kronecker_covariance,
       ranks                   = ranks[n, ],
       n_run                   = n_run,
-      n_cores                 = n_cores,
-      orth_modes              = orth_modes
+      n_cores                 = n_cores
     )
 
     # Store tau, AVE_inner, crit
