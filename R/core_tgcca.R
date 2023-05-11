@@ -57,15 +57,17 @@ core_tgcca <- function(A, P, DIM, LEN, B_2D, B_3D, B_nD, init, g, verbose, C,
     }
     if (init == "svd") {
       lapply(seq(2, LEN[[j]]), function(d) {
-        svd(matrix(aperm(
+        x <- svd(matrix(aperm(
           array(P[[j]], dim = DIM[[j]]), perm = c(d, seq_along(DIM[[j]])[-d])
         ), nrow = DIM[[j]][d]), nu = ranks[j])$u
+        x / norm(x, type = "F")
       })
     } else {
       lapply(seq(2, LEN[[j]]), function(d) {
-        svd(matrix(
+        x <- svd(matrix(
           rnorm(DIM[[j]][d] * ranks[j], mean = 0, sd = 1), nrow = DIM[[j]][d]
         ), nu = ranks[j])$u
+        x / norm(x, type = "F")
       })
     }
   })
@@ -134,6 +136,12 @@ core_tgcca <- function(A, P, DIM, LEN, B_2D, B_3D, B_nD, init, g, verbose, C,
           idx <- aperm(idx, perm = c(d, seq_along(DIM[[j]][-1])[-d]))
 
           factors[[j]][[d]] <- solution(grad, Z, M[[j]][idx, idx])
+
+          if (d > 1) {
+            f_norm <- norm(factors[[j]][[d]], type = "F")
+            factors[[j]][[d]] <- factors[[j]][[d]] / f_norm
+            factors[[j]][[1]] <- factors[[j]][[1]] * f_norm
+          }
 
           a[[j]] <- Reduce(khatri_rao, rev(factors[[j]])) %*% rep(1, ranks[j])
           Y[[j]] <- P[[j]] %*% a[[j]]
