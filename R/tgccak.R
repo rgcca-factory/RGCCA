@@ -55,11 +55,6 @@ tgccak <- function(A, A_m = NULL, C, tau = rep(1, length(A)),
   pjs <- vapply(DIM, function(x) prod(x[-1]), FUN.VALUE = 1.)
   n_iter_max <- 1000L
 
-  # Matricization (mode-1)
-  if (is.null(A_m)) {
-    A_m <- lapply(1:J, function(x) matrix(as.vector(A[[x]]), nrow = n))
-  }
-
   # Initialization of the regularization matrices
   M <- lapply(seq(J), function(j) {
     if (tau[j] == 1) {
@@ -67,7 +62,7 @@ tgccak <- function(A, A_m = NULL, C, tau = rep(1, length(A)),
     }
     if (j %in% B_2D) {
       return(tau[j] * diag(pjs[j]) +
-        (1 - tau[j]) * crossprod(A_m[[j]]) / (n - 1 + bias))
+        (1 - tau[j]) * crossprod(A[[j]]) / (n - 1 + bias))
     } else {
       if (kronecker_covariance == 0) {
         return(tau[j] * diag(pjs[j]) +
@@ -77,13 +72,12 @@ tgccak <- function(A, A_m = NULL, C, tau = rep(1, length(A)),
         return(tau[j] * diag(pjs[j]) +
           (1 - tau[j]) * Reduce("%x%", rev(fac)))
       } else {
-        # TODO: do change of variable with these individual fac
         fac <- estimate_kronecker_covariance(A[[j]])
         to <- tau[j] ^ (1 / length(fac))
         fac <- lapply(fac, function(x) {
           (1 - to) * x + to * diag(nrow(x))
         })
-        return(Reduce("%x%", rev(fac)))
+        return(fac)
       }
     }
   })
@@ -93,10 +87,38 @@ tgccak <- function(A, A_m = NULL, C, tau = rep(1, length(A)),
       return(NULL)
     }
     if (!(j %in% B_2D)) {
-      return(NULL)
+      if (kronecker_covariance == 2) {
+        return(lapply(M[[j]], function(x) {
+          eig <- eigen(x, symmetric = TRUE)
+          e <- .Machine$double.eps
+          if (any(abs(eig$values) < e)) {
+            eig$values[-which(eig$values < e)] <-
+              1 / eig$values[-which(eig$values < e)]
+            eig$values[which(eig$values < e)] <- 0
+            return(
+              eig$vectors %*%
+                diag(eig$values^(1/2), nrow = nrow(x)) %*%
+                t(eig$vectors)
+            )
+          } else {
+            return(
+              eig$vectors %*%
+                diag(eig$values^(-1/2), nrow = nrow(x)) %*%
+                t(eig$vectors)
+            )
+          }
+        }))
+      } else {
+        return(NULL)
+      }
     }
     return(solve(M[[j]]))
   })
+
+  # Matricization (mode-1)
+  if (is.null(A_m)) {
+    A_m <- lapply(1:J, function(x) matrix(as.vector(A[[x]]), nrow = n))
+  }
 
   myCluster <- makeCluster(n_cores, type = "PSOCK")
   doParallel::registerDoParallel(myCluster)

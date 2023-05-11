@@ -20,23 +20,28 @@ core_tgcca <- function(A, P, DIM, LEN, B_2D, B_3D, B_nD, init, g, verbose, C,
   }
 
   # Compute the update
-  solution <- function(X, B, M = NULL) {
+  solution <- function(X, B, M = NULL, Md = NULL) {
     p_a <- nrow(X)
     R <- ncol(B)
 
     # Construct P and P^{-1/2} for change of variable
     if (is.null(M)) {
-        SVD <- svd(crossprod(B))
-        Pm12 <- (SVD$u %*% diag(1 / sqrt(SVD$d), nrow = R) %*% t(SVD$v)) %x%
-            diag(p_a)
+      SVD <- svd(crossprod(B))
+      Pm12 <- (SVD$u %*% diag(1 / sqrt(SVD$d), nrow = R) %*% t(SVD$v)) %x%
+        diag(p_a)
     } else {
+      if (!is.null(Md)) {
+        SVD <- svd(Md)
+        Pm12 <- (SVD$u %*% diag(1 / sqrt(SVD$d), nrow = R) %*% t(SVD$v)) %x% M
+      } else {
         P <- (t(B) %x% diag(p_a)) %*% M %*% (B %x% diag(p_a))
         SVD <- svd(P)
         Pm12 <- SVD$u %*% diag(1 / sqrt(SVD$d), nrow = R * p_a) %*% t(SVD$v)
+      }
     }
 
     # Solve for u = P^{1/2}Vec(A)
-    u <- Pm12 %*% (t(B) %x% diag(p_a)) %*% as.vector(X)
+    u <- Pm12 %*% as.vector(X %*% B)
     u <- u / norm(u, type = "2")
 
     # Invert change of variable
@@ -89,7 +94,14 @@ core_tgcca <- function(A, P, DIM, LEN, B_2D, B_3D, B_nD, init, g, verbose, C,
     if (is.null(M[[j]])) {
       a_norm <- sqrt(drop(crossprod(a[[j]])))
     } else {
-      a_norm <- sqrt(drop(t(a[[j]]) %*% M[[j]] %*% a[[j]]))
+      if (is.list(M[[j]])) {
+        a_norm <- sqrt(drop(t(rep(1, ranks[j])) %*%
+          Reduce("*", lapply(seq(LEN[j] - 1), function(d) {
+            t(factors[[j]][[d]]) %*% M[[j]][[d]] %*% factors[[j]][[d]]
+          })) %*% rep(1, ranks[j])))
+      } else {
+        a_norm <- sqrt(drop(t(a[[j]]) %*% M[[j]] %*% a[[j]]))
+      }
     }
     a[[j]] <- a[[j]] / a_norm
     if (!(j %in% B_2D)) {
@@ -130,12 +142,19 @@ core_tgcca <- function(A, P, DIM, LEN, B_2D, B_3D, B_nD, init, g, verbose, C,
           grad <- matrix(aperm(
             grad, perm = c(d, seq_along(DIM[[j]][-1])[-d])
           ), nrow = DIM[[j]][d + 1])
+
           Z <- Reduce(khatri_rao, rev(factors[[j]][-d]))
-
-          idx <- array(seq_along(grad_j), dim = DIM[[j]][-1])
-          idx <- aperm(idx, perm = c(d, seq_along(DIM[[j]][-1])[-d]))
-
-          factors[[j]][[d]] <- solution(grad, Z, M[[j]][idx, idx])
+          if (is.list(M[[j]])) {
+            Md <- Reduce("*", lapply(seq(1, LEN[j] - 1)[-d], function(m) {
+              t(factors[[j]][[m]]) %*% M[[j]][[m]] %*% factors[[j]][[m]]
+            }))
+            factors[[j]][[d]] <- solution(grad, Z, Minv[[j]][[d]], Md)
+          } else {
+            Z <- Reduce(khatri_rao, rev(factors[[j]][-d]))
+            idx <- array(seq_along(grad_j), dim = DIM[[j]][-1])
+            idx <- aperm(idx, perm = c(d, seq_along(DIM[[j]][-1])[-d]))
+            factors[[j]][[d]] <- solution(grad, Z, M[[j]][idx, idx])
+          }
 
           if (d > 1) {
             f_norm <- norm(factors[[j]][[d]], type = "F")
