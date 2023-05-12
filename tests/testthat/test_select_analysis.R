@@ -43,7 +43,7 @@ test_that("superblock methods sets all attributes of a superblock", {
     res <- tmp$res
     J <- tmp$J
 
-    if (method %in% c(superblock_methods(), "rgcca", "sgcca")) {
+    if (method %in% c(superblock_methods(), generic_methods())) {
       expect_true(res$rgcca_args$superblock)
       expect_equal(
         res$rgcca_args$connection,

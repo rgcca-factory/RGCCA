@@ -72,3 +72,7 @@ x4_methods <- function() {
 sparse_methods <- function() {
   c("sgcca", "spls", "spca", "netsgcca")
 }
+
+generic_methods <- function() {
+  c("rgcca", "sgcca", "netsgcca")
+}

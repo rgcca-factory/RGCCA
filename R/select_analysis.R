@@ -35,7 +35,7 @@ select_analysis <- function(rgcca_args, blocks) {
   scale_block <- rgcca_args$scale_block
   lambda <- rgcca_args$lambda
   graph_laplacians <- rgcca_args$graph_laplacians
-  
+
   if (length(blocks) == 1) {
     if (sparsity[1] == 1) {
       method <- "pca"
@@ -52,6 +52,8 @@ select_analysis <- function(rgcca_args, blocks) {
     comp_orth = comp_orth, scale_block = scale_block
   )
   J <- length(blocks)
+
+  param_list <- list()
 
   switch(method,
     "rgcca" = {
@@ -70,6 +72,7 @@ select_analysis <- function(rgcca_args, blocks) {
       penalty <- sparsity
       lambda <- lambda
       graph_laplacians <- graph_laplacians
+      param_list <- list(lambda = lambda, graph_laplacians = graph_laplacians)
     },
     "pca" = {
       check_nblocks(blocks, "pca")
@@ -447,9 +450,9 @@ select_analysis <- function(rgcca_args, blocks) {
     }
   }
 
-  if (method %in% c("rgcca", "sgcca")) {
+  if (method %in% generic_methods()) {
     scheme <- check_scheme(scheme)
-    if (any(sparsity != 1)) {
+    if (any(sparsity != 1) & (method == "rgcca")) {
       param <- "sparsity"
       gcca <- sgcca
       method <- "sgcca"
@@ -494,13 +497,7 @@ select_analysis <- function(rgcca_args, blocks) {
   )
 
   rgcca_args[[param]] <- penalty
-  
-  if (method == "netsgcca") {
-    param_list <- list(lambda = lambda, graph_laplacians = graph_laplacians)
-  } else {
-    param_list <- list()
-  }
-  
+
   rgcca_args <- modifyList(rgcca_args, list(
     ncomp = ncomp,
     scheme = scheme,
