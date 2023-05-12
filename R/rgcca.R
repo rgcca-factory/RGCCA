@@ -444,7 +444,7 @@ rgcca <- function(blocks, connection = NULL, tau = 1, ncomp = 1,
     warning("Argument C is deprecated, use connection instead.")
     connection <- C
   }
-  
+
   rgcca_args <- as.list(environment())
   ### If specific objects are given for blocks, parameters are imported from
   #   these objects.
@@ -453,15 +453,15 @@ rgcca <- function(blocks, connection = NULL, tau = 1, ncomp = 1,
   rgcca_args <- tmp$rgcca_args
   rgcca_args$quiet <- quiet
   rgcca_args$verbose <- verbose
-  
+
   blocks <- remove_null_sd(rgcca_args$blocks)$list_m
-  
+
   if (opt$disjunction) {
     blocks[[rgcca_args$response]] <- as_disjunctive(
       blocks[[rgcca_args$response]]
     )
   }
-  
+
   ### Apply strategy to deal with NA, scale and prepare superblock
   tmp <- handle_NA(blocks, NA_method = rgcca_args$NA_method)
   na.rm <- tmp$na.rm
@@ -477,7 +477,7 @@ rgcca <- function(blocks, connection = NULL, tau = 1, ncomp = 1,
       "s-", colnames(blocks[["superblock"]])
     )
   }
-  
+
   ### Call the gcca function
   gcca_args <- rgcca_args[c(
     "connection", "ncomp", "scheme", "init", "bias", "tol",
@@ -487,14 +487,12 @@ rgcca <- function(blocks, connection = NULL, tau = 1, ncomp = 1,
   gcca_args[["blocks"]] <- blocks
   gcca_args[["disjunction"]] <- opt$disjunction
   gcca_args[[opt$param]] <- rgcca_args[[opt$param]]
-  if (method == "netsgcca") {
-    gcca_args <- modifyList(gcca_args, rgcca_args[c("lambda", "graph_laplacians")])
-  }
+  gcca_args <- modifyList(gcca_args, opt$supplementary_parameters)
   func_out <- do.call(opt$gcca, gcca_args)
-  
+
   ### Format the output
   func_out <- format_output(func_out, rgcca_args, opt, blocks)
-  
+
   class(func_out) <- "rgcca"
   invisible(func_out)
 }

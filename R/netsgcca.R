@@ -38,7 +38,7 @@
 
 netsgcca <- function(blocks, connection = 1 - diag(length(blocks)),
                      sparsity = rep(1, length(blocks)),
-                     lambda = rep(1, length(A)),
+                     lambda = rep(1, length(blocks)),
                      graph_laplacians,
                      ncomp = rep(1, length(blocks)), scheme = "centroid",
                      init = "svd", bias = TRUE, tol = .Machine$double.eps,
