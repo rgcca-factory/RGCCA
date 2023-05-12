@@ -1,5 +1,5 @@
 #' netSGCCA extends SGCCA to include a Graph Penalty. Specifically,
-#' netSGCCA is equivalent to RGCCA combined with an L1-constraint 
+#' netSGCCA is equivalent to RGCCA combined with an L1-constraint
 #' and a Graph Penalty. It is implemented in the function netsgcca().
 #' Given \eqn{J} matrices \eqn{X_1, X_2, ..., X_J}, that represent
 #' \eqn{J} sets of variables observed on the same set of \eqn{n} individuals.
@@ -25,7 +25,7 @@
 #' @inheritParams rgccad
 #' @param lambda vector of graph penalties
 #' @param graph_laplacians list of graph laplacians
-#' @param na.rm If TRUE, runs sgcca only on available data.
+#' @param na.rm If TRUE, runs netsgcca only on available data.
 #' @return \item{Y}{A list of \eqn{J} elements. Each element of \eqn{Y} is a
 #' matrix that contains the analysis components for the corresponding block.}
 #' @return \item{a}{A list of \eqn{J} elements. Each element of \eqn{a} is a
@@ -34,128 +34,22 @@
 #' a vector such that Y[[j]][, h] = blocks[[j]] \%*\% astar[[j]][, h].}
 #' @return \item{crit}{A vector of integer that contains for each component the
 #' values of the analysis criteria across iterations.}
-#' @references Tenenhaus, A., Philippe, C., Guillemot, V., Le Cao, K. A.,
-#' Grill, J., and Frouin, V. , "Variable selection for generalized canonical
-#' correlation analysis.," Biostatistics, vol. 15, no. 3, pp. 569-583, 2014.
-#' @title Variable Selection For Generalized Canonical Correlation Analysis
-#' (SGCCA)
-#' @examples
-#' #############
-#' # Example 1 #
-#' #############
-#' \dontrun{
-#' # Download the dataset's package at http://biodev.cea.fr/sgcca/.
-#' # --> gliomaData_0.4.tar.gz
-#'
-#' data("ge_cgh_locIGR", package = "gliomaData")
-#'
-#' blocks <- ge_cgh_locIGR$multiblocks
-#' Loc <- factor(ge_cgh_locIGR$y)
-#' levels(Loc) <- colnames(ge_cgh_locIGR$multiblocks$y)
-#' connection <- matrix(c(0, 0, 1, 0, 0, 1, 1, 1, 0), 3, 3)
-#' tau <- c(1, 1, 0)
-#'
-#' # rgcca algorithm using the dual formulation for X1 and X2
-#' # and the dual formulation for X3
-#' blocks[[3]] <- blocks[[3]][, -3]
-#' result.rgcca <- rgcca(
-#'   blocks = blocks, connection = connection, tau = tau,
-#'   ncomp = c(2, 2, 1), scheme = "factorial",
-#'   verbose = TRUE, method = "rgcca"
-#' )
-#' # sgcca algorithm
-#' result.sgcca <- rgcca(
-#'   blocks = blocks, connection = connection,
-#'   sparsity = c(.071, .2, 1), ncomp = c(2, 2, 1),
-#'   scheme = "centroid", verbose = TRUE, method = "sgcca"
-#' )
-#'
-#' ############################
-#' # plot(y1, y2) for (RGCCA) #
-#' ############################
-#' layout(t(1:2))
-#' plot(result.rgcca$Y[[1]][, 1], result.rgcca$Y[[2]][, 1],
-#'   col = "white", xlab = "Y1 (GE)", ylab = "Y2 (CGH)",
-#'   main = "Factorial plan of RGCCA"
-#' )
-#' text(result.rgcca$Y[[1]][, 1], result.rgcca$Y[[2]][, 1],
-#'   Loc,
-#'   col = as.numeric(Loc), cex = .6
-#' )
-#' plot(result.rgcca$Y[[1]][, 1], result.rgcca$Y[[1]][, 2],
-#'   col = "white", xlab = "Y1 (GE)",
-#'   ylab = "Y2 (GE)", main = "Factorial plan of RGCCA"
-#' )
-#' text(result.rgcca$Y[[1]][, 1], result.rgcca$Y[[1]][, 2],
-#'   Loc,
-#'   col = as.numeric(Loc), cex = .6
-#' )
-#'
-#' ############################
-#' # plot(y1, y2) for (SGCCA) #
-#' ############################
-#' layout(t(1:2))
-#' plot(result.sgcca$Y[[1]][, 1], result.sgcca$Y[[2]][, 1],
-#'   col = "white", xlab = "Y1 (GE)",
-#'   ylab = "Y2 (CGH)", main = "Factorial plan of SGCCA"
-#' )
-#' text(result.sgcca$Y[[1]][, 1], result.sgcca$Y[[2]][, 1],
-#'   Loc,
-#'   col = as.numeric(Loc), cex = .6
-#' )
-#'
-#' plot(result.sgcca$Y[[1]][, 1], result.sgcca$Y[[1]][, 2],
-#'   col = "white", xlab = "Y1 (GE)",
-#'   ylab = "Y2 (GE)", main = "Factorial plan of SGCCA"
-#' )
-#' text(result.sgcca$Y[[1]][, 1], result.sgcca$Y[[1]][, 2],
-#'   Loc,
-#'   col = as.numeric(Loc), cex = .6
-#' )
-#'
-#' # sgcca algorithm with multiple components and different
-#' # L1 penalties for each components
-#' # (-> sparsity is a matrix)
-#' init <- "random"
-#' result.sgcca <- sgcca(blocks, connection,
-#'   sparsity = matrix(c(.071, .2, 1, 0.06, 0.15, 1),
-#'     nrow = 2, byrow = TRUE
-#'   ),
-#'   ncomp = c(2, 2, 1), scheme = "factorial", bias = TRUE,
-#'   init = init, verbose = TRUE
-#' )
-#' # number of non zero elements per dimension
-#' apply(result.sgcca$a[[1]], 2, function(x) sum(x != 0))
-#' # (-> 145 non zero elements for a11 and 107 non zero elements for a12)
-#' apply(result.sgcca$a[[2]], 2, function(x) sum(x != 0))
-#' # (-> 85 non zero elements for a21 and 52 non zero elements for a22)
-#' init <- "svd"
-#' result.sgcca <- sgcca(blocks, connection,
-#'   sparsity = matrix(c(.071, .2, 1, 0.06, 0.15, 1),
-#'     nrow = 2, byrow = TRUE
-#'   ),
-#'   ncomp = c(2, 2, 1), scheme = "factorial",
-#'   bias = TRUE,
-#'   init = init, verbose = TRUE
-#' )
-#' }
 #' @noRd
 
 netsgcca <- function(blocks, connection = 1 - diag(length(blocks)),
-                  sparsity = rep(1, length(blocks)),
-                  lambda = rep(1, length(A)),
-                  # group_sparsity, 
-                  graph_laplacians,
-                  ncomp = rep(1, length(blocks)), scheme = "centroid",
-                  init = "svd", bias = TRUE, tol = .Machine$double.eps,
-                  verbose = FALSE, na.rm = TRUE,
-                  superblock = FALSE, response = NULL,
-                  disjunction = NULL, n_iter_max = 1000,
-                  comp_orth = TRUE) {
+                     sparsity = rep(1, length(blocks)),
+                     lambda = rep(1, length(A)),
+                     graph_laplacians,
+                     ncomp = rep(1, length(blocks)), scheme = "centroid",
+                     init = "svd", bias = TRUE, tol = .Machine$double.eps,
+                     verbose = FALSE, na.rm = TRUE,
+                     superblock = FALSE, response = NULL,
+                     disjunction = NULL, n_iter_max = 1000,
+                     comp_orth = TRUE) {
   if (verbose) {
     scheme_str <- ifelse(is(scheme, "function"), "user-defined", scheme)
     cat(
-      "Computation of the SGCCA block components based on the",
+      "Computation of the netSGCCA block components based on the",
       scheme_str, "scheme \n"
     )
   }
@@ -165,8 +59,6 @@ netsgcca <- function(blocks, connection = 1 - diag(length(blocks)),
   ndefl <- ncomp - 1
   N <- max(ndefl)
   J <- length(blocks)
-  pjs <- vapply(blocks, NCOL, numeric(1L))
-  nb_ind <- NROW(blocks[[1]])
 
   crit <- list()
   R <- blocks
@@ -187,16 +79,16 @@ netsgcca <- function(blocks, connection = 1 - diag(length(blocks)),
     )
   }
 
-  ##### Computation of SGCCA components #####
+  ##### Computation of netSGCCA components #####
   for (n in seq(N + 1)) {
     if (verbose) {
       cat(paste0(
-        "Computation of the SGCCA block components #", n,
+        "Computation of the netSGCCA block components #", n,
         " is under progress...\n"
       ))
     }
     gcca_result <- netsgccak(R, connection,
-      sparsity = sparsity[n, ], 
+      sparsity = sparsity[n, ],
       lambda = lambda, graph_laplacians = graph_laplacians,
       scheme = scheme,
       init = init, bias = bias, tol = tol,

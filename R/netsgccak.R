@@ -1,7 +1,8 @@
-#' The function sgccak() is called by sgcca() and does not have to be used by
-#' the user. sgccak() enables the computation of SGCCA block components, outer
-#' weight vectors, etc., for each block and each deflation stage.
-#' @inheritParams sgcca
+#' The function netsgccak() is called by netsgcca() and does not have to
+#' be used by the user. netsgccak() enables the computation of netSGCCA block
+#' components, outer weight vectors, etc., for each block and each
+#' deflation stage.
+#' @inheritParams netsgcca
 #' @inheritParams rgccak
 #' @return \item{Y}{A list of \eqn{J} elements. Each element of \eqn{Y} is a
 #' matrix that contains the analysis components for the corresponding block.}
@@ -9,17 +10,16 @@
 #' matrix that contains the outer weight vectors for each block.}
 #' @return \item{crit}{A vector of integer that contains for each component
 #' the values of the analysis criteria across iterations.}
-#' @title Internal function for computing the SGCCA parameters (SGCCA block
-#' components, outer weight vectors etc.)
+#' @title Internal function for computing the netSGCCA parameters
+#' (netSGCCA block components, outer weight vectors etc.)
 #' @noRd
 netsgccak <- function(A, C, sparsity = rep(1, length(A)),
                       lambda = rep(1, length(A)),
-                      # group_sparsity, 
                       graph_laplacians,
-                   scheme = "centroid", tol = 1e-08,
-                   init = "svd", bias = TRUE, verbose = FALSE,
-                   na.rm = TRUE, response = NULL,
-                   disjunction = FALSE, n_iter_max = 1000) {
+                      scheme = "centroid", tol = 1e-08,
+                      init = "svd", bias = TRUE, verbose = FALSE,
+                      na.rm = TRUE, response = NULL,
+                      disjunction = FALSE, n_iter_max = 1000) {
   if (is.function(scheme)) {
     g <- scheme
   } else {
@@ -39,8 +39,8 @@ netsgccak <- function(A, C, sparsity = rep(1, length(A)),
   dg <- Deriv::Deriv(g, env = parent.frame())
 
   ### Initialization
-  init_object <- netsgcca_init(
-    A, init, bias, na.rm, sparsity, lambda, graph_laplacians, response, disjunction
+  init_object <- sgcca_init(
+    A, init, bias, na.rm, sparsity, response, disjunction
   )
   a <- init_object$a
   Y <- init_object$Y
@@ -52,7 +52,8 @@ netsgccak <- function(A, C, sparsity = rep(1, length(A)),
 
   repeat {
     update_object <- netsgcca_update(
-      A, bias, na.rm, sparsity, lambda, graph_laplacians, response, disjunction, dg, C, a, Y, init_object
+      A, bias, na.rm, sparsity, lambda, graph_laplacians,
+      response, disjunction, dg, C, a, Y, init_object
     )
     a <- update_object$a
     Y <- update_object$Y
@@ -99,8 +100,8 @@ netsgccak <- function(A, C, sparsity = rep(1, length(A)),
     plot(crit, xlab = "iteration", ylab = "criteria")
   }
 
-  result <- netsgcca_postprocess(
-    A, a, Y, g, na.rm, sparsity, lambda, graph_laplacians, tol, response, disjunction
+  result <- sgcca_postprocess(
+    A, a, Y, g, na.rm, sparsity, tol, response, disjunction
   )
   return(list(Y = result$Y, a = result$a, crit = crit))
 }

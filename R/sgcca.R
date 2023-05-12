@@ -160,8 +160,6 @@ sgcca <- function(blocks, connection = 1 - diag(length(blocks)),
   ndefl <- ncomp - 1
   N <- max(ndefl)
   J <- length(blocks)
-  pjs <- vapply(blocks, NCOL, numeric(1L))
-  nb_ind <- NROW(blocks[[1]])
 
   crit <- list()
   R <- blocks
