@@ -17,7 +17,7 @@
 #' uniformly from
 #' the minimum and maximum possible values of the parameter defined by par_type
 #' for each block. Minimum possible values are 0 for tau,
-#' \eqn{1/\text{sqrt}(p_j)}{1/sqrt(p_j)} for sparsity, and 1
+#' \eqn{1/\textrm{sqrt}(p_j)}{1/sqrt(p_j)} for sparsity, and 1
 #' for ncomp. Maximum possible values are 1 for tau and sparsity, and
 #' \eqn{p_j}{p_j} for ncomp.
 #'
