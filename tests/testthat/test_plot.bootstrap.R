@@ -27,14 +27,14 @@ test_that("plot.bootstrap raises an error if block is not an integer
 })
 
 test_that("plot.bootstrap produces the expected weight plot", {
-  skip_on_cran()
+  skip_if_not(as.logical(Sys.getenv("TEST_SNAPSHOTS")))
   vdiffr::expect_doppelganger(
     "Bootstrap weight", plot.bootstrap(fit.boot, type = "weight")
   )
 })
 
 test_that("plot.bootstrap produces the expected loading plot", {
-  skip_on_cran()
+  skip_if_not(as.logical(Sys.getenv("TEST_SNAPSHOTS")))
   vdiffr::expect_doppelganger(
     "Bootstrap loadings", plot.bootstrap(
       fit.boot, type = "loadings", show_stars = FALSE, block = 1

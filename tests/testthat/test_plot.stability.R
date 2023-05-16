@@ -13,7 +13,7 @@ res <- rgcca_stability(
 )
 
 test_that("plot.stability produces the expected plot", {
-  skip_on_cran()
+  skip_if_not(as.logical(Sys.getenv("TEST_SNAPSHOTS")))
   vdiffr::expect_doppelganger(
     "stability weights", plot.stability(res, type = "weights")
   )
