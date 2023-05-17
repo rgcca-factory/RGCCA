@@ -222,7 +222,7 @@ orthogonal block components or orthogonal block weight vectors.}
 \item{...}{Additional parameters to be passed to prediction_model.}
 }
 \value{
-A cval object that can be printed and plotted.
+A rgcca_cv object that can be printed and plotted.
 
 \item{k}{An integer giving the number of folds.}
 

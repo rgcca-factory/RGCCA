@@ -31,7 +31,7 @@ bootstrap sample (default is FALSE).}
 procedure is reported.}
 }
 \value{
-A bootstrap object that can be printed and plotted.
+A rgcca_bootstrap object that can be printed and plotted.
 
 \item{n_boot}{The number of bootstrap samples, returned
 for further use.}
@@ -102,6 +102,6 @@ plot(boot_out, type = "weight", block = 1:3, comp = 1,
 }
 }
 \seealso{
-\code{\link[RGCCA]{plot.bootstrap}},
-\code{\link[RGCCA]{print.bootstrap}}
+\code{\link[RGCCA]{plot.rgcca_bootstrap}},
+\code{\link[RGCCA]{print.rgcca_bootstrap}}
 }

@@ -201,7 +201,7 @@ iterations.}
 orthogonal block components or orthogonal block weight vectors.}
 }
 \value{
-A permutation object that can be printed and plotted.
+A rgcca_permutation object that can be printed and plotted.
 
 \item{opt}{A list indicating some options of the RGCCA model used
 during the permutation.}

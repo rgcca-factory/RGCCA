@@ -1,4 +1,4 @@
-#' # print.cval
+#' # print.rgcca_cv
 #'''
 set.seed(0)
 data(Russett)
@@ -13,7 +13,7 @@ blocks_classif <- list(
   politic = as.factor(Russett[, 9])
 )
 
-test_that("print_cval prints the expected text", {
+test_that("print.rgcca_cv prints the expected text", {
   local_edition(3)
   expect_snapshot({
     res <- rgcca_cv(blocks,
@@ -25,7 +25,7 @@ test_that("print_cval prints the expected text", {
   })
 })
 
-test_that("print_cval prints the expected text 2", {
+test_that("print.rgcca_cv prints the expected text 2", {
   local_edition(3)
   expect_snapshot({
     res <- rgcca_cv(blocks_classif,
@@ -37,7 +37,7 @@ test_that("print_cval prints the expected text 2", {
   })
 })
 
-test_that("print_cval prints the expected text 3", {
+test_that("print.rgcca_cv prints the expected text 3", {
   local_edition(3)
   expect_snapshot({
     res <- rgcca_cv(blocks,
@@ -49,7 +49,7 @@ test_that("print_cval prints the expected text 3", {
   })
 })
 
-test_that("print_cval prints the expected text 4", {
+test_that("print.rgcca_cv prints the expected text 4", {
   local_edition(3)
   expect_snapshot({
     res <- rgcca_cv(blocks_classif,

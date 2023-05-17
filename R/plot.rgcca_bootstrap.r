@@ -1,48 +1,18 @@
-#' Plot a fitted rgcca_bootstrap object
-#'
-#' Plot the results of a fitted rgcca_bootstrap object. Each block variable
-#' is shown along with its associated bootstrap confidence interval and
-#' stars reflecting the p-value of assigning a strictly positive or
-#' negative weight to this block variable.
-#' @inheritParams plot.rgcca
-#' @param x A fitted rgcca_bootstrap object
-#' (see \code{\link[RGCCA]{rgcca_bootstrap}})
-#' @param type A string indicating the bootstrapped object to plot:
-#' block-weight vectors ("weights", default) or block-loading vectors
-#' ("loadings").
-#' @param empirical A logical value indicating if the bootstrap confidence
-#' intervals and p-values are derived from the empirical distribution.
-#' (default: TRUE)
-#' @param n_mark An integer defining the maximum number of variables to plot.
-#' @param show_stars A logical value indicating if the significance levels
-#' are displayed.
-#' @param colors Colors used in the plots.
-#' @param adj.method A string indicating the method used to adjust the p-values.
-#' It must be a method handled by the p.adjust function. Default is "fdr".
-#' @return A ggplot2 plot object.
-#' @examples
-#' data("Russett")
-#' blocks <- list(
-#'   agriculture = Russett[, seq(3)],
-#'   industry = Russett[, 4:5],
-#'   politic = Russett[, 6:11]
-#' )
-#' fit.rgcca <- rgcca(blocks, ncomp = 2, method = "rgcca", tau = 1)
-#' fit.boot <- rgcca_bootstrap(fit.rgcca, n_boot = 20, n_cores = 1,
-#'                             verbose = TRUE)
-#' plot(fit.boot, type = "weight", block = 1, comp = 1)
 #' @export
-plot.bootstrap <- function(x, block = seq_along(x$rgcca$call$blocks),
-                           comp = 1, type = "weights",
-                           empirical = TRUE, n_mark = 30,
-                           display_order = TRUE,
-                           show_stars = TRUE, title = NULL,
-                           cex = 1, cex_sub = 12 * cex,
-                           cex_main = 14 * cex, cex_lab = 12 * cex,
-                           cex_point = 3 * cex, colors = NULL,
-                           adj.method = "fdr", ...) {
+#' @rdname plot
+#' @order 4
+plot.rgcca_bootstrap <- function(x, block = seq_along(x$rgcca$call$blocks),
+                                 comp = 1, type = c("weights", "loadings"),
+                                 empirical = TRUE, n_mark = 30,
+                                 display_order = TRUE,
+                                 show_stars = TRUE, title = NULL,
+                                 cex = 1, cex_sub = 12 * cex,
+                                 cex_main = 14 * cex, cex_lab = 12 * cex,
+                                 cex_point = 3 * cex, colors = NULL,
+                                 adj.method = "fdr", ...) {
   ### Perform checks and parse arguments
-  stopifnot(is(x, "bootstrap"))
+  stopifnot(is(x, "rgcca_bootstrap"))
+  type <- type[1]
   type <- match.arg(type, c("weights", "loadings"))
   lapply(block, function(i) check_blockx("block", i, x$rgcca$call$blocks))
   Map(function(y, z) check_compx(y, y, x$rgcca$call$ncomp, z), comp, block)

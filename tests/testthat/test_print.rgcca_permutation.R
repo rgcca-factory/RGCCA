@@ -1,4 +1,4 @@
-#' # print.permutation
+#' # print.rgcca_permutation
 #'''
 set.seed(0)
 data(Russett)
@@ -8,7 +8,7 @@ blocks <- list(
   politic = Russett[, 6:11]
 )
 
-test_that("print.permutation prints the expected text", {
+test_that("print.rgcca_permutation prints the expected text", {
   local_edition(3)
   expect_snapshot({
     res <- rgcca_permutation(blocks,
@@ -19,7 +19,7 @@ test_that("print.permutation prints the expected text", {
   })
 })
 
-test_that("print.permutation prints the expected text 2", {
+test_that("print.rgcca_permutation prints the expected text 2", {
   local_edition(3)
   expect_snapshot({
     blocks2 <- rep(blocks, 3)

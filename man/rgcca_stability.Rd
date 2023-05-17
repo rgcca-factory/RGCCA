@@ -35,6 +35,8 @@ to be kept even when some of them have null variance for at least one
 bootstrap sample (default is FALSE).}
 }
 \value{
+A rgcca_stability object that can be printed and plotted.
+
 \item{top}{A data.frame giving the indicator (VIP)
 on which the variables are ranked.}
 

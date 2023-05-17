@@ -1,4 +1,4 @@
-#' # test plot.permutation
+#' # test plot.rgcca_permutation
 #-------------------------
 set.seed(0)
 data(Russett)
@@ -19,33 +19,35 @@ perm.out2 <- rgcca_permutation(A2,
   n_cores = 1, par_length = 4, verbose = FALSE
 )
 
-test_that("plot.permutation produces the expected crit plot", {
+test_that("plot.rgcca_permutation produces the expected crit plot", {
   skip_if_not(as.logical(Sys.getenv("TEST_SNAPSHOTS")))
   vdiffr::expect_doppelganger(
-    "Permutation crit", plot.permutation(perm.out, type = "crit")
+    "Permutation crit", plot.rgcca_permutation(perm.out, type = "crit")
   )
 })
 
-test_that("plot.permutation produces the expected zstat plot", {
+test_that("plot.rgcca_permutation produces the expected zstat plot", {
   skip_if_not(as.logical(Sys.getenv("TEST_SNAPSHOTS")))
   vdiffr::expect_doppelganger(
-    "Permutation zstat", plot.permutation(perm.out, type = "zstat")
+    "Permutation zstat", plot.rgcca_permutation(perm.out, type = "zstat")
   )
 })
 
-test_that("plot.permutation produces the expected zstat plot with legend", {
+test_that("plot.rgcca_permutation produces the expected zstat
+          plot with legend", {
   skip_if_not(as.logical(Sys.getenv("TEST_SNAPSHOTS")))
   vdiffr::expect_doppelganger(
-    "Permutation legend", plot.permutation(
+    "Permutation legend", plot.rgcca_permutation(
       perm.out,
       type = "zstat", show_legend = TRUE
     )
   )
 })
 
-test_that("plot.permutation produces the expected crit plot with many blocks", {
+test_that("plot.rgcca_permutation produces the expected crit
+          plot with many blocks", {
   skip_if_not(as.logical(Sys.getenv("TEST_SNAPSHOTS")))
   vdiffr::expect_doppelganger(
-    "Permutation many blocks", plot.permutation(perm.out2, type = "crit")
+    "Permutation many blocks", plot.rgcca_permutation(perm.out2, type = "crit")
   )
 })

@@ -1,55 +1,19 @@
-#' Plot a fitted rgcca permutation object
-#'
-#' Plot a fitted rgcca permutation object. The set of candidate tuning
-#' parameters
-#' are represented on the y-axis and the RGCCA objective function - obtained
-#' from both the original and permuted blocks - on the x-axis. If type =
-#' "zstat" the value of the zstat for the various parameter sets are reported on
-#' the x-axis.
-#' @inheritParams plot.rgcca
-#' @inheritParams plot.bootstrap
-#' @param x A fitted rgcca_permutation object (see
-#' \code{\link[RGCCA]{rgcca_permutation}}).
-#' @param type A string indicating which criterion to plot. Default
-#' is 'crit' for the RGCCA criterion. Otherwise, the pseudo Z-score is used.
-#' @param show_legend A logical value indicating if legend should
-#' be shown (default is FALSE).
-#' @return A ggplot2 plot object.
-#' @examples
-#' data(Russett)
-#' A <- list(
-#'   agriculture = Russett[, seq(3)],
-#'   industry = Russett[, 4:5],
-#'   politic = Russett[, 6:11]
-#' )
-#'
-#' perm_out <- rgcca_permutation(A, par_type = "tau",
-#'                               n_perms = 2, n_cores = 1,
-#'                               verbose = TRUE)
-#' print(perm_out)
-#' plot(perm_out)
-#'
-#' perm.out <- rgcca_permutation(A,
-#'   par_type = "sparsity",
-#'   n_perms = 5, n_cores = 1,
-#'   verbose = TRUE
-#' )
-#'
-#' print(perm.out)
-#' plot(perm.out, type = "zstat")
 #' @export
-plot.permutation <- function(x,
-                             type = "crit",
-                             cex = 1,
-                             title = NULL,
-                             cex_main = 14 * cex,
-                             cex_sub = 12 * cex,
-                             cex_point = 3 * cex,
-                             cex_lab = 12 * cex,
-                             display_order = TRUE,
-                             show_legend = FALSE, ...) {
+#' @rdname plot
+#' @order 3
+plot.rgcca_permutation <- function(x,
+                                   type = c("crit", "zstat"),
+                                   cex = 1,
+                                   title = NULL,
+                                   cex_main = 14 * cex,
+                                   cex_sub = 12 * cex,
+                                   cex_point = 3 * cex,
+                                   cex_lab = 12 * cex,
+                                   display_order = TRUE,
+                                   show_legend = FALSE, ...) {
   ### Perform checks and parse params
-  stopifnot(is(x, "permutation"))
+  stopifnot(is(x, "rgcca_permutation"))
+  type <- type[1]
   match.arg(type, c("crit", "zstat"))
 
   ### Build data frame

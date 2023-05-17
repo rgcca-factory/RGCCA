@@ -1,26 +1,9 @@
-#' Print a rgcca_cv object
-#'
-#' Print a fitted rgcca_cv object. Parameters of the
-#' analysis, tuning parameters and statistics for each set of
-#' parameters are displayed.
-#' @inheritParams plot.cval
-#' @param ... Other parameters used in print (for the displaying of matrices).
-#' @return none
 #' @export
-#' @examples
-#' data("Russett")
-#' blocks <- list(
-#'   agriculture = Russett[, seq(3)],
-#'   industry = Russett[, 4:5],
-#'   politic = Russett[, 6:8]
-#' )
-#' res <- rgcca_cv(blocks,
-#'   response = 3, method = "rgcca", par_type = "tau",
-#'   par_value = c(0, 0.2, 0.3), n_run = 1, n_cores = 1,
-#'   verbose = TRUE
-#' )
-#' print(res)
-print.cval <- function(x, type = "sd", ...) {
+#' @rdname print
+#' @order 2
+print.rgcca_cv <- function(x, type = c("sd", "quantile"), ...) {
+  stopifnot(is(x, "rgcca_cv"))
+  type <- type[1]
   type <- match.arg(type, c("sd", "quantile"))
 
   ### Print parameters of the function

@@ -35,7 +35,7 @@
 #' @param n_run An integer giving the number of Monte-Carlo Cross-Validation
 #' (MCCV) to be run (if validation = 'kfold').
 #' @export
-#' @return A cval object that can be printed and plotted.
+#' @return A rgcca_cv object that can be printed and plotted.
 #' @return  \item{k}{An integer giving the number of folds.}
 #' @return  \item{n_run}{An integer giving the number of MCCV.}
 #' @return  \item{opt}{A list containing some options of the
@@ -342,6 +342,6 @@ rgcca_cv <- function(blocks,
     best_params = param$par_value[best_param_idx, ],
     prediction_model = model$model_name
   )
-  class(res) <- "cval"
+  class(res) <- "rgcca_cv"
   return(res)
 }

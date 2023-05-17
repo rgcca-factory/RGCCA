@@ -1,29 +1,13 @@
-#' Print a rgcca_bootstrap object
-#'
-#' Print a fitted rgcca_bootstrap object. Parameters of the
-#' analysis and bootstrap statistics are displayed.
-#' @inheritParams plot.bootstrap
-#' @param x A fitted rgcca_bootstrap object
-#' (see \code{\link[RGCCA]{rgcca_bootstrap}})
-#' @param ... Other parameters used in print (for the displaying of matrices).
-#' @return none
-#' @examples
-#' data("Russett")
-#' blocks <- list(
-#'   agriculture = Russett[, seq(3)],
-#'   industry = Russett[, 4:5],
-#'   politic = Russett[, 6:11]
-#' )
-#' fit.rgcca <- rgcca(blocks, ncomp = c(2, 1, 2))
-#' boot.out <- rgcca_bootstrap(fit.rgcca, n_boot = 20, n_cores = 2,
-#'                             verbose = TRUE)
-#' print(boot.out)
 #' @export
-print.bootstrap <- function(x, block = seq_along(x$rgcca$call$blocks),
-                            comp = 1, type = "weights", empirical = TRUE,
-                            display_order = FALSE, adj.method = "fdr", ...) {
+#' @rdname print
+#' @order 4
+print.rgcca_bootstrap <- function(x, block = seq_along(x$rgcca$call$blocks),
+                                  comp = 1, type = c("weights", "loadings"),
+                                  empirical = TRUE, display_order = FALSE,
+                                  adj.method = "fdr", ...) {
   ### Perform checks and parse arguments
-  stopifnot(is(x, "bootstrap"))
+  stopifnot(is(x, "rgcca_bootstrap"))
+  type <- type[1]
   type <- match.arg(type, c("weights", "loadings"))
   lapply(block, function(i) check_blockx("block", i, x$rgcca$call$blocks))
   Map(function(y, z) check_compx(y, y, x$rgcca$call$ncomp, z), comp, block)

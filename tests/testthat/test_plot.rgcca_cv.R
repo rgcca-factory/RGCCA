@@ -1,4 +1,4 @@
-#' # test plot.cval
+#' # test plot.rgcca_cv
 #------------------
 set.seed(0)
 data("Russett")
@@ -18,23 +18,23 @@ res2 <- suppressWarnings(rgcca_cv(blocks,
   par_length = 3, n_run = 1, n_cores = 1
 ))
 
-test_that("plot.cval produces the expected quantile plot", {
+test_that("plot.rgcca_cv produces the expected quantile plot", {
   skip_if_not(as.logical(Sys.getenv("TEST_SNAPSHOTS")))
   vdiffr::expect_doppelganger(
-    "CV quantile", plot.cval(res, type = "quantile")
+    "CV quantile", plot.rgcca_cv(res, type = "quantile")
   )
 })
 
-test_that("plot.cval produces the expected sd plot", {
+test_that("plot.rgcca_cv produces the expected sd plot", {
   skip_if_not(as.logical(Sys.getenv("TEST_SNAPSHOTS")))
   vdiffr::expect_doppelganger(
-    "CV sd", plot.cval(res, type = "sd", display_order = FALSE)
+    "CV sd", plot.rgcca_cv(res, type = "sd", display_order = FALSE)
   )
 })
 
-test_that("plot.cval produces the expected sd plot with many blocks", {
+test_that("plot.rgcca_cv produces the expected sd plot with many blocks", {
   skip_if_not(as.logical(Sys.getenv("TEST_SNAPSHOTS")))
   vdiffr::expect_doppelganger(
-    "CV many blocks", plot.cval(res2, type = "sd")
+    "CV many blocks", plot.rgcca_cv(res2, type = "sd")
   )
 })

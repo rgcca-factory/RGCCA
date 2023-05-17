@@ -1,50 +1,16 @@
-#' Plot for cross-validation
-#'
-#' Plot a fitted cross-validation object.
-#' The parameters tuned for maximizing the cross-validated score is
-#' displayed in the title. The set of candidate tuning parameters
-#' are represented on the y-axis. A boxplot of the cross-validated scores are
-#' displayed on the x-axis.
-#' @inheritParams plot.rgcca
-#' @inheritParams plot.bootstrap
-#' @param x A rgcca_cv object (see \link{rgcca_cv})
-#' @param type A string indicating the statistics depicted in the boxplot:
-#' \itemize{
-#' \item "sd" (default): the middle bar corresponds to the mean and limits of
-#' the boxes are given by the mean plus or minus the standard deviation.
-#' \item "quantile": the middle bar corresponds to the median and limits of
-#' the boxes are given by the 25\% and 75\% quantiles.
-#' }
-#' @return A ggplot2 plot object.
-#' @examples
-#' data("Russett")
-#' blocks <- list(
-#'   agriculture = Russett[, seq(3)],
-#'   industry = Russett[, 4:5],
-#'   politic = as.factor(apply(Russett[, 9:11], 1, which.max))
-#' )
-#' cv_out <- rgcca_cv(blocks,
-#'   response = 3, method = "rgcca",
-#'   par_type = "tau",
-#'   par_value = 1,
-#'   n_run = 1, n_cores = 1,
-#'   prediction_model = "lda",
-#'   metric = "Accuracy",
-#'   verbose = TRUE
-#' )
-#'
-#' print(cv_out)
-#' plot(cv_out)
 #' @export
-plot.cval <- function(x, type = "sd",
-                      cex = 1,
-                      cex_main = 14 * cex,
-                      cex_sub = 12 * cex,
-                      cex_point = 3 * cex,
-                      cex_lab = 12 * cex,
-                      display_order = TRUE, ...) {
+#' @rdname plot
+#' @order 2
+plot.rgcca_cv <- function(x, type = c("sd", "quantile"),
+                          cex = 1,
+                          cex_main = 14 * cex,
+                          cex_sub = 12 * cex,
+                          cex_point = 3 * cex,
+                          cex_lab = 12 * cex,
+                          display_order = TRUE, ...) {
   ### Perform checks and parse params
-  stopifnot(is(x, "cval"))
+  stopifnot(is(x, "rgcca_cv"))
+  type <- type[1]
   type <- match.arg(type, c("quantile", "sd"))
 
   ### Build data frame
