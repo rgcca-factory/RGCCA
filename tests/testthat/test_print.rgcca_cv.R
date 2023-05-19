@@ -14,6 +14,7 @@ blocks_classif <- list(
 )
 
 test_that("print.rgcca_cv prints the expected text", {
+  skip_if_not(as.logical(Sys.getenv("TEST_SNAPSHOTS")))
   local_edition(3)
   expect_snapshot({
     res <- rgcca_cv(blocks,
@@ -26,6 +27,7 @@ test_that("print.rgcca_cv prints the expected text", {
 })
 
 test_that("print.rgcca_cv prints the expected text 2", {
+  skip_if_not(as.logical(Sys.getenv("TEST_SNAPSHOTS")))
   local_edition(3)
   expect_snapshot({
     res <- rgcca_cv(blocks_classif,
@@ -38,6 +40,7 @@ test_that("print.rgcca_cv prints the expected text 2", {
 })
 
 test_that("print.rgcca_cv prints the expected text 3", {
+  skip_if_not(as.logical(Sys.getenv("TEST_SNAPSHOTS")))
   local_edition(3)
   expect_snapshot({
     res <- rgcca_cv(blocks,
@@ -50,6 +53,7 @@ test_that("print.rgcca_cv prints the expected text 3", {
 })
 
 test_that("print.rgcca_cv prints the expected text 4", {
+  skip_if_not(as.logical(Sys.getenv("TEST_SNAPSHOTS")))
   local_edition(3)
   expect_snapshot({
     res <- rgcca_cv(blocks_classif,

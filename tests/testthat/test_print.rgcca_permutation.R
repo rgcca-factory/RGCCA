@@ -9,6 +9,7 @@ blocks <- list(
 )
 
 test_that("print.rgcca_permutation prints the expected text", {
+  skip_if_not(as.logical(Sys.getenv("TEST_SNAPSHOTS")))
   local_edition(3)
   expect_snapshot({
     res <- rgcca_permutation(blocks,
@@ -20,6 +21,7 @@ test_that("print.rgcca_permutation prints the expected text", {
 })
 
 test_that("print.rgcca_permutation prints the expected text 2", {
+  skip_if_not(as.logical(Sys.getenv("TEST_SNAPSHOTS")))
   local_edition(3)
   expect_snapshot({
     blocks2 <- rep(blocks, 3)

@@ -10,6 +10,7 @@ blocks <- list(
 fit.sgcca <- rgcca(blocks, sparsity = c(.8, .9, .6))
 
 test_that("print.rgcca_stability produces the expected text", {
+  skip_if_not(as.logical(Sys.getenv("TEST_SNAPSHOTS")))
   local_edition(3)
   expect_snapshot({
     res <- rgcca_stability(fit.sgcca, n_boot = 10, verbose = FALSE)

@@ -8,6 +8,7 @@ blocks <- list(X_agric, X_ind, X_polit)
 blocks2 <- list(X_agric, X_ind, as.factor(Russett[, "demostab"]))
 
 test_that("print.rgcca produces the expected text", {
+  skip_if_not(as.logical(Sys.getenv("TEST_SNAPSHOTS")))
   local_edition(3)
   expect_snapshot({
     res <- rgcca(blocks, ncomp = 1, tau = c(1, 0.7, 0.9))
@@ -16,6 +17,7 @@ test_that("print.rgcca produces the expected text", {
 })
 
 test_that("print.rgcca produces the expected text 2", {
+  skip_if_not(as.logical(Sys.getenv("TEST_SNAPSHOTS")))
   local_edition(3)
   expect_snapshot({
     tau <- matrix(c(1, 1, 1, 0, 0, 0), nrow = 2, byrow = TRUE)
@@ -25,6 +27,7 @@ test_that("print.rgcca produces the expected text 2", {
 })
 
 test_that("print.rgcca produces the expected text 3", {
+  skip_if_not(as.logical(Sys.getenv("TEST_SNAPSHOTS")))
   local_edition(3)
   expect_snapshot({
     res <- rgcca(blocks, ncomp = 1, sparsity = c(0.7, 1, 0.9), method = "sgcca")
@@ -33,6 +36,7 @@ test_that("print.rgcca produces the expected text 3", {
 })
 
 test_that("print.rgcca produces the expected text 4", {
+  skip_if_not(as.logical(Sys.getenv("TEST_SNAPSHOTS")))
   local_edition(3)
   expect_snapshot({
     sparsity <- matrix(c(0.8, 1, 0.9, 1, 0.9, 0.8), nrow = 2, byrow = TRUE)
@@ -42,6 +46,7 @@ test_that("print.rgcca produces the expected text 4", {
 })
 
 test_that("print.rgcca produces the expected text 5", {
+  skip_if_not(as.logical(Sys.getenv("TEST_SNAPSHOTS")))
   local_edition(3)
   expect_snapshot({
     res <- rgcca(blocks2, ncomp = 1, sparsity = c(0.7, 1, 0.9), response = 3)
