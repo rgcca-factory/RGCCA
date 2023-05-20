@@ -88,26 +88,7 @@ tgccak <- function(A, A_m = NULL, C, tau = rep(1, length(A)),
     }
     if (!(j %in% B_2D)) {
       if (kronecker_covariance == 2) {
-        return(lapply(M[[j]], function(x) {
-          eig <- eigen(x, symmetric = TRUE)
-          e <- .Machine$double.eps
-          if (any(abs(eig$values) < e)) {
-            eig$values[-which(eig$values < e)] <-
-              1 / eig$values[-which(eig$values < e)]
-            eig$values[which(eig$values < e)] <- 0
-            return(
-              eig$vectors %*%
-                diag(eig$values^(1/2), nrow = nrow(x)) %*%
-                t(eig$vectors)
-            )
-          } else {
-            return(
-              eig$vectors %*%
-                diag(eig$values^(-1/2), nrow = nrow(x)) %*%
-                t(eig$vectors)
-            )
-          }
-        }))
+        return(lapply(M[[j]], solve))
       } else {
         return(NULL)
       }

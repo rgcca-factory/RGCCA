@@ -24,28 +24,25 @@ core_tgcca <- function(A, P, DIM, LEN, B_2D, B_3D, B_nD, init, g, verbose, C,
     p_a <- nrow(X)
     R <- ncol(B)
 
-    # Construct P and P^{-1/2} for change of variable
+    XB <- X %*% B
+
     if (is.null(M)) {
-      SVD <- svd(crossprod(B))
-      Pm12 <- (SVD$u %*% diag(1 / sqrt(SVD$d), nrow = R) %*% t(SVD$v)) %x%
-        diag(p_a)
+      P <- solve(crossprod(B))
+      XBP <- XB %*% P
     } else {
       if (!is.null(Md)) {
-        SVD <- svd(Md)
-        Pm12 <- (SVD$u %*% diag(1 / sqrt(SVD$d), nrow = R) %*% t(SVD$v)) %x% M
+        P <- solve(Md)
+        XBP <- M %*% XB %*% P
       } else {
-        P <- (t(B) %x% diag(p_a)) %*% M %*% (B %x% diag(p_a))
-        SVD <- svd(P)
-        Pm12 <- SVD$u %*% diag(1 / sqrt(SVD$d), nrow = R * p_a) %*% t(SVD$v)
+        P <- solve((t(B) %x% diag(p_a)) %*% M %*% (B %x% diag(p_a)))
+        XBP <- P %*% as.vector(XB)
       }
     }
 
-    # Solve for u = P^{1/2}Vec(A)
-    u <- Pm12 %*% as.vector(X %*% B)
-    u <- u / norm(u, type = "2")
-
-    # Invert change of variable
-    A <- matrix(Pm12 %*% u, nrow = p_a, ncol = R)
+    A <- matrix(
+      XBP / sqrt(drop(t(as.vector(XB)) %*% as.vector(XBP))),
+      nrow = p_a, ncol = R
+    )
 
     return(A)
   }
