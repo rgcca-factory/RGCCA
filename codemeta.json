@@ -311,7 +311,7 @@
     },
     "SystemRequirements": null
   },
-  "fileSize": "33499.787KB",
+  "fileSize": "1639.849KB",
   "citation": [
     {
       "@type": "SoftwareSourceCode",
@@ -357,7 +357,7 @@
       "description": "R package version 3.0.2"
     }
   ],
-  "releaseNotes": "https://github.com/rgcca-factory/RGCCA/blob/master/NEWS.md",
+  "releaseNotes": "https://github.com/rgcca-factory/RGCCA/blob/main/NEWS.md",
   "readme": "https://github.com/rgcca-factory/RGCCA/blob/main/README.md",
   "developmentStatus": "https://lifecycle.r-lib.org/articles/stages.html#stable"
 }
