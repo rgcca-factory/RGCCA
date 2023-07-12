@@ -10,6 +10,7 @@ gmgccak_PDD5 <- function(A, C, tau = rep(1, length(A)), scheme = "centroid",
                          tol_in_decay = 0.9, rho = 2, A_m = NULL,
                          penalty_coef = 0, orth_Y = FALSE) {
   orth_Y = TRUE
+  rho = 2
 
   ### Utility functions
   criterion <- function() {
@@ -81,15 +82,15 @@ gmgccak_PDD5 <- function(A, C, tau = rep(1, length(A)), scheme = "centroid",
   }
 
   a_update <- function(j) {
-    dgx <- compute_dgx(dg, j)
-    grad <- pm(t(A_m[[j]]), dgx, na.rm = na.rm)
+    grad <- compute_dgx(dg, j)
 
     res <- list()
     if (orth_Y) {
-      Q <- grad + t(A_m[[j]]) %*% (Z[[j]] / rho - Mu[[j]])
-      Q <- a[[j]] + (Q - t(A_m[[j]]) %*% Y[[j]] / rho) * rho / lambda[j]
+      Q <- 1 / lambda[j] * (
+        t(A_m[[j]]) %*% (Z[[j]] - Y[[j]] + rho * (grad - Mu[[j]]))
+      ) + a[[j]]
     } else {
-      Q <- grad + (Z[[j]] / rho - Mu[[j]])
+      Q <- t(A_m[[j]]) %*% grad + (Z[[j]] / rho - Mu[[j]])
     }
 
 
@@ -121,12 +122,12 @@ gmgccak_PDD5 <- function(A, C, tau = rep(1, length(A)), scheme = "centroid",
     if (orth_Y) {
       # Write Z as an orthogonal matrix times
       # a diagonal one with a norm constraint
-      Q <- grad + Mu[[j]] + Y[[j]] / rho
+      Q <- Y[[j]] + rho * (grad + Mu[[j]])
       delta <- sqrt(diag(crossprod(Z[[j]])))
       SVD <- svd(Q %*% diag(delta, nrow = ncol(Q)))
       delta <- diag(SVD$v %*% t(SVD$u) %*% Q)
-      if (norm(delta, type = "2")^2 <= (ncol(Q) * lambda[j] / rho^2)) {
-        delta <- rho * delta
+      if (norm(delta, type = "2")^2 <= (ncol(Q) * lambda[j])) {
+        delta <- delta
       } else {
         delta <- delta * sqrt(lambda[j] * ncol(Q)) / norm(delta, type = "2")
       }
@@ -200,18 +201,16 @@ gmgccak_PDD5 <- function(A, C, tau = rep(1, length(A)), scheme = "centroid",
     } else if (init == "random") {
       # Random Initialisation of a_j
       if (j %in% B_2D) {
-        a[[j]] <- apply(
-          matrix(rnorm(pjs[j] * ncomp[j]), pjs[j]), 2,
-          function(x) x / norm(x, type = "2")
-        )
+        A_random <- matrix(rnorm(pjs[[j]] * ncomp[j]), nrow = pjs[j])
+        SVD = svd(A_random, nu=ncomp[j], nv=0)
+        a[[j]] <- SVD$u
       } else {
+        A_random <- array(rnorm(n = pjs[[j]], mean = 0, sd = 1), dim = DIM[[j]][-1])
         for (d in 1:(LEN[[j]] - 1)) {
-          factors[[j]][[d]] <- apply(
-            matrix(rnorm(DIM[[j]][d + 1] * ncomp[j]), DIM[[j]][d + 1]), 2,
-            function(x) x / norm(x, type = "2")
-          )
+          SVD = svd(apply(A_random, d, c), nu=0, nv=ncomp[j])
+          factors[[j]][[d]] <- SVD$v
         }
-        a[[j]] <- list_khatri_rao(factors[[j]])
+        a[[j]]       <- list_khatri_rao(factors[[j]])
       }
     } else {
       stop_rgcca("init should be either random or by SVD.")
@@ -258,6 +257,12 @@ gmgccak_PDD5 <- function(A, C, tau = rep(1, length(A)), scheme = "centroid",
   crit_old <- criterion()
   eta <- eta_decay * max(equality_constraints())
 
+  a0 <- a
+  Y0 <- Y
+  Z0 <- Z
+
+  counts <- c(0, 0)
+
   ### PDD algorithm
   repeat {
     iter_in <- 1
@@ -287,14 +292,17 @@ gmgccak_PDD5 <- function(A, C, tau = rep(1, length(A)), scheme = "centroid",
       #   max(unlist(Z, FALSE, FALSE) - unlist(Z_old, FALSE, FALSE))
       # )
 
-      stopping_crit <- (crit_lag - crit_lag_old) / abs(crit_lag_old)
+      stopping_crits <- c((crit_lag - crit_lag_old) / abs(crit_lag_old), max(
+        max(abs(unlist(a) - unlist(a_old))), max(abs(unlist(Z) - unlist(Z_old)))
+      ))
+      # print(paste0(iter_in, ": ", stopping_crit))
 
-      if (stopping_crit < -tol_in) {
+      if (stopping_crits[1] < -tol_in) {
         # stop("Convergence issue")
         print(stopping_crit)
       }
 
-      if (stopping_crit < tol_in | iter_in > iter_in_max) {
+      if (any(stopping_crits < tol_in) | iter_in > iter_in_max) {
         # print(iter_in)
         break
       }
@@ -308,6 +316,7 @@ gmgccak_PDD5 <- function(A, C, tau = rep(1, length(A)), scheme = "centroid",
 
     # Choice between Augmented Lagrangian or penalty method
     if (sum(equality_constraints() < eta)) {
+      counts[1] <- counts[1] + 1
       # Update of dual variable
       if (orth_Y) {
         Mu <- lapply(seq(J), function(j) {
@@ -319,6 +328,7 @@ gmgccak_PDD5 <- function(A, C, tau = rep(1, length(A)), scheme = "centroid",
         })
       }
     } else {
+      counts[2] <- counts[2] + 1
       # Update of rho
       rho <- rho_decay * rho
     }
@@ -381,6 +391,9 @@ gmgccak_PDD5 <- function(A, C, tau = rep(1, length(A)), scheme = "centroid",
 
   # AVEinner <- sum(C * cor(Y)^2/2)/(sum(C)/2)
   AVEinner <- NULL
+
+  print(paste0("Number of dual updates: ", counts[1]))
+  print(paste0("Number of rho updates: ", counts[2]))
 
   result <- list(
     Y = Y, a = a, crit = crit,
