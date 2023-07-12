@@ -273,7 +273,7 @@ rgcca <- function(
     if (any(sapply(blocks, function(x) length(dim(x))) > 2)) {
         if(!type %in% c("mgcca", "ns_mgcca", "gmgcca", "ns_mgcca_penalized",
                         "gmgcca_penalized", "gmgcca_aux_y", "gmgcca_aux_var",
-                        "tgcca", "gmgcca_pdd_nuclear"))
+                        "tgcca", "gmgcca_pdd_nuclear", "gmgcca_pdd"))
         {
             message(paste0("type='", type, "' is not available for tensor blocks
                            so type was converted to 'mgcca'."))
@@ -354,6 +354,11 @@ rgcca <- function(
 
     } else if (tolower(type) %in% c("gmgcca_pdd_nuclear")) {
       gcca <- gmgcca_pdd_nuclearNa
+      par <- "tau"
+      penalty <- tau
+
+    } else if (tolower(type) %in% c("gmgcca_pdd")) {
+      gcca <- gmgcca_pddNa
       par <- "tau"
       penalty <- tau
 

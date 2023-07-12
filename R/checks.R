@@ -180,6 +180,7 @@ check_method <- function(method) {
     analysis <- c("rgcca", "sgcca", "mgcca", "ns_mgcca", "ns_mgcca_penalized",
                   "gmgcca_penalized", "gmgcca_aux_y", "gmgcca_aux_var",
                   "gmgcca", "tgcca", "grgcca", "gmgcca_pdd_nuclear",
+                  "gmgcca_pdd",
                   "pca", "spca", "pls", "spls",
       "cca", "ifa", "ra", "gcca", "maxvar", "maxvar-b",
       "maxvar-a", "mcoa","cpca-1", "cpca-2", "cpca-4",

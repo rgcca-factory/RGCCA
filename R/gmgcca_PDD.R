@@ -1,20 +1,20 @@
-gmgcca_pdd_nuclear = function(blocks, connection = 1 - diag(length(blocks)),
-                  tau = rep(1, length(blocks)),
-                  ncomp = rep(1, length(blocks)), scheme = "centroid",
-                  init = "svd", bias = TRUE, tol = 1e-08, verbose = TRUE,
-                  na.rm = TRUE, quiet = FALSE, n_run = 1, n_cores = 1,
-                  scale = TRUE, scale_block = TRUE, prescaling = FALSE,
-                  eta_decay = 0.9, rho_decay = 0.9, rho = 2,
-                  penalty_coef = 1)
+gmgcca_pdd = function(blocks, connection = 1 - diag(length(blocks)),
+                              tau = rep(1, length(blocks)),
+                              ncomp = rep(1, length(blocks)), scheme = "centroid",
+                              init = "svd", bias = TRUE, tol = 1e-08, verbose = TRUE,
+                              na.rm = TRUE, quiet = FALSE, n_run = 1, n_cores = 1,
+                              scale = TRUE, scale_block = TRUE, prescaling = FALSE,
+                              eta_decay = 0.9, rho_decay = 0.9, rho = 2,
+                              penalty_coef = 1)
 {
 
   if (mode(scheme) != "function") {
     if (verbose)
-      cat("Computation of the gMGCCA_PDD_nuclear block components based on the",
+      cat("Computation of the gMGCCA_PDD block components based on the",
           scheme, "scheme \n")
   }
   if (mode(scheme) == "function" & verbose)
-    cat("Computation of the gMGCCA_PDD_nuclear block components based on the g scheme \n")
+    cat("Computation of the gMGCCA_PDD block components based on the g scheme \n")
 
   if (!is.numeric(tau) & verbose) {
     cat("Optimal Shrinkage intensity paramaters are estimated \n")
@@ -79,11 +79,11 @@ gmgcca_pdd_nuclear = function(blocks, connection = 1 - diag(length(blocks)),
   models <- lapply(seq(n_run), function(run_number) {
     init <- ifelse(run_number == 1, init, "random")
 
-    gmgccak_PDD_nuclear3(blocks, connection, tau = tau, scheme = scheme,
-                        init = init, bias = bias, tol = tol,
-                        verbose = verbose, na.rm = na.rm, ncomp = ncomp,
-                        eta_decay = eta_decay, rho_decay = rho_decay, rho = rho,
-                        penalty_coef = penalty_coef, A_m = A_m)
+    gmgccak_PDD5(blocks, connection, tau = tau, scheme = scheme,
+                         init = init, bias = bias, tol = tol,
+                         verbose = verbose, na.rm = na.rm, ncomp = ncomp,
+                         eta_decay = eta_decay, rho_decay = rho_decay, rho = rho,
+                         penalty_coef = penalty_coef, A_m = A_m)
 
   })
 
@@ -123,7 +123,7 @@ gmgcca_pdd_nuclear = function(blocks, connection = 1 - diag(length(blocks)),
     AVE_X = AVE_X,
     AVE_outer_model = AVE_outer,
     AVE_inner_model = AVE_inner
-)
+  )
 
   out <- list(
     Y = Y,
@@ -134,7 +134,7 @@ gmgcca_pdd_nuclear = function(blocks, connection = 1 - diag(length(blocks)),
     AVE = AVE
   )
 
-   class(out) <- "gmgcca_pdd_nuclear"
+  class(out) <- "gmgcca_pdd_nuclear"
 
   return(out)
 }
