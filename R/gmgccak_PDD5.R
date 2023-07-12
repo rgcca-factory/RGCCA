@@ -10,7 +10,7 @@ gmgccak_PDD5 <- function(A, C, tau = rep(1, length(A)), scheme = "centroid",
                          tol_in_decay = 0.9, rho = 2, A_m = NULL,
                          penalty_coef = 0, orth_Y = FALSE) {
   orth_Y = TRUE
-  rho = 2
+  rho = 10
 
   ### Utility functions
   criterion <- function() {
@@ -201,16 +201,18 @@ gmgccak_PDD5 <- function(A, C, tau = rep(1, length(A)), scheme = "centroid",
     } else if (init == "random") {
       # Random Initialisation of a_j
       if (j %in% B_2D) {
-        A_random <- matrix(rnorm(pjs[[j]] * ncomp[j]), nrow = pjs[j])
-        SVD = svd(A_random, nu=ncomp[j], nv=0)
-        a[[j]] <- SVD$u
+        a[[j]] <- apply(
+          matrix(rnorm(pjs[j] * ncomp[j]), pjs[j]), 2,
+          function(x) x / norm(x, type = "2")
+        )
       } else {
-        A_random <- array(rnorm(n = pjs[[j]], mean = 0, sd = 1), dim = DIM[[j]][-1])
         for (d in 1:(LEN[[j]] - 1)) {
-          SVD = svd(apply(A_random, d, c), nu=0, nv=ncomp[j])
-          factors[[j]][[d]] <- SVD$v
+          factors[[j]][[d]] <- apply(
+            matrix(rnorm(DIM[[j]][d + 1] * ncomp[j]), DIM[[j]][d + 1]), 2,
+            function(x) x / norm(x, type = "2")
+          )
         }
-        a[[j]]       <- list_khatri_rao(factors[[j]])
+        a[[j]] <- list_khatri_rao(factors[[j]])
       }
     } else {
       stop_rgcca("init should be either random or by SVD.")
@@ -232,9 +234,13 @@ gmgccak_PDD5 <- function(A, C, tau = rep(1, length(A)), scheme = "centroid",
   }, FUN.VALUE = 1.)
 
   if (orth_Y) {
+    # Z <- lapply(Y, function(x) {
+    #   SVD <- svd(x)
+    #   SVD$u %*% t(SVD$v) %*% diag(SVD$d, nrow = ncol(x))
+    # })
     Z <- lapply(Y, function(x) {
-      SVD <- svd(x)
-      SVD$u %*% t(SVD$v) %*% diag(SVD$d, nrow = ncol(x))
+      SVD <- svd(matrix(rnorm(prod(dim(x))), nrow = nrow(x)))
+      SVD$u %*% t(SVD$v) %*% diag(sqrt(diag(crossprod(x))), nrow = ncol(x))
     })
   } else {
     Z <- lapply(a, function(x) {
@@ -244,7 +250,15 @@ gmgccak_PDD5 <- function(A, C, tau = rep(1, length(A)), scheme = "centroid",
   }
 
   if (orth_Y) {
-    Mu <- lapply(seq(J), function(j) matrix(0, nrow = n, ncol = ncomp[j]))
+    # Mu <- lapply(seq(J), function(j) matrix(0, nrow = n, ncol = ncomp[j]))
+    # # Standard deviation such that E[Mu[[j]][, h]] = lambda[j]
+    # Mu <- lapply(seq(J), function(j) matrix(
+    #   rnorm(n * ncomp[j], sd = sqrt(lambda[j] / n)), nrow = n, ncol = ncomp[j]
+    # ))
+    # Standard deviation such that E[Mu[[j]][, h]] = lambda[j]
+    Mu <- lapply(seq(J), function(j) vapply(seq(ncomp[j]), function(h) {
+      rnorm(n, sd = norm(Y[[j]][, h], type = "2") / sqrt(n))
+    }, FUN.VALUE = double(n)))
   } else {
     Mu <- lapply(seq(J), function(j) matrix(0, nrow = pjs[j], ncol = ncomp[j]))
   }
