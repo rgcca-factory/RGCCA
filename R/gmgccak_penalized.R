@@ -103,11 +103,12 @@ gmgccak_penalized <- function(A, A_m = NULL, C, tau = rep(1, length(A)), scheme 
       }
     } else if (init == "random") {
       # Random Initialisation of a_j
-      A_random <- array(rnorm(n = pjs[[j]], mean = 0, sd = 1), dim = DIM[[j]][-1])
       if (j %in% B_2D) {
-        SVD = svd(A_random, nu = 0, nv = ncomp[j])
-        a[[j]] <- SVD$v
+        A_random <- matrix(rnorm(pjs[[j]] * ncomp[j]), nrow = pjs[j])
+        SVD = svd(A_random, nu=ncomp[j], nv=0)
+        a[[j]] <- SVD$u
       } else {
+        A_random <- array(rnorm(n = pjs[[j]], mean = 0, sd = 1), dim = DIM[[j]][-1])
         for (d in 1:(LEN[[j]] - 1)) {
           SVD = svd(apply(A_random, d, c), nu = 0, nv = ncomp[j])
           factors[[j]][[d]] <- SVD$v

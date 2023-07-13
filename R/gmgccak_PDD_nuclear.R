@@ -82,7 +82,7 @@ gmgccak_PDD_nuclear <- function(A, C, tau = rep(1, length(A)), scheme = "centroi
           res$factors[[d]], 2, function(x) x / norm(x, type = "2")
         )
       }
-      res$a <- list_khatri_rao(factors[[j]])
+      res$a <- list_khatri_rao(res$factors)
     }
 
     return(res)
@@ -203,7 +203,7 @@ gmgccak_PDD_nuclear <- function(A, C, tau = rep(1, length(A)), scheme = "centroi
       } else {
         for (d in 1:(LEN[[j]] - 1)) {
           factors[[j]][[d]] <- apply(
-            matrix(rnorm(DIM[[j]][d] * ncomp[j]), DIM[[j]][d]), 2,
+            matrix(rnorm(DIM[[j]][d + 1] * ncomp[j]), DIM[[j]][d + 1]), 2,
             function(x) x / norm(x, type = "2")
           )
         }
@@ -266,7 +266,7 @@ gmgccak_PDD_nuclear <- function(A, C, tau = rep(1, length(A)), scheme = "centroi
         Y[[j]] <- pm(A_m[[j]], a[[j]], na.rm = na.rm)
 
         c_lag <- crit_lagrangian()
-        if ((c_lag - c_lag_old)  < 0) {
+        if (((c_lag - c_lag_old)  < 0)) {
           print(paste0("issue with update of a[[", j, "]]"))
           # browser()
         }
@@ -280,10 +280,10 @@ gmgccak_PDD_nuclear <- function(A, C, tau = rep(1, length(A)), scheme = "centroi
         Z[[j]] <- P[[j]] %*% D[[j]]
 
         c_lag <- crit_lagrangian()
-        if ((c_lag - c_lag_old)  < 0) {
-          print(paste0("issue with update of Z[[", j, "]]"))
-          # browser()
-        }
+        # if ((c_lag - c_lag_old)  < 0) {
+        #   print(paste0("issue with update of Z[[", j, "]]: ", (c_lag - c_lag_old) / abs(c_lag_old)))
+        #   # browser()
+        # }
         c_lag_old <- c_lag
       }
 
