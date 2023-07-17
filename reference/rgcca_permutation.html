@@ -16,7 +16,7 @@ A permutation-based strategy very similar to the one proposed in
     
     <a class="navbar-brand me-2" href="../index.html">RGCCA</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">3.0.1</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">3.0.2</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -116,7 +116,7 @@ par_length \(\times J\).</p>
 uniformly from
 the minimum and maximum possible values of the parameter defined by par_type
 for each block. Minimum possible values are 0 for tau,
-\(1/\text{sqrt}(p_j)\) for sparsity, and 1
+\(1/\textrm{sqrt}(p_j)\) for sparsity, and 1
 for ncomp. Maximum possible values are 1 for tau and sparsity, and
 \(p_j\) for ncomp.</p>
 <p>If par_value is a vector, it overwrites the maximum values taken for the
@@ -191,7 +191,7 @@ the same number of components is extracted for every block.</p></dd>
 <dd><p>Either a numerical value, a numeric vector of size
 \(J\), or a
 numeric matrix of dimension
-\(\mathrm{max}(\text{ncomp}) \times J\)
+\(\mathrm{max}(\textrm{ncomp}) \times J\)
 containing the values of the regularization parameters
 (default: tau = 1, for each
 block and each dimension), or a string equal to "optimal".
@@ -215,25 +215,25 @@ rgcca_permutation or <a href="rgcca_cv.html">rgcca_cv</a>.</p></dd>
 <dt>sparsity</dt>
 <dd><p>Either a numerical value, a numeric vector of
 size \(J\) or a numeric matrix
-of dimension \(\text{max}(\text{ncomp}) \times J\) encoding the L1
+of dimension \(\textrm{max}(\textrm{ncomp}) \times J\) encoding the L1
 constraints applied to the
 block weight vectors. For block \(j\), the amount of
 sparsity varies between
-\(1/\text{sqrt}(p_j)\) and 1 (larger values of sparsity correspond to less
-penalization).</p>
+\(1/\textrm{sqrt}(p_j)\) and 1 (larger values of sparsity
+correspond to less penalization).</p>
 <p>If sparsity is a numerical value, then sparsity is identical across
 all constraints applied to all block weight vectors.</p>
 <p>If sparsity is a vector, sparsity[j] is identical across the constraints
 applied to the block weight vectors associated to block
 \(\mathbf X_j\):
 $$
-   \forall k, \Vert a_{j,k} \Vert_{1} \le \text{sparsity}[j] \sqrt{p_j}.
+   \forall k, \Vert a_{j,k} \Vert_{1} \le \textrm{sparsity}[j] \sqrt{p_j}.
 $$</p>
 <p>If sparsity is a matrix, sparsity[k, j] is associated with the constraints
 applied to the kth block weight vector corresponding to block
 \(\mathbf X_j\):
 $$
-   \Vert a_{j,k}\Vert_{1} \le \text{sparsity}[k,j] \sqrt{p_j}.
+   \Vert a_{j,k}\Vert_{1} \le \textrm{sparsity}[k,j] \sqrt{p_j}.
 $$</p>
 <p>The sparsity parameter can be estimated by using rgcca_permutation or
 <a href="rgcca_cv.html">rgcca_cv</a>.</p></dd>
@@ -300,7 +300,7 @@ orthogonal block components or orthogonal block weight vectors.</p></dd>
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
     
 
-<p>A permutation object that can be printed and plotted.</p>
+<p>A rgcca_permutation object that can be printed and plotted.</p>
 <dl><dt>opt</dt>
 <dd><p>A list indicating some options of the RGCCA model used
 during the permutation.</p></dd>
@@ -354,11 +354,11 @@ following is performed:</p>
       \(X_J^*\).<br><code>    </code>(c) Record the S/RGCCA criterion \(t^*\).</p>
 <p>(2) Run S/RGCCA on the original blocks \(X_1\),..., \(X_J\).</p>
 <p>(3) Record the S/RGCCA criterion \(t\).</p>
-<p>(4) The resulting p-value is given by \(\text{mean}(t^* &gt; t)\);
+<p>(4) The resulting p-value is given by \(\textrm{mean}(t^* &gt; t)\);
 that is, the fraction of \(t^*\) that exceeds the value of \(t\)
 obtained from the real data.</p>
 <p>(5) The resulting zstat is defined as
-\(\frac{t-\text{mean}(t^*)}{\text{sd}(t^*)}\).</p>
+\(\frac{t-\textrm{mean}(t^*)}{\textrm{sd}(t^*)}\).</p>
 <p>Then, choose the tuning parameter values that gives the highest value in
 Step 5.</p>
     </div>

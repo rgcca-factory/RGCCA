@@ -14,7 +14,7 @@ of the package."><!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/
     
     <a class="navbar-brand me-2" href="../index.html">RGCCA</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">3.0.1</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">3.0.2</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -105,7 +105,7 @@ the network of connections between blocks (default value: 1-diag(J)).</p></dd>
 <dd><p>Either a numerical value, a numeric vector of size
 \(J\), or a
 numeric matrix of dimension
-\(\mathrm{max}(\text{ncomp}) \times J\)
+\(\mathrm{max}(\textrm{ncomp}) \times J\)
 containing the values of the regularization parameters
 (default: tau = 1, for each
 block and each dimension), or a string equal to "optimal".
@@ -190,25 +190,25 @@ method to consider. Possible values are found using
 <dt>sparsity</dt>
 <dd><p>Either a numerical value, a numeric vector of
 size \(J\) or a numeric matrix
-of dimension \(\text{max}(\text{ncomp}) \times J\) encoding the L1
+of dimension \(\textrm{max}(\textrm{ncomp}) \times J\) encoding the L1
 constraints applied to the
 block weight vectors. For block \(j\), the amount of
 sparsity varies between
-\(1/\text{sqrt}(p_j)\) and 1 (larger values of sparsity correspond to less
-penalization).</p>
+\(1/\textrm{sqrt}(p_j)\) and 1 (larger values of sparsity
+correspond to less penalization).</p>
 <p>If sparsity is a numerical value, then sparsity is identical across
 all constraints applied to all block weight vectors.</p>
 <p>If sparsity is a vector, sparsity[j] is identical across the constraints
 applied to the block weight vectors associated to block
 \(\mathbf X_j\):
 $$
-   \forall k, \Vert a_{j,k} \Vert_{1} \le \text{sparsity}[j] \sqrt{p_j}.
+   \forall k, \Vert a_{j,k} \Vert_{1} \le \textrm{sparsity}[j] \sqrt{p_j}.
 $$</p>
 <p>If sparsity is a matrix, sparsity[k, j] is associated with the constraints
 applied to the kth block weight vector corresponding to block
 \(\mathbf X_j\):
 $$
-   \Vert a_{j,k}\Vert_{1} \le \text{sparsity}[k,j] \sqrt{p_j}.
+   \Vert a_{j,k}\Vert_{1} \le \textrm{sparsity}[k,j] \sqrt{p_j}.
 $$</p>
 <p>The sparsity parameter can be estimated by using <a href="rgcca_permutation.html">rgcca_permutation</a> or
 <a href="rgcca_cv.html">rgcca_cv</a>.</p></dd>
@@ -397,7 +397,7 @@ An efficient algorithm to satisfy l1 and l2 constraints.
     </div>
     <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>
-    <div class="dont-index"><p><code><a href="plot.rgcca.html">plot.rgcca</a></code>, <code><a href="print.rgcca.html">print.rgcca</a></code>,
+    <div class="dont-index"><p><code><a href="plot.html">plot.rgcca</a></code>, <code><a href="print.html">print.rgcca</a></code>,
 <code><a href="rgcca_cv.html">rgcca_cv</a></code>,
 <code><a href="rgcca_permutation.html">rgcca_permutation</a></code>
 <code><a href="rgcca_predict.html">rgcca_predict</a></code></p></div>

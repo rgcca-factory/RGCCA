@@ -10,7 +10,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">RGCCA</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">3.0.1</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">3.0.2</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -48,11 +48,19 @@
     </div>
 
     <div class="section level2">
+<h2 class="pkg-version" data-toc-text="3.0.2" id="rgcca-302">RGCCA 3.0.2<a class="anchor" aria-label="anchor" href="#rgcca-302"></a></h2>
+<ul><li><p>Rename RGCCA classes and prefix them with “rgcca_”.</p></li>
+<li><p>Merge documentation of print functions.</p></li>
+<li><p>Merge documentation of plot functions.</p></li>
+<li><p>Environment variable TEST_SNAPSHOTS must be set to “TRUE” for snapshots to be evaluated.</p></li>
+</ul></div>
+    <div class="section level2">
 <h2 class="pkg-version" data-toc-text="3.0.0" id="rgcca-300">RGCCA 3.0.0<a class="anchor" aria-label="anchor" href="#rgcca-300"></a></h2><p class="text-muted">CRAN release: 2023-04-27</p>
 <ul><li>Added a <code>NEWS.md</code> file to track changes to the package.</li>
 </ul><p>Many differences have been introduced since the last version published on CRAN. We list below the most important ones: * The function <code>rgcca</code> is now the main entry point of the package. * Many well-known methods of the multiblock literature are now directly available by setting the <code>method</code> argument in the <code>rgcca</code> function. The list of methods can be found using the <code>available_methods</code> function. * Arguments <code>A</code> and <code>C</code> of the <code>rgcca</code> function are now deprecated. <code>blocks</code> and <code>connection</code> should be used instead. * Small utility functions are no longer exported. * Functions <code>rgcca_transform</code> and <code>rgcca_predict</code> have been added. They allow applying fitted RGCCA models to project new subjects onto the learned subspaces and make predictions of response blocks using <code>caret</code> predictive models. * Functions <code>rgcca_cv</code> and <code>rgcca_permutation</code> have been added. They allow for finding the best parameters of the models based on a cross-validation or permutation criterion. * The function <code>rgcca_bootstrap</code> has been added to evaluate the weights of a model using a bootstrap procedure. * The function <code>rgcca_stability</code> has been added to evaluate the stability of the variable selection performed by SGCCA. * Print and plot functions have been added for the outputs of functions <code>rgcca</code>, <code>rgcca_cv</code>, <code>rgcca_permutation</code>, <code>rgcca_bootstrap</code>, and <code>rgcca_stability</code>.</p>
 </div>
-  </main></div>
+  </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>
+    </nav></aside></div>
 
 
     <footer><div class="pkgdown-footer-left">
