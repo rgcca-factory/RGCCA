@@ -1,9 +1,26 @@
-#' Plot for RGCCA
+#' Plot a fitted object from the RGCCA package
 #'
-#' Create various plots from a fitted RGCCA object.
-#' @param x A fitted RGCCA object (see \code{\link[RGCCA]{rgcca}})
-#' @param type A character string: 'samples', 'weights', 'loadings',
-#' 'cor_circle', both', 'biplot' , 'ave' (see details).
+#' @description
+#' `plot.rgcca()` plots a fitted RGCCA object.
+#'
+#' `plot.rgcca_cv()` plots a fitted rgcca_cv object. Boxplots of the
+#' cross-validated scores for the different parameter sets are displayed.
+#'
+#' `plot.rgcca_permutation()` plots a fitted rgcca_permutation object.
+#' Permutation statistics are displayed for each set of parameters.
+#'
+#' `plot.rgcca_bootstrap()` plots a fitted rgcca_bootstrap object.
+#' Each block variable is shown along with its associated bootstrap
+#' confidence interval and stars reflecting the p-value of assigning
+#' a strictly positive or negative weight to this block variable.
+#'
+#' `plot.rgcca_stability()` calls `plot.rgcca()` on the fitted RGCCA model
+#' returned by `rgcca_stability()`.
+#'
+#' @param x An object to be plotted (output of functions \code{\link{rgcca}},
+#' \code{\link{rgcca_cv}}, \code{\link{rgcca_permutation}},
+#' \code{\link{rgcca_bootstrap}}, or \code{\link{rgcca_stability}}).
+#' @param type A character string indicating the type of plot (see details).
 #' @param block A numeric corresponding to the block(s) to plot.
 #' @param comp A numeric vector indicating the component(s) to consider.
 #' @param response A vector coloring the points in the "samples" plot.
@@ -21,8 +38,8 @@
 #' 12 * cex.
 #' @param cex_point A numeric defining the font size of the points. Default is
 #' 3 * cex.
-#' @param n_mark An integer defining the maximum number of bars plotted in the
-#' "weights" and "loadings" plots. Default is 30.
+#' @param n_mark An integer defining the maximum number plotted objects
+#' (see details).
 #' @param sample_colors A string specifying the colors used to color samples
 #' (used in the "samples" and "biplot" plots).
 #' @param sample_shapes Shapes used for the sample points (used in the "samples"
@@ -46,20 +63,31 @@
 #' variables in the biplot. Default is 1.
 #' @param show_arrows A logical, if TRUE, arrows are shown in the biplot.
 #' Default is FALSE.
+#' @param show_legend A logical value indicating if legend should
+#' be shown (default is FALSE).
+#' @param empirical A logical value indicating if the bootstrap confidence
+#' intervals and p-values are derived from the empirical distribution.
+#' (default: TRUE)
+#' @param show_stars A logical value indicating if the significance levels
+#' are displayed.
+#' @param colors Colors used in the plots.
+#' @param adj.method A string indicating the method used to adjust the p-values.
+#' It must be a method handled by the p.adjust function. Default is "fdr".
 #' @param ... Additional graphical parameters.
 #' @details
+#' Argument type can take 7 values in `plot.rgcca`:
 #' \itemize{
-#' \item "samples": scatter plot of the block components. The blocks used
-#' are defined by the block argument, and the components by the comp argument
-#' (Y[[block[1]]][, comp[1]], Y[[block[2]]][,comp[2]]). Points can
-#' be colored according to the response argument.
-#' \item "weights": barplot of the block weight vectors for one
+#' \item "weights" (default): barplot of the block weight vectors for one
 #' specific block/component. Sorting is applied according to the
 #' display_order argument. The number of displayed weights can be set with
 #' n_marks.
 #' \item "loadings": barplot of the block-loading vectors. Sorting is applied
 #' according to the display_order argument. The number of displayed loadings
 #' can be set with n_marks.
+#' \item "samples": scatter plot of the block components. The blocks used
+#' are defined by the block argument, and the components by the comp argument
+#' (Y[[block[1]]][, comp[1]], Y[[block[2]]][,comp[2]]). Points can
+#' be colored according to the response argument.
 #' \item  "cor_circle" for correlation circle. It represents the correlation
 #' between the block component corresponding to the first element of the block
 #' argument, and the variables of the block corresponding to the blocks
@@ -70,50 +98,103 @@
 #' \item "biplot": displays on the same plot the scatter plot of the block
 #' components and the variables used to compute these block components.
 #' \item "ave": displays the average variance explained for each block.}
+#'
+#' Argument type can take 2 values in `plot.rgcca_cv`: \itemize{
+#' \item "sd" (default): the middle bar of the boxplots corresponds to the
+#' mean and their limits are given by the mean plus or minus the
+#' standard deviation.
+#' \item "quantile": the middle bar corresponds to the median and limits of
+#' the boxes are given by the 25\% and 75\% quantiles.
+#' }
+#'
+#' Argument type can take 2 values in `plot.rgcca_permutation`: \itemize{
+#' \item "crit" (default): both the RGCCA criterion on the permuted and not
+#' permuted datasets are displayed for each set of parameters.
+#' \item "zstat": the Z-score is displayed for each set of parameters.
+#' }
+#'
+#' Argument type can take 2 values in `plot.rgcca_bootstrap`: \itemize{
+#' \item "weights" (default): statistics about the block-weight
+#' vectors are displayed.
+#' \item "loadings": statistics about the block-loading vectors are displayed.
+#' }
+#'
 #' @return A ggplot2 plot object.
 #' @examples
-#' data(Russett)
-#' status <- colnames(Russett)[9:11][apply(Russett[, 9:11], 1, which.max)]
-#' X_agric <- as.matrix(Russett[, c("gini", "farm", "rent")])
-#' X_ind <- as.matrix(Russett[, c("gnpr", "labo")])
-#' X_polit <- as.matrix(Russett[, c("demostab", "dictator")])
-#' A <- list(X_agric = X_agric, X_ind = X_ind, X_polit = X_polit)
-#' C <- matrix(c(0, 0, 1, 0, 0, 1, 1, 1, 0), 3, 3)
-#' fit_rgcca <- rgcca(
-#'   blocks = A, connection = C,
-#'   tau = rep(1, 3), ncomp = rep(2, 3)
+#' ## Plotting of an rgcca object
+#' data("Russett")
+#' blocks <- list(
+#'   agriculture = Russett[, seq(3)],
+#'   industry = Russett[, 4:5],
+#'   politic = as.factor(apply(Russett[, 9:11], 1, which.max))
 #' )
+#' blocks2 <- list(
+#'   agriculture = Russett[, seq(3)],
+#'   industry = Russett[, 4:5],
+#'   politic = Russett[, 6:11]
+#' )
+#' status <- colnames(Russett)[9:11][apply(Russett[, 9:11], 1, which.max)]
+#' fit_rgcca <- rgcca(blocks = blocks, response = 3, ncomp = 2)
 #'
-#' ###############
-#' # sample plot #
-#' ###############
-#' # horizontal axis: First component of the first block
-#' # vertical axis: First component of the second block
-#' plot(fit_rgcca, type = "sample",
-#'      block = 1:2, comp = 1,
-#'      response = status)
-#'
-#' ######################
-#' # all types of plots #
-#' ######################
+#' plot(fit_rgcca, type = "sample", block = 1:2, comp = 1)
 #' plot(fit_rgcca, type = "loadings")
 #' plot(fit_rgcca, type = "weight")
 #' plot(fit_rgcca, type = "sample")
 #' plot(fit_rgcca, type = "cor_circle")
+#' plot(fit_rgcca, type = "both")
 #' plot(fit_rgcca, type = "biplot")
 #' plot(fit_rgcca, type = "ave")
 #'
-#' # with superblock
-#' fit_mcoa <- rgcca(blocks = A, method = "mcoa", ncomp = 2)
+#' # With a superblock
+#' fit_mcoa <- rgcca(blocks = blocks2, method = "mcoa", ncomp = 2)
 #'
 #' plot(fit_mcoa, type = "both", response = status)
 #' plot(fit_mcoa, type = "biplot", response = status)
+#'
+#' ## Plotting of an rgcca_cv object
+#' cv_out <- rgcca_cv(blocks,
+#'   response = 3, method = "rgcca",
+#'   par_type = "tau",
+#'   par_value = 1,
+#'   n_run = 1, n_cores = 1,
+#'   prediction_model = "lda",
+#'   metric = "Accuracy",
+#'   verbose = TRUE
+#' )
+#'
+#' plot(cv_out, type = "sd")
+#' plot(cv_out, type = "quantile")
+#'
+#' ## Ploting of an rgcca_permutation object
+#' perm_out <- rgcca_permutation(blocks2, par_type = "tau",
+#'                               n_perms = 2, n_cores = 1)
+#'
+#' plot(perm_out, type = "crit")
+#' plot(perm_out, type = "zstat")
+#'
+#' ## Plotting of an rgcca_bootstrap object
+#' boot_out <- rgcca_bootstrap(fit_rgcca, n_boot = 20, n_cores = 1)
+#' plot(boot_out, type = "weights", block = 1, comp = 1)
+#' plot(boot_out, type = "loadings", comp = 2,
+#'      display_order = FALSE, show_stars = FALSE)
+#'
+#' ## Plotting of an rgcca_stability object
+#' fit.sgcca <- rgcca(blocks2, sparsity = c(.8, .9, .6))
+#' res <- rgcca_stability(
+#'   fit.sgcca, n_boot = 10, verbose = TRUE, keep = rep(.1, 3)
+#' )
+#'
+#' plot(res, type = "samples")
+#'
 #' @importFrom gridExtra grid.arrange
 #' @importFrom ggplot2 ggplot aes
 #' @importFrom ggrepel geom_text_repel
 #' @importFrom rlang .data
 #' @export
-plot.rgcca <- function(x, type = "weights", block = seq_along(x$call$blocks),
+#' @rdname plot
+#' @order 1
+plot.rgcca <- function(x, type = "weights",
+                       block = seq_along(x$call$blocks),
                        comp = c(1, 2),
                        response = as.factor(rep(1, NROW(x$Y[[1]]))),
                        display_order = TRUE,

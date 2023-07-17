@@ -21,12 +21,12 @@
 #'
 #' (3) Record the S/RGCCA criterion \eqn{t}.
 #'
-#' (4) The resulting p-value is given by \eqn{\text{mean}(t^* > t)};
+#' (4) The resulting p-value is given by \eqn{\textrm{mean}(t^* > t)};
 #' that is, the fraction of \eqn{t^*} that exceeds the value of \eqn{t}
 #' obtained from the real data.
 #'
 #' (5) The resulting zstat is defined as
-#' \eqn{\frac{t-\text{mean}(t^*)}{\text{sd}(t^*)}}.
+#' \eqn{\frac{t-\textrm{mean}(t^*)}{\textrm{sd}(t^*)}}.
 #'
 #' Then, choose the tuning parameter values that gives the highest value in
 #' Step 5.
@@ -38,7 +38,7 @@
 #' (default is 20).
 #' @param verbose A logical value indicating if the progress of the
 #' permutation procedure is reported.
-#' @return A permutation object that can be printed and plotted.
+#' @return A rgcca_permutation object that can be printed and plotted.
 #' @return  \item{opt}{A list indicating some options of the RGCCA model used
 #' during the permutation.}
 #' @return \item{call}{A list containing the input parameters of the
@@ -359,5 +359,5 @@ rgcca_permutation <- function(blocks, par_type = "tau", par_value = NULL,
     opt = opt, call = rgcca_args, par_type = par_type,
     n_perms = n_perms, best_params = param$par_value[which.max(zstat), ],
     permcrit = permcrit, params = param$par_value, stats = stats
-  ), class = "permutation")
+  ), class = "rgcca_permutation")
 }

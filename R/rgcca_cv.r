@@ -17,7 +17,7 @@
 #' uniformly from
 #' the minimum and maximum possible values of the parameter defined by par_type
 #' for each block. Minimum possible values are 0 for tau,
-#' \eqn{1/\text{sqrt}(p_j)}{1/sqrt(p_j)} for sparsity, and 1
+#' \eqn{1/\textrm{sqrt}(p_j)}{1/sqrt(p_j)} for sparsity, and 1
 #' for ncomp. Maximum possible values are 1 for tau and sparsity, and
 #' \eqn{p_j}{p_j} for ncomp.
 #'
@@ -35,7 +35,7 @@
 #' @param n_run An integer giving the number of Monte-Carlo Cross-Validation
 #' (MCCV) to be run (if validation = 'kfold').
 #' @export
-#' @return A cval object that can be printed and plotted.
+#' @return A rgcca_cv object that can be printed and plotted.
 #' @return  \item{k}{An integer giving the number of folds.}
 #' @return  \item{n_run}{An integer giving the number of MCCV.}
 #' @return  \item{opt}{A list containing some options of the
@@ -342,6 +342,6 @@ rgcca_cv <- function(blocks,
     best_params = param$par_value[best_param_idx, ],
     prediction_model = model$model_name
   )
-  class(res) <- "cval"
+  class(res) <- "rgcca_cv"
   return(res)
 }

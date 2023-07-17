@@ -1,3 +1,14 @@
+# RGCCA 3.0.2
+
+* Rename RGCCA classes and prefix them with "rgcca_".
+
+* Merge documentation of print functions.
+
+* Merge documentation of plot functions.
+
+* Environment variable TEST_SNAPSHOTS must be set to "TRUE" for snapshots
+to be evaluated.
+
 # RGCCA 3.0.0
 
 * Added a `NEWS.md` file to track changes to the package.

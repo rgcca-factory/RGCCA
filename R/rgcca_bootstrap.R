@@ -12,7 +12,7 @@
 #' bootstrap sample (default is FALSE).
 #' @param verbose A logical value indicating if the progress of the bootstrap
 #' procedure is reported.
-#' @return A bootstrap object that can be printed and plotted.
+#' @return A rgcca_bootstrap object that can be printed and plotted.
 #' @return \item{n_boot}{The number of bootstrap samples, returned
 #' for further use.}
 #' @return \item{rgcca}{The RGCCA object fitted on the original data.}
@@ -74,13 +74,13 @@
 #'        display_order = FALSE)
 #' }
 #' @export
-#' @seealso \code{\link[RGCCA]{plot.bootstrap}},
-#' \code{\link[RGCCA]{print.bootstrap}}
+#' @seealso \code{\link[RGCCA]{plot.rgcca_bootstrap}},
+#' \code{\link[RGCCA]{print.rgcca_bootstrap}}
 rgcca_bootstrap <- function(rgcca_res, n_boot = 100,
                             n_cores = 1,
                             balanced = TRUE, keep_all_variables = FALSE,
                             verbose = TRUE) {
-  stability <- is(rgcca_res, "stability")
+  stability <- is(rgcca_res, "rgcca_stability")
   if (stability) {
     message(
       "All the parameters were imported from the fitted rgcca_stability",
@@ -157,6 +157,6 @@ rgcca_bootstrap <- function(rgcca_res, n_boot = 100,
     n_boot = n_boot, rgcca = rgcca_res,
     bootstrap = res, stats = data.frame(stats)
   ),
-  class = "bootstrap"
+  class = "rgcca_bootstrap"
   ))
 }

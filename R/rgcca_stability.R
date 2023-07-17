@@ -12,6 +12,7 @@
 #' @param n_cores The number of cores for parallelization.
 #' @param verbose A logical value indicating if the progress of the procedure
 #' is reported.
+#' @return A rgcca_stability object that can be printed and plotted.
 #' @return \item{top}{A data.frame giving the indicator (VIP)
 #' on which the variables are ranked.}
 #' @return \item{keepVar}{The indices of the most stable variables.}
@@ -163,6 +164,6 @@ rgcca_stability <- function(rgcca_res,
     bootstrap = res,
     rgcca_res = rgcca_res
   ),
-  class = "stability"
+  class = "rgcca_stability"
   ))
 }
