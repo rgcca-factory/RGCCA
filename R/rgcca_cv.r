@@ -58,6 +58,8 @@
 #' @return \item{stats}{A data.frame containing various statistics (mean, sd,
 #' median, first quartile, third quartile) of the cross-validated score for
 #' each set of parameters that has been tested.}
+#' @return \item{classification }{A boolean indicating if the model performs a
+#' classification task.}
 #' @return \item{prediction_model }{A string giving the model used for
 #' prediction.}
 #' @details
@@ -155,9 +157,6 @@
 #'  print(cv_out)
 #'  plot(cv_out, display_order = FALSE)
 #' }
-#'
-#' @importFrom stats na.omit
-#' @importFrom utils txtProgressBar setTxtProgressBar
 rgcca_cv <- function(blocks,
                      method = "rgcca",
                      response = NULL,
@@ -340,6 +339,7 @@ rgcca_cv <- function(blocks,
     params = param$par_value,
     validation = validation,
     best_params = param$par_value[best_param_idx, ],
+    classification = model$classification,
     prediction_model = model$model_name
   )
   class(res) <- "rgcca_cv"

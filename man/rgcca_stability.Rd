@@ -40,6 +40,9 @@ A rgcca_stability object that can be printed and plotted.
 \item{top}{A data.frame giving the indicator (VIP)
 on which the variables are ranked.}
 
+\item{n_boot}{The number of bootstrap samples, returned
+for further use.}
+
 \item{keepVar}{The indices of the most stable variables.}
 
 \item{bootstrap}{A data.frame with the block weight vectors

@@ -257,6 +257,9 @@ used during the cross-validation process.}
 median, first quartile, third quartile) of the cross-validated score for
 each set of parameters that has been tested.}
 
+\item{classification }{A boolean indicating if the model performs a
+classification task.}
+
 \item{prediction_model }{A string giving the model used for
 prediction.}
 }
@@ -361,5 +364,4 @@ fit_opt = rgcca(cv_out)
  print(cv_out)
  plot(cv_out, display_order = FALSE)
 }
-
 }
