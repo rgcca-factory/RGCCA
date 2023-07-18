@@ -1,4 +1,4 @@
-#' # print.rgcca_cv
+#' # summary.rgcca_cv
 #'''
 set.seed(0)
 data(Russett)
@@ -13,7 +13,7 @@ blocks_classif <- list(
   politic = as.factor(Russett[, 9])
 )
 
-test_that("print.rgcca_cv prints the expected text", {
+test_that("summary.rgcca_cv prints the expected text", {
   skip_if_not(as.logical(Sys.getenv("TEST_SNAPSHOTS")))
   local_edition(3)
   expect_snapshot({
@@ -22,11 +22,11 @@ test_that("print.rgcca_cv prints the expected text", {
       par_value = c(0, 0.2, 0.3), n_run = 1, n_cores = 1,
       par_length = 2, verbose = FALSE
     )
-    print(res, type = "quantile")
+    summary(res, type = "quantile")
   })
 })
 
-test_that("print.rgcca_cv prints the expected text 2", {
+test_that("summary.rgcca_cv prints the expected text 2", {
   skip_if_not(as.logical(Sys.getenv("TEST_SNAPSHOTS")))
   local_edition(3)
   expect_snapshot({
@@ -35,11 +35,11 @@ test_that("print.rgcca_cv prints the expected text 2", {
                     par_value = c(0, 0.2, 0.3), n_run = 1, n_cores = 1,
                     par_length = 2, verbose = FALSE, prediction_model = "lda"
     )
-    print(res, type = "sd")
+    summary(res, type = "sd")
   })
 })
 
-test_that("print.rgcca_cv prints the expected text 3", {
+test_that("summary.rgcca_cv prints the expected text 3", {
   skip_if_not(as.logical(Sys.getenv("TEST_SNAPSHOTS")))
   local_edition(3)
   expect_snapshot({
@@ -48,11 +48,11 @@ test_that("print.rgcca_cv prints the expected text 3", {
       response = 3, method = "sgcca", par_type = "sparsity",
       n_run = 1, n_cores = 1, par_length = 2, verbose = FALSE
     )
-    print(res, type = "sd")
+    summary(res, type = "sd")
   })
 })
 
-test_that("print.rgcca_cv prints the expected text 4", {
+test_that("summary.rgcca_cv prints the expected text 4", {
   skip_if_not(as.logical(Sys.getenv("TEST_SNAPSHOTS")))
   local_edition(3)
   expect_snapshot({
@@ -61,6 +61,6 @@ test_that("print.rgcca_cv prints the expected text 4", {
       n_run = 1, n_cores = 1, par_length = 2, verbose = FALSE,
       prediction_model = "lda", metric = "Kappa"
     )
-    print(res, type = "sd")
+    summary(res, type = "sd")
   })
 })

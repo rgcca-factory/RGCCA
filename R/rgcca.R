@@ -421,7 +421,7 @@
 #' @importFrom stats cor quantile sd p.adjust rnorm pnorm qnorm
 #' @importFrom stats model.matrix
 #' @importFrom methods is
-#' @seealso \code{\link[RGCCA]{plot.rgcca}}, \code{\link[RGCCA]{print.rgcca}},
+#' @seealso \code{\link[RGCCA]{plot.rgcca}}, \code{\link[RGCCA]{summary.rgcca}},
 #' \code{\link[RGCCA]{rgcca_cv}},
 #' \code{\link[RGCCA]{rgcca_permutation}}
 #' \code{\link[RGCCA]{rgcca_predict}}

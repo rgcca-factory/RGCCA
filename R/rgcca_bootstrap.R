@@ -75,7 +75,7 @@
 #' }
 #' @export
 #' @seealso \code{\link[RGCCA]{plot.rgcca_bootstrap}},
-#' \code{\link[RGCCA]{print.rgcca_bootstrap}}
+#' \code{\link[RGCCA]{summary.rgcca_bootstrap}}
 rgcca_bootstrap <- function(rgcca_res, n_boot = 100,
                             n_cores = 1,
                             balanced = TRUE, keep_all_variables = FALSE,
