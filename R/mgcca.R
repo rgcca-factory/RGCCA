@@ -63,7 +63,7 @@ mgcca <- function(A, C = 1-diag(length(A)), tau = rep(1, length(A)),
                   init="svd", bias = TRUE, tol = 1e-8, verbose=FALSE,
                   scale_block = TRUE, regularisation_matrices = NULL,
                   ranks = rep(1, length(A)), prescaling = FALSE, quiet = FALSE,
-                  n_run = 1, n_cores = 1, orth_modes = 1) {
+                  n_run = 1, n_cores = 1, orth_modes = 1, orth_Y = TRUE) {
 
   # Number of blocks
   J      = length(A)
@@ -214,22 +214,39 @@ mgcca <- function(A, C = 1-diag(length(A)), tau = rep(1, length(A)),
       weights[[d]] = c(weights[[d]], mgcca.result$weights[[d]])
     }
 
+    if (!orth_Y & all(ranks == 1) & n > 1) {
+      for (d in B_nD) {
+        factors[[d]][[1]][, n] = P[[d]] %*% factors[[d]][[1]][, n]
+        a[[d]][, n] <- Reduce("%x%", lapply(rev(factors[[d]]), function(x) x[, n]))
+      }
+    }
+
     # Deflation procedure
-    defla.result = defl.select(mgcca.result$Y, R, ndefl, n, nbloc = J)
+    if (orth_Y | (any(ranks > 1))) {
+      defla.result <- defl.select(mgcca.result$Y, R, ndefl, n, nbloc = J)
+      # Store projection matrices for deflation
+      for (d in 1:J) P[[d]][,n] = defla.result$pdefl[[d]]
+    } else {
+      defla.result <- defl.select_tensor(mgcca.result$a, factors, R,
+                                         ndefl, n, nbloc = J)
+      P <- defla.result$pdefl
+    }
+
     R            = defla.result$resdefl
     R_m          = NULL # Let the inner function take care of the matricization
 
-    # Store projection matrices for deflation
-    for (d in 1:J) P[[d]][,n] = defla.result$pdefl[[d]]
-
     # Compute astar
-    for (d in 1:J){
-      if (n == 1){
-        astar[[d]][,n] = mgcca.result$a[[d]]
-      }else{
-        astar[[d]][,n] = mgcca.result$a[[d]] - astar[[d]][,1:(n-1), drop=F] %*%
-          drop( t(a[[d]][,n]) %*% P[[d]][,1:(n-1),drop=F] )
+    if (orth_Y | (any(ranks > 1))) {
+      for (d in 1:J){
+        if (n == 1){
+          astar[[d]][,n] = mgcca.result$a[[d]]
+        }else{
+          astar[[d]][,n] = mgcca.result$a[[d]] - astar[[d]][,1:(n-1), drop=F] %*%
+            drop( t(a[[d]][,n]) %*% P[[d]][,1:(n-1),drop=F] )
+        }
       }
+    } else {
+      astar <- a
     }
   }
 

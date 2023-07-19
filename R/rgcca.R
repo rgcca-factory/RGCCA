@@ -226,7 +226,8 @@ rgcca <- function(
     penalty_coef = 0,
     n_run = 1,
     n_cores = 1,
-    orth_modes = 1)
+    orth_modes = 1,
+    orth_Y = TRUE)
 {
 
     if(class(blocks)=="permutation")
@@ -505,6 +506,7 @@ rgcca <- function(
       func$regularisation_matrices <- regularisation_matrices
       func$ranks                   <- ranks
       func$orth_modes <- orth_modes
+      func$orth_Y <- orth_Y
     }
 
     if (type == "tgcca") {
