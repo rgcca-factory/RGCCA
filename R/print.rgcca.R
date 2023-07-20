@@ -4,17 +4,17 @@
 #' `print.rgcca()` prints a fitted RGCCA object. The method and number of
 #' components are displayed.
 #'
-#' `print.rgcca_cv()` prints a fitted rgcca_cv object. The type of validation,
+#' `print.rgcca_cv()` prints a rgcca_cv object. The type of validation,
 #' the number of tried parameter sets, the type of task, and the model used
 #' are displayed.
 #'
-#' `print.rgcca_permutation()` prints a fitted rgcca_permutation object.
+#' `print.rgcca_permutation()` prints a rgcca_permutation object.
 #' The number of permutations and tried parameter sets are displayed.
 #'
-#' `print.rgcca_bootstrap()` prints a fitted rgcca_bootstrap object.
+#' `print.rgcca_bootstrap()` prints a rgcca_bootstrap object.
 #' The number of boostrap samples used for fitting is displayed.
 #'
-#' `print.rgcca_stability()` prints a fitted rgcca_stability object.
+#' `print.rgcca_stability()` prints a rgcca_stability object.
 #' The number of boostrap samples used for fitting is displayed.
 #'
 #' @param x An object to be printed
@@ -72,8 +72,23 @@
 print.rgcca <- function(x, ...) {
   stopifnot(is(x, "rgcca"))
   cat(
-    "Fitted ", toupper(x$call$method), " model. \n",
-    max(x$call$ncomp), " components were extracted.", sep = ""
+    "Fitted", toupper(x$call$method), "model. \n"
   )
+  if (max(x$call$ncomp) == 1) {
+    cat(
+      "The alogrithm converged to a stationnary point after",
+      length(x$crit) - 1, "iterations."
+    )
+  } else {
+    cat("The algorithm converged to a stationnary point:")
+    for (k in seq_len(max(x$call$ncomp))) {
+      cat("\n\t")
+      cat(
+        "- After ", length(x$crit[[k]]) - 1,
+        " iterations for component ", k, ".",
+        sep = ""
+      )
+    }
+  }
   cat("\n")
 }

@@ -35,17 +35,17 @@ none
 `print.rgcca()` prints a fitted RGCCA object. The method and number of
 components are displayed.
 
-`print.rgcca_cv()` prints a fitted rgcca_cv object. The type of validation,
+`print.rgcca_cv()` prints a rgcca_cv object. The type of validation,
 the number of tried parameter sets, the type of task, and the model used
 are displayed.
 
-`print.rgcca_permutation()` prints a fitted rgcca_permutation object.
+`print.rgcca_permutation()` prints a rgcca_permutation object.
 The number of permutations and tried parameter sets are displayed.
 
-`print.rgcca_bootstrap()` prints a fitted rgcca_bootstrap object.
+`print.rgcca_bootstrap()` prints a rgcca_bootstrap object.
 The number of boostrap samples used for fitting is displayed.
 
-`print.rgcca_stability()` prints a fitted rgcca_stability object.
+`print.rgcca_stability()` prints a rgcca_stability object.
 The number of boostrap samples used for fitting is displayed.
 }
 \examples{
