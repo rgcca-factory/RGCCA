@@ -76,7 +76,7 @@ print.rgcca <- function(x, ...) {
   )
   if (max(x$call$ncomp) == 1) {
     cat(
-      "The alogrithm converged to a stationnary point after",
+      "The algorithm converged to a stationnary point after",
       length(x$crit) - 1, "iterations."
     )
   } else {
