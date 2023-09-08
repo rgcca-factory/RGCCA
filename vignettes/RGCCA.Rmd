@@ -149,11 +149,10 @@ statistical methods and dedicated software for multiblock data analysis, handlin
 multiple highly multivariate datasets remains a critical issue for effective 
 analysis and knowledge discovery.
 
-Regularized Generalized Canonical Correlation Analysis (RGCCA) \cite{Tenenhaus2011, Tenenhaus2014, Tenenhaus2015, Tenenhaus2017} is a unified 
-statistical framework that gathers six decades of multiblock component methods.
-While RGCCA encompasses a large number of methods, it is based on a single optimization problem. This unified approach bears immediate practical implications, facilitating statistical analyses and implementation strategies.
+Regularized Generalized Canonical Correlation Analysis (RGCCA) \cite{Tenenhaus2011, Tenenhaus2014, Tenenhaus2015, Tenenhaus2017} is a unified statistical framework that gathers six decades of multiblock component methods.
+While RGCCA encompasses a large number of methods, it is based on a single optimization problem which bears immediate practical implications, facilitating statistical analyses and implementation strategies.
 
-In this paper, we present the R package called $\small{\texttt{RGCCA}}$ (Girka et al, 2023), which implements the RGCCA framework. In addition to the main statistical functionalities, the RGCCA package offers various advanced ggplot visualization tools to help users interpret and extract meaningful information from integrated data. It also includes metrics for assessing the robustness and significance of the analysis.
+In this paper, we present the R package called $\small{\texttt{RGCCA}}$ \cite{Girka2023b}, which implements the RGCCA framework. In addition to the main statistical functionalities, the RGCCA package offers various advanced ggplot visualization tools to help users interpret and extract meaningful information from integrated data. It also includes metrics for assessing the robustness and significance of the analysis.
 
 For the statistical computing environment R \cite{R2022}, various R packages are 
 have come to the fore for carrying out multiblock data analysis. The choice of 
@@ -168,7 +167,7 @@ $\small{\texttt{FactoMineR}}$ \cite{Le2008} is also one widely used package for 
 
 The $\small{\texttt{multiblock}}$ package \cite{Liland2022} covers a wide range of multiblock methods for data fusion, but intensively relies on a wrapper strategy for performing multiblock analyses. Consequently, this results in strong dependencies  between the $\small{\texttt{multiblock}}$ package and other packages including (i) FactoMineR (for MFA, GPA), RGCCA (for Hierarchical PCA \citep{Wold1996, Hanafi2010}, MCOA, Interbattery Factor Analysis \citep{Tucker1958} , Carroll's GCCA \cite{Carroll1968a}), ade4 (Multiblock redundancy analysis \cite{Bougeard2011}, statis), r.jive (for JIVE \cite{Lock2013}), RegularizedSCA (for DISCO \cite{Schouteden2014}).
 
-To the sake of completeness, we also mention the $\small{\texttt{multiview}}$ R package that can be used for predicting a univariate response (member of the exponential family of distributions) from several blocks of variables \cite{}Ding2022}.
+To the sake of completeness, we also mention the $\small{\texttt{multiview}}$ R package that can be used for predicting a univariate response (member of the exponential family of distributions) from several blocks of variables \cite{Ding2022}.
 
 Each package uses its own way of specifying multiblock models and storing the results.
 
@@ -201,18 +200,87 @@ more effective analyses and gain new insights into complex datasets.
 
 The paper's remaining sections are organized as follows: Section 2 summarizes the theoretical foundations of the RGCCA framework. Section 3 presents the general optimization problem and the master algorithm underlying the RGCCA framework. Sections 4 and 5 provide code examples to illustrate the package's capabilities. Finally, we conclude the paper in Section 6.
 
-# Optimization background
+# The RGCCA framework 
 
-This section presents the optimization framework under which 
-all the algorithms proposed in the RGCCA framework were designed. The RGCCA 
-framework gathers several methods already presented in 
-\cite{Tenenhaus2011, Tenenhaus2014, Tenenhaus2015, Tenenhaus2017}. It is recalled 
-here for a broader class of constraints.
+The theoretical foundations of the Regularized Generalized Canonical Correlation 
+Analysis (RGCCA) framework, previously published in \cite{Tenenhaus2011, Tenenhaus2014, Tenenhaus2015, Tenenhaus2017}, are briefly 
+summarized.
+
+## Optimization problem
+
+A random column vector $\boldsymbol x$ of $p$ variables is assumed to exist with 
+finite moments of at least order two. The random vector $\boldsymbol x$ has zero 
+mean and a covariance matrix $\mathbf \Sigma$. The vector $\boldsymbol x$ is 
+composed of $J$ subvectors $\boldsymbol x_j = (x_{j1}, \ldots, x_{jp_j})^\top$. 
+The covariance matrix matrix $\mathbf \Sigma$ is composed of $J^2$ submatrices 
+$\mathbf \Sigma_{jk} = \mathbb{E}\left[\boldsymbol x_j \boldsymbol x_k^\top\right]$. 
+Let $\mathbf a_j = (a_{j1}, \ldots, a_{jp_j})^\top$ be a non-random $p_j$-dimensional 
+column vector. A composite variable $y_j$ is defined as the linear combination 
+of the elements of $\boldsymbol x_j$: $y_j =  \mathbf a_j^\top \boldsymbol x_j$.
+Therefore the covariance between two composite variables is 
+$\mathbf{a}_j^\top  \mathbf \Sigma_{jk} \mathbf{a}_k$. The RGCCA framework aims to 
+extract the information shared by the $J$ random composite variables, 
+taking into account an undirected graph of connections between them. 
+The RGCCA framework is defined by the optimization problem (\ref{opti_theo}). 
+It consists in maximizing the sum of convex functions of the covariances between 
+"connected" composites $y_j$ and $y_k$ subject to specific constraints on 
+the weights $\mathbf a_j$ for $j \in \{1, \ldots, J\}$.
+
+\begin{equation}
+\underset{\mathbf{a}_1, \mathbf{a}_2, \ldots,\mathbf{a}_J}{\text{max }}  f( \mathbf a_1, \ldots  \mathbf a_J) = \displaystyle  \sum_{j, k = 1}^J c_{jk} \text{
+g}\left(\mathbf{a}_j^\top  \mathbf \Sigma_{jk} \mathbf{a}_k\right)\\
+\text{ s.t. } \mathbf{a}_j \in \Omega_j, j =1, \ldots, J,
+\label{opti_theo}
+\end{equation}
+where 
+\begin{itemize}
+\item each $\Omega_j$ is a compact set.
+
+\item the function $g$ is any continuously differentiable convex function. 
+Typical choices of $g$ are the identity (horst scheme, leading to maximizing 
+the sum of covariances between block components), the absolute 
+value\footnote{The scheme $g(x) = \vert x \vert$ can be included in this class 
+of functions because the case $x=0$ never appears in practical applications.} 
+(centroid scheme, yielding maximization of the sum of the absolute values of 
+the covariances), the square function (factorial scheme, thereby maximizing the 
+sum of squared covariances), or, more generally, for any even integer $m$, 
+$g(x) = x^m$ (m-scheme, maximizing the power of $m$ of the sum of covariances). 
+The horst scheme penalizes negative structural correlation between block 
+components, while the centroid scheme and the m-scheme enable two 
+components to be negatively correlated. 
+
+\item the design matrix $\mathbf C = \lbrace c_{jk}\rbrace$ is a symmetric 
+$J \times J$ matrix of non-negative elements describing the network of 
+connections between blocks that the user wants to take into account. 
+Usually, $c_{jk} = 1$ to two connected blocks and $0$ otherwise. 
+\end{itemize}
+
+When the diagonal of $\mathbf{C}$ is null, the convexity and the continuous 
+differentiability of the function g imply that the objective function $f$ 
+itself is multi-convex (i.e. for each $j$, $f$ is a convex function of 
+$\mathbf a_j$ while all the other $\mathbf a_k$ are fixed) continuously differentiable. When at least one element 
+of the diagonal of $\mathbf{C}$ is different from $0$, additional conditions have 
+to be imposed on g to keep $f$ multi-convex. For example, when g is 
+twice differentiable, a sufficient condition is that 
+$\forall x\in\mathbb{R}_+, \text{ } g'(x)\geq 0$. This condition guarantees that the 
+second derivative of 
+$g\left(\mathbf{a}_j^\top \mathbf{\Sigma}_{jj} \mathbf{a}_j\right)$ is positive 
+definite:
+
+\begin{equation}
+\frac{\partial^2 g\left(\mathbf a_j^\top  \mathbf \Sigma_{jj} \mathbf a_j \right)}{\partial \mathbf a_j \partial \mathbf a_j^\top} = 2 \left[ g'\left( \mathbf a_j^\top  \mathbf \Sigma_{jj} \mathbf a_j \right) \mathbf \Sigma_{jj} + 2 g''\left(\mathbf a_j^\top  \mathbf \Sigma_{jj} \mathbf a_j\right)  \mathbf \Sigma_{jj}\mathbf a_j\mathbf a_j^\top \mathbf \Sigma_{jj} \right]. 
+\end{equation}
+
+All functions g considered in this paper satisfy this condition. Consequently, 
+the optimization problem (\ref{opti_theo}) falls under the umbrella of the 
+general optimization framework presented in Appendix in the next section.
+consisting in maximizing a continuously differentiable multi-convex function.
+
+## Algorithm
 
 The RGCCA framework relies on a master algorithm for maximizing a continuously 
 differentiable multi-convex function 
-$f( \mathbf a_1, \ldots, \mathbf a_J):\mathbb{R}^{p_1}\times \ldots \times \mathbb{R}^{p_J} \xrightarrow{}\mathbb{R}$ (i.e. for each $j$, $f$ is a convex function of 
-$\mathbf a_j$ while all the other $\mathbf a_k$ are fixed) under the constraint that 
+$f( \mathbf a_1, \ldots, \mathbf a_J):\mathbb{R}^{p_1}\times \ldots \times \mathbb{R}^{p_J} \xrightarrow{}\mathbb{R}$ under the constraint that 
 each $\mathbf a_j$ belongs to a compact set $\Omega_j\subset \mathbb{R}^{p_j}$. 
 This general optimization problem can be formulated as follows:
 
@@ -230,8 +298,6 @@ of size $p = \sum_{j=1}^{J}p_j$. Moreover, the vertical concatenation of a
 column vector is denoted $\mathbf a = \left(  \mathbf a_1; \ldots;  \mathbf a_J \right)$ 
 for the sake of simplification of notation. 
 
-## Algorithm
-
 A simple, monotonically, and globally convergent algorithm is presented for 
 solving optimization problem (\ref{master_optim}). The maximization 
 of the function $f$ defined over different parameter vectors 
@@ -245,8 +311,7 @@ with respect to $\mathbf a_j$. We assume $\nabla_j f( \mathbf a) \neq \mathbf{0}
 this manuscript. This assumption is not too binding as 
 $\nabla_j f( \mathbf a) = \mathbf{0}$ characterizes the global minimum of 
 $f( \mathbf a_1 , \ldots ,  \mathbf a_J )$ with respect to $\mathbf a_j$ when the other 
-vectors $\mathbf a_1 , \ldots ,  \mathbf a_{j-1} ,  \mathbf a_{j+1} , \ldots ,  \mathbf a_J$ 
-are fixed. 
+vectors $\mathbf a_1 , \ldots ,  \mathbf a_{j-1} ,  \mathbf a_{j+1} , \ldots ,  \mathbf a_J$ are fixed. 
 
 We want to find an update $\hat{ \mathbf a}_j\in \Omega_j$ such that 
 $f( \mathbf a)\leq f( \mathbf a_1, ...,  \mathbf a_{j-1}, \hat{ \mathbf a}_j,  \mathbf a_{j+1}, ...,  \mathbf a_J)$. 
@@ -329,80 +394,6 @@ of the sequence $\left\lbrace  \mathbf a^s \right\rbrace$. The full proof of the
 properties is given in \cite{Tenenhaus2017}.
 
 
-# The RGCCA framework 
-
-The theoretical foundations of the Regularized Generalized Canonical Correlation 
-Analysis (RGCCA) framework, previously published in \cite{Tenenhaus2011, Tenenhaus2014, Tenenhaus2015, Tenenhaus2017}, are briefly 
-summarized.
-
-## Optimization problem
-
-A random column vector $\boldsymbol x$ of $p$ variables is assumed to exist with 
-finite moments of at least order two. The random vector $\boldsymbol x$ has zero 
-mean and a covariance matrix $\mathbf \Sigma$. The vector $\boldsymbol x$ is 
-composed of $J$ subvectors $\boldsymbol x_j = (x_{j1}, \ldots, x_{jp_j})^\top$. 
-The covariance matrix matrix $\mathbf \Sigma$ is composed of $J^2$ submatrices 
-$\mathbf \Sigma_{jk} = \mathbb{E}\left[\boldsymbol x_j \boldsymbol x_k^\top\right]$. 
-Let $\mathbf a_j = (a_{j1}, \ldots, a_{jp_j})^\top$ be a non-random $p_j$-dimensional 
-column vector. A composite variable $y_j$ is defined as the linear combination 
-of the elements of $\boldsymbol x_j$: $y_j =  \mathbf a_j^\top \boldsymbol x_j$.
-Therefore the covariance between two composite variables is 
-$\mathbf{a}_j^\top  \mathbf \Sigma_{jk} \mathbf{a}_k$. The RGCCA framework aims to 
-extract the information shared by the $J$ random composite variables, 
-taking into account an undirected graph of connections between them. 
-The RGCCA framework is defined by the optimization problem (\ref{opti_theo}). 
-It consists in maximizing the sum of convex functions of the covariances between 
-"connected" composites $y_j$ and $y_k$ subject to specific constraints on 
-the weights $\mathbf a_j$ for $j \in \{1, \ldots, J\}$.
-
-\begin{equation}
-\underset{\mathbf{a}_1, \mathbf{a}_2, \ldots,\mathbf{a}_J}{\text{max }}  f( \mathbf a_1, \ldots  \mathbf a_J) = \displaystyle  \sum_{j, k = 1}^J c_{jk} \text{
-g}\left(\mathbf{a}_j^\top  \mathbf \Sigma_{jk} \mathbf{a}_k\right)\\
-\text{ s.t. } \mathbf{a}_j \in \Omega_j, j =1, \ldots, J,
-\label{opti_theo}
-\end{equation}
-where 
-\begin{itemize}
-\item each $\Omega_j$ is a compact set.
-
-\item the function $g$ is any continuously differentiable convex function. 
-Typical choices of $g$ are the identity (horst scheme, leading to maximizing 
-the sum of covariances between block components), the absolute 
-value\footnote{The scheme $g(x) = \vert x \vert$ can be included in this class 
-of functions because the case $x=0$ never appears in practical applications.} 
-(centroid scheme, yielding maximization of the sum of the absolute values of 
-the covariances), the square function (factorial scheme, thereby maximizing the 
-sum of squared covariances), or, more generally, for any even integer $m$, 
-$g(x) = x^m$ (m-scheme, maximizing the power of $m$ of the sum of covariances). 
-The horst scheme penalizes negative structural correlation between block 
-components, while the centroid scheme and the m-scheme enable two 
-components to be negatively correlated. 
-
-\item the design matrix $\mathbf C = \lbrace c_{jk}\rbrace$ is a symmetric 
-$J \times J$ matrix of non-negative elements describing the network of 
-connections between blocks that the user wants to take into account. 
-Usually, $c_{jk} = 1$ to two connected blocks and $0$ otherwise. 
-\end{itemize}
-
-When the diagonal of $\mathbf{C}$ is null, the convexity and the continuous 
-differentiability of the function g imply that the objective function $f$ 
-itself is multi-convex continuously differentiable. When at least one element 
-of the diagonal of $\mathbf{C}$ is different from $0$, additional conditions have 
-to be imposed on g to keep the desired property on $f$. For example, when g is 
-twice differentiable, a sufficient condition is that 
-$\forall x\in\mathbb{R}_+, \text{ } g'(x)\geq 0$. This condition guarantees that the 
-second derivative of 
-$g\left(\mathbf{a}_j^\top \mathbf{\Sigma}_{jj} \mathbf{a}_j\right)$ is positive 
-definite:
-
-\begin{equation}
-\frac{\partial^2 g\left(\mathbf a_j^\top  \mathbf \Sigma_{jj} \mathbf a_j \right)}{\partial \mathbf a_j \partial \mathbf a_j^\top} = 2 \left[ g'\left( \mathbf a_j^\top  \mathbf \Sigma_{jj} \mathbf a_j \right) \mathbf \Sigma_{jj} + 2 g''\left(\mathbf a_j^\top  \mathbf \Sigma_{jj} \mathbf a_j\right)  \mathbf \Sigma_{jj}\mathbf a_j\mathbf a_j^\top \mathbf \Sigma_{jj} \right]. 
-\end{equation}
-
-All functions g considered in this paper satisfy this condition. Consequently, 
-the optimization problem (\ref{opti_theo}) falls under the umbrella of the 
-general optimization framework presented in Section \ref{master_algo}.
-
 ## Regularized Generalized Canonical Correlation Analysis (RGCCA) 
 
 Several instantiations of the RGCCA framework were proposed in \cite{Tenenhaus2011, 
@@ -442,10 +433,8 @@ In this case, each $n \times p_j$ data matrix $\mathbf X_j$ is called a block an
 represents a set of $p_j$ variables observed on $n$ individuals. 
 The variables' number and nature may differ from one block to another, but the 
 individuals must be the same across blocks. We assume that all variables are 
-centered. The most recent formulation of RGCCA \citep{Tenenhaus2017} subsumes fifty 
-years of multiblock component methods. It provides improvements to the initial 
-version of RGCCA \citep{Tenenhaus2011} and is defined as the following optimization 
-problem:
+centered. A sample-based optimization problem considered within the RGCCA package   
+is:
 
 \begin{equation}
 \underset{ \mathbf a_1, \ldots,  \mathbf a_J}{\text{maximize }}
@@ -457,7 +446,7 @@ problem:
 where $\widehat{\mathbf{\Sigma}}_{jk} = n^{-1} \mathbf X_j^\top  \mathbf X_k$ is an 
 estimate of the inter-block covariance matrix 
 $\mathbf{\Sigma}_{jk}= \mathbb{E}[\boldsymbol x_j\boldsymbol x_k^\top]$ and 
-$\widehat{\mathbf{\Sigma}}_{jj}$ is an 
+$\mathbf M_j = \widehat{\mathbf{\Sigma}}_{jj}$ is an 
 estimate of the intra-block covariance matrix $\mathbf{\Sigma}_{jj} = \mathbb{E}[\boldsymbol x_j\boldsymbol x_j^\top]$. In cases involving multi-collinearity within 
 blocks or in high dimensional settings, one way of obtaining an estimate for the 
 true covariance matrix $\mathbf{\Sigma}_{jj}$ is to consider the class of linear 
@@ -866,7 +855,7 @@ of how they can be used. The list of functions can be found in Table
 | $\small{\texttt{rgcca\_permutation}}$     | Find the best set of parameters for a R/SGCCA model using a permutation strategy.                                |
 | $\small{\texttt{rgcca\_bootstrap}}$       | Evaluate the significance of the block-weight vectors produced by a R/SGCCA model using bootstrap.               |
 | $\small{\texttt{rgcca\_stability}}$       | Select the most stable variables of a R/SGCCA model using their VIPs.                                            |
-| $\small{\texttt{print/plot}}$            | Print and plot methods for outputs of functions $\small{\texttt{rgcca}}$, $\small{\texttt{rgcca\_cv}}$, $\small{\texttt{rgcca\_permutation}}$, $\small{\texttt{rgcca\_bootstrap}}$, and $\small{\texttt{rgcca\_stability}}$. |
+| $\small{\texttt{summary/print/plot}}$            | Summary, print and plot methods for outputs of functions $\small{\texttt{rgcca}}$, $\small{\texttt{rgcca\_cv}}$, $\small{\texttt{rgcca\_permutation}}$, $\small{\texttt{rgcca\_bootstrap}}$, and $\small{\texttt{rgcca\_stability}}$. |
 Table: Functions implemented in the RGCCA package. \label{exported_functions}
 
 ## RGCCA for the Russett dataset.
