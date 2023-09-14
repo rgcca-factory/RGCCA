@@ -150,40 +150,32 @@ multiple highly multivariate datasets remains a critical issue for effective
 analysis and knowledge discovery.
 
 Regularized Generalized Canonical Correlation Analysis (RGCCA) \cite{Tenenhaus2011, Tenenhaus2014, Tenenhaus2015, Tenenhaus2017} is a unified statistical framework that gathers six decades of multiblock component methods.
-While RGCCA encompasses a large number of methods, it is based on a single optimization problem which bears immediate practical implications, facilitating statistical analyses and implementation strategies.
-
-In this paper, we present the R package called $\small{\texttt{RGCCA}}$ \cite{Girka2023b}, which implements the RGCCA framework. In addition to the main statistical functionalities, the RGCCA package offers various advanced ggplot visualization tools to help users interpret and extract meaningful information from integrated data. It also includes metrics for assessing the robustness and significance of the analysis.
+While RGCCA encompasses a large number of methods, it is based on a single optimization problem which bears immediate practical implications, facilitating statistical analyses and implementation strategies. In this paper, we present the R package called $\small{\texttt{RGCCA}}$ \cite{Girka2023b}, which implements the RGCCA framework. 
 
 For the statistical computing environment R \cite{R2022}, various R packages are 
-have come to the fore for carrying out multiblock data analysis. The choice of 
-the package is dictated mostly by the domain of application.
+have come to the fore for carrying out multiblock data analysis. 
 The bioinformatician community mostly uses $\small{\texttt{mixOmics}}$ \cite{Rohart2017} which wraps the main functions of the RGCCA package for performing multiblock analyses.
 
-The ecological community widely uses $\small{\texttt{ade4}}$ 
-(\cite{Dray2007}), which mainly relies on three approaches 
-for performing multiblock analysis: Multiple co-inertia analysis (MCOA) \cite{Chessel1996} or Multiple Factor Analysis (MFA) \cite{Escofier1994} and Statis \cite{Lavit1994}. 
+The $\small{\texttt{ade4}}$ package (\cite{Dray2007}) cover a wide range of multivariate methods. its implementation follows the tradition of the French school of "Analyse des Donnees" and is based on the use of the duality diagram. $\small{\texttt{ade4}}$ mainly relies on three approaches for performing multiblock analysis: Multiple co-inertia analysis (MCOA) \cite{Chessel1996}, Multiple Factor Analysis (MFA) \cite{Escofier1994} and Statis \cite{Lavit1994}.
 
 $\small{\texttt{FactoMineR}}$ \cite{Le2008} is also one widely used package for multiblock methods mainly due to the implementation of MFA and, to a somewhat lesser extent, Generalized Procrustes Analysis (GPA) \cite{Gower1975}.
 
-The $\small{\texttt{multiblock}}$ package \cite{Liland2022} covers a wide range of multiblock methods for data fusion, but intensively relies on a wrapper strategy for performing multiblock analyses. Consequently, this results in strong dependencies  between the $\small{\texttt{multiblock}}$ package and other packages including (i) FactoMineR (for MFA, GPA), RGCCA (for Hierarchical PCA \citep{Wold1996, Hanafi2010}, MCOA, Interbattery Factor Analysis \citep{Tucker1958} , Carroll's GCCA \cite{Carroll1968a}), ade4 (Multiblock redundancy analysis \cite{Bougeard2011}, statis), r.jive (for JIVE \cite{Lock2013}), RegularizedSCA (for DISCO \cite{Schouteden2014}).
+The $\small{\texttt{multiblock}}$ package \cite{Liland2022} covers a wide range of multiblock methods for data fusion, but intensively relies on a wrapper strategy for performing multiblock analyses. Consequently, this results in strong dependencies  between the $\small{\texttt{multiblock}}$ package and other packages including (i) FactoMineR (for MFA and GPA), RGCCA (for Hierarchical PCA \citep{Wold1996, Hanafi2010}, MCOA, Interbattery Factor Analysis \citep{Tucker1958} and Carroll's GCCA \cite{Carroll1968a}), ade4 (Multiblock redundancy analysis \cite{Bougeard2011} and statis), r.jive (for JIVE \cite{Lock2013}), RegularizedSCA (for DISCO \cite{Schouteden2014}).
 
 To the sake of completeness, we also mention the $\small{\texttt{multiview}}$ R package that can be used for predicting a univariate response (member of the exponential family of distributions) from several blocks of variables \cite{Ding2022}.
 
 Each package uses its own way of specifying multiblock models and storing the results.
 
-For Python users, $\small{\texttt{mvlearn}}$ \cite{Perry2021} seems to be the most advanced Python module for multiview data. mvlearn offers a suite of algorithms for learning latent space embeddings and joint representations of views including a limited version of the RGCCA framework, a kernel versions of GCCA (\cite{Hardoon2004, \cite{Bach2002}, Deep CCA \cite{Andrew2013}. Several other methods for dimensionality reduction and joint subspace learning are included as well, such as multiview 
-multidimensional scaling \cite{Trendafilov2010}.
+For Python users, $\small{\texttt{mvlearn}}$ \cite{Perry2021} seems to be the most advanced Python module for multiview data. mvlearn offers a suite of algorithms for learning latent space embeddings and joint representations of views including a limited version of the RGCCA framework, a kernel versions of GCCA (\cite{Hardoon2004, Bach2002}, Deep CCA \cite{Andrew2013}. Several other methods for dimensionality reduction and joint subspace learning are included as well, such as multiview multidimensional scaling \cite{Trendafilov2010}.
 
 From this perspective, it appears that the $\small{\texttt{RGCCA}}$ package already plays a central role within the R community for conducting multiblock analyses. 
 Also, special attention has been paid to ensuring that $\small{\texttt{RGCCA}}$'s implementation of various multiblock component methods, including MCOA and MFA, aligns with results obtained from other packages such as $\small{\texttt{ade4}}$ or $\small{\texttt{FactoMineR}}$.
 
-Within the $\small{\texttt{RGCCA}}$ package, all implemented methods share the 
-same function interface and a clear class structure. In addition, the 
-$\small{\texttt{RGCCA}}$ package relies on the single $\small{\texttt{rgcca()}}$ 
-function for specifying the multiblock models. It also provides  several 
-utility functions for data preprocessing and several plots 
-for diagnostics or visualization of the results from multiblock analysis.  
-In addition, the package includes several built-in datasets and examples to 
+Within the $\small{\texttt{RGCCA}}$ package, all implemented methods are made available 
+through the single $\small{\texttt{rgcca()}}$ function and thus share the same function 
+interface and a clear class structure. In addition to the main statistical functionalities, the RGCCA package provides several 
+utility functions for data preprocessing and offers various advanced ggplot visualization tools to help users interpret and extract meaningful information from integrated data. It also includes metrics for assessing the robustness and significance of the analysis.
+The package also includes several built-in datasets and examples to 
 help users get started quickly. Package $\small{\texttt{RGCCA}}$ is available 
 from the Comprehensive R Archive Network (CRAN), at https://CRAN.R-project.org/package=RGCCA and can be installed from the R console with the following command:
 
@@ -219,8 +211,7 @@ column vector. A composite variable $y_j$ is defined as the linear combination
 of the elements of $\boldsymbol x_j$: $y_j =  \mathbf a_j^\top \boldsymbol x_j$.
 Therefore the covariance between two composite variables is 
 $\mathbf{a}_j^\top  \mathbf \Sigma_{jk} \mathbf{a}_k$. The RGCCA framework aims to 
-extract the information shared by the $J$ random composite variables, 
-taking into account an undirected graph of connections between them. 
+extract the information shared by the $J$ random composite variables, taking into account an undirected graph of connections between them. 
 The RGCCA framework is defined by the optimization problem (\ref{opti_theo}). 
 It consists in maximizing the sum of convex functions of the covariances between 
 "connected" composites $y_j$ and $y_k$ subject to specific constraints on 
@@ -273,8 +264,7 @@ definite:
 
 All functions g considered in this paper satisfy this condition. Consequently, 
 the optimization problem (\ref{opti_theo}) falls under the umbrella of the 
-general optimization framework presented in Appendix in the next section.
-consisting in maximizing a continuously differentiable multi-convex function.
+general optimization framework presented in the next section.
 
 ## Algorithm
 
@@ -433,8 +423,7 @@ In this case, each $n \times p_j$ data matrix $\mathbf X_j$ is called a block an
 represents a set of $p_j$ variables observed on $n$ individuals. 
 The variables' number and nature may differ from one block to another, but the 
 individuals must be the same across blocks. We assume that all variables are 
-centered. A sample-based optimization problem considered within the RGCCA package   
-is:
+centered. The optimization problem considered within the RGCCA package is:
 
 \begin{equation}
 \underset{ \mathbf a_1, \ldots,  \mathbf a_J}{\text{maximize }}
@@ -1353,13 +1342,12 @@ The $\small{\texttt{summary()}}$ function allows summarizing the SGCCA analysis,
 summary(fit.sgcca)
 ```
 
-and the $\small{\texttt{plot()}}$ returns the same graphical displays as RGCCA. 
+and the $\small{\texttt{plot()}}$ function returns the same graphical displays as RGCCA. 
 We skip these representations for sake of brevity.
 
 Of course, it is still possible to determine the optimal sparsity parameters by permutation. 
 This is made possible by setting the $\small{\texttt{par\_type}}$ argument to $\small{\texttt{"sparsity"}}$ (instead of 
-$\small{\texttt{"tau"}}$) within the $\small{\texttt{rgcca\_permutation()}}$ function. However, we will use another approach
-in this section.
+$\small{\texttt{"tau"}}$) within the $\small{\texttt{rgcca\_permutation()}}$ function. However, we will use another approach in this section.
 
 **Cross-validation strategy.** The 
 optimal tuning parameters can be determined by cross-validating 
@@ -1376,14 +1364,11 @@ $\small{\texttt{rgcca\_cv}}$ function and is used here for predicting the
 location of the tumors.
 
 In this situation, the goal is to maximize the 
-cross-validated  accuracy ($\small{\texttt{metric = "Accuracy"}}$) in a model where we try to 
-predict the response block from all the block components with a user-defined 
-classifier ($\small{\texttt{prediction\_model = "lda"}}$). Also, we decide to upper bound the sparsity 
-parameters for $\mathbf X_1$ and $\mathbf X_2$ to $0.2$ to achieve an 
+cross-validated balanced accuracy ($\small{\texttt{metric = "Balanced\_Accuracy"}}$) in a model where we try to predict the response block from all the block components with a user-defined classifier ($\small{\texttt{prediction\_model = "lda"}}$). The cross-validation protocol is set by specifying the arguments the number of fold ($\small{\texttt{k}}$) and the number of Cross-Validation to be run ($\small{\texttt{n\_run}}$). Also, we decide to upper bound the sparsity parameters for $\mathbf X_1$ and $\mathbf X_2$ to $0.2$ to achieve an 
 attractive amount of sparsity. 
 
 ```{r, cache = TRUE}
-set.seed(27) #my favorite number
+set.seed(20091979) 
 inTraining <- caret::createDataPartition(
   blocks[[3]], p = .75, list = FALSE
 )
@@ -1396,8 +1381,8 @@ cv_out <- rgcca_cv(blocks = training, response = 3,
                    par_length = 10,
                    prediction_model = "lda",
                    validation = "kfold",
-                   k = 3, n_run = 5, metric = "Accuracy",
-                   n_cores = 2)
+                   k = 7, n_run = 3, metric = "Balanced_Accuracy",
+                   n_cores = 15)
 ```
 
 $\small{\texttt{rgcca\_cv()}}$ relies on the $\small{\texttt{caret}}$ package. 
@@ -1412,7 +1397,7 @@ summary(cv_out)
 
 and displayed using the generic $\small{\texttt{plot()}}$ function.
 
-```{r, fig.height = 12, fig.width=18, fig.pos = "H", fig.cap = "Accuracies of the models on the different validation folds against the sets of tuning parameters."}
+```{r, fig.height = 12, fig.width=18, fig.pos = "H", fig.cap = "Balanced accuracies of the models on the different validation folds for the different tuning parameter sets."}
 plot(cv_out, cex = 2)
 ```
 
@@ -1470,25 +1455,18 @@ different models are kept. This procedure is available  through the
 $\small{\texttt{rgcca\_stability}}$ function.
 
 ```{r, cache = TRUE, message = FALSE}
+set.seed(20091979) 
 fit_stab <- rgcca_stability(fit,
                             keep = vapply(
                               fit$a, function(x) mean(x != 0),
                               FUN.VALUE = 1.0
                             ),
-                            n_boot = 100, verbose = TRUE, n_cores = 2)
+                            n_boot = 100, verbose = TRUE, n_cores = 15)
 ```
 
 Once the most stable variables have been found, a new model using these 
 variables is automatically fitted. This last model can be visualized using
 the usual $\small{\texttt{summary()}}$ and $\small{\texttt{plot()}}$ functions.
-  
-```{r, fig.height = 12, fig.width=18, fig.align='center', fig.cap = 'Graphical display of the tumors obtained by crossing the components of GE1 and CGH1, and colored according to their location.', fig.pos = "H"}
-plot(fit_stab, type = "sample", block = 1:2,
-     comp = 1, resp = as.character(Loc)[inTraining],
-     cex = 2
-     )
-```
-
 We can finally apply the bootstrap procedure on the most stable variables.
 
 ```{r, cache = TRUE}
@@ -1499,7 +1477,7 @@ The bootstrap results can be visualized using the generic $\small{\texttt{plot()
 We use the $\small{\texttt{n\_mark}}$ parameter to display the top 50 variables of GE.
 
 
-```{r, fig.height = 12, fig.width=18, fig.pos = "H", fig.cap = "Bootstrap confidence intervals for the block-weight vectors associated to block GE."}
+```{r, fig.height = 12, fig.width=18, fig.pos = "H", fig.cap = "Bootstrap confidence intervals for the block-weight vectors associated with GE."}
 plot(boot_out, block = 1,
      display_order = FALSE,
      n_mark = 50, cex = 1.5, cex_sub = 17,
