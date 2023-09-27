@@ -159,35 +159,31 @@ statistical methods and dedicated software for multiblock data analysis, handlin
 multiple highly multivariate datasets remains a critical issue for effective 
 analysis and knowledge discovery.
 
-Regularized Generalized Canonical Correlation Analysis (RGCCA) \cite{Tenenhaus2011, Tenenhaus2014, Tenenhaus2015, Tenenhaus2017} is a unified statistical framework that gathers six decades of multiblock component methods.
+Regularized Generalized Canonical Correlation Analysis \citep[RGCCA,][]{Tenenhaus2011, Tenenhaus2014, Tenenhaus2015, Tenenhaus2017} is a unified statistical framework that gathers six decades of multiblock component methods.
 While RGCCA encompasses a large number of methods, it is based on a single optimization problem which bears immediate practical implications, facilitating statistical analyses and implementation strategies. In this paper, we present the R package called $\small{\texttt{RGCCA}}$, which implements the RGCCA framework. 
 
-For the statistical computing environment R \cite{R2022}, various R packages are 
-have come to the fore for carrying out multiblock data analysis. 
-The bioinformatician community mostly uses $\small{\texttt{mixOmics}}$ \cite{Rohart2017} which wraps the main functions of the $\small{\texttt{RGCCA}}$ package for performing multiblock analyses.
+For the statistical computing environment R \citep{R2022}, various R packages have come to the fore for carrying out multiblock data analysis. 
+The bioinformatician community mostly uses $\small{\texttt{mixOmics}}$ \citep{Rohart2017} which wraps the main functions of the $\small{\texttt{RGCCA}}$ package for performing multiblock analyses.
 
-The $\small{\texttt{ade4}}$ package \cite{Dray2007} cover a wide range of multivariate methods. its implementation follows the tradition of the French school of "Analyse des Donnees" and is based on the use of the duality diagram. $\small{\texttt{ade4}}$ mainly relies on three approaches for performing multiblock analysis: Multiple co-inertia analysis (MCOA) \cite{Chessel1996}, Multiple Factor Analysis (MFA) \cite{Escofier1994} and Statis \cite{Lavit1994}.
+The $\small{\texttt{ade4}}$ package \citep{Dray2007} covers a wide range of multivariate methods.
+<!-- Its implementation follows the tradition of the French school of "Analyse des Donnees" and is based on the use of the duality diagram.  -->
+$\small{\texttt{ade4}}$ mainly relies on three approaches for performing multiblock analysis: Multiple co-inertia analysis \citep[MCOA, ][]{Chessel1996}, Multiple Factor Analysis \citep[MFA,][]{Escofier1994} and Statis \citep{Lavit1994}.
 
-$\small{\texttt{FactoMineR}}$ \cite{Le2008} is also one widely used package for multiblock methods mainly due to the implementation of MFA and, to a somewhat lesser extent, Generalized Procrustes Analysis (GPA) \cite{Gower1975}.
+$\small{\texttt{FactoMineR}}$ \citep{Le2008} is also one widely used package for multiblock methods mainly due to the implementation of MFA and, to a somewhat lesser extent, Generalized Procrustes Analysis \citep[GPA,][]{Gower1975}.
 
-The $\small{\texttt{multiblock}}$ package \cite{Liland2022} covers a wide range of multiblock methods for data fusion, but intensively relies on a wrapper strategy for performing multiblock analyses. Consequently, this results in strong dependencies  between the $\small{\texttt{multiblock}}$ package and other packages including (i) FactoMineR (for MFA and GPA), RGCCA (for Hierarchical PCA \citep{Wold1996, Hanafi2010}, MCOA, Interbattery Factor Analysis \citep{Tucker1958} and Carroll's GCCA \cite{Carroll1968a}), ade4 (Multiblock redundancy analysis \cite{Bougeard2011} and statis), r.jive (for JIVE \cite{Lock2013}), RegularizedSCA (for DISCO \cite{Schouteden2014}).
+The $\small{\texttt{multiblock}}$ package \citep{Liland2022} covers a wide range of multiblock methods for data fusion, but intensively relies on a wrapper strategy for performing multiblock analyses. Consequently, this results in strong dependencies  between the $\small{\texttt{multiblock}}$ package and other packages including (i) $\small{\texttt{FactoMineR}}$ (for MFA and GPA), $\small{\texttt{RGCCA}}$ (for Hierarchical PCA \citeauthor{Wold1996} \citeyear{Wold1996}; \citeauthor{Hanafi2010} \citeyear{Hanafi2010}, MCOA, Interbattery Factor Analysis \citeauthor{Tucker1958} \citeyear{Tucker1958} and Carroll's GCCA \citeauthor{Carroll1968a} \citeyear{Carroll1968a}), $\small{\texttt{ade4}}$ \citep[Multiblock redundancy analysis][and statis]{Bougeard2011}, $\small{\texttt{r.jive}}$ \citep[for JIVE][]{Lock2013}, and $\small{\texttt{RegularizedSCA}}$ \citep[for DISCO][]{Schouteden2014}.
 
-To the sake of completeness, we also mention the $\small{\texttt{multiview}}$ R package that can be used for predicting a univariate response (member of the exponential family of distributions) from several blocks of variables \cite{Ding2022}.
+To the sake of completeness, we also mention the $\small{\texttt{multiview}}$ R package that can be used for predicting a univariate response (member of the exponential family of distributions) from several blocks of variables \citep{Ding2022}.
 
 Each package uses its own way of specifying multiblock models and storing the results.
 
-For Python users, $\small{\texttt{mvlearn}}$ \cite{Perry2021} seems to be the most advanced Python module for multiview data. mvlearn offers a suite of algorithms for learning latent space embeddings and joint representations of views including a limited version of the RGCCA framework, a kernel versions of GCCA (\cite{Hardoon2004, Bach2002}, Deep CCA \cite{Andrew2013}. Several other methods for dimensionality reduction and joint subspace learning are included as well, such as multiview multidimensional scaling \cite{Trendafilov2010}.
+For Python users, $\small{\texttt{mvlearn}}$ \citep{Perry2021} seems to be the most advanced Python module for multiview data. $\small{\texttt{mvlearn}}$ offers a suite of algorithms for learning latent space embeddings and joint representations of views including a limited version of the RGCCA framework, a kernel version of GCCA \citep{Hardoon2004, Bach2002}, and Deep CCA \citep{Andrew2013}. Several other methods for dimensionality reduction and joint subspace learning are included as well, such as multiview multidimensional scaling \citep{Trendafilov2010}.
 
-From this perspective, it appears that the $\small{\texttt{RGCCA}}$ package already plays a central role within the R community for conducting multiblock analyses. 
+From this perspective, it appears that the $\small{\texttt{RGCCA}}$ package already plays a central role within the R community and beyond for conducting multiblock analyses. 
 Also, special attention has been paid to ensuring that $\small{\texttt{RGCCA}}$'s implementation of various multiblock component methods, including MCOA and MFA, aligns with results obtained from other packages such as $\small{\texttt{ade4}}$ or $\small{\texttt{FactoMineR}}$.
 
-Within the $\small{\texttt{RGCCA}}$ package, all implemented methods are made available 
-through the single $\small{\texttt{rgcca()}}$ function and thus share the same function 
-interface and a clear class structure. In addition to the main statistical functionalities, the $\small{\texttt{RGCCA}}$ package provides several 
-utility functions for data preprocessing and offers various advanced ggplot visualization tools to help users interpret and extract meaningful information from integrated data. It also includes metrics for assessing the robustness and significance of the analysis.
-The package also includes several built-in datasets and examples to 
-help users get started quickly. Package $\small{\texttt{RGCCA}}$ is available 
-from the Comprehensive R Archive Network (CRAN), at https://CRAN.R-project.org/package=RGCCA and can be installed from the R console with the following command:
+Within the $\small{\texttt{RGCCA}}$ package, all implemented methods are made available through the single $\small{\texttt{rgcca()}}$ function and thus share the same function interface and a clear class structure. In addition to the main statistical functionalities, the $\small{\texttt{RGCCA}}$ package provides several utility functions for data preprocessing and offers various advanced $\small{\texttt{ggplot2}}$ \citep{Wickham2016} visualization tools to help users interpret and extract meaningful information from integrated data. It also includes metrics for assessing the robustness and significance of the analysis.
+The package also includes several built-in datasets and examples to help users get started quickly. Package $\small{\texttt{RGCCA}}$ is available from the Comprehensive R Archive Network (CRAN), at https://CRAN.R-project.org/package=RGCCA and can be installed from the R console with the following command:
 
 ```{r, eval = FALSE}
 install.packages("RGCCA")
@@ -200,7 +196,7 @@ and versatility. We believe that our package provides a valuable contribution
 to the field of multiblock data analysis and will enable researchers to conduct 
 more effective analyses and gain new insights into complex datasets.
 
-The paper's remaining sections are organized as follows: Section 2 presents the RGCCA framework and how it generalizes existing methods from the literature. Section 3 presents the general optimization problem and the master algorithm underlying the RGCCA framework. Sections 4 and 5 provide code examples to illustrate the package's capabilities. Finally, we conclude the paper in Section 6.
+The paper's remaining sections are organized as follows: Section 2 presents the RGCCA framework, how it generalizes existing methods from the literature, and the master algorithm underlying the RGCCA framework. Section 3 presents the structure of the package and provides code examples to illustrate the package's capabilities. Finally, we conclude the paper in Section 4.
 
 # The RGCCA framework 
 
@@ -247,7 +243,7 @@ Usually, $c_{jk} = 1$ between two connected blocks and $0$ otherwise.
 
 In this section we briefly present RGCCA \cite{Tenenhaus2011, Tenenhaus2015, Tenenhaus2017} which constitutes the core of the RGCCA framework.  
 
-A sample-based optimization problem related to \eqref{optim_RGCCA} can defined by considering $n$ observations of the vector $\boldsymbol x$. It yields a column-partition data matrix  $\mathbf X = [\mathbf X_1, \ldots, \mathbf X_j, \ldots, \mathbf X_J] \in \mathbb{R}^{n \times p}$. Each $n\times p_j$ data matrix $\mathbf X_j$ is called a block and represents a set of $p_j$ variables observed on the same set of $n$ individuals. The variables’ number and nature may differ from one block to another, but the individuals must be the same across blocks. We assume that all variables are centered.
+A sample-based optimization problem related to \eqref{optim_RGCCA} can be defined by considering $n$ observations of the vector $\boldsymbol x$. It yields a column-partition data matrix  $\mathbf X = [\mathbf X_1, \ldots, \mathbf X_j, \ldots, \mathbf X_J] \in \mathbb{R}^{n \times p}$. Each $n\times p_j$ data matrix $\mathbf X_j$ is called a block and represents a set of $p_j$ variables observed on the same set of $n$ individuals. The variables’ number and nature may differ from one block to another, but the individuals must be the same across blocks. We assume that all variables are centered.
 
 The $\small{\texttt{RGCCA}}$ package proposes a first implementation of the RGCCA framework, focusing on the following sample-based optimization problem:
 
@@ -277,14 +273,14 @@ We can discuss the choice of shrinkage parameters by providing interpretations o
 
 \item   $\tau_j=0$ is recommended when the user wants to maximize correlations between connected components. This option can yield unstable solutions in case of multi-collinearity and cannot be used when a data block is rank deficient (e.g., $n<p_j$).
 
-\item   $0<\tau_j<1$ is a good compromise between variance and correlation: the block components are simultaneously stable and as well correlated as possible with their connected block components. This setting can be used when the data block is rank deficient.
+\item   $0<\tau_j<1$ is a good compromise between variance and correlation: the block components are simultaneously stable and as correlated as possible with their connected block components. This setting can be used when the data block is rank deficient.
 \end{itemize}
 
 It is worth pointing out that for each block $j$, an appropriate shrinkage parameter $\tau_j$ can be obtained using various analytical formulae \citep[see][for instance]{Ledoit2004, Schafer2005, Chen2011}. As $\mathbf{M}_j$ must be positive definite, $\tau_j = 0$ can only be selected for a full rank data matrix $\mathbf{X}_j$. In the $\small{\texttt{RGCCA}}$ package, for each block, the determination of the shrinkage parameter can be made fully automatic by using the analytical formula proposed by \cite{Schafer2005} or guided by the context of an application by cross-validation or permutation. 
 
 From optimization problem (\ref{optim_RGCCA_sample2}), the term "generalized" in the acronym of RGCCA embraces at least four notions. The first one relates to the generalization of two-block methods - including Canonical Correlation Analysis \citep{Hotelling1936}, Inter-battery Factor Analysis \citep{Tucker1958}, and Redundancy Analysis \citep{Wollenberg1977} - to three or more sets of variables. The second one relates to the ability to take into account some hypotheses on between-block connections: the user decides which blocks are connected and which ones are not. The third one relies on the choices of the shrinkage parameters allowing to capture of both correlation or covariance-based criteria. The fourth one relates to the function $g$ that enables considering different functions of the covariance. A triplet of parameters embodies this generalization: (g, $\tau_j, \mathbf C$) and by the fact that an arbitrary number of blocks can be handled. This triplet of parameters offers flexibility and allows RGCCA to encompass a large number of multiblock component methods that have been published for fifty years. Table \ref{twoblock_methods}-\ref{multiblock_hierarchical} gives the correspondences between the triplet (g, $\tau_j, \mathbf C$) and the multiblock component methods. For a complete overview, see \cite{Tenenhaus2017}. 
 
-### Special cases
+## Special cases
 
 Two families of methods have come to the fore in the field of multiblock data 
 analysis. These methods rely on correlation-based or covariance-based criteria. 
