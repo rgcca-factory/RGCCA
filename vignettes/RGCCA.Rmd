@@ -839,8 +839,8 @@ fit <- rgcca(blocks = A, connection = C,
 ```
 
 
-### The summary() and plot() functions
-
+<!-- ### The summary() and plot() functions -->
+**The summary() and plot() functions**.
 The $\small{\texttt{summary()}}$ function allows summarizing the RGCCA analysis.
 
 ```{r}
@@ -915,8 +915,8 @@ components can be viewed as a consensus space that integrates all the
 modalities and facilitates the visualization of the results and their 
 interpretation.
 
-### Bootstrap confidence interval
-
+<!-- ### Bootstrap confidence interval -->
+**Bootstrap confidence intervals**.
 A bootstrap resampling method can be used to assess the reliability of parameter estimates (block-weight/loading vectors) obtained using RGCCA. $\small{\texttt{B = n\_boot}}$ bootstrap 
 samples of the same size as the original data are repeatedly sampled with 
 replacement from the original data. RGCCA is then applied to each bootstrap 
@@ -953,8 +953,8 @@ plot(boot_out, type = "weight",
 Each weight is shown along with its associated bootstrap confidence interval 
 and stars ($\small{\texttt{show\_stars = TRUE}}$) reflecting the p-value of assigning a strictly positive or negative weight to this variable.
 
-### Choice of the shrinkage parameters
-
+<!-- ### Choice of the shrinkage parameters -->
+**Choice of the shrinkage parameters**.
 In the previous section, the shrinkage parameters were manually set. However,  
 the $\small{\texttt{RGCCA}}$ package introduces three fully 
 automated strategies for selecting the optimal shrinkage 
@@ -1054,8 +1054,8 @@ the user with $\small{\texttt{par\_value}}$.
 obtained by cross-validation. We will illustrate this strategy in the second case study,
 in the forthcoming section.
 
-### RGCCA with superblock
-
+<!-- ### RGCCA with superblock -->
+**RGCCA with a superblock**.
 To conclude this section on the analysis of the Russett dataset, we consider 
 Multiple Co-Inertia Analysis \citep{Chessel1996} \citep[MCOA, also called MCIA in][]{Cantini2021} with $2$ components per block. 
 
@@ -1161,8 +1161,8 @@ fit.rgcca$call$connection
 fit.rgcca$call$tau
 ```
 
-### The primal/dual RGCCA algorithm 
-
+<!-- ### The primal/dual RGCCA algorithm  -->
+**The primal/dual RGCCA algorithm**.
 From the dimension of each block ($n>p$ or $n\leq p$), $\small{\texttt{rgcca()}}$ 
 selects automatically the dual formulation for $\mathbf{X}_1$ and 
 $\mathbf{X}_2$ and the primal one for $\mathbf{X}_3$.
@@ -1218,8 +1218,8 @@ applied to the weights corresponding to components $h$:
 \end{equation}
 ```
 
-### SGCCA for the Glioma dataset
-
+<!-- ### SGCCA for the Glioma dataset -->
+**SGCCA for the Glioma dataset**.
 The algorithm associated with the optimization problem 
 (\ref{optim_SGCCA}) is available through the function $\small{\texttt{rgcca()}}$ with the 
 argument $\small{\texttt{method = "sgcca"}}$ or by specifying directly the $\small{\texttt{sparisty}}$ argument as below. 
@@ -1239,8 +1239,8 @@ summary(fit.sgcca)
 and the $\small{\texttt{plot()}}$ function returns the same graphical displays as RGCCA. 
 We skip these representations for sake of brevity.
 
-### Determining the sparsity parameters by cross-validation
-
+<!-- ### Determining the sparsity parameters by cross-validation -->
+**Determining the sparsity parameters by cross-validation**.
 Of course, it is still possible to determine the optimal sparsity parameters by permutation. 
 This is made possible by setting the $\small{\texttt{par\_type}}$ argument to $\small{\texttt{"sparsity"}}$ (instead of $\small{\texttt{"tau"}}$) within the $\small{\texttt{rgcca\_permutation()}}$ function. However, in this section, we 
 will adopt a different approach. 
@@ -1329,8 +1329,8 @@ set, the function $\small{\texttt{rgcca\_transform}}$ can be used.
 projection <- rgcca_transform(fit, blocks_test = testing)
 ```
 
-### Stability selection
-
+<!-- ### Stability selection -->
+**Stability selection**.
 It is possible to stabilize the selected variables using 
 the following procedure.
 
