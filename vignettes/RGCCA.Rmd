@@ -241,7 +241,7 @@ Usually, $c_{jk} = 1$ between two connected blocks and $0$ otherwise.
 
 ## Regularized Generalized Canonical Correlation Analysis (RGCCA)
 
-In this section we briefly present RGCCA \cite{Tenenhaus2011, Tenenhaus2015, Tenenhaus2017} which constitutes the core of the RGCCA framework.  
+In this section we briefly present RGCCA \citep{Tenenhaus2011, Tenenhaus2015, Tenenhaus2017} which constitutes the core of the RGCCA framework.  
 
 A sample-based optimization problem related to \eqref{optim_RGCCA} can be defined by considering $n$ observations of the vector $\boldsymbol x$. It yields a column-partition data matrix  $\mathbf X = [\mathbf X_1, \ldots, \mathbf X_j, \ldots, \mathbf X_J] \in \mathbb{R}^{n \times p}$. Each $n\times p_j$ data matrix $\mathbf X_j$ is called a block and represents a set of $p_j$ variables observed on the same set of $n$ individuals. The variables’ number and nature may differ from one block to another, but the individuals must be the same across blocks. We assume that all variables are centered.
 
@@ -710,7 +710,7 @@ section.
 
 # The RGCCA package
 
-We now present the usefulness and versatility of the RGCCA package on two real datasets.
+We now present the usefulness and versatility of the $\small{\texttt{RGCCA}}$ package on two real datasets.
 
 ## Software design
 
@@ -928,7 +928,7 @@ is computed by assuming that the ratio of the parameter estimate to its standard
 deviation follows the standardized normal distribution), to indicate how reliably 
 parameters were estimated. Since several p-values are constructed simultaneously, 
 FDR correction can be applied to control the False Discovery Rate. This 
-function is available using the $\small{\texttt{rgcca\_bootstrap()}}$ function of the RGCCA 
+function is available using the $\small{\texttt{rgcca\_bootstrap()}}$ function of the $\small{\texttt{RGCCA}}$ 
 package.
 
 ```{r, cache = TRUE, message = FALSE}
