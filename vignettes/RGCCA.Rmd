@@ -709,13 +709,16 @@ The usefulness and versatility of the $\small{\texttt{RGCCA}}$ package are illus
 section.
 
 # The RGCCA package
-
-We now present the usefulness and versatility of the $\small{\texttt{RGCCA}}$ package on two real datasets.
+This section describes how the $\small{\texttt{RGCCA}}$ package is designed and how it can be used on two real datasets.
+<!-- We now present the usefulness and versatility of the $\small{\texttt{RGCCA}}$ package on two real datasets. -->
 
 ## Software design
 
-We now present the functions implemented in the $\small{\texttt{RGCCA}}$ package. 
-The list of functions can be found in Table \ref{exported_functions}.
+The main entry point of the $\small{\texttt{RGCCA}}$ package is the $\small{\texttt{rgcca()}}$ function. This function checks that the blocks are well formatted, preprocesses them, chooses the strategy to handle missing data, chooses if RGCCA or SGCCA should be applied, applies the appropriate method, and returns the fitted model. The different parameters given to the $\small{\texttt{rgcca()}}$ function enable retrieving the different methods presented in Section \ref{special-cases}.
+
+Different functions are then implemented to automatically choose some of the parameters of the $\small{\texttt{rgcca()}}$ function, to evaluate the weights found by the method, make predictions, or provide visualizations.
+<!-- We now present the functions implemented in the $\small{\texttt{RGCCA}}$ package.  -->
+The list of functions available to the user can be found in Table \ref{exported_functions}.
 
 | Function                |  Description                   |
 |:------------------------|:-------------------------------|
