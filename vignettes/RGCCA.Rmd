@@ -716,7 +716,36 @@ This section describes how the $\small{\texttt{RGCCA}}$ package is designed and 
 
 The main entry point of the $\small{\texttt{RGCCA}}$ package is the $\small{\texttt{rgcca()}}$ function. This function checks that the blocks are well formatted, preprocesses them, chooses the strategy to handle missing data, chooses if RGCCA or SGCCA should be applied, applies the appropriate method, and returns the fitted model. The different parameters given to the $\small{\texttt{rgcca()}}$ function enable retrieving the different methods presented in Section \ref{special-cases}.
 
-Different functions are then implemented to automatically choose some of the parameters of the $\small{\texttt{rgcca()}}$ function, to evaluate the weights found by the method, make predictions, or provide visualizations.
+R/SGCCA can be combined with a classification or regression method to predict the value of a block using the projections of the other blocks for new samples. The projection step is implemented in the $\small{\texttt{rgcca\_transform()}}$ function while the prediction step is implemented in the $\small{\texttt{rgcca\_predict()}}$ function. 
+
+This use of R/SGCCA leads to a first procedure to automatically choose the shrinkage parameters, the amount of sparsity, or the number of components. Indeed, it is possible to use cross-validation to find the parameter, among a predefined set of candidate parameters, that leads to the highest cross-validated score. This procedure is implemented in the $\small{\texttt{rgcca\_cv()}}$ function.
+
+The other procedure integrated in the package to automatically choose some of the parameters is a permutation-based strategy very similar to the one proposed in \cite{Witten2009a}. 
+For each set of candidate parameters (generally this will be a $J$-dimensional vector), the following steps are performed:
+
+- S/RGCCA is run on the original data $\mathbf X_1, \ldots, \mathbf X_J$, and we record the value of the objective  function, denoted $t$.
+
+- Multiple times, the rows of $\mathbf X_1, \ldots, \mathbf X_J$ are randomly permuted to obtain permuted data sets $\mathbf X_1^*, \ldots, \mathbf X_J^*$ on which we run S/RGCCA. We record the values of the objective function, denoted $t^*$.
+
+- The resulting p-value is given by the fraction of permuted $t^*$ that exceeds the $t$ obtained from the non-permuted blocks.
+
+- The resulting zstat is defined as $\frac{t-\text{mean}(t^*)}{\text{sd}(t^*)}$.
+
+The best set of tuning parameters is then the set that yields the highest zstat.
+This procedure is available through the $\small{\texttt{rgcca\_permutation()}}$ function.
+
+Once an interesting model has been obtained, the $\small{\texttt{rgcca\_bootstrap()}}$ function can be used to assess the reliability of parameter estimates (block-weight/loading vectors) obtained using RGCCA. Bootstrap samples of the same size as the original data are repeatedly sampled with replacement from the original data. RGCCA is then applied to each bootstrap sample to obtain the RGCCA estimates. We calculate the standard deviation of the estimates across the bootstrap samples, from which we derive bootstrap confidence intervals, t-ratio (defined as the ratio of the parameter estimate to its bootstrap estimate of the standard deviation), and p-value (the p-value is computed by assuming that the ratio of the parameter estimate to its standard deviation follows the standardized normal distribution), to indicate how reliably parameters were estimated. Since several p-values are constructed simultaneously, FDR correction can be applied to control the False Discovery Rate. 
+
+We also implemented a procedure to stabilize the selection of variables.
+\cite{Tenenhaus1998} defines the Variable Importance in Projection (VIP) score for the PLS method. This score can be used for variable selection: the higher the score, the more important the variable. We use this idea to propose a procedure for evaluating the stability of the variable selection procedure of SGCCA. This procedure relies on the following score:
+\begin{equation}
+\displaystyle \mathrm{VIP}(\mathbf{x}_{jh}) = \frac{1}{K} \sum_{k=1}^K \left(\mathbf{a}_{jh}^{(k)2} \mathrm{AVE}\left(\mathbf X_j^{(k)}\right)\right).
+\label{VIP}
+\end{equation}
+SGCCA is run several times using a bootstrap resampling procedure. For each model, the VIPs are computed, and the variables with the higher VIPs averaged over the different models are kept. This procedure is available through the  $\small{\texttt{rgcca\_stability()}}$ function.
+
+The outputs of most of the aforementioned functions can be described and visualized using the generic $\small{\texttt{summary()}}$ and $\small{\texttt{plot()}}$ functions.
+
 <!-- We now present the functions implemented in the $\small{\texttt{RGCCA}}$ package.  -->
 The list of functions available to the user can be found in Table \ref{exported_functions}.
 
@@ -920,19 +949,8 @@ interpretation.
 
 <!-- ### Bootstrap confidence interval -->
 **Bootstrap confidence intervals**.
-A bootstrap resampling method can be used to assess the reliability of parameter estimates (block-weight/loading vectors) obtained using RGCCA. $\small{\texttt{B = n\_boot}}$ bootstrap 
-samples of the same size as the original data are repeatedly sampled with 
-replacement from the original data. RGCCA is then applied to each bootstrap 
-sample to obtain the RGCCA estimates. We calculate the standard deviation of 
-the estimates across the bootstrap samples, from which we derive bootstrap 
-confidence intervals, t-ratio (defined as the ratio of the parameter estimate 
-to its bootstrap estimate of the standard deviation), and p-value (the p-value 
-is computed by assuming that the ratio of the parameter estimate to its standard 
-deviation follows the standardized normal distribution), to indicate how reliably 
-parameters were estimated. Since several p-values are constructed simultaneously, 
-FDR correction can be applied to control the False Discovery Rate. This 
-function is available using the $\small{\texttt{rgcca\_bootstrap()}}$ function of the $\small{\texttt{RGCCA}}$ 
-package.
+We illustrate the use of the $\small{\texttt{rgcca\_bootstrap()}}$ function. It is possible to set the number of bootstrap samples using the $\small{\texttt{n\_boot}}$ argument:
+
 
 ```{r, cache = TRUE, message = FALSE}
 boot_out <- rgcca_bootstrap(fit, n_boot = 500, n_cores = 1)
@@ -953,8 +971,7 @@ plot(boot_out, type = "weight",
      show_stars = TRUE)
 ```
 
-Each weight is shown along with its associated bootstrap confidence interval 
-and stars ($\small{\texttt{show\_stars = TRUE}}$) reflecting the p-value of assigning a strictly positive or negative weight to this variable.
+Each weight is shown along with its associated bootstrap confidence interval and stars ($\small{\texttt{show\_stars = TRUE}}$) reflecting the p-value of assigning a strictly positive or negative weight to this variable.
 
 <!-- ### Choice of the shrinkage parameters -->
 **Choice of the shrinkage parameters**.
@@ -986,30 +1003,8 @@ when the number of individuals is smaller than the number of variables.
 As previously, all the fitted RGCCA objects can be visualized/bootstrapped using 
 the $\small{\texttt{summary()}}$, $\small{\texttt{plot()}}$ and $\small{\texttt{rgcca\_bootstrap()}}$ functions.
 
-**Permutation strategy.** A permutation-based strategy very similar to the one 
-proposed in \cite{Witten2009a} has also been integrated within the $\small{\texttt{RGCCA}}$ package 
-through the $\small{\texttt{rgcca\_permutation()}}$ function. This function is used to 
-select the regularization parameters for R/SGCCA automatically.
-
-For each set of regularization parameters (generally this will be a 
-$J$-dimensional vector), the following steps are performed:
-
-- S/RGCCA is run on the original data 
-$\mathbf X_1, \ldots, \mathbf X_J$, and we record the value of the objective 
-function, denoted $t$.
-
-- $\small{\texttt{n\_perm}}$ times, the rows of $\mathbf X_1, \ldots, \mathbf X_J$ are
-randomly permuted to obtained permuted data sets $\mathbf X_1^*, \ldots, \mathbf X_J^*$.
-S/RGCCA is then run on these permuted data sets, and we record the value of the objective
-function, denoted $t^*$.
-
-- The resulting p-value is given by the fraction of permuted
-$t^*$ that exceeds the $t$ obtained from the non-permuted blocks.
-
-- The resulting zstat is defined as $\frac{t-\text{mean}(t^*)}{\text{sd}(t^*)}$.
-
-The best set of tuning parameters is then the set that yields the highest zstat.
-This procedure is available through the $\small{\texttt{rgcca\_permutation}}$ function.
+**Permutation strategy.** 
+We illustrate here the use of the $\small{\texttt{rgcca\_permutation()}}$ function. The number of permutations can be set using the $\small{\texttt{n\_perms}}$ argument:
 
 ```{r}
 set.seed(123)
@@ -1249,7 +1244,7 @@ This is made possible by setting the $\small{\texttt{par\_type}}$ argument to $\
 will adopt a different approach. 
 
 The optimal tuning parameters can be determined 
-by cross-validating different indicators of quality, namely:
+by cross-validating using different indicators of quality, namely:
 
 - For classification: $\small{\texttt{Accuracy}}$, $\small{\texttt{Kappa}}$, $\small{\texttt{F1}}$, $\small{\texttt{Sensitivity}}$, $\small{\texttt{Specificity}}$, 
 $\small{\texttt{Pos\_Pred\_Value}}$, $\small{\texttt{Neg\_Pred\_Value}}$, $\small{\texttt{Precision}}$, $\small{\texttt{Recall}}$, $\small{\texttt{Detection\_Rate}}$, and
@@ -1262,7 +1257,7 @@ $\small{\texttt{rgcca\_cv}}$ function and is used here for predicting the
 location of the tumors.
 
 In this situation, the goal is to maximize the 
-cross-validated balanced accuracy ($\small{\texttt{metric = "Balanced\_Accuracy"}}$) in a model where we try to predict the response block from all the block components with a user-defined classifier ($\small{\texttt{prediction\_model = "lda"}}$). The cross-validation protocol is set by specifying the arguments the number of fold ($\small{\texttt{k}}$) and the number of Cross-Validation to be run ($\small{\texttt{n\_run}}$). Also, we decide to upper bound the sparsity parameters for $\mathbf X_1$ and $\mathbf X_2$ to $0.2$ to achieve an 
+cross-validated balanced accuracy ($\small{\texttt{metric = "Balanced\_Accuracy"}}$) in a model where we try to predict the response block from all the block components with a user-defined classifier ($\small{\texttt{prediction\_model = "lda"}}$). The cross-validation protocol is set by specifying the arguments the number of folds ($\small{\texttt{k}}$) and the number of cross-validations to be run ($\small{\texttt{n\_run}}$). Also, we decide to upper bound the sparsity parameters for $\mathbf X_1$ and $\mathbf X_2$ to $0.2$ to achieve an 
 attractive amount of sparsity. 
 
 ```{r, cache = TRUE}
@@ -1334,25 +1329,7 @@ projection <- rgcca_transform(fit, blocks_test = testing)
 
 <!-- ### Stability selection -->
 **Stability selection**.
-It is possible to stabilize the selected variables using 
-the following procedure.
-
-\cite{Tenenhaus1998} defines the Variable Importance in Projection
-(VIP) score for the PLS method. This score is used for variable selection: 
-the higher the score, the more important the variable. We use 
-this idea to propose a procedure for evaluating the stability of the variable
-selection procedure of SGCCA. This procedure relies on the following 
-score:
-
-\begin{equation}
-\displaystyle \mathrm{VIP}(\mathbf{x}_{jh}) = \frac{1}{K} \sum_{k=1}^K \left(\mathbf{a}_{jh}^{(k)2} \mathrm{AVE}\left(\mathbf X_j^{(k)}\right)\right).
-\label{VIP}
-\end{equation}
-
-SGCCA is run several times using a bootstrap resampling procedure. For each model,
-the VIPs are computed, and the variables with the higher VIPs averaged over the
-different models are kept. This procedure is available  through the 
-$\small{\texttt{rgcca\_stability}}$ function.
+We finally illustrate the use of the $\small{\texttt{rgcca\_stability()}}$ function:
 
 ```{r, cache = TRUE, message = FALSE}
 set.seed(20091979) 
