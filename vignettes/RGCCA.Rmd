@@ -964,7 +964,7 @@ cv_out <- rgcca_cv(blocks = training, response = 3,
                    prediction_model = "lda",
                    validation = "kfold",
                    k = 7, n_run = 3, metric = "Balanced_Accuracy",
-                   n_cores = 15)
+                   n_cores = 1)
 ```
 
 \code{rgcca\_cv()} relies on the \pkg{caret} package. 
@@ -1017,7 +1017,7 @@ fit_stab <- rgcca_stability(fit,
                               fit$a, function(x) mean(x != 0),
                               FUN.VALUE = 1.0
                             ),
-                            n_boot = 100, verbose = TRUE, n_cores = 15)
+                            n_boot = 100, verbose = TRUE, n_cores = 1)
 ```
 
 Once the most stable variables have been found, a new model using these variables is automatically fitted. This last model can be visualized using the usual \code{summary()} and \code{plot()} functions.
