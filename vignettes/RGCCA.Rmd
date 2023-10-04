@@ -237,7 +237,7 @@ We can discuss the choice of shrinkage parameters by providing interpretations o
 \item   $0<\tau_j<1$ is a good compromise between variance and correlation: the block components are simultaneously stable and as correlated as possible with their connected block components. This setting can be used when the data block is rank deficient.
 \end{itemize}
 
-It is worth pointing out that for each block $j$, an appropriate shrinkage parameter $\tau_j$ can be obtained using various analytical formulae \citep[see][for instance]{Ledoit2004, Schafer2005, Chen2011}. As $\mathbf{M}_j$ must be positive definite, $\tau_j = 0$ can only be selected for a full rank data matrix $\mathbf{X}_j$. In the \pkg{RGCCA} package, for each block, the determination of the shrinkage parameter can be made fully automatic by using the analytical formula proposed by \cite{Schafer2005} or guided by the context of an application by cross-validation or permutation. 
+It is worth pointing out that for each block $j$, an appropriate shrinkage parameter $\tau_j$ can be obtained using various analytical formulae \citep[see][for instance]{Ledoit2004, Schafer2005, Chen2011}. As $\widehat{\mathbf{\Sigma}}_{jj}$ must be positive definite, $\tau_j = 0$ can only be selected for a full rank data matrix $\mathbf{X}_j$. In the \pkg{RGCCA} package, for each block, the determination of the shrinkage parameter can be made fully automatic by using the analytical formula proposed by \cite{Schafer2005} or guided by the context of an application by cross-validation or permutation. 
 
 From the optimization problem (\ref{optim_RGCCA_sample2}), the term "generalized" in the acronym of RGCCA embraces at least four notions. The first one relates to the generalization of two-block methods - including canonical correlation analysis \citep{Hotelling1936}, inter-battery factor analysis \citep{Tucker1958}, and redundancy analysis \citep{Wollenberg1977} - to three or more sets of variables. The second one relates to the ability to take into account some hypotheses on between-block connections: the user decides which blocks are connected and which ones are not. The third one relies on the choices of the shrinkage parameters, allowing the capture of both correlation or covariance-based criteria. The fourth one relates to the function $g$ that enables considering different functions of the covariance. A triplet of parameters embodies this generalization: (g, $\tau_j, \mathbf C$) and by the fact that an arbitrary number of blocks can be handled. This triplet of parameters offers flexibility and allows RGCCA to encompass a large number of multiblock component methods that have been published for sixty years. Tables \ref{twoblock_methods}-\ref{multiblock_hierarchical} give the correspondences between the triplet (g, $\tau_j, \mathbf C$) and the multiblock component methods. For a complete overview, see \cite{Tenenhaus2017}. 
 
@@ -301,11 +301,6 @@ Several criteria were introduced in the literature, and many are listed below.
 | **Multiple factor analysis** \citep{Escofier1994}     | $x^2$  | $\tau_j = 1, j=1, \ldots, J+1$ | $\mathbf{C}_4$ |
 Table: Multiblock component methods in a situation of $J$ blocks: $\mathbf X_1, \ldots,  \mathbf X_J$, connected to a $(J + 1)$th block defined as the concatenation of the blocks: $\mathbf X_{J+1} = [ \mathbf X_1 ,  \mathbf X_2, \ldots,  \mathbf X_J]$.\label{multiblock_hierarchical}
 
-The list of pre-specified multiblock component methods than can be used within the \pkg{RGCCA} package are reported below: 
-
-```{r}
-RGCCA::available_methods()
-```
 
 It is quite remarkable that the single optimization problem (\ref{optim_RGCCA_sample2}) offers a framework for all the multiblock component methods referenced in Tables \ref{twoblock_methods}-\ref{multiblock_hierarchical}.
 It has immediate practical consequences for a unified statistical analysis and implementation strategy. 
@@ -534,51 +529,89 @@ This section describes how the \pkg{RGCCA} package is designed and how it can be
 
 ## Software design
 
-The main entry point of the \pkg{RGCCA} package is the \code{rgcca()} function. This function checks that the blocks are well formatted, preprocesses them, chooses the strategy to handle missing data, chooses if RGCCA or SGCCA should be applied, applies the appropriate method, and returns the fitted model. The different parameters given to the \code{rgcca()} function enable retrieving the different methods presented in Section \ref{special-cases}. This master function has been developed to ease the integration of new RGCCA extensions into the package since the procedure steps are modular.
-
-R/SGCCA can be combined with a classification or regression method to predict the value of a block using the projections of the other blocks for new samples. The projection step is implemented in the \code{rgcca\_transform()} function while the prediction step is implemented in the \code{rgcca\_predict()} function. 
-
-This use of R/SGCCA leads to a first procedure to automatically choose the shrinkage parameters, the amount of sparsity, or the number of components. Indeed, it is possible to use cross-validation to find the parameter among a predefined set of candidate parameters that leads to the highest cross-validated score. This procedure is implemented in the \code{rgcca\_cv()} function.
-
-The other procedure integrated into the package to automatically choose some of the parameters is a permutation-based strategy very similar to the one proposed in \cite{Witten2009a}. 
-For each set of candidate parameters (generally, this will be a $J$-dimensional vector), the following steps are performed:
-
-- S/RGCCA is run on the original data $\mathbf X_1, \ldots, \mathbf X_J$, and we record the value of the objective  function, denoted $t$.
-
-- Multiple times, the rows of $\mathbf X_1, \ldots, \mathbf X_J$ are randomly permuted to obtain permuted data sets $\mathbf X_1^*, \ldots, \mathbf X_J^*$ on which we run S/RGCCA. We record the values of the objective function, denoted $t^*$.
-
-- The resulting p-value is given by the fraction of permuted $t^*$ that exceeds the $t$ obtained from the non-permuted blocks.
-
-- The resulting zstat is defined as $\frac{t-\text{mean}(t^*)}{\text{sd}(t^*)}$.
-
-The best set of tuning parameters is then the set that yields the highest zstat.
-This procedure is available through the \code{rgcca\_permutation()} function.
-
-Once an interesting model has been obtained, the \code{rgcca\_bootstrap()} function can be used to assess the reliability of parameter estimates (block-weight/loading vectors) obtained using RGCCA. Bootstrap samples of the same size as the original data are repeatedly sampled with replacement from the original data. RGCCA is then applied to each bootstrap sample to obtain the RGCCA estimates. We calculate the standard deviation of the estimates across the bootstrap samples, from which we derive bootstrap confidence intervals, t-ratio (defined as the ratio of the parameter estimate to its bootstrap estimate of the standard deviation), and p-value (the p-value is computed by assuming that the ratio of the parameter estimate to its standard deviation follows the standardized normal distribution), to indicate how reliably parameters were estimated. Since several p-values are constructed simultaneously, FDR correction can be applied to control the false discovery rate. 
-
-We also implemented a procedure to stabilize the selection of variables.
-\cite{Tenenhaus1998} defines the variable importance in projection (VIP) score for the PLS method. This score can be used for variable selection: the higher the score, the more important the variable. We use this idea to propose a procedure for evaluating the stability of the variable selection procedure of SGCCA. This procedure relies on the following score:
-\begin{equation}
-\displaystyle \mathrm{VIP}(\mathbf{x}_{jh}) = \frac{1}{K} \sum_{k=1}^K \left(\mathbf{a}_{jh}^{(k)2} \mathrm{AVE}\left(\mathbf X_j^{(k)}\right)\right).
-\label{VIP}
-\end{equation}
-SGCCA is run several times using a bootstrap resampling procedure. The VIPs are computed for each model, and the variables with the higher VIPs averaged over the different models are kept. This procedure is available through the  \code{rgcca\_stability()} function.
-
-The outputs of most of the aforementioned functions can be described and visualized using the generic \code{summary()} and \code{plot()} functions.
-
-The list of functions available to the user can be found in Table \ref{exported_functions}.
+The main user-accessible functions are listed in Table \ref{exported_functions}.
 
 | Function                |  Description                   |
 |:------------------------|:-------------------------------|
 | \code{rgcca}                 | Main entry point of the package, this function allows fitting a R/SGCCA model on a multiblock dataset.           |
-| \code{rgcca\_transform}       | Use a fitted R/SGCCA model to compute the block components of unseen individuals.                                |
-| \code{rgcca\_predict}         | Train a caret model on the block components of a fitted R/SGCCA model and predict values for unseen individuals. |
 | \code{rgcca\_cv}              | Find the best set of parameters for a R/SGCCA model using cross-validation.                                      |
+| \code{rgcca\_predict}         | Train a caret model on the block components of a fitted R/SGCCA model and predict values for unseen individuals. |
+| \code{rgcca\_transform}       | Use a fitted R/SGCCA model to compute the block components of unseen individuals.                                |
 | \code{rgcca\_permutation}     | Find the best set of parameters for a R/SGCCA model using a permutation strategy.                                |
 | \code{rgcca\_bootstrap}       | Evaluate the significance of the block-weight vectors produced by a R/SGCCA model using bootstrap.               |
 | \code{rgcca\_stability}       | Select the most stable variables of a R/SGCCA model using their VIPs.                                            |
 | \code{summary/print/plot}            | Summary, print and plot methods for outputs of functions \code{rgcca}, \code{rgcca\_cv}, \code{rgcca\_permutation}, \code{rgcca\_bootstrap}, and \code{rgcca\_stability}. |
 Table: Functions implemented in the \pkg{RGCCA} package. \label{exported_functions}
+
+These functions are detailed hereafter. 
+
+- \code{rgcca()}
+
+The cornerstone of the RGCCA package is the \code{rgcca()} function. This function enables the construction of a flexible pipeline encompassing all model-building steps. This master function automatically checks the proper formatting of the blocks and performs preprocessing steps based on the \code{scale_block} and \code{scale} arguments. Several user-specified strategies for handling missing data are available through the \code{NA_method} argument. The final step of the pipeline explicitly focuses on the choice of the multiblock component methods. The list of pre-specified multiblock component methods that can be used within the \pkg{RGCCA} package is reported below: 
+
+```{r}
+RGCCA::available_methods()
+```
+
+These method can be retrieved by setting the \code{method} argument of the \code{rgcca()} function. Alternatively, several arguments (\code{tau}, \code{sparsity}, \code{scheme}, \code{connection}, \code{comp_orth}, \code{superblock}) allow users to manually recover the various methods listed in Section 2.3.
+
+- \code{rgcca\_cv}
+
+The optimal tuning parameters can be determined 
+by cross-validating different indicators of quality, namely:
+
+\begin{enumerate}
+\item For classification: \code{Accuracy}, \code{Kappa}, \code{F1}, \code{Sensitivity}, \code{Specificity}, \code{Pos\_Pred\_Value}, \code{Neg\_Pred\_Value}, \code{Precision}, \code{Recall}, \code{Detection\_Rate}, and \code{Balanced\_Accuracy}. 
+
+\item For regression: \code{RMSE} and \code{MAE}.
+\end{enumerate}
+
+This cross-validation protocol is made available through the 
+\code{rgcca\_cv()} function. This function can be used in the presence of a response block specified by the \code{response} argument. The primary objective of this function is to automatically find the set of tuning parameters (shrinkage parameters, amount of sparsity, 
+number of components) that yields the highest cross-validated scores.
+The prediction model aims to predict the response block from all available 
+block components. \code{rgcca\_cv()} harnesses the power of the \code{caret} package. As a direct consequence, an astonishingly large number of prediction models becomes accessible (for an exhaustive list, refer to \code{caret::modelLookup()}). 
+\code{rgcca\_cv()} calls \code{rgcca\_transform()} to obtain the block components 
+associated with the test set and \code{rgcca\_predict()} for making predictions.
+
+- \code{rgcca\_permutation()}
+
+When blocks play a symmetric role (i.e., without a specific response block), a permutation-based strategy, very similar to the one proposed in \cite{Witten2009a} has also been integrated within the \pkg{RGCCA} package through the \code{rgcca\_permutation()} function. 
+
+For each set of candidate parameters, the following steps are performed:
+
+\begin{enumerate}
+\item S/RGCCA is run on the original data 
+$\mathbf X_1, \ldots, \mathbf X_J$, and we record the value of the objective 
+function, denoted as $t$.
+\item \code{n\_perm} times, the rows of $\mathbf X_1, \ldots, \mathbf X_J$ are
+randomly permuted to obtained permuted data sets $\mathbf X_1^*, \ldots, \mathbf X_J^*$.
+S/RGCCA is then run on these permuted data sets, and we record the value of the objective
+function, denoted as $t^*$.
+\item The resulting p-value is determined by calculting the fraction of permuted $t^*$ values that exceeds the non-permuted $t$ value.
+\item The resulting zstat is defined as $\frac{t-\text{mean}(t^*)}{\text{sd}(t^*)}$.
+\end{enumerate}
+
+The best set of tuning parameters is then the set that yields the highest zstat.
+This procedure is available through the \code{rgcca\_permutation()} function.
+
+
+- \code{rgcca\_bootstrap()}
+
+Once a fitted model has been obtained, the \code{rgcca\_bootstrap()} function can be used to assess the reliability of parameter estimates (block-weight/loading vectors). Bootstrap samples of the same size as the original data are repeatedly sampled with replacement from the original data. RGCCA is then applied to each bootstrap sample to obtain the RGCCA estimates. We calculate the standard deviation of the estimates across the bootstrap samples, from which we derive bootstrap confidence intervals, t-ratio (defined as the ratio of the parameter estimate to its bootstrap estimate of the standard deviation), and p-value (the p-value is computed by assuming that the ratio of the parameter estimate to its standard deviation follows the standardized normal distribution), to indicate the reliability of parameter estimates. 
+
+Since multiple p-values are constructed simultaneously, correction for multiple testing applies and, adjusted p-values are returned.
+
+- \code{rgcca\_stability()}
+
+We also implemented a procedure to stabilize the selection of variables in SGCCA. \cite{Tenenhaus1998} defines the variable importance in projection (VIP) score for the PLS method. This score can be used for variable selection: the higher the score, the more important the variable. We use this idea to propose a procedure for evaluating the stability of the variable selection procedure of SGCCA. This procedure relies on the following score:
+\begin{equation}
+\displaystyle \mathrm{VIP}(\mathbf{x}_{jh}) = \frac{1}{K} \sum_{k=1}^K \left(\mathbf{a}_{jh}^{(k)2} \mathrm{AVE}\left(\mathbf X_j^{(k)}\right)\right).
+\label{VIP}
+\end{equation}
+SGCCA is applied several times using a bootstrap resampling procedure. For each fitted model, the VIPs are computed for each variable. The higher VIPs averaged over the different models are kept. This procedure is available through the  \code{rgcca\_stability()} function.
+
+The outputs of most of the aforementioned functions can be described and visualized using the generic \code{summary()}, \code{print()} and \code{plot()} functions.
 
 The following two sections provide examples illustrating the practical applications of these functions.
 
@@ -612,9 +645,9 @@ The different blocks of variables $\mathbf X_1, \mathbf X_2, \mathbf X_3$ are ar
 
 ```{r}
 A <- list(
-  X1 = Russett[, c("gini", "farm", "rent")],
-  X2 = Russett[, c("gnpr", "labo")],
-  X3 = Russett[, c("inst", "ecks",  "death", "demostab", "dictator")])
+  Agriculture = Russett[, c("gini", "farm", "rent")],
+  Industrial = Russett[, c("gnpr", "labo")],
+  Politic = Russett[, c("inst", "ecks",  "death", "demostab", "dictator")])
 
 lab <- factor(
   apply(Russett[, 9:11], 1, which.max),
@@ -1027,7 +1060,7 @@ The RGCCA framework gathers sixty years of multiblock component methods and offe
 
 The \pkg{RGCCA} package will be a valuable resource for researchers and practitioners who are interested in multiblock data analysis to gain new insights and improve decision-making.
 
-The RGCCA framework is constantly evolving and extending. Indeed, we proposed RGCCA for multigroup data \citep{Tenenhaus2014b}, RGCCA for multiway data \citep{Gloaguen2020, Girka2023}, and RGCCA for (sparse and irregular) functional data \citep{Sort2023}. In addition, maximizing successive criteria may be sub-optimal from an optimization point of view, where a single global criterion is preferred. A global version of RGCCA \citep{Gloaguen2020b}, which allows simultaneously extracting several components per block (no deflation procedure required), has been proposed. Also, it is possible to use RGCCA in structural equation modeling with latent and emergent variables for obtaining consistent and asymptotically normal estimators of the parameters \citep{Tenenhaus2023}. At last, several alternatives for handling missing values are discussed in \cite{Peltier2022}. Work in progress includes the integration of all these novel approaches in the next release of the \pkg{RGCCA} package.
+The RGCCA framework is constantly evolving and extending. Indeed, we proposed RGCCA for multigroup data \citep{Tenenhaus2014b}, RGCCA for multiway data \citep{Gloaguen2020, Girka2023}, and RGCCA for (sparse and irregular) functional data \citep{Sort2023}. In addition, maximizing successive criteria may be sub-optimal from an optimization point of view, where a single global criterion is preferred. A global version of RGCCA \citep{Gloaguen2020b}, which allows simultaneously extracting several components per block (no deflation procedure required), has been proposed. Also, it is possible to use RGCCA in structural equation modeling with latent and emergent variables for obtaining consistent and asymptotically normal estimators of the parameters \citep{Tenenhaus2023}. At last, several alternatives for handling missing values are discussed in \cite{Peltier2022}. Work in progress includes the integration of all these novel approaches in the next release of the \pkg{RGCCA} package. The modular design of the \code{rgcca()} function will greatly simplify the integration of these extensions into the package.
 
 # Acknowledgments {-}
 
