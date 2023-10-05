@@ -31,9 +31,9 @@ sgcca_postprocess <- function(
         nMAX <- length(which(a[[i]] != 0))
         warning(
           "The l2 constraint is not saturated for block #", i,
-          ". The sparsity parameter has to be in the range [",
-          sqrt(nMAX / pjs[i]),
-          ", 1] and is equal to ", sparsity[i], "."
+          ". The intersection of the l1 and l2 spheres is empty for ",
+          "a sparsity parameter equal to ", sparsity[i],
+          ". Try to increase the value of the sparsity parameter."
         )
       }
     }
