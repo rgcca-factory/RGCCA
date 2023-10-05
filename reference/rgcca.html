@@ -397,7 +397,7 @@ An efficient algorithm to satisfy l1 and l2 constraints.
     </div>
     <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>
-    <div class="dont-index"><p><code><a href="plot.html">plot.rgcca</a></code>, <code><a href="print.html">print.rgcca</a></code>,
+    <div class="dont-index"><p><code><a href="plot.html">plot.rgcca</a></code>, <code><a href="summary.html">summary.rgcca</a></code>,
 <code><a href="rgcca_cv.html">rgcca_cv</a></code>,
 <code><a href="rgcca_permutation.html">rgcca_permutation</a></code>
 <code><a href="rgcca_predict.html">rgcca_predict</a></code></p></div>
@@ -423,22 +423,8 @@ An efficient algorithm to satisfy l1 and l2 constraints.
 <span class="r-in"><span><span class="va">fit_rgcca</span> <span class="op">&lt;-</span> <span class="fu">rgcca</span><span class="op">(</span>blocks <span class="op">=</span> <span class="va">blocks</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">fit_rgcca</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Call: method='rgcca', superblock=FALSE, scale=TRUE, scale_block='inertia',</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> init='svd', bias=TRUE, tol=1e-08, NA_method='na.ignore', ncomp=c(1,1,1),</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> response=NULL, comp_orth=TRUE </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> There are J = 3 blocks.</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> The design matrix is:</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>             agriculture industry politic</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> agriculture           0        1       1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> industry              1        0       1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> politic               1        1       0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> The factorial scheme is used.</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Sum_{j,k} c_jk g(cov(X_j a_j, X_k a_k) = 0.7172 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> The regularization parameter used for agriculture is: 1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> The regularization parameter used for industry is: 1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> The regularization parameter used for politic is: 1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Fitted RGCCA model. </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> The algorithm converged to a stationnary point after 3 iterations.</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">fit_rgcca</span>, type <span class="op">=</span> <span class="st">"weight"</span>, block <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">3</span><span class="op">)</span></span></span>
 <span class="r-plt img"><img src="rgcca-1.png" alt="" width="700" height="433"></span>
@@ -482,22 +468,10 @@ An efficient algorithm to satisfy l1 and l2 constraints.
 <span class="r-plt img"><img src="rgcca-4.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">fit_rgcca</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Call: method='rgcca', superblock=FALSE, scale=TRUE, scale_block='inertia',</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> init='svd', bias=TRUE, tol=1e-08, NA_method='na.ignore', ncomp=c(2,2,2),</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> response=NULL, comp_orth=TRUE </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> There are J = 3 blocks.</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> The design matrix is:</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>             agriculture industry politic</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> agriculture           0        1       1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> industry              1        0       1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> politic               1        1       0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> The factorial scheme is used.</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Sum_{j,k} c_jk g(cov(X_j a_j, X_k a_k) = 0.7471 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> The regularization parameter used for agriculture is: 1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> The regularization parameter used for industry is: 1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> The regularization parameter used for politic is: 1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Fitted RGCCA model. </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> The algorithm converged to a stationnary point:</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 	- After 3 iterations for component 1.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 	- After 3 iterations for component 2.</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">fit_rgcca</span>,</span></span>
 <span class="r-in"><span>  type <span class="op">=</span> <span class="st">"sample"</span>, block <span class="op">=</span> <span class="fl">1</span>,</span></span>
@@ -515,24 +489,10 @@ An efficient algorithm to satisfy l1 and l2 constraints.
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">fit_rgcca</span> <span class="op">&lt;-</span> <span class="fu">rgcca</span><span class="op">(</span><span class="va">blocks</span>, method <span class="op">=</span> <span class="st">"mcoa"</span>, ncomp <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">fit_rgcca</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Call: method='mcoa', superblock=TRUE, scale=TRUE, scale_block='inertia', init='svd',</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> bias=TRUE, tol=1e-08, NA_method='na.ignore', ncomp=c(2,2,2,2), response=NULL,</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> comp_orth=FALSE </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> There are J = 4 blocks.</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> The design matrix is:</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>             agriculture industry politic superblock</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> agriculture           0        0       0          1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> industry              0        0       0          1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> politic               0        0       0          1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> superblock            1        1       1          0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> The factorial scheme is used.</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Sum_{j,k} c_jk g(cov(X_j a_j, X_k a_k) = 3.4826 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> The regularization parameter used for agriculture is: 1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> The regularization parameter used for industry is: 1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> The regularization parameter used for politic is: 1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> The regularization parameter used for superblock is: 0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Fitted MCOA model. </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> The algorithm converged to a stationnary point:</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 	- After 1 iterations for component 1.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 	- After 1 iterations for component 2.</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># biplot representation</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">fit_rgcca</span>, type <span class="op">=</span> <span class="st">"biplot"</span>, block <span class="op">=</span> <span class="fl">4</span>, resp <span class="op">=</span> <span class="va">politic</span><span class="op">)</span></span></span>

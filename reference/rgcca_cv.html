@@ -380,6 +380,11 @@ median, first quartile, third quartile) of the cross-validated score for
 each set of parameters that has been tested.</p></dd>
 
 
+<dt>classification </dt>
+<dd><p>A boolean indicating if the model performs a
+classification task.</p></dd>
+
+
 <dt>prediction_model </dt>
 <dd><p>A string giving the model used for
 prediction.</p></dd>
@@ -421,47 +426,8 @@ score.</p>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">cv_out</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Call: method='rgcca', superblock=FALSE, scale=TRUE, scale_block=TRUE, init='svd',</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> bias=TRUE, tol=1e-08, NA_method='na.ignore', ncomp=c(1,1,1), response=3,</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> comp_orth=TRUE </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> There are J = 3 blocks.</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> The design matrix is:</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>             agriculture industry politic</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> agriculture           0        0       1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> industry              0        0       1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> politic               1        1       0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> The factorial scheme is used.</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Tuning parameters (tau) used: </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>    agriculture industry politic</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1        1.000    1.000       0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2        0.889    0.889       0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3        0.778    0.778       0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4        0.667    0.667       0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 5        0.556    0.556       0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6        0.444    0.444       0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 7        0.333    0.333       0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 8        0.222    0.222       0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 9        0.111    0.111       0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 10       0.000    0.000       0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Validation: kfold with 3 folds and 3 run(s)) </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Prediction model: lda </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>    Tuning parameters Mean Accuracy     Sd</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1     1.00/1.00/0.00         0.730 0.0718</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2     0.89/0.89/0.00         0.730 0.0718</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3     0.78/0.78/0.00         0.730 0.0718</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4     0.67/0.67/0.00         0.730 0.0718</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 5     0.56/0.56/0.00         0.730 0.0718</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6     0.44/0.44/0.00         0.744 0.0677</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 7     0.33/0.33/0.00         0.744 0.0677</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 8     0.22/0.22/0.00         0.751 0.0780</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 9     0.11/0.11/0.00         0.751 0.0780</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 10    0.00/0.00/0.00         0.781 0.0784</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> The best combination is: 0.00/0.00/0.00 for a mean Accuracy of 0.781.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> RGCCA cross-validation object obtained with 10 sets of parameters using 3 folds.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Classification was performed using lda model.</span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">cv_out</span><span class="op">)</span></span></span>
 <span class="r-plt img"><img src="rgcca_cv-1.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span></span></span>
@@ -526,7 +492,6 @@ score.</p>
 <span class="r-in"><span> <span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">cv_out</span><span class="op">)</span></span></span>
 <span class="r-in"><span> <span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">cv_out</span>, display_order <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">}</span></span></span>
-<span class="r-in"><span></span></span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>
