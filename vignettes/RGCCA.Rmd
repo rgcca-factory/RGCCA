@@ -692,7 +692,7 @@ summary(fit)
 The block-weight vectors solution of the optimization problem (\ref{optim_RGCCA}) are available as an output of the \code{rgcca()} function in \code{fit\$a} and correspond exactly to the weight vectors reported in Figure 5 of \cite{Tenenhaus2011}. 
 It is possible to display specific block-weight vector(s) (\code{type = "weight"}) block-loadings vector(s) (\code{type = "loadings"}) using the generic \code{plot()} function and specifying the arguments \code{block} and \code{comp} accordingly. The ${ \mathbf a_j^{(k)}}^\star$, mentioned in Section [Higher level RGCCA algorithm], are available in \code{fit\$astar}.
 
-```{r, fig.height = 12, fig.width=18, fig.cap = 'Block-weight vectors of a fitted RGCCA model.', fig.pos = "H"}
+```{r fig-weight, fig.height = 12, fig.width=18, fig.cap = 'Block-weight vectors of a fitted RGCCA model.', fig.pos = "H"}
 plot(fit, type = "weight", block = 1:3, comp = 1,
      display_order = FALSE, cex = 2)
 ```
@@ -700,7 +700,7 @@ plot(fit, type = "weight", block = 1:3, comp = 1,
 As a component-based method, the \pkg{RGCCA} package provides block components as an output of the \code{rgcca()} function in \code{fit\$Y}.
 Various graphical representations of the block components are available using the \code{plot()} function on a fitted RGCCA object by setting the \code{type} argument. They include factor plot (\code{"sample"}), correlation circle (\code{"cor_circle"}), or biplot (\code{"biplot"}). This graphical display allows visualization of the sources of variability within blocks, the relationships between variables within and between blocks, and the correlation between blocks. The factor plot of the countries obtained by crossing the block components associated with the agricultural inequality and industrial development blocks, marked by their political regime in 1960, is shown below.
 
-```{r, fig.align='center', fig.cap = '\\label{fig:sample}Graphical display of the countries by drawing the block component of the first block against the block component of the second block, colored according to their political regime.', fig.height = 12, fig.width=18, fig.pos = "H"}
+```{r fig-sample1, fig.align='center', fig.cap = '\\label{fig:sample}Graphical display of the countries by drawing the block component of the first block against the block component of the second block, colored according to their political regime.', fig.height = 12, fig.width=18, fig.pos = "H"}
 plot(fit, type = "sample",
      block = 1:2, comp = 1,
      resp = lab, repel = TRUE, cex = 2)
@@ -711,20 +711,20 @@ Countries aggregate together when they share similarities. It may be noted that 
 The AVEs of the different blocks are reported in the axes of Figure \ref{fig:sample}.
 All AVEs (defined in \eqref{AVE_X}-\eqref{AVE_inner}) are available as output of the \code{rgcca()} function in \code{fit\$AVE}. These indicators of model quality can also be visualized using the generic \code{plot()} function.
 
-```{r, fig.align='center', fig.cap = 'Average variance explained of the different blocks.', fig.height = 8, fig.width=18, fig.pos = "H"}
+```{r fig-ave, fig.align='center', fig.cap = 'Average variance explained of the different blocks.', fig.height = 8, fig.width=18, fig.pos = "H"}
 plot(fit, type = "ave", cex = 2)
 ```
 
 The strength of the relations between each block component and each variable can be visualized using correlation circles or biplot representations.
 
-```{r, fig.align='center', fig.cap = 'Correlation circle associated with the first two components of the first block.', fig.height = 12, fig.width=18, fig.pos = "H"}
+```{r fig-cor-circle, fig.align='center', fig.cap = 'Correlation circle associated with the first two components of the first block.', fig.height = 12, fig.width=18, fig.pos = "H"}
 plot(fit, type = "cor_circle", block = 1, comp = 1:2, 
      display_blocks = 1:3, cex = 2)
 ```
 
 By default, all the variables are displayed on the correlation circle. However, it is possible to choose the block(s) to display (\code{display\_blocks}) in the correlation_circle. 
 
-```{r, fig.align='center', fig.cap = 'Biplot associated with the first two components of the first block.', fig.height = 12, fig.width=18, fig.pos = "H"}
+```{r fig-biplot1, fig.align='center', fig.cap = 'Biplot associated with the first two components of the first block.', fig.height = 12, fig.width=18, fig.pos = "H"}
 plot(fit, type = "biplot", block = 1, 
      comp = 1:2, repel = TRUE, 
      resp = lab, cex = 2,
@@ -738,6 +738,7 @@ We illustrate the use of the \code{rgcca\_bootstrap()} function. It is possible 
 
 
 ```{r, cache = TRUE, message = FALSE}
+set.seed(0)
 boot_out <- rgcca_bootstrap(fit, n_boot = 500, n_cores = 1)
 ```
 
@@ -749,7 +750,7 @@ summary(boot_out, block = 1:3, ncomp = 1)
 
 and displayed using the \code{plot()} function.
 
-```{r, fig.cap = 'Bootstrap confidence intervals for the block-weight vectors.', fig.height = 12, fig.width=18, fig.pos = "H"}
+```{r fig-boot1, fig.cap = 'Bootstrap confidence intervals for the block-weight vectors.', fig.height = 12, fig.width=18, fig.pos = "H"}
 plot(boot_out, type = "weight", 
      block = 1:3, comp = 1, 
      display_order = FALSE, cex = 2,
@@ -782,7 +783,7 @@ As before, all the fitted RGCCA objects can be visualized/bootstrapped using the
 We illustrate the use of the \code{rgcca\_permutation()} function here. The number of permutations can be set using the \code{n\_perms} argument:
 
 ```{r}
-set.seed(123)
+set.seed(0)
 perm_out <- rgcca_permutation(blocks = A, connection = C,
                               par_type = "tau",
                               par_length = 10,
@@ -798,7 +799,7 @@ summary(perm_out)
 
 and displayed using the generic \code{plot()} function.
 
-```{r, fig.height = 12, fig.width=18, fig.pos = "H", fig.cap = "Values of the objective function of RGCCA against the sets of tuning parameters, triangles correspond to evaluations on non-permuted datasets."}
+```{r fig-permutation, fig.height = 12, fig.width=18, fig.pos = "H", fig.cap = "Values of the objective function of RGCCA against the sets of tuning parameters, triangles correspond to evaluations on non-permuted datasets."}
 plot(perm_out, cex = 2)
 ```
 
@@ -830,7 +831,7 @@ summary(fit.mcoa)
 It is possible to display specific output as previously using the generic \code{plot()} function by specifying the argument \code{type} accordingly. MCOA enables individuals to be represented in the space spanned by the first global components. The biplot representation associated with this consensus space is given below.
 
 
-```{r, fig.align='center', fig.cap = 'Biplot of the countries obtained by crossing the two first components of the superblock. Individuals are colored according to their political regime and variables according to their block membership.', fig.height = 12, fig.width=18, fig.pos = "H"}
+```{r fig-biplot2, fig.align='center', fig.cap = 'Biplot of the countries obtained by crossing the two first components of the superblock. Individuals are colored according to their political regime and variables according to their block membership.', fig.height = 12, fig.width=18, fig.pos = "H"}
 plot(fit.mcoa, type = "biplot", 
      block = 4, comp = 1:2, 
      response = lab, 
@@ -903,7 +904,7 @@ system.time(
 RGCCA enables visual inspection of the spatial relationships between classes. 
 This facilitates assessment of the quality of the classification and makes it possible to determine which components capture the discriminant information readily.
 
-```{r, fig.align='center', fig.height = 12, fig.width=18, fig.pos = "H", fig.cap = "Graphical display of the tumors obtained by crossing the block components, and colored according to their location."}
+```{r fig-sample2, fig.align='center', fig.height = 12, fig.width=18, fig.pos = "H", fig.cap = "Graphical display of the tumors obtained by crossing the block components, and colored according to their location."}
 plot(fit.rgcca, type = "sample", block = 1:2,
      comp = 1, response = Loc, cex = 2)
 ```
@@ -950,7 +951,7 @@ This is made possible by setting the \code{par\_type} argument to \code{"sparsit
 This cross-validation protocol is made available through the \code{rgcca\_cv} function and is used here to predict the tumors' location. In this situation, the goal is to maximize the cross-validated balanced accuracy (\code{metric = "Balanced\_Accuracy"}) in a model where we try to predict the response block from all the block components with a user-defined classifier (\code{prediction\_model = "lda"}). The cross-validation protocol is set by specifying the arguments like the number of folds (\code{k}) and the number of cross-validations to be run (\code{n\_run}). Also, we decide to upper bound the sparsity parameters for $\mathbf X_1$ and $\mathbf X_2$ to $0.2$ to achieve an attractive amount of sparsity. 
 
 ```{r, cache = TRUE}
-set.seed(20091979) 
+set.seed(0) 
 in_train <- caret::createDataPartition(
   blocks[[3]], p = .75, list = FALSE
 )
@@ -976,7 +977,7 @@ summary(cv_out)
 
 and displayed using the generic \code{plot()} function.
 
-```{r, fig.height = 12, fig.width=18, fig.pos = "H", fig.cap = "Balanced accuracies of the models on the different validation folds for the different tuning parameter sets."}
+```{r fig-cv, fig.height = 12, fig.width=18, fig.pos = "H", fig.cap = "Balanced accuracies of the models on the different validation folds for the different tuning parameter sets."}
 plot(cv_out, cex = 2)
 ```
 
@@ -1011,7 +1012,7 @@ projection <- rgcca_transform(fit, blocks_test = testing)
 We finally illustrate the use of the \code{rgcca\_stability()} function:
 
 ```{r, cache = TRUE, message = FALSE}
-set.seed(20091979) 
+set.seed(0) 
 fit_stab <- rgcca_stability(fit,
                             keep = vapply(
                               fit$a, function(x) mean(x != 0),
@@ -1024,6 +1025,7 @@ Once the most stable variables have been found, a new model using these variable
 We can finally apply the bootstrap procedure on the most stable variables.
 
 ```{r, cache = TRUE}
+set.seed(0)
 boot_out <- rgcca_bootstrap(fit_stab, n_boot = 500)
 ```
   
@@ -1031,7 +1033,7 @@ The bootstrap results can be visualized using the generic \code{plot()} function
 We use the \code{n\_mark} parameter to display the top 50 variables of GE.
 
 
-```{r, fig.height = 12, fig.width=18, fig.pos = "H", fig.cap = "Bootstrap confidence intervals for the block-weight vectors associated with GE."}
+```{r fig-boot2, fig.height = 12, fig.width=18, fig.pos = "H", fig.cap = "Bootstrap confidence intervals for the block-weight vectors associated with GE."}
 plot(boot_out, block = 1,
      display_order = FALSE,
      n_mark = 50, cex = 1.5, cex_sub = 17,
