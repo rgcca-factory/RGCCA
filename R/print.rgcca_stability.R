@@ -3,5 +3,6 @@
 #' @order 5
 print.rgcca_stability <- function(x, ...) {
   stopifnot(is(x, "rgcca_stability"))
-  print(x$rgcca_res, ...)
+  cat("RGCCA stability object obtained with", x$n_boot, "bootstrap samples.")
+  cat("\n")
 }

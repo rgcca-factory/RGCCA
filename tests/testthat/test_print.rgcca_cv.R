@@ -22,7 +22,7 @@ test_that("print.rgcca_cv prints the expected text", {
       par_value = c(0, 0.2, 0.3), n_run = 1, n_cores = 1,
       par_length = 2, verbose = FALSE
     )
-    print(res, type = "quantile")
+    print(res)
   })
 })
 
@@ -35,32 +35,6 @@ test_that("print.rgcca_cv prints the expected text 2", {
                     par_value = c(0, 0.2, 0.3), n_run = 1, n_cores = 1,
                     par_length = 2, verbose = FALSE, prediction_model = "lda"
     )
-    print(res, type = "sd")
-  })
-})
-
-test_that("print.rgcca_cv prints the expected text 3", {
-  skip_if_not(as.logical(Sys.getenv("TEST_SNAPSHOTS")))
-  local_edition(3)
-  expect_snapshot({
-    res <- rgcca_cv(blocks,
-      validation = "loo", metric = "MAE",
-      response = 3, method = "sgcca", par_type = "sparsity",
-      n_run = 1, n_cores = 1, par_length = 2, verbose = FALSE
-    )
-    print(res, type = "sd")
-  })
-})
-
-test_that("print.rgcca_cv prints the expected text 4", {
-  skip_if_not(as.logical(Sys.getenv("TEST_SNAPSHOTS")))
-  local_edition(3)
-  expect_snapshot({
-    res <- rgcca_cv(blocks_classif,
-      response = 3, method = "sgcca", par_type = "sparsity",
-      n_run = 1, n_cores = 1, par_length = 2, verbose = FALSE,
-      prediction_model = "lda", metric = "Kappa"
-    )
-    print(res, type = "sd")
+    print(res)
   })
 })

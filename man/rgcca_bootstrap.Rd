@@ -103,5 +103,5 @@ plot(boot_out, type = "weight", block = 1:3, comp = 1,
 }
 \seealso{
 \code{\link[RGCCA]{plot.rgcca_bootstrap}},
-\code{\link[RGCCA]{print.rgcca_bootstrap}}
+\code{\link[RGCCA]{summary.rgcca_bootstrap}}
 }

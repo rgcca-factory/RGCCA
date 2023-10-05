@@ -20,10 +20,9 @@ as_disjunctive <- function(vec, levs = NULL) {
     G <- factor(vec)
   }
   # Change na_option locally to keep rows of NA
-  current_na_action <- options("na.action")
-  options(na.action = "na.pass")
+  op <- options(na.action = "na.pass")
+  on.exit(options(op))
   y <- data.frame(model.matrix(~ G - 1, data = G, xlev = levs))
-  options(current_na_action)
 
   new_colnames <- substr(colnames(y), 2, nchar(colnames(y)))
   colnames(y) <- new_colnames

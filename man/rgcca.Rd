@@ -491,7 +491,7 @@ An efficient algorithm to satisfy l1 and l2 constraints.
 49emes Journees de Statistique, May 2017, Avignon, France. (hal-01630744)
 }
 \seealso{
-\code{\link[RGCCA]{plot.rgcca}}, \code{\link[RGCCA]{print.rgcca}},
+\code{\link[RGCCA]{plot.rgcca}}, \code{\link[RGCCA]{summary.rgcca}},
 \code{\link[RGCCA]{rgcca_cv}},
 \code{\link[RGCCA]{rgcca_permutation}}
 \code{\link[RGCCA]{rgcca_predict}}
