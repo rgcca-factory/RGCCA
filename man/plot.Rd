@@ -264,6 +264,7 @@ plot(fit_rgcca, type = "both")
 plot(fit_rgcca, type = "biplot")
 plot(fit_rgcca, type = "ave")
 
+\dontrun{
 # With a superblock
 fit_mcoa <- rgcca(blocks = blocks2, method = "mcoa", ncomp = 2)
 
@@ -304,5 +305,6 @@ res <- rgcca_stability(
 )
 
 plot(res, type = "samples")
+}
 
 }

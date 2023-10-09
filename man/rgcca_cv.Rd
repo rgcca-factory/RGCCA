@@ -294,6 +294,7 @@ blocks <- list(
 
 cv_out <- rgcca_cv(blocks, response = 3, method = "rgcca",
                    par_type = "tau",
+                   par_length = 5,
                    prediction_model = "lda", #caret::modelLookup()
                    metric = "Accuracy",
                    k=3, n_run = 3,

@@ -145,6 +145,7 @@
 #' plot(fit_rgcca, type = "biplot")
 #' plot(fit_rgcca, type = "ave")
 #'
+#' \dontrun{
 #' # With a superblock
 #' fit_mcoa <- rgcca(blocks = blocks2, method = "mcoa", ncomp = 2)
 #'
@@ -185,6 +186,7 @@
 #' )
 #'
 #' plot(res, type = "samples")
+#' }
 #'
 #' @importFrom gridExtra grid.arrange
 #' @importFrom ggplot2 ggplot aes
