@@ -52,8 +52,6 @@ Suggests:
     vdiffr
 VignetteBuilder:
     knitr
-biocViews: Visualization, PrincipalComponent, DimensionReduction,
-    StructuralEquationModels
 LazyData: true
 RoxygenNote: 7.2.3
 Encoding: UTF-8
