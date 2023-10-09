@@ -391,13 +391,12 @@ vectors are displayed.</p></li>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">fit_rgcca</span>, type <span class="op">=</span> <span class="st">"ave"</span><span class="op">)</span></span></span>
 <span class="r-plt img"><img src="plot-8.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span></span></span>
 <span class="r-in"><span><span class="co"># With a superblock</span></span></span>
 <span class="r-in"><span><span class="va">fit_mcoa</span> <span class="op">&lt;-</span> <span class="fu"><a href="rgcca.html">rgcca</a></span><span class="op">(</span>blocks <span class="op">=</span> <span class="va">blocks2</span>, method <span class="op">=</span> <span class="st">"mcoa"</span>, ncomp <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">fit_mcoa</span>, type <span class="op">=</span> <span class="st">"both"</span>, response <span class="op">=</span> <span class="va">status</span><span class="op">)</span></span></span>
-<span class="r-plt img"><img src="plot-9.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">fit_mcoa</span>, type <span class="op">=</span> <span class="st">"biplot"</span>, response <span class="op">=</span> <span class="va">status</span><span class="op">)</span></span></span>
-<span class="r-plt img"><img src="plot-10.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## Plotting of an rgcca_cv object</span></span></span>
 <span class="r-in"><span><span class="va">cv_out</span> <span class="op">&lt;-</span> <span class="fu"><a href="rgcca_cv.html">rgcca_cv</a></span><span class="op">(</span><span class="va">blocks</span>,</span></span>
@@ -411,39 +410,29 @@ vectors are displayed.</p></li>
 <span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">cv_out</span>, type <span class="op">=</span> <span class="st">"sd"</span><span class="op">)</span></span></span>
-<span class="r-plt img"><img src="plot-11.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">cv_out</span>, type <span class="op">=</span> <span class="st">"quantile"</span><span class="op">)</span></span></span>
-<span class="r-plt img"><img src="plot-12.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## Ploting of an rgcca_permutation object</span></span></span>
 <span class="r-in"><span><span class="va">perm_out</span> <span class="op">&lt;-</span> <span class="fu"><a href="rgcca_permutation.html">rgcca_permutation</a></span><span class="op">(</span><span class="va">blocks2</span>, par_type <span class="op">=</span> <span class="st">"tau"</span>,</span></span>
 <span class="r-in"><span>                              n_perms <span class="op">=</span> <span class="fl">2</span>, n_cores <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">perm_out</span>, type <span class="op">=</span> <span class="st">"crit"</span><span class="op">)</span></span></span>
-<span class="r-plt img"><img src="plot-13.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">perm_out</span>, type <span class="op">=</span> <span class="st">"zstat"</span><span class="op">)</span></span></span>
-<span class="r-plt img"><img src="plot-14.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## Plotting of an rgcca_bootstrap object</span></span></span>
 <span class="r-in"><span><span class="va">boot_out</span> <span class="op">&lt;-</span> <span class="fu"><a href="rgcca_bootstrap.html">rgcca_bootstrap</a></span><span class="op">(</span><span class="va">fit_rgcca</span>, n_boot <span class="op">=</span> <span class="fl">20</span>, n_cores <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Bootstrap samples sanity check...</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> OK</span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">boot_out</span>, type <span class="op">=</span> <span class="st">"weights"</span>, block <span class="op">=</span> <span class="fl">1</span>, comp <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span></span>
-<span class="r-plt img"><img src="plot-15.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">boot_out</span>, type <span class="op">=</span> <span class="st">"loadings"</span>, comp <span class="op">=</span> <span class="fl">2</span>,</span></span>
 <span class="r-in"><span>     display_order <span class="op">=</span> <span class="cn">FALSE</span>, show_stars <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></span>
-<span class="r-plt img"><img src="plot-16.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## Plotting of an rgcca_stability object</span></span></span>
 <span class="r-in"><span><span class="va">fit.sgcca</span> <span class="op">&lt;-</span> <span class="fu"><a href="rgcca.html">rgcca</a></span><span class="op">(</span><span class="va">blocks2</span>, sparsity <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">.8</span>, <span class="fl">.9</span>, <span class="fl">.6</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">res</span> <span class="op">&lt;-</span> <span class="fu"><a href="rgcca_stability.html">rgcca_stability</a></span><span class="op">(</span></span></span>
 <span class="r-in"><span>  <span class="va">fit.sgcca</span>, n_boot <span class="op">=</span> <span class="fl">10</span>, verbose <span class="op">=</span> <span class="cn">TRUE</span>, keep <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">.1</span>, <span class="fl">3</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Bootstrap samples sanity check...</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> OK</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">res</span>, type <span class="op">=</span> <span class="st">"samples"</span><span class="op">)</span></span></span>
-<span class="r-plt img"><img src="plot-17.png" alt="" width="700" height="433"></span>
+<span class="r-in"><span><span class="op">}</span></span></span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
     </div>

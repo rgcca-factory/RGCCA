@@ -419,6 +419,7 @@ score.</p>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">cv_out</span> <span class="op">&lt;-</span> <span class="fu">rgcca_cv</span><span class="op">(</span><span class="va">blocks</span>, response <span class="op">=</span> <span class="fl">3</span>, method <span class="op">=</span> <span class="st">"rgcca"</span>,</span></span>
 <span class="r-in"><span>                   par_type <span class="op">=</span> <span class="st">"tau"</span>,</span></span>
+<span class="r-in"><span>                   par_length <span class="op">=</span> <span class="fl">5</span>,</span></span>
 <span class="r-in"><span>                   prediction_model <span class="op">=</span> <span class="st">"lda"</span>, <span class="co">#caret::modelLookup()</span></span></span>
 <span class="r-in"><span>                   metric <span class="op">=</span> <span class="st">"Accuracy"</span>,</span></span>
 <span class="r-in"><span>                   k<span class="op">=</span><span class="fl">3</span>, n_run <span class="op">=</span> <span class="fl">3</span>,</span></span>
@@ -426,7 +427,7 @@ score.</p>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">cv_out</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> RGCCA cross-validation object obtained with 10 sets of parameters using 3 folds.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> RGCCA cross-validation object obtained with 5 sets of parameters using 3 folds.</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Classification was performed using lda model.</span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">cv_out</span><span class="op">)</span></span></span>
 <span class="r-plt img"><img src="rgcca_cv-1.png" alt="" width="700" height="433"></span>
