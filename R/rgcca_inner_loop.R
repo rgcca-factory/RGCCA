@@ -1,25 +1,7 @@
-rgcca_inner_loop <- function(A, C, tau = rep(1, length(A)),
-                             sparsity = rep(1, length(A)), scheme = "centroid",
+rgcca_inner_loop <- function(A, C, g, dg, tau = rep(1, length(A)),
+                             sparsity = rep(1, length(A)),
                              verbose = FALSE, init = "svd", bias = TRUE,
                              tol = 1e-08, na.rm = TRUE, n_iter_max = 1000) {
-  if (is.function(scheme)) {
-    g <- scheme
-  } else {
-    switch(scheme,
-           "horst" = {
-             g <- function(x) x
-           },
-           "factorial" = {
-             g <- function(x) x^2
-           },
-           "centroid" = {
-             g <- function(x) abs(x)
-           }
-    )
-  }
-
-  dg <- Deriv::Deriv(g, env = parent.frame())
-
   if (!is.numeric(tau)) {
     # From Schafer and Strimmer, 2005
     tau <- vapply(A, tau.estimate, na.rm = na.rm, FUN.VALUE = 1.0)

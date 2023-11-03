@@ -228,7 +228,6 @@ rgcca_cv <- function(blocks,
     par_type <- "sparsity"
   } else if (par_type == "sparsity") {
     rgcca_args$method <- "sgcca"
-    opt$gcca <- sgcca
     opt$param <- "sparsity"
   }
 
