@@ -1,3 +1,4 @@
+#' @importFrom Deriv Deriv
 rgcca_outer_loop <- function(blocks, connection = 1 - diag(length(blocks)),
                              tau = rep(1, length(blocks)),
                              sparsity = rep(1, length(blocks)),
@@ -18,6 +19,24 @@ rgcca_outer_loop <- function(blocks, connection = 1 - diag(length(blocks)),
       cat("Optimal shrinkage intensity parameters are estimated \n")
     }
   }
+
+  if (is.function(scheme)) {
+    g <- scheme
+  } else {
+    switch(scheme,
+           "horst" = {
+             g <- function(x) x
+           },
+           "factorial" = {
+             g <- function(x) x^2
+           },
+           "centroid" = {
+             g <- function(x) abs(x)
+           }
+    )
+  }
+
+  dg <- Deriv::Deriv(g, env = parent.frame())
 
   ##### Initialization #####
   # ndefl number of deflation per block
@@ -69,10 +88,9 @@ rgcca_outer_loop <- function(blocks, connection = 1 - diag(length(blocks)),
         " is under progress...\n"
       ))
     }
-    gcca_result <- rgcca_inner_loop(R, connection,
+    gcca_result <- rgcca_inner_loop(R, connection, g, dg,
                                     tau = computed_tau[n, ],
                                     sparsity = sparsity[n, ],
-                                    scheme = scheme,
                                     init = init, bias = bias, tol = tol,
                                     verbose = verbose, na.rm = na.rm,
                                     n_iter_max = n_iter_max
