@@ -52,8 +52,8 @@ get_rgcca_args <- function(object, default_args = list()) {
     }
 
     rgcca_args$blocks <- check_blocks(
-      rgcca_args$blocks, add_NAlines = TRUE,
-      quiet = rgcca_args$quiet, response = rgcca_args$response
+      rgcca_args$blocks, quiet = rgcca_args$quiet,
+      response = rgcca_args$response
     )
 
     check_integer("tol", rgcca_args$tol, float = TRUE, min = 0)
