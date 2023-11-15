@@ -56,7 +56,7 @@ VignetteBuilder:
 biocViews: Visualization, PrincipalComponent, DimensionReduction,
     StructuralEquationModels
 LazyData: true
-RoxygenNote: 7.2.1
+RoxygenNote: 7.2.3
 Encoding: UTF-8
 URL: https://github.com/rgcca-factory/RGCCA
 BugReports: https://github.com/rgcca-factory/RGCCA/issues
