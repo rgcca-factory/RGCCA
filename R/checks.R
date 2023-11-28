@@ -269,7 +269,7 @@ check_sign_comp <- function(rgcca_res, w) {
     function(i) pm(rgcca_res$blocks[[i]], w[[i]])
   )
 
-  w <- lapply(setNames(seq_along(w), names(w)), function(i) {
+  w[seq_along(w)] <- lapply(seq_along(w), function(i) {
     if (NROW(w[[i]]) < NROW(y[[i]])) {
       res <- as.matrix(cor2(rgcca_res$Y[[i]], y[[i]]))
     } else {

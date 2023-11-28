@@ -33,15 +33,14 @@
 #'   dimnames in the same order.
 #' }
 #' @inheritParams rgcca
-#' @importFrom stats setNames
 #' @noRd
-check_blocks <- function(blocks, quiet = FALSE, response = NULL, primary = 1) {
+check_blocks <- function(blocks, quiet = FALSE, response = NULL) {
   blocks <- check_blocks_is_list(blocks)
   blocks <- check_blocks_data_structure(blocks)
   blocks <- check_blocks_quantitative(blocks, response)
-  blocks <- check_blocks_names(blocks, quiet)
-  blocks <- check_blocks_dimnames(blocks, primary, quiet)
-  blocks <- check_blocks_align(blocks, primary, quiet)
+  blocks <- check_blocks_names(blocks)
+  blocks <- check_blocks_dimnames(blocks, 1, quiet)
+  blocks <- check_blocks_align(blocks, 1)
 
   invisible(blocks)
 }
@@ -95,16 +94,11 @@ check_blocks_quantitative <- function(blocks, response = NULL) {
   return(blocks)
 }
 
-check_blocks_names <- function(blocks, quiet = FALSE) {
+check_blocks_names <- function(blocks) {
   # Add block names if some are missing
-  renamed <- FALSE
   if (is.null(names(blocks))) names(blocks) <- rep("", length(blocks))
   for (j in which(names(blocks) == "")) {
     names(blocks)[j] <- paste0("block", j)
-    renamed <- TRUE
-  }
-  if (!quiet && renamed) {
-    message("Missing block names are automatically labeled.")
   }
   return(blocks)
 }
@@ -120,19 +114,23 @@ check_blocks_dimnames <- function(blocks, primary = 1, quiet = FALSE) {
   })
 
   # Check dimnames on primary dimension
-  blocks <- check_blocks_primary_dimnames(blocks, m = primary, quiet = quiet)
+  blocks <- check_blocks_primary_dimnames(blocks, m = primary)
 
   # Check dimnames on other dimensions
-  blocks <- lapply(
-    blocks, check_block_secondary_dimnames, primary = primary, quiet = quiet
-  )
+  # blocks <- lapply(
+  #   blocks, check_block_secondary_dimnames, primary = primary, quiet = quiet
+  # )
+  blocks <- Map(function(block, name) {
+    check_block_secondary_dimnames(block, name, primary, quiet)
+  }, blocks, names(blocks))
 
   # Check for duplicated dimnames across blocks (except primary dim)
   if (any(duplicated(unlist(
     lapply(blocks, function(x) dimnames(x)[-primary])
   )))) {
-    if (!quiet)
-      message("Duplicated dimnames are modified to avoid confusion \n")
+    if (!quiet) message(
+      "Duplicated dimnames across blocks are modified to avoid confusion. \n"
+    )
 
     # Add block name as a prefix to avoid confusion
     blocks[seq_along(blocks)] <- lapply(seq_along(blocks), function(j) {
@@ -150,7 +148,7 @@ check_blocks_dimnames <- function(blocks, primary = 1, quiet = FALSE) {
   return(blocks)
 }
 
-check_blocks_primary_dimnames <- function(blocks, m = 1, quiet = FALSE) {
+check_blocks_primary_dimnames <- function(blocks, m = 1) {
   # Raise error if dimension m does not exist in one of the blocks
   lapply(seq_along(blocks), function(j) {
     if (m > length(dim(blocks[[j]]))) stop_rgcca(
@@ -178,7 +176,7 @@ check_blocks_primary_dimnames <- function(blocks, m = 1, quiet = FALSE) {
       dimnames(x)[[m]] <- paste0("S", seq_len(dim(x)[[m]]))
       return(x)
     })
-  } else {
+  } else if (any(empty_names)) {
     # If at least one block does not have dimnames, 2 cases arise:
     #   - if all blocks with names have the same dimnames, in the same order,
     #     we fill the missing dimnames with the dimnames of the other blocks;
@@ -202,18 +200,23 @@ check_blocks_primary_dimnames <- function(blocks, m = 1, quiet = FALSE) {
     }
   }
 
-  if (any(empty_names) && !quiet) message(
-    "Missing names are automatically labeled on dimension ", m, "."
-  )
-
   return(blocks)
 }
 
-check_block_secondary_dimnames <- function(x, primary = 1, quiet = FALSE) {
+check_block_secondary_dimnames <- function(x, n, primary = 1, quiet = FALSE) {
+  n_dim <- length(dim(x)[-primary])
   # Set default dimnames if missing
   dimnames(x)[-primary] <- lapply(seq_along(dim(x))[-primary], function(m) {
     if (is.null(dimnames(x)[[m]])) {
-      return(paste("V", m, seq_len(dim(x)[m]), sep = "_"))
+      if (n_dim == 1) {
+        if (dim(x)[m] == 1) {
+          return(n)
+        } else {
+          return(paste(n, seq_len(dim(x)[m]), sep = "_"))
+        }
+      } else {
+        return(paste(n, m, seq_len(dim(x)[m]), sep = "_"))
+      }
     } else {
       return(dimnames(x)[[m]])
     }
@@ -223,14 +226,21 @@ check_block_secondary_dimnames <- function(x, primary = 1, quiet = FALSE) {
   duplicated_names <- duplicated(unlist(dimnames(x)[-primary]))
   if (any(duplicated_names)) {
     dimnames(x)[-primary] <- lapply(seq_along(dim(x))[-primary], function(m) {
-      paste(dimnames(x)[[m]], m, seq_len(dim(x)[m]), sep = "_")
+      if (n_dim == 1) {
+        return(paste(dimnames(x)[[m]], seq_len(dim(x)[m]), sep = "_"))
+      } else {
+        return(paste(dimnames(x)[[m]], m, seq_len(dim(x)[m]), sep = "_"))
+      }
     })
+    if (!quiet) message(
+      "Duplicated dimnames are modified to avoid confusion. \n"
+    )
   }
 
   return(x)
 }
 
-check_blocks_align <- function(blocks, m = 1, quiet = FALSE) {
+check_blocks_align <- function(blocks, m = 1) {
   # Construct union of names on dimension m
   all_names <- Reduce(union, lapply(blocks, function(x) dimnames(x)[[m]]))
 
@@ -248,7 +258,7 @@ check_blocks_align <- function(blocks, m = 1, quiet = FALSE) {
     y <- array(NA, dim = extra_dim)
     dimnames(y)[[m]] <- missing_names
     rownames(y) <- missing_names
-    return(abind(x, y, along = m))
+    return(abind::abind(x, y, along = m))
   })
 
   # Align blocks using names on dimension m
