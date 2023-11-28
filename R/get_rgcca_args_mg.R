@@ -54,8 +54,10 @@ get_rgcca_args_mg <- function(object, default_args = list()) { #EG
     
     rgcca_args$blocks <- check_blocks_mg( #EG
       rgcca_args$blocks, add_NAlines = TRUE,
-      quiet = rgcca_args$quiet, response = rgcca_args$response
+      quiet = rgcca_args$quiet, response = rgcca_args$response,
+      groups = rgcca_args$groups #EG
     )
+    
     
     check_integer("tol", rgcca_args$tol, float = TRUE, min = 0)
     check_integer("n_iter_max", rgcca_args$n_iter_max, min = 1)
@@ -70,7 +72,7 @@ get_rgcca_args_mg <- function(object, default_args = list()) { #EG
     rgcca_args$sparsity <- elongate_arg(rgcca_args$sparsity, rgcca_args$blocks)
     
     ### Get last parameters based on the method
-    tmp <- select_analysis(rgcca_args, rgcca_args$blocks)
+    tmp <- select_analysis_mg(rgcca_args, rgcca_args$blocks)
     opt <- tmp$opt
     rgcca_args <- tmp$rgcca_args
     

@@ -252,16 +252,40 @@ check_blocks_groups_mg <- function(blocks, groups = NULL) { #EG whole function
     }
     # Check that each group has at least 2 representatives
     if (any(table(droplevels(groups)) < 2)) {
-      stop_rgcca(paster("All groups should have more than one representative."))
+      stop_rgcca(paste("All groups should have more than one representative."))
     }
     # Check that only one block was provided
     if (length(blocks > 1)) {
-      stop_rgcca(paste("Analysis in the multi-group + multi-block framework is not yet supported.
-                       Please provide only one block."))
+      stop_rgcca(paste("Please provide only one block to use the multi-group framework."))
     }
+    # Check for NAs in groups
+    if (any(is.na(groups))) {
+      stop_rgcca(paste("Argument groups cannot accept NAs."))
+    }
+    # Check for NA rows in blocks
+    if (any(sapply(blocks, function(X) {any(apply(X, 1, function(x) all(is.na(x))))}))) {
+      # TRUE if at least one block has at least one row with all missing values
+      missing_rows_list <- lapply(blocks, function(X) {
+        apply(X, 1, function(x) {all(is.na(x))})
+      })
+      names <- names(blocks)
+      blocks <- lapply(seq_along(blocks), function(j) {blocks[[j]][!missing_rows_list[[j]],]})
+      names(blocks) <- names
+    }
+    # Check for NA columns in blocks
+    if (any(sapply(blocks, function(X) {any(apply(X, 2, function(x) all(is.na(x))))}))) {
+      # TRUE if at least one block has at least one column with all missing values
+      missing_cols_list <- lapply(blocks, function(X) {
+        apply(X, 2, function(x) {all(is.na(x))})
+      })
+      names <- names(blocks)
+      blocks <- lapply(seq_along(blocks), function(j) {blocks[[j]][,!missing_cols_list[[j]]]})
+      names(blocks) <- names
+    }
+    
     # Split blocks into groups
     blocks <- split(x = data.frame(blocks[[1]]), # split only works on data.frames and vectors (not matrices)
-                    f = groups, drop = FALSE) # change to drop=T to drop levels that do not occur
+                    f = groups, drop = TRUE) # drop=T to drop levels that do not occur
     blocks <- lapply(blocks, data.matrix)
   }
 }
