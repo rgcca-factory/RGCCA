@@ -40,6 +40,13 @@ select_analysis <- function(rgcca_args, blocks) {
     }
   }
 
+  if (any(vapply(blocks, function(x) length(dim(x)), FUN.VALUE = 1L) > 2)) {
+    method <- "tgcca"
+    superblock <- FALSE
+    # Set sparsity to 1 for now
+    sparsity <- sparsity * 0 + 1
+  }
+
   method <- check_method(method)
 
   call <- list(
@@ -401,7 +408,7 @@ select_analysis <- function(rgcca_args, blocks) {
     }
   }
 
-  if (method %in% c("rgcca", "sgcca")) {
+  if (method %in% c("rgcca", "sgcca", "tgcca")) {
     scheme <- check_scheme(scheme)
     if (any(sparsity != 1)) {
       param <- "sparsity"
