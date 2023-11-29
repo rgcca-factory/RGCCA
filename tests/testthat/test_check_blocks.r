@@ -121,3 +121,57 @@ test_that("check_blocks returns blocks with the same rownames in the same
   expect_equal(rownames(blocks2[[1]]), rownames(blocks2[[2]]))
   expect_equal(rownames(blocks2[[1]]), union(rownames(blocks[[1]]), "xxx"))
 })
+
+### Make sure check_blocks works for arrays
+n <- nrow(X_agric)
+array_block <- array(rnorm(n * 12 * 15), dim = c(n, 12, 15))
+
+test_that("check_blocks still works when a block is an array", {
+  blocks <- list(agric = X_agric, ind = X_ind, array = array_block)
+  blocks <- check_blocks(blocks)
+  expect_equal(rownames(blocks[[1]]), rownames(blocks[[3]]))
+  expect_equal(
+    dimnames(check_blocks(blocks)[[3]])[[2]],
+    paste0("array_2_", seq_len(dim(array_block)[2]))
+  )
+  expect_equal(
+    dimnames(check_blocks(blocks)[[3]])[[3]],
+    paste0("array_3_", seq_len(dim(array_block)[3]))
+  )
+
+  blocks <- list(agric = X_agric, ind = X_ind, array = array_block)
+  dimnames(blocks[[3]])[c(2, 3)] <- list(
+    seq_len(dim(array_block)[2]), seq_len(dim(array_block)[3])
+  )
+  expect_message(
+    check_blocks(blocks, quiet = FALSE),
+    "Duplicated dimnames are modified to avoid confusion.", fixed = TRUE
+  )
+
+  dimnames(blocks[[3]])[c(2, 3)] <- list(
+    paste0("2", seq_len(dim(array_block)[2])),
+    paste0("3", seq_len(dim(array_block)[3]))
+  )
+  blocks2 <- check_blocks(blocks)
+  expect_equal(dimnames(blocks2[[3]])[-1], dimnames(blocks[[3]])[-1])
+
+  rownames(blocks[[3]]) <- sample(
+    rownames(blocks[[1]]), size = n, replace = FALSE
+  )
+  blocks2 <- check_blocks(blocks)
+  expect_equal(rownames(blocks2[[1]]), rownames(blocks2[[3]]))
+  expect_equal(
+    blocks2[[3]][rownames(blocks2[[3]]), , ],
+    blocks[[3]][rownames(blocks2[[3]]), , ]
+  )
+
+  rownames(blocks[[3]])[1] <- "xxx"
+  blocks2 <- check_blocks(blocks)
+  expect_equal(rownames(blocks2[[1]]), union(rownames(blocks[[1]]), "xxx"))
+
+  rownames(blocks[[2]]) <- NULL
+  expect_error(check_blocks(blocks), paste0(
+    "some blocks are missing names on dimension 1, and the other blocks' ",
+    "names on dimension 1 are not consistent."
+  ), fixed = TRUE)
+})
