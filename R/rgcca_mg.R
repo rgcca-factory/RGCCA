@@ -277,7 +277,7 @@ rgcca_mg <- function(blocks, method = "rgcca", #EG
   rgcca_args$quiet <- quiet
   rgcca_args$verbose <- verbose
   
-  blocks <- remove_null_sd(rgcca_args$blocks)$list_m
+  blocks <- remove_null_sd_mg(rgcca_args$blocks, groups = groups)$list_m #EG
   
   if (opt$disjunction) {
     blocks[[rgcca_args$response]] <- as_disjunctive(

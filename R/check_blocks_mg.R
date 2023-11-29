@@ -246,41 +246,52 @@ check_blocks_align <- function(blocks, add_NAlines = FALSE, quiet = FALSE) {
 check_blocks_groups_mg <- function(blocks, groups = NULL) { #EG whole function
   if (!is.null(groups)) {
     # Check that the multigroup parameter groups is a factor of the right length
-    groups <- as.factor(groups)
+    groups <- droplevels(as.factor(groups))
     if (length(groups) != nrow(blocks[[1]])) {
       stop_rgcca(paste("groups should be a factor of length ", NROW(blocks[[1]]),"."))
     }
+    
     # Check that each group has at least 2 representatives
-    if (any(table(droplevels(groups)) < 2)) {
+    if (any(table(groups) < 2)) {
       stop_rgcca(paste("All groups should have more than one representative."))
     }
+    
     # Check that only one block was provided
     if (length(blocks > 1)) {
       stop_rgcca(paste("Please provide only one block to use the multi-group framework."))
     }
+    
     # Check for NAs in groups
     if (any(is.na(groups))) {
       stop_rgcca(paste("Argument groups cannot accept NAs."))
     }
+    
     # Check for NA rows in blocks
-    if (any(sapply(blocks, function(X) {any(apply(X, 1, function(x) all(is.na(x))))}))) {
+    if (any(sapply(blocks, function(X) {
+      any(apply(X, 1, function(x) all(is.na(x))))}))) {
       # TRUE if at least one block has at least one row with all missing values
       missing_rows_list <- lapply(blocks, function(X) {
         apply(X, 1, function(x) {all(is.na(x))})
       })
-      names <- names(blocks)
-      blocks <- lapply(seq_along(blocks), function(j) {blocks[[j]][!missing_rows_list[[j]],]})
-      names(blocks) <- names
+      blocks[seq_along(blocks)] <- lapply(seq_along(blocks), function(j) {
+        blocks[[j]][!missing_rows_list[[j]],]})
+      if (!quiet) {
+        message(paste('Rows that had all values missing were removed.'))
+      }
     }
+    
     # Check for NA columns in blocks
-    if (any(sapply(blocks, function(X) {any(apply(X, 2, function(x) all(is.na(x))))}))) {
+    if (any(sapply(blocks, function(X) {
+      any(apply(X, 2, function(x) all(is.na(x))))}))) {
       # TRUE if at least one block has at least one column with all missing values
       missing_cols_list <- lapply(blocks, function(X) {
         apply(X, 2, function(x) {all(is.na(x))})
       })
-      names <- names(blocks)
-      blocks <- lapply(seq_along(blocks), function(j) {blocks[[j]][,!missing_cols_list[[j]]]})
-      names(blocks) <- names
+      blocks[seq_along(blocks)] <- lapply(seq_along(blocks), function(j) {
+        blocks[[j]][,!missing_cols_list[[j]]]})
+      if (!quiet) {
+        message(paste('Columns that had all values missing were removed.'))
+      }
     }
     
     # Split blocks into groups

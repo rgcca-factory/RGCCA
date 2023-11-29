@@ -38,7 +38,8 @@ get_rgcca_args_mg <- function(object, default_args = list()) { #EG
       n_iter_max = default_args$n_iter_max,
       connection = default_args$connection,
       superblock = default_args$superblock,
-      scale_block = default_args$scale_block
+      scale_block = default_args$scale_block,
+      groups = default_args$groups #EG
     )
     
     rgcca_args$init <- check_char(rgcca_args$init, "init", c("svd", "random"))
@@ -72,7 +73,7 @@ get_rgcca_args_mg <- function(object, default_args = list()) { #EG
     rgcca_args$sparsity <- elongate_arg(rgcca_args$sparsity, rgcca_args$blocks)
     
     ### Get last parameters based on the method
-    tmp <- select_analysis_mg(rgcca_args, rgcca_args$blocks)
+    tmp <- select_analysis_mg(rgcca_args, rgcca_args$blocks) #EG
     opt <- tmp$opt
     rgcca_args <- tmp$rgcca_args
     
