@@ -288,10 +288,11 @@ rgcca_mg <- function(blocks, method = "rgcca", #EG
   ### Apply strategy to deal with NA, scale and prepare superblock
   tmp <- handle_NA(blocks, NA_method = rgcca_args$NA_method)
   na.rm <- tmp$na.rm
-  blocks <- scaling(tmp$blocks,
-                    scale = rgcca_args$scale,
-                    bias = rgcca_args$bias,
-                    scale_block = rgcca_args$scale_block
+  blocks <- scaling_mg(tmp$blocks, #EG
+                       scale = rgcca_args$scale,
+                       bias = rgcca_args$bias,
+                       scale_block = rgcca_args$scale_block,
+                       groups = rgcca_args$groups #EG
   )
   if (rgcca_args$superblock) {
     blocks[["superblock"]] <- Reduce(cbind, blocks)
