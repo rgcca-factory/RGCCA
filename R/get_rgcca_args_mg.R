@@ -1,6 +1,5 @@
 #' Get the rgcca arguments from a fitted object and default arguments.
 #' Modify arguments based on the provided configuration if needed.
-#' Multigroup version. #EG
 #' @noRd
 get_rgcca_args_mg <- function(object, default_args = list()) { #EG
   if (class(object) %in% c("rgcca", "permutation", "cval")) {

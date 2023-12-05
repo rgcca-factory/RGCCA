@@ -43,7 +43,7 @@ select_analysis_mg <- function(rgcca_args, blocks) { #EG
     }
   }
   
-  method <- check_method_mg(method) #EG
+  method <- check_method_mg(method, groups = groups) #EG
   
   call <- list(
     ncomp = ncomp, scheme = scheme, tau = tau, sparsity = sparsity,
@@ -469,6 +469,9 @@ select_analysis_mg <- function(rgcca_args, blocks) { #EG
         pen <- ifelse(length(penalty) < J + 1, 1, penalty[J + 1])
         penalty <- c(penalty[seq(J)], pen)
       }
+    } 
+    if(!is.null(groups)){
+      connection <- connection_matrix(blocks, type = "all")
     } else {
       connection <- check_connection(connection, blocks)
     }

@@ -257,7 +257,7 @@ check_blocks_groups_mg <- function(blocks, groups = NULL) { #EG whole function
     }
     
     # Check that only one block was provided
-    if (length(blocks > 1)) {
+    if (length(blocks) > 1) {
       stop_rgcca(paste("Please provide only one block to use the multi-group framework."))
     }
     

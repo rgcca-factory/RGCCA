@@ -162,7 +162,7 @@ check_integer <- function(x, y = x, type = "scalar", float = FALSE, min = 1,
   return(y)
 }
 
-check_method_mg <- function(method) { #EG
+check_method_mg <- function(method, groups = NULL) { #EG
   if (!method %in% available_methods()) {
     stop_rgcca(
       "method '", method, "' is not among the available methods: ",
