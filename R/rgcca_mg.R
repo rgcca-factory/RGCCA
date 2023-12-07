@@ -260,9 +260,9 @@ rgcca_mg <- function(blocks, method = "rgcca", #EG
                   groups = NULL, #EG
                   connection = 1 - diag(length(blocks)),
                   scheme = "factorial",
-                  ncomp = rep(1, length(blocks)),
-                  tau = rep(1, length(blocks)),
-                  sparsity = rep(1, length(blocks)),
+                  ncomp = 1,
+                  tau = 1,
+                  sparsity = 1,
                   init = "svd", bias = TRUE, tol = 1e-08,
                   response = NULL,
                   superblock = FALSE,
@@ -308,6 +308,7 @@ rgcca_mg <- function(blocks, method = "rgcca", #EG
   )]
   gcca_args[["na.rm"]] <- na.rm
   gcca_args[["blocks"]] <- blocks
+  gcca_args[["groups"]] <- groups #EG
   gcca_args[["disjunction"]] <- opt$disjunction
   gcca_args[[opt$param]] <- rgcca_args[[opt$param]]
   func_out <- do.call(opt$gcca, gcca_args)

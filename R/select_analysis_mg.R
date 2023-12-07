@@ -55,7 +55,7 @@ select_analysis_mg <- function(rgcca_args, blocks) { #EG
   switch(method,
          "rgcca" = {
            param <- "tau"
-           gcca <- rgccad
+           gcca <- rgccad_mg
            penalty <- tau
          },
          "sgcca" = {
@@ -471,7 +471,7 @@ select_analysis_mg <- function(rgcca_args, blocks) { #EG
       }
     } 
     if(!is.null(groups)){
-      connection <- connection_matrix(blocks, type = "all")
+      connection <- connection_matrix(blocks, type = "pair")
     } else {
       connection <- check_connection(connection, blocks)
     }

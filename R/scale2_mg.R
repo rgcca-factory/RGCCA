@@ -10,19 +10,14 @@ scale2_mg <- function(A, scale = TRUE, bias = TRUE, groups = NULL) {
   if (!is.null(groups)){
     A <- scale(A, center = TRUE, scale = FALSE)
     col_norm <- apply(A, 2, function(x) {norm(x, type = "2")})
-    A <- sweep(A, 2, col_norm, FUN = "/")
-    attr(A, "scaled:scale") <- col_norm
+    A <- scale(A, center = FALSE, scale = col_norm)
     return(A)
   }
   
   if (scale) {
     A <- scale(A, center = TRUE, scale = FALSE)
     std <- sqrt(apply(A, 2, function(x) cov2(x, bias = bias)))
-    if (any(std == 0)) {
-      sprintf("there were %d constant variables", sum(std == 0))
-    }
-    A <- sweep(A, 2, std, FUN = "/")
-    attr(A, "scaled:scale") <- std
+    A <- scale(A, center = FALSE, scale = std)
     return(A)
   }
   

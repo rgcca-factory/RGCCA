@@ -23,7 +23,13 @@ remove_null_sd_mg <- function(list_m, column_sd_null = NULL, groups = NULL) {
       function(x) {
         which(apply(x, 2, function(y) {
           if (mode(y) != "character") {
-            res <- all(is.na(y)) || (sd(y[!is.na(y)]) == 0)
+            if (!is.null(groups)){
+              # in multi-group mode, variables with NA in a 
+              # whole group but not in all groups are kept
+              res <- all(sd(y[!is.na(y)]) == 0)
+            } else {
+              res <- all(is.na(y)) || (sd(y[!is.na(y)]) == 0)
+            }
           } else {
             res <- FALSE
           }
@@ -33,7 +39,8 @@ remove_null_sd_mg <- function(list_m, column_sd_null = NULL, groups = NULL) {
     )
   }
   
-  # in multi-group mode, variables with null sd in at least one block (=group) are removed in all blocks (=groups)
+  # in multi-group mode, variables with null sd in at 
+  # least one group are removed in all groups
   if (!is.null(groups)) {
     all_cols_sd_null <- unique(unlist(column_sd_null, use.names = FALSE))
     column_sd_null[seq_along(column_sd_null)] <- rep(list(all_cols_sd_null), 
