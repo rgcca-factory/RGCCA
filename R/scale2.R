@@ -10,6 +10,8 @@ scale2 <- function(A, scale = TRUE, bias = TRUE) {
   if (scale) {
     A <- scale(A, center = TRUE, scale = FALSE)
     std <- sqrt(apply(A, 2, function(x) cov2(x, bias = bias)))
+    # Account for potentially 0 std
+    std <- pmax(.Machine$double.eps, std)
     A <- sweep(A, 2, std, FUN = "/")
     attr(A, "scaled:scale") <- std
     return(A)
