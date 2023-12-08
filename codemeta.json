@@ -8,13 +8,13 @@
   "codeRepository": "https://github.com/rgcca-factory/RGCCA",
   "issueTracker": "https://github.com/rgcca-factory/RGCCA/issues",
   "license": "https://spdx.org/licenses/GPL-3.0",
-  "version": "3.0.2",
+  "version": "3.0.3",
   "programmingLanguage": {
     "@type": "ComputerLanguage",
     "name": "R",
     "url": "https://r-project.org"
   },
-  "runtimePlatform": "R version 4.2.3 (2023-03-15 ucrt)",
+  "runtimePlatform": "R version 4.3.0 (2023-04-21)",
   "provider": {
     "@id": "https://cran.r-project.org",
     "@type": "Organization",
@@ -311,7 +311,7 @@
     },
     "SystemRequirements": null
   },
-  "fileSize": "57390.932KB",
+  "fileSize": "1237.747KB",
   "citation": [
     {
       "@type": "SoftwareSourceCode",
@@ -354,7 +354,7 @@
       ],
       "name": "{RGCCA}: Regularized and Sparse Generalized Canonical Correlation Analysis for Multiblock Data",
       "url": "https://CRAN.R-project.org/package=RGCCA",
-      "description": "R package version 3.0.2"
+      "description": "R package version 3.0.3"
     }
   ],
   "releaseNotes": "https://github.com/rgcca-factory/RGCCA/blob/main/NEWS.md",

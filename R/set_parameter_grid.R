@@ -17,7 +17,8 @@ set_parameter_grid <- function(par_type, par_length, par_value, blocks,
         "following: NULL, a vector, a matrix or a dataframe."
       )
     }
-    is_valid_shape <- (NCOL(par_value) == 1) ||
+    is_valid_shape <- is.null(par_value) ||
+      (NCOL(par_value) == 1) ||
       (NCOL(par_value) == J) ||
       ((NCOL(par_value) == J + 1) && superblock)
     if (!is_valid_shape) {
