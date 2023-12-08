@@ -5,11 +5,6 @@
 #' @param rgcca_res A fitted RGCCA object (see  \code{\link[RGCCA]{rgcca}}).
 #' @param n_boot The number of bootstrap samples (default: 100).
 #' @param n_cores The number of cores used for parallelization.
-#' @param balanced A logical value indicating if a balanced bootstrap procedure
-#' is performed or not (default is TRUE).
-#' @param keep_all_variables A logical value indicating if all variables have
-#' to be kept even when some of them have null variance for at least one
-#' bootstrap sample (default is FALSE).
 #' @param verbose A logical value indicating if the progress of the bootstrap
 #' procedure is reported.
 #' @return A rgcca_bootstrap object that can be printed and plotted.
@@ -77,9 +72,7 @@
 #' @seealso \code{\link[RGCCA]{plot.rgcca_bootstrap}},
 #' \code{\link[RGCCA]{summary.rgcca_bootstrap}}
 rgcca_bootstrap <- function(rgcca_res, n_boot = 100,
-                            n_cores = 1,
-                            balanced = TRUE, keep_all_variables = FALSE,
-                            verbose = TRUE) {
+                            n_cores = 1, verbose = TRUE) {
   stability <- is(rgcca_res, "rgcca_stability")
   if (stability) {
     message(
@@ -120,36 +113,20 @@ rgcca_bootstrap <- function(rgcca_res, n_boot = 100,
 
   check_integer("n_boot", n_boot)
 
-  boot_sampling <- generate_resampling(
-    rgcca_res = rgcca_res,
-    n_boot = n_boot,
-    balanced = balanced,
-    keep_all_variables = keep_all_variables,
-    verbose = verbose
-  )
+  ### Create bootstrap samples
+  v_inds <- lapply(seq_len(n_boot), function(i) {
+    sample(seq_len(NROW(rgcca_res$call$blocks[[1]])), replace = TRUE)
+  })
 
-  sd_null <- boot_sampling$sd_null
+  ### Run RGCCA on the bootstrap samples
+  W <- par_pblapply(v_inds, function(b) {
+    rgcca_bootstrap_k(
+      rgcca_res = rgcca_res,
+      inds = b
+    )
+  }, n_cores = n_cores, verbose = verbose)
 
-  if (!is.null(sd_null)) {
-    rgcca_res$call$blocks <- remove_null_sd(
-      list_m = rgcca_res$call$blocks,
-      column_sd_null = sd_null
-    )$list_m
-    rgcca_res <- rgcca(rgcca_res)
-  }
-
-  W <- par_pblapply(
-    boot_sampling$full_idx, function(b) {
-      rgcca_bootstrap_k(
-        rgcca_res = rgcca_res,
-        inds = b
-      )
-    },
-    n_cores = n_cores, verbose = verbose
-  )
-
-  W <- W[!vapply(W, is.null, logical(1L))]
-
+  ### Extract statistics from the results of the bootstrap
   res <- format_bootstrap_list(W, rgcca_res)
   stats <- rgcca_bootstrap_stats(res, rgcca_res, length(W))
 

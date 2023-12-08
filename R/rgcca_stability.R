@@ -5,11 +5,8 @@
 #' (VIP) based criterion is used to identify the most stable variables.
 #'
 #' @inheritParams rgcca_bootstrap
-#' @param rgcca_res A fitted RGCCA object (see \code{\link[RGCCA]{rgcca}}).
 #' @param keep A numeric vector indicating the proportion of variables per
 #' block to select.
-#' @param n_boot The number of bootstrap samples (default: 100).
-#' @param n_cores The number of cores for parallelization.
 #' @param verbose A logical value indicating if the progress of the procedure
 #' is reported.
 #' @return A rgcca_stability object that can be printed and plotted.
@@ -63,42 +60,23 @@ rgcca_stability <- function(rgcca_res,
                             ),
                             n_boot = 100,
                             n_cores = 1,
-                            verbose = TRUE,
-                            balanced = TRUE,
-                            keep_all_variables = FALSE) {
+                            verbose = TRUE) {
   stopifnot(tolower(rgcca_res$call$method) %in% sparse_methods())
   check_integer("n_boot", n_boot)
   check_integer("n_cores", n_cores, min = 0)
 
-  boot_sampling <- generate_resampling(
-    rgcca_res = rgcca_res,
-    n_boot = n_boot,
-    balanced = balanced,
-    verbose = verbose,
-    keep_all_variables = keep_all_variables
-  )
+  ### Create bootstrap samples
+  v_inds <- lapply(seq_len(n_boot), function(i) {
+    sample(seq_len(NROW(rgcca_res$call$blocks[[1]])), replace = TRUE)
+  })
 
-  sd_null <- boot_sampling$sd_null
-
-  if (!is.null(sd_null)) {
-    rgcca_res$call$blocks <- remove_null_sd(
-      list_m = rgcca_res$call$blocks,
-      column_sd_null = sd_null
-    )$list_m
-    rgcca_res <- rgcca(rgcca_res)
-  }
-
-  W <- par_pblapply(
-    boot_sampling$full_idx, function(b) {
-      rgcca_bootstrap_k(
-        rgcca_res = rgcca_res,
-        inds = b, type = "AVE"
-      )
-    },
-    n_cores = n_cores, verbose = verbose
-  )
-
-  W <- W[!vapply(W, is.null, logical(1L))]
+  ### Run RGCCA on the bootstrap samples
+  W <- par_pblapply(v_inds, function(b) {
+    rgcca_bootstrap_k(
+      rgcca_res = rgcca_res,
+      inds = b, type = "AVE"
+    )
+  }, n_cores = n_cores, verbose = verbose)
 
   res <- format_bootstrap_list(W, rgcca_res)
   J <- length(rgcca_res$blocks)

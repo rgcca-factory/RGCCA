@@ -453,7 +453,7 @@ rgcca <- function(blocks, connection = NULL, tau = 1, ncomp = 1,
   rgcca_args$quiet <- quiet
   rgcca_args$verbose <- verbose
 
-  blocks <- remove_null_sd(rgcca_args$blocks)$list_m
+  blocks <- rgcca_args$blocks
 
   if (opt$disjunction) {
     blocks[[rgcca_args$response]] <- as_disjunctive(
