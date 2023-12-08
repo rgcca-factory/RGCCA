@@ -22,7 +22,7 @@ as_disjunctive <- function(vec, levs = NULL) {
   # Change na_option locally to keep rows of NA
   op <- options(na.action = "na.pass")
   on.exit(options(op))
-  y <- data.frame(model.matrix(~ G - 1, data = G, xlev = levs))
+  y <- model.matrix(~ G - 1, data = G, xlev = levs)
 
   new_colnames <- substr(colnames(y), 2, nchar(colnames(y)))
   colnames(y) <- new_colnames

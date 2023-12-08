@@ -8,7 +8,7 @@ blocks <- list(
 )
 
 C <- connection <- 1 - diag(3)
-A <- lapply(blocks, function(x) x[1:32, ])
+A <- lapply(blocks, function(x) data.matrix(x[1:32, ]))
 A_scaled <- scaling(A)
 A_test <- lapply(blocks, function(x) x[39:47, ])
 ncomp <- c(3, 2, 4)
