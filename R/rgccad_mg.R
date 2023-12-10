@@ -257,8 +257,8 @@ rgccad_mg <- function(blocks, connection = 1 - diag(length(blocks)),
     
     # Deflation procedure
     if (n == N + 1) break
-    defl_result <- deflate(gcca_result$a, gcca_result$Y, R, P, ndefl, n,
-                           superblock, comp_orth, response, na.rm)
+    defl_result <- deflate_mg(gcca_result$a, gcca_result$Y, R, P, ndefl, n,
+                           superblock, comp_orth, response, na.rm, groups)
     R <- defl_result$R
     P <- defl_result$P
   }

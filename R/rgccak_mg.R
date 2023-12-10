@@ -75,24 +75,37 @@ rgccak_mg <- function(A, C, tau = rep(1, length(A)), scheme = "centroid",
   }
   
   ### Initialization
-  init_object <- ifelse(is.null(groups),
-                        yes = rgcca_init(A, init, bias, na.rm, tau),
-                        no = rgcca_init_mg(A, init, bias, na.rm, tau, groups)) #remove bias?
+  if (!is.null(groups)){
+    init_object <- rgcca_init_mg(A, init, na.rm, tau, groups)
+  } else {
+    init_object <- rgcca_init(A, init, bias, na.rm, tau)
+  }
+
   a <- init_object$a
   Y <- init_object$Y
   
   iter <- 1
   crit <- NULL
-  crit_old <- sum(C * g(cov2(Y, bias = bias)))
+  crit_old <- ifelse(!is.null(groups),
+                     yes = sum(C * g(crossprod(Y))),
+                     no = sum(C * g(cov2(Y, bias = bias))))
   a_old <- a
   
   repeat {
-    update_object <- rgcca_update(A, bias, na.rm, tau, dg, C, a, Y, init_object)
+    if (!is.null(groups)){
+      update_object <- rgcca_update_mg(A, na.rm, tau, dg, C, a, Y, init_object, groups)
+    } else {
+      update_object <- rgcca_update(A, bias, na.rm, tau, dg, C, a, Y, init_object)
+    }
     a <- update_object$a
     Y <- update_object$Y
     
     # Print out intermediate fit
-    crit <- c(crit, sum(C * g(cov2(Y, bias = bias))))
+    if (!is.null(groups)) {
+      crit <- c(crit, sum(C * g(crossprod(Y))))
+    } else {
+      crit <- c(crit, sum(C * g(cov2(Y, bias = bias))))
+    }
     
     if (verbose) {
       cat(
@@ -133,6 +146,6 @@ rgccak_mg <- function(A, C, tau = rep(1, length(A)), scheme = "centroid",
     plot(crit, xlab = "iteration", ylab = "criteria")
   }
   
-  result <- rgcca_postprocess(A, a, Y, g, na.rm)
+  result <- rgcca_postprocess_mg(A, a, Y, g, na.rm, groups)
   return(list(Y = result$Y, a = result$a, crit = crit, tau = tau))
 }

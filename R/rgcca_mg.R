@@ -314,7 +314,7 @@ rgcca_mg <- function(blocks, method = "rgcca", #EG
   func_out <- do.call(opt$gcca, gcca_args)
   
   ### Format the output
-  func_out <- format_output(func_out, rgcca_args, opt, blocks)
+  func_out <- format_output_mg(func_out, rgcca_args, opt, blocks)
   
   class(func_out) <- "rgcca"
   invisible(func_out)
