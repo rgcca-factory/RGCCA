@@ -209,6 +209,9 @@ rgccad_mg <- function(blocks, connection = 1 - diag(length(blocks)),
 
   a <- lapply(seq(J), function(b) c())
   Y <- lapply(seq(J), function(b) c())
+  if (!is.null(groups)) {
+    L <- lapply(seq(J), function(b) c())
+  }
 
   
   if (superblock && comp_orth) {
@@ -251,14 +254,20 @@ rgccad_mg <- function(blocks, connection = 1 - diag(length(blocks)),
     computed_tau[n, ] <- gcca_result$tau
     crit[[n]] <- gcca_result$crit
     
-    # Store Y, a, factors and weights
+    # Store Y, a, factors and weights, 
+    # as well as loadings L in the multi-group case
     a <- lapply(seq(J), function(b) cbind(a[[b]], gcca_result$a[[b]]))
-    Y <- lapply(seq(J), function(b) cbind(Y[[b]], gcca_result$Y[, b]))
+    if (!is.null(groups)) {
+      Y <- lapply(seq(J), function(b) cbind(Y[[b]], gcca_result$Y[[b]]))
+      L <- lapply(seq(J), function(b) cbind(L[[b]], gcca_result$L[, b]))
+    } else{
+      Y <- lapply(seq(J), function(b) cbind(Y[[b]], gcca_result$Y[, b]))
+    }
     
     # Deflation procedure
     if (n == N + 1) break
     defl_result <- deflate_mg(gcca_result$a, gcca_result$Y, R, P, ndefl, n,
-                           superblock, comp_orth, response, na.rm, groups)
+                           superblock, comp_orth, response, na.rm)
     R <- defl_result$R
     P <- defl_result$P
   }
@@ -285,13 +294,22 @@ rgccad_mg <- function(blocks, connection = 1 - diag(length(blocks)),
   
   astar <- compute_astar(a, P, superblock, comp_orth, N)
   
-  out <- list(
-    Y = Y,
-    a = a,
-    astar = astar,
-    tau = computed_tau,
-    crit = crit, primal_dual = primal_dual
-  )
+  if (!is.null(groups)) {
+    out <- list(
+      Y = Y,
+      a = a,
+      L = L,
+      astar = astar,
+      tau = computed_tau,
+      crit = crit, primal_dual = primal_dual)
+  } else {
+    out <- list(
+      Y = Y,
+      a = a,
+      astar = astar,
+      tau = computed_tau,
+      crit = crit, primal_dual = primal_dual)
+  }
   
   class(out) <- "rgccad"
   return(out)

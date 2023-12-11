@@ -308,13 +308,13 @@ rgcca_mg <- function(blocks, method = "rgcca", #EG
   )]
   gcca_args[["na.rm"]] <- na.rm
   gcca_args[["blocks"]] <- blocks
-  gcca_args[["groups"]] <- groups #EG
+  gcca_args[["groups"]] <- groups
   gcca_args[["disjunction"]] <- opt$disjunction
   gcca_args[[opt$param]] <- rgcca_args[[opt$param]]
   func_out <- do.call(opt$gcca, gcca_args)
   
   ### Format the output
-  func_out <- format_output_mg(func_out, rgcca_args, opt, blocks)
+  func_out <- format_output_mg(func_out, rgcca_args, opt, blocks, groups)
   
   class(func_out) <- "rgcca"
   invisible(func_out)
