@@ -2,7 +2,7 @@
 #' in the multi-group framework
 #'
 #' @noRd
-rgcca_init_mg <- function(A, init, na.rm, tau, groups = NULL) {
+rgcca_init_mg <- function(A, init, bias, na.rm, tau, groups = NULL) {
   J <- length(A) # number of groups
   nb_ind <- vapply(A, NROW, FUN.VALUE = 1L) # number of individuals per group
   p <- NCOL(A[[1]]) # number of variables per group

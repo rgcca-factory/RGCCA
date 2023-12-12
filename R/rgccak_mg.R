@@ -76,7 +76,7 @@ rgccak_mg <- function(A, C, tau = rep(1, length(A)), scheme = "centroid",
   
   ### Initialization
   if (!is.null(groups)){
-    init_object <- rgcca_init_mg(A, init, na.rm, tau, groups)
+    init_object <- rgcca_init_mg(A, init, bias, na.rm, tau, groups)
     L <- init_object$L
   } else {
     init_object <- rgcca_init(A, init, bias, na.rm, tau)

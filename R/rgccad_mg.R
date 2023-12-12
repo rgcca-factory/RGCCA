@@ -178,7 +178,7 @@ rgccad_mg <- function(blocks, connection = 1 - diag(length(blocks)),
                    tau = rep(1, length(blocks)),
                    ncomp = rep(1, length(blocks)), scheme = "centroid",
                    init = "svd", bias = TRUE, tol = 1e-08, verbose = TRUE,
-                   na.rm = TRUE, superblock = FALSE,
+                   na.rm = TRUE, superblock = FALSE, supergroup = FALSE,
                    response = NULL, disjunction = NULL,
                    n_iter_max = 1000, comp_orth = TRUE,
                    groups = NULL) {
@@ -214,7 +214,7 @@ rgccad_mg <- function(blocks, connection = 1 - diag(length(blocks)),
   }
 
   
-  if (superblock && comp_orth) {
+  if (superblock && comp_orth || supergroup) {
     P <- c()
   } else {
     P <- lapply(seq(J), function(b) c())
@@ -267,7 +267,7 @@ rgccad_mg <- function(blocks, connection = 1 - diag(length(blocks)),
     # Deflation procedure
     if (n == N + 1) break
     defl_result <- deflate_mg(gcca_result$a, gcca_result$Y, R, P, ndefl, n,
-                           superblock, comp_orth, response, na.rm)
+                           superblock, supergroup, comp_orth, response, na.rm)
     R <- defl_result$R
     P <- defl_result$P
   }
@@ -275,7 +275,7 @@ rgccad_mg <- function(blocks, connection = 1 - diag(length(blocks)),
   # If there is a superblock and weight vectors are orthogonal, it is possible
   # to have non meaningful weights associated to blocks that have been set to
   # zero by the deflation
-  if (superblock && !comp_orth) {
+  if (superblock && !comp_orth) { #TODO supergroup
     a <- lapply(a, function(x) {
       if (ncol(x) > nrow(x)) {
         x[, seq(nrow(x) + 1, ncol(x))] <- 0
@@ -292,7 +292,7 @@ rgccad_mg <- function(blocks, connection = 1 - diag(length(blocks)),
     computed_tau <- apply(computed_tau, 2, as.numeric)
   }
   
-  astar <- compute_astar(a, P, superblock, comp_orth, N)
+  astar <- compute_astar_mg(a, P, superblock, supergroup, comp_orth, N)
   
   if (!is.null(groups)) {
     out <- list(

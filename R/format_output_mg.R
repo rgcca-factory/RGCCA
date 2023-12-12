@@ -72,6 +72,8 @@ format_output_mg <- function(func_out, rgcca_args, opt, blocks, groups = NULL) {
   
   if (rgcca_args$superblock && rgcca_args$comp_orth) {
     rownames(func_out$astar) <- colnames(blocks[[length(blocks)]])
+  } else if (rgcca_args$supergroup && rgcca_args$comp_orth) {
+    rownames(func_out$astar) <- colnames(blocks[[length(blocks)]])
   } else {
     for (j in seq_along(blocks)) {
       rownames(func_out$astar[[j]]) <- colnames(blocks[[j]])

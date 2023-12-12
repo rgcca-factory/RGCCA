@@ -266,6 +266,7 @@ rgcca_mg <- function(blocks, method = "rgcca", #EG
                   init = "svd", bias = TRUE, tol = 1e-08,
                   response = NULL,
                   superblock = FALSE,
+                  supergroup = FALSE, #EG
                   NA_method = "nipals", verbose = FALSE, quiet = TRUE,
                   n_iter_max = 1000, comp_orth = TRUE) {
   rgcca_args <- as.list(environment())
@@ -285,7 +286,7 @@ rgcca_mg <- function(blocks, method = "rgcca", #EG
     )
   }
   
-  ### Apply strategy to deal with NA, scale and prepare superblock
+  ### Apply strategy to deal with NA, scale and prepare superblock or supergroup
   tmp <- handle_NA(blocks, NA_method = rgcca_args$NA_method)
   na.rm <- tmp$na.rm
   blocks <- scaling_mg(tmp$blocks, #EG
@@ -300,11 +301,18 @@ rgcca_mg <- function(blocks, method = "rgcca", #EG
       "s-", colnames(blocks[["superblock"]])
     )
   }
+  if (rgcca_args$supergroup) {
+    blocks[["supergroup"]] <- Reduce(rbind, blocks)
+    rownames(blocks[["supergroup"]]) <- paste0(
+      rownames(blocks[["supergroup"]])
+    )
+    blocks[["supergroup"]] <- blocks[["supergroup"]] / sqrt(length(blocks) - 1)
+  }
   
   ### Call the gcca function
   gcca_args <- rgcca_args[c(
     "connection", "ncomp", "scheme", "init", "bias", "tol",
-    "verbose", "superblock", "response", "n_iter_max", "comp_orth"
+    "verbose", "superblock", "response", "n_iter_max", "comp_orth", "supergroup"
   )]
   gcca_args[["na.rm"]] <- na.rm
   gcca_args[["blocks"]] <- blocks

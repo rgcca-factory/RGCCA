@@ -200,8 +200,8 @@ check_nblocks <- function(blocks, method) {
   )
 }
 
-check_ncomp <- function(ncomp, blocks, min = 1, superblock = FALSE,
-                        response = NULL) {
+check_ncomp_mg <- function(ncomp, blocks, min = 1, superblock = FALSE,
+                        supergroup = FALSE, response = NULL) {
   if (superblock) {
     if (length(unique(ncomp)) != 1) {
       stop_rgcca(
@@ -216,6 +216,31 @@ check_ncomp <- function(ncomp, blocks, min = 1, superblock = FALSE,
     msg <- paste0(
       "the number of components must be lower than the number of ",
       "variables in the superblock, i.e. ", max_ncomp,
+      "."
+    )
+    
+    y <- check_integer("ncomp", ncomp[1],
+                       min = min, max_message = msg,
+                       max = max_ncomp,
+                       exit_code = 126
+    )
+    return(rep(y, length(ncomp)))
+  }
+  
+  if (supergroup) {
+    if (length(unique(ncomp)) != 1) {
+      stop_rgcca(
+        "only one number of components must be specified (supergroup)."
+      )
+    }
+    max_ncomp <- ifelse(
+      "supergroup" %in% names(blocks),
+      NCOL(blocks[[length(blocks)]]),
+      sum(vapply(blocks, NCOL, FUN.VALUE = integer(1))) #TODO change max nbr of comp?
+    )
+    msg <- paste0(
+      "the number of components must be lower than the number of ",
+      "variables in the supergroup, i.e. ", max_ncomp,
       "."
     )
     
@@ -302,11 +327,15 @@ check_size_blocks <- function(blocks, x, y = x, n_row = NULL) {
   }
 }
 
-check_penalty <- function(penalty, blocks, method = "rgcca", superblock = FALSE,
-                          ncomp = NULL) {
+check_penalty_mg <- function(penalty, blocks, method = "rgcca", superblock = FALSE,
+                          supergroup = FALSE, ncomp = NULL) {
   if (superblock) {
     blocks[[length(blocks) + 1]] <- Reduce(cbind, blocks)
     names(blocks)[length(blocks)] <- "superblock"
+  }
+  if (supergroup) {
+    blocks[[length(blocks) + 1]] <- Reduce(rbind, blocks)
+    names(blocks)[length(blocks)] <- "supergroup"
   }
   penalty <- elongate_arg(penalty, blocks)
   name <- ifelse(method == "rgcca", "tau", "sparsity")

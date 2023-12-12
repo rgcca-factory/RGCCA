@@ -34,6 +34,7 @@ select_analysis_mg <- function(rgcca_args, blocks) { #EG
   superblock <- rgcca_args$superblock
   scale_block <- rgcca_args$scale_block
   groups <- rgcca_args$groups #EG
+  supergroup <- rgcca_args$supergroup #EG
   
   if (length(blocks) == 1) {
     if (sparsity == 1) {
@@ -469,20 +470,34 @@ select_analysis_mg <- function(rgcca_args, blocks) { #EG
         pen <- ifelse(length(penalty) < J + 1, 1, penalty[J + 1])
         penalty <- c(penalty[seq(J)], pen)
       }
-    } 
-    if(!is.null(groups)){
+    } else if (supergroup) {
+      ncomp <- rep(max(ncomp), J + 1)
+      connection <- connection_matrix(blocks, type = "response", J = J + 1)
+      if (is.matrix(penalty)) {
+        if (ncol(penalty) < J + 1) {
+          pen <- 1
+        } else {
+          pen <- penalty[, J + 1]
+        }
+        penalty <- cbind(penalty[, seq(J)], pen)
+      } else {
+        pen <- ifelse(length(penalty) < J + 1, 1, penalty[J + 1])
+        penalty <- c(penalty[seq(J)], pen)
+      }
+    } else if(!is.null(groups) && !supergroup){
       connection <- connection_matrix(blocks, type = "pair")
     } else {
       connection <- check_connection(connection, blocks)
     }
-    penalty <- check_penalty(penalty, blocks, method,
+    penalty <- check_penalty_mg(penalty, blocks, method,
                              superblock = superblock,
+                             supergroup = supergroup,
                              ncomp = max(ncomp)
     )
   }
-  ncomp <- check_ncomp(
-    ncomp, blocks,
-    superblock = superblock, response = response
+  ncomp <- check_ncomp_mg(
+    ncomp, blocks, superblock = superblock, 
+    supergroup = supergroup, response = response
   )
   
   rgcca_args[[param]] <- penalty
@@ -495,7 +510,8 @@ select_analysis_mg <- function(rgcca_args, blocks) { #EG
     comp_orth = comp_orth,
     connection = connection,
     superblock = superblock,
-    scale_block = scale_block
+    scale_block = scale_block,
+    supergroup = supergroup
   ), keep.null = TRUE)
   return(list(
     rgcca_args = rgcca_args,

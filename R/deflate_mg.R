@@ -14,10 +14,11 @@
 #' response block.
 #' @param na.rm Logical indicating if NA values should be removed.
 #' @noRd
-deflate_mg <- function(a, Y, R, P, ndefl, n, superblock,
+deflate_mg <- function(a, Y, R, P, ndefl, n, superblock, supergroup,
                     comp_orth, response, na.rm, groups = NULL) {
   J <- length(a)
   pjs <- vapply(R, NCOL, FUN.VALUE = 1L)
+  nis <- vapply(R, NROW, FUN.VALUE = 1L)
   # Select the variable used to deflate blocks
   if (comp_orth) {
     if (is.list(Y)) {
@@ -40,6 +41,17 @@ deflate_mg <- function(a, Y, R, P, ndefl, n, superblock,
     R <- lapply(seq(J - 1), function(b) {
       x <- defl_result$R[, inf_pjs[b]:cumsum_pjs[b], drop = FALSE]
       colnames(x) <- colnames(defl_result$R)[inf_pjs[b]:cumsum_pjs[b]]
+      return(x)
+    })
+    R[[J]] <- defl_result$R
+  } else if (supergroup && comp_orth) {
+    defl_result <- deflation(R[[J]], var_defl[[J]], na.rm, left)
+    P <- cbind(P, defl_result$p)
+    cumsum_nis <- cumsum(nis)[seq_len(J - 1)]
+    inf_nis <- c(0, cumsum_nis[seq_len(J - 2)]) + 1
+    R <- lapply(seq(J - 1), function(b) {
+      x <- defl_result$R[inf_nis[b]:cumsum_nis[b], , drop = FALSE]
+      rownames(x) <- rownames(defl_result$R)[inf_nis[b]:cumsum_nis[b]]
       return(x)
     })
     R[[J]] <- defl_result$R
