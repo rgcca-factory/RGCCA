@@ -39,3 +39,19 @@ block_init.dual_regularized_block <- function(x, init = "svd") {
   x$M <- ginv(x$tau * diag(x$n) + (1 - x$tau) * x$K / x$N)
   NextMethod()
 }
+
+#' @export
+block_init.tensor_block <- function(x, init = "svd") {
+  if (init == "svd") {
+    x$factors <- lapply(seq_along(dim(x$x))[-1], function(m) {
+      svd(apply(x$x, m, c), nu = 0, nv = 1)$v
+    })
+  } else {
+    x$factors <- lapply(seq_along(dim(x$x))[-1], function(m) {
+      svd(matrix(rnorm(dim(x$x)[m]), dim(x$x)[m]), nu = 0, nv = 1)$v
+    })
+  }
+  x$weights <- rep(1 / sqrt(1), 1)
+
+  return(block_project(x))
+}
