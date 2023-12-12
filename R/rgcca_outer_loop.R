@@ -49,7 +49,10 @@ rgcca_outer_loop <- function(blocks, connection = 1 - diag(length(blocks)),
   crit <- list()
   R <- blocks
 
-  a <- Y <- factors <- weights <- lapply(seq(J), function(b) c())
+  a <- Y <- weights <- lapply(seq(J), function(b) c())
+  factors <- lapply(seq(J), function(b) {
+    lapply(seq_along(dim(R[[b]])[-1]), function(m) NULL)
+  })
 
   if (superblock && comp_orth) {
     P <- c()
@@ -102,9 +105,11 @@ rgcca_outer_loop <- function(blocks, connection = 1 - diag(length(blocks)),
     # Store Y, a, factors and weights
     a <- lapply(seq(J), function(b) cbind(a[[b]], gcca_result$a[[b]]))
     Y <- lapply(seq(J), function(b) cbind(Y[[b]], gcca_result$Y[, b]))
-    factors <- lapply(
-      seq(J), function(b) cbind(factors[[b]], gcca_result$factors[[b]])
-    )
+    factors <- lapply(seq(J), function(b) {
+      lapply(seq_along(factors[[b]]), function(m) {
+        cbind(factors[[b]][[m]], gcca_result$factors[[b]][[m]])
+      })
+    })
     weights <- lapply(
       seq(J), function(b) cbind(weights[[b]], gcca_result$weights[[b]])
     )

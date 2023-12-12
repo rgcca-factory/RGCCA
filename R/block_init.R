@@ -48,7 +48,7 @@ block_init.tensor_block <- function(x, init = "svd") {
     })
   } else {
     x$factors <- lapply(seq_along(dim(x$x))[-1], function(m) {
-      svd(matrix(rnorm(dim(x$x)[m]), dim(x$x)[m]), nu = 0, nv = 1)$v
+      svd(matrix(rnorm(dim(x$x)[m]), dim(x$x)[m]), nu = 1, nv = 0)$u
     })
   }
   x$weights <- rep(1 / sqrt(1), 1)
