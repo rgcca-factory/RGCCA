@@ -174,6 +174,18 @@
 #' orthogonal block components or orthogonal block weight vectors.
 #' @param A Deprecated argument, please use blocks instead.
 #' @param C Deprecated argument, please use connection instead.
+#' @param rank Either an integer, an integer vector of
+#' size \eqn{J} or an integer matrix
+#' of dimension \eqn{\textrm{max}(\textrm{ncomp}) \times J} giving the rank
+#' of the decomposition sought for the canonical vectors in TGCCA.
+#' If block \eqn{j} is an array with at least three dimensions, rank must be
+#' comprised between 1 and the number of variables on the mode bearing the
+#' orthogonality constraint. See \textrm{mode_orth}.
+#' @param mode_orth Either an integer or an integer vector of size \eqn{J}
+#' designating the mode which associated set of factors will be orthogonal
+#' in the decomposition sought by TGCCA. If block \eqn{j} is an array with
+#' \eqn{d > 2} dimensions, \textrm{mode_orth} must be comprised between
+#' 1 and \eqn{d - 1}.
 #' @return A fitted rgcca object.
 #' @return \item{Y}{A list of \eqn{J} elements. The jth element
 #' of the list \eqn{Y}
@@ -433,6 +445,7 @@ rgcca <- function(blocks, connection = NULL, tau = 1, ncomp = 1,
                   superblock = FALSE,
                   NA_method = "na.ignore", quiet = TRUE,
                   n_iter_max = 1000, comp_orth = TRUE,
+                  rank = 1, mode_orth = 1,
                   A = NULL, C = NULL) {
   # Check for deprecated arguments
   if (!missing(A)) {
@@ -478,14 +491,12 @@ rgcca <- function(blocks, connection = NULL, tau = 1, ncomp = 1,
   }
 
   ### Call the gcca function
-  gcca_args <- rgcca_args[c(
-    "connection", "ncomp", "scheme", "init", "bias", "tol",
-    "verbose", "superblock", "response", "n_iter_max", "comp_orth"
-  )]
+  gcca_args <- rgcca_args[-which(names(rgcca_args) %in% c(
+    "quiet", "scale", "scale_block", "method", "NA_method"
+  ))]
   gcca_args[["na.rm"]] <- na.rm
   gcca_args[["blocks"]] <- blocks
   gcca_args[["disjunction"]] <- opt$disjunction
-  gcca_args[[opt$param]] <- rgcca_args[[opt$param]]
   func_out <- do.call(rgcca_outer_loop, gcca_args)
 
   ### Format the output

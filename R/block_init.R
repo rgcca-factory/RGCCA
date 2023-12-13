@@ -44,14 +44,20 @@ block_init.dual_regularized_block <- function(x, init = "svd") {
 block_init.tensor_block <- function(x, init = "svd") {
   if (init == "svd") {
     x$factors <- lapply(seq_along(dim(x$x))[-1], function(m) {
-      svd(apply(x$x, m, c), nu = 0, nv = 1)$v
+      svd(apply(x$x, m, c), nu = 0, nv = x$rank)$v
     })
   } else {
     x$factors <- lapply(seq_along(dim(x$x))[-1], function(m) {
-      svd(matrix(rnorm(dim(x$x)[m]), dim(x$x)[m]), nu = 1, nv = 0)$u
+      if (m == x$mode_orth) {
+        svd(matrix(
+          rnorm(dim(x$x)[m] * x$rank), dim(x$x)[m]
+        ), nu = x$rank, nv = 0)$u
+      } else {
+        matrix(rnorm(dim(x$x)[m] * x$rank), dim(x$x)[m])
+      }
     })
   }
-  x$weights <- rep(1 / sqrt(1), 1)
+  x$weights <- rep(1 / sqrt(x$rank), x$rank)
 
   return(block_project(x))
 }

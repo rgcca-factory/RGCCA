@@ -13,12 +13,14 @@ run_selection <- function(method, quiet = TRUE, ...) {
 
   rgcca_args <- list(
     tau = rep(1, J),
+    rank = rep(1, J),
     ncomp = rep(1, J),
     quiet = quiet,
     scheme = "centroid",
     method = method,
     response = NULL,
     sparsity = rep(1, J),
+    mode_orth = rep(1, J),
     connection = 1 - diag(J),
     superblock = FALSE
   )
@@ -72,7 +74,7 @@ test_that("superblock methods sets all attributes of a superblock", {
   method <- "spca"
   res <- run_selection(method, superblock = TRUE, sparsity = 0.7)$res
   expect_equal(res$rgcca_args$method, "spca")
-  expect_equal(res$rgcca_args[[res$opt$param]], c(0.7, 0.7))
+  expect_equal(unname(res$rgcca_args[[res$opt$param]]), matrix(0.7, 1, 2))
   expect_equal(res$opt$param, "sparsity")
 })
 

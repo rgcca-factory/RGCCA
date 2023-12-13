@@ -105,8 +105,7 @@ rgcca_bootstrap <- function(rgcca_res, n_boot = 100,
     rgcca_res$call$blocks <- Map(
       function(x, y) x[, y, drop = FALSE], rgcca_res$call$blocks, keep_var
     )
-    rgcca_res$call$tau <-
-      rgcca_res$call$sparsity <- rep(1, length(rgcca_res$blocks))
+    rgcca_res$call$tau[] <- rgcca_res$call$sparsity[] <- 1
 
     rgcca_res <- rgcca(rgcca_res)
   }

@@ -43,11 +43,11 @@ format_output <- function(func_out, rgcca_args, opt, blocks) {
   names(func_out$AVE$AVE_X_cor) <- names_AVE
 
   ### Set names and shave
-  array_idx <- which(
-    vapply(blocks, function(x) length(dim(x)) > 2, FUN.VALUE = logical(1L))
+  array_idx <- vapply(
+    blocks, function(x) length(dim(x)) > 2, FUN.VALUE = logical(1L)
   )
 
-  for (j in array_idx) {
+  for (j in seq_along(blocks)[array_idx]) {
     func_out$factors[[j]] <- lapply(
       seq_along(func_out$factors[[j]]),
       function(m) {
@@ -60,7 +60,7 @@ format_output <- function(func_out, rgcca_args, opt, blocks) {
     rownames(func_out$a[[j]]) <- do.call(paste, c(grid, sep = "_"))
   }
 
-  for (j in seq_along(blocks)[-array_idx]) {
+  for (j in seq_along(blocks)[!array_idx]) {
     rownames(func_out$a[[j]]) <- colnames(blocks[[j]])
   }
 

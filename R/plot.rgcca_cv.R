@@ -30,7 +30,7 @@ plot.rgcca_cv <- function(x, type = c("sd", "quantile"),
   }
 
   best <- which(apply(
-    x$params, 1, function(z) identical(z, x$best_params)
+    x$params, 1, function(z) identical(z, drop(x$best_params))
   ))
 
   idx_order <- seq_len(nrow(df))

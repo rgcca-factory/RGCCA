@@ -29,8 +29,17 @@ block_update.tensor_block <- function(x, grad) {
     grad_m <- grad_m %*% khatri_rao(
       Reduce(khatri_rao, rev(x$factors[-seq_len(m)])), other_factors
     )
-    x$factors[[m]] <- grad_m %*% diag(x$weights, nrow = length(x$weights))
-    x$factors[[m]] <- x$factors[[m]] / norm(x$factors[[m]], type = "2")
+    if (m == x$mode_orth) {
+      SVD <- svd(
+        grad_m %*% diag(x$weights, nrow = x$rank), nu = x$rank, nv = x$rank
+      )
+      x$factors[[m]] <- SVD$u %*% t(SVD$v)
+    } else {
+      x$factors[[m]] <- grad_m %*% diag(x$weights, nrow = x$rank)
+      x$factors[[m]] <- apply(
+        x$factors[[m]], 2, function(y) y / norm(y, type = "2")
+      )
+    }
 
     other_factors <- khatri_rao(x$factors[[m]], other_factors)
   }

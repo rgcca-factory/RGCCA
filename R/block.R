@@ -45,19 +45,30 @@ new_sparse_block <- function(x, j, sparsity, tol = 1e-08, ...) {
   )
 }
 
-new_tensor_block <- function(x, j, ..., class = character()) {
+new_tensor_block <- function(x, j, rank, mode_orth, ..., class = character()) {
   new_block(
-    x, j, factors = NULL, weights = NULL, ..., class = c(class, "tensor_block")
+    x, j, rank = rank, mode_orth = mode_orth, factors = NULL,
+    weights = NULL, ..., class = c(class, "tensor_block")
+  )
+}
+
+new_regularized_tensor_block <- function(x, j, rank, mode_orth, tau, ...) {
+  new_tensor_block(
+    x, j, rank = rank, mode_orth = mode_orth, tau = tau,
+    M = NULL, ..., class = "tensor_regularized_block"
   )
 }
 
 ### Utility method to choose the adequate class
-create_block <- function(x, j, bias, na.rm, tau, sparsity, tol) {
+create_block <- function(x, j, bias, na.rm, tau, sparsity,
+                         tol, rank, mode_orth) {
   if (length(dim(x)) > 2) {         # TGCCA
     if (tau < 1) {
-      res <- new_regularized_tensor_block(x, j, tau, bias = bias, na.rm = na.rm)
+      res <- new_regularized_tensor_block(
+        x, j, rank, mode_orth, tau, bias = bias, na.rm = na.rm
+      )
     } else {
-      res <- new_tensor_block(x, j, bias = bias, na.rm = na.rm)
+      res <- new_tensor_block(x, j, rank, mode_orth, bias = bias, na.rm = na.rm)
     }
   } else {
     if (sparsity < 1) {             # SGCCA

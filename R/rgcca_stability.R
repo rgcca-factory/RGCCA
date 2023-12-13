@@ -133,8 +133,7 @@ rgcca_stability <- function(rgcca_res,
   rgcca_res$call$blocks <- Map(
     function(x, y) x[, y, drop = FALSE], rgcca_res$call$blocks, keepVar
   )
-  rgcca_res$call$tau <-
-    rgcca_res$call$sparsity <- rep(1, length(rgcca_res$call$blocks))
+  rgcca_res$call$tau[] <- rgcca_res$call$sparsity[] <- 1
 
   rgcca_res <- rgcca(rgcca_res)
 

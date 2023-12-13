@@ -22,7 +22,7 @@ summary.rgcca_permutation <- function(object, ...) {
   print(tab, quote = FALSE, ...)
 
   best <- which(apply(
-    object$params, 1, function(z) identical(z, object$best_params)
+    object$params, 1, function(z) identical(z, drop(object$best_params))
   ))
   cat(strwrap(paste0(
     "\nThe best combination is: ",

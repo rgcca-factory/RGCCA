@@ -33,6 +33,7 @@
 #'   dimnames in the same order.
 #' }
 #' @inheritParams rgcca
+#' @importFrom abind abind
 #' @noRd
 check_blocks <- function(blocks, quiet = FALSE, response = NULL) {
   blocks <- check_blocks_is_list(blocks)
@@ -258,7 +259,7 @@ check_blocks_align <- function(blocks, m = 1) {
     y <- array(NA, dim = extra_dim)
     dimnames(y)[[m]] <- missing_names
     rownames(y) <- missing_names
-    return(abind::abind(x, y, along = m))
+    return(abind(x, y, along = m))
   })
 
   # Align blocks using names on dimension m

@@ -8,7 +8,8 @@ rgcca_outer_loop <- function(blocks, connection = 1 - diag(length(blocks)),
                              verbose = TRUE,
                              na.rm = TRUE, superblock = FALSE,
                              response = NULL, disjunction = NULL,
-                             n_iter_max = 1000, comp_orth = TRUE) {
+                             n_iter_max = 1000, comp_orth = TRUE,
+                             rank = 1, mode_orth = 1) {
   if (verbose) {
     scheme_str <- ifelse(is(scheme, "function"), "user-defined", scheme)
     cat(
@@ -60,22 +61,6 @@ rgcca_outer_loop <- function(blocks, connection = 1 - diag(length(blocks)),
     P <- lapply(seq(J), function(b) c())
   }
 
-  # Save computed shrinkage parameter in a new variable
-  computed_tau <- tau
-  if (is.vector(tau)) {
-    computed_tau <- matrix(
-      rep(tau, N + 1),
-      nrow = N + 1, J, byrow = TRUE
-    )
-  }
-
-  if (is.vector(sparsity)) {
-    sparsity <- matrix(
-      rep(sparsity, N + 1),
-      nrow = N + 1, J, byrow = TRUE
-    )
-  }
-
   # Whether primal or dual
   primal_dual <- matrix("primal", nrow = N + 1, ncol = J)
   primal_dual[which((sparsity == 1) & (nb_ind < matrix(
@@ -91,15 +76,16 @@ rgcca_outer_loop <- function(blocks, connection = 1 - diag(length(blocks)),
       ))
     }
     gcca_result <- rgcca_inner_loop(R, connection, g, dg,
-                                    tau = computed_tau[n, ],
+                                    tau = tau[n, ],
                                     sparsity = sparsity[n, ],
                                     init = init, bias = bias, tol = tol,
                                     verbose = verbose, na.rm = na.rm,
-                                    n_iter_max = n_iter_max
+                                    n_iter_max = n_iter_max,
+                                    rank = rank[n, ], mode_orth = mode_orth
     )
 
     # Store tau, crit
-    computed_tau[n, ] <- gcca_result$tau
+    tau[n, ] <- gcca_result$tau
     crit[[n]] <- gcca_result$crit
 
     # Store Y, a, factors and weights
@@ -137,9 +123,9 @@ rgcca_outer_loop <- function(blocks, connection = 1 - diag(length(blocks)),
   ##### Generation of the output #####
   if (N == 0) {
     crit <- unlist(crit)
-    computed_tau <- as.numeric(computed_tau)
+    tau <- as.numeric(tau)
   } else {
-    computed_tau <- apply(computed_tau, 2, as.numeric)
+    tau <- apply(tau, 2, as.numeric)
   }
 
   astar <- compute_astar(a, P, superblock, comp_orth, N)
@@ -150,7 +136,7 @@ rgcca_outer_loop <- function(blocks, connection = 1 - diag(length(blocks)),
     astar = astar,
     factors = factors,
     weights = weights,
-    tau = computed_tau,
+    tau = tau,
     crit = crit, primal_dual = primal_dual
   )
 
