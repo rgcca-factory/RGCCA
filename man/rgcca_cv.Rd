@@ -35,6 +35,7 @@ rgcca_cv(
   comp_orth = TRUE,
   rank = 1,
   mode_orth = 1,
+  separable = TRUE,
   ...
 )
 }
@@ -227,13 +228,17 @@ of dimension \eqn{\textrm{max}(\textrm{ncomp}) \times J} giving the rank
 of the decomposition sought for the canonical vectors in TGCCA.
 If block \eqn{j} is an array with at least three dimensions, rank must be
 comprised between 1 and the number of variables on the mode bearing the
-orthogonality constraint. See \textrm{mode_orth}.}
+orthogonality constraint. See \eqn{\textrm{mode_orth}}.}
 
 \item{mode_orth}{Either an integer or an integer vector of size \eqn{J}
 designating the mode which associated set of factors will be orthogonal
 in the decomposition sought by TGCCA. If block \eqn{j} is an array with
-\eqn{d > 2} dimensions, \textrm{mode_orth} must be comprised between
+\eqn{d > 2} dimensions, \eqn{\textrm{mode_orth}} must be comprised between
 1 and \eqn{d - 1}.}
+
+\item{separable}{A logical value if the regularization matrices must be
+estimated as separable matrices (i.e. products of Kronecker products
+matching the dimensions of the modes in the data).}
 
 \item{...}{Additional parameters to be passed to prediction_model.}
 }

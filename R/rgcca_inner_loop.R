@@ -3,7 +3,8 @@ rgcca_inner_loop <- function(A, C, g, dg, tau = rep(1, length(A)),
                              verbose = FALSE, init = "svd", bias = TRUE,
                              tol = 1e-08, na.rm = TRUE, n_iter_max = 1000,
                              rank = rep(1, length(A)),
-                             mode_orth = rep(1, length(A))) {
+                             mode_orth = rep(1, length(A)),
+                             separable = TRUE) {
   if (!is.numeric(tau)) {
     # From Schafer and Strimmer, 2005
     tau <- vapply(A, tau.estimate, na.rm = na.rm, FUN.VALUE = 1.0)
@@ -18,7 +19,8 @@ rgcca_inner_loop <- function(A, C, g, dg, tau = rep(1, length(A)),
   ### Initialization
   block_objects <- lapply(seq_along(A), function(j) {
     create_block(
-      A[[j]], j, bias, na.rm, tau[j], sparsity[j], tol, rank[j], mode_orth[j]
+      A[[j]], j, bias, na.rm, tau[j], sparsity[j],
+      tol, rank[j], mode_orth[j], separable
     )
   })
 

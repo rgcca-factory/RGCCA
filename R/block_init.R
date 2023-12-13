@@ -61,3 +61,24 @@ block_init.tensor_block <- function(x, init = "svd") {
 
   return(block_project(x))
 }
+
+#' @export
+block_init.regularized_tensor_block <- function(x, init = "svd") {
+  NextMethod()
+}
+
+#' @export
+block_init.separable_regularized_tensor_block <- function(x, init = "svd") {
+  d <- length(dim(x$x)) - 1
+  x$M <- estimate_separable_covariance(x$x)
+  x$M <- lapply(x$M, function(y) {
+    sqrt_matrix(
+      x$tau^(1 / d) * diag(nrow(y)) + (1 - x$tau^(1 / d)) * y,
+      inv = TRUE
+    )
+  })
+  for (m in seq_len(d)) {
+    x$x <- mode_product(x$x, x$M[[m]], m = m + 1)
+  }
+  NextMethod()
+}

@@ -172,20 +172,23 @@
 #' iterations.
 #' @param comp_orth A logical value indicating if the deflation should lead to
 #' orthogonal block components or orthogonal block weight vectors.
-#' @param A Deprecated argument, please use blocks instead.
-#' @param C Deprecated argument, please use connection instead.
 #' @param rank Either an integer, an integer vector of
 #' size \eqn{J} or an integer matrix
 #' of dimension \eqn{\textrm{max}(\textrm{ncomp}) \times J} giving the rank
 #' of the decomposition sought for the canonical vectors in TGCCA.
 #' If block \eqn{j} is an array with at least three dimensions, rank must be
 #' comprised between 1 and the number of variables on the mode bearing the
-#' orthogonality constraint. See \textrm{mode_orth}.
+#' orthogonality constraint. See \eqn{\textrm{mode_orth}}.
 #' @param mode_orth Either an integer or an integer vector of size \eqn{J}
 #' designating the mode which associated set of factors will be orthogonal
 #' in the decomposition sought by TGCCA. If block \eqn{j} is an array with
-#' \eqn{d > 2} dimensions, \textrm{mode_orth} must be comprised between
+#' \eqn{d > 2} dimensions, \eqn{\textrm{mode_orth}} must be comprised between
 #' 1 and \eqn{d - 1}.
+#' @param separable A logical value if the regularization matrices must be
+#' estimated as separable matrices (i.e. products of Kronecker products
+#' matching the dimensions of the modes in the data).
+#' @param A Deprecated argument, please use blocks instead.
+#' @param C Deprecated argument, please use connection instead.
 #' @return A fitted rgcca object.
 #' @return \item{Y}{A list of \eqn{J} elements. The jth element
 #' of the list \eqn{Y}
@@ -445,7 +448,7 @@ rgcca <- function(blocks, connection = NULL, tau = 1, ncomp = 1,
                   superblock = FALSE,
                   NA_method = "na.ignore", quiet = TRUE,
                   n_iter_max = 1000, comp_orth = TRUE,
-                  rank = 1, mode_orth = 1,
+                  rank = 1, mode_orth = 1, separable = TRUE,
                   A = NULL, C = NULL) {
   # Check for deprecated arguments
   if (!missing(A)) {

@@ -55,18 +55,32 @@ new_tensor_block <- function(x, j, rank, mode_orth, ..., class = character()) {
 new_regularized_tensor_block <- function(x, j, rank, mode_orth, tau, ...) {
   new_tensor_block(
     x, j, rank = rank, mode_orth = mode_orth, tau = tau,
-    M = NULL, ..., class = "tensor_regularized_block"
+    M = NULL, ..., class = "regularized_tensor_block"
+  )
+}
+
+new_separable_regularized_tensor_block <- function(x, j, rank, mode_orth,
+                                                   tau, ...) {
+  new_tensor_block(
+    x, j, rank = rank, mode_orth = mode_orth, tau = tau,
+    M = NULL, ..., class = "separable_regularized_tensor_block"
   )
 }
 
 ### Utility method to choose the adequate class
 create_block <- function(x, j, bias, na.rm, tau, sparsity,
-                         tol, rank, mode_orth) {
+                         tol, rank, mode_orth, separable) {
   if (length(dim(x)) > 2) {         # TGCCA
     if (tau < 1) {
-      res <- new_regularized_tensor_block(
-        x, j, rank, mode_orth, tau, bias = bias, na.rm = na.rm
-      )
+      if (separable) {
+        res <- new_separable_regularized_tensor_block(
+          x, j, rank, mode_orth, tau, bias = bias, na.rm = na.rm
+        )
+      } else {
+        res <- new_regularized_tensor_block(
+          x, j, rank, mode_orth, tau, bias = bias, na.rm = na.rm
+        )
+      }
     } else {
       res <- new_tensor_block(x, j, rank, mode_orth, bias = bias, na.rm = na.rm)
     }
