@@ -64,11 +64,34 @@ block_init.tensor_block <- function(x, init = "svd") {
 
 #' @export
 block_init.regularized_tensor_block <- function(x, init = "svd") {
-  NextMethod()
+  # Compute the highest singular value of the regularization matrix
+  p <- prod(dim(x$x)[-1])
+  if (p > x$n) {
+    x$M <- eigen(
+      pm(matrix(x$x, x$n), t(matrix(x$x, x$n)), na.rm = x$na.rm),
+      symmetric = TRUE, only.values = TRUE
+    )$values[1]
+  } else {
+    x$M <- eigen(
+      pm(t(matrix(x$x, x$n)), matrix(x$x, x$n), na.rm = x$na.rm),
+      symmetric = TRUE, only.values = TRUE
+    )$values[1]
+  }
+  x$M <- x$tau + (1 - x$tau) * x$M / x$N
+
+  # Initialize the factors and weights using the tau = 1 strategy
+  x <- NextMethod()
+
+  # Change weights to satisfy the constraints
+  x$weights <- x$weights / sqrt(x$M)
+  x$a <- x$a / sqrt(x$M)
+  x$Y <- x$Y / sqrt(x$M)
+  return(x)
 }
 
 #' @export
 block_init.separable_regularized_tensor_block <- function(x, init = "svd") {
+  # Compute separable estimation of the regularization matrix
   d <- length(dim(x$x)) - 1
   x$M <- estimate_separable_covariance(x$x)
   x$M <- lapply(x$M, function(y) {
@@ -77,8 +100,12 @@ block_init.separable_regularized_tensor_block <- function(x, init = "svd") {
       inv = TRUE
     )
   })
+
+  # Make a change of variables
   for (m in seq_len(d)) {
     x$x <- mode_product(x$x, x$M[[m]], m = m + 1)
   }
+
+  # Initialize the factors and weights using the tau = 1 strategy
   NextMethod()
 }
