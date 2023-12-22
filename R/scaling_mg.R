@@ -6,7 +6,7 @@ scaling_mg <- function(blocks, scale = TRUE, bias = TRUE,
   if (isTRUE(scale_block)) scale_block <- "inertia"
   sqrt_N <- sqrt(NROW(blocks[[1]]) + bias - 1)
   
-  if (scale || !is.null(groups)) { #EG
+  if (scale) {
     # Standardization of the variables of each block
     # Or, in the multi-group case, centering and normalization of the variables #EG
     blocks <- lapply(

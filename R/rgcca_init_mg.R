@@ -31,7 +31,7 @@ rgcca_init_mg <- function(A, init, bias, na.rm, tau, groups = NULL) {
              L[, j] <- pm(t(A[[j]]), Y[[j]], na.rm = na.rm)
            },
            no = {
-             M[[j]] <- ginv(tau[j] * diag(p) + ((1 - tau[j])) * # 1 / N[[j]] *
+             M[[j]] <- ginv(tau[j] * diag(p) + ((1 - tau[j])) *
                               (pm(t(A[[j]]), A[[j]], na.rm = na.rm)))
              a[[j]] <- drop(1 / sqrt(t(a[[j]]) %*% M[[j]] %*% a[[j]])) *
                (M[[j]] %*% a[[j]])

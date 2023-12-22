@@ -272,6 +272,14 @@ rgcca_mg <- function(blocks, method = "rgcca", #EG
   rgcca_args <- as.list(environment())
   ### If specific objects are given for blocks, parameters are imported from
   #   these objects.
+  if (supergroup) { #EG
+    if (is.matrix(rgcca_args$blocks) || is.data.frame(rgcca_args$blocks)) {
+      rownames_data <- rownames(rgcca_args$blocks)
+    } else {
+      rownames_data <- rownames(rgcca_args$blocks[[1]])
+    }
+  }
+  
   tmp <- get_rgcca_args_mg(blocks, rgcca_args) #EG
   opt <- tmp$opt
   rgcca_args <- tmp$rgcca_args
@@ -303,10 +311,11 @@ rgcca_mg <- function(blocks, method = "rgcca", #EG
   }
   if (rgcca_args$supergroup) {
     blocks[["supergroup"]] <- Reduce(rbind, blocks)
-    rownames(blocks[["supergroup"]]) <- paste0(
-      rownames(blocks[["supergroup"]])
-    )
     blocks[["supergroup"]] <- blocks[["supergroup"]] / sqrt(length(blocks) - 1)
+    # reorder rows
+    indices <- match(rownames(blocks[["supergroup"]]), 
+                     rownames_data)
+    blocks[["supergroup"]] <- blocks[["supergroup"]][indices, , drop = FALSE]
   }
   
   ### Call the gcca function

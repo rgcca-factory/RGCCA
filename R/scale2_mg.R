@@ -7,7 +7,7 @@
 #' @title Scaling and Centering of Matrix-like Objects
 #' @noRd
 scale2_mg <- function(A, scale = TRUE, bias = TRUE, groups = NULL) {
-  if (!is.null(groups)){
+  if (scale && !is.null(groups)){
     A <- scale(A, center = TRUE, scale = FALSE)
     col_norm <- apply(A, 2, function(x) {norm(x, type = "2")})
     A <- scale(A, center = FALSE, scale = col_norm)

@@ -16,41 +16,40 @@ format_output_mg <- function(func_out, rgcca_args, opt, blocks, groups = NULL) {
     pjs <- pjs[-rgcca_args$response]
   }
   
-  if (is.null(groups)){
-    AVE_inner <- vapply(seq(max(rgcca_args$ncomp)), function(n) {
-      sum(rgcca_args$connection * cor(
-        do.call(cbind, lapply(func_out$Y, function(y) y[, n]))
-      )^2 / 2) / (sum(rgcca_args$connection) / 2)
-    }, FUN.VALUE = double(1L))
+  AVE_inner <- vapply(seq(max(rgcca_args$ncomp)), function(n) {
+    sum(rgcca_args$connection * cor(
+      do.call(cbind, lapply(func_out$Y, function(y) y[, n]))
+    )^2 / 2) / (sum(rgcca_args$connection) / 2)
+  }, FUN.VALUE = double(1L))
     
-    AVE_X <- lapply(blocks_AVE, function(j) {
-      apply(func_out$Y[[j]], 2, rsq, blocks[[j]])
-    })
-    AVE_X_cum <- lapply(blocks_AVE, function(j) {
-      vapply(
-        seq_len(NCOL(func_out$Y[[j]])),
-        function(p) rsq(func_out$Y[[j]][, seq(p)], blocks[[j]]),
-        FUN.VALUE = 1.0
-      )
-    })
-    AVE_X_cor <- lapply(AVE_X_cum, function(x) {
-      y <- c(0, x[-length(x)])
-      x - y
-    })
-    
-    outer <- matrix(unlist(AVE_X_cor), nrow = max(ncomp_AVE))
-    AVE_outer <- as.vector((outer %*% pjs) / sum(pjs))
-    AVE_X <- shave(AVE_X, ncomp_AVE)
-    AVE_X_cor <- shave(AVE_X_cor, ncomp_AVE)
-    func_out$AVE <- list(
-      AVE_X = AVE_X, AVE_X_cor = AVE_X_cor,
-      AVE_outer = AVE_outer, AVE_inner = AVE_inner
+  AVE_X <- lapply(blocks_AVE, function(j) {
+    apply(func_out$Y[[j]], 2, rsq, blocks[[j]])
+  })
+  AVE_X_cum <- lapply(blocks_AVE, function(j) {
+    vapply(
+      seq_len(NCOL(func_out$Y[[j]])),
+      function(p) rsq(func_out$Y[[j]][, seq(p)], blocks[[j]]),
+      FUN.VALUE = 1.0
     )
-    func_out$AVE_inner <- NULL
-    
-    names(func_out$AVE$AVE_X) <- names_AVE
-    names(func_out$AVE$AVE_X_cor) <- names_AVE
-  }
+  })
+  AVE_X_cor <- lapply(AVE_X_cum, function(x) {
+    y <- c(0, x[-length(x)])
+    x - y
+  })
+  
+  outer <- matrix(unlist(AVE_X_cor), nrow = max(ncomp_AVE))
+  AVE_outer <- as.vector((outer %*% pjs) / sum(pjs))
+  AVE_X <- shave(AVE_X, ncomp_AVE)
+  AVE_X_cor <- shave(AVE_X_cor, ncomp_AVE)
+  func_out$AVE <- list(
+    AVE_X = AVE_X, AVE_X_cor = AVE_X_cor,
+    AVE_outer = AVE_outer, AVE_inner = AVE_inner
+  )
+  func_out$AVE_inner <- NULL
+  
+  names(func_out$AVE$AVE_X) <- names_AVE
+  names(func_out$AVE$AVE_X_cor) <- names_AVE
+
   
   ### Set names and shave
   for (j in seq_along(blocks)) {

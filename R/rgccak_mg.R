@@ -114,8 +114,10 @@ rgccak_mg <- function(A, C, tau = rep(1, length(A)), scheme = "centroid",
         " Iter: ", formatC(iter, width = 3, format = "d"),
         " Fit: ", formatC(crit[iter], digits = 8, width = 10, format = "f"),
         " Dif: ", formatC(crit[iter] - crit_old,
-                          digits = 8, width = 10, format = "f"
-        ), "\n"
+                          digits = 8, width = 10, format = "f"), 
+        "Dif a:", formatC(drop(crossprod(unlist(a, FALSE, FALSE) - unlist(a_old, FALSE, FALSE))), 
+                          digits = 14, width = 10, format = "f"), 
+        "\n"
       )
     }
     stopping_criteria <- c(
