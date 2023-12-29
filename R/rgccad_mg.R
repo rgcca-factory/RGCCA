@@ -214,7 +214,7 @@ rgccad_mg <- function(blocks, connection = 1 - diag(length(blocks)),
   }
 
   
-  if (superblock && comp_orth || supergroup) {
+  if ((superblock || supergroup) && comp_orth) {
     P <- c()
   } else {
     P <- lapply(seq(J), function(b) c())
@@ -275,7 +275,7 @@ rgccad_mg <- function(blocks, connection = 1 - diag(length(blocks)),
   # If there is a superblock and weight vectors are orthogonal, it is possible
   # to have non meaningful weights associated to blocks that have been set to
   # zero by the deflation
-  if (superblock && !comp_orth) { #TODO supergroup
+  if ((superblock || supergroup) && !comp_orth) {
     a <- lapply(a, function(x) {
       if (ncol(x) > nrow(x)) {
         x[, seq(nrow(x) + 1, ncol(x))] <- 0

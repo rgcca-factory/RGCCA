@@ -33,6 +33,7 @@ deflate_mg <- function(a, Y, R, P, ndefl, n, superblock, supergroup,
   }
   # If we aim for orthogonal components with a superblock, we need to deflate
   # the superblock and reconstruct the blocks from the superblock
+  # Same for supergroup
   if (superblock && comp_orth) {
     defl_result <- deflation(R[[J]], var_defl[[J]], na.rm, left)
     P <- cbind(P, defl_result$p)
@@ -47,11 +48,8 @@ deflate_mg <- function(a, Y, R, P, ndefl, n, superblock, supergroup,
   } else if (supergroup && comp_orth) {
     defl_result <- deflation(R[[J]], var_defl[[J]], na.rm, left)
     P <- cbind(P, defl_result$p)
-    cumsum_nis <- cumsum(nis)[seq_len(J - 1)]
-    inf_nis <- c(0, cumsum_nis[seq_len(J - 2)]) + 1
     R <- lapply(seq(J - 1), function(b) {
-      x <- defl_result$R[inf_nis[b]:cumsum_nis[b], , drop = FALSE]
-      rownames(x) <- rownames(defl_result$R)[inf_nis[b]:cumsum_nis[b]]
+      x <- defl_result$R[rownames(R[[b]]), , drop = FALSE]
       return(x)
     })
     R[[J]] <- defl_result$R
@@ -71,6 +69,12 @@ deflate_mg <- function(a, Y, R, P, ndefl, n, superblock, supergroup,
     # must be reconstructed from the individual blocks
     if (superblock && !comp_orth) {
       R[[J]] <- do.call(cbind, R[seq(J - 1)])
+    }
+    # Same for supergroup
+    if (supergroup && !comp_orth) {
+      rownames_supergroup <- rownames(R[[J]])
+      R[[J]] <- do.call(rbind, R[seq(J - 1)])
+      R[[J]] <- R[[J]][rownames_supergroup, , drop = FALSE]
     }
   }
   return(list(R = R, P = P))

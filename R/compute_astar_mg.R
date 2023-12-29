@@ -10,14 +10,7 @@ compute_astar_mg <- function(a, P, superblock, supergroup, comp_orth, N) {
   J <- length(a)
   # If there is a superblock and components are orthogonal, astar is only
   # available for the superblock
-  if (superblock && comp_orth) {
-    astar <- a[[J]]
-    for (n in seq_len(N)) {
-      astar[, n + 1] <- a[[J]][, n + 1] -
-        astar[, seq(n), drop = FALSE] %*%
-        drop(t(a[[J]][, n + 1]) %*% P[, seq(n), drop = FALSE])
-    }
-  } else if (supergroup) {
+  if ((superblock || supergroup) && comp_orth) {
     astar <- a[[J]]
     for (n in seq_len(N)) {
       astar[, n + 1] <- a[[J]][, n + 1] -
