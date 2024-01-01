@@ -299,4 +299,5 @@ check_blocks_groups_mg <- function(blocks, groups = NULL) { #EG whole function
                     f = groups, drop = TRUE) # drop=T to drop levels that do not occur
     blocks <- lapply(blocks, data.matrix)
   }
+  return(blocks)
 }

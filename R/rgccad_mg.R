@@ -178,10 +178,10 @@ rgccad_mg <- function(blocks, connection = 1 - diag(length(blocks)),
                    tau = rep(1, length(blocks)),
                    ncomp = rep(1, length(blocks)), scheme = "centroid",
                    init = "svd", bias = TRUE, tol = 1e-08, verbose = TRUE,
-                   na.rm = TRUE, superblock = FALSE, supergroup = FALSE,
+                   na.rm = TRUE, superblock = FALSE, 
                    response = NULL, disjunction = NULL,
                    n_iter_max = 1000, comp_orth = TRUE,
-                   groups = NULL) {
+                   groups = NULL, supergroup = FALSE) {
   if (verbose) {
     scheme_str <- ifelse(is(scheme, "function"), "user-defined", "scheme")
     cat(
