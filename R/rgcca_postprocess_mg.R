@@ -1,7 +1,8 @@
 #' Function to postprocess the RGCCA variables
+#' in the multi-group framework
 #'
 #' @noRd
-rgcca_postprocess_mg <- function(A, a, Y, L, g, na.rm, groups = NULL) {
+rgcca_postprocess_mg <- function(A, a, Y, L, g, na.rm, groups) {
   # check for parity of g
   ctrl <- all(g(-5:5) == g(5:-5))
   

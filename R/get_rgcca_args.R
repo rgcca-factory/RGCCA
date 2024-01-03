@@ -2,11 +2,11 @@
 #' Modify arguments based on the provided configuration if needed.
 #' @noRd
 get_rgcca_args <- function(object, default_args = list()) {
-  if (class(object) %in% c("rgcca", "permutation", "cval")) {
+  if (any(class(object) %in% c("rgcca", "permutation", "cval"))) {
     opt <- object$opt
     rgcca_args <- object$call
-
-    if (class(object) %in% c("permutation", "cval")) {
+    
+    if (any(class(object) %in% c("permutation", "cval"))) {
       if (object$par_type == "tau") {
         rgcca_args$tau <- object$bestpenalties
       }
@@ -27,6 +27,7 @@ get_rgcca_args <- function(object, default_args = list()) {
       scale = default_args$scale,
       ncomp = default_args$ncomp,
       blocks = default_args$blocks,
+      groups = default_args$groups,
       scheme = default_args$scheme,
       method = tolower(default_args$method),
       verbose = default_args$verbose,
@@ -37,9 +38,10 @@ get_rgcca_args <- function(object, default_args = list()) {
       n_iter_max = default_args$n_iter_max,
       connection = default_args$connection,
       superblock = default_args$superblock,
+      supergroup = default_args$supergroup,
       scale_block = default_args$scale_block
     )
-
+    
     rgcca_args$init <- check_char(rgcca_args$init, "init", c("svd", "random"))
     rgcca_args$NA_method <- check_char(
       rgcca_args$NA_method, "NA_method", c("nipals", "complete")
@@ -50,33 +52,35 @@ get_rgcca_args <- function(object, default_args = list()) {
         rgcca_args$scale_block, "scale_block", c("inertia", "lambda1")
       )
     }
-
+    
     rgcca_args$blocks <- check_blocks(
       rgcca_args$blocks, add_NAlines = TRUE,
-      quiet = rgcca_args$quiet, response = rgcca_args$response
+      quiet = rgcca_args$quiet, response = rgcca_args$response,
+      groups = rgcca_args$groups
     )
-
+    
+    
     check_integer("tol", rgcca_args$tol, float = TRUE, min = 0)
     check_integer("n_iter_max", rgcca_args$n_iter_max, min = 1)
     for (i in c(
-      "superblock", "verbose", "scale", "bias", "quiet", "comp_orth"
+      "superblock", "verbose", "scale", "bias", "quiet", "comp_orth", "supergroup"
     )) {
       check_boolean(i, rgcca_args[[i]])
     }
-
+    
     rgcca_args$tau <- elongate_arg(rgcca_args$tau, rgcca_args$blocks)
     rgcca_args$ncomp <- elongate_arg(rgcca_args$ncomp, rgcca_args$blocks)
     rgcca_args$sparsity <- elongate_arg(rgcca_args$sparsity, rgcca_args$blocks)
-
+    
     ### Get last parameters based on the method
     tmp <- select_analysis(rgcca_args, rgcca_args$blocks)
     opt <- tmp$opt
     rgcca_args <- tmp$rgcca_args
-
+    
     # Change penalty to 0 if there is a univariate disjunctive block response
     opt$disjunction <- !is.null(rgcca_args$response) &&
       is.character(rgcca_args$blocks[[rgcca_args$response]])
-
+    
     if (opt$disjunction) {
       if (is.matrix(rgcca_args[[opt$param]])) {
         rgcca_args[[opt$param]][, rgcca_args$response] <- 0

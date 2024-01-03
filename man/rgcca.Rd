@@ -9,16 +9,18 @@ rgcca(
   method = "rgcca",
   scale = TRUE,
   scale_block = "inertia",
+  groups = NULL,
   connection = 1 - diag(length(blocks)),
   scheme = "factorial",
-  ncomp = rep(1, length(blocks)),
-  tau = rep(1, length(blocks)),
-  sparsity = rep(1, length(blocks)),
+  ncomp = 1,
+  tau = 1,
+  sparsity = 1,
   init = "svd",
   bias = TRUE,
   tol = 1e-08,
   response = NULL,
   superblock = FALSE,
+  supergroup = FALSE,
   NA_method = "nipals",
   verbose = FALSE,
   quiet = TRUE,
@@ -47,6 +49,9 @@ eigenvalue of its empirical covariance matrix.
 Otherwise the blocks are not scaled. If standardization is
 applied (scale = TRUE), the block scaling is applied on the result of the
 standardization.}
+
+\item{groups}{Factor of length n indicating the group to which each 
+individual belongs, when using the multi-group framework.}
 
 \item{connection}{A symmetric matrix (\eqn{J \times J}{J x J}) that
 describes the relationships between blocks.}
@@ -102,6 +107,10 @@ activated.}
 
 \item{superblock}{Boolean indicating the presence of a superblock
 (deflation strategy must be adapted when a superblock is used).}
+
+\item{supergroup}{Boolean indicating the presence of a supergroup,
+when using the multi-group framework
+(deflation strategy must be adapted when a supergroup is used).}
 
 \item{NA_method}{Character string corresponding to the method used for
 handling missing values ("nipals", "complete"). (default: "nipals").

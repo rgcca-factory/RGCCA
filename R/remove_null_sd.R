@@ -14,16 +14,22 @@
 #' index of the removed variables along with their name.}
 #' @noRd
 
-remove_null_sd <- function(list_m, column_sd_null = NULL) {
+remove_null_sd <- function(list_m, column_sd_null = NULL, groups = NULL) {
   names <- names(list_m)
-
+  
   if (is.null(column_sd_null)) {
     column_sd_null <- lapply(
       list_m,
       function(x) {
         which(apply(x, 2, function(y) {
           if (mode(y) != "character") {
-            res <- all(is.na(y)) || (sd(y[!is.na(y)]) == 0)
+            if (!is.null(groups)){
+              # in multi-group mode, variables with NA in a 
+              # whole group but not in all groups are kept
+              res <- all(sd(y[!is.na(y)]) == 0)
+            } else {
+              res <- all(is.na(y)) || (sd(y[!is.na(y)]) == 0)
+            }
           } else {
             res <- FALSE
           }
@@ -32,7 +38,15 @@ remove_null_sd <- function(list_m, column_sd_null = NULL) {
       }
     )
   }
-
+  
+  # in multi-group mode, variables with null sd in at 
+  # least one group are removed in all groups
+  if (!is.null(groups)) {
+    all_cols_sd_null <- unique(unlist(column_sd_null, use.names = FALSE))
+    column_sd_null[seq_along(column_sd_null)] <- rep(list(all_cols_sd_null), 
+                                                     times = length(column_sd_null))
+  }
+  
   blocks_index <- seq(1, length(list_m))[
     unlist(
       lapply(
@@ -51,7 +65,7 @@ remove_null_sd <- function(list_m, column_sd_null = NULL) {
       }
     }
   )
-
+  
   names(list_m) <- names
   return(list(list_m = list_m, column_sd_null = column_sd_null))
 }

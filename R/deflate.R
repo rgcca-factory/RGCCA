@@ -14,13 +14,17 @@
 #' response block.
 #' @param na.rm Logical indicating if NA values should be removed.
 #' @noRd
-deflate <- function(a, Y, R, P, ndefl, n, superblock,
-                    comp_orth, response, na.rm) {
+deflate <- function(a, Y, R, P, ndefl, n, superblock, supergroup,
+                    comp_orth, response, na.rm, groups) {
   J <- length(a)
   pjs <- vapply(R, NCOL, FUN.VALUE = 1L)
   # Select the variable used to deflate blocks
   if (comp_orth) {
-    var_defl <- lapply(seq_len(NCOL(Y)), function(i) Y[, i])
+    if (is.list(Y)) {
+      var_defl <- lapply(seq_len(J), function(i) Y[[i]])
+    } else {
+      var_defl <- lapply(seq_len(NCOL(Y)), function(i) Y[, i])
+    }
     left <- TRUE
   } else {
     var_defl <- a
@@ -28,6 +32,7 @@ deflate <- function(a, Y, R, P, ndefl, n, superblock,
   }
   # If we aim for orthogonal components with a superblock, we need to deflate
   # the superblock and reconstruct the blocks from the superblock
+  # Same for supergroup
   if (superblock && comp_orth) {
     defl_result <- deflation(R[[J]], var_defl[[J]], na.rm, left)
     P <- cbind(P, defl_result$p)
@@ -39,7 +44,15 @@ deflate <- function(a, Y, R, P, ndefl, n, superblock,
       return(x)
     })
     R[[J]] <- defl_result$R
-  # Otherwise, the individual blocks are deflated
+  } else if (supergroup && comp_orth) {
+    defl_result <- deflation(R[[J]], var_defl[[J]], na.rm, left)
+    P <- cbind(P, defl_result$p)
+    R <- lapply(seq(J - 1), function(b) {
+      x <- defl_result$R[rownames(R[[b]]), , drop = FALSE]
+      return(x)
+    })
+    R[[J]] <- defl_result$R
+    # Otherwise, the individual blocks are deflated
   } else {
     defl_result <- defl_select(var_defl, R,
                                ndefl, n - 1, J,
@@ -55,6 +68,12 @@ deflate <- function(a, Y, R, P, ndefl, n, superblock,
     # must be reconstructed from the individual blocks
     if (superblock && !comp_orth) {
       R[[J]] <- do.call(cbind, R[seq(J - 1)])
+    }
+    # Same for supergroup
+    if (supergroup && !comp_orth) {
+      rownames_supergroup <- rownames(R[[J]])
+      R[[J]] <- do.call(rbind, R[seq(J - 1)])
+      R[[J]] <- R[[J]][rownames_supergroup, , drop = FALSE]
     }
   }
   return(list(R = R, P = P))

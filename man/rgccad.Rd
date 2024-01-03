@@ -19,7 +19,9 @@ rgccad(
   response = NULL,
   disjunction = NULL,
   n_iter_max = 1000,
-  comp_orth = TRUE
+  comp_orth = TRUE,
+  groups = NULL,
+  supergroup = FALSE
 )
 }
 \arguments{
@@ -84,6 +86,13 @@ iterations.}
 
 \item{comp_orth}{Logical value indicating if the deflation should lead to
 orthogonal components or orthogonal weights.}
+
+\item{groups}{Factor of length n indicating the group to which each 
+individual belongs, when using the multi-group framework.}
+
+\item{supergroup}{Boolean indicating the presence of a supergroup,
+when using the multi-group framework
+(deflation strategy must be adapted when a supergroup is used).}
 }
 \value{
 \item{Y}{A list of \eqn{J} elements. Each element of the list is a

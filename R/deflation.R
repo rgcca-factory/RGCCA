@@ -1,4 +1,4 @@
-deflation <- function(X, y, na.rm = TRUE, left = TRUE) {
+deflation <- function(X, y, na.rm = TRUE, left = TRUE, groups = NULL) {
   # Computation of the residual matrix R
   # Computation of the vector p.
   if (left) {

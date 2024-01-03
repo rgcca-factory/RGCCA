@@ -58,6 +58,8 @@
 #' Otherwise the blocks are not scaled. If standardization is
 #' applied (scale = TRUE), the block scaling is applied on the result of the
 #' standardization.
+#' @param groups Factor of length n indicating the group to which each 
+#' individual belongs, when using the multi-group framework.
 #' @param connection  A symmetric matrix (\eqn{J \times J}{J x J}) that
 #' describes the relationships between blocks.
 #' @param scheme Character string or a function giving the scheme function for
@@ -103,6 +105,9 @@
 #' activated.
 #' @param superblock Boolean indicating the presence of a superblock
 #' (deflation strategy must be adapted when a superblock is used).
+#' @param supergroup Boolean indicating the presence of a supergroup,
+#' when using the multi-group framework
+#' (deflation strategy must be adapted when a supergroup is used).
 #' @param NA_method  Character string corresponding to the method used for
 #' handling missing values ("nipals", "complete"). (default: "nipals").
 #' \itemize{
@@ -257,40 +262,51 @@
 #' \code{\link[RGCCA]{rgcca_predict}}
 rgcca <- function(blocks, method = "rgcca",
                   scale = TRUE, scale_block = "inertia",
+                  groups = NULL,
                   connection = 1 - diag(length(blocks)),
                   scheme = "factorial",
-                  ncomp = rep(1, length(blocks)),
-                  tau = rep(1, length(blocks)),
-                  sparsity = rep(1, length(blocks)),
+                  ncomp = 1,
+                  tau = 1,
+                  sparsity = 1,
                   init = "svd", bias = TRUE, tol = 1e-08,
                   response = NULL,
                   superblock = FALSE,
+                  supergroup = FALSE,
                   NA_method = "nipals", verbose = FALSE, quiet = TRUE,
                   n_iter_max = 1000, comp_orth = TRUE) {
   rgcca_args <- as.list(environment())
   ### If specific objects are given for blocks, parameters are imported from
   #   these objects.
+  if (supergroup) {
+    if (is.matrix(rgcca_args$blocks) || is.data.frame(rgcca_args$blocks)) {
+      rownames_data <- rownames(rgcca_args$blocks)
+    } else {
+      rownames_data <- rownames(rgcca_args$blocks[[1]])
+    }
+  }
+  
   tmp <- get_rgcca_args(blocks, rgcca_args)
   opt <- tmp$opt
   rgcca_args <- tmp$rgcca_args
   rgcca_args$quiet <- quiet
   rgcca_args$verbose <- verbose
-
-  blocks <- remove_null_sd(rgcca_args$blocks)$list_m
-
+  
+  blocks <- remove_null_sd(rgcca_args$blocks, groups = groups)$list_m
+  
   if (opt$disjunction) {
     blocks[[rgcca_args$response]] <- as_disjunctive(
       blocks[[rgcca_args$response]]
     )
   }
-
-  ### Apply strategy to deal with NA, scale and prepare superblock
+  
+  ### Apply strategy to deal with NA, scale and prepare superblock or supergroup
   tmp <- handle_NA(blocks, NA_method = rgcca_args$NA_method)
   na.rm <- tmp$na.rm
   blocks <- scaling(tmp$blocks,
-    scale = rgcca_args$scale,
-    bias = rgcca_args$bias,
-    scale_block = rgcca_args$scale_block
+                    scale = rgcca_args$scale,
+                    bias = rgcca_args$bias,
+                    scale_block = rgcca_args$scale_block,
+                    groups = rgcca_args$groups
   )
   if (rgcca_args$superblock) {
     blocks[["superblock"]] <- Reduce(cbind, blocks)
@@ -298,21 +314,30 @@ rgcca <- function(blocks, method = "rgcca",
       "s-", colnames(blocks[["superblock"]])
     )
   }
-
+  if (rgcca_args$supergroup) {
+    blocks[["supergroup"]] <- Reduce(rbind, blocks)
+    blocks[["supergroup"]] <- blocks[["supergroup"]] / sqrt(length(blocks) - 1)
+    # reorder rows
+    indices <- match(rownames(blocks[["supergroup"]]), 
+                     rownames_data)
+    blocks[["supergroup"]] <- blocks[["supergroup"]][indices, , drop = FALSE]
+  }
+  
   ### Call the gcca function
   gcca_args <- rgcca_args[c(
     "connection", "ncomp", "scheme", "init", "bias", "tol",
-    "verbose", "superblock", "response", "n_iter_max", "comp_orth"
+    "verbose", "superblock", "response", "n_iter_max", "comp_orth", "supergroup"
   )]
   gcca_args[["na.rm"]] <- na.rm
   gcca_args[["blocks"]] <- blocks
+  gcca_args[["groups"]] <- groups
   gcca_args[["disjunction"]] <- opt$disjunction
   gcca_args[[opt$param]] <- rgcca_args[[opt$param]]
   func_out <- do.call(opt$gcca, gcca_args)
-
+  
   ### Format the output
-  func_out <- format_output(func_out, rgcca_args, opt, blocks)
-
+  func_out <- format_output(func_out, rgcca_args, opt, blocks, groups)
+  
   class(func_out) <- "rgcca"
   invisible(func_out)
 }

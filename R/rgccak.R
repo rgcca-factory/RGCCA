@@ -49,71 +49,91 @@
 #' @noRd
 rgccak <- function(A, C, tau = rep(1, length(A)), scheme = "centroid",
                    verbose = FALSE, init = "svd", bias = TRUE,
-                   tol = 1e-08, na.rm = TRUE, n_iter_max = 1000) {
+                   tol = 1e-08, na.rm = TRUE, n_iter_max = 1000,
+                   groups = NULL) {
   if (is.function(scheme)) {
     g <- scheme
   } else {
     switch(scheme,
-      "horst" = {
-        g <- function(x) x
-      },
-      "factorial" = {
-        g <- function(x) x^2
-      },
-      "centroid" = {
-        g <- function(x) abs(x)
-      }
+           "horst" = {
+             g <- function(x) x
+           },
+           "factorial" = {
+             g <- function(x) x^2
+           },
+           "centroid" = {
+             g <- function(x) abs(x)
+           }
     )
   }
-
+  
   dg <- Deriv::Deriv(g, env = parent.frame())
-
+  
   if (!is.numeric(tau)) {
     # From Schafer and Strimmer, 2005
     tau <- vapply(A, tau.estimate, na.rm = na.rm, FUN.VALUE = 1.0)
   }
-
+  
   ### Initialization
-  init_object <- rgcca_init(A, init, bias, na.rm, tau)
+  if (!is.null(groups)){
+    init_object <- rgcca_init_mg(A, init, bias, na.rm, tau, groups)
+    L <- init_object$L
+  } else {
+    init_object <- rgcca_init(A, init, bias, na.rm, tau)
+  }
+  
   a <- init_object$a
   Y <- init_object$Y
-
+  
   iter <- 1
   crit <- NULL
-  crit_old <- sum(C * g(cov2(Y, bias = bias)))
+  crit_old <- ifelse(!is.null(groups),
+                     yes = sum(C * g(crossprod(L))),
+                     no = sum(C * g(cov2(Y, bias = bias))))
   a_old <- a
-
+  
   repeat {
-    update_object <- rgcca_update(A, bias, na.rm, tau, dg, C, a, Y, init_object)
+    if (!is.null(groups)){
+      update_object <- rgcca_update_mg(A, bias, na.rm, tau, dg, C, a, Y, L, init_object, groups)
+      L <- update_object$L
+    } else {
+      update_object <- rgcca_update(A, bias, na.rm, tau, dg, C, a, Y, init_object)
+    }
     a <- update_object$a
     Y <- update_object$Y
-
+    
     # Print out intermediate fit
-    crit <- c(crit, sum(C * g(cov2(Y, bias = bias))))
-
+    if (!is.null(groups)) {
+      crit <- c(crit, sum(C * g(crossprod(L))))
+    } else {
+      crit <- c(crit, sum(C * g(cov2(Y, bias = bias))))
+    }
+    
     if (verbose) {
       cat(
         " Iter: ", formatC(iter, width = 3, format = "d"),
         " Fit: ", formatC(crit[iter], digits = 8, width = 10, format = "f"),
         " Dif: ", formatC(crit[iter] - crit_old,
-          digits = 8, width = 10, format = "f"
-        ), "\n"
+                          digits = 8, width = 10, format = "f"), 
+        "Dif a:", formatC(drop(crossprod(unlist(a, FALSE, FALSE) - unlist(a_old, FALSE, FALSE))), 
+                          digits = 14, width = 10, format = "f"), 
+        "\n"
       )
     }
     stopping_criteria <- c(
       drop(crossprod(unlist(a, FALSE, FALSE) - unlist(a_old, FALSE, FALSE))),
       abs(crit[iter] - crit_old)
     )
-
+    
     if (any(stopping_criteria < tol) || (iter > 1000)) {
       break
     }
-
+    
     crit_old <- crit[iter]
     a_old <- a
     iter <- iter + 1
   }
-
+  
   if (iter > n_iter_max) {
     warning(
       "The RGCCA algorithm did not converge after ", n_iter_max,
@@ -129,7 +149,11 @@ rgccak <- function(A, C, tau = rep(1, length(A)), scheme = "centroid",
     }
     plot(crit, xlab = "iteration", ylab = "criteria")
   }
-
+  
+  if (!is.null(groups)) {
+    result <- rgcca_postprocess_mg(A, a, Y, L, g, na.rm, groups)
+    return(list(Y = result$Y, a = result$a, L = result$L, crit = crit, tau = tau))
+  }
   result <- rgcca_postprocess(A, a, Y, g, na.rm)
   return(list(Y = result$Y, a = result$a, crit = crit, tau = tau))
 }

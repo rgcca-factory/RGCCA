@@ -178,9 +178,10 @@ rgccad <- function(blocks, connection = 1 - diag(length(blocks)),
                    tau = rep(1, length(blocks)),
                    ncomp = rep(1, length(blocks)), scheme = "centroid",
                    init = "svd", bias = TRUE, tol = 1e-08, verbose = TRUE,
-                   na.rm = TRUE, superblock = FALSE,
+                   na.rm = TRUE, superblock = FALSE, 
                    response = NULL, disjunction = NULL,
-                   n_iter_max = 1000, comp_orth = TRUE) {
+                   n_iter_max = 1000, comp_orth = TRUE,
+                   groups = NULL, supergroup = FALSE) {
   if (verbose) {
     scheme_str <- ifelse(is(scheme, "function"), "user-defined", "scheme")
     cat(
@@ -194,31 +195,37 @@ rgccad <- function(blocks, connection = 1 - diag(length(blocks)),
     )
     cat(tau_str)
   }
-
+  
   ##### Initialization #####
   # ndefl number of deflation per block
   ndefl <- ncomp - 1
   N <- max(ndefl)
   J <- length(blocks)
   pjs <- vapply(blocks, NCOL, FUN.VALUE = 1L)
-  nb_ind <- NROW(blocks[[1]])
-
+  nb_ind <- vapply(blocks, NROW, FUN.VALUE = 1L)
+  
   crit <- list()
   R <- blocks
-
+  
   a <- lapply(seq(J), function(b) c())
   Y <- lapply(seq(J), function(b) c())
-
-  if (superblock && comp_orth) {
+  if (!is.null(groups)) {
+    L <- lapply(seq(J), function(b) c())
+  }
+  
+  
+  if ((superblock || supergroup) && comp_orth) {
     P <- c()
   } else {
     P <- lapply(seq(J), function(b) c())
   }
-
+  
   # Whether primal or dual
   primal_dual <- rep("primal", J)
-  primal_dual[which(nb_ind < pjs)] <- "dual"
-
+  if (is.null(groups)){
+    primal_dual[which(nb_ind < pjs)] <- "dual"
+  }
+  
   # Save computed shrinkage parameter in a new variable
   computed_tau <- tau
   if (is.vector(tau)) {
@@ -227,7 +234,7 @@ rgccad <- function(blocks, connection = 1 - diag(length(blocks)),
       nrow = N + 1, J, byrow = TRUE
     )
   }
-
+  
   ##### Computation of RGCCA components #####
   for (n in seq(N + 1)) {
     if (verbose) {
@@ -237,31 +244,38 @@ rgccad <- function(blocks, connection = 1 - diag(length(blocks)),
       ))
     }
     gcca_result <- rgccak(R, connection,
-      tau = computed_tau[n, ], scheme = scheme,
-      init = init, bias = bias, tol = tol,
-      verbose = verbose, na.rm = na.rm, n_iter_max = n_iter_max
+                          tau = computed_tau[n, ], scheme = scheme,
+                          init = init, bias = bias, tol = tol,
+                          verbose = verbose, na.rm = na.rm, 
+                          n_iter_max = n_iter_max, groups = groups
     )
-
+    
     # Store tau, crit
     computed_tau[n, ] <- gcca_result$tau
     crit[[n]] <- gcca_result$crit
-
-    # Store Y, a, factors and weights
+    
+    # Store Y, a, factors and weights, 
+    # as well as loadings L in the multi-group case
     a <- lapply(seq(J), function(b) cbind(a[[b]], gcca_result$a[[b]]))
-    Y <- lapply(seq(J), function(b) cbind(Y[[b]], gcca_result$Y[, b]))
-
+    if (!is.null(groups)) {
+      Y <- lapply(seq(J), function(b) cbind(Y[[b]], gcca_result$Y[[b]]))
+      L <- lapply(seq(J), function(b) cbind(L[[b]], gcca_result$L[, b]))
+    } else{
+      Y <- lapply(seq(J), function(b) cbind(Y[[b]], gcca_result$Y[, b]))
+    }
+    
     # Deflation procedure
     if (n == N + 1) break
     defl_result <- deflate(gcca_result$a, gcca_result$Y, R, P, ndefl, n,
-                           superblock, comp_orth, response, na.rm)
+                           superblock, supergroup, comp_orth, response, na.rm)
     R <- defl_result$R
     P <- defl_result$P
   }
-
+  
   # If there is a superblock and weight vectors are orthogonal, it is possible
   # to have non meaningful weights associated to blocks that have been set to
   # zero by the deflation
-  if (superblock && !comp_orth) {
+  if ((superblock || supergroup) && !comp_orth) {
     a <- lapply(a, function(x) {
       if (ncol(x) > nrow(x)) {
         x[, seq(nrow(x) + 1, ncol(x))] <- 0
@@ -269,7 +283,7 @@ rgccad <- function(blocks, connection = 1 - diag(length(blocks)),
       return(x)
     })
   }
-
+  
   ##### Generation of the output #####
   if (N == 0) {
     crit <- unlist(crit)
@@ -277,17 +291,26 @@ rgccad <- function(blocks, connection = 1 - diag(length(blocks)),
   } else {
     computed_tau <- apply(computed_tau, 2, as.numeric)
   }
-
-  astar <- compute_astar(a, P, superblock, comp_orth, N)
-
-  out <- list(
-    Y = Y,
-    a = a,
-    astar = astar,
-    tau = computed_tau,
-    crit = crit, primal_dual = primal_dual
-  )
-
+  
+  astar <- compute_astar(a, P, superblock, supergroup, comp_orth, N)
+  
+  if (!is.null(groups)) {
+    out <- list(
+      Y = Y,
+      a = a,
+      L = L,
+      astar = astar,
+      tau = computed_tau,
+      crit = crit, primal_dual = primal_dual)
+  } else {
+    out <- list(
+      Y = Y,
+      a = a,
+      astar = astar,
+      tau = computed_tau,
+      crit = crit, primal_dual = primal_dual)
+  }
+  
   class(out) <- "rgccad"
   return(out)
 }

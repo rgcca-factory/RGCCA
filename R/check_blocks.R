@@ -38,7 +38,7 @@
 #' @importFrom stats setNames
 #' @noRd
 check_blocks <- function(blocks, add_NAlines = FALSE, allow_unnames = TRUE,
-                         quiet = FALSE, response = NULL) {
+                         quiet = FALSE, response = NULL, groups = NULL) {
   blocks <- check_blocks_is_list(blocks)
   blocks <- check_blocks_matrix(blocks)
   blocks <- check_blocks_quantitative(blocks, response)
@@ -46,7 +46,8 @@ check_blocks <- function(blocks, add_NAlines = FALSE, allow_unnames = TRUE,
   blocks <- check_blocks_colnames(blocks, quiet)
   blocks <- check_blocks_rownames(blocks, allow_unnames, quiet)
   blocks <- check_blocks_align(blocks, add_NAlines, quiet)
-
+  blocks <- check_blocks_groups(blocks, groups)
+  
   invisible(blocks)
 }
 
@@ -135,18 +136,18 @@ check_blocks_colnames <- function(blocks, quiet = FALSE) {
       }
     )
   }
-
+  
   # Check for duplicated colnames
   if (any(duplicated(unlist(lapply(blocks, colnames))))) {
     if (!quiet) message("Duplicated colnames are modified to avoid confusion.")
-
+    
     blocks <- lapply(
       setNames(seq_along(blocks), names(blocks)),
       function(x) {
         block <- blocks[[x]]
         colnames(block) <- paste(names(blocks)[x],
-          colnames(blocks[[x]]),
-          sep = "_"
+                                 colnames(blocks[[x]]),
+                                 sep = "_"
         )
         return(block)
       }
@@ -164,7 +165,7 @@ check_blocks_rownames <- function(blocks, allow_unnames = TRUE, quiet = FALSE) {
       )
     }
   })
-
+  
   # Create rownames for all blocks if all missing
   if (all(vapply(
     blocks, function(x) is.null(row.names(x)),
@@ -183,7 +184,7 @@ check_blocks_rownames <- function(blocks, allow_unnames = TRUE, quiet = FALSE) {
       stop_rgcca(paste("blocks must have rownames."))
     }
   }
-
+  
   # If at least one block does not have rownames, 2 cases arise:
   #   - if all blocks with names have the same rownames, in the same order,
   #     we fill the missing rownames with the rownames of the other blocks;
@@ -217,11 +218,11 @@ check_blocks_rownames <- function(blocks, allow_unnames = TRUE, quiet = FALSE) {
 check_blocks_align <- function(blocks, add_NAlines = FALSE, quiet = FALSE) {
   # Construct union of rownames
   all_names <- Reduce(union, lapply(blocks, row.names))
-
+  
   # If add_NAlines is FALSE and one block doesn't have as many rows as there
   # are names in all_names, we stop. Otherwise we complete the blocks by
   # adding rows full of NA.
-
+  
   if (any(vapply(blocks, nrow, FUN.VALUE = integer(1)) != length(all_names))) {
     if (add_NAlines) {
       blocks <- lapply(blocks, function(x) {
@@ -234,10 +235,69 @@ check_blocks_align <- function(blocks, add_NAlines = FALSE, quiet = FALSE) {
       stop_rgcca("blocks must have the same rownames.")
     }
   }
-
+  
   # Align blocks using rownames
   blocks <- lapply(
     blocks, function(x) x[row.names(blocks[[1]]), , drop = FALSE]
   )
+  return(blocks)
+}
+
+check_blocks_groups <- function(blocks, groups = NULL) {
+  if (!is.null(groups)) {
+    # Check that the multigroup parameter groups is a factor of the right length
+    groups <- droplevels(as.factor(groups))
+    if (length(groups) != nrow(blocks[[1]])) {
+      stop_rgcca(paste("groups should be a factor of length ", NROW(blocks[[1]]),"."))
+    }
+    
+    # Check that each group has at least 2 representatives
+    if (any(table(groups) < 2)) {
+      stop_rgcca(paste("All groups should have more than one representative."))
+    }
+    
+    # Check that only one block was provided
+    if (length(blocks) > 1) {
+      stop_rgcca(paste("Please provide only one block to use the multi-group framework."))
+    }
+    
+    # Check for NAs in groups
+    if (any(is.na(groups))) {
+      stop_rgcca(paste("Argument groups cannot accept NAs."))
+    }
+    
+    # Check for NA rows in blocks
+    if (any(sapply(blocks, function(X) {
+      any(apply(X, 1, function(x) all(is.na(x))))}))) {
+      # TRUE if at least one block has at least one row with all missing values
+      missing_rows_list <- lapply(blocks, function(X) {
+        apply(X, 1, function(x) {all(is.na(x))})
+      })
+      blocks[seq_along(blocks)] <- lapply(seq_along(blocks), function(j) {
+        blocks[[j]][!missing_rows_list[[j]],]})
+      if (!quiet) {
+        message(paste('Rows that had all values missing were removed.'))
+      }
+    }
+    
+    # Check for NA columns in blocks
+    if (any(sapply(blocks, function(X) {
+      any(apply(X, 2, function(x) all(is.na(x))))}))) {
+      # TRUE if at least one block has at least one column with all missing values
+      missing_cols_list <- lapply(blocks, function(X) {
+        apply(X, 2, function(x) {all(is.na(x))})
+      })
+      blocks[seq_along(blocks)] <- lapply(seq_along(blocks), function(j) {
+        blocks[[j]][,!missing_cols_list[[j]]]})
+      if (!quiet) {
+        message(paste('Columns that had all values missing were removed.'))
+      }
+    }
+    
+    # Split blocks into groups
+    blocks <- split(x = data.frame(blocks[[1]]), # split only works on data.frames and vectors (not matrices)
+                    f = groups, drop = TRUE) # drop=T to drop levels that do not occur
+    blocks <- lapply(blocks, data.matrix)
+  }
   return(blocks)
 }

@@ -6,11 +6,11 @@
 #' orthogonal components.
 #' @param N Integer indicating the number of times blocks are deflated.
 #' @noRd
-compute_astar <- function(a, P, superblock, comp_orth, N) {
+compute_astar <- function(a, P, superblock, supergroup, comp_orth, N) {
   J <- length(a)
   # If there is a superblock and components are orthogonal, astar is only
-  # available for the superblock
-  if (superblock && comp_orth) {
+  # available for the superblock, same for the supergroup
+  if ((superblock || supergroup) && comp_orth) {
     astar <- a[[J]]
     for (n in seq_len(N)) {
       astar[, n + 1] <- a[[J]][, n + 1] -
