@@ -28,6 +28,7 @@ License: GPL-3
 Depends:
     R (>= 3.5)
 Imports:
+    abind,
     caret,
     Deriv,
     ggplot2 (>= 3.4.0),
