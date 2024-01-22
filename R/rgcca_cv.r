@@ -159,6 +159,7 @@
 #'  plot(cv_out, display_order = FALSE)
 #' }
 rgcca_cv <- function(blocks,
+                     connection = NULL,
                      method = "rgcca",
                      response = NULL,
                      par_type = "tau",

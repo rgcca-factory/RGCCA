@@ -6,6 +6,7 @@
 \usage{
 rgcca_cv(
   blocks,
+  connection = NULL,
   method = "rgcca",
   response = NULL,
   par_type = "tau",
@@ -43,6 +44,9 @@ Block \eqn{\mathbf{X}_j}{Xj} is a matrix of dimension
 \eqn{n \times p_j}{n x p_j} where \eqn{n} is the number of
 observations and \eqn{p_j} the number of variables. The blocks argument can
 be also a fitted cval, rgcca or permutation object.}
+
+\item{connection}{A (\eqn{J \times J}{J x J}) symmetric matrix describing
+the network of connections between blocks (default value: 1-diag(J)).}
 
 \item{method}{A string specifying which multiblock component
 method to consider. Possible values are found using
