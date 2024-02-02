@@ -110,7 +110,7 @@ rgcca_predict <- function(rgcca_res,
   X_test <- reformat_projection(projection)
 
   # Keep same lines in X_train and y_train
-  y_train <- as.data.frame(subset_rows(y_train, rownames(X_train)))
+  y_train <- as.data.frame(subset_block_rows(y_train, rownames(X_train)))
 
   # Test that in classification, variables are not constant within groups
   if (classification) {

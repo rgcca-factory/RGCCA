@@ -23,7 +23,7 @@ format_output <- function(func_out, rgcca_args, opt, blocks) {
   }, FUN.VALUE = double(1L))
 
   AVE <- lapply(blocks_AVE, function(j) {
-    ave(blocks[[j]], func_out$Y[[j]])
+    ave(matrix(blocks[[j]], nrow = nrow(blocks[[j]])), func_out$Y[[j]])
   })
   AVE_X <- lapply(AVE, "[[", "AVE_X")
   AVE_X_cor <- lapply(AVE, "[[", "AVE_X_cor")
@@ -43,8 +43,28 @@ format_output <- function(func_out, rgcca_args, opt, blocks) {
   names(func_out$AVE$AVE_X_cor) <- names_AVE
 
   ### Set names and shave
-  for (j in seq_along(blocks)) {
+  array_idx <- vapply(
+    blocks, function(x) length(dim(x)) > 2, FUN.VALUE = logical(1L)
+  )
+
+  for (j in seq_along(blocks)[array_idx]) {
+    func_out$factors[[j]] <- lapply(
+      seq_along(func_out$factors[[j]]),
+      function(m) {
+        x <- func_out$factors[[j]][[m]]
+        rownames(x) <- dimnames(blocks[[j]])[[m + 1]]
+        return(x)
+      }
+    )
+    grid <- expand.grid(dimnames(blocks[[j]])[-1])
+    rownames(func_out$a[[j]]) <- do.call(paste, c(grid, sep = "_"))
+  }
+
+  for (j in seq_along(blocks)[!array_idx]) {
     rownames(func_out$a[[j]]) <- colnames(blocks[[j]])
+  }
+
+  for (j in seq_along(blocks)) {
     rownames(func_out$Y[[j]]) <- rownames(blocks[[j]])
     colnames(func_out$Y[[j]]) <- paste0("comp", seq_len(max(rgcca_args$ncomp)))
   }
@@ -56,7 +76,7 @@ format_output <- function(func_out, rgcca_args, opt, blocks) {
     rownames(func_out$astar) <- colnames(blocks[[length(blocks)]])
   } else {
     for (j in seq_along(blocks)) {
-      rownames(func_out$astar[[j]]) <- colnames(blocks[[j]])
+      rownames(func_out$astar[[j]]) <- rownames(func_out$a[[j]])
     }
     func_out$astar <- shave(func_out$astar, rgcca_args$ncomp)
     names(func_out$astar) <- names(blocks)

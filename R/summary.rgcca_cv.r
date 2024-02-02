@@ -42,7 +42,7 @@ summary.rgcca_cv <- function(object, type = c("sd", "quantile"), ...) {
   cat("\n")
 
   best <- which(apply(
-    object$params, 1, function(z) identical(z, object$best_params)
+    object$params, 1, function(z) identical(z, drop(object$best_params))
   ))
   optimal_y <- object$stats[best, "mean"]
 

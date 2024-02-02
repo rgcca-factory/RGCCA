@@ -7,7 +7,7 @@
 #' @export
 available_methods <- function() {
   c(
-    "rgcca", "sgcca", "pca", "spca", "pls", "spls", "cca",
+    "rgcca", "sgcca", "tgcca", "pca", "spca", "pls", "spls", "cca",
     "ifa", "ra", "gcca", "maxvar", "maxvar-b", "maxvar-a",
     "mfa", "mcia", "mcoa", "cpca-1", "cpca-2", "cpca-4", "hpca", "maxbet-b",
     "maxbet", "maxdiff-b", "maxdiff", "sabscor",
@@ -71,4 +71,8 @@ x4_methods <- function() {
 
 sparse_methods <- function() {
   c("sgcca", "spls", "spca")
+}
+
+tensor_methods <- function() {
+  c("tgcca")
 }

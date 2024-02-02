@@ -9,30 +9,21 @@ rgcca_stability(
   keep = vapply(rgcca_res$a, function(x) mean(x != 0), FUN.VALUE = 1),
   n_boot = 100,
   n_cores = 1,
-  verbose = TRUE,
-  balanced = TRUE,
-  keep_all_variables = FALSE
+  verbose = TRUE
 )
 }
 \arguments{
-\item{rgcca_res}{A fitted RGCCA object (see \code{\link[RGCCA]{rgcca}}).}
+\item{rgcca_res}{A fitted RGCCA object (see  \code{\link[RGCCA]{rgcca}}).}
 
 \item{keep}{A numeric vector indicating the proportion of variables per
 block to select.}
 
 \item{n_boot}{The number of bootstrap samples (default: 100).}
 
-\item{n_cores}{The number of cores for parallelization.}
+\item{n_cores}{The number of cores used for parallelization.}
 
 \item{verbose}{A logical value indicating if the progress of the procedure
 is reported.}
-
-\item{balanced}{A logical value indicating if a balanced bootstrap procedure
-is performed or not (default is TRUE).}
-
-\item{keep_all_variables}{A logical value indicating if all variables have
-to be kept even when some of them have null variance for at least one
-bootstrap sample (default is FALSE).}
 }
 \value{
 A rgcca_stability object that can be printed and plotted.

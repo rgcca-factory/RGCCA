@@ -109,7 +109,7 @@ summary.rgcca <- function(object, ...) {
   cat("\n")
   if (!tolower(object$call$method) %in% sparse_methods()) {
     param <- "regularization"
-    if (!is.matrix(object$call$tau)) {
+    if (!is.matrix(drop(object$call$tau))) {
       for (i in seq_len(NCOL(object$call$connection))) {
         tau <- object$call$tau[i]
         cat("The", param, "parameter used for", names(object$blocks)[i],
@@ -130,7 +130,7 @@ summary.rgcca <- function(object, ...) {
       function(a) apply(a, 2, function(l) sum(l != 0))
     )
     param <- "sparsity"
-    if (!is.matrix(object$call$sparsity)) {
+    if (!is.matrix(drop(object$call$sparsity))) {
       for (i in seq_len(NCOL(object$call$connection))[-response]) {
         sparsity <- object$call$sparsity[i]
 

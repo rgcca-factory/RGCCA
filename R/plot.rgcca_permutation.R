@@ -32,7 +32,7 @@ plot.rgcca_permutation <- function(x,
 
   # Mark the best parameter set
   best <- which(apply(
-    x$params[idx_order, ], 1, function(z) identical(z, x$best_params)
+    x$params[idx_order, ], 1, function(z) identical(z, drop(x$best_params))
   ))
   df$label[best] <- "Best parameter set"
 
