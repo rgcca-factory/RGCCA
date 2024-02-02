@@ -23,7 +23,7 @@ test_that("handle_NA selects the common rows without missing values when
   NA_method is \"na.omit\"", {
   tmp <- handle_NA(blocks, NA_method = "na.omit")
   for (j in seq_along(blocks)) {
-    expect_equal(tmp$blocks[[j]], subset_rows(blocks[[j]], -ind_NA))
+    expect_equal(tmp$blocks[[j]], subset_block_rows(blocks[[j]], -ind_NA))
     expect_false(tmp$na.rm)
   }
 })

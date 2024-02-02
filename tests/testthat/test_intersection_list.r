@@ -22,7 +22,7 @@ ind_NA <- c(2, 4, 8, 12, 17, 23, 30, 32, 40, 42)
 test_that("intersection_list selects the common rows without missing values", {
   blocks_inter <- intersection_list(blocks)
   for (j in seq_along(blocks)) {
-    expect_equal(blocks_inter[[j]], subset_rows(blocks[[j]], -ind_NA))
+    expect_equal(blocks_inter[[j]], subset_block_rows(blocks[[j]], -ind_NA))
   }
 })
 test_that("intersection_list raises an error if there is less than 3 subjects
@@ -51,6 +51,6 @@ test_that("intersection_list selects the common rows without missing
           values with arrays", {
   blocks_inter <- intersection_list(blocks)
   for (j in seq_along(blocks)) {
-    expect_equal(blocks_inter[[j]], subset_rows(blocks[[j]], -ind_NA))
+    expect_equal(blocks_inter[[j]], subset_block_rows(blocks[[j]], -ind_NA))
   }
 })

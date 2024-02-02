@@ -3,7 +3,7 @@ subset_block_rows <- function(x, rows, drop = TRUE) {
 }
 
 #' @export
-subset_block_rows.vector <- function(x, rows, drop = TRUE) {
+subset_block_rows.numeric <- function(x, rows, drop = TRUE) {
   return(x[rows])
 }
 
