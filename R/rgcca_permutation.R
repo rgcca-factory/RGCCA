@@ -260,7 +260,6 @@ rgcca_permutation <- function(blocks, par_type = "tau", par_value = NULL,
     par_type <- "sparsity"
   } else if (par_type == "sparsity") {
     rgcca_args$method <- "sgcca"
-    opt$gcca <- sgcca
     opt$param <- "sparsity"
   }
 
