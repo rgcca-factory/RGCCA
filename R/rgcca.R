@@ -429,6 +429,7 @@ rgcca <- function(blocks, connection = NULL, tau = 1, ncomp = 1,
                   scheme = "factorial", scale = TRUE, init = "svd",
                   bias = TRUE, tol = 1e-08, verbose = FALSE,
                   scale_block = "inertia", method = "rgcca",
+                  lambda = 0, graph_laplacians = NA,
                   sparsity = 1, response = NULL,
                   superblock = FALSE,
                   NA_method = "na.ignore", quiet = TRUE,
@@ -465,10 +466,10 @@ rgcca <- function(blocks, connection = NULL, tau = 1, ncomp = 1,
   tmp <- handle_NA(blocks, NA_method = rgcca_args$NA_method)
   na.rm <- tmp$na.rm
   blocks <- scaling(tmp$blocks,
-    scale = rgcca_args$scale,
-    bias = rgcca_args$bias,
-    scale_block = rgcca_args$scale_block,
-    na.rm = na.rm
+                    scale = rgcca_args$scale,
+                    bias = rgcca_args$bias,
+                    scale_block = rgcca_args$scale_block,
+                    na.rm = na.rm
   )
   if (rgcca_args$superblock) {
     blocks[["superblock"]] <- Reduce(cbind, blocks)
@@ -486,6 +487,8 @@ rgcca <- function(blocks, connection = NULL, tau = 1, ncomp = 1,
   gcca_args[["blocks"]] <- blocks
   gcca_args[["disjunction"]] <- opt$disjunction
   gcca_args[[opt$param]] <- rgcca_args[[opt$param]]
+  gcca_args <- modifyList(gcca_args, opt$supplementary_parameters)
+  
   func_out <- do.call(rgcca_outer_loop, gcca_args)
 
   ### Format the output

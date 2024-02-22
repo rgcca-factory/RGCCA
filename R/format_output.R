@@ -65,15 +65,15 @@ format_output <- function(func_out, rgcca_args, opt, blocks) {
   names(func_out$a) <- names(blocks)
   names(func_out$Y) <- names(blocks)
 
-  is_optimal <- any(rgcca_args[[opt$par]] == "optimal")
+  is_optimal <- any(rgcca_args[[opt$param]] == "optimal")
   func_out[["optimal"]] <- is_optimal
 
   if (is_optimal) {
-    rgcca_args[[opt$par]] <- func_out$tau
+    rgcca_args[[opt$param]] <- func_out$tau
   }
 
-  if (NCOL(rgcca_args[[opt$par]]) > 1) {
-    colnames(rgcca_args[[opt$par]]) <- names(blocks)
+  if (NCOL(rgcca_args[[opt$param]]) > 1) {
+    colnames(rgcca_args[[opt$param]]) <- names(blocks)
   }
 
   if (!is.null(func_out$tau)) {

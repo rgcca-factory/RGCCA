@@ -37,7 +37,9 @@ get_rgcca_args <- function(object, default_args = list()) {
       n_iter_max = default_args$n_iter_max,
       connection = default_args$connection,
       superblock = default_args$superblock,
-      scale_block = default_args$scale_block
+      scale_block = default_args$scale_block,
+      lambda = default_args$lambda,
+      graph_laplacians = default_args$graph_laplacians
     )
 
     rgcca_args$init <- check_char(rgcca_args$init, "init", c("svd", "random"))
