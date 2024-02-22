@@ -2,7 +2,7 @@ Type: Package
 Package: RGCCA
 Title: Regularized and Sparse Generalized Canonical Correlation
         Analysis for Multiblock Data
-Version: 3.0.1
+Version: 3.0.3
 Authors@R: c(
   person("Fabien", "Girka", role = "aut"),
   person("Etienne", "Camenen", role = "aut"),
@@ -18,13 +18,11 @@ Description: Multi-block data analysis concerns the analysis of several
     The main aims of the RGCCA package are: to study the relationships
     between blocks and to identify subsets of variables of each block
     which are active in their relationships with the other blocks. This
-    package allows to (i) run R/SGCCA and related methods (\link{rgcca}),
+    package allows to (i) run R/SGCCA and related methods,
     (ii) help the user to find out the optimal parameters for R/SGCCA such
-    as regularization parameters (tau or sparsity)
-    (\link{rgcca_permutation}, \link{rgcca_cv}), (iii) evaluate the
-    stability of the RGCCA results and their significance
-    (\link{rgcca_bootstrap} and \link{rgcca_stability}), (iv) build predictive
-    models from the R/SGCCA (\link{rgcca_predict}), (v) Generic print()
+    as regularization parameters (tau or sparsity), (iii) evaluate the
+    stability of the RGCCA results and their significance, (iv) build predictive
+    models from the R/SGCCA. (v) Generic print()
     and plot() functions apply to all these functionalities.
 License: GPL-3
 Depends:
@@ -54,8 +52,6 @@ Suggests:
     vdiffr
 VignetteBuilder:
     knitr
-biocViews: Visualization, PrincipalComponent, DimensionReduction,
-    StructuralEquationModels
 LazyData: true
 RoxygenNote: 7.2.3
 Encoding: UTF-8

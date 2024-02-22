@@ -51,7 +51,7 @@ If par_value is NULL, up to par_length sets of parameters are generated
 uniformly from
 the minimum and maximum possible values of the parameter defined by par_type
 for each block. Minimum possible values are 0 for tau,
-\eqn{1/\text{sqrt}(p_j)}{1/sqrt(p_j)} for sparsity, and 1
+\eqn{1/\textrm{sqrt}(p_j)}{1/sqrt(p_j)} for sparsity, and 1
 for ncomp. Maximum possible values are 1 for tau and sparsity, and
 \eqn{p_j}{p_j} for ncomp.
 
@@ -109,7 +109,7 @@ the same number of components is extracted for every block.}
 \item{tau}{Either a numerical value, a numeric vector of size
 \eqn{J}{J}, or a
 numeric matrix of dimension
-\eqn{\mathrm{max}(\text{ncomp}) \times J}{max(ncomp) x J}
+\eqn{\mathrm{max}(\textrm{ncomp}) \times J}{max(ncomp) x J}
 containing the values of the regularization parameters
 (default: tau = 1, for each
 block and each dimension), or a string equal to "optimal".
@@ -135,12 +135,12 @@ estimated using
 
 \item{sparsity}{Either a numerical value, a numeric vector of
 size \eqn{J} or a numeric matrix
-of dimension \eqn{\text{max}(\text{ncomp}) \times J} encoding the L1
+of dimension \eqn{\textrm{max}(\textrm{ncomp}) \times J} encoding the L1
 constraints applied to the
 block weight vectors. For block \eqn{j}, the amount of
 sparsity varies between
-\eqn{1/\text{sqrt}(p_j)} and 1 (larger values of sparsity correspond to less
-penalization).
+\eqn{1/\textrm{sqrt}(p_j)} and 1 (larger values of sparsity
+correspond to less penalization).
 
 If sparsity is a numerical value, then sparsity is identical across
 all constraints applied to all block weight vectors.
@@ -149,14 +149,14 @@ If sparsity is a vector, sparsity[j] is identical across the constraints
 applied to the block weight vectors associated to block
 \eqn{\mathbf X_j}{Xj}:
 \deqn{
-   \forall k, \Vert a_{j,k} \Vert_{1} \le \text{sparsity}[j] \sqrt{p_j}.
+   \forall k, \Vert a_{j,k} \Vert_{1} \le \textrm{sparsity}[j] \sqrt{p_j}.
 }{for all k, ||ajk||1 <= sparsity(j) sqrt(pj).}
 
 If sparsity is a matrix, sparsity[k, j] is associated with the constraints
 applied to the kth block weight vector corresponding to block
 \eqn{\mathbf X_j}{Xj}:
 \deqn{
-   \Vert a_{j,k}\Vert_{1} \le \text{sparsity}[k,j] \sqrt{p_j}.
+   \Vert a_{j,k}\Vert_{1} \le \textrm{sparsity}[k,j] \sqrt{p_j}.
 }{||ajk||1 <= sparsity(k, j) sqrt(pj).}
 
 The sparsity parameter can be estimated by using \link{rgcca_permutation} or
@@ -201,7 +201,7 @@ iterations.}
 orthogonal block components or orthogonal block weight vectors.}
 }
 \value{
-A permutation object that can be printed and plotted.
+A rgcca_permutation object that can be printed and plotted.
 
 \item{opt}{A list indicating some options of the RGCCA model used
 during the permutation.}
@@ -252,12 +252,12 @@ following is performed:
 
 (3) Record the S/RGCCA criterion \eqn{t}.
 
-(4) The resulting p-value is given by \eqn{\text{mean}(t^* > t)};
+(4) The resulting p-value is given by \eqn{\textrm{mean}(t^* > t)};
 that is, the fraction of \eqn{t^*} that exceeds the value of \eqn{t}
 obtained from the real data.
 
 (5) The resulting zstat is defined as
-\eqn{\frac{t-\text{mean}(t^*)}{\text{sd}(t^*)}}.
+\eqn{\frac{t-\textrm{mean}(t^*)}{\textrm{sd}(t^*)}}.
 
 Then, choose the tuning parameter values that gives the highest value in
 Step 5.

@@ -6,6 +6,7 @@
 \usage{
 rgcca_cv(
   blocks,
+  connection = NULL,
   method = "rgcca",
   response = NULL,
   par_type = "tau",
@@ -44,6 +45,9 @@ Block \eqn{\mathbf{X}_j}{Xj} is a matrix of dimension
 observations and \eqn{p_j} the number of variables. The blocks argument can
 be also a fitted cval, rgcca or permutation object.}
 
+\item{connection}{A (\eqn{J \times J}{J x J}) symmetric matrix describing
+the network of connections between blocks (default value: 1-diag(J)).}
+
 \item{method}{A string specifying which multiblock component
 method to consider. Possible values are found using
 \link{available_methods}.}
@@ -63,7 +67,7 @@ If par_value is NULL, up to par_length sets of parameters are generated
 uniformly from
 the minimum and maximum possible values of the parameter defined by par_type
 for each block. Minimum possible values are 0 for tau,
-\eqn{1/\text{sqrt}(p_j)}{1/sqrt(p_j)} for sparsity, and 1
+\eqn{1/\textrm{sqrt}(p_j)}{1/sqrt(p_j)} for sparsity, and 1
 for ncomp. Maximum possible values are 1 for tau and sparsity, and
 \eqn{p_j}{p_j} for ncomp.
 
@@ -144,7 +148,7 @@ data (See Tenenhaus et al, 2005).}}
 \item{tau}{Either a numerical value, a numeric vector of size
 \eqn{J}{J}, or a
 numeric matrix of dimension
-\eqn{\mathrm{max}(\text{ncomp}) \times J}{max(ncomp) x J}
+\eqn{\mathrm{max}(\textrm{ncomp}) \times J}{max(ncomp) x J}
 containing the values of the regularization parameters
 (default: tau = 1, for each
 block and each dimension), or a string equal to "optimal".
@@ -174,12 +178,12 @@ the same number of components is extracted for every block.}
 
 \item{sparsity}{Either a numerical value, a numeric vector of
 size \eqn{J} or a numeric matrix
-of dimension \eqn{\text{max}(\text{ncomp}) \times J} encoding the L1
+of dimension \eqn{\textrm{max}(\textrm{ncomp}) \times J} encoding the L1
 constraints applied to the
 block weight vectors. For block \eqn{j}, the amount of
 sparsity varies between
-\eqn{1/\text{sqrt}(p_j)} and 1 (larger values of sparsity correspond to less
-penalization).
+\eqn{1/\textrm{sqrt}(p_j)} and 1 (larger values of sparsity
+correspond to less penalization).
 
 If sparsity is a numerical value, then sparsity is identical across
 all constraints applied to all block weight vectors.
@@ -188,14 +192,14 @@ If sparsity is a vector, sparsity[j] is identical across the constraints
 applied to the block weight vectors associated to block
 \eqn{\mathbf X_j}{Xj}:
 \deqn{
-   \forall k, \Vert a_{j,k} \Vert_{1} \le \text{sparsity}[j] \sqrt{p_j}.
+   \forall k, \Vert a_{j,k} \Vert_{1} \le \textrm{sparsity}[j] \sqrt{p_j}.
 }{for all k, ||ajk||1 <= sparsity(j) sqrt(pj).}
 
 If sparsity is a matrix, sparsity[k, j] is associated with the constraints
 applied to the kth block weight vector corresponding to block
 \eqn{\mathbf X_j}{Xj}:
 \deqn{
-   \Vert a_{j,k}\Vert_{1} \le \text{sparsity}[k,j] \sqrt{p_j}.
+   \Vert a_{j,k}\Vert_{1} \le \textrm{sparsity}[k,j] \sqrt{p_j}.
 }{||ajk||1 <= sparsity(k, j) sqrt(pj).}
 
 The sparsity parameter can be estimated by using \link{rgcca_permutation} or
@@ -222,7 +226,7 @@ orthogonal block components or orthogonal block weight vectors.}
 \item{...}{Additional parameters to be passed to prediction_model.}
 }
 \value{
-A cval object that can be printed and plotted.
+A rgcca_cv object that can be printed and plotted.
 
 \item{k}{An integer giving the number of folds.}
 
@@ -256,6 +260,9 @@ used during the cross-validation process.}
 \item{stats}{A data.frame containing various statistics (mean, sd,
 median, first quartile, third quartile) of the cross-validated score for
 each set of parameters that has been tested.}
+
+\item{classification }{A boolean indicating if the model performs a
+classification task.}
 
 \item{prediction_model }{A string giving the model used for
 prediction.}
@@ -291,6 +298,7 @@ blocks <- list(
 
 cv_out <- rgcca_cv(blocks, response = 3, method = "rgcca",
                    par_type = "tau",
+                   par_length = 5,
                    prediction_model = "lda", #caret::modelLookup()
                    metric = "Accuracy",
                    k=3, n_run = 3,
@@ -361,5 +369,4 @@ fit_opt = rgcca(cv_out)
  print(cv_out)
  plot(cv_out, display_order = FALSE)
 }
-
 }

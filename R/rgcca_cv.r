@@ -17,7 +17,7 @@
 #' uniformly from
 #' the minimum and maximum possible values of the parameter defined by par_type
 #' for each block. Minimum possible values are 0 for tau,
-#' \eqn{1/\text{sqrt}(p_j)}{1/sqrt(p_j)} for sparsity, and 1
+#' \eqn{1/\textrm{sqrt}(p_j)}{1/sqrt(p_j)} for sparsity, and 1
 #' for ncomp. Maximum possible values are 1 for tau and sparsity, and
 #' \eqn{p_j}{p_j} for ncomp.
 #'
@@ -35,7 +35,7 @@
 #' @param n_run An integer giving the number of Monte-Carlo Cross-Validation
 #' (MCCV) to be run (if validation = 'kfold').
 #' @export
-#' @return A cval object that can be printed and plotted.
+#' @return A rgcca_cv object that can be printed and plotted.
 #' @return  \item{k}{An integer giving the number of folds.}
 #' @return  \item{n_run}{An integer giving the number of MCCV.}
 #' @return  \item{opt}{A list containing some options of the
@@ -58,6 +58,8 @@
 #' @return \item{stats}{A data.frame containing various statistics (mean, sd,
 #' median, first quartile, third quartile) of the cross-validated score for
 #' each set of parameters that has been tested.}
+#' @return \item{classification }{A boolean indicating if the model performs a
+#' classification task.}
 #' @return \item{prediction_model }{A string giving the model used for
 #' prediction.}
 #' @details
@@ -85,6 +87,7 @@
 #'
 #' cv_out <- rgcca_cv(blocks, response = 3, method = "rgcca",
 #'                    par_type = "tau",
+#'                    par_length = 5,
 #'                    prediction_model = "lda", #caret::modelLookup()
 #'                    metric = "Accuracy",
 #'                    k=3, n_run = 3,
@@ -155,10 +158,8 @@
 #'  print(cv_out)
 #'  plot(cv_out, display_order = FALSE)
 #' }
-#'
-#' @importFrom stats na.omit
-#' @importFrom utils txtProgressBar setTxtProgressBar
 rgcca_cv <- function(blocks,
+                     connection = NULL,
                      method = "rgcca",
                      response = NULL,
                      par_type = "tau",
@@ -228,7 +229,6 @@ rgcca_cv <- function(blocks,
     par_type <- "sparsity"
   } else if (par_type == "sparsity") {
     rgcca_args$method <- "sgcca"
-    opt$gcca <- sgcca
     opt$param <- "sparsity"
   }
 
@@ -340,8 +340,9 @@ rgcca_cv <- function(blocks,
     params = param$par_value,
     validation = validation,
     best_params = param$par_value[best_param_idx, ],
+    classification = model$classification,
     prediction_model = model$model_name
   )
-  class(res) <- "cval"
+  class(res) <- "rgcca_cv"
   return(res)
 }
