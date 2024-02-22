@@ -2,11 +2,11 @@
 #' Modify arguments based on the provided configuration if needed.
 #' @noRd
 get_rgcca_args <- function(object, default_args = list()) {
-  if (any(class(object) %in% c("rgcca", "permutation", "cval"))) {
+  if (any(class(object) %in% c("rgcca", "rgcca_permutation", "rgcca_cv"))) {
     opt <- object$opt
     rgcca_args <- object$call
 
-    if (any(class(object) %in% c("permutation", "cval"))) {
+    if (any(class(object) %in% c("rgcca_permutation", "rgcca_cv"))) {
       if (object$par_type == "tau") {
         rgcca_args$tau <- object$best_params
       }

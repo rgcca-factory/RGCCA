@@ -52,9 +52,12 @@ rgcca_bootstrap_k <- function(rgcca_res, inds = NULL, type = "loadings") {
         if (!(n %in% names(rgcca_res$AVE$AVE_X))) {
           res <- rep(-1, NCOL(rgcca_res$a[[n]]))
         } else {
-          res <-  rgcca_res$AVE$AVE_X[[n]]
+          res <-  rgcca_res_boot$AVE$AVE_X[[n]]
         }
-        res <- matrix(res, nrow = nrow(A[[n]]), ncol = length(res))
+        res <- matrix(
+          res, nrow = nrow(A[[n]]),
+          ncol = length(res), byrow = TRUE
+        )
         rownames(res) <- rownames(A[[n]])
         return(res)
       })

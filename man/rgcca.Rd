@@ -42,7 +42,7 @@ the network of connections between blocks (default value: 1-diag(J)).}
 \item{tau}{Either a numerical value, a numeric vector of size
 \eqn{J}{J}, or a
 numeric matrix of dimension
-\eqn{\mathrm{max}(\text{ncomp}) \times J}{max(ncomp) x J}
+\eqn{\mathrm{max}(\textrm{ncomp}) \times J}{max(ncomp) x J}
 containing the values of the regularization parameters
 (default: tau = 1, for each
 block and each dimension), or a string equal to "optimal".
@@ -114,12 +114,12 @@ method to consider. Possible values are found using
 
 \item{sparsity}{Either a numerical value, a numeric vector of
 size \eqn{J} or a numeric matrix
-of dimension \eqn{\text{max}(\text{ncomp}) \times J} encoding the L1
+of dimension \eqn{\textrm{max}(\textrm{ncomp}) \times J} encoding the L1
 constraints applied to the
 block weight vectors. For block \eqn{j}, the amount of
 sparsity varies between
-\eqn{1/\text{sqrt}(p_j)} and 1 (larger values of sparsity correspond to less
-penalization).
+\eqn{1/\textrm{sqrt}(p_j)} and 1 (larger values of sparsity
+correspond to less penalization).
 
 If sparsity is a numerical value, then sparsity is identical across
 all constraints applied to all block weight vectors.
@@ -128,14 +128,14 @@ If sparsity is a vector, sparsity[j] is identical across the constraints
 applied to the block weight vectors associated to block
 \eqn{\mathbf X_j}{Xj}:
 \deqn{
-   \forall k, \Vert a_{j,k} \Vert_{1} \le \text{sparsity}[j] \sqrt{p_j}.
+   \forall k, \Vert a_{j,k} \Vert_{1} \le \textrm{sparsity}[j] \sqrt{p_j}.
 }{for all k, ||ajk||1 <= sparsity(j) sqrt(pj).}
 
 If sparsity is a matrix, sparsity[k, j] is associated with the constraints
 applied to the kth block weight vector corresponding to block
 \eqn{\mathbf X_j}{Xj}:
 \deqn{
-   \Vert a_{j,k}\Vert_{1} \le \text{sparsity}[k,j] \sqrt{p_j}.
+   \Vert a_{j,k}\Vert_{1} \le \textrm{sparsity}[k,j] \sqrt{p_j}.
 }{||ajk||1 <= sparsity(k, j) sqrt(pj).}
 
 The sparsity parameter can be estimated by using \link{rgcca_permutation} or
@@ -491,7 +491,7 @@ An efficient algorithm to satisfy l1 and l2 constraints.
 49emes Journees de Statistique, May 2017, Avignon, France. (hal-01630744)
 }
 \seealso{
-\code{\link[RGCCA]{plot.rgcca}}, \code{\link[RGCCA]{print.rgcca}},
+\code{\link[RGCCA]{plot.rgcca}}, \code{\link[RGCCA]{summary.rgcca}},
 \code{\link[RGCCA]{rgcca_cv}},
 \code{\link[RGCCA]{rgcca_permutation}}
 \code{\link[RGCCA]{rgcca_predict}}

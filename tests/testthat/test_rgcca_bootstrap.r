@@ -9,7 +9,7 @@ p <- vapply(blocks, NCOL, FUN.VALUE = 1L)
 test_structure <- function(res, n_boot, ncomp, p) {
   expect_equal(length(res), 4)
   expect_equal(dim(res$bootstrap), c(2 * n_boot * ncomp * sum(p), 6))
-  expect_is(res, "bootstrap")
+  expect_is(res, "rgcca_bootstrap")
   expect_is(res$rgcca, "rgcca")
 }
 

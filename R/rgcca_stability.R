@@ -12,8 +12,11 @@
 #' @param n_cores The number of cores for parallelization.
 #' @param verbose A logical value indicating if the progress of the procedure
 #' is reported.
+#' @return A rgcca_stability object that can be printed and plotted.
 #' @return \item{top}{A data.frame giving the indicator (VIP)
 #' on which the variables are ranked.}
+#' @return \item{n_boot}{The number of bootstrap samples, returned
+#' for further use.}
 #' @return \item{keepVar}{The indices of the most stable variables.}
 #' @return \item{bootstrap}{A data.frame with the block weight vectors
 #' computed on each bootstrap sample.}
@@ -159,10 +162,11 @@ rgcca_stability <- function(rgcca_res,
 
   return(structure(list(
     top = top,
+    n_boot = n_boot,
     keepVar = keepVar,
     bootstrap = res,
     rgcca_res = rgcca_res
   ),
-  class = "stability"
+  class = "rgcca_stability"
   ))
 }
