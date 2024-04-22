@@ -156,9 +156,15 @@ rgcca_predict <- function(rgcca_res,
     }))
   })
 
+  probs <- lapply(c("train", "test"), function(mode) {
+    as.data.frame(lapply(results, function(res) {
+      res[["probs"]][[mode]]
+    }))
+  })
+
   confusion <- results[[1]]$confusion
 
-  names(prediction) <- names(metric) <- c("train", "test")
+  names(prediction) <- names(metric) <- names(probs) <- c("train", "test")
 
   model <- lapply(results, "[[", "model")
   score <- mean(unlist(lapply(results, "[[", "score")), na.rm = TRUE)
@@ -169,6 +175,7 @@ rgcca_predict <- function(rgcca_res,
     prediction = prediction,
     confusion = confusion,
     metric = metric,
+    probs = probs,
     model = model,
     score = score
   )
@@ -221,6 +228,8 @@ core_prediction <- function(prediction_model, X_train, X_test,
   idx_train <- !(is.na(prediction_train$obs) | is.na(prediction_train$pred))
   idx_test <- !(is.na(prediction_test$obs) | is.na(prediction_test$pred))
 
+  probs_train <- probs_test <- NULL
+
   if (classification) {
     confusion_train <- confusionMatrix(prediction_train$pred,
       reference = prediction_train$obs
@@ -228,15 +237,9 @@ core_prediction <- function(prediction_model, X_train, X_test,
     confusion_test <- confusionMatrix(prediction_test$pred,
       reference = prediction_test$obs
     )
-    if (is.null(prediction_model$prob)) {
-      prediction_train <- data.frame(cbind(
-        prediction_train,
-        predict(model, X_train, type = "prob")
-      ))
-      prediction_test <- data.frame(cbind(
-        prediction_test,
-        predict(model, X_test, type = "prob")
-      ))
+    if (is.function(prediction_model$prob)) {
+      probs_train <- data.frame(predict(model, X_train, type = "prob"))
+      probs_test <- data.frame(predict(model, X_test, type = "prob"))
     }
     metric_train <- multiClassSummary(
       data = prediction_train[idx_train, ],
@@ -268,6 +271,7 @@ core_prediction <- function(prediction_model, X_train, X_test,
   return(list(
     score = score,
     model = model,
+    probs = list(train = probs_train, test = probs_test),
     metric = list(train = metric_train, test = metric_test),
     confusion = list(train = confusion_train, test = confusion_test),
     prediction = list(train = prediction_train, test = prediction_test)
