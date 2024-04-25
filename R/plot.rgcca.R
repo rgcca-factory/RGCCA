@@ -208,14 +208,106 @@ plot.rgcca <- function(x, type = "weights",
                        AVE_colors = NULL, show_sample_names = TRUE,
                        show_var_names = TRUE, repel = FALSE,
                        display_blocks = seq_along(x$call$blocks),
-                       expand = 1, show_arrows = TRUE, ...) {
+                       expand = 1, show_arrows = TRUE,
+                       sample_select = list(
+                         name = NULL, value = NULL, number = NULL
+                       ),
+                       var_select = list(
+                         name = NULL, value = NULL, number = NULL
+                       ),
+                       ...) {
+  ### Define utility function to handle selection of data.frame rows
+  select_rows <- function(select_list, df, display_order,
+                          type = "var", cols = 1) {
+    arg_name <- ifelse(type == "var", "var_select", "sample_select")
+    idx <- seq_len(nrow(df))
+    sort_after <- FALSE
+
+    if (!is.null(select_list)) {
+      if (
+        !is.list(select_list) ||
+        !all(names(select_list) %in% c("name", "value", "number"))
+      ) {
+        stop_rgcca(
+          arg_name, " must be NULL or a named list.",
+          " Possible names are 'name', 'value', and 'number'."
+        )
+      }
+      if (!is.null(select_list$name)) {
+        if (is.null(df$y)) {
+          ref <- rownames(df)
+        } else {
+          ref <- df$y
+        }
+        if (!all(select_list$name %in% ref)) {
+          stop_rgcca(
+            "Wrong '", type, "' name. The names in ", arg_name, "$name ",
+            "do not all correspond to existing '", type, "' names."
+          )
+        }
+        idx <- ref %in% select_list$name
+        sort_after <- TRUE
+      }
+      else if (!is.null(select_list$value)) {
+        select_list$value <- check_integer(
+          paste0(arg_name, "$value"), select_list$value,
+          float = TRUE, min = 0, max = max(abs(df[, cols]))
+        )
+        idx <- abs(df[, cols]) >= select_list$value[1]
+        if (NCOL(idx) > 1) {
+          idx <- apply(idx, 1, any)
+        }
+        sort_after <- TRUE
+      }
+      else if (!is.null(select_list$number)) {
+        select_list$number <- check_integer(
+          paste0(arg_name, "$number"), select_list$number,
+          min = 1, max = nrow(df)
+        )
+        idx <- seq(select_list$number)
+      }
+    } else {
+      n <- ifelse(type == "var", min(n_mark, nrow(df)), nrow(df))
+      idx <- seq(n)
+    }
+
+    if (display_order) {
+      if (sort_after) {
+        df <- df[idx, ]
+        if (length(cols) > 1) {
+          df <- df[order(apply(abs(df[, cols]), 1, max), decreasing = TRUE), ]
+        } else {
+          df <- df[order(abs(df$x), decreasing = TRUE), ]
+        }
+      } else {
+        if (length(cols) > 1) {
+          df <- df[order(apply(abs(df[, cols]), 1, max), decreasing = TRUE), ]
+        } else {
+          df <- df[order(abs(df$x), decreasing = TRUE), ]
+        }
+        df <- df[idx, ]
+      }
+    } else {
+      df <- df[idx, ]
+    }
+
+    return(df)
+  }
+
   ### Define data.frame generating functions
   df_sample <- function(x, block, comp, response, obj = "Y") {
-    data.frame(
+    df <- data.frame(
       x[[obj]][[block[1]]][, comp[1]],
       x[[obj]][[block[2]]][, comp[2]],
       response = response
     )
+    if (obj == "Y") {
+      select_rows(
+        sample_select, df, display_order, type = "sample", cols = c(1, 2)
+      )
+    } else {
+      select_rows(var_select, df, display_order, type = "var", cols = c(1, 2))
+    }
   }
 
   df_cor <- function(x, block, comp, num_block, display_blocks) {
@@ -230,10 +322,7 @@ plot.rgcca <- function(x, type = "weights",
       y = do.call(c, lapply(x$blocks[display_blocks], colnames))
     )
 
-    idx <- unlist(
-      lapply(x$a[display_blocks], apply, 1, function(y) any(y != 0))
-    )
-    return(df[idx, ])
+    select_rows(var_select, df, display_order, type = "var", cols = seq_along(comp))
   }
 
   df_weight <- function(x, block, comp, num_block, display_order) {
@@ -242,11 +331,7 @@ plot.rgcca <- function(x, type = "weights",
       y = do.call(c, lapply(x$blocks[block], colnames)),
       response = num_block
     )
-    df <- df[df$x != 0, ]
-    if (display_order) {
-      df <- df[order(abs(df$x), decreasing = TRUE), ]
-    }
-    df <- df[seq(min(n_mark, nrow(df))), ]
+    df <- select_rows(var_select, df, display_order, type = "var", cols = 1)
     df$y <- factor(df$y, levels = df$y, ordered = TRUE)
     return(df)
   }
