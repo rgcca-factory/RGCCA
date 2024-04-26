@@ -567,16 +567,22 @@ plot.rgcca <- function(x, type = "weights",
 
       # Rescale weigths
       var_tot <- sum(diag(var(x$blocks[[block[1]]], na.rm = TRUE)))
-      a <- data.matrix(df$a[, c(1, 2)]) %*% diag(sqrt(
-        var_tot * x$AVE$AVE_X[[block[1]]][comp]
-      ))
+      var_comp <- diag(sqrt(var_tot * x$AVE$AVE_X[[block[1]]][comp]))
+
+      a <- cbind(
+        x$a[[block[1]]][, comp[1]], x$a[[block[2]]][, comp[2]]
+      ) %*% var_comp
+
+      Y <- cbind(
+        x$Y[[block[1]]][, comp[1]], x$Y[[block[2]]][, comp[2]]
+      )
 
       ratio <- min(
-        (max(df$Y[, 1]) - min(df$Y[, 1])) / (max(a[, 1]) - min(a[, 1])),
-        (max(df$Y[, 2]) - min(df$Y[, 2])) / (max(a[, 2]) - min(a[, 2]))
+        (max(Y[, 1]) - min(Y[, 1])) / (max(a[, 1]) - min(a[, 1])),
+        (max(Y[, 2]) - min(Y[, 2])) / (max(a[, 2]) - min(a[, 2]))
       ) * expand
 
-      df$a[, c(1, 2)] <- a * ratio
+      df$a[, c(1, 2)] <- data.matrix(df$a)[, c(1, 2)] %*% var_comp * ratio
       df$a <- df$a[df$a[, 1] != 0 | df$a[, 2] != 0, ]
 
       title <- ifelse(missing(title), "Biplot", title)
