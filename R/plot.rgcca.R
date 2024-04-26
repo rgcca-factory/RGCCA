@@ -63,6 +63,10 @@
 #' variables in the biplot. Default is 1.
 #' @param show_arrows A logical, if TRUE, arrows are shown in the biplot.
 #' Default is FALSE.
+#' @param sample_select A named list to select which samples to show in the
+#' plots "samples" and "biplot". See details.
+#' @param var_select A named list to select which variables to show in the
+#' plots "weights", "loadings", "cor_circle" and "biplot". See details.
 #' @param show_legend A logical value indicating if legend should
 #' be shown (default is FALSE).
 #' @param empirical A logical value indicating if the bootstrap confidence
@@ -119,6 +123,23 @@
 #' \item "loadings": statistics about the block-loading vectors are displayed.
 #' }
 #'
+#' Argument sample_select and var_select are named lists. The accepted names
+#' are "name", "value", and "number". \itemize{
+#' \item $name: expects a character vector corresponding to sample names for
+#' sample_select and variable names for var_select. If not NULL, only the
+#' elements which names are included in the vector are shown.
+#' \item $value: expects a numerical value. In 2D plots, only the elements
+#' with an abscissa or an ordinate greater than the specified value are shown.
+#' In a 1D plot, the cutoff value is directly applied on the correlation
+#' (type = "loadings") or the weight (type = "weights").
+#' \item $number: expects a positive integer number \eqn{n}. The first \eqn{n}
+#' elements are shown. If display_order = TRUE, the elements with the top
+#' \eqn{n} values are shown. In 2D plots, the order is based on the maximum
+#' between the abscissa and the ordinate for each point.
+#' }
+#' "name" takes precedence on "value" which itself takes precedence
+#' on "number".
+#'
 #' @return A ggplot2 plot object.
 #' @examples
 #' ## Plotting of an rgcca object
@@ -141,8 +162,9 @@
 #' plot(fit_rgcca, type = "weight")
 #' plot(fit_rgcca, type = "sample")
 #' plot(fit_rgcca, type = "cor_circle")
-#' plot(fit_rgcca, type = "both")
-#' plot(fit_rgcca, type = "biplot")
+#' plot(fit_rgcca, type = "both", var_select = list(value = .3),
+#'      sample_select = list(name = c("France", "Japan")))
+#' plot(fit_rgcca, type = "biplot", var_select = list(number = 2))
 #' plot(fit_rgcca, type = "ave")
 #'
 #' \dontrun{
@@ -220,6 +242,7 @@ plot.rgcca <- function(x, type = "weights",
   select_rows <- function(select_list, df, display_order,
                           type = "var", cols = 1) {
     arg_name <- ifelse(type == "var", "var_select", "sample_select")
+    msg <- ifelse(type == "var", "variable", "sample")
     idx <- seq_len(nrow(df))
     sort_after <- FALSE
 
@@ -241,8 +264,8 @@ plot.rgcca <- function(x, type = "weights",
         }
         if (!all(select_list$name %in% ref)) {
           stop_rgcca(
-            "Wrong '", type, "' name. The names in ", arg_name, "$name ",
-            "do not all correspond to existing '", type, "' names."
+            "Wrong ", msg, " name. The names in ", arg_name, "$name ",
+            "do not all correspond to existing ", msg, " names."
           )
         }
         idx <- ref %in% select_list$name
