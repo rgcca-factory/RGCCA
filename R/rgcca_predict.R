@@ -24,6 +24,10 @@
 #' block is missing.}
 #' @return \item{model}{A list of the models trained using caret to make the
 #' predictions and compute the scores.}
+#' @return \item{probs}{A list of data.frames with the class probabilities
+#' of the test and train response blocks predicted by the prediction
+#' model. If the prediction model does not compute class probabilities, the
+#' data.frames are empty.}
 #' @return \item{metric}{A list of data.frames containing the scores obtained
 #' on the training and testing sets.}
 #' @return \item{confusion}{A list containing NA for regression tasks.
