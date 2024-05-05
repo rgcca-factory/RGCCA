@@ -21,10 +21,10 @@ initsvd <- function(X, dual = TRUE) {
 
   if (dual) {
     ifelse(n >= p,
-      return(svd(X, nu = 0, nv = 1)$v),
-      return(svd(X, nu = 1, nv = 0)$u)
+      return(svd_wrapper(X, nu = 0, nv = 1)$v),
+      return(svd_wrapper(X, nu = 1, nv = 0)$u)
     )
   } else {
-    return(svd(X, nu = 0, nv = 1)$v)
+    return(svd_wrapper(X, nu = 0, nv = 1)$v)
   }
 }

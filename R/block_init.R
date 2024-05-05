@@ -1,5 +1,3 @@
-#' @importFrom MASS ginv
-
 block_init <- function(x, init = "svd") {
   UseMethod("block_init")
 }

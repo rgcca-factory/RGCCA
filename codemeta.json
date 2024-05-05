@@ -114,6 +114,11 @@
     },
     {
       "@type": "SoftwareApplication",
+      "identifier": "MASS",
+      "name": "MASS"
+    },
+    {
+      "@type": "SoftwareApplication",
       "identifier": "pander",
       "name": "pander",
       "provider": {
@@ -247,18 +252,6 @@
       "sameAs": "https://CRAN.R-project.org/package=gridExtra"
     },
     "8": {
-      "@type": "SoftwareApplication",
-      "identifier": "MASS",
-      "name": "MASS",
-      "provider": {
-        "@id": "https://cran.r-project.org",
-        "@type": "Organization",
-        "name": "Comprehensive R Archive Network (CRAN)",
-        "url": "https://cran.r-project.org"
-      },
-      "sameAs": "https://CRAN.R-project.org/package=MASS"
-    },
-    "9": {
       "@type": "SoftwareApplication",
       "identifier": "matrixStats",
       "name": "matrixStats",
