@@ -31,7 +31,7 @@ block_project.dual_block <- function(x) {
 #' @export
 block_project.primal_regularized_block <- function(x) {
   if (any(x$a != 0)) {
-    a_norm <- sqrt(t(x$a) %*% x$M %*% x$a)
+    a_norm <- t(x$a) %*% x$M %*% x$a
     if (a_norm > 0) {
       x$a <- x$M %*% x$a / drop(sqrt(a_norm))
     } else {
