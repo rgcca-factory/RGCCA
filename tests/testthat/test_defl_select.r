@@ -21,8 +21,17 @@ test_that("defl_select does not deflate block which reached ncomp", {
   expect_equal(res$resdefl[[1]], A[[1]])
 })
 
+test_that("defl_select does not deflate block when y is zero", {
+  yy0 <- yy
+  yy0[[1]] <- yy0[[1]] * 0
+  res <- defl_select(
+    yy = yy0, rr = A, nncomp = c(2, 2, 2), nn = 1, nbloc = 3
+  )
+  expect_equal(res$resdefl[[1]], A[[1]])
+})
+
 test_that("defl_select outputs coherent residuals and projections", {
-  res <- defl_select(yy = yy, rr = A, nncomp = c(1, 1, 1), nn = 1, nbloc = 3)
+  res <- defl_select(yy = yy, rr = A, nncomp = c(2, 2, 2), nn = 1, nbloc = 3)
   for (j in seq_along(A)) {
     expect_equal(A[[j]] - yy[[j]] %*% t(res$pdefl[[j]]), res$resdefl[[j]])
   }
