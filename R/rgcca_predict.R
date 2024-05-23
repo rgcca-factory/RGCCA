@@ -105,7 +105,9 @@ rgcca_predict <- function(rgcca_res,
 
   ### Get projected train and test data
   projection <- rgcca_transform(rgcca_res, blocks_test[-test_idx])
-  X_train <- rgcca_res$Y[names(projection)]
+  X_train <- rgcca_transform(
+    rgcca_res, rgcca_res$call$blocks[names(projection)]
+  )
   X_train <- reformat_projection(X_train)
   X_test <- reformat_projection(projection)
 

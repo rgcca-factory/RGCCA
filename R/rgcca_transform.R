@@ -86,6 +86,10 @@ rgcca_transform <- function(rgcca_res, blocks_test = rgcca_res$call$blocks) {
   # Otherwise we directly use astar to project the individual blocks
   } else {
     astar <- rgcca_res$astar[names(X_train)]
+    # Remove zero columns of astar
+    astar <- lapply(astar, function(x) {
+      x[, which(apply(x, 2, function(y) sum(abs(y)) > 0))]
+    })
     projection <- lapply(seq_along(blocks_test), function(j) {
       x <- pm(as.matrix(blocks_test[[j]]), astar[[j]])
       rownames(x) <- rownames(blocks_test[[j]])
