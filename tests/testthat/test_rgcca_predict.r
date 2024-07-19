@@ -90,6 +90,12 @@ test_that("rgcca_predict with lm predictor gives the same prediction as
   expect_equal(as.matrix(A[[response]] - res_predict$prediction$test), res_lm)
 })
 
+test_that("rgcca_predict returns an empty probs in regression", {
+  res_predict <- rgcca_predict(rgcca_res = fit_rgcca)
+  expect_equal(nrow(res_predict$probs$train), 0)
+  expect_equal(nrow(res_predict$probs$test), 0)
+})
+
 # Classification
 #---------------
 test_that("rgcca_predict with lda predictor gives the same prediction as
@@ -108,4 +114,17 @@ test_that("rgcca_predict with lda predictor gives the same prediction as
     res_predict$prediction$test,
     data.frame(politic = prediction_lda)
   )
+})
+
+test_that("rgcca_predict returns probs in classification with adequate model", {
+  A <- lapply(blocks_classif, function(x) x[1:32, ])
+  B <- lapply(blocks_classif, function(x) x[33:47, ])
+  response <- 3
+  fit_rgcca <- rgcca(A, tau = 1, ncomp = c(3, 2, 1), response = response)
+  res_predict <- rgcca_predict(fit_rgcca,
+                               blocks_test = B[-3],
+                               prediction_model = "lda"
+  )
+  expect_equal(nrow(res_predict$probs$train), 32)
+  expect_equal(nrow(res_predict$probs$test), 15)
 })
