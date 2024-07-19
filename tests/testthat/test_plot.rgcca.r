@@ -114,3 +114,60 @@ test_that("plot.rgcca produces the expected biplot 3", {
     )
   )
 })
+
+test_that("plot.rgcca produces the expected plots with selection", {
+  skip_if_not(as.logical(Sys.getenv("TEST_SNAPSHOTS")))
+  vdiffr::expect_doppelganger(
+    "RGCCA biplot sample_select", plot.rgcca(
+      fit.rgcca2, type = "biplot",
+      response = Russett[, 7], sample_select = list(name = c("France", "Japan"))
+    )
+  )
+  vdiffr::expect_doppelganger(
+    "RGCCA cor_circle var_select", plot.rgcca(
+      fit.rgcca2, type = "cor_circle",
+      var_select = list(value = .5)
+    )
+  )
+  vdiffr::expect_doppelganger(
+    "RGCCA weights var_select", plot.rgcca(
+      fit.rgcca, type = "weights",
+      var_select = list(number = 1)
+    )
+  )
+  vdiffr::expect_doppelganger(
+    "RGCCA loadings var_select", plot.rgcca(
+      fit.rgcca, type = "loadings",
+      var_select = list(number = 2), display_order = FALSE
+    )
+  )
+})
+
+test_that("plot.rgcca produces expected errors with selection", {
+  expect_error(
+    plot.rgcca(fit.rgcca, type = "biplot", sample_select = list(toto = 1)),
+    paste0(
+      "sample_select must be NULL or a named list. Possible names are ",
+      "'name', 'value', and 'number'."
+    ),
+    fixed = TRUE
+  )
+  expect_error(
+    plot.rgcca(fit.rgcca2, type = "weight", var_select = list(name = "toto")),
+    paste0(
+      "Wrong variable name. The names in var_select$name do not all correspond",
+      " to existing variable names."
+    ),
+    fixed = TRUE
+  )
+  expect_error(
+    plot.rgcca(fit.rgcca2, type = "cor_circle", var_select = list(value = 5)),
+    "var_select$value must be lower than or equal to 0.891150801400273.",
+    fixed = TRUE
+  )
+  expect_error(
+    plot.rgcca(fit.rgcca2, type = "loadings", var_select = list(number = 0)),
+    "var_select$number must be higher than or equal to 1",
+    fixed = TRUE
+  )
+})

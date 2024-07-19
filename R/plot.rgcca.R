@@ -63,6 +63,10 @@
 #' variables in the biplot. Default is 1.
 #' @param show_arrows A logical, if TRUE, arrows are shown in the biplot.
 #' Default is FALSE.
+#' @param sample_select A named list to select which samples to show in the
+#' plots "samples" and "biplot". See details.
+#' @param var_select A named list to select which variables to show in the
+#' plots "weights", "loadings", "cor_circle" and "biplot". See details.
 #' @param show_legend A logical value indicating if legend should
 #' be shown (default is FALSE).
 #' @param empirical A logical value indicating if the bootstrap confidence
@@ -119,6 +123,23 @@
 #' \item "loadings": statistics about the block-loading vectors are displayed.
 #' }
 #'
+#' Argument sample_select and var_select are named lists. The accepted names
+#' are "name", "value", and "number". \itemize{
+#' \item $name: expects a character vector corresponding to sample names for
+#' sample_select and variable names for var_select. If not NULL, only the
+#' elements which names are included in the vector are shown.
+#' \item $value: expects a numerical value. In 2D plots, only the elements
+#' with an abscissa or an ordinate greater than the specified value are shown.
+#' In a 1D plot, the cutoff value is directly applied on the correlation
+#' (type = "loadings") or the weight (type = "weights").
+#' \item $number: expects a positive integer number \eqn{n}. The first \eqn{n}
+#' elements are shown. If display_order = TRUE, the elements with the top
+#' \eqn{n} values are shown. In 2D plots, the order is based on the maximum
+#' between the abscissa and the ordinate for each point.
+#' }
+#' "name" takes precedence on "value" which itself takes precedence
+#' on "number".
+#'
 #' @return A ggplot2 plot object.
 #' @examples
 #' ## Plotting of an rgcca object
@@ -141,8 +162,9 @@
 #' plot(fit_rgcca, type = "weight")
 #' plot(fit_rgcca, type = "sample")
 #' plot(fit_rgcca, type = "cor_circle")
-#' plot(fit_rgcca, type = "both")
-#' plot(fit_rgcca, type = "biplot")
+#' plot(fit_rgcca, type = "both", var_select = list(value = .3),
+#'      sample_select = list(name = c("France", "Japan")))
+#' plot(fit_rgcca, type = "biplot", var_select = list(number = 2))
 #' plot(fit_rgcca, type = "ave")
 #'
 #' \dontrun{
@@ -208,14 +230,107 @@ plot.rgcca <- function(x, type = "weights",
                        AVE_colors = NULL, show_sample_names = TRUE,
                        show_var_names = TRUE, repel = FALSE,
                        display_blocks = seq_along(x$call$blocks),
-                       expand = 1, show_arrows = TRUE, ...) {
+                       expand = 1, show_arrows = TRUE,
+                       sample_select = list(
+                         name = NULL, value = NULL, number = NULL
+                       ),
+                       var_select = list(
+                         name = NULL, value = NULL, number = NULL
+                       ),
+                       ...) {
+  ### Define utility function to handle selection of data.frame rows
+  select_rows <- function(select_list, df, display_order,
+                          type = "var", cols = 1) {
+    arg_name <- ifelse(type == "var", "var_select", "sample_select")
+    msg <- ifelse(type == "var", "variable", "sample")
+    idx <- seq_len(nrow(df))
+    sort_after <- FALSE
+
+    if (!is.null(select_list)) {
+      if (
+        !is.list(select_list) ||
+        !all(names(select_list) %in% c("name", "value", "number"))
+      ) {
+        stop_rgcca(
+          arg_name, " must be NULL or a named list.",
+          " Possible names are 'name', 'value', and 'number'."
+        )
+      }
+      if (!is.null(select_list$name)) {
+        if (is.null(df$y)) {
+          ref <- rownames(df)
+        } else {
+          ref <- df$y
+        }
+        if (!all(select_list$name %in% ref)) {
+          stop_rgcca(
+            "Wrong ", msg, " name. The names in ", arg_name, "$name ",
+            "do not all correspond to existing ", msg, " names."
+          )
+        }
+        idx <- ref %in% select_list$name
+        sort_after <- TRUE
+      }
+      else if (!is.null(select_list$value)) {
+        select_list$value <- check_integer(
+          paste0(arg_name, "$value"), select_list$value,
+          float = TRUE, min = 0, max = max(abs(df[, cols]))
+        )
+        idx <- abs(df[, cols]) >= select_list$value[1]
+        if (NCOL(idx) > 1) {
+          idx <- apply(idx, 1, any)
+        }
+        sort_after <- TRUE
+      }
+      else if (!is.null(select_list$number)) {
+        select_list$number <- check_integer(
+          paste0(arg_name, "$number"), select_list$number,
+          min = 1, max = nrow(df)
+        )
+        idx <- seq(select_list$number)
+      }
+    } else {
+      n <- ifelse(type == "var", min(n_mark, nrow(df)), nrow(df))
+      idx <- seq(n)
+    }
+
+    if (display_order) {
+      if (sort_after) {
+        df <- df[idx, ]
+        if (length(cols) > 1) {
+          df <- df[order(apply(abs(df[, cols]), 1, max), decreasing = TRUE), ]
+        } else {
+          df <- df[order(abs(df$x), decreasing = TRUE), ]
+        }
+      } else {
+        if (length(cols) > 1) {
+          df <- df[order(apply(abs(df[, cols]), 1, max), decreasing = TRUE), ]
+        } else {
+          df <- df[order(abs(df$x), decreasing = TRUE), ]
+        }
+        df <- df[idx, ]
+      }
+    } else {
+      df <- df[idx, ]
+    }
+
+    return(df)
+  }
+
   ### Define data.frame generating functions
   df_sample <- function(x, block, comp, response, obj = "Y") {
-    data.frame(
+    df <- data.frame(
       x[[obj]][[block[1]]][, comp[1]],
       x[[obj]][[block[2]]][, comp[2]],
       response = response
     )
+    if (obj == "Y") {
+      select_rows(
+        sample_select, df, display_order, type = "sample", cols = c(1, 2)
+      )
+    } else {
+      select_rows(var_select, df, display_order, type = "var", cols = c(1, 2))
+    }
   }
 
   df_cor <- function(x, block, comp, num_block, display_blocks) {
@@ -230,10 +345,7 @@ plot.rgcca <- function(x, type = "weights",
       y = do.call(c, lapply(x$blocks[display_blocks], colnames))
     )
 
-    idx <- unlist(
-      lapply(x$a[display_blocks], apply, 1, function(y) any(y != 0))
-    )
-    return(df[idx, ])
+    select_rows(var_select, df, display_order, type = "var", cols = seq_along(comp))
   }
 
   df_weight <- function(x, block, comp, num_block, display_order) {
@@ -242,11 +354,7 @@ plot.rgcca <- function(x, type = "weights",
       y = do.call(c, lapply(x$blocks[block], colnames)),
       response = num_block
     )
-    df <- df[df$x != 0, ]
-    if (display_order) {
-      df <- df[order(abs(df$x), decreasing = TRUE), ]
-    }
-    df <- df[seq(min(n_mark, nrow(df))), ]
+    df <- select_rows(var_select, df, display_order, type = "var", cols = 1)
     df$y <- factor(df$y, levels = df$y, ordered = TRUE)
     return(df)
   }
@@ -482,16 +590,22 @@ plot.rgcca <- function(x, type = "weights",
 
       # Rescale weigths
       var_tot <- sum(diag(var(x$blocks[[block[1]]], na.rm = TRUE)))
-      a <- data.matrix(df$a[, c(1, 2)]) %*% diag(sqrt(
-        var_tot * x$AVE$AVE_X[[block[1]]][comp]
-      ))
+      var_comp <- diag(sqrt(var_tot * x$AVE$AVE_X[[block[1]]][comp]))
+
+      a <- cbind(
+        x$a[[block[1]]][, comp[1]], x$a[[block[2]]][, comp[2]]
+      ) %*% var_comp
+
+      Y <- cbind(
+        x$Y[[block[1]]][, comp[1]], x$Y[[block[2]]][, comp[2]]
+      )
 
       ratio <- min(
-        (max(df$Y[, 1]) - min(df$Y[, 1])) / (max(a[, 1]) - min(a[, 1])),
-        (max(df$Y[, 2]) - min(df$Y[, 2])) / (max(a[, 2]) - min(a[, 2]))
+        (max(Y[, 1]) - min(Y[, 1])) / (max(a[, 1]) - min(a[, 1])),
+        (max(Y[, 2]) - min(Y[, 2])) / (max(a[, 2]) - min(a[, 2]))
       ) * expand
 
-      df$a[, c(1, 2)] <- a * ratio
+      df$a[, c(1, 2)] <- data.matrix(df$a)[, c(1, 2)] %*% var_comp * ratio
       df$a <- df$a[df$a[, 1] != 0 | df$a[, 2] != 0, ]
 
       title <- ifelse(missing(title), "Biplot", title)
