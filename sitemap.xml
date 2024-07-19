@@ -1,66 +1,24 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <url>
-    <loc>https://rgcca-factory.github.io/RGCCA/404.html</loc>
-  </url>
-  <url>
-    <loc>https://rgcca-factory.github.io/RGCCA/CODE_OF_CONDUCT.html</loc>
-  </url>
-  <url>
-    <loc>https://rgcca-factory.github.io/RGCCA/CONTRIBUTING.html</loc>
-  </url>
-  <url>
-    <loc>https://rgcca-factory.github.io/RGCCA/articles/index.html</loc>
-  </url>
-  <url>
-    <loc>https://rgcca-factory.github.io/RGCCA/authors.html</loc>
-  </url>
-  <url>
-    <loc>https://rgcca-factory.github.io/RGCCA/index.html</loc>
-  </url>
-  <url>
-    <loc>https://rgcca-factory.github.io/RGCCA/news/index.html</loc>
-  </url>
-  <url>
-    <loc>https://rgcca-factory.github.io/RGCCA/reference/ECSI.html</loc>
-  </url>
-  <url>
-    <loc>https://rgcca-factory.github.io/RGCCA/reference/Russett.html</loc>
-  </url>
-  <url>
-    <loc>https://rgcca-factory.github.io/RGCCA/reference/available_methods.html</loc>
-  </url>
-  <url>
-    <loc>https://rgcca-factory.github.io/RGCCA/reference/index.html</loc>
-  </url>
-  <url>
-    <loc>https://rgcca-factory.github.io/RGCCA/reference/plot.html</loc>
-  </url>
-  <url>
-    <loc>https://rgcca-factory.github.io/RGCCA/reference/print.html</loc>
-  </url>
-  <url>
-    <loc>https://rgcca-factory.github.io/RGCCA/reference/rgcca.html</loc>
-  </url>
-  <url>
-    <loc>https://rgcca-factory.github.io/RGCCA/reference/rgcca_bootstrap.html</loc>
-  </url>
-  <url>
-    <loc>https://rgcca-factory.github.io/RGCCA/reference/rgcca_cv.html</loc>
-  </url>
-  <url>
-    <loc>https://rgcca-factory.github.io/RGCCA/reference/rgcca_permutation.html</loc>
-  </url>
-  <url>
-    <loc>https://rgcca-factory.github.io/RGCCA/reference/rgcca_predict.html</loc>
-  </url>
-  <url>
-    <loc>https://rgcca-factory.github.io/RGCCA/reference/rgcca_stability.html</loc>
-  </url>
-  <url>
-    <loc>https://rgcca-factory.github.io/RGCCA/reference/rgcca_transform.html</loc>
-  </url>
-  <url>
-    <loc>https://rgcca-factory.github.io/RGCCA/reference/summary.html</loc>
-  </url>
+<urlset xmlns = 'http://www.sitemaps.org/schemas/sitemap/0.9'>
+<url><loc>https://rgcca-factory.github.io/RGCCA/404.html</loc></url>
+<url><loc>https://rgcca-factory.github.io/RGCCA/CODE_OF_CONDUCT.html</loc></url>
+<url><loc>https://rgcca-factory.github.io/RGCCA/CONTRIBUTING.html</loc></url>
+<url><loc>https://rgcca-factory.github.io/RGCCA/articles/index.html</loc></url>
+<url><loc>https://rgcca-factory.github.io/RGCCA/authors.html</loc></url>
+<url><loc>https://rgcca-factory.github.io/RGCCA/index.html</loc></url>
+<url><loc>https://rgcca-factory.github.io/RGCCA/news/index.html</loc></url>
+<url><loc>https://rgcca-factory.github.io/RGCCA/reference/ECSI.html</loc></url>
+<url><loc>https://rgcca-factory.github.io/RGCCA/reference/Russett.html</loc></url>
+<url><loc>https://rgcca-factory.github.io/RGCCA/reference/available_methods.html</loc></url>
+<url><loc>https://rgcca-factory.github.io/RGCCA/reference/index.html</loc></url>
+<url><loc>https://rgcca-factory.github.io/RGCCA/reference/plot.html</loc></url>
+<url><loc>https://rgcca-factory.github.io/RGCCA/reference/print.html</loc></url>
+<url><loc>https://rgcca-factory.github.io/RGCCA/reference/rgcca.html</loc></url>
+<url><loc>https://rgcca-factory.github.io/RGCCA/reference/rgcca_bootstrap.html</loc></url>
+<url><loc>https://rgcca-factory.github.io/RGCCA/reference/rgcca_cv.html</loc></url>
+<url><loc>https://rgcca-factory.github.io/RGCCA/reference/rgcca_permutation.html</loc></url>
+<url><loc>https://rgcca-factory.github.io/RGCCA/reference/rgcca_predict.html</loc></url>
+<url><loc>https://rgcca-factory.github.io/RGCCA/reference/rgcca_stability.html</loc></url>
+<url><loc>https://rgcca-factory.github.io/RGCCA/reference/rgcca_transform.html</loc></url>
+<url><loc>https://rgcca-factory.github.io/RGCCA/reference/summary.html</loc></url>
 </urlset>
+

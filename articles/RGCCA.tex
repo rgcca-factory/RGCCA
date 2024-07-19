@@ -136,8 +136,7 @@ de Paris (AP-HP)\\
 \newtheorem{corollary}[theorem]{Corollary}
 \newtheorem{remark}[theorem]{Remark}
 
-\hypertarget{introduction}{%
-\section{Introduction}\label{introduction}}
+\section{Introduction}\label{introduction}
 
 A challenging problem in multivariate statistics is to study
 relationships between several sets of variables measured on the same set
@@ -254,16 +253,14 @@ Section 3 presents the structure of the package and provides code
 examples to illustrate the package's capabilities. Finally, we conclude
 the paper in Section 4.
 
-\hypertarget{the-rgcca-framework}{%
-\section{The RGCCA framework}\label{the-rgcca-framework}}
+\section{The RGCCA framework}\label{the-rgcca-framework}
 
 We first introduce the optimization problem defining the RGCCA
 framework, previously published in
 \cite{Tenenhaus2011, Tenenhaus2014, Tenenhaus2015, Tenenhaus2017}. We
 then show how it includes many existing methods.
 
-\hypertarget{formulation}{%
-\subsection{Formulation}\label{formulation}}
+\subsection{Formulation}\label{formulation}
 
 Let \(\boldsymbol x\) be a random column vector of \(p\) variables such
 that \(\boldsymbol x\) is the concatenation of \(J\) subvectors
@@ -277,7 +274,7 @@ for \((j, k) \in \{1, \dots, J\}^2\). Let
 \(\mathbf a_j = (a_{j1}, \ldots, a_{jp_j})^\top\) be a non-random
 \(p_j\)-dimensional column vector. A composite variable \(y_j\) is
 defined as the linear combination of the elements of
-\(\boldsymbol x_j\): \(y_j = \mathbf a_j^\top \boldsymbol x_j\).
+\(\boldsymbol x_j\): \(y_j =  \mathbf a_j^\top \boldsymbol x_j\).
 Therefore the covariance between two composite variables is
 \(\mathbf{a}_j^\top \mathbf \Sigma_{jk} \mathbf{a}_k\).
 
@@ -304,8 +301,7 @@ g}\left(\mathbf{a}_j^\top  \mathbf \Sigma_{jk} \mathbf{a}_k\right)\\
 \item the design matrix $\mathbf C = \lbrace c_{jk}\rbrace$ is a symmetric $J \times J$ matrix of non-negative elements describing the network of connections between blocks that the user wants to take into account. Usually, $c_{jk} = 1$ between two connected blocks and $0$ otherwise. 
 \end{itemize}
 
-\hypertarget{sample-based-rgcca}{%
-\subsection{Sample-based RGCCA}\label{sample-based-rgcca}}
+\subsection{Sample-based RGCCA}\label{sample-based-rgcca}
 
 A sample-based optimization problem related to \eqref{optim_RGCCA} can
 be defined by considering \(n\) observations of the vector
@@ -328,7 +324,7 @@ g}\left(\mathbf{a}_j^\top  \widehat{\mathbf{\Sigma}}_{jk} \mathbf{a}_k\right)\\
 \end{equation}
 
 where
-\(\widehat{\mathbf{\Sigma}}_{jk}= n^{-1} \mathbf X_j^\top \mathbf X_k\)
+\(\widehat{\mathbf{\Sigma}}_{jk}= n^{-1} \mathbf X_j^\top  \mathbf X_k\)
 is an estimate of the interblock covariance matrix
 \(\mathbf{\Sigma}_{jk}= \mathbb{E}[\boldsymbol x_j\boldsymbol x_k^\top]\)
 and \(\widehat{\boldsymbol \Sigma}_{jj}\) is an estimate of the
@@ -341,7 +337,7 @@ In cases involving multi-collinearity within blocks or in high
 dimensional settings, one way of obtaining an estimate for the true
 covariance matrix \(\mathbf{\Sigma}_{jj}\) is to consider the class of
 linear convex combinations of the sample covariance matrix
-\(\mathbf{S}_{jj} = n^{-1} \mathbf X_j^\top \mathbf X_j\) and the
+\(\mathbf{S}_{jj} = n^{-1} \mathbf X_j^\top  \mathbf X_j\) and the
 identity matrix \(\mathbf I_{p_j}\). Therefore,
 \(\widehat{\mathbf{\Sigma}}_{jj} = (1-\tau_j)\mathbf{S}_{jj} + \tau_j\mathbf{I}_{p_j}\)
 with \(\tau_j \in [0,1]\) (shrinkage estimator of
@@ -358,7 +354,7 @@ description of the objective of RGCCA.
 \end{equation}
 
 The objective of RGCCA is thus to find block components
-\(\mathbf y_j = \mathbf X_j \mathbf a_j\) for
+\(\mathbf y_j =  \mathbf X_j  \mathbf a_j\) for
 \(j \in \{1, \ldots, J\}\), summarizing the relevant information between
 and within the blocks. The \(\tau_j\)s are called shrinkage parameters
 ranging from \(0\) to \(1\) and interpolate smoothly between maximizing
@@ -411,8 +407,7 @@ correspondences between the triplet (g, \(\tau_j, \mathbf C\)) and the
 multiblock component methods. For a complete overview, see
 \cite{Tenenhaus2017}.
 
-\hypertarget{special-cases}{%
-\subsection{Special cases}\label{special-cases}}
+\subsection{Special cases}\label{special-cases}
 
 Two families of methods have come to the fore in the field of multiblock
 data analysis. These methods rely on correlation-based or
@@ -463,7 +458,7 @@ and is reported in Table \ref{twoblock_methods}.
   >{\centering\arraybackslash}p{(\columnwidth - 6\tabcolsep) * \real{0.2857}}@{}}
 \caption{Two-block component methods.
 \label{twoblock_methods}}\tabularnewline
-\toprule()
+\toprule\noalign{}
 \begin{minipage}[b]{\linewidth}\raggedright
 \textbf{Methods}
 \end{minipage} & \begin{minipage}[b]{\linewidth}\centering
@@ -473,9 +468,9 @@ and is reported in Table \ref{twoblock_methods}.
 \end{minipage} & \begin{minipage}[b]{\linewidth}\centering
 \(\mathbf{C}\)
 \end{minipage} \\
-\midrule()
+\midrule\noalign{}
 \endfirsthead
-\toprule()
+\toprule\noalign{}
 \begin{minipage}[b]{\linewidth}\raggedright
 \textbf{Methods}
 \end{minipage} & \begin{minipage}[b]{\linewidth}\centering
@@ -485,8 +480,10 @@ and is reported in Table \ref{twoblock_methods}.
 \end{minipage} & \begin{minipage}[b]{\linewidth}\centering
 \(\mathbf{C}\)
 \end{minipage} \\
-\midrule()
+\midrule\noalign{}
 \endhead
+\bottomrule\noalign{}
+\endlastfoot
 \textbf{Canonical correlation analysis} \citep{Hotelling1936} & \(x\) &
 \(\tau_1 = \tau_2 = 0\) &
 \(\mathbf{C}_1 = \begin{pmatrix} 0 & 1 \\ 1 & 0 \end{pmatrix}\) \\
@@ -501,7 +498,6 @@ regression} \citep{Wold1983} & \(x\) & \(\tau_1 = \tau_2 = 1\) &
 \textbf{Regularized canonical correlation analysis}
 \citep{Vinod1976, Leurgans1993, Shawe2004} & \(x\) &
 \(0 \le \tau_1 \le 1\) ; \(0 \le \tau_2 \le 1\) & \(\mathbf{C}_1\) \\
-\bottomrule()
 \end{longtable}
 
 In the multiblock data analysis literature, all blocks
@@ -523,7 +519,7 @@ which are not.
   >{\centering\arraybackslash}p{(\columnwidth - 6\tabcolsep) * \real{0.2857}}@{}}
 \caption{Multiblock component methods as special cases of
 RGCCA.\label{multiblock_methods}}\tabularnewline
-\toprule()
+\toprule\noalign{}
 \begin{minipage}[b]{\linewidth}\raggedright
 \textbf{Methods}
 \end{minipage} & \begin{minipage}[b]{\linewidth}\centering
@@ -533,9 +529,9 @@ RGCCA.\label{multiblock_methods}}\tabularnewline
 \end{minipage} & \begin{minipage}[b]{\linewidth}\centering
 \(\mathbf{C}\)
 \end{minipage} \\
-\midrule()
+\midrule\noalign{}
 \endfirsthead
-\toprule()
+\toprule\noalign{}
 \begin{minipage}[b]{\linewidth}\raggedright
 \textbf{Methods}
 \end{minipage} & \begin{minipage}[b]{\linewidth}\centering
@@ -545,8 +541,10 @@ RGCCA.\label{multiblock_methods}}\tabularnewline
 \end{minipage} & \begin{minipage}[b]{\linewidth}\centering
 \(\mathbf{C}\)
 \end{minipage} \\
-\midrule()
+\midrule\noalign{}
 \endhead
+\bottomrule\noalign{}
+\endlastfoot
 \textbf{SUMCOR} \citep{Horst1961} & \(x\) &
 \(\tau_j = 0, j=1, \ldots, J\) &
 \(\mathbf{C}_2 = \begin{pmatrix} 1 & 1 & \cdots & 1 \\ 1 & 1 & \ddots & \vdots \\ \vdots & \ddots& \ddots & 1\\ 1 & \cdots & 1 & 1 \end{pmatrix}\) \\
@@ -568,14 +566,13 @@ RGCCA.\label{multiblock_methods}}\tabularnewline
 \textbf{PLS path modeling - mode B} \citep{Wold1982, Tenenhaus2005} &
 \(|x|\) & \(\tau_j = 0, j=1, \ldots, J\) & \(c_{jk}=1\) for two
 connected block and \(c_{jk} = 0\) otherwise \\
-\bottomrule()
 \end{longtable}
 
 Many multiblock component methods aim to simultaneously find block
 components and a global component. For that purpose, we consider \(J\)
-blocks, \(\mathbf X_1, \ldots, \mathbf X_J\) connected to a
+blocks, \(\mathbf X_1, \ldots,  \mathbf X_J\) connected to a
 \((J + 1)\)th block defined as the concatenation of the blocks,
-\(\mathbf X_{J+1} = [ \mathbf X_1 , \mathbf X_2, \ldots, \mathbf X_J ]\).
+\(\mathbf X_{J+1} = [ \mathbf X_1 ,  \mathbf X_2, \ldots,  \mathbf X_J ]\).
 Several criteria were introduced in the literature, and many are listed
 below.
 
@@ -585,10 +582,10 @@ below.
   >{\raggedright\arraybackslash}p{(\columnwidth - 6\tabcolsep) * \real{0.2857}}
   >{\centering\arraybackslash}p{(\columnwidth - 6\tabcolsep) * \real{0.2857}}@{}}
 \caption{Multiblock component methods in a situation of \(J\) blocks:
-\(\mathbf X_1, \ldots, \mathbf X_J\), connected to a \((J + 1)\)th block
-defined as the concatenation of the blocks:
-\(\mathbf X_{J+1} = [ \mathbf X_1 , \mathbf X_2, \ldots, \mathbf X_J]\).\label{multiblock_hierarchical}}\tabularnewline
-\toprule()
+\(\mathbf X_1, \ldots,  \mathbf X_J\), connected to a \((J + 1)\)th
+block defined as the concatenation of the blocks:
+\(\mathbf X_{J+1} = [ \mathbf X_1 ,  \mathbf X_2, \ldots,  \mathbf X_J]\).\label{multiblock_hierarchical}}\tabularnewline
+\toprule\noalign{}
 \begin{minipage}[b]{\linewidth}\raggedright
 \textbf{Methods}
 \end{minipage} & \begin{minipage}[b]{\linewidth}\centering
@@ -598,9 +595,9 @@ defined as the concatenation of the blocks:
 \end{minipage} & \begin{minipage}[b]{\linewidth}\centering
 \(\mathbf{C}\)
 \end{minipage} \\
-\midrule()
+\midrule\noalign{}
 \endfirsthead
-\toprule()
+\toprule\noalign{}
 \begin{minipage}[b]{\linewidth}\raggedright
 \textbf{Methods}
 \end{minipage} & \begin{minipage}[b]{\linewidth}\centering
@@ -610,8 +607,10 @@ defined as the concatenation of the blocks:
 \end{minipage} & \begin{minipage}[b]{\linewidth}\centering
 \(\mathbf{C}\)
 \end{minipage} \\
-\midrule()
+\midrule\noalign{}
 \endhead
+\bottomrule\noalign{}
+\endlastfoot
 \textbf{Generalized CCA} \citep{Carroll1968a} & \(x^2\) &
 \(\tau_j = 0, j=1, \ldots, J+1\) &
 \(\mathbf{C}_4 = \begin{pmatrix} 0 & \cdots & 0 & 1 \\ \vdots & \ddots & \vdots & \vdots\\ 0 & \cdots & 0 & 1\\ 1 & \cdots & 1 & 0 \end{pmatrix}\) \\
@@ -627,7 +626,6 @@ defined as the concatenation of the blocks:
 \(\mathbf{C}_4\) \\
 \textbf{Multiple factor analysis} \citep{Escofier1994} & \(x^2\) &
 \(\tau_j = 1, j=1, \ldots, J+1\) & \(\mathbf{C}_4\) \\
-\bottomrule()
 \end{longtable}
 
 It is quite remarkable that the single optimization problem
@@ -649,9 +647,8 @@ be used when \(n \le p_j\). The \code{rgcca()} function of the
 \pkg{RGCCA} package implements these two formulations and automatically
 selects the best one.
 
-\hypertarget{sparse-generalized-canonical-correlation-analysis}{%
 \subsection{Sparse generalized canonical correlation
-analysis}\label{sparse-generalized-canonical-correlation-analysis}}
+analysis}\label{sparse-generalized-canonical-correlation-analysis}
 
 RGCCA is a component-based approach that aims to study the relationships
 between several sets of variables. The quality and interpretability of
@@ -682,9 +679,8 @@ to result in desired amounts of sparsity.
 SGCCA is also implemented in the \pkg{RGCCA} package and offers a sparse
 counterpart for all the covariance-based methods cited above.
 
-\hypertarget{a-master-algorithm-for-the-rgcca-framework}{%
 \subsection{A master algorithm for the RGCCA
-framework}\label{a-master-algorithm-for-the-rgcca-framework}}
+framework}\label{a-master-algorithm-for-the-rgcca-framework}
 
 The general optimization problem behind the RGCCA framework can be
 formulated as follows:
@@ -702,11 +698,11 @@ a set of parameter vectors \(( \mathbf a_1, \ldots, \mathbf a_J)\), we
 make no difference between the notations
 \(f( \mathbf a_1, \ldots, \mathbf a_J)\) and \(f( \mathbf a)\), where
 \(\mathbf a\) is the column vector
-\(\mathbf a = \left( \mathbf a_1^\top, \ldots, \mathbf a_J^\top\right)^\top\)
+\(\mathbf a = \left(  \mathbf a_1^\top, \ldots,  \mathbf a_J^\top\right)^\top\)
 of size \(p = \sum_{j=1}^{J}p_j\). Moreover, the vertical concatenation
 of a column vector is denoted
-\(\mathbf a = \left( \mathbf a_1; \ldots; \mathbf a_J \right)\) for the
-sake of simplification of notation.
+\(\mathbf a = \left(  \mathbf a_1; \ldots;  \mathbf a_J \right)\) for
+the sake of simplification of notation.
 
 A simple, monotonically, and globally convergent algorithm is presented
 for solving the optimization problem (\ref{master_optim}). The
@@ -721,13 +717,13 @@ Let \(\nabla_j f( \mathbf a)\) be the partial gradient of
 \(\nabla_j f( \mathbf a) \neq \mathbf{0}\) in this manuscript. This
 assumption is not too binding as \(\nabla_j f( \mathbf a) = \mathbf{0}\)
 characterizes the global minimum of
-\(f( \mathbf a_1 , \ldots , \mathbf a_J )\) with respect to
+\(f( \mathbf a_1 , \ldots ,  \mathbf a_J )\) with respect to
 \(\mathbf a_j\) when the other vectors
-\(\mathbf a_1 , \ldots , \mathbf a_{j-1} , \mathbf a_{j+1} , \ldots , \mathbf a_J\)
+\(\mathbf a_1 , \ldots ,  \mathbf a_{j-1} ,  \mathbf a_{j+1} , \ldots ,  \mathbf a_J\)
 are fixed.
 
 We want to find an update \(\hat{ \mathbf a}_j\in \Omega_j\) such that
-\(f( \mathbf a)\leq f( \mathbf a_1, ..., \mathbf a_{j-1}, \hat{ \mathbf a}_j, \mathbf a_{j+1}, ..., \mathbf a_J)\).
+\(f( \mathbf a)\leq f( \mathbf a_1, ...,  \mathbf a_{j-1}, \hat{ \mathbf a}_j,  \mathbf a_{j+1}, ...,  \mathbf a_J)\).
 As \(f\) is a continuously differentiable multi-convex function and
 considering that a convex function lies above its linear approximation
 at \(\mathbf a_j\) for any \(\tilde{ \mathbf a}_j\in\Omega_j\), the
@@ -776,7 +772,7 @@ properties of Algorithm \ref{master_algo}:
 \(\Omega = \Omega_1 \times \ldots \times \Omega_J\),
 \(\mathbf a = \left( \mathbf a_1; \ldots; \mathbf a_J\right) \in \Omega\),
 \(c_j \text{ : } \Omega\mapsto\Omega\) is an operator defined as
-\(c_j( \mathbf a) = \left( \mathbf a_1; \ldots; \mathbf a_{j-1} ; r_j( \mathbf a) ; \mathbf a_{j+1} ; \ldots; \mathbf a_J\right)\)
+\(c_j( \mathbf a) = \left( \mathbf a_1; \ldots;  \mathbf a_{j-1} ; r_j( \mathbf a) ;  \mathbf a_{j+1} ; \ldots;  \mathbf a_J\right)\)
 with \(r_j( \mathbf a)\) introduced in
 Equation\textasciitilde{}\ref{core_update} and
 \(c \text{ : } \Omega\mapsto\Omega\) is defined as
@@ -805,7 +801,7 @@ Algorithm \ref{master_algo}. The three first points of Proposition
 \ref{cv_prop} concern the behavior of the sequence values
 \(\left\lbrace f( \mathbf a^s) \right\rbrace\) of the objective
 function, whereas the three last points are about the behavior of the
-sequence \(\left\lbrace \mathbf a^s \right\rbrace\). The full proof of
+sequence \(\left\lbrace  \mathbf a^s \right\rbrace\). The full proof of
 these properties is given in \cite{Tenenhaus2017}.
 
 The optimization problem \eqref{optim_RGCCA} defining the RGCCA
@@ -832,9 +828,8 @@ condition. Consequently, the optimization problem (\ref{optim_RGCCA})
 falls under the umbrella of the general optimization framework presented
 in the previous section.
 
-\hypertarget{the-specific-case-of-rgcca}{%
 \subsection{The specific case of
-RGCCA}\label{the-specific-case-of-rgcca}}
+RGCCA}\label{the-specific-case-of-rgcca}
 
 The optimization problem \eqref{optim_RGCCA_sample1} defining
 sample-based RGCCA is a particular case of \eqref{master_optim}. Indeed,
@@ -861,13 +856,12 @@ problem:
 \label{grad_obj_function}
 \end{equation}
 
-\hypertarget{the-specific-case-of-sgcca}{%
 \subsection{The specific case of
-SGCCA}\label{the-specific-case-of-sgcca}}
+SGCCA}\label{the-specific-case-of-sgcca}
 
 The optimization problem (\ref{optim_SGCCA}) falls into the RGCCA
 framework with
-\(\Omega_j = \lbrace \mathbf a_j\in\mathbb{R}^{p_j}; \Vert \mathbf a_j \Vert_2 \leq 1; \Vert \mathbf a_j \Vert_1 \leq s_l\rbrace\).
+\(\Omega_j = \lbrace  \mathbf a_j\in\mathbb{R}^{p_j}; \Vert  \mathbf a_j \Vert_2 \leq 1; \Vert  \mathbf a_j \Vert_1 \leq s_l\rbrace\).
 \(\Omega_j\) is defined as the intersection between the \(\ell_2\)-ball
 of radius \(1\) and the \(\ell_1\)-ball of radius
 \(s_l \in \mathbb{R}_+^\star\) which are two compact sets. Hence,
@@ -935,9 +929,8 @@ convergence properties. Empirically, we note that the S/RGCCA algorithm
 is found to be not sensitive to the starting point and usually reaches
 convergence (\code{tol = 1e-16}) within a few iterations.
 
-\hypertarget{higher-level-rgcca-algorithm}{%
 \subsection{Higher level RGCCA
-algorithm}\label{higher-level-rgcca-algorithm}}
+algorithm}\label{higher-level-rgcca-algorithm}
 
 In many applications, several components per block need to be
 identified. The traditional approach incorporates the single-unit RGCCA
@@ -955,10 +948,10 @@ replacing within the RGCCA optimization problem the data matrix
 \(\mathbf X_j\) by \(\mathbf X_j^{(1)}\) its projection onto either: (i)
 the orthogonal subspace of \(\mathbf y_j^{(1)}\) if orthogonal
 components are desired:
-\(\mathbf X_j^{(1)} = \mathbf X_j - \mathbf y_j^{(1)} \left( { \mathbf y_j^{(1)}}^\top \mathbf y_j^{(1)} \right)^{-1}{ \mathbf y_j^{(1)}}^\top \mathbf X_j\),
+\(\mathbf X_j^{(1)} = \mathbf X_j -  \mathbf y_j^{(1)} \left( { \mathbf y_j^{(1)}}^\top  \mathbf y_j^{(1)} \right)^{-1}{ \mathbf y_j^{(1)}}^\top \mathbf X_j\),
 or (ii) the orthogonal subspace of \(\mathbf a_j^{(1)}\) for orthogonal
 weight vectors
-\(\mathbf X_j^{(1)} = \mathbf X_j - \mathbf X_j \mathbf a_j^{(1)} \left( { \mathbf a_j^{(1)}}^\top \mathbf a_j^{(1)} \right)^{-1}{ \mathbf a_j^{(1)}}^\top\).
+\(\mathbf X_j^{(1)} = \mathbf X_j - \mathbf X_j \mathbf a_j^{(1)} \left( { \mathbf a_j^{(1)}}^\top  \mathbf a_j^{(1)} \right)^{-1}{ \mathbf a_j^{(1)}}^\top\).
 
 The second level RGCCA optimization problem boils down to:
 
@@ -975,7 +968,7 @@ vectors \(\mathbf a_j^{(2)}\) and block components
 \(j = 1\ldots, J\).
 
 For orthogonal block weight vectors,
-\(\mathbf y_j^{(2)} = \mathbf X_j^{(1)} \mathbf a_j^{(2)} = \mathbf X_j \mathbf a_j^{(2)}\)
+\(\mathbf y_j^{(2)} = \mathbf X_j^{(1)} \mathbf a_j^{(2)} = \mathbf X_j  \mathbf a_j^{(2)}\)
 naturally expresses as a linear combination of the original variables.
 For orthogonal block component, as
 \(\mathbf y_j^{(1)} = \mathbf X_j \mathbf a_j^{(1)}\), the range space
@@ -1011,9 +1004,8 @@ described in \cite{Chessel1996} (\code{ade4::mcoa()}) for multiple
 co-inertia analysis, which is one of the most popular and established
 methods of the multiblock literature.
 
-\hypertarget{average-variance-explained}{%
 \subsection{Average variance
-explained}\label{average-variance-explained}}
+explained}\label{average-variance-explained}
 
 In this section, using the idea of average variance explained (AVE), the
 following indicators of model quality are defined:
@@ -1065,14 +1057,12 @@ Guidelines describing R/SGCCA in practice are provided in
 \cite{Garali2018}. The usefulness and versatility of the \pkg{RGCCA}
 package are illustrated in the next section.
 
-\hypertarget{the-rgcca-package}{%
-\section{The RGCCA package}\label{the-rgcca-package}}
+\section{The RGCCA package}\label{the-rgcca-package}
 
 This section describes how the \pkg{RGCCA} package is designed and how
 it can be used on two real datasets.
 
-\hypertarget{software-design}{%
-\subsection{Software design}\label{software-design}}
+\subsection{Software design}\label{software-design}
 
 The main user-accessible functions are listed in Table
 \ref{exported_functions}.
@@ -1082,22 +1072,24 @@ The main user-accessible functions are listed in Table
   >{\raggedright\arraybackslash}p{(\columnwidth - 2\tabcolsep) * \real{0.5614}}@{}}
 \caption{Functions implemented in the \pkg{RGCCA} package.
 \label{exported_functions}}\tabularnewline
-\toprule()
+\toprule\noalign{}
 \begin{minipage}[b]{\linewidth}\raggedright
 Function
 \end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
 Description
 \end{minipage} \\
-\midrule()
+\midrule\noalign{}
 \endfirsthead
-\toprule()
+\toprule\noalign{}
 \begin{minipage}[b]{\linewidth}\raggedright
 Function
 \end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
 Description
 \end{minipage} \\
-\midrule()
+\midrule\noalign{}
 \endhead
+\bottomrule\noalign{}
+\endlastfoot
 \code{rgcca} & Main entry point of the package, this function allows
 fitting a R/SGCCA model on a multiblock dataset. \\
 \code{rgcca\_cv} & Find the best set of parameters for a R/SGCCA model
@@ -1115,7 +1107,6 @@ model using their VIPs. \\
 \code{summary/print/plot} & Summary, print and plot methods for outputs
 of functions \code{rgcca}, \code{rgcca\_cv}, \code{rgcca\_permutation},
 \code{rgcca\_bootstrap}, and \code{rgcca\_stability}. \\
-\bottomrule()
 \end{longtable}
 
 These functions are detailed hereafter.
@@ -1266,9 +1257,8 @@ visualized using the generic \code{summary()}, \code{print()} and
 The following two sections provide examples illustrating the practical
 applications of these functions.
 
-\hypertarget{case-study-the-russett-dataset}{%
 \subsection{Case study: the Russett
-dataset}\label{case-study-the-russett-dataset}}
+dataset}\label{case-study-the-russett-dataset}
 
 In this section, we reproduce some of the results presented in
 \cite{Tenenhaus2011} from the Russett data. The Russett dataset is
@@ -1491,8 +1481,8 @@ specific block-weight vector(s) (\code{type = "weight"}) block-loadings
 vector(s) (\code{type = "loadings"}) using the generic \code{plot()}
 function and specifying the arguments \code{block} and \code{comp}
 accordingly. The \({ \mathbf a_j^{(k)}}^\star\), mentioned in Section
-\protect\hyperlink{higher-level-rgcca-algorithm}{Higher level RGCCA
-algorithm}, are available in \code{fit\$astar}.
+\hyperref[higher-level-rgcca-algorithm]{Higher level RGCCA algorithm},
+are available in \code{fit\$astar}.
 
 \footnotesize
 
@@ -1979,9 +1969,8 @@ As previously, this model can be easily bootstrapped using the
 intervals are still available using the \code{summary()} and
 \code{plot()} functions.
 
-\hypertarget{high-dimensional-case-study-the-glioma-study}{%
 \subsection{High dimensional case study: the glioma
-study}\label{high-dimensional-case-study-the-glioma-study}}
+study}\label{high-dimensional-case-study-the-glioma-study}
 
 \textbf{Biological problem.} Brain tumors are children's most common
 solid tumors and have the highest mortality rate of all pediatric
@@ -2357,8 +2346,7 @@ R> plot(boot_out, block = 1,
 
 \normalsize
 
-\hypertarget{conclusion}{%
-\section{Conclusion}\label{conclusion}}
+\section{Conclusion}\label{conclusion}
 
 The RGCCA framework gathers sixty years of multiblock component methods
 and offers a unified implementation strategy for these methods. The
@@ -2404,8 +2392,7 @@ release of the \pkg{RGCCA} package. The modular design of the
 \code{rgcca()} function will greatly simplify the integration of these
 extensions into the package.
 
-\hypertarget{acknowledgments}{%
-\section*{Acknowledgments}\label{acknowledgments}}
+\section*{Acknowledgments}\label{acknowledgments}
 \addcontentsline{toc}{section}{Acknowledgments}
 
 This project has received funding from UDOPIA - ANR-20-THIA-0013, the
