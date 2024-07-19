@@ -163,3 +163,17 @@ test_that("rgcca_transform creates projection with the right number of
     expect_true(all(dim(projection[[j]]) == c(nrow(projection[[j]]), ncomp[j])))
   }
 })
+
+#-------------------------------------------------------------------------
+# Checking rgcca_transform removes zero columns
+#-------------------------------------------------------------------------
+fit.rgcca_with_zeros <- fit.rgcca
+fit.rgcca_with_zeros$astar[[1]][, 3] <- 0
+fit.rgcca_with_zeros$astar[[3]][, c(3, 4)] <- 0
+
+projection <- rgcca_transform(fit.rgcca_with_zeros, A_test)
+
+test_that("rgcca_transform creates projection without zero columns", {
+  expect_equal(ncol(projection[[1]]), 2)
+  expect_equal(ncol(projection[[3]]), 2)
+})
