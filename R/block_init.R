@@ -41,6 +41,17 @@ block_init.dual_regularized_block <- function(x, init = "svd") {
 }
 
 #' @export
+block_init.sim_block <- function(x, init = "svd") {
+  if (init == "svd") {
+    x$a <- initsvd(x$x, dual = FALSE, rank = x$ncomp)
+  } else {
+    x$a <- matrix(rnorm(x$p * x$ncomp), nrow = x$p)
+  }
+
+  return(block_project(x))
+}
+
+#' @export
 block_init.tensor_block <- function(x, init = "svd") {
   if (init == "svd") {
     x$factors <- lapply(seq_along(dim(x$x))[-1], function(m) {

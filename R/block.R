@@ -1,5 +1,5 @@
 ### Create classes
-new_block <- function(x, j, na.rm = TRUE, bias = TRUE,
+new_block <- function(x, j, na.rm = TRUE, ncomp = 1, bias = TRUE,
                       ..., class = character()) {
   n <- NROW(x)
   p <- NCOL(x)
@@ -12,6 +12,7 @@ new_block <- function(x, j, na.rm = TRUE, bias = TRUE,
     p = p,
     N = N,
     na.rm = na.rm,
+    ncomp = ncomp,
     a = NULL,
     Y = NULL,
     ...
@@ -67,6 +68,32 @@ new_separable_regularized_tensor_block <- function(x, j, rank, mode_orth,
   )
 }
 
+### Block classes for simultaneous methods
+new_sim_block <- function(x, j, na.rm = TRUE, ..., class = character()) {
+  new_block(
+    x, j, na.rm, ..., class = c(class, "sim_block")
+  )
+}
+
+new_sim_dual_block <- function(x, j, na.rm = TRUE, ..., class = character()) {
+  K <- pm(x, t(x), na.rm = na.rm)
+  new_sim_block(
+    x, j, na.rm, alpha = NULL, K = K, ..., class = c(class, "sim_dual_block")
+  )
+}
+
+new_sim_primal_regularized_block <- function(x, j, tau, ...) {
+  new_sim_block(
+    x, j, tau = tau, M = NULL, ..., class = "sim_primal_regularized_block"
+  )
+}
+
+new_sim_dual_regularized_block <- function(x, j, tau, ...) {
+  new_sim_dual_block(
+    x, j, tau = tau, M = NULL, ..., class = "sim_dual_regularized_block"
+  )
+}
+
 ### Utility method to choose the adequate class
 create_block <- function(x, j, bias, na.rm, tau, sparsity,
                          tol, rank, mode_orth, separable) {
@@ -100,6 +127,31 @@ create_block <- function(x, j, bias, na.rm, tau, sparsity,
       } else {
         res <- new_dual_block(x, j, bias = bias, na.rm = na.rm)
       }
+    }
+  }
+  return(res)
+}
+
+create_sim_block <- function(x, j, bias, na.rm, tau, ncomp) {
+  if (NROW(x) > NCOL(x)) {
+    if (tau < 1) {
+      res <- new_sim_primal_regularized_block(
+        x, j, tau, bias = bias, na.rm = na.rm, ncomp = ncomp
+      )
+    } else {
+      res <- new_sim_block(
+        x, j, bias = bias, na.rm = na.rm, ncomp = ncomp
+      )
+    }
+  } else {
+    if (tau < 1) {
+      res <- new_sim_dual_regularized_block(
+        x, j, tau, bias = bias, na.rm = na.rm, ncomp = ncomp
+      )
+    } else {
+      res <- new_sim_dual_block(
+        x, j, bias = bias, na.rm = na.rm, ncomp = ncomp
+      )
     }
   }
   return(res)
