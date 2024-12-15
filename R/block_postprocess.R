@@ -33,6 +33,12 @@ block_postprocess.sparse_block <- function(x, ctrl) {
 }
 
 #' @export
+block_postprocess.sim_primal_regularized_block <- function(x, ctrl) {
+  x$a <- x$M %*% x$a
+  NextMethod()
+}
+
+#' @export
 block_postprocess.separable_regularized_tensor_block <- function(x, ctrl) {
   x$factors <- lapply(seq_along(x$factors), function(m) {
     x$M[[m]] %*% x$factors[[m]]
