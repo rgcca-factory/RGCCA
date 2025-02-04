@@ -2,8 +2,6 @@
 #' @importFrom RSpectra eigs_sym
 
 block_init <- function(x, init = "svd") {
-  print("block_init")
-  print(class(x))
   UseMethod("block_init")
 }
 
@@ -14,7 +12,6 @@ block_init.block <- function(x, init = "svd") {
   } else {
     x$a <- rnorm(x$p)
   }
-  print("block_init.block is being used")
   return(block_project(x))
 }
 
@@ -25,7 +22,6 @@ block_init.dual_block <- function(x, init = "svd") {
   } else {
     x$alpha <- rnorm(x$n)
   }
-  print("block_init.dual_block is being used")
   return(block_project(x))
 }
 
@@ -34,20 +30,17 @@ block_init.primal_regularized_block <- function(x, init = "svd") {
   x$M <- ginv(
     x$tau * diag(x$p) + (1 - x$tau) * pm(t(x$x), x$x, na.rm = x$na.rm) / x$N
   )
-  print("block_init.primal_regularized_block is being used")
   NextMethod()
 }
 
 #' @export
 block_init.dual_regularized_block <- function(x, init = "svd") {
   x$M <- ginv(x$tau * diag(x$n) + (1 - x$tau) * x$K / x$N)
-  print("block_init.dual_regularized_block is being used")
   NextMethod()
 }
 
 #' @export
 block_init.ac_block <- function(x, init = "svd") {
-  print("block_init.ac_block is being used")
   x$M <- x$tau * diag(x$p) + (1 - x$tau) * pm(t(x$x), x$x, na.rm = x$na.rm) / x$N
   x$M_inv <- ginv(x$M)
   x$sqrt_M <- sqrt_matrix(x$M)
@@ -62,18 +55,9 @@ block_init.ac_block <- function(x, init = "svd") {
   x$mu <- x$penalty_coef *
     RSpectra::eigs_sym(A = x$B, k = 1, which = "LA", opts = list(retvec = F))$values
   
-  print(RSpectra::eigs_sym(A = x$B, k = 1, which = "LA", opts = list(retvec = F))$values)
-  
   x$f_left <- 1/(2 * x$mu) * t(P)
   
   x$f_right <- x$penalty_coef / x$mu * pm(x$B, x$sqrt_M, na.rm = x$na.rm)
   
-  #NextMethod()
-  
-  if (init == "svd") {
-    x$a <- initsvd(x$x, dual = FALSE)
-  } else {
-    x$a <- rnorm(x$p)
-  }
-  return(block_project(x))
+  NextMethod()
 }

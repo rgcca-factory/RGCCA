@@ -20,6 +20,8 @@ rgcca(
   sparsity = 1,
   response = NULL,
   superblock = FALSE,
+  confounders = NULL,
+  penalty_coef = 0,
   NA_method = "na.ignore",
   quiet = TRUE,
   n_iter_max = 1000,

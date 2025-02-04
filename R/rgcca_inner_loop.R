@@ -19,16 +19,8 @@ rgcca_inner_loop <- function(A, C, g, dg, tau = rep(1, length(A)),
     create_block(A[[j]], j, bias, na.rm, tau[j], sparsity[j], tol, confounders[[j]], penalty_coef[j])
   })
   
-  #block_objects <- lapply(block_objects, block_init, init = init) # somehow doesn't dispatch to block_init.ac_block()
-  # temporary patch:
-  block_objects <- lapply(seq_along(block_objects), function(j) {
-    if (!is.null(block_objects[[j]]$confounders) && block_objects[[j]]$penalty_coef != 0) {
-      x <- block_init.ac_block(x = block_objects[[j]], init = init)
-    } else {
-      x <- block_init(x = block_objects[[j]], init = init)
-    }
-  })
-
+  block_objects <- lapply(block_objects, block_init, init = init)
+  
   Y <- do.call(cbind, lapply(block_objects, "[[", "Y"))
   N <- block_objects[[1]]$N
 
