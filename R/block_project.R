@@ -72,3 +72,15 @@ block_project.sim_block <- function(x) {
   x$Y <- pm(x$x, x$a, na.rm = x$na.rm)
   return(x)
 }
+
+#' @export
+block_project.sim_response_block <- function(x) {
+  if (any(x$a != 0)) {
+    x$a <- do.call('cbind', lapply(seq(x$ncomp), function(m) {
+      x$a[, m] / norm(x$a[, m], type = "2")
+    }))
+  }
+
+  x$Y <- pm(x$x, x$a, na.rm = x$na.rm)
+  return(x)
+}

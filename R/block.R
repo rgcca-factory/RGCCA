@@ -75,6 +75,10 @@ new_sim_block <- function(x, j, na.rm = TRUE, ..., class = character()) {
   )
 }
 
+new_sim_response_block <- function(x, j, ...) {
+  new_sim_block(x, j, ..., class = "sim_response_block")
+}
+
 new_sim_dual_block <- function(x, j, na.rm = TRUE, ..., class = character()) {
   K <- pm(x, t(x), na.rm = na.rm)
   new_sim_block(
@@ -132,7 +136,12 @@ create_block <- function(x, j, bias, na.rm, tau, sparsity,
   return(res)
 }
 
-create_sim_block <- function(x, j, bias, na.rm, tau, ncomp) {
+create_sim_block <- function(x, j, bias, na.rm, tau, ncomp, response) {
+  if (response) {
+    return(new_sim_response_block(
+      x, j, bias = bias, na.rm = na.rm, ncomp = ncomp
+    ))
+  }
   if (TRUE) {
     if (tau < 1) {
       res <- new_sim_primal_regularized_block(

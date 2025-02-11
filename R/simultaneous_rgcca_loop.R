@@ -52,7 +52,8 @@ simultaneous_rgcca_loop <- function(blocks, connection = 1 - diag(length(blocks)
   primal_dual[which((sparsity == 1) & (nb_ind < pjs))]
 
   block_objects <- lapply(seq_along(blocks), function(j) {
-    create_sim_block(blocks[[j]], j, bias, na.rm, tau[j], ncomp[1])
+    is_response <- !is.null(response) && (j == response)
+    create_sim_block(blocks[[j]], j, bias, na.rm, tau[j], ncomp[1], is_response)
   })
 
   block_objects <- lapply(block_objects, block_init, init = init)
