@@ -61,27 +61,35 @@ simultaneous_rgcca_loop <- function(blocks, connection = 1 - diag(length(blocks)
 
   iter <- 1
   crit <- NULL
-  # TODO: check criterion to make it match sequential
-  crit_old <- sum(vapply(seq(J), function(i) sum(vapply(seq(J), function(j) {
-    connection[i, j] * sum(diag(g(crossprod(Y[[i]], Y[[j]]))))
-  }, FUN.VALUE = double(1L))), FUN.VALUE = double(1L))) / N
+  crit_old <- sum(vapply(seq(J), function(i) {
+    sum(vapply(seq(J), function(j) {
+      connection[i, j] * sum(diag(g(crossprod(Y[[i]], Y[[j]]) / N)))
+    }, FUN.VALUE = double(1L)))
+  }, FUN.VALUE = double(1L)))
   a_old <- lapply(block_objects, "[[", "a")
 
   ##### Update weights until convergence #####
   repeat {
     for (j in seq_along(blocks)) {
       # Compute grad
-      grad <- Reduce('+', lapply(seq(J), function(k)
-        connection[j, k] * Y[[k]] %*% diag(dg(diag(crossprod(Y[[j]], Y[[k]]))), nrow = ncol(Y[[k]]))
-      ))
+      grad <- Reduce("+", lapply(seq(J), function(k) {
+        connection[j, k] * Y[[k]] %*% diag(
+          dg(diag(crossprod(Y[[j]], Y[[k]]))), nrow = ncol(Y[[k]])
+        )
+      }))
       block_objects[[j]] <- block_update(block_objects[[j]], grad)
       Y[[j]] <- block_objects[[j]]$Y
     }
 
     # Print out intermediate fit
-    crit <- c(crit, sum(vapply(seq(J), function(i) sum(vapply(seq(J), function(j) {
-      connection[i, j] * sum(diag(g(crossprod(Y[[i]], Y[[j]]))))
-    }, FUN.VALUE = double(1L))), FUN.VALUE = double(1L))) / N)
+    crit <- c(
+      crit,
+      sum(vapply(seq(J), function(i) {
+        sum(vapply(seq(J), function(j) {
+          connection[i, j] * sum(diag(g(crossprod(Y[[i]], Y[[j]]) / N)))
+        }, FUN.VALUE = double(1L)))
+      }, FUN.VALUE = double(1L)))
+    )
 
     if (verbose) {
       cat(
