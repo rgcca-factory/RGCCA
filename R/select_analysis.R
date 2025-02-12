@@ -33,12 +33,17 @@ select_analysis <- function(rgcca_args, blocks) {
   connection <- rgcca_args$connection
   superblock <- rgcca_args$superblock
   scale_block <- rgcca_args$scale_block
+  simultaneous <- rgcca_args$simultaneous
 
   if (length(blocks) == 1) {
     if (sparsity[1] == 1) {
       method <- "pca"
     } else {
       method <- "spca"
+    }
+  } else {
+    if (simultaneous) {
+      method <- "grgcca"
     }
   }
 
@@ -51,11 +56,17 @@ select_analysis <- function(rgcca_args, blocks) {
   call <- list(
     ncomp = ncomp, scheme = scheme, tau = tau, sparsity = sparsity,
     superblock = superblock, connection = connection, response = response,
-    comp_orth = comp_orth, scale_block = scale_block
+    comp_orth = comp_orth, scale_block = scale_block,
+    simultaneous = simultaneous
   )
   J <- length(blocks)
 
   switch(method,
+    "grgcca" = {
+      param <- "tau"
+      penalty <- tau
+      simultaneous <- TRUE
+    },
     "rgcca" = {
       param <- "tau"
       penalty <- tau
@@ -414,7 +425,44 @@ select_analysis <- function(rgcca_args, blocks) {
     }
   }
 
-  if (method %in% c("rgcca", "sgcca", "tgcca")) {
+  if (method %in% c("grgcca")) {
+    scheme <- check_scheme(scheme)
+    sparsity <- rep(1, J)
+    if (!is.null(response)) {
+      check_blockx("response", response, blocks)
+      ncomp <- rep(min(ncomp[-response]), J)
+      superblock <- FALSE
+      if (!is.null(connection)) {
+        connection <- check_connection(connection, blocks)
+      } else {
+        connection <- connection_matrix(
+          blocks, type = "response", response = response
+        )
+      }
+    } else {
+      ncomp <- rep(min(ncomp), J)
+    }
+    if (is.matrix(penalty)) {
+      penalty <- penalty[1, ]
+    }
+    penalty <- check_penalty(
+      penalty, blocks, method, superblock = superblock, ncomp = max(ncomp)
+    )
+    if (superblock) {
+      ncomp <- c(ncomp, ncomp[1])
+      connection <- connection_matrix(blocks, type = "response", J = J + 1)
+      pen <- ifelse(length(penalty) < J + 1, 1, penalty[J + 1])
+      penalty <- c(penalty[seq(J)], pen)
+    } else {
+      if (is.null(connection)) {
+        connection <- connection_matrix(blocks, type = "pair")
+      } else {
+        connection <- check_connection(connection, blocks)
+      }
+    }
+  }
+
+  if (method %in% c("rgcca", "sgcca")) {
     scheme <- check_scheme(scheme)
     if (any(sparsity != 1)) {
       param <- "sparsity"
