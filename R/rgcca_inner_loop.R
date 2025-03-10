@@ -2,7 +2,7 @@ rgcca_inner_loop <- function(A, C, g, dg, tau = rep(1, length(A)),
                              sparsity = rep(1, length(A)),
                              verbose = FALSE, init = "svd", bias = TRUE,
                              tol = 1e-08, na.rm = TRUE, n_iter_max = 1000,
-                             confounders = NULL, penalty_coef = rep(0, length(A))) {
+                             confounders = NULL, penalty_coef = rep(0, length(A)), algo = 1) {
   if (!is.numeric(tau)) {
     # From Schafer and Strimmer, 2005
     tau <- vapply(A, tau.estimate, na.rm = na.rm, FUN.VALUE = 1.0)
@@ -16,7 +16,7 @@ rgcca_inner_loop <- function(A, C, g, dg, tau = rep(1, length(A)),
 
   ### Initialization
   block_objects <- lapply(seq_along(A), function(j) {
-    create_block(A[[j]], j, bias, na.rm, tau[j], sparsity[j], tol, confounders[[j]], penalty_coef[j])
+    create_block(A[[j]], j, bias, na.rm, tau[j], sparsity[j], tol, confounders[[j]], penalty_coef[j], algo)
   })
   
   block_objects <- lapply(block_objects, block_init, init = init)
@@ -26,6 +26,8 @@ rgcca_inner_loop <- function(A, C, g, dg, tau = rep(1, length(A)),
 
   iter <- 1
   crit <- NULL
+  crit_RGCCA <- NULL
+  crit_penalty <- NULL
   crit_old <- sum(C * g(crossprod(Y) / N))
   
   if (!is.null(confounders) && any(penalty_coef != 0)) {
@@ -58,6 +60,8 @@ rgcca_inner_loop <- function(A, C, g, dg, tau = rep(1, length(A)),
         }
       })))
       crit <- c(crit, sum(C * g(crossprod(Y) / N)) - crit_second_part)
+      crit_RGCCA <- c(crit_RGCCA, sum(C * g(crossprod(Y) / N)))
+      crit_penalty <- c(crit_penalty, crit_second_part)
     } else {
       crit <- c(crit, sum(C * g(crossprod(Y) / N)))
     }
@@ -67,8 +71,10 @@ rgcca_inner_loop <- function(A, C, g, dg, tau = rep(1, length(A)),
         " Iter: ", formatC(iter, width = 3, format = "d"),
         " Fit: ", formatC(crit[iter], digits = 8, width = 10, format = "f"),
         " Dif: ", formatC(crit[iter] - crit_old,
-                          digits = 8, width = 10, format = "f"
-        ), "\n"
+                          digits = 8, width = 10, format = "f"),
+        "RGCCA crit: ", formatC(crit_RGCCA[iter], digits = 8, width = 10, format = "f"),
+        "Penalty: ", formatC(crit_penalty[iter], digits = 8, width = 10, format = "f"), 
+        "\n"
       )
     }
 
@@ -101,6 +107,8 @@ rgcca_inner_loop <- function(A, C, g, dg, tau = rep(1, length(A)),
       )
     }
     plot(crit, xlab = "iteration", ylab = "criteria")
+    plot(crit_RGCCA, xlab = "iteration", ylab = "RGCCA criteria")
+    plot(crit_penalty, xlab = "iteration", ylab = "penalty")
   }
 
   # Post-process the resulting block-weight and block-component vectors

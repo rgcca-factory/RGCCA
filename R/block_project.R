@@ -57,12 +57,16 @@ block_project.sparse_block <- function(x) {
 
 #' @export
 block_project.ac_block <- function(x) {
-  if (is.null(x$f)) {
+  if (is.null(x$f) && is.null(x$e)) {
     NextMethod()
   } else {
-    v <- pm(x$sqrt_M, x$a, na.rm = x$na.rm)
-    x$a <- (x$sqrt_M_inv %*% x$f + x$a) / drop(sqrt(
-      crossprod(x$f + v)))
+    if (x$algo == 1) {
+      v <- pm(x$sqrt_M, x$a, na.rm = x$na.rm)
+      x$a <- (x$sqrt_M_inv %*% x$f + x$a) / drop(sqrt(
+        crossprod(x$f + v)))
+    } else if (x$algo == 2) {
+      x$a <- t(sweep(t(x$a_MQ), 1, (x$d + 2 * x$mu)**(-1), "*")) %*% x$e
+    }
     
     x$Y <- pm(x$x, x$a, na.rm = x$na.rm)
     return(x)

@@ -10,7 +10,7 @@ rgcca_outer_loop <- function(blocks, connection = 1 - diag(length(blocks)),
                              response = NULL, disjunction = NULL,
                              n_iter_max = 1000, comp_orth = TRUE,
                              confounders = NULL, 
-                             penalty_coef = rep(0, length(blocks))) {
+                             penalty_coef = rep(0, length(blocks)), algo = 1) {
   if (verbose) {
     scheme_str <- ifelse(is(scheme, "function"), "user-defined", scheme)
     cat(
@@ -103,7 +103,7 @@ rgcca_outer_loop <- function(blocks, connection = 1 - diag(length(blocks)),
                                     init = init, bias = bias, tol = tol,
                                     verbose = verbose, na.rm = na.rm,
                                     n_iter_max = n_iter_max,
-                                    confounders, penalty_coef = penalty_coef[n, ]
+                                    confounders, penalty_coef = penalty_coef[n, ], algo = algo
     )
 
     # Store tau, crit
