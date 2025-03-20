@@ -66,6 +66,8 @@ block_project.ac_block <- function(x) {
         crossprod(x$f + v)))
     } else if (x$algo == 2) {
       x$a <- t(sweep(t(x$a_MQ), 1, (x$d + 2 * x$mu)**(-1), "*")) %*% x$e
+    } else if (x$algo == 3) {
+      x$a <- x$sqrt_M_inv %*% solve(x$B + 2 * x$mu * diag(nrow = x$p)) %*% x$h
     }
     
     x$Y <- pm(x$x, x$a, na.rm = x$na.rm)

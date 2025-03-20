@@ -43,12 +43,12 @@ block_init.dual_regularized_block <- function(x, init = "svd") {
 block_init.ac_block <- function(x, init = "svd") {
   if (x$algo == 1) {
     x$M <- x$tau * diag(x$p) + (1 - x$tau) * pm(t(x$x), x$x, na.rm = x$na.rm) / x$N
-    x$M_inv <- ginv(x$M)
+    #x$M_inv <- ginv(x$M)
     x$sqrt_M <- sqrt_matrix(x$M)
-    x$sqrt_M_inv <- sqrt_matrix(x$M_inv) #TODO check if result is the same with sqrt_matrix(x$M, inv = T)
+    x$sqrt_M_inv <- sqrt_matrix(x$M, inv = T)
   
     P <- pm(x$x, x$sqrt_M_inv, na.rm = x$na.rm)
-    x$B <- pm(
+    x$B <- 1/x$N * pm(
       t(P), pm(
         x$confounders, P, na.rm = x$na.rm), 
       na.rm = x$na.rm)
@@ -61,21 +61,43 @@ block_init.ac_block <- function(x, init = "svd") {
     x$f_right <- x$penalty_coef / x$mu * pm(x$B, x$sqrt_M, na.rm = x$na.rm)
   } else if (x$algo == 2) {
     x$M <- x$tau * diag(x$p) + (1 - x$tau) * pm(t(x$x), x$x, na.rm = x$na.rm) / x$N
-    x$M_inv <- ginv(x$M)
-    x$sqrt_M <- sqrt_matrix(x$M)
-    x$sqrt_M_inv <- sqrt_matrix(x$M_inv)
+    #x$M_inv <- ginv(x$M)
+    #x$sqrt_M <- sqrt_matrix(x$M)
+    x$sqrt_M_inv <- sqrt_matrix(x$M, inv = T)
     
     P <- pm(x$x, x$sqrt_M_inv, na.rm = x$na.rm)
     
-    res_svd <- svd(2 * x$penalty_coef * pm(
+    # Compute truncated SVD
+    res_svd <- svd(2 * 1/x$N * x$penalty_coef * pm(
       t(P), pm(
         x$confounders, P, na.rm = x$na.rm), 
       na.rm = x$na.rm))
-    x$d <- res_svd$d
-    x$Q <- res_svd$v
     
-    x$e_QM <- - pm(x$Q, x$sqrt_M, na.rm = x$na.rm)
+    dim_svd <- length(res_svd$d)
+    for (i in 1:length(res_svd$d)) {
+      if (res_svd$d[i] <= res_svd$d[1] * .Machine$double.eps * x$p) { # cor(res_svd$u[,i], res_svd$v[,i]) != 1) {
+        dim_svd <- i - 1
+        break
+      }
+    } #dim of truncated SVD is computed as the max order of decomposition that results in equal vectors u and v
+    # could also choose a threshold below which singular elements are considered = 0
+    
+    x$d <- res_svd$d[1:dim_svd]
+    x$Q <- t(res_svd$v[, 1:dim_svd])
+
+    x$e_QM <- - pm(x$Q, x$sqrt_M_inv, na.rm = x$na.rm)
     x$a_MQ <- - pm(x$sqrt_M_inv, t(x$Q), na.rm = x$na.rm)
+  } else if (x$algo == 3) {
+    x$M <- x$tau * diag(x$p) + (1 - x$tau) * pm(t(x$x), x$x, na.rm = x$na.rm) / x$N
+    x$sqrt_M_inv <- sqrt_matrix(x$M, inv = T)
+    
+    P <- pm(x$x, x$sqrt_M_inv, na.rm = x$na.rm)
+    x$B <- 2 * 1/x$N * x$penalty_coef * pm(
+      t(P), pm(
+        x$confounders, P, na.rm = x$na.rm), 
+      na.rm = x$na.rm)
+    
+    x$h_MX <- 1/x$N * pm(x$sqrt_M_inv, t(x$x), na.rm = x$na.rm)
   }
   
   NextMethod()

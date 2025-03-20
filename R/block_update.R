@@ -19,14 +19,25 @@ block_update.dual_block <- function(x, grad) {
 #' @export
 block_update.ac_block <- function(x, grad) {
   if (x$algo == 1) {
-    x$f <- pm(x$f_left, 1/x$N * grad, na.rm = x$na.rm) -
+    x$f <- pm(x$f_left, 1/x$N * grad, na.rm = x$na.rm) - 
       pm(x$f_right, x$a, na.rm = x$na.rm)
   } else if (x$algo == 2) {
     x$e <- x$e_QM %*% pm(t(x$x), 1/x$N * grad, na.rm = x$na.rm)
-    mu_max <- 1/2 * drop(sweep(t(x$e), 2, (x$d + 1E-25)**(-1), "*") %*% x$e)
-    x$mu <- mean(gtools::binsearch(
-      fun = function(mu) {drop(sweep(t(x$e), 2, (x$d + 2 * mu)**(-2), "*") %*% x$e) - 1},
-      range = c(0, mu_max))$where)
+    #mu_max <- 1/2 * sum(x$e**2 / x$d)
+    #x$mu <- mean(gtools::binsearch(fun = function(mu) {sum(x$e**2 / (x$d + 2 * mu)**2) - 1},range = c(0, mu_max))$where)
+    
+    L <- function(mu) {1/2 * sum(x$e**2 / (x$d + 2 * mu)) + mu}
+    grad_L <- function(mu) {- sum(x$e**2 / (x$d + 2 * mu)**2) + 1}
+    res <- optim(par = 0, L, grad_L, method = "BFGS")
+    x$mu <- res$par
+  } else if (x$algo == 3) {
+    x$h <- pm(x$h_MX, grad, na.rm = x$na.rm)
+    #mu_max <- 0.5 * t(x$h) %*% x$B_inv %*% x_h
+    #x$mu <- mean(gtools::binsearch(fun = function(mu) {x$h %*% solve((x$B + 2 * mu * diag(nrow = x$p)) %*% (x$B + 2 * mu * diag(nrow = x$p))) %*% x$h - 1}, range = c(0, mu_max))$where)
+    L <- function(mu) {0.5 * t(x$h) %*% solve(x$B + 2 * mu * diag(nrow = x$p)) %*% x$h + mu}
+    grad_L <- function(mu) {- t(x$h) %*% solve((x$B + 2 * mu * diag(nrow = x$p)) %*% (x$B + 2 * mu * diag(nrow = x$p))) %*% x$h + 1}
+    res <- optim(par = 1e-12, L, grad_L, method = "BFGS")
+    x$mu <- res$par
   }
   return(block_project(x))
 }

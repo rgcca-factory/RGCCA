@@ -117,7 +117,7 @@ check_confounders <- function(confounders, blocks){
       #TODO change this behaviour?
     }
     if (!all(aligned_rownames %in% row.names(x))) {
-    stop_rgcca("matrix confounders must include the same rownames as blocks.")
+    stop_rgcca("matrix confounders must have the same rownames as blocks.")
     }
     return(x)
   }) #TODO should I modify this behaviour when confounders is K?
@@ -129,7 +129,8 @@ check_confounders <- function(confounders, blocks){
     if (!isSymmetric.matrix(x)) { #TODO do I have to use fct unname like in check_connection?
       #names_x <- row.names()
       x <- tcrossprod(x)
-    }
+    } 
+    return(x)
   })
   #TODO check if K is positive definite?
   

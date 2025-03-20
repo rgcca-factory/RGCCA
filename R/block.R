@@ -49,8 +49,9 @@ new_ac_block <- function(x, j, tau, confounders, penalty_coef, algo, ...) {
   new_block(x, j, tau = tau, M = NULL, M_inv = NULL, B = NULL, 
             f = NULL, sqrt_M = NULL, sqrt_M_inv = NULL, 
             mu = NULL, f_left = NULL, f_right = NULL, 
-            algo = algo, D = NULL, Q = NULL, 
-            e_QM = NULL, a_MQ = NULL, e = NULL, 
+            algo = algo, d = NULL, Q = NULL, 
+            e_QM = NULL, a_MQ = NULL, e = NULL,
+            h = NULL, 
             confounders = confounders, penalty_coef = penalty_coef, ..., 
             class = "ac_block")
 }
