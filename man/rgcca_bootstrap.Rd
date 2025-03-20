@@ -4,14 +4,7 @@
 \alias{rgcca_bootstrap}
 \title{Bootstrap confidence intervals and p-values}
 \usage{
-rgcca_bootstrap(
-  rgcca_res,
-  n_boot = 100,
-  n_cores = 1,
-  balanced = TRUE,
-  keep_all_variables = FALSE,
-  verbose = TRUE
-)
+rgcca_bootstrap(rgcca_res, n_boot = 100, n_cores = 1, verbose = TRUE)
 }
 \arguments{
 \item{rgcca_res}{A fitted RGCCA object (see  \code{\link[RGCCA]{rgcca}}).}
@@ -19,13 +12,6 @@ rgcca_bootstrap(
 \item{n_boot}{The number of bootstrap samples (default: 100).}
 
 \item{n_cores}{The number of cores used for parallelization.}
-
-\item{balanced}{A logical value indicating if a balanced bootstrap procedure
-is performed or not (default is TRUE).}
-
-\item{keep_all_variables}{A logical value indicating if all variables have
-to be kept even when some of them have null variance for at least one
-bootstrap sample (default is FALSE).}
 
 \item{verbose}{A logical value indicating if the progress of the bootstrap
 procedure is reported.}
