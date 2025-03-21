@@ -97,7 +97,17 @@ block_init.ac_block <- function(x, init = "svd") {
         x$confounders, P, na.rm = x$na.rm), 
       na.rm = x$na.rm)
     
-    x$h_MX <- 1/x$N * pm(x$sqrt_M_inv, t(x$x), na.rm = x$na.rm)
+    eigen_dec <- eigen(x$B + diag(nrow = x$p), symmetric = T)
+    x$eigen_val_Bplus1 <- eigen_dec$values
+    x$eigen_vec_Bplus1 <- eigen_dec$vectors
+    
+    x$h_tilde_QMX <- - 1/x$N * pm(
+      t(x$eigen_vec_Bplus1),
+      pm(x$sqrt_M_inv, 
+         t(x$x), na.rm = x$na.rm), 
+      na.rm = x$na.rm)
+    
+    x$a_MQ <- - pm(x$sqrt_M_inv, x$eigen_vec_Bplus1, na.rm = x$na.rm)
   }
   
   NextMethod()

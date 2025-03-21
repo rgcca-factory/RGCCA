@@ -31,13 +31,10 @@ block_update.ac_block <- function(x, grad) {
     res <- optim(par = 0, L, grad_L, method = "BFGS")
     x$mu <- res$par
   } else if (x$algo == 3) {
-    x$h <- pm(x$h_MX, grad, na.rm = x$na.rm)
-    #mu_max <- 0.5 * t(x$h) %*% x$B_inv %*% x_h
-    #x$mu <- mean(gtools::binsearch(fun = function(mu) {x$h %*% solve((x$B + 2 * mu * diag(nrow = x$p)) %*% (x$B + 2 * mu * diag(nrow = x$p))) %*% x$h - 1}, range = c(0, mu_max))$where)
-    L <- function(mu) {0.5 * t(x$h) %*% solve(x$B + 2 * mu * diag(nrow = x$p)) %*% x$h + mu}
-    grad_L <- function(mu) {- t(x$h) %*% solve((x$B + 2 * mu * diag(nrow = x$p)) %*% (x$B + 2 * mu * diag(nrow = x$p))) %*% x$h + 1}
-    res <- optim(par = 1e-12, L, grad_L, method = "BFGS")
-    x$mu <- res$par
+    x$h_tilde <- pm(x$h_tilde_QMX, grad, na.rm = x$na.rm)
+    mu_max <- 0.5 * sum(x$h_tilde**2)
+    L <- function(mu) {0.5 * sum(x$h_tilde**2 / (x$eigen_val_Bplus1 + 2 * mu - 1)) + mu}
+    x$mu <- optimize(f = L, interval = c(0, mu_max))$minimum
   }
   return(block_project(x))
 }
