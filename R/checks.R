@@ -70,24 +70,24 @@ check_compx <- function(x, y, ncomp, blockx) {
   return(res)
 }
 
-check_confounders <- function(confounders, blocks){
+check_confounders <- function(confounders, blocks, scale = TRUE, bias = T){
   # Check that there is either a single matrix or a list of matrices
   if (is.matrix(confounders) || is.data.frame(confounders)) {
     confounders <- list(confounders)
   }
   if (is.list(confounders)) {
     # Check that elements of the list are matrices
-    confounders <- lapply(confounders, function(x) {
-      if (is.matrix(x)) {
-        return(x)
+    confounders <- lapply(confounders, function(y) {
+      if (is.matrix(y)) {
+        return(y)
       }
-      if (is.data.frame(x)) {
-        return(data.matrix(x))
+      if (is.data.frame(y)) {
+        return(data.matrix(y))
       }
-      names_x <- names(x)
-      x <- data.matrix(x)
-      rownames(x) <- names_x
-      return(x)
+      names_y <- names(y)
+      y <- data.matrix(y)
+      rownames(y) <- names_y
+      return(y)
     })
     
     # Check length of the list
@@ -108,35 +108,56 @@ check_confounders <- function(confounders, blocks){
   # Check that rownames are present and that all rows of blocks are present in confounders
   aligned_rownames <- row.names(blocks[[1]])
   
-  confounders <- lapply(confounders, function(x) {
-    if (is.null(row.names(x))) {
-      if (NROW(x) == NROW(blocks[[1]])) {
-        row.names(x) <- aligned_rownames
+  confounders <- lapply(confounders, function(y) {
+    if (is.null(row.names(y))) {
+      if (NROW(y) == NROW(blocks[[1]])) {
+        row.names(y) <- aligned_rownames
       }
       #stop_rgcca("matrix confounders must have rownames.")
       #TODO change this behaviour?
     }
-    if (!all(aligned_rownames %in% row.names(x))) {
+    if (!all(aligned_rownames %in% row.names(y))) {
     stop_rgcca("matrix confounders must have the same rownames as blocks.")
     }
-    return(x)
+    return(y)
   }) #TODO should I modify this behaviour when confounders is K?
   
   #TODO should I allow missing rows and add rows of NAs? not if confounders is K
   
-  # Check whether the matrix is K and compute linear kernel
-  confounders <- lapply(confounders, function(x) {
-    if (!isSymmetric.matrix(x)) { #TODO do I have to use fct unname like in check_connection?
-      #names_x <- row.names()
-      x <- tcrossprod(x)
-    } 
-    return(x)
+  # Check whether the matrix is K and compute linear kernel on centered and scaled data
+  confounders <- lapply(confounders, function(y) {
+    if (!isSymmetric.matrix(y)) {
+      # Standardization of Y as performed by scale2()
+      y <- scale(y, center = TRUE, scale = FALSE)
+      if (scale) {
+        std <- sqrt(apply(y, 2, function(y_i) cov2(y_i, bias = bias)))
+        y <- sweep(y, 2, std, FUN = "/")
+        attr(y, "scaled:scale") <- std
+      }
+      
+      # Build linear kernel
+      K <- tcrossprod(y)
+      
+    } else {
+      # Centering data in the feature space
+      N <- NROW(y)
+      ones <- matrix(1, nrow = N, ncol = 1)
+      ones_mat <- tcrossprod(ones)
+      K <- y - 1/N * ones_mat %*% y - 1/N * y %*% ones_mat + 1/(N**2) * drop(t(ones) %*% y %*% ones) * ones_mat
+      
+      if (scale) {
+        # Scaling #Actually, the following procedure transforms the kernel so that it is equal to the kernel built on Y with column-centering and rows-normalization
+        D <- diag(K)**(-1/2)
+        K <- sweep(t(sweep(K, 1, D, "*")), 1, D, "*") # fast matrix product for diag(D) %*% K_centered %*% diag(D)
+      }
+    }
+    return(K)
   })
   #TODO check if K is positive definite?
   
   # Align rownames with blocks
-  confounders <- lapply(confounders, function(x) {
-    return(x[aligned_rownames, aligned_rownames])
+  confounders <- lapply(confounders, function(K) {
+    return(K[aligned_rownames, aligned_rownames])
   })
   
   return(confounders)
@@ -334,9 +355,16 @@ check_ncomp <- function(ncomp, blocks, min = 1, superblock = FALSE,
   return(ncomp)
 }
 
-check_penalty_coef <- function(penalty_coef, blocks) {
-  penalty_coef <- elongate_arg(penalty_coef, blocks)
-  if (length(penalty_coef) != length(blocks)) {
+check_penalty_coef <- function(penalty_coef, blocks, superblock = F) {
+  if (superblock) {
+    penalty_coef <- elongate_arg(penalty_coef, 1:(length(blocks)+1))
+  } else {
+    penalty_coef <- elongate_arg(penalty_coef, blocks)
+  }
+  
+  if (superblock && length(penalty_coef) != (length(blocks) + 1)) {
+    stop_rgcca("if superblock = T, penalty_coef must be of length 1 or J+1.")
+  } else if (!superblock && length(penalty_coef) != length(blocks)) {
     stop_rgcca("penalty_coef must be of length 1 or J.")
   }
   
