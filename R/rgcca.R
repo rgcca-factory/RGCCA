@@ -429,6 +429,7 @@ rgcca <- function(blocks, connection = NULL, tau = 1, ncomp = 1,
                   scheme = "factorial", scale = TRUE, init = "svd",
                   bias = TRUE, tol = 1e-08, verbose = FALSE,
                   scale_block = "inertia", method = "rgcca",
+                  lambda = 0, graph_laplacians = NULL,
                   sparsity = 1, response = NULL,
                   superblock = FALSE,
                   NA_method = "na.ignore", quiet = TRUE,
@@ -447,6 +448,7 @@ rgcca <- function(blocks, connection = NULL, tau = 1, ncomp = 1,
   rgcca_args <- as.list(environment())
   ### If specific objects are given for blocks, parameters are imported from
   #   these objects.
+  # Add a check that graph_laplacians and lambda are the same length as blocks
   tmp <- get_rgcca_args(blocks, rgcca_args)
   opt <- tmp$opt
   rgcca_args <- tmp$rgcca_args
@@ -465,10 +467,10 @@ rgcca <- function(blocks, connection = NULL, tau = 1, ncomp = 1,
   tmp <- handle_NA(blocks, NA_method = rgcca_args$NA_method)
   na.rm <- tmp$na.rm
   blocks <- scaling(tmp$blocks,
-    scale = rgcca_args$scale,
-    bias = rgcca_args$bias,
-    scale_block = rgcca_args$scale_block,
-    na.rm = na.rm
+                    scale = rgcca_args$scale,
+                    bias = rgcca_args$bias,
+                    scale_block = rgcca_args$scale_block,
+                    na.rm = na.rm
   )
   if (rgcca_args$superblock) {
     blocks[["superblock"]] <- Reduce(cbind, blocks)
@@ -480,7 +482,8 @@ rgcca <- function(blocks, connection = NULL, tau = 1, ncomp = 1,
   ### Call the gcca function
   gcca_args <- rgcca_args[c(
     "connection", "ncomp", "scheme", "init", "bias", "tol",
-    "verbose", "superblock", "response", "n_iter_max", "comp_orth"
+    "verbose", "superblock", "response", "n_iter_max", "comp_orth",
+    "lambda", "graph_laplacians" # for netSGCCA
   )]
   gcca_args[["na.rm"]] <- na.rm
   gcca_args[["blocks"]] <- blocks

@@ -17,6 +17,8 @@ rgcca(
   verbose = FALSE,
   scale_block = "inertia",
   method = "rgcca",
+  lambda = 0,
+  graph_laplacians = NA,
   sparsity = 1,
   response = NULL,
   superblock = FALSE,

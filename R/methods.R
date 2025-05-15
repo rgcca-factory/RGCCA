@@ -13,7 +13,7 @@ available_methods <- function() {
     "maxbet", "maxdiff-b", "maxdiff", "sabscor",
     "ssqcor", "ssqcov-1", "ssqcov-2", "ssqcov",
     "sumcor", "sumcov-1", "sumcov-2", "sumcov", "sabscov-1",
-    "sabscov-2"
+    "sabscov-2", "netsgcca"
   )
 }
 
@@ -70,5 +70,9 @@ x4_methods <- function() {
 }
 
 sparse_methods <- function() {
-  c("sgcca", "spls", "spca")
+  c("sgcca", "spls", "spca", "netsgcca")
+}
+
+generic_methods <- function() {
+  c("rgcca", "sgcca", "netsgcca")
 }

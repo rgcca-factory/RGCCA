@@ -3,6 +3,8 @@ rgcca_outer_loop <- function(blocks, connection = 1 - diag(length(blocks)),
                              tau = rep(1, length(blocks)),
                              sparsity = rep(1, length(blocks)),
                              ncomp = rep(1, length(blocks)),
+                             lambda = rep(0, length(blocks)),
+                             graph_laplacians = NULL,
                              scheme = "centroid",
                              init = "svd", bias = TRUE, tol = 1e-08,
                              verbose = TRUE,
@@ -74,6 +76,8 @@ rgcca_outer_loop <- function(blocks, connection = 1 - diag(length(blocks)),
     )
   }
 
+  # TODO: make lambda a matrix, same as sparsity and tau
+
   # Whether primal or dual
   primal_dual <- matrix("primal", nrow = N + 1, ncol = J)
   primal_dual[which((sparsity == 1) & (nb_ind < matrix(
@@ -91,6 +95,8 @@ rgcca_outer_loop <- function(blocks, connection = 1 - diag(length(blocks)),
     gcca_result <- rgcca_inner_loop(R, connection, g, dg,
                                     tau = computed_tau[n, ],
                                     sparsity = sparsity[n, ],
+                                    lambda = lambda,
+                                    graph_laplacians = graph_laplacians,
                                     init = init, bias = bias, tol = tol,
                                     verbose = verbose, na.rm = na.rm,
                                     n_iter_max = n_iter_max

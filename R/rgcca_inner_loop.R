@@ -1,5 +1,7 @@
 rgcca_inner_loop <- function(A, C, g, dg, tau = rep(1, length(A)),
                              sparsity = rep(1, length(A)),
+                             lambda = rep(0, length(A)),
+                             graph_laplacians = NULL,
                              verbose = FALSE, init = "svd", bias = TRUE,
                              tol = 1e-08, na.rm = TRUE, n_iter_max = 1000) {
   if (!is.numeric(tau)) {
@@ -15,7 +17,8 @@ rgcca_inner_loop <- function(A, C, g, dg, tau = rep(1, length(A)),
 
   ### Initialization
   block_objects <- lapply(seq_along(A), function(j) {
-    create_block(A[[j]], j, bias, na.rm, tau[j], sparsity[j], tol)
+    create_block(A[[j]], j, bias, na.rm, tau[j], sparsity[j], lambda[j], 
+      graph_laplacians[[j]], tol)
   })
 
   block_objects <- lapply(block_objects, block_init, init = init)
