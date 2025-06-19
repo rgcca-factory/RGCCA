@@ -431,7 +431,7 @@ rgcca <- function(blocks, connection = NULL, tau = 1, ncomp = 1,
                   scale_block = "inertia", method = "rgcca",
                   sparsity = 1, response = NULL,
                   superblock = FALSE, 
-                  confounders = NULL, penalty_coef = 0, algo = 1,
+                  confounders = NULL, penalty_coef = 0, algo = 1, primal = TRUE,
                   NA_method = "na.ignore", quiet = TRUE,
                   n_iter_max = 1000, comp_orth = TRUE,
                   A = NULL, C = NULL) {
@@ -454,7 +454,7 @@ rgcca <- function(blocks, connection = NULL, tau = 1, ncomp = 1,
   rgcca_args$quiet <- quiet
   rgcca_args$verbose <- verbose
 
-  blocks <- rgcca_args$blocks
+  blocks <- remove_null_sd(rgcca_args$blocks)$list_m
 
   if (opt$disjunction) {
     blocks[[rgcca_args$response]] <- as_disjunctive(
@@ -482,7 +482,7 @@ rgcca <- function(blocks, connection = NULL, tau = 1, ncomp = 1,
   gcca_args <- rgcca_args[c(
     "connection", "ncomp", "scheme", "init", "bias", "tol",
     "verbose", "superblock", "response", "n_iter_max", "comp_orth",
-    "confounders", "penalty_coef", "algo"
+    "confounders", "penalty_coef", "algo", "primal"
   )]
   gcca_args[["na.rm"]] <- na.rm
   gcca_args[["blocks"]] <- blocks

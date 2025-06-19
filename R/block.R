@@ -49,19 +49,29 @@ new_ac_block <- function(x, j, tau, confounders, penalty_coef, algo, ...) {
   new_block(x, j, tau = tau, M = NULL, M_inv = NULL, B = NULL, 
             f = NULL, sqrt_M = NULL, sqrt_M_inv = NULL, 
             mu = NULL, f_left = NULL, f_right = NULL, 
-            algo = algo, d = NULL, Q = NULL, 
+            algo = algo, d = NULL, h_MX = NULL,
             e_QM = NULL, a_MQ = NULL, e = NULL, h_tilde_QMX = NULL,
-            h = NULL, h_tilde = NULL, eigen_val_Bplus1 = NULL, eigen_vec_Bplus1 = NULL,
+            h = NULL, h_tilde = NULL, D = NULL, Q = NULL, MQ = NULL, QMX = NULL, gamma = NULL,
             confounders = confounders, penalty_coef = penalty_coef, ..., 
             class = "ac_block")
 }
 
+new_dual_ac_block <- function(x, j, tau, confounders, penalty_coef, ...) {
+  new_dual_block(x, j, tau = tau, M_n = NULL, M_n_inv = NULL, K_M = NULL, O = NULL, mu = NULL, M_grad = NULL,
+                 confounders = confounders, penalty_coef = penalty_coef, ...,
+                 class = "dual_ac_block")
+}
+
 ### Utility method to choose the adequate class
-create_block <- function(x, j, bias, na.rm, tau, sparsity, tol, confounders, penalty_coef, algo) {
+create_block <- function(x, j, bias, na.rm, tau, sparsity, tol, confounders, penalty_coef, algo, primal) {
   if (sparsity < 1) {
     res <- new_sparse_block(x, j, sparsity, tol, bias = bias, na.rm = na.rm)
   } else if (!is.null(confounders) && (penalty_coef != 0)) {
-    res <- new_ac_block(x, j, tau, confounders = confounders, penalty_coef = penalty_coef, algo = algo)
+    if (NROW(x) > NCOL(x) || primal){
+      res <- new_ac_block(x, j, tau, confounders = confounders, penalty_coef = penalty_coef, algo = algo)
+    } else {
+      res <- new_dual_ac_block(x, j, tau, confounders = confounders, penalty_coef = penalty_coef, algo = algo)
+    }
   } else if (NROW(x) > NCOL(x)) {
     if (tau < 1) {
       res <- new_primal_regularized_block(x, j, tau, bias = bias, na.rm = na.rm)

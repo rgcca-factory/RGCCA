@@ -111,6 +111,14 @@ set_parameter_grid <- function(par_type, par_length, par_value, blocks,
       check_function <- function(x) {
         check_penalty(x, blocks, method = "sgcca", superblock = superblock)
       }
+    },
+    "penalty_coef" = {
+      min_values <- rep(0, J + 1)
+      max_values <- rep(10, J + 1) #TODO change max_value?
+      response_value <- NULL #TODO change when a response behavior is defined for ac-rgcca
+      check_function <- function(x) {
+        check_penalty_coef(x, blocks, superblock = superblock)
+      }
     }
   )
   if (is.null(response)) response_value <- NULL

@@ -23,6 +23,7 @@ get_rgcca_args <- function(object, default_args = list()) {
       tol = default_args$tol,
       init = tolower(default_args$init),
       algo = default_args$algo,
+      primal = default_args$primal,
       bias = default_args$bias,
       quiet = default_args$quiet,
       scale = default_args$scale,
