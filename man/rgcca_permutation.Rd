@@ -80,8 +80,8 @@ are reported.}
 \item{scale_block}{A logical value or a string indicating if each block is
 scaled.
 
-If TRUE or "inertia", each block is divided by the sum of eigenvalues
-of its empirical covariance matrix.
+If TRUE or "inertia", each block is divided by the squared root of the sum 
+of eigenvalues of its empirical covariance matrix.
 
 If "lambda1", each block is divided by
 the square root of the highest eigenvalue of its empirical covariance matrix.

@@ -68,8 +68,8 @@
 #' @param scale_block A logical value or a string indicating if each block is
 #' scaled.
 #'
-#' If TRUE or "inertia", each block is divided by the sum of eigenvalues
-#' of its empirical covariance matrix.
+#' If TRUE or "inertia", each block is divided by the squared root of the sum 
+#' of eigenvalues of its empirical covariance matrix.
 #'
 #' If "lambda1", each block is divided by
 #' the square root of the highest eigenvalue of its empirical covariance matrix.
@@ -454,7 +454,7 @@ rgcca <- function(blocks, connection = NULL, tau = 1, ncomp = 1,
   rgcca_args$quiet <- quiet
   rgcca_args$verbose <- verbose
 
-  blocks <- remove_null_sd(rgcca_args$blocks)$list_m
+  blocks <- rgcca_args$blocks
 
   if (opt$disjunction) {
     blocks[[rgcca_args$response]] <- as_disjunctive(
