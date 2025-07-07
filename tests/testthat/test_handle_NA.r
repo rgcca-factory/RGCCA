@@ -7,7 +7,7 @@ blocks <- list(
   agriculture = Russett[, seq(3)],
   industry = Russett[, 4:5],
   politic = Russett[, 6:11],
-  target = Russett[, 11]
+  target = matrix(Russett[, 11])
 )
 
 # Add missing values

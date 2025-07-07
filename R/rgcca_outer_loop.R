@@ -87,7 +87,7 @@ rgcca_outer_loop <- function(blocks, connection = 1 - diag(length(blocks)),
   primal_dual <- matrix("primal", nrow = N + 1, ncol = J)
   primal_dual[which((sparsity == 1) & (nb_ind < matrix(
     pjs, nrow = N + 1, ncol = J, byrow = TRUE
-  )))]
+  )))] <- "dual"
   
   ##### Computation of RGCCA components #####
   for (n in seq(N + 1)) {

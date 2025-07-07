@@ -167,8 +167,8 @@ check_confounders <- function(confounders, blocks, scale = TRUE, bias = T){
 check_connection <- function(C, blocks) {
   msg <- "connection matrix C must"
 
-  if (!is.matrix(C)) stop_rgcca(msg, " be a matrix.", exit_code = 103) #TODO check why is function paste not used?
-
+  if (!is.matrix(C)) stop_rgcca(msg, " be a matrix.", exit_code = 103)
+  
   if (!isSymmetric.matrix(unname(C))) {
     stop_rgcca(paste(msg, "be symmetric."), exit_code = 103)
   }
@@ -384,7 +384,7 @@ check_sign_comp <- function(rgcca_res, w) {
     function(i) pm(rgcca_res$blocks[[i]], w[[i]])
   )
 
-  w <- lapply(setNames(seq_along(w), names(w)), function(i) {
+  w[seq_along(w)] <- lapply(seq_along(w), function(i) {
     if (NROW(w[[i]]) < NROW(y[[i]])) {
       res <- as.matrix(cor2(rgcca_res$Y[[i]], y[[i]]))
     } else {

@@ -51,17 +51,6 @@ test_that("check_blocks renames blocks if names are missing", {
     names(check_blocks(list(agriculture = X_agric, industry = X_ind))),
     c("agriculture", "industry")
   )
-
-  # Check for messages as well
-  expect_message(
-    check_blocks(list(agriculture = X_agric, X_ind), quiet = FALSE),
-    "Missing block names are automatically labeled.",
-    fixed = TRUE
-  )
-  expect_message(
-    check_blocks(list(agriculture = X_agric, industry = X_ind), quiet = FALSE),
-    NA
-  )
 })
 
 test_that("check_blocks add colnames with blocks with no colnames", {

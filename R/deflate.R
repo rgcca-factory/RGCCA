@@ -34,8 +34,8 @@ deflate <- function(a, Y, R, P, ndefl, n, superblock,
     cumsum_pjs <- cumsum(pjs)[seq_len(J - 1)]
     inf_pjs <- c(0, cumsum_pjs[seq_len(J - 2)]) + 1
     R <- lapply(seq(J - 1), function(b) {
-      x <- defl_result$R[, inf_pjs[b]:cumsum_pjs[b], drop = FALSE]
-      colnames(x) <- colnames(defl_result$R)[inf_pjs[b]:cumsum_pjs[b]]
+      x <- defl_result$R[, seq(inf_pjs[b], cumsum_pjs[b]), drop = FALSE]
+      colnames(x) <- colnames(defl_result$R)[seq(inf_pjs[b], cumsum_pjs[b])]
       return(x)
     })
     R[[J]] <- defl_result$R

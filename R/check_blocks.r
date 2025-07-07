@@ -42,7 +42,7 @@ check_blocks <- function(blocks, add_NAlines = FALSE, allow_unnames = TRUE,
   blocks <- check_blocks_is_list(blocks)
   blocks <- check_blocks_matrix(blocks)
   blocks <- check_blocks_quantitative(blocks, response)
-  blocks <- check_blocks_names(blocks, quiet)
+  blocks <- check_blocks_names(blocks)
   blocks <- check_blocks_colnames(blocks, quiet)
   blocks <- check_blocks_rownames(blocks, allow_unnames, quiet)
   blocks <- check_blocks_align(blocks, add_NAlines, quiet)
@@ -99,16 +99,11 @@ check_blocks_quantitative <- function(blocks, response = NULL) {
   return(blocks)
 }
 
-check_blocks_names <- function(blocks, quiet = FALSE) {
+check_blocks_names <- function(blocks) {
   # Add block names if some are missing
-  renamed <- FALSE
   if (is.null(names(blocks))) names(blocks) <- rep("", length(blocks))
-  for (x in which(names(blocks) == "")) {
-    names(blocks)[x] <- paste0("block", x)
-    renamed <- TRUE
-  }
-  if (!quiet && renamed) {
-    message("Missing block names are automatically labeled.")
+  for (j in which(names(blocks) == "")) {
+    names(blocks)[j] <- paste0("block", j)
   }
   return(blocks)
 }
