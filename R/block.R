@@ -57,7 +57,7 @@ new_ac_block <- function(x, j, tau, confounders, penalty_coef, algo, ...) {
 }
 
 new_dual_ac_block <- function(x, j, tau, confounders, penalty_coef, ...) {
-  new_dual_block(x, j, tau = tau, M_n = NULL, M_n_inv = NULL, K_M = NULL, O = NULL, mu = NULL, M_grad = NULL,
+  new_dual_block(x, j, tau = tau, M_n = NULL, M_n_inv = NULL, K_M = NULL, mu = NULL, 
                  confounders = confounders, penalty_coef = penalty_coef, ...,
                  class = "dual_ac_block")
 }

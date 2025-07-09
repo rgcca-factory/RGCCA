@@ -363,7 +363,7 @@ check_penalty_coef <- function(penalty_coef, blocks, superblock = F) {
   }
   
   if (superblock && length(penalty_coef) != (length(blocks) + 1)) {
-    stop_rgcca("if superblock = T, penalty_coef must be of length 1 or J+1.")
+    stop_rgcca("if superblock == T, penalty_coef must be of length 1 or J+1.")
   } else if (!superblock && length(penalty_coef) != length(blocks)) {
     stop_rgcca("penalty_coef must be of length 1 or J.")
   }

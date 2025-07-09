@@ -87,12 +87,11 @@ get_rgcca_args <- function(object, default_args = list()) {
     opt <- tmp$opt
     rgcca_args <- tmp$rgcca_args
     
-    # With confounders and a superblock, add NULL to confounders and 0 penalty_coef #changed w same confounders for superblock
+    # With confounders and a superblock, make sure that confounders matrix is the same for all blocks and is added for the superblock
     if (!is.null(rgcca_args$confounders) && any(rgcca_args$penalty_coef != 0) && rgcca_args$superblock) {
-      rgcca_args$confounders[[length(rgcca_args$confounders) + 1]] <- rgcca_args$confounders[[1]] #c(rgcca_args$confounders, list(NULL))
-      #rgcca_args$penalty_coef <- c(rgcca_args$penalty_coef, rgcca_args$penalty_coef[[1]]) #c(rgcca_args$penalty_coef, 0) #moved this to check_penalty_coef
+      rgcca_args$confounders[[length(rgcca_args$confounders) + 1]] <- rgcca_args$confounders[[1]]
     }
-
+    
     # Change penalty to 0 if there is a univariate disjunctive block response
     opt$disjunction <- !is.null(rgcca_args$response) &&
       is.character(rgcca_args$blocks[[rgcca_args$response]])

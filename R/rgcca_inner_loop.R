@@ -28,7 +28,7 @@ rgcca_inner_loop <- function(A, C, g, dg, tau = rep(1, length(A)),
   crit <- NULL
   #crit_RGCCA <- NULL
   #crit_penalty <- NULL
-  crit_old <- sum(C * g(crossprod(Y) / N))
+  crit_old <- sum(C * g(crossprod(Y) / N)) 
   crit_blocks <- NULL
   crit_tilde <- NULL
   
@@ -50,17 +50,31 @@ rgcca_inner_loop <- function(A, C, g, dg, tau = rep(1, length(A)),
   repeat {
     for (j in seq_along(A)) {
       # Cat h1
-      h1 <- sum(C * g(crossprod(Y) / N)) - crit_second_part
-      cat("h1 = ", formatC(h1, digits = 8, width = 10, format = "f"), "\n")
-      
-      # Cat htilde1
-      htilde1 <- sum(C * g(crossprod(Y) / N)) + 
-        t(1/N * t(block_objects[[j]]$x) %*% Y %*% (C[j, ] * dg(crossprod(Y, Y[, j]) / N))) %*% 
-        (block_objects[[j]]$a - a_old[[j]]) - crit_second_part
-      cat("htilde1 = ", formatC(htilde1, digits = 8, width = 10, format = "f"), ifelse(h1 == htilde1, "", " NO: h1 != htilde1 "), "\n")
+      if (!is.null(confounders) && any(penalty_coef != 0)) {
+        h1 <- sum(C * g(crossprod(Y) / N)) - crit_second_part
+        #cat("h1 = ", formatC(h1, digits = 8, width = 10, format = "f"), "\n")
+
+        # Cat htilde1
+        htilde1 <- sum(C * g(crossprod(Y) / N))  +
+          t(2/N * t(block_objects[[j]]$x) %*% Y %*% (C[j, ] * dg(crossprod(Y, Y[, j]) / N))) %*%
+          (block_objects[[j]]$a - a_old[[j]]) #- crit_second_part
+        cat("htilde1 = ", formatC(htilde1, digits = 8, width = 10, format = "f"), "\n")#, ifelse(h1 == htilde1, "", " NO: h1 != htilde1 "), "\n")
+      }
       
       # Compute grad
       grad <- Y %*% (C[j, ] * dg(crossprod(Y, Y[, j]) / N))
+      
+      # #TEST fct minorante
+      # for (i in 1:10) {
+      #   w_test <- rnorm(block_objects[[j]]$p)
+      #   if (norm(w_test, type = "2") > 1) {w_test <- w_test / norm(w_test, type = "2")}
+      #   Y_test <- Y
+      #   Y_test[, j] <- block_objects[[j]]$x %*% w_test
+      #   f_test <- sum(C * g(crossprod(Y_test) / N))
+      #   f_lin <- sum(C * g(crossprod(Y) / N))  + 2/N * t(grad) %*% block_objects[[j]]$x %*% (w_test - block_objects[[j]]$a)
+      #   cat("f = ", f_test, " ; f_lin = ", f_lin, ifelse(f_lin - f_test > 1e-10, "NO", ""), "\n")
+      # }
+      
       block_objects[[j]] <- block_update(block_objects[[j]], grad)
       
       # Cat htilde2
@@ -72,11 +86,13 @@ rgcca_inner_loop <- function(A, C, g, dg, tau = rep(1, length(A)),
             return(0)
           }
         })))}
-      
-      htilde2 <- sum(C * g(crossprod(Y) / N)) +
-        t(1/N * t(block_objects[[j]]$x) %*% Y %*% (C[j, ] * dg(crossprod(Y, Y[, j]) / N))) %*% 
-        (block_objects[[j]]$a - a_old[[j]]) - crit_second_part
-      cat("htilde2 = ", formatC(htilde2, digits = 8, width = 10, format = "f"), ifelse(htilde2 > htilde1, "", " NOOOO: htilde1 > htilde2 "), "\n")
+
+      if (!is.null(confounders) && any(penalty_coef != 0)) {
+        htilde2 <- sum(C * g(crossprod(Y) / N))  +
+          t(2/N * t(block_objects[[j]]$x) %*% Y %*% (C[j, ] * dg(crossprod(Y, Y[, j]) / N))) %*%
+          (block_objects[[j]]$a - a_old[[j]]) #- crit_second_part
+        cat("htilde2 = ", formatC(htilde2, digits = 8, width = 10, format = "f"), ifelse(htilde1 - htilde2 > 1e-10, " NOOOO: htilde1 > htilde2 ", ""), "\n")
+      }
       
       Y[, j] <- block_objects[[j]]$Y
       
@@ -89,16 +105,18 @@ rgcca_inner_loop <- function(A, C, g, dg, tau = rep(1, length(A)),
             return(0)
           }
         })))
-        crit_blocks <- c(crit_blocks, sum(C * g(crossprod(Y) / N)) - crit_second_part)
+        crit_blocks <- c(crit_blocks, sum(C * g(crossprod(Y) / N))  - crit_second_part)
       } else {
-        crit_blocks <- c(crit_blocks, sum(C * g(crossprod(Y) / N)))
+        crit_blocks <- c(crit_blocks, sum(C * g(crossprod(Y) / N)) )
       }
-      
-      # Cat h2
-      h2 <- sum(C * g(crossprod(Y) / N)) - crit_second_part
-      cat("h2 = ", formatC(h2, digits = 8, width = 10, format = "f"),  ifelse(h2 > htilde2, "", " NOOOOOOOOOOOOOO: htilde2 > h2 "), "\n")
-    }
 
+      # Cat h2
+      if (!is.null(confounders) && any(penalty_coef != 0)) {
+        h2 <- sum(C * g(crossprod(Y) / N))  - crit_second_part
+        #cat("h2 = ", formatC(h2, digits = 8, width = 10, format = "f"),  ifelse(htilde2 - h2 > 1e-10, " NOOOOOOOOOOOOOO: htilde2 > h2 ", ""), "\n")
+      }
+    }
+    
     # Print out intermediate fit
     if (!is.null(confounders) && any(penalty_coef != 0)) {
       crit_second_part <- sum(unlist(lapply(seq_along(A), function(j) {
@@ -175,8 +193,8 @@ rgcca_inner_loop <- function(A, C, g, dg, tau = rep(1, length(A)),
       )
     }
     plot(crit, xlab = "iteration", ylab = "criteria")
-    plot(crit_blocks, xlab = "iteration", ylab = "criteria", xaxt = "n", col = "green4", pch = 16)
-    axis(side = 1, at = 0:(iter*length(A)), labels = c(0, rep(1:iter, each = length(A))))
+    # plot(crit_blocks, xlab = "iteration", ylab = "criteria", xaxt = "n", col = "green4", pch = 16)
+    # axis(side = 1, at = 0:(iter*length(A)), labels = c(0, rep(1:iter, each = length(A))))
     #plot(crit_RGCCA, xlab = "iteration", ylab = "RGCCA criteria")
     #plot(crit_penalty, xlab = "iteration", ylab = "penalty")
   }
