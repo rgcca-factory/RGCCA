@@ -68,6 +68,8 @@ block_update.ac_block <- function(x, grad) {
     x$z <- z
   }
   
+  x$a <- x$MQ %*% x$z
+  
   return(block_project(x))
 }
 
@@ -84,6 +86,7 @@ block_update.dual_ac_block <- function(x, grad) {
     
     mu_max <- 1E10
     mu_max_test <- 0.5 * drop(t(x$h) %*% ginv(x$B) %*% x$h)
+    
     L <- function(mu) {
       0.5 * drop(t(x$h) %*% ginv(x$B + 2 * mu * x$KM, tol = .Machine$double.eps * x$n) %*% x$h) + mu
     }

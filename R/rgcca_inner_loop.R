@@ -52,13 +52,13 @@ rgcca_inner_loop <- function(A, C, g, dg, tau = rep(1, length(A)),
       # Cat h1
       if (!is.null(confounders) && any(penalty_coef != 0)) {
         h1 <- sum(C * g(crossprod(Y) / N)) - crit_second_part
-        #cat("h1 = ", formatC(h1, digits = 8, width = 10, format = "f"), "\n")
+        cat("h1 = ", formatC(h1, digits = 8, width = 10, format = "f"), "\n")
 
         # Cat htilde1
         htilde1 <- sum(C * g(crossprod(Y) / N))  +
           t(2/N * t(block_objects[[j]]$x) %*% Y %*% (C[j, ] * dg(crossprod(Y, Y[, j]) / N))) %*%
-          (block_objects[[j]]$a - a_old[[j]]) #- crit_second_part
-        cat("htilde1 = ", formatC(htilde1, digits = 8, width = 10, format = "f"), "\n")#, ifelse(h1 == htilde1, "", " NO: h1 != htilde1 "), "\n")
+          (block_objects[[j]]$a - a_old[[j]]) - crit_second_part
+        cat("htilde1 = ", formatC(htilde1, digits = 8, width = 10, format = "f"), ifelse(h1 == htilde1, "", " NO: h1 != htilde1 "), "\n")
       }
       
       # Compute grad
@@ -90,7 +90,7 @@ rgcca_inner_loop <- function(A, C, g, dg, tau = rep(1, length(A)),
       if (!is.null(confounders) && any(penalty_coef != 0)) {
         htilde2 <- sum(C * g(crossprod(Y) / N))  +
           t(2/N * t(block_objects[[j]]$x) %*% Y %*% (C[j, ] * dg(crossprod(Y, Y[, j]) / N))) %*%
-          (block_objects[[j]]$a - a_old[[j]]) #- crit_second_part
+          (block_objects[[j]]$a - a_old[[j]]) - crit_second_part
         cat("htilde2 = ", formatC(htilde2, digits = 8, width = 10, format = "f"), ifelse(htilde1 - htilde2 > 1e-10, " NOOOO: htilde1 > htilde2 ", ""), "\n")
       }
       
@@ -113,7 +113,7 @@ rgcca_inner_loop <- function(A, C, g, dg, tau = rep(1, length(A)),
       # Cat h2
       if (!is.null(confounders) && any(penalty_coef != 0)) {
         h2 <- sum(C * g(crossprod(Y) / N))  - crit_second_part
-        #cat("h2 = ", formatC(h2, digits = 8, width = 10, format = "f"),  ifelse(htilde2 - h2 > 1e-10, " NOOOOOOOOOOOOOO: htilde2 > h2 ", ""), "\n")
+        cat("h2 = ", formatC(h2, digits = 8, width = 10, format = "f"),  ifelse(htilde2 - h2 > 1e-10, " NOOOOOOOOOOOOOO: htilde2 > h2 ", ""), "\n")
       }
     }
     
@@ -136,9 +136,10 @@ rgcca_inner_loop <- function(A, C, g, dg, tau = rep(1, length(A)),
     if (verbose) {
       cat(
         " Iter: ", formatC(iter, width = 3, format = "d"),
-        " Fit: ", formatC(crit[iter], digits = 8, width = 10, format = "f"),
-        " Dif: ", formatC(crit[iter] - crit_old,
-                          digits = 8, width = 10, format = "f"),
+        " Fit: ", formatC(crit[iter], digits = -round(log10(tol)), 
+                          width = -round(log10(tol)) + 2, format = "f"),
+        " Dif: ", formatC(crit[iter] - crit_old, digits = -round(log10(tol)), 
+                          width = -round(log10(tol)) + 2, format = "f"),
         #"RGCCA crit: ", formatC(crit_RGCCA[iter], digits = 8, width = 10, format = "f"),
         #"Penalty: ", formatC(crit_penalty[iter], digits = 8, width = 10, format = "f"), 
         "\n"

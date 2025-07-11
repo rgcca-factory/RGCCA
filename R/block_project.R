@@ -91,7 +91,7 @@ block_project.ac_block <- function(x) {
       # #cat("norm of v = ", crossprod(tmp %*% x$h), "\n")
       # x$a <- - x$sqrt_M_inv %*% tmp %*% x$h #/ drop(sqrt(crossprod(tmp %*% x$h)))
     } else if (x$algo == 5) {
-      x$a <- x$MQ %*% x$z
+      # x$a <- x$MQ %*% x$z
       # if (norm(x$sqrt_M %*% x$a, type = "2") > 1) {cat("w^T M_j w - 1 = ", t(x$a) %*% x$M %*% x$a - 1, "\n")}
     }
     
