@@ -2,7 +2,7 @@ rgcca_inner_loop <- function(A, C, g, dg, tau = rep(1, length(A)),
                              sparsity = rep(1, length(A)),
                              verbose = FALSE, init = "svd", bias = TRUE,
                              tol = 1e-08, na.rm = TRUE, n_iter_max = 1000,
-                             confounders = NULL, penalty_coef = rep(0, length(A)), algo = 1, primal = TRUE) {
+                             confounders = NULL, penalty_coef = rep(0, length(A)), algo = 3, primal = TRUE) {
   if (!is.numeric(tau)) {
     # From Schafer and Strimmer, 2005
     tau <- vapply(A, tau.estimate, na.rm = na.rm, FUN.VALUE = 1.0)

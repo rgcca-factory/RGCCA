@@ -10,7 +10,7 @@ rgcca_outer_loop <- function(blocks, connection = 1 - diag(length(blocks)),
                              response = NULL, disjunction = NULL,
                              n_iter_max = 1000, comp_orth = TRUE,
                              confounders = NULL, 
-                             penalty_coef = rep(0, length(blocks)), algo = 1, primal = TRUE) {
+                             penalty_coef = rep(0, length(blocks)), algo = 3, primal = TRUE) {
   if (verbose) {
     scheme_str <- ifelse(is(scheme, "function"), "user-defined", scheme)
     cat(

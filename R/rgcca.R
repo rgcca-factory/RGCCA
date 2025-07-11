@@ -431,7 +431,7 @@ rgcca <- function(blocks, connection = NULL, tau = 1, ncomp = 1,
                   scale_block = "inertia", method = "rgcca",
                   sparsity = 1, response = NULL,
                   superblock = FALSE, 
-                  confounders = NULL, penalty_coef = 0, algo = 1, primal = TRUE,
+                  confounders = NULL, penalty_coef = 0, algo = 3, primal = TRUE,
                   NA_method = "na.ignore", quiet = TRUE,
                   n_iter_max = 1000, comp_orth = TRUE,
                   A = NULL, C = NULL) {

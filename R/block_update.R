@@ -18,24 +18,15 @@ block_update.dual_block <- function(x, grad) {
 
 #' @export
 block_update.ac_block <- function(x, grad) {
-  if (x$algo == 1) {
-    # x$f <- pm(x$f_left, 1/x$N * grad, na.rm = x$na.rm) - 
-    #   pm(x$f_right, x$a, na.rm = x$na.rm)
-  } else if (x$algo == 3) {
-    x$h_tilde <- x$h_tilde_QMX %*% grad
+  if (x$algo == 3) {
+    x$h_tilde <- x$QMX %*% grad
     mu_max <- 0.5 * sqrt(sum(x$h_tilde**2))
     mu_min <- max(0, sapply(seq_len(x$p), function(k) {0.5 * sqrt(sum(x$h_tilde[k:x$p]**2)) - max(x$D[k:x$p])}))
     L <- function(mu) {0.5 * sum(x$h_tilde**2 / (x$D + 2 * mu)) + mu}
     x$mu <- optimize(f = L, interval = c(mu_min, mu_max), tol = .Machine$double.eps)$minimum
     
-    x$a <- x$a_MQ %*% (x$h_tilde / (x$D + 2 * x$mu))
+    x$a <- - x$MQ %*% (x$h_tilde / (x$D + 2 * x$mu))
     
-  } else if (x$algo == 4) {
-    # x$h <- pm(x$h_MX, grad, na.rm = x$na.rm)
-    # mu_max <- 10000 #TODO find expression
-    # L <- function(mu) {drop(0.5 * t(x$h) %*% solve(x$B + 2 * mu * diag(nrow = x$p)) %*% x$h + mu)}
-    # x$mu <- optimize(f = L, interval = c(0, mu_max), tol = .Machine$double.eps)$minimum
-    # 
   } else if (x$algo == 5) {
     x$h_tilde <- x$QMX %*% grad
     
@@ -66,9 +57,8 @@ block_update.ac_block <- function(x, grad) {
     }
     #plot(crit, col = "gold")
     x$z <- z
+    x$a <- x$MQ %*% x$z
   }
-  
-  x$a <- x$MQ %*% x$z
   
   return(block_project(x))
 }
@@ -94,6 +84,7 @@ block_update.dual_ac_block <- function(x, grad) {
     #cat("mu = ", x$mu, " ; mu_max_test = ", mu_max_test, ifelse(x$mu > mu_max_test, yes = "NOOOOO", no = ""), "\n")
     
     L_mu_opt <- -0.5 * drop(t(x$h) %*% ginv(x$B + 2 * x$mu * x$KM, tol = .Machine$double.eps * x$n) %*% x$h) - x$mu
+    
     if (!is.null(L_mu)) {cat("L_(mu^) =", L_mu_opt, ifelse(L_mu - L_mu_opt > 1e-8, " NOOOO: L_(mu) > L_(mu^) ", ""), "\n")}
     
     x$alpha <- - ginv(x$B + 2 * x$mu * x$KM, tol = .Machine$double.eps * x$n) %*% x$h
