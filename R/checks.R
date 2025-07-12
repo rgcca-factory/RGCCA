@@ -70,11 +70,13 @@ check_compx <- function(x, y, ncomp, blockx) {
   return(res)
 }
 
-check_confounders <- function(confounders, blocks, scale = TRUE, bias = T){
+check_confounders <- function(confounders, blocks, scale = TRUE, bias = T,
+                              superblock = FALSE, response = NULL){
   # Check that there is either a single matrix or a list of matrices
   if (is.matrix(confounders) || is.data.frame(confounders)) {
     confounders <- list(confounders)
   }
+  
   if (is.list(confounders)) {
     # Check that elements of the list are matrices
     confounders <- lapply(confounders, function(y) {
@@ -90,21 +92,43 @@ check_confounders <- function(confounders, blocks, scale = TRUE, bias = T){
       return(y)
     })
     
-    # Check length of the list
-    if (length(confounders) == 1 && length(blocks) != 1) {
-      confounders <- rep(confounders, length(blocks))
+    # Check the length of the list
+    if (length(confounders) == 1) {
+      if (superblock) {
+        confounders <- rep(confounders, length(blocks) + 1)
+      } else {
+        confounders <- rep(confounders, length(blocks))
+      }
+    } else { # if length(confounders) > 1
+      if (superblock) {
+        if (length(confounders) != length(blocks) + 1) {
+          stop_rgcca("With a superblock, confounders list must be of length 1 or J+1. 
+                     We recommend using the same confounders matrix for all blocks 
+                     if the study includes a superblock.")
+        }
+      } else {
+        if (length(confounders) != length(blocks)) {
+          stop_rgcca("confounders list must be of length 1 or J.")
+        }
+      }
     }
-    if (length(confounders) != length(blocks)) {
-      stop_rgcca("confounders list must be of length 1 or J")
-    }
-  } #TODO change this when there is a response block or with a superblock?
-
-  #TODO are NA allowed?
-  #TODO check variable type of confounders?
-  #TODO check colnames?
-  #TODO check duplicated rownames?
-  #TODO add centering and scaling?
-
+  }
+  
+  # Change confounders to NULL for the response block, if necessary
+  if (!is.null(response)) {
+    confounders[response] <- list(NULL) #TODO check if this creates issues downstream
+  }
+  
+  # Check that there are no NAs
+  if (any(is.na(confounders))) {
+    stop_rgcca(("As of today, NA values are not allowed in the confounders matrix."))
+  }
+  
+  # Perform one-hot encoding if needed
+  if (any(is.character(confounders) || is.factor(confounders))) { #TODO check as_disjunctive behaviour when given a factor with character levels (as mode(<anyfactorwithcharacterlevels> returns "numeric"))
+    confounders <- lapply(confounders, as_disjunctive)
+  }
+  
   # Check that rownames are present and that all rows of blocks are present in confounders
   aligned_rownames <- row.names(blocks[[1]])
   
@@ -113,8 +137,6 @@ check_confounders <- function(confounders, blocks, scale = TRUE, bias = T){
       if (NROW(y) == NROW(blocks[[1]])) {
         row.names(y) <- aligned_rownames
       }
-      #stop_rgcca("matrix confounders must have rownames.")
-      #TODO change this behaviour?
     }
     if (!all(aligned_rownames %in% row.names(y))) {
     stop_rgcca("matrix confounders must have the same rownames as blocks.")
@@ -122,23 +144,31 @@ check_confounders <- function(confounders, blocks, scale = TRUE, bias = T){
     return(y)
   }) #TODO should I modify this behaviour when confounders is K?
   
-  #TODO should I allow missing rows and add rows of NAs? not if confounders is K
-  
   # Check whether the matrix is K and compute linear kernel on centered and scaled data
   confounders <- lapply(confounders, function(y) {
     if (!isSymmetric.matrix(y)) {
       # Standardization of Y as performed by scale2()
       y <- scale(y, center = TRUE, scale = FALSE)
       if (scale) {
-        std <- sqrt(apply(y, 2, function(y_i) cov2(y_i, bias = bias)))
-        y <- sweep(y, 2, std, FUN = "/")
-        attr(y, "scaled:scale") <- std
+        std <- sqrt(apply(y, 2, function(y_k) cov2(y_k, bias = bias)))
+        std <- pmax(.Machine$double.eps, std) # Account for potentially 0 std
+        y <- scale(y, center = FALSE, scale = std)
       }
       
       # Build linear kernel
       K <- tcrossprod(y)
       
     } else {
+      #TODO # Check colnames ?
+      
+      # Check whether confounders is positive definite
+      eigen_dec <- eigen(y, symmetric = T, only.values = T)$values
+      
+      if (any(eigens_dec < 0)) {
+        stop_rgcca("If the given confounders matrix is K, it should be positive definite 
+                   (as well as symmetric and of dimensions $n \times n$).")
+      }
+      
       # Centering data in the feature space
       N <- NROW(y)
       ones <- matrix(1, nrow = N, ncol = 1)
@@ -153,8 +183,7 @@ check_confounders <- function(confounders, blocks, scale = TRUE, bias = T){
     }
     return(K)
   })
-  #TODO check if K is positive definite?
-  
+
   # Align rownames with blocks
   confounders <- lapply(confounders, function(K) {
     return(K[aligned_rownames, aligned_rownames])
@@ -355,25 +384,37 @@ check_ncomp <- function(ncomp, blocks, min = 1, superblock = FALSE,
   return(ncomp)
 }
 
-check_penalty_coef <- function(penalty_coef, blocks, superblock = F) {
+check_penalty_coef <- function(penalty_coef, blocks, superblock = FALSE, 
+                               response = NULL, quiet = TRUE) {
   if (superblock) {
     penalty_coef <- elongate_arg(penalty_coef, 1:(length(blocks)+1))
   } else {
     penalty_coef <- elongate_arg(penalty_coef, blocks)
   }
   
-  if (superblock && length(penalty_coef) != (length(blocks) + 1)) {
-    stop_rgcca("if superblock == T, penalty_coef must be of length 1 or J+1.")
-  } else if (!superblock && length(penalty_coef) != length(blocks)) {
-    stop_rgcca("penalty_coef must be of length 1 or J.")
+  if (superblock) {
+    if (length(penalty_coef) != length(blocks) + 1) {
+      stop_rgcca("If superblock == T, penalty_coef must be of length 1 or J+1.")
+    }
+  } else {
+    if (length(penalty_coef) != length(blocks)) {
+       stop_rgcca("Penalty_coef must be of length 1 or J.")
+    }
+  }
+  
+  # Change penalty to 0 for the response block, if necessary
+  if (!is.null(response)) {
+    penalty_coef[response] <- 0
   }
   
   if (any(penalty_coef < 0)) {
     stop_rgcca("penalty_coef must be non-negative.")
   }
   
-  #TODO any other checks?
-  #TODO print message if all coefs are = 0?
+  if (!quiet && all(penalty_coef == 0)) {
+    cat("With penalty_coef == 0, the classic rgcca algorithm will be used.\n")
+  }
+  
   return(penalty_coef)
 }
 

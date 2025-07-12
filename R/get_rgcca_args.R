@@ -59,16 +59,6 @@ get_rgcca_args <- function(object, default_args = list()) {
       rgcca_args$blocks, add_NAlines = TRUE,
       quiet = rgcca_args$quiet, response = rgcca_args$response
     )
-    
-    if (!is.null(rgcca_args$confounders) && any(rgcca_args$penalty_coef != 0)) {
-      rgcca_args$confounders <- check_confounders(
-        rgcca_args$confounders, rgcca_args$blocks, rgcca_args$scale, rgcca_args$bias
-      )
-      
-      rgcca_args$penalty_coef <- check_penalty_coef(
-        rgcca_args$penalty_coef, rgcca_args$blocks, rgcca_args$superblock
-      )
-    }
 
     check_integer("tol", rgcca_args$tol, float = TRUE, min = 0)
     check_integer("n_iter_max", rgcca_args$n_iter_max, min = 1)
@@ -87,9 +77,17 @@ get_rgcca_args <- function(object, default_args = list()) {
     opt <- tmp$opt
     rgcca_args <- tmp$rgcca_args
     
-    # With confounders and a superblock, make sure that confounders matrix is the same for all blocks and is added for the superblock
-    if (!is.null(rgcca_args$confounders) && any(rgcca_args$penalty_coef != 0) && rgcca_args$superblock) {
-      rgcca_args$confounders[[length(rgcca_args$confounders) + 1]] <- rgcca_args$confounders[[1]]
+    # Check AC-RGCCA parameters
+    if (!is.null(rgcca_args$confounders) && any(rgcca_args$penalty_coef != 0)) {
+      rgcca_args$confounders <- check_confounders(
+        rgcca_args$confounders, rgcca_args$blocks, rgcca_args$scale, rgcca_args$bias,
+        rgcca_args$superblock, rgcca_args$response
+      )
+      
+      rgcca_args$penalty_coef <- check_penalty_coef(
+        rgcca_args$penalty_coef, rgcca_args$blocks, rgcca_args$superblock,
+        rgcca_args$response, rgcca_args$quiet
+      )
     }
     
     # Change penalty to 0 if there is a univariate disjunctive block response
