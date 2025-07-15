@@ -121,7 +121,7 @@ check_confounders <- function(confounders, blocks, scale = TRUE, bias = T,
   
   # Check that there are no NAs
   if (any(is.na(confounders))) {
-    stop_rgcca(("As of today, NA values are not allowed in the confounders matrix."))
+    stop_rgcca(("NA values are not allowed in the confounders matrix."))
   }
   
   # Perform one-hot encoding if needed
@@ -133,6 +133,10 @@ check_confounders <- function(confounders, blocks, scale = TRUE, bias = T,
   aligned_rownames <- row.names(blocks[[1]])
   
   confounders <- lapply(confounders, function(y) {
+    if (is.null(y)) {
+      return(y)
+    }
+    
     if (is.null(row.names(y))) {
       if (NROW(y) == NROW(blocks[[1]])) {
         row.names(y) <- aligned_rownames
@@ -146,6 +150,10 @@ check_confounders <- function(confounders, blocks, scale = TRUE, bias = T,
   
   # Check whether the matrix is K and compute linear kernel on centered and scaled data
   confounders <- lapply(confounders, function(y) {
+    if (is.null(y)) {
+      return(y)
+    }
+    
     if (!isSymmetric.matrix(y)) {
       # Standardization of Y as performed by scale2()
       y <- scale(y, center = TRUE, scale = FALSE)
@@ -186,6 +194,10 @@ check_confounders <- function(confounders, blocks, scale = TRUE, bias = T,
 
   # Align rownames with blocks
   confounders <- lapply(confounders, function(K) {
+    if (is.null(K)) {
+      return(K)
+    }
+    
     return(K[aligned_rownames, aligned_rownames])
   })
   
