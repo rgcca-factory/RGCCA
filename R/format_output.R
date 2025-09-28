@@ -69,11 +69,14 @@ format_output <- function(func_out, rgcca_args, opt, blocks) {
     rownames(func_out$Y[[j]]) <- rownames(blocks[[j]])
     colnames(func_out$Y[[j]]) <- paste0("comp", seq_len(max(rgcca_args$ncomp)))
     for (m in seq_along(func_out$factors[[j]])) {
-      ncomp <- rgcca_args$ncomp[j]
+      ncomp <- max(rgcca_args$ncomp)
       r <- NCOL(func_out$factors[[j]][[m]]) / ncomp
       colnames(func_out$factors[[j]][[m]]) <- paste0(
         "comp", rep(seq_len(ncomp), each = r), "_r", seq_len(r)
       )
+      func_out$factors[[j]][[m]] <- func_out$factors[[j]][[m]][, seq_len(
+        r * rgcca_args$ncomp[j]
+      )]
     }
   }
 
