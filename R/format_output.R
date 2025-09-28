@@ -62,6 +62,7 @@ format_output <- function(func_out, rgcca_args, opt, blocks) {
 
   for (j in seq_along(blocks)[!array_idx]) {
     rownames(func_out$a[[j]]) <- colnames(blocks[[j]])
+    func_out$factors[[j]] <- func_out$a[[j]]
   }
 
   for (j in seq_along(blocks)) {
