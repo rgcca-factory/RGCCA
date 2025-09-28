@@ -114,9 +114,21 @@ rgcca_bootstrap <- function(rgcca_res, n_boot = 100,
   check_integer("n_boot", n_boot)
 
   ### Create bootstrap samples
-  v_inds <- lapply(seq_len(n_boot), function(i) {
-    sample(seq_len(NROW(rgcca_res$call$blocks[[1]])), replace = TRUE)
-  })
+  # If there is a disjunctive response block, sample bootstrap samples
+  # with a stratified strategy
+  if (rgcca_res$opt$disjunction) {
+    folds <- caret::createFolds(
+      rep(rgcca_res$call$blocks[[rgcca_res$call$response]][, 1], n_boot),
+      k = n_boot, list = TRUE,
+      returnTrain = FALSE
+    )
+    idx <- rep(seq_len(NROW(rgcca_res$call$blocks[[1]])), n_boot)
+    v_inds <- lapply(folds, function(f) idx[f])
+  } else {
+    v_inds <- lapply(seq_len(n_boot), function(i) {
+      sample(seq_len(NROW(rgcca_res$call$blocks[[1]])), replace = TRUE)
+    })
+  }
 
   ### Run RGCCA on the bootstrap samples
   W <- par_pblapply(v_inds, function(b) {
