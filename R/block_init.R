@@ -44,7 +44,7 @@ block_init.dual_regularized_block <- function(x, init = "svd") {
 block_init.tensor_block <- function(x, init = "svd") {
   if (init == "svd") {
     x$factors <- lapply(seq_along(dim(x$x))[-1], function(m) {
-      svd(apply(x$x, m, c), nu = 0, nv = x$rank)$v
+      initsvd(apply(x$x, m, c), dual = FALSE, rank = x$rank)
     })
   } else {
     x$factors <- lapply(seq_along(dim(x$x))[-1], function(m) {
@@ -93,7 +93,7 @@ block_init.regularized_tensor_block <- function(x, init = "svd") {
 block_init.separable_regularized_tensor_block <- function(x, init = "svd") {
   # Compute separable estimation of the regularization matrix
   d <- length(dim(x$x)) - 1
-  x$M <- estimate_separable_covariance(x$x)
+  x$M <- estimate_separable_covariance(x$x, x$na.rm)
   x$M <- lapply(x$M, function(y) {
     sqrt_matrix(
       x$tau^(1 / d) * diag(nrow(y)) + (1 - x$tau^(1 / d)) * y,
