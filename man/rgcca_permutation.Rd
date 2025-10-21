@@ -32,7 +32,8 @@ rgcca_permutation(
   comp_orth = TRUE,
   rank = 1,
   mode_orth = 1,
-  separable = TRUE
+  separable = TRUE,
+  simultaneous = FALSE
 )
 }
 \arguments{
@@ -220,6 +221,10 @@ in the decomposition sought by TGCCA. If block \eqn{j} is an array with
 \item{separable}{A logical value if the regularization matrices must be
 estimated as separable matrices (i.e. products of Kronecker products
 matching the dimensions of the modes in the data).}
+
+\item{simultaneous}{A logical value indicating if a simultaneous algorithm
+should be used to find all components or if a sequential algorithm should
+be used instead. Default value is FALSE.}
 }
 \value{
 A rgcca_permutation object that can be printed and plotted.

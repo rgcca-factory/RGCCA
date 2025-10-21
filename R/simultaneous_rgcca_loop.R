@@ -1,5 +1,6 @@
 #' @importFrom Deriv Deriv
-simultaneous_rgcca_loop <- function(blocks, connection = 1 - diag(length(blocks)),
+simultaneous_rgcca_loop <- function(blocks,
+                                    connection = 1 - diag(length(blocks)),
                                     tau = rep(1, length(blocks)),
                                     sparsity = rep(1, length(blocks)),
                                     ncomp = 1,
@@ -8,7 +9,8 @@ simultaneous_rgcca_loop <- function(blocks, connection = 1 - diag(length(blocks)
                                     verbose = TRUE,
                                     na.rm = TRUE, superblock = FALSE,
                                     response = NULL, disjunction = NULL,
-                                    n_iter_max = 1000, comp_orth = TRUE) {
+                                    n_iter_max = 1000, comp_orth = TRUE,
+                                    rank = 1, mode_orth = 1, separable = TRUE) {
   if (verbose) {
     scheme_str <- ifelse(is(scheme, "function"), "user-defined", scheme)
     cat(

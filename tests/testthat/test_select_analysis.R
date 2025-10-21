@@ -22,7 +22,8 @@ run_selection <- function(method, quiet = TRUE, ...) {
     sparsity = rep(1, J),
     mode_orth = rep(1, J),
     connection = 1 - diag(J),
-    superblock = FALSE
+    superblock = FALSE,
+    simultaneous = FALSE
   )
   rgcca_args <- modifyList(rgcca_args, list(...), keep.null = TRUE)
 
@@ -45,7 +46,7 @@ test_that("superblock methods sets all attributes of a superblock", {
     res <- tmp$res
     J <- tmp$J
 
-    if (method %in% c(superblock_methods(), "rgcca", "sgcca")) {
+    if (method %in% c(superblock_methods(), "rgcca", "sgcca", "grgcca")) {
       expect_true(res$rgcca_args$superblock)
       expect_equal(
         res$rgcca_args$connection,
