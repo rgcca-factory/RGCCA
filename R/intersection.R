@@ -5,7 +5,9 @@
 #' @noRd
 intersection_list <- function(A) {
   # Find rows without missing values in each block
-  valid_rows <- lapply(A, complete.cases)
+  valid_rows <- lapply(A, function(x) {
+    apply(x, 1, function(y) all(!is.na(y)))
+  })
   # Take the intersection
   common_valid_rows <- apply(
     matrix(unlist(valid_rows), length(valid_rows[[1]]), length(valid_rows)),
@@ -19,5 +21,5 @@ intersection_list <- function(A) {
     ))
   }
   # Extract the rows from the different blocks
-  lapply(A, function(x) subset_rows(x, as.logical(common_valid_rows)))
+  lapply(A, subset_block_rows, as.logical(common_valid_rows), drop = FALSE)
 }

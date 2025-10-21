@@ -23,6 +23,7 @@ get_rgcca_args <- function(object, default_args = list()) {
       tol = default_args$tol,
       init = tolower(default_args$init),
       bias = default_args$bias,
+      rank = default_args$rank,
       quiet = default_args$quiet,
       scale = default_args$scale,
       ncomp = default_args$ncomp,
@@ -34,6 +35,8 @@ get_rgcca_args <- function(object, default_args = list()) {
       response = default_args$response,
       NA_method = tolower(default_args$NA_method),
       comp_orth = default_args$comp_orth,
+      mode_orth = default_args$mode_orth,
+      separable = default_args$separable,
       n_iter_max = default_args$n_iter_max,
       connection = default_args$connection,
       superblock = default_args$superblock,
@@ -52,14 +55,15 @@ get_rgcca_args <- function(object, default_args = list()) {
     }
 
     rgcca_args$blocks <- check_blocks(
-      rgcca_args$blocks, add_NAlines = TRUE,
-      quiet = rgcca_args$quiet, response = rgcca_args$response
+      rgcca_args$blocks, quiet = rgcca_args$quiet, 
+      response = rgcca_args$response
     )
 
     check_integer("tol", rgcca_args$tol, float = TRUE, min = 0)
     check_integer("n_iter_max", rgcca_args$n_iter_max, min = 1)
     for (i in c(
-      "superblock", "verbose", "scale", "bias", "quiet", "comp_orth"
+      "superblock", "verbose", "scale", "bias", 
+      "quiet", "comp_orth", "separable"
     )) {
       check_boolean(i, rgcca_args[[i]])
     }

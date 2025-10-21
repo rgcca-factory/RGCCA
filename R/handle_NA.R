@@ -6,7 +6,7 @@ handle_NA <- function(blocks, NA_method = "na.ignore") {
   if (NA_method == "na.omit") blocks <- intersection_list(blocks)
   if (NA_method == "na.ignore") {
     blocks <- blocks
-    na.rm <- Reduce("||", lapply(blocks, function(x) any(is.na(x))))
+    na.rm <- any(is.na(unlist(blocks, use.names = FALSE)))
   }
   return(list(blocks = blocks, na.rm = na.rm))
 }

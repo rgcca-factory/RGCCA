@@ -15,56 +15,42 @@
 rgcca_bootstrap_k <- function(rgcca_res, inds = NULL, type = "loadings") {
   if (length(inds) > 0) {
     rgcca_res$call$blocks <- lapply(rgcca_res$call$blocks, function(x) {
-      y <- x[inds, , drop = FALSE]
+      y <- subset_block_rows(x, inds, drop = FALSE)
       rownames(y) <- paste("S", seq_along(inds))
       return(y)
     })
   }
   rgcca_res_boot <- rgcca(rgcca_res)
 
-  # block-weight vector
-  missing_var <- unlist(lapply(
-    seq_along(rgcca_res_boot$a),
-    function(x) {
-      setdiff(
-        colnames(rgcca_res$blocks[[x]]),
-        rownames(rgcca_res_boot$a[[x]])
-      )
-    }
-  ))
-  if (length(missing_var) == 0) {
-    # block-loadings vector
-    A <- check_sign_comp(rgcca_res, rgcca_res_boot$a)
+  # block-loadings vector
+  A <- check_sign_comp(rgcca_res, rgcca_res_boot$a)
 
-    if (type == "loadings") {
-      Y <- lapply(
-        seq_along(A),
-        function(j) pm(rgcca_res_boot$blocks[[j]], A[[j]])
-      )
-      L <- lapply(
-        seq_along(A),
-        function(j) {
-          cor2(rgcca_res_boot$blocks[[j]], Y[[j]])
-        }
-      )
-    } else {
-      L <- lapply(names(A), function(n) {
-        if (!(n %in% names(rgcca_res$AVE$AVE_X))) {
-          res <- rep(-1, NCOL(rgcca_res$a[[n]]))
-        } else {
-          res <-  rgcca_res_boot$AVE$AVE_X[[n]]
-        }
-        res <- matrix(
-          res, nrow = nrow(A[[n]]),
-          ncol = length(res), byrow = TRUE
-        )
-        rownames(res) <- rownames(A[[n]])
-        return(res)
-      })
-    }
-    names(L) <- names(rgcca_res$a)
-    return(list(W = A, L = L))
+  if (type == "loadings") {
+    Y <- lapply(
+      seq_along(A),
+      function(j) pm(to_mat(rgcca_res_boot$blocks[[j]]), A[[j]])
+    )
+    L <- lapply(
+      seq_along(A),
+      function(j) {
+        cor2(to_mat(rgcca_res_boot$blocks[[j]]), Y[[j]])
+      }
+    )
   } else {
-    return(NULL)
+    L <- lapply(names(A), function(n) {
+      if (!(n %in% names(rgcca_res$AVE$AVE_X))) {
+        res <- rep(-1, NCOL(rgcca_res$a[[n]]))
+      } else {
+        res <-  rgcca_res_boot$AVE$AVE_X[[n]]
+      }
+      res <- matrix(
+        res, nrow = nrow(A[[n]]),
+        ncol = length(res), byrow = TRUE
+      )
+      rownames(res) <- rownames(A[[n]])
+      return(res)
+    })
   }
+  names(L) <- names(rgcca_res$a)
+  return(list(W = A, L = L))
 }

@@ -31,3 +31,12 @@ block_postprocess.sparse_block <- function(x, ctrl) {
   }
   NextMethod()
 }
+
+#' @export
+block_postprocess.separable_regularized_tensor_block <- function(x, ctrl) {
+  x$factors <- lapply(seq_along(x$factors), function(m) {
+    x$M[[m]] %*% x$factors[[m]]
+  })
+  x$a <- Reduce(khatri_rao, rev(x$factors)) %*% x$lambda
+  NextMethod()
+}

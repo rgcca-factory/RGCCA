@@ -34,6 +34,9 @@ rgcca_cv(
   verbose = TRUE,
   n_iter_max = 1000,
   comp_orth = TRUE,
+  rank = 1,
+  mode_orth = 1,
+  separable = TRUE,
   ...
 )
 }
@@ -114,8 +117,8 @@ superblock option is used.}
 \item{scale_block}{A logical value or a string indicating if each block is
 scaled.
 
-If TRUE or "inertia", each block is divided by the sum of eigenvalues
-of its empirical covariance matrix.
+If TRUE or "inertia", each block is divided by the square root of the sum
+of eigenvalues of its empirical covariance matrix.
 
 If "lambda1", each block is divided by
 the square root of the highest eigenvalue of its empirical covariance matrix.
@@ -222,6 +225,24 @@ iterations.}
 
 \item{comp_orth}{A logical value indicating if the deflation should lead to
 orthogonal block components or orthogonal block weight vectors.}
+
+\item{rank}{Either an integer, an integer vector of
+size \eqn{J} or an integer matrix
+of dimension \eqn{\textrm{max}(\textrm{ncomp}) \times J} giving the rank
+of the decomposition sought for the canonical vectors in TGCCA.
+If block \eqn{j} is an array with at least three dimensions, rank must be
+comprised between 1 and the number of variables on the mode bearing the
+orthogonality constraint. See \eqn{\textrm{mode_orth}}.}
+
+\item{mode_orth}{Either an integer or an integer vector of size \eqn{J}
+designating the mode which associated set of factors will be orthogonal
+in the decomposition sought by TGCCA. If block \eqn{j} is an array with
+\eqn{d > 2} dimensions, \eqn{\textrm{mode_orth}} must be comprised between
+1 and \eqn{d - 1}.}
+
+\item{separable}{A logical value if the regularization matrices must be
+estimated as separable matrices (i.e. products of Kronecker products
+matching the dimensions of the modes in the data).}
 
 \item{...}{Additional parameters to be passed to prediction_model.}
 }

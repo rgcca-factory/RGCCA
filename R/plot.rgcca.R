@@ -222,12 +222,14 @@ plot.rgcca <- function(x, type = "weights",
     df <- data.frame(
       x = do.call(rbind, Map(function(i, j) {
         cor2(
-          x$blocks[[i]][rownames(x$Y[[j]]), ],
+          subset_block_rows(to_mat(x$blocks[[i]]), rownames(x$Y[[j]])),
           x$Y[[j]][, comp]
         )
       }, display_blocks, block)),
       response = num_block,
-      y = do.call(c, lapply(x$blocks[display_blocks], colnames))
+      y = do.call(
+        c, lapply(display_blocks, function(j) colnames(to_mat(x$blocks[[j]])))
+      )
     )
 
     idx <- unlist(
@@ -239,7 +241,9 @@ plot.rgcca <- function(x, type = "weights",
   df_weight <- function(x, block, comp, num_block, display_order) {
     df <- data.frame(
       x = unlist(lapply(x$a[block], function(z) z[, comp[1]])),
-      y = do.call(c, lapply(x$blocks[block], colnames)),
+      y = do.call(c, lapply(
+        block, function(j) colnames(to_mat(x$blocks[[j]]))
+      )),
       response = num_block
     )
     df <- df[df$x != 0, ]
@@ -397,7 +401,7 @@ plot.rgcca <- function(x, type = "weights",
   # Construct response vector for correlation circle, weights and loadings
   num_block <- as.factor(unlist(lapply(
     display_blocks,
-    function(j) rep(names(x$blocks)[j], NCOL(x$blocks[[j]]))
+    function(j) rep(names(x$blocks)[j], prod(dim(x$blocks[[j]])[-1]))
   )))
 
   switch(type,
@@ -481,7 +485,7 @@ plot.rgcca <- function(x, type = "weights",
       )
 
       # Rescale weigths
-      var_tot <- sum(diag(var(x$blocks[[block[1]]], na.rm = TRUE)))
+      var_tot <- sum(diag(var(to_mat(x$blocks[[block[1]]]), na.rm = TRUE)))
       a <- data.matrix(df$a[, c(1, 2)]) %*% diag(sqrt(
         var_tot * x$AVE$AVE_X[[block[1]]][comp]
       ))

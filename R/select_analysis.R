@@ -21,6 +21,7 @@
 #' @noRd
 select_analysis <- function(rgcca_args, blocks) {
   tau <- rgcca_args$tau
+  rank <- rgcca_args$rank
   ncomp <- rgcca_args$ncomp
   quiet <- rgcca_args$quiet
   scheme <- rgcca_args$scheme
@@ -28,6 +29,7 @@ select_analysis <- function(rgcca_args, blocks) {
   response <- rgcca_args$response
   sparsity <- rgcca_args$sparsity
   comp_orth <- rgcca_args$comp_orth
+  mode_orth <- rgcca_args$mode_orth
   connection <- rgcca_args$connection
   superblock <- rgcca_args$superblock
   scale_block <- rgcca_args$scale_block
@@ -38,6 +40,10 @@ select_analysis <- function(rgcca_args, blocks) {
     } else {
       method <- "spca"
     }
+  }
+
+  if (any(vapply(blocks, function(x) length(dim(x)), FUN.VALUE = 1L) > 2)) {
+    method <- "tgcca"
   }
 
   method <- check_method(method)
@@ -57,6 +63,13 @@ select_analysis <- function(rgcca_args, blocks) {
     "sgcca" = {
       param <- "sparsity"
       penalty <- sparsity
+    },
+    "tgcca" = {
+      mode_orth <- check_mode_orth(mode_orth, blocks)
+      param <- "tau"
+      penalty <- tau
+      comp_orth <- TRUE
+      superblock <- FALSE
     },
     "pca" = {
       check_nblocks(blocks, "pca")
@@ -401,7 +414,7 @@ select_analysis <- function(rgcca_args, blocks) {
     }
   }
 
-  if (method %in% c("rgcca", "sgcca")) {
+  if (method %in% c("rgcca", "sgcca", "tgcca")) {
     scheme <- check_scheme(scheme)
     if (any(sparsity != 1)) {
       param <- "sparsity"
@@ -438,6 +451,7 @@ select_analysis <- function(rgcca_args, blocks) {
         penalty <- c(penalty[seq(J)], pen)
       }
     } else {
+      rank <- check_rank(rank, blocks, mode_orth, ncomp = max(ncomp))
       if (is.null(connection)) {
         connection <- connection_matrix(blocks, type = "pair")
       } else {
@@ -453,11 +467,13 @@ select_analysis <- function(rgcca_args, blocks) {
   rgcca_args[[param]] <- penalty
 
   rgcca_args <- modifyList(rgcca_args, list(
+    rank = rank,
     ncomp = ncomp,
     scheme = scheme,
     method = method,
     response = response,
     comp_orth = comp_orth,
+    mode_orth = mode_orth,
     connection = connection,
     superblock = superblock,
     scale_block = scale_block

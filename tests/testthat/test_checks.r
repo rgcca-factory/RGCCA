@@ -458,3 +458,37 @@ test_that("check_scheme passes when scheme is valid", {
   g <- function(x) x^2
   expect_error(check_scheme(g), NA)
 })
+
+# Test check_rank
+n <- nrow(blocks[[1]])
+array_blocks <- blocks
+array_blocks[[4]] <- array(seq(n * 10 * 5), dim = c(n, 10, 5))
+test_that("check_rank raises an error for invalid rank", {
+  expect_error(
+    check_rank("toto", array_blocks, rep(1, 4), 1),
+    "rank must be numeric.", fixed = TRUE
+  )
+  expect_error(
+    check_rank(rep(1, 5), array_blocks, rep(1, 4), 1),
+    paste0("rank must have the same number of columns (actually 5) ",
+           "as the number of blocks (4)."),
+    fixed = TRUE
+  )
+  expect_error(
+    check_rank(c(1, 1, 1, 7), array_blocks, c(1, 1, 1, 2), 1),
+    paste0("rank[4] should be comprise between 1 and 5 (that is the number of ",
+           "variables of the mode bearing the orthogonality for block 4)."),
+    fixed = TRUE
+  )
+  expect_error(
+    check_rank(matrix(rep(1, 8), nrow = 2), array_blocks, rep(1, 4), 1),
+    "rank must have 1 rows.", fixed = TRUE
+  )
+})
+test_that("check_rank passes when rank is valid", {
+  expect_equal(check_rank(1, array_blocks, rep(1, 4), 1), matrix(1, 1, 4))
+  r <- matrix(1, 2, 4)
+  expect_equal(check_rank(r, array_blocks, rep(1, 4), 2), r)
+  r[2, 4] <- 7
+  expect_equal(check_rank(r, array_blocks, rep(1, 4), 2), r)
+})

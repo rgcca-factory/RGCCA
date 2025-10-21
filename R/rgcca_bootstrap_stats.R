@@ -53,7 +53,7 @@ rgcca_bootstrap_stats <- function(res, rgcca_res, n_boot) {
     unlist(rgcca_res$a, use.names = FALSE),
     unlist(lapply(unique(stats$block), function(block) {
       cor2(
-        rgcca_res$blocks[[block]],
+        to_mat(rgcca_res$blocks[[block]]),
         rgcca_res$Y[[block]]
       )
     }), use.names = FALSE)

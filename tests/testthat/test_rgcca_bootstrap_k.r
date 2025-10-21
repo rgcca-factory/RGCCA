@@ -24,7 +24,7 @@ test_that("test_rgcca_bootstrap_k_1", {
 rgcca_out_2 <- rgcca(blocks, superblock = FALSE, ncomp = 2)
 resb_2 <- rgcca_bootstrap_k(rgcca_out_2)
 
-test_that("test_rgcca_bootstrap_k", {
+test_that("test_rgcca_bootstrap_k_2", {
   expect_is(resb_2, "list")
   expect_is(resb_2[[1]][[1]], "matrix")
   expect_is(resb_2[[2]][[1]], "matrix")
@@ -34,9 +34,7 @@ test_that("test_rgcca_bootstrap_k", {
 })
 
 # If one bootstrap sample presents at least a single variable with null
-# variance, rgcca_bootstrap_k should return the name of
-# the null variance variables
-# in both the two lists it returns.
+# variance, rgcca_bootstrap_k should still return results
 blocks_3 <- blocks
 blocks_3$agriculture$rent <- 0
 blocks_3$agriculture$rent[1] <- 1
@@ -44,6 +42,11 @@ rgcca_out_3 <- rgcca(blocks_3, superblock = FALSE, ncomp = 2)
 inds <- c(2, 2:NROW(blocks_3$agriculture))
 resb_3 <- rgcca_bootstrap_k(rgcca_res = rgcca_out_3, inds = inds)
 
-test_that("test_rgcca_bootstrap_k_missing_var_identification", {
-  expect_null(resb_3)
+test_that("test_rgcca_bootstrap_k_3", {
+  expect_is(resb_3, "list")
+  expect_is(resb_3[[1]][[1]], "matrix")
+  expect_is(resb_3[[2]][[1]], "matrix")
+  expect_equal(length(resb_3), 2)
+  expect_true(all(vapply(resb_3[[1]], NCOL, FUN.VALUE = 1L) == 2))
+  expect_identical(vapply(resb_3[[1]], NROW, FUN.VALUE = 1L), p)
 })

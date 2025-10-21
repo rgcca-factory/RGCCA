@@ -196,33 +196,35 @@ test_that("Block weights can be retrieved using the superblock weights", {
 })
 
 ##### Retrieve MFA with RGCCA #####
-df <- Russett[, c(
-  "gini", "farm", "rent", "gnpr", "labo",
-  "inst", "ecks", "death", "demostab", "dictator"
-)]
-fit.mfa <- FactoMineR::MFA(df,
-  group = c(3, 2, 5), ncp = 2, type = rep("s", 3),
-  graph = FALSE
-)
-
-X_agric <- Russett[, c("gini", "farm", "rent")]
-X_ind <- Russett[, c("gnpr", "labo")]
-X_polit <- Russett[, c(
-  "inst", "ecks", "death",
-  "demostab", "dictator"
-)]
-A <- list(Agric = X_agric, Ind = X_ind, Polit = X_polit)
-
-test_that("RGCCA is equivalent to MFA with right parameters", {
-  fit.mcoa <- rgcca(
-    blocks = A, tau = 1, scheme = "factorial", scale = TRUE,
-    scale_block = "lambda1", bias = TRUE, ncomp = 2,
-    superblock = TRUE, tol = 1e-16
+if ("FactoMineR" %in% rownames(installed.packages())) {
+  df <- Russett[, c(
+    "gini", "farm", "rent", "gnpr", "labo",
+    "inst", "ecks", "death", "demostab", "dictator"
+  )]
+  fit.mfa <- FactoMineR::MFA(df,
+                             group = c(3, 2, 5), ncp = 2, type = rep("s", 3),
+                             graph = FALSE
   )
 
-  expect_lte(max(abs(fit.mcoa$Y[[4]][, 1] - fit.mfa$ind$coord[, 1])), tol)
-  expect_lte(max(abs(fit.mcoa$Y[[4]][, 2] - fit.mfa$ind$coord[, 2])), tol)
-})
+  X_agric <- Russett[, c("gini", "farm", "rent")]
+  X_ind <- Russett[, c("gnpr", "labo")]
+  X_polit <- Russett[, c(
+    "inst", "ecks", "death",
+    "demostab", "dictator"
+  )]
+  A <- list(Agric = X_agric, Ind = X_ind, Polit = X_polit)
+
+  test_that("RGCCA is equivalent to MFA with right parameters", {
+    fit.mcoa <- rgcca(
+      blocks = A, tau = 1, scheme = "factorial", scale = TRUE,
+      scale_block = "lambda1", bias = TRUE, ncomp = 2,
+      superblock = TRUE, tol = 1e-16
+    )
+
+    expect_lte(max(abs(fit.mcoa$Y[[4]][, 1] - fit.mfa$ind$coord[, 1])), tol)
+    expect_lte(max(abs(fit.mcoa$Y[[4]][, 2] - fit.mfa$ind$coord[, 2])), tol)
+  })
+}
 
 ##### Test AVE #####
 X_agric <- Russett[, c("gini", "farm", "rent")]

@@ -45,8 +45,8 @@ rgcca_transform <- function(rgcca_res, blocks_test = rgcca_res$call$blocks) {
   }
   X_train <- rgcca_res$blocks[names(blocks_test)]
   blocks_test <- lapply(seq_along(blocks_test), function(j) {
-    x <- as.matrix(blocks_test[[j]])
-    y <- as.matrix(X_train[[j]])
+    x <- to_mat(blocks_test[[j]])
+    y <- to_mat(X_train[[j]])
     # Deal with qualitative block
     if (rgcca_res$opt$disjunction) {
       j_train <- which(names(rgcca_res$blocks) == names(blocks_test)[j])

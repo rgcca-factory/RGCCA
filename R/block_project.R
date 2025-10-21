@@ -54,3 +54,10 @@ block_project.sparse_block <- function(x) {
   x$Y <- pm(x$x, x$a, na.rm = x$na.rm)
   return(x)
 }
+
+#' @export
+block_project.tensor_block <- function(x) {
+  x$a <- Reduce(khatri_rao, rev(x$factors)) %*% x$lambda
+  x$Y <- pm(matrix(x$x, nrow = nrow(x$x)), x$a, na.rm = x$na.rm)
+  return(x)
+}

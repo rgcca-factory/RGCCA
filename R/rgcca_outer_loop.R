@@ -8,7 +8,8 @@ rgcca_outer_loop <- function(blocks, connection = 1 - diag(length(blocks)),
                              verbose = TRUE,
                              na.rm = TRUE, superblock = FALSE,
                              response = NULL, disjunction = NULL,
-                             n_iter_max = 1000, comp_orth = TRUE) {
+                             n_iter_max = 1000, comp_orth = TRUE,
+                             rank = 1, mode_orth = 1, separable = TRUE) {
   if (verbose) {
     scheme_str <- ifelse(is(scheme, "function"), "user-defined", scheme)
     cat(
@@ -49,8 +50,10 @@ rgcca_outer_loop <- function(blocks, connection = 1 - diag(length(blocks)),
   crit <- list()
   R <- blocks
 
-  a <- lapply(seq(J), function(b) c())
-  Y <- lapply(seq(J), function(b) c())
+  a <- Y <- lambda <- lapply(seq(J), function(b) c())
+  factors <- lapply(seq(J), function(b) {
+    lapply(seq_along(dim(R[[b]])[-1]), function(m) NULL)
+  })
 
   if (superblock && comp_orth) {
     P <- c()
@@ -74,11 +77,18 @@ rgcca_outer_loop <- function(blocks, connection = 1 - diag(length(blocks)),
     )
   }
 
+  if (is.vector(rank)) {
+    rank <- matrix(
+      rep(rank, N + 1),
+      nrow = N + 1, J, byrow = TRUE
+    )
+  }
+
   # Whether primal or dual
   primal_dual <- matrix("primal", nrow = N + 1, ncol = J)
   primal_dual[which((sparsity == 1) & (nb_ind < matrix(
     pjs, nrow = N + 1, ncol = J, byrow = TRUE
-  )))]
+  )))] <- "dual"
 
   ##### Computation of RGCCA components #####
   for (n in seq(N + 1)) {
@@ -93,16 +103,26 @@ rgcca_outer_loop <- function(blocks, connection = 1 - diag(length(blocks)),
                                     sparsity = sparsity[n, ],
                                     init = init, bias = bias, tol = tol,
                                     verbose = verbose, na.rm = na.rm,
-                                    n_iter_max = n_iter_max
+                                    n_iter_max = n_iter_max,
+                                    rank = rank[n, ], mode_orth = mode_orth,
+                                    separable = separable
     )
 
     # Store tau, crit
     computed_tau[n, ] <- gcca_result$tau
     crit[[n]] <- gcca_result$crit
 
-    # Store Y, a, factors and weights
+    # Store Y, a, factors and lambda
     a <- lapply(seq(J), function(b) cbind(a[[b]], gcca_result$a[[b]]))
     Y <- lapply(seq(J), function(b) cbind(Y[[b]], gcca_result$Y[, b]))
+    factors <- lapply(seq(J), function(b) {
+      lapply(seq_along(factors[[b]]), function(m) {
+        cbind(factors[[b]][[m]], gcca_result$factors[[b]][[m]])
+      })
+    })
+    lambda <- lapply(
+      seq(J), function(b) cbind(lambda[[b]], gcca_result$lambda[[b]])
+    )
 
     # Deflation procedure
     if (n == N + 1) break
@@ -113,7 +133,7 @@ rgcca_outer_loop <- function(blocks, connection = 1 - diag(length(blocks)),
   }
 
   # If there is a superblock and weight vectors are orthogonal, it is possible
-  # to have non meaningful weights associated to blocks that have been set to
+  # to have non meaningful lambda associated to blocks that have been set to
   # zero by the deflation
   if (superblock && !comp_orth) {
     a <- lapply(a, function(x) {
@@ -138,6 +158,8 @@ rgcca_outer_loop <- function(blocks, connection = 1 - diag(length(blocks)),
     Y = Y,
     a = a,
     astar = astar,
+    factors = factors,
+    lambda = lambda,
     tau = computed_tau,
     crit = crit, primal_dual = primal_dual
   )

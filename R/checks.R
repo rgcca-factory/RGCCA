@@ -266,10 +266,10 @@ check_ncomp <- function(ncomp, blocks, min = 1, superblock = FALSE,
 check_sign_comp <- function(rgcca_res, w) {
   y <- lapply(
     seq_along(rgcca_res$a),
-    function(i) pm(rgcca_res$blocks[[i]], w[[i]])
+    function(i) pm(to_mat(rgcca_res$blocks[[i]]), w[[i]])
   )
 
-  w <- lapply(setNames(seq_along(w), names(w)), function(i) {
+  w[seq_along(w)] <- lapply(seq_along(w), function(i) {
     if (NROW(w[[i]]) < NROW(y[[i]])) {
       res <- as.matrix(cor2(rgcca_res$Y[[i]], y[[i]]))
     } else {
@@ -376,6 +376,49 @@ check_tau <- function(tau) {
     tau <- check_integer("tau", tau, float = TRUE, min = 0, max = 1)
   }
   invisible(tau)
+}
+
+check_mode_orth <- function(mode_orth, blocks) {
+  mode_orth <- elongate_arg(mode_orth, blocks)
+  mode_orth <- check_integer("mode_orth", mode_orth, min = 1, type = "vector")
+  check_size_blocks(blocks, "mode_orth", mode_orth)
+  lapply(seq_along(blocks), function(j) {
+    if (length(dim(blocks[[j]])) > 2 &&
+        mode_orth[j] > length(dim(blocks[[j]])) - 1) {
+      stop_rgcca(
+        "mode_orth should be comprise between ", 1 ,
+        " and ", length(dim(blocks[[j]])) - 1, " (that is the number of
+          modes of block ", j, " minus 1)."
+      )
+    }
+  })
+  return(mode_orth)
+}
+
+check_rank <- function(rank, blocks, mode_orth, ncomp) {
+  rank <- elongate_arg(rank, blocks)
+  p <- ifelse(is.vector(rank), 1, nrow(rank))
+  J <- length(blocks)
+  rank <- vapply(seq_along(rank), function(x) {
+    y <- check_integer("rank", rank[x], min = 1)
+    j <- (x - 1) %% J + 1
+    if (length(dim(blocks[[j]])) > 2 &&
+        y > dim(blocks[[j]])[mode_orth[j] + 1]) {
+      stop_rgcca(
+        "rank[", x, "] should be comprise between ", 1 ,
+        " and ", dim(blocks[[j]])[mode_orth[j] + 1], " (that is the number of",
+        " variables of the mode bearing the orthogonality for block ", j, ")."
+      )
+    }
+    return(y)
+  }, FUN.VALUE = 1L)
+
+  rank <- matrix(rank, nrow = p)
+  check_size_blocks(blocks, "rank", rank, n_row = ncomp)
+  if (p < ncomp) {
+    rank <- matrix(rank, nrow = ncomp, ncol = J, byrow = TRUE)
+  }
+  return(rank)
 }
 
 check_scheme <- function(scheme) {

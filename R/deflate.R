@@ -34,20 +34,25 @@ deflate <- function(a, Y, R, P, ndefl, n, superblock,
     cumsum_pjs <- cumsum(pjs)[seq_len(J - 1)]
     inf_pjs <- c(0, cumsum_pjs[seq_len(J - 2)]) + 1
     R <- lapply(seq(J - 1), function(b) {
-      x <- defl_result$R[, inf_pjs[b]:cumsum_pjs[b], drop = FALSE]
-      colnames(x) <- colnames(defl_result$R)[inf_pjs[b]:cumsum_pjs[b]]
+      x <- defl_result$R[, seq(inf_pjs[b], cumsum_pjs[b]), drop = FALSE]
+      colnames(x) <- colnames(defl_result$R)[seq(inf_pjs[b], cumsum_pjs[b])]
       return(x)
     })
     R[[J]] <- defl_result$R
   # Otherwise, the individual blocks are deflated
   } else {
-    defl_result <- defl_select(var_defl, R,
+    defl_result <- defl_select(var_defl, 
+                               lapply(R, function(x) matrix(x, nrow = nrow(x))),
                                ndefl, n - 1, J,
                                na.rm = na.rm,
                                response = response,
                                left = left
     )
-    R <- defl_result$resdefl
+    R[seq_along(R)] <- lapply(seq_along(R), function(j) {
+      x <- array(defl_result$resdefl[[j]], dim = dim(R[[j]]))
+      dimnames(x) <- dimnames(R[[j]])
+      return(x)
+    })
     P <- lapply(seq(J), function(b) {
       cbind(P[[b]], defl_result$pdefl[[b]])
     })

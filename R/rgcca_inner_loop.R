@@ -1,7 +1,10 @@
 rgcca_inner_loop <- function(A, C, g, dg, tau = rep(1, length(A)),
                              sparsity = rep(1, length(A)),
                              verbose = FALSE, init = "svd", bias = TRUE,
-                             tol = 1e-08, na.rm = TRUE, n_iter_max = 1000) {
+                             tol = 1e-08, na.rm = TRUE, n_iter_max = 1000,
+                             rank = rep(1, length(A)),
+                             mode_orth = rep(1, length(A)),
+                             separable = TRUE) {
   if (!is.numeric(tau)) {
     # From Schafer and Strimmer, 2005
     tau <- vapply(A, tau.estimate, na.rm = na.rm, FUN.VALUE = 1.0)
@@ -15,7 +18,8 @@ rgcca_inner_loop <- function(A, C, g, dg, tau = rep(1, length(A)),
 
   ### Initialization
   block_objects <- lapply(seq_along(A), function(j) {
-    create_block(A[[j]], j, bias, na.rm, tau[j], sparsity[j], tol)
+    create_block(A[[j]], j, bias, na.rm, tau[j], sparsity[j], 
+    tol, rank[j], mode_orth[j], separable)
   })
 
   block_objects <- lapply(block_objects, block_init, init = init)
@@ -84,6 +88,10 @@ rgcca_inner_loop <- function(A, C, g, dg, tau = rep(1, length(A)),
   block_objects <- lapply(block_objects, block_postprocess, ctrl)
   a <- lapply(block_objects, "[[", "a")
   Y <- do.call(cbind, lapply(block_objects, "[[", "Y"))
+  factors <- lapply(block_objects, "[[", "factors")
+  lambda <- lapply(block_objects, "[[", "lambda")
 
-  return(list(Y = Y, a = a, crit = crit, tau = tau))
+  return(list(
+    Y = Y, a = a, factors = factors, lambda = lambda, crit = crit, tau = tau
+  ))
 }

@@ -9,7 +9,7 @@ rgcca_permutation_k <- function(rgcca_args, inds, perm, par_type, par_value) {
   if (perm) {
     blocks <- lapply(seq_along(rgcca_args$blocks), function(i) {
       x <- rgcca_args$blocks[[i]]
-      block <- as.matrix(x)[inds[[i]], , drop = FALSE]
+      block <- subset_block_rows(x, inds[[i]], drop = FALSE)
       rownames(block) <- rownames(x)
       return(block)
     })

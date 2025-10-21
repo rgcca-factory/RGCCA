@@ -13,12 +13,14 @@ run_selection <- function(method, quiet = TRUE, ...) {
 
   rgcca_args <- list(
     tau = rep(1, J),
+    rank = rep(1, J),
     ncomp = rep(1, J),
     quiet = quiet,
     scheme = "centroid",
     method = method,
     response = NULL,
     sparsity = rep(1, J),
+    mode_orth = rep(1, J),
     connection = 1 - diag(J),
     superblock = FALSE
   )

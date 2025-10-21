@@ -39,3 +39,73 @@ block_init.dual_regularized_block <- function(x, init = "svd") {
   x$M <- ginv(x$tau * diag(x$n) + (1 - x$tau) * x$K / x$N)
   NextMethod()
 }
+
+#' @export
+block_init.tensor_block <- function(x, init = "svd") {
+  if (init == "svd") {
+    x$factors <- lapply(seq_along(dim(x$x))[-1], function(m) {
+      initsvd(apply(x$x, m, c), dual = FALSE, rank = x$rank)
+    })
+  } else {
+    x$factors <- lapply(seq_along(dim(x$x))[-1], function(m) {
+      if (m == x$mode_orth) {
+        svd(matrix(
+          rnorm(dim(x$x)[m] * x$rank), dim(x$x)[m]
+        ), nu = x$rank, nv = 0)$u
+      } else {
+        matrix(rnorm(dim(x$x)[m] * x$rank), dim(x$x)[m])
+      }
+    })
+  }
+  x$lambda <- rep(1 / sqrt(x$rank), x$rank)
+
+  return(block_project(x))
+}
+
+#' @export
+block_init.regularized_tensor_block <- function(x, init = "svd") {
+  # Compute the highest singular value of the regularization matrix
+  p <- prod(dim(x$x)[-1])
+  if (p > x$n) {
+    x$M <- eigen(
+      pm(matrix(x$x, x$n), t(matrix(x$x, x$n)), na.rm = x$na.rm),
+      symmetric = TRUE, only.values = TRUE
+    )$values[1]
+  } else {
+    x$M <- eigen(
+      pm(t(matrix(x$x, x$n)), matrix(x$x, x$n), na.rm = x$na.rm),
+      symmetric = TRUE, only.values = TRUE
+    )$values[1]
+  }
+  x$M <- x$tau + (1 - x$tau) * x$M / x$N
+
+  # Initialize the factors and lambda using the tau = 1 strategy
+  x <- NextMethod()
+
+  # Change lambda to satisfy the constraints
+  x$lambda <- x$lambda / sqrt(x$M)
+  x$a <- x$a / sqrt(x$M)
+  x$Y <- x$Y / sqrt(x$M)
+  return(x)
+}
+
+#' @export
+block_init.separable_regularized_tensor_block <- function(x, init = "svd") {
+  # Compute separable estimation of the regularization matrix
+  d <- length(dim(x$x)) - 1
+  x$M <- estimate_separable_covariance(x$x, x$na.rm)
+  x$M <- lapply(x$M, function(y) {
+    sqrt_matrix(
+      x$tau^(1 / d) * diag(nrow(y)) + (1 - x$tau^(1 / d)) * y,
+      inv = TRUE
+    )
+  })
+
+  # Make a change of variables
+  for (m in seq_len(d)) {
+    x$x <- mode_product(x$x, x$M[[m]], m = m + 1)
+  }
+
+  # Initialize the factors and lambda using the tau = 1 strategy
+  NextMethod()
+}

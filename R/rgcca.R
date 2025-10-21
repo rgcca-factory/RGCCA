@@ -68,8 +68,8 @@
 #' @param scale_block A logical value or a string indicating if each block is
 #' scaled.
 #'
-#' If TRUE or "inertia", each block is divided by the sum of eigenvalues
-#' of its empirical covariance matrix.
+#' If TRUE or "inertia", each block is divided by the square root of the sum
+#' of eigenvalues of its empirical covariance matrix.
 #'
 #' If "lambda1", each block is divided by
 #' the square root of the highest eigenvalue of its empirical covariance matrix.
@@ -172,6 +172,21 @@
 #' iterations.
 #' @param comp_orth A logical value indicating if the deflation should lead to
 #' orthogonal block components or orthogonal block weight vectors.
+#' @param rank Either an integer, an integer vector of
+#' size \eqn{J} or an integer matrix
+#' of dimension \eqn{\textrm{max}(\textrm{ncomp}) \times J} giving the rank
+#' of the decomposition sought for the canonical vectors in TGCCA.
+#' If block \eqn{j} is an array with at least three dimensions, rank must be
+#' comprised between 1 and the number of variables on the mode bearing the
+#' orthogonality constraint. See \eqn{\textrm{mode_orth}}.
+#' @param mode_orth Either an integer or an integer vector of size \eqn{J}
+#' designating the mode which associated set of factors will be orthogonal
+#' in the decomposition sought by TGCCA. If block \eqn{j} is an array with
+#' \eqn{d > 2} dimensions, \eqn{\textrm{mode_orth}} must be comprised between
+#' 1 and \eqn{d - 1}.
+#' @param separable A logical value if the regularization matrices must be
+#' estimated as separable matrices (i.e. products of Kronecker products
+#' matching the dimensions of the modes in the data).
 #' @param A Deprecated argument, please use blocks instead.
 #' @param C Deprecated argument, please use connection instead.
 #' @return A fitted rgcca object.
@@ -433,6 +448,7 @@ rgcca <- function(blocks, connection = NULL, tau = 1, ncomp = 1,
                   superblock = FALSE,
                   NA_method = "na.ignore", quiet = TRUE,
                   n_iter_max = 1000, comp_orth = TRUE,
+                  rank = 1, mode_orth = 1, separable = TRUE,
                   A = NULL, C = NULL) {
   # Check for deprecated arguments
   if (!missing(A)) {
@@ -453,7 +469,7 @@ rgcca <- function(blocks, connection = NULL, tau = 1, ncomp = 1,
   rgcca_args$quiet <- quiet
   rgcca_args$verbose <- verbose
 
-  blocks <- remove_null_sd(rgcca_args$blocks)$list_m
+  blocks <- rgcca_args$blocks
 
   if (opt$disjunction) {
     blocks[[rgcca_args$response]] <- as_disjunctive(
@@ -480,7 +496,8 @@ rgcca <- function(blocks, connection = NULL, tau = 1, ncomp = 1,
   ### Call the gcca function
   gcca_args <- rgcca_args[c(
     "connection", "ncomp", "scheme", "init", "bias", "tol",
-    "verbose", "superblock", "response", "n_iter_max", "comp_orth"
+    "verbose", "superblock", "response", "n_iter_max", "comp_orth",
+    "rank", "mode_orth", "separable"
   )]
   gcca_args[["na.rm"]] <- na.rm
   gcca_args[["blocks"]] <- blocks
