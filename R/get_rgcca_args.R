@@ -40,7 +40,8 @@ get_rgcca_args <- function(object, default_args = list()) {
       n_iter_max = default_args$n_iter_max,
       connection = default_args$connection,
       superblock = default_args$superblock,
-      scale_block = default_args$scale_block
+      scale_block = default_args$scale_block,
+      simultaneous = default_args$simultaneous
     )
 
     rgcca_args$init <- check_char(rgcca_args$init, "init", c("svd", "random"))
@@ -62,8 +63,8 @@ get_rgcca_args <- function(object, default_args = list()) {
     check_integer("tol", rgcca_args$tol, float = TRUE, min = 0)
     check_integer("n_iter_max", rgcca_args$n_iter_max, min = 1)
     for (i in c(
-      "superblock", "verbose", "scale", "bias", 
-      "quiet", "comp_orth", "separable"
+      "superblock", "verbose", "scale", "bias",
+      "quiet", "comp_orth", "separable", "simultaneous"
     )) {
       check_boolean(i, rgcca_args[[i]])
     }

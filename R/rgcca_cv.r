@@ -190,6 +190,7 @@ rgcca_cv <- function(blocks,
                      rank = 1,
                      mode_orth = 1,
                      separable = TRUE,
+                     simultaneous = FALSE,
                      ...) {
   ### Try to retrieve parameters from a rgcca object
   rgcca_args <- as.list(environment())

@@ -41,6 +41,41 @@ block_init.dual_regularized_block <- function(x, init = "svd") {
 }
 
 #' @export
+block_init.sim_block <- function(x, init = "svd") {
+  if (init == "svd") {
+    x$a <- initsvd(x$x, dual = FALSE, rank = x$ncomp)
+  } else {
+    x$a <- matrix(rnorm(x$p * x$ncomp), nrow = x$p)
+  }
+
+  return(block_project(x))
+}
+
+#' @export
+block_init.sim_primal_regularized_block <- function(x, init = "svd") {
+  x$M <- sqrt_matrix(
+    x$tau * diag(x$p) + (1 - x$tau) * pm(t(x$x), x$x, na.rm = x$na.rm) / x$N,
+    inv = TRUE
+  )
+  x$x <- pm(x$x, x$M, na.rm = x$na.rm)
+  NextMethod()
+}
+
+#' @export
+block_init.sim_response_block <- function(x, init = "svd") {
+  if (init == "svd") {
+    x$a <- matrix(
+      rep(initsvd(x$x, dual = FALSE, rank = 1), x$ncomp),
+      ncol = x$ncomp
+    )
+  } else {
+    x$a <- matrix(rnorm(x$p * x$ncomp), nrow = x$p)
+  }
+
+  return(block_project(x))
+}
+
+#' @export
 block_init.tensor_block <- function(x, init = "svd") {
   if (init == "svd") {
     x$factors <- lapply(seq_along(dim(x$x))[-1], function(m) {
