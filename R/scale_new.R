@@ -6,9 +6,7 @@
 #' "scaled:scale".
 #' @title Scaling and Centering of Matrix-like Objects
 #' @noRd
-scale2 <- function(A, scale = TRUE, bias = TRUE) {
-  # Center the data
-  A <- scale(A, center = TRUE, scale = FALSE)
+scale_new <- function(A, scale = TRUE, bias = TRUE) {
 
   # Scale if needed
   if (scale) {
@@ -19,3 +17,4 @@ scale2 <- function(A, scale = TRUE, bias = TRUE) {
 
   return(A)
 }
+
