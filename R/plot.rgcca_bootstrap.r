@@ -2,7 +2,7 @@
 #' @rdname plot
 #' @order 4
 plot.rgcca_bootstrap <- function(x, block = seq_along(x$rgcca$call$blocks),
-                                 comp = 1, type = c("weights", "loadings"),
+                                 comp = 1, type = c("weights", "loadings", "factors"),
                                  empirical = TRUE, n_mark = 30,
                                  display_order = TRUE,
                                  show_stars = TRUE, title = NULL,
@@ -10,10 +10,11 @@ plot.rgcca_bootstrap <- function(x, block = seq_along(x$rgcca$call$blocks),
                                  cex_main = 14 * cex, cex_lab = 12 * cex,
                                  cex_point = 3 * cex, colors = NULL,
                                  adj.method = "fdr", ...) {
+  
   ### Perform checks and parse arguments
   stopifnot(is(x, "rgcca_bootstrap"))
   type <- type[1]
-  type <- match.arg(type, c("weights", "loadings"))
+  type <- match.arg(type, c("weights", "loadings", "factors"))
   lapply(block, function(i) check_blockx("block", i, x$rgcca$call$blocks))
   Map(function(y, z) check_compx(y, y, x$rgcca$call$ncomp, z), comp, block)
   check_integer("n_mark", n_mark)
@@ -28,21 +29,43 @@ plot.rgcca_bootstrap <- function(x, block = seq_along(x$rgcca$call$blocks),
       "estimate", "mean", "sd", "th_lower_bound", "th_upper_bound", "th_pval"
     )
   }
+  
+  multi_blocks <- sapply(x$rgcca$call$blocks, function(b) {
+    is.array(b) && length(dim(b)) > 2
+  })
+  
+  blocks_names <- names(x$rgcca$blocks)
+  
+  df_list <- lapply(seq_along(block), function(ii) {
+    j <- block[ii]  
+    bn <- blocks_names[j]
+    use_type <- if (multi_blocks[j]) "factors" else type
+    comp_j <- if (length(comp) == 1) comp else comp[ii]
+    subset(x$stats, type == use_type & block == bn & comp == comp_j)
+  })
+  
+  df <- do.call(rbind, df_list)
+  if (is.null(df) || nrow(df) == 0) {
+    message("No data to plot: no rows in bootstrap stats matching chosen blocks/type/comp.")
+    return(invisible(NULL))
+  }
 
-  df <- x$stats[x$stats$type == type, ]
+  blkvec <- df$block
+  
   col_pval <- ifelse(empirical, "pval", "th_pval")
-  df[, col_pval] <- p.adjust(df[, col_pval], method = adj.method)
-  df <- df[df$block %in% names(x$rgcca$blocks)[block], ]
-  df <- df[df$comp == comp, ]
+  if (col_pval %in% colnames(df)) {
+    df[, col_pval] <- p.adjust(df[, col_pval], method = adj.method)
+  } else {
+    df[, col_pval] <- NA
+  }
+  
   rownames(df) <- df$var
-  df <- df[, columns]
+  df <- df[, columns, drop = FALSE]
   colnames(df) <- column_names
-
-  df <- df[unlist(lapply(x$rgcca$blocks[block], colnames)), ]
-
-  df$response <- as.factor(unlist(lapply(block, function(j) {
-    rep(names(x$rgcca$blocks)[j], NCOL(x$rgcca$blocks[[j]]))
-  })))
+  
+  df$response <- factor(blkvec)
+  
+  ### st
 
   if (display_order) {
     df <- df[order(abs(df$estimate), decreasing = TRUE), ]

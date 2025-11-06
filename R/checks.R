@@ -262,27 +262,81 @@ check_ncomp <- function(ncomp, blocks, min = 1, superblock = FALSE,
   return(ncomp)
 }
 
-# Test on the sign of the correlation
-check_sign_comp <- function(rgcca_res, w) {
-  y <- lapply(
-    seq_along(rgcca_res$a),
-    function(i) pm(to_mat(rgcca_res$blocks[[i]]), w[[i]])
-  )
-
-  w[seq_along(w)] <- lapply(seq_along(w), function(i) {
-    if (NROW(w[[i]]) < NROW(y[[i]])) {
-      res <- as.matrix(cor2(rgcca_res$Y[[i]], y[[i]]))
-    } else {
-      res <- as.matrix(cor2(rgcca_res$a[[i]], w[[i]]))
+# Sign correction
+check_sign_comp <- function(fit, res_a) {
+  blocks_idx <- seq_along(fit$a)
+  
+  if ("y" %in% names(fit$a)) {
+    blocks_idx <- seq_along(fit$a)[-which(names(fit$a) == "y")]
+  }
+  
+  for (j in blocks_idx) {
+    if (length(dim(fit$blocks[[j]])) > 2) {
+      next
     }
-    vec_sign <- vapply(diag(res), function(x) {
-      return(ifelse(!is.na(x) && (x < 0), -1, 1))
-    }, double(1))
-    return(pm(w[[i]], diag(vec_sign, nrow = nrow(res))))
-  })
-
-  return(w)
+    for (k in seq_len(NCOL(fit$a[[j]]))) {
+      x <- subset(res_a, block == names(fit$blocks)[j] & comp == k)
+      x <- matrix(x$value, ncol = nrow(fit$a[[j]]), byrow = TRUE)
+      SVD <- svd(x, nu = 1, nv = 1)
+      x <- SVD$u
+      p.val <- dip.test(x)$p.value
+      
+      # Change signs of the points based on the first principal component
+      if (p.val < 0.05) {
+        x_estimator <- drop(t(fit$a[[j]][, k]) %*% SVD$v)
+        estimator_sign <- sign(x_estimator)
+        if (estimator_sign > 0) {
+          idx <- x < 0
+        } else {
+          idx <- x > 0
+        }
+        idx <- rep(idx, each = nrow(fit$a[[j]]))
+        res_a[
+          res_a$block == names(fit$blocks)[j] & res_a$comp == k,
+        ][idx, ]$value <- -res_a[
+          res_a$block == names(fit$blocks)[j] & res_a$comp == k,
+        ][idx, ]$value
+      }
+    }
+  }
+  return(res_a)
 }
+
+check_sign_comp_factors <- function(fit, res_f) {
+  # Test unimodality for each mode using the dip test
+  # Since we are in a multivariate setting, we apply the dip test on the
+  # first principal component.
+  for (j in seq_along(fit$factors)) {
+    for (m in seq_along(fit$factors[[j]])) {
+      for (k in seq_len(NCOL(fit$factors[[j]][[1]]))) {
+        x <- subset(res_f, block == names(fit$blocks)[j] & mode == m & comp == k)
+        x <- matrix(x$value, ncol = nrow(fit$factors[[j]][[m]]), byrow = TRUE)
+        SVD <- svd(x, nu = 1, nv = 1)
+        x <- SVD$u
+        p.val <- dip.test(x)$p.value
+        
+        # Change signs of the points based on the first principal component
+        if (p.val < 0.05) {
+          x_estimator <- drop(t(fit$factors[[j]][[m]][, k]) %*% SVD$v)
+          estimator_sign <- sign(x_estimator)
+          if (estimator_sign > 0) {
+            idx <- x < 0
+          } else {
+            idx <- x > 0
+          }
+          idx <- rep(idx, each = nrow(fit$factors[[j]][[m]]))
+          res_f[
+            res_f$block == names(fit$blocks)[j] & res_f$mode == m & res_f$comp == k,
+          ][idx, ]$value <- -res_f[
+            res_f$block == names(fit$blocks)[j] & res_f$mode == m & res_f$comp == k,
+          ][idx, ]$value
+        }
+      }
+    }
+  }
+  return(res_f)
+}
+
 
 check_size_blocks <- function(blocks, x, y = x, n_row = NULL,
                               superblock = FALSE) {

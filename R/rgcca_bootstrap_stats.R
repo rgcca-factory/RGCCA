@@ -13,11 +13,12 @@ rgcca_bootstrap_stats <- function(res, rgcca_res, n_boot) {
   ### Compute aggregated statistics
   # Utility function to compute the statistics
   aggregated_stats <- function(df, type) {
-    if (type == "weights") {
+    if (type %in% c("weights", "factors")) {
       y <- df$value
     } else {
       y <- 0.5 * log((1 + df$value) / (1 - df$value))
     }
+    
     count_pos <- rowSums2(matrix(df$value > 0, ncol = n_boot))
     count_neg <- rowSums2(matrix(df$value < 0, ncol = n_boot))
     z <- cbind(count_pos, count_neg)
@@ -30,6 +31,7 @@ rgcca_bootstrap_stats <- function(res, rgcca_res, n_boot) {
         probs = c(0.025, 0.975)
       )
     )
+    
     colnames(res) <- c("mean", "sd", "pval", "lower_bound", "upper_bound")
 
     res <- data.frame(res)
@@ -42,10 +44,14 @@ rgcca_bootstrap_stats <- function(res, rgcca_res, n_boot) {
     return(res)
   }
 
-  stats <- rbind(
-    aggregated_stats(res[res$type == "weights", ], "weights"),
-    aggregated_stats(res[res$type == "loadings", ], "loadings")
-  )
+  stats_w <- aggregated_stats(res[res$type == "weights",  ], "weights")
+  stats_l <- aggregated_stats(res[res$type == "loadings", ], "loadings")
+  if (any(res$type == "factors")) {
+    stats_f <- aggregated_stats(res[res$type == "factors",  ], "factors")
+    stats <- rbind(stats_w, stats_l, stats_f)
+  } else {
+    stats <- rbind(stats_w, stats_l)
+  }
 
   ### Compute additional statistics using aggregated statistics
   tail <- qnorm(1 - .05 / 2)
@@ -56,14 +62,14 @@ rgcca_bootstrap_stats <- function(res, rgcca_res, n_boot) {
         to_mat(rgcca_res$blocks[[block]]),
         rgcca_res$Y[[block]]
       )
-    }), use.names = FALSE)
+    }), use.names = FALSE),
+    unlist(rgcca_res$factors, use.names = FALSE)
   )
   suppressWarnings(
     ftrans <- 0.5 * log((1 + stats$estimate) / (1 - stats$estimate))
   )
   ftrans[is.na(ftrans)] <- 0
-  ftrans <- ftrans * (stats$type == "loadings") +
-    stats$estimate * (stats$type == "weights")
+  ftrans <- ftrans * (stats$type == "loadings") + stats$estimate * (stats$type %in% c("weights", "factors"))
   stats$bootstrap_ratio <- ftrans / stats$sd
   stats$th_pval <- 2 * pnorm(abs(stats$bootstrap_ratio), lower.tail = FALSE)
   stats$th_lower_bound <- stats$estimate - stats$sd * tail

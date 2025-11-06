@@ -13,6 +13,7 @@
 #' @title Compute bootstrap (internal).
 #' @noRd
 rgcca_bootstrap_k <- function(rgcca_res, inds = NULL, type = "loadings") {
+  
   if (length(inds) > 0) {
     rgcca_res$call$blocks <- lapply(rgcca_res$call$blocks, function(x) {
       y <- subset_block_rows(x, inds, drop = FALSE)
@@ -20,16 +21,17 @@ rgcca_bootstrap_k <- function(rgcca_res, inds = NULL, type = "loadings") {
       return(y)
     })
   }
+ 
   rgcca_res_boot <- rgcca(rgcca_res)
 
-  # block-loadings vector
-  A <- check_sign_comp(rgcca_res, rgcca_res_boot$a)
-
+  A <- rgcca_res_boot$a
+  
   if (type == "loadings") {
     Y <- lapply(
       seq_along(A),
       function(j) pm(to_mat(rgcca_res_boot$blocks[[j]]), A[[j]])
     )
+    
     L <- lapply(
       seq_along(A),
       function(j) {
@@ -51,6 +53,24 @@ rgcca_bootstrap_k <- function(rgcca_res, inds = NULL, type = "loadings") {
       return(res)
     })
   }
+  
   names(L) <- names(rgcca_res$a)
-  return(list(W = A, L = L))
+  
+  F <- list()
+  for (j in seq_along(rgcca_res$call$blocks)) {
+    block_data <- rgcca_res$call$blocks[[j]]
+    if (is.array(block_data) && length(dim(block_data)) > 2) {
+      dims <- dim(block_data)
+      n_modes <- length(dims) - 1
+      F_modes <- list()
+      for (m in 1:n_modes) {
+        # Pas de correction locale
+        F_boot <- rgcca_res_boot$factors[[j]][[m]]
+        F_modes[[m]] <- F_boot
+      }
+      F[[ names(rgcca_res$a)[j] ]] <- F_modes
+    }
+  }
+  
+  return(list(W = A, L = L, F = F))
 }
