@@ -7,7 +7,13 @@ rgcca_inner_loop <- function(A, C, g, dg, tau = rep(1, length(A)),
                              separable = TRUE) {
   if (!is.numeric(tau)) {
     # From Schafer and Strimmer, 2005
-    tau <- vapply(A, tau.estimate, na.rm = na.rm, FUN.VALUE = 1.0)
+    tau <- unlist(Map(function(b, t) {
+      if (t == "optimal") {
+        tau.estimate(b, na.rm = na.rm)
+      } else {
+        as.double(t)
+      }
+    }, A, tau))
   }
 
   # TODO: change this behaviour
@@ -18,7 +24,7 @@ rgcca_inner_loop <- function(A, C, g, dg, tau = rep(1, length(A)),
 
   ### Initialization
   block_objects <- lapply(seq_along(A), function(j) {
-    create_block(A[[j]], j, bias, na.rm, tau[j], sparsity[j], 
+    create_block(A[[j]], j, bias, na.rm, tau[j], sparsity[j],
     tol, rank[j], mode_orth[j], separable)
   })
 
