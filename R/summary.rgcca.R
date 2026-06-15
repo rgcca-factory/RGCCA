@@ -104,7 +104,7 @@ summary.rgcca <- function(object, ...) {
     sep = "",
     paste(round(crit, 4), sep = "", " "), fill = TRUE
   )
-
+  
   ### Print regularization parameter or the number of selected variables
   cat("\n")
   if (!tolower(object$call$method) %in% sparse_methods()) {
@@ -125,18 +125,22 @@ summary.rgcca <- function(object, ...) {
     response <- ifelse(
       object$opt$disjunction, object$call$response, length(object$blocks) + 1
     )
+    
     nb_selected_var <- lapply(
       object$a[-response],
       function(a) apply(a, 2, function(l) sum(l != 0))
     )
     param <- "sparsity"
     if (!is.matrix(object$call$sparsity)) {
+      
       for (i in seq_len(NCOL(object$call$connection))[-response]) {
         sparsity <- object$call$sparsity[i]
+        
 
         cat("The", param, "parameter used for", names(object$blocks)[i], "is:",
-          sparsity, "(with", paste(nb_selected_var[[i]], collapse = ", "),
-          "variables selected)",
+        
+          as.numeric(unlist(sparsity)), "(with", paste(nb_selected_var[[i]], collapse = ", ")
+          ,"variables selected)",
           fill = TRUE
         )
       }

@@ -231,6 +231,7 @@ rgcca_permutation <- function(blocks, par_type = "tau", par_value = NULL,
                               ncomp = 1,
                               tau = 1,
                               sparsity = 1,
+                              par_value2=NULL,
                               init = "svd", bias = TRUE, tol = 1e-8,
                               response = NULL, superblock = FALSE,
                               NA_method = "na.ignore", rgcca_res = NULL,
@@ -238,6 +239,7 @@ rgcca_permutation <- function(blocks, par_type = "tau", par_value = NULL,
                               comp_orth = TRUE, rank = 1, mode_orth = 1,
                               separable = TRUE) {
   ### Try to retrieve parameters from a rgcca object
+  
   rgcca_args <- as.list(environment())
   tmp <- get_rgcca_args(blocks, rgcca_args)
   opt <- tmp$opt
@@ -260,19 +262,20 @@ rgcca_permutation <- function(blocks, par_type = "tau", par_value = NULL,
   ) {
     par_type <- "sparsity"
   } else if (par_type == "sparsity") {
-    rgcca_args$method <- "sgcca"
+    #rgcca_args$method <- "sgcca"
     opt$param <- "sparsity"
   }
-
+ 
   param <- set_parameter_grid(
-    par_type, par_length, par_value, rgcca_args$blocks,
-    rgcca_args[[par_type]], rgcca_args$response,
+    par_type, par_length, par_value, par_value2,rgcca_args$blocks,
+    rgcca_args[[par_type]], method,rgcca_args$response,
     rgcca_args$superblock,  opt$disjunction
   )
-
+  
   # Generate a warning if tau has not been fully specified for a block that
   # has more columns than samples and remove tau = 0 configuration
   n <- NROW(rgcca_args$blocks[[1]])
+  
   overfitting_risk <- (param$par_type == "tau") && is.null(dim(par_value)) &&
     any(vapply(
       seq_along(rgcca_args$blocks),
@@ -288,28 +291,65 @@ rgcca_permutation <- function(blocks, par_type = "tau", par_value = NULL,
   }
 
   ### Create folds
-  v_inds <- lapply(seq_len(n_perms), function(i) {
-    lapply(rgcca_args$blocks, function(x) {
-      sample(seq_len(NROW(x)))
-    })
-  })
+
 
   ### Start line search
   # For every set of parameter, RGCCA is run once on the non permuted blocks
   # and then n_perms on permuted blocks.
-  idx <- seq(NROW(param$par_value) * (n_perms + 1))
+  if (method=='stgcca'){
+    v_inds <- lapply(seq_len(n_perms), function(i) {
+    lapply(rgcca_args$blocks, function(x) {
+      sample(seq_len(NROW(x)))
+    })
+  })
+  idx <- seq(NROW(param$par_value) * (n_perms + 1))  }
+  else{
+    v_inds <- lapply(seq_len(n_perms), function(i) {
+    lapply(rgcca_args$blocks, function(x) {
+      sample(seq_len(NROW(x)))
+    })
+  })
+    idx <- seq(NROW(param$par_value) * (n_perms + 1))  }
+ 
+  if (method=='stgcca'){
+    W <- par_pblapply(idx, function(n) {
+      
+     i <- (n - 1) %/% (n_perms + 1) + 1
+    j <- (n - 1) %% (n_perms + 1)
+    perm <- (n - 1) %% (n_perms + 1) != 0
+  
+    rgcca_permutation_k(
+      rgcca_args,
+      perm = perm,
+      inds = v_inds[[j]],
+      par_type = param$par_type,
+      par_value = param$par_value[[i]],
+      par_value2=param$par_value2[i,]
+    )
+   
+
+
+  }, n_cores = n_cores, verbose = verbose)
+  
+  
+  }else{
+   
   W <- par_pblapply(idx, function(n) {
     i <- (n - 1) %/% (n_perms + 1) + 1
     j <- (n - 1) %% (n_perms + 1)
     perm <- (n - 1) %% (n_perms + 1) != 0
-    rgcca_permutation_k(
+        rgcca_permutation_k(
       rgcca_args,
       inds = v_inds[[j]],
+            perm = perm,
+
       par_type = param$par_type,
-      par_value = param$par_value[i, ],
-      perm = perm
+      par_value = param$par_value[i, ]
     )
+    
+
   }, n_cores = n_cores, verbose = verbose)
+  }
 
   W <- do.call(rbind, W)
 
@@ -318,6 +358,7 @@ rgcca_permutation <- function(blocks, par_type = "tau", par_value = NULL,
   if (ncol(param$par_value) > length(rgcca_args$blocks)) {
     par_colnames <- c(par_colnames, "superblock")
   }
+   if (method!='stgcca'){
   rownames(param$par_value) <- seq_len(NROW(param$par_value))
   colnames(param$par_value) <- par_colnames
 
@@ -360,4 +401,59 @@ rgcca_permutation <- function(blocks, par_type = "tau", par_value = NULL,
     n_perms = n_perms, best_params = param$par_value[which.max(zstat), ],
     permcrit = permcrit, params = param$par_value, stats = stats
   ), class = "rgcca_permutation")
+}
+else{
+  #rownames(param$par_value) <- seq_len(NROW(param$par_value))
+  #colnames(param$par_value) <- par_colnames
+
+  idx_perm <- (idx - 1) %% (n_perms + 1) != 0
+  crit <- W[!idx_perm]
+  permcrit <- matrix(W[idx_perm],
+    nrow = nrow(param$par_value),
+    ncol = n_perms, byrow = TRUE
+  )
+
+  # Compute statistics
+  pvals <- vapply(
+    seq_len(NROW(param$par_value)),
+    function(k) mean(permcrit[k, ] >= crit[k]),
+    FUN.VALUE = double(1)
+  )
+  zstat <- vapply(
+    seq_len(NROW(param$par_value)), function(k) {
+      z <- (crit[k] - mean(permcrit[k, ])) / (sd(permcrit[k, ]))
+      if (is.na(z) || z == "Inf") {
+        z <- 0
+      }
+      return(z)
+    },
+    FUN.VALUE = double(1)
+  )
+  aux=matrix(,nrow=dim(param$par_value)[1],ncol=length(unlist(param$par_value[[1]])))
+  
+   
+
+    rownames(W) <- seq_len(NROW(W))
+    
+    for (m in 1:dim(param$par_value)[1]){
+        aux[m,1:length(unlist(param$par_value[[m]]))]<-unlist(param$par_value[[m]])}
+  param$value<-aux
+  combinations <- format_combinations(aux)
+
+  stats <- data.frame(
+    combinations = combinations,
+    crit = crit,
+    mean = apply(permcrit, 1, mean, na.rm = TRUE),
+    sd = apply(permcrit, 1, sd, na.rm = TRUE),
+    zstat = zstat,
+    pval = pvals
+  )
+
+  structure(list(
+    opt = opt, call = rgcca_args, par_type = par_type,
+    n_perms = n_perms, best_params = param$par_value[which.max(zstat), ],
+    permcrit = permcrit, params = param$par_value, stats = stats
+  ), class = "rgcca_permutation")
+}
+
 }

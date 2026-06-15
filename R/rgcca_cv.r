@@ -158,15 +158,19 @@
 #'  print(cv_out)
 #'  plot(cv_out, display_order = FALSE)
 #' }
+
 rgcca_cv <- function(blocks,
                      connection = NULL,
                      method = "rgcca",
                      response = NULL,
                      par_type = "tau",
                      par_value = NULL,
+                     par_value2=NULL,
                      par_length = 10,
                      validation = "kfold",
                      prediction_model = "lm",
+                     tuning=NULL,
+                     params=NULL,
                      metric = NULL,
                      k = 5,
                      n_run = 1,
@@ -181,7 +185,7 @@ rgcca_cv <- function(blocks,
                      rgcca_res = NULL,
                      tau = 1,
                      ncomp = 1,
-                     sparsity = 1,
+                     sparsity = 1,upsample=FALSE,
                      init = "svd",
                      bias = TRUE,
                      verbose = TRUE,
@@ -196,19 +200,24 @@ rgcca_cv <- function(blocks,
   tmp <- get_rgcca_args(blocks, rgcca_args)
   opt <- tmp$opt
   rgcca_args <- tmp$rgcca_args
-
+  #rgcca_args$verbose<-TRUE
   if (is.null(rgcca_args$response)) {
     stop(paste0(
       "response is required for rgcca_cv (it is an integer ",
       "comprised between 1 and the number of blocks) "
     ))
   }
-
   ### Check parameters
   if (validation == "loo") {
     k <- NROW(rgcca_args$blocks[[1]])
     n_run <- 1
   }
+  if (length(prediction_model)>1){
+  params=prediction_model[2:length(prediction_model)]
+
+  }
+
+  prediction_model=prediction_model[[1]]
   model <- check_prediction_model(
     prediction_model, rgcca_args$blocks[[rgcca_args$response]],
     missing(prediction_model)
@@ -224,6 +233,7 @@ rgcca_cv <- function(blocks,
   metric <- ifelse(is.null(metric), default_metric, metric)
   available_metrics <- get_available_metrics(model$classification)
   metric <- match.arg(metric, available_metrics)
+  rgcca_args$method=method
 
   ### Prepare parameters for line search
   if (
@@ -231,13 +241,12 @@ rgcca_cv <- function(blocks,
   ) {
     par_type <- "sparsity"
   } else if (par_type == "sparsity") {
-    rgcca_args$method <- "sgcca"
     opt$param <- "sparsity"
   }
 
   param <- set_parameter_grid(
-    par_type, par_length, par_value, rgcca_args$blocks,
-    rgcca_args[[par_type]], rgcca_args$response, FALSE, opt$disjunction
+    par_type, par_length, par_value,par_value2, rgcca_args$blocks,
+    rgcca_args[[par_type]], method,rgcca_args$response, FALSE, opt$disjunction
   )
 
   # Generate a warning if tau has not been fully specified for a block that
@@ -249,6 +258,7 @@ rgcca_cv <- function(blocks,
       function(j) NCOL(rgcca_args$blocks[[j]]) > n,
       FUN.VALUE = logical(1L)
     ))
+
   if (overfitting_risk) {
     param$par_value <- param$par_value[-nrow(param$par_value), ]
     warning(
@@ -256,9 +266,15 @@ rgcca_cv <- function(blocks,
       "configuration with tau = 0 has been removed."
     )
   }
+  
 
   ### Create folds
-  idx <- seq_len(NROW(rgcca_args$blocks[[1]]))
+  if (method=='stgcca'){
+    idx <- seq_len(NROW(rgcca_args$blocks[[1]]))
+  }else{  
+    idx <- seq_len(NROW(rgcca_args$blocks[[1]]))
+}
+
   if (validation == "loo") {
     v_inds <- idx
   } else {
@@ -269,6 +285,7 @@ rgcca_cv <- function(blocks,
           k = k, list = TRUE,
           returnTrain = FALSE
         )
+        
         # If there are NA in the response block, caret creates an extra fold
         # with all the NA elements. We split them across the other folds
         if (length(folds) > k) {
@@ -285,9 +302,40 @@ rgcca_cv <- function(blocks,
       }))
     }
   }
-
+  
   ### Compute cross validation
-  idx <- seq_len(NROW(param$par_value) * length(v_inds))
+  if (method=='stgcca'){
+    idx <- seq_len(NROW(param$par_value) * length(v_inds))
+  }
+  else{
+    idx <- seq_len(NROW(param$par_value) * length(v_inds))}
+
+  if (method=='stgcca'){
+   
+
+    W <- par_pblapply(idx, function(n) {
+    i <- (n - 1) %/% length(v_inds) + 1
+    j <- (n - 1) %% length(v_inds) + 1
+    
+
+    rgcca_cv_k(
+      rgcca_args,
+      inds = v_inds[[j]],
+      metric = metric,
+      par_type = param$par_type,
+      par_value = param$par_value[i,],
+      par_value2=param$par_value2[i,],upsample=upsample,
+      prediction_model = model$prediction_model,params=params,tuning=tuning,
+      ...
+    )
+   
+
+
+  }, n_cores = n_cores, verbose = verbose)
+  
+  
+  }else{
+   
   W <- par_pblapply(idx, function(n) {
     i <- (n - 1) %/% length(v_inds) + 1
     j <- (n - 1) %% length(v_inds) + 1
@@ -300,19 +348,28 @@ rgcca_cv <- function(blocks,
       prediction_model = model$prediction_model,
       ...
     )
+    
+
   }, n_cores = n_cores, verbose = verbose)
-
-  W <- matrix(unlist(W), nrow = NROW(param$par_value), byrow = TRUE)
-
+  }
+ 
+  if (method=='stgcca'){
+    W <- matrix(unlist(W), nrow = NROW(param$par_value), byrow = TRUE)
+  }
+  else{
+     W <- matrix(unlist(W), nrow = NROW(param$par_value), byrow = TRUE)
+  }
+  
   if (model$classification) {
     W[is.na(W)] <- 0
   }
-
+  
   ### Format output
+  if (method!='stgcca'){
   rownames(param$par_value) <- seq_len(NROW(param$par_value))
   colnames(param$par_value) <- names(rgcca_args$blocks)
   rownames(W) <- seq_len(NROW(W))
-
+ 
   best_param_idx <- ifelse(
     model$classification,
     which.max(apply(W, 1, mean, na.rm = TRUE)),
@@ -321,7 +378,6 @@ rgcca_cv <- function(blocks,
 
   # Compute statistics
   combinations <- format_combinations(param$par_value)
-
   stats <- data.frame(
     combinations,
     mean = apply(W, 1, mean),
@@ -343,9 +399,68 @@ rgcca_cv <- function(blocks,
     params = param$par_value,
     validation = validation,
     best_params = param$par_value[best_param_idx, ],
+     best_param_idx=best_param_idx,
     classification = model$classification,
     prediction_model = model$model_name
-  )
+  )}
+  else{
+  
+    aux=matrix(,nrow=dim(param$par_value)[1],ncol=length(unlist(param$par_value[1,])))
+   
+    rownames(W) <- seq_len(NROW(W))
+    
+    for (m in 1:dim(param$par_value)[1]){
+        aux[m,1:length(unlist(param$par_value[[m]]))]<-unlist(param$par_value[[m]])}
+    #hacer loopp
+  
+    
+    
+   
+    #rownames(aux) <- seq_len(NCOL(param$par_value))
+    #colnames(aux) <- names(rgcca_args$blocks)
+    param$value<-aux
+
+    best_param_idx <- ifelse(
+    model$classification,
+    which.max(apply(W, 1, mean, na.rm = TRUE)),
+    which.min(apply(W, 1, mean, na.rm = TRUE))
+    )
+    
+
+   
+  
+    # Compute statistics
+    combinations <- format_combinations(aux)
+  
+   
+    stats <- data.frame(
+      combinations,
+      mean = apply(W, 1, mean),
+      sd = apply(W, 1, sd),
+      median = apply(W, 1, median),
+      Q1 = apply(W, 1, quantile, 0.25),
+      Q3 = apply(W, 1, quantile, 0.75)
+    )
+    res <- list(
+      k = k,
+      cv = W,
+      opt = opt,
+      call = rgcca_args,
+      stats = stats,
+      n_run = n_run,
+      metric = metric,
+      par_type = param$par_type,
+      params =aux,
+      validation = validation,
+      best_params = param$par_value[best_param_idx,],
+      best_param_idx=best_param_idx,
+      classification = model$classification,
+      prediction_model = model$model_name
+    )}
+
+  
+  
+
   class(res) <- "rgcca_cv"
   return(res)
 }

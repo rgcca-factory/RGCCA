@@ -1,26 +1,34 @@
 rgcca_inner_loop <- function(A, C, g, dg, tau = rep(1, length(A)),
-                             sparsity = rep(1, length(A)),
+                             sparsity = rep(1, length(A)),sparse_lambda=rep(1,length(A)),
                              verbose = FALSE, init = "svd", bias = TRUE,
                              tol = 1e-08, na.rm = TRUE, n_iter_max = 1000,
                              rank = rep(1, length(A)),
                              mode_orth = rep(1, length(A)),
                              separable = TRUE) {
+
   if (!is.numeric(tau)) {
     # From Schafer and Strimmer, 2005
     tau <- vapply(A, tau.estimate, na.rm = na.rm, FUN.VALUE = 1.0)
   }
-
   # TODO: change this behaviour
-  if (any(sparsity == 0)) {
-    tau[which(sparsity == 0)] <- 0
-    sparsity[which(sparsity == 0)] <- 1
-  }
+  #if (any(as.numeric(unlist(lapply(seq_along(sparsity), function(m) {
+  #  
+  #    any(sparsity[[m]]==1)}))) == 0)) {
+  #  tau[which(as.numeric(unlist(lapply(seq_along(sparsity), function(m) {
+  #  
+  #    any(sparsity[[m]]==1)}))) == 0)] <- 0
+  #  sparsity[which(as.numeric(unlist(lapply(seq_along(sparsity), function(m) {
+  #  
+  #    any(sparsity[[m]]==1)}))) == 0)] <- 1
+  #}
 
   ### Initialization
+  
   block_objects <- lapply(seq_along(A), function(j) {
-    create_block(A[[j]], j, bias, na.rm, tau[j], sparsity[j], 
+    create_block(A[[j]], j, bias, na.rm, tau[j], sparsity[j], sparse_lambda[j],
     tol, rank[j], mode_orth[j], separable)
   })
+  
 
   block_objects <- lapply(block_objects, block_init, init = init)
   Y <- do.call(cbind, lapply(block_objects, "[[", "Y"))
@@ -28,6 +36,7 @@ rgcca_inner_loop <- function(A, C, g, dg, tau = rep(1, length(A)),
 
   iter <- 1
   crit <- NULL
+  
   crit_old <- sum(C * g(crossprod(Y) / N))
   a_old <- lapply(block_objects, "[[", "a")
 
@@ -35,6 +44,7 @@ rgcca_inner_loop <- function(A, C, g, dg, tau = rep(1, length(A)),
     for (j in seq_along(A)) {
       # Compute grad
       grad <- Y %*% (C[j, ] * dg(crossprod(Y, Y[, j]) / N))
+      
       block_objects[[j]] <- block_update(block_objects[[j]], grad)
       Y[, j] <- block_objects[[j]]$Y
     }
@@ -89,6 +99,7 @@ rgcca_inner_loop <- function(A, C, g, dg, tau = rep(1, length(A)),
   a <- lapply(block_objects, "[[", "a")
   Y <- do.call(cbind, lapply(block_objects, "[[", "Y"))
   factors <- lapply(block_objects, "[[", "factors")
+  
   lambda <- lapply(block_objects, "[[", "lambda")
 
   return(list(

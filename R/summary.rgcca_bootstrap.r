@@ -49,7 +49,7 @@ summary.rgcca_bootstrap <- function(object,
     "Extracted statistics from ", object$n_boot, " bootstrap samples.\n",
     "Block-", type_str, " vectors for component ", comp, ":"
   ), "\n")
-
+  
   print(df, quote = FALSE, ...)
   cat("\n")
 }

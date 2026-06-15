@@ -26,6 +26,7 @@ block_update.tensor_block <- function(x, grad) {
     grad_m <- matrix(
       aperm(grad, c(m, seq_along(dim(grad))[-m])), nrow = dim(x$x)[m + 1]
     )
+   
     grad_m <- grad_m %*% khatri_rao(
       Reduce(khatri_rao, rev(x$factors[-seq_len(m)])), other_factors
     )
@@ -43,12 +44,81 @@ block_update.tensor_block <- function(x, grad) {
 
     other_factors <- khatri_rao(x$factors[[m]], other_factors)
   }
+ 
+  # Update lambda  
+  x$lambda <- t(other_factors) %*% as.vector(grad)
+  x$lambda <- drop(x$lambda) / norm(drop(x$lambda), type = "2")
+
+  return(block_project(x))
+}
+#' @export
+block_update.sparse_tensor_block <- function(x, grad) {
+  grad <- array(
+    pm(t(matrix(x$x, nrow = nrow(x$x))), grad, na.rm = x$na.rm),
+    dim = dim(x$x)[-1]
+  )
+  other_factors <- NULL
+  # Update factors
+  for (m in seq_along(dim(x$x)[-1])) {
+    grad_m <- matrix(
+      aperm(grad, c(m, seq_along(dim(grad))[-m])), nrow = dim(x$x)[m + 1]
+    )
+    grad_m <- grad_m %*% khatri_rao(
+      Reduce(khatri_rao, rev(x$factors[-seq_len(m)])), other_factors
+    )
+    if (m == x$mode_orth) {
+      
+      
+     
+      SVD <- svd(
+        grad_m %*% diag(x$lambda, nrow = x$rank), nu = x$rank, nv = x$rank
+      )
+      
+      x$factors[[m]] <-  SVD$u %*% t(SVD$v)
+
+    } else{
+           
+      x$factors[[m]] <- grad_m %*% diag(x$lambda, nrow = x$rank)
+      
+      if (x$sparsity[m]<1){
+        if (dim(x$factors[[m]])[2]==1){
+    
+       x$factors[[m]]<-soft_threshold( x$factors[[m]],x$const[m])
+        x$factors[[m]]<-apply(
+  x$factors[[m]], 2, function(y) y / norm(y, type = "2"))}
+       else{
+        for (ii in 1:dim(x$factors[[m]])[2]){
+
+       x$factors[[m]][,ii]<-soft_threshold( x$factors[[m]][,ii],x$const[m])
+       }
+        
+
+       }
+
+
+      
+         x$factors[[m]]<-apply(
+  x$factors[[m]], 2, function(y) y / norm(y, type = "2"))
+      }
+        
+    
+     
+     
+
+    } 
+      
+    
+
+    other_factors <- khatri_rao(x$factors[[m]], other_factors)
+  }
   # Update lambda
   x$lambda <- t(other_factors) %*% as.vector(grad)
   x$lambda <- drop(x$lambda) / norm(drop(x$lambda), type = "2")
+
+
+
   return(block_project(x))
 }
-
 #' @export
 block_update.regularized_tensor_block <- function(x, grad) {
   grad <- array(
@@ -74,6 +144,7 @@ block_update.regularized_tensor_block <- function(x, grad) {
     other_factors <- khatri_rao(x$factors[[m]], other_factors)
   }
   # Update lambda
+  
   u <- drop(t(other_factors) %*% as.vector(grad))
 
   w_ref <- drop(ginv(

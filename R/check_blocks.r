@@ -123,6 +123,7 @@ check_blocks_dimnames <- function(blocks, primary = 1, quiet = FALSE) {
   }, blocks, names(blocks))
 
   # Check for duplicated dimnames across blocks (except primary dim)
+  
   if (any(duplicated(unlist(
     lapply(blocks, function(x) dimnames(x)[-primary])
   )))) {

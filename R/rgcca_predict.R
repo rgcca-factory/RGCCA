@@ -57,13 +57,12 @@
 rgcca_predict <- function(rgcca_res,
                           blocks_test = rgcca_res$call$blocks,
                           prediction_model = "lm",
-                          metric = NULL,
+                          metric = NULL,params=NULL,tuning=NULL,
                           ...) {
   ### Check input parameters
   if (is.null(names(blocks_test))) {
     stop_rgcca("Please provide names for blocks_test.")
   }
-
   response <- rgcca_res$call$response
   if (is.null(response)) {
     stop_rgcca("RGCCA must use a response block.")
@@ -99,6 +98,7 @@ rgcca_predict <- function(rgcca_res,
   ### Get train and test target (if present)
   y_train <- to_mat(rgcca_res$call$blocks[[response]])
   y_test <- as.data.frame(to_mat(blocks_test[[test_idx]]))
+  
 
   if (any(dim(y_test)[-1] != dim(y_train)[-1])) {
     stop_rgcca(
@@ -137,11 +137,12 @@ rgcca_predict <- function(rgcca_res,
   }
 
   ### Train prediction model and predict results on X_test
+ 
   results <- lapply(
     seq_len(NCOL(y_train)), function(j) {
       core_prediction(
         prediction_model, X_train, X_test,
-        y_train[, j], y_test[, j], metric,
+        y_train[, j], y_test[, j], metric,params,tuning,
         classification, no_y_test, ...
       )
     }
@@ -153,6 +154,7 @@ rgcca_predict <- function(rgcca_res,
       res[["prediction"]][[mode]][, "pred"]
     }))
   })
+ 
 
   metric <- lapply(c("train", "test"), function(mode) {
     as.data.frame(lapply(results, function(res) {
@@ -206,19 +208,27 @@ reformat_projection <- function(projection) {
 # Train a model from caret on (X_train, y_train) and make a prediction on
 # X_test and evaluate the prediction quality by comparing to y_test.
 core_prediction <- function(prediction_model, X_train, X_test,
-                            y_train, y_test, metric, classification = FALSE,
+                            y_train, y_test, metric,params, tuning,classification = FALSE,
                             no_y_test = FALSE, ...) {
   if (classification) {
     y_train <- as.factor(as.matrix(y_train))
     y_test <- factor(as.matrix(y_test), levels = levels(y_train))
   }
   data <- as.data.frame(cbind(X_train, obs = unname(y_train)))
-  model <- train(obs ~ .,
+ 
+  if (length(params)>0){
+  for(i in 1:length(names(params))){
+  assign(names(params), params[[i]])    
+  }
+  }
+  
+
+  model <-do.call(train,c(list(obs ~ .,
     data      = data,
     method    = prediction_model,
-    trControl = trainControl(method = "none"),
-    na.action = "na.exclude",
-    ...
+    trControl = trainControl(method = "cv"),
+    na.action = "na.exclude",tuneGrid=tuning),params)
+    
   )
 
   prediction_train <- data.frame(

@@ -8,7 +8,7 @@
 #' @param verbose A logical value indicating if the progress of the bootstrap
 #' procedure is reported.
 #' @return A rgcca_bootstrap object that can be printed and plotted.
-#' @return \item{n_boot}{The number of bootstrap samples, returned
+#' @return \item{n_boot}{The prinnumber of bootstrap samples, returned
 #' for further use.}
 #' @return \item{rgcca}{The RGCCA object fitted on the original data.}
 #' @return \item{bootstrap}{A data.frame with the block weight vectors and
@@ -73,7 +73,8 @@
 #' \code{\link[RGCCA]{summary.rgcca_bootstrap}}
 rgcca_bootstrap <- function(rgcca_res, n_boot = 100,
                             n_cores = 1, verbose = TRUE) {
-  stability <- is(rgcca_res, "rgcca_stability")
+
+ stability <- is(rgcca_res, "rgcca_stability")
   if (stability) {
     message(
       "All the parameters were imported from the fitted rgcca_stability",
@@ -94,24 +95,64 @@ rgcca_bootstrap <- function(rgcca_res, n_boot = 100,
     # Remove superblock variables from keep_var as the superblock is generated
     # from the kept variables
     J <- length(rgcca_res$call$blocks)
+   
+    for (i in 1:(length(rgcca_res$factors)-1)){
+      if (length(rgcca_res$factors[[i]])>1){
+      
+      for (kk in 1:length(rgcca_res$factors[[i]])){
+
+        keep_var=which(rgcca_res$factors[[i]][[kk]]!=0)
+        
+        rgcca_res$factors[[i]][[kk]]=rgcca_res$factors[[i]][[kk]][keep_var]
+      
+        if (kk==1){
+          keep_var1=keep_var
+
+      }
+       else{
+        keep_var2=keep_var
+        if (length(keep_var2==0)){
+          keep_var=1:dim(rgcca_res$call$blocks[[i]])[2]
+        }}
+       # for (ii in 1:dim(rgcca_res$call$blocks[[i]])[3]){
+       
+         }
+        
+         rgcca_res$call$blocks[[i]]=rgcca_res$call$blocks[[i]][,keep_var1,keep_var2]
+
+        
+       #}
+      }
+      else{
+
+       # rgcca_res$factors[[i]]=rgcca_res$factors[[i]][which(rgcca_res$factors[[i]][,1]!=0),]
+       rgcca_res$call$blocks[[i]]=rgcca_res$call$blocks[[i]][,which(rgcca_res$factors[[i]][,1]!=0)]
+
+        
+      }
+
+    }
     keep_var <- lapply(
       rgcca_res$a[-(J + 1)],
       function(x) unique(which(x != 0, arr.ind = TRUE)[, 1])
     )
+
     if (rgcca_res$opt$disjunction) {
       keep_var[[rgcca_res$call$response]] <- 1
     }
 
-    rgcca_res$call$blocks <- Map(
-      function(x, y) x[, y, drop = FALSE], rgcca_res$call$blocks, keep_var
-    )
+    #rgcca_res$call$blocks <- Map(
+    #  function(x, y) x[, y, drop = FALSE], rgcca_res$call$blocks, keep_var
+   # )
     rgcca_res$call$tau <-
       rgcca_res$call$sparsity <- rep(1, length(rgcca_res$blocks))
 
     rgcca_res <- rgcca(rgcca_res)
   }
+  
 
   check_integer("n_boot", n_boot)
+
 
   ### Create bootstrap samples
   # If there is a disjunctive response block, sample bootstrap samples
@@ -129,6 +170,7 @@ rgcca_bootstrap <- function(rgcca_res, n_boot = 100,
       sample(seq_len(NROW(rgcca_res$call$blocks[[1]])), replace = TRUE)
     })
   }
+  
 
   ### Run RGCCA on the bootstrap samples
   W <- par_pblapply(v_inds, function(b) {
@@ -137,15 +179,71 @@ rgcca_bootstrap <- function(rgcca_res, n_boot = 100,
       inds = b
     )
   }, n_cores = n_cores, verbose = verbose)
+  
+  factors_df <- NULL
+  
+  multi_blocks <- sapply(rgcca_res$call$blocks, function(x) is.array(x) && length(dim(x)) > 2)
+  
+  if (any(multi_blocks)) {
+    factors_df <- do.call(rbind, lapply(seq_along(W), function(b) { 
+      do.call(rbind, lapply(seq_along(W[[b]]$F), function(j) {
+        F_list <- W[[b]]$F[[j]] 
+        if (is.null(F_list)) return(NULL) 
+        do.call(rbind, lapply(seq_along(F_list), function(k) {
+          M <- F_list[[k]] 
+          n <- nrow(M)
+          p <- ncol(M)
+          if (is.null(p)){
+            p=1
+            vars <- names(M)}
 
+          else{
+    
+          vars <- rownames(M)}
+          
+          data.frame(
+            boot  = b,
+            block = names(rgcca_res$a)[j],
+            mode  = k,
+            var   = rep(vars, times = p),
+            comp  = rep(seq_len(p), each = n),
+            value = as.vector(M),
+            row.names = NULL
+          )
+        }))
+      }))
+    }))
+    if (nrow(factors_df) == 0) factors_df <- NULL
+  }
+ 
+  # Test unimodality for each mode using the dip test
+  # Since we are in a multivariate setting, we apply the dip test on the
+  # first principal component.
+  W2 <- lapply(W, function(x) { x$F <- NULL; x })
+  res <- format_bootstrap_list(W2, rgcca_res)
+  res <- check_sign_comp(rgcca_res, res)
+
+
+  res_f <- check_sign_comp_factors(rgcca_res, factors_df)
+  
+  # common statistics
+  if (!is.null(res_f) && nrow(res_f) > 0) {
+    res_f$type <- "factors"
+    cols_communes <- intersect(colnames(res), colnames(res_f))
+    res_sub <- res[, cols_communes, drop = FALSE]
+    resf_sub <- res_f[, cols_communes, drop = FALSE]
+    res_glob <- rbind(res_sub, resf_sub)
+  } else {
+    res_glob <- res
+  }
+  
   ### Extract statistics from the results of the bootstrap
-  res <- format_bootstrap_list(W, rgcca_res)
-  stats <- rgcca_bootstrap_stats(res, rgcca_res, length(W))
+  stats <- rgcca_bootstrap_stats(res_glob, rgcca_res, length(W))
 
-  return(structure(list(
-    n_boot = n_boot, rgcca = rgcca_res,
-    bootstrap = res, stats = data.frame(stats)
-  ),
-  class = "rgcca_bootstrap"
-  ))
+  return(structure(list(n_boot     = n_boot,
+                        rgcca      = rgcca_res,
+                        bootstrap  = res, 
+                        factors    = res_f,
+                        stats      = data.frame(stats)),
+                   class = "rgcca_bootstrap"))
 }

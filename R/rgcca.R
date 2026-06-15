@@ -444,12 +444,12 @@ rgcca <- function(blocks, connection = NULL, tau = 1, ncomp = 1,
                   scheme = "factorial", scale = TRUE, init = "svd",
                   bias = TRUE, tol = 1e-08, verbose = FALSE,
                   scale_block = "inertia", method = "rgcca",
-                  sparsity = 1, response = NULL,
+                  sparsity = 1, response = NULL,sparse_lambda=1,
                   superblock = FALSE,
                   NA_method = "na.ignore", quiet = TRUE,
                   n_iter_max = 1000, comp_orth = TRUE,
                   rank = 1, mode_orth = 1, separable = TRUE,
-                  A = NULL, C = NULL) {
+                  A = NULL, C = NULL,n_run=1,n_cores=1) {
   # Check for deprecated arguments
   if (!missing(A)) {
     warning("Argument A is deprecated, use blocks instead.")
@@ -459,10 +459,11 @@ rgcca <- function(blocks, connection = NULL, tau = 1, ncomp = 1,
     warning("Argument C is deprecated, use connection instead.")
     connection <- C
   }
-
+  
   rgcca_args <- as.list(environment())
   ### If specific objects are given for blocks, parameters are imported from
   #   these objects.
+
   tmp <- get_rgcca_args(blocks, rgcca_args)
   opt <- tmp$opt
   rgcca_args <- tmp$rgcca_args
@@ -476,6 +477,7 @@ rgcca <- function(blocks, connection = NULL, tau = 1, ncomp = 1,
       blocks[[rgcca_args$response]]
     )
   }
+ 
 
   ### Apply strategy to deal with NA, scale and prepare superblock
   tmp <- handle_NA(blocks, NA_method = rgcca_args$NA_method)
@@ -502,11 +504,19 @@ rgcca <- function(blocks, connection = NULL, tau = 1, ncomp = 1,
   gcca_args[["na.rm"]] <- na.rm
   gcca_args[["blocks"]] <- blocks
   gcca_args[["disjunction"]] <- opt$disjunction
-  gcca_args[[opt$param]] <- rgcca_args[[opt$param]]
-  func_out <- do.call(rgcca_outer_loop, gcca_args)
 
-  ### Format the output
-  func_out <- format_output(func_out, rgcca_args, opt, blocks)
+  
+  gcca_args[[opt$param]] <- rgcca_args[[opt$param]]
+  models=NULL
+  crit=NULL
+  
+        model<-do.call(rgcca_outer_loop, gcca_args)
+
+    func_out <- format_output(model, rgcca_args, opt, blocks)
+
+  
+
+ 
 
   class(func_out) <- "rgcca"
   invisible(func_out)

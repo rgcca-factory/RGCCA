@@ -5,16 +5,46 @@
 #' @inheritParams rgcca
 #' @inheritParams rgcca_bootstrap
 #' @noRd
-rgcca_cv_k <- function(rgcca_args, inds, prediction_model,
-                       par_type, par_value, metric, ...) {
+rgcca_cv_k <- function(rgcca_args, inds,prediction_model,params=NULL,tuning=NULL,
+                       par_type, par_value, par_value2=NULL,metric, upsample=FALSE,...) {
+  
+ 
   rgcca_args[[par_type]] <- par_value
-
+  rgcca_args[['sparse_lambda']] <- par_value2
   blocks <- rgcca_args[["blocks"]]
-
+  ind_pos_=setdiff(c(1:dim(rgcca_args[["blocks"]][[1]])[1]),inds)
+ 
+ # intermediate <- lapply(
+ #   blocks, function(x) subset_block_rows(x, ind_pos, drop = FALSE)
+ # )
+  if (upsample){
+          ind_pos=NULL
+          ind_pos$ind=ind_pos_
+          
+          ind_pos$response=rgcca_args[["blocks"]]
+          ind_pos_new=upSample(y=as.factor(rgcca_args[["blocks"]]$response[ind_pos$ind]),
+          x=ind_pos$ind)
+          
+ 
+         
+          #print(length(folds))
+        }
+  else{
+    ind_pos_new=NULL
+    ind_pos_new$x=ind_pos_
+  }
+  
   rgcca_args[["blocks"]] <- lapply(
-    blocks, function(x) subset_block_rows(x, -inds, drop = FALSE)
+    blocks, function(x) subset_block_rows(x, ind_pos_new$x, drop = FALSE)
   )
+
   # Fit RGCCA on the training blocks
+  for (i in 1:length(rgcca_args[["blocks"]])){
+      row.names(rgcca_args[["blocks"]][[i]]) <- NULL
+
+  }
+ 
+  
   res <- do.call(rgcca, rgcca_args)
 
   # Evaluate RGCCA on the validation blocks
@@ -27,7 +57,7 @@ rgcca_cv_k <- function(rgcca_args, inds, prediction_model,
     res,
     metric = metric,
     blocks_test = blocks_test,
-    prediction_model = prediction_model,
+    prediction_model = prediction_model,params=params,tuning=tuning,
     ...
   )$score)
 }

@@ -9,7 +9,11 @@
 #' @return A data.frame containing the results.
 #' @noRd
 format_bootstrap_list <- function(W, rgcca_res) {
+ 
+
+  #aa
   # Repeat values for variables, blocks and components
+  
   grid <- do.call(rbind, lapply(seq_along(rgcca_res$a), function(j) {
     a <- rgcca_res$a[[j]]
     expand.grid(list(
@@ -18,11 +22,13 @@ format_bootstrap_list <- function(W, rgcca_res) {
       block = names(rgcca_res$a)[j]
     ))
   }))
-
-  # Repeat values by adding the type and the number of the bootstrap sample
   df <- expand.grid(
     var = grid[, 1], type = c("weights", "loadings"), boot = seq_along(W)
   )
+  
+  print(grid)
+  # Repeat values by adding the type and the number of the bootstrap sample
+  
   df <- cbind(df, lapply(grid[-1], function(x) {
     expand.grid(
       x, type = c("weights", "loadings"), boot = seq_along(W)
@@ -30,6 +36,9 @@ format_bootstrap_list <- function(W, rgcca_res) {
   }))
 
   # Unlist the values into a new column of the grid
+ 
+
+
   df$value <- unlist(W, use.names = FALSE)
 
   return(df)

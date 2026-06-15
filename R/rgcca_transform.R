@@ -25,7 +25,7 @@ rgcca_transform <- function(rgcca_res, blocks_test = rgcca_res$call$blocks) {
     # Use the scaling parameter of the training set on the new set
     if (length(center) != 0) {
       if (is.null(scale)) scale <- FALSE
-      data <- scale(data, center, scale)
+      data <- scale(data,  center,scale)
     }
     return(data)
   }
@@ -44,8 +44,10 @@ rgcca_transform <- function(rgcca_res, blocks_test = rgcca_res$call$blocks) {
     ))
   }
   X_train <- rgcca_res$blocks[names(blocks_test)]
+  
   blocks_test <- lapply(seq_along(blocks_test), function(j) {
     x <- to_mat(blocks_test[[j]])
+   
     y <- to_mat(X_train[[j]])
     # Deal with qualitative block
     if (rgcca_res$opt$disjunction) {
@@ -54,6 +56,7 @@ rgcca_transform <- function(rgcca_res, blocks_test = rgcca_res$call$blocks) {
         x <- as_disjunctive(x)
       }
     }
+   
     if (!all(colnames(y) %in% colnames(x))) {
       stop_rgcca(
         "Some columns are missing for test block ",
@@ -65,14 +68,15 @@ rgcca_transform <- function(rgcca_res, blocks_test = rgcca_res$call$blocks) {
   })
 
   ### Scale blocks_test if needed
-  blocks_test <- lapply(seq_along(blocks_test), function(j) {
-    scl_fun(
-      blocks_test[[j]],
-      attr(X_train[[j]], "scaled:center"),
-      attr(X_train[[j]], "scaled:scale")
-    )
-  })
-
+  #noo
+  #blocks_test <- lapply(seq_along(blocks_test), function(j) {
+  #  scl_fun(
+  #    blocks_test[[j]],
+  #    attr(X_train[[j]], "scaled:center"),
+  #    attr(X_train[[j]], "scaled:scale")
+  #  )
+  #})
+#
   ### Project blocks_test on the space computed using RGCCA
   # If there is a superblock with orthogonal components, the superblock
   # is constructed and projected

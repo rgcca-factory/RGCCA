@@ -43,8 +43,11 @@ select_analysis <- function(rgcca_args, blocks) {
   }
 
   if (any(vapply(blocks, function(x) length(dim(x)), FUN.VALUE = 1L) > 2)) {
+    if (any(as.numeric(unlist(sparsity)) != 1)) {
+      method <- "stgcca"}
+    else{
     method <- "tgcca"
-  }
+  }}
 
   method <- check_method(method)
 
@@ -70,6 +73,14 @@ select_analysis <- function(rgcca_args, blocks) {
       penalty <- tau
       comp_orth <- TRUE
       superblock <- FALSE
+    },
+    "stgcca" = {
+      mode_orth <- check_mode_orth(mode_orth, blocks)
+      param <- "sparsity"
+      penalty <- sparsity
+      comp_orth <- TRUE
+      superblock <- FALSE
+      
     },
     "pca" = {
       check_nblocks(blocks, "pca")
@@ -414,11 +425,12 @@ select_analysis <- function(rgcca_args, blocks) {
     }
   }
 
-  if (method %in% c("rgcca", "sgcca", "tgcca")) {
+  if (method %in% c("rgcca", "sgcca", "tgcca","stgcca")) {
     scheme <- check_scheme(scheme)
-    if (any(sparsity != 1)) {
+    if (any(as.numeric(unlist(sparsity)) != 1)) {
       param <- "sparsity"
-      method <- "sgcca"
+      #method <- "sgcca"
+     
       penalty <- sparsity
     }
     if (!is.null(response)) {
@@ -451,7 +463,8 @@ select_analysis <- function(rgcca_args, blocks) {
         penalty <- c(penalty[seq(J)], pen)
       }
     } else {
-      rank <- check_rank(rank, blocks, mode_orth, ncomp = max(ncomp))
+  
+      rank <- check_rank(rank, blocks, mode_orth, ncomp = max(unlist(ncomp)))
       if (is.null(connection)) {
         connection <- connection_matrix(blocks, type = "pair")
       } else {

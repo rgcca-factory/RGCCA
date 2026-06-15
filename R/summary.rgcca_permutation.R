@@ -6,8 +6,8 @@ summary.rgcca_permutation <- function(object, ...) {
 
   ### Print parameters of the function
   print_call(object$call)
-
-  params <- round(object$params, 3)
+ 
+  params <- object$params
   rownames(params) <- seq_len(NROW(params))
   cat(fill = TRUE)
   cat(paste0("Tuning parameters (", object$par_type, ") used: "), fill = TRUE)

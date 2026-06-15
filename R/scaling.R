@@ -3,20 +3,47 @@
 #' @param na.rm A logical, if TRUE, NA values are replaced by 0 to
 #' compute scaling parameters.
 #' @noRd
+
 scaling <- function(blocks, scale = TRUE, bias = TRUE,
                     scale_block = "inertia", na.rm = TRUE) {
   if (isTRUE(scale_block)) scale_block <- "inertia"
   sqrt_N <- sqrt(NROW(blocks[[1]]) + bias - 1)
 
+
   blocks <- lapply(blocks, function(x) {
     # Store dim and dimnames
+   
     dim_x <- dim(x)
-    dimnames_x <- dimnames(x)
 
-    # Unfold the array if needed
+    dimnames_x <- dimnames(x)
+    if (scale){
     if (length(dim_x) > 2) {
-      x <- matrix(x, nrow = nrow(x))
-    }
+    # Unfold the array if needed
+    
+     dim(x)<-c(dim(x)[1],dim(x)[2],prod(dim(x)[3:length(dim(x))]))
+      for (i in 1:dim(x)[2]){
+    
+          
+          x[1:dim(x)[1],i,1:dim(x)[3]] <- scale2(x[1:dim(x)[1],i,1:dim(x)[3]], scale = scale, bias = bias)
+          # Scale each block by a constant if requested
+          if (scale_block == "lambda1") {
+            x[1:dim(x)[1],i,1:dim(x)[3]] <- scale_lambda1(x[1:dim(x)[1],i,1:dim(x)[3]], sqrt_N, scale, na.rm = na.rm)
+          } else if (scale_block == "inertia") {
+            
+            x[1:dim(x)[1],i,1:dim(x)[3]] <- scale_inertia(x[1:dim(x)[1],i,1:dim(x)[3]], sqrt_N, scale, na.rm = na.rm)
+          }
+
+
+      }
+            dim(x)<-dim_x
+            }
+            #else{
+            #      x <- scale2(x, scale = scale, bias = bias)
+#
+            #}
+            
+
+    else{
 
     # Center and eventually scale the blocks
     x <- scale2(x, scale = scale, bias = bias)
@@ -26,7 +53,7 @@ scaling <- function(blocks, scale = TRUE, bias = TRUE,
       x <- scale_lambda1(x, sqrt_N, scale, na.rm = na.rm)
     } else if (scale_block == "inertia") {
       x <- scale_inertia(x, sqrt_N, scale, na.rm = na.rm)
-    }
+    }}}
 
     # Go back to a tensor
     y <- array(x, dim = dim_x)

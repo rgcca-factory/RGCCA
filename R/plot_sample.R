@@ -10,6 +10,7 @@ plot_sample <- function(df, title, x, block, comp, theme_RGCCA,
                         var_shapes, ...) {
   xlab <- print_comp(x, comp[1], block[1])
   ylab <- print_comp(x, comp[2], block[2])
+ 
 
   discrete <- is.character(df$response) || is.factor(df$response)
   if (discrete) {
@@ -61,7 +62,6 @@ plot_sample <- function(df, title, x, block, comp, theme_RGCCA,
     ) +
     ggplot2::scale_x_continuous(expand = ggplot2::expansion(mult = .1)) +
     ggplot2::scale_y_continuous(expand = ggplot2::expansion(mult = .1))
-
   # Change colors and shapes based on discrete or continuous response
   if (discrete) {
     # Remove legend if response takes a single value

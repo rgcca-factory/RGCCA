@@ -54,7 +54,7 @@ rgcca_outer_loop <- function(blocks, connection = 1 - diag(length(blocks)),
   factors <- lapply(seq(J), function(b) {
     lapply(seq_along(dim(R[[b]])[-1]), function(m) NULL)
   })
-
+  
   if (superblock && comp_orth) {
     P <- c()
   } else {
@@ -86,9 +86,11 @@ rgcca_outer_loop <- function(blocks, connection = 1 - diag(length(blocks)),
 
   # Whether primal or dual
   primal_dual <- matrix("primal", nrow = N + 1, ncol = J)
-  primal_dual[which((sparsity == 1) & (nb_ind < matrix(
+  primal_dual[which((as.numeric(unlist(lapply(seq_along(sparsity), function(m) {
+    
+      any(sparsity[[m]]==1)}))) & (nb_ind < matrix(
     pjs, nrow = N + 1, ncol = J, byrow = TRUE
-  )))] <- "dual"
+  ))))] <- "dual"
 
   ##### Computation of RGCCA components #####
   for (n in seq(N + 1)) {
@@ -98,6 +100,7 @@ rgcca_outer_loop <- function(blocks, connection = 1 - diag(length(blocks)),
         " is under progress...\n"
       ))
     }
+    
     gcca_result <- rgcca_inner_loop(R, connection, g, dg,
                                     tau = computed_tau[n, ],
                                     sparsity = sparsity[n, ],
@@ -114,6 +117,8 @@ rgcca_outer_loop <- function(blocks, connection = 1 - diag(length(blocks)),
 
     # Store Y, a, factors and lambda
     a <- lapply(seq(J), function(b) cbind(a[[b]], gcca_result$a[[b]]))
+    
+
     Y <- lapply(seq(J), function(b) cbind(Y[[b]], gcca_result$Y[, b]))
     factors <- lapply(seq(J), function(b) {
       lapply(seq_along(factors[[b]]), function(m) {
@@ -131,6 +136,7 @@ rgcca_outer_loop <- function(blocks, connection = 1 - diag(length(blocks)),
     R <- defl_result$R
     P <- defl_result$P
   }
+
 
   # If there is a superblock and weight vectors are orthogonal, it is possible
   # to have non meaningful lambda associated to blocks that have been set to

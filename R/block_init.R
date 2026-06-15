@@ -1,11 +1,13 @@
 #' @importFrom MASS ginv
 
 block_init <- function(x, init = "svd") {
+  
   UseMethod("block_init")
 }
 
 #' @export
 block_init.block <- function(x, init = "svd") {
+
   if (init == "svd") {
     x$a <- initsvd(x$x, dual = FALSE)
   } else {
@@ -17,6 +19,7 @@ block_init.block <- function(x, init = "svd") {
 
 #' @export
 block_init.dual_block <- function(x, init = "svd") {
+
   if (init == "svd") {
     x$alpha <- initsvd(x$x, dual = TRUE)
   } else {
@@ -28,6 +31,7 @@ block_init.dual_block <- function(x, init = "svd") {
 
 #' @export
 block_init.primal_regularized_block <- function(x, init = "svd") {
+  
   x$M <- ginv(
     x$tau * diag(x$p) + (1 - x$tau) * pm(t(x$x), x$x, na.rm = x$na.rm) / x$N
   )
@@ -36,10 +40,32 @@ block_init.primal_regularized_block <- function(x, init = "svd") {
 
 #' @export
 block_init.dual_regularized_block <- function(x, init = "svd") {
+
   x$M <- ginv(x$tau * diag(x$n) + (1 - x$tau) * x$K / x$N)
   NextMethod()
 }
 
+#' @export
+block_init.sparse_tensor_block <- function(x, init = "svd") {
+  if (init == "svd") {
+    x$factors <- lapply(seq_along(dim(x$x))[-1], function(m) {
+      initsvd(apply(x$x, m, c), dual = FALSE, rank = x$rank)
+    })
+  } else {
+    x$factors <- lapply(seq_along(dim(x$x))[-1], function(m) {
+      if (m == x$mode_orth) {
+        svd(matrix(
+          rnorm(dim(x$x)[m] * x$rank), dim(x$x)[m]
+        ), nu = x$rank, nv = 0)$u
+      } else {
+        matrix(rnorm(dim(x$x)[m] * x$rank), dim(x$x)[m])
+      }
+    })
+  }
+  x$lambda <- rep(1 / sqrt(x$rank), x$rank)
+
+  return(block_project(x))
+}
 #' @export
 block_init.tensor_block <- function(x, init = "svd") {
   if (init == "svd") {
@@ -61,6 +87,8 @@ block_init.tensor_block <- function(x, init = "svd") {
 
   return(block_project(x))
 }
+
+
 
 #' @export
 block_init.regularized_tensor_block <- function(x, init = "svd") {
