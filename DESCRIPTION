@@ -1,5 +1,5 @@
 Type: Package
-Package: RGCCA2
+Package: RGCCA
 Title: Regularized and Sparse Generalized Canonical Correlation
         Analysis for Multiblock Data
 Version: 3.0.3
@@ -42,6 +42,8 @@ Imports:
     pbapply,
     rlang,
     stats,
+    diptest,
+    pracma,
 Suggests:
     devtools,
     FactoMineR,
