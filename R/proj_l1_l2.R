@@ -15,6 +15,7 @@ proj_l1_l2 <- function(x, a = 1) {
 
   # Check if constraints are already satisfied
   norm2_x <- norm(x, type = "2")
+ 
   if (norm2_x < .Machine$double.eps) {
     return(list(sol = x, l2_sat = FALSE))
   }

@@ -71,7 +71,7 @@
 #' @export
 #' @seealso \code{\link[RGCCA]{plot.rgcca_bootstrap}},
 #' \code{\link[RGCCA]{summary.rgcca_bootstrap}}
-rgcca_bootstrap <- function(rgcca_res, n_boot = 100,
+rgcca_bootstrap <- function(rgcca_res, n_boot = 100,method,
                             n_cores = 1, verbose = TRUE) {
 
  stability <- is(rgcca_res, "rgcca_stability")
@@ -82,6 +82,11 @@ rgcca_bootstrap <- function(rgcca_res, n_boot = 100,
     )
     rgcca_res <- rgcca_res$rgcca_res
   }
+    extract <- function(A, .dim, .value) {
+    idx.list <- lapply(dim(A), seq_len)
+    idx.list[[.dim]] <- .value
+    do.call(`[`, c(list(A), idx.list))
+}
 
   # If sparse model, we perform bootstrap only on the selected variables
   if (!stability && tolower(rgcca_res$call$method) %in% sparse_methods()) {
@@ -96,46 +101,40 @@ rgcca_bootstrap <- function(rgcca_res, n_boot = 100,
     # from the kept variables
     J <- length(rgcca_res$call$blocks)
    
-    for (i in 1:(length(rgcca_res$factors)-1)){
-      if (length(rgcca_res$factors[[i]])>1){
+    for (i in 1:(length(rgcca_res$call$blocks)-1)){
+    
+      if (length(dim(rgcca_res$call$blocks[[i]]))>2){
+        for (m in 1:(length(dim(rgcca_res$call$blocks[[i]]))-1)){
+          aux =rgcca_res$factors[[i]][m][[1]][,1]
+          names(aux)=seq_len(length(aux))
+     
+        x=unlist(aux)!=0
+        if (m==1){
+      keep=c(unlist(rgcca_res$factors[[i]][m][[1]][,1])[x])
+
+        }
+        else{
+          keep = c(keep,unlist(rgcca_res$factors[[i]][m][[1]][,1])[x])
+          
+        }
+       # print(rgcca_res$a)
       
-      for (kk in 1:length(rgcca_res$factors[[i]])){
-
-        keep_var=which(rgcca_res$factors[[i]][[kk]]!=0)
         
-        rgcca_res$factors[[i]][[kk]]=rgcca_res$factors[[i]][[kk]][keep_var]
-      
-        if (kk==1){
-          keep_var1=keep_var
+          rgcca_res$call$blocks[[i]]=extract(rgcca_res$call$blocks[[i]],m+1,seq_len(length(rgcca_res$factors[[i]][m][[1]][,1]))[x])
+         
 
-      }
-       else{
-        keep_var2=keep_var
-        if (length(keep_var2==0)){
-          keep_var=1:dim(rgcca_res$call$blocks[[i]])[2]
-        }}
-       # for (ii in 1:dim(rgcca_res$call$blocks[[i]])[3]){
-       
-         }
-        
-         rgcca_res$call$blocks[[i]]=rgcca_res$call$blocks[[i]][,keep_var1,keep_var2]
 
-        
-       #}
-      }
-      else{
+    } 
+ }
+     else{
+      keepvar=unlist(rgcca_res$a[i])!=0
+       rgcca_res$call$blocks[[i]]=rgcca_res$call$blocks[[i]][,keepvar,drop=FALSE]
 
-       # rgcca_res$factors[[i]]=rgcca_res$factors[[i]][which(rgcca_res$factors[[i]][,1]!=0),]
-       rgcca_res$call$blocks[[i]]=rgcca_res$call$blocks[[i]][,which(rgcca_res$factors[[i]][,1]!=0)]
-
-        
-      }
-
-    }
-    keep_var <- lapply(
-      rgcca_res$a[-(J + 1)],
-      function(x) unique(which(x != 0, arr.ind = TRUE)[, 1])
-    )
+     }}
+   # keep_var <- lapply(
+   #   rgcca_res$a[-(J + 1)],
+   #   function(x) unique(which(x != 0, arr.ind = TRUE)[, 1])
+   # )
 
     if (rgcca_res$opt$disjunction) {
       keep_var[[rgcca_res$call$response]] <- 1
@@ -146,8 +145,8 @@ rgcca_bootstrap <- function(rgcca_res, n_boot = 100,
    # )
     rgcca_res$call$tau <-
       rgcca_res$call$sparsity <- rep(1, length(rgcca_res$blocks))
-
-    rgcca_res <- rgcca(rgcca_res)
+    
+    rgcca_res <- rgcca(rgcca_res,method)
   }
   
 
@@ -171,7 +170,6 @@ rgcca_bootstrap <- function(rgcca_res, n_boot = 100,
     })
   }
   
-
   ### Run RGCCA on the bootstrap samples
   W <- par_pblapply(v_inds, function(b) {
     rgcca_bootstrap_k(

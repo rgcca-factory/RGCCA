@@ -6,11 +6,11 @@
 #' @inheritParams rgcca_bootstrap
 #' @noRd
 rgcca_cv_k <- function(rgcca_args, inds,prediction_model,params=NULL,tuning=NULL,
-                       par_type, par_value, par_value2=NULL,metric, upsample=FALSE,...) {
+                       par_type, par_value, metric, upsample=FALSE,...) {
   
  
   rgcca_args[[par_type]] <- par_value
-  rgcca_args[['sparse_lambda']] <- par_value2
+ #rgcca_args[['sparse_lambda']] <- par_value2
   blocks <- rgcca_args[["blocks"]]
   ind_pos_=setdiff(c(1:dim(rgcca_args[["blocks"]][[1]])[1]),inds)
  
@@ -23,13 +23,8 @@ rgcca_cv_k <- function(rgcca_args, inds,prediction_model,params=NULL,tuning=NULL
           
           ind_pos$response=rgcca_args[["blocks"]]
           ind_pos_new=upSample(y=as.factor(rgcca_args[["blocks"]]$response[ind_pos$ind]),
-          x=ind_pos$ind)
-          
- 
-         
-          #print(length(folds))
-        }
-  else{
+          x=ind_pos$ind)              
+  }else{
     ind_pos_new=NULL
     ind_pos_new$x=ind_pos_
   }

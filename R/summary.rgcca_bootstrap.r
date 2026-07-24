@@ -3,7 +3,7 @@
 #' @order 4
 summary.rgcca_bootstrap <- function(object,
                                     block = seq_along(object$rgcca$call$blocks),
-                                    comp = 1, type = c("weights", "loadings"),
+                                    comp = 1, type = c("weights", "loadings","factors"),
                                     empirical = TRUE, display_order = FALSE,
                                     adj.method = "fdr", ...) {
   ### Perform checks and parse arguments
@@ -34,7 +34,12 @@ summary.rgcca_bootstrap <- function(object,
   df_list <- lapply(seq_along(block), function(ii) {
     j <- block[ii]  
     bn <- blocks_names[j]
-    use_type <- if (multi_blocks[j]) "factors" else type
+    if ((length(dim(object$rgcca$call$blocks[[j]]))>2)& (type=='weights')){
+      use_type='factors'
+    
+    }else{
+      use_type=type
+    }
     comp_j <- if (length(comp) == 1) comp else comp[ii]
     subset(object$stats, type == use_type & block == bn & comp == comp_j)
   })

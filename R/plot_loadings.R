@@ -9,11 +9,16 @@ plot_loadings <- function(df, title, x, block, theme_RGCCA,
                           cex_point, var_colors, ...) {
   # Add colors depending on looking at superblock or regular blocks
   is_multiblock <- (length(block) > 1) || (block == length(x$call$blocks) + 1)
+  is_factor <- (length(unique(df$response ))>1)
   if (is_multiblock) {
     p <- ggplot(df, aes(x = .data$x, y = .data$y, color = .data$response)) +
       ggplot2::scale_color_manual(values = var_colors) +
       ggplot2::labs(color = "Block")
-  } else {
+  } else if (is_factor) {
+      p <- ggplot(df, aes(x = .data$x, y = .data$y, color = .data$response)) +
+      ggplot2::scale_color_manual(values = var_colors) +
+      ggplot2::labs(color = "Mode")
+  }else {
     p <- ggplot(df, aes(x = .data$x, y = .data$y))
   }
   # Construct plot
@@ -39,7 +44,7 @@ plot_loadings <- function(df, title, x, block, theme_RGCCA,
     )
 
   # Hide legend if not superblock
-  if (!is_multiblock) {
+  if (!(is_multiblock|| is_factor)) {
     p <- p + ggplot2::theme(legend.position = "none")
   }
   return(p)

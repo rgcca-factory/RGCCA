@@ -7,9 +7,8 @@ summary.rgcca_cv <- function(object, type = c("sd", "quantile"), ...) {
   type <- match.arg(type, c("sd", "quantile"))
 
   ### Print parameters of the function
-  print(object$params)
-  print(object)
-  params <- round(object$params, 3)
+  
+  params <- object$params#round(object$params, 3)
   rownames(params) <- seq_len(NROW(params))
   cat(fill = TRUE)
   cat(paste0("Tuning parameters (", object$par_type, ") used: "), fill = TRUE)
@@ -49,7 +48,7 @@ summary.rgcca_cv <- function(object, type = c("sd", "quantile"), ...) {
 
   cat(strwrap(paste0(
     "The best combination is: ",
-    list(object$best_params),
+   list( object$best_params),
     " for a mean ", object$metric, " of ",
     format(optimal_y, digits = 3)
   ), getOption("width")))

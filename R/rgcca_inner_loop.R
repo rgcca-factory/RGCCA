@@ -24,8 +24,9 @@ rgcca_inner_loop <- function(A, C, g, dg, tau = rep(1, length(A)),
 
   ### Initialization
   
+  
   block_objects <- lapply(seq_along(A), function(j) {
-    create_block(A[[j]], j, bias, na.rm, tau[j], sparsity[j], sparse_lambda[j],
+    create_block(A[[j]], j, bias, na.rm, tau[j], sparsity[[j]], sparse_lambda[j],
     tol, rank[j], mode_orth[j], separable)
   })
   
@@ -63,11 +64,12 @@ rgcca_inner_loop <- function(A, C, g, dg, tau = rep(1, length(A)),
     }
 
     a <- lapply(block_objects, "[[", "a")
+
     stopping_criteria <- c(
       drop(crossprod(unlist(a, FALSE, FALSE) - unlist(a_old, FALSE, FALSE))),
       abs(crit[iter] - crit_old)
     )
-
+   
     if (any(stopping_criteria < tol) || (iter > n_iter_max)) {
       break
     }

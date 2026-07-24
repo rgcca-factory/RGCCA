@@ -470,6 +470,7 @@ rgcca <- function(blocks, connection = NULL, tau = 1, ncomp = 1,
   rgcca_args$quiet <- quiet
   rgcca_args$verbose <- verbose
 
+
   blocks <- rgcca_args$blocks
 
   if (opt$disjunction) {
@@ -499,7 +500,7 @@ rgcca <- function(blocks, connection = NULL, tau = 1, ncomp = 1,
   gcca_args <- rgcca_args[c(
     "connection", "ncomp", "scheme", "init", "bias", "tol",
     "verbose", "superblock", "response", "n_iter_max", "comp_orth",
-    "rank", "mode_orth", "separable"
+    "rank", "mode_orth", "separable","sparse_lambda"
   )]
   gcca_args[["na.rm"]] <- na.rm
   gcca_args[["blocks"]] <- blocks

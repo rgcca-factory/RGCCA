@@ -26,7 +26,6 @@ format_bootstrap_list <- function(W, rgcca_res) {
     var = grid[, 1], type = c("weights", "loadings"), boot = seq_along(W)
   )
   
-  print(grid)
   # Repeat values by adding the type and the number of the bootstrap sample
   
   df <- cbind(df, lapply(grid[-1], function(x) {

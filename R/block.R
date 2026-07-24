@@ -67,13 +67,12 @@ new_sparse_tensor_block <- function(x, j, rank, mode_orth,sparsity,sparse_lambda
     
    
   }
-
-  const2 <- sqrt(rank *sparse_lambda )
-  
+ 
+  const2 <- sqrt(rank) *sparse_lambda
   
  
   new_block(
-    x, j, rank = rank, sparsity=sparsity,const = const,
+    x, j, rank = rank, sparsity=sparsity,const = const,sparse_lambda=sparse_lambda,
     tol = tol,mode_orth = mode_orth, factors = NULL,const2=const2,
     lambda = NULL, ..., class ="sparse_tensor_block"
   )
@@ -111,8 +110,10 @@ create_block <- function(x, j, bias, na.rm, tau, sparsity,sparse_lambda,
         )
       }
       }else {
+   
 
-        if  (any(unlist(sparsity)!=1)) {  
+        if  (any(unlist(sparsity)!=1)| any(unlist(sparse_lambda)!=1)) {  
+         
         
 
         
@@ -121,7 +122,7 @@ create_block <- function(x, j, bias, na.rm, tau, sparsity,sparse_lambda,
           res <- new_tensor_block(x, j, rank, mode_orth, bias = bias, na.rm = na.rm)
     }  }
     }else {
-    if (sparsity < 1 &sparsity>0) {             # SGCCA
+    if (any(unlist(sparsity)!=1) < 1 &any(unlist(sparsity)!=1)>0) {             # SGCCA
       res <- new_sparse_block(x, j, sparsity, tol, bias = bias, na.rm = na.rm)
     } else if (NROW(x) > NCOL(x)) { # Primal RGCCA
       if (tau < 1) {

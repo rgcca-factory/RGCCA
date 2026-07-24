@@ -2,7 +2,7 @@
 #' @rdname plot
 #' @order 4
 plot.rgcca_bootstrap <- function(x, block = seq_along(x$rgcca$call$blocks),
-                                 comp = 1, type = c("weights", "loadings"),
+                                 comp = 1, type = c("weights", "loadings","factors"),
                                  empirical = TRUE, n_mark = 30,
                                  display_order = TRUE,
                                  show_stars = TRUE, title = NULL,
@@ -132,6 +132,7 @@ plot.rgcca_bootstrap <- function(x, block = seq_along(x$rgcca$call$blocks),
   stopifnot(is(x, "rgcca_bootstrap"))
   type <- type[1]
   type <- match.arg(type, c("weights", "loadings", "factors"))
+  
   lapply(block, function(i) check_blockx("block", i, x$rgcca$call$blocks))
   Map(function(y, z) check_compx(y, y, x$rgcca$call$ncomp, z), comp, block)
   check_integer("n_mark", n_mark)
@@ -156,7 +157,13 @@ plot.rgcca_bootstrap <- function(x, block = seq_along(x$rgcca$call$blocks),
   df_list <- lapply(seq_along(block), function(ii) {
     j <- block[ii]  
     bn <- blocks_names[j]
-    use_type <- if (multi_blocks[j]) "factors" else type
+    
+    if ((length(dim(x$rgcca$blocks[[j]]))>2)& (type=='weights')){
+      use_type='factors'
+    
+    }else{
+      use_type=type
+    }
     comp_j <- if (length(comp) == 1) comp else comp[ii]
     subset(x$stats, type == use_type & block == bn & comp == comp_j)
   })
@@ -181,6 +188,26 @@ plot.rgcca_bootstrap <- function(x, block = seq_along(x$rgcca$call$blocks),
   colnames(df) <- column_names
   
   df$response <- factor(blkvec)
+  if (length(dim(x$rgcca$blocks[[block]]))>2){
+    
+  first=TRUE
+    for (j in 1:length(block)){
+      for (i in 1:length(dimnames(x$rgcca$blocks[[j]])[2:length( dimnames(x$rgcca$blocks[[j]]))]) ){
+        if (first){
+          y = rep(as.character(i),length(dimnames(x$rgcca$blocks[[j]])[2:length( dimnames(x$rgcca$blocks[[j]]))][i][[1]]) )
+        first=FALSE
+        }else{
+          y = c(y,rep(as.character(i),length(dimnames(x$rgcca$blocks[[j]])[2:length( dimnames(x$rgcca$blocks[[j]]))][i][[1]]) ))
+
+        }
+      }
+    }
+
+
+    df$response=as.factor(y)
+
+
+  }
   
   ### st
 
@@ -190,7 +217,6 @@ plot.rgcca_bootstrap <- function(x, block = seq_along(x$rgcca$call$blocks),
   df <- df[df[, "sd"] != 0, ]
 
   n_mark <- min(n_mark, NROW(df))
-  print(df)
   df <- data.frame(df, order = seq(NROW(df), 1))[seq(n_mark), ]
 
   significance <- rep("", n_mark)
@@ -220,7 +246,7 @@ plot.rgcca_bootstrap <- function(x, block = seq_along(x$rgcca$call$blocks),
 
   # Duplicate colors to avoid insufficient values in manual scale
   colors <- rep(colors, NROW(df) / length(colors) + 1)
-
+  
   ### Construct plot
   if (length(block) > 1) {
     p <- ggplot(
@@ -229,7 +255,16 @@ plot.rgcca_bootstrap <- function(x, block = seq_along(x$rgcca$call$blocks),
     ) +
       ggplot2::scale_color_manual(values = colors) +
       ggplot2::labs(color = "Block")
-  } else {
+  } 
+  else if (length(dim(x$rgcca$blocks[[block]]))>2){
+        p <- ggplot(
+      df,
+      aes(x = .data$order, y = .data$estimate, color = .data$response)
+    ) +
+      ggplot2::scale_color_manual(values = colors) +
+      ggplot2::labs(color = "Modes")
+
+    }else {
     p <- ggplot(df, aes(x = .data$order, y = .data$estimate))
   }
 

@@ -4,7 +4,7 @@
 #' be evaluated either using cross validation or permutation.
 #' @inheritParams rgcca_cv
 #' @noRd
-set_parameter_grid <- function(par_type, par_length, par_value,par_value2, blocks,
+set_parameter_grid <- function(par_type, par_length, par_value, blocks,
                                penalty, method,response = NULL, superblock = FALSE,
                                disjunction = FALSE) {
 
@@ -34,6 +34,9 @@ set_parameter_grid <- function(par_type, par_length, par_value,par_value2, block
     if (is.null(response_value)) {
       return(par_value)
     }
+
+
+    par_value[response]=response_value(par_value)
     par_value <- t(apply(par_value, 1, function(x) {
       
      
@@ -69,20 +72,13 @@ set_parameter_grid <- function(par_type, par_length, par_value,par_value2, block
           }
       }
       par_value<-aux
-     
-      if (is.null(par_value2)){
-        par_value2 <- lapply(seq_along(blocks), function(j) {
-            
-         
-            seq(max_values, min_values[j], length.out = par_length)})
-      }            
-      par_value2 <- do.call(cbind, par_value2)
-}
+  
+      
 
 
+     }
     
-    
-      return(list(par_type = par_type, par_value = par_value,par_value2=par_value2))  
+      return(list(par_type = par_type, par_value = par_value))  
     }
     
 
@@ -90,9 +86,9 @@ set_parameter_grid <- function(par_type, par_length, par_value,par_value2, block
     # If par_value is a vector, we aim to create a matrix out of this
     # vector. Hence we have to check beforehand that par_value is a vector
     # of valid numbers.
-   
     if (is.vector(par_value)&!is.list(par_value)) {
-      par_value <- check_function(par_value)
+      if (method!='stgcca'){
+      par_value <- check_function(par_value)}
 
       par_value <- lapply(seq_along(par_value), function(j) {
         seq(par_value[j], min_values[j], length.out = par_length)
@@ -100,27 +96,22 @@ set_parameter_grid <- function(par_type, par_length, par_value,par_value2, block
       par_value <- do.call(cbind, par_value)
       par_value <- set_response_value(par_value, response_value)
       
-      return(list(par_type = par_type, par_value = par_value,par_value=par_value2))
+      return(list(par_type = par_type, par_value = par_value))
     }
     # If par_value is already a grid, we just check that it is valid.
-    else{if (method!='stgcca'){par_value <- t(vapply(seq_len(NROW(par_value)), function(i) {
+    else{
+      if (method!='stgcca'){
+        par_value <- t(vapply(seq_len(NROW(par_value)), function(i) {
       check_function(par_value[i, ])
     }, FUN.VALUE = double(ncol(par_value))))}
-    if (is.vector(par_value2)&!is.list(par_value2)) {
-      par_value2 <- check_function(par_value2)
-      par_value2<- lapply(seq_along(par_value2), function(j) {
-        seq(par_value2[j], min_values[j], length.out = par_length)
-      })
-      par_value2 <- do.call(cbind, par_value2)
-      par_value2 <- set_response_value(par_value2, response_value)}
+    
     #
     
-    
-    #par_value <- set_response_value(par_value, response_value)
+   # par_value <- set_response_value(par_value, response_value)
    # par_value2 <- set_response_value(par_value2, response_value)
 
 
-    return(list(par_type = par_type, par_value = par_value,par_value2=par_value2))
+    return(list(par_type = par_type, par_value = par_value))
   }}
 
   ### Main function
@@ -153,6 +144,16 @@ set_parameter_grid <- function(par_type, par_length, par_value,par_value2, block
       }
     },
     "sparsity" = {
+      min_values <- c(1 / sqrt(ncols), 1 / sqrt(sum(ncols)))
+      max_values <- 1
+      response_value <- function(x) {
+        ifelse(disjunction, 0, x[response])
+      }
+      check_function <- function(x) {
+        check_penalty(x, blocks, method='sgcca', superblock = superblock)
+      }
+    },
+    "sparse_lambda" = {
       min_values <- c(1 / sqrt(ncols), 1 / sqrt(sum(ncols)))
       max_values <- 1
       response_value <- function(x) {

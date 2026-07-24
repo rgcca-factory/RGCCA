@@ -32,6 +32,7 @@ get_rgcca_args <- function(object, default_args = list()) {
       method = tolower(default_args$method),
       verbose = default_args$verbose,
       sparsity = default_args$sparsity,
+      sparse_lambda = default_args$sparse_lambda,
       response = default_args$response,
       NA_method = tolower(default_args$NA_method),
       comp_orth = default_args$comp_orth,
@@ -42,6 +43,7 @@ get_rgcca_args <- function(object, default_args = list()) {
       superblock = default_args$superblock,
       scale_block = default_args$scale_block
     )
+ 
 
     rgcca_args$init <- check_char(rgcca_args$init, "init", c("svd", "random"))
     rgcca_args$NA_method <- check_char(
@@ -62,7 +64,7 @@ get_rgcca_args <- function(object, default_args = list()) {
     check_integer("tol", rgcca_args$tol, float = TRUE, min = 0)
     check_integer("n_iter_max", rgcca_args$n_iter_max, min = 1)
     for (i in c(
-      "superblock", "verbose", "scale", "bias", 
+      "superblock", "verbose", "bias", 
       "quiet", "comp_orth", "separable"
     )) {
       check_boolean(i, rgcca_args[[i]])

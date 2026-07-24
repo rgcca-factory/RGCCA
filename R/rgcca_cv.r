@@ -165,7 +165,6 @@ rgcca_cv <- function(blocks,
                      response = NULL,
                      par_type = "tau",
                      par_value = NULL,
-                     par_value2=NULL,
                      par_length = 10,
                      validation = "kfold",
                      prediction_model = "lm",
@@ -185,7 +184,7 @@ rgcca_cv <- function(blocks,
                      rgcca_res = NULL,
                      tau = 1,
                      ncomp = 1,
-                     sparsity = 1,upsample=FALSE,
+                     sparsity = 1,sparse_lambda=1,upsample=FALSE,
                      init = "svd",
                      bias = TRUE,
                      verbose = TRUE,
@@ -226,7 +225,7 @@ rgcca_cv <- function(blocks,
   check_integer("par_length", par_length)
   check_integer("n_run", n_run)
   check_integer("k", k, min = 2)
-  match.arg(par_type, c("tau", "sparsity", "ncomp"))
+  match.arg(par_type, c("tau", "sparsity", "ncomp","sparse_lambda"))
   match.arg(validation, c("loo", "kfold"))
 
   default_metric <- ifelse(model$classification, "Accuracy", "RMSE")
@@ -245,7 +244,7 @@ rgcca_cv <- function(blocks,
   }
 
   param <- set_parameter_grid(
-    par_type, par_length, par_value,par_value2, rgcca_args$blocks,
+    par_type, par_length, par_value, rgcca_args$blocks,
     rgcca_args[[par_type]], method,rgcca_args$response, FALSE, opt$disjunction
   )
 
@@ -317,14 +316,14 @@ rgcca_cv <- function(blocks,
     i <- (n - 1) %/% length(v_inds) + 1
     j <- (n - 1) %% length(v_inds) + 1
     
-
+    
     rgcca_cv_k(
       rgcca_args,
       inds = v_inds[[j]],
       metric = metric,
       par_type = param$par_type,
       par_value = param$par_value[i,],
-      par_value2=param$par_value2[i,],upsample=upsample,
+      upsample=upsample,
       prediction_model = model$prediction_model,params=params,tuning=tuning,
       ...
     )
@@ -404,7 +403,8 @@ rgcca_cv <- function(blocks,
     prediction_model = model$model_name
   )}
   else{
-  
+          original<-param$par_value
+
     aux=matrix(,nrow=dim(param$par_value)[1],ncol=length(unlist(param$par_value[1,])))
    
     rownames(W) <- seq_len(NROW(W))
@@ -418,7 +418,8 @@ rgcca_cv <- function(blocks,
    
     #rownames(aux) <- seq_len(NCOL(param$par_value))
     #colnames(aux) <- names(rgcca_args$blocks)
-    param$value<-aux
+
+    param$par_value=aux
 
     best_param_idx <- ifelse(
     model$classification,
@@ -427,10 +428,9 @@ rgcca_cv <- function(blocks,
     )
     
 
-   
   
     # Compute statistics
-    combinations <- format_combinations(aux)
+    combinations <- format_combinations(original)
   
    
     stats <- data.frame(
@@ -450,9 +450,9 @@ rgcca_cv <- function(blocks,
       n_run = n_run,
       metric = metric,
       par_type = param$par_type,
-      params =aux,
+      params =original,
       validation = validation,
-      best_params = param$par_value[best_param_idx,],
+      best_params = original[best_param_idx,],
       best_param_idx=best_param_idx,
       classification = model$classification,
       prediction_model = model$model_name

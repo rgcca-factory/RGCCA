@@ -125,11 +125,91 @@ summary.rgcca <- function(object, ...) {
     response <- ifelse(
       object$opt$disjunction, object$call$response, length(object$blocks) + 1
     )
-    
-    nb_selected_var <- lapply(
+    if (object$call$method=="stgcca"){
+      aux=object$factors
+      nb_selected_fact=list()
+   
+      kk=1
+      fact = array(numeric(),c(dim(aux[[1]][[1]])[2],length(aux[[1]]),length(aux)) )
+     
+      for (i in 1:length(aux)){
+        if (i!=(response-1)){
+        for (j in 1:length(aux[[i]])){
+          
+          comp =dim(aux[[i]][[j]])[2]
+          
+          for (k in 1:comp){
+            fact[k,j,i]=sum(aux[[i]][[j]][,k]!=0)
+          }
+
+        }}
+      #nb_selected_fact[i]=list(fact)
+
+        #for (j in 1:length(aux[[1]])[2]){
+        kk=kk+1
+        #}
+        
+    nb_selected_fact=fact
+      }
+      nb_selected_var <- lapply(
       object$a[-response],
       function(a) apply(a, 2, function(l) sum(l != 0))
     )
+   
+      param <- "sparsity"
+    if (!is.matrix(object$call$sparsity)) {
+      
+      for (i in seq_len(NCOL(object$call$connection))[-response]) {
+        sparsity <- object$call$sparsity[i]
+                  
+
+        if (length(dim(object$blocks[[i]]))>2){
+
+        
+
+        cat("The", param, "parameter used for", names(object$blocks)[i], "is:",
+        
+          as.numeric(unlist(sparsity)),"\n",fill = TRUE)
+          for (j in 1:dim(nb_selected_fact)[2]){
+           cat( "- with", paste(nb_selected_fact[j, , i], collapse = ", ")
+          ,"variables selected for component",as.numeric(j), '\n',
+          fill = TRUE
+        )}
+
+      }else{
+        cat("The", param, "parameter used for", names(object$blocks)[i], "is:",
+        
+          as.numeric(unlist(sparsity)),"\n", fill = TRUE)
+          for (j in 1:length(nb_selected_var[[i]])){ 
+            cat("- with", nb_selected_var[[i]][j]
+          ,"variables selected for component",as.numeric(j), '\n', fill = TRUE
+        )}
+          
+        
+
+      }}
+    } else {
+      cat("The", param, "parameters used are: \n")
+      print(round(object$call$sparsity[, -response], 4), ...)
+      cat("The number of selected variables are: \n")
+      print(do.call(cbind, nb_selected_var))
+    }
+    if (object$opt$disjunction) {
+      cat("The regularization parameter used for",
+          names(object$blocks)[response], "is:", 0,
+          fill = TRUE
+      )
+    }
+
+
+      
+    }else{
+nb_selected_var <- lapply(
+      object$a[-response],
+      function(a) apply(a, 2, function(l) sum(l != 0))
+    )
+    
+    
     param <- "sparsity"
     if (!is.matrix(object$call$sparsity)) {
       
@@ -155,7 +235,7 @@ summary.rgcca <- function(object, ...) {
           names(object$blocks)[response], "is:", 0,
           fill = TRUE
       )
-    }
+    }}
   }
   cat("\n")
 }

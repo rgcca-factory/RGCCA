@@ -70,19 +70,9 @@ block_project.tensor_block <- function(x) {
 block_project.sparse_tensor_block <- function(x) {
  
 
-    #for (m in 1:length(x$factors)){
-    #  for (j in 1:dim(x$factors[[m]])[2]){
-    #   x$factors[[m]][,j]<- soft_threshold(x$factors[[m]][,j],x$const[[m]])/ norm(soft_threshold(x$factors[[m]][,j],x$const[[m]]),type='2')
-    #  }
-    #}
-
   x$a <- Reduce(khatri_rao, rev(x$factors)) %*% x$lambda
 
- 
-   
-  #x$a <- Reduce(khatri_rao, rev(lapply(seq_along(x$factors), function(m) {
-   #  soft_threshold(do.call(rbind,x$factors[m]),  x$const[[m]])})))%*% x$lambda
-  
+
   x$Y <- pm(matrix(x$x, nrow = nrow(x$x)), x$a, na.rm = x$na.rm)
   return(x)
 }

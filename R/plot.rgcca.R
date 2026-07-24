@@ -254,6 +254,82 @@ plot.rgcca <- function(x, type = "weights",
     df$y <- factor(df$y, levels = df$y, ordered = TRUE)
     return(df)
   }
+  df_factor <- function(x, block, comp, num_block, display_order) {
+    num_block=as.factor(unlist(lapply(
+    display_blocks,
+    function(j) rep(names(x$blocks)[j], sum(dim(x$blocks[[j]])[-1]))
+  )))
+
+      first=TRUE
+    
+      if (length(block)>1){
+        for (j in 1:length(block)){
+          for (i in 1:length(dimnames(x$blocks[[j]])[2:length( dimnames(x$blocks[[j]]))]) ){
+        if (first){
+        y = rep(as.character(j),length(dimnames(x$blocks[[j]])[2:length( dimnames(x$blocks[[j]]))][i][[1]]) )
+        first=FALSE
+        }else{
+          y = c(y,rep(as.character(j),length(dimnames(x$blocks[[j]])[2:length( dimnames(x$blocks[[j]]))][i][[1]]) ))
+
+        }
+        }}
+      }
+     else{
+      for (j in 1:length(block)){
+      for (i in 1:length(dimnames(x$blocks[[j]])[2:length( dimnames(x$blocks[[j]]))]) ){
+        if (first){
+        y = rep(as.character(i),length(dimnames(x$blocks[[j]])[2:length( dimnames(x$blocks[[j]]))][i][[1]]) )
+        first=FALSE
+        }else{
+          y = c(y,rep(as.character(i),length(dimnames(x$blocks[[j]])[2:length( dimnames(x$blocks[[j]]))][i][[1]]) ))
+
+        }
+      }
+    }
+
+     }
+    first=TRUE
+
+    for (j in 1:length(block)){
+      if (length(dim(x$blocks[[j]]))>2){
+        if (first){
+          xx=lapply(x$factors[block][[j]], function(z) z[, comp[1]])
+          first=FALSE
+        }
+        else{
+          xx=c(xx,lapply(x$factors[block][[j]], function(z) z[, comp[1]]))
+        }
+
+      }else{
+        if (first){
+          xx=x$a[block][[j]][, comp[1]]
+          first=FALSE
+        }
+        else{
+          xx=c(xx,x$a[block][[j]][, comp[1]])
+        }
+
+      }}
+      
+
+
+    
+    df <- data.frame(
+      
+      x = unlist(xx),
+      y = unlist(do.call(c, lapply(
+        block, function(j) dimnames(x$blocks[[j]])[2:length( dimnames(x$blocks[[j]]))])
+      )),
+      response = as.factor(y)
+    )
+    df <- df[df$x != 0, ]
+    if (display_order) {
+      df <- df[order(abs(df$x), decreasing = TRUE), ]
+    }
+    df <- df[seq(min(n_mark, nrow(df))), ]
+    df$y <- factor(df$y, levels = df$y, ordered = TRUE)
+    return(df)
+  }
 
   df_AVE <- function(x) {
     AVE <- x$AVE$AVE_X_cor
@@ -280,7 +356,7 @@ plot.rgcca <- function(x, type = "weights",
   type <- tolower(type)
   type <- match.arg(type, c(
     "samples", "cor_circle", "both",
-    "ave", "loadings", "weights", "biplot"
+    "ave", "loadings", "weights", "biplot","factors"
   ))
   sample_colors <- check_colors(sample_colors, type = "samples")
   var_colors <- check_colors(var_colors, type = "variables")
@@ -338,6 +414,15 @@ plot.rgcca <- function(x, type = "weights",
       }
     },
     "weights" = {
+      block <- unique(block)
+      comp <- comp[1]
+      if (all(block == length(x$call$blocks) + 1)) {
+        display_blocks <- seq_along(x$call$blocks)
+      } else {
+        display_blocks <- block
+      }
+    },
+    "factors" = {
       block <- unique(block)
       comp <- comp[1]
       if (all(block == length(x$call$blocks) + 1)) {
@@ -463,8 +548,21 @@ plot.rgcca <- function(x, type = "weights",
       plot_function <- plot_loadings
     },
     # Plot the value associated with each projecting factor
+    #"weights" = {
+    #  df <- df_weight(x, block, comp, num_block, display_order)
+#
+    #  block_name <- ifelse(
+    #    length(unique(block)) == 1,
+    #    paste(":", names(x$blocks)[block[1]]),
+    #    ""
+    #  )
+    #  title <- ifelse(missing(title), paste0(
+    #    "Block-weight vector", block_name, " - comp", comp[1]
+    #  ), title)
+    #  plot_function <- plot_loadings
+    #},
     "weights" = {
-      df <- df_weight(x, block, comp, num_block, display_order)
+      df <- df_factor(x, block, comp, num_block, display_order)
 
       block_name <- ifelse(
         length(unique(block)) == 1,

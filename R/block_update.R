@@ -68,7 +68,7 @@ block_update.sparse_tensor_block <- function(x, grad) {
     )
     if (m == x$mode_orth) {
       
-      
+
      
       SVD <- svd(
         grad_m %*% diag(x$lambda, nrow = x$rank), nu = x$rank, nv = x$rank
@@ -79,7 +79,8 @@ block_update.sparse_tensor_block <- function(x, grad) {
     } else{
            
       x$factors[[m]] <- grad_m %*% diag(x$lambda, nrow = x$rank)
-      
+     # x$factors[[m]][is.nan(x$factors[[m]])] <- 0
+
       if (x$sparsity[m]<1){
         if (dim(x$factors[[m]])[2]==1){
     
@@ -93,27 +94,36 @@ block_update.sparse_tensor_block <- function(x, grad) {
        }
         
 
-       }
-
-
-      
+       }}      
          x$factors[[m]]<-apply(
   x$factors[[m]], 2, function(y) y / norm(y, type = "2"))
-      }
-        
-    
-     
-     
+      x$factors[[m]][is.nan(x$factors[[m]])] <- 0
 
     } 
       
-    
-
     other_factors <- khatri_rao(x$factors[[m]], other_factors)
   }
+  
+ 
+  if (x$sparse_lambda<1){
+
+    x$lambda <-  drop(t(other_factors) %*% as.vector(grad))
+    x$lambda [is.nan(x$lambda )] <- 0
+
+
+  x$lambda <- soft_threshold(x$lambda,x$const2)
+
+  }
+  else{
+      x$lambda <-  drop(t(other_factors) %*% as.vector(grad))
+        x$lambda [is.nan(x$lambda )] <- 0
+
+
+  }
   # Update lambda
-  x$lambda <- t(other_factors) %*% as.vector(grad)
-  x$lambda <- drop(x$lambda) / norm(drop(x$lambda), type = "2")
+  x$lambda [is.nan(x$lambda )] <- 0
+
+  x$lambda <-x$lambda / norm(x$lambda, type = "2")
 
 
 

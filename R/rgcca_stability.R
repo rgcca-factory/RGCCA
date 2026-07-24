@@ -108,13 +108,11 @@ rgcca_stability <- function(rgcca_res,
           vars <- rownames(M)
           if (is.null(p)){
             p=1
-          }
-          if (is.null(n)){
-            n=1
-          }
-          if (is.null(vars)){
-            vars="selected"
-          }
+            vars <- names(M)}
+
+          else{
+    
+          vars <- rownames(M)}
         
 
           
@@ -132,7 +130,6 @@ rgcca_stability <- function(rgcca_res,
     }))
     if (nrow(factors_df) == 0) factors_df <- NULL
   }}
-  
   # Test unimodality for each mode using the dip test
   # Since we are in a multivariate setting, we apply the dip test on the
   # first principal component.
@@ -141,10 +138,10 @@ rgcca_stability <- function(rgcca_res,
   res <- format_bootstrap_list(W2, rgcca_res)
   res <- check_sign_comp(rgcca_res, res)
   #res <- format_bootstrap_list(W, rgcca_res)
-  if (method!="rgcca"){
+   if (any(multi_blocks)){
   res_f<- check_sign_comp_factors(rgcca_res, factors_df)}
   
-  if (method!="rgcca"){
+  if (any(multi_blocks)){
   if (!is.null(res_f) && nrow(res_f) > 0) {
     res_f$type <- "factors"
     cols_communes <- intersect(colnames(res), colnames(res_f))
@@ -187,7 +184,6 @@ rgcca_stability <- function(rgcca_res,
   #factors_df=factors_df %>% 
   #group_by(across(c("boot","comp","block"))) %>% 
   #summarize(value = mean(value))
-
 
   res$scores <-  res$value^2 *factors_df$value#
   
@@ -285,15 +281,13 @@ rgcca_stability <- function(rgcca_res,
 
         }
         else{
-          keep = list(keep,c(order(x, decreasing = TRUE)[seq(round(perc * length(x)))] ))
+          keep = c(keep,order(x, decreasing = TRUE)[seq(round(perc * length(x)))] )
           
         }
-      
-            rgcca_res$call$blocks[[i]]=extract(rgcca_res$call$blocks[[i]],m+1,c(order(x, decreasing = TRUE)[seq(round(perc * length(x)))] ))
-
-
+              rgcca_res$call$blocks[[i]]=extract(rgcca_res$call$blocks[[i]],m+1,order(x, decreasing = TRUE)[seq(round(perc * length(x)))] )
    
       } 
+
 
     }
   
@@ -309,7 +303,6 @@ rgcca_stability <- function(rgcca_res,
 
 
      
-
 
 
   original=rgcca_res$call$blocks

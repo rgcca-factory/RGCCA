@@ -1,7 +1,7 @@
 #' @importFrom Deriv Deriv
 rgcca_outer_loop <- function(blocks, connection = 1 - diag(length(blocks)),
                              tau = rep(1, length(blocks)),
-                             sparsity = rep(1, length(blocks)),
+                             sparsity = 1,sparse_lambda=rep(1, length(blocks)),
                              ncomp = rep(1, length(blocks)),
                              scheme = "centroid",
                              init = "svd", bias = TRUE, tol = 1e-08,
@@ -37,6 +37,7 @@ rgcca_outer_loop <- function(blocks, connection = 1 - diag(length(blocks)),
     )
   }
 
+
   dg <- Deriv::Deriv(g, env = parent.frame())
 
   ##### Initialization #####
@@ -70,13 +71,58 @@ rgcca_outer_loop <- function(blocks, connection = 1 - diag(length(blocks)),
     )
   }
 
+  
   if (is.vector(sparsity)) {
-    sparsity <- matrix(
-      rep(sparsity, N + 1),
+    if (!is.list(sparsity)){
+    
+    first =TRUE
+    for (i in 1:J){
+      
+      if (length(dim(blocks[[i]]))>2){
+        if (first){
+          sparsity_all= c(rep(sparsity[1],length(dim(blocks[[i]]))-1 ))
+          first=FALSE
+        }
+        else{
+          sparsity_all=list(sparsity_all,c(rep(sparsity[1],length(dim(blocks[[i]]))-1 )))
+
+        }
+
+      }
+      else{
+        if (first){
+          sparsity_all=sparsity
+                    first=FALSE
+
+        }
+        else{
+          
+
+          sparsity_all=list(sparsity_all,sparsity[1])
+
+
+        }
+      }
+    }}
+    else{
+      sparsity_all=sparsity
+    }
+    
+  sparsity= matrix(
+      rep(sparsity_all, N + 1),
+      nrow = N + 1, J, byrow = TRUE
+    )
+    
+  }
+
+
+  if (is.vector(sparse_lambda)) {
+    sparse_lambda <- matrix(
+      rep(sparse_lambda, N + 1),
       nrow = N + 1, J, byrow = TRUE
     )
   }
-
+  
   if (is.vector(rank)) {
     rank <- matrix(
       rep(rank, N + 1),
@@ -103,7 +149,7 @@ rgcca_outer_loop <- function(blocks, connection = 1 - diag(length(blocks)),
     
     gcca_result <- rgcca_inner_loop(R, connection, g, dg,
                                     tau = computed_tau[n, ],
-                                    sparsity = sparsity[n, ],
+                                    sparsity = sparsity[n, ],sparse_lambda=sparse_lambda[n,],
                                     init = init, bias = bias, tol = tol,
                                     verbose = verbose, na.rm = na.rm,
                                     n_iter_max = n_iter_max,
