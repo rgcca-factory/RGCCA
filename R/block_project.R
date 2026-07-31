@@ -59,43 +59,23 @@ block_project.sparse_block <- function(x) {
 
 #' @export
 block_project.ac_block <- function(x) {
-  if (is.null(x$h_tilde) && is.null(x$h)) { #init
-    #NextMethod()
+  if (is.null(x$h_tilde)) {
     if (any(x$a != 0) && drop(sqrt(t(x$a) %*% x$M %*% x$a)) > 1) {
       x$a <- x$a / drop(sqrt(t(x$a) %*% x$M %*% x$a))
     }
-    
-    if (x$algo == 5) {
-      x$z <- x$a
-      if (any(x$z != 0) && norm(x$z, type = "2") > 1) {
-        x$z <- x$z / norm(x$z, type = "2")
-      }
-      # if (any(x$a != 0) && norm(crossprod(x$Q, x$sqrt_M %*% x$a), type = "2") > 1) {
-      #   x$z <- crossprod(x$Q, x$sqrt_M %*% x$a) / norm(crossprod(x$Q, x$sqrt_M %*% x$a), type = "2")
-      # } else {
-      #   x$z <- crossprod(x$Q, x$sqrt_M %*% x$a)
-      # }
-    }
   }
-  
   x$Y <- pm(x$x, x$a, na.rm = x$na.rm)
   return(x)
 }
 
 #' @export
 block_project.dual_ac_block <- function(x) {
-  if (is.null(x$mu) && is.null(x$h_tilde)) {# init
+  if (is.null(x$mu)) {
     if (any(x$alpha != 0) && drop(t(x$alpha) %*% x$KM %*% x$alpha) > 1) {
-      x$alpha <- x$alpha / sqrt(drop(t(x$alpha) %*% x$KM %*% x$alpha)) #Is this ok?
+      x$alpha <- x$alpha / sqrt(drop(t(x$alpha) %*% x$KM %*% x$alpha)) 
     }
-    
-    if (x$algo == 5) {
-      x$z <- t(x$Q_B) %*% x$alpha
-    } #NextMethod()
   }
-  
   x$a <- pm(t(x$x), x$alpha, na.rm = x$na.rm)
-  
   x$Y <- pm(x$x, x$a, na.rm = x$na.rm)
   return(x)
 }

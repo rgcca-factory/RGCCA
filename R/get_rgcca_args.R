@@ -22,7 +22,6 @@ get_rgcca_args <- function(object, default_args = list()) {
       tau = default_args$tau,
       tol = default_args$tol,
       init = tolower(default_args$init),
-      algo = default_args$algo,
       bias = default_args$bias,
       quiet = default_args$quiet,
       scale = default_args$scale,
