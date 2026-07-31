@@ -67,12 +67,12 @@ block_update.ac_block <- function(x, grad) {
 block_update.dual_ac_block <- function(x, grad) {
   if (x$algo == 3) {
     x$h <- x$h_K %*% grad
-    if (!is.null(x$mu)) {
-      L_mu <- -0.5 * drop(t(x$h) %*% ginv(x$B + 2 * x$mu * x$KM, tol = .Machine$double.eps * x$n) %*% x$h) - x$mu
-      cat("L_(mu) =", L_mu, "\n")
-    } else {
-      L_mu <- NULL
-    }
+    # if (!is.null(x$mu)) {
+    #   L_mu <- -0.5 * drop(t(x$h) %*% ginv(x$B + 2 * x$mu * x$KM, tol = .Machine$double.eps * x$n) %*% x$h) - x$mu
+    #   cat("L_(mu) =", L_mu, "\n")
+    # } else {
+    #   L_mu <- NULL
+    # }
     
     mu_max <- 1E10
     mu_max_test <- 0.5 * drop(t(x$h) %*% ginv(x$B) %*% x$h)
@@ -80,15 +80,15 @@ block_update.dual_ac_block <- function(x, grad) {
     L <- function(mu) {
       0.5 * drop(t(x$h) %*% ginv(x$B + 2 * mu * x$KM, tol = .Machine$double.eps * x$n) %*% x$h) + mu
     }
-    x$mu <- optimize(f = L, interval = c(0, mu_max))$minimum
+    x$mu <- optimize(f = L, interval = c(0, mu_max), tol = .Machine$double.eps)$minimum
     #cat("mu = ", x$mu, " ; mu_max_test = ", mu_max_test, ifelse(x$mu > mu_max_test, yes = "NOOOOO", no = ""), "\n")
     
     L_mu_opt <- -0.5 * drop(t(x$h) %*% ginv(x$B + 2 * x$mu * x$KM, tol = .Machine$double.eps * x$n) %*% x$h) - x$mu
     
-    if (!is.null(L_mu)) {cat("L_(mu^) =", L_mu_opt, ifelse(L_mu - L_mu_opt > 1e-8, " NOOOO: L_(mu) > L_(mu^) ", ""), "\n")}
+    # if (!is.null(L_mu)) {cat("L_(mu^) =", L_mu_opt, ifelse(L_mu - L_mu_opt > 1e-8, " NOOOO: L_(mu) > L_(mu^) ", ""), "\n")}
     
     x$alpha <- - ginv(x$B + 2 * x$mu * x$KM, tol = .Machine$double.eps * x$n) %*% x$h
-
+    
   } else if (x$algo == 5) {
     x$h_tilde <- x$QK %*% grad
     
@@ -119,7 +119,7 @@ block_update.dual_ac_block <- function(x, grad) {
         #cat("n iter = ", iter, " ; norm of z=", norm(z, type = "2"), "\n")
         break
       }
-
+      
       iter <- iter + 1
       z_old <- z
     }

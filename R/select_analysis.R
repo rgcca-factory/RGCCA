@@ -32,8 +32,8 @@ select_analysis <- function(rgcca_args, blocks) {
   superblock <- rgcca_args$superblock
   scale_block <- rgcca_args$scale_block
   confounders <- rgcca_args$confounders
-  penalty_coef <- rgcca_args$penalty_coef
-
+  gamma_confounders <- rgcca_args$gamma_confounders
+  
   if (length(blocks) == 1) {
     if (sparsity[1] == 1) {
       method <- "pca"
@@ -41,355 +41,355 @@ select_analysis <- function(rgcca_args, blocks) {
       method <- "spca"
     }
   }
-
+  
   method <- check_method(method) #TODO
-
+  
   call <- list(
     ncomp = ncomp, scheme = scheme, tau = tau, sparsity = sparsity,
     superblock = superblock, connection = connection, response = response,
     comp_orth = comp_orth, scale_block = scale_block, 
-    confounders = confounders, penalty_coef = penalty_coef
+    confounders = confounders, gamma_confounders = gamma_confounders
   )
   J <- length(blocks)
-
+  
   switch(method,
-    "rgcca" = {
-      param <- "tau"
-      penalty <- tau
-    },
-    "sgcca" = {
-      param <- "sparsity"
-      penalty <- sparsity
-    },
-    "pca" = {
-      check_nblocks(blocks, "pca")
-      param <- "tau"
-      ncomp <- rep(max(ncomp), 2)
-      scheme <- "horst"
-      penalty <- c(1, 1)
-      response <- NULL
-      comp_orth <- TRUE
-      superblock <- TRUE
-      connection <- connection_matrix(blocks, type = "response", J = 2)
-    },
-    "spca" = {
-      check_nblocks(blocks, "spca")
-      param <- "sparsity"
-      ncomp <- rep(max(ncomp), 2)
-      scheme <- "horst"
-      penalty <- c(sparsity[1], sparsity[1])
-      response <- NULL
-      comp_orth <- TRUE
-      superblock <- TRUE
-      connection <- connection_matrix(blocks, type = "response", J = 2)
-    },
-    "pls" = {
-      check_nblocks(blocks, "pls")
-      param <- "tau"
-      ncomp[2] <- ncomp[1]
-      scheme <- "horst"
-      penalty <- c(1, 1)
-      response <- 2
-      comp_orth <- TRUE
-      superblock <- FALSE
-      connection <- connection_matrix(blocks, type = "response", J = 2)
-    },
-    "spls" = {
-      check_nblocks(blocks, "spls")
-      param <- "sparsity"
-      ncomp[2] <- ncomp[1]
-      scheme <- "horst"
-      penalty <- check_penalty(sparsity, blocks, "sgcca")
-      response <- 2
-      comp_orth <- TRUE
-      superblock <- FALSE
-      connection <- connection_matrix(blocks, type = "response", J = 2)
-    },
-    "cca" = {
-      check_nblocks(blocks, "cca")
-      param <- "tau"
-      scheme <- "horst"
-      penalty <- c(0, 0)
-      response <- NULL
-      comp_orth <- TRUE
-      superblock <- FALSE
-      connection <- connection_matrix(blocks, type = "pair", J = 2)
-    },
-    "ifa" = {
-      check_nblocks(blocks, "ifa")
-      param <- "tau"
-      scheme <- "horst"
-      penalty <- c(1, 1)
-      response <- NULL
-      comp_orth <- TRUE
-      superblock <- FALSE
-      connection <- connection_matrix(blocks, type = "pair", J = 2)
-    },
-    "ra" = {
-      check_nblocks(blocks, "ra")
-      param <- "tau"
-      ncomp[2] <- ncomp[1]
-      scheme <- "horst"
-      penalty <- c(1, 0)
-      response <- 2
-      comp_orth <- TRUE
-      superblock <- FALSE
-      connection <- connection_matrix(blocks, type = "response", J = 2)
-    },
-    "gcca" = {
-      param <- "tau"
-      ncomp <- rep(max(ncomp), J + 1)
-      scheme <- "factorial"
-      penalty <- rep(0, J + 1)
-      response <- NULL
-      comp_orth <- TRUE
-      superblock <- TRUE
-      connection <- connection_matrix(blocks, type = "response", J = J + 1)
-    },
-    "maxvar" = {
-      param <- "tau"
-      ncomp <- rep(max(ncomp), J + 1)
-      scheme <- "factorial"
-      penalty <- rep(0, J + 1)
-      response <- NULL
-      comp_orth <- TRUE
-      superblock <- TRUE
-      connection <- connection_matrix(blocks, type = "response", J = J + 1)
-    },
-    "maxvar-b" = {
-      param <- "tau"
-      ncomp <- rep(max(ncomp), J + 1)
-      scheme <- "factorial"
-      penalty <- rep(0, J + 1)
-      response <- NULL
-      comp_orth <- TRUE
-      superblock <- TRUE
-      connection <- connection_matrix(blocks, type = "response", J = J + 1)
-    },
-    "maxvar-a" = {
-      param <- "tau"
-      ncomp <- rep(max(ncomp), J + 1)
-      scheme <- "factorial"
-      penalty <- c(rep(1, J), 0)
-      response <- NULL
-      comp_orth <- TRUE
-      superblock <- TRUE
-      connection <- connection_matrix(blocks, type = "response", J = J + 1)
-    },
-    "mfa" = {
-      param <- "tau"
-      ncomp <- rep(max(ncomp), J + 1)
-      scheme <- "factorial"
-      penalty <- rep(1, J + 1)
-      response <- NULL
-      comp_orth <- TRUE
-      superblock <- TRUE
-      connection <- connection_matrix(blocks, type = "response", J = J + 1)
-      scale_block <- "lambda1"
-    },
-    "mcia" = {
-      param <- "tau"
-      ncomp <- rep(max(ncomp), J + 1)
-      scheme <- "factorial"
-      penalty <- c(rep(1, J), 0)
-      response <- NULL
-      comp_orth <- FALSE
-      superblock <- TRUE
-      connection <- connection_matrix(blocks, type = "response", J = J + 1)
-      scale_block <- "inertia"
-    },
-    "mcoa" = {
-      param <- "tau"
-      ncomp <- rep(max(ncomp), J + 1)
-      scheme <- "factorial"
-      penalty <- c(rep(1, J), 0)
-      response <- NULL
-      comp_orth <- FALSE
-      superblock <- TRUE
-      connection <- connection_matrix(blocks, type = "response", J = J + 1)
-      scale_block <- "inertia"
-    },
-    "cpca-1" = {
-      param <- "tau"
-      ncomp <- rep(max(ncomp), J + 1)
-      scheme <- "horst"
-      penalty <- c(rep(1, J), 0)
-      response <- NULL
-      comp_orth <- TRUE
-      superblock <- TRUE
-      connection <- connection_matrix(blocks, type = "response", J = J + 1)
-    },
-    "cpca-2" = {
-      param <- "tau"
-      ncomp <- rep(max(ncomp), J + 1)
-      scheme <- "factorial"
-      penalty <- c(rep(1, J), 0)
-      response <- NULL
-      comp_orth <- TRUE
-      superblock <- TRUE
-      connection <- connection_matrix(blocks, type = "response", J = J + 1)
-    },
-    "cpca-4" = {
-      param <- "tau"
-      ncomp <- rep(max(ncomp), J + 1)
-      scheme <- function(x) x^4
-      penalty <- c(rep(1, J), 0)
-      response <- NULL
-      comp_orth <- TRUE
-      superblock <- TRUE
-      connection <- connection_matrix(blocks, type = "response", J = J + 1)
-    },
-    "hpca" = {
-      param <- "tau"
-      ncomp <- rep(max(ncomp), J + 1)
-      scheme <- function(x) x^4
-      penalty <- c(rep(1, J), 0)
-      response <- NULL
-      comp_orth <- TRUE
-      superblock <- TRUE
-      connection <- connection_matrix(blocks, type = "response", J = J + 1)
-    },
-    "maxbet-b" = {
-      param <- "tau"
-      scheme <- "factorial"
-      penalty <- rep(1, J)
-      response <- NULL
-      comp_orth <- FALSE
-      superblock <- FALSE
-      connection <- connection_matrix(blocks, type = "all")
-    },
-    "maxbet" = {
-      param <- "tau"
-      scheme <- "horst"
-      penalty <- rep(1, J)
-      response <- NULL
-      comp_orth <- FALSE
-      superblock <- FALSE
-      connection <- connection_matrix(blocks, type = "all")
-    },
-    "maxdiff-b" = {
-      param <- "tau"
-      scheme <- "factorial"
-      penalty <- rep(1, J)
-      response <- NULL
-      comp_orth <- FALSE
-      superblock <- FALSE
-      connection <- connection_matrix(blocks, type = "pair")
-    },
-    "maxdiff" = {
-      param <- "tau"
-      scheme <- "horst"
-      penalty <- rep(1, J)
-      response <- NULL
-      comp_orth <- FALSE
-      superblock <- FALSE
-      connection <- connection_matrix(blocks, type = "pair")
-    },
-    "sabscor" = {
-      param <- "tau"
-      scheme <- "centroid"
-      penalty <- rep(0, J)
-      response <- NULL
-      comp_orth <- TRUE
-      superblock <- FALSE
-      connection <- connection_matrix(blocks, type = "pair")
-    },
-    "ssqcor" = {
-      param <- "tau"
-      scheme <- "factorial"
-      penalty <- rep(0, J)
-      response <- NULL
-      comp_orth <- TRUE
-      superblock <- FALSE
-      connection <- connection_matrix(blocks, type = "pair")
-    },
-    "ssqcov-1" = {
-      param <- "tau"
-      scheme <- "factorial"
-      penalty <- rep(1, J)
-      response <- NULL
-      comp_orth <- TRUE
-      superblock <- FALSE
-      connection <- connection_matrix(blocks, type = "all")
-    },
-    "ssqcov-2" = {
-      param <- "tau"
-      scheme <- "factorial"
-      penalty <- rep(1, J)
-      response <- NULL
-      comp_orth <- TRUE
-      superblock <- FALSE
-      connection <- connection_matrix(blocks, type = "pair")
-    },
-    "ssqcov" = {
-      param <- "tau"
-      scheme <- "factorial"
-      penalty <- rep(1, J)
-      response <- NULL
-      comp_orth <- TRUE
-      superblock <- FALSE
-      connection <- connection_matrix(blocks, type = "pair")
-    },
-    "sumcor" = {
-      param <- "tau"
-      scheme <- "horst"
-      penalty <- rep(0, J)
-      response <- NULL
-      comp_orth <- TRUE
-      superblock <- FALSE
-      connection <- connection_matrix(blocks, type = "pair")
-    },
-    "sumcov-1" = {
-      param <- "tau"
-      scheme <- "horst"
-      penalty <- rep(1, J)
-      response <- NULL
-      comp_orth <- TRUE
-      superblock <- FALSE
-      connection <- connection_matrix(blocks, type = "all")
-    },
-    "sumcov-2" = {
-      param <- "tau"
-      scheme <- "horst"
-      penalty <- rep(1, J)
-      response <- NULL
-      comp_orth <- TRUE
-      superblock <- FALSE
-      connection <- connection_matrix(blocks, type = "pair")
-    },
-    "sumcov" = {
-      param <- "tau"
-      scheme <- "horst"
-      penalty <- rep(1, J)
-      response <- NULL
-      comp_orth <- TRUE
-      superblock <- FALSE
-      connection <- connection_matrix(blocks, type = "pair")
-    },
-    "sabscov-1" = {
-      param <- "tau"
-      scheme <- "centroid"
-      penalty <- rep(1, J)
-      response <- NULL
-      comp_orth <- TRUE
-      superblock <- FALSE
-      connection <- connection_matrix(blocks, type = "all")
-    },
-    "sabscov-2" = {
-      param <- "tau"
-      scheme <- "centroid"
-      penalty <- rep(1, J)
-      response <- NULL
-      comp_orth <- TRUE
-      superblock <- FALSE
-      connection <- connection_matrix(blocks, type = "pair")
-    },
-    "ac-rgcca" = {
-      param <- "tau"
-      penalty <- tau
-    }
+         "rgcca" = {
+           param <- "tau"
+           penalty <- tau
+         },
+         "sgcca" = {
+           param <- "sparsity"
+           penalty <- sparsity
+         },
+         "pca" = {
+           check_nblocks(blocks, "pca")
+           param <- "tau"
+           ncomp <- rep(max(ncomp), 2)
+           scheme <- "horst"
+           penalty <- c(1, 1)
+           response <- NULL
+           comp_orth <- TRUE
+           superblock <- TRUE
+           connection <- connection_matrix(blocks, type = "response", J = 2)
+         },
+         "spca" = {
+           check_nblocks(blocks, "spca")
+           param <- "sparsity"
+           ncomp <- rep(max(ncomp), 2)
+           scheme <- "horst"
+           penalty <- c(sparsity[1], sparsity[1])
+           response <- NULL
+           comp_orth <- TRUE
+           superblock <- TRUE
+           connection <- connection_matrix(blocks, type = "response", J = 2)
+         },
+         "pls" = {
+           check_nblocks(blocks, "pls")
+           param <- "tau"
+           ncomp[2] <- ncomp[1]
+           scheme <- "horst"
+           penalty <- c(1, 1)
+           response <- 2
+           comp_orth <- TRUE
+           superblock <- FALSE
+           connection <- connection_matrix(blocks, type = "response", J = 2)
+         },
+         "spls" = {
+           check_nblocks(blocks, "spls")
+           param <- "sparsity"
+           ncomp[2] <- ncomp[1]
+           scheme <- "horst"
+           penalty <- check_penalty(sparsity, blocks, "sgcca")
+           response <- 2
+           comp_orth <- TRUE
+           superblock <- FALSE
+           connection <- connection_matrix(blocks, type = "response", J = 2)
+         },
+         "cca" = {
+           check_nblocks(blocks, "cca")
+           param <- "tau"
+           scheme <- "horst"
+           penalty <- c(0, 0)
+           response <- NULL
+           comp_orth <- TRUE
+           superblock <- FALSE
+           connection <- connection_matrix(blocks, type = "pair", J = 2)
+         },
+         "ifa" = {
+           check_nblocks(blocks, "ifa")
+           param <- "tau"
+           scheme <- "horst"
+           penalty <- c(1, 1)
+           response <- NULL
+           comp_orth <- TRUE
+           superblock <- FALSE
+           connection <- connection_matrix(blocks, type = "pair", J = 2)
+         },
+         "ra" = {
+           check_nblocks(blocks, "ra")
+           param <- "tau"
+           ncomp[2] <- ncomp[1]
+           scheme <- "horst"
+           penalty <- c(1, 0)
+           response <- 2
+           comp_orth <- TRUE
+           superblock <- FALSE
+           connection <- connection_matrix(blocks, type = "response", J = 2)
+         },
+         "gcca" = {
+           param <- "tau"
+           ncomp <- rep(max(ncomp), J + 1)
+           scheme <- "factorial"
+           penalty <- rep(0, J + 1)
+           response <- NULL
+           comp_orth <- TRUE
+           superblock <- TRUE
+           connection <- connection_matrix(blocks, type = "response", J = J + 1)
+         },
+         "maxvar" = {
+           param <- "tau"
+           ncomp <- rep(max(ncomp), J + 1)
+           scheme <- "factorial"
+           penalty <- rep(0, J + 1)
+           response <- NULL
+           comp_orth <- TRUE
+           superblock <- TRUE
+           connection <- connection_matrix(blocks, type = "response", J = J + 1)
+         },
+         "maxvar-b" = {
+           param <- "tau"
+           ncomp <- rep(max(ncomp), J + 1)
+           scheme <- "factorial"
+           penalty <- rep(0, J + 1)
+           response <- NULL
+           comp_orth <- TRUE
+           superblock <- TRUE
+           connection <- connection_matrix(blocks, type = "response", J = J + 1)
+         },
+         "maxvar-a" = {
+           param <- "tau"
+           ncomp <- rep(max(ncomp), J + 1)
+           scheme <- "factorial"
+           penalty <- c(rep(1, J), 0)
+           response <- NULL
+           comp_orth <- TRUE
+           superblock <- TRUE
+           connection <- connection_matrix(blocks, type = "response", J = J + 1)
+         },
+         "mfa" = {
+           param <- "tau"
+           ncomp <- rep(max(ncomp), J + 1)
+           scheme <- "factorial"
+           penalty <- rep(1, J + 1)
+           response <- NULL
+           comp_orth <- TRUE
+           superblock <- TRUE
+           connection <- connection_matrix(blocks, type = "response", J = J + 1)
+           scale_block <- "lambda1"
+         },
+         "mcia" = {
+           param <- "tau"
+           ncomp <- rep(max(ncomp), J + 1)
+           scheme <- "factorial"
+           penalty <- c(rep(1, J), 0)
+           response <- NULL
+           comp_orth <- FALSE
+           superblock <- TRUE
+           connection <- connection_matrix(blocks, type = "response", J = J + 1)
+           scale_block <- "inertia"
+         },
+         "mcoa" = {
+           param <- "tau"
+           ncomp <- rep(max(ncomp), J + 1)
+           scheme <- "factorial"
+           penalty <- c(rep(1, J), 0)
+           response <- NULL
+           comp_orth <- FALSE
+           superblock <- TRUE
+           connection <- connection_matrix(blocks, type = "response", J = J + 1)
+           scale_block <- "inertia"
+         },
+         "cpca-1" = {
+           param <- "tau"
+           ncomp <- rep(max(ncomp), J + 1)
+           scheme <- "horst"
+           penalty <- c(rep(1, J), 0)
+           response <- NULL
+           comp_orth <- TRUE
+           superblock <- TRUE
+           connection <- connection_matrix(blocks, type = "response", J = J + 1)
+         },
+         "cpca-2" = {
+           param <- "tau"
+           ncomp <- rep(max(ncomp), J + 1)
+           scheme <- "factorial"
+           penalty <- c(rep(1, J), 0)
+           response <- NULL
+           comp_orth <- TRUE
+           superblock <- TRUE
+           connection <- connection_matrix(blocks, type = "response", J = J + 1)
+         },
+         "cpca-4" = {
+           param <- "tau"
+           ncomp <- rep(max(ncomp), J + 1)
+           scheme <- function(x) x^4
+           penalty <- c(rep(1, J), 0)
+           response <- NULL
+           comp_orth <- TRUE
+           superblock <- TRUE
+           connection <- connection_matrix(blocks, type = "response", J = J + 1)
+         },
+         "hpca" = {
+           param <- "tau"
+           ncomp <- rep(max(ncomp), J + 1)
+           scheme <- function(x) x^4
+           penalty <- c(rep(1, J), 0)
+           response <- NULL
+           comp_orth <- TRUE
+           superblock <- TRUE
+           connection <- connection_matrix(blocks, type = "response", J = J + 1)
+         },
+         "maxbet-b" = {
+           param <- "tau"
+           scheme <- "factorial"
+           penalty <- rep(1, J)
+           response <- NULL
+           comp_orth <- FALSE
+           superblock <- FALSE
+           connection <- connection_matrix(blocks, type = "all")
+         },
+         "maxbet" = {
+           param <- "tau"
+           scheme <- "horst"
+           penalty <- rep(1, J)
+           response <- NULL
+           comp_orth <- FALSE
+           superblock <- FALSE
+           connection <- connection_matrix(blocks, type = "all")
+         },
+         "maxdiff-b" = {
+           param <- "tau"
+           scheme <- "factorial"
+           penalty <- rep(1, J)
+           response <- NULL
+           comp_orth <- FALSE
+           superblock <- FALSE
+           connection <- connection_matrix(blocks, type = "pair")
+         },
+         "maxdiff" = {
+           param <- "tau"
+           scheme <- "horst"
+           penalty <- rep(1, J)
+           response <- NULL
+           comp_orth <- FALSE
+           superblock <- FALSE
+           connection <- connection_matrix(blocks, type = "pair")
+         },
+         "sabscor" = {
+           param <- "tau"
+           scheme <- "centroid"
+           penalty <- rep(0, J)
+           response <- NULL
+           comp_orth <- TRUE
+           superblock <- FALSE
+           connection <- connection_matrix(blocks, type = "pair")
+         },
+         "ssqcor" = {
+           param <- "tau"
+           scheme <- "factorial"
+           penalty <- rep(0, J)
+           response <- NULL
+           comp_orth <- TRUE
+           superblock <- FALSE
+           connection <- connection_matrix(blocks, type = "pair")
+         },
+         "ssqcov-1" = {
+           param <- "tau"
+           scheme <- "factorial"
+           penalty <- rep(1, J)
+           response <- NULL
+           comp_orth <- TRUE
+           superblock <- FALSE
+           connection <- connection_matrix(blocks, type = "all")
+         },
+         "ssqcov-2" = {
+           param <- "tau"
+           scheme <- "factorial"
+           penalty <- rep(1, J)
+           response <- NULL
+           comp_orth <- TRUE
+           superblock <- FALSE
+           connection <- connection_matrix(blocks, type = "pair")
+         },
+         "ssqcov" = {
+           param <- "tau"
+           scheme <- "factorial"
+           penalty <- rep(1, J)
+           response <- NULL
+           comp_orth <- TRUE
+           superblock <- FALSE
+           connection <- connection_matrix(blocks, type = "pair")
+         },
+         "sumcor" = {
+           param <- "tau"
+           scheme <- "horst"
+           penalty <- rep(0, J)
+           response <- NULL
+           comp_orth <- TRUE
+           superblock <- FALSE
+           connection <- connection_matrix(blocks, type = "pair")
+         },
+         "sumcov-1" = {
+           param <- "tau"
+           scheme <- "horst"
+           penalty <- rep(1, J)
+           response <- NULL
+           comp_orth <- TRUE
+           superblock <- FALSE
+           connection <- connection_matrix(blocks, type = "all")
+         },
+         "sumcov-2" = {
+           param <- "tau"
+           scheme <- "horst"
+           penalty <- rep(1, J)
+           response <- NULL
+           comp_orth <- TRUE
+           superblock <- FALSE
+           connection <- connection_matrix(blocks, type = "pair")
+         },
+         "sumcov" = {
+           param <- "tau"
+           scheme <- "horst"
+           penalty <- rep(1, J)
+           response <- NULL
+           comp_orth <- TRUE
+           superblock <- FALSE
+           connection <- connection_matrix(blocks, type = "pair")
+         },
+         "sabscov-1" = {
+           param <- "tau"
+           scheme <- "centroid"
+           penalty <- rep(1, J)
+           response <- NULL
+           comp_orth <- TRUE
+           superblock <- FALSE
+           connection <- connection_matrix(blocks, type = "all")
+         },
+         "sabscov-2" = {
+           param <- "tau"
+           scheme <- "centroid"
+           penalty <- rep(1, J)
+           response <- NULL
+           comp_orth <- TRUE
+           superblock <- FALSE
+           connection <- connection_matrix(blocks, type = "pair")
+         },
+         "ac-rgcca" = {
+           param <- "tau"
+           penalty <- tau
+         }
   )
-
+  
   # Generate warnings if some parameters have been modified
   if (!quiet) {
     modified_parameters <- vapply(names(call), function(n) {
@@ -407,7 +407,7 @@ select_analysis <- function(rgcca_args, blocks) {
       )
     }
   }
-
+  
   if (method %in% c("rgcca", "sgcca")) {
     scheme <- check_scheme(scheme)
     if (any(sparsity != 1)) {
@@ -456,9 +456,9 @@ select_analysis <- function(rgcca_args, blocks) {
     ncomp, blocks,
     superblock = superblock, response = response
   )
-
+  
   rgcca_args[[param]] <- penalty
-
+  
   rgcca_args <- modifyList(rgcca_args, list( #TODO add new arguments here? only if they are modified in this function
     ncomp = ncomp,
     scheme = scheme,

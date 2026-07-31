@@ -10,7 +10,7 @@ rgcca_outer_loop <- function(blocks, connection = 1 - diag(length(blocks)),
                              response = NULL, disjunction = NULL,
                              n_iter_max = 1000, comp_orth = TRUE,
                              confounders = NULL, 
-                             penalty_coef = rep(0, length(blocks)), algo = 3, primal = TRUE) {
+                             gamma_confounders = rep(0, length(blocks)), algo = 3, primal = TRUE) {
   if (verbose) {
     scheme_str <- ifelse(is(scheme, "function"), "user-defined", scheme)
     cat(
@@ -21,7 +21,7 @@ rgcca_outer_loop <- function(blocks, connection = 1 - diag(length(blocks)),
       cat("Optimal shrinkage intensity parameters are estimated \n")
     }
   }
-
+  
   if (is.function(scheme)) {
     g <- scheme
   } else {
@@ -37,9 +37,9 @@ rgcca_outer_loop <- function(blocks, connection = 1 - diag(length(blocks)),
            }
     )
   }
-
+  
   dg <- Deriv::Deriv(g, env = parent.frame())
-
+  
   ##### Initialization #####
   # ndefl number of deflation per block
   ndefl <- ncomp - 1
@@ -47,13 +47,13 @@ rgcca_outer_loop <- function(blocks, connection = 1 - diag(length(blocks)),
   J <- length(blocks)
   pjs <- vapply(blocks, NCOL, FUN.VALUE = 1L)
   nb_ind <- NROW(blocks[[1]])
-
+  
   crit <- list()
   R <- blocks
-
+  
   a <- lapply(seq(J), function(b) c())
   Y <- lapply(seq(J), function(b) c())
-
+  
   if (superblock && comp_orth) {
     P <- c()
   } else {
@@ -68,7 +68,7 @@ rgcca_outer_loop <- function(blocks, connection = 1 - diag(length(blocks)),
       nrow = N + 1, J, byrow = TRUE
     )
   }
-
+  
   if (is.vector(sparsity)) {
     sparsity <- matrix(
       rep(sparsity, N + 1),
@@ -76,13 +76,13 @@ rgcca_outer_loop <- function(blocks, connection = 1 - diag(length(blocks)),
     )
   }
   
-  if (is.vector(penalty_coef)) {
-    penalty_coef <- matrix(
-      rep(penalty_coef, N + 1),
+  if (is.vector(gamma_confounders)) {
+    gamma_confounders <- matrix(
+      rep(gamma_confounders, N + 1),
       nrow = N + 1, J, byrow = TRUE
     )
   }
-
+  
   # Whether primal or dual
   primal_dual <- matrix("primal", nrow = N + 1, ncol = J)
   primal_dual[which((sparsity == 1) & (nb_ind < matrix(
@@ -103,17 +103,17 @@ rgcca_outer_loop <- function(blocks, connection = 1 - diag(length(blocks)),
                                     init = init, bias = bias, tol = tol,
                                     verbose = verbose, na.rm = na.rm,
                                     n_iter_max = n_iter_max,
-                                    confounders, penalty_coef = penalty_coef[n, ], algo = algo, primal = primal
+                                    confounders, gamma_confounders = gamma_confounders[n, ], algo = algo, primal = primal
     )
-
+    
     # Store tau, crit
     computed_tau[n, ] <- gcca_result$tau
     crit[[n]] <- gcca_result$crit
-
+    
     # Store Y, a, factors and weights
     a <- lapply(seq(J), function(b) cbind(a[[b]], gcca_result$a[[b]]))
     Y <- lapply(seq(J), function(b) cbind(Y[[b]], gcca_result$Y[, b]))
-
+    
     # Deflation procedure
     if (n == N + 1) break
     defl_result <- deflate(gcca_result$a, gcca_result$Y, R, P, ndefl, n,
@@ -121,7 +121,7 @@ rgcca_outer_loop <- function(blocks, connection = 1 - diag(length(blocks)),
     R <- defl_result$R
     P <- defl_result$P
   }
-
+  
   # If there is a superblock and weight vectors are orthogonal, it is possible
   # to have non meaningful weights associated to blocks that have been set to
   # zero by the deflation
@@ -133,7 +133,7 @@ rgcca_outer_loop <- function(blocks, connection = 1 - diag(length(blocks)),
       return(x)
     })
   }
-
+  
   ##### Generation of the output #####
   if (N == 0) {
     crit <- unlist(crit)
@@ -141,9 +141,9 @@ rgcca_outer_loop <- function(blocks, connection = 1 - diag(length(blocks)),
   } else {
     computed_tau <- apply(computed_tau, 2, as.numeric)
   }
-
+  
   astar <- compute_astar(a, P, superblock, comp_orth, N)
-
+  
   out <- list(
     Y = Y,
     a = a,
@@ -151,7 +151,7 @@ rgcca_outer_loop <- function(blocks, connection = 1 - diag(length(blocks)),
     tau = computed_tau,
     crit = crit, primal_dual = primal_dual
   )
-
+  
   class(out) <- "rgccad"
   return(out)
 }

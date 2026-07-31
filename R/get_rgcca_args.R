@@ -5,7 +5,7 @@ get_rgcca_args <- function(object, default_args = list()) {
   if (any(class(object) %in% c("rgcca", "rgcca_permutation", "rgcca_cv"))) {
     opt <- object$opt
     rgcca_args <- object$call
-
+    
     if (any(class(object) %in% c("rgcca_permutation", "rgcca_cv"))) {
       if (object$par_type == "tau") {
         rgcca_args$tau <- object$best_params
@@ -41,7 +41,7 @@ get_rgcca_args <- function(object, default_args = list()) {
       superblock = default_args$superblock,
       confounders = default_args$confounders,
       scale_block = default_args$scale_block,
-      penalty_coef = default_args$penalty_coef
+      gamma_confounders = default_args$gamma_confounders
     )
     
     rgcca_args$init <- check_char(rgcca_args$init, "init", c("svd", "random"))
@@ -54,12 +54,12 @@ get_rgcca_args <- function(object, default_args = list()) {
         rgcca_args$scale_block, "scale_block", c("inertia", "lambda1")
       )
     }
-
+    
     rgcca_args$blocks <- check_blocks(
       rgcca_args$blocks, add_NAlines = TRUE,
       quiet = rgcca_args$quiet, response = rgcca_args$response
     )
-
+    
     check_integer("tol", rgcca_args$tol, float = TRUE, min = 0)
     check_integer("n_iter_max", rgcca_args$n_iter_max, min = 1)
     for (i in c(
@@ -67,25 +67,25 @@ get_rgcca_args <- function(object, default_args = list()) {
     )) {
       check_boolean(i, rgcca_args[[i]])
     }
-
+    
     rgcca_args$tau <- elongate_arg(rgcca_args$tau, rgcca_args$blocks)
     rgcca_args$ncomp <- elongate_arg(rgcca_args$ncomp, rgcca_args$blocks)
     rgcca_args$sparsity <- elongate_arg(rgcca_args$sparsity, rgcca_args$blocks)
-
+    
     ### Get last parameters based on the method
     tmp <- select_analysis(rgcca_args, rgcca_args$blocks)
     opt <- tmp$opt
     rgcca_args <- tmp$rgcca_args
     
     # Check AC-RGCCA parameters
-    if (!is.null(rgcca_args$confounders) && any(rgcca_args$penalty_coef != 0)) {
+    if (!is.null(rgcca_args$confounders) && any(rgcca_args$gamma_confounders != 0)) {
       rgcca_args$confounders <- check_confounders(
         rgcca_args$confounders, rgcca_args$blocks, rgcca_args$scale, rgcca_args$bias,
         rgcca_args$superblock, rgcca_args$response
       )
       
-      rgcca_args$penalty_coef <- check_penalty_coef(
-        rgcca_args$penalty_coef, rgcca_args$blocks, rgcca_args$superblock,
+      rgcca_args$gamma_confounders <- check_gamma_confounders(
+        rgcca_args$gamma_confounders, rgcca_args$blocks, rgcca_args$superblock,
         rgcca_args$response, rgcca_args$quiet
       )
     }
@@ -93,7 +93,7 @@ get_rgcca_args <- function(object, default_args = list()) {
     # Change penalty to 0 if there is a univariate disjunctive block response
     opt$disjunction <- !is.null(rgcca_args$response) &&
       is.character(rgcca_args$blocks[[rgcca_args$response]])
-
+    
     if (opt$disjunction) {
       if (is.matrix(rgcca_args[[opt$param]])) {
         rgcca_args[[opt$param]][, rgcca_args$response] <- 0

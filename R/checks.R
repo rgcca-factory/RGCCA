@@ -7,8 +7,8 @@ check_blockx <- function(x, y, blocks) {
   )
   exit_code <- 133
   x <- check_integer(x, y,
-    max = length(blocks), exit_code = exit_code,
-    max_message = message
+                     max = length(blocks), exit_code = exit_code,
+                     max_message = message
   )
   return(x)
 }
@@ -17,11 +17,11 @@ check_boolean <- function(x, y = x, type = "scalar") {
   if (any(is.na(y))) {
     stop_rgcca(x, " must not be NA.")
   }
-
+  
   if (!is(y, "logical")) {
     stop_rgcca(x, " must be TRUE or FALSE.")
   }
-
+  
   if (type == "scalar" && length(y) != 1) {
     stop_rgcca(x, " must be of length 1.")
   }
@@ -30,24 +30,24 @@ check_boolean <- function(x, y = x, type = "scalar") {
 check_colors <- function(colors, type = "variables") {
   if (is.null(colors)) {
     switch(type,
-      "variables" = colors <- c(
-        "#882255", "#1FB0B5", "#C79E46", "#117733",
-        "#332288", "#BB728E", "#1F9F76", "#A95700"
-      ),
-      "samples" = colors <- c(
-        "#1F6EE0", "#CC0000", "#029B38", "#FFC709",
-        "#34C926", "#88AEC1", "#990099", "#FB176C"
-      ),
-      "AVE" = colors <- c(
-        "#828076", "#959685", "#A4AC96", "#AEB998",
-        "#B7C69A", "#CADF9E", "#DCF1AE", "#E7F8C4"
-      )
+           "variables" = colors <- c(
+             "#882255", "#1FB0B5", "#C79E46", "#117733",
+             "#332288", "#BB728E", "#1F9F76", "#A95700"
+           ),
+           "samples" = colors <- c(
+             "#1F6EE0", "#CC0000", "#029B38", "#FFC709",
+             "#34C926", "#88AEC1", "#990099", "#FB176C"
+           ),
+           "AVE" = colors <- c(
+             "#828076", "#959685", "#A4AC96", "#AEB998",
+             "#B7C69A", "#CADF9E", "#DCF1AE", "#E7F8C4"
+           )
     )
   } else {
     colors <- as.vector(colors)
     lapply(colors, function(i) {
       if (!is.na(i) && !(i %in% colors()) && is.character(i) &&
-        regexpr("^#{1}[a-zA-Z0-9]{6,8}$", i) < 1) {
+          regexpr("^#{1}[a-zA-Z0-9]{6,8}$", i) < 1) {
         stop_rgcca(
           "Unrecognized colors. Colors must be in colors() ",
           "or a rgb character."
@@ -62,9 +62,9 @@ check_compx <- function(x, y, ncomp, blockx) {
   res <- check_integer(x, y, min = 1)
   if (y > ncomp[blockx]) {
     stop_rgcca("not existing component. Trying to extract component ", y,
-      " for block ", blockx, " , but only ", ncomp[blockx],
-      " component(s) are available for this block.",
-      exit_code = 128
+               " for block ", blockx, " , but only ", ncomp[blockx],
+               " component(s) are available for this block.",
+               exit_code = 128
     )
   }
   return(res)
@@ -80,6 +80,9 @@ check_confounders <- function(confounders, blocks, scale = TRUE, bias = T,
   if (is.list(confounders)) {
     # Check that elements of the list are matrices
     confounders <- lapply(confounders, function(y) {
+      if (is.null(y)) {
+        return(y)
+      }
       if (is.matrix(y)) {
         return(y)
       }
@@ -143,7 +146,7 @@ check_confounders <- function(confounders, blocks, scale = TRUE, bias = T,
       }
     }
     if (!all(aligned_rownames %in% row.names(y))) {
-    stop_rgcca("matrix confounders must have the same rownames as blocks.")
+      stop_rgcca("matrix confounders must have the same rownames as blocks.")
     }
     return(y)
   }) #TODO should I modify this behaviour when confounders is K?
@@ -172,26 +175,29 @@ check_confounders <- function(confounders, blocks, scale = TRUE, bias = T,
       # Check whether confounders is positive definite
       eigen_dec <- eigen(y, symmetric = T, only.values = T)$values
       
-      if (any(eigens_dec < 0)) {
+      if (any(eigen_dec < - 1e-14 * NROW(y) * max(eigen_dec))) {
         stop_rgcca("If the given confounders matrix is K, it should be positive definite 
                    (as well as symmetric and of dimensions $n \times n$).")
       }
       
       # Centering data in the feature space
       N <- NROW(y)
+      I <- diag(1, nrow = N, ncol = N)
       ones <- matrix(1, nrow = N, ncol = 1)
-      ones_mat <- tcrossprod(ones)
-      K <- y - 1/N * ones_mat %*% y - 1/N * y %*% ones_mat + 1/(N**2) * drop(t(ones) %*% y %*% ones) * ones_mat
+      mat <- I - (1/N * tcrossprod(ones))
+      K <- mat %*% y %*% mat
       
       if (scale) {
-        # Scaling #Actually, the following procedure transforms the kernel so that it is equal to the kernel built on Y with column-centering and rows-normalization
+        # Scaling #Actually, the following procedure transforms the kernel so that it is equal to the kernel built on Y with column-centering and row-normalization
         D <- diag(K)**(-1/2)
         K <- sweep(t(sweep(K, 1, D, "*")), 1, D, "*") # fast matrix product for diag(D) %*% K_centered %*% diag(D)
       }
+      
+      rownames(K) <- colnames(K) <- rownames(y)
     }
     return(K)
   })
-
+  
   # Align rownames with blocks
   confounders <- lapply(confounders, function(K) {
     if (is.null(K)) {
@@ -201,40 +207,41 @@ check_confounders <- function(confounders, blocks, scale = TRUE, bias = T,
     return(K[aligned_rownames, aligned_rownames])
   })
   
+  names(confounders) <- names(blocks)
   return(confounders)
 }
 
 # Check the format of the connection matrix
 check_connection <- function(C, blocks) {
   msg <- "connection matrix C must"
-
+  
   if (!is.matrix(C)) stop_rgcca(msg, " be a matrix.", exit_code = 103)
   
   if (!isSymmetric.matrix(unname(C))) {
     stop_rgcca(paste(msg, "be symmetric."), exit_code = 103)
   }
-
+  
   if (any(is.na(C))) {
     stop_rgcca(paste(msg, "not contain NA values."), exit_code = 106)
   }
-
+  
   x <- C >= 0 & C <= 1
   if (sum(!x) != 0) {
     stop_rgcca(paste(msg, "contain numbers between 0 and 1."), exit_code = 106)
   }
-
+  
   if (all(C == 0)) {
     stop_rgcca(paste(msg, "not contain only 0."), exit_code = 107)
   }
-
+  
   invisible(check_size_blocks(blocks, "connection matrix", C))
-
+  
   if (is.null(rownames(C)) || is.null(colnames(C))) {
     rownames(C) <- colnames(C) <- names(blocks)
   }
-
+  
   if (!all(rownames(C) %in% names(blocks)) ||
-    !all(colnames(C) %in% names(blocks))) {
+      !all(colnames(C) %in% names(blocks))) {
     stop_rgcca(paste(
       msg,
       "have the rownames and the colnames that match with",
@@ -243,7 +250,7 @@ check_connection <- function(C, blocks) {
     exit_code = 108
     )
   }
-
+  
   return(C)
 }
 
@@ -253,49 +260,49 @@ check_integer <- function(x, y = x, type = "scalar", float = FALSE, min = 1,
   if (type %in% c("matrix", "data.frame")) {
     y_temp <- y
   }
-
+  
   y <- tryCatch(
     as.double(as.matrix(y)),
     warning = function(w) {
       stop_rgcca(paste(x, "must be numeric."))
     }
   )
-
+  
   if (any(is.na(y))) {
     stop_rgcca(paste(x, "must not be NA."))
   }
-
+  
   if (type == "scalar" && length(y) != 1) {
     stop_rgcca(paste(x, "must be of length 1."))
   }
-
+  
   if (!float) {
     if (any((y %% 1) != 0)) {
       stop_rgcca(paste(x, "must be an integer."))
     }
     y <- as.integer(y)
   }
-
+  
   if (any(y < min)) {
     if (!is.null(min_message)) {
       stop_rgcca(min_message, exit_code = exit_code)
     } else {
       stop_rgcca(x, " must be higher than or equal to ", min, ".",
-        exit_code = exit_code
+                 exit_code = exit_code
       )
     }
   }
-
+  
   if (any(y > max)) {
     if (!is.null(max_message)) {
       stop_rgcca(max_message, exit_code = exit_code)
     } else {
       stop_rgcca(x, " must be lower than or equal to ", max, ".",
-        exit_code = exit_code
+                 exit_code = exit_code
       )
     }
   }
-
+  
   if (type %in% c("matrix", "data.frame")) {
     y <- matrix(
       y,
@@ -304,11 +311,11 @@ check_integer <- function(x, y = x, type = "scalar", float = FALSE, min = 1,
       dimnames = dimnames(y_temp)
     )
   }
-
+  
   if (type == "data.frame") {
     y <- as.data.frame(y)
   }
-
+  
   return(y)
 }
 
@@ -363,15 +370,15 @@ check_ncomp <- function(ncomp, blocks, min = 1, superblock = FALSE,
       "variables in the superblock, i.e. ", max_ncomp,
       "."
     )
-
+    
     y <- check_integer("ncomp", ncomp[1],
-      min = min, max_message = msg,
-      max = max_ncomp,
-      exit_code = 126
+                       min = min, max_message = msg,
+                       max = max_ncomp,
+                       exit_code = 126
     )
     return(rep(y, length(ncomp)))
   }
-
+  
   ncomp <- elongate_arg(ncomp, blocks)
   check_size_blocks(blocks, "ncomp", ncomp)
   ncomp <- vapply(
@@ -385,8 +392,8 @@ check_ncomp <- function(ncomp, blocks, min = 1, superblock = FALSE,
           "for block ", x, ", i.e. ", NCOL(blocks[[x]]), "."
         )
         y <- check_integer("ncomp", ncomp[x],
-          min = min, max_message = msg,
-          max = NCOL(blocks[[x]]), exit_code = 126
+                           min = min, max_message = msg,
+                           max = NCOL(blocks[[x]]), exit_code = 126
         )
       }
       return(y)
@@ -396,38 +403,38 @@ check_ncomp <- function(ncomp, blocks, min = 1, superblock = FALSE,
   return(ncomp)
 }
 
-check_penalty_coef <- function(penalty_coef, blocks, superblock = FALSE, 
+check_gamma_confounders <- function(gamma_confounders, blocks, superblock = FALSE, 
                                response = NULL, quiet = TRUE) {
   if (superblock) {
-    penalty_coef <- elongate_arg(penalty_coef, 1:(length(blocks)+1))
+    gamma_confounders <- elongate_arg(gamma_confounders, 1:(length(blocks)+1))
   } else {
-    penalty_coef <- elongate_arg(penalty_coef, blocks)
+    gamma_confounders <- elongate_arg(gamma_confounders, blocks)
   }
   
   if (superblock) {
-    if (length(penalty_coef) != length(blocks) + 1) {
-      stop_rgcca("If superblock == T, penalty_coef must be of length 1 or J+1.")
+    if (length(gamma_confounders) != length(blocks) + 1) {
+      stop_rgcca("If superblock == T, gamma_confounders must be of length 1 or J+1.")
     }
   } else {
-    if (length(penalty_coef) != length(blocks)) {
-       stop_rgcca("Penalty_coef must be of length 1 or J.")
+    if (length(gamma_confounders) != length(blocks)) {
+      stop_rgcca("gamma_confounders must be of length 1 or J.")
     }
   }
   
   # Change penalty to 0 for the response block, if necessary
   if (!is.null(response)) {
-    penalty_coef[response] <- 0
+    gamma_confounders[response] <- 0
   }
   
-  if (any(penalty_coef < 0)) {
-    stop_rgcca("penalty_coef must be non-negative.")
+  if (any(gamma_confounders < 0)) {
+    stop_rgcca("gamma_confounders must be non-negative.")
   }
   
-  if (!quiet && all(penalty_coef == 0)) {
-    cat("With penalty_coef == 0, the classic rgcca algorithm will be used.\n")
+  if (!quiet && all(gamma_confounders == 0)) {
+    cat("With gamma_confounders == 0, the classic rgcca algorithm will be used.\n")
   }
   
-  return(penalty_coef)
+  return(gamma_confounders)
 }
 
 # Test on the sign of the correlation
@@ -436,7 +443,7 @@ check_sign_comp <- function(rgcca_res, w) {
     seq_along(rgcca_res$a),
     function(i) pm(rgcca_res$blocks[[i]], w[[i]])
   )
-
+  
   w[seq_along(w)] <- lapply(seq_along(w), function(i) {
     if (NROW(w[[i]]) < NROW(y[[i]])) {
       res <- as.matrix(cor2(rgcca_res$Y[[i]], y[[i]]))
@@ -448,7 +455,7 @@ check_sign_comp <- function(rgcca_res, w) {
     }, double(1))
     return(pm(w[[i]], diag(vec_sign, nrow = nrow(res))))
   })
-
+  
   return(w)
 }
 
@@ -464,7 +471,7 @@ check_size_blocks <- function(blocks, x, y = x, n_row = NULL,
     dim_y <- length(y)
     dim_type <- "size"
   }
-
+  
   if (dim_y != length(blocks)) {
     superblock_msg <- ifelse(superblock, paste0(
       " or the number of blocks + 1 (", length(blocks) + 1, ")"
@@ -499,7 +506,7 @@ check_penalty <- function(penalty, blocks, method = "rgcca", superblock = FALSE,
   name <- ifelse(method == "rgcca", "tau", "sparsity")
   check_size_blocks(blocks, name, penalty,
                     n_row = ncomp, superblock = superblock)
-
+  
   # Check value of each penalty
   if (method == "rgcca") {
     penalty <- unlist(lapply(penalty, check_tau))
@@ -515,9 +522,9 @@ check_penalty <- function(penalty, blocks, method = "rgcca", superblock = FALSE,
       FUN.VALUE = double(1L)
     )
   }
-
+  
   if (is_matrix) penalty <- matrix(penalty, DIM[1], DIM[2])
-
+  
   return(penalty)
 }
 
@@ -533,8 +540,8 @@ check_spars <- function(sparsity, block, n) {
     " for block ", n, ")."
   )
   sparsity <- check_integer("sparsity", sparsity,
-    float = TRUE,
-    min = min_sparsity, max = 1, min_message = min_message
+                            float = TRUE,
+                            min = min_sparsity, max = 1, min_message = min_message
   )
   invisible(sparsity)
 }
@@ -563,11 +570,11 @@ check_prediction_model <- function(prediction_model, response_block,
                                    missing_model = FALSE) {
   classification <-
     is.factor(response_block) || is.character(response_block)
-
+  
   if (missing_model && classification) {
     prediction_model <- "lda"
   }
-
+  
   if (is.list(prediction_model)) {
     model_info <- prediction_model
   } else {
@@ -579,7 +586,7 @@ check_prediction_model <- function(prediction_model, response_block,
       )
     }
   }
-
+  
   is_inadequate <- !("Classification" %in% model_info$type) && classification
   if (is_inadequate) {
     stop_rgcca(
@@ -588,7 +595,7 @@ check_prediction_model <- function(prediction_model, response_block,
       "classification. Please choose another model."
     )
   }
-
+  
   is_inadequate <- !("Regression" %in% model_info$type) && !classification
   if (is_inadequate) {
     stop_rgcca(
@@ -597,7 +604,7 @@ check_prediction_model <- function(prediction_model, response_block,
       "regression Please choose another model."
     )
   }
-
+  
   return(list(prediction_model = model_info, classification = classification,
               model_name = prediction_model))
 }

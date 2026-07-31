@@ -46,7 +46,7 @@ check_blocks <- function(blocks, add_NAlines = FALSE, allow_unnames = TRUE,
   blocks <- check_blocks_colnames(blocks, quiet)
   blocks <- check_blocks_rownames(blocks, allow_unnames, quiet)
   blocks <- check_blocks_align(blocks, add_NAlines, quiet)
-
+  
   invisible(blocks)
 }
 
@@ -130,18 +130,18 @@ check_blocks_colnames <- function(blocks, quiet = FALSE) {
       }
     )
   }
-
+  
   # Check for duplicated colnames
   if (any(duplicated(unlist(lapply(blocks, colnames))))) {
     if (!quiet) message("Duplicated colnames are modified to avoid confusion.")
-
+    
     blocks <- lapply(
       setNames(seq_along(blocks), names(blocks)),
       function(x) {
         block <- blocks[[x]]
         colnames(block) <- paste(names(blocks)[x],
-          colnames(blocks[[x]]),
-          sep = "_"
+                                 colnames(blocks[[x]]),
+                                 sep = "_"
         )
         return(block)
       }
@@ -159,7 +159,7 @@ check_blocks_rownames <- function(blocks, allow_unnames = TRUE, quiet = FALSE) {
       )
     }
   })
-
+  
   # Create rownames for all blocks if all missing
   if (all(vapply(
     blocks, function(x) is.null(row.names(x)),
@@ -178,7 +178,7 @@ check_blocks_rownames <- function(blocks, allow_unnames = TRUE, quiet = FALSE) {
       stop_rgcca(paste("blocks must have rownames."))
     }
   }
-
+  
   # If at least one block does not have rownames, 2 cases arise:
   #   - if all blocks with names have the same rownames, in the same order,
   #     we fill the missing rownames with the rownames of the other blocks;
@@ -212,11 +212,11 @@ check_blocks_rownames <- function(blocks, allow_unnames = TRUE, quiet = FALSE) {
 check_blocks_align <- function(blocks, add_NAlines = FALSE, quiet = FALSE) {
   # Construct union of rownames
   all_names <- Reduce(union, lapply(blocks, row.names))
-
+  
   # If add_NAlines is FALSE and one block doesn't have as many rows as there
   # are names in all_names, we stop. Otherwise we complete the blocks by
   # adding rows full of NA.
-
+  
   if (any(vapply(blocks, nrow, FUN.VALUE = integer(1)) != length(all_names))) {
     if (add_NAlines) {
       blocks <- lapply(blocks, function(x) {
@@ -229,7 +229,7 @@ check_blocks_align <- function(blocks, add_NAlines = FALSE, quiet = FALSE) {
       stop_rgcca("blocks must have the same rownames.")
     }
   }
-
+  
   # Align blocks using rownames
   blocks <- lapply(
     blocks, function(x) x[row.names(blocks[[1]]), , drop = FALSE]

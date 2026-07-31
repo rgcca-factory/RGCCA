@@ -54,7 +54,7 @@ block_init.ac_block <- function(x, init = "svd") {
     }
     
     P <- pm(x$x, x$sqrt_M_inv, na.rm = x$na.rm)
-    x$B <- 2 * 1/x$N * x$penalty_coef * pm(
+    x$B <- 2 * 1/x$N * x$gamma_confounders * pm(
       t(P), pm(
         x$confounders, P, na.rm = x$na.rm), 
       na.rm = x$na.rm)
@@ -82,7 +82,7 @@ block_init.ac_block <- function(x, init = "svd") {
     }
     
     P <- pm(x$x, x$sqrt_M_inv, na.rm = x$na.rm)
-    x$B <- 2 * 1/x$N * x$penalty_coef * pm(
+    x$B <- 2 * 1/x$N * x$gamma_confounders * pm(
       t(P), pm(
         x$confounders, P, na.rm = x$na.rm), 
       na.rm = x$na.rm)
@@ -107,14 +107,14 @@ block_init.dual_ac_block <- function(x, init = "svd") {
     #x$M_n_inv <- ginv(x$M_n)
     x$KM <- pm(x$K, x$M_n, na.rm = x$na.rm)
     
-    x$B <- 2/x$N * x$penalty_coef * x$K %*% x$confounders %*% x$K
+    x$B <- 2/x$N * x$gamma_confounders * x$K %*% x$confounders %*% x$K
     x$h_K <- -2/x$N * x$K
-
+    
   } else if (x$algo == 5) {
     x$M_n <- x$tau * diag(x$n) + (1 - x$tau)/x$N * x$K 
     x$KM <- pm(x$K, x$M_n, na.rm = x$na.rm)
     
-    x$B <- 2/x$N * x$penalty_coef * x$K %*% x$confounders %*% x$K
+    x$B <- 2/x$N * x$gamma_confounders * x$K %*% x$confounders %*% x$K
     eigen_dec_B <- eigen(x$B, symmetric = T)
     rank_B <- sum(eigen_dec_B$values > x$n * max(eigen_dec_B$values) * .Machine$double.eps)
     x$D_B <- c(eigen_dec_B$values[1:rank_B], rep(0, x$n - rank_B))

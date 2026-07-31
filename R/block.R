@@ -4,7 +4,7 @@ new_block <- function(x, j, na.rm = TRUE, bias = TRUE,
   n <- NROW(x)
   p <- NCOL(x)
   N <- ifelse(bias, n, n - 1)
-
+  
   x <- list(
     x = x,
     j = j,
@@ -45,32 +45,32 @@ new_sparse_block <- function(x, j, sparsity, tol = 1e-08, ...) {
   )
 }
 
-new_ac_block <- function(x, j, tau, confounders, penalty_coef, algo, ...) {
+new_ac_block <- function(x, j, tau, confounders, gamma_confounders, algo, ...) {
   new_block(x, j, tau = tau, M = NULL, M_inv = NULL, B = NULL, 
             f = NULL, sqrt_M = NULL, sqrt_M_inv = NULL, 
             mu = NULL, f_left = NULL, f_right = NULL, 
             algo = algo, d = NULL, h_MX = NULL,
             e_QM = NULL, a_MQ = NULL, e = NULL, h_tilde_QMX = NULL,
             h = NULL, h_tilde = NULL, D = NULL, Q = NULL, MQ = NULL, QMX = NULL, gamma = NULL,
-            confounders = confounders, penalty_coef = penalty_coef, ..., 
+            confounders = confounders, gamma_confounders = gamma_confounders, ..., 
             class = "ac_block")
 }
 
-new_dual_ac_block <- function(x, j, tau, confounders, penalty_coef, ...) {
+new_dual_ac_block <- function(x, j, tau, confounders, gamma_confounders, ...) {
   new_dual_block(x, j, tau = tau, M_n = NULL, M_n_inv = NULL, K_M = NULL, mu = NULL, 
-                 confounders = confounders, penalty_coef = penalty_coef, ...,
+                 confounders = confounders, gamma_confounders = gamma_confounders, ...,
                  class = "dual_ac_block")
 }
 
 ### Utility method to choose the adequate class
-create_block <- function(x, j, bias, na.rm, tau, sparsity, tol, confounders, penalty_coef, algo, primal) {
+create_block <- function(x, j, bias, na.rm, tau, sparsity, tol, confounders, gamma_confounders, algo, primal) {
   if (sparsity < 1) {
     res <- new_sparse_block(x, j, sparsity, tol, bias = bias, na.rm = na.rm)
-  } else if (!is.null(confounders) && (penalty_coef != 0)) {
+  } else if (!is.null(confounders) && (gamma_confounders != 0)) {
     if (NROW(x) > NCOL(x) || primal){
-      res <- new_ac_block(x, j, tau, confounders = confounders, penalty_coef = penalty_coef, algo = algo)
+      res <- new_ac_block(x, j, tau, confounders = confounders, gamma_confounders = gamma_confounders, algo = algo)
     } else {
-      res <- new_dual_ac_block(x, j, tau, confounders = confounders, penalty_coef = penalty_coef, algo = algo)
+      res <- new_dual_ac_block(x, j, tau, confounders = confounders, gamma_confounders = gamma_confounders, algo = algo)
     }
   } else if (NROW(x) > NCOL(x)) {
     if (tau < 1) {
