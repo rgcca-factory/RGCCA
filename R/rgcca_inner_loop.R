@@ -2,7 +2,7 @@ rgcca_inner_loop <- function(A, C, g, dg, tau = rep(1, length(A)),
                              sparsity = rep(1, length(A)),
                              verbose = FALSE, init = "svd", bias = TRUE,
                              tol = 1e-08, na.rm = TRUE, n_iter_max = 1000,
-                             confounders = NULL, gamma_confounders = rep(0, length(A)), algo = 3, primal = TRUE) {
+                             confounders = NULL, gamma_confounders = rep(0, length(A)), algo = 3) {
   if (!is.numeric(tau)) {
     # From Schafer and Strimmer, 2005
     tau <- vapply(A, tau.estimate, na.rm = na.rm, FUN.VALUE = 1.0)
@@ -16,7 +16,7 @@ rgcca_inner_loop <- function(A, C, g, dg, tau = rep(1, length(A)),
   
   ### Initialization
   block_objects <- lapply(seq_along(A), function(j) {
-    create_block(A[[j]], j, bias, na.rm, tau[j], sparsity[j], tol, confounders[[j]], gamma_confounders[j], algo, primal)
+    create_block(A[[j]], j, bias, na.rm, tau[j], sparsity[j], tol, confounders[[j]], gamma_confounders[j], algo)
   })
   
   block_objects <- lapply(block_objects, block_init, init = init)

@@ -42,7 +42,7 @@ select_analysis <- function(rgcca_args, blocks) {
     }
   }
   
-  method <- check_method(method) #TODO
+  method <- check_method(method)
   
   call <- list(
     ncomp = ncomp, scheme = scheme, tau = tau, sparsity = sparsity,
@@ -459,7 +459,7 @@ select_analysis <- function(rgcca_args, blocks) {
   
   rgcca_args[[param]] <- penalty
   
-  rgcca_args <- modifyList(rgcca_args, list( #TODO add new arguments here? only if they are modified in this function
+  rgcca_args <- modifyList(rgcca_args, list(
     ncomp = ncomp,
     scheme = scheme,
     method = method,

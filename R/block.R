@@ -63,11 +63,11 @@ new_dual_ac_block <- function(x, j, tau, confounders, gamma_confounders, ...) {
 }
 
 ### Utility method to choose the adequate class
-create_block <- function(x, j, bias, na.rm, tau, sparsity, tol, confounders, gamma_confounders, algo, primal) {
+create_block <- function(x, j, bias, na.rm, tau, sparsity, tol, confounders, gamma_confounders, algo) {
   if (sparsity < 1) {
     res <- new_sparse_block(x, j, sparsity, tol, bias = bias, na.rm = na.rm)
   } else if (!is.null(confounders) && (gamma_confounders != 0)) {
-    if (NROW(x) > NCOL(x) || primal){
+    if (NROW(x) > NCOL(x)){
       res <- new_ac_block(x, j, tau, confounders = confounders, gamma_confounders = gamma_confounders, algo = algo)
     } else {
       res <- new_dual_ac_block(x, j, tau, confounders = confounders, gamma_confounders = gamma_confounders, algo = algo)
