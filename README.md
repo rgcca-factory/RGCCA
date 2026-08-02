@@ -4,36 +4,39 @@
 
 <!-- badges: end -->
 
-# R/SGCCA
+# AC-RGCCA
 
 ##### Version: 3.0.2
 
-##### Authors:
-Fabien GIRKA, Etienne CAMENEN,  Caroline PELTIER, Vincent GUILLEMOT, 
-Arnaud GLOAGUEN, Laurent LE BRUSQUET, Arthur TENENHAUS
+##### Authors of RGCCA package:
+Fabien GIRKA, Etienne CAMENEN,  Caroline PELTIER, Vincent GUILLEMOT, Arnaud GLOAGUEN, Laurent LE BRUSQUET, Arthur TENENHAUS
+
+##### AC-RGCCA Authors:
+Elen GOUJON, Olivier ARMANT, Sandrine FRELON, Laurent LE BRUSQUET, Arthur TENENHAUS, Imène GARALI
 
 ##### Key-words:
-Regularized Generalized Canonical Correlation Analysis, multi-block data analysis
+Regularized Generalized Canonical Correlation Analysis, multi-block data analysis, confounding variation
 
 ##### Contact:
 arthur.tenenhaus@centralesupelec.fr
 
 ##### Short description
-Performs multiblock component methods (PCA, CCA, PLS, MCOA, GCCA, CPCA, MAXVAR, R/SGCCA, etc.) and produces graphical outputs (e.g. variables and individuals plots) and statistics to assess the robustness/significance of the analysis.
+The RGCCA package performs multiblock component methods (PCA, CCA, PLS, MCOA, GCCA, CPCA, MAXVAR, R/SGCCA, etc.) and produces graphical outputs (e.g. variables and individuals plots) and statistics to assess the robustness/significance of the analysis. Additionally, AC-RGCCA extends RGCCA's framework to allow accounting for confounding variation within multiblock data analysis.
 
 ---
 
 ## Contents
   - [Description](#description)
-  - [Algorithm](#algorithm)
+  - [Algorithm for RGCCA](#algorithm-for-rgcca)
+  - [AC-RGCCA](#ac-rgcca)
   - [Installation](#installation)
-  - [Installation of a development branch from the git repository](#installation-of-a-development-branch-from-the-git-repository)
+  - [Installation of the development branch AC-RGCCA](#installation-of-the-development-branch-ac-rgcca)
   - [References](#references)
 
-## Descriptiont
-A package for multiblock data analysis (RGCCA - Regularized Generalized Canonical Correlation Analysis) as described in [1-4]. The software produces graphical outputs and statistics to assess the robustness/significance of the analysis.
+## Description
+A package for multiblock data analysis (RGCCA - Regularized Generalized Canonical Correlation Analysis) as described in [1-4]. The software produces graphical outputs and statistics to assess the robustness/significance of the analysis. The AC-RGCCA method, presented in [8], allows handling confounding variation directly within multiblock data analysis. This method is implemented in the RGCCA package and accessible on the AC-RGCCA development branch. 
 
-## Algorithm
+## Algorithm for RGCCA
 We consider $J$ data matrices $\mathbf X_1 , \dots, \mathbf X_J$. Each $n \times p_j$ data matrix 
 $\mathbf X_j = \left[ x_{j1}, \dots, x_{jp_j} \right]$ 
 is called a block and represents a set of $p_j$ variables observed on $n$ individuals. The number and the nature of the variables may differ from one block to another, but the individuals must be the same across blocks. We assume that all variables are centered. The objective of RGCCA is to find, for each block, a weighted composite of variables (called block component) $\mathbf y_j = \mathbf X_j  \mathbf a_j, ~ j = 1 ,..., J$ (where $\mathbf a_j$ is a column-vector with $p_j$ elements) summarizing the relevant information between and within the blocks. The block components are obtained such that (i) block components explain well their own block and/or (ii) block components that are assumed to be connected are highly correlated. In addition, RGCCA integrates a variable selection procedure, called SGCCA, allowing the identification of the most relevant features.
@@ -56,6 +59,10 @@ Moreover, we can define the choice of the shrinkage parameters by providing inte
 
 The quality and interpretability of the RGCCA block components $\mathbf y_j = \mathbf X_j \mathbf a_j, ~ j = 1 , \dots, J$ are likely affected by the usefulness and relevance of the variables of each block. Accordingly, it is an important issue to identify within each block a subset of significant variables which are active in the relationships between blocks. **SGCCA** extends RGCCA to address this issue of variable selection. Specifically, RGCCA with all $\tau_j$ equal to 1 is combined with an L1-penalty that gives rise to SGCCA [3]. The SGCCA optimization problem is defined with $s_j$, a user defined positive constant that determines the amount of sparsity through the additional constraint $\Vert \mathbf a_j \Vert_1 \leq s_j, ~ j = 1, \dots, J$. The smaller the $s_j$, the larger the degree of sparsity for $\mathbf a_j$. The sparsity parameter $s_j$ is usually set by cross-validation or permutation. Alternatively, values of $s_j$ can simply be chosen to result in desired amounts of sparsity.
 
+## AC-RGCCA
+TODO
+
+
 ## Installation
 Required:
 
@@ -70,18 +77,18 @@ install.packages("RGCCA")
 See the [vignette](https://rgcca-factory.github.io/RGCCA/articles/RGCCA.pdf) for an introduction to the package.
 
 
-## Installation of a development branch from the git repository
+## Installation of the development branch AC-RGCCA
 Required:
 
 - Software: R (≥ 3.2.0)
 
-- R libraries: see the [DESCRIPTION](https://github.com/rgcca-factory/RGCCA/blob/main/DESCRIPTION) file.
+- R libraries: see the [DESCRIPTION](https://github.com/rgcca-factory/RGCCA/blob/AC-RGCCA/DESCRIPTION) file.
 
 - The R library `devtools`.
 
 ```
 remove.packages("RGCCA")
-devtools::install_github(repo="https://github.com/rgcca-factory/RGCCA.git", ref = "main")
+devtools::install_github(repo = "rgcca-factory/RGCCA", ref = "AC-RGCCA")
 ```
 
 ## References
@@ -92,3 +99,4 @@ devtools::install_github(repo="https://github.com/rgcca-factory/RGCCA.git", ref 
 5. Van de Geer, J. P. (1984). Linear relations among K sets of variables. Psychometrika, 49(1), 79-94.
 6. Schäfer, J., & Strimmer, K. (2005). A shrinkage approach to large-scale covariance matrix estimation and implications for functional genomics. Statistical applications in genetics and molecular biology, 4(1).
 7. Tenenhaus, A., & Tenenhaus, M. (2014). Regularized generalized canonical correlation analysis for multiblock or multigroup data analysis. European Journal of operational research, 238(2), 391-403.
+8. Goujon, E. Armant, O., Frelon, S., Le Brusquet, L., Tenenhaus, A., & Garali, I. (To be published) AC-RGCCA: Adjusting for Confounding Variation Within Multiblock Data Analysis.
