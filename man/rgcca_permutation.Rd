@@ -2,7 +2,7 @@
 % Please edit documentation in R/rgcca_permutation.R
 \name{rgcca_permutation}
 \alias{rgcca_permutation}
-\title{Tune the (AC-)S/RGCCA hyper-parameters by permutation}
+\title{Tune the S/RGCCA hyper-parameters by permutation}
 \usage{
 rgcca_permutation(
   blocks,
@@ -25,9 +25,6 @@ rgcca_permutation(
   tol = 1e-08,
   response = NULL,
   superblock = FALSE,
-  confounders = NULL,
-  penalty_coef = 0,
-  algo = 1,
   NA_method = "na.ignore",
   rgcca_res = NULL,
   verbose = TRUE,
@@ -235,8 +232,7 @@ deviations of permuted criteria, Z-statistics and p-values.}
 }
 \description{
 This function can be used to automatically select the hyper-parameters
-(amount of sparsity for sgcca, shrinkage parameters for RGCCA or
-penalty on confounding variation for AC-RGCCA).
+(amount of sparsity for sgcca or shrinkage parameters for RGCCA).
 A permutation-based strategy very similar to the one proposed in
 (Witten et al, 2009) is implemented.
 }

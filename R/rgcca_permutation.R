@@ -1,8 +1,7 @@
-#' Tune the (AC-)S/RGCCA hyper-parameters by permutation
+#' Tune the S/RGCCA hyper-parameters by permutation
 #'
 #' This function can be used to automatically select the hyper-parameters
-#' (amount of sparsity for sgcca, shrinkage parameters for RGCCA or
-#' penalty on confounding variation for AC-RGCCA).
+#' (amount of sparsity for sgcca or shrinkage parameters for RGCCA).
 #' A permutation-based strategy very similar to the one proposed in
 #' (Witten et al, 2009) is implemented.
 #'
@@ -223,21 +222,21 @@
 #'
 #' @export
 rgcca_permutation <- function(blocks, par_type = "tau", par_value = NULL,
-                             par_length = 10, n_perms = 20,
-                             n_cores = 1,
-                             quiet = TRUE, scale = TRUE, scale_block = TRUE,
-                             method = "rgcca",
-                             connection = NULL,
-                             scheme = "factorial",
-                             ncomp = 1,
-                             tau = 1,
-                             sparsity = 1,
-                             init = "svd", bias = TRUE, tol = 1e-8,
-                             response = NULL, superblock = FALSE,
-                             confounders = NULL, penalty_coef = 0, algo = 1,
-                             NA_method = "na.ignore", rgcca_res = NULL,
-                             verbose = TRUE, n_iter_max = 1000,
-                             comp_orth = TRUE) {
+                              par_length = 10, n_perms = 20,
+                              n_cores = 1,
+                              quiet = TRUE, scale = TRUE, scale_block = TRUE,
+                              method = "rgcca",
+                              connection = NULL,
+                              scheme = "factorial",
+                              ncomp = 1,
+                              tau = 1,
+                              sparsity = 1,
+                              init = "svd", bias = TRUE, tol = 1e-8,
+                              response = NULL, superblock = FALSE,
+                              NA_method = "na.ignore", rgcca_res = NULL,
+                              verbose = TRUE, n_iter_max = 1000,
+                              comp_orth = TRUE) {
+  
   ### Try to retrieve parameters from a rgcca object
   rgcca_args <- as.list(environment())
   tmp <- get_rgcca_args(blocks, rgcca_args)
@@ -247,7 +246,7 @@ rgcca_permutation <- function(blocks, par_type = "tau", par_value = NULL,
   ### Check parameters
   check_integer("n_perms", n_perms)
   check_integer("par_length", n_perms)
-  match.arg(par_type, c("tau", "sparsity", "ncomp", "penalty_coef"))
+  match.arg(par_type, c("tau", "sparsity", "ncomp"))
   if (length(rgcca_args$blocks) == 1) {
     stop_rgcca(
       "wrong number of blocks. Permutation requires more than ",
@@ -265,7 +264,7 @@ rgcca_permutation <- function(blocks, par_type = "tau", par_value = NULL,
     opt$param <- "sparsity"
   }
   
-  param <- set_parameter_grid( #TODO
+  param <- set_parameter_grid(
     par_type, par_length, par_value, rgcca_args$blocks,
     rgcca_args[[par_type]], rgcca_args$response,
     rgcca_args$superblock,  opt$disjunction

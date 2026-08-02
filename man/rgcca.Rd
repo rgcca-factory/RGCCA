@@ -21,9 +21,7 @@ rgcca(
   response = NULL,
   superblock = FALSE,
   confounders = NULL,
-  penalty_coef = 0,
-  algo = 1,
-  primal = TRUE,
+  gamma_confounders = 0,
   NA_method = "na.ignore",
   quiet = TRUE,
   n_iter_max = 1000,
@@ -152,6 +150,71 @@ activated.}
 \item{superblock}{A logical value indicating if the
 superblock option is used.}
 
+\item{confounders}{Either a matrix with \eqn{n} observations or a list of 
+\eqn{J} such matrices encoding the unwanted information, whose influence on 
+the estimated components is to be minimized by AC-RGCCA. If only one matrix 
+is given, all blocks are assumed to suffer from the same unwanted variation. 
+On the other hand, users can specify a list of \eqn{J} matrices for specific 
+confounders for each block. 
+
+For each block \eqn{j=1,\ldots,J}{j=1,...,J}, a confounders kernel matrix 
+\eqn{\mathbf K_j}{Kj} of dimensions \eqn{n \times n}{n x n} is defined. Its 
+elements \eqn{[K_j]_{ii'}}{Kj[i,i']} measure a similarity between 
+observations \eqn{i} and \eqn{i'} in \eqn{\mathbf Z_j}{Zj}. By default, the 
+linear kernel \eqn{\mathbf K_j = \mathbf Z_j \mathbf Z_j^\top}{Kj=Zj Zj'} is 
+computed but alternative kernel matrices can be computed by users to 
+implement more sophisticated penalties. 
+
+Indeed, users can choose to input the confounders matrices with either 
+\eqn{\mathbf Z_j}{Zj} (\eqn{n \times q_j}{n x qj} matrix with \eqn{q_j}{qj} 
+confounders observed on the \eqn{n} individuals) or \eqn{\mathbf K_j}{Kj} 
+(kernel matrix of size \eqn{n \times n}{n x n}). Internal checking 
+procedures then determines if the input matrices correspond to 
+\eqn{\mathbf Z_j}{Zj} or \eqn{\mathbf K_j}{Kj} for 
+\eqn{j=1,\ldots,J}{j=1,...,J} based on the matrix characteristics. 
+
+If \eqn{\mathbf Z_1, \ldots, \mathbf Z_J}{Z1,...,ZJ} are given, the matrices 
+are centered by columns and optionally scaled depending on the argument 
+scale, thus imposing the same scaling as for the blocks 
+\eqn{\mathbf X_1, \ldots, \mathbf X_J}{X1,...,XJ}. A linear kernel is then 
+applied.
+
+Alternatively, if users wish to implement a specific kernel and input 
+\eqn{\mathbf K_1, \ldots, \mathbf K_J}{K1,...,KJ}, the following 
+transformation is applied to center data in the feature space:
+\deqn{\mathbf K_j^C = \left(\mathbf I_n - \frac{1}{n} \mathbf 1_n 
+\mathbf 1_n^\top \right) \mathbf K_j \left(\mathbf I_n - \frac{1}{n} 
+\mathbf 1_n \mathbf 1_n^\top \right),}{KjC = (In - (1/n)1n 1n') Kj (In - 
+(1/n)1n 1n'),}
+where \eqn{\mathbf K_j^C}{KjC} is the kernel matrix of the centered data 
+(Shawe-Taylor and Cristianini, 2004). Also, if scale is TRUE, the 
+normalization of data in the feature space is performed using the 
+transformation:
+\deqn{\mathbf K_j^N = \mathbf D^{-1/2} \mathbf K_j^C \mathbf D^{-1/2},}{KjN =
+D^{-1/2} KjC D^{-1/2},}
+with \eqn{\mathbf D}{D} being the diagonal matrix with the inverse of the 
+norm of centered feature vectors as diagonal elements: \eqn{d_k = 
+[K_j^C]_{kk}, k=1, \dots, n}{dk = KjC[kk], k=1,...,n} and \eqn{\mathbf K_j^N
+}{KjN} giving the kernel matrix obtained on centered and normalized data.
+
+If users wish to define confounders matrices 
+only for certain blocks, \code{NULL} elements can be given in the list at 
+positions of blocks for which confounder adjustment is not necessary 
+(equivalent to setting the corresponding \eqn{\gamma_j}{gammaj} elements to 
+0 in the vector given to gamma_confounders). 
+
+When superblock = TRUE, the matrix \eqn{\mathbf K_j}{Kj} and the parameter 
+\eqn{\gamma_j}{gammaj} are assumed to be identical for all blocks including 
+the superblock.}
+
+\item{gamma_confounders}{Either a numerical value, or a numeric vector of 
+size \eqn{J} used to define the coefficients 
+\eqn{\gamma_j \ge 0}{gammaj >= 0} for \eqn{j=1, \ldots, J}{j=1,...,J} which 
+control the strength of the penalization imposed on the confounding 
+variation. If one scalar is given, the penalty coefficient is assumed to be 
+the same for all blocks. Otherwise, users can give a vector of length 
+\eqn{J} with values chosen for each block.}
+
 \item{NA_method}{A string indicating the method used for
 handling missing values ("na.ignore", "na.omit"). (default: "na.ignore").
 \itemize{
@@ -254,7 +317,7 @@ the primal algorithm (when \eqn{n \geq p_j}{n >= p_j}) or the dual algorithm
 (when \eqn{n < p_j}{n < p_j}) is used (see Tenenhaus et al. 2015).
 
 When sparsity is
-specified SGCCA, extends RGCCA to address the issue of variable selection
+specified, SGCCA extends RGCCA to address the issue of variable selection
 (Tenenhaus et al, 2014). Specifically, RGCCA is combined with an L1-penalty
 that gives rise to Sparse GCCA (SGCCA). The SGCCA algorithm is very similar
 to the RGCCA algorithm and keeps the same convergence properties (i.e. the
@@ -267,11 +330,28 @@ components
 vectors are guaranteed to be orthogonal. It should be noted that the numbers
 of components per block can differ from one block to another.
 
-The rgcca() function handle missing values (punctual or blockwise missing
+The rgcca() function handles missing values (punctual or blockwise missing
 structure) using the algorithm described in (Tenenhaus et al, 2005).
 
 Guidelines describing how to use RGCCA in practice are provided in
 (Garali et al., 2018).
+
+Additionally, AC-RGCCA extends RGCCA to enable simultaneous handling of 
+confounding variation (Goujon et al, to be published). When the arguments 
+confounders and gamma_confounders are used, the function automatically 
+applies AC-RGCCA. The confounders matrix (or matrices) represents the 
+unwanted variation whose influence on the components the user wishes to 
+limit. This is done through the addition of a penalty in RGCCA's 
+optimization problem. The penalty tuning parameter gamma_confounders allows 
+to control the strength of the regularization imposed by the penalty. 
+
+As for classical RGCCA, a dual strategy facilitates the application of 
+AC-RGCCA to "wide" block matrices (\eqn{n \ll p_j}{n << pj}). Also, 
+components of higher orders are retrieved using the same deflation approach 
+implemented for RGCCA. AC-RGCCA extends naturally to the supervised case 
+through the existing framework for RGCCA. In supervised AC-RGCCA, we assume 
+that the variables from the response block are not affected by the 
+confounding effects.
 }
 \examples{
 ####################
@@ -459,6 +539,40 @@ plot(fit_rgcca, type = "biplot", block = 4, resp = politic)
   # all the parameters were imported from the fitted cval object.
   fit_rgcca <- rgcca(cv_out)
   print(fit_rgcca)
+
+  #######################################################
+  # Example 9: Accounting for confounders with AC-RGCCA #
+  #######################################################
+  # Load the dataset
+  data(example_confounders)
+  
+  # Apply methods
+  ## Classical RGCCA
+  fit_RGCCA <- rgcca(blocks = example_confounders$blocks, tau = 1, 
+                     ncomp = 2, superblock = T, scale = T)
+  print(fit_RGCCA)
+
+  ## AC-RGCCA scheme A
+  fit_AC_RGCCA_A <- rgcca(blocks = example_confounders$blocks, tau = 1, 
+                          ncomp = 2, superblock = T, scale = T, 
+                          confounders = example_confounders$confounders_Z_A,
+                          gamma_confounders = 5)
+  print(fit_AC_RGCCA_A)
+  
+  ## AC-RGCCA scheme B
+  fit_AC_RGCCA_B <- rgcca(blocks = example_confounders$blocks, tau = 1, 
+                          ncomp = 2, superblock = T, scale = T, 
+                          confounders = example_confounders$confounders_Z_B,
+                          gamma_confounders = 5)
+  print(fit_AC_RGCCA_B)
+  
+  # Compare results on superblock components
+  plot(fit_RGCCA, type = "samples", block = 3, 
+       response = example_confounders$dose_groups)
+  plot(fit_AC_RGCCA_A, type = "samples", block = 3, 
+       response = example_confounders$dose_groups)
+  plot(fit_AC_RGCCA_B, type = "samples", block = 3, 
+       response = example_confounders$dose_groups)
 }
 
 }
@@ -493,6 +607,12 @@ genomics. Statistical Applications in Genetics and Molecular Biology 4:32.
 Arnaud Gloaguen, Vincent Guillemot, Arthur Tenenhaus.
 An efficient algorithm to satisfy l1 and l2 constraints.
 49emes Journees de Statistique, May 2017, Avignon, France. (hal-01630744)
+
+Goujon E. et al. AC-RGCCA: Adjusting for Confounding Variation 
+Within Multiblock Data Analysis. To be published.
+
+Shawe-Taylor J. and Cristianini N, (2004). Kernel Methods for 
+Pattern Analysis. Cambridge University Press.
 }
 \seealso{
 \code{\link[RGCCA]{plot.rgcca}}, \code{\link[RGCCA]{summary.rgcca}},
