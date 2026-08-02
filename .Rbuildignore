@@ -13,3 +13,4 @@
 ^revdep$
 ^CRAN-SUBMISSION$
 ^vignettes/RGCCA_cache$
+^data-raw$

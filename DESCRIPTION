@@ -53,8 +53,8 @@ Suggests:
 VignetteBuilder:
     knitr
 LazyData: true
-RoxygenNote: 7.3.2
 Encoding: UTF-8
 URL: https://github.com/rgcca-factory/RGCCA,
     https://rgcca-factory.github.io/RGCCA/
 BugReports: https://github.com/rgcca-factory/RGCCA/issues
+Config/roxygen2/version: 8.0.0
