@@ -12,7 +12,7 @@
 Fabien GIRKA, Etienne CAMENEN,  Caroline PELTIER, Vincent GUILLEMOT, Arnaud GLOAGUEN, Laurent LE BRUSQUET, Arthur TENENHAUS
 
 ##### AC-RGCCA Authors:
-Elen GOUJON, Olivier ARMANT, Sandrine FRELON, Laurent LE BRUSQUET, Arthur TENENHAUS, Imène GARALI
+Elen GOUJON, Arthur TENENHAUS, Laurent LE BRUSQUET, Sandrine FRELON, Olivier ARMANT, Imène GARALI
 
 ##### Key-words:
 Regularized Generalized Canonical Correlation Analysis, multi-block data analysis, confounding variation
@@ -60,8 +60,24 @@ Moreover, we can define the choice of the shrinkage parameters by providing inte
 The quality and interpretability of the RGCCA block components $\mathbf y_j = \mathbf X_j \mathbf a_j, ~ j = 1 , \dots, J$ are likely affected by the usefulness and relevance of the variables of each block. Accordingly, it is an important issue to identify within each block a subset of significant variables which are active in the relationships between blocks. **SGCCA** extends RGCCA to address this issue of variable selection. Specifically, RGCCA with all $\tau_j$ equal to 1 is combined with an L1-penalty that gives rise to SGCCA [3]. The SGCCA optimization problem is defined with $s_j$, a user defined positive constant that determines the amount of sparsity through the additional constraint $\Vert \mathbf a_j \Vert_1 \leq s_j, ~ j = 1, \dots, J$. The smaller the $s_j$, the larger the degree of sparsity for $\mathbf a_j$. The sparsity parameter $s_j$ is usually set by cross-validation or permutation. Alternatively, values of $s_j$ can simply be chosen to result in desired amounts of sparsity.
 
 ## AC-RGCCA
-TODO
+AC-RGCCA extends the RGCCA framework to adjust for unwanted variation. This new method aims to extract components that summarize the information present within the blocks and shared across connected blocks, while at the same time limiting the amount of confounding variation captured by components. Building on the existing framework for RGCCA presented in the previous section, we now introduce the mathematical objects used by AC-RGCCA and the associated optimization problem.
 
+For each block $j=1, \dots, J$, we assume that a set of $q_j$ covariates pollutes the study of the information contained in block $\mathbf X_j$. These confounding variables observed on the $n$ individuals are represented in a column-centered $n \times q_j$ matrix $\mathbf Z_j = [\mathbf z_j^{(1)}, \ldots, \mathbf z_j^{(q_j)}]$. In presence of confounders, we wish to limit the amount of unwanted variation captured by the components. Based on this philosophy, AC-RGCCA thus implements the following optimization problem:
+$$\underset{\mathbf a_1, \dots, \mathbf a_J}{\text{maximize}} \sum_{j, k = 1}^J c_{jk} g(\text{cov}(\mathbf X_j \mathbf a_j, \mathbf X_k \mathbf a_k)) - \sum_{l=1}^J \frac{\gamma_l}{n} \mathbf a_l^\top \mathbf X_l^\top \mathbf K_l \mathbf X_l \mathbf a_l$$
+$$\text{ s.t. } (1 - \tau_j)\text{var}(\mathbf X_j \mathbf a_j) + \tau_j \Vert \mathbf a_j \Vert^2 = 1, ~ j = 1, \dots, J.$$
+For each block $\mathbf X_j$, we associate a penalty parameter $\gamma_j \geq 0$ used to control the regularization imposed, and a $n \times n$ confounders kernel matrix $\mathbf K_j$, with elements $[K_j]_{ii'}$ measuring a similarity between observations $i$ and $i'$ in $\mathbf Z_j$. Thanks to RGCCA-specific parameters $\mathbf C$, $g$, $\{\tau_j\}_{j = 1, \dots, J}$, and the chosen deflation strategy, this new formulation allows controlling for confounding variation in various multiblock scenarios, including correlation-based or supervised models with a response block. 
+
+A natural choice for the confounders kernel matrix is the linear kernel $\mathbf K_j = \mathbf Z_j \mathbf Z_j^\top$. With this kernel, the quantity $\mathbf a_j^\top \mathbf X_j^\top \mathbf Z_j \mathbf Z_j^\top \mathbf X_j \mathbf a_j$ is proportional to $\sum_{k=1}^{q_j} {\text{cov}}^2 (\mathbf z_j^{(k)}, \mathbf X_j \mathbf a_j)$, and the corresponding penalty therefore encourages the component $\mathbf X_j \mathbf a_j$ to be orthogonal to the confounders in $\mathbf Z_j$. Importantly, we note that more sophisticated kernel functions can also be used.
+
+Two arguments are introduced within the `rgcca` function for users to customize the AC-RGCCA methods to their analysis:
+- `gamma_confounders`: The **penalty tuning parameters** $\gamma_1, \dots, \gamma_J \geq 0$ control the strength of the penalty that will be applied on each block $j=1, \dots, J$. Choosing $\gamma_1 = \dots = \gamma_J = 0$ imposes no penalization and leads to performing classical RGCCA. On the other hand, a large enough value will shift the solutions towards being orthogonal to the confounding variables (if $\mathbf K_j = \mathbf Z_j \mathbf Z_j^\top$). Tuning $\boldsymbol \gamma = (\gamma_1, \dots, \gamma_J)$ can be achieved by studying the ratio $R(\boldsymbol \gamma)$:
+  $$R(\boldsymbol \gamma) = \left( \sum_{j=1}^J \mathbf a_j^\top \mathbf X_j^\top \mathbf K_j \mathbf X_j \mathbf a_j \right)/\left( \sum_{j,k=1}^J c_{jk}^\star \mathbf a_j^\top \mathbf X_j^\top \mathbf X_k \mathbf a_k \right).$$
+  In this ratio, $\mathbf C^\star$ is the connection matrix used for the model with all its diagonal elements $c_{jj}^\star, j=1, \dots, J$ changed to $1$; this allows to include the variance explained by each block in the denominator, in addition to the covariance terms. This function measures the relative importance of the unwanted variation captured by the components in relation to the total variation extracted (with terms $j = k$ of the denominator sum giving the component variance, and terms $j \neq k$ giving the covariance between components of connected blocks). We suggest selecting the smallest value $\gamma$ such that $R(\gamma) < 0.05 R(\gamma = 0)$ in the components studied, with the possibility of users tailoring the threshold level of $0.05$ to their application.
+- `confounders`: The **confounders matrices** incode the unwanted information, whose influence on the estimated components is to be minimized by AC-RGCCA. It can be given as either $\mathbf Z_1, \dots, \mathbf Z_J$, or directly $\mathbf K_1, \dots, \mathbf K_J$. If users input $\mathbf Z_1, \dots, \mathbf Z_J$, a linear kernel will be applied to compute the confounders kernel matrices. Otherwise, if users wish to adapt AC-RGCCA's optimization problem to their biological question, they are free to create and input their own confounders kernel matrices $\mathbf K_1, \dots, \mathbf K_J$.
+
+See the documentation of `rgcca` in the AC-RGCCA branch for examples on how to use the method, and further information about the function's arguments.
+
+AC-RGCCA is implemented on the namesake development branch within the RGCCA GitHub repository. Please see below for its installation. 
 
 ## Installation
 Required:
@@ -99,4 +115,4 @@ devtools::install_github(repo = "rgcca-factory/RGCCA", ref = "AC-RGCCA")
 5. Van de Geer, J. P. (1984). Linear relations among K sets of variables. Psychometrika, 49(1), 79-94.
 6. Schäfer, J., & Strimmer, K. (2005). A shrinkage approach to large-scale covariance matrix estimation and implications for functional genomics. Statistical applications in genetics and molecular biology, 4(1).
 7. Tenenhaus, A., & Tenenhaus, M. (2014). Regularized generalized canonical correlation analysis for multiblock or multigroup data analysis. European Journal of operational research, 238(2), 391-403.
-8. Goujon, E. Armant, O., Frelon, S., Le Brusquet, L., Tenenhaus, A., & Garali, I. (To be published) AC-RGCCA: Adjusting for Confounding Variation Within Multiblock Data Analysis.
+8. Goujon, E., Tenenhaus, A., Le Brusquet, L., Frelon, S., Armant, O., & Garali, I. (To be published) AC-RGCCA: Adjusting for Confounding Variation Within Multiblock Data Analysis.
