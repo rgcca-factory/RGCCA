@@ -236,16 +236,36 @@ rgcca_cv <- function(blocks,
 
   ### Prepare parameters for line search
   if (
-    rgcca_args$method %in% sparse_methods() && (par_type == "tau")
+    (rgcca_args$method %in% sparse_methods()) && (par_type == "tau")
   ) {
     par_type <- "sparsity"
   } else if (par_type == "sparsity") {
     opt$param <- "sparsity"
-  }
+    # Recursive check that evaluates dimensions of both lists/arrays and their contents
+    check_all_dims <- function(x) {
+      # 1. Check if the current object itself has > 2 dimensions
+      if (!is.null(dim(x)) && length(dim(x)) > 2) {
+        return(TRUE)
+      }
+      
+      # 2. If it's a list or list-array, recursively check its contents
+      if (is.list(x) || is.array(x)) {
+        return(any(sapply(x, check_all_dims)))
+      }
+      
+      return(FALSE)
+    }
 
+    if (check_all_dims(blocks) ){
+    rgcca_args$method ="stgcca"}
+    else{
+      rgcca_args$method ='sgcca'
+    }
+    
+  }
   param <- set_parameter_grid(
     par_type, par_length, par_value, rgcca_args$blocks,
-    rgcca_args[[par_type]], method,rgcca_args$response, FALSE, opt$disjunction
+    rgcca_args[[par_type]],rgcca_args$response, FALSE, opt$disjunction
   )
 
   # Generate a warning if tau has not been fully specified for a block that
@@ -268,11 +288,8 @@ rgcca_cv <- function(blocks,
   
 
   ### Create folds
-  if (method=='stgcca'){
-    idx <- seq_len(NROW(rgcca_args$blocks[[1]]))
-  }else{  
-    idx <- seq_len(NROW(rgcca_args$blocks[[1]]))
-}
+  idx <- seq_len(NROW(rgcca_args$blocks[[1]]))
+  
 
   if (validation == "loo") {
     v_inds <- idx
@@ -301,15 +318,13 @@ rgcca_cv <- function(blocks,
       }))
     }
   }
-  
+    
+  idx <- seq_len(NROW(param$par_value) * length(v_inds))
   ### Compute cross validation
-  if (method=='stgcca'){
-    idx <- seq_len(NROW(param$par_value) * length(v_inds))
-  }
-  else{
-    idx <- seq_len(NROW(param$par_value) * length(v_inds))}
+  
+    
 
-  if (method=='stgcca'){
+  if (rgcca_args$method=='stgcca'){
    
 
     W <- par_pblapply(idx, function(n) {
@@ -343,8 +358,8 @@ rgcca_cv <- function(blocks,
       inds = v_inds[[j]],
       metric = metric,
       par_type = param$par_type,
-      par_value = param$par_value[i, ],
-      prediction_model = model$prediction_model,
+      par_value = param$par_value[i, ],upsample=upsample,
+      prediction_model = model$prediction_model,params=params,tuning=tuning,
       ...
     )
     
@@ -352,12 +367,8 @@ rgcca_cv <- function(blocks,
   }, n_cores = n_cores, verbose = verbose)
   }
  
-  if (method=='stgcca'){
-    W <- matrix(unlist(W), nrow = NROW(param$par_value), byrow = TRUE)
-  }
-  else{
+  
      W <- matrix(unlist(W), nrow = NROW(param$par_value), byrow = TRUE)
-  }
   
   if (model$classification) {
     W[is.na(W)] <- 0

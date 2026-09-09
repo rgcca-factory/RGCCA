@@ -231,7 +231,7 @@ rgcca_permutation <- function(blocks, par_type = "tau", par_value = NULL,
                               ncomp = 1,
                               tau = 1,
                               sparsity = 1,
-                              par_value2=NULL,
+                              
                               init = "svd", bias = TRUE, tol = 1e-8,
                               response = NULL, superblock = FALSE,
                               NA_method = "na.ignore", rgcca_res = NULL,
@@ -258,7 +258,7 @@ rgcca_permutation <- function(blocks, par_type = "tau", par_value = NULL,
 
   ### Prepare parameters for line search
   if (
-    rgcca_args$method %in% sparse_methods() && (par_type == "tau")
+    (rgcca_args$method %in% sparse_methods()) && (par_type == "tau")
   ) {
     par_type <- "sparsity"
   } else if (par_type == "sparsity") {
@@ -267,8 +267,8 @@ rgcca_permutation <- function(blocks, par_type = "tau", par_value = NULL,
   }
  
   param <- set_parameter_grid(
-    par_type, par_length, par_value, par_value2,rgcca_args$blocks,
-    rgcca_args[[par_type]], method,rgcca_args$response,
+    par_type, par_length, par_value,rgcca_args$blocks,
+    rgcca_args[[par_type]], rgcca_args$response,
     rgcca_args$superblock,  opt$disjunction
   )
   
@@ -296,7 +296,7 @@ rgcca_permutation <- function(blocks, par_type = "tau", par_value = NULL,
   ### Start line search
   # For every set of parameter, RGCCA is run once on the non permuted blocks
   # and then n_perms on permuted blocks.
-  if (method=='stgcca'){
+  if (rgcca_args$method =='stgcca'){
     v_inds <- lapply(seq_len(n_perms), function(i) {
     lapply(rgcca_args$blocks, function(x) {
       sample(seq_len(NROW(x)))
@@ -311,7 +311,7 @@ rgcca_permutation <- function(blocks, par_type = "tau", par_value = NULL,
   })
     idx <- seq(NROW(param$par_value) * (n_perms + 1))  }
  
-  if (method=='stgcca'){
+  if (rgcca_args$method =='stgcca'){
     W <- par_pblapply(idx, function(n) {
       
      i <- (n - 1) %/% (n_perms + 1) + 1
@@ -324,7 +324,7 @@ rgcca_permutation <- function(blocks, par_type = "tau", par_value = NULL,
       inds = v_inds[[j]],
       par_type = param$par_type,
       par_value = param$par_value[[i]],
-      par_value2=param$par_value2[i,]
+  
     )
    
 
@@ -358,7 +358,7 @@ rgcca_permutation <- function(blocks, par_type = "tau", par_value = NULL,
   if (ncol(param$par_value) > length(rgcca_args$blocks)) {
     par_colnames <- c(par_colnames, "superblock")
   }
-   if (method!='stgcca'){
+   if (rgcca_args$method !='stgcca'){
   rownames(param$par_value) <- seq_len(NROW(param$par_value))
   colnames(param$par_value) <- par_colnames
 

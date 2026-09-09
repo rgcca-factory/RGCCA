@@ -263,7 +263,7 @@ plot.rgcca <- function(x, type = "weights",
       first=TRUE
     
       if (length(block)>1){
-        for (j in 1:length(block)){
+        for (j in block){
           for (i in 1:length(dimnames(x$blocks[[j]])[2:length( dimnames(x$blocks[[j]]))]) ){
         if (first){
         y = rep(as.character(j),length(dimnames(x$blocks[[j]])[2:length( dimnames(x$blocks[[j]]))][i][[1]]) )
@@ -275,7 +275,8 @@ plot.rgcca <- function(x, type = "weights",
         }}
       }
      else{
-      for (j in 1:length(block)){
+
+      for (j in block){
       for (i in 1:length(dimnames(x$blocks[[j]])[2:length( dimnames(x$blocks[[j]]))]) ){
         if (first){
         y = rep(as.character(i),length(dimnames(x$blocks[[j]])[2:length( dimnames(x$blocks[[j]]))][i][[1]]) )
@@ -293,27 +294,37 @@ plot.rgcca <- function(x, type = "weights",
     for (j in 1:length(block)){
       if (length(dim(x$blocks[[j]]))>2){
         if (first){
-          xx=lapply(x$factors[block][[j]], function(z) z[, comp[1]])
+          xx=x$factors[block][[j]]
+          if (!is.null(dim(xx))){
+          xx=lapply(xx, function(z) z[, comp[1]])}
+          xx<-unlist(xx)
           first=FALSE
         }
         else{
-          xx=c(xx,lapply(x$factors[block][[j]], function(z) z[, comp[1]]))
+          aux <- x$factors[block][[j]]
+          if (!is.null(dim(aux))){
+          aux=lapply(aux, function(z) z[, comp[1]])}
+          xx=c(xx,aux)
         }
-
       }else{
         if (first){
-          xx=x$a[block][[j]][, comp[1]]
+          xx=x$a[block][[j]]
+          if (!is.null(dim(xx))){
+          xx=xx[, comp[1]]}
           first=FALSE
+        
+         }else{
+          aux <- x$a[block][[j]]
+          if (!is.null(dim(aux))){
+          aux=aux[, comp[1]]}
+          xx=c(xx,aux)
         }
-        else{
-          xx=c(xx,x$a[block][[j]][, comp[1]])
-        }
+
 
       }}
       
 
-
-    
+   
     df <- data.frame(
       
       x = unlist(xx),

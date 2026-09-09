@@ -2,7 +2,7 @@
 library(RGCCA)
 #install.packages('sNPLS')
 library(sNPLS)
-
+Sys.setenv(TEST_SNAPSHOTS = "TRUE")
 data(bread)
 print(bread)
 Xbread <-bread$Xbread
@@ -10,14 +10,15 @@ Ybread <- bread$Ybread
 
 
 
-
+print(class(bread$X))
+print(class(bread$response))
 
 bread=list(X=bread$Xbread, response=bread$Ybread)
 print('data size')
 print(dim(bread$X))
 print('response size')
 print(length(bread$response))
-fit <- rgcca(blocks = bread, tau=0,response = 2,method = "stgcca", ncomp = 2,separable=TRUE,rank=1,
+fit <- rgcca(blocks = bread, tau=0,response = 2,method = "tgcca", ncomp = 2,separable=TRUE,rank=1,
              sparsity=list(c(1,0.5),1),sparse_lambda=0.5,scale=1,
              verbose = TRUE)
 summary(fit)

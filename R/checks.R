@@ -242,6 +242,7 @@ check_ncomp <- function(ncomp, blocks, min = 1, superblock = FALSE,
   ncomp <- vapply(
     seq_along(ncomp),
     function(x) {
+
       if (!is.null(response) && x == response) {
         y <- check_integer("ncomp", ncomp[x], min = min, exit_code = 126)
       } else {
@@ -264,7 +265,6 @@ check_ncomp <- function(ncomp, blocks, min = 1, superblock = FALSE,
 # Test on the sign of the correlation
 check_sign_comp <- function(fit, res_a) {
   blocks_idx <- seq_along(fit$a)
-  
   if ("y" %in% names(fit$a)) {
     blocks_idx <- seq_along(fit$a)[-which(names(fit$a) == "y")]
   }
@@ -275,6 +275,7 @@ check_sign_comp <- function(fit, res_a) {
     }
     for (k in seq_len(NCOL(fit$a[[j]]))) {
       x <- subset(res_a, block == names(fit$blocks)[j] & comp == k)
+ 
       x <- matrix(x$value, ncol = nrow(fit$a[[j]]), byrow = TRUE)
       SVD <- svd(x, nu = 1, nv = 1)
       x <- SVD$u
@@ -425,6 +426,7 @@ check_size_blocks <- function(blocks, x, y = x, n_row = NULL,
 check_penalty <- function(penalty, blocks, method = "rgcca", superblock = FALSE,
                           ncomp = NULL) {
   penalty <- elongate_arg(penalty, blocks)
+  
   is_matrix <- is.matrix(penalty)
   DIM <- dim(penalty)
 

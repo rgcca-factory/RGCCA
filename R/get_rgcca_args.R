@@ -72,8 +72,8 @@ get_rgcca_args <- function(object, default_args = list()) {
 
     rgcca_args$tau <- elongate_arg(rgcca_args$tau, rgcca_args$blocks)
     rgcca_args$ncomp <- elongate_arg(rgcca_args$ncomp, rgcca_args$blocks)
-
     rgcca_args$sparsity <- elongate_arg(rgcca_args$sparsity, rgcca_args$blocks)
+   
 
     ### Get last parameters based on the method
     tmp <- select_analysis(rgcca_args, rgcca_args$blocks)

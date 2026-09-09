@@ -71,7 +71,7 @@ rgcca_outer_loop <- function(blocks, connection = 1 - diag(length(blocks)),
     )
   }
 
-  
+ 
   if (is.vector(sparsity)) {
     if (!is.list(sparsity)){
     
@@ -80,34 +80,42 @@ rgcca_outer_loop <- function(blocks, connection = 1 - diag(length(blocks)),
       
       if (length(dim(blocks[[i]]))>2){
         if (first){
-          sparsity_all= c(rep(sparsity[1],length(dim(blocks[[i]]))-1 ))
+          sparsity_all= list(rep(sparsity[i],length(dim(blocks[[i]]))-1 ))
           first=FALSE
         }
         else{
-          sparsity_all=list(sparsity_all,c(rep(sparsity[1],length(dim(blocks[[i]]))-1 )))
+          sparsity_all=c(sparsity_all,c(rep(sparsity[i],length(dim(blocks[[i]]))-1 )))
 
         }
 
       }
       else{
         if (first){
-          sparsity_all=sparsity
+          if (is.na(sparsity[i])){
+                      sparsity_all=1
+
+          }else{
+          sparsity_all=sparsity[i]}
                     first=FALSE
 
         }
         else{
-          
+          if (is.na(sparsity[i])){
+                    sparsity_all=c(sparsity_all,1)}
 
-          sparsity_all=list(sparsity_all,sparsity[1])
+          else{
+          sparsity_all=c(sparsity_all,sparsity[i])}
 
 
         }
       }
+
     }}
     else{
       sparsity_all=sparsity
     }
     
+  
   sparsity= matrix(
       rep(sparsity_all, N + 1),
       nrow = N + 1, J, byrow = TRUE
@@ -137,7 +145,6 @@ rgcca_outer_loop <- function(blocks, connection = 1 - diag(length(blocks)),
       any(sparsity[[m]]==1)}))) & (nb_ind < matrix(
     pjs, nrow = N + 1, ncol = J, byrow = TRUE
   ))))] <- "dual"
-
   ##### Computation of RGCCA components #####
   for (n in seq(N + 1)) {
     if (verbose) {

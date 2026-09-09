@@ -459,7 +459,10 @@ rgcca <- function(blocks, connection = NULL, tau = 1, ncomp = 1,
     warning("Argument C is deprecated, use connection instead.")
     connection <- C
   }
-  
+  #deal with one block data
+  if (!is.list(blocks)){
+    blocks <- list(blocks)
+  }
   rgcca_args <- as.list(environment())
   ### If specific objects are given for blocks, parameters are imported from
   #   these objects.
@@ -489,6 +492,7 @@ rgcca <- function(blocks, connection = NULL, tau = 1, ncomp = 1,
     scale_block = rgcca_args$scale_block,
     na.rm = na.rm
   )
+ 
   if (rgcca_args$superblock) {
     blocks[["superblock"]] <- Reduce(cbind, blocks)
     colnames(blocks[["superblock"]]) <- paste0(
@@ -500,7 +504,7 @@ rgcca <- function(blocks, connection = NULL, tau = 1, ncomp = 1,
   gcca_args <- rgcca_args[c(
     "connection", "ncomp", "scheme", "init", "bias", "tol",
     "verbose", "superblock", "response", "n_iter_max", "comp_orth",
-    "rank", "mode_orth", "separable","sparse_lambda"
+    "rank", "mode_orth", "separable","sparse_lambda","sparsity"
   )]
   gcca_args[["na.rm"]] <- na.rm
   gcca_args[["blocks"]] <- blocks
@@ -512,6 +516,7 @@ rgcca <- function(blocks, connection = NULL, tau = 1, ncomp = 1,
   crit=NULL
   
         model<-do.call(rgcca_outer_loop, gcca_args)
+
 
     func_out <- format_output(model, rgcca_args, opt, blocks)
 

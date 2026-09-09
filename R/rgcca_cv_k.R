@@ -39,7 +39,6 @@ rgcca_cv_k <- function(rgcca_args, inds,prediction_model,params=NULL,tuning=NULL
 
   }
  
-  
   res <- do.call(rgcca, rgcca_args)
 
   # Evaluate RGCCA on the validation blocks

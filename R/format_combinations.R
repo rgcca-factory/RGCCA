@@ -5,7 +5,7 @@ format_combinations <- function(par_value) {
   combinations=list()
  
   for (i in 1:NROW(par_value)){
-    combinations[i] = paste0(unlist(par_value[i,]),collapse='/')
+    combinations[i] = paste0(round(unlist(par_value[i, ]), 2),collapse='/')
   }
   combinations=unlist(combinations)
 

@@ -37,6 +37,7 @@ summary.rgcca_cv <- function(object, type = c("sd", "quantile"), ...) {
     df <- df[, c(1, 2, 3)]
     colnames(df) <- c("Tuning parameters", paste("Mean", object$metric), "Sd")
   }
+  
   print(df, ...)
   cat("\n")
 
@@ -48,7 +49,7 @@ summary.rgcca_cv <- function(object, type = c("sd", "quantile"), ...) {
 
   cat(strwrap(paste0(
     "The best combination is: ",
-   list( object$best_params),
+   list(round(unlist(object$best_params), 3)),
     " for a mean ", object$metric, " of ",
     format(optimal_y, digits = 3)
   ), getOption("width")))

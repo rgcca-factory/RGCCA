@@ -5,7 +5,7 @@
 #' by concatenating the permuted blocks.
 #' @inheritParams rgcca_permutation
 #' @noRd
-rgcca_permutation_k <- function(rgcca_args, inds, perm, par_type, par_value,par_value2) {
+rgcca_permutation_k <- function(rgcca_args, inds, perm, par_type, par_value) {
   if (perm) {
     blocks <- lapply(seq_along(rgcca_args$blocks), function(i) {
       x <- rgcca_args$blocks[[i]]

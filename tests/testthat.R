@@ -1,3 +1,8 @@
 library(testthat)
 library(RGCCA)
+testthat::snapshot_review()
+Sys.setenv(NOT_CRAN = "true")
+devtools::test_active_file("testthat/test_plot.rgcca.r")
+Sys.setenv(TEST_SNAPSHOTS = "TRUE")
+Sys.setenv(NOT_CRAN = "true")
 test_check("RGCCA")

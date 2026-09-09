@@ -5,10 +5,31 @@
 #' @inheritParams rgcca_cv
 #' @noRd
 set_parameter_grid <- function(par_type, par_length, par_value, blocks,
-                               penalty, method,response = NULL, superblock = FALSE,
+                               penalty,response = NULL, superblock = FALSE,
                                disjunction = FALSE) {
 
+
   ### Auxiliary functions
+  check_all_dims <- function(x) {
+      # 1. Check if the current object itself has > 2 dimensions
+      if (!is.null(dim(x)) && length(dim(x)) > 2) {
+        return(TRUE)
+      }
+      
+      # 2. If it's a list or list-array, recursively check its contents
+      if (is.list(x) || is.array(x)) {
+        return(any(sapply(x, check_all_dims)))
+      }
+      
+      return(FALSE)
+    }
+
+    if (check_all_dims(blocks) & par_type=='sparsity'){
+      sparse_tensor=TRUE
+    }
+    else{
+      sparse_tensor <- FALSE
+    }
   check_param_type <- function(par_value, blocks) {
     is_valid_type <- is.null(par_value) || is.vector(par_value) ||
       (length(dim(par_value)) == 2)
@@ -36,7 +57,7 @@ set_parameter_grid <- function(par_type, par_length, par_value, blocks,
     }
 
 
-    par_value[response]=response_value(par_value)
+   # par_value[response]=response_value(par_value)
     par_value <- t(apply(par_value, 1, function(x) {
       
      
@@ -50,65 +71,105 @@ set_parameter_grid <- function(par_type, par_length, par_value, blocks,
     # If par_value is null, we generate a matrix with par_length rows
     # by taking values uniformly spaced between the min of possible
     # values and the max of possible values for each block.
-   
     if (is.null(par_value)) {
+  
+
+     if (sparse_tensor){
+par_value <- matrix(vector("list", par_length * length(blocks)), 
+                    nrow = par_length, 
+                    ncol = length(blocks))
+      for (i in seq_along(blocks)) {
+      seq_list <- list()
+  
+      num_steps <- length(min_values[[i]]) / 2
+
+      for (j in seq_len(num_steps)) {
+        # Extract scalar numeric values using [[ ]] or unlist()
+        from_val <- max_values
+        to_val   <- unlist(min_values[[i]][[j]])
+
+        # Generate sequence with length matching par_length
+        seq_list[[j]] <- seq(from = from_val, to = to_val, length.out = par_length)
+      }
+
+      # Combine sequence steps per row across columns for block i
+     block_seqs <- round(do.call(cbind, seq_list), 2)
+  # Store each row of block_seqs as a numeric vector in column i
+      for (r in 1:par_length) {
+        par_value[r, i] <- list(block_seqs[r, ])
+      }
+    
+      }
+
+
+     }else{
+
         
             par_value <- lapply(seq_along(blocks), function(j) {
-            
-         
-            seq(max_values, min_values[j], length.out = par_length)})
+            seq(max_values, min_values[[j]][1], length.out = par_length)})
+
       par_value <- do.call(cbind, par_value)
       
-      
-     if (method=='stgcca'){
-      aux=matrix(rep(list(), NROW(par_value)*NCOL(par_value)),nrow=NROW(par_value),ncol=NCOL(par_value))
-      for (i in seq_along(blocks)){
-        #if (length(dim(blocks[[i]])) >2){
-          for (j in 1:dim(par_value)[1]){
-            
-
-            aux[j,i]<-list(rep(par_value[j,i],length(dim(blocks[[i]]))-1))
-            
-          }
-      }
-      par_value<-aux
-  
-      
-
+      par_value <- set_response_value(par_value, response_value)
 
      }
+      
     
       return(list(par_type = par_type, par_value = par_value))  
     }
-    
-
    
     # If par_value is a vector, we aim to create a matrix out of this
     # vector. Hence we have to check beforehand that par_value is a vector
     # of valid numbers.
-    if (is.vector(par_value)&!is.list(par_value)) {
-      if (method!='stgcca'){
-      par_value <- check_function(par_value)}
+    if (is.vector(par_value)) {
+      if (!sparse_tensor){
+      par_value <- check_function(par_value)
 
       par_value <- lapply(seq_along(par_value), function(j) {
-        seq(par_value[j], min_values[j], length.out = par_length)
+        seq(par_value[j], min_values[[j]][1], length.out = par_length)
       })
       par_value <- do.call(cbind, par_value)
       par_value <- set_response_value(par_value, response_value)
+     } else{
+      par_value <- matrix(vector("list", par_length * length(blocks)), 
+                    nrow = par_length, 
+                    ncol = length(blocks))
+      for (i in seq_along(blocks)) {
+      seq_list <- list()
+  
+      num_steps <- length(min_values[[i]]) / 2
+
+      for (j in seq_len(num_steps)) {
+        # Extract scalar numeric values using [[ ]] or unlist()
+        from_val <- par_value[j]
+        to_val   <- unlist(min_values[[i]][[j]])
+
+        # Generate sequence with length matching par_length
+        seq_list[[j]] <- seq(from = from_val, to = to_val, length.out = par_length)
+      }
+
+      # Combine sequence steps per row across columns for block i
+     block_seqs <- round(do.call(cbind, seq_list), 2)
+  # Store each row of block_seqs as a numeric vector in column i
+      for (r in 1:par_length) {
+        par_value[r, i] <- list(block_seqs[r, ])
+      }
+      }}
       
       return(list(par_type = par_type, par_value = par_value))
     }
     # If par_value is already a grid, we just check that it is valid.
     else{
-      if (method!='stgcca'){
+      if (!sparse_tensor){
         par_value <- t(vapply(seq_len(NROW(par_value)), function(i) {
       check_function(par_value[i, ])
-    }, FUN.VALUE = double(ncol(par_value))))}
+    }, FUN.VALUE = double(ncol(par_value))))
+     par_value <- set_response_value(par_value, response_value)}
+    
     
     #
     
-   # par_value <- set_response_value(par_value, response_value)
-   # par_value2 <- set_response_value(par_value2, response_value)
+   
 
 
     return(list(par_type = par_type, par_value = par_value))
@@ -118,14 +179,21 @@ set_parameter_grid <- function(par_type, par_length, par_value, blocks,
   J <- length(blocks)
   check_param_type(par_value, blocks)
   ncols <- vapply(blocks, NCOL, FUN.VALUE = integer(1))
+  ndims_list <- lapply(blocks, function(x) {
+  d <- dim(x)[2:length(dim(x))]
+
+  if (is.null(d)) length(x) else d
+})
 
   switch(par_type,
     "ncomp" = {
       if (!is.null(response)) ncols <- ncols[-response]
+     
       min_values <- rep(1, J + 1)
       max_values <- min(
         ifelse(superblock, sum(ncols), min(ncols)), par_length
       )
+     
       response_value <- function(x) {
         return(max(x[-response]))
       }
@@ -144,7 +212,9 @@ set_parameter_grid <- function(par_type, par_length, par_value, blocks,
       }
     },
     "sparsity" = {
-      min_values <- c(1 / sqrt(ncols), 1 / sqrt(sum(ncols)))
+      min_values <- lapply(ndims_list, function(d) {
+  c(1 / sqrt(d), 1 / sqrt(d))
+})
       max_values <- 1
       response_value <- function(x) {
         ifelse(disjunction, 0, x[response])

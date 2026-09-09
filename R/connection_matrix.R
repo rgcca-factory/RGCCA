@@ -17,6 +17,9 @@ connection_matrix <- function(blocks, type = "pair",
       connection[response, response] <- 0
     }
   )
+  if (J==1){
+    connection=matrix(c(1),ncol=1)
+  }
   rownames(connection) <- colnames(connection) <- name_blocks
   return(connection)
 }

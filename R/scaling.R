@@ -34,12 +34,13 @@ scaling <- function(blocks, scale = TRUE, bias = TRUE,
       }}
     else{
       ##baseline
-      if (length(x)>2){
+      if (length(dim(x))>2){
 
         x <- matrix(x, nrow = nrow(x))
       }
+      
 
-        x<- scale2(x, scale = TRUE, bias = bias)
+        x<- scale2(x, scale = scale, bias = bias)
     }
           
        # Scale each block by a constant if requested

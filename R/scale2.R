@@ -8,8 +8,8 @@
 #' @noRd
 scale2 <- function(A, scale = TRUE, bias = TRUE) {
   # Center the data
+ 
   A <- scale(A, center = TRUE, scale = FALSE)
-
   # Scale if needed
   if (scale) {
     std <- sqrt(apply(A, 2, function(x) cov2(x, bias = bias)))

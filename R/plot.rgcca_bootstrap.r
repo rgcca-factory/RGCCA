@@ -183,12 +183,19 @@ plot.rgcca_bootstrap <- function(x, block = seq_along(x$rgcca$call$blocks),
     df[, col_pval] <- NA
   }
   
+  if (anyDuplicated(df$var) > 0) {
+  # Fallback: df$var has duplicates, combine var and block
+  rownames(df) <- paste(df$var, df$block, sep = "-")
+} else {
+  # Primary: df$var is completely unique
   rownames(df) <- df$var
+}
   df <- df[, columns, drop = FALSE]
   colnames(df) <- column_names
   
   df$response <- factor(blkvec)
-  if (length(dim(x$rgcca$blocks[[block]]))>2){
+  if (sum(multi_blocks)>0){
+  
     
   first=TRUE
     for (j in 1:length(block)){

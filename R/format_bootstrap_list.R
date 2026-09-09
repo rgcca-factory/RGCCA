@@ -13,6 +13,9 @@ format_bootstrap_list <- function(W, rgcca_res) {
 
   #aa
   # Repeat values for variables, blocks and components
+  if (!is.null(rgcca_res$call$response)){
+    rownames(rgcca_res$a[[rgcca_res$call$response]])= paste(rownames(rgcca_res$a[[rgcca_res$call$response]]),'-response')
+  }
   
   grid <- do.call(rbind, lapply(seq_along(rgcca_res$a), function(j) {
     a <- rgcca_res$a[[j]]

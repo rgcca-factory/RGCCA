@@ -71,7 +71,7 @@
 #' @export
 #' @seealso \code{\link[RGCCA]{plot.rgcca_bootstrap}},
 #' \code{\link[RGCCA]{summary.rgcca_bootstrap}}
-rgcca_bootstrap <- function(rgcca_res, n_boot = 100,method,
+rgcca_bootstrap <- function(rgcca_res, n_boot = 100,
                             n_cores = 1, verbose = TRUE) {
 
  stability <- is(rgcca_res, "rgcca_stability")
@@ -105,40 +105,51 @@ rgcca_bootstrap <- function(rgcca_res, n_boot = 100,method,
     
       if (length(dim(rgcca_res$call$blocks[[i]]))>2){
         for (m in 1:(length(dim(rgcca_res$call$blocks[[i]]))-1)){
-          aux =rgcca_res$factors[[i]][m][[1]][,1]
-          names(aux)=seq_len(length(aux))
+          if (!is.null(dim(rgcca_res$factors[[i]][m][[1]]))){
+            aux <- rgcca_res$factors[[i]][m][[1]][,1]
+          }
+          else{
+            aux <- rgcca_res$factors[[i]][m][[1]]
+          }
+         
+         names(aux)=seq_len(length(aux))
      
         x=unlist(aux)!=0
+        
         if (m==1){
-      keep=c(unlist(rgcca_res$factors[[i]][m][[1]][,1])[x])
+      keep=c(unlist(aux)[x])
 
         }
         else{
-          keep = c(keep,unlist(rgcca_res$factors[[i]][m][[1]][,1])[x])
+          keep = c(keep,unlist(aux)[x])
           
         }
        # print(rgcca_res$a)
       
         
-          rgcca_res$call$blocks[[i]]=extract(rgcca_res$call$blocks[[i]],m+1,seq_len(length(rgcca_res$factors[[i]][m][[1]][,1]))[x])
+          rgcca_res$call$blocks[[i]]=extract(rgcca_res$call$blocks[[i]],m+1,seq_len(length(aux))[x])
          
 
 
     } 
  }
      else{
-      keepvar=unlist(rgcca_res$a[i])!=0
+      aux <- rgcca_res$a[[i]]
+      if (!is.null(dim(aux))){
+        aux <- aux[, 1]
+      }
+      keepvar=unlist(aux)!=0
+     
        rgcca_res$call$blocks[[i]]=rgcca_res$call$blocks[[i]][,keepvar,drop=FALSE]
 
      }}
-   # keep_var <- lapply(
-   #   rgcca_res$a[-(J + 1)],
-   #   function(x) unique(which(x != 0, arr.ind = TRUE)[, 1])
-   # )
-
-    if (rgcca_res$opt$disjunction) {
-      keep_var[[rgcca_res$call$response]] <- 1
-    }
+  #  keep_var <- lapply(
+  #    rgcca_res$a[-(J + 1)],
+  #    function(x) unique(which(x != 0, arr.ind = TRUE)[, 1])
+  #  )
+  #  if (rgcca_res$opt$disjunction) {
+  #    keep_var[[rgcca_res$call$response]] <- 1
+  #  }
 
     #rgcca_res$call$blocks <- Map(
     #  function(x, y) x[, y, drop = FALSE], rgcca_res$call$blocks, keep_var
@@ -146,7 +157,7 @@ rgcca_bootstrap <- function(rgcca_res, n_boot = 100,method,
     rgcca_res$call$tau <-
       rgcca_res$call$sparsity <- rep(1, length(rgcca_res$blocks))
     
-    rgcca_res <- rgcca(rgcca_res,method)
+    rgcca_res <- rgcca(rgcca_res,rgcca_res$call$method)
   }
   
 

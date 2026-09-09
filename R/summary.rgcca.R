@@ -106,7 +106,7 @@ summary.rgcca <- function(object, ...) {
   )
   
   ### Print regularization parameter or the number of selected variables
-  cat("\n")
+  #cat("\n")
   if (!tolower(object$call$method) %in% sparse_methods()) {
     param <- "regularization"
     if (!is.matrix(object$call$tau)) {
@@ -127,30 +127,33 @@ summary.rgcca <- function(object, ...) {
     )
     if (object$call$method=="stgcca"){
       aux=object$factors
-      nb_selected_fact=list()
-   
-      kk=1
-      fact = array(numeric(),c(dim(aux[[1]][[1]])[2],length(aux[[1]]),length(aux)) )
-     
-      for (i in 1:length(aux)){
-        if (i!=(response-1)){
-        for (j in 1:length(aux[[i]])){
-          
-          comp =dim(aux[[i]][[j]])[2]
-          
-          for (k in 1:comp){
-            fact[k,j,i]=sum(aux[[i]][[j]][,k]!=0)
-          }
+      # Returns a list of matrices (one matrix per top-level list element)
+      nb_selected_fact <- lapply(aux, function(sub_list) {
+  # Handle empty or NULL sub-lists (like [[2]] or [[3]])
+      if (is.null(sub_list)) return(NULL)
 
-        }}
-      #nb_selected_fact[i]=list(fact)
+      sapply(sub_list, function(mat) {
+        if (is.null(mat)) return(NULL)
+
+        if (is.matrix(mat) || is.data.frame(mat)) {
+          # 2D Matrix: Count non-zeros per column (component)
+          return(colSums(mat != 0))
+        } else if (is.numeric(mat)) {
+          # 1D Vector: Count total non-zero elements
+          return(sum(mat != 0))
+        } else {
+          return(NULL)
+        }
+      })
+    })
+
+# Access result for [[1]]:
 
         #for (j in 1:length(aux[[1]])[2]){
-        kk=kk+1
         #}
         
-    nb_selected_fact=fact
-      }
+    
+      
       nb_selected_var <- lapply(
       object$a[-response],
       function(a) apply(a, 2, function(l) sum(l != 0))
@@ -167,22 +170,28 @@ summary.rgcca <- function(object, ...) {
 
         
 
-        cat("The", param, "parameter used for", names(object$blocks)[i], "is:",
+        cat("\n The", param, "parameter used for", names(object$blocks)[i], "is:",
         
-          as.numeric(unlist(sparsity)),"\n",fill = TRUE)
-          for (j in 1:dim(nb_selected_fact)[2]){
-           cat( "- with", paste(nb_selected_fact[j, , i], collapse = ", ")
-          ,"variables selected for component",as.numeric(j), '\n',
+          as.numeric(unlist(sparsity)),fill = TRUE)
+          for (j in 1:object$call$ncomp[i]){
+            if (object$call$ncomp[i]==1){
+cat( "- with", paste(unlist(nb_selected_fact[[i]]), collapse = ", ")
+          ,"variables selected for component",as.numeric(j),
           fill = TRUE
-        )}
+        )
+            }else{
+           cat( "- with", paste(unlist(nb_selected_fact[[i]][j,]), collapse = ", ")
+          ,"variables selected for component",as.numeric(j),
+          fill = TRUE
+        )}}
 
       }else{
-        cat("The", param, "parameter used for", names(object$blocks)[i], "is:",
+        cat("\n The", param, "parameter used for", names(object$blocks)[i], "is:",
         
-          as.numeric(unlist(sparsity)),"\n", fill = TRUE)
+          as.numeric(unlist(sparsity)), fill = TRUE)
           for (j in 1:length(nb_selected_var[[i]])){ 
             cat("- with", nb_selected_var[[i]][j]
-          ,"variables selected for component",as.numeric(j), '\n', fill = TRUE
+          ,"variables selected for component",as.numeric(j), fill = TRUE
         )}
           
         

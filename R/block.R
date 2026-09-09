@@ -115,14 +115,15 @@ create_block <- function(x, j, bias, na.rm, tau, sparsity,sparse_lambda,
         if  (any(unlist(sparsity)!=1)| any(unlist(sparse_lambda)!=1)) {  
          
         
-
         
         res <- new_sparse_tensor_block(x, j,rank,  mode_orth,unlist(sparsity),sparse_lambda,tol,bias = bias, na.rm = na.rm)
         } else {
           res <- new_tensor_block(x, j, rank, mode_orth, bias = bias, na.rm = na.rm)
     }  }
     }else {
-    if (any(unlist(sparsity)!=1) < 1 &any(unlist(sparsity)!=1)>0) {             # SGCCA
+   
+    if (any(unlist(sparsity)!=1) && sum(unlist(sparsity))>0) { 
+            # SGCCA
       res <- new_sparse_block(x, j, sparsity, tol, bias = bias, na.rm = na.rm)
     } else if (NROW(x) > NCOL(x)) { # Primal RGCCA
       if (tau < 1) {

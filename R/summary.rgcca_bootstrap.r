@@ -54,7 +54,15 @@ summary.rgcca_bootstrap <- function(object,
   df["adjust.pval"] <- p.adjust(df[, col_pval], method = adj.method)
  # df <- df[df$block %in% names(object$rgcca$blocks)[block], ]
  # df <- df[df$comp == comp, ]
+  
+  # Primary option: try setting rownames using just var
+  if (anyDuplicated(df$var) > 0) {
+  # Fallback: df$var has duplicates, combine var and block
+  rownames(df) <- paste(df$var, df$block, sep = "-")
+} else {
+  # Primary: df$var is completely unique
   rownames(df) <- df$var
+}
   df <- df[, columns]
   colnames(df) <- column_names
 

@@ -99,7 +99,7 @@ rgcca_predict <- function(rgcca_res,
   y_train <- to_mat(rgcca_res$call$blocks[[response]])
   y_test <- as.data.frame(to_mat(blocks_test[[test_idx]]))
   
-
+  
   if (any(dim(y_test)[-1] != dim(y_train)[-1])) {
     stop_rgcca(
       "Dimensions of response do not match between",
@@ -112,6 +112,7 @@ rgcca_predict <- function(rgcca_res,
   X_train <- rgcca_res$Y[names(projection)]
   X_train <- reformat_projection(X_train)
   X_test <- reformat_projection(projection)
+  
 
   # Keep same lines in X_train and y_train
   y_train <- as.data.frame(subset_block_rows(y_train, rownames(X_train)))

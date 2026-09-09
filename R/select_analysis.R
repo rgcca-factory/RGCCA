@@ -34,21 +34,28 @@ select_analysis <- function(rgcca_args, blocks) {
   superblock <- rgcca_args$superblock
   scale_block <- rgcca_args$scale_block
 
-  if (length(blocks) == 1) {
-    if (sparsity[1] == 1) {
-      method <- "pca"
-    } else {
-      method <- "spca"
-    }
-  }
-
+  #if (length(blocks) == 1) {
+  #  if (sparsity[1] == 1) {
+  #    method <- "pca"
+  #  } else {
+  #    method <- "spca"
+  #  }
+  #}
+ if (method %in% c("rgcca", "sgcca", "tgcca","stgcca")) {
   if (any(vapply(blocks, function(x) length(dim(x)), FUN.VALUE = 1L) > 2)) {
     if (any(as.numeric(unlist(sparsity)) != 1)) {
       method <- "stgcca"}
     else{
     method <- "tgcca"
-  }}
+  }}else{
+    if (any(sparsity != 1)) {
+      param <- "sparsity"
+      method <- "sgcca"
+      penalty <- sparsity
 
+
+  }
+  }}
   method <- check_method(method)
 
   call <- list(

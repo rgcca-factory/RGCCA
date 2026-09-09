@@ -57,7 +57,7 @@ rgcca_stability <- function(rgcca_res,
                             keep = vapply(
                               rgcca_res$a, function(x) mean(x != 0),
                               FUN.VALUE = 1.0
-                            ),method=NULL,
+                            ),
                             n_boot = 100,
                             n_cores = 1,
                             verbose = TRUE) {
@@ -93,7 +93,7 @@ rgcca_stability <- function(rgcca_res,
     )
   }, n_cores = n_cores, verbose = verbose)
   factors_df <- NULL
-  if (method!='rgcca'){
+  if (rgcca_res$call$method!='rgcca'){
   
   multi_blocks <- sapply(rgcca_res$call$blocks, function(x) is.array(x) && length(dim(x)) > 2)
   if (any(multi_blocks)) {
