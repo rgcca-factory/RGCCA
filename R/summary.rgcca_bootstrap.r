@@ -35,8 +35,8 @@ summary.rgcca_bootstrap <- function(object,
   df_list <- lapply(seq_along(block), function(ii) {
     j <- block[ii]  
     bn <- blocks_names[j]
-    if ((length(dim(object$rgcca$call$blocks[[j]]))>2)& (type=='weights')){
-      use_type='factors'
+    if ((length(dim(object$rgcca$call$blocks[[j]]))<=2)& (type=='factors')){
+      use_type='weights'
     
     }else{
       use_type=type

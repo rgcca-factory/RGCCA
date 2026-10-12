@@ -8,11 +8,25 @@ summary.rgcca_cv <- function(object, type = c("sd", "quantile"), ...) {
 
   ### Print parameters of the function
   
-  params <- object$params#round(object$params, 3)
+   params <- object$params
   rownames(params) <- seq_len(NROW(params))
+params_clean <- as.data.frame(params, stringsAsFactors = FALSE)
+
+# 2. Loop through each column and collapse any matrix or list data into 'value1/value2'
+for (col_name in names(params_clean)) {
+  col_data <- params_clean[[col_name]]
+  
+  if (is.matrix(col_data)) {
+    params_clean[[col_name]] <- apply(col_data, 1, paste, collapse = "/")
+  } else if (is.list(col_data)) {
+    params_clean[[col_name]] <- sapply(col_data, function(x) paste(x, collapse = "/"))
+  } else if (is.data.frame(col_data)) {
+    params_clean[[col_name]] <- apply(as.matrix(col_data), 1, paste, collapse = "/")
+  }
+}
   cat(fill = TRUE)
   cat(paste0("Tuning parameters (", object$par_type, ") used: "), fill = TRUE)
- 
+  print(params_clean, quote = FALSE, ...)
   cat("\n")
 
   cat(paste0(

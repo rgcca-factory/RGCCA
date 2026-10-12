@@ -292,34 +292,39 @@ plot.rgcca <- function(x, type = "weights",
     first=TRUE
 
     for (j in block){
+  
        
 
       if (length(dim(x$blocks[[j]]))>2){
+       
         if (first){
           xx=x$factors[[j]]
+         
 
-          if (!is.null(dim(xx))|length(xx)>1){
+          if (!is.null(dim(xx))){
           xx=lapply(xx, function(z) z[, comp[1]])}
           xx<-unlist(xx)
           first=FALSE
         }
         else{
           aux <- x$factors[[j]]
-          if (!is.null(dim(aux))|length(xx)>1){
+          if (!is.null(dim(aux))){
           aux=lapply(aux, function(z) z[, comp[1]])}
           xx=c(xx,aux)
         }
       }else{
+      
+
         if (first){
-          xx=x$a[[j]]
+          xx=x$a[j]
           if (!is.null(dim(xx))){
-          xx=xx[, comp[1]]}
+          xx=lapply(xx, function(z) z[, comp[1]])}
           first=FALSE
         
          }else{
-          aux <- x$a[[j]]
+          aux <- x$a[j]
           if (!is.null(dim(aux))){
-          aux=aux[, comp[1]]}
+          aux=lapply(xx, function(z) z[, comp[1]])}
           xx=c(xx,aux)
         }
 
@@ -577,7 +582,7 @@ plot.rgcca <- function(x, type = "weights",
     #  plot_function <- plot_loadings
     #},
     "weights" = {
-      df <- df_factor(x, block, comp, num_block, display_order)
+      df <- df_weight(x, block, comp, num_block, display_order)
 
       block_name <- ifelse(
         length(unique(block)) == 1,
@@ -586,6 +591,19 @@ plot.rgcca <- function(x, type = "weights",
       )
       title <- ifelse(missing(title), paste0(
         "Block-weight vector", block_name, " - comp", comp[1]
+      ), title)
+      plot_function <- plot_loadings
+    },
+    "factors" = {
+      df <- df_factor(x, block, comp, num_block, display_order)
+
+      block_name <- ifelse(
+        length(unique(block)) == 1,
+        paste(":", names(x$blocks)[block[1]]),
+        ""
+      )
+      title <- ifelse(missing(title), paste0(
+        "Block-factor vector", block_name, " - comp", comp[1]
       ), title)
       plot_function <- plot_loadings
     },

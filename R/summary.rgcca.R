@@ -204,7 +204,7 @@ cat( "- with", paste(unlist(nb_selected_fact[[i]]), collapse = ", ")
       print(do.call(cbind, nb_selected_var))
     }
     if (object$opt$disjunction) {
-      cat("The regularization parameter used for",
+      cat("\nThe regularization parameter used for",
           names(object$blocks)[response], "is:", 0,
           fill = TRUE
       )
@@ -240,7 +240,7 @@ nb_selected_var <- lapply(
       print(do.call(cbind, nb_selected_var))
     }
     if (object$opt$disjunction) {
-      cat("The regularization parameter used for",
+      cat("\nThe regularization parameter used for",
           names(object$blocks)[response], "is:", 0,
           fill = TRUE
       )

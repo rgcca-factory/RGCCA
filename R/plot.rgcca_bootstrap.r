@@ -159,8 +159,8 @@ plot.rgcca_bootstrap <- function(x, block = seq_along(x$rgcca$call$blocks),
     bn <- blocks_names[j]
  
    
-    if ((length(dim(x$rgcca$blocks[[j]]))>2)& (type=='factors')){
-      use_type='factors'
+    if ((length(dim(x$rgcca$blocks[[j]]))<=2)& (type=='factors')){
+      use_type='weights'
       multi_blocks = TRUE
     
     }else{
