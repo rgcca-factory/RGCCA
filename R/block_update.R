@@ -4,6 +4,7 @@ block_update <- function(x, grad) {
 
 #' @export
 block_update.block <- function(x, grad) {
+ 
   x$a <- pm(t(x$x), grad, na.rm = x$na.rm)
   return(block_project(x))
 }
@@ -31,6 +32,7 @@ block_update.tensor_block <- function(x, grad) {
       Reduce(khatri_rao, rev(x$factors[-seq_len(m)])), other_factors
     )
     if (m == x$mode_orth) {
+     
       SVD <- svd(
         grad_m %*% diag(x$lambda, nrow = x$rank), nu = x$rank, nv = x$rank
       )

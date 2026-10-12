@@ -87,7 +87,6 @@ rgcca_bootstrap <- function(rgcca_res, n_boot = 100,
     idx.list[[.dim]] <- .value
     do.call(`[`, c(list(A), idx.list))
 }
-
   # If sparse model, we perform bootstrap only on the selected variables
   if (!stability && tolower(rgcca_res$call$method) %in% sparse_methods()) {
     if (verbose) {
@@ -193,37 +192,43 @@ rgcca_bootstrap <- function(rgcca_res, n_boot = 100,
   
   multi_blocks <- sapply(rgcca_res$call$blocks, function(x) is.array(x) && length(dim(x)) > 2)
   
-  if (any(multi_blocks)) {
-    factors_df <- do.call(rbind, lapply(seq_along(W), function(b) { 
-      do.call(rbind, lapply(seq_along(W[[b]]$F), function(j) {
-        F_list <- W[[b]]$F[[j]] 
-        if (is.null(F_list)) return(NULL) 
-        do.call(rbind, lapply(seq_along(F_list), function(k) {
-          M <- F_list[[k]] 
-          n <- nrow(M)
-          p <- ncol(M)
-          if (is.null(p)){
-            p=1
-            vars <- names(M)}
-
-          else{
-    
-          vars <- rownames(M)}
-          
-          data.frame(
-            boot  = b,
-            block = names(rgcca_res$a)[j],
-            mode  = k,
-            var   = rep(vars, times = p),
-            comp  = rep(seq_len(p), each = n),
-            value = as.vector(M),
-            row.names = NULL
-          )
-        }))
+  block_names  <- names(rgcca_res$call$blocks) # Extract accurate block names
+if (any(multi_blocks)) {
+  factors_df <- do.call(rbind, lapply(seq_along(W), function(b) { 
+    do.call(rbind, lapply(seq_along(W[[b]]$F), function(j) {
+      
+      F_list <- W[[b]]$F[[j]] 
+      if (is.null(F_list)) return(NULL) 
+      
+      do.call(rbind, lapply(seq_along(F_list), function(k) {
+        M <- F_list[[k]] 
+        if (is.null(M)) return(NULL)
+        
+        n <- nrow(M)
+        p <- ncol(M)
+        if (is.null(p)) {
+          p <- 1
+          vars <- names(M)
+        } else {
+          vars <- rownames(M)
+        }
+        
+        data.frame(
+          boot  = b,
+          block = block_names[j], # Use block_names here instead of names(rgcca_res$a)[j]
+          mode  = k,
+          var   = rep(vars, times = p),
+          comp  = rep(seq_len(p), each = n),
+          value = as.vector(M),
+          stringsAsFactors = FALSE,
+          row.names = NULL
+        )
       }))
     }))
-    if (nrow(factors_df) == 0) factors_df <- NULL
-  }
+  }))
+  
+  if (!is.null(factors_df) && nrow(factors_df) == 0) factors_df <- NULL
+}
  
   # Test unimodality for each mode using the dip test
   # Since we are in a multivariate setting, we apply the dip test on the

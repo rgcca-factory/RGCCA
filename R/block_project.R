@@ -26,6 +26,7 @@ block_project.dual_block <- function(x) {
 
 #' @export
 block_project.primal_regularized_block <- function(x) {
+  
  
   if (any(x$a != 0)) {
     x$a <- x$M %*% x$a / drop(sqrt(t(x$a) %*% x$M %*% x$a))

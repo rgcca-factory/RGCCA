@@ -55,14 +55,14 @@ set_parameter_grid <- function(par_type, par_length, par_value, blocks,
     if (is.null(response_value)) {
       return(par_value)
     }
-
-
+    
    # par_value[response]=response_value(par_value)
-    par_value <- t(apply(par_value, 1, function(x) {
-      
-     
-      x[response] <- response_value(x)
-      return(x)
+    par_value <- do.call(rbind, lapply(1:nrow(par_value), function(i) {
+    x <- par_value[i, ]
+    
+    x[response]<- response_value(x) # wrap in list() if response_value returns a vector
+
+    return(x)
     }))
   }
 
@@ -100,7 +100,7 @@ par_value <- matrix(vector("list", par_length * length(blocks)),
       }
     
       }
-
+      par_value <- set_response_value(par_value, response_value)
 
      }else{
 
@@ -155,6 +155,7 @@ par_value <- matrix(vector("list", par_length * length(blocks)),
         par_value[r, i] <- list(block_seqs[r, ])
       }
       }}
+      par_value <- set_response_value(par_value, response_value)
       
       return(list(par_type = par_type, par_value = par_value))
     }

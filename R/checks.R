@@ -315,7 +315,7 @@ check_sign_comp_factors <- function(fit, res_f) {
     for (m in seq_along(fit$factors[[j]])) {
       for (k in seq_len(comp)) {
         x <- subset(res_f, block == names(fit$blocks)[j] & mode == m & comp == k)
-  
+        
        
    
         if (!is.null(fit$factors[[j]][[m]])){

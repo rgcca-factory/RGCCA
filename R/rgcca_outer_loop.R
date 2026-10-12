@@ -71,7 +71,6 @@ rgcca_outer_loop <- function(blocks, connection = 1 - diag(length(blocks)),
     )
   }
 
- 
   if (is.vector(sparsity)) {
     if (!is.list(sparsity)){
     
@@ -84,7 +83,7 @@ rgcca_outer_loop <- function(blocks, connection = 1 - diag(length(blocks)),
           first=FALSE
         }
         else{
-          sparsity_all=c(sparsity_all,c(rep(sparsity[i],length(dim(blocks[[i]]))-1 )))
+          sparsity_all=c(sparsity_all,list(rep(sparsity[i],length(dim(blocks[[i]]))-1 )))
 
         }
 
@@ -115,7 +114,6 @@ rgcca_outer_loop <- function(blocks, connection = 1 - diag(length(blocks)),
       sparsity_all=sparsity
     }
     
-  
   sparsity= matrix(
       rep(sparsity_all, N + 1),
       nrow = N + 1, J, byrow = TRUE

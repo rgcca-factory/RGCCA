@@ -291,30 +291,33 @@ plot.rgcca <- function(x, type = "weights",
      }
     first=TRUE
 
-    for (j in 1:length(block)){
+    for (j in block){
+       
+
       if (length(dim(x$blocks[[j]]))>2){
         if (first){
-          xx=x$factors[block][[j]]
-          if (!is.null(dim(xx))){
+          xx=x$factors[[j]]
+
+          if (!is.null(dim(xx))|length(xx)>1){
           xx=lapply(xx, function(z) z[, comp[1]])}
           xx<-unlist(xx)
           first=FALSE
         }
         else{
-          aux <- x$factors[block][[j]]
-          if (!is.null(dim(aux))){
+          aux <- x$factors[[j]]
+          if (!is.null(dim(aux))|length(xx)>1){
           aux=lapply(aux, function(z) z[, comp[1]])}
           xx=c(xx,aux)
         }
       }else{
         if (first){
-          xx=x$a[block][[j]]
+          xx=x$a[[j]]
           if (!is.null(dim(xx))){
           xx=xx[, comp[1]]}
           first=FALSE
         
          }else{
-          aux <- x$a[block][[j]]
+          aux <- x$a[[j]]
           if (!is.null(dim(aux))){
           aux=aux[, comp[1]]}
           xx=c(xx,aux)
@@ -333,12 +336,13 @@ plot.rgcca <- function(x, type = "weights",
       )),
       response = as.factor(y)
     )
+   
     df <- df[df$x != 0, ]
     if (display_order) {
       df <- df[order(abs(df$x), decreasing = TRUE), ]
     }
     df <- df[seq(min(n_mark, nrow(df))), ]
-    df$y <- factor(df$y, levels = df$y, ordered = TRUE)
+   # df$y <- factor(df$y, levels = df$y, ordered = TRUE)
     return(df)
   }
 

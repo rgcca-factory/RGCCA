@@ -148,26 +148,29 @@ plot.rgcca_bootstrap <- function(x, block = seq_along(x$rgcca$call$blocks),
     )
   }
   
-  multi_blocks <- sapply(x$rgcca$call$blocks, function(b) {
-    is.array(b) && length(dim(b)) > 2
-  })
+  
   
   blocks_names <- names(x$rgcca$blocks)
-  
+ multi_blocks <- any(sapply(block, function(j) {
+  length(dim(x$rgcca$blocks[[j]])) > 2 && type == 'factors'
+}))
   df_list <- lapply(seq_along(block), function(ii) {
     j <- block[ii]  
     bn <- blocks_names[j]
-    
-    if ((length(dim(x$rgcca$blocks[[j]]))>2)& (type=='weights')){
+ 
+   
+    if ((length(dim(x$rgcca$blocks[[j]]))>2)& (type=='factors')){
       use_type='factors'
+      multi_blocks = TRUE
     
     }else{
       use_type=type
     }
     comp_j <- if (length(comp) == 1) comp else comp[ii]
-    subset(x$stats, type == use_type & block == bn & comp == comp_j)
+    subset(x$stats, type == use_type & block == bn & comp == comp_j )
   })
-  
+
+ 
   df <- do.call(rbind, df_list)
   if (is.null(df) || nrow(df) == 0) {
     message("No data to plot: no rows in bootstrap stats matching chosen blocks/type/comp.")
@@ -194,13 +197,17 @@ plot.rgcca_bootstrap <- function(x, block = seq_along(x$rgcca$call$blocks),
   colnames(df) <- column_names
   
   df$response <- factor(blkvec)
-  if (sum(multi_blocks)>0){
+  
+ 
+ #print(dimnames(x$rgcca$blocks[[j]])
+  if (multi_blocks & type=='factors'){
   
     
   first=TRUE
-    for (j in 1:length(block)){
+    for (j in block){
       for (i in 1:length(dimnames(x$rgcca$blocks[[j]])[2:length( dimnames(x$rgcca$blocks[[j]]))]) ){
         if (first){
+          print(dimnames(x$rgcca$blocks[[j]])[2:length( dimnames(x$rgcca$blocks[[j]]))][i][[1]])
           y = rep(as.character(i),length(dimnames(x$rgcca$blocks[[j]])[2:length( dimnames(x$rgcca$blocks[[j]]))][i][[1]]) )
         first=FALSE
         }else{
@@ -224,8 +231,8 @@ plot.rgcca_bootstrap <- function(x, block = seq_along(x$rgcca$call$blocks),
   df <- df[df[, "sd"] != 0, ]
 
   n_mark <- min(n_mark, NROW(df))
+  
   df <- data.frame(df, order = seq(NROW(df), 1))[seq(n_mark), ]
-
   significance <- rep("", n_mark)
   significance[df$pval < 1e-3] <- "***"
   significance[df$pval >= 1e-3 & df$pval < 1e-2] <- "**"
@@ -254,7 +261,9 @@ plot.rgcca_bootstrap <- function(x, block = seq_along(x$rgcca$call$blocks),
   # Duplicate colors to avoid insufficient values in manual scale
   colors <- rep(colors, NROW(df) / length(colors) + 1)
   
+ # print(.data$response)
   ### Construct plot
+  
   if (length(block) > 1) {
     p <- ggplot(
       df,
@@ -263,7 +272,8 @@ plot.rgcca_bootstrap <- function(x, block = seq_along(x$rgcca$call$blocks),
       ggplot2::scale_color_manual(values = colors) +
       ggplot2::labs(color = "Block")
   } 
-  else if (length(dim(x$rgcca$blocks[[block]]))>2){
+  else if (multi_blocks){
+    
         p <- ggplot(
       df,
       aes(x = .data$order, y = .data$estimate, color = .data$response)

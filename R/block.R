@@ -97,7 +97,6 @@ new_separable_regularized_tensor_block <- function(x, j, rank, mode_orth,
 create_block <- function(x, j, bias, na.rm, tau, sparsity,sparse_lambda,
                          tol, rank, mode_orth, separable) {
   
- 
   if (length(dim(x)) > 2) {        # TGCCA
     if (tau < 1) {
       if (separable) {

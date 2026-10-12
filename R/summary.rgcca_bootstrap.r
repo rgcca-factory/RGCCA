@@ -10,6 +10,7 @@ summary.rgcca_bootstrap <- function(object,
   stopifnot(is(object, "rgcca_bootstrap"))
   type <- type[1]
   type <- match.arg(type, c("weights", "loadings","factors"))
+  print(block)
   lapply(block, function(i) check_blockx("block", i, object$rgcca$call$blocks))
   Map(function(y, z) check_compx(y, y, object$rgcca$call$ncomp, z), comp, block)
 
@@ -28,7 +29,7 @@ summary.rgcca_bootstrap <- function(object,
   multi_blocks <- sapply(object$rgcca$call$blocks, function(b) {
     is.array(b) && length(dim(b)) > 2
   })
-  
+
   blocks_names <- names(object$rgcca$blocks)
   
   df_list <- lapply(seq_along(block), function(ii) {

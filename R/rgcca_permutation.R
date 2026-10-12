@@ -230,7 +230,7 @@ rgcca_permutation <- function(blocks, par_type = "tau", par_value = NULL,
                               scheme = "factorial",
                               ncomp = 1,
                               tau = 1,
-                              sparsity = 1,
+                              sparsity = 1,sparse_lambda=1,
                               
                               init = "svd", bias = TRUE, tol = 1e-8,
                               response = NULL, superblock = FALSE,

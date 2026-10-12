@@ -27,6 +27,7 @@ print_call <- function(call) {
 
   ### Print design matrix
   cat("The design matrix is:\n")
+  print(call$connection)
 
   ### Print scheme
   cat("\n")
